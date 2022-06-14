@@ -314,7 +314,6 @@ func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request, prefO
 			return
 		}
 		configs = append(configs, string(kc))
-
 	}
 	mClient, err := meshes.CreateClient(req.Context(), meshAdapters[aID].Location)
 	if err != nil {

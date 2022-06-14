@@ -194,7 +194,6 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 }
 
 func (r *Resolver) connectToBroker(ctx context.Context, provider models.Provider, ctxID string) error {
-
 	status, err := r.getOperatorStatus(ctx, provider, ctxID)
 	if err != nil {
 		return err

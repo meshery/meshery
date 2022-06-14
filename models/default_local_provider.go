@@ -1018,11 +1018,20 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 		}(seedContent, log, &seededUUIDs)
 	}
 }
-func (l *DefaultLocalProvider) Cleanup() {
-	l.MesheryK8sContextPersister.DB.Migrator().DropTable(&K8sContext{})
-	l.MesheryK8sContextPersister.DB.Migrator().DropTable(&MesheryPattern{})
-	l.MesheryK8sContextPersister.DB.Migrator().DropTable(&MesheryApplication{})
-	l.MesheryK8sContextPersister.DB.Migrator().DropTable(&MesheryFilter{})
+func (l *DefaultLocalProvider) Cleanup() error {
+	if err := l.MesheryK8sContextPersister.DB.Migrator().DropTable(&K8sContext{}); err != nil {
+		return err
+	}
+	if err := l.MesheryK8sContextPersister.DB.Migrator().DropTable(&MesheryPattern{}); err != nil {
+		return err
+	}
+	if err := l.MesheryK8sContextPersister.DB.Migrator().DropTable(&MesheryApplication{}); err != nil {
+		return err
+	}
+	if err := l.MesheryK8sContextPersister.DB.Migrator().DropTable(&MesheryFilter{}); err != nil {
+		return err
+	}
+	return nil	
 }
 
 // githubRepoPatternScan & githubRepoFilterScan takes in github repo owner, repo name, path from where the file/files are needed
