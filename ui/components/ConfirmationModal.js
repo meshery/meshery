@@ -1,10 +1,11 @@
 import {
-  Button, Checkbox, Chip, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField,
+  Button, Checkbox, Chip, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, TextField,
   Tooltip, Typography
 } from "@material-ui/core";
+import CloseIcon from "@material-ui/icons/Close";
 import { withStyles } from "@material-ui/core/styles";
 import { Search } from "@material-ui/icons";
-import { useSnackbar, withSnackbar } from "notistack";
+import { withSnackbar } from "notistack";
 import { connect } from "react-redux";
 import { setK8sContexts, updateProgress } from "../lib/store";
 import { closeButtonForSnackbarAction, errorHandlerGenerator, hideProgress, showProgress, successHandlerGenerator } from "./ConnectionWizard/helpers/common";
@@ -91,9 +92,7 @@ const styles = (theme) => ({
 
 function ConfirmationMsg(props) {
   const { classes, open, handleClose, submit, isDelete,
-    selectedK8sContexts, k8scontext, title, setK8sContexts } = props
-
-  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+    selectedK8sContexts, k8scontext, title, setK8sContexts, enqueueSnackbar, closeSnackbar } = props
 
   const [contexts, setContexts] = useState(k8scontext);
 
@@ -105,6 +104,21 @@ function ConfirmationMsg(props) {
     )
   }
 
+  const handleSubmit = () => {
+    if (selectedK8sContexts.length === 0) {
+      enqueueSnackbar("Please select Kubernetes context(s) before proceeding with the operation",
+        { variant : "info", preventDuplicate : true,
+          action : (key) => (
+            <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+              <CloseIcon />
+            </IconButton>
+          ),
+          autoHideDuration : 3000, });
+      return;
+    }
+    submit();
+    handleClose();
+  }
   const searchContexts = (search) => {
     if (search === "") {
       setContexts(k8scontext);
@@ -219,7 +233,7 @@ function ConfirmationMsg(props) {
               color="primary">
               <Typography variant body2 > {isDelete ? "UNDEPLOY LATER" : "DEPLOY"} </Typography>
             </Button>
-            <Button onClick={submit}
+            <Button onClick={handleSubmit}
               className={classes.button0} autoFocus type="submit"
               variant="contained"
               color="primary">
