@@ -103,12 +103,10 @@ class MesheryApp extends App {
 
   initSubscriptions = (contexts) => {
     const operatorCallback = (data) => {
-      console.log("callback received op--->", data)
       this.props.store.dispatch({ type : actionTypes.SET_OPERATOR_SUBSCRIPTION, operatorState : data });
     }
 
     const meshSyncCallback = (data) => {
-      console.log("callback received--->", data)
       this.props.store.dispatch({ type : actionTypes.SET_MESHSYNC_SUBSCRIPTION, meshSyncState : data });
     }
 
