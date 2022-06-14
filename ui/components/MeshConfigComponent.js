@@ -52,8 +52,6 @@ const styles = (theme) => ({
   paper : { margin : theme.spacing(2), },
   fileInputStyle : { display : "none", },
   button : {
-    marginTop : theme.spacing(3),
-    marginLeft : theme.spacing(1),
     padding : theme.spacing(1),
     borderRadius : 5
   },
@@ -83,6 +81,9 @@ const styles = (theme) => ({
   menu : {
     display : 'flex',
     alignItems : 'center'
+  },
+  table : {
+    marginTop : theme.spacing(1.5)
   }
 });
 
@@ -193,7 +194,6 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
   }
 
   const setDateTime = (dt) => {
-    console.log("LLLL", dt);
     return dt.toLocaleDateString("en-US", options)
       + " " +  dt.toLocaleTimeString("en-US");
   }
@@ -515,6 +515,20 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
         handleConfigDelete(data[item.index].id)
       })
     },
+    customToolbar : () => (
+      <Button
+        type="submit"
+        variant="contained"
+        color="primary"
+        size="large"
+        onClick={handleClick}
+        className={classes.button}
+        data-cy="btnResetDatabase"
+      >
+        <Typography className={classes.add}> Add Cluster </Typography>
+        <AddIcon fontSize="small" />
+      </Button>
+    ),
     renderExpandableRow : (rowData, rowMetaData) => {
       return (
         <NoSsr>
@@ -769,6 +783,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
       </>,
       options : ["CANCEL", "UPLOAD"]
     })
+
     if (response === "UPLOAD") {
       uploadK8SConfig().then(() => {
         handleSuccess("successfully uploaded kubernetes config");
@@ -807,7 +822,6 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
       error : handleError("Operator could not be pinged"), });
   };
 
-  // done
   const handleNATSClick = (index) => {
     updateProgress({ showProgress : true });
     NatsStatusQuery({ k8scontextID : contexts[index].id }).subscribe({
@@ -827,10 +841,8 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
         } else {
           handleError("Meshery Broker could not be reached")("Meshery Server is not connected to Meshery Broker");
         }
-        // make state changes for individual index
+
         stateUpdater(NATSState, setNATSState, res.controller.status.length !== 0 ? res.controller.status : "UNKNOWN", index)
-        // setNATSState(res.controller.status.length !== 0 ? res.controller.status : "UNKNOWN");
-        // setNATSVersion(res.controller.version);
         stateUpdater(NATSVersion, setNATSVersion, res.controller.version, index);
       },
       error : handleError("NATS status could not be retrieved"), });
@@ -927,23 +939,11 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
 
   return (
     <>
-      <Button
-        type="submit"
-        variant="contained"
-        color="primary"
-        size="large"
-        onClick={handleClick}
-        className={classes.button}
-        data-cy="btnResetDatabase"
-      >
-        <Typography className={classes.add}> Add Cluster </Typography>
-        <AddIcon fontSize="small" />
-      </Button>
-
       <DataTable
         columns = { columns }
         data = { data }
         options = { options }
+        className={classes.table}
       />
       <PromptComponent ref={ ref }/>
       <PromptComponent ref = {meshSyncResetRef} />
