@@ -167,7 +167,7 @@ function ConfirmationMsg(props) {
         aria-describedby="alert-dialog-description"
         className={classes.dialogBox}
       >
-        {selectedK8sContexts.length > 0 ?
+        {k8scontext.length > 0 ?
           <>
             <DialogTitle id="alert-dialog-title" className={classes.title}>
               {title}
