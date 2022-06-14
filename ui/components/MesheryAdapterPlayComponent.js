@@ -23,8 +23,6 @@ import dataFetch, { promisifiedDataFetch } from "../lib/data-fetch";
 // import { updateSMIResults } from '../lib/store';
 import { setK8sContexts, updateProgress, actionTypes } from "../lib/store";
 import { ctxUrl, getK8sClusterIdsFromCtxId } from "../utils/multi-ctx";
-import { closeButtonForSnackbarAction, errorHandlerGenerator, hideProgress, showProgress, successHandlerGenerator } from "./ConnectionWizard/helpers/common";
-import { pingKubernetes } from "./ConnectionWizard/helpers/kubernetesHelpers";
 import fetchAvailableAddons from './graphql/queries/AddonsStatusQuery';
 import fetchAvailableNamespaces from "./graphql/queries/NamespaceQuery";
 import MesheryMetrics from "./MesheryMetrics";
@@ -106,7 +104,9 @@ const styles = (theme) => ({
     height : "100%",
     padding : theme.spacing(0.5)
   },
-  modalOpen : false
+  text : {
+    padding : theme.spacing(1)
+  }
 });
 
 class MesheryAdapterPlayComponent extends React.Component {
@@ -357,13 +357,6 @@ class MesheryAdapterPlayComponent extends React.Component {
     };
   }
 
-  handleKubernetesClick() {
-    showProgress()
-    pingKubernetes(
-      successHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Kubernetes succesfully pinged", () => hideProgress()),
-      errorHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Kubernetes not pinged successfully", () => hideProgress())
-    )
-  }
 
   handleSubmit = (cat, selectedOp, deleteOp = false) => {
     const self = this;
@@ -1231,7 +1224,7 @@ class MesheryAdapterPlayComponent extends React.Component {
             handleClose={this.handleClose}
             submit={() => this.submitOp(this.state.category, this.state.selectedOp, this.state.isDeleteOp)}
             isDelete={this.state.isDeleteOp}
-            title={"The selected operation will be applied to following contexts."}
+            title={<Typography variant="h6" className={classes.text} >The selected operation will be applied to following contexts.</Typography>}
           />
         </React.Fragment>
       </NoSsr>

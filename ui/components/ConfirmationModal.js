@@ -96,11 +96,12 @@ function ConfirmationMsg(props) {
 
   const [contexts, setContexts] = useState(k8scontext);
 
-  const handleKubernetesClick = () => {
+  const handleKubernetesClick = (ctxID) => {
     showProgress()
     pingKubernetes(
       successHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Kubernetes succesfully pinged", () => hideProgress()),
-      errorHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Kubernetes not pinged successfully", () => hideProgress())
+      errorHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Kubernetes not pinged successfully", () => hideProgress()),
+      ctxID
     )
   }
 
@@ -209,7 +210,7 @@ function ConfirmationMsg(props) {
                           <Chip
                             label={ctx.contextName}
                             className={classes.ctxChip}
-                            onClick={handleKubernetesClick}
+                            onClick={() => handleKubernetesClick(ctx.contextID)}
                             icon={<img src="/static/img/kubernetes.svg" className={classes.ctxIcon} />}
                             variant="outlined"
                             data-cy="chipContextName"
