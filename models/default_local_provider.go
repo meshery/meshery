@@ -1031,7 +1031,7 @@ func (l *DefaultLocalProvider) Cleanup() error {
 	if err := l.MesheryK8sContextPersister.DB.Migrator().DropTable(&MesheryFilter{}); err != nil {
 		return err
 	}
-	return nil	
+	return nil
 }
 
 // githubRepoPatternScan & githubRepoFilterScan takes in github repo owner, repo name, path from where the file/files are needed
