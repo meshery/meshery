@@ -785,6 +785,10 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
     })
 
     if (response === "UPLOAD") {
+      if (formData.get("k8sfile") === null) {
+        handleError("No file selected.")("Please select a valid kube config")
+        return;
+      }
       uploadK8SConfig().then(() => {
         handleSuccess("successfully uploaded kubernetes config");
         fetchAllContexts(25)
@@ -798,6 +802,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
         catch(err => {
           handleError("failed to upload kubernetes config")(err)
         })
+      formData.delete("k8sfile");
     }
   }
 
