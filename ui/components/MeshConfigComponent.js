@@ -87,7 +87,7 @@ const styles = (theme) => ({
 });
 
 function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updateProgress,
-  operatorState, MeshSyncState, setMeshsyncSubscription }) {
+  operatorState, MeshSyncState, setMeshsyncSubscription, k8sconfig }) {
   const [data, setData] = useState([])
   const [showMenu, setShowMenu] = useState([false])
   const [anchorEl, setAnchorEl] = useState(null);
@@ -97,36 +97,27 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
   const [operatorVersion, setOperatorVersion] = useState(["N/A"]);
   const [operatorProcessing, setOperatorProcessing] = useState([false]);
   const [operatorSwitch, setOperatorSwitch] = useState([false]);
-  const [discover, setLastDiscover] = useState(['']);
   const [contexts, setContexts] = useState([]);
   const [k8sVersion, setK8sVersion] = useState(["N/A"]);
-
+  const [discover, setLastDiscover] = useState(['']);
 
   const ref = useRef(null);
   const meshSyncResetRef = useRef(null);
-  // const systemResetRef = useRef(null);
 
   const dateOptions = { weekday : 'long', year : 'numeric', month : 'long', day : 'numeric' };
 
   let k8sfileElementVal ="";
   let formData = new FormData();
+
   const stateUpdater = (state, updateFunc, updateValue, index) => {
     let newState = [...state];
     newState[index] = updateValue;
     updateFunc(newState);
   }
 
-  // done
   useEffect(() => {
-    // let meshSyncStatusEventsSubscription = subscribeMeshSyncStatusEvents((res) => {
-    //   if (res.meshsync?.error) {
-    //     handleError(res.meshsync?.error?.description || "MeshSync could not be reached");
-    //     return;
-    //   }
-    // });
-
-
     let tableInfo = [];
+    console.log("ASDF", k8sconfig);
     fetchAllContexts(25)
       .then(res => {
         handleContexts(res.contexts);
@@ -134,7 +125,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
           let data = {
             context : ctx.name,
             location : ctx.server,
-            deployment_type : "-",
+            deployment_type : k8sconfig.find(context => context.contextID === ctx.id)?.inClusterConfig ? "In Cluster" : "Out Cluster",
             last_discovery : "",
             name : ctx.name,
             id : ctx.id
@@ -144,19 +135,9 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
         setData(tableInfo);
       })
       .catch(handleError("failed to fetch contexts for the instance"))
-      // console.log(contexts[0].id, "CTX");
+
     getKubernetesVersion();
-
-    // let operatorStatusEventsSubscription = subscribeOperatorStatusEvents(setOperatorState);
-    // setOperatorStatusSubscription(operatorStatusEventsSubscription);
-    // fetchMesheryOperatorStatus().subscribe({
-    //   next : (res) => {
-    //     setOperatorState(res);
-    //   },
-    //   error : (err) => console.log("error at operator scan: " + err),
-    // });
-
-    // setMeshSyncStatusSubscription(meshSyncStatusEventsSubscription);
+    setLastDiscover([setDateTime(new Date())]);
 
   }, [])
 
@@ -168,49 +149,13 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
     })
     setOperatorSwitch(opSwitch);
   }, [operatorState])
+
   const isMeshSyncActive = (ctxID) => {
     return MeshSyncState?.filter((state) => state?.contextID === ctxID && state.OperatorControllerStatus.status !== "DISABLED" ).length > 0;
   }
 
-  // const handleResetDatabase = () => {
-  //   return async () => {
-  //     systemResetRef.current.show({
-  //       title : "Reset Meshery Database?",
-  //       subtitle : "Are you sure to reset all the data of Meshery?",
-  //       options : ["Proceed", "Cancel"]
-  //     });
-  //     if (responseOfResetDatabase === "Continue Reset") {
-  //       this.props.updateProgress({ showProgress : true });
-  //       const self = this;
-  //       resetDatabase({
-  //         selector : {
-  //           clearDB : "true",
-  //           ReSync : "true",
-  //           hardReset : "true",
-  //         },
-  //       }).subscribe({
-  //         next : (res) => {
-  //           self.props.updateProgress({ showProgress : false });
-  //           if (res.resetStatus === "PROCESSING") {
-  //             this.props.enqueueSnackbar(`Database reset successful.`, {
-  //               variant : "success",
-  //               action : (key) => (
-  //                 <IconButton key="close" aria-label="close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
-  //                   <CloseIcon />
-  //                 </IconButton>
-  //               ),
-  //               autohideduration : 3000,
-  //             })
-  //           }
-  //         },
-  //         error : self.handleError("Database is not reachable, try restarting server.")
-  //       });
-  //     }
-  //   }
-  // }
-
   const handleFlushMeshSync = (index) => {
-    return async () => { // add backend support to delete context realted data
+    return async () => {
       handleMenuClose(index);
       let response = await meshSyncResetRef.current.show({
         title : "Flush MeshSync data?",
@@ -247,16 +192,16 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
     }
   }
 
+  const setDateTime = (dt) => {
+    console.log("LLLL", dt);
+    return dt.toLocaleDateString("en-US", options)
+      + " " +  dt.toLocaleTimeString("en-US");
+  }
+
   const handleContexts = (contexts) => {
     contexts.forEach((ctx) => {
-      let cdt = new Date(ctx.created_at);
-      let updt = new Date(ctx.updated_at);
-
-      ctx.created_at = cdt.toLocaleDateString("en-US", options)
-      + " " +  cdt.toLocaleTimeString("en-US");
-
-      ctx.updated_at = updt.toLocaleDateString("en-US", options)
-      + " " +  updt.toLocaleTimeString("en-US")
+      ctx.created_at = setDateTime(new Date(ctx.created_at));
+      ctx.updated_at = setDateTime(new Date(ctx.updated_at));
     })
     setContexts(contexts);
   }
