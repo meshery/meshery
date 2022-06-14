@@ -14,6 +14,11 @@
  */
 
 /**
+ * @typedef {Object} AccountSchema
+ * will be decided based on schema
+ */
+
+/**
  * ExtensionPointSchemaValidator returns the schema validator based on the
  * type passed to the function
  * @param {string} type - Type of Schema validator needed. Valid types are - navigator, userprefs
@@ -24,6 +29,8 @@ export default function ExtensionPointSchemaValidator(type) {
       return NavigatorExtensionSchemaDecoder;
     case "user_prefs":
       return UserPrefsExtensionSchemaDecoder;
+    case "account":
+      return AccountExtensionSchemaDecoder;
     default:
       return () => {};
   }
@@ -62,6 +69,25 @@ function UserPrefsExtensionSchemaDecoder(content) {
     return content.map((item) => {
       return { component : item.component || "", };
     });
+  }
+
+  return [];
+}
+
+
+/**
+ * AccountExtensionSchemaDecoder
+ * @param {*} content
+ * @returns {AccountSchema}
+ */
+function AccountExtensionSchemaDecoder(content) {
+  if (Array.isArray(content)) {
+    return content.map((item) => {
+      console.log("item: ", item);
+      return {
+        // will be decided based on schema
+      }
+    })
   }
 
   return [];
