@@ -266,7 +266,10 @@ func main() {
 	}()
 	<-c
 	logrus.Info("Doing seeded content cleanup...")
-	lProv.Cleanup()
+	err = lProv.Cleanup()
+	if err != nil {
+		log.Error(err)
+	}
 
 	logrus.Info("Closing database instance...")
 	err = dbHandler.DBClose()
