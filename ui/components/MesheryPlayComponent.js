@@ -152,8 +152,6 @@ class MesheryPlayComponent extends React.Component {
     const { classes,  meshAdapters } = this.props;
     let { adapter } = this.state;
 
-    console.log("size", meshAdapters)
-
     if (meshAdapters.size === 0) {
       return (
         <NoSsr>
@@ -167,10 +165,6 @@ class MesheryPlayComponent extends React.Component {
           </React.Fragment>
         </NoSsr>
       );
-    }
-
-    if (!adapter) {
-      this.setState({ adapter : meshAdapters[0] })
     }
 
     if (this.props.adapter && this.props.adapter !== "") {
