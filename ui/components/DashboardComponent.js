@@ -148,7 +148,6 @@ class DashboardComponent extends React.Component {
     if (self._isMounted) {
       const controlPlaneSubscription = fetchControlPlanes(ALL_MESH).subscribe({
         next : (controlPlaneRes) => {
-          console.log("control plane query subscription --> ", controlPlaneRes)
           this.setState({ controlPlaneState : controlPlaneRes })
         },
         error : (err) => console.error(err),
@@ -156,7 +155,6 @@ class DashboardComponent extends React.Component {
 
       const dataPlaneSubscription = fetchDataPlanes(ALL_MESH).subscribe({
         next : (dataPlaneRes) => {
-          console.log("data plane query subscription --> ", dataPlaneRes)
           this.setState({ dataPlaneState : dataPlaneRes })
         },
         error : (err) => console.error(err),
@@ -174,7 +172,6 @@ class DashboardComponent extends React.Component {
   componentDidMount = () => {
     this._isMounted = true
     this.fetchAvailableAdapters();
-    console.log("", this.props.k8sconfig);
     fetchAllContexts(25)
       .then(res => this.setState({ contexts : res?.contexts || [] }))
       .catch(this.handleError("failed to fetch contexts for the instance"))
