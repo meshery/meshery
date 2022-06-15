@@ -8,7 +8,6 @@ import CloseIcon from "@material-ui/icons/Close";
 import DeleteIcon from "@material-ui/icons/Delete";
 import FullscreenIcon from '@material-ui/icons/Fullscreen';
 import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
-import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 import SaveIcon from '@material-ui/icons/Save';
 import MUIDataTable from "mui-datatables";
 import { withSnackbar } from "notistack";
@@ -26,6 +25,8 @@ import { ctxUrl } from "../utils/multi-ctx";
 import { randomPatternNameGenerator as getRandomName } from "../utils/utils";
 import PromptComponent from "./PromptComponent";
 import UploadImport from "./UploadImport";
+import UndeployIcon from "../public/static/img/UndeployIcon";
+import DoneAllIcon from '@material-ui/icons/DoneAll';
 
 const styles = (theme) => ({
   grid : { padding : theme.spacing(2), },
@@ -170,6 +171,10 @@ const ACTION_TYPES = {
     name : "DEPLOY_APPLICATION",
     error_msg : "Failed to deploy application file"
   },
+  UNDEPLOY_APPLICATION : {
+    name : "UNDEPLOY_APPLICATION",
+    error_msg : "Failed to undeploy application file"
+  },
   UPLOAD_APPLICATION : {
     name : "UPLOAD_APPLICATION",
     error_msg : "Failed to upload application file"
@@ -240,6 +245,40 @@ function MesheryApplications({
         }
       },
       handleError(ACTION_TYPES.DEPLOY_APPLICATIONS)
+    );
+  };
+
+  const handleUnDeploy = (application_file) => {
+    updateProgress({ showProgress : true })
+    dataFetch(
+      "/api/pattern",
+      {
+        credentials : "include",
+        method : "DELETE",
+        body : JSON.stringify({ k8s_manifest : application_file }),
+      },
+      (res) => {
+        if (res) {
+          const pfile = res[0].pattern_file
+          dataFetch(
+            ctxUrl(DEPLOY_URL, selectedK8sContexts),
+            {
+              credentials : "include",
+              method : "POST",
+              body : pfile,
+            }, () => {
+              updateProgress({ showProgress : false });
+            },
+            handleError(ACTION_TYPES.UNDEPLOY_APPLICATION)
+          );
+        } else {
+          updateProgress({ showProgress : false });
+          enqueueSnackbar("Failed converting kubernetes yaml to pattern file",
+            { variant : "error" }
+          )
+        }
+      },
+      handleError(ACTION_TYPES.UNDEPLOY_APPLICATION)
     );
   };
 
@@ -467,12 +506,24 @@ function MesheryApplications({
               <Tooltip
                 title="Deploy Application">
                 <IconButton>
-                  <PlayArrowIcon
+                  <DoneAllIcon
                     title="Deploy"
                     aria-label="deploy"
                     color="inherit"
                     onClick={() => handleDeploy(rowData.application_file)} //deploy endpoint to be called here
                     data-cy="deploy-button"
+                  />
+                </IconButton>
+              </Tooltip>
+              <Tooltip
+                title="Undeploy Application">
+                <IconButton>
+                  <UndeployIcon
+                    title="Undeploy"
+                    aria-label="undeploy"
+                    fill="rgba(0, 0, 0, 0.54)"
+                    onClick={() => handleUnDeploy(rowData.application_file)} //deploy endpoint to be called here
+                    data-cy="undeploy-button"
                   />
                 </IconButton>
               </Tooltip>
