@@ -152,8 +152,6 @@ class MesheryPlayComponent extends React.Component {
     const { classes,  meshAdapters } = this.props;
     let { adapter } = this.state;
 
-    console.log("size", meshAdapters)
-
     if (meshAdapters.size === 0) {
       return (
         <NoSsr>
