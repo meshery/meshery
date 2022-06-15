@@ -952,8 +952,8 @@ const mapStateToProps = (state) => {
   const k8sconfig = state.get("k8sConfig");
   const meshAdapters = state.get("meshAdapters");
   const meshAdaptersts = state.get("meshAdaptersts");
-  const grafana = state.get("grafana");
-  const prometheus = state.get("prometheus");
+  const grafana = state.get("grafana").toJS();
+  const prometheus = state.get("prometheus").toJS();
   const selectedK8sContexts = state.get('selectedK8sContexts');
 
   return {
