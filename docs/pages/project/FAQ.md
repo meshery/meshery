@@ -63,7 +63,7 @@ _If you're running Kubernetes in Docker Desktop, an external IP address of `loca
   
   If either is the case, Meshery Operator will make sure MeshSync and Meshery Broker deployments are again healthy, wait for some time, otherwise try redeploying Meshery Operator.
   
-  _You can also verify health of you system using [mesheryctl system check]({{site.baseurl}}/reference/mesheryctl/system/check)_
+  _You can also verify health of your system using [mesheryctl system check]({{site.baseurl}}/reference/mesheryctl/system/check)_
   
   If MeshSync, Meshery Broker and Meshery Operator are healthy.
 
