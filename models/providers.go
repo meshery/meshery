@@ -54,6 +54,7 @@ type Extensions struct {
 	Navigator NavigatorExtensions `json:"navigator,omitempty"`
 	UserPrefs UserPrefsExtensions `json:"user_prefs,omitempty"`
 	GraphQL   GraphQLExtensions   `json:"graphql,omitempty"`
+	Acccount  AccountExtensions   `json:"account,omitempty"`
 }
 
 // NavigatorExtensions is a collection of NavigatorExtension
@@ -64,6 +65,9 @@ type UserPrefsExtensions []UserPrefsExtension
 
 // GraphQLExtensions is a collection of GraphQLExtension endpoints
 type GraphQLExtensions []GraphQLExtension
+
+// NavigatorExtensions is a collection of NavigatorExtension
+type AccountExtensions []AccountExtension
 
 // GraphQLExtension describes the graphql server extension point in the backend
 type GraphQLExtension struct {
@@ -82,6 +86,18 @@ type NavigatorExtension struct {
 	Show            *bool               `json:"show,omitempty"`
 	Children        NavigatorExtensions `json:"children,omitempty"`
 }
+
+// AccountExtension describes the Account extension point in the UI
+type AccountExtension struct {
+	Title           string              `json:"title,omitempty"`
+	OnClickCallback int                 `json:"on_click_callback,omitempty"`
+	Href            Href                `json:"href,omitempty"`
+	Component       string              `json:"component,omitempty"`
+	Link            *bool               `json:"link,omitempty"`
+	Show            *bool               `json:"show,omitempty"`
+	Children        AccountExtensions   `json:"children,omitempty"`
+}
+
 
 // UserPrefsExtension describes the user preference extension point in the UI
 type UserPrefsExtension struct {
@@ -133,6 +149,8 @@ const (
 	PersistPerformanceProfiles Feature = "persist-performance-profiles" // /user/performance/profile
 
 	PersistSchedules Feature = "persist-schedules" // /user/schedules
+
+	EditUserProfile Feature = "edit-user-profile" // /user/profile/edit
 )
 
 const (
