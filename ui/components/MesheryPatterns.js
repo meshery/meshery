@@ -10,7 +10,6 @@ import CloseIcon from "@material-ui/icons/Close";
 import DeleteIcon from "@material-ui/icons/Delete";
 import FullscreenIcon from '@material-ui/icons/Fullscreen';
 import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
-import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 import SaveIcon from '@material-ui/icons/Save';
 import MUIDataTable from "mui-datatables";
 import { withSnackbar } from "notistack";
@@ -32,7 +31,8 @@ import { ctxUrl } from "../utils/multi-ctx";
 import { randomPatternNameGenerator as getRandomName } from "../utils/utils";
 import { ToggleButton, ToggleButtonGroup } from "@material-ui/lab";
 import MesheryPatternGrid from "./MesheryPatterns/MesheryPatternGridView";
-import UndeployIcon from "./MesheryPatterns/Undeploy";
+import UndeployIcon from "../public/static/img/UndeployIcon";
+import DoneAllIcon from '@material-ui/icons/DoneAll';
 
 const styles = (theme) => ({
   grid : {
@@ -362,7 +362,6 @@ function MesheryPatterns({
         method : "POST",
         body : pattern_file,
       }, () => {
-        console.log("PatternFile Deploy API", `/api/pattern/deploy`);
         updateProgress({ showProgress : false });
         enqueueSnackbar("Pattern Successfully Deployed!", {
           variant : "success",
@@ -389,7 +388,6 @@ function MesheryPatterns({
         method : "DELETE",
         body : pattern_file,
       }, () => {
-        console.log("PatternFile UnDeploy API", `/api/pattern/deploy`);
         updateProgress({ showProgress : false });
         enqueueSnackbar("Pattern Successfully Undeployed!", {
           variant : "success",
@@ -638,7 +636,7 @@ function MesheryPatterns({
                 title="Deploy"
                 onClick={() => handleDeploy(rowData.pattern_file)}
               >
-                <PlayArrowIcon data-cy="deploy-button" />
+                <DoneAllIcon data-cy="deploy-button" />
               </IconButton>
               <IconButton
                 title="Undeploy"
@@ -885,6 +883,7 @@ function MesheryPatterns({
             <MesheryPatternGrid
               patterns={patterns}
               handleDeploy={handleDeploy}
+              handleUnDeploy={handleUnDeploy}
               handleSubmit={handleSubmit}
               setSelectedPattern={setSelectedPattern}
               selectedPattern={selectedPattern}
