@@ -118,28 +118,28 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
 
   useEffect(() => {
     let tableInfo = [];
-    console.log("ASDF", k8sconfig);
     fetchAllContexts(25)
       .then(res => {
-        handleContexts(res.contexts);
-        res.contexts.forEach((ctx) => {
-          let data = {
-            context : ctx.name,
-            location : ctx.server,
-            deployment_type : k8sconfig.find(context => context.contextID === ctx.id)?.inClusterConfig ? "In Cluster" : "Out Cluster",
-            last_discovery : "",
-            name : ctx.name,
-            id : ctx.id
-          };
-          tableInfo.push(data);
-        })
-        setData(tableInfo);
+        if (res?.contexts) {
+          handleContexts(res.contexts);
+          res.contexts.forEach((ctx) => {
+            let data = {
+              context : ctx.name,
+              location : ctx.server,
+              deployment_type : k8sconfig.find(context => context.contextID === ctx.id)?.inClusterConfig ? "In Cluster" : "Out Cluster",
+              last_discovery : "",
+              name : ctx.name,
+              id : ctx.id
+            };
+            tableInfo.push(data);
+          })
+          setData(tableInfo);
+        }
       })
       .catch(handleError("failed to fetch contexts for the instance"))
 
     getKubernetesVersion();
     setLastDiscover([setDateTime(new Date())]);
-
   }, [])
 
   useEffect(() => {
