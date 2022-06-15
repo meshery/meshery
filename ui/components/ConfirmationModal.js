@@ -115,7 +115,6 @@ function ConfirmationMsg(props) {
             </IconButton>
           ),
           autoHideDuration : 3000, });
-      return;
     }
     submit();
     handleClose();
