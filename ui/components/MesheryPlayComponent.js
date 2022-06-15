@@ -167,10 +167,6 @@ class MesheryPlayComponent extends React.Component {
       );
     }
 
-    if (!adapter) {
-      this.setState({ adapter : meshAdapters[0] })
-    }
-
     if (this.props.adapter && this.props.adapter !== "") {
       const indContent = this.renderIndividualAdapter();
       if (indContent !== "") {
