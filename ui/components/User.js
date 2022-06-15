@@ -102,13 +102,13 @@ class User extends React.Component {
   /**
    * @param {import("../utils/ExtensionPointSchemaValidator").AccountSchema[]} children
    */
-  renderAccountExtension  (children) {
+  renderAccountExtension(children) {
 
     if (children && children.length > 0) {
       return (
         <List disablePadding>
           {children.map(({
-            id, onClickCallback, href, title
+            id, href, title
           }) => {
             if (typeof showc !== "undefined" && !showc) {
               return "";
@@ -119,7 +119,7 @@ class User extends React.Component {
                   button
                   key={id}
                 >
-                  {this.extensionPointContent(href, title, onClickCallback)}
+                  {this.extensionPointContent(href, title)}
                 </ListItem>
               </React.Fragment>
             );
@@ -129,11 +129,11 @@ class User extends React.Component {
     }
   }
 
-  extensionPointContent(href, name, onClickCallback) {
+  extensionPointContent(href, name) {
     const { classes } = this.props;
 
     const content = (
-      <div className={classNames(classes.link)} onClick={() => this.onClickCallback(onClickCallback)}>
+      <div className={classNames(classes.link)} >
         <ListItemText
           classes={{ primary : classes.itemPrimary, }}
         >
