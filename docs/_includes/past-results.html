@@ -1,10 +1,11 @@
 {% assign sorted_tests_istio = site.compatibility | sort: "timestamp" | reverse | where: "meshery-component",{{page.service-mesh}} %}
 
-<table>
+
+<table id = "test-table">
     <th>Status</th>
     <th>Meshery Component</th>
     <th>Meshery Component Version</th>
-    <th>Meshery Server Version</th>
+    <th onclick="reverse()"  style="text-align: center;" >Meshery Server Version <span id="sort-arrow">ↆ</span></th>
     <th>Service Mesh</th>
     <th>Service Mesh Version</th>
 
@@ -58,3 +59,21 @@
     {% endfor %}
 
 </table>
+
+
+<script>
+    let table = document.getElementById("test-table")
+    rows = table.rows;
+    let sortArrow = document.getElementById("sort-arrow")
+    
+    
+function reverse(){
+	for (var i = 1; i <rows.length; i++) {
+    rows[i].parentNode.insertBefore(rows[rows.length-1], rows[i]);
+	}
+    if(sortArrow.innerHTML == "ↆ")
+     sortArrow.innerHTML = "↑"
+    else
+        sortArrow.innerHTML = "ↆ"
+}
+</script>
