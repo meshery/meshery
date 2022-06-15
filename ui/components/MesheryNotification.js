@@ -241,7 +241,6 @@ class MesheryNotification extends React.Component {
 
   closeEventStream() {
     if (this.eventStream && this.eventStream.close) {
-      console.log("clising event stream")
       this.eventStream.close();
     }
   }
