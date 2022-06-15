@@ -55,6 +55,21 @@ _If you're running Kubernetes in Docker Desktop, an external IP address of `loca
   - _Use an external cloud provider which provides you with the LoadBalancer having an external IP address other than localhost_
   - _Use [Kind](https://kind.sigs.k8s.io) cluster with [MetalLB](https://metallb.universe.tf) configuration_
 
+#### Question: Why Service Mesh deployed is not visible in UI despite successful installation in my cluster?
+  **Answer:** _Few ways to solve this problem:_
+  - Confirm that the Meshery Broker service is exposed from your cluster using `kubectl get svc -n meshery`
+  - It is possible that MeshSync is not healthy and not sending cluster updates, check for MeshSync status by going in Settings from Meshery UI and click on MeshSync chip.
+  - If MeshSync is healthy, next step is to check for status of Meshery Broker by clicking on the NATS chip. 
+  
+  If either is the case, Meshery Operator will make sure MeshSync and Meshery Broker deployments are again healthy, wait for some time, otherwise try redeploying Meshery Operator.
+  
+  _You can also verify health of you system using [mesheryctl system check]({{site.baseurl}}/reference/mesheryctl/system/check)_
+  
+  If MeshSync, Meshery Broker and Meshery Operator are healthy.
+
+  - Try clearing the database by clicking on the `Flush MeshSync` button associated with the corresponding cluster.
+  - If still `Service Mesh` is not visible in UI, move on to `Hard Reset` of Database. This option is in the `Reset System` Tab in `Settings` page.
+
 {% include discuss.html %}
 
 <!--Add other questions-->
