@@ -19,6 +19,7 @@ import NoSsr from '@material-ui/core/NoSsr';
 import { withRouter } from 'next/router';
 import dataFetch from '../lib/data-fetch';
 import { updateUser } from '../lib/store';
+import classNames from 'classnames';
 
 
 const styles = () => ({ popover : { color : 'black', }, });
@@ -87,6 +88,7 @@ class User extends React.Component {
         credentials : "include", },
       (result) => {
         if (result) {
+          console.log("results: ", result)
           this.setState({
             account : ExtensionPointSchemaValidator("account")(result?.extensions?.account),
             providerType : result?.provider_type
