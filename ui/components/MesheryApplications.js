@@ -503,30 +503,18 @@ function MesheryApplications({
           const rowData = applications[tableMeta.rowIndex];
           return (
             <>
-              <Tooltip
-                title="Deploy Application">
-                <IconButton>
-                  <DoneAllIcon
-                    title="Deploy"
-                    aria-label="deploy"
-                    color="inherit"
-                    onClick={() => handleDeploy(rowData.application_file)} //deploy endpoint to be called here
-                    data-cy="deploy-button"
-                  />
-                </IconButton>
-              </Tooltip>
-              <Tooltip
-                title="Undeploy Application">
-                <IconButton>
-                  <UndeployIcon
-                    title="Undeploy"
-                    aria-label="undeploy"
-                    fill="rgba(0, 0, 0, 0.54)"
-                    onClick={() => handleUnDeploy(rowData.application_file)} //deploy endpoint to be called here
-                    data-cy="undeploy-button"
-                  />
-                </IconButton>
-              </Tooltip>
+              <IconButton
+                title="Deploy"
+                onClick={() => handleDeploy(rowData.application_file)}
+              >
+                <DoneAllIcon data-cy="deploy-button" />
+              </IconButton>
+              <IconButton
+                title="Undeploy"
+                onClick={() => handleUnDeploy(rowData.application_file)}
+              >
+                <UndeployIcon fill="rgba(0, 0, 0, 0.54)" data-cy="undeploy-button" />
+              </IconButton>
             </>
           );
         },
