@@ -21,55 +21,55 @@ import MesheryIcon from "../../img/meshery-logo/CustomMesheryLogo";
 import { DockerMuiThemeProvider } from '@docker/docker-mui-theme';
 import CssBaseline from '@mui/material/CssBaseline';
 import { LoadComp } from "../LoadingComponent/LoadComp";
-import { LoadingDiv, StyledDiv, AccountDiv, ServiceMeshAdapters, ExtensionWrapper, AdapterDiv, ComponentWrapper, SectionWrapper, VersionDiv, VersionText } from "./styledComponents";
+import { LoadingDiv, StyledDiv, AccountDiv, ServiceMeshAdapters, ExtensionWrapper, AdapterDiv, ComponentWrapper, SectionWrapper, VersionText, LogoutButton } from "./styledComponents";
 import { MesheryAnimation } from "../MesheryAnimation/MesheryAnimation";
 
 
 const adapters = {
-  'TRAEFIK_MESH': {
-    displayName: "Traefix Mesh",
-    icon: <TraefikIcon width={40} height={40} />,
-    name: 'TRAEFIK_MESH'
-  },
-  'NGINX_SERVICE_MESH': {
-    displayName: "NGINX",
-    icon: <NginxIcon width={38} height={40} />,
-    name: 'NGINX_SERVICE_MESH'
-  },
   'APP_MESH': {
     displayName: "App Mesh",
     icon: <AppmeshIcon width={40} height={40} />,
     name: 'APP_MESH'
-  },
-  'OPEN_SERVICE_MESH': {
-    displayName: "OSM",
-    icon: <OsmIcon width={40} height={40} />,
-    name: 'OPEN_SERVICE_MESH'
-  },
-  'KUMA': {
-    displayName: "Kuma",
-    icon: <KumaIcon width={40} height={40} />,
-    name: 'KUMA'
   },
   'CILIUM_SERVICE_MESH': {
     displayName: "Cilium",
     icon: <CiliumIcon width={40} height={40} />,
     name: 'CILIUM_SERVICE_MESH'
   },
+  'CONSUL': {
+    displayName: "Consul",
+    icon: <ConsulIcon width={40} height={40} />,
+    name: 'CONSUL'
+  },
   'ISTIO': {
     displayName: "Istio",
     icon: <IstioIcon width={40} height={40} />,
     name: 'ISTIO'
+  },
+  'KUMA': {
+    displayName: "Kuma",
+    icon: <KumaIcon width={40} height={40} />,
+    name: 'KUMA'
   },
   'LINKERD': {
     displayName: "Linkerd",
     icon: <LinkerdIcon width={40} height={40} />,
     name: 'LINKERD'
   },
-  'CONSUL': {
-    displayName: "Consul",
-    icon: <ConsulIcon width={40} height={40} />,
-    name: 'CONSUL'
+  'NGINX_SERVICE_MESH': {
+    displayName: "NGINX",
+    icon: <NginxIcon width={38} height={40} />,
+    name: 'NGINX_SERVICE_MESH'
+  },
+  'OPEN_SERVICE_MESH': {
+    displayName: "OSM",
+    icon: <OsmIcon width={40} height={40} />,
+    name: 'OPEN_SERVICE_MESH'
+  },
+  'TRAEFIK_MESH': {
+    displayName: "Traefix Mesh",
+    icon: <TraefikIcon width={40} height={40} />,
+    name: 'TRAEFIK_MESH'
   },
 }
 
@@ -238,6 +238,9 @@ const ExtensionsComponent = () => {
       {changing && <LoadingDiv sx={{ opacity: "1" }}>
         <LoadComp />
       </LoadingDiv>}
+      {isLoggedIn && <LogoutButton variant="p" component="p" align="start">
+                  <Button color="secondary" component="span" variant="contained">Logout</Button>
+            </LogoutButton>}
       <ComponentWrapper sx={{ opacity: changing ? "0.3" : "1" }}>
         {isLoggedIn && <Tour />}
         <MesheryIcon CustomColor={isDarkTheme ? "white" : "#3C494F"} />
@@ -252,7 +255,7 @@ const ExtensionsComponent = () => {
               <div style={{ marginBottom: "0.5rem" }}>
                 <a style={{ textDecoration: "none" }} href={token && "http://localhost:9081/api/user/token?token=" + token + "&provider=Meshery"} >
 
-                  <div
+                {isLoggedIn ?  <div
                     onMouseEnter={() => setIsHovered(!isHovered)}
                     onMouseLeave={onMouseOut}
                     onClick={onClick}
@@ -260,7 +263,7 @@ const ExtensionsComponent = () => {
                   >
                     {isHovered ? <MesheryAnimation height={70} width={72} /> : <Meshery height={70} width={72} />}
 
-                  </div>
+                  </div> : <Meshery height={70} width={72} />}
                 </a>
               </div>
               {!isLoggedIn ? <Button sx={{ marginTop: "0.3rem" }} variant="contained" disabled={isLoggedIn} color="primary" component="span" onClick={() => {
@@ -268,9 +271,10 @@ const ExtensionsComponent = () => {
               }}>
                 Login
               </Button> : (userName &&
-                <Typography sx={{ marginBottom: "1rem", whiteSpace: "nowrap" }}>
+             <Typography sx={{ marginBottom: "1rem", whiteSpace: "nowrap" }}>
                   User: {userName}
-                </Typography>)
+                </Typography>
+              )      
               }
             </AccountDiv>
           </ExtensionWrapper>
@@ -313,12 +317,13 @@ const ExtensionsComponent = () => {
               </ExtensionWrapper>
               <Tooltip title="Meshery server version">
                 <VersionText variant="p" component="p" align="end">
-                  {mesheryVersion}
+                  {mesheryVersion}vbriusviub
                 </VersionText>
               </Tooltip>
             </div>}
-
+          
         </SectionWrapper >
+        
       </ComponentWrapper >
 
 
