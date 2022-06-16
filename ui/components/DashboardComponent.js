@@ -479,11 +479,13 @@ class DashboardComponent extends React.Component {
 
   formatContextNamesForDashboardView = () => {
     const clusters = this.getSelectedK8sContextsNames();
+    if (clusters.length===0) {
+      return "No Cluster is selected to show the Service Mesh Information"
+    }
     if (clusters.includes("all")) {
       return `No service meshes detected in any of the cluster.`
-    } else {
-      return `No service meshes detected in the ${clusters.join(", ")} cluster(s).`
     }
+    return `No service meshes detected in the ${clusters.join(", ")} cluster(s).`
   }
 
   handleKubernetesClick = (id) => {
