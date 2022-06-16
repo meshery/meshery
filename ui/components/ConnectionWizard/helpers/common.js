@@ -15,8 +15,8 @@ export const closeButtonForSnackbarAction = (closeSnackbar) => (key) => (
 
 export const successHandlerGenerator = (snackbar, action, msg, cb) => (res) => {
   if (res !== undefined) {
-    hideProgress()
     if (cb !== undefined) cb(res)
+    hideProgress()
     snackbar(msg, { variant : "success",
       action,
       autoHideDuration : 3000, })

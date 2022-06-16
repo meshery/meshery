@@ -34,6 +34,7 @@ import { getFirstCtxIdFromSelectedCtxIds } from '../utils/multi-ctx';
 import { promisifiedDataFetch } from '../lib/data-fetch';
 import { updateK8SConfig } from '../lib/store';
 import { bindActionCreators } from 'redux';
+import BadgeAvatars from './CustomAvatar';
 const lightColor = 'rgba(255, 255, 255, 0.7)';
 const styles = (theme) => ({
   secondaryBar : { zIndex : 0, },
@@ -115,7 +116,8 @@ const styles = (theme) => ({
     position : "relative"
   },
   icon : {
-    width : theme.spacing(2.5)
+    width : 24,
+    height : 24
   },
   Chip : {
     backgroundColor : "white",
@@ -180,6 +182,8 @@ function K8sContextMenu({
   const [transformProperty, setTransformProperty] = React.useState(100)
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
+  console.log({ runningStatus })
+
   const styleSlider = {
     backgroundColor : "#EEEEEE",
     position : "absolute",
@@ -203,6 +207,20 @@ function K8sContextMenu({
     return context.operatorStatus.status === "ENABLED";
   }
 
+  const getMeshSyncStatus = (contextId) => {
+    const state = runningStatus.meshSyncStatus;
+    if (!state) {
+      return false;
+    }
+
+    const context = state.find(st => st.contextID === contextId)
+    if (!context) {
+      return false;
+    }
+
+    return context.OperatorControllerStatus.status?.includes("ENABLED");
+  }
+
   const handleKubernetesClick = (id) => {
     showProgress()
 
@@ -214,7 +232,7 @@ function K8sContextMenu({
   }
 
   const handleKubernetesDelete = (name, ctxId) => () => {
-    if (confirm(`Are you sure you want to delete ${name} cluster from Meshery?`)) {
+    if (confirm(`Are you sure you want to delete "${name}" cluster from Meshery?`)) {
       const successCallback = async () => {
         showProgress()
         const updatedConfig = await loadActiveK8sContexts()
@@ -324,9 +342,20 @@ function K8sContextMenu({
                       </Button>
                     </Link>
                 }
-                {contexts?.contexts?.map(ctx => (
-                  <div id={ctx.id} className={classes.chip}>
-                    <Tooltip title={`Server: ${ctx.server}`}>
+                {contexts?.contexts?.map(ctx => {
+                  const meshStatus = getMeshSyncStatus(ctx.id);
+                  const operStatus = getOperatorStatus(ctx.id);
+
+                  function getStatus(status) {
+                    if (status) {
+                      return "Active"
+                    } else {
+                      return "InActive"
+                    }
+                  }
+
+                  return <div id={ctx.id} className={classes.chip}>
+                    <Tooltip title={`Server: ${ctx.server}, Meshsync: ${getStatus(meshStatus)}, Operator: ${getStatus(operStatus)}`}>
                       <div style={{ display : "flex", justifyContent : "flex-start", alignItems : "center" }}>
                         <Checkbox
                           checked={activeContexts.includes(ctx.id)}
@@ -338,9 +367,16 @@ function K8sContextMenu({
                           onDelete={handleKubernetesDelete(ctx.name, ctx.id)}
                           onClick={() => handleKubernetesClick(ctx.id)}
                           avatar={
-                            <Avatar src="/static/img/kubernetes.svg" className={classes.icon}
-                              style={getOperatorStatus(ctx.id) ? {} : { opacity : 0.2 }}
-                            />}
+                            meshStatus ?
+                              <BadgeAvatars>
+                                <Avatar src="/static/img/kubernetes.svg" className={classes.icon}
+                                  style={operStatus ? {} : { opacity : 0.2 }}
+                                />
+                              </BadgeAvatars> :
+                              <Avatar src="/static/img/kubernetes.svg" className={classes.icon}
+                                style={operStatus ? { margin : 8 } : { opacity : 0.2, margin : 8 }}
+                              />
+                          }
                           variant="filled"
                           className={classes.Chip}
                           data-cy="chipContextName"
@@ -348,7 +384,7 @@ function K8sContextMenu({
                       </div>
                     </Tooltip>
                   </div>
-                ))}
+                })}
 
               </div>
             </Paper>
