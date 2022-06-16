@@ -251,7 +251,7 @@ function MesheryApplications({
   const handleUnDeploy = (application_file) => {
     updateProgress({ showProgress : true })
     dataFetch(
-      "/api/pattern",
+      "/api/application",
       {
         credentials : "include",
         method : "DELETE",
