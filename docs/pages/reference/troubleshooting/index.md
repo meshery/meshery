@@ -20,7 +20,8 @@ Troubleshooting guides to using Meshery's various features and components.
 
 #### See Also
 
-- [Error Code Reference](/reference/error-codes)
+* [Error Code Reference](/reference/error-codes)    
+.
 
 {% include discuss.html %}
 <!-- {:toc} -->

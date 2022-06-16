@@ -83,3 +83,10 @@ You may now proceed to install and work with any [service mesh]({{ site.baseurl 
  Your browser does not support the video tag
 </video>
 
+
+## Additional Guides
+- [Troubleshooting Meshery Installations](/guides/troubleshooting/installation)
+
+- [Meshery Error Code Reference](/reference/error-codes)
+
+- [Mesheryctl system check](/reference/mesheryctl/system/check)
