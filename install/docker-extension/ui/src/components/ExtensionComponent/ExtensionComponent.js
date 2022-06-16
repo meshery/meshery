@@ -317,7 +317,7 @@ const ExtensionsComponent = () => {
               </ExtensionWrapper>
               <Tooltip title="Meshery server version">
                 <VersionText variant="p" component="p" align="end">
-                  {mesheryVersion}vbriusviub
+                  {mesheryVersion}
                 </VersionText>
               </Tooltip>
             </div>}
