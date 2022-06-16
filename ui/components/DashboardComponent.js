@@ -148,7 +148,6 @@ class DashboardComponent extends React.Component {
     if (self._isMounted) {
       const controlPlaneSubscription = fetchControlPlanes(ALL_MESH).subscribe({
         next : (controlPlaneRes) => {
-          console.log("control plane query subscription --> ", controlPlaneRes)
           this.setState({ controlPlaneState : controlPlaneRes })
         },
         error : (err) => console.error(err),
@@ -156,7 +155,6 @@ class DashboardComponent extends React.Component {
 
       const dataPlaneSubscription = fetchDataPlanes(ALL_MESH).subscribe({
         next : (dataPlaneRes) => {
-          console.log("data plane query subscription --> ", dataPlaneRes)
           this.setState({ dataPlaneState : dataPlaneRes })
         },
         error : (err) => console.error(err),
@@ -174,7 +172,6 @@ class DashboardComponent extends React.Component {
   componentDidMount = () => {
     this._isMounted = true
     this.fetchAvailableAdapters();
-    console.log("", this.props.k8sconfig);
     fetchAllContexts(25)
       .then(res => this.setState({ contexts : res?.contexts || [] }))
       .catch(this.handleError("failed to fetch contexts for the instance"))
@@ -477,7 +474,18 @@ class DashboardComponent extends React.Component {
   };
 
   getSelectedK8sContextsNames = () => {
-    return getK8sClusterNamesFromCtxId(this.props?.selectedK8sContexts, this.props.k8sconfig)
+    return getK8sClusterNamesFromCtxId(this.props.selectedK8sContexts, this.props.k8sconfig)
+  }
+
+  formatContextNamesForDashboardView = () => {
+    const clusters = this.getSelectedK8sContextsNames();
+    if (clusters.length===0) {
+      return "No Cluster is selected to show the Service Mesh Information"
+    }
+    if (clusters.includes("all")) {
+      return `No service meshes detected in any of the cluster.`
+    }
+    return `No service meshes detected in the ${clusters.join(", ")} cluster(s).`
   }
 
   handleKubernetesClick = (id) => {
@@ -896,7 +904,7 @@ class DashboardComponent extends React.Component {
               }}
             >
               <Typography style={{ fontSize : "1.5rem", marginBottom : "2rem" }} align="center" color="textSecondary">
-              No service meshes detected in the {this.getSelectedK8sContextsNames()?.map(ctx => ctx.name).join(",")} cluster(s).
+                {this.formatContextNamesForDashboardView()}
               </Typography>
               <Button
                 aria-label="Add Meshes"
@@ -955,8 +963,8 @@ const mapStateToProps = (state) => {
   const k8sconfig = state.get("k8sConfig");
   const meshAdapters = state.get("meshAdapters");
   const meshAdaptersts = state.get("meshAdaptersts");
-  const grafana = state.get("grafana");
-  const prometheus = state.get("prometheus");
+  const grafana = state.get("grafana").toJS();
+  const prometheus = state.get("prometheus").toJS();
   const selectedK8sContexts = state.get('selectedK8sContexts');
 
   return {

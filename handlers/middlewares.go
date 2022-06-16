@@ -9,6 +9,8 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+const providerQParamName = "provider"
+
 // ProviderMiddleware is a middleware to validate if a provider is set
 func (h *Handler) ProviderMiddleware(next http.Handler) http.Handler {
 	fn := func(w http.ResponseWriter, req *http.Request) {
@@ -19,6 +21,11 @@ func (h *Handler) ProviderMiddleware(next http.Handler) http.Handler {
 			providerName = ck.Value
 		} else {
 			providerName = req.Header.Get(h.config.ProviderCookieName)
+			// allow provider to be set using query parameter
+			// this is OK since provider information is not sensitive
+			if providerName == "" {
+				providerName = req.URL.Query().Get(providerQParamName)
+			}
 		}
 		if providerName != "" {
 			provider = h.config.Providers[providerName]
@@ -123,7 +130,7 @@ func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http
 		}
 		if len(k8sContextIDs) == 0 { //This is for backwards compabitibility with clients. This will work fine for single cluster.
 			//For multi cluster, it is expected of clients to explicitly pass the k8scontextID.
-			//So for now, randomly one of the contexts from available ones will be pushed to the array to stop anything from breaking in case of no contexts recieved(with single cluster, the behavior would be as expected).
+			//So for now, randomly one of the contexts from available ones will be pushed to the array to stop anything from breaking in case of no contexts received(with single cluster, the behavior would be as expected).
 			if len(contexts) > 0 && contexts[0] != nil {
 				k8scontexts = append(k8scontexts, *contexts[0])
 			}

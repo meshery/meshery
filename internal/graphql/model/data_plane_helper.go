@@ -116,14 +116,12 @@ func GetDataPlaneState(ctx context.Context, selectors []MeshType, provider model
 						}
 					}
 				}
-
 			}
 			dataPlaneList = append(dataPlaneList, &DataPlane{
 				Name:    strings.ToLower(selector.String()),
 				Proxies: proxies,
 			})
 		}
-
 	}
 	return dataPlaneList, nil
 }

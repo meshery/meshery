@@ -4479,7 +4479,7 @@ paths:
       summary: Handle POST requests for Kubernetes Context list
       tags:
       - SystemAPI
-  /api/system/kubernetes/ping:
+  /api/system/kubernetes/ping?contexts={id}:
     get:
       description: Fetches server version to simulate ping
       operationId: idGetKubernetesPing

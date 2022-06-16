@@ -1,15 +1,18 @@
 import {
-  Button, Checkbox, Chip, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField,
+  Button, Checkbox, Chip, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, TextField,
   Tooltip, Typography
 } from "@material-ui/core";
+import CloseIcon from "@material-ui/icons/Close";
 import { withStyles } from "@material-ui/core/styles";
 import { Search } from "@material-ui/icons";
-import { useSnackbar, withSnackbar } from "notistack";
+import { withSnackbar } from "notistack";
 import { connect } from "react-redux";
-import { bindActionCreators } from "redux";
-import { updateProgress } from "../lib/store";
+import { setK8sContexts, updateProgress } from "../lib/store";
 import { closeButtonForSnackbarAction, errorHandlerGenerator, hideProgress, showProgress, successHandlerGenerator } from "./ConnectionWizard/helpers/common";
 import { pingKubernetes } from "./ConnectionWizard/helpers/kubernetesHelpers";
+import { getK8sConfigIdsFromK8sConfig } from "../utils/multi-ctx";
+import { bindActionCreators } from "redux";
+import { useState } from "react";
 
 const styles = (theme) => ({
   icon : {
@@ -89,27 +92,71 @@ const styles = (theme) => ({
 
 function ConfirmationMsg(props) {
   const { classes, open, handleClose, submit, isDelete,
-    selectedK8sContexts, k8scontext, setContextViewer, title } = props
+    selectedK8sContexts, k8scontext, title, setK8sContexts, enqueueSnackbar, closeSnackbar } = props
 
-  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+  const [contexts, setContexts] = useState(k8scontext);
 
-  const handleKubernetesClick = () => {
+  const handleKubernetesClick = (ctxID) => {
     showProgress()
     pingKubernetes(
       successHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Kubernetes succesfully pinged", () => hideProgress()),
-      errorHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Kubernetes not pinged successfully", () => hideProgress())
+      errorHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Kubernetes not pinged successfully", () => hideProgress()),
+      ctxID
     )
   }
 
+  const handleSubmit = () => {
+    if (selectedK8sContexts.length === 0) {
+      enqueueSnackbar("Please select Kubernetes context(s) before proceeding with the operation",
+        { variant : "info", preventDuplicate : true,
+          action : (key) => (
+            <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+              <CloseIcon />
+            </IconButton>
+          ),
+          autoHideDuration : 3000, });
+    }
+    submit();
+    handleClose();
+  }
   const searchContexts = (search) => {
-    const matchedCtx = k8scontext.filter((ctx) => ctx.name.includes(search))
-    let matchedCtxID = [];
-    matchedCtx.forEach(ctx => {
-      matchedCtxID.push(ctx.id);
+    if (search === "") {
+      setContexts(k8scontext);
+    }
+    let matchedCtx = [];
+    k8scontext.forEach(ctx => {
+      if (ctx.contextName.includes(search)) {
+        matchedCtx.push(ctx);
+      }
     });
-
+    setContexts(matchedCtx);
   }
 
+  const setContextViewer = (id) => {
+    if (id === "all") {
+      if (selectedK8sContexts.includes("all")) {
+        updateProgress({ showProgress : true })
+        setK8sContexts({ selectedK8sContexts : [] })
+      } else {
+        setK8sContexts({ selectedK8sContexts : ["all"] });
+      }
+      return;
+    }
+
+    if (selectedK8sContexts.includes(id)) {
+      const filteredContexts = selectedK8sContexts.filter(cid => cid !== id );
+      setK8sContexts({ selectedK8sContexts : filteredContexts })
+    } else if (selectedK8sContexts[0] === "all") {
+      const allContextIds = getK8sConfigIdsFromK8sConfig(k8scontext);
+      setK8sContexts({ selectedK8sContexts : allContextIds.filter(cid => cid !== id) });
+    } else {
+      if (selectedK8sContexts.length === k8scontext.length - 1) {
+        setK8sContexts({ selectedK8sContexts : ["all"] })
+        return;
+      }
+      setK8sContexts({ selectedK8sContexts : [...selectedK8sContexts, id] });
+    }
+  }
   return (
     <div className={classes.root}>
       <Dialog
@@ -119,16 +166,14 @@ function ConfirmationMsg(props) {
         aria-describedby="alert-dialog-description"
         className={classes.dialogBox}
       >
-        {/* {selectedK8sContexts.length > 0 */}
-        {/* ? */}
-        <>
-          <DialogTitle id="alert-dialog-title" className={classes.title}>
-            {title}
-          </DialogTitle>
-          <DialogContent>
-            <DialogContentText id="alert-dialog-description" className={classes.subtitle}>
-              <Typography variant="body1">
-                <div>
+        {k8scontext.length > 0 ?
+          <>
+            <DialogTitle id="alert-dialog-title" className={classes.title}>
+              {title}
+            </DialogTitle>
+            <DialogContent>
+              <DialogContentText id="alert-dialog-description" className={classes.subtitle}>
+                <Typography variant="body1">
                   <TextField
                     id="search-ctx"
                     label="Search"
@@ -142,71 +187,73 @@ function ConfirmationMsg(props) {
                       )
                     }}
                   />
-                </div>
-                <div className={classes.all}>
-                  <Checkbox
-                    checked={selectedK8sContexts?.includes("all")}
-                    onChange={() => setContextViewer("all")}
-                    color="primary"
-                  />
-                  <span>Select All</span>
-                </div>
-                <div className={classes.contexts}>
-                  {k8scontext.map((ctx) => (
-                    <div id={ctx.contextID} className={classes.chip}>
-                      <Tooltip title={`Server: ${ctx.configuredServer}`}>
-                        <div style={{ display : "flex", justifyContent : "flex-wrap", alignItems : "center" }}>
-                          <Checkbox
-                            checked={selectedK8sContexts?.includes(ctx.contextID) || (selectedK8sContexts?.length > 0 && selectedK8sContexts[0] === "all")}
-                            onChange={() => setContextViewer(ctx.contextID)}
-                            color="primary"
-                          />
-                          <Chip
-                            label={ctx.contextName}
-                            className={classes.ctxChip}
-                            onClick={handleKubernetesClick}
-                            icon={<img src="/static/img/kubernetes.svg" className={classes.ctxIcon} />}
-                            variant="outlined"
-                            data-cy="chipContextName"
-                          />
-                        </div>
+                  <div className={classes.all}>
+                    <Checkbox
+                      checked={selectedK8sContexts?.includes("all")}
+                      onChange={() => setContextViewer("all")}
+                      color="primary"
+                    />
+                    <span>Select All</span>
+                  </div>
+                  <div className={classes.contexts}>
+                    {
+                      contexts.map((ctx) => (
+                        <div id={ctx.contextID} className={classes.chip}>
+                          <Tooltip title={`Server: ${ctx.configuredServer}`}>
+                            <div style={{ display : "flex", justifyContent : "flex-wrap", alignItems : "center" }}>
+                              <Checkbox
+                                checked={selectedK8sContexts.includes(ctx.contextID) || (selectedK8sContexts.length > 0 && selectedK8sContexts[0] === "all")}
+                                onChange={() => setContextViewer(ctx.contextID)}
+                                color="primary"
+                              />
+                              <Chip
+                                label={ctx.contextName}
+                                className={classes.ctxChip}
+                                onClick={() => handleKubernetesClick(ctx.contextID)}
+                                icon={<img src="/static/img/kubernetes.svg" className={classes.ctxIcon} />}
+                                variant="outlined"
+                                data-cy="chipContextName"
+                              />
+                            </div>
 
-                      </Tooltip>
-                    </div>
-                  ))}
-                </div>
-              </Typography>
-            </DialogContentText>
-          </DialogContent>
-          <DialogActions className={classes.actions}>
-            <Button onClick={handleClose} className={classes.button1}>
-              <Typography variant body2> Cancel </Typography>
-            </Button>
-            <Button  disabled
-              className={classes.button0} autoFocus type="submit"
-              variant="contained"
-              color="primary">
-              <Typography variant body2 > {isDelete ? "UNDEPLOY LATER" : "DEPLOY"} </Typography>
-            </Button>
-            <Button onClick={submit}
-              className={classes.button0} autoFocus type="submit"
-              variant="contained"
-              color="primary">
-              <Typography variant body2 > {isDelete ? "UNDEPLOY" : "DEPLOY"} </Typography>
-            </Button>
-          </DialogActions>
-        </>
-        {/* : */}
-        {/* enqueueSnackbar(`Please select Kubernets context before proceeding with the deployment`, { */}
-        {/* variant : "info", */}
-        {/* action : (key) => (
-              <IconButton key="close" aria-label="close" color="inherit" onClick={() => closeSnackbar(key)}>
-                <CloseIcon />
-              </IconButton>
-            ),
-            autohideduration : 2000,
-          })
-        } */}
+                          </Tooltip>
+                        </div>
+                      ))
+                    }
+                  </div>
+                </Typography>
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions className={classes.actions}>
+              <Button onClick={handleClose} className={classes.button1}>
+                <Typography variant body2> Cancel </Typography>
+              </Button>
+              <Button  disabled
+                className={classes.button0} autoFocus type="submit"
+                variant="contained"
+                color="primary">
+                <Typography variant body2 > {isDelete ? "UNDEPLOY LATER" : "DEPLOY"} </Typography>
+              </Button>
+              <Button onClick={handleSubmit}
+                className={classes.button0} autoFocus type="submit"
+                variant="contained"
+                color="primary">
+                <Typography variant body2 > {isDelete ? "UNDEPLOY" : "DEPLOY"} </Typography>
+              </Button>
+            </DialogActions>
+          </>
+          :
+          <>
+            <DialogTitle id="alert-dialog-title" className={classes.title}>
+            No Kubernetes contexts detected
+            </DialogTitle>
+            <DialogContent>
+              <DialogContentText id="alert-dialog-description" className={classes.subtitle}>
+                <Typography variant="subtitle1">Please upload kube config file.</Typography>
+              </DialogContentText>
+            </DialogContent>
+          </>
+        }
       </Dialog>
     </div>
   )
@@ -219,7 +266,8 @@ const mapStateToProps = state => {
 }
 
 const mapDispatchToProps = (dispatch) => ({
-  updateProgress : bindActionCreators(updateProgress, dispatch)
+  updateProgress : bindActionCreators(updateProgress, dispatch),
+  setK8sContexts : bindActionCreators(setK8sContexts, dispatch)
 });
 
 export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(withSnackbar(ConfirmationMsg)));

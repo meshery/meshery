@@ -55,6 +55,24 @@ _If you're running Kubernetes in Docker Desktop, an external IP address of `loca
   - _Use an external cloud provider which provides you with the LoadBalancer having an external IP address other than localhost_
   - _Use [Kind](https://kind.sigs.k8s.io) cluster with [MetalLB](https://metallb.universe.tf) configuration_
 
+#### Question: Why does the dashboard not show the infrastructure provisioned or discovered by Meshery?
+  **Answer:** _This issue is typically caused by either lack of connectivity between Meshery Server and Meshery Broker or by database corruption. Use the following troubleshooting steps to resolve this issue:_
+  
+  **Lack of Connectivity**
+  1. Confirm that the Meshery Broker service is exposed from your cluster using `kubectl get svc -n meshery` and that an hostname or IP address is displayed in the External Address column. Meshery Server should be able to reach this address.
+  1. It is possible that MeshSync is not healthy and not sending cluster updates, check for MeshSync status by navigating to Settings in Meshery UI and clicking on the MeshSync connection.
+  1. If MeshSync is healthy, check the status of Meshery Broker by clicking on the NATS connection. 
+  
+  If either is the case, Meshery Operator will make sure MeshSync and Meshery Broker deployments are again healthy, wait for some time, otherwise try redeploying Meshery Operator.
+  
+  **Database Corruption**
+  If MeshSync, Meshery Broker and Meshery Operator are healthy, then perhaps, there is corruption in the Meshery Database. Use the following troubleshooting steps to resolve this issue:_
+
+    1. Try clearing the database by clicking on the `Flush MeshSync` button associated with the corresponding cluster.
+    1. If still `Service Mesh` is not visible in UI, move on to `Hard Reset` of Database. This option is in the `Reset System` Tab in `Settings` page.
+  
+Note:   _You can also verify health of your system using [mesheryctl system check]({{site.baseurl}}/reference/mesheryctl/system/check)_
+
 {% include discuss.html %}
 
 <!--Add other questions-->

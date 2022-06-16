@@ -20,10 +20,10 @@ var connectionTrackerSingleton = model.NewK8sConnctionTracker()
 var (
 	MeshSyncSubscriptionError = model.Error{
 		Description: "Failed to get MeshSync data",
-		Code:        ErrMeshsyncSubscriptionCode,
+		Code:        ErrResolverMeshsyncSubscriptionCode,
 	}
 	MeshSyncMesheryClientMissingError = model.Error{
-		Code:        ErrMeshsyncSubscriptionCode,
+		Code:        ErrResolverMeshsyncSubscriptionCode,
 		Description: "Cannot find Meshery Client",
 	}
 )
@@ -194,7 +194,6 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 }
 
 func (r *Resolver) connectToBroker(ctx context.Context, provider models.Provider, ctxID string) error {
-
 	status, err := r.getOperatorStatus(ctx, provider, ctxID)
 	if err != nil {
 		return err

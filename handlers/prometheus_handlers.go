@@ -54,7 +54,6 @@ func (h *Handler) ScanPromGrafanaHandler(w http.ResponseWriter, req *http.Reques
 					return
 				}
 			}(mk8scontext)
-
 		}
 	}
 	if len(errs) != 0 {
@@ -99,7 +98,6 @@ func (h *Handler) ScanPrometheusHandler(w http.ResponseWriter, req *http.Request
 					return
 				}
 			}(mk8scontext)
-
 		}
 	}
 	if len(errs) != 0 {
@@ -144,7 +142,6 @@ func (h *Handler) ScanGrafanaHandler(w http.ResponseWriter, req *http.Request, p
 					return
 				}
 			}(mk8scontext)
-
 		}
 	}
 	if len(errs) != 0 {
