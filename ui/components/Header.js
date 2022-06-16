@@ -182,8 +182,6 @@ function K8sContextMenu({
   const [transformProperty, setTransformProperty] = React.useState(100)
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
-  console.log({ runningStatus })
-
   const styleSlider = {
     backgroundColor : "#EEEEEE",
     position : "absolute",

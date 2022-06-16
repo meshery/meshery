@@ -92,7 +92,6 @@ export const getK8sClusterNamesFromCtxId = (selectedContexts, k8sconfig) => {
     }
   });
 
-  console.log("cluster names", clusterNames, selectedContexts, k8sconfig)
 
   return clusterNames;
 }
