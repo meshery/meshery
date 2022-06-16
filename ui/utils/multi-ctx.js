@@ -31,7 +31,16 @@ export const getK8sClusterIdsFromCtxId = (selectedContexts, k8sconfig) => {
     return ["all"]
   }
 
-  return selectedContexts.map(c => k8sconfig.find(cfg => cfg.contextID === c)?.clusterID) || []
+  const clusterIds = [];
+
+  selectedContexts.forEach(context => {
+    const clusterId = k8sconfig.find(cfg => cfg.contextID === context)?.clusterID
+    if (clusterId) {
+      clusterIds.push(clusterId)
+    }
+  });
+
+  return clusterIds;
 }
 
 /**
@@ -74,5 +83,16 @@ export const getK8sClusterNamesFromCtxId = (selectedContexts, k8sconfig) => {
     return ["all"]
   }
 
-  return selectedContexts.map(c => k8sconfig.find(cfg => cfg.contextID === c)?.contextName) || []
+  const clusterNames = [];
+
+  selectedContexts.forEach(context => {
+    const name = k8sconfig.find(cfg => cfg.contextID === context)?.contextName
+    if (name) {
+      clusterNames.push(name)
+    }
+  });
+
+  console.log("cluster names", clusterNames, selectedContexts, k8sconfig)
+
+  return clusterNames;
 }
