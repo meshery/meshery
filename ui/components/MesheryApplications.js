@@ -258,25 +258,17 @@ function MesheryApplications({
         body : JSON.stringify({ k8s_manifest : application_file }),
       },
       (res) => {
-        if (res) {
-          const pfile = res[0].pattern_file
-          dataFetch(
-            ctxUrl(DEPLOY_URL, selectedK8sContexts),
-            {
-              credentials : "include",
-              method : "POST",
-              body : pfile,
-            }, () => {
-              updateProgress({ showProgress : false });
-            },
-            handleError(ACTION_TYPES.UNDEPLOY_APPLICATION)
-          );
-        } else {
-          updateProgress({ showProgress : false });
-          enqueueSnackbar("Failed converting kubernetes yaml to pattern file",
-            { variant : "error" }
-          )
-        }
+        const pfile = res[0].pattern_file
+        dataFetch(
+          ctxUrl(DEPLOY_URL, selectedK8sContexts),
+          {
+            credentials : "include",
+            method : "POST",
+            body : pfile,
+          }, () => {
+            updateProgress({ showProgress : false });
+          },
+        );
       },
       handleError(ACTION_TYPES.UNDEPLOY_APPLICATION)
     );
