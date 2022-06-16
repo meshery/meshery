@@ -143,13 +143,14 @@ Compatibility of Meshery with other integrated systems.
 
 <table>
   <th>Kubernetes Version</th>
-  <th><img style="height: 1rem; vertical-align: text-bottom;" src="{{site.baseurl}}/assets/img/service-meshes/istio.svg" /><a href="{{ site.repo }}-istio">meshery-istio</a></th>
-  <th><img style="height: 1rem; vertical-align: text-bottom;" src="{{site.baseurl}}/assets/img/service-meshes/linkerd.svg" /><a href="{{ site.repo }}-istio">meshery-linkerd</a></th>
-  <th><img style="height: 1rem; vertical-align: text-bottom;" src="{{site.baseurl}}/assets/img/service-meshes/kuma.svg" /><a href="{{ site.repo }}-istio">meshery-kuma</a></th>
-  <th><img style="height: 1rem; vertical-align: text-bottom;" src="{{site.baseurl}}/assets/img/service-meshes/osm.svg" /><a href="{{ site.repo }}-istio">meshery-osm</a></th>
-  <th><img style="height: 1rem; vertical-align: text-bottom;" src="{{site.baseurl}}/assets/img/service-meshes/nginx-sm.svg" /><a href="{{ site.repo }}-istio">meshery-nginx-sm</a></th>
-  <th><img style="height: 1rem; vertical-align: text-bottom;" src="{{site.baseurl}}/assets/img/service-meshes/traefik-mesh.svg" /><a href="{{ site.repo }}-istio">meshery-traefik-mesh</a></th>
-  <th><img style="height: 1rem; vertical-align: text-bottom;" src="{{site.baseurl}}/assets/img/service-meshes/cilium.svg" /><a href="{{ site.repo }}-istio">meshery-cilium</a></th>
+  
+  <th><img style="height: 1rem; vertical-align: text-bottom;" src="{{site.baseurl}}/assets/img/service-meshes/istio.svg" /><a href="{{site.baseurl}}/project/compatibility-matrix/meshery-istio-past-results">meshery-istio</a></th>
+  <th><img style="height: 1rem; vertical-align: text-bottom;" src="{{site.baseurl}}/assets/img/service-meshes/linkerd.svg" /><a href="{{site.baseurl}}/project/compatibility-matrix/meshery-linkerd-past-results">meshery-linkerd</a></th>
+  <th><img style="height: 1rem; vertical-align: text-bottom;" src="{{site.baseurl}}/assets/img/service-meshes/kuma.svg" /><a href="{{site.baseurl}}/project/compatibility-matrix/meshery-kuma-past-results">meshery-kuma</a></th>
+  <th><img style="height: 1rem; vertical-align: text-bottom;" src="{{site.baseurl}}/assets/img/service-meshes/osm.svg" /><a href="{{site.baseurl}}/project/compatibility-matrix/meshery-osm-past-results">meshery-osm</a></th>
+  <th><img style="height: 1rem; vertical-align: text-bottom;" src="{{site.baseurl}}/assets/img/service-meshes/nginx-sm.svg" /><a href="{{site.baseurl}}/project/compatibility-matrix/meshery-nginx-sm-past-results">meshery-nginx-sm</a></th>
+  <th><img style="height: 1rem; vertical-align: text-bottom;" src="{{site.baseurl}}/assets/img/service-meshes/traefik-mesh.svg" /><a href="{{site.baseurl}}/project/compatibility-matrix/meshery-traefik-mesh-past-results">meshery-traefik-mesh</a></th>
+  <th><img style="height: 1rem; vertical-align: text-bottom;" src="{{site.baseurl}}/assets/img/service-meshes/cilium.svg" /><a href="{{site.baseurl}}/project/compatibility-matrix/meshery-cilium-past-results">meshery-cilium</a></th>
   
 
   {% for k8s in k8s_tests_group limit: 1 %}

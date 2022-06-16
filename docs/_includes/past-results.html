@@ -2,12 +2,12 @@
 
 
 <table id = "test-table">
-    <th>Status</th>
+    <th onclick="reverse()">Status <span class="sort-arrow">ↆ</span> </th>
     <th>Meshery Component</th>
-    <th>Meshery Component Version</th>
-    <th onclick="reverse()"  style="text-align: center;" >Meshery Server Version <span id="sort-arrow">ↆ</span></th>
+    <th  onclick="reverse()" >Meshery Component Version <span class="sort-arrow">ↆ</span></th>
+    <th onclick="reverse()"  style="text-align: center;" >Meshery Server Version <span class="sort-arrow">ↆ</span></th>
     <th>Service Mesh</th>
-    <th>Service Mesh Version</th>
+    <th onclick="reverse()">Service Mesh Version <span class="sort-arrow">ↆ</span></th>
 
     {% for item in sorted_tests_istio  %}
         {% if item.overall-status == "passing" %}
@@ -64,16 +64,19 @@
 <script>
     let table = document.getElementById("test-table")
     rows = table.rows;
-    let sortArrow = document.getElementById("sort-arrow")
-    
+    let sortArrow = document.querySelectorAll(".sort-arrow")
+    console.log("asdfasf",sortArrow)
     
 function reverse(){
 	for (var i = 1; i <rows.length; i++) {
     rows[i].parentNode.insertBefore(rows[rows.length-1], rows[i]);
 	}
-    if(sortArrow.innerHTML == "ↆ")
-     sortArrow.innerHTML = "↑"
-    else
-        sortArrow.innerHTML = "ↆ"
+    for(let j = 0;j<sortArrow.length;j++){
+        if(sortArrow[j].innerHTML == "ↆ")
+        sortArrow[j].innerHTML = "↑"
+       else
+       sortArrow[j].innerHTML = "ↆ"
+    }
+   
 }
 </script>
