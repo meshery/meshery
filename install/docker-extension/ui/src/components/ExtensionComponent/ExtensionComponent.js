@@ -120,7 +120,6 @@ const ExtensionsComponent = () => {
 
   useEffect(() => {
     fetch("http://127.0.0.1:7877/token").then(res => res.text()).then(res => {
-      console.log({ tokenReqRes: res })
       if (res !== "null") {
         setIsLoggedIn(true)
         setToken(res)
@@ -251,7 +250,7 @@ const ExtensionsComponent = () => {
                 Launch Meshery
               </Typography>
               <div style={{ marginBottom: "0.5rem" }}>
-                <a style={{ textDecoration: "none" }} href={token && "http://localhost:9081/api/user/token?token=" + token} >
+                <a style={{ textDecoration: "none" }} href={token && "http://localhost:9081/api/user/token?token=" + token + "&provider=Meshery"} >
 
                   <div
                     onMouseEnter={() => setIsHovered(!isHovered)}
