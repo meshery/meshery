@@ -122,7 +122,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
       .then(res => {
         if (res?.contexts) {
           handleContexts(res.contexts);
-          res.contexts.forEach((ctx) => {
+          res.contexts.forEach((ctx, index) => {
             let data = {
               context : ctx.name,
               location : ctx.server,
@@ -132,6 +132,12 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
               id : ctx.id
             };
             tableInfo.push(data);
+            fetchMesheryOperatorStatus({ k8scontextID : ctx.id }).subscribe({
+              next : (res) => {
+                setOperatorState(res, index);
+              },
+              error : (err) => console.log("error at operator scan: " + err),
+            }).unsubscribe();
           })
           setData(tableInfo);
         }
@@ -351,6 +357,12 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
         ), });
       stateUpdater(operatorSwitch, setOperatorSwitch, !operatorSwitch[index], index);
     }, variables);
+    fetchMesheryOperatorStatus({ k8scontextID : contexts[index].id }).subscribe({
+      next : (res) => {
+        setOperatorState(res, index);
+      },
+      error : (err) => console.log("error at operator scan: " + err),
+    }).unsubscribe();
   };
 
   const handleConfigDelete = (id, index) => {
@@ -532,7 +544,6 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
     renderExpandableRow : (rowData, rowMetaData) => {
       return (
         <NoSsr>
-          { operatorState &&
           <TableCell colSpan={6}>
             <TableContainer>
               <Table>
@@ -672,7 +683,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
                                 : "Disabled"} />
                             </ListItem>
                             <ListItem>
-                              <ListItemText primary="Operator Version" secondary={operatorState[rowMetaData?.rowIndex]?.operatorStatus.version} />
+                              <ListItemText primary="Operator Version" secondary={operatorState !== null ? operatorState[rowMetaData?.rowIndex]?.operatorStatus.version : ""} />
                             </ListItem>
                           </List>
                         </Grid>
@@ -706,7 +717,6 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
               </Table>
             </TableContainer>
           </TableCell>
-          }
         </NoSsr>
       )
     }
