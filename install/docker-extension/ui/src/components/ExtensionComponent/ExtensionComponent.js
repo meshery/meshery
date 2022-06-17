@@ -251,9 +251,6 @@ const ExtensionsComponent = () => {
       {changing && <LoadingDiv sx={{ opacity: "1" }}>
         <LoadComp />
       </LoadingDiv>}
-      {isLoggedIn && <LogoutButton variant="p" component="p" align="start">
-        <Button onClick={logout} color="secondary" component="span" variant="contained">Logout</Button>
-      </LogoutButton>}
       <ComponentWrapper sx={{ opacity: changing ? "0.3" : "1" }}>
         {isLoggedIn && <Tour />}
         <MesheryIcon CustomColor={isDarkTheme ? "white" : "#3C494F"} />
@@ -283,10 +280,13 @@ const ExtensionsComponent = () => {
                 window.ddClient.host.openExternal("https://meshery.layer5.io?source=aHR0cDovL2xvY2FsaG9zdDo3ODc3L3Rva2VuL3N0b3Jl&provider_version=v0.3.14")
               }}>
                 Login
-              </Button> : (userName &&
-                <Typography sx={{ marginBottom: "1rem", whiteSpace: "nowrap" }}>
+              </Button> : (<div>
+                {userName &&<Typography sx={{ marginBottom: "1rem", whiteSpace: "nowrap" }}>
                   User: {userName}
-                </Typography>
+                </Typography>}
+                <LogoutButton variant="p" component="p" align="start">
+        <Button onClick={logout} color="secondary" component="span" variant="contained">Logout</Button>
+      </LogoutButton></div>
               )
               }
             </AccountDiv>
@@ -309,7 +309,7 @@ const ExtensionsComponent = () => {
           }
           {!!isLoggedIn &&
             <div style={{ paddingTop: isLoggedIn ? "1.2rem" : null }}>
-              <ExtensionWrapper className="first-step" sx={{ height: ["22rem", "17rem", "12rem"], backgroundColor: isDarkTheme ? "#393F49" : "#D7DADE" }} >
+              <ExtensionWrapper className="first-step" sx={{ height: ["22rem", "17rem", "14rem"], backgroundColor: isDarkTheme ? "#393F49" : "#D7DADE" }} >
                 <div>
                   <Typography sx={{ marginBottom: "1rem" }}>Deploy a Service Mesh</Typography>
                   <ServiceMeshAdapters>
