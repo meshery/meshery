@@ -130,9 +130,9 @@ const ExtensionsComponent = () => {
 
   useEffect(() => {
     fetch(proxyUrl + "/token").then(res => res.text()).then(res => {
+      setToken(res)
       if (res !== "null") {
         setIsLoggedIn(true)
-        setToken(res)
         fetch("http://localhost:7877/api/user").then(res => res.text()).then(res => setUserName(JSON.parse(res)?.user_id))
         fetch(
           "http://localhost:7877/api/system/sync",
@@ -147,6 +147,7 @@ const ExtensionsComponent = () => {
         }
       }
     }).catch(console.log)
+    return () => ws.close()
   }, [isLoggedIn, refetchTokenBool])
 
   useEffect(() => {
