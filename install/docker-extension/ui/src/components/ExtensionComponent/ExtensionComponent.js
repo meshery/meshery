@@ -129,6 +129,7 @@ const ExtensionsComponent = () => {
   }
 
   useEffect(() => {
+    let ws
     fetch(proxyUrl + "/token").then(res => res.text()).then(res => {
       setToken(res)
       if (res !== "null") {
@@ -141,14 +142,14 @@ const ExtensionsComponent = () => {
           }).then(res => res.json()).then(data => setMeshAdapters(data.meshAdapters)).catch(console.err)
       } else {
         setIsLoggedIn(false)
-        let ws = new WebSocket("ws://127.0.0.1:7877/ws")
+        ws = new WebSocket("ws://127.0.0.1:7877/ws")
         ws.onmessage = msg => {
           if (msg.data == "Authenticated")
             setIsLoggedIn(true)
         }
       }
     }).catch(console.log)
-    return () => ws.close()
+    return () => { if (ws) ws.close() }
   }, [isLoggedIn, refetchTokenBool])
 
   useEffect(() => {
