@@ -212,7 +212,7 @@ function MesheryApplications({
    * @param {string} search search string
    * @param {string} sortOrder order of sort
    */
-
+  // ASSUMPTION: APPLICATION FILES ARE ONLY K8S MANIFEST
   const handleDeploy = (application_file) => {
     updateProgress({ showProgress : true })
     dataFetch(
@@ -248,27 +248,33 @@ function MesheryApplications({
     );
   };
 
+  // ASSUMPTION: APPLICATION FILES ARE ONLY K8S MANIFEST
   const handleUnDeploy = (application_file) => {
     updateProgress({ showProgress : true })
     dataFetch(
-      "/api/application",
+      "/api/pattern",
       {
         credentials : "include",
-        method : "DELETE",
+        method : "POST",
         body : JSON.stringify({ k8s_manifest : application_file }),
       },
       (res) => {
         const pfile = res[0].pattern_file
-        dataFetch(
-          ctxUrl(DEPLOY_URL, selectedK8sContexts),
-          {
-            credentials : "include",
-            method : "POST",
-            body : pfile,
-          }, () => {
-            updateProgress({ showProgress : false });
-          },
-        );
+        if (pfile) {
+          dataFetch(
+            ctxUrl(DEPLOY_URL, selectedK8sContexts),
+            {
+              credentials : "include",
+              method : "DELETE",
+              body : pfile,
+            }, () => {
+              updateProgress({ showProgress : false });
+            },
+            handleError(ACTION_TYPES.UNDEPLOY_APPLICATION)
+          );
+        } else {
+          handleError(ACTION_TYPES.UNDEPLOY_APPLICATION)
+        }
       },
       handleError(ACTION_TYPES.UNDEPLOY_APPLICATION)
     );
