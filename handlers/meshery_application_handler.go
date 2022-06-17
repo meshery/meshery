@@ -8,6 +8,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/models"
 	"github.com/layer5io/meshkit/utils/kubernetes/kompose"
+	"gopkg.in/yaml.v2"
 )
 
 // MesheryApplicationRequestBody refers to the type of request body that
@@ -131,9 +132,33 @@ func (h *Handler) handleApplicationPOST(
 				http.Error(rw, ErrApplicationFailure(err, obj).Error(), http.StatusInternalServerError) // sending a 500 when we cannot convert the file into kuberentes manifest
 				return
 			}
-			mesheryApplication.ApplicationFile = res
-		}
 
+			manifest := map[string]interface{}{}
+			if err := yaml.Unmarshal([]byte(res), &manifest); err != nil {
+				return 
+			}
+			metaKeys  := manifest["metadata"].(map[interface {}]interface {})
+			for k, value := range metaKeys {
+				if (value == nil) {
+					metaKeys[k]= ""
+				}
+			}
+			
+			// specKeys := manifest["spec"].(map[interface {}]interface{})["ports"].([]interface {})
+			// ports := specKeys[0].(map[interface {}]interface {})
+
+			// for k, value := range ports {
+			// 	if (k == "targetPort") {
+			// 		ports["targetPort"] = fmt.Sprint(value.(int))
+			// 	}
+			// }
+			result, err := yaml.Marshal(&manifest)
+			if err != nil {
+				return
+			}
+			mesheryApplication.ApplicationFile = string(result)
+		}
+		
 		if parsedBody.Save {
 			resp, err := provider.SaveMesheryApplication(token, mesheryApplication)
 			if err != nil {
