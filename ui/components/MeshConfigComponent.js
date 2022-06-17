@@ -137,9 +137,10 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
             const tempSubscription = fetchMesheryOperatorStatus({ k8scontextID : ctx.id }).
             subscribe({
               next : (res) => {
-                console.log("setting operator state", res, index)
-                setOperatorState(res, index);
-                // tempSubscription.unsubscribe();
+                if(!_operatorState.find(opSt => opSt.contextID === ctx.id)) {
+                  updateCtxInfo(ctx.id, res)
+                }
+                tempSubscription.unsubscribe();
               },
               error : (err) => console.log("error at operator scan: " + err),
             })
@@ -343,8 +344,13 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
   };
 
   const updateCtxInfo = (ctxId, newInfo) => {
-    let ctx = {..._operatorState.find(ctx => ctx.contextID === ctxId)};
-    const removeCtx = _operatorState.filter(ctx => ctx.contextID !== ctxId);
+    const op = _operatorState.find(ctx => ctx.contextID === ctxId);
+    if(!op) {
+      return [..._operatorState, {contextID: ctxId, operatorStatus: newInfo.operator}];
+    }
+
+    let ctx = {...op};
+    const removeCtx = _operatorState.filter(ctx => ctx.contextID !== ctxId);   
     ctx.operatorStatus = newInfo.operator;
     return [...removeCtx, ctx];
   }
@@ -372,7 +378,6 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
             <CloseIcon />
           </IconButton>
         ), });
-
 
         const tempSubscription = fetchMesheryOperatorStatus({ k8scontextID : contextId }).subscribe({
           next : (res) => {
@@ -896,12 +901,13 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
 
   const handleOperatorClick = (index) => {
     updateProgress({ showProgress : true });
-
-    const tempSubscription = fetchMesheryOperatorStatus({ k8scontextID : contexts[index].id })
+    const ctxId = contexts[index].id
+    const tempSubscription = fetchMesheryOperatorStatus({ k8scontextID : ctxId })
       .subscribe({ next : (res) => {
-        let state = setOperatorState(res, index);
+        _setOperatorState(updateCtxInfo(ctxId, res))
+
         updateProgress({ showProgress : false });
-        if (state == true) {
+        if (!res.operator.error) {
           enqueueSnackbar("Operator was successfully pinged!", { variant : "success",
             autoHideDuration : 2000,
             action : (key) => (
