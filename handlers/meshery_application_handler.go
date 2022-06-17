@@ -135,15 +135,15 @@ func (h *Handler) handleApplicationPOST(
 
 			manifest := map[string]interface{}{}
 			if err := yaml.Unmarshal([]byte(res), &manifest); err != nil {
-				return 
+				return
 			}
-			metaKeys  := manifest["metadata"].(map[interface {}]interface {})
+			metaKeys := manifest["metadata"].(map[interface{}]interface{})
 			for k, value := range metaKeys {
-				if (value == nil) {
-					metaKeys[k]= ""
+				if value == nil {
+					metaKeys[k] = ""
 				}
 			}
-			
+
 			// specKeys := manifest["spec"].(map[interface {}]interface{})["ports"].([]interface {})
 			// ports := specKeys[0].(map[interface {}]interface {})
 
@@ -158,7 +158,7 @@ func (h *Handler) handleApplicationPOST(
 			}
 			mesheryApplication.ApplicationFile = string(result)
 		}
-		
+
 		if parsedBody.Save {
 			resp, err := provider.SaveMesheryApplication(token, mesheryApplication)
 			if err != nil {
