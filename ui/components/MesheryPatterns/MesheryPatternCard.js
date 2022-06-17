@@ -12,8 +12,8 @@ import FlipCard from "../FlipCard";
 import { makeStyles } from "@material-ui/core/styles";
 import { UnControlled as CodeMirror } from "react-codemirror2";
 import FullscreenExit from "@material-ui/icons/FullscreenExit";
-import TrendingUp from "@material-ui/icons/TrendingUp"
-
+import UndeployIcon from "../../public/static/img/UndeployIcon";
+import DoneAllIcon from '@material-ui/icons/DoneAll';
 
 const INITIAL_GRID_SIZE = { xl : 4, md : 6, xs : 12 };
 
@@ -157,6 +157,7 @@ function MesheryPatternCard({
   created_at,
   pattern_file,
   handleDeploy,
+  handleUnDeploy,
   updateHandler,
   deleteHandler,
   setSelectedPatterns,
@@ -237,9 +238,21 @@ function MesheryPatternCard({
                 onClick={(ev) =>
                   genericClickHandler(ev, handleDeploy)
                 }
+                className={classes.testsButton}
               >
-                <TrendingUp className={classes.iconPatt}/>
+                <DoneAllIcon className={classes.iconPatt}/>
               Deploy
+              </Button>
+
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={(ev) =>
+                  genericClickHandler(ev, handleUnDeploy)
+                }
+              >
+                <UndeployIcon fill="#ffffff" className={classes.iconPatt} />
+              Undeploy
               </Button>
             </div>
           </div>
