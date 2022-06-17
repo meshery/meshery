@@ -219,7 +219,7 @@ function ExtensionSandbox({ type, Extension }) {
       <LoadingScreen message="Establishing Remote Connection" />
       :
       (
-        <Extension url={createPathForRemoteComponent(getComponentTitleFromPathForAccount(extensions, getPath))} />
+        <Extension url={createPathForRemoteComponent(getComponentURIFromPathForAccount(extensions, getPath()))} />
       )
   }
 

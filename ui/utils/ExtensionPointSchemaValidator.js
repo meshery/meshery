@@ -15,6 +15,9 @@
 
 /**
  * @typedef {Object} AccountSchema
+ * @property {string} title
+ * @property {number} onClickCallback
+ * @property {string} href
  * @property {string} component
  */
 
@@ -81,6 +84,7 @@ function UserPrefsExtensionSchemaDecoder(content) {
  */
 function AccountExtensionSchemaDecoder(content) {
   if (Array.isArray(content)) {
+    console.log("item: ", content)
     return content.map((item) => {
       return {
         title : item.title || "",
@@ -88,7 +92,7 @@ function AccountExtensionSchemaDecoder(content) {
         component : item.component || "",
         onClickCallback : item?.on_click_callback || 0,
         show : !!item.show,
-        children : NavigatorExtensionSchemaDecoder(item.children),
+        // children : NavigatorExtensionSchemaDecoder(item.children),
       };
     });
   }

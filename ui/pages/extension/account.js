@@ -1,12 +1,12 @@
 /* eslint-disable no-unused-vars */
 
-import Extension from "../../components/NavigatorExtension";
-import ExtensionSandbox, { getCapabilities, getComponentTitleFromPathForNavigator } from "../../components/ExtensionSandbox";
+import ExtensionSandbox, { getCapabilities, getComponentTitleFromPathForAccount } from "../../components/ExtensionSandbox";
 import { NoSsr } from "@material-ui/core";
 import { updatepagepath, updatepagetitle } from "../../lib/store";
 import { connect } from "react-redux";
 import Head from "next/head";
 import { bindActionCreators } from "redux";
+import RemoteAccount from "../../components/RemoteAccount";
 
 
 /**
@@ -42,13 +42,13 @@ function capitalize(string) {
   return "";
 }
 
-class Navigator extends React.Component {
+class Account extends React.Component {
   state = { componentTitle : "" }
 
   componentDidMount() {
-    getCapabilities("navigator", extensions => {
-      this.setState({ componentTitle : getComponentTitleFromPathForNavigator(extensions, getPath()) });
-      this.props.updatepagetitle({ title : getComponentTitleFromPathForNavigator(extensions, getPath()) });
+    getCapabilities("account", extensions => {
+      this.setState({ componentTitle : getComponentTitleFromPathForAccount(extensions, getPath()) });
+      this.props.updatepagetitle({ title : getComponentTitleFromPathForAccount(extensions, getPath()) });
     });
     console.log(`path: ${getPath()}`);
     this.props.updatepagepath({ path : getPath() });
@@ -61,7 +61,7 @@ class Navigator extends React.Component {
           <title>{this.state.componentTitle || ""}</title>
         </Head>
         <NoSsr>
-          <ExtensionSandbox type="navigator" Extension={Extension} />
+          <ExtensionSandbox type="account" Extension={(url) => RemoteAccount({ url })} />
         </NoSsr>
       </NoSsr>
     );
@@ -71,4 +71,4 @@ class Navigator extends React.Component {
 const mapDispatchToProps = (dispatch) => ({ updatepagepath : bindActionCreators(updatepagepath, dispatch),
   updatepagetitle : bindActionCreators(updatepagetitle, dispatch), });
 
-export default connect(null, mapDispatchToProps)(Navigator);
+export default connect(null, mapDispatchToProps)(Account);
