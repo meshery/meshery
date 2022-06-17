@@ -21,60 +21,60 @@ import MesheryIcon from "../../img/meshery-logo/CustomMesheryLogo";
 import { DockerMuiThemeProvider } from '@docker/docker-mui-theme';
 import CssBaseline from '@mui/material/CssBaseline';
 import { LoadComp } from "../LoadingComponent/LoadComp";
-import { LoadingDiv, StyledDiv, AccountDiv, ServiceMeshAdapters, ExtensionWrapper, AdapterDiv, ComponentWrapper, SectionWrapper, VersionDiv, VersionText } from "./styledComponents";
+import { LoadingDiv, StyledDiv, AccountDiv, ServiceMeshAdapters, ExtensionWrapper, AdapterDiv, ComponentWrapper, SectionWrapper, VersionText, LogoutButton } from "./styledComponents";
 import { MesheryAnimation } from "../MesheryAnimation/MesheryAnimation";
 
 
 const adapters = {
-  'TRAEFIK_MESH': {
-    displayName: "Traefix Mesh",
-    icon: <TraefikIcon width={40} height={40} />,
-    name: 'TRAEFIK_MESH'
-  },
-  'NGINX_SERVICE_MESH': {
-    displayName: "NGINX",
-    icon: <NginxIcon width={38} height={40} />,
-    name: 'NGINX_SERVICE_MESH'
-  },
   'APP_MESH': {
     displayName: "App Mesh",
     icon: <AppmeshIcon width={40} height={40} />,
     name: 'APP_MESH'
-  },
-  'OPEN_SERVICE_MESH': {
-    displayName: "OSM",
-    icon: <OsmIcon width={40} height={40} />,
-    name: 'OPEN_SERVICE_MESH'
-  },
-  'KUMA': {
-    displayName: "Kuma",
-    icon: <KumaIcon width={40} height={40} />,
-    name: 'KUMA'
   },
   'CILIUM_SERVICE_MESH': {
     displayName: "Cilium",
     icon: <CiliumIcon width={40} height={40} />,
     name: 'CILIUM_SERVICE_MESH'
   },
+  'CONSUL': {
+    displayName: "Consul",
+    icon: <ConsulIcon width={40} height={40} />,
+    name: 'CONSUL'
+  },
   'ISTIO': {
     displayName: "Istio",
     icon: <IstioIcon width={40} height={40} />,
     name: 'ISTIO'
+  },
+  'KUMA': {
+    displayName: "Kuma",
+    icon: <KumaIcon width={40} height={40} />,
+    name: 'KUMA'
   },
   'LINKERD': {
     displayName: "Linkerd",
     icon: <LinkerdIcon width={40} height={40} />,
     name: 'LINKERD'
   },
-  'CONSUL': {
-    displayName: "Consul",
-    icon: <ConsulIcon width={40} height={40} />,
-    name: 'CONSUL'
+  'NGINX_SERVICE_MESH': {
+    displayName: "NGINX",
+    icon: <NginxIcon width={38} height={40} />,
+    name: 'NGINX_SERVICE_MESH'
+  },
+  'OPEN_SERVICE_MESH': {
+    displayName: "OSM",
+    icon: <OsmIcon width={40} height={40} />,
+    name: 'OPEN_SERVICE_MESH'
+  },
+  'TRAEFIK_MESH': {
+    displayName: "Traefix Mesh",
+    icon: <TraefikIcon width={40} height={40} />,
+    name: 'TRAEFIK_MESH'
   },
 }
 
 
-const baseURL = "http://localhost:9081"
+const proxyUrl = "http://127.0.0.1:7877"
 
 export function trueRandom() {
   return crypto.getRandomValues(new Uint32Array(1))[0] / 2 ** 32;
@@ -108,6 +108,9 @@ const ExtensionsComponent = () => {
   const [token, setToken] = useState()
   const [changing, isChanging] = useState(false)
   const [meshAdapters, setMeshAdapters] = useState(null)
+  const [refetchTokenBool, setRefetchTokenBool] = useState(false)
+
+  const refetchToken = () => setRefetchTokenBool(p => !p)
 
   useEffect(() => {
     if (meshAdapters && meshAdapters.length != 0) {
@@ -118,8 +121,15 @@ const ExtensionsComponent = () => {
   }, [meshAdapters])
   const [mesheryVersion, setMesheryVersion] = useState(null)
 
+
+  const logout = () => {
+    fetch(proxyUrl + "/token/delete").then(_ => {
+      refetchToken()
+    }).catch(console.error)
+  }
+
   useEffect(() => {
-    fetch("http://127.0.0.1:7877/token").then(res => res.text()).then(res => {
+    fetch(proxyUrl + "/token").then(res => res.text()).then(res => {
       if (res !== "null") {
         setIsLoggedIn(true)
         setToken(res)
@@ -132,16 +142,15 @@ const ExtensionsComponent = () => {
       } else {
         let ws = new WebSocket("ws://127.0.0.1:7877/ws")
         ws.onmessage = msg => {
-          console.log("From proxy ws connection: ", msg)
           if (msg.data == "Authenticated")
             setIsLoggedIn(true)
         }
       }
     }).catch(console.log)
-  }, [isLoggedIn])
+  }, [isLoggedIn, refetchTokenBool])
 
   useEffect(() => {
-    fetch("http://127.0.0.1:7877/api/system/version").then(result => result.text()).then(result => setMesheryVersion(JSON.parse(result)?.build))
+    fetch(proxyUrl + "/api/system/version").then(result => result.text()).then(result => setMesheryVersion(JSON.parse(result)?.build))
       .catch((error) => {
         console.log(error)
       })
@@ -191,7 +200,7 @@ const ExtensionsComponent = () => {
       .map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(data[key])}`)
       .join("&");
     fetch(
-      "http://127.0.0.1:7877/api/system/adapter/operation",
+      proxyUrl + "/api/system/adapter/operation",
       {
         credentials: "same-origin",
         method: "POST",
@@ -234,10 +243,14 @@ const ExtensionsComponent = () => {
 
   return (
     <DockerMuiThemeProvider>
+
       <CssBaseline />
       {changing && <LoadingDiv sx={{ opacity: "1" }}>
         <LoadComp />
       </LoadingDiv>}
+      {isLoggedIn && <LogoutButton variant="p" component="p" align="start">
+        <Button onClick={logout} color="secondary" component="span" variant="contained">Logout</Button>
+      </LogoutButton>}
       <ComponentWrapper sx={{ opacity: changing ? "0.3" : "1" }}>
         {isLoggedIn && <Tour />}
         <MesheryIcon CustomColor={isDarkTheme ? "white" : "#3C494F"} />
@@ -252,7 +265,7 @@ const ExtensionsComponent = () => {
               <div style={{ marginBottom: "0.5rem" }}>
                 <a style={{ textDecoration: "none" }} href={token && "http://localhost:9081/api/user/token?token=" + token + "&provider=Meshery"} >
 
-                  <div
+                  {isLoggedIn ? <div
                     onMouseEnter={() => setIsHovered(!isHovered)}
                     onMouseLeave={onMouseOut}
                     onClick={onClick}
@@ -260,7 +273,7 @@ const ExtensionsComponent = () => {
                   >
                     {isHovered ? <MesheryAnimation height={70} width={72} /> : <Meshery height={70} width={72} />}
 
-                  </div>
+                  </div> : <Meshery height={70} width={72} />}
                 </a>
               </div>
               {!isLoggedIn ? <Button sx={{ marginTop: "0.3rem" }} variant="contained" disabled={isLoggedIn} color="primary" component="span" onClick={() => {
@@ -270,7 +283,8 @@ const ExtensionsComponent = () => {
               </Button> : (userName &&
                 <Typography sx={{ marginBottom: "1rem", whiteSpace: "nowrap" }}>
                   User: {userName}
-                </Typography>)
+                </Typography>
+              )
               }
             </AccountDiv>
           </ExtensionWrapper>
@@ -319,6 +333,7 @@ const ExtensionsComponent = () => {
             </div>}
 
         </SectionWrapper >
+
       </ComponentWrapper >
 
 
