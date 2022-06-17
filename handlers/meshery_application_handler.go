@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/models"
@@ -140,7 +141,10 @@ func (h *Handler) handleApplicationPOST(
 			metaKeys := manifest["metadata"].(map[interface{}]interface{})
 			for k, value := range metaKeys {
 				if value == nil {
-					metaKeys[k] = ""
+					if k == "creationTimestamp" {
+
+						metaKeys[k] = (time.Now())
+					}
 				}
 			}
 
