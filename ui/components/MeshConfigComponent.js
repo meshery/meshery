@@ -342,39 +342,47 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
     );
   };
 
-  const handleOperatorSwitch = (index) => {
-    const contextId = contexts[index].id;
+  const updateCtxInfo = (ctxId, newInfo) => {
+    let ctx = {..._operatorState.find(ctx => ctx.contextID === ctxId)};
+    const removeCtx = _operatorState.filter(ctx => ctx.contextID !== ctxId);
+    ctx.operatorStatus = newInfo.operator;
+    return [...removeCtx, ctx];
+  }
 
+  const handleOperatorSwitch = (index, checked) => {
+    const contextId = contexts[index].id;
     const variables = {
-      status : `${!operatorSwitch[index] ? "ENABLED" : "DISABLED"}`,
-      contextID : contexts[index].id
+      status : `${ checked ? "ENABLED" : "DISABLED"}`,
+      contextID : contextId
     };
 
     updateProgress({ showProgress : true });
 
     changeOperatorState((response, errors) => {
       updateProgress({ showProgress : false });
+
       if (errors !== undefined) {
-        handleError(`Unable to ${operatorSwitch[index] === true ? "Uni" : "I"} nstall operator`);
+        handleError(`Unable to ${!checked ? "Uni" : "I"}nstall operator`);
       }
-      enqueueSnackbar("Operator " + response.operatorStatus.toLowerCase(), { variant : "success",
+      enqueueSnackbar("Operator " + response.operatorStatus.toLowerCase(), {
+        variant : "success",
         autoHideDuration : 2000,
         action : (key) => (
           <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
             <CloseIcon />
           </IconButton>
         ), });
-      stateUpdater(operatorSwitch, setOperatorSwitch, !operatorSwitch[index], index);
+
+
+        const tempSubscription = fetchMesheryOperatorStatus({ k8scontextID : contextId }).subscribe({
+          next : (res) => {
+            _setOperatorState(updateCtxInfo(contextId, res))
+            tempSubscription.unsubscribe();
+          },
+          error : (err) => console.log("error at operator scan: " + err),
+        })
+
     }, variables);
-
-    const tempSubscription = fetchMesheryOperatorStatus({ k8scontextID : contexts[index].id }).subscribe({
-      next : (res) => {
-        setOperatorState(res, index);
-        tempSubscription.unsubscribe();
-      },
-      error : (err) => console.log("error at operator scan: " + err),
-    }).unsubscribe();
-
   };
 
   const handleConfigDelete = (id, index) => {
@@ -408,7 +416,16 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
     }
   }
 
-  const getOperatorStatus = (ctxId) => {
+  function getOperatorStatus(ctxId) {
+    const operator = _operatorState.find(op => op.contextID === ctxId);
+    const operatorStatus = operator.operatorStatus;
+    return {
+      operatorState: operatorStatus.status==="ENABLED",
+      operatorVersion: operatorStatus.version,
+    }
+  }
+
+  const getContextStatus = (ctxId) => {
     const operator = _operatorState.find(op => op.contextID === ctxId);
     const operatorStatus = operator.operatorStatus;
 
@@ -444,8 +461,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
     }
 
     const actualOperatorState = {
-      operatorState: operatorStatus.status==="ENABLED",
-      operatorVersion: operatorStatus.version,
+      ...getOperatorStatus(ctxId),
       ...getMeshSyncStats(),
       ...getBrokerStats()
     }
@@ -557,8 +573,8 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
                 </Button>
                 <MenuItem>
                   <Switch
-                    checked={operatorSwitch[tableMeta.rowIndex]}
-                    onClick={() => handleOperatorSwitch(tableMeta.rowIndex)}
+                    checked={getOperatorStatus(contexts[tableMeta.rowIndex].id)?.operatorState}
+                    onClick={(e) => handleOperatorSwitch(tableMeta.rowIndex, e.target.checked)}
                     disabled={operatorProcessing[tableMeta.rowIndex]}
                     name="OperatorSwitch"
                     color="primary"
@@ -601,7 +617,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
 
     renderExpandableRow : (rowData, rowMetaData) => {
       const contextId = contexts[rowMetaData.rowIndex].id;
-      const {meshSyncState, meshSyncVersion, natsState, natsVersion, operatorState, operatorVersion} = getOperatorStatus(contextId);
+      const {meshSyncState, meshSyncVersion, natsState, natsVersion, operatorState, operatorVersion} = getContextStatus(contextId);
       return (
         <NoSsr>
           <TableCell colSpan={6}>
