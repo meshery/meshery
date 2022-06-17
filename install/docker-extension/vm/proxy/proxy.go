@@ -129,17 +129,16 @@ func (p *Proxy) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
 				wr.WriteHeader(http.StatusUnauthorized)
 				return
 			} else {
-				htmlTemplate := `
-        <html>
+				wr.Header().Set("Content-Type", "text/html; charset=utf-8")
+				htmlTemplate := `<html>
 <head>
-<title>Page Title</title>
+  <title>Meshery | Docker Desktop</title>
 </head>
 <body>
-<script type="text/javascript">
-  window.open('docker-desktop://dashboard/open','_self')
-</script>
-<p>You have been authenticated successfully and can close this window now.</p>
-
+  <script type="text/javascript">
+   window.open('docker-desktop://dashboard/open','_self')
+  </script>
+  <p>You have been authenticated successfully and can close this window now.</p>
 </body>
 </html>
         `
@@ -147,13 +146,20 @@ func (p *Proxy) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
 			}
 		}
 	case "/token":
-		if req.Method == "GET" {
+		if req.Method == http.MethodGet {
 			if p.token != "" {
 				fmt.Fprintf(wr, p.token)
 			} else {
 				fmt.Fprintf(wr, "null")
 			}
+			return
 		}
+	case "/token/delete":
+		p.token = ""
+		log.Println("Deleting the existing token: ", p.token)
+		wr.Write([]byte(""))
+		return
+
 	default:
 		//http: Request.RequestURI can't be set in client requests.
 		//http://golang.org/src/pkg/net/http/client.go

@@ -74,7 +74,7 @@ const adapters = {
 }
 
 
-const baseURL = "http://localhost:9081"
+const proxyUrl = "http://127.0.0.1:7877"
 
 export function trueRandom() {
   return crypto.getRandomValues(new Uint32Array(1))[0] / 2 ** 32;
@@ -108,6 +108,9 @@ const ExtensionsComponent = () => {
   const [token, setToken] = useState()
   const [changing, isChanging] = useState(false)
   const [meshAdapters, setMeshAdapters] = useState(null)
+  const [refetchTokenBool, setRefetchTokenBool] = useState(false)
+
+  const refetchToken = () => setRefetchTokenBool(p => !p)
 
   useEffect(() => {
     if (meshAdapters && meshAdapters.length != 0) {
@@ -118,8 +121,15 @@ const ExtensionsComponent = () => {
   }, [meshAdapters])
   const [mesheryVersion, setMesheryVersion] = useState(null)
 
+
+  const logout = () => {
+    fetch(proxyUrl + "/token/delete").then(_ => {
+      refetchToken()
+    }).catch(console.error)
+  }
+
   useEffect(() => {
-    fetch("http://127.0.0.1:7877/token").then(res => res.text()).then(res => {
+    fetch(proxyUrl + "/token").then(res => res.text()).then(res => {
       if (res !== "null") {
         setIsLoggedIn(true)
         setToken(res)
@@ -132,16 +142,15 @@ const ExtensionsComponent = () => {
       } else {
         let ws = new WebSocket("ws://127.0.0.1:7877/ws")
         ws.onmessage = msg => {
-          console.log("From proxy ws connection: ", msg)
           if (msg.data == "Authenticated")
             setIsLoggedIn(true)
         }
       }
     }).catch(console.log)
-  }, [isLoggedIn])
+  }, [isLoggedIn, refetchTokenBool])
 
   useEffect(() => {
-    fetch("http://127.0.0.1:7877/api/system/version").then(result => result.text()).then(result => setMesheryVersion(JSON.parse(result)?.build))
+    fetch(proxyUrl + "/api/system/version").then(result => result.text()).then(result => setMesheryVersion(JSON.parse(result)?.build))
       .catch((error) => {
         console.log(error)
       })
@@ -191,7 +200,7 @@ const ExtensionsComponent = () => {
       .map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(data[key])}`)
       .join("&");
     fetch(
-      "http://127.0.0.1:7877/api/system/adapter/operation",
+      proxyUrl + "/api/system/adapter/operation",
       {
         credentials: "same-origin",
         method: "POST",
@@ -234,13 +243,14 @@ const ExtensionsComponent = () => {
 
   return (
     <DockerMuiThemeProvider>
+
       <CssBaseline />
       {changing && <LoadingDiv sx={{ opacity: "1" }}>
         <LoadComp />
       </LoadingDiv>}
       {isLoggedIn && <LogoutButton variant="p" component="p" align="start">
-                  <Button color="secondary" component="span" variant="contained">Logout</Button>
-            </LogoutButton>}
+        <Button onClick={logout} color="secondary" component="span" variant="contained">Logout</Button>
+      </LogoutButton>}
       <ComponentWrapper sx={{ opacity: changing ? "0.3" : "1" }}>
         {isLoggedIn && <Tour />}
         <MesheryIcon CustomColor={isDarkTheme ? "white" : "#3C494F"} />
@@ -255,7 +265,7 @@ const ExtensionsComponent = () => {
               <div style={{ marginBottom: "0.5rem" }}>
                 <a style={{ textDecoration: "none" }} href={token && "http://localhost:9081/api/user/token?token=" + token + "&provider=Meshery"} >
 
-                {isLoggedIn ?  <div
+                  {isLoggedIn ? <div
                     onMouseEnter={() => setIsHovered(!isHovered)}
                     onMouseLeave={onMouseOut}
                     onClick={onClick}
@@ -271,10 +281,10 @@ const ExtensionsComponent = () => {
               }}>
                 Login
               </Button> : (userName &&
-             <Typography sx={{ marginBottom: "1rem", whiteSpace: "nowrap" }}>
+                <Typography sx={{ marginBottom: "1rem", whiteSpace: "nowrap" }}>
                   User: {userName}
                 </Typography>
-              )      
+              )
               }
             </AccountDiv>
           </ExtensionWrapper>
@@ -321,9 +331,9 @@ const ExtensionsComponent = () => {
                 </VersionText>
               </Tooltip>
             </div>}
-          
+
         </SectionWrapper >
-        
+
       </ComponentWrapper >
 
 
