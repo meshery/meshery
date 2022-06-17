@@ -92,16 +92,12 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
   const [data, setData] = useState([])
   const [showMenu, setShowMenu] = useState([false])
   const [anchorEl, setAnchorEl] = useState(null);
-  const [operatorInstalled, setOperatorInstalled] = useState([false]);
   const [NATSState, setNATSState] = useState(["UNKNOWN"]);
   const [NATSVersion, setNATSVersion] = useState(["N/A"]);
-  const [operatorVersion, setOperatorVersion] = useState(["N/A"]);
-  const [operatorProcessing, setOperatorProcessing] = useState([false]);
-  const [operatorSwitch, setOperatorSwitch] = useState([false]);
   const [contexts, setContexts] = useState([]);
   const [k8sVersion, setK8sVersion] = useState(["N/A"]);
   const [discover, setLastDiscover] = useState(['']);
-  const [_operatorState, _setOperatorState] = useState(operatorState || []);  
+  const [_operatorState, _setOperatorState] = useState(operatorState || []);
 
   const ref = useRef(null);
   const meshSyncResetRef = useRef(null);
@@ -123,7 +119,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
       .then(res => {
         if (res?.contexts) {
           handleContexts(res.contexts);
-          res.contexts.forEach((ctx, index) => {
+          res.contexts.forEach(ctx => {
             let data = {
               context : ctx.name,
               location : ctx.server,
@@ -135,15 +131,15 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
             tableInfo.push(data);
 
             const tempSubscription = fetchMesheryOperatorStatus({ k8scontextID : ctx.id }).
-            subscribe({
-              next : (res) => {
-                if(!_operatorState.find(opSt => opSt.contextID === ctx.id)) {
-                  updateCtxInfo(ctx.id, res)
-                }
-                tempSubscription.unsubscribe();
-              },
-              error : (err) => console.log("error at operator scan: " + err),
-            })
+              subscribe({
+                next : (res) => {
+                  if (!_operatorState.find(opSt => opSt.contextID === ctx.id)) {
+                    updateCtxInfo(ctx.id, res)
+                  }
+                  tempSubscription.unsubscribe();
+                },
+                error : (err) => console.log("error at operator scan: " + err),
+              })
           })
           setData(tableInfo);
         }
@@ -155,21 +151,10 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
   }, [])
 
   useEffect(() => {
-    if(operatorState) {
+    if (operatorState) {
       _setOperatorState(operatorState);
-      // todo: remove
-      let opSwitch = [];
-      operatorState?.forEach((state, idx) => {
-        opSwitch[idx] = state.operatorStatus.status !== 'ENABLED' ? false : true;
-        setOperatorState({ "operator" : state.operatorStatus }, idx);
-      })
-      setOperatorSwitch(opSwitch);
     }
   }, [operatorState])
-
-  const isMeshSyncActive = (ctxID) => {
-    return MeshSyncState?.filter((state) => state?.contextID === ctxID && state.OperatorControllerStatus.status !== "DISABLED" ).length > 0;
-  }
 
   const handleFlushMeshSync = (index) => {
     return async () => {
@@ -226,40 +211,6 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
     let menu = [...showMenu];
     menu[index] = false;
     setShowMenu(menu)
-  }
-
-  const setOperatorState = (res, index) => {
-
-    if (res.operator?.error) {
-      handleError("Operator could not be reached")(res.operator?.error?.description);
-      let meshSyncdata = [...MeshSyncState];
-      meshSyncdata[index] = null;
-      setMeshsyncSubscription( { action : actionTypes.SET_MESHSYNC_SUBSCRIPTION, meshSyncState : meshSyncdata })
-      stateUpdater(operatorProcessing, setOperatorProcessing, false, index);
-      return false;
-    }
-
-    if (res.operator?.status === "ENABLED") {
-      stateUpdater(operatorProcessing, setOperatorProcessing, false, index);
-      res.operator?.controllers?.forEach((controller) => {
-        if (controller.name === "broker" && controller.status.includes("CONNECTED")) {
-          stateUpdater(NATSState, setNATSState, controller.status, index);
-          stateUpdater(NATSVersion, setNATSVersion, controller.version, index);
-        }
-      });
-      stateUpdater(operatorInstalled, setOperatorInstalled, true, index);
-      stateUpdater(operatorSwitch, setOperatorSwitch, true, index);
-      stateUpdater(operatorVersion, setOperatorVersion, res.operator?.version, index);
-      return true;
-    }
-    if (res.operator?.status === "DISABLED") {
-      stateUpdater(operatorProcessing, setOperatorProcessing, false, index);
-    }
-
-    if (res.operator?.status === "PROCESSING") {
-      console.log("setting to processing");
-      stateUpdater(operatorProcessing, setOperatorProcessing, true, index);
-    }
   }
 
   async function fetchAllContexts(number) {
@@ -345,12 +296,12 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
 
   const updateCtxInfo = (ctxId, newInfo) => {
     const op = _operatorState.find(ctx => ctx.contextID === ctxId);
-    if(!op) {
-      return [..._operatorState, {contextID: ctxId, operatorStatus: newInfo.operator}];
+    if (!op) {
+      return [..._operatorState, { contextID : ctxId, operatorStatus : newInfo.operator }];
     }
 
-    let ctx = {...op};
-    const removeCtx = _operatorState.filter(ctx => ctx.contextID !== ctxId);   
+    let ctx = { ...op };
+    const removeCtx = _operatorState.filter(ctx => ctx.contextID !== ctxId);
     ctx.operatorStatus = newInfo.operator;
     return [...removeCtx, ctx];
   }
@@ -379,13 +330,13 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
           </IconButton>
         ), });
 
-        const tempSubscription = fetchMesheryOperatorStatus({ k8scontextID : contextId }).subscribe({
-          next : (res) => {
-            _setOperatorState(updateCtxInfo(contextId, res))
-            tempSubscription.unsubscribe();
-          },
-          error : (err) => console.log("error at operator scan: " + err),
-        })
+      const tempSubscription = fetchMesheryOperatorStatus({ k8scontextID : contextId }).subscribe({
+        next : (res) => {
+          _setOperatorState(updateCtxInfo(contextId, res))
+          tempSubscription.unsubscribe();
+        },
+        error : (err) => console.log("error at operator scan: " + err),
+      })
 
     }, variables);
   };
@@ -425,8 +376,8 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
     const operator = _operatorState.find(op => op.contextID === ctxId);
     const operatorStatus = operator.operatorStatus;
     return {
-      operatorState: operatorStatus.status==="ENABLED",
-      operatorVersion: operatorStatus.version,
+      operatorState : operatorStatus.status==="ENABLED",
+      operatorVersion : operatorStatus.version,
     }
   }
 
@@ -435,34 +386,34 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
     const operatorStatus = operator.operatorStatus;
 
     function getMeshSyncStats() {
-      if(!operatorStatus) return {};
-      const {controllers} = operatorStatus;
+      if (!operatorStatus) return {};
+      const { controllers } = operatorStatus;
       // meshsync is at 1st idx
-      const {status, version} = controllers[1];
+      const { status, version } = controllers[1];
       return {
-        meshSyncState: status,
-        meshSyncVersion: version
+        meshSyncState : status,
+        meshSyncVersion : version
       }
     }
 
     function getBrokerStats() {
-      if(!operatorStatus) return {};
-      const {controllers} = operatorStatus;
+      if (!operatorStatus) return {};
+      const { controllers } = operatorStatus;
       // broker is at 0th idx
-      const {status, version} = controllers[0];
+      const { status, version } = controllers[0];
       return {
-        natsState: status,
-        natsVersion: version
+        natsState : status,
+        natsVersion : version
       }
     }
 
     const defaultState = {
-      operatorState: false,
-      operatorVersion: null,
-      meshSyncState: "Not Active",
-      meshSyncVersion: "Not Available",
-      natsState: "Not Active",
-      natsVersion: "Not Avaiable"
+      operatorState : false,
+      operatorVersion : null,
+      meshSyncState : "Not Active",
+      meshSyncVersion : "Not Available",
+      natsState : "Not Active",
+      natsVersion : "Not Avaiable"
     }
 
     const actualOperatorState = {
@@ -580,7 +531,6 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
                   <Switch
                     checked={getOperatorStatus(contexts[tableMeta.rowIndex].id)?.operatorState}
                     onClick={(e) => handleOperatorSwitch(tableMeta.rowIndex, e.target.checked)}
-                    disabled={operatorProcessing[tableMeta.rowIndex]}
                     name="OperatorSwitch"
                     color="primary"
                   />
@@ -622,7 +572,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
 
     renderExpandableRow : (rowData, rowMetaData) => {
       const contextId = contexts[rowMetaData.rowIndex].id;
-      const {meshSyncState, meshSyncVersion, natsState, natsVersion, operatorState, operatorVersion} = getContextStatus(contextId);
+      const { meshSyncState, meshSyncVersion, natsState, natsVersion, operatorState, operatorVersion } = getContextStatus(contextId);
       return (
         <NoSsr>
           <TableCell colSpan={6}>
@@ -795,7 +745,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
                     </div>
                   </Paper>
                 </TableCell>
-                
+
                 {/* </TableRow> */}
               </Table>
             </TableContainer>
@@ -845,33 +795,6 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
                 ), }}
             />
           </FormGroup>
-          {/* <Dialog
-            open={open}
-            onClose={handleClose}
-            aria-labelledby="alert-dialog-title"
-            aria-describedby="alert-dialog-description"
-            className={classes.dialogBox}
-          >
-            <DialogContent>
-              <DialogContentText className={ classes.subtitle }>
-                <Typography>
-                    Available Contexts
-                </Typography>
-                {
-                  toUploadContexts.map((ctx) => (
-                    <Chip
-                      label={ctx.name}
-                      // onDelete={() => handleReconfigure(ctx.id)}
-                      onClick={() => handleKubernetesClick(data[tableMeta.rowIndex].id, tableMeta.rowIndex)}
-                      icon={<img src="/static/img/kubernetes.svg" className={classes.icon} />}
-                      variant="outlined"
-                      data-cy="chipContextName"
-                    />
-                  ))
-                }
-              </DialogContentText>
-            </DialogContent>
-          </Dialog> */}
         </div>
       </>,
       options : ["CANCEL", "UPLOAD"]
@@ -947,38 +870,6 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
         stateUpdater(NATSVersion, setNATSVersion, res.controller.version, index);
       },
       error : handleError("NATS status could not be retrieved"), });
-
-    // connectToNats().subscribe({
-    //   next : (res) => {
-    //     if (res.connectToNats === "PROCESSING") {
-    //       updateProgress({ showProgress : false });
-    //       enqueueSnackbar(`Reconnecting to NATS...`, {
-    //         variant : "info",
-    //         action : (key) => (
-    //           <IconButton key="close" aria-label="close" color="inherit" onClick={() => closesnackbar(key)}>
-    //             <CloseIcon />
-    //           </IconButton>
-    //         ),
-    //         autohideduration : 7000,
-    //       })
-    //     }
-    //     if (res.connectToNats === "CONNECTED") {
-    //       updateProgress({ showProgress : false });
-    //       enqueueSnackbar(`Successfully connected to NATS`, {
-    //         variant : "success",
-    //         action : (key) => (
-    //           <IconButton key="close" aria-label="close" color="inherit" onClick={() => closesnackbar(key)}>
-    //             <CloseIcon />
-    //           </IconButton>
-    //         ),
-    //         autohideduration : 7000,
-    //       })
-    //     }
-
-    //   },
-    //   error : handleError("Failed to request reconnection with NATS"),
-    // });
-
   };
 
   const handleMeshSyncClick = (index) => {
