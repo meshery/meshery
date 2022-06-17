@@ -508,7 +508,6 @@ func _processPattern(
 
 	// 	return mergeMsgs(resp), fmt.Errorf(mergeMsgs(errs))
 	// }
-
 }
 
 type serviceInfoProvider struct {

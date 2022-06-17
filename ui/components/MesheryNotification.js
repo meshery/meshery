@@ -185,10 +185,10 @@ class MesheryNotification extends React.Component {
 
   componentDidUpdate() {
     const { createStream, k8sConfig, meshAdapters } = this.state;
-    if (!k8sConfig.clusterConfigured || meshAdapters.length === 0) {
+    if (k8sConfig.length === 0 || meshAdapters.length === 0) {
       this.closeEventStream();
     }
-    if (createStream && k8sConfig.clusterConfigured && typeof meshAdapters !== 'undefined' && meshAdapters.length > 0) {
+    if (createStream && k8sConfig.length > 0 && typeof meshAdapters !== 'undefined' && meshAdapters.length > 0) {
       this.startEventStream();
     }
   }

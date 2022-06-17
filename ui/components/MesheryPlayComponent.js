@@ -56,18 +56,12 @@ class MesheryPlayComponent extends React.Component {
   constructor(props) {
     super(props);
 
-    const { k8sconfig, meshAdapters } = props;
+    const {  meshAdapters } = props;
     let adapter = {};
-    if (meshAdapters && meshAdapters.length > 0) {
+    if (meshAdapters && meshAdapters.size > 0) {
       adapter = meshAdapters[0];
     }
     this.state = {
-      k8sconfig,
-      kts : new Date(),
-
-      meshAdapters,
-      mts : new Date(),
-
       adapter,
     };
   }
@@ -75,10 +69,12 @@ class MesheryPlayComponent extends React.Component {
   handleRouteChange =  () => {
     const queryParam = this.props?.router?.query?.adapter;
     if (queryParam) {
-      const selectedAdapter = this.state.meshAdapters.find(({ adapter_location }) => adapter_location === queryParam);
+      const selectedAdapter = this.props.meshAdapters.find(({ adapter_location }) => adapter_location === queryParam);
       if (selectedAdapter) {
         this.setState({ adapter : selectedAdapter })
       }
+    } else if (this.props.meshAdapters.size > 0) {
+      this.setState({ adapter : this.props.meshAdapters.get(0) })
     }
   }
 
@@ -89,44 +85,15 @@ class MesheryPlayComponent extends React.Component {
 
   componentDidUpdate(prevProps) {
     // update the adapter when the meshadapters props are changed
-    if (prevProps.meshAdapters?.length !== this.props.meshAdapters.length) {
-      this.handleRouteChange()
+    if (prevProps.meshAdapters?.size !== this.props.meshAdapters?.size
+      && this.props.meshAdapters.size > 0
+    ) {
+      this.setState({ adapter : this.props.meshAdapters.get(0) })
     }
   }
 
   componentWillUnmount() {
     this.props.router.events.off('routeChangeComplete', this.handleRouteChange)
-  }
-
-  static getDerivedStateFromProps(props, state) {
-    let { meshAdapters, meshAdaptersts, k8sconfig, selectedAdapter } = props;
-    let adapter  = state.adapter;
-    let aName = selectedAdapter.toLowerCase()
-    if (meshAdapters && meshAdapters.length > 0) {
-      adapter = meshAdapters.filter((meshadapters) => {
-        return aName ===  meshadapters.name.toLowerCase()
-      });
-    }
-    const st = {};
-    if (meshAdaptersts > state.mts) {
-      st.meshAdapters = meshAdapters;
-      st.mts = meshAdaptersts;
-      if (meshAdapters && meshAdapters.length > 0) {
-        st.adapter = adapter[0];
-      }
-    }
-    if (k8sconfig.ts > state.kts) {
-      st.inClusterConfig = k8sconfig.inClusterConfig;
-      st.k8sfile = k8sconfig.k8sfile;
-      st.contextName = k8sconfig.contextName;
-      st.clusterConfigured = k8sconfig.clusterConfigured;
-      st.configuredServer = k8sconfig.configuredServer;
-      st.kts = props.ts;
-    }
-    if (adapter.length > 0) {
-      st.adapter = adapter[0];
-    }
-    return st;
   }
 
   handleConfigure = () => {
@@ -147,13 +114,12 @@ class MesheryPlayComponent extends React.Component {
   handleAdapterChange = () => {
     const self = this;
     return (event) => {
-      const { meshAdapters } = self.state;
-      const { setAdapter, } = self.props;
+      const { setAdapter,meshAdapters } = self.props;
       if (event.target.value !== "") {
         const selectedAdapter = meshAdapters.filter(({ adapter_location }) => adapter_location === event.target.value);
-        if (typeof selectedAdapter !== "undefined" && selectedAdapter.length === 1) {
-          self.setState({ adapter : selectedAdapter[0] });
-          setAdapter({ selectedAdapter : selectedAdapter[0].name });
+        if (selectedAdapter && selectedAdapter.size === 1) {
+          self.setState({ adapter : selectedAdapter.get(0) });
+          setAdapter({ selectedAdapter : selectedAdapter.get(0).name });
         }
       }
     };
@@ -183,10 +149,10 @@ class MesheryPlayComponent extends React.Component {
   }
 
   render() {
-    const { classes, k8sconfig, meshAdapters } = this.props;
+    const { classes,  meshAdapters } = this.props;
     let { adapter } = this.state;
 
-    if (k8sconfig.clusterConfigured === false || meshAdapters.length === 0) {
+    if (meshAdapters.size === 0) {
       return (
         <NoSsr>
           <React.Fragment>
@@ -201,10 +167,6 @@ class MesheryPlayComponent extends React.Component {
       );
     }
 
-    if (!adapter) {
-      this.setState({ adapter : meshAdapters[0] })
-    }
-
     if (this.props.adapter && this.props.adapter !== "") {
       const indContent = this.renderIndividualAdapter();
       if (indContent !== "") {
@@ -214,7 +176,6 @@ class MesheryPlayComponent extends React.Component {
 
     const self = this;
     const imageIcon = self.pickImage(adapter);
-    let adapCount = 0;
     return (
       <NoSsr>
         <React.Fragment>
@@ -247,17 +208,8 @@ class MesheryPlayComponent extends React.Component {
             </Grid>
           </div>
           <Divider variant="fullWidth" light />
-          <Divider variant="fullWidth" light />
-          {meshAdapters.forEach((adap) => {
-            if (adap.adapter_location === this.props.adapter) {
-              adapter = adap;
-              meshAdapters.forEach((ad) => {
-                if (ad.name == adap.name) adapCount += 1;
-              });
-            }
-          })}
           {adapter && adapter.adapter_location && (
-            <MesheryAdapterPlayComponent adapter={adapter} adapCount={adapCount} adapter_icon={imageIcon} />
+            <MesheryAdapterPlayComponent adapter={adapter} adapter_icon={imageIcon} />
           )}
         </React.Fragment>
       </NoSsr>
