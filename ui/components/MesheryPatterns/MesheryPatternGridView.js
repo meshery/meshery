@@ -10,7 +10,7 @@ import FILE_OPS from "../../utils/configurationFileHandlersEnum";
 
 const INITIAL_GRID_SIZE = { xl : 4, md : 6, xs : 12 };
 
-function PatternCardGridItem({ pattern, handleDeploy, handleSubmit, setSelectedPatterns }) {
+function PatternCardGridItem({ pattern, handleDeploy, handleUnDeploy, handleSubmit, setSelectedPatterns }) {
   const [gridProps, setGridProps] = useState(INITIAL_GRID_SIZE);
   const [yaml, setYaml] = useState(pattern.pattern_file);
 
@@ -25,6 +25,7 @@ function PatternCardGridItem({ pattern, handleDeploy, handleSubmit, setSelectedP
         requestFullSize={() => setGridProps({ xl : 12, md : 12, xs : 12 })}
         requestSizeRestore={() => setGridProps(INITIAL_GRID_SIZE)}
         handleDeploy={() => handleDeploy(pattern.pattern_file)}
+        handleUnDeploy={() => handleUnDeploy(pattern.pattern_file)}
         deleteHandler={() => handleSubmit({ data : yaml, id : pattern.id, type : FILE_OPS.DELETE ,name : pattern.name })}
         updateHandler={() => handleSubmit({ data : yaml, id : pattern.id, type : FILE_OPS.UPDATE ,name : pattern.name })}
         setSelectedPatterns={() => setSelectedPatterns({ pattern : pattern, show : true })}
@@ -52,6 +53,7 @@ const useStyles = makeStyles(() => ({
  *  pattern_file: string,
  * }>,
  *  handleDeploy: (pattern_file: any) => void,
+ *  handleUnDeploy: (pattern_file: any) => void,
  *  handleSubmit: (data: any, id: string, name: string, type: string) => void,
  *  setSelectedPattern : ({show: boolean, pattern:any}) => void,
  *  selectedPattern: {show : boolean, pattern : any},
@@ -61,7 +63,7 @@ const useStyles = makeStyles(() => ({
  * }} props props
  */
 
-function MesheryPatternGrid({ patterns=[],handleDeploy,handleSubmit, setSelectedPattern, selectedPattern, pages = 1,setPage, selectedPage }) {
+function MesheryPatternGrid({ patterns=[],handleDeploy, handleUnDeploy, handleSubmit, setSelectedPattern, selectedPattern, pages = 1,setPage, selectedPage }) {
 
   const classes = useStyles()
   return (
@@ -76,6 +78,7 @@ function MesheryPatternGrid({ patterns=[],handleDeploy,handleSubmit, setSelected
             key={pattern.id}
             pattern={pattern}
             handleDeploy={handleDeploy}
+            handleUnDeploy={handleUnDeploy}
             handleSubmit={handleSubmit}
             setSelectedPatterns={setSelectedPattern}
           />

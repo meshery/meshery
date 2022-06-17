@@ -20,10 +20,10 @@ var connectionTrackerSingleton = model.NewK8sConnctionTracker()
 var (
 	MeshSyncSubscriptionError = model.Error{
 		Description: "Failed to get MeshSync data",
-		Code:        ErrMeshsyncSubscriptionCode,
+		Code:        ErrResolverMeshsyncSubscriptionCode,
 	}
 	MeshSyncMesheryClientMissingError = model.Error{
-		Code:        ErrMeshsyncSubscriptionCode,
+		Code:        ErrResolverMeshsyncSubscriptionCode,
 		Description: "Cannot find Meshery Client",
 	}
 )
