@@ -276,16 +276,14 @@ const ExtensionsComponent = () => {
                   </div> : <Meshery height={70} width={72} />}
                 </a>
               </div>
-              {!!isLoggedIn ? <Button sx={{ marginTop: "0.3rem" }} variant="contained" disabled={isLoggedIn} color="primary" component="span" onClick={() => {
+              {!isLoggedIn ? <Button sx={{ marginTop: "0.3rem" }} variant="contained" disabled={isLoggedIn} color="primary" component="span" onClick={() => {
                 window.ddClient.host.openExternal("https://meshery.layer5.io?source=aHR0cDovL2xvY2FsaG9zdDo3ODc3L3Rva2VuL3N0b3Jl&provider_version=v0.3.14")
               }}>
                 Login
               </Button> : (<div>
-                {/* {userName && */}
-                <Typography sx={{ marginBottom: "1rem", whiteSpace: "nowrap" }}>
-                  User: {userName}warunicorn19
-                </Typography>
-                {/* } */}
+                {userName &&<Typography sx={{ marginBottom: "1rem", whiteSpace: "nowrap" }}>
+                  User: {userName}
+                </Typography>}
                 <LogoutButton variant="p" component="p" align="start">
         <Button onClick={logout} color="secondary" component="span" variant="contained">Logout</Button>
       </LogoutButton></div>
@@ -295,7 +293,7 @@ const ExtensionsComponent = () => {
           </ExtensionWrapper>
 
 
-          {!isLoggedIn && <ExtensionWrapper className="second-step" sx={{ backgroundColor: isDarkTheme ? "#393F49" : "#D7DADE" }}>
+          {isLoggedIn && <ExtensionWrapper className="second-step" sx={{ backgroundColor: isDarkTheme ? "#393F49" : "#D7DADE" }}>
             <AccountDiv>
               <Typography sx={{ marginBottom: "2rem", whiteSpace: " nowrap" }}>Import Compose App</Typography>
               <div style={{ paddingBottom: "2rem" }}>
@@ -309,7 +307,7 @@ const ExtensionsComponent = () => {
             </AccountDiv>
           </ExtensionWrapper>
           }
-          {!isLoggedIn &&
+          {!!isLoggedIn &&
             <div style={{ paddingTop: isLoggedIn ? "1.2rem" : null }}>
               <ExtensionWrapper className="first-step" sx={{ height: ["22rem", "17rem", "14rem"], backgroundColor: isDarkTheme ? "#393F49" : "#D7DADE" }} >
                 <div>
@@ -321,7 +319,7 @@ const ExtensionsComponent = () => {
                         <Typography sx={{ whiteSpace: "nowrap" }}>{adapters[adapter.name].displayName}</Typography>
                         <Switch checked={switchesState ? switchesState[adapter.name] : false} disabled={!isLoggedIn} onChange={() => {
                           submitConfig(adapter.name, switchesState[adapter.name], meshAdapters)
-                          setSwitchesState({ ...switchesState, [adapter.name]: switchesState[adapter.name] })
+                          setSwitchesState({ ...switchesState, [adapter.name]: !switchesState[adapter.name] })
                         }
                         } color="primary"></Switch>
                       </StyledDiv>
@@ -332,7 +330,7 @@ const ExtensionsComponent = () => {
               </ExtensionWrapper>
               <Tooltip title="Meshery server version">
                 <VersionText variant="p" component="p" align="end">
-                  {mesheryVersion}v0.6.0.rc-5x
+                  {mesheryVersion}
                 </VersionText>
               </Tooltip>
             </div>}
