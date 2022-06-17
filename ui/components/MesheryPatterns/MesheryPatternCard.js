@@ -85,6 +85,10 @@ const useStyles= makeStyles(() => ({
     width : "24px",
     height : "24px",
     marginRight : "5px"
+  },
+  undeployButton: {
+    backgroundColor:"#B32700", 
+    color: "#ffffff"
   }
 }))
 
@@ -246,7 +250,7 @@ function MesheryPatternCard({
 
               <Button
                 variant="contained"
-                color="primary"
+                className={classes.undeployButton}
                 onClick={(ev) =>
                   genericClickHandler(ev, handleUnDeploy)
                 }

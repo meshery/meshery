@@ -34,7 +34,7 @@ export const ExtensionWrapper = styled('div')(({ theme }) => ({
   display: "flex",
   justifyContent: 'center',
   alignItems: 'center',
-  height: "12rem",
+  height: "14rem",
   borderRadius: "20px ",
   padding: "2rem",
   textAlign: "center",
@@ -73,8 +73,6 @@ export const VersionText = styled(Typography)(({ theme }) => ({
 }));
 
 export const LogoutButton = styled('div')(({ theme }) => ({
-  padding: "12px 1.5rem",
-  paddingBottom: "0",
+  transform:" translateX(39%)",
   width: "fit-content",
-  marginRight: "auto",
 }));
