@@ -137,7 +137,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
                 setOperatorState(res, index);
               },
               error : (err) => console.log("error at operator scan: " + err),
-            });
+            }).unsubscribe();
           })
           setData(tableInfo);
         }
@@ -362,7 +362,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
         setOperatorState(res, index);
       },
       error : (err) => console.log("error at operator scan: " + err),
-    });
+    }).unsubscribe();
   };
 
   const handleConfigDelete = (id, index) => {
