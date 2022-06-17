@@ -71,3 +71,10 @@ export const VersionText = styled(Typography)(({ theme }) => ({
   width: "fit-content",
   marginLeft: "auto",
 }));
+
+export const LogoutButton = styled('div')(({ theme }) => ({
+  padding: "12px 1.5rem",
+  paddingBottom: "0",
+  width: "fit-content",
+  marginRight: "auto",
+}));
