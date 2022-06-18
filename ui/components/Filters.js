@@ -11,9 +11,7 @@ import {
   DialogActions,
   Divider,
   Tooltip,
-  Typography,
-  Paper,
-  Button
+  Typography
 } from "@material-ui/core";
 import { UnControlled as CodeMirror } from "react-codemirror2";
 import DeleteIcon from "@material-ui/icons/Delete";
@@ -62,22 +60,6 @@ const styles = (theme) => ({
     justifySelf : "flex-end",
     marginLeft : "auto",
     paddingLeft : "1rem"
-  },
-  noDesignAddButton : {
-    marginTop : "0.5rem"
-  },
-  noDesignContainer : {
-    padding : "2rem",
-    display : "flex",
-    justifyContent : "center",
-    alignItems : "center",
-    flexDirection : "column",
-  },
-  noDesignButtons : {
-    display : "flex",
-    justifyContent : "center",
-    alignItems : "center",
-    flexDirection : "row",
   },
 });
 
