@@ -1,7 +1,7 @@
 //@ts-check
 import React, { useState } from "react";
 import {
-  Avatar, Dialog, DialogActions, DialogContent, DialogTitle, Divider, Grid, IconButton, Tooltip, Typography
+  Dialog, DialogActions, DialogContent, DialogTitle, Divider, Grid, IconButton, Tooltip, Typography
 } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import DeleteIcon from "@material-ui/icons/Delete";
@@ -159,10 +159,7 @@ function FiltersCard({
   handleDeploy,
   updateHandler,
   deleteHandler,
-  setSelectedFilters,
   setYaml,
-  // requestFullSize,
-  // requestSizeRestore,
 }) {
 
   function genericClickHandler(ev, fn) {
@@ -299,15 +296,11 @@ function FiltersCard({
 
             <Grid item xs={12}>
               <div className={classes.updateDeleteButtons} >
-
-                {/* Save button */}
                 <IconButton onClick={(ev) =>
                   genericClickHandler(ev,updateHandler)
                 }>
                   <Save color="primary" />
                 </IconButton>
-
-                {/* Delete Button */}
                 <IconButton onClick={(ev) =>
                   genericClickHandler(ev,deleteHandler)
                 }>

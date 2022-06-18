@@ -51,7 +51,6 @@ const useStyles = makeStyles(() => ({
  *  filter_file: string,
  * }>,
  *  handleDeploy: (filter_file: any) => void,
- *  handleUnDeploy: (filter_file: any) => void,
  *  handleSubmit: (data: any, id: string, name: string, type: string) => void,
  *  setSelectedFilter : ({show: boolean, filter:any}) => void,
  *  selectedFilter: {show : boolean, filter : any},
@@ -61,7 +60,7 @@ const useStyles = makeStyles(() => ({
  * }} props props
  */
 
-function FiltersGrid({ filters=[],handleDeploy, handleUnDeploy, handleSubmit, setSelectedFilter, selectedFilter, pages = 1,setPage, selectedPage }) {
+function FiltersGrid({ filters=[],handleDeploy, handleSubmit, setSelectedFilter, selectedFilter, pages = 1,setPage, selectedPage }) {
 
   const classes = useStyles()
   return (

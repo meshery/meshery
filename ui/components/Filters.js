@@ -91,7 +91,7 @@ const useStyles = makeStyles(() => ({
  * grid and table views
  * @param {{ view: TypeView, changeView: (view: TypeView) => void }} props
  */
- function ViewSwitch({ view, changeView }) {
+function ViewSwitch({ view, changeView }) {
   console.log(view)
   return (
     <ToggleButtonGroup
@@ -102,14 +102,14 @@ const useStyles = makeStyles(() => ({
       aria-label="Switch View"
     >
       <Tooltip title="Grid view">
-      <ToggleButton value="grid">
-        <GridOnIcon />
-      </ToggleButton>
+        <ToggleButton value="grid">
+          <GridOnIcon />
+        </ToggleButton>
       </Tooltip>
       <Tooltip title="Table view">
-      <ToggleButton value="table">
-        <TableChartIcon />
-      </ToggleButton>
+        <ToggleButton value="table">
+          <TableChartIcon />
+        </ToggleButton>
       </Tooltip>
     </ToggleButtonGroup>
   )
