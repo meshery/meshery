@@ -183,7 +183,7 @@ function YAMLEditor({ filter, onClose, onSubmit }) {
 }
 
 function resetSelectedFilter() {
-  return { show : false, pattern : null };
+  return { show : false, filter : null };
 }
 
 function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, classes, selectedK8sContexts }) {
