@@ -11,7 +11,9 @@ import {
   DialogActions,
   Divider,
   Tooltip,
-  Typography
+  Typography,
+  Paper,
+  Button
 } from "@material-ui/core";
 import { UnControlled as CodeMirror } from "react-codemirror2";
 import DeleteIcon from "@material-ui/icons/Delete";
@@ -30,7 +32,11 @@ import dataFetch from "../lib/data-fetch";
 import UploadImport from "./UploadImport";
 import FullscreenIcon from '@material-ui/icons/Fullscreen';
 import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
-import FILE_OPS from "../utils/configurationFileHandlersEnum"
+import TableChartIcon from "@material-ui/icons/TableChart";
+import FILE_OPS from "../utils/configurationFileHandlersEnum";
+import GridOnIcon from "@material-ui/icons/GridOn";
+import { ToggleButton, ToggleButtonGroup } from "@material-ui/lab";
+import FiltersGrid from "./MesheryFilters/FiltersGrid";
 import { trueRandom } from "../lib/trueRandom";
 import { ctxUrl } from "../utils/multi-ctx";
 
@@ -47,7 +53,15 @@ const styles = (theme) => ({
     justifyContent : "flex-start",
     alignItems : "center",
     whiteSpace : "nowrap",
-    margin : "1rem auto 2rem auto"
+    margin : "1rem 0 2rem 1rem"
+  },
+  topToolbar : {
+    display : "flex"
+  },
+  viewSwitchButton : {
+    justifySelf : "flex-end",
+    marginLeft : "auto",
+    paddingLeft : "1rem"
   },
 });
 
@@ -68,6 +82,41 @@ const useStyles = makeStyles(() => ({
   },
 
 }))
+
+/**
+ * Type Definition for View Type
+ * @typedef {"grid" | "table"} TypeView
+ */
+
+/**
+ * ViewSwitch component renders a switch for toggling between
+ * grid and table views
+ * @param {{ view: TypeView, changeView: (view: TypeView) => void }} props
+ */
+ function ViewSwitch({ view, changeView }) {
+  console.log(view)
+  return (
+    <ToggleButtonGroup
+      size="small"
+      value={view}
+      exclusive
+      onChange={(_, newView) => changeView(newView)}
+      aria-label="Switch View"
+    >
+      <Tooltip title="Grid view">
+      <ToggleButton value="grid">
+        <GridOnIcon />
+      </ToggleButton>
+      </Tooltip>
+      <Tooltip title="Table view">
+      <ToggleButton value="table">
+        <TableChartIcon />
+      </ToggleButton>
+      </Tooltip>
+    </ToggleButtonGroup>
+  )
+}
+
 
 function TooltipIcon({ children, onClick, title }) {
   return (
@@ -135,6 +184,10 @@ function YAMLEditor({ filter, onClose, onSubmit }) {
   );
 }
 
+function resetSelectedFilter() {
+  return { show : false, pattern : null };
+}
+
 function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, classes, selectedK8sContexts }) {
   const [page, setPage] = useState(0);
   const [search] = useState("");
@@ -143,8 +196,12 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
   const modalRef = useRef(null);
   const [pageSize, setPageSize] = useState(10);
   const [filters, setFilters] = useState([]);
+  const [selectedFilter, setSelectedFilter] = useState(resetSelectedFilter());
   const [selectedRowData, setSelectedRowData] = useState(null);
-  const [close, handleClose] = useState(true);
+  const [viewType, setViewType] = useState(
+    /**  @type {TypeView} */
+    ("grid")
+  );
   const DEPLOY_URL = "/api/filter/deploy";
 
   const getMuiTheme = () => createTheme({
@@ -217,7 +274,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
    */
   useEffect(() => {
     fetchFilters(page, pageSize, search, sortOrder);
-  }, []);
+  }, [page, pageSize, search, sortOrder]);
 
   /**
    * fetchFilters constructs the queries based on the parameters given
@@ -322,7 +379,6 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
         () => {
           console.log("FilterFile API", `/api/filter`);
           updateProgress({ showProgress : false });
-          handleClose(true);
           fetchFilters(page, pageSize, search, sortOrder);
         },
         // handleError
@@ -577,26 +633,56 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
   };
 
   return (
-    <NoSsr>
-      {selectedRowData && Object.keys(selectedRowData).length > 0 && (
-        <YAMLEditor filter={selectedRowData} onClose={resetSelectedRowData()} onSubmit={handleSubmit} />
-      )}
-      <div className={classes.createButton}>
-        <div className={classes.UploadImport}>
-          <UploadImport aria-label="URL upload button" handleUpload={urlUploadHandler} handleImport={uploadHandler} configuration="Filter" modalStatus={close} />
+    <>
+
+      <NoSsr>
+        {selectedRowData && Object.keys(selectedRowData).length > 0 && (
+          <YAMLEditor filter={selectedRowData} onClose={resetSelectedRowData()} onSubmit={handleSubmit} />
+        )}
+        <div className={classes.topToolbar} >
+          {!selectedFilter.show && (filters.length>0 || viewType==="table") && <div className={classes.createButton}>
+            <div>
+              <UploadImport aria-label="URL upload button" handleUpload={urlUploadHandler} handleImport={uploadHandler} configuration={undefined} modalStatus={undefined}  />
+            </div>
+
+          </div>
+          }
+          {!selectedFilter.show &&
+          <div className={classes.viewSwitchButton}>
+            <ViewSwitch view={viewType} changeView={setViewType} />
+          </div>
+          }
         </div>
-      </div>
-      <MuiThemeProvider theme={getMuiTheme()}>
-        <MUIDataTable
-          title={<div className={classes.tableHeader}>Filters</div>}
-          data={filters}
-          columns={columns}
-          // @ts-ignore
-          options={options}
-        />
-      </MuiThemeProvider>
-      <PromptComponent ref={modalRef} />
-    </NoSsr>
+        {
+          !selectedFilter.show && viewType==="table" && <MuiThemeProvider theme={getMuiTheme() }>
+            <MUIDataTable
+              title={<div className={classes.tableHeader}>Filters</div>}
+              data={filters}
+              columns={columns}
+              // @ts-ignore
+              options={options}
+              className={classes.muiRow}
+            />
+          </MuiThemeProvider>
+        }
+        {
+          !selectedFilter.show && viewType==="grid" &&
+            // grid vieww
+            <FiltersGrid
+              filters={filters}
+              handleDeploy={handleDeploy}
+              handleSubmit={handleSubmit}
+              setSelectedFilter={setSelectedFilter}
+              selectedFilter={selectedFilter}
+              pages={Math.ceil(count / pageSize)}
+              setPage={setPage}
+              selectedPage={page}
+            />
+        }
+
+        <PromptComponent ref={modalRef} />
+      </NoSsr>
+    </>
   );
 }
 
