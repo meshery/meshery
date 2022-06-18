@@ -399,7 +399,7 @@ As a key aspect of Meshery, its integrations with other systems are routinely te
     <!-- display tests from the stable channel -->
 
     {% for group in sorted_tests_group %}
-      {% assign items = group.items | sort: "meshery-component-version" | reverse %}
+      {% assign items = group.items | sort: "timestamp" | reverse %}
       {% for item in items limit: 1 %}
         {% if item.meshery-component-version != "edge" %}
           {% if item.overall-status == "passing" %}
