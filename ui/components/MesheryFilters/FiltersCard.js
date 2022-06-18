@@ -33,7 +33,7 @@ const useStyles= makeStyles(() => ({
     minHeight : "6rem",
     position : "relative"
   },
-  updateDeleteButtons : {
+  deleteButton : {
     width : "fit-content",
     margin : "10 0 0 auto",
     position : "absolute",
@@ -282,7 +282,7 @@ function FiltersCard({
             </Grid>
 
             <Grid item xs={12}>
-              <div className={classes.updateDeleteButtons} >
+              <div className={classes.deleteButton} >
                 <IconButton onClick={(ev) =>
                   genericClickHandler(ev,deleteHandler)
                 }>
