@@ -23,6 +23,9 @@ var upgrader = websocket.Upgrader{
 	WriteBufferSize: 1024,
 }
 
+const AuthenticatedMsg = "Authenticated"
+const UnauthenticatedMsg = "Unauthenticated"
+
 // Hop-by-hop headers. These are removed when sent to the backend.
 // http://www.w3.org/Protocols/rfc2616/rfc2616-sec13.html
 var hopHeaders = []string{
@@ -34,6 +37,12 @@ var hopHeaders = []string{
 	"Trailers",
 	"Transfer-Encoding",
 	"Upgrade",
+}
+
+func enableCors(w *http.ResponseWriter) {
+	(*w).Header().Set("Access-Control-Allow-Origin", "*")
+	(*w).Header().Set("Access-Control-Allow-Headers", "Accept, Accept-Language,Content-Type, Access-Control-Request-Method")
+	(*w).Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
 }
 
 func copyHeader(dst, src http.Header) {
@@ -75,7 +84,6 @@ func handleWsMessage(conn *websocket.Conn) {
 		}
 		// print out that message for clarity
 		fmt.Println(string(p))
-
 		if err := conn.WriteMessage(messageType, p); err != nil {
 			log.Println(err)
 			return
@@ -92,7 +100,7 @@ func (p *Proxy) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
 
 	client := &http.Client{}
 
-	wr.Header().Set("Access-Control-Allow-Origin", "*")
+	enableCors(&wr)
 
 	switch req.URL.Path {
 	case "/ws":
@@ -106,7 +114,12 @@ func (p *Proxy) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
 
 		for res := range p.authWsChan {
 			if res == true {
-				err = ws.WriteMessage(1, []byte("Authenticated"))
+				err = ws.WriteMessage(1, []byte(AuthenticatedMsg))
+				if err != nil {
+					log.Println(err)
+				}
+			} else {
+				err = ws.WriteMessage(1, []byte(UnauthenticatedMsg))
 				if err != nil {
 					log.Println(err)
 				}
@@ -114,7 +127,7 @@ func (p *Proxy) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
 		}
 
 	case "/token/store":
-		if req.Method == "GET" {
+		if req.Method == http.MethodGet {
 			values := req.URL.Query()
 			var token string
 			if values["token"] != nil {
@@ -131,20 +144,26 @@ func (p *Proxy) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
 			} else {
 				wr.Header().Set("Content-Type", "text/html; charset=utf-8")
 				htmlTemplate := `<html>
+
 <head>
   <title>Meshery | Docker Desktop</title>
 </head>
+
 <body>
   <script type="text/javascript">
-   window.open('docker-desktop://dashboard/open','_self')
+    window.open('docker-desktop://dashboard/open', '_self')
   </script>
-  <p>You have been authenticated successfully and can close this window now.</p>
+  <p>You have been authenticated succesfully, you can safely close this window.</p>
+
 </body>
-</html>
-        `
+
+</html>`
 				fmt.Fprint(wr, htmlTemplate)
+				// http.ServeFile(wr, req, "../assets/auth.html")
+				return
 			}
 		}
+
 	case "/token":
 		if req.Method == http.MethodGet {
 			if p.token != "" {
@@ -154,11 +173,13 @@ func (p *Proxy) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
 			}
 			return
 		}
-	case "/token/delete":
-		p.token = ""
-		log.Println("Deleting the existing token: ", p.token)
-		wr.Write([]byte(""))
-		return
+		if req.Method == http.MethodDelete {
+			p.token = ""
+			log.Println("Deleting the existing token: ", p.token)
+			p.authWsChan <- false
+			wr.Write([]byte(""))
+			return
+		}
 
 	default:
 		//http: Request.RequestURI can't be set in client requests.
