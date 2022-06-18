@@ -5,7 +5,6 @@ import {
 } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import DeleteIcon from "@material-ui/icons/Delete";
-import Save from "@material-ui/icons/Save";
 import Fullscreen from "@material-ui/icons/Fullscreen";
 import Moment from "react-moment";
 import FlipCard from "../FlipCard";
@@ -94,7 +93,6 @@ const YAMLDialog = ({
   toggleFullScreen,
   filter_file,
   setYaml,
-  updateHandler,
   deleteHandler
 }) => {
   const classes = useStyles()
@@ -128,15 +126,6 @@ const YAMLDialog = ({
       </DialogContent>
       <Divider variant="fullWidth" light />
       <DialogActions>
-        <Tooltip title="Update Filter">
-          <IconButton
-            aria-label="Update"
-            color="primary"
-            onClick={updateHandler}
-          >
-            <Save />
-          </IconButton>
-        </Tooltip>
         <Tooltip title="Delete Filter">
           <IconButton
             aria-label="Delete"
@@ -157,7 +146,6 @@ function FiltersCard({
   created_at,
   filter_file,
   handleDeploy,
-  updateHandler,
   deleteHandler,
   setYaml,
 }) {
@@ -184,7 +172,6 @@ function FiltersCard({
           toggleFullScreen={toggleFullScreen}
           filter_file={filter_file}
           setYaml={setYaml}
-          updateHandler={updateHandler}
           deleteHandler={deleteHandler}
         />
       }
@@ -296,11 +283,6 @@ function FiltersCard({
 
             <Grid item xs={12}>
               <div className={classes.updateDeleteButtons} >
-                <IconButton onClick={(ev) =>
-                  genericClickHandler(ev,updateHandler)
-                }>
-                  <Save color="primary" />
-                </IconButton>
                 <IconButton onClick={(ev) =>
                   genericClickHandler(ev,deleteHandler)
                 }>

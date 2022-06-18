@@ -25,7 +25,6 @@ function FilterCardGridItem({ filter, handleDeploy, handleSubmit, setSelectedFil
         requestSizeRestore={() => setGridProps(INITIAL_GRID_SIZE)}
         handleDeploy={() => handleDeploy(filter.filter_file)}
         deleteHandler={() => handleSubmit({ data : yaml, id : filter.id, type : FILE_OPS.DELETE ,name : filter.name })}
-        updateHandler={() => handleSubmit({ data : yaml, id : filter.id, type : FILE_OPS.UPDATE ,name : filter.name })}
         setSelectedFilters={() => setSelectedFilters({ filter : filter, show : true })}
         setYaml={setYaml}
       />
