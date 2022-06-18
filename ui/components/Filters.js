@@ -63,6 +63,22 @@ const styles = (theme) => ({
     marginLeft : "auto",
     paddingLeft : "1rem"
   },
+  noDesignAddButton : {
+    marginTop : "0.5rem"
+  },
+  noDesignContainer : {
+    padding : "2rem",
+    display : "flex",
+    justifyContent : "center",
+    alignItems : "center",
+    flexDirection : "column",
+  },
+  noDesignButtons : {
+    display : "flex",
+    justifyContent : "center",
+    alignItems : "center",
+    flexDirection : "row",
+  },
 });
 
 const useStyles = makeStyles(() => ({
