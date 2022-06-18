@@ -25,6 +25,7 @@ var upgrader = websocket.Upgrader{
 
 const AuthenticatedMsg = "Authenticated"
 const UnauthenticatedMsg = "Unauthenticated"
+const InitiationSuccessful = "Successfully Initiated ws connection"
 
 // Hop-by-hop headers. These are removed when sent to the backend.
 // http://www.w3.org/Protocols/rfc2616/rfc2616-sec13.html
@@ -94,9 +95,6 @@ func handleWsMessage(conn *websocket.Conn) {
 
 func (p *Proxy) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
 	log.Println(req.RemoteAddr, " ", req.Method, " ", req.URL)
-	if p.authWsChan == nil {
-		p.authWsChan = make(chan bool)
-	}
 
 	client := &http.Client{}
 
@@ -104,26 +102,48 @@ func (p *Proxy) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
 
 	switch req.URL.Path {
 	case "/ws":
+		if p.authWsChan == nil {
+			p.authWsChan = make(chan bool)
+		}
 		upgrader.CheckOrigin = func(r *http.Request) bool { return true }
 
 		ws, err := upgrader.Upgrade(wr, req, nil)
+
+		ws.SetCloseHandler(func(code int, text string) error {
+			close(p.authWsChan)
+			p.authWsChan = nil
+			err := ws.Close()
+			if err != nil {
+				return err
+			}
+			return nil
+		})
 		if err != nil {
 			log.Println(err)
 		}
 		go handleWsMessage(ws)
-
-		for res := range p.authWsChan {
-			if res == true {
-				err = ws.WriteMessage(1, []byte(AuthenticatedMsg))
-				if err != nil {
-					log.Println(err)
-				}
-			} else {
-				err = ws.WriteMessage(1, []byte(UnauthenticatedMsg))
-				if err != nil {
-					log.Println(err)
+		go func() {
+			for res := range p.authWsChan {
+				log.Println("Got msg from authChan: ", res)
+				if res == true {
+					err = ws.WriteMessage(1, []byte(AuthenticatedMsg))
+					log.Println("Sent message to ws client: ", AuthenticatedMsg)
+					if err != nil {
+						log.Println(err)
+					}
+				} else {
+					err = ws.WriteMessage(1, []byte(UnauthenticatedMsg))
+					log.Println("Sent message to ws client: ", UnauthenticatedMsg)
+					if err != nil {
+						log.Println(err)
+					}
 				}
 			}
+		}()
+		err = ws.WriteMessage(1, []byte(InitiationSuccessful))
+		log.Println("Sent message to ws client: ", InitiationSuccessful)
+		if err != nil {
+			log.Println(err)
 		}
 
 	case "/token/store":
@@ -176,6 +196,7 @@ func (p *Proxy) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
 		if req.Method == http.MethodDelete {
 			p.token = ""
 			log.Println("Deleting the existing token: ", p.token)
+			log.Printf("AuthChan: %v", p.authWsChan)
 			p.authWsChan <- false
 			wr.Write([]byte(""))
 			return
