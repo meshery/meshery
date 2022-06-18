@@ -23,6 +23,13 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { LoadComp } from "../LoadingComponent/LoadComp";
 import { LoadingDiv, StyledDiv, AccountDiv, ServiceMeshAdapters, ExtensionWrapper, AdapterDiv, ComponentWrapper, SectionWrapper, VersionText, LogoutButton } from "./styledComponents";
 import { MesheryAnimation } from "../MesheryAnimation/MesheryAnimation";
+import { trueRandom, randomApplicationNameGenerator } from "../../utils"
+
+
+const AuthenticatedMsg = "Authenticated"
+const UnauthenticatedMsg = "Unauthenticated"
+const proxyUrl = "http://127.0.0.1:7877"
+const httpDelete = "DELETE"
 
 
 const adapters = {
@@ -74,15 +81,8 @@ const adapters = {
 }
 
 
-const proxyUrl = "http://127.0.0.1:7877"
 
-export function trueRandom() {
-  return crypto.getRandomValues(new Uint32Array(1))[0] / 2 ** 32;
-}
 
-export function randomPatternNameGenerator() {
-  return "meshery_" + Math.floor(trueRandom() * 100)
-}
 
 const useThemeDetector = () => {
   const getCurrentTheme = () => window.matchMedia("(prefers-color-scheme: dark)").matches;
@@ -108,9 +108,7 @@ const ExtensionsComponent = () => {
   const [token, setToken] = useState()
   const [changing, isChanging] = useState(false)
   const [meshAdapters, setMeshAdapters] = useState(null)
-  const [refetchTokenBool, setRefetchTokenBool] = useState(false)
 
-  const refetchToken = () => setRefetchTokenBool(p => !p)
 
   useEffect(() => {
     if (meshAdapters && meshAdapters.length != 0) {
@@ -123,42 +121,35 @@ const ExtensionsComponent = () => {
 
 
   const logout = () => {
-    fetch(proxyUrl + "/token/delete").then(_ => {
-      refetchToken()
-    }).catch(console.error)
+    fetch(proxyUrl + "/token", { method: httpDelete }).then(console.log).catch(console.error)
   }
 
   useEffect(() => {
-    let ws
+    let ws = new WebSocket("ws://127.0.0.1:7877/ws")
+    ws.onmessage = msg => {
+      if (msg.data == AuthenticatedMsg)
+        setIsLoggedIn(true)
+      if (msg.data == UnauthenticatedMsg) {
+        setIsLoggedIn(false)
+      }
+    }
+    return () => ws.close()
+  }, [])
+
+  useEffect(() => {
     fetch(proxyUrl + "/token").then(res => res.text()).then(res => {
       setToken(res)
       if (res !== "null") {
         setIsLoggedIn(true)
-        fetch("http://localhost:7877/api/user").then(res => res.text()).then(res => setUserName(JSON.parse(res)?.user_id))
+
+        fetch(proxyUrl + "/api/user").then(res => res.text()).then(res => setUserName(JSON.parse(res)?.user_id)).catch(console.error)
         fetch(
-          "http://localhost:7877/api/system/sync",
-          {
-            method: "GET",
-          }).then(res => res.json()).then(data => setMeshAdapters(data.meshAdapters)).catch(console.err)
-      } else {
-        setIsLoggedIn(false)
-        ws = new WebSocket("ws://127.0.0.1:7877/ws")
-        ws.onmessage = msg => {
-          if (msg.data == "Authenticated")
-            setIsLoggedIn(true)
-        }
+          proxyUrl + "/api/system/sync",
+        ).then(res => res.json()).then(data => setMeshAdapters(data.meshAdapters)).catch(console.err)
+        fetch(proxyUrl + "/api/system/version").then(result => result.text()).then(result => setMesheryVersion(JSON.parse(result)?.build)).catch(console.error)
       }
-    }).catch(console.log)
-    return () => { if (ws) ws.close() }
-  }, [isLoggedIn, refetchTokenBool])
-
-  useEffect(() => {
-    fetch(proxyUrl + "/api/system/version").then(result => result.text()).then(result => setMesheryVersion(JSON.parse(result)?.build))
-      .catch((error) => {
-        console.log(error)
-      })
-  })
-
+    }).catch(console.error)
+  }, [isLoggedIn])
 
   const onMouseOver = e => {
     let target = e.target.closest("div");
@@ -171,21 +162,13 @@ const ExtensionsComponent = () => {
     target.style.transition = "all .8s";
     target.style.transform = "scale(1)";
   }
-
   const onClick = e => {
     let target = e.target.closest("div");
     target.style.transition = "all .2s";
     target.style.transform = "scale(0.8)";
     isChanging(true);
     setIsHovered(true);
-    // fetch("http://127.0.0.1:7877/token").then(res => res.text()).then(res => {
-    //   console.log(res)
-    //   window.ddClient.host.openExternal("http://localhost:7877/api/user/token?token=" + res)
-    // }).catch(console.log)
   };
-
-
-
   const submitConfig = (mesh, deprovision = false, meshAdapters) => {
     const targetMesh = meshAdapters.find(msh => msh.name === mesh)
     const deployQuery = targetMesh.ops.find(op => !op.category).key
@@ -225,12 +208,12 @@ const ExtensionsComponent = () => {
     reader.addEventListener("load", (event) => {
 
       let body = { save: true }
-      let name = randomPatternNameGenerator()
+      let name = randomApplicationNameGenerator()
       body = JSON.stringify({
         ...body, application_data: { name, application_file: event.target.result }
       })
 
-      fetch("http://localhost:7877/api/application", {
+      fetch(proxyUrl + "/api/application", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8", },
         body,
