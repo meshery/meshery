@@ -21,68 +21,68 @@ import MesheryIcon from "../../img/meshery-logo/CustomMesheryLogo";
 import { DockerMuiThemeProvider } from '@docker/docker-mui-theme';
 import CssBaseline from '@mui/material/CssBaseline';
 import { LoadComp } from "../LoadingComponent/LoadComp";
-import { LoadingDiv, StyledDiv, AccountDiv, ServiceMeshAdapters, ExtensionWrapper, AdapterDiv, ComponentWrapper, SectionWrapper, VersionDiv, VersionText } from "./styledComponents";
+import { LoadingDiv, StyledDiv, AccountDiv, ServiceMeshAdapters, ExtensionWrapper, AdapterDiv, ComponentWrapper, SectionWrapper, VersionText, LogoutButton } from "./styledComponents";
 import { MesheryAnimation } from "../MesheryAnimation/MesheryAnimation";
+import { trueRandom, randomApplicationNameGenerator } from "../../utils"
+
+
+const AuthenticatedMsg = "Authenticated"
+const UnauthenticatedMsg = "Unauthenticated"
+const proxyUrl = "http://127.0.0.1:7877"
+const httpDelete = "DELETE"
 
 
 const adapters = {
-  'TRAEFIK_MESH': {
-    displayName: "Traefix Mesh",
-    icon: <TraefikIcon width={40} height={40} />,
-    name: 'TRAEFIK_MESH'
-  },
-  'NGINX_SERVICE_MESH': {
-    displayName: "NGINX",
-    icon: <NginxIcon width={38} height={40} />,
-    name: 'NGINX_SERVICE_MESH'
-  },
   'APP_MESH': {
     displayName: "App Mesh",
     icon: <AppmeshIcon width={40} height={40} />,
     name: 'APP_MESH'
-  },
-  'OPEN_SERVICE_MESH': {
-    displayName: "OSM",
-    icon: <OsmIcon width={40} height={40} />,
-    name: 'OPEN_SERVICE_MESH'
-  },
-  'KUMA': {
-    displayName: "Kuma",
-    icon: <KumaIcon width={40} height={40} />,
-    name: 'KUMA'
   },
   'CILIUM_SERVICE_MESH': {
     displayName: "Cilium",
     icon: <CiliumIcon width={40} height={40} />,
     name: 'CILIUM_SERVICE_MESH'
   },
+  'CONSUL': {
+    displayName: "Consul",
+    icon: <ConsulIcon width={40} height={40} />,
+    name: 'CONSUL'
+  },
   'ISTIO': {
     displayName: "Istio",
     icon: <IstioIcon width={40} height={40} />,
     name: 'ISTIO'
+  },
+  'KUMA': {
+    displayName: "Kuma",
+    icon: <KumaIcon width={40} height={40} />,
+    name: 'KUMA'
   },
   'LINKERD': {
     displayName: "Linkerd",
     icon: <LinkerdIcon width={40} height={40} />,
     name: 'LINKERD'
   },
-  'CONSUL': {
-    displayName: "Consul",
-    icon: <ConsulIcon width={40} height={40} />,
-    name: 'CONSUL'
+  'NGINX_SERVICE_MESH': {
+    displayName: "NGINX",
+    icon: <NginxIcon width={38} height={40} />,
+    name: 'NGINX_SERVICE_MESH'
+  },
+  'OPEN_SERVICE_MESH': {
+    displayName: "OSM",
+    icon: <OsmIcon width={40} height={40} />,
+    name: 'OPEN_SERVICE_MESH'
+  },
+  'TRAEFIK_MESH': {
+    displayName: "Traefix Mesh",
+    icon: <TraefikIcon width={40} height={40} />,
+    name: 'TRAEFIK_MESH'
   },
 }
 
 
-const baseURL = "http://localhost:9081"
 
-export function trueRandom() {
-  return crypto.getRandomValues(new Uint32Array(1))[0] / 2 ** 32;
-}
 
-export function randomPatternNameGenerator() {
-  return "meshery_" + Math.floor(trueRandom() * 100)
-}
 
 const useThemeDetector = () => {
   const getCurrentTheme = () => window.matchMedia("(prefers-color-scheme: dark)").matches;
@@ -109,6 +109,7 @@ const ExtensionsComponent = () => {
   const [changing, isChanging] = useState(false)
   const [meshAdapters, setMeshAdapters] = useState(null)
 
+
   useEffect(() => {
     if (meshAdapters && meshAdapters.length != 0) {
       setSwitchesState(meshAdapters.map(adapter => ({
@@ -118,35 +119,37 @@ const ExtensionsComponent = () => {
   }, [meshAdapters])
   const [mesheryVersion, setMesheryVersion] = useState(null)
 
+
+  const logout = () => {
+    fetch(proxyUrl + "/token", { method: httpDelete }).then(console.log).catch(console.error)
+  }
+
   useEffect(() => {
-    fetch("http://127.0.0.1:7877/token").then(res => res.text()).then(res => {
+    let ws = new WebSocket("ws://127.0.0.1:7877/ws")
+    ws.onmessage = msg => {
+      if (msg.data == AuthenticatedMsg)
+        setIsLoggedIn(true)
+      if (msg.data == UnauthenticatedMsg) {
+        setIsLoggedIn(false)
+      }
+    }
+    return () => ws.close()
+  }, [])
+
+  useEffect(() => {
+    fetch(proxyUrl + "/token").then(res => res.text()).then(res => {
+      setToken(res)
       if (res !== "null") {
         setIsLoggedIn(true)
-        setToken(res)
-        fetch("http://localhost:7877/api/user").then(res => res.text()).then(res => setUserName(JSON.parse(res)?.user_id))
+
+        fetch(proxyUrl + "/api/user").then(res => res.text()).then(res => setUserName(JSON.parse(res)?.user_id)).catch(console.error)
         fetch(
-          "http://localhost:7877/api/system/sync",
-          {
-            method: "GET",
-          }).then(res => res.json()).then(data => setMeshAdapters(data.meshAdapters)).catch(console.err)
-      } else {
-        let ws = new WebSocket("ws://127.0.0.1:7877/ws")
-        ws.onmessage = msg => {
-          console.log("From proxy ws connection: ", msg)
-          if (msg.data == "Authenticated")
-            setIsLoggedIn(true)
-        }
+          proxyUrl + "/api/system/sync",
+        ).then(res => res.json()).then(data => setMeshAdapters(data.meshAdapters)).catch(console.err)
+        fetch(proxyUrl + "/api/system/version").then(result => result.text()).then(result => setMesheryVersion(JSON.parse(result)?.build)).catch(console.error)
       }
-    }).catch(console.log)
+    }).catch(console.error)
   }, [isLoggedIn])
-
-  useEffect(() => {
-    fetch("http://127.0.0.1:7877/api/system/version").then(result => result.text()).then(result => setMesheryVersion(JSON.parse(result)?.build))
-      .catch((error) => {
-        console.log(error)
-      })
-  })
-
 
   const onMouseOver = e => {
     let target = e.target.closest("div");
@@ -159,21 +162,13 @@ const ExtensionsComponent = () => {
     target.style.transition = "all .8s";
     target.style.transform = "scale(1)";
   }
-
   const onClick = e => {
     let target = e.target.closest("div");
     target.style.transition = "all .2s";
     target.style.transform = "scale(0.8)";
     isChanging(true);
     setIsHovered(true);
-    // fetch("http://127.0.0.1:7877/token").then(res => res.text()).then(res => {
-    //   console.log(res)
-    //   window.ddClient.host.openExternal("http://localhost:7877/api/user/token?token=" + res)
-    // }).catch(console.log)
   };
-
-
-
   const submitConfig = (mesh, deprovision = false, meshAdapters) => {
     const targetMesh = meshAdapters.find(msh => msh.name === mesh)
     const deployQuery = targetMesh.ops.find(op => !op.category).key
@@ -191,7 +186,7 @@ const ExtensionsComponent = () => {
       .map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(data[key])}`)
       .join("&");
     fetch(
-      "http://127.0.0.1:7877/api/system/adapter/operation",
+      proxyUrl + "/api/system/adapter/operation",
       {
         credentials: "same-origin",
         method: "POST",
@@ -213,12 +208,12 @@ const ExtensionsComponent = () => {
     reader.addEventListener("load", (event) => {
 
       let body = { save: true }
-      let name = randomPatternNameGenerator()
+      let name = randomApplicationNameGenerator()
       body = JSON.stringify({
         ...body, application_data: { name, application_file: event.target.result }
       })
 
-      fetch("http://localhost:7877/api/application", {
+      fetch(proxyUrl + "/api/application", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8", },
         body,
@@ -234,6 +229,7 @@ const ExtensionsComponent = () => {
 
   return (
     <DockerMuiThemeProvider>
+
       <CssBaseline />
       {changing && <LoadingDiv sx={{ opacity: "1" }}>
         <LoadComp />
@@ -252,7 +248,7 @@ const ExtensionsComponent = () => {
               <div style={{ marginBottom: "0.5rem" }}>
                 <a style={{ textDecoration: "none" }} href={token && "http://localhost:9081/api/user/token?token=" + token + "&provider=Meshery"} >
 
-                  <div
+                  {isLoggedIn ? <div
                     onMouseEnter={() => setIsHovered(!isHovered)}
                     onMouseLeave={onMouseOut}
                     onClick={onClick}
@@ -260,17 +256,21 @@ const ExtensionsComponent = () => {
                   >
                     {isHovered ? <MesheryAnimation height={70} width={72} /> : <Meshery height={70} width={72} />}
 
-                  </div>
+                  </div> : <Meshery height={70} width={72} />}
                 </a>
               </div>
               {!isLoggedIn ? <Button sx={{ marginTop: "0.3rem" }} variant="contained" disabled={isLoggedIn} color="primary" component="span" onClick={() => {
                 window.ddClient.host.openExternal("https://meshery.layer5.io?source=aHR0cDovL2xvY2FsaG9zdDo3ODc3L3Rva2VuL3N0b3Jl&provider_version=v0.3.14")
               }}>
                 Login
-              </Button> : (userName &&
-                <Typography sx={{ marginBottom: "1rem", whiteSpace: "nowrap" }}>
+              </Button> : (<div>
+                {userName &&<Typography sx={{ marginBottom: "1rem", whiteSpace: "nowrap" }}>
                   User: {userName}
-                </Typography>)
+                </Typography>}
+                <LogoutButton variant="p" component="p" align="start">
+        <Button onClick={logout} color="secondary" component="span" variant="contained">Logout</Button>
+      </LogoutButton></div>
+              )
               }
             </AccountDiv>
           </ExtensionWrapper>
@@ -292,7 +292,7 @@ const ExtensionsComponent = () => {
           }
           {!!isLoggedIn &&
             <div style={{ paddingTop: isLoggedIn ? "1.2rem" : null }}>
-              <ExtensionWrapper className="first-step" sx={{ height: ["22rem", "17rem", "12rem"], backgroundColor: isDarkTheme ? "#393F49" : "#D7DADE" }} >
+              <ExtensionWrapper className="first-step" sx={{ height: ["22rem", "17rem", "14rem"], backgroundColor: isDarkTheme ? "#393F49" : "#D7DADE" }} >
                 <div>
                   <Typography sx={{ marginBottom: "1rem" }}>Deploy a Service Mesh</Typography>
                   <ServiceMeshAdapters>
@@ -319,6 +319,7 @@ const ExtensionsComponent = () => {
             </div>}
 
         </SectionWrapper >
+
       </ComponentWrapper >
 
 
