@@ -294,4 +294,6 @@ type Provider interface {
 	GetSchedules(req *http.Request, page, pageSize, order string) ([]byte, error)
 	GetSchedule(req *http.Request, scheduleID string) ([]byte, error)
 	DeleteSchedule(req *http.Request, scheduleID string) ([]byte, error)
+
+	ExtensionProxy(req *http.Request) ([]byte, error)
 }
