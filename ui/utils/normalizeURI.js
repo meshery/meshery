@@ -9,7 +9,6 @@
  * @returns {string}
  */
 export default function normalizeURI(uri) {
-  console.log("uri: ", uri);
   if (!uri.startsWith("/")) return "/" + uri;
   return uri;
 }

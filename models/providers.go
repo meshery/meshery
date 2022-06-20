@@ -91,16 +91,15 @@ type NavigatorExtension struct {
 
 // AccountExtension describes the Account extension point in the UI
 type AccountExtension struct {
-	Title           string              `json:"title,omitempty"`
-	OnClickCallback int                 `json:"on_click_callback,omitempty"`
-	Href            Href                `json:"href,omitempty"`
-	Component       string              `json:"component,omitempty"`
-	Link            *bool               `json:"link,omitempty"`
-	Show            *bool               `json:"show,omitempty"`
-	Children        AccountExtensions   `json:"children,omitempty"`
-	Type            string              `json:"type,omitempty"`
+	Title           string            `json:"title,omitempty"`
+	OnClickCallback int               `json:"on_click_callback,omitempty"`
+	Href            Href              `json:"href,omitempty"`
+	Component       string            `json:"component,omitempty"`
+	Link            *bool             `json:"link,omitempty"`
+	Show            *bool             `json:"show,omitempty"`
+	Children        AccountExtensions `json:"children,omitempty"`
+	Type            string            `json:"type,omitempty"`
 }
-
 
 // UserPrefsExtension describes the user preference extension point in the UI
 type UserPrefsExtension struct {

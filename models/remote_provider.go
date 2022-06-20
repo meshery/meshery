@@ -2616,7 +2616,7 @@ func (l *RemoteProvider) SMPTestConfigDelete(req *http.Request, testUUID string)
 	return ErrDelete(fmt.Errorf("could not delete the test profile: %d", resp.StatusCode), "Perf Test Config :"+testUUID, resp.StatusCode)
 }
 
-func (l *RemoteProvider) ExtensionProxy(req *http.Request) ([]byte, error){
+func (l *RemoteProvider) ExtensionProxy(req *http.Request) ([]byte, error) {
 	logrus.Infof("attempting to request remote provider")
 	p := req.URL.Path
 	split := strings.Split(p, "/api/extensions")
