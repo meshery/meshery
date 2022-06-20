@@ -1,12 +1,13 @@
 /* eslint-disable no-unused-vars */
 
 import Extension from "../../components/NavigatorExtension";
-import ExtensionSandbox, { getCapabilities, getComponentTitleFromPathForNavigator } from "../../components/ExtensionSandbox";
+import ExtensionSandbox, { getCapabilities, getFullPageExtensions, getComponentTitleFromPath } from "../../components/ExtensionSandbox";
 import { NoSsr } from "@material-ui/core";
 import { updatepagepath, updatepagetitle } from "../../lib/store";
 import { connect } from "react-redux";
 import Head from "next/head";
 import { bindActionCreators } from "redux";
+import RemoteComponent from "../../components/RemoteComponent";
 
 
 /**
@@ -18,13 +19,13 @@ function getPath() {
 }
 
 /**
- * extractComponentName extracts the last part of the
+ * extractComponentURI extracts the last part of the
  * given path
  * @param {string} path
  * @returns {string}
  */
-function extractComponentName(path) {
-  return path.substring(path.lastIndexOf("/") + 1);
+function extractComponentURI(path) {
+  return path.substring(path.lastIndexOf("/"));
 }
 
 /**
@@ -42,27 +43,51 @@ function capitalize(string) {
   return "";
 }
 
-class Navigator extends React.Component {
-  state = { componentTitle : "" }
+class RemoteExtension extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      componentTitle : "",
+      extensionType : ""
+    }
+  }
 
   componentDidMount() {
-    getCapabilities("navigator", extensions => {
-      this.setState({ componentTitle : getComponentTitleFromPathForNavigator(extensions, getPath()) });
-      this.props.updatepagetitle({ title : getComponentTitleFromPathForNavigator(extensions, getPath()) });
+    getFullPageExtensions(extNames => {
+      extNames.forEach((ext) => {
+        const currentURI = extractComponentURI(getPath());
+        if (currentURI === ext.uri) {
+          this.setState({ extensionType : ext.name })
+          getCapabilities(ext.name, extensions => {
+            this.setState({ componentTitle : getComponentTitleFromPath(extensions, getPath()) });
+            this.props.updatepagetitle({ title : getComponentTitleFromPath(extensions, getPath()) });
+          });
+          console.log(`path: ${getPath()}`);
+          this.props.updatepagepath({ path : getPath() });
+        }
+      })
     });
-    console.log(`path: ${getPath()}`);
-    this.props.updatepagepath({ path : getPath() });
   }
 
   render() {
+    const { componentTitle, extensionType } = this.state;
     return (
       <NoSsr>
         <Head>
-          <title>{this.state.componentTitle || ""}</title>
+          <title>{componentTitle || ""}</title>
         </Head>
-        <NoSsr>
-          <ExtensionSandbox type="navigator" Extension={Extension} />
-        </NoSsr>
+        {
+          extensionType &&
+          <NoSsr>
+            {console.log("ext", extensionType)}
+            {
+              (extensionType === 'navigator') ?
+                <ExtensionSandbox type={extensionType} Extension={Extension} />
+                :
+                <ExtensionSandbox type={extensionType} Extension={(url) => RemoteComponent({ url })} />
+            }
+          </NoSsr>
+        }
       </NoSsr>
     );
   }
@@ -71,4 +96,4 @@ class Navigator extends React.Component {
 const mapDispatchToProps = (dispatch) => ({ updatepagepath : bindActionCreators(updatepagepath, dispatch),
   updatepagetitle : bindActionCreators(updatepagetitle, dispatch), });
 
-export default connect(null, mapDispatchToProps)(Navigator);
+export default connect(null, mapDispatchToProps)(RemoteExtension);

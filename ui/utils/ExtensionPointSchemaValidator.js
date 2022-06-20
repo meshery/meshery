@@ -6,6 +6,7 @@
  * @property {string} component
  * @property {string} icon
  * @property {NavigatorSchema[]} children
+ * @property {boolean} full_page
  */
 
 /**
@@ -19,6 +20,18 @@
  * @property {number} onClickCallback
  * @property {string} href
  * @property {string} component
+ * @property {AccountSchema[]} children
+ * @property {boolean} full_page
+ */
+
+/**
+ * @typedef {Object} FullPageExtensionSchema
+ * @property {string} title
+ * @property {number} onClickCallback
+ * @property {string} href
+ * @property {string} component
+ * @property {AccountSchema[]} children
+ * @property {boolean} full_page
  */
 
 /**
@@ -55,6 +68,7 @@ function NavigatorExtensionSchemaDecoder(content) {
         icon : (item.icon && "/api/provider/extension/" + item.icon) || "",
         show : !!item.show,
         children : NavigatorExtensionSchemaDecoder(item.children),
+        full_page : item.full_page
       };
     });
   }
@@ -84,7 +98,6 @@ function UserPrefsExtensionSchemaDecoder(content) {
  */
 function AccountExtensionSchemaDecoder(content) {
   if (Array.isArray(content)) {
-    console.log("item: ", content)
     return content.map((item) => {
       return {
         title : item.title || "",
@@ -92,7 +105,8 @@ function AccountExtensionSchemaDecoder(content) {
         component : item.component || "",
         onClickCallback : item?.on_click_callback || 0,
         show : !!item.show,
-        // children : NavigatorExtensionSchemaDecoder(item.children),
+        children : AccountExtensionSchemaDecoder(item.children),
+        full_page : item.full_page
       };
     });
   }
