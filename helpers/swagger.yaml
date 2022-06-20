@@ -3,6 +3,40 @@ consumes:
 - application/json
 - multipart/form-data
 definitions:
+  AccountExtension:
+    description: AccountExtension describes the Account extension point in the UI
+    properties:
+      children:
+        $ref: '#/definitions/AccountExtensions'
+      component:
+        type: string
+        x-go-name: Component
+      href:
+        $ref: '#/definitions/Href'
+      link:
+        type: boolean
+        x-go-name: Link
+      on_click_callback:
+        format: int64
+        type: integer
+        x-go-name: OnClickCallback
+      show:
+        type: boolean
+        x-go-name: Show
+      title:
+        type: string
+        x-go-name: Title
+      type:
+        type: string
+        x-go-name: Type
+    type: object
+    x-go-package: github.com/layer5io/meshery/models
+  AccountExtensions:
+    description: NavigatorExtensions is a collection of NavigatorExtension
+    items:
+      $ref: '#/definitions/AccountExtension'
+    type: array
+    x-go-package: github.com/layer5io/meshery/models
   Adapter:
     description: Adapter represents an adapter in Meshery
     properties:
@@ -505,6 +539,8 @@ definitions:
   Extensions:
     description: Extensions defines the UI extension points
     properties:
+      account:
+        $ref: '#/definitions/AccountExtensions'
       graphql:
         $ref: '#/definitions/GraphQLExtensions'
       navigator:
@@ -736,6 +772,9 @@ definitions:
       path:
         type: string
         x-go-name: Path
+      type:
+        type: string
+        x-go-name: Type
     type: object
     x-go-package: github.com/layer5io/meshery/models
   GraphQLExtensions:
@@ -1273,6 +1312,9 @@ definitions:
       title:
         type: string
         x-go-name: Title
+      type:
+        type: string
+        x-go-name: Type
     type: object
     x-go-package: github.com/layer5io/meshery/models
   NavigatorExtensions:
@@ -3793,6 +3835,9 @@ definitions:
       component:
         type: string
         x-go-name: Component
+      type:
+        type: string
+        x-go-name: Type
     type: object
     x-go-package: github.com/layer5io/meshery/models
   UserPrefsExtensions:
