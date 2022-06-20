@@ -85,6 +85,7 @@ type NavigatorExtension struct {
 	Link            *bool               `json:"link,omitempty"`
 	Show            *bool               `json:"show,omitempty"`
 	Children        NavigatorExtensions `json:"children,omitempty"`
+	FullPage        *bool               `json:"full_page,omitempty"`
 }
 
 // AccountExtension describes the Account extension point in the UI
@@ -96,6 +97,7 @@ type AccountExtension struct {
 	Link            *bool               `json:"link,omitempty"`
 	Show            *bool               `json:"show,omitempty"`
 	Children        AccountExtensions   `json:"children,omitempty"`
+	FullPage        *bool               `json:"full_page,omitempty"`
 }
 
 
@@ -149,8 +151,6 @@ const (
 	PersistPerformanceProfiles Feature = "persist-performance-profiles" // /user/performance/profile
 
 	PersistSchedules Feature = "persist-schedules" // /user/schedules
-
-	EditUserProfile Feature = "edit-user-profile" // /user/profile/edit
 )
 
 const (
