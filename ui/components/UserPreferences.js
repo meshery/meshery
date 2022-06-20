@@ -17,7 +17,7 @@ import { Paper, Tooltip } from '@material-ui/core';
 import SettingsRemoteIcon from '@material-ui/icons/SettingsRemote';
 import SettingsCellIcon from '@material-ui/icons/SettingsCell';
 import ExtensionSandbox from "./ExtensionSandbox";
-import RemoteUserPref from "./RemoteUserPref";
+import RemoteComponent from "./RemoteComponent";
 import ExtensionPointSchemaValidator from "../utils/ExtensionPointSchemaValidator";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTachometerAlt } from '@fortawesome/free-solid-svg-icons';
@@ -296,7 +296,7 @@ class UserPreference extends React.Component {
             <MesherySettingsPerformanceComponent />
           }
           {tabVal == 2 && userPrefs && providerType != 'local' &&
-            <ExtensionSandbox type="user_prefs" Extension={(url) => RemoteUserPref({ url })} />
+            <ExtensionSandbox type="user_prefs" Extension={(url) => RemoteComponent({ url })} />
           }
         </Paper>
       </NoSsr>
