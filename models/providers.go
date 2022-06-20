@@ -73,6 +73,7 @@ type AccountExtensions []AccountExtension
 type GraphQLExtension struct {
 	Component string `json:"component,omitempty"`
 	Path      string `json:"path,omitempty"`
+	Type      string `json:"type,omitempty"`
 }
 
 // NavigatorExtension describes the Navigator extension point in the UI
@@ -85,7 +86,7 @@ type NavigatorExtension struct {
 	Link            *bool               `json:"link,omitempty"`
 	Show            *bool               `json:"show,omitempty"`
 	Children        NavigatorExtensions `json:"children,omitempty"`
-	FullPage        *bool               `json:"full_page,omitempty"`
+	Type            string              `json:"type,omitempty"`
 }
 
 // AccountExtension describes the Account extension point in the UI
@@ -97,13 +98,14 @@ type AccountExtension struct {
 	Link            *bool               `json:"link,omitempty"`
 	Show            *bool               `json:"show,omitempty"`
 	Children        AccountExtensions   `json:"children,omitempty"`
-	FullPage        *bool               `json:"full_page,omitempty"`
+	Type            string              `json:"type,omitempty"`
 }
 
 
 // UserPrefsExtension describes the user preference extension point in the UI
 type UserPrefsExtension struct {
 	Component string `json:"component,omitempty"`
+	Type      string `json:"type,omitempty"`
 }
 
 // Href describes a link along with its type

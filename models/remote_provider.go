@@ -2626,35 +2626,9 @@ func (l *RemoteProvider) ExtensionProxy(req *http.Request) ([]byte, error){
 		path = fmt.Sprintf("%s?%s", path, q)
 	}
 	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s", l.RemoteProviderURL, path))
-	logrus.Debugf("constructed results url: %s", remoteProviderURL.String())
-	
-	if req.Method != http.MethodGet {
-		cReq, _ := http.NewRequest(req.Method, remoteProviderURL.String(), req.Body)
-		tokenString, err := l.GetToken(req)
-	
-		if err != nil {
-			return nil, err
-		}
-		resp, err := l.DoRequest(cReq, tokenString)
-		if err != nil {
-			return nil, err
-		}
-		defer func() {
-			_ = resp.Body.Close()
-		}()
-		bdr, err := io.ReadAll(resp.Body)
-		if err != nil {
-			return nil, err
-		}
-	
-		if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusCreated {
-			logrus.Infof("request successfully sent to remote provider")
-			return nil, nil
-		}
-		return nil, ErrFetch(fmt.Errorf("failed to send request to remote provider"), fmt.Sprint(bdr), resp.StatusCode)	
-	}
+	logrus.Debugf("constructed url: %s", remoteProviderURL.String())
 
-	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
+	cReq, _ := http.NewRequest(req.Method, remoteProviderURL.String(), req.Body)
 	tokenString, err := l.GetToken(req)
 
 	if err != nil {
@@ -2672,11 +2646,11 @@ func (l *RemoteProvider) ExtensionProxy(req *http.Request) ([]byte, error){
 		return nil, err
 	}
 
-	if resp.StatusCode == http.StatusOK {
+	if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusCreated {
 		logrus.Infof("response successfully retrieved from remote provider")
 		return bdr, nil
 	}
-	return nil, ErrFetch(fmt.Errorf("failed to retrieve response from remote provider"), fmt.Sprint(bdr), resp.StatusCode)
+	return nil, ErrFetch(fmt.Errorf("failed to request to remote provider"), fmt.Sprint(bdr), resp.StatusCode)
 }
 
 // RecordMeshSyncData records the mesh sync data

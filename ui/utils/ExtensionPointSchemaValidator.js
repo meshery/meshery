@@ -6,12 +6,13 @@
  * @property {string} component
  * @property {string} icon
  * @property {NavigatorSchema[]} children
- * @property {boolean} full_page
+ * @property {string} type
  */
 
 /**
  * @typedef {Object} UserPrefSchema
  * @property {string} component
+ * @property {string} type
  */
 
 /**
@@ -21,7 +22,7 @@
  * @property {string} href
  * @property {string} component
  * @property {AccountSchema[]} children
- * @property {boolean} full_page
+ * @property {string} type
  */
 
 /**
@@ -31,7 +32,7 @@
  * @property {string} href
  * @property {string} component
  * @property {AccountSchema[]} children
- * @property {boolean} full_page
+ * @property {string} type
  */
 
 /**
