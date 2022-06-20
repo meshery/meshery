@@ -2618,10 +2618,14 @@ func (l *RemoteProvider) SMPTestConfigDelete(req *http.Request, testUUID string)
 
 func (l *RemoteProvider) ExtensionProxy(req *http.Request) ([]byte, error){
 	logrus.Infof("attempting to request remote provider")
-	path := req.URL.Path
-	split := strings.Split(path, "/api/extensions")
-	reqPath := split[1]
-	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s", l.RemoteProviderURL, reqPath))
+	p := req.URL.Path
+	split := strings.Split(p, "/api/extensions")
+	path := split[1]
+	q := req.URL.Query().Encode()
+	if len(q) > 0 {
+		path = fmt.Sprintf("%s?%s", path, q)
+	}
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s", l.RemoteProviderURL, path))
 	logrus.Debugf("constructed results url: %s", remoteProviderURL.String())
 	
 	if req.Method != http.MethodGet {
