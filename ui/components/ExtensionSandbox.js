@@ -59,7 +59,7 @@ export function getFullPageExtensions(cb) {
       for (var key of Object.keys(result?.extensions)) {
         if (Array.isArray(result?.extensions[key])) {
           result?.extensions[key].forEach((comp) => {
-            if (comp?.full_page === true) {
+            if (comp?.type === "full_page") {
               let ext = {
                 name : key,
                 uri : comp?.href?.uri
