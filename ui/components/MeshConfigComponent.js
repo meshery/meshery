@@ -381,7 +381,6 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
   }
 
   function getOperatorStatus(ctxId) {
-    console.log({ _operatorState })
     const operator = _operatorState.find(op => op.contextID === ctxId);
     if (!operator) {
       return {}

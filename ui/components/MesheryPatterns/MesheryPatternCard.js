@@ -86,9 +86,9 @@ const useStyles= makeStyles(() => ({
     height : "24px",
     marginRight : "5px"
   },
-  undeployButton: {
-    backgroundColor:"#B32700", 
-    color: "#ffffff"
+  undeployButton : {
+    backgroundColor : "#B32700",
+    color : "#ffffff"
   }
 }))
 
