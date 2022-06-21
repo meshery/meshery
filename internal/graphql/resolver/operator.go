@@ -357,18 +357,18 @@ func (r *Resolver) listenToOperatorsState(ctx context.Context, provider models.P
 							} else {
 								switch processing.Data.(operatorStatusK8sContext).processing.(type) {
 								case bool:
-									if processing.Data.(bool) {
+									if processing.Data.(operatorStatusK8sContext).processing.(bool) {
 										status.Status = model.StatusProcessing
 									}
 								case *errors.Error:
 									status.Error = &model.Error{
 										Code:        "",
-										Description: processing.Data.(*errors.Error).Error(),
+										Description: processing.Data.(operatorStatusK8sContext).processing.(*errors.Error).Error(),
 									}
 								case error:
 									status.Error = &model.Error{
 										Code:        "",
-										Description: processing.Data.(error).Error(),
+										Description: processing.Data.(operatorStatusK8sContext).processing.(error).Error(),
 									}
 								}
 							}
