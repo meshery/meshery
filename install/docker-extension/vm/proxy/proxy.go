@@ -23,6 +23,10 @@ var upgrader = websocket.Upgrader{
 	WriteBufferSize: 1024,
 }
 
+const AuthenticatedMsg = "Authenticated"
+const UnauthenticatedMsg = "Unauthenticated"
+const InitiationSuccessful = "Successfully Initiated ws connection"
+
 // Hop-by-hop headers. These are removed when sent to the backend.
 // http://www.w3.org/Protocols/rfc2616/rfc2616-sec13.html
 var hopHeaders = []string{
@@ -34,6 +38,12 @@ var hopHeaders = []string{
 	"Trailers",
 	"Transfer-Encoding",
 	"Upgrade",
+}
+
+func enableCors(w *http.ResponseWriter) {
+	(*w).Header().Set("Access-Control-Allow-Origin", "*")
+	(*w).Header().Set("Access-Control-Allow-Headers", "Accept, Accept-Language,Content-Type, Access-Control-Request-Method")
+	(*w).Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
 }
 
 func copyHeader(dst, src http.Header) {
@@ -75,7 +85,6 @@ func handleWsMessage(conn *websocket.Conn) {
 		}
 		// print out that message for clarity
 		fmt.Println(string(p))
-
 		if err := conn.WriteMessage(messageType, p); err != nil {
 			log.Println(err)
 			return
@@ -86,35 +95,59 @@ func handleWsMessage(conn *websocket.Conn) {
 
 func (p *Proxy) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
 	log.Println(req.RemoteAddr, " ", req.Method, " ", req.URL)
-	if p.authWsChan == nil {
-		p.authWsChan = make(chan bool)
-	}
 
 	client := &http.Client{}
 
-	wr.Header().Set("Access-Control-Allow-Origin", "*")
+	enableCors(&wr)
 
 	switch req.URL.Path {
 	case "/ws":
+		if p.authWsChan == nil {
+			p.authWsChan = make(chan bool)
+		}
 		upgrader.CheckOrigin = func(r *http.Request) bool { return true }
 
 		ws, err := upgrader.Upgrade(wr, req, nil)
+
+		ws.SetCloseHandler(func(code int, text string) error {
+			close(p.authWsChan)
+			p.authWsChan = nil
+			err := ws.Close()
+			if err != nil {
+				return err
+			}
+			return nil
+		})
 		if err != nil {
 			log.Println(err)
 		}
 		go handleWsMessage(ws)
-
-		for res := range p.authWsChan {
-			if res == true {
-				err = ws.WriteMessage(1, []byte("Authenticated"))
-				if err != nil {
-					log.Println(err)
+		go func() {
+			for res := range p.authWsChan {
+				log.Println("Got msg from authChan: ", res)
+				if res == true {
+					err = ws.WriteMessage(1, []byte(AuthenticatedMsg))
+					log.Println("Sent message to ws client: ", AuthenticatedMsg)
+					if err != nil {
+						log.Println(err)
+					}
+				} else {
+					err = ws.WriteMessage(1, []byte(UnauthenticatedMsg))
+					log.Println("Sent message to ws client: ", UnauthenticatedMsg)
+					if err != nil {
+						log.Println(err)
+					}
 				}
 			}
+		}()
+		err = ws.WriteMessage(1, []byte(InitiationSuccessful))
+		log.Println("Sent message to ws client: ", InitiationSuccessful)
+		if err != nil {
+			log.Println(err)
 		}
 
 	case "/token/store":
-		if req.Method == "GET" {
+		if req.Method == http.MethodGet {
 			values := req.URL.Query()
 			var token string
 			if values["token"] != nil {
@@ -131,20 +164,26 @@ func (p *Proxy) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
 			} else {
 				wr.Header().Set("Content-Type", "text/html; charset=utf-8")
 				htmlTemplate := `<html>
+
 <head>
   <title>Meshery | Docker Desktop</title>
 </head>
+
 <body>
   <script type="text/javascript">
-   window.open('docker-desktop://dashboard/open','_self')
+    window.open('docker-desktop://dashboard/open', '_self')
   </script>
-  <p>You have been authenticated successfully and can close this window now.</p>
+  <p>You have been authenticated succesfully, you can safely close this window.</p>
+
 </body>
-</html>
-        `
+
+</html>`
 				fmt.Fprint(wr, htmlTemplate)
+				// http.ServeFile(wr, req, "../assets/auth.html")
+				return
 			}
 		}
+
 	case "/token":
 		if req.Method == http.MethodGet {
 			if p.token != "" {
@@ -154,11 +193,14 @@ func (p *Proxy) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
 			}
 			return
 		}
-	case "/token/delete":
-		p.token = ""
-		log.Println("Deleting the existing token: ", p.token)
-		wr.Write([]byte(""))
-		return
+		if req.Method == http.MethodDelete {
+			p.token = ""
+			log.Println("Deleting the existing token: ", p.token)
+			log.Printf("AuthChan: %v", p.authWsChan)
+			p.authWsChan <- false
+			wr.Write([]byte(""))
+			return
+		}
 
 	default:
 		//http: Request.RequestURI can't be set in client requests.

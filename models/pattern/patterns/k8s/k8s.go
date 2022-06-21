@@ -118,6 +118,10 @@ func ConvertMapInterfaceMapString(v interface{}, prettify bool) interface{} {
 			} else {
 				x[strings.ReplaceAll(k, " ", "")] = ConvertMapInterfaceMapString(v2, prettify)
 			}
+			//Fix
+			if k == "format" && v2 == "int-or-string" {
+				x["type"] = []string{"integer", "string"}
+			}
 		}
 	}
 
