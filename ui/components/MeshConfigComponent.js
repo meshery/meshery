@@ -297,6 +297,11 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
   };
 
   const updateCtxInfo = (ctxId, newInfo) => {
+    if (newInfo.operator.error) {
+      handleError("There is problem With operator")(newInfo.operator.error);
+      return;
+    }
+
     const state = _operatorStateRef.current;
     const op = state.find(ctx => ctx.contextID === ctxId);
     if (!op) {
