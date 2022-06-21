@@ -98,9 +98,10 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
   const [k8sVersion, setK8sVersion] = useState(["N/A"]);
   const [discover, setLastDiscover] = useState(['']);
   const [_operatorState, _setOperatorState] = useState(operatorState || []);
-
   const ref = useRef(null);
   const meshSyncResetRef = useRef(null);
+  const _operatorStateRef = useRef(_operatorState);
+  _operatorStateRef.current = _operatorState;
 
   const dateOptions = { weekday : 'long', year : 'numeric', month : 'long', day : 'numeric' };
 
@@ -134,7 +135,8 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
               subscribe({
                 next : (res) => {
                   if (!_operatorState.find(opSt => opSt.contextID === ctx.id)) {
-                    updateCtxInfo(ctx.id, res)
+                    const x  = updateCtxInfo(ctx.id, res)
+                    _setOperatorState(x)
                   }
                   tempSubscription.unsubscribe();
                 },
@@ -295,13 +297,14 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
   };
 
   const updateCtxInfo = (ctxId, newInfo) => {
-    const op = _operatorState.find(ctx => ctx.contextID === ctxId);
+    const state = _operatorStateRef.current;
+    const op = state.find(ctx => ctx.contextID === ctxId);
     if (!op) {
-      return [..._operatorState, { contextID : ctxId, operatorStatus : newInfo.operator }];
+      return [...state, { contextID : ctxId, operatorStatus : newInfo.operator }];
     }
 
     let ctx = { ...op };
-    const removeCtx = _operatorState.filter(ctx => ctx.contextID !== ctxId);
+    const removeCtx = state.filter(ctx => ctx.contextID !== ctxId);
     ctx.operatorStatus = newInfo.operator;
     return [...removeCtx, ctx];
   }
@@ -373,7 +376,11 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
   }
 
   function getOperatorStatus(ctxId) {
+    console.log({ _operatorState })
     const operator = _operatorState.find(op => op.contextID === ctxId);
+    if (!operator) {
+      return {}
+    }
     const operatorStatus = operator.operatorStatus;
     return {
       operatorState : operatorStatus.status==="ENABLED",
@@ -383,6 +390,9 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
 
   const getContextStatus = (ctxId) => {
     const operator = _operatorState.find(op => op.contextID === ctxId);
+    if (!operator) {
+      return {}
+    }
     const operatorStatus = operator.operatorStatus;
 
     function getMeshSyncStats() {
