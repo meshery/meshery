@@ -17,21 +17,20 @@ import (
 )
 
 type Options struct {
-	Logger          logger.Handler
-	MeshSyncChannel chan struct{}
-	BrokerConn      broker.Handler
-	Config          *models.HandlerConfig
-	URL             string
-	Broadcaster     broadcast.Broadcaster
+	Logger      logger.Handler
+	BrokerConn  broker.Handler
+	Config      *models.HandlerConfig
+	URL         string
+	Broadcaster broadcast.Broadcaster
 }
 
 // New returns a graphql handler instance
 func New(opts Options) http.Handler {
 	res := &resolver.Resolver{
-		Log:             opts.Logger,
-		MeshSyncChannel: opts.MeshSyncChannel,
-		BrokerConn:      opts.BrokerConn,
-		Config:          opts.Config,
+		Log:                          opts.Logger,
+		MeshSyncChannelPerK8sContext: nil,
+		BrokerConn:                   opts.BrokerConn,
+		Config:                       opts.Config,
 
 		Broadcast: opts.Broadcaster,
 	}
