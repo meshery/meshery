@@ -56,7 +56,9 @@ func (r *Resolver) listenToMeshSyncEvents(ctx context.Context, provider models.P
 		prevStatus := r.getMeshSyncStatus(k8sctx)
 		go func(k8sctx models.K8sContext, ch chan *model.OperatorControllerStatusPerK8sContext) {
 			r.Log.Info("Initializing MeshSync subscription")
-
+			if r.MeshSyncChannelPerK8sContext[k8sctx.ID] == nil {
+				r.MeshSyncChannelPerK8sContext[k8sctx.ID] = make(chan struct{})
+			}
 			go model.PersistClusterNames(ctx, r.Log, provider.GetGenericPersister(), r.MeshSyncChannelPerK8sContext[k8sctx.ID])
 			go model.ListernToEvents(r.Log, provider.GetGenericPersister(), r.brokerChannel, r.MeshSyncChannelPerK8sContext[k8sctx.ID], r.Broadcast)
 			for {
