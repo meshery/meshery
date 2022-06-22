@@ -11,7 +11,6 @@ import (
 	"github.com/layer5io/meshery/models"
 	"github.com/layer5io/meshkit/broker"
 	"github.com/layer5io/meshkit/utils"
-	"github.com/layer5io/meshkit/utils/broadcast"
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
 )
 
@@ -238,15 +237,6 @@ func (r *Resolver) connectToBroker(ctx context.Context, provider models.Provider
 		endpoint, err := model.SubscribeToBroker(provider, kubeclient, r.brokerChannel, r.BrokerConn, connectionTrackerSingleton)
 		if err != nil {
 			r.Log.Error(ErrAddonSubscription(err))
-			r.Broadcast.Submit(broadcast.BroadcastMessage{
-				Source: broadcast.OperatorSyncChannel,
-				Type:   "error",
-				Data: operatorStatusK8sContext{
-					processing: err,
-					ctxID:      ctxID,
-				},
-			})
-
 			return err
 		}
 		r.Log.Info("Connected to broker at:", endpoint)
