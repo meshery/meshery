@@ -180,19 +180,18 @@ func installUsingHelm(client *mesherykube.Client, delete bool, adapterTracker mo
 			mesheryReleaseVersion = latestRelease
 		}
 	}
-
 	var (
 		act   = mesherykube.INSTALL
 		chart = "meshery-operator"
 	)
-
+	if delete {
+		act = mesherykube.UNINSTALL
+	}
 	// a basic check to see if meshery is installed in cluster
 	// this helps decide what chart should be used for installing operator
 	if viper.GetString("KUBERNETES_SERVICE_HOST") != "" {
-		act = mesherykube.UPGRADE
+		// act = mesherykube.UPGRADE
 		chart = "meshery"
-	} else if delete {
-		act = mesherykube.UNINSTALL
 	}
 
 	overrides := SetOverrideValues(delete, adapterTracker)

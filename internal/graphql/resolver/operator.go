@@ -33,6 +33,8 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Pro
 	if status == model.StatusEnabled {
 		r.Log.Info("Installing Operator")
 		delete = false
+	} else {
+		r.Log.Info("Uninstalling Operator in context ", ctxID)
 	}
 
 	var kubeclient *mesherykube.Client

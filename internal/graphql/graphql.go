@@ -28,7 +28,7 @@ type Options struct {
 func New(opts Options) http.Handler {
 	res := &resolver.Resolver{
 		Log:                          opts.Logger,
-		MeshSyncChannelPerK8sContext: nil,
+		MeshSyncChannelPerK8sContext: make(map[string]chan struct{}),
 		BrokerConn:                   opts.BrokerConn,
 		Config:                       opts.Config,
 
