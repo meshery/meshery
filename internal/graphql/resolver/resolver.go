@@ -13,12 +13,13 @@ import (
 // It serves as dependency injection for your app, add any dependencies you require here.
 
 type Resolver struct {
-	Log                          logger.Handler
-	BrokerConn                   broker.Handler
-	MeshSyncChannelPerK8sContext map[string]chan struct{}
-	Config                       *models.HandlerConfig
-	Broadcast                    broadcast.Broadcaster
+	Log             logger.Handler
+	BrokerConn      broker.Handler
+	MeshSyncChannel chan struct{}
+	Config          *models.HandlerConfig
+	Broadcast       broadcast.Broadcaster
 
+	controlPlaneSyncChannel chan struct{}
 	// operatorChannel         chan *model.OperatorStatus
 	performanceChannel  chan *model.PerfPageResult
 	brokerChannel       chan *broker.Message
