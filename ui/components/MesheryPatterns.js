@@ -523,13 +523,11 @@ function MesheryPatterns({
   function uploadHandler(ev) {
     if (!ev.target.files?.length) return;
 
-    console.log("top level event", ev)
 
     const file = ev.target.files[0];
     // Create a reader
     const reader = new FileReader();
     reader.addEventListener("load", (event) => {
-      console.log("Bottom level event", event)
       // @ts-ignore
       handleSubmit({
         data : event.target.result,
@@ -795,7 +793,6 @@ function MesheryPatterns({
     }
   };
 
-  console.log(patterns)
   return (
     <>
 
@@ -823,7 +820,7 @@ function MesheryPatterns({
            Create Design
             </Button>
             <div className={classes.UploadImport}>
-              <UploadImport aria-label="URL upload button" handleUpload={urlUploadHandler} handleImport={uploadHandler} configuration={undefined} modalStatus={undefined}  />
+              <UploadImport aria-label="URL upload button" handleUpload={urlUploadHandler} handleImport={uploadHandler} configuration="Design" modalStatus={close}  />
             </div>
 
           </div>
@@ -870,7 +867,7 @@ function MesheryPatterns({
 
                 </Button>
                 <div className={classes.UploadImport}>
-                  <UploadImport aria-label="URL upload button" handleUpload={urlUploadHandler} handleImport={uploadHandler} configuration={undefined} modalStatus={undefined}  />
+                  <UploadImport aria-label="URL upload button" handleUpload={urlUploadHandler} handleImport={uploadHandler} configuration="Design" modalStatus={close}  />
                 </div>
               </div>
             </div>
