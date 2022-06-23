@@ -61,7 +61,7 @@ func (r *queryResolver) GetMeshsyncStatus(ctx context.Context, k8scontextID stri
 
 func (r *queryResolver) DeployMeshsync(ctx context.Context, k8scontextID string) (model.Status, error) {
 	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
-	return r.deployMeshsync(ctx, provider, k8scontextID)
+	return r.deployMeshsync(ctx, provider)
 }
 
 func (r *queryResolver) GetNatsStatus(ctx context.Context, k8scontextID string) (*model.OperatorControllerStatus, error) {

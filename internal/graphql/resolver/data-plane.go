@@ -36,26 +36,21 @@ func (r *Resolver) listenToDataPlaneState(ctx context.Context, provider models.P
 
 	go func() {
 		r.Log.Info("Initializing DataPlane subscription")
-		for _, ctxID := range filter.K8sClusterIDs {
-			go func(ctxID string) {
-				for {
-					select {
-					case <-r.MeshSyncChannelPerK8sContext[ctxID]:
-						containers, err := r.getDataPlanes(ctx, provider, filter)
-						if err != nil {
-							r.Log.Error(ErrDataPlaneSubscription(err))
-							break
-						}
-						r.dataPlaneChannel <- containers
-					case <-ctx.Done():
-						r.Log.Info("DataPlane subscription stopped")
-						return
-					}
+
+		for {
+			select {
+			case <-r.MeshSyncChannel:
+				containers, err := r.getDataPlanes(ctx, provider, filter)
+				if err != nil {
+					r.Log.Error(ErrDataPlaneSubscription(err))
+					break
 				}
-			}(ctxID)
-
+				r.dataPlaneChannel <- containers
+			case <-ctx.Done():
+				r.Log.Info("DataPlane subscription stopped")
+				return
+			}
 		}
-
 	}()
 	return r.dataPlaneChannel, nil
 }
