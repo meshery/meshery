@@ -30,10 +30,8 @@ import dataFetch from "../lib/data-fetch";
 import UploadImport from "./UploadImport";
 import FullscreenIcon from '@material-ui/icons/Fullscreen';
 import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
-import TableChartIcon from "@material-ui/icons/TableChart";
 import FILE_OPS from "../utils/configurationFileHandlersEnum";
-import GridOnIcon from "@material-ui/icons/GridOn";
-import { ToggleButton, ToggleButtonGroup } from "@material-ui/lab";
+import ViewSwitch from "./ViewSwitch";
 import FiltersGrid from "./MesheryFilters/FiltersGrid";
 import { trueRandom } from "../lib/trueRandom";
 import { ctxUrl } from "../utils/multi-ctx";
@@ -80,41 +78,6 @@ const useStyles = makeStyles(() => ({
   },
 
 }))
-
-/**
- * Type Definition for View Type
- * @typedef {"grid" | "table"} TypeView
- */
-
-/**
- * ViewSwitch component renders a switch for toggling between
- * grid and table views
- * @param {{ view: TypeView, changeView: (view: TypeView) => void }} props
- */
-function ViewSwitch({ view, changeView }) {
-  console.log(view)
-  return (
-    <ToggleButtonGroup
-      size="small"
-      value={view}
-      exclusive
-      onChange={(_, newView) => changeView(newView)}
-      aria-label="Switch View"
-    >
-      <Tooltip title="Grid view">
-        <ToggleButton value="grid">
-          <GridOnIcon />
-        </ToggleButton>
-      </Tooltip>
-      <Tooltip title="Table view">
-        <ToggleButton value="table">
-          <TableChartIcon />
-        </ToggleButton>
-      </Tooltip>
-    </ToggleButtonGroup>
-  )
-}
-
 
 function TooltipIcon({ children, onClick, title }) {
   return (
