@@ -1,18 +1,39 @@
+
+
+
+
 {% assign sorted_tests_istio = site.compatibility | sort: "timestamp" | reverse | where: "meshery-component",{{page.service-mesh}} %}
+<style>
+table.tablesorter th.tablesorter-headerAsc {
+    background-image:url("data:image/gif;base64, R0lGODlhFQAJAIAAACMtMP///yH5BAEAAAEALAAAAAAVAAkAAAIXjI+AywnaYnhUMoqt3gZXPmVg94yJVQAAOw==");
+    background-repeat: no-repeat;
+    background-position: center right;
+}
+table.tablesorter th.tablesorter-headerDesc {
+    background-image: url("data:image/gif;base64, R0lGODlhFQAEAIAAACMtMP///yH5BAEAAAEALAAAAAAVAAQAAAINjI8Bya2wnINUMopZAQA7");
+    background-repeat: no-repeat;
+    background-position: center right;
+}
+table.tablesorter th.headerSortDown,
+table.tablesorter th.headerSortUp {
+background-color: #8dbdd8;
+}
+</style>
 
-
-<table id = "test-table">
-    <th onclick="reverse()">Status <span class="sort-arrow">ↆ</span> </th>
-    <th>Meshery Component</th>
-    <th  onclick="reverse()" >Meshery Component Version <span class="sort-arrow">ↆ</span></th>
-    <th onclick="reverse()"  style="text-align: center;" >Meshery Server Version <span class="sort-arrow">ↆ</span></th>
-    <th>Service Mesh</th>
-    <th onclick="reverse()">Service Mesh Version <span class="sort-arrow">ↆ</span></th>
-
+<table id = "test-table" class="tablesorter">
+    <thead>
+        <th>Status </th>
+        <th>Meshery Component</th>
+        <th>Meshery Component Version</th>
+        <th style="text-align: center;" >Meshery Server Version</th>
+        <th>Service Mesh</th>
+        <th>Service Mesh Version</th>
+    </thead>
+    <tbody>
     {% for item in sorted_tests_istio  %}
         {% if item.overall-status == "passing" %}
             {% assign overall-status = "background-color: #56b257; color: white;" %}
-            {% assign result-state = "/assets/img/passing.svg"></td>" %}
+            {% assign result-state = "/assets/img/passing.svg"></tbody>" %}
         {% elsif item.overall-status == "partial" %}
             {% assign overall-status = "background-color: #EBC017; color: white;" %}
             {% assign result-state = "/assets/img/YellowCheck.svg" %}
@@ -57,11 +78,17 @@
             </td>
         </tr>
     {% endfor %}
-
+    </tbody>
 </table>
 
+<script type="text/javascript" >
+    $(function($) {
+            console.log("sorting table");
+            $("#test-table").tablesorter();
+    });
+</script>
 
-<script>
+<!-- <script>
     let table = document.getElementById("test-table")
     rows = table.rows;
     let sortArrow = document.querySelectorAll(".sort-arrow")
@@ -79,4 +106,4 @@ function reverse(){
     }
    
 }
-</script>
+</script> -->
