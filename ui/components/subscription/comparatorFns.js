@@ -10,7 +10,7 @@ export function isMeshSyncSubscriptionDataUpdated(currentState, newData) {
     return true;
   }
 
-  return !_.isEqual(oldData, newData);
+  return !_.isEqual(oldData.OperatorControllerStatus, newData.OperatorControllerStatus);
 }
 
 export function isOperatorStateSubscriptionDataUpdated(currentState, newData) {
@@ -23,6 +23,6 @@ export function isOperatorStateSubscriptionDataUpdated(currentState, newData) {
     return true;
   }
 
-  return !_.isEqual(oldData, newData);
+  return !_.isEqual(oldData.OperatorState, newData.OperatorState);
 }
 
