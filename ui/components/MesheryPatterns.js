@@ -10,7 +10,6 @@ import CloseIcon from "@material-ui/icons/Close";
 import DeleteIcon from "@material-ui/icons/Delete";
 import FullscreenIcon from '@material-ui/icons/Fullscreen';
 import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
-import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 import SaveIcon from '@material-ui/icons/Save';
 import MUIDataTable from "mui-datatables";
 import { withSnackbar } from "notistack";
@@ -32,6 +31,8 @@ import { ctxUrl } from "../utils/multi-ctx";
 import { randomPatternNameGenerator as getRandomName } from "../utils/utils";
 import { ToggleButton, ToggleButtonGroup } from "@material-ui/lab";
 import MesheryPatternGrid from "./MesheryPatterns/MesheryPatternGridView";
+import UndeployIcon from "../public/static/img/UndeployIcon";
+import DoneAllIcon from '@material-ui/icons/DoneAll';
 
 const styles = (theme) => ({
   grid : {
@@ -330,6 +331,10 @@ function MesheryPatterns({
       name : "DEPLOY_PATTERN",
       error_msg : "Failed to deploy pattern file"
     },
+    UNDEPLOY_PATTERN : {
+      name : "UNDEPLOY_PATTERN",
+      error_msg : "Failed to undeploy pattern file"
+    },
     UPLOAD_PATTERN : {
       name : "UPLOAD_PATTERN",
       error_msg : "Failed to upload pattern file"
@@ -357,7 +362,6 @@ function MesheryPatterns({
         method : "POST",
         body : pattern_file,
       }, () => {
-        console.log("PatternFile Deploy API", `/api/pattern/deploy`);
         updateProgress({ showProgress : false });
         enqueueSnackbar("Pattern Successfully Deployed!", {
           variant : "success",
@@ -372,6 +376,32 @@ function MesheryPatterns({
         });
       },
       handleError(ACTION_TYPES.DEPLOY_PATTERN),
+    );
+  };
+
+  const handleUnDeploy = (pattern_file) => {
+    updateProgress({ showProgress : true });
+    dataFetch(
+      ctxUrl(DEPLOY_URL, selectedK8sContexts),
+      {
+        credentials : "include",
+        method : "DELETE",
+        body : pattern_file,
+      }, () => {
+        updateProgress({ showProgress : false });
+        enqueueSnackbar("Pattern Successfully Undeployed!", {
+          variant : "success",
+          action : function Action(key) {
+            return (
+              <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+                <CloseIcon />
+              </IconButton>
+            );
+          },
+          autoHideDuration : 2000,
+        });
+      },
+      handleError(ACTION_TYPES.UNDEPLOY_PATTERN),
     );
   };
 
@@ -493,13 +523,11 @@ function MesheryPatterns({
   function uploadHandler(ev) {
     if (!ev.target.files?.length) return;
 
-    console.log("top level event", ev)
 
     const file = ev.target.files[0];
     // Create a reader
     const reader = new FileReader();
     reader.addEventListener("load", (event) => {
-      console.log("Bottom level event", event)
       // @ts-ignore
       handleSubmit({
         data : event.target.result,
@@ -606,7 +634,13 @@ function MesheryPatterns({
                 title="Deploy"
                 onClick={() => handleDeploy(rowData.pattern_file)}
               >
-                <PlayArrowIcon data-cy="deploy-button" />
+                <DoneAllIcon data-cy="deploy-button" />
+              </IconButton>
+              <IconButton
+                title="Undeploy"
+                onClick={() => handleUnDeploy(rowData.pattern_file)}
+              >
+                <UndeployIcon fill="rgba(0, 0, 0, 0.54)" data-cy="undeploy-button" />
               </IconButton>
             </>
           );
@@ -759,7 +793,6 @@ function MesheryPatterns({
     }
   };
 
-  console.log(patterns)
   return (
     <>
 
@@ -787,7 +820,7 @@ function MesheryPatterns({
            Create Design
             </Button>
             <div className={classes.UploadImport}>
-              <UploadImport aria-label="URL upload button" handleUpload={urlUploadHandler} handleImport={uploadHandler} configuration={undefined} modalStatus={undefined}  />
+              <UploadImport aria-label="URL upload button" handleUpload={urlUploadHandler} handleImport={uploadHandler} configuration="Design" modalStatus={close}  />
             </div>
 
           </div>
@@ -834,7 +867,7 @@ function MesheryPatterns({
 
                 </Button>
                 <div className={classes.UploadImport}>
-                  <UploadImport aria-label="URL upload button" handleUpload={urlUploadHandler} handleImport={uploadHandler} configuration={undefined} modalStatus={undefined}  />
+                  <UploadImport aria-label="URL upload button" handleUpload={urlUploadHandler} handleImport={uploadHandler} configuration="Design" modalStatus={close}  />
                 </div>
               </div>
             </div>
@@ -847,6 +880,7 @@ function MesheryPatterns({
             <MesheryPatternGrid
               patterns={patterns}
               handleDeploy={handleDeploy}
+              handleUnDeploy={handleUnDeploy}
               handleSubmit={handleSubmit}
               setSelectedPattern={setSelectedPattern}
               selectedPattern={selectedPattern}

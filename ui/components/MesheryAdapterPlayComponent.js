@@ -23,8 +23,6 @@ import dataFetch, { promisifiedDataFetch } from "../lib/data-fetch";
 // import { updateSMIResults } from '../lib/store';
 import { setK8sContexts, updateProgress, actionTypes } from "../lib/store";
 import { ctxUrl, getK8sClusterIdsFromCtxId } from "../utils/multi-ctx";
-import { closeButtonForSnackbarAction, errorHandlerGenerator, hideProgress, showProgress, successHandlerGenerator } from "./ConnectionWizard/helpers/common";
-import { pingKubernetes } from "./ConnectionWizard/helpers/kubernetesHelpers";
 import fetchAvailableAddons from './graphql/queries/AddonsStatusQuery';
 import fetchAvailableNamespaces from "./graphql/queries/NamespaceQuery";
 import MesheryMetrics from "./MesheryMetrics";
@@ -106,7 +104,9 @@ const styles = (theme) => ({
     height : "100%",
     padding : theme.spacing(0.5)
   },
-  modalOpen : false
+  text : {
+    padding : theme.spacing(1)
+  }
 });
 
 class MesheryAdapterPlayComponent extends React.Component {
@@ -357,13 +357,6 @@ class MesheryAdapterPlayComponent extends React.Component {
     };
   }
 
-  handleKubernetesClick() {
-    showProgress()
-    pingKubernetes(
-      successHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Kubernetes succesfully pinged", () => hideProgress()),
-      errorHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Kubernetes not pinged successfully", () => hideProgress())
-    )
-  }
 
   handleSubmit = (cat, selectedOp, deleteOp = false) => {
     const self = this;
@@ -581,40 +574,6 @@ class MesheryAdapterPlayComponent extends React.Component {
       activeK8sContexts = ["all"];
     }
     this.props.setK8sContexts({ type : actionTypes.SET_K8S_CONTEXT, selectedK8sContexts : activeK8sContexts });
-  }
-
-  setActiveContexts = (id) => {
-
-    if (this.props.k8sconfig) {
-      if (id === "all") {
-        let activecontexts = [];
-        this.props.k8sconfig.forEach(ctx =>
-          activecontexts.push(ctx.contextID)
-        );
-        activecontexts.push("all");
-        this.setState(state => {
-          if (state.activeContexts?.includes("all")) return { activeContexts : [] };
-          return { activeContexts : activecontexts };
-        },
-        () => this.activeContextChangeCallback(this.state.activeContexts));
-        return;
-      }
-      this.setState(state => {
-        let ids = [...(state.activeContexts || [])];
-        //pop event
-        if (ids.includes(id)) {
-          ids  = ids.filter(id => id != "all")
-          return { activeContexts : ids.filter(cid => cid !== id) }
-        }
-
-        //push event
-        if (ids.length === this.props.k8sconfig.length - 1) {
-          ids.push("all");
-        }
-        return { activeContexts : [...ids, id] }
-      }, () => this.activeContextChangeCallback(this.state.activeContexts))
-    }
-
   }
 
   /**
@@ -1265,8 +1224,7 @@ class MesheryAdapterPlayComponent extends React.Component {
             handleClose={this.handleClose}
             submit={() => this.submitOp(this.state.category, this.state.selectedOp, this.state.isDeleteOp)}
             isDelete={this.state.isDeleteOp}
-            setContextViewer={this.setActiveContexts}
-            title={"The selected operation will be applied to following contexts."}
+            title={<Typography variant="h6" className={classes.text} >The selected operation will be applied to following contexts.</Typography>}
           />
         </React.Fragment>
       </NoSsr>

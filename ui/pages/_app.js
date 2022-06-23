@@ -89,6 +89,13 @@ class MesheryApp extends App {
     const { k8sConfig } = this.props;
     if (!_.isEqual(prevProps.k8sConfig, k8sConfig)) {
       const { operatorSubscription, meshSyncSubscription } = this.state;
+
+      fetchContexts()
+        .then(ctx => {
+          this.setState({ k8sContexts : ctx })
+        })
+        .catch(err => console.error(err))
+
       console.log("k8sconfig changed, re-initialising subscriptions");
       const ids = getK8sConfigIdsFromK8sConfig(k8sConfig)
       if (operatorSubscription) {

@@ -35,7 +35,6 @@ func (h *Handler) K8SConfigHandler(w http.ResponseWriter, req *http.Request, pre
 	// 	return
 	// }
 	if req.Method == http.MethodPost {
-
 		h.addK8SConfig(user, prefObj, w, req, provider)
 		return
 	}
@@ -306,7 +305,6 @@ func (h *Handler) LoadContexts(token string, prov models.Provider) error {
 					return
 				}
 				h.log.Info("Registration of k8s native components completed for contextID ", ctx)
-
 			}(cfg, k8ctxID)
 		}
 	}

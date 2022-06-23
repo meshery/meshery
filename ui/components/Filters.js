@@ -23,7 +23,7 @@ import Moment from "react-moment";
 import { withSnackbar } from "notistack";
 import CloseIcon from "@material-ui/icons/Close";
 import EditIcon from "@material-ui/icons/Edit";
-import PlayArrowIcon from "@material-ui/icons/PlayArrow";
+import DoneAllIcon from '@material-ui/icons/DoneAll';
 import { updateProgress } from "../lib/store";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
 import dataFetch from "../lib/data-fetch";
@@ -435,7 +435,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
                 />
               </IconButton>
               <IconButton>
-                <PlayArrowIcon
+                <DoneAllIcon
                   title="Deploy"
                   aria-label="deploy"
                   color="inherit"

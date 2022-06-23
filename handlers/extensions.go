@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"path"
 	"plugin"
@@ -94,4 +95,19 @@ func (h *Handler) ExtensionsVersionHandler(w http.ResponseWriter, req *http.Requ
 		h.log.Error(ErrEncoding(err, "extension version"))
 		http.Error(w, ErrEncoding(err, "extension version").Error(), http.StatusNotFound)
 	}
+}
+
+/*
+* ExtensionsHandler is a handler function which works as a proxy to resolve the
+* request of any extension point to its remote provider
+ */
+func (h *Handler) ExtensionsHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+	resp, err := provider.ExtensionProxy(req)
+	if err != nil {
+		http.Error(w, "Error", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	fmt.Fprint(w, string(resp))
 }

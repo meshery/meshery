@@ -121,7 +121,7 @@ const UploadImport = ({ handleUpload, handleImport, configuration, modalStatus }
                     error={isError}
                     helperText={isError && "Invalid URL"}
                     variant="outlined"
-                    label={"URL for "+configuration}
+                    label={`URL for ${configuration}`}
                     style={{ width : "100%" }}
                     onChange={(e) => setInput(e.target.value)} />
                 </Grid>

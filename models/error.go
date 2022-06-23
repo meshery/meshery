@@ -75,12 +75,12 @@ const (
 	ErrFetchDataCode                   = "2147"
 	ErrIndexOutOfRangeCode             = "2148"
 	ErrSessionCopyCode                 = "2149"
-	ErrSavingSeededComponentsCode      = "2152"
-	ErrGettingSeededComponentsCode     = "2153"
-	ErrDownloadingSeededComponentsCode = "2154"
-	ErrContextIDCode                   = "2155"
-	ErrMesheryInstanceIDCode           = "2156"
-	ErrMesheryNotInClusterCode         = "2157"
+	ErrSavingSeededComponentsCode      = "2215"
+	ErrGettingSeededComponentsCode     = "2216"
+	ErrDownloadingSeededComponentsCode = "2217"
+	ErrContextIDCode                   = "2218"
+	ErrMesheryInstanceIDCode           = "2219"
+	ErrMesheryNotInClusterCode         = "2220"
 )
 
 var (
