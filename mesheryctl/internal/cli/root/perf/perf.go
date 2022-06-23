@@ -51,7 +51,6 @@ mesheryctl perf result sam-test
 mesheryctl perf result -o json
 mesheryctl perf result -o yaml
 	`,
-	Args: cobra.MinimumNArgs(1),
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
 		hcOptions := &system.HealthCheckOptions{
@@ -66,8 +65,11 @@ mesheryctl perf result -o yaml
 		return hc.RunPreflightHealthChecks()
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
+		if len(args) != 1 {
+			return errors.New(utils.PerfError(fmt.Sprintln("requires at least 1 arg(s), only received 0 ")))
+		}
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
-			return errors.New(utils.SystemError(fmt.Sprintf("invalid command: \"%s\"", args[0])))
+			return errors.New(utils.PerfError(fmt.Sprintf("'%s' is a invalid command. See 'mesheryctl pref --help'\n", args[0])))
 		}
 		return nil
 	},
