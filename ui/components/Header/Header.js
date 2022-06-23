@@ -5,6 +5,7 @@ import { AppBar, Grid, Hidden, IconButton, Toolbar, Typography } from "@mui/mate
 import Link from "next/link";
 import MenuIcon from "@mui/icons-material/Menu";
 import { useStyles } from "./Header.styles";
+import K8sContextMenu from "../K8sContextSwitcher/K8sContextSwitcher";
 
 const HeaderComponent = ({ drawerOpen, onDrawerToggle, pageTitle }) => {
   const classes = useStyles();
@@ -41,6 +42,7 @@ const HeaderComponent = ({ drawerOpen, onDrawerToggle, pageTitle }) => {
                 <MesheryNotification />
               </Grid> */}
           <Grid item className={classes.userContainer}>
+            <K8sContextMenu/>
             <IconButton color="inherit" size="large">
               <Link href="/system/connections">
                 <img
