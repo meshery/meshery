@@ -16,7 +16,6 @@ function FilterCardGridItem({ filter, handleDeploy, handleSubmit, setSelectedFil
   return (
     <Grid item {...gridProps}>
       <FiltersCard
-        // id={filter.id}
         name={filter.name}
         updated_at={filter.updated_at}
         created_at={filter.created_at}
@@ -39,25 +38,6 @@ const useStyles = makeStyles(() => ({
     marginTop : "2rem"
   }
 }))
-
-/**
- * FiltersGrid is the react component for rendering grid
- * @param {{
- *  filters:Array<{
- *  id:string,
- *  created_at: string,
- *  updated_at: string,
- *  filter_file: string,
- * }>,
- *  handleDeploy: (filter_file: any) => void,
- *  handleSubmit: (data: any, id: string, name: string, type: string) => void,
- *  setSelectedFilter : ({show: boolean, filter:any}) => void,
- *  selectedFilter: {show : boolean, filter : any},
- *  pages?: number,
- *  selectedPage?: number,
- *  setPage: (page: number) => void
- * }} props props
- */
 
 function FiltersGrid({ filters=[],handleDeploy, handleSubmit, setSelectedFilter, selectedFilter, pages = 1,setPage, selectedPage }) {
 
