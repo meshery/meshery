@@ -2,6 +2,8 @@ import {
   Button, Checkbox, Chip, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, TextField,
   Tooltip, Typography
 } from "@material-ui/core";
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
 import CloseIcon from "@material-ui/icons/Close";
 import { withStyles } from "@material-ui/core/styles";
 import { Search } from "@material-ui/icons";
@@ -92,9 +94,14 @@ const styles = (theme) => ({
 
 function ConfirmationMsg(props) {
   const { classes, open, handleClose, submit, isDelete,
-    selectedK8sContexts, k8scontext, title, setK8sContexts, enqueueSnackbar, closeSnackbar } = props
+    selectedK8sContexts, k8scontext, title, setK8sContexts, enqueueSnackbar, closeSnackbar, validationComp } = props
 
   const [contexts, setContexts] = useState(k8scontext);
+  const [tabVal, setTabVal] = useState(1); // change it
+
+  const handleTabValChange = (event, newVal) => {
+    setTabVal(newVal);
+  }
 
   const handleKubernetesClick = (ctxID) => {
     showProgress()
@@ -119,6 +126,7 @@ function ConfirmationMsg(props) {
     submit();
     handleClose();
   }
+
   const searchContexts = (search) => {
     if (search === "") {
       setContexts(k8scontext);
@@ -166,64 +174,102 @@ function ConfirmationMsg(props) {
         aria-describedby="alert-dialog-description"
         className={classes.dialogBox}
       >
-        {k8scontext.length > 0 ?
+        <DialogTitle id="alert-dialog-title" className={classes.title}>
+          {title}
+        </DialogTitle>
+        <Tabs
+          value={tabVal}
+          onChange={handleTabValChange}
+          variant="fullWidth"
+          indicatorColor="primary"
+          textColor="primary"
+          className={classes.tabs}
+        >
+          <Tab
+            className={classes.tab}
+            // icon={
+            //   <SettingsCellIcon />
+            // }
+            label={<span className={classes.tabLabel}>Contexts</span>}
+          />
+          {
+            validationComp &&
+          <Tab
+            className={classes.tab}
+            // icon={
+            //   <SettingsCellIcon />
+            // }
+            label={<span className={classes.tabLabel}>Validation</span>}
+          />
+          }
+        </Tabs>
+        { k8scontext.length > 0 ?
           <>
-            <DialogTitle id="alert-dialog-title" className={classes.title}>
-              {title}
-            </DialogTitle>
-            <DialogContent>
-              <DialogContentText id="alert-dialog-description" className={classes.subtitle}>
-                <Typography variant="body1">
-                  <TextField
-                    id="search-ctx"
-                    label="Search"
-                    size="small"
-                    variant="outlined"
-                    onChange={(event) => searchContexts(event.target.value)}
-                    style={{ width : "100%", backgroundColor : "rgba(102, 102, 102, 0.12)", margin : "1px 1px 8px " }}
-                    InputProps={{
-                      endAdornment : (
-                        <Search />
-                      )
-                    }}
-                  />
-                  <div className={classes.all}>
-                    <Checkbox
-                      checked={selectedK8sContexts?.includes("all")}
-                      onChange={() => setContextViewer("all")}
-                      color="primary"
-                    />
-                    <span>Select All</span>
-                  </div>
-                  <div className={classes.contexts}>
-                    {
-                      contexts.map((ctx) => (
-                        <div id={ctx.contextID} className={classes.chip}>
-                          <Tooltip title={`Server: ${ctx.configuredServer}`}>
-                            <div style={{ display : "flex", justifyContent : "flex-wrap", alignItems : "center" }}>
-                              <Checkbox
-                                checked={selectedK8sContexts.includes(ctx.contextID) || (selectedK8sContexts.length > 0 && selectedK8sContexts[0] === "all")}
-                                onChange={() => setContextViewer(ctx.contextID)}
-                                color="primary"
-                              />
-                              <Chip
-                                label={ctx.contextName}
-                                className={classes.ctxChip}
-                                onClick={() => handleKubernetesClick(ctx.contextID)}
-                                icon={<img src="/static/img/kubernetes.svg" className={classes.ctxIcon} />}
-                                variant="outlined"
-                                data-cy="chipContextName"
-                              />
-                            </div>
+            { tabVal == 0 &&
 
-                          </Tooltip>
-                        </div>
-                      ))
-                    }
-                  </div>
-                </Typography>
-              </DialogContentText>
-            </DialogContent>
+                <DialogContent>
+                  <DialogContentText id="alert-dialog-description" className={classes.subtitle}>
+                    <Typography variant="body1">
+                      <TextField
+                        id="search-ctx"
+                        label="Search"
+                        size="small"
+                        variant="outlined"
+                        onChange={(event) => searchContexts(event.target.value)}
+                        style={{ width : "100%", backgroundColor : "rgba(102, 102, 102, 0.12)", margin : "1px 1px 8px " }}
+                        InputProps={{
+                          endAdornment : (
+                            <Search />
+                          )
+                        }}
+                      />
+                      <div className={classes.all}>
+                        <Checkbox
+                          checked={selectedK8sContexts?.includes("all")}
+                          onChange={() => setContextViewer("all")}
+                          color="primary"
+                        />
+                        <span>Select All</span>
+                      </div>
+                      <div className={classes.contexts}>
+                        {
+                          contexts.map((ctx) => (
+                            <div id={ctx.contextID} className={classes.chip}>
+                              <Tooltip title={`Server: ${ctx.configuredServer}`}>
+                                <div style={{ display : "flex", justifyContent : "flex-wrap", alignItems : "center" }}>
+                                  <Checkbox
+                                    checked={selectedK8sContexts.includes(ctx.contextID) || (selectedK8sContexts.length > 0 && selectedK8sContexts[0] === "all")}
+                                    onChange={() => setContextViewer(ctx.contextID)}
+                                    color="primary"
+                                  />
+                                  <Chip
+                                    label={ctx.contextName}
+                                    className={classes.ctxChip}
+                                    onClick={() => handleKubernetesClick(ctx.contextID)}
+                                    icon={<img src="/static/img/kubernetes.svg" className={classes.ctxIcon} />}
+                                    variant="outlined"
+                                    data-cy="chipContextName"
+                                  />
+                                </div>
+
+                              </Tooltip>
+                            </div>
+                          ))
+                        }
+                      </div>
+                    </Typography>
+                  </DialogContentText>
+                </DialogContent>
+            }
+            { tabVal == 1 &&
+                <DialogContent>
+                  <DialogContentText id="alert-dialog-description" className={classes.subtitle}>
+                    <Typography variant="body1">
+                      {validationComp}
+                    </Typography>
+                  </DialogContentText>
+                </DialogContent>
+            }
             <DialogActions className={classes.actions}>
               <Button onClick={handleClose} className={classes.button1}>
                 <Typography variant body2> Cancel </Typography>
@@ -254,6 +300,7 @@ function ConfirmationMsg(props) {
             </DialogContent>
           </>
         }
+
       </Dialog>
     </div>
   )
