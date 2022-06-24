@@ -4,13 +4,21 @@
 
 {% assign sorted_tests_istio = site.compatibility | sort: "timestamp" | reverse | where: "meshery-component",{{page.service-mesh}} %}
 <style>
+
+table.tablesorter th.tablesorter-headerUnSorted {
+    background-image: url('http://tablesorter.com/themes/blue/bg.gif');
+    background-repeat: no-repeat;
+    background-position: center right;
+    cursor: pointer;
+}
+
 table.tablesorter th.tablesorter-headerAsc {
-    background-image:url("data:image/gif;base64, R0lGODlhFQAJAIAAACMtMP///yH5BAEAAAEALAAAAAAVAAkAAAIXjI+AywnaYnhUMoqt3gZXPmVg94yJVQAAOw==");
+    background-image:url("data:image/gif;base64, R0lGODlhFQAJAIAAACMtMP///yH5BAEAAAEALAAAAAAVAAkAAAIXjI+AywnaYnhUMoqt3gZXPmVg94yJVQAAOw==") no-repeat 99%;
     background-repeat: no-repeat;
     background-position: center right;
 }
 table.tablesorter th.tablesorter-headerDesc {
-    background-image: url("data:image/gif;base64, R0lGODlhFQAEAIAAACMtMP///yH5BAEAAAEALAAAAAAVAAQAAAINjI8Bya2wnINUMopZAQA7");
+    background-image: url("data:image/gif;base64, R0lGODlhFQAEAIAAACMtMP///yH5BAEAAAEALAAAAAAVAAQAAAINjI8Bya2wnINUMopZAQA7")no-repeat 99%;
     background-repeat: no-repeat;
     background-position: center right;
 }
