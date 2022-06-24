@@ -4,11 +4,12 @@ import {
   TextField, FormGroup, InputAdornment
 } from '@material-ui/core';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
+import TableSortLabel from "@material-ui/core/TableSortLabel";
 import CloseIcon from "@material-ui/icons/Close";
 import { withSnackbar } from "notistack";
 import { useState, useEffect, useRef } from 'react';
 import DataTable from "mui-datatables";
-import { withStyles } from '@material-ui/styles';
+import { withStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import dataFetch, { promisifiedDataFetch } from '../lib/data-fetch';
@@ -124,8 +125,8 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
             let data = {
               context : ctx.name,
               location : ctx.server,
-              deployment_type : k8sconfig.find(context => context.contextID === ctx.id)?.inClusterConfig ? "In Cluster" : "Out Cluster",
-              last_discovery : "",
+              deployment_type : k8sconfig.find(context => context.contextID === ctx.id)?.inClusterConfig ? "In Cluster" : "Out of Cluster",
+              last_discovery : setDateTime(new Date()),
               name : ctx.name,
               id : ctx.id
             };
@@ -149,7 +150,6 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
       .catch(handleError("failed to fetch contexts for the instance"))
 
     getKubernetesVersion();
-    setLastDiscover([setDateTime(new Date())]);
   }, [])
 
   useEffect(() => {
@@ -197,7 +197,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
   }
 
   const setDateTime = (dt) => {
-    return dt.toLocaleDateString("en-US", options)
+    return dt.toLocaleDateString("en-US", dateOptions)
       + " " +  dt.toLocaleTimeString("en-US");
   }
 
@@ -457,6 +457,15 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
         filter : true,
         sort : true,
         searchable : true,
+        customHeadRender : function CustomHead({ index, ...column }, sortColumn) {
+          return (
+            <TableCell align={"center"} key={index} onClick={() => sortColumn(index)}>
+              <TableSortLabel active={column.sortDirection != null} direction={column.sortDirection || "asc"}>
+                <b>{column.label}</b>
+              </TableSortLabel>
+            </TableCell>
+          );
+        },
         customBodyRender : (_, tableMeta, ) => {
           return (
             <Tooltip title={`Server: ${tableMeta.rowData[2]}`}>
@@ -480,6 +489,15 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
         filter : true,
         sort : true,
         searchable : true,
+        customHeadRender : function CustomHead({ index, ...column }, sortColumn) {
+          return (
+            <TableCell align={"center"} key={index} onClick={() => sortColumn(index)}>
+              <TableSortLabel active={column.sortDirection != null} direction={column.sortDirection || "asc"}>
+                <b>{column.label}</b>
+              </TableSortLabel>
+            </TableCell>
+          );
+        },
       }
     },
     {
@@ -489,6 +507,15 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
         filter : true,
         sort : true,
         searchable : true,
+        customHeadRender : function CustomHead({ index, ...column }, sortColumn) {
+          return (
+            <TableCell align={"center"} key={index} onClick={() => sortColumn(index)}>
+              <TableSortLabel active={column.sortDirection != null} direction={column.sortDirection || "asc"}>
+                <b>{column.label}</b>
+              </TableSortLabel>
+            </TableCell>
+          );
+        },
       }
     },
     {
@@ -498,7 +525,16 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
         filter : true,
         sort : true,
         searchable : true,
-        customBodyRender : (value, tableMeta) => <p>{ discover[tableMeta.rowIndex] }</p>
+        customHeadRender : function CustomHead({ index, ...column }, sortColumn) {
+          return (
+            <TableCell align={"center"} key={index} onClick={() => sortColumn(index)}>
+              <TableSortLabel active={column.sortDirection != null} direction={column.sortDirection || "asc"}>
+                <b>{column.label}</b>
+              </TableSortLabel>
+            </TableCell>
+          );
+        },
+        customBodyRender : (value, tableMeta) => <p>{ discover[tableMeta.rowIndex] || value }</p>
       }
     },
     {
@@ -507,6 +543,15 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
         filter : true,
         sort : true,
         searchable : true,
+        customHeadRender : function CustomHead({ index, ...column }, sortColumn) {
+          return (
+            <TableCell key={index} onClick={() => sortColumn(index)}>
+              <TableSortLabel active={column.sortDirection != null} direction={column.sortDirection || "asc"}>
+                <b>{column.label}</b>
+              </TableSortLabel>
+            </TableCell>
+          );
+        },
         customBodyRender : (value, tableMeta) => {
           return (
             <div>
@@ -564,25 +609,14 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
     download : false,
     expandableRows : true,
     expandableRowsOnClick : false,
+    elevation : 0,
+    label : "",
     onRowsDelete : (td) => {
       td.data.forEach((item) => {
         handleConfigDelete(data[item.index].id)
       })
     },
-    customToolbar : () => (
-      <Button
-        type="submit"
-        variant="contained"
-        color="primary"
-        size="large"
-        onClick={handleClick}
-        className={classes.button}
-        data-cy="btnResetDatabase"
-      >
-        <Typography className={classes.add}> Add Cluster </Typography>
-        <AddIcon fontSize="small" />
-      </Button>
-    ),
+
 
     renderExpandableRow : (rowData, rowMetaData) => {
       const contextId = contexts[rowMetaData.rowIndex].id;
@@ -946,6 +980,20 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
   return (
     <>
       <DataTable
+        title={
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            size="large"
+            onClick={handleClick}
+            className={classes.button}
+            data-cy="btnResetDatabase"
+          >
+            <Typography className={classes.add}> Add Cluster </Typography>
+            <AddIcon fontSize="small" />
+          </Button>
+        }
         columns = { columns }
         data = { data }
         options = { options }
