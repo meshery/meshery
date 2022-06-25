@@ -26,5 +26,19 @@ export const PaperWithTitle = ({ title, children, titleVariant, containerProps }
       </Grid>
     </CustomPaper>
   );
-};
+          }
+
+          export const PaperWithoutTitle = ({ children, containerProps }) => {
+            return (
+              <CustomPaper>
+                <Grid container spacing={1}>
+                  <Grid item xs={12} container {...containerProps}>
+                    {children}
+                  </Grid>
+                </Grid>
+              </CustomPaper>
+            );
+          };
+
+
 export default CustomPaper;
