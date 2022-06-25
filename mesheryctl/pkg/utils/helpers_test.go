@@ -651,7 +651,7 @@ func TestSetOverrideValues(t *testing.T) {
 					"enabled": true,
 				},
 				"meshery-cpx": map[string]interface{}{
-					"enabled": true,
+					"enabled": false,
 				},
 				"image": map[string]interface{}{
 					"tag": testChannel + "-testImageVersion",

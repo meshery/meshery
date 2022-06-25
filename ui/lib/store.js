@@ -184,7 +184,6 @@ export const reducer = (state = initialState, action) => {
       //     return state
 
     case actionTypes.SET_OPERATOR_SUBSCRIPTION: 
-      console.log("urge to change the data", action.operatorState)
       return state.merge({operatorState: action.operatorState});
 
     case actionTypes.SET_MESHSYNC_SUBSCRIPTION: 

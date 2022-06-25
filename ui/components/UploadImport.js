@@ -4,9 +4,11 @@ import { TextField, Button, Grid } from '@material-ui/core';
 import { makeStyles, MuiThemeProvider } from '@material-ui/core/styles';
 import { createTheme } from '@material-ui/core/styles';
 import { URLValidator } from '../utils/URLValidator';
-import { Dialog,  DialogActions,
+import {
+  Dialog, DialogActions,
   DialogContent,
-  DialogTitle } from '@material-ui/core';
+  DialogTitle
+} from '@material-ui/core';
 
 
 
@@ -99,8 +101,8 @@ const UploadImport = ({ handleUpload, handleImport, configuration, modalStatus }
         <Button aria-label="URL-Upload" data-cy="import-button" variant="contained"
           color="primary" className={classes.button}
           size="large" onClick={handleOpen}>
-          <LinkIcon style={{ padding : "1px" }} />
-           Import {configuration}
+          <LinkIcon style={{ paddingRight : ".35rem" }} />
+          Import {configuration}
         </Button>
 
         <Dialog
@@ -121,12 +123,12 @@ const UploadImport = ({ handleUpload, handleImport, configuration, modalStatus }
                     error={isError}
                     helperText={isError && "Invalid URL"}
                     variant="outlined"
-                    label={"URL for "+configuration}
+                    label={`URL for ${configuration}`}
                     style={{ width : "100%" }}
                     onChange={(e) => setInput(e.target.value)} />
                 </Grid>
               </Grid>
-              <hr/>
+              <hr />
               <Grid container spacing={24}>
                 <Grid item xs={3}>
                   <h4 className={classes.heading}> UPLOAD FILE </h4>
@@ -141,16 +143,16 @@ const UploadImport = ({ handleUpload, handleImport, configuration, modalStatus }
                 <Grid item xs={3}>
                   <label htmlFor="upload-button" className={classes.upload}>
 
-                    <Button variant="contained" size="large"  color="primary" aria-label="Upload Button"  component="span" >
-                      <input id="upload-button" type="file"  accept=".yaml, .yml" hidden onChange={ handleImport } name="upload-button" data-cy="file-upload-button" />
-                        Browse
+                    <Button variant="contained" size="large" color="primary" aria-label="Upload Button" component="span" >
+                      <input id="upload-button" type="file" accept=".yaml, .yml" hidden onChange={handleImport} name="upload-button" data-cy="file-upload-button" />
+                      Browse
                     </Button>
                   </label>
                 </Grid>
               </Grid>
             </DialogContent>
             <DialogActions>
-              <label htmlFor="cancel"  className={classes.cancel}>
+              <label htmlFor="cancel" className={classes.cancel}>
                 <Button variant="outlined" size="large" color="secondary" onClick={handleClose}>Cancel</Button>
               </label>
               <label htmlFor="URL">  <Button disabled={isError || !input} size="large" id="URL" variant="contained" color="primary" onClick={(e) => handleSubmit(e, handleUpload)}>Import</Button> </label>

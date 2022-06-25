@@ -119,7 +119,6 @@ func PersistClusterNames(
 	handler *database.Handler,
 	meshsyncCh chan struct{},
 ) {
-
 	k8sContexts, ok := ctx.Value(models.KubeClustersKey).([]models.K8sContext)
 	if !ok {
 		return

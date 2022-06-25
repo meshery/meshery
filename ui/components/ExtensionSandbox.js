@@ -42,7 +42,45 @@ export function getCapabilities(type, cb) {
 }
 
 /**
- * getComponentURIFromPathForNavigator takes in teh navigator extensions and the current
+ * getFullPageExtensions queries the meshery server for the current providers
+ * capabilities and returns all the extensions names and URIs having full_page type as true
+ * @param {Function} cb
+ */
+export function getFullPageExtensions(cb) {
+  let extNames = [];
+  dataFetch(
+    "/api/provider/capabilities",
+    {
+      credentials : "same-origin",
+      method : "GET",
+      credentials : "include",
+    },
+    (result) => {
+      for (var key of Object.keys(result?.extensions)) {
+        if (Array.isArray(result?.extensions[key])) {
+          result?.extensions[key].forEach((comp) => {
+            if (comp?.type === "full_page") {
+              let ext = {
+                name : key,
+                uri : comp?.href?.uri
+              }
+              extNames.push(ext)
+            }
+          })
+        }
+      }
+      cb(extNames)
+    },
+    (err) => {
+      console.group("extension error");
+      console.error(err);
+      console.groupEnd();
+    }
+  );
+}
+
+/**
+ * getComponentURIFromPathForNavigator takes in the navigator extensions and the current
  * path and searches recursively for the matching component
  *
  * If there are duplicate uris then the component for first match will be returned
@@ -94,6 +132,110 @@ export function getComponentTitleFromPathForNavigator(extensions, path) {
 }
 
 /**
+ * getComponentURIFromPathForAccount takes in the account extensions and the current
+ * path and searches recursively for the matching component
+ *
+ * If there are duplicate uris then the component for first match will be returned
+ * @param {import("../utils/ExtensionPointSchemaValidator").AcccountSchema[]} extensions
+ * @param {string} path
+ * @returns {string}
+ */
+function getComponentURIFromPathForAccount(extensions, path) {
+  path = normalizeURI(path);
+
+  if (Array.isArray(extensions)) {
+    const fext = extensions.find((item) => item?.href === path);
+    if (fext) return fext.component || "";
+
+    // If not found then start searching in the child of each extension
+    for (const ext of extensions) {
+      const comp = getComponentURIFromPathForAccount(ext.children, path);
+      if (comp) return comp;
+    }
+  }
+
+  return "";
+}
+
+/**
+ * getComponentTitleFromPathForAccount takes in the account extensions and the current
+ * path and searches recursively for the matching component and returns title
+ *
+ * If there are duplicate uris then the component for first match will be returned
+ * @param {import("../utils/ExtensionPointSchemaValidator").AccountSchema[]} extensions
+ * @param {string} path
+ * @returns {string}
+ */
+export function getComponentTitleFromPathForAccount(extensions, path) {
+  path = normalizeURI(path);
+
+  if (Array.isArray(extensions)) {
+    const fext = extensions.find((item) => item?.href === path);
+    if (fext) return fext.title || "";
+
+    // If not found then start searching in the child of each extension
+    for (const ext of extensions) {
+      const title = getComponentURIFromPathForAccount(ext.children, path);
+      if (title) return title;
+    }
+  }
+
+  return "";
+}
+
+/**
+ * getComponentURIFromPath takes in the extensions and the current
+ * path and searches recursively for the matching component
+ *
+ * If there are duplicate uris then the component for first match will be returned
+ * @param {import("../utils/ExtensionPointSchemaValidator").FullPageExtensionSchema[]} extensions
+ * @param {string} path
+ * @returns {string}
+ */
+function getComponentURIFromPath(extensions, path) {
+  path = normalizeURI(path);
+
+  if (Array.isArray(extensions)) {
+    const fext = extensions.find((item) => item?.href === path);
+    if (fext) return fext.component || "";
+
+    // If not found then start searching in the child of each extension
+    for (const ext of extensions) {
+      const comp = getComponentURIFromPath(ext.children, path);
+      if (comp) return comp;
+    }
+  }
+
+  return "";
+}
+
+/**
+ * getComponentTitleFromPath takes in the extensions and the current
+ * path and searches recursively for the matching component and returns title
+ *
+ * If there are duplicate uris then the component for first match will be returned
+ * @param {import("../utils/ExtensionPointSchemaValidator").FullPageExtensionSchema[]} extensions
+ * @param {string} path
+ * @returns {string}
+ */
+export function getComponentTitleFromPath(extensions, path) {
+  path = normalizeURI(path);
+
+  if (Array.isArray(extensions)) {
+    const fext = extensions.find((item) => item?.href === path);
+    if (fext) return fext.title || "";
+
+    // If not found then start searching in the child of each extension
+    for (const ext of extensions) {
+      const title = getComponentURIFromPath(ext.children, path);
+      if (title) return title;
+    }
+  }
+
+  return "";
+}
+
+/**
  * getComponentURIFromPathForUserPrefs takes in the user_prefs extensions and returns
  * an array of all the component mappings
  * @param {import("../utils/ExtensionPointSchemaValidator").UserPrefSchema[]} extensions
@@ -128,7 +270,8 @@ function createPathForRemoteComponent(componentName) {
  * Only two "types" are supported by the sandbox:
  *  1. navigator - for navigator extensions
  *  2. user_prefs - for user preference extension
- * @param {{ type: "navigator" | "user_prefs", Extension: JSX.Element }} props
+ *  3. account - for user account
+ * @param {{ type: "navigator" | "user_prefs" | "account", Extension: JSX.Element }} props
  */
 function ExtensionSandbox({ type, Extension }) {
   const [extensions, setExtensions] = useState([]);
@@ -159,6 +302,15 @@ function ExtensionSandbox({ type, Extension }) {
           return <Extension url={createPathForRemoteComponent(uri)} />
         })
       );
+  }
+
+  if (type === "account") {
+    return isLoading ?
+      <LoadingScreen message="Establishing Remote Connection" />
+      :
+      (
+        <Extension url={createPathForRemoteComponent(getComponentURIFromPathForAccount(extensions, getPath()))} />
+      )
   }
 
   return null

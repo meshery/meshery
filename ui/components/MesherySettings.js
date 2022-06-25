@@ -48,11 +48,16 @@ const styles = (theme) => ({
   DBBtn : {
     margin : theme.spacing(0.5),
     padding : theme.spacing(1),
-    borderRadius : 5
+    borderRadius : 5,
+    backgroundColor : "#dc3545",
+    "&:hover" : {
+      backgroundColor : "#bb2d3b",
+    },
   },
   container : {
     display : "flex",
-    justifyContent : "center"
+    justifyContent : "center",
+    margin : theme.spacing(2),
   }
 });
 

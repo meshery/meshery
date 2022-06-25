@@ -12,12 +12,12 @@ import FlipCard from "../FlipCard";
 import { makeStyles } from "@material-ui/core/styles";
 import { UnControlled as CodeMirror } from "react-codemirror2";
 import FullscreenExit from "@material-ui/icons/FullscreenExit";
-import TrendingUp from "@material-ui/icons/TrendingUp"
-
+import UndeployIcon from "../../public/static/img/UndeployIcon";
+import DoneAllIcon from '@material-ui/icons/DoneAll';
 
 const INITIAL_GRID_SIZE = { xl : 4, md : 6, xs : 12 };
 
-const useStyles= makeStyles(() => ({
+const useStyles = makeStyles(() => ({
   cardButtons : {
     display : "flex",
     justifyContent : "flex-end",
@@ -85,6 +85,13 @@ const useStyles= makeStyles(() => ({
     width : "24px",
     height : "24px",
     marginRight : "5px"
+  },
+  undeployButton : {
+    backgroundColor : "#B32700",
+    color : "#ffffff",
+    "&:hover" : {
+      backgroundColor : "#8f1f00"
+    }
   }
 }))
 
@@ -157,6 +164,7 @@ function MesheryPatternCard({
   created_at,
   pattern_file,
   handleDeploy,
+  handleUnDeploy,
   updateHandler,
   deleteHandler,
   setSelectedPatterns,
@@ -176,7 +184,7 @@ function MesheryPatternCard({
     setFullScreen(!fullScreen);
   };
 
-  const classes=useStyles()
+  const classes = useStyles()
 
   return (
     <>
@@ -210,7 +218,7 @@ function MesheryPatternCard({
                 {updated_at
                   ? (
                     <Typography color="primary" variant="caption" style={{ fontStyle : "italic" }}>
-                  Modified On: <Moment format="LLL">{updated_at}</Moment>
+                      Modified On: <Moment format="LLL">{updated_at}</Moment>
                     </Typography>
                   )
                   : null}
@@ -228,7 +236,7 @@ function MesheryPatternCard({
                 className={classes.testsButton}
               >
                 <Avatar src="/static/img/pattwhite.svg" className={classes.iconPatt} imgProps={{ height : "16px", width : "16px" }} />
-              Design
+                Design
               </Button>
 
               <Button
@@ -237,9 +245,21 @@ function MesheryPatternCard({
                 onClick={(ev) =>
                   genericClickHandler(ev, handleDeploy)
                 }
+                className={classes.testsButton}
               >
-                <TrendingUp className={classes.iconPatt}/>
-              Deploy
+                <DoneAllIcon className={classes.iconPatt} />
+                Deploy
+              </Button>
+
+              <Button
+                variant="contained"
+                className={classes.undeployButton}
+                onClick={(ev) =>
+                  genericClickHandler(ev, handleUnDeploy)
+                }
+              >
+                <UndeployIcon fill="#ffffff" className={classes.iconPatt} />
+                Undeploy
               </Button>
             </div>
           </div>
@@ -272,7 +292,7 @@ function MesheryPatternCard({
             </Grid>
             <Grid item xs={12}
               onClick={(ev) =>
-                genericClickHandler(ev, () => {})
+                genericClickHandler(ev, () => { })
               }>
 
               <Divider variant="fullWidth" light />
@@ -298,7 +318,7 @@ function MesheryPatternCard({
                   {created_at
                     ? (
                       <Typography color="primary" variant="caption" style={{ fontStyle : "italic" }}>
-                  Created at: <Moment format="LLL">{created_at}</Moment>
+                        Created at: <Moment format="LLL">{created_at}</Moment>
                       </Typography>
                     )
                     : null}
@@ -311,14 +331,14 @@ function MesheryPatternCard({
 
                 {/* Save button */}
                 <IconButton onClick={(ev) =>
-                  genericClickHandler(ev,updateHandler)
+                  genericClickHandler(ev, updateHandler)
                 }>
                   <Save color="primary" />
                 </IconButton>
 
                 {/* Delete Button */}
                 <IconButton onClick={(ev) =>
-                  genericClickHandler(ev,deleteHandler)
+                  genericClickHandler(ev, deleteHandler)
                 }>
                   <DeleteIcon color="primary" />
                 </IconButton>

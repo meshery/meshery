@@ -9,7 +9,7 @@ import PerformanceProfileTable from "./PerformanceProfileTable";
 import PerformanceProfileGrid from "./PerformanceProfileGrid";
 import dataFetch from "../../lib/data-fetch";
 import IconButton from "@material-ui/core/IconButton";
-import AddIcon from "@material-ui/icons/Add";
+import AddIcon from "@material-ui/icons/AddCircleOutline";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import { updateProgress } from "../../lib/store";
@@ -60,6 +60,9 @@ const useStyles = makeStyles(() => ({
     margin : "auto",
     maxWidth : "90%",
     outline : "none"
+  },
+  addIcon : {
+    paddingRight : "0.5"
   }
 }));
 /**
@@ -115,7 +118,7 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar }) 
    */
   useEffect(() => {
     fetchTestProfiles(page, pageSize, search, sortOrder);
-    const subscription = subscribePerformanceProfiles( (res) => {
+    const subscription = subscribePerformanceProfiles((res) => {
       // @ts-ignore
       console.log(res);
       let result = res?.subscribePerfProfiles;
@@ -127,13 +130,14 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar }) 
           setPage(result.page || 0);
         }
       }
-    },{
+    }, {
       selector : {
         pageSize : `${pageSize}`,
         page : `${page}`,
         search : `${encodeURIComponent(search)}`,
         order : `${encodeURIComponent(sortOrder)}`,
-      } })
+      }
+    })
     return () => {
       subscription.dispose();
     };
@@ -181,8 +185,9 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar }) 
   }
 
   async function showModal(count) {
-    let response = await modalRef.current.show({ title : `Delete ${count ? count : ""} Performance Profile${count > 1 ? "s" : '' }?`,
-      subtitle : `Are you sure you want to delete ${count > 1 ? "these" : 'this' } ${count ? count : ""} performance profile${count > 1 ? "s" : '' }?`,
+    let response = await modalRef.current.show({
+      title : `Delete ${count ? count : ""} Performance Profile${count > 1 ? "s" : ''}?`,
+      subtitle : `Are you sure you want to delete ${count > 1 ? "these" : 'this'} ${count ? count : ""} performance profile${count > 1 ? "s" : ''}?`,
 
       options : ["Yes", "No"],
     })
@@ -240,7 +245,7 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar }) 
     <>
       <div className={classes.pageContainer}>
         <div className={classes.topToolbar}>
-          {(testProfiles.length > 0 || viewType == "table")  && (
+          {(testProfiles.length > 0 || viewType == "table") && (
             <div className={classes.addButton}>
               <Button
                 aria-label="Add Performance Profile"
@@ -250,7 +255,7 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar }) 
                 // @ts-ignore
                 onClick={() => setProfileForModal({})}
               >
-                <AddIcon />
+                <AddIcon className={classes.addIcon} />
                 Add Performance Profile
               </Button>
             </div>
@@ -301,8 +306,8 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar }) 
                 // @ts-ignore
                 onClick={() => setProfileForModal({})}
               >
-                <AddIcon />
-                Add Performance Profile
+
+                <Typography className="addIcon">Add Performance Profile</Typography>
               </Button>
             </div>
           </Paper>
