@@ -46,6 +46,7 @@ mesheryctl app onboard -f [filepath]
 
 		deployURL := mctlCfg.GetBaseMesheryURL() + "/api/application/deploy"
 		appURL := mctlCfg.GetBaseMesheryURL() + "/api/application"
+		patternURL := mctlCfg.GetBaseMesheryURL() + "/api/pattern"
 
 		// app name has been passed
 		if len(args) > 0 {
@@ -208,7 +209,43 @@ mesheryctl app onboard -f [filepath]
 			}
 		}
 
-		req, err = utils.NewRequest("POST", deployURL, bytes.NewBuffer([]byte(appFile)))
+		// Convert App File into Pattern File
+		jsonValues, _ := json.Marshal(map[string]interface{}{
+			"k8s_manifest": appFile,
+		})
+
+		req, err = utils.NewRequest("POST", patternURL, bytes.NewBuffer(jsonValues))
+		if err != nil {
+			return err
+		}
+
+		resp, err := client.Do(req)
+		if err != nil {
+			return err
+		}
+		defer resp.Body.Close()
+
+		var response []*models.MesheryPattern
+		// bad api call
+		if resp.StatusCode != 200 {
+			return errors.Errorf("Response Status Code %d, possible Server Error", resp.StatusCode)
+		}
+
+		body, err := io.ReadAll(resp.Body)
+		if err != nil {
+			return errors.Wrap(err, utils.PerfError("failed to read response body"))
+		}
+
+		err = json.Unmarshal(body, &response)
+		if err != nil {
+			return errors.Wrap(err, "failed to unmarshal response body")
+		}
+
+		utils.Log.Debug("application file converted to pattern file")
+
+		patternFile := response[0].PatternFile
+
+		req, err = utils.NewRequest("POST", deployURL, bytes.NewBuffer([]byte(patternFile)))
 		if err != nil {
 			return err
 		}
@@ -219,7 +256,7 @@ mesheryctl app onboard -f [filepath]
 		}
 
 		defer res.Body.Close()
-		body, err := io.ReadAll(res.Body)
+		body, err = io.ReadAll(res.Body)
 		if err != nil {
 			return err
 		}
