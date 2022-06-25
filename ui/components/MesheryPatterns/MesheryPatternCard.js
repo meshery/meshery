@@ -118,7 +118,7 @@ function MesheryPatternCard({
                 }
               >
                 <UndeployIcon fill="#ffffff" className={classes.iconPatt} />
-                Undeploy
+                <span className={classes.btnText}>Undeploy</span>
               </Button>
             </div>
           </div>

@@ -69,9 +69,17 @@ const useStyles= makeStyles(() => ({
     height : "24px",
     marginRight : "5px"
   },
+  btnText : {
+    display : "flex",
+    justifyContent : "center",
+    paddingLeft : "0.35rem"
+  },
   undeployButton : {
     backgroundColor : "#B32700",
-    color : "#ffffff"
+    color : "#ffffff",
+    "&:hover" : {
+      backgroundColor : "#8f1f00"
+    }
   }
 }));
 
