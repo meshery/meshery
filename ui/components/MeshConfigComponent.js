@@ -4,17 +4,18 @@ import {
   TextField, FormGroup, InputAdornment
 } from '@material-ui/core';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
+import TableSortLabel from "@material-ui/core/TableSortLabel";
 import CloseIcon from "@material-ui/icons/Close";
 import { withSnackbar } from "notistack";
 import { useState, useEffect, useRef } from 'react';
 import DataTable from "mui-datatables";
-import { withStyles } from '@material-ui/styles';
+import { withStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import dataFetch, { promisifiedDataFetch } from '../lib/data-fetch';
 import PromptComponent from './PromptComponent';
 import CloudUploadIcon from "@material-ui/icons/CloudUpload";
-import AddIcon from '@material-ui/icons/Add';
+import AddIcon from "@material-ui/icons/AddCircleOutline";
 import MeshsyncStatusQuery from './graphql/queries/MeshsyncStatusQuery';
 import NatsStatusQuery from './graphql/queries/NatsStatusQuery';
 import changeOperatorState from './graphql/mutations/OperatorStatusMutation';
@@ -55,11 +56,15 @@ const styles = (theme) => ({
     padding : theme.spacing(1),
     borderRadius : 5
   },
-  grey : { background : "WhiteSmoke",
+  grey : {
+    background : "WhiteSmoke",
     padding : theme.spacing(2),
-    borderRadius : "inherit", },
-  fileLabelText : { cursor : "pointer",
-    "& *" : { cursor : "pointer", }, },
+    borderRadius : "inherit",
+  },
+  fileLabelText : {
+    cursor : "pointer",
+    "& *" : { cursor : "pointer", },
+  },
   subtitle : {
     minWidth : 400,
     overflowWrap : 'anywhere',
@@ -70,8 +75,9 @@ const styles = (theme) => ({
     width : "80%",
     wordWrap : "break-word"
   },
-  add : {
-    marginRight : theme.spacing(1)
+  addIcon : {
+    paddingLeft : theme.spacing(.5),
+    marginRight : theme.spacing(.5),
   },
   FlushBtn : {
     margin : theme.spacing(0.5),
@@ -105,7 +111,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
 
   const dateOptions = { weekday : 'long', year : 'numeric', month : 'long', day : 'numeric' };
 
-  let k8sfileElementVal ="";
+  let k8sfileElementVal = "";
   let formData = new FormData();
 
   const stateUpdater = (state, updateFunc, updateValue, index) => {
@@ -124,8 +130,8 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
             let data = {
               context : ctx.name,
               location : ctx.server,
-              deployment_type : k8sconfig.find(context => context.contextID === ctx.id)?.inClusterConfig ? "In Cluster" : "Out Cluster",
-              last_discovery : "",
+              deployment_type : k8sconfig.find(context => context.contextID === ctx.id)?.inClusterConfig ? "In Cluster" : "Out of Cluster",
+              last_discovery : setDateTime(new Date()),
               name : ctx.name,
               id : ctx.id
             };
@@ -135,7 +141,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
               subscribe({
                 next : (res) => {
                   if (!_operatorState.find(opSt => opSt.contextID === ctx.id)) {
-                    const x  = updateCtxInfo(ctx.id, res)
+                    const x = updateCtxInfo(ctx.id, res)
                     _setOperatorState(x)
                   }
                   tempSubscription.unsubscribe();
@@ -149,7 +155,6 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
       .catch(handleError("failed to fetch contexts for the instance"))
 
     getKubernetesVersion();
-    setLastDiscover([setDateTime(new Date())]);
   }, [])
 
   useEffect(() => {
@@ -197,8 +202,8 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
   }
 
   const setDateTime = (dt) => {
-    return dt.toLocaleDateString("en-US", options)
-      + " " +  dt.toLocaleTimeString("en-US");
+    return dt.toLocaleDateString("en-US", dateOptions)
+      + " " + dt.toLocaleTimeString("en-US");
   }
 
   const handleContexts = (contexts) => {
@@ -221,13 +226,15 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
 
   const handleError = (msg) => (error) => {
     updateProgress({ showProgress : false });
-    enqueueSnackbar(`${msg}: ${error}`, { variant : "error", preventDuplicate : true,
+    enqueueSnackbar(`${msg}: ${error}`, {
+      variant : "error", preventDuplicate : true,
       action : (key) => (
         <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
           <CloseIcon />
         </IconButton>
       ),
-      autoHideDuration : 7000, });
+      autoHideDuration : 7000,
+    });
   };
 
   const handleMenuOpen = (e, index) => {
@@ -317,7 +324,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
   const handleOperatorSwitch = (index, checked) => {
     const contextId = contexts[index].id;
     const variables = {
-      status : `${ checked ? "ENABLED" : "DISABLED"}`,
+      status : `${checked ? "ENABLED" : "DISABLED"}`,
       contextID : contextId
     };
 
@@ -336,7 +343,8 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
           <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
             <CloseIcon />
           </IconButton>
-        ), });
+        ),
+      });
 
       const tempSubscription = fetchMesheryOperatorStatus({ k8scontextID : contextId }).subscribe({
         next : (res) => {
@@ -353,8 +361,10 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
     updateProgress({ showProgress : true });
     dataFetch(
       "/api/system/kubernetes/contexts/" + id,
-      { credentials : "same-origin",
-        method : "DELETE" },
+      {
+        credentials : "same-origin",
+        method : "DELETE"
+      },
       () => {
         updateProgress({ showProgress : false });
         if (index != undefined) {
@@ -374,7 +384,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
       const name = field.files[0].name;
       const formdata = new FormData();
       formdata.append("k8sfile", field.files[0])
-      textField.value=name;
+      textField.value = name;
       formData = formdata;
 
     }
@@ -387,7 +397,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
     }
     const operatorStatus = operator.operatorStatus;
     return {
-      operatorState : operatorStatus.status==="ENABLED",
+      operatorState : operatorStatus.status === "ENABLED",
       operatorVersion : operatorStatus.version,
     }
   }
@@ -457,7 +467,16 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
         filter : true,
         sort : true,
         searchable : true,
-        customBodyRender : (_, tableMeta, ) => {
+        customHeadRender : function CustomHead({ index, ...column }, sortColumn) {
+          return (
+            <TableCell align={"center"} key={index} onClick={() => sortColumn(index)}>
+              <TableSortLabel active={column.sortDirection != null} direction={column.sortDirection || "asc"}>
+                <b>{column.label}</b>
+              </TableSortLabel>
+            </TableCell>
+          );
+        },
+        customBodyRender : (_, tableMeta,) => {
           return (
             <Tooltip title={`Server: ${tableMeta.rowData[2]}`}>
               <Chip
@@ -480,6 +499,15 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
         filter : true,
         sort : true,
         searchable : true,
+        customHeadRender : function CustomHead({ index, ...column }, sortColumn) {
+          return (
+            <TableCell align={"center"} key={index} onClick={() => sortColumn(index)}>
+              <TableSortLabel active={column.sortDirection != null} direction={column.sortDirection || "asc"}>
+                <b>{column.label}</b>
+              </TableSortLabel>
+            </TableCell>
+          );
+        },
       }
     },
     {
@@ -489,6 +517,15 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
         filter : true,
         sort : true,
         searchable : true,
+        customHeadRender : function CustomHead({ index, ...column }, sortColumn) {
+          return (
+            <TableCell align={"center"} key={index} onClick={() => sortColumn(index)}>
+              <TableSortLabel active={column.sortDirection != null} direction={column.sortDirection || "asc"}>
+                <b>{column.label}</b>
+              </TableSortLabel>
+            </TableCell>
+          );
+        },
       }
     },
     {
@@ -498,7 +535,16 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
         filter : true,
         sort : true,
         searchable : true,
-        customBodyRender : (value, tableMeta) => <p>{ discover[tableMeta.rowIndex] }</p>
+        customHeadRender : function CustomHead({ index, ...column }, sortColumn) {
+          return (
+            <TableCell align={"center"} key={index} onClick={() => sortColumn(index)}>
+              <TableSortLabel active={column.sortDirection != null} direction={column.sortDirection || "asc"}>
+                <b>{column.label}</b>
+              </TableSortLabel>
+            </TableCell>
+          );
+        },
+        customBodyRender : (value, tableMeta) => <p>{discover[tableMeta.rowIndex] || value}</p>
       }
     },
     {
@@ -507,6 +553,15 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
         filter : true,
         sort : true,
         searchable : true,
+        customHeadRender : function CustomHead({ index, ...column }, sortColumn) {
+          return (
+            <TableCell key={index} onClick={() => sortColumn(index)}>
+              <TableSortLabel active={column.sortDirection != null} direction={column.sortDirection || "asc"}>
+                <b>{column.label}</b>
+              </TableSortLabel>
+            </TableCell>
+          );
+        },
         customBodyRender : (value, tableMeta) => {
           return (
             <div>
@@ -548,7 +603,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
                     name="OperatorSwitch"
                     color="primary"
                   />
-                    Operator
+                  Operator
                 </MenuItem>
               </Menu>
             </div>
@@ -564,25 +619,14 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
     download : false,
     expandableRows : true,
     expandableRowsOnClick : false,
+    elevation : 0,
+    label : "",
     onRowsDelete : (td) => {
       td.data.forEach((item) => {
         handleConfigDelete(data[item.index].id)
       })
     },
-    customToolbar : () => (
-      <Button
-        type="submit"
-        variant="contained"
-        color="primary"
-        size="large"
-        onClick={handleClick}
-        className={classes.button}
-        data-cy="btnResetDatabase"
-      >
-        <Typography className={classes.add}> Add Cluster </Typography>
-        <AddIcon fontSize="small" />
-      </Button>
-    ),
+
 
     renderExpandableRow : (rowData, rowMetaData) => {
       const contextId = contexts[rowMetaData.rowIndex].id;
@@ -618,7 +662,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
                         <Grid item xs={12} md={5}>
                           <List>
                             <ListItem>
-                              <ListItemText primary="Name" secondary={contexts[rowMetaData.rowIndex].name}/>
+                              <ListItemText primary="Name" secondary={contexts[rowMetaData.rowIndex].name} />
                             </ListItem>
                             <ListItem>
                               <ListItemText primary="K8s Version" secondary={k8sVersion} />
@@ -630,7 +674,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
                             <ListItem>
                               <ListItemText primary="Created At" secondary={
                                 contexts[rowMetaData.rowIndex].created_at
-                              }/>
+                              } />
                             </ListItem>
                             <ListItem>
                               <ListItemText primary="UpdatedAt" secondary={
@@ -644,7 +688,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
                             <ListItem>
                               <ListItemText className={classes.text} primary="Server" secondary={
                                 contexts[rowMetaData.rowIndex].server
-                              }/>
+                              } />
                             </ListItem>
                           </List>
                         </Grid>
@@ -682,44 +726,44 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
                         </Grid>
 
                         {(meshSyncState || natsState) &&
-                            <>
-                              <Grid item xs={12} md={4}>
-                                <List>
-                                  <ListItem>
-                                    <Tooltip
-                                      title={meshSyncState ? `Ping MeshSync` : "Not Available"}
-                                      aria-label="meshSync"
-                                    >
-                                      <Chip
-                                        label={"MeshSync"}
-                                        onClick={() => handleMeshSyncClick(rowMetaData.rowIndex)}
-                                        icon={<img src="/static/img/meshsync.svg" className={classes.icon} />}
-                                        variant="outlined"
-                                        data-cy="chipMeshSync"
-                                      />
-                                    </Tooltip>
-                                  </ListItem>
-                                </List>
-                              </Grid>
-                              <Grid item xs={12} md={4}>
-                                <List>
-                                  <ListItem>
-                                    <Tooltip
-                                      title={natsState ? `Reconnect NATS` : "Not Available"}
-                                      aria-label="nats"
-                                    >
-                                      <Chip
-                                        label={"NATS"}
-                                        onClick={() => handleNATSClick(rowMetaData.rowIndex)}
-                                        icon={<img src="/static/img/nats-icon-color.svg" className={classes.icon} />}
-                                        variant="outlined"
-                                        data-cy="chipNATS"
-                                      />
-                                    </Tooltip>
-                                  </ListItem>
-                                </List>
-                              </Grid>
-                            </>
+                          <>
+                            <Grid item xs={12} md={4}>
+                              <List>
+                                <ListItem>
+                                  <Tooltip
+                                    title={meshSyncState ? `Ping MeshSync` : "Not Available"}
+                                    aria-label="meshSync"
+                                  >
+                                    <Chip
+                                      label={"MeshSync"}
+                                      onClick={() => handleMeshSyncClick(rowMetaData.rowIndex)}
+                                      icon={<img src="/static/img/meshsync.svg" className={classes.icon} />}
+                                      variant="outlined"
+                                      data-cy="chipMeshSync"
+                                    />
+                                  </Tooltip>
+                                </ListItem>
+                              </List>
+                            </Grid>
+                            <Grid item xs={12} md={4}>
+                              <List>
+                                <ListItem>
+                                  <Tooltip
+                                    title={natsState ? `Reconnect NATS` : "Not Available"}
+                                    aria-label="nats"
+                                  >
+                                    <Chip
+                                      label={"NATS"}
+                                      onClick={() => handleNATSClick(rowMetaData.rowIndex)}
+                                      icon={<img src="/static/img/nats-icon-color.svg" className={classes.icon} />}
+                                      variant="outlined"
+                                      data-cy="chipNATS"
+                                    />
+                                  </Tooltip>
+                                </ListItem>
+                              </List>
+                            </Grid>
+                          </>
                         }
                       </Grid>
 
@@ -727,7 +771,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
                         <Grid item xs={12} md={5}>
                           <List>
                             <ListItem>
-                              <ListItemText primary="Operator State" secondary={operatorState ? "Active":  "Disabled"} />
+                              <ListItemText primary="Operator State" secondary={operatorState ? "Active" : "Disabled"} />
                             </ListItem>
                             <ListItem>
                               <ListItemText primary="Operator Version" secondary={operatorVersion} />
@@ -774,43 +818,45 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
     let response = await modal.show({
       title : "Add Kuberneted Cluster(s)",
       subtitle :
-      <>
-        <div>
-          <Typography variant="h6">
-          Upload your kubeconfig
-          </Typography>
-          <Typography variant="body2">
-          commonly found at ~/.kube/config
-          </Typography>
-          <FormGroup>
-            <input
-              id="k8sfile"
-              type="file"
-              value={k8sfileElementVal}
-              onChange={handleChange}
-              className={classes.fileInputStyle}
-            />
-            <TextField
-              id="k8sfileLabelText"
-              name="k8sfileLabelText"
-              className={classes.fileLabelText}
-              label="Upload kubeconfig"
-              variant="outlined"
-              fullWidth
-              onClick={() => {
-                document.querySelector("#k8sfile")?.click();
-              }}
-              margin="normal"
-              InputProps={{ readOnly : true,
-                endAdornment : (
-                  <InputAdornment position="end">
-                    <CloudUploadIcon />
-                  </InputAdornment>
-                ), }}
-            />
-          </FormGroup>
-        </div>
-      </>,
+        <>
+          <div>
+            <Typography variant="h6">
+              Upload your kubeconfig
+            </Typography>
+            <Typography variant="body2">
+              commonly found at ~/.kube/config
+            </Typography>
+            <FormGroup>
+              <input
+                id="k8sfile"
+                type="file"
+                value={k8sfileElementVal}
+                onChange={handleChange}
+                className={classes.fileInputStyle}
+              />
+              <TextField
+                id="k8sfileLabelText"
+                name="k8sfileLabelText"
+                className={classes.fileLabelText}
+                label="Upload kubeconfig"
+                variant="outlined"
+                fullWidth
+                onClick={() => {
+                  document.querySelector("#k8sfile")?.click();
+                }}
+                margin="normal"
+                InputProps={{
+                  readOnly : true,
+                  endAdornment : (
+                    <InputAdornment position="end">
+                      <CloudUploadIcon />
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            </FormGroup>
+          </div>
+        </>,
       options : ["CANCEL", "UPLOAD"]
     })
 
@@ -840,24 +886,28 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
     updateProgress({ showProgress : true });
     const ctxId = contexts[index].id
     const tempSubscription = fetchMesheryOperatorStatus({ k8scontextID : ctxId })
-      .subscribe({ next : (res) => {
-        _setOperatorState(updateCtxInfo(ctxId, res))
+      .subscribe({
+        next : (res) => {
+          _setOperatorState(updateCtxInfo(ctxId, res))
 
-        updateProgress({ showProgress : false });
-        if (!res.operator.error) {
-          enqueueSnackbar("Operator was successfully pinged!", { variant : "success",
-            autoHideDuration : 2000,
-            action : (key) => (
-              <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-                <CloseIcon />
-              </IconButton>
-            ), });
-        } else {
-          handleError("Operator could not be reached")("Operator is disabled");
-        }
-        tempSubscription.unsubscribe();
-      },
-      error : handleError("Operator could not be pinged"), });
+          updateProgress({ showProgress : false });
+          if (!res.operator.error) {
+            enqueueSnackbar("Operator was successfully pinged!", {
+              variant : "success",
+              autoHideDuration : 2000,
+              action : (key) => (
+                <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+                  <CloseIcon />
+                </IconButton>
+              ),
+            });
+          } else {
+            handleError("Operator could not be reached")("Operator is disabled");
+          }
+          tempSubscription.unsubscribe();
+        },
+        error : handleError("Operator could not be pinged"),
+      });
   };
 
   const handleNATSClick = (index) => {
@@ -883,32 +933,35 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
         stateUpdater(NATSState, setNATSState, res.controller.status.length !== 0 ? res.controller.status : "UNKNOWN", index)
         stateUpdater(NATSVersion, setNATSVersion, res.controller.version, index);
       },
-      error : handleError("NATS status could not be retrieved"), });
+      error : handleError("NATS status could not be retrieved"),
+    });
   };
 
   const handleMeshSyncClick = (index) => {
     updateProgress({ showProgress : true });
-    MeshsyncStatusQuery(({ k8scontextID : contexts[index].id })).subscribe({ next : (res) => {
-      updateProgress({ showProgress : false });
-      if (res.controller.name !== "meshsync" || !res.controller.status.includes("ENABLED")) {
-        let newMeshSyncState = [...MeshSyncState]
-        newMeshSyncState[index] = null;
-        setMeshsyncSubscription({ type : actionTypes.SET_MESHSYNC_SUBSCRIPTION, meshSyncState : newMeshSyncState })
-        handleError("MeshSync could not be reached")("MeshSync is unavailable");
-      } else {
-        let publishEndpoint = res.controller.status.substring("ENABLED".length)
-        enqueueSnackbar(`MeshSync was successfully pinged. Publishing to ${publishEndpoint} `, {
-          variant : "success",
-          action : (key) => (
-            <IconButton key="close" aria-label="close" color="inherit" onClick={() => closeSnackbar(key)}>
-              <CloseIcon />
-            </IconButton>
-          ),
-          autohideduration : 2000,
-        })
-      }
-    },
-    error : handleError("MeshSync status could not be retrieved"), });
+    MeshsyncStatusQuery(({ k8scontextID : contexts[index].id })).subscribe({
+      next : (res) => {
+        updateProgress({ showProgress : false });
+        if (res.controller.name !== "meshsync" || !res.controller.status.includes("ENABLED")) {
+          let newMeshSyncState = [...MeshSyncState]
+          newMeshSyncState[index] = null;
+          setMeshsyncSubscription({ type : actionTypes.SET_MESHSYNC_SUBSCRIPTION, meshSyncState : newMeshSyncState })
+          handleError("MeshSync could not be reached")("MeshSync is unavailable");
+        } else {
+          let publishEndpoint = res.controller.status.substring("ENABLED".length)
+          enqueueSnackbar(`MeshSync was successfully pinged. Publishing to ${publishEndpoint} `, {
+            variant : "success",
+            action : (key) => (
+              <IconButton key="close" aria-label="close" color="inherit" onClick={() => closeSnackbar(key)}>
+                <CloseIcon />
+              </IconButton>
+            ),
+            autohideduration : 2000,
+          })
+        }
+      },
+      error : handleError("MeshSync status could not be retrieved"),
+    });
 
     // connectToNats().subscribe({
     //   next : (res) => {
@@ -946,13 +999,27 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
   return (
     <>
       <DataTable
-        columns = { columns }
-        data = { data }
-        options = { options }
+        title={
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            size="large"
+            onClick={handleClick}
+            className={classes.button}
+            data-cy="btnResetDatabase"
+          >
+            <AddIcon fontSize="small" />
+            <Typography className={classes.addIcon}> Add Cluster</Typography>
+          </Button>
+        }
+        columns={columns}
+        data={data}
+        options={options}
         className={classes.table}
       />
-      <PromptComponent ref={ ref }/>
-      <PromptComponent ref = {meshSyncResetRef} />
+      <PromptComponent ref={ref} />
+      <PromptComponent ref={meshSyncResetRef} />
     </>
   )
 }
@@ -963,7 +1030,8 @@ const mapStateToProps = (state) => {
   const MeshSyncState = state.get('meshSyncState');
   return { k8sconfig, selectedK8sContexts, operatorState, MeshSyncState };
 }
-const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(updateProgress, dispatch),
+const mapDispatchToProps = (dispatch) => ({
+  updateProgress : bindActionCreators(updateProgress, dispatch),
   setMeshsyncSubscription : bindActionCreators(setMeshsyncSubscription, dispatch)
 });
 
