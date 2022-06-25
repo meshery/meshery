@@ -10,11 +10,12 @@ import (
 
 // Handler type is the bucket for configs and http handlers
 type Handler struct {
-	config          *models.HandlerConfig
-	task            *taskq.Task
-	meshsyncChannel chan struct{}
-	log             logger.Handler
-	brokerConn      broker.Handler
+	config           *models.HandlerConfig
+	task             *taskq.Task
+	meshsyncChannel  chan struct{}
+	log              logger.Handler
+	brokerConn       broker.Handler
+	K8sCompRegHelper *models.ComponentsRegistrationHelper
 }
 
 // NewHandlerInstance returns a Handler instance
@@ -23,12 +24,14 @@ func NewHandlerInstance(
 	meshSyncCh chan struct{},
 	logger logger.Handler,
 	brokerConn broker.Handler,
+	compRegHelper *models.ComponentsRegistrationHelper,
 ) models.HandlerInterface {
 	h := &Handler{
-		config:          handlerConfig,
-		meshsyncChannel: meshSyncCh,
-		log:             logger,
-		brokerConn:      brokerConn,
+		config:           handlerConfig,
+		meshsyncChannel:  meshSyncCh,
+		log:              logger,
+		brokerConn:       brokerConn,
+		K8sCompRegHelper: compRegHelper,
 	}
 
 	h.task = taskq.RegisterTask(&taskq.TaskOptions{

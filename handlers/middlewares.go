@@ -3,6 +3,7 @@ package handlers
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 
 	"github.com/layer5io/meshery/models"
@@ -82,52 +83,37 @@ func (h *Handler) validateAuth(provider models.Provider, req *http.Request) bool
 	return false
 }
 
-// SessionInjectorMiddleware - is a middleware which injects user and session object
-func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http.Request, *models.Preference, *models.User, models.Provider)) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		providerI := req.Context().Value(models.ProviderCtxKey)
-		provider, ok := providerI.(models.Provider)
+// KubernetesMiddleware is a middleware that is responsible for handling kubernetes related stuff such as
+// setting contexts, component generation etc.
+func (h *Handler) KubernetesMiddleware(next func(http.ResponseWriter, *http.Request, *models.Preference, *models.User, models.Provider)) func(http.ResponseWriter, *http.Request, *models.Preference, *models.User, models.Provider) {
+	return func(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+		ctx := req.Context()
+		token, ok := ctx.Value(models.TokenCtxKey).(string)
 		if !ok {
-			http.Redirect(w, req, "/provider", http.StatusFound)
-			return
-		}
-		// ensuring session is intact before running load test
-		err := provider.GetSession(req)
-		if err != nil {
-			provider.Logout(w, req)
-			logrus.Errorf("Error: unable to get session: %v", err)
-			http.Error(w, "unable to get session", http.StatusUnauthorized)
+			err := ErrRetrieveUserToken(fmt.Errorf("failed to retrieve user token"))
+			logrus.Error(err)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
-		user, _ := provider.GetUserDetails(req)
-		prefObj, err := provider.ReadFromPersister(user.UserID)
-		if err != nil {
-			logrus.Warn("unable to read session from the session persister, starting with a new one")
-		}
-
-		token := provider.UpdateToken(w, req)
-
-		ctx := context.WithValue(req.Context(), models.TokenCtxKey, token)
-		ctx = context.WithValue(ctx, models.PerfObjCtxKey, prefObj)
-		ctx = context.WithValue(ctx, models.UserCtxKey, user)
-		ctx = context.WithValue(ctx, models.BrokerURLCtxKey, h.config.BrokerEndpointURL) // nolint
-		ctxpage, err := provider.GetK8sContexts(token, "", "", "", "")
-		if err != nil || len(ctxpage.Contexts) == 0 { //Try to load the contexts when there are no contexts available
+		contexts, err := provider.LoadAllK8sContext(token)
+		if err != nil || len(contexts) == 0 { //Try to load the contexts when there are no contexts available
 			logrus.Warn("failed to get kubernetes contexts")
-			err = h.LoadContexts(token, provider)
+			// only the contexts that are succesfully pinged will be persisted
+			contexts, err = h.LoadContextsAndPersist(token, provider)
 			if err != nil {
 				logrus.Warn("failed to load kubernetes contexts: ", err.Error())
 			}
 		}
+
+		// register kubernetes components
+		h.K8sCompRegHelper.UpdateContexts(contexts).RegisterComponents(contexts, RegisterK8sComponents)
+
 		// Identify custom contexts, if provided
 		k8sContextIDs := req.URL.Query()["contexts"]
 		k8scontexts := []models.K8sContext{}    //The contexts passed by the user
 		allk8scontexts := []models.K8sContext{} //All contexts to track all the connected clusters
-		contexts, err := provider.LoadAllK8sContext(token)
-		if err != nil {
-			logrus.Warn("failed to load all k8scontext")
-		}
+
 		if len(k8sContextIDs) == 0 { //This is for backwards compabitibility with clients. This will work fine for single cluster.
 			//For multi cluster, it is expected of clients to explicitly pass the k8scontextID.
 			//So for now, randomly one of the contexts from available ones will be pushed to the array to stop anything from breaking in case of no contexts received(with single cluster, the behavior would be as expected).
@@ -158,8 +144,40 @@ func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http
 
 		ctx = context.WithValue(ctx, models.KubeClustersKey, k8scontexts)
 		ctx = context.WithValue(ctx, models.AllKubeClusterKey, allk8scontexts)
-		req1 := req.WithContext(ctx)
+		next(w, req, prefObj, user, provider)
+	}
+}
 
+// SessionInjectorMiddleware - is a middleware which injects user and session object
+func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http.Request, *models.Preference, *models.User, models.Provider)) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		providerI := req.Context().Value(models.ProviderCtxKey)
+		provider, ok := providerI.(models.Provider)
+		if !ok {
+			http.Redirect(w, req, "/provider", http.StatusFound)
+			return
+		}
+		// ensuring session is intact before running load test
+		err := provider.GetSession(req)
+		if err != nil {
+			provider.Logout(w, req)
+			logrus.Errorf("Error: unable to get session: %v", err)
+			http.Error(w, "unable to get session", http.StatusUnauthorized)
+			return
+		}
+
+		user, _ := provider.GetUserDetails(req)
+		prefObj, err := provider.ReadFromPersister(user.UserID)
+		if err != nil {
+			logrus.Warn("unable to read session from the session persister, starting with a new one")
+		}
+
+		token := provider.UpdateToken(w, req)
+		ctx := context.WithValue(req.Context(), models.TokenCtxKey, token)
+		ctx = context.WithValue(ctx, models.PerfObjCtxKey, prefObj)
+		ctx = context.WithValue(ctx, models.UserCtxKey, user)
+
+		req1 := req.WithContext(ctx)
 		next(w, req1, prefObj, user, provider)
 	})
 }

@@ -153,7 +153,7 @@ func (r *subscriptionResolver) ListenToOperatorState(ctx context.Context, k8scon
 	return r.listenToOperatorsState(ctx, provider, k8scontextIDs)
 }
 
-func (r *subscriptionResolver) ListenToMeshSyncEvents(ctx context.Context) (<-chan *model.OperatorControllerStatus, error) {
+func (r *subscriptionResolver) ListenToMeshSyncEvents(ctx context.Context, k8scontextIDs []string) (<-chan *model.OperatorControllerStatusPerK8sContext, error) {
 	// provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
 	// return r.listenToMeshSyncEvents(ctx, provider)
 	return nil, nil

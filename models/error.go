@@ -81,6 +81,7 @@ const (
 	ErrContextIDCode                   = "2218"
 	ErrMesheryInstanceIDCode           = "2219"
 	ErrMesheryNotInClusterCode         = "2220"
+	ErrBrokerNotFoundCode              = "2235"
 )
 
 var (
