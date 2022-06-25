@@ -1,7 +1,7 @@
 //@ts-check
 import React, { useState } from "react";
 import {
-  Dialog, DialogActions, DialogContent, DialogTitle, Divider, Grid, IconButton, Tooltip, Typography
+  Divider, Grid, IconButton, Typography
 } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import DeleteIcon from "@material-ui/icons/Delete";
@@ -12,60 +12,9 @@ import { UnControlled as CodeMirror } from "react-codemirror2";
 import FullscreenExit from "@material-ui/icons/FullscreenExit";
 import DoneAllIcon from '@material-ui/icons/DoneAll';
 import useStyles from "../MesheryPatterns/Cards.styles";
+import YAMLDialog from "../YamlDialog";
 
 const INITIAL_GRID_SIZE = { xl : 4, md : 6, xs : 12 };
-const YAMLDialog = ({
-  fullScreen,
-  name,
-  toggleFullScreen,
-  filter_file,
-  setYaml,
-  deleteHandler
-}) => {
-  const classes = useStyles()
-  return (
-    <Dialog aria-labelledby="filter-dialog-title" open maxWidth="md" fullScreen={fullScreen} fullWidth={!fullScreen}>
-      <DialogTitle disableTypography id="filter-dialog-title" className={classes.yamlDialogTitle}>
-        <Typography variant="h6" className={classes.yamlDialogTitleText}>
-          {name}
-        </Typography>
-        <IconButton
-          onClick={toggleFullScreen}>
-          {fullScreen ? <FullscreenExit /> : <Fullscreen />}
-        </IconButton>
-      </DialogTitle>
-      <Divider variant="fullWidth" light />
-      <DialogContent>
-        <CodeMirror
-          value={filter_file}
-          className={fullScreen ? classes.fullScreenCodeMirror : ""}
-          options={{
-            theme : "material",
-            lineNumbers : true,
-            lineWrapping : true,
-            gutters : ["CodeMirror-lint-markers"],
-            // @ts-ignore
-            lint : true,
-            mode : "text/x-yaml",
-          }}
-          onChange={(_, data, val) => setYaml(val)}
-        />
-      </DialogContent>
-      <Divider variant="fullWidth" light />
-      <DialogActions>
-        <Tooltip title="Delete Filter">
-          <IconButton
-            aria-label="Delete"
-            color="primary"
-            onClick={deleteHandler}
-          >
-            <DeleteIcon />
-          </IconButton>
-        </Tooltip>
-      </DialogActions>
-    </Dialog>
-  )
-}
 
 function FiltersCard({
   name,
@@ -97,7 +46,7 @@ function FiltersCard({
           fullScreen={fullScreen}
           name={name}
           toggleFullScreen={toggleFullScreen}
-          filter_file={filter_file}
+          config_file={filter_file}
           setYaml={setYaml}
           deleteHandler={deleteHandler}
         />
