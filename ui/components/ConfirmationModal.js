@@ -89,7 +89,10 @@ const styles = (theme) => ({
   contexts : {
     display : "flex",
     flexWrap : "wrap"
-  }
+  },
+  tabs : {
+    marginLeft : 0
+  },
 })
 
 function ConfirmationMsg(props) {
@@ -97,8 +100,8 @@ function ConfirmationMsg(props) {
     selectedK8sContexts, k8scontext, title, setK8sContexts, enqueueSnackbar, closeSnackbar, validationComp } = props
 
   const [contexts, setContexts] = useState(k8scontext);
-  const [tabVal, setTabVal] = useState(1); // change it
 
+  const [tabVal, setTabVal] = useState(0);
   const handleTabValChange = (event, newVal) => {
     setTabVal(newVal);
   }
@@ -190,7 +193,7 @@ function ConfirmationMsg(props) {
             // icon={
             //   <SettingsCellIcon />
             // }
-            label={<span className={classes.tabLabel}>Contexts</span>}
+            label={<span className={classes.tabLabel}>Environment</span>}
           />
           {
             validationComp &&
@@ -262,13 +265,7 @@ function ConfirmationMsg(props) {
                 </DialogContent>
             }
             { tabVal == 1 &&
-                <DialogContent>
-                  <DialogContentText id="alert-dialog-description" className={classes.subtitle}>
-                    <Typography variant="body1">
-                      {validationComp}
-                    </Typography>
-                  </DialogContentText>
-                </DialogContent>
+               validationComp
             }
             <DialogActions className={classes.actions}>
               <Button onClick={handleClose} className={classes.button1}>
