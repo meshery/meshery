@@ -18,6 +18,85 @@ import useStyles from "./Cards.styles";
 
 const INITIAL_GRID_SIZE = { xl : 4, md : 6, xs : 12 };
 
+const useStyles = makeStyles(() => ({
+  cardButtons : {
+    display : "flex",
+    justifyContent : "flex-end",
+    alignItems : "center",
+    marginTop : "50px"
+  },
+  testsButton : {
+    marginRight : "0.5rem"
+  },
+  perfResultsContainer : {
+    marginTop : "0.5rem"
+  },
+  backGrid : {
+    marginBottom : "0.25rem",
+    minHeight : "6rem",
+    position : "relative"
+  },
+  updateDeleteButtons : {
+    width : "fit-content",
+    margin : "10 0 0 auto",
+    position : "absolute",
+    right : 0,
+    bottom : 0,
+  },
+  yamlDialogTitle : {
+    display : "flex",
+    alignItems : "center"
+  },
+  yamlDialogTitleText : {
+    flexGrow : 1
+  },
+  fullScreenCodeMirror : {
+    height : '100%',
+    width : '100%',
+    '& .CodeMirror' : {
+      minHeight : "300px",
+      height : '100%',
+      width : '100%'
+    }
+  },
+  maximizeButton : {
+    width : "fit-content",
+    margin : "0 0 0 auto",
+    position : "absolute",
+    right : 0,
+    top : 0
+  },
+  noOfResultsContainer : {
+    margin : "0 0 1rem",
+    '& div' : {
+      display : "flex",
+      alignItems : "center"
+    },
+  },
+  bottomPart : {
+    display : "flex",
+    justifyContent : "flex-end",
+    alignItems : "center",
+  },
+  lastRunText : {
+    marginRight : "0.5rem"
+
+  },
+  iconPatt : {
+    width : "24px",
+    height : "24px",
+    marginRight : "5px"
+  },
+  undeployButton : {
+    backgroundColor : "#B32700",
+    color : "#ffffff",
+    "&:hover" : {
+      backgroundColor : "#8f1f00"
+    }
+  }
+}))
+
+//Full screen Dialog: Similar to the dialog on the table view, with few modification on parameters
 const YAMLDialog = ({
   fullScreen,
   name,
@@ -104,7 +183,7 @@ function MesheryPatternCard({
     setFullScreen(!fullScreen);
   };
 
-  const classes=useStyles()
+  const classes = useStyles()
 
   return (
     <>
@@ -138,7 +217,7 @@ function MesheryPatternCard({
                 {updated_at
                   ? (
                     <Typography color="primary" variant="caption" style={{ fontStyle : "italic" }}>
-                  Modified On: <Moment format="LLL">{updated_at}</Moment>
+                      Modified On: <Moment format="LLL">{updated_at}</Moment>
                     </Typography>
                   )
                   : null}
@@ -156,7 +235,7 @@ function MesheryPatternCard({
                 className={classes.testsButton}
               >
                 <Avatar src="/static/img/pattwhite.svg" className={classes.iconPatt} imgProps={{ height : "16px", width : "16px" }} />
-              Design
+                Design
               </Button>
 
               <Button
@@ -167,8 +246,8 @@ function MesheryPatternCard({
                 }
                 className={classes.testsButton}
               >
-                <DoneAllIcon className={classes.iconPatt}/>
-              Deploy
+                <DoneAllIcon className={classes.iconPatt} />
+                Deploy
               </Button>
 
               <Button
@@ -179,7 +258,7 @@ function MesheryPatternCard({
                 }
               >
                 <UndeployIcon fill="#ffffff" className={classes.iconPatt} />
-              Undeploy
+                Undeploy
               </Button>
             </div>
           </div>
@@ -212,7 +291,7 @@ function MesheryPatternCard({
             </Grid>
             <Grid item xs={12}
               onClick={(ev) =>
-                genericClickHandler(ev, () => {})
+                genericClickHandler(ev, () => { })
               }>
 
               <Divider variant="fullWidth" light />
@@ -238,7 +317,7 @@ function MesheryPatternCard({
                   {created_at
                     ? (
                       <Typography color="primary" variant="caption" style={{ fontStyle : "italic" }}>
-                  Created at: <Moment format="LLL">{created_at}</Moment>
+                        Created at: <Moment format="LLL">{created_at}</Moment>
                       </Typography>
                     )
                     : null}
@@ -251,14 +330,14 @@ function MesheryPatternCard({
 
                 {/* Save button */}
                 <IconButton onClick={(ev) =>
-                  genericClickHandler(ev,updateHandler)
+                  genericClickHandler(ev, updateHandler)
                 }>
                   <Save color="primary" />
                 </IconButton>
 
                 {/* Delete Button */}
                 <IconButton onClick={(ev) =>
-                  genericClickHandler(ev,deleteHandler)
+                  genericClickHandler(ev, deleteHandler)
                 }>
                   <DeleteIcon color="primary" />
                 </IconButton>
