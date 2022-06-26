@@ -18,6 +18,7 @@ import (
 	"github.com/spf13/viper"
 )
 
+// to be moved elsewhere
 const (
 	chartRepo = "https://meshery.github.io/meshery.io/charts"
 )
@@ -164,6 +165,7 @@ func applyYaml(client *mesherykube.Client, delete bool, file string) error {
 }
 
 // installs operator
+// To be depricated
 func installUsingHelm(client *mesherykube.Client, delete bool, adapterTracker models.AdaptersTrackerInterface) error {
 	// retrieving meshery's version to apply the appropriate chart
 	mesheryReleaseVersion := viper.GetString("BUILD")
@@ -219,6 +221,8 @@ func installUsingHelm(client *mesherykube.Client, delete bool, adapterTracker mo
 // SetOverrideValues detects the currently insalled adapters and sets appropriate
 // overrides so as to not uninstall them. It also sets override values for
 // operator so that it can be enabled or disabled depending on the need
+
+// to be depricated
 func SetOverrideValues(delete bool, adapterTracker models.AdaptersTrackerInterface) map[string]interface{} {
 	installedAdapters := make([]string, 0)
 	adapters := adapterTracker.GetAdapters(context.TODO())

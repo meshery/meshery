@@ -37,9 +37,7 @@ var (
 
 const (
 	// DefaultProviderURL is the provider url for the "none" provider
-	DefaultProviderURL           = "https://meshery.layer5.io"
-	MesherySeverBrokerConnection = "meshery-server"
-	MesheryNamespace             = "meshery"
+	DefaultProviderURL = "https://meshery.layer5.io"
 )
 
 func main() {
@@ -236,8 +234,14 @@ func main() {
 		PrometheusClient:         models.NewPrometheusClient(),
 		PrometheusClientForQuery: models.NewPrometheusClientWithHTTPClient(&http.Client{Timeout: time.Second}),
 	}
+
+	operatorDeploymentConfig := models.NewOperatorDeploymentConfig(adapterTracker)
+	mctrlHelper := models.NewMesheryControllersHelper(log, operatorDeploymentConfig, dbHandler)
 	k8sComponentsRegistrationHelper := models.NewComponentsRegistrationHelper(log)
-	h := handlers.NewHandlerInstance(hc, meshsyncCh, log, brokerConn, k8sComponentsRegistrationHelper)
+
+	// purge the meshsync objects in the database on startup
+	models.RemoveStaleObjects(*dbHandler)
+	h := handlers.NewHandlerInstance(hc, meshsyncCh, log, brokerConn, k8sComponentsRegistrationHelper, mctrlHelper, dbHandler)
 
 	b := broadcast.NewBroadcaster(100)
 	defer b.Close()
@@ -259,53 +263,8 @@ func main() {
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt)
 
-	// go func() {
-	// 	kclient, err := mesherykube.New(nil)
-	// 	if err != nil {
-	// 		log.Error(handlers.ErrKubeClient(err))
-	// 		return
-	// 	}
-	// 	mesheryclient, err := operatorClient.New(&kclient.RestConfig)
-	// 	if err != nil {
-	// 		if mesheryclient == nil {
-	// 			log.Error(model.ErrMesheryClient(nil))
-	// 			return
-	// 		}
-	// 		log.Error(model.ErrMesheryClient(err))
-	// 		return
-	// 	}
-	// 	broker, err := mesheryclient.CoreV1Alpha1().Brokers(MesheryNamespace).Get(ctx, "meshery-broker", metav1.GetOptions{})
-	// 	if err != nil || broker.Status.Endpoint.External == "" {
-	// 		log.Error(models.ErrBrokerNotFound(err))
-	// 		return
-	// 	}
-	// 	brokerEndpoint := helpers.GetBrokerEndpoint(kclient, broker)
-	// 	// This connection is unique to meshery server.
-	// 	// We use different conections for graphql subscriptions and
-	// 	// other use cases
-	// 	brkrConn, err := nats.New(nats.Options{
-	// 		URLS:           []string{brokerEndpoint},
-	// 		ConnectionName: MesherySeverBrokerConnection,
-	// 		Username:       "",
-	// 		Password:       "",
-	// 		ReconnectWait:  2 * time.Second,
-	// 		MaxReconnect:   60,
-	// 	})
-	// 	if err != nil {
-	// 		log.Error(err)
-	// 		return
-	// 	}
-	// 	log.Info("Connected to broker at: ", brokerEndpoint)
-	// meshsyncDataHandler := helpers.NewMeshsyncDataHandler(brkrConn, *dbHandler, log)
-	// 	err = meshsyncDataHandler.Run()
-	// 	if err != nil {
-	// 		log.Info(err.Error())
-	// 	}
-
-	// }()
-
 	go func() {
-		logrus.Infof("Starting Server listening on :%d", port)
+		logrus.Infof("Meshery Server listening on :%d", port)
 		if err := r.Run(); err != nil {
 			logrus.Fatalf("ListenAndServe Error: %v", err)
 		}

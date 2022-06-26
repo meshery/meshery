@@ -83,6 +83,30 @@ func (h *Handler) validateAuth(provider models.Provider, req *http.Request) bool
 	return false
 }
 
+// MesheryControllersMiddleware is a middleware that is responsible for handling meshery controllers(operator, meshsync and NATS) related stuff such as
+// getting status, reconciling their deployments etc.
+func (h *Handler) MesheryControllersMiddleware(next func(http.ResponseWriter, *http.Request, *models.Preference, *models.User, models.Provider)) func(http.ResponseWriter, *http.Request, *models.Preference, *models.User, models.Provider) {
+	return func(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+		ctx := req.Context()
+		mk8sContexts, ok := ctx.Value(models.AllKubeClusterKey).([]models.K8sContext)
+		if !ok || len(mk8sContexts) == 0 {
+			h.log.Error(ErrInvalidK8SConfig)
+			// this should not bother the primary request
+			next(w, req, prefObj, user, provider)
+		}
+
+		// 1. get the status of controller deployments for each cluster and make sure that all the contexts have meshery controllers deployed
+		ctrlHlpr := h.MesheryCtrlsHelper.UpdateCtxControllerHandlers(mk8sContexts).UpdateOperatorsStatusMap().DeployUndeployedOperators()
+		ctx = context.WithValue(ctx, models.MesheryControllerHandlersKey, h.MesheryCtrlsHelper.GetControllerHandlersForEachContext())
+
+		// 2. make sure that the data from meshsync for all the clusters are persisted properly
+		ctrlHlpr.UpdateMeshsynDataHandlers()
+
+		req1 := req.WithContext(ctx)
+		next(w, req1, prefObj, user, provider)
+	}
+}
+
 // KubernetesMiddleware is a middleware that is responsible for handling kubernetes related stuff such as
 // setting contexts, component generation etc.
 func (h *Handler) KubernetesMiddleware(next func(http.ResponseWriter, *http.Request, *models.Preference, *models.User, models.Provider)) func(http.ResponseWriter, *http.Request, *models.Preference, *models.User, models.Provider) {
@@ -144,7 +168,8 @@ func (h *Handler) KubernetesMiddleware(next func(http.ResponseWriter, *http.Requ
 
 		ctx = context.WithValue(ctx, models.KubeClustersKey, k8scontexts)
 		ctx = context.WithValue(ctx, models.AllKubeClusterKey, allk8scontexts)
-		next(w, req, prefObj, user, provider)
+		req1 := req.WithContext(ctx)
+		next(w, req1, prefObj, user, provider)
 	}
 }
 

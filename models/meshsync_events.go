@@ -1,4 +1,4 @@
-package helpers
+package models
 
 import (
 	"github.com/layer5io/meshkit/broker"
@@ -15,7 +15,6 @@ const (
 )
 
 // TODO: Create proper error codes for the functionalities this struct implements
-
 type MeshsyncDataHandler struct {
 	broker    broker.Handler
 	dbHandler database.Handler
@@ -37,12 +36,13 @@ func (mh *MeshsyncDataHandler) Run() error {
 	go mh.subscribeToMeshsyncEvents()
 
 	go mh.subsribeToStoreUpdates(storeSubscriptionStatusChan)
+	// to make sure that we don't ask for data before we start listening
 	if <-storeSubscriptionStatusChan {
-		err := mh.removeStaleObjects()
-		if err != nil {
-			return err
-		}
-		err = mh.requestMeshsyncStore()
+		// err := mh.removeStaleObjects()
+		// if err != nil {
+		// 	return err
+		// }
+		err := mh.requestMeshsyncStore()
 		if err != nil {
 			return err
 		}
@@ -55,7 +55,7 @@ func (mh *MeshsyncDataHandler) subscribeToMeshsyncEvents() {
 	eventsChan := make(chan *broker.Message)
 	err := mh.broker.SubscribeWithChannel("meshery.meshsync.core", "", eventsChan)
 	if err != nil {
-		mh.log.Error(err)
+		mh.log.Error(ErrBrokerSubscription(err))
 		return
 	}
 	mh.log.Info("subscribing to meshsync events on NATS subject: meshery.meshsync.core  ")
@@ -80,7 +80,7 @@ func (mh *MeshsyncDataHandler) subsribeToStoreUpdates(statusChan chan bool) {
 	mh.log.Info("subscribing to store updates from meshsync on NATS subject: ", MeshsyncStoreUpdatesSubject)
 	err := mh.broker.SubscribeWithChannel(MeshsyncStoreUpdatesSubject, "", storeChan)
 	if err != nil {
-		mh.log.Error(err)
+		mh.log.Error(ErrBrokerSubscription(err))
 		statusChan <- false
 		return
 	}
@@ -100,7 +100,7 @@ func (mh *MeshsyncDataHandler) subsribeToStoreUpdates(statusChan chan bool) {
 			obj := meshsyncmodel.Object{}
 			err := utils.Unmarshal(objectJSON, &obj)
 			if err != nil {
-				mh.log.Error(err)
+				mh.log.Error(ErrUnmarshal(err, objectJSON))
 				continue
 			}
 
@@ -123,7 +123,7 @@ func (mh *MeshsyncDataHandler) meshsyncEventsAccumulator(event *broker.Message) 
 	err := utils.Unmarshal(objectJSON, &obj)
 
 	if err != nil {
-		return err
+		return ErrUnmarshal(err, objectJSON)
 	}
 
 	switch event.EventType {
@@ -132,7 +132,7 @@ func (mh *MeshsyncDataHandler) meshsyncEventsAccumulator(event *broker.Message) 
 		if result.Error != nil {
 			result = mh.dbHandler.Session(&gorm.Session{FullSaveAssociations: true}).Updates(&obj)
 			if result.Error != nil {
-				return result.Error
+				return ErrDBPut(result.Error)
 			}
 			return nil
 		}
@@ -140,7 +140,7 @@ func (mh *MeshsyncDataHandler) meshsyncEventsAccumulator(event *broker.Message) 
 	case broker.Delete:
 		result := mh.dbHandler.Delete(&obj)
 		if result.Error != nil {
-			return result.Error
+			return ErrDBDelete(result.Error, "")
 		}
 	}
 
@@ -157,7 +157,7 @@ func (mh *MeshsyncDataHandler) persistStoreUpdate(object *meshsyncmodel.Object) 
 	if result.Error != nil {
 		result = mh.dbHandler.Session(&gorm.Session{FullSaveAssociations: true}).Updates(object)
 		if result.Error != nil {
-			return result.Error
+			return ErrDBPut(result.Error)
 		}
 		mh.log.Info("Updated object: ", object.ObjectMeta.Name, "/", object.ObjectMeta.Namespace, " of kind: ", object.Kind, " in the database")
 		return nil
@@ -167,14 +167,12 @@ func (mh *MeshsyncDataHandler) persistStoreUpdate(object *meshsyncmodel.Object) 
 	return nil
 }
 
-func (mh *MeshsyncDataHandler) removeStaleObjects() error {
-	mh.dbHandler.Lock()
-	defer mh.dbHandler.Unlock()
-
-	mh.log.Info("Removing stale meshsync objects from the database")
+func RemoveStaleObjects(dbHandler database.Handler) error {
+	dbHandler.Lock()
+	defer dbHandler.Unlock()
 
 	// Clear stale meshsync data
-	err := mh.dbHandler.Migrator().DropTable(
+	err := dbHandler.Migrator().DropTable(
 		&meshsyncmodel.KeyValue{},
 		&meshsyncmodel.Object{},
 		&meshsyncmodel.ResourceSpec{},
@@ -184,7 +182,7 @@ func (mh *MeshsyncDataHandler) removeStaleObjects() error {
 	if err != nil {
 		return err.(error)
 	}
-	err = mh.dbHandler.Migrator().CreateTable(
+	err = dbHandler.Migrator().CreateTable(
 		&meshsyncmodel.KeyValue{},
 		&meshsyncmodel.Object{},
 		&meshsyncmodel.ResourceSpec{},
@@ -206,7 +204,7 @@ func (mh *MeshsyncDataHandler) requestMeshsyncStore() error {
 			Payload: struct{ Reply string }{Reply: MeshsyncStoreUpdatesSubject},
 		}})
 	if err != nil {
-		return err
+		return ErrRequestMeshsyncStore(err)
 	}
 	return nil
 }

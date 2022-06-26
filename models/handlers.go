@@ -15,6 +15,7 @@ type HandlerInterface interface {
 	ProviderMiddleware(http.Handler) http.Handler
 	AuthMiddleware(http.Handler) http.Handler
 	KubernetesMiddleware(func(http.ResponseWriter, *http.Request, *Preference, *User, Provider)) func(http.ResponseWriter, *http.Request, *Preference, *User, Provider)
+	MesheryControllersMiddleware(func(http.ResponseWriter, *http.Request, *Preference, *User, Provider)) func(http.ResponseWriter, *http.Request, *Preference, *User, Provider)
 	SessionInjectorMiddleware(func(http.ResponseWriter, *http.Request, *Preference, *User, Provider)) http.Handler
 	GraphqlMiddleware(http.Handler) func(http.ResponseWriter, *http.Request, *Preference, *User, Provider)
 
@@ -147,6 +148,7 @@ type HandlerConfig struct {
 	ProviderCookieName     string
 	ProviderCookieDuration time.Duration
 
+	// to be removed
 	BrokerEndpointURL *string
 
 	PerformanceChannel       chan struct{}
