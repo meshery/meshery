@@ -62,15 +62,17 @@ func NewMesheryControllersHelper(log logger.Handler, operatorDepConfig controlle
 // initializes Meshsync data handler for the contexts for whom it has not been
 // initialized yet. Apart from updating the map, it also runs the handler after
 // updating the map. The presence of a handler for a context in a map indicate that
-// the meshsync data for that context is properly handled
+// the meshsync data for that context is properly being handled
 func (mch *MesheryControllersHelper) UpdateMeshsynDataHandlers() *MesheryControllersHelper {
-	// only checking those contexts for whose controllers are active
+	// only checking those contexts whose MesheryConrollers are active
 	for ctxId, controllerHandlers := range mch.ctxControllerHandlersMap {
 		if _, ok := mch.ctxMeshsyncDataHandlerMap[ctxId]; !ok {
 			brokerEndpoint, err := controllerHandlers[MesheryBroker].GetPublicEndpoint()
-			if err != nil || brokerEndpoint == "" {
-				mch.log.Warn(err)
-				mch.log.Info(fmt.Sprintf("skipping meshsync data handler setup for contextId: %v due to: %v", ctxId, err.Error()))
+			if brokerEndpoint == "" {
+				if err != nil {
+					mch.log.Warn(err)
+				}
+				mch.log.Info(fmt.Sprintf("skipping meshsync data handler setup for contextId: %v as its public endpoint could not be found", ctxId))
 				continue
 			}
 			mch.log.Info(fmt.Sprintf("found meshery-broker endpoint: %s for contextId: %s", brokerEndpoint, ctxId))
@@ -88,11 +90,12 @@ func (mch *MesheryControllersHelper) UpdateMeshsynDataHandlers() *MesheryControl
 				mch.log.Info(fmt.Sprintf("skipping meshsync data handler setup for contextId: %v due to: %v", ctxId, err.Error()))
 				continue
 			}
-			mch.log.Info(fmt.Sprintf("connection sucessfully established for contextId: %v with meshery-broker at: %v", ctxId, brokerEndpoint))
+			mch.log.Info(fmt.Sprintf("broker connection sucessfully established for contextId: %v with meshery-broker at: %v", ctxId, brokerEndpoint))
 			msDataHandler := NewMeshsyncDataHandler(brokerHandler, *mch.dbHandler, mch.log)
 			err = msDataHandler.Run()
 			if err != nil {
-				mch.log.Warn(fmt.Errorf("skipping meshsync data handler setup for contextId: %s due to: %s", ctxId, err.Error()))
+				mch.log.Warn(err)
+				mch.log.Info(fmt.Sprintf("skipping meshsync data handler setup for contextId: %s due to: %s", ctxId, err.Error()))
 				continue
 			}
 			mch.ctxMeshsyncDataHandlerMap[ctxId] = *msDataHandler
@@ -108,14 +111,14 @@ func (mch *MesheryControllersHelper) UpdateMeshsynDataHandlers() *MesheryControl
 func (mch *MesheryControllersHelper) UpdateCtxControllerHandlers(ctxs []K8sContext) *MesheryControllersHelper {
 	for _, ctx := range ctxs {
 		ctxId := ctx.ID
-		cfg, err := ctx.GenerateKubeConfig()
-		client, err := mesherykube.New(cfg)
-		// means that the config is invalid
-		if err != nil {
-			// invalid configs are not added to the map
-			continue
-		}
 		if _, ok := mch.ctxControllerHandlersMap[ctxId]; !ok {
+			cfg, err := ctx.GenerateKubeConfig()
+			client, err := mesherykube.New(cfg)
+			// means that the config is invalid
+			if err != nil {
+				// invalid configs are not added to the map
+				continue
+			}
 			mch.ctxControllerHandlersMap[ctxId] = map[MesheryController]controllers.IMesheryController{
 				MesheryBroker:   controllers.NewMesheryBrokerHandler(client),
 				MesheryOperator: controllers.NewMesheryOperatorHandler(client, mch.oprDepConfig),
@@ -136,7 +139,7 @@ func (mch *MesheryControllersHelper) UpdateOperatorsStatusMap() *MesheryControll
 	return mch
 }
 
-// looks at the status of Meshery Operator for each cluster and takes necessary action
+// looks at the status of Meshery Operator for each cluster and takes necessary action.
 // it will deploy the operator only when it is in NotDeployed state
 func (mch *MesheryControllersHelper) DeployUndeployedOperators() *MesheryControllersHelper {
 	for ctxId, ctrlHandler := range mch.ctxControllerHandlersMap {

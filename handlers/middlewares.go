@@ -83,7 +83,7 @@ func (h *Handler) validateAuth(provider models.Provider, req *http.Request) bool
 	return false
 }
 
-// MesheryControllersMiddleware is a middleware that is responsible for handling meshery controllers(operator, meshsync and NATS) related stuff such as
+// MesheryControllersMiddleware is a middleware that is responsible for handling meshery controllers(operator, meshsync and broker) related stuff such as
 // getting status, reconciling their deployments etc.
 func (h *Handler) MesheryControllersMiddleware(next func(http.ResponseWriter, *http.Request, *models.Preference, *models.User, models.Provider)) func(http.ResponseWriter, *http.Request, *models.Preference, *models.User, models.Provider) {
 	return func(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
@@ -91,8 +91,9 @@ func (h *Handler) MesheryControllersMiddleware(next func(http.ResponseWriter, *h
 		mk8sContexts, ok := ctx.Value(models.AllKubeClusterKey).([]models.K8sContext)
 		if !ok || len(mk8sContexts) == 0 {
 			h.log.Error(ErrInvalidK8SConfig)
-			// this should not bother the primary request
+			// this should not block the request
 			next(w, req, prefObj, user, provider)
+			return
 		}
 
 		// 1. get the status of controller deployments for each cluster and make sure that all the contexts have meshery controllers deployed

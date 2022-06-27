@@ -74,6 +74,12 @@ type KctlDescribeDetails struct {
 	Ctxid    *string `json:"ctxid"`
 }
 
+type MesheryControllersStatusListItem struct {
+	ContextID  string                  `json:"contextId"`
+	Controller MesheryController       `json:"controller"`
+	Status     MesheryControllerStatus `json:"status"`
+}
+
 type MesheryResult struct {
 	MesheryID          *string                `json:"meshery_id"`
 	Name               *string                `json:"name"`
@@ -277,6 +283,94 @@ func (e *MeshType) UnmarshalGQL(v interface{}) error {
 }
 
 func (e MeshType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type MesheryController string
+
+const (
+	MesheryControllerBroker   MesheryController = "BROKER"
+	MesheryControllerOperator MesheryController = "OPERATOR"
+	MesheryControllerMeshsync MesheryController = "MESHSYNC"
+)
+
+var AllMesheryController = []MesheryController{
+	MesheryControllerBroker,
+	MesheryControllerOperator,
+	MesheryControllerMeshsync,
+}
+
+func (e MesheryController) IsValid() bool {
+	switch e {
+	case MesheryControllerBroker, MesheryControllerOperator, MesheryControllerMeshsync:
+		return true
+	}
+	return false
+}
+
+func (e MesheryController) String() string {
+	return string(e)
+}
+
+func (e *MesheryController) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = MesheryController(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid MesheryController", str)
+	}
+	return nil
+}
+
+func (e MesheryController) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type MesheryControllerStatus string
+
+const (
+	MesheryControllerStatusDeployed    MesheryControllerStatus = "DEPLOYED"
+	MesheryControllerStatusNotdeployed MesheryControllerStatus = "NOTDEPLOYED"
+	MesheryControllerStatusDeploying   MesheryControllerStatus = "DEPLOYING"
+	MesheryControllerStatusUnkown      MesheryControllerStatus = "UNKOWN"
+)
+
+var AllMesheryControllerStatus = []MesheryControllerStatus{
+	MesheryControllerStatusDeployed,
+	MesheryControllerStatusNotdeployed,
+	MesheryControllerStatusDeploying,
+	MesheryControllerStatusUnkown,
+}
+
+func (e MesheryControllerStatus) IsValid() bool {
+	switch e {
+	case MesheryControllerStatusDeployed, MesheryControllerStatusNotdeployed, MesheryControllerStatusDeploying, MesheryControllerStatusUnkown:
+		return true
+	}
+	return false
+}
+
+func (e MesheryControllerStatus) String() string {
+	return string(e)
+}
+
+func (e *MesheryControllerStatus) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = MesheryControllerStatus(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid MesheryControllerStatus", str)
+	}
+	return nil
+}
+
+func (e MesheryControllerStatus) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 

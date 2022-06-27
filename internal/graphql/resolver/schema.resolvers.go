@@ -6,10 +6,12 @@ package resolver
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/layer5io/meshery/internal/graphql/generated"
 	"github.com/layer5io/meshery/internal/graphql/model"
 	"github.com/layer5io/meshery/models"
+	"github.com/layer5io/meshkit/models/controllers"
 )
 
 func (r *mutationResolver) ChangeOperatorStatus(ctx context.Context, input *model.OperatorStatusInput) (model.Status, error) {
@@ -171,6 +173,65 @@ func (r *subscriptionResolver) SubscribePerfResults(ctx context.Context, selecto
 
 func (r *subscriptionResolver) SubscribeBrokerConnection(ctx context.Context) (<-chan bool, error) {
 	return r.subscribeBrokerConnection(ctx)
+}
+
+// subcriptions should be refreshed when new contexts are added are deleted
+func (r *subscriptionResolver) SubscribeMesheryControllersStatus(ctx context.Context, k8scontextIDs []string) (<-chan []*model.MesheryControllersStatusListItem, error) {
+	resChan := make(chan []*model.MesheryControllersStatusListItem)
+	controllerHandlersPerContext, ok := ctx.Value(models.MesheryControllerHandlersKey).(map[string]map[models.MesheryController]controllers.IMesheryController)
+	if !ok || len(controllerHandlersPerContext) == 0 || controllerHandlersPerContext == nil {
+		er := model.ErrMesheryControllersStatusSubscription(fmt.Errorf("Controller handlers are not configured for any of the contexts"))
+		r.Log.Error(er)
+		return nil, er
+	}
+	statusMapPerCtx := make(map[string]map[models.MesheryController]controllers.MesheryControllerStatus)
+	// initialize the map
+	for ctxId, ctrlHandlers := range controllerHandlersPerContext {
+		for controller, handler := range ctrlHandlers {
+			if _, ok := statusMapPerCtx[ctxId]; !ok {
+				statusMapPerCtx[ctxId] = make(map[models.MesheryController]controllers.MesheryControllerStatus)
+			}
+			statusMapPerCtx[ctxId][controller] = handler.GetStatus()
+		}
+	}
+	go func() {
+		ctrlsStatusList := make([]*model.MesheryControllersStatusListItem, 0)
+		// first send the initial status of the controllers
+		for ctxId, statusMap := range statusMapPerCtx {
+			for controller, status := range statusMap {
+				ctrlsStatusList = append(ctrlsStatusList, &model.MesheryControllersStatusListItem{
+					ContextID:  ctxId,
+					Controller: model.GetInternalController(controller),
+					Status:     model.GetInternalControllerStatus(status),
+				})
+			}
+		}
+		resChan <- ctrlsStatusList
+		ctrlsStatusList = make([]*model.MesheryControllersStatusListItem, 0)
+		// do this every 5 seconds
+		for {
+			for ctxId, ctrlHandlers := range controllerHandlersPerContext {
+				for controller, handler := range ctrlHandlers {
+					newStatus := handler.GetStatus()
+					// if the status has changed, send that to the subscription
+					if newStatus != statusMapPerCtx[ctxId][controller] {
+						ctrlsStatusList = append(ctrlsStatusList, &model.MesheryControllersStatusListItem{
+							ContextID:  ctxId,
+							Controller: model.GetInternalController(controller),
+							Status:     model.GetInternalControllerStatus(newStatus),
+						})
+						resChan <- ctrlsStatusList
+						ctrlsStatusList = make([]*model.MesheryControllersStatusListItem, 0)
+					}
+					// update the status list with newStatus
+					statusMapPerCtx[ctxId][controller] = newStatus
+				}
+			}
+			time.Sleep(time.Second * 5)
+		}
+
+	}()
+	return resChan, nil
 }
 
 // Mutation returns generated.MutationResolver implementation.

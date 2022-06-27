@@ -5,25 +5,30 @@ import (
 )
 
 const (
-	ErrInvalidRequestCode           = "1000"
-	ErrNilClientCode                = "1001"
-	ErrCreateDataCode               = "1002"
-	ErrQueryCode                    = "1003"
-	ErrMeshsyncSubscriptionCode     = "1004"
-	ErrOperatorSubscriptionCode     = "1005"
-	ErrAddonSubscriptionCode        = "1006"
-	ErrControlPlaneSubscriptionCode = "1007"
-	ErrMesheryClientCode            = "1008"
-	ErrSubscribeChannelCode         = "1009"
-	ErrPublishBrokerCode            = "1010"
-	ErrNoMeshSyncCode               = "1011"
-	ErrNoExternalEndpointCode       = "1012"
-	ErrApplyHelmChartCode           = "2155"
+	ErrInvalidRequestCode                       = "1000"
+	ErrNilClientCode                            = "1001"
+	ErrCreateDataCode                           = "1002"
+	ErrQueryCode                                = "1003"
+	ErrMeshsyncSubscriptionCode                 = "1004"
+	ErrOperatorSubscriptionCode                 = "1005"
+	ErrAddonSubscriptionCode                    = "1006"
+	ErrControlPlaneSubscriptionCode             = "1007"
+	ErrMesheryClientCode                        = "1008"
+	ErrSubscribeChannelCode                     = "1009"
+	ErrPublishBrokerCode                        = "1010"
+	ErrNoMeshSyncCode                           = "1011"
+	ErrNoExternalEndpointCode                   = "1012"
+	ErrApplyHelmChartCode                       = "2155"
+	ErrMesheryControllersStatusSubscriptionCode = "2239"
 )
 
 var (
 	ErrEmptyHandler = errors.New(ErrNoMeshSyncCode, errors.Alert, []string{"Database handler not initialized"}, []string{"Meshery Database handler is not accessible to perform operations"}, []string{"Meshery Database is crashed or not reachable"}, []string{"Restart Meshery Server", "Please check if Meshery server is accessible to the Database"})
 )
+
+func ErrMesheryControllersStatusSubscription(err error) error {
+	return errors.New(ErrMesheryControllersStatusSubscriptionCode, errors.Alert, []string{"Could not create meshery controllers status subcription", err.Error()}, []string{"Meshery controller handlers may not be available"}, []string{""}, []string{"Make sure the controllers are deployed and their handlers are configured"})
+}
 
 func ErrCreateData(err error) error {
 	return errors.New(ErrCreateDataCode, errors.Alert, []string{"Error while writing meshsync data", err.Error()}, []string{"Unable to write MeshSync data to the Meshery Database"}, []string{"Meshery Database is crashed or not reachable"}, []string{"Restart Meshery Server", "Please check if Meshery server is accessible to the Database"})
