@@ -1,9 +1,6 @@
 import {
-  Button,
-  Card,
-  CardContent, CardHeader, Chip,
-  IconButton, MenuItem, NoSsr, Paper,
-  Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Tooltip, Typography
+  Button, Card, CardContent, CardHeader, Chip,
+  IconButton, MenuItem, NoSsr, Paper, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Tooltip, Typography
 } from "@material-ui/core";
 import blue from "@material-ui/core/colors/blue";
 import Grid from "@material-ui/core/Grid";
@@ -29,18 +26,28 @@ import { submitPrometheusConfigure } from "./PrometheusComponent";
 
 const styles = (theme) => ({
   rootClass : { backgroundColor : "#eaeff1", },
-  chip : { marginRight : theme.spacing(1),
-    marginBottom : theme.spacing(1), },
-  buttons : { display : "flex",
-    justifyContent : "flex-end", },
-  button : { marginTop : theme.spacing(3),
-    marginLeft : theme.spacing(1), },
+  chip : {
+    marginRight : theme.spacing(1),
+    marginBottom : theme.spacing(1),
+  },
+  buttons : {
+    display : "flex",
+    justifyContent : "flex-end",
+  },
+  button : {
+    marginTop : theme.spacing(3),
+    marginLeft : theme.spacing(1),
+  },
   metricsButton : { width : "240px", },
   alreadyConfigured : { textAlign : "center", },
   margin : { margin : theme.spacing(1), },
-  colorSwitchBase : { color : blue[300],
-    "&$colorChecked" : { color : blue[500],
-      "& + $colorBar" : { backgroundColor : blue[500], }, }, },
+  colorSwitchBase : {
+    color : blue[300],
+    "&$colorChecked" : {
+      color : blue[500],
+      "& + $colorBar" : { backgroundColor : blue[500], },
+    },
+  },
   colorBar : {},
   colorChecked : {},
   fileLabel : { width : "100%", },
@@ -49,16 +56,24 @@ const styles = (theme) => ({
   alignCenter : { textAlign : "center", },
   icon : { width : theme.spacing(2.5), },
   istioIcon : { width : theme.spacing(1.5), },
-  settingsIcon : { width : theme.spacing(2.5),
-    paddingRight : theme.spacing(0.5), },
-  addIcon : { width : theme.spacing(2.5),
-    paddingRight : theme.spacing(0.5), },
+  settingsIcon : {
+    width : theme.spacing(2.5),
+    paddingRight : theme.spacing(0.5),
+  },
+  addIcon : {
+    width : theme.spacing(2.5),
+    paddingRight : theme.spacing(0.5),
+  },
   cardHeader : { fontSize : theme.spacing(2), },
-  card : { height : "100%",
-    marginTop : theme.spacing(2), },
+  card : {
+    height : "100%",
+    marginTop : theme.spacing(2),
+  },
   cardContent : { height : "100%", },
-  redirectButton : { marginLeft : "-.5em",
-    color : "#000", },
+  redirectButton : {
+    marginLeft : "-.5em",
+    color : "#000",
+  },
   dashboardSection : {
     backgroundColor : "#fff",
     padding : theme.spacing(2),
@@ -176,28 +191,28 @@ class DashboardComponent extends React.Component {
       .then(res => this.setState({ contexts : res?.contexts || [] }))
       .catch(this.handleError("failed to fetch contexts for the instance"))
 
-    if (this.state.isMetricsConfigured){
+    if (this.state.isMetricsConfigured) {
       this.fetchMetricComponents();
     }
 
-    if (this._isMounted){
+    if (this._isMounted) {
       this.initMeshSyncControlPlaneSubscription();
     }
   };
 
-  componentDidUpdate(prevProps, prevState){
+  componentDidUpdate(prevProps, prevState) {
     let updateControlPlane = false;
     let updateDataPlane = false;
 
     // deep compare very limited, order of object fields is important
-    if (JSON.stringify(prevState.controlPlaneState) !== JSON.stringify(this.state.controlPlaneState)){
+    if (JSON.stringify(prevState.controlPlaneState) !== JSON.stringify(this.state.controlPlaneState)) {
       updateControlPlane = true
     }
-    if (JSON.stringify(prevState.dataPlaneState) !== JSON.stringify(this.state.dataPlaneState)){
+    if (JSON.stringify(prevState.dataPlaneState) !== JSON.stringify(this.state.dataPlaneState)) {
       updateDataPlane = true
     }
 
-    if (updateDataPlane || updateControlPlane){
+    if (updateDataPlane || updateControlPlane) {
       this.setMeshScanData(
         updateControlPlane ? this.state.controlPlaneState : prevState.controlPlaneState,
         updateDataPlane ? this.state.dataPlaneState : prevState.dataPlaneState
@@ -206,7 +221,7 @@ class DashboardComponent extends React.Component {
 
     // handle subscriptions update on switching K8s Contexts
     if (prevProps?.selectedK8sContexts !== this.props?.selectedK8sContexts
-      || prevProps.k8sconfig !== this.props.k8sconfig){
+      || prevProps.k8sconfig !== this.props.k8sconfig) {
       this.disposeSubscriptions()
       this.initMeshSyncControlPlaneSubscription()
     }
@@ -223,21 +238,25 @@ class DashboardComponent extends React.Component {
 
     dataFetch(
       "/api/telemetry/metrics/config",
-      { method : "GET",
+      {
+        method : "GET",
         credentials : "include",
-        headers : { "Content-Type" : "application/x-www-form-urlencoded;charset=UTF-8", }, },
+        headers : { "Content-Type" : "application/x-www-form-urlencoded;charset=UTF-8", },
+      },
       (result) => {
         self.props.updateProgress({ showProgress : false });
         if (typeof result !== "undefined" && result?.prometheusURL && result?.prometheusURL != "") {
-          fetchAvailableAddons(selector).subscribe({ next : (res) => {
-            res?.addonsState?.forEach((addon) => {
-              if (addon.name === "prometheus" && ( self.state.prometheusURL === "" || self.state.prometheusURL == undefined )) {
-                self.setState({ prometheusURL : "http://" + addon.endpoint })
-                submitPrometheusConfigure(self, () => console.log("Prometheus added"));
-              }
-            });
-          },
-          error : (err) => console.log("error registering prometheus: " + err), });
+          fetchAvailableAddons(selector).subscribe({
+            next : (res) => {
+              res?.addonsState?.forEach((addon) => {
+                if (addon.name === "prometheus" && (self.state.prometheusURL === "" || self.state.prometheusURL == undefined)) {
+                  self.setState({ prometheusURL : "http://" + addon.endpoint })
+                  submitPrometheusConfigure(self, () => console.log("Prometheus added"));
+                }
+              });
+            },
+            error : (err) => console.log("error registering prometheus: " + err),
+          });
         }
       },
       self.handleError("Error getting prometheus config")
@@ -245,45 +264,51 @@ class DashboardComponent extends React.Component {
 
     dataFetch(
       "/api/telemetry/metrics/grafana/config",
-      { method : "GET",
+      {
+        method : "GET",
         credentials : "include",
-        headers : { "Content-Type" : "application/x-www-form-urlencoded;charset=UTF-8", }, },
+        headers : { "Content-Type" : "application/x-www-form-urlencoded;charset=UTF-8", },
+      },
       (result) => {
         self.props.updateProgress({ showProgress : false });
-        if (typeof result !== "undefined" && result?.grafanaURL && result?.grafanaURL !="") {
-          fetchAvailableAddons(selector).subscribe({ next : (res) => {
-            res?.addonsState?.forEach((addon) => {
-              if (addon.name === "grafana" && ( self.state.grafanaURL === "" || self.state.grafanaURL == undefined )) {
-                self.setState({ grafanaURL : "http://" + addon.endpoint })
-                submitGrafanaConfigure(self, () => {
-                  self.state.selectedBoardsConfigs.push(self.state.boardConfigs);
-                  console.info("Grafana added");
-                });
-              }
-            });
-          },
-          error : (err) => console.log("error registering grafana: " + err), });
+        if (typeof result !== "undefined" && result?.grafanaURL && result?.grafanaURL != "") {
+          fetchAvailableAddons(selector).subscribe({
+            next : (res) => {
+              res?.addonsState?.forEach((addon) => {
+                if (addon.name === "grafana" && (self.state.grafanaURL === "" || self.state.grafanaURL == undefined)) {
+                  self.setState({ grafanaURL : "http://" + addon.endpoint })
+                  submitGrafanaConfigure(self, () => {
+                    self.state.selectedBoardsConfigs.push(self.state.boardConfigs);
+                    console.info("Grafana added");
+                  });
+                }
+              });
+            },
+            error : (err) => console.log("error registering grafana: " + err),
+          });
         }
       },
       self.handleError("There was an error communicating with grafana config")
     );
 
 
-    fetchAvailableAddons(selector).subscribe({ next : (res) => {
-      res?.addonsState?.forEach((addon) => {
-        if (addon.name === "prometheus" && ( self.state.prometheusURL === "" || self.state.prometheusURL == undefined )) {
-          self.setState({ prometheusURL : "http://" + addon.endpoint })
-          submitPrometheusConfigure(self, () => console.log("Prometheus connected"));
-        } else if (addon.name === "grafana" && ( self.state.grafanaURL === "" || self.state.grafanaURL == undefined )) {
-          self.setState({ grafanaURL : "http://" + addon.endpoint })
-          submitGrafanaConfigure(self, () => {
-            self.state.selectedBoardsConfigs.push(self.state.boardConfigs);
-            console.log("Grafana added");
-          });
-        }
-      });
-    },
-    error : (err) => console.log("error registering addons: " + err), });
+    fetchAvailableAddons(selector).subscribe({
+      next : (res) => {
+        res?.addonsState?.forEach((addon) => {
+          if (addon.name === "prometheus" && (self.state.prometheusURL === "" || self.state.prometheusURL == undefined)) {
+            self.setState({ prometheusURL : "http://" + addon.endpoint })
+            submitPrometheusConfigure(self, () => console.log("Prometheus connected"));
+          } else if (addon.name === "grafana" && (self.state.grafanaURL === "" || self.state.grafanaURL == undefined)) {
+            self.setState({ grafanaURL : "http://" + addon.endpoint })
+            submitGrafanaConfigure(self, () => {
+              self.state.selectedBoardsConfigs.push(self.state.boardConfigs);
+              console.log("Grafana added");
+            });
+          }
+        });
+      },
+      error : (err) => console.log("error registering addons: " + err),
+    });
   };
 
   fetchAvailableAdapters = () => {
@@ -291,14 +316,18 @@ class DashboardComponent extends React.Component {
     this.props.updateProgress({ showProgress : true });
     dataFetch(
       "/api/system/adapters",
-      { credentials : "same-origin",
+      {
+        credentials : "same-origin",
         method : "GET",
-        credentials : "include", },
+        credentials : "include",
+      },
       (result) => {
         this.props.updateProgress({ showProgress : false });
         if (typeof result !== "undefined") {
-          const options = result.map((res) => ({ value : res.adapter_location,
-            label : res.adapter_location, }));
+          const options = result.map((res) => ({
+            value : res.adapter_location,
+            label : res.adapter_location,
+          }));
           this.setState({ availableAdapters : options });
         }
       },
@@ -316,7 +345,7 @@ class DashboardComponent extends React.Component {
       }
       let proxies = []
 
-      if (Array.isArray(dataPlanesData?.dataPlanesState)){
+      if (Array.isArray(dataPlanesData?.dataPlanesState)) {
         const dataplane = dataPlanesData.dataPlanesState.find(mesh_ => mesh_.name === mesh.name)
 
         if (Array.isArray(dataplane?.proxies)) proxies = dataplane.proxies
@@ -329,10 +358,10 @@ class DashboardComponent extends React.Component {
         }
 
         // retrieve data planes according to mesh name
-        if (proxies.length > 0){
+        if (proxies.length > 0) {
           const controlPlaneMemberProxies = proxies.filter(proxy => proxy.controlPlaneMemberName === member.name)
 
-          if (controlPlaneMemberProxies.length > 0){
+          if (controlPlaneMemberProxies.length > 0) {
             member = {
               ...member,
               data_planes : controlPlaneMemberProxies
@@ -365,9 +394,11 @@ class DashboardComponent extends React.Component {
    */
   generateMeshScanPodName = (podname, hash, custom) => {
     const str = custom || podname;
-    return { full : podname,
+    return {
+      full : podname,
       trimmed : str.substring(0, (hash ? str.indexOf(hash)
-        : str.length) - 1), };
+        : str.length) - 1),
+    };
   };
 
   /**
@@ -390,13 +421,15 @@ class DashboardComponent extends React.Component {
   handleError = (msg) => (error) => {
     this.props.updateProgress({ showProgress : false });
     const self = this;
-    this.props.enqueueSnackbar(`${msg}: ${error}`, { variant : "error", preventDuplicate : true,
+    this.props.enqueueSnackbar(`${msg}: ${error}`, {
+      variant : "error", preventDuplicate : true,
       action : (key) => (
         <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
           <CloseIcon />
         </IconButton>
       ),
-      autoHideDuration : 7000, });
+      autoHideDuration : 7000,
+    });
   };
 
   /**
@@ -416,7 +449,8 @@ class DashboardComponent extends React.Component {
     const { classes } = this.props;
     this.props.updateProgress({ showProgress : false });
     const self = this;
-    this.props.enqueueSnackbar(`${msg}. To configure an adapter, visit`, { variant : "error",
+    this.props.enqueueSnackbar(`${msg}. To configure an adapter, visit`, {
+      variant : "error",
       autoHideDuration : 3000,
       action : (key) => (
         <>
@@ -438,7 +472,8 @@ class DashboardComponent extends React.Component {
             <CloseIcon />
           </IconButton>
         </>
-      ), });
+      ),
+    });
   };
 
   handleDelete() {
@@ -451,18 +486,22 @@ class DashboardComponent extends React.Component {
     const self = this;
     dataFetch(
       `/api/system/adapters?adapter=${encodeURIComponent(adapterLoc)}`,
-      { credentials : "same-origin",
-        credentials : "include", },
+      {
+        credentials : "same-origin",
+        credentials : "include",
+      },
       (result) => {
         this.props.updateProgress({ showProgress : false });
         if (typeof result !== "undefined") {
-          this.props.enqueueSnackbar("Meshery Adapter connected at " + adapterLoc, { variant : "success",
+          this.props.enqueueSnackbar("Meshery Adapter connected at " + adapterLoc, {
+            variant : "success",
             autoHideDuration : 2000,
             action : (key) => (
               <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
                 <CloseIcon />
               </IconButton>
-            ), });
+            ),
+          });
         }
       },
       self.handleAdapterPingError("Could not connect to " + adapterLoc)
@@ -479,7 +518,7 @@ class DashboardComponent extends React.Component {
 
   formatContextNamesForDashboardView = () => {
     const clusters = this.getSelectedK8sContextsNames();
-    if (clusters.length===0) {
+    if (clusters.length === 0) {
       return "No Cluster is selected to show the Service Mesh Information"
     }
     if (clusters.includes("all")) {
@@ -497,19 +536,22 @@ class DashboardComponent extends React.Component {
     const { configuredServer, contextName } = selectedCtx;
     dataFetch(
       "/api/system/kubernetes/ping?context=" + id,
-      { credentials : "same-origin",
-        credentials : "include", },
+      {
+        credentials : "same-origin",
+        credentials : "include",
+      },
       (result) => {
         this.props.updateProgress({ showProgress : false });
         if (typeof result !== "undefined") {
-          this.props.enqueueSnackbar(`${contextName} is connected at ${configuredServer}` , {
+          this.props.enqueueSnackbar(`${contextName} is connected at ${configuredServer}`, {
             variant : "success",
             autoHideDuration : 2000,
             action : (key) => (
               <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
                 <CloseIcon />
               </IconButton>
-            ), });
+            ),
+          });
         }
       },
       self.handleError("Could not connect to Kubernetes")
@@ -522,18 +564,22 @@ class DashboardComponent extends React.Component {
     const { grafanaUrl } = this.state;
     dataFetch(
       "/api/telemetry/metrics/grafana/ping",
-      { credentials : "same-origin",
-        credentials : "include", },
+      {
+        credentials : "same-origin",
+        credentials : "include",
+      },
       (result) => {
         this.props.updateProgress({ showProgress : false });
         if (typeof result !== "undefined") {
-          this.props.enqueueSnackbar("Grafana connected at "  + `${grafanaUrl}`, { variant : "success",
+          this.props.enqueueSnackbar("Grafana connected at " + `${grafanaUrl}`, {
+            variant : "success",
             autoHideDuration : 2000,
             action : (key) => (
               <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
                 <CloseIcon />
               </IconButton>
-            ), });
+            ),
+          });
         }
       },
       self.handleError("Could not connect to Grafana")
@@ -605,13 +651,13 @@ class DashboardComponent extends React.Component {
                             Array.isArray(component?.data_planes) && component.data_planes.length > 0 ? (
                               component.data_planes.map((cont) => {
                                 return (
-                                  <div key={cont.name} style={{ fontSize : "15px", color : '#fff', paddingBottom : '10px', padding : '1vh' } }>
+                                  <div key={cont.name} style={{ fontSize : "15px", color : '#fff', paddingBottom : '10px', padding : '1vh' }}>
                                     <p>Name: {cont?.containerName ? cont.containerName : 'Unspecified'}</p>
                                     <p>Status: {cont?.status?.ready ? 'ready' : 'not ready'}</p>
                                     {!cont?.status?.ready && (
                                       typeof cont?.status?.lastState === 'object' && cont?.status?.lastState !== null && Object.keys(cont.status.lastState).length > 0 && (
                                         <div>
-                                          <p>Last state: {Object.keys(cont?.status?.lastState)[0]} <br/> Error: {Object.values(cont?.status?.lastState)[0]?.exitCode} <br/> Finished at: {Object.values(cont?.status?.lastState)[0]?.finishedAt}</p>
+                                          <p>Last state: {Object.keys(cont?.status?.lastState)[0]} <br /> Error: {Object.values(cont?.status?.lastState)[0]?.exitCode} <br /> Finished at: {Object.values(cont?.status?.lastState)[0]?.finishedAt}</p>
                                         </div>
                                       )
                                     )}
@@ -622,22 +668,22 @@ class DashboardComponent extends React.Component {
                                       <p>Restart count: {cont?.status.restartCount}</p>
                                     )}
                                     <p>Image: {cont.image}</p>
-                                    <p>Ports: <br/> {cont?.ports && cont.ports.map(port => `[ ${port?.name ? port.name : 'Unknown'}, ${port?.containerPort ? port.containerPort : 'Unknown'}, ${port?.protocol ? port.protocol : 'Unknown'} ]`).join(', ')}</p>
+                                    <p>Ports: <br /> {cont?.ports && cont.ports.map(port => `[ ${port?.name ? port.name : 'Unknown'}, ${port?.containerPort ? port.containerPort : 'Unknown'}, ${port?.protocol ? port.protocol : 'Unknown'} ]`).join(', ')}</p>
                                     {cont?.resources && (
                                       <div>
-                                        Resources used: <br/>
+                                        Resources used: <br />
 
                                         <div style={{ paddingLeft : '2vh' }}>
                                           {cont?.resources?.limits && (
                                             <div>
-                                              <p>Limits: <br/>
-                                              CPU: {cont?.resources?.limits?.cpu} - Memory: {cont?.resources?.limits?.memory}</p>
+                                              <p>Limits: <br />
+                                                CPU: {cont?.resources?.limits?.cpu} - Memory: {cont?.resources?.limits?.memory}</p>
                                             </div>
                                           )}
                                           {cont?.resources?.requests && (
                                             <div>
-                                              <p>Requests: <br/>
-                                              CPU: {cont?.resources?.requests?.cpu} - Memory: {cont?.resources?.requests?.memory}</p>
+                                              <p>Requests: <br />
+                                                CPU: {cont?.resources?.requests?.cpu} - Memory: {cont?.resources?.requests?.memory}</p>
                                             </div>
                                           )}
                                         </div>
@@ -668,18 +714,22 @@ class DashboardComponent extends React.Component {
     const { prometheusUrl } = this.state;
     dataFetch(
       "/api/telemetry/metrics/ping",
-      { credentials : "same-origin",
-        credentials : "include", },
+      {
+        credentials : "same-origin",
+        credentials : "include",
+      },
       (result) => {
         this.props.updateProgress({ showProgress : false });
         if (typeof result !== "undefined") {
-          this.props.enqueueSnackbar("Prometheus connected at" + ` ${prometheusUrl}`, { variant : "success",
+          this.props.enqueueSnackbar("Prometheus connected at" + ` ${prometheusUrl}`, {
+            variant : "success",
             autoHideDuration : 2000,
             action : (key) => (
               <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
                 <CloseIcon />
               </IconButton>
-            ), });
+            ),
+          });
         }
       },
       self.handleError("Could not connect to Prometheus")
@@ -732,7 +782,7 @@ class DashboardComponent extends React.Component {
     );
 
     if (!contexts?.length) {
-      chp=showConfigured;
+      chp = showConfigured;
     }
 
     showConfigured = <div showConfigured>{chp}</div>;
@@ -774,7 +824,7 @@ class DashboardComponent extends React.Component {
                       .toLowerCase()
                       .split(" ")
                       .map((s) => s.charAt(0).toUpperCase() + s.substring(1))
-                      .join(" ")} on ${aa.label.split(":")[1] }/tcp (${adapterVersion})`}
+                      .join(" ")} on ${aa.label.split(":")[1]}/tcp (${adapterVersion})`}
               >
                 <Chip
                   label={
@@ -914,7 +964,7 @@ class DashboardComponent extends React.Component {
                 onClick={() => self.props.router.push("/management")}
               >
                 <AddIcon className={classes.addIcon} />
-              Install Service Mesh
+                Install Service Mesh
               </Button>
             </div>
           )}
@@ -955,9 +1005,11 @@ class DashboardComponent extends React.Component {
 
 DashboardComponent.propTypes = { classes : PropTypes.object.isRequired, };
 
-const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(updateProgress, dispatch),
+const mapDispatchToProps = (dispatch) => ({
+  updateProgress : bindActionCreators(updateProgress, dispatch),
   updateGrafanaConfig : bindActionCreators(updateGrafanaConfig, dispatch),
-  updatePrometheusConfig : bindActionCreators(updatePrometheusConfig, dispatch), });
+  updatePrometheusConfig : bindActionCreators(updatePrometheusConfig, dispatch),
+});
 
 const mapStateToProps = (state) => {
   const k8sconfig = state.get("k8sConfig");

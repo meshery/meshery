@@ -122,9 +122,20 @@ func (h *Handler) handleApplicationPOST(
 
 		mesheryApplication := parsedBody.ApplicationData
 
+		bytApplication := []byte(mesheryApplication.ApplicationFile)
 		// check whether the uploaded file is a docker compose file
-		if kompose.IsManifestADockerCompose([]byte(mesheryApplication.ApplicationFile)) {
-			res, err := kompose.Convert(mesheryApplication.ApplicationFile) // convert the docker compose file into kubernetes manifest
+		if kompose.IsManifestADockerCompose(bytApplication) {
+			if err := kompose.VaildateDockerComposeFile(bytApplication); err != nil {
+				obj := "validate"
+				h.log.Error(ErrApplicationFailure(err, obj))
+				http.Error(rw, ErrApplicationFailure(err, obj).Error(), http.StatusInternalServerError)
+				return
+			}
+			if err := kompose.FormatComposeFile(&bytApplication); err != nil {
+				obj := "format"
+				h.log.Warn(ErrApplicationFailure(err, obj))
+			}
+			res, err := kompose.Convert(bytApplication) // convert the docker compose file into kubernetes manifest
 			if err != nil {
 				obj := "convert"
 				h.log.Error(ErrApplicationFailure(err, obj))
