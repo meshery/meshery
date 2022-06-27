@@ -60,13 +60,12 @@ func ListernToEvents(log logger.Handler,
 	handler *database.Handler,
 	datach chan *broker.Message,
 	meshsyncCh chan struct{},
-	controlPlaneSyncChannel chan struct{},
 	broadcast broadcast.Broadcaster,
 ) {
 	var wg sync.WaitGroup
 	for msg := range datach {
 		wg.Add(1)
-		go persistData(*msg, log, handler, meshsyncCh, controlPlaneSyncChannel, broadcast, &wg)
+		go persistData(*msg, log, handler, meshsyncCh, broadcast, &wg)
 	}
 
 	wg.Wait()
@@ -77,7 +76,6 @@ func persistData(msg broker.Message,
 	log logger.Handler,
 	handler *database.Handler,
 	meshsyncCh chan struct{},
-	controlPlaneSyncChannel chan struct{},
 	broadcaster broadcast.Broadcaster,
 	wg *sync.WaitGroup,
 ) {
@@ -107,7 +105,9 @@ func persistData(msg broker.Message,
 			log.Error(err)
 			return
 		}
-		meshsyncCh <- struct{}{}
+		if meshsyncCh != nil {
+			meshsyncCh <- struct{}{}
+		}
 	case broker.SMI:
 		log.Info("Received SMI Result")
 	}
@@ -142,7 +142,9 @@ func PersistClusterNames(
 			log.Error(err)
 		}
 	}
-	meshsyncCh <- struct{}{}
+	if meshsyncCh != nil {
+		meshsyncCh <- struct{}{}
+	}
 }
 
 func applyYaml(client *mesherykube.Client, delete bool, file string) error {
@@ -178,19 +180,18 @@ func installUsingHelm(client *mesherykube.Client, delete bool, adapterTracker mo
 			mesheryReleaseVersion = latestRelease
 		}
 	}
-
 	var (
 		act   = mesherykube.INSTALL
 		chart = "meshery-operator"
 	)
-
+	if delete {
+		act = mesherykube.UNINSTALL
+	}
 	// a basic check to see if meshery is installed in cluster
 	// this helps decide what chart should be used for installing operator
 	if viper.GetString("KUBERNETES_SERVICE_HOST") != "" {
-		act = mesherykube.UPGRADE
+		// act = mesherykube.UPGRADE
 		chart = "meshery"
-	} else if delete {
-		act = mesherykube.UNINSTALL
 	}
 
 	overrides := SetOverrideValues(delete, adapterTracker)

@@ -37,20 +37,26 @@ func (r *Resolver) listenToControlPlaneState(ctx context.Context, provider model
 	go func() {
 		r.Log.Info("Initializing ControlPlane subscription")
 
-		for {
-			select {
-			case <-r.MeshSyncChannel:
-				status, err := r.getControlPlanes(ctx, provider, filter)
-				if err != nil {
-					r.Log.Error(ErrControlPlaneSubscription(err))
-					break
+		for _, ctxID := range filter.K8sClusterIDs {
+			go func(ctxID string) {
+				for {
+					select {
+					case <-r.MeshSyncChannelPerK8sContext[ctxID]:
+						status, err := r.getControlPlanes(ctx, provider, filter)
+						if err != nil {
+							r.Log.Error(ErrControlPlaneSubscription(err))
+							break
+						}
+						r.controlPlaneChannel <- status
+					case <-ctx.Done():
+						r.Log.Info("ControlPlane subscription stopped")
+						return
+					}
 				}
-				r.controlPlaneChannel <- status
-			case <-ctx.Done():
-				r.Log.Info("ControlPlane subscription stopped")
-				return
-			}
+
+			}(ctxID)
 		}
+
 	}()
 	return r.controlPlaneChannel, nil
 }
