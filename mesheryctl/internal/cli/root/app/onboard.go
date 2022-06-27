@@ -8,6 +8,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"path"
 	"strconv"
 	"strings"
 
@@ -104,6 +105,7 @@ mesheryctl app onboard -f [filepath]
 				if !skipSave {
 					jsonValues, err := json.Marshal(map[string]interface{}{
 						"application_data": map[string]interface{}{
+							"name":             path.Base(file),
 							"application_file": text,
 						},
 						"save": true,
