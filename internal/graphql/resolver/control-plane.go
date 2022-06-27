@@ -56,7 +56,6 @@ func (r *Resolver) listenToControlPlaneState(ctx context.Context, provider model
 
 			}(ctxID)
 		}
-
 	}()
 	return r.controlPlaneChannel, nil
 }
