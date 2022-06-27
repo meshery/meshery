@@ -42,7 +42,7 @@ const HeaderComponent = ({ drawerOpen, onDrawerToggle, pageTitle }) => {
                 <MesheryNotification />
               </Grid> */}
           <Grid item className={classes.userContainer}>
-            <K8sContextMenu/>
+            <K8sContextMenu contexts={contexts}/>
             <IconButton color="inherit" size="large">
               <Link href="/system/connections">
                 <img

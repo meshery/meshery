@@ -3,7 +3,9 @@ import { useSnackbar } from "notistack";
 import { AddIcon, Button, ClickAwayListener, IconButton, Link, Paper, Search, Slide, TextField } from "@mui/material";
 import { useStyles } from "./K8sContextSwitcher.styles";
 
-export default function K8sContextMenu({ contexts }) {
+export default function K8sContextMenu({
+  contexts={} }) {
+
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(false);
   const [showFullContextMenu, setShowFullContextMenu] = React.useState(false);
@@ -163,7 +165,7 @@ export default function K8sContextMenu({ contexts }) {
                 />
               </div>
               <div>
-                {contexts?.total_count ? (
+                {contexts?.total_count ? 
                   <>
                     <Checkbox
                       checked={activeContexts.includes("all")}
@@ -172,7 +174,7 @@ export default function K8sContextMenu({ contexts }) {
                     />
                     <span>Select All</span>
                   </>
-                ) : (
+                 : 
                   <Link href="/settings">
                     <Button
                       type="submit"
@@ -185,7 +187,7 @@ export default function K8sContextMenu({ contexts }) {
                       Connect Clusters
                     </Button>
                   </Link>
-                )}
+                }
                 {contexts?.contexts?.map((ctx) => {
                   const meshStatus = getMeshSyncStatus(ctx.id);
                   const operStatus = getOperatorStatus(ctx.id);
