@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/layer5io/meshkit/broker/nats"
@@ -35,9 +36,12 @@ type MesheryControllersHelper struct {
 	ctxOperatorStatusMap map[string]controllers.MesheryControllerStatus
 	// maps each context with a meshsync data handler
 	ctxMeshsyncDataHandlerMap map[string]MeshsyncDataHandler
-	log                       logger.Handler
-	oprDepConfig              controllers.OperatorDeploymentConfig
-	dbHandler                 *database.Handler
+
+	mu sync.Mutex
+
+	log          logger.Handler
+	oprDepConfig controllers.OperatorDeploymentConfig
+	dbHandler    *database.Handler
 }
 
 func (mch *MesheryControllersHelper) GetControllerHandlersForEachContext() map[string]map[MesheryController]controllers.IMesheryController {
@@ -69,6 +73,8 @@ func NewMesheryControllersHelper(log logger.Handler, operatorDepConfig controlle
 // the meshsync data for that context is properly being handled
 func (mch *MesheryControllersHelper) UpdateMeshsynDataHandlers() *MesheryControllersHelper {
 	// only checking those contexts whose MesheryConrollers are active
+	mch.mu.Lock()
+	defer mch.mu.Unlock()
 	for ctxId, controllerHandlers := range mch.ctxControllerHandlersMap {
 		if _, ok := mch.ctxMeshsyncDataHandlerMap[ctxId]; !ok {
 			// brokerStatus := controllerHandlers[MesheryBroker].GetStatus()
@@ -83,8 +89,8 @@ func (mch *MesheryControllersHelper) UpdateMeshsynDataHandlers() *MesheryControl
 			}
 			mch.log.Info(fmt.Sprintf("found meshery-broker endpoint: %s for contextId: %s", brokerEndpoint, ctxId))
 			brokerHandler, err := nats.New(nats.Options{
-				URLS: []string{"localhost:4222"},
-				// URLS:           []string{brokerEndpoint},
+				// URLS: []string{"localhost:4222"},
+				URLS:           []string{brokerEndpoint},
 				ConnectionName: MesheryServerBrokerConnection,
 				Username:       "",
 				Password:       "",
@@ -115,6 +121,8 @@ func (mch *MesheryControllersHelper) UpdateMeshsynDataHandlers() *MesheryControl
 // 1. the config is valid
 // 2. if it is not already attached
 func (mch *MesheryControllersHelper) UpdateCtxControllerHandlers(ctxs []K8sContext) *MesheryControllersHelper {
+	mch.mu.Lock()
+	defer mch.mu.Unlock()
 	for _, ctx := range ctxs {
 		ctxId := ctx.ID
 		if _, ok := mch.ctxControllerHandlersMap[ctxId]; !ok {
@@ -139,6 +147,8 @@ func (mch *MesheryControllersHelper) UpdateCtxControllerHandlers(ctxs []K8sConte
 // for whom MesheryControllers are attached
 // should be called after UpdateCtxControllerHandlers
 func (mch *MesheryControllersHelper) UpdateOperatorsStatusMap() *MesheryControllersHelper {
+	mch.mu.Lock()
+	defer mch.mu.Unlock()
 	for ctxId, ctrlHandler := range mch.ctxControllerHandlersMap {
 		mch.ctxOperatorStatusMap[ctxId] = ctrlHandler[MesheryOperator].GetStatus()
 	}
@@ -148,6 +158,8 @@ func (mch *MesheryControllersHelper) UpdateOperatorsStatusMap() *MesheryControll
 // looks at the status of Meshery Operator for each cluster and takes necessary action.
 // it will deploy the operator only when it is in NotDeployed state
 func (mch *MesheryControllersHelper) DeployUndeployedOperators() *MesheryControllersHelper {
+	mch.mu.Lock()
+	defer mch.mu.Unlock()
 	for ctxId, ctrlHandler := range mch.ctxControllerHandlersMap {
 		if oprStatus, ok := mch.ctxOperatorStatusMap[ctxId]; ok {
 			if oprStatus == controllers.NotDeployed {

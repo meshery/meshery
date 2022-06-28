@@ -3,7 +3,7 @@ import environment from "../../../lib/relayEnvironment";
 
 const meshSyncEventsSubscription = graphql`
  subscription MeshSyncEventsSubscription($k8scontextIDs: [String!]) {
-    subscribeMeshSyncEvents {
+    subscribeMeshSyncEvents(k8scontextIDs: $k8scontextIDs) {
          type
     		 object
     		 contextId
