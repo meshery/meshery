@@ -14,6 +14,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/models"
 	"github.com/layer5io/meshery/models/pattern/core"
+	"github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/layer5io/meshkit/utils/kubernetes/kompose"
 	"github.com/layer5io/meshkit/utils/walker"
 )
@@ -168,47 +169,99 @@ func (h *Handler) handleApplicationPOST(
 	}
 
 	if parsedBody.URL != "" {
-		parsedURL, err := url.Parse(parsedBody.URL)
+		var resp []byte
+		var err error
+		if strings.HasSuffix(parsedBody.URL, ".tgz") { //Helm chart is passed
+			resp, err = kubernetes.ConvertHelmChartToK8sManifest(kubernetes.ApplyHelmChartConfig{
+				URL: parsedBody.URL,
+			})
+			if err != nil {
+				obj := "import"
+				h.log.Error(ErrApplicationFailure(err, obj))
+				http.Error(rw, ErrApplicationFailure(err, obj).Error(), http.StatusInternalServerError)
+				return
+			}
+			result := string(resp)
+			url := strings.Split(parsedBody.URL, "/")
+			mesheryApplication = &models.MesheryApplication{
+				Name:            strings.TrimSuffix(url[len(url)-1], ".tgz"),
+				ApplicationFile: result,
+				Location: map[string]interface{}{
+					"type":   "http",
+					"host":   parsedBody.URL,
+					"path":   "",
+					"branch": "",
+				},
+			}
+			resp, err = json.Marshal([]models.MesheryApplication{*mesheryApplication})
+		} else {
+
+			parsedURL, err := url.Parse(parsedBody.URL)
+			if err != nil {
+				http.Error(rw, "error parsing provided URL", http.StatusInternalServerError)
+			}
+
+			// Check if hostname is github
+			if parsedURL.Host == "github.com" {
+				parsedPath := strings.Split(parsedURL.Path, "/")
+				if parsedPath[3] == "tree" {
+					parsedPath = append(parsedPath[0:3], parsedPath[4:]...)
+				}
+				if len(parsedPath) < 3 {
+					http.Error(rw, "malformed URL: url should be of type github.com/<owner>/<repo>/[branch]", http.StatusNotAcceptable)
+				}
+
+				owner := parsedPath[1]
+				repo := parsedPath[2]
+				branch := "master"
+				path := parsedBody.Path
+				if len(parsedPath) == 4 {
+					branch = parsedPath[3]
+				}
+				if path == "" && len(parsedPath) > 4 {
+					path = strings.Join(parsedPath[4:], "/")
+				}
+
+				pfs, err := githubRepoApplicationScan(owner, repo, path, branch, sourcetype)
+				if err != nil {
+					http.Error(rw, ErrRemoteApplication(err).Error(), http.StatusInternalServerError)
+				}
+
+				mesheryApplication = &pfs[0]
+			} else {
+
+			// Fallback to generic HTTP import
+				pfs, err := genericHTTPApplicationFile(parsedBody.URL, sourcetype)
+				if err != nil {
+					http.Error(rw, ErrRemoteApplication(err).Error(), http.StatusInternalServerError)
+				}
+				mesheryApplication = &pfs[0]
+			}
+		}
+	}
+
+	if parsedBody.Path != "" { //This will be considered a path to the local helm repo
+		resp, err := kubernetes.ConvertHelmChartToK8sManifest(kubernetes.ApplyHelmChartConfig{
+			LocalPath: parsedBody.Path,
+		})
 		if err != nil {
-			http.Error(rw, "error parsing provided URL", http.StatusInternalServerError)
+			obj := "import"
+			h.log.Error(ErrApplicationFailure(err, obj))
+			http.Error(rw, ErrApplicationFailure(err, obj).Error(), http.StatusInternalServerError)
+			return
 		}
-
-		// Check if hostname is github
-		if parsedURL.Host == "github.com" {
-			parsedPath := strings.Split(parsedURL.Path, "/")
-			if parsedPath[3] == "tree" {
-				parsedPath = append(parsedPath[0:3], parsedPath[4:]...)
-			}
-			if len(parsedPath) < 3 {
-				http.Error(rw, "malformed URL: url should be of type github.com/<owner>/<repo>/[branch]", http.StatusNotAcceptable)
-			}
-
-			owner := parsedPath[1]
-			repo := parsedPath[2]
-			branch := "master"
-			path := parsedBody.Path
-			if len(parsedPath) == 4 {
-				branch = parsedPath[3]
-			}
-			if path == "" && len(parsedPath) > 4 {
-				path = strings.Join(parsedPath[4:], "/")
-			}
-
-			pfs, err := githubRepoApplicationScan(owner, repo, path, branch, sourcetype)
-			if err != nil {
-				http.Error(rw, ErrRemoteApplication(err).Error(), http.StatusInternalServerError)
-			}
-
-			mesheryApplication = &pfs[0]
+		result := string(resp)
+		path := strings.Split(parsedBody.Path, "/")
+		mesheryApplication = &models.MesheryApplication{
+			Name:            path[len(path)-1],
+			ApplicationFile: result,
+			Location: map[string]interface{}{
+				"type":   "http",
+				"host":   parsedBody.URL,
+				"path":   "",
+				"branch": "",
+			},
 		}
-
-		// Fallback to generic HTTP import
-			pfs, err := genericHTTPApplicationFile(parsedBody.URL, sourcetype)
-			if err != nil {
-				http.Error(rw, ErrRemoteApplication(err).Error(), http.StatusInternalServerError)
-			}
-			mesheryApplication = &pfs[0]
-
 	}
 
 	if parsedBody.Save {
@@ -228,13 +281,8 @@ func (h *Handler) handleApplicationPOST(
 			http.Error(rw, ErrEncoding(err, obj).Error(), http.StatusInternalServerError)
 			return
 		}
+
 		err = provider.SaveApplicationSourceContent(token, (mesheryApplicationContent[0].ID).String(), mesheryApplication.SourceContent)
-		if err != nil {
-			obj := "upload"
-			h.log.Error(ErrApplicationSourceContentUpload(err, obj))
-			http.Error(rw, ErrApplicationSourceContentUpload(err, obj).Error(), http.StatusInternalServerError)
-			return
-		}
 
 		h.formatApplicationOutput(rw, resp, format)
 		return
@@ -394,9 +442,7 @@ func (h *Handler) formatApplicationOutput(rw http.ResponseWriter, content []byte
 		return
 	}
 
-	result := []models.MesheryApplication{}
-
-	data, err := json.Marshal(&result)
+	data, err := json.Marshal(&contentMesheryApplicationSlice)
 	if err != nil {
 		obj := "application file"
 		h.log.Error(ErrMarshal(err, obj))
