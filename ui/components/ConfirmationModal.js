@@ -48,11 +48,11 @@ const styles = (theme) => ({
   },
   title : {
     textAlign : 'center',
-    minWidth : 400,
-    padding : theme.spacing(1.5),
+    minWidth : 300,
+    padding : theme.spacing(1),
     color : '#fff',
     backgroundColor : '#607d8b',
-    fontSize : "1.6rem",
+    fontSize : "1rem",
 
   },
   subtitle : {
@@ -93,6 +93,10 @@ const styles = (theme) => ({
   tabs : {
     marginLeft : 0
   },
+  tabLabel : {
+    fontWeight : "bolder",
+    fontSize : "1rem"
+  }
 })
 
 function ConfirmationMsg(props) {
@@ -105,6 +109,7 @@ function ConfirmationMsg(props) {
   const handleTabValChange = (event, newVal) => {
     setTabVal(newVal);
   }
+  console.log("OPOPOP", tabVal);
 
   const handleKubernetesClick = (ctxID) => {
     showProgress()
@@ -172,7 +177,9 @@ function ConfirmationMsg(props) {
     <div className={classes.root}>
       <Dialog
         open={open}
-        onClose={handleClose}
+        onClose={() => {
+          handleClose(); setTabVal(0);
+        }}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
         className={classes.dialogBox}
@@ -206,10 +213,11 @@ function ConfirmationMsg(props) {
           />
           }
         </Tabs>
-        { k8scontext.length > 0 ?
+        <>
+          { tabVal == 0 &&
           <>
-            { tabVal == 0 &&
-
+            {
+              k8scontext.length > 0 ?
                 <DialogContent>
                   <DialogContentText id="alert-dialog-description" className={classes.subtitle}>
                     <Typography variant="body1">
@@ -263,41 +271,40 @@ function ConfirmationMsg(props) {
                     </Typography>
                   </DialogContentText>
                 </DialogContent>
+                :
+                <DialogContent>
+                  <DialogContentText id="alert-dialog-description" className={classes.subtitle}>
+                    <Typography variant="subtitle1">Please upload kube config file.</Typography>
+                  </DialogContentText>
+                </DialogContent>
             }
-            { tabVal == 1 &&
+          </>
+          }
+          { tabVal == 1 &&
                validationComp
-            }
-            <DialogActions className={classes.actions}>
-              <Button onClick={handleClose} className={classes.button1}>
-                <Typography variant body2> Cancel </Typography>
-              </Button>
-              <Button  disabled
-                className={classes.button0} autoFocus type="submit"
-                variant="contained"
-                color="primary">
-                <Typography variant body2 > {isDelete ? "UNDEPLOY LATER" : "DEPLOY"} </Typography>
-              </Button>
-              <Button onClick={handleSubmit}
-                className={classes.button0} autoFocus type="submit"
-                variant="contained"
-                color="primary">
-                <Typography variant body2 > {isDelete ? "UNDEPLOY" : "DEPLOY"} </Typography>
-              </Button>
-            </DialogActions>
-          </>
-          :
-          <>
-            <DialogTitle id="alert-dialog-title" className={classes.title}>
-            No Kubernetes contexts detected
-            </DialogTitle>
-            <DialogContent>
-              <DialogContentText id="alert-dialog-description" className={classes.subtitle}>
-                <Typography variant="subtitle1">Please upload kube config file.</Typography>
-              </DialogContentText>
-            </DialogContent>
-          </>
-        }
-
+          }
+          <DialogActions className={classes.actions}>
+            <Button onClick={() => {
+              handleClose(); setTabVal(0);
+            }} className={classes.button1}>
+              <Typography variant body2> Cancel </Typography>
+            </Button>
+            <Button  disabled
+              className={classes.button0} autoFocus type="submit"
+              variant="contained"
+              color="primary">
+              <Typography variant body2 > {isDelete ? "UNDEPLOY LATER" : "DEPLOY"} </Typography>
+            </Button>
+            <Button onClick={() => {
+              handleSubmit(); setTabVal(0);
+            }}
+            className={classes.button0} autoFocus type="submit"
+            variant="contained"
+            color="primary">
+              <Typography variant body2 > {isDelete ? "UNDEPLOY" : "DEPLOY"} </Typography>
+            </Button>
+          </DialogActions>
+        </>
       </Dialog>
     </div>
   )
