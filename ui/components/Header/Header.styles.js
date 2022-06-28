@@ -8,7 +8,7 @@ export const getStyles = (theme) => ({
   link: { textDecoration: "none", color: lightColor, "&:hover": { color: theme.palette.common.white } },
   button: { borderColor: lightColor },
   notifications: { paddingLeft: theme.spacing(4), paddingRight: theme.spacing(0), marginLeft: theme.spacing(4) },
-  userContainer: { paddingLeft: 1, display: "flex" },
+  userContainer: { paddingLeft: 1, display: "flex", alignItems: "center" },
   userSpan: { marginLeft: theme.spacing(1) },
   pageTitleWrapper: { flexGrow: 1, marginRight: "auto" },
   pageTitle: {
