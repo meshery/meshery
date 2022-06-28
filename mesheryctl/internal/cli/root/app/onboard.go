@@ -98,12 +98,14 @@ mesheryctl app onboard -f [filepath]
 					return err
 				}
 				text := string(content)
-
+				s := strings.Split(file, "/")
+				name := s[len(s)-1]
 				// if --skip-save is not passed we save the apps first
 				if !skipSave {
 					jsonValues, err := json.Marshal(map[string]interface{}{
 						"application_data": map[string]interface{}{
 							"application_file": text,
+							"name":             name,
 						},
 						"save": true,
 					})
@@ -148,7 +150,6 @@ mesheryctl app onboard -f [filepath]
 
 				utils.Log.Debug(url)
 				utils.Log.Debug(path)
-
 				// save the app with Github URL
 				if !skipSave {
 					if path != "" {
