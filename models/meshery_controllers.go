@@ -44,6 +44,10 @@ func (mch *MesheryControllersHelper) GetControllerHandlersForEachContext() map[s
 	return mch.ctxControllerHandlersMap
 }
 
+func (mch *MesheryControllersHelper) GetMeshSyncDataHandlersForEachContext() map[string]MeshsyncDataHandler {
+	return mch.ctxMeshsyncDataHandlerMap
+}
+
 func (mch *MesheryControllersHelper) GetOperatorsStatusMap() map[string]controllers.MesheryControllerStatus {
 	return mch.ctxOperatorStatusMap
 }
@@ -67,6 +71,8 @@ func (mch *MesheryControllersHelper) UpdateMeshsynDataHandlers() *MesheryControl
 	// only checking those contexts whose MesheryConrollers are active
 	for ctxId, controllerHandlers := range mch.ctxControllerHandlersMap {
 		if _, ok := mch.ctxMeshsyncDataHandlerMap[ctxId]; !ok {
+			// brokerStatus := controllerHandlers[MesheryBroker].GetStatus()
+			// do something if broker is being deployed , maybe try again after sometime
 			brokerEndpoint, err := controllerHandlers[MesheryBroker].GetPublicEndpoint()
 			if brokerEndpoint == "" {
 				if err != nil {
@@ -77,8 +83,8 @@ func (mch *MesheryControllersHelper) UpdateMeshsynDataHandlers() *MesheryControl
 			}
 			mch.log.Info(fmt.Sprintf("found meshery-broker endpoint: %s for contextId: %s", brokerEndpoint, ctxId))
 			brokerHandler, err := nats.New(nats.Options{
-				// URLS: []string{"localhost:4222"},
-				URLS:           []string{brokerEndpoint},
+				URLS: []string{"localhost:4222"},
+				// URLS:           []string{brokerEndpoint},
 				ConnectionName: MesheryServerBrokerConnection,
 				Username:       "",
 				Password:       "",

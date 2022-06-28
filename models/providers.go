@@ -177,6 +177,7 @@ const (
 	AllKubeClusterKey ContextKey = "allkubeclusters"
 
 	MesheryControllerHandlersKey = "mesherycontrollerhandlerskey"
+	MeshSyncDataHandlersKey      = "meshsyncdatahandlerskey"
 )
 
 // IsSupported returns true if the given feature is listed as one of

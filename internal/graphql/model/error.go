@@ -20,11 +20,16 @@ const (
 	ErrNoExternalEndpointCode                   = "1012"
 	ErrApplyHelmChartCode                       = "2155"
 	ErrMesheryControllersStatusSubscriptionCode = "2239"
+	ErrMeshSyncEventsSubscriptionCode           = "2240"
 )
 
 var (
 	ErrEmptyHandler = errors.New(ErrNoMeshSyncCode, errors.Alert, []string{"Database handler not initialized"}, []string{"Meshery Database handler is not accessible to perform operations"}, []string{"Meshery Database is crashed or not reachable"}, []string{"Restart Meshery Server", "Please check if Meshery server is accessible to the Database"})
 )
+
+func ErrMeshSyncEventsSubscription(err error) error {
+	return errors.New(ErrMeshSyncEventsSubscriptionCode, errors.Alert, []string{"Could not create MeshSync events subcription", err.Error()}, []string{"Meshery controller handlers may not be available"}, []string{""}, []string{"Make sure the controllers are deployed and their handlers are configured"})
+}
 
 func ErrMesheryControllersStatusSubscription(err error) error {
 	return errors.New(ErrMesheryControllersStatusSubscriptionCode, errors.Alert, []string{"Could not create meshery controllers status subcription", err.Error()}, []string{"Meshery controller handlers may not be available"}, []string{""}, []string{"Make sure the controllers are deployed and their handlers are configured"})

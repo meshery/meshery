@@ -11,6 +11,7 @@ import (
 	"github.com/layer5io/meshery/internal/graphql/generated"
 	"github.com/layer5io/meshery/internal/graphql/model"
 	"github.com/layer5io/meshery/models"
+	"github.com/layer5io/meshkit/broker"
 	"github.com/layer5io/meshkit/models/controllers"
 )
 
@@ -175,7 +176,7 @@ func (r *subscriptionResolver) SubscribeBrokerConnection(ctx context.Context) (<
 	return r.subscribeBrokerConnection(ctx)
 }
 
-// subcriptions should be refreshed when new contexts are added are deleted
+// this subscription should be re-established to get proper updates when the k8s contexts have changed
 func (r *subscriptionResolver) SubscribeMesheryControllersStatus(ctx context.Context, k8scontextIDs []string) (<-chan []*model.MesheryControllersStatusListItem, error) {
 	resChan := make(chan []*model.MesheryControllersStatusListItem)
 	controllerHandlersPerContext, ok := ctx.Value(models.MesheryControllerHandlersKey).(map[string]map[models.MesheryController]controllers.IMesheryController)
@@ -231,6 +232,45 @@ func (r *subscriptionResolver) SubscribeMesheryControllersStatus(ctx context.Con
 		}
 
 	}()
+	return resChan, nil
+}
+
+// this subscription should be re-established to get proper updates when the k8s contexts have changed
+func (r *subscriptionResolver) SubscribeMeshSyncEvents(ctx context.Context, k8scontextIDs []string) (<-chan *model.MeshSyncEvent, error) {
+	resChan := make(chan *model.MeshSyncEvent)
+	// get handlers
+	meshSyncDataHandlers, ok := ctx.Value(models.MeshSyncDataHandlersKey).(map[string]models.MeshsyncDataHandler)
+	if !ok || len(meshSyncDataHandlers) == 0 || meshSyncDataHandlers == nil {
+		er := model.ErrMeshSyncEventsSubscription(fmt.Errorf("Meshsync data handlers are not configured for any of the contexts"))
+		r.Log.Error(er)
+		return nil, er
+	}
+	for ctxId, dataHandler := range meshSyncDataHandlers {
+		r.Log.Info("context: ", ctxId)
+		brokerEventsChan := make(chan *broker.Message)
+		err := dataHandler.ListenToMeshSyncEvents(brokerEventsChan)
+		r.Log.Info("started listening to meshsync events ", ctxId)
+		if err != nil {
+			r.Log.Warn(err)
+			r.Log.Info("skipping meshsync events subscription for contexId: %s", ctxId)
+			continue
+		}
+		go func(ctxId string, brokerEventsChan chan *broker.Message) {
+			for event := range brokerEventsChan {
+				if event.EventType == broker.ErrorEvent {
+					// TODO: Handle errors accordingly
+					continue
+				}
+				// handle the events
+				res := &model.MeshSyncEvent{
+					ContextID: ctxId,
+					Type:      string(event.EventType),
+					Object:    event.Object,
+				}
+				resChan <- res
+			}
+		}(ctxId, brokerEventsChan)
+	}
 	return resChan, nil
 }
 

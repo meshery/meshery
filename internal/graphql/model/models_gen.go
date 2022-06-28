@@ -74,6 +74,12 @@ type KctlDescribeDetails struct {
 	Ctxid    *string `json:"ctxid"`
 }
 
+type MeshSyncEvent struct {
+	Type      string      `json:"type"`
+	Object    interface{} `json:"object"`
+	ContextID string      `json:"contextId"`
+}
+
 type MesheryControllersStatusListItem struct {
 	ContextID  string                  `json:"contextId"`
 	Controller MesheryController       `json:"controller"`

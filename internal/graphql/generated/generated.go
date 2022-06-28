@@ -106,6 +106,12 @@ type ComplexityRoot struct {
 		Describe func(childComplexity int) int
 	}
 
+	MeshSyncEvent struct {
+		ContextID func(childComplexity int) int
+		Object    func(childComplexity int) int
+		Type      func(childComplexity int) int
+	}
+
 	MesheryControllersStatusListItem struct {
 		ContextID  func(childComplexity int) int
 		Controller func(childComplexity int) int
@@ -259,6 +265,7 @@ type ComplexityRoot struct {
 		ListenToMeshSyncEvents            func(childComplexity int, k8scontextIDs []string) int
 		ListenToOperatorState             func(childComplexity int, k8scontextIDs []string) int
 		SubscribeBrokerConnection         func(childComplexity int) int
+		SubscribeMeshSyncEvents           func(childComplexity int, k8scontextIDs []string) int
 		SubscribeMesheryControllersStatus func(childComplexity int, k8scontextIDs []string) int
 		SubscribePerfProfiles             func(childComplexity int, selector model.PageFilter) int
 		SubscribePerfResults              func(childComplexity int, selector model.PageFilter, profileID string) int
@@ -299,6 +306,7 @@ type SubscriptionResolver interface {
 	SubscribePerfResults(ctx context.Context, selector model.PageFilter, profileID string) (<-chan *model.PerfPageResult, error)
 	SubscribeBrokerConnection(ctx context.Context) (<-chan bool, error)
 	SubscribeMesheryControllersStatus(ctx context.Context, k8scontextIDs []string) (<-chan []*model.MesheryControllersStatusListItem, error)
+	SubscribeMeshSyncEvents(ctx context.Context, k8scontextIDs []string) (<-chan *model.MeshSyncEvent, error)
 }
 
 type executableSchema struct {
@@ -546,6 +554,27 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.KctlDescribeDetails.Describe(childComplexity), true
+
+	case "MeshSyncEvent.contextId":
+		if e.complexity.MeshSyncEvent.ContextID == nil {
+			break
+		}
+
+		return e.complexity.MeshSyncEvent.ContextID(childComplexity), true
+
+	case "MeshSyncEvent.object":
+		if e.complexity.MeshSyncEvent.Object == nil {
+			break
+		}
+
+		return e.complexity.MeshSyncEvent.Object(childComplexity), true
+
+	case "MeshSyncEvent.type":
+		if e.complexity.MeshSyncEvent.Type == nil {
+			break
+		}
+
+		return e.complexity.MeshSyncEvent.Type(childComplexity), true
 
 	case "MesheryControllersStatusListItem.contextId":
 		if e.complexity.MesheryControllersStatusListItem.ContextID == nil {
@@ -1400,6 +1429,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Subscription.SubscribeBrokerConnection(childComplexity), true
 
+	case "Subscription.subscribeMeshSyncEvents":
+		if e.complexity.Subscription.SubscribeMeshSyncEvents == nil {
+			break
+		}
+
+		args, err := ec.field_Subscription_subscribeMeshSyncEvents_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Subscription.SubscribeMeshSyncEvents(childComplexity, args["k8scontextIDs"].([]string)), true
+
 	case "Subscription.subscribeMesheryControllersStatus":
 		if e.complexity.Subscription.SubscribeMesheryControllersStatus == nil {
 			break
@@ -1601,6 +1642,12 @@ type MesheryControllersStatusListItem {
     contextId: String!
     controller: MesheryController! 
     status: MesheryControllerStatus!
+  }
+
+type MeshSyncEvent {
+    type: String!
+    object: Any!
+    contextId: String!
   }
 
 
@@ -2021,8 +2068,12 @@ type Subscription {
 
   # Listen to changes in the status of meshery controllers
   subscribeMesheryControllersStatus(
-      k8scontextIDs: [String!]
+    k8scontextIDs: [String!]
   ): [MesheryControllersStatusListItem!]!
+
+  subscribeMeshSyncEvents(
+    k8scontextIDs: [String!]
+  ) : MeshSyncEvent!
 }
 
 type OAMCapability {
@@ -2512,6 +2563,21 @@ func (ec *executionContext) field_Subscription_listenToMeshSyncEvents_args(ctx c
 }
 
 func (ec *executionContext) field_Subscription_listenToOperatorState_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 []string
+	if tmp, ok := rawArgs["k8scontextIDs"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("k8scontextIDs"))
+		arg0, err = ec.unmarshalOString2ᚕstringᚄ(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["k8scontextIDs"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Subscription_subscribeMeshSyncEvents_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 []string
@@ -4092,6 +4158,138 @@ func (ec *executionContext) _KctlDescribeDetails_ctxid(ctx context.Context, fiel
 func (ec *executionContext) fieldContext_KctlDescribeDetails_ctxid(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "KctlDescribeDetails",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _MeshSyncEvent_type(ctx context.Context, field graphql.CollectedField, obj *model.MeshSyncEvent) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_MeshSyncEvent_type(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Type, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_MeshSyncEvent_type(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "MeshSyncEvent",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _MeshSyncEvent_object(ctx context.Context, field graphql.CollectedField, obj *model.MeshSyncEvent) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_MeshSyncEvent_object(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Object, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(interface{})
+	fc.Result = res
+	return ec.marshalNAny2interface(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_MeshSyncEvent_object(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "MeshSyncEvent",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Any does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _MeshSyncEvent_contextId(ctx context.Context, field graphql.CollectedField, obj *model.MeshSyncEvent) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_MeshSyncEvent_contextId(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ContextID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_MeshSyncEvent_contextId(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "MeshSyncEvent",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -9557,6 +9755,79 @@ func (ec *executionContext) fieldContext_Subscription_subscribeMesheryController
 	return fc, nil
 }
 
+func (ec *executionContext) _Subscription_subscribeMeshSyncEvents(ctx context.Context, field graphql.CollectedField) (ret func(ctx context.Context) graphql.Marshaler) {
+	fc, err := ec.fieldContext_Subscription_subscribeMeshSyncEvents(ctx, field)
+	if err != nil {
+		return nil
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = nil
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Subscription().SubscribeMeshSyncEvents(rctx, fc.Args["k8scontextIDs"].([]string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return nil
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return nil
+	}
+	return func(ctx context.Context) graphql.Marshaler {
+		res, ok := <-resTmp.(<-chan *model.MeshSyncEvent)
+		if !ok {
+			return nil
+		}
+		return graphql.WriterFunc(func(w io.Writer) {
+			w.Write([]byte{'{'})
+			graphql.MarshalString(field.Alias).MarshalGQL(w)
+			w.Write([]byte{':'})
+			ec.marshalNMeshSyncEvent2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐMeshSyncEvent(ctx, field.Selections, res).MarshalGQL(w)
+			w.Write([]byte{'}'})
+		})
+	}
+}
+
+func (ec *executionContext) fieldContext_Subscription_subscribeMeshSyncEvents(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Subscription",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "type":
+				return ec.fieldContext_MeshSyncEvent_type(ctx, field)
+			case "object":
+				return ec.fieldContext_MeshSyncEvent_object(ctx, field)
+			case "contextId":
+				return ec.fieldContext_MeshSyncEvent_contextId(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type MeshSyncEvent", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Subscription_subscribeMeshSyncEvents_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) ___Directive_name(ctx context.Context, field graphql.CollectedField, obj *introspection.Directive) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext___Directive_name(ctx, field)
 	if err != nil {
@@ -11925,6 +12196,48 @@ func (ec *executionContext) _KctlDescribeDetails(ctx context.Context, sel ast.Se
 	return out
 }
 
+var meshSyncEventImplementors = []string{"MeshSyncEvent"}
+
+func (ec *executionContext) _MeshSyncEvent(ctx context.Context, sel ast.SelectionSet, obj *model.MeshSyncEvent) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, meshSyncEventImplementors)
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("MeshSyncEvent")
+		case "type":
+
+			out.Values[i] = ec._MeshSyncEvent_type(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "object":
+
+			out.Values[i] = ec._MeshSyncEvent_object(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "contextId":
+
+			out.Values[i] = ec._MeshSyncEvent_contextId(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var mesheryControllersStatusListItemImplementors = []string{"MesheryControllersStatusListItem"}
 
 func (ec *executionContext) _MesheryControllersStatusListItem(ctx context.Context, sel ast.SelectionSet, obj *model.MesheryControllersStatusListItem) graphql.Marshaler {
@@ -13170,6 +13483,8 @@ func (ec *executionContext) _Subscription(ctx context.Context, sel ast.Selection
 		return ec._Subscription_subscribeBrokerConnection(ctx, fields[0])
 	case "subscribeMesheryControllersStatus":
 		return ec._Subscription_subscribeMesheryControllersStatus(ctx, fields[0])
+	case "subscribeMeshSyncEvents":
+		return ec._Subscription_subscribeMeshSyncEvents(ctx, fields[0])
 	default:
 		panic("unknown field " + strconv.Quote(fields[0].Name))
 	}
@@ -13547,6 +13862,27 @@ func (ec *executionContext) marshalNAddonList2ᚖgithubᚗcomᚋlayer5ioᚋmeshe
 	return ec._AddonList(ctx, sel, v)
 }
 
+func (ec *executionContext) unmarshalNAny2interface(ctx context.Context, v interface{}) (interface{}, error) {
+	res, err := graphql.UnmarshalAny(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNAny2interface(ctx context.Context, sel ast.SelectionSet, v interface{}) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	res := graphql.MarshalAny(v)
+	if res == graphql.Null {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+	}
+	return res
+}
+
 func (ec *executionContext) unmarshalNBoolean2bool(ctx context.Context, v interface{}) (bool, error) {
 	res, err := graphql.UnmarshalBoolean(v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -13820,6 +14156,20 @@ func (ec *executionContext) marshalNKctlDescribeDetails2ᚖgithubᚗcomᚋlayer5
 		return graphql.Null
 	}
 	return ec._KctlDescribeDetails(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNMeshSyncEvent2githubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐMeshSyncEvent(ctx context.Context, sel ast.SelectionSet, v model.MeshSyncEvent) graphql.Marshaler {
+	return ec._MeshSyncEvent(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNMeshSyncEvent2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐMeshSyncEvent(ctx context.Context, sel ast.SelectionSet, v *model.MeshSyncEvent) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._MeshSyncEvent(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNMesheryController2githubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐMesheryController(ctx context.Context, v interface{}) (model.MesheryController, error) {

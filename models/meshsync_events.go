@@ -53,12 +53,12 @@ func (mh *MeshsyncDataHandler) Run() error {
 
 func (mh *MeshsyncDataHandler) subscribeToMeshsyncEvents() {
 	eventsChan := make(chan *broker.Message)
-	err := mh.broker.SubscribeWithChannel("meshery.meshsync.core", "", eventsChan)
+	err := mh.ListenToMeshSyncEvents(eventsChan)
 	if err != nil {
 		mh.log.Error(ErrBrokerSubscription(err))
 		return
 	}
-	mh.log.Info("subscribing to meshsync events on NATS subject: meshery.meshsync.core  ")
+	mh.log.Info("subscribed to meshery broker for meshsync events")
 
 	for event := range eventsChan {
 		if event.EventType == broker.ErrorEvent {
@@ -67,12 +67,21 @@ func (mh *MeshsyncDataHandler) subscribeToMeshsyncEvents() {
 			continue
 		}
 
+		// handle the events
 		err := mh.meshsyncEventsAccumulator(event)
 		if err != nil {
 			mh.log.Error(err)
 			continue
 		}
 	}
+}
+
+func (mh *MeshsyncDataHandler) ListenToMeshSyncEvents(out chan *broker.Message) error {
+	err := mh.broker.SubscribeWithChannel("meshery.meshsync.core", "", out)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (mh *MeshsyncDataHandler) subsribeToStoreUpdates(statusChan chan bool) {

@@ -102,6 +102,7 @@ func (h *Handler) MesheryControllersMiddleware(next func(http.ResponseWriter, *h
 
 		// 2. make sure that the data from meshsync for all the clusters are persisted properly
 		ctrlHlpr.UpdateMeshsynDataHandlers()
+		ctx = context.WithValue(ctx, models.MeshSyncDataHandlersKey, h.MesheryCtrlsHelper.GetMeshSyncDataHandlersForEachContext())
 
 		req1 := req.WithContext(ctx)
 		next(w, req1, prefObj, user, provider)

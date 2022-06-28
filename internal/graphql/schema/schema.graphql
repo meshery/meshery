@@ -75,6 +75,12 @@ type MesheryControllersStatusListItem {
     status: MesheryControllerStatus!
   }
 
+type MeshSyncEvent {
+    type: String!
+    object: Any!
+    contextId: String!
+  }
+
 
 enum Status {
   # Enabled
@@ -495,6 +501,12 @@ type Subscription {
   subscribeMesheryControllersStatus(
     k8scontextIDs: [String!]
   ): [MesheryControllersStatusListItem!]!
+  
+  # Listen to the events that MeshSync is sending through Meshery Broker.
+  # Note: It does not listen to the changes in meshery database, but to meshsync events
+  subscribeMeshSyncEvents(
+    k8scontextIDs: [String!]
+  ) : MeshSyncEvent!
 }
 
 type OAMCapability {
