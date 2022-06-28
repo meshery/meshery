@@ -235,6 +235,44 @@ func (h *Handler) handleApplicationPOST(
 		h.formatApplicationOutput(rw, resp, format)
 		return
 	}
+
+	if parsedBody.Path != "" { //This will be considered a path to the local helm repo
+		resp, err := kubernetes.ConvertHelmChartToK8sManifest(kubernetes.ApplyHelmChartConfig{
+			LocalPath: parsedBody.Path,
+		})
+		if err != nil {
+			obj := "import"
+			h.log.Error(ErrApplicationFailure(err, obj))
+			http.Error(rw, ErrApplicationFailure(err, obj).Error(), http.StatusInternalServerError)
+			return
+		}
+		result := string(resp)
+		path := strings.Split(parsedBody.Path, "/")
+		mesheryApplication := models.MesheryApplication{
+			Name:            path[len(path)-1],
+			ApplicationFile: result,
+			Location: map[string]interface{}{
+				"type":   "http",
+				"host":   parsedBody.URL,
+				"path":   "",
+				"branch": "",
+			},
+		}
+		if parsedBody.Save {
+			resp, err := provider.SaveMesheryApplication(token, &mesheryApplication)
+			if err != nil {
+				obj := "save"
+				h.log.Error(ErrApplicationFailure(err, obj))
+				http.Error(rw, ErrApplicationFailure(err, obj).Error(), http.StatusInternalServerError)
+				return
+			}
+
+			h.formatApplicationOutput(rw, resp, format)
+			return
+		}
+		h.formatApplicationOutput(rw, resp, format)
+		return
+	}
 }
 
 // swagger:route GET /api/application/{id} ApplicationsAPI idGetMesheryApplication
