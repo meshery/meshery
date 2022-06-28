@@ -115,13 +115,9 @@ export function getPatternServiceName(item, includeDisplayName = true) {
  * @returns {string} service name
  */
 export function getHumanReadablePatternServiceName(item) {
-  const name = item?.oam_definition?.spec?.metadata?.k8sKind
-    || item?.metadata?.["display.ui.meshery.io/name"]
-    || item?.oam_definition?.metadata?.name
-    || getPatternAttributeName(item)
-    || "NA";
-
-  return camelCaseToCapitalize(name);
+  return (
+    item?.metadata?.["display.ui.meshery.io/name"]
+  )
 }
 
 /**
@@ -226,9 +222,7 @@ export function createPatternFromConfig(config, namespace, partialClean = false)
 export function camelCaseToCapitalize(text) {
   if (!text) return null
 
-  const result = text.replace(/([A-Z])/g, " $1");
-
-  return result.charAt(0).toUpperCase() + result.slice(1);
+  return text?.replaceAll(/([A-Z])/g, " $1")?.trim();
 }
 
 /**
