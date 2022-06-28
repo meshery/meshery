@@ -5,6 +5,7 @@ import { AppBar, Grid, Hidden, IconButton, Toolbar, Typography } from "@mui/mate
 import Link from "next/link";
 import MenuIcon from "@mui/icons-material/Menu";
 import { useStyles } from "./Header.styles";
+import User from "../User";
 
 const HeaderComponent = ({ drawerOpen, onDrawerToggle, pageTitle }) => {
   const classes = useStyles();
@@ -67,9 +68,9 @@ const HeaderComponent = ({ drawerOpen, onDrawerToggle, pageTitle }) => {
             {/* <div data-test="notification-button">
               <MesheryNotification />
             </div> */}
-            {/* <span className={classes.userSpan}>
+            <span className={classes.userSpan}>
               <User color="inherit" iconButtonClassName={classes.iconButtonAvatar} avatarClassName={classes.avatar} />
-            </span> */}
+            </span>
           </Grid>
         </Grid>
       </Toolbar>
