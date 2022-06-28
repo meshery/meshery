@@ -91,8 +91,8 @@ class MesherySMIResults extends Component {
       const { smi_pageSize, smi_results } = this.state;
 
       const smi_resultsForDisplay = [];
-      if (smi_results&&smi_results.results) {
-        smi_results.results.map((val) => {
+      if (smi_results&&smi_results?.results) {
+        smi_results?.results?.map((val) => {
           smi_resultsForDisplay.push([val.id ,val.date,val.mesh_name,val.mesh_version,val.passing_percentage,val.status])
         })
       }
@@ -212,7 +212,7 @@ class MesherySMIResults extends Component {
         download : false,
         renderExpandableRow : (rowData, rowMeta) => {
           const column = ["Specification","Assertions", "Time","Version", "Capability", "Result", "Reason"]
-          const data = smi_results.results[rowMeta.dataIndex].more_details.map((val) => {
+          const data = smi_results?.results[rowMeta.dataIndex]?.more_details?.map((val) => {
             return [val.smi_specification,val.assertions,val.time,val.smi_version,val.capability,val.status,val.reason]
           })
           const colSpan = rowData.length + 1
@@ -227,9 +227,9 @@ class MesherySMIResults extends Component {
                       </TableRow>
                     </TableHead>
                     <TableBody>
-                      {data.map((row) => (
+                      {data?.map((row) => (
                         <TableRow >
-                          {row.map(val => {
+                          {row?.map(val => {
                             if (val && val.match(/[0-9]+m[0-9]+.+[0-9]+s/i)!=null) {
                               const time = val.split(/m|s/)
                               return <TableCell colSpan={colSpan}>{time[0]+"m " + parseFloat(time[1]).toFixed(1) + "s"}</TableCell>
