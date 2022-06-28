@@ -284,6 +284,13 @@ func (h *Handler) handleApplicationPOST(
 
 		err = provider.SaveApplicationSourceContent(token, (mesheryApplicationContent[0].ID).String(), mesheryApplication.SourceContent)
 
+		if err != nil {
+			obj := "upload"
+			h.log.Error(ErrApplicationSourceContentUpload(err, obj))
+			http.Error(rw, ErrApplicationSourceContentUpload(err, obj).Error(), http.StatusInternalServerError)
+			return
+		}
+		
 		h.formatApplicationOutput(rw, resp, format)
 		return
 	}
