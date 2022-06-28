@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"errors"
 	"net/http"
 	"net/url"
 	"os"
@@ -84,10 +83,10 @@ func main() {
 
 	// Register local OAM traits and workloads
 	if err := core.RegisterMesheryOAMTraits(); err != nil {
-		log.Error(err)
+		log.Error(ErrRegisteringMesheryOAMTraits(err))
 	}
 	if err := core.RegisterMesheryOAMWorkloads(); err != nil {
-		log.Error(err)
+		log.Error(ErrRegisteringMesheryOAMWorkloads(err))
 	}
 	log.Info("Local Provider capabilities are: ", version)
 
@@ -97,20 +96,23 @@ func main() {
 	home, err := os.UserHomeDir()
 	if viper.GetString("USER_DATA_FOLDER") == "" {
 		if err != nil {
-			logrus.Fatalf("unable to retrieve the user's home directory: %v", err)
+			log.Error(ErrRetrievingUserHomeDirectory(err))
+			os.Exit(1)
 		}
 		viper.SetDefault("USER_DATA_FOLDER", path.Join(home, ".meshery", "config"))
 	}
 
 	errDir := os.MkdirAll(viper.GetString("USER_DATA_FOLDER"), 0755)
 	if errDir != nil {
-		logrus.Fatalf("unable to create the directory for storing user data at %v", viper.GetString("USER_DATA_FOLDER"))
+		log.Error(ErrCreatingUserDataDirectory(viper.GetString("USER_DATA_FOLDER")))
+		os.Exit(1)
 	}
 
 	log.Info("Meshery Database is at: ", viper.GetString("USER_DATA_FOLDER"))
 	if viper.GetString("KUBECONFIG_FOLDER") == "" {
 		if err != nil {
-			logrus.Fatalf("unable to retrieve the user's home directory: %v", err)
+			log.Error(ErrRetrievingUserHomeDirectory(err))
+			os.Exit(1)
 		}
 		viper.SetDefault("KUBECONFIG_FOLDER", path.Join(home, ".kube"))
 	}
@@ -140,7 +142,8 @@ func main() {
 
 	preferencePersister, err := models.NewMapPreferencePersister()
 	if err != nil {
-		logrus.Fatal(err)
+		log.Error(ErrCreatingMapPreferencePersisterInstance(err))
+		os.Exit(1)
 	}
 	defer preferencePersister.ClosePersister()
 
@@ -170,7 +173,8 @@ func main() {
 		models.K8sContext{},
 	)
 	if err != nil {
-		logrus.Fatal(err)
+		log.Error(ErrDatabaseAutoMigration(err))
+		os.Exit(1)
 	}
 
 	lProv := &models.DefaultLocalProvider{
@@ -195,8 +199,7 @@ func main() {
 	for _, providerurl := range RemoteProviderURLs {
 		parsedURL, err := url.Parse(providerurl)
 		if err != nil {
-			er := errors.New(providerurl + "is invalid url skipping provider")
-			log.Error(er)
+			log.Error(ErrInvalidURLSkippingProvider(providerurl))
 			continue
 		}
 		cp := &models.RemoteProvider{
@@ -266,20 +269,21 @@ func main() {
 	go func() {
 		log.Info("Meshery Server listening on: ", port)
 		if err := r.Run(); err != nil {
-			logrus.Fatalf("ListenAndServe Error: %v", err)
+			log.Error(ErrListenAndServe(err))
+			os.Exit(1)
 		}
 	}()
 	<-c
 	logrus.Info("Doing seeded content cleanup...")
 	err = lProv.Cleanup()
 	if err != nil {
-		log.Error(err)
+		log.Error(ErrCleaningUpLocalProvider(err))
 	}
 
 	log.Info("Closing database instance...")
 	err = dbHandler.DBClose()
 	if err != nil {
-		log.Error(err)
+		log.Error(ErrClosingDatabaseInstance(err))
 	}
 
 	log.Info("Shutting down Meshery Server...")
