@@ -222,12 +222,13 @@ func (r *subscriptionResolver) SubscribeMesheryControllersStatus(ctx context.Con
 							Status:     model.GetInternalControllerStatus(newStatus),
 						})
 						resChan <- ctrlsStatusList
-						ctrlsStatusList = make([]*model.MesheryControllersStatusListItem, 0)
 					}
 					// update the status list with newStatus
 					statusMapPerCtx[ctxId][controller] = newStatus
+					ctrlsStatusList = make([]*model.MesheryControllersStatusListItem, 0)
 				}
 			}
+			// establish a watch conncetion to get updates, ideally in meshery-operator
 			time.Sleep(time.Second * 5)
 		}
 
@@ -246,10 +247,8 @@ func (r *subscriptionResolver) SubscribeMeshSyncEvents(ctx context.Context, k8sc
 		return nil, er
 	}
 	for ctxId, dataHandler := range meshSyncDataHandlers {
-		r.Log.Info("context: ", ctxId)
 		brokerEventsChan := make(chan *broker.Message)
 		err := dataHandler.ListenToMeshSyncEvents(brokerEventsChan)
-		r.Log.Info("started listening to meshsync events ", ctxId)
 		if err != nil {
 			r.Log.Warn(err)
 			r.Log.Info("skipping meshsync events subscription for contexId: %s", ctxId)

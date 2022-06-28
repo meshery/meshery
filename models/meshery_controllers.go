@@ -31,6 +31,7 @@ const (
 
 type MesheryControllersHelper struct {
 	//  maps each context with the controller handlers
+	// this map will be used as the source of truth
 	ctxControllerHandlersMap map[string]map[MesheryController]controllers.IMesheryController
 	// maps each context with it's operator status
 	ctxOperatorStatusMap map[string]controllers.MesheryControllerStatus
@@ -123,21 +124,22 @@ func (mch *MesheryControllersHelper) UpdateMeshsynDataHandlers() *MesheryControl
 func (mch *MesheryControllersHelper) UpdateCtxControllerHandlers(ctxs []K8sContext) *MesheryControllersHelper {
 	mch.mu.Lock()
 	defer mch.mu.Unlock()
+	// resetting this value as a specific controller handler instance does not have any significance opposed to
+	// a MeshsyncDataHandler instance where it signifies whether or not a listener is attached
+	mch.ctxControllerHandlersMap = make(map[string]map[MesheryController]controllers.IMesheryController)
 	for _, ctx := range ctxs {
 		ctxId := ctx.ID
-		if _, ok := mch.ctxControllerHandlersMap[ctxId]; !ok {
-			cfg, err := ctx.GenerateKubeConfig()
-			client, err := mesherykube.New(cfg)
-			// means that the config is invalid
-			if err != nil {
-				// invalid configs are not added to the map
-				continue
-			}
-			mch.ctxControllerHandlersMap[ctxId] = map[MesheryController]controllers.IMesheryController{
-				MesheryBroker:   controllers.NewMesheryBrokerHandler(client),
-				MesheryOperator: controllers.NewMesheryOperatorHandler(client, mch.oprDepConfig),
-				Meshsync:        controllers.NewMeshsyncHandler(client),
-			}
+		cfg, err := ctx.GenerateKubeConfig()
+		client, err := mesherykube.New(cfg)
+		// means that the config is invalid
+		if err != nil {
+			// invalid configs are not added to the map
+			continue
+		}
+		mch.ctxControllerHandlersMap[ctxId] = map[MesheryController]controllers.IMesheryController{
+			MesheryBroker:   controllers.NewMesheryBrokerHandler(client),
+			MesheryOperator: controllers.NewMesheryOperatorHandler(client, mch.oprDepConfig),
+			Meshsync:        controllers.NewMeshsyncHandler(client),
 		}
 	}
 	return mch
@@ -149,6 +151,7 @@ func (mch *MesheryControllersHelper) UpdateCtxControllerHandlers(ctxs []K8sConte
 func (mch *MesheryControllersHelper) UpdateOperatorsStatusMap() *MesheryControllersHelper {
 	mch.mu.Lock()
 	defer mch.mu.Unlock()
+	mch.ctxOperatorStatusMap = make(map[string]controllers.MesheryControllerStatus)
 	for ctxId, ctrlHandler := range mch.ctxControllerHandlersMap {
 		mch.ctxOperatorStatusMap[ctxId] = ctrlHandler[MesheryOperator].GetStatus()
 	}
