@@ -1077,13 +1077,13 @@ github.com/lann/ps v0.0.0-20150810152359-62de8c46ede0 h1:P6pPBnrTSX3DEVR4fDembhR
 github.com/lann/ps v0.0.0-20150810152359-62de8c46ede0/go.mod h1:vmVJ0l/dxyfGW6FmdpVm2joNMFikkuWg0EoCKLGUMNw=
 github.com/layer5io/gowrk2 v0.0.0-20191111234958-a4c9071c0f87 h1:qMO4fkVja8WatRrvEz6JCoq+81rNJZMjblqyRwywLns=
 github.com/layer5io/gowrk2 v0.0.0-20191111234958-a4c9071c0f87/go.mod h1:l7fQujTUkq0/ecH98qdKAgy9aCV+YvoyEF3nj2IIP50=
-github.com/layer5io/meshery-operator v0.5.4 h1:SpGRsnIBeW3u0dMroixDYufXefnLrDvr02oe5J7ZVIY=
-github.com/layer5io/meshery-operator v0.5.4/go.mod h1:SJ/X7pfogDO92ryfpTYBYjhW4dcKH2Qg/1324bQc87s=
+github.com/layer5io/meshery-operator v0.5.5 h1:AIGDD1xKIWp7QiSjftiZ3zOUkKjn5i9FYGL2Y8tO2vg=
+github.com/layer5io/meshery-operator v0.5.5/go.mod h1:s2YXueMYV9uhkFAKHKS0XN/aS4+F3yjZ+UMD04HGRx0=
 github.com/layer5io/meshkit v0.2.7/go.mod h1:QvEKV8wIEOabiFlUgiu+s78GpJTsRpoRw5pgvEX077Y=
-github.com/layer5io/meshkit v0.5.17/go.mod h1:tj5TAjty7T/WJ8YvlDfOZF94t4g3mhWuKBCc6MOUoNU=
 github.com/layer5io/meshkit v0.5.19/go.mod h1:EUfXIcztap9Dh0Ao3Dmoxf3FMsm4h7zFHGwagj+5ra4=
-github.com/layer5io/meshkit v0.5.22 h1:QGaXTlEzHSHfvDVhg9e8wHhlYQBGhl2lN59ImbEcq/E=
 github.com/layer5io/meshkit v0.5.22/go.mod h1:EUfXIcztap9Dh0Ao3Dmoxf3FMsm4h7zFHGwagj+5ra4=
+github.com/layer5io/meshkit v0.5.23 h1:XXBOQBB27u+KyBMKiwOjRtAJ2Jjd2onnH/riBvK+jJs=
+github.com/layer5io/meshkit v0.5.23/go.mod h1:1yyleAJTOzSzTA44u3cg764Yk0+pvCUwb/KikLkjea8=
 github.com/layer5io/meshsync v0.5.6 h1:jQfQ46nLmQEPCCPM0hpZXunnq0eE3LrXZ4SScC0aP1k=
 github.com/layer5io/meshsync v0.5.6/go.mod h1:q5iIxAjVn9uDlec60nEyG9HxWhW1UWMKzsoiDsMr1QM=
 github.com/layer5io/nighthawk-go v0.5.0 h1:V785ZDRgwJJ7pfNpATG7BUOKaaMqdurX9/NiEZ1fHIQ=
@@ -2359,6 +2359,7 @@ google.golang.org/genproto v0.0.0-20220413183235-5e96e2839df9/go.mod h1:8w6bsBMX
 google.golang.org/genproto v0.0.0-20220414192740-2d67ff6cf2b4/go.mod h1:8w6bsBMX6yCPbAVTeqQHvzxW0EIFigd5lZyahWgyfDo=
 google.golang.org/genproto v0.0.0-20220421151946-72621c1f0bd3/go.mod h1:8w6bsBMX6yCPbAVTeqQHvzxW0EIFigd5lZyahWgyfDo=
 google.golang.org/genproto v0.0.0-20220429170224-98d788798c3e/go.mod h1:8w6bsBMX6yCPbAVTeqQHvzxW0EIFigd5lZyahWgyfDo=
+google.golang.org/genproto v0.0.0-20220502173005-c8bf987b8c21/go.mod h1:RAyBrSAP7Fh3Nc84ghnVLDPuV51xc9agzmm4Ph6i0Q4=
 google.golang.org/genproto v0.0.0-20220505152158-f39f71e6c8f3/go.mod h1:RAyBrSAP7Fh3Nc84ghnVLDPuV51xc9agzmm4Ph6i0Q4=
 google.golang.org/genproto v0.0.0-20220519153652-3a47de7e79bd h1:e0TwkXOdbnH/1x5rc5MZ/VYyiZ4v+RdVfrGMqEwT68I=
 google.golang.org/genproto v0.0.0-20220519153652-3a47de7e79bd/go.mod h1:RAyBrSAP7Fh3Nc84ghnVLDPuV51xc9agzmm4Ph6i0Q4=

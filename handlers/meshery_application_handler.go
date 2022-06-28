@@ -4,9 +4,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/models"
+	"github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/layer5io/meshkit/utils/kubernetes/kompose"
 )
 
@@ -171,7 +173,46 @@ func (h *Handler) handleApplicationPOST(
 	}
 
 	if parsedBody.URL != "" {
-		resp, err := provider.RemoteApplicationFile(r, parsedBody.URL, parsedBody.Path, parsedBody.Save)
+		var resp []byte
+		var err error
+		var mesheryApplication models.MesheryApplication
+		if strings.HasSuffix(parsedBody.URL, ".tgz") { //Helm chart is passed
+			resp, err = kubernetes.ConvertHelmChartToK8sManifest(kubernetes.ApplyHelmChartConfig{
+				URL: parsedBody.URL,
+			})
+			if err != nil {
+				obj := "import"
+				h.log.Error(ErrApplicationFailure(err, obj))
+				http.Error(rw, ErrApplicationFailure(err, obj).Error(), http.StatusInternalServerError)
+				return
+			}
+			result := string(resp)
+			url := strings.Split(parsedBody.URL, "/")
+			mesheryApplication = models.MesheryApplication{
+				Name:            strings.TrimSuffix(url[len(url)-1], ".tgz"),
+				ApplicationFile: result,
+				Location: map[string]interface{}{
+					"type":   "http",
+					"host":   parsedBody.URL,
+					"path":   "",
+					"branch": "",
+				},
+			}
+			resp, err = json.Marshal([]models.MesheryApplication{mesheryApplication})
+		} else {
+			resp, err = provider.RemoteApplicationFile(r, parsedBody.URL, parsedBody.Path, parsedBody.Save)
+			var apps []models.MesheryApplication
+			err := json.Unmarshal(resp, &apps)
+			if err != nil {
+				obj := "import"
+				h.log.Error(ErrApplicationFailure(err, obj))
+				http.Error(rw, ErrApplicationFailure(err, obj).Error(), http.StatusInternalServerError)
+				return
+			}
+			if len(apps) != 0 {
+				mesheryApplication = apps[0]
+			}
+		}
 
 		if err != nil {
 			obj := "import"
@@ -179,7 +220,18 @@ func (h *Handler) handleApplicationPOST(
 			http.Error(rw, ErrApplicationFailure(err, obj).Error(), http.StatusInternalServerError)
 			return
 		}
+		if parsedBody.Save {
+			resp, err := provider.SaveMesheryApplication(token, &mesheryApplication)
+			if err != nil {
+				obj := "save"
+				h.log.Error(ErrApplicationFailure(err, obj))
+				http.Error(rw, ErrApplicationFailure(err, obj).Error(), http.StatusInternalServerError)
+				return
+			}
 
+			h.formatApplicationOutput(rw, resp, format)
+			return
+		}
 		h.formatApplicationOutput(rw, resp, format)
 		return
 	}
@@ -277,9 +329,7 @@ func (h *Handler) formatApplicationOutput(rw http.ResponseWriter, content []byte
 		return
 	}
 
-	result := []models.MesheryApplication{}
-
-	data, err := json.Marshal(&result)
+	data, err := json.Marshal(&contentMesheryApplicationSlice)
 	if err != nil {
 		obj := "application file"
 		h.log.Error(ErrMarshal(err, obj))
