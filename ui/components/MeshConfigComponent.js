@@ -860,7 +860,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
       options : ["IMPORT","CANCEL"]
     })
 
-    if (response === "UPLOAD") {
+    if (response === "IMPORT") {
       if (formData.get("k8sfile") === null) {
         handleError("No file selected.")("Please select a valid kube config")
         return;
