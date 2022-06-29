@@ -621,6 +621,13 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
     expandableRowsOnClick : false,
     elevation : 0,
     label : "",
+    responsive : "standard",
+    fixedHeader : true,
+    textLabels : {
+      selectedRows : {
+        text : "context(s) selected"
+      }
+    },
     onRowsDelete : (td) => {
       td.data.forEach((item) => {
         handleConfigDelete(data[item.index].id)
@@ -997,7 +1004,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
   };
 
   return (
-    <>
+    <div style={{ display : 'table', tableLayout : 'fixed', width : '100%' }}>
       <DataTable
         title={
           <Button
@@ -1020,7 +1027,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
       />
       <PromptComponent ref={ref} />
       <PromptComponent ref={meshSyncResetRef} />
-    </>
+    </div>
   )
 }
 const mapStateToProps = (state) => {
