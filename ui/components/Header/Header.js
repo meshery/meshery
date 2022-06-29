@@ -65,9 +65,6 @@ const HeaderComponent = ({ drawerOpen, onDrawerToggle, pageTitle }) => {
               </Link>
             </IconButton>
 
-            {/* <div data-test="notification-button">
-              <MesheryNotification />
-            </div> */}
             <span className={classes.userSpan}>
               <User color="inherit" iconButtonClassName={classes.iconButtonAvatar} avatarClassName={classes.avatar} />
             </span>
