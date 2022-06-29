@@ -5,8 +5,6 @@ import { MenuItem,TextField,Typography, Chip} from "@mui/material";
 
 
 const CustomCreatableSelect = styled(CreatableSelect)(({ theme }) => ({
-// marginLeft: "4rem",
-// width: "70%",
 verticalAlign: "center",
 margin: "auto 0",
 minWidth : '250px',
