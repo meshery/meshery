@@ -79,7 +79,7 @@ const HeaderComponent = ({ drawerOpen, onDrawerToggle, pageTitle }) => {
                 color="inherit"
                 aria-label="Open drawer"
                 onClick={onDrawerToggle}
-                style={{ marginLeft: `-${theme.spacing(1)}` }}
+                sx={{ marginLeft: `-${theme.spacing(3)}` }}
                 size="large"
               >
                 <HeaderIcon icon={MenuIcon} />

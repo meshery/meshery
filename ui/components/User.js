@@ -139,7 +139,7 @@ const UserComponent = ({ updateUser, color }) => {
         <div data-test="profile-button">
           <IconButton
             color={color}
-            style={{ padding: 4 }}
+            sx={{ padding: "4px" }}
             ref={anchorEl}
             aria-owns={open ? "menu-list-grow" : undefined}
             aria-haspopup="true"
@@ -148,14 +148,14 @@ const UserComponent = ({ updateUser, color }) => {
             <Avatar src={avatar_url} />
           </IconButton>
         </div>
-        <Popper open={open} anchorEl={anchorEl.current} transition style={{ zIndex: 10000 }} placement="top-end">
+        <Popper open={open} anchorEl={anchorEl.current} transition sx={{ zIndex: 10000 }} placement="top-end">
           {({ TransitionProps, placement }) => (
             <Grow
               {...TransitionProps}
               id="menu-list-grow"
-              style={{ transformOrigin: placement === "bottom" ? "left top" : "left bottom" }}
+              sx={{ transformOrigin: placement === "bottom" ? "left top" : "left bottom" }}
             >
-              <Paper style={{ color: "black" }}>
+              <Paper sx={{ color: "black" }}>
                 <ClickAwayListener onClickAway={handleClose}>
                   <MenuList>
                     {account && account.length ? <AccountExtension account={account} /> : null}
