@@ -7,7 +7,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import { useStyles } from "./Header.styles";
 import K8sContextMenu from "../K8sContextSwitcher/K8sContextSwitcher";
 
-const HeaderComponent = ({ drawerOpen, onDrawerToggle, pageTitle }) => {
+const HeaderComponent = ({ drawerOpen, onDrawerToggle, pageTitle, contexts={}}) => {
   const classes = useStyles();
 
   return (

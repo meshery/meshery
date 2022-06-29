@@ -1,6 +1,16 @@
 import React, { useEffect } from "react";
 import { useSnackbar } from "notistack";
-import { AddIcon, Button, ClickAwayListener, IconButton, Link, Paper, Search, Slide, TextField } from "@mui/material";
+import Search from "@mui/icons-material/Search";
+import AddIcon from '@mui/icons-material/Add';
+import Paper from '@mui/material/Paper';
+import Slide from '@mui/material/Slide';
+import Button from '@mui/material/Button';
+import ClickAwayListener from '@mui/base/ClickAwayListener';
+import IconButton from '@mui/material/IconButton';
+import Link from '@mui/material/Link';
+import TextField from '@mui/material/TextField';
+
+
 import { useStyles } from "./K8sContextSwitcher.styles";
 
 export default function K8sContextMenu({
@@ -13,12 +23,13 @@ export default function K8sContextMenu({
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
   const styleSlider = {
-    backgroundColor: "#EEEEEE",
-    position: "absolute",
-    left: "-5rem",
-    zIndex: "-1",
-    bottom: "-55%",
-    transform: showFullContextMenu ? `translateY(${transformProperty}%)` : "translateY(0)",
+    backgroundColor : "#EEEEEE",
+    position : "absolute",
+    top: "-20%",
+    right : "10rem",
+    zIndex : "-1",
+    bottom : "-55%",
+    transform : showFullContextMenu ? `translateY(${transformProperty}%)` : "translateY(0)"
   };
 
   const getOperatorStatus = (contextId) => {
@@ -95,11 +106,6 @@ export default function K8sContextMenu({
     }
   };
 
-  let open = Boolean(anchorEl);
-  if (showFullContextMenu) {
-    open = showFullContextMenu;
-  }
-
   useEffect(() => {
     setTransformProperty((prev) => prev + (contexts.total_count ? contexts.total_count * 3.125 : 0));
   }, []);
@@ -136,7 +142,7 @@ export default function K8sContextMenu({
         </div>
       </IconButton>
 
-      <Slide direction="down" style={classes.styleSlider} timeout={400} in={open} mountOnEnter unmountOnExit>
+      <Slide direction="down" style={styleSlider} timeout={400} in={showFullContextMenu} mountOnEnter unmountOnExit>
         <div>
           <ClickAwayListener
             onClickAway={(e) => {
