@@ -5,6 +5,7 @@ import { AppBar, Grid, Hidden, IconButton, Toolbar, Typography } from "@mui/mate
 import Link from "next/link";
 import MenuIcon from "@mui/icons-material/Menu";
 import { useStyles } from "./Header.styles";
+import MesheryNotification from "@/components/Notification/MesheryNotification"
 
 const HeaderComponent = ({ drawerOpen, onDrawerToggle, pageTitle }) => {
   const classes = useStyles();
@@ -36,7 +37,9 @@ const HeaderComponent = ({ drawerOpen, onDrawerToggle, pageTitle }) => {
               {pageTitle}
             </Typography>
           </Grid>
-
+          <Grid item>
+          <MesheryNotification />
+          </Grid>
           {/* <Grid item className={classes.notifications}>
                 <MesheryNotification />
               </Grid> */}
@@ -55,7 +58,7 @@ const HeaderComponent = ({ drawerOpen, onDrawerToggle, pageTitle }) => {
                 />
               </Link>
             </IconButton>
-
+            
             <IconButton color="inherit" size="large">
               <Link href="/settings">
                 <SettingsIcon
