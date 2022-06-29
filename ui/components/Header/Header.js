@@ -43,9 +43,6 @@ const HeaderComponent = ({ drawerOpen, onDrawerToggle, pageTitle }) => {
             </Typography>
           </Grid>
 
-          {/* <Grid item className={classes.notifications}>
-                <MesheryNotification />
-              </Grid> */}
           <Grid item className={classes.userContainer}>
             <IconButton color="inherit" size="large">
               <Link href="/system/connections">
@@ -70,9 +67,6 @@ const HeaderComponent = ({ drawerOpen, onDrawerToggle, pageTitle }) => {
               </Link>
             </IconButton>
 
-            {/* <div data-test="notification-button">
-              <MesheryNotification />
-            </div> */}
             <UserSpan>
               <User color="inherit" />
             </UserSpan>
