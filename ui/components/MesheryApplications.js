@@ -27,6 +27,7 @@ import PromptComponent from "./PromptComponent";
 import UploadImport from "./UploadImport";
 import UndeployIcon from "../public/static/img/UndeployIcon";
 import DoneAllIcon from '@material-ui/icons/DoneAll';
+import ConfirmationMsg from "./ConfirmationModal";
 
 const styles = (theme) => ({
   grid : { padding : theme.spacing(2), },
@@ -194,6 +195,11 @@ function MesheryApplications({
   const [selectedRowData, setSelectedRowData] = useState(null);
   const [close, handleClose] = useState(true);
   const DEPLOY_URL = '/api/application/deploy';
+  const [modalOpen, setModalOpen] = useState({
+    open : false,
+    deploy : false,
+    application_file : null
+  });
 
   const searchTimeout = useRef(null);
 
@@ -204,6 +210,21 @@ function MesheryApplications({
     fetchApplications(page, pageSize, search, sortOrder);
   }, []);
 
+  const handleModalClose = () => {
+    setModalOpen({
+      open : false,
+      deploy : false,
+      application_file : null
+    });
+  }
+
+  const handleModalOpen = (app_file, isDeploy) => {
+    setModalOpen({
+      open : true,
+      deploy : isDeploy,
+      application_file : app_file
+    });
+  }
   /**
    * fetchApplications constructs the queries based on the parameters given
    * and fetches the applications
@@ -503,13 +524,13 @@ function MesheryApplications({
             <>
               <IconButton
                 title="Deploy"
-                onClick={() => handleDeploy(rowData.application_file)}
+                onClick={() => handleModalOpen(rowData.application_file, true)}
               >
                 <DoneAllIcon data-cy="deploy-button" />
               </IconButton>
               <IconButton
                 title="Undeploy"
-                onClick={() => handleUnDeploy(rowData.application_file)}
+                onClick={() => handleModalOpen(rowData.application_file, false)}
               >
                 <UndeployIcon fill="rgba(0, 0, 0, 0.54)" data-cy="undeploy-button" />
               </IconButton>
@@ -670,6 +691,13 @@ function MesheryApplications({
           className={classes.muiRow}
         />
       </MuiThemeProvider>
+      <ConfirmationMsg
+        open={modalOpen.open}
+        handleClose={handleModalClose}
+        submit={modalOpen.deploy ? () => handleDeploy(modalOpen.application_file) : () => handleUnDeploy(modalOpen.application_file)}
+        isDelete={!modalOpen.deploy}
+        title={<Typography variant="h6" className={classes.text} >The selected operation will be applied to following contexts.</Typography>}
+      />
       <PromptComponent ref={modalRef} />
     </NoSsr>
   );
