@@ -56,7 +56,7 @@ Select from the list of [Providers]({{site.baseurl}}/extensibility#providers) in
 
 ## Configure Connection to Kubernetes
 
-Meshery attempts to auto detect your kubeconfig if it is stored in the default path (`$HOME/.kube`) on your system. In most deployments, Meshery will automatically connect to your Kubernetes cluster. Ensure that Meshery is connected to your your Kubernetes cluster.
+Meshery attempts to auto detect your kubeconfig if it is stored in the default path (`$HOME/.kube`) on your system. In most deployments, Meshery will automatically connect to your Kubernetes cluster. Ensure that Meshery is connected to your local Kubernetes cluster.
 
 Visit <i class="fas fa-cog"></i> Settings:
 
