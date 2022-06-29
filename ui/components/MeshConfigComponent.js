@@ -816,7 +816,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
   const handleClick = async () => {
     const modal = ref.current;
     let response = await modal.show({
-      title : "Add Kuberneted Cluster(s)",
+      title : "Add Kubernetes Cluster(s)",
       subtitle :
         <>
           <div>
@@ -857,7 +857,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
             </FormGroup>
           </div>
         </>,
-      options : ["CANCEL", "UPLOAD"]
+      options : ["IMPORT","CANCEL"]
     })
 
     if (response === "UPLOAD") {
