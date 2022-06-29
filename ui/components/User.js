@@ -48,9 +48,6 @@ function ExtensionPointContent({ href, name }) {
 function AccountExtension({ account }) {
   if (account && account.length > 0) {
     return account.map(({ href, title }) => {
-      // if (typeof showc !== "undefined" && !showc) {
-      //   return "";
-      // }
       return (
         <MenuItem key={title + href}>
           <ExtensionPointContent href={href} name={title} />
