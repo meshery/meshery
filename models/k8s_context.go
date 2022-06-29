@@ -6,7 +6,6 @@ import (
 	"encoding/base64"
 	"encoding/hex"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"net"
 	"os"
@@ -227,7 +226,7 @@ func NewK8sContext(
 
 	ctx.ID = ID
 
-	fmt.Printf("Generated context: %+#v\n", ctx)
+	logrus.Infof("Generated context: %s\n", ctx.Name)
 
 	return ctx
 }

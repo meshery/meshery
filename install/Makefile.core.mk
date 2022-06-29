@@ -18,7 +18,7 @@
 GIT_VERSION	= $(shell git describe --tags `git rev-list --tags --max-count=1`)
 GIT_COMMITSHA = $(shell git rev-list -1 HEAD)
 
-GOVERSION = 1.17.8
+# GOVERSION = 1.17.8
 GOPATH = $(shell go env GOPATH)
 GOBIN  = $(GOPATH)/bin
 
