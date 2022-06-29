@@ -96,7 +96,6 @@ const ShowServiceMesh = () => {
                 variant="contained"
                 color="primary"
                 size="large"
-                // onClick={() => self.props.router.push("/management")}
               >
                 <AddCircleOutlineIcon  />
               Install Service Mesh
