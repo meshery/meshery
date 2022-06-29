@@ -4,12 +4,10 @@ import { lightColor } from "styles/colors";
 export const getStyles = (theme) => ({
   secondaryBar: { zIndex: 0 },
   menuButton: { marginLeft: -theme.spacing(1) },
-  iconButtonAvatar: { padding: 4 },
   link: { textDecoration: "none", color: lightColor, "&:hover": { color: theme.palette.common.white } },
   button: { borderColor: lightColor },
   notifications: { paddingLeft: theme.spacing(4), paddingRight: theme.spacing(0), marginLeft: theme.spacing(4) },
   userContainer: { paddingLeft: 1, display: "flex", alignItems: "center" },
-  userSpan: { marginLeft: theme.spacing(1) },
   pageTitleWrapper: { flexGrow: 1, marginRight: "auto" },
   pageTitle: {
     paddingLeft: theme.spacing(2),

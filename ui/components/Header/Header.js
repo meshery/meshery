@@ -2,10 +2,15 @@
 import React from "react";
 import SettingsIcon from "@mui/icons-material/Settings";
 import { AppBar, Grid, Hidden, IconButton, Toolbar, Typography } from "@mui/material";
+import { styled } from "@mui/material/styles";
 import Link from "next/link";
 import MenuIcon from "@mui/icons-material/Menu";
 import { useStyles } from "./Header.styles";
 import User from "../User";
+
+const UserSpan = styled(({ children, ...props }) => <span {...props}>{children}</span>)(({ theme }) => ({
+  marginLeft: theme.spacing(1),
+}));
 
 const HeaderComponent = ({ drawerOpen, onDrawerToggle, pageTitle }) => {
   const classes = useStyles();
@@ -68,9 +73,9 @@ const HeaderComponent = ({ drawerOpen, onDrawerToggle, pageTitle }) => {
             {/* <div data-test="notification-button">
               <MesheryNotification />
             </div> */}
-            <span className={classes.userSpan}>
-              <User color="inherit" iconButtonClassName={classes.iconButtonAvatar} avatarClassName={classes.avatar} />
-            </span>
+            <UserSpan>
+              <User color="inherit" />
+            </UserSpan>
           </Grid>
         </Grid>
       </Toolbar>

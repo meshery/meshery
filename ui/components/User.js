@@ -12,7 +12,6 @@ import {
   ClickAwayListener,
   NoSsr,
 } from "@mui/material";
-import { makeStyles } from "@mui/styles";
 import ExtensionPointSchemaValidator from "../utils/extensionPointSchemaValidator";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
@@ -62,13 +61,7 @@ function AccountExtension({ account }) {
   }
 }
 
-const styles = () => ({
-  popover: { color: "black" },
-});
-
-const useStyles = makeStyles(styles);
-
-const UserComponent = ({ updateUser, color, iconButtonClassName, avatarClassName }) => {
+const UserComponent = ({ updateUser, color }) => {
   const [user, setUser] = useState(null);
   const [open, setOpen] = useState(false);
   const [account, setAccount] = useState(ExtensionPointSchemaValidator("account")());
@@ -77,7 +70,6 @@ const UserComponent = ({ updateUser, color, iconButtonClassName, avatarClassName
   const anchorEl = useRef();
   const router = useRouter();
 
-  const classes = useStyles();
   useEffect(() => {
     dataFetch(
       "/api/user",
@@ -150,13 +142,13 @@ const UserComponent = ({ updateUser, color, iconButtonClassName, avatarClassName
         <div data-test="profile-button">
           <IconButton
             color={color}
-            className={iconButtonClassName}
+            style={{ padding: 4 }}
             ref={anchorEl}
             aria-owns={open ? "menu-list-grow" : undefined}
             aria-haspopup="true"
             onClick={handleToggle}
           >
-            <Avatar className={avatarClassName} src={avatar_url} />
+            <Avatar src={avatar_url} />
           </IconButton>
         </div>
         <Popper open={open} anchorEl={anchorEl.current} transition style={{ zIndex: 10000 }} placement="top-end">
@@ -166,7 +158,7 @@ const UserComponent = ({ updateUser, color, iconButtonClassName, avatarClassName
               id="menu-list-grow"
               style={{ transformOrigin: placement === "bottom" ? "left top" : "left bottom" }}
             >
-              <Paper className={classes.popover}>
+              <Paper style={{ color: "black" }}>
                 <ClickAwayListener onClickAway={handleClose}>
                   <MenuList>
                     {account && account.length ? <AccountExtension account={account} /> : null}
