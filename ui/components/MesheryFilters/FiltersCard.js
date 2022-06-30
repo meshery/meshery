@@ -1,35 +1,29 @@
 //@ts-check
 import React, { useState } from "react";
 import {
-  Avatar, Divider, Grid, IconButton, Typography
+  Divider, Grid, IconButton, Typography
 } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import DeleteIcon from "@material-ui/icons/Delete";
-import Save from "@material-ui/icons/Save";
 import Fullscreen from "@material-ui/icons/Fullscreen";
 import Moment from "react-moment";
 import FlipCard from "../FlipCard";
 import { UnControlled as CodeMirror } from "react-codemirror2";
 import FullscreenExit from "@material-ui/icons/FullscreenExit";
-import UndeployIcon from "../../public/static/img/UndeployIcon";
 import DoneAllIcon from '@material-ui/icons/DoneAll';
-import useStyles from "./Cards.styles";
+import useStyles from "../MesheryPatterns/Cards.styles";
 import YAMLDialog from "../YamlDialog";
 
 const INITIAL_GRID_SIZE = { xl : 4, md : 6, xs : 12 };
 
-
-function MesheryPatternCard({
+function FiltersCard({
   name,
   updated_at,
   created_at,
-  pattern_file,
+  filter_file,
   handleDeploy,
-  handleUnDeploy,
-  updateHandler,
   deleteHandler,
-  setSelectedPatterns,
-  setYaml
+  setYaml,
 }) {
 
   function genericClickHandler(ev, fn) {
@@ -43,7 +37,7 @@ function MesheryPatternCard({
     setFullScreen(!fullScreen);
   };
 
-  const classes = useStyles()
+  const classes=useStyles()
 
   return (
     <>
@@ -52,9 +46,8 @@ function MesheryPatternCard({
           fullScreen={fullScreen}
           name={name}
           toggleFullScreen={toggleFullScreen}
-          config_file={pattern_file}
+          config_file={filter_file}
           setYaml={setYaml}
-          updateHandler={updateHandler}
           deleteHandler={deleteHandler}
         />
       }
@@ -77,7 +70,7 @@ function MesheryPatternCard({
                 {updated_at
                   ? (
                     <Typography color="primary" variant="caption" style={{ fontStyle : "italic" }}>
-                      Modified On: <Moment format="LLL">{updated_at}</Moment>
+                  Modified On: <Moment format="LLL">{updated_at}</Moment>
                     </Typography>
                   )
                   : null}
@@ -89,36 +82,14 @@ function MesheryPatternCard({
             <div className={classes.cardButtons} >
               <Button
                 variant="contained"
-                onClick={(ev) =>
-                  genericClickHandler(ev, setSelectedPatterns)
-                }
-                className={classes.testsButton}
-              >
-                <Avatar src="/static/img/pattwhite.svg" className={classes.iconPatt} imgProps={{ height : "16px", width : "16px" }} />
-                Design
-              </Button>
-
-              <Button
-                variant="contained"
                 color="primary"
                 onClick={(ev) =>
                   genericClickHandler(ev, handleDeploy)
                 }
                 className={classes.testsButton}
               >
-                <DoneAllIcon className={classes.iconPatt} />
-                Deploy
-              </Button>
-
-              <Button
-                variant="contained"
-                className={classes.undeployButton}
-                onClick={(ev) =>
-                  genericClickHandler(ev, handleUnDeploy)
-                }
-              >
-                <UndeployIcon fill="#ffffff" className={classes.iconPatt} />
-                <span className={classes.btnText}>Undeploy</span>
+                <DoneAllIcon className={classes.iconPatt}/>
+              Deploy
               </Button>
             </div>
           </div>
@@ -151,19 +122,20 @@ function MesheryPatternCard({
             </Grid>
             <Grid item xs={12}
               onClick={(ev) =>
-                genericClickHandler(ev, () => { })
+                genericClickHandler(ev, () => {})
               }>
 
               <Divider variant="fullWidth" light />
 
               <CodeMirror
-                value={pattern_file}
+                value={filter_file}
                 className={fullScreen ? classes.fullScreenCodeMirror : ""}
                 options={{
                   theme : "material",
                   lineNumbers : true,
                   lineWrapping : true,
                   gutters : ["CodeMirror-lint-markers"],
+                  // @ts-ignore
                   lint : true,
                   mode : "text/x-yaml",
                 }}
@@ -177,7 +149,7 @@ function MesheryPatternCard({
                   {created_at
                     ? (
                       <Typography color="primary" variant="caption" style={{ fontStyle : "italic" }}>
-                        Created at: <Moment format="LLL">{created_at}</Moment>
+                  Created at: <Moment format="LLL">{created_at}</Moment>
                       </Typography>
                     )
                     : null}
@@ -186,18 +158,9 @@ function MesheryPatternCard({
             </Grid>
 
             <Grid item xs={12}>
-              <div className={classes.updateDeleteButtons} >
-
-                {/* Save button */}
+              <div className={classes.deleteButton} >
                 <IconButton onClick={(ev) =>
-                  genericClickHandler(ev, updateHandler)
-                }>
-                  <Save color="primary" />
-                </IconButton>
-
-                {/* Delete Button */}
-                <IconButton onClick={(ev) =>
-                  genericClickHandler(ev, deleteHandler)
+                  genericClickHandler(ev,deleteHandler)
                 }>
                   <DeleteIcon color="primary" />
                 </IconButton>
@@ -211,4 +174,4 @@ function MesheryPatternCard({
 }
 
 // @ts-ignore
-export default MesheryPatternCard;
+export default FiltersCard;

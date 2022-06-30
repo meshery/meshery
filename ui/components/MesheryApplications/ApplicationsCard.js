@@ -1,7 +1,7 @@
 //@ts-check
 import React, { useState } from "react";
 import {
-  Avatar, Divider, Grid, IconButton, Typography
+  Divider, Grid, IconButton, Typography
 } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import DeleteIcon from "@material-ui/icons/Delete";
@@ -13,22 +13,21 @@ import { UnControlled as CodeMirror } from "react-codemirror2";
 import FullscreenExit from "@material-ui/icons/FullscreenExit";
 import UndeployIcon from "../../public/static/img/UndeployIcon";
 import DoneAllIcon from '@material-ui/icons/DoneAll';
-import useStyles from "./Cards.styles";
+import useStyles from "../MesheryPatterns/Cards.styles";
 import YAMLDialog from "../YamlDialog";
 
 const INITIAL_GRID_SIZE = { xl : 4, md : 6, xs : 12 };
 
 
-function MesheryPatternCard({
+function MesheryApplicationCard({
   name,
   updated_at,
   created_at,
-  pattern_file,
+  application_file,
   handleDeploy,
   handleUnDeploy,
   updateHandler,
   deleteHandler,
-  setSelectedPatterns,
   setYaml
 }) {
 
@@ -52,7 +51,7 @@ function MesheryPatternCard({
           fullScreen={fullScreen}
           name={name}
           toggleFullScreen={toggleFullScreen}
-          config_file={pattern_file}
+          config_file={application_file}
           setYaml={setYaml}
           updateHandler={updateHandler}
           deleteHandler={deleteHandler}
@@ -87,17 +86,6 @@ function MesheryPatternCard({
           <div className={classes.bottomPart} >
 
             <div className={classes.cardButtons} >
-              <Button
-                variant="contained"
-                onClick={(ev) =>
-                  genericClickHandler(ev, setSelectedPatterns)
-                }
-                className={classes.testsButton}
-              >
-                <Avatar src="/static/img/pattwhite.svg" className={classes.iconPatt} imgProps={{ height : "16px", width : "16px" }} />
-                Design
-              </Button>
-
               <Button
                 variant="contained"
                 color="primary"
@@ -157,7 +145,7 @@ function MesheryPatternCard({
               <Divider variant="fullWidth" light />
 
               <CodeMirror
-                value={pattern_file}
+                value={application_file}
                 className={fullScreen ? classes.fullScreenCodeMirror : ""}
                 options={{
                   theme : "material",
@@ -211,4 +199,4 @@ function MesheryPatternCard({
 }
 
 // @ts-ignore
-export default MesheryPatternCard;
+export default MesheryApplicationCard;
