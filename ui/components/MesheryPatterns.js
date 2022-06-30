@@ -20,16 +20,14 @@ import Moment from "react-moment";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import dataFetch from "../lib/data-fetch";
-import TableChartIcon from "@material-ui/icons/TableChart";
 import FILE_OPS from "../utils/configurationFileHandlersEnum";
 import PromptComponent from "./PromptComponent";
-import GridOnIcon from "@material-ui/icons/GridOn";
 import { updateProgress } from "../lib/store";
 import PatternForm from "../components/configuratorComponents/patternConfigurator";
 import UploadImport from "./UploadImport";
 import { ctxUrl } from "../utils/multi-ctx";
 import { randomPatternNameGenerator as getRandomName } from "../utils/utils";
-import { ToggleButton, ToggleButtonGroup } from "@material-ui/lab";
+import ViewSwitch from "./ViewSwitch";
 import MesheryPatternGrid from "./MesheryPatterns/MesheryPatternGridView";
 import UndeployIcon from "../public/static/img/UndeployIcon";
 import DoneAllIcon from '@material-ui/icons/DoneAll';
@@ -133,35 +131,6 @@ const useStyles = makeStyles((theme) => ({
     }
   }
 }));
-/**
- * Type Definition for View Type
- * @typedef {"grid" | "table"} TypeView
- */
-
-/**
- * ViewSwitch component renders a switch for toggling between
- * grid and table views
- * @param {{ view: TypeView, changeView: (view: TypeView) => void }} props
- */
-function ViewSwitch({ view, changeView }) {
-  console.log(view)
-  return (
-    <ToggleButtonGroup
-      size="small"
-      value={view}
-      exclusive
-      onChange={(_, newView) => changeView(newView)}
-      aria-label="Switch View"
-    >
-      <ToggleButton value="grid">
-        <GridOnIcon />
-      </ToggleButton>
-      <ToggleButton value="table">
-        <TableChartIcon />
-      </ToggleButton>
-    </ToggleButtonGroup>
-  )
-}
 
 function TooltipIcon({ children, onClick, title }) {
   return (
