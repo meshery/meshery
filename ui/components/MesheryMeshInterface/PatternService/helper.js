@@ -1,5 +1,4 @@
 
-import { formatString } from "../helpers";
 
 function deleteTitleFromJSONSchema(jsonSchema) {
   return { ...jsonSchema, title : "" };
@@ -104,7 +103,7 @@ function addTitleToPropertiesJSONSchema(jsonSchema) {
 
         newProperties[key] = {
           ...newProperties[key],
-          title : formatString(key),
+          title : key,
           default : defaultValue,
         }
         // if (typeof newProperties[key] === 'object' && Object.prototype.hasOwnProperty.call(newProperties[key], 'properties')){
