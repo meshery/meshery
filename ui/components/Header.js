@@ -28,11 +28,10 @@ import { Paper } from '@material-ui/core';
 import { useSnackbar } from "notistack";
 import { deleteKubernetesConfig, pingKubernetes } from './ConnectionWizard/helpers/kubernetesHelpers';
 import {
-  successHandlerGenerator, errorHandlerGenerator, closeButtonForSnackbarAction, showProgress, hideProgress
-} from './ConnectionWizard/helpers/common';
+  successHandlerGenerator, errorHandlerGenerator, closeButtonForSnackbarAction } from './ConnectionWizard/helpers/common';
 import { getFirstCtxIdFromSelectedCtxIds } from '../utils/multi-ctx';
 import { promisifiedDataFetch } from '../lib/data-fetch';
-import { updateK8SConfig } from '../lib/store';
+import { updateK8SConfig, updateProgress } from '../lib/store';
 import { bindActionCreators } from 'redux';
 import BadgeAvatars from './CustomAvatar';
 const lightColor = 'rgba(255, 255, 255, 0.7)';
@@ -173,6 +172,7 @@ function K8sContextMenu({
   activeContexts = [],
   runningStatus,
   updateK8SConfig,
+  updateProgress,
 
   setActiveContexts = () => { },
   searchContexts = () => { }
@@ -220,19 +220,23 @@ function K8sContextMenu({
   }
 
   const handleKubernetesClick = (id) => {
-    showProgress()
+    updateProgress({ showProgress : true })
 
     pingKubernetes(
-      successHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Kubernetes succesfully pinged", successCallback),
-      errorHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Kubernetes not pinged successfully", () => hideProgress()),
+      successHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Kubernetes succesfully pinged", () => updateProgress({ showProgress : false })),
+      errorHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Kubernetes not pinged successfully", () => updateProgress({ showProgress : false })),
       id
     )
   }
 
   const handleKubernetesDelete = (name, ctxId) => () => {
+    if (contexts?.total_count === 1) {
+      alert("You have only one kubernetes context connected to Meshery, Aborting delete operation");
+      return;
+    }
+
     if (confirm(`Are you sure you want to delete "${name}" cluster from Meshery?`)) {
       const successCallback = async () => {
-        showProgress()
         const updatedConfig = await loadActiveK8sContexts()
         if (Array.isArray(updatedConfig)) {
           updateK8SConfig({ k8sConfig : updatedConfig })
@@ -460,6 +464,7 @@ class Header extends React.Component {
                       searchContexts={this.props.searchContexts}
                       runningStatus={{ operatorStatus : this.props.operatorState, meshSyncStatus : this.props.meshSyncState }}
                       updateK8SConfig={this.props.updateK8SConfig}
+                      updateProgress={this.props.updateProgress}
                     />
                   </div>
 
@@ -506,7 +511,10 @@ const mapStateToProps = (state) => {
   })
 };
 
-const mapDispatchToProps = (dispatch) => ({ updateK8SConfig : bindActionCreators(updateK8SConfig, dispatch), });
+const mapDispatchToProps = (dispatch) => ({
+  updateK8SConfig : bindActionCreators(updateK8SConfig, dispatch),
+  updateProgress : bindActionCreators(updateProgress, dispatch),
+});
 
 
 export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(Header));
