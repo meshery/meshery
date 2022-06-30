@@ -207,7 +207,6 @@ function MesheryApplications({
   const [applications, setApplications] = useState([]);
   const [selectedRowData, setSelectedRowData] = useState(null);
   const [selectedApplication, setSelectedApplication] = useState(resetSelectedApplication());
-  const [close, handleClose] = useState(true);
   const DEPLOY_URL = '/api/application/deploy';
   const [modalOpen, setModalOpen] = useState({
     open : false,
@@ -429,7 +428,6 @@ function MesheryApplications({
         () => {
           console.log("ApplicationFile API", `/api/application`);
           updateProgress({ showProgress : false });
-          handleClose(true);
           fetchApplications(page, pageSize, search, sortOrder);
         },
         // handleError
@@ -439,7 +437,6 @@ function MesheryApplications({
   }
 
   function uploadHandler(ev) {
-    handleClose(false);
     if (!ev.target.files?.length) return;
 
     const file = ev.target.files[0];
@@ -699,7 +696,7 @@ function MesheryApplications({
         <div className={classes.topToolbar} >
           {!selectedApplication.show && (applications.length>0 || viewType==="table") && <div className={classes.createButton}>
             <div>
-              <UploadImport aria-label="URL upload button" handleUpload={urlUploadHandler} handleImport={uploadHandler} configuration="Application" modalStatus={close}  />
+              <UploadImport aria-label="URL upload button" handleUpload={urlUploadHandler} handleImport={uploadHandler} configuration="Application"  />
             </div>
 
           </div>

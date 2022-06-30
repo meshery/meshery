@@ -53,7 +53,7 @@ const styles = makeStyles(() => ({
 
 
 
-const UploadImport = ({ handleUpload, handleImport, configuration, modalStatus }) => {
+const UploadImport = ({ handleUpload, handleImport, configuration }) => {
   const classes = styles();
   const [open, setOpen] = React.useState(false);
   const [input, setInput] = React.useState();
@@ -65,12 +65,6 @@ const UploadImport = ({ handleUpload, handleImport, configuration, modalStatus }
       setIsError(!URLValidator(input))
     }
   }, [input])
-
-  useEffect(() => {
-    if (modalStatus) {
-      handleClose()
-    }
-  }, [modalStatus])
 
   const handleOpen = () => {
     setOpen(true);
