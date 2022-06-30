@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import { Button, Grid, Link, Stack, Typography } from "@mui/material";
+import { Button, Grid, Link, Stack, Typography, Box } from "@mui/material";
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import { AdaptersChipList, AdaptersListContainer, MesheryServerVersionContainer } from "@/features/mesheryComponents";
 import { PaperWithTitle } from "@/components/Paper";
@@ -79,8 +79,8 @@ export default function Dashboard() {
   
 const ShowServiceMesh = () => {
   return(
-    <div
-    style={{
+    <Box
+    sx={{
       margin: "auto",
       display : "flex",
       justifyContent : "center",
@@ -100,7 +100,7 @@ const ShowServiceMesh = () => {
                 <AddCircleOutlineIcon  />
               Install Service Mesh
               </Button>
-              </div>
+              </Box>
   )
 }
 
