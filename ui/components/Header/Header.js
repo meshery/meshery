@@ -21,7 +21,7 @@ const HeaderIcon = styled(({ icon, isActive = false, children, ...props }) => {
   const Component = icon;
   return (
     <Component
-      style={{
+      sx={{
         color: isActive ? "#00B39F" : "inherit",
       }}
       {...props}
