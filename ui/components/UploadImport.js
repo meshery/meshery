@@ -10,10 +10,6 @@ import {
   DialogTitle
 } from '@material-ui/core';
 
-
-
-
-
 const getMuiTheme = () => createTheme({
   palette : {
     primary : {
@@ -57,7 +53,7 @@ const styles = makeStyles(() => ({
 
 
 
-const UploadImport = ({ handleUpload, handleImport, configuration, modalStatus }) => {
+const UploadImport = ({ handleUpload, handleImport, configuration }) => {
   const classes = styles();
   const [open, setOpen] = React.useState(false);
   const [input, setInput] = React.useState();
@@ -69,12 +65,6 @@ const UploadImport = ({ handleUpload, handleImport, configuration, modalStatus }
       setIsError(!URLValidator(input))
     }
   }, [input])
-
-  useEffect(() => {
-    if (modalStatus) {
-      handleClose()
-    }
-  }, [modalStatus])
 
   const handleOpen = () => {
     setOpen(true);
@@ -89,10 +79,10 @@ const UploadImport = ({ handleUpload, handleImport, configuration, modalStatus }
     handleClose()
   }
 
-  //   const handleUploader = () => {
-  //     handleImport(input)
-  //     handleClose()
-  //   }
+  const handleUploader = (input) => {
+    handleImport(input)
+    handleClose()
+  }
 
   return (
     <>
@@ -144,7 +134,7 @@ const UploadImport = ({ handleUpload, handleImport, configuration, modalStatus }
                   <label htmlFor="upload-button" className={classes.upload}>
 
                     <Button variant="contained" size="large" color="primary" aria-label="Upload Button" component="span" >
-                      <input id="upload-button" type="file" accept=".yaml, .yml" hidden onChange={handleImport} name="upload-button" data-cy="file-upload-button" />
+                      <input id="upload-button" type="file" accept=".yaml, .yml" hidden onChange={handleUploader} name="upload-button" data-cy="file-upload-button" />
                       Browse
                     </Button>
                   </label>

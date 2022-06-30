@@ -88,7 +88,7 @@ class MesheryPlayComponent extends React.Component {
     if (prevProps.meshAdapters?.size !== this.props.meshAdapters?.size
       && this.props.meshAdapters.size > 0
     ) {
-      this.setState({ adapter : this.props.meshAdapters.get(0) })
+      this.handleRouteChange();
     }
   }
 
