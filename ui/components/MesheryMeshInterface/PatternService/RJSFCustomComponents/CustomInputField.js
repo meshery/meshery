@@ -2,11 +2,10 @@ import React from "react";
 import { IconButton, InputAdornment, TextField } from "@material-ui/core";
 import HelpOutlineIcon from "../HelpOutlineIcon";
 import EnlargedTextTooltip from "../EnlargedTextTooltip";
-import { formatString } from "../../helpers"
 
 const CustomInputField = (props) => {
   const name = props.label // || props.id?.split('_')[-1].trim()
-  const prettifiedName = formatString(name) || 'Enter a value'
+  const prettifiedName = name || 'Enter a value'
   const style = {
     display : "flex",
     alignItems : "center",
