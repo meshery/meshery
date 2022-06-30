@@ -157,6 +157,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
   const modalRef = useRef(null);
   const [pageSize, setPageSize] = useState(10);
   const [filters, setFilters] = useState([]);
+  const [close, handleClose] = useState(true);
   const [selectedFilter, setSelectedFilter] = useState(resetSelectedFilter());
   const [selectedRowData, setSelectedRowData] = useState(null);
   const [viewType, setViewType] = useState(
@@ -340,6 +341,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
         () => {
           console.log("FilterFile API", `/api/filter`);
           updateProgress({ showProgress : false });
+          handleClose(true);
           fetchFilters(page, pageSize, search, sortOrder);
         },
         // handleError
@@ -603,7 +605,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
         <div className={classes.topToolbar} >
           {!selectedFilter.show && (filters.length>0 || viewType==="table") && <div className={classes.createButton}>
             <div>
-              <UploadImport aria-label="URL upload button" handleUpload={urlUploadHandler} handleImport={uploadHandler} configuration={undefined} modalStatus={undefined}  />
+              <UploadImport aria-label="URL upload button" handleUpload={urlUploadHandler} handleImport={uploadHandler} configuration="Filter" modalStatus={close}  />
             </div>
 
           </div>

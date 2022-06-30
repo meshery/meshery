@@ -229,6 +229,7 @@ function MesheryPatterns({
   const [pageSize, setPageSize] = useState(10);
   const modalRef = useRef(null);
   const [patterns, setPatterns] = useState([]);
+  const [close, handleClose] = useState(true);
   const [selectedRowData, setSelectedRowData] = useState(null);
   const [selectedPattern, setSelectedPattern] = useState(resetSelectedPattern());
   const [viewType, setViewType] = useState(
@@ -485,6 +486,7 @@ function MesheryPatterns({
         () => {
           console.log("PatternFile API", `/api/pattern`);
           updateProgress({ showProgress : false });
+          handleClose(true);
           fetchPatterns(page, pageSize, search, sortOrder);
         },
         handleError(ACTION_TYPES.UPLOAD_PATTERN)
@@ -493,6 +495,7 @@ function MesheryPatterns({
   }
 
   function uploadHandler(ev) {
+    handleClose(false);
     if (!ev.target.files?.length) return;
 
 
