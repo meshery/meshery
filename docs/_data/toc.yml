@@ -54,6 +54,8 @@
           url: installation/platforms/minikube
         - title: Windows
           url: installation/platforms/windows
+        - title: KubeSphere
+          url: installation/platforms/kubesphere
 - title: 🧠 Concepts
   url: concepts
   links:
