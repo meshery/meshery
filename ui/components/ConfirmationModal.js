@@ -10,7 +10,7 @@ import { Search } from "@material-ui/icons";
 import { withSnackbar } from "notistack";
 import { connect } from "react-redux";
 import { setK8sContexts, updateProgress } from "../lib/store";
-import { closeButtonForSnackbarAction, errorHandlerGenerator, hideProgress, showProgress, successHandlerGenerator } from "./ConnectionWizard/helpers/common";
+import { closeButtonForSnackbarAction, errorHandlerGenerator, successHandlerGenerator } from "./ConnectionWizard/helpers/common";
 import { pingKubernetes } from "./ConnectionWizard/helpers/kubernetesHelpers";
 import { getK8sConfigIdsFromK8sConfig } from "../utils/multi-ctx";
 import { bindActionCreators } from "redux";
@@ -112,10 +112,10 @@ function ConfirmationMsg(props) {
   console.log("OPOPOP", tabVal);
 
   const handleKubernetesClick = (ctxID) => {
-    showProgress()
+    updateProgress({ showProgress : true })
     pingKubernetes(
-      successHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Kubernetes succesfully pinged", () => hideProgress()),
-      errorHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Kubernetes not pinged successfully", () => hideProgress()),
+      successHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Kubernetes succesfully pinged", () =>  updateProgress({ showProgress : false })),
+      errorHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Kubernetes not pinged successfully", () =>  updateProgress({ showProgress : false })),
       ctxID
     )
   }

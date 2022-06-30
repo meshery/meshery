@@ -621,6 +621,13 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
     expandableRowsOnClick : false,
     elevation : 0,
     label : "",
+    responsive : "standard",
+    fixedHeader : true,
+    textLabels : {
+      selectedRows : {
+        text : "context(s) selected"
+      }
+    },
     onRowsDelete : (td) => {
       td.data.forEach((item) => {
         handleConfigDelete(data[item.index].id)
@@ -816,7 +823,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
   const handleClick = async () => {
     const modal = ref.current;
     let response = await modal.show({
-      title : "Add Kuberneted Cluster(s)",
+      title : "Add Kubernetes Cluster(s)",
       subtitle :
         <>
           <div>
@@ -857,10 +864,10 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
             </FormGroup>
           </div>
         </>,
-      options : ["CANCEL", "UPLOAD"]
+      options : ["IMPORT","CANCEL"]
     })
 
-    if (response === "UPLOAD") {
+    if (response === "IMPORT") {
       if (formData.get("k8sfile") === null) {
         handleError("No file selected.")("Please select a valid kube config")
         return;
@@ -997,7 +1004,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
   };
 
   return (
-    <>
+    <div style={{ display : 'table', tableLayout : 'fixed', width : '100%' }}>
       <DataTable
         title={
           <Button
@@ -1020,7 +1027,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
       />
       <PromptComponent ref={ref} />
       <PromptComponent ref={meshSyncResetRef} />
-    </>
+    </div>
   )
 }
 const mapStateToProps = (state) => {

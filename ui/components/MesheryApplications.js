@@ -2,7 +2,7 @@ import {
   Dialog, DialogActions, DialogContent, DialogTitle, Divider, IconButton, NoSsr,
   TableCell, Tooltip, Typography
 } from "@material-ui/core";
-import { makeStyles, MuiThemeProvider, withStyles } from "@material-ui/core/styles";
+import { makeStyles, withStyles } from "@material-ui/core/styles";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
 import CloseIcon from "@material-ui/icons/Close";
 import DeleteIcon from "@material-ui/icons/Delete";
@@ -19,7 +19,6 @@ import { bindActionCreators } from "redux";
 import dataFetch from "../lib/data-fetch";
 import { updateProgress } from "../lib/store";
 import { trueRandom } from "../lib/trueRandom";
-import configurationTableTheme from "../themes/configurationTableTheme";
 import FILE_OPS from "../utils/configurationFileHandlersEnum";
 import { ctxUrl } from "../utils/multi-ctx";
 import { randomPatternNameGenerator as getRandomName } from "../utils/utils";
@@ -27,6 +26,9 @@ import PromptComponent from "./PromptComponent";
 import UploadImport from "./UploadImport";
 import UndeployIcon from "../public/static/img/UndeployIcon";
 import DoneAllIcon from '@material-ui/icons/DoneAll';
+import ConfirmationMsg from "./ConfirmationModal";
+import ViewSwitch from "./ViewSwitch";
+import ApplicationsGrid from "./MesheryApplications/ApplicationsGrid";
 
 const styles = (theme) => ({
   grid : { padding : theme.spacing(2), },
@@ -44,7 +46,15 @@ const styles = (theme) => ({
     justifyContent : "flex-start",
     alignItems : "center",
     whiteSpace : "nowrap",
-    margin : "1rem auto 2rem auto"
+    margin : "1rem 0 2rem 1rem"
+  },
+  topToolbar : {
+    display : "flex"
+  },
+  viewSwitchButton : {
+    justifySelf : "flex-end",
+    marginLeft : "auto",
+    paddingLeft : "1rem"
   },
 });
 
@@ -181,6 +191,10 @@ const ACTION_TYPES = {
   },
 };
 
+function resetSelectedApplication() {
+  return { show : false, application : null };
+}
+
 function MesheryApplications({
   updateProgress, enqueueSnackbar, closeSnackbar, user, classes, selectedK8sContexts
 }) {
@@ -192,8 +206,18 @@ function MesheryApplications({
   const [pageSize, setPageSize] = useState(10);
   const [applications, setApplications] = useState([]);
   const [selectedRowData, setSelectedRowData] = useState(null);
-  const [close, handleClose] = useState(true);
+  const [selectedApplication, setSelectedApplication] = useState(resetSelectedApplication());
+  const [handleClose] = useState(true);
   const DEPLOY_URL = '/api/application/deploy';
+  const [modalOpen, setModalOpen] = useState({
+    open : false,
+    deploy : false,
+    application_file : null
+  });
+  const [viewType, setViewType] = useState(
+    /**  @type {TypeView} */
+    ("grid")
+  );
 
   const searchTimeout = useRef(null);
 
@@ -202,8 +226,23 @@ function MesheryApplications({
    */
   useEffect(() => {
     fetchApplications(page, pageSize, search, sortOrder);
-  }, []);
+  }, [page, pageSize, search, sortOrder]);
 
+  const handleModalClose = () => {
+    setModalOpen({
+      open : false,
+      deploy : false,
+      application_file : null
+    });
+  }
+
+  const handleModalOpen = (app_file, isDeploy) => {
+    setModalOpen({
+      open : true,
+      deploy : isDeploy,
+      application_file : app_file
+    });
+  }
   /**
    * fetchApplications constructs the queries based on the parameters given
    * and fetches the applications
@@ -503,13 +542,13 @@ function MesheryApplications({
             <>
               <IconButton
                 title="Deploy"
-                onClick={() => handleDeploy(rowData.application_file)}
+                onClick={() => handleModalOpen(rowData.application_file, true)}
               >
                 <DoneAllIcon data-cy="deploy-button" />
               </IconButton>
               <IconButton
                 title="Undeploy"
-                onClick={() => handleUnDeploy(rowData.application_file)}
+                onClick={() => handleModalOpen(rowData.application_file, false)}
               >
                 <UndeployIcon fill="rgba(0, 0, 0, 0.54)" data-cy="undeploy-button" />
               </IconButton>
@@ -645,33 +684,68 @@ function MesheryApplications({
     },
     setTableProps : () => {
       return {
-        "data-cy" : "filters-grid"
+        "data-cy" : "applications-grid"
       }
     }
   };
 
   return (
-    <NoSsr>
-      {selectedRowData && Object.keys(selectedRowData).length > 0 && (
-        <YAMLEditor application={selectedRowData} onClose={resetSelectedRowData()} onSubmit={handleSubmit} />
-      )}
-      <div className={classes.createButton}>
-        <div className={classes.UploadImport}>
-          <UploadImport aria-label="URL upload button" handleUpload={urlUploadHandler} handleImport={uploadHandler} configuration="Application" modalStatus={close} />
+    <>
+
+      <NoSsr>
+        {selectedRowData && Object.keys(selectedRowData).length > 0 && (
+          <YAMLEditor application={selectedRowData} onClose={resetSelectedRowData()} onSubmit={handleSubmit} />
+        )}
+        <div className={classes.topToolbar} >
+          {!selectedApplication.show && (applications.length>0 || viewType==="table") && <div className={classes.createButton}>
+            <div>
+              <UploadImport aria-label="URL upload button" handleUpload={urlUploadHandler} handleImport={uploadHandler} configuration={undefined} modalStatus={undefined}  />
+            </div>
+
+          </div>
+          }
+          {!selectedApplication.show &&
+          <div className={classes.viewSwitchButton}>
+            <ViewSwitch view={viewType} changeView={setViewType} />
+          </div>
+          }
         </div>
-      </div>
-      <MuiThemeProvider theme={configurationTableTheme()}>
-        <MUIDataTable
-          title={<div className={classes.tableHeader}>Applications</div>}
-          data={applications}
-          columns={columns}
-          // @ts-ignore
-          options={options}
-          className={classes.muiRow}
+        {
+          !selectedApplication.show && viewType==="table" &&
+            <MUIDataTable
+              title={<div className={classes.tableHeader}>Applications</div>}
+              data={applications}
+              columns={columns}
+              // @ts-ignore
+              options={options}
+              className={classes.muiRow}
+            />
+        }
+        {
+          !selectedApplication.show && viewType==="grid" &&
+            // grid vieww
+            <ApplicationsGrid
+              applications={applications}
+              handleDeploy={handleDeploy}
+              handleUnDeploy={handleUnDeploy}
+              handleSubmit={handleSubmit}
+              setSelectedApplication={setSelectedApplication}
+              selectedApplication={selectedApplication}
+              pages={Math.ceil(count / pageSize)}
+              setPage={setPage}
+              selectedPage={page}
+            />
+        }
+        <ConfirmationMsg
+          open={modalOpen.open}
+          handleClose={handleModalClose}
+          submit={modalOpen.deploy ? () => handleDeploy(modalOpen.application_file) : () => handleUnDeploy(modalOpen.application_file)}
+          isDelete={!modalOpen.deploy}
+          title={<Typography variant="h6" className={classes.text} >The selected operation will be applied to following contexts.</Typography>}
         />
-      </MuiThemeProvider>
-      <PromptComponent ref={modalRef} />
-    </NoSsr>
+        <PromptComponent ref={modalRef} />
+      </NoSsr>
+    </>
   );
 }
 
