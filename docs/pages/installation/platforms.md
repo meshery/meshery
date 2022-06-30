@@ -38,4 +38,4 @@ Find installation instructions for the Supported Platforms in the compatibility 
 | &nbsp;&nbsp;&nbsp; [Scoop]({{ site.baseurl }}/installation/platforms/scoop)                                                                                            |                         |
 | &nbsp;&nbsp;&nbsp;<img src="/assets/img/platforms/wsl2.png" width="20" height="20" /> [Windows]({{ site.baseurl }}/installation/platforms/windows)                     |  Build 18917 and above  |
 | <img src="/assets/img/platforms/raspberry-pi.png" width="20" height="20" /> Raspberry Pi                                                                               |       In Progress       |
-
+| &nbsp;&nbsp;&nbsp;<img src="/assets/img/platforms/kubesphere.png" width="20" height="20" /> [Kubesphere]({{ site.baseurl }}/installation/platforms/kubesphere)               |          | 
