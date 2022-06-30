@@ -37,7 +37,7 @@ export default function Dashboard() {
           {({ grafanas, prometheus, onGrafanaClick, onPrometheusClick }) => {
             return (
               <PaperWithTitle title="Metrics" containerProps={{ spacing: 2 }}>
-               <Grid container  spacing={2} style={{margin: "auto ", justifyContent:"center" }}>
+               <Grid container  spacing={2} sx={{margin: "auto ", justifyContent:"center" }}>
                 <Grid item  >
                   {grafanas !== null && grafanas?.length > 0 && grafanas[0] ? (
                     <GrafanaChip grafana={grafanas[0]} />
@@ -88,7 +88,7 @@ const ShowServiceMesh = () => {
       flexDirection : "column",
     }}
   >
-    <Typography style={{ fontSize : "1.5rem", marginBottom : "2rem" }} align="center" color="textSecondary">
+    <Typography sx={{ fontSize : "1.5rem", marginBottom : "2rem" }} align="center" color="textSecondary">
               No service meshes detected in the cluster.
               </Typography>
               <Button
