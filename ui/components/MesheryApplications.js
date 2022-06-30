@@ -230,7 +230,6 @@ function MesheryApplications({
   const handleModalClose = () => {
     setModalOpen({
       open : false,
-      deploy : false,
       application_file : null
     });
   }

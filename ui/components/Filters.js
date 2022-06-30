@@ -166,7 +166,8 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
   const DEPLOY_URL = "/api/filter/deploy";
   const [modalOpen, setModalOpen] = useState({
     open : false,
-    filter_file : null
+    filter_file : null,
+    deploy : false
   });
 
   const getMuiTheme = () => createTheme({
@@ -307,17 +308,19 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     });
   };
 
-  const handleModalOpen = (app_file) => {
+  const handleModalOpen = (app_file, isDeploy) => {
     setModalOpen({
       open : true,
-      filter_file : app_file
+      filter_file : app_file,
+      deploy : isDeploy
     });
   }
 
   const handleModalClose = () => {
     setModalOpen({
       open : false,
-      filter_file : null
+      filter_file : null,
+      // deploy: false
     });
   }
 
@@ -475,7 +478,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
                   title="Deploy"
                   aria-label="deploy"
                   color="inherit"
-                  onClick={() => handleModalOpen(rowData.filter_file)} //deploy endpoint to be called here
+                  onClick={() => handleModalOpen(rowData.filter_file, true)} //deploy endpoint to be called here
                   data-cy="deploy-button"
                 />
               </IconButton>
