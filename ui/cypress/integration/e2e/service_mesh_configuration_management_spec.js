@@ -51,6 +51,7 @@ const configurationTestTemplate = (itemType, testFilePath, expectedUploadConfigI
       cy.visit(`/configuration/${itemType}s`);
       cy.wait("@getConfigItems");
     });
+
     it(`Deploys ${itemType}`, () => {
       // Load test file fixture data
       cy.fixture(testFilePath).then((expectedContent) => {
@@ -79,6 +80,7 @@ const configurationTestTemplate = (itemType, testFilePath, expectedUploadConfigI
           });
         });
 
+        cy.get('[data-cy="table-view"]').click();
         getConfigurationGridItemName(1).should("have.text", expectedUploadConfigItemName);
 
         cy.get('[data-cy="config-row-0"] [data-cy="deploy-button"]').click();
