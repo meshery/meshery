@@ -37,7 +37,7 @@ func (h *Handler) ExtensionsEndpointHandler(w http.ResponseWriter, req *http.Req
 func (h *Handler) LoadExtensionFromPackage(w http.ResponseWriter, req *http.Request, provider models.Provider) error {
 	mx.Lock()
 	defer mx.Unlock()
-	packagePath := ""
+	packagePath := "/provider/navigator/meshmap/graphql/plugin.so" // default path gql plugin
 	if len(provider.GetProviderProperties().Extensions.GraphQL) > 0 {
 		packagePath = provider.GetProviderProperties().Extensions.GraphQL[0].Path
 	}
