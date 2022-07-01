@@ -6,10 +6,13 @@ package resolver
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/layer5io/meshery/internal/graphql/generated"
 	"github.com/layer5io/meshery/internal/graphql/model"
 	"github.com/layer5io/meshery/models"
+	"github.com/layer5io/meshkit/broker"
+	"github.com/layer5io/meshkit/models/controllers"
 )
 
 func (r *mutationResolver) ChangeOperatorStatus(ctx context.Context, input *model.OperatorStatusInput) (model.Status, error) {
@@ -154,8 +157,9 @@ func (r *subscriptionResolver) ListenToOperatorState(ctx context.Context, k8scon
 }
 
 func (r *subscriptionResolver) ListenToMeshSyncEvents(ctx context.Context, k8scontextIDs []string) (<-chan *model.OperatorControllerStatusPerK8sContext, error) {
-	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
-	return r.listenToMeshSyncEvents(ctx, provider, k8scontextIDs)
+	// provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	// return r.listenToMeshSyncEvents(ctx, provider)
+	return nil, nil
 }
 
 func (r *subscriptionResolver) SubscribePerfProfiles(ctx context.Context, selector model.PageFilter) (<-chan *model.PerfPageProfiles, error) {
@@ -170,6 +174,103 @@ func (r *subscriptionResolver) SubscribePerfResults(ctx context.Context, selecto
 
 func (r *subscriptionResolver) SubscribeBrokerConnection(ctx context.Context) (<-chan bool, error) {
 	return r.subscribeBrokerConnection(ctx)
+}
+
+// this subscription should be re-established to get proper updates when the k8s contexts have changed
+func (r *subscriptionResolver) SubscribeMesheryControllersStatus(ctx context.Context, k8scontextIDs []string) (<-chan []*model.MesheryControllersStatusListItem, error) {
+	resChan := make(chan []*model.MesheryControllersStatusListItem)
+	controllerHandlersPerContext, ok := ctx.Value(models.MesheryControllerHandlersKey).(map[string]map[models.MesheryController]controllers.IMesheryController)
+	if !ok || len(controllerHandlersPerContext) == 0 || controllerHandlersPerContext == nil {
+		er := model.ErrMesheryControllersStatusSubscription(fmt.Errorf("Controller handlers are not configured for any of the contexts"))
+		r.Log.Error(er)
+		return nil, er
+	}
+	statusMapPerCtx := make(map[string]map[models.MesheryController]controllers.MesheryControllerStatus)
+	// initialize the map
+	for ctxId, ctrlHandlers := range controllerHandlersPerContext {
+		for controller, handler := range ctrlHandlers {
+			if _, ok := statusMapPerCtx[ctxId]; !ok {
+				statusMapPerCtx[ctxId] = make(map[models.MesheryController]controllers.MesheryControllerStatus)
+			}
+			statusMapPerCtx[ctxId][controller] = handler.GetStatus()
+		}
+	}
+	go func() {
+		ctrlsStatusList := make([]*model.MesheryControllersStatusListItem, 0)
+		// first send the initial status of the controllers
+		for ctxId, statusMap := range statusMapPerCtx {
+			for controller, status := range statusMap {
+				ctrlsStatusList = append(ctrlsStatusList, &model.MesheryControllersStatusListItem{
+					ContextID:  ctxId,
+					Controller: model.GetInternalController(controller),
+					Status:     model.GetInternalControllerStatus(status),
+				})
+			}
+		}
+		resChan <- ctrlsStatusList
+		ctrlsStatusList = make([]*model.MesheryControllersStatusListItem, 0)
+		// do this every 5 seconds
+		for {
+			for ctxId, ctrlHandlers := range controllerHandlersPerContext {
+				for controller, handler := range ctrlHandlers {
+					newStatus := handler.GetStatus()
+					// if the status has changed, send that to the subscription
+					if newStatus != statusMapPerCtx[ctxId][controller] {
+						ctrlsStatusList = append(ctrlsStatusList, &model.MesheryControllersStatusListItem{
+							ContextID:  ctxId,
+							Controller: model.GetInternalController(controller),
+							Status:     model.GetInternalControllerStatus(newStatus),
+						})
+						resChan <- ctrlsStatusList
+					}
+					// update the status list with newStatus
+					statusMapPerCtx[ctxId][controller] = newStatus
+					ctrlsStatusList = make([]*model.MesheryControllersStatusListItem, 0)
+				}
+			}
+			// establish a watch conncetion to get updates, ideally in meshery-operator
+			time.Sleep(time.Second * 5)
+		}
+
+	}()
+	return resChan, nil
+}
+
+// this subscription should be re-established to get proper updates when the k8s contexts have changed
+func (r *subscriptionResolver) SubscribeMeshSyncEvents(ctx context.Context, k8scontextIDs []string) (<-chan *model.MeshSyncEvent, error) {
+	resChan := make(chan *model.MeshSyncEvent)
+	// get handlers
+	meshSyncDataHandlers, ok := ctx.Value(models.MeshSyncDataHandlersKey).(map[string]models.MeshsyncDataHandler)
+	if !ok || len(meshSyncDataHandlers) == 0 || meshSyncDataHandlers == nil {
+		er := model.ErrMeshSyncEventsSubscription(fmt.Errorf("Meshsync data handlers are not configured for any of the contexts"))
+		r.Log.Error(er)
+		return nil, er
+	}
+	for ctxId, dataHandler := range meshSyncDataHandlers {
+		brokerEventsChan := make(chan *broker.Message)
+		err := dataHandler.ListenToMeshSyncEvents(brokerEventsChan)
+		if err != nil {
+			r.Log.Warn(err)
+			r.Log.Info("skipping meshsync events subscription for contexId: %s", ctxId)
+			continue
+		}
+		go func(ctxId string, brokerEventsChan chan *broker.Message) {
+			for event := range brokerEventsChan {
+				if event.EventType == broker.ErrorEvent {
+					// TODO: Handle errors accordingly
+					continue
+				}
+				// handle the events
+				res := &model.MeshSyncEvent{
+					ContextID: ctxId,
+					Type:      string(event.EventType),
+					Object:    event.Object,
+				}
+				resChan <- res
+			}
+		}(ctxId, brokerEventsChan)
+	}
+	return resChan, nil
 }
 
 // Mutation returns generated.MutationResolver implementation.

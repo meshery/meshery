@@ -17,6 +17,8 @@ import Chip from '@material-ui/core/Chip';
 import MesheryNotification from './MesheryNotification';
 import User from './User';
 import subscribeBrokerStatusEvents from "./graphql/subscriptions/BrokerStatusSubscription"
+import mesheryControllersStatusSubcription from "./graphql/subscriptions/MesheryControllersStatusSubscription"
+import meshSyncEventsSub from "./graphql/subscriptions/MeshSyncEventsSubscription"
 import Slide from '@material-ui/core/Slide';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import { Checkbox, Button } from '@material-ui/core';
@@ -414,7 +416,19 @@ class Header extends React.Component {
       this.setState({ brokerStatus : data?.subscribeBrokerConnection })
     });
     this.setState({ brokerStatusSubscription : brokerStatusSub })
+
+    mesheryControllersStatusSubcription(data => {
+      console.log({ status : data })
+      // this.setState({ brokerStatus: data?.subscribeBrokerConnection })
+    });
+
+    meshSyncEventsSub(data => {
+      console.log({ event : data })
+      // this.setState({ brokerStatus: data?.subscribeBrokerConnection })
+    });
   }
+
+
 
   getSelectedContextId = () => {
     return getFirstCtxIdFromSelectedCtxIds(["all"], this.props.k8sconfig)
