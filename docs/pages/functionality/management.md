@@ -27,7 +27,7 @@ Just as Meshery automates the provisioning of various service meshes, so does it
 
 Users may bring their applications (perform workload onboarding) on the service mesh using the Custom Configuration operation.
 
-Commonly adjoining each service mesh is a sample application that facilitates demonstration of the value of the given service mesh. Meshery allows you to efficiently [install sample applications]({{ site.baseurl }}/guides/sample-apps) across different service meshes.
+Commonly adjoining each service mesh is a sample application that facilitates demonstration of the value of the given service mesh. Meshery allows you to efficiently [install sample applications]({{ site.baseurl }}/guides/deploying-sample-apps) across different service meshes.
 
 ## Configuration Management
 
