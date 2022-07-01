@@ -642,7 +642,6 @@ class Navigator extends React.Component {
           title={name}
           placement="right"
           disableFocusListener={!drawerCollapsed}
-          disableHoverListener={!drawerCollapsed}
           disableTouchListener={!drawerCollapsed}
         >
           <ListItemIcon className={classes.listIcon}>
