@@ -3,16 +3,16 @@ package main
 import "github.com/layer5io/meshkit/errors"
 
 const (
-	ErrRegisteringMesheryOAMTraitsCode = "code1"
-	ErrRegisteringMesheryOAMWorkloadsCode = "code2"
-	ErrRetrievingUserHomeDirectoryCode = "code3"
-	ErrCreatingUserDataDirectoryCode = "code4"
-	ErrCreatingMapPreferencePersisterInstanceCode = "code5"
-	ErrDatabaseAutoMigrationCode = "code6"
-	ErrInvalidURLSkippingProviderCode = "code7"
-	ErrListenAndServeCode = "code8"
-	ErrCleaningUpLocalProviderCode = "code9"
-	ErrClosingDatabaseInstanceCode = "code10"
+	ErrRegisteringMesheryOAMTraitsCode            = "2241"
+	ErrRegisteringMesheryOAMWorkloadsCode         = "2242"
+	ErrRetrievingUserHomeDirectoryCode            = "2243"
+	ErrCreatingUserDataDirectoryCode              = "2244"
+	ErrCreatingMapPreferencePersisterInstanceCode = "2245"
+	ErrDatabaseAutoMigrationCode                  = "2246"
+	ErrInvalidURLSkippingProviderCode             = "2247"
+	ErrListenAndServeCode                         = "2248"
+	ErrCleaningUpLocalProviderCode                = "2249"
+	ErrClosingDatabaseInstanceCode                = "2250"
 )
 
 func ErrRegisteringMesheryOAMTraits(err error) error {
