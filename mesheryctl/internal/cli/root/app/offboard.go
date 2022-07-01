@@ -7,10 +7,8 @@ import (
 	"os"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -21,17 +19,13 @@ var offboardCmd = &cobra.Command{
 	Long:  `Offboard application will trigger deletion of the application file`,
 	Args:  cobra.MinimumNArgs(0),
 	Example: `
-	Offboard application by providing file path
-	mesheryctl app offboard -f <filepath>
+// Offboard application by providing file path
+mesheryctl app offboard -f [filepath]
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			return errors.Wrap(err, "error processing config")
-		}
-		// set default tokenpath for app offboard command.
-		if tokenPath == "" {
-			tokenPath = constants.GetCurrentAuthToken()
 		}
 
 		// Read file
@@ -41,12 +35,7 @@ var offboardCmd = &cobra.Command{
 		}
 
 		client := &http.Client{}
-		req, err := http.NewRequest("DELETE", mctlCfg.GetBaseMesheryURL()+"/api/application/deploy", fileReader)
-		if err != nil {
-			return err
-		}
-
-		err = utils.AddAuthDetails(req, tokenPath)
+		req, err := utils.NewRequest("DELETE", mctlCfg.GetBaseMesheryURL()+"/api/application/deploy", fileReader)
 		if err != nil {
 			return err
 		}
@@ -62,7 +51,7 @@ var offboardCmd = &cobra.Command{
 			return err
 		}
 
-		log.Infof(string(body))
+		utils.Log.Info(string(body))
 
 		return nil
 	},

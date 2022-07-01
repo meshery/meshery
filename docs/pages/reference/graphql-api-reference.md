@@ -2,7 +2,6 @@
 layout: default
 title: "GraphQL API Reference"
 permalink: reference/graphql-apis
-redirect_from: reference/graphql-apis/
 type: Reference
 abstract: 'Meshery GraphQL API Documentation and Reference'
 ---
@@ -30,11 +29,23 @@ Check is Meshey Server is connected to NATS, if not connect to the NATS Server.
 
 ###### **Returns** [`Status!`](#status).
 
+#### **Arguments**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="queryconnecttonatsk8scontextid"></a>`k8scontextID` | [`String!`](#string) |  |
+
 ### `Query.deployMeshsync`
 
 Check the Meshsync Status and deploy if not enabled.
 
 ###### **Returns** [`Status!`](#status).
+
+#### **Arguments**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="querydeploymeshsynck8scontextid"></a>`k8scontextID` | [`String!`](#string) | what to do in-order to deploy meshsync on multiple clusters/contexts. |
 
 ### `Query.fetchAllResults`
 
@@ -47,6 +58,18 @@ Query for fetching all results for profile ID.
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | <a id="queryfetchallresultsselector"></a>`selector` | [`PageFilter!`](#pagefilter) |  |
+
+### `Query.fetchPatterns`
+
+Query for fetching all patterns with selector.
+
+###### **Returns** [`PatternPageResult!`](#patternpageresult).
+
+#### **Arguments**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="queryfetchpatternsselector"></a>`selector` | [`PageFilter!`](#pagefilter) |  |
 
 ### `Query.fetchResults`
 
@@ -71,13 +94,19 @@ Query details about Addons available (Eg. Prometheus and Grafana).
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| <a id="querygetavailableaddonsselector"></a>`selector` | [`MeshType`](#meshtype) | Select Mesh Type. |
+| <a id="querygetavailableaddonsfilter"></a>`filter` | [`ServiceMeshFilter`](#servicemeshfilter) | Select Mesh Type. |
 
 ### `Query.getAvailableNamespaces`
 
 Query available Namesapces in your cluster.
 
 ###### **Returns** [`[NameSpace!]!`](#namespace).
+
+#### **Arguments**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="querygetavailablenamespacesk8sclusterids"></a>`k8sClusterIDs` | [`[String!]`](#string) |  |
 
 ### `Query.getControlPlanes`
 
@@ -103,11 +132,31 @@ Query Data Plane information for a Service Mesh (or all) in your cluster.
 | ---- | ---- | ----------- |
 | <a id="querygetdataplanesfilter"></a>`filter` | [`ServiceMeshFilter`](#servicemeshfilter) | Filter Control Plane Query. |
 
+### `Query.getKubectlDescribe`
+
+Query for getting kubectl describe details with meshkit.
+
+###### **Returns** [`KctlDescribeDetails!`](#kctldescribedetails).
+
+#### **Arguments**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="querygetkubectldescribekind"></a>`kind` | [`String!`](#string) |  |
+| <a id="querygetkubectldescribename"></a>`name` | [`String!`](#string) |  |
+| <a id="querygetkubectldescribenamespace"></a>`namespace` | [`String!`](#string) |  |
+
 ### `Query.getMeshsyncStatus`
 
 Check the Meshsync Status.
 
 ###### **Returns** [`OperatorControllerStatus!`](#operatorcontrollerstatus).
+
+#### **Arguments**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="querygetmeshsyncstatusk8scontextid"></a>`k8scontextID` | [`String!`](#string) |  |
 
 ### `Query.getNatsStatus`
 
@@ -115,11 +164,23 @@ Check is Meshey Server is connected to NATS.
 
 ###### **Returns** [`OperatorControllerStatus!`](#operatorcontrollerstatus).
 
+#### **Arguments**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="querygetnatsstatusk8scontextid"></a>`k8scontextID` | [`String!`](#string) |  |
+
 ### `Query.getOperatorStatus`
 
 Query status of Meshery Operator in your cluster.
 
 ###### **Returns** [`OperatorStatus`](#operatorstatus).
+
+#### **Arguments**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="querygetoperatorstatusk8scontextid"></a>`k8scontextID` | [`String!`](#string) |  |
 
 ### `Query.getPerfResult`
 
@@ -145,6 +206,48 @@ Query for fetching all results for profile ID.
 | ---- | ---- | ----------- |
 | <a id="querygetperformanceprofilesselector"></a>`selector` | [`PageFilter!`](#pagefilter) |  |
 
+### `Query.getScopes`
+
+Query for getting scopes.
+
+###### **Returns** [`[OAMCapability]`](#oamcapability).
+
+#### **Arguments**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="querygetscopesid"></a>`id` | [`ID`](#id) |  |
+| <a id="querygetscopesname"></a>`name` | [`String`](#string) |  |
+| <a id="querygetscopestrim"></a>`trim` | [`Boolean`](#boolean) |  |
+
+### `Query.getTraits`
+
+Query for getting traits.
+
+###### **Returns** [`[OAMCapability]`](#oamcapability).
+
+#### **Arguments**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="querygettraitsid"></a>`id` | [`ID`](#id) |  |
+| <a id="querygettraitsname"></a>`name` | [`String`](#string) |  |
+| <a id="querygettraitstrim"></a>`trim` | [`Boolean`](#boolean) |  |
+
+### `Query.getWorkloads`
+
+Query for getting workloads.
+
+###### **Returns** [`[OAMCapability]`](#oamcapability).
+
+#### **Arguments**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="querygetworkloadsid"></a>`id` | [`ID`](#id) |  |
+| <a id="querygetworkloadsname"></a>`name` | [`String`](#string) |  |
+| <a id="querygetworkloadstrim"></a>`trim` | [`Boolean`](#boolean) |  |
+
 ### `Query.resyncCluster`
 
 Query to resync the cluster discovery.
@@ -155,6 +258,7 @@ Query to resync the cluster discovery.
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
+| <a id="queryresyncclusterk8scontextid"></a>`k8scontextID` | [`String!`](#string) |  |
 | <a id="queryresyncclusterselector"></a>`selector` | [`ReSyncActions`](#resyncactions) | Selector to control several resync actions. |
 
 ## `Mutation` type
@@ -162,21 +266,6 @@ Query to resync the cluster discovery.
 The `Mutation` type contains all the mutations you can execute.
 
 All mutations receive their arguments in a single input object named `input`.
-
-### `Mutation.changeAddonStatus`
-
-Change the Addon Status.
-
-###### **Input type:** `AddonStatusInput`
-
-#### **Arguments**
-
-| Name | Type | Description |
-| ---- | ---- | ----------- |
-| <a id="mutationchangeaddonstatusselector"></a>`selector` | [`MeshType`](#meshtype) | Filter by Serice Mesh. |
-| <a id="mutationchangeaddonstatustargetstatus"></a>`targetStatus` | [`Status!`](#status) | Desired Status. |
-
-###### **Returns** [`Status!`](#status).
 
 ### `Mutation.changeOperatorStatus`
 
@@ -188,6 +277,7 @@ Change the Operator Status.
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
+| <a id="mutationchangeoperatorstatuscontextid"></a>`contextID` | [`String!`](#string) |  |
 | <a id="mutationchangeoperatorstatustargetstatus"></a>`targetStatus` | [`Status!`](#status) | Desired status for Meshery Operator. |
 
 ###### **Returns** [`Status!`](#status).
@@ -206,7 +296,7 @@ Listen to changes in status of Addons available (Eg. Prometheus and Grafana).
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| <a id="subscriptionlistentoaddonstateselector"></a>`selector` | [`MeshType`](#meshtype) | Select Mesh Type. |
+| <a id="subscriptionlistentoaddonstatefilter"></a>`filter` | [`ServiceMeshFilter`](#servicemeshfilter) | Select Mesh Type. |
 
 ### `Subscription.listenToControlPlaneState`
 
@@ -236,25 +326,56 @@ Listen to changes in Data Plane data for a Service Mesh (or all) in your cluster
 
 Listen to changes in the list of available Namesapces in your cluster.
 
-###### **Returns** [`OperatorControllerStatus!`](#operatorcontrollerstatus).
-
-### `Subscription.listenToOperatorState`
-
-Listen to changes in status of Meshery Operator in your cluster.
-
-###### **Returns** [`OperatorStatus!`](#operatorstatus).
-
-### `Subscription.subscribePerfProfile`
-
-Listen to changes in Performance Profile.
-
-###### **Returns** [`MesheryResult!`](#mesheryresult).
+###### **Returns** [`OperatorControllerStatusPerK8sContext`](#operatorcontrollerstatusperk8scontext).
 
 #### **Arguments**
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| <a id="subscriptionsubscribeperfprofileprofileid"></a>`profileID` | [`String!`](#string) |  |
+| <a id="subscriptionlistentomeshsynceventsk8scontextids"></a>`k8scontextIDs` | [`[String!]`](#string) |  |
+
+### `Subscription.listenToOperatorState`
+
+Listen to changes in status of Meshery Operator in your cluster.
+
+###### **Returns** [`OperatorStatusPerK8sContext`](#operatorstatusperk8scontext).
+
+#### **Arguments**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="subscriptionlistentooperatorstatek8scontextids"></a>`k8scontextIDs` | [`[String!]`](#string) |  |
+
+### `Subscription.subscribeBrokerConnection`
+
+Listen to changes in Broker (NATS) Connection.
+
+###### **Returns** [`Boolean!`](#boolean).
+
+### `Subscription.subscribePerfProfiles`
+
+Listen to changes in Performance Profiles.
+
+###### **Returns** [`PerfPageProfiles!`](#perfpageprofiles).
+
+#### **Arguments**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="subscriptionsubscribeperfprofilesselector"></a>`selector` | [`PageFilter!`](#pagefilter) |  |
+
+### `Subscription.subscribePerfResults`
+
+Listen to all results for profile ID.
+
+###### **Returns** [`PerfPageResult!`](#perfpageresult).
+
+#### **Arguments**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="subscriptionsubscribeperfresultsprofileid"></a>`profileID` | [`String!`](#string) |  |
+| <a id="subscriptionsubscribeperfresultsselector"></a>`selector` | [`PageFilter!`](#pagefilter) |  |
 
 ## Object types
 
@@ -277,7 +398,6 @@ Deatils about the Addon Component.
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| <a id="addonlistendpoint"></a>`endpoint` | [`String!`](#string) | Endpoint (if applicable). |
 | <a id="addonlistname"></a>`name` | [`String!`](#string) | Name. |
 | <a id="addonlistowner"></a>`owner` | [`String!`](#string) | Owner. |
 
@@ -365,6 +485,15 @@ Data Plane for a particular Mesh.
 | <a id="errorcode"></a>`code` | [`String!`](#string) | Error Code. |
 | <a id="errordescription"></a>`description` | [`String!`](#string) | Error Details. |
 
+### `KctlDescribeDetails`
+
+#### **Fields**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="kctldescribedetailsctxid"></a>`ctxid` | [`String`](#string) |  |
+| <a id="kctldescribedetailsdescribe"></a>`describe` | [`String`](#string) |  |
+
 ### `MesheryResult`
 
 #### **Fields**
@@ -394,6 +523,19 @@ Type to define a k8s Namespace.
 | ---- | ---- | ----------- |
 | <a id="namespacenamespace"></a>`namespace` | [`String!`](#string) | Namespace Name. |
 
+### `OAMCapability`
+
+#### **Fields**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="oamcapabilityhost"></a>`host` | [`String`](#string) |  |
+| <a id="oamcapabilityid"></a>`id` | [`String`](#string) |  |
+| <a id="oamcapabilitymetadata"></a>`metadata` | [`Any`](#any) |  |
+| <a id="oamcapabilityoam_definition"></a>`oam_definition` | [`Any`](#any) |  |
+| <a id="oamcapabilityoam_ref_schema"></a>`oam_ref_schema` | [`String`](#string) |  |
+| <a id="oamcapabilityrestricted"></a>`restricted` | [`Boolean`](#boolean) |  |
+
 ### `OperatorControllerStatus`
 
 Controllers of Meshery Operator.
@@ -402,10 +544,20 @@ Controllers of Meshery Operator.
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
+| <a id="operatorcontrollerstatuscontextid"></a>`contextID` | [`String!`](#string) |  |
 | <a id="operatorcontrollerstatuserror"></a>`error` | [`Error`](#error) | Controller Error Log. |
 | <a id="operatorcontrollerstatusname"></a>`name` | [`String!`](#string) | Controller Name. |
 | <a id="operatorcontrollerstatusstatus"></a>`status` | [`Status!`](#status) | Controller Status. |
 | <a id="operatorcontrollerstatusversion"></a>`version` | [`String!`](#string) | Controller Verison. |
+
+### `OperatorControllerStatusPerK8sContext`
+
+#### **Fields**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="operatorcontrollerstatusperk8scontextoperatorcontrollerstatus"></a>`OperatorControllerStatus` | [`OperatorControllerStatus!`](#operatorcontrollerstatus) |  |
+| <a id="operatorcontrollerstatusperk8scontextcontextid"></a>`contextID` | [`String!`](#string) |  |
 
 ### `OperatorStatus`
 
@@ -415,10 +567,58 @@ Status of Meshery Operator and its controllers.
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
+| <a id="operatorstatuscontextid"></a>`contextID` | [`String!`](#string) |  |
 | <a id="operatorstatuscontrollers"></a>`controllers` | [`[OperatorControllerStatus!]!`](#operatorcontrollerstatus) | Details about various Controllers of Meshery Operator. |
 | <a id="operatorstatuserror"></a>`error` | [`Error`](#error) | Error Logs encountered by Meshery Operator. |
 | <a id="operatorstatusstatus"></a>`status` | [`Status!`](#status) | Status of Meshery Operator. |
 | <a id="operatorstatusversion"></a>`version` | [`String!`](#string) | Verion of Meshery Operator. |
+
+### `OperatorStatusPerK8sContext`
+
+#### **Fields**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="operatorstatusperk8scontextcontextid"></a>`contextID` | [`String!`](#string) |  |
+| <a id="operatorstatusperk8scontextoperatorstatus"></a>`operatorStatus` | [`OperatorStatus!`](#operatorstatus) |  |
+
+### `PatternLocation`
+
+#### **Fields**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="patternlocationbranch"></a>`branch` | [`String`](#string) |  |
+| <a id="patternlocationhost"></a>`host` | [`String`](#string) |  |
+| <a id="patternlocationpath"></a>`path` | [`String`](#string) |  |
+| <a id="patternlocationtype"></a>`type` | [`String`](#string) |  |
+
+### `PatternPageResult`
+
+#### **Fields**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="patternpageresultpage"></a>`page` | [`Int!`](#int) |  |
+| <a id="patternpageresultpage_size"></a>`page_size` | [`Int!`](#int) |  |
+| <a id="patternpageresultpatterns"></a>`patterns` | [`[PatternResult]`](#patternresult) |  |
+| <a id="patternpageresulttotal_count"></a>`total_count` | [`Int!`](#int) |  |
+
+### `PatternResult`
+
+#### **Fields**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="patternresultcansupport"></a>`canSupport` | [`Boolean!`](#boolean) |  |
+| <a id="patternresultcreated_at"></a>`created_at` | [`String`](#string) |  |
+| <a id="patternresulterrmsg"></a>`errmsg` | [`String`](#string) |  |
+| <a id="patternresultid"></a>`id` | [`ID!`](#id) |  |
+| <a id="patternresultlocation"></a>`location` | [`PatternLocation!`](#patternlocation) |  |
+| <a id="patternresultname"></a>`name` | [`String!`](#string) |  |
+| <a id="patternresultpattern_file"></a>`pattern_file` | [`String!`](#string) |  |
+| <a id="patternresultupdated_at"></a>`updated_at` | [`String`](#string) |  |
+| <a id="patternresultuser_id"></a>`user_id` | [`String!`](#string) |  |
 
 ### `PerfPageProfiles`
 
@@ -483,6 +683,7 @@ Service Mesh Types.
 | ----- | ----------- |
 | <a id="meshtypeall_mesh"></a>`ALL_MESH` | All meshes that Meshery supports. |
 | <a id="meshtypeapp_mesh"></a>`APP_MESH` | AWS App Mesh. |
+| <a id="meshtypecilium_service_mesh"></a>`CILIUM_SERVICE_MESH` | Cilium Service Mesh. |
 | <a id="meshtypecitrix_service_mesh"></a>`CITRIX_SERVICE_MESH` | Citrix Service Mesh. |
 | <a id="meshtypeconsul"></a>`CONSUL` | Consul by HashiCorp. |
 | <a id="meshtypeinvalid_mesh"></a>`INVALID_MESH` | Invalid Mesh. |
@@ -549,6 +750,18 @@ see the associated mutation type above.
 
 For more information, read about [Scalar Types](https://graphql.org/learn/schema/#input-types) on `graphql.org`.
 
+### `AddonStatusInput`
+
+Input for changing Addon Status.
+
+#### **Arguments**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="addonstatusinputk8scontextid"></a>`k8scontextID` | [`String!`](#string) | kubernetes context ID. |
+| <a id="addonstatusinputselector"></a>`selector` | [`MeshType`](#meshtype) | Filter by Serice Mesh. |
+| <a id="addonstatusinputtargetstatus"></a>`targetStatus` | [`Status!`](#status) | Desired Status. |
+
 ### `PageFilter`
 
 #### **Arguments**
@@ -572,6 +785,7 @@ Type ReSyncActions define the actions involved during resync.
 | ---- | ---- | ----------- |
 | <a id="resyncactionsresync"></a>`ReSync` | [`String!`](#string) |  |
 | <a id="resyncactionscleardb"></a>`clearDB` | [`String!`](#string) |  |
+| <a id="resyncactionshardreset"></a>`hardReset` | [`String!`](#string) |  |
 
 ### `ServiceMeshFilter`
 
@@ -581,4 +795,5 @@ Filter Control Plane Query.
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
+| <a id="servicemeshfilterk8sclusterids"></a>`k8sClusterIDs` | [`[String!]`](#string) |  |
 | <a id="servicemeshfiltertype"></a>`type` | [`MeshType`](#meshtype) | Filter by Service Mesh. |

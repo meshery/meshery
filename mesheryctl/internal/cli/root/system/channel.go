@@ -46,7 +46,11 @@ var viewCmd = &cobra.Command{
 	Use:   "view",
 	Short: "view release channel and version",
 	Long:  `View release channel and version of context in focus`,
-	Args:  cobra.NoArgs,
+	Example: `
+// View current release channel
+mesheryctl system channel view
+	`,
+	Args: cobra.NoArgs,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
@@ -85,7 +89,11 @@ var setCmd = &cobra.Command{
 	Use:   "set [stable|stable-version|edge|edge-version]",
 	Short: "set release channel and version",
 	Long:  `Set release channel and version of context in focus`,
-	Args:  cobra.ExactArgs(1),
+	Example: `
+// Subscribe to release channel or version
+mesheryctl system channel set [stable|stable-version|edge|edge-version]
+	`,
+	Args: cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 
 		mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
@@ -152,7 +160,11 @@ var switchCmd = &cobra.Command{
 	Use:   "switch [stable|stable-version|edge|edge-version]",
 	Short: "switch release channel and version",
 	Long:  `Switch release channel and version of context in focus`,
-	Args:  cobra.ExactArgs(1),
+	Example: `
+// Switch between release channels
+mesheryctl system channel switch [stable|stable-version|edge|edge-version]
+	`,
+	Args: cobra.ExactArgs(1),
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
 		hcOptions := &HealthCheckOptions{
@@ -208,6 +220,10 @@ var channelCmd = &cobra.Command{
 	Short: "Switch between release channels",
 	Long:  `Subscribe to a release channel. Choose between either 'stable' or 'edge' channels.`,
 	Args:  cobra.NoArgs,
+	Example: `
+// Subscribe to release channel or version
+mesheryctl system channel [stable|stable-version|edge|edge-version]
+	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
 		if err != nil {

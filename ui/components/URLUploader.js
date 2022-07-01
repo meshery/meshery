@@ -1,8 +1,8 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import LinkIcon from '@material-ui/icons/Link';
-import { Tooltip, IconButton, TextField,Button, Grid } from '@material-ui/core';
-import { makeStyles,  MuiThemeProvider  } from '@material-ui/core/styles';
-import {  createTheme } from '@material-ui/core/styles';
+import { Tooltip, IconButton, TextField, Button, Grid } from '@material-ui/core';
+import { makeStyles, MuiThemeProvider } from '@material-ui/core/styles';
+import { createTheme } from '@material-ui/core/styles';
 import { URLValidator } from '../utils/URLValidator';
 
 
@@ -48,7 +48,15 @@ import GenericModal from "./GenericModal";
 const URLUploader = ({ onSubmit }) => {
   const classes = styles();
   const [open, setOpen] = React.useState(false);
-  const [input, setInput] = React.useState('');
+  const [input, setInput] = React.useState();
+  const [isError, setIsError] = React.useState(false);
+
+  useEffect(() => {
+    if (input) {
+      setIsError(!URLValidator(input))
+    }
+  }, [input])
+
   const handleOpen = () => {
     setOpen(true);
   };
@@ -56,14 +64,9 @@ const URLUploader = ({ onSubmit }) => {
   const handleClose = () => {
     setOpen(false);
   };
-  const validURL = (str) =>  {
-    return URLValidator(str);
-  }
-  const handleError = (input) => {
-    console.log(input + ' is not valid url')
-  }
+
   const handleSubmit = () => {
-    validURL(input) ? onSubmit(input) : handleError(input);
+    onSubmit(input)
     handleClose()
   }
 
@@ -93,13 +96,19 @@ const URLUploader = ({ onSubmit }) => {
                   </Grid>
                   <Grid
                     item xs={12}>
-                    <TextField id="standard-basic" label="Paste URL here" fullWidth onChange={(e) => setInput(e.target.value) }/>
+                    <TextField
+                      error={isError}
+                      helperText={isError && "Invalid URL"}
+                      variant="outlined"
+                      label="Paste URL here"
+                      fullWidth
+                      onChange={(e) => setInput(e.target.value)} />
                   </Grid>
                   <Grid item xs={12} sm={6}>
                     <Button fullWidth variant="contained" onClick={handleClose}>Cancel</Button>
                   </Grid>
                   <Grid item xs={12} sm={6}>
-                    <Button fullWidth variant="contained" color="primary" onClick={() => handleSubmit()}>Import</Button>
+                    <Button disabled={isError || !input} fullWidth variant="contained" color="primary" onClick={() => handleSubmit()}>Import</Button>
                   </Grid>
                 </Grid>
 

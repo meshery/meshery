@@ -10,6 +10,7 @@ import (
 	"net/url"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"fortio.org/fortio/periodic"
@@ -362,135 +363,133 @@ func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, profil
 
 	resultsMap["load-generator"] = loadTestOptions.LoadGenerator
 
-	if prefObj.K8SConfig != nil {
-		nodesChan := make(chan []*models.K8SNode)
-		versionChan := make(chan string)
-		installedMeshesChan := make(chan map[string][]corev1.Pod)
-
-		go func() {
-			var nodes []*models.K8SNode
-			var err error
-			if len(prefObj.K8SConfig.Nodes) == 0 {
-				nodes, err = helpers.FetchKubernetesNodes(prefObj.K8SConfig.Config, prefObj.K8SConfig.ContextName)
-				if err != nil {
-					err = errors.Wrap(err, "unable to ping kubernetes")
-					// logrus.Error(err)
-					h.log.Warn(ErrFetchKubernetes(err))
-					// return
-				}
-			}
-			nodesChan <- nodes
-		}()
-		go func() {
-			var serverVersion string
-			var err error
-			if prefObj.K8SConfig.ServerVersion == "" {
-				serverVersion, err = helpers.FetchKubernetesVersion(prefObj.K8SConfig.Config, prefObj.K8SConfig.ContextName)
-				if err != nil {
-					h.log.Error(ErrFetchKubernetes(err))
-				}
-			}
-			versionChan <- serverVersion
-		}()
-		go func() {
-			installedMeshes, err := helpers.ScanKubernetes(prefObj.K8SConfig.Config, prefObj.K8SConfig.ContextName)
-			if err != nil {
-				h.log.Warn(ErrFetchKubernetes(err))
-			}
-			installedMeshesChan <- installedMeshes
-		}()
-
-		prefObj.K8SConfig.Nodes = <-nodesChan
-		prefObj.K8SConfig.ServerVersion = <-versionChan
-
-		if prefObj.K8SConfig.ServerVersion != "" && len(prefObj.K8SConfig.Nodes) > 0 {
-			resultsMap["kubernetes"] = map[string]interface{}{
-				"server_version": prefObj.K8SConfig.ServerVersion,
-				"nodes":          prefObj.K8SConfig.Nodes,
-			}
-		}
-		installedMeshes := <-installedMeshesChan
-		if len(installedMeshes) > 0 {
-			resultsMap["detected-meshes"] = installedMeshes
-		}
-	}
-	respChan <- &models.LoadTestResponse{
-		Status:  models.LoadTestInfo,
-		Message: "Obtained the needed metadatas, attempting to persist the result",
-	}
-
-	result := &models.MesheryResult{
-		Name:   testName,
-		Mesh:   meshName,
-		Result: resultsMap,
-	}
-
-	resultID, err := provider.PublishResults(req, result, profileID)
-	if err != nil {
-		h.log.Error(ErrLoadTest(err, "unable to persist"))
-		respChan <- &models.LoadTestResponse{
-			Status:  models.LoadTestError,
-			Message: "unable to persist",
-		}
+	mk8sContexts, ok := req.Context().Value(models.KubeClustersKey).([]models.K8sContext)
+	if !ok || len(mk8sContexts) == 0 {
+		h.log.Error(ErrInvalidK8SConfig)
 		return
 	}
-	respChan <- &models.LoadTestResponse{
-		Status:  models.LoadTestInfo,
-		Message: "Done persisting the load test results.",
+	var wg sync.WaitGroup
+	for _, k8context := range mk8sContexts {
+		wg.Add(1)
+		go func(mk8scontext *models.K8sContext) {
+			defer wg.Done()
+			// Get the k8sconfig
+			k8sconfig, err := mk8scontext.GenerateKubeConfig()
+			if err == nil {
+				nodesChan := make(chan []*models.K8SNode)
+				versionChan := make(chan string)
+				installedMeshesChan := make(chan map[string][]corev1.Pod)
+
+				go func() {
+					var nodes []*models.K8SNode
+					var err error
+					nodes, err = helpers.FetchKubernetesNodes(k8sconfig, mk8scontext.Name)
+					if err != nil {
+						err = errors.Wrap(err, "unable to ping kubernetes for context: "+mk8scontext.ID)
+						h.log.Warn(ErrFetchKubernetes(err))
+					}
+
+					nodesChan <- nodes
+				}()
+				go func() {
+					var serverVersion string
+					var err error
+					serverVersion, err = helpers.FetchKubernetesVersion(k8sconfig, mk8scontext.Name)
+					if err != nil {
+						h.log.Error(ErrFetchKubernetes(err))
+					}
+
+					versionChan <- serverVersion
+				}()
+				go func() {
+					installedMeshes, err := helpers.ScanKubernetes(k8sconfig, mk8scontext.Name)
+					if err != nil {
+						h.log.Warn(ErrFetchKubernetes(err))
+					}
+					installedMeshesChan <- installedMeshes
+				}()
+
+				serverVersion := <-versionChan
+				nodes := <-nodesChan
+
+				resultsMap["kubernetes"] = map[string]interface{}{
+					"server_version": serverVersion,
+					"nodes":          nodes,
+				}
+
+				installedMeshes := <-installedMeshesChan
+				if len(installedMeshes) > 0 {
+					resultsMap["detected-meshes"] = installedMeshes
+				}
+			}
+
+			respChan <- &models.LoadTestResponse{
+				Status:  models.LoadTestInfo,
+				Message: "Obtained the needed metadatas, attempting to persist the result for cluster " + mk8scontext.Name,
+			}
+
+			result := &models.MesheryResult{
+				Name:   testName,
+				Mesh:   meshName,
+				Result: resultsMap,
+			}
+
+			resultID, err := provider.PublishResults(req, result, profileID)
+			if err != nil {
+				h.log.Error(ErrLoadTest(err, "unable to persist in cluster"))
+				respChan <- &models.LoadTestResponse{
+					Status:  models.LoadTestError,
+					Message: "unable to persist",
+				}
+				return
+			}
+			respChan <- &models.LoadTestResponse{
+				Status:  models.LoadTestInfo,
+				Message: "Done persisting the load test results.",
+			}
+
+			var promURL string
+			if prefObj.Prometheus != nil {
+				promURL = prefObj.Prometheus.PrometheusURL
+			}
+
+			tokenVal, _ := provider.GetProviderToken(req)
+
+			h.log.Debug("promURL: , testUUID: , resultID: ", promURL, testUUID, resultID)
+			if promURL != "" && testUUID != "" && resultID != "" &&
+				(provider.GetProviderType() == models.RemoteProviderType ||
+					(provider.GetProviderType() == models.LocalProviderType && prefObj.AnonymousPerfResults)) {
+				_ = h.task.WithArgs(ctx, &models.SubmitMetricsConfig{
+					TestUUID:  testUUID,
+					ResultID:  resultID,
+					PromURL:   promURL,
+					StartTime: resultInst.StartTime,
+					EndTime:   resultInst.StartTime.Add(resultInst.ActualDuration),
+					TokenVal:  tokenVal,
+					Provider:  provider,
+				})
+			}
+
+			key := uuid.FromStringOrNil(resultID)
+			if key == uuid.Nil {
+				key, _ = uuid.NewV4()
+			}
+			result.ID = key
+			respChan <- &models.LoadTestResponse{
+				Status: models.LoadTestSuccess,
+				Result: result,
+			}
+
+			if h.config.PerformanceChannel != nil {
+				h.config.PerformanceChannel <- struct{}{}
+			}
+
+			if h.config.PerformanceResultChannel != nil {
+				h.config.PerformanceResultChannel <- struct{}{}
+			}
+		}(&k8context)
 	}
-
-	var promURL string
-	if prefObj.Prometheus != nil {
-		promURL = prefObj.Prometheus.PrometheusURL
-	}
-
-	tokenVal, _ := provider.GetProviderToken(req)
-
-	h.log.Debug("promURL: , testUUID: , resultID: ", promURL, testUUID, resultID)
-	if promURL != "" && testUUID != "" && resultID != "" &&
-		(provider.GetProviderType() == models.RemoteProviderType ||
-			(provider.GetProviderType() == models.LocalProviderType && prefObj.AnonymousPerfResults)) {
-		_ = h.task.WithArgs(ctx, &models.SubmitMetricsConfig{
-			TestUUID:  testUUID,
-			ResultID:  resultID,
-			PromURL:   promURL,
-			StartTime: resultInst.StartTime,
-			EndTime:   resultInst.StartTime.Add(resultInst.ActualDuration),
-			TokenVal:  tokenVal,
-			Provider:  provider,
-		})
-	}
-
-	key := uuid.FromStringOrNil(resultID)
-	if key == uuid.Nil {
-		key, _ = uuid.NewV4()
-	}
-	result.ID = key
-	respChan <- &models.LoadTestResponse{
-		Status: models.LoadTestSuccess,
-		Result: result,
-	}
-
-	// publish result to graphql subscription
-	// startTime := fmt.Sprintf("%v", result.TestStartTime)
-	// serverBoardConfig := fmt.Sprintf("%v", result.ServerBoardConfig)
-	// serverMetrics := fmt.Sprintf("%v", result.ServerMetrics)
-	// performanceProfile := fmt.Sprintf("%v", result.PerformanceProfileInfo.ID)
-
-	// h.config.PerformanceChannels[performanceProfileID] <- &graphqlModel.MesheryResult{
-	// 	MesheryID:          &resultID,
-	// 	Name:               &result.Name,
-	// 	Mesh:               &result.Mesh,
-	// 	PerformanceProfile: &performanceProfile,
-	// 	TestID:             &result.TestID,
-	// 	RunnerResults:      result.Result,
-	// 	ServerMetrics:      &serverMetrics,
-	// 	ServerBoardConfig:  &serverBoardConfig,
-	// 	TestStartTime:      &startTime,
-	// 	UserID:             &result.UserID,
-	// 	UpdatedAt:          &result.UpdatedAt,
-	// 	CreatedAt:          &result.CreatedAt,
-	// }
+	wg.Wait()
 }
 
 // CollectStaticMetrics is used for collecting static metrics from prometheus and submitting it to Remote Provider

@@ -84,6 +84,10 @@ collections:
     output: true
     permalink: /service-meshes/:collection/:path
     name: adapters
+  compatibility:
+    output: true
+    permalink: /project/:collection/:path
+    name: compatibility   
   guides:
     output: true
     permalink: /:collection/:path

@@ -36,12 +36,27 @@ import (
 	"github.com/layer5io/meshery-operator/api/v1alpha1"
 )
 
+var (
+	// forceDelete used to clean-up meshery resources forcefully
+	forceDelete bool
+)
+
 // stopCmd represents the stop command
 var stopCmd = &cobra.Command{
 	Use:   "stop",
 	Short: "Stop Meshery",
-	Long:  `Stop all Meshery containers / remove all Meshery pods.`,
+	Long:  `Stop all Meshery containers / remove all Meshery resources.`,
 	Args:  cobra.NoArgs,
+	Example: `
+// Stop Meshery
+mesheryctl system stop
+
+// Reset Meshery's configuration file to default settings.
+mesheryctl system stop --reset
+
+// Stop Meshery forcefully (use it when system stop doesn't work)
+mesheryctl system stop --force
+	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
 		hcOptions := &HealthCheckOptions{
@@ -81,12 +96,13 @@ func stop() error {
 		return err
 	}
 
-	ok, err := utils.IsMesheryRunning(currCtx.GetPlatform())
+	ok, err := utils.AreMesheryComponentsRunning(currCtx.GetPlatform())
 	if err != nil {
 		return err
 	}
-	if !ok {
-		log.Info("Meshery is not running. Nothing to stop.")
+	// if --force passed possibly no deployments running but other stale resource present
+	if !ok && !forceDelete {
+		log.Info("Meshery resources are not running. Nothing to stop.")
 		return nil
 	}
 
@@ -99,7 +115,7 @@ func stop() error {
 			}
 		}
 
-		log.Info("Stopping Meshery...")
+		log.Info("Stopping Meshery resources...")
 
 		// Stop all Docker containers
 		stop := exec.Command("docker-compose", "-f", utils.DockerComposeFile, "stop")
@@ -117,6 +133,7 @@ func stop() error {
 		if err := stop.Run(); err != nil {
 			return ErrStopMeshery(err)
 		}
+		log.Info("Meshery resources is stopped.")
 	case "kubernetes":
 		client, err := meshkitkube.New([]byte(""))
 		if err != nil {
@@ -136,7 +153,7 @@ func stop() error {
 			return nil
 		}
 
-		log.Info("Stopping Meshery...")
+		log.Info("Stopping Meshery resources...")
 
 		// Delete the CR instances for brokers and meshsyncs
 		// this needs to be executed before deleting the helm release, or the CR instances cannot be found for some reason
@@ -144,16 +161,38 @@ func stop() error {
 			return err
 		}
 
-		// Delete the helm release
-		if err = client.ApplyHelmChart(meshkitkube.ApplyHelmChartConfig{
-			Namespace: utils.MesheryNamespace,
-			ChartLocation: meshkitkube.HelmChartLocation{
-				Repository: utils.HelmChartURL,
-				Chart:      utils.HelmChartName,
-			},
-			Action: meshkitkube.UNINSTALL,
-		}); err != nil {
-			return errors.Wrap(err, "cannot stop Meshery")
+		if forceDelete {
+			if err = utils.ForceCleanupCluster(); err != nil {
+				return err
+			}
+		} else {
+			// DryRun helm release uninstallation with helm pkg
+			if err = client.ApplyHelmChart(meshkitkube.ApplyHelmChartConfig{
+				Namespace: utils.MesheryNamespace,
+				ChartLocation: meshkitkube.HelmChartLocation{
+					Repository: utils.HelmChartURL,
+					Chart:      utils.HelmChartName,
+				},
+				Action: meshkitkube.UNINSTALL,
+				DryRun: true,
+			}); err != nil {
+				// Dry run failed, in such case; fallback to force cleanup
+				if err = utils.ForceCleanupCluster(); err != nil {
+					return errors.Wrap(err, "cannot stop Meshery")
+				}
+			}
+
+			// Dry run passed; now delete meshery components with the helm pkg
+			if err = client.ApplyHelmChart(meshkitkube.ApplyHelmChartConfig{
+				Namespace: utils.MesheryNamespace,
+				ChartLocation: meshkitkube.HelmChartLocation{
+					Repository: utils.HelmChartURL,
+					Chart:      utils.HelmChartName,
+				},
+				Action: meshkitkube.UNINSTALL,
+			}); err != nil {
+				return errors.Wrap(err, "cannot stop Meshery")
+			}
 		}
 
 		// Delete the CRDs for brokers and meshsyncs
@@ -166,10 +205,17 @@ func stop() error {
 			if err = deleteNs(utils.MesheryNamespace, client.KubeClient); err != nil {
 				return err
 			}
+			// Wait for the namespace to be deleted
+			deleted, err := utils.CheckMesheryNsDelete()
+			if err != nil || !deleted {
+				log.Info("Meshery is taking too long to stop.\nPlease check the status of the pods by executing “mesheryctl system status”.")
+			} else {
+				log.Info("Meshery resources are stopped.")
+			}
+		} else {
+			log.Info("Meshery resources are stopped.")
 		}
 	}
-
-	log.Info("Meshery is stopped.")
 
 	// Reset Meshery config file to default settings
 	if utils.ResetFlag {
@@ -191,11 +237,21 @@ func invokeDeleteCRs(client *meshkitkube.Client) error {
 	)
 
 	if err := deleteCR(brokerResourceName, brokerInstanceName, client); err != nil {
-		return errors.Wrap(err, "cannot delete CR "+brokerInstanceName)
+		err = ErrStopMeshery(errors.Wrap(err, "cannot delete CR "+brokerInstanceName))
+		if !forceDelete {
+			return err
+		}
+
+		log.Debug(err)
 	}
 
 	if err := deleteCR(meshsyncResourceName, meshsyncInstanceName, client); err != nil {
-		return errors.Wrap(err, "cannot delete CR "+meshsyncInstanceName)
+		err = ErrStopMeshery(errors.Wrap(err, "cannot delete CR "+meshsyncInstanceName))
+		if !forceDelete {
+			return err
+		}
+
+		log.Debug(err)
 	}
 
 	return nil
@@ -213,22 +269,37 @@ func deleteCR(resourceName, instanceName string, client *meshkitkube.Client) err
 // invokeDeleteCRs is a wrapper of deleteCRD to delete CRDs (brokers and meshsyncs)
 func invokeDeleteCRDs() error {
 	const (
-		brokderCRDName  = "brokers.meshery.layer5.io"
+		brokerCRDName   = "brokers.meshery.layer5.io"
 		meshsyncCRDName = "meshsyncs.meshery.layer5.io"
 	)
 
 	cfg := controllerConfig.GetConfigOrDie()
 	client, err := apiextension.NewForConfig(cfg)
 	if err != nil {
-		return errors.Wrap(err, "cannot invoke delete CRDs")
+		err = ErrStopMeshery(errors.Wrap(err, "cannot invoke delete CRDs"))
+		if !forceDelete {
+			return err
+		}
+
+		log.Debug(err)
 	}
 
-	if err = deleteCRD(brokderCRDName, client); err != nil {
-		return errors.Wrap(err, "cannot delete CRD "+brokderCRDName)
+	if err = deleteCRD(brokerCRDName, client); err != nil {
+		err = ErrStopMeshery(errors.Wrap(err, "cannot delete CRD "+brokerCRDName))
+		if !forceDelete {
+			return err
+		}
+
+		log.Debug(err)
 	}
 
 	if err = deleteCRD(meshsyncCRDName, client); err != nil {
-		return errors.Wrap(err, "cannot delete CRD "+meshsyncCRDName)
+		err = ErrStopMeshery(errors.Wrap(err, "cannot delete CRD "+meshsyncCRDName))
+		if !forceDelete {
+			return err
+		}
+
+		log.Debug(err)
 	}
 
 	return nil
@@ -246,4 +317,5 @@ func deleteNs(ns string, client *kubernetes.Clientset) error {
 func init() {
 	stopCmd.Flags().BoolVarP(&utils.ResetFlag, "reset", "", false, "(optional) reset Meshery's configuration file to default settings.")
 	stopCmd.Flags().BoolVar(&utils.KeepNamespace, "keep-namespace", false, "(optional) keep the Meshery namespace during uninstallation")
+	stopCmd.Flags().BoolVar(&forceDelete, "force", false, "(optional) uninstall Meshery resources forcefully")
 }

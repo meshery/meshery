@@ -1,5 +1,8 @@
 /**
+ * @generated SignedSource<<69f5137ccf198a4abb7c74df505200c9>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -7,7 +10,7 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
+import type { ConcreteRequest, Query } from 'relay-runtime';
 export type PageFilter = {|
   page: string,
   pageSize: string,
@@ -16,10 +19,10 @@ export type PageFilter = {|
   from?: ?string,
   to?: ?string,
 |};
-export type FetchAllResultsQueryVariables = {|
-  selector: PageFilter
+export type FetchAllResultsQuery$variables = {|
+  selector: PageFilter,
 |};
-export type FetchAllResultsQueryResponse = {|
+export type FetchAllResultsQuery$data = {|
   +fetchAllResults: {|
     +page: number,
     +page_size: number,
@@ -37,41 +40,15 @@ export type FetchAllResultsQueryResponse = {|
       +updated_at: ?string,
       +runner_results: ?any,
     |}>,
-  |}
+  |},
 |};
 export type FetchAllResultsQuery = {|
-  variables: FetchAllResultsQueryVariables,
-  response: FetchAllResultsQueryResponse,
+  variables: FetchAllResultsQuery$variables,
+  response: FetchAllResultsQuery$data,
 |};
 */
 
-
-/*
-query FetchAllResultsQuery(
-  $selector: PageFilter!
-) {
-  fetchAllResults(selector: $selector) {
-    page
-    page_size
-    total_count
-    results {
-      meshery_id
-      name
-      mesh
-      performance_profile
-      test_id
-      server_metrics
-      test_start_time
-      created_at
-      user_id
-      updated_at
-      runner_results
-    }
-  }
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -234,7 +211,10 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = '0aede14fffa5004109535cbff9b07687';
 
-module.exports = node;
+(node/*: any*/).hash = "0aede14fffa5004109535cbff9b07687";
+
+module.exports = ((node/*: any*/)/*: Query<
+  FetchAllResultsQuery$variables,
+  FetchAllResultsQuery$data,
+>*/);

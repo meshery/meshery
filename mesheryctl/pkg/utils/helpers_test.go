@@ -91,12 +91,13 @@ func TestNavigateToBrowser(t *testing.T) {
 func TestUploadFileWithParams(t *testing.T) {
 	fixtureFileName := "listmanifest.api.response.golden" // any arbitrary fixture file
 	uploadFilePath := filepath.Join(fixturesDir, "platform", fixtureFileName)
-
+	// set token
+	TokenFlag = filepath.Join(fixturesDir, "auth.json")
 	// returns *http.Request
 	_, err := UploadFileWithParams("https://www.layer5.io", nil, "meshery", uploadFilePath)
 
 	if err != nil {
-		t.Errorf("UploadFileWithParams error = %v", err)
+		t.Errorf("TestUploadFileWithParams error = %v", err)
 	}
 }
 
@@ -519,14 +520,20 @@ func TestSetOverrideValues(t *testing.T) {
 		want                map[string]interface{}
 	}{
 		{
-			name: "Context contains no adapters and no meshery image version",
+			name: "Context contains no components and no meshery image version",
 			ctx: &config.Context{
-				Adapters: nil,
-				Channel:  testChannel,
+				Components: nil,
+				Channel:    testChannel,
 			},
 			mesheryImageVersion: "",
 			want: map[string]interface{}{
+				"meshery-app-mesh": map[string]interface{}{
+					"enabled": false,
+				},
 				"meshery-istio": map[string]interface{}{
+					"enabled": false,
+				},
+				"meshery-cilium": map[string]interface{}{
 					"enabled": false,
 				},
 				"meshery-linkerd": map[string]interface{}{
@@ -559,15 +566,21 @@ func TestSetOverrideValues(t *testing.T) {
 			},
 		},
 		{
-			name: "Context contains part of all available adapters and meshery image version",
+			name: "Context contains part of all available components and meshery image version",
 			ctx: &config.Context{
-				Adapters: []string{"meshery-istio", "meshery-osm", "meshery-nsm"},
-				Channel:  testChannel,
+				Components: []string{"meshery-istio", "meshery-osm", "meshery-nsm"},
+				Channel:    testChannel,
 			},
 			mesheryImageVersion: "testImageVersion",
 			want: map[string]interface{}{
+				"meshery-app-mesh": map[string]interface{}{
+					"enabled": false,
+				},
 				"meshery-istio": map[string]interface{}{
 					"enabled": true,
+				},
+				"meshery-cilium": map[string]interface{}{
+					"enabled": false,
 				},
 				"meshery-linkerd": map[string]interface{}{
 					"enabled": false,
@@ -599,15 +612,21 @@ func TestSetOverrideValues(t *testing.T) {
 			},
 		},
 		{
-			name: "Context contains all available adapters and meshery image version",
+			name: "Context contains all available components and meshery image version",
 			ctx: &config.Context{
-				Adapters: []string{"meshery-istio", "meshery-linkerd", "meshery-consul", "meshery-kuma",
-					"meshery-osm", "meshery-nsm", "meshery-nginx-sm", "meshery-traefik-mesh", "meshery-cpx"},
+				Components: []string{"meshery-istio", "meshery-linkerd", "meshery-consul", "meshery-kuma",
+					"meshery-osm", "meshery-nsm", "meshery-nginx-sm", "meshery-traefik-mesh", "meshery-cpx", "meshery-cilium"},
 				Channel: testChannel,
 			},
 			mesheryImageVersion: "testImageVersion",
 			want: map[string]interface{}{
+				"meshery-app-mesh": map[string]interface{}{
+					"enabled": false,
+				},
 				"meshery-istio": map[string]interface{}{
+					"enabled": true,
+				},
+				"meshery-cilium": map[string]interface{}{
 					"enabled": true,
 				},
 				"meshery-linkerd": map[string]interface{}{
@@ -632,7 +651,7 @@ func TestSetOverrideValues(t *testing.T) {
 					"enabled": true,
 				},
 				"meshery-cpx": map[string]interface{}{
-					"enabled": true,
+					"enabled": false,
 				},
 				"image": map[string]interface{}{
 					"tag": testChannel + "-testImageVersion",
@@ -645,7 +664,7 @@ func TestSetOverrideValues(t *testing.T) {
 		got := SetOverrideValues(tt.ctx, tt.mesheryImageVersion)
 		eq := reflect.DeepEqual(got, tt.want)
 		if !eq {
-			t.Errorf("ReadToken got = %v want = %v", got, tt.want)
+			t.Errorf("SetOverrideValues %s got = %v want = %v", tt.name, got, tt.want)
 		}
 	}
 }

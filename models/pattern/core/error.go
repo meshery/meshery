@@ -5,9 +5,9 @@ import (
 )
 
 const (
-	ErrGetK8sComponentsCode     = "2154"
-	ErrParseK8sManifestCode     = "2155"
-	ErrCreatePatternServiceCode = "2156"
+	ErrGetK8sComponentsCode     = "2212"
+	ErrParseK8sManifestCode     = "2213"
+	ErrCreatePatternServiceCode = "2214"
 )
 
 func ErrGetK8sComponents(err error) error {

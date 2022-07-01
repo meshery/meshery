@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
 import dataFetch from "../../../lib/data-fetch";
+import { ctxUrl } from "../../../utils/multi-ctx";
 
 export const verifyGrafanaConnection = (grafanaUrl) => {
   return new Promise((res, rej) => {
@@ -95,10 +96,10 @@ export const pingPrometheus = (successCb, errorCb) =>
   );
 
 
-export const fetchPromGrafanaScanData = () => {
+export const fetchPromGrafanaScanData = (ctx) => {
   return new Promise((res, rej) => {
     dataFetch(
-      '/api/system/meshsync/grafana',
+      ctxUrl('/api/system/meshsync/grafana', ctx),
       {
         credentials : "same-origin",
         method : "GET",

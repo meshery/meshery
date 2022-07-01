@@ -16,8 +16,11 @@ func (r *Resolver) getDataPlanes(ctx context.Context, provider models.Provider, 
 	} else {
 		selectors = append(selectors, *filter.Type)
 	}
-
-	dataPlaneList, err := model.GetDataPlaneState(selectors, provider)
+	var cids []string
+	if len(filter.K8sClusterIDs) != 0 {
+		cids = filter.K8sClusterIDs
+	}
+	dataPlaneList, err := model.GetDataPlaneState(ctx, selectors, provider, cids)
 	if err != nil {
 		r.Log.Error(err)
 		return nil, err
@@ -33,11 +36,6 @@ func (r *Resolver) listenToDataPlaneState(ctx context.Context, provider models.P
 
 	go func() {
 		r.Log.Info("Initializing DataPlane subscription")
-		err := r.connectToBroker(context.TODO(), provider)
-		if err != nil && err != ErrNoMeshSync {
-			r.Log.Error(err)
-			return
-		}
 
 		for {
 			select {

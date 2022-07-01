@@ -3,17 +3,22 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/internal/sql"
 	"github.com/layer5io/meshery/models"
+
 	pCore "github.com/layer5io/meshery/models/pattern/core"
+	"github.com/layer5io/meshery/models/pattern/stages"
+	"github.com/sirupsen/logrus"
 )
 
 // MesheryPatternRequestBody refers to the type of request body that
 // SaveMesheryPattern would receive
 type MesheryPatternRequestBody struct {
+	Name          string                 `json:"name,omitempty"`
 	URL           string                 `json:"url,omitempty"`
 	Path          string                 `json:"path,omitempty"`
 	Save          bool                   `json:"save,omitempty"`
@@ -62,14 +67,17 @@ func (h *Handler) handlePatternPOST(
 
 	var parsedBody *MesheryPatternRequestBody
 	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil {
-		rw.WriteHeader(http.StatusBadRequest)
-		fmt.Fprintf(rw, "failed to read request body: %s", err)
+		h.log.Error(ErrRequestBody(err))
+		http.Error(rw, ErrRequestBody(err).Error(), http.StatusBadRequest)
+		// rw.WriteHeader(http.StatusBadRequest)
+		// fmt.Fprintf(rw, "failed to read request body: %s", err)
 		return
 	}
 
 	token, err := provider.GetProviderToken(r)
 	if err != nil {
-		http.Error(rw, "failed to get user token", http.StatusInternalServerError)
+		h.log.Error(ErrRetrieveUserToken(err))
+		http.Error(rw, ErrRetrieveUserToken(err).Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -77,16 +85,17 @@ func (h *Handler) handlePatternPOST(
 
 	// If Content is not empty then assume it's a local upload
 	if parsedBody.PatternData != nil {
-		patternName, err := models.GetPatternName(parsedBody.PatternData.PatternFile)
-		if err != nil {
-			http.Error(rw, fmt.Sprintf("failed to save the pattern: %s", err), http.StatusBadRequest)
-			return
-		}
-
 		// Assign a name if no name is provided
 		if parsedBody.PatternData.Name == "" {
+			patternName, err := models.GetPatternName(parsedBody.PatternData.PatternFile)
+			if err != nil {
+				h.log.Error(ErrSavePattern(err))
+				http.Error(rw, ErrSavePattern(err).Error(), http.StatusBadRequest)
+				return
+			}
 			parsedBody.PatternData.Name = patternName
 		}
+
 		// Assign a location if no location is specified
 		if parsedBody.PatternData.Location == nil {
 			parsedBody.PatternData.Location = map[string]interface{}{
@@ -102,7 +111,8 @@ func (h *Handler) handlePatternPOST(
 		if parsedBody.Save {
 			resp, err := provider.SaveMesheryPattern(token, mesheryPattern)
 			if err != nil {
-				http.Error(rw, fmt.Sprintf("failed to save the pattern: %s", err), http.StatusInternalServerError)
+				h.log.Error(ErrSavePattern(err))
+				http.Error(rw, ErrSavePattern(err).Error(), http.StatusInternalServerError)
 				return
 			}
 
@@ -112,7 +122,8 @@ func (h *Handler) handlePatternPOST(
 
 		byt, err := json.Marshal([]models.MesheryPattern{*mesheryPattern})
 		if err != nil {
-			http.Error(rw, fmt.Sprintf("failed to encode pattern: %s", err), http.StatusInternalServerError)
+			h.log.Error(ErrEncodePattern(err))
+			http.Error(rw, ErrEncodePattern(err).Error(), http.StatusInternalServerError)
 			return
 		}
 
@@ -124,7 +135,8 @@ func (h *Handler) handlePatternPOST(
 		resp, err := provider.RemotePatternFile(r, parsedBody.URL, parsedBody.Path, parsedBody.Save)
 
 		if err != nil {
-			http.Error(rw, fmt.Sprintf("failed to import pattern: %s", err), http.StatusInternalServerError)
+			h.log.Error(ErrImportPattern(err))
+			http.Error(rw, ErrImportPattern(err).Error(), http.StatusInternalServerError)
 			return
 		}
 
@@ -133,7 +145,7 @@ func (h *Handler) handlePatternPOST(
 	}
 
 	if parsedBody.CytoscapeJSON != "" {
-		pf, err := pCore.NewPatternFileFromCytoscapeJSJSON([]byte(parsedBody.CytoscapeJSON))
+		pf, err := pCore.NewPatternFileFromCytoscapeJSJSON(parsedBody.Name, []byte(parsedBody.CytoscapeJSON))
 		if err != nil {
 			rw.WriteHeader(http.StatusBadRequest)
 			fmt.Fprintf(rw, "%s", err)
@@ -149,7 +161,8 @@ func (h *Handler) handlePatternPOST(
 
 		patternName, err := models.GetPatternName(string(pfByt))
 		if err != nil {
-			http.Error(rw, fmt.Sprintf("failed to get the pattern name: %s", err), http.StatusBadRequest)
+			h.log.Error(ErrGetPattern(err))
+			http.Error(rw, ErrGetPattern(err).Error(), http.StatusBadRequest)
 			return
 		}
 
@@ -166,7 +179,8 @@ func (h *Handler) handlePatternPOST(
 		if parsedBody.Save {
 			resp, err := provider.SaveMesheryPattern(token, mesheryPattern)
 			if err != nil {
-				http.Error(rw, fmt.Sprintf("failed to save the pattern: %s", err), http.StatusInternalServerError)
+				h.log.Error(ErrSavePattern(err))
+				http.Error(rw, ErrSavePattern(err).Error(), http.StatusInternalServerError)
 				return
 			}
 
@@ -176,7 +190,8 @@ func (h *Handler) handlePatternPOST(
 
 		byt, err := json.Marshal([]models.MesheryPattern{*mesheryPattern})
 		if err != nil {
-			http.Error(rw, fmt.Sprintf("failed to encode pattern: %s", err), http.StatusInternalServerError)
+			h.log.Error(ErrEncodePattern(err))
+			http.Error(rw, ErrEncodePattern(err).Error(), http.StatusInternalServerError)
 			return
 		}
 
@@ -252,10 +267,12 @@ func (h *Handler) GetMesheryPatternsHandler(
 	provider models.Provider,
 ) {
 	q := r.URL.Query()
+	tokenString := r.Context().Value(models.TokenCtxKey).(string)
 
-	resp, err := provider.GetMesheryPatterns(r, q.Get("page"), q.Get("page_size"), q.Get("search"), q.Get("order"))
+	resp, err := provider.GetMesheryPatterns(tokenString, q.Get("page"), q.Get("page_size"), q.Get("search"), q.Get("order"))
 	if err != nil {
-		http.Error(rw, fmt.Sprintf("failed to fetch the patterns: %s", err), http.StatusInternalServerError)
+		h.log.Error(ErrFetchPattern(err))
+		http.Error(rw, ErrFetchPattern(err).Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -264,9 +281,9 @@ func (h *Handler) GetMesheryPatternsHandler(
 		http.Error(rw, "failed to get user token", http.StatusInternalServerError)
 		return
 	}
-	mc := newContentModifier(token, provider, prefObj, user.UserID)
+	mc := NewContentModifier(token, provider, prefObj, user.UserID)
 	//acts like a middleware, modifying the bytes lazily just before sending them back
-	err = mc.addMetadataForPatterns(&resp)
+	err = mc.AddMetadataForPatterns(r.Context(), &resp)
 	if err != nil {
 		fmt.Println("Could not add metadata about pattern's current support ", err.Error())
 	}
@@ -292,6 +309,42 @@ func (h *Handler) DeleteMesheryPatternHandler(
 	patternID := mux.Vars(r)["id"]
 
 	resp, err := provider.DeleteMesheryPattern(r, patternID)
+	if err != nil {
+		h.log.Error(ErrDeletePattern(err))
+		http.Error(rw, ErrDeletePattern(err).Error(), http.StatusInternalServerError)
+		return
+	}
+
+	rw.Header().Set("Content-Type", "application/json")
+	fmt.Fprint(rw, string(resp))
+}
+
+// swagger:route DELETE /api/patterns PatternsAPI idDeleteMesheryPattern
+// Handle Delete for multiple Meshery Patterns
+//
+// DeleteMultiMesheryPatternsHandler deletes patterns with the given ids
+func (h *Handler) DeleteMultiMesheryPatternsHandler(
+	rw http.ResponseWriter,
+	r *http.Request,
+	prefObj *models.Preference,
+	user *models.User,
+	provider models.Provider,
+) {
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		logrus.Error(rw, "err deleting pattern, converting bytes: ", err)
+	}
+
+	var patterns models.MesheryPatternDeleteRequestBody
+	err = json.Unmarshal([]byte(body), &patterns)
+	if err != nil {
+		logrus.Error("error marshaling patterns json: ", err)
+	}
+
+	logrus.Debugf("patterns to be deleted: %+v", patterns)
+
+	resp, err := provider.DeleteMesheryPatterns(r, patterns)
+
 	if err != nil {
 		http.Error(rw, fmt.Sprintf("failed to delete the pattern: %s", err), http.StatusInternalServerError)
 		return
@@ -320,7 +373,8 @@ func (h *Handler) GetMesheryPatternHandler(
 
 	resp, err := provider.GetMesheryPattern(r, patternID)
 	if err != nil {
-		http.Error(rw, fmt.Sprintf("failed to get the pattern: %s", err), http.StatusNotFound)
+		h.log.Error(ErrGetPattern(err))
+		http.Error(rw, ErrGetPattern(err).Error(), http.StatusNotFound)
 		return
 	}
 
@@ -332,8 +386,9 @@ func formatPatternOutput(rw http.ResponseWriter, content []byte, format string) 
 	contentMesheryPatternSlice := make([]models.MesheryPattern, 0)
 
 	if err := json.Unmarshal(content, &contentMesheryPatternSlice); err != nil {
-		rw.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprintf(rw, "failed to decode patterns data into go slice: %s", err)
+		http.Error(rw, ErrDecodePattern(err).Error(), http.StatusInternalServerError)
+		// rw.WriteHeader(http.StatusInternalServerError)
+		// fmt.Fprintf(rw, "failed to decode patterns data into go slice: %s", err)
 		return
 	}
 
@@ -343,17 +398,22 @@ func formatPatternOutput(rw http.ResponseWriter, content []byte, format string) 
 		if format == "cytoscape" {
 			patternFile, err := pCore.NewPatternFile([]byte(content.PatternFile))
 			if err != nil {
-				rw.WriteHeader(http.StatusBadRequest)
-				fmt.Fprintf(rw, "failed to parse to PatternFile: %s", err)
+				http.Error(rw, ErrParsePattern(err).Error(), http.StatusBadRequest)
+				// rw.WriteHeader(http.StatusBadRequest)
+				// fmt.Fprintf(rw, "failed to parse to PatternFile: %s", err)
 				return
 			}
 
-			cyjs, _ := patternFile.ToCytoscapeJS()
+			//TODO: The below line has to go away once the client fully supports referencing variables  and pattern imports inside design
+			newpatternfile := evalImportAndReferenceStage(&patternFile)
+
+			cyjs, _ := newpatternfile.ToCytoscapeJS()
 
 			bytes, err := json.Marshal(&cyjs)
 			if err != nil {
-				rw.WriteHeader(http.StatusInternalServerError)
-				fmt.Fprintf(rw, "failed to convert PatternFile to Cytoscape object: %s", err)
+				http.Error(rw, ErrConvertPattern(err).Error(), http.StatusInternalServerError)
+				// rw.WriteHeader(http.StatusInternalServerError)
+				// fmt.Fprintf(rw, "failed to convert PatternFile to Cytoscape object: %s", err)
 				return
 			}
 
@@ -366,11 +426,33 @@ func formatPatternOutput(rw http.ResponseWriter, content []byte, format string) 
 
 	data, err := json.Marshal(&result)
 	if err != nil {
-		rw.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprintf(rw, "failed to marshal pattern file: %s", err)
+		obj := "pattern file"
+		http.Error(rw, ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
+		// rw.WriteHeader(http.StatusInternalServerError)
+		// fmt.Fprintf(rw, "failed to marshal pattern file: %s", err)
 		return
 	}
 
 	rw.Header().Set("Content-Type", "application/json")
 	fmt.Fprint(rw, string(data))
+}
+
+//Since the client currently does not support pattern imports and externalized variables, the first(import) stage of pattern engine
+// is evaluated here to simplify the pattern file such that it is valid when a deploy takes place
+func evalImportAndReferenceStage(p *pCore.Pattern) (newp pCore.Pattern) {
+	sap := &serviceActionProvider{}
+	sip := &serviceInfoProvider{}
+	chain := stages.CreateChain()
+	chain.
+		Add(stages.Import(sip, sap)).
+		Add(stages.Filler(false)).
+		Add(func(data *stages.Data, err error, next stages.ChainStageNextFunction) {
+			data.Lock.Lock()
+			newp = *data.Pattern
+			data.Lock.Unlock()
+		}).
+		Process(&stages.Data{
+			Pattern: p,
+		})
+	return newp
 }

@@ -24,7 +24,7 @@ import (
 	"gopkg.in/yaml.v2"
 
 	v1core "k8s.io/api/core/v1"
-	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	meshkitutils "github.com/layer5io/meshkit/utils"
 	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
@@ -35,78 +35,6 @@ var (
 	ManifestsFolder = "manifests"
 	ReleaseTag      string
 )
-
-// ChangePlatform changes the platform specified in the current context to the specified platform
-func ChangePlatform(currCtx string, ctx config.Context) error {
-	ViperK8s.SetConfigFile(DefaultConfigPath)
-	err := ViperK8s.ReadInConfig()
-	if err != nil {
-		return err
-	}
-
-	meshConfig := &config.MesheryCtlConfig{}
-	err = ViperK8s.Unmarshal(&meshConfig)
-	if err != nil {
-		return err
-	}
-
-	meshConfig.Contexts[currCtx] = ctx
-	ViperK8s.Set("contexts."+currCtx, ctx)
-
-	err = ViperK8s.WriteConfig()
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-// ChangeConfigEndpoint changes the endpoint of the current context in meshconfig, based on the platform
-func ChangeConfigEndpoint(currCtx string, ctx *config.Context) error {
-	if ctx.Platform == "kubernetes" {
-		ViperK8s.SetConfigFile(DefaultConfigPath)
-		err := ViperK8s.ReadInConfig()
-		if err != nil {
-			return err
-		}
-
-		kubeCompose := &config.MesheryCtlConfig{}
-		err = ViperK8s.Unmarshal(&kubeCompose)
-		if err != nil {
-			return err
-		}
-
-		kubeCompose.Contexts[currCtx] = *ctx
-		ViperK8s.Set("contexts."+currCtx, ctx)
-
-		err = ViperK8s.WriteConfig()
-		if err != nil {
-			return err
-		}
-	} else if ctx.Platform == "docker" {
-		ViperDocker.SetConfigFile(DefaultConfigPath)
-		err := ViperDocker.ReadInConfig()
-		if err != nil {
-			return err
-		}
-
-		dockerConfig := &config.MesheryCtlConfig{}
-		err = ViperDocker.Unmarshal(&dockerConfig)
-		if err != nil {
-			return err
-		}
-
-		dockerConfig.Contexts[currCtx] = *ctx
-		ViperDocker.Set("contexts."+currCtx, ctx)
-
-		err = ViperDocker.WriteConfig()
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
 
 // GetManifestTreeURL returns the manifest tree url based on version
 func GetManifestTreeURL(version string) (string, error) {
@@ -303,16 +231,16 @@ func CanUseCachedManifests(currCtx *(config.Context)) error {
 
 	switch currCtx.GetPlatform() {
 	case "kubernetes":
-		// check if adapter manifests are present
-		for _, adapter := range currCtx.GetAdapters() {
-			serviceFile := filepath.Join(MesheryFolder, ManifestsFolder, adapter+"-service.yaml")
+		// check if component manifests are present
+		for _, component := range currCtx.GetComponents() {
+			serviceFile := filepath.Join(MesheryFolder, ManifestsFolder, component+"-service.yaml")
 			if _, err := os.Stat(serviceFile); os.IsNotExist(err) {
 				return errors.New("service file does not exist")
 			}
 
-			adapterDeploymentFile := filepath.Join(MesheryFolder, ManifestsFolder, adapter+"-deployment.yaml")
-			if _, err := os.Stat(adapterDeploymentFile); os.IsNotExist(err) {
-				return errors.New("adapter deployment file does not exist")
+			componentDeploymentFile := filepath.Join(MesheryFolder, ManifestsFolder, component+"-deployment.yaml")
+			if _, err := os.Stat(componentDeploymentFile); os.IsNotExist(err) {
+				return errors.New("component deployment file does not exist")
 			}
 		}
 	}
@@ -383,10 +311,10 @@ func GetLatestStableReleaseTag() (string, error) {
 	return latest, nil
 }
 
-// IsAdapterValid checks if the adapter mentioned by the user is a valid adapter
-func IsAdapterValid(manifestArr []Manifest, adapterManifest string) bool {
+// IsAdapterValid checks if the component mentioned by the user is a valid component
+func IsAdapterValid(manifestArr []Manifest, componentManifest string) bool {
 	for _, v := range manifestArr {
-		if v.Path == adapterManifest {
+		if v.Path == componentManifest {
 			return true
 		}
 	}
@@ -454,7 +382,7 @@ func ApplyManifestFiles(manifestArr []Manifest, requestedAdapters []string, clie
 	manifestFiles := filepath.Join(MesheryFolder, ManifestsFolder)
 
 	// read the manifest files as strings
-	// other than the adapters, meshery-deployment.yaml, meshery-service.yaml and service-account.yaml should be applied
+	// other than the components, meshery-deployment.yaml, meshery-service.yaml and service-account.yaml should be applied
 	MesheryDeploymentManifest, err := meshkitutils.ReadLocalFile(filepath.Join(manifestFiles, MesheryDeployment))
 	if err != nil {
 		return errors.Wrap(err, "failed to read manifest files")
@@ -496,24 +424,24 @@ func ApplyManifestFiles(manifestArr []Manifest, requestedAdapters []string, clie
 		return err
 	}
 
-	// loop through the required adapters as specified in the config.yaml file and apply/update/delete each
-	for _, adapter := range requestedAdapters {
-		// for each adapter, there is a meshery-adapterName-deployment.yaml and meshery-adapterName-service.yaml
+	// loop through the required components as specified in the config.yaml file and apply/update/delete each
+	for _, component := range requestedAdapters {
+		// for each component, there is a meshery-componentName-deployment.yaml and meshery-componentName-service.yaml
 		// manifest file. See- https://github.com/layer5io/meshery/tree/master/install/deployment_yamls/k8s
-		adapterFile := filepath.Join(manifestFiles, adapter)
-		adapterDeployment := adapterFile + "-deployment.yaml"
-		adapterService := adapterFile + "-service.yaml"
+		componentFile := filepath.Join(manifestFiles, component)
+		componentDeployment := componentFile + "-deployment.yaml"
+		componentService := componentFile + "-service.yaml"
 
-		if !IsAdapterValid(manifestArr, adapter+"-deployment.yaml") {
-			return fmt.Errorf("invalid adapter %s specified. Please check %s/config.yaml file", adapter, MesheryFolder)
+		if !IsAdapterValid(manifestArr, component+"-deployment.yaml") {
+			return fmt.Errorf("invalid component %s specified. Please check %s/config.yaml file", component, MesheryFolder)
 		}
 
 		// read manifest files as strings and apply/update/delete
-		manifestDepl, err := meshkitutils.ReadLocalFile(adapterDeployment)
+		manifestDepl, err := meshkitutils.ReadLocalFile(componentDeployment)
 		if err != nil {
 			return errors.Wrap(err, "failed to read manifest files")
 		}
-		manifestService, err := meshkitutils.ReadLocalFile(adapterService)
+		manifestService, err := meshkitutils.ReadLocalFile(componentService)
 		if err != nil {
 			return errors.Wrap(err, "failed to read manifest files")
 		}
@@ -647,12 +575,12 @@ func CreateManifestsFolder() error {
 }
 
 // GetPods lists all the available pods in the MesheryNamespace
-func GetPods(client *meshkitkube.Client, namespace string) (*v1core.PodList, error) {
+func GetPodList(client *meshkitkube.Client, namespace string) (*v1core.PodList, error) {
 	// Create a pod interface for the given namespace
 	podInterface := client.KubeClient.CoreV1().Pods(namespace)
 
 	// List the pods in the given namespace
-	podList, err := podInterface.List(context.TODO(), v1.ListOptions{})
+	podList, err := podInterface.List(context.TODO(), metav1.ListOptions{})
 
 	if err != nil {
 		return nil, err
@@ -677,8 +605,8 @@ func GetRequiredPods(specifiedPods []string, availablePods []v1core.Pod) ([]stri
 	return requiredPods, nil
 }
 
-// CleanPodNames cleans the pod names in the MesheryNamespace to make it more readable
-func CleanPodNames(name string) string {
+// GetCleanPodName cleans the pod names in the MesheryNamespace to make it more readable
+func GetCleanPodName(name string) string {
 	// The pod names are of the form meshery-<component name>-dasd67qwe-jka244asd where the last characters are generated by kubernetes
 	// Only the first two splits contain useful information
 	split := strings.Split(name, "-")[:2]
@@ -780,4 +708,176 @@ func SetKubeConfig() {
 		ConfigPath = filepath.Join(usr.HomeDir, ".meshery", KubeConfigYaml)
 		KubeConfig = filepath.Join(usr.HomeDir, ".kube", "config")
 	}
+}
+
+func ForceCleanupCluster() error {
+	client, err := meshkitkube.New([]byte(""))
+	if err != nil {
+		return errors.Wrap(err, "failed to create new client")
+	}
+
+	// deletePolicy to delete related resources
+	deletePolicy := metav1.DeletePropagationForeground
+
+	// Deleting resources via kube-client
+	// Deployments
+	// Services
+	// StatefulSets
+	// ClusterRoleBindings
+	// ClusterRoles
+	// ServiceAccount
+	// Secrets
+	// ConfigMaps
+	// Roles
+	// RoleBindings
+
+	deploymentInterface := client.KubeClient.AppsV1().Deployments(MesheryNamespace)
+	deploymentList, err := deploymentInterface.List(context.TODO(), metav1.ListOptions{})
+	if err != nil {
+		return err
+	}
+
+	for _, deployment := range deploymentList.Items {
+		if err := deploymentInterface.Delete(context.TODO(), deployment.GetName(), metav1.DeleteOptions{
+			PropagationPolicy: &deletePolicy,
+		}); err != nil {
+			log.Debug(err)
+		}
+	}
+
+	serviceInterface := client.KubeClient.CoreV1().Services(MesheryNamespace)
+	serviceList, err := serviceInterface.List(context.TODO(), metav1.ListOptions{})
+	if err != nil {
+		return err
+	}
+
+	for _, service := range serviceList.Items {
+		if err := serviceInterface.Delete(context.TODO(), service.GetName(), metav1.DeleteOptions{
+			PropagationPolicy: &deletePolicy,
+		}); err != nil {
+			log.Debug(err)
+		}
+	}
+
+	statefulSetInterface := client.KubeClient.AppsV1().StatefulSets(MesheryNamespace)
+	statefulSetList, err := statefulSetInterface.List(context.TODO(), metav1.ListOptions{})
+	if err != nil {
+		return err
+	}
+
+	for _, statefulSet := range statefulSetList.Items {
+		if err := statefulSetInterface.Delete(context.TODO(), statefulSet.GetName(), metav1.DeleteOptions{
+			PropagationPolicy: &deletePolicy,
+		}); err != nil {
+			log.Debug(err)
+		}
+	}
+
+	clusterRoleBindingInterface := client.KubeClient.RbacV1().ClusterRoleBindings()
+	clusterRoleBindingList, err := clusterRoleBindingInterface.List(context.TODO(), metav1.ListOptions{})
+	if err != nil {
+		return err
+	}
+
+	for _, clusterRoleBinding := range clusterRoleBindingList.Items {
+		// clusterrolebindings aren't namespaced so gotta
+		// check if "meshery" is present in the name or not
+		if strings.Contains(string(clusterRoleBinding.GetName()), "meshery") {
+			if err := clusterRoleBindingInterface.Delete(context.TODO(), clusterRoleBinding.GetName(), metav1.DeleteOptions{
+				PropagationPolicy: &deletePolicy,
+			}); err != nil {
+				log.Debug(err)
+			}
+		}
+	}
+
+	clusterRoleInterface := client.KubeClient.RbacV1().ClusterRoles()
+	clusterRoleList, err := clusterRoleInterface.List(context.TODO(), metav1.ListOptions{})
+	if err != nil {
+		return err
+	}
+
+	for _, clusterRole := range clusterRoleList.Items {
+		// clusterroles aren't namespaced so gotta
+		// check if "meshery" is present in the name or not
+		if strings.Contains(string(clusterRole.GetName()), "meshery") {
+			if err := clusterRoleInterface.Delete(context.TODO(), clusterRole.GetName(), metav1.DeleteOptions{
+				PropagationPolicy: &deletePolicy,
+			}); err != nil {
+				log.Debug(err)
+			}
+		}
+	}
+
+	serviceAccountInterface := client.KubeClient.CoreV1().ServiceAccounts(MesheryNamespace)
+	serviceAccountList, err := serviceAccountInterface.List(context.TODO(), metav1.ListOptions{})
+	if err != nil {
+		return err
+	}
+
+	for _, serviceAccount := range serviceAccountList.Items {
+		if err := serviceAccountInterface.Delete(context.TODO(), serviceAccount.GetName(), metav1.DeleteOptions{
+			PropagationPolicy: &deletePolicy,
+		}); err != nil {
+			log.Debug(err)
+		}
+	}
+
+	secretsInterface := client.KubeClient.CoreV1().Secrets(MesheryNamespace)
+	secretsList, err := secretsInterface.List(context.TODO(), metav1.ListOptions{})
+	if err != nil {
+		return err
+	}
+
+	for _, secrets := range secretsList.Items {
+		if err := secretsInterface.Delete(context.TODO(), secrets.GetName(), metav1.DeleteOptions{
+			PropagationPolicy: &deletePolicy,
+		}); err != nil {
+			log.Debug(err)
+		}
+	}
+
+	configMapsInterface := client.KubeClient.CoreV1().ConfigMaps(MesheryNamespace)
+	configMapsList, err := configMapsInterface.List(context.TODO(), metav1.ListOptions{})
+	if err != nil {
+		return err
+	}
+
+	for _, configMap := range configMapsList.Items {
+		if err := configMapsInterface.Delete(context.TODO(), configMap.GetName(), metav1.DeleteOptions{
+			PropagationPolicy: &deletePolicy,
+		}); err != nil {
+			log.Debug(err)
+		}
+	}
+
+	rolesInterface := client.KubeClient.RbacV1().Roles(MesheryNamespace)
+	rolesList, err := rolesInterface.List(context.TODO(), metav1.ListOptions{})
+	if err != nil {
+		return err
+	}
+
+	for _, role := range rolesList.Items {
+		if err := rolesInterface.Delete(context.TODO(), role.GetName(), metav1.DeleteOptions{
+			PropagationPolicy: &deletePolicy,
+		}); err != nil {
+			log.Debug(err)
+		}
+	}
+
+	roleBindingsInterface := client.KubeClient.RbacV1().RoleBindings(MesheryNamespace)
+	roleBindingsList, err := roleBindingsInterface.List(context.TODO(), metav1.ListOptions{})
+	if err != nil {
+		return err
+	}
+
+	for _, roleBinding := range roleBindingsList.Items {
+		if err := roleBindingsInterface.Delete(context.TODO(), roleBinding.GetName(), metav1.DeleteOptions{
+			PropagationPolicy: &deletePolicy,
+		}); err != nil {
+			log.Debug(err)
+		}
+	}
+
+	return nil
 }

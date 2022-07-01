@@ -24,12 +24,23 @@ import (
 	"github.com/spf13/viper"
 )
 
+var (
+	silentFlagSet bool
+)
+
 // restartCmd represents the restart command
 var restartCmd = &cobra.Command{
 	Use:   "restart",
 	Short: "Stop, then start Meshery",
 	Long:  `Restart all Meshery containers / pods.`,
 	Args:  cobra.NoArgs,
+	Example: `
+// Restart all Meshery containers, their instances and their connected volumes
+mesheryctl system restart
+
+// (optional) skip checking for new updates available in Meshery.
+mesheryctl system restart --skip-update
+	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
 		hcOptions := &HealthCheckOptions{
@@ -55,8 +66,6 @@ var restartCmd = &cobra.Command{
 }
 
 func restart() error {
-	log.Info("Restarting Meshery...")
-
 	// Get viper instance used for context
 	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 	if err != nil {
@@ -78,7 +87,7 @@ func restart() error {
 
 	currPlatform := currCtx.GetPlatform()
 
-	running, err := utils.IsMesheryRunning(currPlatform)
+	running, err := utils.AreMesheryComponentsRunning(currPlatform)
 	if err != nil {
 		return err
 	}
@@ -87,9 +96,32 @@ func restart() error {
 			return ErrRestartMeshery(err)
 		}
 	} else {
+		if currPlatform == "kubernetes" {
+			userResponse := false
+			if utils.SilentFlag {
+				userResponse = true
+			} else {
+				// ask user for confirmation
+				userResponse = utils.AskForConfirmation("Meshery deployments will be deleted from your cluster. Are you sure you want to continue")
+			}
+			if !userResponse {
+				log.Info("Restart aborted.")
+				return nil
+			}
+			// take a backup of silentFlag value to pass it to start() function later
+			silentFlagSet = utils.SilentFlag
+			// skips asking for confirmation in the stop() function
+			utils.SilentFlag = true
+		}
+
+		log.Info("Restarting Meshery...")
+
 		if err := stop(); err != nil {
 			return ErrRestartMeshery(err)
 		}
+
+		// reset the silent flag to avoid overriding the flag for start command
+		utils.SilentFlag = silentFlagSet
 
 		if err := start(); err != nil {
 			return ErrRestartMeshery(err)

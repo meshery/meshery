@@ -2,16 +2,15 @@ package filter
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"regexp"
 
 	"github.com/ghodss/yaml"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -22,18 +21,21 @@ var (
 )
 
 var viewCmd = &cobra.Command{
-	Use:   "view <filter name>",
+	Use:   "view [filter name]",
 	Short: "Display filters(s)",
 	Long:  `Displays the contents of a specific filter based on name or id`,
-	Args:  cobra.MaximumNArgs(1),
+	Example: `
+// View the specified WASM filter file
+mesheryctl exp filter view [filter-name | ID]	
+
+// View using filter name
+mesheryctl exp filter view test-wasm
+	`,
+	Args: cobra.MaximumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			return errors.Wrap(err, "error processing config")
-		}
-		// set default tokenpath for perf apply command.
-		if tokenPath == "" {
-			tokenPath = constants.GetCurrentAuthToken()
 		}
 
 		filter := ""
@@ -66,12 +68,7 @@ var viewCmd = &cobra.Command{
 		}
 
 		client := &http.Client{}
-		req, err := http.NewRequest("GET", url, nil)
-		if err != nil {
-			return err
-		}
-
-		err = utils.AddAuthDetails(req, tokenPath)
+		req, err := utils.NewRequest("GET", url, nil)
 		if err != nil {
 			return err
 		}
@@ -109,7 +106,7 @@ var viewCmd = &cobra.Command{
 			// use the first match from the result when searching by filter name
 			arr := dat["filters"].([]interface{})
 			if len(arr) == 0 {
-				log.Infof("filter with name: %s not found", filter)
+				utils.Log.Info(fmt.Sprintf("filter with name: %s not found", filter))
 				return nil
 			}
 			if body, err = json.MarshalIndent(arr[0], "", "  "); err != nil {
@@ -124,7 +121,7 @@ var viewCmd = &cobra.Command{
 		} else if outFormatFlag != "json" {
 			return errors.New("output-format choice invalid, use [json|yaml]")
 		}
-		log.Info(string(body))
+		utils.Log.Info(string(body))
 		return nil
 	},
 }

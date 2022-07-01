@@ -3,7 +3,6 @@
 
 import { promisifiedDataFetch } from "../../lib/data-fetch";
 import { trueRandom } from "../../lib/trueRandom";
-import PascalCaseToKebab from "../../utils/PascalCaseToKebab";
 
 /**
  * @typedef {Object} OAMDefinition
@@ -79,7 +78,7 @@ export async function createWorkloadTraitSets(adapter) {
 
   const sets = [];
   workloads?.forEach((w) => {
-    const item = { workload : w, traits : [], type : getPatternServiceType(w?.metadata) };
+    const item = { workload : w, traits : [], type : getPatternServiceType(w) };
 
     item.traits = traits?.filter((t) => {
       if (Array.isArray(t?.oam_definition?.spec?.appliesToWorkloads))
@@ -116,13 +115,9 @@ export function getPatternServiceName(item, includeDisplayName = true) {
  * @returns {string} service name
  */
 export function getHumanReadablePatternServiceName(item) {
-  const name = item?.oam_definition?.spec?.metadata?.k8sKind
-    || item?.metadata?.["display.ui.meshery.io/name"]
-    || item?.oam_definition?.metadata?.name
-    || getPatternAttributeName(item)
-    || "NA";
-
-  return camelCaseToCapitalize(name);
+  return (
+    item?.metadata?.["display.ui.meshery.io/name"]
+  )
 }
 
 /**
@@ -198,17 +193,15 @@ export function createPatternFromConfig(config, namespace, partialClean = false)
     name : `pattern-${trueRandom().toString(36).substr(2, 5)}`,
     services : {},
   };
-
   partialClean ? recursiveCleanObjectExceptEmptyArray(config) : recursiveCleanObject(config);
 
   Object.keys(config).forEach((key) => {
     // Add it only if the settings are non empty or "true"
     if (config[key].settings) {
-      const name = PascalCaseToKebab(key);
-      pattern.services[name] = config[key];
+      // const name = PascalCaseToKebab(key);
+      pattern.services[key] = config[key];
 
-      pattern.services[name].type = key;
-      pattern.services[name].namespace = namespace;
+      pattern.services[key].namespace = namespace;
     }
   });
 
@@ -226,10 +219,93 @@ export function createPatternFromConfig(config, namespace, partialClean = false)
  * @param {String} text
  * @returns
  */
-export function camelCaseToCapitalize(text){
+export function camelCaseToCapitalize(text) {
   if (!text) return null
 
-  const result = text.replace(/([A-Z])/g, " $1");
+  return text?.replaceAll(/([A-Z])/g, " $1")?.trim();
+}
 
-  return result.charAt(0).toUpperCase() + result.slice(1);
+/**
+ * Formats text for prettified view
+ *
+ * @param {String} text
+ * @returns
+ */
+export function formatString(text) {
+  if (!text) return null
+
+  // format string for prettified camelCase
+  // @ts-ignore
+  let formattedText = text.replaceAll("IP", "Ip");
+  formattedText = camelCaseToCapitalize(formattedText),
+  formattedText = formattedText.replaceAll("Ip", "IP")
+  return formattedText
+}
+
+/**
+ * The rjsf json schema builder for the ui
+ * inplace builds the obj recursively according
+ * to the schema provided
+ *
+ * @param {Record<string, any>} schema The RJSF schema
+ * @param {*} obj
+ * @returns
+ */
+function jsonSchemaBuilder(schema, obj) {
+  if (!schema) return
+
+  const uiDesc = "ui:description"
+
+  if (schema.type === 'object') {
+    for (let key in schema.properties) {
+      obj[key] = {};
+
+      // handle percentage for range widget
+      if ((schema.properties?.[key]["type"] === 'number' || schema.properties?.[key].type === 'integer')
+        && key.toLowerCase().includes("percent")) {
+        obj[key]["ui:widget"] = "range"
+      }
+
+      jsonSchemaBuilder(schema.properties?.[key], obj[key]);
+    }
+    return
+  }
+
+  if (schema.type === 'array') {
+    obj["items"] = {}
+    jsonSchemaBuilder(schema.items, obj["items"]);
+    return
+  }
+
+  obj[uiDesc] = " ";
+  if (obj["ui:widget"]) { // if widget is already assigned, don't go over
+    return
+  }
+
+  if (schema.type === 'boolean') {
+    obj["ui:widget"] = "checkbox";
+  }
+
+  if (schema.type === 'number' || schema.type === 'integer') {
+    obj["ui:widget"] = "updown";
+  }
+}
+
+/**
+ * Builds ui schema and sets the required rjsf ui
+ * properties
+ *
+ * @param {Record.<string, any>} schema RJSF json Schema
+ * @returns
+ */
+export function buildUiSchema(schema) {
+  const uiSchemaObj = {};
+  // 1. Build ui schema
+  jsonSchemaBuilder(schema, uiSchemaObj);
+
+  // 2. Set the ordering of the components
+  uiSchemaObj["ui:order"] = ["name", "namespace", "*"]
+
+  //3. Return the final uiSchema Object
+  return uiSchemaObj
 }

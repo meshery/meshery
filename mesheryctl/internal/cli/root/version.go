@@ -25,7 +25,6 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -40,12 +39,16 @@ var versionCmd = &cobra.Command{
 	Use:   "version",
 	Short: "Version of mesheryctl",
 	Long:  `Version of Meshery command line client - mesheryctl.`,
+	Example: `
+// To view the current version and SHA of release binary of mesheryctl client 
+mesheryctl version
+	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		var err error
 		mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			// get the currCtx
-			logrus.Errorf("error processing config: %v", err)
+			utils.Log.Error(ErrProcessingConfig(err))
 			userResponse := false
 			userResponse = utils.AskForConfirmation("Looks like you are using an outdated config file. Do you want to generate a new config file?")
 			if userResponse {
@@ -53,29 +56,29 @@ var versionCmd = &cobra.Command{
 				// Create config file if not present in meshery folder
 				err = utils.CreateConfigFile()
 				if err != nil {
-					logrus.Errorf("unable to create config file")
+					utils.Log.Error(ErrCreatingConfigFile)
 				}
 
 				// Add Token to context file
 				err = config.AddTokenToConfig(utils.TemplateToken, utils.DefaultConfigPath)
 				if err != nil {
-					logrus.Errorf("unable to add token to config")
+					utils.Log.Error(ErrAddingTokenToConfig)
 				}
 
 				// Add Context to context file
-				err = config.AddContextToConfig("local", utils.TemplateContext, utils.DefaultConfigPath, true)
+				err = config.AddContextToConfig("local", utils.TemplateContext, utils.DefaultConfigPath, true, false)
 				if err != nil {
-					logrus.Errorf("unable to add context to config")
+					utils.Log.Error(ErrAddingContextToConfig)
 				}
 
-				logrus.Printf(
+				utils.Log.Info(
 					fmt.Sprintf("Default config file created at %s",
 						utils.DefaultConfigPath,
 					))
 
 				mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
 				if err != nil {
-					logrus.Errorf("error unmarshaling config file")
+					utils.Log.Error(ErrUnmarshallingConfigFile)
 				}
 				currCtx, err := mctlCfg.GetCurrentContext()
 				if err != nil {
@@ -117,7 +120,7 @@ var versionCmd = &cobra.Command{
 		req, err := http.NewRequest("GET", fmt.Sprintf("%s/api/system/version", url), nil)
 		if err != nil {
 			utils.PrintToTable(header, rows)
-			logrus.Errorf("\nUnable to get request context: %v", err)
+			utils.Log.Error(ErrGettingRequestContext(err))
 			return
 		}
 
@@ -127,8 +130,7 @@ var versionCmd = &cobra.Command{
 
 		if err != nil {
 			utils.PrintToTable(header, rows)
-			logrus.Errorf("\n  Unable to communicate with Meshery: %v", err)
-			logrus.Errorf("  See https://docs.meshery.io for help getting started with Meshery.")
+			utils.Log.Error(ErrConnectingToServer(err))
 			return
 		}
 
@@ -137,14 +139,14 @@ var versionCmd = &cobra.Command{
 		data, err := io.ReadAll(resp.Body)
 		if err != nil {
 			utils.PrintToTable(header, rows)
-			logrus.Errorf("\n  Invalid response: %v", err)
+			utils.Log.Error(ErrInvalidAPIResponse(err))
 			return
 		}
 
 		err = json.Unmarshal(data, &version)
 		if err != nil {
 			utils.PrintToTable(header, rows)
-			logrus.Errorf("\n  Unable to unmarshal data: %v", err)
+			utils.Log.Error(ErrUnmarshallingAPIData(err))
 			return
 		}
 		rows[1][1] = version.GetBuild()
@@ -154,18 +156,18 @@ var versionCmd = &cobra.Command{
 }
 
 func checkMesheryctlClientVersion(build string) {
-	logrus.Infof("\nChecking for latest version of mesheryctl...")
+	utils.Log.Info("\nChecking for latest version of mesheryctl...")
 
 	// Inform user of the latest release version
 	res, err := utils.GetLatestStableReleaseTag()
 	if err != nil {
-		logrus.Warn("\n  Unable to check for latest version of mesheryctl. ", err)
+		utils.Log.Warn(fmt.Errorf("\n  Unable to check for latest version of mesheryctl. %s", err))
 		return
 	}
 	// If user is running an outdated release, let them know.
 	if res != build {
-		logrus.Info("\n  ", build, " is not the latest release. Update to ", res, ".")
+		utils.Log.Info("\n  ", build, " is not the latest release. Update to ", res, ".")
 	} else { // If user is running the latest release, let them know.
-		logrus.Info("\n  ", res, " is the latest release.")
+		utils.Log.Info("\n  ", res, " is the latest release.")
 	}
 }

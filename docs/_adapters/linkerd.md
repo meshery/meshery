@@ -4,7 +4,7 @@ title: Meshery Adapter for Linkerd
 name: Meshery Adapter for Linkerd
 mesh_name: Linkerd
 earliest_version: v2.10.2
-port: 10001/tcp
+port: 10001/gRPC
 project_status: stable
 adapter_version: v0.5.2
 lab: linkerd-meshery-adapter
@@ -25,7 +25,7 @@ permalink: service-meshes/adapters/linkerd
 
 ## Lifecycle management
 
-The {{page.name}} can install **{{page.version}}** of {{page.mesh_name}}. A number of sample applications can be installed using the {{page.name}}.
+The {{page.name}} can install **{{page.earliest_version}}** of {{page.mesh_name}} service mesh. A number of sample applications can be installed using the {{page.name}}.
 
 ### Install {{ page.mesh_name }}
 
@@ -37,7 +37,7 @@ Note: Linkerd's control plane will be deployed to the `linkerd` namespace. Linke
   <img style="width:500px;" src="{{ site.baseurl }}/assets/img/adapters/linkerd/linkerd-adapter.png" />
 </a>
 
-##### Click on (+) and choose the {{page.version}} of the {{page.mesh_name}} service mesh.
+##### Click on (+) and choose the {{page.earliest_version}} of the {{page.mesh_name}} service mesh.
 
 <a href="{{ site.baseurl }}/assets/img/adapters/linkerd/linkerd-install.png">
   <img style="width:500px;" src="{{ site.baseurl }}/assets/img/adapters/linkerd/linkerd-install.png" />

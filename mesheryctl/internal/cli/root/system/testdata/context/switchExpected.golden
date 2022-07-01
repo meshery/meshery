@@ -1,16 +1,16 @@
 contexts:
   local:
-    adapters:
-    - meshery-istio
     channel: stable
+    components:
+    - meshery-istio
     endpoint: http://localhost:9081
     platform: kubernetes
     token: Default
     version: latest
   local2:
-    adapters:
-    - meshery-istio
     channel: stable
+    components:
+    - meshery-istio
     endpoint: http://localhost:32242
     platform: docker
     token: Default2

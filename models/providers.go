@@ -12,6 +12,9 @@ import (
 	SMP "github.com/layer5io/service-mesh-performance/spec"
 )
 
+// ContextKey is a custom type for setting context key
+type ContextKey string
+
 // ExtensionInput - input for a plugin
 type ExtensionInput struct {
 	DBHandler       *database.Handler
@@ -51,6 +54,7 @@ type Extensions struct {
 	Navigator NavigatorExtensions `json:"navigator,omitempty"`
 	UserPrefs UserPrefsExtensions `json:"user_prefs,omitempty"`
 	GraphQL   GraphQLExtensions   `json:"graphql,omitempty"`
+	Acccount  AccountExtensions   `json:"account,omitempty"`
 }
 
 // NavigatorExtensions is a collection of NavigatorExtension
@@ -62,10 +66,14 @@ type UserPrefsExtensions []UserPrefsExtension
 // GraphQLExtensions is a collection of GraphQLExtension endpoints
 type GraphQLExtensions []GraphQLExtension
 
+// NavigatorExtensions is a collection of NavigatorExtension
+type AccountExtensions []AccountExtension
+
 // GraphQLExtension describes the graphql server extension point in the backend
 type GraphQLExtension struct {
 	Component string `json:"component,omitempty"`
 	Path      string `json:"path,omitempty"`
+	Type      string `json:"type,omitempty"`
 }
 
 // NavigatorExtension describes the Navigator extension point in the UI
@@ -78,11 +86,25 @@ type NavigatorExtension struct {
 	Link            *bool               `json:"link,omitempty"`
 	Show            *bool               `json:"show,omitempty"`
 	Children        NavigatorExtensions `json:"children,omitempty"`
+	Type            string              `json:"type,omitempty"`
+}
+
+// AccountExtension describes the Account extension point in the UI
+type AccountExtension struct {
+	Title           string            `json:"title,omitempty"`
+	OnClickCallback int               `json:"on_click_callback,omitempty"`
+	Href            Href              `json:"href,omitempty"`
+	Component       string            `json:"component,omitempty"`
+	Link            *bool             `json:"link,omitempty"`
+	Show            *bool             `json:"show,omitempty"`
+	Children        AccountExtensions `json:"children,omitempty"`
+	Type            string            `json:"type,omitempty"`
 }
 
 // UserPrefsExtension describes the user preference extension point in the UI
 type UserPrefsExtension struct {
 	Component string `json:"component,omitempty"`
+	Type      string `json:"type,omitempty"`
 }
 
 // Href describes a link along with its type
@@ -140,19 +162,22 @@ const (
 	RemoteProviderType ProviderType = "remote"
 
 	// ProviderCtxKey is the context key for persisting provider to context
-	ProviderCtxKey = "provider"
+	ProviderCtxKey ContextKey = "provider"
 
 	// TokenCtxKey is the context key for persisting token to context
-	TokenCtxKey = "token"
+	TokenCtxKey ContextKey = "token"
 
 	// UserCtxKey is the context key for persisting user to context
-	UserCtxKey = "user"
+	UserCtxKey ContextKey = "user"
 
 	// UserPrefsCtxKey is the context key for persisting user preferences to context
-	PerfObjCtxKey = "perf_obj"
+	PerfObjCtxKey ContextKey = "perf_obj"
 
-	// UserPrefsCtxKey is the context key for latest broker endpoint to context
-	BrokerURLCtxKey = "broker_endpoint"
+	KubeClustersKey   ContextKey = "kubeclusters"
+	AllKubeClusterKey ContextKey = "allkubeclusters"
+
+	MesheryControllerHandlersKey = "mesherycontrollerhandlerskey"
+	MeshSyncDataHandlersKey      = "meshsyncdatahandlerskey"
 )
 
 // IsSupported returns true if the given feature is listed as one of
@@ -218,6 +243,14 @@ type Provider interface {
 	GetResult(tokenVal string, resultID uuid.UUID) (*MesheryResult, error)
 	RecordPreferences(req *http.Request, userID string, data *Preference) error
 
+	SaveK8sContext(token string, k8sContext K8sContext) (K8sContext, error)
+	GetK8sContexts(token, page, pageSize, search, order string) (MesheryK8sContextPage, error)
+	DeleteK8sContext(token, id string) (K8sContext, error)
+	GetK8sContext(token, id string) (K8sContext, error)
+	LoadAllK8sContext(token string) ([]*K8sContext, error)
+	// SetCurrentContext(token, id string) (K8sContext, error)
+	// GetCurrentContext(token string) (K8sContext, error)
+
 	SMPTestConfigStore(req *http.Request, perfConfig *SMP.PerformanceTestConfig) (string, error)
 	SMPTestConfigGet(req *http.Request, testUUID string) (*SMP.PerformanceTestConfig, error)
 	SMPTestConfigFetch(req *http.Request, page, pageSize, search, order string) ([]byte, error)
@@ -231,8 +264,9 @@ type Provider interface {
 	GetKubeClient() *mesherykube.Client
 
 	SaveMesheryPattern(tokenString string, pattern *MesheryPattern) ([]byte, error)
-	GetMesheryPatterns(req *http.Request, page, pageSize, search, order string) ([]byte, error)
+	GetMesheryPatterns(tokenString string, page, pageSize, search, order string) ([]byte, error)
 	DeleteMesheryPattern(req *http.Request, patternID string) ([]byte, error)
+	DeleteMesheryPatterns(req *http.Request, patterns MesheryPatternDeleteRequestBody) ([]byte, error)
 	GetMesheryPattern(req *http.Request, patternID string) ([]byte, error)
 	RemotePatternFile(req *http.Request, resourceURL, path string, save bool) ([]byte, error)
 	SaveMesheryPatternResource(token string, resource *PatternResource) (*PatternResource, error)
@@ -262,4 +296,6 @@ type Provider interface {
 	GetSchedules(req *http.Request, page, pageSize, order string) ([]byte, error)
 	GetSchedule(req *http.Request, scheduleID string) ([]byte, error)
 	DeleteSchedule(req *http.Request, scheduleID string) ([]byte, error)
+
+	ExtensionProxy(req *http.Request) ([]byte, error)
 }

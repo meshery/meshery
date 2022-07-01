@@ -1,5 +1,8 @@
 /**
+ * @generated SignedSource<<351072a663eef7bd57786864c22f673b>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -7,15 +10,16 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
-export type MeshType = "ALL_MESH" | "APP_MESH" | "CITRIX_SERVICE_MESH" | "CONSUL" | "INVALID_MESH" | "ISTIO" | "KUMA" | "LINKERD" | "NETWORK_SERVICE_MESH" | "NGINX_SERVICE_MESH" | "OCTARINE" | "OPEN_SERVICE_MESH" | "TANZU" | "TRAEFIK_MESH" | "%future added value";
+import type { ConcreteRequest, Query } from 'relay-runtime';
+export type MeshType = "ALL_MESH" | "INVALID_MESH" | "APP_MESH" | "CITRIX_SERVICE_MESH" | "CONSUL" | "ISTIO" | "KUMA" | "LINKERD" | "TRAEFIK_MESH" | "OCTARINE" | "NETWORK_SERVICE_MESH" | "TANZU" | "OPEN_SERVICE_MESH" | "NGINX_SERVICE_MESH" | "CILIUM_SERVICE_MESH" | "%future added value";
 export type ServiceMeshFilter = {|
-  type?: ?MeshType
+  type?: ?MeshType,
+  k8sClusterIDs?: ?$ReadOnlyArray<string>,
 |};
-export type DataPlanesQueryVariables = {|
-  filter?: ?ServiceMeshFilter
+export type DataPlanesQuery$variables = {|
+  filter?: ?ServiceMeshFilter,
 |};
-export type DataPlanesQueryResponse = {|
+export type DataPlanesQuery$data = {|
   +dataPlanesState: $ReadOnlyArray<{|
     +name: string,
     +proxies: $ReadOnlyArray<{|
@@ -40,48 +44,15 @@ export type DataPlanesQueryResponse = {|
       |}>,
       +resources: ?any,
     |}>,
-  |}>
+  |}>,
 |};
 export type DataPlanesQuery = {|
-  variables: DataPlanesQueryVariables,
-  response: DataPlanesQueryResponse,
+  variables: DataPlanesQuery$variables,
+  response: DataPlanesQuery$data,
 |};
 */
 
-
-/*
-query DataPlanesQuery(
-  $filter: ServiceMeshFilter
-) {
-  dataPlanesState: getDataPlanes(filter: $filter) {
-    name
-    proxies {
-      controlPlaneMemberName
-      containerName
-      image
-      status {
-        containerStatusName
-        image
-        state
-        lastState
-        ready
-        restartCount
-        started
-        imageID
-        containerID
-      }
-      ports {
-        name
-        containerPort
-        protocol
-      }
-      resources
-    }
-  }
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -277,7 +248,10 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = '972da366246c7024e36e973fb98f27a5';
 
-module.exports = node;
+(node/*: any*/).hash = "972da366246c7024e36e973fb98f27a5";
+
+module.exports = ((node/*: any*/)/*: Query<
+  DataPlanesQuery$variables,
+  DataPlanesQuery$data,
+>*/);

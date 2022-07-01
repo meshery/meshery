@@ -1,30 +1,31 @@
 ---
 layout: default
 title: Broker
-permalink: es/concepts/architecture/broker
+permalink: /es/concepts/architecture/broker
 type: concepts
-redirect_from: es/architecture/broker
-abstract: "El componente Meshery broker facilita la transmisión de datos entre los componentes del clúster de Kubernetes y el mundo exterior"
+redirect_from: architecture/broker
+abstract: "El componente broker de Meshery facilita la transmisión de datos entre los componentes del clúster de Kubernetes y el mundo exterior."
 language: es
 list: include
 ---
 
-El Broker es un controlador de Kubernetes personalizado que provee transmisión de datos a través de componentes independientes de Meshery ya sea que estos componentes estén ejecutándose dentro o fuera del clúster de Kubernetes.
+Broker es un controlador personalizado Kubernetes que provee transmisión de datos a través de componentes independientes de Meshery, ya sea que esos componentes se ejecuten dentro o fuera del clúster de Kubernetes.
 
-### Preguntas más Frecuentes del Broker
+### Preguntas Frequentes del Broker
 
 #### ¿Cuántos Brokers pueden ejecutarse?
-Se recomienda ejecutar una instancia del Broker para cada clúster de Kubernetes. Sin embargo, la instancia en sí puede ser escalado de acuerdo al volumen de datos entrantes en cada clúster. El escalamiento es independiente de la cantidad de instancias que se ejecutan.
+Se recomienda ejecutar una instancia de agente para cada clúster de kubernetes. Sin embargo, la instancia en sí se puede escalar en función del volumen de datos entrantes en cada uno de los clústeres. El escalado es independiente del número de instancias en ejecución.
 
-#### ¿Cómo se ve una configuración de Alta Disponibilidad?
-Aprovechamos la funcionalidad de Kubernetes en términos del comportamiento de Alta Disponibilidad. Lo que significa que la instancia del Broker se instancía/reinicia por sí misma cuando se produce un problema. En parte, Meshery Operator es también responsable de mantener al Broker funcional.
+#### ¿Cómo se ve una configuración HA?
+Aprovechamos la funcionalidad de kubernetes en términos del comportamiento de alta disponibilidad(High Avaliavility - HA). Es decir, la instancia del agente se crea una instancia / se reinicia por sí sola cuando ocurre un problema. En parte, Meshery-Operator también es responsable de mantener al corredor en funcionamiento.
 
-#### ¿Qué características de estado tiene el Broker?
-Todos los mensajes que se publican en el Broker se persisten en memoria dentro de la instancia del Broker hasta que se consuma. El Volumen de persistencia/Espacio del disco no está siendo utilizado actualmente por el Broker.
+#### ¿Qué caracteristicas con estado tiene el Broker?
+Todos los mensajes que se publican en el intermediario se conservan en la memoria dentro de la instancia del intermediario hasta que se consumen. El Broker no está utilizando actualmente el volumen persistente / espacio en disco.
 
-#### ¿Cómo puedo saber si el Broker está funcionando?, ¿cómo puedo solucionar problemas del Broker?
-La instancia del Broker es desplegada dentro del clúster de Kubernetes como un `Statefulset`. En el caso de que el Broker parezca que no funciona, aquí están algunos pasos para solucionar problemas de la instancia:
+#### ¿Cómo saber si el Broker está funcionando? ¿Cómo solucionar problemas con el Broker?
+La instancia de Broker se implementa dentro del clúster de kubernetes como un "Statefulset". En el caso de que el agente no parezca funcionar, aquí hay algunos pasos para solucionar el problema de la instancia:
 
-- Asegúrese de que los pods correspondientes al `Statefulset` se encuentren en funcionamiento.
-- Asegúrese de que el clúster de Kubernetes tiene soporte para Kubernetes `Service` tipo `LoadBalancer` o `NodePort`.
-- Asegurar la conectividad entre el Meshery Server y el endpoint del servicio del Broker.
+- Asegúrese de que los pods correspondientes al `Statefulset` estén en funcionamiento.
+- Asegúrese de que el clúster de kubernetes sea compatible con el tipo de `Servicio` de kubernetes` LoadBalancer` o `NodePort`.
+- Asegure la conectividad entre Meshery-Server y el punto final del servicio Broker.
+

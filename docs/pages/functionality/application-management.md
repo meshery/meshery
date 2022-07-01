@@ -10,7 +10,9 @@ list: include
 Meshery's application management features allows you to store and onboard/offboard applications onto service meshes. Meshery also comes with some sample applications out-of-the-box for you to quickly try out service mesh features.
 
 ## What is a Meshery Application?
-	A single file (future: which could be split into multiple files upon user request) that comprises Kubernetes objects representative of a complete set of Kubernetes workload resources. 
+
+A single file (future: which could be split into multiple files upon user request) that comprises Kubernetes objects representative of a complete set of Kubernetes workload resources. 
+
 ### What is a Meshery Rollout?
 	"v1" Application = Services + Deployments + ReplicaSets
 	"v2" Application = Services + Deployments + ReplicaSets (Rollout Strategy) 

@@ -9,7 +9,7 @@
   {{ include.diffTag }}
   {% endif %}
   {% for item in sorted_reading %}
-  {% if item.type==page.type and item.category==page.category and item.list!="exclude" and page.url!=item.url %}
+  {% if item.type==page.type and item.category==page.category and item.list!="exclude" and page.url!=item.url and item.language == include.language %}
   <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
   </li>
   {% endif %}

@@ -1,6 +1,6 @@
 # meshery-app-mesh
 
-![Version: 2.1.2](https://img.shields.io/badge/Version-2.1.2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: stable-latest](https://img.shields.io/badge/AppVersion-stable--latest-informational?style=flat-square)
+![Version: 0.5.0](https://img.shields.io/badge/Version-0.5.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: stable-latest](https://img.shields.io/badge/AppVersion-stable--latest-informational?style=flat-square)
 
 Meshery Adapter for App Mesh chart.
 
@@ -8,8 +8,8 @@ Meshery Adapter for App Mesh chart.
 
 | Name | Email | Url |
 | ---- | ------ | --- |
-| aisuko | urakiny@gmail.com |  |
-| leecalcote | leecalcote@gmail.com |  |
+| aisuko | <urakiny@gmail.com> |  |
+| leecalcote | <leecalcote@gmail.com> |  |
 
 ## Values
 
@@ -19,7 +19,7 @@ Meshery Adapter for App Mesh chart.
 | annotations | object | `{}` |  |
 | env | object | `{}` |  |
 | fullnameOverride | string | `""` |  |
-| image.pullPolicy | string | `"IfNotPresent"` |  |
+| image.pullPolicy | string | `"Always"` |  |
 | image.repository | string | `"layer5/meshery-app-mesh:stable-latest"` |  |
 | imagePullSecrets | list | `[]` |  |
 | ingress.annotations | string | `nil` |  |
@@ -38,8 +38,9 @@ Meshery Adapter for App Mesh chart.
 | service.annotations | object | `{}` |  |
 | service.port | int | `10005` |  |
 | service.type | string | `"ClusterIP"` |  |
-| serviceAccount.create | bool | `true` |  |
-| serviceAccount.name | string | `"meshery-adapter-app-mesh"` |  |
+| serviceAccount.create | bool | `false` |  |
+| serviceAccount.name | string | `""` |  |
+| serviceAccountNameOverride | string | `""` |  |
 | testCase.enabled | bool | `false` |  |
 | tolerations | list | `[]` |  |
 

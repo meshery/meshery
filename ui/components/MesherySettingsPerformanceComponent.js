@@ -17,6 +17,7 @@ import { bindActionCreators } from 'redux';
 import CloseIcon from '@material-ui/icons/Close';
 import { updateLoadTestPref, updateProgress } from '../lib/store';
 import { durationOptions } from '../lib/prePopulatedOptions';
+import { ctxUrl } from '../utils/multi-ctx';
 
 
 const loadGenerators = [
@@ -60,7 +61,11 @@ class MesherySettingsPerformanceComponent extends React.Component {
   }
 
   handleChange = (name) => (event) => {
+    if (name === 'qps' || name === 'c'){
+      this.setState({ [name]: parseInt(event.target.value) });
+    }else{
     this.setState({ [name]: event.target.value });
+    }
   }
 
   handleDurationChange = (event, newValue) => {
@@ -101,25 +106,26 @@ class MesherySettingsPerformanceComponent extends React.Component {
       qps, c, t, gen,
     } = this.state;
 
-    const data = {
+    const loadTestPrefs = {
       qps,
       c,
       t,
       gen,
     };
-    const params = Object.keys(data).map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(data[key])}`).join('&');
+    const requestBody = JSON.stringify({"loadTestPrefs": loadTestPrefs});
 
     this.setState({ blockRunTest: true }); // to block the button
     this.props.updateProgress({ showProgress: true });
     const self = this;
-    dataFetch('/api/user/prefs', {
+    dataFetch(
+      ctxUrl('/api/user/prefs', this.props.selectedK8sContexts), {
       credentials: 'same-origin',
       method: 'POST',
       credentials: 'include',
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+        'Content-Type': 'application/json;charset=UTF-8',
       },
-      body: params,
+      body: requestBody,
     }, (result) => {
       this.props.updateProgress({ showProgress: false });
       if (typeof result !== 'undefined') {
@@ -156,7 +162,8 @@ class MesherySettingsPerformanceComponent extends React.Component {
 
   getLoadTestPrefs = () => {
     const self = this;
-    dataFetch('/api/user/prefs', {
+    dataFetch(
+      ctxUrl('/api/user/prefs', this.props.selectedK8sContexts), {
       credentials: 'same-origin',
       method: 'GET',
       credentials: 'include',
@@ -309,10 +316,12 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 const mapStateToProps = (state) => {
-
   const loadTestPref = state.get('loadTestPref').toJS();
+  const selectedK8sContexts = state.get('selectedK8sContexts');
+
   return {
     ...loadTestPref,
+    selectedK8sContexts,
   };
 };
 

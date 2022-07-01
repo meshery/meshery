@@ -23,45 +23,47 @@ func init() {
 }
 
 // Filler - filler stage processes the pattern to subsitute Pattern
-func Filler(data *Data, err error, next ChainStageNextFunction) {
-	if err != nil {
-		next(data, err)
-		return
-	}
+func Filler(skipPrintLogs bool) ChainStageFunction {
+	return func(data *Data, err error, next ChainStageNextFunction) {
+		if err != nil {
+			next(data, err)
+			return
+		}
 
-	// Flatten the service map to perform queries
-	flatSvc := map[string]interface{}{}
-	utils.FlattenMap("", utils.ToMapStringInterface(data.Pattern), flatSvc)
-
-	fmt.Printf("%+#v\n", flatSvc)
-
-	err = fill(data.Pattern, flatSvc)
-
-	if next != nil {
-		next(data, err)
+		// Flatten the service map to perform queries
+		flatSvc := map[string]interface{}{}
+		utils.FlattenMap("", utils.ToMapStringInterface(data.Pattern), flatSvc)
+		if !skipPrintLogs {
+			fmt.Printf("%+#v\n", flatSvc)
+		}
+		err = fill(data.Pattern, flatSvc)
+		if next != nil {
+			next(data, err)
+		}
 	}
 }
 
 func fill(p *core.Pattern, flatSvc map[string]interface{}) error {
+	var errs []error
 	for _, v := range p.Services {
 		if err := fillDependsOn(v, flatSvc); err != nil {
-			return err
+			errs = append(errs, err)
 		}
 		if err := fillNamespace(v, flatSvc); err != nil {
-			return err
+			errs = append(errs, err)
 		}
 		if err := fillSettings(v, flatSvc); err != nil {
-			return err
+			errs = append(errs, err)
 		}
 		if err := fillTraits(v, flatSvc); err != nil {
-			return err
+			errs = append(errs, err)
 		}
 		if err := fillType(v, flatSvc); err != nil {
-			return err
+			errs = append(errs, err)
 		}
 	}
 
-	return nil
+	return mergeErrors(errs)
 }
 
 func fillDependsOn(svc *core.Service, flatSvc map[string]interface{}) error {

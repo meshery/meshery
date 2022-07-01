@@ -18,8 +18,6 @@ import (
 	"bufio"
 	"context"
 	"fmt"
-	"net/http"
-	"net/url"
 	"os"
 	"os/exec"
 	"path"
@@ -35,24 +33,41 @@ import (
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
-	log "github.com/sirupsen/logrus"
-	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 
 	meshkitutils "github.com/layer5io/meshkit/utils"
 	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
+	log "github.com/sirupsen/logrus"
+	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 var (
-	skipUpdateFlag bool
+	skipUpdateFlag  bool
+	skipBrowserFlag bool
 )
 
 // startCmd represents the start command
 var startCmd = &cobra.Command{
 	Use:   "start",
 	Short: "Start Meshery",
-	Long:  `Start Meshery and each of its service mesh adapters.`,
+	Long:  `Start Meshery and each of its service mesh components.`,
 	Args:  cobra.NoArgs,
+	Example: `
+// Start meshery
+mesheryctl system start
+
+// To create a new context for in-cluster Kubernetes deployments and set the new context as your current-context
+mesheryctl system context create k8s -p kubernetes -s
+
+// (optional) skip checking for new updates available in Meshery.
+mesheryctl system start --skip-update
+
+// Reset Meshery's configuration file to default settings.
+mesheryctl system start --reset
+
+// Silently create Meshery's configuration file with default settings
+mesheryctl system start --yes
+	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
 		hcOptions := &HealthCheckOptions{
@@ -134,6 +149,12 @@ func start() error {
 	if utils.PlatformFlag != "" {
 		if utils.PlatformFlag == "docker" || utils.PlatformFlag == "kubernetes" {
 			currCtx.SetPlatform(utils.PlatformFlag)
+
+			// update the context to config
+			err = config.UpdateContextInConfig(viper.GetViper(), currCtx, mctlCfg.GetCurrentContextName())
+			if err != nil {
+				return err
+			}
 		} else {
 			return ErrUnsupportedPlatform(utils.PlatformFlag, utils.CfgFile)
 		}
@@ -180,14 +201,14 @@ func start() error {
 		RequiredService := []string{"meshery", "watchtower"}
 
 		AllowedServices := map[string]utils.Service{}
-		for _, v := range currCtx.GetAdapters() {
+		for _, v := range currCtx.GetComponents() {
 			if services[v].Image == "" {
-				log.Fatalf("Invalid adapter specified %s", v)
+				log.Fatalf("Invalid component specified %s", v)
 			}
 
 			temp, ok := services[v]
 			if !ok {
-				return errors.New("unable to extract adapter version")
+				return errors.New("unable to extract component version")
 			}
 
 			spliter := strings.Split(temp.Image, ":")
@@ -253,7 +274,7 @@ func start() error {
 			endpoint.Address = utils.EndpointProtocol + "://localhost"
 			currCtx.SetEndpoint(endpoint.Address + ":" + userPort[len(userPort)-1])
 
-			err = utils.ChangeConfigEndpoint(mctlCfg.CurrentContext, currCtx)
+			err = config.UpdateContextInConfig(viper.GetViper(), currCtx, mctlCfg.GetCurrentContextName())
 			if err != nil {
 				return err
 			}
@@ -338,6 +359,7 @@ func start() error {
 		}
 
 		log.Info("Starting Meshery...")
+
 		spinner := utils.CreateDefaultSpinner("Deploying Meshery on Kubernetes", "\nMeshery deployed on Kubernetes.")
 		spinner.Start()
 
@@ -345,163 +367,65 @@ func start() error {
 			return err
 		}
 
-		// get value overrides to install the helm chart
-		overrideValues := utils.SetOverrideValues(currCtx, mesheryImageVersion)
-
-		// install the helm charts with specified override values
-		var chartVersion string
-		if mesheryImageVersion != "latest" {
-			chartVersion = mesheryImageVersion
-		}
-		if err = kubeClient.ApplyHelmChart(meshkitkube.ApplyHelmChartConfig{
-			Namespace:       utils.MesheryNamespace,
-			CreateNamespace: true,
-			ChartLocation: meshkitkube.HelmChartLocation{
-				Repository: utils.HelmChartURL,
-				Chart:      utils.HelmChartName,
-				Version:    chartVersion,
-			},
-			OverrideValues: overrideValues,
-			Action:         meshkitkube.INSTALL,
-			// the helm chart will be downloaded to ~/.meshery/manifests if it doesn't exist
-			DownloadLocation: path.Join(utils.MesheryFolder, utils.ManifestsFolder),
-		}); err != nil {
-			return errors.Wrap(err, "cannot start Meshery")
+		// Applying Meshery Helm charts for installing Meshery
+		if err = applyHelmCharts(kubeClient, currCtx, mesheryImageVersion, false); err != nil {
+			return err
 		}
 
-		deadline := time.Now().Add(20 * time.Second)
-
-		// check if all the pods are running
-		for !(time.Now().After(deadline)) {
-			podsStatus, err := utils.AreAllPodsRunning()
-			if err != nil {
-				return err
-			}
-
-			if podsStatus {
-				break
-			} else {
-				time.Sleep(1 * time.Second)
-			}
+		// checking if Meshery is ready
+		time.Sleep(10 * time.Second) // sleeping 10 seconds to countermeasure time to apply helm charts
+		ready, err := mesheryReadinessHealthCheck()
+		if err != nil {
+			log.Info(err)
 		}
 
 		spinner.Stop()
 
-		podsStatus, err := utils.AreAllPodsRunning()
-		if !podsStatus {
-			log.Info("\nSome Meshery pods have not come up yet.\nPlease check the status of the pods by executing “mesheryctl system status” before using meshery.")
-		} else {
-			log.Info("Meshery is starting...")
+		if !ready {
+			log.Info("\nFew Meshery pods have not come up yet.\nPlease check the status of the pods by executing “mesheryctl system status” and Meshery-UI endpoint with “mesheryctl system dashboard” before using meshery.")
+			return nil
 		}
-
-		clientset := kubeClient.KubeClient
-
-		var opts meshkitkube.ServiceOptions
-		opts.Name = "meshery"
-		opts.Namespace = utils.MesheryNamespace
-		opts.APIServerURL = kubeClient.RestConfig.Host
-
-		var endpoint *meshkitutils.Endpoint
-
-		deadline = time.Now().Add(3 * time.Second)
-
-		//polling for endpoint to be available within the three second deadline
-		for !(time.Now().After(deadline)) {
-			endpoint, err = meshkitkube.GetServiceEndpoint(context.TODO(), clientset, &opts)
-			if err == nil {
-				break
-			} else {
-				time.Sleep(1 * time.Second)
-			}
-		}
-
-		currCtx.SetEndpoint(fmt.Sprintf("%s://%s:%d", utils.EndpointProtocol, endpoint.Internal.Address, endpoint.Internal.Port))
-		if !meshkitutils.TcpCheck(&meshkitutils.HostPort{
-			Address: endpoint.Internal.Address,
-			Port:    endpoint.Internal.Port,
-		}, nil) {
-			currCtx.SetEndpoint(fmt.Sprintf("%s://%s:%d", utils.EndpointProtocol, endpoint.External.Address, endpoint.External.Port))
-			if !meshkitutils.TcpCheck(&meshkitutils.HostPort{
-				Address: endpoint.External.Address,
-				Port:    endpoint.External.Port,
-			}, nil) {
-				u, _ := url.Parse(opts.APIServerURL)
-				if meshkitutils.TcpCheck(&meshkitutils.HostPort{
-					Address: u.Hostname(),
-					Port:    endpoint.External.Port,
-				}, nil) {
-					currCtx.SetEndpoint(fmt.Sprintf("%s://%s:%d", utils.EndpointProtocol, u.Hostname(), endpoint.External.Port))
-				}
-			}
-		}
-
-		if err == nil {
-			err = utils.ChangeConfigEndpoint(mctlCfg.CurrentContext, currCtx)
-			if err != nil {
-				return err
-			}
-		}
+		log.Info("Meshery is starting...")
 
 		// switch to default case if the platform specified is not supported
 	default:
 		return fmt.Errorf("the platform %s is not supported currently. The supported platforms are:\ndocker\nkubernetes\nPlease check %s/config.yaml file", currCtx.GetPlatform(), utils.MesheryFolder)
 	}
 
-	hcOptions := &HealthCheckOptions{
-		PrintLogs:           false,
-		IsPreRunE:           false,
-		Subcommand:          "",
-		RunKubernetesChecks: true,
-	}
-	hc, err := NewHealthChecker(hcOptions)
-	if err != nil {
-		return ErrHealthCheckFailed(err)
-	}
-	// If k8s is available in case of platform docker than we deploy operator
-	if err = hc.Run(); err != nil {
-		return ErrHealthCheckFailed(err)
-	}
-
-	// Check for Meshery status before opening it in browser
-	client := &http.Client{}
-	url := currCtx.GetEndpoint()
-	// Can not wait for ever, so setting a limit of 10 seconds
-	waittime := time.Now().Add(10 * time.Second)
-
-	for !(time.Now().After(waittime)) {
-		// Request to check whether endpoint is up or not
-		req, err := http.NewRequest("GET", url, nil)
-		if err != nil {
-			log.Info("To open Meshery in browser, please point your browser to " + currCtx.GetEndpoint() + " to access Meshery.")
-			return nil
-		}
-
-		resp, err := client.Do(req)
-
-		if resp != nil {
-			defer resp.Body.Close()
-		}
-		if err != nil || resp.StatusCode != 200 {
-			// wait and try accessing the endpoint after one second
-			time.Sleep(1 * time.Second)
-		} else {
-			// meshery server is up and responding, break out of loop and open Meshery in browser
-			break
-		}
-	}
-
-	log.Info("Opening Meshery (" + currCtx.GetEndpoint() + ") in browser.")
-
-	err = utils.NavigateToBrowser(currCtx.GetEndpoint())
-	if err != nil {
-		log.Warn("Failed to open Meshery in browser, please point your browser to " + currCtx.GetEndpoint() + " to access Meshery.")
-	}
-
-	return nil
+	// execute dashboard command to fetch and navigate to Meshery UI
+	return dashboardCmd.RunE(nil, nil)
 }
 
 func init() {
 	startCmd.PersistentFlags().StringVarP(&utils.PlatformFlag, "platform", "p", "", "platform to deploy Meshery to.")
 	startCmd.Flags().BoolVarP(&skipUpdateFlag, "skip-update", "", false, "(optional) skip checking for new Meshery's container images.")
 	startCmd.Flags().BoolVarP(&utils.ResetFlag, "reset", "", false, "(optional) reset Meshery's configuration file to default settings.")
+	startCmd.Flags().BoolVarP(&skipBrowserFlag, "skip-browser", "", false, "(optional) skip opening of MesheryUI in browser.")
+}
+
+// Apply Meshery helm charts
+func applyHelmCharts(kubeClient *meshkitkube.Client, currCtx *config.Context, mesheryImageVersion string, dryRun bool) error {
+	// get value overrides to install the helm chart
+	overrideValues := utils.SetOverrideValues(currCtx, mesheryImageVersion)
+
+	// install the helm charts with specified override values
+	var chartVersion string
+	if mesheryImageVersion != "latest" {
+		chartVersion = mesheryImageVersion
+	}
+	return kubeClient.ApplyHelmChart(meshkitkube.ApplyHelmChartConfig{
+		Namespace:       utils.MesheryNamespace,
+		ReleaseName:     "meshery",
+		CreateNamespace: true,
+		ChartLocation: meshkitkube.HelmChartLocation{
+			Repository: utils.HelmChartURL,
+			Chart:      utils.HelmChartName,
+			Version:    chartVersion,
+		},
+		OverrideValues: overrideValues,
+		Action:         meshkitkube.INSTALL,
+		// the helm chart will be downloaded to ~/.meshery/manifests if it doesn't exist
+		DownloadLocation: path.Join(utils.MesheryFolder, utils.ManifestsFolder),
+		DryRun:           dryRun,
+	})
 }

@@ -103,3 +103,4 @@ Si el procedimiento de [Configuración automática](#configuración-automática-
    ```
 
 Meshery ahora debería estar conectado con su instancia administrada de Kubernetes. Eche un vistazo a las [Guías Meshery]({{ site.baseurl }}/guides) para ver más consejos de uso avanzados.
+

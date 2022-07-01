@@ -15,7 +15,6 @@ import PrometheusConfigComponent from "./PrometheusConfigComponent";
 import fetchAvailableAddons from "./graphql/queries/AddonsStatusQuery";
 
 const promStyles = (theme) => ({
-  root : { padding : theme.spacing(5), },
   buttons : { display : "flex",
     //   justifyContent: 'flex-end',
   },
@@ -115,7 +114,8 @@ class PrometheusComponent extends Component {
           self.props.updateProgress({ showProgress : false });
           if (typeof result !== "undefined" && result?.prometheusURL && result?.prometheusURL !="") {
             let selector = {
-              serviceMesh : "ALL_MESH",
+              type : "ALL_MESH",
+              k8sClusterIDs : this.getK8sClusterIds()
             };
             fetchAvailableAddons(selector).subscribe({
               next : (res) => {
@@ -147,6 +147,11 @@ class PrometheusComponent extends Component {
     }
     return {};
   }
+
+  getK8sClusterIds = () => {
+    return getK8sClusterIdsFromCtxId(this.props.selectedK8sContexts, this.props.k8sconfig)
+  }
+
 
   handleChange = (name) => (value) => {
     if (name === "prometheusURL" && value !== "") {
@@ -306,10 +311,14 @@ PrometheusComponent.propTypes = { classes : PropTypes.object.isRequired,
 const mapDispatchToProps = (dispatch) => ({ updateGrafanaConfig : bindActionCreators(updateGrafanaConfig, dispatch),
   updatePrometheusConfig : bindActionCreators(updatePrometheusConfig, dispatch),
   updateProgress : bindActionCreators(updateProgress, dispatch), });
+
 const mapStateToProps = (st) => {
   const grafana = st.get("grafana").toJS();
   const prometheus = st.get("prometheus").toJS();
-  return { grafana, prometheus };
+  const selectedK8sContexts = st.get('selectedK8sContexts');
+  const k8sconfig = st.get("k8sConfig");
+
+  return { grafana, prometheus, selectedK8sContexts, k8sconfig };
 };
 
 export default withStyles(promStyles)(connect(mapStateToProps, mapDispatchToProps)(withSnackbar(PrometheusComponent)));

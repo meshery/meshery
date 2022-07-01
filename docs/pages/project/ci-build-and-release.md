@@ -35,7 +35,7 @@ Some portions of the workflow require secrets to accomplish their tasks. These s
 - `GO_VERSION`: As of July 21st 2021 it is 1.16
 - `IMAGE_NAME`: appropriate image name for each of the Docker container images. All are under the `layer5io` org.
 - `SLACK_BOT_TOKEN`: Used for notification of new GitHub stars given to the Meshery repo.
-- CYPRESS_RECORD_KEY`: Used for integration with the Layer5 account on Cypress.
+- `CYPRESS_RECORD_KEY`: Used for integration with the Layer5 account on Cypress.
 - `GLOBAL_TOKEN`: Used for securely transmitting performance test results for the None Provider.
 
 The Docker Hub user, `mesheryci`, belongs to the "ciusers" team in Docker Hub and acts as the service account under which these automated builds are being pushed. Every time a new Docker Hub repository is created we have to grant “Admin” (in order to update the README in the Docker Hub repository) permissions to the ciusers team.
@@ -306,3 +306,43 @@ Project focuses on functionality, quality and adoption, while retaining the flex
 Once a 1.0 release has been made, Around once a month or so, the project maintainers will take one of these daily builds and run it through a number of additional qualification tests and tag the build as a Stable release. Around once a quarter or so, the project maintainers take one of these Stable releases, run through a bunch more tests and tag the build as a Long Term Support (LTS) release. Finally, if we find something wrong with an LTS release, we issue patches.
 
 The different types (Daily, Stable, LTS) represent different product quality levels and different levels of support from the Meshery team. In this context, support means that we will produce patch releases for critical issues and offer technical assistance. 
+
+## Versioning Documentation 
+### For new major release
+
+The structure which the docs follow right now is, The main `docs` folder has the most recent version of documentation, while there are sub-folders for previous versions, v0.x (x being the last major release).
+On release of a new major version, the static html files for the most recent version is generated and is renamed as the release version (v0.x). 
+
+##### Steps:
+After cloning the Meshery repository
+1. `cd docs` > `bundle install` > `make site`
+1. On executing `make site` a `_site` folder is created which has static html files. 
+1. The `_site` folder is renamed to `v0.x`. 
+1. This `v0.x` folder is now the latest version of docs. 
+
+##### _In the `v0.x` folder_
+1. Search and replace all the instances where there is a direct path is defined to include the version name in the path, i.e, all paths to intra-page links and images should start with `/v0.x/`.
+- Look for `href="/` and replace with `href="/0.x/`
+- Look for `src="/`and replace with `src="/0.x/` <br/><br/>
+<a href="{{ site.baseurl }}/assets/img/versioning-guide/search-and-replace.png">
+  <img src="{{ site.baseurl }}/assets/img/versioning-guide/search-and-replace.png" />
+</a>
+
+
+### For old release
+
+For older releases we have to travel back in time. Using the `Tags` in github we go to a previous release, `v0.X.x`, the `.x` here should be the latest version of the archived docs. 
+
+##### Steps: 
+1. Copy the commit ID for that release. <br/><br/>
+<a href="{{ site.baseurl }}/assets/img/versioning-guide/commit-ID.png">
+  <img src="{{ site.baseurl }}/assets/img/versioning-guide/commit-ID.png" />
+</a>
+
+1. `git checkout <commit ID>` > `cd docs` > `bundle install` > `make site`
+1.  On executing `make site` a `_site` folder is created which has static html files. 
+1.  The `_site` folder is renamed to `v0.X` and is copied into the `docs` folder of the present version. 
+
+The above [steps]({{site.baseurl}}/project/build-and-release#in-the-v0x-folder) for replacing all the instances of direct path are to be followed. 
+
+

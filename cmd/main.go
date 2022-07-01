@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"net/url"
 	"os"
@@ -10,24 +9,21 @@ import (
 	"path"
 	"time"
 
+	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/handlers"
 	"github.com/layer5io/meshery/helpers"
 	"github.com/layer5io/meshery/internal/graphql"
-	"github.com/layer5io/meshery/internal/graphql/model"
 	"github.com/layer5io/meshery/internal/store"
 	"github.com/layer5io/meshery/models"
 	"github.com/layer5io/meshery/models/pattern/core"
 	"github.com/layer5io/meshery/router"
 	"github.com/layer5io/meshkit/broker/nats"
-	"github.com/layer5io/meshkit/database"
 	"github.com/layer5io/meshkit/logger"
 	"github.com/layer5io/meshkit/utils/broadcast"
-	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
 	"github.com/spf13/viper"
 
 	"github.com/sirupsen/logrus"
-
 	"github.com/vmihailenco/taskq/v3"
 	"github.com/vmihailenco/taskq/v3/memqueue"
 )
@@ -47,6 +43,12 @@ const (
 func main() {
 	if globalTokenForAnonymousResults != "" {
 		models.GlobalTokenForAnonymousResults = globalTokenForAnonymousResults
+	}
+
+	instanceID, err := uuid.NewV4()
+	if err != nil {
+		logrus.Error(err)
+		os.Exit(1)
 	}
 
 	// Initialize Logger instance
@@ -73,6 +75,8 @@ func main() {
 	viper.SetDefault("OS", "meshery")
 	viper.SetDefault("COMMITSHA", commitsha)
 	viper.SetDefault("RELEASE_CHANNEL", releasechannel)
+	viper.SetDefault("INSTANCE_ID", &instanceID)
+
 	viper.SetDefault("SKIP_DOWNLOAD_CONTENT", false)
 	viper.SetDefault("SKIP_COMP_GEN", false)
 	store.Initialize()
@@ -84,10 +88,10 @@ func main() {
 	if err := core.RegisterMesheryOAMWorkloads(); err != nil {
 		logrus.Error(err)
 	}
-	logrus.Info("Registered Meshery local Capabilities")
+	logrus.Info("Local Provider capabilities are: ", version)
 
 	// Get the channel
-	logrus.Info("Meshery server current channel: ", releasechannel)
+	logrus.Info("Meshery Server release channel is: ", releasechannel)
 
 	home, err := os.UserHomeDir()
 	if viper.GetString("USER_DATA_FOLDER") == "" {
@@ -102,14 +106,14 @@ func main() {
 		logrus.Fatalf("unable to create the directory for storing user data at %v", viper.GetString("USER_DATA_FOLDER"))
 	}
 
-	logrus.Infof("Using '%s' to store user data", viper.GetString("USER_DATA_FOLDER"))
+	logrus.Infof("Meshery Database is at: %s", viper.GetString("USER_DATA_FOLDER"))
 	if viper.GetString("KUBECONFIG_FOLDER") == "" {
 		if err != nil {
 			logrus.Fatalf("unable to retrieve the user's home directory: %v", err)
 		}
 		viper.SetDefault("KUBECONFIG_FOLDER", path.Join(home, ".kube"))
 	}
-	logrus.Infof("Using '%s' as the folder to look for kubeconfig file", viper.GetString("KUBECONFIG_FOLDER"))
+	logrus.Infof("Using kubeconfig at: %s", viper.GetString("KUBECONFIG_FOLDER"))
 
 	if viper.GetBool("DEBUG") {
 		logrus.SetLevel(logrus.DebugLevel)
@@ -139,17 +143,12 @@ func main() {
 	}
 	defer preferencePersister.ClosePersister()
 
-	dbHandler, err := database.New(database.Options{
-		Filename: fmt.Sprintf("file:%s/mesherydb.sql?cache=private&mode=rwc&_busy_timeout=10000&_journal_mode=WAL", viper.GetString("USER_DATA_FOLDER")),
-		Engine:   database.SQLITE,
-		Logger:   log,
-	})
+	dbHandler := models.GetNewDBInstance()
 	if err != nil {
 		logrus.Fatal(err)
 	}
 
-	kubeclient := mesherykube.Client{}
-	meshsyncCh := make(chan struct{})
+	meshsyncCh := make(chan struct{}, 10)
 	brokerConn := nats.NewEmptyConnection
 
 	err = dbHandler.AutoMigrate(
@@ -167,6 +166,7 @@ func main() {
 		&models.UserPreference{},
 		&models.PerformanceTestConfig{},
 		&models.SmiResultWithID{},
+		models.K8sContext{},
 	)
 	if err != nil {
 		logrus.Fatal(err)
@@ -175,18 +175,19 @@ func main() {
 	lProv := &models.DefaultLocalProvider{
 		ProviderBaseURL:                 DefaultProviderURL,
 		MapPreferencePersister:          preferencePersister,
-		ResultPersister:                 &models.MesheryResultsPersister{DB: &dbHandler},
-		SmiResultPersister:              &models.SMIResultsPersister{DB: &dbHandler},
-		TestProfilesPersister:           &models.TestProfilesPersister{DB: &dbHandler},
-		PerformanceProfilesPersister:    &models.PerformanceProfilePersister{DB: &dbHandler},
-		MesheryPatternPersister:         &models.MesheryPatternPersister{DB: &dbHandler},
-		MesheryFilterPersister:          &models.MesheryFilterPersister{DB: &dbHandler},
-		MesheryApplicationPersister:     &models.MesheryApplicationPersister{DB: &dbHandler},
-		MesheryPatternResourcePersister: &models.PatternResourcePersister{DB: &dbHandler},
+		ResultPersister:                 &models.MesheryResultsPersister{DB: dbHandler},
+		SmiResultPersister:              &models.SMIResultsPersister{DB: dbHandler},
+		TestProfilesPersister:           &models.TestProfilesPersister{DB: dbHandler},
+		PerformanceProfilesPersister:    &models.PerformanceProfilePersister{DB: dbHandler},
+		MesheryPatternPersister:         &models.MesheryPatternPersister{DB: dbHandler},
+		MesheryFilterPersister:          &models.MesheryFilterPersister{DB: dbHandler},
+		MesheryApplicationPersister:     &models.MesheryApplicationPersister{DB: dbHandler},
+		MesheryPatternResourcePersister: &models.PatternResourcePersister{DB: dbHandler},
+		MesheryK8sContextPersister:      &models.MesheryK8sContextPersister{DB: dbHandler},
 		GenericPersister:                dbHandler,
 	}
 	lProv.Initialize()
-	seededUUIDs := lProv.SeedContent(log)
+	lProv.SeedContent(log)
 	provs[lProv.Name()] = lProv
 
 	RemoteProviderURLs := viper.GetStringSlice("PROVIDER_BASE_URLS")
@@ -202,9 +203,9 @@ func main() {
 			SessionName:                parsedURL.Host,
 			TokenStore:                 make(map[string]string),
 			LoginCookieDuration:        1 * time.Hour,
-			SessionPreferencePersister: &models.SessionPreferencePersister{DB: &dbHandler},
-			ProviderVersion:            "v0.3.14",
-			SmiResultPersister:         &models.SMIResultsPersister{DB: &dbHandler},
+			SessionPreferencePersister: &models.SessionPreferencePersister{DB: dbHandler},
+			ProviderVersion:            version,
+			SmiResultPersister:         &models.SMIResultsPersister{DB: dbHandler},
 			GenericPersister:           dbHandler,
 		}
 
@@ -226,7 +227,6 @@ func main() {
 		Queue: mainQueue,
 
 		KubeConfigFolder: viper.GetString("KUBECONFIG_FOLDER"),
-		KubeClient:       &kubeclient,
 
 		GrafanaClient:         models.NewGrafanaClient(),
 		GrafanaClientForQuery: models.NewGrafanaClientWithHTTPClient(&http.Client{Timeout: time.Second}),
@@ -235,7 +235,13 @@ func main() {
 		PrometheusClientForQuery: models.NewPrometheusClientWithHTTPClient(&http.Client{Timeout: time.Second}),
 	}
 
-	h := handlers.NewHandlerInstance(hc, meshsyncCh, log, brokerConn)
+	operatorDeploymentConfig := models.NewOperatorDeploymentConfig(adapterTracker)
+	mctrlHelper := models.NewMesheryControllersHelper(log, operatorDeploymentConfig, dbHandler)
+	k8sComponentsRegistrationHelper := models.NewComponentsRegistrationHelper(log)
+
+	// purge the meshsync objects in the database on startup
+	models.RemoveStaleObjects(*dbHandler)
+	h := handlers.NewHandlerInstance(hc, meshsyncCh, log, brokerConn, k8sComponentsRegistrationHelper, mctrlHelper, dbHandler)
 
 	b := broadcast.NewBroadcaster(100)
 	defer b.Close()
@@ -258,22 +264,23 @@ func main() {
 	signal.Notify(c, os.Interrupt)
 
 	go func() {
-		logrus.Infof("Starting Server listening on :%d", port)
+		logrus.Infof("Meshery Server listening on :%d", port)
 		if err := r.Run(); err != nil {
 			logrus.Fatalf("ListenAndServe Error: %v", err)
 		}
 	}()
 	<-c
 	logrus.Info("Doing seeded content cleanup...")
-	lProv.CleanupSeeded(seededUUIDs)
-
-	// only uninstalls meshery-operator using helm charts
-	// useful for dev deployments
-	logrus.Info("Uninstalling meshery-operator...")
-	err = model.Initialize(&kubeclient, true, adapterTracker)
+	err = lProv.Cleanup()
 	if err != nil {
 		log.Error(err)
 	}
 
-	logrus.Info("Shutting down Meshery")
+	logrus.Info("Closing database instance...")
+	err = dbHandler.DBClose()
+	if err != nil {
+		log.Error(err)
+	}
+
+	logrus.Info("Shutting down Meshery Server...")
 }

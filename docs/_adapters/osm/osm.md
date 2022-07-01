@@ -3,7 +3,7 @@ layout: default
 title: Meshery Adapter for Open Service Mesh
 name: Meshery Adapter for Open Service Mesh
 mesh_name: Open Service Mesh
-port: 10009/tcp
+port: 10009/gRPC
 project_status: stable
 lab: osm-meshery-adapter
 github_link: https://github.com/meshery/meshery-osm
@@ -18,7 +18,7 @@ earliest_version: v0.9.2
 
 ## Lifecycle management
 
-The {{page.name}} can install **{{page.version}}** of the {{page.mesh_name}} service mesh. Sample applications for {{page.mesh_name}} can also be installed using Meshery. Using the {{page.name}}, you may also run the complete suite of Service Mesh Interface (SMI) conformance tests to validate OSM’s compliance with the SMI specification.
+The {{page.name}} can install **{{page.earliest_version}}** of the {{page.mesh_name}} service mesh. Sample applications for {{page.mesh_name}} can also be installed using Meshery. Using the {{page.name}}, you may also run the complete suite of Service Mesh Interface (SMI) conformance tests to validate OSM’s compliance with the SMI specification.
 
 ### Install {{ page.mesh_name }}
 
@@ -28,7 +28,7 @@ Choose the Meshery Adapter for {{ page.mesh_name }}.
   <img style="width:500px;" src="{{ site.baseurl }}/assets/img/adapters/osm/osm-adapter.png" />
 </a>
 
-Click on (+) and choose the `{{page.version}}` of the {{page.mesh_name}} service mesh.
+Click on (+) and choose the `{{page.earliest_version}}` of the {{page.mesh_name}} service mesh.
 
 <a href="{{ site.baseurl }}/assets/img/adapters/osm/osm-install.png">
   <img style="width:500px;" src="{{ site.baseurl }}/assets/img/adapters/osm/osm-install.png" />

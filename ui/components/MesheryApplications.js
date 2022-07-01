@@ -1,55 +1,34 @@
-import React, { useState, useEffect, useRef } from "react";
-import { withStyles, makeStyles, MuiThemeProvider } from "@material-ui/core/styles";
-import { createTheme } from '@material-ui/core/styles';
 import {
-  NoSsr,
-  TableCell,
-  IconButton,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Divider,
-  Tooltip,
-  Grid,
-  Typography,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
-  CardContent,
-  Card,
-  CardActions,
-  AppBar,
-  Toolbar
+  Dialog, DialogActions, DialogContent, DialogTitle, Divider, IconButton, NoSsr,
+  TableCell, Tooltip, Typography
 } from "@material-ui/core";
-import { UnControlled as CodeMirror } from "react-codemirror2";
-import DeleteIcon from "@material-ui/icons/Delete";
-import SaveIcon from '@material-ui/icons/Save';
-import UploadIcon from "@material-ui/icons/Publish";
-import { connect } from "react-redux";
-import { bindActionCreators } from "redux";
-import MUIDataTable from "mui-datatables";
-import PromptComponent from "./PromptComponent";
-import Moment from "react-moment";
-import { withSnackbar } from "notistack";
-import CloseIcon from "@material-ui/icons/Close";
-import PlayArrowIcon from '@material-ui/icons/PlayArrow';
-import { updateProgress } from "../lib/store";
+import { makeStyles, withStyles } from "@material-ui/core/styles";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
-import URLUploader from "./URLUploader";
-import dataFetch, { promisifiedDataFetch } from "../lib/data-fetch";
-import { CircularProgress } from "@material-ui/core";
-import PatternServiceForm from "./MesheryMeshInterface/PatternServiceForm";
+import CloseIcon from "@material-ui/icons/Close";
+import DeleteIcon from "@material-ui/icons/Delete";
 import FullscreenIcon from '@material-ui/icons/Fullscreen';
 import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import { Button } from "@material-ui/core";
-import jsYaml from "js-yaml";
-import PascalCaseToKebab from "../utils/PascalCaseToKebab";
-import ArrowBackIcon from '@material-ui/icons/ArrowBack';
-import AppsIcon from "./ConnectionWizard/icons/apps";
-import FILE_OPS from "../utils/configurationFileHandlersEnum"
+import SaveIcon from '@material-ui/icons/Save';
+import MUIDataTable from "mui-datatables";
+import { withSnackbar } from "notistack";
+import React, { useEffect, useRef, useState } from "react";
+import { UnControlled as CodeMirror } from "react-codemirror2";
+import Moment from "react-moment";
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
+import dataFetch from "../lib/data-fetch";
+import { updateProgress } from "../lib/store";
 import { trueRandom } from "../lib/trueRandom";
+import FILE_OPS from "../utils/configurationFileHandlersEnum";
+import { ctxUrl } from "../utils/multi-ctx";
+import { randomPatternNameGenerator as getRandomName } from "../utils/utils";
+import PromptComponent from "./PromptComponent";
+import UploadImport from "./UploadImport";
+import UndeployIcon from "../public/static/img/UndeployIcon";
+import DoneAllIcon from '@material-ui/icons/DoneAll';
+import ConfirmationMsg from "./ConfirmationModal";
+import ViewSwitch from "./ViewSwitch";
+import ApplicationsGrid from "./MesheryApplications/ApplicationsGrid";
 
 const styles = (theme) => ({
   grid : { padding : theme.spacing(2), },
@@ -61,7 +40,22 @@ const styles = (theme) => ({
     '& .MuiTableRow-root' : {
       cursor : 'pointer'
     }
-  }
+  },
+  createButton : {
+    display : "flex",
+    justifyContent : "flex-start",
+    alignItems : "center",
+    whiteSpace : "nowrap",
+    margin : "1rem 0 2rem 1rem"
+  },
+  topToolbar : {
+    display : "flex"
+  },
+  viewSwitchButton : {
+    justifySelf : "flex-end",
+    marginLeft : "auto",
+    paddingLeft : "1rem"
+  },
 });
 
 
@@ -95,25 +89,6 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-function CustomToolbar(onClick, urlOnClick) {
-  return function Toolbar() {
-    return (
-      <>
-        <label htmlFor="upload-button">
-          <input type="file" accept=".yaml, .yml" hidden onChange={onClick} id="upload-button" name="upload-button" />
-          <Tooltip title="Upload Application">
-            <IconButton aria-label="Upload" component="span">
-              <UploadIcon />
-            </IconButton>
-          </Tooltip>
-        </label>
-        <label htmlFor="url-upload-button">
-          <URLUploader onSubmit={urlOnClick} />
-        </label>
-      </>
-    );
-  };
-}
 function TooltipIcon({ children, onClick, title }) {
   return (
     <Tooltip title={title} placement="top" arrow interactive >
@@ -126,7 +101,7 @@ function TooltipIcon({ children, onClick, title }) {
 
 function YAMLEditor({ application, onClose, onSubmit }) {
   const classes = useStyles();
-  const [yaml, setYaml] = useState("");
+  const [yaml, setYaml] = useState(application.application_file);
   const [fullScreen, setFullScreen] = useState(false);
 
   const toggleFullScreen = () => {
@@ -189,8 +164,39 @@ function YAMLEditor({ application, onClose, onSubmit }) {
   );
 }
 
+const ACTION_TYPES = {
+  FETCH_APPLICATIONS : {
+    name : "FETCH_APPLICATION",
+    error_msg : "Failed to fetch application"
+  },
+  UPDATE_APPLICATIONS : {
+    name : "UPDATEAPPLICATION",
+    error_msg : "Failed to update application file"
+  },
+  DELETE_APPLICATIONS : {
+    name : "DELETEAPPLICATION",
+    error_msg : "Failed to delete application file"
+  },
+  DEPLOY_APPLICATIONS : {
+    name : "DEPLOY_APPLICATION",
+    error_msg : "Failed to deploy application file"
+  },
+  UNDEPLOY_APPLICATION : {
+    name : "UNDEPLOY_APPLICATION",
+    error_msg : "Failed to undeploy application file"
+  },
+  UPLOAD_APPLICATION : {
+    name : "UPLOAD_APPLICATION",
+    error_msg : "Failed to upload application file"
+  },
+};
+
+function resetSelectedApplication() {
+  return { show : false, application : null };
+}
+
 function MesheryApplications({
-  updateProgress, enqueueSnackbar, closeSnackbar, user, classes
+  updateProgress, enqueueSnackbar, closeSnackbar, user, classes, selectedK8sContexts
 }) {
   const [page, setPage] = useState(0);
   const [search] = useState("");
@@ -198,78 +204,19 @@ function MesheryApplications({
   const [count, setCount] = useState(0);
   const modalRef = useRef(null);
   const [pageSize, setPageSize] = useState(10);
-  const [showForm, setShowForm] = useState(false);
   const [applications, setApplications] = useState([]);
   const [selectedRowData, setSelectedRowData] = useState(null);
+  const [selectedApplication, setSelectedApplication] = useState(resetSelectedApplication());
   const DEPLOY_URL = '/api/application/deploy';
-
-  const getMuiTheme = () => createTheme({
-    overrides : {
-      MuiInput : {
-        underline : {
-          "&:hover:not(.Mui-disabled):before" : {
-            borderBottom : "2px solid #222"
-          },
-          "&:after" : {
-            borderBottom : "2px solid #222"
-          }
-        }
-      },
-      MUIDataTableSearch : {
-        searchIcon : {
-          color : "#607d8b",
-          marginTop : "7px",
-          marginRight : "8px",
-        },
-        clearIcon : {
-          "&:hover" : {
-            color : "#607d8b"
-          }
-        },
-      },
-      MUIDataTableSelectCell : {
-        checkboxRoot : {
-          '&$checked' : {
-            color : '#607d8b',
-          },
-        },
-      },
-      MUIDataTableToolbar : {
-        iconActive : {
-          color : "#222"
-        },
-        icon : {
-          "&:hover" : {
-            color : "#607d8b"
-          }
-        },
-      }
-    }
+  const [modalOpen, setModalOpen] = useState({
+    open : false,
+    deploy : false,
+    application_file : null
   });
-
-  const ACTION_TYPES = {
-    FETCH_APPLICATIONS : {
-      name : "FETCH_APPLICATION",
-      error_msg : "Failed to fetch application"
-    },
-    UPDATE_APPLICATIONS : {
-      name : "UPDATEAPPLICATION",
-      error_msg : "Failed to update application file"
-    },
-    DELETE_APPLICATIONS : {
-      name : "DELETEAPPLICATION",
-      error_msg : "Failed to delete application file"
-    },
-    DEPLOY_APPLICATIONS : {
-      name : "DEPLOY_APPLICATION",
-      error_msg : "Failed to deploy application file"
-    },
-    UPLOAD_APPLICATION : {
-      name : "UPLOAD_APPLICATION",
-      error_msg : "Failed to upload application file"
-    },
-  };
-
+  const [viewType, setViewType] = useState(
+    /**  @type {TypeView} */
+    ("grid")
+  );
 
   const searchTimeout = useRef(null);
 
@@ -278,8 +225,22 @@ function MesheryApplications({
    */
   useEffect(() => {
     fetchApplications(page, pageSize, search, sortOrder);
-  }, []);
+  }, [page, pageSize, search, sortOrder]);
 
+  const handleModalClose = () => {
+    setModalOpen({
+      open : false,
+      application_file : null
+    });
+  }
+
+  const handleModalOpen = (app_file, isDeploy) => {
+    setModalOpen({
+      open : true,
+      deploy : isDeploy,
+      application_file : app_file
+    });
+  }
   /**
    * fetchApplications constructs the queries based on the parameters given
    * and fetches the applications
@@ -288,22 +249,71 @@ function MesheryApplications({
    * @param {string} search search string
    * @param {string} sortOrder order of sort
    */
-
+  // ASSUMPTION: APPLICATION FILES ARE ONLY K8S MANIFEST
   const handleDeploy = (application_file) => {
+    updateProgress({ showProgress : true })
     dataFetch(
-      DEPLOY_URL,
+      "/api/pattern",
       {
         credentials : "include",
         method : "POST",
-        body : application_file,
-      }, () => {
-        console.log("ApplicationFile Deploy API", `/api/application/deploy`);
-        // },(e) => {
-        //   console.error(e)
-        // })
-        updateProgress({ showProgress : false });
+        body : JSON.stringify({ k8s_manifest : application_file }),
+      },
+      (res) => {
+        if (res) {
+          const pfile = res[0].pattern_file
+          dataFetch(
+            ctxUrl(DEPLOY_URL, selectedK8sContexts),
+            {
+              credentials : "include",
+              method : "POST",
+              body : pfile,
+            }, () => {
+              console.log("ApplicationFile Deploy API", `/api/application/deploy`);
+              updateProgress({ showProgress : false });
+            },
+            handleError(ACTION_TYPES.DEPLOY_APPLICATIONS)
+          );
+        } else {
+          updateProgress({ showProgress : false });
+          enqueueSnackbar("Failed converting kubernetes yaml to pattern file",
+            { variant : "error" }
+          )
+        }
       },
       handleError(ACTION_TYPES.DEPLOY_APPLICATIONS)
+    );
+  };
+
+  // ASSUMPTION: APPLICATION FILES ARE ONLY K8S MANIFEST
+  const handleUnDeploy = (application_file) => {
+    updateProgress({ showProgress : true })
+    dataFetch(
+      "/api/pattern",
+      {
+        credentials : "include",
+        method : "POST",
+        body : JSON.stringify({ k8s_manifest : application_file }),
+      },
+      (res) => {
+        const pfile = res[0].pattern_file
+        if (pfile) {
+          dataFetch(
+            ctxUrl(DEPLOY_URL, selectedK8sContexts),
+            {
+              credentials : "include",
+              method : "DELETE",
+              body : pfile,
+            }, () => {
+              updateProgress({ showProgress : false });
+            },
+            handleError(ACTION_TYPES.UNDEPLOY_APPLICATION)
+          );
+        } else {
+          handleError(ACTION_TYPES.UNDEPLOY_APPLICATION)
+        }
+      },
+      handleError(ACTION_TYPES.UNDEPLOY_APPLICATION)
     );
   };
 
@@ -384,7 +394,7 @@ function MesheryApplications({
         {
           credentials : "include",
           method : "POST",
-          body : JSON.stringify({ application_data : { id, application_file : data }, save : true }),
+          body : JSON.stringify({ application_data : { id, name, application_file : data }, save : true }),
         },
         () => {
           console.log("ApplicationFile API", `/api/application`);
@@ -399,7 +409,9 @@ function MesheryApplications({
     if (type === FILE_OPS.FILE_UPLOAD || type === FILE_OPS.URL_UPLOAD) {
       let body = { save : true }
       if (type === FILE_OPS.FILE_UPLOAD) {
-        body = JSON.stringify({ ...body,   application_data : { application_file : data }
+        console.log({ data, id, name, type })
+        body = JSON.stringify({
+          ...body, application_data : { name : name || getRandomName(), application_file : data }
         })
       }
       if (type === FILE_OPS.URL_UPLOAD) {
@@ -524,19 +536,17 @@ function MesheryApplications({
           const rowData = applications[tableMeta.rowIndex];
           return (
             <>
-              <Tooltip
-                title="configure">
-                <IconButton onClick={() => setShowForm({ application : applications[tableMeta.rowIndex], show : true })}>
-                  <AppsIcon />
-                </IconButton>
-              </Tooltip>
-              <IconButton>
-                <PlayArrowIcon
-                  title="Deploy"
-                  aria-label="deploy"
-                  color="inherit"
-                  onClick={() => handleDeploy(rowData.application_file)} //deploy endpoint to be called here
-                />
+              <IconButton
+                title="Deploy"
+                onClick={() => handleModalOpen(rowData.application_file, true)}
+              >
+                <DoneAllIcon data-cy="deploy-button" />
+              </IconButton>
+              <IconButton
+                title="Undeploy"
+                onClick={() => handleModalOpen(rowData.application_file, false)}
+              >
+                <UndeployIcon fill="rgba(0, 0, 0, 0.54)" data-cy="undeploy-button" />
               </IconButton>
             </>
           );
@@ -607,7 +617,6 @@ function MesheryApplications({
         text : "application(s) selected"
       }
     },
-    customToolbar : CustomToolbar(uploadHandler,urlUploadHandler),
 
     onCellClick : (_, meta) => meta.colIndex !== 3 && setSelectedRowData(applications[meta.rowIndex]),
 
@@ -664,315 +673,83 @@ function MesheryApplications({
           break;
       }
     },
+    setRowProps : (row, dataIndex, rowIndex) => {
+      return {
+        "data-cy" : `config-row-${rowIndex}`
+      }
+    },
+    setTableProps : () => {
+      return {
+        "data-cy" : "applications-grid"
+      }
+    }
   };
 
   return (
-    <NoSsr>
-      {showForm &&
-        <PatternForm onSubmit={handleSubmit} show={setShowForm} application={showForm.application} />}
-      {selectedRowData && Object.keys(selectedRowData).length > 0 && (
-        <YAMLEditor application={selectedRowData} onClose={resetSelectedRowData()} onSubmit={handleSubmit} />
-      )}
-      {
-        !showForm && <MuiThemeProvider theme={getMuiTheme()}><MUIDataTable
-          title={<div className={classes.tableHeader}>Applications</div>}
-          data={applications}
-          columns={columns}
-          // @ts-ignore
-          options={options}
-          className={classes.muiRow}
+    <>
+
+      <NoSsr>
+        {selectedRowData && Object.keys(selectedRowData).length > 0 && (
+          <YAMLEditor application={selectedRowData} onClose={resetSelectedRowData()} onSubmit={handleSubmit} />
+        )}
+        <div className={classes.topToolbar} >
+          {!selectedApplication.show && (applications.length>0 || viewType==="table") && <div className={classes.createButton}>
+            <div>
+              <UploadImport aria-label="URL upload button" handleUpload={urlUploadHandler} handleImport={uploadHandler} configuration="Application"  />
+            </div>
+
+          </div>
+          }
+          {!selectedApplication.show &&
+          <div className={classes.viewSwitchButton}>
+            <ViewSwitch view={viewType} changeView={setViewType} />
+          </div>
+          }
+        </div>
+        {
+          !selectedApplication.show && viewType==="table" &&
+            <MUIDataTable
+              title={<div className={classes.tableHeader}>Applications</div>}
+              data={applications}
+              columns={columns}
+              // @ts-ignore
+              options={options}
+              className={classes.muiRow}
+            />
+        }
+        {
+          !selectedApplication.show && viewType==="grid" &&
+            // grid vieww
+            <ApplicationsGrid
+              applications={applications}
+              handleDeploy={handleDeploy}
+              handleUnDeploy={handleUnDeploy}
+              handleSubmit={handleSubmit}
+              setSelectedApplication={setSelectedApplication}
+              selectedApplication={selectedApplication}
+              pages={Math.ceil(count / pageSize)}
+              setPage={setPage}
+              selectedPage={page}
+            />
+        }
+        <ConfirmationMsg
+          open={modalOpen.open}
+          handleClose={handleModalClose}
+          submit={modalOpen.deploy ? () => handleDeploy(modalOpen.application_file) : () => handleUnDeploy(modalOpen.application_file)}
+          isDelete={!modalOpen.deploy}
+          title={<Typography variant="h6" className={classes.text} >The selected operation will be applied to following contexts.</Typography>}
         />
-        </MuiThemeProvider>
-      }
-      <PromptComponent ref={modalRef} />
-    </NoSsr>
+        <PromptComponent ref={modalRef} />
+      </NoSsr>
+    </>
   );
 }
 
 const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(updateProgress, dispatch), });
 
 const mapStateToProps = (state) => {
-  return { user : state.get("user")?.toObject(), };
+  return { user : state.get("user")?.toObject(), selectedK8sContexts : state.get("selectedK8sContexts") };
 };
 
 // @ts-ignore
 export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(withSnackbar(MesheryApplications)));
-
-// --------------------------------------------------------------------------------------------------
-// -------------------------------------------- Aplications Configuration---------------------------------------
-// --------------------------------------------------------------------------------------------------
-
-function PatternForm({ application, onSubmit, show }) {
-  const [schemaSet, setSchemaSet] = useState();
-  const [deployServiceConfig, setDeployServiceConfig] = useState(getPatternJson() || {});
-  const [yaml, setYaml] = useState("");
-  const [expanded, setExpanded] = useState([]);
-  // const [changedYaml, setChangedYaml] = useState("");
-  const classes = useStyles();
-
-  function getPatternJson() {
-    const patternString = application.application_file;
-    return jsYaml.load(patternString).services;
-  }
-
-  async function fetchWorkloadAndTraitsSchema() {
-    try {
-      const workloads = await promisifiedDataFetch("/api/oam/workload");
-      const traits = await promisifiedDataFetch("/api/oam/trait");
-
-      const workloadTraitSets = createWorkloadTraitSets(workloads, traits);
-
-      return workloadTraitSets;
-    } catch (e) {
-      console.log("Error in Fetching Workload or traits", e);
-      return {};
-    }
-  }
-
-  function createWorkloadTraitSets(workloads, traits) {
-    const sets = [];
-    workloads?.forEach((w) => {
-      const item = { workload : w, traits : [] };
-
-      item.traits = traits?.filter((t) => {
-        if (Array.isArray(t?.oam_definition?.spec?.appliesToWorkloads))
-          return t?.oam_definition?.spec?.appliesToWorkloads?.includes(w?.oam_definition?.metadata?.name);
-
-        return false;
-      });
-
-      sets.push(item);
-    });
-
-    return sets;
-  }
-
-  async function getJSONSchemaSets() {
-    const wtSets = await fetchWorkloadAndTraitsSchema();
-
-    return wtSets?.map((s) => {
-      const item = {
-        workload : JSON.parse(s.workload?.oam_ref_schema),
-        traits : s.traits?.map((t) => {
-          const trait = JSON.parse(t?.oam_ref_schema);
-
-          // Attaching internal metadata to the json schema
-          trait._internal = {
-            patternAttributeName : t?.oam_definition.metadata.name,
-          };
-
-          return trait;
-        }),
-        type : s.workload?.metadata?.["ui.meshery.io/category"],
-      };
-
-      // Attaching internal metadata to the json schema
-      item.workload._internal = {
-        patternAttributeName : s.workload?.oam_definition.metadata.name,
-      };
-
-      return item;
-    });
-  }
-
-  function getPatternAttributeName(jsonSchema) {
-    return PascalCaseToKebab(jsonSchema?._internal?.patternAttributeName || "NA");
-  }
-
-  function getPatternKey(cfg) {
-    return Object.keys(cfg?.services)?.[0] || undefined;
-  }
-
-  const handleSubmit = (cfg, patternName) => {
-    console.log("submitted", { cfg, patternName });
-    const key = getPatternKey(cfg);
-    handleDeploy({ ...deployServiceConfig, [getPatternKey(cfg)] : cfg?.services?.[key] });
-    if (key)
-      setDeployServiceConfig({ ...deployServiceConfig, [getPatternKey(cfg)] : cfg?.services?.[key] });
-    handleExpansion(patternName);
-  };
-
-  const handleChangeData = (cfg, patternName) => {
-    console.log("Ran Changed", { cfg, patternName });
-    const key = getPatternKey(cfg);
-    handleDeploy({ ...deployServiceConfig, [getPatternKey(cfg)] : cfg?.services?.[key] });
-    if (key)
-      setDeployServiceConfig({ ...deployServiceConfig, [getPatternKey(cfg)] : cfg?.services?.[key] });
-  };
-
-  const handleDelete = (cfg, patternName) => {
-    console.log("deleted", cfg);
-    const newCfg = schemaSet.filter(schema => schema.workload.title !== patternName);
-    setSchemaSet(newCfg);
-  };
-
-  const handleDeploy = (cfg) => {
-    const deployConfig = {};
-    deployConfig.name = application.name;
-    deployConfig.services = cfg;
-    const deployConfigYaml = jsYaml.dump(deployConfig);
-    setYaml(deployConfigYaml);
-  };
-
-  const handleExpansion = (item) => {
-    let expandedItems = [...expanded];
-    if (expandedItems.includes(item)) {
-      expandedItems = expandedItems.filter(el => el !== item);
-    } else {
-      expandedItems.push(item);
-    }
-    setExpanded(expandedItems);
-  };
-
-  function handleSubmitFinalPattern(yaml, id, name, action) {
-    onSubmit(yaml, id, name, action);
-    show(false);
-  }
-
-  const ns = "default";
-
-  function saveCodeEditorChanges(data) {
-    setYaml(data.valueOf().getValue());
-  }
-
-  useEffect(() => {
-    getJSONSchemaSets().then((res) => setSchemaSet(res));
-  }, []);
-
-  if (!schemaSet) {
-    return <CircularProgress />;
-  }
-
-  return (
-    <>
-      <AppBar position="static" className={classes.appBar} elevation={0}>
-        <Toolbar>
-          <IconButton edge="start" className={classes.backButton} color="inherit" onClick={() => show(false)}>
-            <ArrowBackIcon />
-          </IconButton>
-          <Typography variant="h6" className={classes.title}>
-            Edit Application Configuration of <i>{`${application.name}`}</i>
-          </Typography>
-        </Toolbar>
-      </AppBar>
-      <Grid container spacing={3}>
-        <Grid item xs={12} md={6}>
-          {schemaSet
-            .filter((s) => s.type !== "addon")
-            .sort((a, b) => (a.workload?.title < b.workload?.title ? -1 : 1))
-            .map((s) => (
-              accordion(s)
-            ))}
-          <Accordion
-            expanded={expanded.includes('addon')}
-            onChange={() => handleExpansion('addon')}
-            style={{ width : '100%' }}
-          >
-            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-              <Typography variant="h6">
-                Configure Addons
-              </Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              {schemaSet
-                .filter((s) => s.type === "addon")
-                .sort((a, b) => (a.workload?.title < b.workload?.title ? -1 : 1))
-                .map((s) => (
-                  <Grid item>
-                    <PatternServiceForm formData={deployServiceConfig[s.workload?.title]} onChange={handleChangeData} schemaSet={s} onSubmit={handleSubmit} onDelete={handleDelete} namespace={ns} />
-                  </Grid>
-                ))}
-            </AccordionDetails>
-          </Accordion>
-        </Grid>
-        <Grid item xs={12} md={6} >
-          <CodeEditor />
-        </Grid>
-      </Grid>
-    </>
-  );
-
-  function CustomButton({ title, onClick }) {
-    return <Button
-      fullWidth
-      color="primary"
-      variant="contained"
-      onClick={onClick}
-      style={{
-        marginTop : "16px",
-        padding : "10px"
-      }}
-    >
-      {title}
-    </Button>;
-  }
-
-  function accordion(schema) {
-    const patternName = schema?.workload?.title;
-
-    return <Accordion
-      expanded={expanded.includes(patternName)}
-      onChange={() => handleExpansion(patternName)}
-      style={{ width : '100%' }}
-    >
-      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-        <Typography variant="h6">
-          {patternName || "Expand More"}
-        </Typography>
-      </AccordionSummary>
-      <AccordionDetails>
-        <PatternServiceForm formData={deployServiceConfig[getPatternAttributeName(schema.workload)]} onChange={handleChangeData} schemaSet={schema} onSubmit={(val) => handleSubmit(val, patternName)} onDelete={(val) => handleDelete(val, patternName)} namespace={ns} />
-      </AccordionDetails>
-    </Accordion>;
-  }
-
-  function CodeEditor() {
-    const cardStyle = { marginBottom : "16px", position : "sticky", float : "right", minWidth : "100%" };
-    const cardcontentStyle = { margin : "16px" };
-
-    const classes = useStyles();
-
-    return (
-      <div>
-        <Card style={cardStyle}>
-          <CardContent style={cardcontentStyle}>
-            <CodeMirror
-              value={yaml}
-              className={classes.codeMirror}
-              options={{
-                theme : "material",
-                lineNumbers : true,
-                lineWrapping : true,
-                gutters : ["CodeMirror-lint-markers"],
-                lint : true,
-                mode : "text/x-yaml",
-              }}
-              onBlur={(a) => saveCodeEditorChanges(a)}
-            />
-            <CustomButton title="Save Application" onClick={() => handleSubmitFinalPattern(yaml, "", `meshery_${Math.floor(trueRandom() * 100)}`, FILE_OPS.FILE_UPLOAD)} />
-            <CardActions style={{ justifyContent : "flex-end" }}>
-              <Tooltip title="Update Application">
-                <IconButton
-                  aria-label="Update"
-                  color="primary"
-                  onClick={() => handleSubmitFinalPattern(yaml, application.id, application.name, FILE_OPS.UPDATE)}
-                >
-                  <SaveIcon />
-                </IconButton>
-              </Tooltip>
-              <Tooltip title="Delete Application">
-                <IconButton
-                  aria-label="Delete"
-                  color="primary"
-                  onClick={() => handleSubmitFinalPattern(yaml, application.id, application.name, FILE_OPS.DELETE)}
-                >
-                  <DeleteIcon />
-                </IconButton>
-              </Tooltip>
-            </CardActions>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-}

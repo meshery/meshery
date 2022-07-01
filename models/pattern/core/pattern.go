@@ -5,7 +5,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"math/big"
+	mathrand "math/rand"
 	"strings"
+	"time"
 
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/models/pattern/utils"
@@ -21,6 +23,8 @@ import (
 type Pattern struct {
 	// Name is the human-readable, display-friendly descriptor of the pattern
 	Name string `yaml:"name,omitempty" json:"name,omitempty"`
+	//Vars will be used to configure the pattern when it is imported from other patterns.
+	Vars map[string]interface{} `yaml:"vars,omitempty" json:"vars,omitempty"`
 	// PatternID is the moniker use to uniquely identify any given pattern
 	// Convention: SMP-###-v#.#.#
 	PatternID string              `yaml:"patternID,omitempty" json:"patternID,omitempty"`
@@ -38,6 +42,7 @@ type Service struct {
 	Name        string            `yaml:"name,omitempty" json:"name,omitempty"`
 	Type        string            `yaml:"type,omitempty" json:"type,omitempty"`
 	Namespace   string            `yaml:"namespace" json:"namespace"`
+	Version     string            `yaml:"version,omitempty" json:"version,omitempty"`
 	Labels      map[string]string `yaml:"labels,omitempty" json:"labels,omitempty"`
 	Annotations map[string]string `yaml:"annotations,omitempty" json:"annotations,omitempty"`
 	// DependsOn correlates one or more objects as a required dependency of this service
@@ -51,7 +56,9 @@ type Service struct {
 // NewPatternFile takes in raw yaml and encodes it into a construct
 func NewPatternFile(yml []byte) (af Pattern, err error) {
 	err = yaml.Unmarshal(yml, &af)
-
+	if err != nil {
+		return af, err
+	}
 	for svcName, svc := range af.Services {
 		// If an explicit name is not given to the service then use
 		// the service identifier as its name
@@ -155,7 +162,7 @@ func (p *Pattern) ToCytoscapeJS() (cytoscapejs.GraphElem, error) {
 	// Set up the nodes
 	for name, svc := range p.Services {
 		elemData := cytoscapejs.ElemData{
-			ID: name, // Assuming that the service names are unique
+			ID: getCytoscapeElementID(name, svc),
 		}
 
 		elemPosition, err := getCytoscapeJSPosition(svc)
@@ -186,35 +193,109 @@ func (p *Pattern) ToYAML() ([]byte, error) {
 
 // NewPatternFileFromCytoscapeJSJSON takes in CytoscapeJS JSON
 // and creates a PatternFile from it
-func NewPatternFileFromCytoscapeJSJSON(byt []byte) (Pattern, error) {
+func NewPatternFileFromCytoscapeJSJSON(name string, byt []byte) (Pattern, error) {
 	// Unmarshal data into cytoscape struct
 	var cy cytoscapejs.GraphElem
 	if err := json.Unmarshal(byt, &cy); err != nil {
 		return Pattern{}, err
 	}
-
+	if name == "" {
+		name = "MesheryGeneratedPattern"
+	}
 	// Convert cytoscape struct to patternfile
 	pf := Pattern{
-		Name:     "MesheryGeneratedPatternFile",
+		Name:     name,
 		Services: make(map[string]*Service),
 	}
-	for _, elem := range cy.Elements {
+	dependsOnMap := make(map[string][]string, 0) //used to figure out dependencies from traits.meshmap.parent
+	eleToSvc := make(map[string]string)          //used to map cyto element ID uniquely to the name of the service created.
+	countDuplicates := make(map[string]int)
+	//store the names of services and their count
+	err := processCytoElementsWithPattern(cy.Elements, &pf, func(svc Service, ele cytoscapejs.Element) error {
+		name, ok := svc.Settings["name"].(string)
+		if !ok {
+			return fmt.Errorf("missing name in service settings")
+		}
+		countDuplicates[name]++
+		return nil
+	})
+	if err != nil {
+		return pf, err
+	}
+
+	//Populate the dependsOn field with appropriate unique service names
+	err = processCytoElementsWithPattern(cy.Elements, &pf, func(svc Service, ele cytoscapejs.Element) error {
+		//Extract parents, if present
+		m, ok := svc.Traits["meshmap"].(map[string]interface{})
+		if ok {
+			parentID, ok := m["parent"].(string)
+			if ok { //If it does not have a parent then we can skip and we dont make it depend on anything
+				elementID, ok := m["id"].(string)
+				if !ok {
+					return fmt.Errorf("required meshmap trait field: \"id\" missing")
+				}
+				dependsOnMap[elementID] = append(dependsOnMap[elementID], parentID)
+			}
+		}
+		svc.Name, ok = svc.Settings["name"].(string)
+		if !ok {
+			return fmt.Errorf("required service setting: \"name\" missing")
+		}
+		//Only make the name unique when duplicates are encountered. This allows clients to preserve and propagate the unique name they want to give to their workload
+		if countDuplicates[svc.Name] > 1 {
+			//set appropriate unique service name
+			svc.Name = strings.ToLower(svc.Name)
+			svc.Name += "-" + getRandomAlphabetsOfDigit(5)
+		}
+		eleToSvc[ele.Data.ID] = svc.Name //will be used while adding depends-on
+		pf.Services[svc.Name] = &svc
+		return nil
+	})
+	if err == nil {
+		//add depends-on field
+		for child, parents := range dependsOnMap {
+			childSvc := eleToSvc[child]
+			if childSvc != "" {
+				for _, parent := range parents {
+					if eleToSvc[parent] != "" {
+						pf.Services[childSvc].DependsOn = append(pf.Services[childSvc].DependsOn, eleToSvc[parent])
+					}
+				}
+			}
+		}
+	}
+	return pf, err
+}
+
+func getRandomAlphabetsOfDigit(length int) (s string) {
+	charSet := "abcdedfghijklmnopqrstuvwxyz"
+	for i := 0; i < length; i++ {
+		random := mathrand.Intn(len(charSet))
+		randomChar := charSet[random]
+		s += string(randomChar)
+	}
+	return
+}
+
+//processCytoElementsWithPattern iterates over all the cyto elements, convert each into a patternfile service and exposes a callback to handle that service
+func processCytoElementsWithPattern(eles []cytoscapejs.Element, pf *Pattern, callback func(svc Service, ele cytoscapejs.Element) error) error {
+	for _, elem := range eles {
 		// Try to create Service object from the elem.scratch's _data field
 		// if this fails then immediately fail the process and return an error
 		castedScratch, ok := elem.Scratch.(map[string]interface{})
 		if !ok {
-			return pf, fmt.Errorf("empty scratch field is not allowed, must containe \"_data\" field holding metadata")
+			return fmt.Errorf("empty scratch field is not allowed, must contain \"_data\" field holding metadata")
 		}
 
 		data, ok := castedScratch["_data"]
 		if !ok {
-			return pf, fmt.Errorf("\"_data\" cannot be empty")
+			return fmt.Errorf("\"_data\" cannot be empty")
 		}
 
 		// Convert data to JSON for easy serialization
 		svcByt, err := json.Marshal(&data)
 		if err != nil {
-			return pf, fmt.Errorf("failed to serialize service from the metadata in the scratch")
+			return fmt.Errorf("failed to serialize service from the metadata in the scratch")
 		}
 
 		// Unmarshal the JSON into a service
@@ -230,16 +311,17 @@ func NewPatternFileFromCytoscapeJSJSON(byt []byte) (Pattern, error) {
 				"posY": elem.Position.Y,
 			},
 		}
+
 		if err := json.Unmarshal(svcByt, &svc); err != nil {
-			return pf, fmt.Errorf("failed to create service from the metadata in the scratch")
+			return fmt.Errorf("failed to create service from the metadata in the scratch")
 		}
-
-		pf.Services[elem.Data.ID] = &svc
+		err = callback(svc, elem)
+		if err != nil {
+			return err
+		}
 	}
-
-	return pf, nil
+	return nil
 }
-
 func NewPatternFileFromK8sManifest(data string, ignoreErrors bool) (Pattern, error) {
 	pattern := Pattern{
 		Name:     "Autogenerated",
@@ -309,7 +391,9 @@ func createPatternServiceFromCoreK8s(manifest map[string]interface{}) (string, S
 	namespace, _ := metadata["namespace"].(string)
 	labels, _ := metadata["labels"].(map[string]interface{})
 	annotations, _ := metadata["annotations"].(map[string]interface{})
-
+	if namespace == "" {
+		namespace = "default"
+	}
 	fmt.Printf("%+#v\n", manifest)
 
 	// rest will store a map of everything other than the above mentioned fields
@@ -374,7 +458,9 @@ func createPatternServiceFromExtendedK8s(manifest map[string]interface{}) (strin
 	spec, _ := manifest["spec"].(map[string]interface{})
 	labels, _ := metadata["labels"].(map[string]interface{})
 	annotations, _ := metadata["annotations"].(map[string]interface{})
-
+	if namespace == "" {
+		namespace = "default"
+	}
 	id := name
 	uid, err := uuid.NewV4()
 	if err == nil {
@@ -420,6 +506,28 @@ func createPatternServiceFromExtendedK8s(manifest map[string]interface{}) (strin
 // coreK8sAPIVersions returns list of core K8s API versions
 func coreK8sAPIVersions() []string {
 	return []string{"v1", "apps/v1", "apps/v1beta1"}
+}
+
+// getCytoscapeElementID returns the element id for a given service
+func getCytoscapeElementID(name string, svc *Service) string {
+	mpi, ok := svc.Traits["meshmap"] // check if service has meshmap as trait
+	if !ok {
+		return name // Assuming that the service names are unique
+	}
+
+	mpStrInterface, ok := mpi.(map[string]interface{})
+	if !ok {
+		logrus.Debugf("failed to cast meshmap trait (MPI): %+#v", mpi)
+		return name // Assuming that the service names are unique
+	}
+
+	mpID, ok := mpStrInterface["id"].(string)
+	if !ok {
+		logrus.Debugf("Meshmap id not present in Meshmap interface")
+		return name // Assuming that the service names are unique
+	}
+
+	return mpID
 }
 
 func getCytoscapeJSPosition(svc *Service) (cytoscapejs.Position, error) {
@@ -489,4 +597,8 @@ func getCytoscapeJSPosition(svc *Service) (cytoscapejs.Position, error) {
 	}
 
 	return pos, nil
+}
+
+func init() {
+	mathrand.Seed(time.Now().Unix())
 }

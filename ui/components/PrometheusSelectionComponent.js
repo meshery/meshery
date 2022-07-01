@@ -10,10 +10,11 @@ import { Controlled as CodeMirror } from 'react-codemirror2';
 import { updateProgress } from '../lib/store';
 import { trueRandom } from '../lib/trueRandom';
 import dataFetch from '../lib/data-fetch';
-
+import CodeIcon from '@material-ui/icons/Code';
+import Alert from '@material-ui/lab/Alert';
 
 const promStyles = (theme) => ({
-  root : { padding : theme.spacing(5), },
+  prometheusWrapper : { padding : theme.spacing(5), },
   buttons : { display : 'flex',
     justifyContent : 'flex-end', },
   button : { marginTop : theme.spacing(3), },
@@ -32,7 +33,7 @@ const promStyles = (theme) => ({
 const dummyBoard = `
 {
   "id": null,
-  "uid": "cdsafedwewgew",
+  "uid": "1234-exam-ple",
   "title": "Dashboard",
   "tags": [],
   "timezone": "browser",
@@ -128,16 +129,16 @@ class PrometheusSelectionComponent extends Component {
           credentials : 'include',
           headers : { 'Content-Type' : 'application/json', },
           body : newVal,
-        }, (result) => {
+        },
+        (result) => {
           this.props.updateProgress({ showProgress : false });
+          var panels = result.panels.filter((panel) => panel.targets !== undefined && panel.datasource === 'Prometheus');
           if (typeof result !== 'undefined') {
             this.setState({
               grafanaBoardObject : result,
-              panels : result.panels,
-              selectedPanels : result.panels.map((panel) => panel.id), // selecting all panels by default
-              templateVars : result.template_vars && result.template_vars.length > 0
-                ? result.template_vars
-                : [],
+              panels : panels,
+              selectedPanels : panels.map((panel) => panel.id), // selecting all panels by default
+              templateVars : result.template_vars && result.template_vars.length > 0 ? result.template_vars : [],
               templateVarOptions : [],
               selectedTemplateVars : [],
             });
@@ -263,7 +264,7 @@ class PrometheusSelectionComponent extends Component {
       return (
         <NoSsr>
           <React.Fragment>
-            <div className={classes.root}>
+            <div className={classes.prometheusWrapper}>
               <div className={classes.alignRight}>
                 <Chip
                   label={prometheusURL}
@@ -276,7 +277,11 @@ class PrometheusSelectionComponent extends Component {
               </div>
               <Grid container spacing={1}>
                 <Grid item xs={12}>
-                  Please paste your Grafana board json below
+                  <div style={{ padding : '20px', display : 'flex' }}>
+                    <CodeIcon style={{ marginRight : '6px' }} />
+                  Paste your custom board JSON below.
+                  </div>
+
                   <CodeMirror
                     editorDidMount={(editor) => {
                       this.cmEditor = editor;
@@ -347,8 +352,8 @@ class PrometheusSelectionComponent extends Component {
                   })}
 
                 {panels.length === 0 && (
-                  <Grid item xs={12} style={{ textAlign : 'center' }}>
-                  Please load a valid Grafana board json to be able to view the panels.
+                  <Grid item xs={12} style={{ marginTop : '10px' }}>
+                    <Alert severity="error">Please load a valid Board JSON to be able to view the panels</Alert>
                   </Grid>
                 )}
 

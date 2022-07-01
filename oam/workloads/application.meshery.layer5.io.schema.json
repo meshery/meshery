@@ -42,6 +42,12 @@
           "image": {
             "type": "string"
           },
+          "commands": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
           "ports": {
             "type": "array",
             "items": {

@@ -3,16 +3,13 @@ on:
   push:
     branches:
       - "master"
-    paths-ignore:
-      - "docs/**"
-      - "ui/**"
-      - "provider-ui/**"
-      - ".github/**"
+    paths:
+      - "**.go"
   pull_request:
     branches:
       - "master"
-    paths-ignore:
-      - "docs/**"
+    paths:
+      - "**.go"
   workflow_dispatch:
     inputs:
       logLevel:
@@ -25,15 +22,15 @@ jobs:
     name: Unit tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3.0.0
         with:
           fetch-depth: 2
       - name: Install lynx for xdg-open support
         run: sudo apt-get install lynx
       - name: Setup Go
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v3.0.0
         with:
-          go-version: '1.16.7'
+          go-version: "1.17"
       - name: Run coverage
         run: go test --short ./... -race -coverprofile=coverage.txt -covermode=atomic
       - name: Upload coverage to Codecov
@@ -47,21 +44,21 @@ jobs:
     name: Integration tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 2
       - name: Install lynx for xdg-open support
         run: sudo apt-get install lynx
       - name: Setup Go
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v3.0.0
         with:
-          go-version: '1.16.7'
+          go-version: "1.17"
       - name: Create k8s Kind Cluster
         uses: helm/kind-action@v1.1.0
         with:
           cluster_name: "kind-cluster"
       - name: Run coverage
-        run: go test -run Integration ./... -race -coverprofile=coverage.txt -covermode=atomic -timeout 20m
+        run: go test -run Integration ./... -race -coverprofile=coverage.txt -covermode=atomic -timeout 40m
       - name: Upload coverage to Codecov
         if: github.repository == 'meshery/meshery'
         uses: codecov/codecov-action@v1
@@ -69,3 +66,4 @@ jobs:
           files: ./coverage.txt
           flags: gointegrationtests
           fail_ci_if_error: true
+

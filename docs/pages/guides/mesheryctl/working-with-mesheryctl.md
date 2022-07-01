@@ -1,8 +1,8 @@
 ---
 layout: default
-title: Using mesheryctl
+title: Using Meshery CLI
 description: How to use mesheryctl
-permalink: guides/mesheryctl/using-mesheryctl
+permalink: guides/mesheryctl/working-with-mesheryctl
 language: en
 type: Guides
 category: mesheryctl
@@ -182,7 +182,7 @@ Install `mesheryctl` and run Meshery on Mac or Linux with this script:
 
  <pre class="codeblock-pre"><div class="codeblock">
  <div class="clipboardjs">
- curl -L https://git.io/meshery | bash -
+ curl -L https://meshery.io/install | bash -
  </div></div>
  </pre>
 
@@ -192,7 +192,7 @@ Upgrade `mesheryctl` and run Meshery on Mac or Linux with this script:
 
  <pre class="codeblock-pre"><div class="codeblock">
  <div class="clipboardjs">
- curl -L https://git.io/meshery | bash -
+ curl -L https://meshery.io/install | bash -
  </div></div>
  </pre>
 

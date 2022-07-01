@@ -57,6 +57,10 @@ func (h *Handler) SavePerformanceProfileHandler(
 		return
 	}
 
+	if h.config.PerformanceChannel != nil {
+		h.config.PerformanceChannel <- struct{}{}
+	}
+
 	rw.Header().Set("Content-Type", "application/json")
 	fmt.Fprint(rw, string(resp))
 }
@@ -78,7 +82,7 @@ func (h *Handler) GetPerformanceProfilesHandler(
 ) {
 	q := r.URL.Query()
 
-	tokenString := r.Context().Value("token").(string)
+	tokenString := r.Context().Value(models.TokenCtxKey).(string)
 
 	resp, err := provider.GetPerformanceProfiles(tokenString, q.Get("page"), q.Get("page_size"), q.Get("search"), q.Get("order"))
 	if err != nil {

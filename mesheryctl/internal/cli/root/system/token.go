@@ -13,8 +13,12 @@ import (
 	"github.com/spf13/viper"
 )
 
-var ctx string
-var viewAllTokens bool
+var (
+	tokenPath     string
+	ctx           string
+	viewAllTokens bool
+)
+
 var tokenCmd = &cobra.Command{
 	Use:   "token",
 	Short: "Manage Meshery user tokens",
@@ -43,9 +47,9 @@ var createTokenCmd = &cobra.Command{
 	Short: "Create a token in your meshconfig",
 	Long:  "Create the token with provided token name (optionally token path) to your meshconfig tokens.",
 	Example: `
-	mesheryctl system token create <token-name> -f <token-path>
-	mesheryctl system token create <token-name> (default path is auth.json)
-	mesheryctl system token create <token-name> -f <token-path> --set
+mesheryctl system token create [token-name] -f [token-path]
+mesheryctl system token create [token-name] (default path is auth.json)
+mesheryctl system token create [token-name] -f [token-path] --set
 	`,
 	Args: checkTokenName(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -61,7 +65,7 @@ var createTokenCmd = &cobra.Command{
 		if err := config.AddTokenToConfig(token, utils.DefaultConfigPath); err != nil {
 			return errors.Wrap(err, "Could not create specified token to config")
 		}
-		log.Printf("Token %s created.", tokenName)
+		utils.Log.Info(fmt.Sprintf("Token %s created.", tokenName))
 		if set {
 			if ctx == "" {
 				ctx = viper.GetString("current-context")
@@ -69,7 +73,7 @@ var createTokenCmd = &cobra.Command{
 			if err = config.SetTokenToConfig(tokenName, utils.DefaultConfigPath, ctx); err != nil {
 				return errors.Wrapf(err, "Could not set token \"%s\" on context %s", tokenName, ctx)
 			}
-			log.Printf("Token: %s set on context %s.", tokenName, ctx)
+			utils.Log.Info(fmt.Sprintf("Token: %s set on context %s.", tokenName, ctx))
 		}
 		return nil
 	},
@@ -79,7 +83,7 @@ var deleteTokenCmd = &cobra.Command{
 	Short: "Delete a token from your meshconfig",
 	Long:  "Delete the token with provided token name from your meshconfig tokens.",
 	Example: `
-	mesheryctl system token delete <token-name>
+mesheryctl system token delete [token-name]
 	`,
 	Args: checkTokenName(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -97,8 +101,7 @@ var setTokenCmd = &cobra.Command{
 	Short: "Set token for context",
 	Long:  "Set token for current context or context specified with --context flag.",
 	Example: `
-	mesheryctl system token set <token-name> 
-
+mesheryctl system token set [token-name] 
 	`,
 	Args: cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -120,7 +123,7 @@ var listTokenCmd = &cobra.Command{
 	Short: "List tokens",
 	Long:  "List all the tokens in your meshconfig",
 	Example: `
-	mesheryctl system token list
+mesheryctl system token list
 	`,
 	Args: cobra.ExactArgs(0),
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -150,8 +153,8 @@ var viewTokenCmd = &cobra.Command{
 	Short: "View token",
 	Long:  "View a specific token in meshery config",
 	Example: `
-	mesheryctl system token view <token-name>
-	mesheryctl system token view (show token of current context)
+mesheryctl system token view [token-name]
+mesheryctl system token view (show token of current context)
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if _, err := os.Stat(utils.DefaultConfigPath); os.IsNotExist(err) {

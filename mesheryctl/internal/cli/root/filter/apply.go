@@ -13,7 +13,6 @@ import (
 
 	"github.com/asaskevich/govalidator"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/models"
 	"github.com/pkg/errors"
@@ -31,16 +30,18 @@ var applyCmd = &cobra.Command{
 	Use:   "apply",
 	Short: "Apply filter file",
 	Long:  `Apply filter file will trigger deploy of the filter file`,
-	Args:  cobra.MinimumNArgs(0),
+	Example: `
+// Apply WASM filter file (login required)
+mesheryctl exp filter apply --file [GitHub Link]
+
+// Apply the file
+mesheryctl exp filter apply --file https://github.com/layer5io/wasm-filters/tree/master/http-auth
+	`,
+	Args: cobra.MinimumNArgs(0),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var req *http.Request
 		var err error
 		client := &http.Client{}
-
-		// set default tokenpath for filter apply command.
-		if tokenPath == "" {
-			tokenPath = constants.GetCurrentAuthToken()
-		}
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
@@ -58,14 +59,9 @@ var applyCmd = &cobra.Command{
 			// search and fetch filters with filter-name
 			log.Debug("Fetching filters")
 
-			req, err = http.NewRequest("GET", filterURL+"?search="+filterName, nil)
+			req, err = utils.NewRequest("GET", filterURL+"?search="+filterName, nil)
 			if err != nil {
 				return err
-			}
-
-			err = utils.AddAuthDetails(req, tokenPath)
-			if err != nil {
-				return ErrInvalidAuthToken()
 			}
 
 			resp, err := client.Do(req)
@@ -118,11 +114,7 @@ var applyCmd = &cobra.Command{
 					if err != nil {
 						return err
 					}
-					req, err = http.NewRequest("POST", filterURL, bytes.NewBuffer(jsonValues))
-					if err != nil {
-						return err
-					}
-					err = utils.AddAuthDetails(req, tokenPath)
+					req, err = utils.NewRequest("POST", filterURL, bytes.NewBuffer(jsonValues))
 					if err != nil {
 						return err
 					}
@@ -188,14 +180,11 @@ var applyCmd = &cobra.Command{
 						})
 					}
 				}
-				req, err = http.NewRequest("POST", filterURL, bytes.NewBuffer(jsonValues))
+				req, err = utils.NewRequest("POST", filterURL, bytes.NewBuffer(jsonValues))
 				if err != nil {
 					return err
 				}
-				err = utils.AddAuthDetails(req, tokenPath)
-				if err != nil {
-					return err
-				}
+
 				resp, err := client.Do(req)
 				if err != nil {
 					return err
@@ -222,12 +211,7 @@ var applyCmd = &cobra.Command{
 			}
 		}
 
-		req, err = http.NewRequest("POST", deployURL, bytes.NewBuffer([]byte(filterFile)))
-		if err != nil {
-			return err
-		}
-
-		err = utils.AddAuthDetails(req, tokenPath)
+		req, err = utils.NewRequest("POST", deployURL, bytes.NewBuffer([]byte(filterFile)))
 		if err != nil {
 			return err
 		}
@@ -272,10 +256,10 @@ func multipleFiltersConfirmation(profiles []models.MesheryFilter) int {
 		response = strings.ToLower(strings.TrimSpace(response))
 		index, err := strconv.Atoi(response)
 		if err != nil {
-			log.Info(err)
+			utils.Log.Info(err)
 		}
 		if index < 0 || index >= len(profiles) {
-			log.Info("Invalid index")
+			utils.Log.Info("Invalid index")
 		} else {
 			return index
 		}

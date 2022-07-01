@@ -27,7 +27,6 @@ type Operation struct {
 var spec string
 var adapterURL string
 var namespace string
-var tokenPath string
 var watch bool
 var err error
 
@@ -36,7 +35,11 @@ var validateCmd = &cobra.Command{
 	Use:   "validate",
 	Short: "Validate conformance to service mesh standards",
 	Args:  cobra.NoArgs,
-	Long:  `Validate service mesh conformance to different standard specifications`,
+	Example: `
+// Validate conformance to service mesh standards
+mesheryctl mesh validate --adapter [name of the adapter] --tokenPath [path to token for authentication] --spec [specification to be used for conformance test] --namespace [namespace to be used]
+	`,
+	Long: `Validate service mesh conformance to different standard specifications`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		log.Infof("Verifying prerequisites...")
 
@@ -44,16 +47,8 @@ var validateCmd = &cobra.Command{
 		if err != nil {
 			log.Fatalln(err)
 		}
-		// set default tokenpath for command.
-		if tokenPath == "" {
-			activeToken, err := mctlCfg.GetTokenForContext(mctlCfg.CurrentContext)
-			if err != nil {
-				log.Fatalln(err)
-			}
-			tokenPath = activeToken.GetLocation()
-		}
 
-		prefs, err := utils.GetSessionData(mctlCfg, tokenPath)
+		prefs, err := utils.GetSessionData(mctlCfg)
 		if err != nil {
 			log.Fatalln(err)
 		}
@@ -66,7 +61,7 @@ var validateCmd = &cobra.Command{
 			}
 		}
 		//sync with available adapters
-		if err = validateAdapter(mctlCfg, tokenPath, meshName); err != nil {
+		if err = validateAdapter(mctlCfg, meshName); err != nil {
 			log.Fatalln(err)
 		}
 		log.Info("verified prerequisites")
@@ -101,7 +96,7 @@ func init() {
 	_ = validateCmd.MarkFlagRequired("spec")
 	validateCmd.Flags().StringVarP(&adapterURL, "adapter", "a", "meshery-osm", "Adapter to use for validation")
 	_ = validateCmd.MarkFlagRequired("adapter")
-	validateCmd.Flags().StringVarP(&tokenPath, "tokenPath", "t", "", "Path to token for authenticating to Meshery API")
+	validateCmd.Flags().StringVarP(&utils.TokenFlag, "token", "t", "", "Path to token for authenticating to Meshery API")
 	validateCmd.Flags().BoolVarP(&watch, "watch", "w", false, "Watch for events and verify operation (in beta testing)")
 }
 
@@ -109,15 +104,10 @@ func waitForValidateResponse(mctlCfg *config.MesheryCtlConfig, query string) (st
 	path := mctlCfg.GetBaseMesheryURL() + "/api/events?client=cli_validate"
 	method := "GET"
 	client := &http.Client{}
-	req, err := http.NewRequest(method, path, nil)
+	req, err := utils.NewRequest(method, path, nil)
 	req.Header.Add("Accept", "text/event-stream")
 	if err != nil {
 		return "", ErrCreatingDeployResponseRequest(err)
-	}
-
-	err = utils.AddAuthDetails(req, tokenPath)
-	if err != nil {
-		return "", ErrAddingAuthDetails(err)
 	}
 
 	res, err := client.Do(req)
@@ -196,16 +186,11 @@ func sendValidateRequest(mctlCfg *config.MesheryCtlConfig, query string, delete 
 	payload := strings.NewReader(data.Encode())
 
 	client := &http.Client{}
-	req, err := http.NewRequest(method, path, payload)
+	req, err := utils.NewRequest(method, path, payload)
 	if err != nil {
 		return "", ErrCreatingValidateRequest(err)
 	}
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8")
-
-	err = utils.AddAuthDetails(req, tokenPath)
-	if err != nil {
-		return "", ErrAddingAuthDetails(err)
-	}
 
 	res, err := client.Do(req)
 	if err != nil {

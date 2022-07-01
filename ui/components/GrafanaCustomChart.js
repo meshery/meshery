@@ -19,7 +19,7 @@ import GrafanaCustomGaugeChart from './GrafanaCustomGaugeChart';
 import bb, { area, line } from 'billboard.js'
 
 const grafanaStyles = (theme) => ({
-  root : { width : '100%', },
+  chart : { width : '100%', },
   column : { flex : '1', },
   heading : { fontSize : theme.typography.pxToRem(15), },
   secondaryHeading : { fontSize : theme.typography.pxToRem(15),
@@ -36,7 +36,6 @@ const grafanaStyles = (theme) => ({
   card : { height : '100%',
     width : "100%", },
   sparklineCardContent : { display : 'grid',
-    gridTemplateColumns : '1fr 3fr max-content',
     gap : ' 0.5rem', },
   cardContent : { height : '100%',
     width : "100%" },
@@ -767,22 +766,22 @@ class GrafanaCustomChart extends Component {
       } else {
         mainChart = (
           <div>
-            <div ref={(ch) => self.chartRef = ch} className={classes.root} />
+            <div ref={(ch) => self.chartRef = ch} className={classes.chart} />
           </div>
         );
       }
-      if (this.state.sparkline){
-        return (
-          <NoSsr>
-            {loadingBar}
-            <div className={classes.sparklineCardContent}>
-              <div>{panel.title}</div>
-              <div>{mainChart}</div>
-              <div>{iconComponent}</div>
-            </div>
-          </NoSsr>
-        )
-      }
+      // if (this.state.sparkline){
+      //   return (
+      //     <NoSsr>
+      //       {loadingBar}
+      //       <div className={classes.sparklineCardContent}>
+      //         <div>{panel.title}</div>
+      //         <div>{mainChart}</div>
+      //         <div>{iconComponent}</div>
+      //       </div>
+      //     </NoSsr>
+      //   )
+      // }
       return (
         <NoSsr>
           {loadingBar}

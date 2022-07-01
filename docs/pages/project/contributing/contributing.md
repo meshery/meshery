@@ -5,16 +5,17 @@ permalink: project/contributing
 description: How to contribute to the Meshery project.
 language: en
 type: project
+redirect_from: 
+ - contributing
+ - project/contributing/
 category: contributing
 ---
 
-Please do! Thanks for your help! 🎈
-
-This project is community-built and welcomes collaboration. Contributors are expected to adhere to the [CNCF's Code of Conduct](https://github.com/layer5io/meshery/blob/master/CODE_OF_CONDUCT.md).
+Please do! Thanks for your help! 🎈 Meshery is community-built and welcomes collaboration. Contributors are expected to adhere to the [CNCF's Code of Conduct](https://github.com/layer5io/meshery/blob/master/CODE_OF_CONDUCT.md).
 
 # Contributing Guides
 
-{% include suggested-reading.html diffName ="true" %}
+{% include suggested-reading.html diffName ="true" language = "en" %}
 
 ## Not sure where to start?
 
@@ -30,7 +31,7 @@ Follow these steps and you'll be right at home.
 - **Build** Meshery: Confirm that you have a usable development environment.
 - **Discuss** with the community by engaging in the [discussion form](https://discuss.layer5.io).
 - **Contribute** by grabbing any open issue with the [help-wanted label](https://github.com/meshery/meshery/issues/) and jump in. If needed, create a [new issue](https://github.com/meshery/meshery/issues/new/choose). All [pull requests](https://github.com/meshery/meshery/pulls) should reference an open issue. Include keywords in your pull request descriptions, as well as commit messages, to [automatically close issues in GitHub](https://help.github.com/en/github/managing-your-work-on-github/closing-issues-using-keywords).
-- **Fill-in** a [community member form](https://layer5.io/newcomers)community member form to gain access to community resources.
+- **Fill-in** a [community member form](https://layer5.io/newcomers) community member form to gain access to community resources.
 
 ## <a name="contributing">General Contribution Flow</a>
 
@@ -56,7 +57,7 @@ In most cases, you can add this signoff to your commit automatically with the
 address (sorry, no pseudonyms or anonymous contributions). An example of signing off on a commit:
 
 ```
-$ commit -s -m “my commit message w/signoff”
+$ git commit -s -m “my commit message w/signoff”
 ```
 
 To ensure all your commits are signed, you may choose to add this alias to your global `.gitconfig`:

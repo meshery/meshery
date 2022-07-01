@@ -1,0 +1,140 @@
+name: Meshery End-to-End Tests with mesheryctl
+on:
+  workflow_dispatch:
+    inputs:
+      profile_name:
+        description: "performance profile to use"
+        required: true
+      profile_filename:
+        description: "test configuration file"
+        required: false
+      patternfile_url:
+        description: "URL of the pattern file"
+        required: false
+      patternfile_name:
+        description: "name of the pattern file"
+        required: false
+  # scheduled to run at the 43rd minute of every 12th hour
+  schedule:
+    - cron: '43 */24 * * *'
+
+jobs:
+  manual-test:
+    name: Manual e2e Test
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'workflow_dispatch' }}
+    strategy:
+      fail-fast: false
+      matrix:
+        k8s_version: ['v1.20.11', 'v1.21.5', 'v1.22.2']
+        platform: ['docker', 'kubernetes']
+    steps:
+      - name: Setup Kubernetes
+        uses: manusa/actions-setup-minikube@v2.4.1
+        with:
+          minikube version: 'v1.23.2'
+          kubernetes version: ${{ matrix.k8s_version }}
+          driver: docker
+
+      - name: Run minikube tunnel
+        run: |
+          echo 'Running minikube tunnel'
+          minikube tunnel &> /dev/null &
+        shell: bash
+
+      - name: Get Date
+        id: date
+        run: echo "::set-output name=date::$(date +'%Y-%m-%d-%H.%M.%S')"
+
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Run Performance Tests
+        uses: layer5io/meshery-smp-action@master
+        with:
+          provider_token: ${{ secrets.PROVIDER_TOKEN }}
+          platform: ${{ matrix.platform }}
+          profile_name: ${{ github.event.inputs.profile_name }}
+          profile_filename: ${{ github.event.inputs.profile_filename }}
+          test_name: '${{ steps.date.outputs.date }}'
+
+      - name: Deploy Service Mesh
+        run: |
+          cat ~/auth.json
+          echo | mesheryctl mesh deploy --adapter meshery-istio --namespace istio-system -t ~/auth.json ISTIO
+          sleep 50
+        shell: '/bin/bash {0}'
+
+      - name: Apply Pattern
+        uses: layer5io/meshery-service-mesh-patterns-action@master
+        with:
+          provider_token: ${{ secrets.PROVIDER_TOKEN }}
+          platform: ${{ matrix.platform }}
+          pattern_url: ${{ github.event.inputs.pattern_url }}
+          pattern_file: ${{ github.event.inputs.pattern_file }}
+  
+  scheduled-test:
+    name: Scheduled e2e Test
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'schedule' }}
+    strategy:
+      fail-fast: false
+      matrix:
+        k8s_version: ['v1.20.11', 'v1.21.5', 'v1.22.2']
+        platform: ['docker', 'kubernetes']
+    steps:
+      - name: Setup Kubernetes
+        uses: manusa/actions-setup-minikube@v2.4.1
+        with:
+          minikube version: 'v1.23.2'
+          kubernetes version: ${{ matrix.k8s_version }}
+          driver: docker
+
+      - name: Run minikube tunnel
+        run: |
+          echo 'Running minikube tunnel'
+          minikube tunnel &> /dev/null &
+        shell: bash
+
+      - name: Get Date
+        id: date
+        run: echo "::set-output name=date::$(date +'%Y-%m-%d-%H.%M.%S')"
+
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Run Performance Tests
+        uses: layer5io/meshery-smp-action@master
+        with:
+          provider_token: ${{ secrets.PROVIDER_TOKEN }}
+          platform: ${{ matrix.platform }}
+          profile_name: integration-e2e-workflow
+          profile_filename: integration-test-config.yaml
+          test_name: '${{ steps.date.outputs.date }}'
+      
+      - name: Deploy Service Mesh
+        run: |
+          echo | mesheryctl mesh deploy --adapter meshery-istio --namespace istio-system -t ~/auth.json ISTIO
+          sleep 50
+        shell: '/bin/bash {0}'
+
+      - name: Apply BookInfo Pattern
+        uses: layer5io/mesheryctl-service-mesh-patterns-action@master
+        with:
+          provider_token: ${{ secrets.PROVIDER_TOKEN }}
+          platform: ${{ matrix.platform }}
+          pattern_url: https://raw.githubusercontent.com/service-mesh-patterns/service-mesh-patterns/master/samples/bookInfoPattern.yaml
+
+      - name: Apply Circuit Breaker Pattern
+        uses: layer5io/mesheryctl-service-mesh-patterns-action@master
+        with:
+          provider_token: ${{ secrets.PROVIDER_TOKEN }}
+          platform: ${{ matrix.platform }}
+          pattern_url: https://raw.githubusercontent.com/service-mesh-patterns/service-mesh-patterns/master/samples/servicemeshcon-na-2021/circuitbreaker.yaml
+
+      - name: Apply Retries Pattern
+        uses: layer5io/mesheryctl-service-mesh-patterns-action@master
+        with:
+          provider_token: ${{ secrets.PROVIDER_TOKEN }}
+          platform: ${{ matrix.platform }}
+          pattern_url: https://raw.githubusercontent.com/service-mesh-patterns/service-mesh-patterns/master/samples/servicemeshcon-na-2021/retries.yaml

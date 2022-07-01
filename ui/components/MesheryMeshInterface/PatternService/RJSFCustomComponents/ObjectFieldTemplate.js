@@ -7,12 +7,13 @@ import { utils } from '@rjsf/core';
 
 import AddButton from "@material-ui/icons/Add";
 import { Box, IconButton, Typography } from '@material-ui/core';
-import CustomDescriptionField from "./DescriptionField";
+import EnlargedTextTooltip from '../EnlargedTextTooltip';
+import HelpOutlineIcon from '../HelpOutlineIcon';
 
 const { canExpand } = utils;
 
 const useStyles = makeStyles({
-  root : {
+  objectFieldGrid : {
     marginTop : 10,
     // paddingLeft: "0.6rem",
     padding : "0.6rem",
@@ -39,7 +40,11 @@ const ObjectFieldTemplate = ({
     <Box mb={1} mt={1}>
       <Grid container justify="space-between" alignItems="center">
         <Grid item mb={1} mt={1}>
-          <Typography variant="body1" style={{ fontWeight : "bold" }}>{title.charAt(0).toUpperCase() + title.slice(1)}</Typography>
+          <Typography variant="body1" style={{ fontWeight : "bold", display : "inline" }}>{title.charAt(0).toUpperCase() + title.slice(1)}{" "}</Typography>
+          {description &&
+            <EnlargedTextTooltip title={description}>
+              <HelpOutlineIcon />
+            </EnlargedTextTooltip>}
         </Grid>
 
         {canExpand(schema, uiSchema, formData) && (
@@ -49,7 +54,7 @@ const ObjectFieldTemplate = ({
               onClick={onAddClick(schema)}
               disabled={disabled || readonly}
             >
-              <AddButton/>
+              <AddButton />
             </IconButton>
           </Grid>
         )}
@@ -64,16 +69,19 @@ const ObjectFieldTemplate = ({
         <CustomTitleField
           id={`${idSchema.$id}-title`}
           title={title}
+          description={description}
           required={required}
         />
       )}
-      {description && (
+
+      {/* {description && (
         <CustomDescriptionField
           id={`${idSchema.$id}-description`}
           description={description}
         />
-      )}
-      <Grid container={true} spacing={2} className={classes.root} style={Object.keys(properties).length === 0 || schema["$schema"] ? { border : "none" } : null}>
+      )} */}
+
+      <Grid container={true} spacing={2} className={classes.objectFieldGrid} style={Object.keys(properties).length === 0 || schema["$schema"] ? { border : "none" } : null}>
         {properties.map((element, index) => {
           // console.log("eke", element)
           // Remove the <Grid> if the inner element is hidden as the <Grid>
@@ -86,7 +94,7 @@ const ObjectFieldTemplate = ({
                 item={true}
                 xs={element.name === "name" || element.name === "namespace" ? 6 : 12}
                 key={index}
-                style={{ marginBottom : "10px" }}>
+              >
                 {element.content}
               </Grid>
             )

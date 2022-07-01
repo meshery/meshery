@@ -3,7 +3,7 @@ contexts:
     endpoint: http://localhost:9081
     token: Default
     platform: kubernetes
-    adapters:
+    components:
     - meshery-istio
     channel: stable
     version: latest
@@ -11,7 +11,7 @@ contexts:
     endpoint: http://localhost:32242
     token: Default2
     platform: docker
-    adapters:
+    components:
     - meshery-istio
     channel: stable
     version: latest
@@ -19,17 +19,17 @@ contexts:
     endpoint: http://localhost:9081
     token: Default
     platform: kubernetes
-    adapters:
+    components:
     - meshery-app-mesh
     - meshery-istio
     - meshery-linkerd
     - meshery-consul
     - meshery-nsm
     - meshery-kuma
-    - meshery-cpx
     - meshery-osm
     - meshery-traefik-mesh
     - meshery-nginx-sm
+    - meshery-cilium
     channel: stable
     version: latest
 current-context: local

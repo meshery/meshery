@@ -9,13 +9,13 @@ import (
 )
 
 type AddonList struct {
-	Name     string `json:"name"`
-	Owner    string `json:"owner"`
-	Endpoint string `json:"endpoint"`
+	Name  string `json:"name"`
+	Owner string `json:"owner"`
 }
 
 type AddonStatusInput struct {
 	Selector     *MeshType `json:"selector"`
+	K8scontextID string    `json:"k8scontextID"`
 	TargetStatus Status    `json:"targetStatus"`
 }
 
@@ -69,6 +69,23 @@ type Error struct {
 	Description string `json:"description"`
 }
 
+type KctlDescribeDetails struct {
+	Describe *string `json:"describe"`
+	Ctxid    *string `json:"ctxid"`
+}
+
+type MeshSyncEvent struct {
+	Type      string      `json:"type"`
+	Object    interface{} `json:"object"`
+	ContextID string      `json:"contextId"`
+}
+
+type MesheryControllersStatusListItem struct {
+	ContextID  string                  `json:"contextId"`
+	Controller MesheryController       `json:"controller"`
+	Status     MesheryControllerStatus `json:"status"`
+}
+
 type MesheryResult struct {
 	MesheryID          *string                `json:"meshery_id"`
 	Name               *string                `json:"name"`
@@ -88,11 +105,26 @@ type NameSpace struct {
 	Namespace string `json:"namespace"`
 }
 
+type OAMCapability struct {
+	OamDefinition interface{} `json:"oam_definition"`
+	ID            *string     `json:"id"`
+	OamRefSchema  *string     `json:"oam_ref_schema"`
+	Host          *string     `json:"host"`
+	Restricted    *bool       `json:"restricted"`
+	Metadata      interface{} `json:"metadata"`
+}
+
 type OperatorControllerStatus struct {
-	Name    string `json:"name"`
-	Version string `json:"version"`
-	Status  Status `json:"status"`
-	Error   *Error `json:"error"`
+	Name      string `json:"name"`
+	Version   string `json:"version"`
+	Status    Status `json:"status"`
+	Error     *Error `json:"error"`
+	ContextID string `json:"contextID"`
+}
+
+type OperatorControllerStatusPerK8sContext struct {
+	ContextID                string                    `json:"contextID"`
+	OperatorControllerStatus *OperatorControllerStatus `json:"OperatorControllerStatus"`
 }
 
 type OperatorStatus struct {
@@ -100,10 +132,17 @@ type OperatorStatus struct {
 	Version     string                      `json:"version"`
 	Controllers []*OperatorControllerStatus `json:"controllers"`
 	Error       *Error                      `json:"error"`
+	ContextID   string                      `json:"contextID"`
 }
 
 type OperatorStatusInput struct {
 	TargetStatus Status `json:"targetStatus"`
+	ContextID    string `json:"contextID"`
+}
+
+type OperatorStatusPerK8sContext struct {
+	ContextID      string          `json:"contextID"`
+	OperatorStatus *OperatorStatus `json:"operatorStatus"`
 }
 
 type PageFilter struct {
@@ -113,6 +152,32 @@ type PageFilter struct {
 	Search   *string `json:"search"`
 	From     *string `json:"from"`
 	To       *string `json:"to"`
+}
+
+type PatternLocation struct {
+	Branch *string `json:"branch"`
+	Host   *string `json:"host"`
+	Path   *string `json:"path"`
+	Type   *string `json:"type"`
+}
+
+type PatternPageResult struct {
+	Page       int              `json:"page"`
+	PageSize   int              `json:"page_size"`
+	TotalCount int              `json:"total_count"`
+	Patterns   []*PatternResult `json:"patterns"`
+}
+
+type PatternResult struct {
+	ID          string           `json:"id"`
+	Name        string           `json:"name"`
+	UserID      string           `json:"user_id"`
+	Location    *PatternLocation `json:"location"`
+	PatternFile string           `json:"pattern_file"`
+	CanSupport  bool             `json:"canSupport"`
+	Errmsg      *string          `json:"errmsg"`
+	CreatedAt   *string          `json:"created_at"`
+	UpdatedAt   *string          `json:"updated_at"`
 }
 
 type PerfPageProfiles struct {
@@ -150,12 +215,14 @@ type PerfProfile struct {
 }
 
 type ReSyncActions struct {
-	ClearDb string `json:"clearDB"`
-	ReSync  string `json:"ReSync"`
+	ClearDb   string `json:"clearDB"`
+	ReSync    string `json:"ReSync"`
+	HardReset string `json:"hardReset"`
 }
 
 type ServiceMeshFilter struct {
-	Type *MeshType `json:"type"`
+	Type          *MeshType `json:"type"`
+	K8sClusterIDs []string  `json:"k8sClusterIDs"`
 }
 
 type MeshType string
@@ -175,6 +242,7 @@ const (
 	MeshTypeTanzu              MeshType = "TANZU"
 	MeshTypeOpenServiceMesh    MeshType = "OPEN_SERVICE_MESH"
 	MeshTypeNginxServiceMesh   MeshType = "NGINX_SERVICE_MESH"
+	MeshTypeCiliumServiceMesh  MeshType = "CILIUM_SERVICE_MESH"
 )
 
 var AllMeshType = []MeshType{
@@ -192,11 +260,12 @@ var AllMeshType = []MeshType{
 	MeshTypeTanzu,
 	MeshTypeOpenServiceMesh,
 	MeshTypeNginxServiceMesh,
+	MeshTypeCiliumServiceMesh,
 }
 
 func (e MeshType) IsValid() bool {
 	switch e {
-	case MeshTypeAllMesh, MeshTypeInvalidMesh, MeshTypeAppMesh, MeshTypeCitrixServiceMesh, MeshTypeConsul, MeshTypeIstio, MeshTypeKuma, MeshTypeLinkerd, MeshTypeTraefikMesh, MeshTypeOctarine, MeshTypeNetworkServiceMesh, MeshTypeTanzu, MeshTypeOpenServiceMesh, MeshTypeNginxServiceMesh:
+	case MeshTypeAllMesh, MeshTypeInvalidMesh, MeshTypeAppMesh, MeshTypeCitrixServiceMesh, MeshTypeConsul, MeshTypeIstio, MeshTypeKuma, MeshTypeLinkerd, MeshTypeTraefikMesh, MeshTypeOctarine, MeshTypeNetworkServiceMesh, MeshTypeTanzu, MeshTypeOpenServiceMesh, MeshTypeNginxServiceMesh, MeshTypeCiliumServiceMesh:
 		return true
 	}
 	return false
@@ -220,6 +289,94 @@ func (e *MeshType) UnmarshalGQL(v interface{}) error {
 }
 
 func (e MeshType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type MesheryController string
+
+const (
+	MesheryControllerBroker   MesheryController = "BROKER"
+	MesheryControllerOperator MesheryController = "OPERATOR"
+	MesheryControllerMeshsync MesheryController = "MESHSYNC"
+)
+
+var AllMesheryController = []MesheryController{
+	MesheryControllerBroker,
+	MesheryControllerOperator,
+	MesheryControllerMeshsync,
+}
+
+func (e MesheryController) IsValid() bool {
+	switch e {
+	case MesheryControllerBroker, MesheryControllerOperator, MesheryControllerMeshsync:
+		return true
+	}
+	return false
+}
+
+func (e MesheryController) String() string {
+	return string(e)
+}
+
+func (e *MesheryController) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = MesheryController(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid MesheryController", str)
+	}
+	return nil
+}
+
+func (e MesheryController) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type MesheryControllerStatus string
+
+const (
+	MesheryControllerStatusDeployed    MesheryControllerStatus = "DEPLOYED"
+	MesheryControllerStatusNotdeployed MesheryControllerStatus = "NOTDEPLOYED"
+	MesheryControllerStatusDeploying   MesheryControllerStatus = "DEPLOYING"
+	MesheryControllerStatusUnkown      MesheryControllerStatus = "UNKOWN"
+)
+
+var AllMesheryControllerStatus = []MesheryControllerStatus{
+	MesheryControllerStatusDeployed,
+	MesheryControllerStatusNotdeployed,
+	MesheryControllerStatusDeploying,
+	MesheryControllerStatusUnkown,
+}
+
+func (e MesheryControllerStatus) IsValid() bool {
+	switch e {
+	case MesheryControllerStatusDeployed, MesheryControllerStatusNotdeployed, MesheryControllerStatusDeploying, MesheryControllerStatusUnkown:
+		return true
+	}
+	return false
+}
+
+func (e MesheryControllerStatus) String() string {
+	return string(e)
+}
+
+func (e *MesheryControllerStatus) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = MesheryControllerStatus(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid MesheryControllerStatus", str)
+	}
+	return nil
+}
+
+func (e MesheryControllerStatus) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 

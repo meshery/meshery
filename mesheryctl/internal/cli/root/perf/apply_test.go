@@ -86,7 +86,7 @@ func TestApplyCmd(t *testing.T) {
 			apply1002output,
 			testToken, true,
 		},
-		{"Run Test with new profile with --url without protocol", []string{"apply", "--profile", "test", "--url", "www.google.com"},
+		{"Run Test with new profile with --url without protocol", []string{"apply", "test", "--url", "www.google.com"},
 			[]utils.MockURL{
 				{Method: "POST", URL: profileURL, Response: apply1004, ResponseCode: 200},
 				{Method: "GET", URL: newProfileRunTest, Response: apply1003, ResponseCode: 400},
@@ -94,32 +94,19 @@ func TestApplyCmd(t *testing.T) {
 			apply1002output,
 			testToken, true,
 		},
-		{"Run Test with new profile", []string{"apply", "--profile", "test", "--url", "https://www.google.com"},
-			[]utils.MockURL{
-				{Method: "POST", URL: profileURL, Response: apply1004, ResponseCode: 200},
-				{Method: "GET", URL: newProfileRunTest, Response: apply1005, ResponseCode: 200},
-			},
-			apply1001output,
-			testToken, false,
-		},
-		{"Run Test with new profile but without URL", []string{"apply", "--profile", "test", "--url", ""},
-			[]utils.MockURL{},
-			apply1003output,
-			testToken, true,
-		},
 		{"Run Test without profile-name and id", []string{"apply"},
 			[]utils.MockURL{},
 			apply1005output,
 			testToken, true,
 		},
-		{"No profiles found with given name", []string{"apply", "new"},
+		{"No profiles found with given name", []string{"apply", "new", "--yes"},
 			[]utils.MockURL{
 				{Method: "GET", URL: profileURL, Response: apply1006, ResponseCode: 200},
 			},
 			apply1006output,
 			testToken, true,
 		},
-		{"Run Test with new profile with Invalid URL", []string{"apply", "--profile", "test", "--url", "invalid-url"},
+		{"Run Test with new profile with Invalid URL", []string{"apply", "test", "--url", "invalid-url"},
 			[]utils.MockURL{},
 			apply1004output,
 			testToken, true,
@@ -140,9 +127,9 @@ func TestApplyCmd(t *testing.T) {
 					httpmock.NewStringResponder(url.ResponseCode, apiResponse))
 			}
 
-			tokenPath = tt.Token
+			utils.TokenFlag = tt.Token
 			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
-			b := utils.SetupLogrusGrabTesting(t)
+			b := utils.SetupMeshkitLoggerTesting(t, false)
 
 			PerfCmd.SetArgs(tt.Args)
 			PerfCmd.SetOutput(b)
@@ -184,5 +171,6 @@ func resetVariables() {
 	loadGenerator = "fortio"
 	filePath = ""
 	outputFormatFlag = ""
-	expand = false
+	viewSingleProfile = false
+	viewSingleResult = false
 }

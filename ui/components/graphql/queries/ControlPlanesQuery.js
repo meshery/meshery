@@ -2,7 +2,7 @@ import { graphql, fetchQuery } from "react-relay";
 import environment from "../../../lib/relayEnvironment";
 
 export default function fetchControlPlanes(variables) {
-  const vars = { filter : { "type" : variables.type } };
+  const vars = { filter : variables };
 
   const query = graphql`
     query ControlPlanesQuery($filter: ServiceMeshFilter) {
@@ -13,7 +13,7 @@ export default function fetchControlPlanes(variables) {
           version
           component
           namespace
-        }
+        } 
       }
     }
   `;

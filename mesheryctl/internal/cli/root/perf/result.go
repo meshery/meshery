@@ -4,16 +4,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"net/http"
 	"strings"
 	"time"
 
 	"github.com/ghodss/yaml"
 	"github.com/gofrs/uuid"
-	log "github.com/sirupsen/logrus"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/models"
 	"github.com/pkg/errors"
@@ -35,23 +32,24 @@ type resultStruct struct {
 }
 
 var (
-	resultPage int
+	pageNumber       int
+	viewSingleResult bool
 )
 
 var resultCmd = &cobra.Command{
 	Use:   "result profile-name",
 	Short: "List performance test results",
 	Long:  `List all the available test results of a performance profile`,
-	Args:  cobra.MinimumNArgs(1),
+	Args:  cobra.MinimumNArgs(0),
 	Example: `
-// List Test results (maximum 25 results)	
-mesheryctl perf result saturday-profile 
+// List Test results (maximum 25 results)
+mesheryctl perf result saturday-profile
 
 // View other set of performance results with --page (maximum 25 results)
-mesheryctl perf result saturday-profile --page 2 
+mesheryctl perf result saturday-profile --page 2
 
 // View single performance result with detailed information
-mesheryctl perf result saturday-profile --view 
+mesheryctl perf result saturday-profile --view
 `,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		// used for searching performance profile
@@ -64,27 +62,31 @@ mesheryctl perf result saturday-profile --view
 			return ErrMesheryConfig(err)
 		}
 
-		profileURL := mctlCfg.GetBaseMesheryURL() + "/api/user/performance/profiles"
-
-		// set default tokenpath for command.
-		if tokenPath == "" {
-			tokenPath = constants.GetCurrentAuthToken()
+		// Throw error if a profile name is not provided
+		if len(args) == 0 {
+			return ErrNoProfileName()
 		}
 
-		// Merge args to get result-name
+		// handles spaces in args if quoted args passed
+		for i, arg := range args {
+			args[i] = strings.ReplaceAll(arg, " ", "%20")
+		}
+		// Merge args to get profile-name
 		searchString = strings.Join(args, "%20")
 
-		data, _, _, err := fetchPerformanceProfiles(profileURL, searchString)
+		profiles, _, err := fetchPerformanceProfiles(mctlCfg.GetBaseMesheryURL(), searchString, pageSize, pageNumber-1)
 		if err != nil {
 			return err
 		}
 
-		if len(data) == 0 {
-			log.Info("No Performance Profiles found with the given name")
+		if len(profiles) == 0 {
+			utils.Log.Info("No Performance Profiles found with the given name")
 			return nil
 		}
 
-		if len(data) == 1 {
+		data := profilesToStringArrays(profiles)
+
+		if len(profiles) == 1 {
 			// found only one profile with matching name
 			profileID = data[0][1]
 		} else {
@@ -97,38 +99,38 @@ mesheryctl perf result saturday-profile --view
 			profileID = data[selectedProfileIndex][2]
 		}
 
-		resultURL := mctlCfg.GetBaseMesheryURL() + "/api/user/performance/profiles/" + profileID + "/results"
-
-		data, expandedData, body, err := fetchPerformanceProfileResults(resultURL)
+		results, _, err := fetchPerformanceProfileResults(mctlCfg.GetBaseMesheryURL(), profileID, pageSize, pageNumber-1)
 		if err != nil {
 			return err
 		}
 
 		if len(data) == 0 {
-			log.Info("No Test Results to display")
+			utils.Log.Info("No Test Results to display")
+			return nil
+		}
+
+		// get performance results in format of string arrays and resultStruct
+		data, expandedData := performanceResultsToStringArrays(results)
+		if len(expandedData) == 0 {
+			utils.Log.Info("No test results to display")
 			return nil
 		}
 
 		if outputFormatFlag != "" {
-			var tempStruct *models.PerformanceResultsAPIResponse
-			err = json.Unmarshal(body, &tempStruct)
-			if err != nil {
-				return ErrFailUnmarshal(err)
-			}
-			body, _ = json.Marshal(tempStruct.Results)
+			body, _ := json.Marshal(results)
 			if outputFormatFlag == "yaml" {
 				body, _ = yaml.JSONToYAML(body)
 			} else if outputFormatFlag != "json" {
 				return ErrInvalidOutputChoice()
 			}
-			log.Info(string(body))
-		} else if !expand {
+			utils.Log.Info(string(body))
+		} else if !viewSingleResult { // print all results
 			utils.PrintToTable([]string{"NAME", "MESH", "QPS", "DURATION", "P50", "P99.9", "START-TIME"}, data)
 		} else {
-			// if data consists only one profile, directly print profile
 			index := 0
+			// if more than one result exist ask for index
 			if len(data) > 1 {
-				index, err = userPrompt("result", "Select Performance-test result to exapand", data)
+				index, err = userPrompt("result", "Select Performance-test result to expand", data)
 				if err != nil {
 					return err
 				}
@@ -149,44 +151,42 @@ mesheryctl perf result saturday-profile --view
 }
 
 // Fetch results for a specific profile
-func fetchPerformanceProfileResults(url string) ([][]string, []resultStruct, []byte, error) {
-	client := &http.Client{}
+func fetchPerformanceProfileResults(baseURL, profileID string, pageSize, pageNumber int) ([]models.PerformanceResult, []byte, error) {
 	var response *models.PerformanceResultsAPIResponse
-	tempURL := fmt.Sprintf("%s?pageSize=%d&page=%d", url, pageSize, resultPage-1)
 
-	req, _ := http.NewRequest("GET", tempURL, nil)
+	url := baseURL + "/api/user/performance/profiles/" + profileID + "/results"
 
-	err := utils.AddAuthDetails(req, tokenPath)
+	tempURL := fmt.Sprintf("%s?pageSize=%d&page=%d", url, pageSize, pageNumber)
+
+	req, err := utils.NewRequest("GET", tempURL, nil)
 	if err != nil {
-		return nil, nil, nil, ErrAttachAuthToken(err)
+		return nil, nil, err
 	}
-	resp, err := client.Do(req)
+
+	resp, err := utils.MakeRequest(req)
 	if err != nil {
-		return nil, nil, nil, ErrFailRequest(err)
+		return nil, nil, err
 	}
-	// failsafe for no authentication
-	if utils.ContentTypeIsHTML(resp) {
-		return nil, nil, nil, ErrUnauthenticated()
-	}
-	// failsafe for bad api call
-	if resp.StatusCode != 200 {
-		return nil, nil, nil, ErrFailReqStatus(resp.StatusCode)
-	}
+
 	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return nil, nil, nil, errors.Wrap(err, utils.PerfError("failed to read response body"))
+		return nil, nil, errors.Wrap(err, utils.PerfError("failed to read response body"))
 	}
 	err = json.Unmarshal(body, &response)
 	if err != nil {
-		return nil, nil, nil, ErrFailUnmarshal(err)
+		return nil, nil, ErrFailUnmarshal(err)
 	}
+	return response.Results, body, nil
+}
 
+// change performance results into string arrays(for tabular format printing) and profileStruct (to print single performance result)
+func performanceResultsToStringArrays(results []models.PerformanceResult) ([][]string, []resultStruct) {
 	var data [][]string
 	var expendedData []resultStruct
 
 	// append data for single profile
-	for _, result := range response.Results {
+	for _, result := range results {
 		serviceMesh := "No Mesh"
 		p50 := ""
 		p99_9 := ""
@@ -211,10 +211,36 @@ func fetchPerformanceProfileResults(url string) ([][]string, []resultStruct, []b
 		}
 
 		// append data for extended output
+		name := "None"
+		userid := uuid.Nil
+		mesheryid := uuid.Nil
+		url := "None"
+		loadGenerator := "None"
+
+		if result.UserID != nil {
+			userid = *result.UserID
+		}
+
+		if result.MesheryID != nil {
+			mesheryid = *result.MesheryID
+		}
+
+		if result.Name != "" {
+			name = result.Name
+		}
+
+		if result.RunnerResults.URL != "" {
+			url = result.RunnerResults.URL
+		}
+
+		if result.RunnerResults.LoadGenerator != "" {
+			loadGenerator = result.RunnerResults.LoadGenerator
+		}
+
 		a := resultStruct{
-			Name:     result.Name,
-			UserID:   result.UserID,
-			URL:      result.RunnerResults.URL,
+			Name:     name,
+			UserID:   (*uuid.UUID)(userid.Bytes()),
+			URL:      url,
 			QPS:      int(result.RunnerResults.QPS),
 			Duration: result.RunnerResults.RequestedDuration,
 			LatenciesMs: &models.LatenciesMs{
@@ -226,17 +252,17 @@ func fetchPerformanceProfileResults(url string) ([][]string, []resultStruct, []b
 				P99:     P99,
 			},
 			StartTime:     result.TestStartTime,
-			MesheryID:     result.MesheryID,
-			LoadGenerator: result.RunnerResults.LoadGenerator,
+			MesheryID:     (*uuid.UUID)(mesheryid.Bytes()),
+			LoadGenerator: loadGenerator,
 		}
 
 		expendedData = append(expendedData, a)
 	}
 
-	return data, expendedData, body, nil
+	return data, expendedData
 }
 
 func init() {
-	resultCmd.Flags().BoolVarP(&expand, "view", "", false, "(optional) View single performance results with more info")
-	resultCmd.Flags().IntVarP(&resultPage, "page", "p", 1, "(optional) List next set of performance results with --page (default = 1)")
+	resultCmd.Flags().BoolVarP(&viewSingleResult, "view", "", false, "(optional) View single performance results with more info")
+	resultCmd.Flags().IntVarP(&pageNumber, "page", "p", 1, "(optional) List next set of performance results with --page (default = 1)")
 }

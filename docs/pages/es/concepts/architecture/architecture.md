@@ -13,18 +13,18 @@ list: include
 
 Meshery y sus componentes están escritos utilizando los siguientes lenguajes de programación y tecnologías.
 
-| Componentes                                                          | Lenguajes y Tecnologías                                                           |
-| :------------------------------------------------------------------- | :-------------------------------------------------------------------------------- |
-| Meshery Server                                                       | Golang, gRPC, GraphQL, [SMP](https://smp-spec.io)                                 |
-| [Meshery Adapters](/concepts/architecture/adapters)                  | Golang, gRPC, [CloudEvents](https://cloudevents.io/), [SMI](https://smi-spec.io), [OAM](https://oam.dev)  |
-| [Meshery WASM Filters](https://github.com/layer5io/wasm-filters)     | Rust y C++                                                                        |
-| Meshery UI                                                           | ReactJS, NextJS, BillboardJS                                                      |
-| Meshery Provider UI                                                  | ReactJS, NextJS                                                                   |
-| [Meshery Remote Providers](/extensibility/providers)                 | _cualquiera_ - debe adherirse a los [Extension Points]({{site.baseurl}}/extensibility) de Meshery |
-| [Meshery Operator](/concepts/architecture/operator)                  | Golang                                                                            |
-| &nbsp;&nbsp;&nbsp;&nbsp; [MeshSync](/concepts/architecture/meshsync) | Golang                                                                            |
-| &nbsp;&nbsp;&nbsp;&nbsp; [Broker](/concepts/architecture/broker)     | Golang, NATS                                                                      |
-| [Meshery Database](/concepts/architecture/database)                  | Golang, SQLlite                                                                   |
+| Componentes                                                          | Lenguajes y Tecnologías                                                                                  |
+| :------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------- |
+| Meshery Server                                                       | Golang, gRPC, GraphQL, [SMP](https://smp-spec.io)                                                        |
+| [Meshery Adapters](/concepts/architecture/adapters)                  | Golang, gRPC, [CloudEvents](https://cloudevents.io/), [SMI](https://smi-spec.io), [OAM](https://oam.dev) |
+| [Meshery WASM Filters](https://github.com/layer5io/wasm-filters)     | Rust y C++                                                                                               |
+| Meshery UI                                                           | ReactJS, NextJS, BillboardJS                                                                             |
+| Meshery Provider UI                                                  | ReactJS, NextJS                                                                                          |
+| [Meshery Remote Providers](/extensibility/providers)                 | _cualquiera_ - debe adherirse a los [Extension Points]({{site.baseurl}}/extensibility) de Meshery        |
+| [Meshery Operator](/concepts/architecture/operator)                  | Golang                                                                                                   |
+| &nbsp;&nbsp;&nbsp;&nbsp; [MeshSync](/concepts/architecture/meshsync) | Golang                                                                                                   |
+| &nbsp;&nbsp;&nbsp;&nbsp; [Broker](/concepts/architecture/broker)     | Golang, NATS                                                                                             |
+| [Meshery Database](/concepts/architecture/database)                  | Golang, SQLlite                                                                                          |
 
 ## Despliegues
 
@@ -84,7 +84,6 @@ La base de datos de Meshery es responsable de recopilar y centralizar el estado 
 
 _Ver la sección [**Database**]({{ site.baseurl }}/concepts/architecture/database) para obtener más información sobre la función de la base de datos._
 
-
 ### **Statefulness en los componentes de Meshery**
 
 Algunos componentes dentro de la arquitectura de Meshery se ocupan de la persistencia de datos, mientras que otros solo se relacionan con una configuración de larga duración, mientras que otros no tienen ningún estado en absoluto.
@@ -122,3 +121,4 @@ Meshery usa la siguiente lista de puertos de red para interactuar con sus divers
 {% endfor %}
 
 _Ver la sección [**Adapters**]({{ site.baseurl }}/concepts/architecture/adapters) para obtener más información sobre la función del adapter._
+

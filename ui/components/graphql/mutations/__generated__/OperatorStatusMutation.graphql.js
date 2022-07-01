@@ -1,5 +1,8 @@
 /**
+ * @generated SignedSource<<3f8e706210e59168563a58ae4724c63c>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -7,33 +10,25 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
-export type Status = "CONNECTED" | "DISABLED" | "ENABLED" | "PROCESSING" | "UNKNOWN" | "%future added value";
+import type { ConcreteRequest, Mutation } from 'relay-runtime';
+export type Status = "ENABLED" | "CONNECTED" | "DISABLED" | "PROCESSING" | "UNKNOWN" | "%future added value";
 export type OperatorStatusInput = {|
-  targetStatus: Status
+  targetStatus: Status,
+  contextID: string,
 |};
-export type OperatorStatusMutationVariables = {|
-  input?: ?OperatorStatusInput
+export type OperatorStatusMutation$variables = {|
+  input?: ?OperatorStatusInput,
 |};
-export type OperatorStatusMutationResponse = {|
-  +operatorStatus: Status
+export type OperatorStatusMutation$data = {|
+  +operatorStatus: Status,
 |};
 export type OperatorStatusMutation = {|
-  variables: OperatorStatusMutationVariables,
-  response: OperatorStatusMutationResponse,
+  variables: OperatorStatusMutation$variables,
+  response: OperatorStatusMutation$data,
 |};
 */
 
-
-/*
-mutation OperatorStatusMutation(
-  $input: OperatorStatusInput
-) {
-  operatorStatus: changeOperatorStatus(input: $input)
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -83,7 +78,10 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = 'fc306fe156aa1a0f9984281666bd7693';
 
-module.exports = node;
+(node/*: any*/).hash = "fc306fe156aa1a0f9984281666bd7693";
+
+module.exports = ((node/*: any*/)/*: Mutation<
+  OperatorStatusMutation$variables,
+  OperatorStatusMutation$data,
+>*/);

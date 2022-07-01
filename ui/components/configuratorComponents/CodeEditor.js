@@ -1,9 +1,10 @@
-import { Card, makeStyles, CardContent } from "@material-ui/core";
+import { Card, makeStyles, CardContent,  IconButton } from "@material-ui/core";
+import {  Eco } from "@material-ui/icons";
 import { useEffect, useState } from "react";
 import { UnControlled as CodeMirror } from "react-codemirror2";
 
 const useStyles = makeStyles(theme => ({
-  root : {
+  cardRoot : {
     position : "sticky"
   },
   codeMirror : {
@@ -19,10 +20,18 @@ const useStyles = makeStyles(theme => ({
       minWidth : "calc(50% - 175px)",
       maxWidth : "calc(50% - 175px)",
     },
+  },
+  icon : {
+    position : "absolute",
+    right : "24px",
+    bottom : "30px",
+    color : "#fff",
+    zIndex : 11,
+    backgroundColor : 'rgb(255,255,255,0.05)'
   }
 }));
 
-export default function CodeEditor({ yaml, saveCodeEditorChanges }) {
+export default function CodeEditor({ yaml, saveCodeEditorChanges, cleanHandler }) {
   const [style, setStyle] = useState(67)
   const classes = useStyles({ scrollPos : style });
 
@@ -43,9 +52,8 @@ export default function CodeEditor({ yaml, saveCodeEditorChanges }) {
       <Card
         elevation={0}
         // @ts-ignore
-        className={classes.root}
+        className={classes.cardRoot}
       >
-
         <CardContent >
           <CodeMirror
             value={yaml}
@@ -65,6 +73,9 @@ export default function CodeEditor({ yaml, saveCodeEditorChanges }) {
               }
             }}
           />
+          <IconButton className={classes.icon} onClick={cleanHandler}>
+            <Eco />
+          </IconButton>
         </CardContent>
       </Card>
     </div>

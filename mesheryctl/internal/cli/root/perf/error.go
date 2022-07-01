@@ -58,17 +58,22 @@ func ErrFailMarshal(err error) error {
 
 func ErrAttachAuthToken(err error) error {
 	return errors.New(ErrAttachAuthTokenCode, errors.Alert, []string{err.Error()},
-		[]string{"authentication token not found. please supply a valid user token with the --token (or -t) flag. or login with `mesheryctl system login`", formatErrorWithReference()}, []string{}, []string{})
+		[]string{"authentication token not found. Run `mesheryctl system login` to generate a new token or supply a valid token with the `--token` flag.", formatErrorWithReference()}, []string{}, []string{})
 }
 
 func ErrFailRequest(err error) error {
 	return errors.New(ErrFailRequestCode, errors.Alert, []string{},
-		[]string{"failed to make a request", err.Error(), formatErrorWithReference()}, []string{}, []string{})
+		[]string{"Failed to make a request", err.Error(), formatErrorWithReference()}, []string{}, []string{})
 }
 
 func ErrUnauthenticated() error {
 	return errors.New(ErrFailRequestCode, errors.Alert, []string{},
-		[]string{"Invalid/expired authetication token", formatErrorWithReference()}, []string{}, []string{})
+		[]string{"Authentication token is invalid. Please supply a valid user token. Login with `mesheryctl system login`", formatErrorWithReference()}, []string{}, []string{})
+}
+
+func ErrExpired() error {
+	return errors.New(ErrFailRequestCode, errors.Alert, []string{},
+		[]string{"Authentication token is expired. Please login with `mesheryctl system login` to generate a new token", formatErrorWithReference()}, []string{}, []string{})
 }
 
 func ErrFailReqStatus(statusCode int) error {
@@ -102,7 +107,7 @@ func ErrFailUnmarshalFile(err error) error {
 
 func ErrInvalidTestConfigFile() error {
 	return errors.New(ErrInvalidTestConfigFileCode, errors.Alert, []string{},
-		[]string{"invalid test conffigration file", formatErrorWithReference()}, []string{"the test configuration is outdated or incorrect"}, []string{"see https://docs.meshery.io/guides/performance-management#running-performance-benchmarks-through-mesheryctl for a valid configuration file"})
+		[]string{"invalid test configuration file", formatErrorWithReference()}, []string{"the test configuration is outdated or incorrect"}, []string{"see https://docs.meshery.io/guides/performance-management#running-performance-benchmarks-through-mesheryctl for a valid configuration file"})
 }
 
 func formatErrorWithReference() string {

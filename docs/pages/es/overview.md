@@ -6,13 +6,14 @@ language: es
 ---
 
 # Introducción a Meshery
+
 El plano de gestión de service mesh adopta, opera y desarrolla sobre diferentes service meshes.
 Meshery facilita el aprendizaje sobre la funcionalidad y el desempeño de los service mesh e incorpora la recopilación y visualización de métricas de las aplicaciones que se ejecutan dentro de un service mesh o multiples service meshes.
 Meshery proporciona estas funcionalidades de alto nivel:
 
 1. Gestión del desempeño de service meshes.
 2. Gestión de configuración de service meshes.
-     - Mejores prácticas de configuración.
+   - Mejores prácticas de configuración.
 3. Gestión del ciclo de vida de service meshes.
 4. Interoperabilidad y asociación de service meshes.
 
@@ -20,11 +21,11 @@ Meshery proporciona estas funcionalidades de alto nivel:
 
 <div style="text-align:center;width:100%"><emphasis>Presentado en Service Mesh Day 2019</emphasis></div>
 
-
 <h2>¿Qué desafíos resuelve Meshery?</h2>
 <b>Gestión de service mesh - uno o múltiples service meshes.</b>
 
 Siempre que haya que responder a estas preguntas sobre el desempeño, son subjetivas a la carga de trabajo y la infraestructura específicas utilizadas para la medición. Ante este desafío, el proyecto Envoy, por ejemplo, se niega a publicar datos de desempeño porque tales pruebas pueden ser:
+
 - Confusas
 - Malinterpretadas.
 
@@ -38,9 +39,11 @@ La intención de Meshery es ser un proveedor y una utilidad neutra de proyectos 
 4. Realiza un seguimiento del desempeño de su aplicación de una versión a otra.
 
 ## Meshery es para Entusiastas y Operadores
-Sea la opción para implementar desde el Día 0 o el mantenimiento del Día 2 de despliegue, Meshery tiene capacidades útiles para cualquier circunstancia. La audicencia dirigida para un proyecto con Meshery sería cualquier tipo de operador  que aproveche el service mesh en su ecosistema; incluyendo desarrolladores, ingenieros de devops, quienes toman decisiones, arquitectos, y organizaciones que dependen de una plataforma de microservicios.. 
+
+Sea la opción para implementar desde el Día 0 o el mantenimiento del Día 2 de despliegue, Meshery tiene capacidades útiles para cualquier circunstancia. La audicencia dirigida para un proyecto con Meshery sería cualquier tipo de operador que aproveche el service mesh en su ecosistema; incluyendo desarrolladores, ingenieros de devops, quienes toman decisiones, arquitectos, y organizaciones que dependen de una plataforma de microservicios..
 
 ## Meshery es para la gestión de desempeño: pruebas y comparaciones de mercado
+
 Meshery ayuda a los usuarios a sopesar el valor de la implementación de un service mesh con la alta carga involucrada a la ejecución del mismo. Meshery proporciona un análisis estadístico de la latencia de las solicitudes y el rendimiento que se observan a través de las permutaciones de su carga de trabajo, infraestructura y la configuración del service mesh.
 Además de solicitar la latencia y el rendimiento, Meshery también rastrea la sobrecarga de memoria y el CPU en los nodos del clúster. Mide el plano de datos y el plano de control con diferentes conjuntos de cargas de trabajo e infraestructuras.
 
@@ -49,7 +52,6 @@ Establece un desempeño de marca y rastrea el desempeño como estándar a medida
 
 ## Meshery es para cualquier service mesh
 La diversidad de infraestructuras es una realidad para cualquier organización. Ya sea que se esté ejecutando un solo service mesh o varios tipos de service meshes, en Meshery encontrarás que soporta una diversidad de infraestructura (o bien, la falta de una).
-
 
 
 - **Adaptadores disponibles de service mesh** - Adaptadores de service mesh soportados por Mashery.
@@ -85,20 +87,24 @@ La diversidad de infraestructuras es una realidad para cualquier organización. 
 ## Comunidad
 Este proyecto es hecho por la comunidad y toda colaboración es bienvenida! [Fork here on Github](https://github.com/layer5io/meshery)
 
-* Únete a [la reunión semanal de la comunidad](https://docs.google.com/document/d/1c07UO9dS7_tFD-ClCWHIrEzRnzUJoFQ10EzfJTpS7FY/edit?usp=sharing) [Viernes de 10am a 11am Horario Central](/assets/projects/meshery/Meshery-Community-Meeting.ics). 
-  * Observa las [grabaciones de la comunidad](https://www.youtube.com/playlist?list=PL3A-A6hPO2IMPPqVjuzgqNU5xwnFFn3n0) y suscríbete al [calendario de la comunidad](https://bit.ly/2SbrRhe).
+- Únete a [la reunión semanal de la comunidad](https://docs.google.com/document/d/1c07UO9dS7_tFD-ClCWHIrEzRnzUJoFQ10EzfJTpS7FY/edit?usp=sharing) [Viernes de 10am a 11am Horario Central](/assets/projects/meshery/Meshery-Community-Meeting.ics).
 
-* Ingresa al [drive de la comunidad](https://layer5.io/newcomers) (solicita acceso).
+  - Observa las [grabaciones de la comunidad](https://www.youtube.com/playlist?list=PL3A-A6hPO2IMPPqVjuzgqNU5xwnFFn3n0) y suscríbete al [calendario de la comunidad](https://bit.ly/2SbrRhe).
 
-# FAQ 
+- Ingresa al [drive de la comunidad](https://layer5.io/newcomers) (solicita acceso).
+
+# FAQ
 
 ## ¿Por qué usar Meshery?
-* Porque es un proyecto de código abierto, proveedor neutral de proyectos que facilita las pruebas en meshes.
-* Porque fortio no está empaquetado en una utilidad de prueba de mesh, sino que es solo un generador de carga en sí mismo.
-* Debido a que regpatrol es de código cerrado, el código binario no es liberado, embebido para un mesh y es producido por un proveedor de ese mesh.
+
+- Porque es un proyecto de código abierto, proveedor neutral de proyectos que facilita las pruebas en meshes.
+- Porque fortio no está empaquetado en una utilidad de prueba de mesh, sino que es solo un generador de carga en sí mismo.
+- Debido a que regpatrol es de código cerrado, el código binario no es liberado, embebido para un mesh y es producido por un proveedor de ese mesh.
 
 ## ¿Por qué crear Meshery y no usar otra herramienta de marca?
+
 Meshery está diseñado específicamente para facilitar la evaluación comparativa de los service mesh y sus cargas de trabajo, al contrario de otras herramientas. Sin embargo también existen otras herramientas que se utilizan para la evaluación comparativa de los service meshes, como regpatrol. Regpatrol es utilizado por IBM, el cual no es código abierto ni está disponible en su forma binaria para su uso, posee las siguientes diferencias con Meshery:
+
 - Telemetría: regpatrol obtiene la telemetría del adaptador Mixer Prometheus y utiliza el agente de nodo propietario de IBM.
 - Meshery se obtiene del adaptador Mixer Prometheus y utiliza el exportador de nodos Prometheus.
 - Tipo de tráfico: regpatrol usa JMeter, que puede analizar las respuestas y realizar pruebas funcionales.
@@ -126,7 +132,9 @@ Meshery está diseñado específicamente para facilitar la evaluación comparati
 - Solving the Service Mesh Adopter’s Dilemma ([deck](https://calcotestudios.com/talks/decks/slides-open-source-101-at-home-solving-the-service-mesh-adopters-dilemma.html), [event](https://opensource101.com/sessions/solving-the-service-mesh-adopters-dilemma/),[video](https://www.youtube.com/watch?v=Q1zSWbO0RmI&list=PL3A-A6hPO2IN_HSU0pSfijBboiHggs5mC&index=2&t=0s))
 
 ## Otros Recursos
+
 - [Comparación de Service Meshes](https://layer5.io/landscape)
 - [Herramientas de Service meshes](https://layer5.io/landscape#tools)
 - [Libros sobre Service Mesh](https://layer5.io/books)
 - [Workshops sobre Service Mesh](https://layer5.io/workshops)
+

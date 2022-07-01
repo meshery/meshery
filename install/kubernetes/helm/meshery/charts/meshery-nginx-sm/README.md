@@ -1,6 +1,6 @@
 # meshery-nginx-sm
 
-![Version: 1.0.1](https://img.shields.io/badge/Version-1.0.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: stable-latest](https://img.shields.io/badge/AppVersion-stable--latest-informational?style=flat-square)
+![Version: 0.5.0](https://img.shields.io/badge/Version-0.5.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: stable-latest](https://img.shields.io/badge/AppVersion-stable--latest-informational?style=flat-square)
 
 Meshery Adapter for NGINX Service Mesh.
 
@@ -8,16 +8,17 @@ Meshery Adapter for NGINX Service Mesh.
 
 | Name | Email | Url |
 | ---- | ------ | --- |
-| Layer5 Authors | community@layer5.io |  |
-| darrenlau | panyuenlau@gmail.com |  |
-| leecalcote | lee.calcote@layer5.io |  |
+| Layer5 Authors | <community@layer5.io> |  |
+| darrenlau | <panyuenlau@gmail.com> |  |
+| leecalcote | <lee.calcote@layer5.io> |  |
 
 ## Values
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | affinity | object | `{}` |  |
-| annotations | object | `{}` |  |
+| annotations."kompose.cmd" | string | `"kompose convert -f ../docker-compose.yaml"` |  |
+| annotations."kompose.version" | string | `"1.17.0 ()"` |  |
 | env | object | `{}` |  |
 | fullnameOverride | string | `""` |  |
 | image.pullPolicy | string | `"Always"` |  |
@@ -41,8 +42,9 @@ Meshery Adapter for NGINX Service Mesh.
 | service.port | int | `10010` |  |
 | service.targetPort | int | `10010` |  |
 | service.type | string | `"ClusterIP"` |  |
-| serviceAccount.create | bool | `true` |  |
-| serviceAccount.name | string | `"meshery-adapter-nsm"` |  |
+| serviceAccount.create | bool | `false` |  |
+| serviceAccount.name | string | `""` |  |
+| serviceAccountNameOverride | string | `""` |  |
 | testCase.enabled | bool | `false` |  |
 | tolerations | list | `[]` |  |
 

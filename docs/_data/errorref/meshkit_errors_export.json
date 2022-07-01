@@ -120,6 +120,15 @@
         "probable_cause": "",
         "suggested_remediation": ""
       },
+      "11017": {
+        "name": "ErrClosingDatabaseConnectionCode",
+        "code": "11017",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "failed to close database connection",
+        "probable_cause": "Invalid database instance passed.",
+        "suggested_remediation": "Make sure the DB handler has a valid database instance."
+      },
       "11021": {
         "name": "ErrApplyManifestCode",
         "code": "11021",

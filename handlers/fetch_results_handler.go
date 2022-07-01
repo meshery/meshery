@@ -31,7 +31,7 @@ func (h *Handler) FetchResultsHandler(w http.ResponseWriter, req *http.Request, 
 	}
 	q := req.Form
 
-	tokenString := req.Context().Value("token").(string)
+	tokenString := req.Context().Value(models.TokenCtxKey).(string)
 
 	bdr, err := p.FetchResults(tokenString, q.Get("page"), q.Get("pageSize"), q.Get("search"), q.Get("order"), profileID)
 	if err != nil {
@@ -68,7 +68,7 @@ func (h *Handler) FetchAllResultsHandler(w http.ResponseWriter, req *http.Reques
 	}
 	q := req.Form
 
-	tokenString := req.Context().Value("token").(string)
+	tokenString := req.Context().Value(models.TokenCtxKey).(string)
 
 	bdr, err := p.FetchAllResults(tokenString, q.Get("page"), q.Get("pageSize"), q.Get("search"), q.Get("order"), q.Get("from"), q.Get("to"))
 	if err != nil {
@@ -107,7 +107,7 @@ func (h *Handler) GetResultHandler(w http.ResponseWriter, req *http.Request, _ *
 		return
 	}
 
-	tokenString := req.Context().Value("token").(string)
+	tokenString := req.Context().Value(models.TokenCtxKey).(string)
 
 	bdr, err := p.GetResult(tokenString, key)
 	if err != nil {

@@ -3,7 +3,7 @@ contexts:
     endpoint: http://localhost:9081
     token: Default
     platform: kubernetes
-    adapters:
+    components:
     - meshery-istio
     channel: stable
     version: latest

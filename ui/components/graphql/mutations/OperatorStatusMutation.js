@@ -8,7 +8,7 @@ const operatorStatusMutation = graphql`
 `;
 
 export default function changeOperatorState(onComplete, variables) {
-  const vars = { input : { targetStatus : variables.status, } };
+  const vars = { input : { targetStatus : variables.status, contextID : variables.contextID } };
 
   commitMutation(environment,{
     mutation : operatorStatusMutation,

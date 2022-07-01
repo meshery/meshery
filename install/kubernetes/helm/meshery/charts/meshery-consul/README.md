@@ -1,6 +1,6 @@
 # meshery-consul
 
-![Version: 2.1.2](https://img.shields.io/badge/Version-2.1.2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: stable-latest](https://img.shields.io/badge/AppVersion-stable--latest-informational?style=flat-square)
+![Version: 0.5.0](https://img.shields.io/badge/Version-0.5.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: stable-latest](https://img.shields.io/badge/AppVersion-stable--latest-informational?style=flat-square)
 
 Meshery Adapter for Consul chart.
 
@@ -8,9 +8,9 @@ Meshery Adapter for Consul chart.
 
 | Name | Email | Url |
 | ---- | ------ | --- |
-| Layer5 Authors | community@layer5.io |  |
-| aisuko | urakiny@gmail.com |  |
-| leecalcote | lee.calcote@layer5.io |  |
+| Layer5 Authors | <community@layer5.io> |  |
+| aisuko | <urakiny@gmail.com> |  |
+| leecalcote | <lee.calcote@layer5.io> |  |
 
 ## Values
 
@@ -20,7 +20,7 @@ Meshery Adapter for Consul chart.
 | annotations | object | `{}` |  |
 | env | object | `{}` |  |
 | fullnameOverride | string | `""` |  |
-| image.pullPolicy | string | `"IfNotPresent"` |  |
+| image.pullPolicy | string | `"Always"` |  |
 | image.repository | string | `"layer5/meshery-consul:stable-latest"` |  |
 | imagePullSecrets | list | `[]` |  |
 | ingress.annotations | string | `nil` |  |
@@ -39,8 +39,9 @@ Meshery Adapter for Consul chart.
 | service.annotations | object | `{}` |  |
 | service.port | int | `10002` |  |
 | service.type | string | `"ClusterIP"` |  |
-| serviceAccount.create | bool | `true` |  |
-| serviceAccount.name | string | `"meshery-adapter-consul"` |  |
+| serviceAccount.create | bool | `false` |  |
+| serviceAccount.name | string | `""` |  |
+| serviceAccountNameOverride | string | `""` |  |
 | testCase.enabled | bool | `false` |  |
 | tolerations | list | `[]` |  |
 

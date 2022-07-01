@@ -2,6 +2,7 @@
 layout: page
 title: Contributing to Meshery Server
 permalink: project/contributing/contributing-server
+redirect_from: project/contributing/contributing-server/
 description: How to contribute to Meshery Server
 language: en
 type: project
@@ -19,14 +20,14 @@ To build and run Meshery server from source:
 1. Build the static assets for the UI by running
 
 ```sh
-make setup-ui-libs
-make build-ui
+make ui-setup
+make ui-build
 ```
 
 2. Build & run the server code by running
 
 ```sh
-make run-local // Or make run-fast
+make server // Or make run-fast
 ```
 
 Any time changes are made to the GO code, you will have to stop the server and run the above command again.

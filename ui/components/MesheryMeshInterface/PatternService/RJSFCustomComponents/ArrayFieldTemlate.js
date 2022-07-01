@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React from "react";
+import React, { useEffect } from "react";
 
 import { utils } from "@rjsf/core";
 
@@ -10,8 +10,30 @@ import Paper from "@material-ui/core/Paper";
 import { Button, IconButton, Typography } from "@material-ui/core";
 import AddIcon from "@material-ui/icons/Add";
 import SimpleAccordion from "./Accordion";
-import CustomDescriptionField from "./DescriptionField";
+import EnlargedTextTooltip from "../EnlargedTextTooltip";
+import HelpOutlineIcon from "../HelpOutlineIcon";
 const { isMultiSelect, getDefaultRegistry } = utils;
+
+function getTitleForItem(props) {
+  const title = getTitle(props);
+
+  // remove plurals
+  if (title.endsWith("es")) {
+    return title.substring(0, title.length - 2);
+  }
+  if (title.endsWith("s")) {
+    return title.substring(0, title.length - 1);
+  }
+
+  return title;
+}
+
+function getTitle(props) {
+  if (!props) {
+    return "Unknown"
+  }
+  return props.uiSchema["ui:title"] || props.title
+}
 
 const ArrayFieldTemplate = (props) => {
   const { schema, registry = getDefaultRegistry() } = props;
@@ -31,7 +53,7 @@ const ArrayFieldTitle = ({ TitleField, idSchema, title, required }) => {
 
   const id = `${idSchema.$id}__title`;
   // return <h3>{title?.charAt(0)?.toUpperCase() + title?.slice(1)}</h3>;
-  return <Typography variant="body1" style={{ fontWeight : "bold" }}>{title.charAt(0).toUpperCase() + title.slice(1)}</Typography>;
+  return <Typography variant="body1" style={{ fontWeight : "bold", display : "inline" }}>{title.charAt(0).toUpperCase() + title.slice(1)}</Typography>;
   // return <TitleField id={id} title={title} required={required} />;
 };
 
@@ -53,8 +75,9 @@ const DefaultArrayItem = (props) => {
     fontWeight : "bold",
     minWidth : 0
   };
+
   return (
-    <SimpleAccordion childProps={props}>
+    <SimpleAccordion heading={props.heading} childProps={props}>
       <Grid container={true} key={props.key} alignItems="center">
         <Grid item={true} xs >
           <Box mb={2} style={{ border : "0.5px solid black" }}>
@@ -104,7 +127,7 @@ const DefaultFixedArrayFieldTemplate = (props) => {
         key={`array-field-title-${props.idSchema.$id}`}
         TitleField={props.TitleField}
         idSchema={props.idSchema}
-        title={props.uiSchema["ui:title"] || props.title}
+        title={getTitle(props)}
         required={props.required}
       />
 
@@ -121,7 +144,9 @@ const DefaultFixedArrayFieldTemplate = (props) => {
         className="row array-item-list"
         key={`array-item-list-${props.idSchema.$id}`}
       >
-        {props.items && props.items.map(DefaultArrayItem)}
+        {props.items && props.items.map((item, idx) => {
+          return <DefaultArrayItem key={`${getTitle(props)}-${idx}`} heading={`${getTitleForItem(props)} (${idx})`} {...item} />
+        })}
       </div>
 
       {props.canAdd && (
@@ -147,9 +172,17 @@ const DefaultNormalArrayFieldTemplate = (props) => {
               key={`array-field-title-${props.idSchema.$id}`}
               TitleField={props.TitleField}
               idSchema={props.idSchema}
-              title={props.uiSchema["ui:title"] || props.title}
+              title={getTitle(props)}
               required={props.required}
             />
+
+            {
+              (props.uiSchema["ui:description"] || props.schema.description) &&
+              <EnlargedTextTooltip title={props.uiSchema["ui:description"] || props.schema.description}>
+                <HelpOutlineIcon style={{ marginLeft : '4px' }} />
+              </EnlargedTextTooltip>
+            }
+
           </Grid>
           <Grid item xs={4}>
             {props.canAdd && (
@@ -170,7 +203,7 @@ const DefaultNormalArrayFieldTemplate = (props) => {
           </Grid>
         </Grid>
 
-        {(props.uiSchema["ui:description"] || props.schema.description) && (
+        {/* {(props.uiSchema["ui:description"] || props.schema.description) && (
           <ArrayFieldDescription
             key={`array-field-description-${props.idSchema.$id}`}
             DescriptionField={CustomDescriptionField}
@@ -179,10 +212,12 @@ const DefaultNormalArrayFieldTemplate = (props) => {
               props.uiSchema["ui:description"] || props.schema.description
             }
           />
-        )}
+        )} */}
 
         <Grid container={true} key={`array-item-list-${props.idSchema.$id}`}>
-          {props.items && props.items.map((p) => DefaultArrayItem(p))}
+          {props.items && props.items.map((item, idx) => {
+            return <DefaultArrayItem key={`${getTitle(props)}-${idx}`} heading={`${getTitleForItem(props)} (${idx})`} {...item} />
+          })}
 
 
         </Grid>

@@ -26,5 +26,5 @@ assignees: ''
 #### Contributor [Guides](https://docs.meshery.io/project/contributing) and Resources
 
 - 🎨 Wireframes and designs for Meshery UI in [Figma](https://www.figma.com/file/SMP3zxOjZztdOLtgN4dS2W/Meshery-UI)
-- 🖥 [Contributing to Meshery UI](https://docs.meshery.io/project/contributing-ui)
+- 🖥 [Contributing to Meshery UI](https://docs.meshery.io/project/contributing/contributing-ui)
 - 🙋🏾🙋🏼 Questions: [Layer5 Discussion Forum](https://discuss.layer5.io) and [Layer5 Community Slack](http://slack.layer5.io)

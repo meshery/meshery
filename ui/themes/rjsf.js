@@ -1,6 +1,7 @@
 
 import { createTheme } from '@material-ui/core/styles';
 
+
 export const rjsfTheme = createTheme({
   palette : {
     primary : {
@@ -18,6 +19,9 @@ export const rjsfTheme = createTheme({
     MuiCheckbox : {
       color : 'primary',
     },
+    MuiMenu : {
+      variant : "outlined",
+    }
   },
   overrides : {
     MuiButton : {
@@ -58,12 +62,71 @@ export const rjsfTheme = createTheme({
         color : "#565656"
       },
     },
+    MuiInputBase : {
+      root : {
+        fontSize : "0.8rem" // same as title
+      }
+    },
+    MuiTooltip : {
+      tooltip : {
+        backgroundColor : " #3C494F",
+        color : "#fff",
+        opacity : "100%",
+        fontSize : "14px",
+        borderRadius : "0.9375rem",
+        padding : "0.9rem",
+        zIndex : "99999999999"
+      },
+      popper : {
+        zIndex : "99999 !important"
+      }
+    },
+    MuiAccordionSummary : {
+      root : {
+        // border: "5px solid red",
+        backgroundColor : "rgba(0, 0, 0, .03)",
+        borderBottom : "1px solid rgba(0, 0, 0, .125)",
+        marginBottom : -1,
+        maxHeight : "1.5rem",
+        "&$expanded" : {
+          minHeight : 56
+        }
+      },
+      content : {
+        // border: "5px solid green",
+        justifyContent : "space-between",
+        "&$expanded" : {
+          margin : "12px 0",
+          justifyContent : "space-between"
+        }
+      },
+    },
+    MuiAccordionDetails : {
+      root : {
+        padding : 16
+      }
+    },
+    MuiAccordion : {
+      root : {
+        border : "1px solid rgba(0, 0, 0, .125)",
+        boxShadow : "none",
+        "&:not(:last-child)" : {
+          borderBottom : 0
+        },
+        "&:before" : {
+          display : "none"
+        },
+        "&$expanded" : {
+          margin : "auto"
+        }
+      },
+    },
     MuiGrid : {
       root : {
         "& > *" : {
           border : 'none !important'
         },
-        marginTop : '0.2rem !important',
+        marginTop : '0.1rem !important',
       },
     },
     MuiPaper : {

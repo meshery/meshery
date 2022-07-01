@@ -1,6 +1,6 @@
 {
   "errors_export": {
-    "component_name": "linkerd",
+    "component_name": "meshery-linkerd",
     "component_type": "adapter",
     "errors": {
       "1000": {
@@ -28,6 +28,15 @@
         "long_description": "",
         "short_description": "failed to extract release names",
         "probable_cause": "Invalid release format",
+        "suggested_remediation": ""
+      },
+      "1003": {
+        "name": "ErrInstallLinkerdCode",
+        "code": "1003",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error with Linkerd operation: ",
+        "probable_cause": "",
         "suggested_remediation": ""
       },
       "1004": {
@@ -100,7 +109,7 @@
         "long_description": "Error occurred while applying custom manifest to the cluster",
         "short_description": "Error with custom operation",
         "probable_cause": "Invalid kubeclient config\nInvalid manifest",
-        "suggested_remediation": "Make sure to apply a valid kubernetes manifest"
+        "suggested_remediation": "Make sure to apply a valid Kubernetes manifest"
       },
       "1013": {
         "name": "ErrOpInvalidCode",
@@ -108,6 +117,33 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "Invalid operation",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1014": {
+        "name": "ErrInvalidOAMComponentTypeCode",
+        "code": "1014",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "invalid OAM component name: ",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1015": {
+        "name": "ErrLinkerdCoreComponentFailCode",
+        "code": "1015",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "error in linkerd core component",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1016": {
+        "name": "ErrProcessOAMCode",
+        "code": "1016",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "error performing OAM operations",
         "probable_cause": "",
         "suggested_remediation": ""
       },
@@ -124,10 +160,19 @@
         "name": "ErrParseOAMComponentCode",
         "code": "1018",
         "severity": "Alert",
-        "long_description": "Error occurred while prasing application component in the OAM request made",
+        "long_description": "Error occurred while parsing application component in the OAM request made by Meshery server",
         "short_description": "error parsing the component",
-        "probable_cause": "Invalid OAM component passed in OAM request",
-        "suggested_remediation": "Check if your request has vaild OAM components"
+        "probable_cause": "Could not unmarshall configuration component received via ProcessOAM gRPC call into a valid Component struct",
+        "suggested_remediation": "Check if Meshery Server is creating valid component for ProcessOAM gRPC call. This error should never happen and can be reported as a bug in Meshery Server. Also check if Meshery Server and adapters are referring to same component struct provided in MeshKit."
+      },
+      "1019": {
+        "name": "ErrParseOAMConfigCode",
+        "code": "1019",
+        "severity": "Alert",
+        "long_description": "Error occurred while parsing configuration in the request made by Meshery Server",
+        "short_description": "error parsing the configuration",
+        "probable_cause": "Could not unmarshall OAM config received via ProcessOAM gRPC call into a valid Config struct",
+        "suggested_remediation": "Check if Meshery Server is creating valid config for ProcessOAM gRPC call. This error should never happen and can be reported as a bug in Meshery Server. Also, confirm that Meshery Server and Adapters are referring to same config struct provided in MeshKit"
       },
       "1020": {
         "name": "ErrApplyHelmChartCode",
@@ -137,6 +182,42 @@
         "short_description": "error applying helm chart",
         "probable_cause": "",
         "suggested_remediation": ""
+      },
+      "1021": {
+        "name": "ErrNilClientCode",
+        "code": "1021",
+        "severity": "Alert",
+        "long_description": "Kubernetes client is nil",
+        "short_description": "Kubernetes client not initialized",
+        "probable_cause": "Kubernetes client not initialized",
+        "suggested_remediation": "Reconnect the Meshery Adapter to Meshery Server"
+      },
+      "1022": {
+        "name": "ErrAddonFromHelmCode",
+        "code": "1022",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error with addon install operation by helm chart",
+        "probable_cause": "The helm chart URL in additional properties of addon operation might be incorrect\nCould not apply service patch file for the given addon",
+        "suggested_remediation": ""
+      },
+      "1023": {
+        "name": "ErrInvalidVersionForMeshInstallationCode",
+        "code": "1023",
+        "severity": "Alert",
+        "long_description": "Version passed is invalid",
+        "short_description": "Invalid version passed for helm based installation",
+        "probable_cause": "Version might not be prefixed with \\\"stable-\\\" or \\\"edge-\\",
+        "suggested_remediation": "Version should be prefixed with \\\"stable-\\\" or \\\"edge-\\\nVersion might be empty"
+      },
+      "1024": {
+        "name": "ErrAnnotatingNamespaceCode",
+        "code": "1024",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error with annotating namespace",
+        "probable_cause": "Could not get the namespace in cluster\nCould not update namespace in cluster",
+        "suggested_remediation": "Make sure the cluster is reachable"
       },
       "1101": {
         "name": "ErrCertEncodeCode",
@@ -191,6 +272,15 @@
         "short_description": "Failed to create default Root CA: ",
         "probable_cause": "",
         "suggested_remediation": ""
+      },
+      "1107": {
+        "name": "ErrGetFileNamesCode",
+        "code": "1107",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "failed to get filenames for dynamic component generation",
+        "probable_cause": "The repository could not be cloned or reached\nThe repository url is invalid\nCould not reach the remote git repository",
+        "suggested_remediation": "Make sure the owner, repo and path is correct for fetching crd names"
       }
     }
   }

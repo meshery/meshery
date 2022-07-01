@@ -33,12 +33,13 @@ flags:
     carryforward: true
   backend:
     paths:
-      - cmd
-      - handlers
-      - helpers
-      - internal
-      - mesheryctl
-      - meshes
-      - models
-      - router
+    # Accepts only glob patterns, not regex
+      - "*/cmd/**"
+      - "*/handlers/**"
+      - "*/helpers/**"
+      - "*/internal/**"
+      - "*/mesheryctl/**" 
+      - "*/meshes/**"
+      - "*/models/**"
+      - "*/router/**"
     carryforward: true

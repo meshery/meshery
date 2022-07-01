@@ -1,6 +1,7 @@
 // @ts-check
 import {
-  Avatar, Dialog, DialogActions, DialogContent, DialogTitle, Divider, IconButton, NoSsr,
+  Avatar, Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, IconButton, NoSsr,
+  Paper,
   TableCell, Tooltip, Typography
 } from "@material-ui/core";
 import { createTheme, makeStyles, MuiThemeProvider, withStyles } from "@material-ui/core/styles";
@@ -9,23 +10,27 @@ import CloseIcon from "@material-ui/icons/Close";
 import DeleteIcon from "@material-ui/icons/Delete";
 import FullscreenIcon from '@material-ui/icons/Fullscreen';
 import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
-import PlayArrowIcon from '@material-ui/icons/PlayArrow';
-import UploadIcon from "@material-ui/icons/Publish";
 import SaveIcon from '@material-ui/icons/Save';
 import MUIDataTable from "mui-datatables";
 import { withSnackbar } from "notistack";
+import AddIcon from "@material-ui/icons/AddCircleOutline";
 import React, { useEffect, useRef, useState } from "react";
 import { UnControlled as CodeMirror } from "react-codemirror2";
 import Moment from "react-moment";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import dataFetch from "../lib/data-fetch";
-import FILE_OPS from "../utils/configurationFileHandlersEnum"
-import { updateProgress } from "../lib/store";
-import { trueRandom } from "../lib/trueRandom";
-import PatternForm from "./configuratorComponents/patternConfigurator";
+import FILE_OPS from "../utils/configurationFileHandlersEnum";
 import PromptComponent from "./PromptComponent";
-import URLUploader from "./URLUploader";
+import { updateProgress } from "../lib/store";
+import PatternForm from "../components/configuratorComponents/patternConfigurator";
+import UploadImport from "./UploadImport";
+import { ctxUrl } from "../utils/multi-ctx";
+import { randomPatternNameGenerator as getRandomName } from "../utils/utils";
+import ViewSwitch from "./ViewSwitch";
+import MesheryPatternGrid from "./MesheryPatterns/MesheryPatternGridView";
+import UndeployIcon from "../public/static/img/UndeployIcon";
+import DoneAllIcon from '@material-ui/icons/DoneAll';
 
 const styles = (theme) => ({
   grid : {
@@ -43,7 +48,54 @@ const styles = (theme) => ({
   iconPatt : {
     width : "24px",
     height : "24px",
-  }
+  },
+  topToolbar : {
+    margin : "2rem auto",
+    display : "flex",
+    justifyContent : "space-between",
+    paddingLeft : "1rem"
+  },
+  viewSwitchButton : {
+    justifySelf : "flex-end",
+    marginLeft : "auto",
+    paddingLeft : "1rem"
+  },
+  createButton : {
+    display : "flex",
+    justifyContent : "flex-start",
+    alignItems : "center",
+    whiteSpace : "nowrap",
+  },
+  UploadImport : {
+    marginLeft : "1.5rem",
+  },
+  noDesignAddButton : {
+    marginTop : "0.5rem"
+  },
+  noDesignContainer : {
+    padding : "2rem",
+    display : "flex",
+    justifyContent : "center",
+    alignItems : "center",
+    flexDirection : "column",
+  },
+  noDesignButtons : {
+    display : "flex",
+    justifyContent : "center",
+    alignItems : "center",
+    flexDirection : "row",
+  },
+  noDesignPaper : {
+    padding : "0.5rem",
+    fontSize : "3rem"
+  },
+  noDesignText : {
+    fontSize : "2rem",
+    marginBottom : "2rem",
+  },
+  addIcon : {
+    paddingRight : ".35rem",
+  },
 });
 
 const useStyles = makeStyles((theme) => ({
@@ -79,26 +131,6 @@ const useStyles = makeStyles((theme) => ({
     }
   }
 }));
-
-function CustomToolbar(onClick, urlOnClick) {
-  return function Toolbar() {
-    return (
-      <>
-        <label htmlFor="upload-button">
-          <input type="file" accept=".yaml, .yml" hidden onChange={onClick} id="upload-button" name="upload-button" />
-          <Tooltip title="Upload Pattern">
-            <IconButton aria-label="Upload" component="span">
-              <UploadIcon />
-            </IconButton>
-          </Tooltip>
-        </label>
-        <label htmlFor="url-upload-button">
-          <URLUploader onSubmit={urlOnClick} />
-        </label>
-      </>
-    );
-  };
-}
 
 function TooltipIcon({ children, onClick, title }) {
   return (
@@ -144,6 +176,7 @@ function YAMLEditor({ pattern, onClose, onSubmit }) {
             lineNumbers : true,
             lineWrapping : true,
             gutters : ["CodeMirror-lint-markers"],
+            // @ts-ignore
             lint : true,
             mode : "text/x-yaml",
           }}
@@ -156,7 +189,9 @@ function YAMLEditor({ pattern, onClose, onSubmit }) {
           <IconButton
             aria-label="Update"
             color="primary"
-            onClick={() => onSubmit(yaml, pattern.id, pattern.name, FILE_OPS.UPDATE)}
+            onClick={() => onSubmit({
+              data : yaml, id : pattern.id, name : pattern.name, type : FILE_OPS.UPDATE
+            })}
           >
             <SaveIcon />
           </IconButton>
@@ -165,7 +200,12 @@ function YAMLEditor({ pattern, onClose, onSubmit }) {
           <IconButton
             aria-label="Delete"
             color="primary"
-            onClick={() => onSubmit(yaml, pattern.id, pattern.name,)}
+            onClick={() => onSubmit({
+              data : yaml,
+              id : pattern.id,
+              name : pattern.name,
+              type : FILE_OPS.DELETE
+            })}
           >
             <DeleteIcon />
           </IconButton>
@@ -180,7 +220,7 @@ function resetSelectedPattern() {
 }
 
 function MesheryPatterns({
-  updateProgress, enqueueSnackbar, closeSnackbar, user, classes
+  updateProgress, enqueueSnackbar, closeSnackbar, user, classes, selectedK8sContexts
 }) {
   const [page, setPage] = useState(0);
   const [search] = useState("");
@@ -191,7 +231,10 @@ function MesheryPatterns({
   const [patterns, setPatterns] = useState([]);
   const [selectedRowData, setSelectedRowData] = useState(null);
   const [selectedPattern, setSelectedPattern] = useState(resetSelectedPattern());
-
+  const [viewType, setViewType] = useState(
+    /**  @type {TypeView} */
+    ("grid")
+  );
   const DEPLOY_URL = '/api/pattern/deploy';
 
   const getMuiTheme = () => createTheme({
@@ -234,7 +277,12 @@ function MesheryPatterns({
             color : "#607d8b"
           }
         },
-      }
+      },
+      MUIDataTableBodyCell : {
+        root : {
+          cursor : "pointer"
+        },
+      },
     }
   });
 
@@ -255,6 +303,10 @@ function MesheryPatterns({
       name : "DEPLOY_PATTERN",
       error_msg : "Failed to deploy pattern file"
     },
+    UNDEPLOY_PATTERN : {
+      name : "UNDEPLOY_PATTERN",
+      error_msg : "Failed to undeploy pattern file"
+    },
     UPLOAD_PATTERN : {
       name : "UPLOAD_PATTERN",
       error_msg : "Failed to upload pattern file"
@@ -265,23 +317,23 @@ function MesheryPatterns({
   /**
    * fetch patterns when the page loads
    */
+  // @ts-ignore
   useEffect(() => {
     fetchPatterns(page, pageSize, search, sortOrder);
     document.body.style.overflowX = "hidden"
 
     return (() => document.body.style.overflowX = "auto")
-  }, []);
+  }, [page, pageSize, search, sortOrder]);
 
   const handleDeploy = (pattern_file) => {
     updateProgress({ showProgress : true });
     dataFetch(
-      DEPLOY_URL,
+      ctxUrl(DEPLOY_URL, selectedK8sContexts),
       {
         credentials : "include",
         method : "POST",
         body : pattern_file,
       }, () => {
-        console.log("PatternFile Deploy API", `/api/pattern/deploy`);
         updateProgress({ showProgress : false });
         enqueueSnackbar("Pattern Successfully Deployed!", {
           variant : "success",
@@ -299,10 +351,35 @@ function MesheryPatterns({
     );
   };
 
+  const handleUnDeploy = (pattern_file) => {
+    updateProgress({ showProgress : true });
+    dataFetch(
+      ctxUrl(DEPLOY_URL, selectedK8sContexts),
+      {
+        credentials : "include",
+        method : "DELETE",
+        body : pattern_file,
+      }, () => {
+        updateProgress({ showProgress : false });
+        enqueueSnackbar("Pattern Successfully Undeployed!", {
+          variant : "success",
+          action : function Action(key) {
+            return (
+              <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+                <CloseIcon />
+              </IconButton>
+            );
+          },
+          autoHideDuration : 2000,
+        });
+      },
+      handleError(ACTION_TYPES.UNDEPLOY_PATTERN),
+    );
+  };
+
   function fetchPatterns(page, pageSize, search, sortOrder) {
     if (!search) search = "";
     if (!sortOrder) sortOrder = "";
-
     const query = `?page=${page}&page_size=${pageSize}&search=${encodeURIComponent(search)}&order=${encodeURIComponent(
       sortOrder
     )}`;
@@ -348,7 +425,7 @@ function MesheryPatterns({
     };
   }
 
-  function handleSubmit(data, id, name, type) {
+  function handleSubmit({ data, id, name, type }) {
     updateProgress({ showProgress : true })
     if (type === FILE_OPS.DELETE) {
       dataFetch(
@@ -384,10 +461,16 @@ function MesheryPatterns({
       );
     }
 
-    if (type === FILE_OPS.FILE_UPLOAD || type=== FILE_OPS.URL_UPLOAD) {
+    if (type === FILE_OPS.FILE_UPLOAD || type === FILE_OPS.URL_UPLOAD) {
       let body;
       if (type === FILE_OPS.FILE_UPLOAD) {
-        body = JSON.stringify({  pattern_data : { pattern_file : data }, save : true })
+        body = JSON.stringify({
+          pattern_data : {
+            name,
+            pattern_file : data,
+          },
+          save : true
+        })
       }
       if (type === FILE_OPS.URL_UPLOAD) {
         body = JSON.stringify({ url : data, save : true })
@@ -412,28 +495,34 @@ function MesheryPatterns({
   function uploadHandler(ev) {
     if (!ev.target.files?.length) return;
 
+
     const file = ev.target.files[0];
     // Create a reader
     const reader = new FileReader();
     reader.addEventListener("load", (event) => {
-      handleSubmit(
-        event.target.result,
-        "",
-        file?.name || "meshery_" + Math.floor(trueRandom() * 100),
-        FILE_OPS.URL_UPLOAD,
-      );
+      // @ts-ignore
+      handleSubmit({
+        data : event.target.result,
+        name : file?.name || getRandomName(),
+        type : FILE_OPS.FILE_UPLOAD
+      });
     });
     reader.readAsText(file);
   }
 
   function urlUploadHandler(link) {
-    handleSubmit(link, "", "meshery_" + Math.floor(trueRandom() * 100), FILE_OPS.URL_UPLOAD);
-    // console.log(link, "valid");
+    handleSubmit({
+      data : link,
+      id : "",
+      name : getRandomName(),
+      type : FILE_OPS.URL_UPLOAD
+    });
   }
+
   const columns = [
     {
       name : "name",
-      label : "Pattern Name",
+      label : "Name",
       options : {
         filter : false,
         sort : true,
@@ -517,7 +606,13 @@ function MesheryPatterns({
                 title="Deploy"
                 onClick={() => handleDeploy(rowData.pattern_file)}
               >
-                <PlayArrowIcon />
+                <DoneAllIcon data-cy="deploy-button" />
+              </IconButton>
+              <IconButton
+                title="Undeploy"
+                onClick={() => handleUnDeploy(rowData.pattern_file)}
+              >
+                <UndeployIcon fill="rgba(0, 0, 0, 0.54)" data-cy="undeploy-button" />
               </IconButton>
             </>
           );
@@ -543,30 +638,38 @@ function MesheryPatterns({
     return response;
   }
 
-  function deletePattern(id) {
-    dataFetch(
-      `/api/pattern/${id}`,
-      {
-        method : "DELETE",
-        credentials : "include",
-      },
-      () => {
-        updateProgress({ showProgress : false });
+  async function deletePatterns(patterns) {
+    const jsonPatterns = JSON.stringify(patterns)
 
-        enqueueSnackbar("Pattern deleted.", {
-          variant : "success",
-          autoHideDuration : 2000,
-          action : function Action(key) {
-            return (
-              <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-                <CloseIcon />
-              </IconButton>
-            );
-          },
-        });
+
+    updateProgress({ showProgress : true })
+    dataFetch("/api/patterns/delete", {
+      method : "POST",
+      credentials : "include",
+      body : jsonPatterns
+    },
+    () => {
+      console.log("PatternFile Delete Multiple API", `/api/pattern/delete`);
+      updateProgress({ showProgress : false });
+      setTimeout(() => {
+        enqueueSnackbar(`${patterns.patterns.length} Patterns Deleted`,
+          {
+            variant : "success",
+            autoHideDuration : 2000,
+            action : function Action(key) {
+              return (
+                <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+                  <CloseIcon />
+                </IconButton>
+              );
+            }
+          }
+        )
         fetchPatterns(page, pageSize, search, sortOrder);
-      },
-      handleError("Failed to delete pattern")
+        resetSelectedRowData()()
+      }, 1200);
+    },
+    handleError(ACTION_TYPES.DELETE_PATTERN)
     );
   }
 
@@ -590,18 +693,21 @@ function MesheryPatterns({
         text : "pattern(s) selected"
       }
     },
-    customToolbar : CustomToolbar(uploadHandler, urlUploadHandler),
 
     onCellClick : (_, meta) => meta.colIndex !== 3 && setSelectedRowData(patterns[meta.rowIndex]),
 
     onRowsDelete : async function handleDelete(row) {
-      let response = await showModal(Object.keys(row.lookup).length);
-      console.log(response);
-      if (response === "Yes") {
-        const fid = Object.keys(row.lookup).map(idx => patterns[idx]?.id);
-        fid.forEach(fid => deletePattern(fid));
+      const toBeDeleted = Object.keys(row.lookup).map(idx => (
+        {
+          id : patterns[idx]?.id,
+          name : patterns[idx]?.name,
+        }
+      ))
+      let response = await showModal(toBeDeleted.length)
+      if (response.toLowerCase() === "yes") {
+        deletePatterns({ patterns : toBeDeleted })
       }
-      if (response === "No")
+      if (response.toLowerCase() === "no")
         fetchPatterns(page, pageSize, search, sortOrder);
     },
 
@@ -647,37 +753,124 @@ function MesheryPatterns({
           break;
       }
     },
+    setRowProps : (row, dataIndex, rowIndex) => {
+      return {
+        "data-cy" : `config-row-${rowIndex}`
+      }
+    },
+    setTableProps : () => {
+      return {
+        "data-cy" : "filters-grid"
+      }
+    }
   };
 
   return (
-    <NoSsr>
-      {selectedPattern.show &&
-        <PatternForm onSubmit={handleSubmit} show={setSelectedPattern} pattern={selectedPattern.pattern} />}
+    <>
 
-      {selectedRowData && Object.keys(selectedRowData).length > 0 && (
-        <YAMLEditor pattern={selectedRowData} onClose={resetSelectedRowData()} onSubmit={handleSubmit} />
-      )}
-      {
-        !selectedPattern.show && <MuiThemeProvider theme={getMuiTheme()}>
-          <MUIDataTable
-            title={<div className={classes.tableHeader}>Patterns</div>}
-            data={patterns}
-            columns={columns}
-            // @ts-ignore
-            options={options}
-            className={classes.muiRow}
+      <NoSsr>
+        {selectedPattern.show &&
+          <PatternForm onSubmit={handleSubmit} show={setSelectedPattern} pattern={selectedPattern.pattern} />}
+
+        {selectedRowData && Object.keys(selectedRowData).length > 0 && (
+          <YAMLEditor pattern={selectedRowData} onClose={resetSelectedRowData()} onSubmit={handleSubmit} />
+        )}
+        <div className={classes.topToolbar} >
+          {!selectedPattern.show && (patterns.length > 0 || viewType === "table") && <div className={classes.createButton}>
+            <Button
+              aria-label="Add Pattern"
+              variant="contained"
+              color="primary"
+              size="large"
+              // @ts-ignore
+              onClick={() => setSelectedPattern({
+                pattern : { id : null, name : "New Pattern", pattern_file : "name: New Pattern\nservices:" },
+                show : true,
+              })}
+            >
+              <AddIcon className={classes.addIcon} />
+              Create Design
+            </Button>
+            <div className={classes.UploadImport}>
+              <UploadImport aria-label="URL upload button" handleUpload={urlUploadHandler} handleImport={uploadHandler} configuration="Design" />
+            </div>
+
+          </div>
+          }
+          {!selectedPattern.show &&
+            <div className={classes.viewSwitchButton}>
+              <ViewSwitch view={viewType} changeView={setViewType} />
+            </div>
+          }
+        </div>
+        {
+          !selectedPattern.show && viewType === "table" && <MuiThemeProvider theme={getMuiTheme()}>
+            <MUIDataTable
+              title={<div className={classes.tableHeader}>Designs</div>}
+              data={patterns}
+              columns={columns}
+              // @ts-ignore
+              options={options}
+              className={classes.muiRow}
+            />
+          </MuiThemeProvider>
+        }
+        {!selectedPattern.show && viewType === "grid" && patterns.length === 0 &&
+          <Paper className={classes.noDesignPaper} >
+            <div className={classes.noDesignContainer}>
+              <Typography className={classes.noDesignText} align="center" color="textSecondary">
+                No Designs Found
+              </Typography>
+              <div className={classes.noDesignButtons}>
+                <Button
+                  aria-label="Create Design"
+                  variant="contained"
+                  color="primary"
+                  size="large"
+                  className={classes.noDesignAddButton}
+                  // @ts-ignore
+                  onClick={() => setSelectedPattern({
+                    pattern : { id : null, name : "New Pattern", pattern_file : "name: New Pattern\nservices:" },
+                    show : true,
+                  })}
+                >
+                  <AddIcon className={classes.addIcon} />
+                  Create Design
+                </Button>
+                <div className={classes.UploadImport}>
+                  <UploadImport aria-label="URL upload button" handleUpload={urlUploadHandler} handleImport={uploadHandler} configuration="Design" />
+                </div>
+              </div>
+            </div>
+          </Paper>
+        }
+
+        {
+          !selectedPattern.show && viewType === "grid" &&
+          // grid vieww
+          <MesheryPatternGrid
+            patterns={patterns}
+            handleDeploy={handleDeploy}
+            handleUnDeploy={handleUnDeploy}
+            handleSubmit={handleSubmit}
+            setSelectedPattern={setSelectedPattern}
+            selectedPattern={selectedPattern}
+            pages={Math.ceil(count / pageSize)}
+            setPage={setPage}
+            selectedPage={page}
           />
-        </MuiThemeProvider>
-      }
-      <PromptComponent ref={modalRef} />
-    </NoSsr>
+        }
+
+        <PromptComponent ref={modalRef} />
+      </NoSsr>
+    </>
   );
 }
 
 const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(updateProgress, dispatch), });
 
 const mapStateToProps = (state) => {
-  return { user : state.get("user")?.toObject(), };
+  return { user : state.get("user")?.toObject(), selectedK8sContexts : state.get("selectedK8sContexts"), };
 };
 
 // @ts-ignore

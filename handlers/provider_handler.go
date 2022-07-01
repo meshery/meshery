@@ -28,7 +28,13 @@ func (h *Handler) ProviderHandler(w http.ResponseWriter, r *http.Request) {
 				Path:     "/",
 				HttpOnly: true,
 			})
-			http.Redirect(w, r, "/", http.StatusFound)
+
+			redirectURL := "/user/login"
+			if provider == "None" {
+				redirectURL = "/"
+			}
+
+			http.Redirect(w, r, redirectURL, http.StatusFound)
 			return
 		}
 	}

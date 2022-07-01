@@ -9,15 +9,17 @@ import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import { promisifiedDataFetch } from "../../lib/data-fetch";
 import { CircularProgress } from "@material-ui/core";
 import PatternServiceForm from "./PatternServiceForm";
-import { getPatternServiceName as getItemName,
+import {
+  getPatternServiceName as getItemName,
   getPatternServiceID as getItemID,
   getPatternServiceType,
   getHumanReadablePatternServiceName as getReadableItemName
 } from "./helpers";
 import { isEmptyObj } from "../../utils/utils";
+import { useSnackbar } from 'notistack';
 
 const useStyles = makeStyles((theme) => ({
-  root : {
+  accordionRoot : {
     width : "100%",
   },
   heading : {
@@ -77,7 +79,7 @@ export async function getWorkloadTraitAndType(schemaSet) {
 export default function LazyPatternServiceForm(props) {
   const [expanded, setExpanded] = React.useState(false);
   const [schemaSet, setSchemaSet] = React.useState({});
-
+  const { enqueueSnackbar } = useSnackbar();
   const classes = useStyles();
 
   async function expand(state) {
@@ -93,7 +95,6 @@ export default function LazyPatternServiceForm(props) {
       if (isEmptyObj(schemaSet)) {
         // Get the schema sets consisting the workloads, traits and type
         const { workload, traits, type } = await getWorkloadTraitAndType(props?.schemaSet);
-
         setSchemaSet({
           workload,
           traits,
@@ -101,12 +102,13 @@ export default function LazyPatternServiceForm(props) {
         });
       }
     } catch (error) {
-      console.error(error);
+      console.error("error getting schema:", { error })
+      enqueueSnackbar(`error getting schema: ${error?.message}`, { variant : "error" })
     }
   }
 
   return (
-    <div className={classes.root}>
+    <div className={classes.accordionRoot}>
       <Accordion elevation={0} expanded={expanded} onChange={() => expand(!expanded)}>
         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
           <Typography className={classes.heading}>{getReadableItemName(props?.schemaSet?.workload)}</Typography>

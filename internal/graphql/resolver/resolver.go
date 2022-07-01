@@ -19,9 +19,7 @@ type Resolver struct {
 	Config          *models.HandlerConfig
 	Broadcast       broadcast.Broadcaster
 
-	operatorSyncChannel     chan bool // true for processing, false for no processing
 	controlPlaneSyncChannel chan struct{}
-	meshsyncLivenessChannel chan struct{}
 	// operatorChannel         chan *model.OperatorStatus
 	performanceChannel  chan *model.PerfPageResult
 	brokerChannel       chan *broker.Message

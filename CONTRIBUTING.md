@@ -27,7 +27,7 @@ All set to contribute? Grab an open issue with the [help-wanted label](../../lab
 
 # <a name="contributing">General Contribution Flow</a>
 
-To contribute to Meshery, please follow the fork-and-pull request workflow described [here](./CONTRIBUTING-gitflow.md).
+To contribute to Meshery, please follow the fork-and-pull request workflow described [here](docs/CONTRIBUTING-gitflow.md).
 
 ## <a name="commit-signing">Signing-off on Commits (Developer Certificate of Origin)</a>
 
@@ -71,7 +71,7 @@ Or you may configure your IDE, for example, Visual Studio Code to automatically 
 
 Please contribute! Meshery documentation uses GitHub Pages to host the docs site. Learn more about [Meshery's documentation framework](https://docs.google.com/document/d/17guuaxb0xsfutBCzyj2CT6OZiFnMu9w4PzoILXhRXSo/edit?usp=sharing). The process of contributing follows this flow:
 
-1. Create a fork, if you have not already, by following the steps described [here](./CONTRIBUTING-gitflow.md)
+1. Create a fork, if you have not already, by following the steps described [here](docs/CONTRIBUTING-gitflow.md)
 1. In the local copy of your fork, navigate to the docs folder.
    `cd docs`
 1. Create and checkout a new branch to make changes within
@@ -79,9 +79,9 @@ Please contribute! Meshery documentation uses GitHub Pages to host the docs site
 1. Edit/add documentation.
    `vi <specific page>.md`
 1. Run site locally to preview changes.
-   `make site`
+   `make docs-run`
 
-- **Note:** _From the Makefile, this command is actually running `$ bundle exec jekyll serve --drafts --livereload`. There are two Jekyll configuration, `jekyll serve` for developing locally and `jekyll build` when you need to generate the site artefacts for production._
+- **Note:** _From the Makefile, this command is actually running `$ bundle exec jekyll serve --drafts --livereload --config _config_dev.yml`. If this command causes errors try running the server without Livereload with this command: `$ bundle exec jekyll serve --drafts --config _config_dev.yml`. Just keep in mind you will have to manually restart the server to reflect any changes made without Livereload. There are two Jekyll configuration, `jekyll serve` for developing locally and `jekyll build` when you need to generate the site artefacts for production._
 
 1. Commit, [sign-off](#commit-signing), and push changes to your remote branch.
    `git push origin <my-changes>`
@@ -104,24 +104,24 @@ Practices for Production Environments](https://peter.bourgon.org/go-in-productio
 1. Fork this repository (`git clone https://github.com/meshery/meshery.git`), clone your forked version of Meshery to your local, preferably outside `GOPATH`.
 1. `golangci-lint` should be installed if you want to test Go code, for MacOS and linux users.
 
-#### Build and run Meshery server
+#### Build and run Meshery Server
 
 Before you can access the Meshery UI, you need to install the UI dependencies,
 
 ```sh
-make setup-ui-libs
+make ui-setup
 ```
 
-and then Build and export the UI
+and then build and export the UI
 
 ```sh
-make build-ui
+make ui
 ```
 
-To build & run the Meshery server code, run the following command:
+To build & run Meshery Server, run the following command:
 
 ```sh
-make run-local
+make server
 ```
 
 Any time changes are made to the Go code, you will have to stop the server and run the above command again.
@@ -129,7 +129,7 @@ Once the Meshery server is up and running, you should be able to access Meshery 
 
 To access the [Meshery UI Development Server](#ui-development-server) on port `3000`, you will need to select your **Cloud Provider** by navigating to `localhost:9081` after running the Meshery server.
 
-**Please note**: When running `make run-local` on the macOS platform, some may face errors with the crypto module in Go. This is caused due to invalid C headers in Clang installed with XCode platform tools. Replacing Clang with gcc by adding `export CC=gcc` to .bashrc / .zshrc should fix the issue. More information on the issue can be found [here](https://github.com/golang/go/issues/30072)
+**Please note**: When running `make server` on the macOS platform, some may face errors with the crypto module in Go. This is caused due to invalid C headers in Clang installed with XCode platform tools. Replacing Clang with gcc by adding `export CC=gcc` to .bashrc / .zshrc should fix the issue. More information on the issue can be found [here](https://github.com/golang/go/issues/30072)
 
 #### Tests
 
@@ -168,7 +168,7 @@ _Tip:_ The [Meshery adapter for Istio](https://github.com/meshery/meshery-istio)
 
 #### <a name="meshery-istio">Running Meshery Adapter (Meshery-Istio)</a>
 
-**Meshery-Istio** is a pre-written example of Meshery Adapter written in Go. Follow these instuctions to run meshery-istio to avoid errors related to Meshery Adapters
+**Meshery-Istio** is a pre-written example of Meshery Adapter written in Go. Follow these instructions to run meshery-istio to avoid errors related to Meshery Adapters
 
 1. Fork [Meshery-Istio](https://github.com/meshery/meshery-istio)
 2. Clone your fork locally
@@ -222,19 +222,13 @@ If you want to run Meshery from IDE like Goland, VSCode. set below environment v
 PROVIDER_BASE_URLS="https://meshery.layer5.io"
 PORT=9081
 DEBUG=true
-ADAPTER_URLS=mesherylocal.layer5.io:10000 mesherylocal.layer5.io:10001 mesherylocal.layer5.io:10002 mesherylocal.layer5.io:10003 mesherylocal.layer5.io:10004 mesherylocal.layer5.io:10005 mesherylocal.layer5.io:10006 mesherylocal.layer5.io:10007 mesherylocal.layer5.io:10008 mesherylocal.layer5.io:10009
+ADAPTER_URLS=localhost:10000 localhost:10001 localhost:10002 localhost:10003 localhost:10004 localhost:10005 localhost:10006 localhost:10007 localhost:10008 localhost:10009
 ```
 
 go tool argument
 
 ```shell
 -tags draft
-```
-
-update /etc/hosts
-
-```shell
-127.0.0.1 mesherylocal.layer5.io
 ```
 
 ### UI Lint Rules
@@ -266,12 +260,10 @@ The [`/mesheryctl`](https://github.com/meshery/meshery/tree/master/mesheryctl) f
 
 After making changes, run `make` in the `mesheryctl` folder to build the binary. You can then use the binary by, say, `./mesheryctl system start`.
 
-
 ### `mesheryctl` command reference
 
-- Seee user-facing, documentation of the `mesheryctl` commands is available in the [Meshery Docs](https://docs.meshery.io/reference/mesheryctl).
+- See user-facing, documentation of the `mesheryctl` commands is available in the [Meshery Docs](https://docs.meshery.io/reference/mesheryctl).
 - See contributor-facing design spec for [Meshery CLI Commands and Documentation](https://docs.google.com/document/d/1xRlFpElRmybJ3WacgPKXgCSiQ2poJl3iCCV1dAalf0k/edit#heading=h.5fucij4hc5wt) for a complete reference of `mesheryctl`.
-
 
 ### General guidelines and resources
 
@@ -309,3 +301,4 @@ Resources: https://lab.github.com and https://try.github.com/
 ### License
 
 This repository and site are available as open-source under the terms of the [Apache 2.0 License](https://opensource.org/licenses/Apache-2.0).
+

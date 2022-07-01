@@ -113,12 +113,6 @@ func (h *Handler) GrafanaPingHandler(w http.ResponseWriter, req *http.Request, p
 		return
 	}
 
-	if prefObj.K8SConfig == nil || !prefObj.K8SConfig.InClusterConfig && (prefObj.K8SConfig.Config == nil || len(prefObj.K8SConfig.Config) == 0) {
-		h.log.Error(ErrInvalidK8SConfig)
-		http.Error(w, ErrInvalidK8SConfig.Error(), http.StatusBadRequest)
-		return
-	}
-
 	if err := h.config.GrafanaClient.Validate(req.Context(), prefObj.Grafana.GrafanaURL, prefObj.Grafana.GrafanaAPIKey); err != nil {
 		h.log.Error(ErrGrafanaScan(err))
 		http.Error(w, ErrGrafanaScan(err).Error(), http.StatusInternalServerError)

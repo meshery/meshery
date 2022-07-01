@@ -1,5 +1,8 @@
 /**
+ * @generated SignedSource<<290c0678db6f7169da54d0bbfc072231>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -7,7 +10,7 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
+import type { ConcreteRequest, Query } from 'relay-runtime';
 export type PageFilter = {|
   page: string,
   pageSize: string,
@@ -16,11 +19,11 @@ export type PageFilter = {|
   from?: ?string,
   to?: ?string,
 |};
-export type PerformanceResultQueryVariables = {|
+export type PerformanceResultQuery$variables = {|
   selector: PageFilter,
   profileID: string,
 |};
-export type PerformanceResultQueryResponse = {|
+export type PerformanceResultQuery$data = {|
   +fetchResults: {|
     +page: number,
     +page_size: number,
@@ -38,42 +41,15 @@ export type PerformanceResultQueryResponse = {|
       +updated_at: ?string,
       +runner_results: ?any,
     |}>,
-  |}
+  |},
 |};
 export type PerformanceResultQuery = {|
-  variables: PerformanceResultQueryVariables,
-  response: PerformanceResultQueryResponse,
+  variables: PerformanceResultQuery$variables,
+  response: PerformanceResultQuery$data,
 |};
 */
 
-
-/*
-query PerformanceResultQuery(
-  $selector: PageFilter!
-  $profileID: String!
-) {
-  fetchResults(selector: $selector, profileID: $profileID) {
-    page
-    page_size
-    total_count
-    results {
-      meshery_id
-      name
-      mesh
-      performance_profile
-      test_id
-      server_metrics
-      test_start_time
-      created_at
-      user_id
-      updated_at
-      runner_results
-    }
-  }
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = {
   "defaultValue": null,
   "kind": "LocalArgument",
@@ -250,7 +226,10 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = 'e42d1c8529e951f7ad055eab6db359b8';
 
-module.exports = node;
+(node/*: any*/).hash = "e42d1c8529e951f7ad055eab6db359b8";
+
+module.exports = ((node/*: any*/)/*: Query<
+  PerformanceResultQuery$variables,
+  PerformanceResultQuery$data,
+>*/);
