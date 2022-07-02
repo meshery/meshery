@@ -274,7 +274,7 @@ func main() {
 		}
 	}()
 	<-c
-	logrus.Info("Doing seeded content cleanup...")
+	log.Info("Doing seeded content cleanup...")
 	err = lProv.Cleanup()
 	if err != nil {
 		log.Error(ErrCleaningUpLocalProvider(err))
