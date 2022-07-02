@@ -240,7 +240,7 @@ func main() {
 	k8sComponentsRegistrationHelper := models.NewComponentsRegistrationHelper(log)
 
 	// purge the meshsync objects in the database on startup
-	models.RemoveStaleObjects(*dbHandler)
+	_ = models.RemoveStaleObjects(*dbHandler)
 	h := handlers.NewHandlerInstance(hc, meshsyncCh, log, brokerConn, k8sComponentsRegistrationHelper, mctrlHelper, dbHandler)
 
 	b := broadcast.NewBroadcaster(100)
