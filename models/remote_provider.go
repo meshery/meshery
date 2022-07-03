@@ -127,12 +127,14 @@ func (l *RemoteProvider) loadCapabilities(token string) {
 	}
 }
 
+var gmc sync.Mutex
+
 // downloadProviderExtensionPackage will download the remote provider extensions
 // package
 func (l *RemoteProvider) downloadProviderExtensionPackage() {
 	// Location for the package to be stored
 	loc := l.PackageLocation()
-
+	gmc.Lock() //To make sure that on multiple requests, the package is not asked to be downloaded multiple times
 	// Skip download if the file is already present
 	if _, err := os.Stat(loc); err == nil {
 		logrus.Debugf("[Initialize]: Package found at %s skipping download", loc)
@@ -144,6 +146,7 @@ func (l *RemoteProvider) downloadProviderExtensionPackage() {
 	if err := TarXZF(l.PackageURL, loc); err != nil {
 		logrus.Errorf("[Initialize]: Failed to download provider package %s", err)
 	}
+	gmc.Unlock()
 }
 
 // PackageLocation returns the location of where the package for the current
@@ -2392,26 +2395,44 @@ func (l *RemoteProvider) RecordPreferences(req *http.Request, userID string, dat
 
 // TokenHandler - specific to remote auth
 func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, fromMiddleWare bool) {
-	tokenString := r.URL.Query().Get(tokenName)
-	logrus.Debugf("token : %v", tokenString)
-	ck := &http.Cookie{
-		Name:     tokenName,
-		Value:    string(tokenString),
-		Path:     "/",
-		HttpOnly: true,
+	var tokenString string
+	if fromMiddleWare {
+		ck, err := r.Cookie("token")
+		if err != nil {
+			return
+		}
+		if ck == nil || ck.Value == "" {
+			return
+		}
+		tokenString = ck.Value
+		// Get new capabilities
+		// Doing this here is important so that
+		l.loadCapabilities(tokenString)
+
+		// Download the package for the user
+		l.downloadProviderExtensionPackage()
+	} else {
+		tokenString = r.URL.Query().Get(tokenName)
+		logrus.Debugf("token : %v", tokenString)
+		ck := &http.Cookie{
+			Name:     tokenName,
+			Value:    string(tokenString),
+			Path:     "/",
+			HttpOnly: true,
+		}
+		http.SetCookie(w, ck)
+		// Get new capabilities
+		// Doing this here is important so that
+		l.loadCapabilities(tokenString)
+
+		// Download the package for the user
+		l.downloadProviderExtensionPackage()
+
+		// Proceed to redirect once the capabilities has loaded
+		// and the package has been downloaded
+		http.Redirect(w, r, "/", http.StatusFound)
 	}
-	http.SetCookie(w, ck)
 
-	// Get new capabilities
-	// Doing this here is important so that
-	l.loadCapabilities(tokenString)
-
-	// Download the package for the user
-	l.downloadProviderExtensionPackage()
-
-	// Proceed to redirect once the capabilities has loaded
-	// and the package has been downloaded
-	http.Redirect(w, r, "/", http.StatusFound)
 }
 
 // UpdateToken - in case the token was refreshed, this routine updates the response with the new token

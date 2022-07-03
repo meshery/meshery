@@ -41,6 +41,12 @@ func (h *Handler) ProviderMiddleware(next http.Handler) http.Handler {
 	}
 	return http.HandlerFunc(fn)
 }
+func (h *Handler) TokenHandlerMiddleware(next func(http.ResponseWriter, *http.Request, *models.Preference, *models.User, models.Provider)) func(http.ResponseWriter, *http.Request, *models.Preference, *models.User, models.Provider) {
+	return func(w http.ResponseWriter, r *http.Request, p1 *models.Preference, u *models.User, p2 models.Provider) {
+		p2.TokenHandler(w, r, true)
+		next(w, r, p1, u, p2)
+	}
+}
 
 // AuthMiddleware is a middleware to validate if a user is authenticated
 func (h *Handler) AuthMiddleware(next http.Handler) http.Handler {
