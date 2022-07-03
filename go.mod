@@ -16,13 +16,12 @@ replace (
 	go.mongodb.org/mongo-driver v1.5.1 => github.com/mongodb/mongo-go-driver v1.5.1
 	gonum.org/v1/plot v0.9.0 => github.com/gonum/plot v0.9.0
 	vbom.ml/util => github.com/fvbommel/util v0.0.0-20180919145318-efcd4e0f9787
-
 )
 
 require (
 	cuelang.org/go v0.4.3
 	fortio.org/fortio v1.21.0
-	github.com/99designs/gqlgen v0.17.5
+	github.com/99designs/gqlgen v0.17.10
 	github.com/asaskevich/govalidator v0.0.0-20200907205600-7a23bdc65eef
 	github.com/briandowns/spinner v1.18.1
 	github.com/docker/docker v20.10.14+incompatible
@@ -40,8 +39,8 @@ require (
 	github.com/jarcoal/httpmock v1.2.0
 	github.com/jinzhu/copier v0.0.0-20190924061706-b57f9002281a
 	github.com/layer5io/gowrk2 v0.0.0-20191111234958-a4c9071c0f87
-	github.com/layer5io/meshery-operator v0.5.4
-	github.com/layer5io/meshkit v0.5.21
+	github.com/layer5io/meshery-operator v0.5.5
+	github.com/layer5io/meshkit v0.5.24
 	github.com/layer5io/meshsync v0.5.6
 	github.com/layer5io/nighthawk-go v0.5.0
 	github.com/layer5io/service-mesh-performance v0.3.4
@@ -52,13 +51,13 @@ require (
 	github.com/pkg/browser v0.0.0-20210706143420-7d21f8c997e2
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.12.2
-	github.com/prometheus/common v0.34.0
+	github.com/prometheus/common v0.35.0
 	github.com/qri-io/jsonschema v0.2.1
 	github.com/sirupsen/logrus v1.8.1
 	github.com/spf13/cobra v1.4.0
 	github.com/spf13/pflag v1.0.5
 	github.com/spf13/viper v1.12.0
-	github.com/vektah/gqlparser/v2 v2.4.2
+	github.com/vektah/gqlparser/v2 v2.4.5
 	github.com/vmihailenco/taskq/v3 v3.2.7
 	golang.org/x/oauth2 v0.0.0-20220411215720-9780585627b5
 	gonum.org/v1/gonum v0.11.0
@@ -76,7 +75,7 @@ require (
 require (
 	cloud.google.com/go/compute v1.6.1 // indirect
 	github.com/Azure/go-ansiterm v0.0.0-20210617225240-d185dfc1b5a1 // indirect
-	github.com/BurntSushi/toml v1.0.0 // indirect
+	github.com/BurntSushi/toml v1.1.0 // indirect
 	github.com/MakeNowJust/heredoc v0.0.0-20170808103936-bb23615498cd // indirect
 	github.com/Masterminds/goutils v1.1.1 // indirect
 	github.com/Masterminds/semver/v3 v3.1.1 // indirect
@@ -113,6 +112,7 @@ require (
 	github.com/docker/go-units v0.4.0 // indirect
 	github.com/docker/libcompose v0.4.0 // indirect
 	github.com/emicklei/go-restful v2.9.5+incompatible // indirect
+	github.com/emicklei/proto v1.6.15 // indirect
 	github.com/emirpasic/gods v1.12.0 // indirect
 	github.com/envoyproxy/protoc-gen-validate v0.6.2 // indirect
 	github.com/evanphx/json-patch v4.12.0+incompatible // indirect
@@ -142,6 +142,7 @@ require (
 	github.com/go-stack/stack v1.8.0 // indirect
 	github.com/gobwas/glob v0.2.3 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
+	github.com/golang/glog v1.0.0 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/google/btree v1.0.1 // indirect
 	github.com/google/gnostic v0.5.7-v3refs // indirect
@@ -209,6 +210,7 @@ require (
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/prometheus/client_model v0.2.0 // indirect
 	github.com/prometheus/procfs v0.7.3 // indirect
+	github.com/protocolbuffers/txtpbfmt v0.0.0-20201118171849-f6a6b3f636fc // indirect
 	github.com/qri-io/jsonpointer v0.1.1 // indirect
 	github.com/rubenv/sql-migrate v1.1.1 // indirect
 	github.com/russross/blackfriday v1.5.2 // indirect
@@ -230,6 +232,7 @@ require (
 	go.opencensus.io v0.23.0 // indirect
 	go.starlark.net v0.0.0-20200306205701-8dd3e2ee1dd5 // indirect
 	golang.org/x/crypto v0.0.0-20220411220226-7b82a4e95df4 // indirect
+	golang.org/x/mod v0.6.0-dev.0.20220106191415-9b9b3d81d5e3 // indirect
 	golang.org/x/net v0.0.0-20220520000938-2e3eb7b945c2 // indirect
 	golang.org/x/sync v0.0.0-20220513210516-0976fa681c29 // indirect
 	golang.org/x/sys v0.0.0-20220520151302-bc2c85ada10a // indirect
@@ -237,6 +240,7 @@ require (
 	golang.org/x/text v0.3.7 // indirect
 	golang.org/x/time v0.0.0-20220210224613-90d013bbcef8 // indirect
 	golang.org/x/tools v0.1.10 // indirect
+	golang.org/x/xerrors v0.0.0-20220517211312-f3a8303e98df // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/genproto v0.0.0-20220519153652-3a47de7e79bd // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect

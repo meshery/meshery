@@ -9,7 +9,7 @@ WORKDIR /github.com/meshery/meshery
 ADD . .
 RUN go clean -modcache; cd cmd; GOPROXY=https://proxy.golang.org GOSUMDB=off go build -ldflags="-w -s -X main.globalTokenForAnonymousResults=$TOKEN -X main.version=$GIT_VERSION -X main.commitsha=$GIT_COMMITSHA -X main.releasechannel=$RELEASE_CHANNEL" -tags draft -a -o /meshery .
 
-FROM node:16 as ui
+FROM node:lts-slim as ui
 ADD ui ui
 RUN cd ui; npm install --only=production; npm run build && npm run export; mv out /
 

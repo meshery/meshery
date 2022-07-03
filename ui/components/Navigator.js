@@ -637,12 +637,11 @@ class Navigator extends React.Component {
     const { classes } = this.props;
 
     const content = (
-      <div className={classNames(classes.link)} onClick={() => this.onClickCallback(onClickCallback)}>
+      <div className={classNames(classes.link)} onClick={() => this.onClickCallback(onClickCallback)} data-cy={name}>
         <Tooltip
           title={name}
           placement="right"
           disableFocusListener={!drawerCollapsed}
-          disableHoverListener={!drawerCollapsed}
           disableTouchListener={!drawerCollapsed}
         >
           <ListItemIcon className={classes.listIcon}>

@@ -375,12 +375,10 @@ func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext) (K8
 		return k8sContext, ErrMarshal(err, "kubernetes context error")
 	}
 
-	logrus.Debugf("Kubernetes context: %s, size: %d", data, len(data))
-	logrus.Infof("attempting to save kubernetes context to remote provider")
+	logrus.Infof("attempting to save %s context to remote provider with ID %s", k8sContext.Name, k8sContext.ID)
 	bf := bytes.NewBuffer(data)
 
 	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + "/user/contexts")
-	logrus.Debugf("saving context to remote provider - constructed URL: %s", remoteProviderURL.String())
 	cReq, err := http.NewRequest(http.MethodPost, remoteProviderURL.String(), bf)
 	if err != nil {
 		return k8sContext, err
@@ -408,16 +406,15 @@ func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext) (K8
 	}
 	return k8sContext, ErrPost(fmt.Errorf("failed to save kubernetes context"), fmt.Sprint(resp.Body), resp.StatusCode)
 }
-
 func (l *RemoteProvider) GetK8sContexts(token, page, pageSize, search, order string) (MesheryK8sContextPage, error) {
-	logrus.Infof("attempting to fetch kubernetes contexts from cloud")
 
 	MesheryInstanceID, ok := viper.Get("INSTANCE_ID").(*uuid.UUID)
 	if !ok {
 		return MesheryK8sContextPage{}, ErrMesheryInstanceID
 	}
-
-	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + "/user/contexts/" + MesheryInstanceID.String())
+	mi := MesheryInstanceID.String()
+	logrus.Infof("attempting to fetch kubernetes contexts from cloud for Meshery instance: %s", mi)
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + "/user/contexts/" + mi)
 	q := remoteProviderURL.Query()
 	if page != "" {
 		q.Set("page", page)
@@ -432,7 +429,6 @@ func (l *RemoteProvider) GetK8sContexts(token, page, pageSize, search, order str
 		q.Set("order", order)
 	}
 	remoteProviderURL.RawQuery = q.Encode()
-	logrus.Debugf("constructed kubernetes contexts url: %s", remoteProviderURL.String())
 	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
 
 	resp, err := l.DoRequest(cReq, token)
@@ -512,7 +508,7 @@ func (l *RemoteProvider) DeleteK8sContext(token, id string) (K8sContext, error) 
 func (l *RemoteProvider) GetK8sContext(token, id string) (K8sContext, error) {
 	mesheryInstanceID, _ := viper.Get("INSTANCE_ID").(*uuid.UUID)
 	ep := "/user/contexts/" + mesheryInstanceID.String()
-	logrus.Infof("attempting to fetch kubernetes contexts from cloud for id: %s", id)
+	logrus.Infof("attempting to fetch kubernetes contexts from cloud for context id: %s", id)
 
 	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/context/%s", l.RemoteProviderURL, ep, id))
 	logrus.Debugf("constructed kubernetes contexts url: %s", remoteProviderURL.String())
@@ -2614,6 +2610,43 @@ func (l *RemoteProvider) SMPTestConfigDelete(req *http.Request, testUUID string)
 	}
 
 	return ErrDelete(fmt.Errorf("could not delete the test profile: %d", resp.StatusCode), "Perf Test Config :"+testUUID, resp.StatusCode)
+}
+
+func (l *RemoteProvider) ExtensionProxy(req *http.Request) ([]byte, error) {
+	logrus.Infof("attempting to request remote provider")
+	p := req.URL.Path
+	split := strings.Split(p, "/api/extensions")
+	path := split[1]
+	q := req.URL.Query().Encode()
+	if len(q) > 0 {
+		path = fmt.Sprintf("%s?%s", path, q)
+	}
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s", l.RemoteProviderURL, path))
+	logrus.Debugf("constructed url: %s", remoteProviderURL.String())
+
+	cReq, _ := http.NewRequest(req.Method, remoteProviderURL.String(), req.Body)
+	tokenString, err := l.GetToken(req)
+
+	if err != nil {
+		return nil, err
+	}
+	resp, err := l.DoRequest(cReq, tokenString)
+	if err != nil {
+		return nil, err
+	}
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+	bdr, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusCreated {
+		logrus.Infof("response successfully retrieved from remote provider")
+		return bdr, nil
+	}
+	return nil, ErrFetch(fmt.Errorf("failed to request to remote provider"), fmt.Sprint(bdr), resp.StatusCode)
 }
 
 // RecordMeshSyncData records the mesh sync data

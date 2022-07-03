@@ -13,23 +13,21 @@ import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
 import SaveIcon from '@material-ui/icons/Save';
 import MUIDataTable from "mui-datatables";
 import { withSnackbar } from "notistack";
-import AddIcon from "@material-ui/icons/Add";
+import AddIcon from "@material-ui/icons/AddCircleOutline";
 import React, { useEffect, useRef, useState } from "react";
 import { UnControlled as CodeMirror } from "react-codemirror2";
 import Moment from "react-moment";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import dataFetch from "../lib/data-fetch";
-import TableChartIcon from "@material-ui/icons/TableChart";
 import FILE_OPS from "../utils/configurationFileHandlersEnum";
 import PromptComponent from "./PromptComponent";
-import GridOnIcon from "@material-ui/icons/GridOn";
 import { updateProgress } from "../lib/store";
 import PatternForm from "../components/configuratorComponents/patternConfigurator";
 import UploadImport from "./UploadImport";
 import { ctxUrl } from "../utils/multi-ctx";
 import { randomPatternNameGenerator as getRandomName } from "../utils/utils";
-import { ToggleButton, ToggleButtonGroup } from "@material-ui/lab";
+import ViewSwitch from "./ViewSwitch";
 import MesheryPatternGrid from "./MesheryPatterns/MesheryPatternGridView";
 import UndeployIcon from "../public/static/img/UndeployIcon";
 import DoneAllIcon from '@material-ui/icons/DoneAll';
@@ -69,7 +67,7 @@ const styles = (theme) => ({
     whiteSpace : "nowrap",
   },
   UploadImport : {
-    paddingLeft : "1.5rem",
+    marginLeft : "1.5rem",
   },
   noDesignAddButton : {
     marginTop : "0.5rem"
@@ -94,7 +92,10 @@ const styles = (theme) => ({
   noDesignText : {
     fontSize : "2rem",
     marginBottom : "2rem",
-  }
+  },
+  addIcon : {
+    paddingRight : ".35rem",
+  },
 });
 
 const useStyles = makeStyles((theme) => ({
@@ -130,35 +131,6 @@ const useStyles = makeStyles((theme) => ({
     }
   }
 }));
-/**
- * Type Definition for View Type
- * @typedef {"grid" | "table"} TypeView
- */
-
-/**
- * ViewSwitch component renders a switch for toggling between
- * grid and table views
- * @param {{ view: TypeView, changeView: (view: TypeView) => void }} props
- */
-function ViewSwitch({ view, changeView }) {
-  console.log(view)
-  return (
-    <ToggleButtonGroup
-      size="small"
-      value={view}
-      exclusive
-      onChange={(_, newView) => changeView(newView)}
-      aria-label="Switch View"
-    >
-      <ToggleButton value="grid">
-        <GridOnIcon />
-      </ToggleButton>
-      <ToggleButton value="table">
-        <TableChartIcon />
-      </ToggleButton>
-    </ToggleButtonGroup>
-  )
-}
 
 function TooltipIcon({ children, onClick, title }) {
   return (
@@ -351,7 +323,7 @@ function MesheryPatterns({
     document.body.style.overflowX = "hidden"
 
     return (() => document.body.style.overflowX = "auto")
-  }, [page,pageSize,search,sortOrder]);
+  }, [page, pageSize, search, sortOrder]);
 
   const handleDeploy = (pattern_file) => {
     updateProgress({ showProgress : true });
@@ -523,13 +495,11 @@ function MesheryPatterns({
   function uploadHandler(ev) {
     if (!ev.target.files?.length) return;
 
-    console.log("top level event", ev)
 
     const file = ev.target.files[0];
     // Create a reader
     const reader = new FileReader();
     reader.addEventListener("load", (event) => {
-      console.log("Bottom level event", event)
       // @ts-ignore
       handleSubmit({
         data : event.target.result,
@@ -795,19 +765,18 @@ function MesheryPatterns({
     }
   };
 
-  console.log(patterns)
   return (
     <>
 
       <NoSsr>
         {selectedPattern.show &&
-        <PatternForm onSubmit={handleSubmit} show={setSelectedPattern} pattern={selectedPattern.pattern} />}
+          <PatternForm onSubmit={handleSubmit} show={setSelectedPattern} pattern={selectedPattern.pattern} />}
 
         {selectedRowData && Object.keys(selectedRowData).length > 0 && (
           <YAMLEditor pattern={selectedRowData} onClose={resetSelectedRowData()} onSubmit={handleSubmit} />
         )}
         <div className={classes.topToolbar} >
-          {!selectedPattern.show && (patterns.length>0 || viewType==="table") && <div className={classes.createButton}>
+          {!selectedPattern.show && (patterns.length > 0 || viewType === "table") && <div className={classes.createButton}>
             <Button
               aria-label="Add Pattern"
               variant="contained"
@@ -819,23 +788,23 @@ function MesheryPatterns({
                 show : true,
               })}
             >
-              <AddIcon />
-           Create Design
+              <AddIcon className={classes.addIcon} />
+              Create Design
             </Button>
             <div className={classes.UploadImport}>
-              <UploadImport aria-label="URL upload button" handleUpload={urlUploadHandler} handleImport={uploadHandler} configuration={undefined} modalStatus={undefined}  />
+              <UploadImport aria-label="URL upload button" handleUpload={urlUploadHandler} handleImport={uploadHandler} configuration="Design" />
             </div>
 
           </div>
           }
           {!selectedPattern.show &&
-          <div className={classes.viewSwitchButton}>
-            <ViewSwitch view={viewType} changeView={setViewType} />
-          </div>
+            <div className={classes.viewSwitchButton}>
+              <ViewSwitch view={viewType} changeView={setViewType} />
+            </div>
           }
         </div>
         {
-          !selectedPattern.show && viewType==="table" && <MuiThemeProvider theme={getMuiTheme() }>
+          !selectedPattern.show && viewType === "table" && <MuiThemeProvider theme={getMuiTheme()}>
             <MUIDataTable
               title={<div className={classes.tableHeader}>Designs</div>}
               data={patterns}
@@ -846,11 +815,11 @@ function MesheryPatterns({
             />
           </MuiThemeProvider>
         }
-        {!selectedPattern.show && viewType==="grid" && patterns.length===0 &&
+        {!selectedPattern.show && viewType === "grid" && patterns.length === 0 &&
           <Paper className={classes.noDesignPaper} >
             <div className={classes.noDesignContainer}>
               <Typography className={classes.noDesignText} align="center" color="textSecondary">
-              No Designs Found
+                No Designs Found
               </Typography>
               <div className={classes.noDesignButtons}>
                 <Button
@@ -865,12 +834,11 @@ function MesheryPatterns({
                     show : true,
                   })}
                 >
-                  <AddIcon />
-              Create Design
-
+                  <AddIcon className={classes.addIcon} />
+                  Create Design
                 </Button>
                 <div className={classes.UploadImport}>
-                  <UploadImport aria-label="URL upload button" handleUpload={urlUploadHandler} handleImport={uploadHandler} configuration={undefined} modalStatus={undefined}  />
+                  <UploadImport aria-label="URL upload button" handleUpload={urlUploadHandler} handleImport={uploadHandler} configuration="Design" />
                 </div>
               </div>
             </div>
@@ -878,19 +846,19 @@ function MesheryPatterns({
         }
 
         {
-          !selectedPattern.show && viewType==="grid" &&
-            // grid vieww
-            <MesheryPatternGrid
-              patterns={patterns}
-              handleDeploy={handleDeploy}
-              handleUnDeploy={handleUnDeploy}
-              handleSubmit={handleSubmit}
-              setSelectedPattern={setSelectedPattern}
-              selectedPattern={selectedPattern}
-              pages={Math.ceil(count / pageSize)}
-              setPage={setPage}
-              selectedPage={page}
-            />
+          !selectedPattern.show && viewType === "grid" &&
+          // grid vieww
+          <MesheryPatternGrid
+            patterns={patterns}
+            handleDeploy={handleDeploy}
+            handleUnDeploy={handleUnDeploy}
+            handleSubmit={handleSubmit}
+            setSelectedPattern={setSelectedPattern}
+            selectedPattern={selectedPattern}
+            pages={Math.ceil(count / pageSize)}
+            setPage={setPage}
+            selectedPage={page}
+          />
         }
 
         <PromptComponent ref={modalRef} />

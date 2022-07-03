@@ -913,6 +913,10 @@ func (l *DefaultLocalProvider) RecordMeshSyncData(obj model.Object) error {
 	return nil
 }
 
+func (l *DefaultLocalProvider) ExtensionProxy(req *http.Request) ([]byte, error) {
+	return []byte{}, ErrLocalProviderSupport
+}
+
 // ReadMeshSyncData reads the mesh sync data
 func (l *DefaultLocalProvider) ReadMeshSyncData() ([]model.Object, error) {
 	objects := make([]model.Object, 0)

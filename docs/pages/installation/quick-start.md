@@ -56,7 +56,7 @@ Select from the list of [Providers]({{site.baseurl}}/extensibility#providers) in
 
 ## Configure Connection to Kubernetes
 
-Meshery attempts to auto detect your kubeconfig if it is stored in the default path (`$HOME/.kube`) on your system. In most deployments, Meshery will automatically connect to your Kubernetes cluster. Ensure that Meshery is connected to your your Kubernetes cluster.
+Meshery attempts to auto detect your kubeconfig if it is stored in the default path (`$HOME/.kube`) on your system. In most deployments, Meshery will automatically connect to your Kubernetes cluster. Ensure that Meshery is connected to your Kubernetes cluster.
 
 Visit <i class="fas fa-cog"></i> Settings:
 
@@ -83,3 +83,12 @@ You may now proceed to install and work with any [service mesh]({{ site.baseurl 
  Your browser does not support the video tag
 </video>
 
+## Additional Guides
+
+<div class="section">
+    <ul>
+        <li><a href="{{ site.baseurl }}/guides/troubleshooting/installation">Troubleshooting Meshery Installations</a></li>
+        <li><a href="{{ site.baseurl }}/reference/error-codes">Meshery Error Code Reference</a></li>
+        <li><a href="{{ site.baseurl }}/reference/mesheryctl/system/check">Mesheryctl system check</a></li> 
+    </ul>
+</div>  

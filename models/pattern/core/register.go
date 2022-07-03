@@ -429,7 +429,7 @@ type crdhelper struct {
 }
 
 // GetK8Components returns all the generated definitions and schemas for available api resources
-func GetK8Components(ctxt context.Context, config []byte, ctx string) (*manifests.Component, error) {
+func GetK8Components(ctxt context.Context, config []byte) (*manifests.Component, error) {
 	cli, err := kubernetes.New(config)
 	if err != nil {
 		return nil, ErrGetK8sComponents(err)
@@ -564,9 +564,7 @@ func GetK8Components(ctxt context.Context, config []byte, ctx string) (*manifest
 			delete(prop, "status")
 			schema["properties"] = prop
 			schema["$schema"] = "http://json-schema.org/draft-04/schema"
-			if k8s.Format {
-				k8s.Format.Prettify(schema)
-			}
+
 			b, err = json.Marshal(schema)
 			if err != nil {
 				return
@@ -581,6 +579,18 @@ func GetK8Components(ctxt context.Context, config []byte, ctx string) (*manifest
 			definitions := parsedManifest.LookupPath(cue.ParsePath("definitions"))
 
 			b, err = manifests.ResolveReferences(b, definitions)
+			if err != nil {
+				return
+			}
+			resolved := make(map[string]interface{})
+			err = json.Unmarshal(b, &resolved)
+			if err != nil {
+				return
+			}
+			if k8s.Format {
+				k8s.Format.Prettify(resolved)
+			}
+			b, err = json.Marshal(resolved)
 			if err != nil {
 				return
 			}
