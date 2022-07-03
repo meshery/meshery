@@ -1,11 +1,11 @@
 import React, {useState} from "react";
 import { styled } from "@mui/material/styles";
-import { Box, Grid, Paper, Typography, Tabs, Tab, Tooltip,FormControl, FormLabel, FormGroup, FormControlLabel, Switch } from "@mui/material";
+import { Box, Paper, Tabs, Tab, Tooltip,FormControl, FormLabel, FormGroup, FormControlLabel, Switch } from "@mui/material";
 import SettingsCellIcon from '@mui/icons-material/SettingsCell';
-import SpeedIcon from '@mui/icons-material/Speed';
 import SettingsRemoteIcon from '@mui/icons-material/SettingsRemote';
 import PerformanceIcon from "@/components/Navbar/drawer-icons/performance_svg";
 import MesherySettingsPerformanceComponent from "./MesherySettingsPerformanceComponent"
+import ExtensionPointSchemaValidator from "@/utils/extensionPointSchemaValidator"
 
 function UserPrefrences () {
 
@@ -21,7 +21,9 @@ const CustomFormContaainer = styled(Box)(() => ({
   padding : 50
 }))
 
-  const [tabVal, SetTabVal] = useState(1);
+  const [tabVal, SetTabVal] = useState(2);
+
+ const userPrefs = ExtensionPointSchemaValidator("user_prefs")();
 
   const handleTabValChange  = (newVal) =>{
     SetTabVal(newVal);
@@ -54,7 +56,7 @@ const CustomFormContaainer = styled(Box)(() => ({
               />
             </Tooltip>
             {/* NOTE: This tab's appearance is logical hence it must be put at last here! Otherwise added logic will need to be added for tab numbers!*/}
-            {/* {userPrefs && providerType != 'local' && */}
+            {userPrefs && 
               <Tooltip title="Remote Provider preferences" placement="top">
                 <Tab
                   icon={
@@ -63,7 +65,7 @@ const CustomFormContaainer = styled(Box)(() => ({
                   label={<span>Remote Provider</span>}
                 />
               </Tooltip>
-            {/* } */}
+             } 
           </Tabs>
       </Paper>
       <Paper>
@@ -105,9 +107,9 @@ const CustomFormContaainer = styled(Box)(() => ({
       {tabVal === 1 &&
         <MesherySettingsPerformanceComponent />
       }
-      {/* {tabVal == 2 && userPrefs && providerType != 'local' &&
-        <ExtensionSandbox type="user_prefs" Extension={(url) => RemoteComponent({ url })} />
-      } */}
+      {tabVal == 2 && userPrefs &&
+      <h1>HI</h1>
+      }
     </Paper>
     </>
     )

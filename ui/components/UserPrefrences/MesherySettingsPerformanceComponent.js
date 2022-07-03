@@ -110,7 +110,6 @@ function MesherySettingsPerformanceComponent () {
                   color="primary"
                   size="large"
                 //   onClick={this.handleSubmit}
-                //   className={classes.button}
                 //   disabled={blockRunTest}
                 >
                   <SaveIcon
