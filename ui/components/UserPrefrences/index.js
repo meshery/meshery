@@ -21,7 +21,7 @@ const CustomFormContaainer = styled(Box)(() => ({
   padding : 50
 }))
 
-  const [tabVal, SetTabVal] = useState(0);
+  const [tabVal, SetTabVal] = useState(1);
 
   const handleTabValChange  = (newVal) =>{
     SetTabVal(newVal);

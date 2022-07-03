@@ -11,7 +11,28 @@ const loadGenerators = [
   ];
 
 function MesherySettingsPerformanceComponent () {
+   
+    const [c, SetC] = useState(0);
+    const [t, SetT] = useState([]);
+    const [tValue, SetTValue] = useState(t);
+    const [qps, SetQPS] = useState(0);
+    const [gen, SetGen] = useState([]);
 
+
+   const handleChange = (name) => (event) => {
+        if (name === 'qps'){
+            SetQPS(parseInt(event.target.value))
+        }
+        if (name === 'c'){
+            SetC(parseInt(event.target.value))
+        }
+        if (name === 'gen'){
+            SetGen((event.target.value))
+        }
+    }
+   const handleDurationChange = (newValue) =>  {
+    SetTValue(newValue)
+    }
     return(
         <Box sx={{padding : "5rem"}} >
             <label><strong>Performance Load Test Defaults</strong></label>
@@ -24,11 +45,11 @@ function MesherySettingsPerformanceComponent () {
                   label="Concurrent requests"
                   type="number"
                   fullWidth
-                //   value={c}
+                  value={c}
                   inputProps={{ min: '0', step: '1' }}
                   margin="normal"
                   variant="outlined"
-                //   onChange={this.handleChange('c')}
+                  onChange={handleChange('c')}
                   InputLabelProps={{ shrink: true }}
                 />
               </Grid>
@@ -40,11 +61,11 @@ function MesherySettingsPerformanceComponent () {
                   label="Queries per second"
                   type="number"
                   fullWidth
-                //   value={qps}
+                  value={qps}
                   inputProps={{ min: '0', step: '1' }}
                   margin="normal"
                   variant="outlined"
-                //   onChange={this.handleChange('qps')}
+                  onChange={handleChange('qps')}
                   InputLabelProps={{ shrink: true }}
                 />
               </Grid>
@@ -58,9 +79,9 @@ function MesherySettingsPerformanceComponent () {
                     label="Duration*"
                     fullWidth
                     variant="outlined"
-                    // value={tValue}
-                    // inputValue={t}
-                    // onChange={this.handleDurationChange}
+                    value={tValue}
+                    inputValue={t}
+                    onChange={handleDurationChange}
                     // onInputChange={this.handleInputDurationChange}
                     // options={durationOptions}
                     style={{ marginTop: '16px', marginBottom: '8px' }}
@@ -72,8 +93,8 @@ function MesherySettingsPerformanceComponent () {
                 <FormControl component="loadGenerator">
                   <label><strong>Default Load Generator</strong></label>
                   <RadioGroup aria-label="loadGenerator" name="loadGenerator" 
-                //   value={gen}
-                //    onChange={this.handleChange('gen')}
+                  value={gen}
+                   onChange={handleChange('gen')}
                     row>
                     {loadGenerators.map((lg) => (
                       <FormControlLabel value={lg} control={<Radio color="primary" />} label={lg} />
