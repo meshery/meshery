@@ -21,7 +21,7 @@ const CustomFormContaainer = styled(Box)(() => ({
   padding : 50
 }))
 
-  const [tabVal, SetTabVal] = useState(2);
+  const [tabVal, SetTabVal] = useState(0);
 
  const userPrefs = ExtensionPointSchemaValidator("user_prefs")();
 
