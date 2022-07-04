@@ -31,6 +31,7 @@ import ViewSwitch from "./ViewSwitch";
 import MesheryPatternGrid from "./MesheryPatterns/MesheryPatternGridView";
 import UndeployIcon from "../public/static/img/UndeployIcon";
 import DoneAllIcon from '@material-ui/icons/DoneAll';
+import ConfirmationMsg from "./ConfirmationModal";
 
 const styles = (theme) => ({
   grid : {
@@ -96,6 +97,9 @@ const styles = (theme) => ({
   addIcon : {
     paddingRight : ".35rem",
   },
+  text : {
+    padding : "5px"
+  }
 });
 
 const useStyles = makeStyles((theme) => ({
@@ -236,6 +240,11 @@ function MesheryPatterns({
     ("grid")
   );
   const DEPLOY_URL = '/api/pattern/deploy';
+  const [modalOpen, setModalOpen] = useState({
+    open : false,
+    deploy : false,
+    pattern_file : null
+  });
 
   const getMuiTheme = () => createTheme({
     overrides : {
@@ -324,6 +333,22 @@ function MesheryPatterns({
 
     return (() => document.body.style.overflowX = "auto")
   }, [page, pageSize, search, sortOrder]);
+
+  const handleModalClose = () => {
+    setModalOpen({
+      open : false,
+      deploy : false,
+      pattern_file : null
+    });
+  }
+
+  const handleModalOpen = (pattern_file, isDeploy) => {
+    setModalOpen({
+      open : true,
+      deploy : isDeploy,
+      pattern_file : pattern_file
+    });
+  }
 
   const handleDeploy = (pattern_file) => {
     updateProgress({ showProgress : true });
@@ -604,13 +629,13 @@ function MesheryPatterns({
               {/*</Tooltip> */}
               <IconButton
                 title="Deploy"
-                onClick={() => handleDeploy(rowData.pattern_file)}
+                onClick={() => handleModalOpen(rowData.pattern_file, true)}
               >
                 <DoneAllIcon data-cy="deploy-button" />
               </IconButton>
               <IconButton
                 title="Undeploy"
-                onClick={() => handleUnDeploy(rowData.pattern_file)}
+                onClick={() => handleModalOpen(rowData.pattern_file, false)}
               >
                 <UndeployIcon fill="rgba(0, 0, 0, 0.54)" data-cy="undeploy-button" />
               </IconButton>
@@ -860,7 +885,13 @@ function MesheryPatterns({
             selectedPage={page}
           />
         }
-
+        <ConfirmationMsg
+          open={modalOpen.open}
+          handleClose={handleModalClose}
+          submit={modalOpen.deploy ? () => handleDeploy(modalOpen.pattern_file) : () => handleUnDeploy(modalOpen.pattern_file)}
+          isDelete={!modalOpen.deploy}
+          title={<Typography variant="h6" className={classes.text} >The selected operation will be applied to following contexts.</Typography>}
+        />
         <PromptComponent ref={modalRef} />
       </NoSsr>
     </>

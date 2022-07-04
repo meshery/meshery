@@ -59,6 +59,9 @@ const styles = (theme) => ({
     marginLeft : "auto",
     paddingLeft : "1rem"
   },
+  text : {
+    padding : "5px"
+  }
 });
 
 const useStyles = makeStyles(() => ({

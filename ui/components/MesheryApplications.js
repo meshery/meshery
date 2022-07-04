@@ -56,6 +56,9 @@ const styles = (theme) => ({
     marginLeft : "auto",
     paddingLeft : "1rem"
   },
+  text : {
+    padding : theme.spacing(1)
+  }
 });
 
 
