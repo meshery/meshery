@@ -233,19 +233,20 @@ const ExtensionsComponent = () => {
       });
       if(!(type.includes(".yaml")||type.includes(".yml"))){
         window.ddClient.desktopUI.toast.error("Some error occured while uploading the compose file. ")
+        return ;
       }
-      else{
-        fetch(proxyUrl + "/api/application", {
-          method: "POST",
-          headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8" },
-          body,
+      
+      fetch(proxyUrl + "/api/application", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8" },
+        body,
+      })
+        .then((res) => {
+          console.log(res);
+          window.ddClient.desktopUI.toast.success("Compose file has been uploaded with name: " + name);
         })
-          .then((res) => {
-            console.log(res);
-            window.ddClient.desktopUI.toast.success("Compose file has been uploaded with name: " + name);
-          })
-          .catch(() => window.ddClient.desktopUI.toast.error("Some error occured while uploading the compose file."));
-      }
+        .catch(() => window.ddClient.desktopUI.toast.error("Some error occured while uploading the compose file."));
+      
       });
     reader.readAsText(file);
   
