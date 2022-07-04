@@ -17,16 +17,24 @@ import {
    
   function MesheryNotification () {
 
-  const DrawerButton = styled(IconButton)((theme) => ({
-    padding : '0.45rem',
-    margin : '0.2rem',
-    backgroundColor : '#000000',
-    color : '#FFFFFF',
-    "&:hover" : { backgroundColor : '#FFFFFF',
-      color : '#000000' }
+  const DrawerButton = styled(IconButton)(({theme}) => ({
+    padding : theme.spacing(1),
+    margin : theme.spacing(0.5),
+    backgroundColor : theme.palette.secondary.dark,
+    color : theme.palette.white,
+    "&:hover" : { backgroundColor : theme.palette.white,
+      color : theme.palette.secondary.dark }
+  }))
+  const DrawerContainer = styled(Drawer)(({theme}) => ({
+    flexShrink: 0,
+    '& .MuiDrawer-paper': {
+      width: 450,
+      background: theme.palette.white,
+      boxSizing: 'border-box',
+    },
   }))
 
-    const listTop = styled('div')(() => ({
+    const ListTop = styled('div')(({theme}) => ({
       display : 'grid',
     alignItems : 'center',
     gridTemplateColumns : "2fr 6fr 2fr",
@@ -86,23 +94,14 @@ import {
       }
 
     return(
-        <div>
+        <>
         <IconButton color="inherit" size="large"  onClick={handleToggle}>
         <Badge badgeContent={getNotificationCount(events)} >
                 <NotificationsIcon   />
                 </Badge>  
             </IconButton>
                    
-             <Drawer
-             sx={{
-                // width: 450,
-                flexShrink: 0,
-                '& .MuiDrawer-paper': {
-                  width: 450,
-                  background: "#fff",
-                  boxSizing: 'border-box',
-                },
-            }}
+             <DrawerContainer
             PaperProps={{
               sx: {
                 "& .MuiPaper-root": {
@@ -115,14 +114,8 @@ import {
             open={open}
             onClose={handleClose}
           >
-            <div>
-              <div >
-                <div style={{      display : 'grid',
-    alignItems : 'center',
-    gridTemplateColumns : "2fr 6fr 2fr",
-    padding: "1rem 0.5rem "
-   }} >
-                  <NotifSelector >
+                <ListTop>
+                  <NotifSelector>
                     <Tooltip title="Show all notifications">
                       <DrawerButton
                         color="inherit"
@@ -148,7 +141,7 @@ import {
                       </DrawerButton>
                     </Tooltip>
                   </ClearAllButton>
-                </div>
+                </ListTop>
                 <Divider light />
                 <Tabs
                   value={tabValue}
@@ -170,12 +163,8 @@ import {
                     eventDetails={event.details || "Details Unavailable"}
                   />
                 ))}
-              </div>
-            </div>
-            </Drawer>  
-            
-  
-        </div>
+            </DrawerContainer> 
+        </>
     )
   }
 
