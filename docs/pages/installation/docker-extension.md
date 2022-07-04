@@ -25,7 +25,7 @@ The Docker Extension for Meshery extends Docker Desktop’s position as the clou
   <img style="width:350px;" src="{{ site.baseurl }}/assets/img/platforms/docker-extensions-marketplace.png">
 </a>
 
-### Using `docker`
+### Using `Docker CLI`
 
 Meshery runs as a set of containers inside your Docker Desktop virtual machine.
 
