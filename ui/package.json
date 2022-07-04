@@ -95,7 +95,7 @@
     "redux": "^4.2.0",
     "redux-devtools-extension": "^2.13.9",
     "redux-thunk": "^2.4.0",
-    "relay-runtime": "^13.1.1",
+    "relay-runtime": "^14.0.0",
     "set-value": "^4.0.1",
     "styled-jsx": "^4.0.1",
     "subscriptions-transport-ws": "^0.9.19",
