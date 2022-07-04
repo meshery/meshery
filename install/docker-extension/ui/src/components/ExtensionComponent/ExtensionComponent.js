@@ -222,7 +222,7 @@ const ExtensionsComponent = () => {
   const handleImport = () => {
     const file = document.getElementById("upload-button").files[0];
     // Create a reader
-    let type=String(file.name)
+    const type=String(file.name)
     const reader = new FileReader();
     reader.addEventListener("load", (event) => {
       let body = { save: true };
