@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import { Button, Grid, Link, Stack, Typography, Box } from "@mui/material";
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-import { AdaptersChipList, AdaptersListContainer, MesheryServerVersionContainer } from "@/features/mesheryComponents";
+import { AdaptersChipList, AdaptersListContainer } from "@/features/mesheryComponents";
 import { PaperWithTitle } from "@/components/Paper";
 import { nanoid } from "@reduxjs/toolkit";
 import { useTheme } from "@mui/system";
@@ -84,7 +84,6 @@ const ShowServiceMesh = () => {
       margin: "auto",
       display : "flex",
       justifyContent : "center",
-      alignItems : "center",
       flexDirection : "column",
     }}
   >
