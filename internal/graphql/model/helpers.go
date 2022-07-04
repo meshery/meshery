@@ -10,6 +10,7 @@ import (
 	"github.com/layer5io/meshkit/broker"
 	"github.com/layer5io/meshkit/database"
 	"github.com/layer5io/meshkit/logger"
+	"github.com/layer5io/meshkit/models/controllers"
 	"github.com/layer5io/meshkit/utils"
 	"github.com/layer5io/meshkit/utils/broadcast"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
@@ -18,6 +19,7 @@ import (
 	"github.com/spf13/viper"
 )
 
+// to be moved elsewhere
 const (
 	chartRepo = "https://meshery.github.io/meshery.io/charts"
 )
@@ -164,6 +166,7 @@ func applyYaml(client *mesherykube.Client, delete bool, file string) error {
 }
 
 // installs operator
+// To be depricated
 func installUsingHelm(client *mesherykube.Client, delete bool, adapterTracker models.AdaptersTrackerInterface) error {
 	// retrieving meshery's version to apply the appropriate chart
 	mesheryReleaseVersion := viper.GetString("BUILD")
@@ -219,6 +222,8 @@ func installUsingHelm(client *mesherykube.Client, delete bool, adapterTracker mo
 // SetOverrideValues detects the currently insalled adapters and sets appropriate
 // overrides so as to not uninstall them. It also sets override values for
 // operator so that it can be enabled or disabled depending on the need
+
+// to be depricated
 func SetOverrideValues(delete bool, adapterTracker models.AdaptersTrackerInterface) map[string]interface{} {
 	installedAdapters := make([]string, 0)
 	adapters := adapterTracker.GetAdapters(context.TODO())
@@ -342,4 +347,33 @@ func (k *K8sConnectionTracker) Log(l logger.Handler) {
 		e += v + ", "
 	}
 	l.Info(strings.TrimSuffix(e, ", "))
+}
+
+func GetInternalController(controller models.MesheryController) MesheryController {
+	switch controller {
+	case models.MesheryBroker:
+		return MesheryControllerBroker
+	case models.MesheryOperator:
+		return MesheryControllerOperator
+	case models.Meshsync:
+		return MesheryControllerMeshsync
+	}
+	return ""
+}
+
+func GetInternalControllerStatus(status controllers.MesheryControllerStatus) MesheryControllerStatus {
+	switch status {
+	case controllers.Deployed:
+		return MesheryControllerStatusDeployed
+
+	case controllers.NotDeployed:
+		return MesheryControllerStatusNotdeployed
+
+	case controllers.Deploying:
+		return MesheryControllerStatusDeploying
+
+	case controllers.Unknown:
+		return MesheryControllerStatusUnkown
+	}
+	return ""
 }

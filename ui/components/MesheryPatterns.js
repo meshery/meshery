@@ -792,7 +792,7 @@ function MesheryPatterns({
               Create Design
             </Button>
             <div className={classes.UploadImport}>
-              <UploadImport aria-label="URL upload button" handleUpload={urlUploadHandler} handleImport={uploadHandler} configuration="Design" modalStatus={close} />
+              <UploadImport aria-label="URL upload button" handleUpload={urlUploadHandler} handleImport={uploadHandler} configuration="Design" />
             </div>
 
           </div>
@@ -838,7 +838,7 @@ function MesheryPatterns({
                   Create Design
                 </Button>
                 <div className={classes.UploadImport}>
-                  <UploadImport aria-label="URL upload button" handleUpload={urlUploadHandler} handleImport={uploadHandler} configuration="Design" modalStatus={close} />
+                  <UploadImport aria-label="URL upload button" handleUpload={urlUploadHandler} handleImport={uploadHandler} configuration="Design" />
                 </div>
               </div>
             </div>

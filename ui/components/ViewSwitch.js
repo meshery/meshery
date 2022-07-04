@@ -12,10 +12,10 @@ function ViewSwitch({ view, changeView }) {
       onChange={(_, newView) => changeView(newView)}
       aria-label="Switch View"
     >
-      <ToggleButton value="grid">
+      <ToggleButton value="grid" data-cy="grid-view">
         <GridOnIcon />
       </ToggleButton>
-      <ToggleButton value="table">
+      <ToggleButton value="table" data-cy="table-view">
         <TableChartIcon />
       </ToggleButton>
     </ToggleButtonGroup>

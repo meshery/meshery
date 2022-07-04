@@ -24,7 +24,6 @@ import (
 	"github.com/spf13/viper"
 
 	"github.com/sirupsen/logrus"
-
 	"github.com/vmihailenco/taskq/v3"
 	"github.com/vmihailenco/taskq/v3/memqueue"
 )
@@ -236,7 +235,13 @@ func main() {
 		PrometheusClientForQuery: models.NewPrometheusClientWithHTTPClient(&http.Client{Timeout: time.Second}),
 	}
 
-	h := handlers.NewHandlerInstance(hc, meshsyncCh, log, brokerConn)
+	operatorDeploymentConfig := models.NewOperatorDeploymentConfig(adapterTracker)
+	mctrlHelper := models.NewMesheryControllersHelper(log, operatorDeploymentConfig, dbHandler)
+	k8sComponentsRegistrationHelper := models.NewComponentsRegistrationHelper(log)
+
+	// purge the meshsync objects in the database on startup
+	models.RemoveStaleObjects(*dbHandler)
+	h := handlers.NewHandlerInstance(hc, meshsyncCh, log, brokerConn, k8sComponentsRegistrationHelper, mctrlHelper, dbHandler)
 
 	b := broadcast.NewBroadcaster(100)
 	defer b.Close()
@@ -259,7 +264,7 @@ func main() {
 	signal.Notify(c, os.Interrupt)
 
 	go func() {
-		logrus.Infof("Meshery Server listening on: %d", port)
+		logrus.Infof("Meshery Server listening on :%d", port)
 		if err := r.Run(); err != nil {
 			logrus.Fatalf("ListenAndServe Error: %v", err)
 		}

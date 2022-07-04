@@ -9,8 +9,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"path/filepath"
-	"sync"
-	"time"
 
 	// for GKE kube API authentication
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
@@ -20,7 +18,6 @@ import (
 	"github.com/layer5io/meshery/helpers"
 	"github.com/layer5io/meshery/models"
 	"github.com/layer5io/meshery/models/pattern/core"
-	"github.com/layer5io/meshkit/logger"
 	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
 	"github.com/layer5io/meshkit/utils"
 	"github.com/pkg/errors"
@@ -224,16 +221,17 @@ func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request
 	return
 }
 
-func (h *Handler) LoadContexts(token string, prov models.Provider) error {
+func (h *Handler) LoadContextsAndPersist(token string, prov models.Provider) ([]*models.K8sContext, error) {
+	var contexts []*models.K8sContext
 	// Get meshery instance ID
 	mid, ok := viper.Get("INSTANCE_ID").(*uuid.UUID)
 	if !ok {
-		return ErrMesheryInstanceID
+		return contexts, ErrMesheryInstanceID
 	}
 
 	// Attempt to get kubeconfig from the filesystem
 	if h.config == nil {
-		return ErrInvalidK8SConfig
+		return contexts, ErrInvalidK8SConfig
 	}
 	data, err := utils.ReadFileSource(fmt.Sprintf("file://%s", filepath.Join(h.config.KubeConfigFolder, "config")))
 	if err != nil {
@@ -243,40 +241,22 @@ func (h *Handler) LoadContexts(token string, prov models.Provider) error {
 		cc, err := models.NewK8sContextFromInClusterConfig(ctxName, mid)
 		if err != nil || cc == nil {
 			logrus.Warn("failed to generate in cluster context: ", err)
-			return err
+			return contexts, err
 		}
+
 		_, err = prov.SaveK8sContext(token, *cc)
 		if err != nil {
 			logrus.Warn("failed to save the context for incluster: ", err)
-			return err
+			return contexts, err
 		}
-		// Generate Kube Config
-		if !viper.GetBool("SKIP_COMP_GEN") {
-			ctxID := cc.ID
-			cfg, err := cc.GenerateKubeConfig()
-			if err != nil {
-				return err
-			}
+		contexts = append(contexts, cc)
 
-			go func(config []byte, ctx string) {
-				compCreationSingleton.cancelPreviousRun(ctx)
-				ctxt, cancel := context.WithTimeout(context.Background(), 300*time.Second)
-				compCreationSingleton.registerCancelFunc(ctx, cancel)
-				err := compCreationSingleton.registerK8sComponents(ctxt, config, ctxID)
-				if err != nil {
-					h.log.Error(err)
-					return
-				}
-				h.log.Info("Registration of k8s native components completed for contextID ", ctx)
-			}(cfg, ctxID)
-		}
-
-		return nil
+		return contexts, nil
 	}
 
 	cfg, err := helpers.FlattenMinifyKubeConfig([]byte(data))
 	if err != nil {
-		return err
+		return contexts, err
 	}
 
 	ctxs := models.K8sContextsFromKubeconfig(cfg, mid)
@@ -288,69 +268,23 @@ func (h *Handler) LoadContexts(token string, prov models.Provider) error {
 			logrus.Warn("failed to save the context: ", err)
 			continue
 		}
-		if !viper.GetBool("SKIP_COMP_GEN") {
-			k8ctxID := ctx.ID
-			cfg, err := ctx.GenerateKubeConfig()
-			if err != nil {
-				return nil
-			}
-
-			go func(config []byte, ctx string) {
-				compCreationSingleton.cancelPreviousRun(ctx) //if a registerK8sComponents is still running for the same context then we safely cancel that assuming that run to be stale now
-				ctxt, cancel := context.WithTimeout(context.Background(), 600*time.Second)
-				compCreationSingleton.registerCancelFunc(ctx, cancel)
-				err := compCreationSingleton.registerK8sComponents(ctxt, config, k8ctxID)
-				if err != nil {
-					h.log.Error(err)
-					return
-				}
-				h.log.Info("Registration of k8s native components completed for contextID ", ctx)
-			}(cfg, k8ctxID)
-		}
+		contexts = append(contexts, &ctx)
 	}
-
-	return nil
+	return contexts, nil
 }
 
-//manages creation of k8s components per context. Such that for each k8s context we have one component creation process running at a time
-type compCreation struct {
-	compCreationPerContext map[string]*context.CancelFunc //For each contextID, we have a cancel function to cancel it's previous run.
-	compCreationMutex      sync.Mutex
-	log                    logger.Handler
-}
-
-func (c *compCreation) cancelPreviousRun(ctx string) {
-	c.compCreationMutex.Lock()
-	defer c.compCreationMutex.Unlock()
-	cancel := c.compCreationPerContext[ctx]
-	if cancel != nil {
-		fmt.Println("canceling previous run for contextID ", ctx)
-		(*cancel)()
-		return
-	}
-}
-func (c *compCreation) registerCancelFunc(ctx string, cancel context.CancelFunc) {
-	c.compCreationMutex.Lock()
-	defer c.compCreationMutex.Unlock()
-	c.compCreationPerContext[ctx] = &cancel
-}
-
-var compCreationSingleton = compCreation{
-	compCreationPerContext: make(map[string]*context.CancelFunc),
-}
-
-func (c *compCreation) registerK8sComponents(ctxt context.Context, config []byte, ctx string) (err error) {
-	man, err := core.GetK8Components(ctxt, config, ctx)
+func RegisterK8sComponents(ctxt context.Context, config []byte, ctxId string) (err error) {
+	man, err := core.GetK8Components(ctxt, config)
 	if err != nil {
-		return ErrCreatingKubernetesComponents(err, ctx)
+		return ErrCreatingKubernetesComponents(err, ctxId)
 	}
 	if man == nil {
-		return ErrCreatingKubernetesComponents(errors.New("generated components are nil"), ctx)
+		return ErrCreatingKubernetesComponents(errors.New("generated components are nil"), ctxId)
 	}
 	for i, def := range man.Definitions {
 		var ord core.WorkloadCapability
 		ord.Metadata = make(map[string]string)
-		ord.Metadata["io.meshery.ctxid"] = ctx
+		ord.Metadata["io.meshery.ctxid"] = ctxId
 		ord.Metadata["adapter.meshery.io/name"] = "kubernetes"
 		ord.Host = "<none-local>"
 		ord.OAMRefSchema = man.Schemas[i]
@@ -358,16 +292,16 @@ func (c *compCreation) registerK8sComponents(ctxt context.Context, config []byte
 		var definition v1alpha1.WorkloadDefinition
 		err := json.Unmarshal([]byte(def), &definition)
 		if err != nil {
-			return ErrCreatingKubernetesComponents(err, ctx)
+			return ErrCreatingKubernetesComponents(err, ctxId)
 		}
 		ord.OAMDefinition = definition
 		content, err := json.Marshal(ord)
 		if err != nil {
-			return ErrCreatingKubernetesComponents(err, ctx)
+			return ErrCreatingKubernetesComponents(err, ctxId)
 		}
 		err = core.RegisterWorkload(content)
 		if err != nil {
-			return ErrCreatingKubernetesComponents(err, ctx)
+			return ErrCreatingKubernetesComponents(err, ctxId)
 		}
 	}
 	return nil

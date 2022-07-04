@@ -4080,7 +4080,9 @@ paths:
       tags:
       - ApplicationsAPI
     post:
-      description: Deploy an attached application file with the request
+      description: |-
+        Handle POST request for Application File Deploy
+        Deploy an attached application file with the request
       operationId: idPostDeployApplicationFile
       parameters:
       - in: formData
@@ -4090,7 +4092,6 @@ paths:
       responses:
         "200":
           $ref: '#/responses/applicationFilesResponseWrapper'
-      summary: Handle POST request for Application File Deploy
       tags:
       - ApplicationsAPI
   /api/filter:

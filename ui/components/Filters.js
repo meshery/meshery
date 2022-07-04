@@ -18,7 +18,6 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import MUIDataTable from "mui-datatables";
-import PromptComponent from "./PromptComponent";
 import Moment from "react-moment";
 import { withSnackbar } from "notistack";
 import CloseIcon from "@material-ui/icons/Close";
@@ -35,6 +34,7 @@ import ViewSwitch from "./ViewSwitch";
 import FiltersGrid from "./MesheryFilters/FiltersGrid";
 import { trueRandom } from "../lib/trueRandom";
 import { ctxUrl } from "../utils/multi-ctx";
+import ConfirmationMsg from "./ConfirmationModal";
 
 const styles = (theme) => ({
   grid : {
@@ -164,6 +164,11 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     ("grid")
   );
   const DEPLOY_URL = "/api/filter/deploy";
+  const [modalOpen, setModalOpen] = useState({
+    open : false,
+    filter_file : null,
+    deploy : false
+  });
 
   const getMuiTheme = () => createTheme({
     overrides : {
@@ -303,6 +308,22 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     });
   };
 
+  const handleModalOpen = (app_file, isDeploy) => {
+    setModalOpen({
+      open : true,
+      filter_file : app_file,
+      deploy : isDeploy
+    });
+  }
+
+  const handleModalClose = () => {
+    setModalOpen({
+      open : false,
+      filter_file : null,
+      // deploy: false
+    });
+  }
+
   function resetSelectedRowData() {
     return () => {
       setSelectedRowData(null);
@@ -349,7 +370,6 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
   }
 
   function uploadHandler(ev) {
-    handleClose(false);
     if (!ev.target.files?.length) return;
 
     const file = ev.target.files[0];
@@ -361,10 +381,12 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     });
     reader.readAsText(file);
   }
+
   function urlUploadHandler(link) {
     handleSubmit(link, "", "meshery_" + Math.floor(trueRandom() * 100),  FILE_OPS.URL_UPLOAD);
     console.log(link, "valid");
   }
+
   const columns = [
     {
       name : "name",
@@ -456,7 +478,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
                   title="Deploy"
                   aria-label="deploy"
                   color="inherit"
-                  onClick={() => handleDeploy(rowData.filter_file)} //deploy endpoint to be called here
+                  onClick={() => handleModalOpen(rowData.filter_file, true)} //deploy endpoint to be called here
                   data-cy="deploy-button"
                 />
               </IconButton>
@@ -603,9 +625,8 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
         <div className={classes.topToolbar} >
           {!selectedFilter.show && (filters.length>0 || viewType==="table") && <div className={classes.createButton}>
             <div>
-              <UploadImport aria-label="URL upload button" handleUpload={urlUploadHandler} handleImport={uploadHandler} configuration={undefined} modalStatus={undefined}  />
+              <UploadImport aria-label="URL upload button" handleUpload={urlUploadHandler} handleImport={uploadHandler} configuration="Filter" />
             </div>
-
           </div>
           }
           {!selectedFilter.show &&
@@ -640,8 +661,13 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
               selectedPage={page}
             />
         }
-
-        <PromptComponent ref={modalRef} />
+        <ConfirmationMsg
+          open={modalOpen.open}
+          handleClose={handleModalClose}
+          submit={() => handleDeploy(modalOpen.filter_file)}
+          isDelete={!modalOpen.deploy}
+          title={<Typography variant="h6" className={classes.text} >The selected operation will be applied to following contexts.</Typography>}
+        />
       </NoSsr>
     </>
   );

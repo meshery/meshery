@@ -1,5 +1,5 @@
 import {
-  Button, Checkbox, Chip, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, TextField,
+  Button, Checkbox, Chip, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, IconButton, TextField,
   Tooltip, Typography
 } from "@material-ui/core";
 import CloseIcon from "@material-ui/icons/Close";
@@ -46,11 +46,11 @@ const styles = (theme) => ({
   },
   title : {
     textAlign : 'center',
-    minWidth : 400,
-    padding : theme.spacing(1.5),
+    minWidth : 300,
+    padding : theme.spacing(1),
     color : '#fff',
     backgroundColor : '#607d8b',
-    fontSize : "1.6rem",
+    fontSize : "1rem",
 
   },
   subtitle : {
@@ -87,14 +87,27 @@ const styles = (theme) => ({
   contexts : {
     display : "flex",
     flexWrap : "wrap"
+  },
+  tabs : {
+    marginLeft : 0
+  },
+  tabLabel : {
+    fontWeight : "bolder",
+    fontSize : "1rem"
   }
 })
 
 function ConfirmationMsg(props) {
   const { classes, open, handleClose, submit, isDelete,
-    selectedK8sContexts, k8scontext, title, setK8sContexts, enqueueSnackbar, closeSnackbar, updateProgress } = props
+    selectedK8sContexts, k8scontext, title, setK8sContexts, enqueueSnackbar, closeSnackbar, validationComp } = props
 
   const [contexts, setContexts] = useState(k8scontext);
+  let isValidation = validationComp !== null && validationComp !== undefined;
+  // const [tabVal, setTabVal] = useState(0);
+  // const handleTabValChange = (event, newVal) => {
+  //   setTabVal(newVal);
+  // }
+
 
   const handleKubernetesClick = (ctxID) => {
     updateProgress({ showProgress : true })
@@ -119,6 +132,7 @@ function ConfirmationMsg(props) {
     submit();
     handleClose();
   }
+
   const searchContexts = (search) => {
     if (search === "") {
       setContexts(k8scontext);
@@ -166,94 +180,100 @@ function ConfirmationMsg(props) {
         aria-describedby="alert-dialog-description"
         className={classes.dialogBox}
       >
-        {k8scontext.length > 0 ?
-          <>
-            <DialogTitle id="alert-dialog-title" className={classes.title}>
-              {title}
-            </DialogTitle>
-            <DialogContent>
-              <DialogContentText id="alert-dialog-description" className={classes.subtitle}>
-                <Typography variant="body1">
-                  <TextField
-                    id="search-ctx"
-                    label="Search"
-                    size="small"
-                    variant="outlined"
-                    onChange={(event) => searchContexts(event.target.value)}
-                    style={{ width : "100%", backgroundColor : "rgba(102, 102, 102, 0.12)", margin : "1px 1px 8px " }}
-                    InputProps={{
-                      endAdornment : (
-                        <Search />
-                      )
-                    }}
-                  />
-                  <div className={classes.all}>
-                    <Checkbox
-                      checked={selectedK8sContexts?.includes("all")}
-                      onChange={() => setContextViewer("all")}
-                      color="primary"
-                    />
-                    <span>Select All</span>
-                  </div>
-                  <div className={classes.contexts}>
-                    {
-                      contexts.map((ctx) => (
-                        <div id={ctx.contextID} className={classes.chip}>
-                          <Tooltip title={`Server: ${ctx.configuredServer}`}>
-                            <div style={{ display : "flex", justifyContent : "flex-wrap", alignItems : "center" }}>
-                              <Checkbox
-                                checked={selectedK8sContexts.includes(ctx.contextID) || (selectedK8sContexts.length > 0 && selectedK8sContexts[0] === "all")}
-                                onChange={() => setContextViewer(ctx.contextID)}
-                                color="primary"
-                              />
-                              <Chip
-                                label={ctx.contextName}
-                                className={classes.ctxChip}
-                                onClick={() => handleKubernetesClick(ctx.contextID)}
-                                icon={<img src="/static/img/kubernetes.svg" className={classes.ctxIcon} />}
-                                variant="outlined"
-                                data-cy="chipContextName"
-                              />
-                            </div>
+        <DialogTitle id="alert-dialog-title" className={classes.title}>
+          {title}
+        </DialogTitle>
+        <>
+          { !isValidation &&
+           <>
+             <DialogContent>
+               <DialogContentText id="alert-dialog-description" className={classes.subtitle}>
+                 <Typography variant="h6" style={{ fontWeight : "bolder", marginTop : "-12px" }} > Environment </Typography>
+                 <Divider />
+                 {
+                   k8scontext.length > 0 ?
+                     <Typography variant="body1">
+                       <TextField
+                         id="search-ctx"
+                         label="Search"
+                         size="small"
+                         variant="outlined"
+                         onChange={(event) => searchContexts(event.target.value)}
+                         style={{ width : "100%", backgroundColor : "rgba(102, 102, 102, 0.12)", margin : "1px 1px 8px " }}
+                         InputProps={{
+                           endAdornment : (
+                             <Search />
+                           )
+                         }}
+                       />
+                       <div className={classes.all}>
+                         <Checkbox
+                           checked={selectedK8sContexts?.includes("all")}
+                           onChange={() => setContextViewer("all")}
+                           color="primary"
+                         />
+                         <span>Select All</span>
+                       </div>
+                       <div className={classes.contexts}>
+                         {
+                           contexts.map((ctx) => (
+                             <div id={ctx.contextID} className={classes.chip}>
+                               <Tooltip title={`Server: ${ctx.configuredServer}`}>
+                                 <div style={{ display : "flex", justifyContent : "flex-wrap", alignItems : "center" }}>
+                                   <Checkbox
+                                     checked={selectedK8sContexts.includes(ctx.contextID) || (selectedK8sContexts.length > 0 && selectedK8sContexts[0] === "all")}
+                                     onChange={() => setContextViewer(ctx.contextID)}
+                                     color="primary"
+                                   />
+                                   <Chip
+                                     label={ctx.contextName}
+                                     className={classes.ctxChip}
+                                     onClick={() => handleKubernetesClick(ctx.contextID)}
+                                     icon={<img src="/static/img/kubernetes.svg" className={classes.ctxIcon} />}
+                                     variant="outlined"
+                                     data-cy="chipContextName"
+                                   />
+                                 </div>
 
-                          </Tooltip>
-                        </div>
-                      ))
-                    }
-                  </div>
-                </Typography>
-              </DialogContentText>
-            </DialogContent>
-            <DialogActions className={classes.actions}>
-              <Button onClick={handleClose} className={classes.button1}>
-                <Typography variant body2> Cancel </Typography>
-              </Button>
-              <Button  disabled
-                className={classes.button0} autoFocus type="submit"
-                variant="contained"
-                color="primary">
-                <Typography variant body2 > {isDelete ? "UNDEPLOY LATER" : "DEPLOY"} </Typography>
-              </Button>
-              <Button onClick={handleSubmit}
-                className={classes.button0} autoFocus type="submit"
-                variant="contained"
-                color="primary">
-                <Typography variant body2 > {isDelete ? "UNDEPLOY" : "DEPLOY"} </Typography>
-              </Button>
-            </DialogActions>
-          </>
-          :
-          <>
-            <DialogTitle id="alert-dialog-title" className={classes.title}>
-            No Kubernetes contexts detected
-            </DialogTitle>
-            <DialogContent>
-              <DialogContentText id="alert-dialog-description" className={classes.subtitle}>
-                <Typography variant="subtitle1">Please upload kube config file.</Typography>
-              </DialogContentText>
-            </DialogContent>
-          </>
-        }
+                               </Tooltip>
+                             </div>
+                           ))
+                         }
+                       </div>
+                     </Typography>
+                     :
+                     <Typography variant="subtitle1" style={{ marginTop : "20px" }} >No contexts detected.</Typography>
+                 }
+               </DialogContentText>
+             </DialogContent>
+           </>
+          }
+          { isValidation &&
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description" className={classes.subtitle}>
+
+              {validationComp}
+            </DialogContentText>
+          </DialogContent>
+          }
+          <DialogActions className={classes.actions}>
+            <Button onClick={ handleClose } className={classes.button1}>
+              <Typography variant body2> Cancel </Typography>
+            </Button>
+            <Button  disabled
+              className={classes.button0} autoFocus type="submit"
+              variant="contained"
+              color="primary">
+              <Typography variant body2 > {isDelete ? "UNDEPLOY LATER" : "DEPLOY LATER"} </Typography>
+            </Button>
+            <Button onClick={ handleSubmit }
+              className={classes.button0} autoFocus type="submit"
+              variant="contained"
+              color="primary">
+              <Typography variant body2 > {isDelete ? "UNDEPLOY" : "DEPLOY"} </Typography>
+            </Button>
+          </DialogActions>
+        </>
       </Dialog>
     </div>
   )

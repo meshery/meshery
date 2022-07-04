@@ -56,6 +56,32 @@ enum MeshType {
   CILIUM_SERVICE_MESH
 }
 
+enum MesheryController {
+    BROKER
+    OPERATOR
+    MESHSYNC
+  }
+
+enum MesheryControllerStatus {
+    DEPLOYED
+    NOTDEPLOYED
+    DEPLOYING
+    UNKOWN
+  }
+
+type MesheryControllersStatusListItem {
+    contextId: String!
+    controller: MesheryController! 
+    status: MesheryControllerStatus!
+  }
+
+type MeshSyncEvent {
+    type: String!
+    object: Any!
+    contextId: String!
+  }
+
+
 enum Status {
   # Enabled
   ENABLED
@@ -470,6 +496,17 @@ type Subscription {
 
   # Listen to changes in Broker (NATS) Connection
   subscribeBrokerConnection: Boolean!
+
+  # Listen to changes in the status of meshery controllers
+  subscribeMesheryControllersStatus(
+    k8scontextIDs: [String!]
+  ): [MesheryControllersStatusListItem!]!
+  
+  # Listen to the events that MeshSync is sending through Meshery Broker.
+  # Note: It does not listen to the changes in meshery database, but to meshsync events
+  subscribeMeshSyncEvents(
+    k8scontextIDs: [String!]
+  ) : MeshSyncEvent!
 }
 
 type OAMCapability {
