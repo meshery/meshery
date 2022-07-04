@@ -239,11 +239,6 @@ func main() {
 	mctrlHelper := models.NewMesheryControllersHelper(log, operatorDeploymentConfig, dbHandler)
 	k8sComponentsRegistrationHelper := models.NewComponentsRegistrationHelper(log)
 
-	// purge the meshsync objects in the database on startup
-	err = models.RemoveStaleObjects(*dbHandler)
-	if err != nil {
-		logrus.Error(err)
-	}
 	h := handlers.NewHandlerInstance(hc, meshsyncCh, log, brokerConn, k8sComponentsRegistrationHelper, mctrlHelper, dbHandler)
 
 	b := broadcast.NewBroadcaster(100)
