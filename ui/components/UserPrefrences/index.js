@@ -25,7 +25,7 @@ const CustomFormContaainer = styled(Box)(() => ({
 
  const userPrefs = ExtensionPointSchemaValidator("user_prefs")();
 
-  const handleTabValChange  = (newVal) =>{
+  const handleTabValChange  = (event, newVal) =>{
     SetTabVal(newVal);
   }
     return(
