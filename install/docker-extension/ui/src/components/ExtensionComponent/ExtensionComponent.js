@@ -222,6 +222,7 @@ const ExtensionsComponent = () => {
   const handleImport = () => {
     const file = document.getElementById("upload-button").files[0];
     // Create a reader
+    const type=String(file.name)
     const reader = new FileReader();
     reader.addEventListener("load", (event) => {
       let body = { save: true };
@@ -230,7 +231,11 @@ const ExtensionsComponent = () => {
         ...body,
         application_data: { name, application_file: event.target.result },
       });
-
+      if(!(type.includes(".yaml")||type.includes(".yml"))){
+        window.ddClient.desktopUI.toast.error("Some error occured while uploading the compose file. ")
+        return ;
+      }
+      
       fetch(proxyUrl + "/api/application", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8" },
@@ -241,8 +246,11 @@ const ExtensionsComponent = () => {
           window.ddClient.desktopUI.toast.success("Compose file has been uploaded with name: " + name);
         })
         .catch(() => window.ddClient.desktopUI.toast.error("Some error occured while uploading the compose file."));
-    });
+      
+      });
     reader.readAsText(file);
+  
+
   };
 
   return (

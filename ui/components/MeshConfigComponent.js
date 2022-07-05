@@ -869,9 +869,18 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
 
     if (response === "IMPORT") {
       if (formData.get("k8sfile") === null) {
-        handleError("No file selected.")("Please select a valid kube config")
+        handleError("No file selected")("Please select a valid kube config")
         return;
       }
+
+      const inputFile = ( formData.get( "k8sfile" ).name );
+      const invalidExtensions = /^.*\.(jpg|gif|jpeg|pdf|png|svg)$/i;
+
+      if (invalidExtensions.test(inputFile)  ) {
+        handleError("Invalid file selected")("Please select a valid kube config")
+        return;
+      }
+
       uploadK8SConfig().then(() => {
         handleSuccess("successfully uploaded kubernetes config");
         fetchAllContexts(25)
