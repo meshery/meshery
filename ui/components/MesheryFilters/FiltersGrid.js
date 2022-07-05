@@ -1,11 +1,11 @@
 //@ts-check
-import { Grid } from "@material-ui/core";
+import { Grid, Typography } from "@material-ui/core";
 import { Pagination } from "@material-ui/lab";
 import React, { useState } from "react";
 import FiltersCard from "./FiltersCard";
 import { makeStyles } from "@material-ui/core/styles";
 import FILE_OPS from "../../utils/configurationFileHandlersEnum";
-
+import ConfirmationMsg from "../ConfirmationModal";
 
 const INITIAL_GRID_SIZE = { xl : 4, md : 6, xs : 12 };
 
@@ -36,12 +36,38 @@ const useStyles = makeStyles(() => ({
     justifyContent : "center",
     alignItems : "center",
     marginTop : "2rem"
+  },
+  text : {
+    padding : "5px"
   }
 }))
 
 function FiltersGrid({ filters=[],handleDeploy, handleSubmit, setSelectedFilter, selectedFilter, pages = 1,setPage, selectedPage }) {
 
   const classes = useStyles()
+
+  const [modalOpen, setModalOpen] = useState({
+    open : false,
+    deploy : false,
+    filter_file : null
+  });
+
+  const handleModalClose = () => {
+    setModalOpen({
+      open : false,
+      deploy : false,
+      filter_file : null
+    });
+  }
+
+  const handleModalOpen = (filter_file, isDeploy) => {
+    setModalOpen({
+      open : true,
+      deploy : isDeploy,
+      filter_file : filter_file
+    });
+  }
+
   return (
     <div>
       {!selectedFilter.show &&
@@ -50,7 +76,7 @@ function FiltersGrid({ filters=[],handleDeploy, handleSubmit, setSelectedFilter,
           <FilterCardGridItem
             key={filter.id}
             filter={filter}
-            handleDeploy={handleDeploy}
+            handleDeploy={() => handleModalOpen(filter.filter_file, true)}
             handleSubmit={handleSubmit}
             setSelectedFilters={setSelectedFilter}
           />
@@ -65,6 +91,13 @@ function FiltersGrid({ filters=[],handleDeploy, handleSubmit, setSelectedFilter,
           </div>
         )
         : null}
+      <ConfirmationMsg
+        open={modalOpen.open}
+        handleClose={handleModalClose}
+        submit={() => handleDeploy(modalOpen.filter_file)}
+        isDelete={!modalOpen.deploy}
+        title={<Typography variant="h6" className={classes.text} >The selected operation will be applied to following contexts.</Typography>}
+      />
     </div>
   );
 }

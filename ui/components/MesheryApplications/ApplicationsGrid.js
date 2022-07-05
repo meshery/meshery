@@ -1,10 +1,11 @@
 //@ts-check
-import { Grid } from "@material-ui/core";
+import { Grid, Typography } from "@material-ui/core";
 import { Pagination } from "@material-ui/lab";
 import React, { useState } from "react";
 import MesheryApplicationCard from "./ApplicationsCard";
 import { makeStyles } from "@material-ui/core/styles";
 import FILE_OPS from "../../utils/configurationFileHandlersEnum";
+import ConfirmationMsg from "../ConfirmationModal";
 
 
 const INITIAL_GRID_SIZE = { xl : 4, md : 6, xs : 12 };
@@ -39,6 +40,9 @@ const useStyles = makeStyles(() => ({
     justifyContent : "center",
     alignItems : "center",
     marginTop : "2rem"
+  },
+  text : {
+    padding : "5px"
   }
 }))
 
@@ -65,6 +69,29 @@ const useStyles = makeStyles(() => ({
 function MesheryApplicationGrid({ applications=[],handleDeploy, handleUnDeploy, handleSubmit, setSelectedApplication, selectedApplication, pages = 1,setPage, selectedPage }) {
 
   const classes = useStyles()
+
+  const [modalOpen, setModalOpen] = useState({
+    open : false,
+    deploy : false,
+    application_file : null
+  });
+
+  const handleModalClose = () => {
+    setModalOpen({
+      open : false,
+      deploy : false,
+      application_file : null
+    });
+  }
+
+  const handleModalOpen = (app_file, isDeploy) => {
+    setModalOpen({
+      open : true,
+      deploy : isDeploy,
+      application_file : app_file
+    });
+  }
+
   return (
     <div>
       {!selectedApplication.show &&
@@ -73,8 +100,8 @@ function MesheryApplicationGrid({ applications=[],handleDeploy, handleUnDeploy, 
           <ApplicationsGridItem
             key={application.id}
             application={application}
-            handleDeploy={handleDeploy}
-            handleUnDeploy={handleUnDeploy}
+            handleDeploy={() => handleModalOpen(application.application_file, true)}
+            handleUnDeploy={() => handleModalOpen(application.application_file, false)}
             handleSubmit={handleSubmit}
             setSelectedApplications={setSelectedApplication}
           />
@@ -89,6 +116,13 @@ function MesheryApplicationGrid({ applications=[],handleDeploy, handleUnDeploy, 
           </div>
         )
         : null}
+      <ConfirmationMsg
+        open={modalOpen.open}
+        handleClose={handleModalClose}
+        submit={modalOpen.deploy ? () => handleDeploy(modalOpen.application_file) : () => handleUnDeploy(modalOpen.application_file)}
+        isDelete={!modalOpen.deploy}
+        title={<Typography variant="h6" className={classes.text} >The selected operation will be applied to following contexts.</Typography>}
+      />
     </div>
   );
 }

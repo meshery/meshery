@@ -1,11 +1,12 @@
 //@ts-check
-import { Grid } from "@material-ui/core";
+import { Grid, Typography } from "@material-ui/core";
 import { Pagination } from "@material-ui/lab";
 import React, { useState } from "react";
 import MesheryPatternCard from "./MesheryPatternCard";
 import { makeStyles } from "@material-ui/core/styles";
 import PatternConfiguratorComponent from "../configuratorComponents/patternConfigurator"
 import FILE_OPS from "../../utils/configurationFileHandlersEnum";
+import ConfirmationMsg from "../ConfirmationModal";
 
 
 const INITIAL_GRID_SIZE = { xl : 4, md : 6, xs : 12 };
@@ -40,6 +41,9 @@ const useStyles = makeStyles(() => ({
     justifyContent : "center",
     alignItems : "center",
     marginTop : "2rem"
+  },
+  text : {
+    padding : "5px"
   }
 }))
 
@@ -66,6 +70,29 @@ const useStyles = makeStyles(() => ({
 function MesheryPatternGrid({ patterns=[],handleDeploy, handleUnDeploy, handleSubmit, setSelectedPattern, selectedPattern, pages = 1,setPage, selectedPage }) {
 
   const classes = useStyles()
+
+  const [modalOpen, setModalOpen] = useState({
+    open : false,
+    deploy : false,
+    pattern_file : null
+  });
+
+  const handleModalClose = () => {
+    setModalOpen({
+      open : false,
+      deploy : false,
+      pattern_file : null
+    });
+  }
+
+  const handleModalOpen = (pattern_file, isDeploy) => {
+    setModalOpen({
+      open : true,
+      deploy : isDeploy,
+      pattern_file : pattern_file
+    });
+  }
+
   return (
     <div>
       {selectedPattern.show &&
@@ -77,8 +104,8 @@ function MesheryPatternGrid({ patterns=[],handleDeploy, handleUnDeploy, handleSu
           <PatternCardGridItem
             key={pattern.id}
             pattern={pattern}
-            handleDeploy={handleDeploy}
-            handleUnDeploy={handleUnDeploy}
+            handleDeploy={() => handleModalOpen(pattern.pattern_file, true)}
+            handleUnDeploy={() => handleModalOpen(pattern.pattern_file, false)}
             handleSubmit={handleSubmit}
             setSelectedPatterns={setSelectedPattern}
           />
@@ -93,6 +120,13 @@ function MesheryPatternGrid({ patterns=[],handleDeploy, handleUnDeploy, handleSu
           </div>
         )
         : null}
+      <ConfirmationMsg
+        open={modalOpen.open}
+        handleClose={handleModalClose}
+        submit={modalOpen.deploy ? () => handleDeploy(modalOpen.pattern_file) : () => handleUnDeploy(modalOpen.pattern_file)}
+        isDelete={!modalOpen.deploy}
+        title={<Typography variant="h6" className={classes.text} >The selected operation will be applied to following contexts.</Typography>}
+      />
     </div>
   );
 }
