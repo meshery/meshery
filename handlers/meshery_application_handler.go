@@ -23,7 +23,6 @@ type MesheryApplicationRequestBody struct {
 
 // swagger:route POST /api/application/deploy ApplicationsAPI idPostDeployApplicationFile
 // Handle POST request for Application File Deploy
-//
 // Deploy an attached application file with the request
 // responses:
 //  200: applicationFilesResponseWrapper
@@ -126,17 +125,8 @@ func (h *Handler) handleApplicationPOST(
 
 		bytApplication := []byte(mesheryApplication.ApplicationFile)
 		// check whether the uploaded file is a docker compose file
-		if kompose.IsManifestADockerCompose(bytApplication) {
-			if err := kompose.VaildateDockerComposeFile(bytApplication); err != nil {
-				obj := "validate"
-				h.log.Error(ErrApplicationFailure(err, obj))
-				http.Error(rw, ErrApplicationFailure(err, obj).Error(), http.StatusInternalServerError)
-				return
-			}
-			if err := kompose.FormatComposeFile(&bytApplication); err != nil {
-				obj := "format"
-				h.log.Warn(ErrApplicationFailure(err, obj))
-			}
+		err := kompose.IsManifestADockerCompose(bytApplication, "")
+		if err == nil {
 			res, err := kompose.Convert(bytApplication) // convert the docker compose file into kubernetes manifest
 			if err != nil {
 				obj := "convert"
