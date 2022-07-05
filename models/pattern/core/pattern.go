@@ -428,7 +428,7 @@ func createPatternServiceFromCoreK8s(manifest map[string]interface{}) (string, S
 		id = uid.String()
 	}
 	if apiVersion == "" || kind == "" {
-		return "", Service{}, ErrCreatePatternService(fmt.Errorf("empty apiVersion or kind"))
+		return "", Service{}, ErrCreatePatternService(fmt.Errorf("empty apiVersion or kind in manifest"))
 	}
 	w := GetWorkloadsByK8sAPIVersionKind(apiVersion, kind)
 
