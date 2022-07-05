@@ -33,5 +33,21 @@ $(document).ready(function() {
              })
              $("#link_" + div_id).append(children);
         });
+        //added 'selected' tag to the first element of toc
+        $('.md-nav__link').first().addClass('selected');
+
+        $(window).scroll(function(e){
+          // Detect how far are we from the top of the page
+          let windowTop = $(this).scrollTop();
+          // Loop through every navigation menu item
+          $('.md-nav__link').each(function (event) {       
+              if (windowTop >= $($(this).attr('href')).offset().top - 100) {
+              // Remove 'active' from previously highlighted menu items
+              $('.selected').removeClass('selected');
+              // Highlight the current menu item by adding 'active' class
+              $(this).addClass('selected');
+          }
+        });
+      })
     });
 </script>
