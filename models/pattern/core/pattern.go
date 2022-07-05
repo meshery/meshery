@@ -339,10 +339,10 @@ func NewPatternFileFromK8sManifest(data string, ignoreErrors bool) (Pattern, err
 	}
 
 	manifests := strings.Split(data, "\n---\n")
-	//For `---` separated manifests, even if only one manifest is there followed/preceeded by multiple `\n---\n`- the manifest be will be valid
+	//For `---` separated manifests, even if only one manifest is there followed/preceded by multiple `\n---\n`- the manifest be will be valid
 	//If there is no data present (except \n---\n) , then the yaml will be marked as empty and error will be thrown
 	if manifestIsEmpty(manifests) {
-		return pattern, ErrParseK8sManifest(fmt.Errorf("No data in the passed manifest"))
+		return pattern, ErrParseK8sManifest(fmt.Errorf("no data in the passed manifest"))
 	}
 ManifestLoop:
 	for _, manifestYAML := range manifests {
