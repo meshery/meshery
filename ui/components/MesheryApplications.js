@@ -56,9 +56,9 @@ const styles = (theme) => ({
     marginLeft : "auto",
     paddingLeft : "1rem"
   },
-  text : {
-    padding : theme.spacing(1)
-  }
+  // text : {
+  //   padding : theme.spacing(1)
+  // }
 });
 
 
@@ -221,7 +221,8 @@ function MesheryApplications({
   const [modalOpen, setModalOpen] = useState({
     open : false,
     deploy : false,
-    application_file : null
+    application_file : null,
+    name : ""
   });
   const [viewType, setViewType] = useState(
     /**  @type {TypeView} */
@@ -244,11 +245,12 @@ function MesheryApplications({
     });
   }
 
-  const handleModalOpen = (app_file, isDeploy) => {
+  const handleModalOpen = (app_file, name, isDeploy) => {
     setModalOpen({
       open : true,
       deploy : isDeploy,
-      application_file : app_file
+      application_file : app_file,
+      name : name
     });
   }
   /**
@@ -549,13 +551,13 @@ function MesheryApplications({
             <>
               <IconButton
                 title="Deploy"
-                onClick={() => handleModalOpen(rowData.application_file, true)}
+                onClick={() => handleModalOpen(rowData.application_file, rowData.name, true)}
               >
                 <DoneAllIcon data-cy="deploy-button" />
               </IconButton>
               <IconButton
                 title="Undeploy"
-                onClick={() => handleModalOpen(rowData.application_file, false)}
+                onClick={() => handleModalOpen(rowData.application_file, rowData.name, false)}
               >
                 <UndeployIcon fill="rgba(0, 0, 0, 0.54)" data-cy="undeploy-button" />
               </IconButton>
@@ -748,7 +750,7 @@ function MesheryApplications({
           handleClose={handleModalClose}
           submit={modalOpen.deploy ? () => handleDeploy(modalOpen.application_file) : () => handleUnDeploy(modalOpen.application_file)}
           isDelete={!modalOpen.deploy}
-          title={<Typography variant="h6" className={classes.text} >The selected operation will be applied to following contexts.</Typography>}
+          title={ modalOpen.name }
         />
         <PromptComponent ref={modalRef} />
       </NoSsr>

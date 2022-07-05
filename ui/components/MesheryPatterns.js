@@ -97,9 +97,9 @@ const styles = (theme) => ({
   addIcon : {
     paddingRight : ".35rem",
   },
-  text : {
-    padding : "5px"
-  }
+  // text : {
+  //   padding : "5px"
+  // }
 });
 
 const useStyles = makeStyles((theme) => ({
@@ -243,7 +243,8 @@ function MesheryPatterns({
   const [modalOpen, setModalOpen] = useState({
     open : false,
     deploy : false,
-    pattern_file : null
+    pattern_file : null,
+    name : ""
   });
 
   const getMuiTheme = () => createTheme({
@@ -335,18 +336,20 @@ function MesheryPatterns({
   }, [page, pageSize, search, sortOrder]);
 
   const handleModalClose = () => {
+    // @ts-ignore
     setModalOpen({
       open : false,
-      deploy : false,
-      pattern_file : null
+      pattern_file : null,
+      name : ""
     });
   }
 
-  const handleModalOpen = (pattern_file, isDeploy) => {
+  const handleModalOpen = (pattern_file, name, isDeploy) => {
     setModalOpen({
       open : true,
       deploy : isDeploy,
-      pattern_file : pattern_file
+      pattern_file : pattern_file,
+      name : name
     });
   }
 
@@ -629,13 +632,13 @@ function MesheryPatterns({
               {/*</Tooltip> */}
               <IconButton
                 title="Deploy"
-                onClick={() => handleModalOpen(rowData.pattern_file, true)}
+                onClick={() => handleModalOpen(rowData.pattern_file, rowData.name, true)}
               >
                 <DoneAllIcon data-cy="deploy-button" />
               </IconButton>
               <IconButton
                 title="Undeploy"
-                onClick={() => handleModalOpen(rowData.pattern_file, false)}
+                onClick={() => handleModalOpen(rowData.pattern_file, rowData.name, false)}
               >
                 <UndeployIcon fill="rgba(0, 0, 0, 0.54)" data-cy="undeploy-button" />
               </IconButton>
@@ -890,7 +893,7 @@ function MesheryPatterns({
           handleClose={handleModalClose}
           submit={modalOpen.deploy ? () => handleDeploy(modalOpen.pattern_file) : () => handleUnDeploy(modalOpen.pattern_file)}
           isDelete={!modalOpen.deploy}
-          title={<Typography variant="h6" className={classes.text} >The selected operation will be applied to following contexts.</Typography>}
+          title={ modalOpen.name }
         />
         <PromptComponent ref={modalRef} />
       </NoSsr>

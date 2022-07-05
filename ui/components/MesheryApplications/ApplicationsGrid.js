@@ -1,5 +1,5 @@
 //@ts-check
-import { Grid, Typography } from "@material-ui/core";
+import { Grid } from "@material-ui/core";
 import { Pagination } from "@material-ui/lab";
 import React, { useState } from "react";
 import MesheryApplicationCard from "./ApplicationsCard";
@@ -41,9 +41,9 @@ const useStyles = makeStyles(() => ({
     alignItems : "center",
     marginTop : "2rem"
   },
-  text : {
-    padding : "5px"
-  }
+  // text : {
+  //   padding : "5px"
+  // }
 }))
 
 /**
@@ -73,22 +73,24 @@ function MesheryApplicationGrid({ applications=[],handleDeploy, handleUnDeploy, 
   const [modalOpen, setModalOpen] = useState({
     open : false,
     deploy : false,
-    application_file : null
+    application_file : null,
+    name : ""
   });
 
   const handleModalClose = () => {
     setModalOpen({
       open : false,
-      deploy : false,
-      application_file : null
+      application_file : null,
+      name : ""
     });
   }
 
-  const handleModalOpen = (app_file, isDeploy) => {
+  const handleModalOpen = (app, isDeploy) => {
     setModalOpen({
       open : true,
       deploy : isDeploy,
-      application_file : app_file
+      application_file : app.application_file,
+      name : app.name
     });
   }
 
@@ -100,8 +102,8 @@ function MesheryApplicationGrid({ applications=[],handleDeploy, handleUnDeploy, 
           <ApplicationsGridItem
             key={application.id}
             application={application}
-            handleDeploy={() => handleModalOpen(application.application_file, true)}
-            handleUnDeploy={() => handleModalOpen(application.application_file, false)}
+            handleDeploy={() => handleModalOpen(application, true)}
+            handleUnDeploy={() => handleModalOpen(application, false)}
             handleSubmit={handleSubmit}
             setSelectedApplications={setSelectedApplication}
           />
@@ -121,7 +123,7 @@ function MesheryApplicationGrid({ applications=[],handleDeploy, handleUnDeploy, 
         handleClose={handleModalClose}
         submit={modalOpen.deploy ? () => handleDeploy(modalOpen.application_file) : () => handleUnDeploy(modalOpen.application_file)}
         isDelete={!modalOpen.deploy}
-        title={<Typography variant="h6" className={classes.text} >The selected operation will be applied to following contexts.</Typography>}
+        title={ modalOpen.name }
       />
     </div>
   );

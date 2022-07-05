@@ -1,5 +1,5 @@
 //@ts-check
-import { Grid, Typography } from "@material-ui/core";
+import { Grid } from "@material-ui/core";
 import { Pagination } from "@material-ui/lab";
 import React, { useState } from "react";
 import MesheryPatternCard from "./MesheryPatternCard";
@@ -42,9 +42,9 @@ const useStyles = makeStyles(() => ({
     alignItems : "center",
     marginTop : "2rem"
   },
-  text : {
-    padding : "5px"
-  }
+  // text : {
+  //   padding : "5px"
+  // }
 }))
 
 /**
@@ -74,22 +74,24 @@ function MesheryPatternGrid({ patterns=[],handleDeploy, handleUnDeploy, handleSu
   const [modalOpen, setModalOpen] = useState({
     open : false,
     deploy : false,
-    pattern_file : null
+    pattern_file : null,
+    name : ""
   });
 
   const handleModalClose = () => {
     setModalOpen({
       open : false,
-      deploy : false,
-      pattern_file : null
+      pattern_file : null,
+      name : ""
     });
   }
 
-  const handleModalOpen = (pattern_file, isDeploy) => {
+  const handleModalOpen = (pattern, isDeploy) => {
     setModalOpen({
       open : true,
       deploy : isDeploy,
-      pattern_file : pattern_file
+      pattern_file : pattern.pattern_file,
+      name : pattern.name
     });
   }
 
@@ -104,8 +106,8 @@ function MesheryPatternGrid({ patterns=[],handleDeploy, handleUnDeploy, handleSu
           <PatternCardGridItem
             key={pattern.id}
             pattern={pattern}
-            handleDeploy={() => handleModalOpen(pattern.pattern_file, true)}
-            handleUnDeploy={() => handleModalOpen(pattern.pattern_file, false)}
+            handleDeploy={() => handleModalOpen(pattern, true)}
+            handleUnDeploy={() => handleModalOpen(pattern, false)}
             handleSubmit={handleSubmit}
             setSelectedPatterns={setSelectedPattern}
           />
@@ -125,7 +127,7 @@ function MesheryPatternGrid({ patterns=[],handleDeploy, handleUnDeploy, handleSu
         handleClose={handleModalClose}
         submit={modalOpen.deploy ? () => handleDeploy(modalOpen.pattern_file) : () => handleUnDeploy(modalOpen.pattern_file)}
         isDelete={!modalOpen.deploy}
-        title={<Typography variant="h6" className={classes.text} >The selected operation will be applied to following contexts.</Typography>}
+        title={ modalOpen.name }
       />
     </div>
   );

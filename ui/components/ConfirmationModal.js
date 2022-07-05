@@ -46,8 +46,8 @@ const styles = (theme) => ({
   },
   title : {
     textAlign : 'center',
-    minWidth : 300,
-    padding : theme.spacing(1),
+    // minWidth : 300,
+    padding : theme.spacing(2),
     color : '#fff',
     backgroundColor : '#607d8b',
     fontSize : "1rem",
@@ -80,6 +80,7 @@ const styles = (theme) => ({
   actions : {
     display : 'flex',
     justifyContent : 'space-evenly',
+    marginTop : theme.spacing(-3)
   },
   all : {
     display : "table"
@@ -103,11 +104,6 @@ function ConfirmationMsg(props) {
 
   const [contexts, setContexts] = useState(k8scontext);
   let isValidation = validationComp !== null && validationComp !== undefined;
-  // const [tabVal, setTabVal] = useState(0);
-  // const handleTabValChange = (event, newVal) => {
-  //   setTabVal(newVal);
-  // }
-
 
   const handleKubernetesClick = (ctxID) => {
     updateProgress({ showProgress : true })
@@ -180,16 +176,16 @@ function ConfirmationMsg(props) {
         aria-describedby="alert-dialog-description"
         className={classes.dialogBox}
       >
-        <DialogTitle id="alert-dialog-title" className={classes.title}>
-          {title}
-        </DialogTitle>
         <>
           { !isValidation &&
            <>
+             <DialogTitle id="alert-dialog-title" className={classes.title}>
+               { isDelete ? "Und" : "D"}eploying {title}
+             </DialogTitle>
              <DialogContent>
                <DialogContentText id="alert-dialog-description" className={classes.subtitle}>
                  <Typography variant="h6" style={{ fontWeight : "bolder", marginTop : "-12px" }} > Environment </Typography>
-                 <Divider />
+                 <Divider style={{ marginBottom : "0.5rem" }} />
                  {
                    k8scontext.length > 0 ?
                      <Typography variant="body1">
@@ -205,6 +201,7 @@ function ConfirmationMsg(props) {
                              <Search />
                            )
                          }}
+                         // margin="none"
                        />
                        <div className={classes.all}>
                          <Checkbox

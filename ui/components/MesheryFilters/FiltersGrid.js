@@ -1,5 +1,5 @@
 //@ts-check
-import { Grid, Typography } from "@material-ui/core";
+import { Grid } from "@material-ui/core";
 import { Pagination } from "@material-ui/lab";
 import React, { useState } from "react";
 import FiltersCard from "./FiltersCard";
@@ -22,7 +22,7 @@ function FilterCardGridItem({ filter, handleDeploy, handleSubmit, setSelectedFil
         filter_file={filter.filter_file}
         requestFullSize={() => setGridProps({ xl : 12, md : 12, xs : 12 })}
         requestSizeRestore={() => setGridProps(INITIAL_GRID_SIZE)}
-        handleDeploy={() => handleDeploy(filter.filter_file)}
+        handleDeploy={() => handleDeploy(filter)}
         deleteHandler={() => handleSubmit({ data : yaml, id : filter.id, type : FILE_OPS.DELETE ,name : filter.name })}
         setSelectedFilters={() => setSelectedFilters({ filter : filter, show : true })}
         setYaml={setYaml}
@@ -37,9 +37,9 @@ const useStyles = makeStyles(() => ({
     alignItems : "center",
     marginTop : "2rem"
   },
-  text : {
-    padding : "5px"
-  }
+  // text : {
+  //   padding : "5px"
+  // }
 }))
 
 function FiltersGrid({ filters=[],handleDeploy, handleSubmit, setSelectedFilter, selectedFilter, pages = 1,setPage, selectedPage }) {
@@ -49,22 +49,24 @@ function FiltersGrid({ filters=[],handleDeploy, handleSubmit, setSelectedFilter,
   const [modalOpen, setModalOpen] = useState({
     open : false,
     deploy : false,
-    filter_file : null
+    filter_file : null,
+    name : ""
   });
 
   const handleModalClose = () => {
     setModalOpen({
       open : false,
-      deploy : false,
-      filter_file : null
+      filter_file : null,
+      name : ""
     });
   }
 
-  const handleModalOpen = (filter_file, isDeploy) => {
+  const handleModalOpen = (filter, isDeploy) => {
     setModalOpen({
       open : true,
       deploy : isDeploy,
-      filter_file : filter_file
+      filter_file : filter.filter_file,
+      name : filter.name
     });
   }
 
@@ -76,7 +78,7 @@ function FiltersGrid({ filters=[],handleDeploy, handleSubmit, setSelectedFilter,
           <FilterCardGridItem
             key={filter.id}
             filter={filter}
-            handleDeploy={() => handleModalOpen(filter.filter_file, true)}
+            handleDeploy={() => handleModalOpen(filter, true)}
             handleSubmit={handleSubmit}
             setSelectedFilters={setSelectedFilter}
           />
@@ -96,7 +98,7 @@ function FiltersGrid({ filters=[],handleDeploy, handleSubmit, setSelectedFilter,
         handleClose={handleModalClose}
         submit={() => handleDeploy(modalOpen.filter_file)}
         isDelete={!modalOpen.deploy}
-        title={<Typography variant="h6" className={classes.text} >The selected operation will be applied to following contexts.</Typography>}
+        title={ modalOpen.name }
       />
     </div>
   );

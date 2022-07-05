@@ -59,9 +59,9 @@ const styles = (theme) => ({
     marginLeft : "auto",
     paddingLeft : "1rem"
   },
-  text : {
-    padding : "5px"
-  }
+  // text : {
+  //   padding : "5px"
+  // }
 });
 
 const useStyles = makeStyles(() => ({
@@ -175,7 +175,8 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
   const [modalOpen, setModalOpen] = useState({
     open : false,
     filter_file : null,
-    deploy : false
+    deploy : false,
+    name : ""
   });
 
   const getMuiTheme = () => createTheme({
@@ -316,11 +317,12 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     });
   };
 
-  const handleModalOpen = (app_file, isDeploy) => {
+  const handleModalOpen = (filter_file, name, isDeploy) => {
     setModalOpen({
       open : true,
-      filter_file : app_file,
-      deploy : isDeploy
+      filter_file : filter_file,
+      deploy : isDeploy,
+      name : name
     });
   }
 
@@ -328,7 +330,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     setModalOpen({
       open : false,
       filter_file : null,
-      // deploy: false
+      name : ""
     });
   }
 
@@ -486,7 +488,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
                   title="Deploy"
                   aria-label="deploy"
                   color="inherit"
-                  onClick={() => handleModalOpen(rowData.filter_file, true)} //deploy endpoint to be called here
+                  onClick={() => handleModalOpen(rowData.filter_file, rowData.name, true)}
                   data-cy="deploy-button"
                 />
               </IconButton>
@@ -674,7 +676,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
           handleClose={handleModalClose}
           submit={() => handleDeploy(modalOpen.filter_file)}
           isDelete={!modalOpen.deploy}
-          title={<Typography variant="h6" className={classes.text} >The selected operation will be applied to following contexts.</Typography>}
+          title={modalOpen.name}
         />
       </NoSsr>
     </>
