@@ -341,7 +341,9 @@ ManifestLoop:
 			}
 			return pattern, ErrParseK8sManifest(err)
 		}
-
+		if len(manifest) == 0 {
+			continue
+		}
 		// Recursive casting
 		manifest = utils.RecursiveCastMapStringInterfaceToMapStringInterface(manifest)
 		if manifest == nil {
@@ -396,7 +398,6 @@ func createPatternServiceFromCoreK8s(manifest map[string]interface{}) (string, S
 		namespace = "default"
 	}
 	fmt.Printf("%+#v\n", manifest)
-
 	// rest will store a map of everything other than the above mentioned fields
 	rest := map[string]interface{}{}
 	for k, v := range manifest {
@@ -467,7 +468,6 @@ func createPatternServiceFromExtendedK8s(manifest map[string]interface{}) (strin
 	if err == nil {
 		id = uid.String()
 	}
-
 	w := GetWorkloadsByK8sAPIVersionKind(apiVersion, kind)
 
 	if len(w) == 0 {
