@@ -98,6 +98,7 @@ func (p *Pattern) GetApplicationComponent(name string) (v1alpha1.Component, erro
 		},
 		Spec: v1alpha1.ComponentSpec{
 			Type:     svc.Type,
+			Version:  svc.Version,
 			Settings: svc.Settings,
 		},
 	}

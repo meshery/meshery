@@ -273,18 +273,18 @@ func (h *Handler) LoadContextsAndPersist(token string, prov models.Provider) ([]
 	return contexts, nil
 }
 
-func RegisterK8sComponents(ctxt context.Context, config []byte, ctxId string) (err error) {
+func RegisterK8sComponents(ctxt context.Context, config []byte, ctxID string) (err error) {
 	man, err := core.GetK8Components(ctxt, config)
 	if err != nil {
-		return ErrCreatingKubernetesComponents(err, ctxId)
+		return ErrCreatingKubernetesComponents(err, ctxID)
 	}
 	if man == nil {
-		return ErrCreatingKubernetesComponents(errors.New("generated components are nil"), ctxId)
+		return ErrCreatingKubernetesComponents(errors.New("generated components are nil"), ctxID)
 	}
 	for i, def := range man.Definitions {
 		var ord core.WorkloadCapability
 		ord.Metadata = make(map[string]string)
-		ord.Metadata["io.meshery.ctxid"] = ctxId
+		ord.Metadata["io.meshery.ctxid"] = ctxID
 		ord.Metadata["adapter.meshery.io/name"] = "kubernetes"
 		ord.Host = "<none-local>"
 		ord.OAMRefSchema = man.Schemas[i]
@@ -292,16 +292,16 @@ func RegisterK8sComponents(ctxt context.Context, config []byte, ctxId string) (e
 		var definition v1alpha1.WorkloadDefinition
 		err := json.Unmarshal([]byte(def), &definition)
 		if err != nil {
-			return ErrCreatingKubernetesComponents(err, ctxId)
+			return ErrCreatingKubernetesComponents(err, ctxID)
 		}
 		ord.OAMDefinition = definition
 		content, err := json.Marshal(ord)
 		if err != nil {
-			return ErrCreatingKubernetesComponents(err, ctxId)
+			return ErrCreatingKubernetesComponents(err, ctxID)
 		}
 		err = core.RegisterWorkload(content)
 		if err != nil {
-			return ErrCreatingKubernetesComponents(err, ctxId)
+			return ErrCreatingKubernetesComponents(err, ctxID)
 		}
 	}
 	return nil

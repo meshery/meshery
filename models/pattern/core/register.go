@@ -578,7 +578,8 @@ func GetK8Components(ctxt context.Context, config []byte) (*manifests.Component,
 			parsedManifest := cuectx.BuildExpr(cueParsedManExpr)
 			definitions := parsedManifest.LookupPath(cue.ParsePath("definitions"))
 
-			b, err = manifests.ResolveReferences(b, definitions)
+			referenceResolver := manifests.ResolveOpenApiRefs{}
+			b, err = referenceResolver.ResolveReferences(b, definitions)
 			if err != nil {
 				return
 			}
