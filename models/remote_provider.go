@@ -1897,7 +1897,7 @@ func (l *RemoteProvider) GetMesheryApplications(req *http.Request, page, pageSiz
 }
 
 // GetMesheryApplication gets application for the given applicationID
-func (l *RemoteProvider) GetMesheryApplication(req *http.Request, applicationID string) ([]byte, error) {
+func (l *RemoteProvider) GetMesheryApplication(req *http.Request, applicationID string, source bool) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistMesheryApplications) {
 		logrus.Error("operation not available")
 		return nil, ErrInvalidCapability("PersistMesheryApplications", l.ProviderName)
@@ -1906,8 +1906,11 @@ func (l *RemoteProvider) GetMesheryApplication(req *http.Request, applicationID 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistMesheryApplications)
 
 	logrus.Infof("attempting to fetch application from cloud for id: %s", applicationID)
-
-	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s", l.RemoteProviderURL, ep, applicationID))
+	urls := fmt.Sprintf("%s%s/%s", l.RemoteProviderURL, ep, applicationID)
+	if source {
+		urls += "?source=true"
+	}
+	remoteProviderURL, _ := url.Parse(urls)
 	logrus.Debugf("constructed application url: %s", remoteProviderURL.String())
 	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
 

@@ -94,9 +94,13 @@ func (maap *MesheryApplicationPersister) SaveMesheryApplications(applications []
 	return marshalMesheryApplications(finalApplications), maap.DB.Create(finalApplications).Error
 }
 
-func (maap *MesheryApplicationPersister) GetMesheryApplication(id uuid.UUID) ([]byte, error) {
+func (maap *MesheryApplicationPersister) GetMesheryApplication(id uuid.UUID, source bool) ([]byte, error) {
+	if source {
+		var mesheryApplicationsource MesheryApplicationSource
+		err := maap.DB.First(&mesheryApplicationsource, id).Error
+		return mesheryApplicationsource.Data, err
+	}
 	var mesheryApplication MesheryApplication
-
 	err := maap.DB.First(&mesheryApplication, id).Error
 	return marshalMesheryApplication(&mesheryApplication), err
 }

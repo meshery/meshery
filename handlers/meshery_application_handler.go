@@ -7,6 +7,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/models"
+	"github.com/layer5io/meshery/models/pattern/core"
 	"github.com/layer5io/meshkit/utils/kubernetes/kompose"
 )
 
@@ -132,7 +133,27 @@ func (h *Handler) handleApplicationPOST(
 				http.Error(rw, ErrApplicationFailure(err, obj).Error(), http.StatusInternalServerError) // sending a 500 when we cannot convert the file into kuberentes manifest
 				return
 			}
-			mesheryApplication.ApplicationFile = res
+			pattern, err := core.NewPatternFileFromK8sManifest(res, false)
+			if err != nil {
+				obj := "convert"
+				h.log.Error(ErrApplicationFailure(err, obj))
+				http.Error(rw, ErrApplicationFailure(err, obj).Error(), http.StatusInternalServerError) // sending a 500 when we cannot convert the file into kuberentes manifest
+				return
+			}
+			response, err := json.Marshal(pattern)
+			if err != nil {
+				obj := "convert"
+				h.log.Error(ErrApplicationFailure(err, obj))
+				http.Error(rw, ErrApplicationFailure(err, obj).Error(), http.StatusInternalServerError) // sending a 500 when we cannot convert the file into kuberentes manifest
+				return
+			}
+			mesheryApplication.ApplicationFile = string(response)
+			mesheryApplication.SourceID = mesheryApplication.ID
+			mesheryApplication.Source = models.MesheryApplicationSource{
+				ID:   mesheryApplication.ID,
+				Type: models.DOCKER_COMPOSE,
+				Data: bytApplication,
+			}
 		}
 
 		if parsedBody.Save {
@@ -220,7 +241,6 @@ func (h *Handler) DeleteMesheryApplicationHandler(
 	provider models.Provider,
 ) {
 	applicationID := mux.Vars(r)["id"]
-
 	resp, err := provider.DeleteMesheryApplication(r, applicationID)
 	if err != nil {
 		obj := "delete"
@@ -242,8 +262,12 @@ func (h *Handler) GetMesheryApplicationHandler(
 	provider models.Provider,
 ) {
 	applicationID := mux.Vars(r)["id"]
+	var source bool
 
-	resp, err := provider.GetMesheryApplication(r, applicationID)
+	if r.URL.Query().Get("source") == "true" {
+		source = true
+	}
+	resp, err := provider.GetMesheryApplication(r, applicationID, source)
 	if err != nil {
 		obj := "get"
 		h.log.Error(ErrApplicationFailure(err, obj))

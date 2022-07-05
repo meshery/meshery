@@ -746,9 +746,9 @@ func (l *DefaultLocalProvider) GetMesheryApplications(req *http.Request, page, p
 }
 
 // GetMesheryApplication gets application for the given applicationID
-func (l *DefaultLocalProvider) GetMesheryApplication(req *http.Request, applicationID string) ([]byte, error) {
+func (l *DefaultLocalProvider) GetMesheryApplication(req *http.Request, applicationID string, source bool) ([]byte, error) {
 	id := uuid.FromStringOrNil(applicationID)
-	return l.MesheryApplicationPersister.GetMesheryApplication(id)
+	return l.MesheryApplicationPersister.GetMesheryApplication(id, source)
 }
 
 // DeleteMesheryApplication deletes a meshery application with the given id
