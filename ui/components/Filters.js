@@ -135,7 +135,12 @@ function YAMLEditor({ filter, onClose, onSubmit }) {
           <IconButton
             aria-label="Delete"
             color="primary"
-            onClick={() => onSubmit(yaml, filter.id, filter.name, FILE_OPS.DELETE)}
+            onClick={() => onSubmit({
+              data : yaml,
+              id : filter.id,
+              name : filter.name,
+              type : FILE_OPS.DELETE
+            })}
           >
             <DeleteIcon />
           </IconButton>
@@ -330,7 +335,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     };
   }
 
-  function handleSubmit(data, id, name, type) {
+  function handleSubmit({ data, id, type }) {
     updateProgress({ showProgress : true });
     if (type === FILE_OPS.DELETE) {
       dataFetch(
