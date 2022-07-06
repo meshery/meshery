@@ -16,6 +16,7 @@ export default function Lifestyle() {
     [theme.breakpoints.down("md")] : { fontSize : "12px", },
   }));
 
+
   function SelectServiceMesh () {
    
    return (
@@ -46,10 +47,11 @@ export default function Lifestyle() {
         <Grid container spacing={4}>
     <Grid container item xs={12} alignItems="flex-start" justify="space-between" style={{ gap : '2rem', }} >
      <CustomChip label="meshery-linkerd:10001" icon={<img src={img} />}  variant="outlined" />
-     <ReactSelectWrapper label="qwer" />
+     <div style={{width: "80%"}}>
+     <ReactSelectWrapper  label="Namespace"  />
+     </div>
      </Grid>
       </Grid>
-      
       </PaperWithTitle>
     
     )

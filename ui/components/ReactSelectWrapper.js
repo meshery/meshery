@@ -1,24 +1,131 @@
 import React from 'react';
-import CreatableSelect from 'react-select/creatable';
+// import Select from 'react-select';
+import CreatableSelect from 'react-select/Creatable';
+import {Typography, TextField,Paper, Chip, MenuItem } from '@mui/material';
 import { styled } from "@mui/material/styles";
-import { MenuItem,TextField,Typography, Chip} from "@mui/material";
-
 
 const CustomCreatableSelect = styled(CreatableSelect)(({ theme }) => ({
-verticalAlign: "center",
-margin: "auto 0",
-minWidth : '250px',
-flex : '1',
-}));
+  verticalAlign: "center",
+  margin: "auto 0",
+  minWidth : '250px',
+  width: "100%",
+  flex : '1',
+  }));
 
 
-function ReactSelectWrapper (){
-return(                         
-<CustomCreatableSelect
-  textField = "xyz"
-    isClearable  />
-
-)
+function NoOptionsMessage(props) {
+  return (
+    <Typography
+      color="textSecondary"
+    >
+      {props.children}
+    </Typography>
+  );
 }
 
-export default ReactSelectWrapper;
+function inputComponent({ inputRef, ...props }) {
+  return <div style={{display: "flex"}} ref={inputRef} {...props} />;
+}
+
+function Control(props) {
+  return (
+    <TextField
+      fullWidth
+      variant="outlined"
+      
+      InputProps={{ inputComponent,
+       
+        inputProps : {
+          
+          inputRef : props.innerRef,
+          children : props.children,
+          ...props.innerProps,
+        }, }}
+      {...props.selectProps.textFieldProps}
+    />
+  );
+}
+
+function Option(props) {
+  return (
+    <MenuItem
+      buttonRef={props.innerRef}
+      selected={props.isFocused}
+      component="div"
+      style={{ fontWeight : props.isSelected
+        ? 500
+        : 400, }}
+      {...props.innerProps}
+    >
+      {props.children}
+    </MenuItem>
+  );
+}
+
+function Placeholder(props) {
+  return (
+    <Typography
+      color="textSecondary"
+      {...props.innerProps}
+    >
+      {props.children}
+    </Typography>
+  );
+}
+
+function SingleValue(props) {
+  return (
+    <Typography {...props.innerProps}>
+      {props.children}
+    </Typography>
+  );
+}
+
+function ValueContainer(props) {
+  return <div style={{ flex : 1,}}>{props.children}</div>;
+}
+
+function MultiValue(props) {
+  return (
+    <Chip
+      tabIndex={-1}
+      label={props.children}
+      onDelete={props.removeProps.onClick}
+    />
+  );
+}
+
+function Menu(props) {
+  return (
+    <Paper square {...props.innerProps}>
+      {props.children}
+    </Paper>
+  );
+}
+
+const components = {
+  Control,
+  Menu,
+  MultiValue,
+  NoOptionsMessage,
+  Option,
+  Placeholder,
+  SingleValue,
+  ValueContainer,
+};
+
+export default function ReactSelectWrapper ({ label, placeholder}) {
+
+    return (
+      <div >
+          <CustomCreatableSelect
+            textFieldProps={{ label,
+              InputLabelProps : { shrink : true, } }}
+            components={components}
+            placeholder={placeholder}
+            isClearable
+          />
+      </div>
+    );
+  }
+
