@@ -12,7 +12,7 @@ import { closeButtonForSnackbarAction, errorHandlerGenerator, successHandlerGene
 import { pingKubernetes } from "./ConnectionWizard/helpers/kubernetesHelpers";
 import { getK8sConfigIdsFromK8sConfig } from "../utils/multi-ctx";
 import { bindActionCreators } from "redux";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const styles = (theme) => ({
   icon : {
@@ -103,7 +103,13 @@ function ConfirmationMsg(props) {
     selectedK8sContexts, k8scontext, title, subBody, setK8sContexts, enqueueSnackbar, closeSnackbar, isVerify } = props
 
   const [contexts, setContexts] = useState(k8scontext);
+
+  useEffect(() => {
+    setContexts(k8scontext);
+  });
+
   let ModalHeading = "";
+  console.log("QWERTY", k8scontext);
   if (!isVerify) {
     ModalHeading = (isDelete ? "Und" : "D") + "eploying" // needed?? Since Btn do signify deploy/undeploy
   }
@@ -188,7 +194,7 @@ function ConfirmationMsg(props) {
                <DialogContentText id="alert-dialog-description" className={classes.subtitle}>
                  <Typography variant="h6" style={{ fontWeight : "bolder", marginTop : "-12px" }} > Environment </Typography>
                  <Typography variant="body2" style={{ fontWeight : "bolder", margin : "0.2rem" }} > {subBody} </Typography>
-                 <Divider style={{ margin : "0.3rem" }} />
+                 <Divider style={{ marginBottom : "0.7rem" }} />
                  {
                    k8scontext.length > 0 ?
                      <Typography variant="body1">
@@ -259,12 +265,19 @@ function ConfirmationMsg(props) {
             <Button onClick={ handleClose } className={classes.button1}>{/* TODO:change classnane when isVerify*/}
               <Typography variant body2> {isVerify ? "OK" : "Cancel"} </Typography>
             </Button>
-            { !isVerify &&
+            { !isVerify ?
               <Button  disabled
                 className={classes.button0} autoFocus type="submit"
                 variant="contained"
                 color="primary">
                 <Typography variant body2 > {isDelete ? "UNDEPLOY LATER" : "DEPLOY LATER"} </Typography>
+              </Button>
+              :
+              <Button  disabled
+                className={classes.button0} autoFocus type="submit"
+                variant="contained"
+                color="primary">
+                <Typography variant body2 > { "Revalidate" } </Typography>
               </Button>
             }
             {/* TODO:change onClick function and classname when isVerify*/ }
@@ -272,7 +285,7 @@ function ConfirmationMsg(props) {
               className={classes.button0} autoFocus type="submit"
               variant="contained"
               color="primary">
-              <Typography variant body2 > { isVerify ? "Revalidate" : isDelete ? "UNDEPLOY" : "DEPLOY"} </Typography>
+              <Typography variant body2 > { isVerify ? "DEPLOY" : isDelete ? "UNDEPLOY" : "DEPLOY"} </Typography>
             </Button>
           </DialogActions>
         </>
