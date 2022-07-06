@@ -17,7 +17,7 @@ function ApplicationsGridItem({ application,  handleDeploy, handleUnDeploy, hand
   return (
     <Grid item {...gridProps}>
       <MesheryApplicationCard
-        // id={application.id}
+        id={application.id}
         name={application.name}
         updated_at={application.updated_at}
         created_at={application.created_at}

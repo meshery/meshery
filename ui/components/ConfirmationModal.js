@@ -100,11 +100,13 @@ const styles = (theme) => ({
 
 function ConfirmationMsg(props) {
   const { classes, open, handleClose, submit, isDelete,
-    selectedK8sContexts, k8scontext, title, setK8sContexts, enqueueSnackbar, closeSnackbar, validationComp } = props
+    selectedK8sContexts, k8scontext, title, subBody, setK8sContexts, enqueueSnackbar, closeSnackbar, isVerify } = props
 
   const [contexts, setContexts] = useState(k8scontext);
-  let isValidation = validationComp !== null && validationComp !== undefined;
-
+  let ModalHeading = "";
+  if (!isVerify) {
+    ModalHeading = isDelete ? "Und" : "D" + "eploying" // needed?? Since Btn do signify deploy/undeploy
+  }
   const handleKubernetesClick = (ctxID) => {
     updateProgress({ showProgress : true })
     pingKubernetes(
@@ -177,15 +179,16 @@ function ConfirmationMsg(props) {
         className={classes.dialogBox}
       >
         <>
-          { !isValidation &&
+          <DialogTitle id="alert-dialog-title" className={classes.title}>
+            { !isVerify ? ModalHeading : "" } {title}
+          </DialogTitle>
+          { !isVerify &&
            <>
-             <DialogTitle id="alert-dialog-title" className={classes.title}>
-               { isDelete ? "Und" : "D"}eploying {title}
-             </DialogTitle>
              <DialogContent>
                <DialogContentText id="alert-dialog-description" className={classes.subtitle}>
                  <Typography variant="h6" style={{ fontWeight : "bolder", marginTop : "-12px" }} > Environment </Typography>
-                 <Divider style={{ marginBottom : "0.5rem" }} />
+                 <Divider />
+                 <Typography variant="body2" style={{ fontWeight : "bolder", margin : "0.2rem" }} > {subBody} </Typography>
                  {
                    k8scontext.length > 0 ?
                      <Typography variant="body1">
@@ -239,35 +242,37 @@ function ConfirmationMsg(props) {
                        </div>
                      </Typography>
                      :
-                     <Typography variant="subtitle1" style={{ marginTop : "20px" }} >No contexts detected.</Typography>
+                     <Typography variant="subtitle1"  >No contexts detected.</Typography>
                  }
                </DialogContentText>
              </DialogContent>
            </>
           }
-          { isValidation &&
+          { isVerify &&
           <DialogContent>
             <DialogContentText id="alert-dialog-description" className={classes.subtitle}>
-
-              {validationComp}
+              {subBody}
             </DialogContentText>
           </DialogContent>
           }
           <DialogActions className={classes.actions}>
-            <Button onClick={ handleClose } className={classes.button1}>
-              <Typography variant body2> Cancel </Typography>
+            <Button onClick={ handleClose } className={classes.button1}>{/* TODO:change classnane when isVerify*/}
+              <Typography variant body2> {isVerify ? "OK" : "Cancel"} </Typography>
             </Button>
-            <Button  disabled
-              className={classes.button0} autoFocus type="submit"
-              variant="contained"
-              color="primary">
-              <Typography variant body2 > {isDelete ? "UNDEPLOY LATER" : "DEPLOY LATER"} </Typography>
-            </Button>
+            { !isVerify &&
+              <Button  disabled
+                className={classes.button0} autoFocus type="submit"
+                variant="contained"
+                color="primary">
+                <Typography variant body2 > {isDelete ? "UNDEPLOY LATER" : "DEPLOY LATER"} </Typography>
+              </Button>
+            }
+            {/* TODO:change onClick function and classname when isVerify*/ }
             <Button onClick={ handleSubmit }
               className={classes.button0} autoFocus type="submit"
               variant="contained"
               color="primary">
-              <Typography variant body2 > {isDelete ? "UNDEPLOY" : "DEPLOY"} </Typography>
+              <Typography variant body2 > { isVerify ? "Revalidate" : isDelete ? "UNDEPLOY" : "DEPLOY"} </Typography>
             </Button>
           </DialogActions>
         </>
