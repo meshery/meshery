@@ -105,7 +105,7 @@ function ConfirmationMsg(props) {
   const [contexts, setContexts] = useState(k8scontext);
   let ModalHeading = "";
   if (!isVerify) {
-    ModalHeading = isDelete ? "Und" : "D" + "eploying" // needed?? Since Btn do signify deploy/undeploy
+    ModalHeading = (isDelete ? "Und" : "D") + "eploying" // needed?? Since Btn do signify deploy/undeploy
   }
   const handleKubernetesClick = (ctxID) => {
     updateProgress({ showProgress : true })
@@ -187,8 +187,8 @@ function ConfirmationMsg(props) {
              <DialogContent>
                <DialogContentText id="alert-dialog-description" className={classes.subtitle}>
                  <Typography variant="h6" style={{ fontWeight : "bolder", marginTop : "-12px" }} > Environment </Typography>
-                 <Divider />
                  <Typography variant="body2" style={{ fontWeight : "bolder", margin : "0.2rem" }} > {subBody} </Typography>
+                 <Divider style={{ margin : "0.3rem" }} />
                  {
                    k8scontext.length > 0 ?
                      <Typography variant="body1">

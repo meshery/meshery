@@ -35,6 +35,7 @@ import FiltersGrid from "./MesheryFilters/FiltersGrid";
 import { trueRandom } from "../lib/trueRandom";
 import { ctxUrl } from "../utils/multi-ctx";
 import ConfirmationMsg from "./ConfirmationModal";
+import UndeployIcon from "../public/static/img/UndeployIcon";
 
 const styles = (theme) => ({
   grid : {
@@ -236,6 +237,10 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
       name : "DEPLOY_FILTERS",
       error_msg : "Failed to deploy filter file",
     },
+    UNDEPLOY_FILTERS : {
+      name : "UNDEPLOY_FILTERS",
+      error_msg : "Failed to undeploy filter file",
+    },
     UPLOAD_FILTERS : {
       name : "UPLOAD_FILTERS",
       error_msg : "Failed to upload filter file",
@@ -259,19 +264,6 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
    * @param {string} search search string
    * @param {string} sortOrder order of sort
    */
-
-  const handleDeploy = (filter_file) => {
-    dataFetch(
-      ctxUrl(DEPLOY_URL, selectedK8sContexts),
-      { credentials : "include", method : "POST", body : filter_file },
-      () => {
-        console.log("FilterFile Deploy API", `/api/filter/deploy`);
-        updateProgress({ showProgress : false });
-      },
-      handleError(ACTION_TYPES.DEPLOY_FILTERS)
-    );
-  };
-
   function fetchFilters(page, pageSize, search, sortOrder) {
     if (!search) search = "";
     if (!sortOrder) sortOrder = "";
@@ -299,6 +291,52 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
       handleError(ACTION_TYPES.FETCH_FILTERS)
     );
   }
+
+  const handleDeploy = (filter_file) => {
+    dataFetch(
+      ctxUrl(DEPLOY_URL, selectedK8sContexts),
+      { credentials : "include", method : "POST", body : filter_file },
+      () => {
+        console.log("FilterFile Deploy API", `/api/filter/deploy`);
+        enqueueSnackbar("Filter Successfully Deployed!", {
+          variant : "success",
+          action : function Action(key) {
+            return (
+              <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+                <CloseIcon />
+              </IconButton>
+            );
+          },
+          autoHideDuration : 2000,
+        });
+        updateProgress({ showProgress : false });
+      },
+      handleError(ACTION_TYPES.DEPLOY_FILTERS)
+    );
+  };
+
+  const handleUndeploy = (filter_file) => {
+    dataFetch(
+      ctxUrl(DEPLOY_URL, selectedK8sContexts),
+      { credentials : "include", method : "DELETE", body : filter_file },
+      () => {
+        updateProgress({ showProgress : false });
+        enqueueSnackbar("Filter Successfully Undeployed!", {
+          variant : "success",
+          action : function Action(key) {
+            return (
+              <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+                <CloseIcon />
+              </IconButton>
+            );
+          },
+          autoHideDuration : 2000,
+        });
+      },
+      handleError(ACTION_TYPES.UNDEPLOY_FILTERS)
+    );
+  };
+
 
   // function handleError(error) {
   const handleError = (action) => (error) => {
@@ -492,6 +530,12 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
                   data-cy="deploy-button"
                 />
               </IconButton>
+              <IconButton
+                title="Undeploy"
+                onClick={() => handleModalOpen(rowData.filter_file, rowData.name, false)}
+              >
+                <UndeployIcon fill="rgba(0, 0, 0, 0.54)" data-cy="undeploy-button" />
+              </IconButton>
             </>
           );
         },
@@ -663,6 +707,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
             <FiltersGrid
               filters={filters}
               handleDeploy={handleDeploy}
+              handleUndeploy={handleUndeploy}
               handleSubmit={handleSubmit}
               setSelectedFilter={setSelectedFilter}
               selectedFilter={selectedFilter}
@@ -674,7 +719,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
         <ConfirmationMsg
           open={modalOpen.open}
           handleClose={handleModalClose}
-          submit={() => handleDeploy(modalOpen.filter_file)}
+          submit={ modalOpen.deploy ? () => handleDeploy(modalOpen.filter_file) : () => handleUndeploy(modalOpen.filter_file) }
           isDelete={!modalOpen.deploy}
           title={modalOpen.name}
         />

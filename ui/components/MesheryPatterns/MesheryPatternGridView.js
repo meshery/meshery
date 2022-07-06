@@ -25,8 +25,8 @@ function PatternCardGridItem({ pattern, handleDeploy, handleUnDeploy, handleSubm
         pattern_file={pattern.pattern_file}
         requestFullSize={() => setGridProps({ xl : 12, md : 12, xs : 12 })}
         requestSizeRestore={() => setGridProps(INITIAL_GRID_SIZE)}
-        handleDeploy={() => handleDeploy(pattern.pattern_file)}
-        handleUnDeploy={() => handleUnDeploy(pattern.pattern_file)}
+        handleDeploy={handleDeploy}
+        handleUnDeploy={handleUnDeploy}
         deleteHandler={() => handleSubmit({ data : yaml, id : pattern.id, type : FILE_OPS.DELETE ,name : pattern.name })}
         updateHandler={() => handleSubmit({ data : yaml, id : pattern.id, type : FILE_OPS.UPDATE ,name : pattern.name })}
         setSelectedPatterns={() => setSelectedPatterns({ pattern : pattern, show : true })}

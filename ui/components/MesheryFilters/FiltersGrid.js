@@ -9,7 +9,7 @@ import ConfirmationMsg from "../ConfirmationModal";
 
 const INITIAL_GRID_SIZE = { xl : 4, md : 6, xs : 12 };
 
-function FilterCardGridItem({ filter, handleDeploy, handleSubmit, setSelectedFilters }) {
+function FilterCardGridItem({ filter, handleDeploy, handleUndeploy, handleSubmit, setSelectedFilters }) {
   const [gridProps, setGridProps] = useState(INITIAL_GRID_SIZE);
   const [yaml, setYaml] = useState(filter.filter_file);
 
@@ -22,7 +22,8 @@ function FilterCardGridItem({ filter, handleDeploy, handleSubmit, setSelectedFil
         filter_file={filter.filter_file}
         requestFullSize={() => setGridProps({ xl : 12, md : 12, xs : 12 })}
         requestSizeRestore={() => setGridProps(INITIAL_GRID_SIZE)}
-        handleDeploy={() => handleDeploy(filter)}
+        handleDeploy={handleDeploy}
+        handleUndeploy={handleUndeploy}
         deleteHandler={() => handleSubmit({ data : yaml, id : filter.id, type : FILE_OPS.DELETE ,name : filter.name })}
         setSelectedFilters={() => setSelectedFilters({ filter : filter, show : true })}
         setYaml={setYaml}
@@ -42,7 +43,7 @@ const useStyles = makeStyles(() => ({
   // }
 }))
 
-function FiltersGrid({ filters=[],handleDeploy, handleSubmit, setSelectedFilter, selectedFilter, pages = 1,setPage, selectedPage }) {
+function FiltersGrid({ filters=[],handleDeploy, handleUndeploy, handleSubmit, setSelectedFilter, selectedFilter, pages = 1,setPage, selectedPage }) {
 
   const classes = useStyles()
 
@@ -79,6 +80,7 @@ function FiltersGrid({ filters=[],handleDeploy, handleSubmit, setSelectedFilter,
             key={filter.id}
             filter={filter}
             handleDeploy={() => handleModalOpen(filter, true)}
+            handleUndeploy={() => handleModalOpen(filter, false)}
             handleSubmit={handleSubmit}
             setSelectedFilters={setSelectedFilter}
           />
@@ -96,7 +98,7 @@ function FiltersGrid({ filters=[],handleDeploy, handleSubmit, setSelectedFilter,
       <ConfirmationMsg
         open={modalOpen.open}
         handleClose={handleModalClose}
-        submit={() => handleDeploy(modalOpen.filter_file)}
+        submit={modalOpen.deploy ? () => handleDeploy(modalOpen.filter_file) : () => handleUndeploy(modalOpen.filter_file) }
         isDelete={!modalOpen.deploy}
         title={ modalOpen.name }
       />

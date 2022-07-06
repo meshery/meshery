@@ -282,6 +282,17 @@ function MesheryApplications({
               body : pfile,
             }, () => {
               console.log("ApplicationFile Deploy API", `/api/application/deploy`);
+              enqueueSnackbar("Application Successfully Deployed!", {
+                variant : "success",
+                action : function Action(key) {
+                  return (
+                    <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+                      <CloseIcon />
+                    </IconButton>
+                  );
+                },
+                autoHideDuration : 2000,
+              });
               updateProgress({ showProgress : false });
             },
             handleError(ACTION_TYPES.DEPLOY_APPLICATIONS)
@@ -317,6 +328,17 @@ function MesheryApplications({
               method : "DELETE",
               body : pfile,
             }, () => {
+              enqueueSnackbar("Application Successfully Undeployed!", {
+                variant : "success",
+                action : function Action(key) {
+                  return (
+                    <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+                      <CloseIcon />
+                    </IconButton>
+                  );
+                },
+                autoHideDuration : 2000,
+              });
               updateProgress({ showProgress : false });
             },
             handleError(ACTION_TYPES.UNDEPLOY_APPLICATION)
