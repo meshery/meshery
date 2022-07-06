@@ -27,7 +27,7 @@ mesheryctl exp filter [subcommands]
 			return errors.New(utils.FilterError(fmt.Sprintln("requires at least 1 arg(s), only received 0 ")))
 		}
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
-			return errors.New(utils.SystemError(fmt.Sprintf("'%s' is a invalid command. See 'mesheryctl filter --help'\n", args[0])))
+			return errors.New(utils.SystemError(fmt.Sprintf("'%s' is a invalid command.  Use 'mesheryctl filter --help' to display usage guide.\n", args[0])))
 		}
 		return nil
 	},

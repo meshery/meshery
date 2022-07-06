@@ -27,7 +27,7 @@ mesheryctl app [subcommand]
 			return errors.New(utils.AppError(fmt.Sprintln("requires at least 1 arg(s), only received 0 ")))
 		}
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
-			return errors.New(utils.AppError(fmt.Sprintf("'%s' is a invalid command. See 'mesheryctl app --help'\n", args[0])))
+			return errors.New(utils.AppError(fmt.Sprintf("'%s' is a invalid command. Use 'mesheryctl app --help' to display usage guide.\n", args[0])))
 		}
 		return nil
 	},

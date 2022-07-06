@@ -42,7 +42,7 @@ var SystemCmd = &cobra.Command{
 			return errors.New(utils.SystemError(fmt.Sprintln("requires at least 1 arg(s), only received 0 ")))
 		}
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
-			return errors.New(utils.SystemError(fmt.Sprintf("invalid command: \"%s\"", args[0])))
+			return errors.New(utils.SystemError(fmt.Sprintf("'%s' is a invalid command.  Use 'mesheryctl system --help' to display usage guide.\n", args[0])))
 		}
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
