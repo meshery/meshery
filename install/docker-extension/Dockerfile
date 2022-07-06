@@ -33,13 +33,13 @@ LABEL org.opencontainers.image.title="Meshery" \
   org.opencontainers.image.description="Design and operate your cloud native deployments with the extensible management plane, Meshery." \
   org.opencontainers.image.vendor="Layer5, Inc." \
   com.docker.desktop.extension.api.version=">= 0.2.0" \
-  com.docker.extension.screenshots="[ \
+   com.docker.extension.screenshots="[ \
       { \
         \"alt\": \"Meshery Docker Extension\", \ 
-        \"url\": \"https://raw.githubusercontent.com/meshery/meshery/master/install/docker-extension/docs/img/Docker-extension-meshery.png\" \
+        \"url\": \"https://raw.githubusercontent.com/meshery/meshery/master/install/docker-extension/docs/img/meshmap-docker-extension-for-meshery.png\" \
       },{ \
         \"alt\": \"Meshery Docker Extension\", \
-        \"url\": \"https://raw.githubusercontent.com/meshery/meshery/master/install/docker-extension/docs/img/meshmap-docker-extension-for-meshery.png\" \ 
+        \"url\": \"https://raw.githubusercontent.com/meshery/meshery/master/install/docker-extension/docs/img/Docker-extension-meshery.png\" \ 
       } \
     ]" \
   com.docker.extension.detailed-description="\
