@@ -101,7 +101,7 @@ function TooltipIcon({ children, onClick, title }) {
 
 function YAMLEditor({ application, onClose, onSubmit }) {
   const classes = useStyles();
-  const [yaml, setYaml] = useState(application.application_file);
+  const [yaml, setYaml] = useState("");
   const [fullScreen, setFullScreen] = useState(false);
 
   const toggleFullScreen = () => {
@@ -145,7 +145,9 @@ function YAMLEditor({ application, onClose, onSubmit }) {
           <IconButton
             aria-label="Update"
             color="primary"
-            onClick={() => onSubmit(yaml, application.id, application.name, FILE_OPS.UPDATE)}
+            onClick={() => onSubmit({
+              data : yaml, id : application.id, name : application.name, type : FILE_OPS.UPDATE
+            })}
           >
             <SaveIcon />
           </IconButton>
@@ -154,7 +156,12 @@ function YAMLEditor({ application, onClose, onSubmit }) {
           <IconButton
             aria-label="Delete"
             color="primary"
-            onClick={() => onSubmit(yaml, application.id, application.name, FILE_OPS.DELETE)}
+            onClick={() => onSubmit({
+              data : yaml,
+              id : application.id,
+              name : application.name,
+              type : FILE_OPS.DELETE
+            })}
           >
             <DeleteIcon />
           </IconButton>
@@ -230,7 +237,6 @@ function MesheryApplications({
   const handleModalClose = () => {
     setModalOpen({
       open : false,
-      deploy : false,
       application_file : null
     });
   }
@@ -369,7 +375,8 @@ function MesheryApplications({
     };
   }
 
-  function handleSubmit(data, id, name, type) {
+  function handleSubmit({ data, id, name, type }) {
+    console.log("delete invoked")
     updateProgress({ showProgress : true })
     if (type === FILE_OPS.DELETE) {
       dataFetch(

@@ -98,8 +98,7 @@ function RJSFForm(props) {
     ArrayFieldTemplate = MesheryArrayFieldTemplate,
     ObjectFieldTemplate = MesheryCustomObjFieldTemplate,
     LoadingComponent,
-    showErrorList,
-    ErrorList,
+    // prop should be present in order for the cloned element to override this property
     transformErrors
   } = props;
 
@@ -130,7 +129,8 @@ function RJSFForm(props) {
           TextWidget : CustomInputField
         }}
         liveValidate
-        showErrorList={!!showErrorList}
+        showErrorList={false}
+        transformErrors={transformErrors}
         noHtml5Validate
         ErrorList={ErrorList}
         transformErrors={transformErrors}

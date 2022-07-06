@@ -175,8 +175,9 @@ const (
 
 	KubeClustersKey   ContextKey = "kubeclusters"
 	AllKubeClusterKey ContextKey = "allkubeclusters"
-	// UserPrefsCtxKey is the context key for latest broker endpoint to context
-	BrokerURLCtxKey = "broker_endpoint"
+
+	MesheryControllerHandlersKey ContextKey = "mesherycontrollerhandlerskey"
+	MeshSyncDataHandlersKey      ContextKey = "meshsyncdatahandlerskey"
 )
 
 // IsSupported returns true if the given feature is listed as one of
