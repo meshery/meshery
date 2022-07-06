@@ -42,11 +42,15 @@ $(document).ready(function() {
           // Loop through every navigation menu item
           $('.md-nav__link').each(function (event) {       
               if (windowTop >= $($(this).attr('href')).offset().top - 100) {
-              // Remove 'active' from previously highlighted menu items
+              // Remove 'selected' from previously highlighted menu items
               $('.selected').removeClass('selected');
-              // Highlight the current menu item by adding 'active' class
+              // Highlight the current menu item by adding 'selected' class
               $(this).addClass('selected');
           }
+          if($(window).scrollTop() + $(window).height() > $(document).height() - 10) {
+            $('.selected').removeClass('selected');
+              $(this).addClass('selected');
+   }
         });
       })
     });
