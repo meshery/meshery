@@ -344,7 +344,7 @@ func NewPatternFileFromK8sManifest(data string, ignoreErrors bool) (Pattern, err
 	//For `---` separated manifests, even if only one manifest is there followed/preceded by multiple `\n---\n`- the manifest be will be valid
 	//If there is no data present (except \n---\n) , then the yaml will be marked as empty and error will be thrown
 	if manifestIsEmpty(manifests) {
-		return pattern, ErrParseK8sManifest(fmt.Errorf("no data in the passed manifest"))
+		return pattern, ErrParseK8sManifest(fmt.Errorf("manifest is empty"))
 	}
 ManifestLoop:
 	for _, manifestYAML := range manifests {
@@ -430,7 +430,7 @@ func createPatternServiceFromCoreK8s(manifest map[string]interface{}) (string, S
 		id = uid.String()
 	}
 	if apiVersion == "" || kind == "" {
-		return "", Service{}, ErrCreatePatternService(fmt.Errorf("empty apiVersion or kind"))
+		return "", Service{}, ErrCreatePatternService(fmt.Errorf("empty apiVersion or kind in manifest"))
 	}
 	w := GetWorkloadsByK8sAPIVersionKind(apiVersion, kind)
 
@@ -487,7 +487,7 @@ func createPatternServiceFromExtendedK8s(manifest map[string]interface{}) (strin
 		id = uid.String()
 	}
 	if apiVersion == "" || kind == "" {
-		return "", Service{}, ErrCreatePatternService(fmt.Errorf("empty apiVersion or kind"))
+		return "", Service{}, ErrCreatePatternService(fmt.Errorf("empty apiVersion or kind in manifest"))
 	}
 	w := GetWorkloadsByK8sAPIVersionKind(apiVersion, kind)
 
