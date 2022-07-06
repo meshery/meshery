@@ -24,7 +24,7 @@ mesheryctl mesh
 
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) != 1 {
-			return errors.New(utils.MeshError(fmt.Sprintln("requires at least 1 arg(s), only received 0 ")))
+			return errors.New(utils.MeshError(fmt.Sprintln("mesheryctl mesh requires at least 1 arg(s), got only 0")))
 		}
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
 			return errors.New(utils.MeshError(fmt.Sprintf(" '%s' command not found.  Use 'mesheryctl mesh --help' to display usage guide.'\n ", args[0])))
