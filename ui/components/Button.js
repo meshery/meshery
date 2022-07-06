@@ -4,5 +4,5 @@ import { deepSpaceSparkle } from '../styles/colors';
 
 export const MetricsButton = styled(Button)(({theme})=>({
     backgroundColor: deepSpaceSparkle,
-    width: "240px",
+    // width: "240px",
 }))

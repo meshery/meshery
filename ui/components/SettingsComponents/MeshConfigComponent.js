@@ -7,7 +7,7 @@ import {
 
 function MeshConfigComponent() {
   return (
-    <div>MeshConfigComponent</div>
+    <div style={{padding: "3rem"}} >MeshConfigComponent</div>
   )
 }
 

@@ -1,15 +1,24 @@
 import React , {useState} from "react";
 import { AppBar, Paper, Tooltip, IconButton, Button, Tabs, Tab } from "@mui/material";
+import { styled } from "@mui/material/styles";
 import CloudIcon from '@mui/icons-material/Cloud';
 import InsertChartIcon from '@mui/icons-material/InsertChart';
 import MeshConfigComponent from "@/components/SettingsComponents/MeshConfigComponent"
 import MeshAdapterConfigComponent from "@/components/SettingsComponents/MeshAdapterConfigComponent"
+import PrometheusComponent from "@/components/SettingsComponents/PrometheusComponent"
+import GrafanaComponent from "@/components/SettingsComponents/GrafanaComponent"
 
 export default function Settings () {
     
     const [tabVal, setTabVal] = useState(0);
     const [subTabVal, setSubTabVal] = useState(0);
-
+  
+    const CustomTabIcon = styled("img")(({ theme }) => ({
+      display : 'inline',
+      verticalAlign : 'text-top',
+      width : theme.spacing(1.75),
+      marginLeft : theme.spacing(0.5),
+  }));
 
   const  handleChange = (val) => {
         return (event, newVal) => {
@@ -23,7 +32,7 @@ export default function Settings () {
     }
 
     return(
-        <>
+        <Paper >
         <Paper square >
           <Tabs
             value={tabVal}
@@ -59,7 +68,7 @@ export default function Settings () {
                 tab="tabMetrics"
               />
             </Tooltip>
-            <Tooltip title="Reset System" placement="top">
+            {/* <Tooltip title="Reset System" placement="top">
               <Tab
                 // icon={
                 //   <FontAwesomeIcon icon={faDatabase} transform={mainIconScale} fixedWidth />
@@ -67,9 +76,9 @@ export default function Settings () {
                 label="Reset"
                 tab="systemReset"
               />
-            </Tooltip>
+            </Tooltip> */}
           </Tabs>
-        </Paper>
+          </Paper>
         {tabVal === 0 && (
           <MeshConfigComponent />
         )}
@@ -89,27 +98,28 @@ export default function Settings () {
                   <Tab label={(
                     <div>
                       Grafana
-                      <img src="/static/img/grafana_icon.svg"  />
+                      <CustomTabIcon src="/static/img/grafana_icon.svg"  />
                     </div>
                   )}
                   />
                   <Tab label={(
                     <div>
                       Prometheus
-                      <img src="/static/img/prometheus_logo_orange_circle.svg" />
+                      <CustomTabIcon src="/static/img/prometheus_logo_orange_circle.svg" />
                     </div>
                   )}
                   />
                 </Tabs>
               </AppBar>
               {subTabVal === 0 && (
-                 <h1>  GrafanaComponent </h1>       
+                <GrafanaComponent />   
               )}
               {subTabVal === 1 && (
-                 <h1>    PrometheusComponent </h1>   
+                 <PrometheusComponent />  
               )}
               </>
           )}
+          
         {/* {tabVal === 3 && (
           <TabContainer>
             <div className={classes.container}>
@@ -131,6 +141,6 @@ export default function Settings () {
 
         {/* {backToPlay} */}
         {/* <PromptComponent ref={this.systemResetRef} /> */}
-        </>
+        </Paper>
     )
 }
