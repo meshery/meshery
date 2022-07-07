@@ -1,7 +1,7 @@
 import React from 'react'
 import { Button,TextField, MenuItem, Grid, Chip, } from '@mui/material';
-import {MetricsButton} from "@/components/Button"
 import ReactSelectWrapper from "@/components/ReactSelectWrapper"
+import {RightAlignButton} from "@/components/Button"
 
 function MeshAdapterConfigComponent() {
   return (
@@ -9,12 +9,7 @@ function MeshAdapterConfigComponent() {
        <Grid item xs={12}>
        <ReactSelectWrapper label="Mesh Adapter UR" />
             </Grid>
-           <MetricsButton type="submit"
-                variant="contained"
-                color="primary"
-                size="large" >
-             Connect
-            </MetricsButton>
+            <RightAlignButton title="Connect" />
     </div>
   )
 }

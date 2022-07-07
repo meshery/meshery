@@ -1,6 +1,7 @@
 import React, {useState} from 'react'
 import { Button,TextField, Grid } from '@mui/material';
 import ReactSelectWrapper from "@/components/ReactSelectWrapper"
+import {RightAlignButton} from "@/components/Button"
 
 function GrafanaComponent() {
   return (
@@ -21,17 +22,9 @@ function GrafanaComponent() {
           variant="outlined"
         />
       </Grid>
-    
-    <Grid item xs={4} >
-      <Button
-        type="submit"
-        variant="contained"
-        color="primary"
-        size="large"
-      >
-        Submit
-      </Button>
-    </Grid>
+      
+      <RightAlignButton title="Submit" />
+      
     </Grid>
   </div>
   )
