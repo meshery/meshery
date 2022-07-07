@@ -57,7 +57,7 @@ const styles = (theme) => ({
     // minWidth : 300,
     padding : theme.spacing(1),
     color : '#fff',
-    backgroundColor : '#607d8b',
+    backgroundColor : '#396679',
     fontSize : "1rem",
 
   },
@@ -277,7 +277,7 @@ function ConfirmationMsg(props) {
           {tabVal <= 1 &&
               <DialogContent>
                 <DialogContentText id="alert-dialog-description" className={classes.subtitle}>
-                  <Typography variant="subtitle1" style={{ marginBottom : "0.8rem" }}> {componentCount !== undefined ? <> {componentCount} component(s) </> : "" }</Typography>
+                  <Typography variant="subtitle1" style={{ marginBottom : "0.8rem" }}> {componentCount !== undefined ? <> {componentCount} component{componentCount > 1 ? "s" : ""} </> : "" }</Typography>
                   {
                     k8scontext.length > 0 ?
                       <Typography variant="body1">
@@ -383,6 +383,7 @@ function ConfirmationMsg(props) {
               <Button onClick={handleClose}
                 className={classes.button0} autoFocus type="submit"
                 variant="contained"
+                color="primary"
               >
                 <Typography variant body2 > OK </Typography>
               </Button>
