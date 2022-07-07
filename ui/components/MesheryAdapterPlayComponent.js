@@ -1290,9 +1290,14 @@ class MesheryAdapterPlayComponent extends React.Component {
           <ConfirmationMsg
             open={this.state.modalOpen}
             handleClose={this.handleClose}
-            submit={() => this.submitOp(this.state.category, this.state.selectedOp, this.state.isDeleteOp)}
+            submit={
+              { deploy : () => this.submitOp(this.state.category, this.state.selectedOp, false),
+                unDeploy : () => this.submitOp(this.state.category, this.state.selectedOp, true)
+              }
+            }
             isDelete={this.state.isDeleteOp}
             title={this.state.operationName}
+            tab={this.state.isDeleteOp ? 1 : 0}
           />
         </React.Fragment>
       </NoSsr>

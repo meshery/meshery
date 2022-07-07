@@ -26,7 +26,7 @@ import { updateProgress } from "../lib/store";
 import PatternForm from "../components/configuratorComponents/patternConfigurator";
 import UploadImport from "./UploadImport";
 import { ctxUrl } from "../utils/multi-ctx";
-import { randomPatternNameGenerator as getRandomName } from "../utils/utils";
+import { getComponentsinFile, randomPatternNameGenerator as getRandomName } from "../utils/utils";
 import ViewSwitch from "./ViewSwitch";
 import MesheryPatternGrid from "./MesheryPatterns/MesheryPatternGridView";
 import UndeployIcon from "../public/static/img/UndeployIcon";
@@ -244,7 +244,8 @@ function MesheryPatterns({
     open : false,
     deploy : false,
     pattern_file : null,
-    name : ""
+    name : "",
+    count : 0
   });
 
   const getMuiTheme = () => createTheme({
@@ -340,7 +341,8 @@ function MesheryPatterns({
     setModalOpen({
       open : false,
       pattern_file : null,
-      name : ""
+      name : "",
+      count : 0
     });
   }
 
@@ -349,11 +351,13 @@ function MesheryPatterns({
       open : true,
       deploy : isDeploy,
       pattern_file : pattern_file,
-      name : name
+      name : name,
+      count : getComponentsinFile(pattern_file)
     });
   }
 
   const handleDeploy = (pattern_file) => {
+    console.log(pattern_file, "QWERTYUZAIR");
     updateProgress({ showProgress : true });
     dataFetch(
       ctxUrl(DEPLOY_URL, selectedK8sContexts),
@@ -891,9 +895,13 @@ function MesheryPatterns({
         <ConfirmationMsg
           open={modalOpen.open}
           handleClose={handleModalClose}
-          submit={modalOpen.deploy ? () => handleDeploy(modalOpen.pattern_file) : () => handleUnDeploy(modalOpen.pattern_file)}
+          submit={
+            { deploy : () => handleDeploy(modalOpen.pattern_file), unDeploy : () => handleUnDeploy(modalOpen.pattern_file) }
+          }
           isDelete={!modalOpen.deploy}
           title={ modalOpen.name }
+          componentCount={modalOpen.count}
+          tab={modalOpen.deploy ? 0 : 1}
         />
         <PromptComponent ref={modalRef} />
       </NoSsr>

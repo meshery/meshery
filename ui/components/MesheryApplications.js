@@ -21,7 +21,7 @@ import { updateProgress } from "../lib/store";
 import { trueRandom } from "../lib/trueRandom";
 import FILE_OPS from "../utils/configurationFileHandlersEnum";
 import { ctxUrl } from "../utils/multi-ctx";
-import { randomPatternNameGenerator as getRandomName } from "../utils/utils";
+import { getComponentsinFile, randomPatternNameGenerator as getRandomName } from "../utils/utils";
 import PromptComponent from "./PromptComponent";
 import UploadImport from "./UploadImport";
 import UndeployIcon from "../public/static/img/UndeployIcon";
@@ -222,7 +222,8 @@ function MesheryApplications({
     open : false,
     deploy : false,
     application_file : null,
-    name : ""
+    name : "",
+    count : 0
   });
   const [viewType, setViewType] = useState(
     /**  @type {TypeView} */
@@ -241,16 +242,20 @@ function MesheryApplications({
   const handleModalClose = () => {
     setModalOpen({
       open : false,
-      application_file : null
+      application_file : null,
+      name : "",
+      count : 0
     });
   }
 
   const handleModalOpen = (app_file, name, isDeploy) => {
+    console.log(typeof (app_file), "SHAIKH");
     setModalOpen({
       open : true,
       deploy : isDeploy,
       application_file : app_file,
-      name : name
+      name : name,
+      count : getComponentsinFile(app_file)
     });
   }
   /**
@@ -263,6 +268,7 @@ function MesheryApplications({
    */
   // ASSUMPTION: APPLICATION FILES ARE ONLY K8S MANIFEST
   const handleDeploy = (application_file) => {
+    console.log(application_file, "SHAIKH");
     updateProgress({ showProgress : true })
     dataFetch(
       "/api/pattern",
@@ -770,9 +776,13 @@ function MesheryApplications({
         <ConfirmationMsg
           open={modalOpen.open}
           handleClose={handleModalClose}
-          submit={modalOpen.deploy ? () => handleDeploy(modalOpen.application_file) : () => handleUnDeploy(modalOpen.application_file)}
+          submit={
+            { deploy : () => handleDeploy(modalOpen.application_file),  unDeploy : () => handleUnDeploy(modalOpen.application_file) }
+          }
           isDelete={!modalOpen.deploy}
           title={ modalOpen.name }
+          componentCount={modalOpen.count}
+          tab={modalOpen.deploy ? 0 : 1}
         />
         <PromptComponent ref={modalRef} />
       </NoSsr>

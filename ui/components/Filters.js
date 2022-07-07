@@ -36,6 +36,7 @@ import { trueRandom } from "../lib/trueRandom";
 import { ctxUrl } from "../utils/multi-ctx";
 import ConfirmationMsg from "./ConfirmationModal";
 import UndeployIcon from "../public/static/img/UndeployIcon";
+import { getComponentsinFile } from "../utils/utils";
 
 const styles = (theme) => ({
   grid : {
@@ -177,7 +178,8 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     open : false,
     filter_file : null,
     deploy : false,
-    name : ""
+    name : "",
+    count : 0
   });
 
   const getMuiTheme = () => createTheme({
@@ -293,6 +295,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
   }
 
   const handleDeploy = (filter_file) => {
+    console.log(filter_file, "QWERTYUZAIR");
     dataFetch(
       ctxUrl(DEPLOY_URL, selectedK8sContexts),
       { credentials : "include", method : "POST", body : filter_file },
@@ -360,7 +363,8 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
       open : true,
       filter_file : filter_file,
       deploy : isDeploy,
-      name : name
+      name : name,
+      count : getComponentsinFile(filter_file)
     });
   }
 
@@ -368,7 +372,8 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     setModalOpen({
       open : false,
       filter_file : null,
-      name : ""
+      name : "",
+      count : 0
     });
   }
 
@@ -719,9 +724,13 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
         <ConfirmationMsg
           open={modalOpen.open}
           handleClose={handleModalClose}
-          submit={ modalOpen.deploy ? () => handleDeploy(modalOpen.filter_file) : () => handleUndeploy(modalOpen.filter_file) }
+          submit={
+            { deploy : () => handleDeploy(modalOpen.filter_file),  unDeploy : () => handleUndeploy(modalOpen.filter_file) }
+          }
           isDelete={!modalOpen.deploy}
           title={modalOpen.name}
+          componentCount={modalOpen.count}
+          tab={modalOpen.deploy ? 0 : 1}
         />
       </NoSsr>
     </>

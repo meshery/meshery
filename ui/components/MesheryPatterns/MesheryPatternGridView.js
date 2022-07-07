@@ -7,6 +7,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import PatternConfiguratorComponent from "../configuratorComponents/patternConfigurator"
 import FILE_OPS from "../../utils/configurationFileHandlersEnum";
 import ConfirmationMsg from "../ConfirmationModal";
+import { getComponentsinFile } from "../../utils/utils";
 
 
 const INITIAL_GRID_SIZE = { xl : 4, md : 6, xs : 12 };
@@ -75,14 +76,16 @@ function MesheryPatternGrid({ patterns=[],handleDeploy, handleUnDeploy, handleSu
     open : false,
     deploy : false,
     pattern_file : null,
-    name : ""
+    name : "",
+    count : 0
   });
 
   const handleModalClose = () => {
     setModalOpen({
       open : false,
       pattern_file : null,
-      name : ""
+      name : "",
+      count : 0
     });
   }
 
@@ -91,7 +94,8 @@ function MesheryPatternGrid({ patterns=[],handleDeploy, handleUnDeploy, handleSu
       open : true,
       deploy : isDeploy,
       pattern_file : pattern.pattern_file,
-      name : pattern.name
+      name : pattern.name,
+      count : getComponentsinFile(pattern.pattern_file)
     });
   }
 
@@ -125,9 +129,13 @@ function MesheryPatternGrid({ patterns=[],handleDeploy, handleUnDeploy, handleSu
       <ConfirmationMsg
         open={modalOpen.open}
         handleClose={handleModalClose}
-        submit={modalOpen.deploy ? () => handleDeploy(modalOpen.pattern_file) : () => handleUnDeploy(modalOpen.pattern_file)}
+        submit={
+          { deploy : () => handleDeploy(modalOpen.pattern_file), unDeploy : () => handleUnDeploy(modalOpen.pattern_file) }
+        }
         isDelete={!modalOpen.deploy}
         title={ modalOpen.name }
+        componentCount={modalOpen.count}
+        tab={modalOpen.deploy ? 0 : 1}
       />
     </div>
   );

@@ -6,6 +6,7 @@ import FiltersCard from "./FiltersCard";
 import { makeStyles } from "@material-ui/core/styles";
 import FILE_OPS from "../../utils/configurationFileHandlersEnum";
 import ConfirmationMsg from "../ConfirmationModal";
+import { getComponentsinFile } from "../../utils/utils";
 
 const INITIAL_GRID_SIZE = { xl : 4, md : 6, xs : 12 };
 
@@ -51,14 +52,16 @@ function FiltersGrid({ filters=[],handleDeploy, handleUndeploy, handleSubmit, se
     open : false,
     deploy : false,
     filter_file : null,
-    name : ""
+    name : "",
+    count : 0
   });
 
   const handleModalClose = () => {
     setModalOpen({
       open : false,
       filter_file : null,
-      name : ""
+      name : "",
+      count : 0
     });
   }
 
@@ -67,7 +70,8 @@ function FiltersGrid({ filters=[],handleDeploy, handleUndeploy, handleSubmit, se
       open : true,
       deploy : isDeploy,
       filter_file : filter.filter_file,
-      name : filter.name
+      name : filter.name,
+      count : getComponentsinFile(filter.filter_file)
     });
   }
 
@@ -98,9 +102,13 @@ function FiltersGrid({ filters=[],handleDeploy, handleUndeploy, handleSubmit, se
       <ConfirmationMsg
         open={modalOpen.open}
         handleClose={handleModalClose}
-        submit={modalOpen.deploy ? () => handleDeploy(modalOpen.filter_file) : () => handleUndeploy(modalOpen.filter_file) }
+        submit={
+          { deploy : () => handleDeploy(modalOpen.filter_file), unDeploy : () => handleUndeploy(modalOpen.filter_file) }
+        }
         isDelete={!modalOpen.deploy}
         title={ modalOpen.name }
+        componentCount = {modalOpen.count}
+        tab={modalOpen.deploy ? 0 : 1}
       />
     </div>
   );
