@@ -9,6 +9,7 @@ import {
     Drawer,
     Tabs,
     Tab,
+    Grid,
   } from "@mui/material";
   import NotificationsIcon from '@mui/icons-material/Notifications';
   import DoneAllIcon from '@mui/icons-material/DoneAll';
@@ -34,10 +35,7 @@ import {
     },
   }))
 
-    const ListTop = styled('div')(({theme}) => ({
-      display : 'grid',
-    alignItems : 'center',
-    gridTemplateColumns : "2fr 6fr 2fr",
+    const ListTopGrid = styled(Grid)(({theme}) => ({
     paddingTop : theme.spacing(2),
     paddingLeft : theme.spacing(1),
     paddingRight : theme.spacing(1),
@@ -45,11 +43,7 @@ import {
 
     }))
 
-    const NotifSelector = styled('div')(() => ({
-      display : 'flex', 
-
-    }))
-    const ClearAllButton = styled('div')(() => ({
+    const ClearAllButton = styled(Grid)(() => ({
       display : 'flex', 
       justifyContent : 'flex-end',
     }))
@@ -70,7 +64,7 @@ import {
       // setDisplayEventType(type);
     }  
 
-    const handleTabChange = ( newTabValue) => {
+    const handleTabChange = (event ,newTabValue) => {
       setTabValue(newTabValue) ;
     }
   
@@ -114,8 +108,9 @@ import {
             open={open}
             onClose={handleClose}
           >
-                <ListTop>
-                  <NotifSelector>
+                {/* <ListTop> */}
+                <ListTopGrid container  spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }}>
+                <Grid item xs={2} sm={4} md={4} >
                     <Tooltip title="Show all notifications">
                       <DrawerButton
                         color="inherit"
@@ -125,13 +120,14 @@ import {
                         <NotificationsIcon />
                       </DrawerButton>
                     </Tooltip>
-                  </NotifSelector>
-                  <div >
+                </Grid>
+
+                <Grid item xs={2} sm={4} md={4} >
                     <Typography variant="subtitle1" align="center">
                       Notifications
                     </Typography>
-                  </div>
-                  <ClearAllButton>
+                  </Grid>
+                  <ClearAllButton item xs={2} sm={4} md={4} > 
                     <Tooltip title="Clear all notifications">
                       <DrawerButton
                         color="inherit"
@@ -141,7 +137,7 @@ import {
                       </DrawerButton>
                     </Tooltip>
                   </ClearAllButton>
-                </ListTop>
+                </ListTopGrid>
                 <Divider light />
                 <Tabs
                   value={tabValue}

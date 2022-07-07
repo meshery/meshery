@@ -1,8 +1,8 @@
 import MesherySnackbarWrapper from "./MesherySnackbarWrapper"
 
 
-
-function MesheryEventViewer () {
+//Component for the  event(notification) snackbar 
+function MesheryEventViewer ({eventVariant, eventSummary, eventDetails}) {
 
     return(
      <MesherySnackbarWrapper

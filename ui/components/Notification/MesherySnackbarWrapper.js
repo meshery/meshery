@@ -55,8 +55,7 @@ import {
               </IconButton>
 
               <IconButton  onClick={onClose}>
-                <DoneIcon
-                  
+                <DoneIcon    
                   onMouseEnter={() => setCardHover(false)}
                   onMouseLeave={() => setCardHover(true)}
                 />
