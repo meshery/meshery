@@ -92,9 +92,12 @@ func (h *Handler) handleApplicationPOST(
 		_ = r.Body.Close()
 	}()
 	sourcetype := r.URL.Query().Get("source-type")
+	if sourcetype == "" {
+		http.Error(rw, "missing query parameter \"source-type\"", http.StatusBadRequest)
+		return
+	}
 	var parsedBody *MesheryApplicationRequestBody
 	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil {
-		h.log.Error(ErrRetrieveData(err))
 		http.Error(rw, ErrRetrieveData(err).Error(), http.StatusBadRequest)
 		// rw.WriteHeader(http.StatusBadRequest)
 		// fmt.Fprintf(rw, "failed to read request body: %s", err)
@@ -103,7 +106,6 @@ func (h *Handler) handleApplicationPOST(
 
 	token, err := provider.GetProviderToken(r)
 	if err != nil {
-		h.log.Error(ErrRetrieveUserToken(err))
 		http.Error(rw, ErrRetrieveUserToken(err).Error(), http.StatusInternalServerError)
 		return
 	}
@@ -126,15 +128,10 @@ func (h *Handler) handleApplicationPOST(
 
 		bytApplication := []byte(mesheryApplication.ApplicationFile)
 		mesheryApplication.SourceContent = bytApplication
-		var composeerr = fmt.Errorf("not docker compose")
-		if sourcetype == "" {
-			// check whether the uploaded file is a docker compose file if no source type is passed
-			composeerr = kompose.IsManifestADockerCompose(bytApplication, "")
-		}
 		if sourcetype == string(models.DOCKER_COMPOSE) || sourcetype == "" || sourcetype == string(models.K8S_MANIFEST) {
-			var res string
-			if sourcetype == string(models.DOCKER_COMPOSE) || composeerr == nil {
-				res, err = kompose.Convert(bytApplication) // convert the docker compose file into kubernetes manifest
+			var k8sres string
+			if sourcetype == string(models.DOCKER_COMPOSE) {
+				k8sres, err = kompose.Convert(bytApplication) // convert the docker compose file into kubernetes manifest
 				if err != nil {
 					obj := "convert"
 					h.log.Error(ErrApplicationFailure(err, obj))
@@ -142,12 +139,12 @@ func (h *Handler) handleApplicationPOST(
 					return
 				}
 				mesheryApplication.Type = models.DOCKER_COMPOSE
-			} else {
-				res = string(bytApplication)
+			} else if sourcetype == string(models.K8S_MANIFEST) {
+				k8sres = string(bytApplication)
 				mesheryApplication.Type = models.K8S_MANIFEST
 			}
 
-			pattern, err := core.NewPatternFileFromK8sManifest(res, false)
+			pattern, err := core.NewPatternFileFromK8sManifest(k8sres, false)
 			if err != nil {
 				obj := "convert"
 				h.log.Error(ErrApplicationFailure(err, obj))
