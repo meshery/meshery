@@ -140,14 +140,24 @@ func GenMarkdownCustom(cmd *cobra.Command, w io.Writer, linkHandler func(string)
 		buf.WriteString(fmt.Sprintf("<pre class='codeblock-pre'>\n<div class='codeblock'>\n%s\n\n</div>\n</pre> \n\n", cmd.UseLine()))
 	}
 
+	var picLine = ""
+
 	if len(cmd.Example) > 0 {
 		buf.WriteString("## Examples\n\n")
 		var examples = strings.Split(cmd.Example, "\n")
 		for i := 0; i < len(examples); i++ {
 			if examples[i] != "" && examples[i] != " " && examples[i] != "	" {
 				if strings.HasPrefix(examples[i], "//") {
+					// Description Line
 					buf.WriteString(strings.Replace(examples[i], "// ", "", -1) + "\n")
+				} else if strings.HasPrefix(examples[i], "#") {
+					// If command has screenshot present
+					picLine += strings.Replace(examples[i], "# ", "", -1)
+				} else if strings.HasPrefix(examples[i], "##") {
+					// For skipping comments present in codeblock
+					continue
 				} else {
+					// Code Block Line
 					buf.WriteString(fmt.Sprintf("<pre class='codeblock-pre'>\n<div class='codeblock'>\n%s\n\n</div>\n</pre> \n\n", examples[i]))
 				}
 			}
@@ -157,6 +167,14 @@ func GenMarkdownCustom(cmd *cobra.Command, w io.Writer, linkHandler func(string)
 	if err := printOptions(buf, cmd, name); err != nil {
 		return err
 	}
+
+	// If command has screenshot present
+	if picLine != "" {
+		buf.WriteString("## Screenshots\n\n")
+		buf.WriteString(picLine)
+		buf.WriteString("\n\n")
+	}
+
 	if hasSeeAlso(cmd) {
 		buf.WriteString("## See Also\n\n")
 		if cmd.HasParent() {
