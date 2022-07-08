@@ -249,7 +249,6 @@ function MesheryApplications({
   }
 
   const handleModalOpen = (app_file, name, isDeploy) => {
-    console.log(typeof (app_file), "SHAIKH");
     setModalOpen({
       open : true,
       deploy : isDeploy,
@@ -268,7 +267,6 @@ function MesheryApplications({
    */
   // ASSUMPTION: APPLICATION FILES ARE ONLY K8S MANIFEST
   const handleDeploy = (application_file) => {
-    console.log(application_file, "SHAIKH");
     updateProgress({ showProgress : true })
     dataFetch(
       "/api/pattern",

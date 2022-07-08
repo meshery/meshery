@@ -357,7 +357,6 @@ function MesheryPatterns({
   }
 
   const handleDeploy = (pattern_file) => {
-    console.log(pattern_file, "QWERTYUZAIR");
     updateProgress({ showProgress : true });
     dataFetch(
       ctxUrl(DEPLOY_URL, selectedK8sContexts),

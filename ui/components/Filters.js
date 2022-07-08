@@ -295,7 +295,6 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
   }
 
   const handleDeploy = (filter_file) => {
-    console.log(filter_file, "QWERTYUZAIR");
     dataFetch(
       ctxUrl(DEPLOY_URL, selectedK8sContexts),
       { credentials : "include", method : "POST", body : filter_file },

@@ -426,7 +426,6 @@ class MesheryAdapterPlayComponent extends React.Component {
         return;
       }
       const operationName = selectedOp.replaceAll("_", " ").split(" ").map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
-      console.log(operationName, "PPPPPPPPP", deleteOp, cat);
       self.setState({
         category : cat,
         selectedOp : selectedOp,
@@ -448,7 +447,6 @@ class MesheryAdapterPlayComponent extends React.Component {
     } = this.state;
     const { adapter } = this.props;
     // const fileInput = document.querySelector('#k8sfile') ;
-    console.log("QWERTY", selectedOp);
     const data = {
       adapter : adapter.adapter_location,
       query : selectedOp,
@@ -599,18 +597,6 @@ class MesheryAdapterPlayComponent extends React.Component {
   handleExpandClick() {
     // setExpanded(!expanded);
   }
-
-  // searchContexts = (e) => {
-  //   // if (search === '') {
-  //   //   this.setState({ k8scontext: this.state.contexts });
-  //   //   return
-  //   // }
-  //   let search = e.target.value;
-  //   console.log("SDS",  search);
-  //   const matchedCtx = this.state.contexts.filter((ctx) => ctx.name.startsWith(search))
-  //   this.setState({ k8scontext : matchedCtx });
-  //   console.log("SDS", this.state.k8scontext);
-  // }
 
   handleDeployModalOpen = () => {
     this.setState({ deployModalOpen : true });
