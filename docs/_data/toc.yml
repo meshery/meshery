@@ -50,6 +50,8 @@
           url: installation/platforms/kind
         - title: Kubernetes
           url: installation/platforms/kubernetes
+        - title: KubeSphere
+          url: installation/platforms/kubesphere
         - title: Minikube
           url: installation/platforms/minikube
         - title: Windows

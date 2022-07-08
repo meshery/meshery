@@ -54,7 +54,7 @@ require (
 	github.com/prometheus/common v0.35.0
 	github.com/qri-io/jsonschema v0.2.1
 	github.com/sirupsen/logrus v1.8.1
-	github.com/spf13/cobra v1.4.0
+	github.com/spf13/cobra v1.5.0
 	github.com/spf13/pflag v1.0.5
 	github.com/spf13/viper v1.12.0
 	github.com/vektah/gqlparser/v2 v2.4.5

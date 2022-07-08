@@ -8,6 +8,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"path"
 	"strconv"
 	"strings"
 
@@ -106,6 +107,7 @@ mesheryctl pattern apply [pattern-name]
 				if !skipSave {
 					jsonValues, err := json.Marshal(map[string]interface{}{
 						"pattern_data": map[string]interface{}{
+							"name":         path.Base(file),
 							"pattern_file": text,
 						},
 						"save": true,
