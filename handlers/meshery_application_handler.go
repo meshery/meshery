@@ -125,6 +125,7 @@ func (h *Handler) handleApplicationPOST(
 		mesheryApplication := parsedBody.ApplicationData
 
 		bytApplication := []byte(mesheryApplication.ApplicationFile)
+		mesheryApplication.SourceContent = bytApplication
 		// check whether the uploaded file is a docker compose file
 		err := kompose.IsManifestADockerCompose(bytApplication, "")
 		if err == nil {
@@ -150,6 +151,9 @@ func (h *Handler) handleApplicationPOST(
 				return
 			}
 			mesheryApplication.ApplicationFile = string(response)
+			mesheryApplication.Type = models.DOCKER_COMPOSE
+		} else {
+			mesheryApplication.Type = models.K8S_MANIFEST
 		}
 
 		if parsedBody.Save {
@@ -303,21 +307,6 @@ func (h *Handler) GetMesheryApplicationSourceHandler(
 		ext = ".yaml"
 		mimeType = "application/x-yaml"
 	}
-	// file, err := ioutil.TempFile(os.TempDir(), mapp.Name+".*."+ext)
-	// if err != nil {
-	// 	obj := "download"
-	// 	h.log.Error(ErrApplicationFailure(err, obj))
-	// 	http.Error(rw, ErrApplicationFailure(err, obj).Error(), http.StatusNotFound)
-	// 	return
-	// }
-	// defer file.Close()
-	// _, err = file.Write(mapp.SourceContent)
-	// if err != nil {
-	// 	obj := "download"
-	// 	h.log.Error(ErrApplicationFailure(err, obj))
-	// 	http.Error(rw, ErrApplicationFailure(err, obj).Error(), http.StatusNotFound)
-	// 	return
-	// }d
 	reader := bytes.NewReader(mapp.SourceContent)
 	rw.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=%s", mapp.Name+ext))
 	rw.Header().Set("Content-Type", mimeType)
