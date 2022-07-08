@@ -165,6 +165,9 @@ func (h *Handler) handleApplicationPOST(
 				return
 			}
 			mesheryApplication.ApplicationFile = string(response)
+			mesheryApplication.Type = models.DOCKER_COMPOSE
+		} else {
+			mesheryApplication.Type = models.K8S_MANIFEST
 		}
 	}
 

@@ -34,9 +34,3 @@ type MesheryApplication struct {
 	UpdatedAt     *time.Time `json:"updated_at,omitempty"`
 	CreatedAt     *time.Time `json:"created_at,omitempty"`
 }
-
-type MesheryApplicationSource struct {
-	ID   *uuid.UUID      `json:"id,omitempty"`
-	Type ApplicationType `json:"type,omitempty"`
-	Data []byte
-}
