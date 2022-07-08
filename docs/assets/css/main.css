@@ -18426,6 +18426,11 @@ html body .md-typeset .headerlink {
     margin-bottom: .5rem
 }
 
+.selected{
+    color: #00B39F!important;
+    font-weight:400 !important;
+}
+
 @media(min-width:576px) {
     .td-title {
         font-size: 3rem
