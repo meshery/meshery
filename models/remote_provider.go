@@ -1987,7 +1987,7 @@ func (l *RemoteProvider) GetMesheryApplications(req *http.Request, page, pageSiz
 }
 
 // GetMesheryApplication gets application for the given applicationID
-func (l *RemoteProvider) GetMesheryApplication(req *http.Request, applicationID string, source bool) ([]byte, error) {
+func (l *RemoteProvider) GetMesheryApplication(req *http.Request, applicationID string) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistMesheryApplications) {
 		logrus.Error("operation not available")
 		return nil, ErrInvalidCapability("PersistMesheryApplications", l.ProviderName)
