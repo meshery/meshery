@@ -91,7 +91,7 @@ func (h *Handler) handleApplicationPOST(
 	defer func() {
 		_ = r.Body.Close()
 	}()
-
+	sourcetype := r.URL.Query().Get("source-type")
 	var parsedBody *MesheryApplicationRequestBody
 	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil {
 		h.log.Error(ErrRetrieveData(err))
@@ -126,16 +126,27 @@ func (h *Handler) handleApplicationPOST(
 
 		bytApplication := []byte(mesheryApplication.ApplicationFile)
 		mesheryApplication.SourceContent = bytApplication
-		// check whether the uploaded file is a docker compose file
-		err := kompose.IsManifestADockerCompose(bytApplication, "")
-		if err == nil {
-			res, err := kompose.Convert(bytApplication) // convert the docker compose file into kubernetes manifest
-			if err != nil {
-				obj := "convert"
-				h.log.Error(ErrApplicationFailure(err, obj))
-				http.Error(rw, ErrApplicationFailure(err, obj).Error(), http.StatusInternalServerError) // sending a 500 when we cannot convert the file into kuberentes manifest
-				return
+		var composeerr = fmt.Errorf("not docker compose")
+		if sourcetype == "" {
+			// check whether the uploaded file is a docker compose file if no source type is passed
+			composeerr = kompose.IsManifestADockerCompose(bytApplication, "")
+		}
+		if sourcetype == string(models.DOCKER_COMPOSE) || sourcetype == "" || sourcetype == string(models.K8S_MANIFEST) {
+			var res string
+			if sourcetype == string(models.DOCKER_COMPOSE) || composeerr == nil {
+				res, err = kompose.Convert(bytApplication) // convert the docker compose file into kubernetes manifest
+				if err != nil {
+					obj := "convert"
+					h.log.Error(ErrApplicationFailure(err, obj))
+					http.Error(rw, ErrApplicationFailure(err, obj).Error(), http.StatusInternalServerError) // sending a 500 when we cannot convert the file into kuberentes manifest
+					return
+				}
+				mesheryApplication.Type = models.DOCKER_COMPOSE
+			} else {
+				res = string(bytApplication)
+				mesheryApplication.Type = models.K8S_MANIFEST
 			}
+
 			pattern, err := core.NewPatternFileFromK8sManifest(res, false)
 			if err != nil {
 				obj := "convert"
@@ -151,9 +162,6 @@ func (h *Handler) handleApplicationPOST(
 				return
 			}
 			mesheryApplication.ApplicationFile = string(response)
-			mesheryApplication.Type = models.DOCKER_COMPOSE
-		} else {
-			mesheryApplication.Type = models.K8S_MANIFEST
 		}
 
 		if parsedBody.Save {
@@ -272,6 +280,28 @@ func (h *Handler) GetMesheryApplicationHandler(
 
 	rw.Header().Set("Content-Type", "application/json")
 	fmt.Fprint(rw, string(resp))
+}
+
+// GetMesheryApplicationHandler fetched the application with the given id
+func (h *Handler) GetMesheryApplicationTypesHandler(
+	rw http.ResponseWriter,
+	r *http.Request,
+	prefObj *models.Preference,
+	user *models.User,
+	provider models.Provider,
+) {
+	response := make(map[string]interface{})
+	types := models.GetApplicationTypes()
+	response["available_types"] = types
+	b, err := json.Marshal(response)
+	if err != nil {
+		obj := "available_types"
+		h.log.Error(ErrMarshal(err, obj))
+		http.Error(rw, ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
+		return
+	}
+	rw.Header().Set("Content-Type", "application/json")
+	fmt.Fprintf(rw, string(b))
 }
 
 // GetMesheryApplicationHandler fetched the application with the given id

@@ -9,10 +9,14 @@ import (
 
 type ApplicationType string
 
+func GetApplicationTypes() []ApplicationType {
+	return []ApplicationType{HELM_CHART, DOCKER_COMPOSE, K8S_MANIFEST}
+}
+
 const (
-	HELM_CHART     ApplicationType = "HELM_CHART"
-	DOCKER_COMPOSE ApplicationType = "DOCKER_COMPOSE"
-	K8S_MANIFEST   ApplicationType = "K8S_MANIFEST"
+	HELM_CHART     ApplicationType = "helm_chart"
+	DOCKER_COMPOSE ApplicationType = "docker_compose"
+	K8S_MANIFEST   ApplicationType = "k8s_manifest"
 )
 
 // MesheryApplication represents the applications that needs to be saved
