@@ -1,8 +1,10 @@
 package handlers
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -148,12 +150,6 @@ func (h *Handler) handleApplicationPOST(
 				return
 			}
 			mesheryApplication.ApplicationFile = string(response)
-			mesheryApplication.SourceID = mesheryApplication.ID
-			mesheryApplication.Source = models.MesheryApplicationSource{
-				ID:   mesheryApplication.ID,
-				Type: models.DOCKER_COMPOSE,
-				Data: bytApplication,
-			}
 		}
 
 		if parsedBody.Save {
@@ -262,12 +258,7 @@ func (h *Handler) GetMesheryApplicationHandler(
 	provider models.Provider,
 ) {
 	applicationID := mux.Vars(r)["id"]
-	var source bool
-
-	if r.URL.Query().Get("source") == "true" {
-		source = true
-	}
-	resp, err := provider.GetMesheryApplication(r, applicationID, source)
+	resp, err := provider.GetMesheryApplication(r, applicationID)
 	if err != nil {
 		obj := "get"
 		h.log.Error(ErrApplicationFailure(err, obj))
@@ -279,6 +270,59 @@ func (h *Handler) GetMesheryApplicationHandler(
 	fmt.Fprint(rw, string(resp))
 }
 
+// GetMesheryApplicationHandler fetched the application with the given id
+func (h *Handler) GetMesheryApplicationSourceHandler(
+	rw http.ResponseWriter,
+	r *http.Request,
+	prefObj *models.Preference,
+	user *models.User,
+	provider models.Provider,
+) {
+	applicationID := mux.Vars(r)["id"]
+	resp, err := provider.GetMesheryApplication(r, applicationID)
+	if err != nil {
+		obj := "download"
+		h.log.Error(ErrApplicationFailure(err, obj))
+		http.Error(rw, ErrApplicationFailure(err, obj).Error(), http.StatusNotFound)
+		return
+	}
+	var mapp models.MesheryApplication
+	err = json.Unmarshal(resp, &mapp)
+	if err != nil {
+		obj := "download"
+		h.log.Error(ErrApplicationFailure(err, obj))
+		http.Error(rw, ErrApplicationFailure(err, obj).Error(), http.StatusNotFound)
+		return
+	}
+	var ext string
+	var mimeType string
+	if mapp.Type == models.HELM_CHART { //serve the content in a tgz file
+		ext = ".tgz"
+		mimeType = "application/x-tar"
+	} else { // serve the content in yaml file
+		ext = ".yaml"
+		mimeType = "application/x-yaml"
+	}
+	// file, err := ioutil.TempFile(os.TempDir(), mapp.Name+".*."+ext)
+	// if err != nil {
+	// 	obj := "download"
+	// 	h.log.Error(ErrApplicationFailure(err, obj))
+	// 	http.Error(rw, ErrApplicationFailure(err, obj).Error(), http.StatusNotFound)
+	// 	return
+	// }
+	// defer file.Close()
+	// _, err = file.Write(mapp.SourceContent)
+	// if err != nil {
+	// 	obj := "download"
+	// 	h.log.Error(ErrApplicationFailure(err, obj))
+	// 	http.Error(rw, ErrApplicationFailure(err, obj).Error(), http.StatusNotFound)
+	// 	return
+	// }d
+	reader := bytes.NewReader(mapp.SourceContent)
+	rw.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=%s", mapp.Name+ext))
+	rw.Header().Set("Content-Type", mimeType)
+	io.Copy(rw, reader)
+}
 func (h *Handler) formatApplicationOutput(rw http.ResponseWriter, content []byte, format string) {
 	contentMesheryApplicationSlice := make([]models.MesheryApplication, 0)
 
