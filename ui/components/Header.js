@@ -330,7 +330,7 @@ function K8sContextMenu({
                         onChange={() => setActiveContexts("all")}
                         color="primary"
                       />
-                      <span>Select All</span>
+                      <span style={{ fontWeight : "bolder" }}>select all</span>
                     </>
                     :
                     <Link href="/settings">
