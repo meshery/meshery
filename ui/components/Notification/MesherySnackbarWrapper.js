@@ -11,17 +11,7 @@ import {
   } from "@mui/material";   
   import { SnackbarContent } from 'notistack';
 
-//   const variantIcon = {
-//     success : CheckCircleIcon,
-//     warning : WarningIcon,
-//     error : ErrorIcon,
-//     info : InfoIcon,
-//   };
-
-
   function MesherySnackbarWrapper ({ message, onClose, variant, details}) {
-    
-    // const Icon = variantIcon[variant];
 
     const [expanded, setExpanded] = useState(false);
     const [cardHover, setCardHover] = useState(false)

@@ -155,7 +155,6 @@ import {
                   <MesheryEventViewer
                     eventVariant={event.event_type}
                     eventSummary={event.summary}
-                    // deleteEvent={self.deleteEvent(ind)}
                     eventDetails={event.details || "Details Unavailable"}
                   />
                 ))}

@@ -1,7 +1,7 @@
 import MesherySnackbarWrapper from "./MesherySnackbarWrapper"
 
 
-//Component for the  event(notification) snackbar 
+/* Component for the  event(notification) snackbar */ 
 function MesheryEventViewer ({eventVariant, eventSummary, eventDetails}) {
 
     return(
@@ -12,7 +12,6 @@ function MesheryEventViewer ({eventVariant, eventSummary, eventDetails}) {
               : eventTypes[0].type}
             message={eventSummary}
             details={eventDetails}
-            // onClose={handleSnackbarClose}
              />
     )
 }
