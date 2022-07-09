@@ -28,8 +28,14 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import { getMesheryVersionText } from "@/features/mesheryComponents/components/MesheryServer/helpers";
 import { MesheryServerVersionContainer } from "@/features/mesheryComponents";
-import { Grid } from "@mui/material";
+import { Grid, styled } from "@mui/material";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
+
+const NavDrawer = styled(Drawer)(({theme},) => ({
+	zIndex: theme.zIndex.drawer + 10, 
+	position: "relative",
+	width: "inherit"
+}));
 
 const Navbar = ({
   isDrawerCollapsed,
@@ -363,13 +369,12 @@ const Navbar = ({
 
   return (
     <nav className={isDrawerCollapsed ? classes.drawerCollapsed : classes.drawer}>
-      <Drawer
+      <NavDrawer
         variant={isMobile ? "temporary" : "permanent"}
         open={isDrawerOpen}
         onClose={() => setIsDrawerOpen(false)}
         className={isDrawerCollapsed ? classes.sidebarCollapsed : classes.sidebarExpanded}
         classes={{ paper: isDrawerCollapsed ? classes.sidebarCollapsed : classes.sidebarExpanded }}
-        sx={{ zIndex: theme.zIndex.drawer + 10, position: "relative", width: "inherit" }}
       >
         <HiddenscrollbarStyle>
           <List disablePadding>
@@ -448,7 +453,7 @@ const Navbar = ({
             )}
           </MesheryServerVersionContainer>
         }
-      </Drawer>
+      </NavDrawer>
     </nav>
   );
 };
