@@ -369,7 +369,7 @@ const Navbar = ({
         onClose={() => setIsDrawerOpen(false)}
         className={isDrawerCollapsed ? classes.sidebarCollapsed : classes.sidebarExpanded}
         classes={{ paper: isDrawerCollapsed ? classes.sidebarCollapsed : classes.sidebarExpanded }}
-        style={{ width: "inherit" }}
+        sx={{ zIndex: theme.zIndex.drawer + 10, position: "relative", width: "inherit" }}
       >
         <HiddenscrollbarStyle>
           <List disablePadding>
@@ -411,7 +411,7 @@ const Navbar = ({
               <div>
                 {isDrawerCollapsed ? (
                   <div style={{ color: "white", fontSize: "0.7rem", textAlign: "center", paddingBottom: "0.5rem" }}>
-                    {serverVersion}{" "}
+                    {serverVersion.build}{" "}
                   </div>
                 ) : (
                   <div className={classNames(classes.version)}>
