@@ -105,7 +105,7 @@ brews:
 
   # Your app's description.
   # Default is empty.
-  description: "The Multi-Service Mesh Management Plane."
+  description: "The Cloud Native Management Plane."
 
   # Setting this will prevent goreleaser to actually try to commit the updated
   # formula - instead, the formula file will be stored on the dist folder only,
