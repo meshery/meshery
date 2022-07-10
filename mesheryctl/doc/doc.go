@@ -141,6 +141,7 @@ func GenMarkdownCustom(cmd *cobra.Command, w io.Writer, linkHandler func(string)
 	}
 
 	var picLine = ""
+	var picComment = ""
 
 	if len(cmd.Example) > 0 {
 		buf.WriteString("## Examples\n\n")
@@ -153,7 +154,10 @@ func GenMarkdownCustom(cmd *cobra.Command, w io.Writer, linkHandler func(string)
 				} else if strings.HasPrefix(examples[i], "#") {
 					// If command has screenshot present
 					picLine += strings.Replace(examples[i], "# ", "", -1)
-				} else if strings.HasPrefix(examples[i], "##") {
+				} else if strings.HasPrefix(examples[i], "*") {
+					// Caption for screenshot, if any
+					picComment += strings.Replace(examples[i], "* ", "", -1)
+				} else if strings.HasPrefix(examples[i], "!") {
 					// For skipping comments present in codeblock
 					continue
 				} else {
@@ -171,6 +175,8 @@ func GenMarkdownCustom(cmd *cobra.Command, w io.Writer, linkHandler func(string)
 	// If command has screenshot present
 	if picLine != "" {
 		buf.WriteString("## Screenshots\n\n")
+		buf.WriteString(picComment)
+		buf.WriteString("\n")
 		buf.WriteString(picLine)
 		buf.WriteString("\n\n")
 	}
