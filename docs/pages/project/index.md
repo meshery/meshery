@@ -7,6 +7,7 @@ language: en
 display-title: "false"
 list: exclude
 ---
+
 # Meshery Overview
 
 As the cloud native management plane, Meshery enables the operation and management of Kuberneetes, any service mesh, and their workloads. Meshery's powerful performance management functionality is accomplished through implementation of [Service Mesh Performance](https://smp-spec.io) (SMP). Meshery's multi-mesh management functionality leverages [Service Mesh Interface](https://smi-spec.io) (SMI) and Meshery is the conformance tool for SMI. Meshery integrates with Open Application Model (OAM) to enable users to deploy service mesh patterns. Meshery enables operators to deploy WebAssembly filters to Envoy-based data planes. Meshery facilitates learning about functionality and performance of service meshes and incorporates the collection and display of metrics from applications running on or across service meshes.
@@ -26,8 +27,6 @@ As the cloud native management plane, Meshery enables the operation and manageme
       {% endif %}
     {% endfor %}
 </ul>
-
-{% include toc.html page=project %}
 
 ---
 
@@ -90,6 +89,7 @@ Infrastructure diversity is a reality for any enterprise. Whether you're running
 
 | Service Mesh | Status |
 | :----------- | -----: |
+
 {% for adapter in site.adapters -%}
 {% if adapter.project_status == "stable" -%}
 | <img src="{{ adapter.image }}" style="width:20px" /> [{{ adapter.name }}]({{ site.baseurl }}{{ adapter.url }}) | {{ adapter.project_status }} |
@@ -100,6 +100,7 @@ Infrastructure diversity is a reality for any enterprise. Whether you're running
 
 | Service Mesh | Status |
 | :----------- | -----: |
+
 {% for adapter in site.adapters -%}
 {% if adapter.project_status == "beta" -%}
 | <img src="{{ adapter.image }}" style="width:20px" /> [{{ adapter.name }}]({{ site.baseurl }}{{ adapter.url }}) | {{ adapter.project_status }} |
@@ -110,8 +111,10 @@ Infrastructure diversity is a reality for any enterprise. Whether you're running
 
 | Service Mesh | Status |
 | :----------- | -----: |
+
 {% for adapter in site.adapters -%}
 {% if adapter.project_status == "alpha" -%}
 | <img src="{{ adapter.image }}" style="width:20px" /> [{{ adapter.name }}]({{ site.baseurl }}{{ adapter.url }}) | {{ adapter.project_status }} |
 {% endif -%}
 {% endfor %}
+
