@@ -585,7 +585,7 @@ function MesheryApplications({
                 title="Undeploy"
                 onClick={() => handleModalOpen(rowData.application_file, rowData.name, false)}
               >
-                <UndeployIcon fill="rgba(0, 0, 0, 0.54)" data-cy="undeploy-button" />
+                <UndeployIcon fill="#B32700" data-cy="undeploy-button" />
               </IconButton>
             </>
           );
