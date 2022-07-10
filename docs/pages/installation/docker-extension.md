@@ -19,15 +19,22 @@ The Docker Extension for Meshery extends Docker Desktop’s position as the clou
 
 1) Navigate to the Extensions area of Docker Desktop.
 
-2) Then navigate to Meshery in the MarketPlace and press install.
+2) From the Dashboard, select Add Extensions in the menu bar or open the Extensions Marketplace from the menu options.
 
-<a href="{{ site.baseurl }}/assets/img/platforms/docker-extensions-marketplace.png">
-  <img style="width:350px;" src="{{ site.baseurl }}/assets/img/platforms/docker-extensions-marketplace.png">
+<a href="{{ site.baseurl }}/assets/img/platforms/docker-extension-marketplace-1.png">
+  <img style="width:350px;" src="{{ site.baseurl }}/assets/img/platforms/docker-extension-marketplace-1.png">
 </a>
+
+<a href="{{ site.baseurl }}/assets/img/platforms/docker-extension-marketplace-2.png">
+  <img style="width:350px;" src="{{ site.baseurl }}/assets/img/platforms/docker-extension-marketplace-2.png">
+</a>
+
+3) Navigate to Meshery in the Marketplace and press install.
 
 <a href="{{ site.baseurl }}/assets/img/platforms/meshery-docker-extension-install.png">
-  <img style="width:350px;" src="{{ site.baseurl }}/assets/img/platforms/meshery-docker-extension-install.png">
+  <img style="width:730px;height:113px" src="{{ site.baseurl }}/assets/img/platforms/docker-extension.png">
 </a>
+
 ### Using `Docker CLI`
 
 Meshery runs as a set of containers inside your Docker Desktop virtual machine.
