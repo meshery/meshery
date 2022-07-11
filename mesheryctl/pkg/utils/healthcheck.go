@@ -176,6 +176,45 @@ func IsMesheryRunning(currPlatform string) (bool, error) {
 	return false, nil
 }
 
+// AreMesheryComponentsRunning checks if the meshery containers are up and running
+func AreMesheryComponentsRunning(currPlatform string) (bool, error) {
+	//If not, use the platforms to check if Meshery is running or not
+	switch currPlatform {
+	case "docker":
+		{
+			op, err := exec.Command("docker-compose", "-f", DockerComposeFile, "ps").Output()
+			if err != nil {
+				return false, errors.Wrap(err, " required dependency, docker-compose, is not present or docker is not available. Please run `mesheryctl system check --preflight` to verify system readiness")
+			}
+			return strings.Contains(string(op), "meshery"), nil
+		}
+	case "kubernetes":
+		{
+			client, err := meshkitkube.New([]byte(""))
+
+			if err != nil {
+				return false, errors.Wrap(err, "failed to create new client")
+			}
+
+			deploymentInterface := client.KubeClient.AppsV1().Deployments(MesheryNamespace)
+			deploymentList, err := deploymentInterface.List(context.TODO(), metav1.ListOptions{})
+
+			if err != nil {
+				return false, err
+			}
+			for _, deployment := range deploymentList.Items {
+				if strings.Contains(string(deployment.GetName()), "meshery") {
+					return true, nil
+				}
+			}
+
+			return false, err
+		}
+	}
+
+	return false, nil
+}
+
 // AreAllPodsRunning checks if all the deployment pods under kubernetes are running
 func AreAllPodsRunning() (bool, error) {
 	// create an kubernetes client
@@ -199,6 +238,20 @@ func AreAllPodsRunning() (bool, error) {
 			return false, nil
 		}
 	}
+	return true, nil
+}
+
+// CheckMesheryNsDelete waits for Meshery namespace to be deleted, returns (done, error)
+func CheckMesheryNsDelete() (bool, error) {
+	client, err := meshkitkube.New([]byte(""))
+	if err != nil {
+		return false, err
+	}
+
+	if err := WaitForNamespaceDeleted(client, MesheryNamespace, 300); err != nil {
+		return false, err
+	}
+
 	return true, nil
 }
 
@@ -250,4 +303,33 @@ func WaitForPodRunning(c *meshkitkube.Client, desiredPod, namespace string, time
 	}
 
 	return pollForPodRunning(c, namespace, desiredPodName, time.Duration(timeout)*time.Second)
+}
+
+// Returns condition function to indicate that the `namespace` does not exist anymore.
+func isNamespaceDeleted(c *meshkitkube.Client, namespace string) wait.ConditionFunc {
+	return func() (bool, error) {
+		namespaces, err := c.KubeClient.CoreV1().Namespaces().List(context.TODO(), metav1.ListOptions{})
+		if err != nil {
+			return false, err
+		}
+
+		// Check if namespace exists in namespaces list
+		for _, ns := range namespaces.Items {
+			if ns.Name == namespace {
+				return false, nil
+			}
+		}
+
+		return true, nil
+	}
+}
+
+// Poll up to timeout seconds every 5 seconds until the namespace no more exists.
+func pollForNamespaceDeleted(c *meshkitkube.Client, namespace string, timeout time.Duration) error {
+	return wait.Poll(5*time.Second, timeout, isNamespaceDeleted(c, namespace))
+}
+
+// Wait up to timeout seconds for `namespace` to be deleted.
+func WaitForNamespaceDeleted(c *meshkitkube.Client, namespace string, timeout int) error {
+	return pollForNamespaceDeleted(c, namespace, time.Duration(timeout)*time.Second)
 }

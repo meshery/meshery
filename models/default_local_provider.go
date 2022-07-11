@@ -5,7 +5,6 @@ import (
 	"bytes"
 	"compress/gzip"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -13,7 +12,6 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
-	"regexp"
 	"strconv"
 	"strings"
 	"sync"
@@ -43,7 +41,8 @@ type DefaultLocalProvider struct {
 	MesheryPatternResourcePersister *PatternResourcePersister
 	MesheryApplicationPersister     *MesheryApplicationPersister
 	MesheryFilterPersister          *MesheryFilterPersister
-	GenericPersister                database.Handler
+	MesheryK8sContextPersister      *MesheryK8sContextPersister
+	GenericPersister                *database.Handler
 	KubeClient                      *mesherykube.Client
 }
 
@@ -53,7 +52,7 @@ func (l *DefaultLocalProvider) Initialize() {
 	l.ProviderDescription = []string{
 		"Ephemeral sessions",
 		"Environment setup not saved",
-		"No performance test result history",
+		"No performance or conformance test result history",
 		"Free Use",
 	}
 	l.ProviderType = LocalProviderType
@@ -145,6 +144,74 @@ func (l *DefaultLocalProvider) GetProviderToken(req *http.Request) (string, erro
 func (l *DefaultLocalProvider) Logout(w http.ResponseWriter, req *http.Request) {
 	http.Redirect(w, req, "/user/login", http.StatusFound)
 }
+
+func (l *DefaultLocalProvider) SaveK8sContext(token string, k8sContext K8sContext) (K8sContext, error) {
+	return l.MesheryK8sContextPersister.SaveMesheryK8sContext(k8sContext)
+}
+
+func (l *DefaultLocalProvider) GetK8sContexts(token, page, pageSize, search, order string) (MesheryK8sContextPage, error) {
+	if page == "" {
+		page = "0"
+	}
+	if pageSize == "" {
+		pageSize = "10"
+	}
+
+	pg, err := strconv.ParseUint(page, 10, 32)
+	if err != nil {
+		return MesheryK8sContextPage{}, ErrPageNumber(err)
+	}
+
+	pgs, err := strconv.ParseUint(pageSize, 10, 32)
+	if err != nil {
+		return MesheryK8sContextPage{}, ErrPageSize(err)
+	}
+
+	return l.MesheryK8sContextPersister.GetMesheryK8sContexts(search, order, pg, pgs)
+}
+
+func (l *DefaultLocalProvider) DeleteK8sContext(token, id string) (K8sContext, error) {
+	return l.MesheryK8sContextPersister.DeleteMesheryK8sContext(id)
+}
+
+func (l *DefaultLocalProvider) GetK8sContext(token, id string) (K8sContext, error) {
+	return l.MesheryK8sContextPersister.GetMesheryK8sContext(id)
+}
+
+func (l *DefaultLocalProvider) LoadAllK8sContext(token string) ([]*K8sContext, error) {
+	page := 0
+	pageSize := 25
+	results := []*K8sContext{}
+
+	for {
+		res, err := l.GetK8sContexts(token, strconv.Itoa(page), strconv.Itoa(pageSize), "", "")
+		if err != nil {
+			return results, err
+		}
+
+		results = append(results, res.Contexts...)
+
+		if page*pageSize >= res.TotalCount {
+			break
+		}
+
+		page++
+	}
+
+	return results, nil
+}
+
+// func (l *DefaultLocalProvider) SetCurrentContext(token, id string) (K8sContext, error) {
+// 	if err := l.MesheryK8sContextPersister.SetMesheryK8sCurrentContext(id); err != nil {
+// 		return K8sContext{}, err
+// 	}
+
+// 	return l.MesheryK8sContextPersister.GetMesheryK8sContext(id)
+// }
+
+// func (l *DefaultLocalProvider) GetCurrentContext(token string) (K8sContext, error) {
+// 	return l.MesheryK8sContextPersister.GetMesheryK8sCurrentContext()
+// }
 
 // FetchResults - fetches results from provider backend
 func (l *DefaultLocalProvider) FetchResults(tokenVal, page, pageSize, search, order, profileID string) ([]byte, error) {
@@ -846,6 +913,10 @@ func (l *DefaultLocalProvider) RecordMeshSyncData(obj model.Object) error {
 	return nil
 }
 
+func (l *DefaultLocalProvider) ExtensionProxy(req *http.Request) ([]byte, error) {
+	return []byte{}, ErrLocalProviderSupport
+}
+
 // ReadMeshSyncData reads the mesh sync data
 func (l *DefaultLocalProvider) ReadMeshSyncData() ([]model.Object, error) {
 	objects := make([]model.Object, 0)
@@ -867,7 +938,7 @@ func (l *DefaultLocalProvider) ReadMeshSyncData() ([]model.Object, error) {
 
 // GetGenericPersister - to return persister
 func (l *DefaultLocalProvider) GetGenericPersister() *database.Handler {
-	return &l.GenericPersister
+	return l.GenericPersister
 }
 
 // SetKubeClient - to set meshery kubernetes client
@@ -881,19 +952,16 @@ func (l *DefaultLocalProvider) GetKubeClient() *mesherykube.Client {
 }
 
 // SeedContent- to seed various contents with local provider-like patterns, filters, and applications
-func (l *DefaultLocalProvider) SeedContent(log logger.Handler) []uuid.UUID {
+func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 	seededUUIDs := make([]uuid.UUID, 0)
 	seedContents := []string{"Pattern", "Application", "Filter"}
-	var wg sync.WaitGroup
 	for _, seedContent := range seedContents {
-		wg.Add(1)
 		go func(comp string, log logger.Handler, seededUUIDs *[]uuid.UUID) {
-			defer wg.Done()
 			names, content, err := getSeededComponents(comp, log)
 			if err != nil {
 				log.Error(ErrGettingSeededComponents(err, comp))
 			} else {
-				log.Info("starting to seed ", comp)
+				log.Info("seeding sample ", comp, "s")
 				switch comp {
 				case "Pattern":
 					for i, name := range names {
@@ -903,7 +971,7 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) []uuid.UUID {
 							Name:        name,
 							ID:          &id,
 						}
-						log.Info("saving "+comp+"- ", name)
+						log.Debug("seeding "+comp+": ", name)
 						switch comp {
 
 						}
@@ -921,7 +989,7 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) []uuid.UUID {
 							Name:       name,
 							ID:         &id,
 						}
-						log.Info("saving "+comp+"- ", name)
+						log.Debug("seeding "+comp+": ", name)
 						switch comp {
 
 						}
@@ -939,7 +1007,7 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) []uuid.UUID {
 							Name:            name,
 							ID:              &id,
 						}
-						log.Info("saving "+comp+"- ", name)
+						log.Debug("seeding "+comp+": ", name)
 						switch comp {
 
 						}
@@ -953,15 +1021,21 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) []uuid.UUID {
 			}
 		}(seedContent, log, &seededUUIDs)
 	}
-	wg.Wait()
-	return seededUUIDs
 }
-func (l *DefaultLocalProvider) CleanupSeeded(seededUUIDs []uuid.UUID) {
-	for _, id := range seededUUIDs {
-		_, _ = l.MesheryPatternPersister.DeleteMesheryPattern(id)
-		_, _ = l.MesheryFilterPersister.DeleteMesheryFilter(id)
-		_, _ = l.MesheryApplicationPersister.DeleteMesheryApplication(id)
+func (l *DefaultLocalProvider) Cleanup() error {
+	if err := l.MesheryK8sContextPersister.DB.Migrator().DropTable(&K8sContext{}); err != nil {
+		return err
 	}
+	if err := l.MesheryK8sContextPersister.DB.Migrator().DropTable(&MesheryPattern{}); err != nil {
+		return err
+	}
+	if err := l.MesheryK8sContextPersister.DB.Migrator().DropTable(&MesheryApplication{}); err != nil {
+		return err
+	}
+	if err := l.MesheryK8sContextPersister.DB.Migrator().DropTable(&MesheryFilter{}); err != nil {
+		return err
+	}
+	return nil
 }
 
 // githubRepoPatternScan & githubRepoFilterScan takes in github repo owner, repo name, path from where the file/files are needed
@@ -1076,13 +1150,8 @@ func githubRepoApplicationScan(
 		RegisterFileInterceptor(func(f walker.File) error {
 			ext := filepath.Ext(f.Name)
 			if ext == ".yml" || ext == ".yaml" {
-				name, err := GetApplicationName(string(f.Content))
-				if err != nil {
-					return err
-				}
-
 				af := MesheryApplication{
-					Name:            name,
+					Name:            strings.TrimSuffix(f.Name, ext),
 					ApplicationFile: string(f.Content),
 					Location: map[string]interface{}{
 						"type":   "github",
@@ -1192,14 +1261,9 @@ func genericHTTPApplicationFile(fileURL string) ([]MesheryApplication, error) {
 		return nil, err
 	}
 	result := string(body)
-
-	name, err := GetApplicationName(result)
-	if err != nil {
-		return nil, err
-	}
-
+	url := strings.Split(fileURL, "/")
 	af := MesheryApplication{
-		Name:            name,
+		Name:            url[len(url)-1],
 		ApplicationFile: result,
 		Location: map[string]interface{}{
 			"type":   "http",
@@ -1415,26 +1479,26 @@ func getSeededAppLocation(path string) (map[string][]string, error) {
 	return applicationsAndURLS, nil
 }
 
-// GetLatestStableReleaseTag fetches and returns the latest release tag from GitHub
-func getLatestStableReleaseTag() (string, error) {
-	url := "https://github.com/layer5io/wasm-filters/releases/latest"
-	resp, err := http.Get(url)
-	if err != nil {
-		return "", errors.New("failed to get latest stable release tag")
-	}
-	defer SafeClose(resp.Body)
+// // GetLatestStableReleaseTag fetches and returns the latest release tag from GitHub
+// func getLatestStableReleaseTag() (string, error) {
+// 	url := "https://github.com/layer5io/wasm-filters/releases/latest"
+// 	resp, err := http.Get(url)
+// 	if err != nil {
+// 		return "", errors.New("failed to get latest stable release tag")
+// 	}
+// 	defer SafeClose(resp.Body)
 
-	if resp.StatusCode != http.StatusOK {
-		return "", errors.New("failed to get latest stable release tag")
-	}
+// 	if resp.StatusCode != http.StatusOK {
+// 		return "", errors.New("failed to get latest stable release tag")
+// 	}
 
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return "", errors.New("failed to get latest stable release tag")
-	}
-	re := regexp.MustCompile("/releases/tag/(.*?)\"")
-	releases := re.FindAllString(string(body), -1)
-	latest := strings.ReplaceAll(releases[0], "/releases/tag/", "")
-	latest = strings.ReplaceAll(latest, "\"", "")
-	return latest, nil
-}
+// 	body, err := ioutil.ReadAll(resp.Body)
+// 	if err != nil {
+// 		return "", errors.New("failed to get latest stable release tag")
+// 	}
+// 	re := regexp.MustCompile("/releases/tag/(.*?)\"")
+// 	releases := re.FindAllString(string(body), -1)
+// 	latest := strings.ReplaceAll(releases[0], "/releases/tag/", "")
+// 	latest = strings.ReplaceAll(latest, "\"", "")
+// 	return latest, nil
+// }

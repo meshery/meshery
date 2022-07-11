@@ -4,14 +4,15 @@ import (
 	"encoding/json"
 	"fmt"
 	"strings"
+	"sync"
 
 	"github.com/layer5io/meshery/models/pattern/patterns/application"
 	"github.com/layer5io/meshery/models/pattern/patterns/k8s"
 	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
-	meshkube "github.com/layer5io/meshkit/utils/kubernetes"
+	"github.com/layer5io/meshkit/utils/kubernetes"
 )
 
-func ProcessOAM(kubeClient *meshkube.Client, oamComps []string, oamConfig string, isDel bool) (string, error) {
+func ProcessOAM(kconfigs []string, oamComps []string, oamConfig string, isDel bool) (string, error) {
 	var comps []v1alpha1.Component
 	var config v1alpha1.Configuration
 
@@ -30,38 +31,53 @@ func ProcessOAM(kubeClient *meshkube.Client, oamComps []string, oamConfig string
 
 	var msgs []string
 	var errs []error
-
-	for _, comp := range comps {
-		if comp.Spec.Type == "Application" {
-			if err := application.Deploy(kubeClient, comp, config, isDel); err != nil {
-				errs = append(errs, err)
-			}
-
-			if !isDel {
-				msgs = append(msgs, "successfully deployed application "+comp.Name)
-			} else {
-				msgs = append(msgs, "successfully deleted application "+comp.Name)
-			}
-
+	var kclis []*kubernetes.Client
+	for _, config := range kconfigs {
+		cli, err := kubernetes.New([]byte(config))
+		if err != nil {
+			errs = append(errs, err)
 			continue
 		}
+		kclis = append(kclis, cli)
+	}
+	var wg sync.WaitGroup
+	for _, kcli := range kclis {
+		wg.Add(1)
+		go func(kcli *kubernetes.Client) {
+			defer wg.Done()
+			for _, comp := range comps {
+				if comp.Spec.Type == "Application" {
+					if err := application.Deploy(kcli, comp, config, isDel); err != nil {
+						errs = append(errs, err)
+					}
 
-		// Handle all of the k8s component here
-		if strings.HasSuffix(strings.ToLower(comp.Spec.Type), ".k8s") {
-			if err := k8s.Deploy(kubeClient, comp, config, isDel); err != nil {
-				errs = append(errs, err)
+					if !isDel {
+						msgs = append(msgs, "successfully deployed application "+comp.Name)
+					} else {
+						msgs = append(msgs, "successfully deleted application "+comp.Name)
+					}
 
-				if !isDel {
-					msgs = append(msgs, "successfully deployed kubernetes component "+comp.Name)
-				} else {
-					msgs = append(msgs, "successfully deleted kubernetes component "+comp.Name)
+					continue
 				}
 
-				continue
-			}
-		}
-	}
+				// Handle all of the k8s component here
+				if strings.HasSuffix(strings.ToLower(comp.Spec.Type), ".k8s") {
+					if err := k8s.Deploy(kcli, comp, config, isDel); err != nil {
+						errs = append(errs, err)
 
+						if !isDel {
+							msgs = append(msgs, "successfully deployed kubernetes component "+comp.Name)
+						} else {
+							msgs = append(msgs, "successfully deleted kubernetes component "+comp.Name)
+						}
+
+						continue
+					}
+				}
+			}
+		}(kcli)
+	}
+	wg.Wait()
 	return strings.Join(msgs, "\n"), mergeErrors(errs)
 }
 

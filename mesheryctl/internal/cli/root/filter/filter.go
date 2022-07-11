@@ -18,7 +18,11 @@ var FilterCmd = &cobra.Command{
 	Use:   "filter",
 	Short: "Service Mesh Filter Management",
 	Long:  ``,
-	Args:  cobra.MinimumNArgs(1),
+	Example: `
+// Base command for WASM filters (experimental feature)
+mesheryctl exp filter [subcommands]	
+	`,
+	Args: cobra.MinimumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
 			return errors.New(utils.SystemError(fmt.Sprintf("invalid command: \"%s\"", args[0])))

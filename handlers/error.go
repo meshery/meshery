@@ -54,16 +54,16 @@ const (
 	ErrRetrieveUserTokenCode    = "2044"
 	ErrFailToSaveCode           = "2045"
 	ErrFailToDeleteCode         = "2046"
-	ErrWriteResponseCode        = "2052"
-	ErrTestConfigsCode          = "2053"
-	ErrInvalidGenValueCode      = "2054"
-	ErrFailToLoadExtensionsCode = "2047"
-	ErrConversionCode           = "2048"
-	ErrParseDurationCode        = "2049"
-	ErrLoadTestCode             = "2050"
-	ErrFetchKubernetesCode      = "2051"
-	ErrPanicRecoveryCode        = "2052"
-	ErrBlankNameCode            = "2053"
+	ErrWriteResponseCode        = "2202"
+	ErrTestConfigsCode          = "2203"
+	ErrInvalidGenValueCode      = "2204"
+	ErrFailToLoadExtensionsCode = "2205"
+	ErrConversionCode           = "2206"
+	ErrParseDurationCode        = "2207"
+	ErrLoadTestCode             = "2208"
+	ErrFetchKubernetesCode      = "2209"
+	ErrPanicRecoveryCode        = "2210"
+	ErrBlankNameCode            = "2211"
 	ErrInvalidLTURLCode         = "2053"
 	ErrDataSendCode             = "2137"
 	ErrVersionCompareCode       = "2138"
@@ -96,22 +96,34 @@ const (
 	ErrDecodePatternCode        = "2169"
 	ErrParsePatternCode         = "2170"
 	ErrConvertPatternCode       = "2171"
+	ErrMesheryInstanceIDCode    = "2173"
+	ErrInvalidKubeConfigCode    = "2174"
+	ErrInvalidKubeHandlerCode   = "2175"
+	ErrInvalidKubeContextCode   = "2176"
+	ErrInvalidKubeCon
+	ErrCreatingKubernetesComponentsCode = "2177"
 )
 
 var (
-	ErrInvalidK8SConfig = errors.New(ErrInvalidK8SConfigCode, errors.Alert, []string{"No valid kubernetes config found"}, []string{"Kubernetes config is not initialized with Meshery"}, []string{"Kubernetes config is not accessible to meshery or not valid"}, []string{"Upload your kubernetes config via the settings dashboard. If uploaded, wait for a minute for it to get initialized"})
-	ErrNilClient        = errors.New(ErrNilClientCode, errors.Alert, []string{"Kubernetes client not initialized"}, []string{"Kubernetes config is not initialized with Meshery"}, []string{"Kubernetes config is not accessible to meshery or not valid"}, []string{"Upload your kubernetes config via the settings dashboard. If uploaded, wait for a minute for it to get initialized"})
-	ErrPrometheusConfig = errors.New(ErrPrometheusConfigCode, errors.Alert, []string{"Prometheus endpoint not configured"}, []string{"Cannot find valid Prometheus endpoint in user pref"}, []string{"Prometheus endpoint might not be reachable from meshery"}, []string{"Setup your Prometheus Endpoint via the settings dashboard"})
-	ErrGrafanaConfig    = errors.New(ErrGrafanaConfigCode, errors.Alert, []string{"Grafana endpoint not configured"}, []string{"Cannot find valid grafana endpoint in user pref"}, []string{"Grafana endpoint might not be reachable from meshery"}, []string{"Setup your Grafana Endpoint via the settings dashboard"})
-	ErrStaticBoards     = errors.New(ErrStaticBoardsCode, errors.Alert, []string{"unable to get static board"}, []string{"unable to get static board"}, []string{"No boards could be available in grafana"}, []string{})
-	ErrValidAdapter     = errors.New(ErrValidAdapterCode, errors.Alert, []string{"Unable to find valid Adapter URL"}, []string{"unable to find a valid adapter for the given adapter URL"}, []string{"Given adapter URL is not valid"}, []string{"Please provide a valid Adapter URL"})
-	ErrAddAdapter       = errors.New(ErrAddAdapterCode, errors.Alert, []string{"meshLocationURL is empty"}, []string{"meshLocationURL is empty to add an adapter"}, []string{"meshLocationURL cannot be empty to add an adapter"}, []string{"please provide the meshLocationURL"})
-	ErrMeshClient       = errors.New(ErrMeshClientCode, errors.Alert, []string{"Error creating a mesh client", "Error pinging the mesh adapter"}, []string{"Unable to create a mesh client", "Unable to ping the mesh adapter"}, []string{"Adapter could not be pinged"}, []string{"Unable to connect to the Mesh adapter using the given config, please try again"})
-	ErrWriteResponse    = errors.New(ErrWriteResponseCode, errors.Alert, []string{"Error writing response"}, []string{}, []string{}, []string{})
-	ErrTestConfigs      = errors.New(ErrTestConfigsCode, errors.Alert, []string{"Error fetching test configs"}, []string{}, []string{}, []string{})
-	ErrInvalidGenValue  = errors.New(ErrInvalidGenValueCode, errors.Alert, []string{"Invalid value for gen"}, []string{}, []string{}, []string{"please provide a valid value for gen (load generator)"})
-	ErrParseDuration    = errors.New(ErrParseDurationCode, errors.Alert, []string{"error parsing test duration"}, []string{}, []string{"The format of the duration passed could be incorrect"}, []string{"please refer to:  https://docs.meshery.io/guides/mesheryctl#performance-management"})
+	ErrInvalidK8SConfig  = errors.New(ErrInvalidK8SConfigCode, errors.Alert, []string{"No valid kubernetes config found. Make sure to pass contextIDs in query parameters."}, []string{"Kubernetes config is not initialized with Meshery"}, []string{"Kubernetes config is not accessible to meshery or not valid"}, []string{"Upload your kubernetes config via the settings dashboard. If uploaded, wait for a minute for it to get initialized"})
+	ErrNilClient         = errors.New(ErrNilClientCode, errors.Alert, []string{"Kubernetes client not initialized"}, []string{"Kubernetes config is not initialized with Meshery"}, []string{"Kubernetes config is not accessible to meshery or not valid"}, []string{"Upload your kubernetes config via the settings dashboard. If uploaded, wait for a minute for it to get initialized"})
+	ErrPrometheusConfig  = errors.New(ErrPrometheusConfigCode, errors.Alert, []string{"Prometheus endpoint not configured"}, []string{"Cannot find valid Prometheus endpoint in user pref"}, []string{"Prometheus endpoint might not be reachable from meshery"}, []string{"Setup your Prometheus Endpoint via the settings dashboard"})
+	ErrGrafanaConfig     = errors.New(ErrGrafanaConfigCode, errors.Alert, []string{"Grafana endpoint not configured"}, []string{"Cannot find valid grafana endpoint in user pref"}, []string{"Grafana endpoint might not be reachable from meshery"}, []string{"Setup your Grafana Endpoint via the settings dashboard"})
+	ErrStaticBoards      = errors.New(ErrStaticBoardsCode, errors.Alert, []string{"unable to get static board"}, []string{"unable to get static board"}, []string{"No boards could be available in grafana"}, []string{})
+	ErrValidAdapter      = errors.New(ErrValidAdapterCode, errors.Alert, []string{"Unable to find valid Adapter URL"}, []string{"unable to find a valid adapter for the given adapter URL"}, []string{"Given adapter URL is not valid"}, []string{"Please provide a valid Adapter URL"})
+	ErrAddAdapter        = errors.New(ErrAddAdapterCode, errors.Alert, []string{"meshLocationURL is empty"}, []string{"meshLocationURL is empty to add an adapter"}, []string{"meshLocationURL cannot be empty to add an adapter"}, []string{"please provide the meshLocationURL"})
+	ErrMeshClient        = errors.New(ErrMeshClientCode, errors.Alert, []string{"Error creating a mesh client", "Error pinging the mesh adapter"}, []string{"Unable to create a mesh client", "Unable to ping the mesh adapter"}, []string{"Adapter could not be pinged"}, []string{"Unable to connect to the Mesh adapter using the given config, please try again"})
+	ErrWriteResponse     = errors.New(ErrWriteResponseCode, errors.Alert, []string{"Error writing response"}, []string{}, []string{}, []string{})
+	ErrTestConfigs       = errors.New(ErrTestConfigsCode, errors.Alert, []string{"Error fetching test configs"}, []string{}, []string{}, []string{})
+	ErrInvalidGenValue   = errors.New(ErrInvalidGenValueCode, errors.Alert, []string{"Invalid value for gen"}, []string{}, []string{}, []string{"please provide a valid value for gen (load generator)"})
+	ErrParseDuration     = errors.New(ErrParseDurationCode, errors.Alert, []string{"error parsing test duration"}, []string{}, []string{"The format of the duration passed could be incorrect"}, []string{"please refer to:  https://docs.meshery.io/guides/mesheryctl#performance-management"})
+	ErrMesheryInstanceID = errors.New(ErrMesheryInstanceIDCode, errors.Alert, []string{"Error: Meshery Instance ID is empty or is invalid"}, []string{}, []string{}, []string{})
+	ErrPerformanceTest   = errors.New(ErrLoadTestCode, errors.Alert, []string{"load test error"}, []string{}, []string{"Load test endpoint could be not reachable"}, []string{"Make sure load test endpoint is reachable"})
 )
+
+func ErrCreatingKubernetesComponents(err error, ctxID string) error {
+	return errors.New(ErrCreatingKubernetesComponentsCode, errors.Alert, []string{"failed to register/create kubernetes components for contextID " + ctxID}, []string{err.Error()}, []string{"component generation was canceled due to deletion or reload of K8s context", "Invalid kubeconfig", "Filters passed incorrectly in config", "Could not fetch API resources from Kubernetes server"}, []string{"If there is the log \"Starting to register ...\" for the same contextID after this error means that for some reason the context was reloaded which caused this run to abort. In that case, this error can be ignored.", "Make sure that the configuration filters passed are in accordance with output from /openapi/v2"})
+}
 
 func ErrPrometheusScan(err error) error {
 	return errors.New(ErrPrometheusScanCode, errors.Alert, []string{"Unable to connect to prometheus"}, []string{err.Error()}, []string{"Prometheus endpoint might not be reachable from meshery", "Prometheus endpoint is incorrect"}, []string{"Check if your Prometheus and Grafana Endpoint are correct", "Connect to Prometheus and Grafana from the settings page in the UI"})
@@ -342,6 +354,18 @@ func ErrInvalidRequestObject(fields ...string) error {
 
 func ErrChangeK8sContext(err error) error {
 	return errors.New(ErrCreateDirCode, errors.Alert, []string{"Error changing context"}, []string{err.Error()}, []string{"Context Name might be invalid or not present in the uploaded kubeconfig"}, []string{"Check the context name, if the context name is correct and is present in the kubeconfig then try uploading the kubeconfig again"})
+}
+
+func ErrInvalidKubeConfig(err error, content string) error {
+	return errors.New(ErrInvalidKubeConfigCode, errors.Alert, []string{"Invalid Kube Config ", content}, []string{err.Error()}, []string{"Meshery handler failed to find a valid kubernetes config for the deployment"}, []string{"Try uploading a new kubeconfig and also ensure that meshery can reach kubernetes API server"})
+}
+
+func ErrInvalidKubeHandler(err error, content string) error {
+	return errors.New(ErrInvalidKubeHandlerCode, errors.Alert, []string{"Invalid Kube Handler", content}, []string{err.Error()}, []string{"Meshery handler failed to find a valid kubernetes handler for the deployment"}, []string{"Try uploading a new kubeconfig and also ensure that meshery can reach kubernetes API server"})
+}
+
+func ErrInvalidKubeContext(err error, content string) error {
+	return errors.New(ErrInvalidKubeContextCode, errors.Alert, []string{"Invalid Kube Context", content}, []string{err.Error()}, []string{"Meshery handler failed to find a valid kubernetes context for the deployment"}, []string{"Try uploading a new kubeconfig and also ensure that meshery can reach kubernetes API server"})
 }
 
 func ErrSavingUserPreference(err error) error {

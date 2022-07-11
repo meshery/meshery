@@ -1,5 +1,8 @@
 /**
+ * @generated SignedSource<<5a4a0e50be67f1046811ed99dba67ef1>>
  * @flow
+ * @lightSyntaxTransform
+ * @nogrep
  */
 
 /* eslint-disable */
@@ -7,7 +10,7 @@
 'use strict';
 
 /*::
-import type { ConcreteRequest } from 'relay-runtime';
+import type { ConcreteRequest, Query } from 'relay-runtime';
 export type PageFilter = {|
   page: string,
   pageSize: string,
@@ -16,10 +19,10 @@ export type PageFilter = {|
   from?: ?string,
   to?: ?string,
 |};
-export type PerformanceProfilesQueryVariables = {|
-  selector: PageFilter
+export type PerformanceProfilesQuery$variables = {|
+  selector: PageFilter,
 |};
-export type PerformanceProfilesQueryResponse = {|
+export type PerformanceProfilesQuery$data = {|
   +getPerformanceProfiles: {|
     +page: number,
     +page_size: number,
@@ -43,47 +46,15 @@ export type PerformanceProfilesQueryResponse = {|
       +content_type: ?string,
       +service_mesh: ?string,
     |}>,
-  |}
+  |},
 |};
 export type PerformanceProfilesQuery = {|
-  variables: PerformanceProfilesQueryVariables,
-  response: PerformanceProfilesQueryResponse,
+  variables: PerformanceProfilesQuery$variables,
+  response: PerformanceProfilesQuery$data,
 |};
 */
 
-
-/*
-query PerformanceProfilesQuery(
-  $selector: PageFilter!
-) {
-  getPerformanceProfiles(selector: $selector) {
-    page
-    page_size
-    total_count
-    profiles {
-      concurrent_request
-      created_at
-      duration
-      endpoints
-      id
-      last_run
-      load_generators
-      name
-      qps
-      total_results
-      updated_at
-      user_id
-      request_body
-      request_cookies
-      request_headers
-      content_type
-      service_mesh
-    }
-  }
-}
-*/
-
-const node/*: ConcreteRequest*/ = (function(){
+var node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -288,7 +259,10 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = '8c86c93431616aef124858b289e06a4f';
 
-module.exports = node;
+(node/*: any*/).hash = "8c86c93431616aef124858b289e06a4f";
+
+module.exports = ((node/*: any*/)/*: Query<
+  PerformanceProfilesQuery$variables,
+  PerformanceProfilesQuery$data,
+>*/);

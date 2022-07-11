@@ -1,0 +1,67 @@
+name: Meshery Build and Releaser (stable)
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build:
+    name: Docker build and push
+    if: github.repository == 'meshery/meshery'
+    env:
+      RELEASE_CHANNEL: "stable"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Docker stable build & tag
+        run: |
+          DOCKER_BUILDKIT=1 docker build -f install/docker/Dockerfile --no-cache -t ${{ secrets.IMAGE_NAME }}:stable-latest --build-arg TOKEN=${{ secrets.GLOBAL_TOKEN }} --build-arg GIT_COMMITSHA=${GITHUB_SHA::8} --build-arg GIT_VERSION=${GITHUB_REF/refs\/tags\//} --build-arg RELEASE_CHANNEL=${RELEASE_CHANNEL} .
+          docker tag ${{ secrets.IMAGE_NAME }}:stable-latest ${{ secrets.IMAGE_NAME }}:stable-${GITHUB_REF/refs\/tags\//}
+          docker tag ${{ secrets.IMAGE_NAME }}:stable-latest ${{ secrets.IMAGE_NAME }}:stable-${GITHUB_SHA::8}
+      - name: Docker stable push
+        run: |
+          docker push ${{ secrets.IMAGE_NAME }}:stable-latest
+          docker push ${{ secrets.IMAGE_NAME }}:stable-${GITHUB_REF/refs\/tags\//}
+          docker push ${{ secrets.IMAGE_NAME }}:stable-${GITHUB_SHA::8}
+      # SKIP STEP: FAILS BECAUSE README FILE SIZE IS TOO LARGE FOR DOCKER HUB
+      # - name: Docker Hub Description
+      #   uses: peter-evans/dockerhub-description@v3
+      #   env:
+      #     DOCKERHUB_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      #     DOCKERHUB_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      #     DOCKERHUB_REPOSITORY: ${{ secrets.IMAGE_NAME }}
+  ctlrelease:
+    name: Mesheryctl build & release
+    if: github.repository == 'meshery/meshery'
+    runs-on: macos-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3.0.0
+        with:
+          fetch-depth: 0
+      - name: Set up Go
+        uses: actions/setup-go@v3.0.0
+        with:
+          go-version: 1.17
+      - name: goreleaser with tag
+        uses: goreleaser/goreleaser-action@v2.8.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.RELEASE_NOTES_PAT }}
+          RELEASE_CHANNEL: "stable"
+        with:
+          version: latest
+          args: release --rm-dist --skip-validate
+  call-dde-release-workflow:
+    needs: ctlrelease
+    name: Build and Release Docker Extension
+    uses: meshery/meshery/.github/workflows/build-and-release-dde.yml@master
+    secrets: inherit
+

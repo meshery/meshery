@@ -36,7 +36,7 @@ type MockURL struct {
 func NewTestHelper(t *testing.T) *TestHelper {
 	return &TestHelper{
 		Version: "v0.5.10",
-		BaseURL: "http://localhost:9081",
+		BaseURL: MesheryEndpoint,
 	}
 }
 
@@ -157,10 +157,17 @@ func SetupContextEnv(t *testing.T) {
 }
 
 // setup logrus formatter and return the buffer in which commands output is to be set.
-func SetupLogrusGrabTesting(t *testing.T) *bytes.Buffer {
+func SetupLogrusGrabTesting(t *testing.T, verbose bool) *bytes.Buffer {
 	b := bytes.NewBufferString("")
 	logrus.SetOutput(b)
 	SetupLogrusFormatter()
+	return b
+}
+
+// setup meshkit logger for testing and return the buffer in which commands output is to be set.
+func SetupMeshkitLoggerTesting(t *testing.T, verbose bool) *bytes.Buffer {
+	b := bytes.NewBufferString("")
+	SetupMeshkitLogger(verbose, b)
 	return b
 }
 
@@ -168,8 +175,7 @@ func SetupLogrusGrabTesting(t *testing.T) *bytes.Buffer {
 func SetupCustomContextEnv(t *testing.T, pathToContext string) {
 	viper.Reset()
 	ViperCompose = viper.New()
-	ViperDocker = viper.New()
-	ViperK8s = viper.New()
+	ViperMeshconfig = viper.New()
 
 	viper.SetConfigFile(pathToContext)
 	DefaultConfigPath = pathToContext

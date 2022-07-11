@@ -1,13 +1,18 @@
 import { graphql, fetchQuery } from "react-relay";
 import environment from "../../../lib/relayEnvironment";
 
-export default function deployMeshSync() {
+/**
+ *
+ * @param {{k8scontextID: string}} variable
+ * @returns
+ */
+export default function deployMeshSync(variable) {
 
   const query = graphql`
-    query DeployMeshSyncQuery {
-    deployMeshsync 
+    query DeployMeshSyncQuery($k8scontextID: String!) {
+    deployMeshsync (k8scontextID: $k8scontextID)
     }
   `;
 
-  return fetchQuery(environment, query);
+  return fetchQuery(environment, query, variable);
 }

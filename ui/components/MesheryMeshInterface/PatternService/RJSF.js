@@ -1,113 +1,18 @@
 import { MuiThemeProvider } from '@material-ui/core/styles';
 import { withTheme } from "@rjsf/core";
 import { Theme as MaterialUITheme } from "@rjsf/material-ui";
-import React from "react";
+import React, { useEffect } from "react";
 import JS4 from "../../../assets/jsonschema/schema-04.json";
 import { rjsfTheme } from "../../../themes";
-import { formatString } from "../helpers";
-import ArrayFieldTemplate from "./RJSFCustomComponents/ArrayFieldTemlate";
-import MemoizedCustomInputField from "./RJSFCustomComponents/CustomInputField";
-import CustomObjFieldTemplate from "./RJSFCustomComponents/ObjectFieldTemplate";
-import { isEqualArr } from "../../../utils/utils"
 import handleError from '../../ErrorHandling';
-import { omitTitleFields } from "./RJSFCustomComponents/CustomInputField"
+import { buildUiSchema } from "../helpers";
+import { getRefinedJsonSchema } from "./helper";
+import MesheryArrayFieldTemplate from "./RJSFCustomComponents/ArrayFieldTemlate";
+import CustomInputField from "./RJSFCustomComponents/CustomInputField";
+import MesheryCustomObjFieldTemplate from "./RJSFCustomComponents/ObjectFieldTemplate";
+import _ from "lodash"
 
 const Form = withTheme(MaterialUITheme);
-
-function deleteTitleFromJSONSchema(jsonSchema) {
-  return { ...jsonSchema, title : "" };
-}
-
-function deleteDescriptionFromJSONSchema(jsonSchema) {
-  return { ...jsonSchema, description : "" }
-}
-
-/**
- * remove top-level title, top-level description and
- * replace internal description with "help" key for
- * tooltip description
- *
- * @param {Object.<String, Object>} jsonSchema
- * @returns
- */
-function getRefinedJsonSchema(jsonSchema, hideTitle = true) {
-  let refinedSchema;
-  try {
-    refinedSchema = hideTitle ? deleteTitleFromJSONSchema(jsonSchema) : jsonSchema
-    refinedSchema = deleteDescriptionFromJSONSchema(refinedSchema)
-    refinedSchema = addTitleToPropertiesJSONSchema(refinedSchema)
-  } catch (e) {
-    handleError(e, "schema parsing problem", "fatal")
-  }
-  return refinedSchema
-}
-
-function uiSchema(jsonSchema) {
-  let uiJsonSchema = {}
-  // TODO: needs to do recursively for deep fields
-  Object.keys(jsonSchema.properties).map(key => {
-    if (
-      isEqualArr(jsonSchema.properties[key].type, ["string", "null"], false)
-      || isEqualArr(jsonSchema.properties[key].type, ["integer", "null"], false)
-    ) {
-      uiJsonSchema[key] = {
-        'ui:description' : ' '
-      }
-    }
-  })
-
-  // remove description from special fields
-  omitTitleFields.forEach(elem => {
-    uiJsonSchema[elem] = { "ui:description" : " " }
-  })
-
-  // Schema Order
-  uiJsonSchema["ui:order"] = ["name", "namespace", "*"]
-
-  return uiJsonSchema
-}
-
-function addTitleToPropertiesJSONSchema(jsonSchema) {
-  const newProperties = jsonSchema?.properties
-
-  if (newProperties && typeof newProperties === 'object') {
-    Object.keys(newProperties).map(key => {
-      if (Object.prototype.hasOwnProperty.call(newProperties, key)) {
-        let defaultValue;
-        let types = []
-        if (!Array.isArray(newProperties[key].type) && Object.prototype.hasOwnProperty.call(newProperties[key], 'type')) {
-          types.push(newProperties[key].type)
-        } else {
-          types.push(...newProperties[key].type)
-        }
-        if (types.includes('null')) {
-          defaultValue = null
-        } else if (types.includes('integer')) {
-          defaultValue = 0
-        } else if (types.includes('string')) {
-          defaultValue = ''
-        } else if (types.includes('array')) {
-          defaultValue = []
-        }
-        newProperties[key] = {
-          ...newProperties[key],
-          title : formatString(key),
-          default : defaultValue
-        }
-        // if (typeof newProperties[key] === 'object' && Object.prototype.hasOwnProperty.call(newProperties[key], 'properties')){
-        //   newProperties[key] = {
-        //     ...newProperties[key],
-        //     properties : addTitleToPropertiesJSONSchema(newProperties[key])
-        //   }
-        // }
-      }
-
-    })
-
-    return { ...jsonSchema, properties : newProperties };
-  }
-  return undefined
-}
 
 // function RJSFButton({ handler, text, ...restParams }) {
 //   return (
@@ -128,12 +33,11 @@ function RJSF(props) {
     //.. temporarily ignoring till handler is attached successfully
   } = props;
 
-  // define new string field
-  const fields = {
-    StringField : ({ idSchema, formData, ...props }) => <MemoizedCustomInputField id={idSchema['$id']} value={formData} idSchema={idSchema} {...props} />
-  }
+  const errorHandler = handleError();
 
   const [data, setData] = React.useState(prev => ({ ...formData, ...prev }));
+  const [schema, setSchema] = React.useState({ rjsfSchema : {}, uiSchema : {} })
+  const [isLoading, setIsLoading] = React.useState(true)
 
   React.useEffect(() => {
     // Apply debouncing mechanism for the state propagation
@@ -144,34 +48,97 @@ function RJSF(props) {
     return () => clearTimeout(timer);
   }, [data]);
 
-  return (
-    <RJSFWrapperComponent {...{ ...props, RJSFWrapperComponent : null, RJSFFormChildComponent : null }}>
-      <MuiThemeProvider theme={rjsfTheme}>
-        <Form
-          schema={getRefinedJsonSchema(jsonSchema, hideTitle)}
-          idPrefix={jsonSchema?.title}
-          onChange={(e) => {
-            setData(e.formData)
-          }}
-          formData={data}
-          fields={fields}
-          ArrayFieldTemplate={ArrayFieldTemplate}
-          ObjectFieldTemplate={CustomObjFieldTemplate}
-          additionalMetaSchemas={[JS4]}
-          uiSchema={uiSchema(jsonSchema)}
-          liveValidate
-          showErrorList={false}
-          noHtml5Validate
+  React.useEffect(() => {
+    const rjsfSchema = getRefinedJsonSchema(jsonSchema, hideTitle, errorHandler)
+    const uiSchema = buildUiSchema(rjsfSchema)
+    setSchema({ rjsfSchema, uiSchema })
+  }, [jsonSchema]) // to reduce heavy lifting on every react render
 
-        >
-          {/* {hideSubmit ? true : <RJSFButton handler={onSubmit} text="Submit" {...restparams} />}
-        {hideSubmit ? true : <RJSFButton handler={onDelete} text="Delete" />} */}
-          {/* <RJSFFormChildComponent /> */}
-          <></> {/* temporary change for functionality */}
-        </Form>
-      </MuiThemeProvider>
+  React.useEffect(() => {
+    if (!_.isEqual(schema, { rjsfSchema : {}, uiSchema : {} })) {
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 300); // for showing circular progress
+    }
+  }, [schema])
+
+  return (
+    <RJSFWrapperComponent {...props}>
+      <RJSFForm
+        isLoading={isLoading}
+        schema={schema}
+        data={data}
+        onChange={(e) => {
+          setData(e.formData)
+        }}
+        jsonSchema={jsonSchema}
+      />
     </RJSFWrapperComponent>
   );
 }
 
 export default RJSF;
+
+/**
+ * The Custom RJSF Form that accepts custom fields from the extension
+ * or seed it's own default
+ * Adding a new custom component:
+ * 1. Pass the new prop from the Meshery Extension
+ * 2. Extract from props in the RJSFForm Component
+ * @param {*} props
+ * @returns
+ */
+function RJSFForm(props) {
+  const {
+    schema,
+    jsonSchema,
+    data,
+    onChange,
+    isLoading,
+    ArrayFieldTemplate = MesheryArrayFieldTemplate,
+    ObjectFieldTemplate = MesheryCustomObjFieldTemplate,
+    LoadingComponent,
+    // prop should be present in order for the cloned element to override this property
+    transformErrors
+  } = props;
+
+  useEffect(() => {
+    const extensionTooltipPortal = document.getElementById("extension-tooltip-portal");
+    if (extensionTooltipPortal) {
+      rjsfTheme.props.MuiMenu.container = extensionTooltipPortal;
+    }
+    rjsfTheme.zIndex.modal = 99999;
+  }, [])
+
+  if (isLoading && LoadingComponent) {
+    return <LoadingComponent />
+  }
+
+  return (
+    <MuiThemeProvider theme={rjsfTheme}>
+      <Form
+        schema={schema.rjsfSchema}
+        idPrefix={jsonSchema?.title}
+        onChange={onChange}
+        formData={data}
+        ArrayFieldTemplate={ArrayFieldTemplate}
+        ObjectFieldTemplate={ObjectFieldTemplate}
+        additionalMetaSchemas={[JS4]}
+        uiSchema={schema.uiSchema}
+        widgets={{
+          TextWidget : CustomInputField
+        }}
+        liveValidate
+        showErrorList={false}
+        transformErrors={transformErrors}
+        noHtml5Validate
+      >
+        {/* {hideSubmit ? true : <RJSFButton handler={onSubmit} text="Submit" {...restparams} />}
+{hideSubmit ? true : <RJSFButton handler={onDelete} text="Delete" />} */}
+        {/* <RJSFFormChildComponent /> */}
+        <></> {/* temporary change for functionality */}
+      </Form>
+
+    </MuiThemeProvider>
+  )
+}

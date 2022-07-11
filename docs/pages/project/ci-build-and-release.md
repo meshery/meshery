@@ -35,7 +35,7 @@ Some portions of the workflow require secrets to accomplish their tasks. These s
 - `GO_VERSION`: As of July 21st 2021 it is 1.16
 - `IMAGE_NAME`: appropriate image name for each of the Docker container images. All are under the `layer5io` org.
 - `SLACK_BOT_TOKEN`: Used for notification of new GitHub stars given to the Meshery repo.
-- CYPRESS_RECORD_KEY`: Used for integration with the Layer5 account on Cypress.
+- `CYPRESS_RECORD_KEY`: Used for integration with the Layer5 account on Cypress.
 - `GLOBAL_TOKEN`: Used for securely transmitting performance test results for the None Provider.
 
 The Docker Hub user, `mesheryci`, belongs to the "ciusers" team in Docker Hub and acts as the service account under which these automated builds are being pushed. Every time a new Docker Hub repository is created we have to grant “Admin” (in order to update the README in the Docker Hub repository) permissions to the ciusers team.

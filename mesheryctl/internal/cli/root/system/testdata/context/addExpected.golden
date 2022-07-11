@@ -26,10 +26,10 @@ contexts:
     - meshery-consul
     - meshery-nsm
     - meshery-kuma
-    - meshery-cpx
     - meshery-osm
     - meshery-traefik-mesh
     - meshery-nginx-sm
+    - meshery-cilium
     channel: stable
     version: latest
 current-context: local

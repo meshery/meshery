@@ -8,7 +8,7 @@ import IconButton from '@material-ui/core/IconButton';
 import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
 import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
 
-const actionsStyles = (theme) => ({ root : { flexShrink : 0,
+const actionsStyles = (theme) => ({ wrapper : { flexShrink : 0,
   color : theme.palette.text.secondary,
   marginLeft : theme.spacing(2.5), }, });
 
@@ -37,7 +37,7 @@ class TablePaginationActions extends React.Component {
     } = this.props;
 
     return (
-      <div className={classes.root}>
+      <div className={classes.wrapper}>
         <IconButton
           onClick={this.handleBackButtonClick}
           disabled={page === 0}

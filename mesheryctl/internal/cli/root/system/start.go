@@ -33,12 +33,12 @@ import (
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
-	log "github.com/sirupsen/logrus"
-	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 
 	meshkitutils "github.com/layer5io/meshkit/utils"
 	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
+	log "github.com/sirupsen/logrus"
+	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 var (
@@ -52,6 +52,22 @@ var startCmd = &cobra.Command{
 	Short: "Start Meshery",
 	Long:  `Start Meshery and each of its service mesh components.`,
 	Args:  cobra.NoArgs,
+	Example: `
+// Start meshery
+mesheryctl system start
+
+// To create a new context for in-cluster Kubernetes deployments and set the new context as your current-context
+mesheryctl system context create k8s -p kubernetes -s
+
+// (optional) skip checking for new updates available in Meshery.
+mesheryctl system start --skip-update
+
+// Reset Meshery's configuration file to default settings.
+mesheryctl system start --reset
+
+// Silently create Meshery's configuration file with default settings
+mesheryctl system start --yes
+	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
 		hcOptions := &HealthCheckOptions{
@@ -133,6 +149,12 @@ func start() error {
 	if utils.PlatformFlag != "" {
 		if utils.PlatformFlag == "docker" || utils.PlatformFlag == "kubernetes" {
 			currCtx.SetPlatform(utils.PlatformFlag)
+
+			// update the context to config
+			err = config.UpdateContextInConfig(viper.GetViper(), currCtx, mctlCfg.GetCurrentContextName())
+			if err != nil {
+				return err
+			}
 		} else {
 			return ErrUnsupportedPlatform(utils.PlatformFlag, utils.CfgFile)
 		}
@@ -252,7 +274,7 @@ func start() error {
 			endpoint.Address = utils.EndpointProtocol + "://localhost"
 			currCtx.SetEndpoint(endpoint.Address + ":" + userPort[len(userPort)-1])
 
-			err = utils.ChangeConfigEndpoint(mctlCfg.CurrentContext, currCtx)
+			err = config.UpdateContextInConfig(viper.GetViper(), currCtx, mctlCfg.GetCurrentContextName())
 			if err != nil {
 				return err
 			}
@@ -337,6 +359,7 @@ func start() error {
 		}
 
 		log.Info("Starting Meshery...")
+
 		spinner := utils.CreateDefaultSpinner("Deploying Meshery on Kubernetes", "\nMeshery deployed on Kubernetes.")
 		spinner.Start()
 
@@ -344,28 +367,9 @@ func start() error {
 			return err
 		}
 
-		// get value overrides to install the helm chart
-		overrideValues := utils.SetOverrideValues(currCtx, mesheryImageVersion)
-
-		// install the helm charts with specified override values
-		var chartVersion string
-		if mesheryImageVersion != "latest" {
-			chartVersion = mesheryImageVersion
-		}
-		if err = kubeClient.ApplyHelmChart(meshkitkube.ApplyHelmChartConfig{
-			Namespace:       utils.MesheryNamespace,
-			CreateNamespace: true,
-			ChartLocation: meshkitkube.HelmChartLocation{
-				Repository: utils.HelmChartURL,
-				Chart:      utils.HelmChartName,
-				Version:    chartVersion,
-			},
-			OverrideValues: overrideValues,
-			Action:         meshkitkube.INSTALL,
-			// the helm chart will be downloaded to ~/.meshery/manifests if it doesn't exist
-			DownloadLocation: path.Join(utils.MesheryFolder, utils.ManifestsFolder),
-		}); err != nil {
-			return errors.Wrap(err, "cannot start Meshery")
+		// Applying Meshery Helm charts for installing Meshery
+		if err = applyHelmCharts(kubeClient, currCtx, mesheryImageVersion, false); err != nil {
+			return err
 		}
 
 		// checking if Meshery is ready
@@ -389,15 +393,39 @@ func start() error {
 	}
 
 	// execute dashboard command to fetch and navigate to Meshery UI
-	if !skipBrowserFlag {
-		return dashboardCmd.RunE(nil, nil)
-	}
-	return nil
+	return dashboardCmd.RunE(nil, nil)
 }
 
 func init() {
 	startCmd.PersistentFlags().StringVarP(&utils.PlatformFlag, "platform", "p", "", "platform to deploy Meshery to.")
 	startCmd.Flags().BoolVarP(&skipUpdateFlag, "skip-update", "", false, "(optional) skip checking for new Meshery's container images.")
 	startCmd.Flags().BoolVarP(&utils.ResetFlag, "reset", "", false, "(optional) reset Meshery's configuration file to default settings.")
-	startCmd.Flags().BoolVarP(&skipBrowserFlag, "skip-browser", "s", false, "(optional) skip opening of MesheryUI in browser.")
+	startCmd.Flags().BoolVarP(&skipBrowserFlag, "skip-browser", "", false, "(optional) skip opening of MesheryUI in browser.")
+}
+
+// Apply Meshery helm charts
+func applyHelmCharts(kubeClient *meshkitkube.Client, currCtx *config.Context, mesheryImageVersion string, dryRun bool) error {
+	// get value overrides to install the helm chart
+	overrideValues := utils.SetOverrideValues(currCtx, mesheryImageVersion)
+
+	// install the helm charts with specified override values
+	var chartVersion string
+	if mesheryImageVersion != "latest" {
+		chartVersion = mesheryImageVersion
+	}
+	return kubeClient.ApplyHelmChart(meshkitkube.ApplyHelmChartConfig{
+		Namespace:       utils.MesheryNamespace,
+		ReleaseName:     "meshery",
+		CreateNamespace: true,
+		ChartLocation: meshkitkube.HelmChartLocation{
+			Repository: utils.HelmChartURL,
+			Chart:      utils.HelmChartName,
+			Version:    chartVersion,
+		},
+		OverrideValues: overrideValues,
+		Action:         meshkitkube.INSTALL,
+		// the helm chart will be downloaded to ~/.meshery/manifests if it doesn't exist
+		DownloadLocation: path.Join(utils.MesheryFolder, utils.ManifestsFolder),
+		DryRun:           dryRun,
+	})
 }

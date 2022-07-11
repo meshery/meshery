@@ -78,7 +78,7 @@ func (l *RemoteProvider) refreshToken(tokenString string) (string, error) {
 	}
 	l.TokenStore[tokenString] = target[tokenName]
 	time.AfterFunc(1*time.Hour, func() {
-		logrus.Infof("deleting old ts")
+		logrus.Infof("deleting old token string")
 		delete(l.TokenStore, tokenString)
 	})
 	return target[tokenName], nil

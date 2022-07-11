@@ -55,8 +55,8 @@ func GetMesheryCtl(v *viper.Viper) (*MesheryCtlConfig, error) {
 	return c, err
 }
 
-// SetMesheryCtl sets the mesheryctl configuration object
-func SetContext(v *viper.Viper, context *Context, name string) error {
+// UpdateContextInConfig write the given context in meshconfig
+func UpdateContextInConfig(v *viper.Viper, context *Context, name string) error {
 	viper.Set("contexts."+name, context)
 	err := viper.WriteConfig()
 	if err != nil {
@@ -395,15 +395,16 @@ func SetTokenToConfig(tokenName string, configPath string, ctxName string) error
 		return err
 	}
 	context.Token = tokenName
-	err = SetContext(viper.GetViper(), context, ctxName)
+	err = UpdateContextInConfig(viper.GetViper(), context, ctxName)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-// AddContextToConfig adds context passed to it to mesheryctl config file
-func AddContextToConfig(contextName string, context Context, configPath string, set bool) error {
+// AddContextToConfig adds context passed to it to mesheryctl config file. If overwrite is set to true, existing
+// context with the contextName is overwritten
+func AddContextToConfig(contextName string, context Context, configPath string, set bool, overwrite bool) error {
 	if _, err := os.Stat(configPath); os.IsNotExist(err) {
 		return err
 	}
@@ -424,7 +425,7 @@ func AddContextToConfig(contextName string, context Context, configPath string, 
 	}
 
 	_, exists := mctlCfg.Contexts[contextName]
-	if exists {
+	if exists && !overwrite {
 		return errors.New("error adding context: a context with same name already exists")
 	}
 

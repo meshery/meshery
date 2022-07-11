@@ -45,6 +45,7 @@ import LoadTestTimerDialog from "../load-test-timer-dialog";
 import GrafanaCustomCharts from "../GrafanaCustomCharts";
 import { durationOptions } from "../../lib/prePopulatedOptions";
 import fetchControlPlanes from "../graphql/queries/ControlPlanesQuery";
+import { ctxUrl, getK8sClusterIdsFromCtxId } from "../../utils/multi-ctx";
 
 // =============================== HELPER FUNCTIONS ===========================
 
@@ -116,7 +117,7 @@ const infoloadGenerators = (
   </>
 );
 const styles = (theme) => ({
-  root : { padding : theme.spacing(10), position : "relative" },
+  wrapperClss : { padding : theme.spacing(10), position : "relative" },
   buttons : { display : "flex", justifyContent : "flex-end" },
   button : { marginTop : theme.spacing(3), marginLeft : theme.spacing(1) },
   expansionPanel : { boxShadow : "none", border : "1px solid rgb(196,196,196)" },
@@ -512,7 +513,7 @@ class MesheryPerformanceComponent extends React.Component {
 
   getLoadTestPrefs = () => {
     dataFetch(
-      "/api/user/prefs",
+      ctxUrl("/api/user/prefs", this.props?.selectedK8sContexts),
       { credentials : "same-origin", method : "GET" },
       (result) => {
         if (typeof result !== "undefined") {
@@ -563,6 +564,11 @@ class MesheryPerformanceComponent extends React.Component {
     );
   };
 
+
+  getK8sClusterIds = () => {
+    return getK8sClusterIdsFromCtxId(this.props.selectedK8sContexts, this.props.k8sconfig)
+  }
+
   scanForMeshes = () => {
     const self = this;
 
@@ -574,7 +580,7 @@ class MesheryPerformanceComponent extends React.Component {
      * component of all of the service meshes supported by meshsync v2
      */
 
-    const ALL_MESH = {};
+    const ALL_MESH = { type : "ALL_MESH", k8sClusterIDs : this.getK8sClusterIds() };
 
     fetchControlPlanes(ALL_MESH).subscribe({
       next : (res) => {
@@ -747,7 +753,7 @@ class MesheryPerformanceComponent extends React.Component {
     return (
       <NoSsr>
         <React.Fragment>
-          <div className={classes.root} style={this.props.style || {}}>
+          <div className={classes.wrapperClss} style={this.props.style || {}}>
             <Grid container spacing={1}>
               <Grid item xs={12} md={6}>
                 <Tooltip title="If a profile name is not provided, a random one will be generated for you.">
@@ -1051,13 +1057,16 @@ const mapDispatchToProps = (dispatch) => ({
 const mapStateToProps = (state) => {
   const grafana = state.get("grafana").toJS();
   const prometheus = state.get("prometheus").toJS();
-  const k8sConfig = state.get("k8sConfig").toJS();
+  const k8sConfig = state.get("k8sConfig");
   const staticPrometheusBoardConfig = state.get("staticPrometheusBoardConfig").toJS();
+  const selectedK8sContexts = state.get('selectedK8sContexts');
+
   return {
     grafana,
     prometheus,
     staticPrometheusBoardConfig,
     k8sConfig,
+    selectedK8sContexts,
   };
 };
 

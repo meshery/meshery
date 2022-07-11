@@ -17,15 +17,16 @@ import { Paper, Tooltip } from '@material-ui/core';
 import SettingsRemoteIcon from '@material-ui/icons/SettingsRemote';
 import SettingsCellIcon from '@material-ui/icons/SettingsCell';
 import ExtensionSandbox from "./ExtensionSandbox";
-import RemoteUserPref from "./RemoteUserPref";
+import RemoteComponent from "./RemoteComponent";
 import ExtensionPointSchemaValidator from "../utils/ExtensionPointSchemaValidator";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTachometerAlt } from '@fortawesome/free-solid-svg-icons';
 import MesherySettingsPerformanceComponent from './MesherySettingsPerformanceComponent';
+import { ctxUrl } from '../utils/multi-ctx';
 
 
 const styles = (theme) => ({
-  root : {
+  statsWrapper : {
     maxWidth : "100%",
     height : 'auto',
     borderTopLeftRadius : 0,
@@ -92,7 +93,6 @@ class UserPreference extends React.Component {
     this.state = {
       anonymousStats : props.anonymousStats,
       perfResultStats : props.perfResultStats,
-      startOnZoom : props.startOnZoom,
       tabVal : 0,
       userPrefs : ExtensionPointSchemaValidator("user_prefs")(),
       providerType : ''
@@ -103,10 +103,8 @@ class UserPreference extends React.Component {
     const self = this;
     if (name == 'anonymousUsageStats') {
       self.setState((state) => ({ anonymousStats : !state.anonymousStats }), () => this.handleChange(name));
-    } else if (name == 'anonymousPerfResults') {
-      self.setState((state) => ({ perfResultStats : !state.perfResultStats }), () => this.handleChange(name));
     } else {
-      self.setState((state) => ({ startOnZoom : !state.startOnZoom }), () => this.handleChange(name));
+      self.setState((state) => ({ perfResultStats : !state.perfResultStats }), () => this.handleChange(name));
     }
   }
 
@@ -129,62 +127,54 @@ class UserPreference extends React.Component {
 
   handleChange = (name) => {
     const self = this;
-    const { anonymousStats, perfResultStats, startOnZoom } = this.state;
+    const { anonymousStats, perfResultStats } = this.state;
     let val, msg;
     if (name == 'anonymousUsageStats') {
       val = anonymousStats;
       msg = val
         ? "Sending anonymous usage statistics was enabled"
         : "Sending anonymous usage statistics was disabled";
-
-    } else if (name == 'anonymousPerfResults') {
+    } else {
       val = perfResultStats;
       msg = val
         ? "Sending anonymous performance results was enabled"
         : "Sending anonymous performance results was disabled";
-    } else {
-      val = startOnZoom;
-      msg = val
-        ? "Start on Zoom was enabled"
-        : "Start on Zoom was disabled";
     }
 
     const requestBody = JSON.stringify({
       "anonymousUsageStats" : anonymousStats,
       "anonymousPerfResults" : perfResultStats,
-      "usersExtensionPreferences" : {
-        "showOnZoom" : startOnZoom
-      }
     });
 
     console.log(requestBody,anonymousStats,perfResultStats);
 
     this.props.updateProgress({ showProgress : true });
-    dataFetch('/api/user/prefs', {
-      credentials : 'same-origin',
-      method : 'POST',
-      credentials : 'include',
-      headers : { 'Content-Type' : 'application/json;charset=UTF-8', },
-      body : requestBody,
-    }, (result) => {
-      this.props.updateProgress({ showProgress : false });
-      if (typeof result !== 'undefined') {
-        this.props.enqueueSnackbar(msg, { variant : val
-          ? 'success'
-          : 'info',
-        autoHideDuration : 4000,
-        action : (key) => (
-          <IconButton
-            key="close"
-            aria-label="Close"
-            color="inherit"
-            onClick={() => self.props.closeSnackbar(key)}
-          >
-            <CloseIcon />
-          </IconButton>
-        ), });
-      }
-    }, self.handleError('There was an error sending your preference'));
+    dataFetch(
+      ctxUrl('/api/user/prefs', this.props.selectedK8sContexts), {
+        credentials : 'same-origin',
+        method : 'POST',
+        credentials : 'include',
+        headers : { 'Content-Type' : 'application/json;charset=UTF-8', },
+        body : requestBody,
+      }, (result) => {
+        this.props.updateProgress({ showProgress : false });
+        if (typeof result !== 'undefined') {
+          this.props.enqueueSnackbar(msg, { variant : val
+            ? 'success'
+            : 'info',
+          autoHideDuration : 4000,
+          action : (key) => (
+            <IconButton
+              key="close"
+              aria-label="Close"
+              color="inherit"
+              onClick={() => self.props.closeSnackbar(key)}
+            >
+              <CloseIcon />
+            </IconButton>
+          ), });
+        }
+      }, self.handleError('There was an error sending your preference'));
   }
 
   handleTabValChange = (event, newVal) => {
@@ -211,12 +201,11 @@ class UserPreference extends React.Component {
 
   render() {
     const {
-      anonymousStats, perfResultStats, tabVal, startOnZoom, userPrefs, providerType
+      anonymousStats, perfResultStats, tabVal, userPrefs, providerType
     } = this.state;
     const { classes } = this.props;
 
     const mainIconScale = 'grow-10';
-    const handleToggle = this.handleToggle('startOnZoom');
 
     return (
       <NoSsr>
@@ -261,7 +250,7 @@ class UserPreference extends React.Component {
             }
           </Tabs>
         </Paper>
-        <Paper className={classes.root}>
+        <Paper className={classes.statsWrapper}>
           {tabVal == 0 &&
             <div className={classes.formContainer}>
               <FormControl component="fieldset" className={classes.formGrp}>
@@ -307,7 +296,7 @@ class UserPreference extends React.Component {
             <MesherySettingsPerformanceComponent />
           }
           {tabVal == 2 && userPrefs && providerType != 'local' &&
-            <ExtensionSandbox type="user_prefs" Extension={(url) => RemoteUserPref({ startOnZoom, handleToggle, url })} />
+            <ExtensionSandbox type="user_prefs" Extension={(url) => RemoteComponent({ url })} />
           }
         </Paper>
       </NoSsr>
@@ -318,7 +307,16 @@ class UserPreference extends React.Component {
 const mapDispatchToProps = (dispatch) => ({ updateUser : bindActionCreators(updateUser, dispatch),
   updateProgress : bindActionCreators(updateProgress, dispatch), });
 
+const mapStateToProps = (state) => {
+  const selectedK8sContexts = state.get('selectedK8sContexts');
+
+  return {
+    selectedK8sContexts,
+  };
+};
+
+
 export default withStyles(styles)(connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps,
 )(withRouter(withSnackbar(UserPreference))));

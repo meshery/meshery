@@ -58,11 +58,11 @@ var createContextCmd = &cobra.Command{
 	Short: "Create a new context (a named Meshery deployment)",
 	Long:  `Add a new context to Meshery config.yaml file`,
 	Example: `
-	Create new context
-	mesheryctl system context create context-name
+// Create new context
+mesheryctl system context create [context-name]
 
-	Create new context and provide list of components, platform & URL
-	mesheryctl system context create context-name --components meshery-osm --platform docker --url http://localhost:9081 --set --yes
+// Create new context and provide list of components, platform & URL
+mesheryctl system context create context-name --components meshery-osm --platform docker --url http://localhost:9081 --set --yes
 	`,
 	Args: cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -86,7 +86,7 @@ var createContextCmd = &cobra.Command{
 			tempCntxt.Components = components
 		}
 
-		err := config.AddContextToConfig(args[0], tempCntxt, viper.ConfigFileUsed(), set)
+		err := config.AddContextToConfig(args[0], tempCntxt, viper.ConfigFileUsed(), set, false)
 		if err != nil {
 			return err
 		}
@@ -101,7 +101,11 @@ var deleteContextCmd = &cobra.Command{
 	Use:   "delete context-name",
 	Short: "delete context",
 	Long:  `Delete an existing context (a named Meshery deployment) from Meshery config file`,
-	Args:  cobra.ExactArgs(1),
+	Example: `
+// Delete context
+mesheryctl system context delete [context name]
+	`,
+	Args: cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		err := viper.Unmarshal(&configuration)
 		if err != nil {
@@ -173,9 +177,13 @@ var deleteContextCmd = &cobra.Command{
 
 // listContextCmd represents the list command
 var listContextCmd = &cobra.Command{
-	Use:          "list",
-	Short:        "list contexts",
-	Long:         `List current context and available contexts`,
+	Use:   "list",
+	Short: "list contexts",
+	Long:  `List current context and available contexts`,
+	Example: `
+// List all contexts present
+mesheryctl system context list
+	`,
 	Args:         cobra.NoArgs,
 	SilenceUsage: true,
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -224,17 +232,17 @@ var viewContextCmd = &cobra.Command{
 	Short: "view current context",
 	Long:  `Display active Meshery context`,
 	Example: `
-	View default context
-	mesheryctl system context view
+// View default context
+mesheryctl system context view
 
-	View specified context
-	mesheryctl system context view context-name
+// View specified context
+mesheryctl system context view context-name
 
-	View specified context with context flag
-	mesheryctl system context view --context context-name
+// View specified context with context flag
+mesheryctl system context view --context context-name
 
-	View config of all contexts
-	mesheryctl system context view --all
+// View config of all contexts
+mesheryctl system context view --all
 	`,
 	Args:         cobra.MaximumNArgs(1),
 	SilenceUsage: true,
@@ -310,6 +318,10 @@ var switchContextCmd = &cobra.Command{
 	Use:   "switch context-name",
 	Short: "switch context",
 	Long:  `Configure mesheryctl to actively use one one context vs. another context`,
+	Example: `
+// Switch to context named "sample"
+mesheryctl system context switch sample
+	`,
 	Args: func(_ *cobra.Command, args []string) error {
 		const errMsg = `Usage: mesheryctl system context switch [context name]
 Example: mesheryctl system context switch k8s-sample
@@ -342,7 +354,7 @@ Description: Configures mesheryctl to actively use one one context vs. the anoth
 		if err != nil {
 			return err
 		}
-		isRunning, _ := utils.IsMesheryRunning(currCtx.GetPlatform())
+		isRunning, _ := utils.AreMesheryComponentsRunning(currCtx.GetPlatform())
 		//if meshery running stop meshery before context switch
 		if isRunning {
 			if err := stop(); err != nil {
@@ -367,7 +379,11 @@ var ContextCmd = &cobra.Command{
 	Use:   "context [command]",
 	Short: "Configure your Meshery deployment(s)",
 	Long:  `Configure and switch between different named Meshery server and component versions and deployments.`,
-	Args:  cobra.MaximumNArgs(1),
+	Example: `
+// Base command
+mesheryctl system context
+	`,
+	Args: cobra.MaximumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
 			currentContext := viper.GetString("current-context")

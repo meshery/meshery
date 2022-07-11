@@ -39,6 +39,10 @@ var statusCmd = &cobra.Command{
 	Short: "Check Meshery status",
 	Args:  cobra.NoArgs,
 	Long:  `Check status of Meshery and Meshery components.`,
+	Example: `
+// Check status of Meshery, Meshery adapters, Meshery Operator and its controllers.
+mesheryctl system status 
+	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
 		hcOptions := &HealthCheckOptions{
@@ -80,7 +84,7 @@ var statusCmd = &cobra.Command{
 
 		currPlatform := currCtx.GetPlatform()
 
-		ok, err := utils.IsMesheryRunning(currPlatform)
+		ok, err := utils.AreMesheryComponentsRunning(currPlatform)
 		if err != nil {
 			return err
 		}

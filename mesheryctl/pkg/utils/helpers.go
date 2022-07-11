@@ -19,6 +19,7 @@ import (
 	"github.com/briandowns/spinner"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/models"
+	"github.com/layer5io/meshkit/logger"
 	"github.com/layer5io/meshkit/utils"
 	"github.com/olekukonko/tablewriter"
 	"github.com/pkg/browser"
@@ -73,8 +74,12 @@ var (
 	ResetFlag bool
 	// SkipResetFlag indicates if fetching the updated manifest files is required
 	SkipResetFlag bool
+	// MesheryDefaultHost is the default host on which Meshery is exposed
+	MesheryDefaultHost = "localhost"
+	// MesheryDefaultPort is the default port on which Meshery is exposed
+	MesheryDefaultPort = 9081
 	// MesheryEndpoint is the default URL in which Meshery is exposed
-	MesheryEndpoint = "http://localhost:9081"
+	MesheryEndpoint = fmt.Sprintf("http://%s:%v", MesheryDefaultHost, MesheryDefaultPort)
 	// MesheryFolder is the default relative location of the meshery config
 	// related configuration files.
 	MesheryFolder = ".meshery"
@@ -111,10 +116,8 @@ var (
 	KubeConfigYaml = "kubeconfig.yaml"
 	// ViperCompose is an instance of viper for docker-compose
 	ViperCompose = viper.New()
-	// ViperDocker is an instance of viper for the meshconfig file when the platform is docker
-	ViperDocker = viper.New()
-	// ViperK8s is an instance of viper for the meshconfig file when the platform is kubernetes
-	ViperK8s = viper.New()
+	// ViperMeshconfig is an instance of viper for the meshconfig file
+	ViperMeshconfig = viper.New()
 	// SilentFlag skips waiting for user input and proceeds with default options
 	SilentFlag bool
 	// PlatformFlag sets the platform for the initial config file
@@ -126,6 +129,8 @@ var (
 	KeepNamespace bool
 	// TokenFlag sets token location passed by user with --token
 	TokenFlag = "Not Set"
+	// global logger variable
+	Log logger.Handler
 )
 
 var CfgFile string
@@ -133,7 +138,7 @@ var CfgFile string
 // TODO: add "meshery-perf" as a component
 
 // ListOfComponents returns the list of components available
-var ListOfComponents = []string{"meshery-app-mesh", "meshery-istio", "meshery-linkerd", "meshery-consul", "meshery-nsm", "meshery-kuma", "meshery-cpx", "meshery-osm", "meshery-traefik-mesh", "meshery-nginx-sm"}
+var ListOfComponents = []string{"meshery-app-mesh", "meshery-istio", "meshery-linkerd", "meshery-consul", "meshery-nsm", "meshery-kuma", "meshery-osm", "meshery-traefik-mesh", "meshery-nginx-sm", "meshery-cilium"}
 
 // TemplateContext is the template context provided when creating a config file
 var TemplateContext = config.Context{
@@ -763,6 +768,9 @@ func SetOverrideValues(ctx *config.Context, mesheryImageVersion string) map[stri
 	// this matches to the components listed in install/kubernetes/helm/meshery/values.yaml
 	valueOverrides := map[string]interface{}{
 		"meshery-istio": map[string]interface{}{
+			"enabled": false,
+		},
+		"meshery-cilium": map[string]interface{}{
 			"enabled": false,
 		},
 		"meshery-linkerd": map[string]interface{}{

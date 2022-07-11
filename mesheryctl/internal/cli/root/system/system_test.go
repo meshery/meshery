@@ -129,6 +129,8 @@ func TestSystemCmdIntegration(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
+			// setting up utils.Log
+			_ = utils.SetupMeshkitLoggerTesting(t, false)
 			SystemCmd.SetArgs(tt.Args)
 
 			t.Logf("%sing meshery", tt.Action)

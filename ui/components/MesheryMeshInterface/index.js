@@ -3,23 +3,27 @@ import {
   Grid, Paper, TextField, Typography
 } from "@material-ui/core";
 import React, { useEffect, useState } from "react";
+import { connect } from "react-redux";
+import { ctxUrl } from "../../utils/multi-ctx";
 import { getPatternServiceName, createWorkloadTraitSets } from "./helpers";
 import PatternServiceForm from "./LazyPatternServiceForm";
 
-async function submitPattern(pattern, del = false) {
-  const res = await fetch(
-    "/api/pattern/deploy", {
-      headers : { "Content-Type" : "application/json", },
-      method : del ? "DELETE" : "POST",
-      body : JSON.stringify(pattern),
-    });
 
-  return res.text();
-}
-
-function MesheryMeshInterface({ adapter }) {
+function MesheryMeshInterface({ adapter, selectedK8sContexts }) {
   const [workloadTraitsSet, setWorkloadTraitsSet] = useState([]);
   const [ns, setNS] = useState("default");
+
+
+  async function submitPattern(pattern, del = false) {
+    const res = await fetch(
+      ctxUrl("/api/pattern/deploy", selectedK8sContexts), {
+        headers : { "Content-Type" : "application/json", },
+        method : del ? "DELETE" : "POST",
+        body : JSON.stringify(pattern),
+      });
+
+    return res.text();
+  }
 
   const handleSubmit = (cfg) => {
     submitPattern(cfg)
@@ -84,4 +88,9 @@ function MesheryMeshInterface({ adapter }) {
   );
 }
 
-export default MesheryMeshInterface;
+
+const mapStateToProps = (state) => {
+  return { selectedK8sContexts : state.get("selectedK8sContexts") };
+};
+
+export default connect(mapStateToProps)(MesheryMeshInterface);

@@ -7,6 +7,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/models"
+	"github.com/layer5io/meshkit/utils/kubernetes/kompose"
 )
 
 // MesheryApplicationRequestBody refers to the type of request body that
@@ -20,7 +21,6 @@ type MesheryApplicationRequestBody struct {
 
 // swagger:route POST /api/application/deploy ApplicationsAPI idPostDeployApplicationFile
 // Handle POST request for Application File Deploy
-//
 // Deploy an attached application file with the request
 // responses:
 //  200: applicationFilesResponseWrapper
@@ -109,18 +109,6 @@ func (h *Handler) handleApplicationPOST(
 
 	// If Content is not empty then assume it's a local upload
 	if parsedBody.ApplicationData != nil {
-		applicationName, err := models.GetApplicationName(parsedBody.ApplicationData.ApplicationFile)
-		if err != nil {
-			obj := "save"
-			h.log.Error(ErrApplicationFailure(err, obj))
-			http.Error(rw, ErrApplicationFailure(err, obj).Error(), http.StatusBadRequest)
-			return
-		}
-
-		// Assign a name if no name is provided
-		if parsedBody.ApplicationData.Name == "" {
-			parsedBody.ApplicationData.Name = applicationName
-		}
 		// Assign a location if no location is specified
 		if parsedBody.ApplicationData.Location == nil {
 			parsedBody.ApplicationData.Location = map[string]interface{}{
@@ -132,6 +120,20 @@ func (h *Handler) handleApplicationPOST(
 		}
 
 		mesheryApplication := parsedBody.ApplicationData
+
+		bytApplication := []byte(mesheryApplication.ApplicationFile)
+		// check whether the uploaded file is a docker compose file
+		err := kompose.IsManifestADockerCompose(bytApplication, "")
+		if err == nil {
+			res, err := kompose.Convert(bytApplication) // convert the docker compose file into kubernetes manifest
+			if err != nil {
+				obj := "convert"
+				h.log.Error(ErrApplicationFailure(err, obj))
+				http.Error(rw, ErrApplicationFailure(err, obj).Error(), http.StatusInternalServerError) // sending a 500 when we cannot convert the file into kuberentes manifest
+				return
+			}
+			mesheryApplication.ApplicationFile = res
+		}
 
 		if parsedBody.Save {
 			resp, err := provider.SaveMesheryApplication(token, mesheryApplication)

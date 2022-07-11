@@ -1,11 +1,13 @@
 //@ts-check
 import React, { useEffect, useState, useRef } from "react";
 import {
-  NoSsr, TableCell, IconButton, Typography, Paper
+  NoSsr, TableCell, IconButton, Paper
 } from "@material-ui/core";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import MUIDataTable from "mui-datatables";
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
 import Moment from "react-moment";
 import { withSnackbar } from "notistack";
 import CloseIcon from "@material-ui/icons/Close";
@@ -17,8 +19,10 @@ import MesheryChart from "../MesheryChart";
 import GrafanaCustomCharts from "../GrafanaCustomCharts";
 import GenericModal from "../GenericModal";
 import BarChartIcon from '@material-ui/icons/BarChart';
+import InfoIcon from '@material-ui/icons/Info';
 import fetchPerformanceResults from "../graphql/queries/PerformanceResultQuery";
 import subscribePerformanceProfiles from "../graphql/subscriptions/PerformanceResultSubscription";
+import NodeDetails from "../NodeDetails";
 
 function generateResultsForDisplay(results) {
   if (Array.isArray(results)) {
@@ -51,7 +55,7 @@ function generateResultsForDisplay(results) {
   return [];
 }
 
-function generateColumnsForDisplay(sortOrder, setSelectedProfileIdx) {
+function generateColumnsForDisplay(sortOrder, setSelectedProfileIdxForChart, setSelectedProfileIdxForNodeDetails) {
   const columns = [
     { name : "name",
       label : "Name",
@@ -162,7 +166,7 @@ function generateColumnsForDisplay(sortOrder, setSelectedProfileIdx) {
           );
         },
       }, },
-    { name : "Details",
+    { name : "Chart",
       options : {
         filter : false,
         sort : false,
@@ -176,8 +180,28 @@ function generateColumnsForDisplay(sortOrder, setSelectedProfileIdx) {
         },
         customBodyRender : function CustomBody(value, tableMeta) {
           return (
-            <IconButton aria-label="more" color="inherit" onClick={() => setSelectedProfileIdx(tableMeta.rowIndex)}>
+            <IconButton aria-label="more" color="inherit" onClick={() => setSelectedProfileIdxForChart(tableMeta.rowIndex)}>
               <BarChartIcon />
+            </IconButton>
+          );
+        },
+      }, },
+    { name : "Node Details",
+      options : {
+        filter : false,
+        sort : false,
+        searchable : false,
+        customHeadRender : function CustomHead({ index, ...column }) {
+          return (
+            <TableCell key={index}>
+              <b>{column.label}</b>
+            </TableCell>
+          );
+        },
+        customBodyRender : function CustomBody(value, tableMeta) {
+          return (
+            <IconButton aria-label="more" color="inherit" onClick={() => setSelectedProfileIdxForNodeDetails(tableMeta.rowIndex)}>
+              <InfoIcon />
             </IconButton>
           );
         },
@@ -212,8 +236,72 @@ function generateSelectedRows(results_selection, page, pageSize) {
   return rowsSelected;
 }
 
-function ResultChart({ result }) {
+function ResultChart({ result, handleTabChange, tabValue }) {
   if (!result) return <div />;
+
+  const row = result.runner_results;
+  const boardConfig = result.server_board_config;
+  const serverMetrics = result.server_metrics;
+  const startTime = new Date(row.StartTime);
+  const endTime = new Date(startTime.getTime() + row.ActualDuration / 1000000);
+
+  return (
+    <Paper
+      style={{ width : "100%",
+        maxWidth : "90vw",
+        padding : "0.5rem" }}
+    >
+      <Tabs
+        value={tabValue}
+        onChange={handleTabChange}
+        TabIndicatorProps={{
+          style : {
+            backgroundColor : "#00B39F"
+          }
+        }}
+      >
+        <Tab label="Performance Chart" />
+        <Tab label="Node Details" />
+      </Tabs>
+
+      {
+        (tabValue == 0) ?
+          <div>
+            <div>
+              <MesheryChart
+                rawdata={[result && result.runner_results ? result : {}]}
+                data={[result && result.runner_results ? result.runner_results : {}]}
+              />
+            </div>
+            {boardConfig && boardConfig !== null && Object.keys(boardConfig).length > 0 && (
+              <div>
+                <GrafanaCustomCharts
+                  boardPanelConfigs={[boardConfig]}
+                  // @ts-ignore
+                  boardPanelData={[serverMetrics]}
+                  startDate={startTime}
+                  from={startTime.getTime().toString()}
+                  endDate={endTime}
+                  to={endTime.getTime().toString()}
+                  liveTail={false}
+                />
+              </div>
+            )}
+          </div>
+          : (tabValue == 1) ?
+            <div>
+              <NodeDetails result={row}/>
+            </div>
+            : <div />
+      }
+    </Paper>
+  );
+}
+
+function ResultNodeDetails({ result, handleTabChange, tabValue }){
+  console.log("results: ", result)
+  if (!result) return <div />
+  const chartData = result.runner_results;
 
   const row = result.runner_results;
   const boardConfig = result.server_board_config;
@@ -226,28 +314,51 @@ function ResultChart({ result }) {
         maxWidth : "90vw",
         padding : "0.5rem" }}
     >
-      <div>
-        <Typography variant="h6" gutterBottom align="center">Performance Graph</Typography>
-        <MesheryChart
-          rawdata={[result && result.runner_results ? result : {}]}
-          data={[result && result.runner_results ? result.runner_results : {}]} />
-      </div>
-      {boardConfig && boardConfig !== null && Object.keys(boardConfig).length > 0 && (
-        <div>
-          <GrafanaCustomCharts
-            boardPanelConfigs={[boardConfig]}
-            // @ts-ignore
-            boardPanelData={[serverMetrics]}
-            startDate={startTime}
-            from={startTime.getTime().toString()}
-            endDate={endTime}
-            to={endTime.getTime().toString()}
-            liveTail={false}
-          />
-        </div>
-      )}
+      <Tabs
+        value={tabValue}
+        onChange={handleTabChange}
+        TabIndicatorProps={{
+          style : {
+            backgroundColor : "#00B39F"
+          }
+        }}
+      >
+        <Tab label="Performance Chart" />
+        <Tab label="Node Details" />
+      </Tabs>
+      {
+        (tabValue == 1) ?
+          <div>
+            <NodeDetails result={chartData}/>
+          </div>
+          :
+          (tabValue == 0) ?
+            <div>
+              <div>
+                <MesheryChart
+                  rawdata={[result && result.runner_results ? result : {}]}
+                  data={[result && result.runner_results ? result.runner_results : {}]}
+                />
+              </div>
+              {boardConfig && boardConfig !== null && Object.keys(boardConfig).length > 0 && (
+                <div>
+                  <GrafanaCustomCharts
+                    boardPanelConfigs={[boardConfig]}
+                    // @ts-ignore
+                    boardPanelData={[serverMetrics]}
+                    startDate={startTime}
+                    from={startTime.getTime().toString()}
+                    endDate={endTime}
+                    to={endTime.getTime().toString()}
+                    liveTail={false}
+                  />
+                </div>
+              )}
+            </div>
+            : <div/>
+      }
     </Paper>
-  );
+  )
 }
 
 /**
@@ -282,7 +393,9 @@ function MesheryResults({
   const [count, setCount] = useState(0);
   const [pageSize, setPageSize] = useState(10);
   const [results, setResults] = useState([]);
-  const [selectedRowData, setSelectedRowData] = useState();
+  const [selectedRowChart, setSelectedRowChart] = useState();
+  const [selectedRowNodeDetails, setSelectedRowNodeDetails] = useState();
+  const [tabValue, setTabValue] = useState(0);
 
   const searchTimeout = useRef();
 
@@ -362,7 +475,13 @@ function MesheryResults({
       autoHideDuration : 8000, });
   }
 
-  const columns = generateColumnsForDisplay(sortOrder, (idx) => setSelectedRowData(results[idx]));
+  const columns = generateColumnsForDisplay(sortOrder, (idx) => {
+    setSelectedRowChart(results[idx])
+    setTabValue(0)
+  }, (idx) => {
+    setSelectedRowNodeDetails(results[idx])
+    setTabValue(1)
+  });
 
   const options = {
     elevation : elevation,
@@ -444,6 +563,10 @@ function MesheryResults({
     },
   };
 
+  function handleTabChange(event, newValue) {
+    setTabValue(newValue);
+  }
+
   return (
     <NoSsr>
       <MUIDataTable
@@ -455,11 +578,29 @@ function MesheryResults({
       />
 
       <GenericModal
-        open={!!selectedRowData}
+        open={!!selectedRowChart}
         // @ts-ignore
-        Content={<ResultChart result={selectedRowData} />}
-        handleClose={() => setSelectedRowData(undefined)}
+        Content={
+          <ResultChart
+            result={selectedRowChart}
+            handleTabChange={handleTabChange}
+            tabValue={tabValue}
+          />}
+        handleClose={() => setSelectedRowChart(undefined)}
       />
+
+      <GenericModal
+        open={!!selectedRowNodeDetails}
+        // @ts-ignore
+        Content={
+          <ResultNodeDetails
+            result={selectedRowNodeDetails}
+            handleTabChange={handleTabChange}
+            tabValue={tabValue}
+          />}
+        handleClose={() => setSelectedRowNodeDetails(undefined)}
+      />
+
     </NoSsr>
   );
 }

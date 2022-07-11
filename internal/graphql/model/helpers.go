@@ -10,6 +10,7 @@ import (
 	"github.com/layer5io/meshkit/broker"
 	"github.com/layer5io/meshkit/database"
 	"github.com/layer5io/meshkit/logger"
+	"github.com/layer5io/meshkit/models/controllers"
 	"github.com/layer5io/meshkit/utils"
 	"github.com/layer5io/meshkit/utils/broadcast"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
@@ -18,23 +19,27 @@ import (
 	"github.com/spf13/viper"
 )
 
+// to be moved elsewhere
 const (
 	chartRepo = "https://meshery.github.io/meshery.io/charts"
 )
 
 var (
-	controlPlaneNamespace = map[MeshType]string{
-		MeshTypeIstio:              "istio-system",
-		MeshTypeLinkerd:            "linkerd-system",
-		MeshTypeConsul:             "consul-system",
-		MeshTypeOctarine:           "octarine-system",
-		MeshTypeTraefikMesh:        "traefik-system",
-		MeshTypeOpenServiceMesh:    "osm-system",
-		MeshTypeKuma:               "kuma-system",
-		MeshTypeNginxServiceMesh:   "nginx-system",
-		MeshTypeNetworkServiceMesh: "nsm-system",
-		MeshTypeCitrixServiceMesh:  "ctrix-system",
-		MeshTypeAppMesh:            "appmesh-system",
+	controlPlaneNamespace = map[MeshType][]string{
+		MeshTypeIstio:              {"istio-system"},
+		MeshTypeLinkerd:            {"linkerd-system"},
+		MeshTypeCiliumServiceMesh:  {"kube-system"},
+		MeshTypeConsul:             {"consul-system"},
+		MeshTypeOctarine:           {"octarine-system"},
+		MeshTypeTraefikMesh:        {"traefik-system"},
+		MeshTypeOpenServiceMesh:    {"osm-system"},
+		MeshTypeKuma:               {"kuma-system"},
+		MeshTypeNginxServiceMesh:   {"nginx-system"},
+		MeshTypeNetworkServiceMesh: {"nsm-system"},
+		MeshTypeCitrixServiceMesh:  {"citrix-system"},
+		MeshTypeAppMesh:            {"appmesh-system"},
+		//Any namespace added or appended above should also be appended on the AllMesh array
+		MeshTypeAllMesh: {"istio-system", "linkerd-system", "consul-system", "octarine-system", "traefik-system", "osm-system", "kuma-system", "nginx-system", "nsm-system", "citrix-system", "appmesh-system"},
 	}
 
 	addonPortSelector = map[string]string{
@@ -45,21 +50,25 @@ var (
 		"zipkin":           "http-query",
 	}
 )
+var (
+	//TODO: Add the image orgs of other control plane pods. This change is backwards compatible and wont break anything
+	controlPlaneImageOrgs = map[MeshType][]string{
+		MeshTypeCiliumServiceMesh: {"cilium"},
+	}
+)
 
 // listernToEvents - scale this function with the number of channels
 func ListernToEvents(log logger.Handler,
 	handler *database.Handler,
 	datach chan *broker.Message,
 	meshsyncCh chan struct{},
-	operatorSyncChannel chan bool,
 	controlPlaneSyncChannel chan struct{},
-	meshsyncLivenessChannel chan struct{},
 	broadcast broadcast.Broadcaster,
 ) {
 	var wg sync.WaitGroup
 	for msg := range datach {
 		wg.Add(1)
-		go persistData(*msg, log, handler, meshsyncCh, operatorSyncChannel, controlPlaneSyncChannel, broadcast, &wg)
+		go persistData(*msg, log, handler, meshsyncCh, controlPlaneSyncChannel, broadcast, &wg)
 	}
 
 	wg.Wait()
@@ -70,7 +79,6 @@ func persistData(msg broker.Message,
 	log logger.Handler,
 	handler *database.Handler,
 	meshsyncCh chan struct{},
-	operatorSyncChannel chan bool,
 	controlPlaneSyncChannel chan struct{},
 	broadcaster broadcast.Broadcaster,
 	wg *sync.WaitGroup,
@@ -89,13 +97,13 @@ func persistData(msg broker.Message,
 		// persist the object
 		log.Info("Incoming object: ", object.ObjectMeta.Name, ", kind: ", object.Kind)
 		if object.ObjectMeta.Name == "meshery-operator" || object.ObjectMeta.Name == "meshery-broker" || object.ObjectMeta.Name == "meshery-meshsync" {
-			// operatorSyncChannel <- false
 			broadcaster.Submit(broadcast.BroadcastMessage{
 				Source: broadcast.OperatorSyncChannel,
 				Data:   false,
 				Type:   "health",
 			})
 		}
+
 		err = recordMeshSyncData(msg.EventType, handler, &object)
 		if err != nil {
 			log.Error(err)
@@ -105,6 +113,38 @@ func persistData(msg broker.Message,
 	case broker.SMI:
 		log.Info("Received SMI Result")
 	}
+}
+
+func PersistClusterNames(
+	ctx context.Context,
+	log logger.Handler,
+	handler *database.Handler,
+	meshsyncCh chan struct{},
+) {
+	k8sContexts, ok := ctx.Value(models.KubeClustersKey).([]models.K8sContext)
+	if !ok {
+		return
+	}
+	for _, clusterConfig := range k8sContexts {
+		clusterName := clusterConfig.Cluster["name"].(string)
+		clusterID := clusterConfig.KubernetesServerID.String()
+		object := meshsyncmodel.Object{
+			Kind: "Cluster",
+			ObjectMeta: &meshsyncmodel.ResourceObjectMeta{
+				Name:      clusterName,
+				ClusterID: clusterID,
+			},
+			ClusterID: clusterID,
+		}
+
+		// persist the object
+		log.Info("Incoming object: ", object.ObjectMeta.Name, ", kind: ", object.Kind)
+		err := recordMeshSyncData(broker.Add, handler, &object)
+		if err != nil {
+			log.Error(err)
+		}
+	}
+	meshsyncCh <- struct{}{}
 }
 
 func applyYaml(client *mesherykube.Client, delete bool, file string) error {
@@ -126,6 +166,7 @@ func applyYaml(client *mesherykube.Client, delete bool, file string) error {
 }
 
 // installs operator
+// To be depricated
 func installUsingHelm(client *mesherykube.Client, delete bool, adapterTracker models.AdaptersTrackerInterface) error {
 	// retrieving meshery's version to apply the appropriate chart
 	mesheryReleaseVersion := viper.GetString("BUILD")
@@ -158,7 +199,8 @@ func installUsingHelm(client *mesherykube.Client, delete bool, adapterTracker mo
 	overrides := SetOverrideValues(delete, adapterTracker)
 
 	err := client.ApplyHelmChart(mesherykube.ApplyHelmChartConfig{
-		Namespace: "meshery",
+		Namespace:   "meshery",
+		ReleaseName: "meshery",
 		ChartLocation: mesherykube.HelmChartLocation{
 			Repository: chartRepo,
 			Chart:      chart,
@@ -180,6 +222,8 @@ func installUsingHelm(client *mesherykube.Client, delete bool, adapterTracker mo
 // SetOverrideValues detects the currently insalled adapters and sets appropriate
 // overrides so as to not uninstall them. It also sets override values for
 // operator so that it can be enabled or disabled depending on the need
+
+// to be depricated
 func SetOverrideValues(delete bool, adapterTracker models.AdaptersTrackerInterface) map[string]interface{} {
 	installedAdapters := make([]string, 0)
 	adapters := adapterTracker.GetAdapters(context.TODO())
@@ -191,10 +235,14 @@ func SetOverrideValues(delete bool, adapterTracker models.AdaptersTrackerInterfa
 	}
 
 	overrideValues := map[string]interface{}{
+		"fullnameOverride": "meshery-operator",
 		"meshery": map[string]interface{}{
 			"enabled": false,
 		},
 		"meshery-istio": map[string]interface{}{
+			"enabled": false,
+		},
+		"meshery-cilium": map[string]interface{}{
 			"enabled": false,
 		},
 		"meshery-linkerd": map[string]interface{}{
@@ -244,4 +292,88 @@ func SetOverrideValues(delete bool, adapterTracker models.AdaptersTrackerInterfa
 	}
 
 	return overrideValues
+}
+
+//K8sConnectionTracker keeps track of BrokerURLs per kubernetes context
+type K8sConnectionTracker struct {
+	mx              sync.Mutex
+	contextToBroker map[string]string //ContextID -> BrokerURL
+}
+
+func NewK8sConnctionTracker() *K8sConnectionTracker {
+	return &K8sConnectionTracker{
+		contextToBroker: make(map[string]string),
+	}
+}
+func (k *K8sConnectionTracker) Set(id string, url string) {
+	k.mx.Lock()
+	defer k.mx.Unlock()
+	k.contextToBroker[id] = url
+}
+
+//Takes a set of endpoints and discard the current endpoint if its not present in the set
+func (k *K8sConnectionTracker) ResetEndpoints(available map[string]bool) {
+	k.mx.Lock()
+	defer k.mx.Unlock()
+	c := make(map[string]string)
+	for id, url := range k.contextToBroker {
+		if available[url] {
+			c[id] = url
+		}
+	}
+	k.contextToBroker = c
+}
+func (k *K8sConnectionTracker) ListBrokerEndpoints() (a []string) {
+	k.mx.Lock()
+	defer k.mx.Unlock()
+	for _, v := range k.contextToBroker {
+		a = append(a, v)
+	}
+	return
+}
+func (k *K8sConnectionTracker) Get(id string) (url string) {
+	k.mx.Lock()
+	defer k.mx.Unlock()
+	url = k.contextToBroker[id]
+	return
+}
+
+// Takes the meshkit Logger and logs a comma separated list of currently tracked Broker Endpoints
+func (k *K8sConnectionTracker) Log(l logger.Handler) {
+	var e = "Connected broker endpoints : "
+	k.mx.Lock()
+	defer k.mx.Unlock()
+	for _, v := range k.contextToBroker {
+		e += v + ", "
+	}
+	l.Info(strings.TrimSuffix(e, ", "))
+}
+
+func GetInternalController(controller models.MesheryController) MesheryController {
+	switch controller {
+	case models.MesheryBroker:
+		return MesheryControllerBroker
+	case models.MesheryOperator:
+		return MesheryControllerOperator
+	case models.Meshsync:
+		return MesheryControllerMeshsync
+	}
+	return ""
+}
+
+func GetInternalControllerStatus(status controllers.MesheryControllerStatus) MesheryControllerStatus {
+	switch status {
+	case controllers.Deployed:
+		return MesheryControllerStatusDeployed
+
+	case controllers.NotDeployed:
+		return MesheryControllerStatusNotdeployed
+
+	case controllers.Deploying:
+		return MesheryControllerStatusDeploying
+
+	case controllers.Unknown:
+		return MesheryControllerStatusUnkown
+	}
+	return ""
 }

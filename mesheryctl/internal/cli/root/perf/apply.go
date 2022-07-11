@@ -52,7 +52,7 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com"
 mesheryctl perf apply -f perf-config.yaml
 
 // Run performance test using SMP compatible test configuration and override values with flags
-mesheryctl perf apply -f <filepath> --flags
+mesheryctl perf apply -f [filepath] --flags
 
 // Choice of load generator - fortio or wrk2 (default: fortio)
 mesheryctl perf apply meshery-test --load-generator wrk2
@@ -129,9 +129,9 @@ mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --mesh i
 
 		// Run test based on flags
 		if testName == "" {
-			log.Debug("Test Name not provided")
+			utils.Log.Debug("Test Name not provided")
 			testName = utils.StringWithCharset(8)
-			log.Debug("Using random test name: ", testName)
+			utils.Log.Debug("Using random test name: ", testName)
 		}
 
 		// Throw error if a profile name is not provided
@@ -237,17 +237,12 @@ mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --mesh i
 		}
 		req.URL.RawQuery = q.Encode()
 
-		log.Info("Initiating Performance test ...")
+		utils.Log.Info("Initiating Performance test ...")
 
-		resp, err := client.Do(req)
+		resp, err := utils.MakeRequest(req)
+
 		if err != nil {
-			return ErrFailRequest(err)
-		}
-		if utils.ContentTypeIsHTML(resp) {
-			return ErrFailTestRun()
-		}
-		if resp.StatusCode != 200 {
-			return ErrFailTestRun()
+			return err
 		}
 
 		defer utils.SafeClose(resp.Body)
@@ -255,9 +250,9 @@ mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --mesh i
 		if err != nil {
 			return errors.Wrap(err, utils.PerfError("failed to read response body"))
 		}
-		log.Debug(string(data))
+		utils.Log.Debug(string(data))
 
-		log.Info("Test Completed Successfully!")
+		utils.Log.Info("Test Completed Successfully!")
 		return nil
 	},
 }
@@ -274,7 +269,7 @@ func init() {
 }
 
 func createPerformanceProfile(client *http.Client, mctlCfg *config.MesheryCtlConfig) (string, string, error) {
-	log.Debug("Creating new performance profile inside function")
+	utils.Log.Debug("Creating new performance profile inside function")
 
 	if profileName == "" {
 		return "", "", ErrNoProfileName()
@@ -336,21 +331,20 @@ func createPerformanceProfile(client *http.Client, mctlCfg *config.MesheryCtlCon
 	if err != nil {
 		return "", "", ErrFailMarshal(err)
 	}
-	req, err = utils.NewRequest("POST", mctlCfg.GetBaseMesheryURL()+"/api/user/performance/profiles", bytes.NewBuffer(jsonValue))
+	req, err := utils.NewRequest("POST", mctlCfg.GetBaseMesheryURL()+"/api/user/performance/profiles", bytes.NewBuffer(jsonValue))
+
 	if err != nil {
 		return "", "", err
 	}
 
-	resp, err := client.Do(req)
+	resp, err := utils.MakeRequest(req)
+
 	if err != nil {
-		return "", "", ErrFailRequest(err)
+		return "", "", err
 	}
 
 	var response *models.PerformanceProfile
-	// failsafe for the case when a valid uuid v4 is not an id of any pattern (bad api call)
-	if resp.StatusCode != 200 {
-		return "", "", ErrFailReqStatus(resp.StatusCode)
-	}
+
 	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
@@ -363,6 +357,6 @@ func createPerformanceProfile(client *http.Client, mctlCfg *config.MesheryCtlCon
 	profileID = response.ID.String()
 	profileName = response.Name
 
-	log.Debug("New profile created")
+	utils.Log.Debug("New profile created")
 	return profileID, profileName, nil
 }

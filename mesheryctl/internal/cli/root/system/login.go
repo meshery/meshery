@@ -12,6 +12,10 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+var (
+	providerFlag string
+)
+
 var loginCmd = &cobra.Command{
 	Use:   "login",
 	Short: "Authenticate to a Meshery Server",
@@ -20,6 +24,10 @@ Authenticate to the Local or a Remote Provider of a Meshery Server
 
 The authentication mode is web-based browser flow`,
 	Args: cobra.MinimumNArgs(0),
+	Example: `
+// Login with the Meshery Provider of your choice: the Local Provider or a Remote Provider.
+mesheryctl system login 
+	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
 		hcOptions := &HealthCheckOptions{
@@ -61,7 +69,14 @@ The authentication mode is web-based browser flow`,
 			return nil
 		}
 
-		tokenData, err := utils.InitiateLogin(mctlCfg)
+		var tokenData []byte
+		if providerFlag != "" {
+			var provider = providerFlag
+			tokenData, err = utils.InitiateLogin(mctlCfg, provider)
+		} else {
+			tokenData, err = utils.InitiateLogin(mctlCfg, "")
+		}
+
 		if err != nil {
 			log.Println("authentication failed:", err)
 			return nil
@@ -87,4 +102,8 @@ The authentication mode is web-based browser flow`,
 
 		return nil
 	},
+}
+
+func init() {
+	loginCmd.PersistentFlags().StringVarP(&providerFlag, "provider", "p", "", "login Meshery with specified provider")
 }

@@ -9,13 +9,16 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/internal/sql"
 	"github.com/layer5io/meshery/models"
+
 	pCore "github.com/layer5io/meshery/models/pattern/core"
+	"github.com/layer5io/meshery/models/pattern/stages"
 	"github.com/sirupsen/logrus"
 )
 
 // MesheryPatternRequestBody refers to the type of request body that
 // SaveMesheryPattern would receive
 type MesheryPatternRequestBody struct {
+	Name          string                 `json:"name,omitempty"`
 	URL           string                 `json:"url,omitempty"`
 	Path          string                 `json:"path,omitempty"`
 	Save          bool                   `json:"save,omitempty"`
@@ -142,7 +145,7 @@ func (h *Handler) handlePatternPOST(
 	}
 
 	if parsedBody.CytoscapeJSON != "" {
-		pf, err := pCore.NewPatternFileFromCytoscapeJSJSON([]byte(parsedBody.CytoscapeJSON))
+		pf, err := pCore.NewPatternFileFromCytoscapeJSJSON(parsedBody.Name, []byte(parsedBody.CytoscapeJSON))
 		if err != nil {
 			rw.WriteHeader(http.StatusBadRequest)
 			fmt.Fprintf(rw, "%s", err)
@@ -264,7 +267,7 @@ func (h *Handler) GetMesheryPatternsHandler(
 	provider models.Provider,
 ) {
 	q := r.URL.Query()
-	tokenString := r.Context().Value("token").(string)
+	tokenString := r.Context().Value(models.TokenCtxKey).(string)
 
 	resp, err := provider.GetMesheryPatterns(tokenString, q.Get("page"), q.Get("page_size"), q.Get("search"), q.Get("order"))
 	if err != nil {
@@ -280,7 +283,7 @@ func (h *Handler) GetMesheryPatternsHandler(
 	}
 	mc := NewContentModifier(token, provider, prefObj, user.UserID)
 	//acts like a middleware, modifying the bytes lazily just before sending them back
-	err = mc.AddMetadataForPatterns(&resp)
+	err = mc.AddMetadataForPatterns(r.Context(), &resp)
 	if err != nil {
 		fmt.Println("Could not add metadata about pattern's current support ", err.Error())
 	}
@@ -401,7 +404,10 @@ func formatPatternOutput(rw http.ResponseWriter, content []byte, format string) 
 				return
 			}
 
-			cyjs, _ := patternFile.ToCytoscapeJS()
+			//TODO: The below line has to go away once the client fully supports referencing variables  and pattern imports inside design
+			newpatternfile := evalImportAndReferenceStage(&patternFile)
+
+			cyjs, _ := newpatternfile.ToCytoscapeJS()
 
 			bytes, err := json.Marshal(&cyjs)
 			if err != nil {
@@ -429,4 +435,24 @@ func formatPatternOutput(rw http.ResponseWriter, content []byte, format string) 
 
 	rw.Header().Set("Content-Type", "application/json")
 	fmt.Fprint(rw, string(data))
+}
+
+//Since the client currently does not support pattern imports and externalized variables, the first(import) stage of pattern engine
+// is evaluated here to simplify the pattern file such that it is valid when a deploy takes place
+func evalImportAndReferenceStage(p *pCore.Pattern) (newp pCore.Pattern) {
+	sap := &serviceActionProvider{}
+	sip := &serviceInfoProvider{}
+	chain := stages.CreateChain()
+	chain.
+		Add(stages.Import(sip, sap)).
+		Add(stages.Filler(false)).
+		Add(func(data *stages.Data, err error, next stages.ChainStageNextFunction) {
+			data.Lock.Lock()
+			newp = *data.Pattern
+			data.Lock.Unlock()
+		}).
+		Process(&stages.Data{
+			Pattern: p,
+		})
+	return newp
 }

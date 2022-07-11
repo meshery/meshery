@@ -15,24 +15,28 @@ import {
 } from "@material-ui/core";
 import { UnControlled as CodeMirror } from "react-codemirror2";
 import DeleteIcon from "@material-ui/icons/Delete";
-import UploadIcon from "@material-ui/icons/Publish";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import MUIDataTable from "mui-datatables";
-import PromptComponent from "./PromptComponent";
 import Moment from "react-moment";
 import { withSnackbar } from "notistack";
 import CloseIcon from "@material-ui/icons/Close";
 import EditIcon from "@material-ui/icons/Edit";
-import PlayArrowIcon from "@material-ui/icons/PlayArrow";
+import DoneAllIcon from '@material-ui/icons/DoneAll';
 import { updateProgress } from "../lib/store";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
 import dataFetch from "../lib/data-fetch";
-import URLUploader from "./URLUploader";
+import UploadImport from "./UploadImport";
 import FullscreenIcon from '@material-ui/icons/Fullscreen';
 import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
-import FILE_OPS from "../utils/configurationFileHandlersEnum"
+import FILE_OPS from "../utils/configurationFileHandlersEnum";
+import ViewSwitch from "./ViewSwitch";
+import FiltersGrid from "./MesheryFilters/FiltersGrid";
 import { trueRandom } from "../lib/trueRandom";
+import { ctxUrl } from "../utils/multi-ctx";
+import ConfirmationMsg from "./ConfirmationModal";
+import UndeployIcon from "../public/static/img/UndeployIcon";
+import { getComponentsinFile } from "../utils/utils";
 
 const styles = (theme) => ({
   grid : {
@@ -42,6 +46,24 @@ const styles = (theme) => ({
     fontWeight : "bolder",
     fontSize : 18,
   },
+  createButton : {
+    display : "flex",
+    justifyContent : "flex-start",
+    alignItems : "center",
+    whiteSpace : "nowrap",
+    margin : "1rem 0 2rem 1rem"
+  },
+  topToolbar : {
+    display : "flex"
+  },
+  viewSwitchButton : {
+    justifySelf : "flex-end",
+    marginLeft : "auto",
+    paddingLeft : "1rem"
+  },
+  // text : {
+  //   padding : "5px"
+  // }
 });
 
 const useStyles = makeStyles(() => ({
@@ -61,32 +83,6 @@ const useStyles = makeStyles(() => ({
   },
 
 }))
-
-function CustomToolbar(onClick, urlOnClick) {
-  return function Toolbar() {
-    return (
-      <>
-        <label htmlFor="upload-button">
-          <input
-            type="file"
-            accept=".yaml, .yml, .json"
-            hidden
-            onChange={onClick}
-            id="upload-button"
-            name="upload-button"
-          />
-          <Tooltip title="Upload Filter">
-            <IconButton aria-label="Upload" component="span">
-              <UploadIcon />
-            </IconButton>
-          </Tooltip>
-        </label>
-
-        <URLUploader onSubmit={urlOnClick} />
-      </>
-    );
-  };
-}
 
 function TooltipIcon({ children, onClick, title }) {
   return (
@@ -144,7 +140,12 @@ function YAMLEditor({ filter, onClose, onSubmit }) {
           <IconButton
             aria-label="Delete"
             color="primary"
-            onClick={() => onSubmit(yaml, filter.id, filter.name, FILE_OPS.DELETE)}
+            onClick={() => onSubmit({
+              data : yaml,
+              id : filter.id,
+              name : filter.name,
+              type : FILE_OPS.DELETE
+            })}
           >
             <DeleteIcon />
           </IconButton>
@@ -154,7 +155,11 @@ function YAMLEditor({ filter, onClose, onSubmit }) {
   );
 }
 
-function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, classes }) {
+function resetSelectedFilter() {
+  return { show : false, filter : null };
+}
+
+function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, classes, selectedK8sContexts }) {
   const [page, setPage] = useState(0);
   const [search] = useState("");
   const [sortOrder] = useState("");
@@ -162,8 +167,20 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
   const modalRef = useRef(null);
   const [pageSize, setPageSize] = useState(10);
   const [filters, setFilters] = useState([]);
+  const [selectedFilter, setSelectedFilter] = useState(resetSelectedFilter());
   const [selectedRowData, setSelectedRowData] = useState(null);
+  const [viewType, setViewType] = useState(
+    /**  @type {TypeView} */
+    ("grid")
+  );
   const DEPLOY_URL = "/api/filter/deploy";
+  const [modalOpen, setModalOpen] = useState({
+    open : false,
+    filter_file : null,
+    deploy : false,
+    name : "",
+    count : 0
+  });
 
   const getMuiTheme = () => createTheme({
     overrides : {
@@ -205,7 +222,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
             color : "#607d8b"
           }
         },
-      }
+      },
     }
   })
 
@@ -222,6 +239,10 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
       name : "DEPLOY_FILTERS",
       error_msg : "Failed to deploy filter file",
     },
+    UNDEPLOY_FILTERS : {
+      name : "UNDEPLOY_FILTERS",
+      error_msg : "Failed to undeploy filter file",
+    },
     UPLOAD_FILTERS : {
       name : "UPLOAD_FILTERS",
       error_msg : "Failed to upload filter file",
@@ -235,7 +256,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
    */
   useEffect(() => {
     fetchFilters(page, pageSize, search, sortOrder);
-  }, []);
+  }, [page, pageSize, search, sortOrder]);
 
   /**
    * fetchFilters constructs the queries based on the parameters given
@@ -245,19 +266,6 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
    * @param {string} search search string
    * @param {string} sortOrder order of sort
    */
-
-  const handleDeploy = (filter_file) => {
-    dataFetch(
-      DEPLOY_URL,
-      { credentials : "include", method : "POST", body : filter_file },
-      () => {
-        console.log("FilterFile Deploy API", `/api/filter/deploy`);
-        updateProgress({ showProgress : false });
-      },
-      handleError(ACTION_TYPES.DEPLOY_FILTERS)
-    );
-  };
-
   function fetchFilters(page, pageSize, search, sortOrder) {
     if (!search) search = "";
     if (!sortOrder) sortOrder = "";
@@ -286,6 +294,52 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     );
   }
 
+  const handleDeploy = (filter_file) => {
+    dataFetch(
+      ctxUrl(DEPLOY_URL, selectedK8sContexts),
+      { credentials : "include", method : "POST", body : filter_file },
+      () => {
+        console.log("FilterFile Deploy API", `/api/filter/deploy`);
+        enqueueSnackbar("Filter Successfully Deployed!", {
+          variant : "success",
+          action : function Action(key) {
+            return (
+              <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+                <CloseIcon />
+              </IconButton>
+            );
+          },
+          autoHideDuration : 2000,
+        });
+        updateProgress({ showProgress : false });
+      },
+      handleError(ACTION_TYPES.DEPLOY_FILTERS)
+    );
+  };
+
+  const handleUndeploy = (filter_file) => {
+    dataFetch(
+      ctxUrl(DEPLOY_URL, selectedK8sContexts),
+      { credentials : "include", method : "DELETE", body : filter_file },
+      () => {
+        updateProgress({ showProgress : false });
+        enqueueSnackbar("Filter Successfully Undeployed!", {
+          variant : "success",
+          action : function Action(key) {
+            return (
+              <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+                <CloseIcon />
+              </IconButton>
+            );
+          },
+          autoHideDuration : 2000,
+        });
+      },
+      handleError(ACTION_TYPES.UNDEPLOY_FILTERS)
+    );
+  };
+
+
   // function handleError(error) {
   const handleError = (action) => (error) => {
     updateProgress({ showProgress : false });
@@ -303,13 +357,32 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     });
   };
 
+  const handleModalOpen = (filter_file, name, isDeploy) => {
+    setModalOpen({
+      open : true,
+      filter_file : filter_file,
+      deploy : isDeploy,
+      name : name,
+      count : getComponentsinFile(filter_file)
+    });
+  }
+
+  const handleModalClose = () => {
+    setModalOpen({
+      open : false,
+      filter_file : null,
+      name : "",
+      count : 0
+    });
+  }
+
   function resetSelectedRowData() {
     return () => {
       setSelectedRowData(null);
     };
   }
 
-  function handleSubmit(data, id, name, type) {
+  function handleSubmit({ data, id, type }) {
     updateProgress({ showProgress : true });
     if (type === FILE_OPS.DELETE) {
       dataFetch(
@@ -360,10 +433,12 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     });
     reader.readAsText(file);
   }
+
   function urlUploadHandler(link) {
     handleSubmit(link, "", "meshery_" + Math.floor(trueRandom() * 100),  FILE_OPS.URL_UPLOAD);
     console.log(link, "valid");
   }
+
   const columns = [
     {
       name : "name",
@@ -451,12 +526,19 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
                 />
               </IconButton>
               <IconButton>
-                <PlayArrowIcon
+                <DoneAllIcon
                   title="Deploy"
                   aria-label="deploy"
                   color="inherit"
-                  onClick={() => handleDeploy(rowData.filter_file)} //deploy endpoint to be called here
+                  onClick={() => handleModalOpen(rowData.filter_file, rowData.name, true)}
+                  data-cy="deploy-button"
                 />
+              </IconButton>
+              <IconButton
+                title="Undeploy"
+                onClick={() => handleModalOpen(rowData.filter_file, rowData.name, false)}
+              >
+                <UndeployIcon fill="rgba(0, 0, 0, 0.54)" data-cy="undeploy-button" />
               </IconButton>
             </>
           );
@@ -529,7 +611,6 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
         text : "filter(s) selected"
       }
     },
-    customToolbar : CustomToolbar(uploadHandler, urlUploadHandler),
 
     onRowsDelete : async function handleDelete(row) {
       let response  = await showmodal(Object.keys(row.lookup).length)
@@ -580,31 +661,85 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
           break;
       }
     },
+    setRowProps : (row, dataIndex, rowIndex) => {
+      return {
+        "data-cy" : `config-row-${rowIndex}`
+      }
+    },
+    setTableProps : () => {
+      return {
+        "data-cy" : "filters-grid"
+      }
+    }
   };
 
   return (
-    <NoSsr>
-      {selectedRowData && Object.keys(selectedRowData).length > 0 && (
-        <YAMLEditor filter={selectedRowData} onClose={resetSelectedRowData()} onSubmit={handleSubmit} />
-      )}
-      <MuiThemeProvider theme={getMuiTheme()}>
-        <MUIDataTable
-          title={<div className={classes.tableHeader}>Filters</div>}
-          data={filters}
-          columns={columns}
-          // @ts-ignore
-          options={options}
+    <>
+
+      <NoSsr>
+        {selectedRowData && Object.keys(selectedRowData).length > 0 && (
+          <YAMLEditor filter={selectedRowData} onClose={resetSelectedRowData()} onSubmit={handleSubmit} />
+        )}
+        <div className={classes.topToolbar} >
+          {!selectedFilter.show && (filters.length>0 || viewType==="table") && <div className={classes.createButton}>
+            <div>
+              <UploadImport aria-label="URL upload button" handleUpload={urlUploadHandler} handleImport={uploadHandler} configuration="Filter" />
+            </div>
+          </div>
+          }
+          {!selectedFilter.show &&
+          <div className={classes.viewSwitchButton}>
+            <ViewSwitch view={viewType} changeView={setViewType} />
+          </div>
+          }
+        </div>
+        {
+          !selectedFilter.show && viewType==="table" && <MuiThemeProvider theme={getMuiTheme() }>
+            <MUIDataTable
+              title={<div className={classes.tableHeader}>Filters</div>}
+              data={filters}
+              columns={columns}
+              // @ts-ignore
+              options={options}
+              className={classes.muiRow}
+            />
+          </MuiThemeProvider>
+        }
+        {
+          !selectedFilter.show && viewType==="grid" &&
+            // grid vieww
+            <FiltersGrid
+              filters={filters}
+              handleDeploy={handleDeploy}
+              handleUndeploy={handleUndeploy}
+              handleSubmit={handleSubmit}
+              setSelectedFilter={setSelectedFilter}
+              selectedFilter={selectedFilter}
+              pages={Math.ceil(count / pageSize)}
+              setPage={setPage}
+              selectedPage={page}
+            />
+        }
+        <ConfirmationMsg
+          open={modalOpen.open}
+          handleClose={handleModalClose}
+          submit={
+            { deploy : () => handleDeploy(modalOpen.filter_file),  unDeploy : () => handleUndeploy(modalOpen.filter_file) }
+          }
+          isDelete={!modalOpen.deploy}
+          title={modalOpen.name}
+          componentCount={modalOpen.count}
+          tab={modalOpen.deploy ? 0 : 1}
         />
-      </MuiThemeProvider>
-      <PromptComponent ref={modalRef} />
-    </NoSsr>
+      </NoSsr>
+    </>
   );
 }
 
 const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(updateProgress, dispatch) });
 
 const mapStateToProps = (state) => {
-  return { user : state.get("user")?.toObject() };
+  return { user : state.get("user")?.toObject(), selectedK8sContexts : state.get("selectedK8sContexts") };
 };
 
 // @ts-ignore

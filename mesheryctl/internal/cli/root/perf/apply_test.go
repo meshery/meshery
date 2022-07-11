@@ -129,7 +129,7 @@ func TestApplyCmd(t *testing.T) {
 
 			utils.TokenFlag = tt.Token
 			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
-			b := utils.SetupLogrusGrabTesting(t)
+			b := utils.SetupMeshkitLoggerTesting(t, false)
 
 			PerfCmd.SetArgs(tt.Args)
 			PerfCmd.SetOutput(b)

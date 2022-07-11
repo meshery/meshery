@@ -25,14 +25,8 @@ const chipStyles = (theme) => ({ chipIcon : { width : theme.spacing(2.5) },
   chip : { marginRight : theme.spacing(1),
     marginBottom : theme.spacing(1), }, })
 
-
-
-
-
-
-
-
-
+// Connection Wizard
+// TODO: bind to contextID prop, leaving due to no use in current UI
 const MesheryOperatorDataPanel = ({
   operatorInformation, updateProgress, enqueueSnackbar, closeSnackbar
 }) => {

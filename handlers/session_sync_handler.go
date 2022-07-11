@@ -8,6 +8,19 @@ import (
 	"github.com/layer5io/meshery/models"
 )
 
+type SessionSyncData struct {
+	*models.Preference `json:",inline"`
+	K8sConfigs         []SessionSyncDataK8sConfig `json:"k8sConfig,omitempty"`
+}
+
+type SessionSyncDataK8sConfig struct {
+	ContextID         string `json:"contextID,omitempty"`
+	ContextName       string `json:"contextName,omitempty"`
+	ClusterConfigured bool   `json:"clusterConfigured,omitempty"`
+	ConfiguredServer  string `json:"configuredServer,omitempty"`
+	ClusterID         string `json:"clusterID,omitempty"`
+}
+
 // swagger:route GET /api/system/sync SystemAPI idSystemSync
 // Handle GET request for config sync
 //
@@ -28,6 +41,7 @@ func (h *Handler) SessionSyncHandler(w http.ResponseWriter, req *http.Request, p
 	meshAdapters := []*models.Adapter{}
 
 	adapters := h.config.AdapterTracker.GetAdapters(req.Context())
+
 	for _, adapter := range adapters {
 		meshAdapters, _ = h.addAdapter(req.Context(), meshAdapters, prefObj, adapter.Location, provider)
 	}
@@ -37,34 +51,29 @@ func (h *Handler) SessionSyncHandler(w http.ResponseWriter, req *http.Request, p
 	if err != nil { // ignoring errors in this context
 		h.log.Error(ErrSaveSession(err))
 	}
-
-	if prefObj.K8SConfig != nil && h.config.KubeClient != nil {
-		if prefObj.K8SConfig.ServerVersion == "" {
-			// fetching server version, if it has not already been
-			version, err := h.config.KubeClient.KubeClient.ServerVersion()
-			if err != nil {
-				h.log.Error(ErrFetchKubernetes(err))
+	s := []SessionSyncDataK8sConfig{}
+	k8scontexts, ok := req.Context().Value(models.AllKubeClusterKey).([]models.K8sContext)
+	if ok {
+		for _, k8scontext := range k8scontexts {
+			var cid string
+			if k8scontext.KubernetesServerID != nil {
+				cid = k8scontext.KubernetesServerID.String()
 			}
-			prefObj.K8SConfig.ServerVersion = version.String()
-		}
-
-		//if len(prefObj.K8SConfig.Nodes) == 0 {
-		//	// fetching nodes, if it has not already been
-		//	prefObj.K8SConfig.Nodes, _ = helpers.FetchKubernetesNodes(prefObj.K8SConfig.Config, prefObj.K8SConfig.ContextName)
-		//}
-
-		// clearing out the config just for displaying purposes
-		if len(prefObj.K8SConfig.Config) > 0 {
-			prefObj.K8SConfig.Config = nil
-		}
-	} else {
-		err = h.checkIfK8SConfigExistsOrElseLoadFromDiskOrK8S(req, user, prefObj, provider)
-		if err != nil {
-			h.log.Error(ErrFetchKubernetes(err))
+			s = append(s, SessionSyncDataK8sConfig{
+				ContextID:         k8scontext.ID,
+				ContextName:       k8scontext.Name,
+				ClusterConfigured: true,
+				ClusterID:         cid,
+				ConfiguredServer:  k8scontext.Server,
+			})
 		}
 	}
+	data := SessionSyncData{
+		Preference: prefObj,
+		K8sConfigs: s,
+	}
 
-	err = json.NewEncoder(w).Encode(prefObj)
+	err = json.NewEncoder(w).Encode(data)
 	if err != nil {
 		obj := "user config data"
 		h.log.Error(ErrMarshal(err, obj))

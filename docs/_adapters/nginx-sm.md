@@ -5,7 +5,7 @@ name: Meshery Adapter for NGINX Service Mesh
 mesh_name: NGINX Service Mesh
 earliest_version: v1.2.0
 port: 10010/gRPC
-project_status: beta
+project_status: stable
 github_link: https://github.com/meshery/meshery-nginx-sm
 image: /assets/img/service-meshes/nginx-sm.svg
 permalink: service-meshes/adapters/nginx-sm
@@ -50,3 +50,4 @@ Identify overhead involved in running {{page.mesh_name}}, various {{page.mesh_na
 1. Grafana integration
 
 The [{{page.name}}]({{ page.github_link }}) will connect to NGINX Service Mesh's Prometheus and Grafana instances running in the control plane.
+

@@ -1,6 +1,6 @@
 
 import {
-  Accordion, AccordionDetails, AccordionSummary, AppBar, ButtonGroup, CircularProgress, Divider, FormControl, Grid, IconButton, makeStyles, MenuItem, Paper, Select, TextField, Toolbar, Tooltip, Typography,
+  Accordion, AccordionDetails, AccordionSummary, AppBar, ButtonGroup, CircularProgress, Divider, FormControl, Grid, IconButton, makeStyles, MenuItem, Paper, TextField, Toolbar, Tooltip, Typography,
 } from "@material-ui/core";
 import DeleteIcon from "@material-ui/icons/Delete";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
@@ -44,6 +44,12 @@ const useStyles = makeStyles((theme) => ({
       minHeight : "300px",
       height : '100%',
     }
+  },
+  patternType : {
+    padding : '0px',
+    paddingBottom : '5px' ,
+    paddingTop : '5px',
+    justifyContent : 'center'
   },
   formCtrl : {
     width : "60px",
@@ -356,21 +362,32 @@ function PatternConfiguratorComponent({ pattern, onSubmit, show : setSelectedPat
       <AppBar position="static" className={classes.appBar} elevation={0}>
         <Toolbar className={classes.toolbar}>
           <FormControl className={classes.formCtrl}>
-            <Select
+            <TextField
+              select={true}
+              SelectProps={{
+                MenuProps : {
+                  anchorOrigin : {
+                    vertical : "bottom",
+                    horizontal : "left"
+                  },
+                  getContentAnchorEl : null
+                }
+              }}
+              InputProps={{ disableUnderline : true }}
               labelId="service-mesh-selector"
               id="service-mesh-selector"
               value={selectedMeshType}
               onChange={handleMeshSelection}
-              disableUnderline
+              fullWidth
             >
               {getMeshOptions().map(item => {
                 const details = getMeshProperties(item);
                 return (
-                  <MenuItem key={details.name} value={details.name}>
+                  <MenuItem className={classes.patternType} key={details.name} value={details.name}>
                     <img src={details.img} height="32px" />
                   </MenuItem>);
               })}
-            </Select>
+            </TextField>
           </FormControl>
           {
             selectedVersion && selectedVersionMesh &&
@@ -550,9 +567,6 @@ function PatternConfiguratorComponent({ pattern, onSubmit, show : setSelectedPat
                             .sort((a, b) => (getPatternServiceName(a.workload) < getPatternServiceName(b.workload) ? -1 : 1))
                             .map((s, i) => (
                               <Grid item key={`svc-form-addons-${i}`}>
-                                {
-                                  console.log("f", deployServiceConfig?.[getPatternServiceName(s.workload)], getPatternServiceName(s.workload))
-                                }
                                 <LazyPatternServiceForm
                                   formData={{ settings : deployServiceConfig?.[getPatternServiceName(s.workload)] }}
                                   onSettingsChange={handleSettingsChange(s.workload)}

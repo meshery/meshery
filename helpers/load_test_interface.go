@@ -309,7 +309,6 @@ func NighthawkLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *p
 		},
 		Timeout: durationpb.New(10 * time.Second),
 		// TODO: support multiple http versions
-		H2:                  &wrappers.BoolValue{Value: false},
 		Concurrency:         &wrappers.StringValue{Value: fmt.Sprint(opts.HTTPNumThreads)},
 		Verbosity:           &nighthawk_proto.Verbosity{Value: nighthawk_proto.Verbosity_INFO},
 		OutputFormat:        &nighthawk_proto.OutputFormat{Value: nighthawk_proto.OutputFormat_FORTIO},
@@ -408,7 +407,7 @@ func NighthawkLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *p
 		}
 	}
 
-	d, err := nighthawk_client.Transform(res1, "fortio")
+	d, err := nighthawk_client.Transform(res1)
 	if err != nil {
 		return nil, nil, ErrTransformingData(err)
 	}

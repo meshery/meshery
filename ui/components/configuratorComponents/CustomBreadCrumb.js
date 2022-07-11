@@ -2,14 +2,14 @@ import { ClickAwayListener, makeStyles } from "@material-ui/core"
 import React, { useEffect, useState } from "react"
 
 const useStyles = makeStyles(() => ({
-  root : {
+  designWrapper : {
     width : "100%",
     color : "#fff",
     position : "fixed",
     top : 80,
     // left: 0,
     backgroundColor : "#477E96",
-    zIndex : "9999",
+    zIndex : "1",
     marginLeft : "4px",
     padding : "4px 50px",
     transform : 'translateX(-40px)',
@@ -57,13 +57,13 @@ export default function CustomBreadCrumb({ title, onBack, titleChangeHandler }) 
   }
 
   return (
-    <div className={classes.root}>
+    <div className={classes.designWrapper}>
       {"> "}
       <span
         className={classes.span}
         onClick={onBack}
       >
-        Patterns
+        Designs
       </span>
       {" > "}
 

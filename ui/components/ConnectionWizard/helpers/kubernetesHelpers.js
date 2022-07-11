@@ -1,14 +1,14 @@
 import dataFetch from "../../../lib/data-fetch";
-
+import { updateProgress } from "../../../lib/store";
 
 /**
   * Pings kuberenetes server endpoint
   * @param  {(res) => void} successHandler
   * @param  {(err) => void} errorHandler
 */
-export const pingKubernetes = (successHandler,errorHandler) => {
+export const pingKubernetes = (successHandler,errorHandler, context) => {
   dataFetch(
-    "/api/system/kubernetes/ping",
+    "/api/system/kubernetes/ping?context=" + context,
     { credentials : "same-origin",
       credentials : "include", },
     successHandler,
@@ -38,12 +38,13 @@ export const isKubernetesConnected = (isClusterConfigured,kubernetesPingStatus) 
 }
 
 
-export const deleteKubernetesConfig = (successCb,errorCb) =>
+export const deleteKubernetesConfig = (successCb,errorCb, id) =>
   dataFetch(
-    "/api/system/kubernetes",
+    "/api/system/kubernetes/contexts/" + id,
     { credentials : "same-origin",
       method : "DELETE",
       credentials : "include", },
+    updateProgress({ showProgress : false }),
     successCb,
     errorCb
   )

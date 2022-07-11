@@ -13,7 +13,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-const argoManifest = "https://raw.githubusercontent.com/argoproj/argo-rollouts/stable/manifests/install.yaml"
+const argoManifest = "https://raw.githubusercontent.com/argoproj/argo-rollouts/master/manifests/install.yaml"
 
 type ArgoRollout struct {
 	kubeclient *meshkube.Client

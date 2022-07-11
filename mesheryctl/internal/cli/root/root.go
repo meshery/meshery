@@ -48,6 +48,17 @@ var RootCmd = &cobra.Command{
 	Short: "Meshery Command Line tool",
 	Long:  `Meshery is the service mesh management plane, providing lifecycle, performance, and configuration management of service meshes and their workloads.`,
 	Args:  cobra.MinimumNArgs(1),
+	Example: `
+// Base command
+mesheryctl
+
+// Display help about command/subcommand
+mesheryctl --help
+mesheryctl system start --help
+
+// For viewing verbose output
+mesheryctl -v [or] --verbose
+	`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	PreRunE: func(cmd *cobra.Command, args []string) error {
@@ -65,6 +76,8 @@ var RootCmd = &cobra.Command{
 func Execute() {
 	//log formatter for improved UX
 	utils.SetupLogrusFormatter()
+	// Removing printing command usage on error
+	RootCmd.SilenceUsage = true
 	_ = RootCmd.Execute()
 }
 
@@ -76,6 +89,7 @@ func init() {
 
 	cobra.OnInitialize(initConfig)
 	cobra.OnInitialize(setVerbose)
+	cobra.OnInitialize(setupLogger)
 
 	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", utils.DefaultConfigPath, "path to config file")
 
@@ -96,6 +110,10 @@ func init() {
 	}
 
 	RootCmd.AddCommand(availableSubcommands...)
+}
+
+func TreePath() *cobra.Command {
+	return RootCmd
 }
 
 // initConfig reads in config file and ENV variables if set.
@@ -150,7 +168,7 @@ func initConfig() {
 				}
 
 				// Add Context to context file
-				err = config.AddContextToConfig("local", utils.TemplateContext, utils.DefaultConfigPath, true)
+				err = config.AddContextToConfig("local", utils.TemplateContext, utils.DefaultConfigPath, true, false)
 				if err != nil {
 					log.Fatal(err)
 				}
@@ -186,4 +204,8 @@ func setVerbose() {
 	if verbose {
 		log.SetLevel(log.DebugLevel)
 	}
+}
+
+func setupLogger() {
+	utils.SetupMeshkitLogger(verbose, nil)
 }
