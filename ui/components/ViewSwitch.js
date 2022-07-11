@@ -3,7 +3,6 @@ import GridOnIcon from "@material-ui/icons/GridOn";
 import TableChartIcon from "@material-ui/icons/TableChart";
 
 function ViewSwitch({ view, changeView }) {
-  console.log(view)
   return (
     <ToggleButtonGroup
       size="small"
