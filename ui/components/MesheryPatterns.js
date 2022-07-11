@@ -800,6 +800,7 @@ function MesheryPatterns({
     <>
 
       <NoSsr>
+        {/* Pattern configurator */}
         {selectedPattern.show &&
           <PatternForm onSubmit={handleSubmit} show={setSelectedPattern} pattern={selectedPattern.pattern} />}
 
