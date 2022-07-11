@@ -22,18 +22,24 @@ import (
 )
 
 var (
-	skipSave bool // skip saving a app
-	appFile  string
+	skipSave   bool   // skip saving the app
+	appFile    string // app file
+	sourceType string // app file type (manifest / compose)
 )
+
+var validSourceTypes []string = []string{"compose", "manifest", "helm"}
 
 var onboardCmd = &cobra.Command{
 	Use:   "onboard",
 	Short: "Onboard application",
-	Long:  `Command will trigger deploy of Application file`,
+	Long:  `Command will trigger deploy of application`,
 	Args:  cobra.MinimumNArgs(0),
 	Example: `
 // Onboard application by providing file path
-mesheryctl app onboard -f [filepath]
+mesheryctl app onboard -f [filepath] -s [source type]
+ex:
+mesheryctl app onboard bookinfo
+mesheryctl app onboard -f ./bookinfo.yaml -s manifest
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var req *http.Request
@@ -93,6 +99,10 @@ mesheryctl app onboard -f [filepath]
 				appFile = response.Applications[index].ApplicationFile
 			}
 		} else {
+			// Check if a valid source type is set
+			if !isValidSource(sourceType) {
+				return errors.Errorf("application source type (-s) invalid or not passed.\nAllowed source types: %s", strings.Join(validSourceTypes, ", "))
+			}
 			// Method to check if the entered file is a URL or not
 			if validURL := govalidator.IsURL(file); !validURL {
 				content, err := os.ReadFile(file)
@@ -113,7 +123,7 @@ mesheryctl app onboard -f [filepath]
 					if err != nil {
 						return err
 					}
-					req, err = utils.NewRequest("POST", appURL, bytes.NewBuffer(jsonValues))
+					req, err = utils.NewRequest("POST", appURL+"?source-type="+sourceType, bytes.NewBuffer(jsonValues))
 					if err != nil {
 						return err
 					}
@@ -180,7 +190,7 @@ mesheryctl app onboard -f [filepath]
 						})
 					}
 				}
-				req, err = utils.NewRequest("POST", appURL, bytes.NewBuffer(jsonValues))
+				req, err = utils.NewRequest("POST", appURL+"?source-type="+sourceType, bytes.NewBuffer(jsonValues))
 				if err != nil {
 					return err
 				}
@@ -302,7 +312,18 @@ func multipleApplicationsConfirmation(profiles []models.MesheryApplication) int 
 	}
 }
 
+func isValidSource(sType string) bool {
+	for _, validType := range validSourceTypes {
+		if validType == sType {
+			return true
+		}
+	}
+
+	return false
+}
+
 func init() {
 	onboardCmd.Flags().StringVarP(&file, "file", "f", "", "Path to app file")
 	onboardCmd.Flags().BoolVarP(&skipSave, "skip-save", "", false, "Skip saving a app")
+	onboardCmd.Flags().StringVarP(&sourceType, "type", "s", "", "Type of source file (ex. manifest / compose / helm)")
 }
