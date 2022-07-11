@@ -20,7 +20,7 @@ import (
 var offboardCmd = &cobra.Command{
 	Use:   "offboard",
 	Short: "Offboard application",
-	Long:  `Offboard application will trigger deletion of the application file`,
+	Long:  `Offboard application will trigger undeploy of application`,
 	Args:  cobra.MinimumNArgs(0),
 	Example: `
 // Offboard application by providing file path
