@@ -10,7 +10,6 @@ function GrafanaComponent() {
       <Grid item xs={12} md={6}>
           <ReactSelectWrapper
             label="Grafana Base URL"
-            // placeholder="Address of Grafana Server"
           />
       </Grid>
       <Grid item xs={12} md={6}>

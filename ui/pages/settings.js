@@ -52,9 +52,6 @@ export default function Settings () {
             </Tooltip>
             <Tooltip title="Connect Meshery Adapters" placement="top">
               <Tab
-                // icon={
-                //   <FontAwesomeIcon icon={faMendeley} transform={mainIconScale} />
-                // }
                 label="Service Meshes"
                 data-cy="tabServiceMeshes"
               />
@@ -68,19 +65,11 @@ export default function Settings () {
                 tab="tabMetrics"
               />
             </Tooltip>
-            {/* <Tooltip title="Reset System" placement="top">
-              <Tab
-                // icon={
-                //   <FontAwesomeIcon icon={faDatabase} transform={mainIconScale} fixedWidth />
-                // }
-                label="Reset"
-                tab="systemReset"
-              />
-            </Tooltip> */}
           </Tabs>
           </Paper>
         {tabVal === 0 && (
           <MeshConfigComponent />
+          // <h1>Test</h1>
         )}
         {tabVal === 1 && (
            <MeshAdapterConfigComponent />
@@ -119,28 +108,6 @@ export default function Settings () {
               )}
               </>
           )}
-          
-        {/* {tabVal === 3 && (
-          <TabContainer>
-            <div className={classes.container}>
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                size="large"
-                onClick={this.handleResetDatabase()}
-                className={classes.DBBtn}
-                data-cy="btnResetDatabase"
-
-              >
-                <Typography> System Reset </Typography>
-              </Button>
-            </div>
-          </TabContainer>
-        )} */}
-
-        {/* {backToPlay} */}
-        {/* <PromptComponent ref={this.systemResetRef} /> */}
         </Paper>
     )
 }

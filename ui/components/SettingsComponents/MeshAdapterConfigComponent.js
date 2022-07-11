@@ -9,7 +9,7 @@ function MeshAdapterConfigComponent() {
        <Grid item xs={12}>
        <ReactSelectWrapper label="Mesh Adapter UR" />
             </Grid>
-            <RightAlignButton title="Connect" />
+       <RightAlignButton title="Connect" />
     </div>
   )
 }
