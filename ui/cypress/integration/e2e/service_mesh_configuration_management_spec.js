@@ -88,15 +88,14 @@ const configurationTestTemplate = (itemType, testFilePath, expectedUploadConfigI
         cy.get('[data-cy="deploy-btn-confirm"]').click();
 
         cy.wait("@deployConfigItem").then((interception) => {
-          // uncomment when server responds correctly
-          // cy.wrap(interception.request).then((req) => {
-          //   const body = req.body;
-          //   expect(body).to.eq(expectedContent);
-          // });
-          // cy.wrap(interception.response).then((res) => {
-          //   expect(res.body).to.eq('')
-          //   expect(res.statusCode).to.eq(200);
-          // });
+          cy.wrap(interception.request).then((req) => {
+            const body = req.body;
+            expect(body).to.eq(expectedContent);
+          });
+          cy.wrap(interception.response).then((res) => {
+            expect(res.body).to.eq('')
+            expect(res.statusCode).to.eq(200);
+          });
         });
       });
     });
