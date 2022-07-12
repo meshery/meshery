@@ -70,16 +70,15 @@ run-local: server-local error
 ## and point to (expect) a locally running Meshery Cloud or other Provider(s)
 ## for user authentication (requires go${GOVERSION}).
 server-local:
-	cd cmd; go$(GOVERSION) clean; rm meshery; go$(GOVERSION) mod tidy; \
-	go$(GOVERSION) build -ldflags="-w -s -X main.version=${GIT_VERSION} -X main.commitsha=${GIT_COMMITSHA} -X main.releasechannel=${RELEASE_CHANNEL}" -tags draft -a -o meshery; \
+	cd cmd; go$(GOVERSION) clean; go$(GOVERSION) mod tidy; \
+	BUILD="$(GIT_VERSION)" \
 	PROVIDER_BASE_URLS=$(REMOTE_PROVIDER_LOCAL) \
 	PORT=9081 \
 	DEBUG=true \
 	ADAPTER_URLS=$(ADAPTER_URLS) \
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
-	./meshery; \
-	cd ..
-
+	go$(GOVERSION) run main.go
+	
 run-fast: 
 	## "DEPRECATED: This target is deprecated. Use `make server`.
 

@@ -35,6 +35,8 @@ import FiltersGrid from "./MesheryFilters/FiltersGrid";
 import { trueRandom } from "../lib/trueRandom";
 import { ctxUrl } from "../utils/multi-ctx";
 import ConfirmationMsg from "./ConfirmationModal";
+import UndeployIcon from "../public/static/img/UndeployIcon";
+import { getComponentsinFile } from "../utils/utils";
 
 const styles = (theme) => ({
   grid : {
@@ -59,6 +61,9 @@ const styles = (theme) => ({
     marginLeft : "auto",
     paddingLeft : "1rem"
   },
+  // text : {
+  //   padding : "5px"
+  // }
 });
 
 const useStyles = makeStyles(() => ({
@@ -172,7 +177,9 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
   const [modalOpen, setModalOpen] = useState({
     open : false,
     filter_file : null,
-    deploy : false
+    deploy : false,
+    name : "",
+    count : 0
   });
 
   const getMuiTheme = () => createTheme({
@@ -232,6 +239,10 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
       name : "DEPLOY_FILTERS",
       error_msg : "Failed to deploy filter file",
     },
+    UNDEPLOY_FILTERS : {
+      name : "UNDEPLOY_FILTERS",
+      error_msg : "Failed to undeploy filter file",
+    },
     UPLOAD_FILTERS : {
       name : "UPLOAD_FILTERS",
       error_msg : "Failed to upload filter file",
@@ -255,19 +266,6 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
    * @param {string} search search string
    * @param {string} sortOrder order of sort
    */
-
-  const handleDeploy = (filter_file) => {
-    dataFetch(
-      ctxUrl(DEPLOY_URL, selectedK8sContexts),
-      { credentials : "include", method : "POST", body : filter_file },
-      () => {
-        console.log("FilterFile Deploy API", `/api/filter/deploy`);
-        updateProgress({ showProgress : false });
-      },
-      handleError(ACTION_TYPES.DEPLOY_FILTERS)
-    );
-  };
-
   function fetchFilters(page, pageSize, search, sortOrder) {
     if (!search) search = "";
     if (!sortOrder) sortOrder = "";
@@ -296,6 +294,52 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     );
   }
 
+  const handleDeploy = (filter_file) => {
+    dataFetch(
+      ctxUrl(DEPLOY_URL, selectedK8sContexts),
+      { credentials : "include", method : "POST", body : filter_file },
+      () => {
+        console.log("FilterFile Deploy API", `/api/filter/deploy`);
+        enqueueSnackbar("Filter Successfully Deployed!", {
+          variant : "success",
+          action : function Action(key) {
+            return (
+              <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+                <CloseIcon />
+              </IconButton>
+            );
+          },
+          autoHideDuration : 2000,
+        });
+        updateProgress({ showProgress : false });
+      },
+      handleError(ACTION_TYPES.DEPLOY_FILTERS)
+    );
+  };
+
+  const handleUndeploy = (filter_file) => {
+    dataFetch(
+      ctxUrl(DEPLOY_URL, selectedK8sContexts),
+      { credentials : "include", method : "DELETE", body : filter_file },
+      () => {
+        updateProgress({ showProgress : false });
+        enqueueSnackbar("Filter Successfully Undeployed!", {
+          variant : "success",
+          action : function Action(key) {
+            return (
+              <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+                <CloseIcon />
+              </IconButton>
+            );
+          },
+          autoHideDuration : 2000,
+        });
+      },
+      handleError(ACTION_TYPES.UNDEPLOY_FILTERS)
+    );
+  };
+
+
   // function handleError(error) {
   const handleError = (action) => (error) => {
     updateProgress({ showProgress : false });
@@ -313,11 +357,13 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     });
   };
 
-  const handleModalOpen = (app_file, isDeploy) => {
+  const handleModalOpen = (filter_file, name, isDeploy) => {
     setModalOpen({
       open : true,
-      filter_file : app_file,
-      deploy : isDeploy
+      filter_file : filter_file,
+      deploy : isDeploy,
+      name : name,
+      count : getComponentsinFile(filter_file)
     });
   }
 
@@ -325,7 +371,8 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     setModalOpen({
       open : false,
       filter_file : null,
-      // deploy: false
+      name : "",
+      count : 0
     });
   }
 
@@ -483,9 +530,15 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
                   title="Deploy"
                   aria-label="deploy"
                   color="inherit"
-                  onClick={() => handleModalOpen(rowData.filter_file, true)} //deploy endpoint to be called here
+                  onClick={() => handleModalOpen(rowData.filter_file, rowData.name, true)}
                   data-cy="deploy-button"
                 />
+              </IconButton>
+              <IconButton
+                title="Undeploy"
+                onClick={() => handleModalOpen(rowData.filter_file, rowData.name, false)}
+              >
+                <UndeployIcon fill="rgba(0, 0, 0, 0.54)" data-cy="undeploy-button" />
               </IconButton>
             </>
           );
@@ -658,6 +711,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
             <FiltersGrid
               filters={filters}
               handleDeploy={handleDeploy}
+              handleUndeploy={handleUndeploy}
               handleSubmit={handleSubmit}
               setSelectedFilter={setSelectedFilter}
               selectedFilter={selectedFilter}
@@ -669,9 +723,13 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
         <ConfirmationMsg
           open={modalOpen.open}
           handleClose={handleModalClose}
-          submit={() => handleDeploy(modalOpen.filter_file)}
+          submit={
+            { deploy : () => handleDeploy(modalOpen.filter_file),  unDeploy : () => handleUndeploy(modalOpen.filter_file) }
+          }
           isDelete={!modalOpen.deploy}
-          title={<Typography variant="h6" className={classes.text} >The selected operation will be applied to following contexts.</Typography>}
+          title={modalOpen.name}
+          componentCount={modalOpen.count}
+          tab={modalOpen.deploy ? 0 : 1}
         />
       </NoSsr>
     </>
