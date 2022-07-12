@@ -63,7 +63,7 @@ func (h *Handler) AuthMiddleware(next http.Handler) http.Handler {
 			// }
 			// return
 			if provider.GetProviderType() == models.RemoteProviderType {
-				provider.Logout(w, req)
+				provider.HandleUnAuthenticated(w, req)
 				return
 			}
 			// Local Provider
