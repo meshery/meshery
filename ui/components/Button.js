@@ -16,7 +16,7 @@ export const MetricsButton = styled(Button)(({theme})=>({
 
 export const RightAlignButton = ({title}) => {
     return (
-        <RightAlignContainer>
+        <RightAlignButtonContainer>
             <Button
                 type="submit" 
                 variant="contained"
@@ -24,7 +24,7 @@ export const RightAlignButton = ({title}) => {
                 size="large">
                 {title}
             </Button>
-        </RightAlignContainer>
+        </RightAlignButtonContainer>
     )
 } 
 
