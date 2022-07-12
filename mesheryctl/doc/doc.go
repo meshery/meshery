@@ -175,8 +175,10 @@ func GenMarkdownCustom(cmd *cobra.Command, w io.Writer, linkHandler func(string)
 	// If command has screenshot present
 	if picLine != "" {
 		buf.WriteString("## Screenshots\n\n")
+		// Print Caption first
 		buf.WriteString(picComment)
 		buf.WriteString("\n")
+		// Add markdown code for screenshot
 		buf.WriteString(picLine)
 		buf.WriteString("\n\n")
 	}
