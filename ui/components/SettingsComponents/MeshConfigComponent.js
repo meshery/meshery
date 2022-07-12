@@ -1,27 +1,12 @@
 import React, {useState , useEffect, useRef} from 'react'
-// import { DataGrid } from '@mui/x-data-grid'; 
 import MUIDataTable from "mui-datatables";
 import {
-    Box, Grid, IconButton, List, ListItem, ListItemText, Menu, MenuItem, Modal, Switch, FormGroup,
-    Tooltip, Paper,  TableCell, TableContainer, Table, Button, Typography, Toolbar, InputAdornment,
-     TableBody, TextField, TableRow , TableHead, TableSortLabel, Checkbox, TablePagination, FormControlLabel
+     Grid, IconButton, List, ListItem, ListItemText, Menu, MenuItem,  Switch,
+    Tooltip, Paper,  TableCell, TableContainer, Table, Button, Typography, TableSortLabel
   } from '@mui/material';
   import AddIcon from '@mui/icons-material/Add';
-  import CloudUploadIcon from '@mui/icons-material/CloudUpload';
   
 function MeshConfigComponent({operatorState}) {
-  
-  const style = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 400,
-    bgcolor: '#fff',
-    border: '2px solid #000',
-    boxShadow: 24,
-    p: 4,
-  };
 
   const [open, setOpen] = useState(false);
   const [data, setData] = useState([])
@@ -31,16 +16,9 @@ function MeshConfigComponent({operatorState}) {
   const [k8sVersion, setK8sVersion] = useState(["N/A"]);
   const [discover, setLastDiscover] = useState(['']);
   const [_operatorState, _setOperatorState] = useState(operatorState || []);
-  const ref = useRef(null);
-  const meshSyncResetRef = useRef(null);
-  const _operatorStateRef = useRef(_operatorState);
-  _operatorStateRef.current = _operatorState;
   
   const handleOpenModal = () => setOpen(true);
   const handleCloseModal = () => setOpen(false);
-
-  let k8sfileElementVal = "";
-  let formData = new FormData();
 
   const columns = [
     {
@@ -152,7 +130,6 @@ function MeshConfigComponent({operatorState}) {
                 aria-controls={showMenu[tableMeta.rowIndex] ? 'long-menu' : undefined}
                 aria-expanded={showMenu[tableMeta.rowIndex] ? 'true' : undefined}
                 aria-haspopup="true"
-                // onClick={(e) => handleMenuOpen(e, tableMeta.rowIndex)}
               >
                 <MoreVertIcon />
               </IconButton>
@@ -162,8 +139,6 @@ function MeshConfigComponent({operatorState}) {
                   'aria-labelledby' : 'long-button',
                 }}
                 anchorEl={anchorEl}
-                // open={showMenu[tableMeta.rowIndex]}
-                // onClose={() => handleMenuClose(tableMeta.rowIndex)}
               >
                 <Button
                   type="submit"
@@ -206,7 +181,6 @@ function MeshConfigComponent({operatorState}) {
     },
     onRowsDelete : (td) => {
       td.data.forEach((item) => {
-        // handleConfigDelete(data[item.index].id)
       })
     },
 
@@ -381,8 +355,6 @@ function MeshConfigComponent({operatorState}) {
                     </div>
                   </Paper>
                 </TableCell>
-
-                {/* </TableRow> */}
               </Table>
             </TableContainer>
           </TableCell>
@@ -390,55 +362,6 @@ function MeshConfigComponent({operatorState}) {
       )
     }
   }
-
-  const handleClick = async () => {
-    const modal = ref.current;
-    let response = await modal.show({
-      title : "Add Kubernetes Cluster(s)",
-      subtitle :
-        <>
-          <div>
-            <Typography variant="h6">
-              Upload your kubeconfig
-            </Typography>
-            <Typography variant="body2">
-              commonly found at ~/.kube/config
-            </Typography>
-            <FormGroup>
-              <input
-                id="k8sfile"
-                type="file"
-                value={k8sfileElementVal}
-              />
-              <TextField
-                id="k8sfileLabelText"
-                name="k8sfileLabelText"
-                label="Upload kubeconfig"
-                variant="outlined"
-                fullWidth
-                margin="normal"
-                InputProps={{
-                  readOnly : true,
-                  endAdornment : (
-                    <InputAdornment position="end">
-                      <CloudUploadIcon />
-                    </InputAdornment>
-                  ),
-                }}
-              />
-            </FormGroup>
-          </div>
-        </>,
-      options : ["IMPORT","CANCEL"]
-    })
-
-    if (response === "IMPORT") {
-      if (formData.get("k8sfile") === null) {
-        return;
-      }
-    }
-  }
-
   return (
     <>
     <div style={{ display : 'table', tableLayout : 'fixed', width : '100%' }}>
@@ -461,44 +384,6 @@ function MeshConfigComponent({operatorState}) {
       options={options}
     />
   </div>
-  <Modal 
-        open={open}
-        onClose={handleCloseModal}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box sx={style}>
-            <Typography variant="h6">
-              Upload your kubeconfig
-            </Typography>
-            <Typography variant="body2">
-              commonly found at ~/.kube/config
-            </Typography>
-            <FormGroup>
-              <input
-                id="k8sfile"
-                type="file"
-                value={k8sfileElementVal}
-              />
-              <TextField
-                id="k8sfileLabelText"
-                name="k8sfileLabelText"
-                label="Upload kubeconfig"
-                variant="outlined"
-                fullWidth
-                margin="normal"
-                InputProps={{
-                  readOnly : true,
-                  endAdornment : (
-                    <InputAdornment position="end">
-                      <CloudUploadIcon />
-                    </InputAdornment>
-                  ),
-                }}
-              />
-            </FormGroup>
-          </Box>
-      </Modal>
   </>
   )
 }

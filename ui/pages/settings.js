@@ -69,7 +69,6 @@ export default function Settings () {
           </Paper>
         {tabVal === 0 && (
           <MeshConfigComponent />
-          // <h1>Test</h1>
         )}
         {tabVal === 1 && (
            <MeshAdapterConfigComponent />

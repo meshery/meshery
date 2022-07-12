@@ -4,11 +4,10 @@ import { deepSpaceSparkle } from '../styles/colors';
 
 export const MetricsButton = styled(Button)(({theme})=>({
     backgroundColor: deepSpaceSparkle,
-    // width: "240px",
 }))
 
 
- const RightAlignContainer = styled(Box)(({theme})=>({
+ const RightAlignButtonContainer = styled(Box)(({theme})=>({
       display : 'flex',
     justifyContent : 'flex-end',
     width : '100%',
