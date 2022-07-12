@@ -16,11 +16,11 @@ Use the Meshery command line interface, [mesheryctl]({{ site.baseurl }}/guides/m
 
 ###### Install on Kubernetes
 
- <pre class="codeblock-pre" style="padding: 0;"><div class="codeblock" style="display: block;">
+ <pre class="codeblock-pre" style="padding: 0; font-size:0px;"><div class="codeblock" style="display: block;">
  <div class="clipboardjs">
     <span style="font-size:0;">$ curl -L https://meshery.io/install | PLATFORM=kubernetes bash -</span> 
  </div>
-  <div id="termynal" style="width:100%; height:200px; max-width:100%;" data-termynal="">
+  <div id="termynal0" style="width:100%; height:200px; max-width:100%;" data-termynal="">
             <span data-ty="input">curl -L https://meshery.io/install | PLATFORM=kubernetes bash -</span>
             <span data-ty="progress"></span>
             <span data-ty="">Successfully installed meshery</span>
@@ -31,19 +31,31 @@ Use the Meshery command line interface, [mesheryctl]({{ site.baseurl }}/guides/m
 
 ###### Install on Docker
 
- <pre class="codeblock-pre"><div class="codeblock">
+ <pre class="codeblock-pre" style="padding: 0; font-size:0px;"><div class="codeblock" style="display: block;">
  <div class="clipboardjs">
- $ curl -L https://meshery.io/install | PLATFORM=docker bash - 
- </div></div>
+ <span style="font-size:0;">$ curl -L https://meshery.io/install | PLATFORM=docker bash -</span> 
+ </div>
+ <div id="termynal1" style="width:100%; height:200px; max-width:100%;" data-termynal="">
+            <span data-ty="input">$ curl -L https://meshery.io/install | PLATFORM=docker bash -</span>
+            <span data-ty="progress"></span>
+            <span data-ty="">Successfully installed meshery</span>
+  </div>
+ </div>
  </pre>
  <br>
 
 ###### Install using Docker extension for Meshery
 
- <pre class="codeblock-pre"><div class="codeblock">
+ <pre class="codeblock-pre" style="padding: 0; font-size:0px;"><div class="codeblock" style="display: block;">
  <div class="clipboardjs">
- $ docker extension install meshery/docker-extension-meshery
- </div></div>
+ <span style="font-size:0;">$ docker extension install meshery/docker-extension-meshery</span> 
+ </div>
+ <div id="termynal2" style="width:100%; height:200px; max-width:100%;" data-termynal="">
+            <span data-ty="input">$ docker extension install meshery/docker-extension-meshery</span>
+            <span data-ty="progress"></span>
+            <span data-ty="">Successfully installed meshery</span>
+  </div>
+</div>
  </pre>
 
 _Download, install, and run Meshery in a single command. See all [installation methods]({{ site.baseurl }}/installation/platforms)._
@@ -98,4 +110,4 @@ You may now proceed to install and work with any [service mesh]({{ site.baseurl 
         <li><a href="{{ site.baseurl }}/reference/mesheryctl/system/check">Mesheryctl system check</a></li> 
     </ul>
 </div>  
-<script src="/assets/js/termynal.js" data-termynal-container="#termynal"></script>
+<script src="/assets/js/termynal.js" data-termynal-container="#termynal0|#termynal1|#termynal2"></script>
