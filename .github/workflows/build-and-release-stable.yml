@@ -65,7 +65,7 @@ jobs:
           formula-name: mesheryctl
           download-url: https://github.com/meshery/meshery.git
         env:
-          COMMITTER_TOKEN: ${{ secrets.HOMEBREW_COMMITTER_TOKEN }}
+          COMMITTER_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
   call-dde-release-workflow:
     needs: ctlrelease
     name: Build and Release Docker Extension
