@@ -382,7 +382,9 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     };
   }
 
-  function handleSubmit({ data, id, type }) {
+  function handleSubmit({ data, name, id, type }) {
+    // TODO: use filter name
+    console.info("posting filter", name);
     updateProgress({ showProgress : true });
     if (type === FILE_OPS.DELETE) {
       dataFetch(
@@ -429,14 +431,21 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     // Create a reader
     const reader = new FileReader();
     reader.addEventListener("load", (event) => {
-      handleSubmit(event.target.result, "", file?.name || "meshery_" + Math.floor(trueRandom() * 100), FILE_OPS.FILE_UPLOAD);
+      handleSubmit({
+        data : event.target.result,
+        name : file?.name || "meshery_" + Math.floor(trueRandom() * 100),
+        type : FILE_OPS.FILE_UPLOAD
+      });
     });
     reader.readAsText(file);
   }
 
   function urlUploadHandler(link) {
-    handleSubmit(link, "", "meshery_" + Math.floor(trueRandom() * 100),  FILE_OPS.URL_UPLOAD);
-    console.log(link, "valid");
+    console.log("handling things....")
+    handleSubmit({
+      data : link,
+      name : "meshery_" + Math.floor(trueRandom() * 100),
+      type : FILE_OPS.URL_UPLOAD });
   }
 
   const columns = [
@@ -538,7 +547,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
                 title="Undeploy"
                 onClick={() => handleModalOpen(rowData.filter_file, rowData.name, false)}
               >
-                <UndeployIcon fill="rgba(0, 0, 0, 0.54)" data-cy="undeploy-button" />
+                <UndeployIcon fill="#B32700" data-cy="undeploy-button" />
               </IconButton>
             </>
           );
