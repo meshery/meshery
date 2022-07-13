@@ -375,7 +375,9 @@ function ConfirmationMsg(props) {
                 <Button onClick={handleSubmit}
                   className={tabVal == 1 ? classes.button3 : classes.button0} autoFocus type="submit"
                   variant="contained"
-                  color="primary">
+                  color="primary"
+                  data-cy="deploy-btn-confirm"
+                >
                   <Typography variant body2 > {tabVal == 1 ? "UNDEPLOY" : "DEPLOY"} </Typography>
                 </Button>
               </>

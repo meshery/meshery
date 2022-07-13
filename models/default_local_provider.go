@@ -145,6 +145,11 @@ func (l *DefaultLocalProvider) Logout(w http.ResponseWriter, req *http.Request) 
 	http.Redirect(w, req, "/user/login", http.StatusFound)
 }
 
+// HandleUnAuthenticated - logout from provider backend
+func (l *DefaultLocalProvider) HandleUnAuthenticated(w http.ResponseWriter, req *http.Request) {
+	http.Redirect(w, req, "/user/login", http.StatusFound)
+}
+
 func (l *DefaultLocalProvider) SaveK8sContext(token string, k8sContext K8sContext) (K8sContext, error) {
 	return l.MesheryK8sContextPersister.SaveMesheryK8sContext(k8sContext)
 }
