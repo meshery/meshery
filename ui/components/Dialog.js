@@ -11,8 +11,6 @@ const CustomDialogWrapper = styled(Dialog)(({ theme }) => ({
 const CustomBox = styled(Box)(({ theme }) => ({
    borderRadius : "5px", 
    textAlign : "center",
-   justifyContent : "center",
-   margin: "auto",
    paddingTop: theme.spacing(2),
    paddingButton: theme.spacing(2),
    paddingLeft: theme.spacing(3),
