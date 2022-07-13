@@ -4,10 +4,38 @@
 
 {% assign sorted_tests_istio = site.compatibility | sort: "timestamp" | reverse | where: "meshery-component",{{page.service-mesh}} %}
 <style>
+.tablesorter-header-inner{
+    display: flex;
+    justify-content: space-between;
+}
+th span.sort-by { 
+	padding-right: 18px;
+	position: relative;
+    text-decoration: none;
+    margin-right:0 ;
+}
+span.sort-by:before,
+span.sort-by:after {
+	border: 4px solid transparent;
+	content: "";
+	display: block;
+	height: 0;
+	right: 5px;
+	top: 50%;
+	position: absolute;
+	width: 0;
+}
+span.sort-by:before {
+	border-bottom-color: #666;
+	margin-top: -9px;
+}
+span.sort-by:after {
+	border-top-color: #666;
+	margin-top: 1px;
+}
 
 table.tablesorter th.tablesorter-headerUnSorted {
-    background-image: url('http://tablesorter.com/themes/blue/bg.gif');
-    background-repeat: no-repeat;
+    background-image: url("");
     background-position: center right;
     cursor: pointer;
 }
@@ -30,18 +58,18 @@ background-color: #8dbdd8;
 
 <table id = "test-table" class="tablesorter">
     <thead>
-        <th>Status </th>
-        <th>Meshery Component</th>
-        <th>Meshery Component Version</th>
-        <th style="text-align: center;" >Meshery Server Version</th>
-        <th>Service Mesh</th>
-        <th>Service Mesh Version</th>
+        <th style="text-align: center;" >Status <span class="sort-by">  </span></th>
+        <th style="text-align: center;" ><span class="sort-by"> Meshery Component  </span> </th>
+        <th style="text-align: center;" ><span class="sort-by"> Meshery Component Version </span> </th>
+        <th style="text-align: center;" ><span class="sort-by"> Meshery Server Version </span> </th>
+        <th style="text-align: center;" > <span class="sort-by"> Service Mesh </span> </th>
+        <th style="text-align: center;" ><span class="sort-by"> Service Mesh Version </span></th>
     </thead>
     <tbody>
     {% for item in sorted_tests_istio  %}
         {% if item.overall-status == "passing" %}
             {% assign overall-status = "background-color: #56b257; color: white;" %}
-            {% assign result-state = "/assets/img/passing.svg"></tbody>" %}
+            {% assign result-state = "/assets/img/passing.svg" %}
         {% elsif item.overall-status == "partial" %}
             {% assign overall-status = "background-color: #EBC017; color: white;" %}
             {% assign result-state = "/assets/img/YellowCheck.svg" %}
@@ -52,11 +80,11 @@ background-color: #8dbdd8;
             {% assign overall-status = "" %}
         {% endif %}
         {% if item.meshery-component-version == "edge" %}
-            <tr style= "visibility: hidden; display: none;" class="test-details edge edge_visible" onclick="toggle_visibility('{{forloop.index}}');">
+            <tr style= "visibility: hidden; display: none;" class="test-details edge edge_visible" onclick="toggle_visibility('{{item.timestamp}}');">
         {% else %}
-            <tr style= "visibility: hidden; display: none;" class="test-details stable stable_visible" onclick="toggle_visibility('{{forloop.index}}');">
+            <tr style= "visibility: hidden; display: none;" class="test-details stable stable_visible" onclick="toggle_visibility('{{item.timestamp}}');">
         {% endif %}    
-            <td style="{{overall-status}}" >{{ item.timestamp }}</td>
+            <td id="timestamp" style="{{overall-status}}" >{{ item.timestamp }}</td>
             <td><a href="{{ site.repo }}-{{ item.service-mesh }}">{{ item.meshery-component }}</a></td>
             {% if item.meshery-component-version == "edge" %}
                 <td><a href="{{ site.repo }}-{{ item.service-mesh }}/releases">{{ item.meshery-component-version }}</a></td>
@@ -71,7 +99,7 @@ background-color: #8dbdd8;
             <td><img style="height: 1rem; vertical-align: text-bottom;" src="{{site.baseurl}}/assets/img/service-meshes/{{item.service-mesh | downcase }}.svg" />&nbsp;<a href="{{ site.baseurl }}/service-meshes/adapters/{{ item.service-mesh }}">{{ item.service-mesh }}</a></td>
             <td>{{ item.service-mesh-version }}</td>
         </tr>   
-        <tr id="{{forloop.index}}" style="visibility:hidden; display:none;">
+        <tr class="hidden-details" id="{{item.timestamp}}" style="visibility:hidden; display:none;">
             <td colspan="2" class="details">
                 <i>Platform:</i>
                 <li><img style="height: 1rem; vertical-align: text-bottom;" src="{{site.baseurl}}/assets/img/kubernetes-icon-color.svg" />  {{item.k8s-distro}}  {{item.k8s-version}}</li>
@@ -86,13 +114,29 @@ background-color: #8dbdd8;
             </td>
         </tr>
     {% endfor %}
-    </tbody>
+</tbody>
 </table>
 
 <script type="text/javascript" >
+//     $.tablesorter.addParser({ 
+//     id: 'timestamp', 
+//     is: function(s) { 
+//         // return false so this parser is not auto detected 
+//         return false; 
+//     }, 
+//     format: function(s) { 
+//         var timeInMillis = new Date.parse(s);
+//         return timeInMillis;         
+//     }, 
+//     // set type, either numeric or text 
+//     type: 'numeric' 
+// }); 
+
     $(function($) {
             console.log("sorting table");
-            $("#test-table").tablesorter();
+            $("#test-table").tablesorter({
+                cssChildRow: "hidden-details",
+            });
     });
 </script>
 
