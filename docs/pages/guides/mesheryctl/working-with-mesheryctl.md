@@ -38,7 +38,6 @@ A meshconfig `context` represents a single Meshery deployment. Using `context`s,
 
 Many Meshery users have more than one Meshery deployment. Contexts allow you to deploy different versions of Meshery, update your release channel subscription settings, selectively install one or more Meshery Adapters, and so on. Contexts allow you to configure your invididual Meshery deployments.
 
-
 #### Question: What is `current-context`?
 
 `current-context` identifies the Meshery deployment that when any `mesheryctl` command is invoked will use the environment described in the `current-context`. You can switch between contexts. Only one context can be the `current-context`.
@@ -158,7 +157,7 @@ To install `mesheryctl`, execute the following commands:
 
  <pre class="codeblock-pre"><div class="codeblock">
  <div class="clipboardjs">
- brew tap layer5io/tap
+ brew tap meshery/tap
  brew install mesheryctl
  mesheryctl system start
  </div></div>
@@ -234,4 +233,5 @@ To upgrade `mesheryctl`, execute the following command:
  </pre>
 
 -->
+
 {% include discuss.html %}
