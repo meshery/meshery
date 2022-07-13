@@ -155,7 +155,6 @@ function ConfirmationMsg(props) {
   const { classes, open, handleClose, submit,
     selectedK8sContexts, k8scontext, title, validationBody, setK8sContexts, enqueueSnackbar, closeSnackbar, componentCount, tab, isVerify } = props
 
-  const [contexts, setContexts] = useState(k8scontext);
   const [tabVal, setTabVal] = useState(tab);
   const [disabled, setDisabled] = useState(true);
 
@@ -313,7 +312,7 @@ function ConfirmationMsg(props) {
                         </div>
                         <div className={classes.contexts}>
                           {
-                            contexts.map((ctx) => (
+                            k8scontext.map((ctx) => (
                               <div id={ctx.contextID} className={classes.chip}>
                                 <Tooltip title={`Server: ${ctx.configuredServer}`}>
                                   <div style={{ display : "flex", justifyContent : "flex-wrap", alignItems : "center" }}>
