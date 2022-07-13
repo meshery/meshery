@@ -8,7 +8,7 @@ type: Guides
 category: mesheryctl
 ---
 
-Meshery's command line interface is `mesheryctl`. Use `mesheryctl` to both manage the lifecyle of Meshery itself and to access and invoke any of Meshery's application and cloud native manager functions. `mesheryctl` commands can be categorized as follows:
+Meshery's command line interface is `mesheryctl`. Use `mesheryctl` to both manage the lifecyle of Meshery itself and to access and invoke any of Meshery's application and cloud native management functions. `mesheryctl` commands can be categorized as follows:
 
 - `mesheryctl` - Global overrides and flags
 - `mesheryctl app` - Service Mesh Application Management

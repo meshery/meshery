@@ -29,7 +29,7 @@ Meshery features can be categorized by:
 
 Whether making a Day 0 adoption choice or maintaining a Day 2 deployment, Meshery has useful capabilities in either circumstance. Targeted audience for Meshery project would be any technology operators that leverage service mesh in their ecosystem; this includes developers, devops engineers, decision makers, architects, and organizations that rely on microservices platform.
 
-### Cloud Native manager - one or multiple service meshes.\*\*
+### Cloud Native Management - multi-cluster Kubernetes and service mesh management.\*\*
 
 ### Meshery is for performance management: testing and benchmarking
 

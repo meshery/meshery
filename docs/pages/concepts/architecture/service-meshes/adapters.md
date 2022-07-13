@@ -9,7 +9,7 @@ language: en
 list: include
 ---
 
-As the cloud native manager, Meshery offers support for more adapters than any other project or product in the world. Meshery uses adapters for managing the various service meshes.
+As the cloud native manager, Meshery offers support for more service meshes than any other project or product in the world. Meshery uses adapters to offer choice of load generator (for performance management) and for managing different layers of your infrastructure.
 
 ## What are Meshery Adapters?
 
