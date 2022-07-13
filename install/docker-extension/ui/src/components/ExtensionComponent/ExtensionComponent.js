@@ -111,7 +111,6 @@ const ExtensionsComponent = () => {
   const [changing, isChanging] = useState(false);
   const [emptystate,isEmptystate]=useState(true)
   const [meshAdapters, setMeshAdapters] = useState(null);
-
   useEffect(() => {
     if (meshAdapters && meshAdapters.length != 0) {
       setSwitchesState(
@@ -120,7 +119,6 @@ const ExtensionsComponent = () => {
         }))
         
       );
-      isEmptystate(false)
     }
   }, [meshAdapters]);
   const [mesheryVersion, setMesheryVersion] = useState(null);
@@ -156,7 +154,10 @@ const ExtensionsComponent = () => {
             .catch(console.error);
           fetch(proxyUrl + "/api/system/sync")
             .then((res) => res.json())
-            .then((data) => setMeshAdapters(data.meshAdapters))
+            .then((data) => {
+              setMeshAdapters(data.meshAdapters)
+              isEmptystate(false)
+            })
             .catch(console.err);
           fetch(proxyUrl + "/api/system/version")
             .then((result) => result.text())

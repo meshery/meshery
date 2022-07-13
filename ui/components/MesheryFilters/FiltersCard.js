@@ -13,6 +13,7 @@ import FullscreenExit from "@material-ui/icons/FullscreenExit";
 import DoneAllIcon from '@material-ui/icons/DoneAll';
 import useStyles from "../MesheryPatterns/Cards.styles";
 import YAMLDialog from "../YamlDialog";
+import UndeployIcon from "../../public/static/img/UndeployIcon";
 
 const INITIAL_GRID_SIZE = { xl : 4, md : 6, xs : 12 };
 
@@ -22,6 +23,7 @@ function FiltersCard({
   created_at,
   filter_file,
   handleDeploy,
+  handleUndeploy,
   deleteHandler,
   setYaml,
 }) {
@@ -90,6 +92,16 @@ function FiltersCard({
               >
                 <DoneAllIcon className={classes.iconPatt}/>
               Deploy
+              </Button>
+              <Button
+                variant="contained"
+                className={classes.undeployButton}
+                onClick={(ev) =>
+                  genericClickHandler(ev, handleUndeploy)
+                }
+              >
+                <UndeployIcon fill="#ffffff" className={classes.iconPatt} />
+                <span className={classes.btnText}>Undeploy</span>
               </Button>
             </div>
           </div>

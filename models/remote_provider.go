@@ -366,7 +366,26 @@ func (l *RemoteProvider) Logout(w http.ResponseWriter, req *http.Request) {
 		ck.Path = "/"
 		http.SetCookie(w, ck)
 	}
-	http.Redirect(w, req, "/user/login", http.StatusFound)
+	http.Redirect(w, req, "/provider", http.StatusFound)
+}
+
+// HandleUnAuthenticated
+//
+// Redirects to alert user of expired sesion
+func (l *RemoteProvider) HandleUnAuthenticated(w http.ResponseWriter, req *http.Request) {
+	_, err := req.Cookie("meshery-provider")
+	if err == nil {
+		ck, err := req.Cookie(tokenName)
+		if err == nil {
+			ck.MaxAge = -1
+			ck.Path = "/"
+			http.SetCookie(w, ck)
+		}
+
+		http.Redirect(w, req, "/auth/login", http.StatusFound)
+		return
+	}
+	http.Redirect(w, req, "/provider", http.StatusFound)
 }
 
 func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext) (K8sContext, error) {
