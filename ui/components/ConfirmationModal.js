@@ -67,25 +67,19 @@ const styles = (theme) => ({
     textAlign : 'center',
     padding : '5px'
   },
-  button0 : {
+  button : {
     margin : theme.spacing(0.5),
     padding : theme.spacing(1),
     borderRadius : 5,
     minWidth : 100,
-  },
-  button1 : {
-    margin : theme.spacing(0.5),
-    padding : theme.spacing(1),
-    borderRadius : 5,
     backgroundColor : "#e0e0e0",
     color : "rgba(0, 0, 0, 0.87)",
     "&:hover" : {
       backgroundColor : "#d5d5d5",
       boxShadow : "0px 2px 4px -1px rgb(0 0 0 / 20%), 0px 4px 5px 0px rgb(0 0 0 / 14%), 0px 1px 10px 0px rgb(0 0 0 / 12%)"
     },
-    minWidth : 100,
   },
-  button3 : {
+  undeployBtn : {
     margin : theme.spacing(0.5),
     padding : theme.spacing(1),
     borderRadius : 5,
@@ -97,9 +91,13 @@ const styles = (theme) => ({
     minWidth : 100,
   },
   disabledBtnDel : {
+    margin : theme.spacing(0.5),
+    padding : theme.spacing(1),
+    borderRadius : 5,
     "&:disabled" : {
       backgroundColor : "#ff8080",
     },
+    minWidth : 100,
   },
   actions : {
     display : 'flex',
@@ -150,6 +148,12 @@ const styles = (theme) => ({
     justifyContent : "center"
   }
 })
+
+const ACTIONS = {
+  DEPLOY : 0,
+  UNDEPLOY : 1,
+  VERIFY : 2
+};
 
 function ConfirmationMsg(props) {
   const { classes, open, handleClose, submit,
@@ -281,7 +285,7 @@ function ConfirmationMsg(props) {
           </Tabs>
           {/* </Paper>
           <Paper className={classes.statsWrapper}> */}
-          {tabVal <= 1 &&
+          {(tabVal === ACTIONS.DEPLOY || tabVal === ACTIONS.UNDEPLOY) &&
               <DialogContent>
                 <DialogContentText id="alert-dialog-description" className={classes.subtitle}>
                   <Typography variant="subtitle1" style={{ marginBottom : "0.8rem" }}> {componentCount !== undefined ? <> {componentCount} component{componentCount > 1 ? "s" : ""} </> : "" }</Typography>
@@ -353,7 +357,7 @@ function ConfirmationMsg(props) {
                 </DialogContentText>
               </DialogContent>
           }
-          {tabVal === 2 && isVerify &&// Validate
+          {tabVal === ACTIONS.VERIFY &&// Validate
               <DialogContent>
                 <DialogContentText>
                   { validationBody }
@@ -363,24 +367,24 @@ function ConfirmationMsg(props) {
           {/* </Paper> */}
 
           <DialogActions className={classes.actions}>
-            {tabVal <= 1 ?
+            { (tabVal == ACTIONS.DEPLOY || tabVal === ACTIONS.UNDEPLOY) ?
               <>
                 <Button onClick={handleClose}
-                  className={classes.button1} type="submit"
+                  className={classes.button} type="submit"
                   variant="contained"
                 >
                   <Typography variant body2 > CANCEL </Typography>
                 </Button>
                 <Button disabled
-                  className={tabVal == 1 ? classes.disabledBtnDel : "" }
+                  className={tabVal === ACTIONS.UNDEPLOY ? classes.disabledBtnDel : "" }
                   type="submit"
                   variant="contained"
                   color="primary">
-                  <Typography variant body2 > {tabVal == 1 ? "UNDEPLOY LATER" : "DEPLOY LATER"} </Typography>
+                  <Typography variant body2 > {tabVal === ACTIONS.UNDEPLOY ? "UNDEPLOY LATER" : "DEPLOY LATER"} </Typography>
                   {/* colorchange  */}
                 </Button>
                 <Button onClick={handleSubmit}
-                  className={isDisabled ? (tabVal === 1 ? classes.disabledBtnDel : classes.button0) : tabVal == 1 ? classes.button3 : classes.button0}
+                  className={isDisabled ? (tabVal === ACTIONS.UNDEPLOY ? classes.disabledBtnDel : classes.button) : tabVal === ACTIONS.UNDEPLOY ? classes.undeployBtn : classes.button}
                   autoFocus
                   type="submit"
                   variant="contained"
@@ -388,12 +392,12 @@ function ConfirmationMsg(props) {
                   data-cy="deploy-btn-confirm"
                   disabled={disabled}
                 >
-                  <Typography variant body2 > {tabVal == 1 ? "UNDEPLOY" : "DEPLOY"} </Typography>
+                  <Typography variant body2 > {tabVal === ACTIONS.UNDEPLOY ? "UNDEPLOY" : "DEPLOY"} </Typography>
                 </Button>
               </>
               :
               <Button onClick={handleClose}
-                className={classes.button0} autoFocus type="submit"
+                className={classes.button} autoFocus type="submit"
                 variant="contained"
                 color="primary"
               >
