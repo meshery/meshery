@@ -5,7 +5,7 @@ permalink: installation/quick-start
 redirect_from: installation/quick-start/
 language: en
 ---
-<link href="/assets/css/termynal.css" rel="stylesheet">
+<link href="/assets/css/terminal.css" rel="stylesheet">
 <a name="getting-started"></a>
 
 Getting Meshery up and running locally on a Docker-enabled system or in Kubernetes is easy. Meshery deploys as a set of Docker containers, which can be deployed to either a Docker host or Kubernetes cluster. See the complete list of its [supported platforms]({{ site.baseurl }}/installation/platforms).
@@ -36,7 +36,7 @@ Use the Meshery command line interface, [mesheryctl]({{ site.baseurl }}/guides/m
  <span style="font-size:0;">$ curl -L https://meshery.io/install | PLATFORM=docker bash -</span> 
  </div>
  <div id="termynal1" style="width:100%; height:200px; max-width:100%;" data-termynal="">
-            <span data-ty="input">$ curl -L https://meshery.io/install | PLATFORM=docker bash -</span>
+            <span data-ty="input">curl -L https://meshery.io/install | PLATFORM=docker bash -</span>
             <span data-ty="progress"></span>
             <span data-ty="">Successfully installed meshery</span>
   </div>
@@ -51,7 +51,7 @@ Use the Meshery command line interface, [mesheryctl]({{ site.baseurl }}/guides/m
  <span style="font-size:0;">$ docker extension install meshery/docker-extension-meshery</span> 
  </div>
  <div id="termynal2" style="width:100%; height:200px; max-width:100%;" data-termynal="">
-            <span data-ty="input">$ docker extension install meshery/docker-extension-meshery</span>
+            <span data-ty="input">docker extension install meshery/docker-extension-meshery</span>
             <span data-ty="progress"></span>
             <span data-ty="">Successfully installed meshery</span>
   </div>
@@ -110,4 +110,4 @@ You may now proceed to install and work with any [service mesh]({{ site.baseurl 
         <li><a href="{{ site.baseurl }}/reference/mesheryctl/system/check">Mesheryctl system check</a></li> 
     </ul>
 </div>  
-<script src="/assets/js/termynal.js" data-termynal-container="#termynal0|#termynal1|#termynal2"></script>
+<script src="/assets/js/terminal.js" data-termynal-container="#termynal0|#termynal1|#termynal2"></script>
