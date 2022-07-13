@@ -482,12 +482,11 @@ function MesheryApplications({
     // Create a reader
     const reader = new FileReader();
     reader.addEventListener("load", (event) => {
-      handleSubmit(
-        event.target.result,
-        "",
-        file?.name || "meshery_" + Math.floor(trueRandom() * 100),
-        FILE_OPS.FILE_UPLOAD,
-      );
+      handleSubmit({
+        data : event.target.result,
+        name : file?.name || "meshery_" + Math.floor(trueRandom() * 100),
+        type : FILE_OPS.FILE_UPLOAD,
+      });
     });
     reader.readAsText(file);
   }
