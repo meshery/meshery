@@ -59,9 +59,15 @@ jobs:
         with:
           version: latest
           args: release --rm-dist --skip-validate
+      - name: bump homebrew-core formula
+        uses: mislav/bump-homebrew-formula-action@v2
+        with:
+          formula-name: mesheryctl
+          download-url: https://github.com/meshery/meshery.git
+        env:
+          COMMITTER_TOKEN: ${{ secrets.HOMEBREW_COMMITTER_TOKEN }}
   call-dde-release-workflow:
     needs: ctlrelease
     name: Build and Release Docker Extension
     uses: meshery/meshery/.github/workflows/build-and-release-dde.yml@master
     secrets: inherit
-
