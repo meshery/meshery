@@ -157,10 +157,18 @@ function ConfirmationMsg(props) {
 
   const [contexts, setContexts] = useState(k8scontext);
   const [tabVal, setTabVal] = useState(tab);
+  const [disabled, setDisabled] = useState(true);
+
+  let isDisabled = typeof selectedK8sContexts.length === "undefined" || selectedK8sContexts.length === 0
+
   useEffect(() => {
     setTabVal(tab);
     // setContexts(k8scontext)
   },[open])
+
+  useEffect(() => {
+    setDisabled(isDisabled);
+  },[selectedK8sContexts]);
 
   const handleTabValChange = (event, newVal) => {
     setTabVal(newVal);
@@ -373,10 +381,13 @@ function ConfirmationMsg(props) {
                   {/* colorchange  */}
                 </Button>
                 <Button onClick={handleSubmit}
-                  className={tabVal == 1 ? classes.button3 : classes.button0} autoFocus type="submit"
+                  className={isDisabled ? (tabVal === 1 ? classes.disabledBtnDel : classes.button0) : tabVal == 1 ? classes.button3 : classes.button0}
+                  autoFocus
+                  type="submit"
                   variant="contained"
                   color="primary"
                   data-cy="deploy-btn-confirm"
+                  disabled={disabled}
                 >
                   <Typography variant body2 > {tabVal == 1 ? "UNDEPLOY" : "DEPLOY"} </Typography>
                 </Button>
