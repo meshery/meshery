@@ -23,6 +23,3 @@ Concepts for understanding Meshery's various features and components.
     {% endfor %}
 </ul>
 
-{% include toc.html page=reference %}
-
-{:toc}
