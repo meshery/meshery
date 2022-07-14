@@ -70,7 +70,7 @@
     "jss": "latest",
     "lodash": "^4.17.21",
     "minimist": ">=1.2.2",
-    "moment": "^2.29.2",
+    "moment": "^2.29.4",
     "mui-datatables": "^3.7.8",
     "next": "^10.0.1",
     "next-compose": "0.0.2",
