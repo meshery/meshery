@@ -1,9 +1,9 @@
-import {Box, Dialog, DialogTitle, DialogActions, Backdrop, Fade } from '@mui/material'
+import {Box, Dialog, DialogTitle, DialogActions, Backdrop, Fade } from '@mui/material';
 import { styled } from "@mui/material/styles";
 import { useTheme } from "@mui/system";
 
 const CustomDialogWrapper = styled(Dialog)(({ theme }) => ({
-   display : "flex",
+   display : "flex", 
    alignItems : "center",
    justifyContent : "center", 
 }))
