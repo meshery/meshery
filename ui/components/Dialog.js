@@ -1,4 +1,4 @@
-import {Box, Dialog, DialogTitle, DialogActions, Backdrop, Fade } from '@mui/material'
+import {Box, Dialog, DialogTitle, DialogActions, Backdrop, Fade } from '@mui/material';
 import { styled } from "@mui/material/styles";
 import { useTheme } from "@mui/system";
 
