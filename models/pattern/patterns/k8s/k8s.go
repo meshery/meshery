@@ -111,6 +111,7 @@ func ConvertMapInterfaceMapString(v interface{}, prettify bool) interface{} {
 		}
 
 	case map[string]interface{}:
+		foundFormatIntOrString := false
 		for k, v2 := range x {
 			delete(x, k)
 			if prettify {
@@ -118,10 +119,13 @@ func ConvertMapInterfaceMapString(v interface{}, prettify bool) interface{} {
 			} else {
 				x[strings.ReplaceAll(k, " ", "")] = ConvertMapInterfaceMapString(v2, prettify)
 			}
-			//Fix
+			//Apply this fix only when the format specifies string|int and type specifies string therefore when there is a contradiction
 			if k == "format" && v2 == "int-or-string" {
-				x["type"] = []string{"integer", "string"}
+				foundFormatIntOrString = true
 			}
+		}
+		if x["type"] == "string" && foundFormatIntOrString {
+			x["type"] = "integer"
 		}
 	}
 

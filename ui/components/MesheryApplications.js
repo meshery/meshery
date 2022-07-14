@@ -21,7 +21,7 @@ import { updateProgress } from "../lib/store";
 import { trueRandom } from "../lib/trueRandom";
 import FILE_OPS from "../utils/configurationFileHandlersEnum";
 import { ctxUrl } from "../utils/multi-ctx";
-import { randomPatternNameGenerator as getRandomName } from "../utils/utils";
+import { getComponentsinFile, randomPatternNameGenerator as getRandomName } from "../utils/utils";
 import PromptComponent from "./PromptComponent";
 import UploadImport from "./UploadImport";
 import UndeployIcon from "../public/static/img/UndeployIcon";
@@ -56,6 +56,9 @@ const styles = (theme) => ({
     marginLeft : "auto",
     paddingLeft : "1rem"
   },
+  // text : {
+  //   padding : theme.spacing(1)
+  // }
 });
 
 
@@ -218,7 +221,9 @@ function MesheryApplications({
   const [modalOpen, setModalOpen] = useState({
     open : false,
     deploy : false,
-    application_file : null
+    application_file : null,
+    name : "",
+    count : 0
   });
   const [viewType, setViewType] = useState(
     /**  @type {TypeView} */
@@ -237,15 +242,19 @@ function MesheryApplications({
   const handleModalClose = () => {
     setModalOpen({
       open : false,
-      application_file : null
+      application_file : null,
+      name : "",
+      count : 0
     });
   }
 
-  const handleModalOpen = (app_file, isDeploy) => {
+  const handleModalOpen = (app_file, name, isDeploy) => {
     setModalOpen({
       open : true,
       deploy : isDeploy,
-      application_file : app_file
+      application_file : app_file,
+      name : name,
+      count : getComponentsinFile(app_file)
     });
   }
   /**
@@ -277,6 +286,17 @@ function MesheryApplications({
               body : pfile,
             }, () => {
               console.log("ApplicationFile Deploy API", `/api/application/deploy`);
+              enqueueSnackbar("Application Successfully Deployed!", {
+                variant : "success",
+                action : function Action(key) {
+                  return (
+                    <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+                      <CloseIcon />
+                    </IconButton>
+                  );
+                },
+                autoHideDuration : 2000,
+              });
               updateProgress({ showProgress : false });
             },
             handleError(ACTION_TYPES.DEPLOY_APPLICATIONS)
@@ -312,6 +332,17 @@ function MesheryApplications({
               method : "DELETE",
               body : pfile,
             }, () => {
+              enqueueSnackbar("Application Successfully Undeployed!", {
+                variant : "success",
+                action : function Action(key) {
+                  return (
+                    <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+                      <CloseIcon />
+                    </IconButton>
+                  );
+                },
+                autoHideDuration : 2000,
+              });
               updateProgress({ showProgress : false });
             },
             handleError(ACTION_TYPES.UNDEPLOY_APPLICATION)
@@ -451,18 +482,18 @@ function MesheryApplications({
     // Create a reader
     const reader = new FileReader();
     reader.addEventListener("load", (event) => {
-      handleSubmit(
-        event.target.result,
-        "",
-        file?.name || "meshery_" + Math.floor(trueRandom() * 100),
-        FILE_OPS.FILE_UPLOAD,
-      );
+      handleSubmit({
+        data : event.target.result,
+        name : file?.name || "meshery_" + Math.floor(trueRandom() * 100),
+        type : FILE_OPS.FILE_UPLOAD,
+      });
     });
     reader.readAsText(file);
   }
 
   function urlUploadHandler(link) {
-    handleSubmit(link, "", "meshery_" + Math.floor(trueRandom() * 100), FILE_OPS.URL_UPLOAD);
+    handleSubmit({
+      data : link, id : "", name : "meshery_" + Math.floor(trueRandom() * 100), type : FILE_OPS.URL_UPLOAD });
     // console.log(link, "valid");
   }
 
@@ -546,15 +577,15 @@ function MesheryApplications({
             <>
               <IconButton
                 title="Deploy"
-                onClick={() => handleModalOpen(rowData.application_file, true)}
+                onClick={() => handleModalOpen(rowData.application_file, rowData.name, true)}
               >
                 <DoneAllIcon data-cy="deploy-button" />
               </IconButton>
               <IconButton
                 title="Undeploy"
-                onClick={() => handleModalOpen(rowData.application_file, false)}
+                onClick={() => handleModalOpen(rowData.application_file, rowData.name, false)}
               >
-                <UndeployIcon fill="rgba(0, 0, 0, 0.54)" data-cy="undeploy-button" />
+                <UndeployIcon fill="#B32700" data-cy="undeploy-button" />
               </IconButton>
             </>
           );
@@ -743,9 +774,13 @@ function MesheryApplications({
         <ConfirmationMsg
           open={modalOpen.open}
           handleClose={handleModalClose}
-          submit={modalOpen.deploy ? () => handleDeploy(modalOpen.application_file) : () => handleUnDeploy(modalOpen.application_file)}
+          submit={
+            { deploy : () => handleDeploy(modalOpen.application_file),  unDeploy : () => handleUnDeploy(modalOpen.application_file) }
+          }
           isDelete={!modalOpen.deploy}
-          title={<Typography variant="h6" className={classes.text} >The selected operation will be applied to following contexts.</Typography>}
+          title={ modalOpen.name }
+          componentCount={modalOpen.count}
+          tab={modalOpen.deploy ? 0 : 1}
         />
         <PromptComponent ref={modalRef} />
       </NoSsr>
