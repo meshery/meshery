@@ -5,6 +5,8 @@ import React, { useState } from "react";
 import MesheryApplicationCard from "./ApplicationsCard";
 import { makeStyles } from "@material-ui/core/styles";
 import FILE_OPS from "../../utils/configurationFileHandlersEnum";
+import ConfirmationMsg from "../ConfirmationModal";
+import { getComponentsinFile } from "../../utils/utils";
 
 
 const INITIAL_GRID_SIZE = { xl : 4, md : 6, xs : 12 };
@@ -16,15 +18,15 @@ function ApplicationsGridItem({ application,  handleDeploy, handleUnDeploy, hand
   return (
     <Grid item {...gridProps}>
       <MesheryApplicationCard
-        // id={application.id}
+        id={application.id}
         name={application.name}
         updated_at={application.updated_at}
         created_at={application.created_at}
         application_file={application.application_file}
         requestFullSize={() => setGridProps({ xl : 12, md : 12, xs : 12 })}
         requestSizeRestore={() => setGridProps(INITIAL_GRID_SIZE)}
-        handleDeploy={() => handleDeploy(application.application_file)}
-        handleUnDeploy={() => handleUnDeploy(application.application_file)}
+        handleDeploy={handleDeploy}
+        handleUnDeploy={handleUnDeploy}
         deleteHandler={() => handleSubmit({ data : yaml, id : application.id, type : FILE_OPS.DELETE ,name : application.name })}
         updateHandler={() => handleSubmit({ data : yaml, id : application.id, type : FILE_OPS.UPDATE ,name : application.name })}
         setSelectedApplications={() => setSelectedApplications({ application : application, show : true })}
@@ -39,7 +41,10 @@ const useStyles = makeStyles(() => ({
     justifyContent : "center",
     alignItems : "center",
     marginTop : "2rem"
-  }
+  },
+  // text : {
+  //   padding : "5px"
+  // }
 }))
 
 /**
@@ -65,6 +70,34 @@ const useStyles = makeStyles(() => ({
 function MesheryApplicationGrid({ applications=[],handleDeploy, handleUnDeploy, handleSubmit, setSelectedApplication, selectedApplication, pages = 1,setPage, selectedPage }) {
 
   const classes = useStyles()
+
+  const [modalOpen, setModalOpen] = useState({
+    open : false,
+    deploy : false,
+    application_file : null,
+    name : "",
+    count : 0
+  });
+
+  const handleModalClose = () => {
+    setModalOpen({
+      open : false,
+      application_file : null,
+      name : "",
+      count : 0
+    });
+  }
+
+  const handleModalOpen = (app, isDeploy) => {
+    setModalOpen({
+      open : true,
+      deploy : isDeploy,
+      application_file : app.application_file,
+      name : app.name,
+      count : getComponentsinFile(app.application_file)
+    });
+  }
+
   return (
     <div>
       {!selectedApplication.show &&
@@ -73,8 +106,8 @@ function MesheryApplicationGrid({ applications=[],handleDeploy, handleUnDeploy, 
           <ApplicationsGridItem
             key={application.id}
             application={application}
-            handleDeploy={handleDeploy}
-            handleUnDeploy={handleUnDeploy}
+            handleDeploy={() => handleModalOpen(application, true)}
+            handleUnDeploy={() => handleModalOpen(application, false)}
             handleSubmit={handleSubmit}
             setSelectedApplications={setSelectedApplication}
           />
@@ -89,6 +122,17 @@ function MesheryApplicationGrid({ applications=[],handleDeploy, handleUnDeploy, 
           </div>
         )
         : null}
+      <ConfirmationMsg
+        open={modalOpen.open}
+        handleClose={handleModalClose}
+        submit={
+          { deploy : () => handleDeploy(modalOpen.application_file), unDeploy : () => handleUnDeploy (modalOpen.application_file) }
+        }
+        isDelete={!modalOpen.deploy}
+        title={ modalOpen.name }
+        componentCount={ modalOpen.count }
+        tab={modalOpen.deploy ? 0 : 1}
+      />
     </div>
   );
 }

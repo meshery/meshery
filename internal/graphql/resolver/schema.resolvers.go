@@ -181,27 +181,27 @@ func (r *subscriptionResolver) SubscribeMesheryControllersStatus(ctx context.Con
 	resChan := make(chan []*model.MesheryControllersStatusListItem)
 	controllerHandlersPerContext, ok := ctx.Value(models.MesheryControllerHandlersKey).(map[string]map[models.MesheryController]controllers.IMesheryController)
 	if !ok || len(controllerHandlersPerContext) == 0 || controllerHandlersPerContext == nil {
-		er := model.ErrMesheryControllersStatusSubscription(fmt.Errorf("Controller handlers are not configured for any of the contexts"))
+		er := model.ErrMesheryControllersStatusSubscription(fmt.Errorf("controller handlers are not configured for any of the contexts"))
 		r.Log.Error(er)
 		return nil, er
 	}
 	statusMapPerCtx := make(map[string]map[models.MesheryController]controllers.MesheryControllerStatus)
 	// initialize the map
-	for ctxId, ctrlHandlers := range controllerHandlersPerContext {
+	for ctxID, ctrlHandlers := range controllerHandlersPerContext {
 		for controller, handler := range ctrlHandlers {
-			if _, ok := statusMapPerCtx[ctxId]; !ok {
-				statusMapPerCtx[ctxId] = make(map[models.MesheryController]controllers.MesheryControllerStatus)
+			if _, ok := statusMapPerCtx[ctxID]; !ok {
+				statusMapPerCtx[ctxID] = make(map[models.MesheryController]controllers.MesheryControllerStatus)
 			}
-			statusMapPerCtx[ctxId][controller] = handler.GetStatus()
+			statusMapPerCtx[ctxID][controller] = handler.GetStatus()
 		}
 	}
 	go func() {
 		ctrlsStatusList := make([]*model.MesheryControllersStatusListItem, 0)
 		// first send the initial status of the controllers
-		for ctxId, statusMap := range statusMapPerCtx {
+		for ctxID, statusMap := range statusMapPerCtx {
 			for controller, status := range statusMap {
 				ctrlsStatusList = append(ctrlsStatusList, &model.MesheryControllersStatusListItem{
-					ContextID:  ctxId,
+					ContextID:  ctxID,
 					Controller: model.GetInternalController(controller),
 					Status:     model.GetInternalControllerStatus(status),
 				})
@@ -211,27 +211,26 @@ func (r *subscriptionResolver) SubscribeMesheryControllersStatus(ctx context.Con
 		ctrlsStatusList = make([]*model.MesheryControllersStatusListItem, 0)
 		// do this every 5 seconds
 		for {
-			for ctxId, ctrlHandlers := range controllerHandlersPerContext {
+			for ctxID, ctrlHandlers := range controllerHandlersPerContext {
 				for controller, handler := range ctrlHandlers {
 					newStatus := handler.GetStatus()
 					// if the status has changed, send that to the subscription
-					if newStatus != statusMapPerCtx[ctxId][controller] {
+					if newStatus != statusMapPerCtx[ctxID][controller] {
 						ctrlsStatusList = append(ctrlsStatusList, &model.MesheryControllersStatusListItem{
-							ContextID:  ctxId,
+							ContextID:  ctxID,
 							Controller: model.GetInternalController(controller),
 							Status:     model.GetInternalControllerStatus(newStatus),
 						})
 						resChan <- ctrlsStatusList
 					}
 					// update the status list with newStatus
-					statusMapPerCtx[ctxId][controller] = newStatus
+					statusMapPerCtx[ctxID][controller] = newStatus
 					ctrlsStatusList = make([]*model.MesheryControllersStatusListItem, 0)
 				}
 			}
-			// establish a watch conncetion to get updates, ideally in meshery-operator
+			// establish a watch connection to get updates, ideally in meshery-operator
 			time.Sleep(time.Second * 5)
 		}
-
 	}()
 	return resChan, nil
 }
@@ -242,19 +241,19 @@ func (r *subscriptionResolver) SubscribeMeshSyncEvents(ctx context.Context, k8sc
 	// get handlers
 	meshSyncDataHandlers, ok := ctx.Value(models.MeshSyncDataHandlersKey).(map[string]models.MeshsyncDataHandler)
 	if !ok || len(meshSyncDataHandlers) == 0 || meshSyncDataHandlers == nil {
-		er := model.ErrMeshSyncEventsSubscription(fmt.Errorf("Meshsync data handlers are not configured for any of the contexts"))
+		er := model.ErrMeshSyncEventsSubscription(fmt.Errorf("meshsync data handlers are not configured for any of the contexts"))
 		r.Log.Error(er)
 		return nil, er
 	}
-	for ctxId, dataHandler := range meshSyncDataHandlers {
+	for ctxID, dataHandler := range meshSyncDataHandlers {
 		brokerEventsChan := make(chan *broker.Message)
 		err := dataHandler.ListenToMeshSyncEvents(brokerEventsChan)
 		if err != nil {
 			r.Log.Warn(err)
-			r.Log.Info("skipping meshsync events subscription for contexId: %s", ctxId)
+			r.Log.Info("skipping meshsync events subscription for contexId: %s", ctxID)
 			continue
 		}
-		go func(ctxId string, brokerEventsChan chan *broker.Message) {
+		go func(ctxID string, brokerEventsChan chan *broker.Message) {
 			for event := range brokerEventsChan {
 				if event.EventType == broker.ErrorEvent {
 					// TODO: Handle errors accordingly
@@ -262,13 +261,13 @@ func (r *subscriptionResolver) SubscribeMeshSyncEvents(ctx context.Context, k8sc
 				}
 				// handle the events
 				res := &model.MeshSyncEvent{
-					ContextID: ctxId,
+					ContextID: ctxID,
 					Type:      string(event.EventType),
 					Object:    event.Object,
 				}
 				resChan <- res
 			}
-		}(ctxId, brokerEventsChan)
+		}(ctxID, brokerEventsChan)
 	}
 	return resChan, nil
 }

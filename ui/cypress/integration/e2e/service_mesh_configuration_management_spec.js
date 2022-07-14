@@ -84,6 +84,8 @@ const configurationTestTemplate = (itemType, testFilePath, expectedUploadConfigI
         getConfigurationGridItemName(1).should("have.text", expectedUploadConfigItemName);
 
         cy.get('[data-cy="config-row-0"] [data-cy="deploy-button"]').click();
+        // Modal Pops up
+        cy.get('[data-cy="deploy-btn-confirm"]').click();
 
         cy.wait("@deployConfigItem").then((interception) => {
           cy.wrap(interception.request).then((req) => {

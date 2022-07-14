@@ -176,8 +176,8 @@ const (
 	KubeClustersKey   ContextKey = "kubeclusters"
 	AllKubeClusterKey ContextKey = "allkubeclusters"
 
-	MesheryControllerHandlersKey = "mesherycontrollerhandlerskey"
-	MeshSyncDataHandlersKey      = "meshsyncdatahandlerskey"
+	MesheryControllerHandlersKey ContextKey = "mesherycontrollerhandlerskey"
+	MeshSyncDataHandlersKey      ContextKey = "meshsyncdatahandlerskey"
 )
 
 // IsSupported returns true if the given feature is listed as one of
@@ -233,6 +233,7 @@ type Provider interface {
 	GetProviderToken(req *http.Request) (string, error)
 	UpdateToken(http.ResponseWriter, *http.Request) string
 	Logout(http.ResponseWriter, *http.Request)
+	HandleUnAuthenticated(w http.ResponseWriter, req *http.Request)
 	FetchResults(tokenVal string, page, pageSize, search, order, profileID string) ([]byte, error)
 	FetchAllResults(tokenVal string, page, pageSize, search, order, from, to string) ([]byte, error)
 	PublishResults(req *http.Request, result *MesheryResult, profileID string) (string, error)

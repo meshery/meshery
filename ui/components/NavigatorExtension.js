@@ -14,6 +14,7 @@ import LoadingScreen from "./LoadingComponents/LoadingComponent";
 import usePreventUserFromLeavingPage from "../utils/hooks/usePreventUserFromLeavingPage";
 import { getK8sClusterIdsFromCtxId } from "../utils/multi-ctx";
 import ConfirmationModal from "./ConfirmationModal"
+import { getComponentsinFile } from "../utils/utils";
 
 const requires = createRequires(getDependencies);
 const useRemoteComponent = createUseRemoteComponent({ requires });
@@ -60,7 +61,8 @@ function Extension({ grafana, prometheus, updateLoadTestData, url, isDrawerColla
             subscribeMeshSyncStatusEvents,
           },
         },
-        ConfirmationModal
+        ConfirmationModal,
+        getComponentsinFile
       }}
     />
   );

@@ -1,4 +1,5 @@
 import { trueRandom } from "../lib/trueRandom";
+import jsYaml from "js-yaml";
 
 /**
  * Check if an object is empty
@@ -75,4 +76,21 @@ export function scrollToTop(behavior = "smooth") {
  */
 export function randomPatternNameGenerator() {
   return "meshery_" + Math.floor(trueRandom() * 100)
+}
+
+/**
+ * Returns number of components in Pattern/Application/Filters file
+ */
+export function getComponentsinFile(file) {
+  if (file) {
+    try {
+      let keys = Object.keys(jsYaml.load(file).services);
+      return keys.length;
+    } catch (e) {
+      if (e.reason?.includes("expected a single document")) {
+        return file.split("---").length
+      }
+    }
+  }
+  return 0;
 }
