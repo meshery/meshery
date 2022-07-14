@@ -154,6 +154,7 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 			dbHandler.Lock()
 			defer dbHandler.Unlock()
 
+			r.Log.Info("Dropping Meshery Database")
 			err = dbHandler.Migrator().DropTable(
 				&meshsyncmodel.KeyValue{},
 				&meshsyncmodel.Object{},
@@ -176,6 +177,7 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 				return "", err
 			}
 
+			r.Log.Info("Migrating Meshery Database")
 			err = dbHandler.AutoMigrate(
 				&meshsyncmodel.KeyValue{},
 				&meshsyncmodel.Object{},
@@ -197,6 +199,8 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 				r.Log.Error(err)
 				return "", err
 			}
+
+			r.Log.Info("Hard reset successfully completed")
 		} else { //Delete meshsync objects coming from a particular cluster
 			k8sctxs, ok := ctx.Value(models.AllKubeClusterKey).([]models.K8sContext)
 			if !ok || len(k8sctxs) == 0 {
