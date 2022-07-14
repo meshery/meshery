@@ -118,7 +118,7 @@ func (r *Resolver) getMeshSyncStatus(k8sctx models.K8sContext) model.OperatorCon
 func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, actions *model.ReSyncActions, k8scontextID string) (model.Status, error) {
 	if actions.ClearDb == "true" {
 		// copies the contents .meshery/config/mesherydb.sql to .meshery/config/.archive/mesherydb.sql
-		// then drops all the DB table and then migrate/create tables, missing foreign keys, constraints, columns and indexes. 
+		// then drops all the DB table and then migrate/create tables, missing foreign keys, constraints, columns and indexes.
 		if actions.HardReset == "true" {
 			mesherydbPath := path.Join(utils.GetHome(), ".meshery/config")
 			err := os.Mkdir(path.Join(mesherydbPath, ".archive"), os.ModePerm)
@@ -127,11 +127,11 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 			}
 
 			src := path.Join(mesherydbPath, "mesherydb.sql")
-    	dst := path.Join(mesherydbPath, ".archive/mesherydb.sql")
+			dst := path.Join(mesherydbPath, ".archive/mesherydb.sql")
 
 			fin, err := os.Open(src)
 			if err != nil {
-					return "", err
+				return "", err
 			}
 			defer fin.Close()
 
