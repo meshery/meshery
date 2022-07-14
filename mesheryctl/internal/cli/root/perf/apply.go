@@ -62,6 +62,10 @@ mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --qps 30
 
 // Execute a Performance test with specified service mesh
 mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --mesh istio
+
+! Refer below image link for usage
+* Usage of mesheryctl perf apply
+# ![perf-apply-usage](../../../../docs/assets/img/mesheryctl/perf-apply.jpeg)
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client := &http.Client{}

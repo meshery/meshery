@@ -34,6 +34,10 @@ var onboardCmd = &cobra.Command{
 	Example: `
 // Onboard application by providing file path
 mesheryctl app onboard -f [filepath]
+
+! Refer below image link for usage
+* Usage of mesheryctl app onboard
+# ![app-onboard-usage](../../../../docs/assets/img/mesheryctl/app-onboard.jpeg)
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var req *http.Request

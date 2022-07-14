@@ -36,6 +36,10 @@ mesheryctl pattern apply -f [file | URL]
 
 // deploy a saved pattern
 mesheryctl pattern apply [pattern-name]
+
+! Refer below image link for usage
+* Usage of mesheryctl pattern apply
+# ![pattern-apply-usage](../../../../docs/assets/img/mesheryctl/patternApply.png)
 	`,
 	Args: cobra.MinimumNArgs(0),
 	RunE: func(cmd *cobra.Command, args []string) error {
