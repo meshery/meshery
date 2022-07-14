@@ -10,7 +10,7 @@ type: project
 #### Question: What is service mesh?
 **Answer:** _A service mesh is a way to control how different parts of an application share data with one another. Unlike other systems for managing this communication, a service mesh is a dedicated infrastructure layer built right into an app. This visible infrastructure layer can document how well (or not) different parts of an app interact, so it becomes easier to optimize communication and avoid downtime as an app grows._ 
 #### Question: What is Meshery?
-**Answer:** _Meshery is the open source, service mesh management plane that enables the adoption, operation, and management of any service mesh and their workloads._
+**Answer:** _Meshery is the open source, cloud native management plane that enables the adoption, operation, and management of any service mesh and their workloads._
 
 #### Question: Why was Meshery created?
 
