@@ -187,7 +187,7 @@ func (h *Handler) handleApplicationPOST(
 	}
 
 	if parsedBody.URL != "" {
-		resp, err := provider.RemoteApplicationFile(r, parsedBody.URL, parsedBody.Path, parsedBody.Save)
+		resp, err := provider.RemoteApplicationFile(r, parsedBody.URL, parsedBody.Path, parsedBody.Save, sourcetype)
 
 		if err != nil {
 			obj := "import"

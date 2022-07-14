@@ -286,7 +286,7 @@ type Provider interface {
 	GetMesheryApplications(req *http.Request, page, pageSize, search, order string) ([]byte, error)
 	DeleteMesheryApplication(req *http.Request, applicationID string) ([]byte, error)
 	GetMesheryApplication(req *http.Request, applicationID string) ([]byte, error)
-	RemoteApplicationFile(req *http.Request, resourceURL, path string, save bool) ([]byte, error)
+	RemoteApplicationFile(req *http.Request, resourceURL, path string, save bool, sourceType string) ([]byte, error)
 
 	SavePerformanceProfile(tokenString string, performanceProfile *PerformanceProfile) ([]byte, error)
 	GetPerformanceProfiles(tokenString string, page, pageSize, search, order string) ([]byte, error)

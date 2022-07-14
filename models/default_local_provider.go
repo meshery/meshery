@@ -763,7 +763,7 @@ func (l *DefaultLocalProvider) DeleteMesheryApplication(req *http.Request, appli
 }
 
 // RemoteApplicationFile takes in the
-func (l *DefaultLocalProvider) RemoteApplicationFile(req *http.Request, resourceURL, path string, save bool) ([]byte, error) {
+func (l *DefaultLocalProvider) RemoteApplicationFile(req *http.Request, resourceURL, path string, save bool, sourceType string) ([]byte, error) {
 	parsedURL, err := url.Parse(resourceURL)
 	if err != nil {
 		return nil, err

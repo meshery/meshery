@@ -1991,7 +1991,7 @@ func (l *RemoteProvider) DeleteMesheryApplication(req *http.Request, application
 	return nil, ErrDelete(fmt.Errorf("could not retrieve application from remote provider"), "Application :"+applicationID, resp.StatusCode)
 }
 
-func (l *RemoteProvider) RemoteApplicationFile(req *http.Request, resourceURL, path string, save bool) ([]byte, error) {
+func (l *RemoteProvider) RemoteApplicationFile(req *http.Request, resourceURL, path string, save bool, sourceType string) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistMesheryApplications) {
 		logrus.Error("operation not available")
 		return nil, ErrInvalidCapability("PersistMesheryApplications", l.ProviderName)
@@ -2003,6 +2003,7 @@ func (l *RemoteProvider) RemoteApplicationFile(req *http.Request, resourceURL, p
 		"url":  resourceURL,
 		"save": save,
 		"path": path,
+		"sourcetype": sourceType,
 	})
 
 	if err != nil {
