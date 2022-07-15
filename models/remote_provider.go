@@ -66,6 +66,8 @@ type UserPref struct {
 	Preferences *Preference `json:"preferences,omitempty"`
 }
 
+const remoteUploadURL = "/upload"
+
 // Initialize function will initialize the RemoteProvider instance with the metadata
 // fetched from the remote providers capabilities endpoint
 func (l *RemoteProvider) Initialize() {
@@ -1857,6 +1859,35 @@ func (l *RemoteProvider) SaveMesheryApplication(tokenString string, application 
 	}
 
 	return bdr, ErrPost(fmt.Errorf("failed to send application to remote provider: %s", string(bdr)), fmt.Sprint(bdr), resp.StatusCode)
+}
+
+// SaveApplicationSourceContent saves given application source content with the provider after successful save of Application with the provider
+func (l *RemoteProvider) SaveApplicationSourceContent(tokenString string, applicationID string, sourceContent []byte) (error) {
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistMesheryApplications)
+
+	logrus.Debugf("Application Content: %s, size: %d", sourceContent, len(sourceContent))
+	bf := bytes.NewBuffer(sourceContent)
+
+	uploadURL := fmt.Sprintf("%s%s%s/%s", l.RemoteProviderURL, ep, remoteUploadURL, applicationID)
+	remoteProviderURL, _ := url.Parse(uploadURL)
+
+	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), bf)
+
+	resp, err := l.DoRequest(cReq, tokenString)
+	if err != nil {
+		return ErrPost(err, "Application Source Content", resp.StatusCode)
+	}
+
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+
+	if resp.StatusCode == http.StatusOK {
+		logrus.Infof("application source successfully uploaded to remote provider: %s")
+		return nil
+	}
+
+	return  ErrPost(fmt.Errorf("failed to upload application source to remote provider"), fmt.Sprint(string(sourceContent)), resp.StatusCode)
 }
 
 // GetMesheryApplications gives the applications stored with the provider

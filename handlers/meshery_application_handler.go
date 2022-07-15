@@ -169,6 +169,22 @@ func (h *Handler) handleApplicationPOST(
 				http.Error(rw, ErrApplicationFailure(err, obj).Error(), http.StatusInternalServerError)
 				return
 			}
+			
+			var mesheryApplicationContent []models.MesheryApplication
+			err = json.Unmarshal(resp, &mesheryApplicationContent)
+			if err != nil {
+				obj := "application"
+				h.log.Error(ErrEncoding(err, obj))
+				http.Error(rw, ErrEncoding(err, obj).Error(), http.StatusInternalServerError)
+				return
+			}
+			err = provider.SaveApplicationSourceContent(token, (mesheryApplicationContent[0].ID).String(), mesheryApplication.SourceContent)
+			if err != nil {
+				obj := "upload"
+				h.log.Error(ErrApplicationSourceContentUpload(err, obj))
+				http.Error(rw, ErrApplicationSourceContentUpload(err, obj).Error(), http.StatusInternalServerError)
+				return
+			}
 
 			h.formatApplicationOutput(rw, resp, format)
 			return

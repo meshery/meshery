@@ -728,6 +728,11 @@ func (l *DefaultLocalProvider) SaveMesheryApplication(tokenString string, applic
 	return l.MesheryApplicationPersister.SaveMesheryApplication(application)
 }
 
+// SaveApplicationSourceContent nothing needs to be done as application is saved with source content for local provider
+func (l *DefaultLocalProvider) SaveApplicationSourceContent(tokenString string, applicationID string, sourceContent []byte) (error) {
+	return nil
+}
+
 // GetMesheryApplications gives the applications stored with the provider
 func (l *DefaultLocalProvider) GetMesheryApplications(req *http.Request, page, pageSize, search, order string) ([]byte, error) {
 	if page == "" {
