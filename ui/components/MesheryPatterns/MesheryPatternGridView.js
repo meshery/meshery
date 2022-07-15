@@ -6,6 +6,8 @@ import MesheryPatternCard from "./MesheryPatternCard";
 import { makeStyles } from "@material-ui/core/styles";
 import PatternConfiguratorComponent from "../configuratorComponents/patternConfigurator"
 import FILE_OPS from "../../utils/configurationFileHandlersEnum";
+import ConfirmationMsg from "../ConfirmationModal";
+import { getComponentsinFile } from "../../utils/utils";
 
 
 const INITIAL_GRID_SIZE = { xl : 4, md : 6, xs : 12 };
@@ -24,8 +26,8 @@ function PatternCardGridItem({ pattern, handleDeploy, handleUnDeploy, handleSubm
         pattern_file={pattern.pattern_file}
         requestFullSize={() => setGridProps({ xl : 12, md : 12, xs : 12 })}
         requestSizeRestore={() => setGridProps(INITIAL_GRID_SIZE)}
-        handleDeploy={() => handleDeploy(pattern.pattern_file)}
-        handleUnDeploy={() => handleUnDeploy(pattern.pattern_file)}
+        handleDeploy={handleDeploy}
+        handleUnDeploy={handleUnDeploy}
         deleteHandler={() => handleSubmit({ data : yaml, id : pattern.id, type : FILE_OPS.DELETE ,name : pattern.name })}
         updateHandler={() => handleSubmit({ data : yaml, id : pattern.id, type : FILE_OPS.UPDATE ,name : pattern.name })}
         setSelectedPatterns={() => setSelectedPatterns({ pattern : pattern, show : true })}
@@ -40,7 +42,10 @@ const useStyles = makeStyles(() => ({
     justifyContent : "center",
     alignItems : "center",
     marginTop : "2rem"
-  }
+  },
+  // text : {
+  //   padding : "5px"
+  // }
 }))
 
 /**
@@ -66,6 +71,34 @@ const useStyles = makeStyles(() => ({
 function MesheryPatternGrid({ patterns=[],handleDeploy, handleUnDeploy, handleSubmit, setSelectedPattern, selectedPattern, pages = 1,setPage, selectedPage }) {
 
   const classes = useStyles()
+
+  const [modalOpen, setModalOpen] = useState({
+    open : false,
+    deploy : false,
+    pattern_file : null,
+    name : "",
+    count : 0
+  });
+
+  const handleModalClose = () => {
+    setModalOpen({
+      open : false,
+      pattern_file : null,
+      name : "",
+      count : 0
+    });
+  }
+
+  const handleModalOpen = (pattern, isDeploy) => {
+    setModalOpen({
+      open : true,
+      deploy : isDeploy,
+      pattern_file : pattern.pattern_file,
+      name : pattern.name,
+      count : getComponentsinFile(pattern.pattern_file)
+    });
+  }
+
   return (
     <div>
       {selectedPattern.show &&
@@ -77,8 +110,8 @@ function MesheryPatternGrid({ patterns=[],handleDeploy, handleUnDeploy, handleSu
           <PatternCardGridItem
             key={pattern.id}
             pattern={pattern}
-            handleDeploy={handleDeploy}
-            handleUnDeploy={handleUnDeploy}
+            handleDeploy={() => handleModalOpen(pattern, true)}
+            handleUnDeploy={() => handleModalOpen(pattern, false)}
             handleSubmit={handleSubmit}
             setSelectedPatterns={setSelectedPattern}
           />
@@ -93,6 +126,17 @@ function MesheryPatternGrid({ patterns=[],handleDeploy, handleUnDeploy, handleSu
           </div>
         )
         : null}
+      <ConfirmationMsg
+        open={modalOpen.open}
+        handleClose={handleModalClose}
+        submit={
+          { deploy : () => handleDeploy(modalOpen.pattern_file), unDeploy : () => handleUnDeploy(modalOpen.pattern_file) }
+        }
+        isDelete={!modalOpen.deploy}
+        title={ modalOpen.name }
+        componentCount={modalOpen.count}
+        tab={modalOpen.deploy ? 0 : 1}
+      />
     </div>
   );
 }

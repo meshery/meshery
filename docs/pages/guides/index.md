@@ -11,8 +11,6 @@ Guides to using and troubleshooting Meshery's various features and components.
 
 {% assign sorted_guides = site.pages | sort: "type" | reverse %}
 
-
-
 ### General
 
 <ul>
@@ -33,8 +31,6 @@ Guides to using and troubleshooting Meshery's various features and components.
     {% endif %}
   {% endfor %}
 </ul>
-
-{% include toc.html page=Guides %}
 
 <!-- {% comment %}
 #

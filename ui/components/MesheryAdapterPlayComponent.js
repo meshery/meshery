@@ -202,8 +202,9 @@ class MesheryAdapterPlayComponent extends React.Component {
       activeContexts : [],
       deployModalOpen : false,
       category : 0,
-      selectedOp : '',
-      isDeleteOp : false
+      selectedOp : "",
+      isDeleteOp : false,
+      operationName : ""
     };
   }
 
@@ -400,8 +401,10 @@ class MesheryAdapterPlayComponent extends React.Component {
 
   handleSubmit = (cat, selectedOp, deleteOp = false) => {
     const self = this;
-    return async () => {
-      self.handleOpen();
+    return () => {
+      if (selectedOp !== 'custom' ) {
+        self.handleOpen();
+      }
       const { namespace, cmEditorValAdd, cmEditorValDel } = self.state;
       const { adapter } = self.props;
       const filteredOp = adapter.ops.filter(({ key }) => key === selectedOp);
@@ -422,10 +425,12 @@ class MesheryAdapterPlayComponent extends React.Component {
         self.setState({ namespaceError : true });
         return;
       }
+      const operationName = selectedOp.replaceAll("_", " ").split(" ").map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
       self.setState({
         category : cat,
         selectedOp : selectedOp,
-        isDeleteOp : deleteOp
+        isDeleteOp : deleteOp,
+        operationName : operationName
       })
 
       // let response = await this.showModal()
@@ -442,7 +447,6 @@ class MesheryAdapterPlayComponent extends React.Component {
     } = this.state;
     const { adapter } = this.props;
     // const fileInput = document.querySelector('#k8sfile') ;
-
     const data = {
       adapter : adapter.adapter_location,
       query : selectedOp,
@@ -593,18 +597,6 @@ class MesheryAdapterPlayComponent extends React.Component {
   handleExpandClick() {
     // setExpanded(!expanded);
   }
-
-  // searchContexts = (e) => {
-  //   // if (search === '') {
-  //   //   this.setState({ k8scontext: this.state.contexts });
-  //   //   return
-  //   // }
-  //   let search = e.target.value;
-  //   console.log("SDS",  search);
-  //   const matchedCtx = this.state.contexts.filter((ctx) => ctx.name.startsWith(search))
-  //   this.setState({ k8scontext : matchedCtx });
-  //   console.log("SDS", this.state.k8scontext);
-  // }
 
   handleDeployModalOpen = () => {
     this.setState({ deployModalOpen : true });
@@ -1284,9 +1276,14 @@ class MesheryAdapterPlayComponent extends React.Component {
           <ConfirmationMsg
             open={this.state.modalOpen}
             handleClose={this.handleClose}
-            submit={() => this.submitOp(this.state.category, this.state.selectedOp, this.state.isDeleteOp)}
+            submit={
+              { deploy : () => this.submitOp(this.state.category, this.state.selectedOp, false),
+                unDeploy : () => this.submitOp(this.state.category, this.state.selectedOp, true)
+              }
+            }
             isDelete={this.state.isDeleteOp}
-            title={<Typography variant="h6" className={classes.text} >The selected operation will be applied to following contexts.</Typography>}
+            title={this.state.operationName}
+            tab={this.state.isDeleteOp ? 1 : 0}
           />
         </React.Fragment>
       </NoSsr>

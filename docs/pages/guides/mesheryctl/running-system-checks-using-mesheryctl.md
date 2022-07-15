@@ -109,7 +109,7 @@ mesheryctl system check --operator
 **Answer**: _Make sure if you've configured your system to run Meshery in smooth manner. For configuration, do check out the docs site and [this page](https://docs.meshery.io/installation/platforms) to see instructions related to the platform you use._
 
 ##### Question: Do I need a Kubernetes cluster or will a Docker host suffice for Meshery deployments?
-**Answer**: _Meshery's [performance management](functionality/performance-management) functionality does not require a Kubernetes cluster. The rest of Meshery's functionality (e.g. service mesh management) does require a Kubernetes cluster._
+**Answer**: _Meshery's [performance management](functionality/performance-management) functionality does not require a Kubernetes cluster. The rest of Meshery's functionality (e.g. cloud native management) does require a Kubernetes cluster._
 
 ##### Question: What are Meshery's production deployment requirements?
 **Answer**: _One or more Kubernetes clusters. A stateful set for Meshery Server in order to persist performance test results. See [#2451](https://github.com/meshery/meshery/issues/2451)._

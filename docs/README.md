@@ -2,7 +2,7 @@
 
 ![assets/img/docs-screenshot.png](assets/img/docs-screenshot.png)
 _Check out the [Meshery Docs](https://docs.meshery.io/)!_
-Detailed documentation on contributing to  Meshery docs is available here - [https://docs.meshery.io/project/contributing/contributing-docs](https://docs.meshery.io/project/contributing/contributing-docs).
+Detailed documentation on contributing to Meshery docs is available here - [https://docs.meshery.io/project/contributing/contributing-docs](https://docs.meshery.io/project/contributing/contributing-docs).
 
 ## Contributing to the Meshery Documentation
 
@@ -47,7 +47,7 @@ Alternatively, if you are running Windows 10, you may install the Windows Subsys
 
 - After making changes, don't forget to commit with the sign-off flag (-s)!
   ```bash
-  $ commit -s -m “my commit message w/signoff”
+  $ git commit -s -m “my commit message w/signoff”
   ```
 - Once all changes have been committed, push the changes.
   ```bash
@@ -59,3 +59,4 @@ Alternatively, if you are running Windows 10, you may install the Windows Subsys
 
 - _See the [Meshery Documentation Google Doc](https://docs.google.com/document/d/17guuaxb0xsfutBCzyj2CT6OZiFnMu9w4PzoILXhRXSo/edit) for additional reference._
 - Theme - https://github.com/vsoch/docsy-jekyll
+

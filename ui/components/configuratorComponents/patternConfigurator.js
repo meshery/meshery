@@ -312,7 +312,6 @@ function PatternConfiguratorComponent({ pattern, onSubmit, show : setSelectedPat
   }
 
   function getMeshOptions() {
-    console.log({ meshWorkloads });
     return meshWorkloads ? Object.keys(meshWorkloads) : [];
   }
 
