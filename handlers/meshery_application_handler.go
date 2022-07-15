@@ -326,32 +326,23 @@ func (h *Handler) GetMesheryApplicationSourceHandler(
 	provider models.Provider,
 ) {
 	applicationID := mux.Vars(r)["id"]
-	resp, err := provider.GetMesheryApplication(r, applicationID)
+	resp, err := provider.GetApplicationSourceContent(r, applicationID)
 	if err != nil {
 		obj := "download"
 		h.log.Error(ErrApplicationFailure(err, obj))
 		http.Error(rw, ErrApplicationFailure(err, obj).Error(), http.StatusNotFound)
 		return
 	}
-	var mapp models.MesheryApplication
-	err = json.Unmarshal(resp, &mapp)
-	if err != nil {
-		obj := "download"
-		h.log.Error(ErrApplicationFailure(err, obj))
-		http.Error(rw, ErrApplicationFailure(err, obj).Error(), http.StatusNotFound)
-		return
-	}
-	var ext string
+	
 	var mimeType string
-	if mapp.Type == models.HELM_CHART { //serve the content in a tgz file
-		ext = ".tgz"
+	sourcetype := r.URL.Query().Get("source-type")
+
+	if models.ApplicationType(sourcetype) == models.HELM_CHART { //serve the content in a tgz file
 		mimeType = "application/x-tar"
 	} else { // serve the content in yaml file
-		ext = ".yaml"
 		mimeType = "application/x-yaml"
 	}
-	reader := bytes.NewReader(mapp.SourceContent)
-	rw.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=%s", mapp.Name+ext))
+	reader := bytes.NewReader(resp)
 	rw.Header().Set("Content-Type", mimeType)
 	io.Copy(rw, reader)
 }

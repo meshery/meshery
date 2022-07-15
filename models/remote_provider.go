@@ -66,7 +66,10 @@ type UserPref struct {
 	Preferences *Preference `json:"preferences,omitempty"`
 }
 
-const remoteUploadURL = "/upload"
+const (
+	remoteUploadURL   = "/upload"
+	remoteDownloadURL = "/download"
+)
 
 // Initialize function will initialize the RemoteProvider instance with the metadata
 // fetched from the remote providers capabilities endpoint
@@ -1883,11 +1886,48 @@ func (l *RemoteProvider) SaveApplicationSourceContent(tokenString string, applic
 	}()
 
 	if resp.StatusCode == http.StatusOK {
-		logrus.Infof("application source successfully uploaded to remote provider: %s")
+		logrus.Infof("application source successfully uploaded to remote provider: %s", string(sourceContent))
 		return nil
 	}
 
 	return  ErrPost(fmt.Errorf("failed to upload application source to remote provider"), fmt.Sprint(string(sourceContent)), resp.StatusCode)
+}
+
+// GetApplicationSourceContent returns application source-content from provider
+func (l *RemoteProvider) GetApplicationSourceContent(req *http.Request, applicationID string) ([]byte, error) {
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistMesheryApplications)
+	downloadURL := fmt.Sprintf("%s%s%s/%s", l.RemoteProviderURL, ep, remoteDownloadURL, applicationID)
+	remoteProviderURL, _ := url.Parse(downloadURL)
+	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
+
+	logrus.Infof("attempting to fetch application source content from cloud for id: %s", applicationID)
+
+	tokenString, err := l.GetToken(req)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := l.DoRequest(cReq, tokenString)
+	if err != nil {
+		logrus.Errorf("unable to get application source content: %v", err)
+		return nil, ErrFetch(err, "Application source content", resp.StatusCode)
+	}
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+
+	bdr, err := io.ReadAll(resp.Body)
+	if err != nil {
+		logrus.Errorf("unable to read response body: %v", err)
+		return nil, ErrDataRead(err, "Application")
+	}
+
+	if resp.StatusCode == http.StatusOK {
+		logrus.Infof("applications successfully retrieved from remote provider")
+		return bdr, nil
+	}
+	logrus.Errorf("error while fetching source content: %s", bdr)
+	return nil, ErrFetch(fmt.Errorf("error while fetching applications: %s", bdr), fmt.Sprint(bdr), resp.StatusCode)
 }
 
 // GetMesheryApplications gives the applications stored with the provider

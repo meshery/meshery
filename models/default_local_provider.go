@@ -733,6 +733,12 @@ func (l *DefaultLocalProvider) SaveApplicationSourceContent(tokenString string, 
 	return nil
 }
 
+// GetApplicationSourceContent returns application source-content from provider
+func(l *DefaultLocalProvider) GetApplicationSourceContent(req *http.Request, applicationID string) ([]byte, error) {
+	//TODO
+	return nil, nil
+}
+
 // GetMesheryApplications gives the applications stored with the provider
 func (l *DefaultLocalProvider) GetMesheryApplications(req *http.Request, page, pageSize, search, order string) ([]byte, error) {
 	if page == "" {
