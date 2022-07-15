@@ -271,7 +271,6 @@ type Provider interface {
 	GetMesheryPattern(req *http.Request, patternID string) ([]byte, error)
 	RemotePatternFile(req *http.Request, resourceURL, path string, save bool) ([]byte, error)
 	SaveMesheryPatternResource(token string, resource *PatternResource) (*PatternResource, error)
-	SaveApplicationSourceContent(token string, applicationID string, sourceContent []byte) error
 	GetMesheryPatternResource(token, resourceID string) (*PatternResource, error)
 	GetMesheryPatternResources(token, page, pageSize, search, order, name, namespace, typ, oamType string) (*PatternResourcePage, error)
 	DeleteMesheryPatternResource(token, resourceID string) error
@@ -284,6 +283,7 @@ type Provider interface {
 	RemoteFilterFile(req *http.Request, resourceURL, path string, save bool) ([]byte, error)
 
 	SaveMesheryApplication(tokenString string, application *MesheryApplication) ([]byte, error)
+	SaveApplicationSourceContent(token string, applicationID string, sourceContent []byte) error
 	GetMesheryApplications(req *http.Request, page, pageSize, search, order string) ([]byte, error)
 	DeleteMesheryApplication(req *http.Request, applicationID string) ([]byte, error)
 	GetMesheryApplication(req *http.Request, applicationID string) ([]byte, error)
