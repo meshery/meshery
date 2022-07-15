@@ -9,7 +9,7 @@ list: include
 image: /assets/img/platforms/docker.svg
 ---
 
-{% include installation_prerequisites.html %}
+<h1>Quick Start with {{ page.title }} <img src="{{ page.image }}" style="width:35px;height:35px;" /></h1>
 
 ## Docker Extension for Meshery
 
