@@ -735,8 +735,8 @@ func (l *DefaultLocalProvider) SaveApplicationSourceContent(tokenString string, 
 
 // GetApplicationSourceContent returns application source-content from provider
 func(l *DefaultLocalProvider) GetApplicationSourceContent(req *http.Request, applicationID string) ([]byte, error) {
-	//TODO
-	return nil, nil
+	id := uuid.FromStringOrNil(applicationID)
+	return l.MesheryApplicationPersister.GetMesheryApplicationSource(id)
 }
 
 // GetMesheryApplications gives the applications stored with the provider
@@ -801,7 +801,7 @@ func (l *DefaultLocalProvider) RemoteApplicationFile(req *http.Request, resource
 			path = strings.Join(parsedPath[4:], "/")
 		}
 
-		pfs, err := githubRepoApplicationScan(owner, repo, path, branch)
+		pfs, err := githubRepoApplicationScan(owner, repo, path, branch, sourceType)
 		if err != nil {
 			return nil, err
 		}
@@ -814,7 +814,7 @@ func (l *DefaultLocalProvider) RemoteApplicationFile(req *http.Request, resource
 	}
 
 	// Fallback to generic HTTP import
-	pfs, err := genericHTTPApplicationFile(resourceURL)
+	pfs, err := genericHTTPApplicationFile(resourceURL, sourceType)
 	if err != nil {
 		return nil, err
 	}
@@ -1152,7 +1152,8 @@ func githubRepoApplicationScan(
 	owner,
 	repo,
 	path,
-	branch string,
+	branch,
+	sourceType string,
 ) ([]MesheryApplication, error) {
 	var mu sync.Mutex
 	ghWalker := walker.NewGit()
@@ -1168,13 +1169,15 @@ func githubRepoApplicationScan(
 			if ext == ".yml" || ext == ".yaml" {
 				af := MesheryApplication{
 					Name:            strings.TrimSuffix(f.Name, ext),
-					ApplicationFile: string(f.Content),
+					ApplicationFile: string(f.Content), // TODO: change to pattern file before saving
 					Location: map[string]interface{}{
 						"type":   "github",
 						"host":   fmt.Sprintf("github.com/%s/%s", owner, repo),
 						"path":   f.Path,
 						"branch": branch,
 					},
+					Type: ApplicationType(sourceType),
+					SourceContent: []byte(f.Content),
 				}
 
 				mu.Lock()
@@ -1261,7 +1264,7 @@ func genericHTTPFilterFile(fileURL string) ([]MesheryFilter, error) {
 	return []MesheryFilter{ff}, nil
 }
 
-func genericHTTPApplicationFile(fileURL string) ([]MesheryApplication, error) {
+func genericHTTPApplicationFile(fileURL, sourceType string) ([]MesheryApplication, error) {
 	resp, err := http.Get(fileURL)
 	if err != nil {
 		return nil, err
@@ -1287,6 +1290,8 @@ func genericHTTPApplicationFile(fileURL string) ([]MesheryApplication, error) {
 			"path":   "",
 			"branch": "",
 		},
+		Type: ApplicationType(sourceType),
+		SourceContent: body,
 	}
 
 	return []MesheryApplication{af}, nil
