@@ -6,11 +6,16 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
+	"path/filepath"
+	"strings"
+	"sync"
 
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/models"
 	"github.com/layer5io/meshery/models/pattern/core"
 	"github.com/layer5io/meshkit/utils/kubernetes/kompose"
+	"github.com/layer5io/meshkit/utils/walker"
 )
 
 // MesheryApplicationRequestBody refers to the type of request body that
@@ -111,7 +116,7 @@ func (h *Handler) handleApplicationPOST(
 	}
 
 	format := r.URL.Query().Get("output")
-
+	var mesheryApplication *models.MesheryApplication
 	// If Content is not empty then assume it's a local upload
 	if parsedBody.ApplicationData != nil {
 		// Assign a location if no location is specified
@@ -124,7 +129,7 @@ func (h *Handler) handleApplicationPOST(
 			}
 		}
 
-		mesheryApplication := parsedBody.ApplicationData
+		mesheryApplication = parsedBody.ApplicationData
 
 		bytApplication := []byte(mesheryApplication.ApplicationFile)
 		mesheryApplication.SourceContent = bytApplication
@@ -160,61 +165,91 @@ func (h *Handler) handleApplicationPOST(
 			}
 			mesheryApplication.ApplicationFile = string(response)
 		}
+	}
 
-		if parsedBody.Save {
-			resp, err := provider.SaveMesheryApplication(token, mesheryApplication)
-			if err != nil {
-				obj := "save"
-				h.log.Error(ErrApplicationFailure(err, obj))
-				http.Error(rw, ErrApplicationFailure(err, obj).Error(), http.StatusInternalServerError)
-				return
-			}
-			
-			var mesheryApplicationContent []models.MesheryApplication
-			err = json.Unmarshal(resp, &mesheryApplicationContent)
-			if err != nil {
-				obj := "application"
-				h.log.Error(ErrEncoding(err, obj))
-				http.Error(rw, ErrEncoding(err, obj).Error(), http.StatusInternalServerError)
-				return
-			}
-			err = provider.SaveApplicationSourceContent(token, (mesheryApplicationContent[0].ID).String(), mesheryApplication.SourceContent)
-			if err != nil {
-				obj := "upload"
-				h.log.Error(ErrApplicationSourceContentUpload(err, obj))
-				http.Error(rw, ErrApplicationSourceContentUpload(err, obj).Error(), http.StatusInternalServerError)
-				return
-			}
-
-			h.formatApplicationOutput(rw, resp, format)
-			return
+	if parsedBody.URL != "" {
+		parsedURL, err := url.Parse(parsedBody.URL)
+		if err != nil {
+			http.Error(rw, "error parsing provided URL", http.StatusInternalServerError)
 		}
 
-		byt, err := json.Marshal([]models.MesheryApplication{*mesheryApplication})
+		// Check if hostname is github
+		if parsedURL.Host == "github.com" {
+			parsedPath := strings.Split(parsedURL.Path, "/")
+			if parsedPath[3] == "tree" {
+				parsedPath = append(parsedPath[0:3], parsedPath[4:]...)
+			}
+			if len(parsedPath) < 3 {
+				http.Error(rw, "malformed URL: url should be of type github.com/<owner>/<repo>/[branch]", http.StatusNotAcceptable)
+			}
+
+			owner := parsedPath[1]
+			repo := parsedPath[2]
+			branch := "master"
+			path := parsedBody.Path
+			if len(parsedPath) == 4 {
+				branch = parsedPath[3]
+			}
+			if path == "" && len(parsedPath) > 4 {
+				path = strings.Join(parsedPath[4:], "/")
+			}
+
+			pfs, err := githubRepoApplicationScan(owner, repo, path, branch, sourcetype)
+			if err != nil {
+				http.Error(rw, ErrRemoteApplication(err).Error(), http.StatusInternalServerError)
+			}
+
+			mesheryApplication = &pfs[0]
+		}
+
+		// Fallback to generic HTTP import
+			pfs, err := genericHTTPApplicationFile(parsedBody.URL, sourcetype)
+			if err != nil {
+				http.Error(rw, ErrRemoteApplication(err).Error(), http.StatusInternalServerError)
+			}
+			mesheryApplication = &pfs[0]
+
+	}
+
+	if parsedBody.Save {
+		resp, err := provider.SaveMesheryApplication(token, mesheryApplication)
+		if err != nil {
+			obj := "save"
+			h.log.Error(ErrApplicationFailure(err, obj))
+			http.Error(rw, ErrApplicationFailure(err, obj).Error(), http.StatusInternalServerError)
+			return
+		}
+		
+		var mesheryApplicationContent []models.MesheryApplication
+		err = json.Unmarshal(resp, &mesheryApplicationContent)
 		if err != nil {
 			obj := "application"
 			h.log.Error(ErrEncoding(err, obj))
 			http.Error(rw, ErrEncoding(err, obj).Error(), http.StatusInternalServerError)
 			return
 		}
-
-		h.formatApplicationOutput(rw, byt, format)
-		return
-	}
-
-	if parsedBody.URL != "" {
-		resp, err := provider.RemoteApplicationFile(r, parsedBody.URL, parsedBody.Path, parsedBody.Save, sourcetype)
-
+		err = provider.SaveApplicationSourceContent(token, (mesheryApplicationContent[0].ID).String(), mesheryApplication.SourceContent)
 		if err != nil {
-			obj := "import"
-			h.log.Error(ErrApplicationFailure(err, obj))
-			http.Error(rw, ErrApplicationFailure(err, obj).Error(), http.StatusInternalServerError)
+			obj := "upload"
+			h.log.Error(ErrApplicationSourceContentUpload(err, obj))
+			http.Error(rw, ErrApplicationSourceContentUpload(err, obj).Error(), http.StatusInternalServerError)
 			return
 		}
 
 		h.formatApplicationOutput(rw, resp, format)
 		return
 	}
+
+	byt, err := json.Marshal([]models.MesheryApplication{*mesheryApplication})
+	if err != nil {
+		obj := "application"
+		h.log.Error(ErrEncoding(err, obj))
+		http.Error(rw, ErrEncoding(err, obj).Error(), http.StatusInternalServerError)
+		return
+	}
+
+	h.formatApplicationOutput(rw, byt, format)
+	return
 }
 
 // swagger:route GET /api/application/{id} ApplicationsAPI idGetMesheryApplication
@@ -346,6 +381,7 @@ func (h *Handler) GetMesheryApplicationSourceHandler(
 	rw.Header().Set("Content-Type", mimeType)
 	io.Copy(rw, reader)
 }
+
 func (h *Handler) formatApplicationOutput(rw http.ResponseWriter, content []byte, format string) {
 	contentMesheryApplicationSlice := make([]models.MesheryApplication, 0)
 
@@ -372,4 +408,118 @@ func (h *Handler) formatApplicationOutput(rw http.ResponseWriter, content []byte
 
 	rw.Header().Set("Content-Type", "application/json")
 	fmt.Fprint(rw, string(data))
+}
+
+
+func githubRepoApplicationScan(
+	owner,
+	repo,
+	path,
+	branch,
+	sourceType string,
+) ([]models.MesheryApplication, error) {
+	var mu sync.Mutex
+	ghWalker := walker.NewGit()
+	result := make([]models.MesheryApplication, 0)
+	err := ghWalker.
+		Owner(owner).
+		Repo(repo).
+		Branch(branch).
+		Root(path).
+		RegisterFileInterceptor(func(f walker.File) error {
+
+			ext := filepath.Ext(f.Name)
+			var k8sres string
+			var err error
+			k8sres = f.Content
+			if ext == ".yml" || ext == ".yaml" {
+				if sourceType == string(models.DOCKER_COMPOSE) {
+					k8sres, err = kompose.Convert([]byte (f.Content))
+					if err != nil {			
+						return err
+					}
+				}
+				pattern, err := core.NewPatternFileFromK8sManifest(k8sres, false)
+				if err != nil {
+					return err
+				}
+				response, err := json.Marshal(pattern)
+				if err != nil {
+					return err
+				}
+
+				af := models.MesheryApplication{
+					Name:            strings.TrimSuffix(f.Name, ext),
+					ApplicationFile: string(response), // TODO: change to pattern file before saving
+					Location: map[string]interface{}{
+						"type":   "github",
+						"host":   fmt.Sprintf("github.com/%s/%s", owner, repo),
+						"path":   f.Path,
+						"branch": branch,
+					},
+					Type: models.ApplicationType(sourceType),
+					SourceContent: []byte(f.Content),
+				}
+
+				mu.Lock()
+				result = append(result, af)
+				mu.Unlock()
+			}
+
+			return nil
+		}).
+		Walk()
+
+	return result, err
+}
+
+func genericHTTPApplicationFile(fileURL, sourceType string) ([]models.MesheryApplication, error) {
+	resp, err := http.Get(fileURL)
+	if err != nil {
+		return nil, err
+	}
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("file not found")
+	}
+
+	defer models.SafeClose(resp.Body)
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+	
+	k8sres := string(body)
+	
+	if sourceType == string(models.DOCKER_COMPOSE) {
+		k8sres, err = kompose.Convert(body)
+		if err != nil {			
+			return nil, err
+		}
+	}
+	
+	pattern, err := core.NewPatternFileFromK8sManifest(k8sres, false)
+	if err != nil {
+		return nil, err
+	}
+	response, err := json.Marshal(pattern)
+	
+	if err != nil {
+		return nil, err
+	}
+
+	url := strings.Split(fileURL, "/")
+	af := models.MesheryApplication{
+		Name:            url[len(url)-1],
+		ApplicationFile: string(response),
+		Location: map[string]interface{}{
+			"type":   "http",
+			"host":   fileURL,
+			"path":   "",
+			"branch": "",
+		},
+		Type: models.ApplicationType(sourceType),
+		SourceContent: body,
+	}
+	return []models.MesheryApplication{af}, nil
 }

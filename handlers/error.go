@@ -103,6 +103,7 @@ const (
 	ErrInvalidKubeCon
 	ErrCreatingKubernetesComponentsCode = "2177"
 	ErrApplicationContentUpload  = "2241"
+	ErrRemoteApplicationURL = "2242"
 )
 
 var (
@@ -438,4 +439,8 @@ func ErrParsePattern(err error) error {
 
 func ErrConvertPattern(err error) error {
 	return errors.New(ErrConvertPatternCode, errors.Alert, []string{"Error failed to convert PatternFile to Cytoscape object"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrRemoteApplication(err error) error {
+	return errors.New(ErrRemoteApplicationURL, errors.Alert, []string{"Error failed to persist remote application"}, []string{err.Error()}, []string{}, []string{})
 }

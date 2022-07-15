@@ -2062,62 +2062,6 @@ func (l *RemoteProvider) DeleteMesheryApplication(req *http.Request, application
 	return nil, ErrDelete(fmt.Errorf("could not retrieve application from remote provider"), "Application :"+applicationID, resp.StatusCode)
 }
 
-func (l *RemoteProvider) RemoteApplicationFile(req *http.Request, resourceURL, path string, save bool, sourceType string) ([]byte, error) {
-	if !l.Capabilities.IsSupported(PersistMesheryApplications) {
-		logrus.Error("operation not available")
-		return nil, ErrInvalidCapability("PersistMesheryApplications", l.ProviderName)
-	}
-
-	ep, _ := l.Capabilities.GetEndpointForFeature(PersistMesheryApplications)
-
-	data, err := json.Marshal(map[string]interface{}{
-		"url":  resourceURL,
-		"save": save,
-		"path": path,
-		"sourcetype": sourceType,
-	})
-
-	if err != nil {
-		err = ErrMarshal(err, "meshery metrics for shipping")
-		return nil, err
-	}
-
-	logrus.Debugf("Application: %s, size: %d", data, len(data))
-	logrus.Infof("attempting to save application to remote provider")
-	bf := bytes.NewBuffer(data)
-
-	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
-	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), bf)
-
-	if err != nil {
-		return nil, err
-	}
-
-	tokenString, err := l.GetToken(req)
-	if err != nil {
-		return nil, err
-	}
-	resp, err := l.DoRequest(cReq, tokenString)
-	if err != nil {
-		return nil, ErrPost(err, "Application", resp.StatusCode)
-	}
-
-	defer func() {
-		_ = resp.Body.Close()
-	}()
-	bdr, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, ErrDataRead(err, "Application")
-	}
-
-	if resp.StatusCode == http.StatusOK {
-		logrus.Infof("application successfully sent to remote provider: %s", string(bdr))
-		return bdr, nil
-	}
-
-	return bdr, ErrPost(fmt.Errorf("could not sent application to remote provider: %s", string(bdr)), fmt.Sprint(bdr), resp.StatusCode)
-}
-
 // SavePerformanceProfile saves a performance profile into the remote provider
 func (l *RemoteProvider) SavePerformanceProfile(tokenString string, pp *PerformanceProfile) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistPerformanceProfiles) {
