@@ -1,10 +1,12 @@
-import React, {useState , useEffect, useRef} from 'react'
+import React, {useState} from 'react'
 import MUIDataTable from "mui-datatables";
 import {
-     Grid, IconButton, List, ListItem, ListItemText, Menu, MenuItem,  Switch,
-    Tooltip, Paper,  TableCell, TableContainer, Table, Button, Typography, TableSortLabel
+     Grid, IconButton, List, ListItem, ListItemText, Menu, MenuItem,  Switch, FormGroup, InputAdornment,
+    Tooltip, Paper,  TableCell, TableContainer, Table, Button, Typography, TableSortLabel, TextField,
   } from '@mui/material';
   import AddIcon from '@mui/icons-material/Add';
+import CustomDialog from "@/components/Dialog";
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
   
 function MeshConfigComponent({operatorState}) {
 
@@ -384,6 +386,42 @@ function MeshConfigComponent({operatorState}) {
       options={options}
     />
   </div>
+  <CustomDialog open={open} handleClose={handleCloseModal} 
+  Title="Add Kubernetes Cluster(s)"
+   Content={
+    <div>
+    <Typography variant="h6">
+              Upload your kubeconfig
+            </Typography>
+            <Typography variant="body2">
+              commonly found at ~/.kube/config
+            </Typography>
+            <FormGroup>
+              <input
+                id="k8sfile"
+                type="file"
+                style={{ display: "none" }}
+              />
+              <TextField
+                id="k8sfileLabelText"
+                name="k8sfileLabelText"
+                label="Upload kubeconfig"
+                variant="outlined"
+                fullWidth
+                margin="normal"
+                InputProps={{
+                  readOnly : true,
+                  endAdornment : (
+                    <InputAdornment position="end">
+                      <CloudUploadIcon />
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            </FormGroup>
+          </div>
+   }
+  />
   </>
   )
 }
