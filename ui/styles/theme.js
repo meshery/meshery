@@ -54,6 +54,13 @@ const theme = createTheme(
       // MuiIconButton: { root: { padding: theme.spacing(1) } },
       MuiTooltip: { tooltip: { borderRadius: 4 } },
       MuiDivider: { root: { backgroundColor: "#404854" } },
+      MuiDialogTitle: { 
+        root: {
+          background: '#607d8b',
+          color: '#fff',
+          textAlign: 'center',
+        },
+      },
       // MuiListItemText: { primary: { fontWeight: theme.typography.fontWeightMedium } },
       MuiListItemIcon: {
         root: {
