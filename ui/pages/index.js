@@ -1,14 +1,13 @@
 import React, {useState} from "react";
-import { Button, Grid, Link, Stack, Typography } from "@mui/material";
-import { AdaptersChipList, AdaptersListContainer, MesheryServerVersionContainer } from "@/features/mesheryComponents";
+import { Button, Grid, Link, Stack, Typography, Box } from "@mui/material";
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import { AdaptersChipList, AdaptersListContainer } from "@/features/mesheryComponents";
 import { PaperWithTitle } from "@/components/Paper";
 import { nanoid } from "@reduxjs/toolkit";
 import { useTheme } from "@mui/system";
 import { KuberenetesClusterChip, KuberenetesClusterContainer } from "@/features/mesheryEnvironment";
 import { GrafanaChip, MetricsContainer, PrometheusChip } from "@/features/mesheryEnvironment/components";
 import SettingsIcon from "@mui/icons-material/Settings";
-import { getMesheryVersionText } from "@/features/mesheryComponents/components/MesheryServer/helpers";
-import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import { MetricsButton } from "@/components/Button"
 
 export default function Dashboard() {
@@ -34,11 +33,12 @@ export default function Dashboard() {
         </KuberenetesClusterContainer>
 
         <AdaptersListContainer>{(props) => <AdaptersChipList {...props} />}</AdaptersListContainer>
-        <MetricsContainer>
+        <MetricsContainer justifyContent="center" >
           {({ grafanas, prometheus, onGrafanaClick, onPrometheusClick }) => {
             return (
               <PaperWithTitle title="Metrics" containerProps={{ spacing: 2 }}>
-                <Grid item xs={12} justifyContent="center" container>
+               <Grid container  spacing={2} sx={{margin: "auto ", justifyContent:"center" }}>
+                <Grid item  >
                   {grafanas !== null && grafanas?.length > 0 && grafanas[0] ? (
                     <GrafanaChip grafana={grafanas[0]} />
                   ) : (
@@ -47,13 +47,14 @@ export default function Dashboard() {
                       startIcon={<SettingsIcon />}
                       onClick={onGrafanaClick}
                       size="large"
+                      
                     >
                       Configure Grafana
                     </MetricsButton>
                   )}
                 </Grid>
 
-                <Grid item xs={12} justifyContent="center" container>
+                <Grid item  >
                   {prometheus !== null && prometheus?.length > 0 && prometheus[0] ? (
                     <PrometheusChip prometheus={prometheus[0]} />
                   ) : (
@@ -67,66 +68,47 @@ export default function Dashboard() {
                     </MetricsButton>
                   )}
                 </Grid>
+                </Grid>
               </PaperWithTitle>
             );
           }}
         </MetricsContainer>
-
-        <MesheryServerVersionContainer>
-          {({ serverVersion }) => (
-            <PaperWithTitle title="Release">
-              <Grid item xs={6}>
-                <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
-                  Channel Subscription
-                </Typography>
-                {serverVersion.release_channel}
-              </Grid>
-              <Grid item xs={6}>
-                <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
-                  Version
-                </Typography>
-                {getMesheryVersionText(serverVersion)}
-                <Link
-                  href={`https://docs.meshery.io/project/releases${
-                    serverVersion.release_channel === "edge" ? "" : "/" + serverVersion.build
-                  }`}
-                  target="_blank"
-                >
-                  <OpenInNewIcon sx={{ fontSize: theme.spacing(2) }} />
-                </Link>
-              </Grid>
-              <Grid item xs={12} sx={{ mt: theme.spacing(4) }}>
-                {serverVersion.outdated ? (
-                  <>
-                    <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
-                      Newer version of Meshery available:
-                    </Typography>
-                    <Link
-                      href={`https://docs.meshery.io/project/releases${
-                        serverVersion.release_channel === "edge" ? "" : "/" + serverVersion.build
-                      }`}
-                      target="_blank"
-                    >
-                      {serverVersion.latest}
-                    </Link>
-                  </>
-                ) : (
-                  <Typography variant="body1" sx={{ fontStyle: "italic" }}>
-                    Running latest version of Meshery
-                  </Typography>
-                )}
-              </Grid>
-            </PaperWithTitle>
-          )}
-        </MesheryServerVersionContainer>
       </Stack>
     </PaperWithTitle>
   );
+  
+const ShowServiceMesh = () => {
+  return(
+    <Box
+    sx={{
+      margin: "auto",
+      display : "flex",
+      justifyContent : "center",
+      flexDirection : "column",
+    }}
+  >
+    <Typography sx={{ fontSize : "1.5rem", marginBottom : "2rem" }} align="center" color="textSecondary">
+              No service meshes detected in the cluster.
+              </Typography>
+              <Button
+                aria-label="Add Meshes"
+                variant="contained"
+                color="primary"
+                size="large"
+              >
+                <AddCircleOutlineIcon  />
+              Install Service Mesh
+              </Button>
+              </Box>
+  )
+}
 
   return (
     <Grid container spacing={2}>
       <Grid item xs={6}>
-        <PaperWithTitle title="Service Mesh" titleVariant="h6"></PaperWithTitle>
+        <PaperWithTitle title="Service Mesh" titleVariant="h6">
+          <ShowServiceMesh />
+        </PaperWithTitle>
       </Grid>
       <Grid item xs={6}>
         <ConnectionStatus />

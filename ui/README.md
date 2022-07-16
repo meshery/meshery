@@ -98,10 +98,24 @@ This method doesn't provide a live reload server. You will have to build Meshery
 - So, it is important to make the imports and exports more transparent
 - which is why, we have an `index.js` file for every module where all the exports will be written so that we have a single place to find what things are all exported by a module.
 
+**Material UI**
+
+- Always use MUI `styled` API
+- Reuse Components as much as possible
+- Never miss an opportunity to derive styling from the theme
+
+
+## Philosophy
+
+- Reuse code as much as possible
+- “All code is guilty, until proven innocent.”
+- Use comments, but don't overuse them
+
 ## JSDocs
 
 - We use JSDocs to get type information about the data sets
 - [JsDoc docs](https://jsdoc.app/)
+
 
 ## FAQ
 
