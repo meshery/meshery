@@ -235,7 +235,7 @@ go tool argument
 
 We are using ES-Lint to maintain code quality & consistency in our UI Code. To make sure your PR passes all the UI & ES-Lint Tests, please see below :
 
-- Remember to run `make run-ui-lint` & `make run-provider-ui-lint` if you are making changes in Meshery-UI & Provider-UI respectively.
+- Remember to run `make ui-lint` & `make ui-provider-lint` if you are making changes in Meshery-UI & Provider-UI respectively.
 - The above commands will only fix some basic indenting rules. You will have to manually check your code to ensure there are no duplications, un-used variables or un-declared constants.
 - We will soon be adding Pre-Commit Hooks to make sure you get to know your errors before you commit the code.
 - In case you are unable to fix your lint errors, ping us on our [Slack](http://slack.layer5.io).
@@ -301,4 +301,3 @@ Resources: https://lab.github.com and https://try.github.com/
 ### License
 
 This repository and site are available as open-source under the terms of the [Apache 2.0 License](https://opensource.org/licenses/Apache-2.0).
-
