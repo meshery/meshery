@@ -148,9 +148,6 @@ func main() {
 	defer preferencePersister.ClosePersister()
 
 	dbHandler := models.GetNewDBInstance()
-	if err != nil {
-		logrus.Fatal(err)
-	}
 
 	meshsyncCh := make(chan struct{}, 10)
 	brokerConn := nats.NewEmptyConnection
