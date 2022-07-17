@@ -1,9 +1,9 @@
-import React from 'react'
+import React, {useState} from 'react'
 import { AppBar, Grid, Hidden, IconButton, Toolbar, Typography, TableCell, TableSortLabel } from "@mui/material";
 import MUIDataTable from "mui-datatables";
 import UploadImport from "@/components/UploadImport";
 
-function MesheryApplications() {
+function MesheryApplications({user}) {
     
     const [applications, setApplications] = useState([]);
 
@@ -103,14 +103,11 @@ function MesheryApplications() {
         sort : !(user && user.user_id === "meshery"),
         search : !(user && user.user_id === "meshery"),
         filterType : "textField",
-        responsive : "scrollFullHeight",
+        // responsive : "scrollFullHeight",
         resizableColumns : true,
         serverSide : true,
-        count,
-        rowsPerPage : pageSize,
         rowsPerPageOptions : [10, 20, 25],
         fixedHeader : true,
-        page,
         print : false,
         download : false,
         textLabels : {
@@ -122,13 +119,12 @@ function MesheryApplications() {
 
   return (
     <div>        
-     <UploadImport aria-label="URL upload button" configuration="Application"  />      
+       
          <MUIDataTable
     title={<div>Applications</div>}
-    data={applications}
-    columns={columns}
-    // @ts-ignore
-    options={options}
+    // data={applications}
+    // columns={columns}
+    // options={options}
   /></div>
   )
 }
