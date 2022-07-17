@@ -100,6 +100,12 @@ func (maap *MesheryApplicationPersister) GetMesheryApplication(id uuid.UUID) ([]
 	return marshalMesheryApplication(&mesheryApplication), err
 }
 
+func (maap *MesheryApplicationPersister) GetMesheryApplicationSource(id uuid.UUID) ([]byte, error) {
+	var mesheryApplication MesheryApplication
+	err := maap.DB.First(&mesheryApplication, id).Error
+	return mesheryApplication.SourceContent, err
+}
+
 func marshalMesheryApplicationPage(maap *MesheryApplicationPage) []byte {
 	res, _ := json.Marshal(maap)
 

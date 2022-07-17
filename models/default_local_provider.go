@@ -728,6 +728,17 @@ func (l *DefaultLocalProvider) SaveMesheryApplication(tokenString string, applic
 	return l.MesheryApplicationPersister.SaveMesheryApplication(application)
 }
 
+// SaveApplicationSourceContent nothing needs to be done as application is saved with source content for local provider
+func (l *DefaultLocalProvider) SaveApplicationSourceContent(tokenString string, applicationID string, sourceContent []byte) (error) {
+	return nil
+}
+
+// GetApplicationSourceContent returns application source-content from provider
+func(l *DefaultLocalProvider) GetApplicationSourceContent(req *http.Request, applicationID string) ([]byte, error) {
+	id := uuid.FromStringOrNil(applicationID)
+	return l.MesheryApplicationPersister.GetMesheryApplicationSource(id)
+}
+
 // GetMesheryApplications gives the applications stored with the provider
 func (l *DefaultLocalProvider) GetMesheryApplications(req *http.Request, page, pageSize, search, order string) ([]byte, error) {
 	if page == "" {
@@ -760,58 +771,6 @@ func (l *DefaultLocalProvider) GetMesheryApplication(req *http.Request, applicat
 func (l *DefaultLocalProvider) DeleteMesheryApplication(req *http.Request, applicationID string) ([]byte, error) {
 	id := uuid.FromStringOrNil(applicationID)
 	return l.MesheryApplicationPersister.DeleteMesheryApplication(id)
-}
-
-// RemoteApplicationFile takes in the
-func (l *DefaultLocalProvider) RemoteApplicationFile(req *http.Request, resourceURL, path string, save bool) ([]byte, error) {
-	parsedURL, err := url.Parse(resourceURL)
-	if err != nil {
-		return nil, err
-	}
-
-	// Check if hostname is github
-	if parsedURL.Host == "github.com" {
-		parsedPath := strings.Split(parsedURL.Path, "/")
-		if parsedPath[3] == "tree" {
-			parsedPath = append(parsedPath[0:3], parsedPath[4:]...)
-		}
-		if len(parsedPath) < 3 {
-			return nil, fmt.Errorf("malformed URL: url should be of type github.com/<owner>/<repo>/[branch]")
-		}
-
-		owner := parsedPath[1]
-		repo := parsedPath[2]
-		branch := "master"
-
-		if len(parsedPath) == 4 {
-			branch = parsedPath[3]
-		}
-		if path == "" && len(parsedPath) > 4 {
-			path = strings.Join(parsedPath[4:], "/")
-		}
-
-		pfs, err := githubRepoApplicationScan(owner, repo, path, branch)
-		if err != nil {
-			return nil, err
-		}
-
-		if save {
-			return l.MesheryApplicationPersister.SaveMesheryApplications(pfs)
-		}
-
-		return json.Marshal(pfs)
-	}
-
-	// Fallback to generic HTTP import
-	pfs, err := genericHTTPApplicationFile(resourceURL)
-	if err != nil {
-		return nil, err
-	}
-	if save {
-		return l.MesheryApplicationPersister.SaveMesheryApplications(pfs)
-	}
-
-	return json.Marshal(pfs)
 }
 
 // SavePerformanceProfile saves given performance profile with the provider
@@ -1137,46 +1096,6 @@ func githubRepoFilterScan(
 	return result, err
 }
 
-func githubRepoApplicationScan(
-	owner,
-	repo,
-	path,
-	branch string,
-) ([]MesheryApplication, error) {
-	var mu sync.Mutex
-	ghWalker := walker.NewGit()
-	result := make([]MesheryApplication, 0)
-
-	err := ghWalker.
-		Owner(owner).
-		Repo(repo).
-		Branch(branch).
-		Root(path).
-		RegisterFileInterceptor(func(f walker.File) error {
-			ext := filepath.Ext(f.Name)
-			if ext == ".yml" || ext == ".yaml" {
-				af := MesheryApplication{
-					Name:            strings.TrimSuffix(f.Name, ext),
-					ApplicationFile: string(f.Content),
-					Location: map[string]interface{}{
-						"type":   "github",
-						"host":   fmt.Sprintf("github.com/%s/%s", owner, repo),
-						"path":   f.Path,
-						"branch": branch,
-					},
-				}
-
-				mu.Lock()
-				result = append(result, af)
-				mu.Unlock()
-			}
-
-			return nil
-		}).
-		Walk()
-
-	return result, err
-}
 
 func genericHTTPPatternFile(fileURL string) ([]MesheryPattern, error) {
 	resp, err := http.Get(fileURL)
@@ -1248,37 +1167,6 @@ func genericHTTPFilterFile(fileURL string) ([]MesheryFilter, error) {
 	}
 
 	return []MesheryFilter{ff}, nil
-}
-
-func genericHTTPApplicationFile(fileURL string) ([]MesheryApplication, error) {
-	resp, err := http.Get(fileURL)
-	if err != nil {
-		return nil, err
-	}
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("file not found")
-	}
-
-	defer SafeClose(resp.Body)
-
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-	result := string(body)
-	url := strings.Split(fileURL, "/")
-	af := MesheryApplication{
-		Name:            url[len(url)-1],
-		ApplicationFile: result,
-		Location: map[string]interface{}{
-			"type":   "http",
-			"host":   fileURL,
-			"path":   "",
-			"branch": "",
-		},
-	}
-
-	return []MesheryApplication{af}, nil
 }
 
 // getSeededComponents reads the directory recursively looking for seed content

@@ -102,6 +102,8 @@ const (
 	ErrInvalidKubeContextCode   = "2176"
 	ErrInvalidKubeCon
 	ErrCreatingKubernetesComponentsCode = "2177"
+	ErrApplicationContentUpload  = "2241"
+	ErrRemoteApplicationURL = "2242"
 )
 
 var (
@@ -289,6 +291,9 @@ func ErrApplicationFailure(err error, obj string) error {
 	return errors.New(ErrApplicationFailureCode, errors.Alert, []string{"failed to ", obj, "the application"}, []string{err.Error()}, []string{}, []string{})
 }
 
+func ErrApplicationSourceContentUpload(err error, obj string) error {
+	return errors.New(ErrApplicationContentUpload, errors.Alert, []string{"failed to ", obj, "the application content"}, []string{err.Error()}, []string{}, []string{})
+}
 func ErrDecoding(err error, obj string) error {
 	return errors.New(ErrDecodingCode, errors.Alert, []string{"Error decoding the : ", obj}, []string{err.Error()}, []string{"Object is not a valid json object"}, []string{"Make sure if the object passed is a valid json"})
 }
@@ -434,4 +439,8 @@ func ErrParsePattern(err error) error {
 
 func ErrConvertPattern(err error) error {
 	return errors.New(ErrConvertPatternCode, errors.Alert, []string{"Error failed to convert PatternFile to Cytoscape object"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrRemoteApplication(err error) error {
+	return errors.New(ErrRemoteApplicationURL, errors.Alert, []string{"Error failed to persist remote application"}, []string{err.Error()}, []string{}, []string{})
 }
