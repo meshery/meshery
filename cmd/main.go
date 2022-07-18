@@ -44,19 +44,19 @@ func main() {
 	if globalTokenForAnonymousResults != "" {
 		models.GlobalTokenForAnonymousResults = globalTokenForAnonymousResults
 	}
-
-	instanceID, err := uuid.NewV4()
-	if err != nil {
-		logrus.Error(err)
-		os.Exit(1)
-	}
-
+	
 	// Initialize Logger instance
 	log, err := logger.New("meshery", logger.Options{
 		Format: logger.SyslogLogFormat,
 	})
 	if err != nil {
 		logrus.Error(err)
+		os.Exit(1)
+	}
+
+	instanceID, err := uuid.NewV4()
+	if err != nil {
+		log.Error(ErrCreatingUUIDInstance(err))
 		os.Exit(1)
 	}
 

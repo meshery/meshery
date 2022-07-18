@@ -3,6 +3,7 @@ package main
 import "github.com/layer5io/meshkit/errors"
 
 const (
+	ErrCreatingUUIDInstanceCode                   = "2251"
 	ErrRegisteringMesheryOAMTraitsCode            = "2241"
 	ErrRegisteringMesheryOAMWorkloadsCode         = "2242"
 	ErrRetrievingUserHomeDirectoryCode            = "2243"
@@ -14,6 +15,10 @@ const (
 	ErrCleaningUpLocalProviderCode                = "2249"
 	ErrClosingDatabaseInstanceCode                = "2250"
 )
+
+func ErrCreatingUUIDInstance(err error) error {
+	return errors.New(ErrCreatingUUIDInstanceCode, errors.Fatal, []string{"Unable to create UUID instance"}, []string{"Unable to create UUID instance: ", err.Error()}, []string{}, []string{})
+}
 
 func ErrRegisteringMesheryOAMTraits(err error) error {
 	return errors.New(ErrRegisteringMesheryOAMTraitsCode, errors.Alert, []string{"Error registering local OAM traits"}, []string{"Error registering local OAM traits: ", err.Error()}, []string{}, []string{})
