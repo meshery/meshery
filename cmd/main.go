@@ -44,7 +44,7 @@ func main() {
 	if globalTokenForAnonymousResults != "" {
 		models.GlobalTokenForAnonymousResults = globalTokenForAnonymousResults
 	}
-	
+
 	// Initialize Logger instance
 	log, err := logger.New("meshery", logger.Options{
 		Format: logger.SyslogLogFormat,
