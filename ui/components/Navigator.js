@@ -81,7 +81,7 @@ const styles = (theme) => ({
 
   itemActionable : { "&:hover" : { backgroundColor : "rgb(0, 187, 166, 0.5)", }, },
   itemActiveItem : { color : "#4fc3f7",
-    fill : "#4fc3f7" },
+    fill : "#4fc3f7",backgroundColor : "rgb(0, 187, 166, 0.5)" },
   itemPrimary : { color : "inherit",
     fontSize : theme.typography.fontSize,
     "&$textDense" : { fontSize : theme.typography.fontSize, },
