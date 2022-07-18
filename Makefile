@@ -84,7 +84,7 @@ run-fast:
 
 ## Build and run Meshery Server on your local machine (requires go${GOVERSION}).
 server:
-	cd cmd; go$(GOVERSION) mod tidy; \
+	cd server; cd cmd; go$(GOVERSION) mod tidy; \
 	BUILD="$(GIT_VERSION)" \
 	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
 	PORT=9081 \
@@ -95,7 +95,7 @@ server:
 
 ## Build and run Meshery Server with no Kubernetes components on your local machine (requires go${GOVERSION}).
 server-skip-compgen:
-	cd cmd; go$(GOVERSION) mod tidy; \
+	cd server; cd cmd; go$(GOVERSION) mod tidy; \
 	BUILD="$(GIT_VERSION)" \
 	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
 	PORT=9081 \
@@ -107,7 +107,7 @@ server-skip-compgen:
 		
 ## Build and run Meshery Server with no seed content (requires go$(GOVERSION)).
 server-no-content:
-	cd cmd; go$(GOVERSION) mod tidy; \
+	cd server; cd cmd; go$(GOVERSION) mod tidy; \
 	BUILD="$(GIT_VERSION)" \
 	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
 	PORT=9081 \

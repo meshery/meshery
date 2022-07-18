@@ -19,7 +19,7 @@ GIT_VERSION	= $(shell git describe --tags `git rev-list --tags --max-count=1`)
 GIT_COMMITSHA = $(shell git rev-list -1 HEAD)
 GIT_STRIPPED_VERSION=$(shell git describe --tags `git rev-list --tags --max-count=1` | cut -c 2-)
 
-GOVERSION = 1.17.8
+# GOVERSION = 1.17.8
 GOPATH = $(shell go env GOPATH)
 GOBIN  = $(GOPATH)/bin
 
@@ -42,7 +42,7 @@ MESHERY_CLOUD_STAGING="https://staging-meshery.layer5.io"
 # Server
 #-----------------------------------------------------------------------------
 MESHERY_K8S_SKIP_COMP_GEN ?= TRUE
-APPLICATIONCONFIGPATH="../install/apps.json"
+APPLICATIONCONFIGPATH="../../install/apps.json"
 
 #-----------------------------------------------------------------------------
 # Build

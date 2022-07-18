@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/layer5io/meshery/internal/graphql/model"
-	"github.com/layer5io/meshery/models"
+	"github.com/layer5io/meshery/server/models"
 )
 
 func (r *Resolver) getDataPlanes(ctx context.Context, provider models.Provider, filter *model.ServiceMeshFilter) ([]*model.DataPlane, error) {

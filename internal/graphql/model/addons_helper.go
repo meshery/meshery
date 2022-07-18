@@ -3,7 +3,7 @@ package model
 import (
 	"context"
 
-	"github.com/layer5io/meshery/models"
+	"github.com/layer5io/meshery/server/models"
 	"gorm.io/gorm"
 
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"

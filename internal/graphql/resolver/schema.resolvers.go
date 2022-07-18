@@ -10,7 +10,7 @@ import (
 
 	"github.com/layer5io/meshery/internal/graphql/generated"
 	"github.com/layer5io/meshery/internal/graphql/model"
-	"github.com/layer5io/meshery/models"
+	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/broker"
 	"github.com/layer5io/meshkit/models/controllers"
 )

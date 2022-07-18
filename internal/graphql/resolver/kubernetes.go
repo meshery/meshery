@@ -6,8 +6,8 @@ import (
 	"strings"
 
 	"github.com/layer5io/meshery/internal/graphql/model"
-	"github.com/layer5io/meshery/models"
-	"github.com/layer5io/meshery/models/pattern/core"
+	"github.com/layer5io/meshery/server/models"
+	"github.com/layer5io/meshery/server/models/pattern/core"
 	meshkitKube "github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/layer5io/meshkit/utils/kubernetes/describe"
 )
