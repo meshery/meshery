@@ -119,13 +119,15 @@ function MesheryApplications({user}) {
 
   return (
     <div>        
-       
+       <UploadImport configuration="Applications" />
          <MUIDataTable
     title={<div>Applications</div>}
-    // data={applications}
-    // columns={columns}
-    // options={options}
-  /></div>
+    data={applications}
+    columns={columns}
+    options={options}
+  />
+  
+  </div>
   )
 }
 

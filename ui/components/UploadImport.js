@@ -1,9 +1,12 @@
 import React, {useState} from 'react'
-import {TextField, Button, Grid,} from "@mui/material";
+import {TextField, Button, Grid,   Dialog, DialogActions,
+  DialogContent,
+  DialogTitle} from "@mui/material";
+  import { useTheme } from "@mui/system";
 import LinkIcon from '@mui/icons-material/Link';
-import CustomDialog from "@/components/Dialog"
 
 function UploadImport({configuration}) {
+  const theme = useTheme();
   const [open, setOpen] = useState(false);
 
   const handleOpenModal = () => setOpen(true);
@@ -14,28 +17,17 @@ function UploadImport({configuration}) {
     <Button aria-label="URL-Upload" data-cy="import-button" variant="contained"
           color="primary"
           size="large"
-          onClick={handleOpenModal} >
+          onClick={handleOpenModal} sx={{marginBottom: theme.spacing(2) }} >
           <LinkIcon style={{ paddingRight : ".35rem" }} />
           Import {configuration}
         </Button>
-      <CustomDialog 
-        open={open} handleClose={handleCloseModal}
-        // handleClose={handleClose}
-      Title="qwe"
-      Content={
+      <Dialog 
+        open={open} handleClose={handleCloseModal} >
+
+     <DialogTitle> Import {configuration} </DialogTitle>
+     <DialogContent>
         <>
-      <h1>HI</h1>
-      </>
-      }
-      />  
-     </>   
-  )
-}
-
-export default UploadImport
-
-
- {/* <Grid container spacing={24}>
+       <Grid container sx={{paddingTop: theme.spacing(2)}} >
         <Grid item xs={3}>
           <h4 > FROM URL </h4>
         </Grid>
@@ -48,7 +40,7 @@ export default UploadImport
         </Grid>
       </Grid>
       <hr />
-      <Grid container spacing={24}>
+      <Grid container spacing={2}>
         <Grid item xs={3}>
           <h4> UPLOAD FILE </h4>
         </Grid>
@@ -67,4 +59,22 @@ export default UploadImport
             </Button>
           </label>
         </Grid>
-      </Grid> */}
+      </Grid>
+      </>
+      </DialogContent>
+      <DialogActions>
+              <label htmlFor="cancel">
+                <Button variant="outlined" size="large" color="secondary" onClick={handleCloseModal}>Cancel</Button>
+              </label>
+              <label htmlFor="URL">  <Button size="large" id="URL" variant="contained" color="primary" > Import</Button> </label>
+
+            </DialogActions>
+       </Dialog>
+     </>   
+  )
+}
+
+export default UploadImport
+
+
+ {/* */}
