@@ -18,7 +18,6 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import dataFetch from "../lib/data-fetch";
 import { updateProgress } from "../lib/store";
-import { trueRandom } from "../lib/trueRandom";
 import FILE_OPS from "../utils/configurationFileHandlersEnum";
 import { ctxUrl } from "../utils/multi-ctx";
 import { getComponentsinFile, randomPatternNameGenerator as getRandomName } from "../utils/utils";
@@ -199,6 +198,10 @@ const ACTION_TYPES = {
     name : "UPLOAD_APPLICATION",
     error_msg : "Failed to upload application file"
   },
+  DOWNLOAD_APP : {
+    name : "DOWNLOAD_APP",
+    error_msg : "Failed to download application file"
+  }
 };
 
 function resetSelectedApplication() {
@@ -218,6 +221,7 @@ function MesheryApplications({
   const [selectedRowData, setSelectedRowData] = useState(null);
   const [selectedApplication, setSelectedApplication] = useState(resetSelectedApplication());
   const DEPLOY_URL = '/api/application/deploy';
+  // const [type, setType] = useState("");
   const [modalOpen, setModalOpen] = useState({
     open : false,
     deploy : false,
@@ -355,6 +359,23 @@ function MesheryApplications({
     );
   };
 
+  const handleAppDownload = (id) => {
+    updateProgress({ showProgress : true })
+    dataFetch(
+        `/api/application/download/${id}?source-type=k8s_manifest`,
+        {
+          credentials : "include",
+          method : "GET",
+        },
+        () => {
+          console.log("ApplicationFile API", `/api/application/download/${id}?source-type=k8s_manifest`);
+          updateProgress({ showProgress : false });
+          fetchApplications(page, pageSize, search, sortOrder);
+        },
+        handleError(ACTION_TYPES.DOWNLOAD_APP)
+    );
+  };
+
   function fetchApplications(page, pageSize, search, sortOrder) {
     if (!search) search = "";
     if (!sortOrder) sortOrder = "";
@@ -369,6 +390,7 @@ function MesheryApplications({
       `/api/application${query}`,
       { credentials : "include", },
       (result) => {
+        console.log(result);
         console.log("ApplicationFile API", `/api/application${query}`);
         updateProgress({ showProgress : false });
         if (result) {
@@ -376,8 +398,9 @@ function MesheryApplications({
           setPage(result.page || 0);
           setPageSize(result.page_size || 0);
           setCount(result.total_count || 0);
+          // setType()
         }
-      },
+      },// TODO map types
       // handleError
       handleError(ACTION_TYPES.FETCH_APPLICATIONS)
     );
@@ -429,14 +452,14 @@ function MesheryApplications({
 
     if (type === FILE_OPS.UPDATE) {
       dataFetch(
-        `/api/application`,
+        `/api/application?source-type=k8s_manifest`,
         {
           credentials : "include",
           method : "POST",
           body : JSON.stringify({ application_data : { id, name, application_file : data }, save : true }),
         },
         () => {
-          console.log("ApplicationFile API", `/api/application`);
+          console.log("ApplicationFile API", `/api/application?source-type=k8s_manifest`);
           updateProgress({ showProgress : false });
           fetchApplications(page, pageSize, search, sortOrder);
         },
@@ -448,7 +471,6 @@ function MesheryApplications({
     if (type === FILE_OPS.FILE_UPLOAD || type === FILE_OPS.URL_UPLOAD) {
       let body = { save : true }
       if (type === FILE_OPS.FILE_UPLOAD) {
-        console.log({ data, id, name, type })
         body = JSON.stringify({
           ...body, application_data : { name : name || getRandomName(), application_file : data }
         })
@@ -457,18 +479,17 @@ function MesheryApplications({
         body = JSON.stringify({ ...body, url : data })
       }
       dataFetch(
-        `/api/application`,
+        `/api/application?source-type=k8s_manifest`,
         {
           credentials : "include",
           method : "POST",
-          body
+          body,
         },
         () => {
-          console.log("ApplicationFile API", `/api/application`);
+          console.log("ApplicationFile API", `/api/application?source-type=k8s_manifest`);
           updateProgress({ showProgress : false });
           fetchApplications(page, pageSize, search, sortOrder);
         },
-        // handleError
         handleError(ACTION_TYPES.UPLOAD_APPLICATION)
       );
     }
@@ -478,7 +499,6 @@ function MesheryApplications({
     if (!ev.target.files?.length) return;
 
     const file = ev.target.files[0];
-
     // Create a reader
     const reader = new FileReader();
     reader.addEventListener("load", (event) => {
@@ -555,6 +575,41 @@ function MesheryApplications({
         },
         customBodyRender : function CustomBody(value) {
           return <Moment format="LLLL">{value}</Moment>;
+        },
+      },
+    },
+    {
+      name : "source-type",
+      label : "Source Type",
+      options : {
+        filter : false,
+        sort : false,
+        searchable : false,
+        customHeadRender : function CustomHead({ index, ...column }) {
+          return (
+            <TableCell key={index}>
+              <b>{column.label}</b>
+            </TableCell>
+          );
+        },
+        customBodyRender : function CustomBody(_, tableMeta) {
+          const rowData = applications[tableMeta.rowIndex];
+          console.log(rowData);
+          return (
+            <div>
+              <IconButton
+                title="click to download"
+                onClick={() => handleAppDownload(rowData.id ,rowData.type, false)}
+              >
+                <img src="/static/img/kubernetes.svg" width="45px" height="45px" />
+              </IconButton>
+              {/* {name?
+            <img src="/static/img/kubernetes.svg" width="45px" height="45px" />
+            : <img src="/static/img/Helm.svg" width="45px" height="45px" />
+            } */}
+            </div>
+
+          );
         },
       },
     },

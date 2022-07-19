@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import LinkIcon from '@material-ui/icons/Link';
-import { TextField, Button, Grid } from '@material-ui/core';
+import { TextField, Button, Grid, NativeSelect } from '@material-ui/core';
 import { makeStyles, MuiThemeProvider } from '@material-ui/core/styles';
 import { createTheme } from '@material-ui/core/styles';
 import { URLValidator } from '../utils/URLValidator';
@@ -58,7 +58,13 @@ const UploadImport = ({ handleUpload, handleImport, configuration }) => {
   const [open, setOpen] = React.useState(false);
   const [input, setInput] = React.useState();
   const [isError, setIsError] = React.useState(false);
+  const [fileType, setFileType] = React.useState("");
 
+
+  const handleFilteType = (file_type) => {
+    console.log("Check import fileteype", file_type)
+    setFileType(file_type);
+  }
 
   useEffect(() => {
     if (input) {
@@ -83,6 +89,13 @@ const UploadImport = ({ handleUpload, handleImport, configuration }) => {
     handleImport(input)
     handleClose()
   }
+
+  const filetype = [
+    ".yaml",
+    ".yml",
+    ".tar.gz",
+    ".zip"
+  ]
 
   return (
     <>
@@ -122,11 +135,41 @@ const UploadImport = ({ handleUpload, handleImport, configuration }) => {
               <Grid container spacing={24}>
                 <Grid item xs={3}>
                   <h4 className={classes.heading}> UPLOAD FILE </h4>
+                  <NativeSelect
+                    defaultValue={0}
+                    onChange={(e) => handleFilteType(filetype[e.target.value])}
+                    inputProps={{
+                      name : 'name',
+                      id : 'uncontrolled-native',
+                    }}
+                  >
+                    <option
+                      onClick={ () => {
+                        console.log("YAMLLLLLLLLL")
+                        handleFilteType(".yaml")
+                      }}
+                      value={0}>.yaml</option>
+                    <option
+                      onClick={ () => {
+                        handleFilteType(".yml")
+                      }}
+                      value={1}>.yml</option>
+                    <option
+                      onClick={ () => {
+                        handleFilteType(".tar.gz")
+                      }}
+                      value={2}>.tar.gz</option>
+                    <option
+                      onClick={ () => {
+                        handleFilteType(".zip")
+                      }}
+                      value={3}>.zip</option>
+                  </NativeSelect>
                 </Grid>
                 <Grid item xs={6}>
                   <TextField
                     variant="outlined"
-                    label="Filename"
+                    label={`Filename ${""}`}
                     style={{ width : "100%" }}
                   />
                 </Grid>
@@ -134,7 +177,7 @@ const UploadImport = ({ handleUpload, handleImport, configuration }) => {
                   <label htmlFor="upload-button" className={classes.upload}>
 
                     <Button variant="contained" size="large" color="primary" aria-label="Upload Button" component="span" >
-                      <input id="upload-button" type="file" accept=".yaml, .yml" hidden onChange={handleUploader} name="upload-button" data-cy="file-upload-button" />
+                      <input id="upload-button" type="file" accept={fileType} hidden onChange={handleUploader} name="upload-button" data-cy="file-upload-button" />
                       Browse
                     </Button>
                   </label>
