@@ -65,7 +65,7 @@ display-title: "false"
     <a href="{{ site.baseurl }}/functionality">
         <div class="overview">Functionality</div>
     </a>
-    <h6><a href="{{ site.baseurl }}/functionality" class="text-black section-title">Service Mesh Management</a></h6>
+    <h6><a href="{{ site.baseurl }}/functionality" class="text-black section-title">Cloud Native Management</a></h6>
     <ul>
       {% for item in sorted_pages %}
       {% if item.type=="functionality" and item.list!="exclude" and item.language !="es" -%}
