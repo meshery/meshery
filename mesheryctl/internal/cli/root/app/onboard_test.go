@@ -49,6 +49,11 @@ func TestOnboardCmd(t *testing.T) {
 				},
 				{
 					Method:       "POST",
+					URL:          testContext.BaseURL + "/api/application/pattern",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "POST",
 					URL:          testContext.BaseURL + "/api/application/deploy",
 					Response:     "onboard.applicationdeploy.response.golden",
 					ResponseCode: 200,

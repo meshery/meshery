@@ -42,6 +42,11 @@ func TestOffboardCmd(t *testing.T) {
 			ExpectedResponse: "offboard.output.golden",
 			URLs: []utils.MockURL{
 				{
+					Method:       "POST",
+					URL:          testContext.BaseURL + "/api/application/pattern",
+					ResponseCode: 200,
+				},
+				{
 					Method:       "DELETE",
 					URL:          testContext.BaseURL + "/api/application/deploy",
 					Response:     "offboard.response.golden",
