@@ -145,7 +145,6 @@ const UploadImport = ({ handleUpload, handleImport, configuration }) => {
                   >
                     <option
                       onClick={ () => {
-                        console.log("YAMLLLLLLLLL")
                         handleFilteType(".yaml")
                       }}
                       value={0}>.yaml</option>
