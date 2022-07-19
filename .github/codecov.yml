@@ -36,7 +36,7 @@ flags:
     # Accepts only glob patterns, not regex
       - "*/cmd/**"
       - "*/handlers/**"
-      - "*/server/helpers/**"
+      - "*/helpers/**"
       - "*/internal/**"
       - "*/mesheryctl/**" 
       - "*/meshes/**"
