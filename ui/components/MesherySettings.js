@@ -293,9 +293,9 @@ class MesherySettings extends React.Component {
       let responseOfResetDatabase = await this.systemResetRef.current.show({
         title : "Reset Meshery Database?",
         subtitle : "Are you sure to reset all the data of Meshery?",
-        options : ["PROCEED", "CANCEL"]
+        options : ["RESET", "CANCEL"]
       });
-      if (responseOfResetDatabase === "PROCEED") {
+      if (responseOfResetDatabase === "RESET") {
         this.props.updateProgress({ showProgress : true });
         const self = this;
         resetDatabase({
