@@ -122,7 +122,11 @@ const styles = (theme) => ({
   },
   Chip : {
     backgroundColor : "white",
-    cursor : "pointer"
+    flexGrow : 1,
+    cursor : "pointer",
+    "& .MuiChip-label" : {
+      flexGrow : 1
+    }
   },
   cMenuContainer : {
     backgroundColor : "revert",
