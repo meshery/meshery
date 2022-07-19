@@ -1,7 +1,6 @@
 // @ts-check
 import { AppBar, Button, makeStyles, Tab, Tabs, Typography } from "@material-ui/core";
 import React from "react";
-import { pSBCr } from "../../utils/lightenOrDarkenColor";
 import { getMeshProperties } from "../../utils/nameMapper";
 import PatternServiceFormCore from "./PatternServiceFormCore";
 import SettingsIcon from '@material-ui/icons/Settings';
@@ -9,9 +8,9 @@ import SettingsIcon from '@material-ui/icons/Settings';
 const useStyles = makeStyles(() => ({
   appBar : {
     // @ts-ignore
-    boxShadow : ({ color }) =>  `0px 2px 4px -1px ${pSBCr(color, -30)}`,
+    boxShadow : `0px 2px 4px -1px "#677E88"`,
     // @ts-ignore
-    background : ({ color }) => `linear-gradient(115deg, ${pSBCr( color, -30)} 0%, ${color} 100%)`,
+    background : "#677E88",
     position : "sticky",
     zIndex : 'auto',
   },
