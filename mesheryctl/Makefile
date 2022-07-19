@@ -40,4 +40,4 @@ clean:
 
 .PHONY: error
 error:
-	go run github.com/layer5io/meshkit/cmd/errorutil -d . analyze -i ./server/helpers -o ./server/helpers
+	go run github.com/layer5io/meshkit/cmd/errorutil -d . analyze -i ./helpers -o ./helpers
