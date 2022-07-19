@@ -76,7 +76,7 @@ RUN apk update && apk add ca-certificates; update-ca-certificates && rm -rf /var
 RUN update-ca-certificates
 RUN apk upgrade --no-cache && \
     apk add --no-cache libstdc++
-COPY ./oam /app/oam
+COPY ./server/oam /app/oam
 COPY --from=meshery-server /meshery /app/cmd/
 COPY --from=meshery-server /etc/passwd /etc/passwd
 COPY --from=meshery-server /github.com/meshery/meshery/server/helpers/swagger.yaml /app/server/helpers/swagger.yaml

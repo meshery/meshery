@@ -339,7 +339,7 @@ func RegisterMesheryOAMTraits() error {
 	// rootPath is the relative path to the traits
 	// if the file is moved then this path MUST be changed
 	// accordingly
-	rootPath, _ := filepath.Abs("../oam/traits")
+	rootPath, _ := filepath.Abs("server/oam/traits")
 
 	return registerMesheryServerOAM(rootPath, []string{"meshmap"}, RegisterTrait)
 }
@@ -349,7 +349,7 @@ func RegisterMesheryOAMWorkloads() error {
 	// rootPath is the relative path to the workloads
 	// if the file is moved then this path MUST be changed
 	// accordingly
-	rootPath, _ := filepath.Abs("../oam/workloads")
+	rootPath, _ := filepath.Abs("server/oam/workloads")
 
 	return registerMesheryServerOAM(rootPath, []string{"application"}, RegisterWorkload)
 }
