@@ -26,7 +26,7 @@ function GetChild(children, key) {
 }
 
 function FlipCard({
-  classes, duration = 500, onClick, children
+  classes, duration = 500, onClick,onShow, children
 }) {
   const [flipped, setFlipped] = useState(false);
   const [activeBack, setActiveBack] = useState(false);
@@ -50,7 +50,7 @@ function FlipCard({
 
     timeout.current = setTimeout(() => {
       setActiveBack(flipped);
-    }, duration / 6);
+    }, duration/6);
   }, [flipped]);
 
   return (
@@ -59,6 +59,7 @@ function FlipCard({
       onClick={() => {
         setFlipped((flipped) => !flipped);
         onClick();
+        onShow && onShow();
       }}
     >
       <div

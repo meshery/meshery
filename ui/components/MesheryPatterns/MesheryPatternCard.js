@@ -38,10 +38,13 @@ function MesheryPatternCard({
   }
   const [gridProps, setGridProps] = useState(INITIAL_GRID_SIZE);
   const [fullScreen, setFullScreen] = useState(false);
+  const [showCode,setShowCode]=useState(false);
+
 
   const toggleFullScreen = () => {
     setFullScreen(!fullScreen);
   };
+
 
   const classes = useStyles()
 
@@ -65,6 +68,7 @@ function MesheryPatternCard({
           setGridProps(INITIAL_GRID_SIZE)
         }}
         duration={600}
+        onShow={() => setTimeout(() => setShowCode(p => !p),500)}
       >
         {/* FRONT PART */}
         <>
@@ -157,13 +161,14 @@ function MesheryPatternCard({
               <Divider variant="fullWidth" light />
 
               <CodeMirror
-                value={pattern_file}
+                value={showCode && pattern_file}
                 className={fullScreen ? classes.fullScreenCodeMirror : ""}
                 options={{
                   theme : "material",
                   lineNumbers : true,
                   lineWrapping : true,
                   gutters : ["CodeMirror-lint-markers"],
+                  // @ts-ignore
                   lint : true,
                   mode : "text/x-yaml",
                 }}
