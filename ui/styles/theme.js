@@ -28,6 +28,9 @@ const theme = createTheme(
       MuiButton: {
         root: { textTransform: "none" },
         contained: { boxShadow: "none", "&:active": { boxShadow: "none" } },
+        unDeploy: {background: "#B32700" , boxShadow: "none",color : "#ffffff",    "&:hover" : {
+          backgroundColor : "#8f1f00"
+        }, "&:active": { boxShadow: "none" } },
       },
       MuiToggleButton: { label: { textTransform: "initial", color: "#607d8b" } },
       MuiTabs: {
