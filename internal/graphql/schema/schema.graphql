@@ -7,6 +7,7 @@
 scalar Map
 scalar Time
 scalar Any
+scalar Byte
 
 # Service Mesh Types
 enum MeshType {
@@ -268,6 +269,54 @@ type NameSpace {
   namespace: String!
 }
 
+# ================= Configuration ===================
+
+type ConfigurationPage {
+  applications: ApplicationPage
+  patterns: PatternPageResult
+  filters: FilterPage
+}
+
+# ================= Applications ====================
+
+type ApplicationPage {
+  page: Int!
+  page_size: Int!
+  total_count: Int!
+  applications: [ApplicationResult]
+}
+
+type ApplicationResult {
+  id: ID!
+  name: String!
+  application_file: String!
+  type: String!
+  source_content: Byte!
+  user_id: String!
+  location: Location!
+  created_at: String
+  updated_at: String
+}
+
+# ================= Filters =======================
+
+type FilterPage {
+  page: Int!
+  page_size: Int!
+  total_count: Int!
+  filters: [FilterResult]
+}
+
+type FilterResult {
+  id: ID!
+  name: String!
+  filter_file: String!
+  user_id: String!
+  location: Location!
+  created_at: String
+  updated_at: String
+}
+
 # ============== Patterns =================================
 
 type PatternPageResult {
@@ -282,7 +331,7 @@ type PatternResult {
   id: ID!
   name: String!
   user_id: String!
-  location: PatternLocation!
+  location: Location!
   pattern_file: String!
   canSupport: Boolean!
   errmsg: String
@@ -290,7 +339,7 @@ type PatternResult {
   updated_at: String
 }
 
-type PatternLocation {
+type Location {
   branch: String
   host: String
   path: String
@@ -507,6 +556,8 @@ type Subscription {
   subscribeMeshSyncEvents(
     k8scontextIDs: [String!]
   ) : MeshSyncEvent!
+  subscribeConfiguration(selector: PageFilter!) : ConfigurationPage!
+
 }
 
 type OAMCapability {

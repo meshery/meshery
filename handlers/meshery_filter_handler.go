@@ -135,6 +135,7 @@ func (h *Handler) handleFilterPOST(
 				return
 			}
 
+			h.config.FiltersChannel <- struct{}{}
 			formatFilterOutput(rw, resp, format)
 			return
 		}
@@ -173,8 +174,9 @@ func (h *Handler) GetMesheryFiltersHandler(
 	provider models.Provider,
 ) {
 	q := r.URL.Query()
+	tokenString := r.Context().Value(models.TokenCtxKey).(string)
 
-	resp, err := provider.GetMesheryFilters(r, q.Get("page"), q.Get("page_size"), q.Get("search"), q.Get("order"))
+	resp, err := provider.GetMesheryFilters(tokenString, q.Get("page"), q.Get("page_size"), q.Get("search"), q.Get("order"))
 	if err != nil {
 		h.log.Error(ErrFetchFilter(err))
 		http.Error(rw, ErrFetchFilter(err).Error(), http.StatusInternalServerError)
@@ -209,6 +211,7 @@ func (h *Handler) DeleteMesheryFilterHandler(
 		return
 	}
 
+	h.config.FiltersChannel <- struct{}{}
 	rw.Header().Set("Content-Type", "application/json")
 	fmt.Fprint(rw, string(resp))
 }

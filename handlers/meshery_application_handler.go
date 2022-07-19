@@ -146,6 +146,7 @@ func (h *Handler) handleApplicationPOST(
 				return
 			}
 
+			h.config.ApplicationsChannel <- struct{}{}
 			h.formatApplicationOutput(rw, resp, format)
 			return
 		}
@@ -219,6 +220,7 @@ func (h *Handler) handleApplicationPOST(
 				return
 			}
 
+			h.config.ApplicationsChannel <- struct{}{}
 			h.formatApplicationOutput(rw, resp, format)
 			return
 		}
@@ -257,6 +259,7 @@ func (h *Handler) handleApplicationPOST(
 				return
 			}
 
+			h.config.ApplicationsChannel <- struct{}{}
 			h.formatApplicationOutput(rw, resp, format)
 			return
 		}
@@ -281,8 +284,9 @@ func (h *Handler) GetMesheryApplicationsHandler(
 	provider models.Provider,
 ) {
 	q := r.URL.Query()
+	tokenString := r.Context().Value(models.TokenCtxKey).(string)
 
-	resp, err := provider.GetMesheryApplications(r, q.Get("page"), q.Get("page_size"), q.Get("search"), q.Get("order"))
+	resp, err := provider.GetMesheryApplications(tokenString, q.Get("page"), q.Get("page_size"), q.Get("search"), q.Get("order"))
 	if err != nil {
 		obj := "fetch"
 		h.log.Error(ErrApplicationFailure(err, obj))
@@ -319,6 +323,7 @@ func (h *Handler) DeleteMesheryApplicationHandler(
 		return
 	}
 
+	h.config.ApplicationsChannel <- struct{}{}
 	rw.Header().Set("Content-Type", "application/json")
 	fmt.Fprint(rw, string(resp))
 }
