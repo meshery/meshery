@@ -168,7 +168,7 @@ const UploadImport = ({ handleUpload, handleImport, configuration }) => {
                 <Grid item xs={6}>
                   <TextField
                     variant="outlined"
-                    label={`Filename ${""}`}
+                    label={`Filename${fileType}`}
                     style={{ width : "100%" }}
                   />
                 </Grid>
