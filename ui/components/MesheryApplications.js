@@ -28,6 +28,7 @@ import DoneAllIcon from '@material-ui/icons/DoneAll';
 import ConfirmationMsg from "./ConfirmationModal";
 import ViewSwitch from "./ViewSwitch";
 import ApplicationsGrid from "./MesheryApplications/ApplicationsGrid";
+import { fileDownloader } from "../utils/fileDownloader";
 
 const styles = (theme) => ({
   grid : { padding : theme.spacing(2), },
@@ -359,7 +360,7 @@ function MesheryApplications({
     );
   };
 
-  const handleAppDownload = (id) => {
+  const handleAppDownload = (id, name) => {
     updateProgress({ showProgress : true })
     dataFetch(
         `/api/application/download/${id}?source-type=k8s_manifest`,
@@ -368,6 +369,7 @@ function MesheryApplications({
           method : "GET",
         },
         () => {
+          fileDownloader(id, name);
           console.log("ApplicationFile API", `/api/application/download/${id}?source-type=k8s_manifest`);
           updateProgress({ showProgress : false });
           fetchApplications(page, pageSize, search, sortOrder);
