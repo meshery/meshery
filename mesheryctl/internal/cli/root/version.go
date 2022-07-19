@@ -21,7 +21,7 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/layer5io/meshery/handlers"
+	"github.com/layer5io/meshery/server/handlers"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"

@@ -134,7 +134,7 @@ proto-build:
 
 ## Analyze error codes
 error:
-	go run github.com/layer5io/meshkit/cmd/errorutil -d . analyze -i ./helpers -o ./helpers --skip-dirs mesheryctl
+	go run github.com/layer5io/meshkit/cmd/errorutil -d . analyze -i ./server/helpers -o ./server/helpers --skip-dirs mesheryctl
 
 #-----------------------------------------------------------------------------
 # Meshery UI Native Builds
@@ -246,11 +246,11 @@ helm-meshery-lint:
 .PHONY: swagger-build swagger swagger-docs-build graphql-docs graphql-build
 ## Build Meshery REST API specifications
 swagger-build:
-	swagger generate spec -o ./helpers/swagger.yaml --scan-models
+	swagger generate spec -o ./server/helpers/swagger.yaml --scan-models
 
 ## Generate and serve Meshery REST API specifications
 swagger: swagger-build
-	swagger serve ./helpers/swagger.yaml
+	swagger serve ./server/helpers/swagger.yaml
 
 ## Build Meshery REST API documentation
 swagger-docs-build:
