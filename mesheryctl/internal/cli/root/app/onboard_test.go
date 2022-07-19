@@ -43,12 +43,6 @@ func TestOnboardCmd(t *testing.T) {
 			URLs: []utils.MockURL{
 				{
 					Method:       "POST",
-					URL:          testContext.BaseURL + "/api/application",
-					Response:     "onboard.applicationSave.response.golden",
-					ResponseCode: 200,
-				},
-				{
-					Method:       "POST",
 					URL:          testContext.BaseURL + "/api/application/pattern",
 					ResponseCode: 200,
 				},
