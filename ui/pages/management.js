@@ -5,7 +5,7 @@ import { styled } from "@mui/material/styles";
 const {img} = "../../docs/assets/img/adapters/linkerd/linkerd-adapter.png" 
 import MesheryMetrics from "@/components/MesheryMetrics" 
 import ReactSelectWrapper from "@/components/ReactSelectWrapper"
-
+import CategoryCard from "@/components/CategoryCard";
 export default function Lifestyle() {
  
   const CustomChip = styled(Chip)(({ theme }) => ({
@@ -68,6 +68,9 @@ export default function Lifestyle() {
     <Grid item xs={12}>
     <MesheryMetrics />
     </Grid>
+    </Grid>
+    <Grid>
+      <CategoryCard />
     </Grid>
     </>
   );
