@@ -5,6 +5,7 @@ import { styled } from "@mui/material/styles";
 const {img} = "../../docs/assets/img/adapters/linkerd/linkerd-adapter.png" 
 import MesheryMetrics from "@/components/MesheryMetrics" 
 import ReactSelectWrapper from "@/components/ReactSelectWrapper"
+import CategoryCard from "@/components/CategoryCard";
 
 export default function Lifestyle() {
  
@@ -42,16 +43,27 @@ export default function Lifestyle() {
   
 
   function ManageServiceMesh () {
+    const sample=[0,1,2,3,4]
     return(
       <PaperWithTitle title="Manage Service Mesh" titleVariant="h6">
         <Grid container spacing={4}>
-    <Grid container item xs={12} alignItems="flex-start" justify="space-between" style={{ gap : '2rem', }} >
-     <CustomChip label="meshery-linkerd:10001" icon={<img src={img} />}  variant="outlined" />
-     <div style={{width: "80%"}}>
-     <ReactSelectWrapper  label="Namespace"  />
-     </div>
-     </Grid>
-      </Grid>
+          <Grid container item xs={12} alignItems="flex-start" justify="space-between" style={{ gap : '2rem', }} >
+          <CustomChip label="meshery-linkerd:10001" icon={<img src={img} />}  variant="outlined" />
+          <div style={{width: "80%"}}>
+          <ReactSelectWrapper  label="Namespace"  />
+          </div>
+          </Grid>
+          <Grid container spacing={1}>
+            <Grid container item xs={12} lg={12} spacing={2} style={{margin : "-8px 8px"}}>
+              {sample.map((item, index) => (
+                <Grid item lg={3} md={4} xs={12} key={index}>
+                  <CategoryCard cat={item}/>
+                </Grid>
+              ))}
+              
+            </Grid>
+          </Grid>
+        </Grid>
       </PaperWithTitle>
     
     )
