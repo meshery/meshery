@@ -94,7 +94,10 @@ const UploadImport = ({ handleUpload, handleImport, configuration }) => {
     ".yaml",
     ".yml",
     ".tar.gz",
-    ".zip"
+    ".zip",
+    ".yaml",
+    ".yaml",
+    ".tar.gz",
   ]
 
   return (
@@ -163,6 +166,21 @@ const UploadImport = ({ handleUpload, handleImport, configuration }) => {
                         handleFilteType(".zip")
                       }}
                       value={3}>.zip</option>
+                    <option
+                      onClick={ () => {
+                        handleFilteType(".yaml" || ".yml")
+                      }}
+                      value={4}>docker-compose</option>
+                    <option
+                      onClick={ () => {
+                        handleFilteType(".yaml") // currently all k8s_manifest are treated as yamls
+                      }}
+                      value={5}>k8s_manifest</option>
+                    <option
+                      onClick={ () => {
+                        handleFilteType(".tar.gz")
+                      }}
+                      value={6}>helm</option>
                   </NativeSelect>
                 </Grid>
                 <Grid item xs={6}>
