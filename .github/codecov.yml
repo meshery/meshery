@@ -34,12 +34,12 @@ flags:
   backend:
     paths:
     # Accepts only glob patterns, not regex
-      - "*/server/cmd/**"
-      - "*/server/handlers/**"
-      - "*/server/helpers/**"
+      - "*/cmd/**"
+      - "*/handlers/**"
+      - "*/helpers/**"
       - "*/internal/**"
       - "*/mesheryctl/**" 
-      - "*/server/meshes/**"
-      - "*/server/models/**"
-      - "*/server/router/**"
+      - "*/meshes/**"
+      - "*/models/**"
+      - "*/router/**"
     carryforward: true

@@ -675,7 +675,7 @@
 "url": "https://api.github.com/repos/meshery/meshery/git/trees/0551760b6f9c82da7e4f7b3589612fcd373a83f9"
 },
 {
-"path": "cmd/main.go",
+"path": "sever/cmd/main.go",
 "mode": "100644",
 "type": "blob",
 "sha": "a427c20316f7a236fe715619d85963add43b2171",
@@ -6400,7 +6400,7 @@
 "url": "https://api.github.com/repos/meshery/meshery/git/trees/b835c86e3e1b22db5931f40d174a99abd6bc1fa1"
 },
 {
-"path": "handlers/common_handlers.go",
+"path": "server/handlers/common_handlers.go",
 "mode": "100644",
 "type": "blob",
 "sha": "9e4187cad4892398db6169c2b3dd6002937a329b",
@@ -6408,7 +6408,7 @@
 "url": "https://api.github.com/repos/meshery/meshery/git/blobs/9e4187cad4892398db6169c2b3dd6002937a329b"
 },
 {
-"path": "handlers/doc.go",
+"path": "server/handlers/doc.go",
 "mode": "100644",
 "type": "blob",
 "sha": "cd251676f1230defa49ceda2961bb5bdf54084a2",
@@ -6416,7 +6416,7 @@
 "url": "https://api.github.com/repos/meshery/meshery/git/blobs/cd251676f1230defa49ceda2961bb5bdf54084a2"
 },
 {
-"path": "handlers/error.go",
+"path": "server/handlers/error.go",
 "mode": "100644",
 "type": "blob",
 "sha": "0431b3899e6504cc111f6f889368a2f816bf8665",
@@ -6424,7 +6424,7 @@
 "url": "https://api.github.com/repos/meshery/meshery/git/blobs/0431b3899e6504cc111f6f889368a2f816bf8665"
 },
 {
-"path": "handlers/events_streamer.go",
+"path": "server/handlers/events_streamer.go",
 "mode": "100644",
 "type": "blob",
 "sha": "36e60b97215cc7dfb981834236a11217b64a6c1e",
@@ -6432,7 +6432,7 @@
 "url": "https://api.github.com/repos/meshery/meshery/git/blobs/36e60b97215cc7dfb981834236a11217b64a6c1e"
 },
 {
-"path": "handlers/extensions.go",
+"path": "server/handlers/extensions.go",
 "mode": "100644",
 "type": "blob",
 "sha": "27a1ecc70e14f97457ef660cd439443b743f6a98",
@@ -6440,7 +6440,7 @@
 "url": "https://api.github.com/repos/meshery/meshery/git/blobs/27a1ecc70e14f97457ef660cd439443b743f6a98"
 },
 {
-"path": "handlers/fetch_results_handler.go",
+"path": "server/handlers/fetch_results_handler.go",
 "mode": "100644",
 "type": "blob",
 "sha": "a203eea396e21f26c29b404f3f4e648a796af1d9",
@@ -6448,7 +6448,7 @@
 "url": "https://api.github.com/repos/meshery/meshery/git/blobs/a203eea396e21f26c29b404f3f4e648a796af1d9"
 },
 {
-"path": "handlers/grafana_handlers.go",
+"path": "server/handlers/grafana_handlers.go",
 "mode": "100644",
 "type": "blob",
 "sha": "9c6fb4819aef4d26aab3482f9d27312bad54e504",
@@ -6456,7 +6456,7 @@
 "url": "https://api.github.com/repos/meshery/meshery/git/blobs/9c6fb4819aef4d26aab3482f9d27312bad54e504"
 },
 {
-"path": "handlers/handler_instance.go",
+"path": "server/handlers/handler_instance.go",
 "mode": "100644",
 "type": "blob",
 "sha": "6b0e2d381b8f94843e633f190519d533e50ba9c3",
@@ -6464,7 +6464,7 @@
 "url": "https://api.github.com/repos/meshery/meshery/git/blobs/6b0e2d381b8f94843e633f190519d533e50ba9c3"
 },
 {
-"path": "handlers/k8sconfig_handler.go",
+"path": "server/handlers/k8sconfig_handler.go",
 "mode": "100644",
 "type": "blob",
 "sha": "278595ec4e5f7a0f197f914bc9d7777a0981b68a",
@@ -6472,7 +6472,7 @@
 "url": "https://api.github.com/repos/meshery/meshery/git/blobs/278595ec4e5f7a0f197f914bc9d7777a0981b68a"
 },
 {
-"path": "handlers/load_test_handler.go",
+"path": "server/handlers/load_test_handler.go",
 "mode": "100644",
 "type": "blob",
 "sha": "48237e2cafe4848dd7cfef89b6ddd08f1edc5f6d",
@@ -6480,7 +6480,7 @@
 "url": "https://api.github.com/repos/meshery/meshery/git/blobs/48237e2cafe4848dd7cfef89b6ddd08f1edc5f6d"
 },
 {
-"path": "handlers/load_test_meshes_handler.go",
+"path": "server/handlers/load_test_meshes_handler.go",
 "mode": "100644",
 "type": "blob",
 "sha": "e5add6aefec36502cf3f9dcdf562de5bdda0e68d",
@@ -6488,7 +6488,7 @@
 "url": "https://api.github.com/repos/meshery/meshery/git/blobs/e5add6aefec36502cf3f9dcdf562de5bdda0e68d"
 },
 {
-"path": "handlers/load_test_preferences_handler.go",
+"path": "server/handlers/load_test_preferences_handler.go",
 "mode": "100644",
 "type": "blob",
 "sha": "ba0ed5612fd3fed4440ea50833fd9ef05b1a98c4",
@@ -6496,7 +6496,7 @@
 "url": "https://api.github.com/repos/meshery/meshery/git/blobs/ba0ed5612fd3fed4440ea50833fd9ef05b1a98c4"
 },
 {
-"path": "handlers/mesh_ops_handlers.go",
+"path": "server/handlers/mesh_ops_handlers.go",
 "mode": "100644",
 "type": "blob",
 "sha": "42e1dfa3ca19e55251b375328729345561b08186",
@@ -6504,7 +6504,7 @@
 "url": "https://api.github.com/repos/meshery/meshery/git/blobs/42e1dfa3ca19e55251b375328729345561b08186"
 },
 {
-"path": "handlers/meshery_application_handler.go",
+"path": "server/handlers/meshery_application_handler.go",
 "mode": "100644",
 "type": "blob",
 "sha": "e6305f745161d3165f7731d0d68fd0f827d557e4",
@@ -6512,7 +6512,7 @@
 "url": "https://api.github.com/repos/meshery/meshery/git/blobs/e6305f745161d3165f7731d0d68fd0f827d557e4"
 },
 {
-"path": "handlers/meshery_filter_handler.go",
+"path": "server/handlers/meshery_filter_handler.go",
 "mode": "100644",
 "type": "blob",
 "sha": "239a7652fea11a28745511700a59d34b285ebd97",
@@ -6520,7 +6520,7 @@
 "url": "https://api.github.com/repos/meshery/meshery/git/blobs/239a7652fea11a28745511700a59d34b285ebd97"
 },
 {
-"path": "handlers/meshery_pattern_handler.go",
+"path": "server/handlers/meshery_pattern_handler.go",
 "mode": "100644",
 "type": "blob",
 "sha": "0d3adbabe727546421130c3d2d8da1131c045f40",
@@ -6528,7 +6528,7 @@
 "url": "https://api.github.com/repos/meshery/meshery/git/blobs/0d3adbabe727546421130c3d2d8da1131c045f40"
 },
 {
-"path": "handlers/middlewares.go",
+"path": "server/handlers/middlewares.go",
 "mode": "100644",
 "type": "blob",
 "sha": "ba31f7e3ae4b19ffd51fc67908a6fffdf866295c",
@@ -6536,7 +6536,7 @@
 "url": "https://api.github.com/repos/meshery/meshery/git/blobs/ba31f7e3ae4b19ffd51fc67908a6fffdf866295c"
 },
 {
-"path": "handlers/oam_handler.go",
+"path": "server/handlers/oam_handler.go",
 "mode": "100644",
 "type": "blob",
 "sha": "8ddc8879fa100a1c4e35d7006b747a8e9728c920",
@@ -6544,7 +6544,7 @@
 "url": "https://api.github.com/repos/meshery/meshery/git/blobs/8ddc8879fa100a1c4e35d7006b747a8e9728c920"
 },
 {
-"path": "handlers/performance_profiles_handler.go",
+"path": "server/handlers/performance_profiles_handler.go",
 "mode": "100644",
 "type": "blob",
 "sha": "21c5b7a945c194ea911d487d245eca6296967366",
@@ -6552,7 +6552,7 @@
 "url": "https://api.github.com/repos/meshery/meshery/git/blobs/21c5b7a945c194ea911d487d245eca6296967366"
 },
 {
-"path": "handlers/prometheus_handlers.go",
+"path": "server/handlers/prometheus_handlers.go",
 "mode": "100644",
 "type": "blob",
 "sha": "7f640c076f4ca0c03efe8427b03fae275eec1b40",
@@ -6560,7 +6560,7 @@
 "url": "https://api.github.com/repos/meshery/meshery/git/blobs/7f640c076f4ca0c03efe8427b03fae275eec1b40"
 },
 {
-"path": "handlers/provider_handler.go",
+"path": "server/handlers/provider_handler.go",
 "mode": "100644",
 "type": "blob",
 "sha": "7d13450cfcc55017a6cc6b270fc998904df5378a",
@@ -6568,7 +6568,7 @@
 "url": "https://api.github.com/repos/meshery/meshery/git/blobs/7d13450cfcc55017a6cc6b270fc998904df5378a"
 },
 {
-"path": "handlers/remote_components_handler.go",
+"path": "server/handlers/remote_components_handler.go",
 "mode": "100644",
 "type": "blob",
 "sha": "7117d15c43835bde22899b82f90d2578e6188098",
@@ -6576,7 +6576,7 @@
 "url": "https://api.github.com/repos/meshery/meshery/git/blobs/7117d15c43835bde22899b82f90d2578e6188098"
 },
 {
-"path": "handlers/schedule_handlers.go",
+"path": "server/handlers/schedule_handlers.go",
 "mode": "100644",
 "type": "blob",
 "sha": "2fcdfe2fecc19a109850d3394f91c346594524f9",
@@ -6584,7 +6584,7 @@
 "url": "https://api.github.com/repos/meshery/meshery/git/blobs/2fcdfe2fecc19a109850d3394f91c346594524f9"
 },
 {
-"path": "handlers/server_spec_handler.go",
+"path": "server/handlers/server_spec_handler.go",
 "mode": "100644",
 "type": "blob",
 "sha": "177d53b1a984a77b3f736c9917a78cabd6881fa5",
@@ -6592,7 +6592,7 @@
 "url": "https://api.github.com/repos/meshery/meshery/git/blobs/177d53b1a984a77b3f736c9917a78cabd6881fa5"
 },
 {
-"path": "handlers/session_sync_handler.go",
+"path": "server/handlers/session_sync_handler.go",
 "mode": "100644",
 "type": "blob",
 "sha": "5d748f15650da6a6a9a103aa22caaa00d38e28be",
@@ -6600,7 +6600,7 @@
 "url": "https://api.github.com/repos/meshery/meshery/git/blobs/5d748f15650da6a6a9a103aa22caaa00d38e28be"
 },
 {
-"path": "handlers/ui_handler.go",
+"path": "server/handlers/ui_handler.go",
 "mode": "100644",
 "type": "blob",
 "sha": "8f9ee127e4f10c3c9bc2cc079780466e2dcd7489",
@@ -6608,7 +6608,7 @@
 "url": "https://api.github.com/repos/meshery/meshery/git/blobs/8f9ee127e4f10c3c9bc2cc079780466e2dcd7489"
 },
 {
-"path": "handlers/user_handler.go",
+"path": "server/handlers/user_handler.go",
 "mode": "100644",
 "type": "blob",
 "sha": "341d1a24686e394da7423c917cbc4a6aa6ce3e7a",
@@ -6616,7 +6616,7 @@
 "url": "https://api.github.com/repos/meshery/meshery/git/blobs/341d1a24686e394da7423c917cbc4a6aa6ce3e7a"
 },
 {
-"path": "handlers/vars.go",
+"path": "server/handlers/vars.go",
 "mode": "100644",
 "type": "blob",
 "sha": "920000df27cd62ab53c09fff79bd07a858cd5a5a",
@@ -6639,7 +6639,7 @@
 "url": "https://api.github.com/repos/meshery/meshery/git/blobs/0c2c369d5d2f869f0ea463ecc173543cebdbd111"
 },
 {
-"path": "server/server/helpers/component_info.json",
+"path": "server/helpers/component_info.json",
 "mode": "100644",
 "type": "blob",
 "sha": "584873d722a5ab2c5009b8bbf1745fde1a19ec8e",
@@ -10123,7 +10123,7 @@
 "url": "https://api.github.com/repos/meshery/meshery/git/blobs/748725c7d9f870bf5d65794b4267cdb1ba899dac"
 },
 {
-"path": "models/handlers.go",
+"path": "server/models/handlers.go",
 "mode": "100644",
 "type": "blob",
 "sha": "a266dc87f84d7a0b0757408536383a3962e4c0c4",
@@ -11186,7 +11186,7 @@
 "url": "https://api.github.com/repos/meshery/meshery/git/trees/6b2f51e94563c01f8d7dacf5134f1c5189a4e950"
 },
 {
-"path": "router/server.go",
+"path": "server/router/server.go",
 "mode": "100644",
 "type": "blob",
 "sha": "fd926952d1cd8ea73be02022b95c03291deaf90c",
