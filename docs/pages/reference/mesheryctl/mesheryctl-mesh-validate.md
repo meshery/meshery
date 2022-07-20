@@ -52,11 +52,16 @@ mesheryctl mesh validate --adapter [name of the adapter] --tokenPath [path to to
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "/home/admin-pc/.meshery/config.yaml")
   -v, --verbose         verbose output
 
 </div>
 </pre>
+
+## Screenshots
+
+Usage of mesheryctl mesh validate
+![mesh-validate-usage](../../../../docs/assets/img/mesheryctl/mesh-validate.png)
 
 ## See Also
 

@@ -75,11 +75,16 @@ mesheryctl mesh deploy --adapter meshery-linkerd --watch
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "/home/admin-pc/.meshery/config.yaml")
   -v, --verbose         verbose output
 
 </div>
 </pre>
+
+## Screenshots
+
+Usage of mesheryctl mesh deploy
+![mesh-deploy-usage](../../../../docs/assets/img/mesheryctl/deploy-mesh.png)
 
 ## See Also
 
