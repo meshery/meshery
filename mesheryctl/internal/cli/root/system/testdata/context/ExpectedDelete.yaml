@@ -4,7 +4,7 @@ contexts:
     token: Default
     platform: kubernetes
     components:
-    - meshery-istio
+      - meshery-istio
     channel: stable
     version: latest
   local2:
@@ -12,12 +12,12 @@ contexts:
     token: Default2
     platform: docker
     components:
-    - meshery-istio
+      - meshery-istio
     channel: stable
     version: latest
 current-context: local
 tokens:
-- location: auth.json
-  name: Default
-- location: auth.json
-  name: Default2
+  - location: auth.json
+    name: Default
+  - location: auth.json
+    name: Default2
