@@ -248,9 +248,9 @@ func (h *Handler) handleApplicationPOST(
 			LocalPath: parsedBody.Path,
 		})
 		if err != nil {
-			obj := "upload"
-			h.log.Error(ErrApplicationSourceContentUpload(err, obj))
-			http.Error(rw, ErrApplicationSourceContentUpload(err, obj).Error(), http.StatusInternalServerError)
+			obj := "import"
+			h.log.Error(ErrApplicationFailure(err, obj))
+			http.Error(rw, ErrApplicationFailure(err, obj).Error(), http.StatusInternalServerError)
 			return
 		}
 		result := string(resp)
