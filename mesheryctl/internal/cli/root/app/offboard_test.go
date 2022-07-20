@@ -43,7 +43,8 @@ func TestOffboardCmd(t *testing.T) {
 			URLs: []utils.MockURL{
 				{
 					Method:       "POST",
-					URL:          testContext.BaseURL + "/api/application/pattern",
+					URL:          testContext.BaseURL + "/api/pattern",
+					Response:     "apply.patternSave.response.golden",
 					ResponseCode: 200,
 				},
 				{
