@@ -71,6 +71,7 @@ func TestOnboardCmd(t *testing.T) {
 				{
 					Method:       "POST",
 					URL:          testContext.BaseURL + "/api/pattern",
+					Response:     "apply.patternSave.response.golden",
 					ResponseCode: 200,
 				},
 				{
