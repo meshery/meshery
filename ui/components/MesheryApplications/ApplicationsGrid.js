@@ -1,5 +1,5 @@
 //@ts-check
-import { Button, Grid, Paper, Typography } from "@material-ui/core";
+import { Grid, Paper, Typography } from "@material-ui/core";
 import { Pagination } from "@material-ui/lab";
 import React, { useState } from "react";
 import MesheryApplicationCard from "./ApplicationsCard";
@@ -61,7 +61,7 @@ const useStyles = makeStyles(() => ({
     fontSize : "2rem",
     marginBottom : "2rem",
   },
-  
+
 }))
 
 /**

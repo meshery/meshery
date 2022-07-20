@@ -110,16 +110,16 @@ function FiltersGrid({ filters=[],handleDeploy, handleUndeploy, handleSubmit,url
       }
       {!selectedFilter.show && filters.length === 0 &&
         <Paper className={classes.noFilterPaper}>
-        <div className={classes.noFilterContainer}>
-          <Typography align="center" color="textSecondary" className={classes.noFilterText}>
+          <div className={classes.noFilterContainer}>
+            <Typography align="center" color="textSecondary" className={classes.noFilterText}>
             No Filters Found
-          </Typography>
-          <div>
-            <UploadImport aria-label="URL upload button" handleUpload={urlUploadHandler} handleImport={uploadHandler} configuration="Filter"  />
+            </Typography>
+            <div>
+              <UploadImport aria-label="URL upload button" handleUpload={urlUploadHandler} handleImport={uploadHandler} configuration="Filter"  />
 
+            </div>
           </div>
-        </div>
-      </Paper>
+        </Paper>
       }
       {filters.length
         ? (
