@@ -4,7 +4,7 @@ contexts:
       token: Default
       platform: kubernetes
       components:
-        - meshery-istio
+          - meshery-istio
       channel: stable
       version: latest
 current-context: local
