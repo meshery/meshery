@@ -185,10 +185,24 @@ func (h *Handler) handleApplicationPOST(
 				return
 			}
 			result := string(resp)
+			pattern, err := core.NewPatternFileFromK8sManifest(result, false)
+			if err != nil {
+				obj := "convert"
+				h.log.Error(ErrApplicationFailure(err, obj))
+				http.Error(rw, ErrApplicationFailure(err, obj).Error(), http.StatusInternalServerError) // sending a 500 when we cannot convert the file into kuberentes manifest
+				return
+			}
+			response, err := json.Marshal(pattern)
+			if err != nil {
+				obj := "convert"
+				h.log.Error(ErrApplicationFailure(err, obj))
+				http.Error(rw, ErrApplicationFailure(err, obj).Error(), http.StatusInternalServerError) // sending a 500 when we cannot convert the file into kuberentes manifest
+				return
+			}
 			url := strings.Split(parsedBody.URL, "/")
 			mesheryApplication = &models.MesheryApplication{
 				Name:            strings.TrimSuffix(url[len(url)-1], ".tgz"),
-				ApplicationFile: result,
+				ApplicationFile: string(response),
 				Location: map[string]interface{}{
 					"type":   "http",
 					"host":   parsedBody.URL,
