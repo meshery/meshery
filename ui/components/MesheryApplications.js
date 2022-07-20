@@ -29,6 +29,7 @@ import ConfirmationMsg from "./ConfirmationModal";
 import ViewSwitch from "./ViewSwitch";
 import ApplicationsGrid from "./MesheryApplications/ApplicationsGrid";
 import { fileDownloader } from "../utils/fileDownloader";
+import { trueRandom } from "../lib/trueRandom";
 
 const styles = (theme) => ({
   grid : { padding : theme.spacing(2), },
@@ -481,7 +482,7 @@ function MesheryApplications({
         body = JSON.stringify({ ...body, url : data })
       }
       dataFetch(
-        `/api/application?source-type=k8s_manifest`,
+        `/api/application?source-type=helm_chart`,
         {
           credentials : "include",
           method : "POST",
