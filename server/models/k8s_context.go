@@ -12,8 +12,8 @@ import (
 	"time"
 
 	"github.com/gofrs/uuid"
-	"github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/internal/sql"
+	"github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v2"
