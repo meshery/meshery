@@ -764,6 +764,8 @@ function MesheryApplications({
               handleDeploy={handleDeploy}
               handleUnDeploy={handleUnDeploy}
               handleSubmit={handleSubmit}
+              urlUploadHandler={urlUploadHandler}
+              uploadHandler={uploadHandler}
               setSelectedApplication={setSelectedApplication}
               selectedApplication={selectedApplication}
               pages={Math.ceil(count / pageSize)}

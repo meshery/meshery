@@ -1,5 +1,5 @@
 //@ts-check
-import { Grid } from "@material-ui/core";
+import { Button, Grid, Paper, Typography } from "@material-ui/core";
 import { Pagination } from "@material-ui/lab";
 import React, { useState } from "react";
 import MesheryApplicationCard from "./ApplicationsCard";
@@ -7,6 +7,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import FILE_OPS from "../../utils/configurationFileHandlersEnum";
 import ConfirmationMsg from "../ConfirmationModal";
 import { getComponentsinFile } from "../../utils/utils";
+import UploadImport from "../UploadImport";
 
 
 const INITIAL_GRID_SIZE = { xl : 4, md : 6, xs : 12 };
@@ -45,6 +46,22 @@ const useStyles = makeStyles(() => ({
   // text : {
   //   padding : "5px"
   // }
+  noApplicationPaper : {
+    padding : "0.5rem",
+    fontSize : "3rem"
+  },
+  noApplicationContainer : {
+    padding : "2rem",
+    display : "flex",
+    justifyContent : "center",
+    alignItems : "center",
+    flexDirection : "column",
+  },
+  noApplicationText : {
+    fontSize : "2rem",
+    marginBottom : "2rem",
+  },
+  
 }))
 
 /**
@@ -67,7 +84,7 @@ const useStyles = makeStyles(() => ({
  * }} props props
  */
 
-function MesheryApplicationGrid({ applications=[],handleDeploy, handleUnDeploy, handleSubmit, setSelectedApplication, selectedApplication, pages = 1,setPage, selectedPage }) {
+function MesheryApplicationGrid({ applications=[],handleDeploy, handleUnDeploy, handleSubmit,urlUploadHandler,uploadHandler, setSelectedApplication, selectedApplication, pages = 1,setPage, selectedPage }) {
 
   const classes = useStyles()
 
@@ -114,6 +131,19 @@ function MesheryApplicationGrid({ applications=[],handleDeploy, handleUnDeploy, 
         ))}
 
       </Grid>
+      }
+      {!selectedApplication.show && applications.length === 0 &&
+          <Paper className={classes.noApplicationPaper}>
+            <div className={classes.noApplicationContainer}>
+              <Typography align="center" color="textSecondary" className={classes.noApplicationText}>
+                No Application Found
+              </Typography>
+              <div>
+                <UploadImport aria-label="URL upload button" handleUpload={urlUploadHandler} handleImport={uploadHandler} configuration="Application"  />
+
+              </div>
+            </div>
+          </Paper>
       }
       {applications.length
         ? (
