@@ -157,7 +157,7 @@ func GenMarkdownCustom(cmd *cobra.Command, w io.Writer, linkHandler func(string)
 				} else if strings.HasPrefix(examples[i], "*") {
 					// Caption for screenshot, if any
 					picComment += strings.Replace(examples[i], "* ", "", -1)
-				} else if strings.HasPrefix(examples[i], "!") {
+				} else if strings.HasPrefix(examples[i], "! ") {
 					// For skipping comments present in codeblock
 					continue
 				} else {
