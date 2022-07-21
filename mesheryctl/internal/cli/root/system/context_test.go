@@ -148,7 +148,11 @@ func TestDeleteContextCmd(t *testing.T) {
 			expectedResponse := golden.Load()
 
 			if expectedResponse != actualResponse {
-				t.Errorf("expected response [%v] and actual response [%v] don't match", expectedResponse, actualResponse)
+				t.Error("Expected response not obtained")
+				t.Error("Expected:")
+				t.Errorf("%v", expectedResponse)
+				t.Error("Actual:")
+				t.Errorf("%v", actualResponse)
 			}
 			path, err := os.Getwd()
 			if err != nil {
@@ -167,7 +171,11 @@ func TestDeleteContextCmd(t *testing.T) {
 			}
 			deleteExpected := golden.Load()
 			if actualResponse != deleteExpected {
-				t.Errorf("expected response [%v] and actual response [%v] don't match", deleteExpected, actualResponse)
+				t.Error("Contexts are mismatched")
+				t.Error("Expected:")
+				t.Errorf("%v", deleteExpected)
+				t.Error("Actual:")
+				t.Errorf("%v", actualResponse)
 			}
 
 			//Repopulating Expected yaml
