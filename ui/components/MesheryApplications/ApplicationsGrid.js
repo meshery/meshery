@@ -136,7 +136,7 @@ function MesheryApplicationGrid({ applications=[],handleDeploy, handleUnDeploy, 
           <Paper className={classes.noApplicationPaper}>
             <div className={classes.noApplicationContainer}>
               <Typography align="center" color="textSecondary" className={classes.noApplicationText}>
-                No Application Found
+                No Applications Found
               </Typography>
               <div>
                 <UploadImport aria-label="URL upload button" handleUpload={urlUploadHandler} handleImport={uploadHandler} configuration="Application"  />
