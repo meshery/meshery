@@ -36,7 +36,7 @@ function CategoryCard({cat}) {
       break;
   }
   return (
-    <Card style={
+    <Card sx={
       {
         height:'100%',
         display:'flex',
