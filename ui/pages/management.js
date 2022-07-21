@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import { Grid,TextField, MenuItem,  Chip} from "@mui/material";
+import { Grid,TextField, MenuItem,  Chip, Box} from "@mui/material";
 import { PaperWithoutTitle, PaperWithTitle } from "@/components/Paper";
 import { styled } from "@mui/material/styles";
 const {img} = "../../docs/assets/img/adapters/linkerd/linkerd-adapter.png" 
@@ -47,14 +47,14 @@ export default function Lifestyle() {
     return(
       <PaperWithTitle title="Manage Service Mesh" titleVariant="h6">
         <Grid container spacing={4}>
-          <Grid container item xs={12} alignItems="flex-start" justify="space-between" style={{ gap : '2rem', }} >
+          <Grid container item xs={12} alignItems="flex-start" justify="space-between" sx={{ gap : '2rem', }} >
           <CustomChip label="meshery-linkerd:10001" icon={<img src={img} />}  variant="outlined" />
-          <div style={{width: "80%"}}>
-          <ReactSelectWrapper  label="Namespace"  />
-          </div>
+          <Box sx={{width: "80%"}}>
+            <ReactSelectWrapper  label="Namespace"  />
+          </Box>
           </Grid>
           <Grid container spacing={1}>
-            <Grid container item xs={12} lg={12} spacing={2} style={{margin : "-8px 8px"}}>
+            <Grid container item xs={12} lg={12} spacing={2} sx={{margin : "-8px 8px"}}>
               {sample.map((item, index) => (
                 <Grid item lg={3} md={4} xs={12} key={index}>
                   <CategoryCard cat={item}/>

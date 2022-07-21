@@ -1,4 +1,4 @@
-import { Card, CardActions, CardHeader, IconButton } from "@mui/material";
+import { Box, Card, CardActions, CardHeader, IconButton } from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
@@ -43,7 +43,7 @@ function CategoryCard({cat}) {
         flexDirection:'column',
       }
     }>
-      <CardHeader title={content} subheader={description} style={{ flexGrow : 1 }} />
+      <CardHeader title={content} subheader={description} sx={{ flexGrow : 1 }} />
       <CardActions disableSpacing>
         <IconButton
           aria-label="install"
@@ -53,14 +53,14 @@ function CategoryCard({cat}) {
             : <PlayArrowIcon />}
         </IconButton>
         {cat !== 3 && (
-          <div style={{width:"100%"}}>
+          <Box sx={{width:"100%"}}>
             <IconButton
               aria-label="delete"
-              style={{float:'right'}}
+              sx={{float:'right'}}
             >
               <DeleteIcon />
             </IconButton>
-          </div>
+          </Box>
         )}
       </CardActions>
     </Card>
