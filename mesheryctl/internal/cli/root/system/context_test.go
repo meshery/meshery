@@ -149,10 +149,8 @@ func TestDeleteContextCmd(t *testing.T) {
 
 			if expectedResponse != actualResponse {
 				t.Error("Expected response not obtained")
-				t.Error("Expected:")
-				t.Errorf("%v", expectedResponse)
-				t.Error("Actual:")
-				t.Errorf("%v", actualResponse)
+				t.Errorf("Expected: %v", expectedResponse)
+				t.Errorf("Actual: %v", actualResponse)
 			}
 			path, err := os.Getwd()
 			if err != nil {
