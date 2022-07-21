@@ -12,4 +12,4 @@ tokens:
     - location: auth.json
       name: Default
     - location: auth.json
-      name: default2
+      name: Default2
