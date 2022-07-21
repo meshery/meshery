@@ -31,7 +31,6 @@ type ApplicationResult struct {
 	Name            string    `json:"name"`
 	ApplicationFile string    `json:"application_file"`
 	Type            string    `json:"type"`
-	SourceContent   string    `json:"source_content"`
 	UserID          string    `json:"user_id"`
 	Location        *Location `json:"location"`
 	CreatedAt       *string   `json:"created_at"`

@@ -7,7 +7,6 @@
 scalar Map
 scalar Time
 scalar Any
-scalar Byte
 
 # Service Mesh Types
 enum MeshType {
@@ -291,7 +290,6 @@ type ApplicationResult {
   name: String!
   application_file: String!
   type: String!
-  source_content: Byte!
   user_id: String!
   location: Location!
   created_at: String

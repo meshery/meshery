@@ -64,7 +64,6 @@ type ComplexityRoot struct {
 		ID              func(childComplexity int) int
 		Location        func(childComplexity int) int
 		Name            func(childComplexity int) int
-		SourceContent   func(childComplexity int) int
 		Type            func(childComplexity int) int
 		UpdatedAt       func(childComplexity int) int
 		UserID          func(childComplexity int) int
@@ -444,13 +443,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ApplicationResult.Name(childComplexity), true
-
-	case "ApplicationResult.source_content":
-		if e.complexity.ApplicationResult.SourceContent == nil {
-			break
-		}
-
-		return e.complexity.ApplicationResult.SourceContent(childComplexity), true
 
 	case "ApplicationResult.type":
 		if e.complexity.ApplicationResult.Type == nil {
@@ -1821,7 +1813,6 @@ var sources = []*ast.Source{
 scalar Map
 scalar Time
 scalar Any
-scalar Byte
 
 # Service Mesh Types
 enum MeshType {
@@ -2105,7 +2096,6 @@ type ApplicationResult {
   name: String!
   application_file: String!
   type: String!
-  source_content: Byte!
   user_id: String!
   location: Location!
   created_at: String
@@ -3261,8 +3251,6 @@ func (ec *executionContext) fieldContext_ApplicationPage_applications(ctx contex
 				return ec.fieldContext_ApplicationResult_application_file(ctx, field)
 			case "type":
 				return ec.fieldContext_ApplicationResult_type(ctx, field)
-			case "source_content":
-				return ec.fieldContext_ApplicationResult_source_content(ctx, field)
 			case "user_id":
 				return ec.fieldContext_ApplicationResult_user_id(ctx, field)
 			case "location":
@@ -3449,50 +3437,6 @@ func (ec *executionContext) fieldContext_ApplicationResult_type(ctx context.Cont
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _ApplicationResult_source_content(ctx context.Context, field graphql.CollectedField, obj *model.ApplicationResult) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_ApplicationResult_source_content(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.SourceContent, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNByte2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_ApplicationResult_source_content(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "ApplicationResult",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Byte does not have child fields")
 		},
 	}
 	return fc, nil
@@ -13608,13 +13552,6 @@ func (ec *executionContext) _ApplicationResult(ctx context.Context, sel ast.Sele
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "source_content":
-
-			out.Values[i] = ec._ApplicationResult_source_content(ctx, field, obj)
-
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
 		case "user_id":
 
 			out.Values[i] = ec._ApplicationResult_user_id(ctx, field, obj)
@@ -15836,21 +15773,6 @@ func (ec *executionContext) unmarshalNBoolean2bool(ctx context.Context, v interf
 
 func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.SelectionSet, v bool) graphql.Marshaler {
 	res := graphql.MarshalBoolean(v)
-	if res == graphql.Null {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
-		}
-	}
-	return res
-}
-
-func (ec *executionContext) unmarshalNByte2string(ctx context.Context, v interface{}) (string, error) {
-	res, err := graphql.UnmarshalString(v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalNByte2string(ctx context.Context, sel ast.SelectionSet, v string) graphql.Marshaler {
-	res := graphql.MarshalString(v)
 	if res == graphql.Null {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
