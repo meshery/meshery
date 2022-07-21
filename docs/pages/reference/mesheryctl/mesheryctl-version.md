@@ -48,11 +48,16 @@ mesheryctl version
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "/home/admin-pc/.meshery/config.yaml")
   -v, --verbose         verbose output
 
 </div>
 </pre>
+
+## Screenshots
+
+Usage of mesheryctl version
+![version-usage](../../../../docs/assets/img/mesheryctl/version.png)
 
 ## See Also
 
