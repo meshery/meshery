@@ -57,6 +57,11 @@ mesheryctl app onboard -f [filepath]
 </div>
 </pre>
 
+## Screenshots
+
+Usage of mesheryctl app onboard
+![app-onboard-usage](../../../../docs/assets/img/mesheryctl/app-onboard.png)
+
 ## See Also
 
 Go back to [command reference index](/reference/mesheryctl/) 
