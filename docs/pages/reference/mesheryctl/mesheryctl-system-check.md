@@ -91,6 +91,11 @@ mesheryctl system check --report
 </div>
 </pre>
 
+## Screenshots
+
+Usage of mesheryctl system check
+![check-usage](../../../../docs/assets/img/mesheryctl/check.jpeg)
+
 ## See Also
 
 Go back to [command reference index](/reference/mesheryctl/) 

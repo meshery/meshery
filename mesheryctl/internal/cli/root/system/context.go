@@ -63,6 +63,10 @@ mesheryctl system context create [context-name]
 
 // Create new context and provide list of components, platform & URL
 mesheryctl system context create context-name --components meshery-osm --platform docker --url http://localhost:9081 --set --yes
+
+! Refer below image link for usage
+* Usage of mesheryctl context create
+# ![context-create-usage](../../../../docs/assets/img/mesheryctl/newcontext.png)
 	`,
 	Args: cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -243,6 +247,10 @@ mesheryctl system context view --context context-name
 
 // View config of all contexts
 mesheryctl system context view --all
+
+! Refer below image link for usage
+* Usage of mesheryctl context view
+# ![context-view-usage](../../../../docs/assets/img/mesheryctl/context-view.png)
 	`,
 	Args:         cobra.MaximumNArgs(1),
 	SilenceUsage: true,
@@ -321,6 +329,10 @@ var switchContextCmd = &cobra.Command{
 	Example: `
 // Switch to context named "sample"
 mesheryctl system context switch sample
+
+! Refer below image link for usage
+* Usage of mesheryctl context switch
+# ![context-switch-usage](../../../../docs/assets/img/mesheryctl/contextswitch.png)
 	`,
 	Args: func(_ *cobra.Command, args []string) error {
 		const errMsg = `Usage: mesheryctl system context switch [context name]

@@ -68,6 +68,11 @@ mesheryctl system context create context-name --components meshery-osm --platfor
 </div>
 </pre>
 
+## Screenshots
+
+Usage of mesheryctl context create
+![context-create-usage](../../../../docs/assets/img/mesheryctl/newcontext.png)
+
 ## See Also
 
 Go back to [command reference index](/reference/mesheryctl/) 

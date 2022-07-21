@@ -39,6 +39,10 @@ mesheryctl system update
 
 // Pull the latest manifest files alone
 mesheryctl system update --skip-reset
+
+! Refer below image link for usage
+* Usage of mesheryctl system update
+# ![update-usage](../../../../docs/assets/img/mesheryctl/update.png)
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
