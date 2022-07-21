@@ -222,8 +222,8 @@ function MesheryApplications({
   const [applications, setApplications] = useState([]);
   const [selectedRowData, setSelectedRowData] = useState(null);
   const [selectedApplication, setSelectedApplication] = useState(resetSelectedApplication());
-  const DEPLOY_URL = '/api/application/deploy';
-  // const [type, setType] = useState("");
+  const DEPLOY_URL = '/api/pattern/deploy';
+  const [types, setTypes] = useState([]);
   const [modalOpen, setModalOpen] = useState({
     open : false,
     deploy : false,
@@ -244,6 +244,13 @@ function MesheryApplications({
   useEffect(() => {
     fetchApplications(page, pageSize, search, sortOrder);
   }, [page, pageSize, search, sortOrder]);
+
+  /**
+   * fetch applications when the application downloads
+   */
+  useEffect(() => {
+    getTypes();
+  },[]);
 
   const handleModalClose = () => {
     setModalOpen({
@@ -275,48 +282,29 @@ function MesheryApplications({
   const handleDeploy = (application_file) => {
     updateProgress({ showProgress : true })
     dataFetch(
-      "/api/pattern",
+      ctxUrl(DEPLOY_URL, selectedK8sContexts),
       {
         credentials : "include",
         method : "POST",
-        body : JSON.stringify({ k8s_manifest : application_file }),
-      },
-      (res) => {
-        if (res) {
-          const pfile = res[0].pattern_file
-          dataFetch(
-            ctxUrl(DEPLOY_URL, selectedK8sContexts),
-            {
-              credentials : "include",
-              method : "POST",
-              body : pfile,
-            }, () => {
-              console.log("ApplicationFile Deploy API", `/api/application/deploy`);
-              enqueueSnackbar("Application Successfully Deployed!", {
-                variant : "success",
-                action : function Action(key) {
-                  return (
-                    <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-                      <CloseIcon />
-                    </IconButton>
-                  );
-                },
-                autoHideDuration : 2000,
-              });
-              updateProgress({ showProgress : false });
-            },
-            handleError(ACTION_TYPES.DEPLOY_APPLICATIONS)
-          );
-        } else {
-          updateProgress({ showProgress : false });
-          enqueueSnackbar("Failed converting kubernetes yaml to pattern file",
-            { variant : "error" }
-          )
-        }
+        body : application_file,
+      }, () => {
+        console.log("ApplicationFile Deploy API", `/api/application/deploy`);
+        enqueueSnackbar("Application Successfully Deployed!", {
+          variant : "success",
+          action : function Action(key) {
+            return (
+              <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+                <CloseIcon />
+              </IconButton>
+            );
+          },
+          autoHideDuration : 2000,
+        });
+        updateProgress({ showProgress : false });
       },
       handleError(ACTION_TYPES.DEPLOY_APPLICATIONS)
     );
-  };
+  }
 
   // ASSUMPTION: APPLICATION FILES ARE ONLY K8S MANIFEST
   const handleUnDeploy = (application_file) => {
@@ -361,23 +349,40 @@ function MesheryApplications({
     );
   };
 
-  const handleAppDownload = (id, name) => {
+  // const typesMapping = {
+  //   K8s:["yaml", ".yml"]
+  // }
+  // typesMapping[types[type]][0]
+  const handleAppDownload = (id, source_type) => {
     updateProgress({ showProgress : true })
     dataFetch(
-        `/api/application/download/${id}?source-type=k8s_manifest`,
+        `/api/application/download/${id}?source-type=${source_type}`,
         {
           credentials : "include",
           method : "GET",
         },
         () => {
           fileDownloader(id, name);
-          console.log("ApplicationFile API", `/api/application/download/${id}?source-type=k8s_manifest`);
+          console.log("ApplicationFile API", `/api/application/download/${id}?source-type=${source_type}`);
           updateProgress({ showProgress : false });
-          fetchApplications(page, pageSize, search, sortOrder);
         },
         handleError(ACTION_TYPES.DOWNLOAD_APP)
     );
   };
+
+  const getTypes = () => {
+    dataFetch(
+      `/api/application/types`,
+      {
+        credentials : "include",
+        method : "GET",
+      },
+      (res) => {
+        setTypes(res?.available_types)
+      },
+      handleError(ACTION_TYPES.DOWNLOAD_APP)
+    );
+  }
 
   function fetchApplications(page, pageSize, search, sortOrder) {
     if (!search) search = "";
@@ -432,8 +437,7 @@ function MesheryApplications({
     };
   }
 
-  function handleSubmit({ data, id, name, type }) {
-    console.log("delete invoked")
+  function handleSubmit({ data, id, name, type, source_type }) {
     updateProgress({ showProgress : true })
     if (type === FILE_OPS.DELETE) {
       dataFetch(
@@ -455,14 +459,14 @@ function MesheryApplications({
 
     if (type === FILE_OPS.UPDATE) {
       dataFetch(
-        `/api/application?source-type=k8s_manifest`,
+        `/api/application?source-type=${source_type}`,
         {
           credentials : "include",
           method : "POST",
           body : JSON.stringify({ application_data : { id, name, application_file : data }, save : true }),
         },
         () => {
-          console.log("ApplicationFile API", `/api/application?source-type=k8s_manifest`);
+          console.log("ApplicationFile API", `/api/application?source-type=${source_type}`);
           updateProgress({ showProgress : false });
           fetchApplications(page, pageSize, search, sortOrder);
         },
@@ -482,14 +486,14 @@ function MesheryApplications({
         body = JSON.stringify({ ...body, url : data })
       }
       dataFetch(
-        `/api/application?source-type=helm_chart`,
+        `/api/application?source-type=${source_type}`,
         {
           credentials : "include",
           method : "POST",
           body,
         },
         () => {
-          console.log("ApplicationFile API", `/api/application?source-type=k8s_manifest`);
+          console.log("ApplicationFile API", `/api/application?source-type=${source_type}`);
           updateProgress({ showProgress : false });
           fetchApplications(page, pageSize, search, sortOrder);
         },
@@ -498,7 +502,7 @@ function MesheryApplications({
     }
   }
 
-  function uploadHandler(ev) {
+  function uploadHandler(ev, source_type) {
     if (!ev.target.files?.length) return;
 
     const file = ev.target.files[0];
@@ -509,15 +513,18 @@ function MesheryApplications({
         data : event.target.result,
         name : file?.name || "meshery_" + Math.floor(trueRandom() * 100),
         type : FILE_OPS.FILE_UPLOAD,
+        source_type: source_type
       });
     });
     reader.readAsText(file);
   }
 
-  function urlUploadHandler(link) {
+  function urlUploadHandler(link, source_type) {
     handleSubmit({
-      data : link, id : "", name : "meshery_" + Math.floor(trueRandom() * 100), type : FILE_OPS.URL_UPLOAD });
-    // console.log(link, "valid");
+      data : link, id : "", name : "meshery_" + Math.floor(trueRandom() * 100), type : FILE_OPS.URL_UPLOAD,
+      source_type: source_type   
+    });
+    console.log(link, source_type, "valid");
   }
 
   const columns = [
@@ -582,7 +589,7 @@ function MesheryApplications({
       },
     },
     {
-      name : "source-type",
+      name : "source_type",
       label : "Source Type",
       options : {
         filter : false,
@@ -599,19 +606,14 @@ function MesheryApplications({
           const rowData = applications[tableMeta.rowIndex];
           console.log(rowData);
           return (
-            <div>
+            <>
               <IconButton
                 title="click to download"
-                onClick={() => handleAppDownload(rowData.id ,rowData.type, false)}
+                onClick={() => handleAppDownload(rowData.id ,rowData.type, true)}
               >
-                <img src="/static/img/kubernetes.svg" width="45px" height="45px" />
+                <img src={`/static/img/${rowData.type}.svg`} width="45px" height="45px" />
               </IconButton>
-              {/* {name?
-            <img src="/static/img/kubernetes.svg" width="45px" height="45px" />
-            : <img src="/static/img/Helm.svg" width="45px" height="45px" />
-            } */}
-            </div>
-
+            </>
           );
         },
       },
@@ -649,7 +651,7 @@ function MesheryApplications({
           );
         },
       },
-    },
+    }
   ];
 
   columns.forEach((column, idx) => {
@@ -715,7 +717,7 @@ function MesheryApplications({
       }
     },
 
-    onCellClick : (_, meta) => meta.colIndex !== 3 && setSelectedRowData(applications[meta.rowIndex]),
+    onCellClick : (_, meta) => meta.colIndex !== 3 && meta.colIndex !== 4 && setSelectedRowData(applications[meta.rowIndex]),
 
     onRowsDelete : async function handleDelete(row) {
       let response = await showModal(Object.keys(row.lookup).length);
@@ -792,7 +794,7 @@ function MesheryApplications({
         <div className={classes.topToolbar} >
           {!selectedApplication.show && (applications.length>0 || viewType==="table") && <div className={classes.createButton}>
             <div>
-              <UploadImport aria-label="URL upload button" handleUpload={urlUploadHandler} handleImport={uploadHandler} configuration="Application"  />
+              <UploadImport isApplication = {true}  aria-label="URL upload button" handleUpload={urlUploadHandler} handleImport={uploadHandler} configuration="Application"  />
             </div>
 
           </div>

@@ -53,7 +53,7 @@ const styles = makeStyles(() => ({
 
 
 
-const UploadImport = ({ handleUpload, handleImport, configuration }) => {
+const UploadImport = ({ handleUpload, handleImport, configuration, isApplication }) => {
   const classes = styles();
   const [open, setOpen] = React.useState(false);
   const [input, setInput] = React.useState();
@@ -81,23 +81,25 @@ const UploadImport = ({ handleUpload, handleImport, configuration }) => {
   };
 
   const handleSubmit = () => {
-    handleUpload(input)
+    handleUpload(input, fileType)
     handleClose()
   }
 
   const handleUploader = (input) => {
-    handleImport(input)
+    handleImport(input, fileType)
     handleClose()
   }
 
   const filetype = [
     ".yaml",
     ".yml",
-    ".tar.gz",
-    ".zip",
-    ".yaml",
-    ".yaml",
-    ".tar.gz",
+    ".tar.gz"
+  ]
+
+  const SourceType= [
+    "docker_compose",
+    "k8s_manifest",
+    "helm_chart"
   ]
 
   return (
@@ -138,55 +140,28 @@ const UploadImport = ({ handleUpload, handleImport, configuration }) => {
               <Grid container spacing={24}>
                 <Grid item xs={3}>
                   <h4 className={classes.heading}> UPLOAD FILE </h4>
+                  {isApplication && 
                   <NativeSelect
                     defaultValue={0}
-                    onChange={(e) => handleFilteType(filetype[e.target.value])}
+                    onChange={(e) => handleFilteType(SourceType[e.target.value])}
                     inputProps={{
                       name : 'name',
                       id : 'uncontrolled-native',
                     }}
                   >
                     <option
-                      onClick={ () => {
-                        handleFilteType(".yaml")
-                      }}
-                      value={0}>.yaml</option>
+                      value={0}>docker-compose</option>
                     <option
-                      onClick={ () => {
-                        handleFilteType(".yml")
-                      }}
-                      value={1}>.yml</option>
+                      value={1}>k8s_manifest</option>
                     <option
-                      onClick={ () => {
-                        handleFilteType(".tar.gz")
-                      }}
-                      value={2}>.tar.gz</option>
-                    <option
-                      onClick={ () => {
-                        handleFilteType(".zip")
-                      }}
-                      value={3}>.zip</option>
-                    <option
-                      onClick={ () => {
-                        handleFilteType(".yaml" || ".yml")
-                      }}
-                      value={4}>docker-compose</option>
-                    <option
-                      onClick={ () => {
-                        handleFilteType(".yaml") // currently all k8s_manifest are treated as yamls
-                      }}
-                      value={5}>k8s_manifest</option>
-                    <option
-                      onClick={ () => {
-                        handleFilteType(".tar.gz")
-                      }}
-                      value={6}>helm</option>
+                      value={2}>helm_chart</option>
                   </NativeSelect>
+                  }
                 </Grid>
                 <Grid item xs={6}>
                   <TextField
                     variant="outlined"
-                    label={`Filename${fileType}`}
+                    label="Filename"
                     style={{ width : "100%" }}
                   />
                 </Grid>

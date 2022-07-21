@@ -1,4 +1,4 @@
-export function fileDownloader(id, name) {
+export function fileDownloader(id, name, source_type) {
   let dataStr = JSON.stringify(id);
   let dataUri = `/api/application/download/${id}?source-type=k8s_manifest`+ encodeURIComponent(dataStr);
 
