@@ -247,7 +247,7 @@ func (h *Handler) handleApplicationPOST(
 				mesheryApplication = &pfs[0]
 			} else {
 
-			// Fallback to generic HTTP import
+				// Fallback to generic HTTP import
 				pfs, err := genericHTTPApplicationFile(parsedBody.URL, sourcetype)
 				if err != nil {
 					http.Error(rw, ErrRemoteApplication(err).Error(), http.StatusInternalServerError)
@@ -256,31 +256,6 @@ func (h *Handler) handleApplicationPOST(
 			}
 		}
 	}
-
-	if parsedBody.Path != "" { //This will be considered a path to the local helm repo
-		resp, err := kubernetes.ConvertHelmChartToK8sManifest(kubernetes.ApplyHelmChartConfig{
-			LocalPath: parsedBody.Path,
-		})
-		if err != nil {
-			obj := "import"
-			h.log.Error(ErrApplicationFailure(err, obj))
-			http.Error(rw, ErrApplicationFailure(err, obj).Error(), http.StatusInternalServerError)
-			return
-		}
-		result := string(resp)
-		path := strings.Split(parsedBody.Path, "/")
-		mesheryApplication = &models.MesheryApplication{
-			Name:            path[len(path)-1],
-			ApplicationFile: result,
-			Location: map[string]interface{}{
-				"type":   "http",
-				"host":   parsedBody.URL,
-				"path":   "",
-				"branch": "",
-			},
-		}
-	}
-
 	if parsedBody.Save {
 		resp, err := provider.SaveMesheryApplication(token, mesheryApplication)
 		if err != nil {
@@ -289,7 +264,7 @@ func (h *Handler) handleApplicationPOST(
 			http.Error(rw, ErrApplicationFailure(err, obj).Error(), http.StatusInternalServerError)
 			return
 		}
-		
+
 		var mesheryApplicationContent []models.MesheryApplication
 		err = json.Unmarshal(resp, &mesheryApplicationContent)
 		if err != nil {
@@ -300,16 +275,13 @@ func (h *Handler) handleApplicationPOST(
 		}
 
 		err = provider.SaveApplicationSourceContent(token, (mesheryApplicationContent[0].ID).String(), mesheryApplication.SourceContent)
-    
-    if err != nil {
+
+		if err != nil {
 			obj := "upload"
 			h.log.Error(ErrApplicationSourceContentUpload(err, obj))
 			http.Error(rw, ErrApplicationSourceContentUpload(err, obj).Error(), http.StatusInternalServerError)
 			return
 		}
-		
-		h.formatApplicationOutput(rw, byt, format)
-		return
 	}
 
 	byt, err := json.Marshal([]models.MesheryApplication{*mesheryApplication})
@@ -440,7 +412,7 @@ func (h *Handler) GetMesheryApplicationSourceHandler(
 		http.Error(rw, ErrApplicationFailure(err, obj).Error(), http.StatusNotFound)
 		return
 	}
-	
+
 	var mimeType string
 	sourcetype := r.URL.Query().Get("source-type")
 
@@ -480,7 +452,6 @@ func (h *Handler) formatApplicationOutput(rw http.ResponseWriter, content []byte
 	fmt.Fprint(rw, string(data))
 }
 
-
 func githubRepoApplicationScan(
 	owner,
 	repo,
@@ -504,8 +475,8 @@ func githubRepoApplicationScan(
 			k8sres = f.Content
 			if ext == ".yml" || ext == ".yaml" {
 				if sourceType == string(models.DOCKER_COMPOSE) {
-					k8sres, err = kompose.Convert([]byte (f.Content))
-					if err != nil {			
+					k8sres, err = kompose.Convert([]byte(f.Content))
+					if err != nil {
 						return err
 					}
 				}
@@ -527,7 +498,7 @@ func githubRepoApplicationScan(
 						"path":   f.Path,
 						"branch": branch,
 					},
-					Type: models.ApplicationType(sourceType),
+					Type:          models.ApplicationType(sourceType),
 					SourceContent: []byte(f.Content),
 				}
 
@@ -558,22 +529,22 @@ func genericHTTPApplicationFile(fileURL, sourceType string) ([]models.MesheryApp
 	if err != nil {
 		return nil, err
 	}
-	
+
 	k8sres := string(body)
-	
+
 	if sourceType == string(models.DOCKER_COMPOSE) {
 		k8sres, err = kompose.Convert(body)
-		if err != nil {			
+		if err != nil {
 			return nil, err
 		}
 	}
-	
+
 	pattern, err := core.NewPatternFileFromK8sManifest(k8sres, false)
 	if err != nil {
 		return nil, err
 	}
 	response, err := json.Marshal(pattern)
-	
+
 	if err != nil {
 		return nil, err
 	}
@@ -588,7 +559,7 @@ func genericHTTPApplicationFile(fileURL, sourceType string) ([]models.MesheryApp
 			"path":   "",
 			"branch": "",
 		},
-		Type: models.ApplicationType(sourceType),
+		Type:          models.ApplicationType(sourceType),
 		SourceContent: body,
 	}
 	return []models.MesheryApplication{af}, nil
