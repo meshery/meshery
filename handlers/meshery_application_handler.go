@@ -119,6 +119,7 @@ func (h *Handler) handleApplicationPOST(
 	format := r.URL.Query().Get("output")
 	var mesheryApplication *models.MesheryApplication
 	// If Content is not empty then assume it's a local upload
+	//Note: The Application data will not be present in case of helm charts as we do not support local helm upload.
 	if parsedBody.ApplicationData != nil {
 		// Assign a location if no location is specified
 		if parsedBody.ApplicationData.Location == nil {
@@ -134,7 +135,7 @@ func (h *Handler) handleApplicationPOST(
 
 		bytApplication := []byte(mesheryApplication.ApplicationFile)
 		mesheryApplication.SourceContent = bytApplication
-		if sourcetype == string(models.DOCKER_COMPOSE) || sourcetype == "" || sourcetype == string(models.K8S_MANIFEST) {
+		if sourcetype == string(models.DOCKER_COMPOSE) || sourcetype == string(models.K8S_MANIFEST) {
 			var k8sres string
 			if sourcetype == string(models.DOCKER_COMPOSE) {
 				k8sres, err = kompose.Convert(bytApplication) // convert the docker compose file into kubernetes manifest
@@ -167,14 +168,17 @@ func (h *Handler) handleApplicationPOST(
 			mesheryApplication.ApplicationFile = string(response)
 			mesheryApplication.Type = models.DOCKER_COMPOSE
 		} else {
-			mesheryApplication.Type = models.K8S_MANIFEST
+			obj := "convert"
+			h.log.Error(ErrApplicationFailure(fmt.Errorf("invalid source type"), obj))
+			http.Error(rw, ErrApplicationFailure(fmt.Errorf("invalid source type"), obj).Error(), http.StatusInternalServerError) // sending a 500 when we cannot convert the file into kuberentes manifest
+			return
 		}
 	}
 
 	if parsedBody.URL != "" {
 		var resp []byte
 		var err error
-		if strings.HasSuffix(parsedBody.URL, ".tgz") { //Helm chart is passed
+		if sourcetype == string(models.HELM_CHART) {
 			resp, err = kubernetes.ConvertHelmChartToK8sManifest(kubernetes.ApplyHelmChartConfig{
 				URL: parsedBody.URL,
 			})
@@ -203,6 +207,7 @@ func (h *Handler) handleApplicationPOST(
 			mesheryApplication = &models.MesheryApplication{
 				Name:            strings.TrimSuffix(url[len(url)-1], ".tgz"),
 				ApplicationFile: string(response),
+				Type:            models.HELM_CHART,
 				Location: map[string]interface{}{
 					"type":   "http",
 					"host":   parsedBody.URL,
@@ -211,7 +216,7 @@ func (h *Handler) handleApplicationPOST(
 				},
 			}
 			resp, err = json.Marshal([]models.MesheryApplication{*mesheryApplication})
-		} else {
+		} else if sourcetype == string(models.DOCKER_COMPOSE) || sourcetype == string(models.K8S_MANIFEST) {
 
 			parsedURL, err := url.Parse(parsedBody.URL)
 			if err != nil {
@@ -254,6 +259,11 @@ func (h *Handler) handleApplicationPOST(
 				}
 				mesheryApplication = &pfs[0]
 			}
+		} else {
+			obj := "convert"
+			h.log.Error(ErrApplicationFailure(fmt.Errorf("invalid source type"), obj))
+			http.Error(rw, ErrApplicationFailure(fmt.Errorf("invalid source type"), obj).Error(), http.StatusInternalServerError) // sending a 500 when we cannot convert the file into kuberentes manifest
+			return
 		}
 	}
 	if parsedBody.Save {
