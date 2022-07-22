@@ -42,6 +42,12 @@ func TestOffboardCmd(t *testing.T) {
 			ExpectedResponse: "offboard.output.golden",
 			URLs: []utils.MockURL{
 				{
+					Method:       "POST",
+					URL:          testContext.BaseURL + "/api/pattern",
+					Response:     "apply.patternSave.response.golden",
+					ResponseCode: 200,
+				},
+				{
 					Method:       "DELETE",
 					URL:          testContext.BaseURL + "/api/application/deploy",
 					Response:     "offboard.response.golden",
@@ -55,9 +61,9 @@ func TestOffboardCmd(t *testing.T) {
 
 	// Run tests
 	for _, tt := range tests {
+		// View api response from golden files
 		t.Run(tt.Name, func(t *testing.T) {
 			for _, url := range tt.URLs {
-				// View api response from golden files
 				apiResponse := utils.NewGoldenFile(t, url.Response, fixturesDir).Load()
 
 				// mock response

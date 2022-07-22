@@ -81,6 +81,11 @@ mesheryctl mesh deploy --adapter meshery-linkerd --watch
 </div>
 </pre>
 
+## Screenshots
+
+Usage of mesheryctl mesh deploy
+![mesh-deploy-usage](../../../../docs/assets/img/mesheryctl/deploy-mesh.png)
+
 ## See Also
 
 Go back to [command reference index](/reference/mesheryctl/) 

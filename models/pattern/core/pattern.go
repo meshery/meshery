@@ -346,7 +346,6 @@ func NewPatternFileFromK8sManifest(data string, ignoreErrors bool) (Pattern, err
 	if manifestIsEmpty(manifests) {
 		return pattern, ErrParseK8sManifest(fmt.Errorf("manifest is empty"))
 	}
-ManifestLoop:
 	for _, manifestYAML := range manifests {
 		manifest := map[string]interface{}{}
 
@@ -368,25 +367,7 @@ ManifestLoop:
 			return pattern, ErrParseK8sManifest(fmt.Errorf("failed to parse manifest into an internal representation"))
 		}
 
-		// Treat Kubernetes core resources specially as we don't enforce "spec" as the top field there
-		for _, core := range coreK8sAPIVersions() {
-			if manifest["apiVersion"] == core {
-				name, svc, err := createPatternServiceFromCoreK8s(manifest)
-				if err != nil {
-					if ignoreErrors {
-						continue ManifestLoop
-					}
-
-					return pattern, ErrCreatePatternService(fmt.Errorf("failed to create pattern service from core kubernetes component: %s", err))
-				}
-				pattern.Services[name] = &svc
-
-				continue ManifestLoop
-			}
-		}
-
-		// Extended K8s resources
-		name, svc, err := createPatternServiceFromExtendedK8s(manifest)
+		name, svc, err := createPatternServiceFromK8s(manifest)
 		if err != nil {
 			if ignoreErrors {
 				continue
@@ -401,7 +382,7 @@ ManifestLoop:
 	return pattern, nil
 }
 
-func createPatternServiceFromCoreK8s(manifest map[string]interface{}) (string, Service, error) {
+func createPatternServiceFromK8s(manifest map[string]interface{}) (string, Service, error) {
 	apiVersion, _ := manifest["apiVersion"].(string)
 	kind, _ := manifest["kind"].(string)
 	metadata, _ := manifest["metadata"].(map[string]interface{})
@@ -466,68 +447,6 @@ func createPatternServiceFromCoreK8s(manifest map[string]interface{}) (string, S
 	}
 
 	return id, svc, nil
-}
-
-func createPatternServiceFromExtendedK8s(manifest map[string]interface{}) (string, Service, error) {
-	apiVersion, _ := manifest["apiVersion"].(string)
-	kind, _ := manifest["kind"].(string)
-	metadata, _ := manifest["metadata"].(map[string]interface{})
-	name, _ := metadata["name"].(string)
-	namespace, _ := metadata["namespace"].(string)
-	spec, _ := manifest["spec"].(map[string]interface{})
-	labels, _ := metadata["labels"].(map[string]interface{})
-	annotations, _ := metadata["annotations"].(map[string]interface{})
-	if namespace == "" {
-		namespace = "default"
-	}
-
-	id := name
-	uid, err := uuid.NewV4()
-	if err == nil {
-		id = uid.String()
-	}
-	if apiVersion == "" || kind == "" {
-		return "", Service{}, ErrCreatePatternService(fmt.Errorf("empty apiVersion or kind in manifest"))
-	}
-	w := GetWorkloadsByK8sAPIVersionKind(apiVersion, kind)
-
-	if len(w) == 0 {
-		return "", Service{}, ErrCreatePatternService(fmt.Errorf("no resources found for APIVersion: %s Kind: %s", apiVersion, kind))
-	}
-
-	// Setup labels
-	castedLabel := map[string]string{}
-	for k, v := range labels {
-		cv, ok := v.(string)
-		if ok {
-			castedLabel[k] = cv
-		}
-	}
-
-	// Setup annotations
-	castedAnnotation := map[string]string{}
-	for k, v := range annotations {
-		cv, ok := v.(string)
-		if ok {
-			castedAnnotation[k] = cv
-		}
-	}
-
-	svc := Service{
-		Name:        name,
-		Type:        w[0].OAMDefinition.Name,
-		Namespace:   namespace,
-		Labels:      castedLabel,
-		Annotations: castedAnnotation,
-		Settings:    spec,
-	}
-
-	return id, svc, nil
-}
-
-// coreK8sAPIVersions returns list of core K8s API versions
-func coreK8sAPIVersions() []string {
-	return []string{"v1", "apps/v1", "apps/v1beta1"}
 }
 
 // getCytoscapeElementID returns the element id for a given service

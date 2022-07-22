@@ -2,6 +2,7 @@ package resolver
 
 import (
 	"context"
+	"io"
 	"os"
 	"path"
 	"time"
@@ -116,27 +117,67 @@ func (r *Resolver) getMeshSyncStatus(k8sctx models.K8sContext) model.OperatorCon
 
 func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, actions *model.ReSyncActions, k8scontextID string) (model.Status, error) {
 	if actions.ClearDb == "true" {
+		// copies the contents .meshery/config/mesherydb.sql to .meshery/config/.archive/mesherydb.sql
+		// then drops all the DB table and then migrate/create tables, missing foreign keys, constraints, columns and indexes.
 		if actions.HardReset == "true" {
-			dbPath := path.Join(utils.GetHome(), ".meshery/config")
-			err := os.Mkdir(path.Join(dbPath, ".archive"), os.ModePerm)
+			mesherydbPath := path.Join(utils.GetHome(), ".meshery/config")
+			err := os.Mkdir(path.Join(mesherydbPath, ".archive"), os.ModePerm)
 			if err != nil && os.IsNotExist(err) {
 				return "", err
 			}
-			dbHandler := provider.GetGenericPersister()
 
-			oldPath := path.Join(dbPath, "mesherydb.sql")
-			newPath := path.Join(dbPath, ".archive/mesherydb.sql")
-			err = os.Rename(oldPath, newPath)
+			src := path.Join(mesherydbPath, "mesherydb.sql")
+			dst := path.Join(mesherydbPath, ".archive/mesherydb.sql")
+
+			fin, err := os.Open(src)
+			if err != nil {
+				return "", err
+			}
+			defer fin.Close()
+
+			fout, err := os.Create(dst)
+			if err != nil {
+				return "", err
+			}
+			defer fout.Close()
+
+			_, err = io.Copy(fout, fin)
 			if err != nil {
 				return "", err
 			}
 
-			err = dbHandler.DBClose()
+			dbHandler := provider.GetGenericPersister()
+			if dbHandler == nil {
+				return "", ErrEmptyHandler
+			}
+
+			dbHandler.Lock()
+			defer dbHandler.Unlock()
+
+			r.Log.Info("Dropping Meshery Database")
+			err = dbHandler.Migrator().DropTable(
+				&meshsyncmodel.KeyValue{},
+				&meshsyncmodel.Object{},
+				&meshsyncmodel.ResourceSpec{},
+				&meshsyncmodel.ResourceStatus{},
+				&meshsyncmodel.ResourceObjectMeta{},
+				&models.PerformanceProfile{},
+				&models.MesheryResult{},
+				&models.MesheryPattern{},
+				&models.MesheryFilter{},
+				&models.PatternResource{},
+				&models.MesheryApplication{},
+				&models.UserPreference{},
+				&models.PerformanceTestConfig{},
+				&models.SmiResultWithID{},
+				models.K8sContext{},
+			)
 			if err != nil {
 				r.Log.Error(err)
 				return "", err
 			}
-			dbHandler = models.GetNewDBInstance()
+
+			r.Log.Info("Migrating Meshery Database")
 			err = dbHandler.AutoMigrate(
 				&meshsyncmodel.KeyValue{},
 				&meshsyncmodel.Object{},
@@ -156,7 +197,10 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 			)
 			if err != nil {
 				r.Log.Error(err)
+				return "", err
 			}
+
+			r.Log.Info("Hard reset successfully completed")
 		} else { //Delete meshsync objects coming from a particular cluster
 			k8sctxs, ok := ctx.Value(models.AllKubeClusterKey).([]models.K8sContext)
 			if !ok || len(k8sctxs) == 0 {

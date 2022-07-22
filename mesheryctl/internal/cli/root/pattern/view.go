@@ -21,13 +21,17 @@ var (
 )
 
 var viewCmd = &cobra.Command{
-	Use:   "view <pattern name>",
+	Use:   "view pattern name",
 	Short: "Display pattern(s)",
 	Long:  `Displays the contents of a specific pattern based on name or id`,
 	Args:  cobra.MaximumNArgs(1),
 	Example: `
 // view a pattern
 mesheryctl pattern view [pattern-name | ID]
+
+! Refer below image link for usage
+* Usage of mesheryctl pattern view
+# ![pattern-view-usage](../../../../docs/assets/img/mesheryctl/patternView.png)
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
