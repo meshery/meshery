@@ -375,16 +375,6 @@ func (h *Handler) GetMesheryApplicationHandler(
 }
 
 // GetMesheryApplicationHandler fetched the application with the given id
-/* Returns
-{
-	"available_types":[
-		{
-			"type":"Docker Compose",
-			"supported_extensions":[".yaml",".yml"]
-		}
-	]
-}
-*/
 func (h *Handler) GetMesheryApplicationTypesHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
