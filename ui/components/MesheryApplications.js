@@ -278,7 +278,6 @@ function MesheryApplications({
    * @param {string} search search string
    * @param {string} sortOrder order of sort
    */
-  // ASSUMPTION: APPLICATION FILES ARE ONLY K8S MANIFEST
   const handleDeploy = (application_file) => {
     updateProgress({ showProgress : true })
     dataFetch(
@@ -306,48 +305,32 @@ function MesheryApplications({
     );
   }
 
-  // ASSUMPTION: APPLICATION FILES ARE ONLY K8S MANIFEST
   const handleUnDeploy = (application_file) => {
     updateProgress({ showProgress : true })
     dataFetch(
-      "/api/pattern",
+      ctxUrl(DEPLOY_URL, selectedK8sContexts),
       {
         credentials : "include",
-        method : "POST",
-        body : JSON.stringify({ k8s_manifest : application_file }),
-      },
-      (res) => {
-        const pfile = res[0].pattern_file
-        if (pfile) {
-          dataFetch(
-            ctxUrl(DEPLOY_URL, selectedK8sContexts),
-            {
-              credentials : "include",
-              method : "DELETE",
-              body : pfile,
-            }, () => {
-              enqueueSnackbar("Application Successfully Undeployed!", {
-                variant : "success",
-                action : function Action(key) {
-                  return (
-                    <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-                      <CloseIcon />
-                    </IconButton>
-                  );
-                },
-                autoHideDuration : 2000,
-              });
-              updateProgress({ showProgress : false });
-            },
-            handleError(ACTION_TYPES.UNDEPLOY_APPLICATION)
-          );
-        } else {
-          handleError(ACTION_TYPES.UNDEPLOY_APPLICATION)
-        }
+        method : "DELETE",
+        body : application_file,
+      }, () => {
+        console.log("ApplicationFile Undeploy API", `/api/pattern/deploy`);
+        enqueueSnackbar("Application Successfully Undeployed!", {
+          variant : "success",
+          action : function Action(key) {
+            return (
+              <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+                <CloseIcon />
+              </IconButton>
+            );
+          },
+          autoHideDuration : 2000,
+        });
+        updateProgress({ showProgress : false });
       },
       handleError(ACTION_TYPES.UNDEPLOY_APPLICATION)
     );
-  };
+  }
 
   // const typesMapping = {
   //   K8s:["yaml", ".yml"]
@@ -513,7 +496,7 @@ function MesheryApplications({
         data : event.target.result,
         name : file?.name || "meshery_" + Math.floor(trueRandom() * 100),
         type : FILE_OPS.FILE_UPLOAD,
-        source_type: source_type
+        source_type : source_type
       });
     });
     reader.readAsText(file);
@@ -522,7 +505,7 @@ function MesheryApplications({
   function urlUploadHandler(link, source_type) {
     handleSubmit({
       data : link, id : "", name : "meshery_" + Math.floor(trueRandom() * 100), type : FILE_OPS.URL_UPLOAD,
-      source_type: source_type   
+      source_type : source_type
     });
     console.log(link, source_type, "valid");
   }
@@ -794,7 +777,7 @@ function MesheryApplications({
         <div className={classes.topToolbar} >
           {!selectedApplication.show && (applications.length>0 || viewType==="table") && <div className={classes.createButton}>
             <div>
-              <UploadImport isApplication = {true}  aria-label="URL upload button" handleUpload={urlUploadHandler} handleImport={uploadHandler} configuration="Application"  />
+              <UploadImport isApplication = {true} aria-label="URL upload button" handleUpload={urlUploadHandler} handleImport={uploadHandler} configuration="Application"  />
             </div>
 
           </div>

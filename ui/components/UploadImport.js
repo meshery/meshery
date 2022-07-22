@@ -90,16 +90,10 @@ const UploadImport = ({ handleUpload, handleImport, configuration, isApplication
     handleClose()
   }
 
-  const filetype = [
-    ".yaml",
-    ".yml",
-    ".tar.gz"
-  ]
-
   const SourceType= [
-    "docker_compose",
-    "k8s_manifest",
-    "helm_chart"
+    "Docker Compose",
+    "Kubernetes Manifest",
+    "Helm Chart"
   ]
 
   return (
@@ -140,7 +134,7 @@ const UploadImport = ({ handleUpload, handleImport, configuration, isApplication
               <Grid container spacing={24}>
                 <Grid item xs={3}>
                   <h4 className={classes.heading}> UPLOAD FILE </h4>
-                  {isApplication && 
+                  {isApplication &&
                   <NativeSelect
                     defaultValue={0}
                     onChange={(e) => handleFilteType(SourceType[e.target.value])}
@@ -150,11 +144,11 @@ const UploadImport = ({ handleUpload, handleImport, configuration, isApplication
                     }}
                   >
                     <option
-                      value={0}>docker-compose</option>
+                      value={0}>Docker Compose"</option>
                     <option
-                      value={1}>k8s_manifest</option>
+                      value={1}>Kubernetes Manifest</option>
                     <option
-                      value={2}>helm_chart</option>
+                      value={2}>Helm Chart</option>
                   </NativeSelect>
                   }
                 </Grid>
@@ -167,7 +161,6 @@ const UploadImport = ({ handleUpload, handleImport, configuration, isApplication
                 </Grid>
                 <Grid item xs={3}>
                   <label htmlFor="upload-button" className={classes.upload}>
-
                     <Button variant="contained" size="large" color="primary" aria-label="Upload Button" component="span" >
                       <input id="upload-button" type="file" accept={fileType} hidden onChange={handleUploader} name="upload-button" data-cy="file-upload-button" />
                       Browse
