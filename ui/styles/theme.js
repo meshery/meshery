@@ -1,8 +1,7 @@
-import { createTheme, adaptV4Theme } from "@mui/material/styles";
+import { createTheme } from "@mui/material/styles";
 import { blueGrey } from "@mui/material/colors";
 
-const theme = createTheme(
-  adaptV4Theme({
+const theme = createTheme({
     typography: { useNextVariants: true, h5: { fontWeight: "bolder", fontSize: 26, letterSpacing: 0.5 } },
     palette: {
       // primary: {
@@ -24,18 +23,23 @@ const theme = createTheme(
         xl: 1920,
       },
     },
-    overrides: {
-      MuiDrawer: { paper: { backgroundColor: "#263238" } },
+    components: {
+      MuiDrawer: { styleOverrides: { paper: { backgroundColor: "#263238" } } },
       MuiButton: {
+        styleOverrides: {
         root: { textTransform: "none" },
         contained: { boxShadow: "none", "&:active": { boxShadow: "none" } },
-      },
-      MuiToggleButton: { label: { textTransform: "initial", color: "#607d8b" } },
+      }
+    },
+      MuiToggleButton: { styleOverrides: { label: { textTransform: "initial", color: "#607d8b" } } },
       MuiTabs: {
+        styleOverrides: {
         // root: { marginLeft: theme.spacing(1) },
         indicator: { height: 3, borderTopLeftRadius: 3, borderTopRightRadius: 3 },
-      },
+      }
+    },
       MuiTab: {
+        styleOverrides: {
         root: {
           textTransform: "initial",
           margin: "0 16px",
@@ -50,19 +54,23 @@ const theme = createTheme(
           //   padding: 0,
           // },
         },
-      },
+      }
+    },
       // MuiIconButton: { root: { padding: theme.spacing(1) } },
-      MuiTooltip: { tooltip: { borderRadius: 4 } },
-      MuiDivider: { root: { backgroundColor: "#404854" } },
+      MuiTooltip: { styleOverrides: { tooltip: { borderRadius: 4 } } },
+      MuiDivider: { styleOverrides: { root: { backgroundColor: "#404854" } } },
       MuiDialogTitle: { 
+        styleOverrides: {
         root: {
           background: '#607d8b',
           color: '#fff',
           textAlign: 'center',
         },
-      },
+      }
+    },
       // MuiListItemText: { primary: { fontWeight: theme.typography.fontWeightMedium } },
       MuiListItemIcon: {
+        styleOverrides: {
         root: {
           color: "inherit",
           marginRight: 0,
@@ -70,12 +78,13 @@ const theme = createTheme(
           justifyContent: "center",
           minWidth: 0,
         },
-      },
+      }
+    },
       MuiAvatar: { root: { width: 32, height: 32 } },
     },
     props: { MuiTab: { disableRipple: true } },
     // mixins: { ...theme.mixins },
-  })
+  }
 );
 
 export default theme;
