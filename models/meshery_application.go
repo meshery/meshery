@@ -24,7 +24,7 @@ func GetApplicationTypes() (r []ApplicationTypeResponse) {
 			SupportedExtensions: []string{".yaml", ".yml"},
 		},
 		ApplicationTypeResponse{
-			Type:                HELM_CHART,
+			Type:                K8S_MANIFEST,
 			SupportedExtensions: []string{".yaml", ".yml"},
 		})
 	return
