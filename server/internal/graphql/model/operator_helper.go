@@ -2,7 +2,10 @@ package model
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
+	"io"
+	"net/http"
 	"net/url"
 	"strconv"
 	"strings"
@@ -32,6 +35,14 @@ const (
 var (
 	meshsyncVersion string
 )
+
+type Connections struct {
+	Connections []connection `json:"connections"`
+}
+
+type connection struct {
+	Name string `json:"name"`
+}
 
 func Initialize(client *mesherykube.Client, delete bool, adapterTracker models.AdaptersTrackerInterface) error {
 	// installOperator
@@ -256,4 +267,3 @@ func getVersion(brokerConn brokerpkg.Handler) {
 	ch := <-versionch
 	meshsyncVersion = ch.Object.(string)
 }
-
