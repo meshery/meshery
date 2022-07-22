@@ -308,3 +308,28 @@ func connectivityTest(clientName, externalIP string) bool {
 	}
 	return false
 }
+
+func connectivityTest(clientName, endpoint string) bool {
+	resp, err := http.Get(endpoint)
+	if err != nil {
+		return false
+	}
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return false
+	}
+
+	var natsResponse Connections
+	err = json.Unmarshal(body, &natsResponse)
+	if err != nil {
+		return false
+	}
+
+	for  _, client := range natsResponse.Connections {
+		if client.Name == clientName {
+			return true
+		}
+	} 
+	return false
+}
