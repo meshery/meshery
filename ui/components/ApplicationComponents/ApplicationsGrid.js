@@ -17,7 +17,7 @@ function ApplicationsGridItem({ application,  handleDeploy, handleUnDeploy, hand
   //  application_file={application.application_file}
    requestFullSize={() => setGridProps({ xl : 12, md : 12, xs : 12 })}
    requestSizeRestore={() => setGridProps(INITIAL_GRID_SIZE)}
-  //  handleDeploy={() => handleDeploy(application.application_file)}
+   handleDeploy={() => handleDeploy(application.application_file)}
   //  handleUnDeploy={() => handleUnDeploy(application.application_file)}
   //  deleteHandler={() => handleSubmit({ data : yaml, id : application.id, type : FILE_OPS.DELETE ,name : application.name })}
   //  updateHandler={() => handleSubmit({ data : yaml, id : application.id, type : FILE_OPS.UPDATE ,name : application.name })}
@@ -58,7 +58,7 @@ function ApplicationsGridItem({ application,  handleDeploy, handleUnDeploy, hand
           <ApplicationsGridItem
             key={application.id}
             application={application}
-            // handleDeploy={handleDeploy}
+            handleDeploy={handleDeploy}
             // handleUnDeploy={handleUnDeploy}
             // handleSubmit={handleSubmit}
             setSelectedApplications={setSelectedApplication}

@@ -1,49 +1,35 @@
-import React, {useState} from 'react'
+import React from 'react'
 
-function GetChild(children, key) {
-    // if (children.length != 2) throw Error("FlipCard requires exactly two child components");
-  
-    return children[key];
-  }
+const getChild=(children,index)=>{
+  if(children.length!==2) throw Error("Flipcard Must Have Two Child");
+  return children[index];
+}
 
-function FlipCard(children, duration = 500,) {
+const FlipCard = ({onClick,children}) => {
+  const [flipped,setFlipped]=React.useState(false);
+  const Front=getChild(children,0);
+  const Back=getChild(children,1);
 
-    const [flipped, setFlipped] = useState(false);
-    const [activeBack, setActiveBack] = useState(false);
-
-    const Front = GetChild(children, 0);
-    const Back = GetChild(children, 1);
-  
   return (
-        <div
-      onClick={() => {
-        setFlipped((flipped) => !flipped);
-        onClick();
-      }}
-    >
-              <div
-        style={{ transform : flipped
-          ? "scale(-1,1)"
-          : undefined,
-        transition : `transform ${duration}ms`,
-        transformOrigin : "50% 50% 10%" }}
+    <div>
+      <div
+        onClick={()=>{
+         setFlipped(p=>!p);
+         onClick()
+        }}
       >
-                 {!activeBack
-          ? (
-            <div >
-              {React.isValidElement(Front)
+        <div>
+          {!flipped && React.isValidElement(Front)
                 ? Front
                 : null}
-            </div>
-          )
-          : (
-            <div>{React.isValidElement(Back)
+        </div> 
+        <div>
+          {flipped && React.isValidElement(Back)
               ? Back
-              : null}</div>
-          )}
+              : null}
+        </div> 
       </div>
-
-        </div>
+    </div>
   )
 }
 

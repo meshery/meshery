@@ -1,5 +1,5 @@
 import React, {useState} from 'react'
-import { AppBar, Box, Button, Grid, Hidden, IconButton, Toolbar, Typography, TableCell, TableSortLabel } from "@mui/material";
+import { AppBar, Box, Button, Grid, Dialog, DialogTitle, Divider, DialogContent, DialogActions, Tooltip, Hidden, IconButton, Toolbar, Typography, TableCell, TableSortLabel } from "@mui/material";
 import MUIDataTable from "mui-datatables";
 // import Moment from "react-moment";
 import { styled } from "@mui/material/styles";
@@ -9,11 +9,12 @@ import DoneAllIcon from '@mui/icons-material/DoneAll';
 import UndeployIcon from "../../public/static/img/UndeployIcon";
 import MesheryApplicationGrid from "./ApplicationsGrid"
 import { useTheme } from "@mui/system";
-
+import YAMLEditor from  "@/components/YamlDialog";
 
 function resetSelectedApplication() {
   return { show : false, application : null };
 }
+
 
 function MesheryApplications({user}) {
   const theme = useTheme();  
@@ -24,6 +25,7 @@ function MesheryApplications({user}) {
  }))
 
     const [applications, setApplications] = useState([]);
+    const [selectedRowData, setSelectedRowData] = useState(null);
     const [selectedApplication, setSelectedApplication] = useState(resetSelectedApplication());
     const [modalOpen, setModalOpen] = useState({
       open : false,
@@ -34,6 +36,39 @@ function MesheryApplications({user}) {
       /**  @type {TypeView} */
       ("grid")
     ); 
+
+    function resetSelectedRowData() {
+      return () => {
+        setSelectedRowData(null);
+      };
+    }
+
+    function fetchApplications(page, pageSize, search, sortOrder) {
+      if (!search) search = "";
+      if (!sortOrder) sortOrder = "";
+  
+      const query = `?page=${page}&page_size=${pageSize}&search=${encodeURIComponent(search)}&order=${encodeURIComponent(
+        sortOrder
+      )}`;
+  
+      updateProgress({ showProgress : true });
+  
+      dataFetch(
+        `/api/application${query}`,
+        { credentials : "include", },
+        (result) => {
+          console.log("ApplicationFile API", `/api/application${query}`);
+          updateProgress({ showProgress : false });
+          if (result) {
+            setApplications(result.applications || []);
+            setCount(result.total_count || 0);
+          }
+        },
+        // handleError
+        handleError(ACTION_TYPES.FETCH_APPLICATIONS)
+      );
+    }
+
     const applications1 = [
       {
         id: "e7ccec75-bec6-4b28-b450-272aefa8a182",
@@ -181,10 +216,14 @@ updated_at: "2022-07-14T13:53:35.479756Z"
             text : "application(s) selected"
           }
         },
+        onCellClick : (_, meta) => meta.colIndex !== 3 && setSelectedRowData(applications[meta.rowIndex]),
     }
 
   return (
     <div> 
+                    {selectedRowData && Object.keys(selectedRowData).length > 0 && (
+          <YAMLEditor application={selectedRowData} onClose={resetSelectedRowData()}  />
+          )}
       <Button onClick={handleClick}>QWE</Button>     
       <Box sx={{display: "flex"}}>  
 
@@ -204,7 +243,7 @@ updated_at: "2022-07-14T13:53:35.479756Z"
 }
     {!selectedApplication.show &&  viewType==="grid" &&   
              <MesheryApplicationGrid
-            applications={applications1}
+            applications={applications}
             //  handleDeploy={handleDeploy}
             //  handleUnDeploy={handleUnDeploy}
             //  handleSubmit={handleSubmit}

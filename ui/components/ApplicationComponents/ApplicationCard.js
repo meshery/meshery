@@ -37,10 +37,26 @@ function MesheryApplicationCard({
     const toggleFullScreen = () => {
         setFullScreen(!fullScreen);
       };
+   
+      function genericClickHandler(ev, fn) {
+        ev.stopPropagation();
+        fn();
+      }
 
   return (
     <>
-    <div
+         {fullScreen &&
+        <YAMLDialog
+          fullScreen={fullScreen}
+          name={name}
+          toggleFullScreen={toggleFullScreen}
+          config_file={application_file}
+          setYaml={setYaml}
+          updateHandler={updateHandler}
+          deleteHandler={deleteHandler}
+        />
+      }
+    <FlipCard
     onClick={() => {
       console.log(gridProps)
       setGridProps(INITIAL_GRID_SIZE)
@@ -164,7 +180,7 @@ function MesheryApplicationCard({
         </Grid>
       </Grid>
     </>
-  </div >
+  </FlipCard >
   </>
   )
 }
