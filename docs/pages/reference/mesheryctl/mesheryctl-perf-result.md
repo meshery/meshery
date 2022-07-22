@@ -75,6 +75,11 @@ mesheryctl perf result saturday-profile --view
 </div>
 </pre>
 
+## Screenshots
+
+Usage of mesheryctl perf result
+![perf-result-usage](../../../../docs/assets/img/mesheryctl/perf-result.png)
+
 ## See Also
 
 Go back to [command reference index](/reference/mesheryctl/) 
