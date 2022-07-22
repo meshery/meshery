@@ -1,6 +1,5 @@
 import React from 'react'
-import useStyle from "./FlipCard.style"
-
+import {Container,InnerCard,FrontCard,BackCard} from "./FlipCard.style"
 
 
 
@@ -10,31 +9,30 @@ const getChild=(children,index)=>{
 }
 
 const FlipCard = ({onClick,children}) => {
-  const classes=useStyle()
   const [flipped,setFlipped]=React.useState(false);
   const Front=getChild(children,0);
   const Back=getChild(children,1);
 
   return (
-    <div className={classes.container}>
-      <div className={`${classes.innerCard} ${flipped && classes.rotate}`}
+    <Container>
+      <InnerCard flipped={flipped}
         onClick={()=>{
          setFlipped(p=>!p);
          onClick()
         }}
       >
-        <div className={classes.frontCard}>
+        <FrontCard>
           {!flipped && React.isValidElement(Front)
                 ? Front
                 : null}
-        </div> 
-        <div className={classes.backCard}>
+        </FrontCard> 
+        <BackCard>
           {flipped && React.isValidElement(Back)
               ? Back
               : null}
-        </div> 
-      </div>
-    </div>
+        </BackCard> 
+      </InnerCard>
+    </Container>
   )
 }
 
