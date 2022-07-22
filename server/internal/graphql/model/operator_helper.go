@@ -326,10 +326,10 @@ func connectivityTest(clientName, endpoint string) bool {
 		return false
 	}
 
-	for  _, client := range natsResponse.Connections {
+	for _, client := range natsResponse.Connections {
 		if client.Name == clientName {
 			return true
 		}
-	} 
+	}
 	return false
 }
