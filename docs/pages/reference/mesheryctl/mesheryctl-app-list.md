@@ -55,6 +55,11 @@ mesheryctl app list
 </div>
 </pre>
 
+## Screenshots
+
+Usage of mesheryctl app list
+![app-list-usage](../../../../docs/assets/img/mesheryctl/app-list.png)
+
 ## See Also
 
 Go back to [command reference index](/reference/mesheryctl/) 

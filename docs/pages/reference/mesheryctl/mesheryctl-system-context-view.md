@@ -81,6 +81,11 @@ mesheryctl system context view --all
 </div>
 </pre>
 
+## Screenshots
+
+Usage of mesheryctl context view
+![context-view-usage](../../../../docs/assets/img/mesheryctl/context-view.png)
+
 ## See Also
 
 Go back to [command reference index](/reference/mesheryctl/) 
