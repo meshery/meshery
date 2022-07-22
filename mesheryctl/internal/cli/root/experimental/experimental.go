@@ -20,7 +20,7 @@ var ExpCmd = &cobra.Command{
 	Short: "Experimental commands for mesheryctl",
 	Long:  `List of experimental commands for testing and evaluation purpose.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if len(args) != 1 {
+		if len(args) == 0 {
 			return errors.New(utils.ExpError(fmt.Sprintln("mesheryctl exp requires at least 1 arg(s), got only 0")))
 		}
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {

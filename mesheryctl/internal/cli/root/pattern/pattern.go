@@ -32,7 +32,7 @@ mesheryctl pattern view [pattern name | ID]
 mesheryctl pattern list
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if len(args) != 1 {
+		if len(args) == 0 {
 			return errors.New(utils.PatternError(fmt.Sprintln("mesheryctl pattern requires at least 1 arg(s), got only 0")))
 		}
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {

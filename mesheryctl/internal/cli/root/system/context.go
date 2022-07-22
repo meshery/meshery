@@ -64,8 +64,14 @@ mesheryctl system context create [context-name]
 // Create new context and provide list of components, platform & URL
 mesheryctl system context create context-name --components meshery-osm --platform docker --url http://localhost:9081 --set --yes
 	`,
-	Args: cobra.ExactArgs(1),
+
 	RunE: func(cmd *cobra.Command, args []string) error {
+		if len(args) == 0 {
+			const errMsg = `Please provide a context name:
+mesheryctl system context create [context-name]`
+			return errors.New(utils.SystemContextSubError(fmt.Sprintf("%s\n", errMsg), "create"))
+		}
+
 		tempCntxt := utils.TemplateContext
 
 		if serverURL != "" {
@@ -105,15 +111,20 @@ var deleteContextCmd = &cobra.Command{
 // Delete context
 mesheryctl system context delete [context name]
 	`,
-	Args: cobra.ExactArgs(1),
+
 	RunE: func(cmd *cobra.Command, args []string) error {
+		if len(args) == 0 {
+			const errMsg = `Please provide a context name to delete:
+mesheryctl system context delete [context name]`
+			return errors.New(utils.SystemContextSubError(fmt.Sprintf("%s\n", errMsg), "delete"))
+		}
 		err := viper.Unmarshal(&configuration)
 		if err != nil {
 			return err
 		}
 		_, exists := configuration.Contexts[args[0]]
 		if !exists {
-			return errors.New("no context to delete")
+			return errors.New(fmt.Sprintf("No context name found : %s", args[0]))
 		}
 
 		if viper.GetString("current-context") == args[0] {
@@ -244,9 +255,14 @@ mesheryctl system context view --context context-name
 // View config of all contexts
 mesheryctl system context view --all
 	`,
-	Args:         cobra.MaximumNArgs(1),
+
 	SilenceUsage: true,
 	RunE: func(cmd *cobra.Command, args []string) error {
+		if len(args) == 0 {
+			const errMsg = `Please provide a context name to view:
+mesheryctl system context view [context name]`
+			return errors.New(utils.SystemContextSubError(fmt.Sprintf("%s\n", errMsg), "view"))
+		}
 		err := viper.Unmarshal(&configuration)
 		if err != nil {
 			return err
@@ -340,7 +356,10 @@ Description: Configures mesheryctl to actively use one one context vs. the anoth
 		}
 		_, exists := configuration.Contexts[args[0]]
 		if !exists {
-			return errors.New("requested context does not exist")
+			const errMsg = `Try running the following to create the context:
+mesheryctl system context create `
+
+			return fmt.Errorf("requested context does not exist \n\n%v%s", errMsg, args[0])
 		}
 		if viper.GetString("current-context") == args[0] {
 			return errors.New("already using context '" + args[0] + "'")
@@ -396,7 +415,7 @@ mesheryctl system context
 		}
 
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
-			return errors.New(utils.SystemError(fmt.Sprintf("invalid command: \"%s\"", args[0])))
+			return errors.New(utils.SystemContextSubError(fmt.Sprintf("'%s' is a invalid command.  Use 'mesheryctl system context --help' to display usage guide.\n", args[0]), "context"))
 		}
 		return nil
 	},

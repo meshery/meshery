@@ -31,6 +31,19 @@ func SystemError(msg string) string {
 	return formatError(msg, cmdSystem)
 }
 
+func SystemContextSubError(msg string, cmd string) string {
+	if cmd == "delete" {
+		return formatError(msg, cmdContextDelete)
+	}
+	if cmd == "create" {
+		return formatError(msg, cmdContextCreate)
+	}
+	if cmd == "view" {
+		return formatError(msg, cmdContextView)
+	}
+	return formatError(msg, cmdContext)
+}
+
 // MeshError returns a formatted error message with a link to 'mesh' command usage page in addition to the error message
 func MeshError(msg string) string {
 	return formatError(msg, cmdMesh)
@@ -75,6 +88,14 @@ func formatError(msg string, cmd cmdType) string {
 		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, patternUsageURL)
 	case cmdApp:
 		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, appUsageURL)
+	case cmdContextDelete:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, contextDeleteURL)
+	case cmdContextCreate:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, contextCreateURL)
+	case cmdContextView:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, contextViewURL)
+	case cmdContext:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, contextUsageURL)
 	}
 	return fmt.Sprintf("%s\n", msg)
 }

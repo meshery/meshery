@@ -47,7 +47,6 @@ var RootCmd = &cobra.Command{
 	Use:   "mesheryctl",
 	Short: "Meshery Command Line tool",
 	Long:  `Meshery is the service mesh management plane, providing lifecycle, performance, and configuration management of service meshes and their workloads.`,
-	Args:  cobra.MinimumNArgs(1),
 	Example: `
 // Base command
 mesheryctl
@@ -61,6 +60,7 @@ mesheryctl -v [or] --verbose
 	`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
+	
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		log.Println("Args passed in", args)
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {

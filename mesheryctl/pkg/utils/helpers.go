@@ -45,15 +45,19 @@ const (
 	MeshsyncURL   = baseConfigURL + "samples/meshery_v1alpha1_meshsync.yaml"
 
 	// Documentation URLs
-	docsBaseURL     = "https://docs.meshery.io/"
-	rootUsageURL    = docsBaseURL + "reference/mesheryctl"
-	perfUsageURL    = docsBaseURL + "reference/mesheryctl/perf"
-	systemUsageURL  = docsBaseURL + "reference/mesheryctl/system"
-	meshUsageURL    = docsBaseURL + "reference/mesheryctl/mesh"
-	expUsageURL     = docsBaseURL + "reference/mesheryctl/exp"
-	filterUsageURL  = docsBaseURL + "reference/mesheryctl/exp/filter"
-	patternUsageURL = docsBaseURL + "reference/mesheryctl/pattern"
-	appUsageURL     = docsBaseURL + "reference/mesheryctl/app"
+	docsBaseURL      = "https://docs.meshery.io/"
+	rootUsageURL     = docsBaseURL + "reference/mesheryctl"
+	perfUsageURL     = docsBaseURL + "reference/mesheryctl/perf"
+	systemUsageURL   = docsBaseURL + "reference/mesheryctl/system"
+	meshUsageURL     = docsBaseURL + "reference/mesheryctl/mesh"
+	expUsageURL      = docsBaseURL + "reference/mesheryctl/exp"
+	filterUsageURL   = docsBaseURL + "reference/mesheryctl/exp/filter"
+	patternUsageURL  = docsBaseURL + "reference/mesheryctl/pattern"
+	appUsageURL      = docsBaseURL + "reference/mesheryctl/app"
+	contextDeleteURL = docsBaseURL + "reference/mesheryctl/context/delete"
+	contextViewURL = docsBaseURL + "reference/mesheryctl/context/view"
+	contextCreateURL = docsBaseURL + "reference/mesheryctl/context/create"
+	contextUsageURL = docsBaseURL + "reference/mesheryctl/context"
 	// Meshery Server Location
 	EndpointProtocol = "http"
 )
@@ -61,14 +65,18 @@ const (
 type cmdType string
 
 const (
-	cmdRoot    cmdType = "root"
-	cmdPerf    cmdType = "perf"
-	cmdMesh    cmdType = "mesh"
-	cmdSystem  cmdType = "system"
-	cmdExp     cmdType = "exp"
-	cmdFilter  cmdType = "filter"
-	cmdPattern cmdType = "pattern"
-	cmdApp     cmdType = "app"
+	cmdRoot          cmdType = "root"
+	cmdPerf          cmdType = "perf"
+	cmdMesh          cmdType = "mesh"
+	cmdSystem        cmdType = "system"
+	cmdExp           cmdType = "exp"
+	cmdFilter        cmdType = "filter"
+	cmdPattern       cmdType = "pattern"
+	cmdApp           cmdType = "app"
+	cmdContext       cmdType = "context"
+	cmdContextDelete cmdType = "delete"
+	cmdContextCreate cmdType = "create"
+	cmdContextView   cmdType = "view"
 )
 
 const (
