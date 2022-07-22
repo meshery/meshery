@@ -1865,10 +1865,10 @@ func (l *RemoteProvider) SaveMesheryApplication(tokenString string, application 
 }
 
 // SaveApplicationSourceContent saves given application source content with the provider after successful save of Application with the provider
-func (l *RemoteProvider) SaveApplicationSourceContent(tokenString string, applicationID string, sourceContent []byte) (error) {
+func (l *RemoteProvider) SaveApplicationSourceContent(tokenString string, applicationID string, sourceContent []byte) error {
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistMesheryApplications)
 
-	logrus.Debugf("Application Content: %s, size: %d", sourceContent, len(sourceContent))
+	logrus.Debugf("Application Content size %s", len(sourceContent))
 	bf := bytes.NewBuffer(sourceContent)
 
 	uploadURL := fmt.Sprintf("%s%s%s/%s", l.RemoteProviderURL, ep, remoteUploadURL, applicationID)
@@ -1890,7 +1890,7 @@ func (l *RemoteProvider) SaveApplicationSourceContent(tokenString string, applic
 		return nil
 	}
 
-	return  ErrPost(fmt.Errorf("failed to upload application source to remote provider"), fmt.Sprint(string(sourceContent)), resp.StatusCode)
+	return ErrPost(fmt.Errorf("failed to upload application source to remote provider"), fmt.Sprint(string(sourceContent)), resp.StatusCode)
 }
 
 // GetApplicationSourceContent returns application source-content from provider
