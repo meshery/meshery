@@ -116,8 +116,8 @@ func GetBrokerInfo(mesheryclient operatorClient.Interface, mesheryKubeClient *me
 		brokerVersion = imageVersionExtractUtil(statefulSet.Spec.Template, "nats")
 		externalIP := strings.Split(broker.Status.Endpoint.External, ":")[0]
 		endpoint := fmt.Sprintf("http://%s%s/%s", externalIP, ":8222", "connz")
-		
-		if (connectivityTest(models.MesheryServerBrokerConnection ,endpoint)) {
+
+		if connectivityTest(models.MesheryServerBrokerConnection, endpoint) {
 			status := fmt.Sprintf("%s %s", StatusConnected, broker.Status.Endpoint.External)
 			if brokerConn.Info() != brokerpkg.NotConnected {
 				brokerStatus.Status = Status(status)
@@ -141,11 +141,11 @@ func GetMeshSyncInfo(mesheryclient operatorClient.Interface, mesheryKubeClient *
 	if err != nil && !kubeerror.IsNotFound(err) {
 		return meshsyncStatus, ErrMesheryClient(err)
 	}
-	
+
 	externalIP := svc.Spec.LoadBalancerIP
 	endpoint := fmt.Sprintf("http://%s%s/%s", externalIP, ":8222", "connz")
-	
-	if (connectivityTest("meshsync", endpoint)) {
+
+	if connectivityTest("meshsync", endpoint) {
 		status := fmt.Sprintf("%s %s", StatusEnabled, meshsync.Status.PublishingTo)
 		meshsyncStatus.Status = Status(status)
 	}
@@ -305,10 +305,10 @@ func connectivityTest(clientName, endpoint string) bool {
 		return false
 	}
 
-	for  _, client := range natsResponse.Connections {
+	for _, client := range natsResponse.Connections {
 		if client.Name == clientName {
 			return true
 		}
-	} 
+	}
 	return false
 }
