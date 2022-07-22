@@ -33,8 +33,7 @@ const theme = createTheme({
         }, "&:active": { boxShadow: "none" } },
       },
       MuiToggleButton: { label: { textTransform: "initial", color: "#607d8b" } },
-      }
-    },
+      },
       MuiToggleButton: { styleOverrides: { label: { textTransform: "initial", color: "#607d8b" } } },
       MuiTabs: {
         styleOverrides: {
