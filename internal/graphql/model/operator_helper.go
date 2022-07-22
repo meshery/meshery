@@ -2,7 +2,10 @@ package model
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
+	"io"
+	"net/http"
 	"net/url"
 	"strconv"
 	"strings"
@@ -31,6 +34,14 @@ const (
 var (
 	meshsyncVersion string
 )
+
+type Connections struct {
+	Connections []connection `json:"connections"`
+}
+
+type connection struct {
+	Name string `json:"name"`
+}
 
 func Initialize(client *mesherykube.Client, delete bool, adapterTracker models.AdaptersTrackerInterface) error {
 	// installOperator
@@ -103,11 +114,14 @@ func GetBrokerInfo(mesheryclient operatorClient.Interface, mesheryKubeClient *me
 	brokerVersion := ""
 	if err == nil {
 		brokerVersion = imageVersionExtractUtil(statefulSet.Spec.Template, "nats")
-	}
-	if err == nil {
-		status := fmt.Sprintf("%s %s", StatusConnected, broker.Status.Endpoint.External)
-		if brokerConn.Info() != brokerpkg.NotConnected {
-			brokerStatus.Status = Status(status)
+		externalIP := strings.Split(broker.Status.Endpoint.External, ":")[0]
+		endpoint := fmt.Sprintf("http://%s%s/%s", externalIP, ":8222", "connz")
+		
+		if (connectivityTest(models.MesheryServerBrokerConnection ,endpoint)) {
+			status := fmt.Sprintf("%s %s", StatusConnected, broker.Status.Endpoint.External)
+			if brokerConn.Info() != brokerpkg.NotConnected {
+				brokerStatus.Status = Status(status)
+			}
 		}
 		brokerStatus.Name = "broker"
 		brokerStatus.Version = brokerVersion
@@ -123,14 +137,18 @@ func GetMeshSyncInfo(mesheryclient operatorClient.Interface, mesheryKubeClient *
 		return meshsyncStatus, ErrMesheryClient(err)
 	}
 
-	meshsyncDeployment, err := mesheryKubeClient.KubeClient.AppsV1().Deployments("meshery").Get(context.TODO(), "meshery-meshsync", metav1.GetOptions{})
-	meshsyncVersion := ""
-	if err == nil {
-		meshsyncVersion = imageVersionExtractUtil(meshsyncDeployment.Spec.Template, "meshsync")
+	svc, err := mesheryKubeClient.KubeClient.CoreV1().Services("meshery").Get(context.TODO(), "meshery-broker", metav1.GetOptions{})
+	if err != nil && !kubeerror.IsNotFound(err) {
+		return meshsyncStatus, ErrMesheryClient(err)
 	}
-
-	status := fmt.Sprintf("%s %s", StatusEnabled, meshsync.Status.PublishingTo)
-	meshsyncStatus.Status = Status(status)
+	
+	externalIP := svc.Spec.LoadBalancerIP
+	endpoint := fmt.Sprintf("http://%s%s/%s", externalIP, ":8222", "connz")
+	
+	if (connectivityTest("meshsync", endpoint)) {
+		status := fmt.Sprintf("%s %s", StatusEnabled, meshsync.Status.PublishingTo)
+		meshsyncStatus.Status = Status(status)
+	}
 	meshsyncStatus.Name = "meshsync"
 	meshsyncStatus.Version = meshsyncVersion
 	return meshsyncStatus, nil
@@ -268,4 +286,29 @@ func getVersion(brokerConn brokerpkg.Handler) {
 	ch := <-versionch
 	meshsyncVersion = "stable-" + ch.Object.(string)
 	fmt.Println("VERSION", meshsyncVersion)
+}
+
+func connectivityTest(clientName, endpoint string) bool {
+	resp, err := http.Get(endpoint)
+	if err != nil {
+		return false
+	}
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return false
+	}
+
+	var natsResponse Connections
+	err = json.Unmarshal(body, &natsResponse)
+	if err != nil {
+		return false
+	}
+
+	for  _, client := range natsResponse.Connections {
+		if client.Name == clientName {
+			return true
+		}
+	} 
+	return false
 }
