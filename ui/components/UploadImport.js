@@ -63,7 +63,7 @@ const UploadImport = ({ handleUpload, handleImport, configuration, isApplication
     setFileType(supportedTypes[index]?.supported_extensions);
     setSourceType(supportedTypes[index]?.application_type);
   }
-console.log("POI",supportedTypes);
+  console.log("POI",supportedTypes);
   useEffect(() => {
     if (input) {
       setIsError(!URLValidator(input))
@@ -148,7 +148,7 @@ console.log("POI",supportedTypes);
                         </option>
                       ))
                     }
-                    
+
                   </NativeSelect>
                   }
                 </Grid>
@@ -162,9 +162,9 @@ console.log("POI",supportedTypes);
                 <Grid item xs={3}>
 
                   <label htmlFor="upload-button" className={classes.upload}>
-                    
-                    <Button disabled={fileType==="Helm Chart"} variant="contained" size="large" color="primary" aria-label="Upload Button" onChange={handleUploader} component="span" >
-                      <input id="upload-button" type="file" accept={fileType} hidden  name="upload-button" data-cy="file-upload-button" />
+
+                    <Button disabled={sourceType==="Helm Chart"} variant="contained" size="large" color="primary" aria-label="Upload Button" onChange={sourceType==="Helm Chart" ? null : handleUploader} component="span" >
+                      <input id="upload-button" type="file" accept={fileType} disabled={sourceType==="Helm Chart"} hidden  name="upload-button" data-cy="file-upload-button" />
                       Browse
                     </Button>
                   </label>
