@@ -15,7 +15,7 @@ import FullscreenIcon from "@mui/icons-material/Fullscreen";
 import FullscreenExitIcon from "@mui/icons-material/FullscreenExit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import SaveIcon from "@mui/icons-material/Save";
-import FlipCard from "./FlipCard"
+import FlipCard from "../FlipCard/FlipCard"
 const ActionContainer = styled(Box)(({ theme }) => ({
   display: "flex",
   gap:"10px",
@@ -78,7 +78,7 @@ const MesheryDesignCard = ({
               }}
             >
               <Avatar
-                src="/static/img/patternwhite.svg"
+                src="../../public/static/img/patternwhite.svg"
                 sx={{ width: 27, height: 27, marginRight: 1 }}
               />
               Design
