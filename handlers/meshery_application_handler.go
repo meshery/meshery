@@ -177,8 +177,22 @@ func (h *Handler) handleApplicationPOST(
 
 	if parsedBody.URL != "" {
 		var resp []byte
-		var err error
 		if sourcetype == string(models.HELM_CHART) {
+			helmSourceResp, err := http.Get(parsedBody.URL)
+			defer func() {
+				_ = helmSourceResp.Body.Close()
+			}()
+			if err != nil {
+				obj := "import"
+				http.Error(rw, ErrApplicationFailure(err, obj).Error(), http.StatusInternalServerError)
+				return
+			}
+			sourceContent, err := io.ReadAll(helmSourceResp.Body)
+			if err != nil {
+				http.Error(rw, "error read body", http.StatusInternalServerError)
+				return
+			}
+
 			resp, err = kubernetes.ConvertHelmChartToK8sManifest(kubernetes.ApplyHelmChartConfig{
 				URL: parsedBody.URL,
 			})
@@ -214,6 +228,7 @@ func (h *Handler) handleApplicationPOST(
 					"path":   "",
 					"branch": "",
 				},
+				SourceContent: sourceContent,
 			}
 			resp, err = json.Marshal([]models.MesheryApplication{*mesheryApplication})
 		} else if sourcetype == string(models.DOCKER_COMPOSE) || sourcetype == string(models.K8S_MANIFEST) {
