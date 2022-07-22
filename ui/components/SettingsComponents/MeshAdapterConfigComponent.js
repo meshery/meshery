@@ -1,16 +1,19 @@
-import React from 'react'
-import { Button,TextField, MenuItem, Grid, Chip, } from '@mui/material';
+import React, {useState} from 'react'
+import { Box,TextField, MenuItem, Grid, Chip, } from '@mui/material';
+import { useTheme } from "@mui/system";
+import { AdaptersChipList, AdaptersListContainer } from "@/features/mesheryComponents";
 import ReactSelectWrapper from "@/components/ReactSelectWrapper"
 import {RightAlignButton} from "@/components/Button"
 
 function MeshAdapterConfigComponent() {
+  const theme = useTheme();
+
   return (
-    <div style={{padding: "3rem"}}>
-       <Grid item xs={12}>
-       <ReactSelectWrapper label="Mesh Adapter UR" />
-            </Grid>
-       <RightAlignButton title="Connect" />
-    </div>
+    <Box sx={{p: theme.spacing(4)}}>
+       <AdaptersListContainer>{(props) => <AdaptersChipList {...props} />}</AdaptersListContainer>
+         <ReactSelectWrapper style={{ marginTop: theme.spacing(4)}} label="Mesh Adapter UR" />
+    <RightAlignButton title="Connect" />
+    </Box>
   )
 }
 

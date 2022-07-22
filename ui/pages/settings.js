@@ -52,7 +52,7 @@ export default function Settings () {
             </Tooltip>
             <Tooltip title="Connect Meshery Adapters" placement="top">
               <Tab
-                label="Service Meshes"
+                label="Adapters"
                 data-cy="tabServiceMeshes"
               />
             </Tooltip>

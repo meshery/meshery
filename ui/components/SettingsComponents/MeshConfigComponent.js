@@ -1,14 +1,18 @@
 import React, {useState} from 'react'
 import MUIDataTable from "mui-datatables";
 import {
-     Grid, IconButton, List, ListItem, ListItemText, Menu, MenuItem,  Switch, FormGroup, InputAdornment,
+    Chip, Grid, IconButton, List, ListItem, ListItemText, Menu, MenuItem,  Switch, FormGroup, InputAdornment,
     Tooltip, Paper,  TableCell, TableContainer, Table, Button, Typography, TableSortLabel, TextField,
   } from '@mui/material';
+  import { useTheme } from "@mui/system";  
   import AddIcon from '@mui/icons-material/Add';
+  import MoreVertIcon from '@mui/icons-material/MoreVert';
 import CustomDialog from "@/components/Dialog";
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
   
 function MeshConfigComponent({operatorState}) {
+  
+  const theme = useTheme();
 
   const [open, setOpen] = useState(false);
   const [data, setData] = useState([])
@@ -21,6 +25,13 @@ function MeshConfigComponent({operatorState}) {
   
   const handleOpenModal = () => setOpen(true);
   const handleCloseModal = () => setOpen(false);
+  
+  const handleMenuOpen = (e, index) => {
+    setAnchorEl(e.currentTarget)
+    let menu = [...showMenu];
+    menu[index] = true;
+    setShowMenu(menu);
+  }
 
   const columns = [
     {
@@ -44,7 +55,7 @@ function MeshConfigComponent({operatorState}) {
             <Tooltip title={`Server: ${tableMeta.rowData[2]}`}>
               <Chip
                 label={data[tableMeta.rowIndex].name}
-                icon={<img src="/static/img/kubernetes.svg" />}
+                icon={<img src="/static/img/kubernetes.svg" style={{width : theme.spacing(2.5),}} />}
                 variant="outlined"
                 data-cy="chipContextName"
               />
@@ -132,6 +143,7 @@ function MeshConfigComponent({operatorState}) {
                 aria-controls={showMenu[tableMeta.rowIndex] ? 'long-menu' : undefined}
                 aria-expanded={showMenu[tableMeta.rowIndex] ? 'true' : undefined}
                 aria-haspopup="true"
+                onClick={(e) => handleMenuOpen(e, tableMeta.rowIndex)}
               >
                 <MoreVertIcon />
               </IconButton>
@@ -140,7 +152,9 @@ function MeshConfigComponent({operatorState}) {
                 MenuListProps={{
                   'aria-labelledby' : 'long-button',
                 }}
+                open={showMenu[tableMeta.rowIndex]}
                 anchorEl={anchorEl}
+                sx={{ padding: theme.spacing(0.5) }}
               >
                 <Button
                   type="submit"
@@ -163,7 +177,6 @@ function MeshConfigComponent({operatorState}) {
           )
         },
       },
-
     }
   ]
 
