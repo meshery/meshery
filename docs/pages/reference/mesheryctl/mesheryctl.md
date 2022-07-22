@@ -16,7 +16,7 @@ Meshery Command Line tool
 
 ## Synopsis
 
-Meshery is the cloud native management plane, providing lifecycle, performance, and configuration management of service meshes and their workloads.
+Meshery is the service mesh management plane, providing lifecycle, performance, and configuration management of service meshes and their workloads.
 
 ## Examples
 
@@ -55,7 +55,7 @@ mesheryctl -v [or] --verbose
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/admin-pc/.meshery/config.yaml")
+      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
   -h, --help            help for mesheryctl
   -v, --verbose         verbose output
 
