@@ -1,0 +1,1 @@
+export { updateUser } from "./userSlice";
