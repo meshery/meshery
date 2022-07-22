@@ -70,7 +70,7 @@ run-local: server-local error
 ## and point to (expect) a locally running Meshery Cloud or other Provider(s)
 ## for user authentication (requires go${GOVERSION}).
 server-local:
-	ccd server; cd cmd; go$(GOVERSION) clean; go$(GOVERSION) mod tidy; \
+	cd server; cd cmd; go$(GOVERSION) clean; go$(GOVERSION) mod tidy; \
 	BUILD="$(GIT_VERSION)" \
 	PROVIDER_BASE_URLS=$(REMOTE_PROVIDER_LOCAL) \
 	PORT=9081 \
