@@ -2,10 +2,7 @@ package model
 
 import (
 	"context"
-	"encoding/json"
-	"fmt"
-	"io"
-	"net/http"
+	"fmt"	
 	"net/url"
 	"strconv"
 	"strings"
