@@ -4,6 +4,7 @@ import mesheryEnvironmentReducer from "@/features/mesheryEnvironment/mesheryEnvi
 import mesheryComponentsReducer from "@/features/mesheryComponents/mesheryComponentsSlice";
 import providerReducer from "@/features/provider/providerSlice";
 import performanceReducer from "@/features/performance/performanceSlice";
+import userReducer from "@/features/user/userSlice";
 
 export default configureStore({
   reducer: {
@@ -12,5 +13,6 @@ export default configureStore({
     mesheryComponents: mesheryComponentsReducer,
     provider: providerReducer,
     performance: performanceReducer,
+    user: userReducer,
   },
 });
