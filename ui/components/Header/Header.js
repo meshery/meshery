@@ -4,9 +4,8 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import { AppBar, Grid, Hidden, IconButton, Toolbar, Typography, useTheme } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import Link from "next/link";
-import MenuIcon from "@mui/icons-material/Menu";
-import { useStyles } from "./Header.styles";
 import MesheryNotification from "@/components/Notification/MesheryNotification"
+import MenuIcon from "@mui/icons-material/Menu";
 import User from "../User";
 
 const UserSpan = styled(({ children, ...props }) => <span {...props}>{children}</span>)(({ theme }) => ({
@@ -91,16 +90,6 @@ const HeaderComponent = ({ drawerOpen, onDrawerToggle, pageTitle }) => {
           <PageTitleWrapperGrid item xs container alignItems="center">
             <PageTitle color="inherit" variant="h5">
               {pageTitle}
-            </Typography>
-          </Grid>
-          <Grid item>
-          <MesheryNotification />
-          </Grid>
-          {/* <Grid item className={classes.notifications}>
-                <MesheryNotification />
-              </Grid> */}
-          <Grid item className={classes.userContainer}>
-            <IconButton color="inherit" size="large">
             </PageTitle>
           </PageTitleWrapperGrid>
 
@@ -117,13 +106,15 @@ const HeaderComponent = ({ drawerOpen, onDrawerToggle, pageTitle }) => {
                 />
               </Link>
             </IconButton>
-            
+
             <IconButton color="inherit" size="large">
               <Link href="/settings">
                 <HeaderIcon isActive={pageTitle === "Settings"} icon={SettingsIcon} />
               </Link>
             </IconButton>
-
+            <Grid item>
+          <MesheryNotification />
+          </Grid>
             <UserSpan>
               <User color="inherit" />
             </UserSpan>
