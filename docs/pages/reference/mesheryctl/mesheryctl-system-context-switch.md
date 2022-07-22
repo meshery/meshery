@@ -56,6 +56,11 @@ mesheryctl system context switch sample
 </div>
 </pre>
 
+## Screenshots
+
+Usage of mesheryctl context switch
+![context-switch-usage](../../../../docs/assets/img/mesheryctl/contextswitch.png)
+
 ## See Also
 
 Go back to [command reference index](/reference/mesheryctl/) 

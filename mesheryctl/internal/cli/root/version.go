@@ -42,6 +42,10 @@ var versionCmd = &cobra.Command{
 	Example: `
 // To view the current version and SHA of release binary of mesheryctl client 
 mesheryctl version
+
+! Refer below image link for usage
+* Usage of mesheryctl version
+# ![version-usage](../../../../docs/assets/img/mesheryctl/version.png)
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		var err error

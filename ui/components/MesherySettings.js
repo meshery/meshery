@@ -29,20 +29,26 @@ import PromptComponent from './PromptComponent';
 import resetDatabase from './graphql/queries/ResetDatabaseQuery';
 
 const styles = (theme) => ({
-  wrapperClss : { flexGrow : 1,
+  wrapperClss : {
+    flexGrow : 1,
     maxWidth : '100%',
-    height : 'auto', },
-  tab : { minWidth : 40,
+    height : 'auto',
+  },
+  tab : {
+    minWidth : 40,
     paddingLeft : 0,
-    paddingRight : 0, },
+    paddingRight : 0,
+  },
   icon : {
     display : 'inline',
     verticalAlign : 'text-top',
     width : theme.spacing(1.75),
     marginLeft : theme.spacing(0.5),
   },
-  iconText : { display : 'inline',
-    verticalAlign : 'middle', },
+  iconText : {
+    display : 'inline',
+    verticalAlign : 'middle',
+  },
   backToPlay : { margin : theme.spacing(2), },
   link : { cursor : 'pointer', },
   DBBtn : {
@@ -51,7 +57,7 @@ const styles = (theme) => ({
     borderRadius : 5,
     backgroundColor : "#dc3545",
     "&:hover" : {
-      backgroundColor : "#bb2d3b",
+      backgroundColor : "#B32700",
     },
   },
   container : {
@@ -179,7 +185,7 @@ class MesherySettings extends React.Component {
           self.setState(state => ({ scannedGrafana : [...state.scannedGrafana, ...urls] }));
         }
       },
-      self.handleError("Unable to fetch prometheus and grafana scan data")
+      self.handleError("Unable to fetch Prometheus and Grafana details")
     )
   }
 
@@ -232,13 +238,15 @@ class MesherySettings extends React.Component {
   handleError = (msg) => (error) => {
     this.props.updateProgress({ showProgress : false });
     const self = this;
-    this.props.enqueueSnackbar(`${msg}: ${error}`, { variant : "error",
+    this.props.enqueueSnackbar(`${msg}: ${error}`, {
+      variant : "error",
       action : (key) => (
         <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
           <CloseIcon />
         </IconButton>
       ),
-      autoHideDuration : 7000, });
+      autoHideDuration : 7000,
+    });
   };
 
   handleChange = (val) => {
@@ -292,10 +300,10 @@ class MesherySettings extends React.Component {
     return async () => {
       let responseOfResetDatabase = await this.systemResetRef.current.show({
         title : "Reset Meshery Database?",
-        subtitle : "Are you sure to reset all the data of Meshery?",
-        options : ["PROCEED", "CANCEL"]
+        subtitle : "Are you sure that you want to purge all data?",
+        options : ["RESET", "CANCEL"]
       });
-      if (responseOfResetDatabase === "PROCEED") {
+      if (responseOfResetDatabase === "RESET") {
         this.props.updateProgress({ showProgress : true });
         const self = this;
         resetDatabase({
@@ -342,7 +350,7 @@ class MesherySettings extends React.Component {
             <div className={classes.link}>
               <FontAwesomeIcon icon={faArrowLeft} transform="grow-4" fixedWidth />
               {' '}
-              You are all set to manage service meshes
+              You are ready to manage cloud native infrastructure
             </div>
           </Link>
         </div>
@@ -374,7 +382,7 @@ class MesherySettings extends React.Component {
                 icon={
                   <FontAwesomeIcon icon={faMendeley} transform={mainIconScale} />
                 }
-                label="Service Meshes"
+                label="Adapters"
                 data-cy="tabServiceMeshes"
               />
             </Tooltip>
@@ -451,7 +459,7 @@ class MesherySettings extends React.Component {
               </AppBar>
               {subTabVal === 0 && (
                 <TabContainer>
-                  <GrafanaComponent scannedGrafana={this.state.scannedGrafana} isMeshConfigured= {this.state.isMeshConfigured}  />
+                  <GrafanaComponent scannedGrafana={this.state.scannedGrafana} isMeshConfigured={this.state.isMeshConfigured} />
                 </TabContainer>
               )}
               {subTabVal === 1 && (
