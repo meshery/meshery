@@ -82,7 +82,7 @@ func TestSetFileLocation(t *testing.T) {
 
 func TestNavigateToBrowser(t *testing.T) {
 	// opens up a browser window whenever this test runs
-	err := NavigateToBrowser("https://www.layer5.io")
+	err := NavigateToBrowser("https://layer5.io")
 	if err != nil {
 		t.Errorf("NavigateToBrowser error: %v", err)
 	}
@@ -94,7 +94,7 @@ func TestUploadFileWithParams(t *testing.T) {
 	// set token
 	TokenFlag = filepath.Join(fixturesDir, "auth.json")
 	// returns *http.Request
-	_, err := UploadFileWithParams("https://www.layer5.io", nil, "meshery", uploadFilePath)
+	_, err := UploadFileWithParams("https://layer5.io", nil, "meshery", uploadFilePath)
 
 	if err != nil {
 		t.Errorf("TestUploadFileWithParams error = %v", err)
@@ -417,8 +417,8 @@ func TestParseURLGithub(t *testing.T) {
 	}{
 		{
 			name:          "test with non-github url",
-			url:           "https://www.layer5.io",
-			rawRepoOutput: "https://www.layer5.io",
+			url:           "https://layer5.io",
+			rawRepoOutput: "https://layer5.io",
 			pathOutput:    "",
 			expectedError: "only github urls are supported",
 		},
@@ -557,9 +557,6 @@ func TestSetOverrideValues(t *testing.T) {
 				"meshery-traefik-mesh": map[string]interface{}{
 					"enabled": false,
 				},
-				"meshery-cpx": map[string]interface{}{
-					"enabled": false,
-				},
 				"image": map[string]interface{}{
 					"tag": testChannel + "-",
 				},
@@ -603,9 +600,6 @@ func TestSetOverrideValues(t *testing.T) {
 				"meshery-traefik-mesh": map[string]interface{}{
 					"enabled": false,
 				},
-				"meshery-cpx": map[string]interface{}{
-					"enabled": false,
-				},
 				"image": map[string]interface{}{
 					"tag": testChannel + "-testImageVersion",
 				},
@@ -615,7 +609,7 @@ func TestSetOverrideValues(t *testing.T) {
 			name: "Context contains all available components and meshery image version",
 			ctx: &config.Context{
 				Components: []string{"meshery-istio", "meshery-linkerd", "meshery-consul", "meshery-kuma",
-					"meshery-osm", "meshery-nsm", "meshery-nginx-sm", "meshery-traefik-mesh", "meshery-cpx", "meshery-cilium"},
+					"meshery-osm", "meshery-nsm", "meshery-nginx-sm", "meshery-traefik-mesh", "meshery-cilium"},
 				Channel: testChannel,
 			},
 			mesheryImageVersion: "testImageVersion",
@@ -649,9 +643,6 @@ func TestSetOverrideValues(t *testing.T) {
 				},
 				"meshery-traefik-mesh": map[string]interface{}{
 					"enabled": true,
-				},
-				"meshery-cpx": map[string]interface{}{
-					"enabled": false,
 				},
 				"image": map[string]interface{}{
 					"tag": testChannel + "-testImageVersion",

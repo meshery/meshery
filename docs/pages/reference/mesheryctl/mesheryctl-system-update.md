@@ -65,6 +65,11 @@ mesheryctl system update --skip-reset
 </div>
 </pre>
 
+## Screenshots
+
+Usage of mesheryctl system update
+![update-usage](../../../../docs/assets/img/mesheryctl/update.png)
+
 ## See Also
 
 Go back to [command reference index](/reference/mesheryctl/) 

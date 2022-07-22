@@ -28,6 +28,10 @@ var listCmd = &cobra.Command{
 	Example: `
 // list all available patterns
 mesheryctl pattern list
+
+! Refer below image link for usage
+* Usage of mesheryctl pattern list
+# ![pattern-list-usage](../../../../docs/assets/img/mesheryctl/patternList.png)
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
