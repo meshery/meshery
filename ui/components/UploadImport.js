@@ -51,27 +51,29 @@ const styles = makeStyles(() => ({
 
 }));
 
-
-
-const UploadImport = ({ handleUpload, handleImport, configuration, isApplication }) => {
+const UploadImport = ({ handleUpload, handleImport, configuration, isApplication, supportedTypes }) => {
   const classes = styles();
   const [open, setOpen] = React.useState(false);
   const [input, setInput] = React.useState();
   const [isError, setIsError] = React.useState(false);
-  const [fileType, setFileType] = React.useState("");
+  const [fileType, setFileType] = React.useState();
+  const [sourceType, setSourceType] = React.useState();
 
-
-  const handleFilteType = (file_type) => {
-    console.log("Check import fileteype", file_type)
-    setFileType(file_type);
+  const handleFilteType = (index) => {
+    setFileType(supportedTypes[index]?.supported_extensions);
+    setSourceType(supportedTypes[index]?.application_type);
   }
-
+console.log("POI",supportedTypes);
   useEffect(() => {
     if (input) {
       setIsError(!URLValidator(input))
     }
   }, [input])
 
+  useEffect(() => {
+    setFileType(supportedTypes[0]?.supported_extensions)
+    setSourceType(supportedTypes[0]?.application_type);
+  },[open])
   const handleOpen = () => {
     setOpen(true);
   };
@@ -81,20 +83,16 @@ const UploadImport = ({ handleUpload, handleImport, configuration, isApplication
   };
 
   const handleSubmit = () => {
-    handleUpload(input, fileType)
+    console.log("QAZWSX", sourceType);
+    handleUpload(input, sourceType)
     handleClose()
   }
 
   const handleUploader = (input) => {
-    handleImport(input, fileType)
+    handleImport(input, sourceType)
     handleClose()
   }
 
-  const SourceType= [
-    "Docker Compose",
-    "Kubernetes Manifest",
-    "Helm Chart"
-  ]
 
   return (
     <>
@@ -137,18 +135,20 @@ const UploadImport = ({ handleUpload, handleImport, configuration, isApplication
                   {isApplication &&
                   <NativeSelect
                     defaultValue={0}
-                    onChange={(e) => handleFilteType(SourceType[e.target.value])}
+                    onChange={(e) => handleFilteType(e.target.value)}
                     inputProps={{
                       name : 'name',
                       id : 'uncontrolled-native',
                     }}
                   >
-                    <option
-                      value={0}>Docker Compose"</option>
-                    <option
-                      value={1}>Kubernetes Manifest</option>
-                    <option
-                      value={2}>Helm Chart</option>
+                    {
+                      supportedTypes.map((type, index) => (
+                        <option value={index}>
+                          {type.application_type}
+                        </option>
+                      ))
+                    }
+                    
                   </NativeSelect>
                   }
                 </Grid>
@@ -160,9 +160,11 @@ const UploadImport = ({ handleUpload, handleImport, configuration, isApplication
                   />
                 </Grid>
                 <Grid item xs={3}>
+
                   <label htmlFor="upload-button" className={classes.upload}>
-                    <Button variant="contained" size="large" color="primary" aria-label="Upload Button" component="span" >
-                      <input id="upload-button" type="file" accept={fileType} hidden onChange={handleUploader} name="upload-button" data-cy="file-upload-button" />
+                    
+                    <Button disabled={fileType==="Helm Chart"} variant="contained" size="large" color="primary" aria-label="Upload Button" onChange={handleUploader} component="span" >
+                      <input id="upload-button" type="file" accept={fileType} hidden  name="upload-button" data-cy="file-upload-button" />
                       Browse
                     </Button>
                   </label>

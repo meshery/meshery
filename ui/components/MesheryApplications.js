@@ -331,12 +331,12 @@ function MesheryApplications({
       handleError(ACTION_TYPES.UNDEPLOY_APPLICATION)
     );
   }
-
+           
   // const typesMapping = {
   //   K8s:["yaml", ".yml"]
   // }
   // typesMapping[types[type]][0]
-  const handleAppDownload = (id, source_type) => {
+  const handleAppDownload = (id, source_type, name) => {
     updateProgress({ showProgress : true })
     dataFetch(
         `/api/application/download/${id}?source-type=${source_type}`,
@@ -345,7 +345,7 @@ function MesheryApplications({
           method : "GET",
         },
         () => {
-          fileDownloader(id, name);
+          fileDownloader(id, name, source_type);
           console.log("ApplicationFile API", `/api/application/download/${id}?source-type=${source_type}`);
           updateProgress({ showProgress : false });
         },
@@ -361,7 +361,8 @@ function MesheryApplications({
         method : "GET",
       },
       (res) => {
-        setTypes(res?.available_types)
+        setTypes(res)
+        console.log("QWERTY", res);
       },
       handleError(ACTION_TYPES.DOWNLOAD_APP)
     );
@@ -592,9 +593,9 @@ function MesheryApplications({
             <>
               <IconButton
                 title="click to download"
-                onClick={() => handleAppDownload(rowData.id ,rowData.type, true)}
+                onClick={() => handleAppDownload(rowData.id ,rowData.type, rowData.name)}
               >
-                <img src={`/static/img/${rowData.type}.svg`} width="45px" height="45px" />
+                <img src={`/static/img/${(rowData.type).replaceAll(" ", "_").toLowerCase()}.svg`} width="45px" height="45px" />
               </IconButton>
             </>
           );
@@ -777,7 +778,7 @@ function MesheryApplications({
         <div className={classes.topToolbar} >
           {!selectedApplication.show && (applications.length>0 || viewType==="table") && <div className={classes.createButton}>
             <div>
-              <UploadImport isApplication = {true} aria-label="URL upload button" handleUpload={urlUploadHandler} handleImport={uploadHandler} configuration="Application"  />
+              <UploadImport supportedTypes={types} isApplication = {true} aria-label="URL upload button" handleUpload={urlUploadHandler} handleImport={uploadHandler} configuration="Application"  />
             </div>
 
           </div>
