@@ -37,7 +37,7 @@ function MesheryApplicationCard({
   }
   const [gridProps, setGridProps] = useState(INITIAL_GRID_SIZE);
   const [fullScreen, setFullScreen] = useState(false);
-  const [showCode,setShowCode]=useState(false);
+  const [showCode, setShowCode]=useState(false);
 
   const toggleFullScreen = () => {
     setFullScreen(!fullScreen);
@@ -65,7 +65,7 @@ function MesheryApplicationCard({
           setGridProps(INITIAL_GRID_SIZE)
         }}
         duration={600}
-        onShow={() => setTimeout(() => setShowCode(p => !p),500)}
+        onShow={() => setTimeout(() => setShowCode(currentCodeVisibilty => !currentCodeVisibilty),500)}
       >
         {/* FRONT PART */}
         <>
