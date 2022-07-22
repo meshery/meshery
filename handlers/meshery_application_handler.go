@@ -375,6 +375,16 @@ func (h *Handler) GetMesheryApplicationHandler(
 }
 
 // GetMesheryApplicationHandler fetched the application with the given id
+/* Returns
+{
+	"available_types":[
+		{
+			"type":"Docker Compose",
+			"supported_extensions":[".yaml",".yml"]
+		}
+	]
+}
+*/
 func (h *Handler) GetMesheryApplicationTypesHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
@@ -382,12 +392,10 @@ func (h *Handler) GetMesheryApplicationTypesHandler(
 	user *models.User,
 	provider models.Provider,
 ) {
-	response := make(map[string]interface{})
-	types := models.GetApplicationTypes()
-	response["available_types"] = types
+	response := models.GetApplicationTypes()
 	b, err := json.Marshal(response)
 	if err != nil {
-		obj := "available_types"
+		obj := "available types"
 		h.log.Error(ErrMarshal(err, obj))
 		http.Error(rw, ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
 		return

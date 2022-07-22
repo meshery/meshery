@@ -9,14 +9,31 @@ import (
 
 type ApplicationType string
 
-func GetApplicationTypes() []ApplicationType {
-	return []ApplicationType{HELM_CHART, DOCKER_COMPOSE, K8S_MANIFEST}
+type ApplicationTypeResponse struct {
+	Type                ApplicationType `json:"application_type"`
+	SupportedExtensions []string        `json:"supported_extensions"`
+}
+
+func GetApplicationTypes() (r []ApplicationTypeResponse) {
+	r = append(r, ApplicationTypeResponse{
+		Type:                HELM_CHART,
+		SupportedExtensions: []string{".tgz"},
+	},
+		ApplicationTypeResponse{
+			Type:                DOCKER_COMPOSE,
+			SupportedExtensions: []string{".yaml", ".yml"},
+		},
+		ApplicationTypeResponse{
+			Type:                HELM_CHART,
+			SupportedExtensions: []string{".yaml", ".yml"},
+		})
+	return
 }
 
 const (
-	HELM_CHART     ApplicationType = "helm_chart"
-	DOCKER_COMPOSE ApplicationType = "docker_compose"
-	K8S_MANIFEST   ApplicationType = "k8s_manifest"
+	HELM_CHART     ApplicationType = "Helm Chart"
+	DOCKER_COMPOSE ApplicationType = "Docker Compose"
+	K8S_MANIFEST   ApplicationType = "Kubernetes Manifest"
 )
 
 // MesheryApplication represents the applications that needs to be saved
