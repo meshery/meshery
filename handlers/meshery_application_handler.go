@@ -166,7 +166,6 @@ func (h *Handler) handleApplicationPOST(
 				return
 			}
 			mesheryApplication.ApplicationFile = string(response)
-			mesheryApplication.Type = models.DOCKER_COMPOSE
 		} else {
 			obj := "convert"
 			h.log.Error(ErrApplicationFailure(fmt.Errorf("invalid source type"), obj))
