@@ -78,7 +78,7 @@ const MesheryDesignCard = ({
               }}
             >
               <Avatar
-                src="../../public/static/img/patternwhite.svg"
+                src="/static/img/patternwhite.svg"
                 sx={{ width: 27, height: 27, marginRight: 1 }}
               />
               Design
