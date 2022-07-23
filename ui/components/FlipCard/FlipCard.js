@@ -1,32 +1,24 @@
 import React from 'react'
 import { styled } from "@mui/material/styles";
+import {
+  Box,
+  Paper
+} from "@mui/material";
 
-export const Container=styled('div')(({theme})=>({
-  position:"relative",
-  height:"100%",
-  borderRadius : theme.spacing(1),
-}))
-
-export const InnerCard=styled('div')(({flipped,theme})=>({
+export const CardWrapper=styled(Paper)(({flipped,theme})=>({
       padding : theme.spacing(2),
-      borderRadius : theme.spacing(1),
-      position:"relative",
-      height:"100%",
       transformStyle:"preserve-3d",
       transition:"all 0.5s ease",
       boxShadow : "0 4px 8px 0 rgba(0,0,0,0.2)",
-      backgroundColor : "#fff",
       cursor : "pointer",
       transform:`${flipped && 'rotateY(180deg)'}`
 }))
 
-export const FrontCard=styled('div')(()=>({
-  height:"100%",
+export const FrontCard=styled(Box)(()=>({
   backfaceVisibility:"hidden",
 }))
 
-export const BackCard=styled('div')(()=>({
-  height:"100%",
+export const BackCard=styled(Box)(()=>({
   backfaceVisibility:"hidden",
   transform:"rotateY(180deg)"
 }))
@@ -43,8 +35,8 @@ const FlipCard = ({onClick,children}) => {
   const Back=getChild(children,1);
 
   return (
-    <Container>
-      <InnerCard flipped={flipped}
+    
+      <CardWrapper flipped={flipped}
         onClick={()=>{
          setFlipped(p=>!p);
          onClick()
@@ -60,8 +52,7 @@ const FlipCard = ({onClick,children}) => {
               ? Back
               : null}
         </BackCard> 
-      </InnerCard>
-    </Container>
+      </CardWrapper>
   )
 }
 
