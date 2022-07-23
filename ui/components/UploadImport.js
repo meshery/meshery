@@ -18,7 +18,7 @@ function UploadImport({configuration}) {
           color="primary"
           size="large"
           onClick={handleOpenModal} sx={{marginBottom: theme.spacing(2) }} >
-          <LinkIcon style={{ paddingRight : ".35rem" }} />
+          <LinkIcon sx={{ paddingRight : ".35rem" }} />
           Import {configuration}
         </Button>
       <Dialog 
@@ -35,7 +35,7 @@ function UploadImport({configuration}) {
           <TextField
             variant="outlined"
             label={`URL for ${configuration}`}
-            style={{ width : "100%" }}
+            sx={{ width : "100%" }}
             />
         </Grid>
       </Grid>

@@ -3,7 +3,6 @@ import GridOnIcon from '@mui/icons-material/GridOn';
 import TableChartIcon from "@mui/icons-material/TableChart";
 
 function ViewSwitch({ view, changeView }) {
-  console.log(view)
 
   return (
     <ToggleButtonGroup
