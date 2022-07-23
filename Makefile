@@ -18,11 +18,13 @@ include install/Makefile.show-help.mk
 #-----------------------------------------------------------------------------
 # Dependencies
 #-----------------------------------------------------------------------------
-.PHONY: dep-check
+#.PHONY: dep-check
 #.SILENT: dep-check
 
 dep-check:
-	( which go$(GOVERSION) > /dev/null 2>&1 )  || $(error Dependency missing: go$(GOVERSION). Ensure 'go$(GOVERSION)' (specifically this version) is installed and available in your 'PATH')
+ifeq ($(shell which go$(GOVERSION); echo $$?),1)
+$(error Dependency missing: go$(GOVERSION). Ensure 'go$(GOVERSION)' (specifically this version) is installed and available in your 'PATH')
+endif
 
 #-----------------------------------------------------------------------------
 # Docker-based Builds
