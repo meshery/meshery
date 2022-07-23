@@ -18,6 +18,7 @@ import DoneAllIcon from '@material-ui/icons/DoneAll';
 import AddIcon from '@material-ui/icons/Add';
 import DoneIcon from "@material-ui/icons/Done";
 import Link from 'next/link';
+import Operator from "../assets/img/Operator";
 
 const styles = (theme) => ({
   dialogBox : {
@@ -146,7 +147,21 @@ const styles = (theme) => ({
   text : {
     display : "flex",
     justifyContent : "center"
-  }
+  },
+  textContent : {
+    display : "flex",
+    flexDirection : "column",
+    alignItems : "center",
+    justifyContent : "center",
+    marginTop : "1rem",
+    backgroundColor : "rgb(234, 235, 236)",
+    padding : "10px",
+    borderRadius : "10px"
+  },
+  subText : {
+    color : "rgba(84, 87, 91, 1)",
+    fontSize : "16px"
+  },
 })
 
 const ACTIONS = {
@@ -342,17 +357,25 @@ function ConfirmationMsg(props) {
                         </div>
                       </Typography>
                       :
-                      <Link href="/settings">
-                        <Button
-                          type="submit"
-                          variant="contained"
-                          color="primary"
-                          style={{ margin : "0.6rem 0.6rem", whiteSpace : "nowrap" }}
-                        >
-                          <AddIcon className={classes.AddIcon} />
+                      <div className={classes.textContent}>
+                        <Operator />
+                        <Typography variant="h5">No cluster connected yet</Typography>
+                        <Typography className={classes.subText} variant="h6">
+                        Cluster with a Meshery Operator Deployed will report data here
+                        </Typography>
+
+                        <Link href="/settings">
+                          <Button
+                            type="submit"
+                            variant="contained"
+                            color="primary"
+                            style={{ margin : "0.6rem 0.6rem", whiteSpace : "nowrap" }}
+                          >
+                            <AddIcon className={classes.AddIcon} />
                           Connect Clusters
-                        </Button>
-                      </Link>
+                          </Button>
+                        </Link>
+                      </div>
                   }
                 </DialogContentText>
               </DialogContent>

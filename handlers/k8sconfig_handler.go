@@ -79,6 +79,12 @@ func (h *Handler) addK8SConfig(user *models.User, prefObj *models.Preference, w 
 		return
 	}
 
+	// Flatten kubeconfig. If that fails, go ahead with non-flattened config file
+	flattenedK8sConfig, err := helpers.FlattenMinifyKubeConfig(k8sConfigBytes)
+	if err == nil {
+		k8sConfigBytes = flattenedK8sConfig
+	}
+
 	// Get meshery instance ID
 	mid, ok := viper.Get("INSTANCE_ID").(*uuid.UUID)
 	if !ok {
