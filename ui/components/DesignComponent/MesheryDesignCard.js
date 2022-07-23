@@ -15,10 +15,10 @@ import FullscreenIcon from "@mui/icons-material/Fullscreen";
 import FullscreenExitIcon from "@mui/icons-material/FullscreenExit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import SaveIcon from "@mui/icons-material/Save";
-import FlipCard from "../FlipCard/FlipCard"
+import FlipCard from "../FlipCard"
 const ActionContainer = styled(Box)(({ theme }) => ({
   display: "flex",
-  gap:"10px",
+  gap:theme.spacing(1),
   justifyContent:"flex-end"
 }));
 const INITIAL_GRID_SIZE = { xl : 4, md : 6, xs : 12 };
@@ -73,9 +73,6 @@ const MesheryDesignCard = ({
             <Button
               variant="conatinedSecondory"
               onClick={(ev) => genericClickHandler(ev, setSelectedPatterns)}
-              style={{
-                backgroundColor:""
-              }}
             >
               <Avatar
                 src="/static/img/patternwhite.svg"
