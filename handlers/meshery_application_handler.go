@@ -159,7 +159,7 @@ func (h *Handler) handleApplicationPOST(
 				http.Error(rw, ErrApplicationFailure(err, obj).Error(), http.StatusInternalServerError) // sending a 500 when we cannot convert the file into kuberentes manifest
 				return
 			}
-			response, err := json.Marshal(pattern)
+			response, err := yaml.Marshal(pattern)
 			if err != nil {
 				obj := "convert"
 				h.log.Error(ErrApplicationFailure(err, obj))
