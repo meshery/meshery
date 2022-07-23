@@ -134,66 +134,51 @@ func initConfig() {
 		if os.IsNotExist(err) {
 			log.Printf("Missing Meshery config file.")
 		}
+
+		// Create a default meshconfig in each of the above two scenarios.
 		if os.IsNotExist(err) || (!os.IsNotExist(err) && stat.Size() == 0) {
-			// Check if Meshery config file needs to be created or not
-			// If silent flag is provided, create by default
-			// ortherwise ask for confirmation from user
-			userResponse := false
-			if utils.SilentFlag {
-				userResponse = true
-			} else {
-				userResponse = utils.AskForConfirmation("Create default config now")
-			}
+
 			// Check for Meshery existence and permission of application folder
-			if userResponse {
-				if _, err := os.Stat(utils.MesheryFolder); err != nil {
-					if os.IsNotExist(err) {
-						err = os.MkdirAll(utils.MesheryFolder, 0775)
-						if err != nil {
-							log.Fatal(err)
-						}
+			if _, err := os.Stat(utils.MesheryFolder); err != nil {
+				if os.IsNotExist(err) {
+					err = os.MkdirAll(utils.MesheryFolder, 0775)
+					if err != nil {
+						log.Fatal(err)
 					}
 				}
-
-				// Create config file if not present in meshery folder
-				err = utils.CreateConfigFile()
-				if err != nil {
-					log.Fatal(err)
-				}
-
-				// Add Token to context file
-				err = config.AddTokenToConfig(utils.TemplateToken, utils.DefaultConfigPath)
-				if err != nil {
-					log.Fatal(err)
-				}
-
-				// Add Context to context file
-				err = config.AddContextToConfig("local", utils.TemplateContext, utils.DefaultConfigPath, true, false)
-				if err != nil {
-					log.Fatal(err)
-				}
-
-				log.Println(
-					fmt.Sprintf("Default config file created at %s",
-						utils.DefaultConfigPath,
-					))
-			} else {
-				// User choose not to have a config file created. User must provide location to config file or create one.
-				log.Printf("Provide config file location using `--config <config-file>` or" +
-					" run `mesheryctl system context create <name>` to " +
-					"generate a config file.")
-
-				os.Exit(1)
 			}
+
+			// Create config file if not present in meshery folder
+			err = utils.CreateConfigFile()
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			// Add Token to context file
+			err = config.AddTokenToConfig(utils.TemplateToken, utils.DefaultConfigPath)
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			// Add Context to context file
+			err = config.AddContextToConfig("local", utils.TemplateContext, utils.DefaultConfigPath, true, false)
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			log.Println(
+				fmt.Sprintf("Default config file created at %s",
+					utils.DefaultConfigPath,
+				))
+			viper.SetConfigFile(utils.DefaultConfigPath)
 		}
-		viper.SetConfigFile(utils.DefaultConfigPath)
-	}
 
-	viper.AutomaticEnv() // read in environment variables that match
+		viper.AutomaticEnv() // read in environment variables that match
 
-	// If a config file is found, read it in.
-	if err := viper.ReadInConfig(); err == nil {
-		log.Debug("Using config file:", viper.ConfigFileUsed())
+		// If a config file is found, read it in.
+		if err := viper.ReadInConfig(); err == nil {
+			log.Debug("Using config file:", viper.ConfigFileUsed())
+		}
 	}
 }
 
