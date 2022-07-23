@@ -236,6 +236,7 @@ func (h *Handler) handleApplicationPOST(
 			parsedURL, err := url.Parse(parsedBody.URL)
 			if err != nil {
 				http.Error(rw, "error parsing provided URL", http.StatusInternalServerError)
+				return
 			}
 
 			// Check if hostname is github
@@ -262,6 +263,7 @@ func (h *Handler) handleApplicationPOST(
 				pfs, err := githubRepoApplicationScan(owner, repo, path, branch, sourcetype)
 				if err != nil {
 					http.Error(rw, ErrRemoteApplication(err).Error(), http.StatusInternalServerError)
+					return
 				}
 
 				mesheryApplication = &pfs[0]
@@ -271,6 +273,7 @@ func (h *Handler) handleApplicationPOST(
 				pfs, err := genericHTTPApplicationFile(parsedBody.URL, sourcetype)
 				if err != nil {
 					http.Error(rw, ErrRemoteApplication(err).Error(), http.StatusInternalServerError)
+					return
 				}
 				mesheryApplication = &pfs[0]
 			}
@@ -514,7 +517,7 @@ func githubRepoApplicationScan(
 
 				af := models.MesheryApplication{
 					Name:            strings.TrimSuffix(f.Name, ext),
-					ApplicationFile: string(response), // TODO: change to pattern file before saving
+					ApplicationFile: string(response),
 					Location: map[string]interface{}{
 						"type":   "github",
 						"host":   fmt.Sprintf("github.com/%s/%s", owner, repo),
