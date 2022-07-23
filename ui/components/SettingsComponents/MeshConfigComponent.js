@@ -32,6 +32,53 @@ function MeshConfigComponent({operatorState}) {
     menu[index] = true;
     setShowMenu(menu);
   }
+  
+  const getContextStatus = (ctxId) => {
+    const operator = _operatorState.find(op => op.contextID === ctxId);
+    if (!operator) {
+      return {}
+    }
+    const operatorStatus = operator.operatorStatus;
+
+    function getMeshSyncStats() {
+      if (!operatorStatus) return {};
+      const { controllers } = operatorStatus;
+      // meshsync is at 1st idx
+      const { status, version } = controllers[1];
+      return {
+        meshSyncState : status,
+        meshSyncVersion : version
+      }
+    }
+
+    function getBrokerStats() {
+      if (!operatorStatus) return {};
+      const { controllers } = operatorStatus;
+      // broker is at 0th idx
+      const { status, version } = controllers[0];
+      return {
+        natsState : status,
+        natsVersion : version
+      }
+    }
+
+    const defaultState = {
+      operatorState : false,
+      operatorVersion : null,
+      meshSyncState : "Not Active",
+      meshSyncVersion : "Not Available",
+      natsState : "Not Active",
+      natsVersion : "Not Avaiable"
+    }
+
+    const actualOperatorState = {
+      ...getOperatorStatus(ctxId),
+      ...getMeshSyncStats(),
+      ...getBrokerStats()
+    }
+
+    return _.merge(defaultState, actualOperatorState);
+  }
 
   const columns = [
     {
@@ -204,7 +251,7 @@ function MeshConfigComponent({operatorState}) {
       const contextId = contexts[rowMetaData.rowIndex].id;
       const { meshSyncState, meshSyncVersion, natsState, natsVersion, operatorState, operatorVersion } = getContextStatus(contextId);
       return (
-        <NoSsr>
+        <>
           <TableCell colSpan={6}>
             <TableContainer>
               <Table>
@@ -220,7 +267,7 @@ function MeshConfigComponent({operatorState}) {
                               >
                                 <Chip
                                   label={data[rowMetaData.rowIndex].name}
-                                  icon={<img src="/static/img/kubernetes.svg" />}
+                                  icon={<img src="/static/img/kubernetes.svg" style={{width : theme.spacing(2.5),}} />}
                                   variant="outlined"
                                   data-cy="chipContextName"
                                 />
@@ -285,7 +332,7 @@ function MeshConfigComponent({operatorState}) {
                                 <Chip
                                   // label={inClusterConfig?'Using In Cluster Config': contextName + (configuredServer?' - ' + configuredServer:'')}
                                   label={"Operator"}
-                                  icon={<img src="/static/img/meshery-operator.svg" />}
+                                  icon={<img src="/static/img/meshery-operator.svg" style={{width : theme.spacing(2.5),}}  />}
                                   variant="outlined"
                                   data-cy="chipOperator"
                                 />
@@ -373,7 +420,7 @@ function MeshConfigComponent({operatorState}) {
               </Table>
             </TableContainer>
           </TableCell>
-        </NoSsr>
+        </>
       )
     }
   }
