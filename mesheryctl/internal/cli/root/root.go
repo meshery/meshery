@@ -137,7 +137,6 @@ func initConfig() {
 
 		// Create a default meshconfig in each of the above two scenarios.
 		if os.IsNotExist(err) || (!os.IsNotExist(err) && stat.Size() == 0) {
-
 			// Check for Meshery existence and permission of application folder
 			if _, err := os.Stat(utils.MesheryFolder); err != nil {
 				if os.IsNotExist(err) {
