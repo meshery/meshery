@@ -798,17 +798,16 @@ function MesheryPatterns({
 
   return (
     <>
-
-      <NoSsr>
-        {/* Pattern configurator */}
-        {selectedPattern.show &&
-          <PatternForm onSubmit={handleSubmit} show={setSelectedPattern} pattern={selectedPattern.pattern} />}
-
+        <NoSsr>
         {selectedRowData && Object.keys(selectedRowData).length > 0 && (
           <YAMLEditor pattern={selectedRowData} onClose={resetSelectedRowData()} onSubmit={handleSubmit} />
         )}
+        {selectedPattern.show &&
+          <PatternForm onSubmit={handleSubmit} show={setSelectedPattern} pattern={selectedPattern.pattern} />
+        }
         <div className={classes.topToolbar} >
-          {!selectedPattern.show && (patterns.length > 0 || viewType === "table") && <div className={classes.createButton}>
+          {!selectedPattern.show && (patterns.length>0 || viewType==="table") && <div className={classes.createButton}>
+            <div>
             <Button
               aria-label="Add Pattern"
               variant="contained"
@@ -819,26 +818,25 @@ function MesheryPatterns({
                 pattern : { id : null, name : "New Pattern", pattern_file : "name: New Pattern\nservices:" },
                 show : true,
               })}
+              style={{marginRight: "2rem"}}
             >
               <AddIcon className={classes.addIcon} />
               Create Design
             </Button>
-            <div className={classes.UploadImport}>
-              <UploadImport aria-label="URL upload button" handleUpload={urlUploadHandler} handleImport={uploadHandler} configuration="Design" />
+              <UploadImport supportedTypes="null"  aria-label="URL upload button" handleUpload={urlUploadHandler} handleImport={uploadHandler} configuration="Designs" />
             </div>
-
           </div>
           }
           {!selectedPattern.show &&
-            <div className={classes.viewSwitchButton}>
-              <ViewSwitch view={viewType} changeView={setViewType} />
-            </div>
+          <div className={classes.viewSwitchButton}>
+            <ViewSwitch view={viewType} changeView={setViewType} />
+          </div>
           }
         </div>
         {
-          !selectedPattern.show && viewType === "table" && <MuiThemeProvider theme={getMuiTheme()}>
+          !selectedPattern.show && viewType==="table" && <MuiThemeProvider theme={getMuiTheme() }>
             <MUIDataTable
-              title={<div className={classes.tableHeader}>Designs</div>}
+              title={<div className={classes.tableHeader}>Patterns</div>}
               data={patterns}
               columns={columns}
               // @ts-ignore
@@ -847,63 +845,32 @@ function MesheryPatterns({
             />
           </MuiThemeProvider>
         }
-        {!selectedPattern.show && viewType === "grid" && patterns.length === 0 &&
-          <Paper className={classes.noDesignPaper} >
-            <div className={classes.noDesignContainer}>
-              <Typography className={classes.noDesignText} align="center" color="textSecondary">
-                No Designs Found
-              </Typography>
-              <div className={classes.noDesignButtons}>
-                <Button
-                  aria-label="Create Design"
-                  variant="contained"
-                  color="primary"
-                  size="large"
-                  className={classes.noDesignAddButton}
-                  // @ts-ignore
-                  onClick={() => setSelectedPattern({
-                    pattern : { id : null, name : "New Pattern", pattern_file : "name: New Pattern\nservices:" },
-                    show : true,
-                  })}
-                >
-                  <AddIcon className={classes.addIcon} />
-                  Create Design
-                </Button>
-                <div className={classes.UploadImport}>
-                  <UploadImport supportedTypes="null" aria-label="URL upload button" handleUpload={urlUploadHandler} handleImport={uploadHandler} configuration="Design" />
-                </div>
-              </div>
-            </div>
-          </Paper>
-        }
-
         {
-          !selectedPattern.show && viewType === "grid" &&
-          // grid vieww
-          <MesheryPatternGrid
-            patterns={patterns}
-            handleDeploy={handleDeploy}
-            handleUnDeploy={handleUnDeploy}
-            handleSubmit={handleSubmit}
-            setSelectedPattern={setSelectedPattern}
-            selectedPattern={selectedPattern}
-            pages={Math.ceil(count / pageSize)}
-            setPage={setPage}
-            selectedPage={page}
-          />
+          !selectedPattern.show && viewType==="grid" &&
+            // grid vieww
+            <MesheryPatternGrid
+              patterns={patterns}
+              handleDeploy={handleDeploy}
+              handleUnDeploy={handleUnDeploy}
+              handleSubmit={handleSubmit}
+              setSelectedPattern={setSelectedPattern}
+              selectedPattern={selectedPattern}
+              pages={Math.ceil(count / pageSize)}
+              setPage={setPage}
+              selectedPage={page}
+            />
         }
         <ConfirmationMsg
           open={modalOpen.open}
           handleClose={handleModalClose}
           submit={
-            { deploy : () => handleDeploy(modalOpen.pattern_file), unDeploy : () => handleUnDeploy(modalOpen.pattern_file) }
+            { deploy : () => handleDeploy(modalOpen.pattern_file),  unDeploy : () => handleUnDeploy(modalOpen.pattern_file) }
           }
           isDelete={!modalOpen.deploy}
-          title={ modalOpen.name }
+          title={modalOpen.name}
           componentCount={modalOpen.count}
           tab={modalOpen.deploy ? 0 : 1}
         />
-        <PromptComponent ref={modalRef} />
       </NoSsr>
     </>
   );
