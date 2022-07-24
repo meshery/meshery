@@ -1868,7 +1868,7 @@ func (l *RemoteProvider) SaveMesheryApplication(tokenString string, application 
 func (l *RemoteProvider) SaveApplicationSourceContent(tokenString string, applicationID string, sourceContent []byte) error {
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistMesheryApplications)
 
-	logrus.Debugf("Application Content size %s", len(sourceContent))
+	logrus.Debugf("Application Content size %d", len(sourceContent))
 	bf := bytes.NewBuffer(sourceContent)
 
 	uploadURL := fmt.Sprintf("%s%s%s/%s", l.RemoteProviderURL, ep, remoteUploadURL, applicationID)

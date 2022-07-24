@@ -729,12 +729,12 @@ func (l *DefaultLocalProvider) SaveMesheryApplication(tokenString string, applic
 }
 
 // SaveApplicationSourceContent nothing needs to be done as application is saved with source content for local provider
-func (l *DefaultLocalProvider) SaveApplicationSourceContent(tokenString string, applicationID string, sourceContent []byte) (error) {
+func (l *DefaultLocalProvider) SaveApplicationSourceContent(tokenString string, applicationID string, sourceContent []byte) error {
 	return nil
 }
 
 // GetApplicationSourceContent returns application source-content from provider
-func(l *DefaultLocalProvider) GetApplicationSourceContent(req *http.Request, applicationID string) ([]byte, error) {
+func (l *DefaultLocalProvider) GetApplicationSourceContent(req *http.Request, applicationID string) ([]byte, error) {
 	id := uuid.FromStringOrNil(applicationID)
 	return l.MesheryApplicationPersister.GetMesheryApplicationSource(id)
 }
@@ -1095,7 +1095,6 @@ func githubRepoFilterScan(
 
 	return result, err
 }
-
 
 func genericHTTPPatternFile(fileURL string) ([]MesheryPattern, error) {
 	resp, err := http.Get(fileURL)

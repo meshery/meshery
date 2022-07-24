@@ -27,7 +27,7 @@ var (
 	sourceType string // app file type (manifest / compose)
 )
 
-var validSourceTypes []string = []string{"compose", "manifest", "helm"}
+var validSourceTypes = []string{"compose", "manifest", "helm"}
 
 var onboardCmd = &cobra.Command{
 	Use:   "onboard",

@@ -102,8 +102,8 @@ const (
 	ErrInvalidKubeContextCode   = "2176"
 	ErrInvalidKubeCon
 	ErrCreatingKubernetesComponentsCode = "2177"
-	ErrApplicationContentUpload  = "2241"
-	ErrRemoteApplicationURL = "2242"
+	ErrApplicationContentUpload         = "2241"
+	ErrRemoteApplicationURL             = "2242"
 )
 
 var (

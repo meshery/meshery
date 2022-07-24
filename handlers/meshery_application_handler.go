@@ -232,7 +232,6 @@ func (h *Handler) handleApplicationPOST(
 			}
 			resp, err = json.Marshal([]models.MesheryApplication{*mesheryApplication})
 		} else if sourcetype == string(models.DOCKER_COMPOSE) || sourcetype == string(models.K8S_MANIFEST) {
-
 			parsedURL, err := url.Parse(parsedBody.URL)
 			if err != nil {
 				http.Error(rw, "error parsing provided URL", http.StatusInternalServerError)
@@ -268,7 +267,6 @@ func (h *Handler) handleApplicationPOST(
 
 				mesheryApplication = &pfs[0]
 			} else {
-
 				// Fallback to generic HTTP import
 				pfs, err := genericHTTPApplicationFile(parsedBody.URL, sourcetype)
 				if err != nil {
@@ -419,7 +417,7 @@ func (h *Handler) GetMesheryApplicationTypesHandler(
 		return
 	}
 	rw.Header().Set("Content-Type", "application/json")
-	fmt.Fprintf(rw, string(b))
+	fmt.Fprint(rw, string(b))
 }
 
 // GetMesheryApplicationHandler fetched the application with the given id
@@ -494,7 +492,6 @@ func githubRepoApplicationScan(
 		Branch(branch).
 		Root(path).
 		RegisterFileInterceptor(func(f walker.File) error {
-
 			ext := filepath.Ext(f.Name)
 			var k8sres string
 			var err error
