@@ -331,7 +331,7 @@ function MesheryApplications({
       handleError(ACTION_TYPES.UNDEPLOY_APPLICATION)
     );
   }
-           
+
   // const typesMapping = {
   //   K8s:["yaml", ".yml"]
   // }
@@ -362,7 +362,6 @@ function MesheryApplications({
       },
       (res) => {
         setTypes(res)
-        console.log("QWERTY", res);
       },
       handleError(ACTION_TYPES.DOWNLOAD_APP)
     );

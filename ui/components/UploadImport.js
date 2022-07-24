@@ -59,11 +59,10 @@ const UploadImport = ({ handleUpload, handleImport, configuration, isApplication
   const [fileType, setFileType] = React.useState();
   const [sourceType, setSourceType] = React.useState();
 
-  const handleFilteType = (index) => {
+  const handleFileType = (index) => {
     setFileType(supportedTypes[index]?.supported_extensions);
     setSourceType(supportedTypes[index]?.application_type);
   }
-  console.log("POI",supportedTypes);
   useEffect(() => {
     if (input) {
       setIsError(!URLValidator(input))
@@ -83,7 +82,6 @@ const UploadImport = ({ handleUpload, handleImport, configuration, isApplication
   };
 
   const handleSubmit = () => {
-    console.log("QAZWSX", sourceType);
     handleUpload(input, sourceType)
     handleClose()
   }
@@ -135,7 +133,7 @@ const UploadImport = ({ handleUpload, handleImport, configuration, isApplication
                   {isApplication &&
                   <NativeSelect
                     defaultValue={0}
-                    onChange={(e) => handleFilteType(e.target.value)}
+                    onChange={(e) => handleFileType(e.target.value)}
                     inputProps={{
                       name : 'name',
                       id : 'uncontrolled-native',
