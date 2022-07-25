@@ -936,9 +936,6 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 							ID:          &id,
 						}
 						log.Debug("seeding "+comp+": ", name)
-						switch comp {
-
-						}
 						_, err := l.MesheryPatternPersister.SaveMesheryPattern(pattern)
 						if err != nil {
 							log.Error(ErrGettingSeededComponents(err, comp+"s"))
@@ -954,9 +951,6 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 							ID:         &id,
 						}
 						log.Debug("seeding "+comp+": ", name)
-						switch comp {
-
-						}
 						_, err := l.MesheryFilterPersister.SaveMesheryFilter(filter)
 						if err != nil {
 							log.Error(ErrGettingSeededComponents(err, comp+"s"))
@@ -964,17 +958,36 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 						*seededUUIDs = append(*seededUUIDs, id)
 					}
 				case "Application":
+					mapNameToTypeToContent := make(map[string]map[string]string)
 					for i, name := range names {
+						ss := strings.Split(name, "_")
+						if len(ss) < 2 {
+							continue
+						}
+						if mapNameToTypeToContent[ss[0]] == nil {
+							mapNameToTypeToContent[ss[0]] = make(map[string]string)
+						}
+						mapNameToTypeToContent[ss[0]][ss[1]] = content[i]
+					}
+					for name, contents := range mapNameToTypeToContent {
 						id, _ := uuid.NewV4()
+						var k8sfile string
+						var patternfile string
+						for typ, content := range contents {
+							if strings.Contains(typ, "k8s") {
+								k8sfile = content
+							} else {
+								patternfile = content
+							}
+						}
 						var app = &MesheryApplication{
-							ApplicationFile: content[i],
+							ApplicationFile: patternfile,
+							Type:            K8S_MANIFEST,
+							SourceContent:   []byte(k8sfile),
 							Name:            name,
 							ID:              &id,
 						}
 						log.Debug("seeding "+comp+": ", name)
-						switch comp {
-
-						}
 						_, err := l.MesheryApplicationPersister.SaveMesheryApplication(app)
 						if err != nil {
 							log.Error(ErrGettingSeededComponents(err, comp+"s"))
@@ -1229,45 +1242,38 @@ func getSeededComponents(comp string, log logger.Handler) ([]string, []string, e
 func downloadContent(comp string, downloadpath string, log logger.Handler) error {
 	switch comp {
 	case "Pattern":
-		walk := walker.NewGit()
-		return walk.Owner("service-mesh-patterns").Repo("service-mesh-patterns").Root("samples/").Branch("master").RegisterFileInterceptor(func(f walker.File) error {
-			path := filepath.Join(downloadpath, f.Name)
+		walk := walker.NewGithub()
+		return walk.Owner("service-mesh-patterns").Repo("service-mesh-patterns").Root("samples/").Branch("master").RegisterFileInterceptor(func(gca walker.GithubContentAPI) error {
+			path := filepath.Join(downloadpath, gca.Name)
 			file, err := os.Create(path)
 			if err != nil {
 				return err
 			}
 			defer file.Close()
-			fmt.Fprintf(file, "%s", f.Content)
+			fmt.Fprintf(file, "%s", gca.Content)
 			return nil
 		}).Walk()
 	case "Filter":
 		return getFiltersFromWasmFiltersRepo(downloadpath)
 	case "Application":
-		var path string
-		path = os.Getenv("APP_PATH")
-		if path == "" {
-			wd, err := os.Getwd()
-			if err != nil {
+		walk := walker.NewGit()
+		walk.Owner("service-mesh-patterns").Repo("service-mesh-patterns").Root("samples/applications/").Branch("master").RegisterDirInterceptor(func(d walker.Directory) error {
+			err := os.Mkdir(downloadpath, 0777)
+			if err != nil && !os.IsExist(err) {
 				return err
 			}
-			path = filepath.Join(wd, "../install/apps.json")
-		}
-		applicationsAndURLS, err := getSeededAppLocation(path)
-		if err != nil {
-			return err
-		}
-		for app, URLs := range applicationsAndURLS {
-			yamlFile := filepath.Join(downloadpath, app)
-			f, err := os.Create(yamlFile)
-			if err != nil {
-				return err
-			}
-			defer f.Close()
-			err = downloadYAMLSintoSingleFile(f, URLs)
-			if err != nil {
-				return err
-			}
-		}
+			walkfile := walker.NewGit()
+			return walkfile.Owner("service-mesh-patterns").Repo("service-mesh-patterns").Root("samples/applications/" + d.Name).Branch("master").RegisterFileInterceptor(func(f walker.File) error {
+				path := filepath.Join(downloadpath, d.Name+"_"+f.Name)
+				file, err := os.Create(path)
+				if err != nil {
+					return err
+				}
+				defer file.Close()
+				fmt.Fprintf(file, "%s", f.Content)
+				return nil
+			}).Walk()
+		}).Walk()
 	}
 	return nil
 }
