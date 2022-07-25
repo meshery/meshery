@@ -931,7 +931,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
     NatsStatusQuery({ k8scontextID : contexts[index].id }).subscribe({
       next : (res) => {
         updateProgress({ showProgress : false });
-        if (res.controller.name === "broker" && res.controller.status.includes("CONNECTED")) {
+        if (res.controller.name === "MesheryBroker" && res.controller.status.includes("CONNECTED")) {
           let runningEndpoint = res.controller.status.substring("CONNECTED".length)
           enqueueSnackbar(`Broker was successfully pinged. Running at ${runningEndpoint}`, {
             variant : "success",
@@ -958,14 +958,14 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
     MeshsyncStatusQuery(({ k8scontextID : contexts[index].id })).subscribe({
       next : (res) => {
         updateProgress({ showProgress : false });
-        if (res.controller.name !== "meshsync" || !res.controller.status.includes("ENABLED")) {
-          let newMeshSyncState = [...MeshSyncState]
+        if (res.controller.name !== "MeshSync" || res.controller.status.includes("Not Deployed")) {
+          let newMeshSyncState = [...MeshSyncState || []]
           newMeshSyncState[index] = null;
           setMeshsyncSubscription({ type : actionTypes.SET_MESHSYNC_SUBSCRIPTION, meshSyncState : newMeshSyncState })
           handleError("MeshSync could not be reached")("MeshSync is unavailable");
         } else {
-          let publishEndpoint = res.controller.status.substring("ENABLED".length)
-          enqueueSnackbar(`MeshSync was successfully pinged. Publishing to ${publishEndpoint} `, {
+          let publishEndpoint = res.controller.status.substring("CONNECTED".length)
+          enqueueSnackbar(`MeshSync was successfully pinged. ${publishEndpoint.length > 0 ?  `Publishing to ${publishEndpoint}`: ""}`, {
             variant : "success",
             action : (key) => (
               <IconButton key="close" aria-label="close" color="inherit" onClick={() => closeSnackbar(key)}>

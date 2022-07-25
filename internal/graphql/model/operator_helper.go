@@ -16,19 +16,21 @@ import (
 	"github.com/layer5io/meshery/models"
 	brokerpkg "github.com/layer5io/meshkit/broker"
 	"github.com/layer5io/meshkit/broker/nats"
+	"github.com/layer5io/meshkit/models/controllers"
 	"github.com/layer5io/meshkit/utils"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/sirupsen/logrus"
-	v1 "k8s.io/api/core/v1"
 	kubeerror "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 const (
-	Namespace       = "meshery"
-	RequestSubject  = "meshery.meshsync.request"
-	MeshsyncSubject = "meshery.meshsync.core"
-	BrokerQueue     = "meshery"
+	Namespace                = "meshery"
+	RequestSubject           = "meshery.meshsync.request"
+	MeshsyncSubject          = "meshery.meshsync.core"
+	BrokerQueue              = "meshery"
+	BrokerPingEndpoint       = "8222/connz"
+	MeshSyncBrokerConnection = "meshsync"
 )
 
 var (
@@ -104,54 +106,50 @@ func GetControllersInfo(mesheryKubeClient *mesherykube.Client, brokerConn broker
 }
 
 func GetBrokerInfo(mesheryclient operatorClient.Interface, mesheryKubeClient *mesherykube.Client, brokerConn brokerpkg.Handler) (OperatorControllerStatus, error) {
-	var brokerStatus OperatorControllerStatus
+	var brokerControllerStatus OperatorControllerStatus
+	broker := controllers.NewMesheryBrokerHandler(mesheryKubeClient)
+	brokerStatus := Status(broker.GetStatus().String())
+	brokerControllerStatus.Name = broker.GetName()
 
-	broker, err := mesheryclient.CoreV1Alpha1().Brokers(Namespace).Get(context.TODO(), "meshery-broker", metav1.GetOptions{})
-	if err != nil && !kubeerror.IsNotFound(err) {
-		return brokerStatus, ErrMesheryClient(err)
-	}
-	statefulSet, err := mesheryKubeClient.KubeClient.AppsV1().StatefulSets("meshery").Get(context.TODO(), "meshery-broker", metav1.GetOptions{})
-	brokerVersion := ""
-	if err == nil {
-		brokerVersion = imageVersionExtractUtil(statefulSet.Spec.Template, "nats")
-		externalIP := strings.Split(broker.Status.Endpoint.External, ":")[0]
-		endpoint := fmt.Sprintf("http://%s%s/%s", externalIP, ":8222", "connz")
-
-		if connectivityTest(models.MesheryServerBrokerConnection, endpoint) {
-			status := fmt.Sprintf("%s %s", StatusConnected, broker.Status.Endpoint.External)
-			if brokerConn.Info() != brokerpkg.NotConnected {
-				brokerStatus.Status = Status(status)
-			}
+	brokerControllerStatus.Version, _ = broker.GetVersion()
+	if brokerStatus == Status(controllers.Deployed.String()) {
+		brokerEndpoint, _ := broker.GetPublicEndpoint()
+		externalIP := strings.Split(brokerEndpoint, ":")[0]
+		if connectivityTest(models.MesheryServerBrokerConnection, externalIP) {
+			status := fmt.Sprintf("%s %s", StatusConnected, brokerEndpoint)
+			brokerControllerStatus.Status = Status(status)
+			return brokerControllerStatus, nil
 		}
-		brokerStatus.Name = "broker"
-		brokerStatus.Version = brokerVersion
+		brokerControllerStatus.Status = brokerStatus
+		return brokerControllerStatus, nil
 	}
-
-	return brokerStatus, nil
+	brokerControllerStatus.Status = brokerStatus
+	return brokerControllerStatus, nil
 }
 
 func GetMeshSyncInfo(mesheryclient operatorClient.Interface, mesheryKubeClient *mesherykube.Client) (OperatorControllerStatus, error) {
-	var meshsyncStatus OperatorControllerStatus
-	meshsync, err := mesheryclient.CoreV1Alpha1().MeshSyncs(Namespace).Get(context.TODO(), "meshery-meshsync", metav1.GetOptions{})
-	if err != nil && !kubeerror.IsNotFound(err) {
-		return meshsyncStatus, ErrMesheryClient(err)
-	}
+	var meshsyncControllerStatus OperatorControllerStatus
+	meshsync := controllers.NewMeshsyncHandler(mesheryKubeClient)
+	meshsyncStatus := meshsync.GetStatus().String()
+	meshsyncControllerStatus.Name = meshsync.GetName()
+	meshsyncControllerStatus.Version = meshsyncVersion
 
-	svc, err := mesheryKubeClient.KubeClient.CoreV1().Services("meshery").Get(context.TODO(), "meshery-broker", metav1.GetOptions{})
-	if err != nil && !kubeerror.IsNotFound(err) {
-		return meshsyncStatus, ErrMesheryClient(err)
+	if meshsyncStatus == controllers.Running.String() {
+		broker := controllers.NewMesheryBrokerHandler(mesheryKubeClient)
+		brokerEndpoint, err := broker.GetPublicEndpoint()
+		if err != nil {
+			meshsyncControllerStatus.Status = Status(meshsyncStatus)
+			return meshsyncControllerStatus, nil
+		}
+		externalIP := strings.Split(brokerEndpoint, ":")[0]
+		if connectivityTest(MeshSyncBrokerConnection, externalIP) {
+			status := fmt.Sprintf("%s %s", StatusConnected, brokerEndpoint)
+			meshsyncControllerStatus.Status = Status(status)
+			return meshsyncControllerStatus, nil
+		}
 	}
-
-	externalIP := svc.Spec.LoadBalancerIP
-	endpoint := fmt.Sprintf("http://%s%s/%s", externalIP, ":8222", "connz")
-
-	if connectivityTest("meshsync", endpoint) {
-		status := fmt.Sprintf("%s %s", StatusEnabled, meshsync.Status.PublishingTo)
-		meshsyncStatus.Status = Status(status)
-	}
-	meshsyncStatus.Name = "meshsync"
-	meshsyncStatus.Version = meshsyncVersion
-	return meshsyncStatus, nil
+	meshsyncControllerStatus.Status = Status(meshsyncStatus)
+	return meshsyncControllerStatus, nil
 }
 
 func SubscribeToBroker(provider models.Provider, mesheryKubeClient *mesherykube.Client, datach chan *brokerpkg.Message, brokerConn brokerpkg.Handler, ct *K8sConnectionTracker) (string, error) {
@@ -254,16 +252,6 @@ func SubscribeToBroker(provider models.Provider, mesheryKubeClient *mesherykube.
 	return endpoint, nil
 }
 
-func imageVersionExtractUtil(container v1.PodTemplateSpec, containerName string) string {
-	version := ""
-	for _, container := range container.Spec.Containers {
-		if strings.Compare(container.Name, containerName) == 0 {
-			version = strings.Split(container.Image, ":")[1]
-		}
-	}
-	return version
-}
-
 func getVersion(brokerConn brokerpkg.Handler) {
 	versionch := make(chan *brokerpkg.Message)
 
@@ -284,24 +272,32 @@ func getVersion(brokerConn brokerpkg.Handler) {
 	}
 
 	ch := <-versionch
-	meshsyncVersion = "stable-" + ch.Object.(string)
-	fmt.Println("VERSION", meshsyncVersion)
+	meshsyncVersion = ch.Object.(string)
 }
 
-func connectivityTest(clientName, endpoint string) bool {
-	resp, err := http.Get(endpoint)
+func connectivityTest(clientName, externalIP string) bool {
+	endpoint, err := url.Parse("http://" + externalIP + ":" + BrokerPingEndpoint)
 	if err != nil {
+		logrus.Error(err.Error())
+		return false
+	}
+
+	resp, err := http.Get(endpoint.String())
+	if err != nil {
+		logrus.Errorf("failed to reach broker at endpoint: %s", endpoint.String())
 		return false
 	}
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
+		logrus.Error("failed to read request body")
 		return false
 	}
 
 	var natsResponse Connections
 	err = json.Unmarshal(body, &natsResponse)
 	if err != nil {
+		logrus.Error("Error marshaling response")
 		return false
 	}
 
