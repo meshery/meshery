@@ -1363,7 +1363,7 @@ func downloadContent(comp string, downloadpath string, log logger.Handler) error
 			if err != nil {
 				return err
 			}
-			path = filepath.Join(wd, "../install/apps.json")
+			path = filepath.Join(wd, "../../install/apps.json")
 		}
 		applicationsAndURLS, err := getSeededAppLocation(path)
 		if err != nil {
