@@ -146,7 +146,9 @@ func (h *Handler) handleApplicationPOST(
 				return
 			}
 
-			h.config.ApplicationsChannel <- struct{}{}
+			if h.config.ApplicationsChannel != nil {
+				h.config.ApplicationsChannel <- struct{}{}
+			}
 			h.formatApplicationOutput(rw, resp, format)
 			return
 		}
@@ -220,7 +222,9 @@ func (h *Handler) handleApplicationPOST(
 				return
 			}
 
-			h.config.ApplicationsChannel <- struct{}{}
+			if h.config.ApplicationsChannel != nil {
+				h.config.ApplicationsChannel <- struct{}{}
+			}
 			h.formatApplicationOutput(rw, resp, format)
 			return
 		}
@@ -259,7 +263,9 @@ func (h *Handler) handleApplicationPOST(
 				return
 			}
 
-			h.config.ApplicationsChannel <- struct{}{}
+			if h.config.ApplicationsChannel != nil {
+				h.config.ApplicationsChannel <- struct{}{}
+			}
 			h.formatApplicationOutput(rw, resp, format)
 			return
 		}
@@ -323,7 +329,9 @@ func (h *Handler) DeleteMesheryApplicationHandler(
 		return
 	}
 
-	h.config.ApplicationsChannel <- struct{}{}
+	if h.config.ApplicationsChannel != nil {
+		h.config.ApplicationsChannel <- struct{}{}
+	}
 	rw.Header().Set("Content-Type", "application/json")
 	fmt.Fprint(rw, string(resp))
 }

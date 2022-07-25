@@ -135,7 +135,9 @@ func (h *Handler) handleFilterPOST(
 				return
 			}
 
-			h.config.FiltersChannel <- struct{}{}
+			if h.config.FiltersChannel != nil {
+				h.config.FiltersChannel <- struct{}{}
+			}
 			formatFilterOutput(rw, resp, format)
 			return
 		}
@@ -211,7 +213,9 @@ func (h *Handler) DeleteMesheryFilterHandler(
 		return
 	}
 
-	h.config.FiltersChannel <- struct{}{}
+	if h.config.FiltersChannel != nil {
+		h.config.FiltersChannel <- struct{}{}
+	}
 	rw.Header().Set("Content-Type", "application/json")
 	fmt.Fprint(rw, string(resp))
 }
