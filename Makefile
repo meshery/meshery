@@ -137,7 +137,7 @@ error:
 	go run github.com/layer5io/meshkit/cmd/errorutil -d . analyze -i ./server/helpers -o ./server/helpers --skip-dirs mesheryctl
 
 #-----------------------------------------------------------------------------
-# Meshery UI Native Builds
+# Meshery UI Native Builds.
 #-----------------------------------------------------------------------------
 .PHONY: setup-ui-libs ui-setup run-ui-dev ui ui-meshery-build ui ui-provider ui-lint ui-provider ui-meshery ui-build ui-provider-build ui-provider-test
 
