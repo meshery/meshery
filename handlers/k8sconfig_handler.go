@@ -27,9 +27,9 @@ import (
 
 // SaveK8sContextResponse - struct used as (json marshalled) response to requests for saving k8s contexts
 type SaveK8sContextResponse struct {
-	InsertedContexts []models.K8sContext
-	UpdatedContexts  []models.K8sContext
-	ErroredContexts  []models.K8sContext
+	InsertedContexts []models.K8sContext `json:"inserted_contexts,omitempty"`
+	UpdatedContexts  []models.K8sContext `json:"updated_contexts,omitempty"`
+	ErroredContexts  []models.K8sContext `json:"errored_contexts,omitempty"`
 }
 
 // K8SConfigHandler is used for persisting kubernetes config and context info
