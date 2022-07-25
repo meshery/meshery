@@ -122,6 +122,12 @@ type Capability struct {
 	Endpoint string  `json:"endpoint,omitempty"`
 }
 
+// K8sContextResponse - struct of response sent by provider when requested to persist k8s config
+type K8sContextPersistResponse struct {
+	K8sContext
+	Inserted bool
+}
+
 // Feature is a type to store the features of the provider
 type Feature string
 

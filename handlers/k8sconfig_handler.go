@@ -25,6 +25,13 @@ import (
 	"github.com/spf13/viper"
 )
 
+// SaveK8sContextResponse - struct used as (json marshalled) response to requests for saving k8s contexts
+type SaveK8sContextResponse struct {
+	InsertedContexts []models.K8sContext
+	UpdatedContexts  []models.K8sContext
+	ErroredContexts  []models.K8sContext
+}
+
 // K8SConfigHandler is used for persisting kubernetes config and context info
 func (h *Handler) K8SConfigHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	// if req.Method != http.MethodPost && req.Method != http.MethodDelete {
@@ -93,15 +100,24 @@ func (h *Handler) addK8SConfig(user *models.User, prefObj *models.Preference, w 
 		return
 	}
 
+	saveK8sContextResponse := SaveK8sContextResponse{}
+
 	contexts := models.K8sContextsFromKubeconfig(k8sConfigBytes, mid)
 	for _, ctx := range contexts {
 		_, err := provider.SaveK8sContext(token, ctx) // Ignore errors
 		if err != nil {
-			logrus.Error("failed to persist context")
+			if err == models.ErrContextAlreadyPersisted {
+				saveK8sContextResponse.UpdatedContexts = append(saveK8sContextResponse.UpdatedContexts, ctx)
+			} else {
+				saveK8sContextResponse.ErroredContexts = append(saveK8sContextResponse.ErroredContexts, ctx)
+				logrus.Error("failed to persist context")
+			}
+		} else {
+			saveK8sContextResponse.InsertedContexts = append(saveK8sContextResponse.InsertedContexts, ctx)
 		}
 	}
 
-	if err := json.NewEncoder(w).Encode(contexts); err != nil {
+	if err := json.NewEncoder(w).Encode(saveK8sContextResponse); err != nil {
 		logrus.Error(ErrMarshal(err, "kubeconfig"))
 		http.Error(w, ErrMarshal(err, "kubeconfig").Error(), http.StatusInternalServerError)
 		return
