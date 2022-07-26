@@ -23,7 +23,9 @@ include install/Makefile.show-help.mk
 
 dep-check:
 ifeq ($(shell which go$(GOVERSION); echo $$?),1)
-$(error Dependency missing: go$(GOVERSION). Ensure 'go$(GOVERSION)' (specifically this version) is installed and available in your 'PATH')
+	@echo "Dependency missing: go$(GOVERSION). Ensure 'go$(GOVERSION)' (specifically this version) is installed and available in your 'PATH'"
+# Uncomment to force error and stop. Careful that ui builds may fail, too.
+# $(error Dependency missing: go$(GOVERSION). Ensure 'go$(GOVERSION)' (specifically this version) is installed and available in your 'PATH')
 endif
 
 #-----------------------------------------------------------------------------
