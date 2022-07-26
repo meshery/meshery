@@ -16,6 +16,7 @@ package system
 
 import (
 	"fmt"
+	"os"
 	"strings"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
@@ -93,7 +94,15 @@ var setCmd = &cobra.Command{
 // Subscribe to release channel or version
 mesheryctl system channel set [stable|stable-version|edge|edge-version]
 	`,
-	Args: cobra.ExactArgs(1),
+	Args: func(_ *cobra.Command, args []string) error {
+		const errMsg = `Usage: mesheryctl system channel set [stable|stable-version|edge|edge-version]
+Example: mesheryctl system channel set stable`
+
+		if len(args) != 1 {
+			return fmt.Errorf("accepts single argument, received %d\n\n%v", len(args), errMsg)
+		}
+		return nil
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 
 		mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
@@ -112,7 +121,7 @@ mesheryctl system channel set [stable|stable-version|edge|edge-version]
 		channelNameSeperated := strings.SplitN(channelVersion, "-", 2)
 
 		if !IsBetaOrStable(channelNameSeperated[0]) {
-			return errors.New("No release channel subscription found." +
+			return errors.New("No release channel subscription found. " +
 				"Please subscribe to either the 'stable' or 'edge' release channel")
 		}
 
@@ -164,7 +173,15 @@ var switchCmd = &cobra.Command{
 // Switch between release channels
 mesheryctl system channel switch [stable|stable-version|edge|edge-version]
 	`,
-	Args: cobra.ExactArgs(1),
+	Args : func(_ *cobra.Command, args []string) error {
+		const errMsg = `Usage: mesheryctl system channel switch [stable|stable-version|edge|edge-version]
+Example: mesheryctl system channel switch stable`
+
+		if len(args) == 0 {
+			return fmt.Errorf("accepts single argument, received %d\n\n%v", len(args), errMsg)
+		}
+		return nil
+	},
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
 		hcOptions := &HealthCheckOptions{
@@ -219,12 +236,19 @@ var channelCmd = &cobra.Command{
 	Use:   "channel",
 	Short: "Switch between release channels",
 	Long:  `Subscribe to a release channel. Choose between either 'stable' or 'edge' channels.`,
-	Args:  cobra.NoArgs,
 	Example: `
-// Subscribe to release channel or version
-mesheryctl system channel [stable|stable-version|edge|edge-version]
+// Base command
+mesheryctl system channel 
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
+		if len(args) == 0 {
+			cmd.Help()
+			os.Exit(0)
+		}
+		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
+			const errMsg = `See https://docs.meshery.io/reference/mesheryctl/system/channel for usage details.`
+			return errors.New(fmt.Sprintf("'%s' is a invalid command.  Use 'mesheryctl system context --help' to display usage guide.\n\n%s", args[0], errMsg))
+		}
 		mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			log.Fatalln(err, "error processing config")
