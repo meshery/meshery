@@ -329,7 +329,16 @@ var configCmd = &cobra.Command{
 	Use:   "config",
 	Short: "Configure Meshery",
 	Long:  `Configure the Kubernetes cluster used by Meshery.`,
-	Args:  cobra.ExactArgs(1),
+	Args: func(_ *cobra.Command, args []string) error {
+		const errMsg = `Usage: mesheryctl system config [aks|eks|gke|minikube]
+Example: mesheryctl system config eks
+Description: Configure the Kubernetes cluster used by Meshery.`
+
+		if len(args) ==0 {
+			return fmt.Errorf("accepts single argument, received %d\n\n%v", len(args), errMsg)
+		}
+		return nil
+	},
 	Example: `
 // Set configuration according to k8s cluster
 mesheryctl system config [aks|eks|gke|minikube]
