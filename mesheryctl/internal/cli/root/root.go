@@ -73,12 +73,13 @@ mesheryctl -v [or] --verbose
 
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the RootCmd.
-func Execute() {
+func Execute() error {
 	//log formatter for improved UX
 	utils.SetupLogrusFormatter()
 	// Removing printing command usage on error
 	RootCmd.SilenceUsage = true
-	_ = RootCmd.Execute()
+	err := RootCmd.Execute()
+	return err
 }
 
 func init() {
