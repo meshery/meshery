@@ -4,16 +4,16 @@ import { withStyles } from '@material-ui/core/styles';
 import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle'
-import WarningIcon from '@material-ui/icons/Warning';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import InfoIcon from '@material-ui/icons/Info';
 
 const styles = (() => ({
   title : {
     textAlign : 'center',
     minWidth : 400,
     padding : '10px',
-    color : '#ebf1f5',
-    backgroundColor : '#F0A303',
+    color : '#2198f3',
+    backgroundColor : '#e6f2fb',
   },
   subtitle : {
     minWidth : 400,
@@ -70,7 +70,7 @@ const AlertUnauthenticatedSession = ({ classes }) => {
       >
         <DialogTitle id="alert-dialog-title" className={classes.title}>
           <span className={classes.icon}>
-            <WarningIcon color="#F0D053"/>
+            <InfoIcon color="#2196f3"/>
           </span>
               Session Expired 
         </DialogTitle>
