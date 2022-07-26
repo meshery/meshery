@@ -31,7 +31,7 @@ const styles = (() => ({
     padding: "inherit",
     position: "absolute",
     left: "25px",
-    top: "20px" 
+    top: "15px" 
   }
 }));
 
