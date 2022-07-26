@@ -132,6 +132,8 @@ function RJSFForm(props) {
         showErrorList={false}
         transformErrors={transformErrors}
         noHtml5Validate
+        ErrorList={ErrorList}
+        transformErrors={transformErrors}
       >
         {/* {hideSubmit ? true : <RJSFButton handler={onSubmit} text="Submit" {...restparams} />}
 {hideSubmit ? true : <RJSFButton handler={onDelete} text="Delete" />} */}
