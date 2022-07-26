@@ -16,6 +16,19 @@ include install/Makefile.core.mk
 include install/Makefile.show-help.mk
 
 #-----------------------------------------------------------------------------
+# Dependencies
+#-----------------------------------------------------------------------------
+#.PHONY: dep-check
+#.SILENT: dep-check
+
+dep-check:
+ifeq ($(shell which go$(GOVERSION); echo $$?),1)
+	@echo "Dependency missing: go$(GOVERSION). Ensure 'go$(GOVERSION)' (specifically this version) is installed and available in your 'PATH'"
+# Uncomment to force error and stop. Careful that ui builds may fail, too.
+# $(error Dependency missing: go$(GOVERSION). Ensure 'go$(GOVERSION)' (specifically this version) is installed and available in your 'PATH')
+endif
+
+#-----------------------------------------------------------------------------
 # Docker-based Builds
 #-----------------------------------------------------------------------------
 .PHONY: docker-build docker-local-cloud docker-cloud
@@ -24,7 +37,6 @@ docker-build:
 	# `make docker` builds Meshery inside of a multi-stage Docker container.
 	# This method does NOT require that you have Go, NPM, etc. installed locally.
 	DOCKER_BUILDKIT=1 docker build -f install/docker/Dockerfile -t layer5/meshery --build-arg TOKEN=$(GLOBAL_TOKEN) --build-arg GIT_COMMITSHA=$(GIT_COMMITSHA) --build-arg GIT_VERSION=$(GIT_VERSION) --build-arg RELEASE_CHANNEL=${RELEASE_CHANNEL} .
-
 
 ## Meshery Cloud for user authentication.
 ## Runs Meshery in a container locally and points to locally-running
@@ -83,7 +95,7 @@ run-fast:
 	## "DEPRECATED: This target is deprecated. Use `make server`.
 
 ## Build and run Meshery Server on your local machine (requires go${GOVERSION}).
-server:
+server: dep-check
 	cd cmd; go$(GOVERSION) mod tidy; \
 	BUILD="$(GIT_VERSION)" \
 	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
