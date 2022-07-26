@@ -29,9 +29,9 @@ const styles = (() => ({
   },
   icon: {
     padding: "inherit",
-    position: "absolute",
-    left: "25px",
-    top: "15px" 
+    position: "relative",
+    right: "120px",
+    top: "5px" 
   }
 }));
 
