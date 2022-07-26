@@ -1,12 +1,15 @@
 import React, {useState} from 'react'
-import { AppBar, Box, Button, Grid, Dialog, DialogTitle, Divider, DialogContent, DialogActions, Tooltip, Hidden, IconButton, Toolbar, Typography, TableCell, TableSortLabel } from "@mui/material";
+import { Avatar, Box, Button, IconButton, TableCell, TableSortLabel } from "@mui/material";
 import MUIDataTable from "mui-datatables";
-// import Moment from "react-moment";
+import Moment from "react-moment";
 import { styled } from "@mui/material/styles";
 import UploadImport from "@/components/UploadImport";
 import ViewSwitch from "@/components/ViewSwitch";
 import DoneAllIcon from '@mui/icons-material/DoneAll';
+import UndeployIcon from "../../public/static/img/UndeployIcon";
 import MesheryPatternGrid from "./MesheryPatternGrid"
+import AddCircleOutlineRoundedIcon from '@mui/icons-material/AddCircleOutlineRounded';
+import EmptyConfigurationList from "@/components/EmptyConfigurationList";
 import { useTheme } from "@mui/system";
 
 function resetSelectedPattern() {
@@ -107,7 +110,7 @@ updated_at: "2022-07-14T13:53:35.479756Z"
     const columns = [
         {
           name : "name",
-          label : "pattern Name",
+          label : "Name",
           options : {
             filter : false,
             sort : true,
@@ -139,6 +142,9 @@ updated_at: "2022-07-14T13:53:35.479756Z"
                 </TableCell>
               );
             },
+            customBodyRender : function CustomBody(value) {
+              return <Moment format="LLLL">{value}</Moment>;
+            },
           },
         },
         {
@@ -157,9 +163,9 @@ updated_at: "2022-07-14T13:53:35.479756Z"
                 </TableCell>
               );
             },
-            // customBodyRender : function CustomBody(value) {
-            //   return <Moment format="LLLL">{value}</Moment>;
-            // },
+            customBodyRender : function CustomBody(value) {
+              return <Moment format="LLLL">{value}</Moment>;
+            },
           },
         },
         {
@@ -179,6 +185,9 @@ updated_at: "2022-07-14T13:53:35.479756Z"
               const rowData = patterns[tableMeta.rowIndex];
               return (
                 <>
+              <IconButton onClick={() => setSelectedPattern({ pattern : patterns[tableMeta.rowIndex], show : true })}>
+                <Avatar src="/static/img/pattwhite.svg" sx={{ width: 27, height: 27, marginRight: 1 }} />
+              </IconButton>
                   <IconButton
                     title="Deploy"
                     onClick={() => handleModalOpen(rowData.pattern_file, true)}
@@ -189,7 +198,7 @@ updated_at: "2022-07-14T13:53:35.479756Z"
                     title="Undeploy"
                     onClick={() => handleModalOpen(rowData.pattern_file, false)}
                   >
-                    {/* <UndeployIcon fill="rgba(0, 0, 0, 0.54)" data-cy="undeploy-button" /> */}
+                    <UndeployIcon fill="rgba(0, 0, 0, 0.54)" data-cy="undeploy-button" />
                   </IconButton>
                 </>
               );
@@ -219,24 +228,51 @@ updated_at: "2022-07-14T13:53:35.479756Z"
     }
 
   return (
-    <div> 
-      <Button onClick={handleClick}>QWE</Button>     
-      <Box sx={{display: "flex"}}>  
-
-       <UploadImport configuration="patterns" />
+    <> 
+          <Button onClick={handleClick}>QWE</Button>  
+             
+      {!selectedPattern.show  &&  (patterns.length > 0 || viewType === "table") &&
+       <Box sx={{display: "flex"}}>
+         
+      <Button aria-label="Add Pattern" variant="contained"
+          color="primary"
+          size="large"
+           sx={{marginBottom: theme.spacing(2) , marginRight: theme.spacing(2)}} >
+           <AddCircleOutlineRoundedIcon sx={{ paddingRight : ".35rem" }} />
+          Create Design
+        </Button>    
+       <UploadImport configuration="Designs" />
        <CustomBox >
             <ViewSwitch view={viewType} changeView={setViewType} />
           </CustomBox>
-       </Box> 
-       {console.log(patterns1.name +"qwert")}
+       </Box>
+      }
+    
     {!selectedPattern.show &&  viewType==="table" &&   
          <MUIDataTable
-    title={<div>patterns</div>}
+    title={<div>Designs</div>}
     data={patterns}
     columns={columns}
     options={options}    
   />
 }
+{!selectedPattern.show && viewType === "grid" && patterns.length === 0 &&
+            <EmptyConfigurationList configuration="Designs" 
+            NewButton={
+              <Button
+              aria-label="Create Design"
+              variant="contained"
+              color="primary"
+              size="large"
+              // @ts-ignore
+              sx={{marginBottom: theme.spacing(2) , marginRight: theme.spacing(2)}} >
+            >
+              <AddCircleOutlineRoundedIcon  sx={{ paddingRight : ".35rem" }} />
+              Create Design
+            </Button>
+            }
+            />
+        } 
     {!selectedPattern.show &&  viewType==="grid" &&   
              <MesheryPatternGrid
             patterns={patterns}
@@ -250,8 +286,7 @@ updated_at: "2022-07-14T13:53:35.479756Z"
             //  selectedPage={page}
            />
 }
-
-  </div>
+  </>
   )
 }
 
