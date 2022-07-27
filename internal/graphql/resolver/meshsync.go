@@ -226,13 +226,16 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 	}
 
 	if actions.ReSync == "true" {
-		err := r.BrokerConn.Publish(model.RequestSubject, &broker.Message{
-			Request: &broker.RequestObject{
-				Entity: broker.ReSyncDiscoveryEntity,
-			},
-		})
-		if err != nil {
-			return "", ErrPublishBroker(err)
+		if (r.BrokerConn.Info() != broker.NotConnected) {
+
+			err := r.BrokerConn.Publish(model.RequestSubject, &broker.Message{
+				Request: &broker.RequestObject{
+					Entity: broker.ReSyncDiscoveryEntity,
+				},
+			})
+			if err != nil {
+				return "", ErrPublishBroker(err)
+			}
 		}
 	}
 	return model.StatusProcessing, nil
