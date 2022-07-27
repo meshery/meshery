@@ -1,10 +1,11 @@
 package models
 
 import (
+	"database/sql"
 	"time"
 
 	"github.com/gofrs/uuid"
-	"github.com/layer5io/meshery/internal/sql"
+	isql "github.com/layer5io/meshery/internal/sql"
 )
 
 type ApplicationType string
@@ -44,9 +45,9 @@ type MesheryApplication struct {
 	ApplicationFile string `json:"application_file"`
 	// Meshery doesn't have the user id fields
 	// but the remote provider is allowed to provide one
-	UserID        *string         `json:"user_id" gorm:"-"`
-	Location      sql.Map         `json:"location"`
-	Type          ApplicationType `json:"type"`
+	UserID        *string        `json:"user_id" gorm:"-"`
+	Location      isql.Map       `json:"location"`
+	Type          sql.NullString `json:"type"`
 	SourceContent []byte
 	UpdatedAt     *time.Time `json:"updated_at,omitempty"`
 	CreatedAt     *time.Time `json:"created_at,omitempty"`

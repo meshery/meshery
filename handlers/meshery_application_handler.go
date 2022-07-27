@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"bytes"
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -146,10 +147,10 @@ func (h *Handler) handleApplicationPOST(
 					http.Error(rw, ErrApplicationFailure(err, obj).Error(), http.StatusInternalServerError) // sending a 500 when we cannot convert the file into kuberentes manifest
 					return
 				}
-				mesheryApplication.Type = models.DOCKER_COMPOSE
+				mesheryApplication.Type.String = string(models.DOCKER_COMPOSE)
 			} else if sourcetype == string(models.K8S_MANIFEST) {
 				k8sres = string(bytApplication)
-				mesheryApplication.Type = models.K8S_MANIFEST
+				mesheryApplication.Type.String = string(models.K8S_MANIFEST)
 			}
 
 			pattern, err := core.NewPatternFileFromK8sManifest(k8sres, false)
@@ -221,7 +222,9 @@ func (h *Handler) handleApplicationPOST(
 			mesheryApplication = &models.MesheryApplication{
 				Name:            strings.TrimSuffix(url[len(url)-1], ".tgz"),
 				ApplicationFile: string(response),
-				Type:            models.HELM_CHART,
+				Type: sql.NullString{
+					String: string(models.HELM_CHART),
+				},
 				Location: map[string]interface{}{
 					"type":   "http",
 					"host":   parsedBody.URL,
@@ -521,7 +524,9 @@ func githubRepoApplicationScan(
 						"path":   f.Path,
 						"branch": branch,
 					},
-					Type:          models.ApplicationType(sourceType),
+					Type: sql.NullString{
+						String: string(sourceType),
+					},
 					SourceContent: []byte(f.Content),
 				}
 
@@ -582,7 +587,9 @@ func genericHTTPApplicationFile(fileURL, sourceType string) ([]models.MesheryApp
 			"path":   "",
 			"branch": "",
 		},
-		Type:          models.ApplicationType(sourceType),
+		Type: sql.NullString{
+			String: string(sourceType),
+		},
 		SourceContent: body,
 	}
 	return []models.MesheryApplication{af}, nil

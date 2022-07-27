@@ -4,6 +4,7 @@ import (
 	"archive/tar"
 	"bytes"
 	"compress/gzip"
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -982,10 +983,12 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 						}
 						var app = &MesheryApplication{
 							ApplicationFile: patternfile,
-							Type:            K8S_MANIFEST,
-							SourceContent:   []byte(k8sfile),
-							Name:            name,
-							ID:              &id,
+							Type: sql.NullString{
+								String: string(K8S_MANIFEST),
+							},
+							SourceContent: []byte(k8sfile),
+							Name:          name,
+							ID:            &id,
 						}
 						log.Debug("seeding "+comp+": ", name)
 						_, err := l.MesheryApplicationPersister.SaveMesheryApplication(app)
