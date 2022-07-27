@@ -662,7 +662,7 @@ function MesheryPatterns({
     let response = await modalRef.current.show({
       title : `Delete ${count ? count : ""} Pattern${count > 1 ? "s" : ''}?`,
 
-      subtitle : `Are you sure you want to delete ${count > 1 ? "these" : 'this'}  ${count ? count : ""}  pattern${count > 1 ? "s" : ''}?`,
+      subtitle : `Are you sure you want to delete ${count > 1 ? "these" : 'this'}  ${count ? count : ""}  design${count > 1 ? "s" : ''}?`,
 
       options : ["Yes", "No"],
     });
@@ -683,7 +683,7 @@ function MesheryPatterns({
       console.log("PatternFile Delete Multiple API", `/api/pattern/delete`);
       updateProgress({ showProgress : false });
       setTimeout(() => {
-        enqueueSnackbar(`${patterns.patterns.length} Patterns Deleted`,
+        enqueueSnackbar(`${patterns.patterns.length} Designs Deleted`,
           {
             variant : "success",
             autoHideDuration : 2000,
