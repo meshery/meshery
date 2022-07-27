@@ -12,7 +12,6 @@ function ViewSwitch({ view, changeView }) {
         if (newView !==null){
           changeView(newView)
         }
-
       }
       }
       aria-label="Switch View"
