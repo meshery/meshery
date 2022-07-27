@@ -1886,11 +1886,11 @@ func (l *RemoteProvider) SaveApplicationSourceContent(tokenString string, applic
 	}()
 
 	if resp.StatusCode == http.StatusOK {
-		logrus.Infof("application source successfully uploaded to remote provider: %s", string(sourceContent))
+		logrus.Infof("application source successfully uploaded to remote provider")
 		return nil
 	}
 
-	return ErrPost(fmt.Errorf("failed to upload application source to remote provider"), fmt.Sprint(string(sourceContent)), resp.StatusCode)
+	return ErrPost(fmt.Errorf("failed to upload application source to remote provider"), "", resp.StatusCode)
 }
 
 // GetApplicationSourceContent returns application source-content from provider
