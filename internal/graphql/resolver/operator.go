@@ -129,7 +129,6 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Pro
 		// r.operatorChannel <- &model.OperatorStatus{
 		// 	Status: status,
 		// }
-
 	}(delete, kubeclient)
 
 	return model.StatusProcessing, nil
@@ -374,7 +373,6 @@ func (r *Resolver) listenToOperatorsState(ctx context.Context, provider models.P
 									}
 								}
 							}
-
 						}
 						statusWithContext := model.OperatorStatusPerK8sContext{
 							ContextID:      k8scontext.ID,
