@@ -76,7 +76,10 @@ var (
 func init() {
 	availableSubcommands = []*cobra.Command{validateCmd, deployCmd, removeCmd}
 	MeshCmd.AddCommand(availableSubcommands...)
-	MeshCmd.PersistentFlags().StringVarP(&utils.TokenFlag, "token", "t", "", "Path to token for authenticating to Meshery API")
+	MeshCmd.PersistentFlags().StringVarP(
+		&utils.TokenFlag, "token", "t", "",
+		"Path to token for authenticating to Meshery API",
+	)
 }
 
 func validateAdapter(mctlCfg *config.MesheryCtlConfig, meshName string) error {

@@ -43,7 +43,7 @@ var (
 				}
 				return errors.New("only Istio supports istio-vet operation")
 			default:
-				return errors.New("specified specification not found or not yet supported")
+				return errors.New("specification not found or not yet supported")
 			}
 
 			_, err = sendOperationRequest(mctlCfg, query, false)
@@ -53,7 +53,7 @@ var (
 
 			if watch {
 				log.Infof("Verifying Operation")
-				_, err = waitForValidateResponse(mctlCfg, "Smi conformance test")
+				_, err = waitForValidateResponse(mctlCfg, "SMI conformance test")
 				if err != nil {
 					log.Fatalln(err)
 				}
@@ -65,8 +65,13 @@ var (
 )
 
 func init() {
-	validateCmd.Flags().StringVarP(&spec, "spec", "s", "smi", "specification to be used for conformance test")
-	_ = validateCmd.MarkFlagRequired("spec")
+	validateCmd.Flags().StringVarP(
+		&spec,
+		"spec",
+		"s",
+		"smi",
+		"Specification to be used for conformance test [smi (default), istio-vet]",
+	)
 	validateCmd.Flags().StringVarP(
 		&namespace, "namespace", "n", "default",
 		"Kubernetes namespace where the mesh is deployed",
