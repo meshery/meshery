@@ -660,7 +660,7 @@ function MesheryPatterns({
 
   async function showModal(count) {
     let response = await modalRef.current.show({
-      title : `Delete ${count ? count : ""} Pattern${count > 1 ? "s" : ''}?`,
+      title : `Delete ${count ? count : ""} Design${count > 1 ? "s" : ''}?`,
 
       subtitle : `Are you sure you want to delete ${count > 1 ? "these" : 'this'}  ${count ? count : ""}  design${count > 1 ? "s" : ''}?`,
 
