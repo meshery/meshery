@@ -148,75 +148,6 @@ paths:
                 type: string
                 x-go-name: UserID
             x-go-package: github.com/layer5io/meshery/models
-  /api/application/deploy:
-    post:
-      description: |-
-        Handle POST request for Application File Deploy
-        Deploy an attached application file with the request
-      tags:
-      - ApplicationsAPI
-      operationId: idPostDeployApplicationFile
-      parameters:
-      - type: file
-        x-go-name: FormFile
-        name: Upload Yaml/Yml File
-        in: formData
-      responses:
-        "200":
-          description: Returns the response of the application files
-          schema:
-            description: MesheryApplication represents the applications that needs
-              to be saved
-            type: object
-            properties:
-              application_file:
-                type: string
-                x-go-name: ApplicationFile
-              created_at:
-                type: string
-                format: date-time
-                x-go-name: CreatedAt
-              id:
-                type: array
-                title: UUID is an array type to represent the value of a UUID, as
-                  defined in RFC-4122.
-                items:
-                  type: integer
-                  format: uint8
-                x-go-package: github.com/gofrs/uuid
-              location:
-                description: |-
-                  It implements native SQL driver interfaces and hence can
-                  be used for SQL json or jsonb types as a drop in replacement
-                  of golang native maps
-                type: object
-                title: Map type is an alias for map[string]interface{}
-                additionalProperties:
-                  type: object
-                x-go-package: github.com/layer5io/meshery/internal/sql
-              name:
-                type: string
-                x-go-name: Name
-              updated_at:
-                type: string
-                format: date-time
-                x-go-name: UpdatedAt
-              user_id:
-                description: |-
-                  Meshery doesn't have the user id fields
-                  but the remote provider is allowed to provide one
-                type: string
-                x-go-name: UserID
-            x-go-package: github.com/layer5io/meshery/models
-    delete:
-      description: Delete a deployed application file with the request
-      tags:
-      - ApplicationsAPI
-      summary: Handle DELETE request for Application File Deploy
-      operationId: idDeleteApplicationFile
-      responses:
-        "200":
-          description: ""
   /api/application/{id}:
     get:
       description: Fetches the list of all applications saved by the current user
@@ -296,6 +227,65 @@ paths:
       responses:
         "200":
           description: ""
+  
+  /api/application/types:
+    get: 
+      description: Returns the list of available types
+      tags:
+      - ApplicationsAPI
+      summary: Handle GET request for available types for all applications
+      parameters:
+      - type: source-type
+        description: query parameter
+        name: application_file
+        in: path
+        required: true
+      responses:
+        "200":
+          description: Fetches a single Meshery Application
+          schema:
+            description: "Returns all Meshery Application based on source type"
+            type: object
+            properties:
+              Helm Chart:
+                type: helm chart
+                format: .tgz
+              Docker Compose:
+                type: docker compose
+                format: ".yaml .yml"
+              Kubernetes Manifest:
+                type: kubernetes manifest
+                format: ".yaml .yml"
+  
+  /api/application/download/{id}:
+    get: 
+      description: Retrieves and downloads a single application of specific source-type with source-content
+      tags:
+      - ApplicationsAPI
+      summary: Retrieves the source-content for all applications
+      parameters:
+      - type: source-type
+        description: query parameter
+        name: id
+        in: path
+        required: true
+      responses:
+        "200":
+          description: retrieves and downloads the source-content of a single Meshery Application
+          schema:
+            description: "Downloads the Meshery Application based on with source-content"
+            type: object
+            properties:
+              Helm Chart:
+                type: helm chart
+                format: .tgz
+              Docker Compose:
+                type: docker compose
+                format: ".yaml .yml"
+              Kubernetes Manifest:
+                type: kubernetes manifest
+                format: ".yaml .yml"
+
   /api/filter:
     get:
       description: Returns all the Meshery Filters saved by the current user
