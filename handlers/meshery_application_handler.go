@@ -147,10 +147,16 @@ func (h *Handler) handleApplicationPOST(
 					http.Error(rw, ErrApplicationFailure(err, obj).Error(), http.StatusInternalServerError) // sending a 500 when we cannot convert the file into kuberentes manifest
 					return
 				}
-				mesheryApplication.Type.String = string(models.DOCKER_COMPOSE)
+				mesheryApplication.Type= sql.NullString{
+					String: string(models.DOCKER_COMPOSE),
+					Valid: true,
+				}
 			} else if sourcetype == string(models.K8S_MANIFEST) {
 				k8sres = string(bytApplication)
-				mesheryApplication.Type.String = string(models.K8S_MANIFEST)
+				mesheryApplication.Type = sql.NullString{
+					String: string(models.K8S_MANIFEST),
+					Valid: true,
+				}
 			}
 
 			pattern, err := core.NewPatternFileFromK8sManifest(k8sres, false)
@@ -224,6 +230,7 @@ func (h *Handler) handleApplicationPOST(
 				ApplicationFile: string(response),
 				Type: sql.NullString{
 					String: string(models.HELM_CHART),
+					Valid: true,
 				},
 				Location: map[string]interface{}{
 					"type":   "http",
@@ -526,6 +533,7 @@ func githubRepoApplicationScan(
 					},
 					Type: sql.NullString{
 						String: string(sourceType),
+						Valid: true,
 					},
 					SourceContent: []byte(f.Content),
 				}
@@ -589,6 +597,7 @@ func genericHTTPApplicationFile(fileURL, sourceType string) ([]models.MesheryApp
 		},
 		Type: sql.NullString{
 			String: string(sourceType),
+			Valid: true,
 		},
 		SourceContent: body,
 	}

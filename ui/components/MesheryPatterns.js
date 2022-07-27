@@ -1,8 +1,6 @@
 // @ts-check
 import {
-  Avatar, Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, IconButton, NoSsr,
-  Paper,
-  TableCell, Tooltip, Typography
+  Avatar, Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, IconButton, NoSsr, TableCell, Tooltip, Typography
 } from "@material-ui/core";
 import { createTheme, makeStyles, MuiThemeProvider, withStyles } from "@material-ui/core/styles";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
@@ -21,7 +19,6 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import dataFetch from "../lib/data-fetch";
 import FILE_OPS from "../utils/configurationFileHandlersEnum";
-import PromptComponent from "./PromptComponent";
 import { updateProgress } from "../lib/store";
 import PatternForm from "../components/configuratorComponents/patternConfigurator";
 import UploadImport from "./UploadImport";
@@ -798,7 +795,7 @@ function MesheryPatterns({
 
   return (
     <>
-        <NoSsr>
+      <NoSsr>
         {selectedRowData && Object.keys(selectedRowData).length > 0 && (
           <YAMLEditor pattern={selectedRowData} onClose={resetSelectedRowData()} onSubmit={handleSubmit} />
         )}
@@ -808,21 +805,21 @@ function MesheryPatterns({
         <div className={classes.topToolbar} >
           {!selectedPattern.show && (patterns.length>0 || viewType==="table") && <div className={classes.createButton}>
             <div>
-            <Button
-              aria-label="Add Pattern"
-              variant="contained"
-              color="primary"
-              size="large"
-              // @ts-ignore
-              onClick={() => setSelectedPattern({
-                pattern : { id : null, name : "New Pattern", pattern_file : "name: New Pattern\nservices:" },
-                show : true,
-              })}
-              style={{marginRight: "2rem"}}
-            >
-              <AddIcon className={classes.addIcon} />
+              <Button
+                aria-label="Add Pattern"
+                variant="contained"
+                color="primary"
+                size="large"
+                // @ts-ignore
+                onClick={() => setSelectedPattern({
+                  pattern : { id : null, name : "New Pattern", pattern_file : "name: New Pattern\nservices:" },
+                  show : true,
+                })}
+                style={{ marginRight : "2rem" }}
+              >
+                <AddIcon className={classes.addIcon} />
               Create Design
-            </Button>
+              </Button>
               <UploadImport supportedTypes="null"  aria-label="URL upload button" handleUpload={urlUploadHandler} handleImport={uploadHandler} configuration="Designs" />
             </div>
           </div>

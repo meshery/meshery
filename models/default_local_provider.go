@@ -985,6 +985,7 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 							ApplicationFile: patternfile,
 							Type: sql.NullString{
 								String: string(K8S_MANIFEST),
+								Valid: true,
 							},
 							SourceContent: []byte(k8sfile),
 							Name:          name,

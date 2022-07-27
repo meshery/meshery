@@ -1833,7 +1833,7 @@ func (l *RemoteProvider) SaveMesheryApplication(tokenString string, application 
 		return nil, err
 	}
 
-	logrus.Debugf("Application: %s, size: %d", data, len(data))
+	logrus.Debugf("Application size: %d", len(data))
 	logrus.Infof("attempting to save application to remote provider")
 	bf := bytes.NewBuffer(data)
 

@@ -594,7 +594,7 @@ function MesheryApplications({
                 title="click to download"
                 onClick={() => handleAppDownload(rowData.id ,rowData.type, rowData.name)}
               >
-                <img src={`/static/img/${(rowData.type).replaceAll(" ", "_").toLowerCase()}.svg`} width="45px" height="45px" />
+                <img src={`/static/img/${(rowData.type.String).replaceAll(" ", "_").toLowerCase()}.svg`} width="45px" height="45px" />
               </IconButton>
             </>
           );
