@@ -8,7 +8,13 @@ function ViewSwitch({ view, changeView }) {
       size="small"
       value={view}
       exclusive
-      onChange={(_, newView) => changeView(newView)}
+      onChange={(_, newView) => {
+        if (newView !==null){
+          changeView(newView)
+        }
+
+      }
+      }
       aria-label="Switch View"
     >
       <ToggleButton value="grid" data-cy="grid-view">
