@@ -18213,7 +18213,7 @@ html body .md-typeset .headerlink {
         position: -webkit-sticky;
         position: sticky;
         top: 4rem;
-        height: 100vh;
+        height: 100%;
         overflow-y: auto
     }
 }
