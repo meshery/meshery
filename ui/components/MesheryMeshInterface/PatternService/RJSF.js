@@ -130,7 +130,6 @@ function RJSFForm(props) {
         }}
         liveValidate
         showErrorList={false}
-        transformErrors={transformErrors}
         noHtml5Validate
         ErrorList={ErrorList}
         transformErrors={transformErrors}
