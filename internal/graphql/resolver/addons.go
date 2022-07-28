@@ -36,19 +36,23 @@ func (r *Resolver) listenToAddonState(ctx context.Context, provider models.Provi
 
 	go func() {
 		r.Log.Info("Addons subscription started")
-		for {
-			select {
-			case <-r.MeshSyncChannel:
-				status, err := r.getAvailableAddons(ctx, provider, filter)
-				if err != nil {
-					r.Log.Error(ErrAddonSubscription(err))
-					break
+		for _, ctxID := range filter.K8sClusterIDs {
+			go func(ctxID string) {
+				for {
+					select {
+					case <-r.MeshSyncChannelPerK8sContext[ctxID]:
+						status, err := r.getAvailableAddons(ctx, provider, filter)
+						if err != nil {
+							r.Log.Error(ErrAddonSubscription(err))
+							break
+						}
+						r.addonChannel <- status
+					case <-ctx.Done():
+						r.Log.Info("Addons subscription stopped")
+						return
+					}
 				}
-				r.addonChannel <- status
-			case <-ctx.Done():
-				r.Log.Info("Addons subscription stopped")
-				return
-			}
+			}(ctxID)
 		}
 	}()
 

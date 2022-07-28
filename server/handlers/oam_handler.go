@@ -9,6 +9,8 @@ import (
 	"strings"
 	"time"
 
+	"cuelang.org/go/cue"
+	"cuelang.org/go/cue/cuecontext"
 	"github.com/ghodss/yaml"
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
@@ -17,6 +19,7 @@ import (
 	"github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshery/server/models/pattern/patterns"
 	"github.com/layer5io/meshery/server/models/pattern/stages"
+	"github.com/layer5io/meshkit/utils"
 	"github.com/sirupsen/logrus"
 )
 
@@ -29,6 +32,119 @@ const (
 	noneLocal  patternCallType = "<none-local>"
 	oamAdapter patternCallType = ""
 )
+
+type validationInputType string
+
+const (
+	jsontype       validationInputType = "JSON"
+	yamltype       validationInputType = "YAML"
+	jsonschematype validationInputType = "JSONSCHEMA"
+)
+
+func getAppropriateCueVal(value string, valType string) (cue.Value, error) {
+	switch valType {
+	case string(jsontype):
+		out, err := utils.JsonToCue([]byte(value))
+		if err != nil {
+			return cue.Value{}, err
+		}
+		return out, nil
+	case string(yamltype):
+		out, err := utils.YamlToCue(value)
+		if err != nil {
+			return cue.Value{}, err
+		}
+		return out, nil
+	case string(jsonschematype):
+		// TODO
+		return cue.Value{}, nil
+	default:
+		cuectx := cuecontext.New()
+		out := cuectx.CompileString(value)
+		if out.Err() != nil {
+			return out, out.Err()
+		}
+		return out, nil
+	}
+}
+
+// swagger:route POST /api/meshmodel/validate MeshmodelValidate idPostMeshModelValidate
+// Handle POST request for validate
+//
+// Validate the given value with the given schema
+// responses:
+// 	200:
+
+// request body should be json
+// request body should be of format - {schema: string, schemaType: "JSON" | "YAML" | "JSONSCHEMA", value: string, valueType: "JSON" | "YAML" }
+// it will respond with error if any occurred, or with `isValid: bool` json
+func (h *Handler) ValidationHandler(rw http.ResponseWriter, r *http.Request) {
+	// extract schema and value
+	body, err := io.ReadAll(r.Body)
+	if err != nil {
+		h.log.Error(ErrRequestBody(err))
+		http.Error(rw, ErrRequestBody(err).Error(), http.StatusInternalServerError)
+
+		rw.WriteHeader(http.StatusBadRequest)
+		fmt.Fprintf(rw, "failed to read request body: %s", err)
+		return
+	}
+	if r.Header.Get("Content-Type") == "application/json" {
+		// schemaType and valueType can be `yaml`, `jsonschema`, `json` etc.
+		val := struct {
+			Schema     string `json:"schema"`
+			SchemaType string `json:"schemaType"`
+			Value      string `json:"value"`
+			ValueType  string `json:"valueType"`
+		}{}
+		err := json.Unmarshal(body, &val)
+		if err != nil {
+			h.log.Error(ErrUnmarshal(err, string(body)))
+			http.Error(rw, ErrUnmarshal(err, string(body)).Error(), http.StatusInternalServerError)
+
+			rw.WriteHeader(http.StatusBadRequest)
+			fmt.Fprintf(rw, "failed to read unmarshal content: %s", err)
+			return
+		}
+		schema, err := getAppropriateCueVal(val.Schema, val.SchemaType)
+		if err != nil {
+			h.log.Error(ErrValidate(err))
+			http.Error(rw, ErrValidate(err).Error(), http.StatusInternalServerError)
+
+			rw.WriteHeader(http.StatusBadRequest)
+			fmt.Fprintf(rw, "failed to parse schema: %s", err)
+		}
+		value, err := getAppropriateCueVal(val.Value, val.ValueType)
+		if err != nil {
+			h.log.Error(ErrValidate(err))
+			http.Error(rw, ErrValidate(err).Error(), http.StatusInternalServerError)
+
+			rw.WriteHeader(http.StatusBadRequest)
+			fmt.Fprintf(rw, "failed to parse value: %s", err)
+		}
+		isValid, err := utils.Validate(schema, value)
+		if err != nil {
+			h.log.Error(ErrValidate(err))
+			http.Error(rw, ErrValidate(err).Error(), http.StatusInternalServerError)
+
+			rw.WriteHeader(http.StatusBadRequest)
+			fmt.Fprintf(rw, "failed to parse  content: %s", err)
+		}
+		rw.Header().Set("Content-Type", "application/json")
+		err = json.NewEncoder(rw).Encode(struct {
+			IsValid bool
+		}{
+			IsValid: isValid,
+		})
+		if err != nil {
+			h.log.Error(ErrValidate(err))
+			http.Error(rw, ErrValidate(err).Error(), http.StatusInternalServerError)
+
+			rw.WriteHeader(http.StatusBadRequest)
+			fmt.Fprintf(rw, "failed to marshal the result: %s", err)
+		}
+	}
+}
 
 // swagger:route POST /api/pattern/deploy PatternsAPI idPostDeployPattern
 // Handle POST request for Pattern Deploy
