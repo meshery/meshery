@@ -278,7 +278,7 @@ function MesheryApplications({
    * @param {string} search search string
    * @param {string} sortOrder order of sort
    */
-  const handleDeploy = (application_file) => {
+  const handleDeploy = (application_file, name) => {
     updateProgress({ showProgress : true })
     dataFetch(
       ctxUrl(DEPLOY_URL, selectedK8sContexts),
@@ -288,7 +288,7 @@ function MesheryApplications({
         body : application_file,
       }, () => {
         console.log("ApplicationFile Deploy API", `/api/application/deploy`);
-        enqueueSnackbar("Application Successfully Deployed!", {
+        enqueueSnackbar(`${name} successfully deployed!!` , {
           variant : "success",
           action : function Action(key) {
             return (
@@ -305,7 +305,7 @@ function MesheryApplications({
     );
   }
 
-  const handleUnDeploy = (application_file) => {
+  const handleUnDeploy = (application_file, name) => {
     updateProgress({ showProgress : true })
     dataFetch(
       ctxUrl(DEPLOY_URL, selectedK8sContexts),
@@ -315,7 +315,7 @@ function MesheryApplications({
         body : application_file,
       }, () => {
         console.log("ApplicationFile Undeploy API", `/api/pattern/deploy`);
-        enqueueSnackbar("Application Successfully Undeployed!", {
+        enqueueSnackbar(`${name} successfully undeployed!!`, {
           variant : "success",
           action : function Action(key) {
             return (
@@ -818,7 +818,7 @@ function MesheryApplications({
           open={modalOpen.open}
           handleClose={handleModalClose}
           submit={
-            { deploy : () => handleDeploy(modalOpen.application_file),  unDeploy : () => handleUnDeploy(modalOpen.application_file) }
+            { deploy : () => handleDeploy(modalOpen.application_file, modalOpen.name),  unDeploy : () => handleUnDeploy(modalOpen.application_file, modalOpen.name) }
           }
           isDelete={!modalOpen.deploy}
           title={ modalOpen.name }
