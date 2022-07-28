@@ -75,26 +75,6 @@ function Mesherypatterns({user}) {
       );
     }
 
-    const patterns1 = [
-      {
-        id: "e7ccec75-bec6-4b28-b450-272aefa8a182",
-        name: "IstioFilterPattern.yaml",
-        user_id: "f714c166-5113-4f52-844c-38f0672b5e60",
-        created_at: "2022-07-14T13:50:46.375252Z",
-updated_at: "2022-07-14T13:53:35.479756Z"
-        },
-        {
-        id: "fb43eb24-de45-481a-955c-3916440276eb",
-        name: "IstioFilterPattern (1).yaml",
-        user_id: "f714c166-5113-4f52-844c-38f0672b5e60",
-        created_at: "2022-07-14T13:50:46.375252Z",
-updated_at: "2022-07-14T13:53:35.479756Z"
-  }
-    ];
-
-
-    const handleClick = () => setpatterns(patterns1);;
-
     const handleModalClose = () => {
       setModalOpen({
         open : false,
@@ -304,7 +284,6 @@ updated_at: "2022-07-14T13:53:35.479756Z"
             {selectedRowData && Object.keys(selectedRowData).length > 0 && (
           <YAMLEditor pattern={selectedRowData} onClose={resetSelectedRowData()}  />
         )}
-          <Button onClick={handleClick}>QWE</Button>  
              
       {!selectedPattern.show  &&  (patterns.length > 0 || viewType === "table") &&
        <Box sx={{display: "flex"}}>
