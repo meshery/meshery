@@ -53,7 +53,6 @@ func (r *Resolver) listenToControlPlaneState(ctx context.Context, provider model
 						return
 					}
 				}
-
 			}(ctxID)
 		}
 	}()
