@@ -47,6 +47,10 @@ const styles = makeStyles(() => ({
   heading : {
     color : "#607d8b"
   },
+  selectType : {
+    color : "#607d8b",
+    marginRight : "1.2rem"
+  }
 
 
 }));
@@ -130,25 +134,6 @@ const UploadImport = ({ handleUpload, handleImport, configuration, isApplication
               <Grid container spacing={24}>
                 <Grid item xs={3}>
                   <h4 className={classes.heading}> UPLOAD FILE </h4>
-                  {isApplication &&
-                  <NativeSelect
-                    defaultValue={0}
-                    onChange={(e) => handleFileType(e.target.value)}
-                    inputProps={{
-                      name : 'name',
-                      id : 'uncontrolled-native',
-                    }}
-                  >
-                    {
-                      supportedTypes.map((type, index) => (
-                        <option value={index}>
-                          {type.application_type}
-                        </option>
-                      ))
-                    }
-
-                  </NativeSelect>
-                  }
                 </Grid>
                 <Grid item xs={6}>
                   <TextField
@@ -167,6 +152,29 @@ const UploadImport = ({ handleUpload, handleImport, configuration, isApplication
                     </Button>
                   </label>
                 </Grid>
+              </Grid>
+              <Grid container spacing={24}>
+                <h4 className={classes.selectType}>SELECT TYPE </h4>
+                {isApplication &&
+                  <>
+                    <NativeSelect
+                      defaultValue={0}
+                      onChange={(e) => handleFileType(e.target.value)}
+                      inputProps={{
+                        name : 'name',
+                        id : 'uncontrolled-native',
+                      }}
+                    >
+                      {
+                        supportedTypes.map((type, index) => (
+                          <option value={index}>
+                            {type.application_type}
+                          </option>
+                        ))
+                      }
+                    </NativeSelect>
+                  </>
+                }
               </Grid>
             </DialogContent>
             <DialogActions>
