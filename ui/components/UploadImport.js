@@ -154,7 +154,10 @@ const UploadImport = ({ handleUpload, handleImport, configuration, isApplication
                 </Grid>
               </Grid>
               <Grid container spacing={24}>
+                {
+                  isApplication && 
                 <h4 className={classes.selectType}>SELECT TYPE </h4>
+                }
                 {isApplication &&
                   <>
                     <NativeSelect
