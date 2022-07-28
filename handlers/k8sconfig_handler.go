@@ -25,7 +25,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-// SaveK8sContextResponse - struct used as (json marshalled) response to requests for saving k8s contexts
+// SaveK8sContextResponse - struct used as (json marshaled) response to requests for saving k8s contexts
 type SaveK8sContextResponse struct {
 	InsertedContexts []models.K8sContext `json:"inserted_contexts,omitempty"`
 	UpdatedContexts  []models.K8sContext `json:"updated_contexts,omitempty"`
