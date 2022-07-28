@@ -1,5 +1,5 @@
 import React, {useState} from 'react'
-import { Avatar, Box, Button, IconButton, TableCell, TableSortLabel } from "@mui/material";
+import { Avatar, Box, Button, Divider, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, TableCell, Typography, Tooltip, TableSortLabel } from "@mui/material";
 import MUIDataTable from "mui-datatables";
 import Moment from "react-moment";
 import { styled } from "@mui/material/styles";
@@ -7,6 +7,10 @@ import UploadImport from "@/components/UploadImport";
 import ViewSwitch from "@/components/ViewSwitch";
 import DoneAllIcon from '@mui/icons-material/DoneAll';
 import UndeployIcon from "../../public/static/img/UndeployIcon";
+import SaveIcon from '@mui/icons-material/Save';
+import DeleteIcon from '@mui/icons-material/Delete';
+import FullscreenIcon from '@mui/icons-material/Fullscreen';
+import FullscreenExitIcon from '@mui/icons-material/FullscreenExit';
 import MesheryPatternGrid from "./MesheryPatternGrid"
 import AddCircleOutlineRoundedIcon from '@mui/icons-material/AddCircleOutlineRounded';
 import EmptyConfigurationList from "@/components/EmptyConfigurationList";
@@ -106,7 +110,75 @@ updated_at: "2022-07-14T13:53:35.479756Z"
       });
     }
 
+    function TooltipIcon({ children, onClick, title }) {
+      return (
+        <Tooltip title={title} placement="top" arrow interactive >
+          <IconButton onClick={onClick}>
+            {children}
+          </IconButton>
+        </Tooltip>
+      );
+    }
 
+    function YAMLEditor({ pattern, onClose, onSubmit }) {
+      const [yaml, setYaml] = useState("");
+      const [fullScreen, setFullScreen] = useState(false);
+    
+      const toggleFullScreen = () => {
+        setFullScreen(!fullScreen);
+      };
+    
+      return (
+        <Dialog onClose={onClose} aria-labelledby="pattern-dialog-title" open maxWidth="md" fullScreen={fullScreen} fullWidth={!fullScreen}>
+          <DialogTitle disableTypography id="pattern-dialog-title" sx={{background: "#fff", color: "#000000" }}>
+             <Typography variant="h6" >
+              {pattern.name}
+            </Typography>
+            <TooltipIcon
+              title={fullScreen ? "Exit Fullscreen" : "Enter Fullscreen"}
+              onClick={toggleFullScreen}>
+              {fullScreen ? <FullscreenExitIcon /> : <FullscreenIcon />}
+            </TooltipIcon>
+            {/* <TooltipIcon title="Exit" onClick={onClose}>
+              <CloseIcon />
+            </TooltipIcon> */}
+          </DialogTitle>
+          <Divider variant="fullWidth" light />
+          <DialogContent>
+
+          </DialogContent>
+          <Divider variant="fullWidth" light />
+          <DialogActions>
+            <Tooltip title="Update Pattern">
+              <IconButton
+                aria-label="Update"
+                color="primary"
+                onClick={() => onSubmit({
+                  data : yaml, id : pattern.id, name : pattern.name, type : FILE_OPS.UPDATE
+                })}
+              >
+                <SaveIcon />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Delete Pattern">
+              <IconButton
+                aria-label="Delete"
+                color="primary"
+                onClick={() => onSubmit({
+                  data : yaml,
+                  id : pattern.id,
+                  name : pattern.name,
+                  type : FILE_OPS.DELETE
+                })}
+              >
+                <DeleteIcon />
+              </IconButton>
+            </Tooltip>
+          </DialogActions>
+        </Dialog>
+      );
+    }
+    
     const columns = [
         {
           name : "name",
@@ -229,6 +301,9 @@ updated_at: "2022-07-14T13:53:35.479756Z"
 
   return (
     <> 
+            {selectedRowData && Object.keys(selectedRowData).length > 0 && (
+          <YAMLEditor pattern={selectedRowData} onClose={resetSelectedRowData()}  />
+        )}
           <Button onClick={handleClick}>QWE</Button>  
              
       {!selectedPattern.show  &&  (patterns.length > 0 || viewType === "table") &&
@@ -265,8 +340,7 @@ updated_at: "2022-07-14T13:53:35.479756Z"
               color="primary"
               size="large"
               // @ts-ignore
-              sx={{marginBottom: theme.spacing(2) , marginRight: theme.spacing(2)}} >
-            >
+              sx={{marginBottom: theme.spacing(2) , marginRight: theme.spacing(2)}} >  
               <AddCircleOutlineRoundedIcon  sx={{ paddingRight : ".35rem" }} />
               Create Design
             </Button>
