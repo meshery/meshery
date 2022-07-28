@@ -1186,7 +1186,7 @@ definitions:
       of golang native maps
     title: Map type is an alias for map[string]interface{}
     type: object
-    x-go-package: github.com/layer5io/meshery/internal/sql
+    x-go-package: github.com/layer5io/meshery/server/internal/sql
   MapType:
     properties:
       name:

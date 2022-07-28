@@ -275,5 +275,5 @@ graphql-docs:
 
 ## Build Meshery GraphQl API specifications
 graphql-build:
-	cd internal/graphql; go run -mod=mod github.com/99designs/gqlgen generate
+	cd server; cd internal/graphql; go run -mod=mod github.com/99designs/gqlgen generate
 

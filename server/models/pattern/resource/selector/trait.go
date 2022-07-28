@@ -1,7 +1,7 @@
 package selector
 
 import (
-	"github.com/layer5io/meshery/internal/store"
+	"github.com/layer5io/meshery/server/internal/store"
 	"github.com/layer5io/meshery/server/models/pattern/core"
 )
 

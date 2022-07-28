@@ -10,10 +10,10 @@ import (
 	"time"
 
 	"github.com/gofrs/uuid"
-	"github.com/layer5io/meshery/internal/graphql"
-	"github.com/layer5io/meshery/internal/store"
 	"github.com/layer5io/meshery/server/handlers"
 	"github.com/layer5io/meshery/server/helpers"
+	"github.com/layer5io/meshery/server/internal/graphql"
+	"github.com/layer5io/meshery/server/internal/store"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshery/server/router"

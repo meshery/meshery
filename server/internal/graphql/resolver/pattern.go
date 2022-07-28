@@ -4,8 +4,8 @@ import (
 	"context"
 	"encoding/json"
 
-	"github.com/layer5io/meshery/internal/graphql/model"
 	"github.com/layer5io/meshery/server/handlers"
+	"github.com/layer5io/meshery/server/internal/graphql/model"
 	"github.com/layer5io/meshery/server/models"
 )
 
