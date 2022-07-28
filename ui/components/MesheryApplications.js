@@ -736,7 +736,7 @@ function MesheryApplications({
         <div className={classes.topToolbar} >
           {!selectedApplication.show && (applications.length>0 || viewType==="table") && <div className={classes.createButton}>
             <div>
-              <UploadImport aria-label="URL upload button" handleUpload={urlUploadHandler} handleImport={uploadHandler} configuration="Application"  />
+              <UploadImport aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} configuration="Application"  />
             </div>
 
           </div>
