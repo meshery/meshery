@@ -73,10 +73,8 @@ const styles = (theme) => ({
     padding : theme.spacing(1),
     borderRadius : 5,
     minWidth : 100,
-    backgroundColor : "#e0e0e0",
-    color : "rgba(0, 0, 0, 0.87)",
+    color : "#fff",
     "&:hover" : {
-      backgroundColor : "#d5d5d5",
       boxShadow : "0px 2px 4px -1px rgb(0 0 0 / 20%), 0px 4px 5px 0px rgb(0 0 0 / 14%), 0px 1px 10px 0px rgb(0 0 0 / 12%)"
     },
   },
@@ -96,7 +94,8 @@ const styles = (theme) => ({
     padding : theme.spacing(1),
     borderRadius : 5,
     "&:disabled" : {
-      backgroundColor : "#ff8080",
+      backgroundColor : "#FF3D3D",
+      color : "#fff"
     },
     minWidth : 100,
   },
@@ -393,7 +392,7 @@ function ConfirmationMsg(props) {
             { (tabVal == ACTIONS.DEPLOY || tabVal === ACTIONS.UNDEPLOY) ?
               <>
                 <Button onClick={handleClose}
-                  className={classes.button} type="submit"
+                  type="submit"
                   variant="contained"
                 >
                   <Typography variant body2 > CANCEL </Typography>
