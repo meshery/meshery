@@ -122,7 +122,11 @@ const styles = (theme) => ({
   },
   Chip : {
     backgroundColor : "white",
-    cursor : "pointer"
+    flexGrow : 1,
+    cursor : "pointer",
+    "& .MuiChip-label" : {
+      flexGrow : 1
+    }
   },
   cMenuContainer : {
     backgroundColor : "revert",
@@ -378,7 +382,7 @@ function K8sContextMenu({
                                 />
                               </BadgeAvatars> :
                               <Avatar src="/static/img/kubernetes.svg" className={classes.icon}
-                                style={operStatus ? { margin : 8 } : { opacity : 0.2, margin : 8 }}
+                                style={operStatus ? {} : { opacity : 0.2 }}
                               />
                           }
                           variant="filled"

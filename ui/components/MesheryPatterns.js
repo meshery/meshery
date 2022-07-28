@@ -643,7 +643,7 @@ function MesheryPatterns({
                 title="Undeploy"
                 onClick={() => handleModalOpen(rowData.pattern_file, rowData.name, false)}
               >
-                <UndeployIcon fill="rgba(0, 0, 0, 0.54)" data-cy="undeploy-button" />
+                <UndeployIcon fill="#B32700" data-cy="undeploy-button" />
               </IconButton>
             </>
           );
@@ -658,11 +658,12 @@ function MesheryPatterns({
     }
   });
 
-  async function showModal(count) {
+  async function showModal(count, patterns) {
+    console.log("patterns to be deleted", count, patterns);
     let response = await modalRef.current.show({
-      title : `Delete ${count ? count : ""} Pattern${count > 1 ? "s" : ''}?`,
+      title : `Delete ${count ? count : ""} Design${count > 1 ? "s" : ''}?`,
 
-      subtitle : `Are you sure you want to delete ${count > 1 ? "these" : 'this'}  ${count ? count : ""}  pattern${count > 1 ? "s" : ''}?`,
+      subtitle : `Are you sure you want to delete the ${patterns} design${count > 1 ? "s" : ''}?`,
 
       options : ["Yes", "No"],
     });
@@ -683,7 +684,7 @@ function MesheryPatterns({
       console.log("PatternFile Delete Multiple API", `/api/pattern/delete`);
       updateProgress({ showProgress : false });
       setTimeout(() => {
-        enqueueSnackbar(`${patterns.patterns.length} Patterns Deleted`,
+        enqueueSnackbar(`${patterns.patterns.length} Designs Deleted`,
           {
             variant : "success",
             autoHideDuration : 2000,
@@ -734,7 +735,7 @@ function MesheryPatterns({
           name : patterns[idx]?.name,
         }
       ))
-      let response = await showModal(toBeDeleted.length)
+      let response = await showModal(toBeDeleted.length, toBeDeleted.map(p => " "+p.name))
       if (response.toLowerCase() === "yes") {
         deletePatterns({ patterns : toBeDeleted })
       }

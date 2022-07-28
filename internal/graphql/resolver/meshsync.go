@@ -2,6 +2,7 @@ package resolver
 
 import (
 	"context"
+	"io"
 	"os"
 	"path"
 	"time"
@@ -11,7 +12,6 @@ import (
 	"github.com/layer5io/meshery/models"
 	"github.com/layer5io/meshkit/broker"
 	"github.com/layer5io/meshkit/utils"
-	"github.com/layer5io/meshkit/utils/broadcast"
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
 )
 
@@ -56,9 +56,11 @@ func (r *Resolver) listenToMeshSyncEvents(ctx context.Context, provider models.P
 		prevStatus := r.getMeshSyncStatus(k8sctx)
 		go func(k8sctx models.K8sContext, ch chan *model.OperatorControllerStatusPerK8sContext) {
 			r.Log.Info("Initializing MeshSync subscription")
-
-			go model.PersistClusterNames(ctx, r.Log, provider.GetGenericPersister(), r.MeshSyncChannel)
-			go model.ListernToEvents(r.Log, provider.GetGenericPersister(), r.brokerChannel, r.MeshSyncChannel, r.controlPlaneSyncChannel, r.Broadcast)
+			if r.MeshSyncChannelPerK8sContext[k8sctx.ID] == nil {
+				r.MeshSyncChannelPerK8sContext[k8sctx.ID] = make(chan struct{})
+			}
+			go model.PersistClusterNames(ctx, r.Log, provider.GetGenericPersister(), r.MeshSyncChannelPerK8sContext[k8sctx.ID])
+			go model.ListernToEvents(r.Log, provider.GetGenericPersister(), r.brokerChannel, r.MeshSyncChannelPerK8sContext[k8sctx.ID], r.Broadcast)
 			for {
 				status := r.getMeshSyncStatus(k8sctx)
 				statusWithContext := model.OperatorControllerStatusPerK8sContext{
@@ -116,27 +118,67 @@ func (r *Resolver) getMeshSyncStatus(k8sctx models.K8sContext) model.OperatorCon
 
 func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, actions *model.ReSyncActions, k8scontextID string) (model.Status, error) {
 	if actions.ClearDb == "true" {
+		// copies the contents .meshery/config/mesherydb.sql to .meshery/config/.archive/mesherydb.sql
+		// then drops all the DB table and then migrate/create tables, missing foreign keys, constraints, columns and indexes.
 		if actions.HardReset == "true" {
-			dbPath := path.Join(utils.GetHome(), ".meshery/config")
-			err := os.Mkdir(path.Join(dbPath, ".archive"), os.ModePerm)
+			mesherydbPath := path.Join(utils.GetHome(), ".meshery/config")
+			err := os.Mkdir(path.Join(mesherydbPath, ".archive"), os.ModePerm)
 			if err != nil && os.IsNotExist(err) {
 				return "", err
 			}
-			dbHandler := provider.GetGenericPersister()
 
-			oldPath := path.Join(dbPath, "mesherydb.sql")
-			newPath := path.Join(dbPath, ".archive/mesherydb.sql")
-			err = os.Rename(oldPath, newPath)
+			src := path.Join(mesherydbPath, "mesherydb.sql")
+			dst := path.Join(mesherydbPath, ".archive/mesherydb.sql")
+
+			fin, err := os.Open(src)
+			if err != nil {
+				return "", err
+			}
+			defer fin.Close()
+
+			fout, err := os.Create(dst)
+			if err != nil {
+				return "", err
+			}
+			defer fout.Close()
+
+			_, err = io.Copy(fout, fin)
 			if err != nil {
 				return "", err
 			}
 
-			err = dbHandler.DBClose()
+			dbHandler := provider.GetGenericPersister()
+			if dbHandler == nil {
+				return "", ErrEmptyHandler
+			}
+
+			dbHandler.Lock()
+			defer dbHandler.Unlock()
+
+			r.Log.Info("Dropping Meshery Database")
+			err = dbHandler.Migrator().DropTable(
+				&meshsyncmodel.KeyValue{},
+				&meshsyncmodel.Object{},
+				&meshsyncmodel.ResourceSpec{},
+				&meshsyncmodel.ResourceStatus{},
+				&meshsyncmodel.ResourceObjectMeta{},
+				&models.PerformanceProfile{},
+				&models.MesheryResult{},
+				&models.MesheryPattern{},
+				&models.MesheryFilter{},
+				&models.PatternResource{},
+				&models.MesheryApplication{},
+				&models.UserPreference{},
+				&models.PerformanceTestConfig{},
+				&models.SmiResultWithID{},
+				models.K8sContext{},
+			)
 			if err != nil {
 				r.Log.Error(err)
 				return "", err
 			}
-			dbHandler = models.GetNewDBInstance()
+
+			r.Log.Info("Migrating Meshery Database")
 			err = dbHandler.AutoMigrate(
 				&meshsyncmodel.KeyValue{},
 				&meshsyncmodel.Object{},
@@ -156,7 +198,10 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 			)
 			if err != nil {
 				r.Log.Error(err)
+				return "", err
 			}
+
+			r.Log.Info("Hard reset successfully completed")
 		} else { //Delete meshsync objects coming from a particular cluster
 			k8sctxs, ok := ctx.Value(models.AllKubeClusterKey).([]models.K8sContext)
 			if !ok || len(k8sctxs) == 0 {
@@ -181,13 +226,15 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 	}
 
 	if actions.ReSync == "true" {
-		err := r.BrokerConn.Publish(model.RequestSubject, &broker.Message{
-			Request: &broker.RequestObject{
-				Entity: broker.ReSyncDiscoveryEntity,
-			},
-		})
-		if err != nil {
-			return "", ErrPublishBroker(err)
+		if r.BrokerConn.Info() != broker.NotConnected {
+			err := r.BrokerConn.Publish(model.RequestSubject, &broker.Message{
+				Request: &broker.RequestObject{
+					Entity: broker.ReSyncDiscoveryEntity,
+				},
+			})
+			if err != nil {
+				return "", ErrPublishBroker(err)
+			}
 		}
 	}
 	return model.StatusProcessing, nil
@@ -236,23 +283,11 @@ func (r *Resolver) connectToBroker(ctx context.Context, provider models.Provider
 		endpoint, err := model.SubscribeToBroker(provider, kubeclient, r.brokerChannel, r.BrokerConn, connectionTrackerSingleton)
 		if err != nil {
 			r.Log.Error(ErrAddonSubscription(err))
-
-			r.Broadcast.Submit(broadcast.BroadcastMessage{
-				Source: broadcast.OperatorSyncChannel,
-				Type:   "error",
-				Data:   err,
-			})
-
 			return err
 		}
 		r.Log.Info("Connected to broker at:", endpoint)
 		connectionTrackerSingleton.Set(currContext.ID, endpoint)
 		connectionTrackerSingleton.Log(r.Log)
-		r.Broadcast.Submit(broadcast.BroadcastMessage{
-			Source: broadcast.OperatorSyncChannel,
-			Data:   false,
-			Type:   "health",
-		})
 		return nil
 	}
 
@@ -263,44 +298,15 @@ func (r *Resolver) connectToBroker(ctx context.Context, provider models.Provider
 	return nil
 }
 
-func (r *Resolver) deployMeshsync(ctx context.Context, provider models.Provider) (model.Status, error) {
+func (r *Resolver) deployMeshsync(ctx context.Context, provider models.Provider, ctxID string) (model.Status, error) {
 	//err := model.RunMeshSync(r.Config.KubeClient, false)
-	r.Broadcast.Submit(broadcast.BroadcastMessage{
-		Source: broadcast.OperatorSyncChannel,
-		Data:   true,
-		Type:   "health",
-	})
-
-	r.Broadcast.Submit(broadcast.BroadcastMessage{
-		Source: broadcast.OperatorSyncChannel,
-		Data:   false,
-		Type:   "health",
-	})
-
 	return model.StatusProcessing, nil
 }
 
 func (r *Resolver) connectToNats(ctx context.Context, provider models.Provider, k8scontextID string) (model.Status, error) {
-	r.Broadcast.Submit(broadcast.BroadcastMessage{
-		Source: broadcast.OperatorSyncChannel,
-		Data:   true,
-		Type:   "health",
-	})
 	err := r.connectToBroker(ctx, provider, k8scontextID)
 	if err != nil {
-		r.Log.Error(err)
-		r.Broadcast.Submit(broadcast.BroadcastMessage{
-			Source: broadcast.OperatorSyncChannel,
-			Data:   err,
-			Type:   "error",
-		})
 		return model.StatusDisabled, err
 	}
-
-	r.Broadcast.Submit(broadcast.BroadcastMessage{
-		Source: broadcast.OperatorSyncChannel,
-		Data:   false,
-		Type:   "health",
-	})
 	return model.StatusConnected, nil
 }

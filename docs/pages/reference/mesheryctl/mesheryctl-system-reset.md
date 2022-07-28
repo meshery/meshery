@@ -56,6 +56,11 @@ mesheryctl system reset
 </div>
 </pre>
 
+## Screenshots
+
+Usage of mesheryctl system reset
+![reset-usage](../../../../docs/assets/img/mesheryctl/reset.png)
+
 ## See Also
 
 Go back to [command reference index](/reference/mesheryctl/) 
