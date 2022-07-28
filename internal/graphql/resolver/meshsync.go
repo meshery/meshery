@@ -12,7 +12,6 @@ import (
 	"github.com/layer5io/meshery/models"
 	"github.com/layer5io/meshkit/broker"
 	"github.com/layer5io/meshkit/utils"
-	"github.com/layer5io/meshkit/utils/broadcast"
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
 )
 
@@ -57,9 +56,11 @@ func (r *Resolver) listenToMeshSyncEvents(ctx context.Context, provider models.P
 		prevStatus := r.getMeshSyncStatus(k8sctx)
 		go func(k8sctx models.K8sContext, ch chan *model.OperatorControllerStatusPerK8sContext) {
 			r.Log.Info("Initializing MeshSync subscription")
-
-			go model.PersistClusterNames(ctx, r.Log, provider.GetGenericPersister(), r.MeshSyncChannel)
-			go model.ListernToEvents(r.Log, provider.GetGenericPersister(), r.brokerChannel, r.MeshSyncChannel, r.controlPlaneSyncChannel, r.Broadcast)
+			if r.MeshSyncChannelPerK8sContext[k8sctx.ID] == nil {
+				r.MeshSyncChannelPerK8sContext[k8sctx.ID] = make(chan struct{})
+			}
+			go model.PersistClusterNames(ctx, r.Log, provider.GetGenericPersister(), r.MeshSyncChannelPerK8sContext[k8sctx.ID])
+			go model.ListernToEvents(r.Log, provider.GetGenericPersister(), r.brokerChannel, r.MeshSyncChannelPerK8sContext[k8sctx.ID], r.Broadcast)
 			for {
 				status := r.getMeshSyncStatus(k8sctx)
 				statusWithContext := model.OperatorControllerStatusPerK8sContext{
@@ -225,13 +226,15 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 	}
 
 	if actions.ReSync == "true" {
-		err := r.BrokerConn.Publish(model.RequestSubject, &broker.Message{
-			Request: &broker.RequestObject{
-				Entity: broker.ReSyncDiscoveryEntity,
-			},
-		})
-		if err != nil {
-			return "", ErrPublishBroker(err)
+		if r.BrokerConn.Info() != broker.NotConnected {
+			err := r.BrokerConn.Publish(model.RequestSubject, &broker.Message{
+				Request: &broker.RequestObject{
+					Entity: broker.ReSyncDiscoveryEntity,
+				},
+			})
+			if err != nil {
+				return "", ErrPublishBroker(err)
+			}
 		}
 	}
 	return model.StatusProcessing, nil
@@ -280,23 +283,11 @@ func (r *Resolver) connectToBroker(ctx context.Context, provider models.Provider
 		endpoint, err := model.SubscribeToBroker(provider, kubeclient, r.brokerChannel, r.BrokerConn, connectionTrackerSingleton)
 		if err != nil {
 			r.Log.Error(ErrAddonSubscription(err))
-
-			r.Broadcast.Submit(broadcast.BroadcastMessage{
-				Source: broadcast.OperatorSyncChannel,
-				Type:   "error",
-				Data:   err,
-			})
-
 			return err
 		}
 		r.Log.Info("Connected to broker at:", endpoint)
 		connectionTrackerSingleton.Set(currContext.ID, endpoint)
 		connectionTrackerSingleton.Log(r.Log)
-		r.Broadcast.Submit(broadcast.BroadcastMessage{
-			Source: broadcast.OperatorSyncChannel,
-			Data:   false,
-			Type:   "health",
-		})
 		return nil
 	}
 
@@ -307,44 +298,15 @@ func (r *Resolver) connectToBroker(ctx context.Context, provider models.Provider
 	return nil
 }
 
-func (r *Resolver) deployMeshsync(ctx context.Context, provider models.Provider) (model.Status, error) {
+func (r *Resolver) deployMeshsync(ctx context.Context, provider models.Provider, ctxID string) (model.Status, error) {
 	//err := model.RunMeshSync(r.Config.KubeClient, false)
-	r.Broadcast.Submit(broadcast.BroadcastMessage{
-		Source: broadcast.OperatorSyncChannel,
-		Data:   true,
-		Type:   "health",
-	})
-
-	r.Broadcast.Submit(broadcast.BroadcastMessage{
-		Source: broadcast.OperatorSyncChannel,
-		Data:   false,
-		Type:   "health",
-	})
-
 	return model.StatusProcessing, nil
 }
 
 func (r *Resolver) connectToNats(ctx context.Context, provider models.Provider, k8scontextID string) (model.Status, error) {
-	r.Broadcast.Submit(broadcast.BroadcastMessage{
-		Source: broadcast.OperatorSyncChannel,
-		Data:   true,
-		Type:   "health",
-	})
 	err := r.connectToBroker(ctx, provider, k8scontextID)
 	if err != nil {
-		r.Log.Error(err)
-		r.Broadcast.Submit(broadcast.BroadcastMessage{
-			Source: broadcast.OperatorSyncChannel,
-			Data:   err,
-			Type:   "error",
-		})
 		return model.StatusDisabled, err
 	}
-
-	r.Broadcast.Submit(broadcast.BroadcastMessage{
-		Source: broadcast.OperatorSyncChannel,
-		Data:   false,
-		Type:   "health",
-	})
 	return model.StatusConnected, nil
 }
