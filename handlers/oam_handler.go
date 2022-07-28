@@ -46,13 +46,15 @@ func getAppropriateCueVal(value string, valType string) (cue.Value, error) {
 	case string(jsontype):
 		out, err := utils.JsonToCue([]byte(value))
 		if err != nil {
-
 			return cue.Value{}, err
 		}
 		return out, nil
 	case string(yamltype):
-		// TODO
-		return cue.Value{}, nil
+		out, err := utils.YamlToCue(value)
+		if err != nil {
+			return cue.Value{}, err
+		}
+		return out, nil
 	case string(jsonschematype):
 		// TODO
 		return cue.Value{}, nil
@@ -66,6 +68,16 @@ func getAppropriateCueVal(value string, valType string) (cue.Value, error) {
 	}
 }
 
+// swagger:route POST /api/meshmodel/validate MeshmodelValidate idPostMeshModelValidate
+// Handle POST request for validate
+//
+// Validate the given value with the given schema
+// responses:
+// 	200:
+
+// request body should be json
+// request body should be of format - {schema: string, schemaType: "JSON" | "YAML" | "JSONSCHEMA", value: string, valueType: "JSON" | "YAML" }
+// it will respond with error if any occurred, or with `isValid: bool` json
 func (h *Handler) ValidationHandler(rw http.ResponseWriter, r *http.Request) {
 	// extract schema and value
 	body, err := io.ReadAll(r.Body)
@@ -80,10 +92,10 @@ func (h *Handler) ValidationHandler(rw http.ResponseWriter, r *http.Request) {
 	if r.Header.Get("Content-Type") == "application/json" {
 		// schemaType and valueType can be `yaml`, `jsonschema`, `json` etc.
 		val := struct {
-			schema     string
-			schemaType string
-			value      string
-			valueType  string
+			Schema     string `json:"schema"`
+			SchemaType string `json:"schemaType"`
+			Value      string `json:"value"`
+			ValueType  string `json:"valueType"`
 		}{}
 		err := json.Unmarshal(body, &val)
 		if err != nil {
@@ -94,7 +106,7 @@ func (h *Handler) ValidationHandler(rw http.ResponseWriter, r *http.Request) {
 			fmt.Fprintf(rw, "failed to read unmarshal content: %s", err)
 			return
 		}
-		schema, err := getAppropriateCueVal(val.schema, val.schemaType)
+		schema, err := getAppropriateCueVal(val.Schema, val.SchemaType)
 		if err != nil {
 			h.log.Error(ErrValidate(err))
 			http.Error(rw, ErrValidate(err).Error(), http.StatusInternalServerError)
@@ -102,7 +114,7 @@ func (h *Handler) ValidationHandler(rw http.ResponseWriter, r *http.Request) {
 			rw.WriteHeader(http.StatusBadRequest)
 			fmt.Fprintf(rw, "failed to parse schema: %s", err)
 		}
-		value, err := getAppropriateCueVal(val.value, val.valueType)
+		value, err := getAppropriateCueVal(val.Value, val.ValueType)
 		if err != nil {
 			h.log.Error(ErrValidate(err))
 			http.Error(rw, ErrValidate(err).Error(), http.StatusInternalServerError)
@@ -120,9 +132,9 @@ func (h *Handler) ValidationHandler(rw http.ResponseWriter, r *http.Request) {
 		}
 		rw.Header().Set("Content-Type", "application/json")
 		err = json.NewEncoder(rw).Encode(struct {
-			isValid bool
+			IsValid bool
 		}{
-			isValid: isValid,
+			IsValid: isValid,
 		})
 		if err != nil {
 			h.log.Error(ErrValidate(err))
