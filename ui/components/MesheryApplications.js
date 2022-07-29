@@ -47,10 +47,12 @@ const styles = (theme) => ({
     justifyContent : "flex-start",
     alignItems : "center",
     whiteSpace : "nowrap",
-    margin : "1rem 0 2rem 1rem"
   },
   topToolbar : {
-    display : "flex"
+    margin : "2rem auto",
+    display : "flex",
+    justifyContent : "space-between",
+    paddingLeft : "1rem"
   },
   viewSwitchButton : {
     justifySelf : "flex-end",
@@ -777,7 +779,7 @@ function MesheryApplications({
         <div className={classes.topToolbar} >
           {!selectedApplication.show && (applications.length>0 || viewType==="table") && <div className={classes.createButton}>
             <div>
-              <UploadImport supportedTypes={types} isApplication = {true} aria-label="URL upload button" handleUpload={urlUploadHandler} handleImport={uploadHandler} configuration="Application"  />
+              <UploadImport supportedTypes={types} isApplication = {true} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} configuration="Application"  />
             </div>
 
           </div>
@@ -807,6 +809,8 @@ function MesheryApplications({
               handleDeploy={handleDeploy}
               handleUnDeploy={handleUnDeploy}
               handleSubmit={handleSubmit}
+              urlUploadHandler={urlUploadHandler}
+              uploadHandler={uploadHandler}
               setSelectedApplication={setSelectedApplication}
               selectedApplication={selectedApplication}
               pages={Math.ceil(count / pageSize)}

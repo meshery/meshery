@@ -55,7 +55,7 @@ const styles = makeStyles(() => ({
 
 }));
 
-const UploadImport = ({ handleUpload, handleImport, configuration, isApplication, supportedTypes }) => {
+const UploadImport = ({ handleUpload, handleUrlUpload, configuration, isApplication, supportedTypes }) => {
   const classes = styles();
   const [open, setOpen] = React.useState(false);
   const [input, setInput] = React.useState();
@@ -86,12 +86,12 @@ const UploadImport = ({ handleUpload, handleImport, configuration, isApplication
   };
 
   const handleSubmit = () => {
-    handleUpload(input, sourceType)
+    handleUrlUpload(input, sourceType)
     handleClose()
   }
 
   const handleUploader = (input) => {
-    handleImport(input, sourceType)
+    handleUpload(input, sourceType)
     handleClose()
   }
 
@@ -184,7 +184,7 @@ const UploadImport = ({ handleUpload, handleImport, configuration, isApplication
               <label htmlFor="cancel" className={classes.cancel}>
                 <Button variant="outlined" size="large" color="secondary" onClick={handleClose}>Cancel</Button>
               </label>
-              <label htmlFor="URL">  <Button disabled={isError || !input} size="large" id="URL" variant="contained" color="primary" onClick={(e) => handleSubmit(e, handleUpload)}>Import</Button> </label>
+              <label htmlFor="URL">  <Button disabled={isError || !input} size="large" id="URL" variant="contained" color="primary" onClick={(e) => handleSubmit(e, handleUploader)}>Import</Button> </label>
 
             </DialogActions>
           </MuiThemeProvider>
