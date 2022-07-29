@@ -10,7 +10,33 @@
 
  'use strict';
 
- /** Generate a terminal widget. */
+//////array of terminal count
+
+const animatedTerminal = [];
+
+/////function to check if element is in view
+
+function inView(containerName) {
+    var element = document.getElementById(containerName);
+
+    var elementHeight = element.clientHeight;
+
+    var windowHeight = window.innerHeight;
+
+    var scrollY = window.scrollY || window.pageYOffset;
+
+    var scrollPosition = scrollY + windowHeight;
+
+    var elementPosition = element.getBoundingClientRect().top + scrollY + elementHeight;
+ 
+    if (scrollPosition > elementPosition) {
+        return true;
+      }
+      
+      return false;
+      }
+
+
  class Termynal {
      /**
       * Construct the widget's settings.
@@ -67,7 +93,33 @@
  
          this.container.setAttribute('data-termynal', '');
          this.container.innerHTML = '';
-         this.start();
+         var divIndex = this.container.id;
+         var self = this;
+
+         if(inView(divIndex)){
+            animatedTerminal.push(divIndex);
+            self.start();
+         }
+         /////scroll eventlistiner for mobile view
+         $(document.body).on('touchmove', mobilescroll);
+         ////mobile view function
+         function mobilescroll(){ 
+            
+            if (inView(divIndex) && !animatedTerminal.includes(divIndex)) {
+                animatedTerminal.push(divIndex);
+                self.start();    
+                }
+        } 
+
+         /////scroll eventlistiner function for window view
+         document.addEventListener('scroll',function(){
+            
+            if (inView(divIndex) && !animatedTerminal.includes(divIndex)) {
+                animatedTerminal.push(divIndex);
+                self.start();    
+                }
+         });
+
      }
  
      /**
@@ -186,12 +238,14 @@
          return attrs;
      }
  }
- 
- /**
+
+/**
  * HTML API: If current script has container(s) specified, initialise Termynal.
  */
  if (document.currentScript.hasAttribute('data-termynal-container')) {
-     const containers = document.currentScript.getAttribute('data-termynal-container');
-     containers.split('|')
-         .forEach(container => new Termynal(container))
- }
+    const containers = document.currentScript.getAttribute('data-termynal-container');
+    containers.split('|')
+        .forEach(container => new Termynal(container))
+}
+     
+ 
