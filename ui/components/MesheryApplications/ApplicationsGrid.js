@@ -139,7 +139,7 @@ function MesheryApplicationGrid({ applications=[],handleDeploy, handleUnDeploy, 
                 No Applications Found
               </Typography>
               <div>
-                <UploadImport aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} configuration="Application"  />
+                <UploadImport supportedTypes="null" aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} configuration="Application"  />
 
               </div>
             </div>
