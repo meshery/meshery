@@ -42,7 +42,7 @@ mesheryctl system update --skip-reset
 
 ! Refer below image link for usage
 * Usage of mesheryctl system update
-# ![update-usage](../../assets/img/mesheryctl/update.png)
+# ![update-usage](https://docs.meshery.io/assets/img/mesheryctl/update.png)
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite

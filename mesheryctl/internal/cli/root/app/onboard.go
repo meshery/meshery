@@ -37,7 +37,7 @@ mesheryctl app onboard -f [filepath]
 
 ! Refer below image link for usage
 * Usage of mesheryctl app onboard
-# ![app-onboard-usage](../../assets/img/mesheryctl/app-onboard.png)
+# ![app-onboard-usage](https://docs.meshery.io/assets/img/mesheryctl/app-onboard.png)
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var req *http.Request
