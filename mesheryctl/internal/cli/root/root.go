@@ -169,17 +169,18 @@ func initConfig() {
 			log.Println(
 				fmt.Sprintf("Default config file created at %s",
 					utils.DefaultConfigPath,
-				))
-			viper.SetConfigFile(utils.DefaultConfigPath)
+				))		
 		}
-
-		viper.AutomaticEnv() // read in environment variables that match
-
-		// If a config file is found, read it in.
-		if err := viper.ReadInConfig(); err == nil {
-			log.Debug("Using config file:", viper.ConfigFileUsed())
-		}
+		viper.SetConfigFile(utils.DefaultConfigPath)		
 	}
+	
+	viper.AutomaticEnv() // read in environment variables that match
+
+	// If a config file is found, read it in.
+	if err := viper.ReadInConfig(); err == nil {
+		log.Debug("Using config file:", viper.ConfigFileUsed())
+	}
+
 }
 
 // setVerbose sets the log level to debug if the -v flag is set
