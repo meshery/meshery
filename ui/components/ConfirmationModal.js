@@ -18,6 +18,7 @@ import DoneAllIcon from '@material-ui/icons/DoneAll';
 import AddIcon from '@material-ui/icons/Add';
 import DoneIcon from "@material-ui/icons/Done";
 import Link from 'next/link';
+import Operator from "../assets/img/Operator";
 
 const styles = (theme) => ({
   dialogBox : {
@@ -72,10 +73,8 @@ const styles = (theme) => ({
     padding : theme.spacing(1),
     borderRadius : 5,
     minWidth : 100,
-    backgroundColor : "#e0e0e0",
-    color : "rgba(0, 0, 0, 0.87)",
+    color : "#fff",
     "&:hover" : {
-      backgroundColor : "#d5d5d5",
       boxShadow : "0px 2px 4px -1px rgb(0 0 0 / 20%), 0px 4px 5px 0px rgb(0 0 0 / 14%), 0px 1px 10px 0px rgb(0 0 0 / 12%)"
     },
   },
@@ -83,9 +82,9 @@ const styles = (theme) => ({
     margin : theme.spacing(0.5),
     padding : theme.spacing(1),
     borderRadius : 5,
-    backgroundColor : "#ff3333",
+    backgroundColor : "#B32700",
     "&:hover" : {
-      backgroundColor : "#ff3333",
+      backgroundColor : "#8f1f00",
       boxShadow : "0px 2px 4px -1px rgb(0 0 0 / 20%), 0px 4px 5px 0px rgb(0 0 0 / 14%), 0px 1px 10px 0px rgb(0 0 0 / 12%)"
     },
     minWidth : 100,
@@ -95,7 +94,8 @@ const styles = (theme) => ({
     padding : theme.spacing(1),
     borderRadius : 5,
     "&:disabled" : {
-      backgroundColor : "#ff8080",
+      backgroundColor : "#FF3D3D",
+      color : "#fff"
     },
     minWidth : 100,
   },
@@ -146,7 +146,21 @@ const styles = (theme) => ({
   text : {
     display : "flex",
     justifyContent : "center"
-  }
+  },
+  textContent : {
+    display : "flex",
+    flexDirection : "column",
+    alignItems : "center",
+    justifyContent : "center",
+    marginTop : "1rem",
+    backgroundColor : "rgb(234, 235, 236)",
+    padding : "10px",
+    borderRadius : "10px"
+  },
+  subText : {
+    color : "rgba(84, 87, 91, 1)",
+    fontSize : "16px"
+  },
 })
 
 const ACTIONS = {
@@ -342,17 +356,25 @@ function ConfirmationMsg(props) {
                         </div>
                       </Typography>
                       :
-                      <Link href="/settings">
-                        <Button
-                          type="submit"
-                          variant="contained"
-                          color="primary"
-                          style={{ margin : "0.6rem 0.6rem", whiteSpace : "nowrap" }}
-                        >
-                          <AddIcon className={classes.AddIcon} />
+                      <div className={classes.textContent}>
+                        <Operator />
+                        <Typography variant="h5">No cluster connected yet</Typography>
+                        <Typography className={classes.subText} variant="h6">
+                        Cluster with a Meshery Operator Deployed will report data here
+                        </Typography>
+
+                        <Link href="/settings">
+                          <Button
+                            type="submit"
+                            variant="contained"
+                            color="primary"
+                            style={{ margin : "0.6rem 0.6rem", whiteSpace : "nowrap" }}
+                          >
+                            <AddIcon className={classes.AddIcon} />
                           Connect Clusters
-                        </Button>
-                      </Link>
+                          </Button>
+                        </Link>
+                      </div>
                   }
                 </DialogContentText>
               </DialogContent>
@@ -370,7 +392,7 @@ function ConfirmationMsg(props) {
             { (tabVal == ACTIONS.DEPLOY || tabVal === ACTIONS.UNDEPLOY) ?
               <>
                 <Button onClick={handleClose}
-                  className={classes.button} type="submit"
+                  type="submit"
                   variant="contained"
                 >
                   <Typography variant body2 > CANCEL </Typography>
