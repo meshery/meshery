@@ -50,7 +50,7 @@ mesheryctl app onboard -f [filepath]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "/home/admin-pc/.meshery/config.yaml")
   -t, --token string    Path to token file default from current context
   -v, --verbose         verbose output
 
@@ -60,7 +60,7 @@ mesheryctl app onboard -f [filepath]
 ## Screenshots
 
 Usage of mesheryctl app onboard
-![app-onboard-usage](../../../../docs/assets/img/mesheryctl/app-onboard.png)
+![app-onboard-usage](https://docs.meshery.io/assets/img/mesheryctl/app-onboard.png)
 
 ## See Also
 

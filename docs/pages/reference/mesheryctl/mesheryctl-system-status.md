@@ -48,7 +48,7 @@ mesheryctl system status
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string    path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string    path to config file (default "/home/admin-pc/.meshery/config.yaml")
   -c, --context string   (optional) temporarily change the current context.
   -v, --verbose          verbose output
   -y, --yes              (optional) assume yes for user interactive prompts.
@@ -59,7 +59,7 @@ mesheryctl system status
 ## Screenshots
 
 Usage of mesheryctl system status
-![status-usage](../../../../docs/assets/img/mesheryctl/status.png)
+![status-usage](https://docs.meshery.io/assets/img/mesheryctl/status.png)
 
 ## See Also
 

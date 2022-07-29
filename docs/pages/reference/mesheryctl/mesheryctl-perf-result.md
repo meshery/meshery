@@ -66,7 +66,7 @@ mesheryctl perf result saturday-profile --view
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string          path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string          path to config file (default "/home/admin-pc/.meshery/config.yaml")
   -o, --output-format string   (optional) format to display in [json|yaml]
   -t, --token string           (required) Path to meshery auth config
   -v, --verbose                verbose output
@@ -78,7 +78,7 @@ mesheryctl perf result saturday-profile --view
 ## Screenshots
 
 Usage of mesheryctl perf result
-![perf-result-usage](../../../../docs/assets/img/mesheryctl/perf-result.png)
+![perf-result-usage](https://docs.meshery.io/assets/img/mesheryctl/perf-result.png)
 
 ## See Also
 
