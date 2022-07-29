@@ -34,7 +34,7 @@ function FiltersCard({
   }
   const [gridProps, setGridProps] = useState(INITIAL_GRID_SIZE);
   const [fullScreen, setFullScreen] = useState(false);
-  const [showCode, setShowCode]=useState(false);
+  const [showCode, setShowCode] = useState(false);
 
   const toggleFullScreen = () => {
     setFullScreen(!fullScreen);
