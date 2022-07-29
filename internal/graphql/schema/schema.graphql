@@ -289,11 +289,16 @@ type ApplicationResult {
   id: ID!
   name: String!
   application_file: String!
-  type: String!
+  type: NullString!
   user_id: String!
   location: Location!
   created_at: String
   updated_at: String
+}
+
+type NullString {
+  String: String!
+  Valid: Boolean!
 }
 
 # ================= Filters =======================

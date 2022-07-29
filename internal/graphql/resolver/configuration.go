@@ -75,7 +75,6 @@ func (r *Resolver) subscribeConfiguration(ctx context.Context, provider models.P
 			case <-ctx.Done():
 				r.Log.Info("Configuration subscription stopped")
 				return
-
 			}
 		}
 	}()

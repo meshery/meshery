@@ -26,8 +26,8 @@ const (
 	ErrKubectlDescribeCode                  = "2179"
 	ErrEmptyCurrentK8sContextCode           = "2180"
 	ErrConfigurationPatternsCode            = "2242"
-	ErrConfigurationApplicationsCode            = "2243"
-	ErrConfigurationFiltersCode            = "2244"
+	ErrConfigurationApplicationsCode        = "2243"
+	ErrConfigurationFiltersCode             = "2244"
 )
 
 var (

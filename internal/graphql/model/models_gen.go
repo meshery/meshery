@@ -27,14 +27,14 @@ type ApplicationPage struct {
 }
 
 type ApplicationResult struct {
-	ID              string    `json:"id"`
-	Name            string    `json:"name"`
-	ApplicationFile string    `json:"application_file"`
-	Type            string    `json:"type"`
-	UserID          string    `json:"user_id"`
-	Location        *Location `json:"location"`
-	CreatedAt       *string   `json:"created_at"`
-	UpdatedAt       *string   `json:"updated_at"`
+	ID              string      `json:"id"`
+	Name            string      `json:"name"`
+	ApplicationFile string      `json:"application_file"`
+	Type            *NullString `json:"type"`
+	UserID          string      `json:"user_id"`
+	Location        *Location   `json:"location"`
+	CreatedAt       *string     `json:"created_at"`
+	UpdatedAt       *string     `json:"updated_at"`
 }
 
 type ConfigurationPage struct {
@@ -151,6 +151,11 @@ type MesheryResult struct {
 
 type NameSpace struct {
 	Namespace string `json:"namespace"`
+}
+
+type NullString struct {
+	String string `json:"String"`
+	Valid  bool   `json:"Valid"`
 }
 
 type OAMCapability struct {
