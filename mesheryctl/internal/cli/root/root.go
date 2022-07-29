@@ -180,7 +180,6 @@ func initConfig() {
 	if err := viper.ReadInConfig(); err == nil {
 		log.Debug("Using config file:", viper.ConfigFileUsed())
 	}
-
 }
 
 // setVerbose sets the log level to debug if the -v flag is set
