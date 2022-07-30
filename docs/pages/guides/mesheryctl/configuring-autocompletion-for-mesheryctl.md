@@ -67,7 +67,7 @@ _Note_ : You might need to restart your shell for this setup to take effect.
 
  <pre class="codeblock-pre"><div class="codeblock">
  <div class="clipboardjs">
- COMPLETION_DIR=$(echo $fpath | grep -o '[^ ]*completions' | grep -v cache) && mesheryctl completion zsh > "${COMPLETION_DIR}/_mesheryctl"
+COMPLETION_DIR=$(echo $fpath | grep -o '[^ ]*completions' | grep -v cache) && mkdir -p $COMPLETION_DIR && mesheryctl completion zsh > "${COMPLETION_DIR}/_mesheryctl"
  </div></div>
  </pre>
 
