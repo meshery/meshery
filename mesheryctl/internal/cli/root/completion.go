@@ -45,7 +45,7 @@ const example = `  # bash <= 3.2
   source <(mesheryctl completion zsh)
 
   # zsh on osx / oh-my-zsh
-  COMPLETION_DIR=$(echo $fpath | grep -o '[^ ]*completions' | grep -v "cache") && mesheryctl completion zsh > "${COMPLETION_DIR}/_mesheryctl"
+  COMPLETION_DIR=$(echo $fpath | grep -o '[^ ]*completions' | grep -v cache) && mesheryctl completion zsh > "${COMPLETION_DIR}/_mesheryctl"
 
   # fish:
   mesheryctl completion fish | source

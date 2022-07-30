@@ -26,6 +26,11 @@ global:
       description: Muestra la versión de Meshery Client (mesheryctl) y el SHA del binario de lanzamiento.
       usage: mesheryctl version
 
+    completion:
+      name: completion
+      description: Código de finalización del shell de salida.
+      usage: mesheryctl completion [bash|zsh|fish]
+
 system:
   name: system
   description: Gestión del ciclo de vida de las implementaciones de Meshery
@@ -82,11 +87,6 @@ system:
           name: --skip-reset
           description: Extraiga los archivos de manifiesto más recientes
           usage: mesheryctl system update --skip-reset
-
-    completion:
-      name: completion
-      description: Código de finalización del shell de salida.
-      usage: mesheryctl system completion [bash|zsh|fish]
 
     config:
       name: config
@@ -308,7 +308,7 @@ perf:
       description: Muestra todos los perfiles de rendimiento disponibles y los resultados de un perfil de rendimiento.
       usage: |
 
-        mesheryctl perf list 
+        mesheryctl perf list
 
         mesheryctl perf list [profile-id]
 
