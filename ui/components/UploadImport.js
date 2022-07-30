@@ -17,7 +17,7 @@ function UploadImport({configuration}) {
     <Button aria-label="URL-Upload" data-cy="import-button" variant="contained"
           color="primary"
           size="large"
-          onClick={handleOpenModal} sx={{marginBottom: theme.spacing(2) }} >
+          onClick={handleOpenModal} sx={{marginBottom: theme.spacing(2), marginLeft: theme.spacing(2) }} >
           <LinkIcon sx={{ paddingRight : ".35rem" }} />
           Import {configuration}
         </Button>
