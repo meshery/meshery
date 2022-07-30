@@ -1,9 +1,10 @@
 import React, { useState } from 'react'
-import { Button, Grid, IconButton, Typography } from "@mui/material";
+import {Box, Button, Grid, IconButton, Typography } from "@mui/material";
 import FlipCard from "@/components/FlipCard";
 import Moment from "react-moment";
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { styled } from "@mui/material/styles";
 
 function PerformanceCard({
     name,
@@ -21,7 +22,17 @@ function PerformanceCard({
     requestCookies,
     requestHeaders,
 }) {
+   
+  const ButtonsWrapper = styled(Box)(({ theme }) => ({
+    display : "flex",
+    justifyContent : "flex-end",
+    gap: theme.spacing(1),
+    alignItems : "center",
+    marginTop : "10px"
+    }))
+
     const [renderTable, setRenderTable] = useState(false);
+
   return (
     <FlipCard>
           {/* FRONT PART */}
@@ -30,14 +41,15 @@ function PerformanceCard({
           <Typography variant="h6" component="div">
             {name}
           </Typography>
-          <div>
+          <Box sx={{display : "flex",
+      alignItems : "center"}}>
               <Typography variant="h2" component="div" color="primary" style={{ marginRight : "0.75rem" }}>
                 {(results).toLocaleString('en')}
               </Typography>
               <Typography variant="body1" style={{ color : "rgba(0, 0, 0, 0.54)" }} component="div">
                 Results
               </Typography>
-          </div>
+          </Box>
         </div>
         <div>
           <div>
@@ -49,8 +61,8 @@ function PerformanceCard({
                 )
                 : null}
           </div>
-          <div>
-            <Button variant="contained" >
+          <ButtonsWrapper>
+            <Button variant="secondary">
               {renderTable
                 ? "Hide"
                 : "View"} Results
@@ -58,7 +70,7 @@ function PerformanceCard({
             <Button color="primary" variant="contained" >
               Run Test
             </Button>
-          </div>
+          </ButtonsWrapper>
         </div>
       </>
 
@@ -76,14 +88,14 @@ function PerformanceCard({
             </Typography>
           </Grid>
           <Grid item xs={4}>
-            <div>
+            <Box sx={{width : "fit-content", margin : "0 0 0 auto"}}>
               <IconButton>
                 <EditIcon color="primary" />
               </IconButton>
               <IconButton>
                 <DeleteIcon color="primary" />
               </IconButton>
-            </div>
+              </Box>
           </Grid>
         </Grid>
         {Array.isArray(endpoints)

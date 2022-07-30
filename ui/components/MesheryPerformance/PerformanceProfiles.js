@@ -83,7 +83,7 @@ function PerformanceProfiles() {
   return (
     <>
     <Button onClick={handleClick}>QWE</Button>
-    <Box sx={{display: "flex"}}>
+    <Box sx={{display: "flex", paddingLeft : "1rem"}}>
           <Button aria-label="Add Performance Profile" variant="contained"
           color="primary"
           size="large"
