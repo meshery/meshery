@@ -86,7 +86,7 @@ type validationInfo struct {
 	SchemaType string `json:"schemaType"`
 	Value      string `json:"value"`
 	ValueType  string `json:"valueType"`
-	Id         string `json:"id"`
+	ID         string `json:"id"`
 }
 
 type validationPayload struct {
@@ -139,15 +139,15 @@ func (h *Handler) ValidationHandler(rw http.ResponseWriter, r *http.Request) {
 					errs = append(errs, "workload not valid")
 				}
 				if len(errs) != 0 {
-					validationErrors[val.Id] = errs
+					validationErrors[val.ID] = errs
 				}
 			}
 
 			rw.Header().Set("Content-Type", "application/json")
 			err = json.NewEncoder(rw).Encode(struct {
-				errors map[string][]string
+				Errors map[string][]string
 			}{
-				errors: validationErrors,
+				Errors: validationErrors,
 			})
 			if err != nil {
 				h.log.Error(ErrValidate(err))
@@ -156,9 +156,8 @@ func (h *Handler) ValidationHandler(rw http.ResponseWriter, r *http.Request) {
 				rw.WriteHeader(http.StatusBadRequest)
 				fmt.Fprintf(rw, "failed to marshal the result: %s", err)
 			}
-
 		}
-		isValid, err := validate(validationInfo{Id: val.Id, Schema: val.Schema, SchemaType: val.SchemaType, ValueType: val.ValueType})
+		isValid, err := validate(validationInfo{ID: val.ID, Schema: val.Schema, SchemaType: val.SchemaType, ValueType: val.ValueType})
 		if err != nil {
 			h.log.Error(ErrValidate(err))
 			http.Error(rw, ErrValidate(err).Error(), http.StatusInternalServerError)
@@ -166,7 +165,6 @@ func (h *Handler) ValidationHandler(rw http.ResponseWriter, r *http.Request) {
 			rw.WriteHeader(http.StatusBadRequest)
 			fmt.Fprintf(rw, "failed to parse schema: %s", err)
 		}
-
 		rw.Header().Set("Content-Type", "application/json")
 		err = json.NewEncoder(rw).Encode(struct {
 			IsValid bool
