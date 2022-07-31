@@ -341,14 +341,14 @@ function MesheryApplications({
   const handleAppDownload = (id, source_type, name) => {
     updateProgress({ showProgress : true })
     dataFetch(
-        `/api/application/download/${id}?source-type=${source_type}`,
+        `/api/application/download/${id}/${source_type}`,
         {
           credentials : "include",
           method : "GET",
         },
         () => {
           fileDownloader(id, name, source_type);
-          console.log("ApplicationFile API", `/api/application/download/${id}?source-type=${source_type}`);
+          console.log("ApplicationFile API", `/api/application/download/${id}/${source_type}`);
           updateProgress({ showProgress : false });
         },
         handleError(ACTION_TYPES.DOWNLOAD_APP)
@@ -444,14 +444,14 @@ function MesheryApplications({
 
     if (type === FILE_OPS.UPDATE) {
       dataFetch(
-        `/api/application?source-type=${source_type}`,
+        `/api/application/${source_type}`,
         {
           credentials : "include",
           method : "POST",
           body : JSON.stringify({ application_data : { id, name, application_file : data }, save : true }),
         },
         () => {
-          console.log("ApplicationFile API", `/api/application?source-type=${source_type}`);
+          console.log("ApplicationFile API", `/api/application/${source_type}`);
           updateProgress({ showProgress : false });
           fetchApplications(page, pageSize, search, sortOrder);
         },
@@ -471,14 +471,14 @@ function MesheryApplications({
         body = JSON.stringify({ ...body, url : data })
       }
       dataFetch(
-        `/api/application?source-type=${source_type}`,
+        `/api/application/${source_type}`,
         {
           credentials : "include",
           method : "POST",
           body,
         },
         () => {
-          console.log("ApplicationFile API", `/api/application?source-type=${source_type}`);
+          console.log("ApplicationFile API", `/api/application/${source_type}`);
           updateProgress({ showProgress : false });
           fetchApplications(page, pageSize, search, sortOrder);
         },
@@ -594,7 +594,7 @@ function MesheryApplications({
             <>
               <IconButton
                 title="click to download"
-                onClick={() => handleAppDownload(rowData.id ,rowData.type, rowData.name)}
+                onClick={() => handleAppDownload(rowData.id ,rowData.type.String, rowData.name)}
               >
                 <img src={`/static/img/${(rowData.type.String).replaceAll(" ", "_").toLowerCase()}.svg`} width="45px" height="45px" />
               </IconButton>

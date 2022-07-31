@@ -124,7 +124,7 @@ mesheryctl app onboard -f [filepath]
 					if err != nil {
 						return err
 					}
-					req, err = utils.NewRequest("POST", appURL+"?source-type="+sourceType, bytes.NewBuffer(jsonValues))
+					req, err = utils.NewRequest("POST", appURL+"/"+sourceType, bytes.NewBuffer(jsonValues))
 					if err != nil {
 						return err
 					}
@@ -191,7 +191,7 @@ mesheryctl app onboard -f [filepath]
 						})
 					}
 				}
-				req, err = utils.NewRequest("POST", appURL+"?source-type="+sourceType, bytes.NewBuffer(jsonValues))
+				req, err = utils.NewRequest("POST", appURL+"/"+sourceType, bytes.NewBuffer(jsonValues))
 				if err != nil {
 					return err
 				}

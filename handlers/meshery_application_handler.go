@@ -99,9 +99,9 @@ func (h *Handler) handleApplicationPOST(
 	defer func() {
 		_ = r.Body.Close()
 	}()
-	sourcetype := r.URL.Query().Get("source-type")
+	sourcetype := mux.Vars(r)["sourcetype"]
 	if sourcetype == "" {
-		http.Error(rw, "missing query parameter \"source-type\"", http.StatusBadRequest)
+		http.Error(rw, "missing route variable \"source-type\"", http.StatusBadRequest)
 		return
 	}
 	var parsedBody *MesheryApplicationRequestBody
@@ -448,7 +448,7 @@ func (h *Handler) GetMesheryApplicationSourceHandler(
 	}
 
 	var mimeType string
-	sourcetype := r.URL.Query().Get("source-type")
+	sourcetype := mux.Vars(r)["sourcetype"]
 
 	if models.ApplicationType(sourcetype) == models.HELM_CHART { //serve the content in a tgz file
 		mimeType = "application/x-tar"
