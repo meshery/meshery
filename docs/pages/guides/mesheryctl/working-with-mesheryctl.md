@@ -157,7 +157,6 @@ To install `mesheryctl`, execute the following commands:
 
  <pre class="codeblock-pre"><div class="codeblock">
  <div class="clipboardjs">
- brew tap meshery/tap
  brew install mesheryctl
  mesheryctl system start
  </div></div>
