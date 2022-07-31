@@ -52,6 +52,9 @@ func fill(p *core.Pattern, flatSvc map[string]interface{}) error {
 		if err := fillNamespace(v, flatSvc); err != nil {
 			errs = append(errs, err)
 		}
+		if err := fillVersion(v, flatSvc); err != nil {
+			errs = append(errs, err)
+		}
 		if err := fillSettings(v, flatSvc); err != nil {
 			errs = append(errs, err)
 		}
@@ -88,7 +91,25 @@ func fillDependsOn(svc *core.Service, flatSvc map[string]interface{}) error {
 
 	return nil
 }
+func fillVersion(svc *core.Service, flatSvc map[string]interface{}) error {
+	nsKey, ok := matchPattern(svc.Version)
+	if !ok {
+		return nil
+	}
 
+	val, found := flatSvc[nsKey]
+	if !found {
+		return fmt.Errorf("invalid reference query: %s", nsKey)
+	}
+
+	vVal, ok := val.(string)
+	if !ok {
+		return fmt.Errorf("resolved reference query [%s] does not return string", nsKey)
+	}
+
+	svc.Version = vVal
+	return nil
+}
 func fillNamespace(svc *core.Service, flatSvc map[string]interface{}) error {
 	nsKey, ok := matchPattern(svc.Namespace)
 	if !ok {
