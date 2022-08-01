@@ -1,6 +1,5 @@
 import React from 'react'
 import { Box, Button, Paper, Typography, } from "@mui/material";
-import UploadImport from "@/components/UploadImport";
 import {PaperWithoutTitle} from "@/components/Paper";
 import { styled } from "@mui/material/styles";
 
@@ -14,7 +13,8 @@ const CustomWrapper = styled(Box)(({theme}) => ({
   gap: theme.spacing(3),
 }))
 const CustomBox = styled(Box)(({theme}) => ({
-  margin: "5rem 5rem"
+  margin: theme.spacing(5)
+
 }))
 
 function EmptyState({configuration, Button1, Button2}) {
