@@ -59,6 +59,8 @@ mesheryctl system channel view
 		focusedContext := tempContext
 		if focusedContext == "" {
 			focusedContext = mctlCfg.CurrentContext
+			log.Printf("focusedContext is ")
+			log.Println(focusedContext)
 		}
 
 		if showForAllContext {

@@ -58,7 +58,7 @@ jobs:
         with:
           cluster_name: "kind-cluster"
       - name: Run coverage
-        run: go test -run Integration ./... -race -coverprofile=coverage.txt -covermode=atomic -timeout 40m
+        run: go test -run TestRootCmdIntegration ./... -race -coverprofile=coverage.txt -covermode=atomic -timeout 40m
       - name: Upload coverage to Codecov
         if: github.repository == 'meshery/meshery'
         uses: codecov/codecov-action@v1
@@ -66,4 +66,3 @@ jobs:
           files: ./coverage.txt
           flags: gointegrationtests
           fail_ci_if_error: true
-
