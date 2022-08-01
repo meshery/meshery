@@ -41,15 +41,15 @@ func TestRootCmdIntegration(t *testing.T) {
 	testConfigPath := filepath.Join(fixturesDirPath, "testConfig.yaml")
 
 	tests := []RootCmdTestInput{
-		{
-			Name: "Gets version",
-			Args: []string{"version"},
-		},
-		{
-			Name:             "view the channel to test if meshconfig is correctly created & loaded",
-			Args:             []string{"system", "channel", "view"},
-			ExpectedResponse: "Context: local\nChannel: stable\nVersion: latest\n\n",
-		},
+		// {
+		// 	Name: "Gets version",
+		// 	Args: []string{"version"},
+		// },
+		// {
+		// 	Name:             "view the channel to test if meshconfig is correctly created & loaded",
+		// 	Args:             []string{"system", "channel", "view"},
+		// 	ExpectedResponse: "Context: local\nChannel: stable\nVersion: latest\n\n",
+		// },
 		{
 			Name:             "view the channel with other config",
 			Args:             []string{"system", "channel", "view", "--config", testConfigPath},
