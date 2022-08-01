@@ -148,6 +148,9 @@ proto-build:
 error:
 	go run github.com/layer5io/meshkit/cmd/errorutil -d . analyze -i ./server/helpers -o ./server/helpers --skip-dirs mesheryctl
 
+## Build Meshery UI; Build and run Meshery Server on your local machine (requires go${GOVERSION}).
+ui-server: ui-meshery-build server
+
 #-----------------------------------------------------------------------------
 # Meshery UI Native Builds.
 #-----------------------------------------------------------------------------
