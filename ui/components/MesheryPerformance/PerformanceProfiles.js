@@ -21,11 +21,8 @@ function PerformanceProfiles() {
         /**  @type {TypeView} */
         ("grid")
       ); 
-      const [page, setPage] = useState(0);
-      const [search, setSearch] = useState("");
-      const [sortOrder, setSortOrder] = useState("");
+
       const [count, setCount] = useState(0);
-      const [pageSize, setPageSize] = useState(10);
       const [testProfiles, setTestProfiles] = useState([]);
       const [profileForModal, setProfileForModal] = useState();
       
@@ -87,6 +84,7 @@ function PerformanceProfiles() {
   return (
     <>
     <Button onClick={handleClick}>QWE</Button>
+    {(testProfiles.length > 0 || viewType === "table") &&
     <Box sx={{display: "flex", paddingLeft : "1rem"}}>
           <Button aria-label="Add Performance Profile" variant="contained"
           color="primary"
@@ -100,6 +98,7 @@ function PerformanceProfiles() {
     <ViewSwitch view={viewType} changeView={setViewType} />
   </CustomBox>
   </Box>
+}
   { viewType==="table" &&
   <PerformanceProfileTable
               testProfiles={testProfiles}
