@@ -61,6 +61,8 @@ mesheryctl system channel view
 			focusedContext = mctlCfg.CurrentContext
 			log.Printf("focusedContext is ")
 			log.Println(focusedContext)
+			log.Printf("contexts is ")
+			log.Println(mctlCfg.Contexts)
 		}
 
 		if showForAllContext {
