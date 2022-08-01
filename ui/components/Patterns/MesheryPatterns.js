@@ -1,17 +1,14 @@
 import React, {useState} from 'react'
-import { Avatar, Box, Button, Divider, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, TableCell, Typography, Tooltip, TableSortLabel } from "@mui/material";
-import MUIDataTable from "mui-datatables";
-import Moment from "react-moment";
+import { Box, Button, Divider, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Typography, Tooltip,} from "@mui/material";
 import { styled } from "@mui/material/styles";
 import UploadImport from "@/components/UploadImport";
 import ViewSwitch from "@/components/ViewSwitch";
-import DoneAllIcon from '@mui/icons-material/DoneAll';
-import UndeployIcon from "../../public/static/img/UndeployIcon";
 import SaveIcon from '@mui/icons-material/Save';
 import DeleteIcon from '@mui/icons-material/Delete';
 import FullscreenIcon from '@mui/icons-material/Fullscreen';
 import FullscreenExitIcon from '@mui/icons-material/FullscreenExit';
-import MesheryPatternGrid from "./MesheryPatternGrid"
+import MesheryPatternGrid from "./MesheryPatternGrid";
+import MesheryPatternTable from "./MesheryPatternTable";
 import AddCircleOutlineRoundedIcon from '@mui/icons-material/AddCircleOutlineRounded';
 import EmptyState from "@/components/EmptyStateComponent";
 import { useTheme } from "@mui/system";
@@ -19,7 +16,6 @@ import { useTheme } from "@mui/system";
 function resetSelectedPattern() {
   return { show : false, pattern : null };
 }
-
 
 function Mesherypatterns({user}) {
   const theme = useTheme();  
@@ -42,7 +38,7 @@ function Mesherypatterns({user}) {
       /**  @type {TypeView} */
       ("grid")
     ); 
-
+  
     function resetSelectedRowData() {
       return () => {
         setSelectedRowData(null);
@@ -159,132 +155,13 @@ function Mesherypatterns({user}) {
       );
     }
     
-    const columns = [
-        {
-          name : "name",
-          label : "Name",
-          options : {
-            filter : false,
-            sort : true,
-            searchable : true,
-            customHeadRender : function CustomHead({ index, ...column }, sortColumn) {
-              return (
-                <TableCell key={index} onClick={() => sortColumn(index)}>
-                  <TableSortLabel active={column.sortDirection != null} direction={column.sortDirection || "asc"}>
-                    <b>{column.label}</b>
-                  </TableSortLabel>
-                </TableCell>
-              );
-            },
-          },
-        },
-        {
-          name : "created_at",
-          label : "Upload Timestamp",
-          options : {
-            filter : false,
-            sort : true,
-            searchable : true,
-            customHeadRender : function CustomHead({ index, ...column }, sortColumn) {
-              return (
-                <TableCell key={index} onClick={() => sortColumn(index)}>
-                  <TableSortLabel active={column.sortDirection != null} direction={column.sortDirection || "asc"}>
-                    <b>{column.label}</b>
-                  </TableSortLabel>
-                </TableCell>
-              );
-            },
-            customBodyRender : function CustomBody(value) {
-              return <Moment format="LLLL">{value}</Moment>;
-            },
-          },
-        },
-        {
-          name : "updated_at",
-          label : "Update Timestamp",
-          options : {
-            filter : false,
-            sort : true,
-            searchable : true,
-            customHeadRender : function CustomHead({ index, ...column }, sortColumn) {
-              return (
-                <TableCell key={index} onClick={() => sortColumn(index)}>
-                  <TableSortLabel active={column.sortDirection != null} direction={column.sortDirection || "asc"}>
-                    <b>{column.label}</b>
-                  </TableSortLabel>
-                </TableCell>
-              );
-            },
-            customBodyRender : function CustomBody(value) {
-              return <Moment format="LLLL">{value}</Moment>;
-            },
-          },
-        },
-        {
-          name : "Actions",
-          options : {
-            filter : false,
-            sort : false,
-            searchable : false,
-            customHeadRender : function CustomHead({ index, ...column }) {
-              return (
-                <TableCell key={index}>
-                  <b>{column.label}</b>
-                </TableCell>
-              );
-            },
-            customBodyRender : function CustomBody(_, tableMeta) {
-              const rowData = patterns[tableMeta.rowIndex];
-              return (
-                <>
-              <IconButton onClick={() => setSelectedPattern({ pattern : patterns[tableMeta.rowIndex], show : true })}>
-                <Avatar src="/static/img/pattwhite.svg" sx={{ width: 27, height: 27, marginRight: 1 }} />
-              </IconButton>
-                  <IconButton
-                    title="Deploy"
-                    onClick={() => handleModalOpen(rowData.pattern_file, true)}
-                  >
-                    <DoneAllIcon data-cy="deploy-button" />
-                  </IconButton>
-                  <IconButton
-                    title="Undeploy"
-                    onClick={() => handleModalOpen(rowData.pattern_file, false)}
-                  >
-                    <UndeployIcon fill="rgba(0, 0, 0, 0.54)" data-cy="undeploy-button" />
-                  </IconButton>
-                </>
-              );
-            },
-          },
-        },
-      ];
-
-      const options = {
-        filter : false,
-        sort : !(user && user.user_id === "meshery"),
-        search : !(user && user.user_id === "meshery"),
-        filterType : "textField",
-        // responsive : "scrollFullHeight",
-        resizableColumns : true,
-        serverSide : true,
-        rowsPerPageOptions : [10, 20, 25],
-        fixedHeader : true,
-        print : false,
-        download : false,
-        textLabels : {
-          selectedRows : {
-            text : "pattern(s) selected"
-          }
-        },
-        onCellClick : (_, meta) => meta.colIndex !== 3 && setSelectedRowData(patterns[meta.rowIndex]),
-    }
 
   return (
     <> 
             {selectedRowData && Object.keys(selectedRowData).length > 0 && (
           <YAMLEditor pattern={selectedRowData} onClose={resetSelectedRowData()}  />
         )}
-             
+        
       {!selectedPattern.show  &&  (patterns.length > 0 || viewType === "table") &&
        <Box sx={{display: "flex"}}>
          
@@ -303,12 +180,12 @@ function Mesherypatterns({user}) {
       }
     
     {!selectedPattern.show &&  viewType==="table" &&   
-         <MUIDataTable
-    title={<div>Designs</div>}
-    data={patterns}
-    columns={columns}
-    options={options}    
-  />
+         <MesheryPatternTable 
+         patterns ={patterns}
+         setSelectedRowData = {setSelectedRowData}
+         handleModalOpen = {handleModalOpen}
+         user={user}
+         />
 }
 {!selectedPattern.show && viewType === "grid" && patterns.length === 0 &&
             <EmptyState configuration="Designs" 

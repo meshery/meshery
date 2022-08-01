@@ -54,7 +54,7 @@ function MesheryPatternGrid({ patterns=[],handleDeploy, handleUnDeploy, handleSu
     return (
         <div>
         {!selectedPattern.show &&
-        <Grid container spacing={3} style={{ padding : "1rem" }}>
+        <Grid container spacing={3} sx={{ padding : "1rem" }}>
           {patterns.map((patterns) => (
             <MesheryPatternsGridItem
               key={patterns.id}
