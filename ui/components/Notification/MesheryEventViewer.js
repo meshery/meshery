@@ -7,9 +7,6 @@ function MesheryEventViewer ({eventVariant, eventSummary, eventDetails}) {
     return(
      <MesherySnackbarWrapper
      key={`event_-_${eventVariant}`}
-            variant={eventTypes[eventVariant]
-              ? eventTypes[eventVariant].type
-              : eventTypes[0].type}
             message={eventSummary}
             details={eventDetails}
              />

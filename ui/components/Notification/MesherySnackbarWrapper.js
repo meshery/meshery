@@ -7,11 +7,11 @@ import {
     Collapse,
     Card,
     CardActions,
-    Grid
+    Grid,
+    Snackbar
   } from "@mui/material";   
-  import { SnackbarContent } from 'notistack';
 
-  function MesherySnackbarWrapper ({ message, onClose, variant, details}) {
+  function MesherySnackbarWrapper ({ message, onClose, details}) {
 
     const [expanded, setExpanded] = useState(false);
     const [cardHover, setCardHover] = useState(false)
@@ -21,7 +21,7 @@ import {
       };
 
     return(
-        <SnackbarContent>
+        <Snackbar>
             <Card 
         aria-label="Show more"
         onMouseEnter={() => setCardHover(true)}
@@ -60,7 +60,7 @@ import {
           </Paper>
         </Collapse>
       </Card>
-        </SnackbarContent>
+        </Snackbar>
     )
 }
 
