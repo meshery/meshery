@@ -17,6 +17,11 @@ type RootCmdTestInput struct {
 	ExpectedResponse string
 }
 
+func resetFlags() {
+	cfgFile = utils.DefaultConfigPath
+	verbose = false
+}
+
 func TestRootCmdIntegration(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping integration test")
@@ -55,12 +60,17 @@ func TestRootCmdIntegration(t *testing.T) {
 			Args:             []string{"system", "channel", "view", "--verbose"},
 			ExpectedResponse: fmt.Sprintf("Using config file:%s\nContext: local\nChannel: stable\nVersion: latest\n\n", utils.DefaultConfigPath),
 		},
+		{
+			Name:             "view the channel with short verbose flag and different config",
+			Args:             []string{"system", "channel", "view", "-v", "--config", testConfigPath},
+			ExpectedResponse: fmt.Sprintf("Using config file:%s\nContext: local2\nChannel: edge\nVersion: latest\n\n", testConfigPath),
+		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
-			// We need to do this because init block in root.go was executed already and it used the other value for DefaultConfigPath
-			cfgFile = utils.DefaultConfigPath
+			// So that flag values from any previous test are not used.
+			resetFlags()
 
 			b := bytes.NewBufferString("")
 			logrus.SetOutput(b)
