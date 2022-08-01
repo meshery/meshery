@@ -142,7 +142,7 @@ proto-build:
 	#         google.golang.org/grpc/cmd/protoc-gen-go-grpc
 	# PATH=$(PATH):`pwd`/../protoc/bin:$(GOPATH)/bin
 	# export PATH=$PATH:`pwd`/../protoc/bin:$GOPATH/bin
-	protoc -I meshes/ meshes/meshops.proto --go-grpc_out=./meshes/ --go_out=./meshes/
+	protoc -I meshes/ meshes/meshops.proto --go-grpc_out=./server/meshes/ --go_out=./server/meshes/
 
 ## Analyze error codes
 error:

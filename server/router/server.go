@@ -237,7 +237,7 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int, g http.
 
 	gMux.PathPrefix("/").
 		Handler(h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			handlers.ServeUI(w, r, "", "../ui/out/")
+			handlers.ServeUI(w, r, "", "../../ui/out/")
 		})))).
 		Methods("GET")
 

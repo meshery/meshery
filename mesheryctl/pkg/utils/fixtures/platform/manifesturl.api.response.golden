@@ -11179,7 +11179,7 @@
 "url": "https://api.github.com/repos/meshery/meshery/git/blobs/759a0b9c8bfbb335e98ecb5f545f729d284bc477"
 },
 {
-"path": "router",
+"path": "server/router",
 "mode": "040000",
 "type": "tree",
 "sha": "6b2f51e94563c01f8d7dacf5134f1c5189a4e950",

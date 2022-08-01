@@ -1282,7 +1282,7 @@ paths:
                             type: array
                             items:
                               $ref: '#/definitions/AccountExtension'
-                            x-go-package: github.com/layer5io/meshery/models
+                            x-go-package: github.com/layer5io/meshery/server/models
                           component:
                             type: string
                             x-go-name: Component
@@ -1458,14 +1458,14 @@ paths:
                       category:
                         type: integer
                         format: int32
-                        x-go-package: github.com/layer5io/meshery/meshes
+                        x-go-package: github.com/layer5io/meshery/server/meshes
                       key:
                         type: string
                         x-go-name: Key
                       value:
                         type: string
                         x-go-name: Value
-                    x-go-package: github.com/layer5io/meshery/meshes
+                    x-go-package: github.com/layer5io/meshery/server/meshes
                   x-go-name: Ops
                 version:
                   type: string
@@ -1554,14 +1554,14 @@ paths:
                       category:
                         type: integer
                         format: int32
-                        x-go-package: github.com/layer5io/meshery/meshes
+                        x-go-package: github.com/layer5io/meshery/server/meshes
                       key:
                         type: string
                         x-go-name: Key
                       value:
                         type: string
                         x-go-name: Value
-                    x-go-package: github.com/layer5io/meshery/meshes
+                    x-go-package: github.com/layer5io/meshery/server/meshes
                   x-go-name: Ops
                 version:
                   type: string
@@ -4764,7 +4764,7 @@ paths:
                                       name:
                                         type: string
                                         x-go-name: Name
-                                    x-go-package: github.com/layer5io/meshery/models
+                                    x-go-package: github.com/layer5io/meshery/server/models
                                   hide:
                                     type: integer
                                     format: uint8
@@ -4778,7 +4778,7 @@ paths:
                                   value:
                                     type: object
                                     x-go-name: Value
-                                x-go-package: github.com/layer5io/meshery/models
+                                x-go-package: github.com/layer5io/meshery/server/models
                               x-go-name: TemplateVars
                             title:
                               type: string
@@ -4789,7 +4789,7 @@ paths:
                             uri:
                               type: string
                               x-go-name: URI
-                          x-go-package: github.com/layer5io/meshery/models
+                          x-go-package: github.com/layer5io/meshery/server/models
                         panels:
                           type: array
                           items:
@@ -4800,9 +4800,9 @@ paths:
                           items:
                             type: string
                           x-go-name: SelectedTemplateVars
-                      x-go-package: github.com/layer5io/meshery/models
+                      x-go-package: github.com/layer5io/meshery/server/models
                     x-go-name: GrafanaBoards
-                x-go-package: github.com/layer5io/meshery/models
+                x-go-package: github.com/layer5io/meshery/server/models
               loadTestPrefs:
                 description: LoadTestPreferences represents the load test preferences
                 type: object
@@ -4821,7 +4821,7 @@ paths:
                   t:
                     type: string
                     x-go-name: Duration
-                x-go-package: github.com/layer5io/meshery/models
+                x-go-package: github.com/layer5io/meshery/server/models
               meshAdapters:
                 type: array
                 items:
@@ -4845,19 +4845,19 @@ paths:
                           category:
                             type: integer
                             format: int32
-                            x-go-package: github.com/layer5io/meshery/meshes
+                            x-go-package: github.com/layer5io/meshery/server/meshes
                           key:
                             type: string
                             x-go-name: Key
                           value:
                             type: string
                             x-go-name: Value
-                        x-go-package: github.com/layer5io/meshery/meshes
+                        x-go-package: github.com/layer5io/meshery/server/meshes
                       x-go-name: Ops
                     version:
                       type: string
                       x-go-name: Version
-                  x-go-package: github.com/layer5io/meshery/models
+                  x-go-package: github.com/layer5io/meshery/server/models
                 x-go-name: MeshAdapters
               prometheus:
                 description: Prometheus represents the prometheus session config
@@ -6278,7 +6278,7 @@ paths:
                                       name:
                                         type: string
                                         x-go-name: Name
-                                    x-go-package: github.com/layer5io/meshery/models
+                                    x-go-package: github.com/layer5io/meshery/server/models
                                   hide:
                                     type: integer
                                     format: uint8
@@ -6292,7 +6292,7 @@ paths:
                                   value:
                                     type: object
                                     x-go-name: Value
-                                x-go-package: github.com/layer5io/meshery/models
+                                x-go-package: github.com/layer5io/meshery/server/models
                               x-go-name: TemplateVars
                             title:
                               type: string
@@ -6303,7 +6303,7 @@ paths:
                             uri:
                               type: string
                               x-go-name: URI
-                          x-go-package: github.com/layer5io/meshery/models
+                          x-go-package: github.com/layer5io/meshery/server/models
                         panels:
                           type: array
                           items:
@@ -6314,9 +6314,9 @@ paths:
                           items:
                             type: string
                           x-go-name: SelectedTemplateVars
-                      x-go-package: github.com/layer5io/meshery/models
+                      x-go-package: github.com/layer5io/meshery/server/models
                     x-go-name: SelectedPrometheusBoardsConfigs
-                x-go-package: github.com/layer5io/meshery/models
+                x-go-package: github.com/layer5io/meshery/server/models
               updated_at:
                 type: string
                 format: date-time
@@ -6326,7 +6326,7 @@ paths:
                 additionalProperties:
                   type: object
                 x-go-name: UsersExtensionPreferences
-            x-go-package: github.com/layer5io/meshery/models
+            x-go-package: github.com/layer5io/meshery/server/models
   /api/system/version:
     get:
       description: Returns the running Meshery version
@@ -6356,7 +6356,7 @@ paths:
               release_channel:
                 type: string
                 x-go-name: ReleaseChannel
-            x-go-package: github.com/layer5io/meshery/handlers
+            x-go-package: github.com/layer5io/meshery/server/handlers
   /api/telemetry/metrics/board_import:
     post:
       description: Used for importing Grafana board for Prometheus
@@ -6402,7 +6402,7 @@ paths:
                         name:
                           type: string
                           x-go-name: Name
-                      x-go-package: github.com/layer5io/meshery/models
+                      x-go-package: github.com/layer5io/meshery/server/models
                     hide:
                       type: integer
                       format: uint8
@@ -6416,7 +6416,7 @@ paths:
                     value:
                       type: object
                       x-go-name: Value
-                  x-go-package: github.com/layer5io/meshery/models
+                  x-go-package: github.com/layer5io/meshery/server/models
                 x-go-name: TemplateVars
               title:
                 type: string
@@ -6427,7 +6427,7 @@ paths:
               uri:
                 type: string
                 x-go-name: URI
-            x-go-package: github.com/layer5io/meshery/models
+            x-go-package: github.com/layer5io/meshery/server/models
   /api/telemetry/metrics/boards:
     post:
       description: Used to persist selected board and panels
@@ -7846,7 +7846,7 @@ paths:
                             name:
                               type: string
                               x-go-name: Name
-                          x-go-package: github.com/layer5io/meshery/models
+                          x-go-package: github.com/layer5io/meshery/server/models
                         hide:
                           type: integer
                           format: uint8
@@ -7860,7 +7860,7 @@ paths:
                         value:
                           type: object
                           x-go-name: Value
-                      x-go-package: github.com/layer5io/meshery/models
+                      x-go-package: github.com/layer5io/meshery/server/models
                     x-go-name: TemplateVars
                   title:
                     type: string
@@ -7871,7 +7871,7 @@ paths:
                   uri:
                     type: string
                     x-go-name: URI
-                x-go-package: github.com/layer5io/meshery/models
+                x-go-package: github.com/layer5io/meshery/server/models
               panels:
                 type: array
                 items:
@@ -7882,7 +7882,7 @@ paths:
                 items:
                   type: string
                 x-go-name: SelectedTemplateVars
-            x-go-package: github.com/layer5io/meshery/models
+            x-go-package: github.com/layer5io/meshery/server/models
       responses:
         "200":
           description: ""
@@ -9314,7 +9314,7 @@ paths:
                                   name:
                                     type: string
                                     x-go-name: Name
-                                x-go-package: github.com/layer5io/meshery/models
+                                x-go-package: github.com/layer5io/meshery/server/models
                               hide:
                                 type: integer
                                 format: uint8
@@ -9328,7 +9328,7 @@ paths:
                               value:
                                 type: object
                                 x-go-name: Value
-                            x-go-package: github.com/layer5io/meshery/models
+                            x-go-package: github.com/layer5io/meshery/server/models
                           x-go-name: TemplateVars
                         title:
                           type: string
@@ -9350,7 +9350,7 @@ paths:
                       items:
                         type: string
                       x-go-name: SelectedTemplateVars
-                  x-go-package: github.com/layer5io/server/meshery/models
+                  x-go-package: github.com/layer5io/meshery/server/models
                 x-go-name: SelectedPrometheusBoardsConfigs
             x-go-package: github.com/layer5io/meshery/server/models
     post:
@@ -9429,7 +9429,7 @@ paths:
                           name:
                             type: string
                             x-go-name: Name
-                        x-go-package: github.com/layer5io/meshery/models
+                        x-go-package: github.com/layer5io/meshery/server/models
                       hide:
                         type: integer
                         format: uint8
@@ -9443,7 +9443,7 @@ paths:
                       value:
                         type: object
                         x-go-name: Value
-                    x-go-package: github.com/layer5io/meshery/models
+                    x-go-package: github.com/layer5io/meshery/server/models
                   x-go-name: TemplateVars
                 title:
                   type: string
@@ -9454,7 +9454,7 @@ paths:
                 uri:
                   type: string
                   x-go-name: URI
-              x-go-package: github.com/layer5io/server/meshery/models
+              x-go-package: github.com/layer5io/meshery/server/models
     post:
       description: Used for persist Grafana boards and panel selections
       tags:
@@ -10896,7 +10896,7 @@ paths:
                                   name:
                                     type: string
                                     x-go-name: Name
-                                x-go-package: github.com/layer5io/meshery/models
+                                x-go-package: github.com/layer5io/meshery/server/models
                               hide:
                                 type: integer
                                 format: uint8
@@ -10910,7 +10910,7 @@ paths:
                               value:
                                 type: object
                                 x-go-name: Value
-                            x-go-package: github.com/layer5io/meshery/models
+                            x-go-package: github.com/layer5io/meshery/server/models
                           x-go-name: TemplateVars
                         title:
                           type: string
@@ -10921,7 +10921,7 @@ paths:
                         uri:
                           type: string
                           x-go-name: URI
-                      x-go-package: github.com/layer5io/meshery/models
+                      x-go-package: github.com/layer5io/meshery/server/models
                     panels:
                       type: array
                       items:
@@ -10932,9 +10932,9 @@ paths:
                       items:
                         type: string
                       x-go-name: SelectedTemplateVars
-                  x-go-package: github.com/layer5io/meshery/models
+                  x-go-package: github.com/layer5io/meshery/server/models
                 x-go-name: GrafanaBoards
-            x-go-package: github.com/layer5io/meshery/models
+            x-go-package: github.com/layer5io/meshery/server/models
     post:
       description: Used for persisting Grafana configuration
       tags:
@@ -10955,7 +10955,7 @@ paths:
             grafanaURL:
               type: string
               x-go-name: GrafanaURL
-          x-go-package: github.com/layer5io/meshery/models
+          x-go-package: github.com/layer5io/meshery/server/models
       responses:
         "200":
           description: ""
@@ -12086,13 +12086,13 @@ paths:
                         marshaling to YAML and JSON.  Wrappers are provided for many
                         of the factory methods that the time package offers.
                       x-go-package: k8s.io/apimachinery/pkg/apis/meta/v1
-                  x-go-package: github.com/layer5io/meshery/models
+                  x-go-package: github.com/layer5io/meshery/server/models
                 x-go-name: Profiles
               total_count:
                 type: integer
                 format: uint64
                 x-go-name: TotalCount
-            x-go-package: github.com/layer5io/meshery/models
+            x-go-package: github.com/layer5io/meshery/server/models
     post:
       description: Save performance profile using the current provider's persistence
         mechanism
@@ -12142,7 +12142,7 @@ paths:
               description: service mesh for performance tests
               type: string
               x-go-name: ServiceMesh
-          x-go-package: github.com/layer5io/meshery/models
+          x-go-package: github.com/layer5io/meshery/server/models
       responses:
         "200":
           description: Returns a single performance profile
@@ -12248,7 +12248,7 @@ paths:
                   marshaling to YAML and JSON.  Wrappers are provided for many
                   of the factory methods that the time package offers.
                 x-go-package: k8s.io/apimachinery/pkg/apis/meta/v1
-            x-go-package: github.com/layer5io/meshery/models
+            x-go-package: github.com/layer5io/meshery/server/models
   /api/user/performance/profiles/results:
     get:
       description: Returns pages of all the performance results from Remote Provider
@@ -19913,7 +19913,7 @@ definitions:
               type: array
               items:
                 $ref: '#/definitions/AccountExtension'
-              x-go-package: github.com/layer5io/meshery/models
+              x-go-package: github.com/layer5io/meshery/server/models
             component:
               type: string
               x-go-name: Component
@@ -27208,7 +27208,7 @@ definitions:
           t:
             type: string
             x-go-name: Duration
-        x-go-package: github.com/layer5io/meshery/models
+        x-go-package: github.com/layer5io/meshery/server/models
       meshAdapters:
         type: array
         items:
@@ -33998,7 +33998,7 @@ definitions:
       release_channel:
         type: string
         x-go-name: ReleaseChannel
-    x-go-package: github.com/layer5io/meshery/handlers
+    x-go-package: github.com/layer5io/meshery/server/handlers
   Volume:
     description: Volume volume
     type: object

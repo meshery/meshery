@@ -71,7 +71,7 @@ RUN apk upgrade --no-cache && \
 COPY ./server/oam /app/oam
 COPY --from=meshery-server /meshery /app/cmd/
 COPY --from=meshery-server /etc/passwd /etc/passwd
-COPY --from=meshery-server /github.com/meshery/meshery/server/helpers/swagger.yaml /app/helpers/swagger.yaml
+COPY --from=meshery-server /github.com/meshery/server/helpers/swagger.yaml /app/helpers/swagger.yaml
 COPY --from=ui /out /app/ui/out
 COPY --from=provider-ui /out /app/provider-ui/out
 COPY --from=wrk2 /wrk2 /app/cmd/wrk2

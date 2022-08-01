@@ -1326,7 +1326,7 @@ definitions:
   OpCategory:
     format: int32
     type: integer
-    x-go-package: github.com/layer5io/meshery/meshes
+    x-go-package: github.com/layer5io/meshery/server/meshes
   Options:
     properties:
       colorMode:
@@ -3501,7 +3501,7 @@ definitions:
         type: string
         x-go-name: Value
     type: object
-    x-go-package: github.com/layer5io/meshery/meshes
+    x-go-package: github.com/layer5io/meshery/server/meshes
   Target:
     description: for an any panel
     properties:
