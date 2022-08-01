@@ -27,7 +27,7 @@ var (
 	sourceType string // app file type (manifest / compose)
 )
 
-var validSourceTypes = []string{"compose", "manifest", "helm"}
+var validSourceTypes []string
 
 var onboardCmd = &cobra.Command{
 	Use:   "onboard",
@@ -36,12 +36,52 @@ var onboardCmd = &cobra.Command{
 	Args:  cobra.MinimumNArgs(0),
 	Example: `
 // Onboard application by providing file path
-mesheryctl app onboard -f [filepath]
+mesheryctl app onboard -f [filepath] -s [source type]
+
+Example:
+mesheryctl app onboard -f ./application.yml -s "Kubernetes Manifest"
 
 ! Refer below image link for usage
 * Usage of mesheryctl app onboard
 # ![app-onboard-usage](../../../../docs/assets/img/mesheryctl/app-onboard.png)
 	`,
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+		validTypesURL := mctlCfg.GetBaseMesheryURL() + "/api/application/types"
+		client := &http.Client{}
+		req, err := utils.NewRequest("GET", validTypesURL, nil)
+		if err != nil {
+			return err
+		}
+
+		resp, err := client.Do(req)
+		if err != nil {
+			return err
+		}
+
+		if resp.StatusCode != 200 {
+			return errors.Errorf("Response Status Code %d, possible Server Error", resp.StatusCode)
+		}
+		defer resp.Body.Close()
+
+		var response []*models.ApplicationSourceTypesAPIResponse
+
+		body, err := io.ReadAll(resp.Body)
+		if err != nil {
+			return errors.Wrap(err, utils.PerfError("failed to read response body"))
+		}
+		err = json.Unmarshal(body, &response)
+		if err != nil {
+			return errors.Wrap(err, "failed to unmarshal response body")
+		}
+
+		for _, apiResponse := range response {
+			validSourceTypes = append(validSourceTypes, apiResponse.ApplicationType)
+		}
+
+		return nil
+	},
+
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var req *http.Request
 		var err error
