@@ -9,6 +9,7 @@ import (
 
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 )
 
 type RootCmdTestInput struct {
@@ -71,6 +72,7 @@ func TestRootCmdIntegration(t *testing.T) {
 		t.Run(tt.Name, func(t *testing.T) {
 			// So that flag values from any previous test are not used.
 			resetFlags()
+			viper.Reset()
 
 			b := bytes.NewBufferString("")
 			logrus.SetOutput(b)
