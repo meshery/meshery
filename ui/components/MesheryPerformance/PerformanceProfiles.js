@@ -10,7 +10,7 @@ import CustomModal from "@/components/Modal";
 import EmptyConfigurationList from "@/components/emptylist";
 
 function PerformanceProfiles() {
-    
+  
     const CustomBox = styled(Box)(({theme}) => ({
         justifySelf : "flex-end",
         marginLeft : "auto",
@@ -133,7 +133,7 @@ function PerformanceProfiles() {
     setProfileForModal(undefined);
   }}
    Content={
-    <div>
+    <div style={{margin: "0 4rem",}}>
       <PerformanceModal />
     </div>
    }

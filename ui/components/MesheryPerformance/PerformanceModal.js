@@ -16,22 +16,26 @@ import {Button,
   Typography,
   TextField,
   Link,
-  ExpansionPanel,
-  ExpansionPanelSummary,
-  ExpansionPanelDetails,} from "@mui/material"
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,} from "@mui/material"
 
   import CloseIcon from '@mui/icons-material/Close';  
   import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
   import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
   import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+  import PaperWithoutTitle from "@/components/Paper";
+  import { useTheme } from "@mui/system";
 
 
   const loadGenerators = ["fortio", "wrk2", "nighthawk"];
   
 function PerformanceModal() {
+  const theme = useTheme();
+
   return (
-    <Paper>
-            <Grid container spacing={1}>
+    <PaperWithoutTitle sx={{ padding : theme.spacing(10), }}>
+            <Grid container spacing={2} >
               <Grid item xs={12} md={6}>
                 <Tooltip title="If a profile name is not provided, a random one will be generated for you.">
                   <TextField
@@ -47,8 +51,6 @@ function PerformanceModal() {
                   />
                 </Tooltip>
               </Grid>
-
-             
               <Grid item xs={12} md={6}>
                 <TextField
                   select
@@ -67,7 +69,6 @@ function PerformanceModal() {
 
                 </TextField>
               </Grid>
-
               <Grid item xs={12}>
                 <TextField
                   required
@@ -137,11 +138,71 @@ function PerformanceModal() {
                   />
                 </Tooltip>
               </Grid>
-
-
-
-
-
+              <Grid item xs={12} md={12}>
+              <Accordion>
+                <AccordionSummary  >
+                <Typography align="center" color="textSecondary" variant="h6">
+                      Advanced Options
+                    </Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                <Grid container spacing={1}>
+                      <Grid item xs={12}>
+                        <TextField
+                          id="headers"
+                          name="headers"
+                          label='Request Headers e.g. {"host":"bookinfo.meshery.io"}'
+                          fullWidth
+                          // value={headers}
+                          multiline
+                          margin="normal"
+                          variant="outlined"
+                          // onChange={this.handleChange("headers")}
+                        ></TextField>
+                      </Grid>
+                      <Grid item xs={12}>
+                        <TextField
+                          id="cookies"
+                          name="cookies"
+                          label='Request Cookies e.g. {"yummy_cookie":"choco_chip"}'
+                          fullWidth
+                          // value={cookies}
+                          multiline
+                          margin="normal"
+                          variant="outlined"
+                          // onChange={this.handleChange("cookies")}
+                        ></TextField>
+                      </Grid>
+                      <Grid item xs={12}>
+                        <TextField
+                          id="contentType"
+                          name="contentType"
+                          label="Content Type e.g. application/json"
+                          fullWidth
+                          // value={contentType}
+                          multiline
+                          margin="normal"
+                          variant="outlined"
+                          // onChange={this.handleChange("contentType")}
+                        ></TextField>
+                      </Grid>
+                      <Grid item xs={12} md={12}>
+                        <TextField
+                          id="cookies"
+                          name="cookies"
+                          label='Request Body e.g. {"method":"post","url":"http://bookinfo.meshery.io/test"}'
+                          fullWidth
+                          // value={reqBody}
+                          multiline
+                          margin="normal"
+                          variant="outlined"
+                          // onChange={this.handleChange("reqBody")}
+                        ></TextField>
+                      </Grid>
+                    </Grid>
+                </AccordionDetails>
+                </Accordion> 
+              </Grid>  
               <Grid item xs={12} md={4}>
                 <FormControl component="loadGenerator">
                   <FormLabel
@@ -168,32 +229,42 @@ function PerformanceModal() {
                   </RadioGroup>
                 </FormControl>
               </Grid>
-            
-            </Grid>
               
-
-            {/* {result && result.runner_results && (
-              <div>
-                <Typography variant="h6" gutterBottom id="timerAnchor">
-                  Test Results
-                  <IconButton
-                    key="download"
-                    aria-label="download"
-                    color="inherit"
-                    // onClick={() => self.props.closeSnackbar(key) }
-                    href={`/api/perf/profile/result/${encodeURIComponent(result.meshery_id)}`}
-                  >
-                    <GetAppIcon />
-                  </IconButton>
-                </Typography>
-                <div style={chartStyle}>
-                  <MesheryChart
-                    rawdata={[result && result.runner_results ? result : {}]}
-                    data={[result && result.runner_results ? result.runner_results : {}]} />
-                </div>
+            </Grid>
+            <div >
+              <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  size="large"
+                  // disabled={disableTest}
+                  // onClick={() => this.handleAbort()}
+                >
+                  Clear
+                </Button>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  size="large"
+                  // onClick={() => this.submitProfile()}
+                  // disabled={disableTest}
+                  startIcon={<SaveOutlinedIcon />}
+                >
+                  Save Profile
+                </Button>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  size="large"
+                  // onClick={this.handleSubmit}
+                  // disabled={blockRunTest || disableTest}
+                >
+                  Run Test
+                </Button>
               </div>
-            )} */}
-    </Paper>
+    </PaperWithoutTitle>
   )
 }
 
