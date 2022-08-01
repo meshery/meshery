@@ -13,7 +13,7 @@ import FullscreenIcon from '@mui/icons-material/Fullscreen';
 import FullscreenExitIcon from '@mui/icons-material/FullscreenExit';
 import MesheryPatternGrid from "./MesheryPatternGrid"
 import AddCircleOutlineRoundedIcon from '@mui/icons-material/AddCircleOutlineRounded';
-import EmptyConfigurationList from "@/components/EmptyConfigurationList";
+import EmptyState from "@/components/EmptyStateComponent";
 import { useTheme } from "@mui/system";
 
 function resetSelectedPattern() {
@@ -311,8 +311,8 @@ function Mesherypatterns({user}) {
   />
 }
 {!selectedPattern.show && viewType === "grid" && patterns.length === 0 &&
-            <EmptyConfigurationList configuration="Designs" 
-            NewButton={
+            <EmptyState configuration="Designs" 
+            Button1={
               <Button
               aria-label="Create Design"
               variant="contained"
@@ -323,6 +323,9 @@ function Mesherypatterns({user}) {
               <AddCircleOutlineRoundedIcon  sx={{ paddingRight : ".35rem" }} />
               Create Design
             </Button>
+            }
+            Button2={
+              <UploadImport configuration="Designs" />
             }
             />
         } 

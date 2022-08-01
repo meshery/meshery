@@ -17,7 +17,7 @@ const CustomBox = styled(Box)(({theme}) => ({
   margin: "5rem 5rem"
 }))
 
-function EmptyConfigurationList({configuration, NewButton}) {
+function EmptyState({configuration, Button1, Button2}) {
 
   return (
     <CustomBox>
@@ -27,8 +27,8 @@ function EmptyConfigurationList({configuration, NewButton}) {
         No {configuration} Found
       </Typography>
           <Box sx={{flexDirection: "row"}} >
-          {NewButton}
-          <UploadImport aria-label="URL upload button" configuration={configuration} /> 
+          {Button1}
+          {Button2}
           </Box>
 
         </CustomWrapper>
@@ -37,4 +37,4 @@ function EmptyConfigurationList({configuration, NewButton}) {
   )
 }
 
-export default EmptyConfigurationList
+export default EmptyState
