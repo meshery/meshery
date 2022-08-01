@@ -1,13 +1,10 @@
 import React, {useState} from 'react'
-import { AppBar, Box, Button, Grid, Dialog, DialogTitle, Divider, DialogContent, DialogActions, Tooltip, Hidden, IconButton, Toolbar, Typography, TableCell, TableSortLabel } from "@mui/material";
-import MUIDataTable from "mui-datatables";
-// import Moment from "react-moment";
+import { Box, Button,} from "@mui/material";
 import { styled } from "@mui/material/styles";
 import UploadImport from "@/components/UploadImport";
 import ViewSwitch from "@/components/ViewSwitch";
-import DoneAllIcon from '@mui/icons-material/DoneAll';
-import UndeployIcon from "../../public/static/img/UndeployIcon";
 import MesheryApplicationGrid from "./ApplicationsGrid"
+import ApplicationTable from "./ApplicationTable";
 import { useTheme } from "@mui/system";
 import YAMLEditor from  "@/components/YamlDialog";
 
@@ -103,121 +100,7 @@ updated_at: "2022-07-14T13:53:35.479756Z"
         application_file : app_file
       });
     }
-    
 
-    const columns = [
-        {
-          name : "name",
-          label : "Application Name",
-          options : {
-            filter : false,
-            sort : true,
-            searchable : true,
-            customHeadRender : function CustomHead({ index, ...column }, sortColumn) {
-              return (
-                <TableCell key={index} onClick={() => sortColumn(index)}>
-                  <TableSortLabel active={column.sortDirection != null} direction={column.sortDirection || "asc"}>
-                    <b>{column.label}</b>
-                  </TableSortLabel>
-                </TableCell>
-              );
-            },
-          },
-        },
-        {
-          name : "created_at",
-          label : "Upload Timestamp",
-          options : {
-            filter : false,
-            sort : true,
-            searchable : true,
-            customHeadRender : function CustomHead({ index, ...column }, sortColumn) {
-              return (
-                <TableCell key={index} onClick={() => sortColumn(index)}>
-                  <TableSortLabel active={column.sortDirection != null} direction={column.sortDirection || "asc"}>
-                    <b>{column.label}</b>
-                  </TableSortLabel>
-                </TableCell>
-              );
-            },
-          },
-        },
-        {
-          name : "updated_at",
-          label : "Update Timestamp",
-          options : {
-            filter : false,
-            sort : true,
-            searchable : true,
-            customHeadRender : function CustomHead({ index, ...column }, sortColumn) {
-              return (
-                <TableCell key={index} onClick={() => sortColumn(index)}>
-                  <TableSortLabel active={column.sortDirection != null} direction={column.sortDirection || "asc"}>
-                    <b>{column.label}</b>
-                  </TableSortLabel>
-                </TableCell>
-              );
-            },
-            // customBodyRender : function CustomBody(value) {
-            //   return <Moment format="LLLL">{value}</Moment>;
-            // },
-          },
-        },
-        {
-          name : "Actions",
-          options : {
-            filter : false,
-            sort : false,
-            searchable : false,
-            customHeadRender : function CustomHead({ index, ...column }) {
-              return (
-                <TableCell key={index}>
-                  <b>{column.label}</b>
-                </TableCell>
-              );
-            },
-            customBodyRender : function CustomBody(_, tableMeta) {
-              const rowData = applications[tableMeta.rowIndex];
-              return (
-                <>
-                  <IconButton
-                    title="Deploy"
-                    onClick={() => handleModalOpen(rowData.application_file, true)}
-                  >
-                    <DoneAllIcon data-cy="deploy-button" />
-                  </IconButton>
-                  <IconButton
-                    title="Undeploy"
-                    onClick={() => handleModalOpen(rowData.application_file, false)}
-                  >
-                    <UndeployIcon fill="rgba(0, 0, 0, 0.54)" data-cy="undeploy-button" />
-                  </IconButton>
-                </>
-              );
-            },
-          },
-        },
-      ];
-    
-      const options = {
-        filter : false,
-        sort : !(user && user.user_id === "meshery"),
-        search : !(user && user.user_id === "meshery"),
-        filterType : "textField",
-        // responsive : "scrollFullHeight",
-        resizableColumns : true,
-        serverSide : true,
-        rowsPerPageOptions : [10, 20, 25],
-        fixedHeader : true,
-        print : false,
-        download : false,
-        textLabels : {
-          selectedRows : {
-            text : "application(s) selected"
-          }
-        },
-        onCellClick : (_, meta) => meta.colIndex !== 3 && setSelectedRowData(applications[meta.rowIndex]),
-    }
 
   return (
     <div> 
@@ -226,19 +109,17 @@ updated_at: "2022-07-14T13:53:35.479756Z"
           )}
       <Button onClick={handleClick}>QWE</Button>     
       <Box sx={{display: "flex"}}>  
-
        <UploadImport configuration="Applications" />
        <CustomBox >
             <ViewSwitch view={viewType} changeView={setViewType} />
           </CustomBox>
        </Box> 
-       {console.log(applications1.name +"qwert")}
+       
     {!selectedApplication.show &&  viewType==="table" &&   
-         <MUIDataTable
-    title={<div>Applications</div>}
-    data={applications}
-    columns={columns}
-    options={options}    
+         <ApplicationTable
+         applications = {applications}
+         setSelectedRowData = {setSelectedRowData}
+         user ={user}
   />
 }
     {!selectedApplication.show &&  viewType==="grid" &&   

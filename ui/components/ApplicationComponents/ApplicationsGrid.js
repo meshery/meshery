@@ -53,7 +53,7 @@ function ApplicationsGridItem({ application,  handleDeploy, handleUnDeploy, hand
   return (
     <div>
       {!selectedApplication.show &&
-      <Grid container spacing={3} style={{ padding : "1rem" }}>
+      <Grid container spacing={3} sx={{ padding : "1rem" }}>
         {applications.map((application) => (
           <ApplicationsGridItem
             key={application.id}
