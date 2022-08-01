@@ -1,11 +1,12 @@
 import React, {useState} from 'react'
-import { Button,TextField, Grid } from '@mui/material';
+import { TextField, Grid } from '@mui/material';
 import ReactSelectWrapper from "@/components/ReactSelectWrapper"
 import {RightAlignButton} from "@/components/Button"
+import {CustomWrapper} from "./PrometheusComponent"
 
 function GrafanaComponent() {
   return (
-    <div style={{padding: "3rem"}} >
+    <CustomWrapper >
     <Grid container spacing={1}>
       <Grid item xs={12} md={6}>
           <ReactSelectWrapper
@@ -25,7 +26,7 @@ function GrafanaComponent() {
       <RightAlignButton title="Submit" />
       
     </Grid>
-  </div>
+  </CustomWrapper>
   )
 }
 

@@ -7,12 +7,23 @@ import {
   import { useTheme } from "@mui/system";  
   import AddIcon from '@mui/icons-material/Add';
   import MoreVertIcon from '@mui/icons-material/MoreVert';
+  import { styled } from "@mui/material/styles";
 import CustomDialog from "@/components/Dialog";
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
   
 function MeshConfigComponent({operatorState}) {
   
   const theme = useTheme();
+  
+  const CustomChipIcon = styled("img")(({ theme }) => ({
+    width : theme.spacing(2.5)
+}));
+
+  const MUIDataTableWrapper = styled("div")(({ theme }) => ({
+    display : 'table', 
+    tableLayout : 'fixed',
+     width : '100%'
+}));
 
   const [open, setOpen] = useState(false);
   const [data, setData] = useState([])
@@ -102,7 +113,7 @@ function MeshConfigComponent({operatorState}) {
             <Tooltip title={`Server: ${tableMeta.rowData[2]}`}>
               <Chip
                 label={data[tableMeta.rowIndex].name}
-                icon={<img src="/static/img/kubernetes.svg" style={{width : theme.spacing(2.5),}} />}
+                icon={<CustomChipIcon src="/static/img/kubernetes.svg" />}
                 variant="outlined"
                 data-cy="chipContextName"
               />
@@ -267,7 +278,7 @@ function MeshConfigComponent({operatorState}) {
                               >
                                 <Chip
                                   label={data[rowMetaData.rowIndex].name}
-                                  icon={<img src="/static/img/kubernetes.svg" style={{width : theme.spacing(2.5),}} />}
+                                  icon={<CustomChipIcon src="/static/img/kubernetes.svg" />}
                                   variant="outlined"
                                   data-cy="chipContextName"
                                 />
@@ -332,7 +343,7 @@ function MeshConfigComponent({operatorState}) {
                                 <Chip
                                   // label={inClusterConfig?'Using In Cluster Config': contextName + (configuredServer?' - ' + configuredServer:'')}
                                   label={"Operator"}
-                                  icon={<img src="/static/img/meshery-operator.svg" style={{width : theme.spacing(2.5),}}  />}
+                                  icon={<CustomChipIcon src="/static/img/meshery-operator.svg" />}
                                   variant="outlined"
                                   data-cy="chipOperator"
                                 />
@@ -426,7 +437,7 @@ function MeshConfigComponent({operatorState}) {
   }
   return (
     <>
-    <div style={{ display : 'table', tableLayout : 'fixed', width : '100%' }}>
+    <MUIDataTableWrapper style={{ display : 'table', tableLayout : 'fixed', width : '100%' }}>
     <MUIDataTable
       title={
         <Button
@@ -445,7 +456,7 @@ function MeshConfigComponent({operatorState}) {
       data={data}
       options={options}
     />
-  </div>
+  </MUIDataTableWrapper>
   <CustomDialog open={open} handleClose={handleCloseModal} 
   Title="Add Kubernetes Cluster(s)"
    Content={
@@ -457,11 +468,6 @@ function MeshConfigComponent({operatorState}) {
               commonly found at ~/.kube/config
             </Typography>
             <FormGroup>
-              <input
-                id="k8sfile"
-                type="file"
-                style={{ display: "none" }}
-              />
               <TextField
                 id="k8sfileLabelText"
                 name="k8sfileLabelText"
