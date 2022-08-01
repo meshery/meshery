@@ -115,7 +115,9 @@ func (h *Handler) handlePatternPOST(
 				http.Error(rw, ErrSavePattern(err).Error(), http.StatusInternalServerError)
 				return
 			}
-
+			if h.config.PatternsChannel != nil {
+				h.config.PatternsChannel <- struct{}{}
+			}
 			formatPatternOutput(rw, resp, format)
 			return
 		}
@@ -184,6 +186,9 @@ func (h *Handler) handlePatternPOST(
 				return
 			}
 
+			if h.config.PatternsChannel != nil {
+				h.config.PatternsChannel <- struct{}{}
+			}
 			formatPatternOutput(rw, resp, format)
 			return
 		}
@@ -235,6 +240,9 @@ func (h *Handler) handlePatternPOST(
 				return
 			}
 
+			if h.config.PatternsChannel != nil {
+				h.config.PatternsChannel <- struct{}{}
+			}
 			formatPatternOutput(rw, resp, format)
 			return
 		}
@@ -315,6 +323,9 @@ func (h *Handler) DeleteMesheryPatternHandler(
 		return
 	}
 
+	if h.config.PatternsChannel != nil {
+		h.config.PatternsChannel <- struct{}{}
+	}
 	rw.Header().Set("Content-Type", "application/json")
 	fmt.Fprint(rw, string(resp))
 }
@@ -350,6 +361,9 @@ func (h *Handler) DeleteMultiMesheryPatternsHandler(
 		return
 	}
 
+	if h.config.PatternsChannel != nil {
+		h.config.PatternsChannel <- struct{}{}
+	}
 	rw.Header().Set("Content-Type", "application/json")
 	fmt.Fprint(rw, string(resp))
 }
