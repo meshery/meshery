@@ -1,4 +1,4 @@
-import { Modal, Backdrop, Fade } from '@mui/core'
+import { Modal, Backdrop, Fade } from '@mui/material'
 import { styled } from "@mui/material/styles";
 import { useTheme } from "@mui/system";
 

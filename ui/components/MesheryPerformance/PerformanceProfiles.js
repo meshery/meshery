@@ -1,11 +1,13 @@
 import React, {useState} from 'react'
-import { Avatar, Box, Button, Divider, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, TableCell, Typography, Tooltip, TableSortLabel } from "@mui/material";
+import { Avatar, Box, Button, Divider, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Paper, TableCell, Typography, Tooltip, TableSortLabel } from "@mui/material";
 import PerformanceProfileTable from "./PerformanceProfileTable"
 import ViewSwitch from "@/components/ViewSwitch";
 import AddCircleOutlineRoundedIcon from '@mui/icons-material/AddCircleOutlineRounded';
-import PerformanceCard from "./PerformanceCard";
 import  PerformanceProfileGrid from "./PerformanceProfileGrid";
+import PerformanceModal from "./PerformanceModal";
 import { styled } from "@mui/material/styles";
+import CustomModal from "@/components/Modal";
+import EmptyConfigurationList from "@/components/emptylist";
 
 function PerformanceProfiles() {
     
@@ -27,6 +29,8 @@ function PerformanceProfiles() {
       const [testProfiles, setTestProfiles] = useState([]);
       const [profileForModal, setProfileForModal] = useState();
       
+      console.log("profileForModal", profileForModal)
+
      const profiles123 = [
         {
         id: "27d7425d-f8f2-41ae-8f5f-443bad744b55",
@@ -87,8 +91,9 @@ function PerformanceProfiles() {
           <Button aria-label="Add Performance Profile" variant="contained"
           color="primary"
           size="large"
+          onClick={() => setProfileForModal({})}
             >
-           <AddCircleOutlineRoundedIcon sx={{ paddingRight : ".35rem" }} />
+           <AddCircleOutlineRoundedIcon sx={{ paddingRight : ".35rem" }}  />
            Add Performance Profile
         </Button> 
     <CustomBox >
@@ -106,6 +111,34 @@ function PerformanceProfiles() {
             />
         }
 
+{testProfiles.length == 0 && viewType == "grid" && (
+     <EmptyConfigurationList
+     configuration="Performance Profile"
+     NewButton={
+      <Button
+                aria-label="Add Performance Profile"
+                variant="contained"
+                color="primary"
+                size="large"
+                // @ts-ignore
+                onClick={() => setProfileForModal({})}
+              >
+                <AddCircleOutlineRoundedIcon sx={{ paddingRight : ".35rem" }}  />
+                <Typography className="addIcon">Add Performance Profile</Typography>
+              </Button>
+     } />
+        )}     
+   <CustomModal
+   open={profileForModal}
+   handleClose={() => {
+    setProfileForModal(undefined);
+  }}
+   Content={
+    <div>
+      <PerformanceModal />
+    </div>
+   }
+   />
   </>
   )
 }

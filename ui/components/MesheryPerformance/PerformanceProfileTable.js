@@ -164,12 +164,13 @@ function PerformanceProfileTable({
         // },
       };
   return (
-    <div>
+    <div style={{marginTop : "1rem", marginLeft: "1rem"}}>
          <MUIDataTable
     title={<div>Profiles</div>}
     data={testProfiles}
     columns={columns}
-    options={options}    
+    options={options}   
+
   />
     </div>
   )
