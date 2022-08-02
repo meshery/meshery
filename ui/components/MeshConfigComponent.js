@@ -257,6 +257,49 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
     });
   }
 
+  const handleConfigSnackbars = ctxs => {
+    updateProgress({ showProgress : false });
+
+    for (let ctx of ctxs.inserted_contexts) {
+      const msg = `Cluster ${ctx.name} at ${ctx.server} added successfully`
+      enqueueSnackbar(msg, {
+        variant : "success",
+        action : (key) => (
+          <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+            <CloseIcon />
+          </IconButton>
+        ),
+        autoHideDuration : 2000,
+      });
+    }
+
+    for (var ctx of ctxs.updated_contexts) {
+      const msg = `Cluster ${ctx.name} at ${ctx.server} already exists`
+      enqueueSnackbar(msg, {
+        variant : "warning",
+        action : (key) => (
+          <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+            <CloseIcon />
+          </IconButton>
+        ),
+        autoHideDuration : 2000,
+      });
+    }
+
+    for (var ctx of ctxs.errored_contexts) {
+      const msg = `Failed to add cluster ${ctx.name} at ${ctx.server}`
+      enqueueSnackbar(msg, {
+        variant : "error",
+        action : (key) => (
+          <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+            <CloseIcon />
+          </IconButton>
+        ),
+        autoHideDuration : 2000,
+      });
+    }
+  }
+
   const handleLastDiscover = (index) => {
     let dt = new Date();
     const newDate = dt.toLocaleDateString("en-US", dateOptions) + "  " + dt.toLocaleTimeString("en-US");
@@ -450,7 +493,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
   }
 
   const uploadK8SConfig = async () => {
-    await promisifiedDataFetch(
+    return await promisifiedDataFetch(
       "/api/system/kubernetes",
       {
         method : "POST",
@@ -881,8 +924,8 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
         return;
       }
 
-      uploadK8SConfig().then(() => {
-        handleSuccess("successfully uploaded kubernetes config");
+      uploadK8SConfig().then((obj) => {
+        handleConfigSnackbars(obj);
         fetchAllContexts(25)
           .then(res => {
             let newData = [...data];

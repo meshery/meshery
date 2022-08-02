@@ -27,9 +27,9 @@ import (
 
 // SaveK8sContextResponse - struct used as (json marshaled) response to requests for saving k8s contexts
 type SaveK8sContextResponse struct {
-	InsertedContexts []models.K8sContext `json:"inserted_contexts,omitempty"`
-	UpdatedContexts  []models.K8sContext `json:"updated_contexts,omitempty"`
-	ErroredContexts  []models.K8sContext `json:"errored_contexts,omitempty"`
+	InsertedContexts []models.K8sContext `json:"inserted_contexts"`
+	UpdatedContexts  []models.K8sContext `json:"updated_contexts"`
+	ErroredContexts  []models.K8sContext `json:"errored_contexts"`
 }
 
 // K8SConfigHandler is used for persisting kubernetes config and context info
@@ -100,7 +100,11 @@ func (h *Handler) addK8SConfig(user *models.User, prefObj *models.Preference, w 
 		return
 	}
 
-	saveK8sContextResponse := SaveK8sContextResponse{}
+	saveK8sContextResponse := SaveK8sContextResponse{
+		InsertedContexts: make([]models.K8sContext, 0),
+		UpdatedContexts:  make([]models.K8sContext, 0),
+		ErroredContexts:  make([]models.K8sContext, 0),
+	}
 
 	contexts := models.K8sContextsFromKubeconfig(k8sConfigBytes, mid)
 	for _, ctx := range contexts {
