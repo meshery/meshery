@@ -322,7 +322,6 @@ func (h *Handler) handleApplicationPOST(
 		if h.config.ApplicationsChannel != nil {
 			_, ok := <-h.config.ApplicationsChannel
 			if ok {
-				fmt.Println()
 				h.config.ApplicationsChannel <- struct{}{}
 			}
 		}
