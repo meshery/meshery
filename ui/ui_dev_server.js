@@ -1,5 +1,4 @@
 /* eslint-disable no-unused-vars */
-/* eslint-disable no-undef */
 const { createServer } = require("http");
 const { parse } = require("url");
 const next = require("next");
