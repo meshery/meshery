@@ -261,7 +261,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
     updateProgress({ showProgress : false });
 
     for (let ctx of ctxs.inserted_contexts) {
-      const msg = `Cluster ${ctx.name} at ${ctx.server} added successfully`
+      const msg = `Cluster ${ctx.name} at ${ctx.server} connected`
       enqueueSnackbar(msg, {
         variant : "success",
         action : (key) => (
