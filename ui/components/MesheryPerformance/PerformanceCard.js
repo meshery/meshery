@@ -21,6 +21,8 @@ function PerformanceCard({
     requestBody,
     requestCookies,
     requestHeaders,
+    handleDelete,
+  handleEdit,
 }) {
    
   const ButtonsWrapper = styled(Box)(({ theme }) => ({
@@ -32,6 +34,11 @@ function PerformanceCard({
     }))
 
     const [renderTable, setRenderTable] = useState(false);
+   
+    function genericClickHandler(ev, fn) {
+      ev.stopPropagation();
+      fn();
+    }
 
   return (
     <FlipCard>
@@ -89,10 +96,10 @@ function PerformanceCard({
           </Grid>
           <Grid item xs={4}>
             <Box sx={{width : "fit-content", margin : "0 0 0 auto"}}>
-              <IconButton>
+              <IconButton onClick={(ev) => genericClickHandler(ev, handleEdit)}>
                 <EditIcon color="primary" />
               </IconButton>
-              <IconButton>
+              <IconButton onClick={(ev) => genericClickHandler(ev, handleDelete)}>
                 <DeleteIcon color="primary" />
               </IconButton>
               </Box>

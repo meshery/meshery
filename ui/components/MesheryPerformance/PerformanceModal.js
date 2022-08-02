@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState} from 'react'
 import {Button, 
   Autocomplete ,
    Tooltip,
@@ -29,10 +29,55 @@ import {Button,
 
 
   const loadGenerators = ["fortio", "wrk2", "nighthawk"];
+  const infoloadGenerators = (
+    <>
+      Which load generators does Meshery support?
+      <ul>
+        <li>
+          fortio - Fortio load testing library, command line tool, advanced echo server and web UI in go (golang). Allows
+          to specify a set query-per-second load and record latency histograms and other useful stats.{" "}
+        </li>
+        <li> wrk2 - A constant throughput, correct latency recording variant of wrk.</li>
+        <li>
+          {" "}
+          nighthawk - Enables users to run distributed performance tests to better mimic real-world, distributed systems
+          scenarios.
+        </li>
+      </ul>
+      <Link
+        style={{ textDecoration : "underline" }}
+        color="inherit"
+        href="https://docs.meshery.io/functionality/performance-management"
+      >
+        {" "}
+        Performance Management
+      </Link>
+    </>
+  );
   
-function PerformanceModal() {
+function PerformanceModal( {
+      testName = "",
+      meshName = "",
+      url = "",
+      qps = "0",
+      c = "0",
+      t = "30s",
+      result,
+      staticPrometheusBoardConfig,
+      performanceProfileID,     
+      profileName,
+      loadGenerator,
+      headers,
+      cookies,
+      reqBody,
+      contentType,
+}) {
   const theme = useTheme();
-
+  
+  const [selectedMesh, setSelectedMesh] = useState("");
+  const [urlError, setUrlError] = useState(false);
+  const [tValue, setTValue] = useState(t);
+  
   return (
     <PaperWithoutTitle sx={{ padding : theme.spacing(10), }}>
             <Grid container spacing={2} >
@@ -43,7 +88,7 @@ function PerformanceModal() {
                     name="profileName"
                     label="Profile Name"
                     fullWidth
-                    // value={profileName}
+                    value={profileName}
                     margin="normal"
                     variant="outlined"
                     // onChange={this.handleChange("profileName")}
@@ -58,7 +103,7 @@ function PerformanceModal() {
                   name="meshName"
                   label="Service Mesh"
                   fullWidth
-                  // value={meshName === "" && selectedMesh !== "" ? selectedMesh : meshName}
+                  value={meshName === "" && selectedMesh !== "" ? selectedMesh : meshName}
                   margin="normal"
                   variant="outlined"
                   // onChange={this.handleChange("meshName")}
@@ -77,9 +122,9 @@ function PerformanceModal() {
                   label="URL to test"
                   type="url"
                   fullWidth
-                  // value={url}
-                  // error={urlError}
-                  // helperText={urlError ? "Please enter a valid URL along with protocol" : ""}
+                  value={url}
+                  error={urlError}
+                  helperText={urlError ? "Please enter a valid URL along with protocol" : ""}
                   margin="normal"
                   variant="outlined"
                   // onChange={this.handleChange("url")}
@@ -93,7 +138,7 @@ function PerformanceModal() {
                   label="Concurrent requests"
                   type="number"
                   fullWidth
-                  // value={c}
+                  value={c}
                   inputProps={{ min : "0", step : "1" }}
                   margin="normal"
                   variant="outlined"
@@ -109,7 +154,7 @@ function PerformanceModal() {
                   label="Queries per second"
                   type="number"
                   fullWidth
-                  // value={qps}
+                  value={qps}
                   inputProps={{ min : "0", step : "1" }}
                   margin="normal"
                   variant="outlined"
@@ -128,8 +173,8 @@ function PerformanceModal() {
                     fullWidth
                     variant="outlined"
                     // classes={{ root : tError }}
-                    // value={tValue}
-                    // inputValue={t}
+                    value={tValue}
+                    inputValue={t}
                     // onChange={this.handleDurationChange}
                     // onInputChange={this.handleInputDurationChange}
                     // options={durationOptions}
@@ -153,7 +198,7 @@ function PerformanceModal() {
                           name="headers"
                           label='Request Headers e.g. {"host":"bookinfo.meshery.io"}'
                           fullWidth
-                          // value={headers}
+                          value={headers}
                           multiline
                           margin="normal"
                           variant="outlined"
@@ -166,7 +211,7 @@ function PerformanceModal() {
                           name="cookies"
                           label='Request Cookies e.g. {"yummy_cookie":"choco_chip"}'
                           fullWidth
-                          // value={cookies}
+                          value={cookies}
                           multiline
                           margin="normal"
                           variant="outlined"
@@ -179,7 +224,7 @@ function PerformanceModal() {
                           name="contentType"
                           label="Content Type e.g. application/json"
                           fullWidth
-                          // value={contentType}
+                          value={contentType}
                           multiline
                           margin="normal"
                           variant="outlined"
@@ -192,7 +237,7 @@ function PerformanceModal() {
                           name="cookies"
                           label='Request Body e.g. {"method":"post","url":"http://bookinfo.meshery.io/test"}'
                           fullWidth
-                          // value={reqBody}
+                          value={reqBody}
                           multiline
                           margin="normal"
                           variant="outlined"
@@ -211,7 +256,7 @@ function PerformanceModal() {
                   >
                     Load generator
                     <Tooltip
-                    //  title={infoloadGenerators}
+                     title={infoloadGenerators}
                      interactive>
                       <HelpOutlineIcon />
                     </Tooltip>
@@ -219,7 +264,7 @@ function PerformanceModal() {
                   <RadioGroup
                     aria-label="loadGenerator"
                     name="loadGenerator"
-                    // value={loadGenerator}
+                    value={loadGenerator}
                     // onChange={this.handleChange("loadGenerator")}
                     row
                   >

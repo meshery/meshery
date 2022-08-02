@@ -4,7 +4,7 @@ import PerformanceCard from "./PerformanceCard";
 
 const INITIAL_GRID_SIZE = { xl : 4, md : 6, xs : 12 };
 
-function PerformanceCardGridItem({ profile }) {
+function PerformanceCardGridItem({ profile, setProfileForModal }) {
     const [gridProps, setGridProps] = useState(INITIAL_GRID_SIZE);
   
     return (
@@ -25,6 +25,8 @@ function PerformanceCardGridItem({ profile }) {
           requestCookies={profile.request_cookies}
           requestHeaders={profile.request_headers}
           lastRun={profile.last_run}
+          handleEdit={() => setProfileForModal(profile)}
+        // handleDelete={() => deleteHandler(profile.id)}
         />
       </Grid>
     );
@@ -41,6 +43,7 @@ function PerformanceCardGridItem({ profile }) {
             <PerformanceCardGridItem
               key={profile.id}
               profile={profile}
+              setProfileForModal={setProfileForModal}
             />
           ))}
         </Grid>

@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect } from 'react'
 import { Avatar, Box, Button, Divider, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, TableCell, Typography, Tooltip, TableSortLabel } from "@mui/material";
 import MUIDataTable from "mui-datatables";
 import Moment from "react-moment";
@@ -14,6 +14,11 @@ function PerformanceProfileTable({
     setProfileForModal,
     showModal,}) {
 
+      const [selectedProfile, setSelectedProfile] = useState();
+
+      useEffect(() => {
+        setProfileForModal(selectedProfile);
+      }, [selectedProfile]);
 
     const columns = [
         { name : "name",
@@ -105,6 +110,10 @@ function PerformanceProfileTable({
                   <>
                     <IconButton
                       aria-label="edit"
+                      onClick={(ev) => {
+                        ev.stopPropagation();
+                        setSelectedProfile(testProfiles[tableMeta.rowIndex]);
+                      }}
                     >
                       <EditIcon  />
                     </IconButton>

@@ -102,11 +102,13 @@ function PerformanceProfiles() {
   { viewType==="table" &&
   <PerformanceProfileTable
               testProfiles={testProfiles}
+              setProfileForModal={setProfileForModal}
             />
         }
   { viewType==="grid" &&
   <PerformanceProfileGrid
   profiles={testProfiles}
+  setProfileForModal={setProfileForModal}
             />
         }
 
@@ -134,7 +136,28 @@ function PerformanceProfiles() {
   }}
    Content={
     <div style={{margin: "0 4rem",}}>
-      <PerformanceModal />
+      <PerformanceModal
+      profileName={profileForModal?.name}
+      // @ts-ignore
+      meshName={profileForModal?.service_mesh}
+      // @ts-ignore
+      url={profileForModal?.endpoints?.[0]}
+      // @ts-ignore
+      qps={profileForModal?.qps}
+      // @ts-ignore
+      loadGenerator={profileForModal?.load_generators?.[0]}
+      // @ts-ignore
+      t={profileForModal?.duration}
+      // @ts-ignore
+      c={profileForModal?.concurrent_request}
+      // @ts-ignore
+      reqBody={profileForModal?.request_body}
+      // @ts-ignore
+      headers={profileForModal?.request_headers}
+      // @ts-ignore
+      cookies={profileForModal?.request_cookies}
+      // @ts-ignore
+      contentType={profileForModal?.content_type} />
     </div>
    }
    />
