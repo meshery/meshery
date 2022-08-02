@@ -320,10 +320,7 @@ func (h *Handler) handleApplicationPOST(
 		}
 
 		if h.config.ApplicationsChannel != nil {
-			_, ok := <-h.config.ApplicationsChannel
-			if ok {
-				h.config.ApplicationsChannel <- struct{}{}
-			}
+			h.config.ApplicationsChannel <- struct{}{}
 		}
 	}
 
@@ -394,10 +391,7 @@ func (h *Handler) DeleteMesheryApplicationHandler(
 	}
 
 	if h.config.ApplicationsChannel != nil {
-		_, ok := <-h.config.ApplicationsChannel
-		if ok {
-			h.config.ApplicationsChannel <- struct{}{}
-		}
+		h.config.ApplicationsChannel <- struct{}{}
 	}
 	rw.Header().Set("Content-Type", "application/json")
 	fmt.Fprint(rw, string(resp))
