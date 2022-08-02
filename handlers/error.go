@@ -102,7 +102,7 @@ const (
 	ErrInvalidKubeContextCode   = "2176"
 	ErrInvalidKubeCon
 	ErrCreatingKubernetesComponentsCode = "2177"
-  ErrValidateCode                     = "2241"
+	ErrValidateCode                     = "2241"
 	ErrApplicationContentUpload         = "2242"
 	ErrRemoteApplicationURL             = "2243"
 )

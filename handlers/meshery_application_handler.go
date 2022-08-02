@@ -147,15 +147,15 @@ func (h *Handler) handleApplicationPOST(
 					http.Error(rw, ErrApplicationFailure(err, obj).Error(), http.StatusInternalServerError) // sending a 500 when we cannot convert the file into kuberentes manifest
 					return
 				}
-				mesheryApplication.Type= sql.NullString{
+				mesheryApplication.Type = sql.NullString{
 					String: string(models.DOCKER_COMPOSE),
-					Valid: true,
+					Valid:  true,
 				}
 			} else if sourcetype == string(models.K8S_MANIFEST) {
 				k8sres = string(bytApplication)
 				mesheryApplication.Type = sql.NullString{
 					String: string(models.K8S_MANIFEST),
-					Valid: true,
+					Valid:  true,
 				}
 			}
 
@@ -230,7 +230,7 @@ func (h *Handler) handleApplicationPOST(
 				ApplicationFile: string(response),
 				Type: sql.NullString{
 					String: string(models.HELM_CHART),
-					Valid: true,
+					Valid:  true,
 				},
 				Location: map[string]interface{}{
 					"type":   "http",
@@ -318,9 +318,13 @@ func (h *Handler) handleApplicationPOST(
 			http.Error(rw, ErrApplicationSourceContentUpload(err, obj).Error(), http.StatusInternalServerError)
 			return
 		}
-    
-    if h.config.ApplicationsChannel != nil {
+
+		if h.config.ApplicationsChannel != nil {
+			_, ok := <-h.config.ApplicationsChannel
+			if ok {
+				fmt.Println()
 				h.config.ApplicationsChannel <- struct{}{}
+			}
 		}
 	}
 
@@ -391,7 +395,10 @@ func (h *Handler) DeleteMesheryApplicationHandler(
 	}
 
 	if h.config.ApplicationsChannel != nil {
-		h.config.ApplicationsChannel <- struct{}{}
+		_, ok := <-h.config.ApplicationsChannel
+		if ok {
+			h.config.ApplicationsChannel <- struct{}{}
+		}
 	}
 	rw.Header().Set("Content-Type", "application/json")
 	fmt.Fprint(rw, string(resp))
@@ -541,7 +548,7 @@ func githubRepoApplicationScan(
 					},
 					Type: sql.NullString{
 						String: string(sourceType),
-						Valid: true,
+						Valid:  true,
 					},
 					SourceContent: []byte(f.Content),
 				}
@@ -605,7 +612,7 @@ func genericHTTPApplicationFile(fileURL, sourceType string) ([]models.MesheryApp
 		},
 		Type: sql.NullString{
 			String: string(sourceType),
-			Valid: true,
+			Valid:  true,
 		},
 		SourceContent: body,
 	}
