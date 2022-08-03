@@ -54,6 +54,13 @@ table.tablesorter th.headerSortDown,
 table.tablesorter th.headerSortUp {
 background-color: #8dbdd8;
 }
+
+.tablesorter-headerRow{
+    background-color: rgb(244, 244, 244);
+}
+.tablesorter-headerRow:hover{
+    background-color:rgb(244, 244, 244) !important ;
+}
 </style>
 
 <table id = "test-table" class="tablesorter">
@@ -80,9 +87,9 @@ background-color: #8dbdd8;
             {% assign overall-status = "" %}
         {% endif %}
         {% if item.meshery-component-version == "edge" %}
-            <tr style= "visibility: hidden; display: none;" class="test-details edge edge_visible" onclick="toggle_visibility('{{item.timestamp}}');">
+            <tr style= "visibility: hidden; display: none;background-color: white;" class="test-details edge edge_visible" onclick="toggle_visibility('{{item.timestamp}}');">
         {% else %}
-            <tr style= "visibility: hidden; display: none;" class="test-details stable stable_visible" onclick="toggle_visibility('{{item.timestamp}}');">
+            <tr style= "visibility: hidden; display: none;background-color: white;" class="test-details stable stable_visible" onclick="toggle_visibility('{{item.timestamp}}');">
         {% endif %}    
             <td id="timestamp" style="{{overall-status}}" >{{ item.timestamp }}</td>
             <td><a href="{{ site.repo }}-{{ item.service-mesh }}">{{ item.meshery-component }}</a></td>
@@ -118,19 +125,6 @@ background-color: #8dbdd8;
 </table>
 
 <script type="text/javascript" >
-//     $.tablesorter.addParser({ 
-//     id: 'timestamp', 
-//     is: function(s) { 
-//         // return false so this parser is not auto detected 
-//         return false; 
-//     }, 
-//     format: function(s) { 
-//         var timeInMillis = new Date.parse(s);
-//         return timeInMillis;         
-//     }, 
-//     // set type, either numeric or text 
-//     type: 'numeric' 
-// }); 
 
     $(function($) {
             console.log("sorting table");
@@ -139,23 +133,3 @@ background-color: #8dbdd8;
             });
     });
 </script>
-
-<!-- <script>
-    let table = document.getElementById("test-table")
-    rows = table.rows;
-    let sortArrow = document.querySelectorAll(".sort-arrow")
-    console.log("asdfasf",sortArrow)
-    
-function reverse(){
-	for (var i = 1; i <rows.length; i++) {
-    rows[i].parentNode.insertBefore(rows[rows.length-1], rows[i]);
-	}
-    for(let j = 0;j<sortArrow.length;j++){
-        if(sortArrow[j].innerHTML == "ↆ")
-        sortArrow[j].innerHTML = "↑"
-       else
-       sortArrow[j].innerHTML = "ↆ"
-    }
-   
-}
-</script> -->
