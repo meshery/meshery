@@ -87,6 +87,10 @@ func (h *Handler) ApplicationFileRequestHandler(
 		h.handleApplicationPOST(rw, r, prefObj, user, provider)
 		return
 	}
+
+	if r.Method == http.MethodPut {
+		h.handleApplicationUpdate(rw, r, prefObj, user, provider)
+	}
 }
 
 func (h *Handler) handleApplicationPOST(
@@ -332,6 +336,48 @@ func (h *Handler) handleApplicationPOST(
 
 	h.formatApplicationOutput(rw, byt, format)
 	return
+}
+
+func (h *Handler) handleApplicationUpdate(rw http.ResponseWriter,
+	r *http.Request,
+	prefObj *models.Preference,
+	user *models.User,
+	provider models.Provider) {
+	defer func() {
+		_ = r.Body.Close()
+	}()
+	sourcetype := mux.Vars(r)["sourcetype"]
+	if sourcetype == "" {
+		http.Error(rw, "missing route variable \"source-type\"", http.StatusBadRequest)
+		return
+	}
+
+	var parsedBody *MesheryApplicationRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil {
+		http.Error(rw, ErrRetrieveData(err).Error(), http.StatusBadRequest)
+		return
+	}
+
+	token, err := provider.GetProviderToken(r)
+	if err != nil {
+		http.Error(rw, ErrRetrieveUserToken(err).Error(), http.StatusInternalServerError)
+		return
+	}
+
+	format := r.URL.Query().Get("output")
+	mesheryApplication := parsedBody.ApplicationData
+	mesheryApplication.Type = sql.NullString{
+		String: sourcetype,
+		Valid:  true,
+	}
+	resp, err := provider.SaveMesheryApplication(token, mesheryApplication)
+	if err != nil {
+		obj := "save"
+		h.log.Error(ErrApplicationFailure(err, obj))
+		http.Error(rw, ErrApplicationFailure(err, obj).Error(), http.StatusInternalServerError)
+		return
+	}
+	h.formatApplicationOutput(rw, resp, format)
 }
 
 // swagger:route GET /api/application/{id} ApplicationsAPI idGetMesheryApplication
