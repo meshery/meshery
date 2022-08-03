@@ -152,7 +152,7 @@ function YAMLEditor({ application, onClose, onSubmit }) {
             aria-label="Update"
             color="primary"
             onClick={() => onSubmit({
-              data : yaml, id : application.id, name : application.name, type : FILE_OPS.UPDATE
+              data : yaml, id : application.id, name : application.name, type : FILE_OPS.UPDATE, source_type : application.type.String
             })}
           >
             <SaveIcon />
@@ -181,6 +181,10 @@ const ACTION_TYPES = {
   FETCH_APPLICATIONS : {
     name : "FETCH_APPLICATION",
     error_msg : "Failed to fetch application"
+  },
+  FETCH_APPLICATIONS_TYPES : {
+    name : "FETCH_APPLICATION_TYPES",
+    error_msg : "Failed to fetch application types"
   },
   UPDATE_APPLICATIONS : {
     name : "UPDATEAPPLICATION",
@@ -365,7 +369,7 @@ function MesheryApplications({
       (res) => {
         setTypes(res)
       },
-      handleError(ACTION_TYPES.DOWNLOAD_APP)
+      handleError(ACTION_TYPES.FETCH_APPLICATIONS_TYPES)
     );
   }
 

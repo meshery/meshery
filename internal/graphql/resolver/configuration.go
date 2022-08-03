@@ -73,9 +73,6 @@ func (r *Resolver) subscribeConfiguration(ctx context.Context, provider models.P
 				configuration <- conf
 
 			case <-ctx.Done():
-				close(r.Config.ApplicationsChannel)
-				close(r.Config.PatternsChannel)
-				close(r.Config.FiltersChannel)
 				r.Log.Info("Configuration subscription stopped")
 				return
 			}

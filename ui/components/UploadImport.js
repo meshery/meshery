@@ -74,8 +74,10 @@ const UploadImport = ({ handleUpload, handleUrlUpload, configuration, isApplicat
   }, [input])
 
   useEffect(() => {
-    setFileType(supportedTypes[0]?.supported_extensions)
-    setSourceType(supportedTypes[0]?.application_type);
+    if (isApplication) {
+      setFileType(supportedTypes[0]?.supported_extensions)
+      setSourceType(supportedTypes[0]?.application_type);
+    }
   },[open])
   const handleOpen = () => {
     setOpen(true);
@@ -169,7 +171,7 @@ const UploadImport = ({ handleUpload, handleUrlUpload, configuration, isApplicat
                       }}
                     >
                       {
-                        supportedTypes.map((type, index) => (
+                        supportedTypes?.map((type, index) => (
                           <option value={index}>
                             {type.application_type}
                           </option>
