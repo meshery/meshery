@@ -26,7 +26,7 @@ const MesheryDesignCard = ({
   name,
   updated_at,
   created_at,
-  application_file,
+  patterns_file : application_file,
   handleDeploy,
   handleUnDeploy,
   updateHandler,
