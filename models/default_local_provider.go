@@ -634,7 +634,7 @@ func (l *DefaultLocalProvider) SaveMesheryFilter(tokenString string, filter *Mes
 }
 
 // GetMesheryFilters gives the filters stored with the provider
-func (l *DefaultLocalProvider) GetMesheryFilters(req *http.Request, page, pageSize, search, order string) ([]byte, error) {
+func (l *DefaultLocalProvider) GetMesheryFilters(tokenString, page, pageSize, search, order string) ([]byte, error) {
 	if page == "" {
 		page = "0"
 	}
@@ -741,7 +741,7 @@ func (l *DefaultLocalProvider) GetApplicationSourceContent(req *http.Request, ap
 }
 
 // GetMesheryApplications gives the applications stored with the provider
-func (l *DefaultLocalProvider) GetMesheryApplications(req *http.Request, page, pageSize, search, order string) ([]byte, error) {
+func (l *DefaultLocalProvider) GetMesheryApplications(tokenString, page, pageSize, search, order string) ([]byte, error) {
 	if page == "" {
 		page = "0"
 	}
@@ -985,7 +985,7 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 							ApplicationFile: patternfile,
 							Type: sql.NullString{
 								String: string(K8S_MANIFEST),
-								Valid: true,
+								Valid:  true,
 							},
 							SourceContent: []byte(k8sfile),
 							Name:          name,
