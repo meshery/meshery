@@ -11,6 +11,7 @@ const theme = createTheme({
       // },
       primary: blueGrey,
       secondary: { main: "#EE5351", dark: "#1E2117" },
+      white: "#FFFFFF"
     },
     shape: { borderRadius: 8 },
     breakpoints: {
