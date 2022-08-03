@@ -694,7 +694,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
         <div className={classes.topToolbar} >
           {!selectedFilter.show && (filters.length>0 || viewType==="table") && <div className={classes.createButton}>
             <div>
-              <UploadImport aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} configuration="Filter" />
+              <UploadImport supportedTypes="null" aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} configuration="Filter" />
             </div>
           </div>
           }

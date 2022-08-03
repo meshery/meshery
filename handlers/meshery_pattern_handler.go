@@ -24,7 +24,7 @@ type MesheryPatternRequestBody struct {
 	Save          bool                   `json:"save,omitempty"`
 	PatternData   *models.MesheryPattern `json:"pattern_data,omitempty"`
 	CytoscapeJSON string                 `json:"cytoscape_json,omitempty"`
-	K8sManifest   string                 `json:"k8s_manifest,omitempty"`
+	K8sManifest   string                 `json:"K8sManifest,omitempty"`
 }
 
 // PatternFileRequestHandler will handle requests of both type GET and POST
