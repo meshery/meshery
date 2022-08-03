@@ -224,7 +224,7 @@ function ConfirmationMsg(props) {
 
   const searchContexts = (search) => {
     if (search === "") {
-      setContexts(k8scontext);
+      setK8sContexts(k8scontext);
     }
     let matchedCtx = [];
     k8scontext.forEach(ctx => {
@@ -232,7 +232,7 @@ function ConfirmationMsg(props) {
         matchedCtx.push(ctx);
       }
     });
-    setContexts(matchedCtx);
+    setK8sContexts(matchedCtx);
   }
 
   const setContextViewer = (id) => {

@@ -253,7 +253,7 @@ class MesherySMIResults extends Component {
             :[];
           let order='';
           if (tableState.activeColumn){
-            order = `${columns[tableState.activeColumn].name} desc`;
+            order = `${smi_columns[tableState.activeColumn].name} desc`;
           }
 
           switch (action) {
@@ -278,9 +278,9 @@ class MesherySMIResults extends Component {
             case 'sort':
               if (sortInfo.length == 2) {
                 if (sortInfo[1] === 'ascending') {
-                  order = `${columns[tableState.activeColumn].name} asc`;
+                  order = `${smi_columns[tableState.activeColumn].name} asc`;
                 } else {
-                  order = `${columns[tableState.activeColumn].name} desc`;
+                  order = `${smi_columns[tableState.activeColumn].name} desc`;
                 }
               }
               if (order !== this.state.sortOrder) {

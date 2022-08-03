@@ -590,7 +590,7 @@ class Navigator extends React.Component {
       return (
         <List disablePadding>
           {children.map(({
-            id, onClickCallback, icon, href, title, children
+            id, onClickCallback, icon, href, title, children, show : showc
           }) => {
             if (typeof showc !== "undefined" && !showc) {
               return "";
