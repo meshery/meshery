@@ -4,6 +4,7 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import { AppBar, Grid, Hidden, IconButton, Toolbar, Typography, useTheme } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import Link from "next/link";
+import MesheryNotification from "@/components/Notification/MesheryNotification"
 import MenuIcon from "@mui/icons-material/Menu";
 import User from "../User";
 
@@ -111,7 +112,9 @@ const HeaderComponent = ({ drawerOpen, onDrawerToggle, pageTitle }) => {
                 <HeaderIcon isActive={pageTitle === "Settings"} icon={SettingsIcon} />
               </Link>
             </IconButton>
-
+            <Grid item>
+          <MesheryNotification />
+          </Grid>
             <UserSpan>
               <User color="inherit" />
             </UserSpan>
