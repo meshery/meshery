@@ -53,7 +53,7 @@ mesheryctl app offboard -f [filepath]
 
 		// Convert App File into Pattern File
 		jsonValues, _ := json.Marshal(map[string]interface{}{
-			"k8s_manifest": appFile,
+			"K8sManifest": appFile,
 		})
 
 		req, err = utils.NewRequest("POST", patternURL, bytes.NewBuffer(jsonValues))

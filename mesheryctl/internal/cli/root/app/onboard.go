@@ -47,6 +47,9 @@ mesheryctl app onboard -f ./application.yml -s "Kubernetes Manifest"
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+		if err != nil {
+			return err
+		}
 		validTypesURL := mctlCfg.GetBaseMesheryURL() + "/api/application/types"
 		client := &http.Client{}
 		req, err := utils.NewRequest("GET", validTypesURL, nil)
@@ -264,7 +267,7 @@ mesheryctl app onboard -f ./application.yml -s "Kubernetes Manifest"
 
 		// Convert App File into Pattern File
 		jsonValues, _ := json.Marshal(map[string]interface{}{
-			"k8s_manifest": appFile,
+			"K8sManifest": appFile,
 		})
 
 		req, err = utils.NewRequest("POST", patternURL, bytes.NewBuffer(jsonValues))

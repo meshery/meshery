@@ -103,7 +103,7 @@ const (
 	ErrInvalidKubeCon
 	ErrCreatingKubernetesComponentsCode = "2177"
 	ErrValidateCode                     = "2241"
-	ErrApplicationContentUpload         = "2242"
+	ErrApplicationContentCode           = "2242"
 	ErrRemoteApplicationURL             = "2243"
 )
 
@@ -296,8 +296,8 @@ func ErrApplicationFailure(err error, obj string) error {
 	return errors.New(ErrApplicationFailureCode, errors.Alert, []string{"failed to ", obj, "the application"}, []string{err.Error()}, []string{}, []string{})
 }
 
-func ErrApplicationSourceContentUpload(err error, obj string) error {
-	return errors.New(ErrApplicationContentUpload, errors.Alert, []string{"failed to ", obj, "the application content"}, []string{err.Error()}, []string{}, []string{})
+func ErrApplicationSourceContent(err error, obj string) error {
+	return errors.New(ErrApplicationContentCode, errors.Alert, []string{"failed to ", obj, "the application content"}, []string{err.Error()}, []string{}, []string{})
 }
 func ErrDecoding(err error, obj string) error {
 	return errors.New(ErrDecodingCode, errors.Alert, []string{"Error decoding the : ", obj}, []string{err.Error()}, []string{"Object is not a valid json object"}, []string{"Make sure if the object passed is a valid json"})

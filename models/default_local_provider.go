@@ -984,7 +984,7 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 						var app = &MesheryApplication{
 							ApplicationFile: patternfile,
 							Type: sql.NullString{
-								String: string(K8S_MANIFEST),
+								String: string(K8sManifest),
 								Valid:  true,
 							},
 							SourceContent: []byte(k8sfile),
@@ -1261,7 +1261,7 @@ func downloadContent(comp string, downloadpath string, log logger.Handler) error
 		return getFiltersFromWasmFiltersRepo(downloadpath)
 	case "Application":
 		walk := walker.NewGit()
-		walk.Owner("service-mesh-patterns").Repo("service-mesh-patterns").Root("samples/applications/").Branch("master").RegisterDirInterceptor(func(d walker.Directory) error {
+		return walk.Owner("service-mesh-patterns").Repo("service-mesh-patterns").Root("samples/applications/").Branch("master").RegisterDirInterceptor(func(d walker.Directory) error {
 			err := os.Mkdir(downloadpath, 0777)
 			if err != nil && !os.IsExist(err) {
 				return err

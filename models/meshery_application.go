@@ -17,24 +17,24 @@ type ApplicationTypeResponse struct {
 
 func GetApplicationTypes() (r []ApplicationTypeResponse) {
 	r = append(r, ApplicationTypeResponse{
-		Type:                HELM_CHART,
+		Type:                HelmChart,
 		SupportedExtensions: []string{".tgz"},
 	},
 		ApplicationTypeResponse{
-			Type:                DOCKER_COMPOSE,
+			Type:                DockerCompose,
 			SupportedExtensions: []string{".yaml", ".yml"},
 		},
 		ApplicationTypeResponse{
-			Type:                K8S_MANIFEST,
+			Type:                K8sManifest,
 			SupportedExtensions: []string{".yaml", ".yml"},
 		})
 	return
 }
 
 const (
-	HELM_CHART     ApplicationType = "Helm Chart"
-	DOCKER_COMPOSE ApplicationType = "Docker Compose"
-	K8S_MANIFEST   ApplicationType = "Kubernetes Manifest"
+	HelmChart     ApplicationType = "Helm Chart"
+	DockerCompose ApplicationType = "Docker Compose"
+	K8sManifest   ApplicationType = "Kubernetes Manifest"
 )
 
 // MesheryApplication represents the applications that needs to be saved

@@ -137,9 +137,9 @@ func (h *Handler) handleApplicationPOST(
 
 		bytApplication := []byte(mesheryApplication.ApplicationFile)
 		mesheryApplication.SourceContent = bytApplication
-		if sourcetype == string(models.DOCKER_COMPOSE) || sourcetype == string(models.K8S_MANIFEST) {
+		if sourcetype == string(models.DockerCompose) || sourcetype == string(models.K8sManifest) {
 			var k8sres string
-			if sourcetype == string(models.DOCKER_COMPOSE) {
+			if sourcetype == string(models.DockerCompose) {
 				k8sres, err = kompose.Convert(bytApplication) // convert the docker compose file into kubernetes manifest
 				if err != nil {
 					obj := "convert"
@@ -148,13 +148,13 @@ func (h *Handler) handleApplicationPOST(
 					return
 				}
 				mesheryApplication.Type = sql.NullString{
-					String: string(models.DOCKER_COMPOSE),
+					String: string(models.DockerCompose),
 					Valid:  true,
 				}
-			} else if sourcetype == string(models.K8S_MANIFEST) {
+			} else if sourcetype == string(models.K8sManifest) {
 				k8sres = string(bytApplication)
 				mesheryApplication.Type = sql.NullString{
-					String: string(models.K8S_MANIFEST),
+					String: string(models.K8sManifest),
 					Valid:  true,
 				}
 			}
@@ -183,8 +183,7 @@ func (h *Handler) handleApplicationPOST(
 	}
 
 	if parsedBody.URL != "" {
-		var resp []byte
-		if sourcetype == string(models.HELM_CHART) {
+		if sourcetype == string(models.HelmChart) {
 			helmSourceResp, err := http.Get(parsedBody.URL)
 			defer func() {
 				_ = helmSourceResp.Body.Close()
@@ -200,7 +199,7 @@ func (h *Handler) handleApplicationPOST(
 				return
 			}
 
-			resp, err = kubernetes.ConvertHelmChartToK8sManifest(kubernetes.ApplyHelmChartConfig{
+			resp, err := kubernetes.ConvertHelmChartToK8sManifest(kubernetes.ApplyHelmChartConfig{
 				URL: parsedBody.URL,
 			})
 			if err != nil {
@@ -229,7 +228,7 @@ func (h *Handler) handleApplicationPOST(
 				Name:            strings.TrimSuffix(url[len(url)-1], ".tgz"),
 				ApplicationFile: string(response),
 				Type: sql.NullString{
-					String: string(models.HELM_CHART),
+					String: string(models.HelmChart),
 					Valid:  true,
 				},
 				Location: map[string]interface{}{
@@ -240,8 +239,7 @@ func (h *Handler) handleApplicationPOST(
 				},
 				SourceContent: sourceContent,
 			}
-			resp, err = json.Marshal([]models.MesheryApplication{*mesheryApplication})
-		} else if sourcetype == string(models.DOCKER_COMPOSE) || sourcetype == string(models.K8S_MANIFEST) {
+		} else if sourcetype == string(models.DockerCompose) || sourcetype == string(models.K8sManifest) {
 			parsedURL, err := url.Parse(parsedBody.URL)
 			if err != nil {
 				http.Error(rw, "error parsing provided URL", http.StatusInternalServerError)
@@ -314,8 +312,8 @@ func (h *Handler) handleApplicationPOST(
 
 		if err != nil {
 			obj := "upload"
-			h.log.Error(ErrApplicationSourceContentUpload(err, obj))
-			http.Error(rw, ErrApplicationSourceContentUpload(err, obj).Error(), http.StatusInternalServerError)
+			h.log.Error(ErrApplicationSourceContent(err, obj))
+			http.Error(rw, ErrApplicationSourceContent(err, obj).Error(), http.StatusInternalServerError)
 			return
 		}
 
@@ -458,14 +456,18 @@ func (h *Handler) GetMesheryApplicationSourceHandler(
 	var mimeType string
 	sourcetype := mux.Vars(r)["sourcetype"]
 
-	if models.ApplicationType(sourcetype) == models.HELM_CHART { //serve the content in a tgz file
+	if models.ApplicationType(sourcetype) == models.HelmChart { //serve the content in a tgz file
 		mimeType = "application/x-tar"
 	} else { // serve the content in yaml file
 		mimeType = "application/x-yaml"
 	}
 	reader := bytes.NewReader(resp)
 	rw.Header().Set("Content-Type", mimeType)
-	io.Copy(rw, reader)
+	_, err = io.Copy(rw, reader)
+	if err != nil {
+		h.log.Error(ErrApplicationSourceContent(err, "download"))
+		http.Error(rw, ErrApplicationSourceContent(err, "download").Error(), http.StatusInternalServerError)
+	}
 }
 
 func (h *Handler) formatApplicationOutput(rw http.ResponseWriter, content []byte, format string) {
@@ -515,7 +517,7 @@ func githubRepoApplicationScan(
 			var err error
 			k8sres = f.Content
 			if ext == ".yml" || ext == ".yaml" {
-				if sourceType == string(models.DOCKER_COMPOSE) {
+				if sourceType == string(models.DockerCompose) {
 					k8sres, err = kompose.Convert([]byte(f.Content))
 					if err != nil {
 						return err
@@ -576,7 +578,7 @@ func genericHTTPApplicationFile(fileURL, sourceType string) ([]models.MesheryApp
 
 	k8sres := string(body)
 
-	if sourceType == string(models.DOCKER_COMPOSE) {
+	if sourceType == string(models.DockerCompose) {
 		k8sres, err = kompose.Convert(body)
 		if err != nil {
 			return nil, err
