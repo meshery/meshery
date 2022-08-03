@@ -59,7 +59,7 @@ class MesherySMIResults extends Component {
           self.setState({ smi_results : result });
           self.setState({ count : result?.total_count })
         }
-      }, self.handleError('Could not fetch SMI results.'));
+      }, () => self.handleError('Could not fetch SMI results.'));
     }
 
     handleError = (error) => {
