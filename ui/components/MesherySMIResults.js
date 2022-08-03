@@ -30,6 +30,7 @@ class MesherySMIResults extends Component {
       smi_search : '',
       smi_sortOrder : '',
       smi_results : [],
+      count : 0,
     };
   }
 
@@ -40,7 +41,7 @@ class MesherySMIResults extends Component {
       this.fetchSMIResults(smi_page, smi_pageSize, smi_search, smi_sortOrder);
     }
 
-    fetchSMIResults= ( page, pageSize, search, sortOrder) => {
+    fetchSMIResults = ( page, pageSize, search, sortOrder) => {
       const self = this;
       let query = '';
       if (typeof search === 'undefined' || search === null) {
@@ -56,8 +57,9 @@ class MesherySMIResults extends Component {
         credentials : 'include', }, (result) => {
         if (typeof result !== 'undefined' && result.results) {
           self.setState({ smi_results : result });
+          self.setState({ count : result?.total_count })
         }
-      }, console.log('Could not fetch SMI results.'));
+      }, self.handleError('Could not fetch SMI results.'));
     }
 
     handleError = (error) => {
@@ -88,7 +90,7 @@ class MesherySMIResults extends Component {
     render() {
       const self = this;
       const { classes ,user } = this.props;
-      const { smi_pageSize, smi_results } = this.state;
+      const { smi_pageSize, smi_results, count } = this.state;
 
       const smi_resultsForDisplay = [];
       if (smi_results&&smi_results?.results) {
@@ -205,6 +207,8 @@ class MesherySMIResults extends Component {
         filterType : 'textField',
         expandableRows : true,
         selectableRows : false,
+        serverSide : true,
+        count,
         rowsPerPage : smi_pageSize,
         rowsPerPageOptions : [10, 20, 25],
         fixedHeader : true,
@@ -292,7 +296,14 @@ class MesherySMIResults extends Component {
       }
 
       return (
-        <MUIDataTable title={<div className={classes.tableHeader}>Service Mesh Interface Conformance Results</div>} data={smi_resultsForDisplay} columns={smi_columns} options={smi_options} />
+        <>
+          <MUIDataTable
+            title={<div className={classes.tableHeader}>Service Mesh Interface Conformance Results</div>}
+            data={smi_resultsForDisplay}
+            columns={smi_columns}
+            options={smi_options}
+          />
+        </>
       );
     }
 }
