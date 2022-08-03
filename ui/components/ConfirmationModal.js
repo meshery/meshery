@@ -366,9 +366,6 @@ function ConfirmationMsg(props) {
                       <div className={classes.textContent}>
                         <Operator />
                         <Typography variant="h5">No cluster connected yet</Typography>
-                        <Typography className={classes.subText} variant="h6">
-                        Cluster with a Meshery Operator Deployed will report data here
-                        </Typography>
 
                         <Link href="/settings">
                           <Button
