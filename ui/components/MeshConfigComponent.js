@@ -276,7 +276,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
     for (var ctx of ctxs.updated_contexts) {
       const msg = `Cluster ${ctx.name} at ${ctx.server} already exists`
       enqueueSnackbar(msg, {
-        variant : "warning",
+        variant : "info",
         action : (key) => (
           <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
             <CloseIcon />
