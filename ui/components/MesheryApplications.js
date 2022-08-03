@@ -451,7 +451,7 @@ function MesheryApplications({
         `/api/application/${source_type}`,
         {
           credentials : "include",
-          method : "POST",
+          method : "PUT",
           body : JSON.stringify({ application_data : { id, name, application_file : data }, save : true }),
         },
         () => {
