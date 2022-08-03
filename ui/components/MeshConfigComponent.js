@@ -269,11 +269,11 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
             <CloseIcon />
           </IconButton>
         ),
-        autoHideDuration : 2000,
+        autoHideDuration : 7000,
       });
     }
 
-    for (var ctx of ctxs.updated_contexts) {
+    for (let ctx of ctxs.updated_contexts) {
       const msg = `Cluster ${ctx.name} at ${ctx.server} already exists`
       enqueueSnackbar(msg, {
         variant : "info",
@@ -282,11 +282,11 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
             <CloseIcon />
           </IconButton>
         ),
-        autoHideDuration : 2000,
+        autoHideDuration : 7000,
       });
     }
 
-    for (var ctx of ctxs.errored_contexts) {
+    for (let ctx of ctxs.errored_contexts) {
       const msg = `Failed to add cluster ${ctx.name} at ${ctx.server}`
       enqueueSnackbar(msg, {
         variant : "error",
@@ -295,7 +295,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
             <CloseIcon />
           </IconButton>
         ),
-        autoHideDuration : 2000,
+        autoHideDuration : 7000,
       });
     }
   }
