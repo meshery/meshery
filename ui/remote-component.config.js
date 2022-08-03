@@ -123,6 +123,7 @@ module.exports = {
     "@material-ui/core/Menu" : require("@material-ui/core/Menu"),
     "@material-ui/icons/Edit" : require("@material-ui/icons/Edit"),
     "@material-ui/core/MenuList" : require("@material-ui/core/MenuList"),
+    "@material-ui/core/Hidden" : require("@material-ui/core/Hidden"),
     "@material-ui/core/CircularProgress" : require("@material-ui/core/CircularProgress"),
     "@material-ui/icons/Keyboard" : require("@material-ui/icons/Keyboard"),
     "@material-ui/core/Switch" : require("@material-ui/core/Switch"),

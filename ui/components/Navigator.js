@@ -978,10 +978,13 @@ class Navigator extends React.Component {
     const { build, outdated, release_channel } = this.state.versionDetail;
 
     // If the version is outdated then no matter what the
-    // release channel is, specify the build
-    if (outdated) return `${release_channel}-${build}`;
+    // release channel is, specify the build which gets covered in the default case
 
-    if (release_channel === "edge") return `${release_channel}-latest`;
+    if (release_channel === "edge" && outdated) return `${build}`;
+    //if it is not outdated which means running on latest, return edge-latest
+
+    if (release_channel === "edge" && !outdated) return `${release_channel}-latest`;
+
     if (release_channel === "stable") return `${release_channel}-${build}`;
 
     return `${build}`;
