@@ -4,9 +4,11 @@ import FlipCard from "@/components/FlipCard";
 import Moment from "react-moment";
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import PerformanceResults from "./PerformanceResults";
 import { styled } from "@mui/material/styles";
 
 function PerformanceCard({
+  id,
     name,
     endpoints,
     loadGenerators,
@@ -23,6 +25,8 @@ function PerformanceCard({
     requestHeaders,
     handleDelete,
   handleEdit,
+  requestFullSize,
+  requestSizeRestore,
 }) {
    
   const ButtonsWrapper = styled(Box)(({ theme }) => ({
@@ -68,8 +72,20 @@ function PerformanceCard({
                 )
                 : null}
           </div>
-          <ButtonsWrapper>
-            <Button variant="secondary">
+          <ButtonsWrapper><Button variant="secondary" 
+            onClick={(ev) =>
+              genericClickHandler(ev, () => {
+                setRenderTable((renderTable) => {
+                  if (renderTable) {
+                    requestSizeRestore();
+                    return false;
+                  }
+
+                  requestFullSize();
+                  return true;
+                });
+              })
+            }>
               {renderTable
                 ? "Hide"
                 : "View"} Results
@@ -79,6 +95,18 @@ function PerformanceCard({
             </Button>
           </ButtonsWrapper>
         </div>
+        {renderTable ? (
+          <div onClick={(ev) => ev.stopPropagation()} >
+            <PerformanceResults
+              // @ts-ignore
+              CustomHeader={<Typography variant="h6">Test Results</Typography>}
+              // @ts-ignore
+              endpoint={`/api/user/performance/profiles/${id}/results`}
+              // @ts-ignore
+              elevation={0}
+            />
+          </div>
+        ) : null}
       </>
 
       {/* BACK PART */}

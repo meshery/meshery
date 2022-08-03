@@ -7,7 +7,7 @@ import  PerformanceProfileGrid from "./PerformanceProfileGrid";
 import PerformanceModal from "./PerformanceModal";
 import { styled } from "@mui/material/styles";
 import CustomModal from "@/components/Modal";
-import EmptyConfigurationList from "@/components/emptylist";
+import EmptyState from "@/components/EmptyStateComponent";
 
 function PerformanceProfiles() {
   
@@ -113,9 +113,9 @@ function PerformanceProfiles() {
         }
 
 {testProfiles.length == 0 && viewType == "grid" && (
-     <EmptyConfigurationList
+     <EmptyState
      configuration="Performance Profile"
-     NewButton={
+     Button1={
       <Button
                 aria-label="Add Performance Profile"
                 variant="contained"

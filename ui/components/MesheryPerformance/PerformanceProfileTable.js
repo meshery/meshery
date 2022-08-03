@@ -1,9 +1,10 @@
 import React, {useState, useEffect } from 'react'
-import { Avatar, Box, Button, Divider, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, TableCell, Typography, Tooltip, TableSortLabel } from "@mui/material";
+import { Avatar, Box, Button, Divider, Dialog, DialogActions, DialogContent, DialogTitle, IconButton,TableRow, TableCell, Typography, Tooltip, TableSortLabel } from "@mui/material";
 import MUIDataTable from "mui-datatables";
 import Moment from "react-moment";
 import EditIcon from '@mui/icons-material/Edit';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import PerformanceResults from "./PerformanceResults";
 
 function PerformanceProfileTable({
     user,
@@ -152,25 +153,25 @@ function PerformanceProfileTable({
         },
     
     
-        // expandableRows : true,
-        // renderExpandableRow : function ExpandableRow(rowData, rowMeta) {
-        //   const colSpan = rowData.length;
-        //   return (
-        //     <TableRow>
-        //       <TableCell />
-        //       <TableCell colSpan={colSpan}>
-        //         <PerformanceResults
-        //           // @ts-ignore
-        //           CustomHeader={<Typography variant="h6">Test Results</Typography>}
-        //           // @ts-ignore
-        //           endpoint={`/api/user/performance/profiles/${testProfiles[rowMeta.rowIndex].id}/results`}
-        //           // @ts-ignore
-        //           elevation={0}
-        //         />
-        //       </TableCell>
-        //     </TableRow>
-        //   );
-        // },
+        expandableRows : true,
+        renderExpandableRow : function ExpandableRow(rowData, rowMeta) {
+          const colSpan = rowData.length;
+          return (
+            <TableRow>
+              <TableCell />
+              <TableCell colSpan={colSpan}>
+                <PerformanceResults
+                  // @ts-ignore
+                  CustomHeader={<Typography variant="h6">Test Results</Typography>}
+                  // @ts-ignore
+                  // endpoint={`/api/user/performance/profiles/${testProfiles[rowMeta.rowIndex].id}/results`}
+                  // @ts-ignore
+                  elevation={0}
+                />
+              </TableCell>
+            </TableRow>
+          );
+        },
       };
   return (
     <div style={{marginTop : "1rem", marginLeft: "1rem"}}>

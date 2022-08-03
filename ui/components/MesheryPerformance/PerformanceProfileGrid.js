@@ -26,6 +26,8 @@ function PerformanceCardGridItem({ profile, setProfileForModal }) {
           requestHeaders={profile.request_headers}
           lastRun={profile.last_run}
           handleEdit={() => setProfileForModal(profile)}
+          requestFullSize={() => setGridProps({ xl : 12, md : 12, xs : 12 })}
+          requestSizeRestore={() => setGridProps(INITIAL_GRID_SIZE)}
         // handleDelete={() => deleteHandler(profile.id)}
         />
       </Grid>
