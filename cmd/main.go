@@ -245,11 +245,10 @@ func main() {
 	defer b.Close()
 
 	g := graphql.New(graphql.Options{
-		Config:          hc,
-		Logger:          log,
-		MeshSyncChannel: meshsyncCh,
-		BrokerConn:      brokerConn,
-		Broadcaster:     b,
+		Config:      hc,
+		Logger:      log,
+		BrokerConn:  brokerConn,
+		Broadcaster: b,
 	})
 
 	gp := graphql.NewPlayground(graphql.Options{

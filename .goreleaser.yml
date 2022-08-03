@@ -214,7 +214,7 @@ scoop:
 
   # Your app's description.
   # Default is empty.
-  description: "The Multi-Service Mesh Management Plane."
+  description: "The Cloud Native Management Plane."
 
   # Your app's license
   # Default is empty.

@@ -91,6 +91,7 @@ type HandlerInterface interface {
 
 	PatternFileHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	OAMRegisterHandler(rw http.ResponseWriter, r *http.Request)
+	ValidationHandler(rw http.ResponseWriter, r *http.Request)
 	OAMComponentDetailsHandler(rw http.ResponseWriter, r *http.Request)
 	OAMComponentDetailByIDHandler(rw http.ResponseWriter, r *http.Request)
 	PatternFileRequestHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
@@ -153,6 +154,10 @@ type HandlerConfig struct {
 
 	PerformanceChannel       chan struct{}
 	PerformanceResultChannel chan struct{}
+
+	ApplicationsChannel chan struct{}
+	PatternsChannel     chan struct{}
+	FiltersChannel      chan struct{}
 }
 
 // SubmitMetricsConfig is used to store config used for submitting metrics

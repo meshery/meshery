@@ -2108,6 +2108,42 @@
         "short_description": "Could not create MeshSync events subcription",
         "probable_cause": "",
         "suggested_remediation": "Make sure the controllers are deployed and their handlers are configured"
+      },
+      "2241": {
+        "name": "ErrValidateCode",
+        "code": "2241",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "failed to validate the given value against the schema",
+        "probable_cause": "unable to validate the value against given schema\neither value or schema might not be a valid cue expression",
+        "suggested_remediation": "Make sure that the schema and value provided are valid cue values\nMake sure both schema and value are sent\nMake sure appropriate value types are sent"
+      },
+      "2242": {
+        "name": "ErrConfigurationPatternsCode",
+        "code": "2242",
+        "severity": "Alert",
+        "long_description": "GraphQL subscription for Patterns stopped",
+        "short_description": "Configuration Subscription failed",
+        "probable_cause": "Could be a network issue",
+        "suggested_remediation": "Confirm that Meshery Server is reachable from your browser."
+      },
+      "2243": {
+        "name": "ErrConfigurationApplicationsCode",
+        "code": "2243",
+        "severity": "Alert",
+        "long_description": "GraphQL subscription for Applications stopped",
+        "short_description": "Configuration Subscription failed",
+        "probable_cause": "Could be a network issue",
+        "suggested_remediation": "Confirm that Meshery Server is reachable from your browser."
+      },
+      "2244": {
+        "name": "ErrConfigurationFiltersCode",
+        "code": "2244",
+        "severity": "Alert",
+        "long_description": "GraphQL subscription for Filters stopped",
+        "short_description": "Configuration Subscription failed",
+        "probable_cause": "Could be a network issue",
+        "suggested_remediation": "Confirm that Meshery Server is reachable from your browser."
       }
     }
   }
