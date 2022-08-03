@@ -58,6 +58,7 @@ class MesherySMIResults extends Component {
         if (typeof result !== 'undefined' && result.results) {
           self.setState({ smi_results : result });
           self.setState({ count : result?.total_count })
+          self.setState({ smi_pageSize : result?.page_size })
         }
       }, () => self.handleError('Could not fetch SMI results.'));
     }
