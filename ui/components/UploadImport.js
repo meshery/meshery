@@ -1,8 +1,9 @@
 import React, { useEffect } from 'react'
-import LinkIcon from '@material-ui/icons/Link';
 import { TextField, Button, Grid, NativeSelect } from '@material-ui/core';
 import { makeStyles, MuiThemeProvider } from '@material-ui/core/styles';
 import { createTheme } from '@material-ui/core/styles';
+import { IconButton, Tooltip } from "@material-ui/core";
+import PublishIcon from "@material-ui/icons/Publish";
 import { URLValidator } from '../utils/URLValidator';
 import {
   Dialog, DialogActions,
@@ -33,6 +34,17 @@ const styles = makeStyles(() => ({
   upload : {
     paddingLeft : "0.7rem",
     paddingTop : "8px"
+  },
+  customToolbarIcons : {
+    borderRadius : "0",
+
+    "&:first-child" : {
+      marginLeft : "5px"
+    },
+
+    "&:last-child" : {
+      borderLeft : "2px solid #ddd"
+    }
   },
   title : {
     textAlign : 'center',
@@ -78,7 +90,7 @@ const UploadImport = ({ handleUpload, handleUrlUpload, configuration, isApplicat
       setFileType(supportedTypes[0]?.supported_extensions)
       setSourceType(supportedTypes[0]?.application_type);
     }
-  },[open])
+  }, [open])
   const handleOpen = () => {
     setOpen(true);
   };
@@ -101,14 +113,13 @@ const UploadImport = ({ handleUpload, handleUrlUpload, configuration, isApplicat
   return (
     <>
       <label htmlFor="url-upload-button">
-
-        <Button aria-label="URL-Upload" data-cy="import-button" variant="contained"
-          color="primary" className={classes.button}
-          size="large" onClick={handleOpen}>
-          <LinkIcon style={{ paddingRight : ".35rem" }} />
-          Import {configuration}
-        </Button>
-
+        <Tooltip title="Upload File">
+          <div className={classes.customToolbarIcons}>
+            <IconButton aria-label="Upload" component="span" onClick={handleOpen}>
+              <PublishIcon />
+            </IconButton>
+          </div>
+        </Tooltip>
         <Dialog
           open={open}
           handleClose={handleClose}>
@@ -148,8 +159,8 @@ const UploadImport = ({ handleUpload, handleUrlUpload, configuration, isApplicat
 
                   <label htmlFor="upload-button" className={classes.upload}>
 
-                    <Button disabled={sourceType==="Helm Chart"} variant="contained" size="large" color="primary" aria-label="Upload Button" onChange={sourceType==="Helm Chart" ? null : handleUploader} component="span" >
-                      <input id="upload-button" type="file" accept={fileType} disabled={sourceType==="Helm Chart"} hidden  name="upload-button" data-cy="file-upload-button" />
+                    <Button disabled={sourceType === "Helm Chart"} variant="contained" size="large" color="primary" aria-label="Upload Button" onChange={sourceType === "Helm Chart" ? null : handleUploader} component="span" >
+                      <input id="upload-button" type="file" accept={fileType} disabled={sourceType === "Helm Chart"} hidden name="upload-button" data-cy="file-upload-button" />
                       Browse
                     </Button>
                   </label>
@@ -158,7 +169,7 @@ const UploadImport = ({ handleUpload, handleUrlUpload, configuration, isApplicat
               <Grid container spacing={24}>
                 {
                   isApplication &&
-                <h4 className={classes.selectType}>SELECT TYPE </h4>
+                  <h4 className={classes.selectType}>SELECT TYPE </h4>
                 }
                 {isApplication &&
                   <>
