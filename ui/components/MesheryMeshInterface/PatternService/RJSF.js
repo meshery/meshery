@@ -98,6 +98,7 @@ function RJSFForm(props) {
     ArrayFieldTemplate = MesheryArrayFieldTemplate,
     ObjectFieldTemplate = MesheryCustomObjFieldTemplate,
     LoadingComponent,
+    ErrorList,
     // prop should be present in order for the cloned element to override this property
     transformErrors
   } = props;
