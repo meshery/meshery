@@ -53,9 +53,7 @@ func (r *Resolver) listenToAddonState(ctx context.Context, provider models.Provi
 					}
 				}
 			}(ctxID)
-
 		}
-
 	}()
 
 	return r.addonChannel, nil

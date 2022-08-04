@@ -53,9 +53,7 @@ func (r *Resolver) listenToDataPlaneState(ctx context.Context, provider models.P
 					}
 				}
 			}(ctxID)
-
 		}
-
 	}()
 	return r.dataPlaneChannel, nil
 }

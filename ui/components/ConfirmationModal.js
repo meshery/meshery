@@ -73,10 +73,8 @@ const styles = (theme) => ({
     padding : theme.spacing(1),
     borderRadius : 5,
     minWidth : 100,
-    backgroundColor : "#e0e0e0",
-    color : "rgba(0, 0, 0, 0.87)",
+    color : "#fff",
     "&:hover" : {
-      backgroundColor : "#d5d5d5",
       boxShadow : "0px 2px 4px -1px rgb(0 0 0 / 20%), 0px 4px 5px 0px rgb(0 0 0 / 14%), 0px 1px 10px 0px rgb(0 0 0 / 12%)"
     },
   },
@@ -84,9 +82,9 @@ const styles = (theme) => ({
     margin : theme.spacing(0.5),
     padding : theme.spacing(1),
     borderRadius : 5,
-    backgroundColor : "#ff3333",
+    backgroundColor : "#B32700",
     "&:hover" : {
-      backgroundColor : "#ff3333",
+      backgroundColor : "#8f1f00",
       boxShadow : "0px 2px 4px -1px rgb(0 0 0 / 20%), 0px 4px 5px 0px rgb(0 0 0 / 14%), 0px 1px 10px 0px rgb(0 0 0 / 12%)"
     },
     minWidth : 100,
@@ -96,7 +94,8 @@ const styles = (theme) => ({
     padding : theme.spacing(1),
     borderRadius : 5,
     "&:disabled" : {
-      backgroundColor : "#ff8080",
+      backgroundColor : "#FF3D3D",
+      color : "#fff"
     },
     minWidth : 100,
   },
@@ -176,12 +175,12 @@ function ConfirmationMsg(props) {
 
   const [tabVal, setTabVal] = useState(tab);
   const [disabled, setDisabled] = useState(true);
-
+  const [context,setContexts]=useState([]);
   let isDisabled = typeof selectedK8sContexts.length === "undefined" || selectedK8sContexts.length === 0
 
   useEffect(() => {
     setTabVal(tab);
-    // setContexts(k8scontext)
+    setContexts(k8scontext);
   },[open])
 
   useEffect(() => {
@@ -321,17 +320,24 @@ function ConfirmationMsg(props) {
                           }}
                         // margin="none"
                         />
-                        <div className={classes.all}>
-                          <Checkbox
-                            checked={selectedK8sContexts?.includes("all")}
-                            onChange={() => setContextViewer("all")}
-                            color="primary"
-                          />
-                          <span style={{ fontWeight : "bolder" }}>select all</span>
-                        </div>
+                        {context.length > 0?
+                          <div className={classes.all}>
+                            <Checkbox
+                              checked={selectedK8sContexts?.includes("all")}
+                              onChange={() => setContextViewer("all")}
+                              color="primary"
+                            />
+                            <span style={{ fontWeight : "bolder" }}>select all</span>
+                          </div>
+                          :
+                          <Typography variant="subtitle1">
+                          No Context found
+                          </Typography>
+                        }
+
                         <div className={classes.contexts}>
                           {
-                            k8scontext.map((ctx) => (
+                            context.map((ctx) => (
                               <div id={ctx.contextID} className={classes.chip}>
                                 <Tooltip title={`Server: ${ctx.configuredServer}`}>
                                   <div style={{ display : "flex", justifyContent : "flex-wrap", alignItems : "center" }}>
@@ -360,9 +366,6 @@ function ConfirmationMsg(props) {
                       <div className={classes.textContent}>
                         <Operator />
                         <Typography variant="h5">No cluster connected yet</Typography>
-                        <Typography className={classes.subText} variant="h6">
-                        Cluster with a Meshery Operator Deployed will report data here
-                        </Typography>
 
                         <Link href="/settings">
                           <Button
@@ -393,7 +396,7 @@ function ConfirmationMsg(props) {
             { (tabVal == ACTIONS.DEPLOY || tabVal === ACTIONS.UNDEPLOY) ?
               <>
                 <Button onClick={handleClose}
-                  className={classes.button} type="submit"
+                  type="submit"
                   variant="contained"
                 >
                   <Typography variant body2 > CANCEL </Typography>

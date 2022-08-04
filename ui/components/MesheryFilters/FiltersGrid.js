@@ -1,5 +1,5 @@
 //@ts-check
-import { Grid } from "@material-ui/core";
+import { Grid, Paper, Typography } from "@material-ui/core";
 import { Pagination } from "@material-ui/lab";
 import React, { useState } from "react";
 import FiltersCard from "./FiltersCard";
@@ -7,6 +7,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import FILE_OPS from "../../utils/configurationFileHandlersEnum";
 import ConfirmationMsg from "../ConfirmationModal";
 import { getComponentsinFile } from "../../utils/utils";
+import UploadImport from "../UploadImport";
 
 const INITIAL_GRID_SIZE = { xl : 4, md : 6, xs : 12 };
 
@@ -42,9 +43,24 @@ const useStyles = makeStyles(() => ({
   // text : {
   //   padding : "5px"
   // }
+  noFilterPaper : {
+    padding : "0.5rem",
+    fontSize : "3rem"
+  },
+  noFilterContainer : {
+    padding : "2rem",
+    display : "flex",
+    justifyContent : "center",
+    alignItems : "center",
+    flexDirection : "column",
+  },
+  noFilterText : {
+    fontSize : "2rem",
+    marginBottom : "2rem",
+  },
 }))
 
-function FiltersGrid({ filters=[],handleDeploy, handleUndeploy, handleSubmit, setSelectedFilter, selectedFilter, pages = 1,setPage, selectedPage }) {
+function FiltersGrid({ filters=[],handleDeploy, handleUndeploy, handleSubmit,urlUploadHandler,uploadHandler, setSelectedFilter, selectedFilter, pages = 1,setPage, selectedPage }) {
 
   const classes = useStyles()
 
@@ -91,6 +107,19 @@ function FiltersGrid({ filters=[],handleDeploy, handleUndeploy, handleSubmit, se
         ))}
 
       </Grid>
+      }
+      {!selectedFilter.show && filters.length === 0 &&
+        <Paper className={classes.noFilterPaper}>
+          <div className={classes.noFilterContainer}>
+            <Typography align="center" color="textSecondary" className={classes.noFilterText}>
+            No Filters Found
+            </Typography>
+            <div>
+              <UploadImport supportedTypes="null" aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} configuration="Filter"  />
+
+            </div>
+          </div>
+        </Paper>
       }
       {filters.length
         ? (
