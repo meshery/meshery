@@ -29,7 +29,7 @@ function ApplicationsGridItem({ application,  handleDeploy, handleUnDeploy, hand
         handleDeploy={handleDeploy}
         handleUnDeploy={handleUnDeploy}
         deleteHandler={() => handleSubmit({ data : yaml, id : application.id, type : FILE_OPS.DELETE ,name : application.name })}
-        updateHandler={() => handleSubmit({ data : yaml, id : application.id, type : FILE_OPS.UPDATE ,name : application.name })}
+        updateHandler={() => handleSubmit({ data : yaml, id : application.id, type : FILE_OPS.UPDATE ,name : application.name, source_type : application.type.String })}
         setSelectedApplications={() => setSelectedApplications({ application : application, show : true })}
         setYaml={setYaml}
       />
@@ -139,7 +139,7 @@ function MesheryApplicationGrid({ applications=[],handleDeploy, handleUnDeploy, 
                 No Applications Found
               </Typography>
               <div>
-                <UploadImport aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} configuration="Application"  />
+                <UploadImport supportedTypes="null" aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} configuration="Application"  />
 
               </div>
             </div>

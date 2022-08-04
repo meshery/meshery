@@ -42,6 +42,11 @@ paths:
                     needs to be saved
                   type: object
                   properties:
+                    SourceContent:
+                      type: array
+                      items:
+                        type: integer
+                        format: uint8
                     application_file:
                       type: string
                       x-go-name: ApplicationFile
@@ -70,6 +75,27 @@ paths:
                     name:
                       type: string
                       x-go-name: Name
+                    type:
+                      description: |-
+                        var s NullString
+                        err := db.QueryRow("SELECT name FROM foo WHERE id=?", id).Scan(&s)
+                        ...
+                        if s.Valid {
+                        use s.String
+                        } else {
+                        NULL value
+                        }
+                      type: object
+                      title: |-
+                        NullString represents a string that may be null.
+                        NullString implements the Scanner interface so
+                        it can be used as a scan destination:
+                      properties:
+                        String:
+                          type: string
+                        Valid:
+                          type: boolean
+                      x-go-package: database/sql
                     updated_at:
                       type: string
                       format: date-time
@@ -109,6 +135,11 @@ paths:
               to be saved
             type: object
             properties:
+              SourceContent:
+                type: array
+                items:
+                  type: integer
+                  format: uint8
               application_file:
                 type: string
                 x-go-name: ApplicationFile
@@ -137,6 +168,27 @@ paths:
               name:
                 type: string
                 x-go-name: Name
+              type:
+                description: |-
+                  var s NullString
+                  err := db.QueryRow("SELECT name FROM foo WHERE id=?", id).Scan(&s)
+                  ...
+                  if s.Valid {
+                  use s.String
+                  } else {
+                  NULL value
+                  }
+                type: object
+                title: |-
+                  NullString represents a string that may be null.
+                  NullString implements the Scanner interface so
+                  it can be used as a scan destination:
+                properties:
+                  String:
+                    type: string
+                  Valid:
+                    type: boolean
+                x-go-package: database/sql
               updated_at:
                 type: string
                 format: date-time
@@ -169,6 +221,11 @@ paths:
               to be saved
             type: object
             properties:
+              SourceContent:
+                type: array
+                items:
+                  type: integer
+                  format: uint8
               application_file:
                 type: string
                 x-go-name: ApplicationFile
@@ -197,6 +254,27 @@ paths:
               name:
                 type: string
                 x-go-name: Name
+              type:
+                description: |-
+                  var s NullString
+                  err := db.QueryRow("SELECT name FROM foo WHERE id=?", id).Scan(&s)
+                  ...
+                  if s.Valid {
+                  use s.String
+                  } else {
+                  NULL value
+                  }
+                type: object
+                title: |-
+                  NullString represents a string that may be null.
+                  NullString implements the Scanner interface so
+                  it can be used as a scan destination:
+                properties:
+                  String:
+                    type: string
+                  Valid:
+                    type: boolean
+                x-go-package: database/sql
               updated_at:
                 type: string
                 format: date-time
@@ -240,6 +318,11 @@ paths:
               to be saved
             type: object
             properties:
+              SourceContent:
+                type: array
+                items:
+                  type: integer
+                  format: uint8
               application_file:
                 type: string
                 x-go-name: ApplicationFile
@@ -268,6 +351,27 @@ paths:
               name:
                 type: string
                 x-go-name: Name
+              type:
+                description: |-
+                  var s NullString
+                  err := db.QueryRow("SELECT name FROM foo WHERE id=?", id).Scan(&s)
+                  ...
+                  if s.Valid {
+                  use s.String
+                  } else {
+                  NULL value
+                  }
+                type: object
+                title: |-
+                  NullString represents a string that may be null.
+                  NullString implements the Scanner interface so
+                  it can be used as a scan destination:
+                properties:
+                  String:
+                    type: string
+                  Valid:
+                    type: boolean
+                x-go-package: database/sql
               updated_at:
                 type: string
                 format: date-time
@@ -614,6 +718,16 @@ paths:
         name: id
         in: path
         required: true
+      responses:
+        "200":
+          description: ""
+  /api/meshmodel/validate:
+    post:
+      description: Validate the given value with the given schema
+      tags:
+      - MeshmodelValidate
+      summary: Handle POST request for validate
+      operationId: idPostMeshModelValidate
       responses:
         "200":
           description: ""
@@ -1278,11 +1392,7 @@ paths:
                         type: object
                         properties:
                           children:
-                            description: NavigatorExtensions is a collection of NavigatorExtension
-                            type: array
-                            items:
-                              $ref: '#/definitions/AccountExtension'
-                            x-go-package: github.com/layer5io/meshery/server/models
+                            $ref: '#/definitions/AccountExtensions'
                           component:
                             type: string
                             x-go-name: Component
@@ -19051,51 +19161,7 @@ definitions:
     type: object
     properties:
       children:
-        description: NavigatorExtensions is a collection of NavigatorExtension
-        type: array
-        items:
-          description: AccountExtension describes the Account extension point in the
-            UI
-          type: object
-          properties:
-            children:
-              description: NavigatorExtensions is a collection of NavigatorExtension
-              type: array
-              items:
-                $ref: '#/definitions/AccountExtension'
-              x-go-package: github.com/layer5io/meshery/server/models
-            component:
-              type: string
-              x-go-name: Component
-            href:
-              description: Href describes a link along with its type
-              type: object
-              properties:
-                external:
-                  type: boolean
-                  x-go-name: External
-                uri:
-                  type: string
-                  x-go-name: URI
-              x-go-package: github.com/layer5io/meshery/server/models
-            link:
-              type: boolean
-              x-go-name: Link
-            on_click_callback:
-              type: integer
-              format: int64
-              x-go-name: OnClickCallback
-            show:
-              type: boolean
-              x-go-name: Show
-            title:
-              type: string
-              x-go-name: Title
-            type:
-              type: string
-              x-go-name: Type
-          x-go-package: github.com/layer5io/meshery/server/models
-        x-go-package: github.com/layer5io/meshery/server/models
+        $ref: '#/definitions/AccountExtensions'
       component:
         type: string
         x-go-name: Component
@@ -19135,11 +19201,7 @@ definitions:
       type: object
       properties:
         children:
-          description: NavigatorExtensions is a collection of NavigatorExtension
-          type: array
-          items:
-            $ref: '#/definitions/AccountExtension'
-          x-go-package: github.com/layer5io/meshery/server/models
+          $ref: '#/definitions/AccountExtensions'
         component:
           type: string
           x-go-name: Component
@@ -19462,6 +19524,11 @@ definitions:
             be saved
           type: object
           properties:
+            SourceContent:
+              type: array
+              items:
+                type: integer
+                format: uint8
             application_file:
               type: string
               x-go-name: ApplicationFile
@@ -19490,6 +19557,27 @@ definitions:
             name:
               type: string
               x-go-name: Name
+            type:
+              description: |-
+                var s NullString
+                err := db.QueryRow("SELECT name FROM foo WHERE id=?", id).Scan(&s)
+                ...
+                if s.Valid {
+                use s.String
+                } else {
+                NULL value
+                }
+              type: object
+              title: |-
+                NullString represents a string that may be null.
+                NullString implements the Scanner interface so
+                it can be used as a scan destination:
+              properties:
+                String:
+                  type: string
+                Valid:
+                  type: boolean
+              x-go-package: database/sql
             updated_at:
               type: string
               format: date-time
@@ -19909,11 +19997,7 @@ definitions:
           type: object
           properties:
             children:
-              description: NavigatorExtensions is a collection of NavigatorExtension
-              type: array
-              items:
-                $ref: '#/definitions/AccountExtension'
-              x-go-package: github.com/layer5io/meshery/server/models
+              $ref: '#/definitions/AccountExtensions'
             component:
               type: string
               x-go-name: Component
@@ -19966,7 +20050,50 @@ definitions:
           x-go-package: github.com/layer5io/meshery/server/models
         x-go-package: github.com/layer5io/meshery/server/models
       navigator:
-        $ref: '#/definitions/NavigatorExtensions'
+        description: NavigatorExtensions is a collection of NavigatorExtension
+        type: array
+        items:
+          description: NavigatorExtension describes the Navigator extension point
+            in the UI
+          type: object
+          properties:
+            children:
+              $ref: '#/definitions/NavigatorExtensions'
+            component:
+              type: string
+              x-go-name: Component
+            href:
+              description: Href describes a link along with its type
+              type: object
+              properties:
+                external:
+                  type: boolean
+                  x-go-name: External
+                uri:
+                  type: string
+                  x-go-name: URI
+              x-go-package: github.com/layer5io/meshery/models
+            icon:
+              type: string
+              x-go-name: Icon
+            link:
+              type: boolean
+              x-go-name: Link
+            on_click_callback:
+              type: integer
+              format: int64
+              x-go-name: OnClickCallback
+            show:
+              type: boolean
+              x-go-name: Show
+            title:
+              type: string
+              x-go-name: Title
+            type:
+              type: string
+              x-go-name: Type
+          x-go-package: github.com/layer5io/meshery/models
+        x-go-package: github.com/layer5io/meshery/models
       user_prefs:
         description: UserPrefsExtensions is a collection of UserPrefsExtension
         type: array
@@ -22289,6 +22416,11 @@ definitions:
     description: MesheryApplication represents the applications that needs to be saved
     type: object
     properties:
+      SourceContent:
+        type: array
+        items:
+          type: integer
+          format: uint8
       application_file:
         type: string
         x-go-name: ApplicationFile
@@ -22317,6 +22449,27 @@ definitions:
       name:
         type: string
         x-go-name: Name
+      type:
+        description: |-
+          var s NullString
+          err := db.QueryRow("SELECT name FROM foo WHERE id=?", id).Scan(&s)
+          ...
+          if s.Valid {
+          use s.String
+          } else {
+          NULL value
+          }
+        type: object
+        title: |-
+          NullString represents a string that may be null.
+          NullString implements the Scanner interface so
+          it can be used as a scan destination:
+        properties:
+          String:
+            type: string
+          Valid:
+            type: boolean
+        x-go-package: database/sql
       updated_at:
         type: string
         format: date-time
@@ -22500,6 +22653,27 @@ definitions:
           x-go-name: Type
       x-go-package: github.com/layer5io/meshery/server/models
     x-go-package: github.com/layer5io/meshery/server/models
+  NullString:
+    description: |-
+      var s NullString
+      err := db.QueryRow("SELECT name FROM foo WHERE id=?", id).Scan(&s)
+      ...
+      if s.Valid {
+      use s.String
+      } else {
+      NULL value
+      }
+    type: object
+    title: |-
+      NullString represents a string that may be null.
+      NullString implements the Scanner interface so
+      it can be used as a scan destination:
+    properties:
+      String:
+        type: string
+      Valid:
+        type: boolean
+    x-go-package: database/sql
   OpCategory:
     type: integer
     format: int32
@@ -30216,11 +30390,7 @@ definitions:
               type: object
               properties:
                 children:
-                  description: NavigatorExtensions is a collection of NavigatorExtension
-                  type: array
-                  items:
-                    $ref: '#/definitions/AccountExtension'
-                  x-go-package: github.com/layer5io/meshery/server/models
+                  $ref: '#/definitions/AccountExtensions'
                 component:
                   type: string
                   x-go-name: Component
@@ -34268,6 +34438,11 @@ responses:
         saved
       type: object
       properties:
+        SourceContent:
+          type: array
+          items:
+            type: integer
+            format: uint8
         application_file:
           type: string
           x-go-name: ApplicationFile
@@ -34296,6 +34471,27 @@ responses:
         name:
           type: string
           x-go-name: Name
+        type:
+          description: |-
+            var s NullString
+            err := db.QueryRow("SELECT name FROM foo WHERE id=?", id).Scan(&s)
+            ...
+            if s.Valid {
+            use s.String
+            } else {
+            NULL value
+            }
+          type: object
+          title: |-
+            NullString represents a string that may be null.
+            NullString implements the Scanner interface so
+            it can be used as a scan destination:
+          properties:
+            String:
+              type: string
+            Valid:
+              type: boolean
+          x-go-package: database/sql
         updated_at:
           type: string
           format: date-time
@@ -35874,11 +36070,7 @@ responses:
                   type: object
                   properties:
                     children:
-                      description: NavigatorExtensions is a collection of NavigatorExtension
-                      type: array
-                      items:
-                        $ref: '#/definitions/AccountExtension'
-                      x-go-package: github.com/layer5io/meshery/server/models
+                      $ref: '#/definitions/AccountExtensions'
                     component:
                       type: string
                       x-go-name: Component
@@ -36132,6 +36324,11 @@ responses:
         saved
       type: object
       properties:
+        SourceContent:
+          type: array
+          items:
+            type: integer
+            format: uint8
         application_file:
           type: string
           x-go-name: ApplicationFile
@@ -36160,6 +36357,27 @@ responses:
         name:
           type: string
           x-go-name: Name
+        type:
+          description: |-
+            var s NullString
+            err := db.QueryRow("SELECT name FROM foo WHERE id=?", id).Scan(&s)
+            ...
+            if s.Valid {
+            use s.String
+            } else {
+            NULL value
+            }
+          type: object
+          title: |-
+            NullString represents a string that may be null.
+            NullString implements the Scanner interface so
+            it can be used as a scan destination:
+          properties:
+            String:
+              type: string
+            Valid:
+              type: boolean
+          x-go-package: database/sql
         updated_at:
           type: string
           format: date-time
@@ -36185,6 +36403,11 @@ responses:
               to be saved
             type: object
             properties:
+              SourceContent:
+                type: array
+                items:
+                  type: integer
+                  format: uint8
               application_file:
                 type: string
                 x-go-name: ApplicationFile
@@ -36213,6 +36436,27 @@ responses:
               name:
                 type: string
                 x-go-name: Name
+              type:
+                description: |-
+                  var s NullString
+                  err := db.QueryRow("SELECT name FROM foo WHERE id=?", id).Scan(&s)
+                  ...
+                  if s.Valid {
+                  use s.String
+                  } else {
+                  NULL value
+                  }
+                type: object
+                title: |-
+                  NullString represents a string that may be null.
+                  NullString implements the Scanner interface so
+                  it can be used as a scan destination:
+                properties:
+                  String:
+                    type: string
+                  Valid:
+                    type: boolean
+                x-go-package: database/sql
               updated_at:
                 type: string
                 format: date-time

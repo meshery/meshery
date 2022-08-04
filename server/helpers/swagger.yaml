@@ -1201,6 +1201,11 @@ definitions:
   MesheryApplication:
     description: MesheryApplication represents the applications that needs to be saved
     properties:
+      SourceContent:
+        items:
+          format: uint8
+          type: integer
+        type: array
       application_file:
         type: string
         x-go-name: ApplicationFile
@@ -1215,6 +1220,8 @@ definitions:
       name:
         type: string
         x-go-name: Name
+      type:
+        $ref: '#/definitions/NullString'
       updated_at:
         format: date-time
         type: string
@@ -1323,6 +1330,27 @@ definitions:
       $ref: '#/definitions/NavigatorExtension'
     type: array
     x-go-package: github.com/layer5io/meshery/server/models
+  NullString:
+    description: |-
+      var s NullString
+      err := db.QueryRow("SELECT name FROM foo WHERE id=?", id).Scan(&s)
+      ...
+      if s.Valid {
+      use s.String
+      } else {
+      NULL value
+      }
+    properties:
+      String:
+        type: string
+      Valid:
+        type: boolean
+    title: |-
+      NullString represents a string that may be null.
+      NullString implements the Scanner interface so
+      it can be used as a scan destination:
+    type: object
+    x-go-package: database/sql
   OpCategory:
     format: int32
     type: integer
@@ -4175,6 +4203,16 @@ paths:
       summary: Handle GET request for filter file with given id
       tags:
       - FiltersAPI
+  /api/meshmodel/validate:
+    post:
+      description: Validate the given value with the given schema
+      operationId: idPostMeshModelValidate
+      responses:
+        "200":
+          description: ""
+      summary: Handle POST request for validate
+      tags:
+      - MeshmodelValidate
   /api/oam/{type}:
     get:
       description: |-
