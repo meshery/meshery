@@ -29,6 +29,7 @@ export const AdapterChip = ({ adapter, handleClick }) => {
         label={adapter.adapter_location.split(":")[0]}
         onClick={handleClick}
         icon={logoIcon}
+        sx={{m: theme.spacing(1)}}
         variant={!adapter.isActive ? "default" : "outlined"}
         data-testid="adapter-chip"
       />

@@ -32,7 +32,10 @@ export default function Dashboard() {
           }}
         </KuberenetesClusterContainer>
 
-        <AdaptersListContainer>{(props) => <AdaptersChipList {...props} />}</AdaptersListContainer>
+        <AdaptersListContainer>{(props) => <PaperWithTitle title="Adapters">
+        <Grid item xs={6}  sx={{ margin: theme.spacing(2.5)}}>
+           <AdaptersChipList {...props} />
+           </Grid> </PaperWithTitle> }</AdaptersListContainer>
         <MetricsContainer justifyContent="center" >
           {({ grafanas, prometheus, onGrafanaClick, onPrometheusClick }) => {
             return (
