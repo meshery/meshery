@@ -104,7 +104,6 @@ class MesherySMIResults extends Component {
         { name : 'ID',
           label : 'ID',
           options : {
-            filter : false,
             sort : true,
             searchable : true,
             customHeadRender : ({ index, ...column }) => {
@@ -124,7 +123,6 @@ class MesherySMIResults extends Component {
         { name : 'Date',
           label : 'Date',
           options : {
-            filter : true,
             sort : true,
             searchable : true,
             customHeadRender : ({ index, ...column }) => {
@@ -142,7 +140,6 @@ class MesherySMIResults extends Component {
         { name : 'Service Mesh',
           label : 'Service Mesh',
           options : {
-            filter : true,
             sort : true,
             searchable : true,
             customHeadRender : ({ index, ...column }) => {
@@ -157,7 +154,6 @@ class MesherySMIResults extends Component {
         { name : 'Service Mesh Version',
           label : 'Service Mesh Version',
           options : {
-            filter : true,
             sort : true,
             searchable : true,
             customHeadRender : ({ index, ...column }) => {
@@ -172,7 +168,6 @@ class MesherySMIResults extends Component {
         { name : '% Passed',
           label : '% Passed',
           options : {
-            filter : true,
             sort : true,
             searchable : true,
             customHeadRender : ({ index, ...column }) => {
@@ -187,7 +182,6 @@ class MesherySMIResults extends Component {
         { name : 'status',
           label : 'Status',
           options : {
-            filter : true,
             sort : true,
             searchable : true,
             customHeadRender : ({ index, ...column }) => {
@@ -205,7 +199,7 @@ class MesherySMIResults extends Component {
       const smi_options = {
         sort : !(user && user.user_id === 'meshery'),
         search : !(user && user.user_id === 'meshery'),
-        filterType : 'textField',
+        filter : false,
         expandableRows : true,
         selectableRows : false,
         serverSide : true,
