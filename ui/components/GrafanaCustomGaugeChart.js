@@ -65,7 +65,7 @@ export default function GrafanaCustomGaugeChart(props) {
     }
 
     if (chartRef && chartRef !== null) {
-      bbChart = bb.generate({
+      self.chart = bb.generate({
         // oninit: function(args){
         //   console.log(JSON.stringify(args));
         // },
