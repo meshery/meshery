@@ -244,19 +244,6 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
     setShowMenu(menu);
   }
 
-  const handleSuccess = msg => {
-    updateProgress({ showProgress : false });
-    enqueueSnackbar(msg, {
-      variant : "success",
-      action : (key) => (
-        <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-          <CloseIcon />
-        </IconButton>
-      ),
-      autoHideDuration : 7000,
-    });
-  }
-
   const handleConfigSnackbars = ctxs => {
     updateProgress({ showProgress : false });
 
