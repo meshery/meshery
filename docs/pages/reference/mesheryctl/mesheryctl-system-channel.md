@@ -20,7 +20,7 @@ Subscribe to a release channel. Choose between either 'stable' or 'edge' channel
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl system channel [flags]
+mesheryctl system channel [command] [flags]
 
 </div>
 </pre> 
@@ -30,15 +30,33 @@ mesheryctl system channel [flags]
 Subscribe to release channel or version
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl system channel [stable|stable-version|edge|edge-version]
+mesheryctl system channel [stable|stable-version|edge|edge-version]  
 
 </div>
 </pre> 
-
+To set the channel
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+  mesheryctl system channel set [stable|stable-version|edge|edge-version]
+</div>
+</pre> 
+To view release channel and version
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+  mesheryctl system channel view
+</div>
+</pre> 
+To switch release channel and version
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+  mesheryctl system channel switch [stable|stable-version|edge|edge-version]
+</div>
+</pre> 
 ## Options
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+  
   -h, --help   help for channel
 
 </div>
