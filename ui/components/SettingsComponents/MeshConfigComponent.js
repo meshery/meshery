@@ -341,7 +341,6 @@ function MeshConfigComponent({operatorState}) {
                                 aria-label="meshSync"
                               >
                                 <Chip
-                                  // label={inClusterConfig?'Using In Cluster Config': contextName + (configuredServer?' - ' + configuredServer:'')}
                                   label={"Operator"}
                                   icon={<CustomChipIcon src="/static/img/meshery-operator.svg" />}
                                   variant="outlined"
