@@ -16,7 +16,7 @@ Offboard application
 
 ## Synopsis
 
-Offboard application will trigger deletion of the application file
+Offboard application will trigger undeploy of application
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
