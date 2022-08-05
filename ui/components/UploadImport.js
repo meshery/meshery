@@ -93,15 +93,8 @@ function UploadImport(props) {
   return (
     <>
       <label htmlFor="url-upload-button">
-
-        {/* <Button aria-label="URL-Upload" data-cy="import-button" variant="contained"
-          color="primary" className={classes.button}
-          size="large" onClick={handleOpen}>
-          <LinkIcon style={{ paddingRight : ".35rem" }} />
-          Import {configuration}
-        </Button> */}
-
         <Dialog
+          data-cy="import-button"
           open={open}
           onClose={handleClose}>
 
