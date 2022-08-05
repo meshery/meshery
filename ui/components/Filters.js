@@ -51,10 +51,12 @@ const styles = (theme) => ({
     justifyContent : "flex-start",
     alignItems : "center",
     whiteSpace : "nowrap",
-    margin : "1rem 0 2rem 1rem"
   },
   topToolbar : {
-    display : "flex"
+    margin : "2rem auto",
+    display : "flex",
+    justifyContent : "space-between",
+    paddingLeft : "1rem"
   },
   viewSwitchButton : {
     justifySelf : "flex-end",
@@ -547,7 +549,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
                 title="Undeploy"
                 onClick={() => handleModalOpen(rowData.filter_file, rowData.name, false)}
               >
-                <UndeployIcon fill="rgba(0, 0, 0, 0.54)" data-cy="undeploy-button" />
+                <UndeployIcon fill="#B32700" data-cy="undeploy-button" />
               </IconButton>
             </>
           );
@@ -692,7 +694,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
         <div className={classes.topToolbar} >
           {!selectedFilter.show && (filters.length>0 || viewType==="table") && <div className={classes.createButton}>
             <div>
-              <UploadImport aria-label="URL upload button" handleUpload={urlUploadHandler} handleImport={uploadHandler} configuration="Filter" />
+              <UploadImport supportedTypes="null" aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} configuration="Filter" />
             </div>
           </div>
           }
@@ -722,6 +724,8 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
               handleDeploy={handleDeploy}
               handleUndeploy={handleUndeploy}
               handleSubmit={handleSubmit}
+              urlUploadHandler={urlUploadHandler}
+              uploadHandler={uploadHandler}
               setSelectedFilter={setSelectedFilter}
               selectedFilter={selectedFilter}
               pages={Math.ceil(count / pageSize)}

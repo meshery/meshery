@@ -16,6 +16,7 @@ Meshery's command line client is `mesheryctl`. To install `mesheryctl` on your s
 **Install** and **Upgrade**
 
 Install `mesheryctl` command
+
  <pre class="codeblock-pre">
  <div class="codeblock">
  <div class="clipboardjs">
@@ -24,6 +25,7 @@ Install `mesheryctl` command
  </pre>
 
 Install `mesheryctl` command and deploy Meshery on Docker
+
  <pre class="codeblock-pre">
  <div class="codeblock">
  <div class="clipboardjs">
@@ -32,6 +34,7 @@ Install `mesheryctl` command and deploy Meshery on Docker
  </pre>
 
 Install `mesheryctl` command and deploy Meshery on Kubernetes
+
  <pre class="codeblock-pre">
  <div class="codeblock">
  <div class="clipboardjs">
@@ -39,7 +42,8 @@ Install `mesheryctl` command and deploy Meshery on Kubernetes
  </div></div>
  </pre>
 
- Install `mesheryctl` command and choose an [adapter]({{ site.baseurl }}/concepts/architecture/adapters) to be loaded.
+Install `mesheryctl` command and choose an [adapter]({{ site.baseurl }}/concepts/architecture/adapters) to be loaded.
+
  <pre class="codeblock-pre">
  <div class="codeblock">
  <div class="clipboardjs">
@@ -55,7 +59,6 @@ To install `mesheryctl` using homebrew, execute the following commands.
 
 <pre class="codeblock-pre"><div class="codeblock">
  <div class="clipboardjs">
- $ brew tap layer5io/tap
  $ brew install mesheryctl
  </div></div>
 </pre>
@@ -72,6 +75,7 @@ You're ready to run Meshery. To do so, execute the following command.
 </pre>
 
 Meshery server supports customizing authentication flow callback URL, which can be configured in the following way
+
 <pre class="codeblock-pre"><div class="codeblock">
 <div class="clipboardjs">
  $ MESHERY_SERVER_CALLBACK_URL=https://custom-host mesheryctl system start
@@ -93,12 +97,13 @@ To upgrade `mesheryctl`, execute the following command.
  </div></div>
  </pre>
 
-Example output of a successful upgrade: 
+Example output of a successful upgrade:
+
 ```
 ➜  ~ brew upgrade mesheryctl
 ==> Upgrading 1 outdated package:
-layer5io/tap/mesheryctl 0.3.2 -> 0.3.4
-==> Upgrading layer5io/tap/mesheryctl
+meshery/tap/mesheryctl 0.3.2 -> 0.3.4
+==> Upgrading meshery/tap/mesheryctl
 ==> Downloading https://github.com/layer5io/meshery/releases/download/v0.3.4/mesheryctl_0.3.4_Darwin_x86_64.zip
 ==> Downloading from https://github-production-release-asset-2e65be.s3.amazonaws.com/157554479/17522b00-2af0-11ea-8aef-cbfe8
 ######################################################################## 100.0%
@@ -109,7 +114,7 @@ Removing: /Users/lee/Library/Caches/Homebrew/mesheryctl--0.3.2.zip... (3.9MB)
 ==> No dependents found!
 ```
 
-## Kubernetes 
+## Kubernetes
 
 **Install**
 
@@ -122,6 +127,7 @@ Removing: /Users/lee/Library/Caches/Homebrew/mesheryctl--0.3.2.zip... (3.9MB)
  $ mesheryctl system start
  </div></div>
 </pre>
+
 Don't have `mesheryctl`? Install with Bash, Brew, or Scoop.
 
 <h6>Using Helm</h6>
@@ -134,6 +140,7 @@ Don't have `mesheryctl`? Install with Bash, Brew, or Scoop.
  $ helm install meshery meshery/meshery -n meshery
  </div></div>
 </pre>
+
 Not a Helm user? Use the Meshery manifests directly.
 
 <h6>Using Manifests</h6>
@@ -152,6 +159,7 @@ Not a Helm user? Use the Meshery manifests directly.
 `mesheryctl` can be installed via Scoop (a package manager for Windows, just like apt for Ubuntu). To install `mesheryctl` using Scoop, execute the following commands.
 
 **Install**
+
 <pre class="codeblock-pre"><div class="codeblock">
 <div class="clipboardjs">
  $ scoop bucket add mesheryctl https://github.com/layer5io/scoop-bucket.git

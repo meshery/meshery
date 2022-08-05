@@ -4,13 +4,18 @@ import (
 	"context"
 	"sync"
 
+	"github.com/go-errors/errors"
 	operatorClient "github.com/layer5io/meshery-operator/pkg/client"
 	"github.com/layer5io/meshery/internal/graphql/model"
 	"github.com/layer5io/meshery/models"
-	"github.com/layer5io/meshkit/errors"
 	"github.com/layer5io/meshkit/utils/broadcast"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
 )
+
+type operatorStatusK8sContext struct {
+	ctxID      string
+	processing interface{}
+}
 
 func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Provider, status model.Status, ctxID string) (model.Status, error) {
 	delete := true
@@ -18,13 +23,18 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Pro
 	// Tell operator status subscription that operation is starting
 	r.Broadcast.Submit(broadcast.BroadcastMessage{
 		Source: broadcast.OperatorSyncChannel,
-		Data:   true,
-		Type:   "health",
+		Data: operatorStatusK8sContext{
+			processing: true,
+			ctxID:      ctxID,
+		},
+		Type: "health",
 	})
 
 	if status == model.StatusEnabled {
 		r.Log.Info("Installing Operator")
 		delete = false
+	} else {
+		r.Log.Info("Uninstalling Operator in context ", ctxID)
 	}
 
 	var kubeclient *mesherykube.Client
@@ -61,8 +71,11 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Pro
 		r.Log.Error(ErrNilClient)
 		r.Broadcast.Submit(broadcast.BroadcastMessage{
 			Source: broadcast.OperatorSyncChannel,
-			Data:   ErrNilClient,
-			Type:   "error",
+			Data: operatorStatusK8sContext{
+				processing: ErrNilClient,
+				ctxID:      ctxID,
+			},
+			Type: "error",
 		})
 		return model.StatusUnknown, ErrNilClient
 	}
@@ -73,37 +86,36 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Pro
 			r.Log.Error(err)
 			r.Broadcast.Submit(broadcast.BroadcastMessage{
 				Source: broadcast.OperatorSyncChannel,
-				Data:   err,
-				Type:   "error",
+				Data: operatorStatusK8sContext{
+					processing: err,
+					ctxID:      ctxID,
+				},
+				Type: "error",
 			})
 			return
 		}
 		r.Log.Info("Operator operation executed")
 
+		r.Broadcast.Submit(broadcast.BroadcastMessage{
+			Source: broadcast.OperatorSyncChannel,
+			Data: operatorStatusK8sContext{
+				processing: false,
+				ctxID:      ctxID,
+			},
+			Type: "health",
+		})
 		if !del {
-			_, err := r.resyncCluster(context.TODO(), provider, &model.ReSyncActions{
-				ReSync:    "false",
-				ClearDb:   "true",
-				HardReset: "false",
-			}, ctxID)
-			if err != nil {
-				r.Log.Error(err)
-				r.Broadcast.Submit(broadcast.BroadcastMessage{
-					Source: broadcast.OperatorSyncChannel,
-					Data:   false,
-					Type:   "health",
-				})
-				return
-			}
-
 			endpoint, err := model.SubscribeToBroker(provider, kubeclient, r.brokerChannel, r.BrokerConn, connectionTrackerSingleton)
 			r.Log.Debug("Endpoint: ", endpoint)
 			if err != nil {
 				r.Log.Error(err)
 				r.Broadcast.Submit(broadcast.BroadcastMessage{
 					Source: broadcast.OperatorSyncChannel,
-					Data:   false,
-					Type:   "health",
+					Data: operatorStatusK8sContext{
+						processing: err,
+						ctxID:      ctxID,
+					},
+					Type: "health",
 				})
 				return
 			}
@@ -117,12 +129,6 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Pro
 		// r.operatorChannel <- &model.OperatorStatus{
 		// 	Status: status,
 		// }
-
-		r.Broadcast.Submit(broadcast.BroadcastMessage{
-			Source: broadcast.OperatorSyncChannel,
-			Data:   false,
-			Type:   "health",
-		})
 	}(delete, kubeclient)
 
 	return model.StatusProcessing, nil
@@ -310,12 +316,6 @@ func (r *Resolver) listenToOperatorsState(ctx context.Context, provider models.P
 			operatorSyncChannel := make(chan broadcast.BroadcastMessage)
 			r.Broadcast.Register(operatorSyncChannel)
 			r.Log.Info("Operator subscription started for ", k8scontext.Name)
-			err := r.connectToBroker(ctx, provider, k8scontext.ID)
-			if err != nil && err != ErrNoMeshSync {
-				r.Log.Error(err)
-				// The subscription should remain live to send future messages and only die when context is done
-				// return
-			}
 
 			// Enforce enable operator
 			status, err := r.getOperatorStatus(ctx, provider, k8scontext.ID)
@@ -335,6 +335,12 @@ func (r *Resolver) listenToOperatorsState(ctx context.Context, provider models.P
 				OperatorStatus: status,
 			}
 			operatorChannel <- &statusWithContext
+			err = r.connectToBroker(ctx, provider, k8scontext.ID)
+			if err != nil && err != ErrNoMeshSync {
+				r.Log.Error(err)
+				// The subscription should remain live to send future messages and only die when context is done
+				// return
+			}
 			for {
 				select {
 				case processing := <-operatorSyncChannel:
@@ -343,25 +349,29 @@ func (r *Resolver) listenToOperatorsState(ctx context.Context, provider models.P
 						status, err := r.getOperatorStatus(ctx, provider, k8scontext.ID)
 						if err != nil {
 							r.Log.Error(ErrOperatorSubscription(err))
-							r.Log.Info("Operator subscription flushed for ", k8scontext.Name)
-							close(operatorChannel)
-							// return
-							continue
+							return
 						}
 						switch processing.Data.(type) {
-						case bool:
-							if processing.Data.(bool) {
-								status.Status = model.StatusProcessing
-							}
-						case *errors.Error:
-							status.Error = &model.Error{
-								Code:        processing.Data.(*errors.Error).Code,
-								Description: processing.Data.(*errors.Error).Error(),
-							}
-						case error:
-							status.Error = &model.Error{
-								Code:        "",
-								Description: processing.Data.(error).Error(),
+						case operatorStatusK8sContext:
+							if processing.Data.(operatorStatusK8sContext).ctxID != k8scontext.ID {
+								continue
+							} else {
+								switch processing.Data.(operatorStatusK8sContext).processing.(type) {
+								case bool:
+									if processing.Data.(operatorStatusK8sContext).processing.(bool) {
+										status.Status = model.StatusProcessing
+									}
+								case *errors.Error:
+									status.Error = &model.Error{
+										Code:        "",
+										Description: processing.Data.(operatorStatusK8sContext).processing.(*errors.Error).Error(),
+									}
+								case error:
+									status.Error = &model.Error{
+										Code:        "",
+										Description: processing.Data.(operatorStatusK8sContext).processing.(error).Error(),
+									}
+								}
 							}
 						}
 						statusWithContext := model.OperatorStatusPerK8sContext{
