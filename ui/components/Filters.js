@@ -714,7 +714,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
           {!selectedFilter.show && (filters.length>0 || viewType==="table") && <div className={classes.createButton}>
             <div>
               <Button
-                aria-label="Add Pattern"
+                aria-label="Add Filter"
                 variant="contained"
                 color="primary"
                 size="large"

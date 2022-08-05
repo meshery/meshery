@@ -803,7 +803,7 @@ function MesheryApplications({
           {!selectedApplication.show && (applications.length>0 || viewType==="table") && <div className={classes.createButton}>
             <div>
               <Button
-                aria-label="Add Pattern"
+                aria-label="Add Application"
                 variant="contained"
                 color="primary"
                 size="large"
