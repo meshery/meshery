@@ -1201,11 +1201,6 @@ definitions:
   MesheryApplication:
     description: MesheryApplication represents the applications that needs to be saved
     properties:
-      SourceContent:
-        items:
-          format: uint8
-          type: integer
-        type: array
       application_file:
         type: string
         x-go-name: ApplicationFile
@@ -1220,6 +1215,12 @@ definitions:
       name:
         type: string
         x-go-name: Name
+      source_content:
+        items:
+          format: uint8
+          type: integer
+        type: array
+        x-go-name: SourceContent
       type:
         $ref: '#/definitions/NullString'
       updated_at:
