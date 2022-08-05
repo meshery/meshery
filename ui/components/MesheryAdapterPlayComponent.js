@@ -33,11 +33,15 @@ import ConfirmationMsg from "./ConfirmationModal";
 const styles = (theme) => ({
   smWrapper : { backgroundColor : "#eaeff1", },
   buttons : { width : "100%", },
-  button : { marginTop : theme.spacing(3),
-    marginLeft : theme.spacing(1), },
+  button : {
+    marginTop : theme.spacing(3),
+    marginLeft : theme.spacing(1),
+  },
   margin : { margin : theme.spacing(1), },
-  alreadyConfigured : { textAlign : "center",
-    padding : theme.spacing(20), },
+  alreadyConfigured : {
+    textAlign : "center",
+    padding : theme.spacing(20),
+  },
   chip : {
     height : "50px",
     fontSize : "15px",
@@ -45,25 +49,35 @@ const styles = (theme) => ({
     top : theme.spacing(0.5),
     [theme.breakpoints.down("md")] : { fontSize : "12px", },
   },
-  colorSwitchBase : { color : blue[300],
-    "&$colorChecked" : { color : blue[500],
-      "& + $colorBar" : { backgroundColor : blue[500], }, }, },
+  colorSwitchBase : {
+    color : blue[300],
+    "&$colorChecked" : {
+      color : blue[500],
+      "& + $colorBar" : { backgroundColor : blue[500], },
+    },
+  },
   colorBar : {},
   colorChecked : {},
-  uploadButton : { margin : theme.spacing(1),
-    marginTop : theme.spacing(3), },
+  uploadButton : {
+    margin : theme.spacing(1),
+    marginTop : theme.spacing(3),
+  },
   fileLabel : { width : "100%", },
   editorContainer : { width : "100%", },
   deleteLabel : { paddingRight : theme.spacing(2), },
   alignRight : { textAlign : "right", },
-  alignLeft : { textAlign : "left",
-    marginLeft : theme.spacing(1), },
+  alignLeft : {
+    textAlign : "left",
+    marginLeft : theme.spacing(1),
+  },
   padLeft : { paddingLeft : theme.spacing(0.25), },
   padRight : { paddingRight : theme.spacing(0.25), },
   deleteRight : { float : "right", },
-  expTitleIcon : { width : theme.spacing(3),
+  expTitleIcon : {
+    width : theme.spacing(3),
     display : "inline",
-    verticalAlign : "middle", },
+    verticalAlign : "middle",
+  },
   expIstioTitleIcon : {
     width : theme.spacing(2),
     display : "inline",
@@ -71,24 +85,38 @@ const styles = (theme) => ({
     marginLeft : theme.spacing(0.5),
     marginRight : theme.spacing(0.5),
   },
-  expTitle : { display : "inline",
-    verticalAlign : "middle", },
+  expTitle : {
+    display : "inline",
+    verticalAlign : "middle",
+  },
   icon : { width : theme.spacing(2.5), },
-  tableHeader : { fontWeight : "bolder",
-    fontSize : 18, },
-  secondaryTable : { borderRadius : 10,
-    backgroundColor : "#f7f7f7", },
-  paneSection : { backgroundColor : "#fff",
+  tableHeader : {
+    fontWeight : "bolder",
+    fontSize : 18,
+  },
+  secondaryTable : {
+    borderRadius : 10,
+    backgroundColor : "#f7f7f7",
+  },
+  paneSection : {
+    backgroundColor : "#fff",
     padding : theme.spacing(3),
-    borderRadius : 4, },
-  chipNamespace : { gap : '2rem',
-    margin : "0px", },
+    borderRadius : 4,
+  },
+  chipNamespace : {
+    gap : '2rem',
+    margin : "0px",
+  },
   cardMesh : { margin : "-8px 0px", },
-  inputContainer : { flex : '1',
-    minWidth : '250px' },
-  card : { height : '100%',
+  inputContainer : {
+    flex : '1',
+    minWidth : '250px'
+  },
+  card : {
+    height : '100%',
     display : 'flex',
-    flexDirection : 'column' },
+    flexDirection : 'column'
+  },
   ctxIcon : {
     display : 'inline',
     verticalAlign : 'text-top',
@@ -126,8 +154,10 @@ class MesheryAdapterPlayComponent extends React.Component {
     if (adapter && adapter.ops) {
       // NOTE: this will have to updated to match the categories
       [0, 1, 2, 3, 4].forEach((i) => {
-        menuState[i] = { add : false,
-          delete : false, };
+        menuState[i] = {
+          add : false,
+          delete : false,
+        };
       });
     }
 
@@ -145,8 +175,10 @@ class MesheryAdapterPlayComponent extends React.Component {
 
       selectionError : false,
 
-      namespace : { value : "default",
-        label : "default" },
+      namespace : {
+        value : "default",
+        label : "default"
+      },
       namespaceError : false,
 
       customDialogAdd : false,
@@ -170,8 +202,9 @@ class MesheryAdapterPlayComponent extends React.Component {
       activeContexts : [],
       deployModalOpen : false,
       category : 0,
-      selectedOp : '',
-      isDeleteOp : false
+      selectedOp : "",
+      isDeleteOp : false,
+      operationName : ""
     };
   }
 
@@ -179,25 +212,31 @@ class MesheryAdapterPlayComponent extends React.Component {
     const self = this;
 
     const namespaceSubscription = fetchAvailableNamespaces({ k8sClusterIDs : self.getK8sClusterIds() })
-      .subscribe({ next : res => {
-        let namespaces = []
-        res?.namespaces?.map(ns => {
-          namespaces.push(
-            { value : ns?.namespace,
-              label : ns?.namespace }
-          )
-        })
-        if (namespaces.length === 0) {
-          namespaces.push({ value : "default",
-            label : "default" })
-        }
-        namespaces.sort((a, b) => (
-          a.value > b.value ? 1
-            : -1
-        ))
-        self.setState({ namespaceList : namespaces })
-      },
-      error : (err) => console.log("error at namespace fetch: " + err), })
+      .subscribe({
+        next : res => {
+          let namespaces = []
+          res?.namespaces?.map(ns => {
+            namespaces.push(
+              {
+                value : ns?.namespace,
+                label : ns?.namespace
+              }
+            )
+          })
+          if (namespaces.length === 0) {
+            namespaces.push({
+              value : "default",
+              label : "default"
+            })
+          }
+          namespaces.sort((a, b) => (
+            a.value > b.value ? 1
+              : -1
+          ))
+          self.setState({ namespaceList : namespaces })
+        },
+        error : (err) => console.log("error at namespace fetch: " + err),
+      })
 
     this.setState({ namespaceSubscription })
   }
@@ -216,7 +255,7 @@ class MesheryAdapterPlayComponent extends React.Component {
     // this.fetchAllContexts(10)
     //   .then(res => {
     if (this.props.selectedK8sContexts) {
-      if ( this.props.selectedK8sContexts.includes("all")) {
+      if (this.props.selectedK8sContexts.includes("all")) {
         let active = [];
         this.props.k8sconfig.forEach((ctx) => {
           active.push(ctx.contextID);
@@ -228,10 +267,12 @@ class MesheryAdapterPlayComponent extends React.Component {
     }
 
     fetchAvailableAddons(variables)
-      .subscribe({ next : res => {
-        self.setAddonsState(res)
-      },
-      error : (err) => console.log("error at addon fetch: " + err), })
+      .subscribe({
+        next : res => {
+          self.setAddonsState(res)
+        },
+        error : (err) => console.log("error at addon fetch: " + err),
+      })
   }
 
   // static getDerivedStateFromProps(props, state) {
@@ -360,8 +401,10 @@ class MesheryAdapterPlayComponent extends React.Component {
 
   handleSubmit = (cat, selectedOp, deleteOp = false) => {
     const self = this;
-    return async () => {
-      self.handleOpen();
+    return () => {
+      if (selectedOp !== 'custom' ) {
+        self.handleOpen();
+      }
       const { namespace, cmEditorValAdd, cmEditorValDel } = self.state;
       const { adapter } = self.props;
       const filteredOp = adapter.ops.filter(({ key }) => key === selectedOp);
@@ -382,10 +425,12 @@ class MesheryAdapterPlayComponent extends React.Component {
         self.setState({ namespaceError : true });
         return;
       }
+      const operationName = selectedOp.replaceAll("_", " ").split(" ").map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
       self.setState({
         category : cat,
         selectedOp : selectedOp,
-        isDeleteOp : deleteOp
+        isDeleteOp : deleteOp,
+        operationName : operationName
       })
 
       // let response = await this.showModal()
@@ -402,7 +447,6 @@ class MesheryAdapterPlayComponent extends React.Component {
     } = this.state;
     const { adapter } = this.props;
     // const fileInput = document.querySelector('#k8sfile') ;
-
     const data = {
       adapter : adapter.adapter_location,
       query : selectedOp,
@@ -441,13 +485,15 @@ class MesheryAdapterPlayComponent extends React.Component {
         self.setState({ menuState, [dlg] : false });
 
         if (typeof result !== "undefined") {
-          self.props.enqueueSnackbar("Operation executing...", { variant : "info",
+          self.props.enqueueSnackbar("Operation executing...", {
+            variant : "info",
             autoHideDuration : 2000,
             action : (key) => (
               <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
                 <CloseIcon />
               </IconButton>
-            ), });
+            ),
+          });
         }
       },
       self.handleError(cat, deleteOp)
@@ -459,18 +505,22 @@ class MesheryAdapterPlayComponent extends React.Component {
     const self = this;
     dataFetch(
       `/api/system/adapters?adapter=${encodeURIComponent(adapterLoc)}`,
-      { credentials : "same-origin",
-        credentials : "include", },
+      {
+        credentials : "same-origin",
+        credentials : "include",
+      },
       (result) => {
         this.props.updateProgress({ showProgress : false });
         if (typeof result !== "undefined") {
-          this.props.enqueueSnackbar("Adapter successfully pinged!", { variant : "success",
+          this.props.enqueueSnackbar("Adapter successfully pinged!", {
+            variant : "success",
             autoHideDuration : 2000,
             action : (key) => (
               <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
                 <CloseIcon />
               </IconButton>
-            ), });
+            ),
+          });
         }
       },
       self.handleError("Could not ping adapter.")
@@ -492,9 +542,11 @@ class MesheryAdapterPlayComponent extends React.Component {
 
     dataFetch(
       `/api/smi/results${query}`,
-      { credentials : "same-origin",
+      {
+        credentials : "same-origin",
         method : "GET",
-        credentials : "include", },
+        credentials : "include",
+      },
       (result) => {
         if (typeof result !== "undefined" && result.results) {
           const results = result.results.filter((val) => val.mesh_name.toLowerCase() == adapterName.toLowerCase());
@@ -530,31 +582,21 @@ class MesheryAdapterPlayComponent extends React.Component {
         self.setState({ menuState, [dlg] : false });
       }
       self.props.updateProgress({ showProgress : false });
-      self.props.enqueueSnackbar(`Operation submission failed: ${error}`, { variant : "error",
+      self.props.enqueueSnackbar(`Operation submission failed: ${error}`, {
+        variant : "error",
         action : (key) => (
           <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
             <CloseIcon />
           </IconButton>
         ),
-        autoHideDuration : 8000, });
+        autoHideDuration : 8000,
+      });
     };
   };
 
   handleExpandClick() {
     // setExpanded(!expanded);
   }
-
-  // searchContexts = (e) => {
-  //   // if (search === '') {
-  //   //   this.setState({ k8scontext: this.state.contexts });
-  //   //   return
-  //   // }
-  //   let search = e.target.value;
-  //   console.log("SDS",  search);
-  //   const matchedCtx = this.state.contexts.filter((ctx) => ctx.name.startsWith(search))
-  //   this.setState({ k8scontext : matchedCtx });
-  //   console.log("SDS", this.state.k8scontext);
-  // }
 
   handleDeployModalOpen = () => {
     this.setState({ deployModalOpen : true });
@@ -568,7 +610,7 @@ class MesheryAdapterPlayComponent extends React.Component {
    * Sets the selected k8s context on global level.
    * @param {Array.<string>} activeK8sContexts
    */
-  activeContextChangeCallback = (activeK8sContexts)  => {
+  activeContextChangeCallback = (activeK8sContexts) => {
 
     if (activeK8sContexts.includes("all")) {
       activeK8sContexts = ["all"];
@@ -626,7 +668,8 @@ class MesheryAdapterPlayComponent extends React.Component {
     const { user, classes } = self.props;
 
     const smi_columns = [
-      { name : "ID",
+      {
+        name : "ID",
         label : "ID",
         options : {
           filter : true,
@@ -644,8 +687,10 @@ class MesheryAdapterPlayComponent extends React.Component {
               <div>{value.slice(0, 5) + "..."}</div>
             </Tooltip>
           ),
-        }, },
-      { name : "Date",
+        },
+      },
+      {
+        name : "Date",
         label : "Date",
         options : {
           filter : true,
@@ -659,8 +704,10 @@ class MesheryAdapterPlayComponent extends React.Component {
             );
           },
           customBodyRender : (value) => <Moment format="LLLL">{value}</Moment>,
-        }, },
-      { name : "Service Mesh",
+        },
+      },
+      {
+        name : "Service Mesh",
         label : "Service Mesh",
         options : {
           filter : true,
@@ -673,8 +720,10 @@ class MesheryAdapterPlayComponent extends React.Component {
               </TableCell>
             );
           },
-        }, },
-      { name : "Service Mesh Version",
+        },
+      },
+      {
+        name : "Service Mesh Version",
         label : "Service Mesh Version",
         options : {
           filter : true,
@@ -687,8 +736,10 @@ class MesheryAdapterPlayComponent extends React.Component {
               </TableCell>
             );
           },
-        }, },
-      { name : "% Passed",
+        },
+      },
+      {
+        name : "% Passed",
         label : "% Passed",
         options : {
           filter : true,
@@ -701,8 +752,10 @@ class MesheryAdapterPlayComponent extends React.Component {
               </TableCell>
             );
           },
-        }, },
-      { name : "status",
+        },
+      },
+      {
+        name : "status",
         label : "Status",
         options : {
           filter : true,
@@ -715,7 +768,8 @@ class MesheryAdapterPlayComponent extends React.Component {
               </TableCell>
             );
           },
-        }, },
+        },
+      },
     ];
 
     const smi_options = {
@@ -1222,9 +1276,14 @@ class MesheryAdapterPlayComponent extends React.Component {
           <ConfirmationMsg
             open={this.state.modalOpen}
             handleClose={this.handleClose}
-            submit={() => this.submitOp(this.state.category, this.state.selectedOp, this.state.isDeleteOp)}
+            submit={
+              { deploy : () => this.submitOp(this.state.category, this.state.selectedOp, false),
+                unDeploy : () => this.submitOp(this.state.category, this.state.selectedOp, true)
+              }
+            }
             isDelete={this.state.isDeleteOp}
-            title={<Typography variant="h6" className={classes.text} >The selected operation will be applied to following contexts.</Typography>}
+            title={this.state.operationName}
+            tab={this.state.isDeleteOp ? 1 : 0}
           />
         </React.Fragment>
       </NoSsr>
@@ -1232,8 +1291,10 @@ class MesheryAdapterPlayComponent extends React.Component {
   }
 }
 
-MesheryAdapterPlayComponent.propTypes = { classes : PropTypes.object.isRequired,
-  adapter : PropTypes.object.isRequired, };
+MesheryAdapterPlayComponent.propTypes = {
+  classes : PropTypes.object.isRequired,
+  adapter : PropTypes.object.isRequired,
+};
 
 const mapStateToProps = (st) => {
   const grafana = st.get("grafana").toJS();
@@ -1243,7 +1304,8 @@ const mapStateToProps = (st) => {
   return { grafana : { ...grafana, ts : new Date(grafana.ts) }, selectedK8sContexts, k8sconfig };
 };
 
-const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(updateProgress, dispatch),
+const mapDispatchToProps = (dispatch) => ({
+  updateProgress : bindActionCreators(updateProgress, dispatch),
   setK8sContexts : bindActionCreators(setK8sContexts, dispatch)
   // updateSMIResults: bindActionCreators(updateSMIResults, dispatch),
 });

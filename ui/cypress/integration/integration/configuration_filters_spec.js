@@ -20,6 +20,7 @@ describe('Configuration Management', () => {
 
       it('displays correct table title', () => {
         const expectedTableTitle = 'Filters';
+        cy.get('[data-cy="table-view"]').click();
         cy.get('[data-cy="filters-grid"] [class*="tableHeader"]').should('have.text', expectedTableTitle)
       })
     })
@@ -59,6 +60,7 @@ describe('Configuration Management', () => {
         })
 
         cy.wait('@getPostUploadFilters')
+        cy.get('[data-cy="table-view"]').click();
         getConfigurationGridItemName(1).should('have.text', expectedUploadedFilterName)
       })
     })

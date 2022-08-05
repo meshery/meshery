@@ -56,6 +56,32 @@ enum MeshType {
   CILIUM_SERVICE_MESH
 }
 
+enum MesheryController {
+    BROKER
+    OPERATOR
+    MESHSYNC
+  }
+
+enum MesheryControllerStatus {
+    DEPLOYED
+    NOTDEPLOYED
+    DEPLOYING
+    UNKOWN
+  }
+
+type MesheryControllersStatusListItem {
+    contextId: String!
+    controller: MesheryController! 
+    status: MesheryControllerStatus!
+  }
+
+type MeshSyncEvent {
+    type: String!
+    object: Any!
+    contextId: String!
+  }
+
+
 enum Status {
   # Enabled
   ENABLED
@@ -242,6 +268,58 @@ type NameSpace {
   namespace: String!
 }
 
+# ================= Configuration ===================
+
+type ConfigurationPage {
+  applications: ApplicationPage
+  patterns: PatternPageResult
+  filters: FilterPage
+}
+
+# ================= Applications ====================
+
+type ApplicationPage {
+  page: Int!
+  page_size: Int!
+  total_count: Int!
+  applications: [ApplicationResult]
+}
+
+type ApplicationResult {
+  id: ID!
+  name: String!
+  application_file: String!
+  type: NullString!
+  user_id: String!
+  location: Location!
+  created_at: String
+  updated_at: String
+}
+
+type NullString {
+  String: String!
+  Valid: Boolean!
+}
+
+# ================= Filters =======================
+
+type FilterPage {
+  page: Int!
+  page_size: Int!
+  total_count: Int!
+  filters: [FilterResult]
+}
+
+type FilterResult {
+  id: ID!
+  name: String!
+  filter_file: String!
+  user_id: String!
+  location: Location!
+  created_at: String
+  updated_at: String
+}
+
 # ============== Patterns =================================
 
 type PatternPageResult {
@@ -256,7 +334,7 @@ type PatternResult {
   id: ID!
   name: String!
   user_id: String!
-  location: PatternLocation!
+  location: Location!
   pattern_file: String!
   canSupport: Boolean!
   errmsg: String
@@ -264,7 +342,7 @@ type PatternResult {
   updated_at: String
 }
 
-type PatternLocation {
+type Location {
   branch: String
   host: String
   path: String
@@ -470,6 +548,19 @@ type Subscription {
 
   # Listen to changes in Broker (NATS) Connection
   subscribeBrokerConnection: Boolean!
+
+  # Listen to changes in the status of meshery controllers
+  subscribeMesheryControllersStatus(
+    k8scontextIDs: [String!]
+  ): [MesheryControllersStatusListItem!]!
+  
+  # Listen to the events that MeshSync is sending through Meshery Broker.
+  # Note: It does not listen to the changes in meshery database, but to meshsync events
+  subscribeMeshSyncEvents(
+    k8scontextIDs: [String!]
+  ) : MeshSyncEvent!
+  subscribeConfiguration(selector: PageFilter!) : ConfigurationPage!
+
 }
 
 type OAMCapability {

@@ -19,7 +19,7 @@ Meshery chart for deploying Meshery and Meshery's adapters.
 |  | meshery-cilium | 0.5.0 |
 |  | meshery-consul | 0.5.0 |
 |  | meshery-cpx | 0.5.0 |
-|  | meshery-istio |  |
+|  | meshery-istio | 0.5.0 |
 |  | meshery-kuma | 0.5.0 |
 |  | meshery-linkerd | 0.5.0 |
 |  | meshery-meshsync | 0.5.0 |
@@ -36,7 +36,7 @@ Meshery chart for deploying Meshery and Meshery's adapters.
 |-----|------|---------|-------------|
 | affinity | object | `{}` |  |
 | annotations | object | `{}` |  |
-| env.ADAPTER_URLS | string | `"meshery-istio:10000 meshery-linkerd:10001 meshery-consul:10002 meshery-kuma:10007 meshery-osm:10009 meshery-nginx-sm:10010 meshery-nsm:10004 meshery-app-mesh:10005 meshery-traefik-mesh:10006 meshery-cpx:10008 meshery-perf:10013"` |  |
+| env.ADAPTER_URLS | string | `"meshery-istio:10000 meshery-linkerd:10001 meshery-consul:10002 meshery-kuma:10007 meshery-osm:10009 meshery-nginx-sm:10010 meshery-nsm:10004 meshery-app-mesh:10005 meshery-traefik-mesh:10006 meshery-cilium:10012 meshery-perf:10013"` |  |
 | env.EVENT | string | `"mesheryLocal"` |  |
 | env.PROVIDER_BASE_URLS | string | `"https://meshery.layer5.io"` |  |
 | env.SAAS_BASE_URL | string | `"https://meshery.layer5.io"` |  |
@@ -53,12 +53,12 @@ Meshery chart for deploying Meshery and Meshery's adapters.
 | meshery-app-mesh.enabled | bool | `true` |  |
 | meshery-app-mesh.fullnameOverride | string | `"meshery-app-mesh"` |  |
 | meshery-app-mesh.serviceAccountNameOverride | string | `"meshery-server"` |  |
-| meshery-cilium.enabled | bool | `false` |  |
+| meshery-cilium.enabled | bool | `true` |  |
 | meshery-cilium.fullnameOverride | string | `"meshery-cilium"` |  |
 | meshery-consul.enabled | bool | `true` |  |
 | meshery-consul.fullnameOverride | string | `"meshery-consul"` |  |
 | meshery-consul.serviceAccountNameOverride | string | `"meshery-server"` |  |
-| meshery-cpx.enabled | bool | `true` |  |
+| meshery-cpx.enabled | bool | `false` |  |
 | meshery-cpx.fullnameOverride | string | `"meshery-cpx"` |  |
 | meshery-cpx.serviceAccountNameOverride | string | `"meshery-server"` |  |
 | meshery-istio.enabled | bool | `true` |  |

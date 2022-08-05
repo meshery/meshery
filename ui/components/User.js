@@ -1,11 +1,17 @@
+import React from 'react';
 import IconButton from '@material-ui/core/IconButton';
+import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
 import Avatar from '@material-ui/core/Avatar';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withStyles } from '@material-ui/core/styles';
+import Link from "next/link";
 import MenuList from '@material-ui/core/MenuList';
 import Grow from '@material-ui/core/Grow';
 import MenuItem from '@material-ui/core/MenuItem';
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemText from "@material-ui/core/ListItemText";
 import Popper from '@material-ui/core/Popper';
 import Paper from '@material-ui/core/Paper';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
@@ -13,6 +19,7 @@ import NoSsr from '@material-ui/core/NoSsr';
 import { withRouter } from 'next/router';
 import dataFetch from '../lib/data-fetch';
 import { updateUser } from '../lib/store';
+import classNames from 'classnames';
 
 
 const styles = () => ({ popover : { color : 'black', }, });
@@ -31,8 +38,12 @@ function exportToJsonFile(jsonData, filename) {
 }
 
 class User extends React.Component {
-  state = { user : null,
-    open : false, }
+  state = {
+    user : null,
+    open : false,
+    account : ExtensionPointSchemaValidator("account")(),
+    providerType : ''
+  }
 
   handleToggle = () => {
     this.setState((state) => ({ open : !state.open }));
@@ -61,10 +72,78 @@ class User extends React.Component {
 
   componentDidMount() {
     // console.log("fetching user data");
-    dataFetch('/api/user', { credentials : 'same-origin' }, (user) => {
+    dataFetch('/api/user', {
+      credentials : 'same-origin'
+    }, (user) => {
       this.setState({ user });
       this.props.updateUser({ user });
-    }, (error) => ({ error, }));
+    }, (error) => ({
+      error,
+    }));
+
+    dataFetch(
+      "/api/provider/capabilities", {
+        credentials : "same-origin",
+        method : "GET",
+        credentials : "include", },
+      (result) => {
+        if (result) {
+          this.setState({
+            account : ExtensionPointSchemaValidator("account")(result?.extensions?.account),
+            providerType : result?.provider_type
+          })
+        }
+      },
+      err => console.error(err)
+    )
+  }
+
+  /**
+   * @param {import("../utils/ExtensionPointSchemaValidator").AccountSchema[]} children
+   */
+  renderAccountExtension(children) {
+
+    if (children && children.length > 0) {
+      return (
+        <List disablePadding>
+          {children.map(({
+            id, href, title
+          }) => {
+            if (typeof showc !== "undefined" && !showc) {
+              return "";
+            }
+            return (
+              <React.Fragment key={id}>
+                <ListItem
+                  button
+                  key={id}
+                >
+                  {this.extensionPointContent(href, title)}
+                </ListItem>
+              </React.Fragment>
+            );
+          })}
+        </List>
+      );
+    }
+  }
+
+  extensionPointContent(href, name) {
+    const { classes } = this.props;
+
+    const content = (
+      <div className={classNames(classes.link)} >
+        <ListItemText
+          classes={{ primary : classes.itemPrimary, }}
+        >
+          {name}
+        </ListItemText>
+      </div>
+    );
+
+    if (href) return <Link href={href}>{content}</Link>;
+
+    return content;
   }
 
   render() {
@@ -107,6 +186,16 @@ class User extends React.Component {
                 <Paper className={classes.popover}>
                   <ClickAwayListener onClickAway={this.handleClose}>
                     <MenuList>
+                      {
+                        this.state.account && this.state.account.length ?
+                          (
+                            <>
+                              {this.renderAccountExtension(this.state.account)}
+                            </>
+                          )
+                          :
+                          null
+                      }
                       <MenuItem onClick={this.handleGetToken}>Get Token</MenuItem>
                       <MenuItem onClick={this.handlePreference}>Preferences</MenuItem>
                       <MenuItem onClick={this.handleLogout}>Logout</MenuItem>

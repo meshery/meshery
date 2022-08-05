@@ -69,7 +69,7 @@ func UpdateContextInConfig(v *viper.Viper, context *Context, name string) error 
 // CheckIfCurrentContextIsValid checks if current context is valid
 func (mc *MesheryCtlConfig) CheckIfCurrentContextIsValid() (*Context, error) {
 	if mc.CurrentContext == "" {
-		return &Context{}, errors.New("current context not set")
+		return &Context{}, errors.New("Valid context is not available in meshconfig")
 	}
 
 	ctx, exists := mc.Contexts[mc.CurrentContext]

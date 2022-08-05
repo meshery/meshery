@@ -97,7 +97,10 @@ function RJSFForm(props) {
     isLoading,
     ArrayFieldTemplate = MesheryArrayFieldTemplate,
     ObjectFieldTemplate = MesheryCustomObjFieldTemplate,
-    LoadingComponent
+    LoadingComponent,
+    ErrorList,
+    // prop should be present in order for the cloned element to override this property
+    transformErrors
   } = props;
 
   useEffect(() => {
@@ -129,6 +132,8 @@ function RJSFForm(props) {
         liveValidate
         showErrorList={false}
         noHtml5Validate
+        ErrorList={ErrorList}
+        transformErrors={transformErrors}
       >
         {/* {hideSubmit ? true : <RJSFButton handler={onSubmit} text="Submit" {...restparams} />}
 {hideSubmit ? true : <RJSFButton handler={onDelete} text="Delete" />} */}

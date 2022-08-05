@@ -5,7 +5,7 @@ permalink: es/overview
 language: es
 ---
 
-As the service mesh management plane, Meshery enables the adoption, operation, and management of any service mesh and their workloads. Meshery's powerful performance management functionality is accomplished through implementation of [Service Mesh Performance](https://smp-spec.io) (SMP). Meshery's multi-mesh management functionality leverages [Service Mesh Interface](https://smi-spec.io) (SMI). Meshery enables operators to deploy WebAssembly filters to Envoy-based data planes. Meshery facilitates learning about functionality and performance of service meshes and incorporates the collection and display of metrics from applications running on or across service meshes.
+As the cloud native management plane, Meshery enables the adoption, operation, and management of any service mesh and their workloads. Meshery's powerful performance management functionality is accomplished through implementation of [Service Mesh Performance](https://smp-spec.io) (SMP). Meshery's cloud native manager functionality leverages [Service Mesh Interface](https://smi-spec.io) (SMI). Meshery enables operators to deploy WebAssembly filters to Envoy-based data planes. Meshery facilitates learning about functionality and performance of service meshes and incorporates the collection and display of metrics from applications running on or across service meshes.
 
 ## Meshery's Functionality
 
@@ -29,7 +29,7 @@ Meshery features can be categorized by:
 
 Whether making a Day 0 adoption choice or maintaining a Day 2 deployment, Meshery has useful capabilities in either circumstance. Targeted audience for Meshery project would be any technology operators that leverage service mesh in their ecosystem; this includes developers, devops engineers, decision makers, architects, and organizations that rely on microservices platform.
 
-### Service mesh management - one or multiple service meshes.\*\*
+### Cloud Native Management - multi-cluster Kubernetes and service mesh management.\*\*
 
 ### Meshery is for performance management: testing and benchmarking
 

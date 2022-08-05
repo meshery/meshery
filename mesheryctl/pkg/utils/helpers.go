@@ -809,9 +809,6 @@ func SetOverrideValues(ctx *config.Context, mesheryImageVersion string) map[stri
 		"meshery-traefik-mesh": map[string]interface{}{
 			"enabled": false,
 		},
-		"meshery-cpx": map[string]interface{}{
-			"enabled": false,
-		},
 		"meshery-app-mesh": map[string]interface{}{
 			"enabled": false,
 		},

@@ -2054,6 +2054,87 @@
         "short_description": "",
         "probable_cause": "",
         "suggested_remediation": ""
+      },
+      "2235": {
+        "name": "ErrBrokerNotFoundCode",
+        "code": "2235",
+        "severity": "Alert",
+        "long_description": "Unable to find meshery broker in the cluster",
+        "short_description": "Meshery broker not found",
+        "probable_cause": "Invalid Grafana Endpoint or API-Key",
+        "suggested_remediation": "Update your Grafana URL and API-Key from the settings page in the UI"
+      },
+      "2236": {
+        "name": "ErrCreateOperatorDeploymentConfigCode",
+        "code": "2236",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Operator deployment configuration could not be created.",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "2237": {
+        "name": "ErrRequestMeshsyncStoreCode",
+        "code": "2237",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Meshsync store request could not be issued",
+        "probable_cause": "",
+        "suggested_remediation": "Make sure meshery broker is healthy"
+      },
+      "2238": {
+        "name": "ErrBrokerSubscriptionCode",
+        "code": "2238",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Could not subscribe to the broker subject",
+        "probable_cause": "",
+        "suggested_remediation": "Make sure meshery broker is healthy"
+      },
+      "2239": {
+        "name": "ErrMesheryControllersStatusSubscriptionCode",
+        "code": "2239",
+        "severity": "Alert",
+        "long_description": "Meshery controller handlers may not be available",
+        "short_description": "Could not create meshery controllers status subcription",
+        "probable_cause": "",
+        "suggested_remediation": "Make sure the controllers are deployed and their handlers are configured"
+      },
+      "2240": {
+        "name": "ErrMeshSyncEventsSubscriptionCode",
+        "code": "2240",
+        "severity": "Alert",
+        "long_description": "Meshery controller handlers may not be available",
+        "short_description": "Could not create MeshSync events subcription",
+        "probable_cause": "",
+        "suggested_remediation": "Make sure the controllers are deployed and their handlers are configured"
+      },
+      "2241": {
+        "name": "ErrValidateCode",
+        "code": "2241",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "failed to validate the given value against the schema",
+        "probable_cause": "unable to validate the value against given schema\neither value or schema might not be a valid cue expression",
+        "suggested_remediation": "Make sure that the schema and value provided are valid cue values\nMake sure both schema and value are sent\nMake sure appropriate value types are sent"
+      },
+      "2243": {
+        "name": "ErrConfigurationApplicationsCode",
+        "code": "2243",
+        "severity": "Alert",
+        "long_description": "GraphQL subscription for Applications stopped",
+        "short_description": "Configuration Subscription failed",
+        "probable_cause": "Could be a network issue",
+        "suggested_remediation": "Confirm that Meshery Server is reachable from your browser."
+      },
+      "2244": {
+        "name": "ErrConfigurationFiltersCode",
+        "code": "2244",
+        "severity": "Alert",
+        "long_description": "GraphQL subscription for Filters stopped",
+        "short_description": "Configuration Subscription failed",
+        "probable_cause": "Could be a network issue",
+        "suggested_remediation": "Confirm that Meshery Server is reachable from your browser."
       }
     }
   }

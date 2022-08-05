@@ -18213,7 +18213,7 @@ html body .md-typeset .headerlink {
         position: -webkit-sticky;
         position: sticky;
         top: 4rem;
-        height: 100vh;
+        height: 100%;
         overflow-y: auto
     }
 }
@@ -18424,6 +18424,11 @@ html body .md-typeset .headerlink {
 .td-title {
     margin-top: 1rem;
     margin-bottom: .5rem
+}
+
+.selected{
+    color: #00B39F!important;
+    font-weight:400 !important;
 }
 
 @media(min-width:576px) {

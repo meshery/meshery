@@ -113,6 +113,11 @@ mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --mesh i
 </div>
 </pre>
 
+## Screenshots
+
+Usage of mesheryctl perf apply
+![perf-apply-usage](../../../../docs/assets/img/mesheryctl/perf-apply.png)
+
 ## See Also
 
 Go back to [command reference index](/reference/mesheryctl/) 

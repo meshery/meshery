@@ -1,8 +1,6 @@
 // @ts-check
 import {
-  Avatar, Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, IconButton, NoSsr,
-  Paper,
-  TableCell, Tooltip, Typography
+  Avatar, Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, IconButton, NoSsr, TableCell, Tooltip, Typography
 } from "@material-ui/core";
 import { createTheme, makeStyles, MuiThemeProvider, withStyles } from "@material-ui/core/styles";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
@@ -13,26 +11,24 @@ import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
 import SaveIcon from '@material-ui/icons/Save';
 import MUIDataTable from "mui-datatables";
 import { withSnackbar } from "notistack";
-import AddIcon from "@material-ui/icons/Add";
+import AddIcon from "@material-ui/icons/AddCircleOutline";
 import React, { useEffect, useRef, useState } from "react";
 import { UnControlled as CodeMirror } from "react-codemirror2";
 import Moment from "react-moment";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import dataFetch from "../lib/data-fetch";
-import TableChartIcon from "@material-ui/icons/TableChart";
 import FILE_OPS from "../utils/configurationFileHandlersEnum";
-import PromptComponent from "./PromptComponent";
-import GridOnIcon from "@material-ui/icons/GridOn";
 import { updateProgress } from "../lib/store";
 import PatternForm from "../components/configuratorComponents/patternConfigurator";
 import UploadImport from "./UploadImport";
 import { ctxUrl } from "../utils/multi-ctx";
-import { randomPatternNameGenerator as getRandomName } from "../utils/utils";
-import { ToggleButton, ToggleButtonGroup } from "@material-ui/lab";
+import { getComponentsinFile, randomPatternNameGenerator as getRandomName } from "../utils/utils";
+import ViewSwitch from "./ViewSwitch";
 import MesheryPatternGrid from "./MesheryPatterns/MesheryPatternGridView";
 import UndeployIcon from "../public/static/img/UndeployIcon";
 import DoneAllIcon from '@material-ui/icons/DoneAll';
+import ConfirmationMsg from "./ConfirmationModal";
 
 const styles = (theme) => ({
   grid : {
@@ -69,7 +65,7 @@ const styles = (theme) => ({
     whiteSpace : "nowrap",
   },
   UploadImport : {
-    paddingLeft : "1.5rem",
+    marginLeft : "1.5rem",
   },
   noDesignAddButton : {
     marginTop : "0.5rem"
@@ -94,7 +90,13 @@ const styles = (theme) => ({
   noDesignText : {
     fontSize : "2rem",
     marginBottom : "2rem",
-  }
+  },
+  addIcon : {
+    paddingRight : ".35rem",
+  },
+  // text : {
+  //   padding : "5px"
+  // }
 });
 
 const useStyles = makeStyles((theme) => ({
@@ -130,35 +132,6 @@ const useStyles = makeStyles((theme) => ({
     }
   }
 }));
-/**
- * Type Definition for View Type
- * @typedef {"grid" | "table"} TypeView
- */
-
-/**
- * ViewSwitch component renders a switch for toggling between
- * grid and table views
- * @param {{ view: TypeView, changeView: (view: TypeView) => void }} props
- */
-function ViewSwitch({ view, changeView }) {
-  console.log(view)
-  return (
-    <ToggleButtonGroup
-      size="small"
-      value={view}
-      exclusive
-      onChange={(_, newView) => changeView(newView)}
-      aria-label="Switch View"
-    >
-      <ToggleButton value="grid">
-        <GridOnIcon />
-      </ToggleButton>
-      <ToggleButton value="table">
-        <TableChartIcon />
-      </ToggleButton>
-    </ToggleButtonGroup>
-  )
-}
 
 function TooltipIcon({ children, onClick, title }) {
   return (
@@ -264,6 +237,13 @@ function MesheryPatterns({
     ("grid")
   );
   const DEPLOY_URL = '/api/pattern/deploy';
+  const [modalOpen, setModalOpen] = useState({
+    open : false,
+    deploy : false,
+    pattern_file : null,
+    name : "",
+    count : 0
+  });
 
   const getMuiTheme = () => createTheme({
     overrides : {
@@ -351,7 +331,27 @@ function MesheryPatterns({
     document.body.style.overflowX = "hidden"
 
     return (() => document.body.style.overflowX = "auto")
-  }, [page,pageSize,search,sortOrder]);
+  }, [page, pageSize, search, sortOrder]);
+
+  const handleModalClose = () => {
+    // @ts-ignore
+    setModalOpen({
+      open : false,
+      pattern_file : null,
+      name : "",
+      count : 0
+    });
+  }
+
+  const handleModalOpen = (pattern_file, name, isDeploy) => {
+    setModalOpen({
+      open : true,
+      deploy : isDeploy,
+      pattern_file : pattern_file,
+      name : name,
+      count : getComponentsinFile(pattern_file)
+    });
+  }
 
   const handleDeploy = (pattern_file) => {
     updateProgress({ showProgress : true });
@@ -523,13 +523,11 @@ function MesheryPatterns({
   function uploadHandler(ev) {
     if (!ev.target.files?.length) return;
 
-    console.log("top level event", ev)
 
     const file = ev.target.files[0];
     // Create a reader
     const reader = new FileReader();
     reader.addEventListener("load", (event) => {
-      console.log("Bottom level event", event)
       // @ts-ignore
       handleSubmit({
         data : event.target.result,
@@ -634,15 +632,15 @@ function MesheryPatterns({
               {/*</Tooltip> */}
               <IconButton
                 title="Deploy"
-                onClick={() => handleDeploy(rowData.pattern_file)}
+                onClick={() => handleModalOpen(rowData.pattern_file, rowData.name, true)}
               >
                 <DoneAllIcon data-cy="deploy-button" />
               </IconButton>
               <IconButton
                 title="Undeploy"
-                onClick={() => handleUnDeploy(rowData.pattern_file)}
+                onClick={() => handleModalOpen(rowData.pattern_file, rowData.name, false)}
               >
-                <UndeployIcon fill="rgba(0, 0, 0, 0.54)" data-cy="undeploy-button" />
+                <UndeployIcon fill="#B32700" data-cy="undeploy-button" />
               </IconButton>
             </>
           );
@@ -657,11 +655,12 @@ function MesheryPatterns({
     }
   });
 
-  async function showModal(count) {
+  async function showModal(count, patterns) {
+    console.log("patterns to be deleted", count, patterns);
     let response = await modalRef.current.show({
-      title : `Delete ${count ? count : ""} Pattern${count > 1 ? "s" : ''}?`,
+      title : `Delete ${count ? count : ""} Design${count > 1 ? "s" : ''}?`,
 
-      subtitle : `Are you sure you want to delete ${count > 1 ? "these" : 'this'}  ${count ? count : ""}  pattern${count > 1 ? "s" : ''}?`,
+      subtitle : `Are you sure you want to delete the ${patterns} design${count > 1 ? "s" : ''}?`,
 
       options : ["Yes", "No"],
     });
@@ -682,7 +681,7 @@ function MesheryPatterns({
       console.log("PatternFile Delete Multiple API", `/api/pattern/delete`);
       updateProgress({ showProgress : false });
       setTimeout(() => {
-        enqueueSnackbar(`${patterns.patterns.length} Patterns Deleted`,
+        enqueueSnackbar(`${patterns.patterns.length} Designs Deleted`,
           {
             variant : "success",
             autoHideDuration : 2000,
@@ -733,7 +732,7 @@ function MesheryPatterns({
           name : patterns[idx]?.name,
         }
       ))
-      let response = await showModal(toBeDeleted.length)
+      let response = await showModal(toBeDeleted.length, toBeDeleted.map(p => " "+p.name))
       if (response.toLowerCase() === "yes") {
         deletePatterns({ patterns : toBeDeleted })
       }
@@ -795,37 +794,35 @@ function MesheryPatterns({
     }
   };
 
-  console.log(patterns)
   return (
     <>
-
       <NoSsr>
-        {selectedPattern.show &&
-        <PatternForm onSubmit={handleSubmit} show={setSelectedPattern} pattern={selectedPattern.pattern} />}
-
         {selectedRowData && Object.keys(selectedRowData).length > 0 && (
           <YAMLEditor pattern={selectedRowData} onClose={resetSelectedRowData()} onSubmit={handleSubmit} />
         )}
+        {selectedPattern.show &&
+          <PatternForm onSubmit={handleSubmit} show={setSelectedPattern} pattern={selectedPattern.pattern} />
+        }
         <div className={classes.topToolbar} >
           {!selectedPattern.show && (patterns.length>0 || viewType==="table") && <div className={classes.createButton}>
-            <Button
-              aria-label="Add Pattern"
-              variant="contained"
-              color="primary"
-              size="large"
-              // @ts-ignore
-              onClick={() => setSelectedPattern({
-                pattern : { id : null, name : "New Pattern", pattern_file : "name: New Pattern\nservices:" },
-                show : true,
-              })}
-            >
-              <AddIcon />
-           Create Design
-            </Button>
-            <div className={classes.UploadImport}>
-              <UploadImport aria-label="URL upload button" handleUpload={urlUploadHandler} handleImport={uploadHandler} configuration={undefined} modalStatus={undefined}  />
+            <div>
+              <Button
+                aria-label="Add Pattern"
+                variant="contained"
+                color="primary"
+                size="large"
+                // @ts-ignore
+                onClick={() => setSelectedPattern({
+                  pattern : { id : null, name : "New Pattern", pattern_file : "name: New Pattern\nservices:" },
+                  show : true,
+                })}
+                style={{ marginRight : "2rem" }}
+              >
+                <AddIcon className={classes.addIcon} />
+              Create Design
+              </Button>
+              <UploadImport supportedTypes="null" aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} configuration="Design" />
             </div>
-
           </div>
           }
           {!selectedPattern.show &&
@@ -837,7 +834,7 @@ function MesheryPatterns({
         {
           !selectedPattern.show && viewType==="table" && <MuiThemeProvider theme={getMuiTheme() }>
             <MUIDataTable
-              title={<div className={classes.tableHeader}>Designs</div>}
+              title={<div className={classes.tableHeader}>Patterns</div>}
               data={patterns}
               columns={columns}
               // @ts-ignore
@@ -846,37 +843,6 @@ function MesheryPatterns({
             />
           </MuiThemeProvider>
         }
-        {!selectedPattern.show && viewType==="grid" && patterns.length===0 &&
-          <Paper className={classes.noDesignPaper} >
-            <div className={classes.noDesignContainer}>
-              <Typography className={classes.noDesignText} align="center" color="textSecondary">
-              No Designs Found
-              </Typography>
-              <div className={classes.noDesignButtons}>
-                <Button
-                  aria-label="Create Design"
-                  variant="contained"
-                  color="primary"
-                  size="large"
-                  className={classes.noDesignAddButton}
-                  // @ts-ignore
-                  onClick={() => setSelectedPattern({
-                    pattern : { id : null, name : "New Pattern", pattern_file : "name: New Pattern\nservices:" },
-                    show : true,
-                  })}
-                >
-                  <AddIcon />
-              Create Design
-
-                </Button>
-                <div className={classes.UploadImport}>
-                  <UploadImport aria-label="URL upload button" handleUpload={urlUploadHandler} handleImport={uploadHandler} configuration={undefined} modalStatus={undefined}  />
-                </div>
-              </div>
-            </div>
-          </Paper>
-        }
-
         {
           !selectedPattern.show && viewType==="grid" &&
             // grid vieww
@@ -892,8 +858,17 @@ function MesheryPatterns({
               selectedPage={page}
             />
         }
-
-        <PromptComponent ref={modalRef} />
+        <ConfirmationMsg
+          open={modalOpen.open}
+          handleClose={handleModalClose}
+          submit={
+            { deploy : () => handleDeploy(modalOpen.pattern_file),  unDeploy : () => handleUnDeploy(modalOpen.pattern_file) }
+          }
+          isDelete={!modalOpen.deploy}
+          title={modalOpen.name}
+          componentCount={modalOpen.count}
+          tab={modalOpen.deploy ? 0 : 1}
+        />
       </NoSsr>
     </>
   );
