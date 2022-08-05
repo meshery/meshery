@@ -60,7 +60,7 @@ mesheryctl -v [or] --verbose
 	`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
-	
+
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		log.Println("Args passed in", args)
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {

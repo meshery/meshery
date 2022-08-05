@@ -355,7 +355,7 @@ mesheryctl system context switch sample
 Example: mesheryctl system context switch k8s-sample
 Description: Configures mesheryctl to actively use one one context vs. the another context`
 
-		if len(args) ==0 {
+		if len(args) == 0 {
 			return fmt.Errorf("accepts single argument, received %d\n\n%v", len(args), errMsg)
 		}
 		return nil
