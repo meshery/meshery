@@ -23,7 +23,6 @@ const styles = (() => ({
     margin: "2px",
     display: "flex",
     flexDirection: "column",
-    justifyContent: "center",
     height: "7rem",
     justifyContent: "space-evenly"
   },
