@@ -115,7 +115,7 @@ function FiltersGrid({ filters=[],handleDeploy, handleUndeploy, handleSubmit,url
             No Filters Found
             </Typography>
             <div>
-              <UploadImport aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} configuration="Filter"  />
+              <UploadImport supportedTypes="null" aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} configuration="Filter"  />
 
             </div>
           </div>

@@ -96,3 +96,15 @@ func ToMapStringInterface(mp interface{}) map[string]interface{} {
 
 	return res
 }
+
+func IsClosed(ch chan struct{}) bool {
+	if ch == nil {
+		return true
+	}
+	select {
+	case <-ch:
+		return true
+	default:
+	}
+	return false
+}

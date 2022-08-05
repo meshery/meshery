@@ -61,8 +61,7 @@ securityContext:
   # runAsUser: 1000
 
 service:
-  # As we discussed, both meshery and meshery-op should have the same type of service.
-  type: LoadBalancer
+  type: ClusterIP
   port: 10000
   annotations: {}
 
