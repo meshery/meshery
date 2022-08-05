@@ -15,7 +15,7 @@ If you would like to have `mesheryctl` commands automatically completed for use 
 
  <pre class="codeblock-pre"><div class="codeblock">
  <div class="clipboardjs">
- source /dev/stdin <<< "$(mesheryctl system completion bash)"
+ source /dev/stdin <<< "$(mesheryctl completion bash)"
  </div></div>
  </pre>
 
@@ -23,7 +23,7 @@ If you would like to have `mesheryctl` commands automatically completed for use 
 
  <pre class="codeblock-pre"><div class="codeblock">
  <div class="clipboardjs">
- source <(mesheryctl system completion bash)
+ source <(mesheryctl completion bash)
  </div></div>
  </pre>
 
@@ -32,7 +32,7 @@ If you would like to have `mesheryctl` commands automatically completed for use 
  <pre class="codeblock-pre"><div class="codeblock">
  <div class="clipboardjs">
  brew install bash-completion # ensure you have bash-completion 1.3+
- mesheryctl system completion bash > $(brew --prefix)/etc/bash_completion.d/mesheryctl
+ mesheryctl completion bash > $(brew --prefix)/etc/bash_completion.d/mesheryctl
  </div></div>
  </pre>
 
@@ -41,7 +41,7 @@ If you would like to have `mesheryctl` commands automatically completed for use 
  <pre class="codeblock-pre"><div class="codeblock">
  <div class="clipboardjs">
  brew install bash-completion@2
- mesheryctl system completion bash > $(brew --prefix)/etc/bash_completion.d/mesheryctl
+ mesheryctl completion bash > $(brew --prefix)/etc/bash_completion.d/mesheryctl
  </div></div>
  </pre>
 
@@ -49,7 +49,7 @@ If you would like to have `mesheryctl` commands automatically completed for use 
 
  <pre class="codeblock-pre"><div class="codeblock">
  <div class="clipboardjs">
- source <(mesheryctl system completion zsh)
+ source <(mesheryctl completion zsh)
  </div></div>
  </pre><br>
 
@@ -57,7 +57,7 @@ If shell completion is not already enabled in your environment you will need to 
 
  <pre class="codeblock-pre"><div class="codeblock">
  <div class="clipboardjs">
- ~/.zshrc > echo "autoload -U compinit; compinit" 
+ ~/.zshrc > echo "autoload -U compinit; compinit"
  </div></div>
  </pre>
 
@@ -67,7 +67,7 @@ _Note_ : You might need to restart your shell for this setup to take effect.
 
  <pre class="codeblock-pre"><div class="codeblock">
  <div class="clipboardjs">
- mesheryctl system completion zsh > "${fpath[1]}/_mesheryctl"
+COMPLETION_DIR=$(echo $fpath | grep -o '[^ ]*completions' | grep -v cache) && mkdir -p $COMPLETION_DIR && mesheryctl completion zsh > "${COMPLETION_DIR}/_mesheryctl"
  </div></div>
  </pre>
 
@@ -75,7 +75,7 @@ _Note_ : You might need to restart your shell for this setup to take effect.
 
  <pre class="codeblock-pre"><div class="codeblock">
  <div class="clipboardjs">
- mesheryctl system completion fish | source
+ mesheryctl completion fish | source
  </div></div>
  </pre><br>
 
@@ -83,7 +83,7 @@ To load fish shell completions for each session, execute once:
 
  <pre class="codeblock-pre"><div class="codeblock">
  <div class="clipboardjs">
- mesheryctl system completion fish > ~/.config/fish/completions/mesheryctl.fish
+ mesheryctl completion fish > ~/.config/fish/completions/mesheryctl.fish
  </div></div>
  </pre>
 
