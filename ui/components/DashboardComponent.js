@@ -561,7 +561,7 @@ class DashboardComponent extends React.Component {
   handleGrafanaClick = () => {
     this.props.updateProgress({ showProgress : true });
     const self = this;
-    const { grafanaUrl } = this.state;
+    const { grafanaURL } = this.state.grafana;
     dataFetch(
       "/api/telemetry/metrics/grafana/ping",
       {
@@ -571,7 +571,7 @@ class DashboardComponent extends React.Component {
       (result) => {
         this.props.updateProgress({ showProgress : false });
         if (typeof result !== "undefined") {
-          this.props.enqueueSnackbar("Grafana connected at " + `${grafanaUrl}`, {
+          this.props.enqueueSnackbar("Grafana connected at " + `${grafanaURL}`, {
             variant : "success",
             autoHideDuration : 2000,
             action : (key) => (
@@ -711,7 +711,7 @@ class DashboardComponent extends React.Component {
   handlePrometheusClick = () => {
     this.props.updateProgress({ showProgress : true });
     const self = this;
-    const { prometheusUrl } = this.state;
+    const { prometheusURL } = this.state.prometheus;
     dataFetch(
       "/api/telemetry/metrics/ping",
       {
@@ -721,7 +721,7 @@ class DashboardComponent extends React.Component {
       (result) => {
         this.props.updateProgress({ showProgress : false });
         if (typeof result !== "undefined") {
-          this.props.enqueueSnackbar("Prometheus connected at" + ` ${prometheusUrl}`, {
+          this.props.enqueueSnackbar("Prometheus connected at" + ` ${prometheusURL}`, {
             variant : "success",
             autoHideDuration : 2000,
             action : (key) => (
