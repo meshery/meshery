@@ -60,7 +60,7 @@ securityContext: {}
   # runAsUser: 1000
 
 service:
-  type: LoadBalancer
+  type: ClusterIP
   port: 10000
   annotations: {}
 

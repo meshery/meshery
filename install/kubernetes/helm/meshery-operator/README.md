@@ -113,7 +113,7 @@ Meshery Operator chart.
 | securityContext | object | `{}` |  |
 | service.annotations | object | `{}` |  |
 | service.port | int | `10000` |  |
-| service.type | string | `"LoadBalancer"` |  |
+| service.type | string | `"ClusterIP"` |  |
 | serviceAccount.create | string | `"create"` |  |
 | serviceAccount.name | string | `"meshery-operator"` |  |
 | testCase.enabled | bool | `false` |  |
