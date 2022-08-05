@@ -419,14 +419,20 @@ func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext) (K8
 	}()
 
 	if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusCreated {
-		var kc K8sContext
-		if err := json.NewDecoder(resp.Body).Decode(&kc); err != nil {
+		var kcr K8sContextPersistResponse
+		if err := json.NewDecoder(resp.Body).Decode(&kcr); err != nil {
 			return k8sContext, ErrUnmarshal(err, "kubernetes context")
 		}
 
 		// Sensitive data. Commenting until better debug controls are put into place. - @leecalcote
 		// logrus.Infof("kubernetes context successfully sent to remote provider: %+v", kc)
-		return kc, nil
+
+		// If the context already existed, return that as error
+		if !kcr.Inserted {
+			return kcr.K8sContext, ErrContextAlreadyPersisted
+		}
+
+		return kcr.K8sContext, nil
 	}
 	return k8sContext, ErrPost(fmt.Errorf("failed to save kubernetes context"), fmt.Sprint(resp.Body), resp.StatusCode)
 }
