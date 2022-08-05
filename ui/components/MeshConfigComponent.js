@@ -149,12 +149,12 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
                 error : (err) => console.log("error at operator scan: " + err),
               })
           })
+          getKubernetesVersion();
           setData(tableInfo);
         }
       })
       .catch(handleError("failed to fetch contexts for the instance"))
 
-    getKubernetesVersion();
   }, [])
 
   useEffect(() => {
@@ -274,7 +274,8 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
           let version = result[0]?.oam_definition?.spec?.metadata?.version;
           setK8sVersion(version);
         }
-      }
+      },
+      handleError("Failed to get Kubernetes version")
     )
   }
 
