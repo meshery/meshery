@@ -15,6 +15,7 @@ import usePreventUserFromLeavingPage from "../utils/hooks/usePreventUserFromLeav
 import { getK8sClusterIdsFromCtxId } from "../utils/multi-ctx";
 import ConfirmationModal from "./ConfirmationModal"
 import { getComponentsinFile } from "../utils/utils";
+import UploadImport from "./UploadImport";
 
 const requires = createRequires(getDependencies);
 const useRemoteComponent = createUseRemoteComponent({ requires });
@@ -62,7 +63,8 @@ function Extension({ grafana, prometheus, updateLoadTestData, url, isDrawerColla
           },
         },
         ConfirmationModal,
-        getComponentsinFile
+        getComponentsinFile,
+        UploadImport
       }}
     />
   );
