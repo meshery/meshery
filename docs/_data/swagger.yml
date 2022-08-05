@@ -404,6 +404,65 @@ paths:
       responses:
         "200":
           description: ""
+  
+  /api/application/types:
+    get: 
+      description: Returns the list of available types
+      tags:
+      - ApplicationsAPI
+      summary: Handle GET request for available types for all applications
+      parameters:
+      - type: source-type
+        description: query parameter
+        name: application_file
+        in: path
+        required: true
+      responses:
+        "200":
+          description: Fetches a single Meshery Application
+          schema:
+            description: "Returns all Meshery Application based on source type"
+            type: object
+            properties:
+              Helm Chart:
+                type: helm chart
+                format: .tgz
+              Docker Compose:
+                type: docker compose
+                format: ".yaml .yml"
+              Kubernetes Manifest:
+                type: kubernetes manifest
+                format: ".yaml .yml"
+  
+  /api/application/download/{id}:
+    get: 
+      description: Retrieves and downloads a single application of specific source-type with source-content
+      tags:
+      - ApplicationsAPI
+      summary: Retrieves the source-content for all applications
+      parameters:
+      - type: source-type
+        description: query parameter
+        name: id
+        in: path
+        required: true
+      responses:
+        "200":
+          description: retrieves and downloads the source-content of a single Meshery Application
+          schema:
+            description: "Downloads the Meshery Application based on with source-content"
+            type: object
+            properties:
+              Helm Chart:
+                type: helm chart
+                format: .tgz
+              Docker Compose:
+                type: docker compose
+                format: ".yaml .yml"
+              Kubernetes Manifest:
+                type: kubernetes manifest
+                format: ".yaml .yml"
+
   /api/filter:
     get:
       description: Returns all the Meshery Filters saved by the current user
