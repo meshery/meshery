@@ -77,7 +77,7 @@ func (mkcp *MesheryK8sContextPersister) SaveMesheryK8sContext(mkc K8sContext) (K
 
 		// Check if there is already an entry for this context
 		if err := tx.First(&mesheryK8sContext, "id = ?", mkc.ID).Error; err == nil {
-			return nil
+			return ErrContextAlreadyPersisted
 		}
 
 		return tx.Save(&mkc).Error
