@@ -48,7 +48,7 @@ type MesheryApplication struct {
 	UserID        *string        `json:"user_id" gorm:"-"`
 	Location      isql.Map       `json:"location"`
 	Type          sql.NullString `json:"type"`
-	SourceContent []byte
-	UpdatedAt     *time.Time `json:"updated_at,omitempty"`
-	CreatedAt     *time.Time `json:"created_at,omitempty"`
+	SourceContent []byte         `json:"source_content"`
+	UpdatedAt     *time.Time     `json:"updated_at,omitempty"`
+	CreatedAt     *time.Time     `json:"created_at,omitempty"`
 }
