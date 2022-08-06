@@ -6,7 +6,7 @@ on:
       - 'ui/**/*'
 
 jobs:
-  build:
+  run-lint:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -32,10 +32,10 @@ jobs:
     - name: Install modules
       if: steps.npm-cache.outputs.cache-hit != 'true'
       run: |
-        - cd ui
-        - npm i
+        cd ui
+        npm i
 
     - name: Run ESLint
       run: |
-        - pwd
-        - eslint . --ext .js,.jsx,.ts,.tsx
+        pwd
+        eslint . --ext .js,.jsx,.ts,.tsx
