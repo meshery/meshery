@@ -111,7 +111,7 @@ function inView(containerName) {
                 }
         } 
 
-         /////scroll eventlistiner function for window view
+         // scroll eventlistiner function for window view
          document.addEventListener('scroll',function(){
             
             if (inView(divIndex) && !animatedTerminal.includes(divIndex)) {
