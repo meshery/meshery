@@ -185,20 +185,12 @@ jobs:
 
     - name: Install modules
       if: steps.npm-cache.outputs.cache-hit != 'true'
-      run: |
-        cd ui
-        npm i
-        cd ..
-        cd provider-ui
-        npm i
+      run: make setup-ui-libs
 
     - name: Run ESLint
       run: |
-        cd ui
-        npm run lint
-        cd ..
-        cd provider-ui
-        npm run lint
+        make lint-ui
+        make lint-provider-ui
 
   tests-ui-e2e:
     needs: [build-backend, build-ui]
