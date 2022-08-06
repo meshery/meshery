@@ -149,12 +149,12 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
                 error : (err) => console.log("error at operator scan: " + err),
               })
           })
+          getKubernetesVersion();
           setData(tableInfo);
         }
       })
       .catch(handleError("failed to fetch contexts for the instance"))
 
-    getKubernetesVersion();
   }, [])
 
   useEffect(() => {
@@ -244,17 +244,47 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
     setShowMenu(menu);
   }
 
-  const handleSuccess = msg => {
+  const handleConfigSnackbars = ctxs => {
     updateProgress({ showProgress : false });
-    enqueueSnackbar(msg, {
-      variant : "success",
-      action : (key) => (
-        <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-          <CloseIcon />
-        </IconButton>
-      ),
-      autoHideDuration : 7000,
-    });
+
+    for (let ctx of ctxs.inserted_contexts) {
+      const msg = `Cluster ${ctx.name} at ${ctx.server} connected`
+      enqueueSnackbar(msg, {
+        variant : "success",
+        action : (key) => (
+          <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+            <CloseIcon />
+          </IconButton>
+        ),
+        autoHideDuration : 7000,
+      });
+    }
+
+    for (let ctx of ctxs.updated_contexts) {
+      const msg = `Cluster ${ctx.name} at ${ctx.server} already exists`
+      enqueueSnackbar(msg, {
+        variant : "info",
+        action : (key) => (
+          <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+            <CloseIcon />
+          </IconButton>
+        ),
+        autoHideDuration : 7000,
+      });
+    }
+
+    for (let ctx of ctxs.errored_contexts) {
+      const msg = `Failed to add cluster ${ctx.name} at ${ctx.server}`
+      enqueueSnackbar(msg, {
+        variant : "error",
+        action : (key) => (
+          <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+            <CloseIcon />
+          </IconButton>
+        ),
+        autoHideDuration : 7000,
+      });
+    }
   }
 
   const handleLastDiscover = (index) => {
@@ -274,7 +304,8 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
           let version = result[0]?.oam_definition?.spec?.metadata?.version;
           setK8sVersion(version);
         }
-      }
+      },
+      handleError("Failed to get Kubernetes version")
     )
   }
 
@@ -450,7 +481,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
   }
 
   const uploadK8SConfig = async () => {
-    await promisifiedDataFetch(
+    return await promisifiedDataFetch(
       "/api/system/kubernetes",
       {
         method : "POST",
@@ -881,8 +912,8 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
         return;
       }
 
-      uploadK8SConfig().then(() => {
-        handleSuccess("successfully uploaded kubernetes config");
+      uploadK8SConfig().then((obj) => {
+        handleConfigSnackbars(obj);
         fetchAllContexts(25)
           .then(res => {
             let newData = [...data];

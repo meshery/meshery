@@ -88,9 +88,9 @@ func init() {
 		log.Fatal(err)
 	}
 
-	cobra.OnInitialize(initConfig)
 	cobra.OnInitialize(setVerbose)
 	cobra.OnInitialize(setupLogger)
+	cobra.OnInitialize(initConfig)
 
 	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", utils.DefaultConfigPath, "path to config file")
 
@@ -101,6 +101,7 @@ func init() {
 	RootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "verbose output")
 
 	availableSubcommands = []*cobra.Command{
+		completionCmd,
 		versionCmd,
 		system.SystemCmd,
 		pattern.PatternCmd,
@@ -170,15 +171,15 @@ func initConfig() {
 				fmt.Sprintf("Default config file created at %s",
 					utils.DefaultConfigPath,
 				))
-			viper.SetConfigFile(utils.DefaultConfigPath)
 		}
+		viper.SetConfigFile(utils.DefaultConfigPath)
+	}
 
-		viper.AutomaticEnv() // read in environment variables that match
+	viper.AutomaticEnv() // read in environment variables that match
 
-		// If a config file is found, read it in.
-		if err := viper.ReadInConfig(); err == nil {
-			log.Debug("Using config file:", viper.ConfigFileUsed())
-		}
+	// If a config file is found, read it in.
+	if err := viper.ReadInConfig(); err == nil {
+		log.Debug("Using config file:", viper.ConfigFileUsed())
 	}
 }
 

@@ -7,3 +7,8 @@ type ApplicationsAPIResponse struct {
 	TotalCount   uint                 `json:"total_count"`
 	Applications []MesheryApplication `json:"applications"`
 }
+
+type ApplicationSourceTypesAPIResponse struct {
+	ApplicationType     string   `json:"application_type"`
+	SupportedExtensions []string `json:"supported_extensions"`
+}

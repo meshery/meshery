@@ -28,11 +28,11 @@ const dataFetch = (url, options = {}, successFn, errorFn) => {
 
         return result;
       } else {
-        throw res
+        throw res.text()
       }
 
     }).then(successFn)
-    .catch((res) => res.text().then(errorFn));
+    .catch((e) => e.then(text => errorFn(text)));
 }
 
 /**

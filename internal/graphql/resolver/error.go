@@ -25,6 +25,9 @@ const (
 	ErrInvalidOAMTypeCode                   = "2178"
 	ErrKubectlDescribeCode                  = "2179"
 	ErrEmptyCurrentK8sContextCode           = "2180"
+	ErrConfigurationPatternsCode            = "2242"
+	ErrConfigurationApplicationsCode        = "2243"
+	ErrConfigurationFiltersCode             = "2244"
 )
 
 var (
@@ -107,4 +110,16 @@ func ErrKubectlDescribe(err error) error {
 		[]string{err.Error(), "invalid kubernetes resource type or couldn't find the specified resource"},
 		nil, nil,
 	)
+}
+
+func ErrPatternsSubscription(err error) error {
+	return errors.New(ErrConfigurationPatternsCode, errors.Alert, []string{"Configuration Subscription failed", err.Error()}, []string{"GraphQL subscription for Patterns stopped"}, []string{"Could be a network issue"}, []string{"Confirm that Meshery Server is reachable from your browser."})
+}
+
+func ErrApplicationsSubscription(err error) error {
+	return errors.New(ErrConfigurationApplicationsCode, errors.Alert, []string{"Configuration Subscription failed", err.Error()}, []string{"GraphQL subscription for Applications stopped"}, []string{"Could be a network issue"}, []string{"Confirm that Meshery Server is reachable from your browser."})
+}
+
+func ErrFiltersSubscription(err error) error {
+	return errors.New(ErrConfigurationFiltersCode, errors.Alert, []string{"Configuration Subscription failed", err.Error()}, []string{"GraphQL subscription for Filters stopped"}, []string{"Could be a network issue"}, []string{"Confirm that Meshery Server is reachable from your browser."})
 }
