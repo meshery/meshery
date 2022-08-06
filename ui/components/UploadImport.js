@@ -94,7 +94,6 @@ function UploadImport(props) {
     <>
       <label htmlFor="url-upload-button">
         <Dialog
-          data-cy="import-button"
           open={open}
           onClose={handleClose}>
 

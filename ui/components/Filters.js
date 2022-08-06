@@ -722,7 +722,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
                 onClick={handleUploadImport}
                 style={{ marginRight : "2rem" }}
               >
-                <PublishIcon className={classes.addIcon} />
+                <PublishIcon className={classes.addIcon} data-cy="import-button"/>
               Import Filters
               </Button>
             </div>
@@ -730,7 +730,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
           }
           {!selectedFilter.show &&
           <div className={classes.viewSwitchButton}>
-            <ViewSwitch view={viewType} changeView={setViewType} />
+            <ViewSwitch data-cy="table-view" view={viewType} changeView={setViewType} />
           </div>
           }
         </div>
