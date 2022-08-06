@@ -14,7 +14,7 @@
 
 const animatedTerminal = [];
 
-/////function to check if element is in view
+// Function to check if element is in view
 
 function inView(containerName) {
     var element = document.getElementById(containerName);
