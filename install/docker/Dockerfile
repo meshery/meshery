@@ -9,7 +9,7 @@ WORKDIR /github.com/meshery/meshery
 ADD . .
 RUN go clean -modcache; cd cmd; GOPROXY=https://proxy.golang.org GOSUMDB=off go build -ldflags="-w -s -X main.globalTokenForAnonymousResults=$TOKEN -X main.version=$GIT_VERSION -X main.commitsha=$GIT_COMMITSHA -X main.releasechannel=$RELEASE_CHANNEL" -tags draft -a -o /meshery .
 
-FROM node:16 as ui
+FROM node:lts-slim as ui
 ADD ui ui
 RUN cd ui; npm install --only=production; npm run build && npm run export; mv out /
 
@@ -61,14 +61,6 @@ RUN mkdir -p /seed_content/applications && cd /seed_content/applications \
 #RUN git clone https://github.com/layer5io/nighthawk-go
 #RUN cd nighthawk-go/apinighthawk/bin && chmod +x ./nighthawk_client
 
-FROM alpine:3.15.3 as jsonschema-util
-RUN apk add --no-cache curl
-WORKDIR /
-RUN UTIL_VERSION=$(curl -L -s https://api.github.com/repos/layer5io/kubeopenapi-jsonschema/releases/latest | \
-	grep tag_name | sed "s/ *\"tag_name\": *\"\\(.*\\)\",*/\\1/" | \
-	grep -v "rc\.[0-9]$"| head -n 1 ) \
-	&& curl -L https://github.com/layer5io/kubeopenapi-jsonschema/releases/download/${UTIL_VERSION}/kubeopenapi-jsonschema -o kubeopenapi-jsonschema \
-	&& chmod +x /kubeopenapi-jsonschema
 
 FROM frolvlad/alpine-glibc:alpine-3.13_glibc-2.32
 #RUN apt-get update; apt-get install -y ca-certificates; update-ca-certificates && rm -rf /var/lib/apt/lists/*
@@ -87,7 +79,6 @@ COPY --from=wrk2 /wrk2/wrk /usr/local/bin
 COPY --from=seed_content /seed_content /home/appuser/.meshery/seed_content
 COPY --from=layer5/getnighthawk:latest /usr/local/bin/nighthawk_service /app/cmd/
 COPY --from=layer5/getnighthawk:latest /usr/local/bin/nighthawk_output_transform /app/cmd/
-COPY --from=jsonschema-util /kubeopenapi-jsonschema /home/appuser/.meshery/bin/kubeopenapi-jsonschema
 
 RUN mkdir -p /home/appuser/.meshery/config; chown -R appuser /home/appuser/
 USER appuser

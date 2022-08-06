@@ -24,7 +24,6 @@ import (
 	"github.com/spf13/viper"
 
 	"github.com/sirupsen/logrus"
-
 	"github.com/vmihailenco/taskq/v3"
 	"github.com/vmihailenco/taskq/v3/memqueue"
 )
@@ -234,19 +233,24 @@ func main() {
 
 		PrometheusClient:         models.NewPrometheusClient(),
 		PrometheusClientForQuery: models.NewPrometheusClientWithHTTPClient(&http.Client{Timeout: time.Second}),
+
+		ConfigurationChannel: models.NewConfigurationHelper(),
 	}
 
-	h := handlers.NewHandlerInstance(hc, meshsyncCh, log, brokerConn)
+	operatorDeploymentConfig := models.NewOperatorDeploymentConfig(adapterTracker)
+	mctrlHelper := models.NewMesheryControllersHelper(log, operatorDeploymentConfig, dbHandler)
+	k8sComponentsRegistrationHelper := models.NewComponentsRegistrationHelper(log)
+
+	h := handlers.NewHandlerInstance(hc, meshsyncCh, log, brokerConn, k8sComponentsRegistrationHelper, mctrlHelper, dbHandler)
 
 	b := broadcast.NewBroadcaster(100)
 	defer b.Close()
 
 	g := graphql.New(graphql.Options{
-		Config:          hc,
-		Logger:          log,
-		MeshSyncChannel: meshsyncCh,
-		BrokerConn:      brokerConn,
-		Broadcaster:     b,
+		Config:      hc,
+		Logger:      log,
+		BrokerConn:  brokerConn,
+		Broadcaster: b,
 	})
 
 	gp := graphql.NewPlayground(graphql.Options{
@@ -259,7 +263,7 @@ func main() {
 	signal.Notify(c, os.Interrupt)
 
 	go func() {
-		logrus.Infof("Meshery Server listening on: %d", port)
+		logrus.Infof("Meshery Server listening on :%d", port)
 		if err := r.Run(); err != nil {
 			logrus.Fatalf("ListenAndServe Error: %v", err)
 		}

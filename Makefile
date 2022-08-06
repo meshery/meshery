@@ -16,6 +16,19 @@ include install/Makefile.core.mk
 include install/Makefile.show-help.mk
 
 #-----------------------------------------------------------------------------
+# Dependencies
+#-----------------------------------------------------------------------------
+#.PHONY: dep-check
+#.SILENT: dep-check
+
+dep-check:
+ifeq ($(shell which go$(GOVERSION); echo $$?),1)
+	@echo "Dependency missing: go$(GOVERSION). Ensure 'go$(GOVERSION)' (specifically this version) is installed and available in your 'PATH'"
+# Uncomment to force error and stop. Careful that ui builds may fail, too.
+# $(error Dependency missing: go$(GOVERSION). Ensure 'go$(GOVERSION)' (specifically this version) is installed and available in your 'PATH')
+endif
+
+#-----------------------------------------------------------------------------
 # Docker-based Builds
 #-----------------------------------------------------------------------------
 .PHONY: docker-build docker-local-cloud docker-cloud
@@ -24,7 +37,6 @@ docker-build:
 	# `make docker` builds Meshery inside of a multi-stage Docker container.
 	# This method does NOT require that you have Go, NPM, etc. installed locally.
 	DOCKER_BUILDKIT=1 docker build -f install/docker/Dockerfile -t layer5/meshery --build-arg TOKEN=$(GLOBAL_TOKEN) --build-arg GIT_COMMITSHA=$(GIT_COMMITSHA) --build-arg GIT_VERSION=$(GIT_VERSION) --build-arg RELEASE_CHANNEL=${RELEASE_CHANNEL} .
-
 
 ## Meshery Cloud for user authentication.
 ## Runs Meshery in a container locally and points to locally-running
@@ -70,21 +82,20 @@ run-local: server-local error
 ## and point to (expect) a locally running Meshery Cloud or other Provider(s)
 ## for user authentication (requires go${GOVERSION}).
 server-local:
-	cd cmd; go$(GOVERSION) clean; rm meshery; go$(GOVERSION) mod tidy; \
-	go$(GOVERSION) build -ldflags="-w -s -X main.version=${GIT_VERSION} -X main.commitsha=${GIT_COMMITSHA} -X main.releasechannel=${RELEASE_CHANNEL}" -tags draft -a -o meshery; \
+	cd cmd; go$(GOVERSION) clean; go$(GOVERSION) mod tidy; \
+	BUILD="$(GIT_VERSION)" \
 	PROVIDER_BASE_URLS=$(REMOTE_PROVIDER_LOCAL) \
 	PORT=9081 \
 	DEBUG=true \
 	ADAPTER_URLS=$(ADAPTER_URLS) \
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
-	./meshery; \
-	cd ..
-
+	go$(GOVERSION) run main.go
+	
 run-fast: 
 	## "DEPRECATED: This target is deprecated. Use `make server`.
 
 ## Build and run Meshery Server on your local machine (requires go${GOVERSION}).
-server:
+server: dep-check
 	cd cmd; go$(GOVERSION) mod tidy; \
 	BUILD="$(GIT_VERSION)" \
 	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
@@ -136,6 +147,9 @@ proto-build:
 ## Analyze error codes
 error:
 	go run github.com/layer5io/meshkit/cmd/errorutil -d . analyze -i ./helpers -o ./helpers --skip-dirs mesheryctl
+
+## Build Meshery UI; Build and run Meshery Server on your local machine (requires go${GOVERSION}).
+ui-server: ui-meshery-build server
 
 #-----------------------------------------------------------------------------
 # Meshery UI Native Builds
@@ -223,12 +237,12 @@ helm-docs: helm-operator-docs helm-meshery-docs
 
 ## Generate Meshery Operator Helm Chart documentation in markdown format.
 helm-operator-docs:
-	GO111MODULE=on go install github.com/norwoodj/helm-docs/cmd/helm-docs 
+	GO111MODULE=on go get github.com/norwoodj/helm-docs/cmd/helm-docs 
 	$(GOPATH)/bin/helm-docs -c install/kubernetes/helm/meshery-operator
 
 ## Generate Meshery Server and Adapters Helm Chart documentation in markdown format.
 helm-meshery-docs:
-	GO111MODULE=on go install github.com/norwoodj/helm-docs/cmd/helm-docs 
+	GO111MODULE=on go get github.com/norwoodj/helm-docs/cmd/helm-docs 
 	$(GOPATH)/bin/helm-docs -c install/kubernetes/helm/meshery
 
 ## Lint all of Meshery's Helm Charts

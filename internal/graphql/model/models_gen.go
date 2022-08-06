@@ -19,6 +19,30 @@ type AddonStatusInput struct {
 	TargetStatus Status    `json:"targetStatus"`
 }
 
+type ApplicationPage struct {
+	Page         int                  `json:"page"`
+	PageSize     int                  `json:"page_size"`
+	TotalCount   int                  `json:"total_count"`
+	Applications []*ApplicationResult `json:"applications"`
+}
+
+type ApplicationResult struct {
+	ID              string      `json:"id"`
+	Name            string      `json:"name"`
+	ApplicationFile string      `json:"application_file"`
+	Type            *NullString `json:"type"`
+	UserID          string      `json:"user_id"`
+	Location        *Location   `json:"location"`
+	CreatedAt       *string     `json:"created_at"`
+	UpdatedAt       *string     `json:"updated_at"`
+}
+
+type ConfigurationPage struct {
+	Applications *ApplicationPage   `json:"applications"`
+	Patterns     *PatternPageResult `json:"patterns"`
+	Filters      *FilterPage        `json:"filters"`
+}
+
 type Container struct {
 	ControlPlaneMemberName string           `json:"controlPlaneMemberName"`
 	ContainerName          string           `json:"containerName"`
@@ -69,9 +93,45 @@ type Error struct {
 	Description string `json:"description"`
 }
 
+type FilterPage struct {
+	Page       int             `json:"page"`
+	PageSize   int             `json:"page_size"`
+	TotalCount int             `json:"total_count"`
+	Filters    []*FilterResult `json:"filters"`
+}
+
+type FilterResult struct {
+	ID         string    `json:"id"`
+	Name       string    `json:"name"`
+	FilterFile string    `json:"filter_file"`
+	UserID     string    `json:"user_id"`
+	Location   *Location `json:"location"`
+	CreatedAt  *string   `json:"created_at"`
+	UpdatedAt  *string   `json:"updated_at"`
+}
+
 type KctlDescribeDetails struct {
 	Describe *string `json:"describe"`
 	Ctxid    *string `json:"ctxid"`
+}
+
+type Location struct {
+	Branch *string `json:"branch"`
+	Host   *string `json:"host"`
+	Path   *string `json:"path"`
+	Type   *string `json:"type"`
+}
+
+type MeshSyncEvent struct {
+	Type      string      `json:"type"`
+	Object    interface{} `json:"object"`
+	ContextID string      `json:"contextId"`
+}
+
+type MesheryControllersStatusListItem struct {
+	ContextID  string                  `json:"contextId"`
+	Controller MesheryController       `json:"controller"`
+	Status     MesheryControllerStatus `json:"status"`
 }
 
 type MesheryResult struct {
@@ -91,6 +151,11 @@ type MesheryResult struct {
 
 type NameSpace struct {
 	Namespace string `json:"namespace"`
+}
+
+type NullString struct {
+	String string `json:"String"`
+	Valid  bool   `json:"Valid"`
 }
 
 type OAMCapability struct {
@@ -142,13 +207,6 @@ type PageFilter struct {
 	To       *string `json:"to"`
 }
 
-type PatternLocation struct {
-	Branch *string `json:"branch"`
-	Host   *string `json:"host"`
-	Path   *string `json:"path"`
-	Type   *string `json:"type"`
-}
-
 type PatternPageResult struct {
 	Page       int              `json:"page"`
 	PageSize   int              `json:"page_size"`
@@ -157,15 +215,15 @@ type PatternPageResult struct {
 }
 
 type PatternResult struct {
-	ID          string           `json:"id"`
-	Name        string           `json:"name"`
-	UserID      string           `json:"user_id"`
-	Location    *PatternLocation `json:"location"`
-	PatternFile string           `json:"pattern_file"`
-	CanSupport  bool             `json:"canSupport"`
-	Errmsg      *string          `json:"errmsg"`
-	CreatedAt   *string          `json:"created_at"`
-	UpdatedAt   *string          `json:"updated_at"`
+	ID          string    `json:"id"`
+	Name        string    `json:"name"`
+	UserID      string    `json:"user_id"`
+	Location    *Location `json:"location"`
+	PatternFile string    `json:"pattern_file"`
+	CanSupport  bool      `json:"canSupport"`
+	Errmsg      *string   `json:"errmsg"`
+	CreatedAt   *string   `json:"created_at"`
+	UpdatedAt   *string   `json:"updated_at"`
 }
 
 type PerfPageProfiles struct {
@@ -277,6 +335,94 @@ func (e *MeshType) UnmarshalGQL(v interface{}) error {
 }
 
 func (e MeshType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type MesheryController string
+
+const (
+	MesheryControllerBroker   MesheryController = "BROKER"
+	MesheryControllerOperator MesheryController = "OPERATOR"
+	MesheryControllerMeshsync MesheryController = "MESHSYNC"
+)
+
+var AllMesheryController = []MesheryController{
+	MesheryControllerBroker,
+	MesheryControllerOperator,
+	MesheryControllerMeshsync,
+}
+
+func (e MesheryController) IsValid() bool {
+	switch e {
+	case MesheryControllerBroker, MesheryControllerOperator, MesheryControllerMeshsync:
+		return true
+	}
+	return false
+}
+
+func (e MesheryController) String() string {
+	return string(e)
+}
+
+func (e *MesheryController) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = MesheryController(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid MesheryController", str)
+	}
+	return nil
+}
+
+func (e MesheryController) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type MesheryControllerStatus string
+
+const (
+	MesheryControllerStatusDeployed    MesheryControllerStatus = "DEPLOYED"
+	MesheryControllerStatusNotdeployed MesheryControllerStatus = "NOTDEPLOYED"
+	MesheryControllerStatusDeploying   MesheryControllerStatus = "DEPLOYING"
+	MesheryControllerStatusUnkown      MesheryControllerStatus = "UNKOWN"
+)
+
+var AllMesheryControllerStatus = []MesheryControllerStatus{
+	MesheryControllerStatusDeployed,
+	MesheryControllerStatusNotdeployed,
+	MesheryControllerStatusDeploying,
+	MesheryControllerStatusUnkown,
+}
+
+func (e MesheryControllerStatus) IsValid() bool {
+	switch e {
+	case MesheryControllerStatusDeployed, MesheryControllerStatusNotdeployed, MesheryControllerStatusDeploying, MesheryControllerStatusUnkown:
+		return true
+	}
+	return false
+}
+
+func (e MesheryControllerStatus) String() string {
+	return string(e)
+}
+
+func (e *MesheryControllerStatus) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = MesheryControllerStatus(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid MesheryControllerStatus", str)
+	}
+	return nil
+}
+
+func (e MesheryControllerStatus) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 

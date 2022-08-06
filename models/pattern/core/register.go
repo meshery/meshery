@@ -429,7 +429,7 @@ type crdhelper struct {
 }
 
 // GetK8Components returns all the generated definitions and schemas for available api resources
-func GetK8Components(ctxt context.Context, config []byte, ctx string) (*manifests.Component, error) {
+func GetK8Components(ctxt context.Context, config []byte) (*manifests.Component, error) {
 	cli, err := kubernetes.New(config)
 	if err != nil {
 		return nil, ErrGetK8sComponents(err)
@@ -578,7 +578,8 @@ func GetK8Components(ctxt context.Context, config []byte, ctx string) (*manifest
 			parsedManifest := cuectx.BuildExpr(cueParsedManExpr)
 			definitions := parsedManifest.LookupPath(cue.ParsePath("definitions"))
 
-			b, err = manifests.ResolveReferences(b, definitions)
+			referenceResolver := manifests.ResolveOpenApiRefs{}
+			b, err = referenceResolver.ResolveReferences(b, definitions)
 			if err != nil {
 				return
 			}

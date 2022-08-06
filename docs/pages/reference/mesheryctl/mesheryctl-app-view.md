@@ -73,6 +73,11 @@ mesheryctl app view --all
 </div>
 </pre>
 
+## Screenshots
+
+Usage of mesheryctl app view
+![app-view-usage](../../../../docs/assets/img/mesheryctl/app-view.png)
+
 ## See Also
 
 Go back to [command reference index](/reference/mesheryctl/) 

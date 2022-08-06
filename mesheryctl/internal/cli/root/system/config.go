@@ -334,7 +334,7 @@ var configCmd = &cobra.Command{
 Example: mesheryctl system config eks
 Description: Configure the Kubernetes cluster used by Meshery.`
 
-		if len(args) ==0 {
+		if len(args) == 0 {
 			return fmt.Errorf("accepts single argument, received %d\n\n%v", len(args), errMsg)
 		}
 		return nil

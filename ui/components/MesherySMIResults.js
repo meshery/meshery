@@ -30,6 +30,7 @@ class MesherySMIResults extends Component {
       smi_search : '',
       smi_sortOrder : '',
       smi_results : [],
+      count : 0,
     };
   }
 
@@ -40,7 +41,7 @@ class MesherySMIResults extends Component {
       this.fetchSMIResults(smi_page, smi_pageSize, smi_search, smi_sortOrder);
     }
 
-    fetchSMIResults= ( page, pageSize, search, sortOrder) => {
+    fetchSMIResults = ( page, pageSize, search, sortOrder) => {
       const self = this;
       let query = '';
       if (typeof search === 'undefined' || search === null) {
@@ -56,8 +57,10 @@ class MesherySMIResults extends Component {
         credentials : 'include', }, (result) => {
         if (typeof result !== 'undefined' && result.results) {
           self.setState({ smi_results : result });
+          self.setState({ count : result?.total_count })
+          self.setState({ smi_pageSize : result?.page_size })
         }
-      }, console.log('Could not fetch SMI results.'));
+      }, () => self.handleError('Could not fetch SMI results.'));
     }
 
     handleError = (error) => {
@@ -88,11 +91,11 @@ class MesherySMIResults extends Component {
     render() {
       const self = this;
       const { classes ,user } = this.props;
-      const { smi_pageSize, smi_results } = this.state;
+      const { smi_pageSize, smi_results, count } = this.state;
 
       const smi_resultsForDisplay = [];
-      if (smi_results&&smi_results.results) {
-        smi_results.results.map((val) => {
+      if (smi_results&&smi_results?.results) {
+        smi_results?.results?.map((val) => {
           smi_resultsForDisplay.push([val.id ,val.date,val.mesh_name,val.mesh_version,val.passing_percentage,val.status])
         })
       }
@@ -101,7 +104,6 @@ class MesherySMIResults extends Component {
         { name : 'ID',
           label : 'ID',
           options : {
-            filter : false,
             sort : true,
             searchable : true,
             customHeadRender : ({ index, ...column }) => {
@@ -121,7 +123,6 @@ class MesherySMIResults extends Component {
         { name : 'Date',
           label : 'Date',
           options : {
-            filter : true,
             sort : true,
             searchable : true,
             customHeadRender : ({ index, ...column }) => {
@@ -139,7 +140,6 @@ class MesherySMIResults extends Component {
         { name : 'Service Mesh',
           label : 'Service Mesh',
           options : {
-            filter : true,
             sort : true,
             searchable : true,
             customHeadRender : ({ index, ...column }) => {
@@ -154,7 +154,6 @@ class MesherySMIResults extends Component {
         { name : 'Service Mesh Version',
           label : 'Service Mesh Version',
           options : {
-            filter : true,
             sort : true,
             searchable : true,
             customHeadRender : ({ index, ...column }) => {
@@ -169,7 +168,6 @@ class MesherySMIResults extends Component {
         { name : '% Passed',
           label : '% Passed',
           options : {
-            filter : true,
             sort : true,
             searchable : true,
             customHeadRender : ({ index, ...column }) => {
@@ -184,7 +182,6 @@ class MesherySMIResults extends Component {
         { name : 'status',
           label : 'Status',
           options : {
-            filter : true,
             sort : true,
             searchable : true,
             customHeadRender : ({ index, ...column }) => {
@@ -202,9 +199,11 @@ class MesherySMIResults extends Component {
       const smi_options = {
         sort : !(user && user.user_id === 'meshery'),
         search : !(user && user.user_id === 'meshery'),
-        filterType : 'textField',
+        filter : false,
         expandableRows : true,
         selectableRows : false,
+        serverSide : true,
+        count,
         rowsPerPage : smi_pageSize,
         rowsPerPageOptions : [10, 20, 25],
         fixedHeader : true,
@@ -212,7 +211,7 @@ class MesherySMIResults extends Component {
         download : false,
         renderExpandableRow : (rowData, rowMeta) => {
           const column = ["Specification","Assertions", "Time","Version", "Capability", "Result", "Reason"]
-          const data = smi_results.results[rowMeta.dataIndex].more_details.map((val) => {
+          const data = smi_results?.results[rowMeta.dataIndex]?.more_details?.map((val) => {
             return [val.smi_specification,val.assertions,val.time,val.smi_version,val.capability,val.status,val.reason]
           })
           const colSpan = rowData.length + 1
@@ -227,9 +226,9 @@ class MesherySMIResults extends Component {
                       </TableRow>
                     </TableHead>
                     <TableBody>
-                      {data.map((row) => (
+                      {data?.map((row) => (
                         <TableRow >
-                          {row.map(val => {
+                          {row?.map(val => {
                             if (val && val.match(/[0-9]+m[0-9]+.+[0-9]+s/i)!=null) {
                               const time = val.split(/m|s/)
                               return <TableCell colSpan={colSpan}>{time[0]+"m " + parseFloat(time[1]).toFixed(1) + "s"}</TableCell>
@@ -292,7 +291,14 @@ class MesherySMIResults extends Component {
       }
 
       return (
-        <MUIDataTable title={<div className={classes.tableHeader}>Service Mesh Interface Conformance Results</div>} data={smi_resultsForDisplay} columns={smi_columns} options={smi_options} />
+        <>
+          <MUIDataTable
+            title={<div className={classes.tableHeader}>Service Mesh Interface Conformance Results</div>}
+            data={smi_resultsForDisplay}
+            columns={smi_columns}
+            options={smi_options}
+          />
+        </>
       );
     }
 }

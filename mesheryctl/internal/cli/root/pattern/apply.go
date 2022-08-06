@@ -8,6 +8,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"path"
 	"strconv"
 	"strings"
 
@@ -35,6 +36,10 @@ mesheryctl pattern apply -f [file | URL]
 
 // deploy a saved pattern
 mesheryctl pattern apply [pattern-name]
+
+! Refer below image link for usage
+* Usage of mesheryctl pattern apply
+# ![pattern-apply-usage](../../../../docs/assets/img/mesheryctl/patternApply.png)
 	`,
 	Args: cobra.MinimumNArgs(0),
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -106,6 +111,7 @@ mesheryctl pattern apply [pattern-name]
 				if !skipSave {
 					jsonValues, err := json.Marshal(map[string]interface{}{
 						"pattern_data": map[string]interface{}{
+							"name":         path.Base(file),
 							"pattern_file": text,
 						},
 						"save": true,

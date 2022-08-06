@@ -13,7 +13,7 @@ import { updateProgress, updateK8SConfig } from "../../../lib/store";
 import AdapterChip from "./AdapterChip"
 import { deleteKubernetesConfig, pingKubernetes } from "../helpers/kubernetesHelpers"
 import {
-  successHandlerGenerator, errorHandlerGenerator, closeButtonForSnackbarAction, showProgress, hideProgress
+  successHandlerGenerator, errorHandlerGenerator, closeButtonForSnackbarAction
 } from "../helpers/common"
 
 const styles = theme => ({
@@ -59,7 +59,7 @@ const KubernetesDataPanel = ({
 
 
   const handleKubernetesDelete = () => {
-    showProgress()
+    // showProgress()
 
     const handlerCb = () => resetKubernetesConfig()
 
@@ -70,10 +70,10 @@ const KubernetesDataPanel = ({
   }
 
   const handleKubernetesClick = () => {
-    showProgress()
+    // showProgress()
     pingKubernetes(
-      successHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Kubernetes succesfully pinged", () => hideProgress()),
-      errorHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Kubernetes not pinged successfully", () => hideProgress())
+      successHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Kubernetes succesfully pinged"/*, () => hideProgress()*/),
+      errorHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Kubernetes not pinged successfully"/*, () => hideProgress()*/)
     )
 
   }

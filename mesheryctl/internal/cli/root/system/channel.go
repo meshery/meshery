@@ -173,7 +173,7 @@ var switchCmd = &cobra.Command{
 // Switch between release channels
 mesheryctl system channel switch [stable|stable-version|edge|edge-version]
 	`,
-	Args : func(_ *cobra.Command, args []string) error {
+	Args: func(_ *cobra.Command, args []string) error {
 		const errMsg = `Usage: mesheryctl system channel switch [stable|stable-version|edge|edge-version]
 Example: mesheryctl system channel switch stable`
 

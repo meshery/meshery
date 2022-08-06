@@ -1,13 +1,17 @@
 package app
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
 	"os"
 
+	"github.com/asaskevich/govalidator"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/layer5io/meshery/models"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -16,7 +20,7 @@ import (
 var offboardCmd = &cobra.Command{
 	Use:   "offboard",
 	Short: "Offboard application",
-	Long:  `Offboard application will trigger deletion of the application file`,
+	Long:  `Offboard application will trigger undeploy of application`,
 	Args:  cobra.MinimumNArgs(0),
 	Example: `
 // Offboard application by providing file path
@@ -31,6 +35,9 @@ mesheryctl app offboard -f [filepath]
 		if err != nil {
 			return errors.Wrap(err, "error processing config")
 		}
+
+		deployURL := mctlCfg.GetBaseMesheryURL() + "/api/application/deploy"
+		patternURL := mctlCfg.GetBaseMesheryURL() + "/api/pattern"
 
 		// Read file
 		fileReader, err := os.Open(file)
@@ -50,11 +57,14 @@ mesheryctl app offboard -f [filepath]
 		}
 
 		defer res.Body.Close()
-		body, err := io.ReadAll(res.Body)
+		body, err = io.ReadAll(res.Body)
 		if err != nil {
 			return err
 		}
 
+		if res.StatusCode == 200 {
+			utils.Log.Info("app successfully offboarded")
+		}
 		utils.Log.Info(string(body))
 
 		return nil

@@ -11,7 +11,7 @@ describe('User Preferences', () => {
     });
 
     it('deactivates "Send Anonymous Usage Statistics"', () => {
-      cy.intercept('POST', '/api/user/prefs').as('postUserStats');
+      cy.intercept('POST', '/api/user/prefs?contexts=all').as('postUserStats');
 
       cy.get('[data-cy="UsageStatsPreference"]').click();
       cy.wait('@postUserStats');
@@ -19,7 +19,7 @@ describe('User Preferences', () => {
     });
 
     it('activates "Send Anonymous Usage Statistics"', () => {
-      cy.intercept('POST', '/api/user/prefs').as('postUserStats');
+      cy.intercept('POST', '/api/user/prefs?contexts=all').as('postUserStats');
 
       cy.get('[data-cy="UsageStatsPreference"]').click();
       cy.wait('@postUserStats');
@@ -27,7 +27,7 @@ describe('User Preferences', () => {
     });
 
     it('deactivates "Send Anonymous Performance Results"', () => {
-      cy.intercept('POST', '/api/user/prefs').as('postUserStats');
+      cy.intercept('POST', '/api/user/prefs?contexts=all').as('postUserStats');
 
       cy.get('[data-cy="PerfResultPreference"]').click();
       cy.wait('@postUserStats');
@@ -35,7 +35,7 @@ describe('User Preferences', () => {
     });
 
     it('activates "Send Anonymous Performance Results"', () => {
-      cy.intercept('POST', '/api/user/prefs').as('postUserStats');
+      cy.intercept('POST', '/api/user/prefs?contexts=all').as('postUserStats');
 
       cy.get('[data-cy="PerfResultPreference"]').click();
       cy.wait('@postUserStats');

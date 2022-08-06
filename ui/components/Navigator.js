@@ -637,12 +637,11 @@ class Navigator extends React.Component {
     const { classes } = this.props;
 
     const content = (
-      <div className={classNames(classes.link)} onClick={() => this.onClickCallback(onClickCallback)}>
+      <div className={classNames(classes.link)} onClick={() => this.onClickCallback(onClickCallback)} data-cy={name}>
         <Tooltip
           title={name}
           placement="right"
           disableFocusListener={!drawerCollapsed}
-          disableHoverListener={!drawerCollapsed}
           disableTouchListener={!drawerCollapsed}
         >
           <ListItemIcon className={classes.listIcon}>
@@ -979,10 +978,13 @@ class Navigator extends React.Component {
     const { build, outdated, release_channel } = this.state.versionDetail;
 
     // If the version is outdated then no matter what the
-    // release channel is, specify the build
-    if (outdated) return `${release_channel}-${build}`;
+    // release channel is, specify the build which gets covered in the default case
 
-    if (release_channel === "edge") return `${release_channel}-latest`;
+    if (release_channel === "edge" && outdated) return `${build}`;
+    //if it is not outdated which means running on latest, return edge-latest
+
+    if (release_channel === "edge" && !outdated) return `${release_channel}-latest`;
+
     if (release_channel === "stable") return `${release_channel}-${build}`;
 
     return `${build}`;

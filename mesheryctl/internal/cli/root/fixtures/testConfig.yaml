@@ -1,0 +1,39 @@
+contexts:
+    local:
+        endpoint: http://localhost:9081
+        token: Default
+        platform: kubernetes
+        components:
+            - meshery-app-mesh
+            - meshery-istio
+            - meshery-linkerd
+            - meshery-consul
+            - meshery-nsm
+            - meshery-kuma
+            - meshery-osm
+            - meshery-traefik-mesh
+            - meshery-nginx-sm
+            - meshery-cilium
+        channel: stable
+        version: latest
+    local2:
+        endpoint: http://localhost:9081
+        token: Default
+        platform: kubernetes
+        components:
+            - meshery-app-mesh
+            - meshery-istio
+            - meshery-linkerd
+            - meshery-consul
+            - meshery-nsm
+            - meshery-kuma
+            - meshery-osm
+            - meshery-traefik-mesh
+            - meshery-nginx-sm
+            - meshery-cilium
+        channel: edge
+        version: latest
+current-context: local2
+tokens:
+    - name: Default
+      location: auth.json
