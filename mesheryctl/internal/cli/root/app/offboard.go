@@ -20,7 +20,7 @@ import (
 var offboardCmd = &cobra.Command{
 	Use:   "offboard",
 	Short: "Offboard application",
-	Long:  `Offboard application will trigger deletion of the application file`,
+	Long:  `Offboard application will trigger undeploy of application`,
 	Args:  cobra.MinimumNArgs(0),
 	Example: `
 // Offboard application by providing file path
@@ -53,7 +53,7 @@ mesheryctl app offboard -f [filepath]
 
 		// Convert App File into Pattern File
 		jsonValues, _ := json.Marshal(map[string]interface{}{
-			"k8s_manifest": appFile,
+			"K8sManifest": appFile,
 		})
 
 		req, err = utils.NewRequest("POST", patternURL, bytes.NewBuffer(jsonValues))

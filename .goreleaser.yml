@@ -14,7 +14,7 @@ builds:
 
   env:
     - CGO_ENABLED=0
-    
+
   ldflags:
     - -s -w -X github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants.version={{.Tag}}
     - -s -w -X github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants.commitsha={{.ShortCommit}}
@@ -35,7 +35,7 @@ builds:
     - amd64
     - arm
     - arm64
- 
+
   # List of combinations of GOOS + GOARCH + GOARM to ignore.
   ignore:
       - goos: windows
@@ -50,10 +50,10 @@ archives:
     windows: Windows
     386: i386
     amd64: x86_64
-  format: zip
-#   format_overrides:
-#     - goos: windows
-#       format: zip
+  format: tar.gz
+  format_overrides:
+    - goos: windows
+      format: zip
   # files:
   #   - setup_scripts/*
 
@@ -82,7 +82,7 @@ brews:
   tap:
     owner: meshery
     name: homebrew-tap
-  
+
   # Template for the url which is determined by the given Token (github or gitlab)
   # Default for github is "https://github.com/<repo_owner>/<repo_name>/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
   # Git author used to commit to the repository.
