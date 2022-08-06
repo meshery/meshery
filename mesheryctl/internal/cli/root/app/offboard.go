@@ -31,6 +31,10 @@ mesheryctl app offboard -f [filepath]
 			const errMsg=`Usage: mesheryctl app offboard -f [filepath]`
 			return fmt.Errorf("no file path provided \n\n%v", errMsg)
 		} 
+		var req *http.Request
+		var err error
+		client := &http.Client{}
+
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			return errors.Wrap(err, "error processing config")
@@ -40,13 +44,54 @@ mesheryctl app offboard -f [filepath]
 		patternURL := mctlCfg.GetBaseMesheryURL() + "/api/pattern"
 
 		// Read file
-		fileReader, err := os.Open(file)
-		if err != nil {
-			return errors.New(utils.AppError(fmt.Sprintf("failed to read file %s", file)))
+		if !govalidator.IsURL(file) {
+			content, err := os.ReadFile(file)
+			if err != nil {
+				return errors.New(utils.SystemError(fmt.Sprintf("failed to read file %s", file)))
+			}
+
+			appFile = string(content)
+		} else {
+			utils.Log.Info("URLs are not currently supported")
 		}
 
-		client := &http.Client{}
-		req, err := utils.NewRequest("DELETE", mctlCfg.GetBaseMesheryURL()+"/api/application/deploy", fileReader)
+		// Convert App File into Pattern File
+		jsonValues, _ := json.Marshal(map[string]interface{}{
+			"K8sManifest": appFile,
+		})
+
+		req, err = utils.NewRequest("POST", patternURL, bytes.NewBuffer(jsonValues))
+		if err != nil {
+			return err
+		}
+
+		resp, err := client.Do(req)
+		if err != nil {
+			return err
+		}
+		defer resp.Body.Close()
+
+		var response []*models.MesheryPattern
+		// bad api call
+		if resp.StatusCode != 200 {
+			return errors.Errorf("Response Status Code %d, possible Server Error", resp.StatusCode)
+		}
+
+		body, err := io.ReadAll(resp.Body)
+		if err != nil {
+			return errors.Wrap(err, utils.PerfError("failed to read response body"))
+		}
+
+		err = json.Unmarshal(body, &response)
+		if err != nil {
+			return errors.Wrap(err, "failed to unmarshal response body")
+		}
+
+		utils.Log.Debug("application file converted to pattern file")
+
+		patternFile := response[0].PatternFile
+
+		req, err = utils.NewRequest("DELETE", deployURL, bytes.NewBuffer([]byte(patternFile)))
 		if err != nil {
 			return err
 		}
