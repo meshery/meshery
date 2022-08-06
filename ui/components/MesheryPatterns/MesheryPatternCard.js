@@ -91,20 +91,20 @@ function MesheryPatternCard({
           <div className={classes.bottomPart} >
 
             <div className={classes.cardButtons} >
+
               <Button
                 variant="contained"
+                className={classes.undeployButton}
                 onClick={(ev) =>
-                  genericClickHandler(ev, setSelectedPatterns)
+                  genericClickHandler(ev, handleUnDeploy)
                 }
-                className={classes.testsButton}
               >
-                <Avatar src="/static/img/pattwhite.svg" className={classes.iconPatt} imgProps={{ height : "16px", width : "16px" }} />
-                Design
+                <UndeployIcon fill="#ffffff" className={classes.iconPatt} />
+                <span className={classes.btnText}>Undeploy</span>
               </Button>
 
               <Button
                 variant="contained"
-                color="primary"
                 onClick={(ev) =>
                   genericClickHandler(ev, handleDeploy)
                 }
@@ -116,13 +116,14 @@ function MesheryPatternCard({
 
               <Button
                 variant="contained"
-                className={classes.undeployButton}
+                color="primary"
                 onClick={(ev) =>
-                  genericClickHandler(ev, handleUnDeploy)
+                  genericClickHandler(ev, setSelectedPatterns)
                 }
+                className={classes.testsButton}
               >
-                <UndeployIcon fill="#ffffff" className={classes.iconPatt} />
-                <span className={classes.btnText}>Undeploy</span>
+                <Avatar src="/static/img/pattern_trans.svg" className={classes.iconPatt} imgProps={{ height : "16px", width : "16px" }} />
+                Design
               </Button>
             </div>
           </div>

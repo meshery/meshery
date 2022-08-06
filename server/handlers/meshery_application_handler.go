@@ -321,9 +321,7 @@ func (h *Handler) handleApplicationPOST(
 			return
 		}
 
-		if h.config.ApplicationsChannel != nil {
-			h.config.ApplicationsChannel <- struct{}{}
-		}
+		go h.config.ConfigurationChannel.PublishApplications()
 	}
 
 	byt, err := json.Marshal([]models.MesheryApplication{*mesheryApplication})
@@ -434,9 +432,7 @@ func (h *Handler) DeleteMesheryApplicationHandler(
 		return
 	}
 
-	if h.config.ApplicationsChannel != nil {
-		h.config.ApplicationsChannel <- struct{}{}
-	}
+	go h.config.ConfigurationChannel.PublishApplications()
 	rw.Header().Set("Content-Type", "application/json")
 	fmt.Fprint(rw, string(resp))
 }

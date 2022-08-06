@@ -2109,15 +2109,6 @@
         "probable_cause": "",
         "suggested_remediation": "Make sure the controllers are deployed and their handlers are configured"
       },
-      "2241": {
-        "name": "ErrValidateCode",
-        "code": "2241",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "failed to validate the given value against the schema",
-        "probable_cause": "unable to validate the value against given schema\neither value or schema might not be a valid cue expression",
-        "suggested_remediation": "Make sure that the schema and value provided are valid cue values\nMake sure both schema and value are sent\nMake sure appropriate value types are sent"
-      },
       "2243": {
         "name": "ErrConfigurationApplicationsCode",
         "code": "2243",

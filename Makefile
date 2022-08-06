@@ -237,12 +237,12 @@ helm-docs: helm-operator-docs helm-meshery-docs
 
 ## Generate Meshery Operator Helm Chart documentation in markdown format.
 helm-operator-docs:
-	GO111MODULE=on go install github.com/norwoodj/helm-docs/cmd/helm-docs 
+	GO111MODULE=on go get github.com/norwoodj/helm-docs/cmd/helm-docs 
 	$(GOPATH)/bin/helm-docs -c install/kubernetes/helm/meshery-operator
 
 ## Generate Meshery Server and Adapters Helm Chart documentation in markdown format.
 helm-meshery-docs:
-	GO111MODULE=on go install github.com/norwoodj/helm-docs/cmd/helm-docs 
+	GO111MODULE=on go get github.com/norwoodj/helm-docs/cmd/helm-docs 
 	$(GOPATH)/bin/helm-docs -c install/kubernetes/helm/meshery
 
 ## Lint all of Meshery's Helm Charts

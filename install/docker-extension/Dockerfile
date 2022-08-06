@@ -58,12 +58,12 @@ COPY --from=builder /backend/bin/service /
 COPY docker-compose.yaml .
 COPY metadata.json .
 RUN mkdir -p /mesheryctl/darwin && mkdir -p /mesheryctl/windows && mkdir -p /mesheryctl/linux
-ADD https://github.com/meshery/meshery/releases/download/${GIT_VERSION}/mesheryctl_${GIT_STRIPPED_VERSION}_Darwin_x86_64.zip /mesheryctl/darwin/
+ADD https://github.com/meshery/meshery/releases/download/${GIT_VERSION}/mesheryctl_${GIT_STRIPPED_VERSION}_Darwin_x86_64.tar.gz /mesheryctl/darwin/
 ADD https://github.com/meshery/meshery/releases/download/${GIT_VERSION}/mesheryctl_${GIT_STRIPPED_VERSION}_Windows_x86_64.zip /mesheryctl/windows/
-ADD https://github.com/meshery/meshery/releases/download/${GIT_VERSION}/mesheryctl_${GIT_STRIPPED_VERSION}_Linux_x86_64.zip /mesheryctl/linux/
-RUN unzip /mesheryctl/darwin/mesheryctl_${GIT_STRIPPED_VERSION}_Darwin_x86_64.zip -d /mesheryctl/darwin/
+ADD https://github.com/meshery/meshery/releases/download/${GIT_VERSION}/mesheryctl_${GIT_STRIPPED_VERSION}_Linux_x86_64.tar.gz /mesheryctl/linux/
+RUN tar -xf /mesheryctl/darwin/mesheryctl_${GIT_STRIPPED_VERSION}_Darwin_x86_64.tar.gz -d /mesheryctl/darwin/
 RUN unzip /mesheryctl/windows/mesheryctl_${GIT_STRIPPED_VERSION}_Windows_x86_64.zip -d /mesheryctl/windows/
-RUN unzip /mesheryctl/linux/mesheryctl_${GIT_STRIPPED_VERSION}_Linux_x86_64.zip -d /mesheryctl/linux/
+RUN tar -xf /mesheryctl/linux/mesheryctl_${GIT_STRIPPED_VERSION}_Linux_x86_64.tar.gz -d /mesheryctl/linux/
 COPY meshery-logo-light.svg .
 COPY --from=client-builder /ui/build ui
 EXPOSE 7877/tcp

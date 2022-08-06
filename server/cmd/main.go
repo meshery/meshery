@@ -233,6 +233,8 @@ func main() {
 
 		PrometheusClient:         models.NewPrometheusClient(),
 		PrometheusClientForQuery: models.NewPrometheusClientWithHTTPClient(&http.Client{Timeout: time.Second}),
+
+		ConfigurationChannel: models.NewConfigurationHelper(),
 	}
 
 	operatorDeploymentConfig := models.NewOperatorDeploymentConfig(adapterTracker)
