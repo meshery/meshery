@@ -43,5 +43,5 @@ jobs:
         cd ui
         npm run lint
         cd ..
-        cd provier-ui
+        cd provider-ui
         npm run lint
