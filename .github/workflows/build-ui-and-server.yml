@@ -46,6 +46,7 @@ jobs:
 
           # Optional: show only new issues if it's a pull request. The default value is `false`.
           # only-new-issues: true
+
   build-backend:
     name: Backend Build
     if: github.repository == 'meshery/meshery'
@@ -73,6 +74,7 @@ jobs:
         with:
           name: meshery
           path: ./main
+
   build-ui:
     name: UI Build
     if: github.repository == 'meshery/meshery'
@@ -113,6 +115,7 @@ jobs:
       - name: build provider-ui
         run: |
           make build-provider-ui
+
   tests-ui:
     needs: [build-ui]
     name: UI Integration Tests
@@ -155,6 +158,48 @@ jobs:
           directory: ./provider-ui/coverage/lcov-report
           flags: integrationtests
           fail_ci_if_error: true
+
+  run-lint:
+    name: Eslint Check
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - uses: actions/setup-node@v3.0.0
+      with:
+        node-version: ${{ secrets.NODE_VERSION }}
+
+    - name: Get npm cache directory
+      id: npm-cache-dir
+      run: |
+        cd ui
+        echo "::set-output name=dir::$(npm config get cache)"
+
+    - uses: actions/cache@v3
+      id: npm-cache
+      with:
+        path: ${{ steps.npm-cache-dir.outputs.dir }}
+        key: ${{ runner.os }}-node-${{ hashFiles('ui/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-
+
+    - name: Install modules
+      if: steps.npm-cache.outputs.cache-hit != 'true'
+      run: |
+        cd ui
+        npm i
+        cd ..
+        cd provider-ui
+        npm i
+
+    - name: Run ESLint
+      run: |
+        cd ui
+        npm run lint
+        cd ..
+        cd provider-ui
+        npm run lint
+
   tests-ui-e2e:
     needs: [build-backend, build-ui]
     name: UI End-to-End Tests
