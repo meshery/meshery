@@ -4,6 +4,7 @@ import (
 	"archive/tar"
 	"bytes"
 	"compress/gzip"
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -142,6 +143,11 @@ func (l *DefaultLocalProvider) GetProviderToken(req *http.Request) (string, erro
 
 // Logout - logout from provider backend
 func (l *DefaultLocalProvider) Logout(w http.ResponseWriter, req *http.Request) {
+	http.Redirect(w, req, "/user/login", http.StatusFound)
+}
+
+// HandleUnAuthenticated - logout from provider backend
+func (l *DefaultLocalProvider) HandleUnAuthenticated(w http.ResponseWriter, req *http.Request) {
 	http.Redirect(w, req, "/user/login", http.StatusFound)
 }
 
@@ -628,7 +634,7 @@ func (l *DefaultLocalProvider) SaveMesheryFilter(tokenString string, filter *Mes
 }
 
 // GetMesheryFilters gives the filters stored with the provider
-func (l *DefaultLocalProvider) GetMesheryFilters(req *http.Request, page, pageSize, search, order string) ([]byte, error) {
+func (l *DefaultLocalProvider) GetMesheryFilters(tokenString, page, pageSize, search, order string) ([]byte, error) {
 	if page == "" {
 		page = "0"
 	}
@@ -723,8 +729,19 @@ func (l *DefaultLocalProvider) SaveMesheryApplication(tokenString string, applic
 	return l.MesheryApplicationPersister.SaveMesheryApplication(application)
 }
 
+// SaveApplicationSourceContent nothing needs to be done as application is saved with source content for local provider
+func (l *DefaultLocalProvider) SaveApplicationSourceContent(tokenString string, applicationID string, sourceContent []byte) error {
+	return nil
+}
+
+// GetApplicationSourceContent returns application source-content from provider
+func (l *DefaultLocalProvider) GetApplicationSourceContent(req *http.Request, applicationID string) ([]byte, error) {
+	id := uuid.FromStringOrNil(applicationID)
+	return l.MesheryApplicationPersister.GetMesheryApplicationSource(id)
+}
+
 // GetMesheryApplications gives the applications stored with the provider
-func (l *DefaultLocalProvider) GetMesheryApplications(req *http.Request, page, pageSize, search, order string) ([]byte, error) {
+func (l *DefaultLocalProvider) GetMesheryApplications(tokenString, page, pageSize, search, order string) ([]byte, error) {
 	if page == "" {
 		page = "0"
 	}
@@ -755,58 +772,6 @@ func (l *DefaultLocalProvider) GetMesheryApplication(req *http.Request, applicat
 func (l *DefaultLocalProvider) DeleteMesheryApplication(req *http.Request, applicationID string) ([]byte, error) {
 	id := uuid.FromStringOrNil(applicationID)
 	return l.MesheryApplicationPersister.DeleteMesheryApplication(id)
-}
-
-// RemoteApplicationFile takes in the
-func (l *DefaultLocalProvider) RemoteApplicationFile(req *http.Request, resourceURL, path string, save bool) ([]byte, error) {
-	parsedURL, err := url.Parse(resourceURL)
-	if err != nil {
-		return nil, err
-	}
-
-	// Check if hostname is github
-	if parsedURL.Host == "github.com" {
-		parsedPath := strings.Split(parsedURL.Path, "/")
-		if parsedPath[3] == "tree" {
-			parsedPath = append(parsedPath[0:3], parsedPath[4:]...)
-		}
-		if len(parsedPath) < 3 {
-			return nil, fmt.Errorf("malformed URL: url should be of type github.com/<owner>/<repo>/[branch]")
-		}
-
-		owner := parsedPath[1]
-		repo := parsedPath[2]
-		branch := "master"
-
-		if len(parsedPath) == 4 {
-			branch = parsedPath[3]
-		}
-		if path == "" && len(parsedPath) > 4 {
-			path = strings.Join(parsedPath[4:], "/")
-		}
-
-		pfs, err := githubRepoApplicationScan(owner, repo, path, branch)
-		if err != nil {
-			return nil, err
-		}
-
-		if save {
-			return l.MesheryApplicationPersister.SaveMesheryApplications(pfs)
-		}
-
-		return json.Marshal(pfs)
-	}
-
-	// Fallback to generic HTTP import
-	pfs, err := genericHTTPApplicationFile(resourceURL)
-	if err != nil {
-		return nil, err
-	}
-	if save {
-		return l.MesheryApplicationPersister.SaveMesheryApplications(pfs)
-	}
-
-	return json.Marshal(pfs)
 }
 
 // SavePerformanceProfile saves given performance profile with the provider
@@ -972,9 +937,6 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 							ID:          &id,
 						}
 						log.Debug("seeding "+comp+": ", name)
-						switch comp {
-
-						}
 						_, err := l.MesheryPatternPersister.SaveMesheryPattern(pattern)
 						if err != nil {
 							log.Error(ErrGettingSeededComponents(err, comp+"s"))
@@ -990,9 +952,6 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 							ID:         &id,
 						}
 						log.Debug("seeding "+comp+": ", name)
-						switch comp {
-
-						}
 						_, err := l.MesheryFilterPersister.SaveMesheryFilter(filter)
 						if err != nil {
 							log.Error(ErrGettingSeededComponents(err, comp+"s"))
@@ -1000,17 +959,39 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 						*seededUUIDs = append(*seededUUIDs, id)
 					}
 				case "Application":
+					mapNameToTypeToContent := make(map[string]map[string]string)
 					for i, name := range names {
+						ss := strings.Split(name, "_")
+						if len(ss) < 2 {
+							continue
+						}
+						if mapNameToTypeToContent[ss[0]] == nil {
+							mapNameToTypeToContent[ss[0]] = make(map[string]string)
+						}
+						mapNameToTypeToContent[ss[0]][ss[1]] = content[i]
+					}
+					for name, contents := range mapNameToTypeToContent {
 						id, _ := uuid.NewV4()
+						var k8sfile string
+						var patternfile string
+						for typ, content := range contents {
+							if strings.Contains(typ, "k8s") {
+								k8sfile = content
+							} else {
+								patternfile = content
+							}
+						}
 						var app = &MesheryApplication{
-							ApplicationFile: content[i],
-							Name:            name,
-							ID:              &id,
+							ApplicationFile: patternfile,
+							Type: sql.NullString{
+								String: string(K8sManifest),
+								Valid:  true,
+							},
+							SourceContent: []byte(k8sfile),
+							Name:          name,
+							ID:            &id,
 						}
 						log.Debug("seeding "+comp+": ", name)
-						switch comp {
-
-						}
 						_, err := l.MesheryApplicationPersister.SaveMesheryApplication(app)
 						if err != nil {
 							log.Error(ErrGettingSeededComponents(err, comp+"s"))
@@ -1132,47 +1113,6 @@ func githubRepoFilterScan(
 	return result, err
 }
 
-func githubRepoApplicationScan(
-	owner,
-	repo,
-	path,
-	branch string,
-) ([]MesheryApplication, error) {
-	var mu sync.Mutex
-	ghWalker := walker.NewGit()
-	result := make([]MesheryApplication, 0)
-
-	err := ghWalker.
-		Owner(owner).
-		Repo(repo).
-		Branch(branch).
-		Root(path).
-		RegisterFileInterceptor(func(f walker.File) error {
-			ext := filepath.Ext(f.Name)
-			if ext == ".yml" || ext == ".yaml" {
-				af := MesheryApplication{
-					Name:            strings.TrimSuffix(f.Name, ext),
-					ApplicationFile: string(f.Content),
-					Location: map[string]interface{}{
-						"type":   "github",
-						"host":   fmt.Sprintf("github.com/%s/%s", owner, repo),
-						"path":   f.Path,
-						"branch": branch,
-					},
-				}
-
-				mu.Lock()
-				result = append(result, af)
-				mu.Unlock()
-			}
-
-			return nil
-		}).
-		Walk()
-
-	return result, err
-}
-
 func genericHTTPPatternFile(fileURL string) ([]MesheryPattern, error) {
 	resp, err := http.Get(fileURL)
 	if err != nil {
@@ -1245,37 +1185,6 @@ func genericHTTPFilterFile(fileURL string) ([]MesheryFilter, error) {
 	return []MesheryFilter{ff}, nil
 }
 
-func genericHTTPApplicationFile(fileURL string) ([]MesheryApplication, error) {
-	resp, err := http.Get(fileURL)
-	if err != nil {
-		return nil, err
-	}
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("file not found")
-	}
-
-	defer SafeClose(resp.Body)
-
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-	result := string(body)
-	url := strings.Split(fileURL, "/")
-	af := MesheryApplication{
-		Name:            url[len(url)-1],
-		ApplicationFile: result,
-		Location: map[string]interface{}{
-			"type":   "http",
-			"host":   fileURL,
-			"path":   "",
-			"branch": "",
-		},
-	}
-
-	return []MesheryApplication{af}, nil
-}
-
 // getSeededComponents reads the directory recursively looking for seed content
 //Note- This function does not throw meshkit errors because the only method that calls it,"SeedContent" wraps the errors in meshkit errors.
 // If this function is reused somewhere else, make sure to wrap its errors in appropriate meshkit errors, otherwise it can cause can a panic.
@@ -1337,45 +1246,38 @@ func getSeededComponents(comp string, log logger.Handler) ([]string, []string, e
 func downloadContent(comp string, downloadpath string, log logger.Handler) error {
 	switch comp {
 	case "Pattern":
-		walk := walker.NewGit()
-		return walk.Owner("service-mesh-patterns").Repo("service-mesh-patterns").Root("samples/").Branch("master").RegisterFileInterceptor(func(f walker.File) error {
-			path := filepath.Join(downloadpath, f.Name)
+		walk := walker.NewGithub()
+		return walk.Owner("service-mesh-patterns").Repo("service-mesh-patterns").Root("samples/").Branch("master").RegisterFileInterceptor(func(gca walker.GithubContentAPI) error {
+			path := filepath.Join(downloadpath, gca.Name)
 			file, err := os.Create(path)
 			if err != nil {
 				return err
 			}
 			defer file.Close()
-			fmt.Fprintf(file, "%s", f.Content)
+			fmt.Fprintf(file, "%s", gca.Content)
 			return nil
 		}).Walk()
 	case "Filter":
 		return getFiltersFromWasmFiltersRepo(downloadpath)
 	case "Application":
-		var path string
-		path = os.Getenv("APP_PATH")
-		if path == "" {
-			wd, err := os.Getwd()
-			if err != nil {
+		walk := walker.NewGit()
+		return walk.Owner("service-mesh-patterns").Repo("service-mesh-patterns").Root("samples/applications/").Branch("master").RegisterDirInterceptor(func(d walker.Directory) error {
+			err := os.Mkdir(downloadpath, 0777)
+			if err != nil && !os.IsExist(err) {
 				return err
 			}
-			path = filepath.Join(wd, "../install/apps.json")
-		}
-		applicationsAndURLS, err := getSeededAppLocation(path)
-		if err != nil {
-			return err
-		}
-		for app, URLs := range applicationsAndURLS {
-			yamlFile := filepath.Join(downloadpath, app)
-			f, err := os.Create(yamlFile)
-			if err != nil {
-				return err
-			}
-			defer f.Close()
-			err = downloadYAMLSintoSingleFile(f, URLs)
-			if err != nil {
-				return err
-			}
-		}
+			walkfile := walker.NewGit()
+			return walkfile.Owner("service-mesh-patterns").Repo("service-mesh-patterns").Root("samples/applications/" + d.Name).Branch("master").RegisterFileInterceptor(func(f walker.File) error {
+				path := filepath.Join(downloadpath, d.Name+"_"+f.Name)
+				file, err := os.Create(path)
+				if err != nil {
+					return err
+				}
+				defer file.Close()
+				fmt.Fprintf(file, "%s", f.Content)
+				return nil
+			}).Walk()
+		}).Walk()
 	}
 	return nil
 }

@@ -38,6 +38,8 @@ function MesheryPatternCard({
   }
   const [gridProps, setGridProps] = useState(INITIAL_GRID_SIZE);
   const [fullScreen, setFullScreen] = useState(false);
+  const [showCode, setShowCode] = useState(false);
+
 
   const toggleFullScreen = () => {
     setFullScreen(!fullScreen);
@@ -64,7 +66,9 @@ function MesheryPatternCard({
           console.log(gridProps)
           setGridProps(INITIAL_GRID_SIZE)
         }}
+
         duration={600}
+        onShow={() => setTimeout(() => setShowCode(currentCodeVisibilty => !currentCodeVisibilty),500)}
       >
         {/* FRONT PART */}
         <>
@@ -87,20 +91,20 @@ function MesheryPatternCard({
           <div className={classes.bottomPart} >
 
             <div className={classes.cardButtons} >
+
               <Button
                 variant="contained"
+                className={classes.undeployButton}
                 onClick={(ev) =>
-                  genericClickHandler(ev, setSelectedPatterns)
+                  genericClickHandler(ev, handleUnDeploy)
                 }
-                className={classes.testsButton}
               >
-                <Avatar src="/static/img/pattwhite.svg" className={classes.iconPatt} imgProps={{ height : "16px", width : "16px" }} />
-                Design
+                <UndeployIcon fill="#ffffff" className={classes.iconPatt} />
+                <span className={classes.btnText}>Undeploy</span>
               </Button>
 
               <Button
                 variant="contained"
-                color="primary"
                 onClick={(ev) =>
                   genericClickHandler(ev, handleDeploy)
                 }
@@ -112,13 +116,14 @@ function MesheryPatternCard({
 
               <Button
                 variant="contained"
-                className={classes.undeployButton}
+                color="primary"
                 onClick={(ev) =>
-                  genericClickHandler(ev, handleUnDeploy)
+                  genericClickHandler(ev, setSelectedPatterns)
                 }
+                className={classes.testsButton}
               >
-                <UndeployIcon fill="#ffffff" className={classes.iconPatt} />
-                <span className={classes.btnText}>Undeploy</span>
+                <Avatar src="/static/img/pattern_trans.svg" className={classes.iconPatt} imgProps={{ height : "16px", width : "16px" }} />
+                Design
               </Button>
             </div>
           </div>
@@ -157,13 +162,14 @@ function MesheryPatternCard({
               <Divider variant="fullWidth" light />
 
               <CodeMirror
-                value={pattern_file}
+                value={showCode && pattern_file}
                 className={fullScreen ? classes.fullScreenCodeMirror : ""}
                 options={{
                   theme : "material",
                   lineNumbers : true,
                   lineWrapping : true,
                   gutters : ["CodeMirror-lint-markers"],
+                  // @ts-ignore
                   lint : true,
                   mode : "text/x-yaml",
                 }}

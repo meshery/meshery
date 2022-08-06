@@ -67,7 +67,7 @@ const useStyles= makeStyles(() => ({
   iconPatt : {
     width : "24px",
     height : "24px",
-    marginRight : "5px"
+    marginRight : "5px",
   },
   btnText : {
     display : "flex",
@@ -79,7 +79,8 @@ const useStyles= makeStyles(() => ({
     color : "#ffffff",
     "&:hover" : {
       backgroundColor : "#8f1f00"
-    }
+    },
+    marginRight : "0.5rem"
   }
 }));
 

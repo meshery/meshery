@@ -1215,6 +1215,14 @@ definitions:
       name:
         type: string
         x-go-name: Name
+      source_content:
+        items:
+          format: uint8
+          type: integer
+        type: array
+        x-go-name: SourceContent
+      type:
+        $ref: '#/definitions/NullString'
       updated_at:
         format: date-time
         type: string
@@ -1323,6 +1331,27 @@ definitions:
       $ref: '#/definitions/NavigatorExtension'
     type: array
     x-go-package: github.com/layer5io/meshery/models
+  NullString:
+    description: |-
+      var s NullString
+      err := db.QueryRow("SELECT name FROM foo WHERE id=?", id).Scan(&s)
+      ...
+      if s.Valid {
+      use s.String
+      } else {
+      NULL value
+      }
+    properties:
+      String:
+        type: string
+      Valid:
+        type: boolean
+    title: |-
+      NullString represents a string that may be null.
+      NullString implements the Scanner interface so
+      it can be used as a scan destination:
+    type: object
+    x-go-package: database/sql
   OpCategory:
     format: int32
     type: integer
@@ -1386,6 +1415,8 @@ definitions:
           If true, AND if the owner has the "foregroundDeletion" finalizer, then
           the owner cannot be deleted from the key-value store until this
           reference is removed.
+          See https://kubernetes.io/docs/concepts/architecture/garbage-collection/#foreground-deletion
+          for how the garbage collector interacts with this field and enforces the foreground deletion.
           Defaults to false.
           To set this field, a user needs "delete" permission of the owner,
           otherwise 422 (Unprocessable Entity) will be returned.
@@ -2898,12 +2929,15 @@ definitions:
         x-go-name: APIVersion
       clusterName:
         description: |-
-          The name of the cluster which the object belongs to.
-          This is used to distinguish resources with same name and namespace in different clusters.
-          This field is not set anywhere right now and apiserver is going to ignore it if set in create or update request.
+          Deprecated: ClusterName is a legacy field that was always cleared by
+          the system and never used; it will be removed completely in 1.25.
+
+          The name in the go struct is changed to help clients detect
+          accidental use.
+
           +optional
         type: string
-        x-go-name: ClusterName
+        x-go-name: ZZZ_DeprecatedClusterName
       creationTimestamp:
         $ref: '#/definitions/Time'
       deletionGracePeriodSeconds:
@@ -2949,10 +2983,7 @@ definitions:
           and may be truncated by the length of the suffix required to make the value
           unique on the server.
 
-          If this field is specified and the generated name exists, the server will
-          NOT return a 409 - instead, it will either return 201 Created or 500 with Reason
-          ServerTimeout indicating a unique name could not be found in the time allotted, and the client
-          should retry (optionally after the time indicated in the Retry-After header).
+          If this field is specified and the generated name exists, the server will return a 409.
 
           Applied only if Name is not specified.
           More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#idempotency
@@ -3057,13 +3088,7 @@ definitions:
         x-go-name: ResourceVersion
       selfLink:
         description: |-
-          SelfLink is a URL representing this object.
-          Populated by the system.
-          Read-only.
-
-          DEPRECATED
-          Kubernetes will stop propagating this field in 1.20 release and the field is planned
-          to be removed in 1.21 release.
+          Deprecated: selfLink is a legacy read-only field that is no longer populated by the system.
           +optional
         type: string
         x-go-name: SelfLink
@@ -3101,7 +3126,7 @@ definitions:
           The application protocol for this port.
           This field follows standard Kubernetes label syntax.
           Un-prefixed names are reserved for IANA standard service names (as per
-          RFC-6335 and http://www.iana.org/assignments/service-names).
+          RFC-6335 and https://www.iana.org/assignments/service-names).
           Non-standard protocols should use prefixed names such as
           mycompany.com/my-custom-protocol.
           +optional
@@ -3155,8 +3180,6 @@ definitions:
           value), those requests will be respected, regardless of this field.
           This field may only be set for services with type LoadBalancer and will
           be cleared if the type is changed to any other type.
-          This field is beta-level and is only honored by servers that enable the ServiceLBNodePortControl feature.
-          +featureGate=ServiceLBNodePortControl
           +optional
         type: boolean
         x-go-name: AllocateLoadBalancerNodePorts
@@ -3295,11 +3318,14 @@ definitions:
         x-go-name: LoadBalancerClass
       loadBalancerIP:
         description: |-
-          Only applies to Service Type: LoadBalancer
-          LoadBalancer will get created with the IP specified in this field.
+          Only applies to Service Type: LoadBalancer.
           This feature depends on whether the underlying cloud-provider supports specifying
           the loadBalancerIP when a load balancer is created.
           This field will be ignored if the cloud-provider does not support the feature.
+          Deprecated: This field was under-specified and its meaning varies across implementations,
+          and it cannot support dual-stack.
+          As of Kubernetes v1.24, users are encouraged to use implementation-specific annotations when available.
+          This field may be removed in a future API version.
           +optional
         type: string
         x-go-name: LoadBalancerIP
@@ -4178,6 +4204,16 @@ paths:
       summary: Handle GET request for filter file with given id
       tags:
       - FiltersAPI
+  /api/meshmodel/validate:
+    post:
+      description: Validate the given value with the given schema
+      operationId: idPostMeshModelValidate
+      responses:
+        "200":
+          description: ""
+      summary: Handle POST request for validate
+      tags:
+      - MeshmodelValidate
   /api/oam/{type}:
     get:
       description: |-

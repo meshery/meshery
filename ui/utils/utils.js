@@ -87,7 +87,7 @@ export function getComponentsinFile(file) {
       let keys = Object.keys(jsYaml.load(file).services);
       return keys.length;
     } catch (e) {
-      if (e.reason.includes("expected a single document")) {
+      if (e.reason?.includes("expected a single document")) {
         return file.split("---").length
       }
     }

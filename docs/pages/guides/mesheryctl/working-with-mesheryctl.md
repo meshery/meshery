@@ -8,7 +8,7 @@ type: Guides
 category: mesheryctl
 ---
 
-Meshery's command line interface is `mesheryctl`. Use `mesheryctl` to both manage the lifecyle of Meshery itself and to access and invoke any of Meshery's application and service mesh management functions. `mesheryctl` commands can be categorized as follows:
+Meshery's command line interface is `mesheryctl`. Use `mesheryctl` to both manage the lifecyle of Meshery itself and to access and invoke any of Meshery's application and cloud native management functions. `mesheryctl` commands can be categorized as follows:
 
 - `mesheryctl` - Global overrides and flags
 - `mesheryctl app` - Service Mesh Application Management
@@ -37,7 +37,6 @@ A meshconfig `context` represents a single Meshery deployment. Using `context`s,
 #### Question: Why are contexts necessary?
 
 Many Meshery users have more than one Meshery deployment. Contexts allow you to deploy different versions of Meshery, update your release channel subscription settings, selectively install one or more Meshery Adapters, and so on. Contexts allow you to configure your invididual Meshery deployments.
-
 
 #### Question: What is `current-context`?
 
@@ -158,7 +157,6 @@ To install `mesheryctl`, execute the following commands:
 
  <pre class="codeblock-pre"><div class="codeblock">
  <div class="clipboardjs">
- brew tap layer5io/tap
  brew install mesheryctl
  mesheryctl system start
  </div></div>
@@ -234,4 +232,5 @@ To upgrade `mesheryctl`, execute the following command:
  </pre>
 
 -->
+
 {% include discuss.html %}
