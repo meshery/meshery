@@ -42,7 +42,7 @@ mesheryctl pattern delete [file | URL]
 		if !govalidator.IsURL(file) {
 			content, err := os.ReadFile(file)
 			if err != nil {
-				return errors.New(utils.SystemError(fmt.Sprintf("failed to read file %s", file)))
+				return errors.New(utils.PatternError(fmt.Sprintf("failed to read file %s", file)))
 			}
 
 			patternFile = string(content)

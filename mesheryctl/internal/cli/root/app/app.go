@@ -2,6 +2,7 @@ package app
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
@@ -24,7 +25,9 @@ mesheryctl app [subcommand]
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
-			return errors.New(utils.AppError(fmt.Sprintln("mesheryctl app requires at least 1 arg(s), got only 0")))
+			// 	return errors.New(utils.AppError(fmt.Sprintln("mesheryctl app requires at least 1 arg(s), got only 0")))
+			cmd.Help()
+			os.Exit(0)
 		}
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
 			return errors.New(utils.AppError(fmt.Sprintf("'%s' is a invalid command. Use 'mesheryctl app --help' to display usage guide.\n", args[0])))

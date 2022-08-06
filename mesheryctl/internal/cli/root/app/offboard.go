@@ -23,6 +23,11 @@ var offboardCmd = &cobra.Command{
 mesheryctl app offboard -f [filepath]
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
+		if len(args) == 0 {
+			
+			const errMsg=`Usage: mesheryctl app offboard -f [filepath]`
+			return fmt.Errorf("No file path provided \n\n%v", errMsg)
+		} 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			return errors.Wrap(err, "error processing config")
@@ -31,7 +36,7 @@ mesheryctl app offboard -f [filepath]
 		// Read file
 		fileReader, err := os.Open(file)
 		if err != nil {
-			return errors.New(utils.SystemError(fmt.Sprintf("failed to read file %s", file)))
+			return errors.New(utils.AppError(fmt.Sprintf("failed to read file %s", file)))
 		}
 
 		client := &http.Client{}

@@ -60,11 +60,14 @@ mesheryctl -v [or] --verbose
 	`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
-	
-	PreRunE: func(cmd *cobra.Command, args []string) error {
-		log.Println("Args passed in", args)
+	Args:cobra.MaximumNArgs(1),
+	RunE: func(cmd *cobra.Command, args []string) error {
+		if len(args) == 0 {
+			cmd.Help()
+			os.Exit(0)
+		}
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
-			return errors.New(utils.RootError(fmt.Sprintf("invalid command: \"%s\"", args[0])))
+			return errors.New(utils.RootError(fmt.Sprintf("'%s' is a invalid command.  Use 'mesheryctl --help' to display usage guide.\n", args[0])))
 		}
 
 		return nil

@@ -29,11 +29,20 @@ var onboardCmd = &cobra.Command{
 	Use:   "onboard",
 	Short: "Onboard application",
 	Long:  `Command will trigger deploy of Application file`,
-	Args:  cobra.MinimumNArgs(0),
 	Example: `
 // Onboard application by providing file path
 mesheryctl app onboard -f [filepath]
 	`,
+	Args: func(_ *cobra.Command, args []string) error {
+		const errMsg = `Usage: mesheryctl app onboard -f [filepath] -s [source type]
+Example: mesheryctl app onboard -f ./application.yml -s "Kubernetes Manifest"
+Description: Onboard application`
+
+		if len(args) == 0 {
+			return fmt.Errorf("the path does not exist \n\n%v", errMsg)
+		}
+		return nil
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var req *http.Request
 		var err error

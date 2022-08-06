@@ -54,10 +54,10 @@ const (
 	filterUsageURL   = docsBaseURL + "reference/mesheryctl/exp/filter"
 	patternUsageURL  = docsBaseURL + "reference/mesheryctl/pattern"
 	appUsageURL      = docsBaseURL + "reference/mesheryctl/app"
-	contextDeleteURL = docsBaseURL + "reference/mesheryctl/context/delete"
-	contextViewURL = docsBaseURL + "reference/mesheryctl/context/view"
-	contextCreateURL = docsBaseURL + "reference/mesheryctl/context/create"
-	contextUsageURL = docsBaseURL + "reference/mesheryctl/context"
+	contextDeleteURL = docsBaseURL + "reference/mesheryctl/system/context/delete"
+	contextViewURL = docsBaseURL + "reference/mesheryctl/system/context/view"
+	contextCreateURL = docsBaseURL + "reference/mesheryctl/system/context/create"
+	contextUsageURL = docsBaseURL + "reference/mesheryctl/system/context"
 	// Meshery Server Location
 	EndpointProtocol = "http"
 )

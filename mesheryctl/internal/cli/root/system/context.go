@@ -67,8 +67,8 @@ mesheryctl system context create context-name --components meshery-osm --platfor
 
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
-			const errMsg = `Please provide a context name:
-mesheryctl system context create [context-name]`
+			const errMsg = `Please provide a context name.
+Usage: mesheryctl system context create [context-name]`
 			return errors.New(utils.SystemContextSubError(fmt.Sprintf("%s\n", errMsg), "create"))
 		}
 
@@ -259,8 +259,8 @@ mesheryctl system context view --all
 	SilenceUsage: true,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
-			const errMsg = `Please provide a context name to view:
-mesheryctl system context view [context name]`
+			const errMsg = `Please provide a context name to view.
+Usage: mesheryctl system context view [context name]`
 			return errors.New(utils.SystemContextSubError(fmt.Sprintf("%s\n", errMsg), "view"))
 		}
 		err := viper.Unmarshal(&configuration)
