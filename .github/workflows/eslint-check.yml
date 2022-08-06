@@ -34,8 +34,14 @@ jobs:
       run: |
         cd ui
         npm i
+        cd ..
+        cd provider-ui
+        npm i
 
     - name: Run ESLint
       run: |
-        pwd
+        cd ui
+        npm run lint
+        cd ..
+        cd provier-ui
         npm run lint
