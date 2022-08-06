@@ -102,7 +102,7 @@ function inView(containerName) {
          }
          /////scroll eventlistiner for mobile view
          $(document.body).on('touchmove', mobilescroll);
-         ////mobile view function
+         // mobile view function
          function mobilescroll(){ 
             
             if (inView(divIndex) && !animatedTerminal.includes(divIndex)) {
