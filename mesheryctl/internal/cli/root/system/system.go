@@ -16,7 +16,6 @@ package system
 
 import (
 	"fmt"
-	"os"
 
 	config "github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 
@@ -40,8 +39,7 @@ var SystemCmd = &cobra.Command{
 	Long:  `Manage the state and configuration of Meshery server, components, and client.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
-			cmd.Help()
-			os.Exit(0)
+			return cmd.Help()
 		}
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
 			return errors.New(utils.SystemError(fmt.Sprintf("'%s' is a invalid command.  Use 'mesheryctl system --help' to display usage guide.\n", args[0])))
@@ -66,7 +64,6 @@ func init() {
 		updateCmd,
 		configCmd,
 		ContextCmd,
-		completionCmd,
 		channelCmd,
 		checkCmd,
 		loginCmd,

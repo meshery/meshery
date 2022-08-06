@@ -28,9 +28,9 @@ mesheryctl app offboard -f [filepath]
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
-			const errMsg=`Usage: mesheryctl app offboard -f [filepath]`
+			const errMsg = `Usage: mesheryctl app offboard -f [filepath]`
 			return fmt.Errorf("no file path provided \n\n%v", errMsg)
-		} 
+		}
 		var req *http.Request
 		var err error
 		client := &http.Client{}

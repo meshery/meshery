@@ -2,7 +2,6 @@ package mesh
 
 import (
 	"fmt"
-	"os"
 
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
@@ -26,8 +25,8 @@ mesheryctl mesh
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
 			// return errors.New(utils.MeshError(fmt.Sprintln("mesheryctl mesh requires at least 1 arg(s), got only 0")))
-			cmd.Help()
-			os.Exit(0)
+			return cmd.Help()
+
 		}
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
 			return errors.New(utils.MeshError(fmt.Sprintf(" '%s' command not found.  Use 'mesheryctl mesh --help' to display usage guide.'\n ", args[0])))

@@ -16,7 +16,6 @@ package system
 
 import (
 	"fmt"
-	"os"
 	"strings"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
@@ -242,8 +241,7 @@ mesheryctl system channel
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
-			cmd.Help()
-			os.Exit(0)
+			return cmd.Help()
 		}
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
 			const errMsg = `See https://docs.meshery.io/reference/mesheryctl/system/channel for usage details.`
