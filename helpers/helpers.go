@@ -24,6 +24,7 @@ func MergeStringMaps(maps ...map[string]string) map[string]string {
 }
 
 func ResolveFSRef(path string) (string, error) {
+	// other useless comment
 	return utils.ReadFileSource(fmt.Sprintf("file://%s", path))
 }
 
