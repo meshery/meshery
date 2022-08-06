@@ -2,19 +2,9 @@ name: eslint-check
 
 on:
   pull_request:
-    branches:
-      - "master"
-    paths-ignore:
-      - "docs/**"
-      - "mesheryctl/**"
-      - "*.md"
-      - "*.github/**"
-  workflow_dispatch:
-    inputs:
-      logLevel:
-        description: "Log level"
-        required: true
-        default: "warning"
+    types: [opened, reopened]
+  paths:
+      - '/ui/**/*'
 
 jobs:
   build:
@@ -39,7 +29,6 @@ jobs:
         key: ${{ runner.os }}-node-${{ hashFiles('ui/package-lock.json') }}
         restore-keys: |
           ${{ runner.os }}-node-
-
 
     - name: Install modules
       if: steps.npm-cache.outputs.cache-hit != 'true'
