@@ -38,4 +38,4 @@ jobs:
     - name: Run ESLint
       run: |
         pwd
-        eslint . --ext .js,.jsx,.ts,.tsx
+        npm run lint
