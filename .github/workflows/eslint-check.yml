@@ -1,10 +1,9 @@
 name: eslint-check
-
 on:
   pull_request:
     types: [opened, reopened, edited]
-  paths:
-      - '/ui/**/*'
+    paths:
+      - 'ui/**/*'
 
 jobs:
   build:
