@@ -426,7 +426,7 @@ func AddContextToConfig(contextName string, context Context, configPath string, 
 
 	_, exists := mctlCfg.Contexts[contextName]
 	if exists && !overwrite {
-		return errors.New("error adding context: a context with same name already exists.")
+		return errors.New("error adding context: a context with same name already exists")
 	}
 
 	mctlCfg.Contexts[contextName] = context

@@ -2,6 +2,7 @@ package pattern
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
@@ -33,7 +34,9 @@ mesheryctl pattern list
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
-			return errors.New(utils.PatternError(fmt.Sprintln("mesheryctl pattern requires at least 1 arg(s), got only 0")))
+			cmd.Help()
+			os.Exit(0)
+			// return errors.New(utils.PatternError(fmt.Sprintln("mesheryctl pattern requires at least 1 arg(s), got only 0")))
 		}
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
 			return errors.New(utils.PatternError(fmt.Sprintf("'%s' is a invalid command.  Use 'mesheryctl pattern --help' to display usage guide.\n", args[0])))

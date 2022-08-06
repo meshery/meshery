@@ -2,7 +2,6 @@ package filter
 
 import (
 	"strconv"
-
 	"github.com/layer5io/meshkit/errors"
 )
 

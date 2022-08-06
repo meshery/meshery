@@ -16,6 +16,7 @@ package perf
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/pkg/errors"
 
@@ -66,7 +67,9 @@ mesheryctl perf result -o yaml
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
-			return errors.New(utils.PerfError(fmt.Sprintln("mesheryctl perf requires at least 1 arg(s), got only 0")))
+			cmd.Help()
+			os.Exit(0)
+			// return errors.New(utils.PerfError(fmt.Sprintln("mesheryctl perf requires at least 1 arg(s), got only 0")))
 		}
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
 			return errors.New(utils.PerfError(fmt.Sprintf("'%s' is a invalid command.  Use 'mesheryctl perf --help' to display usage guide.'\n", args[0])))
