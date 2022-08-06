@@ -1,0 +1,51 @@
+name: eslint-check
+
+on:
+  pull_request:
+    branches:
+      - "master"
+    paths-ignore:
+      - "docs/**"
+      - "mesheryctl/**"
+      - "*.md"
+      - "*.github/**"
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: "Log level"
+        required: true
+        default: "warning"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - uses: actions/setup-node@v3.0.0
+      with:
+        node-version: ${{ secrets.NODE_VERSION }}
+
+    - name: Get npm cache directory
+      id: npm-cache-dir
+      run: |
+        cd ui
+        echo "::set-output name=dir::$(npm config get cache)"
+
+    - uses: actions/cache@v3
+      id: npm-cache
+      with:
+        path: ${{ steps.npm-cache-dir.outputs.dir }}
+        key: ${{ runner.os }}-node-${{ hashFiles('ui/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-
+
+
+    - name: Install modules
+      if: steps.npm-cache.outputs.cache-hit != 'true'
+      run: |
+        - cd ui
+        - npm i
+
+    - name: Run ESLint
+      run: eslint . --ext .js,.jsx,.ts,.tsx
