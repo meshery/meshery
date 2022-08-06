@@ -100,7 +100,7 @@ function inView(containerName) {
             animatedTerminal.push(divIndex);
             self.start();
          }
-         /////scroll eventlistiner for mobile view
+         // scroll eventlistiner for mobile view
          $(document.body).on('touchmove', mobilescroll);
          // mobile view function
          function mobilescroll(){ 
