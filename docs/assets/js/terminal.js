@@ -10,7 +10,7 @@
 
  'use strict';
 
-//////array of terminal count
+// Array of terminal count
 
 const animatedTerminal = [];
 
