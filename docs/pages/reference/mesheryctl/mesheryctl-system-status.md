@@ -59,7 +59,7 @@ mesheryctl system status
 ## Screenshots
 
 Usage of mesheryctl system status
-![status-usage](https://docs.meshery.io/assets/img/mesheryctl/status.png)
+![status-usage](/assets/img/mesheryctl/status.png)
 
 ## See Also
 

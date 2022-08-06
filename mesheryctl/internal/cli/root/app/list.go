@@ -31,7 +31,7 @@ mesheryctl app list
 
 ! Refer below image link for usage
 * Usage of mesheryctl app list
-# ![app-list-usage](https://docs.meshery.io/assets/img/mesheryctl/app-list.png)
+# ![app-list-usage](/assets/img/mesheryctl/app-list.png)
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())

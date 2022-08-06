@@ -61,7 +61,7 @@ mesheryctl mesh validate --adapter [name of the adapter] --tokenPath [path to to
 ## Screenshots
 
 Usage of mesheryctl mesh validate
-![mesh-validate-usage](https://docs.meshery.io/assets/img/mesheryctl/mesh-validate.png)
+![mesh-validate-usage](/assets/img/mesheryctl/mesh-validate.png)
 
 ## See Also
 

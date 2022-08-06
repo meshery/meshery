@@ -84,7 +84,7 @@ mesheryctl system context view --all
 ## Screenshots
 
 Usage of mesheryctl context view
-![context-view-usage](https://docs.meshery.io/assets/img/mesheryctl/context-view.png)
+![context-view-usage](/assets/img/mesheryctl/context-view.png)
 
 ## See Also
 

@@ -46,7 +46,7 @@ mesheryctl mesh deploy --adapter meshery-linkerd --watch
 
 ! Refer below image link for usage
 * Usage of mesheryctl mesh deploy
-# ![mesh-deploy-usage](https://docs.meshery.io/assets/img/mesheryctl/deploy-mesh.png)
+# ![mesh-deploy-usage](/assets/img/mesheryctl/deploy-mesh.png)
 		`,
 		PreRunE: func(cmd *cobra.Command, args []string) error {
 			log.Infof("Verifying prerequisites...")

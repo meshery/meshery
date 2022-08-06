@@ -58,7 +58,7 @@ mesheryctl app list
 ## Screenshots
 
 Usage of mesheryctl app list
-![app-list-usage](https://docs.meshery.io/assets/img/mesheryctl/app-list.png)
+![app-list-usage](/assets/img/mesheryctl/app-list.png)
 
 ## See Also
 
