@@ -39,6 +39,16 @@ global:
       usage:
           mesheryctl version
 
+    completion:
+      name: completion
+      description: Output shell completion code for the specified shell.
+      usage:
+          mesheryctl completion [bash|zsh|fish]
+      example: |
+          mesheryctl completion bash
+            mesheryctl completion zsh
+            mesheryctl completion fish
+
 system:
   name: system
   description: Lifecycle management of Meshery deployments
@@ -53,10 +63,10 @@ system:
       usage:
         mesheryctl system reset -c [temporary context name]
       example: |
-        
-        # Resets the given context 
+
+        # Resets the given context
         mesheryctl system reset -c docker-edge
-        
+
 
   subcommands:
     start:
@@ -80,7 +90,7 @@ system:
           name: --reset
           description: Reset Meshery’s configuration file to default settings.
           usage:
-              mesheryctl system start --reset   
+              mesheryctl system start --reset
         silent:
           name: --silent
           description: Silently create Meshery's configuration file with default settings.
@@ -91,7 +101,7 @@ system:
       name: stop
       arg: system
       description: Stop Meshery
-      usage: 
+      usage:
         mesheryctl system stop
       flags:
         reset:
@@ -99,7 +109,7 @@ system:
           description: Reset Meshery’s configuration file to default settings.
           usage:
               mesheryctl system stop --reset
-    
+
     update:
       name: update
       description: Pull new Meshery images from Docker Hub. Does not update `mesheryctl`. This command may be executed while Meshery is running.
@@ -111,16 +121,6 @@ system:
           description: Pull the latest manifest files
           usage:
               mesheryctl system update --skip-reset
-
-    completion:
-      name: completion
-      description: Output shell completion code for the specified shell.
-      usage:
-          mesheryctl system completion [bash|zsh|fish]
-      example: |
-          mesheryctl system completion bash
-            mesheryctl system completion zsh
-            mesheryctl system completion fish
 
     config:
       name: config
@@ -154,7 +154,7 @@ system:
           description: To configure Meshery to use Google Kubernetes Engine
           usage:
               mesheryctl system config gke --token [path-to-token]
-    
+
     logs:
       name: logs
       description: Starts tailing Meshery server debug logs
@@ -162,7 +162,7 @@ system:
 
           # View logs for specific component
           mesheryctl system logs [component-name]
-          
+
       example: |
           mesheryctl system logs --verbose
             mesheryctl system logs meshery-istio
@@ -183,7 +183,7 @@ system:
           description: (optional) skip checking for new updates available in Meshery.
           usage:
               mesheryctl system restart --skip-update
-        
+
     status:
       name: status
       description: Check status of Meshery, Meshery adapters, Meshery Operator and its controllers.
@@ -195,7 +195,7 @@ system:
       description: "Authenticate with the Meshery Provider of your choice: the Local Provider or a Remote Provider."
       usage:
         mesheryctl system login
-    
+
     logout:
       name: logout
       description: Invalidate current session with your Meshery Provider.
@@ -238,13 +238,13 @@ system:
             mesheryctl system check --report
           example:
             mesheryctl system check --report
-    
+
 system-channel:
   name: system-channel
   description: Switch between release channels.
   usage:
     mesheryctl system channel
-  
+
   subcommands:
     set:
       name: set
@@ -281,7 +281,7 @@ system-context:
   description: Display the current context.
   usage:
       mesheryctl system context
-  
+
   subcommands:
     create:
       name: create
@@ -313,7 +313,7 @@ system-context:
               mesheryctl system context create [context name] --url [URL]
           example:
               mesheryctl system context create k8s-sample --url "https://localhost:9990"
-    
+
     delete:
       name: delete
       description: delete an existing context from Meshery config file
@@ -341,7 +341,7 @@ system-context:
           description: view the configurations of the specified context
           usage:
               mesheryctl system context view --context [context name]
-          example: 
+          example:
               mesheryctl system context view --context docker-edge
         all:
           name: --all
@@ -352,7 +352,7 @@ system-context:
 perf:
   name: perf
   description: Performance Management and Benchmarking using Meshery CLI
-  usage: 
+  usage:
     mesheryctl perf --name "a quick stress test" --url http://192.168.1.15/productpage --qps 300 --concurrent-requests 2 --duration 30s --token "provider=Meshery"
 
   flags:
@@ -390,7 +390,7 @@ perf:
           mesheryctl perf apply test-sam --url https://192.168.1.15/productpage
       flags:
         concurrent-requests:
-          name: --concurrent-requests  
+          name: --concurrent-requests
           arg: apply
           description: 'Number of Parallel Requests (default: 1).'
           usage:
@@ -407,7 +407,7 @@ perf:
               mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --duration 35s
 
         file:
-          name: --file 
+          name: --file
           arg: apply
           description: 'Path to service mesh performance test configuration file (default: empty string).'
           usage:
@@ -415,7 +415,7 @@ perf:
           example:
               mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --file perf-config.yaml
         load-generator:
-          name: --load-generator 
+          name: --load-generator
           arg: apply
           description: 'Choice of load generator - fortio (OR) wrk2 (default: fortio).'
           usage:
@@ -432,7 +432,7 @@ perf:
           example:
               mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --mesh istio
         name:
-          name: --name 
+          name: --name
           arg: apply
           description: 'A memorable name for the test (default: random string).'
           usage:
@@ -440,7 +440,7 @@ perf:
           example:
             mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --name "local-test"
         qps:
-          name: --qps 
+          name: --qps
           arg: apply
           description: 'Queries per second (default: 0) (0 - means to use the CPU unbounded to generate as many requests as possible).'
           usage:
@@ -448,7 +448,7 @@ perf:
           example:
               mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --qps 30
         url:
-          name: --url 
+          name: --url
           arg: apply
           description: (required/optional) URL of the endpoint send load to during testing.
           usage:
@@ -523,7 +523,7 @@ mesh:
   subcommands:
     validate:
       name: validate
-      description: validate service mesh conformance to different standard specifications 
+      description: validate service mesh conformance to different standard specifications
       flags:
         adapter:
           name: --adapter, -a
@@ -587,7 +587,7 @@ mesh:
 
 pattern:
   name: pattern
-  description : 
+  description :
   usage:
     mesheryctl pattern
 
@@ -616,7 +616,7 @@ pattern:
               mesheryctl pattern apply --file [path to pattern file]
           example:
               mesheryctl pattern apply -f "bookInfo.yaml"
-              
+
 
     delete:
       name: delete
@@ -643,7 +643,7 @@ pattern:
           description: show all pattern file metadata
           usage:
               mesheryctl pattern list --all
-              
+
     view:
       name: view
       description: displays the contents of a specific pattern file
@@ -669,7 +669,7 @@ app:
   name: app
   description: Service Mesh application management
   usage:
-    mesheryctl app 
+    mesheryctl app
   flags:
     file:
       name: --file, -f
@@ -694,13 +694,13 @@ app:
           name: --file, -f
           description: Offboard application with an application file
           usage:
-              mesheryctl app offboard -f [filepath] 
+              mesheryctl app offboard -f [filepath]
           example:
               mesheryctl app offboard -f "bookInfo.yaml"
     onboard:
       name: onboard
       description: onboard application
-      usage: 
+      usage:
           mesheryctl app onboard [app name] [flags]
       flags:
         file:
@@ -713,7 +713,7 @@ app:
     view:
       name: view
       description: displays the contents of a application
-      usage: | 
+      usage: |
           mesheryctl app view [application-name|application-id]
       flags:
         view-all:
@@ -726,8 +726,8 @@ app:
         view-json:
           name: -o json
           description: display the content of an application in json format
-          usage: | 
-              mesheryctl app view [application-name|application-id] -o json  
+          usage: |
+              mesheryctl app view [application-name|application-id] -o json
           example:
               mesheryctl app view bookInfo -o json
 
@@ -744,15 +744,14 @@ filter:
       name: apply
       description: Apply WASM file to deploy a filter
 
-    delete: 
+    delete:
       name: delete
       description: Delete filter from Meshery
 
     list:
       name: list
       description: List all WASM filters
-    
+
     view:
       name: view
       description: View the specified WASM filter
-  

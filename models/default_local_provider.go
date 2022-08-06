@@ -1186,7 +1186,7 @@ func genericHTTPFilterFile(fileURL string) ([]MesheryFilter, error) {
 }
 
 // getSeededComponents reads the directory recursively looking for seed content
-//Note- This function does not throw meshkit errors because the only method that calls it,"SeedContent" wraps the errors in meshkit errors.
+// Note- This function does not throw meshkit errors because the only method that calls it,"SeedContent" wraps the errors in meshkit errors.
 // If this function is reused somewhere else, make sure to wrap its errors in appropriate meshkit errors, otherwise it can cause can a panic.
 func getSeededComponents(comp string, log logger.Handler) ([]string, []string, error) {
 	wd := utils.GetHome()
