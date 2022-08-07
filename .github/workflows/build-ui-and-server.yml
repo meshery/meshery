@@ -36,7 +36,7 @@ jobs:
         uses: golangci/golangci-lint-action@v3.2.0
         with:
           # Required: the version of golangci-lint is required and must be specified without patch version: we always use the latest patch version.
-          version: latest
+          version: v1.47.3
 
           # Optional: working directory, useful for monorepos
           # working-directory: somedir
@@ -337,4 +337,3 @@ jobs:
           cd docs
           bundle install
           bundle exec rake graphql:compile_docs
-
