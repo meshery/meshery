@@ -29,6 +29,7 @@ import MesheryPatternGrid from "./MesheryPatterns/MesheryPatternGridView";
 import UndeployIcon from "../public/static/img/UndeployIcon";
 import DoneAllIcon from '@material-ui/icons/DoneAll';
 import ConfirmationMsg from "./ConfirmationModal";
+import PromptComponent from "./PromptComponent";
 
 const styles = (theme) => ({
   grid : {
@@ -834,7 +835,7 @@ function MesheryPatterns({
         {
           !selectedPattern.show && viewType==="table" && <MuiThemeProvider theme={getMuiTheme() }>
             <MUIDataTable
-              title={<div className={classes.tableHeader}>Patterns</div>}
+              title={<div className={classes.tableHeader}>Designs</div>}
               data={patterns}
               columns={columns}
               // @ts-ignore
@@ -869,6 +870,7 @@ function MesheryPatterns({
           componentCount={modalOpen.count}
           tab={modalOpen.deploy ? 0 : 1}
         />
+        <PromptComponent ref={modalRef} />
       </NoSsr>
     </>
   );
