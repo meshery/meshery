@@ -22,8 +22,14 @@ func (h *Handler) GetAllContexts(w http.ResponseWriter, req *http.Request, prefO
 		http.Error(w, "failed to get contexts", http.StatusInternalServerError)
 		return
 	}
-
-	if err := json.NewEncoder(w).Encode(vals); err != nil {
+	var mesheryK8sContextPage models.MesheryK8sContextPage
+	err = json.Unmarshal(vals, &mesheryK8sContextPage)
+	if err != nil {
+		obj := "k8s context"
+		h.log.Error(ErrUnmarshal(err, obj))
+		http.Error(w, ErrUnmarshal(err, obj).Error(), http.StatusInternalServerError)
+	}
+	if err := json.NewEncoder(w).Encode(mesheryK8sContextPage); err != nil {
 		http.Error(w, "failed to encode contexts", http.StatusInternalServerError)
 		return
 	}
@@ -75,6 +81,7 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, prefOb
 		http.Error(w, "failed to delete context", http.StatusInternalServerError)
 		return
 	}
+	h.config.K8scontextChannel.PublishContext()
 }
 
 // func (h *Handler) GetCurrentContextHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {

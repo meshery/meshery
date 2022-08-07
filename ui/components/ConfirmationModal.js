@@ -228,7 +228,7 @@ function ConfirmationMsg(props) {
     }
     let matchedCtx = [];
     k8scontext.forEach(ctx => {
-      if (ctx.contextName.includes(search)) {
+      if (ctx.name.startsWith(search)) {
         matchedCtx.push(ctx);
       }
     });
@@ -338,18 +338,18 @@ function ConfirmationMsg(props) {
                         <div className={classes.contexts}>
                           {
                             context.map((ctx) => (
-                              <div id={ctx.contextID} className={classes.chip}>
-                                <Tooltip title={`Server: ${ctx.configuredServer}`}>
+                              <div id={ctx.id} className={classes.chip}>
+                                <Tooltip title={`Server: ${ctx.server}`}>
                                   <div style={{ display : "flex", justifyContent : "flex-wrap", alignItems : "center" }}>
                                     <Checkbox
-                                      checked={selectedK8sContexts.includes(ctx.contextID) || (selectedK8sContexts.length > 0 && selectedK8sContexts[0] === "all")}
-                                      onChange={() => setContextViewer(ctx.contextID)}
+                                      checked={selectedK8sContexts.includes(ctx.id) || (selectedK8sContexts.length > 0 && selectedK8sContexts[0] === "all")}
+                                      onChange={() => setContextViewer(ctx.id)}
                                       color="primary"
                                     />
                                     <Chip
-                                      label={ctx.contextName}
+                                      label={ctx.name}
                                       className={classes.ctxChip}
-                                      onClick={() => handleKubernetesClick(ctx.contextID)}
+                                      onClick={() => handleKubernetesClick(ctx.id)}
                                       icon={<img src="/static/img/kubernetes.svg" className={classes.ctxIcon} />}
                                       variant="outlined"
                                       data-cy="chipContextName"

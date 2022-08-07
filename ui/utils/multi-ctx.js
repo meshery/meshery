@@ -71,7 +71,7 @@ export function getK8sConfigIdsFromK8sConfig(k8sConfig) {
     return []
   }
 
-  return k8sConfig.map(cfg => cfg.contextID)
+  return k8sConfig.map(cfg => cfg.id)
 }
 
 export const getK8sClusterNamesFromCtxId = (selectedContexts, k8sconfig) => {
