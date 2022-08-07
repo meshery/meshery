@@ -25,14 +25,14 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-go@v3
-        with:
+        with: 
           check-latest: 'true'
           go-version: '1.17.x'
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v3.1.0
         with:
           # Required: the version of golangci-lint is required and must be specified without patch version: we always use the latest patch version.
-          version: 1.47.3
+          version: latest
           # Optional: working directory, useful for monorepos
           working-directory: mesheryctl
 
@@ -84,9 +84,9 @@ jobs:
               echo "version=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_ENV
             fi
       - uses: actions/checkout@master
-        with:
+        with: 
           repository: meshery/meshery
-          token: ${{ secrets.GH_ACCESS_TOKEN }}
+          token: ${{ secrets.GH_ACCESS_TOKEN }} 
       - name: Setup go
         uses: actions/setup-go@v3
         with:
@@ -94,7 +94,7 @@ jobs:
           check-latest: 'true'
       - name: Run script 📜
         run: |
-          cd mesheryctl/doc
+          cd mesheryctl/doc 
           go run doc.go
       - name: Commit ✅
         uses: stefanzweifel/git-auto-commit-action@v4
