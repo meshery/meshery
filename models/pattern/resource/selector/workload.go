@@ -61,8 +61,8 @@ func (s *Selector) selectK8sWorkload(ws []core.WorkloadCapability) (core.Workloa
 // selectMeshWorkload will look through all the candidate workloads and will return most suitable workload
 //
 // The selection of workload is based on the following criterion
-//  - If a workload definition is of a service mesh version that is NOT in the cluster then reject that candidate
-//  - If
+//   - If a workload definition is of a service mesh version that is NOT in the cluster then reject that candidate
+//   - If
 func (s *Selector) selectMeshWorkload(ws []core.WorkloadCapability) (core.WorkloadCapability, bool) {
 	if len(ws) == 0 {
 		return core.WorkloadCapability{}, false

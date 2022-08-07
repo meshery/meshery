@@ -298,7 +298,8 @@ func (h *Handler) GetMesheryPatternsHandler(
 //
 // Deletes a meshery pattern with ID: id
 // responses:
-// 	200: noContentWrapper
+//
+//	200: noContentWrapper
 //
 // DeleteMesheryPatternHandler deletes a pattern with the given id
 func (h *Handler) DeleteMesheryPatternHandler(
@@ -441,7 +442,7 @@ func formatPatternOutput(rw http.ResponseWriter, content []byte, format string) 
 	fmt.Fprint(rw, string(data))
 }
 
-//Since the client currently does not support pattern imports and externalized variables, the first(import) stage of pattern engine
+// Since the client currently does not support pattern imports and externalized variables, the first(import) stage of pattern engine
 // is evaluated here to simplify the pattern file such that it is valid when a deploy takes place
 func evalImportAndReferenceStage(p *pCore.Pattern) (newp pCore.Pattern) {
 	sap := &serviceActionProvider{}
