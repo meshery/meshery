@@ -1301,7 +1301,7 @@ func downloadApplicationsFromURL(downloadpath string, appname string, url string
 	return nil
 }
 
-//takes a slice of URL's which each returns a YAML body on get request. Then combines all the yamls into one yaml
+// DownloadYAMLSintoSingleFile takes a slice of URL's which each returns a YAML body on get request. Then combines all the yamls into one yaml
 func downloadYAMLSintoSingleFile(f io.Writer, URLs []string) error {
 	for _, url := range URLs {
 		res, err := http.Get(url)
