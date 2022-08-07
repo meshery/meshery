@@ -834,7 +834,7 @@ function MesheryPatterns({
         {
           !selectedPattern.show && viewType==="table" && <MuiThemeProvider theme={getMuiTheme() }>
             <MUIDataTable
-              title={<div className={classes.tableHeader}>Patterns</div>}
+              title={<div className={classes.tableHeader}>Designs</div>}
               data={patterns}
               columns={columns}
               // @ts-ignore
