@@ -117,8 +117,8 @@ if ! command_exists curl ; then
     exit;
 fi
 
-if ! command_exists unzip ; then
-    echo "Missing required utility: 'unzip'. Please install 'unzip' and try again."
+if ! command_exists tar; then
+    echo "Missing required utility: 'tar'. Please install 'tar' and try again."
     exit;
 fi
 
@@ -134,14 +134,14 @@ if [ "x${MESHERY_VERSION}" = "x" ] ; then
 fi
 
 NAME="mesheryctl-${MESHERY_VERSION}"
-URL="https://github.com/meshery/meshery/releases/download/${MESHERY_VERSION}/mesheryctl_${MESHERY_VERSION:1}_${OSEXT}_${OSARCHITECTURE}.zip"
+URL="https://github.com/meshery/meshery/releases/download/${MESHERY_VERSION}/mesheryctl_${MESHERY_VERSION:1}_${OSEXT}_${OSARCHITECTURE}.tar.gz"
 
 printf "\nDownloading %s for %s...\n\n" "$NAME" "$OSEXT"
-curl -L ${URL} -o ${PWD}/meshery.zip
+curl -L ${URL} -o ${PWD}/meshery.tar.gz
 
-validFile=`file ${PWD}/meshery.zip | grep 'Zip archive data'`
+validFile=`file ${PWD}/meshery.tar.gz | grep 'gzip compressed data'`
 if [ -z "$validFile" ] ; then
-  printf "Unable to download meshery.zip file from ${URL}. Set MESHERY_VERSION environment variable to a different version and re-run. For example: export MESHERY_VERSION=v0.1.6\n"
+  printf "Unable to download meshery.tar.gz file from ${URL}. Set MESHERY_VERSION environment variable to a different version and re-run. For example: export MESHERY_VERSION=v0.1.6\n"
   exit;
 fi
 
@@ -153,13 +153,13 @@ fi
 
 mkdir $temporary_dir_name
 if [ $? -ne 0 ] ; then
-  rm ${PWD}/meshery.zip
+  rm ${PWD}/meshery.tar.gz
   printf "Disk space is low on the system, Re-try installation after cleaning up some files.\n"
   exit 1;
 fi
 
 printf "\nExtracting %s to temporary folder %s...\n" "$NAME" "$temporary_dir_name"
-unzip ${PWD}/meshery.zip -d ${PWD}/$temporary_dir_name
+tar -xzf ${PWD}/meshery.tar.gz -C ${PWD}/$temporary_dir_name
 
 # Use user provided installation path from env variable(MESHERY_INSTALL_DIR)
 # by default its /usr/local/bin
@@ -208,7 +208,7 @@ fi
 
 
 printf "Removing installation files"
-rm -rf meshery.zip ${PWD}/$temporary_dir_name/
+rm -rf meshery.tar.gz ${PWD}/$temporary_dir_name/
 
 if [ "$DEPLOY_MESHERY" == false ] ;
 then
