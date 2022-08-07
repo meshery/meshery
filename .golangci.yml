@@ -42,7 +42,7 @@ linters-settings:
     settings:
       mnd:
         # don't include the "operation" and "assign"
-        checks: 
+        checks:
           - argument
           - case
           - condition
@@ -150,6 +150,7 @@ run:
     - internal/renameio
     - internal/robustio
   timeout: 5m
+  go: '1.17'
 
 # golangci.com configuration
 # https://github.com/golangci/golangci/wiki/Configuration
