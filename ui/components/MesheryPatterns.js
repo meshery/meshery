@@ -29,6 +29,7 @@ import MesheryPatternGrid from "./MesheryPatterns/MesheryPatternGridView";
 import UndeployIcon from "../public/static/img/UndeployIcon";
 import DoneAllIcon from '@material-ui/icons/DoneAll';
 import ConfirmationMsg from "./ConfirmationModal";
+import PromptComponent from "./PromptComponent";
 
 const styles = (theme) => ({
   grid : {
@@ -869,6 +870,7 @@ function MesheryPatterns({
           componentCount={modalOpen.count}
           tab={modalOpen.deploy ? 0 : 1}
         />
+        <PromptComponent ref={modalRef} />
       </NoSsr>
     </>
   );
