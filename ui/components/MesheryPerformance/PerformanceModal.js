@@ -1,5 +1,6 @@
 import React, {useState} from 'react'
 import {Button, 
+  Box,
   Autocomplete ,
    Tooltip,
   MenuItem,
@@ -24,7 +25,7 @@ import {Button,
   import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
   import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
   import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
-  import PaperWithoutTitle from "@/components/Paper";
+  import { styled } from "@mui/material/styles";
   import { useTheme } from "@mui/system";
 
 
@@ -54,6 +55,11 @@ import {Button,
       </Link>
     </>
   );
+
+  const ButtonsWrapper = styled(Box)(({theme}) => ( { 
+    display : "flex",
+     justifyContent : "flex-end",
+      gap: "2rem" }));
   
 function PerformanceModal( {
       testName = "",
@@ -77,9 +83,23 @@ function PerformanceModal( {
   const [selectedMesh, setSelectedMesh] = useState("");
   const [urlError, setUrlError] = useState(false);
   const [tValue, setTValue] = useState(t);
+
+  // function handleChange (name , event) {
+  //   if (name === "url" && event.target.value !== "") {
+  //     let urlPattern = event.target.value;
+
+  //     let val = URLValidator(urlPattern);
+  //     if (!val) {
+  //      setUrlError(true)
+  //     } else {
+  //       setUrlError(false);
+  //     }
+  //   } else setUrlError(false);
+  //   // this.setState({ [name] : event.target.value });
+  // };
   
   return (
-    <PaperWithoutTitle sx={{ padding : theme.spacing(10), }}>
+    <>
             <Grid container spacing={2} >
               <Grid item xs={12} md={6}>
                 <Tooltip title="If a profile name is not provided, a random one will be generated for you.">
@@ -91,7 +111,7 @@ function PerformanceModal( {
                     value={profileName}
                     margin="normal"
                     variant="outlined"
-                    // onChange={this.handleChange("profileName")}
+                    // onChange= {handleChange("profileName")}
                     inputProps={{ maxLength : 300 }}
                   />
                 </Tooltip>
@@ -185,7 +205,7 @@ function PerformanceModal( {
               </Grid>
               <Grid item xs={12} md={12}>
               <Accordion>
-                <AccordionSummary  >
+                <AccordionSummary  expandIcon={<ExpandMoreIcon />}  >
                 <Typography align="center" color="textSecondary" variant="h6">
                       Advanced Options
                     </Typography>
@@ -276,7 +296,7 @@ function PerformanceModal( {
               </Grid>
               
             </Grid>
-            <div >
+            <ButtonsWrapper >
               <Button
                   type="submit"
                   variant="contained"
@@ -308,8 +328,8 @@ function PerformanceModal( {
                 >
                   Run Test
                 </Button>
-              </div>
-    </PaperWithoutTitle>
+              </ButtonsWrapper>
+    </>
   )
 }
 

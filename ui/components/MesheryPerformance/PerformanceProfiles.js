@@ -1,5 +1,5 @@
 import React, {useState} from 'react'
-import { Avatar, Box, Button, Divider, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Paper, TableCell, Typography, Tooltip, TableSortLabel } from "@mui/material";
+import { Box, Button,Typography, } from "@mui/material";
 import PerformanceProfileTable from "./PerformanceProfileTable"
 import ViewSwitch from "@/components/ViewSwitch";
 import AddCircleOutlineRoundedIcon from '@mui/icons-material/AddCircleOutlineRounded';
@@ -8,9 +8,11 @@ import PerformanceModal from "./PerformanceModal";
 import { styled } from "@mui/material/styles";
 import CustomModal from "@/components/Modal";
 import EmptyState from "@/components/EmptyStateComponent";
+import PaperWithoutTitle from "@/components/Paper";
+import { useTheme } from "@mui/system";
 
 function PerformanceProfiles() {
-  
+  const theme = useTheme();
     const CustomBox = styled(Box)(({theme}) => ({
         justifySelf : "flex-end",
         marginLeft : "auto",
@@ -134,8 +136,8 @@ function PerformanceProfiles() {
    handleClose={() => {
     setProfileForModal(undefined);
   }}
-   Content={
-    <div style={{margin: "0 4rem",}}>
+  Content= {
+    <PaperWithoutTitle sx={{ padding : theme.spacing(10), margin: "0 4rem", }}>
       <PerformanceModal
       profileName={profileForModal?.name}
       // @ts-ignore
@@ -158,8 +160,8 @@ function PerformanceProfiles() {
       cookies={profileForModal?.request_cookies}
       // @ts-ignore
       contentType={profileForModal?.content_type} />
-    </div>
-   }
+    </PaperWithoutTitle>
+  }
    />
   </>
   )
