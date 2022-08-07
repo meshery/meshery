@@ -120,7 +120,7 @@ func (h *Handler) addK8SConfig(user *models.User, prefObj *models.Preference, w 
 			saveK8sContextResponse.InsertedContexts = append(saveK8sContextResponse.InsertedContexts, ctx)
 		}
 	}
-	if (len(saveK8sContextResponse.InsertedContexts) > 0 || len(saveK8sContextResponse.UpdatedContexts) > 0) {
+	if len(saveK8sContextResponse.InsertedContexts) > 0 || len(saveK8sContextResponse.UpdatedContexts) > 0 {
 		h.config.K8scontextChannel.PublishContext()
 	}
 	if err := json.NewEncoder(w).Encode(saveK8sContextResponse); err != nil {

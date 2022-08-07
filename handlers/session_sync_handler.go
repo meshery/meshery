@@ -15,13 +15,13 @@ type SessionSyncData struct {
 }
 
 type SessionSyncDataK8sConfig struct {
-	ContextID         string `json:"id,omitempty"`
-	ContextName       string `json:"name,omitempty"`
-	ClusterConfigured bool   `json:"clusterConfigured,omitempty"`
-	ConfiguredServer  string `json:"server,omitempty"`
-	ClusterID         string `json:"clusterID,omitempty"`
+	ContextID         string     `json:"id,omitempty"`
+	ContextName       string     `json:"name,omitempty"`
+	ClusterConfigured bool       `json:"clusterConfigured,omitempty"`
+	ConfiguredServer  string     `json:"server,omitempty"`
+	ClusterID         string     `json:"clusterID,omitempty"`
 	CreatedAt         *time.Time `json:"created_at,omitempty"`
-	UpdatedAt         *time.Time `json:"updated_at,omitempty"` 
+	UpdatedAt         *time.Time `json:"updated_at,omitempty"`
 }
 
 // swagger:route GET /api/system/sync SystemAPI idSystemSync

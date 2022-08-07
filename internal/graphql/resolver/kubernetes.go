@@ -285,18 +285,18 @@ func (r *Resolver) getKubectlDescribe(ctx context.Context, name string, kind str
 	}, nil
 }
 
-func (r *Resolver) subscribeK8sContexts(ctx context.Context, provider models.Provider, selector model.PageFilter) (<-chan *model.K8sContextsPage ,error) {
+func (r *Resolver) subscribeK8sContexts(ctx context.Context, provider models.Provider, selector model.PageFilter) (<-chan *model.K8sContextsPage, error) {
 	ch := make(chan struct{}, 1)
 	ch <- struct{}{}
 	contextsChan := make(chan *model.K8sContextsPage)
 
 	r.Config.K8scontextChannel.SubscribeContext(ch)
-	r.Log.Info("K8s context subscription started");
-	
+	r.Log.Info("K8s context subscription started")
+
 	go func() {
 		for {
 			select {
-			case <- ch:
+			case <-ch:
 				contexts, err := r.getK8sContexts(ctx, provider, selector)
 				if err != nil {
 					r.Log.Error(ErrK8sContextSubscription(err))
@@ -315,7 +315,7 @@ func (r *Resolver) subscribeK8sContexts(ctx context.Context, provider models.Pro
 
 func (r *Resolver) getK8sContexts(ctx context.Context, provider models.Provider, selector model.PageFilter) (*model.K8sContextsPage, error) {
 	tokenString := ctx.Value(models.TokenCtxKey).(string)
-	resp, err :=   provider.GetK8sContexts(tokenString, selector.Page, selector.PageSize, *selector.Search, *selector.Order)
+	resp, err := provider.GetK8sContexts(tokenString, selector.Page, selector.PageSize, *selector.Search, *selector.Order)
 	if err != nil {
 		return nil, err
 	}
