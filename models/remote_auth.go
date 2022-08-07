@@ -28,7 +28,7 @@ func SafeClose(co io.Closer) {
 	}
 }
 
-//DoRequest - executes a request and does refreshing automatically
+// DoRequest - executes a request and does refreshing automatically
 func (l *RemoteProvider) DoRequest(req *http.Request, tokenString string) (*http.Response, error) {
 	resp, err := l.doRequestHelper(req, tokenString)
 	if err != nil {
