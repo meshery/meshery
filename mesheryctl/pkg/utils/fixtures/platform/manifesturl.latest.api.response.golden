@@ -13282,7 +13282,7 @@
 "url": "https://api.github.com/repos/meshery/meshery/git/blobs/2efea0a1b5761045cc22c81498bfab31dcd33d81"
 },
 {
-"path": "ui/public/static/img/citrixservicemesh.svg",
+"path": "ui/public/static/img/citrix_service_mesh.svg",
 "mode": "100644",
 "type": "blob",
 "sha": "2efea0a1b5761045cc22c81498bfab31dcd33d81",
@@ -13655,7 +13655,7 @@
 "url": "https://api.github.com/repos/meshery/meshery/git/blobs/7db70ceacbd2e4c8c57aa84193a9c4d518cb057d"
 },
 {
-"path": "ui/public/static/img/networkservicemesh.svg",
+"path": "ui/public/static/img/network_service_mesh.svg",
 "mode": "100644",
 "type": "blob",
 "sha": "7db70ceacbd2e4c8c57aa84193a9c4d518cb057d",
@@ -13743,7 +13743,7 @@
 "url": "https://api.github.com/repos/meshery/meshery/git/blobs/75e38ee12bb0357dfd1c74e26823b7966ada74b2"
 },
 {
-"path": "ui/public/static/img/openservicemesh.svg",
+"path": "ui/public/static/img/open_service_mesh.svg",
 "mode": "100644",
 "type": "blob",
 "sha": "75e38ee12bb0357dfd1c74e26823b7966ada74b2",
