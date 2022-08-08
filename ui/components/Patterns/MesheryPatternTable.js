@@ -5,7 +5,7 @@ import Moment from "react-moment";
 import DoneAllIcon from '@mui/icons-material/DoneAll';
 import UndeployIcon from "../../public/static/img/UndeployIcon";
 
-function MesheryPatternTable( {patterns=[], setSelectedRowData, handleModalOpen, user }) {
+function MesheryPatternTable( {patterns=[], setSelectedRowData, handleModalOpen, user, page = 0, count = 0, pageSize = 10,}) {
 
     const columns = [
         {
@@ -106,17 +106,26 @@ function MesheryPatternTable( {patterns=[], setSelectedRowData, handleModalOpen,
           },
         },
       ];
+     
+      columns.forEach((column, idx) => {
+        if (column.name === sortOrder.split(" ")[0]) {
+          columns[idx].options.sortDirection = sortOrder.split(" ")[1];
+        }
+      });
 
       const options = {
         filter : false,
         sort : !(user && user.user_id === "meshery"),
         search : !(user && user.user_id === "meshery"),
         filterType : "textField",
-        // responsive : "scrollFullHeight",
+        responsive : "scrollFullHeight",
         resizableColumns : true,
         serverSide : true,
+        count,
+        rowsPerPage : pageSize,
         rowsPerPageOptions : [10, 20, 25],
         fixedHeader : true,
+        page,
         print : false,
         download : false,
         textLabels : {

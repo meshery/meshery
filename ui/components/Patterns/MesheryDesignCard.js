@@ -16,12 +16,16 @@ import FullscreenExitIcon from "@mui/icons-material/FullscreenExit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import SaveIcon from "@mui/icons-material/Save";
 import FlipCard from "../FlipCard"
+
+
 const ActionContainer = styled(Box)(({ theme }) => ({
   display: "flex",
   gap:theme.spacing(1),
   justifyContent:"flex-end"
 }));
+
 const INITIAL_GRID_SIZE = { xl : 4, md : 6, xs : 12 };
+
 const MesheryDesignCard = ({
   name,
   updated_at,
@@ -43,6 +47,7 @@ const MesheryDesignCard = ({
   };
 
   const toggleFullScreen = () => setFullScreen((prev) => !prev);
+  
   return (
     <FlipCard
     onClick={() => {

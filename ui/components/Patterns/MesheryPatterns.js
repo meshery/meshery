@@ -25,8 +25,13 @@ function Mesherypatterns({user}) {
     marginLeft : "auto",
     paddingLeft : theme.spacing(2),
  }))
-
-    const [patterns, setpatterns] = useState([]);
+    
+    const [page, setPage] = useState(0);
+    const [search] = useState("");
+    const [sortOrder] = useState("");
+    const [count, setCount] = useState(0);
+    const [pageSize, setPageSize] = useState(10);
+    const [patterns, setPatterns] = useState([]);
     const [selectedRowData, setSelectedRowData] = useState(null);
     const [selectedPattern, setSelectedPattern] = useState(resetSelectedPattern());
     const [modalOpen, setModalOpen] = useState({
@@ -49,26 +54,23 @@ function Mesherypatterns({user}) {
       if (!search) search = "";
       if (!sortOrder) sortOrder = "";
 
-      const query = `?page=${page}&page_size=${pageSize}&search=${encodeURIComponent(search)}&order=${encodeURIComponent(
-        sortOrder
-      )}`;
+      // const query = `?page=${page}&page_size=${pageSize}&search=${encodeURIComponent(search)}&order=${encodeURIComponent(
+      //   sortOrder
+      // )}`;
 
-      updateProgress({ showProgress : true });
-
-      dataFetch(
-        `/api/pattern${query}`,
-        { credentials : "include", },
-        (result) => {
-          console.log("patternFile API", `/api/pattern${query}`);
-          updateProgress({ showProgress : false });
-          if (result) {
-            setpatterns(result.patterns || []);
-            setCount(result.total_count || 0);
-          }
-        },
-        // handleError
-        handleError(ACTION_TYPES.FETCH_patternS)
-      );
+      // dataFetch(
+      //   `/api/pattern${query}`,
+      //   { credentials : "include", },
+      //   (result) => {
+      //     console.log("patternFile API", `/api/pattern${query}`);
+      //     updateProgress({ showProgress : false });
+      //     if (result) {
+      //       setpatterns(result.patterns || []);
+      //       setCount(result.total_count || 0);
+      //     }
+      //   },
+      //   // handleError
+      // );
     }
 
     const handleModalClose = () => {
@@ -185,6 +187,9 @@ function Mesherypatterns({user}) {
          setSelectedRowData = {setSelectedRowData}
          handleModalOpen = {handleModalOpen}
          user={user}
+         page ={page}
+         count = {count}
+         pageSize = {pageSize}
          />
 }
 {!selectedPattern.show && viewType === "grid" && patterns.length === 0 &&
@@ -214,9 +219,9 @@ function Mesherypatterns({user}) {
             //  handleSubmit={handleSubmit}
              setSelectedPattern={setSelectedPattern}
              selectedPattern={selectedPattern}
-            //  pages={Math.ceil(count / pageSize)}
-            //  setPage={setPage}
-            //  selectedPage={page}
+             pages={Math.ceil(count / pageSize)}  
+             setPage={setPage}
+             selectedPage={page}
            />
 }
   </>
