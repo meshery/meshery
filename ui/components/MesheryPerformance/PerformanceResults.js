@@ -1,138 +1,13 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import {Button, TableCell, IconButton, Paper,Tabs, Tab,  TableSortLabel} from "@mui/material";
 import MUIDataTable from "mui-datatables";
 import Moment from "react-moment";
 import BarChartIcon from '@mui/icons-material/BarChart';
 import InfoIcon from '@mui/icons-material/Info';
 import CustomModal from "@/components/Modal";
+import fetchPerformanceResults from "@/features/performance/graphql/queries/PerformanceResultQuery";
 import MesheryChart from "@/components/MesheryChart";
 
-const resultstest = [
-  {
-  meshery_id: "e94247f1-5b8e-4735-a4f4-0631d4f618d1",
-  name: "app mesh_1647676936903",
-  test_start_time: "2022-03-19T13:32:20.529138Z",
-  mesh: "app mesh",
-  user_id: "f714c166-5113-4f52-844c-38f0672b5e60",
-  runner_results: {
-  AbortOn: 0,
-  ActualDuration: 30762529800,
-  ActualQPS: 1.0402265420966776,
-  DurationHistogram: {
-  Avg: 0.96132905625,
-  Count: 32,
-  Data: [
-  {
-  Count: 7,
-  End: 0.9,
-  Percent: 21.875,
-  Start: 0.8091348
-  },
-  {
-  Count: 15,
-  End: 1,
-  Percent: 68.75,
-  Start: 0.9
-  },
-  {
-  Count: 10,
-  End: 1.2735744,
-  Percent: 100,
-  Start: 1
-  }
-  ],
-  Max: 1.2735744,
-  Min: 0.8091348,
-  Percentiles: [
-  {
-  Percentile: 50,
-  Value: 0.96
-  },
-  {
-  Percentile: 75,
-  Value: 1.05471488
-  },
-  {
-  Percentile: 90,
-  Value: 1.186030592
-  },
-  {
-  Percentile: 99,
-  Value: 1.2648200192
-  },
-  {
-  Percentile: 99.9,
-  Value: 1.27269896192
-  }
-  ],
-  StdDev: 0.08486755232774887,
-  Sum: 30.7625298
-  },
-  Exactly: 0,
-  HeaderSizes: {
-  Avg: 0,
-  Count: 32,
-  Data: [
-  {
-  Count: 32,
-  End: 0,
-  Percent: 100,
-  Start: 0
-  }
-  ],
-  Max: 0,
-  Min: 0,
-  Percentiles: null,
-  StdDev: 0,
-  Sum: 0
-  },
-  Jitter: false,
-  Labels: "app mesh_1647676936903 -_- https://youtu.be/JNoL5CLrY68",
-  NumThreads: 1,
-  RequestedDuration: "30s",
-  RequestedQPS: "max",
-  RetCodes: {
-  200: 32
-  },
-  RunID: 0,
-  RunType: "HTTP",
-  Sizes: {
-  Avg: 753774.28125,
-  Count: 32,
-  Data: [
-  {
-  Count: 27,
-  End: 750000,
-  Percent: 84.375,
-  Start: 675404
-  },
-  {
-  Count: 5,
-  End: 1136885,
-  Percent: 100,
-  Start: 1000000
-  }
-  ],
-  Max: 1136885,
-  Min: 675404,
-  Percentiles: null,
-  StdDev: 155880.00727828167,
-  Sum: 24120777
-  },
-  SocketCount: 0,
-  StartTime: "2022-03-19T13:32:20.5291384+05:30",
-  URL: "https://youtu.be/JNoL5CLrY68",
-  Version: "dev",
-  kubernetes: {
-  nodes: null,
-  server_version: ""
-  },
-  },
-  performance_profile: "acbff055-721d-4e57-a363-cdc51f9d43cc",
-  created_at: "2022-03-19T08:02:50.903797Z",
-  updated_at: "2022-03-19T08:02:50.903807Z"
-  }
-  ]
 
 function generateResultsForDisplay(results) {
   if (Array.isArray(results)) {
@@ -388,23 +263,17 @@ function ResultChart({ result, handleTabChange, tabValue }) {
   );
 }
 
-
-
-function PerformanceResults({CustomHeader, user, elevation = 4, results_selection,}) {
+function PerformanceResults({CustomHeader, endpoint, user, elevation = 4, results_selection, updateResultsSelection,}) {
 
   const [results, setResults] = useState([]);  
   const [sortOrder, setSortOrder] = useState("");
   const [selectedRowChart, setSelectedRowChart] = useState();
   const [selectedRowNodeDetails, setSelectedRowNodeDetails] = useState();
   const [tabValue, setTabValue] = useState(0);
-  const [open, setOpen] = useState(false);
-
-  function handlenewresultdata (){
-    setResults(resultstest)
-  }
-
-  // const handleOpenModal = () => setOpen(true);
-  // const handleCloseModal = () => setOpen(false);
+  const [count, setCount] = useState(0);
+  const [pageSize, setPageSize] = useState(10);
+  const [page, setPage] = useState(0);
+  const [search, setSearch] = useState("");
 
   const columns = generateColumnsForDisplay(sortOrder, (idx) => {
     setSelectedRowChart(results[idx])
@@ -424,21 +293,54 @@ function PerformanceResults({CustomHeader, user, elevation = 4, results_selectio
     resizableColumns : true,
     selectableRows : true,
     serverSide : true,
+    count,
+    page,
+    rowsPerPage : pageSize,
     rowsPerPageOptions : [10, 20, 25],
     fixedHeader : true,
-    // rowsSelected : generateSelectedRows(results_selection),
     print : false,
     download : false,
-
+     
   };
   
   function handleTabChange(event, newValue) {
     setTabValue(newValue);
   }
+ 
+  useEffect(() => {
+    fetchResults(page, pageSize, search, sortOrder);
+  }, [page, pageSize, search, sortOrder]);
+
+  function fetchResults(page, pageSize, search, sortOrder) {
+    if (!search) search = "";
+    if (!sortOrder) sortOrder = "";
+
+    fetchPerformanceResults({ selector : {
+      pageSize : `${pageSize}`,
+      page : `${page}`,
+      search : `${encodeURIComponent(search)}`,
+      order : `${encodeURIComponent(sortOrder)}`
+    },
+    profileID : endpoint.split("/")[endpoint.split("/").length - 2] }).subscribe({ next : (res) => {
+      // @ts-ignore
+      let result = res?.fetchResults
+      if (typeof result !== "undefined") {
+
+        if (result) {
+          setCount(result.total_count);
+          setPageSize(result.page_size);
+          setSortOrder(sortOrder);
+          setSearch(search);
+          setResults(result.results);
+          setPageSize(result.page_size);
+        }
+      }
+    },  
+ });
+  }
 
   return (
     <>
-    <Button onClick={handlenewresultdata}>ResultTest </Button>
     <MUIDataTable 
     data={generateResultsForDisplay(results)}
     columns={columns}
