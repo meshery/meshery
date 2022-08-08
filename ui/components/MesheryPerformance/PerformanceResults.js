@@ -1,5 +1,5 @@
 import React, {useState} from 'react'
-import {TableCell, IconButton, Paper,Tabs, Tab,  TableSortLabel} from "@mui/material";
+import {Button, TableCell, IconButton, Paper,Tabs, Tab,  TableSortLabel} from "@mui/material";
 import MUIDataTable from "mui-datatables";
 import Moment from "react-moment";
 import BarChartIcon from '@mui/icons-material/BarChart';
@@ -357,7 +357,8 @@ function ResultChart({ result, handleTabChange, tabValue }) {
       {
         (tabValue == 0) ?
           <div>
-             <MesheryChart  />
+            <h1> MesheryChart</h1>
+             {/* <MesheryChart  /> */}
               {/* <MesheryChart
                 rawdata={[result && result.runner_results ? result : {}]}
                 data={[result && result.runner_results ? result.runner_results : {}]}
@@ -388,6 +389,7 @@ function ResultChart({ result, handleTabChange, tabValue }) {
 }
 
 
+
 function PerformanceResults({CustomHeader, user, elevation = 4, results_selection,}) {
 
   const [results, setResults] = useState([]);  
@@ -396,20 +398,19 @@ function PerformanceResults({CustomHeader, user, elevation = 4, results_selectio
   const [selectedRowNodeDetails, setSelectedRowNodeDetails] = useState();
   const [tabValue, setTabValue] = useState(0);
   const [open, setOpen] = useState(false);
-   
 
-  const handleOpenModal = () => setOpen(true);
-  const handleCloseModal = () => setOpen(false);
+  function handlenewresultdata (){
+    setResults(resultstest)
+  }
+
+  // const handleOpenModal = () => setOpen(true);
+  // const handleCloseModal = () => setOpen(false);
 
   const columns = generateColumnsForDisplay(sortOrder, (idx) => {
     setSelectedRowChart(results[idx])
-    handleOpenModal();
-    console.log("Selected row chart", results[idx]);
     setTabValue(0)
   }, (idx) => {
-    setSelectedRowNodeDetails(results[idx])
-    handleOpenModal();
-    console.log("Selected row chart", results[idx]);
+    setSelectedRowChart(results[idx])
     setTabValue(1)
   } );
 
@@ -437,15 +438,16 @@ function PerformanceResults({CustomHeader, user, elevation = 4, results_selectio
 
   return (
     <>
+    <Button onClick={handlenewresultdata}>ResultTest </Button>
     <MUIDataTable 
-    data={resultstest}
+    data={generateResultsForDisplay(results)}
     columns={columns}
     title={CustomHeader}
     options={options}
     />
 
     <CustomModal
-    open={open}
+    open={!!selectedRowChart}
     Content={
       <div>
       <ResultChart
@@ -454,7 +456,7 @@ function PerformanceResults({CustomHeader, user, elevation = 4, results_selectio
         tabValue={tabValue}
       />
       </div>}
-    handleClose={handleCloseModal}
+   handleClose={() => setSelectedRowChart(undefined)}
      />
     </>
   )

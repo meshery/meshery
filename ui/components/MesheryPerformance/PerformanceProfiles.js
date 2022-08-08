@@ -85,7 +85,7 @@ function PerformanceProfiles() {
         const handleClick = () => setTestProfiles(profiles123);
   return (
     <>
-    <Button onClick={handleClick}>QWE</Button>
+    <Button onClick={handleClick}>Test Button</Button>
     {(testProfiles.length > 0 || viewType === "table") &&
     <Box sx={{display: "flex", paddingLeft : "1rem"}}>
           <Button aria-label="Add Performance Profile" variant="contained"
