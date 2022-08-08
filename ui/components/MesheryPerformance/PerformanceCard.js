@@ -9,24 +9,25 @@ import { styled } from "@mui/material/styles";
 
 function PerformanceCard({
   id,
-    name,
-    endpoints,
-    loadGenerators,
-    testRunDuration,
-    lastRun,
-    reqHeaders,
-    results,
-    concurrentRequest,
-    qps,
-    serviceMesh,
-    contentType,
-    requestBody,
-    requestCookies,
-    requestHeaders,
-    handleDelete,
+  name,
+  endpoints,
+  loadGenerators,
+  testRunDuration,
+  lastRun,
+  reqHeaders,
+  results,
+  handleDelete,
   handleEdit,
+  handleRunTest,
   requestFullSize,
   requestSizeRestore,
+  concurrentRequest,
+  qps,
+  serviceMesh,
+  contentType,
+  requestBody,
+  requestCookies,
+  requestHeaders,
 }) {
    
   const ButtonsWrapper = styled(Box)(({ theme }) => ({
@@ -45,7 +46,11 @@ function PerformanceCard({
     }
 
   return (
-    <FlipCard>
+    <FlipCard 
+    onClick={() => {
+      setRenderTable(false);
+      requestSizeRestore();
+    }}>
           {/* FRONT PART */}
           <>
         <div>
@@ -90,7 +95,7 @@ function PerformanceCard({
                 ? "Hide"
                 : "View"} Results
             </Button>
-            <Button color="primary" variant="contained" >
+            <Button color="primary" variant="contained" onClick={(ev) => genericClickHandler(ev, handleRunTest)} >
               Run Test
             </Button>
           </ButtonsWrapper>

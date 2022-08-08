@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import { Box, Button,Typography, } from "@mui/material";
 import PerformanceProfileTable from "./PerformanceProfileTable"
 import ViewSwitch from "@/components/ViewSwitch";
@@ -10,6 +10,7 @@ import CustomModal from "@/components/Modal";
 import EmptyState from "@/components/EmptyStateComponent";
 import PaperWithoutTitle from "@/components/Paper";
 import { useTheme } from "@mui/system";
+import fetchPerformanceProfiles from "@/features/performance/graphql/queries/PerformanceProfileQuery";
 
 function PerformanceProfiles() {
   const theme = useTheme();
@@ -23,69 +24,73 @@ function PerformanceProfiles() {
         /**  @type {TypeView} */
         ("grid")
       ); 
-
+      
+      const [page, setPage] = useState(0);
+      const [search, setSearch] = useState("");
+      const [sortOrder, setSortOrder] = useState("");
       const [count, setCount] = useState(0);
       const [testProfiles, setTestProfiles] = useState([]);
       const [profileForModal, setProfileForModal] = useState();
+      const [pageSize, setPageSize] = useState(10);
       
       console.log("profileForModal", profileForModal)
+    
+        useEffect(() => {
+          fetchTestProfiles(page, pageSize, search, sortOrder);
+          // const subscription = subscribePerformanceProfiles((res) => {
+          //   // @ts-ignore
+          //   console.log(res);
+          //   let result = res?.subscribePerfProfiles;
+          //   if (typeof result !== "undefined") {
+          //     if (result) {
+          //       setCount(result.total_count || 0);
+          //       setPageSize(result.page_size || 0);
+          //       setTestProfiles(result.profiles || []);
+          //       setPage(result.page || 0);
+          //     }
+          //   }
+          // }, {
+          //   selector : {
+          //     pageSize : `${pageSize}`,
+          //     page : `${page}`,
+          //     search : `${encodeURIComponent(search)}`,
+          //     order : `${encodeURIComponent(sortOrder)}`,
+          //   }
+          // })
+          // return () => {
+          //   subscription.dispose();
+          // };
+        }, [page, pageSize, search, sortOrder]);
 
-     const profiles123 = [
-        {
-        id: "27d7425d-f8f2-41ae-8f5f-443bad744b55",
-        name: "ebd",
-        user_id: "f714c166-5113-4f52-844c-38f0672b5e60",
-        load_generators: [
-        "nighthawk"
-        ],
-        endpoints: [
-        "https://layer5.io/"
-        ],
-        service_mesh: "linkerd",
-        concurrent_request: 4,
-        qps: 4,
-        duration: "30s",
-        created_at: "2022-07-04T06:37:07.233393Z",
-        updated_at: "2022-07-04T06:37:07.233403Z"
-        },
-        {
-        id: "54df3a92-dec6-4566-8274-0cc2b8bd62ab",
-        name: "sdv",
-        user_id: "f714c166-5113-4f52-844c-38f0672b5e60",
-        load_generators: [
-        "nighthawk"
-        ],
-        endpoints: [
-        "https://layer5.io/blog"
-        ],
-        service_mesh: "app mesh",
-        duration: "30s",
-        created_at: "2022-07-04T06:35:23.043739Z",
-        updated_at: "2022-07-04T06:35:23.043748Z"
-        },
-        {
-        id: "acbff055-721d-4e57-a363-cdc51f9d43cc",
-        name: "ebd",
-        user_id: "f714c166-5113-4f52-844c-38f0672b5e60",
-        load_generators: [
-        "fortio"
-        ],
-        endpoints: [
-        "https://youtu.be/JNoL5CLrY68"
-        ],
-        service_mesh: "app mesh",
-        duration: "30s",
-        last_run: "2022-04-01T18:18:17.449935Z",
-        total_results: 2,
-        created_at: "2022-03-19T08:02:16.125012Z",
-        updated_at: "2022-03-19T08:02:16.125022Z"
+        function fetchTestProfiles(page, pageSize, search, sortOrder) {
+          if (!search) search = "";
+          if (!sortOrder) sortOrder = "";
+    
+          fetchPerformanceProfiles({
+            selector : {
+              pageSize : `${pageSize}`,
+              page : `${page}`,
+              search : `${encodeURIComponent(search)}`,
+              order : `${encodeURIComponent(sortOrder)}`,
+            },
+          }).subscribe({
+            next : (res) => {
+              // @ts-ignore
+              let result = res?.getPerformanceProfiles;
+              if (typeof result !== "undefined") {
+                if (result) {
+                  setCount(result.total_count || 0);
+                  setPageSize(result.page_size || 0);
+                  setTestProfiles(result.profiles || []);
+                  setPage(result.page || 0);
+                }
+              }
+            },
+          });
         }
-        ];
-     
-        const handleClick = () => setTestProfiles(profiles123);
+
   return (
     <>
-    <Button onClick={handleClick}>Test Button</Button>
     {(testProfiles.length > 0 || viewType === "table") &&
     <Box sx={{display: "flex", paddingLeft : "1rem"}}>
           <Button aria-label="Add Performance Profile" variant="contained"
@@ -105,12 +110,22 @@ function PerformanceProfiles() {
   <PerformanceProfileTable
               testProfiles={testProfiles}
               setProfileForModal={setProfileForModal}
+              pageSize={pageSize}
+              page={page}
+              setPage={setPage}
+              search={search}
+              setSearch={setSearch}
+              sortOrder={sortOrder}
+              setSortOrder={setSortOrder}
+              count={count}
             />
         }
   { viewType==="grid" &&
   <PerformanceProfileGrid
   profiles={testProfiles}
   setProfileForModal={setProfileForModal}
+  pages={Math.ceil(count / pageSize)}
+              setPage={setPage}
             />
         }
 

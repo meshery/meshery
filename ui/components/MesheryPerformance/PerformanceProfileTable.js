@@ -1,5 +1,5 @@
-import React, {useState, useEffect } from 'react'
-import { Avatar, Box, Button, Divider, Dialog, DialogActions, DialogContent, DialogTitle, IconButton,TableRow, TableCell, Typography, Tooltip, TableSortLabel } from "@mui/material";
+import React, {useState, useEffect, useRef } from 'react'
+import { IconButton,TableRow, TableCell, Typography, TableSortLabel } from "@mui/material";
 import MUIDataTable from "mui-datatables";
 import Moment from "react-moment";
 import EditIcon from '@mui/icons-material/Edit';
@@ -11,15 +11,26 @@ function PerformanceProfileTable({
     page = 0,
     count = 0,
     pageSize = 10,
+    setPage,
+    setPageSize,
+    setSortOrder,
+    sortOrder = "",
+    setSearch,
+    search = "",
     testProfiles = [],
     setProfileForModal,
-    showModal,}) {
+    showModal,
+    fetchTestProfiles,
+    handleDelete,
+  }) {
 
       const [selectedProfile, setSelectedProfile] = useState();
 
       useEffect(() => {
         setProfileForModal(selectedProfile);
       }, [selectedProfile]);
+     
+      const searchTimeout = useRef(null);
 
     const columns = [
         { name : "name",
@@ -129,6 +140,11 @@ function PerformanceProfileTable({
           }, },
       ];
       
+      columns.forEach((column, idx) => {
+        if (column.name === sortOrder.split(" ")[0]) {
+          columns[idx].options.sortDirection = sortOrder.split(" ")[1];
+        }
+      });
       
       const options = {
         filter : false,
@@ -152,7 +168,52 @@ function PerformanceProfileTable({
           }
         },
     
+        onRowsDelete : async function handleDeleteRow(row) {
+          let response = await showModal(Object.keys(row.lookup).length)
+          console.log(response)
+          if (response === "Yes") {
+            const pids = Object.keys(row.lookup).map(idx => testProfiles[idx]?.id)
+            pids.forEach(pid => handleDelete(pid))
+          }
+          if (response === "No") {
+            fetchTestProfiles(page, pageSize, search, sortOrder);
+          }
+        },
+        onTableChange : (action, tableState) => {
+          const sortInfo = tableState.announceText
+            ? tableState.announceText.split(" : ")
+            : [];
+          let order = "";
+          if (tableState.activeColumn) {
+            order = `${columns[tableState.activeColumn].name} desc`;
+          }
     
+          switch (action) {
+            case "changePage":
+              setPage(tableState.page);
+              break;
+            case "changeRowsPerPage":
+              setPageSize(tableState.rowsPerPage);
+              break;
+            case "search":
+              if (searchTimeout.current) clearTimeout(searchTimeout.current);
+              searchTimeout.current = setTimeout(() => {
+                if (search !== tableState.searchText) setSearch(tableState.searchText);
+              }, 500);
+              break;
+            case "sort":
+              if (sortInfo.length == 2) {
+                if (sortInfo[1] === "ascending") {
+                  order = `${columns[tableState.activeColumn].name} asc`;
+                } else {
+                  order = `${columns[tableState.activeColumn].name} desc`;
+                }
+              }
+              if (order !== sortOrder) setSortOrder(order);
+              break;
+          }
+        },
+
         expandableRows : true,
         renderExpandableRow : function ExpandableRow(rowData, rowMeta) {
           const colSpan = rowData.length;

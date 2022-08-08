@@ -1,10 +1,10 @@
 import React, {useState} from 'react'
-import { Button, Grid, IconButton, Typography } from "@mui/material";
+import { Grid, Pagination } from "@mui/material";
 import PerformanceCard from "./PerformanceCard";
 
 const INITIAL_GRID_SIZE = { xl : 4, md : 6, xs : 12 };
 
-function PerformanceCardGridItem({ profile, setProfileForModal }) {
+function PerformanceCardGridItem({ profile, deleteHandler, setProfileForModal }) {
     const [gridProps, setGridProps] = useState(INITIAL_GRID_SIZE);
   
     return (
@@ -26,29 +26,38 @@ function PerformanceCardGridItem({ profile, setProfileForModal }) {
           requestHeaders={profile.request_headers}
           lastRun={profile.last_run}
           handleEdit={() => setProfileForModal(profile)}
+          handleDelete={() => deleteHandler(profile.id)}
+          handleRunTest={() => setProfileForModal({ ...profile, runTest : true })}
           requestFullSize={() => setGridProps({ xl : 12, md : 12, xs : 12 })}
           requestSizeRestore={() => setGridProps(INITIAL_GRID_SIZE)}
-        // handleDelete={() => deleteHandler(profile.id)}
         />
       </Grid>
     );
   }
 
   function PerformanceProfileGrid({
-    profiles = [], deleteHandler, setProfileForModal,
+    profiles = [], deleteHandler, setProfileForModal,  pages = 1, setPage
   }) {
 
     return (
       <div>
-        <Grid container spacing={2} style={{ padding : "1rem" }}>
+        <Grid container spacing={2} sx={{ padding : "1rem" }}>
           {profiles.map((profile) => (
             <PerformanceCardGridItem
               key={profile.id}
               profile={profile}
+              deleteHandler={deleteHandler}
               setProfileForModal={setProfileForModal}
             />
           ))}
         </Grid>
+        {profiles.length
+        ? (
+          <div  >
+            <Pagination count={pages} onChange={(_, page) => setPage(page - 1)} />  
+          </div>
+        )
+        : null}
       </div>
     );
   }
