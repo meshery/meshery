@@ -12,6 +12,7 @@ replace (
 	github.com/go-redis/redis/v8 => github.com/go-redis/redis/v8 v8.11.4
 	github.com/kubernetes/kompose => github.com/meshery/kompose v1.0.1 // till https://github.com/kubernetes/kompose/pull/1499 is merged
 	github.com/kudobuilder/kuttl => github.com/layer5io/kuttl v0.4.1-0.20200806180306-b7e46afd657f
+	github.com/layer5io/meshkit => ../meshkit
 	github.com/spf13/afero => github.com/spf13/afero v1.5.1 // Until viper bug is resolved #1161
 	go.mongodb.org/mongo-driver v1.5.1 => github.com/mongodb/mongo-go-driver v1.5.1
 	gonum.org/v1/plot v0.9.0 => github.com/gonum/plot v0.9.0
@@ -192,7 +193,6 @@ require (
 	github.com/morikuni/aec v1.0.0 // indirect
 	github.com/mpvl/unique v0.0.0-20150818121801-cbe035fff7de // indirect
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
-	github.com/nats-io/jwt/v2 v2.2.1-0.20220113022732-58e87895b296 // indirect
 	github.com/nats-io/nats.go v1.14.0 // indirect
 	github.com/nats-io/nkeys v0.3.0 // indirect
 	github.com/nats-io/nuid v1.0.1 // indirect
