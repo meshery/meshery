@@ -12,6 +12,7 @@ import MesheryPatternTable from "./MesheryPatternTable";
 import AddCircleOutlineRoundedIcon from '@mui/icons-material/AddCircleOutlineRounded';
 import EmptyState from "@/components/EmptyStateComponent";
 import { useTheme } from "@mui/system";
+import fetchPatternsQuery from "@/features/mesheryConfigurator/patternsConfigurator/graphql/queries/PatternsQuery";
 
 function resetSelectedPattern() {
   return { show : false, pattern : null };
@@ -53,7 +54,27 @@ function Mesherypatterns({user}) {
     function fetchpatterns(page, pageSize, search, sortOrder) {
       if (!search) search = "";
       if (!sortOrder) sortOrder = "";
-
+      
+      fetchPatternsQuery({
+        selector : {
+          pageSize : `${pageSize}`,
+          page : `${page}`,
+          search : `${encodeURIComponent(search)}`,
+          order : `${encodeURIComponent(sortOrder)}`,
+        },
+      }).subscribe({
+        next : (res) => {
+        let result = res?.getPatterns;
+        if (typeof result !== "undefined") {
+          if (result) {
+            setCount(result.total_count || 0);
+            setPageSize(result.page_size || 0);
+            setTestProfiles(result.profiles || []);
+            setPage(result.page || 0);
+          }
+        }
+      },
+      })
       // const query = `?page=${page}&page_size=${pageSize}&search=${encodeURIComponent(search)}&order=${encodeURIComponent(
       //   sortOrder
       // )}`;
