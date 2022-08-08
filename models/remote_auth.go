@@ -39,7 +39,7 @@ func (l *RemoteProvider) DoRequest(req *http.Request, tokenString string) (*http
 	if resp.StatusCode == 401 || resp.StatusCode == 403 {
 		// Read and close response body before reusing request
 		// https://github.com/golang/go/issues/19653#issuecomment-341540384
-		ioutil.ReadAll(resp.Body)
+		_, _ = ioutil.ReadAll(resp.Body)
 		resp.Body.Close()
 		logrus.Warn("trying after refresh")
 		newToken, err := l.refreshToken(tokenString)
