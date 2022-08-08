@@ -23,7 +23,7 @@ import MesheryPatternTable from "./MesheryPatternTable";
 import AddCircleOutlineRoundedIcon from "@mui/icons-material/AddCircleOutlineRounded";
 import EmptyState from "@/components/EmptyStateComponent";
 import { useTheme } from "@mui/system";
-import PatternConfigurator from "../PatternConfigurator/PatternConfigurator";
+import PatternConfigurator from "./PatternConfigurator";
 function resetSelectedPattern() {
   return { show: false, pattern: null };
 }

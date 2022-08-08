@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   AppBar,
   FormControl,
@@ -15,24 +15,23 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import FileCopyIcon from "@mui/icons-material/FileCopy";
 import ListAltIcon from "@mui/icons-material/ListAlt";
 import SaveIcon from "@mui/icons-material/Save";
-import NameToIcon from "./NameToIcon";
-import {getMeshProperties} from "../../utils/nameMapper"
-import { isEmptyObj } from "../../utils/utils";
-import { getHumanReadablePatternServiceName, getPatternServiceName } from "./helpers";
+import {
+  getHumanReadablePatternServiceName,
+  getPatternServiceName,
+  isEmptyObj,
+  NameToIcon,
+  getMeshProperties,
+} from "./helpers";
 
-const PattrenBar = styled(AppBar)(() => ({
-  marginBottom: "16px",
-  backgroundColor: "#fff",
-  borderRadius: "8px"
+const PattrenBar = styled(AppBar)(({theme}) => ({
+  marginBottom: theme.spacing(2),
+  backgroundColor: theme.palette(white),
+  borderRadius: theme.spacing(1),
 }));
 
-const PatternConfigurator = ({
-  pattern,
-  onSubmit,
-  show: setSelectedPattern
-}) => {
+const PatternConfigurator = ({ pattern, onSubmit, show: setSelectedPattern }) => {
   // const { workloadTraitSet, meshWorkloads } = useContext(SchemaContext);
-  const [workloadTraitsSet, setWorkloadTraitsSet] = useState(workloadTraitSet);
+  // const [workloadTraitsSet, setWorkloadTraitsSet] = useState(workloadTraitSet);
   const [selectedMeshType, setSelectedMeshType] = useState("core");
   const [selectedVersion, setSelectedVersion] = useState("");
   const [selectedVersionMesh, setSelectedVersionMesh] = useState();
@@ -40,12 +39,6 @@ const PatternConfigurator = ({
   const [activeForm, setActiveForm] = useState();
   const [activeCR, setActiveCR] = useState({});
   const [viewType, setViewType] = useState("list");
- 
-  useEffect(() => {
-    if (workloadTraitSet != workloadTraitsSet) {
-      setWorkloadTraitsSet(workloadTraitSet);
-    }
-  }, [workloadTraitSet]);
 
   useEffect(() => {
     // core is not versioned
@@ -71,48 +64,24 @@ const PatternConfigurator = ({
       setBriefCrsInformations(crsBriefs);
       setActivePatternWithRefinedSchema(
         selectedVersionMesh?.[selectedVersion]?.sort((a, b) =>
-          getPatternServiceName(a.workload) < getPatternServiceName(b.workload)
-            ? -1
-            : 1
+          getPatternServiceName(a.workload) < getPatternServiceName(b.workload) ? -1 : 1
         )[0]
       );
       setActiveCR(crsBriefs[0]);
     }
   }, [selectedVersion]);
 
-  // useEffect(() => {
-  //   if (!isEmptyObj(activeCR)) {
-  //     let activeSchema;
-  //     if (selectedMeshType === "core" || selectedMeshType === "kubernetes") {
-  //       activeSchema = meshWorkloads[selectedMeshType].find(
-  //         (schema) =>
-  //           schema?.workload?.metadata?.["display.ui.meshery.io/name"] ===
-  //           activeCR.name
-  //       );
-  //     } else {
-  //       activeSchema = selectedVersionMesh?.[selectedVersion].find(
-  //         (schema) =>
-  //           schema?.workload?.oam_definition?.metadata?.name === activeCR.name
-  //       );
-  //     }
-  //     setActivePatternWithRefinedSchema(activeSchema);
-  //   }
-  // }, [activeCR]);
-
   const groupWlByVersion = () => {
     // const mfw = meshWorkloads[selectedMeshType];
     // return mfw ? groupWorkloadByVersion(mfw) : {};
-  }
-
+  };
 
   const resetSelectedPattern = () => {
     return { show: false, pattern: null };
   };
-  
-  const handleMeshSelection = (event) =>
-    setSelectedMeshType(event.target.value);
-  ;
 
+  const handleMeshSelection = (event) => setSelectedMeshType(event.target.value);
+  
   const getMeshOptions = () => {
     return meshWorkloads ? Object.keys(meshWorkloads) : [];
   };
@@ -126,7 +95,7 @@ const PatternConfigurator = ({
       data: yaml,
       id: id,
       name: name,
-      type: action
+      type: action,
     });
     setSelectedPattern(resetSelectedPattern());
   };
@@ -136,7 +105,6 @@ const PatternConfigurator = ({
     // setActiveForm(refinedSchema);
   };
 
-  
   /**
    * get keys and mapping to the correct icons and colors
    * for all the CRDs available in any SM
@@ -148,38 +116,23 @@ const PatternConfigurator = ({
         const name = mwl?.workload?.metadata?.["display.ui.meshery.io/name"];
         return {
           name,
-          icon: (
-            <NameToIcon
-              name={name.split(".")[0]}
-              color={getMeshProperties(selectedMeshType).color}
-            />
-          ),
-          readableName: getHumanReadablePatternServiceName(mwl?.workload)
+          icon: <NameToIcon name={name.split(".")[0]} color={getMeshProperties(selectedMeshType).color} />,
+          readableName: getHumanReadablePatternServiceName(mwl?.workload),
         };
       });
     }
     return selectedVersionMesh?.[selectedVersion]
-      ?.sort((a, b) =>
-        getPatternServiceName(a.workload) < getPatternServiceName(b.workload)
-          ? -1
-          : 1
-      )
+      ?.sort((a, b) => (getPatternServiceName(a.workload) < getPatternServiceName(b.workload) ? -1 : 1))
       .map((item) => {
         const name = item.workload?.oam_definition?.metadata?.name;
         return {
           name,
-          icon: (
-            <NameToIcon
-              name={name.split(".")[0]}
-              color={getMeshProperties(selectedMeshType).color}
-            />
-          ),
-          readableName: getHumanReadablePatternServiceName(item?.workload)
+          icon: <NameToIcon name={name.split(".")[0]} color={getMeshProperties(selectedMeshType).color} />,
+          readableName: getHumanReadablePatternServiceName(item?.workload),
         };
       });
   }
-  
-  
+
   const toggleView = () => {
     if (viewType == "list") {
       if (isEmptyObj(activeForm)) {
@@ -188,19 +141,13 @@ const PatternConfigurator = ({
         if (selectedMeshType === "core" || selectedMeshType === "kubernetes") {
           setActivePatternWithRefinedSchema(
             meshWorkloads[selectedMeshType]?.sort((a, b) =>
-              getPatternServiceName(a.workload) <
-              getPatternServiceName(b.workload)
-                ? -1
-                : 1
+              getPatternServiceName(a.workload) < getPatternServiceName(b.workload) ? -1 : 1
             )[0]
           );
         } else {
           setActivePatternWithRefinedSchema(
             selectedVersionMesh?.[selectedVersion]?.sort((a, b) =>
-              getPatternServiceName(a.workload) <
-              getPatternServiceName(b.workload)
-                ? -1
-                : 1
+              getPatternServiceName(a.workload) < getPatternServiceName(b.workload) ? -1 : 1
             )[0]
           );
         }
@@ -214,16 +161,18 @@ const PatternConfigurator = ({
   return (
     <>
       <PattrenBar position="static" elevation={0}>
-        <Toolbar sx={{
-          display:"flex",
-          justifyContent:"space-between"
-        }}>
+        <Toolbar
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+          }}
+        >
           <FormControl
             sx={{
               width: "60px",
               minWidth: "60px",
               maxWidth: "60px",
-              marginRight: 8
+              marginRight: 8,
             }}
           >
             <Select
@@ -233,71 +182,65 @@ const PatternConfigurator = ({
               onChange={handleMeshSelection}
               fullWidth
             >
-              {getMeshOptions().map((meshItem) => {
+              {/* {getMeshOptions().map((meshItem) => {
                 const meshDetails = getMeshProperties(meshItem);
-                console.log(meshDetails)
                 return (
-                  <MenuItem key={meshDetails.name} value={meshDetails.name} sx={{
-                    padding: "5px 0",
-                    justifyContent:"center"
-                  }}>
+                  <MenuItem
+                    key={meshDetails.name}
+                    value={meshDetails.name}
+                    sx={{
+                      padding: "5px 0",
+                      justifyContent: "center",
+                    }}
+                  >
                     <img src={meshDetails.image} height="32px" />
                   </MenuItem>
                 );
-              })}
+              })} */}
             </Select>
           </FormControl>
           {selectedVersion && selectedVersionMesh && (
             <Autocomplete
               options={Object.keys(selectedVersionMesh).sort().reverse()}
-              renderInput={(params) => (
-                <TextField {...params} variant="outlined" label="Version" />
-              )}
+              renderInput={(params) => <TextField {...params} variant="outlined" label="Version" />}
               value={selectedVersion}
               onChange={handleVersionChange}
               disableClearable
               sx={{
                 width: "120px",
                 minWidth: "120px",
-                maxWidth: 120
+                maxWidth: 120,
               }}
             />
           )}
-          {viewType === "form" &&
-            briefCrsInformations &&
-            briefCrsInformations.length > 0 && (
-              <Autocomplete
-                disableClearable
-                value={activeCR}
-                options={briefCrsInformations}
-                getOptionLabel={(option) => option.readableName}
-                onChange={(_, newVal) => {
-                  setActiveCR(newVal);
-                }}
-                renderOption={(option) => {
-                  return (
-                    <>
-                      <IconButton color="primary">{option.icon}</IconButton>
-                      {option.name}
-                    </>
-                  );
-                }}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    variant="outlined"
-                    label="Configure"
-                    placeholder={selectedMeshType}
-                  />
-                )}
-                sx={{
-                  width: 250,
-                  marginLeft: 16,
-                  marginRight: "auto",
-                  padding: 0
-                }}
-              />
-            )}
+          {viewType === "form" && briefCrsInformations && briefCrsInformations.length > 0 && (
+            <Autocomplete
+              disableClearable
+              value={activeCR}
+              options={briefCrsInformations}
+              getOptionLabel={(option) => option.readableName}
+              onChange={(_, newVal) => {
+                setActiveCR(newVal);
+              }}
+              renderOption={(option) => {
+                return (
+                  <>
+                    <IconButton color="primary">{option.icon}</IconButton>
+                    {option.name}
+                  </>
+                );
+              }}
+              renderInput={(params) => (
+                <TextField {...params} variant="outlined" label="Configure" placeholder={selectedMeshType} />
+              )}
+              sx={{
+                width: 250,
+                marginLeft: 16,
+                marginRight: "auto",
+                padding: 0,
+              }}
+            />
+          )}
 
           <div>
             <Tooltip title="Save Pattern as New File">
@@ -356,3 +299,4 @@ const PatternConfigurator = ({
 };
 
 export default PatternConfigurator;
+
