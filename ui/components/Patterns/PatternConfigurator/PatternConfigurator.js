@@ -25,7 +25,7 @@ import {
 
 const PattrenBar = styled(AppBar)(({theme}) => ({
   marginBottom: theme.spacing(2),
-  backgroundColor: theme.palette(white),
+  backgroundColor: theme.palette.white,
   borderRadius: theme.spacing(1),
 }));
 
