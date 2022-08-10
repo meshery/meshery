@@ -6,6 +6,5 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - working-directory: ./ui/
     - name: Run ESLint
-      run: npm i eslint && npx eslint .
+      run: cd ui && npm i eslint && npx eslint .
