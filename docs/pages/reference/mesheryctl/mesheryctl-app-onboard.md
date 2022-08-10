@@ -75,7 +75,7 @@ mesheryctl app onboard -f ./application.yml -s "Kubernetes Manifest"
 ## Screenshots
 
 Usage of mesheryctl app onboard
-![app-onboard-usage](../../../../docs/assets/img/mesheryctl/app-onboard.png)
+![app-onboard-usage](/assets/img/mesheryctl/app-onboard.png)
 
 ## See Also
 
