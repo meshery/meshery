@@ -223,6 +223,12 @@ var channelCmd = &cobra.Command{
 	Example: `
 // Subscribe to release channel or version
 mesheryctl system channel [stable|stable-version|edge|edge-version]
+// To set the channel
+mesheryctl system channel set [stable|stable-version|edge|edge-version]
+// To view release channel and version
+mesheryctl system channel view
+// To switch release channel and version
+mesheryctl system channel switch [stable|stable-version|edge|edge-version]
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
