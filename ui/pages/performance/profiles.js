@@ -1,3 +1,4 @@
+import React from "react";
 import { NoSsr } from "@material-ui/core";
 import PerformanceProfiles from "../../components/MesheryPerformance/PerformanceProfiles";
 import { updatepagepath } from "../../lib/store";
