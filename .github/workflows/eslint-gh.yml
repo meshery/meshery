@@ -2,6 +2,7 @@ name: eslint-check
 on: [pull_request]
 jobs:
   eslint:
+    name: runner / eslint
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
