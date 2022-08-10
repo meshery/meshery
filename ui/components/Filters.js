@@ -11,7 +11,8 @@ import {
   DialogActions,
   Divider,
   Tooltip,
-  Typography
+  Typography,
+  Button
 } from "@material-ui/core";
 import { UnControlled as CodeMirror } from "react-codemirror2";
 import DeleteIcon from "@material-ui/icons/Delete";
@@ -37,6 +38,7 @@ import { ctxUrl } from "../utils/multi-ctx";
 import ConfirmationMsg from "./ConfirmationModal";
 import UndeployIcon from "../public/static/img/UndeployIcon";
 import { getComponentsinFile } from "../utils/utils";
+import PublishIcon from "@material-ui/icons/Publish";
 
 const styles = (theme) => ({
   grid : {
@@ -184,6 +186,11 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     count : 0
   });
 
+
+  const [importModal, setImportModal] = useState({
+    open : false
+  })
+
   const getMuiTheme = () => createTheme({
     overrides : {
       MuiInput : {
@@ -252,6 +259,18 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
   };
 
   const searchTimeout = useRef(null);
+
+  const handleUploadImport = () => {
+    setImportModal({
+      open : true
+    });
+  }
+
+  const handleUploadImportClose = () => {
+    setImportModal({
+      open : false
+    });
+  }
 
   /**
    * fetch filters when the page loads
@@ -694,13 +713,24 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
         <div className={classes.topToolbar} >
           {!selectedFilter.show && (filters.length>0 || viewType==="table") && <div className={classes.createButton}>
             <div>
-              <UploadImport supportedTypes="null" aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} configuration="Filter" />
+              <Button
+                aria-label="Add Filter"
+                variant="contained"
+                color="primary"
+                size="large"
+                // @ts-ignore
+                onClick={handleUploadImport}
+                style={{ marginRight : "2rem" }}
+              >
+                <PublishIcon className={classes.addIcon} data-cy="import-button"/>
+              Import Filters
+              </Button>
             </div>
           </div>
           }
           {!selectedFilter.show &&
           <div className={classes.viewSwitchButton}>
-            <ViewSwitch view={viewType} changeView={setViewType} />
+            <ViewSwitch data-cy="table-view" view={viewType} changeView={setViewType} />
           </div>
           }
         </div>
@@ -744,6 +774,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
           componentCount={modalOpen.count}
           tab={modalOpen.deploy ? 0 : 1}
         />
+        <UploadImport open={importModal.open} handleClose={handleUploadImportClose} supportedTypes="null" aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} configuration="Filter" />
       </NoSsr>
     </>
   );
