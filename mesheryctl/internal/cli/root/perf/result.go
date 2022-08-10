@@ -53,7 +53,7 @@ mesheryctl perf result saturday-profile --view
 
 ! Refer below image link for usage
 * Usage of mesheryctl perf result
-# ![perf-result-usage](../../../../docs/assets/img/mesheryctl/perf-result.png)
+# ![perf-result-usage](/assets/img/mesheryctl/perf-result.png)
 `,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		// used for searching performance profile
