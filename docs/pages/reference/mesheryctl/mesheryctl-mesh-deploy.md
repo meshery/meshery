@@ -84,7 +84,7 @@ mesheryctl mesh deploy --adapter meshery-linkerd --watch
 ## Screenshots
 
 Usage of mesheryctl mesh deploy
-![mesh-deploy-usage](../../../../docs/assets/img/mesheryctl/deploy-mesh.png)
+![mesh-deploy-usage](/assets/img/mesheryctl/deploy-mesh.png)
 
 ## See Also
 

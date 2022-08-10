@@ -68,7 +68,7 @@ mesheryctl system update --skip-reset
 ## Screenshots
 
 Usage of mesheryctl system update
-![update-usage](../../../../docs/assets/img/mesheryctl/update.png)
+![update-usage](/assets/img/mesheryctl/update.png)
 
 ## See Also
 
