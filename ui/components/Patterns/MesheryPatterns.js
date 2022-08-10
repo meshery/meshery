@@ -68,7 +68,7 @@ function Mesherypatterns({user}) {
         },
       }).subscribe({
         next : (res) => {
-        let result = res?.getPatterns;
+        let result = res?.fetchPatterns;
         if (typeof result !== "undefined") {
           if (result) {
             console.log("test")
@@ -80,23 +80,6 @@ function Mesherypatterns({user}) {
         }
       },
       })
-      // const query = `?page=${page}&page_size=${pageSize}&search=${encodeURIComponent(search)}&order=${encodeURIComponent(
-      //   sortOrder
-      // )}`;
-
-      // dataFetch(
-      //   `/api/pattern${query}`,
-      //   { credentials : "include", },
-      //   (result) => {
-      //     console.log("patternFile API", `/api/pattern${query}`);
-      //     updateProgress({ showProgress : false });
-      //     if (result) {
-      //       setpatterns(result.patterns || []);
-      //       setCount(result.total_count || 0);
-      //     }
-      //   },
-      //   // handleError
-      // );
     }
 
     const handleModalClose = () => {
@@ -216,6 +199,7 @@ function Mesherypatterns({user}) {
          page ={page}
          count = {count}
          pageSize = {pageSize}
+         sortOrder ={sortOrder}
          />
 }
 {!selectedPattern.show && viewType === "grid" && patterns.length === 0 &&
