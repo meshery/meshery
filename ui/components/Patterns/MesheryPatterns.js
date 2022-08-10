@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import { Box, Button, Divider, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Typography, Tooltip,} from "@mui/material";
 import { styled } from "@mui/material/styles";
 import UploadImport from "@/components/UploadImport";
@@ -12,7 +12,7 @@ import MesheryPatternTable from "./MesheryPatternTable";
 import AddCircleOutlineRoundedIcon from '@mui/icons-material/AddCircleOutlineRounded';
 import EmptyState from "@/components/EmptyStateComponent";
 import { useTheme } from "@mui/system";
-import fetchPatternsQuery from "@/features/mesheryConfigurator/patternsConfigurator/graphql/queries/PatternsQuery";
+import fetchPatternsQuery from "@/features/mesheryConfigurator/graphql/queries/PatternsQuery";
 
 function resetSelectedPattern() {
   return { show : false, pattern : null };
@@ -49,7 +49,14 @@ function Mesherypatterns({user}) {
       return () => {
         setSelectedRowData(null);
       };
-    }
+    } 
+
+    useEffect(() => {
+      fetchpatterns(page, pageSize, search, sortOrder);
+      document.body.style.overflowX = "hidden"
+  
+      return (() => document.body.style.overflowX = "auto")
+    }, [page, pageSize, search, sortOrder]);
 
     function fetchpatterns(page, pageSize, search, sortOrder) {
       if (!search) search = "";
@@ -67,9 +74,10 @@ function Mesherypatterns({user}) {
         let result = res?.getPatterns;
         if (typeof result !== "undefined") {
           if (result) {
+            console.log("test")
             setCount(result.total_count || 0);
             setPageSize(result.page_size || 0);
-            setTestProfiles(result.profiles || []);
+            setPatterns(result.patterns || [])
             setPage(result.page || 0);
           }
         }

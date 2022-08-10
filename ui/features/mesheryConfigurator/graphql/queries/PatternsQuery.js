@@ -7,7 +7,7 @@ export default function fetchPatternsQuery(variables) {
 
     const query = graphql`
      query PatternsQuery($selector: PageFilter!) {
-      getPatterns(selector: $selector) {
+      fetchPatterns(selector: $selector) {
         page
         page_size
         patterns{
