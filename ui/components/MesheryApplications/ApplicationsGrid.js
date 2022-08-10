@@ -84,7 +84,7 @@ const useStyles = makeStyles(() => ({
  * }} props props
  */
 
-function MesheryApplicationGrid({ applications=[],handleDeploy, handleUnDeploy, handleSubmit,urlUploadHandler,uploadHandler, setSelectedApplication, selectedApplication, pages = 1,setPage, selectedPage }) {
+function MesheryApplicationGrid({ applications=[],handleDeploy, handleUnDeploy, handleSubmit,urlUploadHandler,uploadHandler, setSelectedApplication, selectedApplication, pages = 1,setPage, selectedPage, types }) {
 
   const classes = useStyles()
 
@@ -139,8 +139,7 @@ function MesheryApplicationGrid({ applications=[],handleDeploy, handleUnDeploy, 
                 No Applications Found
               </Typography>
               <div>
-                <UploadImport supportedTypes="null" aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} configuration="Application"  />
-
+                <UploadImport supportedTypes={types} isApplication = {true} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} configuration="Application"  />
               </div>
             </div>
           </Paper>
