@@ -8,4 +8,4 @@ jobs:
     - uses: actions/checkout@v2
     - working-directory: ./ui/
     - name: Run ESLint
-      run: npx eslint .
+      run: npm i eslint && npx eslint .
