@@ -53,9 +53,6 @@ function Mesherypatterns({user}) {
 
     useEffect(() => {
       fetchpatterns(page, pageSize, search, sortOrder);
-      document.body.style.overflowX = "hidden"
-  
-      return (() => document.body.style.overflowX = "auto")
     }, [page, pageSize, search, sortOrder]);
 
     function fetchpatterns(page, pageSize, search, sortOrder) {
