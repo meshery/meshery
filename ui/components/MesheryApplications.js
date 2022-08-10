@@ -850,6 +850,8 @@ function MesheryApplications({
               pages={Math.ceil(count / pageSize)}
               setPage={setPage}
               selectedPage={page}
+              UploadImport={UploadImport}
+              types={types}
             />
         }
         <ConfirmationMsg
