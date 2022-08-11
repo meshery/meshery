@@ -222,7 +222,7 @@ var channelCmd = &cobra.Command{
 	Args:  cobra.NoArgs,
 	Example: `
 // Subscribe to release channel or version
-mesheryctl system channel [stable|stable-version|edge|edge-version]
+mesheryctl system channel 
 // To set the channel
 mesheryctl system channel set [stable|stable-version|edge|edge-version]
 // To view release channel and version
