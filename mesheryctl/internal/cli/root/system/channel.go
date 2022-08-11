@@ -225,6 +225,8 @@ var channelCmd = &cobra.Command{
 mesheryctl system channel 
 // To set the channel
 mesheryctl system channel set [stable|stable-version|edge|edge-version]
+// To pin/set the channel to a specific version
+mesheryctl system channel set stable-version 0.6.0
 // To view release channel and version
 mesheryctl system channel view
 // To switch release channel and version
