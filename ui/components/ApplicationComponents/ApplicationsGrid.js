@@ -1,5 +1,5 @@
 import React, {useState} from 'react'
-import {Grid} from "@mui/material"
+import {Grid, Pagination} from "@mui/material"
 import MesheryApplicationCard from "./ApplicationCard";
 const INITIAL_GRID_SIZE = { xl : 4, md : 6, xs : 12 };
 
@@ -14,11 +14,11 @@ function ApplicationsGridItem({ application,  handleDeploy, handleUnDeploy, hand
    name={application.name}
    updated_at={application.updated_at}
    created_at={application.created_at}
-  //  application_file={application.application_file}
+   application_file={application.application_file}
    requestFullSize={() => setGridProps({ xl : 12, md : 12, xs : 12 })}
    requestSizeRestore={() => setGridProps(INITIAL_GRID_SIZE)}
-   handleDeploy={() => handleDeploy(application.application_file)}
-  //  handleUnDeploy={() => handleUnDeploy(application.application_file)}
+   handleDeploy={handleDeploy}
+   handleUnDeploy={handleUnDeploy}
   //  deleteHandler={() => handleSubmit({ data : yaml, id : application.id, type : FILE_OPS.DELETE ,name : application.name })}
   //  updateHandler={() => handleSubmit({ data : yaml, id : application.id, type : FILE_OPS.UPDATE ,name : application.name })}
    setSelectedApplications={() => setSelectedApplications({ application : application, show : true })}
@@ -67,6 +67,13 @@ function ApplicationsGridItem({ application,  handleDeploy, handleUnDeploy, hand
 
       </Grid>
       }
+        {applications.length
+        ? (
+          <div >
+            <Pagination count={pages} page={selectedPage+1} onChange={(_, page) => setPage(page - 1)} />  
+          </div>
+        )
+        : null}
     </div>
   );
 }

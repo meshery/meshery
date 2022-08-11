@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import { Box, Button,} from "@mui/material";
 import { styled } from "@mui/material/styles";
 import UploadImport from "@/components/UploadImport";
@@ -7,6 +7,8 @@ import MesheryApplicationGrid from "./ApplicationsGrid"
 import ApplicationTable from "./ApplicationTable";
 import { useTheme } from "@mui/system";
 import YAMLEditor from  "@/components/YamlDialog";
+import EmptyState from "@/components/EmptyStateComponent";
+import  fetchApplicationsQuery from "@/features/applications/ApplicationsQuery";
 
 function resetSelectedApplication() {
   return { show : false, application : null };
@@ -20,7 +22,10 @@ function MesheryApplications({user}) {
     marginLeft : "auto",
     paddingLeft : theme.spacing(2),
  }))
-
+    
+ const [page, setPage] = useState(0);
+ const [count, setCount] = useState(0);
+ const [pageSize, setPageSize] = useState(10)
     const [applications, setApplications] = useState([]);
     const [selectedRowData, setSelectedRowData] = useState(null);
     const [selectedApplication, setSelectedApplication] = useState(resetSelectedApplication());
@@ -39,32 +44,36 @@ function MesheryApplications({user}) {
         setSelectedRowData(null);
       };
     }
+   
+    useEffect(() => {
+      fetchApplications(page, pageSize, search, sortOrder);
+    }, [page, pageSize, search, sortOrder]);
 
     function fetchApplications(page, pageSize, search, sortOrder) {
       if (!search) search = "";
       if (!sortOrder) sortOrder = "";
-  
-      const query = `?page=${page}&page_size=${pageSize}&search=${encodeURIComponent(search)}&order=${encodeURIComponent(
-        sortOrder
-      )}`;
-  
-      updateProgress({ showProgress : true });
-  
-      dataFetch(
-        `/api/application${query}`,
-        { credentials : "include", },
-        (result) => {
-          console.log("ApplicationFile API", `/api/application${query}`);
-          updateProgress({ showProgress : false });
+       
+      fetchApplicationsQuery({
+        selector : {
+          pageSize : `${pageSize}`,
+          page : `${page}`,
+          search : `${encodeURIComponent(search)}`,
+          order : `${encodeURIComponent(sortOrder)}`,
+        },
+      }).subscribe({
+        next : (res) => {
+         let result = res?.fetchApplications;
+         if (typeof result !== "undefined") {
           if (result) {
             setApplications(result.applications || []);
             setCount(result.total_count || 0);
+            setPage(result.page || 0);
+            setPageSize(result.page_size || 0);
           }
-        },
-        // handleError
-        handleError(ACTION_TYPES.FETCH_APPLICATIONS)
-      );
+        }
     }
+  })
+}
 
     const applications1 = [
       {
@@ -108,18 +117,23 @@ updated_at: "2022-07-14T13:53:35.479756Z"
           <YAMLEditor application={selectedRowData} onClose={resetSelectedRowData()}  />
           )}
       <Button onClick={handleClick}>QWE</Button>     
+      {!selectedApplication.show  &&  (applications.length > 0 || viewType === "table") &&
       <Box sx={{display: "flex"}}>  
        <UploadImport configuration="Applications" />
        <CustomBox >
             <ViewSwitch view={viewType} changeView={setViewType} />
           </CustomBox>
        </Box> 
+}
        
     {!selectedApplication.show &&  viewType==="table" &&   
          <ApplicationTable
          applications = {applications}
          setSelectedRowData = {setSelectedRowData}
          user ={user}
+         count ={count}
+         pageSize={pageSize}
+         page={page}
   />
 }
     {!selectedApplication.show &&  viewType==="grid" &&   
@@ -130,11 +144,18 @@ updated_at: "2022-07-14T13:53:35.479756Z"
             //  handleSubmit={handleSubmit}
              setSelectedApplication={setSelectedApplication}
              selectedApplication={selectedApplication}
-            //  pages={Math.ceil(count / pageSize)}
-            //  setPage={setPage}
-            //  selectedPage={page}
+             pages={Math.ceil(count / pageSize)}
+             setPage={setPage}
+             selectedPage={page}
            />
 }
+{!selectedApplication.show && viewType === "grid" && applications.length === 0 &&
+            <EmptyState configuration="Applications" 
+            Button1={
+              <UploadImport configuration="Applications" />
+            }
+            />
+        } 
   
   </div>
   )

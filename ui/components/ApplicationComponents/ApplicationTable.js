@@ -5,7 +5,7 @@ import Moment from "react-moment";
 import DoneAllIcon from '@mui/icons-material/DoneAll';
 import UndeployIcon from "../../public/static/img/UndeployIcon";
 
-function ApplicationTable({applications= [], setSelectedRowData, user}) {
+function ApplicationTable({applications= [], count, pageSize, page, setSelectedRowData, handleAppDownload, user}) {
 
     const columns = [
         {
@@ -69,6 +69,36 @@ function ApplicationTable({applications= [], setSelectedRowData, user}) {
           },
         },
         {
+          name : "source_type",
+          label : "Source Type",
+          options : {
+            filter : false,
+            sort : false,
+            searchable : false,
+            customHeadRender : function CustomHead({ index, ...column }) {
+              return (
+                <TableCell key={index}>
+                  <b>{column.label}</b>
+                </TableCell>
+              );
+            },
+            customBodyRender : function CustomBody(_, tableMeta) {
+              const rowData = applications[tableMeta.rowIndex];
+              console.log(rowData);
+              return (
+                <>
+                  <IconButton
+                    title="click to download"
+                    onClick={() => handleAppDownload(rowData.id ,rowData.type.String, rowData.name)}
+                  >
+                    {/* <img src={`/static/img/${(rowData.type.String).replaceAll(" ", "_").toLowerCase()}.svg`} width="45px" height="45px" /> */}
+                  </IconButton>
+                </>
+              );
+            },
+          },
+        },
+        {
           name : "Actions",
           options : {
             filter : false,
@@ -109,11 +139,14 @@ function ApplicationTable({applications= [], setSelectedRowData, user}) {
         sort : !(user && user.user_id === "meshery"),
         search : !(user && user.user_id === "meshery"),
         filterType : "textField",
-        // responsive : "scrollFullHeight",
+        responsive : "scrollFullHeight",
         resizableColumns : true,
         serverSide : true,
+        count,
+        rowsPerPage : pageSize,
         rowsPerPageOptions : [10, 20, 25],
         fixedHeader : true,
+        page,
         print : false,
         download : false,
         textLabels : {
@@ -121,8 +154,19 @@ function ApplicationTable({applications= [], setSelectedRowData, user}) {
             text : "application(s) selected"
           }
         },
-        onCellClick : (_, meta) => meta.colIndex !== 3 && setSelectedRowData(applications[meta.rowIndex]),
-    }
+        onCellClick : (_, meta) => meta.colIndex !== 3 &&  meta.colIndex !== 4 && setSelectedRowData(applications[meta.rowIndex]),
+        setRowProps : (row, dataIndex, rowIndex) => {
+          return {
+            "data-cy" : `config-row-${rowIndex}`
+          }
+        },
+        setTableProps : () => {
+          return {
+            "data-cy" : "applications-grid"
+          }
+        }
+    
+      }
 
   return (
     <MUIDataTable
