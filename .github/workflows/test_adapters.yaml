@@ -152,11 +152,12 @@ jobs:
           cat ./${{ inputs.patternfile_name }}
           for n in {1..3}; 
           do
-            if [ mesheryctl pattern apply -f ./${{ inputs.patternfile_name }} | grep "invalid workload of type:" ]
+            if [ mesheryctl pattern apply -f ./${{ inputs.patternfile_name }} | grep "invalid workload of type:" ];
             then
               sleep 30
             else
-              :
+              break
+            fi  
           done
           
       - name: Check adapter logs
