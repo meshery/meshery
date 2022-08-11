@@ -155,12 +155,10 @@ jobs:
             if [ mesheryctl pattern apply -f ./${{ inputs.patternfile_name }} | grep "invalid workload of type:" ]
             then
               sleep 30
-              echo $n
             else
               :
           done
           
-
       - name: Check adapter logs
         run: |
           podname=$(kubectl get pods -n meshery | grep ${{ inputs.adapter_name }} | tr -s ' ' | cut -d " " -f 1)
