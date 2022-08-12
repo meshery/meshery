@@ -33,7 +33,8 @@ import ConformanceHover from '../public/static/img/drawer-icons/conformance_hove
 import SmiIcon from '../public/static/img/drawer-icons/servicemeshinterface-icon-white_svg';
 import DiscussIcon from '../public/static/img/drawer-icons/discuss_forum_svg.js';
 import OpenInNewIcon from "@material-ui/icons/OpenInNew";
-import { faAngleLeft,faCaretDown,
+import {
+  faAngleLeft, faCaretDown,
   faExternalLinkAlt,
   faDigitalTachograph
 } from "@fortawesome/free-solid-svg-icons";
@@ -81,9 +82,12 @@ const styles = (theme) => ({
   },
 
   itemActionable : { "&:hover" : { backgroundColor : "rgb(0, 187, 166, 0.5)", }, },
-  itemActiveItem : { color : "#4fc3f7",
-    fill : "#4fc3f7" },
-  itemPrimary : { color : "inherit",
+  itemActiveItem : {
+    color : "#4fc3f7",
+    fill : "#4fc3f7"
+  },
+  itemPrimary : {
+    color : "inherit",
     fontSize : theme.typography.fontSize,
     "&$textDense" : { fontSize : theme.typography.fontSize, },
   },
@@ -393,7 +397,7 @@ const categories = [
   {
     id : "Configuration",
     icon : <img src="/static/img/configuration_trans.svg" style={{ width : "1.21rem" }} />,
-    hovericon : <ConfigurationHover style={{ transform : "scale(1.3)", ...drawerIconsStyle }}/>,
+    hovericon : <ConfigurationHover style={{ transform : "scale(1.3)", ...drawerIconsStyle }} />,
     href : "#",
     title : "Configuration",
     show : true,
@@ -431,7 +435,7 @@ const categories = [
   {
     id : "Performance",
     icon : <PerformanceIcon style={{ transform : "scale(1.3)", ...drawerIconsStyle }} />,
-    hovericon : <PerformanceHover  style={drawerIconsStyle}/>,
+    hovericon : <PerformanceHover style={drawerIconsStyle} />,
     href : "/performance",
     title : "Performance",
     show : true,
@@ -475,10 +479,11 @@ const categories = [
     ],
   },
   {
-    id : "Extension",
+    id : "Extensions",
     icon : <ExtensionIcon style={drawerIconsStyle} />,
-    title : "Extension",
+    title : "Extensions",
     show : true,
+    width : 12,
     link : true,
     href : "/extensions"
   }
@@ -1127,7 +1132,7 @@ class Navigator extends React.Component {
                       arrow
                     >
 
-                      { (isDrawerCollapsed && children && (this.state.hoveredId === childId  || this.state.openItems.includes(childId))) ?
+                      {(isDrawerCollapsed && children && (this.state.hoveredId === childId || this.state.openItems.includes(childId))) ?
                         <Tooltip
                           title={title}
                           placement="right"
@@ -1278,8 +1283,8 @@ class Navigator extends React.Component {
       </ListItem>
     )
     const Chevron = (
-      <div  className={classname} style={{ display : "flex", justifyContent : "center" }}
-        onClick ={this.toggleMiniDrawer}
+      <div className={classname} style={{ display : "flex", justifyContent : "center" }}
+        onClick={this.toggleMiniDrawer}
       >
         <FontAwesomeIcon
           icon={faAngleLeft}
