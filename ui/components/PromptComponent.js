@@ -123,6 +123,7 @@ class PromptComponent extends React.Component {
               this.hide();
               resolve(options[0]);
             }} key={options[0]}  className={classes.button0}
+            style={{ backgroundColor : options[0]?.toLowerCase() === "reset" ? "#8F1F00" : "#607d8b" }}
             type="submit"
             variant="contained"
             color="primary">
