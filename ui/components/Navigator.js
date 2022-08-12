@@ -473,6 +473,15 @@ const categories = [
       },
     ],
   },
+  {
+    id : "Extension",
+    // icon: <ConformanceIcon style={drawerIconsStyle} />,
+    // hovericon : <ConformanceHover style={drawerIconsStyle} />,
+    title : "Extension",
+    show : true,
+    link : true,
+    href : "/extensions"
+  }
 ];
 
 const ExternalLinkIcon = <FontAwesomeIcon style={externalLinkIconStyle} icon={faExternalLinkAlt} transform="shrink-7" />

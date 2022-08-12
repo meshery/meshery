@@ -62,7 +62,6 @@ const useStyles= makeStyles(() => ({
   },
   lastRunText : {
     marginRight : "0.5rem"
-
   },
   iconPatt : {
     width : "24px",
