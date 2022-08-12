@@ -45,8 +45,11 @@ const styles = (theme) => ({
     maxWidth : "100px",
     maxHeight : "100px"
   },
-  content : {
-    textAlign : "right",
+  frontContent : {
+    textAlign : "right"
+  },
+  backContent : {
+    textAlign : "left"
   }
 });
 
@@ -72,7 +75,7 @@ const Extensions = ({ classes }) => {
       <Grid item {...INITIAL_GRID_SIZE} className={classes.grid} >
         <FlipCard >
           <div>
-            <Typography className={classes.content} variant="h5" component="div">
+            <Typography className={classes.frontContent} variant="h5" component="div">
               {"MeshMap"}
             </Typography>
 
@@ -90,7 +93,7 @@ const Extensions = ({ classes }) => {
 
           {/* Back part */}
           <div>
-            <Typography className={classes.content} variant="h5" component="div">
+            <Typography className={classes.backContent} variant="h5" component="div">
               {"MeshMap"}
             </Typography>
             <Typography variant="subtitle1" component="div" className={classes.text}>
@@ -102,7 +105,7 @@ const Extensions = ({ classes }) => {
       <Grid item {...INITIAL_GRID_SIZE} className={classes.grid}>
         <FlipCard >
           <div>
-            <Typography  className={classes.content} variant="h5" component="div">
+            <Typography  className={classes.frontContent} variant="h5" component="div">
               {"Meshery Catalog"}
             </Typography>
             <img className={classes.img} src="/static/img/meshery_catalog.svg" />
@@ -119,7 +122,7 @@ const Extensions = ({ classes }) => {
 
           {/* Back part */}
           <div>
-            <Typography className={classes.content} variant="h5" component="div">
+            <Typography className={classes.backContent} variant="h5" component="div">
               {"Meshery Catalog"}
             </Typography>
             <Typography variant="subtitle1" component="div" className={classes.text}>

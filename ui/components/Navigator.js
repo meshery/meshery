@@ -25,6 +25,7 @@ import DashboardIcon from '@material-ui/icons/Dashboard';
 import LifecycleIcon from '../public/static/img/drawer-icons/lifecycle_mgmt_svg';
 import PerformanceIcon from '../public/static/img/drawer-icons/performance_svg';
 import ConformanceIcon from '../public/static/img/drawer-icons/conformance_svg';
+import ExtensionIcon from "../public/static/img/drawer-icons/extensions_svg";
 import LifecycleHover from '../public/static/img/drawer-icons/lifecycle_hover_svg';
 import ConfigurationHover from '../public/static/img/drawer-icons/configuration_hover_svg';
 import PerformanceHover from '../public/static/img/drawer-icons/performance_hover_svg';
@@ -475,8 +476,7 @@ const categories = [
   },
   {
     id : "Extension",
-    // icon: <ConformanceIcon style={drawerIconsStyle} />,
-    // hovericon : <ConformanceHover style={drawerIconsStyle} />,
+    icon : <ExtensionIcon style={drawerIconsStyle} />,
     title : "Extension",
     show : true,
     link : true,
