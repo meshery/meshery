@@ -97,7 +97,7 @@ mesheryctl system channel set [stable|stable-version|edge|edge-version]
 		const errMsg = `Usage: mesheryctl system channel set [stable|stable-version|edge|edge-version]
 Example: mesheryctl system channel set stable`
 
-		if len(args) != 1 {
+		if len(args) == 0 {
 			return fmt.Errorf("accepts single argument, received %d\n\n%v", len(args), errMsg)
 		}
 		return nil

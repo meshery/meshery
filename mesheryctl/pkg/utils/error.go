@@ -31,17 +31,20 @@ func SystemError(msg string) string {
 	return formatError(msg, cmdSystem)
 }
 
+// SystemContextSubError returns a formatted error message with a link to `context` command usage page 
+// in addition to the error message
 func SystemContextSubError(msg string, cmd string) string {
-	if cmd == "delete" {
-		return formatError(msg, cmdContextDelete)
+	switch cmd {
+		case "delete":
+			return formatError(msg, cmdContextDelete)
+		case "create":
+			return formatError(msg, cmdContextCreate)
+		case "view":
+			return formatError(msg, cmdContextView)
+		default:
+			return formatError(msg, cmdContext)
 	}
-	if cmd == "create" {
-		return formatError(msg, cmdContextCreate)
-	}
-	if cmd == "view" {
-		return formatError(msg, cmdContextView)
-	}
-	return formatError(msg, cmdContext)
+
 }
 
 // MeshError returns a formatted error message with a link to 'mesh' command usage page in addition to the error message
