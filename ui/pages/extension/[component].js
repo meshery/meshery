@@ -7,6 +7,7 @@ import { updatepagepath, updatepagetitle } from "../../lib/store";
 import { connect } from "react-redux";
 import Head from "next/head";
 import { bindActionCreators } from "redux";
+import React from "react";
 import RemoteComponent from "../../components/RemoteComponent";
 
 

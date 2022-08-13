@@ -1,5 +1,5 @@
 //@ts-check
-import { Grid, Paper, Typography } from "@material-ui/core";
+import { Grid, Paper, Typography, Button } from "@material-ui/core";
 import { Pagination } from "@material-ui/lab";
 import React, { useState } from "react";
 import MesheryApplicationCard from "./ApplicationsCard";
@@ -7,8 +7,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import FILE_OPS from "../../utils/configurationFileHandlersEnum";
 import ConfirmationMsg from "../ConfirmationModal";
 import { getComponentsinFile } from "../../utils/utils";
-import UploadImport from "../UploadImport";
-
+import PublishIcon from "@material-ui/icons/Publish";
 
 const INITIAL_GRID_SIZE = { xl : 4, md : 6, xs : 12 };
 
@@ -84,9 +83,25 @@ const useStyles = makeStyles(() => ({
  * }} props props
  */
 
-function MesheryApplicationGrid({ applications=[],handleDeploy, handleUnDeploy, handleSubmit,urlUploadHandler,uploadHandler, setSelectedApplication, selectedApplication, pages = 1,setPage, selectedPage }) {
+function MesheryApplicationGrid({ applications=[],handleDeploy, handleUnDeploy, handleSubmit,urlUploadHandler,uploadHandler, setSelectedApplication, selectedApplication, pages = 1,setPage, selectedPage, UploadImport, types }) {
 
   const classes = useStyles()
+
+  const [importModal, setImportModal] = useState({
+    open : false
+  });
+
+  const handleUploadImport = () => {
+    setImportModal({
+      open : true
+    });
+  }
+
+  const handleUploadImportClose = () => {
+    setImportModal({
+      open : false
+    });
+  }
 
   const [modalOpen, setModalOpen] = useState({
     open : false,
@@ -139,8 +154,18 @@ function MesheryApplicationGrid({ applications=[],handleDeploy, handleUnDeploy, 
                 No Applications Found
               </Typography>
               <div>
-                <UploadImport supportedTypes="null" aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} configuration="Application"  />
-
+                <Button
+                  aria-label="Add Application"
+                  variant="contained"
+                  color="primary"
+                  size="large"
+                  // @ts-ignore
+                  onClick={handleUploadImport}
+                  style={{ marginRight : "2rem" }}
+                >
+                  <PublishIcon className={classes.addIcon} />
+              Import Application
+                </Button>
               </div>
             </div>
           </Paper>
@@ -163,6 +188,7 @@ function MesheryApplicationGrid({ applications=[],handleDeploy, handleUnDeploy, 
         componentCount={ modalOpen.count }
         tab={modalOpen.deploy ? 0 : 1}
       />
+      <UploadImport open={importModal.open} handleClose={handleUploadImportClose} supportedTypes={types} isApplication = {true} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} configuration="Application"  />
     </div>
   );
 }

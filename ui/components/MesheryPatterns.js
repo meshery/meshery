@@ -29,6 +29,7 @@ import MesheryPatternGrid from "./MesheryPatterns/MesheryPatternGridView";
 import UndeployIcon from "../public/static/img/UndeployIcon";
 import DoneAllIcon from '@material-ui/icons/DoneAll';
 import ConfirmationMsg from "./ConfirmationModal";
+import PublishIcon from "@material-ui/icons/Publish";
 import PromptComponent from "./PromptComponent";
 
 const styles = (theme) => ({
@@ -246,6 +247,10 @@ function MesheryPatterns({
     count : 0
   });
 
+  const [importModal, setImportModal] = useState({
+    open : false
+  })
+
   const getMuiTheme = () => createTheme({
     overrides : {
       MuiInput : {
@@ -351,6 +356,18 @@ function MesheryPatterns({
       pattern_file : pattern_file,
       name : name,
       count : getComponentsinFile(pattern_file)
+    });
+  }
+
+  const handleUploadImport = () => {
+    setImportModal({
+      open : true
+    });
+  }
+
+  const handleUploadImportClose = () => {
+    setImportModal({
+      open : false
     });
   }
 
@@ -822,7 +839,18 @@ function MesheryPatterns({
                 <AddIcon className={classes.addIcon} />
               Create Design
               </Button>
-              <UploadImport supportedTypes="null" aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} configuration="Design" />
+              <Button
+                aria-label="Add Pattern"
+                variant="contained"
+                color="primary"
+                size="large"
+                // @ts-ignore
+                onClick={handleUploadImport}
+                style={{ marginRight : "2rem" }}
+              >
+                <PublishIcon className={classes.addIcon} />
+              Import Pattern
+              </Button>
             </div>
           </div>
           }
@@ -870,6 +898,7 @@ function MesheryPatterns({
           componentCount={modalOpen.count}
           tab={modalOpen.deploy ? 0 : 1}
         />
+        <UploadImport open={importModal.open} handleClose={handleUploadImportClose} supportedTypes="null" aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} configuration="Design" />
         <PromptComponent ref={modalRef} />
       </NoSsr>
     </>
