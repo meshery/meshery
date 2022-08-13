@@ -2,6 +2,7 @@ import { Grid, Typography, Button, Switch } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
 import { useState } from "react";
 
+
 const styles = (theme) => ({
   button : {
     marginRight : "0.5rem",
@@ -18,7 +19,8 @@ const styles = (theme) => ({
     transformStyle : "preserve-3d",
     boxShadow : "0 4px 8px 0 rgba(0,0,0,0.2)",
     backgroundColor : "#fff",
-    minHeight : "100%"
+    minHeight : "100%",
+    position : "relative"
   },
   a : {
     textDecoration : "none",
@@ -45,6 +47,11 @@ const styles = (theme) => ({
     display : "flex",
     justifyContent : "flex-end",
     padding : "0.5rem"
+  },
+  comingSoon : {
+    transform : "rotate(30deg) translateX(20%) translateY(-50%)",
+    position : "absolute",
+    right : "0",
   }
 });
 
@@ -92,7 +99,9 @@ const Extensions = ({ classes }) => {
         </div>
       </Grid>
       <Grid item {...INITIAL_GRID_SIZE} className={classes.grid}>
+
         <div className={classes.card}>
+          <Typography className={classes.comingSoon} variant="h5" component="div">Coming Soon</Typography>
           <Typography className={classes.frontContent} variant="h5" component="div">
             {"Meshery Catalog"}
           </Typography>
@@ -105,7 +114,7 @@ const Extensions = ({ classes }) => {
           </Typography>
 
           <Typography className={classes.link} variant="subtitle2" style={{ fontStyle : "italic" }}>
-              Explore at:<a href="https://meshery.io/catalog" target="_blank" rel="noreferrer" style={{ textDecoration : "none", paddingLeft : "0.3rem " }}> Meshery Catalog </a>
+              Explore at:<a href="https://meshery.io/catalog" target="_blank" rel="noreferrer" style={{ textDecoration : "none", paddingLeft : "0.3rem ", color : "#00b39F" }}> Meshery Catalog </a>
           </Typography>
           <div style={{ textAlign : "right" }}>
             <Switch
