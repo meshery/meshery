@@ -11,7 +11,7 @@ import PublishIcon from "@material-ui/icons/Publish";
 
 const INITIAL_GRID_SIZE = { xl : 4, md : 6, xs : 12 };
 
-function ApplicationsGridItem({ application,  handleDeploy, handleUnDeploy, handleSubmit, setSelectedApplications }) {
+function ApplicationsGridItem({ application,  handleDeploy, handleUnDeploy, handleSubmit, setSelectedApplications, handleAppDownload }) {
   const [gridProps, setGridProps] = useState(INITIAL_GRID_SIZE);
   const [yaml, setYaml] = useState(application.application_file);
 
@@ -31,6 +31,8 @@ function ApplicationsGridItem({ application,  handleDeploy, handleUnDeploy, hand
         updateHandler={() => handleSubmit({ data : yaml, id : application.id, type : FILE_OPS.UPDATE ,name : application.name, source_type : application.type.String })}
         setSelectedApplications={() => setSelectedApplications({ application : application, show : true })}
         setYaml={setYaml}
+        source_type={application.type.String}
+        handleAppDownload={handleAppDownload}
       />
     </Grid>
   );
@@ -83,7 +85,7 @@ const useStyles = makeStyles(() => ({
  * }} props props
  */
 
-function MesheryApplicationGrid({ applications=[],handleDeploy, handleUnDeploy, handleSubmit,urlUploadHandler,uploadHandler, setSelectedApplication, selectedApplication, pages = 1,setPage, selectedPage, UploadImport, types }) {
+function MesheryApplicationGrid({ applications=[],handleDeploy, handleUnDeploy, handleSubmit,urlUploadHandler,uploadHandler, setSelectedApplication, selectedApplication, pages = 1,setPage, selectedPage, UploadImport, types, handleAppDownload }) {
 
   const classes = useStyles()
 
@@ -142,6 +144,7 @@ function MesheryApplicationGrid({ applications=[],handleDeploy, handleUnDeploy, 
             handleUnDeploy={() => handleModalOpen(application, false)}
             handleSubmit={handleSubmit}
             setSelectedApplications={setSelectedApplication}
+            handleAppDownload={handleAppDownload}
           />
         ))}
 

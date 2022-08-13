@@ -852,6 +852,7 @@ function MesheryApplications({
               selectedPage={page}
               UploadImport={UploadImport}
               types={types}
+              handleAppDownload={handleAppDownload}
             />
         }
         <ConfirmationMsg
