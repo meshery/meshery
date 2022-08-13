@@ -132,6 +132,8 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int, g http.
 		Methods("GET")
 	gMux.Handle("/api/pattern/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.DeleteMesheryPatternHandler)))).
 		Methods("DELETE")
+	gMux.Handle("/api/pattern/{id}/fork", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.ForkMesheryPatternHandler)))).
+		Methods("POST")
 	gMux.Handle("/api/patterns/delete", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.DeleteMultiMesheryPatternsHandler)))).
 		Methods("POST")
 	gMux.HandleFunc("/api/oam/{type}", h.OAMRegisterHandler).Methods("GET", "POST")
@@ -150,6 +152,8 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int, g http.
 		Methods("DELETE")
 	gMux.Handle("/api/filter/file/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetMesheryFilterFileHandler)))).
 		Methods("GET")
+	gMux.Handle("/api/filter/{id}/fork", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.ForkMesheryFilterHandler)))).
+		Methods("POST")
 
 	gMux.Handle("/api/application/deploy", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.KubernetesMiddleware(h.ApplicationFileHandler))))).
 		Methods("POST", "DELETE")

@@ -1439,6 +1439,48 @@ func (l *RemoteProvider) DeleteMesheryPattern(req *http.Request, patternID strin
 	return nil, fmt.Errorf("error while getting pattern - Status code: %d, Body: %s", resp.StatusCode, bdr)
 }
 
+// ForkMesheryPattern forks a meshery pattern with the given id
+func (l *RemoteProvider) ForkMesheryPattern(req *http.Request, patternID string) ([]byte, error) {
+	if !l.Capabilities.IsSupported(PersistMesheryPatterns) {
+		logrus.Error("operation not available")
+		return nil, fmt.Errorf("%s is not suppported by provider: %s", PersistMesheryPatterns, l.ProviderName)
+	}
+
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistMesheryPatterns)
+
+	logrus.Infof("attempting to fetch pattern from cloud for id: %s", patternID)
+
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s/fork", l.RemoteProviderURL, ep, patternID))
+	logrus.Debugf("constructed pattern url: %s", remoteProviderURL.String())
+	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), nil)
+
+	tokenString, err := l.GetToken(req)
+	if err != nil {
+		logrus.Errorf("unable to get patterns: %v", err)
+		return nil, err
+	}
+	resp, err := l.DoRequest(cReq, tokenString)
+	if err != nil {
+		logrus.Errorf("unable to get patterns: %v", err)
+		return nil, err
+	}
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+	bdr, err := io.ReadAll(resp.Body)
+	if err != nil {
+		logrus.Errorf("unable to read response body: %v", err)
+		return nil, err
+	}
+
+	if resp.StatusCode == http.StatusOK {
+		logrus.Infof("pattern successfully retrieved from remote provider")
+		return bdr, nil
+	}
+	logrus.Errorf("error while fetching pattern: %s", bdr)
+	return nil, fmt.Errorf("error while getting pattern - Status code: %d, Body: %s", resp.StatusCode, bdr)
+}
+
 // DeleteMesheryPatterns deletes meshery patterns with the given ids and names
 func (l *RemoteProvider) DeleteMesheryPatterns(req *http.Request, patterns MesheryPatternDeleteRequestBody) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistMesheryPatterns) {
@@ -1758,6 +1800,48 @@ func (l *RemoteProvider) DeleteMesheryFilter(req *http.Request, filterID string)
 	}
 	logrus.Errorf("error while fetching filter: %s", bdr)
 	return nil, ErrDelete(fmt.Errorf("error while fetching filter: %s", bdr), fmt.Sprint(bdr), resp.StatusCode)
+}
+
+// ForkMesheryFilter forks a meshery filter with the given id
+func (l *RemoteProvider) ForkMesheryFilter(req *http.Request, filterID string) ([]byte, error) {
+	if !l.Capabilities.IsSupported(PersistMesheryFilters) {
+		logrus.Error("operation not available")
+		return nil, fmt.Errorf("%s is not suppported by provider: %s", PersistMesheryFilters, l.ProviderName)
+	}
+
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistMesheryFilters)
+
+	logrus.Infof("attempting to fetch filter from cloud for id: %s", filterID)
+
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s/fork", l.RemoteProviderURL, ep, filterID))
+	logrus.Debugf("constructed filter url: %s", remoteProviderURL.String())
+	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), nil)
+
+	tokenString, err := l.GetToken(req)
+	if err != nil {
+		logrus.Errorf("unable to get filters: %v", err)
+		return nil, err
+	}
+	resp, err := l.DoRequest(cReq, tokenString)
+	if err != nil {
+		logrus.Errorf("unable to get filters: %v", err)
+		return nil, err
+	}
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+	bdr, err := io.ReadAll(resp.Body)
+	if err != nil {
+		logrus.Errorf("unable to read response body: %v", err)
+		return nil, err
+	}
+
+	if resp.StatusCode == http.StatusOK {
+		logrus.Infof("filter successfully retrieved from remote provider")
+		return bdr, nil
+	}
+	logrus.Errorf("error while fetching filter: %s", bdr)
+	return nil, fmt.Errorf("error while getting filter - Status code: %d, Body: %s", resp.StatusCode, bdr)
 }
 
 func (l *RemoteProvider) RemoteFilterFile(req *http.Request, resourceURL, path string, save bool) ([]byte, error) {

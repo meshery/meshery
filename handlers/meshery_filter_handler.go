@@ -216,6 +216,35 @@ func (h *Handler) DeleteMesheryFilterHandler(
 	fmt.Fprint(rw, string(resp))
 }
 
+// swagger:route POST /api/filter/{id}/fork FiltersAPI idForkMesheryFilter
+// Handle Fork for a Meshery Filter
+//
+// Creates a local copy of a public filter with id: id
+// responses:
+// 	200: noContentWrapper
+//
+// ForkMesheryFilterHandler forks a filter with the given id
+func (h *Handler) ForkMesheryFilterHandler(
+	rw http.ResponseWriter,
+	r *http.Request,
+	prefObj *models.Preference,
+	user *models.User,
+	provider models.Provider,
+) {
+	filterID := mux.Vars(r)["id"]
+
+	resp, err := provider.ForkMesheryFilter(r, filterID)
+	if err != nil {
+		h.log.Error(ErrForkFilter(err))
+		http.Error(rw, ErrForkFilter(err).Error(), http.StatusInternalServerError)
+		return
+	}
+
+	go h.config.ConfigurationChannel.PublishFilters()
+	rw.Header().Set("Content-Type", "application/json")
+	fmt.Fprint(rw, string(resp))
+}
+
 // swagger:route GET /api/filter/{id} FiltersAPI idGetMesheryFilter
 // Handle GET request for a Meshery Filter
 //

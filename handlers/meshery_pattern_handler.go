@@ -322,6 +322,35 @@ func (h *Handler) DeleteMesheryPatternHandler(
 	fmt.Fprint(rw, string(resp))
 }
 
+// swagger:route POST /api/pattern/{id}/fork PatternsAPI idForkMesheryPattern
+// Handle Fork for a Meshery Pattern
+//
+// Creates a local copy of a public pattern with id: id
+// responses:
+// 	200: noContentWrapper
+//
+// ForkMesheryPatternHandler forks a pattern with the given id
+func (h *Handler) ForkMesheryPatternHandler(
+	rw http.ResponseWriter,
+	r *http.Request,
+	prefObj *models.Preference,
+	user *models.User,
+	provider models.Provider,
+) {
+	patternID := mux.Vars(r)["id"]
+
+	resp, err := provider.ForkMesheryPattern(r, patternID)
+	if err != nil {
+		h.log.Error(ErrForkPattern(err))
+		http.Error(rw, ErrForkPattern(err).Error(), http.StatusInternalServerError)
+		return
+	}
+
+	go h.config.ConfigurationChannel.PublishPatterns()
+	rw.Header().Set("Content-Type", "application/json")
+	fmt.Fprint(rw, string(resp))
+}
+
 // swagger:route DELETE /api/patterns PatternsAPI idDeleteMesheryPattern
 // Handle Delete for multiple Meshery Patterns
 //

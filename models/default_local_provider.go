@@ -576,6 +576,12 @@ func (l *DefaultLocalProvider) DeleteMesheryPatterns(req *http.Request, patterns
 	return l.MesheryPatternPersister.DeleteMesheryPatterns(patterns)
 }
 
+// ForkMesheryPattern forks a meshery pattern with the given id
+// Not supported by local provider
+func (l *DefaultLocalProvider) ForkMesheryPattern(req *http.Request, patternID string) ([]byte, error) {
+	return []byte("{}"), nil
+}
+
 // RemotePatternFile takes in the
 func (l *DefaultLocalProvider) RemotePatternFile(req *http.Request, resourceURL, path string, save bool) ([]byte, error) {
 	parsedURL, err := url.Parse(resourceURL)
@@ -671,6 +677,12 @@ func (l *DefaultLocalProvider) GetMesheryFilter(req *http.Request, filterID stri
 func (l *DefaultLocalProvider) DeleteMesheryFilter(req *http.Request, filterID string) ([]byte, error) {
 	id := uuid.FromStringOrNil(filterID)
 	return l.MesheryFilterPersister.DeleteMesheryFilter(id)
+}
+
+// ForkMesheryFilter forks a meshery filter with the given id
+// Not supported by local provider
+func (l *DefaultLocalProvider) ForkMesheryFilter(req *http.Request, filterID string) ([]byte, error) {
+	return []byte("{}"), nil
 }
 
 // RemoteFilterFile takes in the

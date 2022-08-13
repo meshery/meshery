@@ -101,9 +101,11 @@ const (
 	ErrInvalidKubeHandlerCode           = "2175"
 	ErrInvalidKubeContextCode           = "2176"
 	ErrCreatingKubernetesComponentsCode = "2177"
-	ErrValidateCode                     = "2241"
-	ErrApplicationContentCode           = "2242"
-	ErrRemoteApplicationURL             = "2243"
+	ErrValidateCode                     = "2248"
+	ErrApplicationContentCode           = "2245"
+	ErrRemoteApplicationURL             = "2249"
+	ErrForkPatternCode                  = "2246"
+	ErrForkFilterCode                   = "2247"
 )
 
 var (
@@ -447,4 +449,12 @@ func ErrConvertPattern(err error) error {
 
 func ErrRemoteApplication(err error) error {
 	return errors.New(ErrRemoteApplicationURL, errors.Alert, []string{"Error failed to persist remote application"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrForkPattern(err error) error {
+	return errors.New(ErrForkPatternCode, errors.Alert, []string{"Error failed to fork pattern"}, []string{err.Error()}, []string{"Failed to fork Pattern with the given ID"}, []string{"Check if the Pattern ID is correct and the pattern is public"})
+}
+
+func ErrForkFilter(err error) error {
+	return errors.New(ErrForkFilterCode, errors.Alert, []string{"Error failed to fork filter"}, []string{err.Error()}, []string{"Failed to fork Filter with the given ID"}, []string{"Check if the Filter ID is correct and the Filter is public"})
 }
