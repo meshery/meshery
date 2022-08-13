@@ -627,6 +627,29 @@ function MesheryPatterns({
       },
     },
     {
+      name : "visibility",
+      label : "Visibility",
+      options : {
+        filter : false,
+        sort : true,
+        searchable : true,
+        customHeadRender : function CustomHead({ index, ...column }) {
+          return (
+            <TableCell key={index}>
+              <b>{column.label}</b>
+            </TableCell>
+          );
+        },
+        customBodyRender : function CustomBody() {
+          return (
+            <>
+              <img src="/static/img/private.svg" />
+            </>
+          );
+        },
+      },
+    },
+    {
       name : "Actions",
       options : {
         filter : false,
@@ -643,6 +666,9 @@ function MesheryPatterns({
           const rowData = patterns[tableMeta.rowIndex];
           return (
             <>
+              <IconButton>
+                <img src="/static/img/fork.svg" />
+              </IconButton>
               {/* <Tooltip title="Configure">*/}
               <IconButton onClick={() => setSelectedPattern({ pattern : patterns[tableMeta.rowIndex], show : true })}>
                 <Avatar src="/static/img/pattwhite.svg" className={classes.iconPatt} imgProps={{ height : "16px", width : "16px" }} />
