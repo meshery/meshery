@@ -176,7 +176,6 @@ func (r *subscriptionResolver) SubscribeBrokerConnection(ctx context.Context) (<
 	return r.subscribeBrokerConnection(ctx)
 }
 
-// this subscription should be re-established to get proper updates when the k8s contexts have changed
 func (r *subscriptionResolver) SubscribeMesheryControllersStatus(ctx context.Context, k8scontextIDs []string) (<-chan []*model.MesheryControllersStatusListItem, error) {
 	resChan := make(chan []*model.MesheryControllersStatusListItem)
 	controllerHandlersPerContext, ok := ctx.Value(models.MesheryControllerHandlersKey).(map[string]map[models.MesheryController]controllers.IMesheryController)
@@ -235,7 +234,6 @@ func (r *subscriptionResolver) SubscribeMesheryControllersStatus(ctx context.Con
 	return resChan, nil
 }
 
-// this subscription should be re-established to get proper updates when the k8s contexts have changed
 func (r *subscriptionResolver) SubscribeMeshSyncEvents(ctx context.Context, k8scontextIDs []string) (<-chan *model.MeshSyncEvent, error) {
 	resChan := make(chan *model.MeshSyncEvent)
 	// get handlers
@@ -275,6 +273,11 @@ func (r *subscriptionResolver) SubscribeMeshSyncEvents(ctx context.Context, k8sc
 func (r *subscriptionResolver) SubscribeConfiguration(ctx context.Context, selector model.PageFilter) (<-chan *model.ConfigurationPage, error) {
 	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
 	return r.subscribeConfiguration(ctx, provider, selector)
+}
+
+func (r *subscriptionResolver) SubscribeClusterInfo(ctx context.Context, k8scontextIDs []string) (<-chan *model.ClusterInfo, error) {
+	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	return r.subscribeClusterInfo(ctx, provider, k8scontextIDs)	
 }
 
 // Mutation returns generated.MutationResolver implementation.

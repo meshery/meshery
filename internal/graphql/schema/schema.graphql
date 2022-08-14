@@ -107,6 +107,20 @@ type Error {
   description: String!
 }
 
+# ================ DASHBOARD ================
+
+type Resource {
+  # Name of resource
+  kind: String!,
+  # Number of resouce
+  number: Int!
+}
+
+# Details about discovered workloads
+type ClusterInfo {
+  resources: [Resource!]!,
+}
+
 # =================== ADDONS =====================
 
 # Input for changing Addon Status
@@ -561,6 +575,9 @@ type Subscription {
   ) : MeshSyncEvent!
   subscribeConfiguration(selector: PageFilter!) : ConfigurationPage!
 
+  subscribeClusterInfo(
+    k8scontextIDs: [String!]
+  ): ClusterInfo!
 }
 
 type OAMCapability {
