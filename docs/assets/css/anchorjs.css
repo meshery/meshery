@@ -5,6 +5,7 @@
 .anchorjs-link {
     color: inherit !important;
     text-decoration: none !important; /* do not underline */
+    margin-left: -1.6em; /* inorder to avoid overlap with the icon */
     }
     
     @media (max-width: 768px) {
@@ -23,8 +24,8 @@
     
     *:hover > .anchorjs-link:hover,
     .anchorjs-link:focus {
+    margin-left: -1.6em;  
     text-decoration: none !important; /* do not underline */
-    opacity: 1;
     }
 
 /**
