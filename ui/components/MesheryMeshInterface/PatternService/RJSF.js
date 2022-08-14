@@ -9,6 +9,7 @@ import { buildUiSchema } from "../helpers";
 import { getRefinedJsonSchema } from "./helper";
 import MesheryArrayFieldTemplate from "./RJSFCustomComponents/ArrayFieldTemlate";
 import CustomInputField from "./RJSFCustomComponents/CustomInputField";
+import CustomUpDownWidget from './RJSFCustomComponents/CustomUpDownWidget';
 import MesheryCustomObjFieldTemplate from "./RJSFCustomComponents/ObjectFieldTemplate";
 import _ from "lodash"
 
@@ -127,7 +128,8 @@ function RJSFForm(props) {
         additionalMetaSchemas={[JS4]}
         uiSchema={schema.uiSchema}
         widgets={{
-          TextWidget : CustomInputField
+          TextWidget : CustomInputField,
+          UpDownWidget : CustomUpDownWidget
         }}
         liveValidate
         showErrorList={false}
