@@ -26,6 +26,7 @@
     .anchorjs-link:focus {
     margin-left: -1.6em;  
     text-decoration: none !important; /* do not underline */
+    opacity: 1;
     }
 
 /**
