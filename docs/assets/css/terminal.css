@@ -54,6 +54,7 @@
 [data-ty] {
     display: block;
     line-height: 2;
+    overflow: auto;
 }
 
 [data-ty]:before {
