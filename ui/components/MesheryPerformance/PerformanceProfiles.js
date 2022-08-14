@@ -32,34 +32,9 @@ function PerformanceProfiles() {
       const [testProfiles, setTestProfiles] = useState([]);
       const [profileForModal, setProfileForModal] = useState();
       const [pageSize, setPageSize] = useState(10);
-      
-      console.log("profileForModal", profileForModal)
     
         useEffect(() => {
           fetchTestProfiles(page, pageSize, search, sortOrder);
-          // const subscription = subscribePerformanceProfiles((res) => {
-          //   // @ts-ignore
-          //   console.log(res);
-          //   let result = res?.subscribePerfProfiles;
-          //   if (typeof result !== "undefined") {
-          //     if (result) {
-          //       setCount(result.total_count || 0);
-          //       setPageSize(result.page_size || 0);
-          //       setTestProfiles(result.profiles || []);
-          //       setPage(result.page || 0);
-          //     }
-          //   }
-          // }, {
-          //   selector : {
-          //     pageSize : `${pageSize}`,
-          //     page : `${page}`,
-          //     search : `${encodeURIComponent(search)}`,
-          //     order : `${encodeURIComponent(sortOrder)}`,
-          //   }
-          // })
-          // return () => {
-          //   subscription.dispose();
-          // };
         }, [page, pageSize, search, sortOrder]);
 
         function fetchTestProfiles(page, pageSize, search, sortOrder) {

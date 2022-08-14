@@ -8,7 +8,6 @@ import CustomModal from "@/components/Modal";
 import fetchPerformanceResults from "@/features/performance/graphql/queries/PerformanceResultQuery";
 import MesheryChart from "@/components/MesheryChart";
 
-
 function generateResultsForDisplay(results) {
   if (Array.isArray(results)) {
     return results.map((record) => {
@@ -166,7 +165,6 @@ function generateColumnsForDisplay(sortOrder, setSelectedProfileIdxForChart, set
         customBodyRender : function CustomBody(value, tableMeta) {
           return (
             <IconButton aria-label="more" color="inherit" onClick={() => {
-              console.log("Chart clicked", tableMeta.rowIndex);
               setSelectedProfileIdxForChart(tableMeta.rowIndex)}} >
               <BarChartIcon />
             </IconButton>
@@ -209,6 +207,7 @@ function ResultChart({ result, handleTabChange, tabValue }) {
   // const serverMetrics = result.server_metrics;
   // const startTime = new Date(row.StartTime);
   // const endTime = new Date(startTime.getTime() + row.ActualDuration / 1000000);
+  
 
   return (
     <Paper
@@ -232,12 +231,10 @@ function ResultChart({ result, handleTabChange, tabValue }) {
       {
         (tabValue == 0) ?
           <div>
-            <h1> MesheryChart</h1>
-             {/* <MesheryChart  /> */}
-              {/* <MesheryChart
+        <MesheryChart
                 rawdata={[result && result.runner_results ? result : {}]}
                 data={[result && result.runner_results ? result.runner_results : {}]}
-              /> */}
+              />
             {/* {boardConfig && boardConfig !== null && Object.keys(boardConfig).length > 0 && ( */}
                 <h1>GrafanaCustomCharts</h1>
                 {/* <GrafanaCustomCharts
@@ -274,6 +271,9 @@ function PerformanceResults({CustomHeader, endpoint, user, elevation = 4, result
   const [pageSize, setPageSize] = useState(10);
   const [page, setPage] = useState(0);
   const [search, setSearch] = useState("");
+  
+
+  
 
   const columns = generateColumnsForDisplay(sortOrder, (idx) => {
     setSelectedRowChart(results[idx])
@@ -353,7 +353,7 @@ function PerformanceResults({CustomHeader, endpoint, user, elevation = 4, result
     Content={
       <div>
       <ResultChart
-        // result={selectedRowChart}
+        result={selectedRowChart}
         handleTabChange={handleTabChange}
         tabValue={tabValue}
       />
