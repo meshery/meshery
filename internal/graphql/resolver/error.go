@@ -28,6 +28,8 @@ const (
 	ErrConfigurationPatternsCode            = "2242"
 	ErrConfigurationApplicationsCode        = "2243"
 	ErrConfigurationFiltersCode             = "2244"
+	ErrClusterInfoSubscriptionCode          = "2245"
+	ErrGettingClusterResourcesCode     = "2246"
 )
 
 var (
@@ -122,4 +124,25 @@ func ErrApplicationsSubscription(err error) error {
 
 func ErrFiltersSubscription(err error) error {
 	return errors.New(ErrConfigurationFiltersCode, errors.Alert, []string{"Configuration Subscription failed", err.Error()}, []string{"GraphQL subscription for Filters stopped"}, []string{"Could be a network issue"}, []string{"Confirm that Meshery Server is reachable from your browser."})
+}
+
+func ErrClusterInfoSubcription(err error) error {
+	return errors.New(
+		ErrClusterInfoSubscriptionCode, 
+		errors.Alert, 
+		[]string{"ClusterInfo Subscription failed", err.Error()}, 
+		[]string{"GraphQL subscription for ClusterInfo stopped"}, 
+		[]string{"Could be a network issue"}, 
+		[]string{"Confirm that Meshery Server is reachable from your browser."})
+}
+
+func ErrGettingClusterResources(err error) error {
+	return errors.New(
+		ErrGettingClusterResourcesCode,
+		errors.Alert,
+		[]string{"Cannot get avaiable resources"},
+		[]string{err.Error()},
+		[]string{"Table in the database might not exists"},
+		nil,
+	)
 }

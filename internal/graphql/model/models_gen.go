@@ -37,6 +37,10 @@ type ApplicationResult struct {
 	UpdatedAt       *string     `json:"updated_at"`
 }
 
+type ClusterInfo struct {
+	Resources []*Resource `json:"resources"`
+}
+
 type ConfigurationPage struct {
 	Applications *ApplicationPage   `json:"applications"`
 	Patterns     *PatternPageResult `json:"patterns"`
@@ -264,6 +268,11 @@ type ReSyncActions struct {
 	ClearDb   string `json:"clearDB"`
 	ReSync    string `json:"ReSync"`
 	HardReset string `json:"hardReset"`
+}
+
+type Resource struct {
+	Kind   string `json:"kind"`
+	Number int    `json:"number"`
 }
 
 type ServiceMeshFilter struct {

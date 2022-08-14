@@ -282,3 +282,83 @@ func (r *Resolver) getKubectlDescribe(ctx context.Context, name string, kind str
 		Describe: &details,
 	}, nil
 }
+
+func (r *Resolver) subscribeClusterInfo(ctx context.Context, provider models.Provider, k8scontextIDs []string) (<-chan *model.ClusterInfo, error) {
+	ch := make(chan struct{}, 1)
+	ch <- struct{}{}
+	clusterInfoChan := make(chan *model.ClusterInfo)
+
+	r.Log.Info("ClusterInfo subscription started")
+
+	go func() {
+		for {
+			select {
+				case <- ch:
+					clusterInfo, err := r.getClusterInfo(ctx, provider, k8scontextIDs)
+					if err != nil {
+						r.Log.Error(ErrClusterInfoSubcription(err))
+						break
+					}
+					clusterInfoChan <- clusterInfo
+				case <- ctx.Done():
+					r.Log.Info("ClusterInfo subcription stopped")
+					return
+			}
+		}
+	}()
+
+	return clusterInfoChan, nil
+}
+
+func (r *Resolver) getClusterInfo(ctx context.Context, provider models.Provider, k8scontextIDs []string) (*model.ClusterInfo, error) {
+	var cids []string
+	if len(k8scontextIDs) != 0 {
+		cids = k8scontextIDs
+	} else { //This is a fallback
+		k8sctxs, ok := ctx.Value(models.KubeClustersKey).([]models.K8sContext)
+		if !ok || len(k8sctxs) == 0 {
+			r.Log.Error(ErrEmptyCurrentK8sContext)
+			return nil, ErrEmptyCurrentK8sContext
+		}
+		for _, context := range k8sctxs {
+			if context.KubernetesServerID == nil {
+				r.Log.Error(ErrEmptyCurrentK8sContext)
+				return nil, ErrEmptyCurrentK8sContext
+			}
+			cids = append(cids, context.KubernetesServerID.String())
+		}
+	}
+
+	query := "SELECT count(kind) as count, kind FROM objects o"
+
+	var rows *sql.Rows
+	var err error
+	if len(cids) == 1 || cids[0] == "all" {
+		query += " group by kind"
+		rows, err = provider.GetGenericPersister().Raw(query).Rows()
+	} else {
+		query += " WHERE o.cluster_id IN ? group by kind"
+		rows, err = provider.GetGenericPersister().Raw(query, cids).Rows()
+	}
+
+	if err != nil {
+		r.Log.Error(ErrGettingClusterResources(err))
+	}
+
+	defer rows.Close()
+
+	resources := make([]*model.Resource, 0)
+	for rows.Next() {
+		var resource model.Resource
+		err := rows.Scan(&resource.Number, &resource.Kind)
+		if err != nil {
+			r.Log.Error(ErrGettingClusterResources(err))
+			return nil, err
+		}
+		resources = append(resources, &resource)
+	}
+
+	return &model.ClusterInfo{
+		Resources: resources,
+	}, nil
+}
