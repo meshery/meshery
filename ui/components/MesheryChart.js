@@ -42,8 +42,6 @@ function MesheryChart({rawdata, data}) {
             {NonRecursiveConstructDisplayCells(chartData?.options?.metadata )?.map((el, i) => {
               return <Grid item xs={4} key={`nri-${i}`}>{el}  </Grid>
             })}
-            {/* <h1> qwe </h1>  */}
-            <h1>data</h1>
           </Grid>
     </div>
   )
