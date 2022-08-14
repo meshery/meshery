@@ -22,6 +22,7 @@ import { submitGrafanaConfigure } from "./GrafanaComponent";
 import fetchAvailableAddons from "./graphql/queries/AddonsStatusQuery";
 import fetchControlPlanes from "./graphql/queries/ControlPlanesQuery";
 import fetchDataPlanes from "./graphql/queries/DataPlanesQuery";
+import clusterInfoSubscription from "./graphql/subscriptions/ClusterInfoSubscription";
 import { submitPrometheusConfigure } from "./PrometheusComponent";
 
 const styles = (theme) => ({
@@ -122,10 +123,12 @@ class DashboardComponent extends React.Component {
       isMetricsConfigured : grafana.grafanaURL !== '' && prometheus.prometheusURL !== '',
       controlPlaneState : "",
       dataPlaneState : "",
+      clusterInfo : "",
 
       // subscriptions disposable
       dataPlaneSubscription : null,
       controlPlaneSubscription : null,
+      clusterInfoSubcription : null
     };
   }
 
@@ -149,6 +152,9 @@ class DashboardComponent extends React.Component {
     }
     if (this.state.controlPlaneSubscription) {
       this.state.controlPlaneSubscription.unsubscribe()
+    }
+    if (this.state.clusterInfoSubcription) {
+      this.state.clusterInfoSubcription.dispose()
     }
   }
 
@@ -179,6 +185,24 @@ class DashboardComponent extends React.Component {
     }
   }
 
+  initDashboardClusterInfoSubscription = () => {
+    const self = this;
+    console.log("k8s: ", self.getK8sClusterIds())
+    let k8s = self.getK8sClusterIds()
+
+    if (self._isMounted) {
+      // @ts-ignore
+      const clusterInfoSubcription = clusterInfoSubscription((res) => {
+        console.log("res: ", res)
+        console.log("clusterinfo: ", res?.clusterInfo)
+      }, {
+        k8scontextIDs : k8s
+      });
+
+      this.setState({ clusterInfoSubcription });
+    }
+  }
+
   componentWillUnmount = () => {
     this._isMounted = false
     this.disposeSubscriptions()
@@ -197,6 +221,10 @@ class DashboardComponent extends React.Component {
 
     if (this._isMounted) {
       this.initMeshSyncControlPlaneSubscription();
+    }
+
+    if (this._isMounted) {
+      this.initDashboardClusterInfoSubscription();
     }
   };
 
@@ -379,7 +407,7 @@ class DashboardComponent extends React.Component {
         members : processedMember
       }
     });
-
+    console.log("namespaceS:", namespaces, " activenamepsaces: ", activeNamespaces)
     self.setState({ meshScan : processedControlPlanesData?.filter(data => !!data).filter((data) => data.members?.length > 0) });
     self.setState({ meshScanNamespaces : namespaces, activeMeshScanNamespace : activeNamespaces });
   };
@@ -975,12 +1003,21 @@ class DashboardComponent extends React.Component {
         <div className={classes.rootClass}>
           <Grid container spacing={2}>
             <Grid item xs={12} md={6}>
-              <div className={classes.dashboardSection} data-test="service-mesh">
-                <Typography variant="h6" gutterBottom className={classes.chartTitle}>
-                  Service Mesh
-                </Typography>
-                {showServiceMesh}
-              </div>
+              <Grid item xs={12} md={12}>
+                <div className={classes.dashboardSection} data-test="workloads">
+                  <Typography variant="h6" gutterBottom className={classes.chartTitle}>
+                    Workloads
+                  </Typography>
+                </div>
+              </Grid>
+              <Grid item xs={12} md={12}>
+                <div className={classes.dashboardSection} data-test="service-mesh">
+                  <Typography variant="h6" gutterBottom className={classes.chartTitle}>
+                    Service Mesh
+                  </Typography>
+                  {showServiceMesh}
+                </div>
+              </Grid>
             </Grid>
             <Grid item xs={12} md={6}>
               <div className={classes.dashboardSection} data-test="connection-status">
