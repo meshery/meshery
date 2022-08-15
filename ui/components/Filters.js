@@ -602,22 +602,24 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
         },
         customBodyRender : function CustomBody(_, tableMeta) {
           const rowData = filters[tableMeta.rowIndex];
+          const visibility = filters[tableMeta.rowIndex].visibility
           return (
             <>
-              <IconButton onClick={(e) => handleFork(e, rowData.id)}>
+              {visibility === "public" ? <IconButton onClick={(e) => handleFork(e, rowData.id)}>
                 <img src="/static/img/fork.svg" />
               </IconButton>
-              <IconButton>
-                <EditIcon
-                  title="Config"
-                  aria-label="config"
-                  color="inherit"
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    setSelectedRowData(filters[tableMeta.rowIndex])
-                  }}
-                />
-              </IconButton>
+                :
+                <IconButton>
+                  <EditIcon
+                    title="Config"
+                    aria-label="config"
+                    color="inherit"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      setSelectedRowData(filters[tableMeta.rowIndex])
+                    }}
+                  />
+                </IconButton> }
               <IconButton>
                 <DoneAllIcon
                   title="Deploy"

@@ -698,20 +698,21 @@ function MesheryPatterns({
         },
         customBodyRender : function CustomBody(_, tableMeta) {
           const rowData = patterns[tableMeta.rowIndex];
+          const visibility = patterns[tableMeta.rowIndex].visibility
           return (
             <>
-              <IconButton onClick={(e) => handleFork(e, rowData.id)}>
+              { visibility === "public" ? <IconButton onClick={(e) => handleFork(e, rowData.id)}>
                 <img src="/static/img/fork.svg" />
-              </IconButton>
-              {/* <Tooltip title="Configure">*/}
-              <IconButton onClick={(e) => {
-                e.stopPropagation();
-                setSelectedPattern({ pattern : patterns[tableMeta.rowIndex], show : true })
-              }
-              }
-              >
-                <Avatar src="/static/img/pattwhite.svg" className={classes.iconPatt} imgProps={{ height : "16px", width : "16px" }} />
-              </IconButton>
+              </IconButton> :
+
+                <IconButton onClick={(e) => {
+                  e.stopPropagation();
+                  setSelectedPattern({ pattern : patterns[tableMeta.rowIndex], show : true })
+                }
+                }
+                >
+                  <Avatar src="/static/img/pattwhite.svg" className={classes.iconPatt} imgProps={{ height : "16px", width : "16px" }} />
+                </IconButton> }
               {/*</Tooltip> */}
               <IconButton
                 title="Deploy"
