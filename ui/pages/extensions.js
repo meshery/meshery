@@ -5,7 +5,6 @@ import { useState } from "react";
 
 const styles = (theme) => ({
   button : {
-    marginRight : "0.5rem",
     borderRadius : 5,
     minWidth : 100,
     color : "#fff",
@@ -14,17 +13,16 @@ const styles = (theme) => ({
     },
   },
   card : {
-    padding : theme.spacing(2),
+    padding : theme.spacing(3),
     borderRadius : theme.spacing(1),
     transformStyle : "preserve-3d",
     boxShadow : "0 4px 8px 0 rgba(0,0,0,0.2)",
     backgroundColor : "#fff",
     minHeight : "100%",
-    position : "relative"
+    position : "relative",
   },
   a : {
     textDecoration : "none",
-    padding : "0.5rem"
   },
   img : {
     paddingRight : "1rem",
@@ -34,28 +32,20 @@ const styles = (theme) => ({
     maxHeight : "120px",
   },
   frontSideDescription : {
-    padding : "1rem",
+    paddingTop : "1rem",
+    paddingBottom : "1rem",
     textAlign : "left",
     display : "flex",
     flexDirection : 'row',
-    justifyContent : 'flex-start',
-    alignItems : 'flex-start',
     textAlign : "left"
   },
   link : {
     textDecoration : "none",
-    display : "flex",
-    justifyContent : "flex-end",
-    padding : "0.5rem"
+    color : "#00b39F",
   },
-  comingSoon : {
-    transform : "rotate(30deg) translateX(20%) translateY(-50%)",
-    position : "absolute",
-    right : "0",
-  }
 });
 
-const INITIAL_GRID_SIZE = { lg : 6,  md : 12, xs : 12 };
+const INITIAL_GRID_SIZE = { lg : 6, md : 12, xs : 12 };
 
 const Extensions = ({ classes }) => {
   const [catalog, setCatalog] = useState(false);
@@ -83,8 +73,8 @@ const Extensions = ({ classes }) => {
 
           <Typography className={classes.frontSideDescription} variant="body">
             <img className={classes.img} src="/static/img/meshmap.svg" />
-              Collaboratively design and manage your Kubernetes clusters, service mesh deployments, and cloud native apps.
-              MeshMap is now in private beta. Sign-up today to for early access!
+            Collaboratively design and manage your Kubernetes clusters, service mesh deployments, and cloud native apps.
+            MeshMap is now in private beta. Sign-up today to for early access!
           </Typography>
           <div style={{ textAlign : "right" }}>
 
@@ -93,41 +83,46 @@ const Extensions = ({ classes }) => {
               color="primary"
               className={classes.button}
               onClick={(e) => handleSignUp(e)}>
-                Sign Up
+              Sign Up
             </Button>
           </div>
         </div>
       </Grid>
-      <Grid item {...INITIAL_GRID_SIZE} className={classes.grid}>
+      <Grid item {...INITIAL_GRID_SIZE} className={classes.grid} >
 
-        <div className={classes.card}>
-          <Typography className={classes.comingSoon} variant="h5" component="div">Coming Soon</Typography>
+        <div className={classes.card} style={{ backgroundColor : "#ddd", }} >
           <Typography className={classes.frontContent} variant="h5" component="div">
             {"Meshery Catalog"}
           </Typography>
 
           <Typography className={classes.frontSideDescription} variant="body">
             <img className={classes.img} src="/static/img/meshery_catalog.svg" />
-              Connect to enable access to the cloud native catalog. Import any catalog item and customize.
-
-
+            <div style={{
+              display : "inline", position : "relative",
+            }}>
+              Enable access to the cloud native catalog, supporting <a href="https://service-mesh-patterns.github.io/service-mesh-patterns" className={classes.link
+              } variant="body">Service Mesh Patterns</a>, WebAssembly filters, eBPF programs (<span style={{ fontStyle : "italic" }}>soon</span>), and OPA policies (<span style={{ fontStyle : "italic" }}>soon</span>). Import any catalog item and customize.
+            </div>
           </Typography>
 
-          <Typography className={classes.link} variant="subtitle2" style={{ fontStyle : "italic" }}>
-              Explore at:<a href="https://meshery.io/catalog" target="_blank" rel="noreferrer" style={{ textDecoration : "none", paddingLeft : "0.3rem ", color : "#00b39F" }}> Meshery Catalog </a>
-          </Typography>
-          <div style={{ textAlign : "right" }}>
-            <Switch
-              disabled
-              checked={catalog}
-              onClick={(e) => handleToggle(e)}
-              name="OperatorSwitch"
-              color="primary"
-            />
-          </div>
+          <Grid container spacing={2} className={classes.grid} direction="row" justifyContent="space-between" alignItems="baseline" style={{ position : "absolute", paddingRight : "3rem", paddingLeft : ".5rem", bottom : "1.5rem", }}>
+            <Typography variant="subtitle2" style={{ fontStyle : "italic" }}>
+              Explore the <a href="https://meshery.io/catalog" target="_blank" rel="noreferrer" className={classes.link}>Meshery Catalog</a>
+            </Typography>
+
+            <div style={{ textAlign : "right" }}>
+              <Switch
+                disabled
+                checked={catalog}
+                onClick={(e) => handleToggle(e)}
+                name="OperatorSwitch"
+                color="primary"
+              />
+            </div>
+          </Grid>
         </div>
-      </Grid>
-    </Grid>
+      </Grid >
+    </Grid >
   )
 }
 
