@@ -34,7 +34,7 @@ export const getK8sClusterIdsFromCtxId = (selectedContexts, k8sconfig) => {
   const clusterIds = [];
 
   selectedContexts.forEach(context => {
-    const clusterId = k8sconfig.find(cfg => cfg.contextID === context)?.clusterID
+    const clusterId = k8sconfig.find(cfg => cfg.id === context)?.id
     if (clusterId) {
       clusterIds.push(clusterId)
     }
@@ -55,7 +55,7 @@ export function getFirstCtxIdFromSelectedCtxIds(selectedK8sContexts, k8sConfig) 
   }
 
   if (selectedK8sContexts?.includes("all")){
-    return k8sConfig[0]?.contextID
+    return k8sConfig[0]?.id
   }
 
   return selectedK8sContexts[0];
@@ -86,7 +86,7 @@ export const getK8sClusterNamesFromCtxId = (selectedContexts, k8sconfig) => {
   const clusterNames = [];
 
   selectedContexts.forEach(context => {
-    const name = k8sconfig.find(cfg => cfg.contextID === context)?.contextName
+    const name = k8sconfig.find(cfg => cfg.id === context)?.contextName
     if (name) {
       clusterNames.push(name)
     }
