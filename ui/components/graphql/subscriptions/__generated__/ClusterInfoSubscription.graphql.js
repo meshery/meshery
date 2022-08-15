@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<fde52f581f1f0ef747f278cf2e9aa1ff>>
+ * @generated SignedSource<<3fab72b1d660ff726d690a9b0057c232>>
  * @flow
  * @lightSyntaxTransform
  * @nogrep
@@ -15,7 +15,7 @@ export type ClusterInfoSubscription$variables = {|
   k8scontextIDs?: ?$ReadOnlyArray<string>,
 |};
 export type ClusterInfoSubscription$data = {|
-  +subscribeClusterInfo: {|
+  +clusterInfo: {|
     +resources: $ReadOnlyArray<{|
       +kind: string,
       +number: number,
@@ -38,7 +38,7 @@ var v0 = [
 ],
 v1 = [
   {
-    "alias": null,
+    "alias": "clusterInfo",
     "args": [
       {
         "kind": "Variable",
@@ -98,17 +98,17 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "1d8aba943dec00a83aab08ae03d818f8",
+    "cacheID": "cd90ed04679ef1175d0c20bdddc9cc47",
     "id": null,
     "metadata": {},
     "name": "ClusterInfoSubscription",
     "operationKind": "subscription",
-    "text": "subscription ClusterInfoSubscription(\n  $k8scontextIDs: [String!]\n) {\n  subscribeClusterInfo(k8scontextIDs: $k8scontextIDs) {\n    resources {\n      kind\n      number\n    }\n  }\n}\n"
+    "text": "subscription ClusterInfoSubscription(\n  $k8scontextIDs: [String!]\n) {\n  clusterInfo: subscribeClusterInfo(k8scontextIDs: $k8scontextIDs) {\n    resources {\n      kind\n      number\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node/*: any*/).hash = "6b46e3d367148a9cd7f2322c6d8092a5";
+(node/*: any*/).hash = "867b3a2886251da9448c8dfde882c99a";
 
 module.exports = ((node/*: any*/)/*: GraphQLSubscription<
   ClusterInfoSubscription$variables,

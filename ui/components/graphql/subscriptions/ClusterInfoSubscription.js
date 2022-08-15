@@ -3,7 +3,7 @@ import environment from "../../../lib/relayEnvironment";
 
 export const clusterInfoSubscription = graphql`
   subscription ClusterInfoSubscription($k8scontextIDs: [String!]) {
-    subscribeClusterInfo(k8scontextIDs: $k8scontextIDs) {
+    clusterInfo: subscribeClusterInfo(k8scontextIDs: $k8scontextIDs) {
       resources { 
         kind
         number
