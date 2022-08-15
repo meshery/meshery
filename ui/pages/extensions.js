@@ -18,7 +18,7 @@ const styles = (theme) => ({
     transformStyle : "preserve-3d",
     boxShadow : "0 4px 8px 0 rgba(0,0,0,0.2)",
     backgroundColor : "#fff",
-    minHeight : "100%",
+    minHeight : "250px",
     position : "relative",
   },
   a : {
@@ -64,7 +64,7 @@ const Extensions = ({ classes }) => {
 
   return (
     <Grid container spacing={1} >
-      <Grid item {...INITIAL_GRID_SIZE} className={classes.grid} >
+      <Grid item {...INITIAL_GRID_SIZE}>
         <div className={classes.card}>
           <Typography className={classes.frontContent} variant="h5" component="div">
             {"MeshMap"}
@@ -88,7 +88,7 @@ const Extensions = ({ classes }) => {
           </div>
         </div>
       </Grid>
-      <Grid item {...INITIAL_GRID_SIZE} className={classes.grid} >
+      <Grid item {...INITIAL_GRID_SIZE}>
 
         <div className={classes.card} style={{ backgroundColor : "#ddd", }} >
           <Typography className={classes.frontContent} variant="h5" component="div">
