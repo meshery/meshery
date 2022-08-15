@@ -238,7 +238,9 @@ function MesheryPatterns({
     /**  @type {TypeView} */
     ("grid")
   );
-  const DEPLOY_URL = '/api/pattern/deploy';
+  const PATTERN_URL = '/api/pattern'
+  const DEPLOY_URL = `${PATTERN_URL}/deploy`;
+  const FORK_URL = '/fork';
   const [modalOpen, setModalOpen] = useState({
     open : false,
     deploy : false,
@@ -325,6 +327,10 @@ function MesheryPatterns({
       name : "UPLOAD_PATTERN",
       error_msg : "Failed to upload pattern file"
     },
+    FORK_PATTERN : {
+      name : "FORK_PATTERN",
+      error_msg : "Failed to fork pattern file"
+    }
   };
 
   const searchTimeout = useRef(null);
@@ -349,7 +355,8 @@ function MesheryPatterns({
     });
   }
 
-  const handleModalOpen = (pattern_file, name, isDeploy) => {
+  const handleModalOpen = (e, pattern_file, name, isDeploy) => {
+    e.stopPropagation();
     setModalOpen({
       open : true,
       deploy : isDeploy,
@@ -422,6 +429,32 @@ function MesheryPatterns({
       handleError(ACTION_TYPES.UNDEPLOY_PATTERN),
     );
   };
+
+  function handleFork(e, patternID) {
+    e.stopPropagation();
+    updateProgress({ showProgress : true });
+    dataFetch(PATTERN_URL.concat("/", patternID, FORK_URL),
+      {
+        credentials : "include",
+        method : "POST",
+      },
+      () => {
+        updateProgress({ showProgress : false });
+        enqueueSnackbar("Pattern Successfully Forked!", {
+          variant : "success",
+          action : function Action(key) {
+            return (
+              <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+                <CloseIcon />
+              </IconButton>
+            );
+          },
+          autoHideDuration : 2000,
+        });
+      },
+      handleError(ACTION_TYPES.FORK_PATTERN),
+    );
+  }
 
   function fetchPatterns(page, pageSize, search, sortOrder) {
     if (!search) search = "";
@@ -640,10 +673,11 @@ function MesheryPatterns({
             </TableCell>
           );
         },
-        customBodyRender : function CustomBody() {
+        customBodyRender : function CustomBody(_, tableMeta) {
+          const visibility = patterns[tableMeta.rowIndex].visibility
           return (
             <>
-              <img src="/static/img/private.svg" />
+              <img src={`/static/img/${visibility}.svg`} />
             </>
           );
         },
@@ -666,23 +700,28 @@ function MesheryPatterns({
           const rowData = patterns[tableMeta.rowIndex];
           return (
             <>
-              <IconButton>
+              <IconButton onClick={(e) => handleFork(e, rowData.id)}>
                 <img src="/static/img/fork.svg" />
               </IconButton>
               {/* <Tooltip title="Configure">*/}
-              <IconButton onClick={() => setSelectedPattern({ pattern : patterns[tableMeta.rowIndex], show : true })}>
+              <IconButton onClick={(e) => {
+                e.stopPropagation();
+                setSelectedPattern({ pattern : patterns[tableMeta.rowIndex], show : true })
+              }
+              }
+              >
                 <Avatar src="/static/img/pattwhite.svg" className={classes.iconPatt} imgProps={{ height : "16px", width : "16px" }} />
               </IconButton>
               {/*</Tooltip> */}
               <IconButton
                 title="Deploy"
-                onClick={() => handleModalOpen(rowData.pattern_file, rowData.name, true)}
+                onClick={(e) => handleModalOpen(e, rowData.pattern_file, rowData.name, true)}
               >
                 <DoneAllIcon data-cy="deploy-button" />
               </IconButton>
               <IconButton
                 title="Undeploy"
-                onClick={() => handleModalOpen(rowData.pattern_file, rowData.name, false)}
+                onClick={(e) => handleModalOpen(e, rowData.pattern_file, rowData.name, false)}
               >
                 <UndeployIcon fill="#B32700" data-cy="undeploy-button" />
               </IconButton>

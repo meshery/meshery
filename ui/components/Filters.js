@@ -177,7 +177,10 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     /**  @type {TypeView} */
     ("grid")
   );
-  const DEPLOY_URL = "/api/filter/deploy";
+  const FILTER_URL = "/api/filter"
+  const DEPLOY_URL = FILTER_URL + "/deploy";
+  const FORK_URL = "/fork";
+
   const [modalOpen, setModalOpen] = useState({
     open : false,
     filter_file : null,
@@ -256,6 +259,10 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
       name : "UPLOAD_FILTERS",
       error_msg : "Failed to upload filter file",
     },
+    FORK_FILTERS : {
+      name : "FORK_FILTER",
+      error_msg : "Failed to fork filter file"
+    }
   };
 
   const searchTimeout = useRef(null);
@@ -360,6 +367,31 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     );
   };
 
+  function handleFork(e, filterID) {
+    e.stopPropagation()
+    updateProgress({ showProgress : true });
+    dataFetch(FILTER_URL.concat("/", filterID, FORK_URL),
+      {
+        credentials : "include",
+        method : "POST",
+      },
+      () => {
+        updateProgress({ showProgress : false });
+        enqueueSnackbar("Filter Successfully Forked!", {
+          variant : "success",
+          action : function Action(key) {
+            return (
+              <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+                <CloseIcon />
+              </IconButton>
+            );
+          },
+          autoHideDuration : 2000,
+        });
+      },
+      handleError(ACTION_TYPES.FORK_FILTERS),
+    );
+  }
 
   // function handleError(error) {
   const handleError = (action) => (error) => {
@@ -378,7 +410,8 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     });
   };
 
-  const handleModalOpen = (filter_file, name, isDeploy) => {
+  const handleModalOpen = (e, filter_file, name, isDeploy) => {
+    e.stopPropagation()
     setModalOpen({
       open : true,
       filter_file : filter_file,
@@ -531,6 +564,30 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
       },
     },
     {
+      name : "visibility",
+      label : "Visibility",
+      options : {
+        filter : false,
+        sort : true,
+        searchable : true,
+        customHeadRender : function CustomHead({ index, ...column }) {
+          return (
+            <TableCell key={index}>
+              <b>{column.label}</b>
+            </TableCell>
+          );
+        },
+        customBodyRender : function CustomBody(_, tableMeta) {
+          const visibility = filters[tableMeta.rowIndex].visibility
+          return (
+            <>
+              <img src={`/static/img/${visibility}.svg`} />
+            </>
+          );
+        },
+      },
+    },
+    {
       name : "Actions",
       options : {
         filter : false,
@@ -547,12 +604,18 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
           const rowData = filters[tableMeta.rowIndex];
           return (
             <>
+              <IconButton onClick={(e) => handleFork(e, rowData.id)}>
+                <img src="/static/img/fork.svg" />
+              </IconButton>
               <IconButton>
                 <EditIcon
                   title="Config"
                   aria-label="config"
                   color="inherit"
-                  onClick={() => setSelectedRowData(filters[tableMeta.rowIndex])}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    setSelectedRowData(filters[tableMeta.rowIndex])
+                  }}
                 />
               </IconButton>
               <IconButton>
@@ -560,13 +623,13 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
                   title="Deploy"
                   aria-label="deploy"
                   color="inherit"
-                  onClick={() => handleModalOpen(rowData.filter_file, rowData.name, true)}
+                  onClick={(e) => handleModalOpen(e, rowData.filter_file, rowData.name, true)}
                   data-cy="deploy-button"
                 />
               </IconButton>
               <IconButton
                 title="Undeploy"
-                onClick={() => handleModalOpen(rowData.filter_file, rowData.name, false)}
+                onClick={(e) => handleModalOpen(e, rowData.filter_file, rowData.name, false)}
               >
                 <UndeployIcon fill="#B32700" data-cy="undeploy-button" />
               </IconButton>
