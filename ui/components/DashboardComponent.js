@@ -123,7 +123,7 @@ class DashboardComponent extends React.Component {
       isMetricsConfigured : grafana.grafanaURL !== '' && prometheus.prometheusURL !== '',
       controlPlaneState : "",
       dataPlaneState : "",
-      clusterInfo : "",
+      clusterInfo : [],
 
       // subscriptions disposable
       dataPlaneSubscription : null,
@@ -195,6 +195,7 @@ class DashboardComponent extends React.Component {
       const clusterInfoSubcription = clusterInfoSubscription((res) => {
         console.log("res: ", res)
         console.log("clusterinfo: ", res?.clusterInfo)
+        this.setState({ clusterInfo : res?.clusterInfo })
       }, {
         k8scontextIDs : k8s
       });
@@ -544,7 +545,7 @@ class DashboardComponent extends React.Component {
     return getK8sClusterNamesFromCtxId(this.props.selectedK8sContexts, this.props.k8sconfig)
   }
 
-  formatContextNamesForDashboardView = () => {
+  emptyStateMessageForServiceMeshesInfo = () => {
     const clusters = this.getSelectedK8sContextsNames();
     if (clusters.length === 0) {
       return "No Cluster is selected to show the Service Mesh Information"
@@ -553,6 +554,17 @@ class DashboardComponent extends React.Component {
       return `No service meshes detected in any of the cluster.`
     }
     return `No service meshes detected in the ${clusters.join(", ")} cluster(s).`
+  }
+
+  emptyStateMessageForClusterInfo = () => {
+    const clusters = this.getSelectedK8sContextsNames();
+    if (clusters.length === 0) {
+      return "No Cluster is selected to show the discovered resources"
+    }
+    if (clusters.includes("all")) {
+      return `No resources detected in any of the cluster.`
+    }
+    return `No resources detected in the ${clusters.join(", ")} cluster(s).`
   }
 
   handleKubernetesClick = (id) => {
@@ -735,6 +747,45 @@ class DashboardComponent extends React.Component {
 
     return null;
   };
+
+
+  /**
+   * ClusterInfoCard takes in the cluster related data
+   * and renders a table with cluster resources information of
+   * the selected cluster
+   * @param {{kind, number}[]} resources
+   */
+   ClusterInfoCard = (resources = []) => {
+     if (Array.isArray(resources) && resources.length)
+       return (
+         <Paper elevation={1} style={{ padding : "2rem", marginTop : "1rem" }}>
+           <TableContainer>
+             <Table aria-label="Discovered Kubernetes cluster details">
+               <TableHead>
+                 <TableRow>
+                   <TableCell align="center">Resource</TableCell>
+                   <TableCell align="center">Number</TableCell>
+                 </TableRow>
+               </TableHead>
+               <TableBody>
+                 {
+                   resources.map((resource) => {
+                     return (
+                       <TableRow key={resource?.kind}>
+                         <TableCell align="center">{resource?.kind}</TableCell>
+                         <TableCell align="center">{resource?.number}</TableCell>
+                       </TableRow>
+                     )
+                   })
+                 }
+               </TableBody>
+             </Table>
+           </TableContainer>
+         </Paper>
+       );
+
+     return null;
+   };
 
   handlePrometheusClick = () => {
     this.props.updateProgress({ showProgress : true });
@@ -954,7 +1005,7 @@ class DashboardComponent extends React.Component {
 
     const showServiceMesh = (
       <>
-        {self?.state?.meshScan && Object.keys(self.state.meshScan).length
+        {self?.state?.meshScan && Object.keys(self?.state?.meshScan).length
           ? (
             <>
               {self.state.meshScan.map((mesh) => {
@@ -982,7 +1033,7 @@ class DashboardComponent extends React.Component {
               }}
             >
               <Typography style={{ fontSize : "1.5rem", marginBottom : "2rem" }} align="center" color="textSecondary">
-                {this.formatContextNamesForDashboardView()}
+                {this.emptyStateMessageForServiceMeshesInfo()}
               </Typography>
               <Button
                 aria-label="Add Meshes"
@@ -998,6 +1049,39 @@ class DashboardComponent extends React.Component {
           )}
       </>
     );
+    const showClusterInfo = (
+      <>
+        {self?.state?.clusterInfo && Object.keys(self?.state?.clusterInfo).length
+          ? (
+            self.ClusterInfoCard(self?.state?.clusterInfo?.resources)
+          )
+          : (
+            <div
+              style={{
+                padding : "2rem",
+                display : "flex",
+                justifyContent : "center",
+                alignItems : "center",
+                flexDirection : "column",
+              }}
+            >
+              <Typography style={{ fontSize : "1.5rem", marginBottom : "2rem" }} align="center" color="textSecondary">
+                {this.emptyStateMessageForClusterInfo()}
+              </Typography>
+              <Button
+                aria-label="Connect K8s cluster"
+                variant="contained"
+                color="primary"
+                size="large"
+                onClick={() => self.props.router.push("/settings")}
+              >
+                <AddIcon className={classes.addIcon} />
+                Connect Cluster
+              </Button>
+            </div>
+          )}
+      </>
+    );
     return (
       <NoSsr>
         <div className={classes.rootClass}>
@@ -1008,6 +1092,7 @@ class DashboardComponent extends React.Component {
                   <Typography variant="h6" gutterBottom className={classes.chartTitle}>
                     Workloads
                   </Typography>
+                  {showClusterInfo}
                 </div>
               </Grid>
               <Grid item xs={12} md={12}>
