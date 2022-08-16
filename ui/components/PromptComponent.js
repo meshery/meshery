@@ -9,6 +9,7 @@ import {
   DialogContent,
   DialogTitle
 } from "@material-ui/core";
+import classNames from 'classnames';
 
 const styles = (theme) => ({
   title : {
@@ -50,6 +51,12 @@ const styles = (theme) => ({
       boxShadow : "0px 2px 4px -1px rgb(0 0 0 / 20%), 0px 4px 5px 0px rgb(0 0 0 / 14%), 0px 1px 10px 0px rgb(0 0 0 / 12%)"
     },
     minWidth : 100,
+  },
+  resetButton : {
+    backgroundColor : "#8F1F00",
+    "&:hover" : {
+      backgroundColor : "#B32700",
+    }
   }
 });
 
@@ -122,7 +129,8 @@ class PromptComponent extends React.Component {
             <Button onClick={() => {
               this.hide();
               resolve(options[0]);
-            }} key={options[0]}  className={classes.button0}
+            }} key={options[0]}
+            className={options[0]?.toLowerCase() === "reset" ? classNames(classes.button0,classes.resetButton) : classes.button0}
             type="submit"
             variant="contained"
             color="primary">
