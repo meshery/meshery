@@ -1,6 +1,6 @@
 import { makeStyles } from "@material-ui/core";
 
-const useStyles= makeStyles(() => ({
+const useStyles= makeStyles((theme) => ({
   cardButtons : {
     display : "flex",
     justifyContent : "flex-end",
@@ -69,15 +69,16 @@ const useStyles= makeStyles(() => ({
     marginRight : "5px",
   },
   btnText : {
+    [theme.breakpoints.between(960, 1190)] : { display : "none" },
     display : "flex",
     justifyContent : "center",
     paddingLeft : "0.35rem"
   },
   undeployButton : {
-    backgroundColor : "#B32700",
+    backgroundColor : "#8F1F00",
     color : "#ffffff",
     "&:hover" : {
-      backgroundColor : "#8f1f00"
+      backgroundColor : "#B32700",
     },
     marginRight : "0.5rem"
   }

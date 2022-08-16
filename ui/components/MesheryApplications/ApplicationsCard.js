@@ -103,6 +103,16 @@ function MesheryApplicationCard({
             <div className={classes.cardButtons} >
               <Button
                 variant="contained"
+                className={classes.undeployButton}
+                onClick={(ev) =>
+                  genericClickHandler(ev, handleUnDeploy)
+                }
+              >
+                <UndeployIcon fill="#ffffff" className={classes.iconPatt} />
+                Undeploy
+              </Button>
+              <Button
+                variant="contained"
                 color="primary"
                 onClick={(ev) =>
                   genericClickHandler(ev, handleDeploy)
@@ -113,16 +123,6 @@ function MesheryApplicationCard({
                 Deploy
               </Button>
 
-              <Button
-                variant="contained"
-                className={classes.undeployButton}
-                onClick={(ev) =>
-                  genericClickHandler(ev, handleUnDeploy)
-                }
-              >
-                <UndeployIcon fill="#ffffff" className={classes.iconPatt} />
-                <span className={classes.btnText}>Undeploy</span>
-              </Button>
             </div>
           </div>
         </>
