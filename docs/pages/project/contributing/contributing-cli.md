@@ -8,7 +8,7 @@ type: project
 category: contributing
 ---
 
-`mesheryctl` is written in Golang or the Go Programming Language. For development use Go version 1.15+.
+`mesheryctl` is written in Golang or the Go Programming Language. For development use Go version 1.17+.
 
 {% include alert.html
     type="info"
@@ -45,7 +45,10 @@ For logs, `mesheryctl` uses [Logrus](https://github.com/sirupsen/logrus). Going 
 
 **Unit Tests**
 
-Unit test code coverage reports can be found - _tbd_.
+Unit test code coverage reports can be found in the [CodeCov logs](https://app.codecov.io/gh/meshery/meshery/).  (Note: GitHub login may be required for access)
+
+**Documentation**
+The documentation pages for `mesheryctl` reference are made with the help of `golang` script which will be triggered on PR merge using GitHub Actions. Refer to [Contributing mesheryctl documentation](#contributing-to-mesheryctl-documentation) for instructions.
 
 # Meshery CLI Style Guide
 
@@ -139,6 +142,52 @@ Below you will find guidelines to write unit tests and integration tests and exa
 Unit tests: Individual components are tested.
 
 Integration tests: Individual components are combined and tested as a group.
+
+# Contributing to mesheryctl documentation
+
+The documentation for `mesheryctl` is made different such that if the change is made on any of the `mesheryctl`'s golang files, the documentation page is created after the PR is merged, thereby reducing the extra work to update the documentation pages. To contribute to this section, follow the below steps:
+
+ - Go to the required command file in which the documentation has to be created/updated (mainly under /mesheryctl/internal/cli/root/...)
+ - Then, edit the Cobra macro variables present in the each file. An example is given below for reference.
+    ```
+    var startCmd = &cobra.Command{
+	Use:   "start",
+	Short: "Start Meshery",
+	Long:  'Start Meshery and each of its service mesh components.',
+	Args:  cobra.NoArgs,
+	Example: 
+    // Start meshery
+    mesheryctl system start
+
+    // To create a new context for in-cluster Kubernetes deployments and set the new context as your current-context
+    mesheryctl system context create k8s -p kubernetes -s
+	...
+
+    ```
+    The variables present in above sample will be used in creating the doc pages for the specific command
+
+Also, if the screenshot is present in the command, the respective field has to be added at the bottom of the `Examples` field in the command file. The image file has to be included in the `docs/assets` folder in **PNG** format. The screenshot field is given for reference below
+
+```
+	Example: 
+// apply a pattern file
+mesheryctl pattern apply -f [file | URL]
+
+// deploy a saved pattern
+mesheryctl pattern apply [pattern-name]
+
+! Refer below image link for usage
+* Usage of mesheryctl pattern apply
+# ![pattern-apply-usage](/assets/img/mesheryctl/patternApply.png)
+```
+
+Certain symbols are used in the screenshot section, each having it's own function
+ - `!` - Used to denote as comment and the line will be ignored by the script
+ - `*` - Caption for the screenshot
+ - `#` - Markdown code for adding the screenshot in the doc page
+
+
+**NOTE: It is advised not to modify the changes in `docs` folder, rather should be done in `mesheryctl` folder as the changes will get overwritten by the script.**
 
 ### References
 
