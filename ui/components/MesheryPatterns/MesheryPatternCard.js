@@ -105,7 +105,7 @@ function MesheryPatternCard({
               </Button>
 
               <Button
-                title="deploy"
+                title="Deploy"
                 variant="contained"
                 onClick={(ev) =>
                   genericClickHandler(ev, handleDeploy)
