@@ -117,7 +117,7 @@ function MesheryPatternCard({
               </Button>
 
               <Button
-                title="design"
+                title="Design"
                 variant="contained"
                 color="primary"
                 onClick={(ev) =>
