@@ -158,6 +158,10 @@ const (
 	PersistPerformanceProfiles Feature = "persist-performance-profiles" // /user/performance/profile
 
 	PersistSchedules Feature = "persist-schedules" // /user/schedules
+
+	ForkMesheryPatterns Feature = "fork-meshery-patterns" // /patterns/fork
+
+	ForkMesheryFilters Feature = "fork-meshery-filters" // /filters/fork
 )
 
 const (
