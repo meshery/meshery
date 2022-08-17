@@ -104,7 +104,7 @@ func (h *Handler) MesheryControllersMiddleware(next func(http.ResponseWriter, *h
 		ctrlHlpr.UpdateMeshsynDataHandlers()
 		ctx = context.WithValue(ctx, models.MeshSyncDataHandlersKey, h.MesheryCtrlsHelper.GetMeshSyncDataHandlersForEachContext())
 
-		go h.config.DashboardK8sResourcesChan.PublishDashboardK8sResources()
+		// go h.config.DashboardK8sResourcesChan.PublishDashboardK8sResources()
 
 		req1 := req.WithContext(ctx)
 		next(w, req1, prefObj, user, provider)
