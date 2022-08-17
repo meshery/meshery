@@ -251,7 +251,7 @@ type Provider interface {
 	RecordPreferences(req *http.Request, userID string, data *Preference) error
 
 	SaveK8sContext(token string, k8sContext K8sContext) (K8sContext, error)
-	GetK8sContexts(token, page, pageSize, search, order string) (MesheryK8sContextPage, error)
+	GetK8sContexts(token, page, pageSize, search, order string) ([]byte, error)
 	DeleteK8sContext(token, id string) (K8sContext, error)
 	GetK8sContext(token, id string) (K8sContext, error)
 	LoadAllK8sContext(token string) ([]*K8sContext, error)

@@ -3,8 +3,10 @@ package resolver
 import (
 	"context"
 	"database/sql"
+	"encoding/json"
 	"strings"
 
+	"github.com/layer5io/meshery/handlers"
 	"github.com/layer5io/meshery/internal/graphql/model"
 	"github.com/layer5io/meshery/models"
 	"github.com/layer5io/meshery/models/pattern/core"
@@ -281,4 +283,47 @@ func (r *Resolver) getKubectlDescribe(ctx context.Context, name string, kind str
 	return &model.KctlDescribeDetails{
 		Describe: &details,
 	}, nil
+}
+
+func (r *Resolver) subscribeK8sContexts(ctx context.Context, provider models.Provider, selector model.PageFilter) (<-chan *model.K8sContextsPage, error) {
+	ch := make(chan struct{}, 1)
+	ch <- struct{}{}
+	contextsChan := make(chan *model.K8sContextsPage)
+
+	r.Config.K8scontextChannel.SubscribeContext(ch)
+	r.Log.Info("K8s context subscription started")
+
+	go func() {
+		for {
+			select {
+			case <-ch:
+				contexts, err := r.getK8sContexts(ctx, provider, selector)
+				if err != nil {
+					r.Log.Error(ErrK8sContextSubscription(err))
+					break
+				}
+				contextsChan <- contexts
+
+			case <-ctx.Done():
+				r.Log.Info("K8s context subscription stopped")
+				return
+			}
+		}
+	}()
+	return contextsChan, nil
+}
+
+func (r *Resolver) getK8sContexts(ctx context.Context, provider models.Provider, selector model.PageFilter) (*model.K8sContextsPage, error) {
+	tokenString := ctx.Value(models.TokenCtxKey).(string)
+	resp, err := provider.GetK8sContexts(tokenString, selector.Page, selector.PageSize, *selector.Search, *selector.Order)
+	if err != nil {
+		return nil, err
+	}
+	var k8sContext model.K8sContextsPage
+	err = json.Unmarshal(resp, &k8sContext)
+	if err != nil {
+		obj := "k8s context"
+		return nil, handlers.ErrEncoding(err, obj)
+	}
+	return &k8sContext, nil
 }

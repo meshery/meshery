@@ -156,7 +156,7 @@ func (l *DefaultLocalProvider) SaveK8sContext(token string, k8sContext K8sContex
 	return l.MesheryK8sContextPersister.SaveMesheryK8sContext(k8sContext)
 }
 
-func (l *DefaultLocalProvider) GetK8sContexts(token, page, pageSize, search, order string) (MesheryK8sContextPage, error) {
+func (l *DefaultLocalProvider) GetK8sContexts(token, page, pageSize, search, order string) ([]byte, error) {
 	if page == "" {
 		page = "0"
 	}
@@ -166,12 +166,12 @@ func (l *DefaultLocalProvider) GetK8sContexts(token, page, pageSize, search, ord
 
 	pg, err := strconv.ParseUint(page, 10, 32)
 	if err != nil {
-		return MesheryK8sContextPage{}, ErrPageNumber(err)
+		return nil, ErrPageNumber(err)
 	}
 
 	pgs, err := strconv.ParseUint(pageSize, 10, 32)
 	if err != nil {
-		return MesheryK8sContextPage{}, ErrPageSize(err)
+		return nil, ErrPageSize(err)
 	}
 
 	return l.MesheryK8sContextPersister.GetMesheryK8sContexts(search, order, pg, pgs)
@@ -196,9 +196,15 @@ func (l *DefaultLocalProvider) LoadAllK8sContext(token string) ([]*K8sContext, e
 			return results, err
 		}
 
-		results = append(results, res.Contexts...)
+		var k8scontext MesheryK8sContextPage
+		err = json.Unmarshal(res, &k8scontext)
+		if err != nil {
+			obj := "k8s context"
+			return nil, ErrUnmarshal(err, obj)
+		}
+		results = append(results, k8scontext.Contexts...)
 
-		if page*pageSize >= res.TotalCount {
+		if page*pageSize >= k8scontext.TotalCount {
 			break
 		}
 
