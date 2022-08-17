@@ -81,7 +81,22 @@ const useStyles= makeStyles((theme) => ({
       backgroundColor : "#B32700",
     },
     marginRight : "0.5rem"
-  }
+  },
+  noPaper : {
+    padding : "0.5rem",
+    fontSize : "3rem"
+  },
+  noContainer : {
+    padding : "2rem",
+    display : "flex",
+    justifyContent : "center",
+    alignItems : "center",
+    flexDirection : "column",
+  },
+  noText : {
+    fontSize : "2rem",
+    marginBottom : "2rem",
+  },
 }));
 
 export default useStyles;

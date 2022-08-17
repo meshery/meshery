@@ -3,11 +3,11 @@ import { Grid, Paper, Typography, Button } from "@material-ui/core";
 import { Pagination } from "@material-ui/lab";
 import React, { useState } from "react";
 import FiltersCard from "./FiltersCard";
-import { makeStyles } from "@material-ui/core/styles";
 import FILE_OPS from "../../utils/configurationFileHandlersEnum";
 import ConfirmationMsg from "../ConfirmationModal";
 import { getComponentsinFile } from "../../utils/utils";
 import PublishIcon from "@material-ui/icons/Publish";
+import useStyles from "../MesheryPatterns/Grid.styles";
 
 const INITIAL_GRID_SIZE = { xl : 4, md : 6, xs : 12 };
 
@@ -33,32 +33,6 @@ function FilterCardGridItem({ filter, handleDeploy, handleUndeploy, handleSubmit
     </Grid>
   );
 }
-const useStyles = makeStyles(() => ({
-  pagination : {
-    display : "flex",
-    justifyContent : "center",
-    alignItems : "center",
-    marginTop : "2rem"
-  },
-  // text : {
-  //   padding : "5px"
-  // }
-  noFilterPaper : {
-    padding : "0.5rem",
-    fontSize : "3rem"
-  },
-  noFilterContainer : {
-    padding : "2rem",
-    display : "flex",
-    justifyContent : "center",
-    alignItems : "center",
-    flexDirection : "column",
-  },
-  noFilterText : {
-    fontSize : "2rem",
-    marginBottom : "2rem",
-  },
-}))
 
 function FiltersGrid({ filters=[],handleDeploy, handleUndeploy, handleSubmit,urlUploadHandler,uploadHandler, setSelectedFilter, selectedFilter, pages = 1,setPage, selectedPage, UploadImport }) {
 
@@ -125,9 +99,9 @@ function FiltersGrid({ filters=[],handleDeploy, handleUndeploy, handleSubmit,url
       </Grid>
       }
       {!selectedFilter.show && filters.length === 0 &&
-        <Paper className={classes.noFilterPaper}>
-          <div className={classes.noFilterContainer}>
-            <Typography align="center" color="textSecondary" className={classes.noFilterText}>
+        <Paper className={classes.noPaper}>
+          <div className={classes.noContainer}>
+            <Typography align="center" color="textSecondary" className={classes.noText}>
             No Filters Found
             </Typography>
             <div>
@@ -140,7 +114,7 @@ function FiltersGrid({ filters=[],handleDeploy, handleUndeploy, handleSubmit,url
                 onClick={handleUploadImport}
                 style={{ marginRight : "2rem" }}
               >
-                <PublishIcon />
+                <PublishIcon className={classes.addIcon} />
               Import Filter
               </Button>
             </div>
