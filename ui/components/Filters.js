@@ -761,6 +761,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
               pages={Math.ceil(count / pageSize)}
               setPage={setPage}
               selectedPage={page}
+              UploadImport={UploadImport}
             />
         }
         <ConfirmationMsg

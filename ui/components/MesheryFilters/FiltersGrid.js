@@ -1,5 +1,5 @@
 //@ts-check
-import { Grid, Paper, Typography } from "@material-ui/core";
+import { Grid, Paper, Typography, Button } from "@material-ui/core";
 import { Pagination } from "@material-ui/lab";
 import React, { useState } from "react";
 import FiltersCard from "./FiltersCard";
@@ -7,7 +7,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import FILE_OPS from "../../utils/configurationFileHandlersEnum";
 import ConfirmationMsg from "../ConfirmationModal";
 import { getComponentsinFile } from "../../utils/utils";
-import UploadImport from "../UploadImport";
+import PublishIcon from "@material-ui/icons/Publish";
 
 const INITIAL_GRID_SIZE = { xl : 4, md : 6, xs : 12 };
 
@@ -60,9 +60,25 @@ const useStyles = makeStyles(() => ({
   },
 }))
 
-function FiltersGrid({ filters=[],handleDeploy, handleUndeploy, handleSubmit,urlUploadHandler,uploadHandler, setSelectedFilter, selectedFilter, pages = 1,setPage, selectedPage }) {
+function FiltersGrid({ filters=[],handleDeploy, handleUndeploy, handleSubmit,urlUploadHandler,uploadHandler, setSelectedFilter, selectedFilter, pages = 1,setPage, selectedPage, UploadImport }) {
 
   const classes = useStyles()
+
+  const [importModal, setImportModal] = useState({
+    open : false
+  });
+
+  const handleUploadImport = () => {
+    setImportModal({
+      open : true
+    });
+  }
+
+  const handleUploadImportClose = () => {
+    setImportModal({
+      open : false
+    });
+  }
 
   const [modalOpen, setModalOpen] = useState({
     open : false,
@@ -115,8 +131,18 @@ function FiltersGrid({ filters=[],handleDeploy, handleUndeploy, handleSubmit,url
             No Filters Found
             </Typography>
             <div>
-              <UploadImport supportedTypes="null" aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} configuration="Filter"  />
-
+              <Button
+                aria-label="Add Application"
+                variant="contained"
+                color="primary"
+                size="large"
+                // @ts-ignore
+                onClick={handleUploadImport}
+                style={{ marginRight : "2rem" }}
+              >
+                <PublishIcon />
+              Import Filter
+              </Button>
             </div>
           </div>
         </Paper>
@@ -139,6 +165,7 @@ function FiltersGrid({ filters=[],handleDeploy, handleUndeploy, handleSubmit,url
         componentCount = {modalOpen.count}
         tab={modalOpen.deploy ? 0 : 1}
       />
+      <UploadImport open={importModal.open} handleClose={handleUploadImportClose} supportedTypes="null" aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} configuration="Filter"  />
     </div>
   );
 }
