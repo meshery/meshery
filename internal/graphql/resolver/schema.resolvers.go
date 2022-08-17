@@ -124,6 +124,11 @@ func (r *queryResolver) GetKubectlDescribe(ctx context.Context, name string, kin
 	return r.getKubectlDescribe(ctx, name, kind, namespace)
 }
 
+func (r *queryResolver) GetClusterInfo(ctx context.Context, k8scontextIDs []string) (*model.ClusterInfo, error) {
+	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	return r.getClusterInfo(ctx, provider, k8scontextIDs)
+}
+
 func (r *subscriptionResolver) ListenToAddonState(ctx context.Context, filter *model.ServiceMeshFilter) (<-chan []*model.AddonList, error) {
 	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
 	if filter != nil {
@@ -277,7 +282,7 @@ func (r *subscriptionResolver) SubscribeConfiguration(ctx context.Context, selec
 
 func (r *subscriptionResolver) SubscribeClusterInfo(ctx context.Context, k8scontextIDs []string) (<-chan *model.ClusterInfo, error) {
 	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
-	return r.subscribeClusterInfo(ctx, provider, k8scontextIDs)	
+	return r.subscribeClusterInfo(ctx, provider, k8scontextIDs)
 }
 
 // Mutation returns generated.MutationResolver implementation.
