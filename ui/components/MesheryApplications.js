@@ -1,6 +1,6 @@
 import {
   Dialog, DialogActions, DialogContent, DialogTitle, Divider, IconButton, NoSsr,
-  TableCell, Tooltip, Typography
+  TableCell, Tooltip, Typography, Button
 } from "@material-ui/core";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
@@ -30,6 +30,7 @@ import ViewSwitch from "./ViewSwitch";
 import ApplicationsGrid from "./MesheryApplications/ApplicationsGrid";
 import { fileDownloader } from "../utils/fileDownloader";
 import { trueRandom } from "../lib/trueRandom";
+import PublishIcon from "@material-ui/icons/Publish";
 
 const styles = (theme) => ({
   grid : { padding : theme.spacing(2), },
@@ -237,6 +238,11 @@ function MesheryApplications({
     name : "",
     count : 0
   });
+
+  const [importModal, setImportModal] = useState({
+    open : false
+  })
+
   const [viewType, setViewType] = useState(
     /**  @type {TypeView} */
     ("grid")
@@ -276,6 +282,19 @@ function MesheryApplications({
       count : getComponentsinFile(app_file)
     });
   }
+
+  const handleUploadImport = () => {
+    setImportModal({
+      open : true
+    });
+  }
+
+  const handleUploadImportClose = () => {
+    setImportModal({
+      open : false
+    });
+  }
+
   /**
    * fetchApplications constructs the queries based on the parameters given
    * and fetches the applications
@@ -783,7 +802,18 @@ function MesheryApplications({
         <div className={classes.topToolbar} >
           {!selectedApplication.show && (applications.length>0 || viewType==="table") && <div className={classes.createButton}>
             <div>
-              <UploadImport supportedTypes={types} isApplication = {true} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} configuration="Application"  />
+              <Button
+                aria-label="Add Application"
+                variant="contained"
+                color="primary"
+                size="large"
+                // @ts-ignore
+                onClick={handleUploadImport}
+                style={{ marginRight : "2rem" }}
+              >
+                <PublishIcon className={classes.addIcon} />
+              Import Application
+              </Button>
             </div>
 
           </div>
@@ -820,6 +850,8 @@ function MesheryApplications({
               pages={Math.ceil(count / pageSize)}
               setPage={setPage}
               selectedPage={page}
+              UploadImport={UploadImport}
+              types={types}
             />
         }
         <ConfirmationMsg
@@ -834,6 +866,7 @@ function MesheryApplications({
           tab={modalOpen.deploy ? 0 : 1}
         />
         <PromptComponent ref={modalRef} />
+        <UploadImport open={importModal.open} handleClose={handleUploadImportClose} supportedTypes={types} isApplication = {true} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} configuration="Application"  />
       </NoSsr>
     </>
   );

@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react'
-import LinkIcon from '@material-ui/icons/Link';
 import { TextField, Button, Grid, NativeSelect } from '@material-ui/core';
 import { makeStyles, MuiThemeProvider } from '@material-ui/core/styles';
 import { createTheme } from '@material-ui/core/styles';
@@ -55,9 +54,9 @@ const styles = makeStyles(() => ({
 
 }));
 
-const UploadImport = ({ handleUpload, handleUrlUpload, configuration, isApplication, supportedTypes }) => {
+function UploadImport(props) {
+  const { handleUpload, handleUrlUpload, configuration, isApplication, supportedTypes, open, handleClose } = props
   const classes = styles();
-  const [open, setOpen] = React.useState(false);
   const [input, setInput] = React.useState();
   const [isError, setIsError] = React.useState(false);
   const [fileType, setFileType] = React.useState();
@@ -79,13 +78,6 @@ const UploadImport = ({ handleUpload, handleUrlUpload, configuration, isApplicat
       setSourceType(supportedTypes[0]?.application_type);
     }
   },[open])
-  const handleOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
 
   const handleSubmit = () => {
     handleUrlUpload(input, sourceType)
@@ -101,17 +93,9 @@ const UploadImport = ({ handleUpload, handleUrlUpload, configuration, isApplicat
   return (
     <>
       <label htmlFor="url-upload-button">
-
-        <Button aria-label="URL-Upload" data-cy="import-button" variant="contained"
-          color="primary" className={classes.button}
-          size="large" onClick={handleOpen}>
-          <LinkIcon style={{ paddingRight : ".35rem" }} />
-          Import {configuration}
-        </Button>
-
         <Dialog
           open={open}
-          handleClose={handleClose}>
+          onClose={handleClose}>
 
           <MuiThemeProvider theme={getMuiTheme()}>
             <DialogTitle className={classes.title}>

@@ -114,7 +114,7 @@ mesheryctl system check --report
 
 ! Refer below image link for usage
 * Usage of mesheryctl system check
-# ![check-usage](../../../../docs/assets/img/mesheryctl/check.jpeg)
+# ![check-usage](/assets/img/mesheryctl/check.jpeg)
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		hco := &HealthCheckOptions{

@@ -37,7 +37,7 @@ mesheryctl app view --all
 
 ! Refer below image link for usage
 * Usage of mesheryctl app view
-# ![app-view-usage](../../../../docs/assets/img/mesheryctl/app-view.png)
+# ![app-view-usage](/assets/img/mesheryctl/app-view.png)
 	`,
 	Args: cobra.MinimumNArgs(0),
 	RunE: func(cmd *cobra.Command, args []string) error {

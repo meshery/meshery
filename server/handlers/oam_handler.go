@@ -56,8 +56,11 @@ func getAppropriateCueVal(value string, valType string) (cue.Value, error) {
 		}
 		return out, nil
 	case string(jsonschematype):
-		// TODO
-		return cue.Value{}, nil
+		out, err := utils.JsonSchemaToCue(value)
+		if err != nil {
+			return cue.Value{}, err
+		}
+		return out, nil
 	default:
 		cuectx := cuecontext.New()
 		out := cuectx.CompileString(value)
@@ -68,7 +71,7 @@ func getAppropriateCueVal(value string, valType string) (cue.Value, error) {
 	}
 }
 
-func validate(val validationInfo) (bool, error) {
+func validate(val ValidationInfo) (bool, error) {
 	schema, err := getAppropriateCueVal(val.Schema, val.SchemaType)
 	if err != nil {
 		return false, err
@@ -81,7 +84,7 @@ func validate(val validationInfo) (bool, error) {
 	return isValid, err
 }
 
-type validationInfo struct {
+type ValidationInfo struct {
 	Schema     string `json:"schema"`
 	SchemaType string `json:"schemaType"`
 	Value      string `json:"value"`
@@ -89,9 +92,9 @@ type validationInfo struct {
 	ID         string `json:"id"`
 }
 
-type validationPayload struct {
-	validationInfo
-	List []validationInfo
+type ValidationPayload struct {
+	ValidationInfo
+	List []ValidationInfo `json:"list"`
 }
 
 // swagger:route POST /api/meshmodel/validate MeshmodelValidate idPostMeshModelValidate
@@ -115,69 +118,55 @@ func (h *Handler) ValidationHandler(rw http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(rw, "failed to read request body: %s", err)
 		return
 	}
-	if r.Header.Get("Content-Type") == "application/json" {
-		// schemaType and valueType can be `yaml`, `jsonschema`, `json` etc.
-		val := validationPayload{}
-		err := json.Unmarshal(body, &val)
-		if err != nil {
-			h.log.Error(ErrUnmarshal(err, string(body)))
-			http.Error(rw, ErrUnmarshal(err, string(body)).Error(), http.StatusInternalServerError)
+	// schemaType and valueType can be `yaml`, `jsonschema`, `json` etc.
+	val := ValidationPayload{}
+	err = json.Unmarshal(body, &val)
+	if err != nil {
+		h.log.Error(ErrUnmarshal(err, string(body)))
+		http.Error(rw, ErrUnmarshal(err, string(body)).Error(), http.StatusInternalServerError)
 
-			rw.WriteHeader(http.StatusBadRequest)
-			fmt.Fprintf(rw, "failed to read unmarshal content: %s", err)
-			return
-		}
-		if val.List != nil {
-			validationErrors := make(map[string][]string, 0)
-			for _, valInfo := range val.List {
-				errs := make([]string, 0)
-				isValid, err := validate(valInfo)
-				if err != nil {
-					errs = append(errs, err.Error())
-				}
-				if !isValid {
-					errs = append(errs, "workload not valid")
-				}
-				if len(errs) != 0 {
-					validationErrors[val.ID] = errs
-				}
-			}
-
-			rw.Header().Set("Content-Type", "application/json")
-			err = json.NewEncoder(rw).Encode(struct {
-				Errors map[string][]string
-			}{
-				Errors: validationErrors,
-			})
+		rw.WriteHeader(http.StatusBadRequest)
+		fmt.Fprintf(rw, "failed to read unmarshal content: %s", err)
+		return
+	}
+	validationErrors := make(map[string][]string, 0)
+	if val.List != nil {
+		for _, valInfo := range val.List {
+			errs := make([]string, 0)
+			isValid, err := validate(valInfo)
 			if err != nil {
-				h.log.Error(ErrValidate(err))
-				http.Error(rw, ErrValidate(err).Error(), http.StatusInternalServerError)
-
-				rw.WriteHeader(http.StatusBadRequest)
-				fmt.Fprintf(rw, "failed to marshal the result: %s", err)
+				errs = append(errs, err.Error())
+			}
+			if !isValid {
+				errs = append(errs, "workload not valid")
+			}
+			if len(errs) != 0 {
+				validationErrors[val.ID] = errs
 			}
 		}
-		isValid, err := validate(validationInfo{ID: val.ID, Schema: val.Schema, SchemaType: val.SchemaType, ValueType: val.ValueType})
-		if err != nil {
-			h.log.Error(ErrValidate(err))
-			http.Error(rw, ErrValidate(err).Error(), http.StatusInternalServerError)
+	}
+	isValid, err := validate(ValidationInfo{ID: val.ID, Schema: val.Schema, SchemaType: val.SchemaType, ValueType: val.ValueType})
+	if err != nil {
+		h.log.Error(ErrValidate(err))
+		http.Error(rw, ErrValidate(err).Error(), http.StatusInternalServerError)
 
-			rw.WriteHeader(http.StatusBadRequest)
-			fmt.Fprintf(rw, "failed to parse schema: %s", err)
-		}
-		rw.Header().Set("Content-Type", "application/json")
-		err = json.NewEncoder(rw).Encode(struct {
-			IsValid bool
-		}{
-			IsValid: isValid,
-		})
-		if err != nil {
-			h.log.Error(ErrValidate(err))
-			http.Error(rw, ErrValidate(err).Error(), http.StatusInternalServerError)
+		rw.WriteHeader(http.StatusBadRequest)
+		fmt.Fprintf(rw, "failed to parse schema: %s", err)
+	}
+	rw.Header().Set("Content-Type", "application/json")
+	err = json.NewEncoder(rw).Encode(struct {
+		IsValid          bool                `json:"isValid"`
+		ValidationErrors map[string][]string `json:"errors"`
+	}{
+		IsValid:          isValid,
+		ValidationErrors: validationErrors,
+	})
+	if err != nil {
+		h.log.Error(ErrValidate(err))
+		http.Error(rw, ErrValidate(err).Error(), http.StatusInternalServerError)
 
-			rw.WriteHeader(http.StatusBadRequest)
-			fmt.Fprintf(rw, "failed to marshal the result: %s", err)
-		}
+		rw.WriteHeader(http.StatusBadRequest)
+		fmt.Fprintf(rw, "failed to marshal the result: %s", err)
 	}
 }
 

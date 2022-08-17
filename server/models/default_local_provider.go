@@ -5,6 +5,7 @@ import (
 	"bytes"
 	"compress/gzip"
 	"database/sql"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -1254,7 +1255,11 @@ func downloadContent(comp string, downloadpath string, log logger.Handler) error
 				return err
 			}
 			defer file.Close()
-			fmt.Fprintf(file, "%s", gca.Content)
+			content, err := base64.StdEncoding.DecodeString(gca.Content)
+			if err != nil {
+				return err
+			}
+			fmt.Fprintf(file, "%s", content)
 			return nil
 		}).Walk()
 	case "Filter":

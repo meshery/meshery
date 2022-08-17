@@ -43,7 +43,7 @@ mesheryctl app onboard -f ./application.yml -s "Kubernetes Manifest"
 
 ! Refer below image link for usage
 * Usage of mesheryctl app onboard
-# ![app-onboard-usage](../../../../docs/assets/img/mesheryctl/app-onboard.png)
+# ![app-onboard-usage](/assets/img/mesheryctl/app-onboard.png)
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())

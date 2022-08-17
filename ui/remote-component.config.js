@@ -56,6 +56,7 @@ module.exports = {
     "@material-ui/core/FormControl" : require("@material-ui/core/FormControl"),
     "@material-ui/core/Select" : require("@material-ui/core/Select"),
     "@material-ui/icons/Fullscreen" : require("@material-ui/icons/Fullscreen"),
+    "@material-ui/icons/Phone" : require("@material-ui/icons/Phone"),
     "@material-ui/icons/FullscreenExit" : require("@material-ui/icons/FullscreenExit"),
     "@material-ui/icons/RotateRight" : require("@material-ui/icons/RotateRight"),
     "@material-ui/icons/RotateLeft" : require("@material-ui/icons/RotateLeft"),
