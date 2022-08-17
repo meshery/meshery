@@ -607,7 +607,7 @@ function MesheryApplications({
         customHeadRender : function CustomHead({ index, ...column }) {
           return (
             <TableCell key={index}>
-              <Tooltip title="click source type to download application">
+              <Tooltip title="Click source type to download Application">
                 <div style={{ display : "flex" }}>
                   <b>{column.label}</b>
                   <InfoIcon color="primary" style={{ scale : "0.8" }}/>

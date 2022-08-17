@@ -93,7 +93,7 @@ function MesheryPatternCard({
             <div className={classes.cardButtons} >
 
               <Button
-                title="undeploy"
+                title="Undeploy"
                 variant="contained"
                 className={classes.undeployButton}
                 onClick={(ev) =>
@@ -105,7 +105,7 @@ function MesheryPatternCard({
               </Button>
 
               <Button
-                title="deploy"
+                title="Deploy"
                 variant="contained"
                 onClick={(ev) =>
                   genericClickHandler(ev, handleDeploy)
@@ -117,7 +117,7 @@ function MesheryPatternCard({
               </Button>
 
               <Button
-                title="design"
+                title="Design"
                 variant="contained"
                 color="primary"
                 onClick={(ev) =>
