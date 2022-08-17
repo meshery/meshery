@@ -158,6 +158,8 @@ type HandlerConfig struct {
 	PerformanceResultChannel chan struct{}
 
 	ConfigurationChannel *ConfigurationChannel
+
+	DashboardK8sResourcesChan *DashboardK8sResourcesChan
 }
 
 // SubmitMetricsConfig is used to store config used for submitting metrics

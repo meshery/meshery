@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"strings"
 
+	"github.com/sirupsen/logrus"
 	"github.com/layer5io/meshery/internal/graphql/model"
 	"github.com/layer5io/meshery/models"
 	"github.com/layer5io/meshery/models/pattern/core"
@@ -288,19 +289,22 @@ func (r *Resolver) subscribeClusterInfo(ctx context.Context, provider models.Pro
 	ch <- struct{}{}
 	clusterInfoChan := make(chan *model.ClusterInfo)
 
-	r.Log.Info("ClusterInfo subscription started")
+	r.Config.DashboardK8sResourcesChan.SubscribeDashbordK8Resources(ch)
 
 	go func() {
 		for {
 			select {
-				case <- ch:
+				case <-ch:
+					logrus.Debug("ch(resolver): ", ch)
 					clusterInfo, err := r.getClusterInfo(ctx, provider, k8scontextIDs)
+					logrus.Debug("clusterinfo: ", clusterInfo)
 					if err != nil {
 						r.Log.Error(ErrClusterInfoSubcription(err))
 						break
 					}
 					clusterInfoChan <- clusterInfo
-				case <- ctx.Done():
+				case <-ctx.Done():
+					close(ch)
 					r.Log.Info("ClusterInfo subcription stopped")
 					return
 			}
@@ -312,22 +316,22 @@ func (r *Resolver) subscribeClusterInfo(ctx context.Context, provider models.Pro
 
 func (r *Resolver) getClusterInfo(ctx context.Context, provider models.Provider, k8scontextIDs []string) (*model.ClusterInfo, error) {
 	var cids []string
-	if len(k8scontextIDs) != 0 {
-		cids = k8scontextIDs
-	} else { //This is a fallback
-		k8sctxs, ok := ctx.Value(models.KubeClustersKey).([]models.K8sContext)
-		if !ok || len(k8sctxs) == 0 {
-			r.Log.Error(ErrEmptyCurrentK8sContext)
-			return nil, ErrEmptyCurrentK8sContext
-		}
-		for _, context := range k8sctxs {
-			if context.KubernetesServerID == nil {
-				r.Log.Error(ErrEmptyCurrentK8sContext)
-				return nil, ErrEmptyCurrentK8sContext
-			}
-			cids = append(cids, context.KubernetesServerID.String())
-		}
+	k8sCtxs, ok := ctx.Value(models.AllKubeClusterKey).([]models.K8sContext)
+	if !ok || len(k8sCtxs) == 0 {
+		return nil, ErrMesheryClient(nil)
 	}
+
+	if len(k8scontextIDs) == 1 && k8scontextIDs[0] == "all" { //fallback, to be removed
+		for _, k8sContext := range k8sCtxs {
+			if k8sContext.KubernetesServerID != nil {
+				clusterID := k8sContext.KubernetesServerID.String()
+				cids = append(cids, clusterID)
+			}
+		}
+	} else {
+		cids = k8scontextIDs
+	}
+	logrus.Debug("cids: ", cids)
 
 	query := "SELECT count(kind) as count, kind FROM objects o"
 

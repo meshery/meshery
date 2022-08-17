@@ -235,6 +235,8 @@ func main() {
 		PrometheusClientForQuery: models.NewPrometheusClientWithHTTPClient(&http.Client{Timeout: time.Second}),
 
 		ConfigurationChannel: models.NewConfigurationHelper(),
+
+		DashboardK8sResourcesChan: models.NewDashboardK8sResourcesHelper(),
 	}
 
 	operatorDeploymentConfig := models.NewOperatorDeploymentConfig(adapterTracker)

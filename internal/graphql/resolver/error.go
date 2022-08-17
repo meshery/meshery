@@ -29,7 +29,7 @@ const (
 	ErrConfigurationApplicationsCode        = "2243"
 	ErrConfigurationFiltersCode             = "2244"
 	ErrClusterInfoSubscriptionCode          = "2245"
-	ErrGettingClusterResourcesCode     = "2246"
+	ErrGettingClusterResourcesCode          = "2246"
 )
 
 var (
