@@ -244,8 +244,7 @@ mesheryctl system channel
 			return cmd.Help()
 		}
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
-			const errMsg = `See https://docs.meshery.io/reference/mesheryctl/system/channel for usage details.`
-			return errors.New(fmt.Sprintf("'%s' is a invalid command.  Use 'mesheryctl system context --help' to display usage guide.\n\n%s", args[0], errMsg))
+			return errors.New(utils.SystemChannelSubError(fmt.Sprintf("'%s' is a invalid command.  Use 'mesheryctl system context --help' to display usage guide.\n", args[0]), "channel"))
 		}
 		mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
 		if err != nil {

@@ -58,6 +58,11 @@ const (
 	contextViewURL   = docsBaseURL + "reference/mesheryctl/system/context/view"
 	contextCreateURL = docsBaseURL + "reference/mesheryctl/system/context/create"
 	contextUsageURL  = docsBaseURL + "reference/mesheryctl/system/context"
+	channelUsageURL  = docsBaseURL + "reference/mesheryctl/system/channel"
+	channelSetURL    = docsBaseURL + "reference/mesheryctl/system/channel/set"
+	channelSwitchURL = docsBaseURL + "reference/mesheryctl/system/channel/switch"
+	channelViewURL   = docsBaseURL + "reference/mesheryctl/system/channel/view"
+
 	// Meshery Server Location
 	EndpointProtocol = "http"
 )
@@ -76,7 +81,11 @@ const (
 	cmdContext       cmdType = "context"
 	cmdContextDelete cmdType = "delete"
 	cmdContextCreate cmdType = "create"
-	cmdContextView   cmdType = "view"
+	cmdContextView   cmdType = "context view"
+	cmdChannel       cmdType = "channel"
+	cmdChannelSet    cmdType = "set"
+	cmdChannelSwitch cmdType = "switch"
+	cmdChannelView   cmdType = "channel view"
 )
 
 const (

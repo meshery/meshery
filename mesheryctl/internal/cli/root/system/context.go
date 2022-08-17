@@ -269,7 +269,7 @@ mesheryctl system context view --all
 		if len(args) == 0 && cmd.Flags().Lookup("all").Value.String() == "false" {
 			const errMsg = `Please provide a context name to view.
 Usage: mesheryctl system context view [context name]`
-			return errors.New(utils.SystemContextSubError(fmt.Sprintf("%s\n", errMsg), "view"))
+			return errors.New(utils.SystemContextSubError(fmt.Sprintf("%s\n", errMsg), "context view"))
 		}
 		err := viper.Unmarshal(&configuration)
 		if err != nil {

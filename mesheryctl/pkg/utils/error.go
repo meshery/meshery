@@ -31,20 +31,35 @@ func SystemError(msg string) string {
 	return formatError(msg, cmdSystem)
 }
 
-// SystemContextSubError returns a formatted error message with a link to `context` command usage page 
+// SystemContextSubError returns a formatted error message with a link to `context` command usage page
 // in addition to the error message
 func SystemContextSubError(msg string, cmd string) string {
 	switch cmd {
-		case "delete":
-			return formatError(msg, cmdContextDelete)
-		case "create":
-			return formatError(msg, cmdContextCreate)
-		case "view":
-			return formatError(msg, cmdContextView)
-		default:
-			return formatError(msg, cmdContext)
+	case "delete":
+		return formatError(msg, cmdContextDelete)
+	case "create":
+		return formatError(msg, cmdContextCreate)
+	case "view":
+		return formatError(msg, cmdContextView)
+	default:
+		return formatError(msg, cmdContext)
 	}
 
+}
+
+// SystemChannelSubError returns a formatted error message with a link to `context` command usage page
+// in addition to the error message
+func SystemChannelSubError(msg string, cmd string) string {
+	switch cmd {
+	case "switch":
+		return formatError(msg, cmdChannelSwitch)
+	case "view":
+		return formatError(msg, cmdChannelView)
+	case "set":
+		return formatError(msg, cmdChannelSet)
+	default:
+		return formatError(msg, cmdChannel)
+	}
 }
 
 // MeshError returns a formatted error message with a link to 'mesh' command usage page in addition to the error message
@@ -99,8 +114,18 @@ func formatError(msg string, cmd cmdType) string {
 		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, contextViewURL)
 	case cmdContext:
 		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, contextUsageURL)
+	case cmdChannelSwitch:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, channelSwitchURL)
+	case cmdChannelView:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, channelViewURL)
+	case cmdChannelSet:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, channelSetURL)
+	case cmdChannel:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, channelUsageURL)
+	default:
+		return fmt.Sprintf("%s\n", msg)
 	}
-	return fmt.Sprintf("%s\n", msg)
+
 }
 
 func ErrAttachAuthToken(err error) error {
