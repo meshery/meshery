@@ -292,19 +292,19 @@ func (r *Resolver) subscribeClusterInfo(ctx context.Context, provider models.Pro
 	r.Config.DashboardK8sResourcesChan.SubscribeDashbordK8Resources(ch)
 
 	go func() {
+		logrus.Debug("starting go routine, ch:", ch)
 		for {
 			select {
 				case <-ch:
-					logrus.Debug("ch(resolver): ", ch)
+					logrus.Debug("ch(resolver): ", <-ch)
 					clusterInfo, err := r.getClusterInfo(ctx, provider, k8scontextIDs)
-					logrus.Debug("clusterinfo: ", clusterInfo)
+					logrus.Debug("clusterinfo: ", clusterInfo.Resources)
 					if err != nil {
 						r.Log.Error(ErrClusterInfoSubcription(err))
 						break
 					}
 					clusterInfoChan <- clusterInfo
 				case <-ctx.Done():
-					close(ch)
 					r.Log.Info("ClusterInfo subcription stopped")
 					return
 			}
