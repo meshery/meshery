@@ -32,6 +32,8 @@ function PatternCardGridItem({ pattern, handleDeploy, handleUnDeploy, handleSubm
         updateHandler={() => handleSubmit({ data : yaml, id : pattern.id, type : FILE_OPS.UPDATE ,name : pattern.name })}
         setSelectedPatterns={() => setSelectedPatterns({ pattern : pattern, show : true })}
         setYaml={setYaml}
+        description={pattern.description}
+        visibility={pattern.visibility}
       />
     </Grid>
   );
