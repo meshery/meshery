@@ -192,6 +192,7 @@ class DashboardComponent extends React.Component {
 
     if (self._isMounted) {
       // @ts-ignore
+      console.log("running clusterinfo")
       const clusterInfoSubcription = clusterInfoSubscription((res) => {
         console.log("res: ", res)
         console.log("clusterinfo: ", res?.clusterInfo)
