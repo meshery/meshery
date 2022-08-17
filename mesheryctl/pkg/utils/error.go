@@ -44,7 +44,6 @@ func SystemContextSubError(msg string, cmd string) string {
 	default:
 		return formatError(msg, cmdContext)
 	}
-
 }
 
 // SystemChannelSubError returns a formatted error message with a link to `context` command usage page
@@ -125,7 +124,6 @@ func formatError(msg string, cmd cmdType) string {
 	default:
 		return fmt.Sprintf("%s\n", msg)
 	}
-
 }
 
 func ErrAttachAuthToken(err error) error {
