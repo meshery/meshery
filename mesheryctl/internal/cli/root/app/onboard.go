@@ -44,12 +44,12 @@ mesheryctl app onboard -f ./application.yml -s "Kubernetes Manifest"
 * Usage of mesheryctl app onboard
 # ![app-onboard-usage](../../../../docs/assets/img/mesheryctl/app-onboard.png)
 	`,
-	Args: func(_ *cobra.Command, args []string) error {
+	Args: func(_ *cobra.Command, _ []string) error {
 		const errMsg = `Usage: mesheryctl app onboard -f [filepath] -s [source type]
 Example: mesheryctl app onboard -f ./application.yml -s "Kubernetes Manifest"
 Description: Onboard application`
 
-		if len(args) == 0 {
+		if file == "" {
 			return fmt.Errorf("the path does not exist \n\n%v", errMsg)
 		}
 		return nil
