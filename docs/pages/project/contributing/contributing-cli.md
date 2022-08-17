@@ -48,7 +48,7 @@ For logs, `mesheryctl` uses [Logrus](https://github.com/sirupsen/logrus). Going 
 Unit test code coverage reports can be found in the [CodeCov logs](https://app.codecov.io/gh/meshery/meshery/).  (Note: GitHub login may be required for access)
 
 **Documentation**
-The documentation pages for `mesheryctl` reference are made with the help of `golang` script which will be triggered on PR merge using GitHub Actions. Refer to [Contributing mesheryctl documentation](#contributing-to-mesheryctl-documentation) for instructions.
+The documentation pages for `mesheryctl` reference are made with the help of the Cobra Golang framework and use of GitHub Actions. Refer to [Contributing to mesheryctl documentation](#contributing-to-mesheryctl-documentation) for details.
 
 # Meshery CLI Style Guide
 
