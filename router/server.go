@@ -134,11 +134,18 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int, g http.
 		Methods("DELETE")
 	gMux.Handle("/api/patterns/delete", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.DeleteMultiMesheryPatternsHandler)))).
 		Methods("POST")
+
 	gMux.HandleFunc("/api/oam/{type}", h.OAMRegisterHandler).Methods("GET", "POST")
 	gMux.HandleFunc("/api/oam/{type}/{name}", h.OAMComponentDetailsHandler).Methods("GET")
 	gMux.HandleFunc("/api/oam/{type}/{name}/{id}", h.OAMComponentDetailByIDHandler).Methods("GET")
-	gMux.HandleFunc("/api/oam/{type}", h.OAMRegisterHandler).Methods("GET", "POST")
 	gMux.HandleFunc("/api/meshmodel/validate", h.ValidationHandler).Methods("POST")
+
+	gMux.HandleFunc("/api/components", h.GetAllComponents).Methods("GET")
+	gMux.HandleFunc("/api/components/types", h.ComponentTypesHandler).Methods("GET")
+	gMux.HandleFunc("/api/components/{type}", h.ComponentsForTypeHandler).Methods("GET")
+	gMux.HandleFunc("/api/components/{type}/versions", h.ComponentVersionsHandler).Methods("GET")
+	gMux.HandleFunc("/api/components/{type}/{version}", h.ComponentsHandler).Methods("GET")
+	gMux.HandleFunc("/api/components/{type}/{version}/{name}", h.ComponentsByNameHandler).Methods("GET")
 
 	gMux.Handle("/api/filter/deploy", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.KubernetesMiddleware(h.FilterFileHandler))))).
 		Methods("POST", "DELETE")
