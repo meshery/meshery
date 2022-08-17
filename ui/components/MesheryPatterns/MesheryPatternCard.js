@@ -29,7 +29,9 @@ function MesheryPatternCard({
   updateHandler,
   deleteHandler,
   setSelectedPatterns,
-  setYaml
+  setYaml,
+  description={},
+  visibility
 }) {
 
   function genericClickHandler(ev, fn) {
@@ -45,6 +47,8 @@ function MesheryPatternCard({
     setFullScreen(!fullScreen);
   };
 
+  const catalogContentKeys = Object.keys(description);
+  const catalogContentValues = Object.values(description);
   const classes = useStyles()
 
   return (
@@ -75,6 +79,7 @@ function MesheryPatternCard({
           <div>
             <Typography variant="h6" component="div">
               {name}
+              <img  className={classes.img} src={`/static/img/${visibility}.svg`} />
             </Typography>
             <div className={classes.lastRunText} >
               <div>
@@ -160,21 +165,33 @@ function MesheryPatternCard({
               }>
 
               <Divider variant="fullWidth" light />
-
-              <CodeMirror
-                value={showCode && pattern_file}
-                className={fullScreen ? classes.fullScreenCodeMirror : ""}
-                options={{
-                  theme : "material",
-                  lineNumbers : true,
-                  lineWrapping : true,
-                  gutters : ["CodeMirror-lint-markers"],
-                  // @ts-ignore
-                  lint : true,
-                  mode : "text/x-yaml",
-                }}
-                onChange={(_, data, val) => setYaml(val)}
-              />
+              { catalogContentKeys.length === 0 ?
+                <CodeMirror
+                  value={showCode && pattern_file}
+                  className={fullScreen ? classes.fullScreenCodeMirror : ""}
+                  options={{
+                    theme : "material",
+                    lineNumbers : true,
+                    lineWrapping : true,
+                    gutters : ["CodeMirror-lint-markers"],
+                    // @ts-ignore
+                    lint : true,
+                    mode : "text/x-yaml",
+                  }}
+                  onChange={(_, data, val) => setYaml(val)}
+                />
+                :
+                catalogContentKeys.map((title, index) => (
+                  <>
+                    <Typography variant="h6" className={classes.yamlDialogTitleText}>
+                      {title}
+                    </Typography>
+                    <Typography variant="body2">
+                      {catalogContentValues[index]}
+                    </Typography>
+                  </>
+                ))
+              }
             </Grid>
 
             <Grid item xs={8}>

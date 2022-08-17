@@ -80,6 +80,9 @@ const useStyles= makeStyles(() => ({
       backgroundColor : "#8f1f00"
     },
     marginRight : "0.5rem"
+  },
+  img : {
+    marginRight : "0.5rem"
   }
 }));
 

@@ -29,6 +29,8 @@ function FilterCardGridItem({ filter, handleDeploy, handleUndeploy, handleSubmit
         deleteHandler={() => handleSubmit({ data : yaml, id : filter.id, type : FILE_OPS.DELETE ,name : filter.name })}
         setSelectedFilters={() => setSelectedFilters({ filter : filter, show : true })}
         setYaml={setYaml}
+        description={filter.desciption}
+        visibility={filter.visibility}
       />
     </Grid>
   );
