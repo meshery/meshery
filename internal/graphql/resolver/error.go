@@ -140,7 +140,7 @@ func ErrGettingClusterResources(err error) error {
 	return errors.New(
 		ErrGettingClusterResourcesCode,
 		errors.Alert,
-		[]string{"Cannot get avaiable resources"},
+		[]string{"Unable to retrieve cluster resources"},
 		[]string{err.Error()},
 		[]string{"Table in the database might not exists"},
 		nil,
