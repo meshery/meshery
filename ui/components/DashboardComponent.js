@@ -22,7 +22,7 @@ import { submitGrafanaConfigure } from "./GrafanaComponent";
 import fetchAvailableAddons from "./graphql/queries/AddonsStatusQuery";
 import fetchControlPlanes from "./graphql/queries/ControlPlanesQuery";
 import fetchDataPlanes from "./graphql/queries/DataPlanesQuery";
-import clusterInfoSubscription from "./graphql/subscriptions/ClusterInfoSubscription";
+import getClusterInfoQuery from "./graphql/queries/ClusterInfoQuery";
 import { submitPrometheusConfigure } from "./PrometheusComponent";
 
 const styles = (theme) => ({
@@ -154,7 +154,7 @@ class DashboardComponent extends React.Component {
       this.state.controlPlaneSubscription.unsubscribe()
     }
     if (this.state.clusterInfoSubcription) {
-      this.state.clusterInfoSubcription.dispose()
+      this.state.clusterInfoSubcription.unsubscribe()
     }
   }
 
@@ -187,19 +187,16 @@ class DashboardComponent extends React.Component {
 
   initDashboardClusterInfoSubscription = () => {
     const self = this;
-    console.log("k8s: ", self.getK8sClusterIds())
     let k8s = self.getK8sClusterIds()
 
     if (self._isMounted) {
       // @ts-ignore
-      console.log("running clusterinfo")
-      const clusterInfoSubcription = clusterInfoSubscription((res) => {
-        console.log("res: ", res)
-        console.log("clusterinfo: ", res?.clusterInfo)
-        this.setState({ clusterInfo : res?.clusterInfo })
-      }, {
-        k8scontextIDs : k8s
-      });
+      const clusterInfoSubcription = getClusterInfoQuery(k8s).subscribe({
+        next : (clusterInfoRes) => {
+          this.setState({ clusterInfo : clusterInfoRes?.clusterInfo })
+        },
+        error : (err) => console.log(err),
+      })
 
       this.setState({ clusterInfoSubcription });
     }
@@ -254,6 +251,7 @@ class DashboardComponent extends React.Component {
       || prevProps.k8sconfig !== this.props.k8sconfig) {
       this.disposeSubscriptions()
       this.initMeshSyncControlPlaneSubscription()
+      this.initDashboardClusterInfoSubscription()
     }
   }
 
@@ -409,7 +407,6 @@ class DashboardComponent extends React.Component {
         members : processedMember
       }
     });
-    console.log("namespaceS:", namespaces, " activenamepsaces: ", activeNamespaces)
     self.setState({ meshScan : processedControlPlanesData?.filter(data => !!data).filter((data) => data.members?.length > 0) });
     self.setState({ meshScanNamespaces : namespaces, activeMeshScanNamespace : activeNamespaces });
   };
@@ -1052,7 +1049,7 @@ class DashboardComponent extends React.Component {
     );
     const showClusterInfo = (
       <>
-        {self?.state?.clusterInfo && Object.keys(self?.state?.clusterInfo).length
+        {self?.state?.clusterInfo && Object.keys(self?.state?.clusterInfo) && self?.state?.clusterInfo?.resources?.length > 0
           ? (
             self.ClusterInfoCard(self?.state?.clusterInfo?.resources)
           )
