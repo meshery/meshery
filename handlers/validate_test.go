@@ -114,7 +114,7 @@ func TestFindSchemaType(t *testing.T) {
 	}
 }
 
-func TestMmValidate(t *testing.T) {
+func TestValidate(t *testing.T) {
 	var tests = []struct {
 		validationItems map[string]validationItem
 		want            map[string]bool
@@ -138,7 +138,7 @@ func TestMmValidate(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run("meshmodel validate", func(t *testing.T) {
-			ans := mmValidate(tt.validationItems)
+			ans := validate(tt.validationItems)
 			for id, vr := range ans {
 				if vr.IsValid != tt.want[id] {
 					t.Errorf("got %v, want %v for id: %v", ans, tt.want, id)

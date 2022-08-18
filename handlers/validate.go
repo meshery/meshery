@@ -39,7 +39,49 @@ type jsonSchemaValidationType struct {
 	Schema string `json:"$schema,omitempty"`
 }
 
-func mmValidate(validationItems map[string]validationItem) map[string]validationResponse {
+// swagger:route POST /api/meshmodel/validate MeshmodelValidate idPostMeshModelValidate
+// Handle POST request for validate
+//
+// Validate the given value with the given schema
+// responses:
+// 	200:
+
+// request body should be json
+// request body should be of format - {validationItems: {[id]:{schema: string, value: string, valueType: "JSON"|"YAML"|"CUE"}}}
+// response format - {[id]: {isValid: bool, error: string}}
+func (h *Handler) ValidationHandler(rw http.ResponseWriter, r *http.Request) {
+	// Parse the request body
+	body, err := io.ReadAll(r.Body)
+	if err != nil {
+		h.log.Error(ErrRequestBody(err))
+		http.Error(rw, ErrRequestBody(err).Error(), http.StatusInternalServerError)
+		return
+	}
+	// Unmarshal request body
+	pld := payload{}
+	err = json.Unmarshal(body, &pld)
+	if err != nil {
+		h.log.Error(ErrRequestBody(err))
+		http.Error(rw, ErrRequestBody(err).Error(), http.StatusBadRequest)
+		return
+	}
+	// Validate
+	validationResults := validate(pld.ValidationItems)
+	// Send response
+	rw.Header().Set("Content-Type", "application/json")
+	err = json.NewEncoder(rw).Encode(struct {
+		ValidationErrors map[string]validationResponse `json:"errors"`
+	}{
+		ValidationErrors: validationResults,
+	})
+	if err != nil {
+		h.log.Error(ErrValidate(err))
+		http.Error(rw, ErrValidate(err).Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+func validate(validationItems map[string]validationItem) map[string]validationResponse {
 	validationResults := make(map[string]validationResponse, 0)
 	for id, vi := range validationItems {
 		// Parse the schema as CUE value
@@ -68,38 +110,6 @@ func mmValidate(validationItems map[string]validationItem) map[string]validation
 		}
 	}
 	return validationResults
-}
-
-func (h *Handler) MeshModelValidate(rw http.ResponseWriter, r *http.Request) {
-	// Parse the request body
-	body, err := io.ReadAll(r.Body)
-	if err != nil {
-		h.log.Error(ErrRequestBody(err))
-		http.Error(rw, ErrRequestBody(err).Error(), http.StatusInternalServerError)
-		return
-	}
-	// Unmarshal request body
-	pld := payload{}
-	err = json.Unmarshal(body, &pld)
-	if err != nil {
-		h.log.Error(ErrRequestBody(err))
-		http.Error(rw, ErrRequestBody(err).Error(), http.StatusBadRequest)
-		return
-	}
-	// Validate
-	validationResults := mmValidate(pld.ValidationItems)
-	// Send response
-	rw.Header().Set("Content-Type", "application/json")
-	err = json.NewEncoder(rw).Encode(struct {
-		ValidationErrors map[string]validationResponse `json:"errors"`
-	}{
-		ValidationErrors: validationResults,
-	})
-	if err != nil {
-		h.log.Error(ErrValidate(err))
-		http.Error(rw, ErrValidate(err).Error(), http.StatusInternalServerError)
-		return
-	}
 }
 
 // if schema is not a JSONSCHEMA, we assume that it is CUE
