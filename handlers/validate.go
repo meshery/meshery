@@ -70,9 +70,9 @@ func (h *Handler) ValidationHandler(rw http.ResponseWriter, r *http.Request) {
 	// Send response
 	rw.Header().Set("Content-Type", "application/json")
 	err = json.NewEncoder(rw).Encode(struct {
-		ValidationErrors map[string]validationResponse `json:"errors"`
+		Result map[string]validationResponse `json:"result"`
 	}{
-		ValidationErrors: validationResults,
+		Result: validationResults,
 	})
 	if err != nil {
 		h.log.Error(ErrValidate(err))
