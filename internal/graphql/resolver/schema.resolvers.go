@@ -285,6 +285,11 @@ func (r *subscriptionResolver) SubscribeClusterInfo(ctx context.Context, k8scont
 	return r.subscribeClusterInfo(ctx, provider, k8scontextIDs)
 }
 
+func (r *subscriptionResolver) SubscribeK8sContext(ctx context.Context, selector model.PageFilter) (<-chan *model.K8sContextsPage, error) {
+	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	return r.subscribeK8sContexts(ctx, provider, selector)
+}
+
 // Mutation returns generated.MutationResolver implementation.
 func (r *Resolver) Mutation() generated.MutationResolver { return &mutationResolver{r} }
 

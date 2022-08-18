@@ -3,15 +3,15 @@ import { Grid, Paper, Typography, Button } from "@material-ui/core";
 import { Pagination } from "@material-ui/lab";
 import React, { useState } from "react";
 import MesheryApplicationCard from "./ApplicationsCard";
-import { makeStyles } from "@material-ui/core/styles";
 import FILE_OPS from "../../utils/configurationFileHandlersEnum";
 import ConfirmationMsg from "../ConfirmationModal";
 import { getComponentsinFile } from "../../utils/utils";
 import PublishIcon from "@material-ui/icons/Publish";
+import useStyles from "../MesheryPatterns/Grid.styles";
 
 const INITIAL_GRID_SIZE = { xl : 4, md : 6, xs : 12 };
 
-function ApplicationsGridItem({ application,  handleDeploy, handleUnDeploy, handleSubmit, setSelectedApplications }) {
+function ApplicationsGridItem({ application,  handleDeploy, handleUnDeploy, handleSubmit, setSelectedApplications, handleAppDownload }) {
   const [gridProps, setGridProps] = useState(INITIAL_GRID_SIZE);
   const [yaml, setYaml] = useState(application.application_file);
 
@@ -31,37 +31,12 @@ function ApplicationsGridItem({ application,  handleDeploy, handleUnDeploy, hand
         updateHandler={() => handleSubmit({ data : yaml, id : application.id, type : FILE_OPS.UPDATE ,name : application.name, source_type : application.type.String })}
         setSelectedApplications={() => setSelectedApplications({ application : application, show : true })}
         setYaml={setYaml}
+        source_type={application.type.String}
+        handleAppDownload={handleAppDownload}
       />
     </Grid>
   );
 }
-const useStyles = makeStyles(() => ({
-  pagination : {
-    display : "flex",
-    justifyContent : "center",
-    alignItems : "center",
-    marginTop : "2rem"
-  },
-  // text : {
-  //   padding : "5px"
-  // }
-  noApplicationPaper : {
-    padding : "0.5rem",
-    fontSize : "3rem"
-  },
-  noApplicationContainer : {
-    padding : "2rem",
-    display : "flex",
-    justifyContent : "center",
-    alignItems : "center",
-    flexDirection : "column",
-  },
-  noApplicationText : {
-    fontSize : "2rem",
-    marginBottom : "2rem",
-  },
-
-}))
 
 /**
  * MesheryApplicationGrid is the react component for rendering grid
@@ -83,7 +58,7 @@ const useStyles = makeStyles(() => ({
  * }} props props
  */
 
-function MesheryApplicationGrid({ applications=[],handleDeploy, handleUnDeploy, handleSubmit,urlUploadHandler,uploadHandler, setSelectedApplication, selectedApplication, pages = 1,setPage, selectedPage, UploadImport, types }) {
+function MesheryApplicationGrid({ applications=[],handleDeploy, handleUnDeploy, handleSubmit,urlUploadHandler,uploadHandler, setSelectedApplication, selectedApplication, pages = 1,setPage, selectedPage, UploadImport, types, handleAppDownload }) {
 
   const classes = useStyles()
 
@@ -142,15 +117,16 @@ function MesheryApplicationGrid({ applications=[],handleDeploy, handleUnDeploy, 
             handleUnDeploy={() => handleModalOpen(application, false)}
             handleSubmit={handleSubmit}
             setSelectedApplications={setSelectedApplication}
+            handleAppDownload={handleAppDownload}
           />
         ))}
 
       </Grid>
       }
       {!selectedApplication.show && applications.length === 0 &&
-          <Paper className={classes.noApplicationPaper}>
-            <div className={classes.noApplicationContainer}>
-              <Typography align="center" color="textSecondary" className={classes.noApplicationText}>
+          <Paper className={classes.noPaper}>
+            <div className={classes.noContainer}>
+              <Typography align="center" color="textSecondary" className={classes.noText}>
                 No Applications Found
               </Typography>
               <div>

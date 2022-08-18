@@ -1,7 +1,7 @@
 //@ts-check
 import React, { useState } from "react";
 import {
-  Divider, Grid, IconButton, Typography
+  Divider, Grid, IconButton, Typography,
 } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import DeleteIcon from "@material-ui/icons/Delete";
@@ -21,6 +21,7 @@ const INITIAL_GRID_SIZE = { xl : 4, md : 6, xs : 12 };
 
 function MesheryApplicationCard({
   name,
+  id,
   updated_at,
   created_at,
   application_file,
@@ -28,7 +29,9 @@ function MesheryApplicationCard({
   handleUnDeploy,
   updateHandler,
   deleteHandler,
-  setYaml
+  setYaml,
+  source_type,
+  handleAppDownload
 }) {
 
   function genericClickHandler(ev, fn) {
@@ -70,9 +73,19 @@ function MesheryApplicationCard({
         {/* FRONT PART */}
         <>
           <div>
-            <Typography variant="h6" component="div">
-              {name}
-            </Typography>
+            <div style={{ display : "flex", justifyContent : "space-between" }}>
+              <Typography variant="h6" component="div">
+                {name}
+              </Typography>
+              <IconButton
+                title="click to download"
+                onClick={(e) => {
+                  e.stopPropagation(); handleAppDownload(id ,source_type, name)
+                }}
+              >
+                <img src={`/static/img/${(source_type).replaceAll(" ", "_").toLowerCase()}.svg`} width="45px" height="45px" />
+              </IconButton>
+            </div>
             <div className={classes.lastRunText} >
               <div>
                 {updated_at
@@ -90,6 +103,16 @@ function MesheryApplicationCard({
             <div className={classes.cardButtons} >
               <Button
                 variant="contained"
+                className={classes.undeployButton}
+                onClick={(ev) =>
+                  genericClickHandler(ev, handleUnDeploy)
+                }
+              >
+                <UndeployIcon fill="#ffffff" className={classes.iconPatt} />
+                Undeploy
+              </Button>
+              <Button
+                variant="contained"
                 color="primary"
                 onClick={(ev) =>
                   genericClickHandler(ev, handleDeploy)
@@ -100,16 +123,6 @@ function MesheryApplicationCard({
                 Deploy
               </Button>
 
-              <Button
-                variant="contained"
-                className={classes.undeployButton}
-                onClick={(ev) =>
-                  genericClickHandler(ev, handleUnDeploy)
-                }
-              >
-                <UndeployIcon fill="#ffffff" className={classes.iconPatt} />
-                <span className={classes.btnText}>Undeploy</span>
-              </Button>
             </div>
           </div>
         </>

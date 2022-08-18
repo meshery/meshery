@@ -2126,6 +2126,15 @@
         "short_description": "Configuration Subscription failed",
         "probable_cause": "Could be a network issue",
         "suggested_remediation": "Confirm that Meshery Server is reachable from your browser."
+      },
+      "2245": {
+        "name": "ErrK8sContextCode",
+        "code": "2245",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
       }
     }
   }

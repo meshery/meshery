@@ -28,8 +28,12 @@ const (
 	ErrConfigurationPatternsCode            = "2242"
 	ErrConfigurationApplicationsCode        = "2243"
 	ErrConfigurationFiltersCode             = "2244"
+<<<<<<< HEAD
 	ErrClusterInfoSubscriptionCode          = "2245"
 	ErrGettingClusterResourcesCode          = "2246"
+=======
+	ErrK8sContextCode                       = "2245"
+>>>>>>> upstream/master
 )
 
 var (
@@ -126,6 +130,7 @@ func ErrFiltersSubscription(err error) error {
 	return errors.New(ErrConfigurationFiltersCode, errors.Alert, []string{"Configuration Subscription failed", err.Error()}, []string{"GraphQL subscription for Filters stopped"}, []string{"Could be a network issue"}, []string{"Confirm that Meshery Server is reachable from your browser."})
 }
 
+<<<<<<< HEAD
 func ErrClusterInfoSubcription(err error) error {
 	return errors.New(
 		ErrClusterInfoSubscriptionCode, 
@@ -145,4 +150,8 @@ func ErrGettingClusterResources(err error) error {
 		[]string{"Table in the database might not exists"},
 		nil,
 	)
+=======
+func ErrK8sContextSubscription(err error) error {
+	return errors.New(ErrK8sContextCode, errors.Alert, []string{"Failed to get k8s context from remote provider", err.Error()}, []string{"There might be something wrong with the Meshery or Meshery Cloud"}, []string{"Could be a network issue"}, nil)
+>>>>>>> upstream/master
 }

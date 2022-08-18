@@ -103,6 +103,7 @@
     "uuid": "^8.3.2"
   },
   "devDependencies": {
+    "@4tw/cypress-drag-drop": "^2.2.1",
     "@babel/eslint-parser": "^7.18.2",
     "@babel/traverse": "^7.17.3",
     "@babel/types": "^7.18.7",
