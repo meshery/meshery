@@ -598,14 +598,13 @@ type Subscription {
     k8scontextIDs: [String!]
   ) : MeshSyncEvent!
   subscribeConfiguration(selector: PageFilter!) : ConfigurationPage!
-<<<<<<< HEAD
 
   subscribeClusterInfo(
     k8scontextIDs: [String!]
   ): ClusterInfo!
-=======
+
   subscribeK8sContext(selector: PageFilter!) : K8sContextsPage!
->>>>>>> upstream/master
+
 }
 
 type OAMCapability {

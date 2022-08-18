@@ -387,11 +387,8 @@ type SubscriptionResolver interface {
 	SubscribeMesheryControllersStatus(ctx context.Context, k8scontextIDs []string) (<-chan []*model.MesheryControllersStatusListItem, error)
 	SubscribeMeshSyncEvents(ctx context.Context, k8scontextIDs []string) (<-chan *model.MeshSyncEvent, error)
 	SubscribeConfiguration(ctx context.Context, selector model.PageFilter) (<-chan *model.ConfigurationPage, error)
-<<<<<<< HEAD
 	SubscribeClusterInfo(ctx context.Context, k8scontextIDs []string) (<-chan *model.ClusterInfo, error)
-=======
 	SubscribeK8sContext(ctx context.Context, selector model.PageFilter) (<-chan *model.K8sContextsPage, error)
->>>>>>> upstream/master
 }
 
 type executableSchema struct {
@@ -2608,14 +2605,13 @@ type Subscription {
     k8scontextIDs: [String!]
   ) : MeshSyncEvent!
   subscribeConfiguration(selector: PageFilter!) : ConfigurationPage!
-<<<<<<< HEAD
 
   subscribeClusterInfo(
     k8scontextIDs: [String!]
   ): ClusterInfo!
-=======
+
   subscribeK8sContext(selector: PageFilter!) : K8sContextsPage!
->>>>>>> upstream/master
+
 }
 
 type OAMCapability {
@@ -12635,13 +12631,8 @@ func (ec *executionContext) fieldContext_Subscription_subscribeConfiguration(ctx
 	return fc, nil
 }
 
-<<<<<<< HEAD
 func (ec *executionContext) _Subscription_subscribeClusterInfo(ctx context.Context, field graphql.CollectedField) (ret func(ctx context.Context) graphql.Marshaler) {
 	fc, err := ec.fieldContext_Subscription_subscribeClusterInfo(ctx, field)
-=======
-func (ec *executionContext) _Subscription_subscribeK8sContext(ctx context.Context, field graphql.CollectedField) (ret func(ctx context.Context) graphql.Marshaler) {
-	fc, err := ec.fieldContext_Subscription_subscribeK8sContext(ctx, field)
->>>>>>> upstream/master
 	if err != nil {
 		return nil
 	}
@@ -12654,11 +12645,7 @@ func (ec *executionContext) _Subscription_subscribeK8sContext(ctx context.Contex
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-<<<<<<< HEAD
 		return ec.resolvers.Subscription().SubscribeClusterInfo(rctx, fc.Args["k8scontextIDs"].([]string))
-=======
-		return ec.resolvers.Subscription().SubscribeK8sContext(rctx, fc.Args["selector"].(model.PageFilter))
->>>>>>> upstream/master
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -12672,11 +12659,7 @@ func (ec *executionContext) _Subscription_subscribeK8sContext(ctx context.Contex
 	}
 	return func(ctx context.Context) graphql.Marshaler {
 		select {
-<<<<<<< HEAD
 		case res, ok := <-resTmp.(<-chan *model.ClusterInfo):
-=======
-		case res, ok := <-resTmp.(<-chan *model.K8sContextsPage):
->>>>>>> upstream/master
 			if !ok {
 				return nil
 			}
@@ -12684,11 +12667,7 @@ func (ec *executionContext) _Subscription_subscribeK8sContext(ctx context.Contex
 				w.Write([]byte{'{'})
 				graphql.MarshalString(field.Alias).MarshalGQL(w)
 				w.Write([]byte{':'})
-<<<<<<< HEAD
 				ec.marshalNClusterInfo2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐClusterInfo(ctx, field.Selections, res).MarshalGQL(w)
-=======
-				ec.marshalNK8sContextsPage2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐK8sContextsPage(ctx, field.Selections, res).MarshalGQL(w)
->>>>>>> upstream/master
 				w.Write([]byte{'}'})
 			})
 		case <-ctx.Done():
@@ -12697,11 +12676,7 @@ func (ec *executionContext) _Subscription_subscribeK8sContext(ctx context.Contex
 	}
 }
 
-<<<<<<< HEAD
 func (ec *executionContext) fieldContext_Subscription_subscribeClusterInfo(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-=======
-func (ec *executionContext) fieldContext_Subscription_subscribeK8sContext(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
->>>>>>> upstream/master
 	fc = &graphql.FieldContext{
 		Object:     "Subscription",
 		Field:      field,
@@ -12709,19 +12684,10 @@ func (ec *executionContext) fieldContext_Subscription_subscribeK8sContext(ctx co
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-<<<<<<< HEAD
 			case "resources":
 				return ec.fieldContext_ClusterInfo_resources(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type ClusterInfo", field.Name)
-=======
-			case "total_count":
-				return ec.fieldContext_K8sContextsPage_total_count(ctx, field)
-			case "contexts":
-				return ec.fieldContext_K8sContextsPage_contexts(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type K8sContextsPage", field.Name)
->>>>>>> upstream/master
 		},
 	}
 	defer func() {
@@ -12731,11 +12697,82 @@ func (ec *executionContext) fieldContext_Subscription_subscribeK8sContext(ctx co
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-<<<<<<< HEAD
 	if fc.Args, err = ec.field_Subscription_subscribeClusterInfo_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-=======
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Subscription_subscribeK8sContext(ctx context.Context, field graphql.CollectedField) (ret func(ctx context.Context) graphql.Marshaler) {
+	fc, err := ec.fieldContext_Subscription_subscribeK8sContext(ctx, field)
+	if err != nil {
+		return nil
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = nil
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Subscription().SubscribeK8sContext(rctx, fc.Args["selector"].(model.PageFilter))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return nil
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return nil
+	}
+	return func(ctx context.Context) graphql.Marshaler {
+		select {
+		case res, ok := <-resTmp.(<-chan *model.K8sContextsPage):
+			if !ok {
+				return nil
+			}
+			return graphql.WriterFunc(func(w io.Writer) {
+				w.Write([]byte{'{'})
+				graphql.MarshalString(field.Alias).MarshalGQL(w)
+				w.Write([]byte{':'})
+				ec.marshalNK8sContextsPage2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐK8sContextsPage(ctx, field.Selections, res).MarshalGQL(w)
+				w.Write([]byte{'}'})
+			})
+		case <-ctx.Done():
+			return nil
+		}
+	}
+}
+
+func (ec *executionContext) fieldContext_Subscription_subscribeK8sContext(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Subscription",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "total_count":
+				return ec.fieldContext_K8sContextsPage_total_count(ctx, field)
+			case "contexts":
+				return ec.fieldContext_K8sContextsPage_contexts(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type K8sContextsPage", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Subscription_subscribeK8sContext_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
->>>>>>> upstream/master
 		ec.Error(ctx, err)
 		return
 	}
@@ -16915,13 +16952,10 @@ func (ec *executionContext) _Subscription(ctx context.Context, sel ast.Selection
 		return ec._Subscription_subscribeMeshSyncEvents(ctx, fields[0])
 	case "subscribeConfiguration":
 		return ec._Subscription_subscribeConfiguration(ctx, fields[0])
-<<<<<<< HEAD
 	case "subscribeClusterInfo":
 		return ec._Subscription_subscribeClusterInfo(ctx, fields[0])
-=======
 	case "subscribeK8sContext":
 		return ec._Subscription_subscribeK8sContext(ctx, fields[0])
->>>>>>> upstream/master
 	default:
 		panic("unknown field " + strconv.Quote(fields[0].Name))
 	}
