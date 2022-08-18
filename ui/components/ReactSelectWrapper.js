@@ -1,6 +1,6 @@
 import React from 'react';
 // import Select from 'react-select';
-import CreatableSelect from 'react-select/Creatable';
+import CreatableSelect from 'react-select/creatable';
 import {Typography, TextField,Paper, Chip, MenuItem } from '@mui/material';
 import { styled } from "@mui/material/styles";
 
