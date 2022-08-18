@@ -33,6 +33,16 @@ var (
 		Use:   "mesh",
 		Short: "Service Mesh Lifecycle Management",
 		Long:  "Provisioning, configuration, and on-going operational management of service meshes",
+		Example: `  // Deploy Linkerd:
+  mesheryctl mesh deploy linkerd -n linkerd-ns -t /path/to/token -w
+  
+  // Run SMI conformance tests against Linkerd:
+  mesheryctl mesh validate linkerd -s smi -n linkerd-ns
+  
+  // Remove Linkerd:
+  mesheryctl mesh remove linkerd -n linkerd-ns
+  
+Run "mesheryctl mesh [command] -h" for more details on each command.`,
 		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
 
 			// if `mesh` command is ran without any subcommands, show Help and exit

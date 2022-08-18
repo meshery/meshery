@@ -16,15 +16,18 @@ var deployCmd = &cobra.Command{
 	Use:   "deploy [mesh-name]",
 	Short: "Deploy a service mesh",
 	Long:  "Deploy a service mesh in the connected Kubernetes cluster",
-	Example: `
-// Deploy a service mesh interactively:
-mesheryctl mesh deploy
+	Example: `  // Deploy a service mesh interactively:
+  mesheryctl mesh deploy
 
-// Deploy Linkerd in a specific namespace:
-mesheryctl mesh deploy linkerd --namespace linkerd-ns
+  // Deploy Linkerd in a specific namespace:
+  mesheryctl mesh deploy linkerd --namespace linkerd-ns
 
-// Deploy Linkerd and wait for it to be deployed:
-mesheryctl mesh deploy linkerd --watch`,
+  // Deploy Linkerd and wait for it to be deployed:
+  mesheryctl mesh deploy linkerd --watch
+
+! Refer below image link for usage
+ * Usage of mesheryctl mesh deploy
+ # ![mesh-deploy-usage](/assets/img/mesheryctl/deploy-mesh.png)`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		log.Infof(fmt.Sprintf("Deploying %s...", meshName))
 		_, err = sendOperationRequest(mctlCfg, strings.ToLower(meshName), false)

@@ -28,6 +28,15 @@ var (
 		Use:   "validate [mesh-name]",
 		Short: "Validate conformance to service mesh standards",
 		Long:  "Validate service mesh conformance to different standard specifications",
+		Example: `  // Run SMI conformance tests against Linkerd:
+  mesheryctl mesh validate linkerd --spec smi --namespace linkerd-ns
+
+  // Run istio-vet for Istio:
+  mesheryctl mesh validate istio --spec istio-vet --namespace istio-ns
+
+! Refer below image link for usage
+* Usage of mesheryctl mesh validate
+# ![mesh-validate-usage](/assets/img/mesheryctl/mesh-validate.png)`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			log.Infof("Starting service mesh validation...")
 
@@ -70,7 +79,7 @@ func init() {
 		"spec",
 		"s",
 		"smi",
-		"Specification to be used for conformance test [smi (default), istio-vet]",
+		"Specification to be used for conformance test [smi, istio-vet]",
 	)
 	validateCmd.Flags().StringVarP(
 		&namespace, "namespace", "n", "default",

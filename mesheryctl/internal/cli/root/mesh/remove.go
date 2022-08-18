@@ -11,7 +11,10 @@ import (
 
 var removeCmd = &cobra.Command{
 	Use:   "remove [mesh-name]",
-	Short: "Remove a service mesh from the connected Kubernetes cluster",
+	Short: "Remove a service mesh",
+	Long:  "Remove a service mesh from the connected Kubernetes cluster",
+	Example: `  // Remove Linkerd:
+  mesheryctl mesh remove linkerd --namespace linkerd-ns`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		s := utils.CreateDefaultSpinner(
 			fmt.Sprintf("Removing %s", meshName),
