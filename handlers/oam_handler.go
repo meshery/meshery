@@ -33,14 +33,6 @@ const (
 	oamAdapter patternCallType = ""
 )
 
-type validationInputType string
-
-const (
-	jsontype       validationInputType = "JSON"
-	yamltype       validationInputType = "YAML"
-	jsonschematype validationInputType = "JSONSCHEMA"
-)
-
 func getAppropriateCueVal(value string, valType string) (cue.Value, error) {
 	switch valType {
 	case string(jsontype):
