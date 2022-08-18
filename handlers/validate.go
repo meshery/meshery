@@ -39,25 +39,10 @@ type jsonSchemaValidationType struct {
 	Schema string `json:"$schema,omitempty"`
 }
 
-func (h *Handler) MeshModelValidate(rw http.ResponseWriter, r *http.Request) {
-	// 1. Parse the request body
-	body, err := io.ReadAll(r.Body)
-	if err != nil {
-		h.log.Error(ErrRequestBody(err))
-		http.Error(rw, ErrRequestBody(err).Error(), http.StatusInternalServerError)
-		return
-	}
-	// 2. Unmarshal request body
-	pld := payload{}
-	err = json.Unmarshal(body, &pld)
-	if err != nil {
-		h.log.Error(ErrRequestBody(err))
-		http.Error(rw, ErrRequestBody(err).Error(), http.StatusBadRequest)
-		return
-	}
+func mmValidate(validationItems map[string]validationItem) map[string]validationResponse {
 	validationResults := make(map[string]validationResponse, 0)
-	for id, vi := range pld.ValidationItems {
-		// 3. Parse the schema as CUE value
+	for id, vi := range validationItems {
+		// Parse the schema as CUE value
 		schemaType := findSchemaType(vi.Schema)
 		cueSchema, err := parseSchema(vi.Schema, schemaType)
 		if err != nil {
@@ -65,14 +50,14 @@ func (h *Handler) MeshModelValidate(rw http.ResponseWriter, r *http.Request) {
 			validationResults[id] = validationResponse{IsValid: false, Error: err.Error()}
 			continue
 		}
-		// 4. Parse the value as CUE value
+		// Parse the value as CUE value
 		cueValue, err := parseValue(vi.Value, vi.ValueType)
 		if err != nil {
 			// if there is an error, push it into the map and continue
 			validationResults[id] = validationResponse{IsValid: false, Error: err.Error()}
 			continue
 		}
-		// 5. Validate the value against the schema
+		// Validate the value against the schema
 		isValid, err := utils.Validate(cueSchema, cueValue)
 		if err != nil {
 			validationResults[id] = validationResponse{IsValid: false, Error: err.Error()}
@@ -82,7 +67,28 @@ func (h *Handler) MeshModelValidate(rw http.ResponseWriter, r *http.Request) {
 			validationResults[id] = validationResponse{IsValid: true, Error: ""}
 		}
 	}
-	// 6. Send response
+	return validationResults
+}
+
+func (h *Handler) MeshModelValidate(rw http.ResponseWriter, r *http.Request) {
+	// Parse the request body
+	body, err := io.ReadAll(r.Body)
+	if err != nil {
+		h.log.Error(ErrRequestBody(err))
+		http.Error(rw, ErrRequestBody(err).Error(), http.StatusInternalServerError)
+		return
+	}
+	// Unmarshal request body
+	pld := payload{}
+	err = json.Unmarshal(body, &pld)
+	if err != nil {
+		h.log.Error(ErrRequestBody(err))
+		http.Error(rw, ErrRequestBody(err).Error(), http.StatusBadRequest)
+		return
+	}
+	// Validate
+	validationResults := mmValidate(pld.ValidationItems)
+	// Send response
 	rw.Header().Set("Content-Type", "application/json")
 	err = json.NewEncoder(rw).Encode(struct {
 		ValidationErrors map[string]validationResponse `json:"errors"`
@@ -94,7 +100,6 @@ func (h *Handler) MeshModelValidate(rw http.ResponseWriter, r *http.Request) {
 		http.Error(rw, ErrValidate(err).Error(), http.StatusInternalServerError)
 		return
 	}
-
 }
 
 // if schema is not a JSONSCHEMA, we assume that it is CUE
@@ -103,10 +108,12 @@ func findSchemaType(schema string) validationInputType {
 	err := json.Unmarshal([]byte(schema), &jsValType)
 	if err != nil {
 		// schema is not a valid JSON
-		// since the `Schema` field has `omitempty` tag, literally any valid JSON should be unmarshalled into jsonSchemaValidationType
 		return cuetype
 	}
-	return jsontype
+	if jsValType.Schema == "" {
+		return cuetype
+	}
+	return jsonschematype
 }
 
 // NOTE: does not return meshkit error - make sure to wrap it in meshkit errors before using
