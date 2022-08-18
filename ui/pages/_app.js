@@ -36,7 +36,7 @@ import { actionTypes, makeStore } from '../lib/store';
 import theme, { styles } from "../themes";
 import { getK8sConfigIdsFromK8sConfig } from '../utils/multi-ctx';
 import './../public/static/style/index.css';
-
+import subscribeK8sContext from "../components/graphql/subscriptions/K8sContextSubscription";
 
 if (typeof window !== 'undefined') {
   require('codemirror/mode/yaml/yaml');
@@ -69,6 +69,7 @@ class MesheryApp extends App {
       activeK8sContexts : [],
       operatorSubscription : null,
       meshSyncSubscription : null,
+      disposeK8sContextSubscription : null
     };
   }
 
@@ -76,26 +77,28 @@ class MesheryApp extends App {
     this.loadConfigFromServer(); // this works, but sometimes other components which need data load faster than this data is obtained.
     this.initSubscriptions([]);
 
-    fetchContexts()
-      .then(ctx => {
-        this.setState({ k8sContexts : ctx }, () => this.setActiveContexts("all"))
-        const active = ctx?.contexts?.find(c => c.is_current_context === true);
-        if (active) this.setState({ activeK8sContexts : [active?.id] })
+    const k8sContextSubscription = (page="", search="", pageSize="10", order="") => {
+      return subscribeK8sContext((result) => {
+        this.setState({ k8sContexts : result.k8sContext }, () => this.setActiveContexts("all"))
+        this.props.store.dispatch({ type : actionTypes.UPDATE_CLUSTER_CONFIG, k8sConfig : result.k8sContext.contexts });
+      },
+      {
+        selector : {
+          page : page,
+          pageSize : pageSize,
+          order : order,
+          search : search
+        }
       })
-      .catch(err => console.error(err))
+    }
+    const disposeK8sContextSubscription = k8sContextSubscription();
+    this.setState({ disposeK8sContextSubscription })
   }
 
   componentDidUpdate(prevProps) {
     const { k8sConfig } = this.props;
     if (!_.isEqual(prevProps.k8sConfig, k8sConfig)) {
       const { operatorSubscription, meshSyncSubscription } = this.state;
-
-      fetchContexts()
-        .then(ctx => {
-          this.setState({ k8sContexts : ctx })
-        })
-        .catch(err => console.error(err))
-
       console.log("k8sconfig changed, re-initialising subscriptions");
       const ids = getK8sConfigIdsFromK8sConfig(k8sConfig)
       if (operatorSubscription) {
@@ -200,9 +203,11 @@ class MesheryApp extends App {
           const kubeConfigs = result.k8sConfig.map(config => Object.assign({
             inClusterConfig : false,
             k8sfile : "",
-            contextName : "",
+            name : "",
             clusterConfigured : "",
-            configuredServer : "",
+            server : "",
+            created_at : "",
+            updated_at : "",
             ts : new Date()
           }, config));
           store.dispatch({ type : actionTypes.UPDATE_CLUSTER_CONFIG, k8sConfig : kubeConfigs });

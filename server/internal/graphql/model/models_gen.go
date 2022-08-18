@@ -110,6 +110,25 @@ type FilterResult struct {
 	UpdatedAt  *string   `json:"updated_at"`
 }
 
+type K8sContext struct {
+	ID                 string                 `json:"id"`
+	Name               string                 `json:"name"`
+	Auth               map[string]interface{} `json:"auth"`
+	Cluster            map[string]interface{} `json:"cluster"`
+	Server             string                 `json:"server"`
+	Owner              string                 `json:"owner"`
+	CreatedBy          string                 `json:"created_by"`
+	MesheryInstanceID  string                 `json:"meshery_instance_id"`
+	KubernetesServerID string                 `json:"kubernetes_server_id"`
+	UpdatedAt          string                 `json:"updated_at"`
+	CreatedAt          string                 `json:"created_at"`
+}
+
+type K8sContextsPage struct {
+	TotalCount int           `json:"total_count"`
+	Contexts   []*K8sContext `json:"contexts"`
+}
+
 type KctlDescribeDetails struct {
 	Describe *string `json:"describe"`
 	Ctxid    *string `json:"ctxid"`

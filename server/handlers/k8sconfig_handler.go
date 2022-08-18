@@ -120,7 +120,9 @@ func (h *Handler) addK8SConfig(user *models.User, prefObj *models.Preference, w 
 			saveK8sContextResponse.InsertedContexts = append(saveK8sContextResponse.InsertedContexts, ctx)
 		}
 	}
-
+	if len(saveK8sContextResponse.InsertedContexts) > 0 || len(saveK8sContextResponse.UpdatedContexts) > 0 {
+		h.config.K8scontextChannel.PublishContext()
+	}
 	if err := json.NewEncoder(w).Encode(saveK8sContextResponse); err != nil {
 		logrus.Error(ErrMarshal(err, "kubeconfig"))
 		http.Error(w, ErrMarshal(err, "kubeconfig").Error(), http.StatusInternalServerError)
@@ -275,8 +277,8 @@ func (h *Handler) LoadContextsAndPersist(token string, prov models.Provider) ([]
 			logrus.Warn("failed to save the context for incluster: ", err)
 			return contexts, err
 		}
+		h.config.K8scontextChannel.PublishContext()
 		contexts = append(contexts, cc)
-
 		return contexts, nil
 	}
 
@@ -294,6 +296,7 @@ func (h *Handler) LoadContextsAndPersist(token string, prov models.Provider) ([]
 			logrus.Warn("failed to save the context: ", err)
 			continue
 		}
+		h.config.K8scontextChannel.PublishContext()
 		contexts = append(contexts, &ctx)
 	}
 	return contexts, nil

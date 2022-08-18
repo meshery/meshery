@@ -142,6 +142,25 @@ type ComplexityRoot struct {
 		UserID     func(childComplexity int) int
 	}
 
+	K8sContext struct {
+		Auth               func(childComplexity int) int
+		Cluster            func(childComplexity int) int
+		CreatedAt          func(childComplexity int) int
+		CreatedBy          func(childComplexity int) int
+		ID                 func(childComplexity int) int
+		KubernetesServerID func(childComplexity int) int
+		MesheryInstanceID  func(childComplexity int) int
+		Name               func(childComplexity int) int
+		Owner              func(childComplexity int) int
+		Server             func(childComplexity int) int
+		UpdatedAt          func(childComplexity int) int
+	}
+
+	K8sContextsPage struct {
+		Contexts   func(childComplexity int) int
+		TotalCount func(childComplexity int) int
+	}
+
 	KctlDescribeDetails struct {
 		Ctxid    func(childComplexity int) int
 		Describe func(childComplexity int) int
@@ -312,6 +331,7 @@ type ComplexityRoot struct {
 		ListenToOperatorState             func(childComplexity int, k8scontextIDs []string) int
 		SubscribeBrokerConnection         func(childComplexity int) int
 		SubscribeConfiguration            func(childComplexity int, selector model.PageFilter) int
+		SubscribeK8sContext               func(childComplexity int, selector model.PageFilter) int
 		SubscribeMeshSyncEvents           func(childComplexity int, k8scontextIDs []string) int
 		SubscribeMesheryControllersStatus func(childComplexity int, k8scontextIDs []string) int
 		SubscribePerfProfiles             func(childComplexity int, selector model.PageFilter) int
@@ -355,6 +375,7 @@ type SubscriptionResolver interface {
 	SubscribeMesheryControllersStatus(ctx context.Context, k8scontextIDs []string) (<-chan []*model.MesheryControllersStatusListItem, error)
 	SubscribeMeshSyncEvents(ctx context.Context, k8scontextIDs []string) (<-chan *model.MeshSyncEvent, error)
 	SubscribeConfiguration(ctx context.Context, selector model.PageFilter) (<-chan *model.ConfigurationPage, error)
+	SubscribeK8sContext(ctx context.Context, selector model.PageFilter) (<-chan *model.K8sContextsPage, error)
 }
 
 type executableSchema struct {
@@ -770,6 +791,97 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.FilterResult.UserID(childComplexity), true
+
+	case "K8sContext.auth":
+		if e.complexity.K8sContext.Auth == nil {
+			break
+		}
+
+		return e.complexity.K8sContext.Auth(childComplexity), true
+
+	case "K8sContext.cluster":
+		if e.complexity.K8sContext.Cluster == nil {
+			break
+		}
+
+		return e.complexity.K8sContext.Cluster(childComplexity), true
+
+	case "K8sContext.created_at":
+		if e.complexity.K8sContext.CreatedAt == nil {
+			break
+		}
+
+		return e.complexity.K8sContext.CreatedAt(childComplexity), true
+
+	case "K8sContext.created_by":
+		if e.complexity.K8sContext.CreatedBy == nil {
+			break
+		}
+
+		return e.complexity.K8sContext.CreatedBy(childComplexity), true
+
+	case "K8sContext.id":
+		if e.complexity.K8sContext.ID == nil {
+			break
+		}
+
+		return e.complexity.K8sContext.ID(childComplexity), true
+
+	case "K8sContext.kubernetes_server_id":
+		if e.complexity.K8sContext.KubernetesServerID == nil {
+			break
+		}
+
+		return e.complexity.K8sContext.KubernetesServerID(childComplexity), true
+
+	case "K8sContext.meshery_instance_id":
+		if e.complexity.K8sContext.MesheryInstanceID == nil {
+			break
+		}
+
+		return e.complexity.K8sContext.MesheryInstanceID(childComplexity), true
+
+	case "K8sContext.name":
+		if e.complexity.K8sContext.Name == nil {
+			break
+		}
+
+		return e.complexity.K8sContext.Name(childComplexity), true
+
+	case "K8sContext.owner":
+		if e.complexity.K8sContext.Owner == nil {
+			break
+		}
+
+		return e.complexity.K8sContext.Owner(childComplexity), true
+
+	case "K8sContext.server":
+		if e.complexity.K8sContext.Server == nil {
+			break
+		}
+
+		return e.complexity.K8sContext.Server(childComplexity), true
+
+	case "K8sContext.updated_at":
+		if e.complexity.K8sContext.UpdatedAt == nil {
+			break
+		}
+
+		return e.complexity.K8sContext.UpdatedAt(childComplexity), true
+
+	case "K8sContextsPage.contexts":
+		if e.complexity.K8sContextsPage.Contexts == nil {
+			break
+		}
+
+		return e.complexity.K8sContextsPage.Contexts(childComplexity), true
+
+	case "K8sContextsPage.total_count":
+		if e.complexity.K8sContextsPage.TotalCount == nil {
+			break
+		}
+
+		return e.complexity.K8sContextsPage.TotalCount(childComplexity), true
 
 	case "KctlDescribeDetails.ctxid":
 		if e.complexity.KctlDescribeDetails.Ctxid == nil {
@@ -1685,6 +1797,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Subscription.SubscribeConfiguration(childComplexity, args["selector"].(model.PageFilter)), true
 
+	case "Subscription.subscribeK8sContext":
+		if e.complexity.Subscription.SubscribeK8sContext == nil {
+			break
+		}
+
+		args, err := ec.field_Subscription_subscribeK8sContext_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Subscription.SubscribeK8sContext(childComplexity, args["selector"].(model.PageFilter)), true
+
 	case "Subscription.subscribeMeshSyncEvents":
 		if e.complexity.Subscription.SubscribeMeshSyncEvents == nil {
 			break
@@ -2093,6 +2217,27 @@ type NameSpace {
   namespace: String!
 }
 
+# ================ K8s Context ======================
+
+type K8sContext {
+  id: String!,
+  name: String!,
+  auth: Map!,
+  cluster: Map!,
+  server: String!,
+  owner: ID!,
+  created_by: ID!,
+  meshery_instance_id: ID!,
+  kubernetes_server_id: ID!,
+  updated_at: String!,
+  created_at: String!
+}
+
+type K8sContextsPage {
+  total_count: Int!,
+  contexts: [K8sContext]! 
+}
+
 # ================= Configuration ===================
 
 type ConfigurationPage {
@@ -2385,7 +2530,7 @@ type Subscription {
     k8scontextIDs: [String!]
   ) : MeshSyncEvent!
   subscribeConfiguration(selector: PageFilter!) : ConfigurationPage!
-
+  subscribeK8sContext(selector: PageFilter!) : K8sContextsPage!
 }
 
 type OAMCapability {
@@ -2890,6 +3035,21 @@ func (ec *executionContext) field_Subscription_listenToOperatorState_args(ctx co
 }
 
 func (ec *executionContext) field_Subscription_subscribeConfiguration_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.PageFilter
+	if tmp, ok := rawArgs["selector"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("selector"))
+		arg0, err = ec.unmarshalNPageFilter2githubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐPageFilter(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["selector"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Subscription_subscribeK8sContext_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 model.PageFilter
@@ -5615,6 +5775,602 @@ func (ec *executionContext) fieldContext_FilterResult_updated_at(ctx context.Con
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _K8sContext_id(ctx context.Context, field graphql.CollectedField, obj *model.K8sContext) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_K8sContext_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_K8sContext_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "K8sContext",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _K8sContext_name(ctx context.Context, field graphql.CollectedField, obj *model.K8sContext) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_K8sContext_name(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Name, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_K8sContext_name(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "K8sContext",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _K8sContext_auth(ctx context.Context, field graphql.CollectedField, obj *model.K8sContext) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_K8sContext_auth(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Auth, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(map[string]interface{})
+	fc.Result = res
+	return ec.marshalNMap2map(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_K8sContext_auth(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "K8sContext",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Map does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _K8sContext_cluster(ctx context.Context, field graphql.CollectedField, obj *model.K8sContext) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_K8sContext_cluster(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Cluster, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(map[string]interface{})
+	fc.Result = res
+	return ec.marshalNMap2map(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_K8sContext_cluster(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "K8sContext",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Map does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _K8sContext_server(ctx context.Context, field graphql.CollectedField, obj *model.K8sContext) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_K8sContext_server(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Server, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_K8sContext_server(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "K8sContext",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _K8sContext_owner(ctx context.Context, field graphql.CollectedField, obj *model.K8sContext) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_K8sContext_owner(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Owner, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNID2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_K8sContext_owner(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "K8sContext",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _K8sContext_created_by(ctx context.Context, field graphql.CollectedField, obj *model.K8sContext) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_K8sContext_created_by(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedBy, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNID2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_K8sContext_created_by(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "K8sContext",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _K8sContext_meshery_instance_id(ctx context.Context, field graphql.CollectedField, obj *model.K8sContext) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_K8sContext_meshery_instance_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.MesheryInstanceID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNID2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_K8sContext_meshery_instance_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "K8sContext",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _K8sContext_kubernetes_server_id(ctx context.Context, field graphql.CollectedField, obj *model.K8sContext) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_K8sContext_kubernetes_server_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.KubernetesServerID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNID2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_K8sContext_kubernetes_server_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "K8sContext",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _K8sContext_updated_at(ctx context.Context, field graphql.CollectedField, obj *model.K8sContext) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_K8sContext_updated_at(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UpdatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_K8sContext_updated_at(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "K8sContext",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _K8sContext_created_at(ctx context.Context, field graphql.CollectedField, obj *model.K8sContext) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_K8sContext_created_at(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_K8sContext_created_at(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "K8sContext",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _K8sContextsPage_total_count(ctx context.Context, field graphql.CollectedField, obj *model.K8sContextsPage) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_K8sContextsPage_total_count(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TotalCount, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_K8sContextsPage_total_count(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "K8sContextsPage",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _K8sContextsPage_contexts(ctx context.Context, field graphql.CollectedField, obj *model.K8sContextsPage) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_K8sContextsPage_contexts(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Contexts, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.K8sContext)
+	fc.Result = res
+	return ec.marshalNK8sContext2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐK8sContext(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_K8sContextsPage_contexts(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "K8sContextsPage",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_K8sContext_id(ctx, field)
+			case "name":
+				return ec.fieldContext_K8sContext_name(ctx, field)
+			case "auth":
+				return ec.fieldContext_K8sContext_auth(ctx, field)
+			case "cluster":
+				return ec.fieldContext_K8sContext_cluster(ctx, field)
+			case "server":
+				return ec.fieldContext_K8sContext_server(ctx, field)
+			case "owner":
+				return ec.fieldContext_K8sContext_owner(ctx, field)
+			case "created_by":
+				return ec.fieldContext_K8sContext_created_by(ctx, field)
+			case "meshery_instance_id":
+				return ec.fieldContext_K8sContext_meshery_instance_id(ctx, field)
+			case "kubernetes_server_id":
+				return ec.fieldContext_K8sContext_kubernetes_server_id(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_K8sContext_updated_at(ctx, field)
+			case "created_at":
+				return ec.fieldContext_K8sContext_created_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type K8sContext", field.Name)
 		},
 	}
 	return fc, nil
@@ -11567,6 +12323,81 @@ func (ec *executionContext) fieldContext_Subscription_subscribeConfiguration(ctx
 	return fc, nil
 }
 
+func (ec *executionContext) _Subscription_subscribeK8sContext(ctx context.Context, field graphql.CollectedField) (ret func(ctx context.Context) graphql.Marshaler) {
+	fc, err := ec.fieldContext_Subscription_subscribeK8sContext(ctx, field)
+	if err != nil {
+		return nil
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = nil
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Subscription().SubscribeK8sContext(rctx, fc.Args["selector"].(model.PageFilter))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return nil
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return nil
+	}
+	return func(ctx context.Context) graphql.Marshaler {
+		select {
+		case res, ok := <-resTmp.(<-chan *model.K8sContextsPage):
+			if !ok {
+				return nil
+			}
+			return graphql.WriterFunc(func(w io.Writer) {
+				w.Write([]byte{'{'})
+				graphql.MarshalString(field.Alias).MarshalGQL(w)
+				w.Write([]byte{':'})
+				ec.marshalNK8sContextsPage2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐK8sContextsPage(ctx, field.Selections, res).MarshalGQL(w)
+				w.Write([]byte{'}'})
+			})
+		case <-ctx.Done():
+			return nil
+		}
+	}
+}
+
+func (ec *executionContext) fieldContext_Subscription_subscribeK8sContext(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Subscription",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "total_count":
+				return ec.fieldContext_K8sContextsPage_total_count(ctx, field)
+			case "contexts":
+				return ec.fieldContext_K8sContextsPage_contexts(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type K8sContextsPage", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Subscription_subscribeK8sContext_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) ___Directive_name(ctx context.Context, field graphql.CollectedField, obj *introspection.Directive) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext___Directive_name(ctx, field)
 	if err != nil {
@@ -14166,6 +14997,139 @@ func (ec *executionContext) _FilterResult(ctx context.Context, sel ast.Selection
 	return out
 }
 
+var k8sContextImplementors = []string{"K8sContext"}
+
+func (ec *executionContext) _K8sContext(ctx context.Context, sel ast.SelectionSet, obj *model.K8sContext) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, k8sContextImplementors)
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("K8sContext")
+		case "id":
+
+			out.Values[i] = ec._K8sContext_id(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "name":
+
+			out.Values[i] = ec._K8sContext_name(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "auth":
+
+			out.Values[i] = ec._K8sContext_auth(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "cluster":
+
+			out.Values[i] = ec._K8sContext_cluster(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "server":
+
+			out.Values[i] = ec._K8sContext_server(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "owner":
+
+			out.Values[i] = ec._K8sContext_owner(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "created_by":
+
+			out.Values[i] = ec._K8sContext_created_by(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "meshery_instance_id":
+
+			out.Values[i] = ec._K8sContext_meshery_instance_id(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "kubernetes_server_id":
+
+			out.Values[i] = ec._K8sContext_kubernetes_server_id(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "updated_at":
+
+			out.Values[i] = ec._K8sContext_updated_at(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "created_at":
+
+			out.Values[i] = ec._K8sContext_created_at(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var k8sContextsPageImplementors = []string{"K8sContextsPage"}
+
+func (ec *executionContext) _K8sContextsPage(ctx context.Context, sel ast.SelectionSet, obj *model.K8sContextsPage) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, k8sContextsPageImplementors)
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("K8sContextsPage")
+		case "total_count":
+
+			out.Values[i] = ec._K8sContextsPage_total_count(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "contexts":
+
+			out.Values[i] = ec._K8sContextsPage_contexts(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var kctlDescribeDetailsImplementors = []string{"KctlDescribeDetails"}
 
 func (ec *executionContext) _KctlDescribeDetails(ctx context.Context, sel ast.SelectionSet, obj *model.KctlDescribeDetails) graphql.Marshaler {
@@ -15521,6 +16485,8 @@ func (ec *executionContext) _Subscription(ctx context.Context, sel ast.Selection
 		return ec._Subscription_subscribeMeshSyncEvents(ctx, fields[0])
 	case "subscribeConfiguration":
 		return ec._Subscription_subscribeConfiguration(ctx, fields[0])
+	case "subscribeK8sContext":
+		return ec._Subscription_subscribeK8sContext(ctx, fields[0])
 	default:
 		panic("unknown field " + strconv.Quote(fields[0].Name))
 	}
@@ -16194,6 +17160,58 @@ func (ec *executionContext) marshalNInt2int(ctx context.Context, sel ast.Selecti
 	return res
 }
 
+func (ec *executionContext) marshalNK8sContext2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐK8sContext(ctx context.Context, sel ast.SelectionSet, v []*model.K8sContext) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOK8sContext2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐK8sContext(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	return ret
+}
+
+func (ec *executionContext) marshalNK8sContextsPage2githubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐK8sContextsPage(ctx context.Context, sel ast.SelectionSet, v model.K8sContextsPage) graphql.Marshaler {
+	return ec._K8sContextsPage(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNK8sContextsPage2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐK8sContextsPage(ctx context.Context, sel ast.SelectionSet, v *model.K8sContextsPage) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._K8sContextsPage(ctx, sel, v)
+}
+
 func (ec *executionContext) marshalNKctlDescribeDetails2githubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐKctlDescribeDetails(ctx context.Context, sel ast.SelectionSet, v model.KctlDescribeDetails) graphql.Marshaler {
 	return ec._KctlDescribeDetails(ctx, sel, &v)
 }
@@ -16216,6 +17234,27 @@ func (ec *executionContext) marshalNLocation2ᚖgithubᚗcomᚋlayer5ioᚋmesher
 		return graphql.Null
 	}
 	return ec._Location(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNMap2map(ctx context.Context, v interface{}) (map[string]interface{}, error) {
+	res, err := graphql.UnmarshalMap(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNMap2map(ctx context.Context, sel ast.SelectionSet, v map[string]interface{}) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	res := graphql.MarshalMap(v)
+	if res == graphql.Null {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+	}
+	return res
 }
 
 func (ec *executionContext) marshalNMeshSyncEvent2githubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐMeshSyncEvent(ctx context.Context, sel ast.SelectionSet, v model.MeshSyncEvent) graphql.Marshaler {
@@ -17054,6 +18093,13 @@ func (ec *executionContext) marshalOInt2ᚖint(ctx context.Context, sel ast.Sele
 	}
 	res := graphql.MarshalInt(*v)
 	return res
+}
+
+func (ec *executionContext) marshalOK8sContext2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐK8sContext(ctx context.Context, sel ast.SelectionSet, v *model.K8sContext) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._K8sContext(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOMap2map(ctx context.Context, v interface{}) (map[string]interface{}, error) {

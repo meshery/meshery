@@ -277,6 +277,11 @@ func (r *subscriptionResolver) SubscribeConfiguration(ctx context.Context, selec
 	return r.subscribeConfiguration(ctx, provider, selector)
 }
 
+func (r *subscriptionResolver) SubscribeK8sContext(ctx context.Context, selector model.PageFilter) (<-chan *model.K8sContextsPage, error) {
+	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	return r.subscribeK8sContexts(ctx, provider, selector)
+}
+
 // Mutation returns generated.MutationResolver implementation.
 func (r *Resolver) Mutation() generated.MutationResolver { return &mutationResolver{r} }
 
