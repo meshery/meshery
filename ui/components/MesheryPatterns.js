@@ -240,7 +240,7 @@ function MesheryPatterns({
   );
   const PATTERN_URL = '/api/pattern'
   const DEPLOY_URL = `${PATTERN_URL}/deploy`;
-  const FORK_URL = '/fork';
+  const CLONE_URL = '/clone';
   const [modalOpen, setModalOpen] = useState({
     open : false,
     deploy : false,
@@ -327,9 +327,9 @@ function MesheryPatterns({
       name : "UPLOAD_PATTERN",
       error_msg : "Failed to upload pattern file"
     },
-    FORK_PATTERN : {
-      name : "FORK_PATTERN",
-      error_msg : "Failed to fork pattern file"
+    CLONE_PATTERN : {
+      name : "CLONE_PATTERN",
+      error_msg : "Failed to clone pattern file"
     }
   };
 
@@ -430,17 +430,17 @@ function MesheryPatterns({
     );
   };
 
-  function handleFork(e, patternID) {
+  function handleClone(e, patternID) {
     e.stopPropagation();
     updateProgress({ showProgress : true });
-    dataFetch(PATTERN_URL.concat("/", patternID, FORK_URL),
+    dataFetch(PATTERN_URL.concat("/", patternID, CLONE_URL),
       {
         credentials : "include",
         method : "POST",
       },
       () => {
         updateProgress({ showProgress : false });
-        enqueueSnackbar("Pattern Successfully Forked!", {
+        enqueueSnackbar("Pattern Successfully Cloned!", {
           variant : "success",
           action : function Action(key) {
             return (
@@ -452,7 +452,7 @@ function MesheryPatterns({
           autoHideDuration : 2000,
         });
       },
-      handleError(ACTION_TYPES.FORK_PATTERN),
+      handleError(ACTION_TYPES.CLONE_PATTERN),
     );
   }
 
@@ -701,7 +701,7 @@ function MesheryPatterns({
           const visibility = patterns[tableMeta.rowIndex].visibility
           return (
             <>
-              { visibility === "public" ? <IconButton onClick={(e) => handleFork(e, rowData.id)}>
+              { visibility === "public" ? <IconButton onClick={(e) => handleClone(e, rowData.id)}>
                 <img src="/static/img/fork.svg" />
               </IconButton> :
 

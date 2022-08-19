@@ -179,7 +179,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
   );
   const FILTER_URL = "/api/filter"
   const DEPLOY_URL = FILTER_URL + "/deploy";
-  const FORK_URL = "/fork";
+  const CLONE_URL = "/CLONE";
 
   const [modalOpen, setModalOpen] = useState({
     open : false,
@@ -259,9 +259,9 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
       name : "UPLOAD_FILTERS",
       error_msg : "Failed to upload filter file",
     },
-    FORK_FILTERS : {
-      name : "FORK_FILTER",
-      error_msg : "Failed to fork filter file"
+    CLONE_FILTERS : {
+      name : "CLONE_FILTER",
+      error_msg : "Failed to clone filter file"
     }
   };
 
@@ -367,17 +367,17 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     );
   };
 
-  function handleFork(e, filterID) {
+  function handleClone(e, filterID) {
     e.stopPropagation()
     updateProgress({ showProgress : true });
-    dataFetch(FILTER_URL.concat("/", filterID, FORK_URL),
+    dataFetch(FILTER_URL.concat("/", filterID, CLONE_URL),
       {
         credentials : "include",
         method : "POST",
       },
       () => {
         updateProgress({ showProgress : false });
-        enqueueSnackbar("Filter Successfully Forked!", {
+        enqueueSnackbar("Filter Successfully Cloned!", {
           variant : "success",
           action : function Action(key) {
             return (
@@ -389,7 +389,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
           autoHideDuration : 2000,
         });
       },
-      handleError(ACTION_TYPES.FORK_FILTERS),
+      handleError(ACTION_TYPES.CLONE_FILTERS),
     );
   }
 
@@ -605,7 +605,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
           const visibility = filters[tableMeta.rowIndex].visibility
           return (
             <>
-              {visibility === "public" ? <IconButton onClick={(e) => handleFork(e, rowData.id)}>
+              {visibility === "public" ? <IconButton onClick={(e) => handleClone(e, rowData.id)}>
                 <img src="/static/img/fork.svg" />
               </IconButton>
                 :
