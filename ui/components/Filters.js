@@ -179,7 +179,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
   );
   const FILTER_URL = "/api/filter"
   const DEPLOY_URL = FILTER_URL + "/deploy";
-  const CLONE_URL = "/CLONE";
+  const CLONE_URL = "/clone";
 
   const [modalOpen, setModalOpen] = useState({
     open : false,
@@ -370,7 +370,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
   function handleClone(e, filterID) {
     e.stopPropagation()
     updateProgress({ showProgress : true });
-    dataFetch(FILTER_URL.concat("/", filterID, CLONE_URL),
+    dataFetch(FILTER_URL.concat(CLONE_URL, "/", filterID),
       {
         credentials : "include",
         method : "POST",

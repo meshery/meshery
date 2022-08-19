@@ -433,7 +433,7 @@ function MesheryPatterns({
   function handleClone(e, patternID) {
     e.stopPropagation();
     updateProgress({ showProgress : true });
-    dataFetch(PATTERN_URL.concat("/", patternID, CLONE_URL),
+    dataFetch(PATTERN_URL.concat(CLONE_URL, "/", patternID),
       {
         credentials : "include",
         method : "POST",
