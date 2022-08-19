@@ -3,6 +3,7 @@ package app
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"os"
@@ -93,7 +94,6 @@ mesheryctl app import -f [file/URL] -s [source-type]
 			}
 			text := string(content)
 
-			// if --skip-save is not passed we save the apps first
 			jsonValues, err := json.Marshal(map[string]interface{}{
 				"application_data": map[string]interface{}{
 					"name":             path.Base(file),
@@ -113,7 +113,7 @@ mesheryctl app import -f [file/URL] -s [source-type]
 			if err != nil {
 				return err
 			}
-			utils.Log.Debug("saved app file")
+			utils.Log.Debug("app file saved")
 			var response []*models.MesheryApplication
 			// failsafe (bad api call)
 			if resp.StatusCode != 200 {
@@ -144,33 +144,19 @@ mesheryctl app import -f [file/URL] -s [source-type]
 			utils.Log.Debug(path)
 
 			// save the app with Github URL
-			if !skipSave {
-				if path != "" {
-					jsonValues, _ = json.Marshal(map[string]interface{}{
-						"url":  url,
-						"path": path,
-						"save": true,
-					})
-				} else {
-					jsonValues, _ = json.Marshal(map[string]interface{}{
-						"url":  url,
-						"save": true,
-					})
-				}
-			} else { // we don't save the app
-				if path != "" {
-					jsonValues, _ = json.Marshal(map[string]interface{}{
-						"url":  url,
-						"path": path,
-						"save": false,
-					})
-				} else {
-					jsonValues, _ = json.Marshal(map[string]interface{}{
-						"url":  url,
-						"save": false,
-					})
-				}
+			if path != "" {
+				jsonValues, _ = json.Marshal(map[string]interface{}{
+					"url":  url,
+					"path": path,
+					"save": true,
+				})
+			} else {
+				jsonValues, _ = json.Marshal(map[string]interface{}{
+					"url":  url,
+					"save": true,
+				})
 			}
+
 			req, err = utils.NewRequest("POST", appURL+"/"+sourceType, bytes.NewBuffer(jsonValues))
 			if err != nil {
 				return err
@@ -234,6 +220,30 @@ mesheryctl app import -f [file/URL] -s [source-type]
 		}
 
 		utils.Log.Debug("application file converted to pattern file")
+
+		patternFile := response[0].PatternFile
+
+		req, err = utils.NewRequest("POST", appURL, bytes.NewBuffer([]byte(patternFile)))
+		if err != nil {
+			return err
+		}
+
+		res, err := client.Do(req)
+		if err != nil {
+			return err
+		}
+
+		defer res.Body.Close()
+		body, err = io.ReadAll(res.Body)
+		if err != nil {
+			return err
+		}
+
+		if res.StatusCode == 200 {
+			utils.Log.Info("app successfully imported")
+		}
+		utils.Log.Info(string(body))
+		fmt.Println("App file import successful")
 
 		return nil
 	},
