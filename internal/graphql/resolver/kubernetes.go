@@ -12,6 +12,7 @@ import (
 	"github.com/layer5io/meshery/models/pattern/core"
 	meshkitKube "github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/layer5io/meshkit/utils/kubernetes/describe"
+	"github.com/sirupsen/logrus"
 )
 
 func (r *Resolver) getAvailableNamespaces(ctx context.Context, provider models.Provider, k8sClusterIDs []string) ([]*model.NameSpace, error) {
@@ -286,34 +287,33 @@ func (r *Resolver) getKubectlDescribe(ctx context.Context, name string, kind str
 }
 
 func (r *Resolver) subscribeClusterInfo(ctx context.Context, provider models.Provider, k8scontextIDs []string) (<-chan *model.ClusterInfo, error) {
-	if r.clusterInfo == nil {
-		r.clusterInfo = make(chan *model.ClusterInfo)
-	}
+	ch := make(chan struct{}, 1)
+	respChan := make(chan *model.ClusterInfo)
+	logrus.Debug("k8s context: ", k8scontextIDs)
 
+	r.Config.DashboardK8sResourcesChan.SubscribeDashbordK8Resources(ch)
+
+	r.Log.Info("Initializing ClusterInfo subscription.")
 	go func() {
-		r.Log.Info("Initializing ClusterInfo subscription.")
-
-		for _, ctxID := range k8scontextIDs {
-			go func(ctxID string)	 {
-				for {
-					select {
-						case <-r.MeshSyncChannelPerK8sContext[ctxID]:
-							clusterInfo, err := r.getClusterInfo(ctx, provider, k8scontextIDs)
-							if err != nil {
-								r.Log.Error(ErrClusterInfoSubcription(err))
-								break
-							}
-							r.clusterInfo <- clusterInfo
-						case <-ctx.Done():
-							r.Log.Info("ClusterInfo subscription stopped.")
-							return
+		for {
+			select {
+				case <-ch:
+					logrus.Debug("running query")
+					clusterInfo, err := r.getClusterInfo(ctx, provider, k8scontextIDs)
+					logrus.Debug("cluster info: ", clusterInfo)
+					if err != nil {
+						r.Log.Error(ErrClusterInfoSubcription(err))
+						break
 					}
-				}
-			}(ctxID)
+					respChan <- clusterInfo
+				case <-ctx.Done():
+					r.Log.Info("ClusterInfo subscription stopped.")
+					return
+			}
 		}
 	}()
 
-	return r.clusterInfo, nil
+	return respChan, nil
 }
 
 func (r *Resolver) getClusterInfo(ctx context.Context, provider models.Provider, k8scontextIDs []string) (*model.ClusterInfo, error) {
@@ -322,7 +322,7 @@ func (r *Resolver) getClusterInfo(ctx context.Context, provider models.Provider,
 
 	var rows *sql.Rows
 	var err error
-	
+	logrus.Debug("k8scontext(getclusterinfo): ", k8scontextIDs)	
 	k8sCtxs, ok := ctx.Value(models.AllKubeClusterKey).([]models.K8sContext)
 	if !ok || len(k8sCtxs) == 0 {
 		return nil, ErrMesheryClient(nil)
@@ -339,6 +339,7 @@ func (r *Resolver) getClusterInfo(ctx context.Context, provider models.Provider,
 		cids = k8scontextIDs
 	}
 
+	logrus.Debug("cids(getclusterinfo): ", cids)
 	rows, err = provider.GetGenericPersister().Raw(query, cids).Rows()
 
 	if err != nil {
@@ -357,6 +358,8 @@ func (r *Resolver) getClusterInfo(ctx context.Context, provider models.Provider,
 		}
 		resources = append(resources, &resource)
 	}
+
+	logrus.Debug("resources: ", resources)
 
 	return &model.ClusterInfo{
 		Resources: resources,

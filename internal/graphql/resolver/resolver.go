@@ -25,5 +25,4 @@ type Resolver struct {
 	addonChannel        chan []*model.AddonList
 	controlPlaneChannel chan []*model.ControlPlane
 	dataPlaneChannel    chan []*model.DataPlane
-	clusterInfo         chan *model.ClusterInfo
 }

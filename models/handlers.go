@@ -161,7 +161,6 @@ type HandlerConfig struct {
 
 	DashboardK8sResourcesChan *DashboardK8sResourcesChan
 	K8scontextChannel *K8scontextChan
-
 }
 
 // SubmitMetricsConfig is used to store config used for submitting metrics

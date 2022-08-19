@@ -269,6 +269,7 @@ func (r *subscriptionResolver) SubscribeMeshSyncEvents(ctx context.Context, k8sc
 					Object:    event.Object,
 				}
 				resChan <- res
+				go r.Config.DashboardK8sResourcesChan.PublishDashboardK8sResources()
 			}
 		}(ctxID, brokerEventsChan)
 	}
