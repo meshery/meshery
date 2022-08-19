@@ -23,6 +23,7 @@ import fetchAvailableAddons from "./graphql/queries/AddonsStatusQuery";
 import fetchControlPlanes from "./graphql/queries/ControlPlanesQuery";
 import fetchDataPlanes from "./graphql/queries/DataPlanesQuery";
 import getClusterInfoQuery from "./graphql/queries/ClusterInfoQuery";
+import  subscribeClusterInfo from "./graphql/subscriptions/ClusterInfoSubscription"
 import { submitPrometheusConfigure } from "./PrometheusComponent";
 
 const styles = (theme) => ({
@@ -125,7 +126,8 @@ class DashboardComponent extends React.Component {
       // subscriptions disposable
       dataPlaneSubscription : null,
       controlPlaneSubscription : null,
-      clusterInfoSubcription : null
+      clusterInfoSubscription : null,
+      clusterInfoQuery : null
     };
   }
 
@@ -151,8 +153,8 @@ class DashboardComponent extends React.Component {
     if (this.state.controlPlaneSubscription) {
       this.state.controlPlaneSubscription.unsubscribe()
     }
-    if (this.state.clusterInfoSubcription) {
-      this.state.clusterInfoSubcription.unsubscribe()
+    if (this.state.clusterInfoQuery) {
+      this.state.clusterInfoQuery.unsubscribe()
     }
   }
 
@@ -183,20 +185,35 @@ class DashboardComponent extends React.Component {
     }
   }
 
-  initDashboardClusterInfoSubscription = () => {
+  initDashboardClusterInfoQuery = () => {
     const self = this;
     let k8s = self.getK8sClusterIds()
 
     if (self._isMounted) {
       // @ts-ignore
-      const clusterInfoSubcription = getClusterInfoQuery(k8s).subscribe({
+      const clusterInfoQuery = getClusterInfoQuery(k8s).subscribe({
         next : (clusterInfoRes) => {
           this.setState({ clusterInfo : clusterInfoRes?.clusterInfo })
         },
         error : (err) => console.log(err),
       })
 
-      this.setState({ clusterInfoSubcription });
+      this.setState({ clusterInfoQuery });
+    }
+  }
+
+  initDashboardClusterInfoSubscription = () => {
+    const self = this;
+    let k8s = self.getK8sClusterIds()
+
+    if (self._isMounted) {
+      // @ts-ignore
+      const clusterInfoSubscription = subscribeClusterInfo((res) => {
+        this.setState({ clusterInfo : res?.clusterInfo })
+      }, {
+        k8scontextIDs : k8s
+      });
+      this.setState({ clusterInfoSubscription });
     }
   }
 
@@ -215,9 +232,7 @@ class DashboardComponent extends React.Component {
 
     if (this._isMounted) {
       this.initMeshSyncControlPlaneSubscription();
-    }
-
-    if (this._isMounted) {
+      this.initDashboardClusterInfoQuery();
       this.initDashboardClusterInfoSubscription();
     }
   };
@@ -228,10 +243,10 @@ class DashboardComponent extends React.Component {
 
     // deep compare very limited, order of object fields is important
     if (JSON.stringify(prevState.controlPlaneState) !== JSON.stringify(this.state.controlPlaneState)) {
-      updateControlPlane = true
+      updateControlPlane = true;
     }
     if (JSON.stringify(prevState.dataPlaneState) !== JSON.stringify(this.state.dataPlaneState)) {
-      updateDataPlane = true
+      updateDataPlane = true;
     }
 
     if (updateDataPlane || updateControlPlane) {
@@ -244,9 +259,9 @@ class DashboardComponent extends React.Component {
     // handle subscriptions update on switching K8s Contexts
     if (prevProps?.selectedK8sContexts !== this.props?.selectedK8sContexts
       || prevProps.k8sconfig !== this.props.k8sconfig) {
-      this.disposeSubscriptions()
-      this.initMeshSyncControlPlaneSubscription()
-      this.initDashboardClusterInfoSubscription()
+      this.disposeSubscriptions();
+      this.initMeshSyncControlPlaneSubscription();
+      this.initDashboardClusterInfoQuery();
     }
   }
 
