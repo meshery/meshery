@@ -4120,6 +4120,49 @@ paths:
           $ref: '#/responses/applicationFilesResponseWrapper'
       tags:
       - ApplicationsAPI
+
+  /api/application/types:
+    get:
+      description: Returns the list of available types
+      operationId: idGetApplicationFile
+      responses:
+        "200":
+          description: ""
+      summary: Handle GET request for available types for all applications
+      tags:
+      - ApplicationsAPI
+
+  /api/application/{sourcetype}:
+    put:
+      description: Updates the design for given application
+      operationId: idPutApplicationFile
+      responses:
+        "200":
+          description: ""
+      summary: Handle PUT request for available types for all applications
+      tags:
+      - ApplicationsAPI
+    post:
+      description: Creates a new application with source-content
+      operationId: idPostApplicationFile
+      responses:
+        "200":
+          description: ""
+      summary: Handle POST request for available types for all applications
+      tags:
+      - ApplicationsAPI
+
+  /api/application/download/{id}/{sourcetype}:
+    get:
+      description: Retrieves and downloads a single application of specific source-type with source-content
+      operationId: idGetApplicationFile
+      responses:
+        "200":
+          description: ""
+      summary: Retrieves the source-content for all applications
+      tags:
+      - ApplicationsAPI
+
   /api/filter:
     get:
       description: Returns all the Meshery Filters saved by the current user
