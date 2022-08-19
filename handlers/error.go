@@ -104,8 +104,8 @@ const (
 	ErrValidateCode                     = "2248"
 	ErrApplicationContentCode           = "2245"
 	ErrRemoteApplicationURL             = "2249"
-	ErrForkPatternCode                  = "2246"
-	ErrForkFilterCode                   = "2247"
+	ErrClonePatternCode                 = "2246"
+	ErrCloneFilterCode                  = "2247"
 )
 
 var (
@@ -451,10 +451,10 @@ func ErrRemoteApplication(err error) error {
 	return errors.New(ErrRemoteApplicationURL, errors.Alert, []string{"Error failed to persist remote application"}, []string{err.Error()}, []string{}, []string{})
 }
 
-func ErrForkPattern(err error) error {
-	return errors.New(ErrForkPatternCode, errors.Alert, []string{"Error failed to fork pattern"}, []string{err.Error()}, []string{"Failed to fork Pattern with the given ID"}, []string{"Check if the Pattern ID is correct and the pattern is public"})
+func ErrClonePattern(err error) error {
+	return errors.New(ErrClonePatternCode, errors.Alert, []string{"Error failed to clone pattern"}, []string{err.Error()}, []string{"Failed to clone Pattern with the given ID"}, []string{"Check if the Pattern ID is correct and the pattern is public"})
 }
 
-func ErrForkFilter(err error) error {
-	return errors.New(ErrForkFilterCode, errors.Alert, []string{"Error failed to fork filter"}, []string{err.Error()}, []string{"Failed to fork Filter with the given ID"}, []string{"Check if the Filter ID is correct and the Filter is public"})
+func ErrCloneFilter(err error) error {
+	return errors.New(ErrCloneFilterCode, errors.Alert, []string{"Error failed to clone filter"}, []string{err.Error()}, []string{"Failed to clone Filter with the given ID"}, []string{"Check if the Filter ID is correct and the Filter is public"})
 }

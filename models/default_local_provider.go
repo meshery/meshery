@@ -576,9 +576,9 @@ func (l *DefaultLocalProvider) DeleteMesheryPatterns(req *http.Request, patterns
 	return l.MesheryPatternPersister.DeleteMesheryPatterns(patterns)
 }
 
-// ForkMesheryPattern forks a meshery pattern with the given id
+// CloneMesheryPattern clones a meshery pattern with the given id
 // Not supported by local provider
-func (l *DefaultLocalProvider) ForkMesheryPattern(req *http.Request, patternID string) ([]byte, error) {
+func (l *DefaultLocalProvider) CloneMesheryPattern(req *http.Request, patternID string) ([]byte, error) {
 	return []byte("{}"), nil
 }
 
@@ -679,9 +679,9 @@ func (l *DefaultLocalProvider) DeleteMesheryFilter(req *http.Request, filterID s
 	return l.MesheryFilterPersister.DeleteMesheryFilter(id)
 }
 
-// ForkMesheryFilter forks a meshery filter with the given id
+// CloneMesheryFilter clones a meshery filter with the given id
 // Not supported by local provider
-func (l *DefaultLocalProvider) ForkMesheryFilter(req *http.Request, filterID string) ([]byte, error) {
+func (l *DefaultLocalProvider) CloneMesheryFilter(req *http.Request, filterID string) ([]byte, error) {
 	return []byte("{}"), nil
 }
 

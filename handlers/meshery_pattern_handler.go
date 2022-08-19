@@ -322,15 +322,15 @@ func (h *Handler) DeleteMesheryPatternHandler(
 	fmt.Fprint(rw, string(resp))
 }
 
-// swagger:route POST /api/pattern/{id}/fork PatternsAPI idForkMesheryPattern
-// Handle Fork for a Meshery Pattern
+// swagger:route POST /api/pattern/clone/{id} PatternsAPI idCloneMesheryPattern
+// Handle Clone for a Meshery Pattern
 //
 // Creates a local copy of a public pattern with id: id
 // responses:
 // 	200: noContentWrapper
 //
-// ForkMesheryPatternHandler forks a pattern with the given id
-func (h *Handler) ForkMesheryPatternHandler(
+// CloneMesheryPatternHandler clones a pattern with the given id
+func (h *Handler) CloneMesheryPatternHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
 	prefObj *models.Preference,
@@ -339,10 +339,10 @@ func (h *Handler) ForkMesheryPatternHandler(
 ) {
 	patternID := mux.Vars(r)["id"]
 
-	resp, err := provider.ForkMesheryPattern(r, patternID)
+	resp, err := provider.CloneMesheryPattern(r, patternID)
 	if err != nil {
-		h.log.Error(ErrForkPattern(err))
-		http.Error(rw, ErrForkPattern(err).Error(), http.StatusInternalServerError)
+		h.log.Error(ErrClonePattern(err))
+		http.Error(rw, ErrClonePattern(err).Error(), http.StatusInternalServerError)
 		return
 	}
 
