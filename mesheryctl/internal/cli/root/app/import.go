@@ -243,7 +243,33 @@ mesheryctl app import -f [file/URL] -s [source-type]
 			utils.Log.Info("app successfully imported")
 		}
 		utils.Log.Info(string(body))
-		fmt.Println("App file import successful")
+
+		// Fetch ID of imported app manifest
+		var responseApp []*models.MesheryApplication
+		req, err = utils.NewRequest("GET", appURL, nil)
+		if err != nil {
+			return err
+		}
+
+		res, err = client.Do(req)
+		if err != nil {
+			return err
+		}
+		defer res.Body.Close()
+		body, err = io.ReadAll(res.Body)
+		if err != nil {
+			return err
+		}
+		err = json.Unmarshal(body, &responseApp)
+		if err != nil {
+			return err
+		}
+
+		AppID := responseApp[0].ID
+
+		resID := utils.TruncateID(AppID.String())
+
+		fmt.Printf("App file imported successfully. App ID: %s", resID)
 
 		return nil
 	},
