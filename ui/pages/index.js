@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import { Button, Grid, Link, Stack, Typography, Box } from "@mui/material";
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import { AdaptersChipList, AdaptersListContainer } from "@/features/mesheryComponents";
@@ -9,9 +9,13 @@ import { KuberenetesClusterChip, KuberenetesClusterContainer } from "@/features/
 import { GrafanaChip, MetricsContainer, PrometheusChip } from "@/features/mesheryEnvironment/components";
 import SettingsIcon from "@mui/icons-material/Settings";
 import { MetricsButton } from "@/components/Button"
+import showServiceMesh from "@/components/Dashboard/showServiceMesh"
 
 export default function Dashboard() {
   const theme = useTheme();
+  const [meshScan, SetMeshScan] = useState([])
+  const [meshScanNamespaces, SetMeshScanNamespaces]  = useState()
+  const [activeMeshScanNamespace , SetActiveMeshScanNamespace] = useState()
 
   const ConnectionStatus = () => (
     <PaperWithTitle title="Connection Status" titleVariant="h6">
@@ -79,38 +83,66 @@ export default function Dashboard() {
       </Stack>
     </PaperWithTitle>
   );
+
+  useEffect(() => {
+    setMeshScanData
+  });
+
+ function setMeshScanData (controlPlanesData, dataPlanesData) {
+    const namespaces = {};
+    const activeNamespaces = {};
+    const processedControlPlanesData = controlPlanesData?.controlPlanesState?.map((mesh) => {
+      if (!mesh?.members?.length) {
+        return;
+      }
+      let proxies = []
+
+      if (Array.isArray(dataPlanesData?.dataPlanesState)) {
+        const dataplane = dataPlanesData.dataPlanesState.find(mesh_ => mesh_.name === mesh.name)
+
+        if (Array.isArray(dataplane?.proxies)) proxies = dataplane.proxies
+      }
+      const processedMember = mesh?.members?.map((member) => {
+        if (namespaces[mesh.name]) {
+          namespaces[mesh.name].add(member.namespace);
+        } else {
+          namespaces[mesh.name] = new Set([member.namespace]);
+        }
+
+        // retrieve data planes according to mesh name
+        if (proxies.length > 0) {
+          const controlPlaneMemberProxies = proxies.filter(proxy => proxy.controlPlaneMemberName === member.name)
+
+          if (controlPlaneMemberProxies.length > 0) {
+            member = {
+              ...member,
+              data_planes : controlPlaneMemberProxies
+            }
+          }
+        }
+
+        return member
+      });
+      namespaces[mesh.name] = [...namespaces[mesh.name]];
+      activeNamespaces[mesh.name] = namespaces[mesh.name][0] || "";
+
+      return {
+        ...mesh,
+        members : processedMember
+      }
+    });
+
+    SetMeshScan (processedControlPlanesData?.filter(data => !!data).filter((data) => data.members?.length > 0)) 
+    SetMeshScanNamespaces(namespaces)
+    SetActiveMeshScanNamespace(activeNamespaces)
+  };
   
-const ShowServiceMesh = () => {
-  return(
-    <Box
-    sx={{
-      margin: "auto",
-      display : "flex",
-      justifyContent : "center",
-      flexDirection : "column",
-    }}
-  >
-    <Typography sx={{ fontSize : "1.5rem", marginBottom : "2rem" }} align="center" color="textSecondary">
-              No service meshes detected in the cluster.
-              </Typography>
-              <Button
-                aria-label="Add Meshes"
-                variant="contained"
-                color="primary"
-                size="large"
-              >
-                <AddCircleOutlineIcon  />
-              Install Service Mesh
-              </Button>
-              </Box>
-  )
-}
 
   return (
     <Grid container spacing={2}>
       <Grid item xs={6}>
         <PaperWithTitle title="Service Mesh" titleVariant="h6">
-          <ShowServiceMesh />
+          <showServiceMesh meshScan={meshScan} activeMeshScanNamespace={activeMeshScanNamespace} />
         </PaperWithTitle>
       </Grid>
       <Grid item xs={6}>
