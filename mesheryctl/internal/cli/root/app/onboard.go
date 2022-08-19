@@ -356,16 +356,6 @@ func multipleApplicationsConfirmation(profiles []models.MesheryApplication) int 
 	}
 }
 
-func isValidSource(sType string) bool {
-	for _, validType := range validSourceTypes {
-		if validType == sType {
-			return true
-		}
-	}
-
-	return false
-}
-
 func init() {
 	onboardCmd.Flags().StringVarP(&file, "file", "f", "", "Path to app file")
 	onboardCmd.Flags().BoolVarP(&skipSave, "skip-save", "", false, "Skip saving a app")

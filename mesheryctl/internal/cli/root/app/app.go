@@ -17,7 +17,7 @@ var (
 var AppCmd = &cobra.Command{
 	Use:   "app",
 	Short: "Service Mesh Apps Management",
-	Long:  `Manage all apps operations; ;list, view, onboard and offboard`,
+	Long:  `Manage all apps operations; import, list, view, onboard and offboard`,
 	Example: `
 // Base command
 mesheryctl app [subcommand]
@@ -34,6 +34,16 @@ mesheryctl app [subcommand]
 func init() {
 	AppCmd.PersistentFlags().StringVarP(&utils.TokenFlag, "token", "t", "", "Path to token file default from current context")
 
-	availableSubcommands = []*cobra.Command{onboardCmd, viewCmd, offboardCmd, listCmd}
+	availableSubcommands = []*cobra.Command{onboardCmd, viewCmd, offboardCmd, listCmd, importCmd}
 	AppCmd.AddCommand(availableSubcommands...)
+}
+
+func isValidSource(sType string) bool {
+	for _, validType := range validSourceTypes {
+		if validType == sType {
+			return true
+		}
+	}
+
+	return false
 }
