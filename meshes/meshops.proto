@@ -73,6 +73,11 @@ message EventsResponse {
     string summary = 2;
     string details = 3;
     string operation_id = 4;
+    string probable_cause = 5;
+    string suggested_remediation = 6;
+    string error_code = 7;
+    string component = 8;
+    string component_name = 9;
 }
 
 message ProcessOAMRequest {
