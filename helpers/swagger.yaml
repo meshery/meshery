@@ -4134,7 +4134,7 @@ paths:
 
   /api/application/{sourcetype}:
     put:
-      description: Updates the design for given application
+      description: Updates the design for an existing application
       operationId: idPutApplicationFile
       responses:
         "200":
