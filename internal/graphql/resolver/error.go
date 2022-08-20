@@ -28,6 +28,7 @@ const (
 	ErrConfigurationPatternsCode            = "2242"
 	ErrConfigurationApplicationsCode        = "2243"
 	ErrConfigurationFiltersCode             = "2244"
+	ErrK8sContextCode                       = "2245"
 )
 
 var (
@@ -122,4 +123,8 @@ func ErrApplicationsSubscription(err error) error {
 
 func ErrFiltersSubscription(err error) error {
 	return errors.New(ErrConfigurationFiltersCode, errors.Alert, []string{"Configuration Subscription failed", err.Error()}, []string{"GraphQL subscription for Filters stopped"}, []string{"Could be a network issue"}, []string{"Confirm that Meshery Server is reachable from your browser."})
+}
+
+func ErrK8sContextSubscription(err error) error {
+	return errors.New(ErrK8sContextCode, errors.Alert, []string{"Failed to get k8s context from remote provider", err.Error()}, []string{"There might be something wrong with the Meshery or Meshery Cloud"}, []string{"Could be a network issue"}, nil)
 }

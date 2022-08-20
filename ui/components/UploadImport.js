@@ -38,7 +38,7 @@ const styles = makeStyles(() => ({
     minWidth : 500,
     padding : '15px',
     color : '#fff',
-    backgroundColor : '#607d8b'
+    backgroundColor : '#396679'
   },
   content : {
     padding : "1.5rem"

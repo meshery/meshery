@@ -14,7 +14,7 @@ import PropTypes from "prop-types";
 import React from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import dataFetch, { promisifiedDataFetch } from "../lib/data-fetch";
+import dataFetch from "../lib/data-fetch";
 import { updateGrafanaConfig, updateProgress, updatePrometheusConfig } from "../lib/store";
 import { getK8sClusterIdsFromCtxId, getK8sClusterNamesFromCtxId } from "../utils/multi-ctx";
 import { versionMapper } from "../utils/nameMapper";
@@ -81,9 +81,6 @@ const styles = (theme) => ({
     height : "100%",
   },
 });
-async function fetchAllContexts(pageSize) {
-  return await promisifiedDataFetch("/api/system/kubernetes/contexts?pageSize=" + pageSize)
-}
 class DashboardComponent extends React.Component {
   constructor(props) {
     super(props);
@@ -140,6 +137,7 @@ class DashboardComponent extends React.Component {
     }
     st.grafana = grafana;
     st.prometheus = prometheus;
+    st.k8sconfig = props.k8sconfig
     return st;
   }
 
@@ -187,9 +185,6 @@ class DashboardComponent extends React.Component {
   componentDidMount = () => {
     this._isMounted = true
     this.fetchAvailableAdapters();
-    fetchAllContexts(25)
-      .then(res => this.setState({ contexts : res?.contexts || [] }))
-      .catch(this.handleError("failed to fetch contexts for the instance"))
 
     if (this.state.isMetricsConfigured) {
       this.fetchMetricComponents();
@@ -530,10 +525,10 @@ class DashboardComponent extends React.Component {
   handleKubernetesClick = (id) => {
     this.props.updateProgress({ showProgress : true });
     const self = this;
-    const selectedCtx = this.props.k8sconfig?.find((ctx) => ctx.contextID === id);
+    const selectedCtx = this.props.k8sconfig?.find((ctx) => ctx.id === id);
     if (!selectedCtx) return;
 
-    const { configuredServer, contextName } = selectedCtx;
+    const { server, name } = selectedCtx;
     dataFetch(
       "/api/system/kubernetes/ping?context=" + id,
       {
@@ -543,7 +538,7 @@ class DashboardComponent extends React.Component {
       (result) => {
         this.props.updateProgress({ showProgress : false });
         if (typeof result !== "undefined") {
-          this.props.enqueueSnackbar(`${contextName} is connected at ${configuredServer}`, {
+          this.props.enqueueSnackbar(`${name} is connected at ${server}`, {
             variant : "success",
             autoHideDuration : 2000,
             action : (key) => (
@@ -752,21 +747,20 @@ class DashboardComponent extends React.Component {
   }
 
   configureTemplate = () => {
-    const { classes } = this.props;
+    const { classes, k8sconfig } = this.props;
     const {
       meshAdapters,
       grafanaUrl,
       prometheusUrl,
       availableAdapters,
       grafana,
-      contexts,
       prometheus,
     } = this.state;
     const self = this;
     let showConfigured = "Not connected to Kubernetes.";
     let chp = (
       <div>
-        {contexts?.map(ctx => (
+        {k8sconfig?.map(ctx => (
           <Tooltip title={`Server: ${ctx.server}`}>
             <Chip
               label={ctx?.name}
@@ -781,7 +775,7 @@ class DashboardComponent extends React.Component {
       </div>
     );
 
-    if (!contexts?.length) {
+    if (!k8sconfig?.length) {
       chp = showConfigured;
     }
 
