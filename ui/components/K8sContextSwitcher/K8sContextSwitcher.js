@@ -1,26 +1,17 @@
-import React, { useEffect } from "react";
-import { useSnackbar } from "notistack";
+import React, { useState, useEffect } from "react";
 import Search from "@mui/icons-material/Search";
 import AddIcon from '@mui/icons-material/Add';
-import Paper from '@mui/material/Paper';
-import Slide from '@mui/material/Slide';
-import Button from '@mui/material/Button';
+import {Paper, Slide, Button, IconButton, Link, TextField, Checkbox, Avatar} from '@mui/material';
 import ClickAwayListener from '@mui/base/ClickAwayListener';
-import IconButton from '@mui/material/IconButton';
-import Link from '@mui/material/Link';
-import TextField from '@mui/material/TextField';
-
-
-import { useStyles } from "./K8sContextSwitcher.styles";
+import BadgeAvatars from "@/components/CustomAvatar"
 
 export default function K8sContextMenu({
-  contexts={} }) {
+  contexts={},  setActiveContexts = () => { },
+  searchContexts = () => { }, runningStatus, }) {
 
-  const classes = useStyles();
-  const [anchorEl, setAnchorEl] = React.useState(false);
-  const [showFullContextMenu, setShowFullContextMenu] = React.useState(false);
-  const [transformProperty, setTransformProperty] = React.useState(100);
-  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+  const [anchorEl, setAnchorEl] = useState(false);
+  const [showFullContextMenu, setShowFullContextMenu] = useState(false);
+  const [transformProperty, setTransformProperty] = useState(100);
 
   const styleSlider = {
     backgroundColor : "#EEEEEE",
@@ -59,56 +50,16 @@ export default function K8sContextMenu({
 
     return context.OperatorControllerStatus.status?.includes("ENABLED");
   };
-
-  const handleKubernetesClick = (id) => {
-    showProgress();
-
-    pingKubernetes(
-      successHandlerGenerator(
-        enqueueSnackbar,
-        closeButtonForSnackbarAction(closeSnackbar),
-        "Kubernetes succesfully pinged",
-        successCallback
-      ),
-      errorHandlerGenerator(
-        enqueueSnackbar,
-        closeButtonForSnackbarAction(closeSnackbar),
-        "Kubernetes not pinged successfully",
-        () => hideProgress()
-      ),
-      id
-    );
-  };
-
-  const handleKubernetesDelete = (name, ctxId) => () => {
-    if (confirm(`Are you sure you want to delete "${name}" cluster from Meshery?`)) {
-      const successCallback = async () => {
-        showProgress();
-        const updatedConfig = await loadActiveK8sContexts();
-        if (Array.isArray(updatedConfig)) {
-          updateK8SConfig({ k8sConfig: updatedConfig });
-        }
-      };
-      deleteKubernetesConfig(
-        successHandlerGenerator(
-          enqueueSnackbar,
-          closeButtonForSnackbarAction(closeSnackbar),
-          "Kubernetes config successfully removed",
-          successCallback
-        ),
-        errorHandlerGenerator(
-          enqueueSnackbar,
-          closeButtonForSnackbarAction(closeSnackbar),
-          "Not able to remove config"
-        ),
-        ctxId
-      );
-    }
-  };
+  
+  let open = Boolean(anchorEl);
+  if (showFullContextMenu) {
+    open = showFullContextMenu;
+  }
 
   useEffect(() => {
     setTransformProperty((prev) => prev + (contexts.total_count ? contexts.total_count * 3.125 : 0));
   }, []);
+
   return (
     <>
       <IconButton
@@ -130,7 +81,7 @@ export default function K8sContextMenu({
         aria-haspopup="true"
         style={{ marginRight: "0.5rem" }}
       >
-        <div className={classes.cbadgeContainer}>
+        <div>
           <img
             className="k8s-image"
             src="/static/img/kubernetes.svg"
@@ -138,25 +89,19 @@ export default function K8sContextMenu({
             height="24px"
             style={{ zIndex: "2" }}
           />
-          <div className={classes.cbadge}>{contexts?.total_count || 0}</div>
+          <div>{contexts?.total_count || 0}</div>
         </div>
       </IconButton>
 
-      <Slide direction="down" style={styleSlider} timeout={400} in={showFullContextMenu} mountOnEnter unmountOnExit>
+      <Slide direction="down" style={styleSlider} timeout={400} in={open} mountOnEnter unmountOnExit>
         <div>
           <ClickAwayListener
             onClickAway={(e) => {
-              if (
-                !e.target.className?.includes("cbadge") &&
-                e.target?.className != "k8s-image" &&
-                !e.target.className.includes("k8s-icon-button")
-              ) {
                 setAnchorEl(false);
                 setShowFullContextMenu(false);
-              }
             }}
           >
-            <Paper className={classes.cMenuContainer}>
+            <Paper >
               <div>
                 <TextField
                   id="search-ctx"
@@ -166,7 +111,7 @@ export default function K8sContextMenu({
                   onChange={(ev) => searchContexts(ev.target.value)}
                   style={{ width: "100%", backgroundColor: "rgba(102, 102, 102, 0.12)", margin: "1px 0px" }}
                   InputProps={{
-                    endAdornment: <Search className={classes.searchIcon} />,
+                    endAdornment: <Search />,
                   }}
                 />
               </div>
@@ -189,7 +134,7 @@ export default function K8sContextMenu({
                       size="large"
                       style={{ margin: "0.5rem 0.5rem", whiteSpace: "nowrap" }}
                     >
-                      <AddIcon className={classes.AddIcon} />
+                      <AddIcon/>
                       Connect Clusters
                     </Button>
                   </Link>
@@ -207,7 +152,7 @@ export default function K8sContextMenu({
                   }
 
                   return (
-                    <div id={ctx.id} className={classes.chip}>
+                    <div id={ctx.id}>
                       <Tooltip
                         title={`Server: ${ctx.server}, Meshsync: ${getStatus(meshStatus)}, Operator: ${getStatus(
                           operStatus
@@ -221,27 +166,22 @@ export default function K8sContextMenu({
                           />
                           <Chip
                             label={ctx?.name}
-                            onDelete={handleKubernetesDelete(ctx.name, ctx.id)}
-                            onClick={() => handleKubernetesClick(ctx.id)}
                             avatar={
                               meshStatus ? (
                                 <BadgeAvatars>
                                   <Avatar
                                     src="/static/img/kubernetes.svg"
-                                    className={classes.icon}
                                     style={operStatus ? {} : { opacity: 0.2 }}
                                   />
                                 </BadgeAvatars>
                               ) : (
                                 <Avatar
                                   src="/static/img/kubernetes.svg"
-                                  className={classes.icon}
                                   style={operStatus ? { margin: 8 } : { opacity: 0.2, margin: 8 }}
                                 />
                               )
                             }
                             variant="filled"
-                            className={classes.Chip}
                             data-cy="chipContextName"
                           />
                         </div>
