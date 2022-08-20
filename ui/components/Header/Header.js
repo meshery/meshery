@@ -1,23 +1,79 @@
 /* eslint-disable react/prop-types */
 import React from "react";
 import SettingsIcon from "@mui/icons-material/Settings";
-import { AppBar, Grid, Hidden, IconButton, Toolbar, Typography } from "@mui/material";
+import { AppBar, Grid, Hidden, IconButton, Toolbar, Typography, useTheme } from "@mui/material";
+import { styled } from "@mui/material/styles";
 import Link from "next/link";
+import MesheryNotification from "@/components/Notification/MesheryNotification"
 import MenuIcon from "@mui/icons-material/Menu";
-import { useStyles } from "./Header.styles";
 import K8sContextMenu from "../K8sContextSwitcher/K8sContextSwitcher";
+import User from "../User";
 
-const HeaderComponent = ({ drawerOpen, onDrawerToggle, pageTitle, contexts={}}) => {
-  const classes = useStyles();
+const UserSpan = styled(({ children, ...props }) => <span {...props}>{children}</span>)(({ theme }) => ({
+  marginLeft: theme.spacing(1),
+}));
 
+const UserGrid = styled(Grid)(() => ({
+  paddingLeft: 1,
+  display: "flex",
+  alignItems: "center",
+}));
+
+const HeaderIcon = styled(({ icon, isActive = false, children, ...props }) => {
+  const Component = icon;
   return (
-    <AppBar
+    <Component
+      sx={{
+        color: isActive ? "#00B39F" : "inherit",
+      }}
+      {...props}
+    >
+      {children}
+    </Component>
+  );
+})(() => ({
+  fontSize: "1.5rem",
+  height: "1.5rem",
+  width: "1.5rem",
+}));
+
+const PageTitleWrapperGrid = styled(Grid)(() => ({ flexGrow: 1, marginRight: "auto" }));
+
+const PageTitle = styled(Typography)(({ theme }) => ({
+  paddingLeft: theme.spacing(2),
+  fontSize: "1.25rem",
+  [theme.breakpoints.up("sm")]: { fontSize: "1.65rem" },
+}));
+
+const HeaderComponent = ({ drawerOpen, onDrawerToggle, pageTitle }) => {
+  const theme = useTheme();
+  return (
+       <AppBar
       color="primary"
       position="sticky"
       elevation={0}
-      className={drawerOpen ? classes.appBarOnDrawerClosed : classes.appBarOnDrawerOpen}
+      sx={{
+        padding: theme.spacing(1.4),
+        backgroundColor: "#396679",
+        zIndex: theme.zIndex.drawer + 1,
+        [theme.breakpoints.up(635)]: drawerOpen ? { padding: theme.spacing(0.75, 1.4) } : undefined,
+        [theme.breakpoints.between(600, 634.99)]: drawerOpen ? { padding: theme.spacing(0.4, 1.4) } : undefined,
+      }}
     >
-      <Toolbar className={drawerOpen ? classes.toolbarOnDrawerClosed : classes.toolbarOnDrawerOpen}>
+      <Toolbar
+        sx={{
+          minHeight: drawerOpen ? "58px" : "59px",
+          paddingLeft: drawerOpen ? "20px" : "24px",
+          paddingRight: drawerOpen ? "20px" : "24px",
+          [theme.breakpoints.up(620)]: drawerOpen
+            ? {
+                minHeight: "68px",
+                paddingLeft: "20px",
+                paddingRight: "20px",
+              }
+            : undefined,
+        }}
+      >
         <Grid container alignItems="center">
           <Hidden smUp>
             <Grid item>
@@ -25,54 +81,47 @@ const HeaderComponent = ({ drawerOpen, onDrawerToggle, pageTitle, contexts={}}) 
                 color="inherit"
                 aria-label="Open drawer"
                 onClick={onDrawerToggle}
-                className={classes.menuButton}
+                sx={{ marginLeft: `-${theme.spacing(3)}` }}
                 size="large"
               >
-                <MenuIcon className={classes.headerIcons} />
+                <HeaderIcon icon={MenuIcon} />
               </IconButton>
             </Grid>
           </Hidden>
-          <Grid item xs container alignItems="center" className={classes.pageTitleWrapper}>
-            <Typography color="inherit" variant="h5" className={classes.pageTitle}>
+          <PageTitleWrapperGrid item xs container alignItems="center">
+            <PageTitle color="inherit" variant="h5">
               {pageTitle}
-            </Typography>
-          </Grid>
+            </PageTitle>
+          </PageTitleWrapperGrid>
 
-          {/* <Grid item className={classes.notifications}>
-                <MesheryNotification />
-              </Grid> */}
-          <Grid item className={classes.userContainer}>
-            <K8sContextMenu contexts={contexts}/>
-            <IconButton color="inherit" size="large">
+          <UserGrid item>
+            <IconButton color="inherit" size="lage">
               <Link href="/system/connections">
-                <img
+                <HeaderIcon
+                  icon={(props) => <img {...props}></img>}
                   src={
                     pageTitle === "Connection Wizard"
                       ? "/static/img/connection_wizard/connection-wizard-green.svg"
                       : "/static/img/connection_wizard/connection-wizard-white.svg"
                   }
-                  className={
-                    classes.headerIcons + " " + (pageTitle === "Connection Wizard" ? classes.itemActiveItem : "")
-                  }
                 />
               </Link>
             </IconButton>
+            
+            <K8sContextMenu contexts={contexts}/>
 
             <IconButton color="inherit" size="large">
               <Link href="/settings">
-                <SettingsIcon
-                  className={classes.headerIcons + " " + (pageTitle === "Settings" ? classes.itemActiveItem : "")}
-                />
+                <HeaderIcon isActive={pageTitle === "Settings"} icon={SettingsIcon} />
               </Link>
             </IconButton>
-
-            {/* <div data-test="notification-button">
-              <MesheryNotification />
-            </div> */}
-            {/* <span className={classes.userSpan}>
-              <User color="inherit" iconButtonClassName={classes.iconButtonAvatar} avatarClassName={classes.avatar} />
-            </span> */}
+            <Grid item>
+          <MesheryNotification />
           </Grid>
+            <UserSpan>
+              <User color="inherit" />
+            </UserSpan>
+          </UserGrid>
         </Grid>
       </Toolbar>
     </AppBar>
