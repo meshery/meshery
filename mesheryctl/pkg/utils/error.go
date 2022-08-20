@@ -31,6 +31,12 @@ func SystemError(msg string) string {
 	return formatError(msg, cmdSystem)
 }
 
+// AppError returns a formatted error message with a link to 'app' command usage page
+// in addition to the error message
+func AppError(msg string) string {
+	return formatError(msg, cmdApp)
+}
+
 // MeshError returns a formatted error message with a link to 'mesh' command usage page in addition to the error message
 //func MeshError(msg string) string {
 //	return formatError(msg, cmdMesh)
@@ -45,6 +51,8 @@ func formatError(msg string, cmd cmdType) string {
 		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, perfUsageURL)
 	case cmdMesh:
 		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, meshUsageURL)
+	case cmdApp:
+		return fmt.Sprintf("%s \nSee %s for usage details\n", msg, appUsageURL)
 	case cmdSystem:
 		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, systemUsageURL)
 	}

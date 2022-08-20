@@ -50,6 +50,7 @@ const (
 	perfUsageURL   = docsBaseURL + "reference/mesheryctl/perf"
 	systemUsageURL = docsBaseURL + "reference/mesheryctl/system"
 	meshUsageURL   = docsBaseURL + "reference/mesheryctl/mesh"
+	appUsageURL	   = docsBaseURL + "reference/mesheryctl/app"
 
 	// Meshery Server Location
 	EndpointProtocol = "http"
@@ -62,6 +63,7 @@ const (
 	cmdPerf   cmdType = "perf"
 	cmdMesh   cmdType = "mesh"
 	cmdSystem cmdType = "system"
+	cmdApp    cmdType = "app"
 )
 
 const (
