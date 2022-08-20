@@ -45,7 +45,7 @@ const PageTitle = styled(Typography)(({ theme }) => ({
   [theme.breakpoints.up("sm")]: { fontSize: "1.65rem" },
 }));
 
-const HeaderComponent = ({ drawerOpen, onDrawerToggle, pageTitle }) => {
+const HeaderComponent = ({ drawerOpen, onDrawerToggle, pageTitle, contexts={} }) => {
   const theme = useTheme();
   return (
        <AppBar
