@@ -1355,6 +1355,49 @@ func (l *RemoteProvider) GetMesheryPatterns(tokenString string, page, pageSize, 
 	return nil, fmt.Errorf("error while fetching patterns - Status code: %d, Body: %s", resp.StatusCode, bdr)
 }
 
+// GetCatalogMesheryPatterns gives the catalog patterns stored with the provider
+func (l *RemoteProvider) GetCatalogMesheryPatterns(tokenString string, search, order string) ([]byte, error) {
+	if !l.Capabilities.IsSupported(MesheryPatternsCatalog) {
+		logrus.Error("operation not available")
+		return []byte{}, ErrInvalidCapability("MesheryPatternsCatalog", l.ProviderName)
+	}
+
+	ep, _ := l.Capabilities.GetEndpointForFeature(MesheryPatternsCatalog)
+
+	logrus.Infof("attempting to fetch catalog patterns from cloud")
+
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
+	q := remoteProviderURL.Query()
+	if search != "" {
+		q.Set("search", search)
+	}
+	if order != "" {
+		q.Set("order", order)
+	}
+	remoteProviderURL.RawQuery = q.Encode()
+	logrus.Debugf("constructed catalog patterns url: %s", remoteProviderURL.String())
+	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
+
+	resp, err := l.DoRequest(cReq, tokenString)
+	if err != nil {
+		return nil, ErrFetch(err, "Pattern Page - Catalog", resp.StatusCode)
+	}
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+	bdr, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, ErrDataRead(err, "Pattern Page - Catalog")
+	}
+
+	if resp.StatusCode == http.StatusOK {
+		logrus.Infof("catalog patterns successfully retrieved from remote provider")
+		return bdr, nil
+	}
+	logrus.Errorf("error while fetching catalog patterns: %s", bdr)
+	return nil, ErrFetch(fmt.Errorf("error while fetching catalog patterns: %s", bdr), "Patterns page - Catalog", resp.StatusCode)
+}
+
 // GetMesheryPattern gets pattern for the given patternID
 func (l *RemoteProvider) GetMesheryPattern(req *http.Request, patternID string) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistMesheryPatterns) {
@@ -1683,6 +1726,49 @@ func (l *RemoteProvider) GetMesheryFilters(tokenString string, page, pageSize, s
 	}
 	logrus.Errorf("error while fetching filters: %s", bdr)
 	return nil, ErrFetch(fmt.Errorf("error while fetching filters: %s", bdr), "Filters page", resp.StatusCode)
+}
+
+// GetCatalogMesheryFilters gives the catalog filters stored with the provider
+func (l *RemoteProvider) GetCatalogMesheryFilters(tokenString string, search, order string) ([]byte, error) {
+	if !l.Capabilities.IsSupported(MesheryFiltersCatalog) {
+		logrus.Error("operation not available")
+		return []byte{}, ErrInvalidCapability("MesheryFiltersCatalog", l.ProviderName)
+	}
+
+	ep, _ := l.Capabilities.GetEndpointForFeature(MesheryFiltersCatalog)
+
+	logrus.Infof("attempting to fetch catalog filters from cloud")
+
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
+	q := remoteProviderURL.Query()
+	if search != "" {
+		q.Set("search", search)
+	}
+	if order != "" {
+		q.Set("order", order)
+	}
+	remoteProviderURL.RawQuery = q.Encode()
+	logrus.Debugf("constructed catalog filters url: %s", remoteProviderURL.String())
+	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
+
+	resp, err := l.DoRequest(cReq, tokenString)
+	if err != nil {
+		return nil, ErrFetch(err, "Filter Page - Catalog", resp.StatusCode)
+	}
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+	bdr, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, ErrDataRead(err, "Filter Page - Catalog")
+	}
+
+	if resp.StatusCode == http.StatusOK {
+		logrus.Infof("catalog filters successfully retrieved from remote provider")
+		return bdr, nil
+	}
+	logrus.Errorf("error while fetching catalog filters: %s", bdr)
+	return nil, ErrFetch(fmt.Errorf("error while fetching catalog filters: %s", bdr), "Filters page - Catalog", resp.StatusCode)
 }
 
 // GetMesheryFilterFile gets filter for the given filterID without the metadata

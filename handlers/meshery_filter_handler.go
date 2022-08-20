@@ -187,6 +187,34 @@ func (h *Handler) GetMesheryFiltersHandler(
 	fmt.Fprint(rw, string(resp))
 }
 
+// swagger:route POST /api/filter/catalog FiltersAPI idGetCatalogMesheryFiltersHandler
+// Handle GET request for catalog filters
+//
+// Used to get catalog filters
+// responses:
+// 	200: mesheryFilterResponseWrapper
+//
+func (h *Handler) GetCatalogMesheryFiltersHandler(
+	rw http.ResponseWriter,
+	r *http.Request,
+	prefObj *models.Preference,
+	user *models.User,
+	provider models.Provider,
+) {
+	q := r.URL.Query()
+	tokenString := r.Context().Value(models.TokenCtxKey).(string)
+
+	resp, err := provider.GetCatalogMesheryFilters(tokenString, q.Get("search"), q.Get("order"))
+	if err != nil {
+		h.log.Error(ErrFetchFilter(err))
+		http.Error(rw, ErrFetchFilter(err).Error(), http.StatusInternalServerError)
+		return
+	}
+
+	rw.Header().Set("Content-Type", "application/json")
+	fmt.Fprint(rw, string(resp))
+}
+
 // swagger:route DELETE /api/filter/{id} FiltersAPI idDeleteMesheryFilter
 // Handle Delete for a Meshery Filter
 //

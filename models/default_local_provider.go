@@ -559,6 +559,12 @@ func (l *DefaultLocalProvider) GetMesheryPatterns(tokenString, page, pageSize, s
 	return l.MesheryPatternPersister.GetMesheryPatterns(search, order, pg, pgs)
 }
 
+// GetCatalogMesheryPatterns gives the catalog patterns stored with the provider
+// Not supported by local provider
+func (l *DefaultLocalProvider) GetCatalogMesheryPatterns(tokenString string, search, order string) ([]byte, error) {
+	return []byte("{}"), nil
+}
+
 // GetMesheryPattern gets pattern for the given patternID
 func (l *DefaultLocalProvider) GetMesheryPattern(req *http.Request, patternID string) ([]byte, error) {
 	id := uuid.FromStringOrNil(patternID)
@@ -659,6 +665,12 @@ func (l *DefaultLocalProvider) GetMesheryFilters(tokenString, page, pageSize, se
 	}
 
 	return l.MesheryFilterPersister.GetMesheryFilters(search, order, pg, pgs)
+}
+
+// GetCatalogMesheryFilters gives the catalog filters stored with the provider
+// Not supported by local provider
+func (l *DefaultLocalProvider) GetCatalogMesheryFilters(tokenString string, search, order string) ([]byte, error) {
+	return []byte("{}"), nil
 }
 
 // GetMesheryFilterFile gets filter for the given filterID without the metadata
