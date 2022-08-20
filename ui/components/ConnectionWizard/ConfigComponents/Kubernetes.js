@@ -1,4 +1,4 @@
-/* eslint-disable no-unused-vars */
+/* eslint-disable no-unused-vars, no-undef  */
 import {
   FormGroup,
   TextField,
@@ -29,14 +29,12 @@ const KubernetesConfig = ({
 
   const handleChange = (name) => {
     return (event) => {
+      let fileInput = document.querySelector("#k8sfile");
+      let k8sfile = fileInput.files[0]
       if (name === "k8sfile") {
         if (event.target.value !== "") {
           setState({ ...state, k8sfileError : false });
         }
-
-        let fileInput = document.querySelector("#k8sfile");
-        let k8sfile = fileInput.files[0]
-
         fetchContexts(updateProgress, k8sfile )
           .then(res => {
             setState({

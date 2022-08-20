@@ -261,7 +261,7 @@ mesheryctl system context view --all
 
 ! Refer below image link for usage
 * Usage of mesheryctl context view
-# ![context-view-usage](../../../../docs/assets/img/mesheryctl/context-view.png)
+# ![context-view-usage](/assets/img/mesheryctl/context-view.png)
 	`,
 
 	SilenceUsage: true,

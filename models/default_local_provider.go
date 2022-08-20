@@ -5,6 +5,7 @@ import (
 	"bytes"
 	"compress/gzip"
 	"database/sql"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -155,7 +156,7 @@ func (l *DefaultLocalProvider) SaveK8sContext(token string, k8sContext K8sContex
 	return l.MesheryK8sContextPersister.SaveMesheryK8sContext(k8sContext)
 }
 
-func (l *DefaultLocalProvider) GetK8sContexts(token, page, pageSize, search, order string) (MesheryK8sContextPage, error) {
+func (l *DefaultLocalProvider) GetK8sContexts(token, page, pageSize, search, order string) ([]byte, error) {
 	if page == "" {
 		page = "0"
 	}
@@ -165,12 +166,12 @@ func (l *DefaultLocalProvider) GetK8sContexts(token, page, pageSize, search, ord
 
 	pg, err := strconv.ParseUint(page, 10, 32)
 	if err != nil {
-		return MesheryK8sContextPage{}, ErrPageNumber(err)
+		return nil, ErrPageNumber(err)
 	}
 
 	pgs, err := strconv.ParseUint(pageSize, 10, 32)
 	if err != nil {
-		return MesheryK8sContextPage{}, ErrPageSize(err)
+		return nil, ErrPageSize(err)
 	}
 
 	return l.MesheryK8sContextPersister.GetMesheryK8sContexts(search, order, pg, pgs)
@@ -195,9 +196,15 @@ func (l *DefaultLocalProvider) LoadAllK8sContext(token string) ([]*K8sContext, e
 			return results, err
 		}
 
-		results = append(results, res.Contexts...)
+		var k8scontext MesheryK8sContextPage
+		err = json.Unmarshal(res, &k8scontext)
+		if err != nil {
+			obj := "k8s context"
+			return nil, ErrUnmarshal(err, obj)
+		}
+		results = append(results, k8scontext.Contexts...)
 
-		if page*pageSize >= res.TotalCount {
+		if page*pageSize >= k8scontext.TotalCount {
 			break
 		}
 
@@ -1186,7 +1193,7 @@ func genericHTTPFilterFile(fileURL string) ([]MesheryFilter, error) {
 }
 
 // getSeededComponents reads the directory recursively looking for seed content
-//Note- This function does not throw meshkit errors because the only method that calls it,"SeedContent" wraps the errors in meshkit errors.
+// Note- This function does not throw meshkit errors because the only method that calls it,"SeedContent" wraps the errors in meshkit errors.
 // If this function is reused somewhere else, make sure to wrap its errors in appropriate meshkit errors, otherwise it can cause can a panic.
 func getSeededComponents(comp string, log logger.Handler) ([]string, []string, error) {
 	wd := utils.GetHome()
@@ -1254,7 +1261,11 @@ func downloadContent(comp string, downloadpath string, log logger.Handler) error
 				return err
 			}
 			defer file.Close()
-			fmt.Fprintf(file, "%s", gca.Content)
+			content, err := base64.StdEncoding.DecodeString(gca.Content)
+			if err != nil {
+				return err
+			}
+			fmt.Fprintf(file, "%s", content)
 			return nil
 		}).Walk()
 	case "Filter":
@@ -1301,7 +1312,7 @@ func downloadApplicationsFromURL(downloadpath string, appname string, url string
 	return nil
 }
 
-//takes a slice of URL's which each returns a YAML body on get request. Then combines all the yamls into one yaml
+// DownloadYAMLSintoSingleFile takes a slice of URL's which each returns a YAML body on get request. Then combines all the yamls into one yaml
 func downloadYAMLSintoSingleFile(f io.Writer, URLs []string) error {
 	for _, url := range URLs {
 		res, err := http.Get(url)

@@ -41,7 +41,7 @@ mesheryctl mesh validate --adapter [name of the adapter] --tokenPath [path to to
 
 ! Refer below image link for usage
 * Usage of mesheryctl mesh validate
-# ![mesh-validate-usage](../../../../docs/assets/img/mesheryctl/mesh-validate.png)
+# ![mesh-validate-usage](/assets/img/mesheryctl/mesh-validate.png)
 	`,
 	Long: `Validate service mesh conformance to different standard specifications`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {

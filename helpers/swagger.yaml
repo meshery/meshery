@@ -1201,11 +1201,6 @@ definitions:
   MesheryApplication:
     description: MesheryApplication represents the applications that needs to be saved
     properties:
-      SourceContent:
-        items:
-          format: uint8
-          type: integer
-        type: array
       application_file:
         type: string
         x-go-name: ApplicationFile
@@ -1220,6 +1215,12 @@ definitions:
       name:
         type: string
         x-go-name: Name
+      source_content:
+        items:
+          format: uint8
+          type: integer
+        type: array
+        x-go-name: SourceContent
       type:
         $ref: '#/definitions/NullString'
       updated_at:
@@ -4119,6 +4120,49 @@ paths:
           $ref: '#/responses/applicationFilesResponseWrapper'
       tags:
       - ApplicationsAPI
+
+  /api/application/types:
+    get:
+      description: Returns the list of available types
+      operationId: idGetApplicationFile
+      responses:
+        "200":
+          description: ""
+      summary: Handle GET request for available types for all applications
+      tags:
+      - ApplicationsAPI
+
+  /api/application/{sourcetype}:
+    put:
+      description: Updates the design for an existing application
+      operationId: idPutApplicationFile
+      responses:
+        "200":
+          description: ""
+      summary: Handle PUT request for available types for all applications
+      tags:
+      - ApplicationsAPI
+    post:
+      description: Creates a new application with source-content
+      operationId: idPostApplicationFile
+      responses:
+        "200":
+          description: ""
+      summary: Handle POST request for available types for all applications
+      tags:
+      - ApplicationsAPI
+
+  /api/application/download/{id}/{sourcetype}:
+    get:
+      description: Retrieves and downloads a single application of specific source-type with source-content
+      operationId: idGetApplicationFile
+      responses:
+        "200":
+          description: ""
+      summary: Retrieves the source-content for all applications
+      tags:
+      - ApplicationsAPI
+
   /api/filter:
     get:
       description: Returns all the Meshery Filters saved by the current user

@@ -1,3 +1,4 @@
+import React from "react";
 import DashboardComponent from "../components/DashboardComponent";
 import { NoSsr } from "@material-ui/core";
 import { updatepagepath } from "../lib/store";

@@ -119,7 +119,6 @@ class ProviderComponent extends React.Component {
     dataFetch(
       "/api/providers",
       {
-        credentials: "same-origin",
         method: "GET",
         credentials: "include",
       },

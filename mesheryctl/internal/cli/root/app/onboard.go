@@ -42,7 +42,7 @@ mesheryctl app onboard -f ./application.yml -s "Kubernetes Manifest"
 
 ! Refer below image link for usage
 * Usage of mesheryctl app onboard
-# ![app-onboard-usage](../../../../docs/assets/img/mesheryctl/app-onboard.png)
+# ![app-onboard-usage](/assets/img/mesheryctl/app-onboard.png)
 	`,
 	Args: func(_ *cobra.Command, _ []string) error {
 		const errMsg = `Usage: mesheryctl app onboard -f [filepath] -s [source type]

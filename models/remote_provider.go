@@ -419,21 +419,27 @@ func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext) (K8
 	}()
 
 	if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusCreated {
-		var kc K8sContext
-		if err := json.NewDecoder(resp.Body).Decode(&kc); err != nil {
+		var kcr K8sContextPersistResponse
+		if err := json.NewDecoder(resp.Body).Decode(&kcr); err != nil {
 			return k8sContext, ErrUnmarshal(err, "kubernetes context")
 		}
 
 		// Sensitive data. Commenting until better debug controls are put into place. - @leecalcote
 		// logrus.Infof("kubernetes context successfully sent to remote provider: %+v", kc)
-		return kc, nil
+
+		// If the context already existed, return that as error
+		if !kcr.Inserted {
+			return kcr.K8sContext, ErrContextAlreadyPersisted
+		}
+
+		return kcr.K8sContext, nil
 	}
 	return k8sContext, ErrPost(fmt.Errorf("failed to save kubernetes context"), fmt.Sprint(resp.Body), resp.StatusCode)
 }
-func (l *RemoteProvider) GetK8sContexts(token, page, pageSize, search, order string) (MesheryK8sContextPage, error) {
+func (l *RemoteProvider) GetK8sContexts(token, page, pageSize, search, order string) ([]byte, error) {
 	MesheryInstanceID, ok := viper.Get("INSTANCE_ID").(*uuid.UUID)
 	if !ok {
-		return MesheryK8sContextPage{}, ErrMesheryInstanceID
+		return nil, ErrMesheryInstanceID
 	}
 	mi := MesheryInstanceID.String()
 	logrus.Infof("attempting to fetch kubernetes contexts from cloud for Meshery instance: %s", mi)
@@ -457,7 +463,7 @@ func (l *RemoteProvider) GetK8sContexts(token, page, pageSize, search, order str
 	resp, err := l.DoRequest(cReq, token)
 	if err != nil {
 		logrus.Errorf("unable to get kubernetes contexts: %v", err)
-		return MesheryK8sContextPage{}, err
+		return nil, err
 	}
 	defer func() {
 		_ = resp.Body.Close()
@@ -465,21 +471,15 @@ func (l *RemoteProvider) GetK8sContexts(token, page, pageSize, search, order str
 	bdr, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		logrus.Errorf("unable to read response body: %v", err)
-		return MesheryK8sContextPage{}, err
+		return nil, err
 	}
 
 	if resp.StatusCode == http.StatusOK {
-		var kp MesheryK8sContextPage
 		logrus.Infof("kubernetes contexts successfully retrieved from remote provider")
-
-		if err := json.Unmarshal(bdr, &kp); err != nil {
-			return kp, ErrMarshal(err, "kubernetes context")
-		}
-
-		return kp, nil
+		return bdr, nil
 	}
 	logrus.Errorf("error while fetching kubernetes contexts: %s", bdr)
-	return MesheryK8sContextPage{}, fmt.Errorf("error while fetching kubernetes contexts - Status code: %d, Body: %s", resp.StatusCode, bdr)
+	return nil, fmt.Errorf("error while fetching kubernetes contexts - Status code: %d, Body: %s", resp.StatusCode, bdr)
 }
 
 func (l *RemoteProvider) LoadAllK8sContext(token string) ([]*K8sContext, error) {
@@ -492,10 +492,14 @@ func (l *RemoteProvider) LoadAllK8sContext(token string) ([]*K8sContext, error) 
 		if err != nil {
 			return results, err
 		}
+		var k8scontext MesheryK8sContextPage
+		err = json.Unmarshal(res, &k8scontext)
+		if err != nil {
+			return results, ErrMarshal(err, "kubernetes context")
+		}
+		results = append(results, k8scontext.Contexts...)
 
-		results = append(results, res.Contexts...)
-
-		if (page+1)*pageSize >= res.TotalCount {
+		if (page+1)*pageSize >= k8scontext.TotalCount {
 			break
 		}
 
