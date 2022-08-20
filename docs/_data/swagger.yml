@@ -204,8 +204,8 @@ paths:
             x-go-package: github.com/layer5io/meshery/models
   /api/application/deploy:
     post:
+      summary:  Handle POST request for Application File 
       description: |-
-        Handle POST request for Application File Deploy
         Deploy an attached application file with the request
       tags:
       - ApplicationsAPI
@@ -404,6 +404,172 @@ paths:
       responses:
         "200":
           description: ""
+  
+  /api/application/types:
+    get: 
+      description: Returns the list of available types
+      tags:
+      - ApplicationsAPI
+      summary: Handle GET request for available types for all applications
+      responses:
+        "200":
+          description: Fetches a single Meshery Application (original type of application packaging format)
+          schema:
+            description: "Returns all Meshery Application based on source type (original type of application packaging format)"
+            type: object
+            properties:
+              Helm Chart:
+                type: helm chart
+                format: .tgz
+              Docker Compose:
+                type: docker compose
+                format: ".yaml .yml"
+              Kubernetes Manifest:
+                type: kubernetes manifest
+                format: ".yaml .yml"
+
+  /api/application/{sourcetype}:
+    put: 
+      description: Updates the design for given application 
+      tags:
+      - ApplicationsAPI
+      summary: Handle PUT request for available types for all applications
+      responses:
+        "200":
+          description: Updates a single Meshery Application (original type of application packaging format)
+          schema:
+            description: "Updates all Meshery Application based on source type (original type of application packaging format)"
+            ype: object
+            properties:
+              application_file:
+                type: string
+                x-go-name: ApplicationFile
+              created_at:
+                type: string
+                format: date-time
+                x-go-name: CreatedAt
+              id:
+                type: array
+                title: UUID is an array type to represent the value of a UUID, as
+                  defined in RFC-4122.
+                items:
+                  type: integer
+                  format: uint8
+                x-go-package: github.com/gofrs/uuid
+                description: |-
+                  It implements native SQL driver interfaces and hence can
+                  be used for SQL json or jsonb types as a drop in replacement
+                  of golang native maps
+              name:
+                type: string
+                x-go-name: Name
+                description: |-
+                  var s NullString
+                  err := db.QueryRow("SELECT name FROM foo WHERE id=?", id).Scan(&s)
+                  ...
+                  if s.Valid {
+                  use s.String
+                  } else {
+                  NULL value
+                  }
+                title: |-
+                  NullString represents a string that may be null.
+                  NullString implements the Scanner interface so
+                  it can be used as a scan destination:
+                properties:
+                  String:
+                    type: string
+                  Valid:
+                    type: boolean
+                x-go-package: database/sql
+              updated_at:
+                type: string
+                format: date-time
+                x-go-name: UpdatedAt
+              user_id:
+                description: |-
+                  Meshery doesn't have the user id fields
+                  but the remote provider is allowed to provide one
+                type: string
+                x-go-name: UserID
+            x-go-package: github.com/layer5io/meshery/models
+    post:
+       description: Creates a new application with source-content
+       tags: 
+       - ApplicationsAPI
+       summary: Handle POST request for available types for all applications
+       responses:
+        "200":
+          description: Creates a new single Meshery Application (original type of application packaging format)
+          schema:
+            description: "Creates all Meshery Application based on source type (original type of application packaging format)"
+            ype: object
+            properties:
+              application_file:
+                type: string
+                x-go-name: ApplicationFile
+              created_at:
+                type: string
+                format: date-time
+                x-go-name: CreatedAt
+              id:
+                type: array
+                title: UUID is an array type to represent the value of a UUID, as
+                  defined in RFC-4122.
+                items:
+                  type: integer
+                  format: uint8
+                x-go-package: github.com/gofrs/uuid
+                description: |-
+                  It implements native SQL driver interfaces and hence can
+                  be used for SQL json or jsonb types as a drop in replacement
+                  of golang native maps
+              name:
+                type: string
+                x-go-name: Name
+                description: |-
+                  var s NullString
+                  err := db.QueryRow("SELECT name FROM foo WHERE id=?", id).Scan(&s)
+                  ...
+                  if s.Valid {
+                  use s.String
+                  } else {
+                  NULL value
+                  }
+                title: |-
+                  NullString represents a string that may be null.
+                  NullString implements the Scanner interface so
+                  it can be used as a scan destination:
+                properties:
+                  String:
+                    type: string
+                  Valid:
+                    type: boolean
+                x-go-package: database/sql
+              updated_at:
+                type: string
+                format: date-time
+                x-go-name: UpdatedAt
+              user_id:
+                description: |-
+                  Meshery doesn't have the user id fields
+                  but the remote provider is allowed to provide one
+                type: string
+                x-go-name: UserID
+            x-go-package: github.com/layer5io/meshery/models
+
+  /api/application/download/{id}/{sourcetype}:
+    get: 
+      description: Retrieves and downloads a single application of specific source-type with source-content
+      tags:
+      - ApplicationsAPI
+      summary: Retrieves the source-content for all applications
+      responses:
+        "200":
+          description: retrieves and downloads the source-content of a single Meshery Application
+          schema:
+            description: "Downloads the Meshery Application based on with source-content"
+
   /api/filter:
     get:
       description: Returns all the Meshery Filters saved by the current user
