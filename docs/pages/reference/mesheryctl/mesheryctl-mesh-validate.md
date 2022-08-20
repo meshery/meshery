@@ -58,6 +58,11 @@ mesheryctl mesh validate --adapter [name of the adapter] --tokenPath [path to to
 </div>
 </pre>
 
+## Screenshots
+
+Usage of mesheryctl mesh validate
+![mesh-validate-usage](/assets/img/mesheryctl/mesh-validate.png)
+
 ## See Also
 
 Go back to [command reference index](/reference/mesheryctl/) 

@@ -50,6 +50,10 @@ mesheryctl perf result saturday-profile --page 2
 
 // View single performance result with detailed information
 mesheryctl perf result saturday-profile --view
+
+! Refer below image link for usage
+* Usage of mesheryctl perf result
+# ![perf-result-usage](/assets/img/mesheryctl/perf-result.png)
 `,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		// used for searching performance profile

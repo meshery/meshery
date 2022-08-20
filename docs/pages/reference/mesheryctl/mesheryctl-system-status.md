@@ -56,6 +56,11 @@ mesheryctl system status
 </div>
 </pre>
 
+## Screenshots
+
+Usage of mesheryctl system status
+![status-usage](/assets/img/mesheryctl/status.png)
+
 ## See Also
 
 Go back to [command reference index](/reference/mesheryctl/) 

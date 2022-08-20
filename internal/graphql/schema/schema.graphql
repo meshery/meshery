@@ -268,6 +268,79 @@ type NameSpace {
   namespace: String!
 }
 
+# ================ K8s Context ======================
+
+type K8sContext {
+  id: String!,
+  name: String!,
+  auth: Map!,
+  cluster: Map!,
+  server: String!,
+  owner: ID!,
+  created_by: ID!,
+  meshery_instance_id: ID!,
+  kubernetes_server_id: ID!,
+  updated_at: String!,
+  created_at: String!
+}
+
+type K8sContextsPage {
+  total_count: Int!,
+  contexts: [K8sContext]! 
+}
+
+# ================= Configuration ===================
+
+type ConfigurationPage {
+  applications: ApplicationPage
+  patterns: PatternPageResult
+  filters: FilterPage
+}
+
+# ================= Applications ====================
+
+type ApplicationPage {
+  page: Int!
+  page_size: Int!
+  total_count: Int!
+  applications: [ApplicationResult]
+}
+
+type ApplicationResult {
+  id: ID!
+  name: String!
+  application_file: String!
+  type: NullString!
+  user_id: String!
+  location: Location!
+  created_at: String
+  updated_at: String
+}
+
+type NullString {
+  String: String!
+  Valid: Boolean!
+}
+
+# ================= Filters =======================
+
+type FilterPage {
+  page: Int!
+  page_size: Int!
+  total_count: Int!
+  filters: [FilterResult]
+}
+
+type FilterResult {
+  id: ID!
+  name: String!
+  filter_file: String!
+  user_id: String!
+  location: Location!
+  created_at: String
+  updated_at: String
+}
+
 # ============== Patterns =================================
 
 type PatternPageResult {
@@ -282,7 +355,7 @@ type PatternResult {
   id: ID!
   name: String!
   user_id: String!
-  location: PatternLocation!
+  location: Location!
   pattern_file: String!
   canSupport: Boolean!
   errmsg: String
@@ -290,7 +363,7 @@ type PatternResult {
   updated_at: String
 }
 
-type PatternLocation {
+type Location {
   branch: String
   host: String
   path: String
@@ -507,6 +580,8 @@ type Subscription {
   subscribeMeshSyncEvents(
     k8scontextIDs: [String!]
   ) : MeshSyncEvent!
+  subscribeConfiguration(selector: PageFilter!) : ConfigurationPage!
+  subscribeK8sContext(selector: PageFilter!) : K8sContextsPage!
 }
 
 type OAMCapability {

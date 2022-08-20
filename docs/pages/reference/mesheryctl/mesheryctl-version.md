@@ -54,6 +54,11 @@ mesheryctl version
 </div>
 </pre>
 
+## Screenshots
+
+Usage of mesheryctl version
+![version-usage](/assets/img/mesheryctl/version.png)
+
 ## See Also
 
 Go back to [command reference index](/reference/mesheryctl/) 

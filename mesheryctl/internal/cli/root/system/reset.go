@@ -35,6 +35,10 @@ var resetCmd = &cobra.Command{
 	Example: `
 // Resets meshery.yaml file with a copy from Meshery repo
 mesheryctl system reset
+
+! Refer below image link for usage
+* Usage of mesheryctl system reset
+# ![reset-usage](/assets/img/mesheryctl/reset.png)
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		return resetMesheryConfig()

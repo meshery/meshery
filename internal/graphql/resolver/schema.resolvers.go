@@ -64,7 +64,7 @@ func (r *queryResolver) GetMeshsyncStatus(ctx context.Context, k8scontextID stri
 
 func (r *queryResolver) DeployMeshsync(ctx context.Context, k8scontextID string) (model.Status, error) {
 	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
-	return r.deployMeshsync(ctx, provider)
+	return r.deployMeshsync(ctx, provider, k8scontextID)
 }
 
 func (r *queryResolver) GetNatsStatus(ctx context.Context, k8scontextID string) (*model.OperatorControllerStatus, error) {
@@ -270,6 +270,16 @@ func (r *subscriptionResolver) SubscribeMeshSyncEvents(ctx context.Context, k8sc
 		}(ctxID, brokerEventsChan)
 	}
 	return resChan, nil
+}
+
+func (r *subscriptionResolver) SubscribeConfiguration(ctx context.Context, selector model.PageFilter) (<-chan *model.ConfigurationPage, error) {
+	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	return r.subscribeConfiguration(ctx, provider, selector)
+}
+
+func (r *subscriptionResolver) SubscribeK8sContext(ctx context.Context, selector model.PageFilter) (<-chan *model.K8sContextsPage, error) {
+	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	return r.subscribeK8sContexts(ctx, provider, selector)
 }
 
 // Mutation returns generated.MutationResolver implementation.

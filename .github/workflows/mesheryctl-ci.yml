@@ -2,20 +2,20 @@ name: Mesheryctl
 on:
   push:
     branches:
-      - 'master'
+      - "master"
     paths:
-      - 'mesheryctl/**'
+      - "mesheryctl/**"
   pull_request:
     branches:
-      - 'master'
+      - "master"
     paths:
-      - 'mesheryctl/**'
+      - "mesheryctl/**"
   workflow_dispatch:
     inputs:
       logLevel:
-        description: 'Log level'
+        description: "Log level"
         required: true
-        default: 'warning'
+        default: "warning"
 
 jobs:
   golangci:
@@ -25,14 +25,14 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-go@v3
-        with: 
-          check-latest: 'true'
-          go-version: '1.17.x'
+        with:
+          check-latest: "true"
+          go-version: "1.17.x"
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@v3.1.0
+        uses: golangci/golangci-lint-action@v3.2.0
         with:
           # Required: the version of golangci-lint is required and must be specified without patch version: we always use the latest patch version.
-          version: latest
+          version: v1.47.3
           # Optional: working directory, useful for monorepos
           working-directory: mesheryctl
 
@@ -47,54 +47,54 @@ jobs:
     runs-on: macos-latest
     needs: [golangci]
     steps:
-    - name: Check out code
-      uses: actions/checkout@v3
-    - name: Unshallow
-      run: git fetch --prune --unshallow
-    - name: Set up Go
-      uses: actions/setup-go@v3
-      with:
-        go-version: '1.17.x'
-    - name: Setup Cache
-      uses: actions/cache@v3
-      with:
-        path: ~/go/pkg/mod
-        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-        restore-keys: |
-          ${{ runner.os }}-go-
-    - name: goreleaser WITHOUT tag
-      uses: goreleaser/goreleaser-action@v2.8.0
-      if: success() && startsWith(github.ref, 'refs/tags/') == false
-      env:
-        RELEASE_CHANNEL: "edge"
-      with:
-        version: latest
-        args: release --snapshot --skip-publish --rm-dist
+      - name: Check out code
+        uses: actions/checkout@v3
+      - name: Unshallow
+        run: git fetch --prune --unshallow
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: "1.17.x"
+      - name: Setup Cache
+        uses: actions/cache@v3
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+      - name: goreleaser WITHOUT tag
+        uses: goreleaser/goreleaser-action@v2.8.0
+        if: success() && startsWith(github.ref, 'refs/tags/') == false
+        env:
+          RELEASE_CHANNEL: "edge"
+        with:
+          version: latest
+          args: release --snapshot --skip-publish --rm-dist
   mesheryctl_docs:
     if: "always() && github.event_name != 'pull_request' "
     runs-on: ubuntu-latest
     steps:
       - name: Skip if needed
         run: |
-            echo "this is it ${{ needs.SkipIfNeeded.outputs.skipdocupdate }} "
-            if [ "${{github.event_name }}" == "push" ];then
-              echo "version=edge" >> $GITHUB_ENV
-            fi
-            if [ "${{github.event_name }}" == "release" ];then
-              echo "version=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_ENV
-            fi
+          echo "this is it ${{ needs.SkipIfNeeded.outputs.skipdocupdate }} "
+          if [ "${{github.event_name }}" == "push" ];then
+            echo "version=edge" >> $GITHUB_ENV
+          fi
+          if [ "${{github.event_name }}" == "release" ];then
+            echo "version=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_ENV
+          fi
       - uses: actions/checkout@master
-        with: 
+        with:
           repository: meshery/meshery
-          token: ${{ secrets.GH_ACCESS_TOKEN }} 
+          token: ${{ secrets.GH_ACCESS_TOKEN }}
       - name: Setup go
         uses: actions/setup-go@v3
         with:
-          go-version: '1.17'
-          check-latest: 'true'
+          go-version: "1.17"
+          check-latest: "true"
       - name: Run script 📜
         run: |
-          cd mesheryctl/doc 
+          cd mesheryctl/doc
           go run doc.go
       - name: Commit ✅
         uses: stefanzweifel/git-auto-commit-action@v4
@@ -103,5 +103,5 @@ jobs:
           commit_user_name: l5io
           commit_user_email: ci@layer5.io
           commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
-          commit_options: '--signoff'
-          commit_message: '[Docs] Update mesheryctl docs'
+          commit_options: "--signoff"
+          commit_message: "[Docs] Update mesheryctl docs"

@@ -134,6 +134,7 @@ type: "project"
 {% assign sorted_tests_group = site.compatibility | group_by: "meshery-component" %}
 {% assign k8s_tests_group = site.compatibility | group_by: "k8s-version" %}
 {% assign service_meshes = site.adapters  %}
+
  <div>
  </div>
 
@@ -150,88 +151,89 @@ Compatibility of Meshery with other integrated systems.
   <th><img style="height: 1rem; vertical-align: text-bottom;" src="{{site.baseurl}}/assets/img/service-meshes/nginx-sm.svg" /><a href="{{ site.repo }}-istio">meshery-nginx-sm</a></th>
   <th><img style="height: 1rem; vertical-align: text-bottom;" src="{{site.baseurl}}/assets/img/service-meshes/traefik-mesh.svg" /><a href="{{ site.repo }}-istio">meshery-traefik-mesh</a></th>
   <th><img style="height: 1rem; vertical-align: text-bottom;" src="{{site.baseurl}}/assets/img/service-meshes/cilium.svg" /><a href="{{ site.repo }}-istio">meshery-cilium</a></th>
-  
 
-  {% for k8s in k8s_tests_group limit: 1 %}
-    <tr class = "first-row">
-      {% assign successfull_istio = 0 %}
-      {% assign successfull_linkerd = 0 %}
-      {% assign successfull_cilium = 0 %}
-      {% assign successfull_osm = 0 %}
-      {% assign successfull_kuma = 0 %}
-      {% assign successfull_traefik_mesh = 0 %}
-      {% assign successfull_nginx_sm = 0 %}
-      <td>{{k8s.name}} and above</td>
-      {% assign k8s_items = k8s.items | group_by: "meshery-component"  %}
-      {% for k8s_item in k8s_items %}
-        {% if k8s_item.name == "meshery-linkerd" %}
-          {% assign linkerd_size = k8s_item.size | times:1.0 %}
-          {% for single in k8s_item.items %}
-            {% if single.overall-status == "passing" %}
-              {% assign successfull_linkerd = successfull_linkerd | plus:1 %}
-            {% endif %}
-          {% endfor %}
-        {% elsif k8s_item.name == "meshery-istio" %}
-          {% assign istio_size = k8s_item.size | times:1.0 | times:1.0 %}
-          {% for single in k8s_item.items %}
-            {% if single.overall-status == "passing" %}
-              {% assign successfull_istio = successfull_istio | plus:1 %}
-            {% endif %}
-          {% endfor %}
-        {% elsif k8s_item.name == "meshery-kuma" %}
-          {% assign kuma_size = k8s_item.size | times:1.0 %}
-          {% for single in k8s_item.items %}
-            {% if single.overall-status == "passing" %}
-              {% assign successfull_kuma = successfull_kuma | plus:1 %}
-            {% endif %}
-          {% endfor %}
-        {% elsif k8s_item.name == "meshery-osm" %}
-          {% assign osm_size = k8s_item.size | times:1.0 %}
-          {% for single in k8s_item.items %}
-            {% if single.overall-status == "passing" %}
-              {% assign successfull_osm = successfull_osm | plus:1 %}
-            {% endif %}
-          {% endfor %}
-        {% elsif k8s_item.name == "meshery-cilium" %}
-          {% assign cilium_size = k8s_item.size | times:1.0 %}
-          {% for single in k8s_item.items %}
-            {% if single.overall-status == "passing" %}
-              {% assign successfull_cilium = successfull_cilium | plus:1 %}
-            {% endif %}
-          {% endfor %}
-        {% elsif k8s_item.name == "meshery-nginx-sm"%}
-          {% assign nginx_size = k8s_item.size | times:1.0 %}
-          {% for single in k8s_item.items %}
-            {% if single.overall-status == "passing" %}
-              {% assign successfull_nginx_sm= successfull_nginx_sm| plus:1 %}
-            {% endif %}
-          {% endfor %}
-        {% elsif k8s_item.name == "meshery-traefik-mesh" %}
-          {% assign traefik_size = k8s_item.size | times:1.0 %}
-          {% for single in k8s_item.items %}
-            {% if single.overall-status == "passing" %}
-              {% assign successfull_traefik_mesh = successfull_traefik_mesh | plus:1 %}
-            {% endif %}
-          {% endfor %}
-        {% endif %}
-      {% endfor %}
-      {% assign istio_percentage = successfull_istio | divided_by:istio_size | times:100 | round:2 %}
-      <td onclick = "clickIcon(`meshery-istio`)" class = "compatibility">{{istio_percentage}}
-      </td>
-      {% assign linkerd_percentage = successfull_linkerd | divided_by:linkerd_size | times:100 | round:2 %}
-      <td onclick = "clickIcon(`meshery-linkerd`)" class = "compatibility">{{linkerd_percentage}}</td>
-      {% assign kuma_percentage = successfull_kuma | divided_by:kuma_size | times:100 | round:2 %}
-      <td onclick = "clickIcon(`meshery-kuma`)" class = "compatibility">{{kuma_percentage}}</td>
-      {% assign osm_percentage = successfull_osm | divided_by:osm_size | times:100 | round:2 %}
-      <td onclick = "clickIcon(`meshery-osm`)" class = "compatibility">{{osm_percentage}}%</td>
-      {% assign nginx_percentage = successfull_nginx_sm | divided_by:nginx_size | times:100 | round:2 %}
-      <td onclick = "clickIcon(`meshery-nginx-sm`)" class = "compatibility">{{nginx_percentage}}% </td>
-      {% assign traefik_percentage = successfull_traefik_mesh | divided_by:traefik_size | times:100 | round:2 %}
-      <td onclick = "clickIcon(`meshery-traefik-mesh`)" class = "compatibility">{{traefik_percentage}}%</td>
-      {% assign cilium_percentage = successfull_cilium | divided_by:cilium_size | times:100 | round:2 %}
-      <td onclick = "clickIcon(`meshery-cilium`)" class = "compatibility">{{cilium_percentage}}%</td>
-    </tr>
-  {% endfor %}
+{% for k8s in k8s_tests_group%}
+
+<tr class = "first-row">
+{% assign successfull_istio = 0 %}
+{% assign successfull_linkerd = 0 %}
+{% assign successfull_cilium = 0 %}
+{% assign successfull_osm = 0 %}
+{% assign successfull_kuma = 0 %}
+{% assign successfull_traefik_mesh = 0 %}
+{% assign successfull_nginx_sm = 0 %}
+<td>{{k8s.name}}</td>
+{% assign k8s_items = k8s.items | group_by: "meshery-component"  %}
+{% for k8s_item in k8s_items %}
+{% if k8s_item.name == "meshery-linkerd" %}
+{% assign linkerd_size = k8s_item.size | times:1.0 %}
+{% for single in k8s_item.items %}
+{% if single.overall-status == "passing" %}
+{% assign successfull_linkerd = successfull_linkerd | plus:1 %}
+{% endif %}
+{% endfor %}
+{% elsif k8s_item.name == "meshery-istio" %}
+{% assign istio_size = k8s_item.size | times:1.0 | times:1.0 %}
+{% for single in k8s_item.items %}
+{% if single.overall-status == "passing" %}
+{% assign successfull_istio = successfull_istio | plus:1 %}
+{% endif %}
+{% endfor %}
+{% elsif k8s_item.name == "meshery-kuma" %}
+{% assign kuma_size = k8s_item.size | times:1.0 %}
+{% for single in k8s_item.items %}
+{% if single.overall-status == "passing" %}
+{% assign successfull_kuma = successfull_kuma | plus:1 %}
+{% endif %}
+{% endfor %}
+{% elsif k8s_item.name == "meshery-osm" %}
+{% assign osm_size = k8s_item.size | times:1.0 %}
+{% for single in k8s_item.items %}
+{% if single.overall-status == "passing" %}
+{% assign successfull_osm = successfull_osm | plus:1 %}
+{% endif %}
+{% endfor %}
+{% elsif k8s_item.name == "meshery-cilium" %}
+{% assign cilium_size = k8s_item.size | times:1.0 %}
+{% for single in k8s_item.items %}
+{% if single.overall-status == "passing" %}
+{% assign successfull_cilium = successfull_cilium | plus:1 %}
+{% endif %}
+{% endfor %}
+{% elsif k8s_item.name == "meshery-nginx-sm"%}
+{% assign nginx_size = k8s_item.size | times:1.0 %}
+{% for single in k8s_item.items %}
+{% if single.overall-status == "passing" %}
+{% assign successfull_nginx_sm= successfull_nginx_sm| plus:1 %}
+{% endif %}
+{% endfor %}
+{% elsif k8s_item.name == "meshery-traefik-mesh" %}
+{% assign traefik_size = k8s_item.size | times:1.0 %}
+{% for single in k8s_item.items %}
+{% if single.overall-status == "passing" %}
+{% assign successfull_traefik_mesh = successfull_traefik_mesh | plus:1 %}
+{% endif %}
+{% endfor %}
+{% endif %}
+{% endfor %}
+{% assign istio_percentage = successfull_istio | divided_by:istio_size | times:100 | round:2 %}
+<td onclick = "clickIcon(`meshery-istio`)" class = "compatibility">{{istio_percentage}}
+</td>
+{% assign linkerd_percentage = successfull_linkerd | divided_by:linkerd_size | times:100 | round:2 %}
+<td onclick = "clickIcon(`meshery-linkerd`)" class = "compatibility">{{linkerd_percentage}}</td>
+{% assign kuma_percentage = successfull_kuma | divided_by:kuma_size | times:100 | round:2 %}
+<td onclick = "clickIcon(`meshery-kuma`)" class = "compatibility">{{kuma_percentage}}</td>
+{% assign osm_percentage = successfull_osm | divided_by:osm_size | times:100 | round:2 %}
+<td onclick = "clickIcon(`meshery-osm`)" class = "compatibility">{{osm_percentage}}%</td>
+{% assign nginx_percentage = successfull_nginx_sm | divided_by:nginx_size | times:100 | round:2 %}
+<td onclick = "clickIcon(`meshery-nginx-sm`)" class = "compatibility">{{nginx_percentage}}% </td>
+{% assign traefik_percentage = successfull_traefik_mesh | divided_by:traefik_size | times:100 | round:2 %}
+<td onclick = "clickIcon(`meshery-traefik-mesh`)" class = "compatibility">{{traefik_percentage}}%</td>
+{% assign cilium_percentage = successfull_cilium | divided_by:cilium_size | times:100 | round:2 %}
+<td onclick = "clickIcon(`meshery-cilium`)" class = "compatibility">{{cilium_percentage}}%</td>
+</tr>
+{% endfor %}
+
 </table>
 
 <script>
@@ -241,7 +243,7 @@ Compatibility of Meshery with other integrated systems.
       for(let i = 0 ; i<percentContainer.length;i++){
         console.log(parseFloat(percentContainer[i].innerHTML));
         let percentage = parseFloat(percentContainer[i].innerHTML);
-        if (percentage == 100.00){
+        if (percentage >= 90.00){
           percentContainer[i].innerHTML = `
             <div class = "tooltipss">
               <img src = "{{site.baseurl}}/assets/img/passing.svg" class = "yellowCheckbox" >
@@ -249,7 +251,7 @@ Compatibility of Meshery with other integrated systems.
             </div>
           `
         }
-        else if(percentage >=1 && percentage<=99.99){
+        else if(percentage >=1 && percentage<=89.99){
           percentContainer[i].innerHTML = `<div class = "tooltipss">
               <img src = "{{site.baseurl}}/assets/img/YellowCheck.svg" class = "yellowCheckbox" >
               <span class = "tooltiptext">${percentage}%</span>
@@ -270,10 +272,10 @@ Compatibility of Meshery with other integrated systems.
 
 showCompatability()
 </script>
+
 ## Integration Tests
 
 As a key aspect of Meshery, its integrations with other systems are routinely tested. Unit, integration testing occurs before and after every pull request (before code is to be merged into the project and after code is merged into the project). Regression tests are run nightly.
-
 
 <div class="checkbox">
     <div>
@@ -444,5 +446,4 @@ As a key aspect of Meshery, its integrations with other systems are routinely te
     {% endfor %}
 
 </table>
-
 

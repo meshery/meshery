@@ -235,6 +235,10 @@ func main() {
 
 		PrometheusClient:         models.NewPrometheusClient(),
 		PrometheusClientForQuery: models.NewPrometheusClientWithHTTPClient(&http.Client{Timeout: time.Second}),
+
+		ConfigurationChannel: models.NewConfigurationHelper(),
+
+		K8scontextChannel: models.NewContextHelper(),
 	}
 
 	operatorDeploymentConfig := models.NewOperatorDeploymentConfig(adapterTracker)
@@ -247,11 +251,10 @@ func main() {
 	defer b.Close()
 
 	g := graphql.New(graphql.Options{
-		Config:          hc,
-		Logger:          log,
-		MeshSyncChannel: meshsyncCh,
-		BrokerConn:      brokerConn,
-		Broadcaster:     b,
+		Config:      hc,
+		Logger:      log,
+		BrokerConn:  brokerConn,
+		Broadcaster: b,
 	})
 
 	gp := graphql.NewPlayground(graphql.Options{

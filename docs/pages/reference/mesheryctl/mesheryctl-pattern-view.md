@@ -20,7 +20,7 @@ Displays the contents of a specific pattern based on name or id
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl pattern view <pattern name> [flags]
+mesheryctl pattern view pattern name [flags]
 
 </div>
 </pre> 
@@ -56,6 +56,11 @@ mesheryctl pattern view [pattern-name | ID]
 
 </div>
 </pre>
+
+## Screenshots
+
+Usage of mesheryctl pattern view
+![pattern-view-usage](/assets/img/mesheryctl/patternView.png)
 
 ## See Also
 

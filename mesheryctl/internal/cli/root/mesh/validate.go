@@ -38,6 +38,10 @@ var validateCmd = &cobra.Command{
 	Example: `
 // Validate conformance to service mesh standards
 mesheryctl mesh validate --adapter [name of the adapter] --tokenPath [path to token for authentication] --spec [specification to be used for conformance test] --namespace [namespace to be used]
+
+! Refer below image link for usage
+* Usage of mesheryctl mesh validate
+# ![mesh-validate-usage](/assets/img/mesheryctl/mesh-validate.png)
 	`,
 	Long: `Validate service mesh conformance to different standard specifications`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {

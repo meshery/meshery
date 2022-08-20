@@ -2108,6 +2108,33 @@
         "short_description": "Could not create MeshSync events subcription",
         "probable_cause": "",
         "suggested_remediation": "Make sure the controllers are deployed and their handlers are configured"
+      },
+      "2243": {
+        "name": "ErrConfigurationApplicationsCode",
+        "code": "2243",
+        "severity": "Alert",
+        "long_description": "GraphQL subscription for Applications stopped",
+        "short_description": "Configuration Subscription failed",
+        "probable_cause": "Could be a network issue",
+        "suggested_remediation": "Confirm that Meshery Server is reachable from your browser."
+      },
+      "2244": {
+        "name": "ErrConfigurationFiltersCode",
+        "code": "2244",
+        "severity": "Alert",
+        "long_description": "GraphQL subscription for Filters stopped",
+        "short_description": "Configuration Subscription failed",
+        "probable_cause": "Could be a network issue",
+        "suggested_remediation": "Confirm that Meshery Server is reachable from your browser."
+      },
+      "2245": {
+        "name": "ErrK8sContextCode",
+        "code": "2245",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
       }
     }
   }

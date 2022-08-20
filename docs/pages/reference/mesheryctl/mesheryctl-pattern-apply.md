@@ -65,6 +65,11 @@ mesheryctl pattern apply [pattern-name]
 </div>
 </pre>
 
+## Screenshots
+
+Usage of mesheryctl pattern apply
+![pattern-apply-usage](/assets/img/mesheryctl/patternApply.png)
+
 ## See Also
 
 Go back to [command reference index](/reference/mesheryctl/) 

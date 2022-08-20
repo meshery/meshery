@@ -111,6 +111,10 @@ mesheryctl system check --operator
 
 // Runs diagnostic checks and bundles up to open an issue if present
 mesheryctl system check --report
+
+! Refer below image link for usage
+* Usage of mesheryctl system check
+# ![check-usage](/assets/img/mesheryctl/check.jpeg)
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		hco := &HealthCheckOptions{

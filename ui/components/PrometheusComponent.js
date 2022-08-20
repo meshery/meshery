@@ -12,6 +12,7 @@ import GrafanaDisplaySelection from "./GrafanaDisplaySelection";
 import { updateGrafanaConfig, updateProgress, updatePrometheusConfig } from "../lib/store";
 import GrafanaCustomCharts from "./GrafanaCustomCharts";
 import PrometheusConfigComponent from "./PrometheusConfigComponent";
+import { getK8sClusterIdsFromCtxId } from "../utils/multi-ctx";
 import fetchAvailableAddons from "./graphql/queries/AddonsStatusQuery";
 
 const promStyles = (theme) => ({
@@ -135,7 +136,7 @@ class PrometheusComponent extends Component {
   }
 
   static getDerivedStateFromProps(props, state) {
-    // const {prometheusURL, selectedPrometheusBoardsConfigs} = props.grafana;
+    const { prometheusURL, selectedPrometheusBoardsConfigs } = props.grafana;
     // if(prometheusURL !== state.prometheusURL || JSON.stringify(selectedPrometheusBoardsConfigs) !== JSON.stringify(state.selectedPrometheusBoardsConfigs)) { // JSON.stringify is not the best. Will leave it for now until a better solution is found
     if (props.ts > state.ts) {
       return {

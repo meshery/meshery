@@ -19,6 +19,30 @@ type AddonStatusInput struct {
 	TargetStatus Status    `json:"targetStatus"`
 }
 
+type ApplicationPage struct {
+	Page         int                  `json:"page"`
+	PageSize     int                  `json:"page_size"`
+	TotalCount   int                  `json:"total_count"`
+	Applications []*ApplicationResult `json:"applications"`
+}
+
+type ApplicationResult struct {
+	ID              string      `json:"id"`
+	Name            string      `json:"name"`
+	ApplicationFile string      `json:"application_file"`
+	Type            *NullString `json:"type"`
+	UserID          string      `json:"user_id"`
+	Location        *Location   `json:"location"`
+	CreatedAt       *string     `json:"created_at"`
+	UpdatedAt       *string     `json:"updated_at"`
+}
+
+type ConfigurationPage struct {
+	Applications *ApplicationPage   `json:"applications"`
+	Patterns     *PatternPageResult `json:"patterns"`
+	Filters      *FilterPage        `json:"filters"`
+}
+
 type Container struct {
 	ControlPlaneMemberName string           `json:"controlPlaneMemberName"`
 	ContainerName          string           `json:"containerName"`
@@ -69,9 +93,52 @@ type Error struct {
 	Description string `json:"description"`
 }
 
+type FilterPage struct {
+	Page       int             `json:"page"`
+	PageSize   int             `json:"page_size"`
+	TotalCount int             `json:"total_count"`
+	Filters    []*FilterResult `json:"filters"`
+}
+
+type FilterResult struct {
+	ID         string    `json:"id"`
+	Name       string    `json:"name"`
+	FilterFile string    `json:"filter_file"`
+	UserID     string    `json:"user_id"`
+	Location   *Location `json:"location"`
+	CreatedAt  *string   `json:"created_at"`
+	UpdatedAt  *string   `json:"updated_at"`
+}
+
+type K8sContext struct {
+	ID                 string                 `json:"id"`
+	Name               string                 `json:"name"`
+	Auth               map[string]interface{} `json:"auth"`
+	Cluster            map[string]interface{} `json:"cluster"`
+	Server             string                 `json:"server"`
+	Owner              string                 `json:"owner"`
+	CreatedBy          string                 `json:"created_by"`
+	MesheryInstanceID  string                 `json:"meshery_instance_id"`
+	KubernetesServerID string                 `json:"kubernetes_server_id"`
+	UpdatedAt          string                 `json:"updated_at"`
+	CreatedAt          string                 `json:"created_at"`
+}
+
+type K8sContextsPage struct {
+	TotalCount int           `json:"total_count"`
+	Contexts   []*K8sContext `json:"contexts"`
+}
+
 type KctlDescribeDetails struct {
 	Describe *string `json:"describe"`
 	Ctxid    *string `json:"ctxid"`
+}
+
+type Location struct {
+	Branch *string `json:"branch"`
+	Host   *string `json:"host"`
+	Path   *string `json:"path"`
+	Type   *string `json:"type"`
 }
 
 type MeshSyncEvent struct {
@@ -103,6 +170,11 @@ type MesheryResult struct {
 
 type NameSpace struct {
 	Namespace string `json:"namespace"`
+}
+
+type NullString struct {
+	String string `json:"String"`
+	Valid  bool   `json:"Valid"`
 }
 
 type OAMCapability struct {
@@ -154,13 +226,6 @@ type PageFilter struct {
 	To       *string `json:"to"`
 }
 
-type PatternLocation struct {
-	Branch *string `json:"branch"`
-	Host   *string `json:"host"`
-	Path   *string `json:"path"`
-	Type   *string `json:"type"`
-}
-
 type PatternPageResult struct {
 	Page       int              `json:"page"`
 	PageSize   int              `json:"page_size"`
@@ -169,15 +234,15 @@ type PatternPageResult struct {
 }
 
 type PatternResult struct {
-	ID          string           `json:"id"`
-	Name        string           `json:"name"`
-	UserID      string           `json:"user_id"`
-	Location    *PatternLocation `json:"location"`
-	PatternFile string           `json:"pattern_file"`
-	CanSupport  bool             `json:"canSupport"`
-	Errmsg      *string          `json:"errmsg"`
-	CreatedAt   *string          `json:"created_at"`
-	UpdatedAt   *string          `json:"updated_at"`
+	ID          string    `json:"id"`
+	Name        string    `json:"name"`
+	UserID      string    `json:"user_id"`
+	Location    *Location `json:"location"`
+	PatternFile string    `json:"pattern_file"`
+	CanSupport  bool      `json:"canSupport"`
+	Errmsg      *string   `json:"errmsg"`
+	CreatedAt   *string   `json:"created_at"`
+	UpdatedAt   *string   `json:"updated_at"`
 }
 
 type PerfPageProfiles struct {

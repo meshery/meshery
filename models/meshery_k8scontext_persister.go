@@ -1,6 +1,7 @@
 package models
 
 import (
+	"encoding/json"
 	"strings"
 
 	"github.com/layer5io/meshkit/database"
@@ -22,7 +23,7 @@ type MesheryK8sContextPage struct {
 }
 
 // GetMesheryK8sContexts returns all of the contexts
-func (mkcp *MesheryK8sContextPersister) GetMesheryK8sContexts(search, order string, page, pageSize uint64) (MesheryK8sContextPage, error) {
+func (mkcp *MesheryK8sContextPersister) GetMesheryK8sContexts(search, order string, page, pageSize uint64) ([]byte, error) {
 	order = sanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
 
 	if order == "" {
@@ -50,7 +51,8 @@ func (mkcp *MesheryK8sContextPersister) GetMesheryK8sContexts(search, order stri
 		Contexts:   contexts,
 	}
 
-	return mesheryK8sContextPage, nil
+	resp, _ := json.Marshal(mesheryK8sContextPage)
+	return resp, nil
 }
 
 // DeleteMesheryK8sContext takes in an application id and delete it if it already exists
@@ -77,7 +79,7 @@ func (mkcp *MesheryK8sContextPersister) SaveMesheryK8sContext(mkc K8sContext) (K
 
 		// Check if there is already an entry for this context
 		if err := tx.First(&mesheryK8sContext, "id = ?", mkc.ID).Error; err == nil {
-			return nil
+			return ErrContextAlreadyPersisted
 		}
 
 		return tx.Save(&mkc).Error

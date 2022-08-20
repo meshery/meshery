@@ -31,7 +31,6 @@ Instala `mesheryctl` y ejecuta Meshery en Mac con Homebrew.
 Para instalar `mesheryctl`, ejecute el siguiente comando:
 
 ```bash
-brew tap meshery/tap
 brew install mesheryctl
 mesheryctl system start
 ```
@@ -110,4 +109,3 @@ services:
 ---
 
 Cuando Meshery está levantado y corriendo, las instrucciones para acceder Meshery serán impresas en la pantalla y su navegador web por default deberá ser dirigido a la pantalla de inicio de Meshery.
-

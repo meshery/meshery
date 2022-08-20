@@ -18,7 +18,7 @@
 
 | Name               | GitHub      | Affiliation |
 | ------------------ | ----------- | ----------- |
-| Aisuko             | Aisuko      | Layer5      |
+| Aisuko Li          | aisuko      | Layer5      |
 | Dhiraj Gedam       | dheerajng   | Citrix      |
 | Haim Helman        | thehh1974   | VMware      |
 | Hussaina Begum     | hexxdump    | VMware      |
@@ -29,7 +29,7 @@
 
 | Name                  | GitHub             | Affiliation |
 | --------------------- | ------------------ | ----------- |
-| Lee Calcote           | leecalcote         | Layer5      |
+| Ashish Tiwari         | revolyssup         | Layer5      |
 | Mario Arriaga         | MarioArriaga92     | F5          |
 
 ### Docs Maintainers
@@ -47,3 +47,5 @@
 | ----------------------  | -----------  | ----------- |
 | Aditya Chatterjee       | warunicorn19 | Layer5      |
 | Debopriya Bhattacharjee | debo19       | Layer5      |
+| Nikhil Ladha.           | Nikhil-Ladha | Red Hat     |
+
