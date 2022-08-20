@@ -8,6 +8,7 @@ import (
 
 	"cuelang.org/go/cue"
 	"cuelang.org/go/cue/cuecontext"
+	"cuelang.org/go/cue/errors"
 	"github.com/layer5io/meshkit/utils"
 )
 
@@ -31,8 +32,8 @@ type payload struct {
 }
 
 type validationResponse struct {
-	IsValid bool   `json:"isValid"`
-	Error   string `json:"error"`
+	IsValid bool     `json:"isValid"`
+	Errors  []string `json:"errors"`
 }
 
 type jsonSchemaValidationType struct {
@@ -89,27 +90,40 @@ func validate(validationItems map[string]validationItem) map[string]validationRe
 		cueSchema, err := parseSchema(vi.Schema, schemaType)
 		if err != nil {
 			// if there is an error, push it into the map and continue
-			validationResults[id] = validationResponse{IsValid: false, Error: err.Error()}
+			validationResults[id] = validationResponse{IsValid: false, Errors: []string{err.Error()}}
 			continue
 		}
 		// Parse the value as CUE value
 		cueValue, err := parseValue(vi.Value, vi.ValueType)
 		if err != nil {
 			// if there is an error, push it into the map and continue
-			validationResults[id] = validationResponse{IsValid: false, Error: err.Error()}
+			validationResults[id] = validationResponse{IsValid: false, Errors: []string{err.Error()}}
 			continue
 		}
 		// Validate the value against the schema
-		isValid, err := utils.Validate(cueSchema, cueValue)
-		if err != nil {
-			validationResults[id] = validationResponse{IsValid: false, Error: err.Error()}
+		isValid, errs := utils.Validate(cueSchema, cueValue)
+		if len(errs) != 0 {
+			errs := convertCueErrorsToStrings(errs)
+			validationResults[id] = validationResponse{IsValid: false, Errors: errs}
 		}
 		if isValid {
 			// empty string means that the item is valid
-			validationResults[id] = validationResponse{IsValid: true, Error: ""}
+			validationResults[id] = validationResponse{IsValid: true, Errors: make([]string, 0)}
 		}
 	}
 	return validationResults
+}
+
+func convertCueErrorsToStrings(errs []errors.Error) []string {
+	var res []string
+	// sanitize
+	for _, err := range errs {
+		err = errors.Sanitize(err)
+	}
+	for _, err2 := range errs {
+		res = append(res, err2.Error())
+	}
+	return res
 }
 
 // if schema is not a JSONSCHEMA, we assume that it is CUE
