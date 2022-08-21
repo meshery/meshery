@@ -3,11 +3,14 @@ package handlers
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 
 	"github.com/layer5io/meshery/models"
 	"github.com/sirupsen/logrus"
 )
+
+const providerQParamName = "provider"
 
 // ProviderMiddleware is a middleware to validate if a provider is set
 func (h *Handler) ProviderMiddleware(next http.Handler) http.Handler {
@@ -19,6 +22,11 @@ func (h *Handler) ProviderMiddleware(next http.Handler) http.Handler {
 			providerName = ck.Value
 		} else {
 			providerName = req.Header.Get(h.config.ProviderCookieName)
+			// allow provider to be set using query parameter
+			// this is OK since provider information is not sensitive
+			if providerName == "" {
+				providerName = req.URL.Query().Get(providerQParamName)
+			}
 		}
 		if providerName != "" {
 			provider = h.config.Providers[providerName]
@@ -27,7 +35,6 @@ func (h *Handler) ProviderMiddleware(next http.Handler) http.Handler {
 			http.Redirect(w, req, "/provider", http.StatusFound)
 			return
 		}
-		//lint:ignore SA1029 we want to make sure that no two results of errors
 		ctx := context.WithValue(req.Context(), models.ProviderCtxKey, provider) // nolint
 		req1 := req.WithContext(ctx)
 		next.ServeHTTP(w, req1)
@@ -56,7 +63,7 @@ func (h *Handler) AuthMiddleware(next http.Handler) http.Handler {
 			// }
 			// return
 			if provider.GetProviderType() == models.RemoteProviderType {
-				provider.Logout(w, req)
+				provider.HandleUnAuthenticated(w, req)
 				return
 			}
 			// Local Provider
@@ -74,6 +81,98 @@ func (h *Handler) validateAuth(provider models.Provider, req *http.Request) bool
 	}
 	// logrus.Errorf("session invalid, error: %v", err)
 	return false
+}
+
+// MesheryControllersMiddleware is a middleware that is responsible for handling meshery controllers(operator, meshsync and broker) related stuff such as
+// getting status, reconciling their deployments etc.
+func (h *Handler) MesheryControllersMiddleware(next func(http.ResponseWriter, *http.Request, *models.Preference, *models.User, models.Provider)) func(http.ResponseWriter, *http.Request, *models.Preference, *models.User, models.Provider) {
+	return func(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+		ctx := req.Context()
+		mk8sContexts, ok := ctx.Value(models.AllKubeClusterKey).([]models.K8sContext)
+		if !ok || len(mk8sContexts) == 0 {
+			h.log.Error(ErrInvalidK8SConfig)
+			// this should not block the request
+			next(w, req, prefObj, user, provider)
+			return
+		}
+
+		// 1. get the status of controller deployments for each cluster and make sure that all the contexts have meshery controllers deployed
+		ctrlHlpr := h.MesheryCtrlsHelper.UpdateCtxControllerHandlers(mk8sContexts).UpdateOperatorsStatusMap().DeployUndeployedOperators()
+		ctx = context.WithValue(ctx, models.MesheryControllerHandlersKey, h.MesheryCtrlsHelper.GetControllerHandlersForEachContext())
+
+		// 2. make sure that the data from meshsync for all the clusters are persisted properly
+		ctrlHlpr.UpdateMeshsynDataHandlers()
+		ctx = context.WithValue(ctx, models.MeshSyncDataHandlersKey, h.MesheryCtrlsHelper.GetMeshSyncDataHandlersForEachContext())
+
+		req1 := req.WithContext(ctx)
+		next(w, req1, prefObj, user, provider)
+	}
+}
+
+// KubernetesMiddleware is a middleware that is responsible for handling kubernetes related stuff such as
+// setting contexts, component generation etc.
+func (h *Handler) KubernetesMiddleware(next func(http.ResponseWriter, *http.Request, *models.Preference, *models.User, models.Provider)) func(http.ResponseWriter, *http.Request, *models.Preference, *models.User, models.Provider) {
+	return func(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+		ctx := req.Context()
+		token, ok := ctx.Value(models.TokenCtxKey).(string)
+		if !ok {
+			err := ErrRetrieveUserToken(fmt.Errorf("failed to retrieve user token"))
+			logrus.Error(err)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		contexts, err := provider.LoadAllK8sContext(token)
+		if err != nil || len(contexts) == 0 { //Try to load the contexts when there are no contexts available
+			logrus.Warn("failed to get kubernetes contexts")
+			// only the contexts that are successfully pinged will be persisted
+			contexts, err = h.LoadContextsAndPersist(token, provider)
+			if err != nil {
+				logrus.Warn("failed to load kubernetes contexts: ", err.Error())
+			}
+		}
+
+		// register kubernetes components
+		h.K8sCompRegHelper.UpdateContexts(contexts).RegisterComponents(contexts, RegisterK8sComponents)
+
+		// Identify custom contexts, if provided
+		k8sContextIDs := req.URL.Query()["contexts"]
+		k8scontexts := []models.K8sContext{}    //The contexts passed by the user
+		allk8scontexts := []models.K8sContext{} //All contexts to track all the connected clusters
+
+		if len(k8sContextIDs) == 0 { //This is for backwards compabitibility with clients. This will work fine for single cluster.
+			//For multi cluster, it is expected of clients to explicitly pass the k8scontextID.
+			//So for now, randomly one of the contexts from available ones will be pushed to the array to stop anything from breaking in case of no contexts received(with single cluster, the behavior would be as expected).
+			if len(contexts) > 0 && contexts[0] != nil {
+				k8scontexts = append(k8scontexts, *contexts[0])
+			}
+		} else if len(k8sContextIDs) == 1 && k8sContextIDs[0] == "all" {
+			for _, c := range contexts {
+				if c != nil {
+					k8scontexts = append(k8scontexts, *c)
+				}
+			}
+		} else {
+			for _, kctxID := range k8sContextIDs {
+				kctx, err := provider.GetK8sContext(token, kctxID)
+				if err != nil {
+					logrus.Warn("invalid context ID found")
+					continue
+				}
+				k8scontexts = append(k8scontexts, kctx)
+			}
+		}
+		for _, k8scontext := range contexts {
+			if k8scontext != nil {
+				allk8scontexts = append(allk8scontexts, *k8scontext)
+			}
+		}
+
+		ctx = context.WithValue(ctx, models.KubeClustersKey, k8scontexts)
+		ctx = context.WithValue(ctx, models.AllKubeClusterKey, allk8scontexts)
+		req1 := req.WithContext(ctx)
+		next(w, req1, prefObj, user, provider)
+	}
 }
 
 // SessionInjectorMiddleware - is a middleware which injects user and session object
@@ -95,24 +194,17 @@ func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http
 		}
 
 		user, _ := provider.GetUserDetails(req)
-
 		prefObj, err := provider.ReadFromPersister(user.UserID)
 		if err != nil {
 			logrus.Warn("unable to read session from the session persister, starting with a new one")
 		}
 
-		err = h.checkIfK8SConfigExistsOrElseLoadFromDiskOrK8S(req, user, prefObj, provider)
-		if err != nil {
-			logrus.Errorf("Unable to load default kubernetes config: %v", err)
-		}
-
 		token := provider.UpdateToken(w, req)
-		//lint:ignore SA1029 we want to make sure that no two results of errors
-		ctx := context.WithValue(req.Context(), models.TokenCtxKey, token) // nolint
-		ctx = context.WithValue(ctx, models.UserCtxKey, user)              // nolint
-		ctx = context.WithValue(ctx, models.PerfObjCtxKey, prefObj)        // nolint
-		req1 := req.WithContext(ctx)
+		ctx := context.WithValue(req.Context(), models.TokenCtxKey, token)
+		ctx = context.WithValue(ctx, models.PerfObjCtxKey, prefObj)
+		ctx = context.WithValue(ctx, models.UserCtxKey, user)
 
+		req1 := req.WithContext(ctx)
 		next(w, req1, prefObj, user, provider)
 	})
 }

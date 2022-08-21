@@ -1,4 +1,0 @@
-name : mesheryctl
-description : Displays help about any command.
-usage: |
-    mesheryctl

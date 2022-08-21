@@ -39,19 +39,19 @@ Alternatively, you may execute the following steps to manually configure Meshery
 - After successfull login, you have to select the subscription with which your AKS is associated with
 <pre class="codeblock-pre"><div class="codeblock">
 <div class="clipboardjs">
-az account set --subscription {{SUBSCRIPTION_ID}}
+az account set --subscription [SUBSCRIPTION_ID]
 </div></div>
 </pre>
 - Get the kubeconfig from your AKS cluster
 <pre class="codeblock-pre"><div class="codeblock">
 <div class="clipboardjs">
-az aks get-credentials --resource-group {{RESOURCE_GROUP}} --name {{AKS_SERVICE_NAME}}
+az aks get-credentials --resource-group [RESOURCE_GROUP] --name [AKS_SERVICE_NAME]
 </div></div>
 </pre>
 - Set your cluster context and check your cluster-info
 <pre class="codeblock-pre"><div class="codeblock">
 <div class="clipboardjs">
-kubectl set-context {{AKS_SERVICE_NAME}}
+kubectl set-context AKS_SERVICE_NAME
 kubectl cluster-info
 </div></div>
 </pre>
@@ -60,15 +60,14 @@ kubectl cluster-info
 
  <pre class="codeblock-pre"><div class="codeblock">
  <div class="clipboardjs">
- $ kubectl create ns meshery
  $ helm repo add meshery https://meshery.io/charts/
- $ helm install meshery --namespace meshery
+ $ helm install meshery meshery/meshery --namespace meshery --create-namespace
  </div></div>
  </pre>
  - Meshery server supports customizing authentication flow callback URL, which can be configured in the following way
  <pre class="codeblock-pre"><div class="codeblock">
  <div class="clipboardjs">
- $ helm install meshery --namespace meshery --set env.MESHERY_SERVER_CALLBACK_URL=https://custom-host meshery/meshery
+ $ helm install meshery meshery/meshery --namespace meshery --set env.MESHERY_SERVER_CALLBACK_URL=https://custom-host --create-namespace
  </div></div>
  </pre>
 
@@ -81,6 +80,4 @@ kubectl cluster-info
  </div></div>
  </pre>
 
-Meshery should now be running in your AKS cluster and the Meshery UI should be locally accessible. Navigate to [http://localhost:9081](http://localhost:9081) to log into Meshery.
-
-Meshery should now be running in your AKS cluster and the Meshery UI should be accessible. Navigate to the `meshery` service endpoint to log into Meshery.
+Meshery should now be running in your AKS cluster and the Meshery UI should be accessible at the specified endpoint you've exposed to. Navigate to the `meshery` service endpoint to log into Meshery.

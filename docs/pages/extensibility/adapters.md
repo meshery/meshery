@@ -8,7 +8,7 @@ abstract: 'Meshery architecture is extensible. Meshery provides several extensio
 ---
 ## Guiding Principles of Adapter Design
 
-Adapters allow Meshery to interface with the different service meshes. Review the list of all available [service mesh adapters](service-meshes/adapters). See the [Meshery Architecture](architecture) diagrams for visuals on how adapters relate to other Meshery components.
+Adapters allow Meshery to interface with the different service meshes. Review the list of all available [service mesh adapters](../concepts/architecture/service-meshes/adapters.md). See the [Meshery Architecture](../concepts/architecture/architecture.md) diagrams for visuals on how adapters relate to other Meshery components.
 
 Meshery upholds the following guiding principles for adapter design:
 
@@ -61,7 +61,7 @@ The library consists of interfaces and default implementations for the main and 
 ## Contributing to Meshery Adapters
 With the [CONTRIBUTING.md](https://github.com/layer5io/meshery/blob/master/CONTRIBUTING.md#adapter) in mind, understand that development follows the usual fork-and-pull request workflow described here, see also GitHub Process. On forking GitHub deactivates all workflows. It is safe and good practice to activate them such that the code is validated on each push. This requires that branches filter for “on push” is set to ‘**’ to be triggered also on branches containing ‘/’  in their name.  The actions are parameterized using secrets (see Build & Release Strategy). The Docker image is only built and pushed to Docker Hub if a tag is pushed and the corresponding authentication information is configured. The only secret that should be set in each fork is GO_VERSION, specified in Build & Release Strategy, otherwise, the corresponding action’s default version is used.
 
-Each commit has to be signed off, see {{site.baseurl}}project/contributingContributing Overview.
+Each commit has to be signed off, see [Contributing Overview]({{site.baseurl}}/project/contributing).
 
 ### Running an adapter as a container
 
@@ -72,7 +72,7 @@ Testing your local changes running as a container can be accomplished in two way
 
 ### Running an adapter as a process
 
-Another way to test your local changes is to run the adapter as a process. To do this, clone the meshery repository, and start meshery using make run-local-cloud. Start the adapter from your IDE, or by executing make run. Then, in the meshery interface, add the adapter using “localhost:<PORT>”.
+Another way to test your local changes is to run the adapter as a process. To do this, clone the `meshery/meshery` repository, and start Meshery Server using `make server`. Start the adapter from your IDE, or by executing `make run`. Then, in Meshery UI, add the adapter using “localhost:<PORT>”.
 
 ### Creating a new Meshery Adapter
 

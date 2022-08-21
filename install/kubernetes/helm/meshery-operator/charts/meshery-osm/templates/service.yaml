@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "meshery-osm.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "meshery-osm.labels" . | nindent 4 }}
+  annotations:
+{{- toYaml .Values.service.annotations | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "meshery-osm.selectorLabels" . | nindent 4 }}

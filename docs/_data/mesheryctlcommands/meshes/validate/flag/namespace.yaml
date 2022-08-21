@@ -1,4 +1,0 @@
-name: --namespace, -n
-description: Kubernetes namespace to be used for deploying the validation tests and sample workload
-usage: |
-    mesheryctl mesh validate --namespace [namespace to be used]

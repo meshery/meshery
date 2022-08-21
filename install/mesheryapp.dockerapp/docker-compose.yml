@@ -53,7 +53,7 @@ services:
       - "${cpx.port}:10000"
     x-enabled: ${cpx.enabled}
   watchtower:
-    image: v2tec/watchtower
+    image: containrrr/watchtower
     labels:
       - ${labels.watchtower}
     volumes:

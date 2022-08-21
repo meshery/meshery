@@ -13,10 +13,13 @@ image: /assets/img/platforms/kind.png
 
 **To set up and run Meshery on KinD** 
 
-- [Install kinD](#installation)
-- [Create a Kubernetes cluster with kinD](#create-cluster-using-kind)
-  - [Access the kinD cluster](#access-the-kind-cluster)
-- [Alternatively, Run Helm](#using-helm)
+- [**Installation**](#installation)
+  - [**Create cluster using KinD**](#create-cluster-using-kind)
+      - [1. **KinD on WSL2**](#1-kind-on-wsl2)
+      - [2. **KinD on other systems**](#2-kind-on-other-systems)
+  - [**Access the KinD cluster**](#access-the-kind-cluster)
+  - [**Using Helm**](#using-helm)
+    - [**Helm v3**](#helm-v3)
 
 ### **Installation**
 
@@ -153,9 +156,8 @@ Run the following:
 
  <pre class="codeblock-pre"><div class="codeblock">
  <div class="clipboardjs">
- $ git clone https://github.com/layer5io/meshery.git; cd meshery
- $ kubectl create namespace meshery
- $ helm install meshery --namespace meshery install/kubernetes/helm/meshery
+$ helm repo add meshery https://meshery.io/charts/
+$ helm install meshery meshery/meshery -n meshery --create-namespace
  </div></div>
  </pre>
  - Meshery server supports customizing authentication flow callback URL, which can be configured in the following way

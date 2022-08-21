@@ -9,14 +9,38 @@ import (
 )
 
 type AddonList struct {
-	Name     string `json:"name"`
-	Owner    string `json:"owner"`
-	Endpoint string `json:"endpoint"`
+	Name  string `json:"name"`
+	Owner string `json:"owner"`
 }
 
 type AddonStatusInput struct {
 	Selector     *MeshType `json:"selector"`
+	K8scontextID string    `json:"k8scontextID"`
 	TargetStatus Status    `json:"targetStatus"`
+}
+
+type ApplicationPage struct {
+	Page         int                  `json:"page"`
+	PageSize     int                  `json:"page_size"`
+	TotalCount   int                  `json:"total_count"`
+	Applications []*ApplicationResult `json:"applications"`
+}
+
+type ApplicationResult struct {
+	ID              string      `json:"id"`
+	Name            string      `json:"name"`
+	ApplicationFile string      `json:"application_file"`
+	Type            *NullString `json:"type"`
+	UserID          string      `json:"user_id"`
+	Location        *Location   `json:"location"`
+	CreatedAt       *string     `json:"created_at"`
+	UpdatedAt       *string     `json:"updated_at"`
+}
+
+type ConfigurationPage struct {
+	Applications *ApplicationPage   `json:"applications"`
+	Patterns     *PatternPageResult `json:"patterns"`
+	Filters      *FilterPage        `json:"filters"`
 }
 
 type Container struct {
@@ -69,6 +93,66 @@ type Error struct {
 	Description string `json:"description"`
 }
 
+type FilterPage struct {
+	Page       int             `json:"page"`
+	PageSize   int             `json:"page_size"`
+	TotalCount int             `json:"total_count"`
+	Filters    []*FilterResult `json:"filters"`
+}
+
+type FilterResult struct {
+	ID         string    `json:"id"`
+	Name       string    `json:"name"`
+	FilterFile string    `json:"filter_file"`
+	UserID     string    `json:"user_id"`
+	Location   *Location `json:"location"`
+	CreatedAt  *string   `json:"created_at"`
+	UpdatedAt  *string   `json:"updated_at"`
+}
+
+type K8sContext struct {
+	ID                 string                 `json:"id"`
+	Name               string                 `json:"name"`
+	Auth               map[string]interface{} `json:"auth"`
+	Cluster            map[string]interface{} `json:"cluster"`
+	Server             string                 `json:"server"`
+	Owner              string                 `json:"owner"`
+	CreatedBy          string                 `json:"created_by"`
+	MesheryInstanceID  string                 `json:"meshery_instance_id"`
+	KubernetesServerID string                 `json:"kubernetes_server_id"`
+	UpdatedAt          string                 `json:"updated_at"`
+	CreatedAt          string                 `json:"created_at"`
+}
+
+type K8sContextsPage struct {
+	TotalCount int           `json:"total_count"`
+	Contexts   []*K8sContext `json:"contexts"`
+}
+
+type KctlDescribeDetails struct {
+	Describe *string `json:"describe"`
+	Ctxid    *string `json:"ctxid"`
+}
+
+type Location struct {
+	Branch *string `json:"branch"`
+	Host   *string `json:"host"`
+	Path   *string `json:"path"`
+	Type   *string `json:"type"`
+}
+
+type MeshSyncEvent struct {
+	Type      string      `json:"type"`
+	Object    interface{} `json:"object"`
+	ContextID string      `json:"contextId"`
+}
+
+type MesheryControllersStatusListItem struct {
+	ContextID  string                  `json:"contextId"`
+	Controller MesheryController       `json:"controller"`
+	Status     MesheryControllerStatus `json:"status"`
+}
+
 type MesheryResult struct {
 	MesheryID          *string                `json:"meshery_id"`
 	Name               *string                `json:"name"`
@@ -88,11 +172,31 @@ type NameSpace struct {
 	Namespace string `json:"namespace"`
 }
 
+type NullString struct {
+	String string `json:"String"`
+	Valid  bool   `json:"Valid"`
+}
+
+type OAMCapability struct {
+	OamDefinition interface{} `json:"oam_definition"`
+	ID            *string     `json:"id"`
+	OamRefSchema  *string     `json:"oam_ref_schema"`
+	Host          *string     `json:"host"`
+	Restricted    *bool       `json:"restricted"`
+	Metadata      interface{} `json:"metadata"`
+}
+
 type OperatorControllerStatus struct {
-	Name    string `json:"name"`
-	Version string `json:"version"`
-	Status  Status `json:"status"`
-	Error   *Error `json:"error"`
+	Name      string `json:"name"`
+	Version   string `json:"version"`
+	Status    Status `json:"status"`
+	Error     *Error `json:"error"`
+	ContextID string `json:"contextID"`
+}
+
+type OperatorControllerStatusPerK8sContext struct {
+	ContextID                string                    `json:"contextID"`
+	OperatorControllerStatus *OperatorControllerStatus `json:"OperatorControllerStatus"`
 }
 
 type OperatorStatus struct {
@@ -100,10 +204,17 @@ type OperatorStatus struct {
 	Version     string                      `json:"version"`
 	Controllers []*OperatorControllerStatus `json:"controllers"`
 	Error       *Error                      `json:"error"`
+	ContextID   string                      `json:"contextID"`
 }
 
 type OperatorStatusInput struct {
 	TargetStatus Status `json:"targetStatus"`
+	ContextID    string `json:"contextID"`
+}
+
+type OperatorStatusPerK8sContext struct {
+	ContextID      string          `json:"contextID"`
+	OperatorStatus *OperatorStatus `json:"operatorStatus"`
 }
 
 type PageFilter struct {
@@ -115,6 +226,32 @@ type PageFilter struct {
 	To       *string `json:"to"`
 }
 
+type PatternPageResult struct {
+	Page       int              `json:"page"`
+	PageSize   int              `json:"page_size"`
+	TotalCount int              `json:"total_count"`
+	Patterns   []*PatternResult `json:"patterns"`
+}
+
+type PatternResult struct {
+	ID          string    `json:"id"`
+	Name        string    `json:"name"`
+	UserID      string    `json:"user_id"`
+	Location    *Location `json:"location"`
+	PatternFile string    `json:"pattern_file"`
+	CanSupport  bool      `json:"canSupport"`
+	Errmsg      *string   `json:"errmsg"`
+	CreatedAt   *string   `json:"created_at"`
+	UpdatedAt   *string   `json:"updated_at"`
+}
+
+type PerfPageProfiles struct {
+	Page       int            `json:"page"`
+	PageSize   int            `json:"page_size"`
+	TotalCount int            `json:"total_count"`
+	Profiles   []*PerfProfile `json:"profiles"`
+}
+
 type PerfPageResult struct {
 	Page       int              `json:"page"`
 	PageSize   int              `json:"page_size"`
@@ -122,13 +259,35 @@ type PerfPageResult struct {
 	Results    []*MesheryResult `json:"results"`
 }
 
+type PerfProfile struct {
+	ConcurrentRequest int       `json:"concurrent_request"`
+	CreatedAt         *string   `json:"created_at"`
+	Duration          string    `json:"duration"`
+	Endpoints         []*string `json:"endpoints"`
+	ID                string    `json:"id"`
+	LastRun           *string   `json:"last_run"`
+	LoadGenerators    []*string `json:"load_generators"`
+	Name              *string   `json:"name"`
+	QPS               *int      `json:"qps"`
+	TotalResults      *int      `json:"total_results"`
+	UpdatedAt         *string   `json:"updated_at"`
+	UserID            string    `json:"user_id"`
+	RequestHeaders    *string   `json:"request_headers"`
+	RequestCookies    *string   `json:"request_cookies"`
+	RequestBody       *string   `json:"request_body"`
+	ContentType       *string   `json:"content_type"`
+	ServiceMesh       *string   `json:"service_mesh"`
+}
+
 type ReSyncActions struct {
-	ClearDb string `json:"clearDB"`
-	ReSync  string `json:"ReSync"`
+	ClearDb   string `json:"clearDB"`
+	ReSync    string `json:"ReSync"`
+	HardReset string `json:"hardReset"`
 }
 
 type ServiceMeshFilter struct {
-	Type *MeshType `json:"type"`
+	Type          *MeshType `json:"type"`
+	K8sClusterIDs []string  `json:"k8sClusterIDs"`
 }
 
 type MeshType string
@@ -148,6 +307,7 @@ const (
 	MeshTypeTanzu              MeshType = "TANZU"
 	MeshTypeOpenServiceMesh    MeshType = "OPEN_SERVICE_MESH"
 	MeshTypeNginxServiceMesh   MeshType = "NGINX_SERVICE_MESH"
+	MeshTypeCiliumServiceMesh  MeshType = "CILIUM_SERVICE_MESH"
 )
 
 var AllMeshType = []MeshType{
@@ -165,11 +325,12 @@ var AllMeshType = []MeshType{
 	MeshTypeTanzu,
 	MeshTypeOpenServiceMesh,
 	MeshTypeNginxServiceMesh,
+	MeshTypeCiliumServiceMesh,
 }
 
 func (e MeshType) IsValid() bool {
 	switch e {
-	case MeshTypeAllMesh, MeshTypeInvalidMesh, MeshTypeAppMesh, MeshTypeCitrixServiceMesh, MeshTypeConsul, MeshTypeIstio, MeshTypeKuma, MeshTypeLinkerd, MeshTypeTraefikMesh, MeshTypeOctarine, MeshTypeNetworkServiceMesh, MeshTypeTanzu, MeshTypeOpenServiceMesh, MeshTypeNginxServiceMesh:
+	case MeshTypeAllMesh, MeshTypeInvalidMesh, MeshTypeAppMesh, MeshTypeCitrixServiceMesh, MeshTypeConsul, MeshTypeIstio, MeshTypeKuma, MeshTypeLinkerd, MeshTypeTraefikMesh, MeshTypeOctarine, MeshTypeNetworkServiceMesh, MeshTypeTanzu, MeshTypeOpenServiceMesh, MeshTypeNginxServiceMesh, MeshTypeCiliumServiceMesh:
 		return true
 	}
 	return false
@@ -196,10 +357,99 @@ func (e MeshType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
+type MesheryController string
+
+const (
+	MesheryControllerBroker   MesheryController = "BROKER"
+	MesheryControllerOperator MesheryController = "OPERATOR"
+	MesheryControllerMeshsync MesheryController = "MESHSYNC"
+)
+
+var AllMesheryController = []MesheryController{
+	MesheryControllerBroker,
+	MesheryControllerOperator,
+	MesheryControllerMeshsync,
+}
+
+func (e MesheryController) IsValid() bool {
+	switch e {
+	case MesheryControllerBroker, MesheryControllerOperator, MesheryControllerMeshsync:
+		return true
+	}
+	return false
+}
+
+func (e MesheryController) String() string {
+	return string(e)
+}
+
+func (e *MesheryController) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = MesheryController(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid MesheryController", str)
+	}
+	return nil
+}
+
+func (e MesheryController) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type MesheryControllerStatus string
+
+const (
+	MesheryControllerStatusDeployed    MesheryControllerStatus = "DEPLOYED"
+	MesheryControllerStatusNotdeployed MesheryControllerStatus = "NOTDEPLOYED"
+	MesheryControllerStatusDeploying   MesheryControllerStatus = "DEPLOYING"
+	MesheryControllerStatusUnkown      MesheryControllerStatus = "UNKOWN"
+)
+
+var AllMesheryControllerStatus = []MesheryControllerStatus{
+	MesheryControllerStatusDeployed,
+	MesheryControllerStatusNotdeployed,
+	MesheryControllerStatusDeploying,
+	MesheryControllerStatusUnkown,
+}
+
+func (e MesheryControllerStatus) IsValid() bool {
+	switch e {
+	case MesheryControllerStatusDeployed, MesheryControllerStatusNotdeployed, MesheryControllerStatusDeploying, MesheryControllerStatusUnkown:
+		return true
+	}
+	return false
+}
+
+func (e MesheryControllerStatus) String() string {
+	return string(e)
+}
+
+func (e *MesheryControllerStatus) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = MesheryControllerStatus(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid MesheryControllerStatus", str)
+	}
+	return nil
+}
+
+func (e MesheryControllerStatus) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
 type Status string
 
 const (
 	StatusEnabled    Status = "ENABLED"
+	StatusConnected  Status = "CONNECTED"
 	StatusDisabled   Status = "DISABLED"
 	StatusProcessing Status = "PROCESSING"
 	StatusUnknown    Status = "UNKNOWN"
@@ -207,6 +457,7 @@ const (
 
 var AllStatus = []Status{
 	StatusEnabled,
+	StatusConnected,
 	StatusDisabled,
 	StatusProcessing,
 	StatusUnknown,
@@ -214,7 +465,7 @@ var AllStatus = []Status{
 
 func (e Status) IsValid() bool {
 	switch e {
-	case StatusEnabled, StatusDisabled, StatusProcessing, StatusUnknown:
+	case StatusEnabled, StatusConnected, StatusDisabled, StatusProcessing, StatusUnknown:
 		return true
 	}
 	return false

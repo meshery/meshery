@@ -7,7 +7,7 @@ import (
 
 func (s *Selector) Workload(name string) (core.WorkloadCapability, bool) {
 	data := store.GetAll(generateWorkloadKey(name))
-	workloads := convertInterfaceSliceToWorkloadSlice(data)
+	workloads := convertValueInterfaceSliceToWorkloadSlice(data)
 
 	filteredWorkloads, typ := filterWorkloadByType(workloads)
 
@@ -147,13 +147,13 @@ func getResourceType(metadata map[string]string) string {
 	return typ
 }
 
-func convertInterfaceSliceToWorkloadSlice(data []interface{}) []core.WorkloadCapability {
+func convertValueInterfaceSliceToWorkloadSlice(data []store.Value) []core.WorkloadCapability {
 	res := []core.WorkloadCapability{}
 
 	for _, el := range data {
-		elc, ok := el.(core.WorkloadCapability)
+		elc, ok := el.(*core.WorkloadCapability)
 		if ok {
-			res = append(res, elc)
+			res = append(res, *elc)
 		}
 	}
 

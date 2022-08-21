@@ -1,16 +1,17 @@
 ---
 layout: default
-title: Using mesheryctl
+title: Using Meshery CLI
 description: How to use mesheryctl
-permalink: guides/mesheryctl/using-mesheryctl
+permalink: guides/mesheryctl/working-with-mesheryctl
 language: en
 type: Guides
 category: mesheryctl
 ---
 
-Meshery's command line interface is `mesheryctl`. Use `mesheryctl` to both manage the lifecyle of Meshery itself and to access and invoke any of Meshery's application and service mesh management functions. `mesheryctl` commands can be categorized as follows:
+Meshery's command line interface is `mesheryctl`. Use `mesheryctl` to both manage the lifecyle of Meshery itself and to access and invoke any of Meshery's application and cloud native management functions. `mesheryctl` commands can be categorized as follows:
 
 - `mesheryctl` - Global overrides and flags
+- `mesheryctl app` - Service Mesh Application Management
 - `mesheryctl filter` - Service Mesh Filter Management
 - `mesheryctl mesh` - Service Mesh Lifecycle & Configuration Management
 - `mesheryctl perf` - Service Mesh Performance Management
@@ -25,17 +26,17 @@ Each of the `system` commands are used to control Meshery's lifecycle like `syst
 
 ## Meshery CLI FAQ
 
-#### Question: What are differences between contexts ?
+#### Question: What is the meshconfig?
 
-Each context is a block that defines certain parameters that are specific to meshery itself.
-This helps the user to save multiple configurations of the meshery instance, switching between them with ease.
+Like kubeconfig for `kubectl`, meshconfig is the name of your `mesheryctl` config file. You can find your meshconfig file in its default location of `~/.meshery/config.yaml`. By default, `mesheryctl` will look to this location for your meshconfig. You can override the default location at anytime with the use of the global parameter, `--config <my-other-meshconfig>`.
 
-#### Question: Why are contexts necessary ?
+#### Question: What is a context?
 
-Having configured multiple contexts and switched between environments enabled automation during the deployment process.
+A meshconfig `context` represents a single Meshery deployment. Using `context`s, you can configure different Meshery deployments with environment-specific settings and you can easily switching between your individual Meshery deployments by updating your current-context.
 
-Approach:
-Context allows us to maining context data in the configuration file similar to kube contexts. The properties could be under the context-name object and the current context can be stored using a current- context key.
+#### Question: Why are contexts necessary?
+
+Many Meshery users have more than one Meshery deployment. Contexts allow you to deploy different versions of Meshery, update your release channel subscription settings, selectively install one or more Meshery Adapters, and so on. Contexts allow you to configure your invididual Meshery deployments.
 
 #### Question: What is `current-context`?
 
@@ -105,17 +106,13 @@ For an exhaustive list of `mesheryctl` commands and syntax:
 
 Guides to using Meshery's various features and components.
 
-{% assign sorted_guides = site.pages | sort: "type" | reverse %}
+{% capture tag %}
 
-<ul>
-  <li><a href="{{ site.baseurl }}/guides/upgrade#upgrading-meshery-cli">Upgrading mesheryctl</a></lI>
-  {% for item in sorted_guides %}
-  {% if item.type=="Guides" and item.category=="mesheryctl" and item.list!="exclude" -%}
-    <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
-    </li>
-    {% endif %}
-  {% endfor %}
-</ul>
+<li><a href="{{ site.baseurl }}/guides/upgrade#upgrading-meshery-cli">Upgrading mesheryctl</a></li>
+
+{% endcapture %}
+
+{% include suggested-reading.html diffName="true" isDiffTag="true" diffTag=tag %}
 
 <!-- ## Related Guides
 
@@ -160,7 +157,6 @@ To install `mesheryctl`, execute the following commands:
 
  <pre class="codeblock-pre"><div class="codeblock">
  <div class="clipboardjs">
- brew tap layer5io/tap
  brew install mesheryctl
  mesheryctl system start
  </div></div>
@@ -184,7 +180,7 @@ Install `mesheryctl` and run Meshery on Mac or Linux with this script:
 
  <pre class="codeblock-pre"><div class="codeblock">
  <div class="clipboardjs">
- curl -L https://git.io/meshery | bash -
+ curl -L https://meshery.io/install | bash -
  </div></div>
  </pre>
 
@@ -194,7 +190,7 @@ Upgrade `mesheryctl` and run Meshery on Mac or Linux with this script:
 
  <pre class="codeblock-pre"><div class="codeblock">
  <div class="clipboardjs">
- curl -L https://git.io/meshery | bash -
+ curl -L https://meshery.io/install | bash -
  </div></div>
  </pre>
 
@@ -236,3 +232,5 @@ To upgrade `mesheryctl`, execute the following command:
  </pre>
 
 -->
+
+{% include discuss.html %}

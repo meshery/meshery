@@ -1,13 +1,13 @@
 ---
 layout: page
 title: Contributing to Meshery Server
-permalink: project/contributing-server
+permalink: project/contributing/contributing-server
+redirect_from: project/contributing/contributing-server/
 description: How to contribute to Meshery Server
 language: en
 type: project
 category: contributing
 ---
-
 
 As a new contributor, you’re going to want to familiarize with the project in order to resolve the issues in the best way. Installing and playing around with Meshery will give you context for the any issues that you might work on.
 
@@ -15,16 +15,19 @@ Once an issue has been addressed, you’ll need to test it as well. Ideally, the
 
 ## Compiling and Running Meshery server
 
-To build and run Meshery server from source: 
+To build and run Meshery server from source:
 
 1. Build the static assets for the UI by running
+
 ```sh
-make setup-ui-libs
-make build-ui
+make ui-setup
+make ui-build
 ```
+
 2. Build & run the server code by running
+
 ```sh
-make run-local // Or make run-fast
+make server // Or make run-fast
 ```
 
 Any time changes are made to the GO code, you will have to stop the server and run the above command again.
@@ -47,18 +50,6 @@ Every Golang-based project that belongs to Layer5 incorporates a utility to defi
 make error
 ```
 
-For more details, <a href="{{ site.baseurl }}/project/contributing-error">Error Utility</a>
+For more details, <a href="{{ site.baseurl }}/project/contributing/contributing-error">Error Utility</a>
 
-
-# Suggested Reading
-
-{% assign sorted_reading = site.pages | sort: page.title | reverse %}
-
-<ul>
-  {% for item in sorted_reading %}
-  {% if item.type=="project" and item.category=="contributing" and item.list!="exclude" -%}
-    <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
-    </li>
-    {% endif %}
-  {% endfor %}
-</ul>
+{% include suggested-reading.html %}

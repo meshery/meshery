@@ -7,6 +7,7 @@ import (
 	"net/url"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strings"
 	"sync"
 	"time"
@@ -174,8 +175,19 @@ func WRK2LoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *period
 func startNighthawkServer(timeout int64) error {
 	nighthawkStatus.Lock()
 	defer nighthawkStatus.Unlock()
-	command := "./nighthawk_service"
-	transformCommand := "./nighthawk_output_transform"
+
+	curDir, err := os.Getwd()
+	if err != nil {
+		return ErrStartingNighthawkServer(err)
+	}
+
+	command := filepath.Join(curDir, "nighthawk_service")
+	transformCommand := filepath.Join(curDir, "nighthawk_output_transform")
+
+	_, err = os.Stat(command)
+	if err != nil {
+		return ErrStartingNighthawkServer(err)
+	}
 	cmd := exec.Command(command)
 	if !nighthawkRunning {
 		err := cmd.Start()
@@ -193,7 +205,7 @@ func startNighthawkServer(timeout int64) error {
 		}
 	}()
 
-	_, err := os.Stat(transformCommand)
+	_, err = os.Stat(transformCommand)
 	if err != nil {
 		nighthawkStatus.Unlock()
 		return ErrStartingNighthawkServer(err)
@@ -219,12 +231,6 @@ func NighthawkLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *p
 		return nil, nil, ErrRunningNighthawkServer(err)
 	}
 
-	qps := opts.HTTPQPS
-
-	if qps <= 0 {
-		qps = -1 // 0==unitialized struct == default duration, -1 (0 for flag) is max
-	}
-
 	u, err := url.Parse(opts.URL)
 	if err != nil {
 		return nil, nil, ErrRunningTest(err)
@@ -232,29 +238,77 @@ func NighthawkLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *p
 	rURL := u.Host
 	if u.Hostname() == "localhost" {
 		if u.Port() != "" {
-			rURL = fmt.Sprintf("0.0.0.0:%s", u.Port())
+			rURL = fmt.Sprintf("0.0.0.0:%s%s", u.Port(), u.Path)
 		} else {
-			rURL = "0.0.0.0"
+			rURL = fmt.Sprintf("0.0.0.0%s", u.Path)
 		}
 	}
 
 	if u.Port() == "" {
 		if u.Scheme == "http" {
-			rURL = fmt.Sprintf("http://%s:80", u.Hostname())
+			rURL = fmt.Sprintf("http://%s:80%s", u.Hostname(), u.Path)
 		} else {
-			rURL = fmt.Sprintf("https://%s:443", u.Hostname())
+			rURL = fmt.Sprintf("https://%s:443%s", u.Hostname(), u.Path)
 		}
 		// Add support for more protocols here
 	}
 
+	// advanced request options supported by nighthawk
+	requestOptions := &nighthawk_proto.RequestOptions{}
+
+	headers := make([]*v3.HeaderValueOption, 0)
+	if opts.Headers != nil {
+		for key, value := range *opts.Headers {
+			headers = append(headers, &v3.HeaderValueOption{
+				Header: &v3.HeaderValue{
+					Key:   key,
+					Value: value,
+				},
+			})
+		}
+	}
+
+	if opts.Cookies != nil {
+		cookies := ""
+		for key, val := range *opts.Cookies {
+			cookies += fmt.Sprintf(" %s=%s;", key, val)
+		}
+		headers = append(headers, &v3.HeaderValueOption{
+			Header: &v3.HeaderValue{
+				Key:   "Cookie",
+				Value: cookies,
+			},
+		})
+	}
+
+	if len(opts.ContentType) > 0 {
+		headers = append(headers, &v3.HeaderValueOption{
+			Header: &v3.HeaderValue{
+				Key:   "Content-Type",
+				Value: opts.ContentType,
+			},
+		})
+	}
+
+	requestOptions.RequestHeaders = headers
+
+	// Nighthawk doesn't send the specified request payload but instead sends
+	// 'a' characters corresponding to that body's size
+	// TODO: Request method should be specifiable through UI
+	if reqBodyLength := len(opts.Body); reqBodyLength > 0 {
+		requestOptions.RequestBodySize = &wrappers.UInt32Value{Value: uint32(len(opts.Body))}
+		requestOptions.RequestMethod = v3.RequestMethod_POST
+	} else {
+		requestOptions.RequestBodySize = &wrappers.UInt32Value{Value: uint32(0)}
+		requestOptions.RequestMethod = v3.RequestMethod_GET
+	}
+
 	ro := &nighthawk_proto.CommandLineOptions{
-		RequestsPerSecond: &wrappers.UInt32Value{Value: uint32(qps)},
-		Connections:       &wrappers.UInt32Value{Value: uint32(2)},
 		OneofDurationOptions: &nighthawk_proto.CommandLineOptions_Duration{
 			Duration: durationpb.New(opts.Duration),
 		},
-		Timeout:             durationpb.New(10 * time.Second),
-		H2:                  &wrappers.BoolValue{Value: false},
+		Timeout: durationpb.New(10 * time.Second),
+		// TODO: support multiple http versions
 		Concurrency:         &wrappers.StringValue{Value: fmt.Sprint(opts.HTTPNumThreads)},
 		Verbosity:           &nighthawk_proto.Verbosity{Value: nighthawk_proto.Verbosity_INFO},
 		OutputFormat:        &nighthawk_proto.OutputFormat{Value: nighthawk_proto.OutputFormat_FORTIO},
@@ -262,28 +316,27 @@ func NighthawkLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *p
 		BurstSize:           &wrappers.UInt32Value{Value: uint32(0)},
 		AddressFamily:       &nighthawk_proto.AddressFamily{Value: nighthawk_proto.AddressFamily_AUTO},
 		OneofRequestOptions: &nighthawk_proto.CommandLineOptions_RequestOptions{
-			RequestOptions: &nighthawk_proto.RequestOptions{
-				RequestMethod:   v3.RequestMethod_GET,
-				RequestHeaders:  make([]*v3.HeaderValueOption, 0),
-				RequestBodySize: &wrappers.UInt32Value{Value: uint32(10)},
-			},
+			RequestOptions: requestOptions,
 		},
-		MaxPendingRequests:       &wrappers.UInt32Value{Value: uint32(10)},
-		MaxActiveRequests:        &wrappers.UInt32Value{Value: uint32(100)},
-		MaxRequestsPerConnection: &wrappers.UInt32Value{Value: uint32(100)},
-		SequencerIdleStrategy:    &nighthawk_proto.SequencerIdleStrategy{Value: nighthawk_proto.SequencerIdleStrategy_DEFAULT},
+		// use default values for nighthawk's configuration to avoid any unexpected
+		// failures until there is a dynamic way to specify this
+		// MaxPendingRequests:       &wrappers.UInt32Value{Value: uint32(10)},
+		// MaxActiveRequests:        &wrappers.UInt32Value{Value: uint32(100)},
+		// MaxRequestsPerConnection: &wrappers.UInt32Value{Value: uint32(100)},
+		SequencerIdleStrategy: &nighthawk_proto.SequencerIdleStrategy{Value: nighthawk_proto.SequencerIdleStrategy_DEFAULT},
 		OneofUri: &nighthawk_proto.CommandLineOptions_Uri{
 			Uri: &wrappers.StringValue{Value: rURL},
 		},
 		ExperimentalH1ConnectionReuseStrategy: &nighthawk_proto.H1ConnectionReuseStrategy{
 			Value: nighthawk_proto.H1ConnectionReuseStrategy_DEFAULT,
 		},
-		TerminationPredicates:                make(map[string]uint64),
-		FailurePredicates:                    make(map[string]uint64),
+		TerminationPredicates: make(map[string]uint64),
+		// Used for specifying parameters for failing execution. Use defailt for now
+		//FailurePredicates:                    make(map[string]uint64),
 		OpenLoop:                             &wrappers.BoolValue{Value: false},
 		JitterUniform:                        durationpb.New(0 * time.Second),
 		ExperimentalH2UseMultipleConnections: &wrappers.BoolValue{Value: false},
-		Labels:                               make([]string, 0),
+		Labels:                               []string{opts.Name, " -_- ", rURL},
 		//TransportSocket: &v3.TransportSocket{
 		//	Name: "test",
 		//	ConfigType: &v3.TransportSocket_TypedConfig{
@@ -302,6 +355,13 @@ func NighthawkLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *p
 		//	Nanos:   0,
 		//},
 		ExecutionId: &wrappers.StringValue{Value: "gg"},
+	}
+
+	qps := opts.HTTPQPS
+	// set QPS only if given QPS > 0
+	// user nighthawk's default QPS otherwise
+	if qps > 0 {
+		ro.RequestsPerSecond = &wrappers.UInt32Value{Value: uint32(qps)}
 	}
 
 	if opts.SupportedLoadTestMethods == 2 {
@@ -347,7 +407,7 @@ func NighthawkLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *p
 		}
 	}
 
-	d, err := nighthawk_client.Transform(res1, "fortio")
+	d, err := nighthawk_client.Transform(res1)
 	if err != nil {
 		return nil, nil, ErrTransformingData(err)
 	}

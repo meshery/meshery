@@ -60,7 +60,7 @@ Run the following for default:
  <pre class="codeblock-pre">
  <div class="codeblock"><div class="clipboardjs">
  $ helm repo add meshery https://meshery.io/charts/
- $ helm install my-meshery meshery/meshery --version 2.1.2
+ $ helm install meshery meshery/meshery
  </div></div>
  </pre>
 
@@ -70,20 +70,20 @@ Customize of deployment the Meshery adapters:
  <div class="codeblock"><div class="clipboardjs">
  $ helm repo add meshery https://meshery.io/charts/
 
- # Manually disable the adapters you do not want to deploy
- $ helm install --set key=value --set key=value my-meshery meshery/meshery --version 2.1.2
+ # Example: Pin your deployment to a specific Meshery version
+ $ helm install meshery meshery/meshery --version v0.5.67
 
- # Example : Disabled the Linkerd2 adapter and check the deployment manifest that the helm will deploy
- $ helm install --set meshery-linkerd.enabled=false meshery/meshery --version 2.1.2 --dry-run
+ # Example: Disabled the Meshery Adapter for Linkerd and verify the deployment manifest
+ $ helm install --set meshery-linkerd.enabled=false meshery/meshery --dry-run
 
- # Example : Meshery server supports customizing authentication flow callback URL, which can be configured in the following way
+ # Example: Meshery Server supports customizing authentication flow callback URL, which can be configured in the following way
  $ helm install meshery --namespace meshery --set env.MESHERY_SERVER_CALLBACK_URL=https://custom-host meshery/meshery
  </div></div>
  </pre>
 
 The key of Meshery adapters you can find [here](https://artifacthub.io/packages/helm/meshery/meshery#values)
 
-### **Using Kubernetes Manifests**
+### **Using Kubernetes Manifests [deprecated]**
 Meshery can also be deployed on an existing Kubernetes cluster. See [compatibility table](#compatibility-matrix) for version compatibility. To install Meshery on your cluster, clone the Meshery repo:
 
  <pre class="codeblock-pre">

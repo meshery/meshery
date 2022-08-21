@@ -1,4 +1,0 @@
-name: apply
-description: apply pattern file
-usage: |
-    mesheryctl pattern apply --file [path to pattern file]

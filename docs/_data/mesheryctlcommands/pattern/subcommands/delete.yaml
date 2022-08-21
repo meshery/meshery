@@ -1,4 +1,0 @@
-name: delete
-description: delete pattern file
-usage: |
-    mesheryctl pattern delete --file [path to pattern file]

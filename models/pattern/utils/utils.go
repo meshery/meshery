@@ -93,6 +93,5 @@ func ToMapStringInterface(mp interface{}) map[string]interface{} {
 	if err := json.Unmarshal(byt, &res); err != nil {
 		return map[string]interface{}{}
 	}
-
 	return res
 }

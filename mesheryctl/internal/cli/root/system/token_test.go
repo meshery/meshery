@@ -2,7 +2,6 @@ package system
 
 import (
 	"bytes"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -40,18 +39,31 @@ func TestTokenCreateCmd(t *testing.T) {
 			ExpectedResponseYaml: "create_err.yaml",
 			ExpectError:          true,
 		},
+		{
+			Name:                 "create the passed token with default location and set it as the current token",
+			Args:                 []string{"token", "create", "new-token", "--set"},
+			ExpectedResponse:     "create_default_set.golden",
+			ExpectedResponseYaml: "create_default_set.yaml",
+			ExpectError:          false,
+		},
+		{
+			Name:                 "create the passed token with passed location and set it as the current token",
+			Args:                 []string{"token", "create", "new-token", "--set"},
+			ExpectedResponse:     "create_set.golden",
+			ExpectedResponseYaml: "create_set.yaml",
+			ExpectError:          false,
+		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
 			utils.SetupCustomContextEnv(t, currDir+"/testdata/token/"+tt.ExpectedResponseYaml)
-			var b *bytes.Buffer
 
 			// Expected response
 			testdatatokenDir := filepath.Join(currDir, "testdata/token")
 			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdatatokenDir)
 
-			b = utils.SetupLogrusGrabTesting(t)
+			b := utils.SetupMeshkitLoggerTesting(t, false)
 			SystemCmd.SetOut(b)
 			SystemCmd.SetArgs(tt.Args)
 			err := SystemCmd.Execute()
@@ -86,7 +98,7 @@ func TestTokenCreateCmd(t *testing.T) {
 				t.Error("unable to locate meshery directory")
 			}
 			filepath := path + "/testdata/token/" + tt.ExpectedResponseYaml
-			content, err := ioutil.ReadFile(filepath)
+			content, err := os.ReadFile(filepath)
 			if err != nil {
 				t.Error(err)
 			}
@@ -139,7 +151,7 @@ func TestTokenDeleteCmd(t *testing.T) {
 			testdatatokenDir := filepath.Join(currDir, "testdata/token")
 			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdatatokenDir)
 
-			b = utils.SetupLogrusGrabTesting(t)
+			b = utils.SetupLogrusGrabTesting(t, false)
 			SystemCmd.SetOut(b)
 			SystemCmd.SetArgs(tt.Args)
 			err := SystemCmd.Execute()
@@ -177,7 +189,7 @@ func TestTokenDeleteCmd(t *testing.T) {
 				t.Error("unable to locate meshery directory")
 			}
 			filepath := path + "/testdata/token/" + tt.ExpectedResponseYaml
-			content, err := ioutil.ReadFile(filepath)
+			content, err := os.ReadFile(filepath)
 			if err != nil {
 				t.Error(err)
 			}
@@ -238,7 +250,7 @@ func TestTokenSetCmd(t *testing.T) {
 			testdatatokenDir := filepath.Join(currDir, "testdata/token")
 			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdatatokenDir)
 
-			b = utils.SetupLogrusGrabTesting(t)
+			b = utils.SetupLogrusGrabTesting(t, false)
 			SystemCmd.SetOut(b)
 			SystemCmd.SetArgs(tt.Args)
 			err := SystemCmd.Execute()
@@ -276,7 +288,7 @@ func TestTokenSetCmd(t *testing.T) {
 				t.Error("unable to locate meshery directory")
 			}
 			filepath := path + "/testdata/token/" + tt.ExpectedResponseYaml
-			content, err := ioutil.ReadFile(filepath)
+			content, err := os.ReadFile(filepath)
 			if err != nil {
 				t.Error(err)
 			}
@@ -326,7 +338,7 @@ func TestTokenViewCmd(t *testing.T) {
 			testdatatokenDir := filepath.Join(currDir, "testdata/token")
 			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdatatokenDir)
 
-			b = utils.SetupLogrusGrabTesting(t)
+			b = utils.SetupLogrusGrabTesting(t, false)
 			SystemCmd.SetOut(b)
 			SystemCmd.SetArgs(tt.Args)
 			err := SystemCmd.Execute()
@@ -388,7 +400,7 @@ func TestTokenListCmd(t *testing.T) {
 			testdatatokenDir := filepath.Join(currDir, "testdata/token")
 			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdatatokenDir)
 
-			b = utils.SetupLogrusGrabTesting(t)
+			b = utils.SetupLogrusGrabTesting(t, false)
 			SystemCmd.SetOut(b)
 			SystemCmd.SetArgs(tt.Args)
 			err := SystemCmd.Execute()

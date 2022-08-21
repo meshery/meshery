@@ -37,6 +37,16 @@ import (
 	"github.com/spf13/viper"
 )
 
+// IsPodRequired checks if a given pod is specified in the required pods
+func IsPodRequired(requiredPods []string, pod string) bool {
+	for _, rp := range requiredPods {
+		if rp == pod {
+			return true
+		}
+	}
+	return false
+}
+
 // logsCmd represents the logs command
 var logsCmd = &cobra.Command{
 	Use:   "logs",
@@ -45,6 +55,11 @@ var logsCmd = &cobra.Command{
 
 It also shows the logs of a specific component.`,
 	Args: cobra.ArbitraryArgs,
+	Example: `
+// Starts tailing Meshery server debug logs (works with components also)
+mesheryctl system logs --verbose
+mesheryctl system logs meshery-istio
+	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
 		hcOptions := &HealthCheckOptions{
@@ -65,7 +80,6 @@ It also shows the logs of a specific component.`,
 		return err
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		log.Info("Starting Meshery logging...")
 
 		// Get viper instance used for context
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
@@ -91,7 +105,7 @@ It also shows the logs of a specific component.`,
 		// switch statement for multiple platform
 		switch currPlatform {
 		case "docker":
-			ok, err := utils.IsMesheryRunning(currPlatform)
+			ok, err := utils.AreMesheryComponentsRunning(currPlatform)
 			if err != nil {
 				return err
 			}
@@ -99,6 +113,7 @@ It also shows the logs of a specific component.`,
 				log.Error("No logs to show. Meshery is not running.")
 				return nil
 			}
+			log.Info("Starting Meshery logging...")
 
 			if _, err := os.Stat(utils.DockerComposeFile); os.IsNotExist(err) {
 				log.Errorf("%s does not exists", utils.DockerComposeFile)
@@ -128,7 +143,7 @@ It also shows the logs of a specific component.`,
 			// if the platform is kubernetes, use kubernetes go-client to
 			// display pod status in the MesheryNamespace
 
-			ok, err := utils.IsMesheryRunning(currPlatform)
+			ok, err := utils.AreMesheryComponentsRunning(currPlatform)
 			if err != nil {
 				return err
 			}
@@ -136,6 +151,7 @@ It also shows the logs of a specific component.`,
 				log.Error("No logs to show. Meshery is not running.")
 				return nil
 			}
+			log.Info("Starting Meshery logging...")
 
 			// create an kubernetes client
 			client, err := meshkitkube.New([]byte(""))
@@ -145,7 +161,7 @@ It also shows the logs of a specific component.`,
 			}
 
 			// List the pods in the MesheryNamespace
-			podList, err := utils.GetPods(client, utils.MesheryNamespace)
+			podList, err := utils.GetPodList(client, utils.MesheryNamespace)
 			availablePods := podList.Items
 
 			if err != nil {
@@ -174,7 +190,7 @@ It also shows the logs of a specific component.`,
 
 				// Only print the logs from the required pods
 				if len(requiredPods) > 0 {
-					if !utils.IsPodRequired(requiredPods, name) {
+					if !IsPodRequired(requiredPods, name) {
 						continue
 					}
 				}
