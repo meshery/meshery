@@ -4,3 +4,9 @@ cypress/screenshots
 # Code coverage
 coverage
 .nyc_output
+
+# yarn
+.pnp.cjs
+.pnp.loader.mjs
+.yarn/
+.yarnrc.yml
