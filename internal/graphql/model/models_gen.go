@@ -37,6 +37,35 @@ type ApplicationResult struct {
 	UpdatedAt       *string     `json:"updated_at"`
 }
 
+type CatalogFilter struct {
+	ID          string                 `json:"id"`
+	Name        string                 `json:"name"`
+	FilterFile  string                 `json:"filter_file"`
+	UserID      string                 `json:"user_id"`
+	Location    *Location              `json:"location"`
+	Visibility  map[string]interface{} `json:"visibility"`
+	CatalogData map[string]interface{} `json:"catalog_data"`
+	CreatedAt   *string                `json:"created_at"`
+	UpdatedAt   *string                `json:"updated_at"`
+}
+
+type CatalogPattern struct {
+	ID          string                 `json:"id"`
+	Name        string                 `json:"name"`
+	UserID      string                 `json:"user_id"`
+	PatternFile string                 `json:"pattern_file"`
+	Location    *Location              `json:"location"`
+	Visibility  map[string]interface{} `json:"visibility"`
+	CatalogData map[string]interface{} `json:"catalog_data"`
+	CreatedAt   *string                `json:"created_at"`
+	UpdatedAt   *string                `json:"updated_at"`
+}
+
+type CatalogSelector struct {
+	Search string `json:"search"`
+	Order  string `json:"order"`
+}
+
 type ConfigurationPage struct {
 	Applications *ApplicationPage   `json:"applications"`
 	Patterns     *PatternPageResult `json:"patterns"`

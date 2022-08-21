@@ -15,11 +15,13 @@ var (
 	err          error
 )
 
-func (r *Resolver) subscribeConfiguration(ctx context.Context, provider models.Provider, selector model.PageFilter) (<-chan *model.ConfigurationPage, error) {
-	chp := make(chan struct{})
-	cha := make(chan struct{})
-	chf := make(chan struct{})
-
+func (r *Resolver) subscribeConfiguration(ctx context.Context, provider models.Provider, applicationSelector model.PageFilter, patternSelector model.PageFilter, filterSelector model.PageFilter) (<-chan *model.ConfigurationPage, error) {
+	chp := make(chan struct{}, 1)
+	cha := make(chan struct{}, 1)
+	chf := make(chan struct{}, 1)
+	chp <- struct{}{}
+	cha <- struct{}{}
+	chf <- struct{}{}
 	r.Config.ConfigurationChannel.SubscribePatterns(chp)
 	r.Config.ConfigurationChannel.SubscribeApplications(cha)
 	r.Config.ConfigurationChannel.SubscribeFilters(chf)
@@ -30,7 +32,7 @@ func (r *Resolver) subscribeConfiguration(ctx context.Context, provider models.P
 		for {
 			select {
 			case <-chp:
-				patterns, err = r.fetchPatterns(ctx, provider, selector)
+				patterns, err = r.fetchPatterns(ctx, provider, patternSelector)
 				if err != nil {
 					r.Log.Error(ErrPatternsSubscription(err))
 					break
@@ -44,7 +46,7 @@ func (r *Resolver) subscribeConfiguration(ctx context.Context, provider models.P
 				configuration <- conf
 
 			case <-cha:
-				applications, err = r.fetchApplications(ctx, provider, selector)
+				applications, err = r.fetchApplications(ctx, provider, applicationSelector)
 				if err != nil {
 					r.Log.Error(ErrApplicationsSubscription(err))
 					break
@@ -58,7 +60,7 @@ func (r *Resolver) subscribeConfiguration(ctx context.Context, provider models.P
 				configuration <- conf
 
 			case <-chf:
-				filters, err = r.fetchFilters(ctx, provider, selector)
+				filters, err = r.fetchFilters(ctx, provider, filterSelector)
 				if err != nil {
 					r.Log.Error(ErrFiltersSubscription(err))
 					break

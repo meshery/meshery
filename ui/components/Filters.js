@@ -39,6 +39,7 @@ import ConfirmationMsg from "./ConfirmationModal";
 import UndeployIcon from "../public/static/img/UndeployIcon";
 import { getComponentsinFile } from "../utils/utils";
 import PublishIcon from "@material-ui/icons/Publish";
+import ConfigurationSubscription from "./graphql/subscriptions/ConfigurationSubscription";
 
 const styles = (theme) => ({
   grid : {
@@ -191,6 +192,8 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     open : false
   })
 
+  const disposeConfSubscriptionRef = useRef(null);
+
   const getMuiTheme = () => createTheme({
     overrides : {
       MuiInput : {
@@ -272,12 +275,36 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     });
   }
 
-  /**
-   * fetch filters when the page loads
-   */
   useEffect(() => {
-    fetchFilters(page, pageSize, search, sortOrder);
-  }, [page, pageSize, search, sortOrder]);
+    const configurationSubscription = ConfigurationSubscription((result) => {
+      setPage(result.configuration?.filters.page || 0);
+      setPageSize(result.configuration?.filters.page_size || 0);
+      setCount(result.configuration?.filters.total_count || 0);
+      setFilters(result.configuration?.filters.filters)
+    },
+    {
+      applicationSelector : {
+        pageSize : pageSize.toString(),
+        page : page.toString(),
+        search : search,
+        order : sortOrder
+      },
+      patternSelector : {
+        pageSize : pageSize.toString(),
+        page : page.toString(),
+        search : search,
+        order : sortOrder
+      },
+      filterSelector : {
+        pageSize : pageSize.toString(),
+        page : page.toString(),
+        search : search,
+        order : sortOrder
+      }
+    });
+    disposeConfSubscriptionRef.current = configurationSubscription;
+    return () => disposeConfSubscriptionRef.current.dispose();
+  },[])
 
   /**
    * fetchFilters constructs the queries based on the parameters given
@@ -378,6 +405,37 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     });
   };
 
+  const initFiltersSubscription = (page, pageSize, search, order) => {
+    disposeConfSubscriptionRef.current.dispose();
+    const configurationSubscription = ConfigurationSubscription((result) => {
+      setPage(result.configuration?.filters.page || 0);
+      setPageSize(result.configuration?.filters.page_size || 0);
+      setCount(result.configuration?.filters.total_count || 0);
+      setFilters(result.configuration?.filters.filters)
+    },
+    {
+      applicationSelector : {
+        pageSize : pageSize,
+        page : page,
+        search : search,
+        order : order
+      },
+      patternSelector : {
+        pageSize : pageSize,
+        page : page,
+        search : search,
+        order : order
+      },
+      filterSelector : {
+        pageSize : pageSize,
+        page : page,
+        search : search,
+        order : order
+      }
+    });
+    disposeConfSubscriptionRef.current = configurationSubscription
+  }
+
   const handleModalOpen = (filter_file, name, isDeploy) => {
     setModalOpen({
       open : true,
@@ -414,7 +472,6 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
         () => {
           console.log("FilterFile API", `/api/filter/${id}`);
           updateProgress({ showProgress : false });
-          fetchFilters(page, pageSize, search, sortOrder);
           resetSelectedRowData()();
         },
         // handleError
@@ -436,7 +493,6 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
         () => {
           console.log("FilterFile API", `/api/filter`);
           updateProgress({ showProgress : false });
-          fetchFilters(page, pageSize, search, sortOrder);
         },
         // handleError
         handleError(ACTION_TYPES.UPLOAD_FILTERS)
@@ -615,7 +671,6 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
           },
         });
 
-        fetchFilters(page, pageSize, search, sortOrder);
       },
       handleError("Failed To Delete Filter")
     );
@@ -649,8 +704,8 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
         const fid = Object.keys(row.lookup).map((idx) => filters[idx]?.id);
         fid.forEach((fid) => deleteFilter(fid));
       }
-      if (response === "No")
-        fetchFilters(page, pageSize, search, sortOrder);
+      // if (response === "No")
+      // fetchFilters(page, pageSize, search, sortOrder);
     },
 
     onTableChange : (action, tableState) => {
@@ -662,10 +717,10 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
 
       switch (action) {
         case "changePage":
-          fetchFilters(tableState.page, pageSize, search, sortOrder);
+          initFiltersSubscription(tableState.page.toString(), pageSize.toString(), search, sortOrder)
           break;
         case "changeRowsPerPage":
-          fetchFilters(page, tableState.rowsPerPage, search, sortOrder);
+          initFiltersSubscription(page.toString(), tableState.rowsPerPage.toString(), search, sortOrder);
           break;
         case "search":
           if (searchTimeout.current) {
@@ -673,7 +728,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
           }
           searchTimeout.current = setTimeout(() => {
             if (search !== tableState.searchText) {
-              fetchFilters(page, pageSize, tableState.searchText !== null ? tableState.searchText : "", sortOrder);
+              fetchFilters(page, pageSize, search, sortOrder);
             }
           }, 500);
           break;
@@ -686,7 +741,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
             }
           }
           if (order !== sortOrder) {
-            fetchFilters(page, pageSize, search, order);
+            initFiltersSubscription(page.toString(), pageSize.toString(), search, order);
           }
           break;
       }
