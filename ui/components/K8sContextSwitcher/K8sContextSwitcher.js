@@ -4,6 +4,31 @@ import AddIcon from '@mui/icons-material/Add';
 import {Paper, Slide, Button, IconButton, Link, TextField, Checkbox, Avatar} from '@mui/material';
 import ClickAwayListener from '@mui/base/ClickAwayListener';
 import BadgeAvatars from "@/components/CustomAvatar"
+import { styled } from "@mui/material/styles";
+
+const CbadgeContainer = styled('div')(({ theme }) => ({
+  display : "flex",
+  justifyContent : "center",
+  alignItems : "center",
+  position : "relative"
+}));
+
+const Cbadge = styled('div')(({ theme }) => ({
+  fontSize : "0.65rem",
+  backgroundColor : "white",
+  borderRadius : "50%",
+  color : "black",
+  height : "1.30rem",
+  width : "1.30rem",
+  display : "flex",
+  justifyContent : "center",
+  alignItems : "center",
+  position : "absolute",
+  zIndex : 1,
+  right : "-0.75rem",
+  top : "-0.29rem"
+}));
+
 
 export default function K8sContextMenu({
   contexts={},  setActiveContexts = () => { },
@@ -22,6 +47,8 @@ export default function K8sContextMenu({
     bottom : "-55%",
     transform : showFullContextMenu ? `translateY(${transformProperty}%)` : "translateY(0)"
   };
+
+
 
   const getOperatorStatus = (contextId) => {
     const state = runningStatus.operatorStatus;
@@ -81,7 +108,7 @@ export default function K8sContextMenu({
         aria-haspopup="true"
         style={{ marginRight: "0.5rem" }}
       >
-        <div>
+        <CbadgeContainer>
           <img
             className="k8s-image"
             src="/static/img/kubernetes.svg"
@@ -89,8 +116,8 @@ export default function K8sContextMenu({
             height="24px"
             style={{ zIndex: "2" }}
           />
-          <div>{contexts?.total_count || 0}</div>
-        </div>
+          <Cbadge>{contexts?.total_count || 0}</Cbadge>
+        </CbadgeContainer>
       </IconButton>
 
       <Slide direction="down" style={styleSlider} timeout={400} in={open} mountOnEnter unmountOnExit>
