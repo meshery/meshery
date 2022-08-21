@@ -45,7 +45,9 @@ const PageTitle = styled(Typography)(({ theme }) => ({
   [theme.breakpoints.up("sm")]: { fontSize: "1.65rem" },
 }));
 
-const HeaderComponent = ({ drawerOpen, onDrawerToggle, pageTitle, contexts={} }) => {
+const HeaderComponent = ({ drawerOpen, onDrawerToggle, pageTitle, contexts={}, activeContexts = [],
+  runningStatus,
+  updateK8SConfig, }) => {
   const theme = useTheme();
   return (
        <AppBar
@@ -95,20 +97,12 @@ const HeaderComponent = ({ drawerOpen, onDrawerToggle, pageTitle, contexts={} })
           </PageTitleWrapperGrid>
 
           <UserGrid item>
-            <IconButton color="inherit" size="lage">
-              <Link href="/system/connections">
-                <HeaderIcon
-                  icon={(props) => <img {...props}></img>}
-                  src={
-                    pageTitle === "Connection Wizard"
-                      ? "/static/img/connection_wizard/connection-wizard-green.svg"
-                      : "/static/img/connection_wizard/connection-wizard-white.svg"
-                  }
-                />
-              </Link>
-            </IconButton>
             
-            <K8sContextMenu contexts={contexts}/>
+            <K8sContextMenu contexts={contexts} 
+            activeContexts={activeContexts}
+            setActiveContexts={setActiveContexts}
+            searchContexts={searchContexts}
+             />
 
             <IconButton color="inherit" size="large">
               <Link href="/settings">
