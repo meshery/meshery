@@ -291,7 +291,7 @@ func (r *Resolver) subscribeClusterInfo(ctx context.Context, provider models.Pro
 	respChan := make(chan *model.ClusterInfo)
 	logrus.Debug("k8s context: ", k8scontextIDs)
 
-	r.Config.DashboardK8sResourcesChan.SubscribeDashbordK8Resources(ch)
+	r.Config.DashboardK8sResourcesChan.SubscribeDashbordK8Resources(ch, k8scontextIDs)
 
 	r.Log.Info("Initializing ClusterInfo subscription.")
 	go func() {

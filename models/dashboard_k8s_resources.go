@@ -7,26 +7,35 @@ import (
 )
 
 type DashboardK8sResourcesChan struct {
-	ResourcesChan   []chan struct{}
+	ResourcesChan   map[string][]chan struct{}
 	mx             sync.Mutex
 }
 
 func NewDashboardK8sResourcesHelper() *DashboardK8sResourcesChan {
 	return &DashboardK8sResourcesChan{
-		ResourcesChan:  make([]chan struct{}, 0),
+		ResourcesChan:  make(map[string][]chan struct{}, 0),
 	}
 }
 
-func (d *DashboardK8sResourcesChan) SubscribeDashbordK8Resources(ch chan struct{}) {
+func (d *DashboardK8sResourcesChan) SubscribeDashbordK8Resources(ch chan struct{}, ctxIDs []string) {
 	d.mx.Lock()
 	defer d.mx.Unlock()
-	d.ResourcesChan = append(d.ResourcesChan, ch)
+
+	for _, ctxID := range ctxIDs {
+		if _, ok := d.ResourcesChan[ctxID]; !ok {
+			d.ResourcesChan[ctxID] = append(d.ResourcesChan[ctxID], ch)
+		}
+	}
 }
 
-func (d *DashboardK8sResourcesChan) PublishDashboardK8sResources() {
-	for _, ch := range d.ResourcesChan {
-		if !utils.IsClosed(ch){
-			ch <- struct{}{}
-		}	
+func (d *DashboardK8sResourcesChan) PublishDashboardK8sResources(k8scontextID string) {
+	for ctxID, ch := range d.ResourcesChan {
+		if ctxID == k8scontextID {
+			for _, c := range ch {
+				if !utils.IsClosed(c){
+					c <- struct{}{}
+				}	
+			}
+		}
 	}
 }
