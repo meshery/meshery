@@ -8,7 +8,7 @@ import (
 	"github.com/layer5io/meshery/models"
 )
 
-func (r *queryResolver) fetchCatalogPattern(ctx context.Context, provider models.Provider, selector *model.CatalogSelector) ([]*model.CatalogPattern, error){
+func (r *queryResolver) fetchCatalogPattern(ctx context.Context, provider models.Provider, selector *model.CatalogSelector) ([]*model.CatalogPattern, error) {
 	token := ctx.Value(models.TokenCtxKey).(string)
 	resp, err := provider.GetCatalogMesheryPatterns(token, selector.Search, selector.Order)
 
@@ -18,10 +18,13 @@ func (r *queryResolver) fetchCatalogPattern(ctx context.Context, provider models
 	}
 	var catalog []*model.CatalogPattern
 
-	json.Unmarshal(resp, &catalog)
+	err = json.Unmarshal(resp, &catalog)
+	if err != nil {
+		r.Log.Error(err)
+		return nil, err
+	}
 	return catalog, nil
-}	
-
+}
 
 func (r *queryResolver) fetchCatalogFilter(ctx context.Context, provider models.Provider, selector *model.CatalogSelector) ([]*model.CatalogFilter, error) {
 	token := ctx.Value(models.TokenCtxKey).(string)
@@ -34,6 +37,10 @@ func (r *queryResolver) fetchCatalogFilter(ctx context.Context, provider models.
 
 	var catalog []*model.CatalogFilter
 
-	json.Unmarshal(resp, &catalog)
+	err = json.Unmarshal(resp, &catalog)
+	if err != nil {
+		r.Log.Error(err)
+		return nil, err
+	}
 	return catalog, nil
 }
