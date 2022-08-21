@@ -89,7 +89,7 @@ server-local:
 	DEBUG=true \
 	ADAPTER_URLS=$(ADAPTER_URLS) \
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
-	go$(GOVERSION) run main.go
+	go$(GOVERSION) run main.go error.go
 	
 run-fast: 
 	## "DEPRECATED: This target is deprecated. Use `make server`.
