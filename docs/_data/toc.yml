@@ -25,10 +25,10 @@
           url: project/contributing/contributing-ui
         - title: End-to-End Testing
           url: project/contributing/contributing-cypress
+        - title: Build & Release (CI)
+          url: project/contributing/build-and-release
     - title: Releases
       url: project/releases
-    - title: Build & Release (CI)
-      url: project/build-and-release
     - title: Vulnerabilities
       url: project/security-vulnerabilities
     - title: FAQ
