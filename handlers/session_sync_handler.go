@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"net/http"
+	"time"
 
 	"encoding/json"
 
@@ -14,11 +15,13 @@ type SessionSyncData struct {
 }
 
 type SessionSyncDataK8sConfig struct {
-	ContextID         string `json:"contextID,omitempty"`
-	ContextName       string `json:"contextName,omitempty"`
-	ClusterConfigured bool   `json:"clusterConfigured,omitempty"`
-	ConfiguredServer  string `json:"configuredServer,omitempty"`
-	ClusterID         string `json:"clusterID,omitempty"`
+	ContextID         string     `json:"id,omitempty"`
+	ContextName       string     `json:"name,omitempty"`
+	ClusterConfigured bool       `json:"clusterConfigured,omitempty"`
+	ConfiguredServer  string     `json:"server,omitempty"`
+	ClusterID         string     `json:"clusterID,omitempty"`
+	CreatedAt         *time.Time `json:"created_at,omitempty"`
+	UpdatedAt         *time.Time `json:"updated_at,omitempty"`
 }
 
 // swagger:route GET /api/system/sync SystemAPI idSystemSync
@@ -65,6 +68,8 @@ func (h *Handler) SessionSyncHandler(w http.ResponseWriter, req *http.Request, p
 				ClusterConfigured: true,
 				ClusterID:         cid,
 				ConfiguredServer:  k8scontext.Server,
+				CreatedAt:         k8scontext.CreatedAt,
+				UpdatedAt:         k8scontext.UpdatedAt,
 			})
 		}
 	}

@@ -658,7 +658,7 @@ function MesheryPatterns({
                 title="Undeploy"
                 onClick={() => handleModalOpen(rowData.pattern_file, rowData.name, false)}
               >
-                <UndeployIcon fill="#B32700" data-cy="undeploy-button" />
+                <UndeployIcon fill="#8F1F00" data-cy="undeploy-button" />
               </IconButton>
             </>
           );
@@ -849,7 +849,7 @@ function MesheryPatterns({
                 style={{ marginRight : "2rem" }}
               >
                 <PublishIcon className={classes.addIcon} />
-              Import Pattern
+              Import Design
               </Button>
             </div>
           </div>
@@ -879,12 +879,15 @@ function MesheryPatterns({
               patterns={patterns}
               handleDeploy={handleDeploy}
               handleUnDeploy={handleUnDeploy}
+              urlUploadHandler={urlUploadHandler}
+              uploadHandler={uploadHandler}
               handleSubmit={handleSubmit}
               setSelectedPattern={setSelectedPattern}
               selectedPattern={selectedPattern}
               pages={Math.ceil(count / pageSize)}
               setPage={setPage}
               selectedPage={page}
+              UploadImport={UploadImport}
             />
         }
         <ConfirmationMsg
