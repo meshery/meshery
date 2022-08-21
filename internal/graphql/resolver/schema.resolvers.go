@@ -138,6 +138,16 @@ func (r *queryResolver) GetClusterResources(ctx context.Context, k8scontextIDs [
 	return r.getClusterResources(ctx, provider, k8scontextIDs)
 }
 
+func (r *queryResolver) FetchPatternCatalogContent(ctx context.Context, selector *model.CatalogSelector) ([]*model.CatalogPattern, error) {
+	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	return r.fetchCatalogPattern(ctx, provider, selector)
+}
+
+func (r *queryResolver) FetchFilterCatalogContent(ctx context.Context, selector *model.CatalogSelector) ([]*model.CatalogFilter, error) {
+	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	return r.fetchCatalogFilter(ctx, provider, selector)
+}
+
 func (r *subscriptionResolver) ListenToAddonState(ctx context.Context, filter *model.ServiceMeshFilter) (<-chan []*model.AddonList, error) {
 	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
 	if filter != nil {
