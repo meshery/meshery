@@ -89,7 +89,7 @@ server-local:
 	DEBUG=true \
 	ADAPTER_URLS=$(ADAPTER_URLS) \
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
-	go$(GOVERSION) run main.go
+	go$(GOVERSION) run main.go error.go
 	
 run-fast: 
 	## "DEPRECATED: This target is deprecated. Use `make server`.
@@ -103,7 +103,7 @@ server:
 	DEBUG=true \
 	ADAPTER_URLS=$(ADAPTER_URLS) \
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
-	go$(GOVERSION) run main.go;
+	go$(GOVERSION) run main.go error.go;
 
 ## Build and run Meshery Server with no Kubernetes components on your local machine (requires go${GOVERSION}).
 server-skip-compgen:
@@ -115,7 +115,7 @@ server-skip-compgen:
 	ADAPTER_URLS=$(ADAPTER_URLS) \
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
  	SKIP_COMP_GEN=true \
-	go$(GOVERSION) run main.go;
+	go$(GOVERSION) run main.go error.go;
 		
 ## Build and run Meshery Server with no seed content (requires go$(GOVERSION)).
 server-no-content:
@@ -127,7 +127,7 @@ server-no-content:
 	ADAPTER_URLS=$(ADAPTER_URLS) \
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
 	SKIP_DOWNLOAD_CONTENT=true \
-	go$(GOVERSION) run main.go;
+	go$(GOVERSION) run main.go error.go;
 
 ## Lint check Meshery Server.
 golangci: error
