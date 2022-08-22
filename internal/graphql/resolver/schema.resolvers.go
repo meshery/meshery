@@ -108,6 +108,10 @@ func (r *queryResolver) FetchPatterns(ctx context.Context, selector model.PageFi
 	return r.fetchPatterns(ctx, provider, selector)
 }
 
+func (r *queryResolver) FetchFilters(ctx context.Context, selector model.PageFilter) (*model.FilterPage, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
 func (r *queryResolver) GetWorkloads(ctx context.Context, name *string, id *string, trim *bool) ([]*model.OAMCapability, error) {
 	return r.getWorkloads(ctx, name, id, trim)
 }
@@ -176,7 +180,6 @@ func (r *subscriptionResolver) SubscribeBrokerConnection(ctx context.Context) (<
 	return r.subscribeBrokerConnection(ctx)
 }
 
-// this subscription should be re-established to get proper updates when the k8s contexts have changed
 func (r *subscriptionResolver) SubscribeMesheryControllersStatus(ctx context.Context, k8scontextIDs []string) (<-chan []*model.MesheryControllersStatusListItem, error) {
 	resChan := make(chan []*model.MesheryControllersStatusListItem)
 	controllerHandlersPerContext, ok := ctx.Value(models.MesheryControllerHandlersKey).(map[string]map[models.MesheryController]controllers.IMesheryController)
@@ -235,7 +238,6 @@ func (r *subscriptionResolver) SubscribeMesheryControllersStatus(ctx context.Con
 	return resChan, nil
 }
 
-// this subscription should be re-established to get proper updates when the k8s contexts have changed
 func (r *subscriptionResolver) SubscribeMeshSyncEvents(ctx context.Context, k8scontextIDs []string) (<-chan *model.MeshSyncEvent, error) {
 	resChan := make(chan *model.MeshSyncEvent)
 	// get handlers
