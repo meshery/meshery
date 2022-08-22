@@ -120,41 +120,41 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
     updateFunc(newState);
   }
 
-  useEffect(() => {
+  const setTableData = () => {
     let tableInfo = [];
-    fetchAllContexts(25)
-      .then(res => {
-        if (res?.contexts) {
-          handleContexts(res.contexts);
-          res.contexts.forEach(ctx => {
-            let data = {
-              context : ctx.name,
-              location : ctx.server,
-              deployment_type : k8sconfig.find(context => context.contextID === ctx.id)?.inClusterConfig ? "In Cluster" : "Out of Cluster",
-              last_discovery : setDateTime(new Date()),
-              name : ctx.name,
-              id : ctx.id
-            };
-            tableInfo.push(data);
+    handleContexts(k8sconfig);
+    k8sconfig.forEach(ctx => {
+      let data = {
+        context : ctx.name,
+        location : ctx.server,
+        deployment_type : ctx.inClusterConfig ? "In Cluster" : "Out of Cluster",
+        last_discovery : setDateTime(new Date()),
+        id : ctx.id
+      };
+      tableInfo.push(data);
+    })
+    setData(tableInfo);
+  }
 
-            const tempSubscription = fetchMesheryOperatorStatus({ k8scontextID : ctx.id }).
-              subscribe({
-                next : (res) => {
-                  if (!_operatorState.find(opSt => opSt.contextID === ctx.id)) {
-                    const x = updateCtxInfo(ctx.id, res)
-                    _setOperatorState(x)
-                  }
-                  tempSubscription.unsubscribe();
-                },
-                error : (err) => console.log("error at operator scan: " + err),
-              })
-          })
-          setData(tableInfo);
-        }
-      })
-      .catch(handleError("failed to fetch contexts for the instance"))
-
-    getKubernetesVersion();
+  useEffect(() => {
+    setTableData();
+  },[k8sconfig])
+  useEffect(() => {
+    setTableData();
+    k8sconfig.forEach(ctx => {
+      const tempSubscription = fetchMesheryOperatorStatus({ k8scontextID : ctx.id }).
+        subscribe({
+          next : (res) => {
+            if (!_operatorState.find(opSt => opSt.contextID === ctx.id)) {
+              const x = updateCtxInfo(ctx.id, res)
+              _setOperatorState(x)
+            }
+            tempSubscription.unsubscribe();
+          },
+          error : (err) => console.log("error at operator scan: " + err),
+        })
+    })
+    getKubernetesVersion(); // change to per context and also ping return server version. no need to check workload
   }, [])
 
   useEffect(() => {
@@ -207,21 +207,20 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
   }
 
   const handleContexts = (contexts) => {
+    let ctxs = []
     contexts.forEach((ctx) => {
-      ctx.created_at = setDateTime(new Date(ctx.created_at));
-      ctx.updated_at = setDateTime(new Date(ctx.updated_at));
+      let tempCtx = { ...ctx }
+      tempCtx.created_at = setDateTime(new Date(ctx.created_at));
+      tempCtx.updated_at = setDateTime(new Date(ctx.updated_at));
+      ctxs.push(tempCtx);
     })
-    setContexts(contexts);
+    setContexts(ctxs);
   }
 
   const handleMenuClose = (index) => {
     let menu = [...showMenu];
     menu[index] = false;
     setShowMenu(menu)
-  }
-
-  async function fetchAllContexts(number) {
-    return await promisifiedDataFetch("/api/system/kubernetes/contexts?pageSize=" + number)
   }
 
   const handleError = (msg) => (error) => {
@@ -244,17 +243,47 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
     setShowMenu(menu);
   }
 
-  const handleSuccess = msg => {
+  const handleConfigSnackbars = ctxs => {
     updateProgress({ showProgress : false });
-    enqueueSnackbar(msg, {
-      variant : "success",
-      action : (key) => (
-        <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-          <CloseIcon />
-        </IconButton>
-      ),
-      autoHideDuration : 7000,
-    });
+
+    for (let ctx of ctxs.inserted_contexts) {
+      const msg = `Cluster ${ctx.name} at ${ctx.server} connected`
+      enqueueSnackbar(msg, {
+        variant : "success",
+        action : (key) => (
+          <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+            <CloseIcon />
+          </IconButton>
+        ),
+        autoHideDuration : 7000,
+      });
+    }
+
+    for (let ctx of ctxs.updated_contexts) {
+      const msg = `Cluster ${ctx.name} at ${ctx.server} already exists`
+      enqueueSnackbar(msg, {
+        variant : "info",
+        action : (key) => (
+          <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+            <CloseIcon />
+          </IconButton>
+        ),
+        autoHideDuration : 7000,
+      });
+    }
+
+    for (let ctx of ctxs.errored_contexts) {
+      const msg = `Failed to add cluster ${ctx.name} at ${ctx.server}`
+      enqueueSnackbar(msg, {
+        variant : "error",
+        action : (key) => (
+          <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+            <CloseIcon />
+          </IconButton>
+        ),
+        autoHideDuration : 7000,
+      });
+    }
   }
 
   const handleLastDiscover = (index) => {
@@ -274,7 +303,8 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
           let version = result[0]?.oam_definition?.spec?.metadata?.version;
           setK8sVersion(version);
         }
-      }
+      },
+      handleError("Failed to get Kubernetes version")
     )
   }
 
@@ -450,7 +480,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
   }
 
   const uploadK8SConfig = async () => {
-    await promisifiedDataFetch(
+    return await promisifiedDataFetch(
       "/api/system/kubernetes",
       {
         method : "POST",
@@ -461,7 +491,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
 
   const columns = [
     {
-      name : "contexts",
+      name : "context",
       label : "Contexts",
       options : {
         filter : true,
@@ -480,7 +510,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
           return (
             <Tooltip title={`Server: ${tableMeta.rowData[2]}`}>
               <Chip
-                label={data[tableMeta.rowIndex].name}
+                label={data[tableMeta.rowIndex].context}
                 onDelete={() => handleConfigDelete(data[tableMeta.rowIndex].id, tableMeta.rowIndex)}
                 onClick={() => handleKubernetesClick(data[tableMeta.rowIndex].id, tableMeta.rowIndex)}
                 icon={<img src="/static/img/kubernetes.svg" className={classes.icon} />}
@@ -654,7 +684,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
                               <Tooltip title={`Server: ${contexts[rowMetaData.rowIndex].server}`}
                               >
                                 <Chip
-                                  label={data[rowMetaData.rowIndex].name}
+                                  label={data[rowMetaData.rowIndex].context}
                                   onClick={() => handleKubernetesClick(data[rowMetaData.rowIndex].id, rowMetaData.rowIndex)}
                                   icon={<img src="/static/img/kubernetes.svg" className={classes.icon} />}
                                   variant="outlined"
@@ -881,15 +911,8 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
         return;
       }
 
-      uploadK8SConfig().then(() => {
-        handleSuccess("successfully uploaded kubernetes config");
-        fetchAllContexts(25)
-          .then(res => {
-            let newData = [...data];
-            setData(newData);
-            setContexts(res.contexts)
-          })
-          .catch(handleError("failed to get contexts"))
+      uploadK8SConfig().then((obj) => {
+        handleConfigSnackbars(obj);
       }).
         catch(err => {
           handleError("failed to upload kubernetes config")(err)

@@ -22,23 +22,69 @@ import (
 )
 
 var (
-	skipSave bool // skip saving a app
-	appFile  string
+	skipSave   bool   // skip saving the app
+	appFile    string // app file
+	sourceType string // app file type (manifest / compose)
 )
+
+var validSourceTypes []string
 
 var onboardCmd = &cobra.Command{
 	Use:   "onboard",
 	Short: "Onboard application",
-	Long:  `Command will trigger deploy of Application file`,
+	Long:  `Command will trigger deploy of application`,
 	Args:  cobra.MinimumNArgs(0),
 	Example: `
 // Onboard application by providing file path
-mesheryctl app onboard -f [filepath]
+mesheryctl app onboard -f [filepath] -s [source type]
+
+Example:
+mesheryctl app onboard -f ./application.yml -s "Kubernetes Manifest"
 
 ! Refer below image link for usage
 * Usage of mesheryctl app onboard
-# ![app-onboard-usage](../../../../docs/assets/img/mesheryctl/app-onboard.png)
+# ![app-onboard-usage](/assets/img/mesheryctl/app-onboard.png)
 	`,
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+		if err != nil {
+			return err
+		}
+		validTypesURL := mctlCfg.GetBaseMesheryURL() + "/api/application/types"
+		client := &http.Client{}
+		req, err := utils.NewRequest("GET", validTypesURL, nil)
+		if err != nil {
+			return err
+		}
+
+		resp, err := client.Do(req)
+		if err != nil {
+			return err
+		}
+
+		if resp.StatusCode != 200 {
+			return errors.Errorf("Response Status Code %d, possible Server Error", resp.StatusCode)
+		}
+		defer resp.Body.Close()
+
+		var response []*models.ApplicationSourceTypesAPIResponse
+
+		body, err := io.ReadAll(resp.Body)
+		if err != nil {
+			return errors.Wrap(err, utils.PerfError("failed to read response body"))
+		}
+		err = json.Unmarshal(body, &response)
+		if err != nil {
+			return errors.Wrap(err, "failed to unmarshal response body")
+		}
+
+		for _, apiResponse := range response {
+			validSourceTypes = append(validSourceTypes, apiResponse.ApplicationType)
+		}
+
+		return nil
+	},
+
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var req *http.Request
 		var err error
@@ -97,6 +143,10 @@ mesheryctl app onboard -f [filepath]
 				appFile = response.Applications[index].ApplicationFile
 			}
 		} else {
+			// Check if a valid source type is set
+			if !isValidSource(sourceType) {
+				return errors.Errorf("application source type (-s) invalid or not passed.\nAllowed source types: %s", strings.Join(validSourceTypes, ", "))
+			}
 			// Method to check if the entered file is a URL or not
 			if validURL := govalidator.IsURL(file); !validURL {
 				content, err := os.ReadFile(file)
@@ -117,7 +167,7 @@ mesheryctl app onboard -f [filepath]
 					if err != nil {
 						return err
 					}
-					req, err = utils.NewRequest("POST", appURL, bytes.NewBuffer(jsonValues))
+					req, err = utils.NewRequest("POST", appURL+"/"+sourceType, bytes.NewBuffer(jsonValues))
 					if err != nil {
 						return err
 					}
@@ -184,7 +234,7 @@ mesheryctl app onboard -f [filepath]
 						})
 					}
 				}
-				req, err = utils.NewRequest("POST", appURL, bytes.NewBuffer(jsonValues))
+				req, err = utils.NewRequest("POST", appURL+"/"+sourceType, bytes.NewBuffer(jsonValues))
 				if err != nil {
 					return err
 				}
@@ -217,7 +267,7 @@ mesheryctl app onboard -f [filepath]
 
 		// Convert App File into Pattern File
 		jsonValues, _ := json.Marshal(map[string]interface{}{
-			"k8s_manifest": appFile,
+			"K8sManifest": appFile,
 		})
 
 		req, err = utils.NewRequest("POST", patternURL, bytes.NewBuffer(jsonValues))
@@ -306,7 +356,18 @@ func multipleApplicationsConfirmation(profiles []models.MesheryApplication) int 
 	}
 }
 
+func isValidSource(sType string) bool {
+	for _, validType := range validSourceTypes {
+		if validType == sType {
+			return true
+		}
+	}
+
+	return false
+}
+
 func init() {
 	onboardCmd.Flags().StringVarP(&file, "file", "f", "", "Path to app file")
 	onboardCmd.Flags().BoolVarP(&skipSave, "skip-save", "", false, "Skip saving a app")
+	onboardCmd.Flags().StringVarP(&sourceType, "source-type", "s", "", "Type of source file (ex. manifest / compose / helm)")
 }

@@ -122,6 +122,12 @@ type Capability struct {
 	Endpoint string  `json:"endpoint,omitempty"`
 }
 
+// K8sContextResponse - struct of response sent by provider when requested to persist k8s config
+type K8sContextPersistResponse struct {
+	K8sContext K8sContext `json:"k8s_context,omitempty"`
+	Inserted   bool       `json:"inserted,omitempty"`
+}
+
 // Feature is a type to store the features of the provider
 type Feature string
 
@@ -245,7 +251,7 @@ type Provider interface {
 	RecordPreferences(req *http.Request, userID string, data *Preference) error
 
 	SaveK8sContext(token string, k8sContext K8sContext) (K8sContext, error)
-	GetK8sContexts(token, page, pageSize, search, order string) (MesheryK8sContextPage, error)
+	GetK8sContexts(token, page, pageSize, search, order string) ([]byte, error)
 	DeleteK8sContext(token, id string) (K8sContext, error)
 	GetK8sContext(token, id string) (K8sContext, error)
 	LoadAllK8sContext(token string) ([]*K8sContext, error)
@@ -283,10 +289,11 @@ type Provider interface {
 	RemoteFilterFile(req *http.Request, resourceURL, path string, save bool) ([]byte, error)
 
 	SaveMesheryApplication(tokenString string, application *MesheryApplication) ([]byte, error)
+	SaveApplicationSourceContent(token string, applicationID string, sourceContent []byte) error
+	GetApplicationSourceContent(req *http.Request, applicationID string) ([]byte, error)
 	GetMesheryApplications(tokenString, page, pageSize, search, order string) ([]byte, error)
 	DeleteMesheryApplication(req *http.Request, applicationID string) ([]byte, error)
 	GetMesheryApplication(req *http.Request, applicationID string) ([]byte, error)
-	RemoteApplicationFile(req *http.Request, resourceURL, path string, save bool) ([]byte, error)
 
 	SavePerformanceProfile(tokenString string, performanceProfile *PerformanceProfile) ([]byte, error)
 	GetPerformanceProfiles(tokenString string, page, pageSize, search, order string) ([]byte, error)

@@ -101,6 +101,7 @@ func init() {
 	RootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "verbose output")
 
 	availableSubcommands = []*cobra.Command{
+		completionCmd,
 		versionCmd,
 		system.SystemCmd,
 		pattern.PatternCmd,

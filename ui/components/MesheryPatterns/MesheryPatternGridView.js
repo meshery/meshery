@@ -1,14 +1,14 @@
 //@ts-check
-import { Grid } from "@material-ui/core";
+import { Grid, Paper, Typography, Button } from "@material-ui/core";
 import { Pagination } from "@material-ui/lab";
 import React, { useState } from "react";
 import MesheryPatternCard from "./MesheryPatternCard";
-import { makeStyles } from "@material-ui/core/styles";
 import PatternConfiguratorComponent from "../configuratorComponents/patternConfigurator"
 import FILE_OPS from "../../utils/configurationFileHandlersEnum";
 import ConfirmationMsg from "../ConfirmationModal";
 import { getComponentsinFile } from "../../utils/utils";
-
+import PublishIcon from "@material-ui/icons/Publish";
+import useStyles from "./Grid.styles";
 
 const INITIAL_GRID_SIZE = { xl : 4, md : 6, xs : 12 };
 
@@ -36,17 +36,6 @@ function PatternCardGridItem({ pattern, handleDeploy, handleUnDeploy, handleSubm
     </Grid>
   );
 }
-const useStyles = makeStyles(() => ({
-  pagination : {
-    display : "flex",
-    justifyContent : "center",
-    alignItems : "center",
-    marginTop : "2rem"
-  },
-  // text : {
-  //   padding : "5px"
-  // }
-}))
 
 /**
  * MesheryPatternGrid is the react component for rendering grid
@@ -68,9 +57,25 @@ const useStyles = makeStyles(() => ({
  * }} props props
  */
 
-function MesheryPatternGrid({ patterns=[],handleDeploy, handleUnDeploy, handleSubmit, setSelectedPattern, selectedPattern, pages = 1,setPage, selectedPage }) {
+function MesheryPatternGrid({ patterns=[] ,handleDeploy, handleUnDeploy, urlUploadHandler,uploadHandler, handleSubmit, setSelectedPattern, selectedPattern, pages = 1,setPage, selectedPage, UploadImport }) {
 
   const classes = useStyles()
+
+  const [importModal, setImportModal] = useState({
+    open : false
+  });
+
+  const handleUploadImport = () => {
+    setImportModal({
+      open : true
+    });
+  }
+
+  const handleUploadImportClose = () => {
+    setImportModal({
+      open : false
+    });
+  }
 
   const [modalOpen, setModalOpen] = useState({
     open : false,
@@ -119,6 +124,29 @@ function MesheryPatternGrid({ patterns=[],handleDeploy, handleUnDeploy, handleSu
 
       </Grid>
       }
+      {!selectedPattern.show && patterns.length === 0 &&
+          <Paper className={classes.noPaper}>
+            <div className={classes.noContainer}>
+              <Typography align="center" color="textSecondary" className={classes.noText}>
+                No Designs Found
+              </Typography>
+              <div>
+                <Button
+                  aria-label="Add Application"
+                  variant="contained"
+                  color="primary"
+                  size="large"
+                  // @ts-ignore
+                  onClick={handleUploadImport}
+                  style={{ marginRight : "2rem" }}
+                >
+                  <PublishIcon className={classes.addIcon} />
+              Import Design
+                </Button>
+              </div>
+            </div>
+          </Paper>
+      }
       {patterns.length
         ? (
           <div className={classes.pagination} >
@@ -137,6 +165,7 @@ function MesheryPatternGrid({ patterns=[],handleDeploy, handleUnDeploy, handleSu
         componentCount={modalOpen.count}
         tab={modalOpen.deploy ? 0 : 1}
       />
+      <UploadImport open={importModal.open} handleClose={handleUploadImportClose} supportedTypes="null" aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} configuration="Designs"  />
     </div>
   );
 }

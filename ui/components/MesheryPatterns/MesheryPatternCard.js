@@ -91,30 +91,9 @@ function MesheryPatternCard({
           <div className={classes.bottomPart} >
 
             <div className={classes.cardButtons} >
-              <Button
-                variant="contained"
-                onClick={(ev) =>
-                  genericClickHandler(ev, setSelectedPatterns)
-                }
-                className={classes.testsButton}
-              >
-                <Avatar src="/static/img/pattwhite.svg" className={classes.iconPatt} imgProps={{ height : "16px", width : "16px" }} />
-                Design
-              </Button>
 
               <Button
-                variant="contained"
-                color="primary"
-                onClick={(ev) =>
-                  genericClickHandler(ev, handleDeploy)
-                }
-                className={classes.testsButton}
-              >
-                <DoneAllIcon className={classes.iconPatt} />
-                Deploy
-              </Button>
-
-              <Button
+                title="Undeploy"
                 variant="contained"
                 className={classes.undeployButton}
                 onClick={(ev) =>
@@ -123,6 +102,31 @@ function MesheryPatternCard({
               >
                 <UndeployIcon fill="#ffffff" className={classes.iconPatt} />
                 <span className={classes.btnText}>Undeploy</span>
+              </Button>
+
+              <Button
+                title="Deploy"
+                variant="contained"
+                onClick={(ev) =>
+                  genericClickHandler(ev, handleDeploy)
+                }
+                className={classes.testsButton}
+              >
+                <DoneAllIcon className={classes.iconPatt} />
+                <span className={classes.btnText}>Deploy</span>
+              </Button>
+
+              <Button
+                title="Design"
+                variant="contained"
+                color="primary"
+                onClick={(ev) =>
+                  genericClickHandler(ev, setSelectedPatterns)
+                }
+                className={classes.testsButton}
+              >
+                <Avatar src="/static/img/pattern_trans.svg" className={classes.iconPatt} imgProps={{ height : "16px", width : "16px" }} />
+                <span className={classes.btnText}>Design</span>
               </Button>
             </div>
           </div>

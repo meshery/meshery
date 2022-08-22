@@ -62,7 +62,6 @@ func init() {
 		updateCmd,
 		configCmd,
 		ContextCmd,
-		completionCmd,
 		channelCmd,
 		checkCmd,
 		loginCmd,

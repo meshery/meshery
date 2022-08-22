@@ -66,6 +66,11 @@ type UserPref struct {
 	Preferences *Preference `json:"preferences,omitempty"`
 }
 
+const (
+	remoteUploadURL   = "/upload"
+	remoteDownloadURL = "/download"
+)
+
 // Initialize function will initialize the RemoteProvider instance with the metadata
 // fetched from the remote providers capabilities endpoint
 func (l *RemoteProvider) Initialize() {
@@ -414,21 +419,27 @@ func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext) (K8
 	}()
 
 	if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusCreated {
-		var kc K8sContext
-		if err := json.NewDecoder(resp.Body).Decode(&kc); err != nil {
+		var kcr K8sContextPersistResponse
+		if err := json.NewDecoder(resp.Body).Decode(&kcr); err != nil {
 			return k8sContext, ErrUnmarshal(err, "kubernetes context")
 		}
 
 		// Sensitive data. Commenting until better debug controls are put into place. - @leecalcote
 		// logrus.Infof("kubernetes context successfully sent to remote provider: %+v", kc)
-		return kc, nil
+
+		// If the context already existed, return that as error
+		if !kcr.Inserted {
+			return kcr.K8sContext, ErrContextAlreadyPersisted
+		}
+
+		return kcr.K8sContext, nil
 	}
 	return k8sContext, ErrPost(fmt.Errorf("failed to save kubernetes context"), fmt.Sprint(resp.Body), resp.StatusCode)
 }
-func (l *RemoteProvider) GetK8sContexts(token, page, pageSize, search, order string) (MesheryK8sContextPage, error) {
+func (l *RemoteProvider) GetK8sContexts(token, page, pageSize, search, order string) ([]byte, error) {
 	MesheryInstanceID, ok := viper.Get("INSTANCE_ID").(*uuid.UUID)
 	if !ok {
-		return MesheryK8sContextPage{}, ErrMesheryInstanceID
+		return nil, ErrMesheryInstanceID
 	}
 	mi := MesheryInstanceID.String()
 	logrus.Infof("attempting to fetch kubernetes contexts from cloud for Meshery instance: %s", mi)
@@ -452,7 +463,7 @@ func (l *RemoteProvider) GetK8sContexts(token, page, pageSize, search, order str
 	resp, err := l.DoRequest(cReq, token)
 	if err != nil {
 		logrus.Errorf("unable to get kubernetes contexts: %v", err)
-		return MesheryK8sContextPage{}, err
+		return nil, err
 	}
 	defer func() {
 		_ = resp.Body.Close()
@@ -460,21 +471,15 @@ func (l *RemoteProvider) GetK8sContexts(token, page, pageSize, search, order str
 	bdr, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		logrus.Errorf("unable to read response body: %v", err)
-		return MesheryK8sContextPage{}, err
+		return nil, err
 	}
 
 	if resp.StatusCode == http.StatusOK {
-		var kp MesheryK8sContextPage
 		logrus.Infof("kubernetes contexts successfully retrieved from remote provider")
-
-		if err := json.Unmarshal(bdr, &kp); err != nil {
-			return kp, ErrMarshal(err, "kubernetes context")
-		}
-
-		return kp, nil
+		return bdr, nil
 	}
 	logrus.Errorf("error while fetching kubernetes contexts: %s", bdr)
-	return MesheryK8sContextPage{}, fmt.Errorf("error while fetching kubernetes contexts - Status code: %d, Body: %s", resp.StatusCode, bdr)
+	return nil, fmt.Errorf("error while fetching kubernetes contexts - Status code: %d, Body: %s", resp.StatusCode, bdr)
 }
 
 func (l *RemoteProvider) LoadAllK8sContext(token string) ([]*K8sContext, error) {
@@ -487,10 +492,14 @@ func (l *RemoteProvider) LoadAllK8sContext(token string) ([]*K8sContext, error) 
 		if err != nil {
 			return results, err
 		}
+		var k8scontext MesheryK8sContextPage
+		err = json.Unmarshal(res, &k8scontext)
+		if err != nil {
+			return results, ErrMarshal(err, "kubernetes context")
+		}
+		results = append(results, k8scontext.Contexts...)
 
-		results = append(results, res.Contexts...)
-
-		if (page+1)*pageSize >= res.TotalCount {
+		if (page+1)*pageSize >= k8scontext.TotalCount {
 			break
 		}
 
@@ -1823,7 +1832,7 @@ func (l *RemoteProvider) SaveMesheryApplication(tokenString string, application 
 		return nil, err
 	}
 
-	logrus.Debugf("Application: %s, size: %d", data, len(data))
+	logrus.Debugf("Application size: %d", len(data))
 	logrus.Infof("attempting to save application to remote provider")
 	bf := bytes.NewBuffer(data)
 
@@ -1852,6 +1861,72 @@ func (l *RemoteProvider) SaveMesheryApplication(tokenString string, application 
 	}
 
 	return bdr, ErrPost(fmt.Errorf("failed to send application to remote provider: %s", string(bdr)), fmt.Sprint(bdr), resp.StatusCode)
+}
+
+// SaveApplicationSourceContent saves given application source content with the provider after successful save of Application with the provider
+func (l *RemoteProvider) SaveApplicationSourceContent(tokenString string, applicationID string, sourceContent []byte) error {
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistMesheryApplications)
+
+	logrus.Debugf("Application Content size %d", len(sourceContent))
+	bf := bytes.NewBuffer(sourceContent)
+
+	uploadURL := fmt.Sprintf("%s%s%s/%s", l.RemoteProviderURL, ep, remoteUploadURL, applicationID)
+	remoteProviderURL, _ := url.Parse(uploadURL)
+
+	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), bf)
+
+	resp, err := l.DoRequest(cReq, tokenString)
+	if err != nil {
+		return ErrPost(err, "Application Source Content", resp.StatusCode)
+	}
+
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+
+	if resp.StatusCode == http.StatusOK {
+		logrus.Infof("application source successfully uploaded to remote provider")
+		return nil
+	}
+
+	return ErrPost(fmt.Errorf("failed to upload application source to remote provider"), "", resp.StatusCode)
+}
+
+// GetApplicationSourceContent returns application source-content from provider
+func (l *RemoteProvider) GetApplicationSourceContent(req *http.Request, applicationID string) ([]byte, error) {
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistMesheryApplications)
+	downloadURL := fmt.Sprintf("%s%s%s/%s", l.RemoteProviderURL, ep, remoteDownloadURL, applicationID)
+	remoteProviderURL, _ := url.Parse(downloadURL)
+	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
+
+	logrus.Infof("attempting to fetch application source content from cloud for id: %s", applicationID)
+
+	tokenString, err := l.GetToken(req)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := l.DoRequest(cReq, tokenString)
+	if err != nil {
+		logrus.Errorf("unable to get application source content: %v", err)
+		return nil, ErrFetch(err, "Application source content", resp.StatusCode)
+	}
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+
+	bdr, err := io.ReadAll(resp.Body)
+	if err != nil {
+		logrus.Errorf("unable to read response body: %v", err)
+		return nil, ErrDataRead(err, "Application")
+	}
+
+	if resp.StatusCode == http.StatusOK {
+		logrus.Infof("applications successfully retrieved from remote provider")
+		return bdr, nil
+	}
+	logrus.Errorf("error while fetching source content: %s", bdr)
+	return nil, ErrFetch(fmt.Errorf("error while fetching applications: %s", bdr), fmt.Sprint(bdr), resp.StatusCode)
 }
 
 // GetMesheryApplications gives the applications stored with the provider
@@ -1915,8 +1990,8 @@ func (l *RemoteProvider) GetMesheryApplication(req *http.Request, applicationID 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistMesheryApplications)
 
 	logrus.Infof("attempting to fetch application from cloud for id: %s", applicationID)
-
-	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s", l.RemoteProviderURL, ep, applicationID))
+	urls := fmt.Sprintf("%s%s/%s", l.RemoteProviderURL, ep, applicationID)
+	remoteProviderURL, _ := url.Parse(urls)
 	logrus.Debugf("constructed application url: %s", remoteProviderURL.String())
 	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
 
@@ -1979,61 +2054,6 @@ func (l *RemoteProvider) DeleteMesheryApplication(req *http.Request, application
 		return bdr, nil
 	}
 	return nil, ErrDelete(fmt.Errorf("could not retrieve application from remote provider"), "Application :"+applicationID, resp.StatusCode)
-}
-
-func (l *RemoteProvider) RemoteApplicationFile(req *http.Request, resourceURL, path string, save bool) ([]byte, error) {
-	if !l.Capabilities.IsSupported(PersistMesheryApplications) {
-		logrus.Error("operation not available")
-		return nil, ErrInvalidCapability("PersistMesheryApplications", l.ProviderName)
-	}
-
-	ep, _ := l.Capabilities.GetEndpointForFeature(PersistMesheryApplications)
-
-	data, err := json.Marshal(map[string]interface{}{
-		"url":  resourceURL,
-		"save": save,
-		"path": path,
-	})
-
-	if err != nil {
-		err = ErrMarshal(err, "meshery metrics for shipping")
-		return nil, err
-	}
-
-	logrus.Debugf("Application: %s, size: %d", data, len(data))
-	logrus.Infof("attempting to save application to remote provider")
-	bf := bytes.NewBuffer(data)
-
-	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
-	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), bf)
-
-	if err != nil {
-		return nil, err
-	}
-
-	tokenString, err := l.GetToken(req)
-	if err != nil {
-		return nil, err
-	}
-	resp, err := l.DoRequest(cReq, tokenString)
-	if err != nil {
-		return nil, ErrPost(err, "Application", resp.StatusCode)
-	}
-
-	defer func() {
-		_ = resp.Body.Close()
-	}()
-	bdr, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, ErrDataRead(err, "Application")
-	}
-
-	if resp.StatusCode == http.StatusOK {
-		logrus.Infof("application successfully sent to remote provider: %s", string(bdr))
-		return bdr, nil
-	}
-
-	return bdr, ErrPost(fmt.Errorf("could not sent application to remote provider: %s", string(bdr)), fmt.Sprint(bdr), resp.StatusCode)
 }
 
 // SavePerformanceProfile saves a performance profile into the remote provider

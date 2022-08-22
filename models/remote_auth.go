@@ -9,6 +9,7 @@ import (
 	"encoding/pem"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"math/big"
 	"net/http"
 	"time"
@@ -28,7 +29,7 @@ func SafeClose(co io.Closer) {
 	}
 }
 
-//DoRequest - executes a request and does refreshing automatically
+// DoRequest - executes a request and does refreshing automatically
 func (l *RemoteProvider) DoRequest(req *http.Request, tokenString string) (*http.Response, error) {
 	resp, err := l.doRequestHelper(req, tokenString)
 	if err != nil {
@@ -36,6 +37,10 @@ func (l *RemoteProvider) DoRequest(req *http.Request, tokenString string) (*http
 	}
 
 	if resp.StatusCode == 401 || resp.StatusCode == 403 {
+		// Read and close response body before reusing request
+		// https://github.com/golang/go/issues/19653#issuecomment-341540384
+		_, _ = ioutil.ReadAll(resp.Body)
+		resp.Body.Close()
 		logrus.Warn("trying after refresh")
 		newToken, err := l.refreshToken(tokenString)
 		logrus.Info("token refresh successful")

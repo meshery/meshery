@@ -3,6 +3,7 @@ const FILE_OPS = {
   URL_UPLOAD : "url_upload",
   UPDATE : "update",
   DELETE : "delete",
+  DOWNLOAD : "download"
 }
 
 export default FILE_OPS;

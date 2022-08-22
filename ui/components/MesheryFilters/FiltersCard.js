@@ -86,6 +86,16 @@ function FiltersCard({
             <div className={classes.cardButtons} >
               <Button
                 variant="contained"
+                className={classes.undeployButton}
+                onClick={(ev) =>
+                  genericClickHandler(ev, handleUndeploy)
+                }
+              >
+                <UndeployIcon fill="#ffffff" className={classes.iconPatt} />
+                Undeploy
+              </Button>
+              <Button
+                variant="contained"
                 color="primary"
                 onClick={(ev) =>
                   genericClickHandler(ev, handleDeploy)
@@ -94,16 +104,6 @@ function FiltersCard({
               >
                 <DoneAllIcon className={classes.iconPatt}/>
               Deploy
-              </Button>
-              <Button
-                variant="contained"
-                className={classes.undeployButton}
-                onClick={(ev) =>
-                  genericClickHandler(ev, handleUndeploy)
-                }
-              >
-                <UndeployIcon fill="#ffffff" className={classes.iconPatt} />
-                <span className={classes.btnText}>Undeploy</span>
               </Button>
             </div>
           </div>
