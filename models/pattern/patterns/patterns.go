@@ -6,13 +6,16 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/gofrs/uuid"
+	"github.com/layer5io/meshery/meshes"
 	"github.com/layer5io/meshery/models/pattern/patterns/application"
 	"github.com/layer5io/meshery/models/pattern/patterns/k8s"
 	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
+	"github.com/layer5io/meshkit/utils/events"
 	"github.com/layer5io/meshkit/utils/kubernetes"
 )
 
-func ProcessOAM(kconfigs []string, oamComps []string, oamConfig string, isDel bool) (string, error) {
+func ProcessOAM(kconfigs []string, oamComps []string, oamConfig string, isDel bool, eb *events.EventBuffer) (string, error) {
 	var comps []v1alpha1.Component
 	var config v1alpha1.Configuration
 
@@ -46,17 +49,36 @@ func ProcessOAM(kconfigs []string, oamComps []string, oamConfig string, isDel bo
 		go func(kcli *kubernetes.Client) {
 			defer wg.Done()
 			for _, comp := range comps {
+				id, _ := uuid.NewV4()
+				var req meshes.EventsResponse
 				if comp.Spec.Type == "Application" {
 					if err := application.Deploy(kcli, comp, config, isDel); err != nil {
+						req = meshes.EventsResponse{
+							EventType:   meshes.EventType_ERROR,
+							Summary:     "Error deploying application: " + comp.Name,
+							Details:     err.Error(),
+							OperationId: id.String(),
+						}
 						errs = append(errs, err)
+						continue
 					}
-
 					if !isDel {
+						req = meshes.EventsResponse{
+							EventType:   meshes.EventType_INFO,
+							Summary:     "Successfully deployed application " + comp.Name,
+							OperationId: id.String(),
+						}
 						msgs = append(msgs, "successfully deployed application "+comp.Name)
 					} else {
+						req = meshes.EventsResponse{
+							EventType:   meshes.EventType_INFO,
+							Summary:     "Successfully deleted application " + comp.Name,
+							OperationId: id.String(),
+						}
+
 						msgs = append(msgs, "successfully deleted application "+comp.Name)
 					}
-
+					eb.Enqueue(&req)
 					continue
 				}
 
@@ -64,15 +86,30 @@ func ProcessOAM(kconfigs []string, oamComps []string, oamConfig string, isDel bo
 				if strings.HasSuffix(strings.ToLower(comp.Spec.Type), ".k8s") {
 					if err := k8s.Deploy(kcli, comp, config, isDel); err != nil {
 						errs = append(errs, err)
-
-						if !isDel {
-							msgs = append(msgs, "successfully deployed kubernetes component "+comp.Name)
-						} else {
-							msgs = append(msgs, "successfully deleted kubernetes component "+comp.Name)
+						req = meshes.EventsResponse{
+							EventType:   meshes.EventType_ERROR,
+							Summary:     "Error deploying k8s component: " + comp.Name,
+							Details:     err.Error(),
+							OperationId: id.String(),
 						}
-
 						continue
 					}
+					if !isDel {
+						req = meshes.EventsResponse{
+							EventType:   meshes.EventType_INFO,
+							Summary:     "Successfully deployed k8s component: " + comp.Name,
+							OperationId: id.String(),
+						}
+						msgs = append(msgs, "successfully deployed kubernetes component "+comp.Name)
+					} else {
+						req = meshes.EventsResponse{
+							EventType:   meshes.EventType_INFO,
+							Summary:     "Successfully deleted k8s component: " + comp.Name,
+							OperationId: id.String(),
+						}
+						msgs = append(msgs, "successfully deleted kubernetes component "+comp.Name)
+					}
+					eb.Enqueue(&req)
 				}
 			}
 		}(kcli)

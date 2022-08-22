@@ -14,6 +14,7 @@ import (
 
 	"github.com/layer5io/meshery/meshes"
 	"github.com/layer5io/meshery/models"
+	"github.com/layer5io/meshkit/utils/events"
 	"github.com/sirupsen/logrus"
 )
 
@@ -74,7 +75,9 @@ func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request, p
 
 		log.Debug("new adapters channel closed")
 	}()
-
+	fmt.Println("here1")
+	go listenForCoreEvents(req.Context(), h.EventsBuffer, respChan, log, p)
+	fmt.Println("here2")
 	go func(flusher http.Flusher) {
 		for data := range respChan {
 			log.Debug("received new data on response channel")
@@ -93,7 +96,6 @@ STOP:
 		case <-notify.Done():
 			log.Debugf("received signal to close connection and channels")
 			close(newAdaptersChan)
-			close(respChan)
 			break STOP
 		default:
 			meshAdapters := prefObj.MeshAdapters
@@ -134,9 +136,39 @@ STOP:
 		}
 		time.Sleep(5 * time.Second)
 	}
+	close(respChan)
 	defer log.Debug("events handler closed")
 }
+func listenForCoreEvents(ctx context.Context, eb *events.EventBuffer, resp chan []byte, log *logrus.Entry, p models.Provider) {
+	log.Debugf("listening for core events")
+	datach := make(chan interface{}, 10)
+	eb.Copy(datach)
+	go eb.Subscribe(datach)
+	fmt.Println("here")
 
+	for {
+		select {
+		case datap := <-datach:
+			fmt.Println("found ", datap)
+			event, ok := datap.(*meshes.EventsResponse)
+			if !ok {
+				fmt.Println("bruh")
+				continue
+			}
+			data, err := json.Marshal(event)
+			if err != nil {
+				log.Error(ErrMarshal(err, "event"))
+				return
+			}
+			resp <- data
+
+		case <-ctx.Done():
+			return
+		}
+
+	}
+
+}
 func listenForAdapterEvents(ctx context.Context, mClient *meshes.MeshClient, respChan chan []byte, log *logrus.Entry, p models.Provider) {
 	log.Debugf("Received a stream client...")
 

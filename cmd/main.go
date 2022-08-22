@@ -20,6 +20,7 @@ import (
 	"github.com/layer5io/meshkit/broker/nats"
 	"github.com/layer5io/meshkit/logger"
 	"github.com/layer5io/meshkit/utils/broadcast"
+	"github.com/layer5io/meshkit/utils/events"
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
 	"github.com/spf13/viper"
 
@@ -245,7 +246,7 @@ func main() {
 	mctrlHelper := models.NewMesheryControllersHelper(log, operatorDeploymentConfig, dbHandler)
 	k8sComponentsRegistrationHelper := models.NewComponentsRegistrationHelper(log)
 
-	h := handlers.NewHandlerInstance(hc, meshsyncCh, log, brokerConn, k8sComponentsRegistrationHelper, mctrlHelper, dbHandler)
+	h := handlers.NewHandlerInstance(hc, meshsyncCh, log, brokerConn, k8sComponentsRegistrationHelper, mctrlHelper, dbHandler, events.NewEventBuffer(10))
 
 	b := broadcast.NewBroadcaster(100)
 	defer b.Close()
