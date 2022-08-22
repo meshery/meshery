@@ -13,6 +13,7 @@ import (
 	"github.com/layer5io/meshery/models"
 	"github.com/layer5io/meshkit/broker"
 	"github.com/layer5io/meshkit/models/controllers"
+	"github.com/sirupsen/logrus"
 )
 
 func (r *mutationResolver) ChangeOperatorStatus(ctx context.Context, input *model.OperatorStatusInput) (model.Status, error) {
@@ -269,7 +270,8 @@ func (r *subscriptionResolver) SubscribeMeshSyncEvents(ctx context.Context, k8sc
 					Object:    event.Object,
 				}
 				resChan <- res
-				go r.Config.DashboardK8sResourcesChan.PublishDashboardK8sResources()
+				logrus.Debug("publishing...")
+				go r.Config.DashboardK8sResourcesChan.PublishDashboardK8sResources(ctx, ctxID)
 			}
 		}(ctxID, brokerEventsChan)
 	}
