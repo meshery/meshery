@@ -271,7 +271,7 @@ func (r *subscriptionResolver) SubscribeMeshSyncEvents(ctx context.Context, k8sc
 				}
 				resChan <- res
 				logrus.Debug("publishing...")
-				go r.Config.DashboardK8sResourcesChan.PublishDashboardK8sResources(ctx, ctxID)
+				go r.Config.DashboardK8sResourcesChan.PublishDashboardK8sResources()
 			}
 		}(ctxID, brokerEventsChan)
 	}

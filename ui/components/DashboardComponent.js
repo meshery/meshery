@@ -156,6 +156,7 @@ class DashboardComponent extends React.Component {
     if (this.state.clusterInfoQuery) {
       this.state.clusterInfoQuery.unsubscribe()
     }
+    this.state.clusterInfoSubscription && this.state.clusterInfoSubscription.dispose();
   }
 
   initMeshSyncControlPlaneSubscription = () => {
@@ -262,6 +263,7 @@ class DashboardComponent extends React.Component {
       this.disposeSubscriptions();
       this.initMeshSyncControlPlaneSubscription();
       this.initDashboardClusterInfoQuery();
+      this.initDashboardClusterInfoSubscription();
     }
   }
 
