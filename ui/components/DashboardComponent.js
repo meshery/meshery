@@ -22,8 +22,8 @@ import { submitGrafanaConfigure } from "./GrafanaComponent";
 import fetchAvailableAddons from "./graphql/queries/AddonsStatusQuery";
 import fetchControlPlanes from "./graphql/queries/ControlPlanesQuery";
 import fetchDataPlanes from "./graphql/queries/DataPlanesQuery";
-import getClusterInfoQuery from "./graphql/queries/ClusterInfoQuery";
-import  subscribeClusterInfo from "./graphql/subscriptions/ClusterInfoSubscription"
+import fetchClusterResources from "./graphql/queries/ClusterResourcesQuery";
+import  subscribeClusterResources from "./graphql/subscriptions/ClusterResourcesSubscription"
 import { submitPrometheusConfigure } from "./PrometheusComponent";
 
 const styles = (theme) => ({
@@ -121,13 +121,13 @@ class DashboardComponent extends React.Component {
       isMetricsConfigured : grafana.grafanaURL !== '' && prometheus.prometheusURL !== '',
       controlPlaneState : "",
       dataPlaneState : "",
-      clusterInfo : [],
+      clusterResources : [],
 
       // subscriptions disposable
       dataPlaneSubscription : null,
       controlPlaneSubscription : null,
-      clusterInfoSubscription : null,
-      clusterInfoQuery : null
+      clusterResourcesSubscription : null,
+      clusterResourcesQuery : null
     };
   }
 
@@ -153,10 +153,10 @@ class DashboardComponent extends React.Component {
     if (this.state.controlPlaneSubscription) {
       this.state.controlPlaneSubscription.unsubscribe()
     }
-    if (this.state.clusterInfoQuery) {
-      this.state.clusterInfoQuery.unsubscribe()
+    if (this.state.clusterResourcesQuery) {
+      this.state.clusterResourcesQuery.unsubscribe()
     }
-    this.state.clusterInfoSubscription && this.state.clusterInfoSubscription.dispose();
+    this.state.clusterResourcesSubscription && this.state.clusterResourcesSubscription.dispose();
   }
 
   initMeshSyncControlPlaneSubscription = () => {
@@ -186,35 +186,35 @@ class DashboardComponent extends React.Component {
     }
   }
 
-  initDashboardClusterInfoQuery = () => {
+  initDashboardClusterResourcesQuery = () => {
     const self = this;
     let k8s = self.getK8sClusterIds()
 
     if (self._isMounted) {
       // @ts-ignore
-      const clusterInfoQuery = getClusterInfoQuery(k8s).subscribe({
-        next : (clusterInfoRes) => {
-          this.setState({ clusterInfo : clusterInfoRes?.clusterInfo })
+      const clusterResourcesQuery = fetchClusterResources(k8s).subscribe({
+        next : (res) => {
+          this.setState({ clusterResources : res?.clusterResources })
         },
         error : (err) => console.log(err),
       })
 
-      this.setState({ clusterInfoQuery });
+      this.setState({ clusterResourcesQuery });
     }
   }
 
-  initDashboardClusterInfoSubscription = () => {
+  initDashboardClusterResourcesSubscription = () => {
     const self = this;
     let k8s = self.getK8sClusterIds()
 
     if (self._isMounted) {
       // @ts-ignore
-      const clusterInfoSubscription = subscribeClusterInfo((res) => {
-        this.setState({ clusterInfo : res?.clusterInfo })
+      const clusterResourcesSubscription = subscribeClusterResources((res) => {
+        this.setState({ clusterResources : res?.clusterResources })
       }, {
         k8scontextIDs : k8s
       });
-      this.setState({ clusterInfoSubscription });
+      this.setState({ clusterResourcesSubscription });
     }
   }
 
@@ -233,8 +233,8 @@ class DashboardComponent extends React.Component {
 
     if (this._isMounted) {
       this.initMeshSyncControlPlaneSubscription();
-      this.initDashboardClusterInfoQuery();
-      this.initDashboardClusterInfoSubscription();
+      this.initDashboardClusterResourcesQuery();
+      this.initDashboardClusterResourcesSubscription();
     }
   };
 
@@ -262,8 +262,8 @@ class DashboardComponent extends React.Component {
       || prevProps.k8sconfig !== this.props.k8sconfig) {
       this.disposeSubscriptions();
       this.initMeshSyncControlPlaneSubscription();
-      this.initDashboardClusterInfoQuery();
-      this.initDashboardClusterInfoSubscription();
+      this.initDashboardClusterResourcesQuery();
+      this.initDashboardClusterResourcesSubscription();
     }
   }
 
@@ -566,7 +566,7 @@ class DashboardComponent extends React.Component {
     return `No service meshes detected in the ${clusters.join(", ")} cluster(s).`
   }
 
-  emptyStateMessageForClusterInfo = () => {
+  emptyStateMessageForClusterResources = () => {
     const clusters = this.getSelectedK8sContextsNames();
     if (clusters.length === 0) {
       return "No Cluster is selected to show the discovered resources"
@@ -760,12 +760,12 @@ class DashboardComponent extends React.Component {
 
 
   /**
-   * ClusterInfoCard takes in the cluster related data
+   * ClusterResourcesCard takes in the cluster related data
    * and renders a table with cluster resources information of
    * the selected cluster
    * @param {{kind, number}[]} resources
    */
-   ClusterInfoCard = (resources = []) => {
+   ClusterResourcesCard = (resources = []) => {
      if (Array.isArray(resources) && resources.length)
        return (
          <Paper elevation={1} style={{ padding : "2rem", marginTop : "1rem" }}>
@@ -773,8 +773,8 @@ class DashboardComponent extends React.Component {
              <Table aria-label="Discovered Kubernetes cluster details">
                <TableHead>
                  <TableRow>
-                   <TableCell align="center">Resource</TableCell>
-                   <TableCell align="center">Number</TableCell>
+                   <TableCell align="center">Resources</TableCell>
+                   <TableCell align="center">Count</TableCell>
                  </TableRow>
                </TableHead>
                <TableBody>
@@ -783,7 +783,7 @@ class DashboardComponent extends React.Component {
                      return (
                        <TableRow key={resource?.kind}>
                          <TableCell align="center">{resource?.kind}</TableCell>
-                         <TableCell align="center">{resource?.number}</TableCell>
+                         <TableCell align="center">{resource?.count}</TableCell>
                        </TableRow>
                      )
                    })
@@ -1058,11 +1058,11 @@ class DashboardComponent extends React.Component {
           )}
       </>
     );
-    const showClusterInfo = (
+    const showClusterResources = (
       <>
-        {self?.state?.clusterInfo && Object.keys(self?.state?.clusterInfo) && self?.state?.clusterInfo?.resources?.length > 0
+        {self?.state?.clusterResources && Object.keys(self?.state?.clusterResources) && self?.state?.clusterResources?.resources?.length > 0
           ? (
-            self.ClusterInfoCard(self?.state?.clusterInfo?.resources)
+            self.ClusterResourcesCard(self?.state?.clusterResources?.resources)
           )
           : (
             <div
@@ -1075,7 +1075,7 @@ class DashboardComponent extends React.Component {
               }}
             >
               <Typography style={{ fontSize : "1.5rem", marginBottom : "2rem" }} align="center" color="textSecondary">
-                {this.emptyStateMessageForClusterInfo()}
+                {this.emptyStateMessageForClusterResources()}
               </Typography>
               <Button
                 aria-label="Connect K8s cluster"
@@ -1101,7 +1101,7 @@ class DashboardComponent extends React.Component {
                   <Typography variant="h6" gutterBottom className={classes.chartTitle}>
                     Workloads
                   </Typography>
-                  {showClusterInfo}
+                  {showClusterResources}
                 </div>
               </Grid>
               <Grid item xs={12} md={12}>

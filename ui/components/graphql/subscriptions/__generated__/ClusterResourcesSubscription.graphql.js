@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<3fab72b1d660ff726d690a9b0057c232>>
+ * @generated SignedSource<<f8ff39fc0d57fdee68da032e096a60de>>
  * @flow
  * @lightSyntaxTransform
  * @nogrep
@@ -11,20 +11,20 @@
 
 /*::
 import type { ConcreteRequest, GraphQLSubscription } from 'relay-runtime';
-export type ClusterInfoSubscription$variables = {|
+export type ClusterResourcesSubscription$variables = {|
   k8scontextIDs?: ?$ReadOnlyArray<string>,
 |};
-export type ClusterInfoSubscription$data = {|
-  +clusterInfo: {|
+export type ClusterResourcesSubscription$data = {|
+  +clusterResources: {|
     +resources: $ReadOnlyArray<{|
       +kind: string,
-      +number: number,
+      +count: number,
     |}>,
   |},
 |};
-export type ClusterInfoSubscription = {|
-  variables: ClusterInfoSubscription$variables,
-  response: ClusterInfoSubscription$data,
+export type ClusterResourcesSubscription = {|
+  variables: ClusterResourcesSubscription$variables,
+  response: ClusterResourcesSubscription$data,
 |};
 */
 
@@ -38,7 +38,7 @@ var v0 = [
 ],
 v1 = [
   {
-    "alias": "clusterInfo",
+    "alias": "clusterResources",
     "args": [
       {
         "kind": "Variable",
@@ -46,9 +46,9 @@ v1 = [
         "variableName": "k8scontextIDs"
       }
     ],
-    "concreteType": "ClusterInfo",
+    "concreteType": "ClusterResources",
     "kind": "LinkedField",
-    "name": "subscribeClusterInfo",
+    "name": "subscribeClusterResources",
     "plural": false,
     "selections": [
       {
@@ -70,7 +70,7 @@ v1 = [
             "alias": null,
             "args": null,
             "kind": "ScalarField",
-            "name": "number",
+            "name": "count",
             "storageKey": null
           }
         ],
@@ -85,7 +85,7 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "ClusterInfoSubscription",
+    "name": "ClusterResourcesSubscription",
     "selections": (v1/*: any*/),
     "type": "Subscription",
     "abstractKey": null
@@ -94,23 +94,23 @@ return {
   "operation": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "ClusterInfoSubscription",
+    "name": "ClusterResourcesSubscription",
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "cd90ed04679ef1175d0c20bdddc9cc47",
+    "cacheID": "08cf7a17c7256b24bf7217396260f4cc",
     "id": null,
     "metadata": {},
-    "name": "ClusterInfoSubscription",
+    "name": "ClusterResourcesSubscription",
     "operationKind": "subscription",
-    "text": "subscription ClusterInfoSubscription(\n  $k8scontextIDs: [String!]\n) {\n  clusterInfo: subscribeClusterInfo(k8scontextIDs: $k8scontextIDs) {\n    resources {\n      kind\n      number\n    }\n  }\n}\n"
+    "text": "subscription ClusterResourcesSubscription(\n  $k8scontextIDs: [String!]\n) {\n  clusterResources: subscribeClusterResources(k8scontextIDs: $k8scontextIDs) {\n    resources {\n      kind\n      count\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node/*: any*/).hash = "867b3a2886251da9448c8dfde882c99a";
+(node/*: any*/).hash = "ab3fce770bc208fe26f2806d070b8995";
 
 module.exports = ((node/*: any*/)/*: GraphQLSubscription<
-  ClusterInfoSubscription$variables,
-  ClusterInfoSubscription$data,
+  ClusterResourcesSubscription$variables,
+  ClusterResourcesSubscription$data,
 >*/);

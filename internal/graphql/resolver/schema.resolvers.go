@@ -13,7 +13,6 @@ import (
 	"github.com/layer5io/meshery/models"
 	"github.com/layer5io/meshkit/broker"
 	"github.com/layer5io/meshkit/models/controllers"
-	"github.com/sirupsen/logrus"
 )
 
 func (r *mutationResolver) ChangeOperatorStatus(ctx context.Context, input *model.OperatorStatusInput) (model.Status, error) {
@@ -125,9 +124,9 @@ func (r *queryResolver) GetKubectlDescribe(ctx context.Context, name string, kin
 	return r.getKubectlDescribe(ctx, name, kind, namespace)
 }
 
-func (r *queryResolver) GetClusterInfo(ctx context.Context, k8scontextIDs []string) (*model.ClusterInfo, error) {
+func (r *queryResolver) GetClusterResources(ctx context.Context, k8scontextIDs []string) (*model.ClusterResources, error) {
 	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
-	return r.getClusterInfo(ctx, provider, k8scontextIDs)
+	return r.getClusterResources(ctx, provider, k8scontextIDs)
 }
 
 func (r *subscriptionResolver) ListenToAddonState(ctx context.Context, filter *model.ServiceMeshFilter) (<-chan []*model.AddonList, error) {
@@ -270,7 +269,6 @@ func (r *subscriptionResolver) SubscribeMeshSyncEvents(ctx context.Context, k8sc
 					Object:    event.Object,
 				}
 				resChan <- res
-				logrus.Debug("publishing...")
 				go r.Config.DashboardK8sResourcesChan.PublishDashboardK8sResources()
 			}
 		}(ctxID, brokerEventsChan)
@@ -283,9 +281,9 @@ func (r *subscriptionResolver) SubscribeConfiguration(ctx context.Context, selec
 	return r.subscribeConfiguration(ctx, provider, selector)
 }
 
-func (r *subscriptionResolver) SubscribeClusterInfo(ctx context.Context, k8scontextIDs []string) (<-chan *model.ClusterInfo, error) {
+func (r *subscriptionResolver) SubscribeClusterResources(ctx context.Context, k8scontextIDs []string) (<-chan *model.ClusterResources, error) {
 	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
-	return r.subscribeClusterInfo(ctx, provider, k8scontextIDs)
+	return r.subscribeClusterResources(ctx, provider, k8scontextIDs)
 }
 
 func (r *subscriptionResolver) SubscribeK8sContext(ctx context.Context, selector model.PageFilter) (<-chan *model.K8sContextsPage, error) {

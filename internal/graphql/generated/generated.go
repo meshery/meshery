@@ -69,7 +69,7 @@ type ComplexityRoot struct {
 		UserID          func(childComplexity int) int
 	}
 
-	ClusterInfo struct {
+	ClusterResources struct {
 		Resources func(childComplexity int) int
 	}
 
@@ -313,7 +313,7 @@ type ComplexityRoot struct {
 		FetchResults           func(childComplexity int, selector model.PageFilter, profileID string) int
 		GetAvailableAddons     func(childComplexity int, filter *model.ServiceMeshFilter) int
 		GetAvailableNamespaces func(childComplexity int, k8sClusterIDs []string) int
-		GetClusterInfo         func(childComplexity int, k8scontextIDs []string) int
+		GetClusterResources    func(childComplexity int, k8scontextIDs []string) int
 		GetControlPlanes       func(childComplexity int, filter *model.ServiceMeshFilter) int
 		GetDataPlanes          func(childComplexity int, filter *model.ServiceMeshFilter) int
 		GetKubectlDescribe     func(childComplexity int, name string, kind string, namespace string) int
@@ -329,8 +329,8 @@ type ComplexityRoot struct {
 	}
 
 	Resource struct {
-		Kind   func(childComplexity int) int
-		Number func(childComplexity int) int
+		Count func(childComplexity int) int
+		Kind  func(childComplexity int) int
 	}
 
 	Subscription struct {
@@ -340,7 +340,7 @@ type ComplexityRoot struct {
 		ListenToMeshSyncEvents            func(childComplexity int, k8scontextIDs []string) int
 		ListenToOperatorState             func(childComplexity int, k8scontextIDs []string) int
 		SubscribeBrokerConnection         func(childComplexity int) int
-		SubscribeClusterInfo              func(childComplexity int, k8scontextIDs []string) int
+		SubscribeClusterResources         func(childComplexity int, k8scontextIDs []string) int
 		SubscribeConfiguration            func(childComplexity int, selector model.PageFilter) int
 		SubscribeK8sContext               func(childComplexity int, selector model.PageFilter) int
 		SubscribeMeshSyncEvents           func(childComplexity int, k8scontextIDs []string) int
@@ -373,7 +373,7 @@ type QueryResolver interface {
 	GetTraits(ctx context.Context, name *string, id *string, trim *bool) ([]*model.OAMCapability, error)
 	GetScopes(ctx context.Context, name *string, id *string, trim *bool) ([]*model.OAMCapability, error)
 	GetKubectlDescribe(ctx context.Context, name string, kind string, namespace string) (*model.KctlDescribeDetails, error)
-	GetClusterInfo(ctx context.Context, k8scontextIDs []string) (*model.ClusterInfo, error)
+	GetClusterResources(ctx context.Context, k8scontextIDs []string) (*model.ClusterResources, error)
 }
 type SubscriptionResolver interface {
 	ListenToAddonState(ctx context.Context, filter *model.ServiceMeshFilter) (<-chan []*model.AddonList, error)
@@ -387,7 +387,7 @@ type SubscriptionResolver interface {
 	SubscribeMesheryControllersStatus(ctx context.Context, k8scontextIDs []string) (<-chan []*model.MesheryControllersStatusListItem, error)
 	SubscribeMeshSyncEvents(ctx context.Context, k8scontextIDs []string) (<-chan *model.MeshSyncEvent, error)
 	SubscribeConfiguration(ctx context.Context, selector model.PageFilter) (<-chan *model.ConfigurationPage, error)
-	SubscribeClusterInfo(ctx context.Context, k8scontextIDs []string) (<-chan *model.ClusterInfo, error)
+	SubscribeClusterResources(ctx context.Context, k8scontextIDs []string) (<-chan *model.ClusterResources, error)
 	SubscribeK8sContext(ctx context.Context, selector model.PageFilter) (<-chan *model.K8sContextsPage, error)
 }
 
@@ -504,12 +504,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ApplicationResult.UserID(childComplexity), true
 
-	case "ClusterInfo.resources":
-		if e.complexity.ClusterInfo.Resources == nil {
+	case "ClusterResources.resources":
+		if e.complexity.ClusterResources.Resources == nil {
 			break
 		}
 
-		return e.complexity.ClusterInfo.Resources(childComplexity), true
+		return e.complexity.ClusterResources.Resources(childComplexity), true
 
 	case "ConfigurationPage.applications":
 		if e.complexity.ConfigurationPage.Applications == nil {
@@ -1594,17 +1594,17 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.GetAvailableNamespaces(childComplexity, args["k8sClusterIDs"].([]string)), true
 
-	case "Query.getClusterInfo":
-		if e.complexity.Query.GetClusterInfo == nil {
+	case "Query.getClusterResources":
+		if e.complexity.Query.GetClusterResources == nil {
 			break
 		}
 
-		args, err := ec.field_Query_getClusterInfo_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_getClusterResources_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Query.GetClusterInfo(childComplexity, args["k8scontextIDs"].([]string)), true
+		return e.complexity.Query.GetClusterResources(childComplexity, args["k8scontextIDs"].([]string)), true
 
 	case "Query.getControlPlanes":
 		if e.complexity.Query.GetControlPlanes == nil {
@@ -1750,19 +1750,19 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.ResyncCluster(childComplexity, args["selector"].(*model.ReSyncActions), args["k8scontextID"].(string)), true
 
+	case "Resource.count":
+		if e.complexity.Resource.Count == nil {
+			break
+		}
+
+		return e.complexity.Resource.Count(childComplexity), true
+
 	case "Resource.kind":
 		if e.complexity.Resource.Kind == nil {
 			break
 		}
 
 		return e.complexity.Resource.Kind(childComplexity), true
-
-	case "Resource.number":
-		if e.complexity.Resource.Number == nil {
-			break
-		}
-
-		return e.complexity.Resource.Number(childComplexity), true
 
 	case "Subscription.listenToAddonState":
 		if e.complexity.Subscription.ListenToAddonState == nil {
@@ -1831,17 +1831,17 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Subscription.SubscribeBrokerConnection(childComplexity), true
 
-	case "Subscription.subscribeClusterInfo":
-		if e.complexity.Subscription.SubscribeClusterInfo == nil {
+	case "Subscription.subscribeClusterResources":
+		if e.complexity.Subscription.SubscribeClusterResources == nil {
 			break
 		}
 
-		args, err := ec.field_Subscription_subscribeClusterInfo_args(context.TODO(), rawArgs)
+		args, err := ec.field_Subscription_subscribeClusterResources_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Subscription.SubscribeClusterInfo(childComplexity, args["k8scontextIDs"].([]string)), true
+		return e.complexity.Subscription.SubscribeClusterResources(childComplexity, args["k8scontextIDs"].([]string)), true
 
 	case "Subscription.subscribeConfiguration":
 		if e.complexity.Subscription.SubscribeConfiguration == nil {
@@ -2120,11 +2120,11 @@ type Resource {
   # Name of resource
   kind: String!,
   # Number of resouce
-  number: Int!
+  count: Int!
 }
 
 # Details about discovered workloads
-type ClusterInfo {
+type ClusterResources {
   resources: [Resource!]!,
 }
 
@@ -2546,7 +2546,7 @@ type Query {
   getKubectlDescribe(name: String!, kind: String!, namespace: String!): KctlDescribeDetails!
 
   # Query for getting cluster info
-  getClusterInfo(k8scontextIDs: [String!]): ClusterInfo!
+  getClusterResources(k8scontextIDs: [String!]): ClusterResources!
 }
 
 #
@@ -2606,9 +2606,9 @@ type Subscription {
   ) : MeshSyncEvent!
   subscribeConfiguration(selector: PageFilter!) : ConfigurationPage!
 
-  subscribeClusterInfo(
+  subscribeClusterResources(
     k8scontextIDs: [String!]
-  ): ClusterInfo!
+  ): ClusterResources!
 
   subscribeK8sContext(selector: PageFilter!) : K8sContextsPage!
 
@@ -2779,7 +2779,7 @@ func (ec *executionContext) field_Query_getAvailableNamespaces_args(ctx context.
 	return args, nil
 }
 
-func (ec *executionContext) field_Query_getClusterInfo_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Query_getClusterResources_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 []string
@@ -3130,7 +3130,7 @@ func (ec *executionContext) field_Subscription_listenToOperatorState_args(ctx co
 	return args, nil
 }
 
-func (ec *executionContext) field_Subscription_subscribeClusterInfo_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Subscription_subscribeClusterResources_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 []string
@@ -3923,8 +3923,8 @@ func (ec *executionContext) fieldContext_ApplicationResult_updated_at(ctx contex
 	return fc, nil
 }
 
-func (ec *executionContext) _ClusterInfo_resources(ctx context.Context, field graphql.CollectedField, obj *model.ClusterInfo) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_ClusterInfo_resources(ctx, field)
+func (ec *executionContext) _ClusterResources_resources(ctx context.Context, field graphql.CollectedField, obj *model.ClusterResources) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ClusterResources_resources(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -3954,9 +3954,9 @@ func (ec *executionContext) _ClusterInfo_resources(ctx context.Context, field gr
 	return ec.marshalNResource2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐResourceᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ClusterInfo_resources(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ClusterResources_resources(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "ClusterInfo",
+		Object:     "ClusterResources",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -3964,8 +3964,8 @@ func (ec *executionContext) fieldContext_ClusterInfo_resources(ctx context.Conte
 			switch field.Name {
 			case "kind":
 				return ec.fieldContext_Resource_kind(ctx, field)
-			case "number":
-				return ec.fieldContext_Resource_number(ctx, field)
+			case "count":
+				return ec.fieldContext_Resource_count(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Resource", field.Name)
 		},
@@ -11539,8 +11539,8 @@ func (ec *executionContext) fieldContext_Query_getKubectlDescribe(ctx context.Co
 	return fc, nil
 }
 
-func (ec *executionContext) _Query_getClusterInfo(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_getClusterInfo(ctx, field)
+func (ec *executionContext) _Query_getClusterResources(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_getClusterResources(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -11553,7 +11553,7 @@ func (ec *executionContext) _Query_getClusterInfo(ctx context.Context, field gra
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetClusterInfo(rctx, fc.Args["k8scontextIDs"].([]string))
+		return ec.resolvers.Query().GetClusterResources(rctx, fc.Args["k8scontextIDs"].([]string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -11565,12 +11565,12 @@ func (ec *executionContext) _Query_getClusterInfo(ctx context.Context, field gra
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.ClusterInfo)
+	res := resTmp.(*model.ClusterResources)
 	fc.Result = res
-	return ec.marshalNClusterInfo2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐClusterInfo(ctx, field.Selections, res)
+	return ec.marshalNClusterResources2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐClusterResources(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Query_getClusterInfo(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Query_getClusterResources(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Query",
 		Field:      field,
@@ -11579,9 +11579,9 @@ func (ec *executionContext) fieldContext_Query_getClusterInfo(ctx context.Contex
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "resources":
-				return ec.fieldContext_ClusterInfo_resources(ctx, field)
+				return ec.fieldContext_ClusterResources_resources(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type ClusterInfo", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type ClusterResources", field.Name)
 		},
 	}
 	defer func() {
@@ -11591,7 +11591,7 @@ func (ec *executionContext) fieldContext_Query_getClusterInfo(ctx context.Contex
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Query_getClusterInfo_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Query_getClusterResources_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return
 	}
@@ -11771,8 +11771,8 @@ func (ec *executionContext) fieldContext_Resource_kind(ctx context.Context, fiel
 	return fc, nil
 }
 
-func (ec *executionContext) _Resource_number(ctx context.Context, field graphql.CollectedField, obj *model.Resource) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Resource_number(ctx, field)
+func (ec *executionContext) _Resource_count(ctx context.Context, field graphql.CollectedField, obj *model.Resource) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Resource_count(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -11785,7 +11785,7 @@ func (ec *executionContext) _Resource_number(ctx context.Context, field graphql.
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Number, nil
+		return obj.Count, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -11802,7 +11802,7 @@ func (ec *executionContext) _Resource_number(ctx context.Context, field graphql.
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Resource_number(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Resource_count(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Resource",
 		Field:      field,
@@ -12631,8 +12631,8 @@ func (ec *executionContext) fieldContext_Subscription_subscribeConfiguration(ctx
 	return fc, nil
 }
 
-func (ec *executionContext) _Subscription_subscribeClusterInfo(ctx context.Context, field graphql.CollectedField) (ret func(ctx context.Context) graphql.Marshaler) {
-	fc, err := ec.fieldContext_Subscription_subscribeClusterInfo(ctx, field)
+func (ec *executionContext) _Subscription_subscribeClusterResources(ctx context.Context, field graphql.CollectedField) (ret func(ctx context.Context) graphql.Marshaler) {
+	fc, err := ec.fieldContext_Subscription_subscribeClusterResources(ctx, field)
 	if err != nil {
 		return nil
 	}
@@ -12645,7 +12645,7 @@ func (ec *executionContext) _Subscription_subscribeClusterInfo(ctx context.Conte
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Subscription().SubscribeClusterInfo(rctx, fc.Args["k8scontextIDs"].([]string))
+		return ec.resolvers.Subscription().SubscribeClusterResources(rctx, fc.Args["k8scontextIDs"].([]string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -12659,7 +12659,7 @@ func (ec *executionContext) _Subscription_subscribeClusterInfo(ctx context.Conte
 	}
 	return func(ctx context.Context) graphql.Marshaler {
 		select {
-		case res, ok := <-resTmp.(<-chan *model.ClusterInfo):
+		case res, ok := <-resTmp.(<-chan *model.ClusterResources):
 			if !ok {
 				return nil
 			}
@@ -12667,7 +12667,7 @@ func (ec *executionContext) _Subscription_subscribeClusterInfo(ctx context.Conte
 				w.Write([]byte{'{'})
 				graphql.MarshalString(field.Alias).MarshalGQL(w)
 				w.Write([]byte{':'})
-				ec.marshalNClusterInfo2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐClusterInfo(ctx, field.Selections, res).MarshalGQL(w)
+				ec.marshalNClusterResources2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐClusterResources(ctx, field.Selections, res).MarshalGQL(w)
 				w.Write([]byte{'}'})
 			})
 		case <-ctx.Done():
@@ -12676,7 +12676,7 @@ func (ec *executionContext) _Subscription_subscribeClusterInfo(ctx context.Conte
 	}
 }
 
-func (ec *executionContext) fieldContext_Subscription_subscribeClusterInfo(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Subscription_subscribeClusterResources(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Subscription",
 		Field:      field,
@@ -12685,9 +12685,9 @@ func (ec *executionContext) fieldContext_Subscription_subscribeClusterInfo(ctx c
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "resources":
-				return ec.fieldContext_ClusterInfo_resources(ctx, field)
+				return ec.fieldContext_ClusterResources_resources(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type ClusterInfo", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type ClusterResources", field.Name)
 		},
 	}
 	defer func() {
@@ -12697,7 +12697,7 @@ func (ec *executionContext) fieldContext_Subscription_subscribeClusterInfo(ctx c
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Subscription_subscribeClusterInfo_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Subscription_subscribeClusterResources_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return
 	}
@@ -14915,19 +14915,19 @@ func (ec *executionContext) _ApplicationResult(ctx context.Context, sel ast.Sele
 	return out
 }
 
-var clusterInfoImplementors = []string{"ClusterInfo"}
+var clusterResourcesImplementors = []string{"ClusterResources"}
 
-func (ec *executionContext) _ClusterInfo(ctx context.Context, sel ast.SelectionSet, obj *model.ClusterInfo) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, clusterInfoImplementors)
+func (ec *executionContext) _ClusterResources(ctx context.Context, sel ast.SelectionSet, obj *model.ClusterResources) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, clusterResourcesImplementors)
 	out := graphql.NewFieldSet(fields)
 	var invalids uint32
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
-			out.Values[i] = graphql.MarshalString("ClusterInfo")
+			out.Values[i] = graphql.MarshalString("ClusterResources")
 		case "resources":
 
-			out.Values[i] = ec._ClusterInfo_resources(ctx, field, obj)
+			out.Values[i] = ec._ClusterResources_resources(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				invalids++
@@ -16836,7 +16836,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			out.Concurrently(i, func() graphql.Marshaler {
 				return rrm(innerCtx)
 			})
-		case "getClusterInfo":
+		case "getClusterResources":
 			field := field
 
 			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
@@ -16845,7 +16845,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Query_getClusterInfo(ctx, field)
+				res = ec._Query_getClusterResources(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
@@ -16899,9 +16899,9 @@ func (ec *executionContext) _Resource(ctx context.Context, sel ast.SelectionSet,
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "number":
+		case "count":
 
-			out.Values[i] = ec._Resource_number(ctx, field, obj)
+			out.Values[i] = ec._Resource_count(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				invalids++
@@ -16952,8 +16952,8 @@ func (ec *executionContext) _Subscription(ctx context.Context, sel ast.Selection
 		return ec._Subscription_subscribeMeshSyncEvents(ctx, fields[0])
 	case "subscribeConfiguration":
 		return ec._Subscription_subscribeConfiguration(ctx, fields[0])
-	case "subscribeClusterInfo":
-		return ec._Subscription_subscribeClusterInfo(ctx, fields[0])
+	case "subscribeClusterResources":
+		return ec._Subscription_subscribeClusterResources(ctx, fields[0])
 	case "subscribeK8sContext":
 		return ec._Subscription_subscribeK8sContext(ctx, fields[0])
 	default:
@@ -17369,18 +17369,18 @@ func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.Se
 	return res
 }
 
-func (ec *executionContext) marshalNClusterInfo2githubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐClusterInfo(ctx context.Context, sel ast.SelectionSet, v model.ClusterInfo) graphql.Marshaler {
-	return ec._ClusterInfo(ctx, sel, &v)
+func (ec *executionContext) marshalNClusterResources2githubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐClusterResources(ctx context.Context, sel ast.SelectionSet, v model.ClusterResources) graphql.Marshaler {
+	return ec._ClusterResources(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNClusterInfo2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐClusterInfo(ctx context.Context, sel ast.SelectionSet, v *model.ClusterInfo) graphql.Marshaler {
+func (ec *executionContext) marshalNClusterResources2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐClusterResources(ctx context.Context, sel ast.SelectionSet, v *model.ClusterResources) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
 		}
 		return graphql.Null
 	}
-	return ec._ClusterInfo(ctx, sel, v)
+	return ec._ClusterResources(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNConfigurationPage2githubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐConfigurationPage(ctx context.Context, sel ast.SelectionSet, v model.ConfigurationPage) graphql.Marshaler {

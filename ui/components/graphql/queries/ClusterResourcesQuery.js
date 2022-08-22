@@ -1,15 +1,15 @@
 import { graphql ,fetchQuery } from "react-relay";
 import environment from "../../../lib/relayEnvironment";
 
-export default function fetchClusterInfo(variables) {
+export default function fetchClusterResources(variables) {
   const vars = { k8scontextIDs : variables }
 
   const query = graphql`
-    query ClusterInfoQuery($k8scontextIDs: [String!]) {
-      clusterInfo: getClusterInfo(k8scontextIDs: $k8scontextIDs) {
+    query ClusterResourcesQuery($k8scontextIDs: [String!]) {
+      clusterResources: getClusterResources(k8scontextIDs: $k8scontextIDs) {
         resources {
           kind
-          number
+          count
         }
       }
     }

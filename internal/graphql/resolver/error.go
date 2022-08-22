@@ -29,7 +29,7 @@ const (
 	ErrConfigurationApplicationsCode        = "2243"
 	ErrConfigurationFiltersCode             = "2244"
 	ErrK8sContextCode                       = "2245"
-	ErrClusterInfoSubscriptionCode          = "2246"
+	ErrClusterResourcesSubscriptionCode     = "2246"
 	ErrGettingClusterResourcesCode          = "2247"
 )
 
@@ -127,12 +127,12 @@ func ErrFiltersSubscription(err error) error {
 	return errors.New(ErrConfigurationFiltersCode, errors.Alert, []string{"Configuration Subscription failed", err.Error()}, []string{"GraphQL subscription for Filters stopped"}, []string{"Could be a network issue"}, []string{"Confirm that Meshery Server is reachable from your browser."})
 }
 
-func ErrClusterInfoSubcription(err error) error {
+func ErrClusterResourcesSubscription(err error) error {
 	return errors.New(
-		ErrClusterInfoSubscriptionCode, 
+		ErrClusterResourcesSubscriptionCode, 
 		errors.Alert, 
-		[]string{"ClusterInfo Subscription failed", err.Error()}, 
-		[]string{"GraphQL subscription for ClusterInfo stopped"}, 
+		[]string{"ClusterResources Subscription failed", err.Error()}, 
+		[]string{"GraphQL subscription for ClusterResources Subscription stopped"}, 
 		[]string{"Could be a network issue"}, 
 		[]string{"Confirm that Meshery Server is reachable from your browser."})
 }

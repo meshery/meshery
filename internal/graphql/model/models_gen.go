@@ -37,7 +37,7 @@ type ApplicationResult struct {
 	UpdatedAt       *string     `json:"updated_at"`
 }
 
-type ClusterInfo struct {
+type ClusterResources struct {
 	Resources []*Resource `json:"resources"`
 }
 
@@ -290,8 +290,8 @@ type ReSyncActions struct {
 }
 
 type Resource struct {
-	Kind   string `json:"kind"`
-	Number int    `json:"number"`
+	Kind  string `json:"kind"`
+	Count int    `json:"count"`
 }
 
 type ServiceMeshFilter struct {

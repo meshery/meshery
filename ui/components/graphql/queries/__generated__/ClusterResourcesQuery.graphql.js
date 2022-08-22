@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<b91b1256fcb317e7a7c063384a1ef283>>
+ * @generated SignedSource<<1390691b362e5451ff54588040f05cc3>>
  * @flow
  * @lightSyntaxTransform
  * @nogrep
@@ -11,20 +11,20 @@
 
 /*::
 import type { ConcreteRequest, Query } from 'relay-runtime';
-export type ClusterInfoQuery$variables = {|
+export type ClusterResourcesQuery$variables = {|
   k8scontextIDs?: ?$ReadOnlyArray<string>,
 |};
-export type ClusterInfoQuery$data = {|
-  +clusterInfo: {|
+export type ClusterResourcesQuery$data = {|
+  +clusterResources: {|
     +resources: $ReadOnlyArray<{|
       +kind: string,
-      +number: number,
+      +count: number,
     |}>,
   |},
 |};
-export type ClusterInfoQuery = {|
-  variables: ClusterInfoQuery$variables,
-  response: ClusterInfoQuery$data,
+export type ClusterResourcesQuery = {|
+  variables: ClusterResourcesQuery$variables,
+  response: ClusterResourcesQuery$data,
 |};
 */
 
@@ -38,7 +38,7 @@ var v0 = [
 ],
 v1 = [
   {
-    "alias": "clusterInfo",
+    "alias": "clusterResources",
     "args": [
       {
         "kind": "Variable",
@@ -46,9 +46,9 @@ v1 = [
         "variableName": "k8scontextIDs"
       }
     ],
-    "concreteType": "ClusterInfo",
+    "concreteType": "ClusterResources",
     "kind": "LinkedField",
-    "name": "getClusterInfo",
+    "name": "getClusterResources",
     "plural": false,
     "selections": [
       {
@@ -70,7 +70,7 @@ v1 = [
             "alias": null,
             "args": null,
             "kind": "ScalarField",
-            "name": "number",
+            "name": "count",
             "storageKey": null
           }
         ],
@@ -85,7 +85,7 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "ClusterInfoQuery",
+    "name": "ClusterResourcesQuery",
     "selections": (v1/*: any*/),
     "type": "Query",
     "abstractKey": null
@@ -94,23 +94,23 @@ return {
   "operation": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "ClusterInfoQuery",
+    "name": "ClusterResourcesQuery",
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "5131abb7963f46b954cb00af93196c0d",
+    "cacheID": "1abdefbc9ce07e8a87c32dbf30edcbdd",
     "id": null,
     "metadata": {},
-    "name": "ClusterInfoQuery",
+    "name": "ClusterResourcesQuery",
     "operationKind": "query",
-    "text": "query ClusterInfoQuery(\n  $k8scontextIDs: [String!]\n) {\n  clusterInfo: getClusterInfo(k8scontextIDs: $k8scontextIDs) {\n    resources {\n      kind\n      number\n    }\n  }\n}\n"
+    "text": "query ClusterResourcesQuery(\n  $k8scontextIDs: [String!]\n) {\n  clusterResources: getClusterResources(k8scontextIDs: $k8scontextIDs) {\n    resources {\n      kind\n      count\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node/*: any*/).hash = "87fe4e9d9c0561175fb5e3a8fbc075ce";
+(node/*: any*/).hash = "20be3f850535f5fc738c4b759c99215f";
 
 module.exports = ((node/*: any*/)/*: Query<
-  ClusterInfoQuery$variables,
-  ClusterInfoQuery$data,
+  ClusterResourcesQuery$variables,
+  ClusterResourcesQuery$data,
 >*/);

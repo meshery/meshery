@@ -113,11 +113,11 @@ type Resource {
   # Name of resource
   kind: String!,
   # Number of resouce
-  number: Int!
+  count: Int!
 }
 
 # Details about discovered workloads
-type ClusterInfo {
+type ClusterResources {
   resources: [Resource!]!,
 }
 
@@ -539,7 +539,7 @@ type Query {
   getKubectlDescribe(name: String!, kind: String!, namespace: String!): KctlDescribeDetails!
 
   # Query for getting cluster info
-  getClusterInfo(k8scontextIDs: [String!]): ClusterInfo!
+  getClusterResources(k8scontextIDs: [String!]): ClusterResources!
 }
 
 #
@@ -599,9 +599,9 @@ type Subscription {
   ) : MeshSyncEvent!
   subscribeConfiguration(selector: PageFilter!) : ConfigurationPage!
 
-  subscribeClusterInfo(
+  subscribeClusterResources(
     k8scontextIDs: [String!]
-  ): ClusterInfo!
+  ): ClusterResources!
 
   subscribeK8sContext(selector: PageFilter!) : K8sContextsPage!
 
