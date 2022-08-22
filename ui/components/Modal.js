@@ -1,4 +1,4 @@
-import { Modal, Backdrop, Fade } from "@mui/core";
+import { Modal, Box, Backdrop, Fade } from '@mui/material'
 import { styled } from "@mui/material/styles";
 import { useTheme } from "@mui/system";
 
@@ -19,22 +19,20 @@ const CustomModalWrapper = styled(Modal)(({ theme }) => ({
  * @returns
  */
 
-const CustomModal = ({ open, Content, handleClose, container }) => {
-  const theme = useTheme();
-  return (
-    <CustomModalWrapper
-      open={open}
-      onClose={handleClose}
-      closeAfterTransition
-      BackdropComponent={Backdrop}
-      BackdropProps={{ timeout: 200 }}
-      container={container}     
-    >
-      <Fade in={open} sx={{ maxHeight: "90vh", overflow: "auto" }}>
+const CustomModal = ({
+    open, Content, handleClose, container
+  }) =>  { const theme = useTheme();
+    return (
+      <CustomModalWrapper
+        open={open}
+        onClose={handleClose}
+        closeAfterTransition
+        BackdropProps={{ timeout : 200, }}
+        container={container}
+      >
         {Content}
-      </Fade>
-    </CustomModalWrapper>
-  );
-};
+      </CustomModalWrapper>
+    );
+  }
 
 export default CustomModal;
