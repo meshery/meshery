@@ -45,7 +45,7 @@ var testSchema3 = `{
       "minimum": 0
     }
   }, 
-  "required": ["age"]
+  "required": ["age", "lastName"]
 }`
 var testSchema4 = `{
   "$id": "https://example.com/person.schema.json",
@@ -93,6 +93,10 @@ firstName: "Meshery"
 lastName: "Layer5"
 age: 34
 `
+var value5 = `
+firstName: 34
+lastName: 54
+`
 
 func TestFindSchemaType(t *testing.T) {
 	var tests = []struct {
@@ -126,6 +130,7 @@ func TestValidate(t *testing.T) {
 				"3": {Schema: testSchema3, Value: value1, ValueType: cuetype},
 				"4": {Schema: testSchema3, Value: value4, ValueType: cuetype},
 				"5": {Schema: testSchema5, Value: value3, ValueType: cuetype},
+				"6": {Schema: testSchema3, Value: value5, ValueType: cuetype},
 			},
 			map[string]bool{
 				"1": true,
@@ -133,6 +138,7 @@ func TestValidate(t *testing.T) {
 				"3": false,
 				"4": true,
 				"5": true,
+				"6": false,
 			},
 		},
 	}
