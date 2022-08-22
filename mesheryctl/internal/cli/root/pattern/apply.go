@@ -19,6 +19,8 @@ import (
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"gopkg.in/yaml.v2"
+	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 )
 
 var (
@@ -222,6 +224,18 @@ mesheryctl pattern apply [pattern-name]
 			return err
 		}
 
+		type pattern struct {
+			Name     string                    `yaml:"name"`
+			Services unstructured.Unstructured `yaml:"services"`
+		}
+
+		var p pattern
+		err = yaml.Unmarshal([]byte(patternFile), &p)
+		if err != nil {
+			return errors.Wrap(err, "could not unmarshal pattern file")
+		}
+
+		s := utils.NewLoader("Applying pattern " + p.Name)
 		res, err := client.Do(req)
 		if err != nil {
 			return err
@@ -229,6 +243,7 @@ mesheryctl pattern apply [pattern-name]
 
 		defer res.Body.Close()
 		body, err := io.ReadAll(res.Body)
+		s.Stop()
 		if err != nil {
 			return err
 		}
