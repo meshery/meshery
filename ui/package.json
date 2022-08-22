@@ -81,6 +81,5 @@
     "prettier": "2.3.2",
     "relay-compiler": "^11.0.2",
     "relay-config": "^11.0.2"
-  },
-  "packageManager": "yarn@3.2.2"
+  }
 }
