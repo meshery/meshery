@@ -514,6 +514,9 @@ type Query {
   # Query for fetching all patterns with selector
   fetchPatterns(selector: PageFilter!): PatternPageResult!
 
+  # Query for fetching all applications with selector
+  fetchApplications(selector: PageFilter!): ApplicationPage!
+
   # Query for getting workloads
   getWorkloads(name: String, id: ID, trim: Boolean): [OAMCapability]
   # Query for getting traits
