@@ -25674,6 +25674,11 @@ definitions:
                       type: number
                       format: double
                   x-go-package: github.com/grafana-tools/sdk
+                min:
+                  type: object
+                  title: 'FloatString represents special type for json values that
+                    could be strings or ints: 100 or "100"'
+                  properties:               
                     Valid:
                       type: boolean
                     Value:
