@@ -90,6 +90,9 @@ const styles = (theme) => ({
   },
   table : {
     marginTop : theme.spacing(1.5)
+  },
+  uploadCluster : {
+    overflow : "hidden"
   }
 });
 
@@ -856,7 +859,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
       title : "Add Kubernetes Cluster(s)",
       subtitle :
         <>
-          <div>
+          <div className={classes.uploadCluster}>
             <Typography variant="h6">
               Upload your kubeconfig
             </Typography>
