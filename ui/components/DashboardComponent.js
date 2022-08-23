@@ -1,6 +1,6 @@
 import {
   Button, Card, CardContent, CardHeader, Chip,
-  IconButton, MenuItem, NoSsr, Paper, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Tooltip, Typography
+  IconButton, MenuItem, NoSsr, Paper, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TableSortLabel, Tooltip, Typography
 } from "@material-ui/core";
 import blue from "@material-ui/core/colors/blue";
 import Grid from "@material-ui/core/Grid";
@@ -25,6 +25,8 @@ import fetchDataPlanes from "./graphql/queries/DataPlanesQuery";
 import fetchClusterResources from "./graphql/queries/ClusterResourcesQuery";
 import  subscribeClusterResources from "./graphql/subscriptions/ClusterResourcesSubscription"
 import { submitPrometheusConfigure } from "./PrometheusComponent";
+import MUIDataTable from "mui-datatables";
+import { MuiThemeProvider, createTheme } from '@material-ui/core/styles';
 
 const styles = (theme) => ({
   rootClass : { backgroundColor : "#eaeff1", },
@@ -758,6 +760,51 @@ class DashboardComponent extends React.Component {
     return null;
   };
 
+  getMuiTheme = () => createTheme({
+    shadows : ["none"],
+    overrides : {
+      MuiInput : {
+        underline : {
+          "&:hover:not(.Mui-disabled):before" : {
+            borderBottom : "2px solid #222"
+          },
+          "&:after" : {
+            borderBottom : "2px solid #222"
+          }
+        }
+      },
+      MUIDataTableSearch : {
+        searchIcon : {
+          color : "#607d8b" ,
+          marginTop : "7px",
+          marginRight : "8px",
+        },
+        clearIcon : {
+          "&:hover" : {
+            color : "#607d8b"
+          }
+        },
+      },
+      MUIDataTableSelectCell : {
+        checkboxRoot : {
+          '&$checked' : {
+            color : '#607d8b',
+          },
+        },
+      },
+      MUIDataTableToolbar : {
+        iconActive : {
+          color : "#222"
+        },
+        icon : {
+          "&:hover" : {
+            color : "#607d8b"
+          }
+        },
+      },
+    }
+  })
+
 
   /**
    * ClusterResourcesCard takes in the cluster related data
@@ -766,31 +813,84 @@ class DashboardComponent extends React.Component {
    * @param {{kind, number}[]} resources
    */
    ClusterResourcesCard = (resources = []) => {
+     let kindSort = "asc";
+     let countSort = "asc";
+     const switchSortOrder = (type) => {
+       if (type==="kindSort") {
+         kindSort = (kindSort==="asc")? "desc" : "asc";
+         countSort = "asc";
+       } else if (type==="countSort") {
+         countSort = (countSort==="asc")? "desc" : "asc";
+         kindSort = "asc";
+       }
+     }
+
+     const columns = [
+       {
+         name : "kind",
+         label : "Resources",
+         options : {
+           filter : false,
+           sort : true,
+           searchable : true,
+           setCellProps : () => ({ style : { textAlign : "center" } }),
+           customHeadRender : ({ index, ...column }, sortColumn) => {
+             return (
+               <TableCell key={index} style={{ textAlign : "center" }} onClick={() => {
+                 sortColumn(index); switchSortOrder("kindSort");
+               }}>
+                 <TableSortLabel active={column.sortDirection != null} direction={kindSort} >
+                   <b>{column.label}</b>
+                 </TableSortLabel>
+               </TableCell>
+
+             )
+           }
+         }, },
+       {
+         name : "count",
+         label : "Count",
+         options : {
+           filter : false,
+           sort : true,
+           searchable : true,
+           setCellProps : () => ({ style : { textAlign : "center" } }),
+           customHeadRender : ({ index, ...column }, sortColumn) => {
+             return (
+               <TableCell key={index} style={{ textAlign : "center" }} onClick={() => {
+                 sortColumn(index); switchSortOrder("countSort");
+               }}>
+                 <TableSortLabel active={column.sortDirection != null} direction={countSort} >
+                   <b>{column.label}</b>
+                 </TableSortLabel>
+               </TableCell>
+
+             )
+           }
+         }, },
+     ]
+
+     const options = {
+       filter : false,
+       selectableRows : "none",
+       responsive : "standard",
+       print : false,
+       download : false,
+       viewColumns : false,
+       rowsPerPage : 5,
+       rowsPerPageOptions : [5, 10, 25]
+     }
+
      if (Array.isArray(resources) && resources.length)
        return (
          <Paper elevation={1} style={{ padding : "2rem", marginTop : "1rem" }}>
-           <TableContainer>
-             <Table aria-label="Discovered Kubernetes cluster details">
-               <TableHead>
-                 <TableRow>
-                   <TableCell align="center">Resources</TableCell>
-                   <TableCell align="center">Count</TableCell>
-                 </TableRow>
-               </TableHead>
-               <TableBody>
-                 {
-                   resources.map((resource) => {
-                     return (
-                       <TableRow key={resource?.kind}>
-                         <TableCell align="center">{resource?.kind}</TableCell>
-                         <TableCell align="center">{resource?.count}</TableCell>
-                       </TableRow>
-                     )
-                   })
-                 }
-               </TableBody>
-             </Table>
-           </TableContainer>
+           <MuiThemeProvider theme={this.getMuiTheme()}>
+             <MUIDataTable
+               data={resources}
+               options={options}
+               columns={columns}
+             />
+           </MuiThemeProvider>
          </Paper>
        );
 

@@ -139,8 +139,6 @@ func (h *Handler) KubernetesMiddleware(next func(http.ResponseWriter, *http.Requ
 		k8sContextIDs := req.URL.Query()["contexts"]
 		k8scontexts := []models.K8sContext{}    //The contexts passed by the user
 		allk8scontexts := []models.K8sContext{} //All contexts to track all the connected clusters
-		logrus.Debug("running k8s middleware")
-		logrus.Debug("k8sContexIDS: ", k8sContextIDs)
 
 		if len(k8sContextIDs) == 0 { //This is for backwards compabitibility with clients. This will work fine for single cluster.
 			//For multi cluster, it is expected of clients to explicitly pass the k8scontextID.
