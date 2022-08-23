@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { Avatar, IconButton, TableCell, TableSortLabel } from "@mui/material";
 import MUIDataTable from "mui-datatables";
 import Moment from "react-moment";
@@ -6,7 +6,22 @@ import DoneAllIcon from "@mui/icons-material/DoneAll";
 import EditIcon from "@mui/icons-material/Edit";
 import UndeployIcon from "../../public/static/img/UndeployIcon";
 
-function MesheryFilterTable({ filters = [], setSelectedRowData, handleModalOpen, user }) {
+function MesheryFilterTable({
+  filters = [],
+  setSelectedRowData,
+  handleModalOpen,
+  user,
+  page = 0,
+  count = 0,
+  pageSize = 10,
+  sortOrder,
+  fetchFilters,
+  showModal,
+  handleDelete,
+  search = "",
+  setSearch,
+}) {
+  const searchTimeout = useRef(null);
   const columns = [
     {
       name: "name",
@@ -86,7 +101,6 @@ function MesheryFilterTable({ filters = [], setSelectedRowData, handleModalOpen,
           return (
             <>
               <IconButton>
-                
                 <EditIcon
                   title="Config"
                   aria-label="config"
@@ -115,8 +129,10 @@ function MesheryFilterTable({ filters = [], setSelectedRowData, handleModalOpen,
     // responsive : "scrollFullHeight",
     resizableColumns: true,
     serverSide: true,
+    count,
     rowsPerPageOptions: [10, 20, 25],
     fixedHeader: true,
+    page,
     print: false,
     download: false,
     textLabels: {
@@ -125,9 +141,53 @@ function MesheryFilterTable({ filters = [], setSelectedRowData, handleModalOpen,
       },
     },
     onCellClick: (_, meta) => meta.colIndex !== 3 && setSelectedRowData(filters[meta.rowIndex]),
+
+    onRowsDelete: async function handleDeleteRow(row) {
+      let response = await showModal(Object.keys(row.lookup).length);
+      console.log(response);
+      if (response === "Yes") {
+        const fid = Object.keys(row.lookup).map((idx) => filters[idx]?.id);
+        fid.forEach((fid) => handleDelete(fid));
+      }
+      if (response === "No") fetchFilters(page, pageSize, search, sortOrder);
+    },
+
+    onTableChange: (action, tableState) => {
+      const sortInfo = tableState.announceText ? tableState.announceText.split(" : ") : [];
+      let order = "";
+      if (tableState.activeColumn) {
+        order = `${columns[tableState.activeColumn].name} desc`;
+      }
+
+      switch (action) {
+        case "changePage":
+          setPage(tableState.page);
+          break;
+        case "changeRowsPerPage":
+          setPageSize(tableState.rowsPerPage);
+          break;
+        case "search":
+          if (searchTimeout.current) clearTimeout(searchTimeout.current);
+          searchTimeout.current = setTimeout(() => {
+            if (search !== tableState.searchText) setSearch(tableState.searchText);
+          }, 500);
+          break;
+        case "sort":
+          if (sortInfo.length == 2) {
+            if (sortInfo[1] === "ascending") {
+              order = `${columns[tableState.activeColumn].name} asc`;
+            } else {
+              order = `${columns[tableState.activeColumn].name} desc`;
+            }
+          }
+          if (order !== sortOrder) setSortOrder(order);
+          break;
+      }
+    },
   };
 
   return <MUIDataTable title={<div>Filters</div>} data={filters} columns={columns} options={options} />;
 }
 
 export default MesheryFilterTable;
+
