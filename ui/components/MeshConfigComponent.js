@@ -140,7 +140,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
             const tempSubscription = fetchMesheryOperatorStatus({ k8scontextID : ctx.id }).
               subscribe({
                 next : (res) => {
-                  if (!_operatorState.find(opSt => opSt.contextID === ctx.id)) {
+                  if (!_operatorState?.find(opSt => opSt.contextID === ctx.id)) {
                     const x = updateCtxInfo(ctx.id, res)
                     _setOperatorState(x)
                   }
@@ -422,7 +422,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
   }
 
   function getOperatorStatus(ctxId) {
-    const operator = _operatorState.find(op => op.contextID === ctxId);
+    const operator = _operatorState?.find(op => op.contextID === ctxId);
     if (!operator) {
       return {}
     }
@@ -434,7 +434,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
   }
 
   const getContextStatus = (ctxId) => {
-    const operator = _operatorState.find(op => op.contextID === ctxId);
+    const operator = _operatorState?.find(op => op.contextID === ctxId);
     if (!operator) {
       return {}
     }
