@@ -266,7 +266,7 @@ mesheryctl system context view --all
 
 	SilenceUsage: true,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if len(args) == 0 && cmd.Flags().Lookup("all").Value.String() == "false" {
+		if len(args) == 0 && (cmd.Flags().Lookup("all").Value.String() == "false" && cmd.Flags().Lookup("context").Value.String() == "") {
 			const errMsg = `Please provide a context name to view.
 Usage: mesheryctl system context view [context name]`
 			return errors.New(utils.SystemContextSubError(fmt.Sprintf("%s\n", errMsg), "context view"))

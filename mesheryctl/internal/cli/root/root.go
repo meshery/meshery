@@ -60,17 +60,11 @@ mesheryctl -v [or] --verbose
 	`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
-	DisableSuggestions: true,
-	Args: func(cmd *cobra.Command, args []string) error {
-
+	Args: cobra.MaximumNArgs(1),
+	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
 			return cmd.Help()
 		}
-		return nil
-	},
-
-	RunE: func(cmd *cobra.Command, args []string) error {
-
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
 			return errors.New(utils.RootError(fmt.Sprintf("'%s' is a invalid command.  Use 'mesheryctl --help' to display usage guide.\n", args[0])))
 		}
