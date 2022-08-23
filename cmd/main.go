@@ -45,18 +45,18 @@ func main() {
 		models.GlobalTokenForAnonymousResults = globalTokenForAnonymousResults
 	}
 
-	instanceID, err := uuid.NewV4()
-	if err != nil {
-		logrus.Error(err)
-		os.Exit(1)
-	}
-
 	// Initialize Logger instance
 	log, err := logger.New("meshery", logger.Options{
 		Format: logger.SyslogLogFormat,
 	})
 	if err != nil {
 		logrus.Error(err)
+		os.Exit(1)
+	}
+
+	instanceID, err := uuid.NewV4()
+	if err != nil {
+		log.Error(ErrCreatingUUIDInstance(err))
 		os.Exit(1)
 	}
 
@@ -83,42 +83,45 @@ func main() {
 
 	// Register local OAM traits and workloads
 	if err := core.RegisterMesheryOAMTraits(); err != nil {
-		logrus.Error(err)
+		log.Error(ErrRegisteringMesheryOAMTraits(err))
 	}
 	if err := core.RegisterMesheryOAMWorkloads(); err != nil {
-		logrus.Error(err)
+		log.Error(ErrRegisteringMesheryOAMWorkloads(err))
 	}
-	logrus.Info("Local Provider capabilities are: ", version)
+	log.Info("Local Provider capabilities are: ", version)
 
 	// Get the channel
-	logrus.Info("Meshery Server release channel is: ", releasechannel)
+	log.Info("Meshery Server release channel is: ", releasechannel)
 
 	home, err := os.UserHomeDir()
 	if viper.GetString("USER_DATA_FOLDER") == "" {
 		if err != nil {
-			logrus.Fatalf("unable to retrieve the user's home directory: %v", err)
+			log.Error(ErrRetrievingUserHomeDirectory(err))
+			os.Exit(1)
 		}
 		viper.SetDefault("USER_DATA_FOLDER", path.Join(home, ".meshery", "config"))
 	}
 
 	errDir := os.MkdirAll(viper.GetString("USER_DATA_FOLDER"), 0755)
 	if errDir != nil {
-		logrus.Fatalf("unable to create the directory for storing user data at %v", viper.GetString("USER_DATA_FOLDER"))
+		log.Error(ErrCreatingUserDataDirectory(viper.GetString("USER_DATA_FOLDER")))
+		os.Exit(1)
 	}
 
-	logrus.Infof("Meshery Database is at: %s", viper.GetString("USER_DATA_FOLDER"))
+	log.Info("Meshery Database is at: ", viper.GetString("USER_DATA_FOLDER"))
 	if viper.GetString("KUBECONFIG_FOLDER") == "" {
 		if err != nil {
-			logrus.Fatalf("unable to retrieve the user's home directory: %v", err)
+			log.Error(ErrRetrievingUserHomeDirectory(err))
+			os.Exit(1)
 		}
 		viper.SetDefault("KUBECONFIG_FOLDER", path.Join(home, ".kube"))
 	}
-	logrus.Infof("Using kubeconfig at: %s", viper.GetString("KUBECONFIG_FOLDER"))
+	log.Info("Using kubeconfig at: ", viper.GetString("KUBECONFIG_FOLDER"))
 
 	if viper.GetBool("DEBUG") {
 		logrus.SetLevel(logrus.DebugLevel)
 	}
-	logrus.Infof("Log level: %s", logrus.GetLevel())
+	log.Info("Log level: ", logrus.GetLevel())
 
 	adapterURLs := viper.GetStringSlice("ADAPTER_URLS")
 
@@ -139,14 +142,12 @@ func main() {
 
 	preferencePersister, err := models.NewMapPreferencePersister()
 	if err != nil {
-		logrus.Fatal(err)
+		log.Error(ErrCreatingMapPreferencePersisterInstance(err))
+		os.Exit(1)
 	}
 	defer preferencePersister.ClosePersister()
 
 	dbHandler := models.GetNewDBInstance()
-	if err != nil {
-		logrus.Fatal(err)
-	}
 
 	meshsyncCh := make(chan struct{}, 10)
 	brokerConn := nats.NewEmptyConnection
@@ -169,7 +170,8 @@ func main() {
 		models.K8sContext{},
 	)
 	if err != nil {
-		logrus.Fatal(err)
+		log.Error(ErrDatabaseAutoMigration(err))
+		os.Exit(1)
 	}
 
 	lProv := &models.DefaultLocalProvider{
@@ -194,7 +196,7 @@ func main() {
 	for _, providerurl := range RemoteProviderURLs {
 		parsedURL, err := url.Parse(providerurl)
 		if err != nil {
-			logrus.Error(providerurl, "is invalid url skipping provider")
+			log.Error(ErrInvalidURLSkippingProvider(providerurl))
 			continue
 		}
 		cp := &models.RemoteProvider{
@@ -235,6 +237,8 @@ func main() {
 		PrometheusClientForQuery: models.NewPrometheusClientWithHTTPClient(&http.Client{Timeout: time.Second}),
 
 		ConfigurationChannel: models.NewConfigurationHelper(),
+
+		K8scontextChannel: models.NewContextHelper(),
 	}
 
 	operatorDeploymentConfig := models.NewOperatorDeploymentConfig(adapterTracker)
@@ -263,23 +267,24 @@ func main() {
 	signal.Notify(c, os.Interrupt)
 
 	go func() {
-		logrus.Infof("Meshery Server listening on :%d", port)
+		log.Info("Meshery Server listening on: ", port)
 		if err := r.Run(); err != nil {
-			logrus.Fatalf("ListenAndServe Error: %v", err)
+			log.Error(ErrListenAndServe(err))
+			os.Exit(1)
 		}
 	}()
 	<-c
-	logrus.Info("Doing seeded content cleanup...")
+	log.Info("Doing seeded content cleanup...")
 	err = lProv.Cleanup()
 	if err != nil {
-		log.Error(err)
+		log.Error(ErrCleaningUpLocalProvider(err))
 	}
 
-	logrus.Info("Closing database instance...")
+	log.Info("Closing database instance...")
 	err = dbHandler.DBClose()
 	if err != nil {
-		log.Error(err)
+		log.Error(ErrClosingDatabaseInstance(err))
 	}
 
-	logrus.Info("Shutting down Meshery Server...")
+	log.Info("Shutting down Meshery Server...")
 }

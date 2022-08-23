@@ -31,6 +31,7 @@ import ApplicationsGrid from "./MesheryApplications/ApplicationsGrid";
 import { fileDownloader } from "../utils/fileDownloader";
 import { trueRandom } from "../lib/trueRandom";
 import PublishIcon from "@material-ui/icons/Publish";
+import InfoIcon from '@material-ui/icons/Info';
 
 const styles = (theme) => ({
   grid : { padding : theme.spacing(2), },
@@ -606,7 +607,12 @@ function MesheryApplications({
         customHeadRender : function CustomHead({ index, ...column }) {
           return (
             <TableCell key={index}>
-              <b>{column.label}</b>
+              <Tooltip title="Click source type to download Application">
+                <div style={{ display : "flex" }}>
+                  <b>{column.label}</b>
+                  <InfoIcon color="primary" style={{ scale : "0.8" }}/>
+                </div>
+              </Tooltip>
             </TableCell>
           );
         },
@@ -653,7 +659,7 @@ function MesheryApplications({
                 title="Undeploy"
                 onClick={() => handleModalOpen(rowData.application_file, rowData.name, false)}
               >
-                <UndeployIcon fill="#B32700" data-cy="undeploy-button" />
+                <UndeployIcon fill="#8F1F00" data-cy="undeploy-button" />
               </IconButton>
             </>
           );
@@ -852,6 +858,7 @@ function MesheryApplications({
               selectedPage={page}
               UploadImport={UploadImport}
               types={types}
+              handleAppDownload={handleAppDownload}
             />
         }
         <ConfirmationMsg

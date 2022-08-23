@@ -1,30 +1,10 @@
 import { Grid, Typography, Button, Switch } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
 import { useState } from "react";
-import FlipCard from "../components/FlipCard";
+
 
 const styles = (theme) => ({
-  card : {
-    height : '100%',
-    width : "40%",
-    backgroundColor : "transparent",
-    perspective : theme.spacing(125),
-    margin : theme.spacing(5),
-    overFlow : "hidden",
-  },
-  innerCard : {
-    padding : theme.spacing(2),
-    borderRadius : theme.spacing(1),
-    transformStyle : "preserve-3d",
-    boxShadow : "0 4px 8px 0 rgba(0,0,0,0.2)",
-    backgroundColor : "#fff",
-    cursor : "pointer",
-    transition : `transform 1ms`,
-    transformOrigin : "50% 50% 10%",
-
-  },
   button : {
-    marginRight : "0.5rem",
     borderRadius : 5,
     minWidth : 100,
     color : "#fff",
@@ -32,28 +12,40 @@ const styles = (theme) => ({
       boxShadow : "0px 2px 4px -1px rgb(0 0 0 / 20%), 0px 4px 5px 0px rgb(0 0 0 / 14%), 0px 1px 10px 0px rgb(0 0 0 / 12%)"
     },
   },
-  grid : {
-    margin : "1rem"
+  card : {
+    padding : theme.spacing(3),
+    borderRadius : theme.spacing(1),
+    transformStyle : "preserve-3d",
+    boxShadow : "0 4px 8px 0 rgba(0,0,0,0.2)",
+    backgroundColor : "#fff",
+    minHeight : "250px",
+    position : "relative",
   },
-  text : {
-    padding : "1rem"
+  a : {
+    textDecoration : "none",
   },
   img : {
-    marginLeft : "0.5rem",
-    height : 'auto',
+    paddingRight : "1rem",
+    height : "auto",
     width : "auto",
-    maxWidth : "100px",
-    maxHeight : "100px"
+    maxWidth : "120px",
+    maxHeight : "120px",
   },
-  frontContent : {
-    textAlign : "right"
-  },
-  backContent : {
+  frontSideDescription : {
+    paddingTop : "1rem",
+    paddingBottom : "1rem",
+    textAlign : "left",
+    display : "flex",
+    flexDirection : 'row',
     textAlign : "left"
-  }
+  },
+  link : {
+    textDecoration : "none",
+    color : "#00b39F",
+  },
 });
 
-const INITIAL_GRID_SIZE = { xl : 4, md : 8, xs : 12 };
+const INITIAL_GRID_SIZE = { lg : 6, md : 12, xs : 12 };
 
 const Extensions = ({ classes }) => {
   const [catalog, setCatalog] = useState(false);
@@ -65,50 +57,59 @@ const Extensions = ({ classes }) => {
   }
 
   const handleSignUp = (e) => {
-    window.open("https://layer5.io/cloud-native-management/meshmap", "_blank")
+    window.open("https://layer5.io/meshmap", "_blank")
     e.stopPropagation();
   };
 
 
   return (
-    <Grid container justifyContent="center" alignItems="center">
-      <Grid item {...INITIAL_GRID_SIZE} className={classes.grid} >
-        <FlipCard >
-          <div>
-            <Typography className={classes.frontContent} variant="h5" component="div">
-              {"MeshMap"}
-            </Typography>
+    <Grid container spacing={1} >
+      <Grid item {...INITIAL_GRID_SIZE}>
+        <div className={classes.card}>
+          <Typography className={classes.frontContent} variant="h5" component="div">
+            {"MeshMap"}
+          </Typography>
 
+
+          <Typography className={classes.frontSideDescription} variant="body">
             <img className={classes.img} src="/static/img/meshmap.svg" />
-            <div style={{ textAlign : "right" }}>
-              <Button
-                variant="contained"
-                color="primary"
-                className={classes.button}
-                onClick={(e) => handleSignUp(e)}>
-                Sign Up
-              </Button>
-            </div>
-          </div>
+            Collaboratively design and manage your Kubernetes clusters, service mesh deployments, and cloud native apps.
+            MeshMap is now in private beta. Sign-up today to for early access!
+          </Typography>
+          <div style={{ textAlign : "right" }}>
 
-          {/* Back part */}
-          <div>
-            <Typography className={classes.backContent} variant="h5" component="div">
-              {"MeshMap"}
-            </Typography>
-            <Typography variant="subtitle1" component="div" className={classes.text}>
-              {"Collaboratively design and manage your Kubernetes clusters, service mesh deployments, and cloud native apps."}
-            </Typography>
+            <Button
+              variant="contained"
+              color="primary"
+              className={classes.button}
+              onClick={(e) => handleSignUp(e)}>
+              Sign Up
+            </Button>
           </div>
-        </FlipCard>
+        </div>
       </Grid>
-      <Grid item {...INITIAL_GRID_SIZE} className={classes.grid}>
-        <FlipCard >
-          <div>
-            <Typography  className={classes.frontContent} variant="h5" component="div">
-              {"Meshery Catalog"}
-            </Typography>
+      <Grid item {...INITIAL_GRID_SIZE}>
+
+        <div className={classes.card} style={{ backgroundColor : "#ddd", }} >
+          <Typography className={classes.frontContent} variant="h5" component="div">
+            {"Meshery Catalog"}
+          </Typography>
+
+          <Typography className={classes.frontSideDescription} variant="body">
             <img className={classes.img} src="/static/img/meshery_catalog.svg" />
+            <div style={{
+              display : "inline", position : "relative",
+            }}>
+              Enable access to the cloud native catalog, supporting <a href="https://service-mesh-patterns.github.io/service-mesh-patterns" className={classes.link
+              } variant="body">Service Mesh Patterns</a>, WebAssembly filters, eBPF programs (<span style={{ fontStyle : "italic" }}>soon</span>), and OPA policies (<span style={{ fontStyle : "italic" }}>soon</span>). Import any catalog item and customize.
+            </div>
+          </Typography>
+
+          <Grid container spacing={2} className={classes.grid} direction="row" justifyContent="space-between" alignItems="baseline" style={{ position : "absolute", paddingRight : "3rem", paddingLeft : ".5rem", bottom : "1.5rem", }}>
+            <Typography variant="subtitle2" style={{ fontStyle : "italic" }}>
+              Explore the <a href="https://meshery.io/catalog" target="_blank" rel="noreferrer" className={classes.link}>Meshery Catalog</a>
+            </Typography>
+
             <div style={{ textAlign : "right" }}>
               <Switch
                 disabled
@@ -118,23 +119,10 @@ const Extensions = ({ classes }) => {
                 color="primary"
               />
             </div>
-          </div>
-
-          {/* Back part */}
-          <div>
-            <Typography className={classes.backContent} variant="h5" component="div">
-              {"Meshery Catalog"}
-            </Typography>
-            <Typography variant="subtitle1" component="div" className={classes.text}>
-              {"Connect to enable access to the cloud native catalog. Import any catalog item and customize."}
-            </Typography>
-            <Typography variant="subtitle2" style={{ fontStyle : "italic" }}>
-                Explore at: <a href="https://meshery.io/catalog" target="_blank" rel="noreferrer"> Meshery Catalog </a>
-            </Typography>
-          </div>
-        </FlipCard>
-      </Grid>
-    </Grid>
+          </Grid>
+        </div>
+      </Grid >
+    </Grid >
   )
 }
 

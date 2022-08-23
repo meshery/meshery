@@ -268,6 +268,27 @@ type NameSpace {
   namespace: String!
 }
 
+# ================ K8s Context ======================
+
+type K8sContext {
+  id: String!,
+  name: String!,
+  auth: Map!,
+  cluster: Map!,
+  server: String!,
+  owner: ID!,
+  created_by: ID!,
+  meshery_instance_id: ID!,
+  kubernetes_server_id: ID!,
+  updated_at: String!,
+  created_at: String!
+}
+
+type K8sContextsPage {
+  total_count: Int!,
+  contexts: [K8sContext]! 
+}
+
 # ================= Configuration ===================
 
 type ConfigurationPage {
@@ -560,7 +581,7 @@ type Subscription {
     k8scontextIDs: [String!]
   ) : MeshSyncEvent!
   subscribeConfiguration(selector: PageFilter!) : ConfigurationPage!
-
+  subscribeK8sContext(selector: PageFilter!) : K8sContextsPage!
 }
 
 type OAMCapability {
