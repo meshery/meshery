@@ -97,7 +97,6 @@ mesheryctl app onboard -f ./application.yml -s "Kubernetes Manifest"
 
 		deployURL := mctlCfg.GetBaseMesheryURL() + "/api/application/deploy"
 		appURL := mctlCfg.GetBaseMesheryURL() + "/api/application"
-		patternURL := mctlCfg.GetBaseMesheryURL() + "/api/pattern"
 
 		// app name has been passed
 		if len(args) > 0 {
@@ -155,47 +154,56 @@ mesheryctl app onboard -f ./application.yml -s "Kubernetes Manifest"
 				}
 				text := string(content)
 
-				// if --skip-save is not passed we save the apps first
+				var jsonValues []byte
 				if !skipSave {
-					jsonValues, err := json.Marshal(map[string]interface{}{
+					jsonValues, err = json.Marshal(map[string]interface{}{
 						"application_data": map[string]interface{}{
 							"name":             path.Base(file),
 							"application_file": text,
 						},
 						"save": true,
 					})
-					if err != nil {
-						return err
-					}
-					req, err = utils.NewRequest("POST", appURL+"/"+sourceType, bytes.NewBuffer(jsonValues))
-					if err != nil {
-						return err
-					}
+				} else {
+					jsonValues, err = json.Marshal(map[string]interface{}{
+						"application_data": map[string]interface{}{
+							"name":             path.Base(file),
+							"application_file": text,
+						},
+						"save": false,
+					})
+				}
 
-					resp, err := client.Do(req)
-					if err != nil {
-						return err
-					}
-					utils.Log.Debug("saved app file")
-					var response []*models.MesheryApplication
-					// failsafe (bad api call)
-					if resp.StatusCode != 200 {
-						return errors.Errorf("Response Status Code %d, possible Server Error", resp.StatusCode)
-					}
-					defer resp.Body.Close()
+				if err != nil {
+					return err
+				}
+				req, err = utils.NewRequest("POST", appURL+"/"+sourceType, bytes.NewBuffer(jsonValues))
+				if err != nil {
+					return err
+				}
 
-					body, err := io.ReadAll(resp.Body)
-					if err != nil {
-						return errors.Wrap(err, utils.PerfError("failed to read response body"))
-					}
-					err = json.Unmarshal(body, &response)
-					if err != nil {
-						return errors.Wrap(err, "failed to unmarshal response body")
-					}
+				resp, err := client.Do(req)
+				if err != nil {
+					return err
+				}
+
+				var response []*models.MesheryApplication
+				// failsafe (bad api call)
+				if resp.StatusCode != 200 {
+					return errors.Errorf("Response Status Code %d, possible Server Error", resp.StatusCode)
+				}
+				defer resp.Body.Close()
+
+				body, err := io.ReadAll(resp.Body)
+				if err != nil {
+					return errors.Wrap(err, utils.PerfError("failed to read response body"))
+				}
+				err = json.Unmarshal(body, &response)
+				if err != nil {
+					return errors.Wrap(err, "failed to unmarshal response body")
 				}
 
 				// setup app file
-				appFile = text
+				appFile = response[0].ApplicationFile
 			} else {
 				var jsonValues []byte
 				url, path, err := utils.ParseURLGithub(file)
@@ -265,43 +273,7 @@ mesheryctl app onboard -f ./application.yml -s "Kubernetes Manifest"
 			}
 		}
 
-		// Convert App File into Pattern File
-		jsonValues, _ := json.Marshal(map[string]interface{}{
-			"K8sManifest": appFile,
-		})
-
-		req, err = utils.NewRequest("POST", patternURL, bytes.NewBuffer(jsonValues))
-		if err != nil {
-			return err
-		}
-
-		resp, err := client.Do(req)
-		if err != nil {
-			return err
-		}
-		defer resp.Body.Close()
-
-		var response []*models.MesheryPattern
-		// bad api call
-		if resp.StatusCode != 200 {
-			return errors.Errorf("Response Status Code %d, possible Server Error", resp.StatusCode)
-		}
-
-		body, err := io.ReadAll(resp.Body)
-		if err != nil {
-			return errors.Wrap(err, utils.PerfError("failed to read response body"))
-		}
-
-		err = json.Unmarshal(body, &response)
-		if err != nil {
-			return errors.Wrap(err, "failed to unmarshal response body")
-		}
-
-		utils.Log.Debug("application file converted to pattern file")
-
-		patternFile := response[0].PatternFile
-
-		req, err = utils.NewRequest("POST", deployURL, bytes.NewBuffer([]byte(patternFile)))
+		req, err = utils.NewRequest("POST", deployURL, bytes.NewBuffer([]byte(appFile)))
 		if err != nil {
 			return err
 		}
@@ -312,7 +284,7 @@ mesheryctl app onboard -f ./application.yml -s "Kubernetes Manifest"
 		}
 
 		defer res.Body.Close()
-		body, err = io.ReadAll(res.Body)
+		body, err := io.ReadAll(res.Body)
 		if err != nil {
 			return err
 		}

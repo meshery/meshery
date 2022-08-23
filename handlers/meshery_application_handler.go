@@ -377,7 +377,7 @@ func (h *Handler) handleApplicationUpdate(rw http.ResponseWriter,
 	}
 
 	go h.config.ConfigurationChannel.PublishApplications()
-	
+
 	h.formatApplicationOutput(rw, resp, format)
 }
 
@@ -551,12 +551,17 @@ func githubRepoApplicationScan(
 	var mu sync.Mutex
 	ghWalker := walker.NewGit()
 	result := make([]models.MesheryApplication, 0)
+	fileName := path[strings.LastIndex(path, "/")+1:]
+	dirPath := strings.TrimSuffix(path, fileName)
 	err := ghWalker.
 		Owner(owner).
 		Repo(repo).
 		Branch(branch).
-		Root(path).
+		Root(dirPath).
 		RegisterFileInterceptor(func(f walker.File) error {
+			if fileName != f.Name {
+				return nil
+			}
 			ext := filepath.Ext(f.Name)
 			var k8sres string
 			var err error
