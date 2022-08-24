@@ -763,6 +763,8 @@ class DashboardComponent extends React.Component {
   getMuiTheme = () => createTheme({
     shadows : ["none"],
     overrides : {
+      MUIDataTable : {
+      },
       MuiInput : {
         underline : {
           "&:hover:not(.Mui-disabled):before" : {
@@ -873,12 +875,11 @@ class DashboardComponent extends React.Component {
      const options = {
        filter : false,
        selectableRows : "none",
-       responsive : "standard",
+       responsive : "scrollMaxHeight",
        print : false,
        download : false,
        viewColumns : false,
-       rowsPerPage : 5,
-       rowsPerPageOptions : [5, 10, 25]
+       pagination : false
      }
 
      if (Array.isArray(resources) && resources.length)
