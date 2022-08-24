@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"strings"
 
-	"github.com/sirupsen/logrus"
 	"github.com/layer5io/meshery/handlers"
 	"github.com/layer5io/meshery/internal/graphql/model"
 	"github.com/layer5io/meshery/models"
@@ -279,7 +278,7 @@ func (r *Resolver) getKubectlDescribe(ctx context.Context, name string, kind str
 	}, nil
 }
 
-func (r *Resolver) subscribeClusterResources(ctx context.Context, provider models.Provider, k8scontextIDs []string, namespaces []string) (<-chan *model.ClusterResources, error) {
+func (r *Resolver) subscribeClusterResources(ctx context.Context, provider models.Provider, k8scontextIDs []string, namespace string) (<-chan *model.ClusterResources, error) {
 	ch := make(chan struct{}, 1)
 	respChan := make(chan *model.ClusterResources)
 
@@ -290,7 +289,7 @@ func (r *Resolver) subscribeClusterResources(ctx context.Context, provider model
 		for {
 			select {
 				case <-ch:
-					clusterResources, err := r.getClusterResources(ctx, provider, k8scontextIDs, namespaces)
+					clusterResources, err := r.getClusterResources(ctx, provider, k8scontextIDs, namespace)
 					if err != nil {
 						r.Log.Error(ErrClusterResourcesSubscription(err))
 						break
@@ -306,7 +305,7 @@ func (r *Resolver) subscribeClusterResources(ctx context.Context, provider model
 	return respChan, nil
 }
 
-func (r *Resolver) getClusterResources(ctx context.Context, provider models.Provider, k8scontextIDs []string, namespaces []string) (*model.ClusterResources, error) {
+func (r *Resolver) getClusterResources(ctx context.Context, provider models.Provider, k8scontextIDs []string, namespace string) (*model.ClusterResources, error) {
 	var cids []string
 	// query := "SELECT count(kind) as count, kind FROM objects o LEFT JOIN resource_object_meta rom WHERE o.cluster_id IN (?) AND rom.namespace = (?) GROUP BY kind"
 	query := `
@@ -337,20 +336,7 @@ func (r *Resolver) getClusterResources(ctx context.Context, provider models.Prov
 		cids = k8scontextIDs
 	}
 
-	if len(namespaces) == 0 || (len(namespaces) == 1 && namespaces[0] == ""){
-		modelNamespaces, err := r.getAvailableNamespaces(ctx, provider, cids)
-		if err != nil {
-			r.Log.Error(ErrGettingNamespace(err))
-			return nil, err
-		}
-		for _, namespace := range modelNamespaces {
-			namespaces = append(namespaces, namespace.Namespace)
-		}
-		logrus.Debug("namespaces: ", namespaces)
-		logrus.Debug("len: ", len(namespaces))
-	}
-
-	rows, err = provider.GetGenericPersister().Raw(query, cids, namespaces, cids, cids).Rows()
+	rows, err = provider.GetGenericPersister().Raw(query, cids, namespace, cids, cids).Rows()
 
 	if err != nil {
 		r.Log.Error(ErrGettingClusterResources(err))

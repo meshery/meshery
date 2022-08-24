@@ -313,7 +313,7 @@ type ComplexityRoot struct {
 		FetchResults           func(childComplexity int, selector model.PageFilter, profileID string) int
 		GetAvailableAddons     func(childComplexity int, filter *model.ServiceMeshFilter) int
 		GetAvailableNamespaces func(childComplexity int, k8sClusterIDs []string) int
-		GetClusterResources    func(childComplexity int, k8scontextIDs []string, namespaces []string) int
+		GetClusterResources    func(childComplexity int, k8scontextIDs []string, namespace string) int
 		GetControlPlanes       func(childComplexity int, filter *model.ServiceMeshFilter) int
 		GetDataPlanes          func(childComplexity int, filter *model.ServiceMeshFilter) int
 		GetKubectlDescribe     func(childComplexity int, name string, kind string, namespace string) int
@@ -340,7 +340,7 @@ type ComplexityRoot struct {
 		ListenToMeshSyncEvents            func(childComplexity int, k8scontextIDs []string) int
 		ListenToOperatorState             func(childComplexity int, k8scontextIDs []string) int
 		SubscribeBrokerConnection         func(childComplexity int) int
-		SubscribeClusterResources         func(childComplexity int, k8scontextIDs []string, namespaces []string) int
+		SubscribeClusterResources         func(childComplexity int, k8scontextIDs []string, namespace string) int
 		SubscribeConfiguration            func(childComplexity int, selector model.PageFilter) int
 		SubscribeK8sContext               func(childComplexity int, selector model.PageFilter) int
 		SubscribeMeshSyncEvents           func(childComplexity int, k8scontextIDs []string) int
@@ -373,7 +373,7 @@ type QueryResolver interface {
 	GetTraits(ctx context.Context, name *string, id *string, trim *bool) ([]*model.OAMCapability, error)
 	GetScopes(ctx context.Context, name *string, id *string, trim *bool) ([]*model.OAMCapability, error)
 	GetKubectlDescribe(ctx context.Context, name string, kind string, namespace string) (*model.KctlDescribeDetails, error)
-	GetClusterResources(ctx context.Context, k8scontextIDs []string, namespaces []string) (*model.ClusterResources, error)
+	GetClusterResources(ctx context.Context, k8scontextIDs []string, namespace string) (*model.ClusterResources, error)
 }
 type SubscriptionResolver interface {
 	ListenToAddonState(ctx context.Context, filter *model.ServiceMeshFilter) (<-chan []*model.AddonList, error)
@@ -387,7 +387,7 @@ type SubscriptionResolver interface {
 	SubscribeMesheryControllersStatus(ctx context.Context, k8scontextIDs []string) (<-chan []*model.MesheryControllersStatusListItem, error)
 	SubscribeMeshSyncEvents(ctx context.Context, k8scontextIDs []string) (<-chan *model.MeshSyncEvent, error)
 	SubscribeConfiguration(ctx context.Context, selector model.PageFilter) (<-chan *model.ConfigurationPage, error)
-	SubscribeClusterResources(ctx context.Context, k8scontextIDs []string, namespaces []string) (<-chan *model.ClusterResources, error)
+	SubscribeClusterResources(ctx context.Context, k8scontextIDs []string, namespace string) (<-chan *model.ClusterResources, error)
 	SubscribeK8sContext(ctx context.Context, selector model.PageFilter) (<-chan *model.K8sContextsPage, error)
 }
 
@@ -1604,7 +1604,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.GetClusterResources(childComplexity, args["k8scontextIDs"].([]string), args["namespaces"].([]string)), true
+		return e.complexity.Query.GetClusterResources(childComplexity, args["k8scontextIDs"].([]string), args["namespace"].(string)), true
 
 	case "Query.getControlPlanes":
 		if e.complexity.Query.GetControlPlanes == nil {
@@ -1841,7 +1841,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Subscription.SubscribeClusterResources(childComplexity, args["k8scontextIDs"].([]string), args["namespaces"].([]string)), true
+		return e.complexity.Subscription.SubscribeClusterResources(childComplexity, args["k8scontextIDs"].([]string), args["namespace"].(string)), true
 
 	case "Subscription.subscribeConfiguration":
 		if e.complexity.Subscription.SubscribeConfiguration == nil {
@@ -2546,7 +2546,7 @@ type Query {
   getKubectlDescribe(name: String!, kind: String!, namespace: String!): KctlDescribeDetails!
 
   # Query for getting cluster info
-  getClusterResources(k8scontextIDs: [String!], namespaces: [String!]): ClusterResources!
+  getClusterResources(k8scontextIDs: [String!], namespace: String!): ClusterResources!
 }
 
 #
@@ -2608,7 +2608,7 @@ type Subscription {
 
   subscribeClusterResources(
     k8scontextIDs: [String!],
-    namespaces: [String!]
+    namespace: String!
   ): ClusterResources!
 
   subscribeK8sContext(selector: PageFilter!) : K8sContextsPage!
@@ -2792,15 +2792,15 @@ func (ec *executionContext) field_Query_getClusterResources_args(ctx context.Con
 		}
 	}
 	args["k8scontextIDs"] = arg0
-	var arg1 []string
-	if tmp, ok := rawArgs["namespaces"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("namespaces"))
-		arg1, err = ec.unmarshalOString2ᚕstringᚄ(ctx, tmp)
+	var arg1 string
+	if tmp, ok := rawArgs["namespace"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("namespace"))
+		arg1, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["namespaces"] = arg1
+	args["namespace"] = arg1
 	return args, nil
 }
 
@@ -3152,15 +3152,15 @@ func (ec *executionContext) field_Subscription_subscribeClusterResources_args(ct
 		}
 	}
 	args["k8scontextIDs"] = arg0
-	var arg1 []string
-	if tmp, ok := rawArgs["namespaces"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("namespaces"))
-		arg1, err = ec.unmarshalOString2ᚕstringᚄ(ctx, tmp)
+	var arg1 string
+	if tmp, ok := rawArgs["namespace"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("namespace"))
+		arg1, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["namespaces"] = arg1
+	args["namespace"] = arg1
 	return args, nil
 }
 
@@ -11572,7 +11572,7 @@ func (ec *executionContext) _Query_getClusterResources(ctx context.Context, fiel
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetClusterResources(rctx, fc.Args["k8scontextIDs"].([]string), fc.Args["namespaces"].([]string))
+		return ec.resolvers.Query().GetClusterResources(rctx, fc.Args["k8scontextIDs"].([]string), fc.Args["namespace"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -12664,7 +12664,7 @@ func (ec *executionContext) _Subscription_subscribeClusterResources(ctx context.
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Subscription().SubscribeClusterResources(rctx, fc.Args["k8scontextIDs"].([]string), fc.Args["namespaces"].([]string))
+		return ec.resolvers.Subscription().SubscribeClusterResources(rctx, fc.Args["k8scontextIDs"].([]string), fc.Args["namespace"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
