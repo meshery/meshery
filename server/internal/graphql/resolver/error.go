@@ -129,11 +129,11 @@ func ErrFiltersSubscription(err error) error {
 
 func ErrClusterResourcesSubscription(err error) error {
 	return errors.New(
-		ErrClusterResourcesSubscriptionCode, 
-		errors.Alert, 
-		[]string{"ClusterResources Subscription failed", err.Error()}, 
-		[]string{"GraphQL subscription for ClusterResources Subscription stopped"}, 
-		[]string{"Could be a network issue"}, 
+		ErrClusterResourcesSubscriptionCode,
+		errors.Alert,
+		[]string{"ClusterResources Subscription failed", err.Error()},
+		[]string{"GraphQL subscription for ClusterResources Subscription stopped"},
+		[]string{"Could be a network issue"},
 		[]string{"Confirm that Meshery Server is reachable from your browser."})
 }
 

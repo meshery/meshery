@@ -295,16 +295,16 @@ func (r *Resolver) subscribeClusterResources(ctx context.Context, provider model
 		r.Log.Info("Initializing Cluster Resources subscription")
 		for {
 			select {
-				case <-ch:
-					clusterResources, err := r.getClusterResources(ctx, provider, k8scontextIDs)
-					if err != nil {
-						r.Log.Error(ErrClusterResourcesSubscription(err))
-						break
-					}
-					respChan <- clusterResources
-				case <-ctx.Done():
-					r.Log.Info("Cluster Resources subscription stopped")
-					return
+			case <-ch:
+				clusterResources, err := r.getClusterResources(ctx, provider, k8scontextIDs)
+				if err != nil {
+					r.Log.Error(ErrClusterResourcesSubscription(err))
+					break
+				}
+				respChan <- clusterResources
+			case <-ctx.Done():
+				r.Log.Info("Cluster Resources subscription stopped")
+				return
 			}
 		}
 	}()

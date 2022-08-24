@@ -7,13 +7,13 @@ import (
 )
 
 type DashboardK8sResourcesChan struct {
-	ResourcesChan  []chan struct{}       
-	mx             sync.Mutex
+	ResourcesChan []chan struct{}
+	mx            sync.Mutex
 }
 
 func NewDashboardK8sResourcesHelper() *DashboardK8sResourcesChan {
 	return &DashboardK8sResourcesChan{
-		ResourcesChan:  make([]chan struct{}, 0),
+		ResourcesChan: make([]chan struct{}, 0),
 	}
 }
 
@@ -26,8 +26,8 @@ func (d *DashboardK8sResourcesChan) SubscribeDashbordK8Resources(ch chan struct{
 
 func (d *DashboardK8sResourcesChan) PublishDashboardK8sResources() {
 	for _, ch := range d.ResourcesChan {
-		if !utils.IsClosed(ch){
+		if !utils.IsClosed(ch) {
 			ch <- struct{}{}
-		}			
+		}
 	}
 }

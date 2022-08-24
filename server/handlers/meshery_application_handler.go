@@ -377,7 +377,7 @@ func (h *Handler) handleApplicationUpdate(rw http.ResponseWriter,
 	}
 
 	go h.config.ConfigurationChannel.PublishApplications()
-	
+
 	h.formatApplicationOutput(rw, resp, format)
 }
 
