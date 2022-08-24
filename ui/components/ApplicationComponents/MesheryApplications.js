@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useRef} from 'react'
 import { Box, Button,} from "@mui/material";
 import { styled } from "@mui/material/styles";
 import UploadImport from "@/components/UploadImport";
@@ -8,7 +8,7 @@ import ApplicationTable from "./ApplicationTable";
 import { useTheme } from "@mui/system";
 import YAMLEditor from  "@/components/YamlDialog";
 import EmptyState from "@/components/EmptyStateComponent";
-import  fetchApplicationsQuery from "@/features/applications/ApplicationsQuery";
+import ConfigurationSubscription from "@/features/Configurations/subscriptions/ConfigurationSubscription"
 
 function resetSelectedApplication() {
   return { show : false, application : null };
@@ -40,6 +40,7 @@ function MesheryApplications({user}) {
       /**  @type {TypeView} */
       ("grid")
     ); 
+    const disposeConfSubscriptionRef = useRef(null);
 
     function resetSelectedRowData() {
       return () => {
@@ -48,34 +49,71 @@ function MesheryApplications({user}) {
     }
    
     useEffect(() => {
-      fetchApplications(page, pageSize, search, sortOrder);
-    }, [page, pageSize, search, sortOrder]);
-
-    function fetchApplications(page, pageSize, search, sortOrder) {
-      if (!search) search = "";
-      if (!sortOrder) sortOrder = "";
-       
-      fetchApplicationsQuery({
-        selector : {
-          pageSize : `${pageSize}`,
-          page : `${page}`,
-          search : `${encodeURIComponent(search)}`,
-          order : `${encodeURIComponent(sortOrder)}`,
+      const configurationSubscription = ConfigurationSubscription((result) => {
+        setPage(result.configuration?.applications.page || 0);
+        setPageSize(result.configuration?.applications.page_size || 0);
+        setCount(result.configuration?.applications.total_count || 0);
+        setApplications(result.configuration?.applications.applications)
+      },
+      {
+        applicationSelector : {
+          pageSize : pageSize.toString(),
+          page : page.toString(),
+          search : search,
+          order : sortOrder
         },
-      }).subscribe({
-        next : (res) => {
-         let result = res?.fetchApplications;
-         if (typeof result !== "undefined") {
-          if (result) {
-            setApplications(result.applications || []);
-            setCount(result.total_count || 0);
-            setPage(result.page || 0);
-            setPageSize(result.page_size || 0);
-          }
+        patternSelector : {
+          pageSize : pageSize.toString(),
+          page : page.toString(),
+          search : search,
+          order : sortOrder
+        },
+        filterSelector : {
+          pageSize : pageSize.toString(),
+          page : page.toString(),
+          search : search,
+          order : sortOrder
         }
+      });
+      console.log("PPPP", configurationSubscription);
+      disposeConfSubscriptionRef.current = configurationSubscription;
+  
+      return () => {
+        console.log(disposeConfSubscriptionRef, "LLLLLLL");
+        disposeConfSubscriptionRef.current.dispose();
+      }
+    },[]);
+
+    const initAppsSubscription = (page, pageSize, search, order) => {
+      disposeConfSubscriptionRef.current.dispose();
+      const configurationSubscription = ConfigurationSubscription((result) => {
+        setPage(result.configuration?.applications.page || 0);
+        setPageSize(result.configuration?.applications.page_size || 0);
+        setCount(result.configuration?.applications.total_count || 0);
+        setApplications(result.configuration?.applications.applications)
+      },
+      {
+        applicationSelector : {
+          pageSize : pageSize,
+          page : page,
+          search : search,
+          order : order
+        },
+        patternSelector : {
+          pageSize : pageSize,
+          page : page,
+          search : search,
+          order : order
+        },
+        filterSelector : {
+          pageSize : pageSize,
+          page : page,
+          search : search,
+          order : order
+        }
+      });
+      disposeConfSubscriptionRef.current = configurationSubscription
     }
-  })
-}
 
     
     const handleModalClose = () => {

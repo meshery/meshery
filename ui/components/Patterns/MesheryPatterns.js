@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect, useRef} from 'react'
 import { Box, Button, Divider, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Typography, Tooltip,} from "@mui/material";
 import { styled } from "@mui/material/styles";
 import UploadImport from "@/components/UploadImport";
@@ -12,6 +12,7 @@ import MesheryPatternTable from "./MesheryPatternTable";
 import AddCircleOutlineRoundedIcon from '@mui/icons-material/AddCircleOutlineRounded';
 import EmptyState from "@/components/EmptyStateComponent";
 import { useTheme } from "@mui/system";
+import ConfigurationSubscription from "@/features/Configurations/subscriptions/ConfigurationSubscription"
 
 function resetSelectedPattern() {
   return { show : false, pattern : null };
@@ -25,8 +26,13 @@ function Mesherypatterns({user}) {
     marginLeft : "auto",
     paddingLeft : theme.spacing(2),
  }))
-
-    const [patterns, setpatterns] = useState([]);
+    
+    const [page, setPage] = useState(0);
+    const [search] = useState("");
+    const [sortOrder] = useState("");
+    const [count, setCount] = useState(0);
+    const [pageSize, setPageSize] = useState(10);
+    const [patterns, setPatterns] = useState([]);
     const [selectedRowData, setSelectedRowData] = useState(null);
     const [selectedPattern, setSelectedPattern] = useState(resetSelectedPattern());
     const [modalOpen, setModalOpen] = useState({
@@ -38,37 +44,76 @@ function Mesherypatterns({user}) {
       /**  @type {TypeView} */
       ("grid")
     ); 
-  
+    
+    const disposeConfSubscriptionRef = useRef(null);
+
     function resetSelectedRowData() {
       return () => {
         setSelectedRowData(null);
       };
-    }
+    } 
 
-    function fetchpatterns(page, pageSize, search, sortOrder) {
-      if (!search) search = "";
-      if (!sortOrder) sortOrder = "";
-
-      const query = `?page=${page}&page_size=${pageSize}&search=${encodeURIComponent(search)}&order=${encodeURIComponent(
-        sortOrder
-      )}`;
-
-      updateProgress({ showProgress : true });
-
-      dataFetch(
-        `/api/pattern${query}`,
-        { credentials : "include", },
-        (result) => {
-          console.log("patternFile API", `/api/pattern${query}`);
-          updateProgress({ showProgress : false });
-          if (result) {
-            setpatterns(result.patterns || []);
-            setCount(result.total_count || 0);
-          }
+    useEffect(() => {
+      const configurationSubscription = ConfigurationSubscription((result) => {
+        setPage(result.configuration?.patterns.page || 0);
+        setPageSize(result.configuration?.patterns.page_size || 0);
+        setCount(result.configuration?.patterns.total_count || 0);
+        setPatterns(result.configuration?.patterns.patterns)
+      },
+      {
+        applicationSelector : {
+          pageSize : pageSize.toString(),
+          page : page.toString(),
+          search : search,
+          order : sortOrder
         },
-        // handleError
-        handleError(ACTION_TYPES.FETCH_patternS)
-      );
+        patternSelector : {
+          pageSize : pageSize.toString(),
+          page : page.toString(),
+          search : search,
+          order : sortOrder
+        },
+        filterSelector : {
+          pageSize : pageSize.toString(),
+          page : page.toString(),
+          search : search,
+          order : sortOrder
+        }
+      });
+  
+      disposeConfSubscriptionRef.current = configurationSubscription;
+      return () => disposeConfSubscriptionRef.current.dispose();
+    },[])
+
+    const initPatternsSubscription = (page, pageSize, search, order) => {
+      disposeConfSubscriptionRef.current.dispose();
+      const configurationSubscription = ConfigurationSubscription((result) => {
+        setPage(result.configuration?.patterns.page || 0);
+        setPageSize(result.configuration?.patterns.page_size || 0);
+        setCount(result.configuration?.patterns.total_count || 0);
+        setPatterns(result.configuration?.patterns.patterns)
+      },
+      {
+        applicationSelector : {
+          pageSize : pageSize,
+          page : page,
+          search : search,
+          order : order
+        },
+        patternSelector : {
+          pageSize : pageSize,
+          page : page,
+          search : search,
+          order : order
+        },
+        filterSelector : {
+          pageSize : pageSize,
+          page : page,
+          search : search,
+          order : order
+        }
+      });
+      disposeConfSubscriptionRef.current = configurationSubscription
     }
 
     const handleModalClose = () => {
@@ -185,6 +230,10 @@ function Mesherypatterns({user}) {
          setSelectedRowData = {setSelectedRowData}
          handleModalOpen = {handleModalOpen}
          user={user}
+         page ={page}
+         count = {count}
+         pageSize = {pageSize}
+         sortOrder ={sortOrder}
          />
 }
 {!selectedPattern.show && viewType === "grid" && patterns.length === 0 &&
@@ -214,9 +263,9 @@ function Mesherypatterns({user}) {
             //  handleSubmit={handleSubmit}
              setSelectedPattern={setSelectedPattern}
              selectedPattern={selectedPattern}
-            //  pages={Math.ceil(count / pageSize)}
-            //  setPage={setPage}
-            //  selectedPage={page}
+             pages={Math.ceil(count / pageSize)}  
+             setPage={setPage}
+             selectedPage={page}
            />
 }
   </>
