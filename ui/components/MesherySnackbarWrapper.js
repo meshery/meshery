@@ -16,6 +16,7 @@ import Typography from '@material-ui/core/Typography';
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import { eventTypes } from "../lib/event-types";
 
 const variantIcon = {
   success : CheckCircleIcon,
@@ -65,10 +66,10 @@ const styles = (theme) => ({
 
 function MesherySnackbarWrapper(props) {
   const {
-    classes, className, message, onClose, variant, details
+    classes, className, message, onClose, variant, details, cause, remedy, errorCode, componentType, componentName
   } = props;
   const Icon = variantIcon[variant];
-
+  const ERROR_DOC_LINK = "https://docs.meshery.io/reference/error-codes"
   const [expanded, setExpanded] = useState(false);
   const [cardHover, setCardHover] = useState(false)
 
@@ -115,6 +116,22 @@ function MesherySnackbarWrapper(props) {
             <Typography variant="subtitle2" gutterBottom>DETAILS</Typography>
             {details}
           </Paper>
+          {variant === eventTypes[2].type &&
+           <>
+             <Paper className={classes.collapse} square variant="outlined" elevation={0}>
+               <Typography variant="subtitle2" gutterBottom>PROBABLE CAUSE</Typography>
+               {cause}
+             </Paper>
+             <Paper className={classes.collapse} square variant="outlined" elevation={0}>
+               <Typography variant="subtitle2" gutterBottom>SUGGESTED REMEDIATION</Typography>
+               {remedy}
+             </Paper>
+             <Paper className={classes.collapse} square variant="outlined" elevation={0}>
+               <Typography variant="subtitle2" gutterBottom>ERROR CODE</Typography>
+               <a href={`${ERROR_DOC_LINK}#meshery-${componentType}-for-meshery-${componentName.toLowerCase()}`} target="_blank" rel="referrer noreferrer"> {errorCode} </a>
+             </Paper>
+           </>
+          }
         </Collapse>
       </Card>
     </SnackbarContent>
