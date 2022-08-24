@@ -107,6 +107,20 @@ type Error {
   description: String!
 }
 
+# ================ DASHBOARD ================
+
+type Resource {
+  # Name of resource
+  kind: String!,
+  # Number of resouce
+  count: Int!
+}
+
+# Details about discovered workloads
+type ClusterResources {
+  resources: [Resource!]!,
+}
+
 # =================== ADDONS =====================
 
 # Input for changing Addon Status
@@ -523,6 +537,9 @@ type Query {
 
   # Query for getting kubectl describe details with meshkit 
   getKubectlDescribe(name: String!, kind: String!, namespace: String!): KctlDescribeDetails!
+
+  # Query for getting cluster info
+  getClusterResources(k8scontextIDs: [String!]): ClusterResources!
 }
 
 #
@@ -581,7 +598,13 @@ type Subscription {
     k8scontextIDs: [String!]
   ) : MeshSyncEvent!
   subscribeConfiguration(selector: PageFilter!) : ConfigurationPage!
+
+  subscribeClusterResources(
+    k8scontextIDs: [String!]
+  ): ClusterResources!
+
   subscribeK8sContext(selector: PageFilter!) : K8sContextsPage!
+
 }
 
 type OAMCapability {
