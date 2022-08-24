@@ -285,6 +285,79 @@ func (r *Resolver) getKubectlDescribe(ctx context.Context, name string, kind str
 	}, nil
 }
 
+func (r *Resolver) subscribeClusterResources(ctx context.Context, provider models.Provider, k8scontextIDs []string) (<-chan *model.ClusterResources, error) {
+	ch := make(chan struct{}, 1)
+	respChan := make(chan *model.ClusterResources)
+
+	r.Config.DashboardK8sResourcesChan.SubscribeDashbordK8Resources(ch)
+
+	go func() {
+		r.Log.Info("Initializing Cluster Resources subscription")
+		for {
+			select {
+				case <-ch:
+					clusterResources, err := r.getClusterResources(ctx, provider, k8scontextIDs)
+					if err != nil {
+						r.Log.Error(ErrClusterResourcesSubscription(err))
+						break
+					}
+					respChan <- clusterResources
+				case <-ctx.Done():
+					r.Log.Info("Cluster Resources subscription stopped")
+					return
+			}
+		}
+	}()
+
+	return respChan, nil
+}
+
+func (r *Resolver) getClusterResources(ctx context.Context, provider models.Provider, k8scontextIDs []string) (*model.ClusterResources, error) {
+	var cids []string
+	query := "SELECT count(kind) as count, kind FROM objects o WHERE o.cluster_id IN (?) GROUP BY kind"
+
+	var rows *sql.Rows
+	var err error
+	k8sCtxs, ok := ctx.Value(models.AllKubeClusterKey).([]models.K8sContext)
+	if !ok || len(k8sCtxs) == 0 {
+		return nil, ErrMesheryClient(nil)
+	}
+
+	if len(k8scontextIDs) == 1 && k8scontextIDs[0] == "all" {
+		for _, k8sContext := range k8sCtxs {
+			if k8sContext.KubernetesServerID != nil {
+				clusterID := k8sContext.KubernetesServerID.String()
+				cids = append(cids, clusterID)
+			}
+		}
+	} else {
+		cids = k8scontextIDs
+	}
+
+	rows, err = provider.GetGenericPersister().Raw(query, cids).Rows()
+
+	if err != nil {
+		r.Log.Error(ErrGettingClusterResources(err))
+	}
+
+	defer rows.Close()
+
+	resources := make([]*model.Resource, 0)
+	for rows.Next() {
+		var resource model.Resource
+		err := rows.Scan(&resource.Count, &resource.Kind)
+		if err != nil {
+			r.Log.Error(ErrGettingClusterResources(err))
+			return nil, err
+		}
+		resources = append(resources, &resource)
+	}
+
+	return &model.ClusterResources{
+		Resources: resources,
+	}, nil
+}
+
 func (r *Resolver) subscribeK8sContexts(ctx context.Context, provider models.Provider, selector model.PageFilter) (<-chan *model.K8sContextsPage, error) {
 	ch := make(chan struct{}, 1)
 	ch <- struct{}{}

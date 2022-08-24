@@ -375,6 +375,9 @@ func (h *Handler) handleApplicationUpdate(rw http.ResponseWriter,
 		http.Error(rw, ErrApplicationFailure(err, obj).Error(), http.StatusInternalServerError)
 		return
 	}
+
+	go h.config.ConfigurationChannel.PublishApplications()
+	
 	h.formatApplicationOutput(rw, resp, format)
 }
 

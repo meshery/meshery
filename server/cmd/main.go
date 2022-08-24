@@ -238,6 +238,8 @@ func main() {
 
 		ConfigurationChannel: models.NewConfigurationHelper(),
 
+		DashboardK8sResourcesChan: models.NewDashboardK8sResourcesHelper(),
+
 		K8scontextChannel: models.NewContextHelper(),
 	}
 

@@ -20,16 +20,17 @@
     font-size: 18px;
     font-family: 'Fira Mono', Consolas, Menlo, Monaco, 'Courier New', Courier, monospace;
     border-radius: 4px;
-    padding: 75px 45px 35px;
+    padding: 45px 45px 35px;
     position: relative;
+    overflow-x: scroll;
     -webkit-box-sizing: border-box;
             box-sizing: border-box;
 }
 
-[data-termynal]:before {
+.btn-copy-wrap::before {
     content: '';
     position: absolute;
-    top: 15px;
+    top: -20px;
     left: 15px;
     display: inline-block;
     width: 15px;
@@ -41,19 +42,21 @@
             box-shadow: 25px 0 0 #f4c025, 50px 0 0 #3ec930;
 }
 
-[data-termynal]:after {
+.clipboardjs::after {
     content: 'bash';
-    position: absolute;
+    /* position: absolute; */
     color: var(--color-text-subtle);
-    top: 5px;
-    left: 0;
+    margin-top: 10px;
+    /* left: 0%; */
     width: 100%;
+    font-size: 18px;
     text-align: center;
 }
 
 [data-ty] {
     display: block;
     line-height: 2;
+    /* overflow: auto; */
 }
 
 [data-ty]:before {
