@@ -276,33 +276,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
   }
 
   useEffect(() => {
-    const configurationSubscription = ConfigurationSubscription((result) => {
-      setPage(result.configuration?.filters.page || 0);
-      setPageSize(result.configuration?.filters.page_size || 0);
-      setCount(result.configuration?.filters.total_count || 0);
-      setFilters(result.configuration?.filters.filters)
-    },
-    {
-      applicationSelector : {
-        pageSize : pageSize.toString(),
-        page : page.toString(),
-        search : search,
-        order : sortOrder
-      },
-      patternSelector : {
-        pageSize : pageSize.toString(),
-        page : page.toString(),
-        search : search,
-        order : sortOrder
-      },
-      filterSelector : {
-        pageSize : pageSize.toString(),
-        page : page.toString(),
-        search : search,
-        order : sortOrder
-      }
-    });
-    disposeConfSubscriptionRef.current = configurationSubscription;
+    initFiltersSubscription();
     return () => disposeConfSubscriptionRef.current.dispose();
   },[])
 
@@ -405,8 +379,10 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     });
   };
 
-  const initFiltersSubscription = (page, pageSize, search, order) => {
-    disposeConfSubscriptionRef.current.dispose();
+  const initFiltersSubscription = (pageNo=page.toString(), pagesize=pageSize.toString(), searchText=search, order=sortOrder) => {
+    if (disposeConfSubscriptionRef.current) {
+      disposeConfSubscriptionRef.current.dispose();
+    }
     const configurationSubscription = ConfigurationSubscription((result) => {
       setPage(result.configuration?.filters.page || 0);
       setPageSize(result.configuration?.filters.page_size || 0);
@@ -415,21 +391,21 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     },
     {
       applicationSelector : {
-        pageSize : pageSize,
-        page : page,
-        search : search,
+        pageSize : pagesize,
+        page : pageNo,
+        search : searchText,
         order : order
       },
       patternSelector : {
-        pageSize : pageSize,
-        page : page,
-        search : search,
+        pageSize : pagesize,
+        page : pageNo,
+        search : searchText,
         order : order
       },
       filterSelector : {
-        pageSize : pageSize,
-        page : page,
-        search : search,
+        pageSize : pagesize,
+        page : pageNo,
+        search : searchText,
         order : order
       }
     });
