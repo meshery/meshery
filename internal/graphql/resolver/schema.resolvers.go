@@ -124,6 +124,11 @@ func (r *queryResolver) GetKubectlDescribe(ctx context.Context, name string, kin
 	return r.getKubectlDescribe(ctx, name, kind, namespace)
 }
 
+func (r *queryResolver) GetClusterResources(ctx context.Context, k8scontextIDs []string) (*model.ClusterResources, error) {
+	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	return r.getClusterResources(ctx, provider, k8scontextIDs)
+}
+
 func (r *subscriptionResolver) ListenToAddonState(ctx context.Context, filter *model.ServiceMeshFilter) (<-chan []*model.AddonList, error) {
 	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
 	if filter != nil {
@@ -176,7 +181,6 @@ func (r *subscriptionResolver) SubscribeBrokerConnection(ctx context.Context) (<
 	return r.subscribeBrokerConnection(ctx)
 }
 
-// this subscription should be re-established to get proper updates when the k8s contexts have changed
 func (r *subscriptionResolver) SubscribeMesheryControllersStatus(ctx context.Context, k8scontextIDs []string) (<-chan []*model.MesheryControllersStatusListItem, error) {
 	resChan := make(chan []*model.MesheryControllersStatusListItem)
 	controllerHandlersPerContext, ok := ctx.Value(models.MesheryControllerHandlersKey).(map[string]map[models.MesheryController]controllers.IMesheryController)
@@ -235,7 +239,6 @@ func (r *subscriptionResolver) SubscribeMesheryControllersStatus(ctx context.Con
 	return resChan, nil
 }
 
-// this subscription should be re-established to get proper updates when the k8s contexts have changed
 func (r *subscriptionResolver) SubscribeMeshSyncEvents(ctx context.Context, k8scontextIDs []string) (<-chan *model.MeshSyncEvent, error) {
 	resChan := make(chan *model.MeshSyncEvent)
 	// get handlers
@@ -266,6 +269,7 @@ func (r *subscriptionResolver) SubscribeMeshSyncEvents(ctx context.Context, k8sc
 					Object:    event.Object,
 				}
 				resChan <- res
+				go r.Config.DashboardK8sResourcesChan.PublishDashboardK8sResources()
 			}
 		}(ctxID, brokerEventsChan)
 	}
@@ -275,6 +279,11 @@ func (r *subscriptionResolver) SubscribeMeshSyncEvents(ctx context.Context, k8sc
 func (r *subscriptionResolver) SubscribeConfiguration(ctx context.Context, selector model.PageFilter) (<-chan *model.ConfigurationPage, error) {
 	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
 	return r.subscribeConfiguration(ctx, provider, selector)
+}
+
+func (r *subscriptionResolver) SubscribeClusterResources(ctx context.Context, k8scontextIDs []string) (<-chan *model.ClusterResources, error) {
+	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	return r.subscribeClusterResources(ctx, provider, k8scontextIDs)
 }
 
 func (r *subscriptionResolver) SubscribeK8sContext(ctx context.Context, selector model.PageFilter) (<-chan *model.K8sContextsPage, error) {
