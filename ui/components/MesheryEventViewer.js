@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import MesherySnackbarWrapper from './MesherySnackbarWrapper';
 import { eventTypes } from '../lib/event-types';
-
 const styles = (theme) => ({ event : { margin : theme.spacing(0.5, 1), }, });
 
 class MesheryEventViewer extends React.Component {
@@ -18,7 +17,7 @@ class MesheryEventViewer extends React.Component {
 
   render() {
     const {
-      classes, eventVariant, eventSummary, eventDetails,
+      classes, eventVariant, eventSummary, eventDetails, eventCause, eventRemediation, eventErrorCode, componentType, componentName
     } = this.props;
 
     return (
@@ -33,6 +32,11 @@ class MesheryEventViewer extends React.Component {
             details={eventDetails}
             onClose={this.handleSnackbarClose}
             className={classes.event}
+            cause={eventCause}
+            remedy={eventRemediation}
+            errorCode={eventErrorCode}
+            componentType={componentType}
+            componentName={componentName}
           />
         </React.Fragment>
       </NoSsr>
