@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"strings"
 
+	"github.com/sirupsen/logrus"
 	"github.com/layer5io/meshery/handlers"
 	"github.com/layer5io/meshery/internal/graphql/model"
 	"github.com/layer5io/meshery/models"
@@ -17,7 +18,20 @@ import (
 func (r *Resolver) getAvailableNamespaces(ctx context.Context, provider models.Provider, k8sClusterIDs []string) ([]*model.NameSpace, error) {
 	var cids []string
 	if len(k8sClusterIDs) != 0 {
-		cids = k8sClusterIDs
+		k8sCtxs, ok := ctx.Value(models.AllKubeClusterKey).([]models.K8sContext)
+		if !ok || len(k8sCtxs) == 0 {
+			return nil, ErrMesheryClient(nil)
+		}
+		if len(k8sClusterIDs) == 1 && k8sClusterIDs[0] == "all" {
+			for _, k8sContext := range k8sCtxs {
+				if k8sContext.KubernetesServerID != nil {
+					clusterID := k8sContext.KubernetesServerID.String()
+					cids = append(cids, clusterID)
+				}
+			}
+		} else {
+			cids = k8sClusterIDs
+		}
 	} else { //This is a fallback
 		k8sctxs, ok := ctx.Value(models.KubeClustersKey).([]models.K8sContext)
 		if !ok || len(k8sctxs) == 0 {
@@ -33,32 +47,12 @@ func (r *Resolver) getAvailableNamespaces(ctx context.Context, provider models.P
 		}
 	}
 	// resourceobjects := make([]meshsyncmodel.ResourceObjectMeta, 0)
-	namespaces := make([]string, 0)
-	var rows *sql.Rows
-	var err error
-	if len(cids) == 1 && cids[0] == "all" {
-		rows, err = provider.GetGenericPersister().Raw("SELECT DISTINCT rom.name as name FROM objects o LEFT JOIN resource_object_meta rom ON o.id = rom.id WHERE o.kind = 'Namespace'").Rows()
-	} else {
-		rows, err = provider.GetGenericPersister().Raw("SELECT DISTINCT rom.name as name FROM objects o LEFT JOIN resource_object_meta rom ON o.id = rom.id WHERE o.kind = 'Namespace' AND o.cluster_id IN ?", cids).Rows()
-	}
-
+	namespaces, err := model.SelectivelyFetchNamespaces(cids, provider)
 	if err != nil {
 		r.Log.Error(ErrGettingNamespace(err))
-		return nil, err
+		return nil, err	
 	}
 
-	defer rows.Close()
-
-	for rows.Next() {
-		var name string
-		err := rows.Scan(&name)
-		if err != nil {
-			r.Log.Error(ErrGettingNamespace(err))
-			return nil, err
-		}
-
-		namespaces = append(namespaces, name)
-	}
 	modelnamespaces := make([]*model.NameSpace, 0)
 
 	for _, ns := range namespaces {
@@ -285,7 +279,7 @@ func (r *Resolver) getKubectlDescribe(ctx context.Context, name string, kind str
 	}, nil
 }
 
-func (r *Resolver) subscribeClusterResources(ctx context.Context, provider models.Provider, k8scontextIDs []string) (<-chan *model.ClusterResources, error) {
+func (r *Resolver) subscribeClusterResources(ctx context.Context, provider models.Provider, k8scontextIDs []string, namespaces []string) (<-chan *model.ClusterResources, error) {
 	ch := make(chan struct{}, 1)
 	respChan := make(chan *model.ClusterResources)
 
@@ -296,7 +290,7 @@ func (r *Resolver) subscribeClusterResources(ctx context.Context, provider model
 		for {
 			select {
 				case <-ch:
-					clusterResources, err := r.getClusterResources(ctx, provider, k8scontextIDs)
+					clusterResources, err := r.getClusterResources(ctx, provider, k8scontextIDs, namespaces)
 					if err != nil {
 						r.Log.Error(ErrClusterResourcesSubscription(err))
 						break
@@ -312,9 +306,18 @@ func (r *Resolver) subscribeClusterResources(ctx context.Context, provider model
 	return respChan, nil
 }
 
-func (r *Resolver) getClusterResources(ctx context.Context, provider models.Provider, k8scontextIDs []string) (*model.ClusterResources, error) {
+func (r *Resolver) getClusterResources(ctx context.Context, provider models.Provider, k8scontextIDs []string, namespaces []string) (*model.ClusterResources, error) {
 	var cids []string
-	query := "SELECT count(kind) as count, kind FROM objects o WHERE o.cluster_id IN (?) GROUP BY kind"
+	// query := "SELECT count(kind) as count, kind FROM objects o LEFT JOIN resource_object_meta rom WHERE o.cluster_id IN (?) AND rom.namespace = (?) GROUP BY kind"
+	query := `
+		SELECT count(kind) as count, kind FROM objects o LEFT JOIN resource_object_meta rom on o.id = rom.id 
+			WHERE o.kind <> 'Namespace' AND rom.namespace = '' AND o.cluster_id IN (?) GROUP BY kind
+				UNION 
+		SELECT count(kind) as count, kind FROM objects o LEFT JOIN resource_object_meta rom on o.id = rom.id 
+			WHERE rom.namespace IN (?) AND o.cluster_id IN (?) GROUP BY kind 
+				UNION			
+		SELECT count(kind) as count, kind FROM objects o 
+			WHERE o.kind = 'Namespace' AND o.cluster_id IN (?) GROUP BY kind`
 
 	var rows *sql.Rows
 	var err error
@@ -334,7 +337,20 @@ func (r *Resolver) getClusterResources(ctx context.Context, provider models.Prov
 		cids = k8scontextIDs
 	}
 
-	rows, err = provider.GetGenericPersister().Raw(query, cids).Rows()
+	if len(namespaces) == 0 || (len(namespaces) == 1 && namespaces[0] == ""){
+		modelNamespaces, err := r.getAvailableNamespaces(ctx, provider, cids)
+		if err != nil {
+			r.Log.Error(ErrGettingNamespace(err))
+			return nil, err
+		}
+		for _, namespace := range modelNamespaces {
+			namespaces = append(namespaces, namespace.Namespace)
+		}
+		logrus.Debug("namespaces: ", namespaces)
+		logrus.Debug("len: ", len(namespaces))
+	}
+
+	rows, err = provider.GetGenericPersister().Raw(query, cids, namespaces, cids, cids).Rows()
 
 	if err != nil {
 		r.Log.Error(ErrGettingClusterResources(err))
