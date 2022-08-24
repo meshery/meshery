@@ -129,11 +129,11 @@ func ErrFiltersSubscription(err error) error {
 
 func ErrClusterResourcesSubscription(err error) error {
 	return errors.New(
-		ErrClusterResourcesSubscriptionCode, 
-		errors.Alert, 
-		[]string{"ClusterResources Subscription failed", err.Error()}, 
-		[]string{"GraphQL subscription for ClusterResources Subscription stopped"}, 
-		[]string{"Could be a network issue"}, 
+		ErrClusterResourcesSubscriptionCode,
+		errors.Alert,
+		[]string{"ClusterResources Subscription failed", err.Error()},
+		[]string{"GraphQL subscription for ClusterResources Subscription stopped"},
+		[]string{"Could be a network issue"},
 		[]string{"Confirm that Meshery Server is reachable from your browser."})
 }
 
@@ -150,5 +150,4 @@ func ErrGettingClusterResources(err error) error {
 
 func ErrK8sContextSubscription(err error) error {
 	return errors.New(ErrK8sContextCode, errors.Alert, []string{"Failed to get k8s context from remote provider", err.Error()}, []string{"There might be something wrong with the Meshery or Meshery Cloud"}, []string{"Could be a network issue"}, nil)
-
 }
