@@ -42,7 +42,7 @@ MESHERY_CLOUD_STAGING="https://staging-meshery.layer5.io"
 # Server
 #-----------------------------------------------------------------------------
 MESHERY_K8S_SKIP_COMP_GEN ?= TRUE
-APPLICATIONCONFIGPATH="../install/apps.json"
+APPLICATIONCONFIGPATH="./apps.json"
 
 #-----------------------------------------------------------------------------
 # Build
