@@ -324,7 +324,7 @@ jobs:
         with:
           filters: |
             modified:
-              - added|modified: 'internal/graphql/schema/schema.graphql'
+              - added|modified: 'server/internal/graphql/schema/schema.graphql'
       - name: Set up Ruby
         if: steps.filter.outputs.modified == 'true'
         uses: ruby/setup-ruby@v1.99.0
@@ -337,3 +337,4 @@ jobs:
           cd docs
           bundle install
           bundle exec rake graphql:compile_docs
+
