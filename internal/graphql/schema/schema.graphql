@@ -539,7 +539,7 @@ type Query {
   getKubectlDescribe(name: String!, kind: String!, namespace: String!): KctlDescribeDetails!
 
   # Query for getting cluster info
-  getClusterResources(k8scontextIDs: [String!]): ClusterResources!
+  getClusterResources(k8scontextIDs: [String!], namespace: String!): ClusterResources!
 }
 
 #
@@ -600,7 +600,8 @@ type Subscription {
   subscribeConfiguration(selector: PageFilter!) : ConfigurationPage!
 
   subscribeClusterResources(
-    k8scontextIDs: [String!]
+    k8scontextIDs: [String!],
+    namespace: String!
   ): ClusterResources!
 
   subscribeK8sContext(selector: PageFilter!) : K8sContextsPage!

@@ -23,7 +23,8 @@ import fetchAvailableAddons from "./graphql/queries/AddonsStatusQuery";
 import fetchControlPlanes from "./graphql/queries/ControlPlanesQuery";
 import fetchDataPlanes from "./graphql/queries/DataPlanesQuery";
 import fetchClusterResources from "./graphql/queries/ClusterResourcesQuery";
-import  subscribeClusterResources from "./graphql/subscriptions/ClusterResourcesSubscription"
+import subscribeClusterResources from "./graphql/subscriptions/ClusterResourcesSubscription";
+import fetchAvailableNamespaces from "./graphql/queries/NamespaceQuery";
 import { submitPrometheusConfigure } from "./PrometheusComponent";
 import MUIDataTable from "mui-datatables";
 import { MuiThemeProvider, createTheme } from '@material-ui/core/styles';
@@ -124,12 +125,15 @@ class DashboardComponent extends React.Component {
       controlPlaneState : "",
       dataPlaneState : "",
       clusterResources : [],
+      namespaceList : [],
+      selectedNamespace : "default",
 
       // subscriptions disposable
       dataPlaneSubscription : null,
       controlPlaneSubscription : null,
       clusterResourcesSubscription : null,
-      clusterResourcesQuery : null
+      clusterResourcesQuery : null,
+      namespaceQuery : null,
     };
   }
 
@@ -158,6 +162,7 @@ class DashboardComponent extends React.Component {
     if (this.state.clusterResourcesQuery) {
       this.state.clusterResourcesQuery.unsubscribe()
     }
+    this.state.namespaceQuery && this.state.namespaceQuery.unsubscribe();
     this.state.clusterResourcesSubscription && this.state.clusterResourcesSubscription.dispose();
   }
 
@@ -188,13 +193,35 @@ class DashboardComponent extends React.Component {
     }
   }
 
+  initNamespaceQuery = () => {
+    const self = this;
+
+    const namespaceQuery = fetchAvailableNamespaces({ k8sClusterIDs : self.getK8sClusterIds() })
+      .subscribe({
+        next : res => {
+          let namespaces = []
+          res?.namespaces?.map(ns => {
+            namespaces.push(ns?.namespace)
+          })
+          namespaces.sort((a, b) => (
+            a > b ? 1 : -1
+          ))
+          self.setState({ namespaceList : namespaces })
+        },
+        error : (err) => console.log("error at namespace fetch: " + err),
+      })
+
+    this.setState({ namespaceQuery })
+  }
+
   initDashboardClusterResourcesQuery = () => {
     const self = this;
-    let k8s = self.getK8sClusterIds()
+    let k8s = self.getK8sClusterIds();
+    let namespace = self.state.selectedNamespace;
 
     if (self._isMounted) {
       // @ts-ignore
-      const clusterResourcesQuery = fetchClusterResources(k8s).subscribe({
+      const clusterResourcesQuery = fetchClusterResources(k8s, namespace).subscribe({
         next : (res) => {
           this.setState({ clusterResources : res?.clusterResources })
         },
@@ -207,14 +234,16 @@ class DashboardComponent extends React.Component {
 
   initDashboardClusterResourcesSubscription = () => {
     const self = this;
-    let k8s = self.getK8sClusterIds()
+    let k8s = self.getK8sClusterIds();
+    let namespace = self.state.selectedNamespace;
 
     if (self._isMounted) {
       // @ts-ignore
       const clusterResourcesSubscription = subscribeClusterResources((res) => {
         this.setState({ clusterResources : res?.clusterResources })
       }, {
-        k8scontextIDs : k8s
+        k8scontextIDs : k8s,
+        namespace : namespace
       });
       this.setState({ clusterResourcesSubscription });
     }
@@ -237,6 +266,7 @@ class DashboardComponent extends React.Component {
       this.initMeshSyncControlPlaneSubscription();
       this.initDashboardClusterResourcesQuery();
       this.initDashboardClusterResourcesSubscription();
+      this.initNamespaceQuery()
     }
   };
 
@@ -266,6 +296,12 @@ class DashboardComponent extends React.Component {
       this.initMeshSyncControlPlaneSubscription();
       this.initDashboardClusterResourcesQuery();
       this.initDashboardClusterResourcesSubscription();
+      this.initNamespaceQuery();
+    }
+
+    if (prevState?.selectedNamespace !== this.state?.selectedNamespace) {
+      this.initDashboardClusterResourcesSubscription();
+      this.initDashboardClusterResourcesQuery();
     }
   }
 
@@ -763,6 +799,8 @@ class DashboardComponent extends React.Component {
   getMuiTheme = () => createTheme({
     shadows : ["none"],
     overrides : {
+      MUIDataTable : {
+      },
       MuiInput : {
         underline : {
           "&:hover:not(.Mui-disabled):before" : {
@@ -809,10 +847,11 @@ class DashboardComponent extends React.Component {
   /**
    * ClusterResourcesCard takes in the cluster related data
    * and renders a table with cluster resources information of
-   * the selected cluster
+   * the selected cluster and namespace
    * @param {{kind, number}[]} resources
    */
    ClusterResourcesCard = (resources = []) => {
+     const self = this;
      let kindSort = "asc";
      let countSort = "asc";
      const switchSortOrder = (type) => {
@@ -873,19 +912,42 @@ class DashboardComponent extends React.Component {
      const options = {
        filter : false,
        selectableRows : "none",
-       responsive : "standard",
+       responsive : "scrollMaxHeight",
        print : false,
        download : false,
        viewColumns : false,
-       rowsPerPage : 5,
-       rowsPerPageOptions : [5, 10, 25]
+       pagination : false,
+       customToolbar : () => {
+         return (
+           <>
+             {self.state.namespaceList && (
+               <Select
+                 value={self.state.selectedNamespace}
+                 onChange={(e) =>
+                   self.setState({ selectedNamespace : e.target.value })
+                 }
+               >
+                 {self.state.namespaceList && self.state.namespaceList.map((ns) => <MenuItem value={ns}>{ns}</MenuItem>)}
+               </Select>
+             )}
+           </>
+         )
+       }
      }
 
      if (Array.isArray(resources) && resources.length)
        return (
-         <Paper elevation={1} style={{ padding : "2rem", marginTop : "1rem" }}>
+         <Paper elevation={1} style={{ padding : "2rem" }}>
            <MuiThemeProvider theme={this.getMuiTheme()}>
              <MUIDataTable
+               title={
+                 <>
+                   <div style={{ display : "flex", alignItems : "center", marginBottom : "1rem" }}>
+                     <img src={"/static/img/all_mesh.svg"} className={this.props.classes.icon} style={{ marginRight : "0.75rem" }} />
+                     <Typography variant="h6">All Workloads</Typography>
+                   </div>
+                 </>
+               }
                data={resources}
                options={options}
                columns={columns}
