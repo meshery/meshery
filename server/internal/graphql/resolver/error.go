@@ -150,5 +150,4 @@ func ErrGettingClusterResources(err error) error {
 
 func ErrK8sContextSubscription(err error) error {
 	return errors.New(ErrK8sContextCode, errors.Alert, []string{"Failed to get k8s context from remote provider", err.Error()}, []string{"There might be something wrong with the Meshery or Meshery Cloud"}, []string{"Could be a network issue"}, nil)
-
 }
