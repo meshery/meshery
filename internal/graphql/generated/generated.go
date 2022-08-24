@@ -161,13 +161,15 @@ type ComplexityRoot struct {
 	}
 
 	FilterResult struct {
-		CreatedAt  func(childComplexity int) int
-		FilterFile func(childComplexity int) int
-		ID         func(childComplexity int) int
-		Location   func(childComplexity int) int
-		Name       func(childComplexity int) int
-		UpdatedAt  func(childComplexity int) int
-		UserID     func(childComplexity int) int
+		CatalogData func(childComplexity int) int
+		CreatedAt   func(childComplexity int) int
+		FilterFile  func(childComplexity int) int
+		ID          func(childComplexity int) int
+		Location    func(childComplexity int) int
+		Name        func(childComplexity int) int
+		UpdatedAt   func(childComplexity int) int
+		UserID      func(childComplexity int) int
+		Visibility  func(childComplexity int) int
 	}
 
 	K8sContext struct {
@@ -285,6 +287,7 @@ type ComplexityRoot struct {
 
 	PatternResult struct {
 		CanSupport  func(childComplexity int) int
+		CatalogData func(childComplexity int) int
 		CreatedAt   func(childComplexity int) int
 		Errmsg      func(childComplexity int) int
 		ID          func(childComplexity int) int
@@ -293,6 +296,7 @@ type ComplexityRoot struct {
 		PatternFile func(childComplexity int) int
 		UpdatedAt   func(childComplexity int) int
 		UserID      func(childComplexity int) int
+		Visibility  func(childComplexity int) int
 	}
 
 	PerfPageProfiles struct {
@@ -917,6 +921,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.FilterPage.TotalCount(childComplexity), true
 
+	case "FilterResult.catalog_data":
+		if e.complexity.FilterResult.CatalogData == nil {
+			break
+		}
+
+		return e.complexity.FilterResult.CatalogData(childComplexity), true
+
 	case "FilterResult.created_at":
 		if e.complexity.FilterResult.CreatedAt == nil {
 			break
@@ -965,6 +976,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.FilterResult.UserID(childComplexity), true
+
+	case "FilterResult.visibility":
+		if e.complexity.FilterResult.Visibility == nil {
+			break
+		}
+
+		return e.complexity.FilterResult.Visibility(childComplexity), true
 
 	case "K8sContext.auth":
 		if e.complexity.K8sContext.Auth == nil {
@@ -1433,6 +1451,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.PatternResult.CanSupport(childComplexity), true
 
+	case "PatternResult.catalog_data":
+		if e.complexity.PatternResult.CatalogData == nil {
+			break
+		}
+
+		return e.complexity.PatternResult.CatalogData(childComplexity), true
+
 	case "PatternResult.created_at":
 		if e.complexity.PatternResult.CreatedAt == nil {
 			break
@@ -1488,6 +1513,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.PatternResult.UserID(childComplexity), true
+
+	case "PatternResult.visibility":
+		if e.complexity.PatternResult.Visibility == nil {
+			break
+		}
+
+		return e.complexity.PatternResult.Visibility(childComplexity), true
 
 	case "PerfPageProfiles.page":
 		if e.complexity.PerfPageProfiles.Page == nil {
@@ -2537,6 +2569,8 @@ type FilterResult {
   filter_file: String!
   user_id: String!
   location: Location!
+  visibility: String!
+  catalog_data: Map
   created_at: String
   updated_at: String
 }
@@ -2548,7 +2582,7 @@ type CatalogFilter {
   user_id: String!
   location: Location!
   visibility: Map!
-  catalog_data: Map!
+  catalog_data: Map
   created_at: String
   updated_at: String 
 }
@@ -2568,6 +2602,8 @@ type PatternResult {
   user_id: String!
   location: Location!
   pattern_file: String!
+  visibility: String!
+  catalog_data: Map
   canSupport: Boolean!
   errmsg: String
   created_at: String
@@ -4479,14 +4515,11 @@ func (ec *executionContext) _CatalogFilter_catalog_data(ctx context.Context, fie
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(map[string]interface{})
 	fc.Result = res
-	return ec.marshalNMap2map(ctx, field.Selections, res)
+	return ec.marshalOMap2map(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_CatalogFilter_catalog_data(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -6679,6 +6712,10 @@ func (ec *executionContext) fieldContext_FilterPage_filters(ctx context.Context,
 				return ec.fieldContext_FilterResult_user_id(ctx, field)
 			case "location":
 				return ec.fieldContext_FilterResult_location(ctx, field)
+			case "visibility":
+				return ec.fieldContext_FilterResult_visibility(ctx, field)
+			case "catalog_data":
+				return ec.fieldContext_FilterResult_catalog_data(ctx, field)
 			case "created_at":
 				return ec.fieldContext_FilterResult_created_at(ctx, field)
 			case "updated_at":
@@ -6915,6 +6952,91 @@ func (ec *executionContext) fieldContext_FilterResult_location(ctx context.Conte
 				return ec.fieldContext_Location_type(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Location", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _FilterResult_visibility(ctx context.Context, field graphql.CollectedField, obj *model.FilterResult) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_FilterResult_visibility(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Visibility, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_FilterResult_visibility(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "FilterResult",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _FilterResult_catalog_data(ctx context.Context, field graphql.CollectedField, obj *model.FilterResult) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_FilterResult_catalog_data(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CatalogData, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(map[string]interface{})
+	fc.Result = res
+	return ec.marshalOMap2map(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_FilterResult_catalog_data(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "FilterResult",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Map does not have child fields")
 		},
 	}
 	return fc, nil
@@ -9869,6 +9991,10 @@ func (ec *executionContext) fieldContext_PatternPageResult_patterns(ctx context.
 				return ec.fieldContext_PatternResult_location(ctx, field)
 			case "pattern_file":
 				return ec.fieldContext_PatternResult_pattern_file(ctx, field)
+			case "visibility":
+				return ec.fieldContext_PatternResult_visibility(ctx, field)
+			case "catalog_data":
+				return ec.fieldContext_PatternResult_catalog_data(ctx, field)
 			case "canSupport":
 				return ec.fieldContext_PatternResult_canSupport(ctx, field)
 			case "errmsg":
@@ -10109,6 +10235,91 @@ func (ec *executionContext) fieldContext_PatternResult_pattern_file(ctx context.
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _PatternResult_visibility(ctx context.Context, field graphql.CollectedField, obj *model.PatternResult) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PatternResult_visibility(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Visibility, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_PatternResult_visibility(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "PatternResult",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _PatternResult_catalog_data(ctx context.Context, field graphql.CollectedField, obj *model.PatternResult) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PatternResult_catalog_data(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CatalogData, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(map[string]interface{})
+	fc.Result = res
+	return ec.marshalOMap2map(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_PatternResult_catalog_data(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "PatternResult",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Map does not have child fields")
 		},
 	}
 	return fc, nil
@@ -16213,9 +16424,6 @@ func (ec *executionContext) _CatalogFilter(ctx context.Context, sel ast.Selectio
 
 			out.Values[i] = ec._CatalogFilter_catalog_data(ctx, field, obj)
 
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
 		case "created_at":
 
 			out.Values[i] = ec._CatalogFilter_created_at(ctx, field, obj)
@@ -16785,6 +16993,17 @@ func (ec *executionContext) _FilterResult(ctx context.Context, sel ast.Selection
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "visibility":
+
+			out.Values[i] = ec._FilterResult_visibility(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "catalog_data":
+
+			out.Values[i] = ec._FilterResult_catalog_data(ctx, field, obj)
+
 		case "created_at":
 
 			out.Values[i] = ec._FilterResult_created_at(ctx, field, obj)
@@ -17570,6 +17789,17 @@ func (ec *executionContext) _PatternResult(ctx context.Context, sel ast.Selectio
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "visibility":
+
+			out.Values[i] = ec._PatternResult_visibility(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "catalog_data":
+
+			out.Values[i] = ec._PatternResult_catalog_data(ctx, field, obj)
+
 		case "canSupport":
 
 			out.Values[i] = ec._PatternResult_canSupport(ctx, field, obj)

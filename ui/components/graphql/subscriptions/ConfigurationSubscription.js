@@ -31,6 +31,8 @@ const configurationSubscription = graphql`
           name
           user_id
           pattern_file
+          visibility
+          catalog_data
           canSupport
           errmsg
           created_at
@@ -45,6 +47,8 @@ const configurationSubscription = graphql`
           id
           name
           filter_file
+          visibility
+          catalog_data
           user_id
           created_at
           updated_at

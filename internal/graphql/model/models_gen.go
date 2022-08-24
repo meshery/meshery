@@ -134,13 +134,15 @@ type FilterPage struct {
 }
 
 type FilterResult struct {
-	ID         string    `json:"id"`
-	Name       string    `json:"name"`
-	FilterFile string    `json:"filter_file"`
-	UserID     string    `json:"user_id"`
-	Location   *Location `json:"location"`
-	CreatedAt  *string   `json:"created_at"`
-	UpdatedAt  *string   `json:"updated_at"`
+	ID          string                 `json:"id"`
+	Name        string                 `json:"name"`
+	FilterFile  string                 `json:"filter_file"`
+	UserID      string                 `json:"user_id"`
+	Location    *Location              `json:"location"`
+	Visibility  string                 `json:"visibility"`
+	CatalogData map[string]interface{} `json:"catalog_data"`
+	CreatedAt   *string                `json:"created_at"`
+	UpdatedAt   *string                `json:"updated_at"`
 }
 
 type K8sContext struct {
@@ -267,15 +269,17 @@ type PatternPageResult struct {
 }
 
 type PatternResult struct {
-	ID          string    `json:"id"`
-	Name        string    `json:"name"`
-	UserID      string    `json:"user_id"`
-	Location    *Location `json:"location"`
-	PatternFile string    `json:"pattern_file"`
-	CanSupport  bool      `json:"canSupport"`
-	Errmsg      *string   `json:"errmsg"`
-	CreatedAt   *string   `json:"created_at"`
-	UpdatedAt   *string   `json:"updated_at"`
+	ID          string                 `json:"id"`
+	Name        string                 `json:"name"`
+	UserID      string                 `json:"user_id"`
+	Location    *Location              `json:"location"`
+	PatternFile string                 `json:"pattern_file"`
+	Visibility  string                 `json:"visibility"`
+	CatalogData map[string]interface{} `json:"catalog_data"`
+	CanSupport  bool                   `json:"canSupport"`
+	Errmsg      *string                `json:"errmsg"`
+	CreatedAt   *string                `json:"created_at"`
+	UpdatedAt   *string                `json:"updated_at"`
 }
 
 type PerfPageProfiles struct {

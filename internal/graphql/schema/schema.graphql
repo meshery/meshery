@@ -351,6 +351,8 @@ type FilterResult {
   filter_file: String!
   user_id: String!
   location: Location!
+  visibility: String!
+  catalog_data: Map
   created_at: String
   updated_at: String
 }
@@ -362,7 +364,7 @@ type CatalogFilter {
   user_id: String!
   location: Location!
   visibility: Map!
-  catalog_data: Map!
+  catalog_data: Map
   created_at: String
   updated_at: String 
 }
@@ -382,6 +384,8 @@ type PatternResult {
   user_id: String!
   location: Location!
   pattern_file: String!
+  visibility: String!
+  catalog_data: Map
   canSupport: Boolean!
   errmsg: String
   created_at: String

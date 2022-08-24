@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<685c612ca10af96e5edfd6a0dfb40a9c>>
+ * @generated SignedSource<<323ea950ba721af7dd7eb3f46c3cdacb>>
  * @flow
  * @lightSyntaxTransform
  * @nogrep
@@ -52,6 +52,8 @@ export type ConfigurationSubscription$data = {|
         +name: string,
         +user_id: string,
         +pattern_file: string,
+        +visibility: string,
+        +catalog_data: any,
         +canSupport: boolean,
         +errmsg: ?string,
         +created_at: ?string,
@@ -66,6 +68,8 @@ export type ConfigurationSubscription$data = {|
         +id: string,
         +name: string,
         +filter_file: string,
+        +visibility: string,
+        +catalog_data: any,
         +user_id: string,
         +created_at: ?string,
         +updated_at: ?string,
@@ -151,7 +155,21 @@ v10 = {
   "name": "updated_at",
   "storageKey": null
 },
-v11 = [
+v11 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "visibility",
+  "storageKey": null
+},
+v12 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "catalog_data",
+  "storageKey": null
+},
+v13 = [
   {
     "alias": "configuration",
     "args": [
@@ -267,6 +285,8 @@ v11 = [
                 "name": "pattern_file",
                 "storageKey": null
               },
+              (v11/*: any*/),
+              (v12/*: any*/),
               {
                 "alias": null,
                 "args": null,
@@ -317,6 +337,8 @@ v11 = [
                 "name": "filter_file",
                 "storageKey": null
               },
+              (v11/*: any*/),
+              (v12/*: any*/),
               (v8/*: any*/),
               (v9/*: any*/),
               (v10/*: any*/)
@@ -340,7 +362,7 @@ return {
     "kind": "Fragment",
     "metadata": null,
     "name": "ConfigurationSubscription",
-    "selections": (v11/*: any*/),
+    "selections": (v13/*: any*/),
     "type": "Subscription",
     "abstractKey": null
   },
@@ -353,20 +375,20 @@ return {
     ],
     "kind": "Operation",
     "name": "ConfigurationSubscription",
-    "selections": (v11/*: any*/)
+    "selections": (v13/*: any*/)
   },
   "params": {
-    "cacheID": "f6fcdbe69c21074ff223408a38dc8a54",
+    "cacheID": "13472d4f71791825fc1c5914cc9fcda4",
     "id": null,
     "metadata": {},
     "name": "ConfigurationSubscription",
     "operationKind": "subscription",
-    "text": "subscription ConfigurationSubscription(\n  $applicationSelector: PageFilter!\n  $patternSelector: PageFilter!\n  $filterSelector: PageFilter!\n) {\n  configuration: subscribeConfiguration(applicationSelector: $applicationSelector, patternSelector: $patternSelector, filterSelector: $filterSelector) {\n    applications {\n      page\n      page_size\n      total_count\n      applications {\n        id\n        name\n        application_file\n        type {\n          String\n          Valid\n        }\n        user_id\n        created_at\n        updated_at\n      }\n    }\n    patterns {\n      page\n      page_size\n      total_count\n      patterns {\n        id\n        name\n        user_id\n        pattern_file\n        canSupport\n        errmsg\n        created_at\n        updated_at\n      }\n    }\n    filters {\n      page\n      page_size\n      total_count\n      filters {\n        id\n        name\n        filter_file\n        user_id\n        created_at\n        updated_at\n      }\n    }\n  }\n}\n"
+    "text": "subscription ConfigurationSubscription(\n  $applicationSelector: PageFilter!\n  $patternSelector: PageFilter!\n  $filterSelector: PageFilter!\n) {\n  configuration: subscribeConfiguration(applicationSelector: $applicationSelector, patternSelector: $patternSelector, filterSelector: $filterSelector) {\n    applications {\n      page\n      page_size\n      total_count\n      applications {\n        id\n        name\n        application_file\n        type {\n          String\n          Valid\n        }\n        user_id\n        created_at\n        updated_at\n      }\n    }\n    patterns {\n      page\n      page_size\n      total_count\n      patterns {\n        id\n        name\n        user_id\n        pattern_file\n        visibility\n        catalog_data\n        canSupport\n        errmsg\n        created_at\n        updated_at\n      }\n    }\n    filters {\n      page\n      page_size\n      total_count\n      filters {\n        id\n        name\n        filter_file\n        visibility\n        catalog_data\n        user_id\n        created_at\n        updated_at\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node/*: any*/).hash = "f7f36aeaf3d0c9fcaceed96d7b9b2077";
+(node/*: any*/).hash = "f29e57d5384332cb8fcb8b99d049fcab";
 
 module.exports = ((node/*: any*/)/*: GraphQLSubscription<
   ConfigurationSubscription$variables,
