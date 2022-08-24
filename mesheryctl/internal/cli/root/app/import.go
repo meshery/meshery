@@ -69,9 +69,7 @@ mesheryctl app import -f [file/URL] -s [source-type]
 	},
 
 	RunE: func(cmd *cobra.Command, args []string) error {
-		var req *http.Request
 		var err error
-		client := &http.Client{}
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
@@ -86,56 +84,29 @@ mesheryctl app import -f [file/URL] -s [source-type]
 			return errors.Errorf("application source type (-s) invalid or not passed.\nAllowed source types: %s", strings.Join(validSourceTypes, ", "))
 		}
 
-		err = importApp(sourceType, file, appURL, patternURL)
+		app, err := importApp(sourceType, file, appURL, patternURL, true)
 
 		if err != nil {
 			return err
 		}
 
-		// Fetch ID of imported app manifest
-		var responseApp *models.ApplicationsAPIResponse
-		req, err = utils.NewRequest("GET", appURL, nil)
-		if err != nil {
-			return err
-		}
-
-		res, err := client.Do(req)
-		if err != nil {
-			return err
-		}
-		defer res.Body.Close()
-		body, err := io.ReadAll(res.Body)
-		if err != nil {
-			return err
-		}
-		err = json.Unmarshal(body, &responseApp)
-		if err != nil {
-			return err
-		}
-
-		AppResult := responseApp.Applications
-
-		// The top most ID contains the new import app manifest
-		AppID := AppResult[0].ID
-
-		resID := utils.TruncateID(AppID.String())
-
-		fmt.Printf("App file imported successfully. \nID of the app: %s \n", resID)
+		fmt.Printf("App file imported successfully. \nID of the app: %s \n", utils.TruncateID(app.ID.String()))
 
 		return nil
 	},
 }
 
-func importApp(sourceType string, file string, appURL string, patternURL string) error {
+func importApp(sourceType string, file string, appURL string, patternURL string, save bool) (*models.MesheryApplication, error) {
 	var req *http.Request
-	var err error
+	var app *models.MesheryApplication
+
 	client := &http.Client{}
 
 	// Check if the app manifest is file or URL
 	if validURL := govalidator.IsURL(file); !validURL {
 		content, err := os.ReadFile(file)
 		if err != nil {
-			return err
+			return nil, err
 		}
 		text := string(content)
 
@@ -144,45 +115,44 @@ func importApp(sourceType string, file string, appURL string, patternURL string)
 				"name":             path.Base(file),
 				"application_file": text,
 			},
-			"save": true,
+			"save": save,
 		})
 		if err != nil {
-			return err
+			return nil, err
 		}
 		req, err = utils.NewRequest("POST", appURL+"/"+sourceType, bytes.NewBuffer(jsonValues))
 		if err != nil {
-			return err
+			return nil, err
 		}
 
 		resp, err := client.Do(req)
 		if err != nil {
-			return err
+			return nil, err
 		}
 		utils.Log.Debug("app file saved")
 		var response []*models.MesheryApplication
 		// failsafe (bad api call)
 		if resp.StatusCode != 200 {
-			return errors.Errorf("Response Status Code %d, possible Server Error", resp.StatusCode)
+			return nil, errors.Errorf("Response Status Code %d, possible Server Error", resp.StatusCode)
 		}
 		defer resp.Body.Close()
 
 		body, err := io.ReadAll(resp.Body)
 		if err != nil {
-			return errors.Wrap(err, utils.AppError("failed to read response body"))
+			return nil, errors.Wrap(err, utils.AppError("failed to read response body"))
 		}
 		err = json.Unmarshal(body, &response)
 		if err != nil {
-			return errors.Wrap(err, "failed to unmarshal response body")
+			return nil, errors.Wrap(err, "failed to unmarshal response body")
 		}
-
-		// setup app file
-		appFile = text
+		// set app
+		app = response[0]
 
 	} else {
 		var jsonValues []byte
 		url, path, err := utils.ParseURLGithub(file)
 		if err != nil {
-			return err
+			return nil, err
 		}
 
 		utils.Log.Debug(url)
@@ -193,102 +163,46 @@ func importApp(sourceType string, file string, appURL string, patternURL string)
 			jsonValues, _ = json.Marshal(map[string]interface{}{
 				"url":  url,
 				"path": path,
-				"save": true,
+				"save": save,
 			})
 		} else {
 			jsonValues, _ = json.Marshal(map[string]interface{}{
 				"url":  url,
-				"save": true,
+				"save": save,
 			})
 		}
 
 		req, err = utils.NewRequest("POST", appURL+"/"+sourceType, bytes.NewBuffer(jsonValues))
 		if err != nil {
-			return err
+			return nil, err
 		}
 
 		resp, err := client.Do(req)
 		if err != nil {
-			return err
+			return nil, err
 		}
 		utils.Log.Debug("remote hosted app request success")
 		var response []*models.MesheryApplication
 		// failsafe (bad api call)
 		if resp.StatusCode != 200 {
-			return errors.Errorf("Response Status Code %d, possible Server Error", resp.StatusCode)
+			return nil, errors.Errorf("Response Status Code %d, possible Server Error", resp.StatusCode)
 		}
 		defer resp.Body.Close()
 
 		body, err := io.ReadAll(resp.Body)
 		if err != nil {
-			return errors.Wrap(err, utils.AppError("failed to read response body"))
+			return nil, errors.Wrap(err, utils.AppError("failed to read response body"))
 		}
 		err = json.Unmarshal(body, &response)
 		if err != nil {
-			return errors.Wrap(err, "failed to unmarshal response body")
+			return nil, errors.Wrap(err, "failed to unmarshal response body")
 		}
 
-		// setup app file here
-		appFile = response[0].ApplicationFile
+		// set app
+		app = response[0]
 	}
 
-	// Start conversion of app file to pattern file
-	jsonValues, _ := json.Marshal(map[string]interface{}{
-		"K8sManifest": appFile,
-	})
-
-	req, err = utils.NewRequest("POST", patternURL, bytes.NewBuffer(jsonValues))
-	if err != nil {
-		return err
-	}
-
-	resp, err := client.Do(req)
-	if err != nil {
-		return err
-	}
-	defer resp.Body.Close()
-
-	var response []*models.MesheryPattern
-	// bad api call
-	if resp.StatusCode != 200 {
-		return errors.Errorf("Response Status Code %d, possible Server Error", resp.StatusCode)
-	}
-
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return errors.Wrap(err, utils.AppError("failed to read response body"))
-	}
-
-	err = json.Unmarshal(body, &response)
-	if err != nil {
-		return errors.Wrap(err, "failed to unmarshal response body")
-	}
-
-	utils.Log.Debug("application file converted to pattern file")
-
-	patternFile := response[0].PatternFile
-
-	req, err = utils.NewRequest("POST", appURL, bytes.NewBuffer([]byte(patternFile)))
-	if err != nil {
-		return err
-	}
-
-	res, err := client.Do(req)
-	if err != nil {
-		return err
-	}
-
-	defer res.Body.Close()
-	body, err = io.ReadAll(res.Body)
-	if err != nil {
-		return err
-	}
-
-	if res.StatusCode == 200 {
-		utils.Log.Info("app successfully imported")
-	}
-	utils.Log.Info(string(body))
-	return nil
+	return app, nil
 }
 
 func init() {
