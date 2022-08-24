@@ -132,6 +132,10 @@ func (r *queryResolver) FetchPatternCatalogContent(ctx context.Context, selector
 func (r *queryResolver) FetchFilterCatalogContent(ctx context.Context, selector *model.CatalogSelector) ([]*model.CatalogFilter, error) {
 	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
 	return r.fetchCatalogFilter(ctx, provider, selector)
+
+func (r *queryResolver) GetClusterResources(ctx context.Context, k8scontextIDs []string) (*model.ClusterResources, error) {
+	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	return r.getClusterResources(ctx, provider, k8scontextIDs)
 }
 
 func (r *subscriptionResolver) ListenToAddonState(ctx context.Context, filter *model.ServiceMeshFilter) (<-chan []*model.AddonList, error) {
@@ -274,6 +278,7 @@ func (r *subscriptionResolver) SubscribeMeshSyncEvents(ctx context.Context, k8sc
 					Object:    event.Object,
 				}
 				resChan <- res
+				go r.Config.DashboardK8sResourcesChan.PublishDashboardK8sResources()
 			}
 		}(ctxID, brokerEventsChan)
 	}
@@ -283,6 +288,11 @@ func (r *subscriptionResolver) SubscribeMeshSyncEvents(ctx context.Context, k8sc
 func (r *subscriptionResolver) SubscribeConfiguration(ctx context.Context, applicationSelector model.PageFilter, patternSelector model.PageFilter, filterSelector model.PageFilter) (<-chan *model.ConfigurationPage, error) {
 	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
 	return r.subscribeConfiguration(ctx, provider, applicationSelector, patternSelector, filterSelector)
+}
+
+func (r *subscriptionResolver) SubscribeClusterResources(ctx context.Context, k8scontextIDs []string) (<-chan *model.ClusterResources, error) {
+	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	return r.subscribeClusterResources(ctx, provider, k8scontextIDs)
 }
 
 func (r *subscriptionResolver) SubscribeK8sContext(ctx context.Context, selector model.PageFilter) (<-chan *model.K8sContextsPage, error) {

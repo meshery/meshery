@@ -64,6 +64,9 @@ type CatalogPattern struct {
 type CatalogSelector struct {
 	Search string `json:"search"`
 	Order  string `json:"order"`
+
+type ClusterResources struct {
+	Resources []*Resource `json:"resources"`
 }
 
 type ConfigurationPage struct {
@@ -312,6 +315,11 @@ type ReSyncActions struct {
 	ClearDb   string `json:"clearDB"`
 	ReSync    string `json:"ReSync"`
 	HardReset string `json:"hardReset"`
+}
+
+type Resource struct {
+	Kind  string `json:"kind"`
+	Count int    `json:"count"`
 }
 
 type ServiceMeshFilter struct {
