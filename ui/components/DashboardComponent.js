@@ -126,7 +126,7 @@ class DashboardComponent extends React.Component {
       dataPlaneState : "",
       clusterResources : [],
       namespaceList : [],
-      selectedNamespace : "",
+      selectedNamespace : "default",
 
       // subscriptions disposable
       dataPlaneSubscription : null,
@@ -199,21 +199,13 @@ class DashboardComponent extends React.Component {
     const namespaceQuery = fetchAvailableNamespaces({ k8sClusterIDs : self.getK8sClusterIds() })
       .subscribe({
         next : res => {
-          console.log("res(namespace): ", res)
           let namespaces = []
           res?.namespaces?.map(ns => {
             namespaces.push(ns?.namespace)
           })
-          // if (namespaces.length === 0) {
-          //   namespaces.push({
-          //     value : "default",
-          //     label : "default"
-          //   })
-          // }
           namespaces.sort((a, b) => (
             a > b ? 1 : -1
           ))
-          console.log("namespaces: ", namespaces)
           self.setState({ namespaceList : namespaces })
         },
         error : (err) => console.log("error at namespace fetch: " + err),
@@ -225,11 +217,11 @@ class DashboardComponent extends React.Component {
   initDashboardClusterResourcesQuery = () => {
     const self = this;
     let k8s = self.getK8sClusterIds();
-    let namespaces = [self.state.selectedNamespace];
+    let namespace = self.state.selectedNamespace;
 
     if (self._isMounted) {
       // @ts-ignore
-      const clusterResourcesQuery = fetchClusterResources(k8s, namespaces).subscribe({
+      const clusterResourcesQuery = fetchClusterResources(k8s, namespace).subscribe({
         next : (res) => {
           this.setState({ clusterResources : res?.clusterResources })
         },
@@ -243,7 +235,7 @@ class DashboardComponent extends React.Component {
   initDashboardClusterResourcesSubscription = () => {
     const self = this;
     let k8s = self.getK8sClusterIds();
-    let namespaces = [self.state.selectedNamespace];
+    let namespace = self.state.selectedNamespace;
 
     if (self._isMounted) {
       // @ts-ignore
@@ -251,7 +243,7 @@ class DashboardComponent extends React.Component {
         this.setState({ clusterResources : res?.clusterResources })
       }, {
         k8scontextIDs : k8s,
-        namespaces : namespaces
+        namespace : namespace
       });
       this.setState({ clusterResourcesSubscription });
     }
@@ -281,8 +273,7 @@ class DashboardComponent extends React.Component {
   componentDidUpdate(prevProps, prevState) {
     let updateControlPlane = false;
     let updateDataPlane = false;
-    console.log("updating...1")
-    console.log("prev: ", prevProps)
+
     // deep compare very limited, order of object fields is important
     if (JSON.stringify(prevState.controlPlaneState) !== JSON.stringify(this.state.controlPlaneState)) {
       updateControlPlane = true;
@@ -309,7 +300,6 @@ class DashboardComponent extends React.Component {
     }
 
     if (prevState?.selectedNamespace !== this.state?.selectedNamespace) {
-      console.log("updating...2")
       this.initDashboardClusterResourcesSubscription();
       this.initDashboardClusterResourcesQuery();
     }
@@ -857,7 +847,7 @@ class DashboardComponent extends React.Component {
   /**
    * ClusterResourcesCard takes in the cluster related data
    * and renders a table with cluster resources information of
-   * the selected cluster
+   * the selected cluster and namespace
    * @param {{kind, number}[]} resources
    */
    ClusterResourcesCard = (resources = []) => {
@@ -933,10 +923,8 @@ class DashboardComponent extends React.Component {
              {self.state.namespaceList && (
                <Select
                  value={self.state.selectedNamespace}
-                 onChange={(e) => {
-                   console.log("e: ", e)
+                 onChange={(e) =>
                    self.setState({ selectedNamespace : e.target.value })
-                 }
                  }
                >
                  {self.state.namespaceList && self.state.namespaceList.map((ns) => <MenuItem value={ns}>{ns}</MenuItem>)}

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<78510c1343b7d26369488990fd1716e6>>
+ * @generated SignedSource<<9b11273ffb94fd2c22708006de739a11>>
  * @flow
  * @lightSyntaxTransform
  * @nogrep
@@ -13,7 +13,7 @@
 import type { ConcreteRequest, Query } from 'relay-runtime';
 export type ClusterResourcesQuery$variables = {|
   k8scontextIDs?: ?$ReadOnlyArray<string>,
-  namespaces?: ?$ReadOnlyArray<string>,
+  namespace: string,
 |};
 export type ClusterResourcesQuery$data = {|
   +clusterResources: {|
@@ -39,7 +39,7 @@ var v0 = [
   {
     "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "namespaces"
+    "name": "namespace"
   }
 ],
 v1 = [
@@ -53,8 +53,8 @@ v1 = [
       },
       {
         "kind": "Variable",
-        "name": "namespaces",
-        "variableName": "namespaces"
+        "name": "namespace",
+        "variableName": "namespace"
       }
     ],
     "concreteType": "ClusterResources",
@@ -109,17 +109,17 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "b4049f93cc26eb621c50945342a69b8b",
+    "cacheID": "be4502eb8686b7ba1ab73d914f75e299",
     "id": null,
     "metadata": {},
     "name": "ClusterResourcesQuery",
     "operationKind": "query",
-    "text": "query ClusterResourcesQuery(\n  $k8scontextIDs: [String!]\n  $namespaces: [String!]\n) {\n  clusterResources: getClusterResources(k8scontextIDs: $k8scontextIDs, namespaces: $namespaces) {\n    resources {\n      kind\n      count\n    }\n  }\n}\n"
+    "text": "query ClusterResourcesQuery(\n  $k8scontextIDs: [String!]\n  $namespace: String!\n) {\n  clusterResources: getClusterResources(k8scontextIDs: $k8scontextIDs, namespace: $namespace) {\n    resources {\n      kind\n      count\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node/*: any*/).hash = "996dd23bbe7c3ebc88fcf007049c3f06";
+(node/*: any*/).hash = "df3b0056c596c2f025a87ac56962fc6e";
 
 module.exports = ((node/*: any*/)/*: Query<
   ClusterResourcesQuery$variables,

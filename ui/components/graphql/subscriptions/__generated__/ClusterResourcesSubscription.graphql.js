@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<9686ae525411d2efdf04211e27fb8023>>
+ * @generated SignedSource<<ac4995adbbbad880a997b8845afcb5f0>>
  * @flow
  * @lightSyntaxTransform
  * @nogrep
@@ -13,7 +13,7 @@
 import type { ConcreteRequest, GraphQLSubscription } from 'relay-runtime';
 export type ClusterResourcesSubscription$variables = {|
   k8scontextIDs?: ?$ReadOnlyArray<string>,
-  namespaces?: ?$ReadOnlyArray<string>,
+  namespace: string,
 |};
 export type ClusterResourcesSubscription$data = {|
   +clusterResources: {|
@@ -39,7 +39,7 @@ var v0 = [
   {
     "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "namespaces"
+    "name": "namespace"
   }
 ],
 v1 = [
@@ -53,8 +53,8 @@ v1 = [
       },
       {
         "kind": "Variable",
-        "name": "namespaces",
-        "variableName": "namespaces"
+        "name": "namespace",
+        "variableName": "namespace"
       }
     ],
     "concreteType": "ClusterResources",
@@ -109,17 +109,17 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "30fcc5c9285042a529056224d20d999b",
+    "cacheID": "d3c5e48d338830a81ec808ac6acf5d8a",
     "id": null,
     "metadata": {},
     "name": "ClusterResourcesSubscription",
     "operationKind": "subscription",
-    "text": "subscription ClusterResourcesSubscription(\n  $k8scontextIDs: [String!]\n  $namespaces: [String!]\n) {\n  clusterResources: subscribeClusterResources(k8scontextIDs: $k8scontextIDs, namespaces: $namespaces) {\n    resources {\n      kind\n      count\n    }\n  }\n}\n"
+    "text": "subscription ClusterResourcesSubscription(\n  $k8scontextIDs: [String!]\n  $namespace: String!\n) {\n  clusterResources: subscribeClusterResources(k8scontextIDs: $k8scontextIDs, namespace: $namespace) {\n    resources {\n      kind\n      count\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node/*: any*/).hash = "d221ceb413e9ea6de94bde64fc229090";
+(node/*: any*/).hash = "2722cb19adcd7e786a91856efcff3e1c";
 
 module.exports = ((node/*: any*/)/*: GraphQLSubscription<
   ClusterResourcesSubscription$variables,
