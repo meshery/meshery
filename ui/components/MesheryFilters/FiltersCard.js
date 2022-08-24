@@ -1,7 +1,7 @@
 //@ts-check
 import React, { useState } from "react";
 import {
-  Divider, Grid, IconButton, Typography
+  Avatar, Divider, Grid, IconButton, Typography
 } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import DeleteIcon from "@material-ui/icons/Delete";
@@ -24,6 +24,7 @@ function FiltersCard({
   filter_file,
   handleDeploy,
   handleUndeploy,
+  handleClone,
   deleteHandler,
   setYaml,
   description={},
@@ -70,10 +71,12 @@ function FiltersCard({
         {/* FRONT PART */}
         <>
           <div>
-            <Typography variant="h6" component="div">
-              {name}
+            <div style={{ display : "flex", justifyContent : "space-between" }}>
+              <Typography variant="h6" component="div">
+                {name}
+              </Typography>
               <img  className={classes.img} src={`/static/img/${visibility}.svg`} />
-            </Typography>
+            </div>
             <div className={classes.lastRunText} >
               <div>
                 {updated_at
@@ -110,6 +113,15 @@ function FiltersCard({
                 <UndeployIcon fill="#ffffff" className={classes.iconPatt} />
                 <span className={classes.btnText}>Undeploy</span>
               </Button>
+              {visibility === "public" ? <Button
+                variant="contained"
+                color="primary"
+                onClick={(ev) =>
+                  genericClickHandler(ev, handleClone)
+                }>
+                <Avatar src="/static/img/fork.svg" className={classes.iconPatt} imgProps={{ height : "16px", width : "16px" }} />
+                  Clone
+              </Button> : null }
             </div>
           </div>
         </>

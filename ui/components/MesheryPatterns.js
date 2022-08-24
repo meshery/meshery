@@ -945,6 +945,7 @@ function MesheryPatterns({
               patterns={patterns}
               handleDeploy={handleDeploy}
               handleUnDeploy={handleUnDeploy}
+              handleClone={handleClone}
               handleSubmit={handleSubmit}
               setSelectedPattern={setSelectedPattern}
               selectedPattern={selectedPattern}

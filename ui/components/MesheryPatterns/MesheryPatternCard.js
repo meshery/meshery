@@ -28,6 +28,7 @@ function MesheryPatternCard({
   handleUnDeploy,
   updateHandler,
   deleteHandler,
+  handleClone,
   setSelectedPatterns,
   setYaml,
   description={},
@@ -77,10 +78,12 @@ function MesheryPatternCard({
         {/* FRONT PART */}
         <>
           <div>
-            <Typography variant="h6" component="div">
-              {name}
+            <div style={{ display : "flex", justifyContent : "space-between" }}>
+              <Typography variant="h6" component="div">
+                {name}
+              </Typography>
               <img  className={classes.img} src={`/static/img/${visibility}.svg`} />
-            </Typography>
+            </div>
             <div className={classes.lastRunText} >
               <div>
                 {updated_at
@@ -119,7 +122,7 @@ function MesheryPatternCard({
                 Deploy
               </Button>
 
-              <Button
+              { visibility === "private" ?  <Button
                 variant="contained"
                 color="primary"
                 onClick={(ev) =>
@@ -129,7 +132,17 @@ function MesheryPatternCard({
               >
                 <Avatar src="/static/img/pattern_trans.svg" className={classes.iconPatt} imgProps={{ height : "16px", width : "16px" }} />
                 Design
-              </Button>
+              </Button> : <Button
+                variant="contained"
+                color="primary"
+                onClick={(ev) =>
+                  genericClickHandler(ev, handleClone)
+                }
+                className={classes.testsButton}
+              >
+                <Avatar src="/static/img/fork.svg" className={classes.iconPatt} imgProps={{ height : "16px", width : "16px" }} />
+                Clone
+              </Button>  }
             </div>
           </div>
         </>

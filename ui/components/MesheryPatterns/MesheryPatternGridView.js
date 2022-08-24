@@ -12,7 +12,7 @@ import { getComponentsinFile } from "../../utils/utils";
 
 const INITIAL_GRID_SIZE = { xl : 4, md : 6, xs : 12 };
 
-function PatternCardGridItem({ pattern, handleDeploy, handleUnDeploy, handleSubmit, setSelectedPatterns }) {
+function PatternCardGridItem({ pattern, handleDeploy, handleUnDeploy, handleClone, handleSubmit, setSelectedPatterns }) {
   const [gridProps, setGridProps] = useState(INITIAL_GRID_SIZE);
   const [yaml, setYaml] = useState(pattern.pattern_file);
 
@@ -28,6 +28,7 @@ function PatternCardGridItem({ pattern, handleDeploy, handleUnDeploy, handleSubm
         requestSizeRestore={() => setGridProps(INITIAL_GRID_SIZE)}
         handleDeploy={handleDeploy}
         handleUnDeploy={handleUnDeploy}
+        handleClone={handleClone}
         deleteHandler={() => handleSubmit({ data : yaml, id : pattern.id, type : FILE_OPS.DELETE ,name : pattern.name })}
         updateHandler={() => handleSubmit({ data : yaml, id : pattern.id, type : FILE_OPS.UPDATE ,name : pattern.name })}
         setSelectedPatterns={() => setSelectedPatterns({ pattern : pattern, show : true })}
@@ -70,7 +71,7 @@ const useStyles = makeStyles(() => ({
  * }} props props
  */
 
-function MesheryPatternGrid({ patterns=[],handleDeploy, handleUnDeploy, handleSubmit, setSelectedPattern, selectedPattern, pages = 1,setPage, selectedPage }) {
+function MesheryPatternGrid({ patterns=[],handleDeploy, handleUnDeploy, handleClone, handleSubmit, setSelectedPattern, selectedPattern, pages = 1,setPage, selectedPage }) {
 
   const classes = useStyles()
 
@@ -112,6 +113,7 @@ function MesheryPatternGrid({ patterns=[],handleDeploy, handleUnDeploy, handleSu
           <PatternCardGridItem
             key={pattern.id}
             pattern={pattern}
+            handleClone={handleClone}
             handleDeploy={() => handleModalOpen(pattern, true)}
             handleUnDeploy={() => handleModalOpen(pattern, false)}
             handleSubmit={handleSubmit}
