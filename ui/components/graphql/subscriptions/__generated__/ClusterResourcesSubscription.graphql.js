@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<f8ff39fc0d57fdee68da032e096a60de>>
+ * @generated SignedSource<<ac4995adbbbad880a997b8845afcb5f0>>
  * @flow
  * @lightSyntaxTransform
  * @nogrep
@@ -13,6 +13,7 @@
 import type { ConcreteRequest, GraphQLSubscription } from 'relay-runtime';
 export type ClusterResourcesSubscription$variables = {|
   k8scontextIDs?: ?$ReadOnlyArray<string>,
+  namespace: string,
 |};
 export type ClusterResourcesSubscription$data = {|
   +clusterResources: {|
@@ -34,6 +35,11 @@ var v0 = [
     "defaultValue": null,
     "kind": "LocalArgument",
     "name": "k8scontextIDs"
+  },
+  {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "namespace"
   }
 ],
 v1 = [
@@ -44,6 +50,11 @@ v1 = [
         "kind": "Variable",
         "name": "k8scontextIDs",
         "variableName": "k8scontextIDs"
+      },
+      {
+        "kind": "Variable",
+        "name": "namespace",
+        "variableName": "namespace"
       }
     ],
     "concreteType": "ClusterResources",
@@ -98,17 +109,17 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "08cf7a17c7256b24bf7217396260f4cc",
+    "cacheID": "d3c5e48d338830a81ec808ac6acf5d8a",
     "id": null,
     "metadata": {},
     "name": "ClusterResourcesSubscription",
     "operationKind": "subscription",
-    "text": "subscription ClusterResourcesSubscription(\n  $k8scontextIDs: [String!]\n) {\n  clusterResources: subscribeClusterResources(k8scontextIDs: $k8scontextIDs) {\n    resources {\n      kind\n      count\n    }\n  }\n}\n"
+    "text": "subscription ClusterResourcesSubscription(\n  $k8scontextIDs: [String!]\n  $namespace: String!\n) {\n  clusterResources: subscribeClusterResources(k8scontextIDs: $k8scontextIDs, namespace: $namespace) {\n    resources {\n      kind\n      count\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node/*: any*/).hash = "ab3fce770bc208fe26f2806d070b8995";
+(node/*: any*/).hash = "2722cb19adcd7e786a91856efcff3e1c";
 
 module.exports = ((node/*: any*/)/*: GraphQLSubscription<
   ClusterResourcesSubscription$variables,

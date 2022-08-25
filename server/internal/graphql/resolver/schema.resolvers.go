@@ -124,9 +124,9 @@ func (r *queryResolver) GetKubectlDescribe(ctx context.Context, name string, kin
 	return r.getKubectlDescribe(ctx, name, kind, namespace)
 }
 
-func (r *queryResolver) GetClusterResources(ctx context.Context, k8scontextIDs []string) (*model.ClusterResources, error) {
+func (r *queryResolver) GetClusterResources(ctx context.Context, k8scontextIDs []string, namespace string) (*model.ClusterResources, error) {
 	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
-	return r.getClusterResources(ctx, provider, k8scontextIDs)
+	return r.getClusterResources(ctx, provider, k8scontextIDs, namespace)
 }
 
 func (r *subscriptionResolver) ListenToAddonState(ctx context.Context, filter *model.ServiceMeshFilter) (<-chan []*model.AddonList, error) {
@@ -281,9 +281,9 @@ func (r *subscriptionResolver) SubscribeConfiguration(ctx context.Context, selec
 	return r.subscribeConfiguration(ctx, provider, selector)
 }
 
-func (r *subscriptionResolver) SubscribeClusterResources(ctx context.Context, k8scontextIDs []string) (<-chan *model.ClusterResources, error) {
+func (r *subscriptionResolver) SubscribeClusterResources(ctx context.Context, k8scontextIDs []string, namespace string) (<-chan *model.ClusterResources, error) {
 	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
-	return r.subscribeClusterResources(ctx, provider, k8scontextIDs)
+	return r.subscribeClusterResources(ctx, provider, k8scontextIDs, namespace)
 }
 
 func (r *subscriptionResolver) SubscribeK8sContext(ctx context.Context, selector model.PageFilter) (<-chan *model.K8sContextsPage, error) {

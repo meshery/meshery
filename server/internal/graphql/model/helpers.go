@@ -2,6 +2,7 @@ package model
 
 import (
 	"context"
+	"database/sql"
 	"strings"
 	"sync"
 
@@ -378,3 +379,29 @@ func GetInternalControllerStatus(status controllers.MesheryControllerStatus) Mes
 	}
 	return ""
 }
+
+// SelectivelyFetchNamespaces fetches the an array of namespaces from DB based on ClusterIDs (or KubernetesServerIDs) passed as param
+func SelectivelyFetchNamespaces(cids []string, provider models.Provider) ([]string, error) {
+	namespaces := make([]string, 0)
+	var rows *sql.Rows
+	var err error
+	rows, err = provider.GetGenericPersister().Raw("SELECT DISTINCT rom.name as name FROM objects o LEFT JOIN resource_object_meta rom ON o.id = rom.id WHERE o.kind = 'Namespace' AND o.cluster_id IN ?", cids).Rows()
+
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	for rows.Next() {
+		var name string
+		err := rows.Scan(&name)
+		if err != nil {
+			return nil, err
+		}
+
+		namespaces = append(namespaces, name)
+	}
+	return namespaces, nil
+}
+
