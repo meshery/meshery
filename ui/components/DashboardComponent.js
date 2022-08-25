@@ -1,7 +1,8 @@
 import {
   Button, Card, CardContent, CardHeader, Chip,
-  IconButton, MenuItem, NoSsr, Paper, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TableSortLabel, Tooltip, Typography
+  IconButton, MenuItem, NoSsr, Paper, Select, TableCell, TableSortLabel, Tooltip, Typography
 } from "@material-ui/core";
+// import {Table, TableBody, TableContainer, TableHead, TableRow,} from "@material-ui/core"
 import blue from "@material-ui/core/colors/blue";
 import Grid from "@material-ui/core/Grid";
 import { withStyles } from "@material-ui/core/styles";
@@ -152,6 +153,12 @@ class DashboardComponent extends React.Component {
     return st;
   }
 
+  disposeWorkloadWidgetSubscription = () => {
+    this.state.namespaceQuery && this.state.namespaceQuery.unsubscribe();
+    this.state.clusterResourcesQuery && this.state.clusterResourcesQuery.unsubscribe()
+    this.state.clusterResourcesSubscription && this.state.clusterResourcesSubscription.dispose();
+  }
+
   disposeSubscriptions = () => {
     if (this.state.dataPlaneSubscription) {
       this.state.dataPlaneSubscription.unsubscribe()
@@ -159,11 +166,7 @@ class DashboardComponent extends React.Component {
     if (this.state.controlPlaneSubscription) {
       this.state.controlPlaneSubscription.unsubscribe()
     }
-    if (this.state.clusterResourcesQuery) {
-      this.state.clusterResourcesQuery.unsubscribe()
-    }
-    this.state.namespaceQuery && this.state.namespaceQuery.unsubscribe();
-    this.state.clusterResourcesSubscription && this.state.clusterResourcesSubscription.dispose();
+    this.disposeWorkloadWidgetSubscription();
   }
 
   initMeshSyncControlPlaneSubscription = () => {
@@ -300,8 +303,10 @@ class DashboardComponent extends React.Component {
     }
 
     if (prevState?.selectedNamespace !== this.state?.selectedNamespace) {
+      this.disposeWorkloadWidgetSubscription();
       this.initDashboardClusterResourcesSubscription();
       this.initDashboardClusterResourcesQuery();
+      this.initNamespaceQuery();
     }
   }
 
@@ -674,6 +679,54 @@ class DashboardComponent extends React.Component {
     );
   };
 
+  getMuiTheme = () => createTheme({
+    shadows : ["none"],
+    overrides : {
+      MUIDataTable : {
+      },
+      MuiInput : {
+        underline : {
+          "&:hover:not(.Mui-disabled):before" : {
+            borderBottom : "2px solid #222"
+          },
+          "&:after" : {
+            borderBottom : "2px solid #222"
+          }
+        }
+      },
+      MUIDataTableSearch : {
+        searchIcon : {
+          color : "#607d8b" ,
+          marginTop : "7px",
+          marginRight : "8px",
+        },
+        clearIcon : {
+          "&:hover" : {
+            color : "#607d8b"
+          }
+        },
+      },
+      MUIDataTableSelectCell : {
+        checkboxRoot : {
+          '&$checked' : {
+            color : '#607d8b',
+          },
+        },
+      },
+      MUIDataTableToolbar : {
+        iconActive : {
+          color : "#222"
+        },
+        icon : {
+          "&:hover" : {
+            color : "#607d8b"
+          }
+        },
+      },
+    }
+  })
+
+
   /**
    * Meshcard takes in the mesh related data
    * and renders a table along with other information of
@@ -682,11 +735,138 @@ class DashboardComponent extends React.Component {
    * @param {{name, component, version, namespace}[]} components Array of components data
    */
   Meshcard = (mesh, components = []) => {
+    console.log("components: ", components)
     const self = this;
+    let componentSort = "asc";
+    let versionSort = "asc";
+    let proxySort = "asc";
+
+    const switchSortOrder = (type) => {
+      if (type==="componentSort") {
+        componentSort = (componentSort==="asc")? "desc" : "asc";
+        versionSort = "asc";
+        proxySort = "asc";
+      } else if (type==="versionSort") {
+        versionSort = (versionSort==="asc")? "desc" : "asc";
+        componentSort = "asc";
+        proxySort = "asc";
+      } else if (type==="proxySort") {
+        proxySort = (proxySort==="asc")? "desc" : "asc";
+        componentSort = "asc";
+        versionSort = "asc";
+      }
+    }
+
+    const columns = [
+      {
+        name : "component",
+        label : "Component",
+        options : {
+          filter : false,
+          sort : true,
+          searchable : true,
+          setCellProps : () => ({ style : { textAlign : "center" } }),
+          customHeadRender : ({ index, ...column }, sortColumn) => {
+            return (
+              <TableCell key={index} style={{ textAlign : "center" }} onClick={() => {
+                sortColumn(index); switchSortOrder("componentSort");
+              }}>
+                <TableSortLabel active={column.sortDirection != null} direction={componentSort} >
+                  <b>{column.label}</b>
+                </TableSortLabel>
+              </TableCell>
+
+            )
+          }
+        }, },
+      {
+        name : "version",
+        label : "Version",
+        options : {
+          filter : false,
+          sort : true,
+          searchable : true,
+          setCellProps : () => ({ style : { textAlign : "center" } }),
+          customHeadRender : ({ index, ...column }, sortColumn) => {
+            return (
+              <TableCell key={index} style={{ textAlign : "center" }} onClick={() => {
+                sortColumn(index); switchSortOrder("versionSort");
+              }}>
+                <TableSortLabel active={column.sortDirection != null} direction={versionSort} >
+                  <b>{column.label}</b>
+                </TableSortLabel>
+              </TableCell>
+
+            );
+          },
+          customBodyRender : (value, tableMeta, updateValue) => {
+            console.log("version");
+            console.log("value: ", value)
+            console.log("tableMeta: ", tableMeta)
+            console.log("updateValue: ", updateValue)
+            return (versionMapper(value))
+          },
+        }, },
+      {
+        name : "data_planes",
+        label : "Proxy",
+        options : {
+          filter : false,
+          sort : true,
+          searchable : true,
+          setCellProps : () => ({ style : { textAlign : "center" } }),
+          customHeadRender : ({ index, ...column }, sortColumn) => {
+            return (
+              <TableCell key={index} style={{ textAlign : "center" }} onClick={() => {
+                sortColumn(index); switchSortOrder("proxySort");
+              }}>
+                <TableSortLabel active={column.sortDirection != null} direction={proxySort} >
+                  <b>{column.label}</b>
+                </TableSortLabel>
+              </TableCell>
+            )
+          },
+          customBodyRender : (value, tableMeta, updateValue) => {
+            console.log("proxy")
+            console.log("value: ", value)
+            console.log("tableMeta: ", tableMeta)
+            console.log("updateValue: ", updateValue)
+            return (value?.length || 0);
+          }
+        }, },
+    ]
+
+    const options = {
+      filter : false,
+      selectableRows : "none",
+      responsive : "scrollMaxHeight",
+      print : false,
+      download : false,
+      viewColumns : false,
+      pagination : false,
+      customToolbar : () => {
+        return (
+          <>
+            {self.state.activeMeshScanNamespace[mesh.name] && (
+              <Select
+                value={self.state.activeMeshScanNamespace[mesh.name]}
+                onChange={(e) =>
+                  self.setState((state) => ({ activeMeshScanNamespace : { ...state.activeMeshScanNamespace, [mesh.name] : e.target.value }, }))
+                }
+              >
+                {self.state.meshScanNamespaces[mesh.name] &&
+                    self.state.meshScanNamespaces[mesh.name].map((ns) => <MenuItem value={ns}>{ns}</MenuItem>)}
+              </Select>
+            )}
+          </>
+        )
+      }
+    }
+
     if (Array.isArray(components) && components.length)
       return (
         <Paper elevation={1} style={{ padding : "2rem", marginTop : "1rem" }}>
-          <Grid container justify="space-between" spacing={1}>
+          {/* <Grid container justify="space-between" spacing={1}>
             <Grid item>
               <div style={{ display : "flex", alignItems : "center", marginBottom : "1rem" }}>
                 <img src={mesh.icon} className={this.props.classes.icon} style={{ marginRight : "0.75rem" }} />
@@ -706,12 +886,27 @@ class DashboardComponent extends React.Component {
                 </Select>
               )}
             </Grid>
-          </Grid>
-          <TableContainer>
+          </Grid> */}
+          <MuiThemeProvider theme={this.getMuiTheme()}>
+            <MUIDataTable
+              title={
+                <>
+                  <div style={{ display : "flex", alignItems : "center", marginBottom : "1rem" }}>
+                    <img src={mesh.icon} className={this.props.classes.icon} style={{ marginRight : "0.75rem" }} />
+                    <Typography variant="h6">{mesh.tag}</Typography>
+                  </div>
+                </>
+              }
+              data={components}
+              options={options}
+              columns={columns}
+            />
+          </MuiThemeProvider>
+          {/* <TableContainer>
             <Table aria-label="Deployed service mesh details">
               <TableHead>
                 <TableRow>
-                  {/* <TableCell align="center">Control Plane</TableCell> */}
+                  {/* <TableCell align="center">Control Plane</TableCell>
                   <TableCell align="center">Component</TableCell>
                   <TableCell align="center">Version</TableCell>
                   <TableCell align="center">Proxy</TableCell>
@@ -730,8 +925,8 @@ class DashboardComponent extends React.Component {
                             </div>
                           </Tooltip>
                         </TableCell> */}
-                        {/* <TableCell align="center">{podNameMapper(component.component, component.name)}</TableCell> */}
-                        <TableCell align="center">{component.component}</TableCell>
+          {/* <TableCell align="center">{podNameMapper(component.component, component.name)}</TableCell> */}
+          {/* <TableCell align="center">{component.component}</TableCell>
                         <TableCell align="center">{versionMapper(component.version)}</TableCell>
                         <Tooltip
                           key={`component-${component.name}`}
@@ -789,60 +984,12 @@ class DashboardComponent extends React.Component {
                   })}
               </TableBody>
             </Table>
-          </TableContainer>
+          </TableContainer> */}
         </Paper>
       );
 
     return null;
   };
-
-  getMuiTheme = () => createTheme({
-    shadows : ["none"],
-    overrides : {
-      MUIDataTable : {
-      },
-      MuiInput : {
-        underline : {
-          "&:hover:not(.Mui-disabled):before" : {
-            borderBottom : "2px solid #222"
-          },
-          "&:after" : {
-            borderBottom : "2px solid #222"
-          }
-        }
-      },
-      MUIDataTableSearch : {
-        searchIcon : {
-          color : "#607d8b" ,
-          marginTop : "7px",
-          marginRight : "8px",
-        },
-        clearIcon : {
-          "&:hover" : {
-            color : "#607d8b"
-          }
-        },
-      },
-      MUIDataTableSelectCell : {
-        checkboxRoot : {
-          '&$checked' : {
-            color : '#607d8b',
-          },
-        },
-      },
-      MUIDataTableToolbar : {
-        iconActive : {
-          color : "#222"
-        },
-        icon : {
-          "&:hover" : {
-            color : "#607d8b"
-          }
-        },
-      },
-    }
-  })
-
 
   /**
    * ClusterResourcesCard takes in the cluster related data
