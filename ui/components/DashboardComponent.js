@@ -896,6 +896,7 @@ class DashboardComponent extends React.Component {
       download : false,
       viewColumns : false,
       pagination : false,
+      fixedHeader : true,
       customToolbar : () => {
         return (
           <>
@@ -1012,6 +1013,7 @@ class DashboardComponent extends React.Component {
        download : false,
        viewColumns : false,
        pagination : false,
+       fixedHeader : true,
        customToolbar : () => {
          return (
            <>
