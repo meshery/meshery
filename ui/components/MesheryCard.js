@@ -27,7 +27,7 @@ const MesheryCard = ({
   updated_at,
   created_at,
   file,
-  type,
+  configurations,
   handleDeploy,
   handleUnDeploy,
   updateHandler,
@@ -135,7 +135,7 @@ const MesheryCard = ({
           ) : null}
           <ActionContainer>
             {/* Save button */}
-            {type!=="filter"?
+            {configurations!=="filter"?
                 <IconButton
                 onClick={(ev) => genericClickHandler(ev, updateHandler)}
               >
