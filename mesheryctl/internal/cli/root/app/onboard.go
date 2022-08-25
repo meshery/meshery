@@ -50,7 +50,7 @@ Example: mesheryctl app onboard -f ./application.yml -s "Kubernetes Manifest"
 Description: Onboard application`
 
 		if file == "" && len(args) == 0 {
-			return fmt.Errorf("the path does not exist \n\n%v", errMsg)
+			return fmt.Errorf("file path or application name not provided \n\n%v", errMsg)
 		}
 		return nil
 	},

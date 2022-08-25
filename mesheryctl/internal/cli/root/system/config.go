@@ -134,7 +134,12 @@ mesheryctl system config aks --token auth.json
 // Configure Meshery to connect to AKS cluster (if session is logged in using login subcommand)
 mesheryctl system config aks
 	`,
-	Args: cobra.ExactArgs(0),
+	Args: func(cmd *cobra.Command, args []string) error {
+		if len(args) >= 1 {
+			return errors.New("more than one config name provided")
+		}
+		return nil
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		aksCheck := exec.Command("az", "version")
 		aksCheck.Stdout = os.Stdout
@@ -199,7 +204,12 @@ mesheryctl system config eks --token auth.json
 // Configure Meshery to connect to EKS cluster (if session is logged in using login subcommand)
 mesheryctl system config eks
 	`,
-	Args: cobra.ExactArgs(0),
+	Args: func(cmd *cobra.Command, args []string) error {
+		if len(args) >= 1 {
+			return errors.New("more than one config name provided")
+		}
+		return nil
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		eksCheck := exec.Command("aws", "--version")
 		eksCheck.Stdout = os.Stdout
@@ -264,7 +274,12 @@ mesheryctl system config gke --token auth.json
 // Configure Meshery to connect to GKE cluster (if session is logged in using login subcommand)
 mesheryctl system config gke
 	`,
-	Args: cobra.ExactArgs(0),
+	Args: func(cmd *cobra.Command, args []string) error {
+		if len(args) >= 1 {
+			return errors.New("more than one config name provided")
+		}
+		return nil
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		// TODO: move the GenerateConfigGKE logic to meshkit/client-go
 		log.Info("Configuring Meshery to access GKE...")
@@ -292,7 +307,12 @@ mesheryctl system config minikube --token auth.json
 // Configure Meshery to connect to minikube cluster (if session is logged in using login subcommand)
 mesheryctl system config minikube
 	`,
-	Args: cobra.ExactArgs(0),
+	Args: func(cmd *cobra.Command, args []string) error {
+		if len(args) >= 1 {
+			return errors.New("more than one config name provided")
+		}
+		return nil
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		log.Info("Configuring Meshery to access Minikube...")
 		// Get the config from the default config path
