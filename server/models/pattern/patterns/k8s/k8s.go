@@ -70,7 +70,6 @@ func (p prettifier) Prettify(m map[string]interface{}) map[string]interface{} {
 	if !ok {
 		fmt.Println("failed to cast")
 	}
-
 	return out
 }
 func (p prettifier) DePrettify(m map[string]interface{}) map[string]interface{} {

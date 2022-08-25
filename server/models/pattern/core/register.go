@@ -14,6 +14,7 @@ import (
 	"github.com/layer5io/meshery/server/internal/store"
 	"github.com/layer5io/meshery/server/models/pattern/patterns/k8s"
 	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
+	"github.com/layer5io/meshkit/utils"
 	"github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/layer5io/meshkit/utils/manifests"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -591,7 +592,8 @@ func GetK8Components(ctxt context.Context, config []byte) (*manifests.Component,
 			if k8s.Format {
 				k8s.Format.Prettify(resolved)
 			}
-			b, err = json.Marshal(resolved)
+			updatedRes := utils.TransformMapKeys(resolved, func(s string) string { return strings.ReplaceAll(s, " ", "") })
+			b, err = json.Marshal(updatedRes)
 			if err != nil {
 				return
 			}
