@@ -8,6 +8,7 @@ import {
   DialogContent,
   DialogTitle
 } from '@material-ui/core';
+import { promisifiedDataFetch } from '../lib/data-fetch';
 
 const getMuiTheme = () => createTheme({
   palette : {
@@ -40,9 +41,6 @@ const styles = makeStyles(() => ({
     color : '#fff',
     backgroundColor : '#396679'
   },
-  content : {
-    padding : "1.5rem"
-  },
   heading : {
     color : "#607d8b"
   },
@@ -50,22 +48,32 @@ const styles = makeStyles(() => ({
     color : "#607d8b",
     marginRight : "1.2rem"
   }
-
-
 }));
 
 function UploadImport(props) {
-  const { handleUpload, handleUrlUpload, configuration, isApplication, supportedTypes, open, handleClose } = props
+  const { handleUpload, handleUrlUpload, configuration, isApplication, open, handleClose } = props;
   const classes = styles();
   const [input, setInput] = React.useState();
   const [isError, setIsError] = React.useState(false);
   const [fileType, setFileType] = React.useState();
   const [sourceType, setSourceType] = React.useState();
+  const [supportedTypes, setSupportedTypes] = React.useState();
+
+  useEffect(() => {
+    if (isApplication) {
+      (async () => {
+        setSupportedTypes(await promisifiedDataFetch("/api/application/types"));
+      })()
+    }
+  }, []);
 
   const handleFileType = (index) => {
-    setFileType(supportedTypes[index]?.supported_extensions);
-    setSourceType(supportedTypes[index]?.application_type);
+    if (isApplication) {
+      setFileType(supportedTypes?.[index]?.supported_extensions);
+      setSourceType(supportedTypes?.[index]?.application_type);
+    }
   }
+
   useEffect(() => {
     if (input) {
       setIsError(!URLValidator(input))
@@ -74,10 +82,10 @@ function UploadImport(props) {
 
   useEffect(() => {
     if (isApplication) {
-      setFileType(supportedTypes[0]?.supported_extensions)
-      setSourceType(supportedTypes[0]?.application_type);
+      setFileType(supportedTypes?.[0]?.supported_extensions)
+      setSourceType(supportedTypes?.[0]?.application_type);
     }
-  },[open])
+  }, [open])
 
   const handleSubmit = () => {
     handleUrlUpload(input, sourceType)
@@ -101,13 +109,14 @@ function UploadImport(props) {
             <DialogTitle className={classes.title}>
               <b id="simple-modal-title" style={{ textAlign : "center" }} >Import {configuration}</b>
             </DialogTitle>
-            <DialogContent className={classes.content}>
-              <Grid container spacing={24}>
+            <DialogContent>
+              <Grid container spacing={24} alignItems="center">
                 <Grid item xs={3}>
                   <h4 className={classes.heading} > FROM URL </h4>
                 </Grid>
                 <Grid item xs={9}>
                   <TextField
+                    size="small"
                     error={isError}
                     helperText={isError && "Invalid URL"}
                     variant="outlined"
@@ -117,32 +126,38 @@ function UploadImport(props) {
                 </Grid>
               </Grid>
               <hr />
-              <Grid container spacing={24}>
-                <Grid item xs={3}>
-                  <h4 className={classes.heading}> UPLOAD FILE </h4>
-                </Grid>
-                <Grid item xs={6}>
-                  <TextField
-                    variant="outlined"
-                    label="Filename"
-                    style={{ width : "100%" }}
-                  />
-                </Grid>
-                <Grid item xs={3}>
+              {
+                sourceType !== "Helm Chart" && (
+                  <Grid container spacing={24} alignItems="center">
+                    <Grid item xs={3}>
+                      <h4 className={classes.heading}> UPLOAD FILE </h4>
+                    </Grid>
+                    <Grid item xs={6}>
+                      <TextField
+                        size="small"
+                        variant="outlined"
+                        label="Filename"
+                        style={{ width : "100%" }}
+                      />
+                    </Grid>
+                    <Grid item xs={3}>
 
-                  <label htmlFor="upload-button" className={classes.upload}>
+                      <label htmlFor="upload-button" className={classes.upload}>
 
-                    <Button disabled={sourceType==="Helm Chart"} variant="contained" size="large" color="primary" aria-label="Upload Button" onChange={sourceType==="Helm Chart" ? null : handleUploader} component="span" >
-                      <input id="upload-button" type="file" accept={fileType} disabled={sourceType==="Helm Chart"} hidden  name="upload-button" data-cy="file-upload-button" />
-                      Browse
-                    </Button>
-                  </label>
-                </Grid>
-              </Grid>
-              <Grid container spacing={24}>
+                        <Button disabled={sourceType === "Helm Chart"} variant="contained" color="primary" aria-label="Upload Button" onChange={sourceType === "Helm Chart" ? null : handleUploader} component="span" >
+                          <input id="upload-button" type="file" accept={fileType} disabled={sourceType === "Helm Chart"} hidden name="upload-button" data-cy="file-upload-button" />
+                          Browse
+                        </Button>
+                      </label>
+                    </Grid>
+                  </Grid>
+                )
+              }
+
+              <Grid container spacing={24} alignItems="center">
                 {
                   isApplication &&
-                <h4 className={classes.selectType}>SELECT TYPE </h4>
+                  <h4 className={classes.selectType}>SELECT TYPE </h4>
                 }
                 {isApplication &&
                   <>
@@ -168,10 +183,9 @@ function UploadImport(props) {
             </DialogContent>
             <DialogActions>
               <label htmlFor="cancel" className={classes.cancel}>
-                <Button variant="outlined" size="large" color="secondary" onClick={handleClose}>Cancel</Button>
+                <Button variant="outlined" color="secondary" onClick={handleClose}>Cancel</Button>
               </label>
-              <label htmlFor="URL">  <Button disabled={isError || !input} size="large" id="URL" variant="contained" color="primary" onClick={(e) => handleSubmit(e, handleUploader)}>Import</Button> </label>
-
+              <label htmlFor="URL">  <Button disabled={isError || !input} id="URL" variant="contained" color="primary" onClick={(e) => handleSubmit(e, handleUploader)}>Import</Button> </label>
             </DialogActions>
           </MuiThemeProvider>
         </Dialog>

@@ -139,7 +139,7 @@ function FiltersGrid({ filters=[],handleDeploy, handleUndeploy, handleSubmit,url
         componentCount = {modalOpen.count}
         tab={modalOpen.deploy ? 0 : 1}
       />
-      <UploadImport open={importModal.open} handleClose={handleUploadImportClose} supportedTypes="null" aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} configuration="Filter"  />
+      <UploadImport open={importModal.open} handleClose={handleUploadImportClose} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} configuration="Filter"  />
     </div>
   );
 }
