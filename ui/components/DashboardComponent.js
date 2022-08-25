@@ -735,11 +735,17 @@ class DashboardComponent extends React.Component {
    * @param {{name, component, version, namespace}[]} components Array of components data
    */
   Meshcard = (mesh, components = []) => {
-    console.log("components: ", components)
     const self = this;
     let componentSort = "asc";
     let versionSort = "asc";
     let proxySort = "asc";
+    let tempComp = [];
+
+    components
+      .filter((comp) => comp.namespace === self.state.activeMeshScanNamespace[mesh.name])
+      .map((component) => tempComp.push(component))
+
+    components = tempComp;
 
     const switchSortOrder = (type) => {
       if (type==="componentSort") {
@@ -799,11 +805,7 @@ class DashboardComponent extends React.Component {
 
             );
           },
-          customBodyRender : (value, tableMeta, updateValue) => {
-            console.log("version");
-            console.log("value: ", value)
-            console.log("tableMeta: ", tableMeta)
-            console.log("updateValue: ", updateValue)
+          customBodyRender : (value) => {
             return (versionMapper(value))
           },
         }, },
@@ -826,12 +828,62 @@ class DashboardComponent extends React.Component {
               </TableCell>
             )
           },
-          customBodyRender : (value, tableMeta, updateValue) => {
-            console.log("proxy")
-            console.log("value: ", value)
-            console.log("tableMeta: ", tableMeta)
-            console.log("updateValue: ", updateValue)
-            return (value?.length || 0);
+          customBodyRender : (value) => {
+            return (
+              <>
+                <Tooltip
+                  key={`component-${value}`}
+                  title={
+                    Array.isArray(value) && value?.length > 0 ? (
+                      value.map((cont) => {
+                        return (
+                          <div key={cont.name} style={{ fontSize : "15px", color : '#fff', paddingBottom : '10px', padding : '1vh' }}>
+                            <p>Name: {cont?.containerName ? cont.containerName : 'Unspecified'}</p>
+                            <p>Status: {cont?.status?.ready ? 'ready' : 'not ready'}</p>
+                            {!cont?.status?.ready && (
+                              typeof cont?.status?.lastState === 'object' && cont?.status?.lastState !== null && Object.keys(cont.status.lastState).length > 0 && (
+                                <div>
+                                  <p>Last state: {Object.keys(cont?.status?.lastState)[0]} <br /> Error: {Object.values(cont?.status?.lastState)[0]?.exitCode} <br /> Finished at: {Object.values(cont?.status?.lastState)[0]?.finishedAt}</p>
+                                </div>
+                              )
+                            )}
+                            {typeof cont?.status?.state === 'object' && cont?.status?.state !== null && Object.keys(cont.status.state).length > 0 && (
+                              <p>State: {Object.keys(cont.status.state)[0]}</p>
+                            )}
+                            {cont?.status?.restartCount && (
+                              <p>Restart count: {cont?.status.restartCount}</p>
+                            )}
+                            <p>Image: {cont.image}</p>
+                            <p>Ports: <br /> {cont?.ports && cont.ports.map(port => `[ ${port?.name ? port.name : 'Unknown'}, ${port?.containerPort ? port.containerPort : 'Unknown'}, ${port?.protocol ? port.protocol : 'Unknown'} ]`).join(', ')}</p>
+                            {cont?.resources && (
+                              <div>
+                                        Resources used: <br />
+
+                                <div style={{ paddingLeft : '2vh' }}>
+                                  {cont?.resources?.limits && (
+                                    <div>
+                                      <p>Limits: <br />
+                                                CPU: {cont?.resources?.limits?.cpu} - Memory: {cont?.resources?.limits?.memory}</p>
+                                    </div>
+                                  )}
+                                  {cont?.resources?.requests && (
+                                    <div>
+                                      <p>Requests: <br />
+                                                CPU: {cont?.resources?.requests?.cpu} - Memory: {cont?.resources?.requests?.memory}</p>
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        )
+                      })
+                    ) : "No proxy attached"}
+                >
+                  <TableCell align="center">{value?.length || 0}</TableCell>
+                </Tooltip>
+              </>
+            );
           }
         }, },
     ]
@@ -860,33 +912,12 @@ class DashboardComponent extends React.Component {
             )}
           </>
         )
-      }
+      },
     }
 
     if (Array.isArray(components) && components.length)
       return (
         <Paper elevation={1} style={{ padding : "2rem", marginTop : "1rem" }}>
-          {/* <Grid container justify="space-between" spacing={1}>
-            <Grid item>
-              <div style={{ display : "flex", alignItems : "center", marginBottom : "1rem" }}>
-                <img src={mesh.icon} className={this.props.classes.icon} style={{ marginRight : "0.75rem" }} />
-                <Typography variant="h6">{mesh.tag}</Typography>
-              </div>
-            </Grid>
-            <Grid item>
-              {self.state.activeMeshScanNamespace[mesh.name] && (
-                <Select
-                  value={self.state.activeMeshScanNamespace[mesh.name]}
-                  onChange={(e) =>
-                    self.setState((state) => ({ activeMeshScanNamespace : { ...state.activeMeshScanNamespace, [mesh.name] : e.target.value }, }))
-                  }
-                >
-                  {self.state.meshScanNamespaces[mesh.name] &&
-                    self.state.meshScanNamespaces[mesh.name].map((ns) => <MenuItem value={ns}>{ns}</MenuItem>)}
-                </Select>
-              )}
-            </Grid>
-          </Grid> */}
           <MuiThemeProvider theme={this.getMuiTheme()}>
             <MUIDataTable
               title={
@@ -902,89 +933,6 @@ class DashboardComponent extends React.Component {
               columns={columns}
             />
           </MuiThemeProvider>
-          {/* <TableContainer>
-            <Table aria-label="Deployed service mesh details">
-              <TableHead>
-                <TableRow>
-                  {/* <TableCell align="center">Control Plane</TableCell>
-                  <TableCell align="center">Component</TableCell>
-                  <TableCell align="center">Version</TableCell>
-                  <TableCell align="center">Proxy</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {components
-                  .filter((comp) => comp.namespace === self.state.activeMeshScanNamespace[mesh.name])
-                  .map((component) => {
-                    return (
-                      <TableRow key={component.name.full}>
-                        {/* <TableCell scope="row" align="center">
-                          <Tooltip title={component.name.full}>
-                            <div style={{ textAlign: "center" }}>
-                              {component.name.trimmed}
-                            </div>
-                          </Tooltip>
-                        </TableCell> */}
-          {/* <TableCell align="center">{podNameMapper(component.component, component.name)}</TableCell> */}
-          {/* <TableCell align="center">{component.component}</TableCell>
-                        <TableCell align="center">{versionMapper(component.version)}</TableCell>
-                        <Tooltip
-                          key={`component-${component.name}`}
-                          title={
-                            Array.isArray(component?.data_planes) && component.data_planes.length > 0 ? (
-                              component.data_planes.map((cont) => {
-                                return (
-                                  <div key={cont.name} style={{ fontSize : "15px", color : '#fff', paddingBottom : '10px', padding : '1vh' }}>
-                                    <p>Name: {cont?.containerName ? cont.containerName : 'Unspecified'}</p>
-                                    <p>Status: {cont?.status?.ready ? 'ready' : 'not ready'}</p>
-                                    {!cont?.status?.ready && (
-                                      typeof cont?.status?.lastState === 'object' && cont?.status?.lastState !== null && Object.keys(cont.status.lastState).length > 0 && (
-                                        <div>
-                                          <p>Last state: {Object.keys(cont?.status?.lastState)[0]} <br /> Error: {Object.values(cont?.status?.lastState)[0]?.exitCode} <br /> Finished at: {Object.values(cont?.status?.lastState)[0]?.finishedAt}</p>
-                                        </div>
-                                      )
-                                    )}
-                                    {typeof cont?.status?.state === 'object' && cont?.status?.state !== null && Object.keys(cont.status.state).length > 0 && (
-                                      <p>State: {Object.keys(cont.status.state)[0]}</p>
-                                    )}
-                                    {cont?.status?.restartCount && (
-                                      <p>Restart count: {cont?.status.restartCount}</p>
-                                    )}
-                                    <p>Image: {cont.image}</p>
-                                    <p>Ports: <br /> {cont?.ports && cont.ports.map(port => `[ ${port?.name ? port.name : 'Unknown'}, ${port?.containerPort ? port.containerPort : 'Unknown'}, ${port?.protocol ? port.protocol : 'Unknown'} ]`).join(', ')}</p>
-                                    {cont?.resources && (
-                                      <div>
-                                        Resources used: <br />
-
-                                        <div style={{ paddingLeft : '2vh' }}>
-                                          {cont?.resources?.limits && (
-                                            <div>
-                                              <p>Limits: <br />
-                                                CPU: {cont?.resources?.limits?.cpu} - Memory: {cont?.resources?.limits?.memory}</p>
-                                            </div>
-                                          )}
-                                          {cont?.resources?.requests && (
-                                            <div>
-                                              <p>Requests: <br />
-                                                CPU: {cont?.resources?.requests?.cpu} - Memory: {cont?.resources?.requests?.memory}</p>
-                                            </div>
-                                          )}
-                                        </div>
-                                      </div>
-                                    )}
-                                  </div>
-                                )
-                              })
-                            ) : "No proxy attached"}
-                        >
-                          <TableCell align="center">{component?.data_planes?.length || 0}</TableCell>
-                        </Tooltip>
-                      </TableRow>
-                    )
-                  })}
-              </TableBody>
-            </Table>
-          </TableContainer> */}
         </Paper>
       );
 
