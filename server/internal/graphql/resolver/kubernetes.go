@@ -307,7 +307,6 @@ func (r *Resolver) subscribeClusterResources(ctx context.Context, provider model
 
 func (r *Resolver) getClusterResources(ctx context.Context, provider models.Provider, k8scontextIDs []string, namespace string) (*model.ClusterResources, error) {
 	var cids []string
-	// query := "SELECT count(kind) as count, kind FROM objects o LEFT JOIN resource_object_meta rom WHERE o.cluster_id IN (?) AND rom.namespace = (?) GROUP BY kind"
 	query := `
 		SELECT count(kind) as count, kind FROM objects o LEFT JOIN resource_object_meta rom on o.id = rom.id 
 			WHERE o.kind <> 'Namespace' AND rom.namespace = '' AND o.cluster_id IN (?) GROUP BY kind
