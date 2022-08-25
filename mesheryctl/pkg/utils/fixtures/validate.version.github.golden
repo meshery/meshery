@@ -7407,7 +7407,7 @@
       "url": "https://api.github.com/repos/meshery/meshery/git/trees/16fb819b200292fae7b2d7ffcf0abd6b0b42a377"
     },
     {
-      "path": "internal/graphql/schema/schema.graphql",
+      "path": "server/internal/graphql/schema/schema.graphql",
       "mode": "100644",
       "type": "blob",
       "sha": "e55ac835244f66403e2929b70f6a1bb98c6a190a",
