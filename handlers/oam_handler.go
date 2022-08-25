@@ -377,7 +377,7 @@ func _processPattern(
 	isDelete bool,
 	verify bool,
 	skipPrintLogs bool,
-	eb *events.EventBuffer,
+	eb *events.EventStreamer,
 ) (string, error) {
 	// Get the token from the context
 	token, ok := ctx.Value(models.TokenCtxKey).(string)
@@ -560,7 +560,7 @@ type serviceActionProvider struct {
 	skipPrintLogs   bool
 	accumulatedMsgs []string
 	err             error
-	eventbuffer     *events.EventBuffer
+	eventbuffer     *events.EventStreamer
 }
 
 func (sap *serviceActionProvider) Terminate(err error) {

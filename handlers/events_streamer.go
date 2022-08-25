@@ -75,9 +75,7 @@ func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request, p
 
 		log.Debug("new adapters channel closed")
 	}()
-	fmt.Println("here1")
 	go listenForCoreEvents(req.Context(), h.EventsBuffer, respChan, log, p)
-	fmt.Println("here2")
 	go func(flusher http.Flusher) {
 		for data := range respChan {
 			log.Debug("received new data on response channel")
@@ -139,10 +137,9 @@ STOP:
 	close(respChan)
 	defer log.Debug("events handler closed")
 }
-func listenForCoreEvents(ctx context.Context, eb *events.EventBuffer, resp chan []byte, log *logrus.Entry, p models.Provider) {
+func listenForCoreEvents(ctx context.Context, eb *events.EventStreamer, resp chan []byte, log *logrus.Entry, p models.Provider) {
 	log.Debugf("listening for core events")
 	datach := make(chan interface{}, 10)
-	eb.Copy(datach)
 	go eb.Subscribe(datach)
 	fmt.Println("here")
 
@@ -152,7 +149,6 @@ func listenForCoreEvents(ctx context.Context, eb *events.EventBuffer, resp chan 
 			fmt.Println("found ", datap)
 			event, ok := datap.(*meshes.EventsResponse)
 			if !ok {
-				fmt.Println("bruh")
 				continue
 			}
 			data, err := json.Marshal(event)

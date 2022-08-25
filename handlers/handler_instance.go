@@ -22,7 +22,7 @@ type Handler struct {
 	K8sCompRegHelper   *models.ComponentsRegistrationHelper
 	MesheryCtrlsHelper *models.MesheryControllersHelper
 	dbHandler          *database.Handler
-	EventsBuffer       *events.EventBuffer
+	EventsBuffer       *events.EventStreamer
 }
 
 // NewHandlerInstance returns a Handler instance
@@ -34,7 +34,7 @@ func NewHandlerInstance(
 	compRegHelper *models.ComponentsRegistrationHelper,
 	mctrlHelper *models.MesheryControllersHelper,
 	dbHandler *database.Handler,
-	eb *events.EventBuffer,
+	eb *events.EventStreamer,
 ) models.HandlerInterface {
 	h := &Handler{
 		config:             handlerConfig,

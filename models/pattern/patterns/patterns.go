@@ -15,7 +15,7 @@ import (
 	"github.com/layer5io/meshkit/utils/kubernetes"
 )
 
-func ProcessOAM(kconfigs []string, oamComps []string, oamConfig string, isDel bool, eb *events.EventBuffer) (string, error) {
+func ProcessOAM(kconfigs []string, oamComps []string, oamConfig string, isDel bool, eb *events.EventStreamer) (string, error) {
 	var comps []v1alpha1.Component
 	var config v1alpha1.Configuration
 
@@ -48,8 +48,8 @@ func ProcessOAM(kconfigs []string, oamComps []string, oamConfig string, isDel bo
 		wg.Add(1)
 		go func(kcli *kubernetes.Client) {
 			defer wg.Done()
+			id, _ := uuid.NewV4()
 			for _, comp := range comps {
-				id, _ := uuid.NewV4()
 				var req meshes.EventsResponse
 				if comp.Spec.Type == "Application" {
 					if err := application.Deploy(kcli, comp, config, isDel); err != nil {
@@ -78,7 +78,7 @@ func ProcessOAM(kconfigs []string, oamComps []string, oamConfig string, isDel bo
 
 						msgs = append(msgs, "successfully deleted application "+comp.Name)
 					}
-					eb.Enqueue(&req)
+					eb.Publish(&req)
 					continue
 				}
 
@@ -109,7 +109,7 @@ func ProcessOAM(kconfigs []string, oamComps []string, oamConfig string, isDel bo
 						}
 						msgs = append(msgs, "successfully deleted kubernetes component "+comp.Name)
 					}
-					eb.Enqueue(&req)
+					eb.Publish(&req)
 				}
 			}
 		}(kcli)

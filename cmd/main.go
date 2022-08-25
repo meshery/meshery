@@ -248,7 +248,7 @@ func main() {
 	mctrlHelper := models.NewMesheryControllersHelper(log, operatorDeploymentConfig, dbHandler)
 	k8sComponentsRegistrationHelper := models.NewComponentsRegistrationHelper(log)
 
-	h := handlers.NewHandlerInstance(hc, meshsyncCh, log, brokerConn, k8sComponentsRegistrationHelper, mctrlHelper, dbHandler, events.NewEventBuffer(10))
+	h := handlers.NewHandlerInstance(hc, meshsyncCh, log, brokerConn, k8sComponentsRegistrationHelper, mctrlHelper, dbHandler, events.NewEventStreamer())
 
 	b := broadcast.NewBroadcaster(100)
 	defer b.Close()
