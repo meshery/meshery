@@ -74,7 +74,17 @@ function MesheryFilterGrid({
               setSelectedFilters={setSelectedFilters}
             />
           ))}
-          
+          {!selectedFilters.show && filters.length === 0 && (
+            <Typography
+              align="center"
+              sx={{
+                fontSize: "2rem",
+                marginBottom: "2rem",
+              }}
+            >
+              No Filters Found
+            </Typography>
+          )}
           {filters.length ? (
             <Box display="flex" justifyContent="center" marginTop={2} alignItems="center">
               <Pagination count={pages} page={selectedPage + 1} onChange={(_, page) => setPage(page - 1)} />
@@ -87,3 +97,4 @@ function MesheryFilterGrid({
 }
 
 export default MesheryFilterGrid;
+
