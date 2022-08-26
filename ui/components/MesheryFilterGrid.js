@@ -1,33 +1,32 @@
-import React, {useState} from 'react'
-import {Grid} from "@mui/material"
+import React, { useState } from "react";
+import { Grid, Box, Pagination } from "@mui/material";
 import MesheryCard from "./MesheryCard";
 
-const INITIAL_GRID_SIZE = { xl : 4, md : 6, xs : 12 };
+const INITIAL_GRID_SIZE = { xl: 4, md: 6, xs: 12 };
 
 function MesheryFilterGridItem({ filter, handleDeploy, handleUnDeploy, handleSubmit, setSelectedFilters }) {
-
-    const [gridProps, setGridProps] = useState(INITIAL_GRID_SIZE);
-    // const [yaml, setYaml] = useState(filetrs.filter_file);
+  const [gridProps, setGridProps] = useState(INITIAL_GRID_SIZE);
+  // const [yaml, setYaml] = useState(filetrs.filter_file);
 
   return (
     <Grid item {...gridProps}>
-        <MesheryCard 
-         name={filter.name}
-         updated_at={filter.updated_at}
-         created_at={filter.created_at}
+      <MesheryCard
+        name={filter.name}
+        updated_at={filter.updated_at}
+        created_at={filter.created_at}
         //  file={filter.filetr_file}
         type="filter"
-         requestFullSize={() => setGridProps({ xl : 12, md : 12, xs : 12 })}
-         requestSizeRestore={() => setGridProps(INITIAL_GRID_SIZE)}
+        requestFullSize={() => setGridProps({ xl: 12, md: 12, xs: 12 })}
+        requestSizeRestore={() => setGridProps(INITIAL_GRID_SIZE)}
         //  handleDeploy={() => handleDeploy(filters.filterss_file)}
         //  handleUnDeploy={() => handleUnDeploy(filters.filters_file)}
         //  deleteHandler={() => handleSubmit({ data : yaml, id : filters.id, type : FILE_OPS.DELETE ,name : filters.name })}
         //  updateHandler={() => handleSubmit({ data : yaml, id : filters.id, type : FILE_OPS.UPDATE ,name : filters.name })}
         // setSelectedFilters={() => setSelectedFilters({ fileter : filter, show : true })}
         //  setYaml={setYaml}
-        />
+      />
     </Grid>
-  )
+  );
 }
 
 /**
@@ -50,12 +49,21 @@ function MesheryFilterGridItem({ filter, handleDeploy, handleUnDeploy, handleSub
  * }} props props
  */
 
-function MesheryFilterGrid({ filters=[],handleDeploy, handleUnDeploy, handleSubmit, setSelectedFilters, selectedFilters, pages = 1,setPage, selectedPage }) {
-  
-    return (
-        <div>
-        {!selectedFilters.show &&
-        <Grid container spacing={3} sx={{ padding : "1rem" }}>
+function MesheryFilterGrid({
+  filters = [],
+  handleDeploy,
+  handleUnDeploy,
+  handleSubmit,
+  setSelectedFilters,
+  selectedFilters,
+  pages = 1,
+  setPage,
+  selectedPage,
+}) {
+  return (
+    <div>
+      {!selectedFilters.show && (
+        <Grid container spacing={3} sx={{ padding: "1rem" }}>
           {filters.map((filter) => (
             <MesheryFilterGridItem
               key={filter.id}
@@ -66,11 +74,16 @@ function MesheryFilterGrid({ filters=[],handleDeploy, handleUnDeploy, handleSubm
               setSelectedFilters={setSelectedFilters}
             />
           ))}
-  
+          
+          {filters.length ? (
+            <Box display="flex" justifyContent="center" marginTop={2} alignItems="center">
+              <Pagination count={pages} page={selectedPage + 1} onChange={(_, page) => setPage(page - 1)} />
+            </Box>
+          ) : null}
         </Grid>
-        }
-      </div>
-        );
+      )}
+    </div>
+  );
 }
 
-export default MesheryFilterGrid
+export default MesheryFilterGrid;
