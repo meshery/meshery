@@ -146,7 +146,6 @@ func listenForCoreEvents(ctx context.Context, eb *events.EventStreamer, resp cha
 	for {
 		select {
 		case datap := <-datach:
-			fmt.Println("found ", datap)
 			event, ok := datap.(*meshes.EventsResponse)
 			if !ok {
 				continue
