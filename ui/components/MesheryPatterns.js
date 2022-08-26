@@ -937,7 +937,7 @@ function MesheryPatterns({
           componentCount={modalOpen.count}
           tab={modalOpen.deploy ? 0 : 1}
         />
-        <UploadImport open={importModal.open} handleClose={handleUploadImportClose} supportedTypes="null" aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} configuration="Design" />
+        <UploadImport open={importModal.open} handleClose={handleUploadImportClose} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} configuration="Design" />
         <PromptComponent ref={modalRef} />
       </NoSsr>
     </>
