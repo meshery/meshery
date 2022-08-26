@@ -31,6 +31,8 @@ import DoneAllIcon from '@material-ui/icons/DoneAll';
 import ConfirmationMsg from "./ConfirmationModal";
 import PublishIcon from "@material-ui/icons/Publish";
 import PromptComponent from "./PromptComponent";
+import ConfigurationSubscription from "./graphql/subscriptions/ConfigurationSubscription";
+import fetchCatalogPattern from "./graphql/queries/CatalogPatternQuery";
 
 const styles = (theme) => ({
   grid : {
@@ -253,6 +255,11 @@ function MesheryPatterns({
     open : false
   })
 
+  const [catalogVisibility, setCatalogVisibility] = useState(true);
+  const [catalogContent, setCatalogContent] = useState([])
+
+  const disposeConfSubscriptionRef = useRef(null);
+
   const getMuiTheme = () => createTheme({
     overrides : {
       MuiInput : {
@@ -344,6 +351,79 @@ function MesheryPatterns({
 
     return (() => document.body.style.overflowX = "auto")
   }, [page, pageSize, search, sortOrder]);
+
+
+  const handleCatalogVisibility = () => {
+    setCatalogVisibility(catalogVisibility => !catalogVisibility);
+  }
+
+  useEffect(() => {
+    let catalogPatterns = []
+    if (catalogVisibility) {
+      catalogPatterns = patterns.filter(content => content.visibility === "public"
+      )
+      if (catalogPatterns.length > 0) {
+        setPatterns([...catalogPatterns, ...patterns])
+      }
+      return
+    }
+    setPatterns(patterns.filter(content => content.visibility !== "public"))
+  }, [catalogVisibility])
+
+  useEffect(() => {
+    initPatternsSubscription();
+    const fetchCatalogPatterns = fetchCatalogPattern({
+      selector : {
+        search : "",
+        order : ""
+      }
+    }).subscribe({
+      next : (result) => {
+        setCatalogContent(result?.catalogFilters)
+      },
+      error : (err) => console.log("There was an error fetching Catalog Pattern: ", err)
+    });
+    return  () => {
+      fetchCatalogPatterns.unsubscribe();
+      disposeConfSubscriptionRef.current.dispose();
+    }
+  },[])
+
+  const initPatternsSubscription = (pageNo=page.toString(), pagesize=pageSize.toString(), searchText=search, order=sortOrder) => {
+    if (disposeConfSubscriptionRef.current) {
+      disposeConfSubscriptionRef.current.dispose();
+    }
+    const configurationSubscription = ConfigurationSubscription((result) => {
+      if (catalogVisibility) {
+        setPatterns([...catalogContent, ...result.configuration?.patterns.patterns])
+      }
+      setPage(result.configuration?.patterns.page || 0);
+      setPageSize(result.configuration?.patterns.page_size || 0);
+      setCount(result.configuration?.patterns.total_count || 0);
+      setPatterns(result.configuration?.patterns.patterns)
+    },
+    {
+      applicationSelector : {
+        pageSize : pagesize,
+        page : pageNo,
+        search : searchText,
+        order : order
+      },
+      patternSelector : {
+        pageSize : pagesize,
+        page : pageNo,
+        search : searchText,
+        order : order
+      },
+      filterSelector : {
+        pageSize : pagesize,
+        page : pageNo,
+        search : searchText,
+        order : order
+      }
+    });
+    disposeConfSubscriptionRef.current = configurationSubscription
+  }
 
   const handleModalClose = () => {
     // @ts-ignore
@@ -922,7 +1002,7 @@ function MesheryPatterns({
           }
           {!selectedPattern.show &&
           <div className={classes.viewSwitchButton}>
-            <ViewSwitch view={viewType} changeView={setViewType} />
+            <ViewSwitch view={viewType} changeView={setViewType} catalogVisibility={catalogVisibility} handleCatalogVisibility={handleCatalogVisibility} />
           </div>
           }
         </div>

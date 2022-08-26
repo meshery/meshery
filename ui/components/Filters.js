@@ -39,6 +39,8 @@ import ConfirmationMsg from "./ConfirmationModal";
 import UndeployIcon from "../public/static/img/UndeployIcon";
 import { getComponentsinFile } from "../utils/utils";
 import PublishIcon from "@material-ui/icons/Publish";
+import ConfigurationSubscription from "./graphql/subscriptions/ConfigurationSubscription";
+import fetchCatalogFilter from "./graphql/queries/CatalogFilterQuery";
 
 const styles = (theme) => ({
   grid : {
@@ -189,10 +191,14 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     count : 0
   });
 
-
   const [importModal, setImportModal] = useState({
     open : false
   })
+
+  const [catalogVisibility, setCatalogVisibility] = useState(true);
+  const [catalogContent, setCatalogContent] = useState([])
+
+  const disposeConfSubscriptionRef = useRef(null);
 
   const getMuiTheme = () => createTheme({
     overrides : {
@@ -279,12 +285,43 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     });
   }
 
-  /**
-   * fetch filters when the page loads
-   */
+  const handleCatalogVisibility = () => {
+    setCatalogVisibility(catalogVisibility => !catalogVisibility);
+  }
+
   useEffect(() => {
-    fetchFilters(page, pageSize, search, sortOrder);
-  }, [page, pageSize, search, sortOrder]);
+    let catalogFilters = []
+    if (catalogVisibility) {
+      catalogFilters = filters.filter(content => content.visibility === "public")
+      if (catalogFilters.length > 0) {
+        setFilters([...catalogFilters, ...filters])
+      }
+      return
+    }
+    setFilters(filters.filter(content => content.visibility !== "public"))
+  }, [catalogVisibility])
+
+  useEffect(() => {
+    initFiltersSubscription();
+
+    const fetchCatalogFilters = fetchCatalogFilter({
+      selector : {
+        search : "",
+        order : ""
+      }
+    }).subscribe({
+      next : (result) => {
+        setCatalogContent(result?.catalogFilters)
+      },
+      error : (err) => console.log("There was an error fetching Catalog Filter: ", err)
+    });
+
+
+    return () => {
+      fetchCatalogFilters.unsubscribe();
+      disposeConfSubscriptionRef.current.dispose();
+    }
+  },[])
 
   /**
    * fetchFilters constructs the queries based on the parameters given
@@ -419,6 +456,42 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
       name : name,
       count : getComponentsinFile(filter_file)
     });
+  }
+
+  const initFiltersSubscription = (pageNo=page.toString(), pagesize=pageSize.toString(), searchText=search, order=sortOrder) => {
+    if (disposeConfSubscriptionRef.current) {
+      disposeConfSubscriptionRef.current.dispose();
+    }
+    const configurationSubscription = ConfigurationSubscription((result) => {
+      if (catalogVisibility) {
+        setFilters([...catalogContent, ...result.configuration?.filters.filters])
+      }
+      setPage(result.configuration?.filters.page || 0);
+      setPageSize(result.configuration?.filters.page_size || 0);
+      setCount(result.configuration?.filters.total_count || 0);
+      setFilters(result.configuration?.filters.filters)
+    },
+    {
+      applicationSelector : {
+        pageSize : pagesize,
+        page : pageNo,
+        search : searchText,
+        order : order
+      },
+      patternSelector : {
+        pageSize : pagesize,
+        page : pageNo,
+        search : searchText,
+        order : order
+      },
+      filterSelector : {
+        pageSize : pagesize,
+        page : pageNo,
+        search : searchText,
+        order : order
+      }
+    });
+    disposeConfSubscriptionRef.current = configurationSubscription
   }
 
   const handleModalClose = () => {
@@ -795,7 +868,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
           }
           {!selectedFilter.show &&
           <div className={classes.viewSwitchButton}>
-            <ViewSwitch data-cy="table-view" view={viewType} changeView={setViewType} />
+            <ViewSwitch data-cy="table-view" view={viewType} changeView={setViewType} catalogVisibility={catalogVisibility} handleCatalogVisibility={handleCatalogVisibility} />
           </div>
           }
         </div>
