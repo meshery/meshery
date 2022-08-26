@@ -231,7 +231,6 @@ function MesheryApplications({
   const [selectedRowData, setSelectedRowData] = useState(null);
   const [selectedApplication, setSelectedApplication] = useState(resetSelectedApplication());
   const DEPLOY_URL = '/api/pattern/deploy';
-  const [types, setTypes] = useState([]);
   const [modalOpen, setModalOpen] = useState({
     open : false,
     deploy : false,
@@ -257,13 +256,6 @@ function MesheryApplications({
   useEffect(() => {
     fetchApplications(page, pageSize, search, sortOrder);
   }, [page, pageSize, search, sortOrder]);
-
-  /**
-   * fetch applications when the application downloads
-   */
-  useEffect(() => {
-    getTypes();
-  },[]);
 
   const handleModalClose = () => {
     setModalOpen({
@@ -378,20 +370,6 @@ function MesheryApplications({
         handleError(ACTION_TYPES.DOWNLOAD_APP)
     );
   };
-
-  const getTypes = () => {
-    dataFetch(
-      `/api/application/types`,
-      {
-        credentials : "include",
-        method : "GET",
-      },
-      (res) => {
-        setTypes(res)
-      },
-      handleError(ACTION_TYPES.FETCH_APPLICATIONS_TYPES)
-    );
-  }
 
   function fetchApplications(page, pageSize, search, sortOrder) {
     if (!search) search = "";
@@ -857,7 +835,6 @@ function MesheryApplications({
               setPage={setPage}
               selectedPage={page}
               UploadImport={UploadImport}
-              types={types}
               handleAppDownload={handleAppDownload}
             />
         }
@@ -873,7 +850,7 @@ function MesheryApplications({
           tab={modalOpen.deploy ? 0 : 1}
         />
         <PromptComponent ref={modalRef} />
-        <UploadImport open={importModal.open} handleClose={handleUploadImportClose} supportedTypes={types} isApplication = {true} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} configuration="Application"  />
+        <UploadImport open={importModal.open} handleClose={handleUploadImportClose} isApplication = {true} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} configuration="Application"  />
       </NoSsr>
     </>
   );

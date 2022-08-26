@@ -2,8 +2,8 @@ import { graphql, requestSubscription } from "react-relay";
 import environment from "../../../lib/relayEnvironment";
 
 export const clusterResourcesSubscription = graphql`
-  subscription ClusterResourcesSubscription($k8scontextIDs: [String!]) {
-    clusterResources: subscribeClusterResources(k8scontextIDs: $k8scontextIDs) {
+  subscription ClusterResourcesSubscription($k8scontextIDs: [String!], $namespace: String!) {
+    clusterResources: subscribeClusterResources(k8scontextIDs: $k8scontextIDs, namespace: $namespace) {
       resources { 
         kind
         count
