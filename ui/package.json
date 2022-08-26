@@ -17,7 +17,7 @@
     "test-integration": "cypress run --spec 'cypress/integration/integration/**/*'",
     "test-e2e": "cypress run --spec 'cypress/integration/e2e/**/*'",
     "ci-test-integration": "start-server-and-test dev http://localhost:3000 test-integration",
-    "relay": "relay-compiler --src ./components --schema ../internal/graphql/schema/schema.graphql",
+    "relay": "relay-compiler --src ./components --schema ../server/internal/graphql/schema/schema.graphql",
     "prepare": "cd .. && husky install ui/.husky",
     "cy:dev:open": "start-server-and-test dev http://localhost:3000 cy:open"
   },
@@ -106,7 +106,7 @@
     "@4tw/cypress-drag-drop": "^2.2.1",
     "@babel/eslint-parser": "^7.18.2",
     "@babel/traverse": "^7.17.3",
-    "@babel/types": "^7.18.7",
+    "@babel/types": "^7.18.10",
     "@types/react-relay": "^13.0.2",
     "cypress": "^9.5.3",
     "cypress-file-upload": "^5.0.8",

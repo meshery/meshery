@@ -2109,30 +2109,39 @@
         "probable_cause": "",
         "suggested_remediation": "Make sure the controllers are deployed and their handlers are configured"
       },
-      "2243": {
-        "name": "ErrConfigurationApplicationsCode",
-        "code": "2243",
-        "severity": "Alert",
-        "long_description": "GraphQL subscription for Applications stopped",
-        "short_description": "Configuration Subscription failed",
-        "probable_cause": "Could be a network issue",
-        "suggested_remediation": "Confirm that Meshery Server is reachable from your browser."
+      "2248": {
+        "name": "ErrListenAndServeCode",
+        "code": "2248",
+        "severity": "Fatal",
+        "long_description": "ListenAndServe Error: ",
+        "short_description": "ListenAndServe Error",
+        "probable_cause": "",
+        "suggested_remediation": ""
       },
-      "2244": {
-        "name": "ErrConfigurationFiltersCode",
-        "code": "2244",
+      "2249": {
+        "name": "ErrCleaningUpLocalProviderCode",
+        "code": "2249",
         "severity": "Alert",
-        "long_description": "GraphQL subscription for Filters stopped",
-        "short_description": "Configuration Subscription failed",
-        "probable_cause": "Could be a network issue",
-        "suggested_remediation": "Confirm that Meshery Server is reachable from your browser."
+        "long_description": "Error cleaning up local provider: ",
+        "short_description": "Error cleaning up local provider",
+        "probable_cause": "",
+        "suggested_remediation": ""
       },
-      "2245": {
-        "name": "ErrK8sContextCode",
-        "code": "2245",
-        "severity": "",
-        "long_description": "",
-        "short_description": "",
+      "2250": {
+        "name": "ErrClosingDatabaseInstanceCode",
+        "code": "2250",
+        "severity": "Alert",
+        "long_description": "Error closing database instance: ",
+        "short_description": "Error closing database instance",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "2251": {
+        "name": "ErrCreatingUUIDInstanceCode",
+        "code": "2251",
+        "severity": "Fatal",
+        "long_description": "Unable to create UUID instance: ",
+        "short_description": "Unable to create UUID instance",
         "probable_cause": "",
         "suggested_remediation": ""
       }

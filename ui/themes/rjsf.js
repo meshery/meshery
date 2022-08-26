@@ -127,6 +127,13 @@ export const rjsfTheme = createTheme({
           border : 'none !important'
         },
         marginTop : '0.1rem !important',
+        overflow : "hidden",
+        textOverflow : "ellipsis",
+        whiteSpace : "nowrap",
+        '&:hover' : {
+          overflow : "visible",
+          whiteSpace : "normal",
+        }
       },
     },
     MuiPaper : {

@@ -23,6 +23,8 @@ import MesheryEventViewer from './MesheryEventViewer';
 // import { updateSMIResults } from '../lib/store';
 import dataFetch from '../lib/data-fetch';
 import { withSnackbar } from 'notistack'
+import { bindActionCreators } from "redux";
+import { updateEvents } from "../lib/store";
 
 const styles = (theme) => ({
   sidelist : { width : 450, },
@@ -127,7 +129,6 @@ function NotificationIcon ({ type, className }) {
 
 class MesheryNotification extends React.Component {
   state = {
-    events : [],
     open : false,
     dialogShow : false,
     k8sConfig : { inClusterConfig : false,
@@ -179,7 +180,7 @@ class MesheryNotification extends React.Component {
         || JSON.stringify(props.meshAdapters) !== JSON.stringify(state.meshAdapters)) {
       return { createStream : true,
         k8sConfig : props.k8sConfig,
-        meshAdapters : props.meshAdapters, };
+        meshAdapters : props.meshAdapters };
     }
     return null;
   }
@@ -205,13 +206,11 @@ class MesheryNotification extends React.Component {
   handleEvents() {
     const self = this;
     return (e) => {
-      const { events } = this.state;
+      const { events, updateEvents } = this.props;
       const data = JSON.parse(e.data);
       // set null event field as success
       data.event_type = data.event_type || 0
 
-      // Add the event to the state
-      events.push(data);
 
       // Dispatch the notification
       self.notificationDispatcher(data.event_type, data.summary)
@@ -220,7 +219,7 @@ class MesheryNotification extends React.Component {
       //   self.props.updateSMIResults({smi_result: data,});
       //   console.log("HandleEvents",{smi_result: data,});
       // }
-      self.setState({ events });
+      updateEvents({ events : [...events, data] })
     };
   }
 
@@ -247,11 +246,12 @@ class MesheryNotification extends React.Component {
   }
 
   deleteEvent = (ind) => () => {
-    const { events } = this.state;
+    const { events, updateEvents } = this.props;
     if (events[ind]) {
       events.splice(ind, 1);
     }
-    this.setState({ events, dialogShow : false });
+    updateEvents({ events : events })
+    this.setState({ dialogShow : false });
   }
 
   handleDialogClose = () => {
@@ -260,8 +260,10 @@ class MesheryNotification extends React.Component {
 
   handleClearAllNotifications() {
     const self = this;
+    const { updateEvents } = this.props;
     return () => {
-      self.setState({ events : [], open : false });
+      updateEvents({ events : [] })
+      self.setState({ open : false });
     };
   }
 
@@ -281,8 +283,8 @@ class MesheryNotification extends React.Component {
   }
 
   render() {
-    const { classes } = this.props;
-    const { open, events } = this.state;
+    const { classes, events } = this.props;
+    const { open } = this.state;
     const self = this;
 
     let toolTipMsg = `There are ${events.length} events`;
@@ -369,12 +371,17 @@ class MesheryNotification extends React.Component {
                   <Tab label="Warning" onClick={this.handleNotifFiltering('warning')} style={{ minWidth : "15%" }}/>
                   <Tab label="Success" onClick={this.handleNotifFiltering('success')} style={{ minWidth : "15%" }}/>
                 </Tabs>
-                {getNotifications(events, this.state.displayEventType).map((event, ind) => (
+                {getNotifications(this.props.events, this.state.displayEventType).map((event, ind) => (
                   <MesheryEventViewer
                     eventVariant={event.event_type}
                     eventSummary={event.summary}
                     deleteEvent={self.deleteEvent(ind)}
                     eventDetails={event.details || "Details Unavailable"}
+                    eventCause={event.probable_cause}
+                    eventRemediation={event.suggested_remediation}
+                    eventErrorCode={event.error_code}
+                    componentType={event.component}
+                    componentName={event.component_name}
                   />
                 ))}
               </div>
@@ -386,6 +393,10 @@ class MesheryNotification extends React.Component {
   }
 }
 
+const mapDispatchToProps = (dispatch) => ({
+  updateEvents : bindActionCreators(updateEvents, dispatch)
+})
+
 // const mapDispatchToProps = (dispatch) => ({
 //   updateSMIResults: bindActionCreators(updateSMIResults, dispatch),
 // });
@@ -393,10 +404,11 @@ class MesheryNotification extends React.Component {
 const mapStateToProps = (state) => {
   const k8sConfig = state.get('k8sConfig');
   const meshAdapters = state.get('meshAdapters').toJS();
-  return { k8sConfig, meshAdapters };
+  const events = state.get("events");
+  return { k8sConfig, meshAdapters, events };
 };
 
 export default withStyles(styles)(connect(
   mapStateToProps,
-  null,
+  mapDispatchToProps,
 )(withSnackbar(MesheryNotification)));
