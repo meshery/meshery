@@ -917,6 +917,7 @@ function MesheryPatterns({
               handleUnDeploy={handleUnDeploy}
               urlUploadHandler={urlUploadHandler}
               uploadHandler={uploadHandler}
+              supportedTypes="null"
               handleSubmit={handleSubmit}
               setSelectedPattern={setSelectedPattern}
               selectedPattern={selectedPattern}
