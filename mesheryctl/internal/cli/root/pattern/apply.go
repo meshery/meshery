@@ -16,11 +16,10 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/models"
+	"github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"gopkg.in/yaml.v2"
-	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 )
 
 var (
@@ -224,18 +223,13 @@ mesheryctl pattern apply [pattern-name]
 			return err
 		}
 
-		type pattern struct {
-			Name     string                    `yaml:"name"`
-			Services unstructured.Unstructured `yaml:"services"`
-		}
-
-		var p pattern
-		err = yaml.Unmarshal([]byte(patternFile), &p)
+		pf, err := core.NewPatternFile([]byte(patternFile))
 		if err != nil {
 			return errors.Wrap(err, "could not unmarshal pattern file")
 		}
 
-		s := utils.NewLoader("Applying pattern " + p.Name)
+		s := utils.CreateDefaultSpinner("Applying pattern "+pf.Name, "")
+		s.Start()
 		res, err := client.Do(req)
 		if err != nil {
 			return err
