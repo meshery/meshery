@@ -12,8 +12,6 @@ replace (
 	github.com/go-redis/redis/v8 => github.com/go-redis/redis/v8 v8.11.4
 	github.com/kubernetes/kompose => github.com/meshery/kompose v1.0.1 // till https://github.com/kubernetes/kompose/pull/1499 is merged
 	github.com/kudobuilder/kuttl => github.com/layer5io/kuttl v0.4.1-0.20200806180306-b7e46afd657f
-	github.com/layer5io/meshery-adapter-library v0.5.8 => ../meshery-adapter-library
-	github.com/layer5io/meshkit v0.5.35 => ../meshkit
 	github.com/spf13/afero => github.com/spf13/afero v1.5.1 // Until viper bug is resolved #1161
 	go.mongodb.org/mongo-driver v1.5.1 => github.com/mongodb/mongo-go-driver v1.5.1
 	gonum.org/v1/plot v0.9.0 => github.com/gonum/plot v0.9.0
