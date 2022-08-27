@@ -6,7 +6,7 @@ import { styled } from "@mui/material/styles";
 import Link from "next/link";
 import MesheryNotification from "@/components/Notification/MesheryNotification"
 import MenuIcon from "@mui/icons-material/Menu";
-import K8sContextMenu from "../K8sContextSwitcher/K8sContextSwitcher";
+import K8sContextMenu from "./K8sContextSwitcher";
 import User from "../User";
 
 const UserSpan = styled(({ children, ...props }) => <span {...props}>{children}</span>)(({ theme }) => ({
@@ -100,8 +100,6 @@ const HeaderComponent = ({ drawerOpen, onDrawerToggle, pageTitle, contexts={}, a
             
             <K8sContextMenu contexts={contexts} 
             activeContexts={activeContexts}
-            setActiveContexts={setActiveContexts}
-            searchContexts={searchContexts}
              />
 
             <IconButton color="inherit" size="large">

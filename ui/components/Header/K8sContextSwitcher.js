@@ -5,6 +5,8 @@ import {Paper, Slide, Button, IconButton, Link, TextField, Checkbox, Avatar} fro
 import ClickAwayListener from '@mui/base/ClickAwayListener';
 import BadgeAvatars from "@/components/CustomAvatar"
 import { styled } from "@mui/material/styles";
+import { useTheme } from "@mui/system";
+
 
 const CbadgeContainer = styled('div')(({ theme }) => ({
   display : "flex",
@@ -13,13 +15,24 @@ const CbadgeContainer = styled('div')(({ theme }) => ({
   position : "relative"
 }));
 
+const CMenuContainer = styled(Paper)(({ theme }) => ({
+  backgroundColor : "revert",
+  borderRadius : "3px",
+  padding : theme.spacing(3),
+  zIndex : 1201,
+  boxShadow : "20px #979797",
+  transition : "linear .2s",
+  transitionProperty : "height",
+  alignItems: "center"
+}));
+
 const Cbadge = styled('div')(({ theme }) => ({
-  fontSize : "0.65rem",
+  fontSize : theme.spacing(1.5),
   backgroundColor : "white",
   borderRadius : "50%",
   color : "black",
-  height : "1.30rem",
-  width : "1.30rem",
+  height : theme.spacing(2.5),
+  width : theme.spacing(2.5),
   display : "flex",
   justifyContent : "center",
   alignItems : "center",
@@ -33,22 +46,22 @@ const Cbadge = styled('div')(({ theme }) => ({
 export default function K8sContextMenu({
   contexts={},  setActiveContexts = () => { },
   searchContexts = () => { }, runningStatus, }) {
-
+  
   const [anchorEl, setAnchorEl] = useState(false);
   const [showFullContextMenu, setShowFullContextMenu] = useState(false);
   const [transformProperty, setTransformProperty] = useState(100);
+
+  const theme = useTheme();
 
   const styleSlider = {
     backgroundColor : "#EEEEEE",
     position : "absolute",
     top: "-20%",
-    right : "10rem",
+    right : theme.spacing(14),
     zIndex : "-1",
     bottom : "-55%",
     transform : showFullContextMenu ? `translateY(${transformProperty}%)` : "translateY(0)"
   };
-
-
 
   const getOperatorStatus = (contextId) => {
     const state = runningStatus.operatorStatus;
@@ -112,8 +125,7 @@ export default function K8sContextMenu({
           <img
             className="k8s-image"
             src="/static/img/kubernetes.svg"
-            width="24px"
-            height="24px"
+            width = {theme.spacing(3)}
             style={{ zIndex: "2" }}
           />
           <Cbadge>{contexts?.total_count || 0}</Cbadge>
@@ -128,7 +140,7 @@ export default function K8sContextMenu({
                 setShowFullContextMenu(false);
             }}
           >
-            <Paper >
+            <CMenuContainer >
               <div>
                 <TextField
                   id="search-ctx"
@@ -142,7 +154,7 @@ export default function K8sContextMenu({
                   }}
                 />
               </div>
-              <div>
+              <div style={{alignItems: "center"}}>
                 {contexts?.total_count ? 
                   <>
                     <Checkbox
@@ -159,7 +171,7 @@ export default function K8sContextMenu({
                       variant="contained"
                       color="primary"
                       size="large"
-                      style={{ margin: "0.5rem 0.5rem", whiteSpace: "nowrap" }}
+                      style={{ margin: "0.5rem 2rem" , whiteSpace: "nowrap" }}
                     >
                       <AddIcon/>
                       Connect Clusters
@@ -217,7 +229,7 @@ export default function K8sContextMenu({
                   );
                 })}
               </div>
-            </Paper>
+            </CMenuContainer>
           </ClickAwayListener>
         </div>
       </Slide>
