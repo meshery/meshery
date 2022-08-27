@@ -59,7 +59,9 @@ function Mesherypatterns({user}) {
     },[])
 
     const initPatternsSubscription = (page, pageSize, search, order) => {
-      disposeConfSubscriptionRef.current.dispose();
+      if (disposeConfSubscriptionRef.current) {
+        disposeConfSubscriptionRef.current.dispose();
+      }
       const configurationSubscription = ConfigurationSubscription((result) => {
         setPage(result.configuration?.patterns.page || 0);
         setPageSize(result.configuration?.patterns.page_size || 0);

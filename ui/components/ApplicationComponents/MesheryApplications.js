@@ -57,7 +57,9 @@ function MesheryApplications({user}) {
     },[]);
 
     const initAppsSubscription = (page, pageSize, search, order) => {
-      disposeConfSubscriptionRef.current.dispose();
+      if (disposeConfSubscriptionRef.current) {
+        disposeConfSubscriptionRef.current.dispose();
+      }
       const configurationSubscription = ConfigurationSubscription((result) => {
         setPage(result.configuration?.applications.page || 0);
         setPageSize(result.configuration?.applications.page_size || 0);
