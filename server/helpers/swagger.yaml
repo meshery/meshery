@@ -1023,7 +1023,6 @@ definitions:
     type: object
     x-go-package: github.com/grafana-tools/sdk
   Link:
-    description: Link represents link to another dashboard or external weblink
     properties:
       asDropdown:
         type: boolean
@@ -1925,7 +1924,6 @@ definitions:
           $ref: '#/definitions/Axis'
         type: array
         x-go-name: Yaxes
-    title: Panel represents panels of different types defined in Grafana.
     type: object
     x-go-package: github.com/grafana-tools/sdk
   PatternsAPIResponse:
@@ -4054,21 +4052,12 @@ paths:
       tags:
       - ApplicationsAPI
     post:
-      description: Creates a new application with source-content
+      description: Save attached Meshery Application File
       operationId: idPostApplicationFileRequest
       responses:
         "200":
           $ref: '#/responses/mesheryApplicationResponseWrapper'
       summary: Handle POST request for Application Files
-      tags:
-      - ApplicationsAPI
-    put:
-      description: Updates the design for given application
-      operationId: idPUTApplicationFileRequest
-      responses:
-        "200":
-          $ref: '#/responses/mesheryApplicationResponseWrapper'
-      summary: Handle PUT request for Application Files
       tags:
       - ApplicationsAPI
   /api/application/{id}:
@@ -4117,7 +4106,9 @@ paths:
       tags:
       - ApplicationsAPI
     post:
-      description: Deploy an attached application file with the request
+      description: |-
+        Handle POST request for Application File Deploy
+        Deploy an attached application file with the request
       operationId: idPostDeployApplicationFile
       parameters:
       - in: formData
@@ -4127,27 +4118,6 @@ paths:
       responses:
         "200":
           $ref: '#/responses/applicationFilesResponseWrapper'
-      summary: Handle POST request for Application File Deploy
-      tags:
-      - ApplicationsAPI
-  /api/application/download/{id}/{sourcetype}:
-    get:
-      description: Get the application source-content
-      operationId: typeGetApplication
-      responses:
-        "200":
-          $ref: '#/responses/mesheryApplicationResponseWrapper'
-      summary: Handle GET request for Meshery Application with of source content
-      tags:
-      - ApplicationsAPI
-  /api/application/types:
-    get:
-      description: Get application file type
-      operationId: typeGetMesheryApplication
-      responses:
-        "200":
-          $ref: '#/responses/mesheryApplicationResponseWrapper'
-      summary: Handle GET request for Meshery Application with the provided type
       tags:
       - ApplicationsAPI
   /api/filter:
