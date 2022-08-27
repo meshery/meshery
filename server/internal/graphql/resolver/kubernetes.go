@@ -49,7 +49,7 @@ func (r *Resolver) getAvailableNamespaces(ctx context.Context, provider models.P
 	namespaces, err := model.SelectivelyFetchNamespaces(cids, provider)
 	if err != nil {
 		r.Log.Error(ErrGettingNamespace(err))
-		return nil, err	
+		return nil, err
 	}
 
 	modelnamespaces := make([]*model.NameSpace, 0)
@@ -288,16 +288,16 @@ func (r *Resolver) subscribeClusterResources(ctx context.Context, provider model
 		r.Log.Info("Initializing Cluster Resources subscription")
 		for {
 			select {
-				case <-ch:
-					clusterResources, err := r.getClusterResources(ctx, provider, k8scontextIDs, namespace)
-					if err != nil {
-						r.Log.Error(ErrClusterResourcesSubscription(err))
-						break
-					}
-					respChan <- clusterResources
-				case <-ctx.Done():
-					r.Log.Info("Cluster Resources subscription stopped")
-					return
+			case <-ch:
+				clusterResources, err := r.getClusterResources(ctx, provider, k8scontextIDs, namespace)
+				if err != nil {
+					r.Log.Error(ErrClusterResourcesSubscription(err))
+					break
+				}
+				respChan <- clusterResources
+			case <-ctx.Done():
+				r.Log.Info("Cluster Resources subscription stopped")
+				return
 			}
 		}
 	}()

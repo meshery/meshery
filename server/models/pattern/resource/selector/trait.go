@@ -61,8 +61,8 @@ func (s *Selector) selectK8sTrait(ws []core.TraitCapability) (core.TraitCapabili
 // selectMeshTrait will look through all the candidate traits and will return most suitable trait
 //
 // The selection of trait is based on the following criterion
-//  - If a trait definition is of a service mesh version that is NOT in the cluster then reject that candidate
-//  - If
+//   - If a trait definition is of a service mesh version that is NOT in the cluster then reject that candidate
+//   - If
 func (s *Selector) selectMeshTrait(ws []core.TraitCapability) (core.TraitCapability, bool) {
 	if len(ws) == 0 {
 		return core.TraitCapability{}, false
