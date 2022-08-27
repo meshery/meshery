@@ -32,6 +32,7 @@ type MesheryApplicationRequestBody struct {
 
 // swagger:route POST /api/application/deploy ApplicationsAPI idPostDeployApplicationFile
 // Handle POST request for Application File Deploy
+//
 // Deploy an attached application file with the request
 // responses:
 //  200: applicationFilesResponseWrapper
@@ -58,7 +59,14 @@ func (h *Handler) ApplicationFileHandler(
 // swagger:route POST /api/application/ ApplicationsAPI idPostApplicationFileRequest
 // Handle POST request for Application Files
 //
-// Save attached Meshery Application File
+// Creates a new application with source-content
+// responses:
+//  200: mesheryApplicationResponseWrapper
+
+// swagger:route PUT /api/application/ ApplicationsAPI idPUTApplicationFileRequest
+// Handle PUT request for Application Files
+//
+// Updates the design for given application
 // responses:
 //  200: mesheryApplicationResponseWrapper
 
@@ -461,6 +469,13 @@ func (h *Handler) GetMesheryApplicationHandler(
 	fmt.Fprint(rw, string(resp))
 }
 
+// swagger:route GET /api/application/types ApplicationsAPI typeGetMesheryApplication
+// Handle GET request for Meshery Application with the provided type
+//
+// Get application file type
+// responses:
+//  200: mesheryApplicationResponseWrapper
+
 // GetMesheryApplicationHandler fetched the application with the given id
 func (h *Handler) GetMesheryApplicationTypesHandler(
 	rw http.ResponseWriter,
@@ -480,6 +495,13 @@ func (h *Handler) GetMesheryApplicationTypesHandler(
 	rw.Header().Set("Content-Type", "application/json")
 	fmt.Fprint(rw, string(b))
 }
+
+// swagger:route GET /api/application/download/{id}/{sourcetype} ApplicationsAPI typeGetApplication
+// Handle GET request for Meshery Application with of source content
+//
+// Get the application source-content
+// responses:
+//  200: mesheryApplicationResponseWrapper
 
 // GetMesheryApplicationHandler fetched the application with the given id
 func (h *Handler) GetMesheryApplicationSourceHandler(
