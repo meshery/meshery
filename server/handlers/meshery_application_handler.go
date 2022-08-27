@@ -56,17 +56,10 @@ func (h *Handler) ApplicationFileHandler(
 	h.PatternFileHandler(rw, r, prefObj, user, provider)
 }
 
-// swagger:route POST /api/application/ ApplicationsAPI idPostApplicationFileRequest
+// swagger:route POST /api/application/{sourcetype} ApplicationsAPI idPostApplicationFileRequest
 // Handle POST request for Application Files
 //
 // Creates a new application with source-content
-// responses:
-//  200: mesheryApplicationResponseWrapper
-
-// swagger:route PUT /api/application/ ApplicationsAPI idPUTApplicationFileRequest
-// Handle PUT request for Application Files
-//
-// Updates the design for given application
 // responses:
 //  200: mesheryApplicationResponseWrapper
 
@@ -100,6 +93,13 @@ func (h *Handler) ApplicationFileRequestHandler(
 		h.handleApplicationUpdate(rw, r, prefObj, user, provider)
 	}
 }
+
+// swagger:route PUT /api/application/{sourcetype} ApplicationsAPI idPutApplicationFileRequest
+// Handle PUT request for Application Files
+//
+// Updates the design for the provided application
+// responses:
+//  200: mesheryApplicationResponseWrapper
 
 func (h *Handler) handleApplicationPOST(
 	rw http.ResponseWriter,
@@ -501,7 +501,7 @@ func (h *Handler) GetMesheryApplicationTypesHandler(
 //
 // Get the application source-content
 // responses:
-//  200: mesheryApplicationResponseWrapper
+//  200: applicationFileParamsWrapper
 
 // GetMesheryApplicationHandler fetched the application with the given id
 func (h *Handler) GetMesheryApplicationSourceHandler(
