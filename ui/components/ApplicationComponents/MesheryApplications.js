@@ -49,35 +49,7 @@ function MesheryApplications({user}) {
     }
    
     useEffect(() => {
-      const configurationSubscription = ConfigurationSubscription((result) => {
-        setPage(result.configuration?.applications.page || 0);
-        setPageSize(result.configuration?.applications.page_size || 0);
-        setCount(result.configuration?.applications.total_count || 0);
-        setApplications(result.configuration?.applications.applications)
-      },
-      {
-        applicationSelector : {
-          pageSize : pageSize.toString(),
-          page : page.toString(),
-          search : search,
-          order : sortOrder
-        },
-        patternSelector : {
-          pageSize : pageSize.toString(),
-          page : page.toString(),
-          search : search,
-          order : sortOrder
-        },
-        filterSelector : {
-          pageSize : pageSize.toString(),
-          page : page.toString(),
-          search : search,
-          order : sortOrder
-        }
-      });
-      console.log("PPPP", configurationSubscription);
-      disposeConfSubscriptionRef.current = configurationSubscription;
-  
+      initAppsSubscription();
       return () => {
         console.log(disposeConfSubscriptionRef, "LLLLLLL");
         disposeConfSubscriptionRef.current.dispose();

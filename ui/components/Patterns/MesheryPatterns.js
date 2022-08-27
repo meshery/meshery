@@ -54,34 +54,7 @@ function Mesherypatterns({user}) {
     } 
 
     useEffect(() => {
-      const configurationSubscription = ConfigurationSubscription((result) => {
-        setPage(result.configuration?.patterns.page || 0);
-        setPageSize(result.configuration?.patterns.page_size || 0);
-        setCount(result.configuration?.patterns.total_count || 0);
-        setPatterns(result.configuration?.patterns.patterns)
-      },
-      {
-        applicationSelector : {
-          pageSize : pageSize.toString(),
-          page : page.toString(),
-          search : search,
-          order : sortOrder
-        },
-        patternSelector : {
-          pageSize : pageSize.toString(),
-          page : page.toString(),
-          search : search,
-          order : sortOrder
-        },
-        filterSelector : {
-          pageSize : pageSize.toString(),
-          page : page.toString(),
-          search : search,
-          order : sortOrder
-        }
-      });
-  
-      disposeConfSubscriptionRef.current = configurationSubscription;
+      initPatternsSubscription();
       return () => disposeConfSubscriptionRef.current.dispose();
     },[])
 
