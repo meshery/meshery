@@ -1,11 +1,11 @@
 import React, {useState} from "react"
-import {Grid, Typography, Box, Paper, MenuItem, TableContainer, Table, TableHead, TableRow, TableCell, Tooltip,} from "@mui/material"
+import {Grid, Typography, Box, Paper, MenuItem, Button, TableContainer, Table, TableHead, TableRow, TableCell, Tooltip,} from "@mui/material"
 import {  getK8sClusterNamesFromCtxId } from "@/utils//multi-ctx";
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 
+function ShowServiceMesh ({meshScan, activeMeshScanNamespace, meshScanNamespaces}) {
 
-function showServiceMesh ({meshScan, activeMeshScanNamespace}) {
-
-    function formatContextNamesForDashboardView () {
+    function emptyStateMessageForServiceMeshesInfo () {
         const clusters = getSelectedK8sContextsNames();
         if (clusters.length === 0) {
           return "No Cluster is selected to show the Service Mesh Information"
@@ -32,19 +32,16 @@ function showServiceMesh ({meshScan, activeMeshScanNamespace}) {
                     <Typography variant="h6">{mesh.tag}</Typography>
                   </div>
                 </Grid>
-                {/* <Grid item>
+                <Grid item>
                   {activeMeshScanNamespace[mesh.name] && (
                     <Select
                       value={activeMeshScanNamespace[mesh.name]}
-                      onChange={(e) =>
-                        self.setState((state) => ({ activeMeshScanNamespace : { ...state.activeMeshScanNamespace, [mesh.name] : e.target.value }, }))
-                      }
                     >
                       {meshScanNamespaces[mesh.name] &&
                         meshScanNamespaces[mesh.name].map((ns) => <MenuItem value={ns}>{ns}</MenuItem>)}
                     </Select>
                   )}
-                </Grid> */}
+                </Grid>
               </Grid>
               <TableContainer>
                 <Table aria-label="Deployed service mesh details">
@@ -147,17 +144,16 @@ function showServiceMesh ({meshScan, activeMeshScanNamespace}) {
               </>
             )
             : (
-              <div
-                style={{
-                  padding : "2rem",
-                  display : "flex",
-                  justifyContent : "center",
-                  alignItems : "center",
-                  flexDirection : "column",
-                }}
-              >
+              <Box
+              sx={{
+                margin: "auto",
+                display : "flex",
+                justifyContent : "center",
+                flexDirection : "column",
+              }}
+            >
                 <Typography style={{ fontSize : "1.5rem", marginBottom : "2rem" }} align="center" color="textSecondary">
-                  {formatContextNamesForDashboardView}
+                  {emptyStateMessageForServiceMeshesInfo}
                 </Typography>
                 <Button
                   aria-label="Add Meshes"
@@ -166,13 +162,13 @@ function showServiceMesh ({meshScan, activeMeshScanNamespace}) {
                   size="large"
                 //   onClick={() => self.props.router.push("/management")}
                 >
-                  <AddIcon />
+                  <AddCircleOutlineIcon />
                   Install Service Mesh
                 </Button>
-              </div>
+              </Box>
             )}
         </>
     )
   }
 
-  export default showServiceMesh
+  export default ShowServiceMesh

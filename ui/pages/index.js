@@ -1,6 +1,5 @@
 import React, {useState, useEffect} from "react";
 import { Button, Grid, Link, Stack, Typography, Box } from "@mui/material";
-import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import { AdaptersChipList, AdaptersListContainer } from "@/features/mesheryComponents";
 import { PaperWithTitle } from "@/components/Paper";
 import { nanoid } from "@reduxjs/toolkit";
@@ -9,7 +8,7 @@ import { KuberenetesClusterChip, KuberenetesClusterContainer } from "@/features/
 import { GrafanaChip, MetricsContainer, PrometheusChip } from "@/features/mesheryEnvironment/components";
 import SettingsIcon from "@mui/icons-material/Settings";
 import { MetricsButton } from "@/components/Button"
-import showServiceMesh from "@/components/Dashboard/showServiceMesh"
+import ShowServiceMesh from "@/components/Dashboard/showServiceMesh"
 
 export default function Dashboard() {
   const theme = useTheme();
@@ -120,7 +119,6 @@ export default function Dashboard() {
             }
           }
         }
-
         return member
       });
       namespaces[mesh.name] = [...namespaces[mesh.name]];
@@ -142,7 +140,7 @@ export default function Dashboard() {
     <Grid container spacing={2}>
       <Grid item xs={6}>
         <PaperWithTitle title="Service Mesh" titleVariant="h6">
-          <showServiceMesh meshScan={meshScan} activeMeshScanNamespace={activeMeshScanNamespace} />
+          <ShowServiceMesh meshScan={meshScan} activeMeshScanNamespace={activeMeshScanNamespace} meshScanNamespaces={meshScanNamespaces} />
         </PaperWithTitle>
       </Grid>
       <Grid item xs={6}>
