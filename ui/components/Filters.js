@@ -24,7 +24,7 @@ import { withSnackbar } from "notistack";
 import CloseIcon from "@material-ui/icons/Close";
 import EditIcon from "@material-ui/icons/Edit";
 import DoneAllIcon from '@material-ui/icons/DoneAll';
-import { updateProgress } from "../lib/store";
+import { toggleCatalogContent, updateProgress } from "../lib/store";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
 import dataFetch from "../lib/data-fetch";
 import UploadImport from "./UploadImport";
@@ -165,7 +165,7 @@ function resetSelectedFilter() {
   return { show : false, filter : null };
 }
 
-function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, classes, selectedK8sContexts }) {
+function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, classes, selectedK8sContexts, catalogVisibility, toggleCatalogContent }) {
   const [page, setPage] = useState(0);
   const [search] = useState("");
   const [sortOrder] = useState("");
@@ -195,8 +195,8 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     open : false
   })
 
-  const [catalogVisibility, setCatalogVisibility] = useState(true);
-  const [catalogContent, setCatalogContent] = useState([])
+  const catalogContentRef = useRef();
+  const catalogVisibilityRef = useRef();
 
   const disposeConfSubscriptionRef = useRef(null);
 
@@ -286,22 +286,16 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
   }
 
   const handleCatalogVisibility = () => {
-    setCatalogVisibility(catalogVisibility => !catalogVisibility);
+    catalogVisibilityRef.current = !catalogVisibility
+    toggleCatalogContent({ catalogVisibility : !catalogVisibility });
   }
 
   useEffect(() => {
-    let catalogFilters = []
-    if (catalogVisibility) {
-      catalogFilters = filters.filter(content => content.visibility === "public")
-      if (catalogFilters.length > 0) {
-        setFilters([...catalogFilters, ...filters])
-      }
-      return
-    }
-    setFilters(filters.filter(content => content.visibility !== "public"))
+    handleSetFilters(filters)
   }, [catalogVisibility])
 
   useEffect(() => {
+    catalogVisibilityRef.current = catalogVisibility
     initFiltersSubscription();
 
     const fetchCatalogFilters = fetchCatalogFilter({
@@ -311,11 +305,10 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
       }
     }).subscribe({
       next : (result) => {
-        setCatalogContent(result?.catalogFilters)
+        catalogContentRef.current = result?.catalogFilters;
       },
       error : (err) => console.log("There was an error fetching Catalog Filter: ", err)
     });
-
 
     return () => {
       fetchCatalogFilters.unsubscribe();
@@ -348,7 +341,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
         console.log("FilterFile API", `/api/filter${query}`);
         updateProgress({ showProgress : false });
         if (result) {
-          setFilters(result.filters || []);
+          handleSetFilters(result.filters || []);
           setPage(result.page || 0);
           setPageSize(result.page_size || 0);
           setCount(result.total_count || 0);
@@ -404,8 +397,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     );
   };
 
-  function handleClone(e, filterID) {
-    e.stopPropagation()
+  function handleClone(filterID) {
     updateProgress({ showProgress : true });
     dataFetch(FILTER_URL.concat(CLONE_URL, "/", filterID),
       {
@@ -458,18 +450,23 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     });
   }
 
+  const handleSetFilters = (filters) => {
+    if (catalogVisibilityRef.current && catalogContentRef.current?.length > 0) {
+      setFilters([...catalogContentRef.current, ...filters.filter(content => content.visibility !== "public")])
+      return
+    }
+    setFilters(filters.filter(content => content.visibility !== "public"))
+  }
+
   const initFiltersSubscription = (pageNo=page.toString(), pagesize=pageSize.toString(), searchText=search, order=sortOrder) => {
     if (disposeConfSubscriptionRef.current) {
       disposeConfSubscriptionRef.current.dispose();
     }
     const configurationSubscription = ConfigurationSubscription((result) => {
-      if (catalogVisibility) {
-        setFilters([...catalogContent, ...result.configuration?.filters.filters])
-      }
       setPage(result.configuration?.filters.page || 0);
       setPageSize(result.configuration?.filters.page_size || 0);
       setCount(result.configuration?.filters.total_count || 0);
-      setFilters(result.configuration?.filters.filters)
+      handleSetFilters(result.configuration?.filters.filters);
     },
     {
       applicationSelector : {
@@ -678,7 +675,11 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
           const visibility = filters[tableMeta.rowIndex].visibility
           return (
             <>
-              {visibility === "public" ? <IconButton onClick={(e) => handleClone(e, rowData.id)}>
+              {visibility === "public" ? <IconButton onClick={(e) => {
+                e.stopPropagation();
+                handleClone(rowData.id)
+              }
+              }>
                 <img src="/static/img/fork.svg" />
               </IconButton>
                 :
@@ -920,10 +921,14 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
   );
 }
 
-const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(updateProgress, dispatch) });
+const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(updateProgress, dispatch),
+  toggleCatalogContent : bindActionCreators(toggleCatalogContent, dispatch)
+});
 
 const mapStateToProps = (state) => {
-  return { user : state.get("user")?.toObject(), selectedK8sContexts : state.get("selectedK8sContexts") };
+  return { user : state.get("user")?.toObject(), selectedK8sContexts : state.get("selectedK8sContexts"),
+    catalogVisibility : state.get("catalogVisibility")
+  };
 };
 
 // @ts-ignore

@@ -1,6 +1,8 @@
 import { Grid, Typography, Button, Switch } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
-import { useState } from "react";
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
+import { toggleCatalogContent } from "../lib/store";
 
 
 const styles = (theme) => ({
@@ -47,13 +49,12 @@ const styles = (theme) => ({
 
 const INITIAL_GRID_SIZE = { lg : 6, md : 12, xs : 12 };
 
-const Extensions = ({ classes }) => {
-  const [catalog, setCatalog] = useState(false);
+const Extensions = ({ classes, catalogVisibility, toggleCatalogContent }) => {
 
   const handleToggle = (e) => {
     e.stopPropagation();
-    console.log(`Meshery Catalog: ${catalog ? "enabled" : "disabled"}`)
-    setCatalog(catalog => !catalog)
+    console.log(`Meshery Catalog: ${catalogVisibility ? "enabled" : "disabled"}`)
+    toggleCatalogContent({ catalogVisibility : !catalogVisibility });
   }
 
   const handleSignUp = (e) => {
@@ -69,7 +70,6 @@ const Extensions = ({ classes }) => {
           <Typography className={classes.frontContent} variant="h5" component="div">
             {"MeshMap"}
           </Typography>
-
 
           <Typography className={classes.frontSideDescription} variant="body">
             <img className={classes.img} src="/static/img/meshmap.svg" />
@@ -112,8 +112,7 @@ const Extensions = ({ classes }) => {
 
             <div style={{ textAlign : "right" }}>
               <Switch
-                disabled
-                checked={catalog}
+                checked={catalogVisibility}
                 onClick={(e) => handleToggle(e)}
                 name="OperatorSwitch"
                 color="primary"
@@ -126,4 +125,12 @@ const Extensions = ({ classes }) => {
   )
 }
 
-export default withStyles(styles)(Extensions);
+const mapStateToProps = state => ({
+  catalogVisibility : state.get('catalogVisibility')
+})
+
+const mapDispatchToProps = dispatch => ({
+  toggleCatalogContent : bindActionCreators(toggleCatalogContent, dispatch)
+})
+
+export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(Extensions));

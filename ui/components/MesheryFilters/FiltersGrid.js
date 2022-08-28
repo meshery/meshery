@@ -92,7 +92,7 @@ function FiltersGrid({ filters=[],handleDeploy, handleUndeploy, handleClone, han
           <FilterCardGridItem
             key={filter.id}
             filter={filter}
-            handleClone={handleClone}
+            handleClone={() => handleClone(filter.id)}
             handleDeploy={() => handleModalOpen(filter, true)}
             handleUndeploy={() => handleModalOpen(filter, false)}
             handleSubmit={handleSubmit}

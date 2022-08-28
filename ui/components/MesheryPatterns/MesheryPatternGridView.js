@@ -118,7 +118,7 @@ function MesheryPatternGrid({ patterns=[], handleDeploy, handleUnDeploy, urlUplo
           <PatternCardGridItem
             key={pattern.id}
             pattern={pattern}
-            handleClone={handleClone}
+            handleClone={() => handleClone(pattern.id)}
             handleDeploy={() => handleModalOpen(pattern, true)}
             handleUnDeploy={() => handleModalOpen(pattern, false)}
             handleSubmit={handleSubmit}

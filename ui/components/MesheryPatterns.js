@@ -19,7 +19,7 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import dataFetch from "../lib/data-fetch";
 import FILE_OPS from "../utils/configurationFileHandlersEnum";
-import { updateProgress } from "../lib/store";
+import { toggleCatalogContent, updateProgress } from "../lib/store";
 import PatternForm from "../components/configuratorComponents/patternConfigurator";
 import UploadImport from "./UploadImport";
 import { ctxUrl } from "../utils/multi-ctx";
@@ -225,7 +225,7 @@ function resetSelectedPattern() {
 }
 
 function MesheryPatterns({
-  updateProgress, enqueueSnackbar, closeSnackbar, user, classes, selectedK8sContexts
+  updateProgress, enqueueSnackbar, closeSnackbar, user, classes, selectedK8sContexts, catalogVisibility, toggleCatalogContent
 }) {
   const [page, setPage] = useState(0);
   const [search] = useState("");
@@ -255,8 +255,8 @@ function MesheryPatterns({
     open : false
   })
 
-  const [catalogVisibility, setCatalogVisibility] = useState(true);
-  const [catalogContent, setCatalogContent] = useState([])
+  const catalogContentRef = useRef();
+  const catalogVisibilityRef = useRef();
 
   const disposeConfSubscriptionRef = useRef(null);
 
@@ -354,24 +354,12 @@ function MesheryPatterns({
 
 
   const handleCatalogVisibility = () => {
-    setCatalogVisibility(catalogVisibility => !catalogVisibility);
+    catalogVisibilityRef.current = !catalogVisibility
+    toggleCatalogContent({ catalogVisibility : !catalogVisibility });
   }
 
   useEffect(() => {
-    let catalogPatterns = []
-    if (catalogVisibility) {
-      catalogPatterns = patterns.filter(content => content.visibility === "public"
-      )
-      if (catalogPatterns.length > 0) {
-        setPatterns([...catalogPatterns, ...patterns])
-      }
-      return
-    }
-    setPatterns(patterns.filter(content => content.visibility !== "public"))
-  }, [catalogVisibility])
-
-  useEffect(() => {
-    initPatternsSubscription();
+    catalogVisibilityRef.current = catalogVisibility
     const fetchCatalogPatterns = fetchCatalogPattern({
       selector : {
         search : "",
@@ -379,28 +367,38 @@ function MesheryPatterns({
       }
     }).subscribe({
       next : (result) => {
-        setCatalogContent(result?.catalogFilters)
+        catalogContentRef.current = result?.catalogPatterns;
       },
       error : (err) => console.log("There was an error fetching Catalog Pattern: ", err)
     });
-    return  () => {
-      fetchCatalogPatterns.unsubscribe();
+    initPatternsSubscription();
+    return () => {
       disposeConfSubscriptionRef.current.dispose();
+      fetchCatalogPatterns.unsubscribe();
     }
   },[])
 
+  useEffect(() => {
+    handleSetPatterns(patterns)
+  }, [catalogVisibility])
+
+  const handleSetPatterns = (patterns) => {
+    if (catalogVisibilityRef.current && catalogContentRef.current?.length > 0) {
+      setPatterns([...catalogContentRef.current, ...patterns.filter(content => content.visibility !== "public")])
+      return
+    }
+    setPatterns(patterns.filter(content => content.visibility !== "public"))
+  }
   const initPatternsSubscription = (pageNo=page.toString(), pagesize=pageSize.toString(), searchText=search, order=sortOrder) => {
     if (disposeConfSubscriptionRef.current) {
       disposeConfSubscriptionRef.current.dispose();
     }
     const configurationSubscription = ConfigurationSubscription((result) => {
-      if (catalogVisibility) {
-        setPatterns([...catalogContent, ...result.configuration?.patterns.patterns])
-      }
+
       setPage(result.configuration?.patterns.page || 0);
       setPageSize(result.configuration?.patterns.page_size || 0);
       setCount(result.configuration?.patterns.total_count || 0);
-      setPatterns(result.configuration?.patterns.patterns)
+      handleSetPatterns(result.configuration?.patterns.patterns);
     },
     {
       applicationSelector : {
@@ -510,8 +508,7 @@ function MesheryPatterns({
     );
   };
 
-  function handleClone(e, patternID) {
-    e.stopPropagation();
+  function handleClone(patternID) {
     updateProgress({ showProgress : true });
     dataFetch(PATTERN_URL.concat(CLONE_URL, "/", patternID),
       {
@@ -552,10 +549,10 @@ function MesheryPatterns({
         console.log("PatternFile API", `/api/pattern${query}`);
         updateProgress({ showProgress : false });
         if (result) {
-          setPatterns(result.patterns || []);
           setPage(result.page || 0);
           setPageSize(result.page_size || 0);
           setCount(result.total_count || 0);
+          handleSetPatterns(result.patterns || [])
         }
       },
       handleError(ACTION_TYPES.FETCH_PATTERNS)
@@ -781,7 +778,11 @@ function MesheryPatterns({
           const visibility = patterns[tableMeta.rowIndex].visibility
           return (
             <>
-              { visibility === "public" ? <IconButton onClick={(e) => handleClone(e, rowData.id)}>
+              { visibility === "public" ? <IconButton onClick={(e) => {
+                e.stopPropagation();
+                handleClone(rowData.id)
+              }
+              }>
                 <img src="/static/img/fork.svg" />
               </IconButton> :
 
@@ -1055,10 +1056,12 @@ function MesheryPatterns({
   );
 }
 
-const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(updateProgress, dispatch), });
+const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(updateProgress, dispatch), toggleCatalogContent : bindActionCreators(toggleCatalogContent, dispatch) });
 
 const mapStateToProps = (state) => {
-  return { user : state.get("user")?.toObject(), selectedK8sContexts : state.get("selectedK8sContexts"), };
+  return { user : state.get("user")?.toObject(), selectedK8sContexts : state.get("selectedK8sContexts"),
+    catalogVisibility : state.get("catalogVisibility")
+  };
 };
 
 // @ts-ignore
