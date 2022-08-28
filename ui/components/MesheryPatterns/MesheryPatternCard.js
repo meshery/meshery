@@ -101,6 +101,7 @@ function MesheryPatternCard({
             <div className={classes.cardButtons} >
 
               <Button
+                title="Undeploy"
                 variant="contained"
                 className={classes.undeployButton}
                 onClick={(ev) =>
@@ -112,6 +113,7 @@ function MesheryPatternCard({
               </Button>
 
               <Button
+                title="Deploy"
                 variant="contained"
                 onClick={(ev) =>
                   genericClickHandler(ev, handleDeploy)
@@ -119,7 +121,7 @@ function MesheryPatternCard({
                 className={classes.testsButton}
               >
                 <DoneAllIcon className={classes.iconPatt} />
-                Deploy
+                <span className={classes.btnText}>Deploy</span>
               </Button>
 
               { visibility === "private" ?  <Button
@@ -143,6 +145,7 @@ function MesheryPatternCard({
                 <Avatar src="/static/img/fork.svg" className={classes.iconPatt} imgProps={{ height : "16px", width : "16px" }} />
                 Clone
               </Button>  }
+                <span className={classes.btnText}>Design</span>
             </div>
           </div>
         </>

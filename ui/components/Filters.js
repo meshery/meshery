@@ -706,7 +706,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
                 title="Undeploy"
                 onClick={(e) => handleModalOpen(e, rowData.filter_file, rowData.name, false)}
               >
-                <UndeployIcon fill="#B32700" data-cy="undeploy-button" />
+                <UndeployIcon fill="#8F1F00" data-cy="undeploy-button" />
               </IconButton>
             </>
           );
@@ -900,6 +900,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
               pages={Math.ceil(count / pageSize)}
               setPage={setPage}
               selectedPage={page}
+              UploadImport={UploadImport}
             />
         }
         <ConfirmationMsg
@@ -913,7 +914,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
           componentCount={modalOpen.count}
           tab={modalOpen.deploy ? 0 : 1}
         />
-        <UploadImport open={importModal.open} handleClose={handleUploadImportClose} supportedTypes="null" aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} configuration="Filter" />
+        <UploadImport open={importModal.open} handleClose={handleUploadImportClose} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} configuration="Filter" />
       </NoSsr>
     </>
   );

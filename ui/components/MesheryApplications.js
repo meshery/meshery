@@ -31,6 +31,7 @@ import ApplicationsGrid from "./MesheryApplications/ApplicationsGrid";
 import { fileDownloader } from "../utils/fileDownloader";
 import { trueRandom } from "../lib/trueRandom";
 import PublishIcon from "@material-ui/icons/Publish";
+import InfoIcon from '@material-ui/icons/Info';
 
 const styles = (theme) => ({
   grid : { padding : theme.spacing(2), },
@@ -230,7 +231,6 @@ function MesheryApplications({
   const [selectedRowData, setSelectedRowData] = useState(null);
   const [selectedApplication, setSelectedApplication] = useState(resetSelectedApplication());
   const DEPLOY_URL = '/api/pattern/deploy';
-  const [types, setTypes] = useState([]);
   const [modalOpen, setModalOpen] = useState({
     open : false,
     deploy : false,
@@ -256,13 +256,6 @@ function MesheryApplications({
   useEffect(() => {
     fetchApplications(page, pageSize, search, sortOrder);
   }, [page, pageSize, search, sortOrder]);
-
-  /**
-   * fetch applications when the application downloads
-   */
-  useEffect(() => {
-    getTypes();
-  },[]);
 
   const handleModalClose = () => {
     setModalOpen({
@@ -377,20 +370,6 @@ function MesheryApplications({
         handleError(ACTION_TYPES.DOWNLOAD_APP)
     );
   };
-
-  const getTypes = () => {
-    dataFetch(
-      `/api/application/types`,
-      {
-        credentials : "include",
-        method : "GET",
-      },
-      (res) => {
-        setTypes(res)
-      },
-      handleError(ACTION_TYPES.FETCH_APPLICATIONS_TYPES)
-    );
-  }
 
   function fetchApplications(page, pageSize, search, sortOrder) {
     if (!search) search = "";
@@ -606,7 +585,12 @@ function MesheryApplications({
         customHeadRender : function CustomHead({ index, ...column }) {
           return (
             <TableCell key={index}>
-              <b>{column.label}</b>
+              <Tooltip title="Click source type to download Application">
+                <div style={{ display : "flex" }}>
+                  <b>{column.label}</b>
+                  <InfoIcon color="primary" style={{ scale : "0.8" }}/>
+                </div>
+              </Tooltip>
             </TableCell>
           );
         },
@@ -653,7 +637,7 @@ function MesheryApplications({
                 title="Undeploy"
                 onClick={() => handleModalOpen(rowData.application_file, rowData.name, false)}
               >
-                <UndeployIcon fill="#B32700" data-cy="undeploy-button" />
+                <UndeployIcon fill="#8F1F00" data-cy="undeploy-button" />
               </IconButton>
             </>
           );
@@ -851,7 +835,7 @@ function MesheryApplications({
               setPage={setPage}
               selectedPage={page}
               UploadImport={UploadImport}
-              types={types}
+              handleAppDownload={handleAppDownload}
             />
         }
         <ConfirmationMsg
@@ -866,7 +850,7 @@ function MesheryApplications({
           tab={modalOpen.deploy ? 0 : 1}
         />
         <PromptComponent ref={modalRef} />
-        <UploadImport open={importModal.open} handleClose={handleUploadImportClose} supportedTypes={types} isApplication = {true} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} configuration="Application"  />
+        <UploadImport open={importModal.open} handleClose={handleUploadImportClose} isApplication = {true} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} configuration="Application"  />
       </NoSsr>
     </>
   );
