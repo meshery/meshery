@@ -32,6 +32,11 @@ const theme = createTheme({
         unDeploy: {background: "#B32700" , boxShadow: "none",color : "#ffffff",    "&:hover" : {
           backgroundColor : "#8f1f00"
         }, "&:active": { boxShadow: "none" } },
+        secondary: { backgroundColor : "#e0e0e0",
+        color : "rgba(0, 0, 0, 0.87)", "&:hover" : {
+          backgroundColor : "#d5d5d5",
+          boxShadow : "0px 2px 4px -1px rgb(0 0 0 / 20%), 0px 4px 5px 0px rgb(0 0 0 / 14%), 0px 1px 10px 0px rgb(0 0 0 / 12%)"
+        },}
       },
     },
       MuiToggleButton: { styleOverrides: { label: { textTransform: "initial", color: "#607d8b" } } },
