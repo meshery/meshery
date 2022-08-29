@@ -153,6 +153,7 @@ jobs:
           for n in {1..3}
           do
             x=$(mesheryctl pattern apply -f ./${{ inputs.patternfile_name }})
+            echo "pattern apply log: $x"
             if [[ $x == "*invalid workload of type:*" ]];
             then
               sleep 30
