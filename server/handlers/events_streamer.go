@@ -138,11 +138,8 @@ STOP:
 	defer log.Debug("events handler closed")
 }
 func listenForCoreEvents(ctx context.Context, eb *events.EventStreamer, resp chan []byte, log *logrus.Entry, p models.Provider) {
-	log.Debugf("listening for core events")
 	datach := make(chan interface{}, 10)
 	go eb.Subscribe(datach)
-	fmt.Println("here")
-
 	for {
 		select {
 		case datap := <-datach:
@@ -160,9 +157,7 @@ func listenForCoreEvents(ctx context.Context, eb *events.EventStreamer, resp cha
 		case <-ctx.Done():
 			return
 		}
-
 	}
-
 }
 func listenForAdapterEvents(ctx context.Context, mClient *meshes.MeshClient, respChan chan []byte, log *logrus.Entry, p models.Provider) {
 	log.Debugf("Received a stream client...")
