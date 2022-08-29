@@ -14,12 +14,12 @@ function MesheryFilterGridItem({ filter, handleDeploy, handleUnDeploy, handleSub
         name={filter.name}
         updated_at={filter.updated_at}
         created_at={filter.created_at}
-        //  file={filter.filetr_file}
+         file={filter.filetr_file}
         type="filter"
         requestFullSize={() => setGridProps({ xl: 12, md: 12, xs: 12 })}
         requestSizeRestore={() => setGridProps(INITIAL_GRID_SIZE)}
-        //  handleDeploy={() => handleDeploy(filters.filterss_file)}
-        //  handleUnDeploy={() => handleUnDeploy(filters.filters_file)}
+         handleDeploy={() => handleDeploy(filters.filterss_file)}
+         handleUnDeploy={() => handleUnDeploy(filters.filters_file)}
         //  deleteHandler={() => handleSubmit({ data : yaml, id : filters.id, type : FILE_OPS.DELETE ,name : filters.name })}
         //  updateHandler={() => handleSubmit({ data : yaml, id : filters.id, type : FILE_OPS.UPDATE ,name : filters.name })}
         // setSelectedFilters={() => setSelectedFilters({ fileter : filter, show : true })}
