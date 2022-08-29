@@ -232,7 +232,7 @@ function MesheryPatterns({
   const [sortOrder] = useState("");
   const [count, setCount] = useState(0);
   const [pageSize, setPageSize] = useState(10);
-  const modalRef = useRef(null);
+  const modalRef = useRef();
   const [patterns, setPatterns] = useState([]);
   const [selectedRowData, setSelectedRowData] = useState(null);
   const [selectedPattern, setSelectedPattern] = useState(resetSelectedPattern());
@@ -257,7 +257,6 @@ function MesheryPatterns({
 
   const catalogContentRef = useRef();
   const catalogVisibilityRef = useRef();
-
   const disposeConfSubscriptionRef = useRef(null);
 
   const getMuiTheme = () => createTheme({
@@ -346,12 +345,10 @@ function MesheryPatterns({
    */
   // @ts-ignore
   useEffect(() => {
-    fetchPatterns(page, pageSize, search, sortOrder);
     document.body.style.overflowX = "hidden"
 
     return (() => document.body.style.overflowX = "auto")
   }, [page, pageSize, search, sortOrder]);
-
 
   const handleCatalogVisibility = () => {
     catalogVisibilityRef.current = !catalogVisibility
@@ -389,12 +386,12 @@ function MesheryPatterns({
     }
     setPatterns(patterns.filter(content => content.visibility !== "public"))
   }
+
   const initPatternsSubscription = (pageNo=page.toString(), pagesize=pageSize.toString(), searchText=search, order=sortOrder) => {
     if (disposeConfSubscriptionRef.current) {
       disposeConfSubscriptionRef.current.dispose();
     }
     const configurationSubscription = ConfigurationSubscription((result) => {
-
       setPage(result.configuration?.patterns.page || 0);
       setPageSize(result.configuration?.patterns.page_size || 0);
       setCount(result.configuration?.patterns.total_count || 0);
@@ -593,7 +590,6 @@ function MesheryPatterns({
         () => {
           console.log("PatternFile API", `/api/pattern/${id}`);
           updateProgress({ showProgress : false });
-          fetchPatterns(page, pageSize, search, sortOrder);
           resetSelectedRowData()();
         },
         handleError(ACTION_TYPES.DELETE_PATTERN)
@@ -611,7 +607,6 @@ function MesheryPatterns({
         () => {
           console.log("PatternFile API", `/api/pattern`);
           updateProgress({ showProgress : false });
-          fetchPatterns(page, pageSize, search, sortOrder);
         },
         handleError(ACTION_TYPES.UPDATE_PATTERN)
       );
@@ -641,7 +636,6 @@ function MesheryPatterns({
         () => {
           console.log("PatternFile API", `/api/pattern`);
           updateProgress({ showProgress : false });
-          fetchPatterns(page, pageSize, search, sortOrder);
         },
         handleError(ACTION_TYPES.UPLOAD_PATTERN)
       );
@@ -859,7 +853,6 @@ function MesheryPatterns({
             }
           }
         )
-        fetchPatterns(page, pageSize, search, sortOrder);
         resetSelectedRowData()()
       }, 1200);
     },
@@ -901,8 +894,8 @@ function MesheryPatterns({
       if (response.toLowerCase() === "yes") {
         deletePatterns({ patterns : toBeDeleted })
       }
-      if (response.toLowerCase() === "no")
-        fetchPatterns(page, pageSize, search, sortOrder);
+      // if (response.toLowerCase() === "no")
+      // fetchPatterns(page, pageSize, search, sortOrder);
     },
 
     onTableChange : (action, tableState) => {
@@ -916,10 +909,10 @@ function MesheryPatterns({
 
       switch (action) {
         case "changePage":
-          fetchPatterns(tableState.page, pageSize, search, sortOrder);
+          initPatternsSubscription(tableState.page.toString(), pageSize.toString(), search, sortOrder);
           break;
         case "changeRowsPerPage":
-          fetchPatterns(page, tableState.rowsPerPage, search, sortOrder);
+          initPatternsSubscription(page.toString(), tableState.rowsPerPage.toString(), search, sortOrder);
           break;
         case "search":
           if (searchTimeout.current) {
@@ -942,7 +935,7 @@ function MesheryPatterns({
             }
           }
           if (order !== sortOrder) {
-            fetchPatterns(page, pageSize, search, order);
+            initPatternsSubscription(page.toString(), pageSize.toString(), search, order);
           }
           break;
       }
@@ -1029,6 +1022,7 @@ function MesheryPatterns({
               handleClone={handleClone}
               urlUploadHandler={urlUploadHandler}
               uploadHandler={uploadHandler}
+              supportedTypes="null"
               handleSubmit={handleSubmit}
               setSelectedPattern={setSelectedPattern}
               selectedPattern={selectedPattern}

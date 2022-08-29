@@ -566,6 +566,12 @@ func (l *DefaultLocalProvider) GetMesheryPatterns(tokenString, page, pageSize, s
 	return l.MesheryPatternPersister.GetMesheryPatterns(search, order, pg, pgs)
 }
 
+// GetCatalogMesheryPatterns gives the catalog patterns stored with the provider
+// Not supported by local provider
+func (l *DefaultLocalProvider) GetCatalogMesheryPatterns(tokenString string, search, order string) ([]byte, error) {
+	return []byte("{}"), nil
+}
+
 // GetMesheryPattern gets pattern for the given patternID
 func (l *DefaultLocalProvider) GetMesheryPattern(req *http.Request, patternID string) ([]byte, error) {
 	id := uuid.FromStringOrNil(patternID)
@@ -581,6 +587,12 @@ func (l *DefaultLocalProvider) DeleteMesheryPattern(req *http.Request, patternID
 // DeleteMesheryPattern deletes a meshery pattern with the given id
 func (l *DefaultLocalProvider) DeleteMesheryPatterns(req *http.Request, patterns MesheryPatternDeleteRequestBody) ([]byte, error) {
 	return l.MesheryPatternPersister.DeleteMesheryPatterns(patterns)
+}
+
+// CloneMesheryPattern clones a meshery pattern with the given id
+// Not supported by local provider
+func (l *DefaultLocalProvider) CloneMesheryPattern(req *http.Request, patternID string) ([]byte, error) {
+	return []byte("{}"), nil
 }
 
 // RemotePatternFile takes in the
@@ -662,6 +674,12 @@ func (l *DefaultLocalProvider) GetMesheryFilters(tokenString, page, pageSize, se
 	return l.MesheryFilterPersister.GetMesheryFilters(search, order, pg, pgs)
 }
 
+// GetCatalogMesheryFilters gives the catalog filters stored with the provider
+// Not supported by local provider
+func (l *DefaultLocalProvider) GetCatalogMesheryFilters(tokenString string, search, order string) ([]byte, error) {
+	return []byte("{}"), nil
+}
+
 // GetMesheryFilterFile gets filter for the given filterID without the metadata
 func (l *DefaultLocalProvider) GetMesheryFilterFile(req *http.Request, filterID string) ([]byte, error) {
 	id := uuid.FromStringOrNil(filterID)
@@ -678,6 +696,12 @@ func (l *DefaultLocalProvider) GetMesheryFilter(req *http.Request, filterID stri
 func (l *DefaultLocalProvider) DeleteMesheryFilter(req *http.Request, filterID string) ([]byte, error) {
 	id := uuid.FromStringOrNil(filterID)
 	return l.MesheryFilterPersister.DeleteMesheryFilter(id)
+}
+
+// CloneMesheryFilter clones a meshery filter with the given id
+// Not supported by local provider
+func (l *DefaultLocalProvider) CloneMesheryFilter(req *http.Request, filterID string) ([]byte, error) {
+	return []byte("{}"), nil
 }
 
 // RemoteFilterFile takes in the

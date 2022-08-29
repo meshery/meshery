@@ -293,6 +293,34 @@ func (h *Handler) GetMesheryPatternsHandler(
 	fmt.Fprint(rw, string(resp))
 }
 
+// swagger:route POST /api/pattern/catalog PatternsAPI idGetCatalogMesheryPatternsHandler
+// Handle GET request for catalog patterns
+//
+// Used to get catalog patterns
+// responses:
+// 	200: mesheryPatternResponseWrapper
+//
+func (h *Handler) GetCatalogMesheryPatternsHandler(
+	rw http.ResponseWriter,
+	r *http.Request,
+	prefObj *models.Preference,
+	user *models.User,
+	provider models.Provider,
+) {
+	q := r.URL.Query()
+	tokenString := r.Context().Value(models.TokenCtxKey).(string)
+
+	resp, err := provider.GetCatalogMesheryPatterns(tokenString, q.Get("search"), q.Get("order"))
+	if err != nil {
+		h.log.Error(ErrFetchPattern(err))
+		http.Error(rw, ErrFetchPattern(err).Error(), http.StatusInternalServerError)
+		return
+	}
+
+	rw.Header().Set("Content-Type", "application/json")
+	fmt.Fprint(rw, string(resp))
+}
+
 // swagger:route DELETE /api/pattern/{id} PatternsAPI idDeleteMesheryPattern
 // Handle Delete for a Meshery Pattern
 //
@@ -314,6 +342,35 @@ func (h *Handler) DeleteMesheryPatternHandler(
 	if err != nil {
 		h.log.Error(ErrDeletePattern(err))
 		http.Error(rw, ErrDeletePattern(err).Error(), http.StatusInternalServerError)
+		return
+	}
+
+	go h.config.ConfigurationChannel.PublishPatterns()
+	rw.Header().Set("Content-Type", "application/json")
+	fmt.Fprint(rw, string(resp))
+}
+
+// swagger:route POST /api/pattern/clone/{id} PatternsAPI idCloneMesheryPattern
+// Handle Clone for a Meshery Pattern
+//
+// Creates a local copy of a public pattern with id: id
+// responses:
+// 	200: noContentWrapper
+//
+// CloneMesheryPatternHandler clones a pattern with the given id
+func (h *Handler) CloneMesheryPatternHandler(
+	rw http.ResponseWriter,
+	r *http.Request,
+	prefObj *models.Preference,
+	user *models.User,
+	provider models.Provider,
+) {
+	patternID := mux.Vars(r)["id"]
+
+	resp, err := provider.CloneMesheryPattern(r, patternID)
+	if err != nil {
+		h.log.Error(ErrClonePattern(err))
+		http.Error(rw, ErrClonePattern(err).Error(), http.StatusInternalServerError)
 		return
 	}
 

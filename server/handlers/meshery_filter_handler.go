@@ -187,6 +187,34 @@ func (h *Handler) GetMesheryFiltersHandler(
 	fmt.Fprint(rw, string(resp))
 }
 
+// swagger:route POST /api/filter/catalog FiltersAPI idGetCatalogMesheryFiltersHandler
+// Handle GET request for catalog filters
+//
+// Used to get catalog filters
+// responses:
+// 	200: mesheryFilterResponseWrapper
+//
+func (h *Handler) GetCatalogMesheryFiltersHandler(
+	rw http.ResponseWriter,
+	r *http.Request,
+	prefObj *models.Preference,
+	user *models.User,
+	provider models.Provider,
+) {
+	q := r.URL.Query()
+	tokenString := r.Context().Value(models.TokenCtxKey).(string)
+
+	resp, err := provider.GetCatalogMesheryFilters(tokenString, q.Get("search"), q.Get("order"))
+	if err != nil {
+		h.log.Error(ErrFetchFilter(err))
+		http.Error(rw, ErrFetchFilter(err).Error(), http.StatusInternalServerError)
+		return
+	}
+
+	rw.Header().Set("Content-Type", "application/json")
+	fmt.Fprint(rw, string(resp))
+}
+
 // swagger:route DELETE /api/filter/{id} FiltersAPI idDeleteMesheryFilter
 // Handle Delete for a Meshery Filter
 //
@@ -208,6 +236,35 @@ func (h *Handler) DeleteMesheryFilterHandler(
 	if err != nil {
 		h.log.Error(ErrDeleteFilter(err))
 		http.Error(rw, ErrDeleteFilter(err).Error(), http.StatusInternalServerError)
+		return
+	}
+
+	go h.config.ConfigurationChannel.PublishFilters()
+	rw.Header().Set("Content-Type", "application/json")
+	fmt.Fprint(rw, string(resp))
+}
+
+// swagger:route POST /api/filter/clone/{id} FiltersAPI idCloneMesheryFilter
+// Handle Clone for a Meshery Filter
+//
+// Creates a local copy of a public filter with id: id
+// responses:
+// 	200: noContentWrapper
+//
+// CloneMesheryFilterHandler clones a filter with the given id
+func (h *Handler) CloneMesheryFilterHandler(
+	rw http.ResponseWriter,
+	r *http.Request,
+	prefObj *models.Preference,
+	user *models.User,
+	provider models.Provider,
+) {
+	filterID := mux.Vars(r)["id"]
+
+	resp, err := provider.CloneMesheryFilter(r, filterID)
+	if err != nil {
+		h.log.Error(ErrCloneFilter(err))
+		http.Error(rw, ErrCloneFilter(err).Error(), http.StatusInternalServerError)
 		return
 	}
 

@@ -197,7 +197,6 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
 
   const catalogContentRef = useRef();
   const catalogVisibilityRef = useRef();
-
   const disposeConfSubscriptionRef = useRef(null);
 
   const getMuiTheme = () => createTheme({
@@ -439,6 +438,39 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     });
   };
 
+  const initFiltersSubscription = (pageNo=page.toString(), pagesize=pageSize.toString(), searchText=search, order=sortOrder) => {
+    if (disposeConfSubscriptionRef.current) {
+      disposeConfSubscriptionRef.current.dispose();
+    }
+    const configurationSubscription = ConfigurationSubscription((result) => {
+      setPage(result.configuration?.filters.page || 0);
+      setPageSize(result.configuration?.filters.page_size || 0);
+      setCount(result.configuration?.filters.total_count || 0);
+      setFilters(result.configuration?.filters.filters)
+    },
+    {
+      applicationSelector : {
+        pageSize : pagesize,
+        page : pageNo,
+        search : searchText,
+        order : order
+      },
+      patternSelector : {
+        pageSize : pagesize,
+        page : pageNo,
+        search : searchText,
+        order : order
+      },
+      filterSelector : {
+        pageSize : pagesize,
+        page : pageNo,
+        search : searchText,
+        order : order
+      }
+    });
+    disposeConfSubscriptionRef.current = configurationSubscription
+  }
+
   const handleModalOpen = (e, filter_file, name, isDeploy) => {
     e.stopPropagation()
     setModalOpen({
@@ -517,7 +549,6 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
         () => {
           console.log("FilterFile API", `/api/filter/${id}`);
           updateProgress({ showProgress : false });
-          fetchFilters(page, pageSize, search, sortOrder);
           resetSelectedRowData()();
         },
         // handleError
@@ -539,7 +570,6 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
         () => {
           console.log("FilterFile API", `/api/filter`);
           updateProgress({ showProgress : false });
-          fetchFilters(page, pageSize, search, sortOrder);
         },
         // handleError
         handleError(ACTION_TYPES.UPLOAD_FILTERS)
@@ -754,7 +784,6 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
           },
         });
 
-        fetchFilters(page, pageSize, search, sortOrder);
       },
       handleError("Failed To Delete Filter")
     );
@@ -788,8 +817,8 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
         const fid = Object.keys(row.lookup).map((idx) => filters[idx]?.id);
         fid.forEach((fid) => deleteFilter(fid));
       }
-      if (response === "No")
-        fetchFilters(page, pageSize, search, sortOrder);
+      // if (response === "No")
+      // fetchFilters(page, pageSize, search, sortOrder);
     },
 
     onTableChange : (action, tableState) => {
@@ -801,10 +830,10 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
 
       switch (action) {
         case "changePage":
-          fetchFilters(tableState.page, pageSize, search, sortOrder);
+          initFiltersSubscription(tableState.page.toString(), pageSize.toString(), search, sortOrder)
           break;
         case "changeRowsPerPage":
-          fetchFilters(page, tableState.rowsPerPage, search, sortOrder);
+          initFiltersSubscription(page.toString(), tableState.rowsPerPage.toString(), search, sortOrder);
           break;
         case "search":
           if (searchTimeout.current) {
@@ -812,7 +841,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
           }
           searchTimeout.current = setTimeout(() => {
             if (search !== tableState.searchText) {
-              fetchFilters(page, pageSize, tableState.searchText !== null ? tableState.searchText : "", sortOrder);
+              fetchFilters(page, pageSize, search, sortOrder);
             }
           }, 500);
           break;
@@ -825,7 +854,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
             }
           }
           if (order !== sortOrder) {
-            fetchFilters(page, pageSize, search, order);
+            initFiltersSubscription(page.toString(), pageSize.toString(), search, order);
           }
           break;
       }
