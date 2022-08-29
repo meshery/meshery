@@ -58,32 +58,6 @@ function MesheryFilters({ user }) {
     };
   }
 
-  function fetchfilters(page, pageSize, search, sortOrder) {
-    if (!search) search = "";
-    if (!sortOrder) sortOrder = "";
-
-    const query = `?page=${page}&page_size=${pageSize}&search=${encodeURIComponent(search)}&order=${encodeURIComponent(
-      sortOrder
-    )}`;
-
-    updateProgress({ showProgress: true });
-
-    dataFetch(
-      `/api/filters${query}`,
-      { credentials: "include" },
-      (result) => {
-        console.log("filterFile API", `/api/filters${query}`);
-        updateProgress({ showProgress: false });
-        if (result) {
-          setFilters(result.filters || []);
-          setCount(result.total_count || 0);
-        }
-      },
-      // handleError
-      handleError(ACTION_TYPES.FETCH_FILTERS)
-    );
-  }
-
   const handleModalClose = () => {
     setModalOpen({
       open: false,
