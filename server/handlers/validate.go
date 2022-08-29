@@ -118,7 +118,7 @@ func convertCueErrorsToStrings(errs []errors.Error) []string {
 	var res []string
 	// sanitize
 	for _, err := range errs {
-		err = errors.Sanitize(err)
+		_ = errors.Sanitize(err)
 	}
 	for _, err2 := range errs {
 		res = append(res, err2.Error())

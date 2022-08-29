@@ -132,7 +132,9 @@ func (h *Handler) DeletePerformanceProfileHandler(
 //
 // Returns single performance profile with the given id
 // responses:
-// 	200: performanceProfileResponseWrapper
+//
+//	200: performanceProfileResponseWrapper
+//
 // GetPerformanceProfileHandler fetched the performance profile with the given id
 func (h *Handler) GetPerformanceProfileHandler(
 	rw http.ResponseWriter,
