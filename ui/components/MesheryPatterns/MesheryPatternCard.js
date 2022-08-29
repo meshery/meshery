@@ -142,7 +142,7 @@ function MesheryPatternCard({
                 }
                 className={classes.testsButton}
               >
-                <Avatar src="/static/img/fork.svg" className={classes.iconPatt} imgProps={{ height : "16px", width : "16px" }} />
+                <Avatar src="/static/img/fork-white.svg" className={classes.iconPatt} imgProps={{ height : "16px", width : "16px" }} />
                 Clone
               </Button>  }
 
@@ -225,22 +225,23 @@ function MesheryPatternCard({
             </Grid>
 
             <Grid item xs={12}>
-              <div className={classes.updateDeleteButtons} >
+              {visibility === "private" ?
+                <div className={classes.updateDeleteButtons} >
 
-                {/* Save button */}
-                <IconButton onClick={(ev) =>
-                  genericClickHandler(ev, updateHandler)
-                }>
-                  <Save color="primary" />
-                </IconButton>
+                  {/* Save button */}
+                  <IconButton onClick={(ev) =>
+                    genericClickHandler(ev, updateHandler)
+                  }>
+                    <Save color="primary" />
+                  </IconButton>
 
-                {/* Delete Button */}
-                <IconButton onClick={(ev) =>
-                  genericClickHandler(ev, deleteHandler)
-                }>
-                  <DeleteIcon color="primary" />
-                </IconButton>
-              </div>
+                  {/* Delete Button */}
+                  <IconButton onClick={(ev) =>
+                    genericClickHandler(ev, deleteHandler)
+                  }>
+                    <DeleteIcon color="primary" />
+                  </IconButton>
+                </div> : null}
             </Grid>
           </Grid>
         </>

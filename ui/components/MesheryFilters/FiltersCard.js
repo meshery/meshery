@@ -119,7 +119,7 @@ function FiltersCard({
                 onClick={(ev) =>
                   genericClickHandler(ev, handleClone)
                 }>
-                <Avatar src="/static/img/fork.svg" className={classes.iconPatt} imgProps={{ height : "16px", width : "16px" }} />
+                <Avatar src="/static/img/fork-white.svg" className={classes.iconPatt} imgProps={{ height : "16px", width : "16px" }} />
                   Clone
               </Button> : null }
             </div>
@@ -202,13 +202,13 @@ function FiltersCard({
             </Grid>
 
             <Grid item xs={12}>
-              <div className={classes.deleteButton} >
+              { visibility === "private" ? <div className={classes.deleteButton} >
                 <IconButton onClick={(ev) =>
                   genericClickHandler(ev,deleteHandler)
                 }>
                   <DeleteIcon color="primary" />
                 </IconButton>
-              </div>
+              </div> : null}
             </Grid>
           </Grid>
         </>
