@@ -1893,7 +1893,7 @@ func (l *RemoteProvider) CloneMesheryFilter(req *http.Request, filterID string) 
 		return nil, fmt.Errorf("%s is not suppported by provider: %s", CloneMesheryFilters, l.ProviderName)
 	}
 
-	ep, _ := l.Capabilities.GetEndpointForFeature(PersistMesheryFilters)
+	ep, _ := l.Capabilities.GetEndpointForFeature(CloneMesheryFilters)
 
 	logrus.Infof("attempting to clone filter from cloud for id: %s", filterID)
 
