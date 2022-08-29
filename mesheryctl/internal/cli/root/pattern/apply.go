@@ -225,7 +225,7 @@ mesheryctl pattern apply [pattern-name]
 
 		pf, err := core.NewPatternFile([]byte(patternFile))
 		if err != nil {
-			return errors.Wrap(err, "could not unmarshal pattern file")
+			return errors.Wrap(err, "Pattern appears invalid. Could not parse successfully")
 		}
 
 		s := utils.CreateDefaultSpinner("Applying pattern "+pf.Name, "")
