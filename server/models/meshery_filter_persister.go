@@ -63,6 +63,7 @@ func (mfp *MesheryFilterPersister) DeleteMesheryFilter(id uuid.UUID) ([]byte, er
 }
 
 func (mfp *MesheryFilterPersister) SaveMesheryFilter(filter *MesheryFilter) ([]byte, error) {
+	filter.Visibility = "private"
 	if filter.ID == nil {
 		id, err := uuid.NewV4()
 		if err != nil {
@@ -79,6 +80,7 @@ func (mfp *MesheryFilterPersister) SaveMesheryFilter(filter *MesheryFilter) ([]b
 func (mfp *MesheryFilterPersister) SaveMesheryFilters(filters []MesheryFilter) ([]byte, error) {
 	finalFilters := []MesheryFilter{}
 	for _, filter := range filters {
+		filter.Visibility = "private"
 		if filter.ID == nil {
 			id, err := uuid.NewV4()
 			if err != nil {

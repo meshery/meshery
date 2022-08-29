@@ -158,6 +158,14 @@ const (
 	PersistPerformanceProfiles Feature = "persist-performance-profiles" // /user/performance/profile
 
 	PersistSchedules Feature = "persist-schedules" // /user/schedules
+
+	MesheryPatternsCatalog Feature = "meshery-patterns-catalog" // /patterns/catalog
+
+	MesheryFiltersCatalog Feature = "meshery-filters-catalog" // /filters/catalog
+
+	CloneMesheryPatterns Feature = "clone-meshery-patterns" // /patterns/clone
+
+	CloneMesheryFilters Feature = "clone-meshery-filters" // /filters/clone
 )
 
 const (
@@ -272,8 +280,10 @@ type Provider interface {
 
 	SaveMesheryPattern(tokenString string, pattern *MesheryPattern) ([]byte, error)
 	GetMesheryPatterns(tokenString, page, pageSize, search, order string) ([]byte, error)
+	GetCatalogMesheryPatterns(tokenString string, search, order string) ([]byte, error)
 	DeleteMesheryPattern(req *http.Request, patternID string) ([]byte, error)
 	DeleteMesheryPatterns(req *http.Request, patterns MesheryPatternDeleteRequestBody) ([]byte, error)
+	CloneMesheryPattern(req *http.Request, patternID string) ([]byte, error)
 	GetMesheryPattern(req *http.Request, patternID string) ([]byte, error)
 	RemotePatternFile(req *http.Request, resourceURL, path string, save bool) ([]byte, error)
 	SaveMesheryPatternResource(token string, resource *PatternResource) (*PatternResource, error)
@@ -283,7 +293,9 @@ type Provider interface {
 
 	SaveMesheryFilter(tokenString string, filter *MesheryFilter) ([]byte, error)
 	GetMesheryFilters(tokenString, page, pageSize, search, order string) ([]byte, error)
+	GetCatalogMesheryFilters(tokenString string, search, order string) ([]byte, error)
 	DeleteMesheryFilter(req *http.Request, filterID string) ([]byte, error)
+	CloneMesheryFilter(req *http.Request, filterID string) ([]byte, error)
 	GetMesheryFilter(req *http.Request, filterID string) ([]byte, error)
 	GetMesheryFilterFile(req *http.Request, filterID string) ([]byte, error)
 	RemoteFilterFile(req *http.Request, resourceURL, path string, save bool) ([]byte, error)

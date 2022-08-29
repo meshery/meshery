@@ -124,6 +124,16 @@ func (r *queryResolver) GetKubectlDescribe(ctx context.Context, name string, kin
 	return r.getKubectlDescribe(ctx, name, kind, namespace)
 }
 
+func (r *queryResolver) FetchPatternCatalogContent(ctx context.Context, selector *model.CatalogSelector) ([]*model.CatalogPattern, error) {
+	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	return r.fetchCatalogPattern(ctx, provider, selector)
+}
+
+func (r *queryResolver) FetchFilterCatalogContent(ctx context.Context, selector *model.CatalogSelector) ([]*model.CatalogFilter, error) {
+	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	return r.fetchCatalogFilter(ctx, provider, selector)
+}
+
 func (r *queryResolver) GetClusterResources(ctx context.Context, k8scontextIDs []string, namespace string) (*model.ClusterResources, error) {
 	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
 	return r.getClusterResources(ctx, provider, k8scontextIDs, namespace)
@@ -276,9 +286,9 @@ func (r *subscriptionResolver) SubscribeMeshSyncEvents(ctx context.Context, k8sc
 	return resChan, nil
 }
 
-func (r *subscriptionResolver) SubscribeConfiguration(ctx context.Context, selector model.PageFilter) (<-chan *model.ConfigurationPage, error) {
+func (r *subscriptionResolver) SubscribeConfiguration(ctx context.Context, applicationSelector model.PageFilter, patternSelector model.PageFilter, filterSelector model.PageFilter) (<-chan *model.ConfigurationPage, error) {
 	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
-	return r.subscribeConfiguration(ctx, provider, selector)
+	return r.subscribeConfiguration(ctx, provider, applicationSelector, patternSelector, filterSelector)
 }
 
 func (r *subscriptionResolver) SubscribeClusterResources(ctx context.Context, k8scontextIDs []string, namespace string) (<-chan *model.ClusterResources, error) {

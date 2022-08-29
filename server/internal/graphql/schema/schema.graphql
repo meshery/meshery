@@ -351,8 +351,22 @@ type FilterResult {
   filter_file: String!
   user_id: String!
   location: Location!
+  visibility: String!
+  catalog_data: Map
   created_at: String
   updated_at: String
+}
+
+type CatalogFilter {
+  id: ID!
+  name: String!
+  filter_file: String!
+  user_id: String!
+  location: Location!
+  visibility: Map!
+  catalog_data: Map
+  created_at: String
+  updated_at: String 
 }
 
 # ============== Patterns =================================
@@ -361,7 +375,6 @@ type PatternPageResult {
   page: Int!
   page_size: Int!
   total_count: Int!
-
   patterns: [PatternResult]
 }
 
@@ -371,6 +384,8 @@ type PatternResult {
   user_id: String!
   location: Location!
   pattern_file: String!
+  visibility: String!
+  catalog_data: Map
   canSupport: Boolean!
   errmsg: String
   created_at: String
@@ -382,6 +397,18 @@ type Location {
   host: String
   path: String
   type: String
+}
+
+type CatalogPattern {
+  id: ID!
+  name: String!
+  user_id: String!
+  pattern_file: String!
+  location: Location!
+  visibility: Map!
+  catalog_data: Map!
+  created_at: String
+  updated_at: String
 }
 
 # ============== Perf =================================
@@ -444,6 +471,11 @@ input PageFilter {
   search: String
   from: String
   to: String
+}
+
+input CatalogSelector {
+  search: String!
+  order: String!
 }
 
 # ============== RESYNC =============================
@@ -538,9 +570,16 @@ type Query {
   # Query for getting kubectl describe details with meshkit 
   getKubectlDescribe(name: String!, kind: String!, namespace: String!): KctlDescribeDetails!
 
+  # Query for getting Pattern Catalog from remote provider
+  fetchPatternCatalogContent(selector: CatalogSelector): [CatalogPattern!]!
+  # Query for getting Filter Catalog from remote provider
+  fetchFilterCatalogContent(selector: CatalogSelector): [CatalogFilter!]!
+
   # Query for getting cluster info
+
   getClusterResources(k8scontextIDs: [String!], namespace: String!): ClusterResources!
 }
+
 
 #
 
@@ -597,7 +636,8 @@ type Subscription {
   subscribeMeshSyncEvents(
     k8scontextIDs: [String!]
   ) : MeshSyncEvent!
-  subscribeConfiguration(selector: PageFilter!) : ConfigurationPage!
+
+  subscribeConfiguration(applicationSelector: PageFilter!, patternSelector: PageFilter!, filterSelector: PageFilter!) : ConfigurationPage!
 
   subscribeClusterResources(
     k8scontextIDs: [String!],

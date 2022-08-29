@@ -18,7 +18,9 @@ type MesheryFilter struct {
 	// but the remote provider is allowed to provide one
 	UserID *string `json:"user_id" gorm:"-"`
 
-	Location sql.Map `json:"location"`
+	Location    sql.Map `json:"location"`
+	Visibility  string  `json:"visibility"`
+	CatalogData sql.Map `json:"catalogData"`
 
 	UpdatedAt *time.Time `json:"updated_at,omitempty"`
 	CreatedAt *time.Time `json:"created_at,omitempty"`
