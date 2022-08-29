@@ -1,7 +1,7 @@
 //@ts-check
 import React, { useState } from "react";
 import {
-  Avatar, Divider, Grid, IconButton, Typography
+  Divider, Grid, IconButton, Typography
 } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import DeleteIcon from "@material-ui/icons/Delete";
@@ -119,7 +119,7 @@ function FiltersCard({
                 onClick={(ev) =>
                   genericClickHandler(ev, handleClone)
                 }>
-                <Avatar src="/static/img/fork-white.svg" className={classes.iconPatt} imgProps={{ height : "16px", width : "16px" }} />
+                <img src="/static/img/clone-white.svg" className={classes.iconPatt} />
                   Clone
               </Button> : null }
             </div>

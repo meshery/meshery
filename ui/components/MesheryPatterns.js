@@ -777,7 +777,7 @@ function MesheryPatterns({
                 handleClone(rowData.id)
               }
               }>
-                <img src="/static/img/fork.svg" />
+                <img src="/static/img/clone.svg" />
               </IconButton> :
 
                 <IconButton onClick={(e) => {

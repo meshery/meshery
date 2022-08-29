@@ -142,7 +142,7 @@ function MesheryPatternCard({
                 }
                 className={classes.testsButton}
               >
-                <Avatar src="/static/img/fork-white.svg" className={classes.iconPatt} imgProps={{ height : "16px", width : "16px" }} />
+                <img src="/static/img/clone-white.svg" className={classes.iconPatt} />
                 Clone
               </Button>  }
 
