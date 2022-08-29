@@ -438,39 +438,6 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     });
   };
 
-  const initFiltersSubscription = (pageNo=page.toString(), pagesize=pageSize.toString(), searchText=search, order=sortOrder) => {
-    if (disposeConfSubscriptionRef.current) {
-      disposeConfSubscriptionRef.current.dispose();
-    }
-    const configurationSubscription = ConfigurationSubscription((result) => {
-      setPage(result.configuration?.filters.page || 0);
-      setPageSize(result.configuration?.filters.page_size || 0);
-      setCount(result.configuration?.filters.total_count || 0);
-      setFilters(result.configuration?.filters.filters)
-    },
-    {
-      applicationSelector : {
-        pageSize : pagesize,
-        page : pageNo,
-        search : searchText,
-        order : order
-      },
-      patternSelector : {
-        pageSize : pagesize,
-        page : pageNo,
-        search : searchText,
-        order : order
-      },
-      filterSelector : {
-        pageSize : pagesize,
-        page : pageNo,
-        search : searchText,
-        order : order
-      }
-    });
-    disposeConfSubscriptionRef.current = configurationSubscription
-  }
-
   const handleModalOpen = (e, filter_file, name, isDeploy) => {
     e.stopPropagation()
     setModalOpen({

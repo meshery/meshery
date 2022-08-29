@@ -10,7 +10,7 @@ import {
 } from '@material-ui/core';
 import NoSsr from '@material-ui/core/NoSsr';
 import dataFetch from '../lib/data-fetch';
-import { updateUser, updateProgress } from '../lib/store';
+import { updateUser, updateProgress, toggleCatalogContent } from '../lib/store';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import { Paper, Tooltip } from '@material-ui/core';
@@ -102,6 +102,7 @@ class UserPreference extends React.Component {
   }
 
   handleCatalogContentToggle = () => {
+    this.props.toggleCatalogContent({ catalogVisibility : !this.state.catalogContent });
     this.setState((state) => ({ catalogContent : !state.catalogContent }), () => this.handleCatalogPreference());
   }
 
@@ -381,13 +382,14 @@ class UserPreference extends React.Component {
 }
 
 const mapDispatchToProps = (dispatch) => ({ updateUser : bindActionCreators(updateUser, dispatch),
-  updateProgress : bindActionCreators(updateProgress, dispatch), });
+  updateProgress : bindActionCreators(updateProgress, dispatch), toggleCatalogContent : bindActionCreators(toggleCatalogContent, dispatch) });
 
 const mapStateToProps = (state) => {
   const selectedK8sContexts = state.get('selectedK8sContexts');
-
+  const catalogVisibility = state.get('catalogVisibility')
   return {
     selectedK8sContexts,
+    catalogVisibility
   };
 };
 
