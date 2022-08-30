@@ -6,28 +6,26 @@
 // This should demonstrate all the possible comment annotations
 // that are available to turn go code into a fully compliant swagger 2.0 spec
 //
+//	Schemes: http
+//	BasePath: /
+//	Version: 0.4.27
+//	License: Apache-2.0 http://www.apache.org/licenses/LICENSE-2.0.txt
 //
-//     Schemes: http
-//     BasePath: /
-//     Version: 0.4.27
-//     License: Apache-2.0 http://www.apache.org/licenses/LICENSE-2.0.txt
+//	Consumes:
+//	- application/json
+//	- multipart/form-data
 //
-//     Consumes:
-//     - application/json
-//     - multipart/form-data
+//	Produces:
+//	- application/json
 //
-//     Produces:
-//     - application/json
+//	Security:
+//	- token: []
 //
-//     Security:
-//     - token: []
-//
-//     SecurityDefinitions:
-//     token:
-//          type: apiKey
-//          name: token
-//          in: cookie
-//
+//	SecurityDefinitions:
+//	token:
+//	     type: apiKey
+//	     name: token
+//	     in: cookie
 //
 // swagger:meta
 package handlers
