@@ -143,8 +143,8 @@ module.exports = {
     "@material-ui/icons" : require("@material-ui/icons"),
     "@material-ui/core/InputAdornment" : require("@material-ui/core/InputAdornment"),
     '@material-ui/icons/InsertChart' : require("@material-ui/icons/InsertChart"),
-    '@material-ui/icons/TouchApp' : require('@material-ui/icons/TouchApp')
-
-
+    '@material-ui/icons/TouchApp' : require('@material-ui/icons/TouchApp'),
+    "@material-ui/icons/CheckCircle" : require("@material-ui/icons/CheckCircle"),
+    "@material-ui/icons/Warning" : require("@material-ui/icons/Warning")
   },
 };
