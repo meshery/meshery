@@ -7,30 +7,32 @@ import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
 
 function ViewSwitch({ view, changeView, catalogVisibility, handleCatalogVisibility, hideCatalog }) {
   return (
-    <ToggleButtonGroup
-      size="small"
-      value={view}
-      exclusive
-      onChange={(_, newView) => {
-        if (newView !==null){
-          changeView(newView)
+    <div>
+      <ToggleButtonGroup
+        size="small"
+        value={view}
+        exclusive
+        onChange={(_, newView) => {
+          if (newView !==null){
+            changeView(newView)
+          }
         }
-      }
-      }
-      aria-label="Switch View"
-    >
-      { !hideCatalog &&  // In application we  don't have catalog, hence this check
-        <Button onClick = {handleCatalogVisibility}>
+        }
+        aria-label="Switch View"
+      >
+        { !hideCatalog &&  // In application we  don't have catalog, hence this check
+        <Button onClick = {handleCatalogVisibility} variant="contained" color="primary" style={{ borderRight : "1px" }}>
           {catalogVisibility ? <VisibilityIcon /> : <VisibilityOffIcon />}
         </Button>
-      }
-      <ToggleButton value="grid" data-cy="grid-view">
-        <GridOnIcon />
-      </ToggleButton>
-      <ToggleButton value="table" data-cy="table-view">
-        <TableChartIcon />
-      </ToggleButton>
-    </ToggleButtonGroup>
+        }
+        <ToggleButton value="grid" data-cy="grid-view">
+          <GridOnIcon />
+        </ToggleButton>
+        <ToggleButton value="table" data-cy="table-view">
+          <TableChartIcon />
+        </ToggleButton>
+      </ToggleButtonGroup>
+    </div>
   )
 }
 
