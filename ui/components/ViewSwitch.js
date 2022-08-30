@@ -21,8 +21,8 @@ function ViewSwitch({ view, changeView, catalogVisibility, handleCatalogVisibili
         aria-label="Switch View"
       >
         { !hideCatalog &&  // In application we  don't have catalog, hence this check
-        <Button onClick = {handleCatalogVisibility} variant="contained" color="primary" style={{ borderRight : "1px" }}>
-          {catalogVisibility ? <VisibilityIcon /> : <VisibilityOffIcon />}
+        <Button onClick = {handleCatalogVisibility} variant="contained" color="primary" endIcon={catalogVisibility ? <VisibilityIcon /> : <VisibilityOffIcon />}>
+         CATALOG
         </Button>
         }
         <ToggleButton value="grid" data-cy="grid-view">
