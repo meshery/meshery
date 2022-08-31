@@ -38,10 +38,6 @@ module.exports = {
     "keyword-spacing" : "error",
     "no-trailing-spaces" : "error",
     "object-curly-spacing" : ["error", "always"],
-    "arrow-spacing" : ["error", {
-      "before" : true,
-      "after" : true,
-    }],
     "key-spacing" : ["error", {
       "beforeColon" : true,
       "afterColon" : true,
@@ -64,15 +60,14 @@ module.exports = {
     ],
     "react/react-in-jsx-scope" : "off",
     "no-undef" : "off",
-    "react/prop-types" : 0,
     "react/jsx-uses-vars" : [
       2
     ],
     "react/jsx-no-undef" : "error",
     "no-console" : 0,
     "no-unused-vars" : "error",
-    "react/jsx-key" : "off",
-    "no-dupe-keys" : "off",
+    "react/jsx-key" : "warn",
+    "no-dupe-keys" : "error",
     "react/jsx-filename-extension" : [1, { "extensions" : [".js", ".jsx"] }],
     "react/prop-types" : "off"
   }

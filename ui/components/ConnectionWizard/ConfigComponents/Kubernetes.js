@@ -23,7 +23,6 @@ const KubernetesConfig = ({
     k8sfileElement : null,
     k8sfileElementVal : "",
     inClusterConfigForm : false,
-    contextNameForForm : ""
   })
 
 

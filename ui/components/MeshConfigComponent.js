@@ -31,7 +31,7 @@ const styles = (theme) => ({
     },
   },
   icon : { width : theme.spacing(2.5), },
-  paper : { padding : theme.spacing(2), },
+  paper : { margin : theme.spacing(2), padding : theme.spacing(2), },
   heading : { textAlign : "center", },
   configBoxContainer : {
     [theme.breakpoints.down(1050)] : {
@@ -50,7 +50,6 @@ const styles = (theme) => ({
     },
     flexWrap : "noWrap",
   },
-  paper : { margin : theme.spacing(2), },
   fileInputStyle : { display : "none", },
   button : {
     padding : theme.spacing(1),
