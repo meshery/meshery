@@ -191,7 +191,6 @@ class MesheryApp extends App {
   async loadConfigFromServer() {
     const { store } = this.props;
     dataFetch('/api/system/sync', {
-      credentials : 'same-origin',
       method : 'GET',
       credentials : 'include',
     }, result => {

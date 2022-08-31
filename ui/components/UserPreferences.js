@@ -151,9 +151,8 @@ class UserPreference extends React.Component {
     this.props.updateProgress({ showProgress : true });
     dataFetch(
       ctxUrl('/api/user/prefs', this.props.selectedK8sContexts), {
-        credentials : 'same-origin',
-        method : 'POST',
         credentials : 'include',
+        method : 'POST',
         headers : { 'Content-Type' : 'application/json;charset=UTF-8', },
         body : requestBody,
       }, (result) => {
@@ -184,9 +183,10 @@ class UserPreference extends React.Component {
   componentDidMount = () => {
     dataFetch(
       "/api/provider/capabilities",
-      { credentials : "same-origin",
+      {
         method : "GET",
-        credentials : "include", },
+        credentials : "include",
+      },
       (result) => {
         if (result) {
           this.setState({

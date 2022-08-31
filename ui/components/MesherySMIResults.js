@@ -52,7 +52,7 @@ class MesherySMIResults extends Component {
       }
 
       query = `?page=${page}&pageSize=${pageSize}&search=${encodeURIComponent(search)}&order=${encodeURIComponent(sortOrder)}`;
-      dataFetch(`/api/smi/results${query}`, { credentials : 'same-origin',
+      dataFetch(`/api/smi/results${query}`, {
         method : 'GET',
         credentials : 'include', }, (result) => {
         if (typeof result !== 'undefined' && result.results) {
