@@ -1,4 +1,4 @@
-//Package handlers :  collection of handlers (aka "HTTP middleware")
+// Package handlers :  collection of handlers (aka "HTTP middleware")
 package handlers
 
 import (
@@ -246,7 +246,6 @@ func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request
 		return
 	}
 	http.Error(w, "Empty contextID. Pass the context ID(in query parameter \"context\") of the kuberenetes to be pinged", http.StatusBadRequest)
-	return
 }
 
 func (h *Handler) LoadContextsAndPersist(token string, prov models.Provider) ([]*models.K8sContext, error) {

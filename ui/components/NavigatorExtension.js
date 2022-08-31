@@ -16,6 +16,7 @@ import { getK8sClusterIdsFromCtxId } from "../utils/multi-ctx";
 import ConfirmationModal from "./ConfirmationModal"
 import { getComponentsinFile } from "../utils/utils";
 import UploadImport from "./UploadImport";
+import ConfigurationSubscription from "../components/graphql/subscriptions/ConfigurationSubscription";
 
 const requires = createRequires(getDependencies);
 const useRemoteComponent = createUseRemoteComponent({ requires });
@@ -60,6 +61,7 @@ function Extension({ grafana, prometheus, updateLoadTestData, url, isDrawerColla
           mutation : {},
           subscription : {
             subscribeMeshSyncStatusEvents,
+            ConfigurationSubscription
           },
         },
         ConfirmationModal,

@@ -76,6 +76,7 @@ func (mpp *MesheryPatternPersister) DeleteMesheryPatterns(patterns MesheryPatter
 }
 
 func (mpp *MesheryPatternPersister) SaveMesheryPattern(pattern *MesheryPattern) ([]byte, error) {
+	pattern.Visibility = "private"
 	if pattern.ID == nil {
 		id, err := uuid.NewV4()
 		if err != nil {
@@ -92,6 +93,7 @@ func (mpp *MesheryPatternPersister) SaveMesheryPattern(pattern *MesheryPattern) 
 func (mpp *MesheryPatternPersister) SaveMesheryPatterns(patterns []MesheryPattern) ([]byte, error) {
 	finalPatterns := []MesheryPattern{}
 	for _, pattern := range patterns {
+		pattern.Visibility = "private"
 		if pattern.ID == nil {
 			id, err := uuid.NewV4()
 			if err != nil {

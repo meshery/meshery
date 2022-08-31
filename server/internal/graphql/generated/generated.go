@@ -69,6 +69,30 @@ type ComplexityRoot struct {
 		UserID          func(childComplexity int) int
 	}
 
+	CatalogFilter struct {
+		CatalogData func(childComplexity int) int
+		CreatedAt   func(childComplexity int) int
+		FilterFile  func(childComplexity int) int
+		ID          func(childComplexity int) int
+		Location    func(childComplexity int) int
+		Name        func(childComplexity int) int
+		UpdatedAt   func(childComplexity int) int
+		UserID      func(childComplexity int) int
+		Visibility  func(childComplexity int) int
+	}
+
+	CatalogPattern struct {
+		CatalogData func(childComplexity int) int
+		CreatedAt   func(childComplexity int) int
+		ID          func(childComplexity int) int
+		Location    func(childComplexity int) int
+		Name        func(childComplexity int) int
+		PatternFile func(childComplexity int) int
+		UpdatedAt   func(childComplexity int) int
+		UserID      func(childComplexity int) int
+		Visibility  func(childComplexity int) int
+	}
+
 	ClusterResources struct {
 		Resources func(childComplexity int) int
 	}
@@ -137,13 +161,15 @@ type ComplexityRoot struct {
 	}
 
 	FilterResult struct {
-		CreatedAt  func(childComplexity int) int
-		FilterFile func(childComplexity int) int
-		ID         func(childComplexity int) int
-		Location   func(childComplexity int) int
-		Name       func(childComplexity int) int
-		UpdatedAt  func(childComplexity int) int
-		UserID     func(childComplexity int) int
+		CatalogData func(childComplexity int) int
+		CreatedAt   func(childComplexity int) int
+		FilterFile  func(childComplexity int) int
+		ID          func(childComplexity int) int
+		Location    func(childComplexity int) int
+		Name        func(childComplexity int) int
+		UpdatedAt   func(childComplexity int) int
+		UserID      func(childComplexity int) int
+		Visibility  func(childComplexity int) int
 	}
 
 	K8sContext struct {
@@ -261,6 +287,7 @@ type ComplexityRoot struct {
 
 	PatternResult struct {
 		CanSupport  func(childComplexity int) int
+		CatalogData func(childComplexity int) int
 		CreatedAt   func(childComplexity int) int
 		Errmsg      func(childComplexity int) int
 		ID          func(childComplexity int) int
@@ -269,6 +296,7 @@ type ComplexityRoot struct {
 		PatternFile func(childComplexity int) int
 		UpdatedAt   func(childComplexity int) int
 		UserID      func(childComplexity int) int
+		Visibility  func(childComplexity int) int
 	}
 
 	PerfPageProfiles struct {
@@ -306,26 +334,28 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		ConnectToNats          func(childComplexity int, k8scontextID string) int
-		DeployMeshsync         func(childComplexity int, k8scontextID string) int
-		FetchAllResults        func(childComplexity int, selector model.PageFilter) int
-		FetchPatterns          func(childComplexity int, selector model.PageFilter) int
-		FetchResults           func(childComplexity int, selector model.PageFilter, profileID string) int
-		GetAvailableAddons     func(childComplexity int, filter *model.ServiceMeshFilter) int
-		GetAvailableNamespaces func(childComplexity int, k8sClusterIDs []string) int
-		GetClusterResources    func(childComplexity int, k8scontextIDs []string, namespace string) int
-		GetControlPlanes       func(childComplexity int, filter *model.ServiceMeshFilter) int
-		GetDataPlanes          func(childComplexity int, filter *model.ServiceMeshFilter) int
-		GetKubectlDescribe     func(childComplexity int, name string, kind string, namespace string) int
-		GetMeshsyncStatus      func(childComplexity int, k8scontextID string) int
-		GetNatsStatus          func(childComplexity int, k8scontextID string) int
-		GetOperatorStatus      func(childComplexity int, k8scontextID string) int
-		GetPerfResult          func(childComplexity int, id string) int
-		GetPerformanceProfiles func(childComplexity int, selector model.PageFilter) int
-		GetScopes              func(childComplexity int, name *string, id *string, trim *bool) int
-		GetTraits              func(childComplexity int, name *string, id *string, trim *bool) int
-		GetWorkloads           func(childComplexity int, name *string, id *string, trim *bool) int
-		ResyncCluster          func(childComplexity int, selector *model.ReSyncActions, k8scontextID string) int
+		ConnectToNats              func(childComplexity int, k8scontextID string) int
+		DeployMeshsync             func(childComplexity int, k8scontextID string) int
+		FetchAllResults            func(childComplexity int, selector model.PageFilter) int
+		FetchFilterCatalogContent  func(childComplexity int, selector *model.CatalogSelector) int
+		FetchPatternCatalogContent func(childComplexity int, selector *model.CatalogSelector) int
+		FetchPatterns              func(childComplexity int, selector model.PageFilter) int
+		FetchResults               func(childComplexity int, selector model.PageFilter, profileID string) int
+		GetAvailableAddons         func(childComplexity int, filter *model.ServiceMeshFilter) int
+		GetAvailableNamespaces     func(childComplexity int, k8sClusterIDs []string) int
+		GetClusterResources        func(childComplexity int, k8scontextIDs []string, namespace string) int
+		GetControlPlanes           func(childComplexity int, filter *model.ServiceMeshFilter) int
+		GetDataPlanes              func(childComplexity int, filter *model.ServiceMeshFilter) int
+		GetKubectlDescribe         func(childComplexity int, name string, kind string, namespace string) int
+		GetMeshsyncStatus          func(childComplexity int, k8scontextID string) int
+		GetNatsStatus              func(childComplexity int, k8scontextID string) int
+		GetOperatorStatus          func(childComplexity int, k8scontextID string) int
+		GetPerfResult              func(childComplexity int, id string) int
+		GetPerformanceProfiles     func(childComplexity int, selector model.PageFilter) int
+		GetScopes                  func(childComplexity int, name *string, id *string, trim *bool) int
+		GetTraits                  func(childComplexity int, name *string, id *string, trim *bool) int
+		GetWorkloads               func(childComplexity int, name *string, id *string, trim *bool) int
+		ResyncCluster              func(childComplexity int, selector *model.ReSyncActions, k8scontextID string) int
 	}
 
 	Resource struct {
@@ -341,7 +371,7 @@ type ComplexityRoot struct {
 		ListenToOperatorState             func(childComplexity int, k8scontextIDs []string) int
 		SubscribeBrokerConnection         func(childComplexity int) int
 		SubscribeClusterResources         func(childComplexity int, k8scontextIDs []string, namespace string) int
-		SubscribeConfiguration            func(childComplexity int, selector model.PageFilter) int
+		SubscribeConfiguration            func(childComplexity int, applicationSelector model.PageFilter, patternSelector model.PageFilter, filterSelector model.PageFilter) int
 		SubscribeK8sContext               func(childComplexity int, selector model.PageFilter) int
 		SubscribeMeshSyncEvents           func(childComplexity int, k8scontextIDs []string) int
 		SubscribeMesheryControllersStatus func(childComplexity int, k8scontextIDs []string) int
@@ -373,6 +403,8 @@ type QueryResolver interface {
 	GetTraits(ctx context.Context, name *string, id *string, trim *bool) ([]*model.OAMCapability, error)
 	GetScopes(ctx context.Context, name *string, id *string, trim *bool) ([]*model.OAMCapability, error)
 	GetKubectlDescribe(ctx context.Context, name string, kind string, namespace string) (*model.KctlDescribeDetails, error)
+	FetchPatternCatalogContent(ctx context.Context, selector *model.CatalogSelector) ([]*model.CatalogPattern, error)
+	FetchFilterCatalogContent(ctx context.Context, selector *model.CatalogSelector) ([]*model.CatalogFilter, error)
 	GetClusterResources(ctx context.Context, k8scontextIDs []string, namespace string) (*model.ClusterResources, error)
 }
 type SubscriptionResolver interface {
@@ -386,7 +418,7 @@ type SubscriptionResolver interface {
 	SubscribeBrokerConnection(ctx context.Context) (<-chan bool, error)
 	SubscribeMesheryControllersStatus(ctx context.Context, k8scontextIDs []string) (<-chan []*model.MesheryControllersStatusListItem, error)
 	SubscribeMeshSyncEvents(ctx context.Context, k8scontextIDs []string) (<-chan *model.MeshSyncEvent, error)
-	SubscribeConfiguration(ctx context.Context, selector model.PageFilter) (<-chan *model.ConfigurationPage, error)
+	SubscribeConfiguration(ctx context.Context, applicationSelector model.PageFilter, patternSelector model.PageFilter, filterSelector model.PageFilter) (<-chan *model.ConfigurationPage, error)
 	SubscribeClusterResources(ctx context.Context, k8scontextIDs []string, namespace string) (<-chan *model.ClusterResources, error)
 	SubscribeK8sContext(ctx context.Context, selector model.PageFilter) (<-chan *model.K8sContextsPage, error)
 }
@@ -503,6 +535,132 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ApplicationResult.UserID(childComplexity), true
+
+	case "CatalogFilter.catalog_data":
+		if e.complexity.CatalogFilter.CatalogData == nil {
+			break
+		}
+
+		return e.complexity.CatalogFilter.CatalogData(childComplexity), true
+
+	case "CatalogFilter.created_at":
+		if e.complexity.CatalogFilter.CreatedAt == nil {
+			break
+		}
+
+		return e.complexity.CatalogFilter.CreatedAt(childComplexity), true
+
+	case "CatalogFilter.filter_file":
+		if e.complexity.CatalogFilter.FilterFile == nil {
+			break
+		}
+
+		return e.complexity.CatalogFilter.FilterFile(childComplexity), true
+
+	case "CatalogFilter.id":
+		if e.complexity.CatalogFilter.ID == nil {
+			break
+		}
+
+		return e.complexity.CatalogFilter.ID(childComplexity), true
+
+	case "CatalogFilter.location":
+		if e.complexity.CatalogFilter.Location == nil {
+			break
+		}
+
+		return e.complexity.CatalogFilter.Location(childComplexity), true
+
+	case "CatalogFilter.name":
+		if e.complexity.CatalogFilter.Name == nil {
+			break
+		}
+
+		return e.complexity.CatalogFilter.Name(childComplexity), true
+
+	case "CatalogFilter.updated_at":
+		if e.complexity.CatalogFilter.UpdatedAt == nil {
+			break
+		}
+
+		return e.complexity.CatalogFilter.UpdatedAt(childComplexity), true
+
+	case "CatalogFilter.user_id":
+		if e.complexity.CatalogFilter.UserID == nil {
+			break
+		}
+
+		return e.complexity.CatalogFilter.UserID(childComplexity), true
+
+	case "CatalogFilter.visibility":
+		if e.complexity.CatalogFilter.Visibility == nil {
+			break
+		}
+
+		return e.complexity.CatalogFilter.Visibility(childComplexity), true
+
+	case "CatalogPattern.catalog_data":
+		if e.complexity.CatalogPattern.CatalogData == nil {
+			break
+		}
+
+		return e.complexity.CatalogPattern.CatalogData(childComplexity), true
+
+	case "CatalogPattern.created_at":
+		if e.complexity.CatalogPattern.CreatedAt == nil {
+			break
+		}
+
+		return e.complexity.CatalogPattern.CreatedAt(childComplexity), true
+
+	case "CatalogPattern.id":
+		if e.complexity.CatalogPattern.ID == nil {
+			break
+		}
+
+		return e.complexity.CatalogPattern.ID(childComplexity), true
+
+	case "CatalogPattern.location":
+		if e.complexity.CatalogPattern.Location == nil {
+			break
+		}
+
+		return e.complexity.CatalogPattern.Location(childComplexity), true
+
+	case "CatalogPattern.name":
+		if e.complexity.CatalogPattern.Name == nil {
+			break
+		}
+
+		return e.complexity.CatalogPattern.Name(childComplexity), true
+
+	case "CatalogPattern.pattern_file":
+		if e.complexity.CatalogPattern.PatternFile == nil {
+			break
+		}
+
+		return e.complexity.CatalogPattern.PatternFile(childComplexity), true
+
+	case "CatalogPattern.updated_at":
+		if e.complexity.CatalogPattern.UpdatedAt == nil {
+			break
+		}
+
+		return e.complexity.CatalogPattern.UpdatedAt(childComplexity), true
+
+	case "CatalogPattern.user_id":
+		if e.complexity.CatalogPattern.UserID == nil {
+			break
+		}
+
+		return e.complexity.CatalogPattern.UserID(childComplexity), true
+
+	case "CatalogPattern.visibility":
+		if e.complexity.CatalogPattern.Visibility == nil {
+			break
+		}
+
+		return e.complexity.CatalogPattern.Visibility(childComplexity), true
 
 	case "ClusterResources.resources":
 		if e.complexity.ClusterResources.Resources == nil {
@@ -763,6 +921,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.FilterPage.TotalCount(childComplexity), true
 
+	case "FilterResult.catalog_data":
+		if e.complexity.FilterResult.CatalogData == nil {
+			break
+		}
+
+		return e.complexity.FilterResult.CatalogData(childComplexity), true
+
 	case "FilterResult.created_at":
 		if e.complexity.FilterResult.CreatedAt == nil {
 			break
@@ -811,6 +976,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.FilterResult.UserID(childComplexity), true
+
+	case "FilterResult.visibility":
+		if e.complexity.FilterResult.Visibility == nil {
+			break
+		}
+
+		return e.complexity.FilterResult.Visibility(childComplexity), true
 
 	case "K8sContext.auth":
 		if e.complexity.K8sContext.Auth == nil {
@@ -1279,6 +1451,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.PatternResult.CanSupport(childComplexity), true
 
+	case "PatternResult.catalog_data":
+		if e.complexity.PatternResult.CatalogData == nil {
+			break
+		}
+
+		return e.complexity.PatternResult.CatalogData(childComplexity), true
+
 	case "PatternResult.created_at":
 		if e.complexity.PatternResult.CreatedAt == nil {
 			break
@@ -1334,6 +1513,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.PatternResult.UserID(childComplexity), true
+
+	case "PatternResult.visibility":
+		if e.complexity.PatternResult.Visibility == nil {
+			break
+		}
+
+		return e.complexity.PatternResult.Visibility(childComplexity), true
 
 	case "PerfPageProfiles.page":
 		if e.complexity.PerfPageProfiles.Page == nil {
@@ -1545,6 +1731,30 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.FetchAllResults(childComplexity, args["selector"].(model.PageFilter)), true
+
+	case "Query.fetchFilterCatalogContent":
+		if e.complexity.Query.FetchFilterCatalogContent == nil {
+			break
+		}
+
+		args, err := ec.field_Query_fetchFilterCatalogContent_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.FetchFilterCatalogContent(childComplexity, args["selector"].(*model.CatalogSelector)), true
+
+	case "Query.fetchPatternCatalogContent":
+		if e.complexity.Query.FetchPatternCatalogContent == nil {
+			break
+		}
+
+		args, err := ec.field_Query_fetchPatternCatalogContent_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.FetchPatternCatalogContent(childComplexity, args["selector"].(*model.CatalogSelector)), true
 
 	case "Query.fetchPatterns":
 		if e.complexity.Query.FetchPatterns == nil {
@@ -1853,7 +2063,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Subscription.SubscribeConfiguration(childComplexity, args["selector"].(model.PageFilter)), true
+		return e.complexity.Subscription.SubscribeConfiguration(childComplexity, args["applicationSelector"].(model.PageFilter), args["patternSelector"].(model.PageFilter), args["filterSelector"].(model.PageFilter)), true
 
 	case "Subscription.subscribeK8sContext":
 		if e.complexity.Subscription.SubscribeK8sContext == nil {
@@ -1924,6 +2134,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	ec := executionContext{rc, e}
 	inputUnmarshalMap := graphql.BuildUnmarshalerMap(
 		ec.unmarshalInputAddonStatusInput,
+		ec.unmarshalInputCatalogSelector,
 		ec.unmarshalInputOperatorStatusInput,
 		ec.unmarshalInputPageFilter,
 		ec.unmarshalInputReSyncActions,
@@ -2358,8 +2569,22 @@ type FilterResult {
   filter_file: String!
   user_id: String!
   location: Location!
+  visibility: String!
+  catalog_data: Map
   created_at: String
   updated_at: String
+}
+
+type CatalogFilter {
+  id: ID!
+  name: String!
+  filter_file: String!
+  user_id: String!
+  location: Location!
+  visibility: Map!
+  catalog_data: Map
+  created_at: String
+  updated_at: String 
 }
 
 # ============== Patterns =================================
@@ -2368,7 +2593,6 @@ type PatternPageResult {
   page: Int!
   page_size: Int!
   total_count: Int!
-
   patterns: [PatternResult]
 }
 
@@ -2378,6 +2602,8 @@ type PatternResult {
   user_id: String!
   location: Location!
   pattern_file: String!
+  visibility: String!
+  catalog_data: Map
   canSupport: Boolean!
   errmsg: String
   created_at: String
@@ -2389,6 +2615,18 @@ type Location {
   host: String
   path: String
   type: String
+}
+
+type CatalogPattern {
+  id: ID!
+  name: String!
+  user_id: String!
+  pattern_file: String!
+  location: Location!
+  visibility: Map!
+  catalog_data: Map!
+  created_at: String
+  updated_at: String
 }
 
 # ============== Perf =================================
@@ -2451,6 +2689,11 @@ input PageFilter {
   search: String
   from: String
   to: String
+}
+
+input CatalogSelector {
+  search: String!
+  order: String!
 }
 
 # ============== RESYNC =============================
@@ -2545,9 +2788,16 @@ type Query {
   # Query for getting kubectl describe details with meshkit 
   getKubectlDescribe(name: String!, kind: String!, namespace: String!): KctlDescribeDetails!
 
+  # Query for getting Pattern Catalog from remote provider
+  fetchPatternCatalogContent(selector: CatalogSelector): [CatalogPattern!]!
+  # Query for getting Filter Catalog from remote provider
+  fetchFilterCatalogContent(selector: CatalogSelector): [CatalogFilter!]!
+
   # Query for getting cluster info
+
   getClusterResources(k8scontextIDs: [String!], namespace: String!): ClusterResources!
 }
+
 
 #
 
@@ -2604,7 +2854,8 @@ type Subscription {
   subscribeMeshSyncEvents(
     k8scontextIDs: [String!]
   ) : MeshSyncEvent!
-  subscribeConfiguration(selector: PageFilter!) : ConfigurationPage!
+
+  subscribeConfiguration(applicationSelector: PageFilter!, patternSelector: PageFilter!, filterSelector: PageFilter!) : ConfigurationPage!
 
   subscribeClusterResources(
     k8scontextIDs: [String!],
@@ -2642,7 +2893,7 @@ func (ec *executionContext) field_Mutation_changeOperatorStatus_args(ctx context
 	var arg0 *model.OperatorStatusInput
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalOOperatorStatusInput2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐOperatorStatusInput(ctx, tmp)
+		arg0, err = ec.unmarshalOOperatorStatusInput2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐOperatorStatusInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -2702,7 +2953,37 @@ func (ec *executionContext) field_Query_fetchAllResults_args(ctx context.Context
 	var arg0 model.PageFilter
 	if tmp, ok := rawArgs["selector"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("selector"))
-		arg0, err = ec.unmarshalNPageFilter2githubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐPageFilter(ctx, tmp)
+		arg0, err = ec.unmarshalNPageFilter2githubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐPageFilter(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["selector"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_fetchFilterCatalogContent_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *model.CatalogSelector
+	if tmp, ok := rawArgs["selector"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("selector"))
+		arg0, err = ec.unmarshalOCatalogSelector2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐCatalogSelector(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["selector"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_fetchPatternCatalogContent_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *model.CatalogSelector
+	if tmp, ok := rawArgs["selector"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("selector"))
+		arg0, err = ec.unmarshalOCatalogSelector2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐCatalogSelector(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -2717,7 +2998,7 @@ func (ec *executionContext) field_Query_fetchPatterns_args(ctx context.Context, 
 	var arg0 model.PageFilter
 	if tmp, ok := rawArgs["selector"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("selector"))
-		arg0, err = ec.unmarshalNPageFilter2githubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐPageFilter(ctx, tmp)
+		arg0, err = ec.unmarshalNPageFilter2githubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐPageFilter(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -2732,7 +3013,7 @@ func (ec *executionContext) field_Query_fetchResults_args(ctx context.Context, r
 	var arg0 model.PageFilter
 	if tmp, ok := rawArgs["selector"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("selector"))
-		arg0, err = ec.unmarshalNPageFilter2githubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐPageFilter(ctx, tmp)
+		arg0, err = ec.unmarshalNPageFilter2githubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐPageFilter(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -2756,7 +3037,7 @@ func (ec *executionContext) field_Query_getAvailableAddons_args(ctx context.Cont
 	var arg0 *model.ServiceMeshFilter
 	if tmp, ok := rawArgs["filter"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filter"))
-		arg0, err = ec.unmarshalOServiceMeshFilter2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐServiceMeshFilter(ctx, tmp)
+		arg0, err = ec.unmarshalOServiceMeshFilter2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐServiceMeshFilter(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -2810,7 +3091,7 @@ func (ec *executionContext) field_Query_getControlPlanes_args(ctx context.Contex
 	var arg0 *model.ServiceMeshFilter
 	if tmp, ok := rawArgs["filter"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filter"))
-		arg0, err = ec.unmarshalOServiceMeshFilter2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐServiceMeshFilter(ctx, tmp)
+		arg0, err = ec.unmarshalOServiceMeshFilter2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐServiceMeshFilter(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -2825,7 +3106,7 @@ func (ec *executionContext) field_Query_getDataPlanes_args(ctx context.Context, 
 	var arg0 *model.ServiceMeshFilter
 	if tmp, ok := rawArgs["filter"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filter"))
-		arg0, err = ec.unmarshalOServiceMeshFilter2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐServiceMeshFilter(ctx, tmp)
+		arg0, err = ec.unmarshalOServiceMeshFilter2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐServiceMeshFilter(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -2933,7 +3214,7 @@ func (ec *executionContext) field_Query_getPerformanceProfiles_args(ctx context.
 	var arg0 model.PageFilter
 	if tmp, ok := rawArgs["selector"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("selector"))
-		arg0, err = ec.unmarshalNPageFilter2githubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐPageFilter(ctx, tmp)
+		arg0, err = ec.unmarshalNPageFilter2githubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐPageFilter(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -3047,7 +3328,7 @@ func (ec *executionContext) field_Query_resyncCluster_args(ctx context.Context, 
 	var arg0 *model.ReSyncActions
 	if tmp, ok := rawArgs["selector"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("selector"))
-		arg0, err = ec.unmarshalOReSyncActions2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐReSyncActions(ctx, tmp)
+		arg0, err = ec.unmarshalOReSyncActions2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐReSyncActions(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -3071,7 +3352,7 @@ func (ec *executionContext) field_Subscription_listenToAddonState_args(ctx conte
 	var arg0 *model.ServiceMeshFilter
 	if tmp, ok := rawArgs["filter"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filter"))
-		arg0, err = ec.unmarshalOServiceMeshFilter2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐServiceMeshFilter(ctx, tmp)
+		arg0, err = ec.unmarshalOServiceMeshFilter2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐServiceMeshFilter(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -3086,7 +3367,7 @@ func (ec *executionContext) field_Subscription_listenToControlPlaneState_args(ct
 	var arg0 *model.ServiceMeshFilter
 	if tmp, ok := rawArgs["filter"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filter"))
-		arg0, err = ec.unmarshalOServiceMeshFilter2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐServiceMeshFilter(ctx, tmp)
+		arg0, err = ec.unmarshalOServiceMeshFilter2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐServiceMeshFilter(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -3101,7 +3382,7 @@ func (ec *executionContext) field_Subscription_listenToDataPlaneState_args(ctx c
 	var arg0 *model.ServiceMeshFilter
 	if tmp, ok := rawArgs["filter"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filter"))
-		arg0, err = ec.unmarshalOServiceMeshFilter2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐServiceMeshFilter(ctx, tmp)
+		arg0, err = ec.unmarshalOServiceMeshFilter2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐServiceMeshFilter(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -3168,14 +3449,32 @@ func (ec *executionContext) field_Subscription_subscribeConfiguration_args(ctx c
 	var err error
 	args := map[string]interface{}{}
 	var arg0 model.PageFilter
-	if tmp, ok := rawArgs["selector"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("selector"))
-		arg0, err = ec.unmarshalNPageFilter2githubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐPageFilter(ctx, tmp)
+	if tmp, ok := rawArgs["applicationSelector"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("applicationSelector"))
+		arg0, err = ec.unmarshalNPageFilter2githubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐPageFilter(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["selector"] = arg0
+	args["applicationSelector"] = arg0
+	var arg1 model.PageFilter
+	if tmp, ok := rawArgs["patternSelector"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("patternSelector"))
+		arg1, err = ec.unmarshalNPageFilter2githubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐPageFilter(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["patternSelector"] = arg1
+	var arg2 model.PageFilter
+	if tmp, ok := rawArgs["filterSelector"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filterSelector"))
+		arg2, err = ec.unmarshalNPageFilter2githubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐPageFilter(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["filterSelector"] = arg2
 	return args, nil
 }
 
@@ -3185,7 +3484,7 @@ func (ec *executionContext) field_Subscription_subscribeK8sContext_args(ctx cont
 	var arg0 model.PageFilter
 	if tmp, ok := rawArgs["selector"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("selector"))
-		arg0, err = ec.unmarshalNPageFilter2githubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐPageFilter(ctx, tmp)
+		arg0, err = ec.unmarshalNPageFilter2githubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐPageFilter(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -3230,7 +3529,7 @@ func (ec *executionContext) field_Subscription_subscribePerfProfiles_args(ctx co
 	var arg0 model.PageFilter
 	if tmp, ok := rawArgs["selector"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("selector"))
-		arg0, err = ec.unmarshalNPageFilter2githubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐPageFilter(ctx, tmp)
+		arg0, err = ec.unmarshalNPageFilter2githubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐPageFilter(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -3245,7 +3544,7 @@ func (ec *executionContext) field_Subscription_subscribePerfResults_args(ctx con
 	var arg0 model.PageFilter
 	if tmp, ok := rawArgs["selector"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("selector"))
-		arg0, err = ec.unmarshalNPageFilter2githubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐPageFilter(ctx, tmp)
+		arg0, err = ec.unmarshalNPageFilter2githubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐPageFilter(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -3546,7 +3845,7 @@ func (ec *executionContext) _ApplicationPage_applications(ctx context.Context, f
 	}
 	res := resTmp.([]*model.ApplicationResult)
 	fc.Result = res
-	return ec.marshalOApplicationResult2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐApplicationResult(ctx, field.Selections, res)
+	return ec.marshalOApplicationResult2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐApplicationResult(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_ApplicationPage_applications(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -3740,7 +4039,7 @@ func (ec *executionContext) _ApplicationResult_type(ctx context.Context, field g
 	}
 	res := resTmp.(*model.NullString)
 	fc.Result = res
-	return ec.marshalNNullString2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐNullString(ctx, field.Selections, res)
+	return ec.marshalNNullString2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐNullString(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_ApplicationResult_type(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -3834,7 +4133,7 @@ func (ec *executionContext) _ApplicationResult_location(ctx context.Context, fie
 	}
 	res := resTmp.(*model.Location)
 	fc.Result = res
-	return ec.marshalNLocation2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐLocation(ctx, field.Selections, res)
+	return ec.marshalNLocation2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐLocation(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_ApplicationResult_location(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -3942,6 +4241,803 @@ func (ec *executionContext) fieldContext_ApplicationResult_updated_at(ctx contex
 	return fc, nil
 }
 
+func (ec *executionContext) _CatalogFilter_id(ctx context.Context, field graphql.CollectedField, obj *model.CatalogFilter) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CatalogFilter_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNID2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_CatalogFilter_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CatalogFilter",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CatalogFilter_name(ctx context.Context, field graphql.CollectedField, obj *model.CatalogFilter) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CatalogFilter_name(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Name, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_CatalogFilter_name(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CatalogFilter",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CatalogFilter_filter_file(ctx context.Context, field graphql.CollectedField, obj *model.CatalogFilter) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CatalogFilter_filter_file(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.FilterFile, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_CatalogFilter_filter_file(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CatalogFilter",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CatalogFilter_user_id(ctx context.Context, field graphql.CollectedField, obj *model.CatalogFilter) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CatalogFilter_user_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UserID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_CatalogFilter_user_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CatalogFilter",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CatalogFilter_location(ctx context.Context, field graphql.CollectedField, obj *model.CatalogFilter) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CatalogFilter_location(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Location, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Location)
+	fc.Result = res
+	return ec.marshalNLocation2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐLocation(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_CatalogFilter_location(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CatalogFilter",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "branch":
+				return ec.fieldContext_Location_branch(ctx, field)
+			case "host":
+				return ec.fieldContext_Location_host(ctx, field)
+			case "path":
+				return ec.fieldContext_Location_path(ctx, field)
+			case "type":
+				return ec.fieldContext_Location_type(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Location", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CatalogFilter_visibility(ctx context.Context, field graphql.CollectedField, obj *model.CatalogFilter) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CatalogFilter_visibility(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Visibility, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(map[string]interface{})
+	fc.Result = res
+	return ec.marshalNMap2map(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_CatalogFilter_visibility(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CatalogFilter",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Map does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CatalogFilter_catalog_data(ctx context.Context, field graphql.CollectedField, obj *model.CatalogFilter) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CatalogFilter_catalog_data(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CatalogData, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(map[string]interface{})
+	fc.Result = res
+	return ec.marshalOMap2map(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_CatalogFilter_catalog_data(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CatalogFilter",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Map does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CatalogFilter_created_at(ctx context.Context, field graphql.CollectedField, obj *model.CatalogFilter) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CatalogFilter_created_at(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_CatalogFilter_created_at(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CatalogFilter",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CatalogFilter_updated_at(ctx context.Context, field graphql.CollectedField, obj *model.CatalogFilter) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CatalogFilter_updated_at(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UpdatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_CatalogFilter_updated_at(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CatalogFilter",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CatalogPattern_id(ctx context.Context, field graphql.CollectedField, obj *model.CatalogPattern) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CatalogPattern_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNID2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_CatalogPattern_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CatalogPattern",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CatalogPattern_name(ctx context.Context, field graphql.CollectedField, obj *model.CatalogPattern) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CatalogPattern_name(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Name, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_CatalogPattern_name(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CatalogPattern",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CatalogPattern_user_id(ctx context.Context, field graphql.CollectedField, obj *model.CatalogPattern) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CatalogPattern_user_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UserID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_CatalogPattern_user_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CatalogPattern",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CatalogPattern_pattern_file(ctx context.Context, field graphql.CollectedField, obj *model.CatalogPattern) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CatalogPattern_pattern_file(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PatternFile, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_CatalogPattern_pattern_file(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CatalogPattern",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CatalogPattern_location(ctx context.Context, field graphql.CollectedField, obj *model.CatalogPattern) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CatalogPattern_location(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Location, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Location)
+	fc.Result = res
+	return ec.marshalNLocation2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐLocation(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_CatalogPattern_location(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CatalogPattern",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "branch":
+				return ec.fieldContext_Location_branch(ctx, field)
+			case "host":
+				return ec.fieldContext_Location_host(ctx, field)
+			case "path":
+				return ec.fieldContext_Location_path(ctx, field)
+			case "type":
+				return ec.fieldContext_Location_type(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Location", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CatalogPattern_visibility(ctx context.Context, field graphql.CollectedField, obj *model.CatalogPattern) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CatalogPattern_visibility(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Visibility, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(map[string]interface{})
+	fc.Result = res
+	return ec.marshalNMap2map(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_CatalogPattern_visibility(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CatalogPattern",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Map does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CatalogPattern_catalog_data(ctx context.Context, field graphql.CollectedField, obj *model.CatalogPattern) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CatalogPattern_catalog_data(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CatalogData, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(map[string]interface{})
+	fc.Result = res
+	return ec.marshalNMap2map(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_CatalogPattern_catalog_data(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CatalogPattern",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Map does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CatalogPattern_created_at(ctx context.Context, field graphql.CollectedField, obj *model.CatalogPattern) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CatalogPattern_created_at(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_CatalogPattern_created_at(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CatalogPattern",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CatalogPattern_updated_at(ctx context.Context, field graphql.CollectedField, obj *model.CatalogPattern) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CatalogPattern_updated_at(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UpdatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_CatalogPattern_updated_at(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CatalogPattern",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _ClusterResources_resources(ctx context.Context, field graphql.CollectedField, obj *model.ClusterResources) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_ClusterResources_resources(ctx, field)
 	if err != nil {
@@ -3970,7 +5066,7 @@ func (ec *executionContext) _ClusterResources_resources(ctx context.Context, fie
 	}
 	res := resTmp.([]*model.Resource)
 	fc.Result = res
-	return ec.marshalNResource2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐResourceᚄ(ctx, field.Selections, res)
+	return ec.marshalNResource2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐResourceᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_ClusterResources_resources(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -4017,7 +5113,7 @@ func (ec *executionContext) _ConfigurationPage_applications(ctx context.Context,
 	}
 	res := resTmp.(*model.ApplicationPage)
 	fc.Result = res
-	return ec.marshalOApplicationPage2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐApplicationPage(ctx, field.Selections, res)
+	return ec.marshalOApplicationPage2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐApplicationPage(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_ConfigurationPage_applications(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -4068,7 +5164,7 @@ func (ec *executionContext) _ConfigurationPage_patterns(ctx context.Context, fie
 	}
 	res := resTmp.(*model.PatternPageResult)
 	fc.Result = res
-	return ec.marshalOPatternPageResult2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐPatternPageResult(ctx, field.Selections, res)
+	return ec.marshalOPatternPageResult2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐPatternPageResult(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_ConfigurationPage_patterns(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -4119,7 +5215,7 @@ func (ec *executionContext) _ConfigurationPage_filters(ctx context.Context, fiel
 	}
 	res := resTmp.(*model.FilterPage)
 	fc.Result = res
-	return ec.marshalOFilterPage2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐFilterPage(ctx, field.Selections, res)
+	return ec.marshalOFilterPage2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐFilterPage(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_ConfigurationPage_filters(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -4302,7 +5398,7 @@ func (ec *executionContext) _Container_status(ctx context.Context, field graphql
 	}
 	res := resTmp.(*model.ContainerStatus)
 	fc.Result = res
-	return ec.marshalOContainer_Status2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐContainerStatus(ctx, field.Selections, res)
+	return ec.marshalOContainer_Status2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐContainerStatus(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Container_status(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -4363,7 +5459,7 @@ func (ec *executionContext) _Container_ports(ctx context.Context, field graphql.
 	}
 	res := resTmp.([]*model.ContainerPort)
 	fc.Result = res
-	return ec.marshalOContainer_Port2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐContainerPort(ctx, field.Selections, res)
+	return ec.marshalOContainer_Port2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐContainerPort(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Container_ports(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -5010,7 +6106,7 @@ func (ec *executionContext) _ControlPlane_members(ctx context.Context, field gra
 	}
 	res := resTmp.([]*model.ControlPlaneMember)
 	fc.Result = res
-	return ec.marshalNControlPlaneMember2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐControlPlaneMemberᚄ(ctx, field.Selections, res)
+	return ec.marshalNControlPlaneMember2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐControlPlaneMemberᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_ControlPlane_members(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -5239,7 +6335,7 @@ func (ec *executionContext) _ControlPlaneMember_data_planes(ctx context.Context,
 	}
 	res := resTmp.([]*model.Container)
 	fc.Result = res
-	return ec.marshalOContainer2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐContainerᚄ(ctx, field.Selections, res)
+	return ec.marshalOContainer2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐContainerᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_ControlPlaneMember_data_planes(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -5341,7 +6437,7 @@ func (ec *executionContext) _DataPlane_proxies(ctx context.Context, field graphq
 	}
 	res := resTmp.([]*model.Container)
 	fc.Result = res
-	return ec.marshalNContainer2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐContainerᚄ(ctx, field.Selections, res)
+	return ec.marshalNContainer2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐContainerᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_DataPlane_proxies(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -5616,7 +6712,7 @@ func (ec *executionContext) _FilterPage_filters(ctx context.Context, field graph
 	}
 	res := resTmp.([]*model.FilterResult)
 	fc.Result = res
-	return ec.marshalOFilterResult2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐFilterResult(ctx, field.Selections, res)
+	return ec.marshalOFilterResult2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐFilterResult(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_FilterPage_filters(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -5637,6 +6733,10 @@ func (ec *executionContext) fieldContext_FilterPage_filters(ctx context.Context,
 				return ec.fieldContext_FilterResult_user_id(ctx, field)
 			case "location":
 				return ec.fieldContext_FilterResult_location(ctx, field)
+			case "visibility":
+				return ec.fieldContext_FilterResult_visibility(ctx, field)
+			case "catalog_data":
+				return ec.fieldContext_FilterResult_catalog_data(ctx, field)
 			case "created_at":
 				return ec.fieldContext_FilterResult_created_at(ctx, field)
 			case "updated_at":
@@ -5852,7 +6952,7 @@ func (ec *executionContext) _FilterResult_location(ctx context.Context, field gr
 	}
 	res := resTmp.(*model.Location)
 	fc.Result = res
-	return ec.marshalNLocation2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐLocation(ctx, field.Selections, res)
+	return ec.marshalNLocation2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐLocation(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_FilterResult_location(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -5873,6 +6973,91 @@ func (ec *executionContext) fieldContext_FilterResult_location(ctx context.Conte
 				return ec.fieldContext_Location_type(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Location", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _FilterResult_visibility(ctx context.Context, field graphql.CollectedField, obj *model.FilterResult) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_FilterResult_visibility(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Visibility, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_FilterResult_visibility(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "FilterResult",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _FilterResult_catalog_data(ctx context.Context, field graphql.CollectedField, obj *model.FilterResult) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_FilterResult_catalog_data(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CatalogData, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(map[string]interface{})
+	fc.Result = res
+	return ec.marshalOMap2map(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_FilterResult_catalog_data(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "FilterResult",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Map does not have child fields")
 		},
 	}
 	return fc, nil
@@ -6516,7 +7701,7 @@ func (ec *executionContext) _K8sContextsPage_contexts(ctx context.Context, field
 	}
 	res := resTmp.([]*model.K8sContext)
 	fc.Result = res
-	return ec.marshalNK8sContext2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐK8sContext(ctx, field.Selections, res)
+	return ec.marshalNK8sContext2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐK8sContext(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_K8sContextsPage_contexts(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -7006,7 +8191,7 @@ func (ec *executionContext) _MesheryControllersStatusListItem_controller(ctx con
 	}
 	res := resTmp.(model.MesheryController)
 	fc.Result = res
-	return ec.marshalNMesheryController2githubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐMesheryController(ctx, field.Selections, res)
+	return ec.marshalNMesheryController2githubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐMesheryController(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_MesheryControllersStatusListItem_controller(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -7050,7 +8235,7 @@ func (ec *executionContext) _MesheryControllersStatusListItem_status(ctx context
 	}
 	res := resTmp.(model.MesheryControllerStatus)
 	fc.Result = res
-	return ec.marshalNMesheryControllerStatus2githubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐMesheryControllerStatus(ctx, field.Selections, res)
+	return ec.marshalNMesheryControllerStatus2githubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐMesheryControllerStatus(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_MesheryControllersStatusListItem_status(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -7586,7 +8771,7 @@ func (ec *executionContext) _Mutation_changeOperatorStatus(ctx context.Context, 
 	}
 	res := resTmp.(model.Status)
 	fc.Result = res
-	return ec.marshalNStatus2githubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐStatus(ctx, field.Selections, res)
+	return ec.marshalNStatus2githubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐStatus(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_changeOperatorStatus(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -8107,7 +9292,7 @@ func (ec *executionContext) _OperatorControllerStatus_status(ctx context.Context
 	}
 	res := resTmp.(model.Status)
 	fc.Result = res
-	return ec.marshalNStatus2githubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐStatus(ctx, field.Selections, res)
+	return ec.marshalNStatus2githubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐStatus(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_OperatorControllerStatus_status(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -8148,7 +9333,7 @@ func (ec *executionContext) _OperatorControllerStatus_error(ctx context.Context,
 	}
 	res := resTmp.(*model.Error)
 	fc.Result = res
-	return ec.marshalOError2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐError(ctx, field.Selections, res)
+	return ec.marshalOError2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐError(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_OperatorControllerStatus_error(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -8286,7 +9471,7 @@ func (ec *executionContext) _OperatorControllerStatusPerK8sContext_OperatorContr
 	}
 	res := resTmp.(*model.OperatorControllerStatus)
 	fc.Result = res
-	return ec.marshalNOperatorControllerStatus2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐOperatorControllerStatus(ctx, field.Selections, res)
+	return ec.marshalNOperatorControllerStatus2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐOperatorControllerStatus(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_OperatorControllerStatusPerK8sContext_OperatorControllerStatus(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -8342,7 +9527,7 @@ func (ec *executionContext) _OperatorStatus_status(ctx context.Context, field gr
 	}
 	res := resTmp.(model.Status)
 	fc.Result = res
-	return ec.marshalNStatus2githubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐStatus(ctx, field.Selections, res)
+	return ec.marshalNStatus2githubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐStatus(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_OperatorStatus_status(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -8430,7 +9615,7 @@ func (ec *executionContext) _OperatorStatus_controllers(ctx context.Context, fie
 	}
 	res := resTmp.([]*model.OperatorControllerStatus)
 	fc.Result = res
-	return ec.marshalNOperatorControllerStatus2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐOperatorControllerStatusᚄ(ctx, field.Selections, res)
+	return ec.marshalNOperatorControllerStatus2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐOperatorControllerStatusᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_OperatorStatus_controllers(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -8483,7 +9668,7 @@ func (ec *executionContext) _OperatorStatus_error(ctx context.Context, field gra
 	}
 	res := resTmp.(*model.Error)
 	fc.Result = res
-	return ec.marshalOError2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐError(ctx, field.Selections, res)
+	return ec.marshalOError2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐError(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_OperatorStatus_error(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -8621,7 +9806,7 @@ func (ec *executionContext) _OperatorStatusPerK8sContext_operatorStatus(ctx cont
 	}
 	res := resTmp.(*model.OperatorStatus)
 	fc.Result = res
-	return ec.marshalNOperatorStatus2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐOperatorStatus(ctx, field.Selections, res)
+	return ec.marshalNOperatorStatus2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐOperatorStatus(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_OperatorStatusPerK8sContext_operatorStatus(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -8806,7 +9991,7 @@ func (ec *executionContext) _PatternPageResult_patterns(ctx context.Context, fie
 	}
 	res := resTmp.([]*model.PatternResult)
 	fc.Result = res
-	return ec.marshalOPatternResult2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐPatternResult(ctx, field.Selections, res)
+	return ec.marshalOPatternResult2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐPatternResult(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_PatternPageResult_patterns(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -8827,6 +10012,10 @@ func (ec *executionContext) fieldContext_PatternPageResult_patterns(ctx context.
 				return ec.fieldContext_PatternResult_location(ctx, field)
 			case "pattern_file":
 				return ec.fieldContext_PatternResult_pattern_file(ctx, field)
+			case "visibility":
+				return ec.fieldContext_PatternResult_visibility(ctx, field)
+			case "catalog_data":
+				return ec.fieldContext_PatternResult_catalog_data(ctx, field)
 			case "canSupport":
 				return ec.fieldContext_PatternResult_canSupport(ctx, field)
 			case "errmsg":
@@ -9002,7 +10191,7 @@ func (ec *executionContext) _PatternResult_location(ctx context.Context, field g
 	}
 	res := resTmp.(*model.Location)
 	fc.Result = res
-	return ec.marshalNLocation2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐLocation(ctx, field.Selections, res)
+	return ec.marshalNLocation2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐLocation(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_PatternResult_location(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -9067,6 +10256,91 @@ func (ec *executionContext) fieldContext_PatternResult_pattern_file(ctx context.
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _PatternResult_visibility(ctx context.Context, field graphql.CollectedField, obj *model.PatternResult) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PatternResult_visibility(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Visibility, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_PatternResult_visibility(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "PatternResult",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _PatternResult_catalog_data(ctx context.Context, field graphql.CollectedField, obj *model.PatternResult) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PatternResult_catalog_data(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CatalogData, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(map[string]interface{})
+	fc.Result = res
+	return ec.marshalOMap2map(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_PatternResult_catalog_data(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "PatternResult",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Map does not have child fields")
 		},
 	}
 	return fc, nil
@@ -9396,7 +10670,7 @@ func (ec *executionContext) _PerfPageProfiles_profiles(ctx context.Context, fiel
 	}
 	res := resTmp.([]*model.PerfProfile)
 	fc.Result = res
-	return ec.marshalOPerfProfile2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐPerfProfile(ctx, field.Selections, res)
+	return ec.marshalOPerfProfile2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐPerfProfile(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_PerfPageProfiles_profiles(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -9605,7 +10879,7 @@ func (ec *executionContext) _PerfPageResult_results(ctx context.Context, field g
 	}
 	res := resTmp.([]*model.MesheryResult)
 	fc.Result = res
-	return ec.marshalOMesheryResult2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐMesheryResult(ctx, field.Selections, res)
+	return ec.marshalOMesheryResult2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐMesheryResult(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_PerfPageResult_results(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -10384,7 +11658,7 @@ func (ec *executionContext) _Query_getAvailableAddons(ctx context.Context, field
 	}
 	res := resTmp.([]*model.AddonList)
 	fc.Result = res
-	return ec.marshalNAddonList2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐAddonListᚄ(ctx, field.Selections, res)
+	return ec.marshalNAddonList2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐAddonListᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_getAvailableAddons(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -10445,7 +11719,7 @@ func (ec *executionContext) _Query_getControlPlanes(ctx context.Context, field g
 	}
 	res := resTmp.([]*model.ControlPlane)
 	fc.Result = res
-	return ec.marshalNControlPlane2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐControlPlaneᚄ(ctx, field.Selections, res)
+	return ec.marshalNControlPlane2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐControlPlaneᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_getControlPlanes(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -10506,7 +11780,7 @@ func (ec *executionContext) _Query_getDataPlanes(ctx context.Context, field grap
 	}
 	res := resTmp.([]*model.DataPlane)
 	fc.Result = res
-	return ec.marshalNDataPlane2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐDataPlaneᚄ(ctx, field.Selections, res)
+	return ec.marshalNDataPlane2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐDataPlaneᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_getDataPlanes(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -10564,7 +11838,7 @@ func (ec *executionContext) _Query_getOperatorStatus(ctx context.Context, field 
 	}
 	res := resTmp.(*model.OperatorStatus)
 	fc.Result = res
-	return ec.marshalOOperatorStatus2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐOperatorStatus(ctx, field.Selections, res)
+	return ec.marshalOOperatorStatus2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐOperatorStatus(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_getOperatorStatus(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -10631,7 +11905,7 @@ func (ec *executionContext) _Query_resyncCluster(ctx context.Context, field grap
 	}
 	res := resTmp.(model.Status)
 	fc.Result = res
-	return ec.marshalNStatus2githubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐStatus(ctx, field.Selections, res)
+	return ec.marshalNStatus2githubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐStatus(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_resyncCluster(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -10686,7 +11960,7 @@ func (ec *executionContext) _Query_getMeshsyncStatus(ctx context.Context, field 
 	}
 	res := resTmp.(*model.OperatorControllerStatus)
 	fc.Result = res
-	return ec.marshalNOperatorControllerStatus2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐOperatorControllerStatus(ctx, field.Selections, res)
+	return ec.marshalNOperatorControllerStatus2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐOperatorControllerStatus(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_getMeshsyncStatus(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -10753,7 +12027,7 @@ func (ec *executionContext) _Query_deployMeshsync(ctx context.Context, field gra
 	}
 	res := resTmp.(model.Status)
 	fc.Result = res
-	return ec.marshalNStatus2githubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐStatus(ctx, field.Selections, res)
+	return ec.marshalNStatus2githubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐStatus(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_deployMeshsync(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -10808,7 +12082,7 @@ func (ec *executionContext) _Query_getNatsStatus(ctx context.Context, field grap
 	}
 	res := resTmp.(*model.OperatorControllerStatus)
 	fc.Result = res
-	return ec.marshalNOperatorControllerStatus2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐOperatorControllerStatus(ctx, field.Selections, res)
+	return ec.marshalNOperatorControllerStatus2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐOperatorControllerStatus(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_getNatsStatus(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -10875,7 +12149,7 @@ func (ec *executionContext) _Query_connectToNats(ctx context.Context, field grap
 	}
 	res := resTmp.(model.Status)
 	fc.Result = res
-	return ec.marshalNStatus2githubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐStatus(ctx, field.Selections, res)
+	return ec.marshalNStatus2githubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐStatus(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_connectToNats(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -10930,7 +12204,7 @@ func (ec *executionContext) _Query_getAvailableNamespaces(ctx context.Context, f
 	}
 	res := resTmp.([]*model.NameSpace)
 	fc.Result = res
-	return ec.marshalNNameSpace2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐNameSpaceᚄ(ctx, field.Selections, res)
+	return ec.marshalNNameSpace2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐNameSpaceᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_getAvailableNamespaces(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -10986,7 +12260,7 @@ func (ec *executionContext) _Query_getPerfResult(ctx context.Context, field grap
 	}
 	res := resTmp.(*model.MesheryResult)
 	fc.Result = res
-	return ec.marshalOMesheryResult2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐMesheryResult(ctx, field.Selections, res)
+	return ec.marshalOMesheryResult2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐMesheryResult(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_getPerfResult(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -11067,7 +12341,7 @@ func (ec *executionContext) _Query_fetchResults(ctx context.Context, field graph
 	}
 	res := resTmp.(*model.PerfPageResult)
 	fc.Result = res
-	return ec.marshalNPerfPageResult2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐPerfPageResult(ctx, field.Selections, res)
+	return ec.marshalNPerfPageResult2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐPerfPageResult(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_fetchResults(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -11132,7 +12406,7 @@ func (ec *executionContext) _Query_getPerformanceProfiles(ctx context.Context, f
 	}
 	res := resTmp.(*model.PerfPageProfiles)
 	fc.Result = res
-	return ec.marshalNPerfPageProfiles2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐPerfPageProfiles(ctx, field.Selections, res)
+	return ec.marshalNPerfPageProfiles2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐPerfPageProfiles(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_getPerformanceProfiles(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -11197,7 +12471,7 @@ func (ec *executionContext) _Query_fetchAllResults(ctx context.Context, field gr
 	}
 	res := resTmp.(*model.PerfPageResult)
 	fc.Result = res
-	return ec.marshalNPerfPageResult2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐPerfPageResult(ctx, field.Selections, res)
+	return ec.marshalNPerfPageResult2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐPerfPageResult(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_fetchAllResults(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -11262,7 +12536,7 @@ func (ec *executionContext) _Query_fetchPatterns(ctx context.Context, field grap
 	}
 	res := resTmp.(*model.PatternPageResult)
 	fc.Result = res
-	return ec.marshalNPatternPageResult2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐPatternPageResult(ctx, field.Selections, res)
+	return ec.marshalNPatternPageResult2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐPatternPageResult(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_fetchPatterns(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -11324,7 +12598,7 @@ func (ec *executionContext) _Query_getWorkloads(ctx context.Context, field graph
 	}
 	res := resTmp.([]*model.OAMCapability)
 	fc.Result = res
-	return ec.marshalOOAMCapability2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐOAMCapability(ctx, field.Selections, res)
+	return ec.marshalOOAMCapability2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐOAMCapability(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_getWorkloads(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -11390,7 +12664,7 @@ func (ec *executionContext) _Query_getTraits(ctx context.Context, field graphql.
 	}
 	res := resTmp.([]*model.OAMCapability)
 	fc.Result = res
-	return ec.marshalOOAMCapability2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐOAMCapability(ctx, field.Selections, res)
+	return ec.marshalOOAMCapability2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐOAMCapability(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_getTraits(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -11456,7 +12730,7 @@ func (ec *executionContext) _Query_getScopes(ctx context.Context, field graphql.
 	}
 	res := resTmp.([]*model.OAMCapability)
 	fc.Result = res
-	return ec.marshalOOAMCapability2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐOAMCapability(ctx, field.Selections, res)
+	return ec.marshalOOAMCapability2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐOAMCapability(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_getScopes(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -11525,7 +12799,7 @@ func (ec *executionContext) _Query_getKubectlDescribe(ctx context.Context, field
 	}
 	res := resTmp.(*model.KctlDescribeDetails)
 	fc.Result = res
-	return ec.marshalNKctlDescribeDetails2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐKctlDescribeDetails(ctx, field.Selections, res)
+	return ec.marshalNKctlDescribeDetails2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐKctlDescribeDetails(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_getKubectlDescribe(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -11552,6 +12826,156 @@ func (ec *executionContext) fieldContext_Query_getKubectlDescribe(ctx context.Co
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_getKubectlDescribe_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_fetchPatternCatalogContent(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_fetchPatternCatalogContent(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().FetchPatternCatalogContent(rctx, fc.Args["selector"].(*model.CatalogSelector))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.CatalogPattern)
+	fc.Result = res
+	return ec.marshalNCatalogPattern2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐCatalogPatternᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_fetchPatternCatalogContent(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_CatalogPattern_id(ctx, field)
+			case "name":
+				return ec.fieldContext_CatalogPattern_name(ctx, field)
+			case "user_id":
+				return ec.fieldContext_CatalogPattern_user_id(ctx, field)
+			case "pattern_file":
+				return ec.fieldContext_CatalogPattern_pattern_file(ctx, field)
+			case "location":
+				return ec.fieldContext_CatalogPattern_location(ctx, field)
+			case "visibility":
+				return ec.fieldContext_CatalogPattern_visibility(ctx, field)
+			case "catalog_data":
+				return ec.fieldContext_CatalogPattern_catalog_data(ctx, field)
+			case "created_at":
+				return ec.fieldContext_CatalogPattern_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_CatalogPattern_updated_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type CatalogPattern", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_fetchPatternCatalogContent_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_fetchFilterCatalogContent(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_fetchFilterCatalogContent(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().FetchFilterCatalogContent(rctx, fc.Args["selector"].(*model.CatalogSelector))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.CatalogFilter)
+	fc.Result = res
+	return ec.marshalNCatalogFilter2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐCatalogFilterᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_fetchFilterCatalogContent(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_CatalogFilter_id(ctx, field)
+			case "name":
+				return ec.fieldContext_CatalogFilter_name(ctx, field)
+			case "filter_file":
+				return ec.fieldContext_CatalogFilter_filter_file(ctx, field)
+			case "user_id":
+				return ec.fieldContext_CatalogFilter_user_id(ctx, field)
+			case "location":
+				return ec.fieldContext_CatalogFilter_location(ctx, field)
+			case "visibility":
+				return ec.fieldContext_CatalogFilter_visibility(ctx, field)
+			case "catalog_data":
+				return ec.fieldContext_CatalogFilter_catalog_data(ctx, field)
+			case "created_at":
+				return ec.fieldContext_CatalogFilter_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_CatalogFilter_updated_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type CatalogFilter", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_fetchFilterCatalogContent_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return
 	}
@@ -11586,7 +13010,7 @@ func (ec *executionContext) _Query_getClusterResources(ctx context.Context, fiel
 	}
 	res := resTmp.(*model.ClusterResources)
 	fc.Result = res
-	return ec.marshalNClusterResources2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐClusterResources(ctx, field.Selections, res)
+	return ec.marshalNClusterResources2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐClusterResources(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_getClusterResources(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -11870,7 +13294,7 @@ func (ec *executionContext) _Subscription_listenToAddonState(ctx context.Context
 				w.Write([]byte{'{'})
 				graphql.MarshalString(field.Alias).MarshalGQL(w)
 				w.Write([]byte{':'})
-				ec.marshalNAddonList2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐAddonListᚄ(ctx, field.Selections, res).MarshalGQL(w)
+				ec.marshalNAddonList2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐAddonListᚄ(ctx, field.Selections, res).MarshalGQL(w)
 				w.Write([]byte{'}'})
 			})
 		case <-ctx.Done():
@@ -11945,7 +13369,7 @@ func (ec *executionContext) _Subscription_listenToControlPlaneState(ctx context.
 				w.Write([]byte{'{'})
 				graphql.MarshalString(field.Alias).MarshalGQL(w)
 				w.Write([]byte{':'})
-				ec.marshalNControlPlane2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐControlPlaneᚄ(ctx, field.Selections, res).MarshalGQL(w)
+				ec.marshalNControlPlane2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐControlPlaneᚄ(ctx, field.Selections, res).MarshalGQL(w)
 				w.Write([]byte{'}'})
 			})
 		case <-ctx.Done():
@@ -12020,7 +13444,7 @@ func (ec *executionContext) _Subscription_listenToDataPlaneState(ctx context.Con
 				w.Write([]byte{'{'})
 				graphql.MarshalString(field.Alias).MarshalGQL(w)
 				w.Write([]byte{':'})
-				ec.marshalNDataPlane2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐDataPlaneᚄ(ctx, field.Selections, res).MarshalGQL(w)
+				ec.marshalNDataPlane2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐDataPlaneᚄ(ctx, field.Selections, res).MarshalGQL(w)
 				w.Write([]byte{'}'})
 			})
 		case <-ctx.Done():
@@ -12092,7 +13516,7 @@ func (ec *executionContext) _Subscription_listenToOperatorState(ctx context.Cont
 				w.Write([]byte{'{'})
 				graphql.MarshalString(field.Alias).MarshalGQL(w)
 				w.Write([]byte{':'})
-				ec.marshalOOperatorStatusPerK8sContext2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐOperatorStatusPerK8sContext(ctx, field.Selections, res).MarshalGQL(w)
+				ec.marshalOOperatorStatusPerK8sContext2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐOperatorStatusPerK8sContext(ctx, field.Selections, res).MarshalGQL(w)
 				w.Write([]byte{'}'})
 			})
 		case <-ctx.Done():
@@ -12164,7 +13588,7 @@ func (ec *executionContext) _Subscription_listenToMeshSyncEvents(ctx context.Con
 				w.Write([]byte{'{'})
 				graphql.MarshalString(field.Alias).MarshalGQL(w)
 				w.Write([]byte{':'})
-				ec.marshalOOperatorControllerStatusPerK8sContext2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐOperatorControllerStatusPerK8sContext(ctx, field.Selections, res).MarshalGQL(w)
+				ec.marshalOOperatorControllerStatusPerK8sContext2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐOperatorControllerStatusPerK8sContext(ctx, field.Selections, res).MarshalGQL(w)
 				w.Write([]byte{'}'})
 			})
 		case <-ctx.Done():
@@ -12239,7 +13663,7 @@ func (ec *executionContext) _Subscription_subscribePerfProfiles(ctx context.Cont
 				w.Write([]byte{'{'})
 				graphql.MarshalString(field.Alias).MarshalGQL(w)
 				w.Write([]byte{':'})
-				ec.marshalNPerfPageProfiles2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐPerfPageProfiles(ctx, field.Selections, res).MarshalGQL(w)
+				ec.marshalNPerfPageProfiles2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐPerfPageProfiles(ctx, field.Selections, res).MarshalGQL(w)
 				w.Write([]byte{'}'})
 			})
 		case <-ctx.Done():
@@ -12318,7 +13742,7 @@ func (ec *executionContext) _Subscription_subscribePerfResults(ctx context.Conte
 				w.Write([]byte{'{'})
 				graphql.MarshalString(field.Alias).MarshalGQL(w)
 				w.Write([]byte{':'})
-				ec.marshalNPerfPageResult2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐPerfPageResult(ctx, field.Selections, res).MarshalGQL(w)
+				ec.marshalNPerfPageResult2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐPerfPageResult(ctx, field.Selections, res).MarshalGQL(w)
 				w.Write([]byte{'}'})
 			})
 		case <-ctx.Done():
@@ -12455,7 +13879,7 @@ func (ec *executionContext) _Subscription_subscribeMesheryControllersStatus(ctx 
 				w.Write([]byte{'{'})
 				graphql.MarshalString(field.Alias).MarshalGQL(w)
 				w.Write([]byte{':'})
-				ec.marshalNMesheryControllersStatusListItem2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐMesheryControllersStatusListItemᚄ(ctx, field.Selections, res).MarshalGQL(w)
+				ec.marshalNMesheryControllersStatusListItem2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐMesheryControllersStatusListItemᚄ(ctx, field.Selections, res).MarshalGQL(w)
 				w.Write([]byte{'}'})
 			})
 		case <-ctx.Done():
@@ -12532,7 +13956,7 @@ func (ec *executionContext) _Subscription_subscribeMeshSyncEvents(ctx context.Co
 				w.Write([]byte{'{'})
 				graphql.MarshalString(field.Alias).MarshalGQL(w)
 				w.Write([]byte{':'})
-				ec.marshalNMeshSyncEvent2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐMeshSyncEvent(ctx, field.Selections, res).MarshalGQL(w)
+				ec.marshalNMeshSyncEvent2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐMeshSyncEvent(ctx, field.Selections, res).MarshalGQL(w)
 				w.Write([]byte{'}'})
 			})
 		case <-ctx.Done():
@@ -12587,7 +14011,7 @@ func (ec *executionContext) _Subscription_subscribeConfiguration(ctx context.Con
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Subscription().SubscribeConfiguration(rctx, fc.Args["selector"].(model.PageFilter))
+		return ec.resolvers.Subscription().SubscribeConfiguration(rctx, fc.Args["applicationSelector"].(model.PageFilter), fc.Args["patternSelector"].(model.PageFilter), fc.Args["filterSelector"].(model.PageFilter))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -12609,7 +14033,7 @@ func (ec *executionContext) _Subscription_subscribeConfiguration(ctx context.Con
 				w.Write([]byte{'{'})
 				graphql.MarshalString(field.Alias).MarshalGQL(w)
 				w.Write([]byte{':'})
-				ec.marshalNConfigurationPage2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐConfigurationPage(ctx, field.Selections, res).MarshalGQL(w)
+				ec.marshalNConfigurationPage2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐConfigurationPage(ctx, field.Selections, res).MarshalGQL(w)
 				w.Write([]byte{'}'})
 			})
 		case <-ctx.Done():
@@ -12686,7 +14110,7 @@ func (ec *executionContext) _Subscription_subscribeClusterResources(ctx context.
 				w.Write([]byte{'{'})
 				graphql.MarshalString(field.Alias).MarshalGQL(w)
 				w.Write([]byte{':'})
-				ec.marshalNClusterResources2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐClusterResources(ctx, field.Selections, res).MarshalGQL(w)
+				ec.marshalNClusterResources2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐClusterResources(ctx, field.Selections, res).MarshalGQL(w)
 				w.Write([]byte{'}'})
 			})
 		case <-ctx.Done():
@@ -12759,7 +14183,7 @@ func (ec *executionContext) _Subscription_subscribeK8sContext(ctx context.Contex
 				w.Write([]byte{'{'})
 				graphql.MarshalString(field.Alias).MarshalGQL(w)
 				w.Write([]byte{':'})
-				ec.marshalNK8sContextsPage2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐK8sContextsPage(ctx, field.Selections, res).MarshalGQL(w)
+				ec.marshalNK8sContextsPage2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐK8sContextsPage(ctx, field.Selections, res).MarshalGQL(w)
 				w.Write([]byte{'}'})
 			})
 		case <-ctx.Done():
@@ -14584,7 +16008,7 @@ func (ec *executionContext) unmarshalInputAddonStatusInput(ctx context.Context, 
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("selector"))
-			it.Selector, err = ec.unmarshalOMeshType2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐMeshType(ctx, v)
+			it.Selector, err = ec.unmarshalOMeshType2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐMeshType(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -14600,7 +16024,38 @@ func (ec *executionContext) unmarshalInputAddonStatusInput(ctx context.Context, 
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("targetStatus"))
-			it.TargetStatus, err = ec.unmarshalNStatus2githubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐStatus(ctx, v)
+			it.TargetStatus, err = ec.unmarshalNStatus2githubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐStatus(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputCatalogSelector(ctx context.Context, obj interface{}) (model.CatalogSelector, error) {
+	var it model.CatalogSelector
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	for k, v := range asMap {
+		switch k {
+		case "search":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("search"))
+			it.Search, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "order":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("order"))
+			it.Order, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -14623,7 +16078,7 @@ func (ec *executionContext) unmarshalInputOperatorStatusInput(ctx context.Contex
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("targetStatus"))
-			it.TargetStatus, err = ec.unmarshalNStatus2githubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐStatus(ctx, v)
+			it.TargetStatus, err = ec.unmarshalNStatus2githubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐStatus(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -14756,7 +16211,7 @@ func (ec *executionContext) unmarshalInputServiceMeshFilter(ctx context.Context,
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("type"))
-			it.Type, err = ec.unmarshalOMeshType2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐMeshType(ctx, v)
+			it.Type, err = ec.unmarshalOMeshType2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐMeshType(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -14922,6 +16377,159 @@ func (ec *executionContext) _ApplicationResult(ctx context.Context, sel ast.Sele
 		case "updated_at":
 
 			out.Values[i] = ec._ApplicationResult_updated_at(ctx, field, obj)
+
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var catalogFilterImplementors = []string{"CatalogFilter"}
+
+func (ec *executionContext) _CatalogFilter(ctx context.Context, sel ast.SelectionSet, obj *model.CatalogFilter) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, catalogFilterImplementors)
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("CatalogFilter")
+		case "id":
+
+			out.Values[i] = ec._CatalogFilter_id(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "name":
+
+			out.Values[i] = ec._CatalogFilter_name(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "filter_file":
+
+			out.Values[i] = ec._CatalogFilter_filter_file(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "user_id":
+
+			out.Values[i] = ec._CatalogFilter_user_id(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "location":
+
+			out.Values[i] = ec._CatalogFilter_location(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "visibility":
+
+			out.Values[i] = ec._CatalogFilter_visibility(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "catalog_data":
+
+			out.Values[i] = ec._CatalogFilter_catalog_data(ctx, field, obj)
+
+		case "created_at":
+
+			out.Values[i] = ec._CatalogFilter_created_at(ctx, field, obj)
+
+		case "updated_at":
+
+			out.Values[i] = ec._CatalogFilter_updated_at(ctx, field, obj)
+
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var catalogPatternImplementors = []string{"CatalogPattern"}
+
+func (ec *executionContext) _CatalogPattern(ctx context.Context, sel ast.SelectionSet, obj *model.CatalogPattern) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, catalogPatternImplementors)
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("CatalogPattern")
+		case "id":
+
+			out.Values[i] = ec._CatalogPattern_id(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "name":
+
+			out.Values[i] = ec._CatalogPattern_name(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "user_id":
+
+			out.Values[i] = ec._CatalogPattern_user_id(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "pattern_file":
+
+			out.Values[i] = ec._CatalogPattern_pattern_file(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "location":
+
+			out.Values[i] = ec._CatalogPattern_location(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "visibility":
+
+			out.Values[i] = ec._CatalogPattern_visibility(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "catalog_data":
+
+			out.Values[i] = ec._CatalogPattern_catalog_data(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "created_at":
+
+			out.Values[i] = ec._CatalogPattern_created_at(ctx, field, obj)
+
+		case "updated_at":
+
+			out.Values[i] = ec._CatalogPattern_updated_at(ctx, field, obj)
 
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
@@ -15406,6 +17014,17 @@ func (ec *executionContext) _FilterResult(ctx context.Context, sel ast.Selection
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "visibility":
+
+			out.Values[i] = ec._FilterResult_visibility(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "catalog_data":
+
+			out.Values[i] = ec._FilterResult_catalog_data(ctx, field, obj)
+
 		case "created_at":
 
 			out.Values[i] = ec._FilterResult_created_at(ctx, field, obj)
@@ -16191,6 +17810,17 @@ func (ec *executionContext) _PatternResult(ctx context.Context, sel ast.Selectio
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "visibility":
+
+			out.Values[i] = ec._PatternResult_visibility(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "catalog_data":
+
+			out.Values[i] = ec._PatternResult_catalog_data(ctx, field, obj)
+
 		case "canSupport":
 
 			out.Values[i] = ec._PatternResult_canSupport(ctx, field, obj)
@@ -16855,6 +18485,52 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			out.Concurrently(i, func() graphql.Marshaler {
 				return rrm(innerCtx)
 			})
+		case "fetchPatternCatalogContent":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_fetchPatternCatalogContent(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return rrm(innerCtx)
+			})
+		case "fetchFilterCatalogContent":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_fetchFilterCatalogContent(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return rrm(innerCtx)
+			})
 		case "getClusterResources":
 			field := field
 
@@ -17298,7 +18974,7 @@ func (ec *executionContext) ___Type(ctx context.Context, sel ast.SelectionSet, o
 
 // region    ***************************** type.gotpl *****************************
 
-func (ec *executionContext) marshalNAddonList2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐAddonListᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.AddonList) graphql.Marshaler {
+func (ec *executionContext) marshalNAddonList2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐAddonListᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.AddonList) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -17322,7 +18998,7 @@ func (ec *executionContext) marshalNAddonList2ᚕᚖgithubᚗcomᚋlayer5ioᚋme
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNAddonList2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐAddonList(ctx, sel, v[i])
+			ret[i] = ec.marshalNAddonList2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐAddonList(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -17342,7 +19018,7 @@ func (ec *executionContext) marshalNAddonList2ᚕᚖgithubᚗcomᚋlayer5ioᚋme
 	return ret
 }
 
-func (ec *executionContext) marshalNAddonList2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐAddonList(ctx context.Context, sel ast.SelectionSet, v *model.AddonList) graphql.Marshaler {
+func (ec *executionContext) marshalNAddonList2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐAddonList(ctx context.Context, sel ast.SelectionSet, v *model.AddonList) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -17388,11 +19064,119 @@ func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.Se
 	return res
 }
 
-func (ec *executionContext) marshalNClusterResources2githubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐClusterResources(ctx context.Context, sel ast.SelectionSet, v model.ClusterResources) graphql.Marshaler {
+func (ec *executionContext) marshalNCatalogFilter2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐCatalogFilterᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.CatalogFilter) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNCatalogFilter2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐCatalogFilter(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNCatalogFilter2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐCatalogFilter(ctx context.Context, sel ast.SelectionSet, v *model.CatalogFilter) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._CatalogFilter(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNCatalogPattern2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐCatalogPatternᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.CatalogPattern) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNCatalogPattern2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐCatalogPattern(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNCatalogPattern2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐCatalogPattern(ctx context.Context, sel ast.SelectionSet, v *model.CatalogPattern) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._CatalogPattern(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNClusterResources2githubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐClusterResources(ctx context.Context, sel ast.SelectionSet, v model.ClusterResources) graphql.Marshaler {
 	return ec._ClusterResources(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNClusterResources2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐClusterResources(ctx context.Context, sel ast.SelectionSet, v *model.ClusterResources) graphql.Marshaler {
+func (ec *executionContext) marshalNClusterResources2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐClusterResources(ctx context.Context, sel ast.SelectionSet, v *model.ClusterResources) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -17402,11 +19186,11 @@ func (ec *executionContext) marshalNClusterResources2ᚖgithubᚗcomᚋlayer5io�
 	return ec._ClusterResources(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNConfigurationPage2githubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐConfigurationPage(ctx context.Context, sel ast.SelectionSet, v model.ConfigurationPage) graphql.Marshaler {
+func (ec *executionContext) marshalNConfigurationPage2githubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐConfigurationPage(ctx context.Context, sel ast.SelectionSet, v model.ConfigurationPage) graphql.Marshaler {
 	return ec._ConfigurationPage(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNConfigurationPage2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐConfigurationPage(ctx context.Context, sel ast.SelectionSet, v *model.ConfigurationPage) graphql.Marshaler {
+func (ec *executionContext) marshalNConfigurationPage2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐConfigurationPage(ctx context.Context, sel ast.SelectionSet, v *model.ConfigurationPage) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -17416,7 +19200,7 @@ func (ec *executionContext) marshalNConfigurationPage2ᚖgithubᚗcomᚋlayer5io
 	return ec._ConfigurationPage(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNContainer2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐContainerᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Container) graphql.Marshaler {
+func (ec *executionContext) marshalNContainer2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐContainerᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Container) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -17440,7 +19224,7 @@ func (ec *executionContext) marshalNContainer2ᚕᚖgithubᚗcomᚋlayer5ioᚋme
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNContainer2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐContainer(ctx, sel, v[i])
+			ret[i] = ec.marshalNContainer2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐContainer(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -17460,7 +19244,7 @@ func (ec *executionContext) marshalNContainer2ᚕᚖgithubᚗcomᚋlayer5ioᚋme
 	return ret
 }
 
-func (ec *executionContext) marshalNContainer2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐContainer(ctx context.Context, sel ast.SelectionSet, v *model.Container) graphql.Marshaler {
+func (ec *executionContext) marshalNContainer2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐContainer(ctx context.Context, sel ast.SelectionSet, v *model.Container) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -17470,7 +19254,7 @@ func (ec *executionContext) marshalNContainer2ᚖgithubᚗcomᚋlayer5ioᚋmeshe
 	return ec._Container(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNControlPlane2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐControlPlaneᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.ControlPlane) graphql.Marshaler {
+func (ec *executionContext) marshalNControlPlane2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐControlPlaneᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.ControlPlane) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -17494,7 +19278,7 @@ func (ec *executionContext) marshalNControlPlane2ᚕᚖgithubᚗcomᚋlayer5io�
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNControlPlane2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐControlPlane(ctx, sel, v[i])
+			ret[i] = ec.marshalNControlPlane2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐControlPlane(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -17514,7 +19298,7 @@ func (ec *executionContext) marshalNControlPlane2ᚕᚖgithubᚗcomᚋlayer5io�
 	return ret
 }
 
-func (ec *executionContext) marshalNControlPlane2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐControlPlane(ctx context.Context, sel ast.SelectionSet, v *model.ControlPlane) graphql.Marshaler {
+func (ec *executionContext) marshalNControlPlane2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐControlPlane(ctx context.Context, sel ast.SelectionSet, v *model.ControlPlane) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -17524,7 +19308,7 @@ func (ec *executionContext) marshalNControlPlane2ᚖgithubᚗcomᚋlayer5ioᚋme
 	return ec._ControlPlane(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNControlPlaneMember2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐControlPlaneMemberᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.ControlPlaneMember) graphql.Marshaler {
+func (ec *executionContext) marshalNControlPlaneMember2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐControlPlaneMemberᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.ControlPlaneMember) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -17548,7 +19332,7 @@ func (ec *executionContext) marshalNControlPlaneMember2ᚕᚖgithubᚗcomᚋlaye
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNControlPlaneMember2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐControlPlaneMember(ctx, sel, v[i])
+			ret[i] = ec.marshalNControlPlaneMember2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐControlPlaneMember(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -17568,7 +19352,7 @@ func (ec *executionContext) marshalNControlPlaneMember2ᚕᚖgithubᚗcomᚋlaye
 	return ret
 }
 
-func (ec *executionContext) marshalNControlPlaneMember2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐControlPlaneMember(ctx context.Context, sel ast.SelectionSet, v *model.ControlPlaneMember) graphql.Marshaler {
+func (ec *executionContext) marshalNControlPlaneMember2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐControlPlaneMember(ctx context.Context, sel ast.SelectionSet, v *model.ControlPlaneMember) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -17578,7 +19362,7 @@ func (ec *executionContext) marshalNControlPlaneMember2ᚖgithubᚗcomᚋlayer5i
 	return ec._ControlPlaneMember(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNDataPlane2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐDataPlaneᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.DataPlane) graphql.Marshaler {
+func (ec *executionContext) marshalNDataPlane2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐDataPlaneᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.DataPlane) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -17602,7 +19386,7 @@ func (ec *executionContext) marshalNDataPlane2ᚕᚖgithubᚗcomᚋlayer5ioᚋme
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNDataPlane2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐDataPlane(ctx, sel, v[i])
+			ret[i] = ec.marshalNDataPlane2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐDataPlane(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -17622,7 +19406,7 @@ func (ec *executionContext) marshalNDataPlane2ᚕᚖgithubᚗcomᚋlayer5ioᚋme
 	return ret
 }
 
-func (ec *executionContext) marshalNDataPlane2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐDataPlane(ctx context.Context, sel ast.SelectionSet, v *model.DataPlane) graphql.Marshaler {
+func (ec *executionContext) marshalNDataPlane2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐDataPlane(ctx context.Context, sel ast.SelectionSet, v *model.DataPlane) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -17662,7 +19446,7 @@ func (ec *executionContext) marshalNInt2int(ctx context.Context, sel ast.Selecti
 	return res
 }
 
-func (ec *executionContext) marshalNK8sContext2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐK8sContext(ctx context.Context, sel ast.SelectionSet, v []*model.K8sContext) graphql.Marshaler {
+func (ec *executionContext) marshalNK8sContext2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐK8sContext(ctx context.Context, sel ast.SelectionSet, v []*model.K8sContext) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -17686,7 +19470,7 @@ func (ec *executionContext) marshalNK8sContext2ᚕᚖgithubᚗcomᚋlayer5ioᚋm
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalOK8sContext2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐK8sContext(ctx, sel, v[i])
+			ret[i] = ec.marshalOK8sContext2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐK8sContext(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -17700,11 +19484,11 @@ func (ec *executionContext) marshalNK8sContext2ᚕᚖgithubᚗcomᚋlayer5ioᚋm
 	return ret
 }
 
-func (ec *executionContext) marshalNK8sContextsPage2githubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐK8sContextsPage(ctx context.Context, sel ast.SelectionSet, v model.K8sContextsPage) graphql.Marshaler {
+func (ec *executionContext) marshalNK8sContextsPage2githubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐK8sContextsPage(ctx context.Context, sel ast.SelectionSet, v model.K8sContextsPage) graphql.Marshaler {
 	return ec._K8sContextsPage(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNK8sContextsPage2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐK8sContextsPage(ctx context.Context, sel ast.SelectionSet, v *model.K8sContextsPage) graphql.Marshaler {
+func (ec *executionContext) marshalNK8sContextsPage2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐK8sContextsPage(ctx context.Context, sel ast.SelectionSet, v *model.K8sContextsPage) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -17714,11 +19498,11 @@ func (ec *executionContext) marshalNK8sContextsPage2ᚖgithubᚗcomᚋlayer5io�
 	return ec._K8sContextsPage(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNKctlDescribeDetails2githubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐKctlDescribeDetails(ctx context.Context, sel ast.SelectionSet, v model.KctlDescribeDetails) graphql.Marshaler {
+func (ec *executionContext) marshalNKctlDescribeDetails2githubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐKctlDescribeDetails(ctx context.Context, sel ast.SelectionSet, v model.KctlDescribeDetails) graphql.Marshaler {
 	return ec._KctlDescribeDetails(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNKctlDescribeDetails2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐKctlDescribeDetails(ctx context.Context, sel ast.SelectionSet, v *model.KctlDescribeDetails) graphql.Marshaler {
+func (ec *executionContext) marshalNKctlDescribeDetails2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐKctlDescribeDetails(ctx context.Context, sel ast.SelectionSet, v *model.KctlDescribeDetails) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -17728,7 +19512,7 @@ func (ec *executionContext) marshalNKctlDescribeDetails2ᚖgithubᚗcomᚋlayer5
 	return ec._KctlDescribeDetails(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNLocation2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐLocation(ctx context.Context, sel ast.SelectionSet, v *model.Location) graphql.Marshaler {
+func (ec *executionContext) marshalNLocation2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐLocation(ctx context.Context, sel ast.SelectionSet, v *model.Location) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -17759,11 +19543,11 @@ func (ec *executionContext) marshalNMap2map(ctx context.Context, sel ast.Selecti
 	return res
 }
 
-func (ec *executionContext) marshalNMeshSyncEvent2githubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐMeshSyncEvent(ctx context.Context, sel ast.SelectionSet, v model.MeshSyncEvent) graphql.Marshaler {
+func (ec *executionContext) marshalNMeshSyncEvent2githubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐMeshSyncEvent(ctx context.Context, sel ast.SelectionSet, v model.MeshSyncEvent) graphql.Marshaler {
 	return ec._MeshSyncEvent(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNMeshSyncEvent2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐMeshSyncEvent(ctx context.Context, sel ast.SelectionSet, v *model.MeshSyncEvent) graphql.Marshaler {
+func (ec *executionContext) marshalNMeshSyncEvent2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐMeshSyncEvent(ctx context.Context, sel ast.SelectionSet, v *model.MeshSyncEvent) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -17773,27 +19557,27 @@ func (ec *executionContext) marshalNMeshSyncEvent2ᚖgithubᚗcomᚋlayer5ioᚋm
 	return ec._MeshSyncEvent(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNMesheryController2githubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐMesheryController(ctx context.Context, v interface{}) (model.MesheryController, error) {
+func (ec *executionContext) unmarshalNMesheryController2githubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐMesheryController(ctx context.Context, v interface{}) (model.MesheryController, error) {
 	var res model.MesheryController
 	err := res.UnmarshalGQL(v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNMesheryController2githubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐMesheryController(ctx context.Context, sel ast.SelectionSet, v model.MesheryController) graphql.Marshaler {
+func (ec *executionContext) marshalNMesheryController2githubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐMesheryController(ctx context.Context, sel ast.SelectionSet, v model.MesheryController) graphql.Marshaler {
 	return v
 }
 
-func (ec *executionContext) unmarshalNMesheryControllerStatus2githubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐMesheryControllerStatus(ctx context.Context, v interface{}) (model.MesheryControllerStatus, error) {
+func (ec *executionContext) unmarshalNMesheryControllerStatus2githubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐMesheryControllerStatus(ctx context.Context, v interface{}) (model.MesheryControllerStatus, error) {
 	var res model.MesheryControllerStatus
 	err := res.UnmarshalGQL(v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNMesheryControllerStatus2githubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐMesheryControllerStatus(ctx context.Context, sel ast.SelectionSet, v model.MesheryControllerStatus) graphql.Marshaler {
+func (ec *executionContext) marshalNMesheryControllerStatus2githubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐMesheryControllerStatus(ctx context.Context, sel ast.SelectionSet, v model.MesheryControllerStatus) graphql.Marshaler {
 	return v
 }
 
-func (ec *executionContext) marshalNMesheryControllersStatusListItem2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐMesheryControllersStatusListItemᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.MesheryControllersStatusListItem) graphql.Marshaler {
+func (ec *executionContext) marshalNMesheryControllersStatusListItem2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐMesheryControllersStatusListItemᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.MesheryControllersStatusListItem) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -17817,7 +19601,7 @@ func (ec *executionContext) marshalNMesheryControllersStatusListItem2ᚕᚖgithu
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNMesheryControllersStatusListItem2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐMesheryControllersStatusListItem(ctx, sel, v[i])
+			ret[i] = ec.marshalNMesheryControllersStatusListItem2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐMesheryControllersStatusListItem(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -17837,7 +19621,7 @@ func (ec *executionContext) marshalNMesheryControllersStatusListItem2ᚕᚖgithu
 	return ret
 }
 
-func (ec *executionContext) marshalNMesheryControllersStatusListItem2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐMesheryControllersStatusListItem(ctx context.Context, sel ast.SelectionSet, v *model.MesheryControllersStatusListItem) graphql.Marshaler {
+func (ec *executionContext) marshalNMesheryControllersStatusListItem2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐMesheryControllersStatusListItem(ctx context.Context, sel ast.SelectionSet, v *model.MesheryControllersStatusListItem) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -17847,7 +19631,7 @@ func (ec *executionContext) marshalNMesheryControllersStatusListItem2ᚖgithub�
 	return ec._MesheryControllersStatusListItem(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNNameSpace2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐNameSpaceᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.NameSpace) graphql.Marshaler {
+func (ec *executionContext) marshalNNameSpace2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐNameSpaceᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.NameSpace) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -17871,7 +19655,7 @@ func (ec *executionContext) marshalNNameSpace2ᚕᚖgithubᚗcomᚋlayer5ioᚋme
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNNameSpace2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐNameSpace(ctx, sel, v[i])
+			ret[i] = ec.marshalNNameSpace2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐNameSpace(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -17891,7 +19675,7 @@ func (ec *executionContext) marshalNNameSpace2ᚕᚖgithubᚗcomᚋlayer5ioᚋme
 	return ret
 }
 
-func (ec *executionContext) marshalNNameSpace2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐNameSpace(ctx context.Context, sel ast.SelectionSet, v *model.NameSpace) graphql.Marshaler {
+func (ec *executionContext) marshalNNameSpace2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐNameSpace(ctx context.Context, sel ast.SelectionSet, v *model.NameSpace) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -17901,7 +19685,7 @@ func (ec *executionContext) marshalNNameSpace2ᚖgithubᚗcomᚋlayer5ioᚋmeshe
 	return ec._NameSpace(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNNullString2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐNullString(ctx context.Context, sel ast.SelectionSet, v *model.NullString) graphql.Marshaler {
+func (ec *executionContext) marshalNNullString2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐNullString(ctx context.Context, sel ast.SelectionSet, v *model.NullString) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -17911,11 +19695,11 @@ func (ec *executionContext) marshalNNullString2ᚖgithubᚗcomᚋlayer5ioᚋmesh
 	return ec._NullString(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNOperatorControllerStatus2githubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐOperatorControllerStatus(ctx context.Context, sel ast.SelectionSet, v model.OperatorControllerStatus) graphql.Marshaler {
+func (ec *executionContext) marshalNOperatorControllerStatus2githubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐOperatorControllerStatus(ctx context.Context, sel ast.SelectionSet, v model.OperatorControllerStatus) graphql.Marshaler {
 	return ec._OperatorControllerStatus(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNOperatorControllerStatus2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐOperatorControllerStatusᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.OperatorControllerStatus) graphql.Marshaler {
+func (ec *executionContext) marshalNOperatorControllerStatus2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐOperatorControllerStatusᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.OperatorControllerStatus) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -17939,7 +19723,7 @@ func (ec *executionContext) marshalNOperatorControllerStatus2ᚕᚖgithubᚗcom�
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNOperatorControllerStatus2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐOperatorControllerStatus(ctx, sel, v[i])
+			ret[i] = ec.marshalNOperatorControllerStatus2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐOperatorControllerStatus(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -17959,7 +19743,7 @@ func (ec *executionContext) marshalNOperatorControllerStatus2ᚕᚖgithubᚗcom�
 	return ret
 }
 
-func (ec *executionContext) marshalNOperatorControllerStatus2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐOperatorControllerStatus(ctx context.Context, sel ast.SelectionSet, v *model.OperatorControllerStatus) graphql.Marshaler {
+func (ec *executionContext) marshalNOperatorControllerStatus2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐOperatorControllerStatus(ctx context.Context, sel ast.SelectionSet, v *model.OperatorControllerStatus) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -17969,7 +19753,7 @@ func (ec *executionContext) marshalNOperatorControllerStatus2ᚖgithubᚗcomᚋl
 	return ec._OperatorControllerStatus(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNOperatorStatus2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐOperatorStatus(ctx context.Context, sel ast.SelectionSet, v *model.OperatorStatus) graphql.Marshaler {
+func (ec *executionContext) marshalNOperatorStatus2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐOperatorStatus(ctx context.Context, sel ast.SelectionSet, v *model.OperatorStatus) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -17979,16 +19763,16 @@ func (ec *executionContext) marshalNOperatorStatus2ᚖgithubᚗcomᚋlayer5ioᚋ
 	return ec._OperatorStatus(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNPageFilter2githubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐPageFilter(ctx context.Context, v interface{}) (model.PageFilter, error) {
+func (ec *executionContext) unmarshalNPageFilter2githubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐPageFilter(ctx context.Context, v interface{}) (model.PageFilter, error) {
 	res, err := ec.unmarshalInputPageFilter(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNPatternPageResult2githubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐPatternPageResult(ctx context.Context, sel ast.SelectionSet, v model.PatternPageResult) graphql.Marshaler {
+func (ec *executionContext) marshalNPatternPageResult2githubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐPatternPageResult(ctx context.Context, sel ast.SelectionSet, v model.PatternPageResult) graphql.Marshaler {
 	return ec._PatternPageResult(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNPatternPageResult2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐPatternPageResult(ctx context.Context, sel ast.SelectionSet, v *model.PatternPageResult) graphql.Marshaler {
+func (ec *executionContext) marshalNPatternPageResult2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐPatternPageResult(ctx context.Context, sel ast.SelectionSet, v *model.PatternPageResult) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -17998,11 +19782,11 @@ func (ec *executionContext) marshalNPatternPageResult2ᚖgithubᚗcomᚋlayer5io
 	return ec._PatternPageResult(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNPerfPageProfiles2githubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐPerfPageProfiles(ctx context.Context, sel ast.SelectionSet, v model.PerfPageProfiles) graphql.Marshaler {
+func (ec *executionContext) marshalNPerfPageProfiles2githubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐPerfPageProfiles(ctx context.Context, sel ast.SelectionSet, v model.PerfPageProfiles) graphql.Marshaler {
 	return ec._PerfPageProfiles(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNPerfPageProfiles2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐPerfPageProfiles(ctx context.Context, sel ast.SelectionSet, v *model.PerfPageProfiles) graphql.Marshaler {
+func (ec *executionContext) marshalNPerfPageProfiles2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐPerfPageProfiles(ctx context.Context, sel ast.SelectionSet, v *model.PerfPageProfiles) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -18012,11 +19796,11 @@ func (ec *executionContext) marshalNPerfPageProfiles2ᚖgithubᚗcomᚋlayer5io�
 	return ec._PerfPageProfiles(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNPerfPageResult2githubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐPerfPageResult(ctx context.Context, sel ast.SelectionSet, v model.PerfPageResult) graphql.Marshaler {
+func (ec *executionContext) marshalNPerfPageResult2githubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐPerfPageResult(ctx context.Context, sel ast.SelectionSet, v model.PerfPageResult) graphql.Marshaler {
 	return ec._PerfPageResult(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNPerfPageResult2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐPerfPageResult(ctx context.Context, sel ast.SelectionSet, v *model.PerfPageResult) graphql.Marshaler {
+func (ec *executionContext) marshalNPerfPageResult2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐPerfPageResult(ctx context.Context, sel ast.SelectionSet, v *model.PerfPageResult) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -18026,7 +19810,7 @@ func (ec *executionContext) marshalNPerfPageResult2ᚖgithubᚗcomᚋlayer5ioᚋ
 	return ec._PerfPageResult(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNResource2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐResourceᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Resource) graphql.Marshaler {
+func (ec *executionContext) marshalNResource2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐResourceᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Resource) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -18050,7 +19834,7 @@ func (ec *executionContext) marshalNResource2ᚕᚖgithubᚗcomᚋlayer5ioᚋmes
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNResource2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐResource(ctx, sel, v[i])
+			ret[i] = ec.marshalNResource2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐResource(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -18070,7 +19854,7 @@ func (ec *executionContext) marshalNResource2ᚕᚖgithubᚗcomᚋlayer5ioᚋmes
 	return ret
 }
 
-func (ec *executionContext) marshalNResource2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐResource(ctx context.Context, sel ast.SelectionSet, v *model.Resource) graphql.Marshaler {
+func (ec *executionContext) marshalNResource2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐResource(ctx context.Context, sel ast.SelectionSet, v *model.Resource) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -18080,13 +19864,13 @@ func (ec *executionContext) marshalNResource2ᚖgithubᚗcomᚋlayer5ioᚋmesher
 	return ec._Resource(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNStatus2githubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐStatus(ctx context.Context, v interface{}) (model.Status, error) {
+func (ec *executionContext) unmarshalNStatus2githubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐStatus(ctx context.Context, v interface{}) (model.Status, error) {
 	var res model.Status
 	err := res.UnmarshalGQL(v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNStatus2githubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐStatus(ctx context.Context, sel ast.SelectionSet, v model.Status) graphql.Marshaler {
+func (ec *executionContext) marshalNStatus2githubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐStatus(ctx context.Context, sel ast.SelectionSet, v model.Status) graphql.Marshaler {
 	return v
 }
 
@@ -18374,14 +20158,14 @@ func (ec *executionContext) marshalOAny2interface(ctx context.Context, sel ast.S
 	return res
 }
 
-func (ec *executionContext) marshalOApplicationPage2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐApplicationPage(ctx context.Context, sel ast.SelectionSet, v *model.ApplicationPage) graphql.Marshaler {
+func (ec *executionContext) marshalOApplicationPage2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐApplicationPage(ctx context.Context, sel ast.SelectionSet, v *model.ApplicationPage) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
 	return ec._ApplicationPage(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalOApplicationResult2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐApplicationResult(ctx context.Context, sel ast.SelectionSet, v []*model.ApplicationResult) graphql.Marshaler {
+func (ec *executionContext) marshalOApplicationResult2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐApplicationResult(ctx context.Context, sel ast.SelectionSet, v []*model.ApplicationResult) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -18408,7 +20192,7 @@ func (ec *executionContext) marshalOApplicationResult2ᚕᚖgithubᚗcomᚋlayer
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalOApplicationResult2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐApplicationResult(ctx, sel, v[i])
+			ret[i] = ec.marshalOApplicationResult2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐApplicationResult(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -18422,7 +20206,7 @@ func (ec *executionContext) marshalOApplicationResult2ᚕᚖgithubᚗcomᚋlayer
 	return ret
 }
 
-func (ec *executionContext) marshalOApplicationResult2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐApplicationResult(ctx context.Context, sel ast.SelectionSet, v *model.ApplicationResult) graphql.Marshaler {
+func (ec *executionContext) marshalOApplicationResult2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐApplicationResult(ctx context.Context, sel ast.SelectionSet, v *model.ApplicationResult) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -18455,7 +20239,15 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	return res
 }
 
-func (ec *executionContext) marshalOContainer2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐContainerᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Container) graphql.Marshaler {
+func (ec *executionContext) unmarshalOCatalogSelector2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐCatalogSelector(ctx context.Context, v interface{}) (*model.CatalogSelector, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputCatalogSelector(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOContainer2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐContainerᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Container) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -18482,7 +20274,7 @@ func (ec *executionContext) marshalOContainer2ᚕᚖgithubᚗcomᚋlayer5ioᚋme
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNContainer2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐContainer(ctx, sel, v[i])
+			ret[i] = ec.marshalNContainer2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐContainer(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -18502,7 +20294,7 @@ func (ec *executionContext) marshalOContainer2ᚕᚖgithubᚗcomᚋlayer5ioᚋme
 	return ret
 }
 
-func (ec *executionContext) marshalOContainer_Port2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐContainerPort(ctx context.Context, sel ast.SelectionSet, v []*model.ContainerPort) graphql.Marshaler {
+func (ec *executionContext) marshalOContainer_Port2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐContainerPort(ctx context.Context, sel ast.SelectionSet, v []*model.ContainerPort) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -18529,7 +20321,7 @@ func (ec *executionContext) marshalOContainer_Port2ᚕᚖgithubᚗcomᚋlayer5io
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalOContainer_Port2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐContainerPort(ctx, sel, v[i])
+			ret[i] = ec.marshalOContainer_Port2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐContainerPort(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -18543,35 +20335,35 @@ func (ec *executionContext) marshalOContainer_Port2ᚕᚖgithubᚗcomᚋlayer5io
 	return ret
 }
 
-func (ec *executionContext) marshalOContainer_Port2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐContainerPort(ctx context.Context, sel ast.SelectionSet, v *model.ContainerPort) graphql.Marshaler {
+func (ec *executionContext) marshalOContainer_Port2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐContainerPort(ctx context.Context, sel ast.SelectionSet, v *model.ContainerPort) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
 	return ec._Container_Port(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalOContainer_Status2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐContainerStatus(ctx context.Context, sel ast.SelectionSet, v *model.ContainerStatus) graphql.Marshaler {
+func (ec *executionContext) marshalOContainer_Status2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐContainerStatus(ctx context.Context, sel ast.SelectionSet, v *model.ContainerStatus) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
 	return ec._Container_Status(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalOError2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐError(ctx context.Context, sel ast.SelectionSet, v *model.Error) graphql.Marshaler {
+func (ec *executionContext) marshalOError2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐError(ctx context.Context, sel ast.SelectionSet, v *model.Error) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
 	return ec._Error(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalOFilterPage2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐFilterPage(ctx context.Context, sel ast.SelectionSet, v *model.FilterPage) graphql.Marshaler {
+func (ec *executionContext) marshalOFilterPage2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐFilterPage(ctx context.Context, sel ast.SelectionSet, v *model.FilterPage) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
 	return ec._FilterPage(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalOFilterResult2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐFilterResult(ctx context.Context, sel ast.SelectionSet, v []*model.FilterResult) graphql.Marshaler {
+func (ec *executionContext) marshalOFilterResult2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐFilterResult(ctx context.Context, sel ast.SelectionSet, v []*model.FilterResult) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -18598,7 +20390,7 @@ func (ec *executionContext) marshalOFilterResult2ᚕᚖgithubᚗcomᚋlayer5io�
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalOFilterResult2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐFilterResult(ctx, sel, v[i])
+			ret[i] = ec.marshalOFilterResult2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐFilterResult(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -18612,7 +20404,7 @@ func (ec *executionContext) marshalOFilterResult2ᚕᚖgithubᚗcomᚋlayer5io�
 	return ret
 }
 
-func (ec *executionContext) marshalOFilterResult2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐFilterResult(ctx context.Context, sel ast.SelectionSet, v *model.FilterResult) graphql.Marshaler {
+func (ec *executionContext) marshalOFilterResult2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐFilterResult(ctx context.Context, sel ast.SelectionSet, v *model.FilterResult) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -18651,7 +20443,7 @@ func (ec *executionContext) marshalOInt2ᚖint(ctx context.Context, sel ast.Sele
 	return res
 }
 
-func (ec *executionContext) marshalOK8sContext2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐK8sContext(ctx context.Context, sel ast.SelectionSet, v *model.K8sContext) graphql.Marshaler {
+func (ec *executionContext) marshalOK8sContext2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐK8sContext(ctx context.Context, sel ast.SelectionSet, v *model.K8sContext) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -18674,7 +20466,7 @@ func (ec *executionContext) marshalOMap2map(ctx context.Context, sel ast.Selecti
 	return res
 }
 
-func (ec *executionContext) unmarshalOMeshType2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐMeshType(ctx context.Context, v interface{}) (*model.MeshType, error) {
+func (ec *executionContext) unmarshalOMeshType2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐMeshType(ctx context.Context, v interface{}) (*model.MeshType, error) {
 	if v == nil {
 		return nil, nil
 	}
@@ -18683,14 +20475,14 @@ func (ec *executionContext) unmarshalOMeshType2ᚖgithubᚗcomᚋlayer5ioᚋmesh
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalOMeshType2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐMeshType(ctx context.Context, sel ast.SelectionSet, v *model.MeshType) graphql.Marshaler {
+func (ec *executionContext) marshalOMeshType2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐMeshType(ctx context.Context, sel ast.SelectionSet, v *model.MeshType) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
 	return v
 }
 
-func (ec *executionContext) marshalOMesheryResult2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐMesheryResult(ctx context.Context, sel ast.SelectionSet, v []*model.MesheryResult) graphql.Marshaler {
+func (ec *executionContext) marshalOMesheryResult2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐMesheryResult(ctx context.Context, sel ast.SelectionSet, v []*model.MesheryResult) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -18717,7 +20509,7 @@ func (ec *executionContext) marshalOMesheryResult2ᚕᚖgithubᚗcomᚋlayer5io�
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalOMesheryResult2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐMesheryResult(ctx, sel, v[i])
+			ret[i] = ec.marshalOMesheryResult2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐMesheryResult(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -18731,14 +20523,14 @@ func (ec *executionContext) marshalOMesheryResult2ᚕᚖgithubᚗcomᚋlayer5io�
 	return ret
 }
 
-func (ec *executionContext) marshalOMesheryResult2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐMesheryResult(ctx context.Context, sel ast.SelectionSet, v *model.MesheryResult) graphql.Marshaler {
+func (ec *executionContext) marshalOMesheryResult2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐMesheryResult(ctx context.Context, sel ast.SelectionSet, v *model.MesheryResult) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
 	return ec._MesheryResult(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalOOAMCapability2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐOAMCapability(ctx context.Context, sel ast.SelectionSet, v []*model.OAMCapability) graphql.Marshaler {
+func (ec *executionContext) marshalOOAMCapability2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐOAMCapability(ctx context.Context, sel ast.SelectionSet, v []*model.OAMCapability) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -18765,7 +20557,7 @@ func (ec *executionContext) marshalOOAMCapability2ᚕᚖgithubᚗcomᚋlayer5io�
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalOOAMCapability2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐOAMCapability(ctx, sel, v[i])
+			ret[i] = ec.marshalOOAMCapability2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐOAMCapability(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -18779,28 +20571,28 @@ func (ec *executionContext) marshalOOAMCapability2ᚕᚖgithubᚗcomᚋlayer5io�
 	return ret
 }
 
-func (ec *executionContext) marshalOOAMCapability2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐOAMCapability(ctx context.Context, sel ast.SelectionSet, v *model.OAMCapability) graphql.Marshaler {
+func (ec *executionContext) marshalOOAMCapability2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐOAMCapability(ctx context.Context, sel ast.SelectionSet, v *model.OAMCapability) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
 	return ec._OAMCapability(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalOOperatorControllerStatusPerK8sContext2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐOperatorControllerStatusPerK8sContext(ctx context.Context, sel ast.SelectionSet, v *model.OperatorControllerStatusPerK8sContext) graphql.Marshaler {
+func (ec *executionContext) marshalOOperatorControllerStatusPerK8sContext2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐOperatorControllerStatusPerK8sContext(ctx context.Context, sel ast.SelectionSet, v *model.OperatorControllerStatusPerK8sContext) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
 	return ec._OperatorControllerStatusPerK8sContext(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalOOperatorStatus2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐOperatorStatus(ctx context.Context, sel ast.SelectionSet, v *model.OperatorStatus) graphql.Marshaler {
+func (ec *executionContext) marshalOOperatorStatus2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐOperatorStatus(ctx context.Context, sel ast.SelectionSet, v *model.OperatorStatus) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
 	return ec._OperatorStatus(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalOOperatorStatusInput2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐOperatorStatusInput(ctx context.Context, v interface{}) (*model.OperatorStatusInput, error) {
+func (ec *executionContext) unmarshalOOperatorStatusInput2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐOperatorStatusInput(ctx context.Context, v interface{}) (*model.OperatorStatusInput, error) {
 	if v == nil {
 		return nil, nil
 	}
@@ -18808,21 +20600,21 @@ func (ec *executionContext) unmarshalOOperatorStatusInput2ᚖgithubᚗcomᚋlaye
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalOOperatorStatusPerK8sContext2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐOperatorStatusPerK8sContext(ctx context.Context, sel ast.SelectionSet, v *model.OperatorStatusPerK8sContext) graphql.Marshaler {
+func (ec *executionContext) marshalOOperatorStatusPerK8sContext2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐOperatorStatusPerK8sContext(ctx context.Context, sel ast.SelectionSet, v *model.OperatorStatusPerK8sContext) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
 	return ec._OperatorStatusPerK8sContext(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalOPatternPageResult2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐPatternPageResult(ctx context.Context, sel ast.SelectionSet, v *model.PatternPageResult) graphql.Marshaler {
+func (ec *executionContext) marshalOPatternPageResult2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐPatternPageResult(ctx context.Context, sel ast.SelectionSet, v *model.PatternPageResult) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
 	return ec._PatternPageResult(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalOPatternResult2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐPatternResult(ctx context.Context, sel ast.SelectionSet, v []*model.PatternResult) graphql.Marshaler {
+func (ec *executionContext) marshalOPatternResult2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐPatternResult(ctx context.Context, sel ast.SelectionSet, v []*model.PatternResult) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -18849,7 +20641,7 @@ func (ec *executionContext) marshalOPatternResult2ᚕᚖgithubᚗcomᚋlayer5io�
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalOPatternResult2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐPatternResult(ctx, sel, v[i])
+			ret[i] = ec.marshalOPatternResult2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐPatternResult(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -18863,14 +20655,14 @@ func (ec *executionContext) marshalOPatternResult2ᚕᚖgithubᚗcomᚋlayer5io�
 	return ret
 }
 
-func (ec *executionContext) marshalOPatternResult2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐPatternResult(ctx context.Context, sel ast.SelectionSet, v *model.PatternResult) graphql.Marshaler {
+func (ec *executionContext) marshalOPatternResult2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐPatternResult(ctx context.Context, sel ast.SelectionSet, v *model.PatternResult) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
 	return ec._PatternResult(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalOPerfProfile2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐPerfProfile(ctx context.Context, sel ast.SelectionSet, v []*model.PerfProfile) graphql.Marshaler {
+func (ec *executionContext) marshalOPerfProfile2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐPerfProfile(ctx context.Context, sel ast.SelectionSet, v []*model.PerfProfile) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -18897,7 +20689,7 @@ func (ec *executionContext) marshalOPerfProfile2ᚕᚖgithubᚗcomᚋlayer5ioᚋ
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalOPerfProfile2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐPerfProfile(ctx, sel, v[i])
+			ret[i] = ec.marshalOPerfProfile2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐPerfProfile(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -18911,14 +20703,14 @@ func (ec *executionContext) marshalOPerfProfile2ᚕᚖgithubᚗcomᚋlayer5ioᚋ
 	return ret
 }
 
-func (ec *executionContext) marshalOPerfProfile2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐPerfProfile(ctx context.Context, sel ast.SelectionSet, v *model.PerfProfile) graphql.Marshaler {
+func (ec *executionContext) marshalOPerfProfile2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐPerfProfile(ctx context.Context, sel ast.SelectionSet, v *model.PerfProfile) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
 	return ec._PerfProfile(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalOReSyncActions2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐReSyncActions(ctx context.Context, v interface{}) (*model.ReSyncActions, error) {
+func (ec *executionContext) unmarshalOReSyncActions2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐReSyncActions(ctx context.Context, v interface{}) (*model.ReSyncActions, error) {
 	if v == nil {
 		return nil, nil
 	}
@@ -18926,7 +20718,7 @@ func (ec *executionContext) unmarshalOReSyncActions2ᚖgithubᚗcomᚋlayer5io�
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalOServiceMeshFilter2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐServiceMeshFilter(ctx context.Context, v interface{}) (*model.ServiceMeshFilter, error) {
+func (ec *executionContext) unmarshalOServiceMeshFilter2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐServiceMeshFilter(ctx context.Context, v interface{}) (*model.ServiceMeshFilter, error) {
 	if v == nil {
 		return nil, nil
 	}

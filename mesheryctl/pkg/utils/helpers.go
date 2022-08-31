@@ -541,9 +541,10 @@ func ContainsStringPrefix(arr []string, str string) bool {
 }
 
 // TransformYAML takes in:
-// 	yamlByt - YAML Byte slice that needs to be modified
+//
+//	yamlByt - YAML Byte slice that needs to be modified
 //	transform - function that will be executed on that value, the returned value will replace the current value
-// 	keys - takes in a series of keys which are supposed to be nested, numbers can also be passed to access an array
+//	keys - takes in a series of keys which are supposed to be nested, numbers can also be passed to access an array
 func TransformYAML(yamlByt []byte, transform func(interface{}) (interface{}, error), keys ...string) ([]byte, error) {
 	var data map[string]interface{}
 
