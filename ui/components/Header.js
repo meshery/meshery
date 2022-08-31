@@ -54,7 +54,9 @@ const styles = (theme) => ({
   },
   userContainer : {
     paddingLeft : 1,
-    display : 'flex', backgroundColor : "#396679"
+    display : 'flex',
+    backgroundColor : "#396679",
+    alignItems : 'center'
   },
   userSpan : { marginLeft : theme.spacing(1), },
   pageTitleWrapper : {
@@ -289,7 +291,7 @@ function K8sContextMenu({
           ? 'menu-list-grow'
           : undefined}
         aria-haspopup="true"
-        style={{ marginRight : "0.5rem" }}
+        style={{ marginRight : "0.5rem", top : "0.25rem" }}
       >
         <div className={classes.cbadgeContainer}>
           <img className="k8s-image" src="/static/img/kubernetes.svg" width="24px" height="24px" style={{ zIndex : "2" }} />
