@@ -5,6 +5,7 @@ import (
 
 	"time"
 
+	"github.com/layer5io/meshkit/utils/events"
 	"github.com/vmihailenco/taskq/v3"
 )
 
@@ -165,6 +166,7 @@ type HandlerConfig struct {
 
 	DashboardK8sResourcesChan *DashboardK8sResourcesChan
 	K8scontextChannel         *K8scontextChan
+	EventsBuffer              *events.EventStreamer
 }
 
 // SubmitMetricsConfig is used to store config used for submitting metrics
