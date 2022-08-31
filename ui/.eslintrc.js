@@ -1,7 +1,8 @@
 module.exports = {
   "env" : {
     "browser" : true,
-    "es6" : true
+    "es6" : true,
+    "node" : true // tells the parser that we are using nodejs
   },
   'settings' : { 'react' : { 'version' : require('./package.json').dependencies.react, }, },
   "extends" : [

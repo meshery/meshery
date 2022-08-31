@@ -94,7 +94,7 @@ mesheryctl system check --report
 ## Screenshots
 
 Usage of mesheryctl system check
-![check-usage](../../../../docs/assets/img/mesheryctl/check.jpeg)
+![check-usage](/assets/img/mesheryctl/check.jpeg)
 
 ## See Also
 

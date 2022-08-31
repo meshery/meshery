@@ -11,7 +11,8 @@ import {
   DialogActions,
   Divider,
   Tooltip,
-  Typography
+  Typography,
+  Button
 } from "@material-ui/core";
 import { UnControlled as CodeMirror } from "react-codemirror2";
 import DeleteIcon from "@material-ui/icons/Delete";
@@ -37,6 +38,8 @@ import { ctxUrl } from "../utils/multi-ctx";
 import ConfirmationMsg from "./ConfirmationModal";
 import UndeployIcon from "../public/static/img/UndeployIcon";
 import { getComponentsinFile } from "../utils/utils";
+import PublishIcon from "@material-ui/icons/Publish";
+import ConfigurationSubscription from "./graphql/subscriptions/ConfigurationSubscription";
 
 const styles = (theme) => ({
   grid : {
@@ -184,6 +187,13 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     count : 0
   });
 
+
+  const [importModal, setImportModal] = useState({
+    open : false
+  })
+
+  const disposeConfSubscriptionRef = useRef(null);
+
   const getMuiTheme = () => createTheme({
     overrides : {
       MuiInput : {
@@ -253,12 +263,22 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
 
   const searchTimeout = useRef(null);
 
-  /**
-   * fetch filters when the page loads
-   */
+  const handleUploadImport = () => {
+    setImportModal({
+      open : true
+    });
+  }
+
+  const handleUploadImportClose = () => {
+    setImportModal({
+      open : false
+    });
+  }
+
   useEffect(() => {
-    fetchFilters(page, pageSize, search, sortOrder);
-  }, [page, pageSize, search, sortOrder]);
+    initFiltersSubscription();
+    return () => disposeConfSubscriptionRef.current.dispose();
+  },[])
 
   /**
    * fetchFilters constructs the queries based on the parameters given
@@ -359,6 +379,39 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     });
   };
 
+  const initFiltersSubscription = (pageNo=page.toString(), pagesize=pageSize.toString(), searchText=search, order=sortOrder) => {
+    if (disposeConfSubscriptionRef.current) {
+      disposeConfSubscriptionRef.current.dispose();
+    }
+    const configurationSubscription = ConfigurationSubscription((result) => {
+      setPage(result.configuration?.filters.page || 0);
+      setPageSize(result.configuration?.filters.page_size || 0);
+      setCount(result.configuration?.filters.total_count || 0);
+      setFilters(result.configuration?.filters.filters)
+    },
+    {
+      applicationSelector : {
+        pageSize : pagesize,
+        page : pageNo,
+        search : searchText,
+        order : order
+      },
+      patternSelector : {
+        pageSize : pagesize,
+        page : pageNo,
+        search : searchText,
+        order : order
+      },
+      filterSelector : {
+        pageSize : pagesize,
+        page : pageNo,
+        search : searchText,
+        order : order
+      }
+    });
+    disposeConfSubscriptionRef.current = configurationSubscription
+  }
+
   const handleModalOpen = (filter_file, name, isDeploy) => {
     setModalOpen({
       open : true,
@@ -395,7 +448,6 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
         () => {
           console.log("FilterFile API", `/api/filter/${id}`);
           updateProgress({ showProgress : false });
-          fetchFilters(page, pageSize, search, sortOrder);
           resetSelectedRowData()();
         },
         // handleError
@@ -417,7 +469,6 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
         () => {
           console.log("FilterFile API", `/api/filter`);
           updateProgress({ showProgress : false });
-          fetchFilters(page, pageSize, search, sortOrder);
         },
         // handleError
         handleError(ACTION_TYPES.UPLOAD_FILTERS)
@@ -549,7 +600,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
                 title="Undeploy"
                 onClick={() => handleModalOpen(rowData.filter_file, rowData.name, false)}
               >
-                <UndeployIcon fill="#B32700" data-cy="undeploy-button" />
+                <UndeployIcon fill="#8F1F00" data-cy="undeploy-button" />
               </IconButton>
             </>
           );
@@ -596,7 +647,6 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
           },
         });
 
-        fetchFilters(page, pageSize, search, sortOrder);
       },
       handleError("Failed To Delete Filter")
     );
@@ -630,8 +680,8 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
         const fid = Object.keys(row.lookup).map((idx) => filters[idx]?.id);
         fid.forEach((fid) => deleteFilter(fid));
       }
-      if (response === "No")
-        fetchFilters(page, pageSize, search, sortOrder);
+      // if (response === "No")
+      // fetchFilters(page, pageSize, search, sortOrder);
     },
 
     onTableChange : (action, tableState) => {
@@ -643,10 +693,10 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
 
       switch (action) {
         case "changePage":
-          fetchFilters(tableState.page, pageSize, search, sortOrder);
+          initFiltersSubscription(tableState.page.toString(), pageSize.toString(), search, sortOrder)
           break;
         case "changeRowsPerPage":
-          fetchFilters(page, tableState.rowsPerPage, search, sortOrder);
+          initFiltersSubscription(page.toString(), tableState.rowsPerPage.toString(), search, sortOrder);
           break;
         case "search":
           if (searchTimeout.current) {
@@ -654,7 +704,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
           }
           searchTimeout.current = setTimeout(() => {
             if (search !== tableState.searchText) {
-              fetchFilters(page, pageSize, tableState.searchText !== null ? tableState.searchText : "", sortOrder);
+              fetchFilters(page, pageSize, search, sortOrder);
             }
           }, 500);
           break;
@@ -667,7 +717,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
             }
           }
           if (order !== sortOrder) {
-            fetchFilters(page, pageSize, search, order);
+            initFiltersSubscription(page.toString(), pageSize.toString(), search, order);
           }
           break;
       }
@@ -694,13 +744,24 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
         <div className={classes.topToolbar} >
           {!selectedFilter.show && (filters.length>0 || viewType==="table") && <div className={classes.createButton}>
             <div>
-              <UploadImport supportedTypes="null" aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} configuration="Filter" />
+              <Button
+                aria-label="Add Filter"
+                variant="contained"
+                color="primary"
+                size="large"
+                // @ts-ignore
+                onClick={handleUploadImport}
+                style={{ marginRight : "2rem" }}
+              >
+                <PublishIcon className={classes.addIcon} data-cy="import-button"/>
+              Import Filters
+              </Button>
             </div>
           </div>
           }
           {!selectedFilter.show &&
           <div className={classes.viewSwitchButton}>
-            <ViewSwitch view={viewType} changeView={setViewType} />
+            <ViewSwitch data-cy="table-view" view={viewType} changeView={setViewType} />
           </div>
           }
         </div>
@@ -731,6 +792,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
               pages={Math.ceil(count / pageSize)}
               setPage={setPage}
               selectedPage={page}
+              UploadImport={UploadImport}
             />
         }
         <ConfirmationMsg
@@ -744,6 +806,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
           componentCount={modalOpen.count}
           tab={modalOpen.deploy ? 0 : 1}
         />
+        <UploadImport open={importModal.open} handleClose={handleUploadImportClose} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} configuration="Filter" />
       </NoSsr>
     </>
   );

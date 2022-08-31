@@ -59,7 +59,7 @@ mesheryctl system reset
 ## Screenshots
 
 Usage of mesheryctl system reset
-![reset-usage](../../../../docs/assets/img/mesheryctl/reset.png)
+![reset-usage](/assets/img/mesheryctl/reset.png)
 
 ## See Also
 

@@ -7,6 +7,7 @@ import { getPath } from "../../lib/path";
 import Head from 'next/head';
 import dataFetch from '../../lib/data-fetch';
 import { ctxUrl } from "../../utils/multi-ctx";
+import React from "react";
 
 const styles = { paper : { maxWidth : '90%',
   margin : 'auto',

@@ -283,10 +283,13 @@ function jsonSchemaBuilder(schema, obj) {
   }
 
   if (schema.type === 'boolean') {
+    schema["default"] = false;
     obj["ui:widget"] = "checkbox";
   }
 
   if (schema.type === 'number' || schema.type === 'integer') {
+    schema["maximum"] = 99999;
+    schema["minimum"] = 0;
     obj["ui:widget"] = "updown";
   }
 }

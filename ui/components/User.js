@@ -106,7 +106,7 @@ class User extends React.Component {
       return (
         <List disablePadding>
           {children.map(({
-            id, href, title
+            id, href, title, show : showc
           }) => {
             if (typeof showc !== "undefined" && !showc) {
               return "";
