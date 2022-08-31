@@ -24,7 +24,6 @@ export function getCapabilities(type, cb) {
   dataFetch(
     "/api/provider/capabilities",
     {
-      credentials : "same-origin",
       method : "GET",
       credentials : "include",
     },
@@ -51,7 +50,6 @@ export function getFullPageExtensions(cb) {
   dataFetch(
     "/api/provider/capabilities",
     {
-      credentials : "same-origin",
       method : "GET",
       credentials : "include",
     },

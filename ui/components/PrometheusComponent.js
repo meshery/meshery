@@ -22,7 +22,6 @@ const promStyles = (theme) => ({
     //   marginLeft: theme.spacing(1),
   },
   margin : { margin : theme.spacing(1), },
-  chartTitle : { textAlign : "center", },
   icon : { width : theme.spacing(2.5), },
   alignRight : { textAlign : "right", },
   formControl : { margin : theme.spacing(1),
@@ -31,7 +30,7 @@ const promStyles = (theme) => ({
     flexWrap : "wrap", },
   panelChip : { margin : theme.spacing(0.25), },
   chartTitle : { marginLeft : theme.spacing(3),
-    marginTop : theme.spacing(2), },
+    marginTop : theme.spacing(2), textAlign : "center", },
 });
 
 export const submitPrometheusConfigure = (self, cb = () => {}) => {
@@ -47,7 +46,6 @@ export const submitPrometheusConfigure = (self, cb = () => {}) => {
   dataFetch(
     "/api/telemetry/metrics/config",
     {
-      credentials : "same-origin",
       method : "POST",
       credentials : "include",
       headers : { "Content-Type" : "application/x-www-form-urlencoded;charset=UTF-8", },
@@ -189,7 +187,7 @@ class PrometheusComponent extends Component {
     self.props.updateProgress({ showProgress : true });
     dataFetch(
       "/api/telemetry/metrics/config",
-      { credentials : "same-origin",
+      {
         method : "DELETE",
         credentials : "include", },
       (result) => {
@@ -211,7 +209,7 @@ class PrometheusComponent extends Component {
     const self = this;
     dataFetch(
       "/api/telemetry/metrics/ping",
-      { credentials : "same-origin",
+      {
         credentials : "include", },
       (result) => {
         self.props.updateProgress({ showProgress : false });
