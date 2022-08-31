@@ -17,6 +17,7 @@ excluded_in_search: true
 	window.data = {
 		{% for post in site.docs %}
 				{% unless post.excluded_in_search %}
+				{% if post.language == en %}
 					{% if added %},{% endif %}
 					{% assign added = false %}
 					"{{ post.url | slugify }}": {
@@ -27,10 +28,12 @@ excluded_in_search: true
 						"content": {{ post.content | strip_html | replace_regex: "[\s/\n]+"," " | strip | jsonify }}
 					}
 					{% assign added = true %}
+					{% endif %}
 				{% endunless %}
 		{% endfor %}
 		{% for post in site.pages %}
 				{% unless post.excluded_in_search %}
+				{% if post.language == en %}
 					{% if added %},{% endif %}
 					{% assign added = false %}
 					"{{ post.url | slugify }}": {
@@ -41,6 +44,7 @@ excluded_in_search: true
 						"content": {{ post.content | strip_html | replace_regex: "[\s/\n]+"," " | strip | jsonify }}
 					}
 					{% assign added = true %}
+					{% endif %}
 				{% endunless %}
 		{% endfor %}
 	};
