@@ -69,16 +69,16 @@ func ProcessOAM(kconfigs []string, oamComps []string, oamConfig string, isDel bo
 							Component:     "core",
 							ComponentName: "Meshery",
 							EventType:     meshes.EventType_INFO,
-							Summary:       "Successfully deployed application " + comp.Name,
+							Summary:       "Successfully deployed application: " + comp.Name,
 							OperationId:   id.String(),
 						}
-						msgs = append(msgs, "successfully deployed application "+comp.Name)
+						msgs = append(msgs, "successfully deployed application: "+comp.Name)
 					} else {
 						req = meshes.EventsResponse{
 							Component:     "core",
 							ComponentName: "Meshery",
 							EventType:     meshes.EventType_INFO,
-							Summary:       "Successfully deleted application " + comp.Name,
+							Summary:       "Successfully deleted application: " + comp.Name,
 							OperationId:   id.String(),
 						}
 
