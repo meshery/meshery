@@ -20,13 +20,13 @@ jobs:
         with:
           version: v0.26.1
       - name: swagger-spec
-        run: swagger generate spec -o ./helpers/swagger.yaml --scan-models
+        run: swagger generate spec -o ./server/helpers/swagger.yaml --scan-models
       - name: swagger-docs
         run: swagger generate spec -o ./docs/_data/swagger.yml --scan-models && swagger flatten ./docs/_data/swagger.yml -o ./docs/_data/swagger.yml --with-expand --format=yaml
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
-          file_pattern: docs helpers/
+          file_pattern: docs server/helpers/
           commit_user_name: l5io
           commit_user_email: ci@layer5.io
           commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>

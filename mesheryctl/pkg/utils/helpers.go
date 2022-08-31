@@ -18,7 +18,7 @@ import (
 
 	"github.com/briandowns/spinner"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/models"
+	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/logger"
 	"github.com/layer5io/meshkit/utils"
 	"github.com/olekukonko/tablewriter"

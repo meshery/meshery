@@ -150,7 +150,17 @@ jobs:
       - name: Pattern apply (Install service mesh)
         run: |
           cat ./${{ inputs.patternfile_name }}
-          mesheryctl pattern apply -f ./${{ inputs.patternfile_name }}
+          for n in {1..3}
+          do
+            x=$(mesheryctl pattern apply -f ./${{ inputs.patternfile_name }})
+            echo "pattern apply log: $x"
+            if [[ $x == "*invalid workload of type:*" ]];
+            then
+              sleep 30
+            else
+              break
+            fi    
+          done        
 
       - name: Check adapter logs
         run: |
