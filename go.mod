@@ -23,7 +23,7 @@ require (
 	fortio.org/fortio v1.21.0
 	github.com/99designs/gqlgen v0.17.10
 	github.com/asaskevich/govalidator v0.0.0-20200907205600-7a23bdc65eef
-	github.com/briandowns/spinner v1.18.1
+	github.com/briandowns/spinner v1.19.0
 	github.com/docker/docker v20.10.14+incompatible
 	github.com/envoyproxy/go-control-plane v0.10.2-0.20220325020618-49ff273808a1
 	github.com/ghodss/yaml v1.0.0
