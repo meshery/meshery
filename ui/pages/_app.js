@@ -85,7 +85,7 @@ class MesheryApp extends App {
       (result) => {
         if (result) {
           this.props.toggleCatalogContent({
-            catalogVisibility : result?.usersExtensionPreferences?.catalogContent
+            catalogVisibility : result?.usersExtensionPreferences?.catalogContent || true
           })
         }
       },
