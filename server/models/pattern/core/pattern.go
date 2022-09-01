@@ -350,7 +350,6 @@ func getDynamicSchemaFromPatternURL(url string) (schema string) {
 	return getSchemaFromVars(p.Vars, p.Name)
 }
 func getSchemaFromVars(vars map[string]interface{}, title string) (schema string) {
-	fmt.Println("Ashish")
 	m := make(map[string]interface{})
 	m["title"] = title
 	m["type"] = "object"
@@ -363,11 +362,9 @@ func getSchemaFromVars(vars map[string]interface{}, title string) (schema string
 	m["properties"] = prop
 	byt, err := json.Marshal(m)
 	if err != nil {
-		fmt.Println("err: ", err.Error())
 		return
 	}
 	schema = string(byt)
-	fmt.Println("schema: ", schema)
 	return
 }
 func manifestIsEmpty(manifests []string) bool {
