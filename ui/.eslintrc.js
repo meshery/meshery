@@ -60,7 +60,7 @@ module.exports = {
       }
     ],
     "react/react-in-jsx-scope" : "off",
-    "no-undef" : "off",
+    "no-undef" : "error",
     "react/jsx-uses-vars" : [
       2
     ],
