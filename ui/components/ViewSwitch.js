@@ -1,11 +1,8 @@
 import { ToggleButton, ToggleButtonGroup } from "@material-ui/lab";
 import GridOnIcon from "@material-ui/icons/GridOn";
 import TableChartIcon from "@material-ui/icons/TableChart";
-import { Button } from "@material-ui/core";
-import VisibilityIcon from '@material-ui/icons/Visibility';
-import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
 
-function ViewSwitch({ view, changeView, catalogVisibility, handleCatalogVisibility, hideCatalog }) {
+function ViewSwitch({ view, changeView}) {
   return (
     <div>
       <ToggleButtonGroup
@@ -20,11 +17,6 @@ function ViewSwitch({ view, changeView, catalogVisibility, handleCatalogVisibili
         }
         aria-label="Switch View"
       >
-        { !hideCatalog &&  // In application we  don't have catalog, hence this check
-        <Button onClick = {handleCatalogVisibility} variant="contained" color="primary" endIcon={catalogVisibility ? <VisibilityIcon /> : <VisibilityOffIcon />}>
-         CATALOG
-        </Button>
-        }
         <ToggleButton value="grid" data-cy="grid-view">
           <GridOnIcon />
         </ToggleButton>

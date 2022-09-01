@@ -25,6 +25,7 @@ import UploadImport from "./UploadImport";
 import { ctxUrl } from "../utils/multi-ctx";
 import { getComponentsinFile, randomPatternNameGenerator as getRandomName } from "../utils/utils";
 import ViewSwitch from "./ViewSwitch";
+import CatalogFilter from "./CatalogFilter";
 import MesheryPatternGrid from "./MesheryPatterns/MesheryPatternGridView";
 import UndeployIcon from "../public/static/img/UndeployIcon";
 import DoneAllIcon from '@material-ui/icons/DoneAll';
@@ -59,7 +60,6 @@ const styles = (theme) => ({
   },
   viewSwitchButton : {
     justifySelf : "flex-end",
-    marginLeft : "auto",
     paddingLeft : "1rem"
   },
   createButton : {
@@ -994,9 +994,12 @@ function MesheryPatterns({
             </div>
           </div>
           }
+               <div style={{ justifySelf:"flex-end", marginLeft: "auto", paddingRight: "1rem", paddingTop: "0.2rem"}}>       
+               <CatalogFilter catalogVisibility={catalogVisibility} handleCatalogVisibility={handleCatalogVisibility} /> 
+               </div>
           {!selectedPattern.show &&
           <div className={classes.viewSwitchButton}>
-            <ViewSwitch view={viewType} changeView={setViewType} catalogVisibility={catalogVisibility} handleCatalogVisibility={handleCatalogVisibility} />
+            <ViewSwitch view={viewType} changeView={setViewType} />
           </div>
           }
         </div>
