@@ -37,7 +37,6 @@ const styles = (theme) => ({
     textAlign : "left",
     display : "flex",
     flexDirection : 'row',
-    textAlign : "left"
   },
   link : {
     textDecoration : "none",
