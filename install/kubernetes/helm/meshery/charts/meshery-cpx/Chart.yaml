@@ -5,7 +5,7 @@ icon: https://meshery.io/images/logos/meshery-logo.png
 source: 
   - https://github.com/layer5io/meshery-cpx
 
-deprecated: false
+deprecated: true
 
 # A chart can be either an 'application' or a 'library' chart.
 #
