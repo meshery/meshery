@@ -1,4 +1,4 @@
-//Package handlers :  collection of handlers (aka "HTTP middleware")
+// Package handlers :  collection of handlers (aka "HTTP middleware")
 package handlers
 
 import (
@@ -133,7 +133,7 @@ func (h *Handler) KubernetesMiddleware(next func(http.ResponseWriter, *http.Requ
 		}
 
 		// register kubernetes components
-		h.K8sCompRegHelper.UpdateContexts(contexts).RegisterComponents(contexts, RegisterK8sComponents)
+		h.K8sCompRegHelper.UpdateContexts(contexts).RegisterComponents(contexts, RegisterK8sComponents, h.EventsBuffer)
 
 		// Identify custom contexts, if provided
 		k8sContextIDs := req.URL.Query()["contexts"]

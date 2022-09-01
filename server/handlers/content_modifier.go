@@ -10,7 +10,7 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-//To be used while adding metadata to patterns,filters and applicationss
+// To be used while adding metadata to patterns,filters and applicationss
 type ContentModifier struct {
 	token    string
 	provider models.Provider
@@ -30,8 +30,8 @@ func NewContentModifier(token string,
 	}
 }
 
-//TODO: Similar mechanisms for filters and applications
-//Takes in response bytes, and add metadata to it based on some checks
+// TODO: Similar mechanisms for filters and applications
+// Takes in response bytes, and add metadata to it based on some checks
 func (mc *ContentModifier) AddMetadataForPatterns(ctx context.Context, contentBytes *[]byte) error {
 	var patternsPage models.MesheryPatternPage
 	err := json.Unmarshal(*contentBytes, &patternsPage)
@@ -77,7 +77,7 @@ func (mc *ContentModifier) AddMetadataForPatterns(ctx context.Context, contentBy
 	return err
 }
 
-//takes a patternfile and returns the status of its current support by using dry run
+// takes a patternfile and returns the status of its current support by using dry run
 func (mc *ContentModifier) isPatternSupported(ctx context.Context, patternfile string) (msg string, ok bool) {
 	var pattern map[string]interface{}
 	err := yaml.Unmarshal([]byte(patternfile), &pattern)
@@ -98,6 +98,7 @@ func (mc *ContentModifier) isPatternSupported(ctx context.Context, patternfile s
 		false,
 		true,
 		true,
+		nil,
 	)
 	if err != nil {
 		return err.Error(), false

@@ -296,7 +296,7 @@ func SetOverrideValues(delete bool, adapterTracker models.AdaptersTrackerInterfa
 	return overrideValues
 }
 
-//K8sConnectionTracker keeps track of BrokerURLs per kubernetes context
+// K8sConnectionTracker keeps track of BrokerURLs per kubernetes context
 type K8sConnectionTracker struct {
 	mx              sync.Mutex
 	contextToBroker map[string]string //ContextID -> BrokerURL
@@ -313,7 +313,7 @@ func (k *K8sConnectionTracker) Set(id string, url string) {
 	k.contextToBroker[id] = url
 }
 
-//Takes a set of endpoints and discard the current endpoint if its not present in the set
+// Takes a set of endpoints and discard the current endpoint if its not present in the set
 func (k *K8sConnectionTracker) ResetEndpoints(available map[string]bool) {
 	k.mx.Lock()
 	defer k.mx.Unlock()
@@ -404,4 +404,3 @@ func SelectivelyFetchNamespaces(cids []string, provider models.Provider) ([]stri
 	}
 	return namespaces, nil
 }
-

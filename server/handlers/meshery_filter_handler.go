@@ -23,8 +23,8 @@ type MesheryFilterRequestBody struct {
 //
 // Returns the Meshery Filter file saved by the current user with the given id
 // responses:
-// 	200: mesheryFilterResponseWrapper
 //
+//	200: mesheryFilterResponseWrapper
 func (h *Handler) GetMesheryFilterFileHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
@@ -50,7 +50,8 @@ func (h *Handler) GetMesheryFilterFileHandler(
 //
 // Returns all the Meshery Filters saved by the current user
 // responses:
-// 	200: mesheryFiltersResponseWrapper
+//
+//	200: mesheryFiltersResponseWrapper
 //
 // FilterFileRequestHandler will handle requests of both type GET and POST
 // on the route /api/filter
@@ -77,8 +78,8 @@ func (h *Handler) FilterFileRequestHandler(
 //
 // Used to save/update a Meshery Filter
 // responses:
-// 	200: mesheryFilterResponseWrapper
 //
+//	200: mesheryFilterResponseWrapper
 func (h *Handler) handleFilterPOST(
 	rw http.ResponseWriter,
 	r *http.Request,
@@ -220,7 +221,8 @@ func (h *Handler) GetCatalogMesheryFiltersHandler(
 //
 // Deletes a meshery filter with ID: id
 // responses:
-// 	200: noContentWrapper
+//
+//	200: noContentWrapper
 //
 // DeleteMesheryFilterHandler deletes a filter with the given id
 func (h *Handler) DeleteMesheryFilterHandler(

@@ -16,6 +16,7 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/models"
+	"github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -222,6 +223,13 @@ mesheryctl pattern apply [pattern-name]
 			return err
 		}
 
+		pf, err := core.NewPatternFile([]byte(patternFile))
+		if err != nil {
+			return errors.Wrap(err, "Pattern appears invalid. Could not parse successfully")
+		}
+
+		s := utils.CreateDefaultSpinner("Applying pattern "+pf.Name, "")
+		s.Start()
 		res, err := client.Do(req)
 		if err != nil {
 			return err
@@ -229,6 +237,7 @@ mesheryctl pattern apply [pattern-name]
 
 		defer res.Body.Close()
 		body, err := io.ReadAll(res.Body)
+		s.Stop()
 		if err != nil {
 			return err
 		}

@@ -54,7 +54,9 @@ const styles = (theme) => ({
   },
   userContainer : {
     paddingLeft : 1,
-    display : 'flex', backgroundColor : "#396679"
+    display : 'flex',
+    backgroundColor : "#396679",
+    alignItems : 'center'
   },
   userSpan : { marginLeft : theme.spacing(1), },
   pageTitleWrapper : {

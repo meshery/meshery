@@ -5,6 +5,8 @@ area/ci:
 component/ui:
   - "ui/**/*"
   - "provider-ui/**/*"
+component/server:
+  - "server/**/*"
 component/mesheryctl:
   - "mesheryctl/**/*"
 component/extensions:
@@ -12,7 +14,12 @@ component/extensions:
   - "ui/components/ExtensionSandbox.js"
   - "ui/remote-component.config.js"
 area/lifecycle:
-  - "install/deployment_yamls/*"
+  - "install/*"
+kubernetes:
+  - "install/deployment_yamls/*"  
 framework/helm:
   - "install/kubernetes/helm/**/*"
-
+framework/graphql:
+  - "server/internal/graphql/*"
+component/database:
+  - "server/internal/sql/*"

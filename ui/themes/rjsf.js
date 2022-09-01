@@ -30,6 +30,11 @@ export const rjsfTheme = createTheme({
         "&:hover" : "00b39f"
       }
     },
+    MuiInput : {
+      root : {
+        width : '50%',
+      }
+    },
     MuiBox : {
       root : {
         marginTop : 0

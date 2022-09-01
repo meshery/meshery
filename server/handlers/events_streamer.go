@@ -1,4 +1,4 @@
-//Package handlers :collection of handlers (aka "HTTP middleware")
+// Package handlers :collection of handlers (aka "HTTP middleware")
 package handlers
 
 import (
@@ -14,6 +14,7 @@ import (
 
 	"github.com/layer5io/meshery/server/meshes"
 	"github.com/layer5io/meshery/server/models"
+	"github.com/layer5io/meshkit/utils/events"
 	"github.com/sirupsen/logrus"
 )
 
@@ -74,7 +75,7 @@ func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request, p
 
 		log.Debug("new adapters channel closed")
 	}()
-
+	go listenForCoreEvents(req.Context(), h.EventsBuffer, respChan, log, p)
 	go func(flusher http.Flusher) {
 		for data := range respChan {
 			log.Debug("received new data on response channel")
@@ -93,7 +94,6 @@ STOP:
 		case <-notify.Done():
 			log.Debugf("received signal to close connection and channels")
 			close(newAdaptersChan)
-			close(respChan)
 			break STOP
 		default:
 			meshAdapters := prefObj.MeshAdapters
@@ -134,9 +134,31 @@ STOP:
 		}
 		time.Sleep(5 * time.Second)
 	}
+	close(respChan)
 	defer log.Debug("events handler closed")
 }
+func listenForCoreEvents(ctx context.Context, eb *events.EventStreamer, resp chan []byte, log *logrus.Entry, p models.Provider) {
+	datach := make(chan interface{}, 10)
+	go eb.Subscribe(datach)
+	for {
+		select {
+		case datap := <-datach:
+			event, ok := datap.(*meshes.EventsResponse)
+			if !ok {
+				continue
+			}
+			data, err := json.Marshal(event)
+			if err != nil {
+				log.Error(ErrMarshal(err, "event"))
+				return
+			}
+			resp <- data
 
+		case <-ctx.Done():
+			return
+		}
+	}
+}
 func listenForAdapterEvents(ctx context.Context, mClient *meshes.MeshClient, respChan chan []byte, log *logrus.Entry, p models.Provider) {
 	log.Debugf("Received a stream client...")
 
