@@ -4,7 +4,7 @@ import environment from "../../../lib/relayEnvironment";
 export default function fetchCatalogPattern (variables) {
   const query = graphql`
       query CatalogPatternQuery($selector: CatalogSelector!) {
-        catlogPatterns: fetchPatternCatalogContent(selector: $selector) { 
+        catalogPatterns: fetchPatternCatalogContent(selector: $selector) { 
           id
           name
           user_id
