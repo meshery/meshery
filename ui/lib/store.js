@@ -54,7 +54,8 @@ const initialState = fromJS({
   showProgress : false,
   isDrawerCollapsed: false,
   selectedAdapter : '',
-  
+  events:[],
+
   // global gql-subscriptions
   operatorState: null,
   meshSyncState: null
@@ -82,6 +83,7 @@ export const actionTypes = {
   UPDATE_PROGRESS : 'UPDATE_PROGRESS',
   TOOGLE_DRAWER : 'TOOGLE_DRAWER',
   SET_ADAPTER : 'SET_ADAPTER',
+  UPDATE_EVENTS : 'UPDATE_EVENTS',
   SET_OPERATOR_SUBSCRIPTION: 'SET_OPERATOR_SUBSCRIPTION',
   SET_MESHSYNC_SUBSCRIPTION: 'SET_MESHSYNC_SUBSCRIPTION'
   // UPDATE_SMI_RESULT: 'UPDATE_SMI_RESULT',
@@ -183,6 +185,9 @@ export const reducer = (state = initialState, action) => {
       //   else
       //     return state
 
+    case actionTypes.UPDATE_EVENTS:
+      return state.merge({ events : action.events })
+
     case actionTypes.SET_OPERATOR_SUBSCRIPTION: 
       return state.merge({operatorState: action.operatorState});
 
@@ -272,6 +277,10 @@ export const toggleDrawer = ({isDrawerCollapsed}) => dispatch => {
 
 export const setAdapter = ({selectedAdapter}) => dispatch => {
   return dispatch({ type : actionTypes.SET_ADAPTER, selectedAdapter });
+}
+
+export const updateEvents = ({ events }) => dispatch => {
+  return dispatch({ type: actionTypes.UPDATE_EVENTS, events });
 }
 
 export const setOperatorSubscription = ({operatorState}) => dispatch => {

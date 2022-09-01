@@ -396,9 +396,7 @@ class MesheryAdapterPlayComponent extends React.Component {
   handleSubmit = (cat, selectedOp, deleteOp = false) => {
     const self = this;
     return () => {
-      if (selectedOp !== 'custom' ) {
-        self.handleOpen();
-      }
+      self.handleOpen();
       const { namespace, cmEditorValAdd, cmEditorValDel } = self.state;
       const { adapter } = self.props;
       const filteredOp = adapter.ops.filter(({ key }) => key === selectedOp);

@@ -2109,24 +2109,6 @@
         "probable_cause": "",
         "suggested_remediation": "Make sure the controllers are deployed and their handlers are configured"
       },
-      "2246": {
-        "name": "ErrDatabaseAutoMigrationCode",
-        "code": "2246",
-        "severity": "Fatal",
-        "long_description": "Unable to auto migrate to database: ",
-        "short_description": "Unable to auto migrate to database",
-        "probable_cause": "",
-        "suggested_remediation": ""
-      },
-      "2247": {
-        "name": "ErrInvalidURLSkippingProviderCode",
-        "code": "2247",
-        "severity": "Alert",
-        "long_description": " is invalid url skipping provider",
-        "short_description": " is invalid url skipping provider",
-        "probable_cause": "",
-        "suggested_remediation": ""
-      },
       "2248": {
         "name": "ErrListenAndServeCode",
         "code": "2248",
