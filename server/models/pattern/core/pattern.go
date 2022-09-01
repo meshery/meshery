@@ -157,7 +157,6 @@ func (p *Pattern) GenerateDynamicSchema() {
 		if strings.HasPrefix(svc.Type, "$(#use ") { //Currently pattern import is supported only via URL
 			url := strings.TrimSpace(strings.TrimSuffix(strings.TrimPrefix(svc.Type, "$(#use"), ")"))
 			svc.Schema = getDynamicSchemaFromPatternURL(url)
-			fmt.Println("here1: ", svc.Schema)
 		}
 	}
 }
@@ -337,18 +336,15 @@ func processCytoElementsWithPattern(eles []cytoscapejs.Element, pf *Pattern, cal
 func getDynamicSchemaFromPatternURL(url string) (schema string) {
 	res, err := http.Get(url)
 	if err != nil {
-		fmt.Println("errwhat: ", err.Error())
 		return
 	}
 	byt, err := ioutil.ReadAll(res.Body)
 	if err != nil {
-		fmt.Println("errbo: ", err.Error())
 		return
 	}
 	var p Pattern
 	p, err = NewPatternFile(byt)
 	if err != nil {
-		fmt.Println("err:ooga: ", err.Error())
 		return
 	}
 	return getSchemaFromVars(p.Vars, p.Name)
