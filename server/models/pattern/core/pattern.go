@@ -4,8 +4,10 @@ import (
 	"crypto/rand"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"math/big"
 	mathrand "math/rand"
+	"net/http"
 	"strings"
 	"time"
 
@@ -42,6 +44,7 @@ type Service struct {
 	Name        string            `yaml:"name,omitempty" json:"name,omitempty"`
 	Type        string            `yaml:"type,omitempty" json:"type,omitempty"`
 	Namespace   string            `yaml:"namespace" json:"namespace"`
+	Schema      string            `yaml:"schema" json:"schema"`
 	Version     string            `yaml:"version,omitempty" json:"version,omitempty"`
 	Labels      map[string]string `yaml:"labels,omitempty" json:"labels,omitempty"`
 	Annotations map[string]string `yaml:"annotations,omitempty" json:"annotations,omitempty"`
@@ -148,6 +151,15 @@ func (p *Pattern) GenerateApplicationConfiguration() (v1alpha1.Configuration, er
 // GetServiceType returns the type of the service
 func (p *Pattern) GetServiceType(name string) string {
 	return p.Services[name].Type
+}
+func (p *Pattern) GenerateDynamicSchema() {
+	for _, svc := range p.Services {
+		if strings.HasPrefix(svc.Type, "$(#use ") { //Currently pattern import is supported only via URL
+			url := strings.TrimSpace(strings.TrimSuffix(strings.TrimPrefix(svc.Type, "$(#use"), ")"))
+			svc.Schema = getDynamicSchemaFromPatternURL(url)
+			fmt.Println("here1: ", svc.Schema)
+		}
+	}
 }
 
 // ToCytoscapeJS converts pattern file into cytoscape object
@@ -312,7 +324,6 @@ func processCytoElementsWithPattern(eles []cytoscapejs.Element, pf *Pattern, cal
 				"posY": elem.Position.Y,
 			},
 		}
-
 		if err := json.Unmarshal(svcByt, &svc); err != nil {
 			return fmt.Errorf("failed to create service from the metadata in the scratch")
 		}
@@ -323,7 +334,46 @@ func processCytoElementsWithPattern(eles []cytoscapejs.Element, pf *Pattern, cal
 	}
 	return nil
 }
-
+func getDynamicSchemaFromPatternURL(url string) (schema string) {
+	res, err := http.Get(url)
+	if err != nil {
+		fmt.Println("errwhat: ", err.Error())
+		return
+	}
+	byt, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		fmt.Println("errbo: ", err.Error())
+		return
+	}
+	var p Pattern
+	p, err = NewPatternFile(byt)
+	if err != nil {
+		fmt.Println("err:ooga: ", err.Error())
+		return
+	}
+	return getSchemaFromVars(p.Vars, p.Name)
+}
+func getSchemaFromVars(vars map[string]interface{}, title string) (schema string) {
+	fmt.Println("Ashish")
+	m := make(map[string]interface{})
+	m["title"] = title
+	m["type"] = "object"
+	prop := make(map[string]interface{})
+	for varr := range vars {
+		prop[varr] = map[string]string{
+			"type": "string",
+		}
+	}
+	m["properties"] = prop
+	byt, err := json.Marshal(m)
+	if err != nil {
+		fmt.Println("err: ", err.Error())
+		return
+	}
+	schema = string(byt)
+	fmt.Println("schema: ", schema)
+	return
+}
 func manifestIsEmpty(manifests []string) bool {
 	for _, m := range manifests {
 		x := strings.TrimSpace(strings.Trim(m, "\n"))

@@ -467,9 +467,9 @@ func formatPatternOutput(rw http.ResponseWriter, content []byte, format string) 
 			}
 
 			//TODO: The below line has to go away once the client fully supports referencing variables  and pattern imports inside design
-			newpatternfile := evalImportAndReferenceStage(&patternFile)
-
-			cyjs, _ := newpatternfile.ToCytoscapeJS()
+			// newpatternfile := evalImportAndReferenceStage(&patternFile)
+			patternFile.GenerateDynamicSchema()
+			cyjs, _ := patternFile.ToCytoscapeJS()
 
 			bytes, err := json.Marshal(&cyjs)
 			if err != nil {
