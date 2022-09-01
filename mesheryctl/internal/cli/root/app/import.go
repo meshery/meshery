@@ -110,7 +110,6 @@ func importApp(sourceType string, file string, appURL string, save bool) (*model
 		}
 		// set app
 		app = response[0]
-
 	} else {
 		var jsonValues []byte
 		url, path, err := utils.ParseURLGithub(file)
