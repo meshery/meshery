@@ -43,7 +43,7 @@ type CatalogFilter struct {
 	FilterFile  string                 `json:"filter_file"`
 	UserID      string                 `json:"user_id"`
 	Location    *Location              `json:"location"`
-	Visibility  map[string]interface{} `json:"visibility"`
+	Visibility  string                 `json:"visibility"`
 	CatalogData map[string]interface{} `json:"catalog_data"`
 	CreatedAt   *string                `json:"created_at"`
 	UpdatedAt   *string                `json:"updated_at"`
@@ -55,7 +55,7 @@ type CatalogPattern struct {
 	UserID      string                 `json:"user_id"`
 	PatternFile string                 `json:"pattern_file"`
 	Location    *Location              `json:"location"`
-	Visibility  map[string]interface{} `json:"visibility"`
+	Visibility  string                 `json:"visibility"`
 	CatalogData map[string]interface{} `json:"catalog_data"`
 	CreatedAt   *string                `json:"created_at"`
 	UpdatedAt   *string                `json:"updated_at"`

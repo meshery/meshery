@@ -481,6 +481,7 @@ const categories = [
   {
     id : "Extensions",
     icon : <ExtensionIcon style={drawerIconsStyle} />,
+    hovericon : <ExtensionIcon style={drawerIconsStyle} />,
     title : "Extensions",
     show : true,
     width : 12,
@@ -1132,7 +1133,7 @@ class Navigator extends React.Component {
                       arrow
                     >
 
-                      {(isDrawerCollapsed && children && (this.state.hoveredId === childId || this.state.openItems.includes(childId))) ?
+                      {(isDrawerCollapsed && (this.state.hoveredId === childId || this.state.openItems.includes(childId))) ?
                         <Tooltip
                           title={title}
                           placement="right"

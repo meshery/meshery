@@ -2581,8 +2581,8 @@ type CatalogFilter {
   filter_file: String!
   user_id: String!
   location: Location!
-  visibility: Map!
-  catalog_data: Map
+  visibility: String!
+  catalog_data: Map!
   created_at: String
   updated_at: String 
 }
@@ -2623,7 +2623,7 @@ type CatalogPattern {
   user_id: String!
   pattern_file: String!
   location: Location!
-  visibility: Map!
+  visibility: String!
   catalog_data: Map!
   created_at: String
   updated_at: String
@@ -4497,9 +4497,9 @@ func (ec *executionContext) _CatalogFilter_visibility(ctx context.Context, field
 		}
 		return graphql.Null
 	}
-	res := resTmp.(map[string]interface{})
+	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalNMap2map(ctx, field.Selections, res)
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_CatalogFilter_visibility(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -4509,7 +4509,7 @@ func (ec *executionContext) fieldContext_CatalogFilter_visibility(ctx context.Co
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Map does not have child fields")
+			return nil, errors.New("field of type String does not have child fields")
 		},
 	}
 	return fc, nil
@@ -4536,11 +4536,14 @@ func (ec *executionContext) _CatalogFilter_catalog_data(ctx context.Context, fie
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
 	res := resTmp.(map[string]interface{})
 	fc.Result = res
-	return ec.marshalOMap2map(ctx, field.Selections, res)
+	return ec.marshalNMap2map(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_CatalogFilter_catalog_data(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -4894,9 +4897,9 @@ func (ec *executionContext) _CatalogPattern_visibility(ctx context.Context, fiel
 		}
 		return graphql.Null
 	}
-	res := resTmp.(map[string]interface{})
+	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalNMap2map(ctx, field.Selections, res)
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_CatalogPattern_visibility(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -4906,7 +4909,7 @@ func (ec *executionContext) fieldContext_CatalogPattern_visibility(ctx context.C
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Map does not have child fields")
+			return nil, errors.New("field of type String does not have child fields")
 		},
 	}
 	return fc, nil
@@ -16445,6 +16448,9 @@ func (ec *executionContext) _CatalogFilter(ctx context.Context, sel ast.Selectio
 
 			out.Values[i] = ec._CatalogFilter_catalog_data(ctx, field, obj)
 
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "created_at":
 
 			out.Values[i] = ec._CatalogFilter_created_at(ctx, field, obj)

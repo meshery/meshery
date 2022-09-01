@@ -195,7 +195,7 @@ function NodeDetails(props) {
     <NoSsr>
       <MuiThemeProvider theme={getMuiTheme()}>
         <MUIDataTable
-          title={<div style={{ fontSize : 18 }}>Server Version: {server}</div>}
+          title={<div style={{ fontSize : 18 }}> Kubernetes Server Version: {server}</div>}
           data={data}
           options={options}
           columns={columns}

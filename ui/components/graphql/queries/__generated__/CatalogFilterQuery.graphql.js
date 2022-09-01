@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<b4d3de0d370e97e088d213d9ad49f6b6>>
+ * @generated SignedSource<<84d9394ef265babad032c478ee6ac59a>>
  * @flow
  * @lightSyntaxTransform
  * @nogrep
@@ -19,12 +19,12 @@ export type CatalogFilterQuery$variables = {|
   selector: CatalogSelector,
 |};
 export type CatalogFilterQuery$data = {|
-  +catlogFilters: $ReadOnlyArray<{|
+  +catalogFilters: $ReadOnlyArray<{|
     +id: string,
     +name: string,
     +user_id: string,
     +filter_file: string,
-    +visibility: any,
+    +visibility: string,
     +catalog_data: any,
     +created_at: ?string,
     +updated_at: ?string,
@@ -46,7 +46,7 @@ var v0 = [
 ],
 v1 = [
   {
-    "alias": "catlogFilters",
+    "alias": "catalogFilters",
     "args": [
       {
         "kind": "Variable",
@@ -137,17 +137,17 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "c8ef8b102fc74283be63caed6f4b9426",
+    "cacheID": "ac1121b539ce2cffd452177869b631dc",
     "id": null,
     "metadata": {},
     "name": "CatalogFilterQuery",
     "operationKind": "query",
-    "text": "query CatalogFilterQuery(\n  $selector: CatalogSelector!\n) {\n  catlogFilters: fetchFilterCatalogContent(selector: $selector) {\n    id\n    name\n    user_id\n    filter_file\n    visibility\n    catalog_data\n    created_at\n    updated_at\n  }\n}\n"
+    "text": "query CatalogFilterQuery(\n  $selector: CatalogSelector!\n) {\n  catalogFilters: fetchFilterCatalogContent(selector: $selector) {\n    id\n    name\n    user_id\n    filter_file\n    visibility\n    catalog_data\n    created_at\n    updated_at\n  }\n}\n"
   }
 };
 })();
 
-(node/*: any*/).hash = "7432aee8a3d6aa20f0277e24e574df09";
+(node/*: any*/).hash = "6a8f76476c5d44a58d465d9d7106e6b2";
 
 module.exports = ((node/*: any*/)/*: Query<
   CatalogFilterQuery$variables,
