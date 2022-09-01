@@ -37,11 +37,21 @@ const styles = (theme) => ({
   dialogTitleBar : {
     display : "flex",
     justifyContent : "space-between",
-    marginRight : "10px",
+    backgroundColor : "rgb(57, 102, 121)",
+    color : "white"
+  },
+  close : {
+    transform : "rotate(-90deg)",
+    '&:hover' : {
+      transform : "rotate(90deg)",
+      transition : "all .3s ease-in",
+    }
   },
   closeButton : {
     height : "2.3rem",
-    marginTop : "0.8rem"
+    marginTop : "0.8rem",
+    marginRight : "10px",
+    color : "white"
   },
   space : { margin : theme.spacing(1), },
   rangeButton : { border : '1px solid rgba(0, 0, 0, 0.23)' },
@@ -602,7 +612,7 @@ class GrafanaDateRangePicker extends Component {
                 className={classes.closeButton}
                 onClick={this.handleClose}
               >
-                <Close />
+                <Close className={classes.close} />
               </IconButton>
             </div>
             <DialogContent>
