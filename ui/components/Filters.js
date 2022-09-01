@@ -32,6 +32,7 @@ import FullscreenIcon from '@material-ui/icons/Fullscreen';
 import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
 import FILE_OPS from "../utils/configurationFileHandlersEnum";
 import ViewSwitch from "./ViewSwitch";
+import CatalogFilter from "./CatalogFilter";
 import FiltersGrid from "./MesheryFilters/FiltersGrid";
 import { trueRandom } from "../lib/trueRandom";
 import { ctxUrl } from "../utils/multi-ctx";
@@ -64,7 +65,6 @@ const styles = (theme) => ({
   },
   viewSwitchButton : {
     justifySelf : "flex-end",
-    marginLeft : "auto",
     paddingLeft : "1rem"
   },
   // text : {
@@ -863,9 +863,12 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
             </div>
           </div>
           }
+          <div style={{ justifySelf : "flex-end", marginLeft : "auto", paddingRight : "1rem", paddingTop : "0.2rem" }}>
+            <CatalogFilter catalogVisibility={catalogVisibility} handleCatalogVisibility={handleCatalogVisibility} />
+          </div>
           {!selectedFilter.show &&
           <div className={classes.viewSwitchButton}>
-            <ViewSwitch data-cy="table-view" view={viewType} changeView={setViewType} catalogVisibility={catalogVisibility} handleCatalogVisibility={handleCatalogVisibility} />
+            <ViewSwitch data-cy="table-view" view={viewType} changeView={setViewType} />
           </div>
           }
         </div>
