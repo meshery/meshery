@@ -1,5 +1,5 @@
 source "https://rubygems.org"
-ruby '2.7.1'
+ruby '2.7.5'
 
 # Hello! This is where you manage which Jekyll version is used to run.
 # When you want to use a different version, change it below, save the
@@ -19,6 +19,11 @@ ruby '2.7.1'
 gem "github-pages", group: :jekyll_plugins
 
 # If you have any plugins, put them here!
-#group :jekyll_plugins do
- # gem "jemoji"
-#end
+group :graphqlDocs_plugins do
+ gem "rake"
+ gem "graphql"
+ gem "rails"
+ gem "graphql-docs"
+ gem "haml"
+
+end
