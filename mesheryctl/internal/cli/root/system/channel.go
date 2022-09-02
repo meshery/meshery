@@ -251,7 +251,7 @@ mesheryctl system channel switch [stable|stable-version|edge|edge-version]
 		if len(args) == 0 {
 			err := viewCmd.RunE(cmd, args)
 
-			errors.New(fmt.Sprintf("%s", err))
+			fmt.Sprintf("%s", err)
 
 			return cmd.Usage()
 
