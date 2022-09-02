@@ -30,7 +30,39 @@ mesheryctl system channel [flags]
 Subscribe to release channel or version
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl system channel [stable|stable-version|edge|edge-version]
+mesheryctl system channel 
+
+</div>
+</pre> 
+
+To set the channel
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl system channel set [stable|stable-version|edge|edge-version]
+
+</div>
+</pre> 
+
+To pin/set the channel to a specific version
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl system channel set stable-v0.6.0
+
+</div>
+</pre> 
+
+To view release channel and version
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl system channel view
+
+</div>
+</pre> 
+
+To switch release channel and version
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl system channel switch [stable|stable-version|edge|edge-version]
 
 </div>
 </pre> 

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<e64af0eb31dd5861d3750c81516afd70>>
+ * @generated SignedSource<<6c6b4a45ea2e5653d87fbc74cbebbb61>>
  * @flow
  * @lightSyntaxTransform
  * @nogrep
@@ -19,12 +19,12 @@ export type CatalogPatternQuery$variables = {|
   selector: CatalogSelector,
 |};
 export type CatalogPatternQuery$data = {|
-  +catlogPatterns: $ReadOnlyArray<{|
+  +catalogPatterns: $ReadOnlyArray<{|
     +id: string,
     +name: string,
     +user_id: string,
     +pattern_file: string,
-    +visibility: any,
+    +visibility: string,
     +catalog_data: any,
     +created_at: ?string,
     +updated_at: ?string,
@@ -46,7 +46,7 @@ var v0 = [
 ],
 v1 = [
   {
-    "alias": "catlogPatterns",
+    "alias": "catalogPatterns",
     "args": [
       {
         "kind": "Variable",
@@ -137,17 +137,17 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "3c26483019645508156e0cf1db15058e",
+    "cacheID": "5819e3c1959f0e6ce5329f2a222a499d",
     "id": null,
     "metadata": {},
     "name": "CatalogPatternQuery",
     "operationKind": "query",
-    "text": "query CatalogPatternQuery(\n  $selector: CatalogSelector!\n) {\n  catlogPatterns: fetchPatternCatalogContent(selector: $selector) {\n    id\n    name\n    user_id\n    pattern_file\n    visibility\n    catalog_data\n    created_at\n    updated_at\n  }\n}\n"
+    "text": "query CatalogPatternQuery(\n  $selector: CatalogSelector!\n) {\n  catalogPatterns: fetchPatternCatalogContent(selector: $selector) {\n    id\n    name\n    user_id\n    pattern_file\n    visibility\n    catalog_data\n    created_at\n    updated_at\n  }\n}\n"
   }
 };
 })();
 
-(node/*: any*/).hash = "2e33f33217c049cd49610319b67e3687";
+(node/*: any*/).hash = "3662bdbf1b55f72dec9757315e54e8ab";
 
 module.exports = ((node/*: any*/)/*: Query<
   CatalogPatternQuery$variables,
