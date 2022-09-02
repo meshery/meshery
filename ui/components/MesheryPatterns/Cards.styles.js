@@ -82,6 +82,9 @@ const useStyles= makeStyles((theme) => ({
     },
     marginRight : "0.5rem"
   },
+  img : {
+    marginRight : "0.5rem"
+  },
   noPaper : {
     padding : "0.5rem",
     fontSize : "3rem"
@@ -96,7 +99,7 @@ const useStyles= makeStyles((theme) => ({
   noText : {
     fontSize : "2rem",
     marginBottom : "2rem",
-  },
+  }
 }));
 
 export default useStyles;
