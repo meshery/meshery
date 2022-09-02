@@ -12,7 +12,7 @@ import (
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/layer5io/meshery/models"
+	"github.com/layer5io/meshery/server/models"
 	"github.com/pkg/errors"
 
 	"github.com/spf13/cobra"
@@ -53,7 +53,7 @@ mesheryctl perf result saturday-profile --view
 
 ! Refer below image link for usage
 * Usage of mesheryctl perf result
-# ![perf-result-usage](../../../../docs/assets/img/mesheryctl/perf-result.png)
+# ![perf-result-usage](/assets/img/mesheryctl/perf-result.png)
 `,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		// used for searching performance profile

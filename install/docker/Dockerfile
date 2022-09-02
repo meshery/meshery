@@ -7,7 +7,7 @@ ARG RELEASE_CHANNEL
 RUN adduser --disabled-login appuser
 WORKDIR /github.com/meshery/meshery
 ADD . .
-RUN go clean -modcache; cd cmd; GOPROXY=https://proxy.golang.org GOSUMDB=off go build -ldflags="-w -s -X main.globalTokenForAnonymousResults=$TOKEN -X main.version=$GIT_VERSION -X main.commitsha=$GIT_COMMITSHA -X main.releasechannel=$RELEASE_CHANNEL" -tags draft -a -o /meshery .
+RUN go clean -modcache; cd server; cd cmd; GOPROXY=https://proxy.golang.org GOSUMDB=off go build -ldflags="-w -s -X main.globalTokenForAnonymousResults=$TOKEN -X main.version=$GIT_VERSION -X main.commitsha=$GIT_COMMITSHA -X main.releasechannel=$RELEASE_CHANNEL" -tags draft -a -o /meshery .
 
 FROM node:lts-slim as ui
 ADD ui ui
@@ -68,19 +68,19 @@ RUN apk update && apk add ca-certificates; update-ca-certificates && rm -rf /var
 RUN update-ca-certificates
 RUN apk upgrade --no-cache && \
     apk add --no-cache libstdc++
-COPY ./oam /app/oam
-COPY --from=meshery-server /meshery /app/cmd/
+COPY ./server/oam /app/server/oam
+COPY --from=meshery-server /meshery /app/server/cmd/
 COPY --from=meshery-server /etc/passwd /etc/passwd
-COPY --from=meshery-server /github.com/meshery/meshery/helpers/swagger.yaml /app/helpers/swagger.yaml
+COPY --from=meshery-server /github.com/meshery/meshery/server/helpers/swagger.yaml /app/server/helpers/swagger.yaml
 COPY --from=ui /out /app/ui/out
 COPY --from=provider-ui /out /app/provider-ui/out
-COPY --from=wrk2 /wrk2 /app/cmd/wrk2
+COPY --from=wrk2 /wrk2 /app/server/cmd/wrk2
 COPY --from=wrk2 /wrk2/wrk /usr/local/bin
 COPY --from=seed_content /seed_content /home/appuser/.meshery/seed_content
-COPY --from=layer5/getnighthawk:latest /usr/local/bin/nighthawk_service /app/cmd/
-COPY --from=layer5/getnighthawk:latest /usr/local/bin/nighthawk_output_transform /app/cmd/
+COPY --from=layer5/getnighthawk:latest /usr/local/bin/nighthawk_service /app/server/cmd/
+COPY --from=layer5/getnighthawk:latest /usr/local/bin/nighthawk_output_transform /app/server/cmd/
 
 RUN mkdir -p /home/appuser/.meshery/config; chown -R appuser /home/appuser/
 USER appuser
-WORKDIR /app/cmd
+WORKDIR /app/server/cmd
 CMD ./meshery

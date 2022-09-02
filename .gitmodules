@@ -1,3 +1,3 @@
-[submodule "cmd/gowrk2"]
-	path = cmd/gowrk2
-	url = https://github.com/layer5io/gowrk2
+[submodule "server/cmd/gowrk2"]
+	path = server/cmd/gowrk2
+	url = https://github.com/layer5io/gowrk2/

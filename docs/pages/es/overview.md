@@ -47,7 +47,7 @@ Sea la opción para implementar desde el Día 0 o el mantenimiento del Día 2 de
 Meshery ayuda a los usuarios a sopesar el valor de la implementación de un service mesh con la alta carga involucrada a la ejecución del mismo. Meshery proporciona un análisis estadístico de la latencia de las solicitudes y el rendimiento que se observan a través de las permutaciones de su carga de trabajo, infraestructura y la configuración del service mesh.
 Además de solicitar la latencia y el rendimiento, Meshery también rastrea la sobrecarga de memoria y el CPU en los nodos del clúster. Mide el plano de datos y el plano de control con diferentes conjuntos de cargas de trabajo e infraestructuras.
 
-<a href="https://raw.githubusercontent.com/layer5io/meshery/master/assets/img/readme/meshery_lifecycle_management.png"><img alt="Layer5 Service Mesh Community" src="{{ site.baseurl }}{% link assets/img/readme/meshery_lifecycle_management.png %}"  width="100%" align="center"/></a>
+<a href="https://raw.githubusercontent.com/meshery/meshery/master/docs/assets/img/readme/meshery_lifecycle_management.png"><img alt="Layer5 Service Mesh Community" src="{{ site.baseurl }}{% link assets/img/readme/meshery_lifecycle_management.png %}"  width="100%" align="center"/></a>
 Establece un desempeño de marca y rastrea el desempeño como estándar a medida que cambia en el tiempo.
 
 ## Meshery es para cualquier service mesh

@@ -15,7 +15,7 @@ import (
 	"github.com/asaskevich/govalidator"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/layer5io/meshery/models"
+	"github.com/layer5io/meshery/server/models"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -43,7 +43,7 @@ mesheryctl app onboard -f ./application.yml -s "Kubernetes Manifest"
 
 ! Refer below image link for usage
 * Usage of mesheryctl app onboard
-# ![app-onboard-usage](../../../../docs/assets/img/mesheryctl/app-onboard.png)
+# ![app-onboard-usage](/assets/img/mesheryctl/app-onboard.png)
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())

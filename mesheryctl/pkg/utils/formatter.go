@@ -8,7 +8,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-//TerminalFormatter is exported
+// TerminalFormatter is exported
 type TerminalFormatter struct{}
 
 // Format defined the format of output for Logrus logs
