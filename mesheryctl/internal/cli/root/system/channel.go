@@ -250,9 +250,7 @@ mesheryctl system channel switch [stable|stable-version|edge|edge-version]
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
 			err := viewCmd.RunE(cmd, args)
-
-			fmt.Sprintf("%s", err)
-
+			_ = fmt.Errorf("%s", err)
 			return cmd.Usage()
 
 		}
