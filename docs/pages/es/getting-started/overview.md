@@ -50,7 +50,7 @@ Meshery is intended to be a vendor and project-neutral utility for uniformly ben
 1. Understand behavioral differences between service meshes.
 1. Track your application performance from version to version.
 
-<a href="https://raw.githubusercontent.com/layer5io/meshery/master/assets/img/readme/meshery_lifecycle_management.png"><img alt="Layer5 Service Mesh Community" src="{{ site.baseurl }}{% link assets/img/readme/meshery_lifecycle_management.png %}"  width="100%" align="center"/></a>
+<a href="https://raw.githubusercontent.com/meshery/meshery/master/docs/assets/img/readme/meshery_lifecycle_management.png"><img alt="Layer5 Service Mesh Community" src="{{ site.baseurl }}{% link assets/img/readme/meshery_lifecycle_management.png %}"  width="100%" align="center"/></a>
 Establish a performance benchmark and track performance against this baseline as your environment changes over time.
 
 ## Meshery is for any service mesh

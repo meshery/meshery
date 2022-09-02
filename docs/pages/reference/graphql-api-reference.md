@@ -526,7 +526,7 @@ Deatils about the Addon Component.
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| <a id="catalogfiltercatalog_data"></a>`catalog_data` | [`Map`](#map) |  |
+| <a id="catalogfiltercatalog_data"></a>`catalog_data` | [`Map!`](#map) |  |
 | <a id="catalogfiltercreated_at"></a>`created_at` | [`String`](#string) |  |
 | <a id="catalogfilterfilter_file"></a>`filter_file` | [`String!`](#string) |  |
 | <a id="catalogfilterid"></a>`id` | [`ID!`](#id) |  |
@@ -534,7 +534,7 @@ Deatils about the Addon Component.
 | <a id="catalogfiltername"></a>`name` | [`String!`](#string) |  |
 | <a id="catalogfilterupdated_at"></a>`updated_at` | [`String`](#string) |  |
 | <a id="catalogfilteruser_id"></a>`user_id` | [`String!`](#string) |  |
-| <a id="catalogfiltervisibility"></a>`visibility` | [`Map!`](#map) |  |
+| <a id="catalogfiltervisibility"></a>`visibility` | [`String!`](#string) |  |
 
 ### `CatalogPattern`
 
@@ -550,7 +550,7 @@ Deatils about the Addon Component.
 | <a id="catalogpatternpattern_file"></a>`pattern_file` | [`String!`](#string) |  |
 | <a id="catalogpatternupdated_at"></a>`updated_at` | [`String`](#string) |  |
 | <a id="catalogpatternuser_id"></a>`user_id` | [`String!`](#string) |  |
-| <a id="catalogpatternvisibility"></a>`visibility` | [`Map!`](#map) |  |
+| <a id="catalogpatternvisibility"></a>`visibility` | [`String!`](#string) |  |
 
 ### `ClusterResources`
 

@@ -307,7 +307,7 @@ type applicationFilesResponseWrapper struct {
 }
 
 // Parameters for uploading a yaml file
-// swagger:parameters idPostDeployApplicationFile idPostDeployPattern
+// swagger:parameters idPostDeployApplicationFile idPostDeployPattern typeGetApplication typePutApplication
 type applicationFileParamsWrapper struct {
 	// in: formData
 	//
