@@ -236,7 +236,6 @@ var channelCmd = &cobra.Command{
 	Short: "Switch between release channels",
 	Long:  `Subscribe to a release channel. Choose between either 'stable' or 'edge' channels.`,
 	Example: `
-// Base command
 // Subscribe to release channel or version
 mesheryctl system channel 
 // To set the channel
@@ -250,7 +249,12 @@ mesheryctl system channel switch [stable|stable-version|edge|edge-version]
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
-			return cmd.Help()
+			err := viewCmd.RunE(cmd, args)
+
+			errors.New(fmt.Sprintf("%s", err))
+
+			return cmd.Usage()
+
 		}
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
 			return errors.New(utils.SystemChannelSubError(fmt.Sprintf("'%s' is a invalid command.  Use 'mesheryctl system channel --help' to display usage guide.\n", args[0]), "channel"))
