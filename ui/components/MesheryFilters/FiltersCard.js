@@ -24,8 +24,11 @@ function FiltersCard({
   filter_file,
   handleDeploy,
   handleUndeploy,
+  handleClone,
   deleteHandler,
   setYaml,
+  description={},
+  visibility
 }) {
 
   function genericClickHandler(ev, fn) {
@@ -40,6 +43,8 @@ function FiltersCard({
     setFullScreen(!fullScreen);
   };
 
+  const catalogContentKeys = Object.keys(description);
+  const catalogContentValues = Object.values(description);
   const classes=useStyles()
 
   return (
@@ -66,9 +71,12 @@ function FiltersCard({
         {/* FRONT PART */}
         <>
           <div>
-            <Typography variant="h6" component="div">
-              {name}
-            </Typography>
+            <div style={{ display : "flex", justifyContent : "space-between" }}>
+              <Typography variant="h6" component="div">
+                {name}
+              </Typography>
+              <img  className={classes.img} src={`/static/img/${visibility}.svg`} />
+            </div>
             <div className={classes.lastRunText} >
               <div>
                 {updated_at
@@ -105,6 +113,15 @@ function FiltersCard({
                 <DoneAllIcon className={classes.iconPatt}/>
               Deploy
               </Button>
+              {visibility === "public" ? <Button
+                variant="contained"
+                color="primary"
+                onClick={(ev) =>
+                  genericClickHandler(ev, handleClone)
+                }>
+                <img src="/static/img/clone-white.svg" className={classes.iconPatt} />
+                  Clone
+              </Button> : null }
             </div>
           </div>
         </>
@@ -141,20 +158,33 @@ function FiltersCard({
 
               <Divider variant="fullWidth" light />
 
-              <CodeMirror
-                value={showCode && filter_file}
-                className={fullScreen ? classes.fullScreenCodeMirror : ""}
-                options={{
-                  theme : "material",
-                  lineNumbers : true,
-                  lineWrapping : true,
-                  gutters : ["CodeMirror-lint-markers"],
-                  // @ts-ignore
-                  lint : true,
-                  mode : "text/x-yaml",
-                }}
-                onChange={(_, data, val) => setYaml(val)}
-              />
+              { catalogContentKeys.length === 0 ?
+                <CodeMirror
+                  value={showCode && filter_file}
+                  className={fullScreen ? classes.fullScreenCodeMirror : ""}
+                  options={{
+                    theme : "material",
+                    lineNumbers : true,
+                    lineWrapping : true,
+                    gutters : ["CodeMirror-lint-markers"],
+                    // @ts-ignore
+                    lint : true,
+                    mode : "text/x-yaml",
+                  }}
+                  onChange={(_, data, val) => setYaml(val)}
+                />
+                :
+                catalogContentKeys.map((title, index) => (
+                  <>
+                    <Typography variant="h6" className={classes.yamlDialogTitleText}>
+                      {title}
+                    </Typography>
+                    <Typography variant="body2">
+                      {catalogContentValues[index]}
+                    </Typography>
+                  </>
+                ))
+              }
             </Grid>
 
             <Grid item xs={8}>
@@ -172,13 +202,13 @@ function FiltersCard({
             </Grid>
 
             <Grid item xs={12}>
-              <div className={classes.deleteButton} >
+              { visibility === "private" ? <div className={classes.deleteButton} >
                 <IconButton onClick={(ev) =>
                   genericClickHandler(ev,deleteHandler)
                 }>
                   <DeleteIcon color="primary" />
                 </IconButton>
-              </div>
+              </div> : null}
             </Grid>
           </Grid>
         </>

@@ -55,6 +55,7 @@ const initialState = fromJS({
   isDrawerCollapsed: false,
   selectedAdapter : '',
   events:[],
+  catalogVisibility: true,
 
   // global gql-subscriptions
   operatorState: null,
@@ -84,6 +85,7 @@ export const actionTypes = {
   TOOGLE_DRAWER : 'TOOGLE_DRAWER',
   SET_ADAPTER : 'SET_ADAPTER',
   UPDATE_EVENTS : 'UPDATE_EVENTS',
+  SET_CATALOG_CONTENT : 'SET_CATALOG_CONTENT',
   SET_OPERATOR_SUBSCRIPTION: 'SET_OPERATOR_SUBSCRIPTION',
   SET_MESHSYNC_SUBSCRIPTION: 'SET_MESHSYNC_SUBSCRIPTION'
   // UPDATE_SMI_RESULT: 'UPDATE_SMI_RESULT',
@@ -188,6 +190,9 @@ export const reducer = (state = initialState, action) => {
     case actionTypes.UPDATE_EVENTS:
       return state.merge({ events : action.events })
 
+    case actionTypes.SET_CATALOG_CONTENT:
+      return state.mergeDeep({ catalogVisibility : action.catalogVisibility })
+
     case actionTypes.SET_OPERATOR_SUBSCRIPTION: 
       return state.merge({operatorState: action.operatorState});
 
@@ -281,6 +286,10 @@ export const setAdapter = ({selectedAdapter}) => dispatch => {
 
 export const updateEvents = ({ events }) => dispatch => {
   return dispatch({ type: actionTypes.UPDATE_EVENTS, events });
+}
+
+export const toggleCatalogContent = ({ catalogVisibility }) => dispatch => {
+  return dispatch({ type: actionTypes.SET_CATALOG_CONTENT, catalogVisibility });
 }
 
 export const setOperatorSubscription = ({operatorState}) => dispatch => {

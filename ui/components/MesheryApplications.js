@@ -849,7 +849,7 @@ function MesheryApplications({
           }
           {!selectedApplication.show &&
           <div className={classes.viewSwitchButton}>
-            <ViewSwitch view={viewType} changeView={setViewType} />
+            <ViewSwitch view={viewType} changeView={setViewType} hideCatalog={true} />
           </div>
           }
         </div>

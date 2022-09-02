@@ -17,6 +17,7 @@ import (
 	"github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshery/server/models/pattern/patterns"
 	"github.com/layer5io/meshery/server/models/pattern/stages"
+	"github.com/layer5io/meshkit/utils/events"
 	"github.com/sirupsen/logrus"
 )
 
@@ -91,6 +92,7 @@ func (h *Handler) PatternFileHandler(
 		isDel,
 		r.URL.Query().Get("verify") == "true",
 		false,
+		h.EventsBuffer,
 	)
 
 	if err != nil {
@@ -375,6 +377,7 @@ func _processPattern(
 	isDelete bool,
 	verify bool,
 	skipPrintLogs bool,
+	eb *events.EventStreamer,
 ) (string, error) {
 	// Get the token from the context
 	token, ok := ctx.Value(models.TokenCtxKey).(string)
@@ -426,6 +429,7 @@ func _processPattern(
 			kubeconfigs:     configs,
 			accumulatedMsgs: []string{},
 			err:             nil,
+			eventbuffer:     eb,
 		}
 
 		chain := stages.CreateChain()
@@ -556,6 +560,7 @@ type serviceActionProvider struct {
 	skipPrintLogs   bool
 	accumulatedMsgs []string
 	err             error
+	eventbuffer     *events.EventStreamer
 }
 
 func (sap *serviceActionProvider) Terminate(err error) {
@@ -592,6 +597,7 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) (string, 
 				[]string{string(jsonComp)},
 				string(jsonConfig),
 				sap.opIsDelete,
+				sap.eventbuffer,
 			)
 
 			return resp, err
