@@ -21,7 +21,7 @@ class Results extends React.Component {
     return (
       <NoSsr>
         <Head>
-          <title>Results | Meshery</title>
+          <title>Performance Test Results | Meshery</title>
         </Head>
         <Paper className={this.props.classes.paper}>
           <MesheryResults />
