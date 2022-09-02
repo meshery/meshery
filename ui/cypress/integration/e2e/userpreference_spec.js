@@ -12,6 +12,13 @@ describe('User Preferences', () => {
     });
 
     context('Extensions', () => {
+      it('activates Meshery Catalog Content', () => {
+        cy.intercept('POST', '/api/user/prefs').as('postUserStatsToActivateExtensions');
+        cy.get('[data-cy="CatalogContentPreference"]').click();
+        cy.wait('@postUserStatsToActivateExtensions');
+        cy.get('[data-cy="CatalogContentPreference"]').should('have.class', 'Mui-checked');
+      });
+      
       it('deactivates Meshery Catalog Content', () => {
         cy.intercept('POST', '/api/user/prefs').as('postUserStatsForExtensions');
         cy.get('[data-cy="CatalogContentPreference"]').click();
@@ -19,12 +26,6 @@ describe('User Preferences', () => {
         cy.get('[data-cy="CatalogContentPreference"]').should('not.have.class', 'Mui-checked');
       });
       
-      it('activates Meshery Catalog Content', () => {
-        cy.intercept('POST', '/api/user/prefs').as('postUserStatsToActivateExtensions');
-        cy.get('[data-cy="CatalogContentPreference"]').click();
-        cy.wait('@postUserStatsToActivateExtensions');
-        cy.get('[data-cy="CatalogContentPreference"]').should('have.class', 'Mui-checked');
-      });
     })
 
     context('Analytics and Improvement Program', () => {
