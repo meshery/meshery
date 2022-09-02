@@ -60,7 +60,7 @@ mesheryctl -v [or] --verbose
 	`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
-	Args: cobra.MaximumNArgs(1),
+
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
 			return cmd.Help()
