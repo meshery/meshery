@@ -547,7 +547,7 @@ class Navigator extends React.Component {
         commitsha : "",
         release_channel : "NA",
       },
-      drawerSetForMeshmap : false,
+      // drawerSetForMeshmap : false,
     };
   }
 
@@ -593,34 +593,34 @@ class Navigator extends React.Component {
       (err) => console.error(err)
     );
 
-    // Collapse the drawer, on meshmap page to provide more room for the canvas
-    const path = window.location.pathname;
-    if (path.includes("/extension/meshmap")) {
-      this.drawerCollapsedForMeshmap();
-    }
+    // // Collapse the drawer, on meshmap page to provide more room for the canvas
+    // const path = window.location.pathname;
+    // if (path.includes("/extension/meshmap")) {
+    //   this.drawerCollapsedForMeshmap();
+    // }
   }
 
-  // Collapse the drawer, on meshmap page to provide more room for the canvas
-  componentDidUpdate() {
-    const path = window.location.pathname;
-    const { isDrawerCollapsed } = this.props;
-    const { drawerSetForMeshmap } = this.state;
-    if (!drawerSetForMeshmap && !isDrawerCollapsed && path.includes("/extension/meshmap")) {
-      this.drawerCollapsedForMeshmap();
-    } else if (drawerSetForMeshmap && !path.includes("/extension/meshmap")) {
-      // Update state if the page is changed, to re-collapse on next visit
-      this.setState({
-        drawerSetForMeshmap : false
-      })
-    }
-  }
+  // // Collapse the drawer, on meshmap page to provide more room for the canvas
+  // componentDidUpdate() {
+  //   const path = window.location.pathname;
+  //   const { isDrawerCollapsed } = this.props;
+  //   const { drawerSetForMeshmap } = this.state;
+  //   if (!drawerSetForMeshmap && !isDrawerCollapsed && path.includes("/extension/meshmap")) {
+  //     this.drawerCollapsedForMeshmap();
+  //   } else if (drawerSetForMeshmap && !path.includes("/extension/meshmap")) {
+  //     // Update state if the page is changed, to re-collapse on next visit
+  //     this.setState({
+  //       drawerSetForMeshmap : false
+  //     })
+  //   }
+  // }
 
-  drawerCollapsedForMeshmap() {
-    this.toggleMiniDrawer(false);
-    this.setState({
-      drawerSetForMeshmap : true
-    })
-  }
+  // drawerCollapsedForMeshmap() {
+  //   this.toggleMiniDrawer(false);
+  //   this.setState({
+  //     drawerSetForMeshmap : true
+  //   })
+  // }
 
   /**
    * @param {import("../utils/ExtensionPointSchemaValidator").NavigatorSchema[]} children

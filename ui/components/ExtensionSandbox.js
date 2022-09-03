@@ -1,4 +1,7 @@
 import React, { useEffect, useState } from "react";
+import { toggleDrawer } from "../lib/store";
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
 import { CircularProgress, Typography } from "@material-ui/core";
 import normalizeURI from "../utils/normalizeURI";
 import dataFetch from "../lib/data-fetch";
@@ -273,7 +276,7 @@ function createPathForRemoteComponent(componentName) {
  *  3. account - for user account
  * @param {{ type: "navigator" | "user_prefs" | "account", Extension: JSX.Element }} props
  */
-function ExtensionSandbox({ type, Extension }) {
+function ExtensionSandbox({ type, Extension, isDrawerCollapsed }) {
   const [extensions, setExtensions] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -282,6 +285,9 @@ function ExtensionSandbox({ type, Extension }) {
       setExtensions(data);
       setIsLoading(false);
     });
+    if (type === "navigator" && !isDrawerCollapsed) {
+      toggleDrawer({ isDrawerCollapsed : !isDrawerCollapsed });
+    }
   }, []);
 
   if (type === "navigator") {
@@ -316,4 +322,13 @@ function ExtensionSandbox({ type, Extension }) {
   return null
 }
 
-export default ExtensionSandbox;
+const mapDispatchToProps = (dispatch) => ({
+  toggleDrawer : bindActionCreators(toggleDrawer, dispatch),
+});
+
+const mapStateToProps = (state) => {
+  const isDrawerCollapsed = state.get("isDrawerCollapsed")
+  return { isDrawerCollapsed };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(ExtensionSandbox);
