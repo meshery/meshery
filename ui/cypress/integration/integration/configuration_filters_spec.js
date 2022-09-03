@@ -28,7 +28,7 @@ describe('Configuration Management', () => {
 
     context('Upload File', () => {
       beforeEach(() => {
-        cy.intercept('POST', '/api/filter**', {}).as('postFilter');
+        cy.intercept('POST', '/api/filter**').as('postFilter');
         cy.visit('/configuration/filters');
         cy.wait('@getInitialFilters')
       })
@@ -40,31 +40,28 @@ describe('Configuration Management', () => {
         // Prepare Stub Interception for Post Upload Filters
         cy.intercept('GET', '/api/filter**', { fixture : 'configuration/filter-stubs/post-upload-filters.json' }).as('getPostUploadFilters');
 
-        // Load test file fixture data
-        cy.fixture(testFilePath).then((expectedContent) => {
-          // Custom command 'attachFile' is provided by https://www.npmjs.com/package/cypress-file-upload#html5-file-input
-          // It internally calls https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/dispatchEvent
-          // with a Custom 'change' input event.
-          //import button shifted to Filters main UI under service_mesh_config_management_spec.js
-          cy.get('[data-cy="import-button"]').click();
-          cy.get('[data-cy="file-upload-button"]').attachFile(testFilePath);
-
-          cy.wait('@postFilter').then(interception => {
-
-            cy.wrap(interception.request).then(req => {
-              const body = JSON.parse(req.body);
-              expect(body).to.have.nested.property('filter_data.filter_file');
-              expect(body.filter_data.filter_file).to.eq(expectedContent);
-              expect(body).to.have.property('save');
-              expect(body.save).to.eq(true);
-            })
+      // Load test file fixture data
+      cy.fixture(testFilePath).then((expectedContent) => {
+        // Custom command 'attachFile' is provided by https://www.npmjs.com/package/cypress-file-upload#html5-file-input
+        // It internally calls https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/dispatchEvent
+        // with a Custom 'change' input event.
+        cy.get('[data-cy="import-button"]').click();
+        cy.get('[data-cy="file-upload-button"]').attachFile(testFilePath);
+        cy.wait("@postFilter").then((interception) => {
+          cy.wrap(interception.request).then((req) => {
+            const body = JSON.parse(req.body);
+            expect(body).to.have.nested.property('filter_data.filter_file');
+            expect(body.filter_data.filter_file).to.eq(expectedContent);
+            expect(body).to.have.property("save");
+            expect(body.save).to.eq(true);
           });
-
-        })
+        });
 
         cy.wait('@getPostUploadFilters')
         cy.get('[data-cy="table-view"]').click();
-        getConfigurationGridItemName(1).should('have.text', expectedUploadedFilterName)
+        getConfigurationGridItemName(1).should("have.text", expectedUploadedFilterName);
+      });
+
       })
     })
   });

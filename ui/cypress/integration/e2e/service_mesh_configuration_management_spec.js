@@ -39,7 +39,7 @@ const configurationTestTemplate = (itemType, testFilePath, expectedUploadConfigI
       // OR we must ensure CI environment has proper access token properly setup and enabled for current browser session.
       cy.selectProviderNone();
       // Interception for Get Filters to spy/wait/assert on actual server requests/responses
-      cy.intercept("GET", `/api/${itemType}**`).as("getConfigItems");
+      cy.intercept("POST", `http://localhost:3000/api/system/graphql/query`).as("getConfigItems");
 
       // Interception for Post Filter to spy/wait/assert on actual server requests/responses
       cy.intercept("POST", `/api/${itemType}**`).as("uploadConfigItem");
@@ -49,6 +49,7 @@ const configurationTestTemplate = (itemType, testFilePath, expectedUploadConfigI
 
       // Visit current page under testing
       cy.visit(`/configuration/${itemType}s`);
+      cy.wait("@getConfigItems");
     });
 
     it(`Deploys ${itemType}`, () => {
@@ -70,16 +71,16 @@ const configurationTestTemplate = (itemType, testFilePath, expectedUploadConfigI
           });
         });
 
-        // Not required since the response is already being sent.
-        
-        // cy.wait("@getConfigItems").then((interception) => {
-        //   cy.wrap(interception.response).then((res) => {
-        //     expect(res.statusCode).to.eq(200);
-        //     const body = res.body;
-        //     expect(body).to.have.property(`${itemType}s`);
-        //     expect(body[`${itemType}s`][0][`${itemType}_file`]).to.eq(expectedContent);
-        //   });
-        // });
+       // TODO: Needs to be fetched using GraphQL
+
+        cy.wait("@getConfigItems").then((interception) => {
+          cy.wrap(interception.response).then((res) => {
+            expect(res.statusCode).to.eq(200);
+            const body = res.body;
+            expect(body).to.have.property(`${itemType}s`);
+            expect(body[`${itemType}s`][0][`${itemType}_file`]).to.eq(expectedContent);
+          });
+        });
 
         cy.get('[data-cy="table-view"]').click();
         getConfigurationGridItemName(1).should("have.text", expectedUploadConfigItemName);
