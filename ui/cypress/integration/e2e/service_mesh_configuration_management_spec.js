@@ -1,5 +1,4 @@
 import { getConfigurationGridItemName } from '../../actionHelpers/service-mesh-configuration-management'
-import { aliasQuery } from '../../../utils/cypress-gql/graphql-test-utils';
 
 // Shared Expect
 const filtersAndApplicationsExpect = (body, itemType) => expect(body).to.have.nested.property(`${itemType}_data.${itemType}_file`)
@@ -39,25 +38,14 @@ const configurationTestTemplate = (itemType, testFilePath, expectedUploadConfigI
       // authentication through a specific provider must be performed,
       // OR we must ensure CI environment has proper access token properly setup and enabled for current browser session.
       cy.selectProviderNone();
-
-      // Interception for Get Filters to spy/wait/assert on actual server requests/responses for GraphQL requests.
-      cy.intercept('GET', `/api/${itemType}/graphql**`, (req) => {
-        // Queries
-        aliasQuery(req, 'getConfigItems')
-
-      })      
+      // Interception for Get Filters to spy/wait/assert on actual server requests/responses
+      cy.intercept("GET", `/api/${itemType}**`).as("getConfigItems");
 
       // Interception for Post Filter to spy/wait/assert on actual server requests/responses
-      cy.intercept('POST', `/api/${itemType}/graphql**`, (req) => {
-        // Queries
-        aliasQuery(req, 'uploadConfigItem')
-      })    
+      cy.intercept("POST", `/api/${itemType}**`).as("uploadConfigItem");
 
       // Interception for Post Filter Deploy to spy/wait/assert on actual server requests/responses
-      cy.intercept('POST', `/api/${itemType}/deploy/graphql**`, (req) => {
-        // Queries
-        aliasQuery(req, 'deployConfigItem')
-      })   
+      cy.intercept("POST", `/api/${itemType}/deploy**`).as("deployConfigItem");
 
       // Visit current page under testing
       cy.visit(`/configuration/${itemType}s`);
@@ -71,7 +59,7 @@ const configurationTestTemplate = (itemType, testFilePath, expectedUploadConfigI
         // with a Custom 'change' input event.
         cy.get('[data-cy="import-button"]').click();
         cy.get('[data-cy="file-upload-button"]').attachFile(testFilePath);
-        cy.wait("@gqluploadConfigItemQuery").then((interception) => {
+        cy.wait("@uploadConfigItem").then((interception) => {
           cy.wrap(interception.request).then((req) => {
             const body = JSON.parse(req.body);
             // expect(body).to.have.nested.property(`${itemType}_data.${itemType}_file`);
@@ -82,14 +70,16 @@ const configurationTestTemplate = (itemType, testFilePath, expectedUploadConfigI
           });
         });
 
-        cy.wait("@gqlgetConfigItemsQuery").then((interception) => {
-          cy.wrap(interception.response).then((res) => {
-            expect(res.statusCode).to.eq(200);
-            const body = res.body;
-            expect(body).to.have.property(`${itemType}s`);
-            expect(body[`${itemType}s`][0][`${itemType}_file`]).to.eq(expectedContent);
-          });
-        });
+        // Not required since the response is already being sent.
+        
+        // cy.wait("@getConfigItems").then((interception) => {
+        //   cy.wrap(interception.response).then((res) => {
+        //     expect(res.statusCode).to.eq(200);
+        //     const body = res.body;
+        //     expect(body).to.have.property(`${itemType}s`);
+        //     expect(body[`${itemType}s`][0][`${itemType}_file`]).to.eq(expectedContent);
+        //   });
+        // });
 
         cy.get('[data-cy="table-view"]').click();
         getConfigurationGridItemName(1).should("have.text", expectedUploadConfigItemName);
@@ -98,7 +88,7 @@ const configurationTestTemplate = (itemType, testFilePath, expectedUploadConfigI
         // Modal Pops up
         cy.get('[data-cy="deploy-btn-confirm"]').click();
 
-        cy.wait("@gqldeployConfigItemQuery").then((interception) => {
+        cy.wait("@deployConfigItem").then((interception) => {
           cy.wrap(interception.request).then((req) => {
             const body = req.body;
             expect(body).to.eq(expectedContent);
@@ -118,4 +108,3 @@ describe("Configuration Management", () => {
     configurationTestTemplate(itemType, testFilePath, expectedUploadConfigItemName, expectUploadRequestBody)
   );
 });
-
