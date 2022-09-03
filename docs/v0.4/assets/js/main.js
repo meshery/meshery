@@ -45,7 +45,7 @@
                         return
                     }
                     var query = $(this).val();
-                    var searchPage = "http://localhost:4000/search/?q=" + query;
+                    var searchPage = "/search/?q=" + query;
                     document.location = searchPage;
                     return false;
                 });
@@ -54,3 +54,33 @@
     };
     Search.init();
 }(jQuery));
+
+
+/*popup-hidden-div*/
+
+function HideToggleFunction() {
+    var hide = document.getElementById("hiddendiv");
+    if (hide.style.display === "block") {
+      hide.style.display = "none";
+    } else {
+      hide.style.display = "block";
+    }
+  }
+
+/*clipboard*/
+
+var getcodeelement = $('.clipboardjs'); /*create custom id*/
+
+getcodeelement.each(function(i) {  
+    /*target*/
+    var currentId = 'codeblock' + (i + 1);
+    $(this).attr('id', currentId);
+
+    /*trigger*/
+    var text = $(this).text();
+    text = text.replace(/\$ /gi, '');
+    var clipButton = '<div class="btn-copy-wrap"><button class="clipbtn" data-clipboard-text="' + text + '" data-clipboard-target="#' + currentId + '"><i class="far fa-copy"></i></button></div>';
+       $(this).after(clipButton);
+});
+
+new Clipboard('.clipbtn');
