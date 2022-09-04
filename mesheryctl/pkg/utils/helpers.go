@@ -3,6 +3,7 @@ package utils
 import (
 	"bufio"
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"io"
 	"math/rand"
@@ -419,6 +420,46 @@ func StringInSlice(str string, slice []string) bool {
 		}
 	}
 	return false
+}
+
+// GetID returns a array of IDs from meshery server endpoint /api/{configurations}
+func GetID(configuration string) ([]string, error) {
+	url := MesheryEndpoint + "/api/" + configuration + "?page_size=10000"
+	config_type := configuration + "s"
+	var idList []string
+	client := &http.Client{}
+	req, err := NewRequest("GET", url, nil)
+	if err != nil {
+		return idList, err
+	}
+
+	res, err := client.Do(req)
+	if err != nil {
+		return idList, err
+	}
+	if res.StatusCode != 200 {
+		return idList, errors.Errorf("Response Status Code %d, possible invalid ID", res.StatusCode)
+	}
+
+	defer res.Body.Close()
+	body, err := io.ReadAll(res.Body)
+	if err != nil {
+		return idList, err
+	}
+	var dat map[string]interface{}
+	if err = json.Unmarshal(body, &dat); err != nil {
+		return idList, errors.Wrap(err, "failed to unmarshal response body")
+	}
+	if dat == nil {
+		return idList, errors.New("no data found")
+	}
+	if dat[config_type] == nil {
+		return idList, errors.New("no results found")
+	}
+	for _, config := range dat[config_type].([]interface{}) {
+		idList = append(idList, config.(map[string]interface{})["id"].(string))
+	}
+	return idList, nil
 }
 
 // AskForInput asks the user for an input and checks if it is in the available values
