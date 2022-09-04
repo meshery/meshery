@@ -547,7 +547,6 @@ class Navigator extends React.Component {
         commitsha : "",
         release_channel : "NA",
       },
-      // drawerSetForMeshmap : false,
     };
   }
 
@@ -592,35 +591,7 @@ class Navigator extends React.Component {
       },
       (err) => console.error(err)
     );
-
-    // // Collapse the drawer, on meshmap page to provide more room for the canvas
-    // const path = window.location.pathname;
-    // if (path.includes("/extension/meshmap")) {
-    //   this.drawerCollapsedForMeshmap();
-    // }
   }
-
-  // // Collapse the drawer, on meshmap page to provide more room for the canvas
-  // componentDidUpdate() {
-  //   const path = window.location.pathname;
-  //   const { isDrawerCollapsed } = this.props;
-  //   const { drawerSetForMeshmap } = this.state;
-  //   if (!drawerSetForMeshmap && !isDrawerCollapsed && path.includes("/extension/meshmap")) {
-  //     this.drawerCollapsedForMeshmap();
-  //   } else if (drawerSetForMeshmap && !path.includes("/extension/meshmap")) {
-  //     // Update state if the page is changed, to re-collapse on next visit
-  //     this.setState({
-  //       drawerSetForMeshmap : false
-  //     })
-  //   }
-  // }
-
-  // drawerCollapsedForMeshmap() {
-  //   this.toggleMiniDrawer(false);
-  //   this.setState({
-  //     drawerSetForMeshmap : true
-  //   })
-  // }
 
   /**
    * @param {import("../utils/ExtensionPointSchemaValidator").NavigatorSchema[]} children
@@ -665,23 +636,11 @@ class Navigator extends React.Component {
     }
   }
 
-  onClickCallback(onClickCallback) {
-    switch (onClickCallback) {
-      case 0:
-        return this.toggleMiniDrawer(false)
-      case 1:
-        return this.toggleMiniDrawer(true)
-      default:
-        // by default, nothing happened
-        return undefined
-    }
-  }
-
   extensionPointContent(icon, href, name, drawerCollapsed) {
     const { classes } = this.props;
 
     const content = (
-      <div className={classNames(classes.link)} onClick={() => this.onClickCallback(href)} data-cy={name}>
+      <div className={classNames(classes.link)} data-cy={name}>
         <Tooltip
           title={name}
           placement="right"
@@ -1157,7 +1116,7 @@ class Navigator extends React.Component {
                 <Link href={link
                   ? href
                   : ""}>
-                  <div data-cy={childId} className={classNames(classes.link)} onClick={() => this.onClickCallback(href)}>
+                  <div data-cy={childId} className={classNames(classes.link)}>
                     <Tooltip
                       title={childId}
                       placement="right"
