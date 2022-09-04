@@ -51,7 +51,7 @@ The Docker Extension for Meshery extends Docker Desktop’s position as the clou
 1. Install any service mesh with the check of a box.
 1. Import your Docker Compose apps for visual design and deployment to Kubernetes and service meshes.
 
-<p align="center"><a href="https://raw.githubusercontent.com/meshery/meshery/master/install/docker-extension/docs/img/Docker Desktop Extension for Meshery.png"><img src="https://raw.githubusercontent.com/meshery/meshery/master/install/docker-extension/docs/img/Docker Desktop Extension for Meshery.png" width="90%" align="center" /></a></p>
+<p align="center"><a href="https://raw.githubusercontent.com/meshery/meshery/master/install/docker-extension/docs/img/docker-desktop-extension-for-meshery.png"><img src="https://raw.githubusercontent.com/meshery/meshery/master/install/docker-extension/docs/img/docker-desktop-extension-for-meshery.png" width="90%" align="center" /></a></p>
 
 ## Docker Extension for Meshery Architecture
 

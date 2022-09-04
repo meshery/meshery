@@ -1,3 +1,4 @@
+@charset "UTF-8";
 .l5-dark-yellow { background-color: #ebc017 !important; }
 
 .l5-dark-yellow-text { color: #ebc017 !important; }
@@ -15,19 +16,104 @@
 
 pre.codeblock-pre { display: inline-flex; justify-content: left; text-align: left; align-items: left; align-content: left; flex-wrap: nowrap; flex-direction: row; background-color: #111; margin: 0; padding: 10px; border-radius: 0.3rem; width: 100%; }
 
-.codeblock { position: relative; width: 100%; display: inline-flex; overflow: auto; justify-content: left; color: #ddd; margin: 0px; padding: 0px; }
+.codeblock { width: 100%; display: inline-flex; overflow: auto; justify-content: left; color: #ddd; margin: 0px; padding: 0px; }
 
-.clipboardjs { position: relative; display: inline-flex; align-self: flex-end; justify-content: left; width: 100%; overflow-x: auto; padding: 0px; margin: 0px; }
+.clipboardjs { display: inline-flex; align-self: flex-end; justify-content: left; width: 100%; overflow-x: auto; padding: 0px; margin: 0px; }
 
-.btn-copy-wrap { align-content: flex-start; }
+.btn-copy-wrap { align-content: flex-end; z-index: 9; position: relative; }
 
-.clipbtn { margin: 5px; border: 0px; background-color: transparent; color: #ccc; font-size: 1.2rem; }
+.clipbtn { position: absolute; top: -35px; right: 0; margin: 5px; border: 0px; background-color: transparent; color: #ccc; font-size: 1.2rem; }
 
 .clipbtn:hover { color: #fff; cursor: pointer; }
 
+/***** OVERVIEW ********/
+/*button style*/
+div.overview { display: flex; text-align: center; /* position:relative;float:left; */ /* background-color:#ebc017; */ background: #3c494f; background: linear-gradient(337deg, #3c494f 0%, rgba(0, 179, 159, 0.8617822129) 87%); color: #fff; font-size: 1.25rem; padding: 1rem; margin: .25rem; width: auto; min-width: 300px; overflow-wrap: break-word; border-radius: 1rem; justify-content: space-evenly; align-content: stretch; }
+
+h3[id]:before { display: block; content: " "; margin-top: -4em; height: 5.5rem; visibility: hidden; }
+
+h2[id]:before, h4[id]:before, h5[id]:before { display: block; content: " "; margin-top: -4em; height: 6rem; visibility: hidden; }
+
+div.wrapper { width: 100%; text-align: justify; display: flex; -ms-flex-align: center; justify-content: space-evenly; align-content: stretch; margin: auto; }
+
+div.section { flex-basis: 47.5%; }
+
+div.overview:hover { background: linear-gradient(337deg, #3c494f 0%, rgba(0, 179, 159, 0.8617822129) 73%); color: #eee; }
+
+@media (max-width: 900px) { div.wrapper { display: block; }
+  div.overview { margin-left: 20%; margin-right: 20%; overflow-x: hidden; } }
+@media (max-width: 62rem) { div.wrapper { display: block; }
+  div.overview { margin-left: 0px; margin-right: 20%; overflow-x: hidden; } }
+/*image align-right*/
+.image-right { float: right; padding-right: 10px; }
+
+/* COMMAND REFERENCE */
+table.mesherycomponents th { background-color: #3C494F; color: white; }
+table.mesherycomponents td.childcomponent { color: white; background-color: #477E96; }
+
+.cmd-caption { margin-bottom: 2rem; }
+
+/* INSTALLATION */
 div.prereqs { background-color: #3C494F; color: #ddd; margin: 20px; padding: 15px; border-radius: 0.3rem; }
 
 a.meshery-light { color: #00b39f; }
 
-table.mesherycomponents th { background-color: #3C494F; color: white; }
-table.mesherycomponents td.childcomponent { color: white; background-color: #477E96; }
+div .td-sidebar__search { padding-top: 2.5rem; }
+
+main nav .breadcrumb { padding-top: 1.5rem; }
+
+div .td-toc { padding-top: 2rem; }
+
+@media (min-width: 768px) { .td-navbar { position: fixed; top: 0; width: 100%; padding-top: 1.35rem; padding-bottom: 1.35rem; } }
+@media (min-width: 768px) { .td-sidebar-nav { max-height: -webkit-calc(100vh - 11.5rem); max-height: calc(100vh - 11.5rem); overflow-y: auto; } }
+.swagger-path { font-weight: bolder; font-size: 19.2px; margin: 0 0 30px 0; font-family: open sans, -apple-system, BlinkMacSystemFont, segoe ui, Roboto, helvetica neue, Arial, sans-serif, apple color emoji, segoe ui emoji, segoe ui symbol; }
+
+.swagger-method { align-self: center; border-radius: 5px; margin: 0 0 5px 0; }
+
+.swagger-method-title { padding: 8px 5px 5px 5px; font-size: 16px; margin: 0; cursor: pointer; }
+
+.swagger-method-description { padding: 3px 5px 5px 5px; font-size: 16px; margin: 0; }
+
+.swagger-method-link:hover { text-decoration: none; }
+
+.swagger-method-name { font-weight: bolder; padding: 6px 0; display: inline-block; width: 80px; text-align: center; color: white; margin-right: 10px; }
+
+.swagger-method-get { border: 1px solid #4fc49d; }
+.swagger-method-get .swagger-method-title { background: #c2eadd; }
+.swagger-method-get .swagger-method-link { color: #2b8265; }
+.swagger-method-get .swagger-method-name { background: #4fc49d; }
+
+.swagger-method-post { border: 1px solid #87adb6; }
+.swagger-method-post .swagger-method-title { background: #e6eef0; }
+.swagger-method-post .swagger-method-link { color: #517c86; }
+.swagger-method-post .swagger-method-name { background: #87adb6; }
+
+.swagger-method-put { border: 1px solid #1eaaaf; }
+.swagger-method-put .swagger-method-title { background: #7de5e9; }
+.swagger-method-put .swagger-method-link { color: #0f5558; }
+.swagger-method-put .swagger-method-name { background: #1eaaaf; }
+
+.swagger-method-patch { border: 1px solid #36bea1; }
+.swagger-method-patch .swagger-method-title { background: #a7e6d9; }
+.swagger-method-patch .swagger-method-link { color: #1f6f5e; }
+.swagger-method-patch .swagger-method-name { background: #36bea1; }
+
+.swagger-method-delete { border: 1px solid #e27a7a; }
+.swagger-method-delete .swagger-method-title { background: #fdf8f8; }
+.swagger-method-delete .swagger-method-link { color: #ca2c2c; }
+.swagger-method-delete .swagger-method-name { background: #e27a7a; }
+
+.swagger-method-details { padding: 20px; display: none; }
+.swagger-method-details.open { display: block; }
+
+.swagger-response { font-size: 16px; font-weight: bolder; }
+.swagger-response h5 { margin: 10px 0 10px 0; }
+
+.swagger-response-code { font-weight: bolder; font-size: 16px; margin: 2px 0 2px 0; }
+.swagger-response-code:after { content: " — "; }
+
+.swagger-parameters-table { border-spacing: 0px; border-collapse: collapse; margin-bottom: 30px; width: 100%; display: table-header-group; font-size: 0.9rem; }
+.swagger-parameters-table th, .swagger-parameters-table td { border: 1px solid #dbdbdb; padding: 4px 10px; text-align: center; font-size: 0.9rem; }
+.swagger-parameters-table th { background: #f7f7f7; }
+
+.swagger-parameter-required:after { content: " *"; color: red; }

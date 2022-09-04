@@ -154,7 +154,7 @@ make docker
 Meshery uses adapters to provision and interact with different service meshes. Follow these instructions to create a new adapter or modify and existing adapter.
 
 1. Get the proto buf spec file from Meshery repo:
-   `wget https://raw.githubusercontent.com/meshery/meshery/master/meshes/meshops.proto`
+   `wget https://raw.githubusercontent.com/meshery/meshery/master/server/meshes/meshops.proto`
 1. Generate code
    1. Using Go as an example, do the following:
       - adding GOPATH to PATH: `export PATH=$PATH:$GOPATH/bin`
