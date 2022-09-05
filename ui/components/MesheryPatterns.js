@@ -747,9 +747,9 @@ function MesheryPatterns({
         customBodyRender : function CustomBody(_, tableMeta) {
           const visibility = patterns[tableMeta.rowIndex].visibility
           return (
-            <>
-              <img src={`/static/img/${visibility}.svg`} />
-            </>
+            <div style={{ cursor : "default" }}>
+              <img  src={`/static/img/${visibility}.svg`} />
+            </div>
           );
         },
       },
