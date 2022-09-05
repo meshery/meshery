@@ -425,7 +425,7 @@ func StringInSlice(str string, slice []string) bool {
 // GetID returns a array of IDs from meshery server endpoint /api/{configurations}
 func GetID(configuration string) ([]string, error) {
 	url := MesheryEndpoint + "/api/" + configuration + "?page_size=10000"
-	config_type := configuration + "s"
+	configType := configuration + "s"
 	var idList []string
 	client := &http.Client{}
 	req, err := NewRequest("GET", url, nil)
@@ -453,10 +453,10 @@ func GetID(configuration string) ([]string, error) {
 	if dat == nil {
 		return idList, errors.New("no data found")
 	}
-	if dat[config_type] == nil {
+	if dat[configType] == nil {
 		return idList, errors.New("no results found")
 	}
-	for _, config := range dat[config_type].([]interface{}) {
+	for _, config := range dat[configType].([]interface{}) {
 		idList = append(idList, config.(map[string]interface{})["id"].(string))
 	}
 	return idList, nil
