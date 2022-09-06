@@ -90,7 +90,7 @@ const Extensions = ({ classes, catalogVisibility, toggleCatalogContent }) => {
       </Grid>
       <Grid item {...INITIAL_GRID_SIZE}>
 
-        <div className={classes.card} style={{ backgroundColor : "#ddd", }} >
+        <div className={classes.card} >
           <Typography className={classes.frontContent} variant="h5" component="div">
             {"Meshery Catalog"}
           </Typography>
