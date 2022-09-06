@@ -148,8 +148,7 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int, g http.
 	gMux.HandleFunc("/api/components/types", h.ComponentTypesHandler).Methods("GET")
 	gMux.HandleFunc("/api/components/{type}", h.ComponentsForTypeHandler).Methods("GET")
 	gMux.HandleFunc("/api/components/{type}/versions", h.ComponentVersionsHandler).Methods("GET")
-	gMux.HandleFunc("/api/components/{type}/{version}", h.ComponentsHandler).Methods("GET")
-	gMux.HandleFunc("/api/components/{type}/{version}/{name}", h.ComponentsByNameHandler).Methods("GET")
+	gMux.HandleFunc("/api/components/{type}/{name}", h.ComponentsByNameHandler).Methods("GET")
 
 	gMux.Handle("/api/filter/deploy", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.KubernetesMiddleware(h.FilterFileHandler))))).
 		Methods("POST", "DELETE")

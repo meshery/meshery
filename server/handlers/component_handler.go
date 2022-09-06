@@ -32,22 +32,12 @@ func (h *Handler) ComponentVersionsHandler(rw http.ResponseWriter, r *http.Reque
 }
 
 //TODO: Swagger API docs
-func (h *Handler) ComponentsHandler(rw http.ResponseWriter, r *http.Request) {
-	t := mux.Vars(r)["type"]
-	v := mux.Vars(r)["version"]
-	rw.Header().Add("Content-Type", "application/json")
-	enc := json.NewEncoder(rw)
-	res := core.ComponentTypesSingleton.FilterWorkloadByVersionAndType(t, v)
-	if err := enc.Encode(res); err != nil {
-		h.log.Error(ErrWorkloadDefinition(err)) //TODO: Add appropriate meshkit error
-		http.Error(rw, ErrWorkloadDefinition(err).Error(), http.StatusInternalServerError)
-	}
-}
-
-//TODO: Swagger API docs
 func (h *Handler) ComponentsByNameHandler(rw http.ResponseWriter, r *http.Request) {
 	t := mux.Vars(r)["type"]
-	v := mux.Vars(r)["version"]
+	v := r.URL.Query().Get("version")
+	if v == "" {
+		v = "latest"
+	}
 	n := mux.Vars(r)["name"]
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
@@ -61,9 +51,13 @@ func (h *Handler) ComponentsByNameHandler(rw http.ResponseWriter, r *http.Reques
 //TODO: Swagger API docs
 func (h *Handler) ComponentsForTypeHandler(rw http.ResponseWriter, r *http.Request) {
 	t := mux.Vars(r)["type"]
+	version := r.URL.Query().Get("version")
+	if version == "" {
+		version = "latest"
+	}
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
-	res := core.ComponentTypesSingleton.FilterWorkloadsForType(t)
+	res := core.ComponentTypesSingleton.FilterWorkloadByVersionAndType(t, version)
 	if err := enc.Encode(res); err != nil {
 		h.log.Error(ErrWorkloadDefinition(err)) //TODO: Add appropriate meshkit error
 		http.Error(rw, ErrWorkloadDefinition(err).Error(), http.StatusInternalServerError)

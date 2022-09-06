@@ -96,7 +96,6 @@ type HandlerInterface interface {
 	ComponentsForTypeHandler(rw http.ResponseWriter, r *http.Request)
 	GetAllComponents(rw http.ResponseWriter, r *http.Request)
 	ComponentVersionsHandler(rw http.ResponseWriter, r *http.Request)
-	ComponentsHandler(rw http.ResponseWriter, r *http.Request)
 	ComponentsByNameHandler(rw http.ResponseWriter, r *http.Request)
 	ValidationHandler(rw http.ResponseWriter, r *http.Request)
 	OAMComponentDetailsHandler(rw http.ResponseWriter, r *http.Request)

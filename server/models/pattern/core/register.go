@@ -107,7 +107,7 @@ func (c *ComponentTypes) FilterWorkloadByVersionAndType(typ string, ver string) 
 		ver = c.LatestVersionForComponent[typ]
 	}
 	for _, r := range res {
-		if typ == r.Metadata["adapter.meshery.io/name"] && (ver == r.OAMDefinition.Spec.Metadata["version"] || ver == r.OAMDefinition.Spec.Metadata["meshVersion"]) {
+		if typ == r.Metadata["adapter.meshery.io/name"] && (ver == "all" || ver == r.OAMDefinition.Spec.Metadata["version"] || ver == r.OAMDefinition.Spec.Metadata["meshVersion"]) {
 			v = append(v, r)
 		}
 	}
