@@ -63,10 +63,14 @@ function setGallery(el) {
 		Object.keys(gallery_elements).forEach(function (k) {
 			if(gallery_elements[k].classList.contains('current')) currentkey = k;
 		});
-		if(currentkey==(gallery_elements.length-1)) var nextkey = 0;
-		else var nextkey = parseInt(currentkey)+1;
-		if(currentkey==0) var prevkey = parseInt(gallery_elements.length-1);
-		else var prevkey = parseInt(currentkey)-1;
+
+		var nextkey;
+		if(currentkey==(gallery_elements.length-1)) nextkey = 0;
+		else nextkey = parseInt(currentkey)+1;
+
+		var prevkey;
+		if(currentkey==0) prevkey = parseInt(gallery_elements.length-1);
+		else prevkey = parseInt(currentkey)-1;
 		document.getElementById('next').addEventListener("click", function() {
 			gallery_elements[nextkey].click();
 		});
@@ -115,7 +119,7 @@ document.addEventListener("DOMContentLoaded", function() {
     });
     
     //add the youtube lightbox on click
-    var elements = document.querySelectorAll('a.lightbox-youtube');
+    elements = document.querySelectorAll('a.lightbox-youtube');
     elements.forEach(element => {
         element.addEventListener("click", function(event) {
             event.preventDefault();
@@ -127,7 +131,7 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
     //add the image lightbox on click
-    var elements = document.querySelectorAll('a.lightbox-image');
+    elements = document.querySelectorAll('a.lightbox-image');
     elements.forEach(element => {
         element.addEventListener("click", function(event) {
             event.preventDefault();

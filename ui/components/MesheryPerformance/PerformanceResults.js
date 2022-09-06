@@ -256,6 +256,7 @@ function ResultChart({ result, handleTabChange, tabValue }) {
         onChange={handleTabChange}
         TabIndicatorProps={{
           style : {
+            color : "#000",
             backgroundColor : "#00B39F"
           }
         }}

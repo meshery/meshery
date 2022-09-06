@@ -67,7 +67,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-go-
       - run: |
-          GOPROXY=https://proxy.golang.org,direct GOSUMDB=off GO111MODULE=on go build -tags draft ./cmd/main.go
+          GOPROXY=https://proxy.golang.org,direct GOSUMDB=off GO111MODULE=on go build -tags draft ./server/cmd/main.go ./server/cmd/error.go
       - name: Upload artifacts
         uses: actions/upload-artifact@v3.0.0
         with:
@@ -303,7 +303,7 @@ jobs:
           version: v0.26.1
       - name: swagger-spec
         if: steps.changes.outputs.modified == 'true'
-        run: swagger generate spec -o ./helpers/swagger.yaml --scan-models
+        run: swagger generate spec -o ./server/helpers/swagger.yaml --scan-models
       - name: swagger-docs
         if: steps.changes.outputs.modified == 'true'
         run: swagger generate spec -o ./docs/_data/swagger.yml --scan-models && swagger flatten ./docs/_data/swagger.yml -o ./docs/_data/swagger.yml --with-expand --format=yaml
@@ -324,7 +324,7 @@ jobs:
         with:
           filters: |
             modified:
-              - added|modified: 'internal/graphql/schema/schema.graphql'
+              - added|modified: 'server/internal/graphql/schema/schema.graphql'
       - name: Set up Ruby
         if: steps.filter.outputs.modified == 'true'
         uses: ruby/setup-ruby@v1.99.0
@@ -337,3 +337,4 @@ jobs:
           cd docs
           bundle install
           bundle exec rake graphql:compile_docs
+

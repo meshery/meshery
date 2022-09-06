@@ -71,43 +71,43 @@ docker-cloud:
 ## Setup wrk2 for local development.
 wrk2-setup:
 	echo "setup-wrk does not work on Mac Catalina at the moment"
-	cd cmd; git clone https://github.com/layer5io/wrk2.git; cd wrk2; make; cd ..
+	cd server; cd cmd; git clone https://github.com/layer5io/wrk2.git; cd wrk2; make; cd ..
 
 ## ## Setup nighthawk for local development.
 nighthawk-setup:
-	cd cmd; git clone https://github.com/layer5io/nighthawk-go.git; cd nighthawk-go; make setup; cd ..
+	cd server; cd cmd; git clone https://github.com/layer5io/nighthawk-go.git; cd nighthawk-go; make setup; cd ..
 
 run-local: server-local error
 ## Build and run Meshery Server on your local machine
 ## and point to (expect) a locally running Meshery Cloud or other Provider(s)
 ## for user authentication (requires go${GOVERSION}).
 server-local:
-	cd cmd; go$(GOVERSION) clean; go$(GOVERSION) mod tidy; \
+	cd server; cd cmd; go$(GOVERSION) clean; go$(GOVERSION) mod tidy; \
 	BUILD="$(GIT_VERSION)" \
 	PROVIDER_BASE_URLS=$(REMOTE_PROVIDER_LOCAL) \
 	PORT=9081 \
 	DEBUG=true \
 	ADAPTER_URLS=$(ADAPTER_URLS) \
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
-	go$(GOVERSION) run main.go
+	go$(GOVERSION) run main.go error.go
 	
 run-fast: 
 	## "DEPRECATED: This target is deprecated. Use `make server`.
 
 ## Build and run Meshery Server on your local machine (requires go${GOVERSION}).
-server: dep-check
-	cd cmd; go$(GOVERSION) mod tidy; \
+server:
+	cd server; cd cmd; go$(GOVERSION) mod tidy; \
 	BUILD="$(GIT_VERSION)" \
 	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
 	PORT=9081 \
 	DEBUG=true \
 	ADAPTER_URLS=$(ADAPTER_URLS) \
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
-	go$(GOVERSION) run main.go;
+	go$(GOVERSION) run main.go error.go;
 
 ## Build and run Meshery Server with no Kubernetes components on your local machine (requires go${GOVERSION}).
 server-skip-compgen:
-	cd cmd; go$(GOVERSION) mod tidy; \
+	cd server; cd cmd; go$(GOVERSION) mod tidy; \
 	BUILD="$(GIT_VERSION)" \
 	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
 	PORT=9081 \
@@ -115,11 +115,11 @@ server-skip-compgen:
 	ADAPTER_URLS=$(ADAPTER_URLS) \
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
  	SKIP_COMP_GEN=true \
-	go$(GOVERSION) run main.go;
+	go$(GOVERSION) run main.go error.go;
 		
 ## Build and run Meshery Server with no seed content (requires go$(GOVERSION)).
 server-no-content:
-	cd cmd; go$(GOVERSION) mod tidy; \
+	cd server; cd cmd; go$(GOVERSION) mod tidy; \
 	BUILD="$(GIT_VERSION)" \
 	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
 	PORT=9081 \
@@ -127,7 +127,7 @@ server-no-content:
 	ADAPTER_URLS=$(ADAPTER_URLS) \
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
 	SKIP_DOWNLOAD_CONTENT=true \
-	go$(GOVERSION) run main.go;
+	go$(GOVERSION) run main.go error.go;
 
 ## Lint check Meshery Server.
 golangci: error
@@ -141,17 +141,17 @@ proto-build:
 	#         google.golang.org/grpc/cmd/protoc-gen-go-grpc
 	# PATH=$(PATH):`pwd`/../protoc/bin:$(GOPATH)/bin
 	# export PATH=$PATH:`pwd`/../protoc/bin:$GOPATH/bin
-	protoc -I meshes/ meshes/meshops.proto --go-grpc_out=./meshes/ --go_out=./meshes/
+	protoc -I meshes/ meshes/meshops.proto --go-grpc_out=./server/meshes/ --go_out=./server/meshes/
 
 ## Analyze error codes
 error:
-	go run github.com/layer5io/meshkit/cmd/errorutil -d . analyze -i ./helpers -o ./helpers --skip-dirs mesheryctl
+	go run github.com/layer5io/meshkit/cmd/errorutil -d . analyze -i ./server/helpers -o ./server/helpers --skip-dirs mesheryctl
 
 ## Build Meshery UI; Build and run Meshery Server on your local machine (requires go${GOVERSION}).
 ui-server: ui-meshery-build server
 
 #-----------------------------------------------------------------------------
-# Meshery UI Native Builds
+# Meshery UI Native Builds.
 #-----------------------------------------------------------------------------
 .PHONY: setup-ui-libs ui-setup run-ui-dev ui ui-meshery-build ui ui-provider ui-lint ui-provider ui-meshery ui-build ui-provider-build ui-provider-test
 
@@ -260,11 +260,11 @@ helm-meshery-lint:
 .PHONY: swagger-build swagger swagger-docs-build graphql-docs graphql-build
 ## Build Meshery REST API specifications
 swagger-build:
-	swagger generate spec -o ./helpers/swagger.yaml --scan-models
+	swagger generate spec -o ./server/helpers/swagger.yaml --scan-models
 
 ## Generate and serve Meshery REST API specifications
 swagger: swagger-build
-	swagger serve ./helpers/swagger.yaml
+	swagger serve ./server/helpers/swagger.yaml
 
 ## Build Meshery REST API documentation
 swagger-docs-build:
@@ -277,5 +277,5 @@ graphql-docs:
 
 ## Build Meshery GraphQl API specifications
 graphql-build:
-	cd internal/graphql; go run -mod=mod github.com/99designs/gqlgen generate
+	cd server; cd internal/graphql; go run -mod=mod github.com/99designs/gqlgen generate
 

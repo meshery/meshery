@@ -17,7 +17,7 @@ const styles = (theme) => ({
     minWidth : 400,
     padding : '10px',
     color : '#fff',
-    backgroundColor : '#607d8b'
+    backgroundColor : '#396679'
   },
   subtitle : {
     minWidth : 400,

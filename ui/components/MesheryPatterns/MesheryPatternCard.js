@@ -28,8 +28,11 @@ function MesheryPatternCard({
   handleUnDeploy,
   updateHandler,
   deleteHandler,
+  handleClone,
   setSelectedPatterns,
-  setYaml
+  setYaml,
+  description={},
+  visibility
 }) {
 
   function genericClickHandler(ev, fn) {
@@ -45,6 +48,8 @@ function MesheryPatternCard({
     setFullScreen(!fullScreen);
   };
 
+  const catalogContentKeys = Object.keys(description);
+  const catalogContentValues = Object.values(description);
   const classes = useStyles()
 
   return (
@@ -73,9 +78,12 @@ function MesheryPatternCard({
         {/* FRONT PART */}
         <>
           <div>
-            <Typography variant="h6" component="div">
-              {name}
-            </Typography>
+            <div style={{ display : "flex", justifyContent : "space-between" }}>
+              <Typography variant="h6" component="div">
+                {name}
+              </Typography>
+              <img  className={classes.img} src={`/static/img/${visibility}.svg`} />
+            </div>
             <div className={classes.lastRunText} >
               <div>
                 {updated_at
@@ -93,6 +101,7 @@ function MesheryPatternCard({
             <div className={classes.cardButtons} >
 
               <Button
+                title="Undeploy"
                 variant="contained"
                 className={classes.undeployButton}
                 onClick={(ev) =>
@@ -104,6 +113,7 @@ function MesheryPatternCard({
               </Button>
 
               <Button
+                title="Deploy"
                 variant="contained"
                 onClick={(ev) =>
                   genericClickHandler(ev, handleDeploy)
@@ -111,10 +121,10 @@ function MesheryPatternCard({
                 className={classes.testsButton}
               >
                 <DoneAllIcon className={classes.iconPatt} />
-                Deploy
+                <span className={classes.btnText}>Deploy</span>
               </Button>
 
-              <Button
+              { visibility === "private" ?  <Button
                 variant="contained"
                 color="primary"
                 onClick={(ev) =>
@@ -124,7 +134,18 @@ function MesheryPatternCard({
               >
                 <Avatar src="/static/img/pattern_trans.svg" className={classes.iconPatt} imgProps={{ height : "16px", width : "16px" }} />
                 Design
-              </Button>
+              </Button> : <Button
+                variant="contained"
+                color="primary"
+                onClick={(ev) =>
+                  genericClickHandler(ev, handleClone)
+                }
+                className={classes.testsButton}
+              >
+                <img src="/static/img/clone-white.svg" className={classes.iconPatt} />
+                Clone
+              </Button>  }
+
             </div>
           </div>
         </>
@@ -160,21 +181,33 @@ function MesheryPatternCard({
               }>
 
               <Divider variant="fullWidth" light />
-
-              <CodeMirror
-                value={showCode && pattern_file}
-                className={fullScreen ? classes.fullScreenCodeMirror : ""}
-                options={{
-                  theme : "material",
-                  lineNumbers : true,
-                  lineWrapping : true,
-                  gutters : ["CodeMirror-lint-markers"],
-                  // @ts-ignore
-                  lint : true,
-                  mode : "text/x-yaml",
-                }}
-                onChange={(_, data, val) => setYaml(val)}
-              />
+              { catalogContentKeys.length === 0 ?
+                <CodeMirror
+                  value={showCode && pattern_file}
+                  className={fullScreen ? classes.fullScreenCodeMirror : ""}
+                  options={{
+                    theme : "material",
+                    lineNumbers : true,
+                    lineWrapping : true,
+                    gutters : ["CodeMirror-lint-markers"],
+                    // @ts-ignore
+                    lint : true,
+                    mode : "text/x-yaml",
+                  }}
+                  onChange={(_, data, val) => setYaml(val)}
+                />
+                :
+                catalogContentKeys.map((title, index) => (
+                  <>
+                    <Typography variant="h6" className={classes.yamlDialogTitleText}>
+                      {title}
+                    </Typography>
+                    <Typography variant="body2">
+                      {catalogContentValues[index]}
+                    </Typography>
+                  </>
+                ))
+              }
             </Grid>
 
             <Grid item xs={8}>
@@ -192,22 +225,23 @@ function MesheryPatternCard({
             </Grid>
 
             <Grid item xs={12}>
-              <div className={classes.updateDeleteButtons} >
+              {visibility === "private" ?
+                <div className={classes.updateDeleteButtons} >
 
-                {/* Save button */}
-                <IconButton onClick={(ev) =>
-                  genericClickHandler(ev, updateHandler)
-                }>
-                  <Save color="primary" />
-                </IconButton>
+                  {/* Save button */}
+                  <IconButton onClick={(ev) =>
+                    genericClickHandler(ev, updateHandler)
+                  }>
+                    <Save color="primary" />
+                  </IconButton>
 
-                {/* Delete Button */}
-                <IconButton onClick={(ev) =>
-                  genericClickHandler(ev, deleteHandler)
-                }>
-                  <DeleteIcon color="primary" />
-                </IconButton>
-              </div>
+                  {/* Delete Button */}
+                  <IconButton onClick={(ev) =>
+                    genericClickHandler(ev, deleteHandler)
+                  }>
+                    <DeleteIcon color="primary" />
+                  </IconButton>
+                </div> : null}
             </Grid>
           </Grid>
         </>

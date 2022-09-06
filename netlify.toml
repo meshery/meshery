@@ -1,5 +1,0 @@
-[build]
-  base = "docs/"
-  publish = "_site"
-  command = "make build"
-  ignore = "git diff --quiet master -- ./ || git log -1 --pretty=%B | grep dependabot"
