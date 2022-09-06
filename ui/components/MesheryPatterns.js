@@ -957,7 +957,7 @@ function MesheryPatterns({
   };
 
   if (loading) {
-    return <LoadingScreen animatedIcon="Pattern" message="Loading Patterns" />;
+    return <LoadingScreen animatedIcon="Pattern" message="Loading Designs..." />;
   }
 
   return (
