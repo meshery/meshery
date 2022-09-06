@@ -83,7 +83,6 @@ func (c *ComponentTypes) FilterWorkloadVersionsByType(typ string) (v []string) {
 	for _, r := range res {
 		if typ == r.Metadata["adapter.meshery.io/name"] {
 			set[r.OAMDefinition.Spec.Metadata["version"]] = true
-
 		}
 	}
 	for ver := range set {
@@ -96,7 +95,6 @@ func (c *ComponentTypes) FilterWorkloadsForType(typ string) (w []WorkloadCapabil
 	for _, r := range res {
 		if typ == r.Metadata["adapter.meshery.io/name"] {
 			w = append(w, r)
-
 		}
 	}
 	return
@@ -128,9 +126,9 @@ func (c *ComponentTypes) FilterWorkloadByVersionAndTypeAndName(typ string, ver s
 	return
 }
 
-//This singleton is initialized per meshery instance and acts as a helper middleware between client facing API and capability registry.
+//ComponentTypesSingleton is initialized per meshery instance and acts as a helper middleware between client facing API and capability registry.
 //Examples of names stored in this struct are: core,kubernetes,istio,linkerd
-var ComponentTypesSingleton ComponentTypes = ComponentTypes{
+var ComponentTypesSingleton = ComponentTypes{
 	Names:                     make(map[string]bool),
 	LatestVersionForComponent: make(map[string]string),
 }
