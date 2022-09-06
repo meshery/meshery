@@ -194,7 +194,7 @@ See the [getting started](https://meshery.io/#getting-started) section to quickl
 ## <a name="functionality">Functionality</a>
 
 <p style="clear:both;">
-<a href="https://raw.githubusercontent.com/meshery/meshery/master/assets/img/readme/meshery_multi_mesh.png"><img alt="Layer5 Service Mesh Management" src="https://docs.meshery.io/assets/img/readme/meshery_multi_mesh.png"  style="margin-left:10px; margin-bottom:10px;" width="45%" align="right"/></a>
+<a href="https://raw.githubusercontent.com/meshery/meshery/master/docs/assets/img/readme/meshery_multi_mesh.png"><img alt="Layer5 Service Mesh Management" src="https://docs.meshery.io/assets/img/readme/meshery_multi_mesh.png"  style="margin-left:10px; margin-bottom:10px;" width="45%" align="right"/></a>
 <h3>Service Mesh Lifecycle Management</h3>
 Meshery manages the provisioning, configuration and operation your service mesh. While supporting different types of service meshes, Meshery also offers a simple way to explore each service mesh and compare them using bundled sample applications.
 
@@ -224,7 +224,7 @@ Onboard your workload onto the service mesh with confidence. Check your service 
 In an effort to produce service mesh agnostic tooling, Meshery uses the [service mesh performance](https://smp-spec.io) as a common format to capture and measure your mesh's performance against a universal service mesh performance index. As a partner of VMware's Multi-Vendor Service Mesh Interoperation (Hamlet) and Service Mesh Interface (SMI), Meshery participates in advancing service mesh adoption through the standardization of APIs.
 
 <p style="clear:both;">
-<a href="https://raw.githubusercontent.com/meshery/meshery/master/.github/assets/images/smp/service mesh performance example.gif"><img alt="Layer5 Service Mesh Performance Management" src="https://raw.githubusercontent.com/meshery/meshery/master/.github/assets/images/smp/service mesh performance example.gif" style="margin-left:10px;margin-bottom:10px;" width="45%" align="right" /></a>
+<a href="https://raw.githubusercontent.com/meshery/meshery/master/.github/assets/images/smp/service-mesh-performance-example.gif"><img alt="Layer5 Service Mesh Performance Management" src="https://raw.githubusercontent.com/meshery/meshery/master/.github/assets/images/smp/service-mesh-performance-example.gif" style="margin-left:10px;margin-bottom:10px;" width="45%" align="right" /></a>
 <!-- <a href="https://raw.githubusercontent.com/layer5io/meshery/master/assets/img/readme/Meshery-Grafana-Charts.png"><img alt="Meshery Grafana Boards" src="https://docs.meshery.io/assets/img/readme/Meshery-Grafana-Charts.png" style="padding-top:10px;margin-left:10px;" width="45%" align="right" /></a> -->
 <h4>Standardized Service Performance Management</h4>
 
@@ -266,7 +266,7 @@ See <a href="https://github.com/layer5io/image-hub">Image Hub</a>.
 
 You may deploy Meshery internal to your cluster or external to your cluster.
 
-<p align="center"><a href="https://raw.githubusercontent.com/meshery/meshery/master/.github/assets/images/architecture/Meshery-client-architecture.svg"><img src="https://docs.meshery.io/assets/img/readme/Meshery-client-architecture.svg" width="90%" align="center" /></a></p>
+<p align="center"><a href="https://raw.githubusercontent.com/meshery/meshery/master/docs/assets/img/architecture/Meshery-client-architecture.svg"><img src="https://docs.meshery.io/assets/img/readme/Meshery-client-architecture.svg" width="90%" align="center" /></a></p>
 Learn more about <a href="https://docs.meshery.io/architecture">Meshery's architecture</a>.
 
 <div>&nbsp;</div>

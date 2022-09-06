@@ -10,7 +10,7 @@ import {
 } from '@material-ui/core';
 import NoSsr from '@material-ui/core/NoSsr';
 import dataFetch from '../lib/data-fetch';
-import { updateUser, updateProgress } from '../lib/store';
+import { updateUser, updateProgress, toggleCatalogContent } from '../lib/store';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import { Paper, Tooltip } from '@material-ui/core';
@@ -95,8 +95,43 @@ class UserPreference extends React.Component {
       perfResultStats : props.perfResultStats,
       tabVal : 0,
       userPrefs : ExtensionPointSchemaValidator("user_prefs")(),
-      providerType : ''
+      providerType : '',
+      catalogContent : true,
+      extensionPreferences : {}
     };
+  }
+
+  handleCatalogContentToggle = () => {
+    this.props.toggleCatalogContent({ catalogVisibility : !this.state.catalogContent });
+    this.setState((state) => ({ catalogContent : !state.catalogContent }), () => this.handleCatalogPreference());
+  }
+
+  handleCatalogPreference = () => {
+    let body = Object.assign({}, this.state.extensionPreferences)
+    body["catalogContent"] = this.state.catalogContent
+    dataFetch("/api/user/prefs",
+      { credentials : "include",
+        method : "POST",
+        body : JSON.stringify({ usersExtensionPreferences : body })
+      },
+      () => {
+        this.props.enqueueSnackbar(`Catalog Content was ${this.state.catalogContent ? "enab" : "disab"}led`,
+          { variant : 'success',
+            autoHideDuration : 4000,
+            action : (key) => (
+              <IconButton
+                key="close"
+                aria-label="Close"
+                color="inherit"
+                onClick={() => self.props.closeSnackbar(key)}
+              >
+                <CloseIcon />
+              </IconButton>
+            ),
+          });
+      },
+      this.handleError("There was an error sending your preference")
+    )
   }
 
   handleToggle = (name) => () => {
@@ -197,11 +232,28 @@ class UserPreference extends React.Component {
       },
       err => console.error(err)
     )
+
+    dataFetch(
+      "/api/user/prefs",
+      { credentials : "same-origin",
+        method : "GET",
+        credentials : "include", },
+      (result) => {
+        if (result) {
+          this.setState({
+            extensionPreferences : result?.usersExtensionPreferences,
+            catalogContent : result?.usersExtensionPreferences?.catalogContent
+          })
+        }
+      },
+      err => console.error(err)
+    )
+
   }
 
   render() {
     const {
-      anonymousStats, perfResultStats, tabVal, userPrefs, providerType
+      anonymousStats, perfResultStats, tabVal, userPrefs, providerType, catalogContent
     } = this.state;
     const { classes } = this.props;
 
@@ -252,6 +304,30 @@ class UserPreference extends React.Component {
         </Paper>
         <Paper className={classes.statsWrapper}>
           {tabVal == 0 &&
+          <>
+            <div className={classes.formContainer}>
+              <FormControl component="fieldset" className={classes.formGrp}>
+                <FormLabel component="legend" className={classes.formLegend}>Extensions</FormLabel>
+                <FormGroup>
+                  <FormControlLabel
+                    key="CatalogContentPreference"
+                    control={(
+                      <Switch
+                        checked={catalogContent}
+                        onChange={this.handleCatalogContentToggle}
+                        color="primary"
+                        classes={{ switchBase : classes.switchBase,
+                          track : classes.track,
+                          checked : classes.checked, }}
+                        data-cy="CatalogContentPreference"
+                      />
+                    )}
+                    labelPlacement="end"
+                    label="Meshery Catalog Content"
+                  />
+                </FormGroup>
+              </FormControl>
+            </div>
             <div className={classes.formContainer}>
               <FormControl component="fieldset" className={classes.formGrp}>
                 <FormLabel component="legend" className={classes.formLegend}>Analytics and Improvement Program</FormLabel>
@@ -291,6 +367,7 @@ class UserPreference extends React.Component {
                 </FormGroup>
               </FormControl>
             </div>
+          </>
           }
           {tabVal === 1 &&
             <MesherySettingsPerformanceComponent />
@@ -305,13 +382,14 @@ class UserPreference extends React.Component {
 }
 
 const mapDispatchToProps = (dispatch) => ({ updateUser : bindActionCreators(updateUser, dispatch),
-  updateProgress : bindActionCreators(updateProgress, dispatch), });
+  updateProgress : bindActionCreators(updateProgress, dispatch), toggleCatalogContent : bindActionCreators(toggleCatalogContent, dispatch) });
 
 const mapStateToProps = (state) => {
   const selectedK8sContexts = state.get('selectedK8sContexts');
-
+  const catalogVisibility = state.get('catalogVisibility')
   return {
     selectedK8sContexts,
+    catalogVisibility
   };
 };
 

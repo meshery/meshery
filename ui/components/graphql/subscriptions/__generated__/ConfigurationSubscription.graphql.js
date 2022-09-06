@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<323ea950ba721af7dd7eb3f46c3cdacb>>
+ * @generated SignedSource<<dd1007a824ce5c9006065a67ccca6af9>>
  * @flow
  * @lightSyntaxTransform
  * @nogrep
@@ -53,7 +53,7 @@ export type ConfigurationSubscription$data = {|
         +user_id: string,
         +pattern_file: string,
         +visibility: string,
-        +catalog_data: any,
+        +catalog_data: ?any,
         +canSupport: boolean,
         +errmsg: ?string,
         +created_at: ?string,
@@ -69,7 +69,7 @@ export type ConfigurationSubscription$data = {|
         +name: string,
         +filter_file: string,
         +visibility: string,
-        +catalog_data: any,
+        +catalog_data: ?any,
         +user_id: string,
         +created_at: ?string,
         +updated_at: ?string,
