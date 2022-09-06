@@ -4,7 +4,7 @@ description: Meshery Adapter for Citrix chart.
 source: 
   - https://github.com/layer5io/meshery-cpx
 
-deprecated: false
+deprecated: true
 
 # A chart can be either an 'application' or a 'library' chart.
 #

@@ -65,6 +65,9 @@ dependencies:
   - name: meshery-traefik-mesh
     version: 0.5.0
     condition: meshery-traefik-mesh.enabled
+  - name: meshery-cpx
+    version: 0.5.0
+    condition: meshery-cpx.enabled
   - name: meshery-nginx-sm
     version: 0.5.0
     condition: meshery-nginx-sm.enabled
@@ -83,6 +86,9 @@ dependencies:
   - name: meshery-cilium
     version: 0.5.0
     condition: meshery-cilium.enabled
+  - name: meshery-perf
+    version: 0.5.0
+    condition: meshery-perf.enabled
 
 maintainers:
   - name: Meshery Authors
