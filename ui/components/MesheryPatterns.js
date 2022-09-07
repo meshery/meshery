@@ -747,9 +747,9 @@ function MesheryPatterns({
         customBodyRender : function CustomBody(_, tableMeta) {
           const visibility = patterns[tableMeta.rowIndex].visibility
           return (
-            <>
-              <img src={`/static/img/${visibility}.svg`} />
-            </>
+            <div style={{ cursor : "default" }}>
+              <img  src={`/static/img/${visibility}.svg`} />
+            </div>
           );
         },
       },
@@ -995,9 +995,11 @@ function MesheryPatterns({
           </div>
           }
 
+          {!selectedPattern.show &&
           <div style={{ justifySelf : "flex-end", marginLeft : "auto", paddingRight : "1rem", paddingTop : "0.2rem" }}>
             <CatalogFilter catalogVisibility={catalogVisibility} handleCatalogVisibility={handleCatalogVisibility} />
           </div>
+          }
 
           {!selectedPattern.show &&
           <div className={classes.viewSwitchButton}>
