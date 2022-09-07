@@ -68,8 +68,14 @@ mesheryctl system context create context-name --components meshery-osm --platfor
 * Usage of mesheryctl context create
 # ![context-create-usage](../../../../docs/assets/img/mesheryctl/newcontext.png)
 	`,
-	Args: cobra.ExactArgs(1),
+
 	RunE: func(cmd *cobra.Command, args []string) error {
+		if len(args) == 0 {
+			const errMsg = `Please provide a context name.
+Usage: mesheryctl system context create [context-name]`
+			return errors.New(utils.SystemContextSubError(fmt.Sprintf("%s\n", errMsg), "create"))
+		}
+
 		tempCntxt := utils.TemplateContext
 
 		if serverURL != "" {
@@ -109,15 +115,20 @@ var deleteContextCmd = &cobra.Command{
 // Delete context
 mesheryctl system context delete [context name]
 	`,
-	Args: cobra.ExactArgs(1),
+
 	RunE: func(cmd *cobra.Command, args []string) error {
+		if len(args) == 0 {
+			const errMsg = `Please provide a context name to delete:
+mesheryctl system context delete [context name]`
+			return errors.New(utils.SystemContextSubError(fmt.Sprintf("%s\n", errMsg), "delete"))
+		}
 		err := viper.Unmarshal(&configuration)
 		if err != nil {
 			return err
 		}
 		_, exists := configuration.Contexts[args[0]]
 		if !exists {
-			return errors.New("no context to delete")
+			return errors.New(fmt.Sprintf("No context name found : %s", args[0]))
 		}
 
 		if viper.GetString("current-context") == args[0] {
@@ -252,7 +263,7 @@ mesheryctl system context view --all
 * Usage of mesheryctl context view
 # ![context-view-usage](/assets/img/mesheryctl/context-view.png)
 	`,
-	Args:         cobra.MaximumNArgs(1),
+
 	SilenceUsage: true,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		err := viper.Unmarshal(&configuration)
@@ -340,7 +351,7 @@ Example: mesheryctl system context switch k8s-sample
 Description: Configures mesheryctl to actively use one one context vs. the another context`
 
 		if len(args) != 1 {
-			return fmt.Errorf("accepts single argument, received %d\n\n%v", len(args), errMsg)
+			return fmt.Errorf("please provide exactly one context name\n\n%v", errMsg)
 		}
 		return nil
 	},
@@ -352,7 +363,10 @@ Description: Configures mesheryctl to actively use one one context vs. the anoth
 		}
 		_, exists := configuration.Contexts[args[0]]
 		if !exists {
-			return errors.New("requested context does not exist")
+			const errMsg = `Try running the following to create the context:
+mesheryctl system context create `
+
+			return fmt.Errorf("requested context does not exist \n\n%v%s", errMsg, args[0])
 		}
 		if viper.GetString("current-context") == args[0] {
 			return errors.New("already using context '" + args[0] + "'")
@@ -408,7 +422,7 @@ mesheryctl system context
 		}
 
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
-			return errors.New(utils.SystemError(fmt.Sprintf("invalid command: \"%s\"", args[0])))
+			return errors.New(utils.SystemContextSubError(fmt.Sprintf("'%s' is a invalid command.  Use 'mesheryctl system context --help' to display usage guide.\n", args[0]), "context"))
 		}
 		return nil
 	},

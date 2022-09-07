@@ -30,7 +30,7 @@ mesheryctl system channel [flags]
 Subscribe to release channel or version
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl system channel 
+mesheryctl system channel
 
 </div>
 </pre> 
