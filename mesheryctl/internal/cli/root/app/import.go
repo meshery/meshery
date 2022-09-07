@@ -23,15 +23,23 @@ var importCmd = &cobra.Command{
 	Use:   "import",
 	Short: "Import app manifests",
 	Long:  `Import the app manifest into Meshery`,
-	Args:  cobra.MinimumNArgs(0),
 	Example: `
 // Import app manifest
 mesheryctl app import -f [file/URL] -s [source-type]
 	`,
+	Args: func(_ *cobra.Command, args []string) error {
+		const errMsg = `Usage: mesheryctl app import -f [file/url] -s [source-type]
+Example: mesheryctl app import -f ./application.yml -s "Kubernetes Manifest"`
+
+		if file == "" {
+			return fmt.Errorf("manifest path not provided \n\n%v", errMsg)
+		}
+
+		return nil
+	},
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		return getSourceTypes()
 	},
-
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var err error
 
