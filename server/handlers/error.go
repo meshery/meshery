@@ -106,6 +106,7 @@ const (
 	ErrRemoteApplicationURL             = "2249"
 	ErrClonePatternCode                 = "2246"
 	ErrCloneFilterCode                  = "2247"
+	ErrGenerateComponentsCode           = "2254"
 )
 
 var (
