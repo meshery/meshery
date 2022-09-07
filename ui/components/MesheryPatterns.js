@@ -34,6 +34,8 @@ import PublishIcon from "@material-ui/icons/Publish";
 import PromptComponent from "./PromptComponent";
 import ConfigurationSubscription from "./graphql/subscriptions/ConfigurationSubscription";
 import fetchCatalogPattern from "./graphql/queries/CatalogPatternQuery";
+import LoadingScreen from "./LoadingComponents/LoadingComponent";
+
 
 const styles = (theme) => ({
   grid : {
@@ -254,6 +256,7 @@ function MesheryPatterns({
   const [importModal, setImportModal] = useState({
     open : false
   })
+  const [loading, stillLoading] = useState(true);
 
   const catalogContentRef = useRef();
   const catalogVisibilityRef = useRef();
@@ -396,6 +399,7 @@ function MesheryPatterns({
       setPageSize(result.configuration?.patterns.page_size || 0);
       setCount(result.configuration?.patterns.total_count || 0);
       handleSetPatterns(result.configuration?.patterns.patterns);
+      stillLoading(false);
     },
     {
       applicationSelector : {
@@ -951,6 +955,10 @@ function MesheryPatterns({
       }
     }
   };
+
+  if (loading) {
+    return <LoadingScreen animatedIcon="AnimatedMeshPattern" message="Loading Designs..." />;
+  }
 
   return (
     <>
