@@ -62,7 +62,7 @@ var completionCmd = &cobra.Command{
 	Args: func(_ *cobra.Command, args []string) error {
 		const errMsg = `Usage: mesheryctl completion [bash|zsh|fish]`
 		if len(args) == 0 {
-			return fmt.Errorf("shell type not provided.\n\n %s", errMsg)
+			return fmt.Errorf("shell type not provided.\n\n%s", errMsg)
 		}
 		return nil
 	},
