@@ -94,11 +94,9 @@ var setCmd = &cobra.Command{
 mesheryctl system channel set [stable|stable-version|edge|edge-version]
 	`,
 	Args: func(_ *cobra.Command, args []string) error {
-		const errMsg = `Usage: mesheryctl system channel set [stable|stable-version|edge|edge-version]
-Example: mesheryctl system channel set stable`
-
+		const errMsg = `Usage: mesheryctl system channel set [stable|stable-version|edge|edge-version]`
 		if len(args) == 0 {
-			return fmt.Errorf("accepts single argument, received %d\n\n%v", len(args), errMsg)
+			return fmt.Errorf("release channel not specified\n\n%v", errMsg)
 		}
 		return nil
 	},
@@ -173,11 +171,9 @@ var switchCmd = &cobra.Command{
 mesheryctl system channel switch [stable|stable-version|edge|edge-version]
 	`,
 	Args: func(_ *cobra.Command, args []string) error {
-		const errMsg = `Usage: mesheryctl system channel switch [stable|stable-version|edge|edge-version]
-Example: mesheryctl system channel switch stable`
-
+		const errMsg = `Usage: mesheryctl system channel switch [stable|stable-version|edge|edge-version]`
 		if len(args) == 0 {
-			return fmt.Errorf("accepts single argument, received %d\n\n%v", len(args), errMsg)
+			return fmt.Errorf("release channel not specified\n\n%v", errMsg)
 		}
 		return nil
 	},
@@ -237,7 +233,7 @@ var channelCmd = &cobra.Command{
 	Long:  `Subscribe to a release channel. Choose between either 'stable' or 'edge' channels.`,
 	Example: `
 // Subscribe to release channel or version
-mesheryctl system channel 
+mesheryctl system channel
 // To set the channel
 mesheryctl system channel set [stable|stable-version|edge|edge-version]
 // To pin/set the channel to a specific version
@@ -248,14 +244,10 @@ mesheryctl system channel view
 mesheryctl system channel switch [stable|stable-version|edge|edge-version]
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if len(args) == 0 {
-			err := viewCmd.RunE(cmd, args)
-			_ = fmt.Errorf("%s", err)
-			return cmd.Usage()
-
-		}
-		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
-			return errors.New(utils.SystemChannelSubError(fmt.Sprintf("'%s' is a invalid command.  Use 'mesheryctl system channel --help' to display usage guide.\n", args[0]), "channel"))
+		if len(args) != 0 {
+			if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
+				return errors.New(utils.SystemChannelSubError(fmt.Sprintf("'%s' is a invalid command. Use 'mesheryctl system channel --help' to display usage guide.\n", args[0]), "channel"))
+			}
 		}
 		mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
 		if err != nil {

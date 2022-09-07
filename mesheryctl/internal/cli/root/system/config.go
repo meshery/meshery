@@ -355,7 +355,7 @@ Example: mesheryctl system config eks
 Description: Configure the Kubernetes cluster used by Meshery.`
 
 		if len(args) == 0 {
-			return fmt.Errorf("accepts single argument, received %d\n\n%v", len(args), errMsg)
+			return fmt.Errorf("config name not provided\n\n%v", errMsg)
 		}
 		return nil
 	},
@@ -369,7 +369,7 @@ mesheryctl system config --token "~/Downloads/auth.json"
 	RunE: func(cmd *cobra.Command, args []string) error {
 
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
-			return errors.New(utils.SystemError(fmt.Sprintf("invalid command: \"%s\"", args[0])))
+			return errors.New(utils.SystemError(fmt.Sprintf("invalid command: \"%s\".", args[0])))
 		}
 		return nil
 	},
