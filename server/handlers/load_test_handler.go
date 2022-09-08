@@ -382,10 +382,14 @@ func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, profil
 		return
 	}
 
+	var resultsMx sync.Mutex
 	for _, k8context := range mk8sContexts {
 		wg.Add(1)
-		go func(mk8scontext *models.K8sContext) {
+		go func(mk8scontext models.K8sContext) {
 			defer wg.Done()
+			var serverVersion string
+			var nodes []*models.K8SNode
+			var installedMeshes map[string][]corev1.Pod
 			// Get the k8sconfig
 			k8sconfig, err := mk8scontext.GenerateKubeConfig()
 			if err == nil {
@@ -393,6 +397,7 @@ func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, profil
 				versionChan := make(chan string)
 				installedMeshesChan := make(chan map[string][]corev1.Pod)
 
+				// Fire goroutines to get cluster information
 				go func() {
 					var nodes []*models.K8SNode
 					var err error
@@ -419,21 +424,31 @@ func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, profil
 					if err != nil {
 						h.log.Warn(ErrFetchKubernetes(err))
 					}
+
 					installedMeshesChan <- installedMeshes
 				}()
 
-				serverVersion := <-versionChan
-				nodes := <-nodesChan
+				// Retrieve cluster information from the goroutines
+				serverVersion = <-versionChan
+				nodes = <-nodesChan
+				installedMeshes = <-installedMeshesChan
+			}
 
+			// Making sure different context goroutines don't interfere with each others' results Map
+			resultsMx.Lock()
+			defer resultsMx.Unlock()
+
+			resultsMap["kubernetes"] = nil
+			if serverVersion != "" {
 				resultsMap["kubernetes"] = map[string]interface{}{
 					"server_version": serverVersion,
 					"nodes":          nodes,
 				}
+			}
 
-				installedMeshes := <-installedMeshesChan
-				if len(installedMeshes) > 0 {
-					resultsMap["detected-meshes"] = installedMeshes
-				}
+			resultsMap["detected-meshes"] = nil
+			if len(installedMeshes) > 0 {
+				resultsMap["detected-meshes"] = installedMeshes
 			}
 
 			respChan <- &models.LoadTestResponse{
@@ -448,8 +463,7 @@ func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, profil
 			}
 
 			h.persistPerformanceTestResult(ctx, req, result, testUUID, profileID, resultInst, prefObj, provider, respChan)
-
-		}(&k8context)
+		}(k8context)
 	}
 	wg.Wait()
 }
