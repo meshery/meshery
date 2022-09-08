@@ -32,7 +32,8 @@ mesheryctl app import -f [file/URL] -s [source-type]
 Example: mesheryctl app import -f ./application.yml -s "Kubernetes Manifest"`
 
 		if file == "" {
-			return fmt.Errorf("manifest path not provided \n\n%v", errMsg)
+			utils.Log.Debug("manifest path not provided")
+			return fmt.Errorf("manifest path not provided. Provide the path to the app manifest. \n\n%v", errMsg)
 		}
 
 		return nil
@@ -52,7 +53,7 @@ Example: mesheryctl app import -f ./application.yml -s "Kubernetes Manifest"`
 
 		// If app file is passed via flags
 		if !isValidSource(sourceType) {
-			return errors.Errorf("application source type (-s) invalid or not passed.\nAllowed source types: %s", strings.Join(validSourceTypes, ", "))
+			return errors.Errorf("Application source type (-s) invalid or not passed.\nAllowed source types: %s", strings.Join(validSourceTypes, ", "))
 		}
 
 		app, err := importApp(sourceType, file, appURL, true)
@@ -100,7 +101,7 @@ func importApp(sourceType string, file string, appURL string, save bool) (*model
 		if err != nil {
 			return nil, err
 		}
-		utils.Log.Debug("app file saved")
+		utils.Log.Debug("App file saved")
 		var response []*models.MesheryApplication
 		// failsafe (bad api call)
 		if resp.StatusCode != 200 {
@@ -110,11 +111,13 @@ func importApp(sourceType string, file string, appURL string, save bool) (*model
 
 		body, err := io.ReadAll(resp.Body)
 		if err != nil {
-			return nil, errors.Wrap(err, utils.AppError("failed to read response body"))
+			utils.Log.Debug("failed to read response body")
+			return nil, errors.Wrap(err, utils.AppError("couldn't read response from server. Please try again after some time"))
 		}
 		err = json.Unmarshal(body, &response)
 		if err != nil {
-			return nil, errors.Wrap(err, "failed to unmarshal response body")
+			utils.Log.Debug("failed to unmarshal JSON response")
+			return nil, errors.Wrap(err, "couldn't process JSON response from server.")
 		}
 		// set app
 		app = response[0]
@@ -161,11 +164,13 @@ func importApp(sourceType string, file string, appURL string, save bool) (*model
 
 		body, err := io.ReadAll(resp.Body)
 		if err != nil {
-			return nil, errors.Wrap(err, utils.AppError("failed to read response body"))
+			utils.Log.Debug("failed to read response body")
+			return nil, errors.Wrap(err, utils.AppError("couldn't read response from server. Please try again after some time"))
 		}
 		err = json.Unmarshal(body, &response)
 		if err != nil {
-			return nil, errors.Wrap(err, "failed to unmarshal response body")
+			utils.Log.Debug("failed to unmarshal JSON response")
+			return nil, errors.Wrap(err, "couldn't process response received from server.")
 		}
 
 		// set app

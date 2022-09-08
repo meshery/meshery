@@ -73,11 +73,13 @@ func getSourceTypes() error {
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return errors.Wrap(err, utils.PerfError("failed to read response body"))
+		utils.Log.Debug("failed to read response body")
+		return errors.Wrap(err, "couldn't read response from server. Please try again after some time")
 	}
 	err = json.Unmarshal(body, &response)
 	if err != nil {
-		return errors.Wrap(err, "failed to unmarshal response body")
+		utils.Log.Debug("failed to unmarshal JSON response body")
+		return errors.Wrap(err, "couldn't process response received from server.")
 	}
 
 	for _, apiResponse := range response {

@@ -46,7 +46,7 @@ Example: mesheryctl app onboard -f ./application.yml -s "Kubernetes Manifest"
 Description: Onboard application`
 
 		if file == "" && len(args) == 0 {
-			return fmt.Errorf("file path or application name not provided \n\n%v", errMsg)
+			return fmt.Errorf("file path or application name not provided. Provide file/app name \n\n%v", errMsg)
 		}
 		return nil
 	},
@@ -92,11 +92,13 @@ Description: Onboard application`
 			defer resp.Body.Close()
 			body, err := io.ReadAll(resp.Body)
 			if err != nil {
-				return errors.Wrap(err, utils.PerfError("failed to read response body"))
+				utils.Log.Debug("failed to read response body")
+				return errors.Wrap(err, "couldn't read response from server. Please try again after some time")
 			}
 			err = json.Unmarshal(body, &response)
 			if err != nil {
-				return errors.Wrap(err, "failed to unmarshal response body")
+				utils.Log.Debug("failed to unmarshal JSON response body")
+				return errors.Wrap(err, "couldn't process response received from server.")
 			}
 
 			index := 0
