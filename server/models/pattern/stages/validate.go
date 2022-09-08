@@ -29,15 +29,14 @@ func Validator(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFu
 				act.Terminate(fmt.Errorf("invalid workload of type: %s", svc.Type))
 				return
 			}
-			if k8s.Format {
-				k8s.Format.DePrettify(svc.Settings)
-			}
 			// Validate workload definition
 			if err := validateWorkload(svc.Settings, wc); err != nil {
 				act.Terminate(fmt.Errorf("invalid workload definition: %s", err))
 				return
 			}
-
+			if k8s.Format {
+				k8s.Format.DePrettify(svc.Settings)
+			}
 			// Store the workload capability in the metadata
 			data.PatternSvcWorkloadCapabilities[svcName] = wc
 

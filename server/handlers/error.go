@@ -106,6 +106,7 @@ const (
 	ErrRemoteApplicationURL             = "2249"
 	ErrClonePatternCode                 = "2246"
 	ErrCloneFilterCode                  = "2247"
+	ErrGenerateComponentsCode           = "2254"
 )
 
 var (
@@ -124,6 +125,10 @@ var (
 	ErrMesheryInstanceID = errors.New(ErrMesheryInstanceIDCode, errors.Alert, []string{"Error: Meshery Instance ID is empty or is invalid"}, []string{}, []string{}, []string{})
 	ErrPerformanceTest   = errors.New(ErrLoadTestCode, errors.Alert, []string{"load test error"}, []string{}, []string{"Load test endpoint could be not reachable"}, []string{"Make sure load test endpoint is reachable"})
 )
+
+func ErrGenerateComponents(err error) error {
+	return errors.New(ErrGenerateComponentsCode, errors.Alert, []string{"failed to generate components for the given payload"}, []string{err.Error()}, []string{}, []string{"Make sure the payload is valid"})
+}
 
 func ErrValidate(err error) error {
 	return errors.New(ErrValidateCode, errors.Alert, []string{"failed to validate the given value against the schema"}, []string{err.Error()}, []string{"unable to validate the value against given schema", "either value or schema might not be a valid cue expression"}, []string{"Make sure that the schema and value provided are valid cue values", "Make sure both schema and value are sent", "Make sure appropriate value types are sent"})

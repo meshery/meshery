@@ -33,7 +33,6 @@ var onboardCmd = &cobra.Command{
 	Use:   "onboard",
 	Short: "Onboard application",
 	Long:  `Command will trigger deploy of application`,
-	Args:  cobra.MinimumNArgs(0),
 	Example: `
 // Onboard application by providing file path
 mesheryctl app onboard -f [filepath] -s [source type]
@@ -45,6 +44,16 @@ mesheryctl app onboard -f ./application.yml -s "Kubernetes Manifest"
 * Usage of mesheryctl app onboard
 # ![app-onboard-usage](/assets/img/mesheryctl/app-onboard.png)
 	`,
+	Args: func(_ *cobra.Command, args []string) error {
+		const errMsg = `Usage: mesheryctl app onboard -f [filepath] -s [source type]
+Example: mesheryctl app onboard -f ./application.yml -s "Kubernetes Manifest"
+Description: Onboard application`
+
+		if file == "" && len(args) == 0 {
+			return fmt.Errorf("file path or application name not provided \n\n%v", errMsg)
+		}
+		return nil
+	},
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {

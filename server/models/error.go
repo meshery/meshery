@@ -86,6 +86,7 @@ const (
 	ErrRequestMeshsyncStoreCode           = "2237"
 	ErrBrokerSubscriptionCode             = "2238"
 	ErrContextAlreadyPersistedCode        = "2241"
+	ErrGetPackageCode                     = "2252"
 )
 
 var (
@@ -115,6 +116,10 @@ var (
 	ErrMesheryNotInCluster     = errors.New(ErrMesheryNotInClusterCode, errors.Alert, []string{"Error: Meshery is not running inside a cluster"}, []string{}, []string{}, []string{})
 	ErrContextAlreadyPersisted = errors.New(ErrContextAlreadyPersistedCode, errors.Alert, []string{"kubernetes context already persisted with provider"}, []string{"kubernetes context already persisted with provider"}, []string{}, []string{})
 )
+
+func ErrGetPackage(err error) error {
+	return errors.New(ErrGetPackageCode, errors.Alert, []string{"Could not get the package"}, []string{"", err.Error()}, []string{""}, []string{"Make sure the configurations are correct"})
+}
 
 func ErrBrokerSubscription(err error) error {
 	return errors.New(ErrBrokerSubscriptionCode, errors.Alert, []string{"Could not subscribe to the broker subject"}, []string{"", err.Error()}, []string{""}, []string{"Make sure meshery broker is healthy"})
