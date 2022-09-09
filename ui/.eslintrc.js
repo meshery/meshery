@@ -39,6 +39,10 @@ module.exports = {
     "keyword-spacing" : "error",
     "no-trailing-spaces" : "error",
     "object-curly-spacing" : ["error", "always"],
+    "arrow-spacing" : ["error", {
+      "before" : true,
+      "after" : true,
+    }],
     "key-spacing" : ["error", {
       "beforeColon" : true,
       "afterColon" : true,
@@ -61,6 +65,7 @@ module.exports = {
     ],
     "react/react-in-jsx-scope" : "off",
     "no-undef" : "error",
+    "react/prop-types" : 0,
     "react/jsx-uses-vars" : [
       2
     ],
