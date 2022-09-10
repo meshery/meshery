@@ -128,6 +128,6 @@ Meshery uses the following list of network ports to interface with its various c
 | <img src="{{ adapter.image }}" style="width:20px" /> [{{ adapter.name }}]({{ site.baseurl }}{{ adapter.url }}) | {{ adapter.port }} | Communication with Meshery Server |
 {% endif -%}
 {% endfor %}
-| [Meshery Perf](https://docs.meshery.io/functionality/performance-management) | 10013/gRPC    | Performance Management                            |
+| [Meshery Perf](https://docs.meshery.io/functionality/performance-management)            | 10013/gRPC    | Performance Management                            |
 
 See the [**Adapters**]({{ site.baseurl }}/concepts/architecture/adapters) section for more information on the function of an adapter.
