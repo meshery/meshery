@@ -25,13 +25,14 @@ import fetchPerformanceResults from "../graphql/queries/PerformanceResultQuery";
 import subscribePerformanceProfiles from "../graphql/subscriptions/PerformanceResultSubscription";
 import NodeDetails from "../NodeDetails";
 import ReplyIcon from '@material-ui/icons/Reply';
+import FacebookIcon from "./assets/facebookIcon";
+import LinkedinIcon from "./assets/linkedinIcon"
+import TwitterIcon from "./assets/twitterIcon";
 import {
   TwitterShareButton,
   LinkedinShareButton,
   FacebookShareButton,
-  TwitterIcon,
-  LinkedinIcon,
-  FacebookIcon
+
 } from "react-share"
 
 const COL_MAPPING = {
@@ -44,7 +45,8 @@ const styles = (theme) => ({
     margin : theme.spacing(0.4)
   },
   share : {
-    transform : "scaleX(-1)"
+    transform : "scaleX(-1)",
+    color : "#000"
   },
   paper : {
     padding : theme.spacing(1)
@@ -264,15 +266,18 @@ function generateColumnsForDisplay(sortOrder, setSelectedProfileIdxForChart, set
                         <TwitterShareButton className={classes.socialIcon} url={"https://meshery.io"} title={socialMessage}
                           hashtags={["opensource"]}
                         >
-                          <TwitterIcon  size={32} />
+                          {/* <img src={`/static/img/twitter.svg`} /> */}
+                          <TwitterIcon   />
                         </TwitterShareButton>
                         <LinkedinShareButton className={classes.socialIcon} url={"https://meshery.io"} summary={socialMessage}>
-                          <LinkedinIcon  size={32}  />
+                          {/* <img src={`/static/img/linkedin.svg`} /> */}
+                          <LinkedinIcon    />
                         </LinkedinShareButton>
                         <FacebookShareButton className={classes.socialIcon} url={"https://meshery.io"} quote={socialMessage}
                           hashtag={"#opensource"}
                         >
-                          <FacebookIcon  size={32}  />
+                          {/* <img src={`/static/img/facebook.svg`} /> */}
+                          <FacebookIcon  />
                         </FacebookShareButton>
                       </Paper>
                     </Fade>
