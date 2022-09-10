@@ -286,7 +286,7 @@ function ExtensionSandbox({ type, Extension }) {
 
   if (type === "navigator") {
     return isLoading ?
-      <LoadingScreen message="Establishing Remote Connection" />
+      <LoadingScreen animatedIcon="AnimatedMeshSync" message="Establishing Remote Connection" />
       : (
         <Extension url={createPathForRemoteComponent(getComponentURIFromPathForNavigator(extensions, getPath()))} />
       );
@@ -306,7 +306,7 @@ function ExtensionSandbox({ type, Extension }) {
 
   if (type === "account") {
     return isLoading ?
-      <LoadingScreen message="Establishing Remote Connection" />
+      <LoadingScreen animatedIcon="AnimatedMeshSync" message="Establishing Remote Connection" />
       :
       (
         <Extension url={createPathForRemoteComponent(getComponentURIFromPathForAccount(extensions, getPath()))} />

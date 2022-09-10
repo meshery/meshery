@@ -13,13 +13,11 @@ keywords:
   - meshery-osm
   - meshery-nsm
   - meshery-traefik-mesh
-  - meshery-cpx
   - meshery-nginx-sm
   - meshery-app-mesh
   - meshery-server
   - meshery-broker
   - meshery-meshsync
-  - meshery-perf
 deprecated: false
 
 # A chart can be either an 'application' or a 'library' chart.
@@ -65,7 +63,7 @@ dependencies:
     condition: meshery-traefik-mesh.enabled
   - name: meshery-cpx
     version: 0.5.0
-    condition: meshery-cpx.disabled
+    condition: meshery-cpx.enabled
   - name: meshery-nginx-sm
     version: 0.5.0
     condition: meshery-nginx-sm.enabled
@@ -86,7 +84,7 @@ dependencies:
     condition: meshery-cilium.enabled
   - name: meshery-perf
     version: 0.5.0
-    condition: meshery-perf.disabled
+    condition: meshery-perf.enabled
 
 maintainers:
   - name: Layer5 Authors

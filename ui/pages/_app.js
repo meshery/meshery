@@ -32,11 +32,12 @@ import getPageContext from '../components/PageContext';
 import { MESHSYNC_EVENT_SUBSCRIPTION, OPERATOR_EVENT_SUBSCRIPTION } from '../components/subscription/helpers';
 import { GQLSubscription } from '../components/subscription/subscriptionhandler';
 import dataFetch, { promisifiedDataFetch } from '../lib/data-fetch';
-import { actionTypes, makeStore } from '../lib/store';
+import { actionTypes, makeStore, toggleCatalogContent } from '../lib/store';
 import theme, { styles } from "../themes";
 import { getK8sConfigIdsFromK8sConfig } from '../utils/multi-ctx';
 import './../public/static/style/index.css';
 import subscribeK8sContext from "../components/graphql/subscriptions/K8sContextSubscription";
+import { bindActionCreators } from 'redux';
 
 if (typeof window !== 'undefined') {
   require('codemirror/mode/yaml/yaml');
@@ -76,7 +77,20 @@ class MesheryApp extends App {
   componentDidMount() {
     this.loadConfigFromServer(); // this works, but sometimes other components which need data load faster than this data is obtained.
     this.initSubscriptions([]);
-
+    dataFetch(
+      "/api/user/prefs",
+      { credentials : "same-origin",
+        method : "GET",
+        credentials : "include", },
+      (result) => {
+        if (result) {
+          this.props.toggleCatalogContent({
+            catalogVisibility : result?.usersExtensionPreferences?.catalogContent || true
+          })
+        }
+      },
+      err => console.error(err)
+    )
     const k8sContextSubscription = (page="", search="", pageSize="10", order="") => {
       return subscribeK8sContext((result) => {
         this.setState({ k8sContexts : result.k8sContext }, () => this.setActiveContexts("all"))
@@ -356,7 +370,11 @@ const mapStateToProps = state => ({
   meshSyncSubscription : state.get("meshSyncSubscription")
 })
 
-const MesheryWithRedux = connect(mapStateToProps)(MesheryApp);
+const mapDispatchToProps = dispatch => ({
+  toggleCatalogContent : bindActionCreators(toggleCatalogContent, dispatch)
+})
+
+const MesheryWithRedux = connect(mapStateToProps, mapDispatchToProps)(MesheryApp);
 
 const MesheryAppWrapper = (props) => {
   return (

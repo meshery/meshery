@@ -32,7 +32,7 @@ export const rjsfTheme = createTheme({
     },
     MuiInput : {
       root : {
-        width : '18%'
+        width : '50%',
       }
     },
     MuiBox : {

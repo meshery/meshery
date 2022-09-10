@@ -126,6 +126,8 @@ func ConvertMapInterfaceMapString(v interface{}, prettify bool) interface{} {
 		if x["type"] == "string" && foundFormatIntOrString {
 			x["type"] = "integer"
 		}
+	case string:
+		return man.FormatToReadableString(x)
 	}
 
 	return v

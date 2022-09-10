@@ -25,7 +25,7 @@ function Extension({ grafana, prometheus, updateLoadTestData, url, isDrawerColla
   const [loading, err, RemoteComponent] = useRemoteComponent(url);
 
   if (loading) {
-    return <LoadingScreen message="Loading Meshery Extension" />;
+    return <LoadingScreen animatedIcon="AnimatedMeshSync" message="Loading Meshery Extension" />;
   }
 
   if (err != null) {

@@ -5,6 +5,7 @@ import (
 
 	"time"
 
+	"github.com/layer5io/meshkit/utils/events"
 	"github.com/vmihailenco/taskq/v3"
 )
 
@@ -92,6 +93,7 @@ type HandlerInterface interface {
 	PatternFileHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	OAMRegisterHandler(rw http.ResponseWriter, r *http.Request)
 	ValidationHandler(rw http.ResponseWriter, r *http.Request)
+	ComponentGenerationHandler(rw http.ResponseWriter, r *http.Request)
 	OAMComponentDetailsHandler(rw http.ResponseWriter, r *http.Request)
 	OAMComponentDetailByIDHandler(rw http.ResponseWriter, r *http.Request)
 	PatternFileRequestHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
@@ -165,6 +167,7 @@ type HandlerConfig struct {
 
 	DashboardK8sResourcesChan *DashboardK8sResourcesChan
 	K8scontextChannel         *K8scontextChan
+	EventsBuffer              *events.EventStreamer
 }
 
 // SubmitMetricsConfig is used to store config used for submitting metrics

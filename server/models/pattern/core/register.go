@@ -14,7 +14,6 @@ import (
 	"github.com/layer5io/meshery/server/internal/store"
 	"github.com/layer5io/meshery/server/models/pattern/patterns/k8s"
 	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
-	"github.com/layer5io/meshkit/utils"
 	"github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/layer5io/meshkit/utils/manifests"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -70,6 +69,11 @@ func RegisterWorkload(data []byte) (err error) {
 
 	schema := map[string]interface{}{}
 	_ = json.Unmarshal([]byte(workload.OAMRefSchema), &schema)
+	if k8s.Format {
+		k8s.Format.Prettify(schema)
+	}
+	temp, _ := json.Marshal(schema)
+	workload.OAMRefSchema = string(temp)
 	if workload.Metadata == nil {
 		workload.Metadata = map[string]string{}
 	}
@@ -589,11 +593,8 @@ func GetK8Components(ctxt context.Context, config []byte) (*manifests.Component,
 			if err != nil {
 				return
 			}
-			if k8s.Format {
-				k8s.Format.Prettify(resolved)
-			}
-			updatedRes := utils.TransformMapKeys(resolved, func(s string) string { return strings.ReplaceAll(s, " ", "") })
-			b, err = json.Marshal(updatedRes)
+
+			b, err = json.Marshal(resolved)
 			if err != nil {
 				return
 			}

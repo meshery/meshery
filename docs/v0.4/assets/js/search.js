@@ -62,11 +62,13 @@
 		if (results.length) {
 			var resultsHTML = "";
 			results.forEach(function (result) {
-				var item = window.data[result.ref],
+
+  				var item = window.data[result.ref]
+                                if (item.title) {
 					contentPreview = getPreview(query, item.content, 170),
 					titlePreview = getPreview(query, item.title);
-
-				resultsHTML += "<li><h4><a href='" + item.url.trim() + "'>" + titlePreview + "</a></h4><p><small>" + contentPreview + "</small></p></li>";
+					resultsHTML += "<li><h4><a href='" + item.url.trim() + "'>" + titlePreview + "</a></h4><p><small>" + contentPreview + "</small></p></li>";
+				}
 			});
 
 			searchResultsEl.innerHTML = resultsHTML;
