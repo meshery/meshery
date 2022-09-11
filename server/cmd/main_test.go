@@ -9,5 +9,5 @@ func TestMain(t *testing.T) {
 		t.Skip("Skipping test in short mode.")
 	}
 
-	t.Log("Need to run main() skipping")
+	t.Log("Need to run main() skipping.")
 }

@@ -6,7 +6,7 @@ contexts:
     components:
       - meshery-istio
     channel: stable
-    version: v0.5.56
+    version: v0.6.6
   local2:
     components:
       - meshery-istio
