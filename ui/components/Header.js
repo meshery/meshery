@@ -393,7 +393,7 @@ function K8sContextMenu({
 
                   function getStatus(status) {
                     if (status) {
-                      return status
+                      return STATUS.ACTIVE
                     } else {
                       return STATUS.DISABLED
                     }
