@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Grid, Box, Pagination } from "@mui/material";
-import MesheryCard from "./MesheryCard";
+import MesheryCard from "../MesheryCard";
 
 const INITIAL_GRID_SIZE = { xl: 4, md: 6, xs: 12 };
 
