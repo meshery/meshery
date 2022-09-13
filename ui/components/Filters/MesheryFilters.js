@@ -22,7 +22,7 @@ import MesheryFilterGrid from "./MesheryFilterGrid";
 import MesheryFilterTable from "./MesheryFilterTable";
 import AddCircleOutlineRoundedIcon from "@mui/icons-material/AddCircleOutlineRounded";
 import EmptyState from "@/components/EmptyStateComponent";
-
+import { useTheme } from "@mui/system";
 function resetSelectedFilter() {
   return { show: false, filter: null };
 }
@@ -180,7 +180,7 @@ function MesheryFilters({ user }) {
       )}
       {!selectedFilter.show && viewType === "grid" && filters.length === 0 && (
         <EmptyState
-          configuration="Designs"
+          configuration="Filters"
           Button1={
             <Button
               aria-label="Create Filter"
@@ -194,7 +194,7 @@ function MesheryFilters({ user }) {
               Create Filters
             </Button>
           }
-          Button2={<UploadImport configuration="Designs" />}
+          Button2={<UploadImport configuration="Filters" />}
         />
       )}
       {!selectedFilter.show && viewType === "grid" && (
@@ -205,9 +205,9 @@ function MesheryFilters({ user }) {
           //  handleSubmit={handleSubmit}
           setSelectedFilter={setSelectedFilter}
           selectedFilter={selectedFilter}
-          pages={Math.ceil(count / pageSize)}
-          setPage={setPage}
-          selectedPage={page}
+          // pages={Math.ceil(count / pageSize)}
+          // setPage={setPage}
+          // selectedPage={page}
         />
       )}
     </>
