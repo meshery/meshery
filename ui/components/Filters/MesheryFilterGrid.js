@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import { Grid, Box, Pagination } from "@mui/material";
+import { Grid, Box, Pagination,Typography } from "@mui/material";
 import MesheryCard from "../MesheryCard";
 
 const INITIAL_GRID_SIZE = { xl: 4, md: 6, xs: 12 };
 
-function MesheryFilterGridItem({ filter, handleDeploy, handleUnDeploy, handleSubmit, setSelectedFilters }) {
+function MesheryFilterGridItem({ filter, handleDeploy, handleUnDeploy, handleSubmit, setSelectedFilter }) {
   const [gridProps, setGridProps] = useState(INITIAL_GRID_SIZE);
   // const [yaml, setYaml] = useState(filetrs.filter_file);
 
@@ -22,7 +22,7 @@ function MesheryFilterGridItem({ filter, handleDeploy, handleUnDeploy, handleSub
          handleUnDeploy={() => handleUnDeploy(filters.filters_file)}
         //  deleteHandler={() => handleSubmit({ data : yaml, id : filters.id, type : FILE_OPS.DELETE ,name : filters.name })}
         //  updateHandler={() => handleSubmit({ data : yaml, id : filters.id, type : FILE_OPS.UPDATE ,name : filters.name })}
-        // setSelectedFilters={() => setSelectedFilters({ fileter : filter, show : true })}
+        // setSelectedFilter={() => setSelectedFilter({ fileter : filter, show : true })}
         //  setYaml={setYaml}
       />
     </Grid>
@@ -42,7 +42,7 @@ function MesheryFilterGridItem({ filter, handleDeploy, handleUnDeploy, handleSub
  *  handleUnDeploy: (filter_file: any) => void,
  *  handleSubmit: (data: any, id: string, name: string, type: string) => void,
  *  setSelectedFiletrs : ({show: boolean, filter:any}) => void,
- *  selectedFilters: {show : boolean, filter : any},
+ *  selectedFilter: {show : boolean, filter : any},
  *  pages?: number,
  *  selectedPage?: number,
  *  setPage: (page: number) => void
@@ -54,15 +54,15 @@ function MesheryFilterGrid({
   handleDeploy,
   handleUnDeploy,
   handleSubmit,
-  setSelectedFilters,
-  selectedFilters,
+  setSelectedFilter,
+  selectedFilter,
   pages = 1,
   setPage,
   selectedPage,
 }) {
   return (
     <div>
-      {!selectedFilters.show && (
+      {!selectedFilter.show && (
         <Grid container spacing={3} sx={{ padding: "1rem" }}>
           {filters.map((filter) => (
             <MesheryFilterGridItem
@@ -71,20 +71,9 @@ function MesheryFilterGrid({
               handleDeploy={handleDeploy}
               // handleUnDeploy={handleUnDeploy}
               // handleSubmit={handleSubmit}
-              setSelectedFilters={setSelectedFilters}
+              setSelectedFilter={setSelectedFilter}
             />
           ))}
-          {!selectedFilters.show && filters.length === 0 && (
-            <Typography
-              align="center"
-              sx={{
-                fontSize: "2rem",
-                marginBottom: "2rem",
-              }}
-            >
-              No Filters Found
-            </Typography>
-          )}
           {filters.length ? (
             <Box display="flex" justifyContent="center" marginTop={2} alignItems="center">
               <Pagination count={pages} page={selectedPage + 1} onChange={(_, page) => setPage(page - 1)} />
