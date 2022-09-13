@@ -100,7 +100,7 @@ mesheryctl system update --skip-reset
 
 		switch currCtx.GetPlatform() {
 		case "docker":
-
+			log.Info("Updating Meshery containers")
 			err = utils.UpdateMesheryContainers()
 			if err != nil {
 				return errors.Wrap(err, utils.SystemError("failed to update Meshery containers"))
