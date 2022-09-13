@@ -118,22 +118,12 @@ mesheryctl system update --skip-reset
 			if err != nil {
 				return err
 			}
+			mesheryImageVersion := currCtx.GetVersion()
 			// If the user skips reset, then just restart the pods else fetch updated manifest files and apply them
 			if !utils.SkipResetFlag {
-				// get value overrides to install the helm chart
-				overrideValues := utils.SetOverrideValues(currCtx, "latest")
 
 				// Apply the latest helm chart along with the default image tag specified in the charts "stable-latest"
-				if err = kubeClient.ApplyHelmChart(meshkitkube.ApplyHelmChartConfig{
-					Namespace:       utils.MesheryNamespace,
-					CreateNamespace: true,
-					ChartLocation: meshkitkube.HelmChartLocation{
-						Repository: utils.HelmChartURL,
-						Chart:      utils.HelmChartName,
-					},
-					Action:         meshkitkube.UPGRADE,
-					OverrideValues: overrideValues,
-				}); err != nil {
+				if err = applyHelmCharts(kubeClient, currCtx, mesheryImageVersion, false); err != nil {
 					return errors.Wrap(err, "cannot update Meshery")
 				}
 			}
