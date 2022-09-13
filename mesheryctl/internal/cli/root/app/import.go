@@ -117,7 +117,7 @@ func importApp(sourceType string, file string, appURL string, save bool) (*model
 		err = json.Unmarshal(body, &response)
 		if err != nil {
 			utils.Log.Debug("failed to unmarshal JSON response")
-			return nil, errors.Wrap(err, "couldn't process JSON response from server.")
+			return nil, errors.Wrap(err, "couldn't process JSON response from server")
 		}
 		// set app
 		app = response[0]

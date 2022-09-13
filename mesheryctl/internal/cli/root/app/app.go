@@ -79,7 +79,7 @@ func getSourceTypes() error {
 	err = json.Unmarshal(body, &response)
 	if err != nil {
 		utils.Log.Debug("failed to unmarshal JSON response body")
-		return errors.Wrap(err, "couldn't process response received from server.")
+		return errors.Wrap(err, "couldn't process response received from server")
 	}
 
 	for _, apiResponse := range response {
