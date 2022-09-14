@@ -73,7 +73,7 @@ function Mesh() {
   return (
     <NoSsr>
       <Head>
-        <title>{capitalize(name)} Management</title>
+        <title>{capitalize(name)} Management | Meshery</title>
       </Head>
       <NoSsr>
         <div className={classes.wrapper}>

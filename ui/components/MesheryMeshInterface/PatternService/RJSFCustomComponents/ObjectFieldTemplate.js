@@ -9,6 +9,8 @@ import AddButton from "@material-ui/icons/Add";
 import { Box, IconButton, Typography } from '@material-ui/core';
 import EnlargedTextTooltip from '../EnlargedTextTooltip';
 import HelpOutlineIcon from '../HelpOutlineIcon';
+import ArrowDown from '@material-ui/icons/KeyboardArrowDown';
+import ArrowUp from '@material-ui/icons/KeyboardArrowUp';
 
 const { canExpand } = utils;
 
@@ -25,7 +27,7 @@ const ObjectFieldTemplate = ({
   description,
   title,
   properties,
-  required,
+  // required,
   disabled,
   readonly,
   uiSchema,
@@ -35,9 +37,10 @@ const ObjectFieldTemplate = ({
   onAddClick,
 }) => {
   const classes = useStyles();
+  const [show, setShow] = React.useState(false);
 
-  const CustomTitleField = ({ title }) => (
-    <Box mb={1} mt={1}>
+  const CustomTitleField = ({ title, id, description, properties }) => {
+    return <Box mb={1} mt={1} id={id} >
       <Grid container justify="space-between" alignItems="center">
         <Grid item mb={1} mt={1}>
           <Typography variant="body1" style={{ fontWeight : "bold", display : "inline" }}>{title.charAt(0).toUpperCase() + title.slice(1)}{" "}</Typography>
@@ -47,8 +50,10 @@ const ObjectFieldTemplate = ({
             </EnlargedTextTooltip>}
         </Grid>
 
-        {canExpand(schema, uiSchema, formData) && (
-          <Grid item={true}>
+        {canExpand(schema, uiSchema, formData) ? (
+          <Grid item={true} onClick={() => {
+            if (!show) setShow(true);
+          }}>
             <IconButton
               className="object-property-expand"
               onClick={onAddClick(schema)}
@@ -57,63 +62,55 @@ const ObjectFieldTemplate = ({
               <AddButton />
             </IconButton>
           </Grid>
+        ) : (
+          Object.keys(properties).length > 0 && (
+            <Grid item={true}>
+              <IconButton
+                className="object-property-expand"
+                onClick={() => setShow(!show)}
+              >
+                {show ? <ArrowUp /> : <ArrowDown />}
+              </IconButton>
+            </Grid>
+          )
         )}
       </Grid>
-
     </Box>
-  );
+  };
+
+  const Properties = (<Grid container={true} spacing={2} className={classes.objectFieldGrid} style={Object.keys(properties).length === 0 || schema["$schema"] ? { border : "none" } : null}>
+    {properties.map((element, index) => {
+      return (
+        element.hidden ? (
+          element.content
+        ) : (
+          <Grid
+            item={true}
+            xs={element.name === "name" || element.name === "namespace" ? 6 : 12}
+            key={index}
+          >
+            {element.content}
+          </Grid>
+        )
+      );
+    })}
+  </Grid>)
+
+  const fieldTitle = uiSchema['ui:title'] || title;
 
   return (
     <>
-      {(uiSchema['ui:title'] || title) && (
-        <CustomTitleField
-          id={`${idSchema.$id}-title`}
-          title={title}
-          description={description}
-          required={required}
-        />
-      )}
-
-      {/* {description && (
-        <CustomDescriptionField
-          id={`${idSchema.$id}-description`}
-          description={description}
-        />
-      )} */}
-
-      <Grid container={true} spacing={2} className={classes.objectFieldGrid} style={Object.keys(properties).length === 0 || schema["$schema"] ? { border : "none" } : null}>
-        {properties.map((element, index) => {
-          // console.log("eke", element)
-          // Remove the <Grid> if the inner element is hidden as the <Grid>
-          // itself would otherwise still take up space.
-          return (
-            element.hidden ? (
-              element.content
-            ) : (
-              <Grid
-                item={true}
-                xs={element.name === "name" || element.name === "namespace" ? 6 : 12}
-                key={index}
-              >
-                {element.content}
-              </Grid>
-            )
-          );
-        })}
-        {/** canExpand(schema, uiSchema, formData) && (
-          <Grid container justify='flex-end'>
-            <Grid item={true}>
-              <IconButton
-                className='object-property-expand'
-                onClick={onAddClick(schema)}
-                disabled={disabled || readonly}
-              >
-              <AddButton/>
-              </IconButton>
-            </Grid>
-          </Grid>
-        ) */}
-      </Grid>
+      {fieldTitle ? (
+        <>
+          <CustomTitleField
+            id={`${idSchema.$id}-title`}
+            title={fieldTitle}
+            description={description}
+            properties={properties}
+          />
+          {Object.keys(properties).length > 0 && show && Properties}
+        </>
+      ) : Properties}
     </>
   );
 };
