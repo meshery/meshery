@@ -128,7 +128,7 @@ mesheryctl system context delete [context name]`
 		}
 		_, exists := configuration.Contexts[args[0]]
 		if !exists {
-			return fmt.Errorf("No context name found : %s", args[0])
+			return fmt.Errorf("no context name found : %s", args[0])
 		}
 
 		if viper.GetString("current-context") == args[0] {
