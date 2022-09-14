@@ -171,7 +171,7 @@ func (mch *MesheryControllersHelper) UpdateOperatorsStatusMap(isUndeployed map[s
 	return mch
 }
 
-var OperatorIsUndeployed map[string]bool = make(map[string]bool)
+var OperatorIsUndeployed = make(map[string]bool)
 var Opmx sync.Mutex
 
 // looks at the status of Meshery Operator for each cluster and takes necessary action.
