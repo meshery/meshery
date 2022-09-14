@@ -1,8 +1,10 @@
 import { Grid, Typography, Button, Switch } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
+import React from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { toggleCatalogContent } from "../lib/store";
+import Head from 'next/head';
 
 
 const styles = (theme) => ({
@@ -64,64 +66,68 @@ const Extensions = ({ classes, catalogVisibility, toggleCatalogContent }) => {
 
 
   return (
-    <Grid container spacing={1} >
-      <Grid item {...INITIAL_GRID_SIZE}>
-        <div className={classes.card}>
-          <Typography className={classes.frontContent} variant="h5" component="div">
-            {"MeshMap"}
-          </Typography>
-
-          <Typography className={classes.frontSideDescription} variant="body">
-            <img className={classes.img} src="/static/img/meshmap.svg" />
-            Collaboratively design and manage your Kubernetes clusters, service mesh deployments, and cloud native apps.
-            MeshMap is now in private beta. Sign-up today to for early access!
-          </Typography>
-          <div style={{ textAlign : "right" }}>
-
-            <Button
-              variant="contained"
-              color="primary"
-              className={classes.button}
-              onClick={(e) => handleSignUp(e)}>
-              Sign Up
-            </Button>
-          </div>
-        </div>
-      </Grid>
-      <Grid item {...INITIAL_GRID_SIZE}>
-
-        <div className={classes.card} >
-          <Typography className={classes.frontContent} variant="h5" component="div">
-            {"Meshery Catalog"}
-          </Typography>
-
-          <Typography className={classes.frontSideDescription} variant="body">
-            <img className={classes.img} src="/static/img/meshery_catalog.svg" />
-            <div style={{
-              display : "inline", position : "relative",
-            }}>
-              Enable access to the cloud native catalog, supporting <a href="https://service-mesh-patterns.github.io/service-mesh-patterns" className={classes.link
-              } variant="body">Service Mesh Patterns</a>, WebAssembly filters, eBPF programs (<span style={{ fontStyle : "italic" }}>soon</span>), and OPA policies (<span style={{ fontStyle : "italic" }}>soon</span>). Import any catalog item and customize.
-            </div>
-          </Typography>
-
-          <Grid container spacing={2} className={classes.grid} direction="row" justifyContent="space-between" alignItems="baseline" style={{ position : "absolute", paddingRight : "3rem", paddingLeft : ".5rem", bottom : "1.5rem", }}>
-            <Typography variant="subtitle2" style={{ fontStyle : "italic" }}>
-              Explore the <a href="https://meshery.io/catalog" target="_blank" rel="noreferrer" className={classes.link}>Meshery Catalog</a>
+    <React.Fragment>
+      <Head>
+        <title>Extensions | Meshery</title>
+      </Head>
+      <Grid container spacing={1} >
+        <Grid item {...INITIAL_GRID_SIZE}>
+          <div className={classes.card}>
+            <Typography className={classes.frontContent} variant="h5" component="div">
+              {"MeshMap"}
             </Typography>
 
+            <Typography className={classes.frontSideDescription} variant="body">
+              <img className={classes.img} src="/static/img/meshmap.svg" />
+              Collaboratively design and manage your Kubernetes clusters, service mesh deployments, and cloud native apps.
+              MeshMap is now in private beta. Sign-up today to for early access!
+            </Typography>
             <div style={{ textAlign : "right" }}>
-              <Switch
-                checked={catalogVisibility}
-                onClick={(e) => handleToggle(e)}
-                name="OperatorSwitch"
+              <Button
+                variant="contained"
                 color="primary"
-              />
+                className={classes.button}
+                onClick={(e) => handleSignUp(e)}>
+                Sign Up
+              </Button>
             </div>
-          </Grid>
-        </div>
+          </div>
+        </Grid>
+        <Grid item {...INITIAL_GRID_SIZE}>
+
+          <div className={classes.card} >
+            <Typography className={classes.frontContent} variant="h5" component="div">
+              {"Meshery Catalog"}
+            </Typography>
+
+            <Typography className={classes.frontSideDescription} variant="body">
+              <img className={classes.img} src="/static/img/meshery_catalog.svg" />
+              <div style={{
+                display : "inline", position : "relative",
+              }}>
+                Enable access to the cloud native catalog, supporting <a href="https://service-mesh-patterns.github.io/service-mesh-patterns" className={classes.link
+                } variant="body">Service Mesh Patterns</a>, WebAssembly filters, eBPF programs (<span style={{ fontStyle : "italic" }}>soon</span>), and OPA policies (<span style={{ fontStyle : "italic" }}>soon</span>). Import any catalog item and customize.
+              </div>
+            </Typography>
+
+            <Grid container spacing={2} className={classes.grid} direction="row" justifyContent="space-between" alignItems="baseline" style={{ position : "absolute", paddingRight : "3rem", paddingLeft : ".5rem", bottom : "1.5rem", }}>
+              <Typography variant="subtitle2" style={{ fontStyle : "italic" }}>
+                Explore the <a href="https://meshery.io/catalog" target="_blank" rel="noreferrer" className={classes.link}>Meshery Catalog</a>
+              </Typography>
+
+              <div style={{ textAlign : "right" }}>
+                <Switch
+                  checked={catalogVisibility}
+                  onClick={(e) => handleToggle(e)}
+                  name="OperatorSwitch"
+                  color="primary"
+                />
+              </div>
+            </Grid>
+          </div>
+        </Grid >
       </Grid >
-    </Grid >
+    </React.Fragment>
   )
 }
 
