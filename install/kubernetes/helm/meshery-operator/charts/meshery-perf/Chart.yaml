@@ -4,7 +4,7 @@ description: Meshery-perf chart.
 source: 
   - https://github.com/layer5io/meshery-perf
 
-deprecated: false
+deprecated: true
 
 # A chart can be either an 'application' or a 'library' chart.
 #

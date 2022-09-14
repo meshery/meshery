@@ -35,7 +35,7 @@ Follow these steps and you'll be right at home.
 
 ## <a name="contributing">General Contribution Flow</a>
 
-To contribute to Meshery, please follow the fork-and-pull request workflow described [here]({{site.baseurl}}/project/contributing/CONTRIBUTING-gitflow.md).
+To contribute to Meshery, from creating a fork to creating pull request, please follow the basic fork-and-pull request workflow described [here]({{site.baseurl}}/project/contributing/contributing-gitflow).
 
 ### <a name="commit-signing">Signing-off on Commits (Developer Certificate of Origin)</a>
 

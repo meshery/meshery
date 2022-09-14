@@ -1,0 +1,663 @@
+# We assume a few things about the schema. We use the graphql-ruby gem to generate docs, which enforces:
+# - All mutations have a single input field named 'input'
+# If these things change, then doc generation for GraphQL will break.
+
+# ================= COMMONS =========================
+
+scalar Map
+scalar Time
+scalar Any
+
+# Service Mesh Types
+enum MeshType {
+  # All meshes that Meshery supports
+  ALL_MESH
+
+  # Invalid Mesh
+  INVALID_MESH
+
+  # AWS App Mesh
+  APP_MESH
+
+  # Citrix Service Mesh
+  CITRIX_SERVICE_MESH
+
+  # Consul by HashiCorp
+  CONSUL
+
+  # Istio Service Mesh
+  ISTIO
+
+  # Kuma
+  KUMA
+
+  # LinkerD Service Mesh
+  LINKERD
+
+  # Traefik Mesh
+  TRAEFIK_MESH
+
+  # Octarine Mesh
+  OCTARINE
+
+  # Network Service Mesh
+  NETWORK_SERVICE_MESH
+
+  # VMware Tanzu Service Mesh
+  TANZU
+
+  # Open Service Mesh
+  OPEN_SERVICE_MESH
+
+  # NGINX Service Mesh
+  NGINX_SERVICE_MESH
+
+  # Cilium Service Mesh
+  CILIUM_SERVICE_MESH
+}
+
+enum MesheryController {
+    BROKER
+    OPERATOR
+    MESHSYNC
+  }
+
+enum MesheryControllerStatus {
+    DEPLOYED
+    NOTDEPLOYED
+    DEPLOYING
+    UNKOWN
+  }
+
+type MesheryControllersStatusListItem {
+    contextId: String!
+    controller: MesheryController! 
+    status: MesheryControllerStatus!
+  }
+
+type MeshSyncEvent {
+    type: String!
+    object: Any!
+    contextId: String!
+  }
+
+
+enum Status {
+  # Enabled
+  ENABLED
+
+  # Connected (Applicable only for NATS status for now)
+  CONNECTED
+
+  # Disabled
+  DISABLED
+
+  # Processing
+  PROCESSING
+
+  # Unknown
+  UNKNOWN
+}
+
+type Error {
+  # Error Code
+  code: String!
+
+  # Error Details
+  description: String!
+}
+
+# ================ DASHBOARD ================
+
+type Resource {
+  # Name of resource
+  kind: String!,
+  # Number of resouce
+  count: Int!
+}
+
+# Details about discovered workloads
+type ClusterResources {
+  resources: [Resource!]!,
+}
+
+# =================== ADDONS =====================
+
+# Input for changing Addon Status
+input AddonStatusInput {
+  # Filter by Serice Mesh
+  selector: MeshType
+  #kubernetes context ID
+  k8scontextID: String!
+  # Desired Status
+  targetStatus: Status!
+}
+
+# Deatils about the Addon Component
+type AddonList {
+  # Name
+  name: String!
+
+  # Owner
+  owner: String!
+}
+
+# ============== DATA PLANE =======================
+
+# Data Plane for a particular Mesh
+type DataPlane {
+  # Service Mesh Name
+  name: String!
+
+  # Members of the Mesh
+  proxies: [Container!]!
+}
+
+type Container {
+  controlPlaneMemberName: String!
+  containerName: String!
+  image: String!
+  status: Container_Status
+  # args: NOT IMPLEMENTED
+  ports: [Container_Port]
+  # env: NOT IMPLEMENTED,
+  resources: Any
+}
+
+type Container_Status {
+  containerStatusName: String!
+  image: String!
+  state: Any
+  lastState: Any
+  ready: Boolean!
+  restartCount: Any
+  # image: String!
+  # imageID: String!
+  # containerID: String!
+  started: Boolean!
+  imageID: Any
+  containerID: Any
+}
+
+type Container_Port {
+  name: String
+  containerPort: Int!
+  protocol: String!
+}
+
+# ============== CONTROL PLANE =======================
+
+# Filter Control Plane Query
+input ServiceMeshFilter {
+  # Filter by Service Mesh
+  type: MeshType
+  k8sClusterIDs: [String!] 
+}
+
+# Control Plane data for a particular Mesh
+type ControlPlane {
+  # Service Mesh Name
+  name: String!
+
+  # Members of the Mesh
+  members: [ControlPlaneMember!]!
+}
+
+# Member Details
+type ControlPlaneMember {
+  # Name
+  name: String!
+
+  # Component
+  component: String!
+
+  # Version
+  version: String!
+
+  # Namespace
+  namespace: String!
+
+  # DataPlanes
+  data_planes: [Container!]
+}
+
+# ============== OPERATOR =============================
+
+# Input for status change of Meshery Operator
+input OperatorStatusInput {
+  # Desired status for Meshery Operator
+  targetStatus: Status!
+  
+  contextID: String!
+}
+
+type OperatorStatusPerK8sContext{
+  contextID: String!
+  operatorStatus: OperatorStatus!
+}
+type OperatorControllerStatusPerK8sContext{
+  contextID: String!
+  OperatorControllerStatus: OperatorControllerStatus!
+}
+# Status of Meshery Operator and its controllers
+type OperatorStatus {
+  # Status of Meshery Operator
+  status: Status!
+
+  # Verion of Meshery Operator
+  version: String!
+
+  # Details about various Controllers of Meshery Operator
+  controllers: [OperatorControllerStatus!]!
+
+  # Error Logs encountered by Meshery Operator
+  error: Error
+
+  contextID: String!
+}
+
+# Controllers of Meshery Operator
+type OperatorControllerStatus {
+  # Controller Name
+  name: String!
+
+  # Controller Verison
+  version: String!
+
+  # Controller Status
+  status: Status!
+
+  # Controller Error Log
+  error: Error
+
+  contextID: String!
+
+}
+
+# ============== NAMESPACE =============================
+
+# Type to define a k8s Namespace
+type NameSpace {
+  # Namespace Name
+  namespace: String!
+}
+
+# ================ K8s Context ======================
+
+type K8sContext {
+  id: String!,
+  name: String!,
+  auth: Map!,
+  cluster: Map!,
+  server: String!,
+  owner: ID!,
+  created_by: ID!,
+  meshery_instance_id: ID!,
+  kubernetes_server_id: ID!,
+  updated_at: String!,
+  created_at: String!
+}
+
+type K8sContextsPage {
+  total_count: Int!,
+  contexts: [K8sContext]! 
+}
+
+# ================= Configuration ===================
+
+type ConfigurationPage {
+  applications: ApplicationPage
+  patterns: PatternPageResult
+  filters: FilterPage
+}
+
+# ================= Applications ====================
+
+type ApplicationPage {
+  page: Int!
+  page_size: Int!
+  total_count: Int!
+  applications: [ApplicationResult]
+}
+
+type ApplicationResult {
+  id: ID!
+  name: String!
+  application_file: String!
+  type: NullString!
+  user_id: String!
+  location: Location!
+  created_at: String
+  updated_at: String
+}
+
+type NullString {
+  String: String!
+  Valid: Boolean!
+}
+
+# ================= Filters =======================
+
+type FilterPage {
+  page: Int!
+  page_size: Int!
+  total_count: Int!
+  filters: [FilterResult]
+}
+
+type FilterResult {
+  id: ID!
+  name: String!
+  filter_file: String!
+  user_id: String!
+  location: Location!
+  visibility: String!
+  catalog_data: Map
+  created_at: String
+  updated_at: String
+}
+
+type CatalogFilter {
+  id: ID!
+  name: String!
+  filter_file: String!
+  user_id: String!
+  location: Location!
+  visibility: String!
+  catalog_data: Map!
+  created_at: String
+  updated_at: String 
+}
+
+# ============== Patterns =================================
+
+type PatternPageResult {
+  page: Int!
+  page_size: Int!
+  total_count: Int!
+  patterns: [PatternResult]
+}
+
+type PatternResult {
+  id: ID!
+  name: String!
+  user_id: String!
+  location: Location!
+  pattern_file: String!
+  visibility: String!
+  catalog_data: Map
+  canSupport: Boolean!
+  errmsg: String
+  created_at: String
+  updated_at: String
+}
+
+type Location {
+  branch: String
+  host: String
+  path: String
+  type: String
+}
+
+type CatalogPattern {
+  id: ID!
+  name: String!
+  user_id: String!
+  pattern_file: String!
+  location: Location!
+  visibility: String!
+  catalog_data: Map!
+  created_at: String
+  updated_at: String
+}
+
+# ============== Perf =================================
+
+type PerfPageResult {
+  page: Int!
+  page_size: Int!
+  total_count: Int!
+
+  results: [MesheryResult]
+}
+
+type PerfPageProfiles {
+  page: Int!
+  page_size: Int!
+  total_count: Int!
+
+  profiles: [PerfProfile]
+}
+
+type PerfProfile {
+  concurrent_request: Int!
+  created_at: String
+  duration: String!
+  endpoints: [String]
+  id: String!
+  last_run: String
+  load_generators: [String]
+  name: String
+  qps: Int
+  total_results: Int
+  updated_at: String
+  user_id: String!
+  request_headers: String
+  request_cookies: String
+  request_body: String
+  content_type: String
+  service_mesh: String
+}
+
+type MesheryResult {
+  meshery_id: String
+  name: String
+  mesh: String
+  performance_profile: String
+  test_id: String
+  runner_results: Map
+  server_metrics: String
+  server_board_config: String
+  test_start_time: String
+  user_id: String
+  updated_at: String
+  created_at: String
+}
+
+input PageFilter {
+  page: String!
+  pageSize: String!
+  order: String
+  search: String
+  from: String
+  to: String
+}
+
+input CatalogSelector {
+  search: String!
+  order: String!
+}
+
+# ============== RESYNC =============================
+
+# Type ReSyncActions define the actions involved during resync
+input ReSyncActions {
+  clearDB: String!
+  ReSync: String!
+  hardReset: String!
+}
+
+# ============== ROOT =================================
+
+type Query {
+  # Query details about Addons available (Eg. Prometheus and Grafana)
+  getAvailableAddons(
+    # Select Mesh Type
+     filter: ServiceMeshFilter
+  ): [AddonList!]!
+
+  # Query Control Plane data for a Service Mesh (or all) in your cluster
+  getControlPlanes(
+    # Filter Control Plane Query
+    filter: ServiceMeshFilter
+  ): [ControlPlane!]!
+
+  # Query Data Plane information for a Service Mesh (or all) in your cluster
+  getDataPlanes(
+    # Filter Control Plane Query
+    filter: ServiceMeshFilter
+  ): [DataPlane!]!
+
+  # Query status of Meshery Operator in your cluster
+  getOperatorStatus(
+        k8scontextID: String!
+  ): OperatorStatus
+
+  # Query to resync the cluster discovery
+  resyncCluster(
+    # Selector to control several resync actions
+    selector: ReSyncActions
+    k8scontextID: String!
+  ): Status!
+
+  # Check the Meshsync Status
+  getMeshsyncStatus(
+        k8scontextID: String!
+  ): OperatorControllerStatus!
+
+  # Check the Meshsync Status and deploy if not enabled
+  deployMeshsync( # what to do in-order to deploy meshsync on multiple clusters/contexts
+        k8scontextID: String!
+  ): Status!
+
+  # Check is Meshey Server is connected to NATS
+  getNatsStatus(
+        k8scontextID: String!
+  ): OperatorControllerStatus!
+
+  # Check is Meshey Server is connected to NATS, if not connect to the NATS Server
+  connectToNats(
+        k8scontextID: String!
+  ): Status!
+
+  # Query available Namesapces in your cluster
+  getAvailableNamespaces(
+        k8sClusterIDs: [String!]
+  ): [NameSpace!]!
+
+  # Query for performance result
+  getPerfResult(id: ID!): MesheryResult
+
+  # Query for fetching all results for profile ID
+  fetchResults(selector: PageFilter!, profileID: String!): PerfPageResult!
+
+  # Query for fetching all results for profile ID
+  getPerformanceProfiles(selector: PageFilter!): PerfPageProfiles!
+
+  # Query for fetching all results for profile ID
+  fetchAllResults(selector: PageFilter!): PerfPageResult!
+
+  # Query for fetching all patterns with selector
+  fetchPatterns(selector: PageFilter!): PatternPageResult!
+
+  # Query for getting workloads
+  getWorkloads(name: String, id: ID, trim: Boolean): [OAMCapability]
+  # Query for getting traits
+  getTraits(name: String, id: ID, trim: Boolean): [OAMCapability]
+  # Query for getting scopes
+  getScopes(name: String, id: ID, trim: Boolean): [OAMCapability]
+
+  # Query for getting kubectl describe details with meshkit 
+  getKubectlDescribe(name: String!, kind: String!, namespace: String!): KctlDescribeDetails!
+
+  # Query for getting Pattern Catalog from remote provider
+  fetchPatternCatalogContent(selector: CatalogSelector): [CatalogPattern!]!
+  # Query for getting Filter Catalog from remote provider
+  fetchFilterCatalogContent(selector: CatalogSelector): [CatalogFilter!]!
+
+  # Query for getting cluster info
+
+  getClusterResources(k8scontextIDs: [String!], namespace: String!): ClusterResources!
+}
+
+
+#
+
+type Mutation {
+  # Change the Operator Status
+  changeOperatorStatus(input: OperatorStatusInput): Status!
+}
+
+type Subscription {
+  # Listen to changes in status of Addons available (Eg. Prometheus and Grafana)
+  listenToAddonState(
+    # Select Mesh Type
+    filter: ServiceMeshFilter
+  ): [AddonList!]!
+
+  # Listen to changes in Control Plane data for a Service Mesh (or all) in your cluster
+  listenToControlPlaneState(
+    # Filter Control Plane Query
+    filter: ServiceMeshFilter
+  ): [ControlPlane!]!
+
+  # Listen to changes in Data Plane data for a Service Mesh (or all) in your cluster
+  listenToDataPlaneState(
+    # Filter Control Plane Query
+    filter: ServiceMeshFilter
+  ): [DataPlane!]!
+
+  # Listen to changes in status of Meshery Operator in your cluster
+  listenToOperatorState(
+    k8scontextIDs: [String!]
+  ): OperatorStatusPerK8sContext
+
+  # Listen to changes in the list of available Namesapces in your cluster
+  listenToMeshSyncEvents(
+    k8scontextIDs: [String!]
+  ): OperatorControllerStatusPerK8sContext
+
+  # Listen to changes in Performance Profiles
+  subscribePerfProfiles(selector: PageFilter!): PerfPageProfiles!
+
+  # Listen to all results for profile ID
+  subscribePerfResults(selector: PageFilter!, profileID: String!): PerfPageResult!
+
+  # Listen to changes in Broker (NATS) Connection
+  subscribeBrokerConnection: Boolean!
+
+  # Listen to changes in the status of meshery controllers
+  subscribeMesheryControllersStatus(
+    k8scontextIDs: [String!]
+  ): [MesheryControllersStatusListItem!]!
+  
+  # Listen to the events that MeshSync is sending through Meshery Broker.
+  # Note: It does not listen to the changes in meshery database, but to meshsync events
+  subscribeMeshSyncEvents(
+    k8scontextIDs: [String!]
+  ) : MeshSyncEvent!
+
+  subscribeConfiguration(applicationSelector: PageFilter!, patternSelector: PageFilter!, filterSelector: PageFilter!) : ConfigurationPage!
+
+  subscribeClusterResources(
+    k8scontextIDs: [String!],
+    namespace: String!
+  ): ClusterResources!
+
+  subscribeK8sContext(selector: PageFilter!) : K8sContextsPage!
+
+}
+
+type OAMCapability {
+  oam_definition: Any
+  id: String
+  oam_ref_schema: String
+  host: String
+  restricted: Boolean
+  metadata: Any
+}
+
+type KctlDescribeDetails {
+  describe: String
+  ctxid: String
+}

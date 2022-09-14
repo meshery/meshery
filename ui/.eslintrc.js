@@ -1,7 +1,8 @@
 module.exports = {
   "env" : {
     "browser" : true,
-    "es6" : true
+    "es6" : true,
+    "node" : true // tells the parser that we are using nodejs
   },
   'settings' : { 'react' : { 'version' : require('./package.json').dependencies.react, }, },
   "extends" : [
@@ -63,7 +64,7 @@ module.exports = {
       }
     ],
     "react/react-in-jsx-scope" : "off",
-    "no-undef" : "off",
+    "no-undef" : "error",
     "react/prop-types" : 0,
     "react/jsx-uses-vars" : [
       2

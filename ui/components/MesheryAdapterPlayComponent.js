@@ -19,7 +19,7 @@ import { Controlled as CodeMirror } from "react-codemirror2";
 import Moment from "react-moment";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import dataFetch, { promisifiedDataFetch } from "../lib/data-fetch";
+import dataFetch from "../lib/data-fetch";
 // import { updateSMIResults } from '../lib/store';
 import { setK8sContexts, updateProgress, actionTypes } from "../lib/store";
 import { ctxUrl, getK8sClusterIdsFromCtxId } from "../utils/multi-ctx";
@@ -252,8 +252,6 @@ class MesheryAdapterPlayComponent extends React.Component {
     const meshname = self.mapAdapterNameToMeshName(self.activeMesh)
     const variables = { type : meshname, k8sClusterIDs : this.getK8sClusterIds() }
     this.initSubscription();
-    // this.fetchAllContexts(10)
-    //   .then(res => {
     if (this.props.selectedK8sContexts) {
       if (this.props.selectedK8sContexts.includes("all")) {
         let active = [];
@@ -302,10 +300,6 @@ class MesheryAdapterPlayComponent extends React.Component {
       this.disposeSubscriptions();
       this.initSubscription();
     }
-  }
-
-  async fetchAllContexts(number) {
-    return await promisifiedDataFetch("/api/system/kubernetes/contexts?pageSize=" + number)
   }
 
   getK8sClusterIds = () => {
@@ -402,9 +396,7 @@ class MesheryAdapterPlayComponent extends React.Component {
   handleSubmit = (cat, selectedOp, deleteOp = false) => {
     const self = this;
     return () => {
-      if (selectedOp !== 'custom' ) {
-        self.handleOpen();
-      }
+      self.handleOpen();
       const { namespace, cmEditorValAdd, cmEditorValDel } = self.state;
       const { adapter } = self.props;
       const filteredOp = adapter.ops.filter(({ key }) => key === selectedOp);
@@ -831,7 +823,7 @@ class MesheryAdapterPlayComponent extends React.Component {
           : [];
         let order = "";
         if (tableState.activeColumn) {
-          order = `${columns[tableState.activeColumn].name} desc`;
+          order = `${smi_columns[tableState.activeColumn].name} desc`;
         }
 
         switch (action) {
@@ -874,9 +866,9 @@ class MesheryAdapterPlayComponent extends React.Component {
           case "sort":
             if (sortInfo.length == 2) {
               if (sortInfo[1] === "ascending") {
-                order = `${columns[tableState.activeColumn].name} asc`;
+                order = `${smi_columns[tableState.activeColumn].name} asc`;
               } else {
-                order = `${columns[tableState.activeColumn].name} desc`;
+                order = `${smi_columns[tableState.activeColumn].name} desc`;
               }
             }
             if (order !== this.state.sortOrder) {
