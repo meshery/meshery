@@ -228,6 +228,7 @@ func (r *subscriptionResolver) SubscribeMesheryControllersStatus(ctx context.Con
 			for ctxID, ctrlHandlers := range controllerHandlersPerContext {
 				for controller, handler := range ctrlHandlers {
 					newStatus := handler.GetStatus()
+					fmt.Println("Abe bhai: ", newStatus)
 					// if the status has changed, send that to the subscription
 					if newStatus != statusMapPerCtx[ctxID][controller] {
 						ctrlsStatusList = append(ctrlsStatusList, &model.MesheryControllersStatusListItem{
