@@ -75,7 +75,7 @@ class RemoteExtension extends React.Component {
     return (
       <NoSsr>
         <Head>
-          <title>{componentTitle || ""}</title>
+          <title>{`${componentTitle} | Meshery` || ""}</title>
         </Head>
         {
           extensionType &&

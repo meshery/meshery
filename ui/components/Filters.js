@@ -24,7 +24,7 @@ import { withSnackbar } from "notistack";
 import CloseIcon from "@material-ui/icons/Close";
 import EditIcon from "@material-ui/icons/Edit";
 import DoneAllIcon from '@material-ui/icons/DoneAll';
-import { updateProgress } from "../lib/store";
+import { toggleCatalogContent, updateProgress } from "../lib/store";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
 import dataFetch from "../lib/data-fetch";
 import UploadImport from "./UploadImport";
@@ -32,6 +32,7 @@ import FullscreenIcon from '@material-ui/icons/Fullscreen';
 import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
 import FILE_OPS from "../utils/configurationFileHandlersEnum";
 import ViewSwitch from "./ViewSwitch";
+import CatalogFilter from "./CatalogFilter";
 import FiltersGrid from "./MesheryFilters/FiltersGrid";
 import { trueRandom } from "../lib/trueRandom";
 import { ctxUrl } from "../utils/multi-ctx";
@@ -40,6 +41,8 @@ import UndeployIcon from "../public/static/img/UndeployIcon";
 import { getComponentsinFile } from "../utils/utils";
 import PublishIcon from "@material-ui/icons/Publish";
 import ConfigurationSubscription from "./graphql/subscriptions/ConfigurationSubscription";
+import fetchCatalogFilter from "./graphql/queries/CatalogFilterQuery";
+import LoadingScreen from "./LoadingComponents/LoadingComponent";
 
 const styles = (theme) => ({
   grid : {
@@ -63,7 +66,6 @@ const styles = (theme) => ({
   },
   viewSwitchButton : {
     justifySelf : "flex-end",
-    marginLeft : "auto",
     paddingLeft : "1rem"
   },
   // text : {
@@ -164,7 +166,7 @@ function resetSelectedFilter() {
   return { show : false, filter : null };
 }
 
-function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, classes, selectedK8sContexts }) {
+function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, classes, selectedK8sContexts, catalogVisibility, toggleCatalogContent }) {
   const [page, setPage] = useState(0);
   const [search] = useState("");
   const [sortOrder] = useState("");
@@ -178,7 +180,10 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     /**  @type {TypeView} */
     ("grid")
   );
-  const DEPLOY_URL = "/api/filter/deploy";
+  const FILTER_URL = "/api/filter"
+  const DEPLOY_URL = FILTER_URL + "/deploy";
+  const CLONE_URL = "/clone";
+
   const [modalOpen, setModalOpen] = useState({
     open : false,
     filter_file : null,
@@ -187,11 +192,13 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     count : 0
   });
 
-
   const [importModal, setImportModal] = useState({
     open : false
   })
+  const [loading, stillLoading] = useState(true);
 
+  const catalogContentRef = useRef();
+  const catalogVisibilityRef = useRef();
   const disposeConfSubscriptionRef = useRef(null);
 
   const getMuiTheme = () => createTheme({
@@ -259,6 +266,10 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
       name : "UPLOAD_FILTERS",
       error_msg : "Failed to upload filter file",
     },
+    CLONE_FILTERS : {
+      name : "CLONE_FILTER",
+      error_msg : "Failed to clone filter file"
+    }
   };
 
   const searchTimeout = useRef(null);
@@ -275,9 +286,35 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     });
   }
 
+  const handleCatalogVisibility = () => {
+    catalogVisibilityRef.current = !catalogVisibility
+    toggleCatalogContent({ catalogVisibility : !catalogVisibility });
+  }
+
   useEffect(() => {
+    handleSetFilters(filters)
+  }, [catalogVisibility])
+
+  useEffect(() => {
+    catalogVisibilityRef.current = catalogVisibility
     initFiltersSubscription();
-    return () => disposeConfSubscriptionRef.current.dispose();
+
+    const fetchCatalogFilters = fetchCatalogFilter({
+      selector : {
+        search : "",
+        order : ""
+      }
+    }).subscribe({
+      next : (result) => {
+        catalogContentRef.current = result?.catalogFilters;
+      },
+      error : (err) => console.log("There was an error fetching Catalog Filter: ", err)
+    });
+
+    return () => {
+      fetchCatalogFilters.unsubscribe();
+      disposeConfSubscriptionRef.current.dispose();
+    }
   },[])
 
   /**
@@ -305,7 +342,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
         console.log("FilterFile API", `/api/filter${query}`);
         updateProgress({ showProgress : false });
         if (result) {
-          setFilters(result.filters || []);
+          handleSetFilters(result.filters || []);
           setPage(result.page || 0);
           setPageSize(result.page_size || 0);
           setCount(result.total_count || 0);
@@ -361,6 +398,30 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     );
   };
 
+  function handleClone(filterID) {
+    updateProgress({ showProgress : true });
+    dataFetch(FILTER_URL.concat(CLONE_URL, "/", filterID),
+      {
+        credentials : "include",
+        method : "POST",
+      },
+      () => {
+        updateProgress({ showProgress : false });
+        enqueueSnackbar("Filter Successfully Cloned!", {
+          variant : "success",
+          action : function Action(key) {
+            return (
+              <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+                <CloseIcon />
+              </IconButton>
+            );
+          },
+          autoHideDuration : 2000,
+        });
+      },
+      handleError(ACTION_TYPES.CLONE_FILTERS),
+    );
+  }
 
   // function handleError(error) {
   const handleError = (action) => (error) => {
@@ -379,15 +440,35 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     });
   };
 
+  const handleModalOpen = (e, filter_file, name, isDeploy) => {
+    e.stopPropagation()
+    setModalOpen({
+      open : true,
+      filter_file : filter_file,
+      deploy : isDeploy,
+      name : name,
+      count : getComponentsinFile(filter_file)
+    });
+  }
+
+  const handleSetFilters = (filters) => {
+    if (catalogVisibilityRef.current && catalogContentRef.current?.length > 0) {
+      setFilters([...catalogContentRef.current, ...filters.filter(content => content.visibility !== "public")])
+      return
+    }
+    setFilters(filters.filter(content => content.visibility !== "public"))
+  }
+
   const initFiltersSubscription = (pageNo=page.toString(), pagesize=pageSize.toString(), searchText=search, order=sortOrder) => {
     if (disposeConfSubscriptionRef.current) {
       disposeConfSubscriptionRef.current.dispose();
     }
     const configurationSubscription = ConfigurationSubscription((result) => {
+      stillLoading(false);
       setPage(result.configuration?.filters.page || 0);
       setPageSize(result.configuration?.filters.page_size || 0);
       setCount(result.configuration?.filters.total_count || 0);
-      setFilters(result.configuration?.filters.filters)
+      handleSetFilters(result.configuration?.filters.filters);
     },
     {
       applicationSelector : {
@@ -410,16 +491,6 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
       }
     });
     disposeConfSubscriptionRef.current = configurationSubscription
-  }
-
-  const handleModalOpen = (filter_file, name, isDeploy) => {
-    setModalOpen({
-      open : true,
-      filter_file : filter_file,
-      deploy : isDeploy,
-      name : name,
-      count : getComponentsinFile(filter_file)
-    });
   }
 
   const handleModalClose = () => {
@@ -563,6 +634,30 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
       },
     },
     {
+      name : "visibility",
+      label : "Visibility",
+      options : {
+        filter : false,
+        sort : true,
+        searchable : true,
+        customHeadRender : function CustomHead({ index, ...column }) {
+          return (
+            <TableCell key={index}>
+              <b>{column.label}</b>
+            </TableCell>
+          );
+        },
+        customBodyRender : function CustomBody(_, tableMeta) {
+          const visibility = filters[tableMeta.rowIndex].visibility
+          return (
+            <>
+              <img src={`/static/img/${visibility}.svg`} />
+            </>
+          );
+        },
+      },
+    },
+    {
       name : "Actions",
       options : {
         filter : false,
@@ -577,28 +672,40 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
         },
         customBodyRender : function CustomBody(_, tableMeta) {
           const rowData = filters[tableMeta.rowIndex];
+          const visibility = filters[tableMeta.rowIndex].visibility
           return (
             <>
-              <IconButton>
-                <EditIcon
-                  title="Config"
-                  aria-label="config"
-                  color="inherit"
-                  onClick={() => setSelectedRowData(filters[tableMeta.rowIndex])}
-                />
+              {visibility === "public" ? <IconButton onClick={(e) => {
+                e.stopPropagation();
+                handleClone(rowData.id)
+              }
+              }>
+                <img src="/static/img/clone.svg" />
               </IconButton>
+                :
+                <IconButton>
+                  <EditIcon
+                    title="Config"
+                    aria-label="config"
+                    color="inherit"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      setSelectedRowData(filters[tableMeta.rowIndex])
+                    }}
+                  />
+                </IconButton> }
               <IconButton>
                 <DoneAllIcon
                   title="Deploy"
                   aria-label="deploy"
                   color="inherit"
-                  onClick={() => handleModalOpen(rowData.filter_file, rowData.name, true)}
+                  onClick={(e) => handleModalOpen(e, rowData.filter_file, rowData.name, true)}
                   data-cy="deploy-button"
                 />
               </IconButton>
               <IconButton
                 title="Undeploy"
-                onClick={() => handleModalOpen(rowData.filter_file, rowData.name, false)}
+                onClick={(e) => handleModalOpen(e, rowData.filter_file, rowData.name, false)}
               >
                 <UndeployIcon fill="#8F1F00" data-cy="undeploy-button" />
               </IconButton>
@@ -734,6 +841,10 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     }
   };
 
+  if (loading) {
+    return <LoadingScreen animatedIcon="AnimatedFilter" message="Loading Filters..." />;
+  }
+
   return (
     <>
 
@@ -759,6 +870,9 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
             </div>
           </div>
           }
+          <div style={{ justifySelf : "flex-end", marginLeft : "auto", paddingRight : "1rem", paddingTop : "0.2rem" }}>
+            <CatalogFilter catalogVisibility={catalogVisibility} handleCatalogVisibility={handleCatalogVisibility} />
+          </div>
           {!selectedFilter.show &&
           <div className={classes.viewSwitchButton}>
             <ViewSwitch data-cy="table-view" view={viewType} changeView={setViewType} />
@@ -785,6 +899,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
               handleDeploy={handleDeploy}
               handleUndeploy={handleUndeploy}
               handleSubmit={handleSubmit}
+              handleClone={handleClone}
               urlUploadHandler={urlUploadHandler}
               uploadHandler={uploadHandler}
               setSelectedFilter={setSelectedFilter}
@@ -812,10 +927,14 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
   );
 }
 
-const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(updateProgress, dispatch) });
+const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(updateProgress, dispatch),
+  toggleCatalogContent : bindActionCreators(toggleCatalogContent, dispatch)
+});
 
 const mapStateToProps = (state) => {
-  return { user : state.get("user")?.toObject(), selectedK8sContexts : state.get("selectedK8sContexts") };
+  return { user : state.get("user")?.toObject(), selectedK8sContexts : state.get("selectedK8sContexts"),
+    catalogVisibility : state.get("catalogVisibility")
+  };
 };
 
 // @ts-ignore

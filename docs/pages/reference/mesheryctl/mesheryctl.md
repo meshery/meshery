@@ -18,6 +18,13 @@ Meshery Command Line tool
 
 Meshery is the service mesh management plane, providing lifecycle, performance, and configuration management of service meshes and their workloads.
 
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl [flags]
+
+</div>
+</pre> 
+
 ## Examples
 
 Base command
