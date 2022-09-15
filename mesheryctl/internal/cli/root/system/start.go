@@ -368,7 +368,7 @@ func start() error {
 		}
 
 		// Applying Meshery Helm charts for installing Meshery
-		if err = applyHelmCharts(kubeClient, currCtx, mesheryImageVersion, false); err != nil {
+		if err = applyHelmCharts(kubeClient, currCtx, mesheryImageVersion, false, meshkitkube.INSTALL); err != nil {
 			return err
 		}
 
@@ -404,7 +404,7 @@ func init() {
 }
 
 // Apply Meshery helm charts
-func applyHelmCharts(kubeClient *meshkitkube.Client, currCtx *config.Context, mesheryImageVersion string, dryRun bool) error {
+func applyHelmCharts(kubeClient *meshkitkube.Client, currCtx *config.Context, mesheryImageVersion string, dryRun bool, act meshkitkube.HelmChartAction) error {
 	// get value overrides to install the helm chart
 	overrideValues := utils.SetOverrideValues(currCtx, mesheryImageVersion)
 
@@ -413,7 +413,7 @@ func applyHelmCharts(kubeClient *meshkitkube.Client, currCtx *config.Context, me
 	if mesheryImageVersion != "latest" {
 		chartVersion = mesheryImageVersion
 	}
-	return kubeClient.ApplyHelmChart(meshkitkube.ApplyHelmChartConfig{
+	err := kubeClient.ApplyHelmChart(meshkitkube.ApplyHelmChartConfig{
 		Namespace:       utils.MesheryNamespace,
 		ReleaseName:     "meshery",
 		CreateNamespace: true,
@@ -423,9 +423,27 @@ func applyHelmCharts(kubeClient *meshkitkube.Client, currCtx *config.Context, me
 			Version:    chartVersion,
 		},
 		OverrideValues: overrideValues,
-		Action:         meshkitkube.INSTALL,
+		Action:         act,
 		// the helm chart will be downloaded to ~/.meshery/manifests if it doesn't exist
 		DownloadLocation: path.Join(utils.MesheryFolder, utils.ManifestsFolder),
 		DryRun:           dryRun,
 	})
+	if err != nil {
+		return err
+	}
+	err = kubeClient.ApplyHelmChart(meshkitkube.ApplyHelmChartConfig{
+		Namespace:       utils.MesheryNamespace,
+		ReleaseName:     "meshery-operator",
+		CreateNamespace: true,
+		ChartLocation: meshkitkube.HelmChartLocation{
+			Repository: utils.HelmChartURL,
+			Chart:      utils.HelmChartOperatorName,
+			Version:    chartVersion,
+		},
+		Action: act,
+		// the helm chart will be downloaded to ~/.meshery/manifests if it doesn't exist
+		DownloadLocation: path.Join(utils.MesheryFolder, utils.ManifestsFolder),
+		DryRun:           dryRun,
+	})
+	return err
 }

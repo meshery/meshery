@@ -8,6 +8,7 @@ import (
 	operatorClient "github.com/layer5io/meshery-operator/pkg/client"
 	"github.com/layer5io/meshery/server/internal/graphql/model"
 	"github.com/layer5io/meshery/server/models"
+	"github.com/layer5io/meshkit/models/controllers"
 	"github.com/layer5io/meshkit/utils/broadcast"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
 )
@@ -81,7 +82,13 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Pro
 	}
 
 	go func(del bool, kubeclient *mesherykube.Client) {
-		err := model.Initialize(kubeclient, del, r.Config.AdapterTracker)
+		op, _ := ctx.Value(models.MesheryControllerHandlersKey).(map[string]map[models.MesheryController]controllers.IMesheryController)
+		var err error
+		if del {
+			err = op[ctxID][models.MesheryOperator].Undeploy()
+		} else {
+			err = op[ctxID][models.MesheryOperator].Deploy(true)
+		}
 		if err != nil {
 			r.Log.Error(err)
 			r.Broadcast.Submit(broadcast.BroadcastMessage{
@@ -94,6 +101,13 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Pro
 			})
 			return
 		}
+		models.Opmx.Lock()
+		if del {
+			models.OperatorIsUndeployed[ctxID] = true
+		} else {
+			models.OperatorIsUndeployed[ctxID] = false
+		}
+		models.Opmx.Unlock()
 		r.Log.Info("Operator operation executed")
 
 		r.Broadcast.Submit(broadcast.BroadcastMessage{
@@ -322,13 +336,6 @@ func (r *Resolver) listenToOperatorsState(ctx context.Context, provider models.P
 			if err != nil {
 				r.Log.Error(ErrOperatorSubscription(err))
 				return
-			}
-			if status.Status != model.StatusEnabled {
-				_, err = r.changeOperatorStatus(ctx, provider, model.StatusEnabled, k8scontext.ID)
-				if err != nil {
-					r.Log.Error(ErrOperatorSubscription(err))
-					// return
-				}
 			}
 			statusWithContext := model.OperatorStatusPerK8sContext{
 				ContextID:      k8scontext.ID,

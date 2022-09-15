@@ -27,6 +27,10 @@ var offboardCmd = &cobra.Command{
 mesheryctl app offboard -f [filepath]
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
+		if file == "" {
+			const errMsg = `Usage: mesheryctl app offboard -f [filepath]`
+			return fmt.Errorf("no file path provided \n\n%v", errMsg)
+		}
 		var req *http.Request
 		var err error
 		client := &http.Client{}
@@ -43,7 +47,7 @@ mesheryctl app offboard -f [filepath]
 		if !govalidator.IsURL(file) {
 			content, err := os.ReadFile(file)
 			if err != nil {
-				return errors.New(utils.SystemError(fmt.Sprintf("failed to read file %s", file)))
+				return errors.New(utils.AppError(fmt.Sprintf("failed to read file %s\n", file)))
 			}
 
 			appFile = string(content)

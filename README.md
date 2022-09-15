@@ -32,13 +32,13 @@
 MESHERY IS A CLOUD NATIVE COMPUTING FOUNDATION PROJECT
 </p>
 <p align="center">
-<img src="docs/assets/img/readme/cncf-white.svg#gh-dark-mode-only" width="30%" align="center" />
-<img src="docs/assets/img/readme/cncf-black.svg#gh-light-mode-only" width="30%" align="center" />
+<img src=".github/assets/images/readme/cncf-white.svg#gh-dark-mode-only" width="30%" align="center" />
+<img src=".github/assets/images/readme/cncf-black.svg#gh-light-mode-only" width="30%" align="center" />
 </p>
 
 <h2><a name="running"></a>Get Started with Meshery</h2>
 <p style="clear:both;">
-<img alt="Control service meshes with mesheryctl" src="docs/assets/img/readme/mesheryctl.png"  style="margin-left:10px; margin-bottom:10px;" width="50%" align="right"/>
+<img alt="Control service meshes with mesheryctl" src=".github/assets/images/readme/mesheryctl.png"  style="margin-left:10px; margin-bottom:10px;" width="50%" align="right"/>
 <h3>Using `mesheryctl`</h3>
 <p>Meshery runs as a set of containers inside or outside of your Kubernetes clusters.</p>
 <pre>curl -L https://meshery.io/install | bash -</pre>
@@ -194,7 +194,7 @@ See the [getting started](https://meshery.io/#getting-started) section to quickl
 ## <a name="functionality">Functionality</a>
 
 <p style="clear:both;">
-<a href="https://raw.githubusercontent.com/meshery/meshery/master/assets/img/readme/meshery_multi_mesh.png"><img alt="Layer5 Service Mesh Management" src="https://docs.meshery.io/assets/img/readme/meshery_multi_mesh.png"  style="margin-left:10px; margin-bottom:10px;" width="45%" align="right"/></a>
+<a href="https://raw.githubusercontent.com/meshery/meshery/master/docs/assets/img/readme/meshery_multi_mesh.png"><img alt="Layer5 Service Mesh Management" src="https://docs.meshery.io/assets/img/readme/meshery_multi_mesh.png"  style="margin-left:10px; margin-bottom:10px;" width="45%" align="right"/></a>
 <h3>Service Mesh Lifecycle Management</h3>
 Meshery manages the provisioning, configuration and operation your service mesh. While supporting different types of service meshes, Meshery also offers a simple way to explore each service mesh and compare them using bundled sample applications.
 
@@ -224,7 +224,7 @@ Onboard your workload onto the service mesh with confidence. Check your service 
 In an effort to produce service mesh agnostic tooling, Meshery uses the [service mesh performance](https://smp-spec.io) as a common format to capture and measure your mesh's performance against a universal service mesh performance index. As a partner of VMware's Multi-Vendor Service Mesh Interoperation (Hamlet) and Service Mesh Interface (SMI), Meshery participates in advancing service mesh adoption through the standardization of APIs.
 
 <p style="clear:both;">
-<a href="https://raw.githubusercontent.com/meshery/meshery/master/.github/assets/images/smp/service mesh performance example.gif"><img alt="Layer5 Service Mesh Performance Management" src="https://raw.githubusercontent.com/meshery/meshery/master/.github/assets/images/smp/service mesh performance example.gif" style="margin-left:10px;margin-bottom:10px;" width="45%" align="right" /></a>
+<a href="https://raw.githubusercontent.com/meshery/meshery/master/.github/assets/images/smp/service-mesh-performance-example.gif"><img alt="Layer5 Service Mesh Performance Management" src="https://raw.githubusercontent.com/meshery/meshery/master/.github/assets/images/smp/service-mesh-performance-example.gif" style="margin-left:10px;margin-bottom:10px;" width="45%" align="right" /></a>
 <!-- <a href="https://raw.githubusercontent.com/layer5io/meshery/master/assets/img/readme/Meshery-Grafana-Charts.png"><img alt="Meshery Grafana Boards" src="https://docs.meshery.io/assets/img/readme/Meshery-Grafana-Charts.png" style="padding-top:10px;margin-left:10px;" width="45%" align="right" /></a> -->
 <h4>Standardized Service Performance Management</h4>
 
@@ -248,7 +248,7 @@ Meshery provides tooling to validate any service mesh that claims to implement a
 <br /><br /><br /><br />
 
 <p style="clear:both;">
-<a href="docs/assets/img/readme/meshery-wasm.png"><img alt="WebAssembly filters" src="docs/assets/img/readme/meshery-wasm.png"  style="margin-right:10px; margin-bottom:10px;" width="45%" align="left"/></a>
+<a href=".github/assets/images/readme/meshery-wasm.png"><img alt="WebAssembly filters" src=".github/assets/images/readme/meshery-wasm.png"  style="margin-right:10px; margin-bottom:10px;" width="45%" align="left"/></a>
 
 <img alt="WebAssembly Logo" src="https://docs.meshery.io/assets/img/readme/webassembly_logo.svg" style="margin-right:10px;" width="10%" />
 <h3> Manage data plane intelligence with WebAssembly filters </h3>
@@ -266,7 +266,7 @@ See <a href="https://github.com/layer5io/image-hub">Image Hub</a>.
 
 You may deploy Meshery internal to your cluster or external to your cluster.
 
-<p align="center"><a href="https://raw.githubusercontent.com/meshery/meshery/master/assets/img/readme/Meshery-client-architecture.svg"><img src="https://docs.meshery.io/assets/img/readme/Meshery-client-architecture.svg" width="90%" align="center" /></a></p>
+<p align="center"><a href="https://raw.githubusercontent.com/meshery/meshery/master/docs/assets/img/architecture/Meshery-client-architecture.svg"><img src="https://docs.meshery.io/assets/img/readme/Meshery-client-architecture.svg" width="90%" align="center" /></a></p>
 Learn more about <a href="https://docs.meshery.io/architecture">Meshery's architecture</a>.
 
 <div>&nbsp;</div>
@@ -290,9 +290,9 @@ Find out more on the <a href="https://layer5.io/community#meshmate">Layer5 commu
 
 <a href="http://slack.layer5.io">
 <picture align="right">
-  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/meshery/meshery/master/docs/assets/img/readme/slack-dark-128.png"  width="110px" align="right" style="margin-left:10px;margin-top:10px;">
-  <source media="(prefers-color-scheme: light)" srcset=https://raw.githubusercontent.com/meshery/meshery/master/docs/assets/img/readme/slack-128.png" width="110px" align="right" style="margin-left:10px;padding-top:5px;">
-  <img alt="Shows an illustrated light mode meshery logo in light color mode and a dark mode meshery logo dark color mode." src="https://raw.githubusercontent.com/meshery/meshery/master/docs/assets/img/readme/slack-128.png" width="110px" align="right" style="margin-left:10px;padding-top:13px;">
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/meshery/meshery/master/.github/assets/images/readme/slack-dark-128.png"  width="110px" align="right" style="margin-left:10px;margin-top:10px;">
+  <source media="(prefers-color-scheme: light)" srcset=https://raw.githubusercontent.com/meshery/meshery/master/.github/assets/images/readme/slack-128.png" width="110px" align="right" style="margin-left:10px;padding-top:5px;">
+  <img alt="Shows an illustrated light mode meshery logo in light color mode and a dark mode meshery logo dark color mode." src="https://raw.githubusercontent.com/meshery/meshery/master/.github/assets/images/readme/slack-128.png" width="110px" align="right" style="margin-left:10px;padding-top:13px;">
 </picture>
 </a>
 
