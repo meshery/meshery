@@ -123,7 +123,7 @@ mesheryctl system update --skip-reset
 			if !utils.SkipResetFlag {
 
 				// Apply the latest helm chart along with the default image tag specified in the charts "stable-latest"
-				if err = applyHelmCharts(kubeClient, currCtx, mesheryImageVersion, false); err != nil {
+				if err = applyHelmCharts(kubeClient, currCtx, mesheryImageVersion, false, meshkitkube.UPGRADE); err != nil {
 					return errors.Wrap(err, "cannot update Meshery")
 				}
 			}
