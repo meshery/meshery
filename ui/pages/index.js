@@ -5,6 +5,7 @@ import { updatepagepath } from "../lib/store";
 import { connect } from "react-redux";
 import { bindActionCreators } from 'redux';
 import { getPath } from "../lib/path";
+import Head from 'next/head';
 
 class Index extends React.Component {
   componentDidMount () {
@@ -15,6 +16,9 @@ class Index extends React.Component {
   render () {
     return (
       <NoSsr>
+        <Head>
+          <title>Dashboard | Meshery</title>
+        </Head>
         <DashboardComponent />
       </NoSsr>
     );
