@@ -127,7 +127,10 @@ func ConvertMapInterfaceMapString(v interface{}, prettify bool) interface{} {
 			x["type"] = "integer"
 		}
 	case string:
-		return man.FormatToReadableString(x)
+		if prettify {
+			return man.FormatToReadableString(x) //Whitespace formatting should be done at the time of prettification only
+		}
+		return x
 	}
 
 	return v
