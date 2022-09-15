@@ -2,8 +2,19 @@ import React, {useState} from "react"
 import {Grid, Typography, Box, Paper, MenuItem, Button, TableContainer, Table, TableHead, TableRow, TableCell, Tooltip,} from "@mui/material"
 import {  getK8sClusterNamesFromCtxId } from "@/utils//multi-ctx";
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import { styled } from "@mui/material/styles";
+import {useRouter} from "next/router";
+
+export const TableWrapper = styled(Box)(({theme})=>({
+  fontSize : "15px", 
+  color : '#fff', 
+  paddingBottom : '10px', 
+  padding : '1vh'
+}))
 
 function ShowServiceMesh ({meshScan, activeMeshScanNamespace, meshScanNamespaces}) {
+
+  const router = useRouter();
 
     function emptyStateMessageForServiceMeshesInfo () {
         const clusters = getSelectedK8sContextsNames();
@@ -24,7 +35,7 @@ function ShowServiceMesh ({meshScan, activeMeshScanNamespace, meshScanNamespaces
   
         if (Array.isArray(components) && components.length)
           return (
-            <Paper elevation={1} style={{ padding : "2rem", marginTop : "1rem" }}>
+            <Paper elevation={1} sx={{ padding : "2rem", marginTop : "1rem" }}>
               <Grid container justify="space-between" spacing={1}>
                 <Grid item>
                   <div style={{ display : "flex", alignItems : "center", marginBottom : "1rem" }}>
@@ -59,14 +70,13 @@ function ShowServiceMesh ({meshScan, activeMeshScanNamespace, meshScanNamespaces
                         return (
                           <TableRow key={component.name.full}>
                             <TableCell align="center">{component.component}</TableCell>
-                            {/* <TableCell align="center">{versionMapper(component.version)}</TableCell> */}
                             <Tooltip
                               key={`component-${component.name}`}
                               title={
                                 Array.isArray(component?.data_planes) && component.data_planes.length > 0 ? (
                                   component.data_planes.map((cont) => {
                                     return (
-                                      <div key={cont.name} style={{ fontSize : "15px", color : '#fff', paddingBottom : '10px', padding : '1vh' }}>
+                                      <TableWrapper key={cont.name}>
                                         <p>Name: {cont?.containerName ? cont.containerName : 'Unspecified'}</p>
                                         <p>Status: {cont?.status?.ready ? 'ready' : 'not ready'}</p>
                                         {!cont?.status?.ready && (
@@ -104,7 +114,7 @@ function ShowServiceMesh ({meshScan, activeMeshScanNamespace, meshScanNamespaces
                                             </div>
                                           </div>
                                         )}
-                                      </div>
+                                      </TableWrapper>
                                     )
                                   })
                                 ) : "No proxy attached"}
@@ -160,7 +170,7 @@ function ShowServiceMesh ({meshScan, activeMeshScanNamespace, meshScanNamespaces
                   variant="contained"
                   color="primary"
                   size="large"
-                //   onClick={() => self.props.router.push("/management")}
+                  onClick={() => router.push("/management")}
                 >
                   <AddCircleOutlineIcon />
                   Install Service Mesh
