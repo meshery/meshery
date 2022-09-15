@@ -3,6 +3,7 @@ layout: default
 title: Using Multiple Adapters
 permalink: guides/multiple-adapters
 type: Guides
+language: en
 ---
 
 ## Advanced Configuration
@@ -25,9 +26,19 @@ Alternatively, directly modify youn the `~/.meshery/meshery.yaml` configuration 
 
 #### Configuration: Running more than one instance of the same Meshery adapter
 
-The default configuration of a Meshery deployment includes one instance of each of the Meshery adapters (that have reached a stable version status). You may choose to run multiple instances of the same type of Meshery adapter; e.g. two instances of the Meshery Adapter for Istio. To do so, modify `~/.meshery/meshery.yaml` to include multiple copies of the given adapter.
+The default configuration of a Meshery deployment includes one instance of each of the Meshery adapters (that have reached a stable version status). You may choose to run multiple instances of the same type of Meshery adapter; e.g. two instances of the Meshery Adapter for NGINX Service Mesh. To do so, you can use either of Meshery's clients or to modify your Meshery deployment:
+ - Using `mesheryctl`, modify `~/.meshery/meshery.yaml` to include multiple copies of the given adapter.
+ - Using Meshery UI, navigate to the Settings page and enter the host and port of your additional adapter.
 
-Demo of Meshery managing service mesh deployments across multiple clusters:
+#### Configuration: Choosing an adapter while installing Mesheryctl
+
+While installing mesheryctl using bash installation script, we can choose which adapter to be loaded.
+This is done by passing ADAPTERS environment variable to meshery bash script.
+
+*For e.g.* 
+`curl -L https://meshery.io/install | ADAPTERS=consul PLATFORM=kubernetes bash -` installs mesheryctl and starts Meshery server for kubernetes platform by loading consul adapter alone. Rest of the service mesh adapters are not loaded.
+
+<h5>Demo of Meshery managing service mesh deployments across multiple clusters:</h5>
 
 <iframe class="container" width="560" height="315" src="https://www.youtube.com/embed/yWPu3vq4vEs?start=5041" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 

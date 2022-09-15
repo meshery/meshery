@@ -1,3 +1,4 @@
+# Sample VS and GW for deployment of Meshery on Istio
 apiVersion: networking.istio.io/v1alpha3
 kind: Gateway
 metadata:

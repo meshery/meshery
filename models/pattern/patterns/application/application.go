@@ -32,9 +32,9 @@ type PatternSetting struct {
 }
 
 type PatternSettingAdvanced struct {
-	SkipService bool              `json:"skip_service,omitempty"`
-	Labels      map[string]string `json:"labels,omitempty"`
-	Annotations map[string]string `json:"annotations,omitempty"`
+	CreateService *bool             `json:"create_service,omitempty"`
+	Labels        map[string]string `json:"labels,omitempty"`
+	Annotations   map[string]string `json:"annotations,omitempty"`
 }
 
 type PatternConfiguration struct {
@@ -85,6 +85,8 @@ func Deploy(
 				return err
 			}
 		}
+
+		setupDefaults(&settings)
 
 		if config.RolloutStrategy == nil {
 			return engine.Native(RolloutEngineGenericOptions{
@@ -203,4 +205,12 @@ func findNamespaces(kubeClient *meshkube.Client) []string {
 	}
 
 	return res
+}
+
+func setupDefaults(s *PatternSetting) {
+	// If nothing is specified then set the value to true
+	if s.Advanced.CreateService == nil {
+		csvc := true
+		s.Advanced.CreateService = &csvc
+	}
 }

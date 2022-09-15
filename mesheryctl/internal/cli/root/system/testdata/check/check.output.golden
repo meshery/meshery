@@ -11,8 +11,8 @@ Kubernetes API
 
 Kubernetes Version 
 --------------
-✓ is running the minimum Kubernetes version
-✓ is running the minimum kubectl version
+✓ running the minimum Kubernetes version
+✓ running the minimum kubectl version
 
 --------------
 --------------

@@ -25,16 +25,19 @@ spec:
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
-        - name: {{ .Chart.Name }}
+        - name: {{ .Values.mesheryOperator.name }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           # TODO: Need to confirm the meshery-operator image version
-          image: "{{ .Values.image.repository }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          image: "{{ .Values.mesheryOperator.image.repository }}"
+          imagePullPolicy: {{ .Values.mesheryOperator.image.pullPolicy }}
           ports:
-            - name: http
-              containerPort: 10000
-              protocol: TCP
+            - containerPort: 9443
+              hostPort: 9443
+              name: server
+            - containerPort: 8080
+              hostPort: 8080
+              name: metrics
           {{- if .Values.probe.livenessProbe.enabled }}
           livenessProbe:
             httpGet:
@@ -54,6 +57,17 @@ spec:
             value: {{ $val }}
           {{- end }}
           {{- end }}
+          args: {{- toYaml .Values.mesheryOperator.args | nindent 12}}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          command: {{- toYaml .Values.mesheryOperator.command | nindent 12 }}
+        - name: {{ .Values.kubeRbac.name }}
+          image: {{ .Values.kubeRbac.image.repository }}
+          imagePullPolicy: {{ .Values.kubeRbac.image.pullPolicy }}
+          ports:
+          - name: https
+            containerPort: 8443
+          args: {{- toYaml .Values.kubeRbac.args | nindent 12}}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}

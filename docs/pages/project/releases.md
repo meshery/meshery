@@ -7,7 +7,11 @@ redirect_from: project/releases/
 language: en
 type: project
 ---
+
+See also Meshery's [Compatibility Matrix]({{site.baseurl}}/project/compatibility-matrix) and [Build and Release](/project/build-and-release) process.
+
 {% assign sorted_release = site.releases | sort: 'date' | reverse %}
+
 <table>
 <tr><th> Version </th><th> Date </th></tr>
 

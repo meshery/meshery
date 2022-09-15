@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
@@ -36,12 +37,12 @@ type Token struct {
 
 // Context defines a meshery environment
 type Context struct {
-	Endpoint string   `mapstructure:"endpoint,omitempty"`
-	Token    string   `mapstructure:"token,omitempty"`
-	Platform string   `mapstructure:"platform"`
-	Adapters []string `mapstructure:"adapters,omitempty"`
-	Channel  string   `mapstructure:"channel,omitempty"`
-	Version  string   `mapstructure:"version,omitempty"`
+	Endpoint   string   `mapstructure:"endpoint,omitempty"`
+	Token      string   `mapstructure:"token,omitempty"`
+	Platform   string   `mapstructure:"platform"`
+	Components []string `mapstructure:"components,omitempty"`
+	Channel    string   `mapstructure:"channel,omitempty"`
+	Version    string   `mapstructure:"version,omitempty"`
 }
 
 // GetMesheryCtl returns a reference to the mesheryctl configuration object
@@ -55,8 +56,8 @@ func GetMesheryCtl(v *viper.Viper) (*MesheryCtlConfig, error) {
 	return c, err
 }
 
-// SetMesheryCtl sets the mesheryctl configuration object
-func SetContext(v *viper.Viper, context *Context, name string) error {
+// UpdateContextInConfig write the given context in meshconfig
+func UpdateContextInConfig(v *viper.Viper, context *Context, name string) error {
 	viper.Set("contexts."+name, context)
 	err := viper.WriteConfig()
 	if err != nil {
@@ -69,7 +70,7 @@ func SetContext(v *viper.Viper, context *Context, name string) error {
 // CheckIfCurrentContextIsValid checks if current context is valid
 func (mc *MesheryCtlConfig) CheckIfCurrentContextIsValid() (*Context, error) {
 	if mc.CurrentContext == "" {
-		return &Context{}, errors.New("current context not set")
+		return &Context{}, errors.New("Valid context is not available in meshconfig")
 	}
 
 	ctx, exists := mc.Contexts[mc.CurrentContext]
@@ -187,9 +188,9 @@ func (ctx *Context) SetPlatform(platform string) {
 	ctx.Platform = platform
 }
 
-// GetAdapters returns the adapters in the current context
-func (ctx *Context) GetAdapters() []string {
-	return ctx.Adapters
+// GetComponents returns the components in the current context
+func (ctx *Context) GetComponents() []string {
+	return ctx.Components
 }
 
 // GetChannel returns the channel of the current context
@@ -223,7 +224,7 @@ func (ctx *Context) ValidateVersion() error {
 		return nil
 	}
 
-	url := "https://api.github.com/repos/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/git/trees/" + ctx.Version + "?recursive=1"
+	url := "https://github.com/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/releases/tag/" + ctx.Version
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return err
@@ -244,6 +245,10 @@ func (ctx *Context) ValidateVersion() error {
 		log.Fatal("version " + ctx.Version + " is not a valid Meshery release")
 	}
 
+	if resp.StatusCode != http.StatusOK {
+		log.Fatal("failed to validate Meshery release version " + ctx.Version)
+	}
+
 	if err != nil {
 		return errors.Wrapf(err, "failed to make GET request to %s", url)
 	}
@@ -262,7 +267,16 @@ func (t *Token) GetLocation() string {
 		return t.Location
 	}
 
-	// If file path is not absolute then assume that the file
+	// If file path is relative, then it has to be expanded
+	if strings.HasPrefix(t.Location, "~/") {
+		usr, err := os.UserHomeDir()
+		if err != nil {
+			log.Warn("failed to get user home directory")
+		}
+		return filepath.Join(usr, t.Location[2:])
+	}
+
+	// If file path is not absolute, then assume that the file
 	// is in the .meshery directory
 	home, err := os.UserHomeDir()
 	if err != nil {
@@ -391,15 +405,16 @@ func SetTokenToConfig(tokenName string, configPath string, ctxName string) error
 		return err
 	}
 	context.Token = tokenName
-	err = SetContext(viper.GetViper(), context, ctxName)
+	err = UpdateContextInConfig(viper.GetViper(), context, ctxName)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-// AddContextToConfig adds context passed to it to mesheryctl config file
-func AddContextToConfig(contextName string, context Context, configPath string, set bool) error {
+// AddContextToConfig adds context passed to it to mesheryctl config file. If overwrite is set to true, existing
+// context with the contextName is overwritten
+func AddContextToConfig(contextName string, context Context, configPath string, set bool, overwrite bool) error {
 	if _, err := os.Stat(configPath); os.IsNotExist(err) {
 		return err
 	}
@@ -420,7 +435,7 @@ func AddContextToConfig(contextName string, context Context, configPath string, 
 	}
 
 	_, exists := mctlCfg.Contexts[contextName]
-	if exists {
+	if exists && !overwrite {
 		return errors.New("error adding context: a context with same name already exists")
 	}
 

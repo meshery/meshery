@@ -2,12 +2,14 @@ import React from 'react';
 import App from 'next/app';
 import Head from 'next/head';
 import { MuiThemeProvider, createTheme, withStyles } from '@material-ui/core/styles';
-import CssBaseline from '@material-ui/core/CssBaseline';
+// TODO: check if below CssBaseline import can be removed, its causing 'error  'CssBaseline' is defined but never used  no-unused-vars'
+// during cypress e2e test run (i.e. `npm run test`)
+// import CssBaseline from '@material-ui/core/CssBaseline';
 import PropTypes from 'prop-types';
 import Paper from '@material-ui/core/Paper';
 import { NoSsr, Typography } from '@material-ui/core';
 import FavoriteIcon from '@material-ui/icons/Favorite';
-
+import { Global } from '@emotion/react';
 import { blueGrey } from '@material-ui/core/colors';
 import getPageContext from '../components/PageContext';
 
@@ -210,7 +212,7 @@ class MesheryProviderApp extends App {
   }
 
   static async getInitialProps({ Component, ctx }) {
-    const pageProps = Component.getInitialProps ? await Component.getInitialProps(ctx) : {};
+    const pageProps = Component.getInitialProps ? await Component.getInitialProps(ctx) : {}
     return { pageProps };
   }
 
@@ -224,12 +226,19 @@ class MesheryProviderApp extends App {
     } = this.props;
     return (
       <NoSsr>
+        <Global
+      styles={{
+        body: {
+          margin: 0,
+          padding: 0
+        }
+      }}
+    />
           <Head>
             <title>Meshery</title>
           </Head>
           <MuiThemeProvider theme={theme}>
             <div className={classes.root}>
-              <CssBaseline />
 
               <div className={classes.appContent}>
                 <main className={classes.mainContent}>

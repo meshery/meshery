@@ -4,12 +4,13 @@ title: Meshery and Service Mesh Interface (SMI)
 permalink: functionality/service-mesh-interface
 type: functionality
 ---
+{% include alert.html type="info" title="Validating SMI Conformance with Meshery" content="<p>Meshery is SMI's 
+<a href='https://smi-spec.io/blog/validating-smi-conformance-with-meshery'>official tool for validating conformance</a>.</p> <p>The <a href='https://meshery.io/service-mesh-interface'>SMI Conformance dashboard</a> displays the current and historical test results of each of the service mesh projects.</p>" %}
 
 As service mesh providers and the surrounding ecosystem start adopting Service Mesh Interface, there is a growing need for validating the SMI implementation.
 
 As a service mesh agnostic tool that provides lifecycle and performance management of a large number of service meshes, sample applications, service mesh patterns and WebAssembly filters, Meshery is the ideal tool for the job when it comes to SMI Conformance.
 
-Meshery is also SMI's [official tool for validating conformance](https://smi-spec.io/blog/validating-smi-conformance-with-meshery/).
 ## Defining Conformance
 
 Conformance of SMI specifications is defined as a series of test assertions. A test assertion is a condition that must be positively verified in order for an implementation to be considered conformant. A test assertion may involve any number of conditions. Sets of test assertions are categorized by SMI specification. Collectively, these test sets comprise the complete suite of SMI conformance tests. Just like SMI itself, the suite of SMI Conformance tests is versioned, and with each new version of SMI, as interfaces are added and specifications changed, the Conformance requirements will change as appropriate.

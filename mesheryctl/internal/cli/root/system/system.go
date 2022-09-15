@@ -30,14 +30,13 @@ var (
 	// flag to change the current context to a temporary context
 	tempContext = ""
 	// token path
-	tokenPath string
 )
 
 // SystemCmd represents Meshery Lifecycle Management cli commands
 var SystemCmd = &cobra.Command{
 	Use:   "system",
 	Short: "Meshery Lifecycle Management",
-	Long:  `Manage the state and configuration of Meshery server, adapters, and client.`,
+	Long:  `Manage the state and configuration of Meshery server, components, and client.`,
 	Args:  cobra.MinimumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
@@ -63,12 +62,12 @@ func init() {
 		updateCmd,
 		configCmd,
 		ContextCmd,
-		completionCmd,
 		channelCmd,
 		checkCmd,
 		loginCmd,
 		logoutCmd,
 		tokenCmd,
+		dashboardCmd,
 	}
 	// --context flag to temporarily change context. This is global to all system commands
 	SystemCmd.PersistentFlags().StringVarP(&tempContext, "context", "c", "", "(optional) temporarily change the current context.")

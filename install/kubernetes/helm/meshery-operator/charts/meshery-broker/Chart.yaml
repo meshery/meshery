@@ -1,0 +1,14 @@
+apiVersion: v2
+name: meshery-broker
+description: Meshery Broker
+type: application
+version: 0.5.0
+appVersion: stable-latest
+
+maintainers:
+  - name: Layer5 Authors
+    email: community@layer5.io
+  - name: darrenlau
+    email: panyuenlau@gmail.com
+  - name: leecalcote
+    email: lee.calcote@layer5.io

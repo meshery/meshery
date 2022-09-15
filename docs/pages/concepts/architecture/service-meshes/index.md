@@ -2,23 +2,22 @@
 layout: default
 title: Service Meshes
 permalink: service-meshes
-redirect_from: 
+redirect_from:
   - service-meshes/adapters/
   - service-meshes/
 type: service-mesh
 list: exclude
 ---
 
-
-As the multi-mesh manager, Meshery offers support for more adapters than any other project or product in the world. Learn more about [Meshery Adapters]({{ site.baseurl }}/concepts/architecture/adapters) in the Architecture section.
+As the cloud native manager, Meshery offers support for more service meshes than any other project or product in the world. Meshery uses adapters to offer choice of load generator (for performance management) and for managing different layers of your infrastructure.
 
 ## Support for Service Meshes
 
-| Service Mesh  | Service Mesh Version  |
-| :------------ | :------------: |
+| Service Mesh | Earliest Version |
+| :----------: | :--------------: |
 {% for adapter in site.adapters -%}
 {% if adapter.port -%}
-| <img src="{{ adapter.image }}" style="width:20px" /> [{{ adapter.name }}]({{ site.baseurl }}{{ adapter.url }}) |&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; {{ adapter.version }} |
+| <img src="{{ adapter.image }}" style="width:20px" /> [{{ adapter.name }}]({{ site.baseurl }}{{ adapter.url }}) |&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; {{ adapter.earliest_version }} |
 {% endif -%}
 {% endfor %}
 

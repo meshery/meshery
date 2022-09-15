@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Layer5 Community
+title: Meshery Community
 permalink: project/community
 description: Open source, service mesh-centric community at Layer5
 redirect_from: project/community/
@@ -8,22 +8,22 @@ language: en
 type: project
 ---
 
-The Meshery project is maintained by the [Layer5 community](https://layer5.io/community). We are an open source organization that adheres to the [CNCF's Code of Conduct](https://github.com/cncf/foundation/blob/master/code-of-conduct.md). Our projects advance the state of the art surrounding service meshes and enable adopters of Cloud Native technologies and techniques to do so with confidence. Our shared commitment to the open source spirit pushes Layer5 projects forward.
+Meshery is a CNCF prpoject maintained by engineers from Layer5, VMware, Red Hat, Rackspace, Citrix, Layer5, Instabase, Microsoft, OpenGov, Computas AS, Rill Data, Quantex, Lumina Networks, and HashiCorp. Meshery is an an open source project that adheres to the [CNCF's Code of Conduct](https://github.com/cncf/foundation/blob/master/code-of-conduct.md). Meshery advance the state of the art surrounding service meshes and enable adopters of Cloud Native technologies and techniques to do so with confidence. Our shared commitment to the open source spirit pushes Meshery forward.
 
-#### [**Community First**](https://layer5.io/community)
+#### Community First
 
-<p>The <a href="https://layer5.io">Layer5</a> community represents the largest collection of service mesh projects and their maintainers in the world.</p>
+<p>Meshery is one of a number of open source projects orginated by the <a href="https://layer5.io">Layer5 community</a>, which represents the largest collection of service mesh projects and their maintainers in the world.</p>
+
 The Meshery project is community-built and welcomes collaboration! 
-<br /><a href="https://github.com/layer5io/meshery"><i class="fab fa-github"></i> Fork here on Github</a>
+<br /><a href="https://github.com/meshery/meshery"><i class="fab fa-github"></i> Fork here on Github</a>
 
-* Join [weekly community meeting](https://docs.google.com/document/d/1c07UO9dS7_tFD-ClCWHIrEzRnzUJoFQ10EzfJTpS7FY/edit?usp=sharing) [Fridays from 10am to 11am Central](/assets/projects/meshery/Meshery-Community-Meeting.ics). 
+* Join [weekly community meeting](https://docs.google.com/document/d/1c07UO9dS7_tFD-ClCWHIrEzRnzUJoFQ10EzfJTpS7FY/edit?usp=sharing) [Fridays from 10am to 11am Central](https://meshery.io/calendar). 
     - Watch community [meeting recordings](https://www.youtube.com/playlist?list=PL3A-A6hPO2IMPPqVjuzgqNU5xwnFFn3n0) and subscribe to the [community calendar](https://bit.ly/2SbrRhe).
-
-* Access the [community drive](https://drive.google.com/drive/u/4/folders/0ABH8aabN4WAKUk9PVA) (request access).
+* Fill-in a <a href="https://layer5.io/newcomers">community member form</a> to gain access to community resources.
 
 ## Getting involved in the Community
 
-Want to get involved with project, join [our Slack](http://slack.layer5.io) and one of the community members will make sure you are not left out. We always have a role for everyone whether to be a code-writer, a community manager, user, advocate, or just to listen in. Layer5 community is always open and warmly welcomes you. Check out our [community welcome guide](https://docs.google.com/document/d/17OPtDE_rdnPQxmk2Kauhm3GwXF1R5dZ3Cj8qZLKdo5E/edit) for more details.
+Want to get involved with project, read through the [Newcomers Guide](https://layer5.io/community/newcomers), which provides details on how to engage. Seek out other community members, who will make sure you are not left out. We always have a role for everyone whether to be a code-writer, a community manager, user, advocate, or just to listen in. Layer5 community is always open and warmly welcomes you. Check out our [community welcome guide](https://docs.google.com/document/d/17OPtDE_rdnPQxmk2Kauhm3GwXF1R5dZ3Cj8qZLKdo5E/edit) for more details.
 If this is your first time making open source contribution, you are in the right place! Check out our [first timers' welcome guide](https://docs.google.com/document/d/1tpg2sLxirozNt3Ofr3GdM002f9rExp74EqrsGZBU710/edit).
 
 Please see our [contributing guide]({{ site.baseurl }}/project/contributing) for more details.
