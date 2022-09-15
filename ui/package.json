@@ -91,6 +91,7 @@
     "react-relay": "^13.2.0",
     "react-runtime": "^1.1.0",
     "react-select": "^2.4.3",
+    "react-share": "^4.4.0",
     "react-slick": "^0.29.0",
     "redux": "^4.2.0",
     "redux-devtools-extension": "^2.13.9",
@@ -129,4 +130,3 @@
     "webpack-cli": "^4.9.2"
   }
 }
-

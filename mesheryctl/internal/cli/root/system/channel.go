@@ -93,7 +93,13 @@ var setCmd = &cobra.Command{
 // Subscribe to release channel or version
 mesheryctl system channel set [stable|stable-version|edge|edge-version]
 	`,
-	Args: cobra.ExactArgs(1),
+	Args: func(_ *cobra.Command, args []string) error {
+		const errMsg = `Usage: mesheryctl system channel set [stable|stable-version|edge|edge-version]`
+		if len(args) == 0 {
+			return fmt.Errorf("release channel not specified\n\n%v", errMsg)
+		}
+		return nil
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 
 		mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
@@ -112,7 +118,7 @@ mesheryctl system channel set [stable|stable-version|edge|edge-version]
 		channelNameSeperated := strings.SplitN(channelVersion, "-", 2)
 
 		if !IsBetaOrStable(channelNameSeperated[0]) {
-			return errors.New("No release channel subscription found." +
+			return errors.New("No release channel subscription found. " +
 				"Please subscribe to either the 'stable' or 'edge' release channel")
 		}
 
@@ -164,7 +170,13 @@ var switchCmd = &cobra.Command{
 // Switch between release channels
 mesheryctl system channel switch [stable|stable-version|edge|edge-version]
 	`,
-	Args: cobra.ExactArgs(1),
+	Args: func(_ *cobra.Command, args []string) error {
+		const errMsg = `Usage: mesheryctl system channel switch [stable|stable-version|edge|edge-version]`
+		if len(args) == 0 {
+			return fmt.Errorf("release channel not specified\n\n%v", errMsg)
+		}
+		return nil
+	},
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
 		hcOptions := &HealthCheckOptions{
@@ -219,10 +231,9 @@ var channelCmd = &cobra.Command{
 	Use:   "channel",
 	Short: "Switch between release channels",
 	Long:  `Subscribe to a release channel. Choose between either 'stable' or 'edge' channels.`,
-	Args:  cobra.NoArgs,
 	Example: `
 // Subscribe to release channel or version
-mesheryctl system channel 
+mesheryctl system channel
 // To set the channel
 mesheryctl system channel set [stable|stable-version|edge|edge-version]
 // To pin/set the channel to a specific version
@@ -233,6 +244,11 @@ mesheryctl system channel view
 mesheryctl system channel switch [stable|stable-version|edge|edge-version]
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
+		if len(args) != 0 {
+			if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
+				return errors.New(utils.SystemChannelSubError(fmt.Sprintf("'%s' is a invalid command. Use 'mesheryctl system channel --help' to display usage guide.\n", args[0]), "channel"))
+			}
+		}
 		mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			log.Fatalln(err, "error processing config")
