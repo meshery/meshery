@@ -146,6 +146,7 @@ module.exports = {
     '@material-ui/icons/TouchApp' : require('@material-ui/icons/TouchApp'),
     "@material-ui/icons/CheckCircle" : require("@material-ui/icons/CheckCircle"),
     "@material-ui/icons/Warning" : require("@material-ui/icons/Warning"),
-    "@material-ui/icons/GetApp" : require("@material-ui/icons/GetApp")
+    "@material-ui/icons/GetApp" : require("@material-ui/icons/GetApp"),
+    "@material-ui/icons/MoreVert" : require("@material-ui/icons/MoreVert")
   },
 };
