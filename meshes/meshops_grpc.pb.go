@@ -18,7 +18,6 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type MeshServiceClient interface {
-	CreateMeshInstance(ctx context.Context, in *CreateMeshInstanceRequest, opts ...grpc.CallOption) (*CreateMeshInstanceResponse, error)
 	MeshName(ctx context.Context, in *MeshNameRequest, opts ...grpc.CallOption) (*MeshNameResponse, error)
 	MeshVersions(ctx context.Context, in *MeshVersionsRequest, opts ...grpc.CallOption) (*MeshVersionsResponse, error)
 	ApplyOperation(ctx context.Context, in *ApplyRuleRequest, opts ...grpc.CallOption) (*ApplyRuleResponse, error)
@@ -34,15 +33,6 @@ type meshServiceClient struct {
 
 func NewMeshServiceClient(cc grpc.ClientConnInterface) MeshServiceClient {
 	return &meshServiceClient{cc}
-}
-
-func (c *meshServiceClient) CreateMeshInstance(ctx context.Context, in *CreateMeshInstanceRequest, opts ...grpc.CallOption) (*CreateMeshInstanceResponse, error) {
-	out := new(CreateMeshInstanceResponse)
-	err := c.cc.Invoke(ctx, "/meshes.MeshService/CreateMeshInstance", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
 }
 
 func (c *meshServiceClient) MeshName(ctx context.Context, in *MeshNameRequest, opts ...grpc.CallOption) (*MeshNameResponse, error) {
@@ -135,7 +125,6 @@ func (c *meshServiceClient) ComponentInfo(ctx context.Context, in *ComponentInfo
 // All implementations must embed UnimplementedMeshServiceServer
 // for forward compatibility
 type MeshServiceServer interface {
-	CreateMeshInstance(context.Context, *CreateMeshInstanceRequest) (*CreateMeshInstanceResponse, error)
 	MeshName(context.Context, *MeshNameRequest) (*MeshNameResponse, error)
 	MeshVersions(context.Context, *MeshVersionsRequest) (*MeshVersionsResponse, error)
 	ApplyOperation(context.Context, *ApplyRuleRequest) (*ApplyRuleResponse, error)
@@ -150,9 +139,6 @@ type MeshServiceServer interface {
 type UnimplementedMeshServiceServer struct {
 }
 
-func (UnimplementedMeshServiceServer) CreateMeshInstance(context.Context, *CreateMeshInstanceRequest) (*CreateMeshInstanceResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateMeshInstance not implemented")
-}
 func (UnimplementedMeshServiceServer) MeshName(context.Context, *MeshNameRequest) (*MeshNameResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method MeshName not implemented")
 }
@@ -185,24 +171,6 @@ type UnsafeMeshServiceServer interface {
 
 func RegisterMeshServiceServer(s grpc.ServiceRegistrar, srv MeshServiceServer) {
 	s.RegisterService(&MeshService_ServiceDesc, srv)
-}
-
-func _MeshService_CreateMeshInstance_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreateMeshInstanceRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MeshServiceServer).CreateMeshInstance(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/meshes.MeshService/CreateMeshInstance",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MeshServiceServer).CreateMeshInstance(ctx, req.(*CreateMeshInstanceRequest))
-	}
-	return interceptor(ctx, in, info, handler)
 }
 
 func _MeshService_MeshName_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -341,10 +309,6 @@ var MeshService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "meshes.MeshService",
 	HandlerType: (*MeshServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
-		{
-			MethodName: "CreateMeshInstance",
-			Handler:    _MeshService_CreateMeshInstance_Handler,
-		},
 		{
 			MethodName: "MeshName",
 			Handler:    _MeshService_MeshName_Handler,

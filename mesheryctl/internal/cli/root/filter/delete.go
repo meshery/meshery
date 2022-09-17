@@ -2,14 +2,13 @@ package filter
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"os"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -18,7 +17,14 @@ var deleteCmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Delete filter file",
 	Long:  `delete filter file will trigger deletion of the filter file`,
-	Args:  cobra.MinimumNArgs(0),
+	Example: `
+// Delete the specified WASM filter file using name or ID
+mesheryctl exp filter delete [filter-name | ID]
+
+// Delete using the file name
+mesheryctl exp filter delete test-wasm
+	`,
+	Args: cobra.MinimumNArgs(0),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
@@ -32,12 +38,7 @@ var deleteCmd = &cobra.Command{
 		}
 
 		client := &http.Client{}
-		req, err := http.NewRequest("DELETE", mctlCfg.GetBaseMesheryURL()+"/api/filter/deploy", fileReader)
-		if err != nil {
-			return err
-		}
-
-		err = utils.AddAuthDetails(req, tokenPath)
+		req, err := utils.NewRequest("DELETE", mctlCfg.GetBaseMesheryURL()+"/api/filter/deploy", fileReader)
 		if err != nil {
 			return err
 		}
@@ -48,12 +49,12 @@ var deleteCmd = &cobra.Command{
 		}
 
 		defer res.Body.Close()
-		body, err := ioutil.ReadAll(res.Body)
+		body, err := io.ReadAll(res.Body)
 		if err != nil {
 			return err
 		}
 
-		log.Infof(string(body))
+		utils.Log.Info(string(body))
 
 		return nil
 	},

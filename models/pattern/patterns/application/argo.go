@@ -13,7 +13,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-const argoManifest = "https://raw.githubusercontent.com/argoproj/argo-rollouts/stable/manifests/install.yaml"
+const argoManifest = "https://raw.githubusercontent.com/argoproj/argo-rollouts/master/manifests/install.yaml"
 
 type ArgoRollout struct {
 	kubeclient *meshkube.Client
@@ -48,7 +48,7 @@ func (ar *ArgoRollout) Native(opt RolloutEngineGenericOptions) error {
 			return fmt.Errorf("failed to delete resource with name \"%s\" in namespace \"%s\"", opt.Name, opt.Namespace)
 		}
 
-		if opt.Advanced.SkipService {
+		if !*opt.Advanced.CreateService {
 			return nil
 		}
 
@@ -81,7 +81,7 @@ func (ar *ArgoRollout) Native(opt RolloutEngineGenericOptions) error {
 		return fmt.Errorf("failed to create resource with name \"%s\" in namespace \"%s\"", opt.Name, opt.Namespace)
 	}
 
-	if opt.Advanced.SkipService {
+	if !*opt.Advanced.CreateService {
 		return nil
 	}
 
@@ -146,10 +146,11 @@ func createNativeArgoResource(opt RolloutEngineGenericOptions) v1alpha1.Rollout 
 		}
 
 		containers = append(containers, v1.Container{
-			Name:  container.Name,
-			Image: container.Image,
-			Ports: ports,
-			Env:   container.Envs,
+			Name:    container.Name,
+			Image:   container.Image,
+			Ports:   ports,
+			Env:     container.Envs,
+			Command: container.Commands,
 		})
 	}
 

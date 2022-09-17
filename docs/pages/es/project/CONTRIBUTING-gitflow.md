@@ -16,7 +16,8 @@ Simplemente dirígete a la página de GitHub y haz clic en el botón "Fork". Es 
 git clone git@github.com:USERNAME/FORKED-PROJECT.git
 ```
 
-Mantener Tu Fork Actualizado
+## Mantener Tu Fork Actualizado
+
 Si bien este no es un paso necesario, si planeas hacer algo más que una pequeña solución rápida, querrás asegurarte de mantener tu fork actualizado rastreando el repositorio "upstream" original al que hiciste "fork". Para hacer esto, deberás agregar un remoto:
 
 ## Agregar repositorio 'upstream' a la lista de remotos

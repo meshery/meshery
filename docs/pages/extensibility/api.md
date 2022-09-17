@@ -15,6 +15,11 @@ Each of Meshery's APIs are subject to the following authentication and authoriza
 
 Requests to any of the API endpoints must be authenticated and include a valid JWT access token in the HTTP headers. Type of authentication is determined by the selected [Provider](#providers). Use of the Local Provider, "None", puts Meshery into single-user mode and does not require authentication.
 
+{% include alert.html type="dark" title="What are authentication tokens?" content="Meshery authentication tokens allow users or systems to authenticate with Meshery Server via either its two clients, <a href='/reference/mesheryctl'>Meshery >CLI</a> and <a href='/concepts/architecture/ui'>UI</a>, or its two APIs: <a href='/reference/rest-apis'>REST</a> or <a href='/reference/graphql-apis'>GraphQL</a>. <p>Meshery's authentication token system provide secure access to Meshery's powerful management features.</p>" %}
+
+#### What are authentication tokens?
+
+
 ### Authorization
 
 Currently, Meshery only requires a valid token in order to allow clients to invoke its APIs.
@@ -24,6 +29,24 @@ Currently, Meshery only requires a valid token in order to allow clients to invo
 Each of the API endpoints are exposed through [server.go](https://github.com/layer5io/meshery/blob/master/router/server.go). Endpoints are grouped by function (e.g. /api/mesh or /api/perf).
 
 Alternatively, [Remote Providers](./providers) can extend Meshery's endpoints behind the `/api/extensions/` endpoint.
+
+### How to get your token
+
+There are two ways to get your authentication token:
+
+1. Meshery UI
+2. Meshery CLI
+
+Using Meshery UI, you can get a copy of your authentication token by following these steps:
+
+1. Log into Meshery by selecting your identity provider of choice (typically found at `http:<meshery-server>:9081/provider`)
+2. Navigate to your user's avatar in the upper lefthand corner and select "Get Token" from the dropdown of profile section.
+
+Using Meshery CLI, you can get a copy of your authentication token by executing this command:
+
+<pre><code>mesheryctl system login</code></pre>
+
+In order to use this command, you must have a web broswer available on your system (this command cannot be executed on a headless system).  
 
 #### GraphQL
 
@@ -37,7 +60,7 @@ Meshery GrahphQL API can be used to perform three operations:
 - Mutations for creating, updating, and deleting data.
 - Subscriptions for watching for any data changes.
 
-{% include alert.html type="dark" title="Meshery's GraphQL Schema" content="See <a href='/reference/graphql-apis'>GraphQL API Reference</a> Self-generated API documentation for Meshery’s GraphQL API. The API can be explored interactively using the GraphQL Playground. Documentation is generated from Meshery’s GraphQL schema. Each table below documents a GraphQL type." %}
+{% include alert.html type="dark" title="Meshery's GraphQL API Reference" content="See <a href='/reference/graphql-apis'>GraphQL API Reference</a> Self-generated API documentation for Meshery’s GraphQL API. The API can be explored interactively using the GraphQL Playground. Documentation is generated from Meshery’s GraphQL schema. Each table below documents a GraphQL type." %}
 
 #### REST
 

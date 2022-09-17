@@ -1,0 +1,181 @@
+# Default values for meshery-operator.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+mesheryOperator:
+  name: manager
+  image:
+    repository: layer5/meshery-operator:stable-latest
+    pullPolicy: IfNotPresent
+  args:
+    - --metrics-addr=127.0.0.1:8080
+    - --enable-leader-election
+  command:
+    - /manager
+
+kubeRbac:
+  name: kube-rbac-proxy
+  image:
+    repository: gcr.io/kubebuilder/kube-rbac-proxy:v0.5.0
+    pullPolicy: IfNotPresent
+  args:
+    - --secure-listen-address=0.0.0.0:8443
+    - --upstream=http://127.0.0.1:8080/
+    - --logtostderr=false
+    - --v=10
+
+env: {}
+
+probe:
+  livenessProbe:
+    enabled: false
+  readinessProbe:
+    enabled: false
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: "meshery-operator"
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: create
+  # The name of the service account to use.
+  # If not set and create is false, a name is generated using the fullname template
+  name: meshery-operator
+
+podSecurityContext:
+  {}
+  # fsGroup: 2000
+
+annotations: {}
+
+securityContext:
+  {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: false
+  # runAsNonRoot: false
+  # runAsUser: 1000
+
+service:
+  type: ClusterIP
+  port: 10000
+  annotations: {}
+
+ingress:
+  enabled: false
+  annotations:
+    {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "false"
+
+  hosts:
+    - host: chart-example.local
+      paths: []
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+resources:
+  {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+testCase:
+  enabled: false
+
+# By default, the adapters need to have the same cluster role as the meshery to have permissions for performing necessary operations
+
+# If need to use a different service accounts for the adapters, modify the serviceAccountNameOverride for the corresponding adapters here,
+# or set the serviceAccountNameOverride to empty while setting the serviceAccount information in the sub-chart accordingly
+meshery-app-mesh:
+  enabled: false
+  fullnameOverride: meshery-app-mesh
+  serviceAccountNameOverride: meshery-server
+
+meshery-istio:
+  enabled: true
+  fullnameOverride: meshery-istio
+  serviceAccountNameOverride: meshery-server
+
+meshery-linkerd:
+  enabled: true
+  fullnameOverride: meshery-linkerd
+  serviceAccountNameOverride: meshery-server
+
+meshery-consul:
+  enabled: true
+  fullnameOverride: meshery-consul
+  serviceAccountNameOverride: meshery-server
+
+meshery-kuma:
+  enabled: true
+  fullnameOverride: meshery-kuma
+  serviceAccountNameOverride: meshery-server
+
+meshery-osm:
+  enabled: true
+  fullnameOverride: meshery-osm
+  serviceAccountNameOverride: meshery-server
+
+meshery-nsm:
+  enabled: false
+  fullnameOverride: meshery-nsm
+  serviceAccountNameOverride: meshery-server
+
+meshery-nginx-sm:
+  enabled: false
+  fullnameOverride: meshery-nginx-sm
+  serviceAccountNameOverride: meshery-server
+
+meshery-traefik-mesh:
+  enabled: false
+  fullnameOverride: meshery-traefik-mesh
+  serviceAccountNameOverride: meshery-server
+
+meshery-cpx:
+  enabled: false
+  fullnameOverride: meshery-cpx
+  serviceAccountNameOverride: meshery-server
+
+meshery:
+  enabled: true
+  fullnameOverride: meshery-server
+  serviceAccountNameOverride: meshery-server
+
+meshery-broker:
+  enabled: true
+  fullnameOverride: meshery-broker
+  serviceAccountNameOverride: meshery-server
+
+meshery-meshsync:
+  enabled: true
+  fullnameOverride: meshery-meshsync
+  serviceAccountNameOverride: meshery-server
+
+meshery-cilium:
+  enabled: false
+  fullnameOverride: meshery-cilium
+
+meshery-perf:
+  enabled: false
+  fullnameOverride: meshery-perf
+  serviceAccountNameOverride: meshery-server

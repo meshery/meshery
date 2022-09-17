@@ -1,4 +1,0 @@
-name: list
-description: displays a list of available pattern files
-usage: |
-    mesheryctl pattern list

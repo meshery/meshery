@@ -2,11 +2,10 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 
+	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/spf13/viper"
-	"github.com/tcnksm/go-latest"
 )
 
 // Version defines the Json payload structure for version api\
@@ -40,13 +39,13 @@ func (h *Handler) ServerVersionHandler(w http.ResponseWriter, r *http.Request) {
 	// }
 
 	// compare the server build with the target build
-	res, err := CheckLatestVersion(version.Build)
+	isOutdated, latestVersion, err := CheckLatestVersion(version.Build)
 	if err != nil {
 		h.log.Error(err)
 	} else {
 		// Add "Latest" and "Outdated" fields to the response
-		version.Latest = res.Current
-		version.Outdated = &res.Outdated
+		version.Latest = latestVersion
+		version.Outdated = isOutdated
 	}
 
 	w.Header().Set("Content-Type", "application/json")
@@ -59,21 +58,19 @@ func (h *Handler) ServerVersionHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 // CheckLatestVersion takes in the current server version compares it with the target
-// and returns the result (latest.CheckResponse)
-func CheckLatestVersion(serverVersion string) (*latest.CheckResponse, error) {
-	githubTag := &latest.GithubTag{
-		Owner:      mesheryGitHubOrg,
-		Repository: mesheryGitHubRepo,
-	}
-
-	// Compare current running Meshery server version to the latest available Meshery release on GitHub.
-	res, err := latest.Check(githubTag, serverVersion)
+// and returns the (isOutdated, latestVersion, error)
+func CheckLatestVersion(serverVersion string) (*bool, string, error) {
+	// Inform user of the latest release version
+	latestVersion, err := utils.GetLatestStableReleaseTag()
+	isOutdated := false
 	if err != nil {
-		return nil, ErrVersionCompare(err)
+		return nil, "", ErrGetLatestVersion(err)
+	}
+	// Compare current running Meshery server version to the latest available Meshery release on GitHub.
+	if latestVersion != serverVersion {
+		isOutdated = true
+		return &isOutdated, latestVersion, nil
 	}
 
-	// Add "v" to the "Current" property of the CheckResponse
-	res.Current = fmt.Sprintf("v%s", res.Current)
-
-	return res, nil
+	return &isOutdated, latestVersion, nil
 }

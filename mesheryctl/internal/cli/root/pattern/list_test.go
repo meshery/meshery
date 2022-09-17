@@ -2,7 +2,7 @@ package pattern
 
 import (
 	"flag"
-	"io/ioutil"
+	"io"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -69,7 +69,7 @@ func TestPatternList(t *testing.T) {
 			apiResponse := utils.NewGoldenFile(t, tt.Fixture, fixturesDir).Load()
 
 			// set token
-			tokenPath = tt.Token
+			utils.TokenFlag = tt.Token
 
 			// mock response
 			httpmock.RegisterResponder("GET", tt.URL,
@@ -83,7 +83,7 @@ func TestPatternList(t *testing.T) {
 			rescueStdout := os.Stdout
 			r, w, _ := os.Pipe()
 			os.Stdout = w
-
+			_ = utils.SetupMeshkitLoggerTesting(t, false)
 			PatternCmd.SetArgs(tt.Args)
 			PatternCmd.SetOutput(rescueStdout)
 			err := PatternCmd.Execute()
@@ -103,7 +103,7 @@ func TestPatternList(t *testing.T) {
 			}
 
 			w.Close()
-			out, _ := ioutil.ReadAll(r)
+			out, _ := io.ReadAll(r)
 			os.Stdout = rescueStdout
 
 			// response being printed in console

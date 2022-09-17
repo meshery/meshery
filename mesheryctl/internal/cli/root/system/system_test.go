@@ -10,7 +10,6 @@ import (
 )
 
 func TestSystemCmdIntegration(t *testing.T) {
-	// skipping this integration test with --short flag
 	if testing.Short() {
 		t.Skip("skipping integration test")
 	}
@@ -26,7 +25,7 @@ func TestSystemCmdIntegration(t *testing.T) {
 	currDir := filepath.Dir(filename)
 
 	// update all location
-	utils.SetFileLocationTesting(t, currDir)
+	utils.SetFileLocationTesting(currDir)
 
 	tests := []struct {
 		Name            string
@@ -130,6 +129,8 @@ func TestSystemCmdIntegration(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
+			// setting up utils.Log
+			_ = utils.SetupMeshkitLoggerTesting(t, false)
 			SystemCmd.SetArgs(tt.Args)
 
 			t.Logf("%sing meshery", tt.Action)

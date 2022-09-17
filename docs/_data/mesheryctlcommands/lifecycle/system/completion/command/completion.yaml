@@ -1,4 +1,0 @@
-name: completion
-description: Output shell completion code.
-usage: |
-    mesheryctl system completion [bash|zsh|fish]

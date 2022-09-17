@@ -62,6 +62,19 @@ func (mpp *MesheryPatternPersister) DeleteMesheryPattern(id uuid.UUID) ([]byte, 
 	return marshalMesheryPattern(&pattern), nil
 }
 
+// DeleteMesheryPatterns takes in a meshery-patterns and delete those if exist
+func (mpp *MesheryPatternPersister) DeleteMesheryPatterns(patterns MesheryPatternDeleteRequestBody) ([]byte, error) {
+	var deletedMaptterns []MesheryPattern
+	for _, pObj := range patterns.Patterns {
+		id := uuid.FromStringOrNil(pObj.ID)
+		pattern := MesheryPattern{ID: &id}
+		mpp.DB.Delete(&pattern)
+		deletedMaptterns = append(deletedMaptterns, pattern)
+	}
+
+	return marshalMesheryPatterns(deletedMaptterns), nil
+}
+
 func (mpp *MesheryPatternPersister) SaveMesheryPattern(pattern *MesheryPattern) ([]byte, error) {
 	if pattern.ID == nil {
 		id, err := uuid.NewV4()

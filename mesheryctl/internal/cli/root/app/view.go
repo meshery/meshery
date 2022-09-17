@@ -2,18 +2,16 @@ package app
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"regexp"
 	"strings"
 
 	"github.com/ghodss/yaml"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/models"
 	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -24,18 +22,22 @@ var (
 )
 
 var viewCmd = &cobra.Command{
-	Use:   "view <application name>",
+	Use:   "view application name",
 	Short: "Display application(s)",
 	Long:  `Displays the contents of a specific application based on name or id`,
 	Example: `
-	View applictaions with name
-	mesheryctl app view <app-name>
+// View applictaions with name
+mesheryctl app view [app-name]
 
-	View applications with id
-	mesheryctl app view <app-id>
+// View applications with id
+mesheryctl app view [app-id]
 
-	View all applications
-	mesheryctl app view --all
+// View all applications
+mesheryctl app view --all
+
+! Refer below image link for usage
+* Usage of mesheryctl app view
+# ![app-view-usage](/assets/img/mesheryctl/app-view.png)
 	`,
 	Args: cobra.MinimumNArgs(0),
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -43,10 +45,7 @@ var viewCmd = &cobra.Command{
 		if err != nil {
 			return errors.Wrap(err, "error processing config")
 		}
-		// set default tokenpath for app offboard command.
-		if tokenPath == "" {
-			tokenPath = constants.GetCurrentAuthToken()
-		}
+
 		application := ""
 		isID := false
 		applicationID := ""
@@ -82,12 +81,7 @@ var viewCmd = &cobra.Command{
 		}
 
 		client := &http.Client{}
-		req, err = http.NewRequest("GET", url, nil)
-		if err != nil {
-			return err
-		}
-
-		err = utils.AddAuthDetails(req, tokenPath)
+		req, err = utils.NewRequest("GET", url, nil)
 		if err != nil {
 			return err
 		}
@@ -102,7 +96,7 @@ var viewCmd = &cobra.Command{
 		}
 
 		defer res.Body.Close()
-		body, err := ioutil.ReadAll(res.Body)
+		body, err := io.ReadAll(res.Body)
 		if err != nil {
 			return err
 		}
@@ -136,14 +130,14 @@ var viewCmd = &cobra.Command{
 					return err
 				}
 				if outFormatFlag == "json" {
-					log.Info(string(body))
+					utils.Log.Info(string(body))
 					continue
 				}
 				if outFormatFlag == "yaml" {
 					if body, err = yaml.JSONToYAML(body); err != nil {
 						return errors.Wrap(err, "failed to convert json to yaml")
 					}
-					log.Info(string(body))
+					utils.Log.Info(string(body))
 					continue
 				}
 			}
@@ -157,7 +151,7 @@ var viewCmd = &cobra.Command{
 			return errors.New("output-format choice invalid, use [json|yaml]")
 		}
 		if viewAllFlag || isID {
-			log.Info(string(body))
+			utils.Log.Info(string(body))
 		}
 		return nil
 	},

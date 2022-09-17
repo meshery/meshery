@@ -20,15 +20,15 @@ const (
 
 var (
 	// no adapters found
-	ErrNoAdapters = errors.New(ErrNoAdaptersCode, errors.Fatal, []string{"Adapter for required mesh not found"}, []string{}, []string{}, []string{"Deploy the proper Meshery Adapter for your service mesh"})
+	ErrNoAdapters = errors.New(ErrNoAdaptersCode, errors.Fatal, []string{"Adapter for required mesh not found"}, []string{"Adapter for required mesh not found"}, []string{""}, []string{"Deploy the proper Meshery Adapter for your service mesh"})
 
-	ErrFailedDeployingMesh = errors.New(ErrFailedDeployingMeshCode, errors.Fatal, []string{"Failed to deploy the service mesh"}, []string{""}, []string{}, []string{"Check your environment and try again"})
+	ErrFailedDeployingMesh = errors.New(ErrFailedDeployingMeshCode, errors.Fatal, []string{"Failed to deploy the service mesh"}, []string{"Failed to deploy the service mesh"}, []string{}, []string{"Check your environment and try again"})
 
-	ErrTimeoutWaitingForDeployResponse = errors.New(ErrTimeoutWaitingForDeployResponseCode, errors.Fatal, []string{"Timed out waiting for deploy event"}, []string{}, []string{}, []string{"Check your environment and try again"})
+	ErrTimeoutWaitingForDeployResponse = errors.New(ErrTimeoutWaitingForDeployResponseCode, errors.Fatal, []string{"Timed out waiting for deploy event"}, []string{"Timed out waiting for deployment"}, []string{}, []string{"Check your environment and try again"})
 
-	ErrTimeoutWaitingForValidateResponse = errors.New(ErrTimeoutWaitingForValidateResponseCode, errors.Fatal, []string{"Timed out waiting for validate response"}, []string{}, []string{}, []string{"Check your environment and try again"})
+	ErrTimeoutWaitingForValidateResponse = errors.New(ErrTimeoutWaitingForValidateResponseCode, errors.Fatal, []string{"Timed out waiting for validate response"}, []string{"Timed out waiting for validate response"}, []string{""}, []string{"Check your environment and try again"})
 
-	ErrSMIConformanceTestsFailed = errors.New(ErrSMIConformanceTestsFailedCode, errors.Fatal, []string{"SMI conformance tests failed"}, []string{}, []string{}, []string{"Join https://layer5io.slack.com/archives/C010H0HE2E6"})
+	ErrSMIConformanceTestsFailed = errors.New(ErrSMIConformanceTestsFailedCode, errors.Fatal, []string{"SMI conformance tests failed"}, []string{"SMI conformance tests failed"}, []string{}, []string{"Join https://layer5io.slack.com/archives/C010H0HE2E6"})
 )
 
 // When unable to get release data

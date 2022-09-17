@@ -1,12 +1,9 @@
 package app
 
 import (
-	"bytes"
 	"path/filepath"
 	"runtime"
 	"testing"
-
-	log "github.com/sirupsen/logrus"
 
 	"github.com/jarcoal/httpmock"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
@@ -45,6 +42,12 @@ func TestOffboardCmd(t *testing.T) {
 			ExpectedResponse: "offboard.output.golden",
 			URLs: []utils.MockURL{
 				{
+					Method:       "POST",
+					URL:          testContext.BaseURL + "/api/pattern",
+					Response:     "apply.patternSave.response.golden",
+					ResponseCode: 200,
+				},
+				{
 					Method:       "DELETE",
 					URL:          testContext.BaseURL + "/api/application/deploy",
 					Response:     "offboard.response.golden",
@@ -58,9 +61,9 @@ func TestOffboardCmd(t *testing.T) {
 
 	// Run tests
 	for _, tt := range tests {
+		// View api response from golden files
 		t.Run(tt.Name, func(t *testing.T) {
 			for _, url := range tt.URLs {
-				// View api response from golden files
 				apiResponse := utils.NewGoldenFile(t, url.Response, fixturesDir).Load()
 
 				// mock response
@@ -69,17 +72,14 @@ func TestOffboardCmd(t *testing.T) {
 			}
 
 			// set token
-			tokenPath = tt.Token
+			utils.TokenFlag = tt.Token
 
 			// Expected response
 			testdataDir := filepath.Join(currDir, "testdata")
 			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
 
-			// setting up log to grab logs
-			var buf bytes.Buffer
-			log.SetOutput(&buf)
-			utils.SetupLogrusFormatter()
-
+			b := utils.SetupMeshkitLoggerTesting(t, false)
+			AppCmd.SetOutput(b)
 			AppCmd.SetArgs(tt.Args)
 			err := AppCmd.Execute()
 			if err != nil {
@@ -98,7 +98,7 @@ func TestOffboardCmd(t *testing.T) {
 			}
 
 			// response being printed in console
-			actualResponse := buf.String()
+			actualResponse := b.String()
 
 			// write it in file
 			if *update {
