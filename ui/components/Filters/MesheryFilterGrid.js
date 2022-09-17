@@ -41,7 +41,7 @@ function MesheryFilterGridItem({ filter, handleDeploy, handleUnDeploy, handleSub
  *  handleDeploy: (fileter_file: any) => void,
  *  handleUnDeploy: (filter_file: any) => void,
  *  handleSubmit: (data: any, id: string, name: string, type: string) => void,
- *  setSelectedFiletrs : ({show: boolean, filter:any}) => void,
+ *  setSelectedFilter : ({show: boolean, filter:any}) => void,
  *  selectedFilter: {show : boolean, filter : any},
  *  pages?: number,
  *  selectedPage?: number,
