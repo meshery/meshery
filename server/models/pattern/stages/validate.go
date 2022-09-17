@@ -9,7 +9,6 @@ import (
 	"github.com/layer5io/meshery/server/models/pattern/jsonschema"
 	"github.com/layer5io/meshery/server/models/pattern/patterns/k8s"
 	"github.com/layer5io/meshery/server/models/pattern/resource/selector"
-	"github.com/sirupsen/logrus"
 )
 
 func Validator(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFunction {
