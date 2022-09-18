@@ -1,4 +1,0 @@
-name: system context
-description: Display the current context.
-usage: |
-    `mesheryctl system context`

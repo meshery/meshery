@@ -1,22 +1,29 @@
 package models
 
 import (
+	"archive/tar"
 	"bytes"
+	"compress/gzip"
+	"database/sql"
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"os"
 	"path/filepath"
 	"strconv"
 	"strings"
 	"sync"
 
 	"github.com/gofrs/uuid"
-	"github.com/layer5io/meshery/models/walker"
 	"github.com/layer5io/meshkit/database"
+	"github.com/layer5io/meshkit/logger"
+	"github.com/layer5io/meshkit/utils"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
+	"github.com/layer5io/meshkit/utils/walker"
 	"github.com/layer5io/meshsync/pkg/model"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
 	"github.com/sirupsen/logrus"
@@ -29,14 +36,15 @@ type DefaultLocalProvider struct {
 	ProviderProperties
 	ProviderBaseURL                 string
 	ResultPersister                 *MesheryResultsPersister
-	SmiResultPersister              *BitCaskSmiResultsPersister
-	TestProfilesPersister           *BitCaskTestProfilesPersister
+	SmiResultPersister              *SMIResultsPersister
+	TestProfilesPersister           *TestProfilesPersister
 	PerformanceProfilesPersister    *PerformanceProfilePersister
 	MesheryPatternPersister         *MesheryPatternPersister
 	MesheryPatternResourcePersister *PatternResourcePersister
 	MesheryApplicationPersister     *MesheryApplicationPersister
 	MesheryFilterPersister          *MesheryFilterPersister
-	GenericPersister                database.Handler
+	MesheryK8sContextPersister      *MesheryK8sContextPersister
+	GenericPersister                *database.Handler
 	KubeClient                      *mesherykube.Client
 }
 
@@ -46,7 +54,7 @@ func (l *DefaultLocalProvider) Initialize() {
 	l.ProviderDescription = []string{
 		"Ephemeral sessions",
 		"Environment setup not saved",
-		"No performance test result history",
+		"No performance or conformance test result history",
 		"Free Use",
 	}
 	l.ProviderType = LocalProviderType
@@ -139,6 +147,85 @@ func (l *DefaultLocalProvider) Logout(w http.ResponseWriter, req *http.Request) 
 	http.Redirect(w, req, "/user/login", http.StatusFound)
 }
 
+// HandleUnAuthenticated - logout from provider backend
+func (l *DefaultLocalProvider) HandleUnAuthenticated(w http.ResponseWriter, req *http.Request) {
+	http.Redirect(w, req, "/user/login", http.StatusFound)
+}
+
+func (l *DefaultLocalProvider) SaveK8sContext(token string, k8sContext K8sContext) (K8sContext, error) {
+	return l.MesheryK8sContextPersister.SaveMesheryK8sContext(k8sContext)
+}
+
+func (l *DefaultLocalProvider) GetK8sContexts(token, page, pageSize, search, order string) ([]byte, error) {
+	if page == "" {
+		page = "0"
+	}
+	if pageSize == "" {
+		pageSize = "10"
+	}
+
+	pg, err := strconv.ParseUint(page, 10, 32)
+	if err != nil {
+		return nil, ErrPageNumber(err)
+	}
+
+	pgs, err := strconv.ParseUint(pageSize, 10, 32)
+	if err != nil {
+		return nil, ErrPageSize(err)
+	}
+
+	return l.MesheryK8sContextPersister.GetMesheryK8sContexts(search, order, pg, pgs)
+}
+
+func (l *DefaultLocalProvider) DeleteK8sContext(token, id string) (K8sContext, error) {
+	return l.MesheryK8sContextPersister.DeleteMesheryK8sContext(id)
+}
+
+func (l *DefaultLocalProvider) GetK8sContext(token, id string) (K8sContext, error) {
+	return l.MesheryK8sContextPersister.GetMesheryK8sContext(id)
+}
+
+func (l *DefaultLocalProvider) LoadAllK8sContext(token string) ([]*K8sContext, error) {
+	page := 0
+	pageSize := 25
+	results := []*K8sContext{}
+
+	for {
+		res, err := l.GetK8sContexts(token, strconv.Itoa(page), strconv.Itoa(pageSize), "", "")
+		if err != nil {
+			return results, err
+		}
+
+		var k8scontext MesheryK8sContextPage
+		err = json.Unmarshal(res, &k8scontext)
+		if err != nil {
+			obj := "k8s context"
+			return nil, ErrUnmarshal(err, obj)
+		}
+		results = append(results, k8scontext.Contexts...)
+
+		if page*pageSize >= k8scontext.TotalCount {
+			break
+		}
+
+		page++
+	}
+
+	return results, nil
+}
+
+// func (l *DefaultLocalProvider) SetCurrentContext(token, id string) (K8sContext, error) {
+// 	if err := l.MesheryK8sContextPersister.SetMesheryK8sCurrentContext(id); err != nil {
+// 		return K8sContext{}, err
+// 	}
+
+// 	return l.MesheryK8sContextPersister.GetMesheryK8sContext(id)
+// }
+
+// func (l *DefaultLocalProvider) GetCurrentContext(token string) (K8sContext, error) {
+// 	return l.MesheryK8sContextPersister.GetMesheryK8sCurrentContext()
+// }
+
 // FetchResults - fetches results from provider backend
 func (l *DefaultLocalProvider) FetchResults(tokenVal, page, pageSize, search, order, profileID string) ([]byte, error) {
 	pg, err := strconv.ParseUint(page, 10, 32)
@@ -153,7 +240,7 @@ func (l *DefaultLocalProvider) FetchResults(tokenVal, page, pageSize, search, or
 }
 
 // FetchResults - fetches results from provider backend
-func (l *DefaultLocalProvider) FetchAllResults(req *http.Request, page, pageSize, search, order, from, to string) ([]byte, error) {
+func (l *DefaultLocalProvider) FetchAllResults(tokenString string, page, pageSize, search, order, from, to string) ([]byte, error) {
 	if page == "" {
 		page = "0"
 	}
@@ -232,6 +319,19 @@ func (l *DefaultLocalProvider) FetchSmiResults(req *http.Request, page, pageSize
 	return l.SmiResultPersister.GetResults(pg, pgs)
 }
 
+// FetchSmiResults - fetches results from provider backend
+func (l *DefaultLocalProvider) FetchSmiResult(req *http.Request, page, pageSize, search, order string, resultID uuid.UUID) ([]byte, error) {
+	pg, err := strconv.ParseUint(page, 10, 32)
+	if err != nil {
+		return nil, ErrPageNumber(err)
+	}
+	pgs, err := strconv.ParseUint(pageSize, 10, 32)
+	if err != nil {
+		return nil, ErrPageSize(err)
+	}
+	return l.SmiResultPersister.GetResult(pg, pgs, resultID)
+}
+
 // PublishSmiResults - publishes results to the provider backend synchronously
 func (l *DefaultLocalProvider) PublishSmiResults(result *SmiResult) (string, error) {
 	key, _ := uuid.NewV4()
@@ -263,7 +363,7 @@ func (l *DefaultLocalProvider) shipResults(req *http.Request, data []byte) (stri
 		_ = resp.Body.Close()
 	}()
 
-	bdr, err := ioutil.ReadAll(resp.Body)
+	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
 		logrus.Warnf("unable to read response body: %v", err)
 		return "", nil
@@ -311,7 +411,7 @@ func (l *DefaultLocalProvider) PublishMetrics(_ string, result *MesheryResult) e
 	defer func() {
 		_ = resp.Body.Close()
 	}()
-	bdr, err := ioutil.ReadAll(resp.Body)
+	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
 		logrus.Warnf("unable to read response body: %v", err)
 		return nil
@@ -445,7 +545,7 @@ func (l *DefaultLocalProvider) SaveMesheryPattern(tokenString string, pattern *M
 }
 
 // GetMesheryPatterns gives the patterns stored with the provider
-func (l *DefaultLocalProvider) GetMesheryPatterns(req *http.Request, page, pageSize, search, order string) ([]byte, error) {
+func (l *DefaultLocalProvider) GetMesheryPatterns(tokenString, page, pageSize, search, order string) ([]byte, error) {
 	if page == "" {
 		page = "0"
 	}
@@ -478,6 +578,11 @@ func (l *DefaultLocalProvider) DeleteMesheryPattern(req *http.Request, patternID
 	return l.MesheryPatternPersister.DeleteMesheryPattern(id)
 }
 
+// DeleteMesheryPattern deletes a meshery pattern with the given id
+func (l *DefaultLocalProvider) DeleteMesheryPatterns(req *http.Request, patterns MesheryPatternDeleteRequestBody) ([]byte, error) {
+	return l.MesheryPatternPersister.DeleteMesheryPatterns(patterns)
+}
+
 // RemotePatternFile takes in the
 func (l *DefaultLocalProvider) RemotePatternFile(req *http.Request, resourceURL, path string, save bool) ([]byte, error) {
 	parsedURL, err := url.Parse(resourceURL)
@@ -491,13 +596,19 @@ func (l *DefaultLocalProvider) RemotePatternFile(req *http.Request, resourceURL,
 		if len(parsedPath) < 3 {
 			return nil, fmt.Errorf("malformed URL: url should be of type github.com/<owner>/<repo>/[branch]")
 		}
+		if len(parsedPath) >= 4 && parsedPath[3] == "tree" {
+			parsedPath = append(parsedPath[0:3], parsedPath[4:]...)
+		}
 
 		owner := parsedPath[1]
 		repo := parsedPath[2]
-		branch := "main"
+		branch := "master"
 
 		if len(parsedPath) == 4 {
 			branch = parsedPath[3]
+		}
+		if path == "" && len(parsedPath) > 4 {
+			path = strings.Join(parsedPath[4:], "/")
 		}
 
 		pfs, err := githubRepoPatternScan(owner, repo, path, branch)
@@ -530,7 +641,7 @@ func (l *DefaultLocalProvider) SaveMesheryFilter(tokenString string, filter *Mes
 }
 
 // GetMesheryFilters gives the filters stored with the provider
-func (l *DefaultLocalProvider) GetMesheryFilters(req *http.Request, page, pageSize, search, order string) ([]byte, error) {
+func (l *DefaultLocalProvider) GetMesheryFilters(tokenString, page, pageSize, search, order string) ([]byte, error) {
 	if page == "" {
 		page = "0"
 	}
@@ -579,18 +690,23 @@ func (l *DefaultLocalProvider) RemoteFilterFile(req *http.Request, resourceURL, 
 	// Check if hostname is github
 	if parsedURL.Host == "github.com" {
 		parsedPath := strings.Split(parsedURL.Path, "/")
+		if parsedPath[3] == "tree" {
+			parsedPath = append(parsedPath[0:3], parsedPath[4:]...)
+		}
 		if len(parsedPath) < 3 {
 			return nil, fmt.Errorf("malformed URL: url should be of type github.com/<owner>/<repo>/[branch]")
 		}
 
 		owner := parsedPath[1]
 		repo := parsedPath[2]
-		branch := "main"
+		branch := "master"
 
 		if len(parsedPath) == 4 {
 			branch = parsedPath[3]
 		}
-
+		if path == "" && len(parsedPath) > 4 {
+			path = strings.Join(parsedPath[4:], "/")
+		}
 		ffs, err := githubRepoFilterScan(owner, repo, path, branch)
 		if err != nil {
 			return nil, err
@@ -620,8 +736,19 @@ func (l *DefaultLocalProvider) SaveMesheryApplication(tokenString string, applic
 	return l.MesheryApplicationPersister.SaveMesheryApplication(application)
 }
 
+// SaveApplicationSourceContent nothing needs to be done as application is saved with source content for local provider
+func (l *DefaultLocalProvider) SaveApplicationSourceContent(tokenString string, applicationID string, sourceContent []byte) error {
+	return nil
+}
+
+// GetApplicationSourceContent returns application source-content from provider
+func (l *DefaultLocalProvider) GetApplicationSourceContent(req *http.Request, applicationID string) ([]byte, error) {
+	id := uuid.FromStringOrNil(applicationID)
+	return l.MesheryApplicationPersister.GetMesheryApplicationSource(id)
+}
+
 // GetMesheryApplications gives the applications stored with the provider
-func (l *DefaultLocalProvider) GetMesheryApplications(req *http.Request, page, pageSize, search, order string) ([]byte, error) {
+func (l *DefaultLocalProvider) GetMesheryApplications(tokenString, page, pageSize, search, order string) ([]byte, error) {
 	if page == "" {
 		page = "0"
 	}
@@ -654,52 +781,6 @@ func (l *DefaultLocalProvider) DeleteMesheryApplication(req *http.Request, appli
 	return l.MesheryApplicationPersister.DeleteMesheryApplication(id)
 }
 
-// RemoteApplicationFile takes in the
-func (l *DefaultLocalProvider) RemoteApplicationFile(req *http.Request, resourceURL, path string, save bool) ([]byte, error) {
-	parsedURL, err := url.Parse(resourceURL)
-	if err != nil {
-		return nil, err
-	}
-
-	// Check if hostname is github
-	if parsedURL.Host == "github.com" {
-		parsedPath := strings.Split(parsedURL.Path, "/")
-		if len(parsedPath) < 3 {
-			return nil, fmt.Errorf("malformed URL: url should be of type github.com/<owner>/<repo>/[branch]")
-		}
-
-		owner := parsedPath[1]
-		repo := parsedPath[2]
-		branch := "main"
-
-		if len(parsedPath) == 4 {
-			branch = parsedPath[3]
-		}
-
-		pfs, err := githubRepoApplicationScan(owner, repo, path, branch)
-		if err != nil {
-			return nil, err
-		}
-
-		if save {
-			return l.MesheryApplicationPersister.SaveMesheryApplications(pfs)
-		}
-
-		return json.Marshal(pfs)
-	}
-
-	// Fallback to generic HTTP import
-	pfs, err := genericHTTPApplicationFile(resourceURL)
-	if err != nil {
-		return nil, err
-	}
-	if save {
-		return l.MesheryApplicationPersister.SaveMesheryApplications(pfs)
-	}
-
-	return json.Marshal(pfs)
-}
-
 // SavePerformanceProfile saves given performance profile with the provider
 func (l *DefaultLocalProvider) SavePerformanceProfile(tokenString string, performanceProfile *PerformanceProfile) ([]byte, error) {
 	var uid uuid.UUID
@@ -723,7 +804,7 @@ func (l *DefaultLocalProvider) SavePerformanceProfile(tokenString string, perfor
 }
 
 // GetPerformanceProfiles gives the performance profiles stored with the provider
-func (l *DefaultLocalProvider) GetPerformanceProfiles(req *http.Request, page, pageSize, search, order string) ([]byte, error) {
+func (l *DefaultLocalProvider) GetPerformanceProfiles(tokenString string, page, pageSize, search, order string) ([]byte, error) {
 	if page == "" {
 		page = "0"
 	}
@@ -804,6 +885,10 @@ func (l *DefaultLocalProvider) RecordMeshSyncData(obj model.Object) error {
 	return nil
 }
 
+func (l *DefaultLocalProvider) ExtensionProxy(req *http.Request) ([]byte, error) {
+	return []byte{}, ErrLocalProviderSupport
+}
+
 // ReadMeshSyncData reads the mesh sync data
 func (l *DefaultLocalProvider) ReadMeshSyncData() ([]model.Object, error) {
 	objects := make([]model.Object, 0)
@@ -825,7 +910,7 @@ func (l *DefaultLocalProvider) ReadMeshSyncData() ([]model.Object, error) {
 
 // GetGenericPersister - to return persister
 func (l *DefaultLocalProvider) GetGenericPersister() *database.Handler {
-	return &l.GenericPersister
+	return l.GenericPersister
 }
 
 // SetKubeClient - to set meshery kubernetes client
@@ -836,6 +921,109 @@ func (l *DefaultLocalProvider) SetKubeClient(client *mesherykube.Client) {
 // GetKubeClient - to get meshery kubernetes client
 func (l *DefaultLocalProvider) GetKubeClient() *mesherykube.Client {
 	return l.KubeClient
+}
+
+// SeedContent- to seed various contents with local provider-like patterns, filters, and applications
+func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
+	seededUUIDs := make([]uuid.UUID, 0)
+	seedContents := []string{"Pattern", "Application", "Filter"}
+	for _, seedContent := range seedContents {
+		go func(comp string, log logger.Handler, seededUUIDs *[]uuid.UUID) {
+			names, content, err := getSeededComponents(comp, log)
+			if err != nil {
+				log.Error(ErrGettingSeededComponents(err, comp))
+			} else {
+				log.Info("seeding sample ", comp, "s")
+				switch comp {
+				case "Pattern":
+					for i, name := range names {
+						id, _ := uuid.NewV4()
+						var pattern = &MesheryPattern{
+							PatternFile: content[i],
+							Name:        name,
+							ID:          &id,
+						}
+						log.Debug("seeding "+comp+": ", name)
+						_, err := l.MesheryPatternPersister.SaveMesheryPattern(pattern)
+						if err != nil {
+							log.Error(ErrGettingSeededComponents(err, comp+"s"))
+						}
+						*seededUUIDs = append(*seededUUIDs, id)
+					}
+				case "Filter":
+					for i, name := range names {
+						id, _ := uuid.NewV4()
+						var filter = &MesheryFilter{
+							FilterFile: content[i],
+							Name:       name,
+							ID:         &id,
+						}
+						log.Debug("seeding "+comp+": ", name)
+						_, err := l.MesheryFilterPersister.SaveMesheryFilter(filter)
+						if err != nil {
+							log.Error(ErrGettingSeededComponents(err, comp+"s"))
+						}
+						*seededUUIDs = append(*seededUUIDs, id)
+					}
+				case "Application":
+					mapNameToTypeToContent := make(map[string]map[string]string)
+					for i, name := range names {
+						ss := strings.Split(name, "_")
+						if len(ss) < 2 {
+							continue
+						}
+						if mapNameToTypeToContent[ss[0]] == nil {
+							mapNameToTypeToContent[ss[0]] = make(map[string]string)
+						}
+						mapNameToTypeToContent[ss[0]][ss[1]] = content[i]
+					}
+					for name, contents := range mapNameToTypeToContent {
+						id, _ := uuid.NewV4()
+						var k8sfile string
+						var patternfile string
+						for typ, content := range contents {
+							if strings.Contains(typ, "k8s") {
+								k8sfile = content
+							} else {
+								patternfile = content
+							}
+						}
+						var app = &MesheryApplication{
+							ApplicationFile: patternfile,
+							Type: sql.NullString{
+								String: string(K8sManifest),
+								Valid:  true,
+							},
+							SourceContent: []byte(k8sfile),
+							Name:          name,
+							ID:            &id,
+						}
+						log.Debug("seeding "+comp+": ", name)
+						_, err := l.MesheryApplicationPersister.SaveMesheryApplication(app)
+						if err != nil {
+							log.Error(ErrGettingSeededComponents(err, comp+"s"))
+						}
+						*seededUUIDs = append(*seededUUIDs, id)
+					}
+				}
+			}
+		}(seedContent, log, &seededUUIDs)
+	}
+}
+func (l *DefaultLocalProvider) Cleanup() error {
+	if err := l.MesheryK8sContextPersister.DB.Migrator().DropTable(&K8sContext{}); err != nil {
+		return err
+	}
+	if err := l.MesheryK8sContextPersister.DB.Migrator().DropTable(&MesheryPattern{}); err != nil {
+		return err
+	}
+	if err := l.MesheryK8sContextPersister.DB.Migrator().DropTable(&MesheryApplication{}); err != nil {
+		return err
+	}
+	if err := l.MesheryK8sContextPersister.DB.Migrator().DropTable(&MesheryFilter{}); err != nil {
+		return err
+	}
+	return nil
 }
 
 // githubRepoPatternScan & githubRepoFilterScan takes in github repo owner, repo name, path from where the file/files are needed
@@ -851,34 +1039,27 @@ func githubRepoPatternScan(
 	branch string,
 ) ([]MesheryPattern, error) {
 	var mu sync.Mutex
-	ghWalker := walker.NewGithub()
+	ghWalker := walker.NewGit()
 	result := make([]MesheryPattern, 0)
-
-	err := ghWalker.
-		Owner(owner).
+	err := ghWalker.Owner(owner).
 		Repo(repo).
 		Branch(branch).
 		Root(path).
-		RegisterFileInterceptor(func(data walker.GithubContentAPI) error {
-			ext := filepath.Ext(data.Name)
+		RegisterFileInterceptor(func(f walker.File) error {
+			ext := filepath.Ext(f.Name)
 			if ext == ".yml" || ext == ".yaml" {
-				decodedContent, err := base64.StdEncoding.DecodeString(data.Content)
-				if err != nil {
-					return err
-				}
-
-				name, err := GetPatternName(string(decodedContent))
+				name, err := GetPatternName(string(f.Content))
 				if err != nil {
 					return err
 				}
 
 				pf := MesheryPattern{
 					Name:        name,
-					PatternFile: string(decodedContent),
+					PatternFile: string(f.Content),
 					Location: map[string]interface{}{
 						"type":   "github",
 						"host":   fmt.Sprintf("github.com/%s/%s", owner, repo),
-						"path":   data.Path,
+						"path":   f.Path,
 						"branch": branch,
 					},
 				}
@@ -889,9 +1070,7 @@ func githubRepoPatternScan(
 			}
 
 			return nil
-		}).
-		Walk()
-
+		}).Walk()
 	return result, err
 }
 
@@ -902,7 +1081,7 @@ func githubRepoFilterScan(
 	branch string,
 ) ([]MesheryFilter, error) {
 	var mu sync.Mutex
-	ghWalker := walker.NewGithub()
+	ghWalker := walker.NewGit()
 	result := make([]MesheryFilter, 0)
 
 	err := ghWalker.
@@ -910,83 +1089,27 @@ func githubRepoFilterScan(
 		Repo(repo).
 		Branch(branch).
 		Root(path).
-		RegisterFileInterceptor(func(data walker.GithubContentAPI) error {
-			ext := filepath.Ext(data.Name)
+		RegisterFileInterceptor(func(f walker.File) error {
+			ext := filepath.Ext(f.Name)
 			if ext == ".yml" || ext == ".yaml" {
-				decodedContent, err := base64.StdEncoding.DecodeString(data.Content)
-				if err != nil {
-					return err
-				}
-
-				name, err := GetFilterName(string(decodedContent))
+				name, err := GetFilterName(string(f.Content))
 				if err != nil {
 					return err
 				}
 
 				ff := MesheryFilter{
 					Name:       name,
-					FilterFile: string(decodedContent),
+					FilterFile: string(f.Content),
 					Location: map[string]interface{}{
 						"type":   "github",
 						"host":   fmt.Sprintf("github.com/%s/%s", owner, repo),
-						"path":   data.Path,
+						"path":   f.Path,
 						"branch": branch,
 					},
 				}
 
 				mu.Lock()
 				result = append(result, ff)
-				mu.Unlock()
-			}
-
-			return nil
-		}).
-		Walk()
-
-	return result, err
-}
-
-func githubRepoApplicationScan(
-	owner,
-	repo,
-	path,
-	branch string,
-) ([]MesheryApplication, error) {
-	var mu sync.Mutex
-	ghWalker := walker.NewGithub()
-	result := make([]MesheryApplication, 0)
-
-	err := ghWalker.
-		Owner(owner).
-		Repo(repo).
-		Branch(branch).
-		Root(path).
-		RegisterFileInterceptor(func(data walker.GithubContentAPI) error {
-			ext := filepath.Ext(data.Name)
-			if ext == ".yml" || ext == ".yaml" {
-				decodedContent, err := base64.StdEncoding.DecodeString(data.Content)
-				if err != nil {
-					return err
-				}
-
-				name, err := GetApplicationName(string(decodedContent))
-				if err != nil {
-					return err
-				}
-
-				af := MesheryApplication{
-					Name:            name,
-					ApplicationFile: string(decodedContent),
-					Location: map[string]interface{}{
-						"type":   "github",
-						"host":   fmt.Sprintf("github.com/%s/%s", owner, repo),
-						"path":   data.Path,
-						"branch": branch,
-					},
-				}
-
-				mu.Lock()
-				result = append(result, af)
 				mu.Unlock()
 			}
 
@@ -1008,7 +1131,7 @@ func genericHTTPPatternFile(fileURL string) ([]MesheryPattern, error) {
 
 	defer SafeClose(resp.Body)
 
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -1044,7 +1167,7 @@ func genericHTTPFilterFile(fileURL string) ([]MesheryFilter, error) {
 
 	defer SafeClose(resp.Body)
 
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -1069,38 +1192,226 @@ func genericHTTPFilterFile(fileURL string) ([]MesheryFilter, error) {
 	return []MesheryFilter{ff}, nil
 }
 
-func genericHTTPApplicationFile(fileURL string) ([]MesheryApplication, error) {
-	resp, err := http.Get(fileURL)
+// getSeededComponents reads the directory recursively looking for seed content
+// Note- This function does not throw meshkit errors because the only method that calls it,"SeedContent" wraps the errors in meshkit errors.
+// If this function is reused somewhere else, make sure to wrap its errors in appropriate meshkit errors, otherwise it can cause can a panic.
+func getSeededComponents(comp string, log logger.Handler) ([]string, []string, error) {
+	wd := utils.GetHome()
+	switch comp {
+	case "Pattern":
+		wd = filepath.Join(wd, ".meshery", "content", "patterns")
+	case "Filter":
+		wd = filepath.Join(wd, ".meshery", "content", "filters", "binaries")
+	case "Application":
+		wd = filepath.Join(wd, ".meshery", "content", "applications")
+	}
+	_, err := os.Stat(wd)
+	if err != nil && !os.IsNotExist(err) {
+		return nil, nil, err
+	} else if os.IsNotExist(err) {
+		log.Info("creating directories for seeding... ", wd)
+		er := os.MkdirAll(wd, 0777)
+		if er != nil {
+			return nil, nil, er
+		}
+	}
+	if !viper.GetBool("SKIP_DOWNLOAD_CONTENT") {
+		err = downloadContent(comp, wd, log)
+		if err != nil {
+			log.Error(ErrDownloadingSeededComponents(err, comp))
+		}
+	}
+	log.Info("extracting "+comp+"s from ", wd)
+	var names []string
+	var contents []string
+	err = filepath.WalkDir(wd,
+		func(path string, d os.DirEntry, err error) error {
+			if err != nil {
+				return err
+			}
+			if !d.IsDir() {
+				file, err := os.OpenFile(path, os.O_RDONLY, 0444)
+				if err != nil {
+					return err
+				}
+				content, err := io.ReadAll(file)
+				if err != nil {
+					return err
+				}
+				names = append(names, d.Name())
+				contents = append(contents, string(content))
+			}
+			return nil
+		})
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("file not found")
-	}
-
-	defer SafeClose(resp.Body)
-
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-	result := string(body)
-
-	name, err := GetApplicationName(result)
-	if err != nil {
-		return nil, err
-	}
-
-	af := MesheryApplication{
-		Name:            name,
-		ApplicationFile: result,
-		Location: map[string]interface{}{
-			"type":   "http",
-			"host":   fileURL,
-			"path":   "",
-			"branch": "",
-		},
-	}
-
-	return []MesheryApplication{af}, nil
+	return names, contents, nil
 }
+
+// Below helper functions are for downloading seed content and can be re used in future as the way of extracting them changes, like endpoint changes or so. That is why, they are encapsulated into general functions
+func downloadContent(comp string, downloadpath string, log logger.Handler) error {
+	switch comp {
+	case "Pattern":
+		walk := walker.NewGithub()
+		return walk.Owner("service-mesh-patterns").Repo("service-mesh-patterns").Root("samples/").Branch("master").RegisterFileInterceptor(func(gca walker.GithubContentAPI) error {
+			path := filepath.Join(downloadpath, gca.Name)
+			file, err := os.Create(path)
+			if err != nil {
+				return err
+			}
+			defer file.Close()
+			content, err := base64.StdEncoding.DecodeString(gca.Content)
+			if err != nil {
+				return err
+			}
+			fmt.Fprintf(file, "%s", content)
+			return nil
+		}).Walk()
+	case "Filter":
+		return getFiltersFromWasmFiltersRepo(downloadpath)
+	case "Application":
+		walk := walker.NewGit()
+		return walk.Owner("service-mesh-patterns").Repo("service-mesh-patterns").Root("samples/applications/").Branch("master").RegisterDirInterceptor(func(d walker.Directory) error {
+			err := os.Mkdir(downloadpath, 0777)
+			if err != nil && !os.IsExist(err) {
+				return err
+			}
+			walkfile := walker.NewGit()
+			return walkfile.Owner("service-mesh-patterns").Repo("service-mesh-patterns").Root("samples/applications/" + d.Name).Branch("master").RegisterFileInterceptor(func(f walker.File) error {
+				path := filepath.Join(downloadpath, d.Name+"_"+f.Name)
+				file, err := os.Create(path)
+				if err != nil {
+					return err
+				}
+				defer file.Close()
+				fmt.Fprintf(file, "%s", f.Content)
+				return nil
+			}).Walk()
+		}).Walk()
+	}
+	return nil
+}
+
+func downloadApplicationsFromURL(downloadpath string, appname string, url string) error {
+	path := filepath.Join(downloadpath, appname)
+	res, err := http.Get(url)
+	if err != nil {
+		return err
+	}
+	content, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return err
+	}
+	f, err := os.Create(path)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+	fmt.Fprintf(f, "%s", content)
+	return nil
+}
+
+// DownloadYAMLSintoSingleFile takes a slice of URL's which each returns a YAML body on get request. Then combines all the yamls into one yaml
+func downloadYAMLSintoSingleFile(f io.Writer, URLs []string) error {
+	for _, url := range URLs {
+		res, err := http.Get(url)
+		if err != nil {
+			return err
+		}
+		content, err := ioutil.ReadAll(res.Body)
+		if err != nil {
+			return err
+		}
+		fmt.Fprintf(f, "%s\n---\n", string(content))
+	}
+	return nil
+}
+
+func getFiltersFromWasmFiltersRepo(downloadPath string) error {
+	// releaseName, err := getLatestStableReleaseTag()
+	// if err != nil {
+	// 	return err
+	// }
+	//Temporary hardcoding until https://github.com/layer5io/wasm-filters/issues/38 is resolved
+	downloadURL := "https://github.com/layer5io/wasm-filters/releases/download/v0.1.0/wasm-filters-v0.1.0.tar.gz"
+	res, err := http.Get(downloadURL)
+	if err != nil {
+		return err
+	}
+	gzipStream := res.Body
+	return extractTarGz(gzipStream, downloadPath)
+}
+func extractTarGz(gzipStream io.Reader, downloadPath string) error {
+	uncompressedStream, err := gzip.NewReader(gzipStream)
+	if err != nil {
+		return err
+	}
+
+	tarReader := tar.NewReader(uncompressedStream)
+
+	for true {
+		header, err := tarReader.Next()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			return err
+		}
+		switch header.Typeflag {
+		case tar.TypeReg:
+			if strings.HasSuffix(header.Name, ".wasm") {
+				outFile, err := os.Create(filepath.Join(downloadPath, header.Name))
+				if err != nil {
+					return err
+				}
+				if _, err := io.Copy(outFile, tarReader); err != nil {
+					return err
+				}
+				outFile.Close()
+			}
+		}
+	}
+	return nil
+}
+
+func getSeededAppLocation(path string) (map[string][]string, error) {
+	var applicationsAndURLS map[string][]string
+	f, err := os.Open(path)
+	if err != nil {
+		return applicationsAndURLS, err
+	}
+	content, err := ioutil.ReadAll(f)
+	if err != nil {
+		return applicationsAndURLS, err
+	}
+	err = json.Unmarshal(content, &applicationsAndURLS)
+	if err != nil {
+		return applicationsAndURLS, err
+	}
+	return applicationsAndURLS, nil
+}
+
+// // GetLatestStableReleaseTag fetches and returns the latest release tag from GitHub
+// func getLatestStableReleaseTag() (string, error) {
+// 	url := "https://github.com/layer5io/wasm-filters/releases/latest"
+// 	resp, err := http.Get(url)
+// 	if err != nil {
+// 		return "", errors.New("failed to get latest stable release tag")
+// 	}
+// 	defer SafeClose(resp.Body)
+
+// 	if resp.StatusCode != http.StatusOK {
+// 		return "", errors.New("failed to get latest stable release tag")
+// 	}
+
+// 	body, err := ioutil.ReadAll(resp.Body)
+// 	if err != nil {
+// 		return "", errors.New("failed to get latest stable release tag")
+// 	}
+// 	re := regexp.MustCompile("/releases/tag/(.*?)\"")
+// 	releases := re.FindAllString(string(body), -1)
+// 	latest := strings.ReplaceAll(releases[0], "/releases/tag/", "")
+// 	latest = strings.ReplaceAll(latest, "\"", "")
+// 	return latest, nil
+// }

@@ -1,7 +1,7 @@
 package app
 
 import (
-	"io/ioutil"
+	"io"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -57,7 +57,7 @@ func TestAppList(t *testing.T) {
 			apiResponse := utils.NewGoldenFile(t, tt.Fixture, fixturesDir).Load()
 
 			// set token
-			tokenPath = tt.Token
+			utils.TokenFlag = tt.Token
 
 			// mock response
 			httpmock.RegisterResponder("GET", tt.URL,
@@ -66,7 +66,7 @@ func TestAppList(t *testing.T) {
 			// Expected response
 			testdataDir := filepath.Join(currDir, "testdata")
 			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
-
+			_ = utils.SetupMeshkitLoggerTesting(t, false)
 			// Grab console prints
 			rescueStdout := os.Stdout
 			r, w, _ := os.Pipe()
@@ -91,7 +91,7 @@ func TestAppList(t *testing.T) {
 			}
 
 			w.Close()
-			out, _ := ioutil.ReadAll(r)
+			out, _ := io.ReadAll(r)
 			os.Stdout = rescueStdout
 
 			// response being printed in console

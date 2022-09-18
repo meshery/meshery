@@ -1,0 +1,98 @@
+apiVersion: v2
+name: meshery-operator
+description: Meshery Operator chart.
+icon: https://meshery.io/images/logos/meshery-logo.png
+source:
+  - https://github.com/layer5io/meshery-operator
+keywords:
+  - meshery
+  - meshery-istio
+  - meshery-linkerd
+  - meshery-consul
+  - meshery-kuma
+  - meshery-osm
+  - meshery-nsm
+  - meshery-traefik-mesh
+  - meshery-cpx
+  - meshery-nginx-sm
+  - meshery-app-mesh
+  - meshery-server
+  - meshery-broker
+  - meshery-meshsync
+  - meshery-perf
+deprecated: false
+
+# A chart can be either an 'application' or a 'library' chart.
+#
+# Application charts are a collection of templates that can be packaged into versioned archives
+# to be deployed.
+#
+# Library charts provide useful utilities or functions for the chart developer. They're included as
+# a dependency of application charts to inject those utilities and functions into the rendering
+# pipeline. Library charts do not define any templates and therefore cannot be deployed.
+type: application
+
+# This is the chart version. This version number should be incremented each time you make changes
+# to the chart and its templates, including the app version.
+version: 0.6.0
+
+# This is the version number of the application being deployed. This version number should be
+# incremented each time you make changes to the application.
+# TODO: Need the confirm the image tag.
+# appVersion: 0.6.0
+
+dependencies:
+  - name: meshery-istio
+    version: 0.5.0
+    condition: meshery-istio.enabled
+  - name: meshery-linkerd
+    version: 0.5.0
+    condition: meshery-linkerd.enabled
+  - name: meshery-consul
+    version: 0.5.0
+    condition: meshery-consul.enabled
+  - name: meshery-kuma
+    version: 0.5.0
+    condition: meshery-kuma.enabled
+  - name: meshery-osm
+    version: 0.5.0
+    condition: meshery-osm.enabled
+  - name: meshery-nsm
+    version: 0.5.0
+    condition: meshery-nsm.enabled
+  - name: meshery-traefik-mesh
+    version: 0.5.0
+    condition: meshery-traefik-mesh.enabled
+  - name: meshery-cpx
+    version: 0.5.0
+    condition: meshery-cpx.disabled
+  - name: meshery-nginx-sm
+    version: 0.5.0
+    condition: meshery-nginx-sm.enabled
+  - name: meshery-app-mesh
+    version: 0.5.0
+    condition: meshery-app-mesh.enabled
+  - name: meshery
+    version: 0.5.0
+    condition: meshery.enabled
+  - name: meshery-broker
+    version: 0.5.0
+    condition: meshery-broker.enabled
+  - name: meshery-meshsync
+    version: 0.5.0
+    condition: meshery-meshsync.enabled
+  - name: meshery-cilium
+    version: 0.5.0
+    condition: meshery-cilium.enabled
+  - name: meshery-perf
+    version: 0.5.0
+    condition: meshery-perf.disabled
+
+maintainers:
+  - name: Layer5 Authors
+    email: community@layer5.io
+  - name: aisuko
+    email: urakiny@gmail.com
+  - name: leecalcote
+    email: leecalcote@gmail.com
+

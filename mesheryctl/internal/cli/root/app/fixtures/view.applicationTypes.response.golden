@@ -1,0 +1,1 @@
+[{"application_type":"Helm Chart","supported_extensions":[".tgz"]},{"application_type":"Docker Compose","supported_extensions":[".yaml",".yml"]},{"application_type":"Kubernetes Manifest","supported_extensions":[".yaml",".yml"]}]

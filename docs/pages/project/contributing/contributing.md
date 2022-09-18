@@ -5,26 +5,17 @@ permalink: project/contributing
 description: How to contribute to the Meshery project.
 language: en
 type: project
+redirect_from: 
+ - contributing
+ - project/contributing/
 category: contributing
 ---
 
-Please do! Thanks for your help! 🎈
-
-This project is community-built and welcomes collaboration. Contributors are expected to adhere to the [CNCF's Code of Conduct](https://github.com/layer5io/meshery/blob/master/CODE_OF_CONDUCT.md).
+Please do! Thanks for your help! 🎈 Meshery is community-built and welcomes collaboration. Contributors are expected to adhere to the [CNCF's Code of Conduct](https://github.com/layer5io/meshery/blob/master/CODE_OF_CONDUCT.md).
 
 # Contributing Guides
 
-{% assign sorted_reading = site.pages | sort: page.title | reverse %}
-
-<ul>
-  {% for item in sorted_reading %}
-  {% if item.type=="project" and item.category=="contributing" and item.list!="exclude" -%}
-    <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
-    </li>
-    {% endif %}
-  {% endfor %}
-</ul>
-
+{% include suggested-reading.html diffName ="true" language = "en" %}
 
 ## Not sure where to start?
 
@@ -32,14 +23,15 @@ Follow these steps and you'll be right at home.
 
 1. See the [_Community Welcome Guide_](https://docs.google.com/document/d/17OPtDE_rdnPQxmk2Kauhm3GwXF1R5dZ3Cj8qZLKdo5E/edit) for how, where, and why to contribute.
 
-2. Sign up for a [_MeshMate_](https://layer5.io/community#meshmate) to find the perfect Mentor to help you explore the Layer5 projects and find your place in the community:
+2. Sign up for a [_MeshMate_](https://layer5.io/community/meshmates) to find the perfect Mentor to help you explore the Layer5 projects and find your place in the community:
 
-- **Familiarize** yourself with all the Layer5 projects (Take a look at the [Community Drive](https://drive.google.com/drive/u/4/folders/0ABH8aabN4WAKUk9PVA) and the [Layer5 Repository Overview](https://docs.google.com/document/d/1brtiJhdzal_O6NBZU_JQXiBff2InNtmgL_G1JgAiZtk/edit#heading=h.uwtb5xf7b5hw): Spend time understanding each of the Layer5 initiatives through high-level overviews available in the community drive and through discussions with your MeshMate.
+- **Familiarize** yourself with the broader set of community projects (take a look atthe [Repository Overview](https://docs.google.com/document/d/1brtiJhdzal_O6NBZU_JQXiBff2InNtmgL_G1JgAiZtk/edit#heading=h.uwtb5xf7b5hw): Spend time understanding each of the initiatives through high-level overviews available in the community drive and through discussions with your MeshMate.
 - **Identify** your area of interest: Use the time with your MeshMate to familiarize yourself with the architecture and technologies used in the projects. Inform your MeshMate of your current skills and what skills you aim to develop.
 - **Run** Meshery: Put on your user hat and walk-through all of Meshery’s features and functions as a user.
 - **Build** Meshery: Confirm that you have a usable development environment.
-- **Communicate** with the Layer5 community by joining the [Slack account](http://slack.layer5.io).
-- **Contribute** by grabbing any open issue with the [help-wanted label](https://github.com/layer5io/meshery/issues/) and jump in. If needed, create a [new issue](https://github.com/layer5io/meshery/issues/new/choose). All [pull requests](https://github.com/layer5io/meshery/pulls) should reference an open issue. Include keywords in your pull request descriptions, as well as commit messages, to [automatically close issues in GitHub](https://help.github.com/en/github/managing-your-work-on-github/closing-issues-using-keywords).
+- **Discuss** with the community by engaging in the [discussion form](https://discuss.layer5.io).
+- **Contribute** by grabbing any open issue with the [help-wanted label](https://github.com/meshery/meshery/issues/) and jump in. If needed, create a [new issue](https://github.com/meshery/meshery/issues/new/choose). All [pull requests](https://github.com/meshery/meshery/pulls) should reference an open issue. Include keywords in your pull request descriptions, as well as commit messages, to [automatically close issues in GitHub](https://help.github.com/en/github/managing-your-work-on-github/closing-issues-using-keywords).
+- **Fill-in** a [community member form](https://layer5.io/newcomers) community member form to gain access to community resources.
 
 ## <a name="contributing">General Contribution Flow</a>
 
@@ -65,7 +57,7 @@ In most cases, you can add this signoff to your commit automatically with the
 address (sorry, no pseudonyms or anonymous contributions). An example of signing off on a commit:
 
 ```
-$ commit -s -m “my commit message w/signoff”
+$ git commit -s -m “my commit message w/signoff”
 ```
 
 To ensure all your commits are signed, you may choose to add this alias to your global `.gitconfig`:

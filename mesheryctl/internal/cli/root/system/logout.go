@@ -1,7 +1,7 @@
 package system
 
 import (
-	"io/ioutil"
+	"os"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/pkg/errors"
@@ -19,6 +19,10 @@ Remove authentication for Meshery Server
 
 This command removes the authentication token from the user's filesystem`,
 	Args: cobra.MinimumNArgs(0),
+	Example: `
+// Logout current session with your Meshery Provider.
+mesheryctl system logout
+	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
@@ -32,7 +36,7 @@ This command removes the authentication token from the user's filesystem`,
 		}
 
 		// Replace the content of the token file with empty content
-		if err := ioutil.WriteFile(token.GetLocation(), []byte{}, 0666); err != nil {
+		if err := os.WriteFile(token.GetLocation(), []byte{}, 0666); err != nil {
 			log.Error("logout failed: ", err)
 			return nil
 		}

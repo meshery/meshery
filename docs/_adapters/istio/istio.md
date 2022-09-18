@@ -2,9 +2,9 @@
 layout: default
 title: Meshery Adapter for Istio
 name: Meshery Adapter for Istio
-version: v1.8.1
 mesh_name: Istio
-port: 10000/tcp
+earliest_version: v1.6.0
+port: 10000/gRPC
 project_status: stable
 adapter_version: v0.5.4
 lab: istio-meshery-adapter
@@ -30,7 +30,7 @@ permalink: service-meshes/adapters/istio
 
 ### Lifecycle management
 
-The {{page.name}} can install {{page.version}} of the {{page.title}} service mesh. The SMI adapter for Istio can also be installed using Meshery.
+The {{page.name}} can install **{{page.earliest_version}}** of the {{page.mesh_name}} service mesh. The SMI adapter for Istio can also be installed using Meshery.
 
 ### Install {{ page.mesh_name }}
 
@@ -40,32 +40,30 @@ In Meshery's UI, choose the Meshery Adapter for {{ page.mesh_name }}.
   <img style="width:500px;" src="{{ site.baseurl }}/assets/img/adapters/istio/istio-adapter.png" />
 </a>
 
-Click on (+) and choose the {{page.version}} of the {{page.mesh_name}} service mesh.
+Click on (+) and choose the {{page.earliest_version}} of the {{page.mesh_name}} service mesh.
 
 <a href="{{ site.baseurl }}/assets/img/adapters/istio/istio-install.png">
   <img style="width:500px;" src="{{ site.baseurl }}/assets/img/adapters/istio/istio-install.png" />
 </a>
 
-
 ### Workload Management
 
 The ({{page.name}}) includes a handful of sample applications. Use Meshery to deploy any of these sample applications:
 
-- [Bookinfo]({{ site.baseurl }}/guides/deploying-sample-apps#bookinfo)
+- [Bookinfo]({{site.baseurl}}/guides/sample-apps#bookinfo)
   - Follow this [tutorial workshop](https://github.com/layer5io/istio-service-mesh-workshop/blob/master/lab-2/README.md) to set up and deploy the BookInfo sample app on Istio using Meshery.
-- [Httpbin]({{ site.baseurl }}/guides/deploying-sample-apps#httpbin)
+- [Httpbin]({{site.baseurl}}/guides/sample-apps#httpbin)
   - Httpbin is a simple HTTP request and response service.
-- [Hipster]({{ site.baseurl }}/guides/deploying-sample-apps#hipster)
-  - Hipster Shop Application is a web-based, e-commerce demo application from the Google Cloud Platform.
-- [Image Hub]({{ site.baseurl }}/guides/deploying-sample-apps/imagehub)
+- [Online Boutique]({{site.baseurl}}/guides/sample-apps#online-boutique)
+  - Online Boutique Application is a web-based, e-commerce demo application from the Google Cloud Platform.
+- [Image Hub]({{site.baseurl}}/guides/sample-apps#imagehub)
   - Image Hub is a sample application written to run on Consul for exploring WebAssembly modules used as Envoy filters.
 
 ## Using Service Mesh Standards
 
-As the service mesh management plane, Meshery enables the adoption, operation, and management of any service mesh and their workloads. Meshery's powerful performance management functionality is accomplished through implementation of [Service Mesh Performance](https://smp-spec.io) (SMP). Meshery's multi-mesh management functionality leverages [Service Mesh Interface](https://smi-spec.io) (SMI) and Meshery is the conformance tool for SMI. Meshery integrates with Open Application Model (OAM) to enable users to deploy service mesh patterns. Meshery enables operators to deploy WebAssembly filters to Envoy-based data planes. Meshery facilitates learning about functionality and performance of service meshes and incorporates the collection and display of metrics from applications running on or across service meshes.
+As the open source, cloud native management plane, Meshery enables the adoption, operation, and management of Kubernetes, any service mesh, and their workloads. Meshery's powerful performance management functionality is accomplished through implementation of [Service Mesh Performance](https://smp-spec.io) (SMP). Meshery's cloud native manager functionality leverages [Service Mesh Interface](https://smi-spec.io) (SMI) and Meshery is the conformance tool for SMI. Meshery integrates with Open Application Model (OAM) to enable users to deploy service mesh patterns. Meshery enables operators to deploy WebAssembly filters to Envoy-based data planes. Meshery facilitates learning about functionality and performance of service meshes and incorporates the collection and display of metrics from applications using Prometheus and Grafana integrations.
 
 ### Service Mesh Patterns and Open Application Model (OAM)
-
 
 ### Complying with Service Mesh Interface (SMI)
 
@@ -79,21 +77,19 @@ Learn more about the SMI specification and [Meshery's conformance test suite]({{
 
 The {{page.name}} allows you to quickly deploy (or remove) an Istio add-ons. Meshery will deploy the Prometheus and Grafana add-ons (including Jaeger and Kiali) into Istio's control plane (typically the `istio-system` namespace). You can also connect Meshery to Prometheus, Grafana instances not running in the service mesh's control plane.
 
-If you already have existing Prometheus or Grafana deployments in your cluster, MeshSync will discover them and attempt to automatically register them for use. 
+If you already have existing Prometheus or Grafana deployments in your cluster, MeshSync will discover them and attempt to automatically register them for use.
 
 ## Configuration Management
 
-{{page.name}} provides 
+{{page.name}} provides
+
 ### Configuration best practices
 
 On demand, the {{page.name}} will parse all of Istio's configuration and compare the running configuration of the service mesh against known best practices for an {{page.title}} deployment.
 
-
-
-
 ### Custom service mesh configuration
 
-Meshery allows you to apply configuration to your service mesh deployment. You can paste (or type in) any Kubernetes manifest that you would like to have applied to your service mesh, in fact, you can apply any configuration that you you would like to your Kubernetes cluster. This configuration may be VirtualServices, DestinationRules or any other custom Istio resource.
+Meshery allows you to apply configuration to your service mesh deployment. You can paste (or type in) any Kubernetes manifest that you would like to have applied to your service mesh, in fact, you can apply any configuration that you would like to your Kubernetes cluster. This configuration may be VirtualServices, DestinationRules or any other custom Istio resource.
 
 <a href="{{ site.baseurl }}istio-adapter-custom-configuration.png">
   <img style="width:500px;" src="{{ site.baseurl }}/assets/img/adapters/istio/istio-adapter-custom-configuration.png" />

@@ -36,7 +36,9 @@ func (h *Handler) SavePerformanceProfileHandler(
 		fmt.Fprintf(rw, ErrRequestBody(err).Error(), err)
 		return
 	}
-	fmt.Printf("%+v\n", parsedBody)
+
+	j, _ := json.Marshal(parsedBody)
+	h.log.Info("performance profile is ", string(j))
 
 	token, err := provider.GetProviderToken(r)
 	if err != nil {
@@ -53,6 +55,10 @@ func (h *Handler) SavePerformanceProfileHandler(
 		h.log.Error(ErrFailToSave(err, obj))
 		http.Error(rw, ErrFailToSave(err, obj).Error(), http.StatusInternalServerError)
 		return
+	}
+
+	if h.config.PerformanceChannel != nil {
+		h.config.PerformanceChannel <- struct{}{}
 	}
 
 	rw.Header().Set("Content-Type", "application/json")
@@ -76,7 +82,9 @@ func (h *Handler) GetPerformanceProfilesHandler(
 ) {
 	q := r.URL.Query()
 
-	resp, err := provider.GetPerformanceProfiles(r, q.Get("page"), q.Get("page_size"), q.Get("search"), q.Get("order"))
+	tokenString := r.Context().Value(models.TokenCtxKey).(string)
+
+	resp, err := provider.GetPerformanceProfiles(tokenString, q.Get("page"), q.Get("page_size"), q.Get("search"), q.Get("order"))
 	if err != nil {
 		obj := "performance profile"
 		//get query performance profile

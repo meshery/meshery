@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/url"
 	"text/template"
@@ -61,9 +62,25 @@ func (p *PrometheusClient) Query(ctx context.Context, promURL string, queryData 
 	return p.grafanaClient.GrafanaQuery(ctx, promURL, "", queryData)
 }
 
-// QueryRange queries prometheus using the GrafanaClient
+// QueryRange parses the given params and performs Prometheus range queries
 func (p *PrometheusClient) QueryRange(ctx context.Context, promURL string, queryData *url.Values) ([]byte, error) {
-	return p.grafanaClient.GrafanaQueryRange(ctx, promURL, "", queryData)
+	if queryData == nil {
+		return nil, ErrNilQuery
+	}
+	reqURL := fmt.Sprintf("%s/api/v1/query_range", promURL)
+	newURL, _ := url.Parse(reqURL)
+	q := url.Values{}
+	q.Set("query", queryData.Get("query"))
+	q.Set("start", queryData.Get("start"))
+	q.Set("end", queryData.Get("end"))
+	q.Set("step", queryData.Get("step"))
+	newURL.RawQuery = q.Encode()
+	queryURL := newURL.String()
+	data, err := p.grafanaClient.makeRequest(ctx, queryURL, "")
+	if err != nil {
+		return nil, ErrGrafanaData(err, queryURL)
+	}
+	return data, nil
 }
 
 // GetClusterStaticBoard retrieves the cluster static board config

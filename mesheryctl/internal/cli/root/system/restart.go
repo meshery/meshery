@@ -15,18 +15,17 @@
 package system
 
 import (
-	"context"
-
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/pkg/errors"
 
-	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
 	log "github.com/sirupsen/logrus"
-	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+)
+
+var (
+	silentFlagSet bool
 )
 
 // restartCmd represents the restart command
@@ -35,6 +34,13 @@ var restartCmd = &cobra.Command{
 	Short: "Stop, then start Meshery",
 	Long:  `Restart all Meshery containers / pods.`,
 	Args:  cobra.NoArgs,
+	Example: `
+// Restart all Meshery containers, their instances and their connected volumes
+mesheryctl system restart
+
+// (optional) skip checking for new updates available in Meshery.
+mesheryctl system restart --skip-update
+	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
 		hcOptions := &HealthCheckOptions{
@@ -44,7 +50,7 @@ var restartCmd = &cobra.Command{
 		}
 		hc, err := NewHealthChecker(hcOptions)
 		if err != nil {
-			return errors.Wrapf(err, "failed to initialize healthchecker")
+			return ErrHealthCheckFailed(err)
 		}
 		// execute healthchecks
 		err = hc.RunPreflightHealthChecks()
@@ -60,76 +66,65 @@ var restartCmd = &cobra.Command{
 }
 
 func restart() error {
-	log.Info("Restarting Meshery...")
-
 	// Get viper instance used for context
 	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 	if err != nil {
-		return errors.Wrap(err, "error processing config")
+		return ErrProcessingMctlConfig(err)
 	}
 	// get the platform, channel and the version of the current context
 	// if a temp context is set using the -c flag, use it as the current context
 	if tempContext != "" {
 		err = mctlCfg.SetCurrentContext(tempContext)
 		if err != nil {
-			return errors.Wrap(err, "failed to set temporary context")
+			return ErrSettingTemporaryContext(err)
 		}
 	}
 
 	currCtx, err := mctlCfg.GetCurrentContext()
 	if err != nil {
-		return err
+		return ErrRetrievingCurrentContext(err)
 	}
 
 	currPlatform := currCtx.GetPlatform()
 
-	switch currPlatform {
-	case "docker":
-		if err := stop(); err != nil {
-			return errors.Wrap(err, utils.SystemError("Failed to restart Meshery"))
+	running, err := utils.AreMesheryComponentsRunning(currPlatform)
+	if err != nil {
+		return err
+	}
+	if !running { // Meshery is not running
+		if err := start(); err != nil {
+			return ErrRestartMeshery(err)
 		}
+	} else {
+		if currPlatform == "kubernetes" {
+			userResponse := false
+			if utils.SilentFlag {
+				userResponse = true
+			} else {
+				// ask user for confirmation
+				userResponse = utils.AskForConfirmation("Meshery deployments will be deleted from your cluster. Are you sure you want to continue")
+			}
+			if !userResponse {
+				log.Info("Restart aborted.")
+				return nil
+			}
+			// take a backup of silentFlag value to pass it to start() function later
+			silentFlagSet = utils.SilentFlag
+			// skips asking for confirmation in the stop() function
+			utils.SilentFlag = true
+		}
+
+		log.Info("Restarting Meshery...")
+
+		if err := stop(); err != nil {
+			return ErrRestartMeshery(err)
+		}
+
+		// reset the silent flag to avoid overriding the flag for start command
+		utils.SilentFlag = silentFlagSet
 
 		if err := start(); err != nil {
-			return errors.Wrap(err, utils.SystemError("Failed to restart Meshery"))
-		}
-
-	case "kubernetes":
-		running, err := utils.IsMesheryRunning(currPlatform)
-		if err != nil {
-			return err
-		}
-		if !running { // Meshery is not running
-			if err := start(); err != nil {
-				return errors.Wrap(err, utils.SystemError("Failed to restart Meshery"))
-			}
-		} else {
-			// create a kubernetes client
-			client, err := meshkitkube.New([]byte(""))
-
-			if err != nil {
-				return err
-			}
-
-			// Create a pod interface for the MesheryNamespace
-			podInterface := client.KubeClient.CoreV1().Pods(utils.MesheryNamespace)
-
-			// List the pods in the MesheryNamespace
-			podList, err := podInterface.List(context.TODO(), v1.ListOptions{})
-			if err != nil {
-				return err
-			}
-
-			// List all the pods similar to kubectl get pods -n MesheryNamespace
-			for _, pod := range podList.Items {
-				// Get the values from the pod status
-				name := pod.GetName()
-				log.Info("Deleting pod ", name)
-				err := client.KubeClient.CoreV1().Pods(utils.MesheryNamespace).Delete(context.TODO(), name, v1.DeleteOptions{})
-				if err != nil {
-					log.Fatal(err)
-				}
-				log.Info("Restarting pod ", name)
-			}
+			return ErrRestartMeshery(err)
 		}
 	}
 	return nil

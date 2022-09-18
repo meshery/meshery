@@ -31,7 +31,7 @@ func (h *Handler) FetchResultsHandler(w http.ResponseWriter, req *http.Request, 
 	}
 	q := req.Form
 
-	tokenString := req.Context().Value("token").(string)
+	tokenString := req.Context().Value(models.TokenCtxKey).(string)
 
 	bdr, err := p.FetchResults(tokenString, q.Get("page"), q.Get("pageSize"), q.Get("search"), q.Get("order"), profileID)
 	if err != nil {
@@ -68,7 +68,9 @@ func (h *Handler) FetchAllResultsHandler(w http.ResponseWriter, req *http.Reques
 	}
 	q := req.Form
 
-	bdr, err := p.FetchAllResults(req, q.Get("page"), q.Get("pageSize"), q.Get("search"), q.Get("order"), q.Get("from"), q.Get("to"))
+	tokenString := req.Context().Value(models.TokenCtxKey).(string)
+
+	bdr, err := p.FetchAllResults(tokenString, q.Get("page"), q.Get("pageSize"), q.Get("search"), q.Get("order"), q.Get("from"), q.Get("to"))
 	if err != nil {
 		http.Error(w, "error while getting load test results", http.StatusInternalServerError)
 		return
@@ -105,7 +107,7 @@ func (h *Handler) GetResultHandler(w http.ResponseWriter, req *http.Request, _ *
 		return
 	}
 
-	tokenString := req.Context().Value("token").(string)
+	tokenString := req.Context().Value(models.TokenCtxKey).(string)
 
 	bdr, err := p.GetResult(tokenString, key)
 	if err != nil {
@@ -141,6 +143,30 @@ func (h *Handler) FetchSmiResultsHandler(w http.ResponseWriter, req *http.Reques
 	q := req.Form
 
 	bdr, err := p.FetchSmiResults(req, q.Get("page"), q.Get("pageSize"), q.Get("search"), q.Get("order"))
+	if err != nil {
+		logrus.Error(ErrFetchSMIResults(err))
+		http.Error(w, ErrFetchSMIResults(err).Error(), http.StatusInternalServerError)
+	}
+	_, _ = w.Write(bdr)
+}
+
+// FetchSingleSmiResultHandler gets the result of single smi conformance test
+func (h *Handler) FetchSingleSmiResultHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, p models.Provider) {
+	w.Header().Set("content-type", "application/json")
+	err := req.ParseForm()
+	if err != nil {
+		logrus.Error(ErrParseForm(err))
+		http.Error(w, ErrParseForm(err).Error(), http.StatusForbidden)
+	}
+	q := req.Form
+	id := mux.Vars(req)["id"]
+	key := uuid.FromStringOrNil(id)
+	if key == uuid.Nil {
+		logrus.Error(ErrQueryGet("key"))
+		http.Error(w, "please provide a valid result id", http.StatusBadRequest)
+		return
+	}
+	bdr, err := p.FetchSmiResult(req, q.Get("page"), q.Get("pageSize"), q.Get("search"), q.Get("order"), key)
 	if err != nil {
 		logrus.Error(ErrFetchSMIResults(err))
 		http.Error(w, ErrFetchSMIResults(err).Error(), http.StatusInternalServerError)

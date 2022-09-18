@@ -6,6 +6,7 @@ import { styled } from "@mui/material/styles";
 import Link from "next/link";
 import MesheryNotification from "@/components/Notification/MesheryNotification"
 import MenuIcon from "@mui/icons-material/Menu";
+import K8sContextMenu from "./K8sContextSwitcher";
 import User from "../User";
 
 const UserSpan = styled(({ children, ...props }) => <span {...props}>{children}</span>)(({ theme }) => ({
@@ -44,10 +45,12 @@ const PageTitle = styled(Typography)(({ theme }) => ({
   [theme.breakpoints.up("sm")]: { fontSize: "1.65rem" },
 }));
 
-const HeaderComponent = ({ drawerOpen, onDrawerToggle, pageTitle }) => {
+const HeaderComponent = ({ drawerOpen, onDrawerToggle, pageTitle, contexts={}, activeContexts = [],
+  runningStatus,
+  updateK8SConfig, }) => {
   const theme = useTheme();
   return (
-    <AppBar
+       <AppBar
       color="primary"
       position="sticky"
       elevation={0}
@@ -94,18 +97,10 @@ const HeaderComponent = ({ drawerOpen, onDrawerToggle, pageTitle }) => {
           </PageTitleWrapperGrid>
 
           <UserGrid item>
-            <IconButton color="inherit" size="lage">
-              <Link href="/system/connections">
-                <HeaderIcon
-                  icon={(props) => <img {...props}></img>}
-                  src={
-                    pageTitle === "Connection Wizard"
-                      ? "/static/img/connection_wizard/connection-wizard-green.svg"
-                      : "/static/img/connection_wizard/connection-wizard-white.svg"
-                  }
-                />
-              </Link>
-            </IconButton>
+            
+            <K8sContextMenu contexts={contexts} 
+            activeContexts={activeContexts}
+             />
 
             <IconButton color="inherit" size="large">
               <Link href="/settings">

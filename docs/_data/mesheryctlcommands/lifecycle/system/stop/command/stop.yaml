@@ -1,4 +1,0 @@
-name: stop
-description: Stop all Meshery containers.
-usage: |
-    mesheryctl system stop

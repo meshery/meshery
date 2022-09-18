@@ -78,11 +78,11 @@ func (mrp *MesheryResultsPersister) GetAllResults(page, pageSize uint64) ([]byte
 }
 
 func (mrp *MesheryResultsPersister) GetResult(key uuid.UUID) (*MesheryResult, error) {
-	var res MesheryResult
+	var lres localMesheryResultDBRepresentation
 
-	err := mrp.DB.Find(&res).Where("id = ?", key).Error
-
-	return &res, err
+	err := mrp.DB.Table("meshery_results").Find(&lres).Where("id = ?", key).Error
+	res := convertLocalRepresentationToMesheryResult(&lres)
+	return res, err
 }
 
 func (mrp *MesheryResultsPersister) WriteResult(key uuid.UUID, result []byte) error {

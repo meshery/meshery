@@ -1,10 +1,10 @@
 package system
 
 import (
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"runtime"
+	"strings"
 	"testing"
 
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
@@ -49,7 +49,7 @@ func TestViewContextCmd(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
-			b := utils.SetupLogrusGrabTesting(t)
+			b := utils.SetupLogrusGrabTesting(t, false)
 			SystemCmd.SetOut(b)
 			SystemCmd.SetArgs(tt.Args)
 			err := SystemCmd.Execute()
@@ -89,7 +89,7 @@ func TestListContextCmd(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
-			b := utils.SetupLogrusGrabTesting(t)
+			b := utils.SetupLogrusGrabTesting(t, false)
 			SystemCmd.SetOut(b)
 			SystemCmd.SetArgs(tt.Args)
 			err := SystemCmd.Execute()
@@ -130,7 +130,7 @@ func TestDeleteContextCmd(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
-			b := utils.SetupLogrusGrabTesting(t)
+			b := utils.SetupLogrusGrabTesting(t, false)
 			SystemCmd.SetOut(b)
 			SystemCmd.SetArgs(tt.Args)
 			err := SystemCmd.Execute()
@@ -148,7 +148,9 @@ func TestDeleteContextCmd(t *testing.T) {
 			expectedResponse := golden.Load()
 
 			if expectedResponse != actualResponse {
-				t.Errorf("expected response [%v] and actual response [%v] don't match", expectedResponse, actualResponse)
+				t.Error("Expected response not obtained")
+				t.Errorf("Expected: %v", expectedResponse)
+				t.Errorf("Actual: %v", actualResponse)
 			}
 			path, err := os.Getwd()
 			if err != nil {
@@ -156,7 +158,7 @@ func TestDeleteContextCmd(t *testing.T) {
 			}
 			filepath := path + "/testdata/context/ExpectedDelete.yaml"
 
-			content, err := ioutil.ReadFile(filepath)
+			content, err := os.ReadFile(filepath)
 			if err != nil {
 				t.Error(err)
 			}
@@ -167,7 +169,11 @@ func TestDeleteContextCmd(t *testing.T) {
 			}
 			deleteExpected := golden.Load()
 			if actualResponse != deleteExpected {
-				t.Errorf("expected response [%v] and actual response [%v] don't match", deleteExpected, actualResponse)
+				t.Error("Contexts are mismatched")
+				t.Error("Expected:")
+				t.Errorf("%v", deleteExpected)
+				t.Error("Actual:")
+				t.Errorf("%v", actualResponse)
 			}
 
 			//Repopulating Expected yaml
@@ -196,7 +202,7 @@ func TestAddContextCmd(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
-			b := utils.SetupLogrusGrabTesting(t)
+			b := utils.SetupLogrusGrabTesting(t, false)
 			SystemCmd.SetOut(b)
 			SystemCmd.SetArgs(tt.Args)
 			err := SystemCmd.Execute()
@@ -214,7 +220,7 @@ func TestAddContextCmd(t *testing.T) {
 			expectedResponse := golden.Load()
 
 			if expectedResponse != actualResponse {
-				t.Errorf("expected response [%v] and actual response [%v] don't match", expectedResponse, actualResponse)
+				t.Errorf("Context: expected response [%v] and actual response [%v] don't match", expectedResponse, actualResponse)
 			}
 			path, err := os.Getwd()
 			if err != nil {
@@ -222,7 +228,7 @@ func TestAddContextCmd(t *testing.T) {
 			}
 			filepath := path + "/testdata/context/ExpectedAdd.yaml"
 
-			content, err := ioutil.ReadFile(filepath)
+			content, err := os.ReadFile(filepath)
 			if err != nil {
 				t.Error(err)
 			}
@@ -233,7 +239,7 @@ func TestAddContextCmd(t *testing.T) {
 			}
 			addExpected := golden.Load()
 			if actualResponse != addExpected {
-				t.Errorf("expected response [%v] and actual response [%v] don't match", addExpected, actualResponse)
+				t.Errorf("ExpectedAdd: expected response [%v] and actual response [%v] don't match", addExpected, actualResponse)
 			}
 
 			//Repopulating Expected yaml
@@ -260,14 +266,26 @@ func TestSwitchContextCmd(t *testing.T) {
 			Args:             []string{"context", "switch", "local2", "-y"},
 			ExpectedResponse: "switch.context.golden",
 		},
+		{
+			Name: "error switching to an empty context",
+			Args: []string{"context", "switch"},
+			ErrorStringContains: []string{
+				"accepts single argument, received 0",
+				"Usage: mesheryctl system context switch [context name]",
+				"Example: mesheryctl system context switch k8s-sample",
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
-			b := utils.SetupLogrusGrabTesting(t)
+			b := utils.SetupLogrusGrabTesting(t, false)
 			SystemCmd.SetOut(b)
 			SystemCmd.SetArgs(tt.Args)
 			err := SystemCmd.Execute()
 			if err != nil {
+				if errSubstrs := tt.ErrorStringContains; len(errSubstrs) > 0 && checkErrorContains(err, errSubstrs) {
+					return
+				}
 				t.Error(err)
 			}
 
@@ -288,7 +306,7 @@ func TestSwitchContextCmd(t *testing.T) {
 				t.Error("unable to locate meshery directory")
 			}
 			filepath := path + "/testdata/context/ExpectedSwitch.yaml"
-			content, err := ioutil.ReadFile(filepath)
+			content, err := os.ReadFile(filepath)
 			if err != nil {
 				t.Error(err)
 			}
@@ -313,4 +331,13 @@ func resetVariables() {
 	newContext = ""
 	currContext = ""
 	tempCntxt = ""
+}
+
+func checkErrorContains(err error, substrs []string) bool {
+	for _, substr := range substrs {
+		if !strings.Contains(err.Error(), substr) {
+			return false
+		}
+	}
+	return true
 }

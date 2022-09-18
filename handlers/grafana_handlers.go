@@ -4,7 +4,7 @@ package handlers
 import (
 	"encoding/gob"
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/url"
 	"strings"
@@ -110,12 +110,6 @@ func (h *Handler) GrafanaPingHandler(w http.ResponseWriter, req *http.Request, p
 	if prefObj.Grafana == nil || prefObj.Grafana.GrafanaURL == "" {
 		h.log.Error(ErrGrafanaConfig)
 		http.Error(w, ErrGrafanaConfig.Error(), http.StatusBadRequest)
-		return
-	}
-
-	if prefObj.K8SConfig == nil || !prefObj.K8SConfig.InClusterConfig && (prefObj.K8SConfig.Config == nil || len(prefObj.K8SConfig.Config) == 0) {
-		h.log.Error(ErrInvalidK8SConfig)
-		http.Error(w, ErrInvalidK8SConfig.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -251,7 +245,7 @@ func (h *Handler) SaveSelectedGrafanaBoardsHandler(w http.ResponseWriter, req *h
 	defer func() {
 		_ = req.Body.Close()
 	}()
-	body, err := ioutil.ReadAll(req.Body)
+	body, err := io.ReadAll(req.Body)
 	if err != nil {
 		h.log.Error(ErrRequestBody(err))
 		http.Error(w, ErrRequestBody(err).Error(), http.StatusInternalServerError)
