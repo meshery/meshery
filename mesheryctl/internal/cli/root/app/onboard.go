@@ -8,11 +8,9 @@ import (
 	"io"
 	"net/http"
 	"os"
-	"path"
 	"strconv"
 	"strings"
 
-	"github.com/asaskevich/govalidator"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/models"
@@ -26,8 +24,6 @@ var (
 	appFile    string // app file
 	sourceType string // app file type (manifest / compose)
 )
-
-var validSourceTypes []string
 
 var onboardCmd = &cobra.Command{
 	Use:   "onboard",
@@ -50,50 +46,13 @@ Example: mesheryctl app onboard -f ./application.yml -s "Kubernetes Manifest"
 Description: Onboard application`
 
 		if file == "" && len(args) == 0 {
-			return fmt.Errorf("file path or application name not provided \n\n%v", errMsg)
+			return fmt.Errorf("file path or application name not provided. Provide file/app name \n\n%v", errMsg)
 		}
 		return nil
 	},
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-		if err != nil {
-			return err
-		}
-		validTypesURL := mctlCfg.GetBaseMesheryURL() + "/api/application/types"
-		client := &http.Client{}
-		req, err := utils.NewRequest("GET", validTypesURL, nil)
-		if err != nil {
-			return err
-		}
-
-		resp, err := client.Do(req)
-		if err != nil {
-			return err
-		}
-
-		if resp.StatusCode != 200 {
-			return errors.Errorf("Response Status Code %d, possible Server Error", resp.StatusCode)
-		}
-		defer resp.Body.Close()
-
-		var response []*models.ApplicationSourceTypesAPIResponse
-
-		body, err := io.ReadAll(resp.Body)
-		if err != nil {
-			return errors.Wrap(err, utils.PerfError("failed to read response body"))
-		}
-		err = json.Unmarshal(body, &response)
-		if err != nil {
-			return errors.Wrap(err, "failed to unmarshal response body")
-		}
-
-		for _, apiResponse := range response {
-			validSourceTypes = append(validSourceTypes, apiResponse.ApplicationType)
-		}
-
-		return nil
+		return getSourceTypes()
 	},
-
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var req *http.Request
 		var err error
@@ -106,7 +65,6 @@ Description: Onboard application`
 
 		deployURL := mctlCfg.GetBaseMesheryURL() + "/api/application/deploy"
 		appURL := mctlCfg.GetBaseMesheryURL() + "/api/application"
-		patternURL := mctlCfg.GetBaseMesheryURL() + "/api/pattern"
 
 		// app name has been passed
 		if len(args) > 0 {
@@ -134,11 +92,13 @@ Description: Onboard application`
 			defer resp.Body.Close()
 			body, err := io.ReadAll(resp.Body)
 			if err != nil {
-				return errors.Wrap(err, utils.PerfError("failed to read response body"))
+				utils.Log.Debug("failed to read response body")
+				return errors.Wrap(err, "couldn't read response from server. Please try again after some time")
 			}
 			err = json.Unmarshal(body, &response)
 			if err != nil {
-				return errors.Wrap(err, "failed to unmarshal response body")
+				utils.Log.Debug("failed to unmarshal JSON response body")
+				return errors.Wrap(err, "couldn't process response received from server")
 			}
 
 			index := 0
@@ -156,161 +116,15 @@ Description: Onboard application`
 			if !isValidSource(sourceType) {
 				return errors.Errorf("application source type (-s) invalid or not passed.\nAllowed source types: %s", strings.Join(validSourceTypes, ", "))
 			}
-			// Method to check if the entered file is a URL or not
-			if validURL := govalidator.IsURL(file); !validURL {
-				content, err := os.ReadFile(file)
-				if err != nil {
-					return err
-				}
-				text := string(content)
-
-				// if --skip-save is not passed we save the apps first
-				if !skipSave {
-					jsonValues, err := json.Marshal(map[string]interface{}{
-						"application_data": map[string]interface{}{
-							"name":             path.Base(file),
-							"application_file": text,
-						},
-						"save": true,
-					})
-					if err != nil {
-						return err
-					}
-					req, err = utils.NewRequest("POST", appURL+"/"+sourceType, bytes.NewBuffer(jsonValues))
-					if err != nil {
-						return err
-					}
-
-					resp, err := client.Do(req)
-					if err != nil {
-						return err
-					}
-					utils.Log.Debug("saved app file")
-					var response []*models.MesheryApplication
-					// failsafe (bad api call)
-					if resp.StatusCode != 200 {
-						return errors.Errorf("Response Status Code %d, possible Server Error", resp.StatusCode)
-					}
-					defer resp.Body.Close()
-
-					body, err := io.ReadAll(resp.Body)
-					if err != nil {
-						return errors.Wrap(err, utils.PerfError("failed to read response body"))
-					}
-					err = json.Unmarshal(body, &response)
-					if err != nil {
-						return errors.Wrap(err, "failed to unmarshal response body")
-					}
-				}
-
-				// setup app file
-				appFile = text
-			} else {
-				var jsonValues []byte
-				url, path, err := utils.ParseURLGithub(file)
-				if err != nil {
-					return err
-				}
-
-				utils.Log.Debug(url)
-				utils.Log.Debug(path)
-
-				// save the app with Github URL
-				if !skipSave {
-					if path != "" {
-						jsonValues, _ = json.Marshal(map[string]interface{}{
-							"url":  url,
-							"path": path,
-							"save": true,
-						})
-					} else {
-						jsonValues, _ = json.Marshal(map[string]interface{}{
-							"url":  url,
-							"save": true,
-						})
-					}
-				} else { // we don't save the app
-					if path != "" {
-						jsonValues, _ = json.Marshal(map[string]interface{}{
-							"url":  url,
-							"path": path,
-							"save": false,
-						})
-					} else {
-						jsonValues, _ = json.Marshal(map[string]interface{}{
-							"url":  url,
-							"save": false,
-						})
-					}
-				}
-				req, err = utils.NewRequest("POST", appURL+"/"+sourceType, bytes.NewBuffer(jsonValues))
-				if err != nil {
-					return err
-				}
-
-				resp, err := client.Do(req)
-				if err != nil {
-					return err
-				}
-				utils.Log.Debug("remote hosted app request success")
-				var response []*models.MesheryApplication
-				// failsafe (bad api call)
-				if resp.StatusCode != 200 {
-					return errors.Errorf("Response Status Code %d, possible Server Error", resp.StatusCode)
-				}
-				defer resp.Body.Close()
-
-				body, err := io.ReadAll(resp.Body)
-				if err != nil {
-					return errors.Wrap(err, utils.PerfError("failed to read response body"))
-				}
-				err = json.Unmarshal(body, &response)
-				if err != nil {
-					return errors.Wrap(err, "failed to unmarshal response body")
-				}
-
-				// setup app file here
-				appFile = response[0].ApplicationFile
+			app, err := importApp(sourceType, file, appURL, !skipSave)
+			if err != nil {
+				return err
 			}
+
+			appFile = app.ApplicationFile
 		}
 
-		// Convert App File into Pattern File
-		jsonValues, _ := json.Marshal(map[string]interface{}{
-			"K8sManifest": appFile,
-		})
-
-		req, err = utils.NewRequest("POST", patternURL, bytes.NewBuffer(jsonValues))
-		if err != nil {
-			return err
-		}
-
-		resp, err := client.Do(req)
-		if err != nil {
-			return err
-		}
-		defer resp.Body.Close()
-
-		var response []*models.MesheryPattern
-		// bad api call
-		if resp.StatusCode != 200 {
-			return errors.Errorf("Response Status Code %d, possible Server Error", resp.StatusCode)
-		}
-
-		body, err := io.ReadAll(resp.Body)
-		if err != nil {
-			return errors.Wrap(err, utils.PerfError("failed to read response body"))
-		}
-
-		err = json.Unmarshal(body, &response)
-		if err != nil {
-			return errors.Wrap(err, "failed to unmarshal response body")
-		}
-
-		utils.Log.Debug("application file converted to pattern file")
-
-		patternFile := response[0].PatternFile
-
-		req, err = utils.NewRequest("POST", deployURL, bytes.NewBuffer([]byte(patternFile)))
+		req, err = utils.NewRequest("POST", deployURL, bytes.NewBuffer([]byte(appFile)))
 		if err != nil {
 			return err
 		}
@@ -321,7 +135,7 @@ Description: Onboard application`
 		}
 
 		defer res.Body.Close()
-		body, err = io.ReadAll(res.Body)
+		body, err := io.ReadAll(res.Body)
 		if err != nil {
 			return err
 		}
@@ -363,16 +177,6 @@ func multipleApplicationsConfirmation(profiles []models.MesheryApplication) int 
 			return index
 		}
 	}
-}
-
-func isValidSource(sType string) bool {
-	for _, validType := range validSourceTypes {
-		if validType == sType {
-			return true
-		}
-	}
-
-	return false
 }
 
 func init() {
