@@ -42,6 +42,7 @@ import { getComponentsinFile } from "../utils/utils";
 import PublishIcon from "@material-ui/icons/Publish";
 import ConfigurationSubscription from "./graphql/subscriptions/ConfigurationSubscription";
 import fetchCatalogFilter from "./graphql/queries/CatalogFilterQuery";
+import LoadingScreen from "./LoadingComponents/LoadingComponent";
 
 const styles = (theme) => ({
   grid : {
@@ -194,6 +195,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
   const [importModal, setImportModal] = useState({
     open : false
   })
+  const [loading, stillLoading] = useState(true);
 
   const catalogContentRef = useRef();
   const catalogVisibilityRef = useRef();
@@ -462,6 +464,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
       disposeConfSubscriptionRef.current.dispose();
     }
     const configurationSubscription = ConfigurationSubscription((result) => {
+      stillLoading(false);
       setPage(result.configuration?.filters.page || 0);
       setPageSize(result.configuration?.filters.page_size || 0);
       setCount(result.configuration?.filters.total_count || 0);
@@ -837,6 +840,10 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
       }
     }
   };
+
+  if (loading) {
+    return <LoadingScreen animatedIcon="AnimatedFilter" message="Loading Filters..." />;
+  }
 
   return (
     <>

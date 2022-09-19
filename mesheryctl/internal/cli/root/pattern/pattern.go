@@ -18,7 +18,6 @@ var PatternCmd = &cobra.Command{
 	Use:   "pattern",
 	Short: "Service Mesh Patterns Management",
 	Long:  `Manage service meshes using predefined patterns`,
-	Args:  cobra.MinimumNArgs(1),
 	Example: `
 // Apply pattern file
 mesheryctl pattern apply --file [path to pattern file | URL of the file]
@@ -33,8 +32,11 @@ mesheryctl pattern view [pattern name | ID]
 mesheryctl pattern list
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
+		if len(args) == 0 {
+			return cmd.Help()
+		}
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
-			return errors.New(utils.SystemError(fmt.Sprintf("invalid command: \"%s\"", args[0])))
+			return errors.New(utils.PatternError(fmt.Sprintf("'%s' is a invalid command.  Use 'mesheryctl pattern --help' to display usage guide.\n", args[0])))
 		}
 		return nil
 	},

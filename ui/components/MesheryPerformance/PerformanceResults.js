@@ -1,7 +1,7 @@
 //@ts-check
 import React, { useEffect, useState, useRef } from "react";
 import {
-  NoSsr, TableCell, IconButton, Paper
+  NoSsr, TableCell, IconButton, Paper, createTheme, Popper, ClickAwayListener, Fade
 } from "@material-ui/core";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
@@ -10,6 +10,7 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Moment from "react-moment";
 import { withSnackbar } from "notistack";
+import { MuiThemeProvider, withStyles } from '@material-ui/core/styles';
 import CloseIcon from "@material-ui/icons/Close";
 import { updateResultsSelection, clearResultsSelection, updateProgress } from "../../lib/store";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
@@ -23,6 +24,34 @@ import InfoIcon from '@material-ui/icons/Info';
 import fetchPerformanceResults from "../graphql/queries/PerformanceResultQuery";
 import subscribePerformanceProfiles from "../graphql/subscriptions/PerformanceResultSubscription";
 import NodeDetails from "../NodeDetails";
+import ReplyIcon from '@material-ui/icons/Reply';
+import FacebookIcon from "./assets/facebookIcon";
+import LinkedinIcon from "./assets/linkedinIcon"
+import TwitterIcon from "./assets/twitterIcon";
+import {
+  TwitterShareButton,
+  LinkedinShareButton,
+  FacebookShareButton,
+
+} from "react-share"
+
+const COL_MAPPING = {
+  QPS : 3,
+  P99 : 6
+}
+
+const styles = (theme) => ({
+  socialIcon : {
+    margin : theme.spacing(0.4)
+  },
+  share : {
+    transform : "scaleX(-1)",
+    color : "#000"
+  },
+  paper : {
+    padding : theme.spacing(1)
+  },
+})
 
 function generateResultsForDisplay(results) {
   if (Array.isArray(results)) {
@@ -55,7 +84,7 @@ function generateResultsForDisplay(results) {
   return [];
 }
 
-function generateColumnsForDisplay(sortOrder, setSelectedProfileIdxForChart, setSelectedProfileIdxForNodeDetails) {
+function generateColumnsForDisplay(sortOrder, setSelectedProfileIdxForChart, setSelectedProfileIdxForNodeDetails, classes, handleSocialExpandClick, handleClickAway, socialExpand, anchorEl, socialMessage) {
   const columns = [
     { name : "name",
       label : "Name",
@@ -205,7 +234,61 @@ function generateColumnsForDisplay(sortOrder, setSelectedProfileIdxForChart, set
             </IconButton>
           );
         },
-      }, },
+      },
+    },
+    {
+      name : "Share Results",
+      options : {
+        filter : false,
+        sort : false,
+        searchable : false,
+        customHeadRender : function CustomHead({ index, ...column }) {
+          return (
+            <TableCell key={index}>
+              <b>{column.label}</b>
+            </TableCell>
+          );
+        },
+        customBodyRender : function CustomBody(value, tableMeta) {
+          return (
+            <>
+              <IconButton
+                aria-label="Share"
+                onClick={(e) => handleSocialExpandClick(e, tableMeta)}
+              >
+                <ReplyIcon className={classes.share}/>
+              </IconButton>
+              <Popper open={socialExpand[tableMeta.rowIndex]} anchorEl={anchorEl[tableMeta.rowIndex]} transition >
+                {({ TransitionProps }) => (
+                  <ClickAwayListener onClickAway={() => handleClickAway(tableMeta.rowIndex)}>
+                    <Fade {...TransitionProps} timeout={350}>
+                      <Paper className={classes.paper}>
+                        <TwitterShareButton className={classes.socialIcon} url={"https://meshery.io"} title={socialMessage}
+                          hashtags={["opensource"]}
+                        >
+                          {/* <img src={`/static/img/twitter.svg`} /> */}
+                          <TwitterIcon   />
+                        </TwitterShareButton>
+                        <LinkedinShareButton className={classes.socialIcon} url={"https://meshery.io"} summary={socialMessage}>
+                          {/* <img src={`/static/img/linkedin.svg`} /> */}
+                          <LinkedinIcon    />
+                        </LinkedinShareButton>
+                        <FacebookShareButton className={classes.socialIcon} url={"https://meshery.io"} quote={socialMessage}
+                          hashtag={"#opensource"}
+                        >
+                          {/* <img src={`/static/img/facebook.svg`} /> */}
+                          <FacebookIcon  />
+                        </FacebookShareButton>
+                      </Paper>
+                    </Fade>
+                  </ClickAwayListener>
+                )}
+              </Popper>
+            </>
+          )
+        }
+      }
+    }
   ];
 
   return columns.map((column) => {
@@ -215,6 +298,10 @@ function generateColumnsForDisplay(sortOrder, setSelectedProfileIdxForChart, set
 
     return column;
   });
+}
+
+function getSocialMessageForPerformanceTest(rps, percentile) {
+  return `I achieved ${rps.trim()} RPS running my service at a P99.9 of ${percentile} ms using @mesheryio with @smp_spec! Find out how fast your service is with`
 }
 
 function generateSelectedRows(results_selection, page, pageSize) {
@@ -239,6 +326,16 @@ function generateSelectedRows(results_selection, page, pageSize) {
 function ResultChart({ result, handleTabChange, tabValue }) {
   if (!result) return <div />;
 
+  const getMuiTheme = () => createTheme({
+    overrides : {
+      MuiTab : {
+        textColorInherit : {
+          textTransform : "none",
+          backgroundColor : "#eaeff1"
+        }
+      }
+    }
+  })
   const row = result.runner_results;
   const boardConfig = result.server_board_config;
   const serverMetrics = result.server_metrics;
@@ -246,56 +343,57 @@ function ResultChart({ result, handleTabChange, tabValue }) {
   const endTime = new Date(startTime.getTime() + row.ActualDuration / 1000000);
 
   return (
-    <Paper
-      style={{ width : "100%",
-        maxWidth : "90vw",
-        padding : "0.5rem" }}
-    >
-      <Tabs
-        value={tabValue}
-        onChange={handleTabChange}
-        TabIndicatorProps={{
-          style : {
-            color : "#000",
-            backgroundColor : "#00B39F"
-          }
-        }}
+    <MuiThemeProvider theme={getMuiTheme()}>
+      <Paper
+        style={{ width : "100%",
+          maxWidth : "90vw",
+          padding : "0.5rem" }}
       >
-        <Tab label="Performance Chart" />
-        <Tab label="Node Details" />
-      </Tabs>
+        <Tabs
+          value={tabValue}
+          onChange={handleTabChange}
+          TabIndicatorProps={{
+            style : {
+              backgroundColor : "#00B39F"
+            }
+          }}
+        >
+          <Tab label="Performance Chart" />
+          <Tab label="Node Details" />
+        </Tabs>
 
-      {
-        (tabValue == 0) ?
-          <div>
+        {
+          (tabValue == 0) ?
             <div>
-              <MesheryChart
-                rawdata={[result && result.runner_results ? result : {}]}
-                data={[result && result.runner_results ? result.runner_results : {}]}
-              />
-            </div>
-            {boardConfig && boardConfig !== null && Object.keys(boardConfig).length > 0 && (
               <div>
-                <GrafanaCustomCharts
-                  boardPanelConfigs={[boardConfig]}
-                  // @ts-ignore
-                  boardPanelData={[serverMetrics]}
-                  startDate={startTime}
-                  from={startTime.getTime().toString()}
-                  endDate={endTime}
-                  to={endTime.getTime().toString()}
-                  liveTail={false}
+                <MesheryChart
+                  rawdata={[result && result.runner_results ? result : {}]}
+                  data={[result && result.runner_results ? result.runner_results : {}]}
                 />
               </div>
-            )}
-          </div>
-          : (tabValue == 1) ?
-            <div>
-              <NodeDetails result={row}/>
+              {boardConfig && boardConfig !== null && Object.keys(boardConfig).length > 0 && (
+                <div>
+                  <GrafanaCustomCharts
+                    boardPanelConfigs={[boardConfig]}
+                    // @ts-ignore
+                    boardPanelData={[serverMetrics]}
+                    startDate={startTime}
+                    from={startTime.getTime().toString()}
+                    endDate={endTime}
+                    to={endTime.getTime().toString()}
+                    liveTail={false}
+                  />
+                </div>
+              )}
             </div>
-            : <div />
-      }
-    </Paper>
+            : (tabValue == 1) ?
+              <div>
+                <NodeDetails result={row}/>
+              </div>
+              : <div />
+        }
+      </Paper>
+    </MuiThemeProvider>
   );
 }
 
@@ -387,6 +485,7 @@ function MesheryResults({
   user,
   CustomHeader = <div />,
   elevation = 4,
+  classes
 }) {
   const [page, setPage] = useState(0);
   const [search, setSearch] = useState("");
@@ -397,6 +496,9 @@ function MesheryResults({
   const [selectedRowChart, setSelectedRowChart] = useState();
   const [selectedRowNodeDetails, setSelectedRowNodeDetails] = useState();
   const [tabValue, setTabValue] = useState(0);
+  const [socialExpand, setSocialExpand] = useState([false]);
+  const [anchorEl, setAnchorEl] = useState([]);
+  const [socialMessage, setSocialMessage] = useState();
 
   const searchTimeout = useRef();
 
@@ -430,6 +532,24 @@ function MesheryResults({
       subscription.dispose();
     };
   }, [page, pageSize, search, sortOrder]);
+
+
+  const handleSocialExpandClick = (e, tableMeta) => {
+    let socialExpandUpdate = [...socialExpand];
+    socialExpandUpdate[tableMeta.rowIndex] = !socialExpand[tableMeta.rowIndex];
+    setSocialExpand(socialExpandUpdate);
+
+    let anchorElUpdate = [...anchorEl];
+    anchorElUpdate[tableMeta.rowIndex] = e.currentTarget;
+    setAnchorEl(anchorElUpdate);
+    setSocialMessage(getSocialMessageForPerformanceTest(tableMeta.rowData[COL_MAPPING.QPS], tableMeta.rowData[COL_MAPPING.P99]));
+  }
+
+  const handleClickAway = (index) => {
+    let socialExpandUpdate = [...socialExpand];
+    socialExpandUpdate[index] = !socialExpand[index];
+    setSocialExpand(socialExpandUpdate);
+  }
 
   function fetchResults(page, pageSize, search, sortOrder) {
     if (!search) search = "";
@@ -482,7 +602,7 @@ function MesheryResults({
   }, (idx) => {
     setSelectedRowNodeDetails(results[idx])
     setTabValue(1)
-  });
+  }, classes, handleSocialExpandClick, handleClickAway, socialExpand, anchorEl, socialMessage);
 
   const options = {
     elevation : elevation,
@@ -627,4 +747,4 @@ const mapStateToProps = (state) => {
 };
 
 // @ts-ignore
-export default connect(mapStateToProps, mapDispatchToProps)(withSnackbar(MesheryResults));
+export default connect(mapStateToProps, mapDispatchToProps)(withSnackbar(withStyles(styles)(MesheryResults)));

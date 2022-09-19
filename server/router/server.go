@@ -143,6 +143,7 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int, g http.
 	gMux.HandleFunc("/api/oam/{type}/{name}", h.OAMComponentDetailsHandler).Methods("GET")
 	gMux.HandleFunc("/api/oam/{type}/{name}/{id}", h.OAMComponentDetailByIDHandler).Methods("GET")
 	gMux.HandleFunc("/api/meshmodel/validate", h.ValidationHandler).Methods("POST")
+	gMux.HandleFunc("/api/meshmodel/component/generate", h.ComponentGenerationHandler).Methods("POST")
 
 	gMux.HandleFunc("/api/components", h.GetAllComponents).Methods("GET")
 	gMux.HandleFunc("/api/components/types", h.ComponentTypesHandler).Methods("GET")

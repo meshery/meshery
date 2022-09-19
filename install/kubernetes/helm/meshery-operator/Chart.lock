@@ -1,0 +1,9 @@
+dependencies:
+- name: meshery-broker
+  repository: ""
+  version: 0.5.0
+- name: meshery-meshsync
+  repository: ""
+  version: 0.5.0
+digest: sha256:4c27c65b00d28c31f222b1a0a6ceb23341ca1626122e33d5603fb64b68529630
+generated: "2022-09-07T11:06:40.363462808+01:00"

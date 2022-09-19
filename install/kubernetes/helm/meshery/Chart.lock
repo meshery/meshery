@@ -1,0 +1,39 @@
+dependencies:
+- name: meshery-istio
+  repository: ""
+  version: 0.5.0
+- name: meshery-linkerd
+  repository: ""
+  version: 0.5.0
+- name: meshery-consul
+  repository: ""
+  version: 0.5.0
+- name: meshery-kuma
+  repository: ""
+  version: 0.5.0
+- name: meshery-osm
+  repository: ""
+  version: 0.5.0
+- name: meshery-nsm
+  repository: ""
+  version: 0.5.0
+- name: meshery-traefik-mesh
+  repository: ""
+  version: 0.5.0
+- name: meshery-cpx
+  repository: ""
+  version: 0.5.0
+- name: meshery-nginx-sm
+  repository: ""
+  version: 0.5.0
+- name: meshery-app-mesh
+  repository: ""
+  version: 0.5.0
+- name: meshery-cilium
+  repository: ""
+  version: 0.5.0
+- name: meshery-perf
+  repository: ""
+  version: 0.5.0
+digest: sha256:1a58f0dc6f2cc5c7cdd8c1a9871ca738502f0e773c2c47f5dc95f03b5388b2c0
+generated: "2022-09-13T11:09:31.819721622Z"
