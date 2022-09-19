@@ -368,7 +368,6 @@ func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, profil
 		h.log.Warn(ErrInvalidK8SConfig)
 	}
 	var wg sync.WaitGroup
-	h.log.Info(mk8sContexts)
 
 	// If no Kubernetes context is selected, skip cluster discovery
 	if len(mk8sContexts) == 0 {
