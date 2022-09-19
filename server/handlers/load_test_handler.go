@@ -364,15 +364,31 @@ func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, profil
 	resultsMap["load-generator"] = loadTestOptions.LoadGenerator
 
 	mk8sContexts, ok := req.Context().Value(models.KubeClustersKey).([]models.K8sContext)
-	if !ok || len(mk8sContexts) == 0 {
-		h.log.Error(ErrInvalidK8SConfig)
-		return
+	if !ok {
+		h.log.Warn(ErrInvalidK8SConfig)
 	}
 	var wg sync.WaitGroup
+
+	// If no Kubernetes context is selected, skip cluster discovery
+	if len(mk8sContexts) == 0 {
+		result := &models.MesheryResult{
+			Name:   testName,
+			Mesh:   meshName,
+			Result: resultsMap,
+		}
+
+		h.persistPerformanceTestResult(ctx, req, result, testUUID, profileID, resultInst, prefObj, provider, respChan)
+		return
+	}
+
+	var resultsMx sync.Mutex
 	for _, k8context := range mk8sContexts {
 		wg.Add(1)
-		go func(mk8scontext *models.K8sContext) {
+		go func(mk8scontext models.K8sContext) {
 			defer wg.Done()
+			var serverVersion string
+			var nodes []*models.K8SNode
+			var installedMeshes map[string][]corev1.Pod
 			// Get the k8sconfig
 			k8sconfig, err := mk8scontext.GenerateKubeConfig()
 			if err == nil {
@@ -380,6 +396,7 @@ func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, profil
 				versionChan := make(chan string)
 				installedMeshesChan := make(chan map[string][]corev1.Pod)
 
+				// Fire goroutines to get cluster information
 				go func() {
 					var nodes []*models.K8SNode
 					var err error
@@ -406,21 +423,31 @@ func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, profil
 					if err != nil {
 						h.log.Warn(ErrFetchKubernetes(err))
 					}
+
 					installedMeshesChan <- installedMeshes
 				}()
 
-				serverVersion := <-versionChan
-				nodes := <-nodesChan
+				// Retrieve cluster information from the goroutines
+				serverVersion = <-versionChan
+				nodes = <-nodesChan
+				installedMeshes = <-installedMeshesChan
+			}
 
+			// Making sure different context goroutines don't interfere with each others' results Map
+			resultsMx.Lock()
+			defer resultsMx.Unlock()
+
+			resultsMap["kubernetes"] = nil
+			if serverVersion != "" {
 				resultsMap["kubernetes"] = map[string]interface{}{
 					"server_version": serverVersion,
 					"nodes":          nodes,
 				}
+			}
 
-				installedMeshes := <-installedMeshesChan
-				if len(installedMeshes) > 0 {
-					resultsMap["detected-meshes"] = installedMeshes
-				}
+			resultsMap["detected-meshes"] = nil
+			if len(installedMeshes) > 0 {
+				resultsMap["detected-meshes"] = installedMeshes
 			}
 
 			respChan <- &models.LoadTestResponse{
@@ -434,62 +461,67 @@ func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, profil
 				Result: resultsMap,
 			}
 
-			resultID, err := provider.PublishResults(req, result, profileID)
-			if err != nil {
-				h.log.Error(ErrLoadTest(err, "unable to persist in cluster"))
-				respChan <- &models.LoadTestResponse{
-					Status:  models.LoadTestError,
-					Message: "unable to persist",
-				}
-				return
-			}
-			respChan <- &models.LoadTestResponse{
-				Status:  models.LoadTestInfo,
-				Message: "Done persisting the load test results.",
-			}
-
-			var promURL string
-			if prefObj.Prometheus != nil {
-				promURL = prefObj.Prometheus.PrometheusURL
-			}
-
-			tokenVal, _ := provider.GetProviderToken(req)
-
-			h.log.Debug("promURL: , testUUID: , resultID: ", promURL, testUUID, resultID)
-			if promURL != "" && testUUID != "" && resultID != "" &&
-				(provider.GetProviderType() == models.RemoteProviderType ||
-					(provider.GetProviderType() == models.LocalProviderType && prefObj.AnonymousPerfResults)) {
-				_ = h.task.WithArgs(ctx, &models.SubmitMetricsConfig{
-					TestUUID:  testUUID,
-					ResultID:  resultID,
-					PromURL:   promURL,
-					StartTime: resultInst.StartTime,
-					EndTime:   resultInst.StartTime.Add(resultInst.ActualDuration),
-					TokenVal:  tokenVal,
-					Provider:  provider,
-				})
-			}
-
-			key := uuid.FromStringOrNil(resultID)
-			if key == uuid.Nil {
-				key, _ = uuid.NewV4()
-			}
-			result.ID = key
-			respChan <- &models.LoadTestResponse{
-				Status: models.LoadTestSuccess,
-				Result: result,
-			}
-
-			if h.config.PerformanceChannel != nil {
-				h.config.PerformanceChannel <- struct{}{}
-			}
-
-			if h.config.PerformanceResultChannel != nil {
-				h.config.PerformanceResultChannel <- struct{}{}
-			}
-		}(&k8context)
+			h.persistPerformanceTestResult(ctx, req, result, testUUID, profileID, resultInst, prefObj, provider, respChan)
+		}(k8context)
 	}
 	wg.Wait()
+}
+
+// persistPerformanceTestResult takes the test result and saves it on the provider
+func (h *Handler) persistPerformanceTestResult(ctx context.Context, req *http.Request, result *models.MesheryResult, testUUID, profileID string, resultInst *periodic.RunnerResults, prefObj *models.Preference, provider models.Provider, respChan chan *models.LoadTestResponse) {
+	resultID, err := provider.PublishResults(req, result, profileID)
+	if err != nil {
+		h.log.Error(ErrLoadTest(err, "unable to persist in cluster"))
+		respChan <- &models.LoadTestResponse{
+			Status:  models.LoadTestError,
+			Message: "unable to persist",
+		}
+		return
+	}
+	respChan <- &models.LoadTestResponse{
+		Status:  models.LoadTestInfo,
+		Message: "Done persisting the load test results.",
+	}
+
+	var promURL string
+	if prefObj.Prometheus != nil {
+		promURL = prefObj.Prometheus.PrometheusURL
+	}
+
+	tokenVal, _ := provider.GetProviderToken(req)
+
+	h.log.Debug("promURL: , testUUID: , resultID: ", promURL, testUUID, resultID)
+	if promURL != "" && testUUID != "" && resultID != "" &&
+		(provider.GetProviderType() == models.RemoteProviderType ||
+			(provider.GetProviderType() == models.LocalProviderType && prefObj.AnonymousPerfResults)) {
+		_ = h.task.WithArgs(ctx, &models.SubmitMetricsConfig{
+			TestUUID:  testUUID,
+			ResultID:  resultID,
+			PromURL:   promURL,
+			StartTime: resultInst.StartTime,
+			EndTime:   resultInst.StartTime.Add(resultInst.ActualDuration),
+			TokenVal:  tokenVal,
+			Provider:  provider,
+		})
+	}
+
+	key := uuid.FromStringOrNil(resultID)
+	if key == uuid.Nil {
+		key, _ = uuid.NewV4()
+	}
+	result.ID = key
+	respChan <- &models.LoadTestResponse{
+		Status: models.LoadTestSuccess,
+		Result: result,
+	}
+
+	if h.config.PerformanceChannel != nil {
+		h.config.PerformanceChannel <- struct{}{}
+	}
+
+	if h.config.PerformanceResultChannel != nil {
+		h.config.PerformanceResultChannel <- struct{}{}
+	}
 }
 
 // CollectStaticMetrics is used for collecting static metrics from prometheus and submitting it to Remote Provider
