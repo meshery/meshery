@@ -554,7 +554,6 @@ class Navigator extends React.Component {
     dataFetch(
       "/api/system/version",
       {
-        credentials : "same-origin",
         method : "GET",
         credentials : "include",
       },
@@ -577,7 +576,6 @@ class Navigator extends React.Component {
     dataFetch(
       "/api/provider/capabilities",
       {
-        credentials : "same-origin",
         method : "GET",
         credentials : "include",
       },

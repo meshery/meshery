@@ -70,7 +70,7 @@ class MeshAdapterConfigComponent extends React.Component {
     this.props.updateProgress({ showProgress : true });
     dataFetch(
       "/api/system/adapters",
-      { credentials : "same-origin",
+      {
         method : "GET",
         credentials : "include", },
       (result) => {
@@ -126,7 +126,7 @@ class MeshAdapterConfigComponent extends React.Component {
     dataFetch(
       "/api/system/adapter/manage",
       {
-        credentials : "same-origin",
+
         method : "POST",
         credentials : "include",
         headers : { "Content-Type" : "application/x-www-form-urlencoded;charset=UTF-8", },
@@ -161,7 +161,7 @@ class MeshAdapterConfigComponent extends React.Component {
     dataFetch(
       `/api/system/adapter/manage?adapter=${encodeURIComponent(adapterLoc)}`,
       {
-        credentials : "same-origin",
+
         method : "DELETE",
         credentials : "include",
       },
@@ -189,7 +189,7 @@ class MeshAdapterConfigComponent extends React.Component {
     const self = this;
     dataFetch(
       `/api/system/adapters?adapter=${encodeURIComponent(adapterLoc)}`,
-      { credentials : "same-origin",
+      {
         credentials : "include", },
       (result) => {
         this.props.updateProgress({ showProgress : false });

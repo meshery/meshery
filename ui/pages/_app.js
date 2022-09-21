@@ -79,9 +79,10 @@ class MesheryApp extends App {
     this.initSubscriptions([]);
     dataFetch(
       "/api/user/prefs",
-      { credentials : "same-origin",
+      {
         method : "GET",
-        credentials : "include", },
+        credentials : "include",
+      },
       (result) => {
         if (result) {
           this.props.toggleCatalogContent({
@@ -207,70 +208,70 @@ class MesheryApp extends App {
 
   async loadConfigFromServer() {
     const { store } = this.props;
-    dataFetch('/api/system/sync', {
-      credentials : 'same-origin',
-      method : 'GET',
-      credentials : 'include',
-    }, result => {
-      if (result) {
-        if (result.k8sConfig && result.k8sConfig.length != 0) {
-          const kubeConfigs = result.k8sConfig.map(config => Object.assign({
-            inClusterConfig : false,
-            k8sfile : "",
-            name : "",
-            clusterConfigured : "",
-            server : "",
-            created_at : "",
-            updated_at : "",
-            ts : new Date()
-          }, config));
-          store.dispatch({ type : actionTypes.UPDATE_CLUSTER_CONFIG, k8sConfig : kubeConfigs });
-        }
-        if (result.meshAdapters && result.meshAdapters !== null && result.meshAdapters.length > 0) {
-          store.dispatch({ type : actionTypes.UPDATE_ADAPTERS_INFO, meshAdapters : result.meshAdapters });
-        }
-        if (result.grafana) {
-          const grafanaCfg = Object.assign({
-            grafanaURL : "",
-            grafanaAPIKey : "",
-            grafanaBoardSearch : "",
-            grafanaBoards : [],
-            selectedBoardsConfigs : []
-          }, result.grafana)
-          store.dispatch({ type : actionTypes.UPDATE_GRAFANA_CONFIG, grafana : grafanaCfg });
-        }
-        if (result.prometheus) {
-          if (typeof result.prometheus.prometheusURL === 'undefined') {
-            result.prometheus.prometheusURL = '';
+    dataFetch('/api/system/sync',
+      {
+        method : 'GET',
+        credentials : 'include',
+      }, result => {
+        if (result) {
+          if (result.k8sConfig && result.k8sConfig.length != 0) {
+            const kubeConfigs = result.k8sConfig.map(config => Object.assign({
+              inClusterConfig : false,
+              k8sfile : "",
+              name : "",
+              clusterConfigured : "",
+              server : "",
+              created_at : "",
+              updated_at : "",
+              ts : new Date()
+            }, config));
+            store.dispatch({ type : actionTypes.UPDATE_CLUSTER_CONFIG, k8sConfig : kubeConfigs });
           }
-          if (typeof result.prometheus.selectedPrometheusBoardsConfigs === 'undefined') {
-            result.prometheus.selectedPrometheusBoardsConfigs = [];
+          if (result.meshAdapters && result.meshAdapters !== null && result.meshAdapters.length > 0) {
+            store.dispatch({ type : actionTypes.UPDATE_ADAPTERS_INFO, meshAdapters : result.meshAdapters });
           }
-          const promCfg = Object.assign({
-            prometheusURL : "",
-            selectedPrometheusBoardsConfigs : []
-          }, result.prometheus)
-          store.dispatch({ type : actionTypes.UPDATE_PROMETHEUS_CONFIG, prometheus : promCfg });
+          if (result.grafana) {
+            const grafanaCfg = Object.assign({
+              grafanaURL : "",
+              grafanaAPIKey : "",
+              grafanaBoardSearch : "",
+              grafanaBoards : [],
+              selectedBoardsConfigs : []
+            }, result.grafana)
+            store.dispatch({ type : actionTypes.UPDATE_GRAFANA_CONFIG, grafana : grafanaCfg });
+          }
+          if (result.prometheus) {
+            if (typeof result.prometheus.prometheusURL === 'undefined') {
+              result.prometheus.prometheusURL = '';
+            }
+            if (typeof result.prometheus.selectedPrometheusBoardsConfigs === 'undefined') {
+              result.prometheus.selectedPrometheusBoardsConfigs = [];
+            }
+            const promCfg = Object.assign({
+              prometheusURL : "",
+              selectedPrometheusBoardsConfigs : []
+            }, result.prometheus)
+            store.dispatch({ type : actionTypes.UPDATE_PROMETHEUS_CONFIG, prometheus : promCfg });
+          }
+          if (result.loadTestPrefs) {
+            const loadTestPref = Object.assign({
+              c : 0,
+              qps : 0,
+              t : 0,
+              gen : 0
+            }, result.loadTestPrefs)
+            store.dispatch({ type : actionTypes.UPDATE_LOAD_GEN_CONFIG, loadTestPref });
+          }
+          if (typeof result.anonymousUsageStats !== 'undefined') {
+            store.dispatch({ type : actionTypes.UPDATE_ANONYMOUS_USAGE_STATS, anonymousUsageStats : result.anonymousUsageStats });
+          }
+          if (typeof result.anonymousPerfResults !== 'undefined') {
+            store.dispatch({ type : actionTypes.UPDATE_ANONYMOUS_PERFORMANCE_RESULTS, anonymousPerfResults : result.anonymousPerfResults });
+          }
         }
-        if (result.loadTestPrefs) {
-          const loadTestPref = Object.assign({
-            c : 0,
-            qps : 0,
-            t : 0,
-            gen : 0
-          }, result.loadTestPrefs)
-          store.dispatch({ type : actionTypes.UPDATE_LOAD_GEN_CONFIG, loadTestPref });
-        }
-        if (typeof result.anonymousUsageStats !== 'undefined') {
-          store.dispatch({ type : actionTypes.UPDATE_ANONYMOUS_USAGE_STATS, anonymousUsageStats : result.anonymousUsageStats });
-        }
-        if (typeof result.anonymousPerfResults !== 'undefined') {
-          store.dispatch({ type : actionTypes.UPDATE_ANONYMOUS_PERFORMANCE_RESULTS, anonymousPerfResults : result.anonymousPerfResults });
-        }
-      }
-    }, error => {
-      console.log(`there was an error fetching user config data: ${error}`);
-    });
+      }, error => {
+        console.log(`there was an error fetching user config data: ${error}`);
+      });
   }
 
   static async getInitialProps({ Component, ctx }) {
@@ -396,5 +397,4 @@ export default withStyles(styles)(withRedux(makeStore, {
   serializeState : state => state.toJS(),
   deserializeState : state => fromJS(state)
 })(MesheryAppWrapper));
-
 
