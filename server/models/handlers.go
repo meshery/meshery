@@ -133,6 +133,8 @@ type HandlerInterface interface {
 	DeleteScheduleHandler(w http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 
 	ExtensionsHandler(w http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
+
+	PatternCollabHandler(w http.ResponseWriter, r *http.Request)
 }
 
 // HandlerConfig holds all the config pieces needed by handler methods
