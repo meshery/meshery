@@ -61,6 +61,7 @@ Run the following for default:
  <div class="codeblock"><div class="clipboardjs">
  $ helm repo add meshery https://meshery.io/charts/
  $ helm install meshery meshery/meshery
+ $ helm install meshery-operator meshery/meshery-operator
  </div></div>
  </pre>
 
