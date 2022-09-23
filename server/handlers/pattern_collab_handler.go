@@ -29,7 +29,7 @@ var (
 type Client struct {
 	hub       *Hub
 	conn      *websocket.Conn
-	patternId string
+	patternID string
 	send      chan []byte
 }
 
@@ -49,8 +49,8 @@ type SocketMessage struct {
 }
 
 type PatternUpdateRequest struct {
-	oldPatternId string
-	newPatternId string
+	oldPatternID string
+	newPatternID string
 	client       *Client
 }
 
@@ -69,22 +69,22 @@ func (c *Client) processMessage(message []byte) {
 		}
 		c.send <- msg
 	case "subscribe":
-		newPatternId := sockMessage.Topics[0]
+		newPatternID := sockMessage.Topics[0]
 		updateRequest := &PatternUpdateRequest{
-			oldPatternId: c.patternId,
-			newPatternId: newPatternId,
+			oldPatternID: c.patternID,
+			newPatternID: newPatternID,
 			client:       c,
 		}
-		c.patternId = newPatternId
+		c.patternID = newPatternID
 		c.hub.updateSubscribedPattern <- updateRequest
 	case "unsubscribe":
-		oldPatternId := sockMessage.Topics[0]
+		oldPatternID := sockMessage.Topics[0]
 		updateRequest := &PatternUpdateRequest{
-			oldPatternId: oldPatternId,
-			newPatternId: "",
+			oldPatternID: oldPatternID,
+			newPatternID: "",
 			client:       c,
 		}
-		c.patternId = ""
+		c.patternID = ""
 		c.hub.updateSubscribedPattern <- updateRequest
 	case "publish":
 		c.hub.broadcast <- sockMessage
@@ -92,8 +92,8 @@ func (c *Client) processMessage(message []byte) {
 }
 
 func (c *Client) readMessages() {
-	c.conn.SetReadDeadline(time.Now().Add(pongWait))
-	c.conn.SetPongHandler(func(string) error { c.conn.SetReadDeadline(time.Now().Add(pongWait)); return nil })
+	_ = c.conn.SetReadDeadline(time.Now().Add(pongWait))
+	c.conn.SetPongHandler(func(string) error { _ = c.conn.SetReadDeadline(time.Now().Add(pongWait)); return nil })
 	defer func() {
 		c.hub.unregister <- c
 		c.conn.Close()
@@ -121,10 +121,14 @@ func (c *Client) writeMessages() {
 	for {
 		select {
 		case message, ok := <-c.send:
-			c.conn.SetWriteDeadline(time.Now().Add(writeWait))
 			if !ok {
 				// The hub closed the channel.
-				c.conn.WriteMessage(websocket.CloseMessage, []byte{})
+				_ = c.conn.WriteMessage(websocket.CloseMessage, []byte{})
+				return
+			}
+
+			err := c.conn.SetWriteDeadline(time.Now().Add(writeWait))
+			if err != nil {
 				return
 			}
 
@@ -132,20 +136,33 @@ func (c *Client) writeMessages() {
 			if err != nil {
 				return
 			}
-			w.Write(message)
+			_, err = w.Write(message)
+			if err != nil {
+				return
+			}
 
 			// Add queued chat messages to the current websocket message.
 			n := len(c.send)
 			for i := 0; i < n; i++ {
-				w.Write(newline)
-				w.Write(<-c.send)
+				_, err = w.Write(newline)
+				if err != nil {
+					return
+				}
+
+				_, err = w.Write(<-c.send)
+				if err != nil {
+					return
+				}
 			}
 
 			if err := w.Close(); err != nil {
 				return
 			}
 		case <-ticker.C:
-			c.conn.SetWriteDeadline(time.Now().Add(writeWait))
+			err := c.conn.SetWriteDeadline(time.Now().Add(writeWait))
+			if err != nil {
+				return
+			}
 			if err := c.conn.WriteMessage(websocket.PingMessage, nil); err != nil {
 				return
 			}
@@ -153,20 +170,20 @@ func (c *Client) writeMessages() {
 	}
 }
 
-func (h *Hub) unsubscribeClientFromPattern(patternId string, client *Client) {
-	if h.patterns[patternId] != nil {
-		delete(h.patterns[patternId], client)
-		if len(h.patterns[patternId]) == 0 {
-			delete(h.patterns, patternId)
+func (h *Hub) unsubscribeClientFromPattern(patternID string, client *Client) {
+	if h.patterns[patternID] != nil {
+		delete(h.patterns[patternID], client)
+		if len(h.patterns[patternID]) == 0 {
+			delete(h.patterns, patternID)
 		}
 	}
 }
 
-func (h *Hub) subscribeClientToPattern(patternId string, client *Client) {
-	if h.patterns[patternId] == nil {
-		h.patterns[patternId] = make(map[*Client]bool)
+func (h *Hub) subscribeClientToPattern(patternID string, client *Client) {
+	if h.patterns[patternID] == nil {
+		h.patterns[patternID] = make(map[*Client]bool)
 	}
-	h.patterns[patternId][client] = true
+	h.patterns[patternID][client] = true
 }
 
 func (h *Hub) closeChannel(ch chan []byte) {
@@ -182,13 +199,13 @@ func (h *Hub) run() {
 	for {
 		select {
 		case client := <-h.register:
-			h.subscribeClientToPattern(client.patternId, client)
+			h.subscribeClientToPattern(client.patternID, client)
 		case client := <-h.unregister:
-			h.unsubscribeClientFromPattern(client.patternId, client)
+			h.unsubscribeClientFromPattern(client.patternID, client)
 			h.closeChannel(client.send)
 		case patternUpdateRequest := <-h.updateSubscribedPattern:
-			h.unsubscribeClientFromPattern(patternUpdateRequest.oldPatternId, patternUpdateRequest.client)
-			h.subscribeClientToPattern(patternUpdateRequest.newPatternId, patternUpdateRequest.client)
+			h.unsubscribeClientFromPattern(patternUpdateRequest.oldPatternID, patternUpdateRequest.client)
+			h.subscribeClientToPattern(patternUpdateRequest.newPatternID, patternUpdateRequest.client)
 		case message := <-h.broadcast:
 			if h.patterns[message.Topic] != nil {
 				msg, err := json.Marshal(message)
@@ -225,7 +242,7 @@ func serveWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	client := &Client{hub: hub, conn: conn, patternId: "", send: make(chan []byte)}
+	client := &Client{hub: hub, conn: conn, patternID: "", send: make(chan []byte)}
 	client.hub.register <- client
 
 	go client.readMessages()
