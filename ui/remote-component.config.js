@@ -19,7 +19,6 @@ module.exports = {
     "@material-ui/icons/ChevronLeft" : require("@material-ui/icons/ChevronLeft"),
     "@material-ui/icons/Assessment" : require("@material-ui/icons/Assessment"),
     "@material-ui/icons/DesktopMac" : require("@material-ui/icons/DesktopMac"),
-    "@material-ui/icons/TouchApp" : require("@material-ui/icons/TouchApp"),
     "@material-ui/icons/Traffic" : require("@material-ui/icons/Traffic"),
     "@material-ui/icons/Security" : require("@material-ui/icons/Security"),
     "@material-ui/icons/HelpOutline" : require("@material-ui/icons/HelpOutline"),

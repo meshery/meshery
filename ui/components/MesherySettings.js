@@ -173,7 +173,6 @@ class MesherySettings extends React.Component {
     dataFetch(
       ctxUrl('/api/system/meshsync/grafana', this.props.selectedK8sContexts),
       {
-        credentials : "same-origin",
         method : "GET",
         credentials : "include",
       },
