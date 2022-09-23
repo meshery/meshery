@@ -24,6 +24,7 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="{{ site.url }}" />
 <meta property="og:site_name" content="{{ site.url }}" />
+<meta property="og:image" content="assets/img/meshery.png">
 
 <meta itemprop="name" content="{% if page.title %}{{ page.title }}{% else %}{{ site.title }}{% endif %}">
 <meta itemprop="description" content="{% if page.description %}{{ page.description | strip_html | strip_newlines | truncate: 160 }}{% else %}{{ site.description }}{% endif %}">
@@ -31,7 +32,7 @@
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="{% if page.title %}{{ page.title }}{% else %}{{ site.title }}{% endif %}"/>
 <meta name="twitter:description" content="{% if page.description %}{{ page.description | strip_html | strip_newlines | truncate: 160 }}{% else %}{{ site.description }}{% endif %}"/>
-
+<meta name="twitter:image" content="assets/img/meshery.png">
 <link rel="stylesheet" href="{{ site.baseurl }}/assets/css/main.css">
 <link rel="stylesheet" href="{{ site.baseurl }}/assets/css/palette.css">
 <link rel="stylesheet" href="{{ site.baseurl }}/assets/css/anchorjs.css">

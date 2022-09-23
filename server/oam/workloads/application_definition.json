@@ -7,6 +7,9 @@
     "spec": {
         "definitionRef": {
             "name": "application.meshery.layer5.io"
+        },
+        "metadata":{
+            "version":"1.0.0"
         }
     }
 }

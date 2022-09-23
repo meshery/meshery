@@ -19,7 +19,6 @@ module.exports = {
     "@material-ui/icons/ChevronLeft" : require("@material-ui/icons/ChevronLeft"),
     "@material-ui/icons/Assessment" : require("@material-ui/icons/Assessment"),
     "@material-ui/icons/DesktopMac" : require("@material-ui/icons/DesktopMac"),
-    "@material-ui/icons/TouchApp" : require("@material-ui/icons/TouchApp"),
     "@material-ui/icons/Traffic" : require("@material-ui/icons/Traffic"),
     "@material-ui/icons/Security" : require("@material-ui/icons/Security"),
     "@material-ui/icons/HelpOutline" : require("@material-ui/icons/HelpOutline"),
@@ -146,6 +145,6 @@ module.exports = {
     '@material-ui/icons/TouchApp' : require('@material-ui/icons/TouchApp'),
     "@material-ui/icons/CheckCircle" : require("@material-ui/icons/CheckCircle"),
     "@material-ui/icons/Warning" : require("@material-ui/icons/Warning"),
-    "@material-ui/icons/GetApp" : require("@material-ui/icons/GetApp")
+    "@material-ui/icons/GetApp" : require("@material-ui/icons/GetApp"),
   },
 };

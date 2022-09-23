@@ -92,6 +92,11 @@ type HandlerInterface interface {
 
 	PatternFileHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	OAMRegisterHandler(rw http.ResponseWriter, r *http.Request)
+	ComponentTypesHandler(rw http.ResponseWriter, r *http.Request)
+	ComponentsForTypeHandler(rw http.ResponseWriter, r *http.Request)
+	GetAllComponents(rw http.ResponseWriter, r *http.Request)
+	ComponentVersionsHandler(rw http.ResponseWriter, r *http.Request)
+	ComponentsByNameHandler(rw http.ResponseWriter, r *http.Request)
 	ValidationHandler(rw http.ResponseWriter, r *http.Request)
 	ComponentGenerationHandler(rw http.ResponseWriter, r *http.Request)
 	OAMComponentDetailsHandler(rw http.ResponseWriter, r *http.Request)

@@ -400,7 +400,6 @@ class DashboardComponent extends React.Component {
     dataFetch(
       "/api/system/adapters",
       {
-        credentials : "same-origin",
         method : "GET",
         credentials : "include",
       },
@@ -569,7 +568,6 @@ class DashboardComponent extends React.Component {
     dataFetch(
       `/api/system/adapters?adapter=${encodeURIComponent(adapterLoc)}`,
       {
-        credentials : "same-origin",
         credentials : "include",
       },
       (result) => {
@@ -630,7 +628,6 @@ class DashboardComponent extends React.Component {
     dataFetch(
       "/api/system/kubernetes/ping?context=" + id,
       {
-        credentials : "same-origin",
         credentials : "include",
       },
       (result) => {
@@ -658,7 +655,6 @@ class DashboardComponent extends React.Component {
     dataFetch(
       "/api/telemetry/metrics/grafana/ping",
       {
-        credentials : "same-origin",
         credentials : "include",
       },
       (result) => {
@@ -1063,7 +1059,6 @@ class DashboardComponent extends React.Component {
     dataFetch(
       "/api/telemetry/metrics/ping",
       {
-        credentials : "same-origin",
         credentials : "include",
       },
       (result) => {

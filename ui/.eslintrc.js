@@ -27,13 +27,6 @@ module.exports = {
   "rules" : {
     "array-bracket-spacing" : ["error", "never"],
     "comma-style" : ["error"],
-    "arrow-spacing" : [
-      "error",
-      {
-        "after" : true,
-        "before" : true
-      }
-    ],
     "jsx-quotes" : ["error", "prefer-double"],
     "block-scoped-var" : "error",
     "keyword-spacing" : "error",
@@ -65,15 +58,14 @@ module.exports = {
     ],
     "react/react-in-jsx-scope" : "off",
     "no-undef" : "error",
-    "react/prop-types" : 0,
     "react/jsx-uses-vars" : [
       2
     ],
     "react/jsx-no-undef" : "error",
     "no-console" : 0,
     "no-unused-vars" : "error",
-    "react/jsx-key" : "off",
-    "no-dupe-keys" : "off",
+    "react/jsx-key" : "warn",
+    "no-dupe-keys" : "error",
     "react/jsx-filename-extension" : [1, { "extensions" : [".js", ".jsx"] }],
     "react/prop-types" : "off"
   }

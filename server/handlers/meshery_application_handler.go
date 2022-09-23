@@ -12,6 +12,7 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/pattern/core"
@@ -302,6 +303,9 @@ func (h *Handler) handleApplicationPOST(
 			return
 		}
 	}
+
+	var savedApplicationID *uuid.UUID
+
 	if parsedBody.Save {
 		resp, err := provider.SaveMesheryApplication(token, mesheryApplication)
 		if err != nil {
@@ -319,8 +323,8 @@ func (h *Handler) handleApplicationPOST(
 			http.Error(rw, ErrEncoding(err, obj).Error(), http.StatusInternalServerError)
 			return
 		}
-
-		err = provider.SaveApplicationSourceContent(token, (mesheryApplicationContent[0].ID).String(), mesheryApplication.SourceContent)
+		savedApplicationID = mesheryApplicationContent[0].ID
+		err = provider.SaveApplicationSourceContent(token, (savedApplicationID).String(), mesheryApplication.SourceContent)
 
 		if err != nil {
 			obj := "upload"
@@ -332,6 +336,7 @@ func (h *Handler) handleApplicationPOST(
 		go h.config.ConfigurationChannel.PublishApplications()
 	}
 
+	mesheryApplication.ID = savedApplicationID
 	byt, err := json.Marshal([]models.MesheryApplication{*mesheryApplication})
 	if err != nil {
 		obj := "application"

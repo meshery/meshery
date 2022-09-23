@@ -3,6 +3,7 @@
 
 import { promisifiedDataFetch } from "../../lib/data-fetch";
 import { trueRandom } from "../../lib/trueRandom";
+import { CustomFieldTemplate } from "./PatternService/RJSFCustomComponents/FieldTemplate";
 
 /**
  * @typedef {Object} OAMDefinition
@@ -287,10 +288,15 @@ function jsonSchemaBuilder(schema, obj) {
     obj["ui:widget"] = "checkbox";
   }
 
+  if (schema.type==='string'&&!schema?.enum) {
+    obj["ui:FieldTemplate"] = CustomFieldTemplate;
+  }
+
   if (schema.type === 'number' || schema.type === 'integer') {
     schema["maximum"] = 99999;
     schema["minimum"] = 0;
     obj["ui:widget"] = "updown";
+    obj["ui:FieldTemplate"] = CustomFieldTemplate;
   }
 }
 

@@ -89,8 +89,9 @@ const (
 )
 
 const (
-	HelmChartURL  = "https://meshery.io/charts/"
-	HelmChartName = "meshery"
+	HelmChartURL          = "https://meshery.io/charts/"
+	HelmChartName         = "meshery"
+	HelmChartOperatorName = "meshery-operator"
 )
 
 var (

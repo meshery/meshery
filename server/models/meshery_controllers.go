@@ -154,29 +154,36 @@ func (mch *MesheryControllersHelper) UpdateCtxControllerHandlers(ctxs []K8sConte
 // update the status of MesheryOperator in all the contexts
 // for whom MesheryControllers are attached
 // should be called after UpdateCtxControllerHandlers
-func (mch *MesheryControllersHelper) UpdateOperatorsStatusMap() *MesheryControllersHelper {
+func (mch *MesheryControllersHelper) UpdateOperatorsStatusMap(isUndeployed map[string]bool) *MesheryControllersHelper {
 	go func(mch *MesheryControllersHelper) {
 		mch.mu.Lock()
 		defer mch.mu.Unlock()
 		mch.ctxOperatorStatusMap = make(map[string]controllers.MesheryControllerStatus)
 		for ctxID, ctrlHandler := range mch.ctxControllerHandlersMap {
-			mch.ctxOperatorStatusMap[ctxID] = ctrlHandler[MesheryOperator].GetStatus()
+			if isUndeployed[ctxID] {
+				mch.ctxOperatorStatusMap[ctxID] = controllers.Undeployed
+			} else {
+				mch.ctxOperatorStatusMap[ctxID] = ctrlHandler[MesheryOperator].GetStatus()
+			}
 		}
 	}(mch)
 
 	return mch
 }
 
+var OperatorIsUndeployed = make(map[string]bool)
+var Opmx sync.Mutex
+
 // looks at the status of Meshery Operator for each cluster and takes necessary action.
 // it will deploy the operator only when it is in NotDeployed state
-func (mch *MesheryControllersHelper) DeployUndeployedOperators() *MesheryControllersHelper {
+func (mch *MesheryControllersHelper) DeployUndeployedOperators(operatorState map[string]bool) *MesheryControllersHelper {
 	go func(mch *MesheryControllersHelper) {
 		mch.mu.Lock()
 		defer mch.mu.Unlock()
 		for ctxID, ctrlHandler := range mch.ctxControllerHandlersMap {
 			if oprStatus, ok := mch.ctxOperatorStatusMap[ctxID]; ok {
 				if oprStatus == controllers.NotDeployed {
-					err := ctrlHandler[MesheryOperator].Deploy()
+					err := ctrlHandler[MesheryOperator].Deploy(false)
 					if err != nil {
 						mch.log.Error(err)
 					}

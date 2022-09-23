@@ -83,7 +83,6 @@ class User extends React.Component {
 
     dataFetch(
       "/api/provider/capabilities", {
-        credentials : "same-origin",
         method : "GET",
         credentials : "include", },
       (result) => {

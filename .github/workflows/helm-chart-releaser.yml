@@ -87,7 +87,7 @@ jobs:
           app_version: ${{ steps.vars.outputs.tag }}
   
       - name: Manually publish Helm chart with release version
-        if: ${{github.event.inputs.release-ver}} != "v"
+        if:  github.event_name != 'pull_request' && ${{github.event.inputs.release-ver}} != "v"
         uses: stefanprodan/helm-gh-pages@master
         with:
           token: ${{ secrets.GH_ACCESS_TOKEN }}
