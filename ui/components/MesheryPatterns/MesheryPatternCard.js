@@ -163,7 +163,7 @@ function MesheryPatternCard({
                 {name}
               </Typography>
               <Tooltip
-                title="Fullscreen" arrow interactive placement="top"
+                title="Enter Fullscreen" arrow interactive placement="top"
               >
                 <IconButton
                   onClick={(ev) =>

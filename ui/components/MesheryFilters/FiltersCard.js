@@ -139,7 +139,7 @@ function FiltersCard({
                 {name}
               </Typography>
               <Tooltip
-                title="Fullscreen"
+                title="Enter Fullscreen"
                 arrow interactive
                 placement="top"
               >
