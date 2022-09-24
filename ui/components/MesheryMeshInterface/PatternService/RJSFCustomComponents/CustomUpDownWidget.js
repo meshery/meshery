@@ -26,7 +26,7 @@ const CustomUpDownField = (props) => {
         value={props?.value}
         variant="standard"
         onChange={e => e.target.value<0?props?.onChange(e.target.value=""):props?.onChange(e.target.value)}
-        type="tel"
+        type="number"
         margin="none"
         error={props.rawErrors?.length > 0}
         size="large"
