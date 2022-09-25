@@ -112,7 +112,6 @@ func (c *Client) writeMessages() {
 	ticker := time.NewTicker(pingPeriod)
 	defer func() {
 		ticker.Stop()
-		c.hub.unregister <- c
 		c.conn.Close()
 	}()
 	for {
@@ -224,10 +223,10 @@ func (h *Hub) run() {
 func newHub() *Hub {
 	return &Hub{
 		patterns:                make(map[string]map[*Client]bool),
-		broadcast:               make(chan *SocketMessage),
-		register:                make(chan *Client),
-		unregister:              make(chan *Client),
-		updateSubscribedPattern: make(chan *PatternUpdateRequest),
+		broadcast:               make(chan *SocketMessage, 10),
+		register:                make(chan *Client, 10),
+		unregister:              make(chan *Client, 10),
+		updateSubscribedPattern: make(chan *PatternUpdateRequest, 10),
 	}
 }
 
@@ -239,7 +238,7 @@ func serveWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	client := &Client{hub: hub, conn: conn, patternID: "", send: make(chan []byte), connected: true}
+	client := &Client{hub: hub, conn: conn, patternID: "", send: make(chan []byte, 100), connected: true}
 	client.hub.register <- client
 
 	go client.readMessages()
