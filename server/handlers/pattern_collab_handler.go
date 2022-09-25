@@ -29,6 +29,7 @@ var (
 type Client struct {
 	hub       *Hub
 	conn      *websocket.Conn
+	connected bool
 	patternID string
 	send      chan []byte
 }
@@ -202,6 +203,7 @@ func (h *Hub) run() {
 			h.subscribeClientToPattern(client.patternID, client)
 		case client := <-h.unregister:
 			h.unsubscribeClientFromPattern(client.patternID, client)
+			client.connected = false
 			h.closeChannel(client.send)
 		case patternUpdateRequest := <-h.updateSubscribedPattern:
 			h.unsubscribeClientFromPattern(patternUpdateRequest.oldPatternID, patternUpdateRequest.client)
@@ -211,11 +213,10 @@ func (h *Hub) run() {
 				msg, err := json.Marshal(message)
 				if err == nil {
 					for client := range h.patterns[message.Topic] {
-						select {
-						case client.send <- msg:
-						default:
+						if client.connected {
+							client.send <- msg
+						} else {
 							delete(h.patterns[message.Topic], client)
-							h.closeChannel(client.send)
 						}
 					}
 				}
@@ -242,7 +243,7 @@ func serveWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	client := &Client{hub: hub, conn: conn, patternID: "", send: make(chan []byte)}
+	client := &Client{hub: hub, conn: conn, patternID: "", send: make(chan []byte), connected: true}
 	client.hub.register <- client
 
 	go client.readMessages()
