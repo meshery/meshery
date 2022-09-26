@@ -22,7 +22,7 @@ import { toggleCatalogContent, updateProgress } from "../lib/store";
 import PatternForm from "../components/configuratorComponents/patternConfigurator";
 import UploadImport from "./UploadImport";
 import { ctxUrl } from "../utils/multi-ctx";
-import { getComponentsinFile, randomPatternNameGenerator as getRandomName } from "../utils/utils";
+import { generateValidatePayload, getComponentsinFile, randomPatternNameGenerator as getRandomName } from "../utils/utils";
 import ViewSwitch from "./ViewSwitch";
 import CatalogFilter from "./CatalogFilter";
 import MesheryPatternGrid from "./MesheryPatterns/MesheryPatternGridView";
@@ -36,8 +36,6 @@ import ConfigurationSubscription from "./graphql/subscriptions/ConfigurationSubs
 import fetchCatalogPattern from "./graphql/queries/CatalogPatternQuery";
 import LoadingScreen from "./LoadingComponents/LoadingComponent";
 import { SchemaContext } from "../utils/context/schemaSet";
-import { findWorkloadByName } from "../utils/workloadFilter";
-import yaml from "js-yaml";
 import Validation from "./Validation";
 import { ACTIONS, FILE_OPS } from "../utils/Enum";
 
@@ -505,38 +503,10 @@ function MesheryPatterns({
 
   const handleVerify = (e, pattern_file, pattern_id) => {
     e.stopPropagation();
-    let pattern = yaml.loadAll(pattern_file)
-    const services = pattern[0]?.services;
-    if (!services) {
-      handleError("Services not found in the design");
-      return;
+    const validationPayloads = generateValidatePayload(pattern_file, workloadTraitSet);
+    if (validationPayloads.err) {
+      handleError(validationPayloads.err);
     }
-
-    const validationPayloads = {};
-
-    for (const serviceId in services) {
-      let valueType;
-
-      let workload = findWorkloadByName(services[serviceId].type, workloadTraitSet);
-
-      if (!(workload && workload.workload?.oam_ref_schema)) {
-        continue;
-      }
-      const schema = workload.workload.oam_ref_schema;
-      const value = services[serviceId]?.settings;
-      if (!value) {
-        continue;
-      }
-      valueType = "JSON";
-      const validationPayload = {
-        schema,
-        value : JSON.stringify(value),
-        valueType
-      };
-
-      validationPayloads[serviceId] = validationPayload;
-    }
-
     dataFetch("/api/meshmodel/validate", {
       method : "POST",
       credentials : "include",
