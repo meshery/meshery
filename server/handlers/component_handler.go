@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	meshmodelcore "github.com/layer5io/meshery/server/models/meshmodel/core"
 	"github.com/layer5io/meshery/server/models/pattern/core"
 )
 
@@ -69,6 +70,16 @@ func (h *Handler) GetAllComponents(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
 	res := core.GetWorkloads()
+	if err := enc.Encode(res); err != nil {
+		h.log.Error(ErrWorkloadDefinition(err)) //TODO: Add appropriate meshkit error
+		http.Error(rw, ErrWorkloadDefinition(err).Error(), http.StatusInternalServerError)
+	}
+}
+
+func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Request) {
+	rw.Header().Add("Content-Type", "application/json")
+	enc := json.NewEncoder(rw)
+	res := meshmodelcore.GetComponents()
 	if err := enc.Encode(res); err != nil {
 		h.log.Error(ErrWorkloadDefinition(err)) //TODO: Add appropriate meshkit error
 		http.Error(rw, ErrWorkloadDefinition(err).Error(), http.StatusInternalServerError)

@@ -2,10 +2,12 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 
 	"github.com/layer5io/meshery/server/models"
+	core "github.com/layer5io/meshery/server/models/meshmodel/core"
 	meshkitmodels "github.com/layer5io/meshkit/models"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 )
@@ -64,6 +66,21 @@ func (h *Handler) ComponentGenerationHandler(rw http.ResponseWriter, r *http.Req
 			responseItem.Errors = append(responseItem.Errors, err.Error())
 			response = append(response, responseItem)
 			continue
+		}
+		if gpi.Register == true {
+			if len(comps) != 0 {
+				for _, comp := range comps {
+					c, err := json.Marshal(comp)
+					if err != nil {
+						continue
+					}
+					host := fmt.Sprintf("%s.artifacthub.meshery", gpi.Name)
+					err = core.RegisterComponent(c, host)
+					if err != nil {
+						h.log.Error(ErrGenerateComponents(err))
+					}
+				}
+			}
 		}
 		responseItem.Components = comps
 		h.log.Info("component generation for ", gpi.Name, " successfully completed")
