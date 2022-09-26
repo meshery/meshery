@@ -60,6 +60,7 @@ Run the following for default:
  <pre class="codeblock-pre">
  <div class="codeblock"><div class="clipboardjs">
  $ helm repo add meshery https://meshery.io/charts/
+ $ helm install meshery-operator meshery/meshery-operator
  $ helm install meshery meshery/meshery
  </div></div>
  </pre>
