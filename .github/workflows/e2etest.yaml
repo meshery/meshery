@@ -1,0 +1,45 @@
+name: E2E tests for K8s components
+
+on:
+  push:
+    branches:
+      - "*"
+    tags:
+      - "v*"
+    paths-ignore:
+      - 'docs/**'
+  pull_request:
+    branches:
+      - "*"
+  release:
+    types: [published]
+jobs:
+  SetPatternfileForEmojivotoInstall:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2   
+      - name: Uploading file
+        uses: actions/upload-artifact@v2
+        with:
+          name: patternfile
+          path: ./.github/samples/emojivoto.yaml
+
+  TestAdapterForEmojivotoInstall:
+    needs: SetPatternfileForEmojivotoInstall
+    uses: meshery/meshery/.github/workflows/test_adapters.yaml@master
+    with: 
+      expected_resources: vote-bot, emoji,voting,web,emoji-svc,voting-svc,web-svc
+      expected_resources_types: pod,pod,pod,pod,service,service,service
+      expected_resources_namespaces: emojivoto, emojivoto,emojivoto,emojivoto,emojivoto,emojivoto,emojivoto
+      #passing a random adapter for now until, the adapter deployment is made optional
+      deployment_url: https://raw.githubusercontent.com/meshery/meshery/master/install/deployment_yamls/k8s/meshery-consul-deployment.yaml
+      service_url: https://raw.githubusercontent.com/meshery/meshery/master/install/deployment_yamls/k8s/meshery-consul-service.yaml
+      adapter_name: 'none'
+      patternfile_name: deploy.yaml 
+      provider: Local 
+      sm_version: 'none'
+      adapter_version: 'none'
+      output_filename: data.json
+    secrets:
+      token: ${{ secrets.PROVIDER_TOKEN }}  
