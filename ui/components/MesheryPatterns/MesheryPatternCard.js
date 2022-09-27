@@ -1,7 +1,7 @@
 //@ts-check
 import React, { useState } from "react";
 import {
-  Avatar, Divider, Grid, IconButton, Typography
+  Avatar, Divider, Grid, IconButton, Typography, Tooltip
 } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import DeleteIcon from "@material-ui/icons/Delete";
@@ -176,18 +176,22 @@ function MesheryPatternCard({
               <Typography variant="h6" className={classes.yamlDialogTitleText}>
                 {name}
               </Typography>
-              <IconButton
-                onClick={(ev) =>
-                  genericClickHandler(ev, () => {
-                    {
-                      toggleFullScreen()
-                    }
-                  })
-                }
-                className={classes.maximizeButton}
+              <Tooltip
+                title="Enter Fullscreen" arrow interactive placement="top"
               >
-                {fullScreen ? <FullscreenExit /> : <Fullscreen />}
-              </IconButton>
+                <IconButton
+                  onClick={(ev) =>
+                    genericClickHandler(ev, () => {
+                      {
+                        toggleFullScreen()
+                      }
+                    })
+                  }
+                  className={classes.maximizeButton}
+                >
+                  {fullScreen ? <FullscreenExit /> : <Fullscreen />}
+                </IconButton>
+              </Tooltip>
             </Grid>
             <Grid item xs={12}
               onClick={(ev) =>
@@ -243,18 +247,26 @@ function MesheryPatternCard({
                 <div className={classes.updateDeleteButtons} >
 
                   {/* Save button */}
-                  <IconButton onClick={(ev) =>
-                    genericClickHandler(ev, updateHandler)
-                  }>
-                    <Save color="primary" />
-                  </IconButton>
+                  <Tooltip
+                    title="Save" arrow interactive placement="bottom"
+                  >
+                    <IconButton onClick={(ev) =>
+                      genericClickHandler(ev, updateHandler)
+                    }>
+                      <Save color="primary" />
+                    </IconButton>
+                  </Tooltip>
 
                   {/* Delete Button */}
-                  <IconButton onClick={(ev) =>
-                    genericClickHandler(ev, deleteHandler)
-                  }>
-                    <DeleteIcon color="primary" />
-                  </IconButton>
+                  <Tooltip
+                    title="Delete" arrow interactive placement="bottom"
+                  >
+                    <IconButton onClick={(ev) =>
+                      genericClickHandler(ev, deleteHandler)
+                    }>
+                      <DeleteIcon color="primary" />
+                    </IconButton>
+                  </Tooltip>
                 </div> : null}
             </Grid>
           </Grid>
