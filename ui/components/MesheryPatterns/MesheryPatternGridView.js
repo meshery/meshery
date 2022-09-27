@@ -4,15 +4,16 @@ import { Pagination } from "@material-ui/lab";
 import React, { useState } from "react";
 import MesheryPatternCard from "./MesheryPatternCard";
 import PatternConfiguratorComponent from "../configuratorComponents/patternConfigurator"
-import FILE_OPS from "../../utils/configurationFileHandlersEnum";
+import { FILE_OPS, ACTIONS } from "../../utils/Enum";
 import ConfirmationMsg from "../ConfirmationModal";
 import { getComponentsinFile } from "../../utils/utils";
 import PublishIcon from "@material-ui/icons/Publish";
 import useStyles from "./Grid.styles";
+import Validation from "../Validation";
 
 const INITIAL_GRID_SIZE = { xl : 4, md : 6, xs : 12 };
 
-function PatternCardGridItem({ pattern, handleDeploy, handleUnDeploy, handleClone, handleSubmit, setSelectedPatterns }) {
+function PatternCardGridItem({ pattern, handleDeploy, handleVerify, handleUnDeploy, handleClone, handleSubmit, setSelectedPatterns }) {
   const [gridProps, setGridProps] = useState(INITIAL_GRID_SIZE);
   const [yaml, setYaml] = useState(pattern.pattern_file);
 
@@ -27,6 +28,7 @@ function PatternCardGridItem({ pattern, handleDeploy, handleUnDeploy, handleClon
         requestFullSize={() => setGridProps({ xl : 12, md : 12, xs : 12 })}
         requestSizeRestore={() => setGridProps(INITIAL_GRID_SIZE)}
         handleDeploy={handleDeploy}
+        handleVerify={handleVerify}
         handleUnDeploy={handleUnDeploy}
         handleClone={handleClone}
         deleteHandler={() => handleSubmit({ data : yaml, id : pattern.id, type : FILE_OPS.DELETE ,name : pattern.name })}
@@ -49,6 +51,7 @@ function PatternCardGridItem({ pattern, handleDeploy, handleUnDeploy, handleClon
  *  updated_at: string,
  *  pattern_file: string,
  * }>,
+ *  handleVerify: (e: Event, pattern_file: any, pattern_id: string) => void,
  *  handleDeploy: (pattern_file: any) => void,
  *  handleUnDeploy: (pattern_file: any) => void,
  *  handleSubmit: (data: any, id: string, name: string, type: string) => void,
@@ -57,10 +60,11 @@ function PatternCardGridItem({ pattern, handleDeploy, handleUnDeploy, handleClon
  *  pages?: number,
  *  selectedPage?: number,
  *  setPage: (page: number) => void
+ *  patternErrors: Map
  * }} props props
  */
 
-function MesheryPatternGrid({ patterns=[], handleDeploy, handleUnDeploy, urlUploadHandler, handleClone, uploadHandler, handleSubmit, setSelectedPattern, selectedPattern, pages = 1,setPage, selectedPage, UploadImport  }) {
+function MesheryPatternGrid({ patterns=[], handleVerify, handleDeploy, handleUnDeploy, urlUploadHandler, handleClone, uploadHandler, handleSubmit, setSelectedPattern, selectedPattern, pages = 1,setPage, selectedPage, UploadImport, patternErrors  }) {
 
   const classes = useStyles()
 
@@ -97,13 +101,22 @@ function MesheryPatternGrid({ patterns=[], handleDeploy, handleUnDeploy, urlUplo
     });
   }
 
-  const handleModalOpen = (pattern, isDeploy) => {
+  const handleModalOpen = (pattern, action) => {
+    const compCount = getComponentsinFile(pattern.pattern_file);
+    const validationBody = (
+      <Validation
+        errors={patternErrors.get(pattern.id)}
+        compCount={compCount}
+        handleClose={() => setModalOpen({ ...modalOpen, open : false })}
+      />
+    )
     setModalOpen({
       open : true,
-      deploy : isDeploy,
+      action : action,
       pattern_file : pattern.pattern_file,
       name : pattern.name,
-      count : getComponentsinFile(pattern.pattern_file)
+      count : compCount,
+      validationBody : validationBody
     });
   }
 
@@ -119,8 +132,9 @@ function MesheryPatternGrid({ patterns=[], handleDeploy, handleUnDeploy, urlUplo
             key={pattern.id}
             pattern={pattern}
             handleClone={() => handleClone(pattern.id)}
-            handleDeploy={() => handleModalOpen(pattern, true)}
-            handleUnDeploy={() => handleModalOpen(pattern, false)}
+            handleDeploy={() => handleModalOpen(pattern, ACTIONS.DEPLOY)}
+            handleUnDeploy={() => handleModalOpen(pattern, ACTIONS.UNDEPLOY)}
+            handleVerify={(e) => handleVerify(e, pattern.pattern_file, pattern.id)}
             handleSubmit={handleSubmit}
             setSelectedPatterns={setSelectedPattern}
           />
@@ -164,10 +178,10 @@ function MesheryPatternGrid({ patterns=[], handleDeploy, handleUnDeploy, urlUplo
         submit={
           { deploy : () => handleDeploy(modalOpen.pattern_file), unDeploy : () => handleUnDeploy(modalOpen.pattern_file) }
         }
-        isDelete={!modalOpen.deploy}
         title={ modalOpen.name }
         componentCount={modalOpen.count}
-        tab={modalOpen.deploy ? 0 : 1}
+        tab={modalOpen.action}
+        validationBody={modalOpen.validationBody}
       />
       <UploadImport open={importModal.open} handleClose={handleUploadImportClose} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} configuration="Designs"  />
     </div>

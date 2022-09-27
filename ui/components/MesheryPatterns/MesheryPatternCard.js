@@ -13,6 +13,7 @@ import { UnControlled as CodeMirror } from "react-codemirror2";
 import FullscreenExit from "@material-ui/icons/FullscreenExit";
 import UndeployIcon from "../../public/static/img/UndeployIcon";
 import DoneAllIcon from '@material-ui/icons/DoneAll';
+import DoneIcon from '@material-ui/icons/Done';
 import useStyles from "./Cards.styles";
 import YAMLDialog from "../YamlDialog";
 
@@ -24,6 +25,7 @@ function MesheryPatternCard({
   updated_at,
   created_at,
   pattern_file,
+  handleVerify,
   handleDeploy,
   handleUnDeploy,
   updateHandler,
@@ -37,7 +39,7 @@ function MesheryPatternCard({
 
   function genericClickHandler(ev, fn) {
     ev.stopPropagation();
-    fn();
+    fn(ev);
   }
   const [gridProps, setGridProps] = useState(INITIAL_GRID_SIZE);
   const [fullScreen, setFullScreen] = useState(false);
@@ -101,15 +103,15 @@ function MesheryPatternCard({
             <div className={classes.cardButtons} >
 
               <Button
-                title="Undeploy"
+                title="Verify"
                 variant="contained"
-                className={classes.undeployButton}
-                onClick={(ev) =>
-                  genericClickHandler(ev, handleUnDeploy)
+                className={classes.testsButton}
+                onClick={
+                  (e) => genericClickHandler(e, handleVerify)
                 }
               >
-                <UndeployIcon fill="#ffffff" className={classes.iconPatt} />
-                <span className={classes.btnText}>Undeploy</span>
+                <DoneIcon className={classes.iconPatt} />
+                <span className={classes.btnText}> Verify </span>
               </Button>
 
               <Button
@@ -124,6 +126,18 @@ function MesheryPatternCard({
                 <span className={classes.btnText}>Deploy</span>
               </Button>
 
+              <Button
+                title="Undeploy"
+                variant="contained"
+                className={classes.undeployButton}
+                onClick={(ev) =>
+                  genericClickHandler(ev, handleUnDeploy)
+                }
+              >
+                <UndeployIcon fill="#ffffff" className={classes.iconPatt} />
+                <span className={classes.btnText}>Undeploy</span>
+              </Button>
+``
               { visibility === "private" ?  <Button
                 variant="contained"
                 color="primary"
