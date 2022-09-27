@@ -11,6 +11,7 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -57,9 +58,9 @@ mesheryctl exp filter delete test-wasm
 		if isID {
 			err := utils.DeleteConfiguration(filter, "filter")
 			if err != nil {
-				return errors.Wrap(err, utils.SystemError(fmt.Sprintf("failed to delete filter %s", args[0])))
+				return errors.Wrap(err, utils.FilterError(fmt.Sprintf("failed to delete filter %s", args[0])))
 			}
-			fmt.Printf("Filter %s deleted successfully\n", args[0])
+			log.Info("Filter ", args[0], " deleted successfully")
 			return nil
 		}
 

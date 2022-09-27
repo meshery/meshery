@@ -15,6 +15,7 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/pkg/errors"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -61,9 +62,9 @@ mesheryctl pattern delete [file | URL]
 		if isID {
 			err := utils.DeleteConfiguration(pattern, "pattern")
 			if err != nil {
-				return errors.Wrap(err, utils.SystemError(fmt.Sprintf("failed to delete pattern %s", args[0])))
+				return errors.Wrap(err, utils.PatternError(fmt.Sprintf("failed to delete pattern %s", args[0])))
 			}
-			fmt.Printf("Pattern %s deleted successfully\n", args[0])
+			log.Info("Pattern ", args[0], " deleted successfully")
 			return nil
 		}
 		deployURL := mctlCfg.GetBaseMesheryURL() + "/api/pattern/deploy"
