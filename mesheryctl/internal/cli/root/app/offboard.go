@@ -15,7 +15,6 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -69,7 +68,7 @@ mesheryctl app offboard -f [filepath]
 			if err != nil {
 				return errors.Wrap(err, utils.AppError(fmt.Sprintf("failed to delete application %s", args[0])))
 			}
-			log.Info("Application ", args[0], " deleted successfully")
+			utils.Log.Info("Application ", args[0], " deleted successfully")
 			return nil
 		}
 
