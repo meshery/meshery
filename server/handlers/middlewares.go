@@ -97,7 +97,7 @@ func (h *Handler) MesheryControllersMiddleware(next func(http.ResponseWriter, *h
 		}
 
 		// 1. get the status of controller deployments for each cluster and make sure that all the contexts have meshery controllers deployed
-		ctrlHlpr := h.MesheryCtrlsHelper.UpdateCtxControllerHandlers(mk8sContexts).UpdateOperatorsStatusMap().DeployUndeployedOperators()
+		ctrlHlpr := h.MesheryCtrlsHelper.UpdateCtxControllerHandlers(mk8sContexts).UpdateOperatorsStatusMap(models.OperatorIsUndeployed).DeployUndeployedOperators(models.OperatorIsUndeployed)
 		ctx = context.WithValue(ctx, models.MesheryControllerHandlersKey, h.MesheryCtrlsHelper.GetControllerHandlersForEachContext())
 
 		// 2. make sure that the data from meshsync for all the clusters are persisted properly

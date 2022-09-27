@@ -15,6 +15,7 @@
 package root
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/pkg/errors"
@@ -54,11 +55,17 @@ const example = `  # bash <= 3.2
 
 // completionCmd represents the completion command
 var completionCmd = &cobra.Command{
-	Use:                   "completion [bash|zsh|fish]",
-	Short:                 "Output shell completion code",
-	Long:                  "Output shell completion code",
-	Example:               example,
-	Args:                  cobra.ExactValidArgs(1),
+	Use:     "completion [bash|zsh|fish]",
+	Short:   "Output shell completion code",
+	Long:    "Output shell completion code",
+	Example: example,
+	Args: func(_ *cobra.Command, args []string) error {
+		const errMsg = `Usage: mesheryctl completion [bash|zsh|fish]`
+		if len(args) == 0 {
+			return fmt.Errorf("shell type not provided.\n\n%s", errMsg)
+		}
+		return nil
+	},
 	DisableFlagsInUseLine: true,
 	ValidArgs:             []string{"bash", "zsh", "fish"},
 	RunE: func(cmd *cobra.Command, args []string) error {

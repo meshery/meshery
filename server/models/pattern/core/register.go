@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"sync"
 
 	"cuelang.org/go/cue"
 	"cuelang.org/go/cue/cuecontext"
@@ -14,6 +15,7 @@ import (
 	"github.com/layer5io/meshery/server/internal/store"
 	"github.com/layer5io/meshery/server/models/pattern/patterns/k8s"
 	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
+	"github.com/layer5io/meshkit/utils"
 	"github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/layer5io/meshkit/utils/manifests"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -51,6 +53,86 @@ type WorkloadCapability struct {
 	genericCapability
 }
 
+//present in metadata."adapter.meshery.io/name". Ex- core,kubernetes,istio,linkerd,etc
+type ComponentTypes struct {
+	Names                     map[string]bool
+	LatestVersionForComponent map[string]string
+	mx                        sync.Mutex
+}
+
+func (c *ComponentTypes) Set(name string) {
+	c.mx.Lock()
+	defer c.mx.Unlock()
+	c.Names[name] = true
+}
+func (c *ComponentTypes) SetLatestVersion(typ string, ver string) {
+	c.mx.Lock()
+	defer c.mx.Unlock()
+	c.LatestVersionForComponent[typ] = ver
+}
+func (c *ComponentTypes) Get() (names []string) {
+	for n := range c.Names {
+		names = append(names, n)
+	}
+	return
+}
+
+func (c *ComponentTypes) FilterWorkloadVersionsByType(typ string) (v []string) {
+	res := GetWorkloads()
+	set := make(map[string]bool)
+	for _, r := range res {
+		if typ == r.Metadata["adapter.meshery.io/name"] {
+			set[r.OAMDefinition.Spec.Metadata["version"]] = true
+		}
+	}
+	for ver := range set {
+		v = append(v, ver)
+	}
+	return
+}
+func (c *ComponentTypes) FilterWorkloadsForType(typ string) (w []WorkloadCapability) {
+	res := GetWorkloads()
+	for _, r := range res {
+		if typ == r.Metadata["adapter.meshery.io/name"] {
+			w = append(w, r)
+		}
+	}
+	return
+}
+func (c *ComponentTypes) FilterWorkloadByVersionAndType(typ string, ver string) (v []WorkloadCapability) {
+	res := GetWorkloads()
+	if ver == "latest" {
+		ver = c.LatestVersionForComponent[typ]
+	}
+	for _, r := range res {
+		if typ == r.Metadata["adapter.meshery.io/name"] && (ver == "all" || ver == r.OAMDefinition.Spec.Metadata["version"] || ver == r.OAMDefinition.Spec.Metadata["meshVersion"]) {
+			v = append(v, r)
+		}
+	}
+
+	return
+}
+func (c *ComponentTypes) FilterWorkloadByVersionAndTypeAndName(typ string, ver string, name string) (v []WorkloadCapability) {
+	res := GetWorkloads()
+	if ver == "latest" {
+		ver = c.LatestVersionForComponent[typ]
+	}
+	for _, r := range res {
+		if typ == r.Metadata["adapter.meshery.io/name"] && (ver == r.OAMDefinition.Spec.Metadata["version"] || ver == r.OAMDefinition.Spec.Metadata["meshVersion"]) && name == strings.ToLower(strings.ReplaceAll(r.Metadata["display.ui.meshery.io/name"], " ", "")) {
+			v = append(v, r)
+		}
+	}
+
+	return
+}
+
+//ComponentTypesSingleton is initialized per meshery instance and acts as a helper middleware between client facing API and capability registry.
+//Examples of names stored in this struct are: core,kubernetes,istio,linkerd
+var ComponentTypesSingleton = ComponentTypes{
+	Names:                     make(map[string]bool),
+	LatestVersionForComponent: make(map[string]string),
+}
+
 // RegisterWorkload will register a workload definition into the database
 func RegisterWorkload(data []byte) (err error) {
 	var workload WorkloadCapability
@@ -80,7 +162,16 @@ func RegisterWorkload(data []byte) (err error) {
 	workload.Metadata["display.ui.meshery.io/name"], _ = schema["title"].(string)
 
 	store.Set(key, &workload)
-
+	go func(name string) {
+		ComponentTypesSingleton.Set(name)
+	}(workload.Metadata["adapter.meshery.io/name"])
+	go func(version string) { //UpdateLatestVersion
+		arr := []string{version, ComponentTypesSingleton.LatestVersionForComponent[workload.Metadata["adapter.meshery.io/name"]]}
+		arr = utils.SortDottedStringsByDigits(arr)
+		if arr[0] != version {
+			ComponentTypesSingleton.SetLatestVersion(workload.Metadata["adapter.meshery.io/name"], version)
+		}
+	}(workload.OAMDefinition.Spec.Metadata["version"])
 	return
 }
 
