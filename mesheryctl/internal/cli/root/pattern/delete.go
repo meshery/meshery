@@ -7,6 +7,8 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"regexp"
+	"strings"
 
 	"github.com/asaskevich/govalidator"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
@@ -35,6 +37,35 @@ mesheryctl pattern delete [file | URL]
 			return errors.Wrap(err, "error processing config")
 		}
 
+		pattern := ""
+		isID := false
+		if len(args) > 0 {
+			pattern = args[0]
+			// It checks if patternID is present or not
+			patternID, err := utils.GetID("pattern")
+			if err == nil {
+				for _, id := range patternID {
+					if strings.HasPrefix(id, pattern) {
+						pattern = id
+					}
+				}
+			}
+			// check if the pattern argument is a valid uuid v4 string
+			isID, err = regexp.MatchString("^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-4[a-fA-F0-9]{3}-[8|9|aA|bB][a-fA-F0-9]{3}-[a-fA-F0-9]{12}$", pattern)
+			if err != nil {
+				return err
+			}
+		}
+
+		// Delete the pattern using the id
+		if isID {
+			err := utils.DeleteConfiguration(pattern, "pattern")
+			if err != nil {
+				return errors.Wrap(err, utils.SystemError(fmt.Sprintf("failed to delete pattern %s", args[0])))
+			}
+			fmt.Printf("Pattern %s deleted successfully\n", args[0])
+			return nil
+		}
 		deployURL := mctlCfg.GetBaseMesheryURL() + "/api/pattern/deploy"
 		patternURL := mctlCfg.GetBaseMesheryURL() + "/api/pattern"
 

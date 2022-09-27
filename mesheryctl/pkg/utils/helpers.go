@@ -487,6 +487,25 @@ func GetID(configuration string) ([]string, error) {
 	return idList, nil
 }
 
+// Delete configuration from meshery server endpoint /api/{configurations}/{id}
+func DeleteConfiguration(id string, configuration string) error {
+	url := MesheryEndpoint + "/api/" + configuration + "/" + id
+	client := &http.Client{}
+	req, err := NewRequest("DELETE", url, nil)
+	if err != nil {
+		return err
+	}
+
+	res, err := client.Do(req)
+	if err != nil {
+		return err
+	}
+	if res.StatusCode != 200 {
+		return errors.Errorf("Response Status Code %d, possible invalid ID", res.StatusCode)
+	}
+	return nil
+}
+
 // AskForInput asks the user for an input and checks if it is in the available values
 func AskForInput(prompt string, allowed []string) string {
 	reader := bufio.NewReader(os.Stdin)

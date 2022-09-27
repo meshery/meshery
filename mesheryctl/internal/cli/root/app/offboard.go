@@ -7,6 +7,8 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"regexp"
+	"strings"
 
 	"github.com/asaskevich/govalidator"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
@@ -38,6 +40,36 @@ mesheryctl app offboard -f [filepath]
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			return errors.Wrap(err, "error processing config")
+		}
+
+		app := ""
+		isID := false
+		if len(args) > 0 {
+			app = args[0]
+			// It checks if appID is present or not
+			appID, err := utils.GetID("application")
+			if err == nil {
+				for _, id := range appID {
+					if strings.HasPrefix(id, app) {
+						app = id
+					}
+				}
+			}
+			// check if the app argument is a valid uuid v4 string
+			isID, err = regexp.MatchString("^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-4[a-fA-F0-9]{3}-[8|9|aA|bB][a-fA-F0-9]{3}-[a-fA-F0-9]{12}$", app)
+			if err != nil {
+				return err
+			}
+		}
+
+		// Delete the app using the id
+		if isID {
+			err := utils.DeleteConfiguration(app, "application")
+			if err != nil {
+				return errors.Wrap(err, utils.SystemError(fmt.Sprintf("failed to delete application %s", args[0])))
+			}
+			fmt.Printf("Application %s deleted successfully\n", args[0])
+			return nil
 		}
 
 		deployURL := mctlCfg.GetBaseMesheryURL() + "/api/application/deploy"
