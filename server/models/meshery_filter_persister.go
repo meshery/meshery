@@ -22,7 +22,8 @@ type MesheryFilterPage struct {
 	Filters    []*MesheryFilter `json:"filters"`
 }
 
-// GetMesheryFilters returns all of the filters
+// GetMesheryFilters returns all of the 'private' filters. Though private has no meaning here since there is only
+// one local user. We make this distinction to be consistent with the remote provider
 func (mfp *MesheryFilterPersister) GetMesheryFilters(search, order string, page, pageSize uint64) ([]byte, error) {
 	order = sanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
 
@@ -33,7 +34,7 @@ func (mfp *MesheryFilterPersister) GetMesheryFilters(search, order string, page,
 	count := int64(0)
 	filters := []*MesheryFilter{}
 
-	query := mfp.DB.Order(order)
+	query := mfp.DB.Where("visibility = 'private'").Order(order)
 
 	if search != "" {
 		like := "%" + strings.ToLower(search) + "%"
@@ -54,6 +55,29 @@ func (mfp *MesheryFilterPersister) GetMesheryFilters(search, order string, page,
 	return marshalMesheryFilterPage(mesheryFilterPage), nil
 }
 
+// GetMesheryCatalogFilters returns all of the public filters
+func (mfp *MesheryFilterPersister) GetMesheryCatalogFilters(search, order string) ([]byte, error) {
+	order = sanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
+
+	if order == "" {
+		order = "updated_at desc"
+	}
+
+	filters := []*MesheryFilter{}
+
+	query := mfp.DB.Where("visibility = 'public'").Order(order)
+
+	if search != "" {
+		like := "%" + strings.ToLower(search) + "%"
+		query = query.Where("(lower(meshery_filters.name) like ?)", like)
+	}
+
+	query.Find(&filters)
+
+	marshalledFilters, _ := json.Marshal(filters)
+	return marshalledFilters, nil
+}
+
 // DeleteMesheryFilter takes in a profile id and delete it if it already exists
 func (mfp *MesheryFilterPersister) DeleteMesheryFilter(id uuid.UUID) ([]byte, error) {
 	filter := MesheryFilter{ID: &id}
@@ -63,7 +87,9 @@ func (mfp *MesheryFilterPersister) DeleteMesheryFilter(id uuid.UUID) ([]byte, er
 }
 
 func (mfp *MesheryFilterPersister) SaveMesheryFilter(filter *MesheryFilter) ([]byte, error) {
-	filter.Visibility = "private"
+	if filter.Visibility == "" {
+		filter.Visibility = "private"
+	}
 	if filter.ID == nil {
 		id, err := uuid.NewV4()
 		if err != nil {
@@ -80,7 +106,9 @@ func (mfp *MesheryFilterPersister) SaveMesheryFilter(filter *MesheryFilter) ([]b
 func (mfp *MesheryFilterPersister) SaveMesheryFilters(filters []MesheryFilter) ([]byte, error) {
 	finalFilters := []MesheryFilter{}
 	for _, filter := range filters {
-		filter.Visibility = "private"
+		if filter.Visibility == "" {
+			filter.Visibility = "private"
+		}
 		if filter.ID == nil {
 			id, err := uuid.NewV4()
 			if err != nil {
