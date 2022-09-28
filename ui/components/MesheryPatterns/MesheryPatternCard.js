@@ -137,8 +137,9 @@ function MesheryPatternCard({
                 <UndeployIcon fill="#ffffff" className={classes.iconPatt} />
                 <span className={classes.btnText}>Undeploy</span>
               </Button>
-``
-              { visibility === "private" ?  <Button
+
+              { visibility === "private1" ?  <Button
+                title="Design"
                 variant="contained"
                 color="primary"
                 onClick={(ev) =>
@@ -147,8 +148,9 @@ function MesheryPatternCard({
                 className={classes.testsButton}
               >
                 <Avatar src="/static/img/pattern_trans.svg" className={classes.iconPatt} imgProps={{ height : "16px", width : "16px" }} />
-                Design
+                <span className={classes.btnText}> Design </span>
               </Button> : <Button
+                title="Clone"
                 variant="contained"
                 color="primary"
                 onClick={(ev) =>
@@ -156,8 +158,8 @@ function MesheryPatternCard({
                 }
                 className={classes.testsButton}
               >
-                <img src="/static/img/clone-white.svg" className={classes.iconPatt} />
-                Clone
+                <Avatar src="/static/img/clone-white.svg" className={classes.iconPatt} />
+                <span className={classes.btnText}> Clone </span>
               </Button>  }
 
             </div>
