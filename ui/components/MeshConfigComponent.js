@@ -957,8 +957,8 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
       next : (res) => {
         updateProgress({ showProgress : false });
         if (res.controller.name === "broker" && res.controller.status.includes("CONNECTED")) {
-          let runningEndpoint = res.controller.status.substring("CONNECTED".length)
-          enqueueSnackbar(`Broker was successfully pinged. Running at ${runningEndpoint}`, {
+          let runningEndpoint = res.controller.status.substring("CONNECTED".length).trim();
+          enqueueSnackbar(`Broker was successfully pinged. ${runningEndpoint != "" ? `Running at ${runningEndpoint}` : ""}`, {
             variant : "success",
             action : (key) => (
               <IconButton key="close" aria-label="close" color="inherit" onClick={() => closeSnackbar(key)}>
@@ -989,8 +989,8 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
           setMeshsyncSubscription({ type : actionTypes.SET_MESHSYNC_SUBSCRIPTION, meshSyncState : newMeshSyncState })
           handleError("MeshSync could not be reached")("MeshSync is unavailable");
         } else {
-          let publishEndpoint = res.controller.status.substring("ENABLED".length)
-          enqueueSnackbar(`MeshSync was successfully pinged. Publishing to ${publishEndpoint} `, {
+          let publishEndpoint = res.controller.status.substring("ENABLED".length).trim()
+          enqueueSnackbar(`MeshSync was successfully pinged. ${publishEndpoint != "" ? `Publishing to ${publishEndpoint}` : ""}`, {
             variant : "success",
             action : (key) => (
               <IconButton key="close" aria-label="close" color="inherit" onClick={() => closeSnackbar(key)}>
