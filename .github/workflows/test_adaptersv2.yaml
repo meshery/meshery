@@ -1,5 +1,5 @@
 # This workflow will be called/referenced in each of the adapters and runs in the context of adapter
-name: Adapter Integration - Core
+name: Adapter Integration - Core v2
 
 on:
   workflow_call:
@@ -14,14 +14,15 @@ on:
         required: true
         type: string
       service_url:
-        required: true
+        required: false
         type: string
       deployment_url:
-        required: true
+        required: false
         type: string
       adapter_name:
-        required: true
+        required: false
         type: string
+        default: meshery
       patternfile_name:
         required: true
         type: string
@@ -33,13 +34,13 @@ on:
         required: false
         type: string
       sm_version:
-        required: true
+        required: false
         type: string
       output_filename:
         required: true
         type: string
       adapter_version:
-        required: true
+        required: false
         type: string
       provider: #default to local
         required: false
@@ -72,8 +73,10 @@ jobs:
       # Build the image by setting appropriate environmental variables in order to access the image from minikube
       - name: Build the tagged Docker image
         run: |
-          eval $(minikube -p minikube docker-env) 
-          docker build -t test:test .
+          if [ "${{ inputs.adapter_name }}" != "meshery" ];then
+            eval $(minikube -p minikube docker-env) 
+            docker build -t test:test .
+          fi
       - name: Retrieve kubeconfig
         run: cat ~/.kube/config
       # Setup meshery config.yaml and auth.json
@@ -102,13 +105,16 @@ jobs:
       # Start the adapter using yamls
       - name: Start adapter
         run: |
-          touch testimagedep.yaml
-          curl ${{ inputs.deployment_url }} > ./testimagedep.yaml
-          yq e -i '.spec.template.spec.containers[0].image="test:test"' ./testimagedep.yaml 
-          yq e -i '.spec.template.spec.containers[0].imagePullPolicy="Never"' ./testimagedep.yaml 
-          cat testimagedep.yaml
-          kubectl apply -f testimagedep.yaml --namespace=meshery
-          kubectl apply -f ${{ inputs.service_url }} --namespace=meshery
+          if [ "${{ inputs.adapter_name }}" != "meshery" ];then
+            touch testimagedep.yaml
+            curl ${{ inputs.deployment_url }} > ./testimagedep.yaml
+            yq e -i '.spec.template.spec.containers[0].image="test:test"' ./testimagedep.yaml 
+            yq e -i '.spec.template.spec.containers[0].imagePullPolicy="Never"' ./testimagedep.yaml 
+            cat testimagedep.yaml
+            kubectl apply -f testimagedep.yaml --namespace=meshery
+            kubectl apply -f ${{ inputs.service_url }} --namespace=meshery
+          fi
+
 
       # Start tunnelling to allocate external IP to LoadBalancer type service(meshery)(SO that we can access meshery from outside)
       - name: Start tunelling
@@ -158,11 +164,13 @@ jobs:
       - name: Pattern apply, second iteration. [IDEMPOTENT]
         run: |
           cat ./${{ inputs.patternfile_name }}
-          mesheryctl pattern apply -f ./${{ inputs.patternfile_name }}   
+          mesheryctl pattern apply -f ./${{ inputs.patternfile_name }}  
       - name: Check adapter logs
         run: |
-          podname=$(kubectl get pods -n meshery | grep ${{ inputs.adapter_name }} | tr -s ' ' | cut -d " " -f 1)
-          kubectl logs pod/$podname -n meshery
+          if [ "${{ inputs.adapter_name }}" != "meshery" ];then
+            podname=$(kubectl get pods -n meshery | grep ${{ inputs.adapter_name }} | tr -s ' ' | cut -d " " -f 1)
+            kubectl logs pod/$podname -n meshery
+          fi
       - name: Check Meshery logs
         run: |
           mesheryctl system  logs meshery
