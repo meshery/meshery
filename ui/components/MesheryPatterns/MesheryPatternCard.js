@@ -138,7 +138,7 @@ function MesheryPatternCard({
                 <span className={classes.btnText}>Undeploy</span>
               </Button>
 
-              { visibility === "private1" ?  <Button
+              { visibility === "private" ?  <Button
                 title="Design"
                 variant="contained"
                 color="primary"
