@@ -118,10 +118,12 @@ func (mpp *MesheryPatternPersister) SaveMesheryPattern(pattern *MesheryPattern) 
 // SaveMesheryPatterns batch inserts the given patterns
 func (mpp *MesheryPatternPersister) SaveMesheryPatterns(patterns []MesheryPattern) ([]byte, error) {
 	finalPatterns := []MesheryPattern{}
+	nilUserId := ""
 	for _, pattern := range patterns {
 		if pattern.Visibility == "" {
 			pattern.Visibility = "private"
 		}
+		pattern.UserID = &nilUserId
 		if pattern.ID == nil {
 			id, err := uuid.NewV4()
 			if err != nil {
