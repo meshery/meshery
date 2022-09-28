@@ -10,6 +10,9 @@ import (
 	"strings"
 	"time"
 
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
+
 	"github.com/gosimple/slug"
 	"github.com/sirupsen/logrus"
 
@@ -161,7 +164,7 @@ func (g *GrafanaClient) ProcessBoard(ctx context.Context, c *sdk.Client, board *
 			var ds sdk.Datasource
 			var dsName string
 			if tmpVar.Type == "datasource" {
-				dsName = strings.Title(strings.ToLower(fmt.Sprint(tmpVar.Query))) // datasource name can be found in the query field
+				dsName = cases.Title(language.Und).String(strings.ToLower(fmt.Sprint(tmpVar.Query))) // datasource name can be found in the query field
 				tmpDsName[tmpVar.Name] = dsName
 			} else if tmpVar.Type == "query" && tmpVar.Datasource != nil {
 				if !strings.HasPrefix(*tmpVar.Datasource, "$") {
