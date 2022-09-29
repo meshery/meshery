@@ -1,5 +1,8 @@
 name: Multi-Platform Build and Release
 on:
+  pull:
+    branches:
+      - 'master'
   release:
     types: [published]
   push:
