@@ -956,8 +956,8 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
     NatsStatusQuery({ k8scontextID : contexts[index].id }).subscribe({
       next : (res) => {
         updateProgress({ showProgress : false });
-        if (res.controller.name === "MesheryBroker" && res.controller.status.includes("CONNECTED")) {
-          let runningEndpoint = res.controller.status.substring("CONNECTED".length)
+        if (res.controller.name === "MesheryBroker" && res.controller.status.includes("Connected")) {
+          let runningEndpoint = res.controller.status.substring("Connected".length)
           enqueueSnackbar(`Broker was successfully pinged. Running at ${runningEndpoint}`, {
             variant : "success",
             action : (key) => (
@@ -971,7 +971,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
           handleError("Meshery Broker could not be reached")("Meshery Server is not connected to Meshery Broker");
         }
 
-        stateUpdater(NATSState, setNATSState, res.controller.status.length !== 0 ? res.controller.status : "UNKNOWN", index)
+        stateUpdater(NATSState, setNATSState, res.controller.status.length !== 0 ? res.controller.status : "Unknown", index)
         stateUpdater(NATSVersion, setNATSVersion, res.controller.version, index);
       },
       error : handleError("NATS status could not be retrieved"),
@@ -983,13 +983,8 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
     MeshsyncStatusQuery(({ k8scontextID : contexts[index].id })).subscribe({
       next : (res) => {
         updateProgress({ showProgress : false });
-        if (res.controller.name !== "MeshSync" || res.controller.status.includes("Not Deployed")) {
-          let newMeshSyncState = [...MeshSyncState || []]
-          newMeshSyncState[index] = null;
-          setMeshsyncSubscription({ type : actionTypes.SET_MESHSYNC_SUBSCRIPTION, meshSyncState : newMeshSyncState })
-          handleError("MeshSync could not be reached")("MeshSync is unavailable");
-        } else {
-          let publishEndpoint = res.controller.status.substring("CONNECTED".length)
+        if (res.controller.name === "MeshSync" || res.controller.status.includes("Connected")) {
+          let publishEndpoint = res.controller.status.substring("Connected".length)
           enqueueSnackbar(`MeshSync was successfully pinged. ${publishEndpoint.length > 0 ?  `Publishing to ${publishEndpoint}`: ""}`, {
             variant : "success",
             action : (key) => (
@@ -999,7 +994,12 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
             ),
             autohideduration : 2000,
           })
+        } else {
+          handleError("MeshSync could not be reached")("MeshSync is unavailable");
         }
+        let newMeshSyncState = [...MeshSyncState || []]
+        newMeshSyncState[index] = null;
+        setMeshsyncSubscription({ type : actionTypes.SET_MESHSYNC_SUBSCRIPTION, meshSyncState : newMeshSyncState })
       },
       error : handleError("MeshSync status could not be retrieved"),
     });

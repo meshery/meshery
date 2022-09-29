@@ -2,10 +2,7 @@ package model
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
-	"io"
-	"net/http"
 	"net/url"
 	"strconv"
 	"strings"
@@ -29,21 +26,12 @@ const (
 	RequestSubject           = "meshery.meshsync.request"
 	MeshsyncSubject          = "meshery.meshsync.core"
 	BrokerQueue              = "meshery"
-	BrokerPingEndpoint       = "8222/connz"
 	MeshSyncBrokerConnection = "meshsync"
 )
 
 var (
 	meshsyncVersion string
 )
-
-type Connections struct {
-	Connections []connection `json:"connections"`
-}
-
-type connection struct {
-	Name string `json:"name"`
-}
 
 func Initialize(client *mesherykube.Client, delete bool, adapterTracker models.AdaptersTrackerInterface) error {
 	// installOperator
@@ -108,20 +96,18 @@ func GetControllersInfo(mesheryKubeClient *mesherykube.Client, brokerConn broker
 func GetBrokerInfo(mesheryclient operatorClient.Interface, mesheryKubeClient *mesherykube.Client, brokerConn brokerpkg.Handler) (OperatorControllerStatus, error) {
 	var brokerControllerStatus OperatorControllerStatus
 	broker := controllers.NewMesheryBrokerHandler(mesheryKubeClient)
-	brokerStatus := Status(broker.GetStatus().String())
+	brokerStatus := broker.GetStatus().String()
 	brokerControllerStatus.Name = broker.GetName()
 
 	brokerControllerStatus.Version, _ = broker.GetVersion()
-	if brokerStatus == Status(controllers.Deployed.String()) {
+	if brokerStatus == controllers.Deployed.String() {
 		brokerEndpoint, _ := broker.GetPublicEndpoint()
 		externalIP := strings.Split(brokerEndpoint, ":")[0]
-		if connectivityTest(models.MesheryServerBrokerConnection, externalIP) {
-			status := fmt.Sprintf("%s %s", StatusConnected, brokerEndpoint)
+		if controllers.ConnectivityTest(models.MesheryServerBrokerConnection, externalIP) {
+			status := fmt.Sprintf("%s %s", controllers.Connected, brokerEndpoint)
 			brokerControllerStatus.Status = Status(status)
 			return brokerControllerStatus, nil
 		}
-		brokerControllerStatus.Status = brokerStatus
-		return brokerControllerStatus, nil
 	}
 	brokerControllerStatus.Status = brokerStatus
 	return brokerControllerStatus, nil
@@ -136,14 +122,10 @@ func GetMeshSyncInfo(mesheryclient operatorClient.Interface, mesheryKubeClient *
 
 	if meshsyncStatus == controllers.Running.String() {
 		broker := controllers.NewMesheryBrokerHandler(mesheryKubeClient)
-		brokerEndpoint, err := broker.GetPublicEndpoint()
-		if err != nil {
-			meshsyncControllerStatus.Status = Status(meshsyncStatus)
-			return meshsyncControllerStatus, nil
-		}
+		brokerEndpoint, _ := broker.GetPublicEndpoint()
 		externalIP := strings.Split(brokerEndpoint, ":")[0]
-		if connectivityTest(MeshSyncBrokerConnection, externalIP) {
-			status := fmt.Sprintf("%s %s", StatusConnected, brokerEndpoint)
+		if controllers.ConnectivityTest(MeshSyncBrokerConnection, externalIP) {
+			status := fmt.Sprintf("%s %s", controllers.Connected, brokerEndpoint)
 			meshsyncControllerStatus.Status = Status(status)
 			return meshsyncControllerStatus, nil
 		}
@@ -275,36 +257,3 @@ func getVersion(brokerConn brokerpkg.Handler) {
 	meshsyncVersion = ch.Object.(string)
 }
 
-func connectivityTest(clientName, externalIP string) bool {
-	endpoint, err := url.Parse("http://" + externalIP + ":" + BrokerPingEndpoint)
-	if err != nil {
-		logrus.Error(err.Error())
-		return false
-	}
-
-	resp, err := http.Get(endpoint.String())
-	if err != nil {
-		logrus.Errorf("failed to reach broker at endpoint: %s", endpoint.String())
-		return false
-	}
-
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		logrus.Error("failed to read request body")
-		return false
-	}
-
-	var natsResponse Connections
-	err = json.Unmarshal(body, &natsResponse)
-	if err != nil {
-		logrus.Error("Error marshaling response")
-		return false
-	}
-
-	for _, client := range natsResponse.Connections {
-		if client.Name == clientName {
-			return true
-		}
-	}
-	return false
-}
