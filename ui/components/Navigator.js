@@ -554,7 +554,6 @@ class Navigator extends React.Component {
     dataFetch(
       "/api/system/version",
       {
-        credentials : "same-origin",
         method : "GET",
         credentials : "include",
       },
@@ -577,7 +576,6 @@ class Navigator extends React.Component {
     dataFetch(
       "/api/provider/capabilities",
       {
-        credentials : "same-origin",
         method : "GET",
         credentials : "include",
       },
@@ -605,7 +603,7 @@ class Navigator extends React.Component {
       return (
         <List disablePadding>
           {children.map(({
-            id, onClickCallback, icon, href, title, children, show : showc
+            id, icon, href, title, children, show : showc
           }) => {
             if (typeof showc !== "undefined" && !showc) {
               return "";
@@ -625,7 +623,7 @@ class Navigator extends React.Component {
                     isDrawerCollapsed && classes.noPadding
                   )}
                 >
-                  {this.extensionPointContent(icon, href, title, isDrawerCollapsed, onClickCallback)}
+                  {this.extensionPointContent(icon, href, title, isDrawerCollapsed)}
                 </ListItem>
                 {this.renderNavigatorExtensions(children, depth + 1)}
               </React.Fragment>
@@ -636,23 +634,11 @@ class Navigator extends React.Component {
     }
   }
 
-  onClickCallback(onClickCallback) {
-    switch (onClickCallback) {
-      case 0:
-        return this.toggleMiniDrawer(false)
-      case 1:
-        return this.toggleMiniDrawer(true)
-      default:
-        // by default, nothing happened
-        return undefined
-    }
-  }
-
-  extensionPointContent(icon, href, name, drawerCollapsed, onClickCallback) {
+  extensionPointContent(icon, href, name, drawerCollapsed) {
     const { classes } = this.props;
 
     const content = (
-      <div className={classNames(classes.link)} onClick={() => this.onClickCallback(onClickCallback)} data-cy={name}>
+      <div className={classNames(classes.link)} data-cy={name}>
         <Tooltip
           title={name}
           placement="right"
@@ -674,7 +660,13 @@ class Navigator extends React.Component {
       </div>
     );
 
-    if (href) return <Link href={href}>{content}</Link>;
+    if (href) {
+      return (
+        <Link href={href}>
+          {content}
+        </Link>
+      )
+    }
 
     return content;
   }
@@ -1122,7 +1114,7 @@ class Navigator extends React.Component {
                 <Link href={link
                   ? href
                   : ""}>
-                  <div data-cy={childId} className={classNames(classes.link)} onClick={() => this.onClickCallback(href)}>
+                  <div data-cy={childId} className={classNames(classes.link)}>
                     <Tooltip
                       title={childId}
                       placement="right"

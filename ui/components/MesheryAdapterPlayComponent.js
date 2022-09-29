@@ -166,7 +166,6 @@ class MesheryAdapterPlayComponent extends React.Component {
     this.modalRef = React.createRef();
 
     this.state = {
-      selectedOp : "",
       cmEditorValAdd : "",
       cmEditorValAddError : false,
 
@@ -460,7 +459,6 @@ class MesheryAdapterPlayComponent extends React.Component {
     dataFetch(
       ctxUrl("/api/system/adapter/operation", this.props.selectedK8sContexts),
       {
-        credentials : "same-origin",
         method : "POST",
         credentials : "include",
         headers : { "Content-Type" : "application/x-www-form-urlencoded;charset=UTF-8", },
@@ -498,7 +496,6 @@ class MesheryAdapterPlayComponent extends React.Component {
     dataFetch(
       `/api/system/adapters?adapter=${encodeURIComponent(adapterLoc)}`,
       {
-        credentials : "same-origin",
         credentials : "include",
       },
       (result) => {
@@ -535,7 +532,6 @@ class MesheryAdapterPlayComponent extends React.Component {
     dataFetch(
       `/api/smi/results${query}`,
       {
-        credentials : "same-origin",
         method : "GET",
         credentials : "include",
       },

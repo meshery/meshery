@@ -1,6 +1,7 @@
 apiVersion: v2
 name: meshery-meshsync
-description: Meshery MeshSync CR Chart
+description: Meshery MeshSync
+icon: https://meshery.io/images/logos/meshery-logo.png
 type: application
 version: 0.5.0
 appVersion: stable-latest
@@ -12,3 +13,4 @@ maintainers:
     email: panyuenlau@gmail.com
   - name: leecalcote
     email: lee.calcote@layer5.io
+

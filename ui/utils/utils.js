@@ -1,5 +1,6 @@
 import { trueRandom } from "../lib/trueRandom";
 import jsYaml from "js-yaml";
+import { findWorkloadByName } from "./workloadFilter";
 
 /**
  * Check if an object is empty
@@ -93,4 +94,38 @@ export function getComponentsinFile(file) {
     }
   }
   return 0;
+}
+
+export function generateValidatePayload(pattern_file, workloadTraitSet) {
+  let pattern = jsYaml.loadAll(pattern_file)
+  const services = pattern[0]?.services;
+  if (!services) {
+    return { err : "Services not found in the design" };
+  }
+
+  const validationPayloads = {};
+
+  for (const serviceId in services) {
+    let valueType;
+
+    let { workload } = findWorkloadByName(services[serviceId].type, workloadTraitSet);
+
+    if (!(workload && workload?.oam_ref_schema)) {
+      continue;
+    }
+    const schema = workload.oam_ref_schema;
+    const value = services[serviceId]?.settings;
+    if (!value) {
+      continue;
+    }
+    valueType = "JSON";
+    const validationPayload = {
+      schema,
+      value : JSON.stringify(value),
+      valueType
+    };
+    validationPayloads[serviceId] = validationPayload;
+  }
+
+  return validationPayloads;
 }

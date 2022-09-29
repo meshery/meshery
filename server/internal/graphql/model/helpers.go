@@ -198,11 +198,9 @@ func installUsingHelm(client *mesherykube.Client, delete bool, adapterTracker mo
 		chart = "meshery"
 	}
 
-	overrides := SetOverrideValues(delete, adapterTracker)
-
 	err := client.ApplyHelmChart(mesherykube.ApplyHelmChartConfig{
 		Namespace:   "meshery",
-		ReleaseName: "meshery",
+		ReleaseName: "meshery-operator",
 		ChartLocation: mesherykube.HelmChartLocation{
 			Repository: chartRepo,
 			Chart:      chart,
@@ -211,8 +209,6 @@ func installUsingHelm(client *mesherykube.Client, delete bool, adapterTracker mo
 		// CreateNamespace doesn't have any effect when the action is UNINSTALL
 		CreateNamespace: true,
 		Action:          act,
-		// Setting override values
-		OverrideValues: overrides,
 	})
 	if err != nil {
 		return ErrApplyHelmChart(err)

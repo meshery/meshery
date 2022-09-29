@@ -14,9 +14,10 @@ import LoadingScreen from "./LoadingComponents/LoadingComponent";
 import usePreventUserFromLeavingPage from "../utils/hooks/usePreventUserFromLeavingPage";
 import { getK8sClusterIdsFromCtxId } from "../utils/multi-ctx";
 import ConfirmationModal from "./ConfirmationModal"
-import { getComponentsinFile } from "../utils/utils";
+import { getComponentsinFile, generateValidatePayload } from "../utils/utils";
 import UploadImport from "./UploadImport";
 import ConfigurationSubscription from "../components/graphql/subscriptions/ConfigurationSubscription";
+import Validation from "./Validation";
 
 const requires = createRequires(getDependencies);
 const useRemoteComponent = createUseRemoteComponent({ requires });
@@ -25,7 +26,7 @@ function Extension({ grafana, prometheus, updateLoadTestData, url, isDrawerColla
   const [loading, err, RemoteComponent] = useRemoteComponent(url);
 
   if (loading) {
-    return <LoadingScreen animatedIcon="AnimatedMeshSync" message="Loading Meshery Extension" />;
+    return <LoadingScreen animatedIcon="AnimatedMeshery" message="Loading Meshery Extension" />;
   }
 
   if (err != null) {
@@ -66,7 +67,9 @@ function Extension({ grafana, prometheus, updateLoadTestData, url, isDrawerColla
         },
         ConfirmationModal,
         getComponentsinFile,
-        UploadImport
+        UploadImport,
+        generateValidatePayload,
+        Validation
       }}
     />
   );

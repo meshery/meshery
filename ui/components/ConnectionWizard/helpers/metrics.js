@@ -42,8 +42,7 @@ export const pingGrafanaWithNotification = (updateProgress, action, enqueueSnack
 export const pingGrafana = (successCb, errorCb) =>
   dataFetch(
     "/api/telemetry/metrics/grafana/ping",
-    { credentials : "same-origin",
-      credentials : "include", },
+    { credentials : "include" },
     successCb,
     errorCb
   );
@@ -89,8 +88,7 @@ export const pingPrometheusWithNotification = (updateProgress, action, enqueueSn
 export const pingPrometheus = (successCb, errorCb) =>
   dataFetch(
     "/api/telemetry/metrics/ping",
-    { credentials : "same-origin",
-      credentials : "include", },
+    { credentials : "include" },
     successCb,
     errorCb
   );
@@ -101,7 +99,6 @@ export const fetchPromGrafanaScanData = (ctx) => {
     dataFetch(
       ctxUrl('/api/system/meshsync/grafana', ctx),
       {
-        credentials : "same-origin",
         method : "GET",
         credentials : "include",
       },
@@ -193,7 +190,6 @@ export const handleGrafanaConfigure = (grafanaURL, grafanaAPIKey, updateProgress
   dataFetch(
     "/api/telemetry/metrics/grafana/config",
     {
-      credentials : "same-origin",
       method : "POST",
       credentials : "include",
       headers : { "Content-Type" : "application/x-www-form-urlencoded;charset=UTF-8", },
@@ -238,7 +234,6 @@ export const handlePrometheusConfigure = (prometheusURL, updateProgress, enqueue
   dataFetch(
     "/api/telemetry/metrics/config",
     {
-      credentials : "same-origin",
       method : "POST",
       credentials : "include",
       headers : { "Content-Type" : "application/x-www-form-urlencoded;charset=UTF-8", },
@@ -269,7 +264,7 @@ export const handlePrometheusConfigure = (prometheusURL, updateProgress, enqueue
 export const deleteMetricsComponentConfig = (componentName) => (successCb, errorCb) => dataFetch(
     `/api/telemetry/metrics${componentName === 'Grafana' ? "/grafana"
       : ""}/config`,
-    { credentials : "same-origin",
+    {
       method : "DELETE",
       credentials : "include", },
     successCb,

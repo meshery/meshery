@@ -26,9 +26,10 @@ class UserPref extends React.Component {
     await new Promise(resolve => {
       dataFetch(
         ctxUrl('/api/user/prefs', this.props.selectedK8sContexts),
-        { credentials : 'same-origin',
+        {
           method : 'GET',
-          credentials : 'include', }, (result) => {
+          credentials : 'include',
+        }, (result) => {
           resolve();
           console.log(result);
           if (typeof result !== 'undefined') {

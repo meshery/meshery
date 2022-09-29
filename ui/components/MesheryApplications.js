@@ -18,7 +18,7 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import dataFetch from "../lib/data-fetch";
 import { updateProgress } from "../lib/store";
-import FILE_OPS from "../utils/configurationFileHandlersEnum";
+import { FILE_OPS } from "../utils/Enum";
 import { ctxUrl } from "../utils/multi-ctx";
 import { getComponentsinFile, randomPatternNameGenerator as getRandomName } from "../utils/utils";
 import PromptComponent from "./PromptComponent";

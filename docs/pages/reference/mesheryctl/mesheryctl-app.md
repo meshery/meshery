@@ -16,7 +16,7 @@ Service Mesh Apps Management
 
 ## Synopsis
 
-Manage all apps operations; ;list, view, onboard and offboard
+Manage all apps operations; import, list, view, onboard and offboard
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
