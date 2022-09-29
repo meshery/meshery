@@ -1,6 +1,6 @@
 name: Multi-Platform Build and Release
 on:
-  pull:
+  pull_request:
     branches:
       - 'master'
   release:
