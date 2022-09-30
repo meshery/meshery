@@ -2,7 +2,7 @@ package model
 
 import (
 	"context"
-	"fmt"	
+	"fmt"
 	"net/url"
 	"strconv"
 	"strings"
@@ -102,43 +102,41 @@ func GetControllersInfo(mesheryKubeClient *mesherykube.Client, brokerConn broker
 }
 
 func GetBrokerInfo(mesheryclient operatorClient.Interface, mesheryKubeClient *mesherykube.Client, brokerConn brokerpkg.Handler) (OperatorControllerStatus, error) {
-	var brokerControllerStatus OperatorControllerStatus
+
 	broker := controllers.NewMesheryBrokerHandler(mesheryKubeClient)
 	brokerStatus := broker.GetStatus().String()
-	brokerControllerStatus.Name = broker.GetName()
+
+	if brokerStatus == controllers.Connected.String() {
+		brokerEndpoint, _ := broker.GetPublicEndpoint()
+		brokerStatus = fmt.Sprintf("%s %s", brokerStatus, brokerEndpoint)
+	}
+	brokerControllerStatus := OperatorControllerStatus{
+		Name:   broker.GetName(),
+		Status: Status(brokerStatus),
+	}
 
 	brokerControllerStatus.Version, _ = broker.GetVersion()
-	if brokerStatus == controllers.Deployed.String() {
-		brokerEndpoint, _ := broker.GetPublicEndpoint()
-		externalIP := strings.Split(brokerEndpoint, ":")[0]
-		if controllers.ConnectivityTest(models.MesheryServerBrokerConnection, externalIP) {
-			status := fmt.Sprintf("%s %s", controllers.Connected, brokerEndpoint)
-			brokerControllerStatus.Status = Status(status)
-			return brokerControllerStatus, nil
-		}
-	}
-	brokerControllerStatus.Status = brokerStatus
+
 	return brokerControllerStatus, nil
 }
 
 func GetMeshSyncInfo(mesheryclient operatorClient.Interface, mesheryKubeClient *mesherykube.Client) (OperatorControllerStatus, error) {
-	var meshsyncControllerStatus OperatorControllerStatus
 	meshsync := controllers.NewMeshsyncHandler(mesheryKubeClient)
 	meshsyncStatus := meshsync.GetStatus().String()
-	meshsyncControllerStatus.Name = meshsync.GetName()
-	meshsyncControllerStatus.Version = meshsyncVersion
 
-	if meshsyncStatus == controllers.Running.String() {
-		broker := controllers.NewMesheryBrokerHandler(mesheryKubeClient)
+	broker := controllers.NewMesheryBrokerHandler(mesheryKubeClient)
+
+	if meshsyncStatus == controllers.Connected.String() {
 		brokerEndpoint, _ := broker.GetPublicEndpoint()
-		externalIP := strings.Split(brokerEndpoint, ":")[0]
-		if controllers.ConnectivityTest(MeshSyncBrokerConnection, externalIP) {
-			status := fmt.Sprintf("%s %s", controllers.Connected, brokerEndpoint)
-			meshsyncControllerStatus.Status = Status(status)
-			return meshsyncControllerStatus, nil
-		}
+		meshsyncStatus = fmt.Sprintf("%s %s", meshsyncStatus, brokerEndpoint)
 	}
-	meshsyncControllerStatus.Status = Status(meshsyncStatus)
+
+	meshsyncControllerStatus := OperatorControllerStatus{
+		Name:    meshsync.GetName(),
+		Version: meshsyncVersion,
+		Status:  Status(meshsyncStatus),
+	}
+
 	return meshsyncControllerStatus, nil
 }
 

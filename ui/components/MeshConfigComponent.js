@@ -810,7 +810,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
                         <Grid item xs={12} md={5}>
                           <List>
                             <ListItem>
-                              <ListItemText primary="Operator State" secondary={operatorState ? "Active" : "Disabled"} />
+                              <ListItemText primary="Operator State" secondary={operatorState ? "Active" : "Undeployed"} />
                             </ListItem>
                             <ListItem>
                               <ListItemText primary="Operator Version" secondary={operatorVersion} />
@@ -820,7 +820,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
                         <Grid item xs={12} md={5}>
                           <List>
                             <ListItem>
-                              <ListItemText primary="MeshSync State" secondary={meshSyncState || "Disabled"} />
+                              <ListItemText primary="MeshSync State" secondary={meshSyncState || "Undeployed"} />
                             </ListItem>
                             <ListItem>
                               <ListItemText primary="MeshSync Version" secondary={meshSyncVersion} />
@@ -985,8 +985,18 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
         updateProgress({ showProgress : false });
         if (res.controller.name === "MeshSync" && res.controller.status.includes("Connected")) {
           let publishEndpoint = res.controller.status.substring("Connected".length)
-          enqueueSnackbar(`MeshSync was successfully pinged. ${publishEndpoint.length > 0 ?  `Publishing to ${publishEndpoint}`: ""}`, {
+          enqueueSnackbar(`MeshSync was successfully pinged. Publishing to ${publishEndpoint}`, {
             variant : "success",
+            action : (key) => (
+              <IconButton key="close" aria-label="close" color="inherit" onClick={() => closeSnackbar(key)}>
+                <CloseIcon />
+              </IconButton>
+            ),
+            autohideduration : 2000,
+          })
+        }  else if (res.controller.name === "MeshSync" && !res.controller.status.includes("Unknown")) {
+          enqueueSnackbar(`MeshSync is not publishing to Meshery Broker`, {
+            variant : "warning",
             action : (key) => (
               <IconButton key="close" aria-label="close" color="inherit" onClick={() => closeSnackbar(key)}>
                 <CloseIcon />
@@ -996,10 +1006,10 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
           })
         } else {
           handleError("MeshSync could not be reached")("MeshSync is unavailable");
+          let newMeshSyncState = [...MeshSyncState || []]
+          newMeshSyncState[index] = null;
+          setMeshsyncSubscription({ type : actionTypes.SET_MESHSYNC_SUBSCRIPTION, meshSyncState : newMeshSyncState })
         }
-        let newMeshSyncState = [...MeshSyncState || []]
-        newMeshSyncState[index] = null;
-        setMeshsyncSubscription({ type : actionTypes.SET_MESHSYNC_SUBSCRIPTION, meshSyncState : newMeshSyncState })
       },
       error : handleError("MeshSync status could not be retrieved"),
     });
