@@ -983,7 +983,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
     MeshsyncStatusQuery(({ k8scontextID : contexts[index].id })).subscribe({
       next : (res) => {
         updateProgress({ showProgress : false });
-        if (res.controller.name === "MeshSync" || res.controller.status.includes("Connected")) {
+        if (res.controller.name === "MeshSync" && res.controller.status.includes("Connected")) {
           let publishEndpoint = res.controller.status.substring("Connected".length)
           enqueueSnackbar(`MeshSync was successfully pinged. ${publishEndpoint.length > 0 ?  `Publishing to ${publishEndpoint}`: ""}`, {
             variant : "success",
