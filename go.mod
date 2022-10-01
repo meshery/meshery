@@ -63,7 +63,7 @@ require (
 	google.golang.org/grpc v1.49.0
 	google.golang.org/protobuf v1.28.1
 	gopkg.in/yaml.v2 v2.4.0
-	gorm.io/gorm v1.23.8
+	gorm.io/gorm v1.23.10
 	k8s.io/api v0.24.2
 	k8s.io/apiextensions-apiserver v0.24.2
 	k8s.io/apimachinery v0.24.2
