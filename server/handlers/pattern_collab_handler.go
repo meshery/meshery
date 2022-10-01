@@ -69,6 +69,9 @@ func (c *Client) processMessage(message []byte) {
 		}
 		c.send <- msg
 	case "subscribe":
+		if len(sockMessage.Topics) == 0 {
+			return
+		}
 		newPatternID := sockMessage.Topics[0]
 		updateRequest := &PatternUpdateRequest{
 			oldPatternID: c.patternID,
@@ -78,6 +81,9 @@ func (c *Client) processMessage(message []byte) {
 		c.patternID = newPatternID
 		c.hub.updateSubscribedPattern <- updateRequest
 	case "unsubscribe":
+		if len(sockMessage.Topics) == 0 {
+			return
+		}
 		oldPatternID := sockMessage.Topics[0]
 		updateRequest := &PatternUpdateRequest{
 			oldPatternID: oldPatternID,
