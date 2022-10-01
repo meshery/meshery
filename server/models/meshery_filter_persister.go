@@ -105,12 +105,12 @@ func (mfp *MesheryFilterPersister) SaveMesheryFilter(filter *MesheryFilter) ([]b
 // SaveMesheryFilters batch inserts the given filters
 func (mfp *MesheryFilterPersister) SaveMesheryFilters(filters []MesheryFilter) ([]byte, error) {
 	finalFilters := []MesheryFilter{}
-	nilUserId := ""
+	nilUserID := ""
 	for _, filter := range filters {
 		if filter.Visibility == "" {
 			filter.Visibility = "private"
 		}
-		filter.UserID = &nilUserId
+		filter.UserID = &nilUserID
 		if filter.ID == nil {
 			id, err := uuid.NewV4()
 			if err != nil {

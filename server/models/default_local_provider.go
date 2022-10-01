@@ -949,7 +949,7 @@ func (l *DefaultLocalProvider) GetKubeClient() *mesherykube.Client {
 func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 	seededUUIDs := make([]uuid.UUID, 0)
 	seedContents := []string{"Pattern", "Application", "Filter"}
-	nilUserId := ""
+	nilUserID := ""
 	for _, seedContent := range seedContents {
 		go func(comp string, log logger.Handler, seededUUIDs *[]uuid.UUID) {
 			names, content, err := getSeededComponents(comp, log)
@@ -965,7 +965,7 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 							PatternFile: content[i],
 							Name:        name,
 							ID:          &id,
-							UserID:      &nilUserId,
+							UserID:      &nilUserID,
 							Visibility:  "public",
 							Location: map[string]interface{}{
 								"host":   "",
@@ -988,7 +988,7 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 							FilterFile: content[i],
 							Name:       name,
 							ID:         &id,
-							UserID:     &nilUserId,
+							UserID:     &nilUserID,
 							Visibility: "public",
 							Location: map[string]interface{}{
 								"host":   "",
