@@ -2,6 +2,7 @@ package models
 
 import (
 	"encoding/json"
+	"fmt"
 	"strings"
 
 	"github.com/gofrs/uuid"
@@ -76,6 +77,26 @@ func (mpp *MesheryPatternPersister) GetMesheryCatalogPatterns(search, order stri
 
 	marshalledPatterns, _ := json.Marshal(patterns)
 	return marshalledPatterns, nil
+}
+
+// CloneMesheryPattern clones meshery pattern to private
+func (mpp *MesheryPatternPersister) CloneMesheryPattern(patternID string) ([]byte, error) {
+	var mesheryPattern MesheryPattern
+	patternUUID, _ := uuid.FromString(patternID)
+	err := mpp.DB.First(&mesheryPattern, patternUUID).Error
+	if err != nil || *mesheryPattern.ID == uuid.Nil {
+		return nil, fmt.Errorf("Unable to get pattern: %w", err)
+	}
+
+	id, err := uuid.NewV4()
+	if err != nil {
+		return nil, err
+	}
+
+	mesheryPattern.Visibility = "private"
+	mesheryPattern.ID = &id
+
+	return mpp.SaveMesheryPattern(&mesheryPattern)
 }
 
 // DeleteMesheryPattern takes in a profile id and delete it if it already exists

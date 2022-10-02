@@ -2,6 +2,7 @@ package models
 
 import (
 	"encoding/json"
+	"fmt"
 	"strings"
 
 	"github.com/gofrs/uuid"
@@ -76,6 +77,26 @@ func (mfp *MesheryFilterPersister) GetMesheryCatalogFilters(search, order string
 
 	marshalledFilters, _ := json.Marshal(filters)
 	return marshalledFilters, nil
+}
+
+// CloneMesheryFilter clones meshery filter to private
+func (mfp *MesheryFilterPersister) CloneMesheryFilter(filterID string) ([]byte, error) {
+	var mesheryFilter MesheryFilter
+	filterUUID, _ := uuid.FromString(filterID)
+	err := mfp.DB.First(&mesheryFilter, filterUUID).Error
+	if err != nil || *mesheryFilter.ID == uuid.Nil {
+		return nil, fmt.Errorf("Unable to get filter: %w", err)
+	}
+
+	id, err := uuid.NewV4()
+	if err != nil {
+		return nil, err
+	}
+
+	mesheryFilter.Visibility = "private"
+	mesheryFilter.ID = &id
+
+	return mfp.SaveMesheryFilter(&mesheryFilter)
 }
 
 // DeleteMesheryFilter takes in a profile id and delete it if it already exists
