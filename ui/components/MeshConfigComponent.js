@@ -167,8 +167,8 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
     return async () => {
       handleMenuClose(index);
       let response = await meshSyncResetRef.current.show({
-        title : "Flush MeshSync data?",
-        subtitle : "Are you sure to Flush MeshSync data?",
+        title : "Flush MeshSync data for {data.name} ?",
+        subtitle : "Are you sure to Flush MeshSync data for {data.name} ? Fresh MeshSync data will be repopulated for this context, if MeshSync is actively running on this cluster.",
         options : ["PROCEED", "CANCEL"]
       });
       if (response === "PROCEED") {
