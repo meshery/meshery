@@ -1,7 +1,7 @@
 //@ts-check
 import React, { useState } from "react";
 import {
-  Avatar, Divider, Grid, IconButton, Typography
+  Avatar, Divider, Grid, IconButton, Typography, Tooltip
 } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import DeleteIcon from "@material-ui/icons/Delete";
@@ -13,6 +13,7 @@ import { UnControlled as CodeMirror } from "react-codemirror2";
 import FullscreenExit from "@material-ui/icons/FullscreenExit";
 import UndeployIcon from "../../public/static/img/UndeployIcon";
 import DoneAllIcon from '@material-ui/icons/DoneAll';
+import DoneIcon from '@material-ui/icons/Done';
 import useStyles from "./Cards.styles";
 import YAMLDialog from "../YamlDialog";
 
@@ -24,17 +25,21 @@ function MesheryPatternCard({
   updated_at,
   created_at,
   pattern_file,
+  handleVerify,
   handleDeploy,
   handleUnDeploy,
   updateHandler,
   deleteHandler,
+  handleClone,
   setSelectedPatterns,
-  setYaml
+  setYaml,
+  description={},
+  visibility
 }) {
 
   function genericClickHandler(ev, fn) {
     ev.stopPropagation();
-    fn();
+    fn(ev);
   }
   const [gridProps, setGridProps] = useState(INITIAL_GRID_SIZE);
   const [fullScreen, setFullScreen] = useState(false);
@@ -45,6 +50,8 @@ function MesheryPatternCard({
     setFullScreen(!fullScreen);
   };
 
+  const catalogContentKeys = Object.keys(description);
+  const catalogContentValues = Object.values(description);
   const classes = useStyles()
 
   return (
@@ -73,9 +80,12 @@ function MesheryPatternCard({
         {/* FRONT PART */}
         <>
           <div>
-            <Typography variant="h6" component="div">
-              {name}
-            </Typography>
+            <div style={{ display : "flex", justifyContent : "space-between" }}>
+              <Typography variant="h6" component="div">
+                {name}
+              </Typography>
+              <img  className={classes.img} src={`/static/img/${visibility}.svg`} />
+            </div>
             <div className={classes.lastRunText} >
               <div>
                 {updated_at
@@ -93,6 +103,31 @@ function MesheryPatternCard({
             <div className={classes.cardButtons} >
 
               <Button
+                title="Verify"
+                variant="contained"
+                className={classes.testsButton}
+                onClick={
+                  (e) => genericClickHandler(e, handleVerify)
+                }
+              >
+                <DoneIcon className={classes.iconPatt} />
+                <span className={classes.btnText}> Verify </span>
+              </Button>
+
+              <Button
+                title="Deploy"
+                variant="contained"
+                onClick={(ev) =>
+                  genericClickHandler(ev, handleDeploy)
+                }
+                className={classes.testsButton}
+              >
+                <DoneAllIcon className={classes.iconPatt} />
+                <span className={classes.btnText}>Deploy</span>
+              </Button>
+
+              <Button
+                title="Undeploy"
                 variant="contained"
                 className={classes.undeployButton}
                 onClick={(ev) =>
@@ -102,19 +137,8 @@ function MesheryPatternCard({
                 <UndeployIcon fill="#ffffff" className={classes.iconPatt} />
                 <span className={classes.btnText}>Undeploy</span>
               </Button>
-
-              <Button
-                variant="contained"
-                onClick={(ev) =>
-                  genericClickHandler(ev, handleDeploy)
-                }
-                className={classes.testsButton}
-              >
-                <DoneAllIcon className={classes.iconPatt} />
-                Deploy
-              </Button>
-
-              <Button
+``
+              { visibility === "private" ?  <Button
                 variant="contained"
                 color="primary"
                 onClick={(ev) =>
@@ -124,7 +148,18 @@ function MesheryPatternCard({
               >
                 <Avatar src="/static/img/pattern_trans.svg" className={classes.iconPatt} imgProps={{ height : "16px", width : "16px" }} />
                 Design
-              </Button>
+              </Button> : <Button
+                variant="contained"
+                color="primary"
+                onClick={(ev) =>
+                  genericClickHandler(ev, handleClone)
+                }
+                className={classes.testsButton}
+              >
+                <img src="/static/img/clone-white.svg" className={classes.iconPatt} />
+                Clone
+              </Button>  }
+
             </div>
           </div>
         </>
@@ -141,18 +176,22 @@ function MesheryPatternCard({
               <Typography variant="h6" className={classes.yamlDialogTitleText}>
                 {name}
               </Typography>
-              <IconButton
-                onClick={(ev) =>
-                  genericClickHandler(ev, () => {
-                    {
-                      toggleFullScreen()
-                    }
-                  })
-                }
-                className={classes.maximizeButton}
+              <Tooltip
+                title="Enter Fullscreen" arrow interactive placement="top"
               >
-                {fullScreen ? <FullscreenExit /> : <Fullscreen />}
-              </IconButton>
+                <IconButton
+                  onClick={(ev) =>
+                    genericClickHandler(ev, () => {
+                      {
+                        toggleFullScreen()
+                      }
+                    })
+                  }
+                  className={classes.maximizeButton}
+                >
+                  {fullScreen ? <FullscreenExit /> : <Fullscreen />}
+                </IconButton>
+              </Tooltip>
             </Grid>
             <Grid item xs={12}
               onClick={(ev) =>
@@ -160,21 +199,33 @@ function MesheryPatternCard({
               }>
 
               <Divider variant="fullWidth" light />
-
-              <CodeMirror
-                value={showCode && pattern_file}
-                className={fullScreen ? classes.fullScreenCodeMirror : ""}
-                options={{
-                  theme : "material",
-                  lineNumbers : true,
-                  lineWrapping : true,
-                  gutters : ["CodeMirror-lint-markers"],
-                  // @ts-ignore
-                  lint : true,
-                  mode : "text/x-yaml",
-                }}
-                onChange={(_, data, val) => setYaml(val)}
-              />
+              { catalogContentKeys.length === 0 ?
+                <CodeMirror
+                  value={showCode && pattern_file}
+                  className={fullScreen ? classes.fullScreenCodeMirror : ""}
+                  options={{
+                    theme : "material",
+                    lineNumbers : true,
+                    lineWrapping : true,
+                    gutters : ["CodeMirror-lint-markers"],
+                    // @ts-ignore
+                    lint : true,
+                    mode : "text/x-yaml",
+                  }}
+                  onChange={(_, data, val) => setYaml(val)}
+                />
+                :
+                catalogContentKeys.map((title, index) => (
+                  <>
+                    <Typography variant="h6" className={classes.yamlDialogTitleText}>
+                      {title}
+                    </Typography>
+                    <Typography variant="body2">
+                      {catalogContentValues[index]}
+                    </Typography>
+                  </>
+                ))
+              }
             </Grid>
 
             <Grid item xs={8}>
@@ -192,22 +243,31 @@ function MesheryPatternCard({
             </Grid>
 
             <Grid item xs={12}>
-              <div className={classes.updateDeleteButtons} >
+              {visibility === "private" ?
+                <div className={classes.updateDeleteButtons} >
 
-                {/* Save button */}
-                <IconButton onClick={(ev) =>
-                  genericClickHandler(ev, updateHandler)
-                }>
-                  <Save color="primary" />
-                </IconButton>
+                  {/* Save button */}
+                  <Tooltip
+                    title="Save" arrow interactive placement="bottom"
+                  >
+                    <IconButton onClick={(ev) =>
+                      genericClickHandler(ev, updateHandler)
+                    }>
+                      <Save color="primary" />
+                    </IconButton>
+                  </Tooltip>
 
-                {/* Delete Button */}
-                <IconButton onClick={(ev) =>
-                  genericClickHandler(ev, deleteHandler)
-                }>
-                  <DeleteIcon color="primary" />
-                </IconButton>
-              </div>
+                  {/* Delete Button */}
+                  <Tooltip
+                    title="Delete" arrow interactive placement="bottom"
+                  >
+                    <IconButton onClick={(ev) =>
+                      genericClickHandler(ev, deleteHandler)
+                    }>
+                      <DeleteIcon color="primary" />
+                    </IconButton>
+                  </Tooltip>
+                </div> : null}
             </Grid>
           </Grid>
         </>

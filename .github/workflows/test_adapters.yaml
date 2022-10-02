@@ -53,7 +53,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        k8s_version: ['v1.20.11', 'v1.21.5', 'v1.22.2','v1.23.9','v1.24.3']
+        k8s_version: ['v1.20.11', 'v1.21.5', 'v1.22.2','v1.23.9']
     runs-on: ubuntu-latest
     outputs:
       exitstatus: ${{ steps.runresources.outputs.exitstatus }}
@@ -146,12 +146,19 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: patternfile
-      # This pattern will try to install  service mesh
-      - name: Pattern apply (Install service mesh)
+      - name: Wait for Meshery pods to come up 
+        run: sleep 100  
+      # This pattern will try to install  service mesh(the first attempt can fail currently fot k8s componets so we will wait 100 seconds after the first apply and then apply again. Since pattern apply is idempotent, this wont be an issue.)
+      - name: Pattern apply 
         run: |
           cat ./${{ inputs.patternfile_name }}
-          mesheryctl pattern apply -f ./${{ inputs.patternfile_name }}
-
+          mesheryctl pattern apply -f ./${{ inputs.patternfile_name }}   
+      - name: Sleep 120 seconds
+        run: sleep 120   
+      - name: Pattern apply, second iteration. [IDEMPOTENT]
+        run: |
+          cat ./${{ inputs.patternfile_name }}
+          mesheryctl pattern apply -f ./${{ inputs.patternfile_name }}   
       - name: Check adapter logs
         run: |
           podname=$(kubectl get pods -n meshery | grep ${{ inputs.adapter_name }} | tr -s ' ' | cut -d " " -f 1)

@@ -1,17 +1,82 @@
+
+
+
+
 {% assign sorted_tests_istio = site.compatibility | sort: "timestamp" | reverse | where: "meshery-component",{{page.service-mesh}} %}
+<style>
+.tablesorter-header-inner{
+    display: flex;
+    justify-content: space-between;
+}
+th span.sort-by { 
+	padding-right: 18px;
+	position: relative;
+    text-decoration: none;
+    margin-right:0 ;
+}
+span.sort-by:before,
+span.sort-by:after {
+	border: 4px solid transparent;
+	content: "";
+	display: block;
+	height: 0;
+	right: 5px;
+	top: 50%;
+	position: absolute;
+	width: 0;
+}
+span.sort-by:before {
+	border-bottom-color: #666;
+	margin-top: -9px;
+}
+span.sort-by:after {
+	border-top-color: #666;
+	margin-top: 1px;
+}
 
-<table>
-    <th>Status</th>
-    <th>Meshery Component</th>
-    <th>Meshery Component Version</th>
-    <th>Meshery Server Version</th>
-    <th>Service Mesh</th>
-    <th>Service Mesh Version</th>
+table.tablesorter th.tablesorter-headerUnSorted {
+    background-image: url("");
+    background-position: center right;
+    cursor: pointer;
+}
 
+table.tablesorter th.tablesorter-headerAsc {
+    background-image:url("data:image/gif;base64, R0lGODlhFQAJAIAAACMtMP///yH5BAEAAAEALAAAAAAVAAkAAAIXjI+AywnaYnhUMoqt3gZXPmVg94yJVQAAOw==") no-repeat 99%;
+    background-repeat: no-repeat;
+    background-position: center right;
+}
+table.tablesorter th.tablesorter-headerDesc {
+    background-image: url("data:image/gif;base64, R0lGODlhFQAEAIAAACMtMP///yH5BAEAAAEALAAAAAAVAAQAAAINjI8Bya2wnINUMopZAQA7")no-repeat 99%;
+    background-repeat: no-repeat;
+    background-position: center right;
+}
+table.tablesorter th.headerSortDown,
+table.tablesorter th.headerSortUp {
+background-color: #8dbdd8;
+}
+
+.tablesorter-headerRow{
+    background-color: rgb(244, 244, 244);
+}
+.tablesorter-headerRow:hover{
+    background-color:rgb(244, 244, 244) !important ;
+}
+</style>
+
+<table id = "test-table" class="tablesorter">
+    <thead>
+        <th style="text-align: center;" >Status <span class="sort-by">  </span></th>
+        <th style="text-align: center;" ><span class="sort-by"> Meshery Component  </span> </th>
+        <th style="text-align: center;" ><span class="sort-by"> Meshery Component Version </span> </th>
+        <th style="text-align: center;" ><span class="sort-by"> Meshery Server Version </span> </th>
+        <th style="text-align: center;" > <span class="sort-by"> Service Mesh </span> </th>
+        <th style="text-align: center;" ><span class="sort-by"> Service Mesh Version </span></th>
+    </thead>
+    <tbody>
     {% for item in sorted_tests_istio  %}
         {% if item.overall-status == "passing" %}
             {% assign overall-status = "background-color: #56b257; color: white;" %}
-            {% assign result-state = "/assets/img/passing.svg"></td>" %}
+            {% assign result-state = "/assets/img/passing.svg" %}
         {% elsif item.overall-status == "partial" %}
             {% assign overall-status = "background-color: #EBC017; color: white;" %}
             {% assign result-state = "/assets/img/YellowCheck.svg" %}
@@ -22,11 +87,11 @@
             {% assign overall-status = "" %}
         {% endif %}
         {% if item.meshery-component-version == "edge" %}
-            <tr style= "visibility: hidden; display: none;" class="test-details edge edge_visible" onclick="toggle_visibility('{{forloop.index}}');">
+            <tr style= "visibility: hidden; display: none;background-color: white;" class="test-details edge edge_visible" onclick="toggle_visibility('{{item.timestamp}}');">
         {% else %}
-            <tr style= "visibility: hidden; display: none;" class="test-details stable stable_visible" onclick="toggle_visibility('{{forloop.index}}');">
+            <tr style= "visibility: hidden; display: none;background-color: white;" class="test-details stable stable_visible" onclick="toggle_visibility('{{item.timestamp}}');">
         {% endif %}    
-            <td style="{{overall-status}}" >{{ item.timestamp }}</td>
+            <td id="timestamp" style="{{overall-status}}" >{{ item.timestamp }}</td>
             <td><a href="{{ site.repo }}-{{ item.service-mesh }}">{{ item.meshery-component }}</a></td>
             {% if item.meshery-component-version == "edge" %}
                 <td><a href="{{ site.repo }}-{{ item.service-mesh }}/releases">{{ item.meshery-component-version }}</a></td>
@@ -41,7 +106,7 @@
             <td><img style="height: 1rem; vertical-align: text-bottom;" src="{{site.baseurl}}/assets/img/service-meshes/{{item.service-mesh | downcase }}.svg" />&nbsp;<a href="{{ site.baseurl }}/service-meshes/adapters/{{ item.service-mesh }}">{{ item.service-mesh }}</a></td>
             <td>{{ item.service-mesh-version }}</td>
         </tr>   
-        <tr id="{{forloop.index}}" style="visibility:hidden; display:none;">
+        <tr class="hidden-details" id="{{item.timestamp}}" style="visibility:hidden; display:none;">
             <td colspan="2" class="details">
                 <i>Platform:</i>
                 <li><img style="height: 1rem; vertical-align: text-bottom;" src="{{site.baseurl}}/assets/img/kubernetes-icon-color.svg" />  {{item.k8s-distro}}  {{item.k8s-version}}</li>
@@ -56,5 +121,15 @@
             </td>
         </tr>
     {% endfor %}
-
+</tbody>
 </table>
+
+<script type="text/javascript" >
+
+    $(function($) {
+            console.log("sorting table");
+            $("#test-table").tablesorter({
+                cssChildRow: "hidden-details",
+            });
+    });
+</script>

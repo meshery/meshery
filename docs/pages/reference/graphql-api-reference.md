@@ -59,6 +59,30 @@ Query for fetching all results for profile ID.
 | ---- | ---- | ----------- |
 | <a id="queryfetchallresultsselector"></a>`selector` | [`PageFilter!`](#pagefilter) |  |
 
+### `Query.fetchFilterCatalogContent`
+
+Query for getting Filter Catalog from remote provider.
+
+###### **Returns** [`[CatalogFilter!]!`](#catalogfilter).
+
+#### **Arguments**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="queryfetchfiltercatalogcontentselector"></a>`selector` | [`CatalogSelector`](#catalogselector) |  |
+
+### `Query.fetchPatternCatalogContent`
+
+Query for getting Pattern Catalog from remote provider.
+
+###### **Returns** [`[CatalogPattern!]!`](#catalogpattern).
+
+#### **Arguments**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="queryfetchpatterncatalogcontentselector"></a>`selector` | [`CatalogSelector`](#catalogselector) |  |
+
 ### `Query.fetchPatterns`
 
 Query for fetching all patterns with selector.
@@ -107,6 +131,17 @@ Query available Namesapces in your cluster.
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | <a id="querygetavailablenamespacesk8sclusterids"></a>`k8sClusterIDs` | [`[String!]`](#string) |  |
+
+### `Query.getClusterResources`
+
+###### **Returns** [`ClusterResources!`](#clusterresources).
+
+#### **Arguments**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="querygetclusterresourcesk8scontextids"></a>`k8scontextIDs` | [`[String!]`](#string) |  |
+| <a id="querygetclusterresourcesnamespace"></a>`namespace` | [`String!`](#string) |  |
 
 ### `Query.getControlPlanes`
 
@@ -352,6 +387,64 @@ Listen to changes in Broker (NATS) Connection.
 
 ###### **Returns** [`Boolean!`](#boolean).
 
+### `Subscription.subscribeClusterResources`
+
+###### **Returns** [`ClusterResources!`](#clusterresources).
+
+#### **Arguments**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="subscriptionsubscribeclusterresourcesk8scontextids"></a>`k8scontextIDs` | [`[String!]`](#string) |  |
+| <a id="subscriptionsubscribeclusterresourcesnamespace"></a>`namespace` | [`String!`](#string) |  |
+
+### `Subscription.subscribeConfiguration`
+
+###### **Returns** [`ConfigurationPage!`](#configurationpage).
+
+#### **Arguments**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="subscriptionsubscribeconfigurationapplicationselector"></a>`applicationSelector` | [`PageFilter!`](#pagefilter) |  |
+| <a id="subscriptionsubscribeconfigurationfilterselector"></a>`filterSelector` | [`PageFilter!`](#pagefilter) |  |
+| <a id="subscriptionsubscribeconfigurationpatternselector"></a>`patternSelector` | [`PageFilter!`](#pagefilter) |  |
+
+### `Subscription.subscribeK8sContext`
+
+###### **Returns** [`K8sContextsPage!`](#k8scontextspage).
+
+#### **Arguments**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="subscriptionsubscribek8scontextselector"></a>`selector` | [`PageFilter!`](#pagefilter) |  |
+
+### `Subscription.subscribeMeshSyncEvents`
+
+Listen to the events that MeshSync is sending through Meshery Broker.
+Note: It does not listen to the changes in meshery database, but to meshsync events.
+
+###### **Returns** [`MeshSyncEvent!`](#meshsyncevent).
+
+#### **Arguments**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="subscriptionsubscribemeshsynceventsk8scontextids"></a>`k8scontextIDs` | [`[String!]`](#string) |  |
+
+### `Subscription.subscribeMesheryControllersStatus`
+
+Listen to changes in the status of meshery controllers.
+
+###### **Returns** [`[MesheryControllersStatusListItem!]!`](#mesherycontrollersstatuslistitem).
+
+#### **Arguments**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="subscriptionsubscribemesherycontrollersstatusk8scontextids"></a>`k8scontextIDs` | [`[String!]`](#string) |  |
+
 ### `Subscription.subscribePerfProfiles`
 
 Listen to changes in Performance Profiles.
@@ -400,6 +493,84 @@ Deatils about the Addon Component.
 | ---- | ---- | ----------- |
 | <a id="addonlistname"></a>`name` | [`String!`](#string) | Name. |
 | <a id="addonlistowner"></a>`owner` | [`String!`](#string) | Owner. |
+
+### `ApplicationPage`
+
+#### **Fields**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="applicationpageapplications"></a>`applications` | [`[ApplicationResult]`](#applicationresult) |  |
+| <a id="applicationpagepage"></a>`page` | [`Int!`](#int) |  |
+| <a id="applicationpagepage_size"></a>`page_size` | [`Int!`](#int) |  |
+| <a id="applicationpagetotal_count"></a>`total_count` | [`Int!`](#int) |  |
+
+### `ApplicationResult`
+
+#### **Fields**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="applicationresultapplication_file"></a>`application_file` | [`String!`](#string) |  |
+| <a id="applicationresultcreated_at"></a>`created_at` | [`String`](#string) |  |
+| <a id="applicationresultid"></a>`id` | [`ID!`](#id) |  |
+| <a id="applicationresultlocation"></a>`location` | [`Location!`](#location) |  |
+| <a id="applicationresultname"></a>`name` | [`String!`](#string) |  |
+| <a id="applicationresulttype"></a>`type` | [`NullString!`](#nullstring) |  |
+| <a id="applicationresultupdated_at"></a>`updated_at` | [`String`](#string) |  |
+| <a id="applicationresultuser_id"></a>`user_id` | [`String!`](#string) |  |
+
+### `CatalogFilter`
+
+#### **Fields**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="catalogfiltercatalog_data"></a>`catalog_data` | [`Map!`](#map) |  |
+| <a id="catalogfiltercreated_at"></a>`created_at` | [`String`](#string) |  |
+| <a id="catalogfilterfilter_file"></a>`filter_file` | [`String!`](#string) |  |
+| <a id="catalogfilterid"></a>`id` | [`ID!`](#id) |  |
+| <a id="catalogfilterlocation"></a>`location` | [`Location!`](#location) |  |
+| <a id="catalogfiltername"></a>`name` | [`String!`](#string) |  |
+| <a id="catalogfilterupdated_at"></a>`updated_at` | [`String`](#string) |  |
+| <a id="catalogfilteruser_id"></a>`user_id` | [`String!`](#string) |  |
+| <a id="catalogfiltervisibility"></a>`visibility` | [`String!`](#string) |  |
+
+### `CatalogPattern`
+
+#### **Fields**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="catalogpatterncatalog_data"></a>`catalog_data` | [`Map!`](#map) |  |
+| <a id="catalogpatterncreated_at"></a>`created_at` | [`String`](#string) |  |
+| <a id="catalogpatternid"></a>`id` | [`ID!`](#id) |  |
+| <a id="catalogpatternlocation"></a>`location` | [`Location!`](#location) |  |
+| <a id="catalogpatternname"></a>`name` | [`String!`](#string) |  |
+| <a id="catalogpatternpattern_file"></a>`pattern_file` | [`String!`](#string) |  |
+| <a id="catalogpatternupdated_at"></a>`updated_at` | [`String`](#string) |  |
+| <a id="catalogpatternuser_id"></a>`user_id` | [`String!`](#string) |  |
+| <a id="catalogpatternvisibility"></a>`visibility` | [`String!`](#string) |  |
+
+### `ClusterResources`
+
+Details about discovered workloads.
+
+#### **Fields**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="clusterresourcesresources"></a>`resources` | [`[Resource!]!`](#resource) |  |
+
+### `ConfigurationPage`
+
+#### **Fields**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="configurationpageapplications"></a>`applications` | [`ApplicationPage`](#applicationpage) |  |
+| <a id="configurationpagefilters"></a>`filters` | [`FilterPage`](#filterpage) |  |
+| <a id="configurationpagepatterns"></a>`patterns` | [`PatternPageResult`](#patternpageresult) |  |
 
 ### `Container`
 
@@ -485,6 +656,60 @@ Data Plane for a particular Mesh.
 | <a id="errorcode"></a>`code` | [`String!`](#string) | Error Code. |
 | <a id="errordescription"></a>`description` | [`String!`](#string) | Error Details. |
 
+### `FilterPage`
+
+#### **Fields**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="filterpagefilters"></a>`filters` | [`[FilterResult]`](#filterresult) |  |
+| <a id="filterpagepage"></a>`page` | [`Int!`](#int) |  |
+| <a id="filterpagepage_size"></a>`page_size` | [`Int!`](#int) |  |
+| <a id="filterpagetotal_count"></a>`total_count` | [`Int!`](#int) |  |
+
+### `FilterResult`
+
+#### **Fields**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="filterresultcatalog_data"></a>`catalog_data` | [`Map`](#map) |  |
+| <a id="filterresultcreated_at"></a>`created_at` | [`String`](#string) |  |
+| <a id="filterresultfilter_file"></a>`filter_file` | [`String!`](#string) |  |
+| <a id="filterresultid"></a>`id` | [`ID!`](#id) |  |
+| <a id="filterresultlocation"></a>`location` | [`Location!`](#location) |  |
+| <a id="filterresultname"></a>`name` | [`String!`](#string) |  |
+| <a id="filterresultupdated_at"></a>`updated_at` | [`String`](#string) |  |
+| <a id="filterresultuser_id"></a>`user_id` | [`String!`](#string) |  |
+| <a id="filterresultvisibility"></a>`visibility` | [`String!`](#string) |  |
+
+### `K8sContext`
+
+#### **Fields**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="k8scontextauth"></a>`auth` | [`Map!`](#map) |  |
+| <a id="k8scontextcluster"></a>`cluster` | [`Map!`](#map) |  |
+| <a id="k8scontextcreated_at"></a>`created_at` | [`String!`](#string) |  |
+| <a id="k8scontextcreated_by"></a>`created_by` | [`ID!`](#id) |  |
+| <a id="k8scontextid"></a>`id` | [`String!`](#string) |  |
+| <a id="k8scontextkubernetes_server_id"></a>`kubernetes_server_id` | [`ID!`](#id) |  |
+| <a id="k8scontextmeshery_instance_id"></a>`meshery_instance_id` | [`ID!`](#id) |  |
+| <a id="k8scontextname"></a>`name` | [`String!`](#string) |  |
+| <a id="k8scontextowner"></a>`owner` | [`ID!`](#id) |  |
+| <a id="k8scontextserver"></a>`server` | [`String!`](#string) |  |
+| <a id="k8scontextupdated_at"></a>`updated_at` | [`String!`](#string) |  |
+
+### `K8sContextsPage`
+
+#### **Fields**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="k8scontextspagecontexts"></a>`contexts` | [`[K8sContext]!`](#k8scontext) |  |
+| <a id="k8scontextspagetotal_count"></a>`total_count` | [`Int!`](#int) |  |
+
 ### `KctlDescribeDetails`
 
 #### **Fields**
@@ -493,6 +718,37 @@ Data Plane for a particular Mesh.
 | ---- | ---- | ----------- |
 | <a id="kctldescribedetailsctxid"></a>`ctxid` | [`String`](#string) |  |
 | <a id="kctldescribedetailsdescribe"></a>`describe` | [`String`](#string) |  |
+
+### `Location`
+
+#### **Fields**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="locationbranch"></a>`branch` | [`String`](#string) |  |
+| <a id="locationhost"></a>`host` | [`String`](#string) |  |
+| <a id="locationpath"></a>`path` | [`String`](#string) |  |
+| <a id="locationtype"></a>`type` | [`String`](#string) |  |
+
+### `MeshSyncEvent`
+
+#### **Fields**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="meshsynceventcontextid"></a>`contextId` | [`String!`](#string) |  |
+| <a id="meshsynceventobject"></a>`object` | [`Any!`](#any) |  |
+| <a id="meshsynceventtype"></a>`type` | [`String!`](#string) |  |
+
+### `MesheryControllersStatusListItem`
+
+#### **Fields**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="mesherycontrollersstatuslistitemcontextid"></a>`contextId` | [`String!`](#string) |  |
+| <a id="mesherycontrollersstatuslistitemcontroller"></a>`controller` | [`MesheryController!`](#mesherycontroller) |  |
+| <a id="mesherycontrollersstatuslistitemstatus"></a>`status` | [`MesheryControllerStatus!`](#mesherycontrollerstatus) |  |
 
 ### `MesheryResult`
 
@@ -522,6 +778,15 @@ Type to define a k8s Namespace.
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | <a id="namespacenamespace"></a>`namespace` | [`String!`](#string) | Namespace Name. |
+
+### `NullString`
+
+#### **Fields**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="nullstringstring"></a>`String` | [`String!`](#string) |  |
+| <a id="nullstringvalid"></a>`Valid` | [`Boolean!`](#boolean) |  |
 
 ### `OAMCapability`
 
@@ -582,17 +847,6 @@ Status of Meshery Operator and its controllers.
 | <a id="operatorstatusperk8scontextcontextid"></a>`contextID` | [`String!`](#string) |  |
 | <a id="operatorstatusperk8scontextoperatorstatus"></a>`operatorStatus` | [`OperatorStatus!`](#operatorstatus) |  |
 
-### `PatternLocation`
-
-#### **Fields**
-
-| Name | Type | Description |
-| ---- | ---- | ----------- |
-| <a id="patternlocationbranch"></a>`branch` | [`String`](#string) |  |
-| <a id="patternlocationhost"></a>`host` | [`String`](#string) |  |
-| <a id="patternlocationpath"></a>`path` | [`String`](#string) |  |
-| <a id="patternlocationtype"></a>`type` | [`String`](#string) |  |
-
 ### `PatternPageResult`
 
 #### **Fields**
@@ -611,14 +865,16 @@ Status of Meshery Operator and its controllers.
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | <a id="patternresultcansupport"></a>`canSupport` | [`Boolean!`](#boolean) |  |
+| <a id="patternresultcatalog_data"></a>`catalog_data` | [`Map`](#map) |  |
 | <a id="patternresultcreated_at"></a>`created_at` | [`String`](#string) |  |
 | <a id="patternresulterrmsg"></a>`errmsg` | [`String`](#string) |  |
 | <a id="patternresultid"></a>`id` | [`ID!`](#id) |  |
-| <a id="patternresultlocation"></a>`location` | [`PatternLocation!`](#patternlocation) |  |
+| <a id="patternresultlocation"></a>`location` | [`Location!`](#location) |  |
 | <a id="patternresultname"></a>`name` | [`String!`](#string) |  |
 | <a id="patternresultpattern_file"></a>`pattern_file` | [`String!`](#string) |  |
 | <a id="patternresultupdated_at"></a>`updated_at` | [`String`](#string) |  |
 | <a id="patternresultuser_id"></a>`user_id` | [`String!`](#string) |  |
+| <a id="patternresultvisibility"></a>`visibility` | [`String!`](#string) |  |
 
 ### `PerfPageProfiles`
 
@@ -666,6 +922,15 @@ Status of Meshery Operator and its controllers.
 | <a id="perfprofileupdated_at"></a>`updated_at` | [`String`](#string) |  |
 | <a id="perfprofileuser_id"></a>`user_id` | [`String!`](#string) |  |
 
+### `Resource`
+
+#### **Fields**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="resourcecount"></a>`count` | [`Int!`](#int) | Number of resouce. |
+| <a id="resourcekind"></a>`kind` | [`String!`](#string) | Name of resource. |
+
 ## Enumeration types
 
 Also called _Enums_, enumeration types are a special kind of scalar that
@@ -696,6 +961,23 @@ Service Mesh Types.
 | <a id="meshtypeopen_service_mesh"></a>`OPEN_SERVICE_MESH` | Open Service Mesh. |
 | <a id="meshtypetanzu"></a>`TANZU` | VMware Tanzu Service Mesh. |
 | <a id="meshtypetraefik_mesh"></a>`TRAEFIK_MESH` | Traefik Mesh. |
+
+### `MesheryController`
+
+| Value | Description |
+| ----- | ----------- |
+| <a id="mesherycontrollerbroker"></a>`BROKER` |  |
+| <a id="mesherycontrollermeshsync"></a>`MESHSYNC` |  |
+| <a id="mesherycontrolleroperator"></a>`OPERATOR` |  |
+
+### `MesheryControllerStatus`
+
+| Value | Description |
+| ----- | ----------- |
+| <a id="mesherycontrollerstatusdeployed"></a>`DEPLOYED` |  |
+| <a id="mesherycontrollerstatusdeploying"></a>`DEPLOYING` |  |
+| <a id="mesherycontrollerstatusnotdeployed"></a>`NOTDEPLOYED` |  |
+| <a id="mesherycontrollerstatusunkown"></a>`UNKOWN` |  |
 
 ### `Status`
 
@@ -761,6 +1043,15 @@ Input for changing Addon Status.
 | <a id="addonstatusinputk8scontextid"></a>`k8scontextID` | [`String!`](#string) | kubernetes context ID. |
 | <a id="addonstatusinputselector"></a>`selector` | [`MeshType`](#meshtype) | Filter by Serice Mesh. |
 | <a id="addonstatusinputtargetstatus"></a>`targetStatus` | [`Status!`](#status) | Desired Status. |
+
+### `CatalogSelector`
+
+#### **Arguments**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="catalogselectororder"></a>`order` | [`String!`](#string) |  |
+| <a id="catalogselectorsearch"></a>`search` | [`String!`](#string) |  |
 
 ### `PageFilter`
 

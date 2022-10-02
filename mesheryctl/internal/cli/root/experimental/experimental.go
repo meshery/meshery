@@ -19,10 +19,12 @@ var ExpCmd = &cobra.Command{
 	Use:   "exp",
 	Short: "Experimental commands for mesheryctl",
 	Long:  `List of experimental commands for testing and evaluation purpose.`,
-	Args:  cobra.MinimumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
+		if len(args) == 0 {
+			return cmd.Help()
+		}
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
-			return errors.New(utils.SystemError(fmt.Sprintf("invalid command: \"%s\"", args[0])))
+			return errors.New(utils.ExpError(fmt.Sprintf("'%s' is a invalid command. Use 'mesheryctl exp --help' to display usage guide.'\n", args[0])))
 		}
 		return nil
 	},

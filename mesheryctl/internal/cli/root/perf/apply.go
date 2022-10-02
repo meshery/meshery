@@ -13,7 +13,7 @@ import (
 	"github.com/ghodss/yaml"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/layer5io/meshery/models"
+	"github.com/layer5io/meshery/server/models"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
 	log "github.com/sirupsen/logrus"
 
@@ -65,7 +65,7 @@ mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --mesh i
 
 ! Refer below image link for usage
 * Usage of mesheryctl perf apply
-# ![perf-apply-usage](../../../../docs/assets/img/mesheryctl/perf-apply.png)
+# ![perf-apply-usage](/assets/img/mesheryctl/perf-apply.png)
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client := &http.Client{}

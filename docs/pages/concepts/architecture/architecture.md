@@ -114,6 +114,7 @@ Meshery uses the following list of network ports to interface with its various c
 | Component                |   Port   | Purpose                                         |
 | :----------------------- | :------: | :-----------------------------------------------|
 | Meshery Server          | 9081/tcp | UI, REST and GraphQL APIs                           |
+| Meshery Server          | 80/tcp | Websocket                          |
 | [Meshery Broker](/concepts/architecture/broker)           | 4222/tcp | Client communication with Meshery Server        |
 | [Meshery Broker](/concepts/architecture/broker)            | 8222/tcp | HTTP management port for monitoring Meshery Broker. Available as of Meshery v0.5.0 |
 | [Meshery Broker](/concepts/architecture/broker)            | 6222/tcp | Routing port for Broker clustering. Unused as of Meshery v0.6.0-rc-2             |
@@ -126,7 +127,7 @@ Meshery uses the following list of network ports to interface with its various c
 {% if adapter.port -%}
 | <img src="{{ adapter.image }}" style="width:20px" /> [{{ adapter.name }}]({{ site.baseurl }}{{ adapter.url }}) | {{ adapter.port }} | Communication with Meshery Server |
 {% endif -%}
-{% endfor %}
-| [Meshery Perf](https://docs.meshery.io/functionality/performance-management) | 10013/gRPC    | Performance Management                            |
+{% endfor -%}
+| [Meshery Perf](https://docs.meshery.io/functionality/performance-management) | 10013/gRPC    | Performance Management|
 
 See the [**Adapters**]({{ site.baseurl }}/concepts/architecture/adapters) section for more information on the function of an adapter.

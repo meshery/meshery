@@ -58,7 +58,7 @@ function FlipCard({
       className={classes.card}
       onClick={() => {
         setFlipped((flipped) => !flipped);
-        onClick();
+        onClick && onClick();
         onShow && onShow();
       }}
     >
