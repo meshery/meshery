@@ -34,7 +34,7 @@
         "name": "ErrInstallUsingIstioctlCode",
         "code": "1003",
         "severity": "Alert",
-        "long_description": "Error occured while installing istio mesh through istioctl",
+        "long_description": "Error occurred while installing istio mesh through istioctl",
         "short_description": "Error with istio operation",
         "probable_cause": "",
         "suggested_remediation": ""
@@ -79,7 +79,7 @@
         "name": "ErrSampleAppCode",
         "code": "1008",
         "severity": "Alert",
-        "long_description": "Error occured while trying to install a sample application using manifests",
+        "long_description": "Error occurred while trying to install a sample application using manifests",
         "short_description": "Error with sample app operation",
         "probable_cause": "Invalid kubeclient config\nInvalid manifest",
         "suggested_remediation": "Reconnect your adapter to meshery server to refresh the kubeclient"
@@ -97,7 +97,7 @@
         "name": "ErrApplyPolicyCode",
         "code": "1010",
         "severity": "Alert",
-        "long_description": "Error occured while trying to install a sample application using manifests",
+        "long_description": "Error occurred while trying to install a sample application using manifests",
         "short_description": "Error with apply policy operation",
         "probable_cause": "Invalid kubeclient config\nInvalid manifest",
         "suggested_remediation": "Reconnect your adapter to meshery server to refresh the kubeclient"
@@ -106,7 +106,7 @@
         "name": "ErrCustomOperationCode",
         "code": "1011",
         "severity": "Alert",
-        "long_description": "Error occured while applying custom manifest to the cluster",
+        "long_description": "Error occurred while applying custom manifest to the cluster",
         "short_description": "Error with custom operation",
         "probable_cause": "Invalid kubeclient config\nInvalid manifest",
         "suggested_remediation": ""
@@ -169,9 +169,9 @@
         "name": "ErrParseOAMConfigCode",
         "code": "1018",
         "severity": "Alert",
-        "long_description": "Error occured while parsing configuration in the request made by Meshery Server",
+        "long_description": "Error occurred while parsing configuration in the request made by Meshery Server",
         "short_description": "error parsing the configuration",
-        "probable_cause": "Could not unmarshall OAM config recieved via ProcessOAM gRPC call into a valid Config struct",
+        "probable_cause": "Could not unmarshall OAM config received via ProcessOAM gRPC call into a valid Config struct",
         "suggested_remediation": "Check if Meshery Server is creating valid config for ProcessOAM gRPC call. This error should never happen and can be reported as a bug in Meshery Server. Also, confirm that Meshery Server and Adapters are referring to same config struct provided in MeshKit"
       },
       "1019": {
@@ -205,7 +205,7 @@
         "name": "ErrOpInvalidCode",
         "code": "1022",
         "severity": "Alert",
-        "long_description": "Istio adapter recived an invalid operation from the meshey server",
+        "long_description": "Istio adapter received an invalid operation from the meshey server",
         "short_description": "Invalid operation",
         "probable_cause": "The operation is not supported by the adapter\nInvalid operation name",
         "suggested_remediation": "Check if the operation name is valid and supported by the adapter"
@@ -233,7 +233,7 @@
         "code": "1025",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "Error occured while applying Helm Chart",
+        "short_description": "Error occurred while applying Helm Chart",
         "probable_cause": "",
         "suggested_remediation": ""
       },
@@ -242,7 +242,7 @@
         "code": "1026",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "Error occured while fetching Istio release artifacts",
+        "short_description": "Error occurred while fetching Istio release artifacts",
         "probable_cause": "",
         "suggested_remediation": ""
       },
@@ -269,7 +269,7 @@
         "code": "1029",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "Error occured while downloading Istio tar",
+        "short_description": "Error occurred while downloading Istio tar",
         "probable_cause": "",
         "suggested_remediation": ""
       },
@@ -278,7 +278,7 @@
         "code": "1030",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "Error occured while unpacking tar",
+        "short_description": "Error occurred while unpacking tar",
         "probable_cause": "",
         "suggested_remediation": ""
       },
