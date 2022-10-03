@@ -3,7 +3,7 @@ package utils
 import (
 	"context"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net"
 	"net/http"
 	"net/url"
@@ -119,8 +119,8 @@ func (pf *PortForward) run() error {
 		return err
 	}
 
-	out := ioutil.Discard
-	errOut := ioutil.Discard
+	out := io.Discard
+	errOut := io.Discard
 	if pf.emitLogs {
 		out = os.Stdout
 		errOut = os.Stderr
