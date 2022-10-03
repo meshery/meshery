@@ -34,6 +34,10 @@ var (
 	version                        = "Not Set"
 	commitsha                      = "Not Set"
 	releasechannel                 = "Not Set"
+	dbUser                         = "postgres"
+	dbPass                         = "meshery"
+	dbHost                         = "localhost"
+	dbPort                         = "5432"
 )
 
 const (
@@ -148,7 +152,7 @@ func main() {
 	}
 	defer preferencePersister.ClosePersister()
 
-	dbHandler := models.GetNewDBInstance()
+	dbHandler := models.GetNewDBInstance(dbUser, dbPass, dbHost, dbPort)
 
 	meshsyncCh := make(chan struct{}, 10)
 	brokerConn := nats.NewEmptyConnection

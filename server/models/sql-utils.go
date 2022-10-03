@@ -9,7 +9,6 @@ import (
 	"github.com/layer5io/meshkit/database"
 	"github.com/layer5io/meshkit/logger"
 	"github.com/sirupsen/logrus"
-	"github.com/spf13/viper"
 )
 
 // sanitizeOrderInput takes in the "order by" query, a validColums
@@ -47,7 +46,7 @@ var (
 	mx        sync.Mutex
 )
 
-func setNewDBInstance() {
+func setNewDBInstance(user string, pass string, host string, port string) {
 	mx.Lock()
 	defer mx.Unlock()
 
@@ -61,8 +60,11 @@ func setNewDBInstance() {
 	}
 
 	dbHandler, err = database.New(database.Options{
-		Filename: fmt.Sprintf("file:%s/mesherydb.sql?cache=private&mode=rwc&_busy_timeout=10000&_journal_mode=WAL", viper.GetString("USER_DATA_FOLDER")),
 		Engine:   database.POSTGRES,
+		Username: user,
+		Password: pass,
+		Host:     host,
+		Port:     port,
 		Logger:   log,
 	})
 	if err != nil {
@@ -70,7 +72,7 @@ func setNewDBInstance() {
 	}
 }
 
-func GetNewDBInstance() *database.Handler {
-	setNewDBInstance()
+func GetNewDBInstance(user string, pass string, host string, port string) *database.Handler {
+	setNewDBInstance(user, pass, host, port)
 	return &dbHandler
 }
