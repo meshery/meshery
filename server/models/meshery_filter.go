@@ -13,7 +13,7 @@ type MesheryFilter struct {
 	ID *uuid.UUID `json:"id,omitempty"`
 
 	Name       string `json:"name,omitempty"`
-	FilterFile string `json:"filter_file"`
+	FilterFile []byte `json:"filter_file" gorm:"type:bytea"`
 	// Meshery doesn't have the user id fields
 	// but the remote provider is allowed to provide one
 	UserID *string `json:"user_id" gorm:"-"`
