@@ -99,7 +99,6 @@ function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference
     };
   }, [])
 
-  console.log({ formData, schemaSet, onSubmit, onDelete, reference, namespace, onSettingsChange, onTraitsChange, scroll })
 
   const handleTabChange = (_, newValue) => {
     setTab(newValue);
