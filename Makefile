@@ -78,6 +78,8 @@ nighthawk-setup:
 	cd server; cd cmd; git clone https://github.com/layer5io/nighthawk-go.git; cd nighthawk-go; make setup; cd ..
 
 run-local: server-local error
+
+
 ## Build and run Meshery Server on your local machine
 ## and point to (expect) a locally running Meshery Cloud or other Provider(s)
 ## for user authentication (requires go${GOVERSION}).
@@ -95,7 +97,8 @@ run-fast:
 	## "DEPRECATED: This target is deprecated. Use `make server`.
 
 ## Build and run Meshery Server on your local machine (requires go${GOVERSION}).
-server:
+server: 
+	docker run -d -p 5432:5432 -e POSTGRES_PASSWORD=meshery --name pg postgres
 	cd server; cd cmd; go$(GOVERSION) mod tidy; \
 	BUILD="$(GIT_VERSION)" \
 	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
@@ -107,6 +110,7 @@ server:
 
 ## Build and run Meshery Server with no Kubernetes components on your local machine (requires go${GOVERSION}).
 server-skip-compgen:
+	docker run -d -p 5432:5432 -e POSTGRES_PASSWORD=meshery --name pg postgres
 	cd server; cd cmd; go$(GOVERSION) mod tidy; \
 	BUILD="$(GIT_VERSION)" \
 	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
@@ -119,6 +123,7 @@ server-skip-compgen:
 		
 ## Build and run Meshery Server with no seed content (requires go$(GOVERSION)).
 server-no-content:
+	docker run -d -p 5432:5432 -e POSTGRES_PASSWORD=meshery --name pg postgres
 	cd server; cd cmd; go$(GOVERSION) mod tidy; \
 	BUILD="$(GIT_VERSION)" \
 	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
