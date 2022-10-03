@@ -88,11 +88,11 @@ mesheryctl exp filter apply --file https://github.com/layer5io/wasm-filters/tree
 			if len(response.Filters) == 0 {
 				return errors.New("no filters found with the given name")
 			} else if len(response.Filters) == 1 {
-				filterFile = response.Filters[0].FilterFile
+				filterFile = string(response.Filters[0].FilterFile)
 			} else {
 				// Multiple filters with same name
 				index = multipleFiltersConfirmation(response.Filters)
-				filterFile = response.Filters[index].FilterFile
+				filterFile = string(response.Filters[index].FilterFile)
 			}
 		} else {
 			// Method to check if the entered file is a URL or not
@@ -207,7 +207,7 @@ mesheryctl exp filter apply --file https://github.com/layer5io/wasm-filters/tree
 				}
 
 				// setup filter file here
-				filterFile = response[0].FilterFile
+				filterFile = string(response[0].FilterFile)
 			}
 		}
 
@@ -243,7 +243,7 @@ func multipleFiltersConfirmation(profiles []models.MesheryFilter) int {
 		fmt.Printf("Name: %v\n", a.Name)
 		fmt.Printf("ID: %s\n", a.ID.String())
 		fmt.Printf("FilterFile:\n")
-		fmt.Printf(a.FilterFile)
+		fmt.Printf(string(a.FilterFile))
 		fmt.Println("---------------------")
 	}
 

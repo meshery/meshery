@@ -66,7 +66,6 @@ func setNewDBInstance() {
 		Logger:   log,
 	})
 	if err != nil {
-		fmt.Println("here1: ", err.Error())
 		logrus.Fatal(err)
 	}
 }
