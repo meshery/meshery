@@ -312,7 +312,7 @@ export function buildUiSchema(schema) {
   jsonSchemaBuilder(schema, uiSchemaObj);
 
   // 2. Set the ordering of the components
-  uiSchemaObj["ui:order"] = ["name", "namespace", "*"]
+  uiSchemaObj["ui:order"] = ["name", "namespace", "label", "annotation", "*"]
 
   //3. Return the final uiSchema Object
   return uiSchemaObj

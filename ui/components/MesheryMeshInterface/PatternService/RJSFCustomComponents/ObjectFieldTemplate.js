@@ -86,7 +86,7 @@ const ObjectFieldTemplate = ({
         ) : (
           <Grid
             item={true}
-            xs={element.name === "name" || element.name === "namespace" ? 6 : 12}
+            xs={element.name === "name" || element.name === "namespace" || element.name == "label" || element.name == "annotation" ? 6 : 12}
             key={index}
           >
             {element.content}

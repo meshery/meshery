@@ -1,6 +1,6 @@
 // @ts-check
 import { AppBar, Button, makeStyles, Tab, Tabs, Typography } from "@material-ui/core";
-import React from "react";
+import React, { useEffect } from "react";
 import { getMeshProperties } from "../../utils/nameMapper";
 import PatternServiceFormCore from "./PatternServiceFormCore";
 import SettingsIcon from '@material-ui/icons/Settings';
@@ -15,7 +15,6 @@ const useStyles = makeStyles(() => ({
     zIndex : 'auto',
   },
   tabPanel : {
-    marginTop : "1.1rem",
     padding : "0px 2px"
   },
   formWrapper : {
@@ -75,6 +74,32 @@ function RJSFFormChildComponent({ onSubmit, onDelete }){
 function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference, namespace, onSettingsChange, onTraitsChange, scroll=false }) {
   const [tab, setTab] = React.useState(0);
   const classes = useStyles({ color : getMeshProperties(getMeshName(schemaSet))?.color });
+
+  useEffect(() => {
+    schemaSet.workload.properties.name = {
+      description : "The Name for the service",
+      default : "default",
+      type : "string",
+      required : true
+    };
+    schemaSet.workload.properties.namespace = {
+      description : "The Namespace for the service",
+      default : "<Name of the Component>",
+      type : "string"
+    };
+    schemaSet.workload.properties.label = {
+      description : "The label for the service",
+      default : "",
+      type : "string"
+    };
+    schemaSet.workload.properties.annotation = {
+      description : "The annotation for the service",
+      default : "",
+      type : "string"
+    };
+  }, [])
+
+  console.log({ formData, schemaSet, onSubmit, onDelete, reference, namespace, onSettingsChange, onTraitsChange, scroll })
 
   const handleTabChange = (_, newValue) => {
     setTab(newValue);
