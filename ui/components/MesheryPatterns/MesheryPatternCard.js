@@ -137,7 +137,6 @@ function MesheryPatternCard({
                 <UndeployIcon fill="#ffffff" className={classes.iconPatt} />
                 <span className={classes.btnText}>Undeploy</span>
               </Button>
-``
               { visibility === "private" ?  <Button
                 variant="contained"
                 color="primary"
