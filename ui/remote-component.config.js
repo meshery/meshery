@@ -19,7 +19,6 @@ module.exports = {
     "@material-ui/icons/ChevronLeft" : require("@material-ui/icons/ChevronLeft"),
     "@material-ui/icons/Assessment" : require("@material-ui/icons/Assessment"),
     "@material-ui/icons/DesktopMac" : require("@material-ui/icons/DesktopMac"),
-    "@material-ui/icons/TouchApp" : require("@material-ui/icons/TouchApp"),
     "@material-ui/icons/Traffic" : require("@material-ui/icons/Traffic"),
     "@material-ui/icons/Security" : require("@material-ui/icons/Security"),
     "@material-ui/icons/HelpOutline" : require("@material-ui/icons/HelpOutline"),
@@ -56,6 +55,7 @@ module.exports = {
     "@material-ui/core/FormControl" : require("@material-ui/core/FormControl"),
     "@material-ui/core/Select" : require("@material-ui/core/Select"),
     "@material-ui/icons/Fullscreen" : require("@material-ui/icons/Fullscreen"),
+    "@material-ui/icons/Phone" : require("@material-ui/icons/Phone"),
     "@material-ui/icons/FullscreenExit" : require("@material-ui/icons/FullscreenExit"),
     "@material-ui/icons/RotateRight" : require("@material-ui/icons/RotateRight"),
     "@material-ui/icons/RotateLeft" : require("@material-ui/icons/RotateLeft"),
@@ -142,8 +142,11 @@ module.exports = {
     "@material-ui/icons" : require("@material-ui/icons"),
     "@material-ui/core/InputAdornment" : require("@material-ui/core/InputAdornment"),
     '@material-ui/icons/InsertChart' : require("@material-ui/icons/InsertChart"),
-    '@material-ui/icons/TouchApp' : require('@material-ui/icons/TouchApp')
-
-
+    '@material-ui/icons/TouchApp' : require('@material-ui/icons/TouchApp'),
+    "@material-ui/icons/CheckCircle" : require("@material-ui/icons/CheckCircle"),
+    "@material-ui/icons/Warning" : require("@material-ui/icons/Warning"),
+    "@material-ui/icons/GetApp" : require("@material-ui/icons/GetApp"),
+    "@material-ui/core/Avatar" : require("@material-ui/core/Avatar"),
+    "@material-ui/lab/AvatarGroup" : require("@material-ui/lab/AvatarGroup"),
   },
 };

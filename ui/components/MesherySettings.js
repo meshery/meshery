@@ -55,7 +55,7 @@ const styles = (theme) => ({
     margin : theme.spacing(0.5),
     padding : theme.spacing(1),
     borderRadius : 5,
-    backgroundColor : "#dc3545",
+    backgroundColor : "#8F1F00",
     "&:hover" : {
       backgroundColor : "#B32700",
     },
@@ -173,7 +173,6 @@ class MesherySettings extends React.Component {
     dataFetch(
       ctxUrl('/api/system/meshsync/grafana', this.props.selectedK8sContexts),
       {
-        credentials : "same-origin",
         method : "GET",
         credentials : "include",
       },

@@ -1,6 +1,6 @@
 import {
   Dialog, DialogActions, DialogContent, DialogTitle, Divider, IconButton, NoSsr,
-  TableCell, Tooltip, Typography
+  TableCell, Tooltip, Typography, Button
 } from "@material-ui/core";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
@@ -18,7 +18,7 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import dataFetch from "../lib/data-fetch";
 import { updateProgress } from "../lib/store";
-import FILE_OPS from "../utils/configurationFileHandlersEnum";
+import { FILE_OPS } from "../utils/Enum";
 import { ctxUrl } from "../utils/multi-ctx";
 import { getComponentsinFile, randomPatternNameGenerator as getRandomName } from "../utils/utils";
 import PromptComponent from "./PromptComponent";
@@ -30,6 +30,9 @@ import ViewSwitch from "./ViewSwitch";
 import ApplicationsGrid from "./MesheryApplications/ApplicationsGrid";
 import { fileDownloader } from "../utils/fileDownloader";
 import { trueRandom } from "../lib/trueRandom";
+import PublishIcon from "@material-ui/icons/Publish";
+import InfoIcon from '@material-ui/icons/Info';
+import ConfigurationSubscription from "./graphql/subscriptions/ConfigurationSubscription";
 
 const styles = (theme) => ({
   grid : { padding : theme.spacing(2), },
@@ -237,25 +240,33 @@ function MesheryApplications({
     name : "",
     count : 0
   });
+
+  const [importModal, setImportModal] = useState({
+    open : false
+  })
+
   const [viewType, setViewType] = useState(
     /**  @type {TypeView} */
     ("grid")
   );
-
+  const disposeConfSubscriptionRef = useRef(null);
   const searchTimeout = useRef(null);
 
   /**
    * fetch applications when the page loads
    */
   useEffect(() => {
-    fetchApplications(page, pageSize, search, sortOrder);
   }, [page, pageSize, search, sortOrder]);
 
   /**
    * fetch applications when the application downloads
    */
   useEffect(() => {
+    initAppsSubscription();
     getTypes();
+    return () => {
+      disposeConfSubscriptionRef.current.dispose();
+    }
   },[]);
 
   const handleModalClose = () => {
@@ -267,7 +278,41 @@ function MesheryApplications({
     });
   }
 
+  const initAppsSubscription = (pageNo=page.toString(), pagesize=pageSize.toString(), searchText=search, order=sortOrder) => {
+    if (disposeConfSubscriptionRef.current) {
+      disposeConfSubscriptionRef.current.dispose();
+    }
+    const configurationSubscription = ConfigurationSubscription((result) => {
+      setPage(result.configuration?.applications.page || 0);
+      setPageSize(result.configuration?.applications.page_size || 0);
+      setCount(result.configuration?.applications.total_count || 0);
+      setApplications(result.configuration?.applications.applications)
+    },
+    {
+      applicationSelector : {
+        pageSize : pagesize,
+        page : pageNo,
+        search : searchText,
+        order : order
+      },
+      patternSelector : {
+        pageSize : pagesize,
+        page : pageNo,
+        search : searchText,
+        order : order
+      },
+      filterSelector : {
+        pageSize : pagesize,
+        page : pageNo,
+        search : searchText,
+        order : order
+      }
+    });
+    disposeConfSubscriptionRef.current = configurationSubscription
+  }
+
   const handleModalOpen = (app_file, name, isDeploy) => {
+    // console.log("MMMM", disposeConfSubscription);
     setModalOpen({
       open : true,
       deploy : isDeploy,
@@ -276,14 +321,19 @@ function MesheryApplications({
       count : getComponentsinFile(app_file)
     });
   }
-  /**
-   * fetchApplications constructs the queries based on the parameters given
-   * and fetches the applications
-   * @param {number} page current page
-   * @param {number} pageSize items per page
-   * @param {string} search search string
-   * @param {string} sortOrder order of sort
-   */
+
+  const handleUploadImport = () => {
+    setImportModal({
+      open : true
+    });
+  }
+
+  const handleUploadImportClose = () => {
+    setImportModal({
+      open : false
+    });
+  }
+
   const handleDeploy = (application_file, name) => {
     updateProgress({ showProgress : true })
     dataFetch(
@@ -338,10 +388,6 @@ function MesheryApplications({
     );
   }
 
-  // const typesMapping = {
-  //   K8s:["yaml", ".yml"]
-  // }
-  // typesMapping[types[type]][0]
   const handleAppDownload = (id, source_type, name) => {
     updateProgress({ showProgress : true })
     dataFetch(
@@ -438,7 +484,6 @@ function MesheryApplications({
         () => {
           console.log("ApplicationFile API", `/api/application/${id}`);
           updateProgress({ showProgress : false });
-          fetchApplications(page, pageSize, search, sortOrder);
           resetSelectedRowData()();
         },
         // handleError
@@ -457,7 +502,6 @@ function MesheryApplications({
         () => {
           console.log("ApplicationFile API", `/api/application/${source_type}`);
           updateProgress({ showProgress : false });
-          fetchApplications(page, pageSize, search, sortOrder);
         },
         // handleError
         handleError(ACTION_TYPES.UPDATE_APPLICATIONS)
@@ -484,7 +528,6 @@ function MesheryApplications({
         () => {
           console.log("ApplicationFile API", `/api/application/${source_type}`);
           updateProgress({ showProgress : false });
-          fetchApplications(page, pageSize, search, sortOrder);
         },
         handleError(ACTION_TYPES.UPLOAD_APPLICATION)
       );
@@ -587,7 +630,12 @@ function MesheryApplications({
         customHeadRender : function CustomHead({ index, ...column }) {
           return (
             <TableCell key={index}>
-              <b>{column.label}</b>
+              <Tooltip title="Click source type to download Application">
+                <div style={{ display : "flex" }}>
+                  <b>{column.label}</b>
+                  <InfoIcon color="primary" style={{ scale : "0.8" }}/>
+                </div>
+              </Tooltip>
             </TableCell>
           );
         },
@@ -634,7 +682,7 @@ function MesheryApplications({
                 title="Undeploy"
                 onClick={() => handleModalOpen(rowData.application_file, rowData.name, false)}
               >
-                <UndeployIcon fill="#B32700" data-cy="undeploy-button" />
+                <UndeployIcon fill="#8F1F00" data-cy="undeploy-button" />
               </IconButton>
             </>
           );
@@ -679,7 +727,6 @@ function MesheryApplications({
             );
           },
         });
-        fetchApplications(page, pageSize, search, sortOrder);
       },
       handleError("Failed to delete application")
     );
@@ -715,8 +762,8 @@ function MesheryApplications({
         const fid = Object.keys(row.lookup).map(idx => applications[idx]?.id);
         fid.forEach(fid => deleteApplication(fid));
       }
-      if (response === "No")
-        fetchApplications(page, pageSize, search, sortOrder);
+      // if (response === "No")
+      // fetchApplications(page, pageSize, search, sortOrder);
     },
 
     onTableChange : (action, tableState) => {
@@ -730,10 +777,11 @@ function MesheryApplications({
 
       switch (action) {
         case "changePage":
-          fetchApplications(tableState.page, pageSize, search, sortOrder);
+          console.log("PPPPPPPPPPPPP------", tableState);
+          initAppsSubscription(tableState.page.toString(), pageSize.toString(), search, order);
           break;
         case "changeRowsPerPage":
-          fetchApplications(page, tableState.rowsPerPage, search, sortOrder);
+          initAppsSubscription(page.toString(), tableState.rowsPerPage.toString(), search, order)
           break;
         case "search":
           if (searchTimeout.current) {
@@ -756,7 +804,7 @@ function MesheryApplications({
             }
           }
           if (order !== sortOrder) {
-            fetchApplications(page, pageSize, search, order);
+            initAppsSubscription(page.toString(), pageSize.toString(), search, order);
           }
           break;
       }
@@ -783,14 +831,25 @@ function MesheryApplications({
         <div className={classes.topToolbar} >
           {!selectedApplication.show && (applications.length>0 || viewType==="table") && <div className={classes.createButton}>
             <div>
-              <UploadImport supportedTypes={types} isApplication = {true} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} configuration="Application"  />
+              <Button
+                aria-label="Add Application"
+                variant="contained"
+                color="primary"
+                size="large"
+                // @ts-ignore
+                onClick={handleUploadImport}
+                style={{ marginRight : "2rem" }}
+              >
+                <PublishIcon className={classes.addIcon} />
+              Import Application
+              </Button>
             </div>
 
           </div>
           }
           {!selectedApplication.show &&
           <div className={classes.viewSwitchButton}>
-            <ViewSwitch view={viewType} changeView={setViewType} />
+            <ViewSwitch view={viewType} changeView={setViewType} hideCatalog={true} />
           </div>
           }
         </div>
@@ -820,6 +879,9 @@ function MesheryApplications({
               pages={Math.ceil(count / pageSize)}
               setPage={setPage}
               selectedPage={page}
+              UploadImport={UploadImport}
+              types={types}
+              handleAppDownload={handleAppDownload}
             />
         }
         <ConfirmationMsg
@@ -834,6 +896,8 @@ function MesheryApplications({
           tab={modalOpen.deploy ? 0 : 1}
         />
         <PromptComponent ref={modalRef} />
+        <UploadImport open={importModal.open} handleClose={handleUploadImportClose} isApplication = {true} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler}
+          supportedTypes={types} configuration="Application"  />
       </NoSsr>
     </>
   );

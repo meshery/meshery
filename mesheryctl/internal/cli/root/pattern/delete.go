@@ -11,7 +11,7 @@ import (
 	"github.com/asaskevich/govalidator"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/layer5io/meshery/models"
+	"github.com/layer5io/meshery/server/models"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -42,7 +42,7 @@ mesheryctl pattern delete [file | URL]
 		if !govalidator.IsURL(file) {
 			content, err := os.ReadFile(file)
 			if err != nil {
-				return errors.New(utils.SystemError(fmt.Sprintf("failed to read file %s", file)))
+				return errors.New(utils.PatternError(fmt.Sprintf("failed to read file %s", file)))
 			}
 
 			patternFile = string(content)

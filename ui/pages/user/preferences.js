@@ -7,6 +7,7 @@ import { getPath } from "../../lib/path";
 import Head from 'next/head';
 import dataFetch from '../../lib/data-fetch';
 import { ctxUrl } from "../../utils/multi-ctx";
+import React from "react";
 
 const styles = { paper : { maxWidth : '90%',
   margin : 'auto',
@@ -25,9 +26,10 @@ class UserPref extends React.Component {
     await new Promise(resolve => {
       dataFetch(
         ctxUrl('/api/user/prefs', this.props.selectedK8sContexts),
-        { credentials : 'same-origin',
+        {
           method : 'GET',
-          credentials : 'include', }, (result) => {
+          credentials : 'include',
+        }, (result) => {
           resolve();
           console.log(result);
           if (typeof result !== 'undefined') {

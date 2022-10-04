@@ -1,3 +1,4 @@
+import React from "react";
 import { NoSsr, withStyles } from "@material-ui/core";
 import MesheryPatterns from "../../components/MesheryPatterns";
 import { updatepagepath } from "../../lib/store";

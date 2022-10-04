@@ -3,6 +3,7 @@
 
 import { promisifiedDataFetch } from "../../lib/data-fetch";
 import { trueRandom } from "../../lib/trueRandom";
+import { CustomFieldTemplate } from "./PatternService/RJSFCustomComponents/FieldTemplate";
 
 /**
  * @typedef {Object} OAMDefinition
@@ -34,8 +35,7 @@ import { trueRandom } from "../../lib/trueRandom";
  */
 export async function getWorkloadDefinitionsForAdapter(adapter) {
   try {
-    const res = await promisifiedDataFetch("/api/oam/workload?trim=true");
-
+    const res = await promisifiedDataFetch("/api/oam/workload");
     if (adapter) return res?.filter((el) => el?.metadata?.["adapter.meshery.io/name"] === adapter);
     return res;
   } catch (error) {
@@ -283,11 +283,19 @@ function jsonSchemaBuilder(schema, obj) {
   }
 
   if (schema.type === 'boolean') {
+    schema["default"] = false;
     obj["ui:widget"] = "checkbox";
   }
 
+  if (schema.type==='string'&&!schema?.enum) {
+    obj["ui:FieldTemplate"] = CustomFieldTemplate;
+  }
+
   if (schema.type === 'number' || schema.type === 'integer') {
+    schema["maximum"] = 99999;
+    schema["minimum"] = 0;
     obj["ui:widget"] = "updown";
+    obj["ui:FieldTemplate"] = CustomFieldTemplate;
   }
 }
 

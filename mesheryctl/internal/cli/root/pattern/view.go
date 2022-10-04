@@ -31,7 +31,7 @@ mesheryctl pattern view [pattern-name | ID]
 
 ! Refer below image link for usage
 * Usage of mesheryctl pattern view
-# ![pattern-view-usage](../../../../docs/assets/img/mesheryctl/patternView.png)
+# ![pattern-view-usage](/assets/img/mesheryctl/patternView.png)
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())

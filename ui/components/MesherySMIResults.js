@@ -52,7 +52,7 @@ class MesherySMIResults extends Component {
       }
 
       query = `?page=${page}&pageSize=${pageSize}&search=${encodeURIComponent(search)}&order=${encodeURIComponent(sortOrder)}`;
-      dataFetch(`/api/smi/results${query}`, { credentials : 'same-origin',
+      dataFetch(`/api/smi/results${query}`, {
         method : 'GET',
         credentials : 'include', }, (result) => {
         if (typeof result !== 'undefined' && result.results) {
@@ -252,7 +252,7 @@ class MesherySMIResults extends Component {
             :[];
           let order='';
           if (tableState.activeColumn){
-            order = `${columns[tableState.activeColumn].name} desc`;
+            order = `${smi_columns[tableState.activeColumn].name} desc`;
           }
 
           switch (action) {
@@ -277,9 +277,9 @@ class MesherySMIResults extends Component {
             case 'sort':
               if (sortInfo.length == 2) {
                 if (sortInfo[1] === 'ascending') {
-                  order = `${columns[tableState.activeColumn].name} asc`;
+                  order = `${smi_columns[tableState.activeColumn].name} asc`;
                 } else {
-                  order = `${columns[tableState.activeColumn].name} desc`;
+                  order = `${smi_columns[tableState.activeColumn].name} desc`;
                 }
               }
               if (order !== this.state.sortOrder) {

@@ -11,7 +11,8 @@ import {
   DialogActions,
   Divider,
   Tooltip,
-  Typography
+  Typography,
+  Button
 } from "@material-ui/core";
 import { UnControlled as CodeMirror } from "react-codemirror2";
 import DeleteIcon from "@material-ui/icons/Delete";
@@ -23,20 +24,25 @@ import { withSnackbar } from "notistack";
 import CloseIcon from "@material-ui/icons/Close";
 import EditIcon from "@material-ui/icons/Edit";
 import DoneAllIcon from '@material-ui/icons/DoneAll';
-import { updateProgress } from "../lib/store";
+import { toggleCatalogContent, updateProgress } from "../lib/store";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
 import dataFetch from "../lib/data-fetch";
 import UploadImport from "./UploadImport";
 import FullscreenIcon from '@material-ui/icons/Fullscreen';
 import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
-import FILE_OPS from "../utils/configurationFileHandlersEnum";
+import { FILE_OPS } from "../utils/Enum";
 import ViewSwitch from "./ViewSwitch";
+import CatalogFilter from "./CatalogFilter";
 import FiltersGrid from "./MesheryFilters/FiltersGrid";
 import { trueRandom } from "../lib/trueRandom";
 import { ctxUrl } from "../utils/multi-ctx";
 import ConfirmationMsg from "./ConfirmationModal";
 import UndeployIcon from "../public/static/img/UndeployIcon";
 import { getComponentsinFile } from "../utils/utils";
+import PublishIcon from "@material-ui/icons/Publish";
+import ConfigurationSubscription from "./graphql/subscriptions/ConfigurationSubscription";
+import fetchCatalogFilter from "./graphql/queries/CatalogFilterQuery";
+import LoadingScreen from "./LoadingComponents/LoadingComponent";
 
 const styles = (theme) => ({
   grid : {
@@ -60,7 +66,6 @@ const styles = (theme) => ({
   },
   viewSwitchButton : {
     justifySelf : "flex-end",
-    marginLeft : "auto",
     paddingLeft : "1rem"
   },
   // text : {
@@ -161,7 +166,7 @@ function resetSelectedFilter() {
   return { show : false, filter : null };
 }
 
-function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, classes, selectedK8sContexts }) {
+function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, classes, selectedK8sContexts, catalogVisibility, toggleCatalogContent }) {
   const [page, setPage] = useState(0);
   const [search] = useState("");
   const [sortOrder] = useState("");
@@ -175,7 +180,10 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     /**  @type {TypeView} */
     ("grid")
   );
-  const DEPLOY_URL = "/api/filter/deploy";
+  const FILTER_URL = "/api/filter"
+  const DEPLOY_URL = FILTER_URL + "/deploy";
+  const CLONE_URL = "/clone";
+
   const [modalOpen, setModalOpen] = useState({
     open : false,
     filter_file : null,
@@ -183,6 +191,15 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     name : "",
     count : 0
   });
+
+  const [importModal, setImportModal] = useState({
+    open : false
+  })
+  const [loading, stillLoading] = useState(true);
+
+  const catalogContentRef = useRef();
+  const catalogVisibilityRef = useRef();
+  const disposeConfSubscriptionRef = useRef(null);
 
   const getMuiTheme = () => createTheme({
     overrides : {
@@ -249,16 +266,56 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
       name : "UPLOAD_FILTERS",
       error_msg : "Failed to upload filter file",
     },
+    CLONE_FILTERS : {
+      name : "CLONE_FILTER",
+      error_msg : "Failed to clone filter file"
+    }
   };
 
   const searchTimeout = useRef(null);
 
-  /**
-   * fetch filters when the page loads
-   */
+  const handleUploadImport = () => {
+    setImportModal({
+      open : true
+    });
+  }
+
+  const handleUploadImportClose = () => {
+    setImportModal({
+      open : false
+    });
+  }
+
+  const handleCatalogVisibility = () => {
+    catalogVisibilityRef.current = !catalogVisibility
+    toggleCatalogContent({ catalogVisibility : !catalogVisibility });
+  }
+
   useEffect(() => {
-    fetchFilters(page, pageSize, search, sortOrder);
-  }, [page, pageSize, search, sortOrder]);
+    handleSetFilters(filters)
+  }, [catalogVisibility])
+
+  useEffect(() => {
+    catalogVisibilityRef.current = catalogVisibility
+    initFiltersSubscription();
+
+    const fetchCatalogFilters = fetchCatalogFilter({
+      selector : {
+        search : "",
+        order : ""
+      }
+    }).subscribe({
+      next : (result) => {
+        catalogContentRef.current = result?.catalogFilters;
+      },
+      error : (err) => console.log("There was an error fetching Catalog Filter: ", err)
+    });
+
+    return () => {
+      fetchCatalogFilters.unsubscribe();
+      disposeConfSubscriptionRef.current.dispose();
+    }
+  },[])
 
   /**
    * fetchFilters constructs the queries based on the parameters given
@@ -285,7 +342,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
         console.log("FilterFile API", `/api/filter${query}`);
         updateProgress({ showProgress : false });
         if (result) {
-          setFilters(result.filters || []);
+          handleSetFilters(result.filters || []);
           setPage(result.page || 0);
           setPageSize(result.page_size || 0);
           setCount(result.total_count || 0);
@@ -341,6 +398,30 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     );
   };
 
+  function handleClone(filterID) {
+    updateProgress({ showProgress : true });
+    dataFetch(FILTER_URL.concat(CLONE_URL, "/", filterID),
+      {
+        credentials : "include",
+        method : "POST",
+      },
+      () => {
+        updateProgress({ showProgress : false });
+        enqueueSnackbar("Filter Successfully Cloned!", {
+          variant : "success",
+          action : function Action(key) {
+            return (
+              <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+                <CloseIcon />
+              </IconButton>
+            );
+          },
+          autoHideDuration : 2000,
+        });
+      },
+      handleError(ACTION_TYPES.CLONE_FILTERS),
+    );
+  }
 
   // function handleError(error) {
   const handleError = (action) => (error) => {
@@ -359,7 +440,8 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     });
   };
 
-  const handleModalOpen = (filter_file, name, isDeploy) => {
+  const handleModalOpen = (e, filter_file, name, isDeploy) => {
+    e.stopPropagation()
     setModalOpen({
       open : true,
       filter_file : filter_file,
@@ -367,6 +449,48 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
       name : name,
       count : getComponentsinFile(filter_file)
     });
+  }
+
+  const handleSetFilters = (filters) => {
+    if (catalogVisibilityRef.current && catalogContentRef.current?.length > 0) {
+      setFilters([...catalogContentRef.current, ...filters.filter(content => content.visibility !== "public")])
+      return
+    }
+    setFilters(filters.filter(content => content.visibility !== "public"))
+  }
+
+  const initFiltersSubscription = (pageNo=page.toString(), pagesize=pageSize.toString(), searchText=search, order=sortOrder) => {
+    if (disposeConfSubscriptionRef.current) {
+      disposeConfSubscriptionRef.current.dispose();
+    }
+    const configurationSubscription = ConfigurationSubscription((result) => {
+      stillLoading(false);
+      setPage(result.configuration?.filters.page || 0);
+      setPageSize(result.configuration?.filters.page_size || 0);
+      setCount(result.configuration?.filters.total_count || 0);
+      handleSetFilters(result.configuration?.filters.filters);
+    },
+    {
+      applicationSelector : {
+        pageSize : pagesize,
+        page : pageNo,
+        search : searchText,
+        order : order
+      },
+      patternSelector : {
+        pageSize : pagesize,
+        page : pageNo,
+        search : searchText,
+        order : order
+      },
+      filterSelector : {
+        pageSize : pagesize,
+        page : pageNo,
+        search : searchText,
+        order : order
+      }
+    });
+    disposeConfSubscriptionRef.current = configurationSubscription
   }
 
   const handleModalClose = () => {
@@ -395,7 +519,6 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
         () => {
           console.log("FilterFile API", `/api/filter/${id}`);
           updateProgress({ showProgress : false });
-          fetchFilters(page, pageSize, search, sortOrder);
           resetSelectedRowData()();
         },
         // handleError
@@ -417,7 +540,6 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
         () => {
           console.log("FilterFile API", `/api/filter`);
           updateProgress({ showProgress : false });
-          fetchFilters(page, pageSize, search, sortOrder);
         },
         // handleError
         handleError(ACTION_TYPES.UPLOAD_FILTERS)
@@ -512,6 +634,30 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
       },
     },
     {
+      name : "visibility",
+      label : "Visibility",
+      options : {
+        filter : false,
+        sort : true,
+        searchable : true,
+        customHeadRender : function CustomHead({ index, ...column }) {
+          return (
+            <TableCell key={index}>
+              <b>{column.label}</b>
+            </TableCell>
+          );
+        },
+        customBodyRender : function CustomBody(_, tableMeta) {
+          const visibility = filters[tableMeta.rowIndex].visibility
+          return (
+            <>
+              <img src={`/static/img/${visibility}.svg`} />
+            </>
+          );
+        },
+      },
+    },
+    {
       name : "Actions",
       options : {
         filter : false,
@@ -526,30 +672,42 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
         },
         customBodyRender : function CustomBody(_, tableMeta) {
           const rowData = filters[tableMeta.rowIndex];
+          const visibility = filters[tableMeta.rowIndex].visibility
           return (
             <>
-              <IconButton>
-                <EditIcon
-                  title="Config"
-                  aria-label="config"
-                  color="inherit"
-                  onClick={() => setSelectedRowData(filters[tableMeta.rowIndex])}
-                />
+              {visibility === "public" ? <IconButton onClick={(e) => {
+                e.stopPropagation();
+                handleClone(rowData.id)
+              }
+              }>
+                <img src="/static/img/clone.svg" />
               </IconButton>
+                :
+                <IconButton>
+                  <EditIcon
+                    title="Config"
+                    aria-label="config"
+                    color="inherit"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      setSelectedRowData(filters[tableMeta.rowIndex])
+                    }}
+                  />
+                </IconButton> }
               <IconButton>
                 <DoneAllIcon
                   title="Deploy"
                   aria-label="deploy"
                   color="inherit"
-                  onClick={() => handleModalOpen(rowData.filter_file, rowData.name, true)}
+                  onClick={(e) => handleModalOpen(e, rowData.filter_file, rowData.name, true)}
                   data-cy="deploy-button"
                 />
               </IconButton>
               <IconButton
                 title="Undeploy"
-                onClick={() => handleModalOpen(rowData.filter_file, rowData.name, false)}
+                onClick={(e) => handleModalOpen(e, rowData.filter_file, rowData.name, false)}
               >
-                <UndeployIcon fill="#B32700" data-cy="undeploy-button" />
+                <UndeployIcon fill="#8F1F00" data-cy="undeploy-button" />
               </IconButton>
             </>
           );
@@ -596,7 +754,6 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
           },
         });
 
-        fetchFilters(page, pageSize, search, sortOrder);
       },
       handleError("Failed To Delete Filter")
     );
@@ -630,8 +787,8 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
         const fid = Object.keys(row.lookup).map((idx) => filters[idx]?.id);
         fid.forEach((fid) => deleteFilter(fid));
       }
-      if (response === "No")
-        fetchFilters(page, pageSize, search, sortOrder);
+      // if (response === "No")
+      // fetchFilters(page, pageSize, search, sortOrder);
     },
 
     onTableChange : (action, tableState) => {
@@ -643,10 +800,10 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
 
       switch (action) {
         case "changePage":
-          fetchFilters(tableState.page, pageSize, search, sortOrder);
+          initFiltersSubscription(tableState.page.toString(), pageSize.toString(), search, sortOrder)
           break;
         case "changeRowsPerPage":
-          fetchFilters(page, tableState.rowsPerPage, search, sortOrder);
+          initFiltersSubscription(page.toString(), tableState.rowsPerPage.toString(), search, sortOrder);
           break;
         case "search":
           if (searchTimeout.current) {
@@ -654,7 +811,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
           }
           searchTimeout.current = setTimeout(() => {
             if (search !== tableState.searchText) {
-              fetchFilters(page, pageSize, tableState.searchText !== null ? tableState.searchText : "", sortOrder);
+              fetchFilters(page, pageSize, search, sortOrder);
             }
           }, 500);
           break;
@@ -667,7 +824,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
             }
           }
           if (order !== sortOrder) {
-            fetchFilters(page, pageSize, search, order);
+            initFiltersSubscription(page.toString(), pageSize.toString(), search, order);
           }
           break;
       }
@@ -684,6 +841,10 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     }
   };
 
+  if (loading) {
+    return <LoadingScreen animatedIcon="AnimatedFilter" message="Loading Filters..." />;
+  }
+
   return (
     <>
 
@@ -694,13 +855,27 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
         <div className={classes.topToolbar} >
           {!selectedFilter.show && (filters.length>0 || viewType==="table") && <div className={classes.createButton}>
             <div>
-              <UploadImport supportedTypes="null" aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} configuration="Filter" />
+              <Button
+                aria-label="Add Filter"
+                variant="contained"
+                color="primary"
+                size="large"
+                // @ts-ignore
+                onClick={handleUploadImport}
+                style={{ marginRight : "2rem" }}
+              >
+                <PublishIcon className={classes.addIcon} data-cy="import-button"/>
+              Import Filters
+              </Button>
             </div>
           </div>
           }
+          <div style={{ justifySelf : "flex-end", marginLeft : "auto", paddingRight : "1rem", paddingTop : "0.2rem" }}>
+            <CatalogFilter catalogVisibility={catalogVisibility} handleCatalogVisibility={handleCatalogVisibility} />
+          </div>
           {!selectedFilter.show &&
           <div className={classes.viewSwitchButton}>
-            <ViewSwitch view={viewType} changeView={setViewType} />
+            <ViewSwitch data-cy="table-view" view={viewType} changeView={setViewType} />
           </div>
           }
         </div>
@@ -724,6 +899,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
               handleDeploy={handleDeploy}
               handleUndeploy={handleUndeploy}
               handleSubmit={handleSubmit}
+              handleClone={handleClone}
               urlUploadHandler={urlUploadHandler}
               uploadHandler={uploadHandler}
               setSelectedFilter={setSelectedFilter}
@@ -731,6 +907,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
               pages={Math.ceil(count / pageSize)}
               setPage={setPage}
               selectedPage={page}
+              UploadImport={UploadImport}
             />
         }
         <ConfirmationMsg
@@ -744,15 +921,20 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
           componentCount={modalOpen.count}
           tab={modalOpen.deploy ? 0 : 1}
         />
+        <UploadImport open={importModal.open} handleClose={handleUploadImportClose} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} configuration="Filter" />
       </NoSsr>
     </>
   );
 }
 
-const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(updateProgress, dispatch) });
+const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(updateProgress, dispatch),
+  toggleCatalogContent : bindActionCreators(toggleCatalogContent, dispatch)
+});
 
 const mapStateToProps = (state) => {
-  return { user : state.get("user")?.toObject(), selectedK8sContexts : state.get("selectedK8sContexts") };
+  return { user : state.get("user")?.toObject(), selectedK8sContexts : state.get("selectedK8sContexts"),
+    catalogVisibility : state.get("catalogVisibility")
+  };
 };
 
 // @ts-ignore

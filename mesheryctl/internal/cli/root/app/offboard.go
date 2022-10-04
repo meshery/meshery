@@ -11,7 +11,7 @@ import (
 	"github.com/asaskevich/govalidator"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/layer5io/meshery/models"
+	"github.com/layer5io/meshery/server/models"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -27,6 +27,10 @@ var offboardCmd = &cobra.Command{
 mesheryctl app offboard -f [filepath]
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
+		if file == "" {
+			const errMsg = `Usage: mesheryctl app offboard -f [filepath]`
+			return fmt.Errorf("no file path provided \n\n%v", errMsg)
+		}
 		var req *http.Request
 		var err error
 		client := &http.Client{}
@@ -43,7 +47,7 @@ mesheryctl app offboard -f [filepath]
 		if !govalidator.IsURL(file) {
 			content, err := os.ReadFile(file)
 			if err != nil {
-				return errors.New(utils.SystemError(fmt.Sprintf("failed to read file %s", file)))
+				return errors.New(utils.AppError(fmt.Sprintf("failed to read file %s\n", file)))
 			}
 
 			appFile = string(content)

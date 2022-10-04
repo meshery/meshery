@@ -1,6 +1,6 @@
 jekyll=bundle exec jekyll
 
-site: install
+docs: install
 	$(jekyll) serve --drafts --livereload --config _config_dev.yml
 
 build: install

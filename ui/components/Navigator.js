@@ -25,6 +25,7 @@ import DashboardIcon from '@material-ui/icons/Dashboard';
 import LifecycleIcon from '../public/static/img/drawer-icons/lifecycle_mgmt_svg';
 import PerformanceIcon from '../public/static/img/drawer-icons/performance_svg';
 import ConformanceIcon from '../public/static/img/drawer-icons/conformance_svg';
+import ExtensionIcon from "../public/static/img/drawer-icons/extensions_svg";
 import LifecycleHover from '../public/static/img/drawer-icons/lifecycle_hover_svg';
 import ConfigurationHover from '../public/static/img/drawer-icons/configuration_hover_svg';
 import PerformanceHover from '../public/static/img/drawer-icons/performance_hover_svg';
@@ -32,7 +33,8 @@ import ConformanceHover from '../public/static/img/drawer-icons/conformance_hove
 import SmiIcon from '../public/static/img/drawer-icons/servicemeshinterface-icon-white_svg';
 import DiscussIcon from '../public/static/img/drawer-icons/discuss_forum_svg.js';
 import OpenInNewIcon from "@material-ui/icons/OpenInNew";
-import { faAngleLeft,faCaretDown,
+import {
+  faAngleLeft, faCaretDown,
   faExternalLinkAlt,
   faDigitalTachograph
 } from "@fortawesome/free-solid-svg-icons";
@@ -80,9 +82,12 @@ const styles = (theme) => ({
   },
 
   itemActionable : { "&:hover" : { backgroundColor : "rgb(0, 187, 166, 0.5)", }, },
-  itemActiveItem : { color : "#4fc3f7",
-    fill : "#4fc3f7" },
-  itemPrimary : { color : "inherit",
+  itemActiveItem : {
+    color : "#4fc3f7",
+    fill : "#4fc3f7"
+  },
+  itemPrimary : {
+    color : "inherit",
     fontSize : theme.typography.fontSize,
     "&$textDense" : { fontSize : theme.typography.fontSize, },
   },
@@ -392,7 +397,7 @@ const categories = [
   {
     id : "Configuration",
     icon : <img src="/static/img/configuration_trans.svg" style={{ width : "1.21rem" }} />,
-    hovericon : <ConfigurationHover style={{ transform : "scale(1.3)", ...drawerIconsStyle }}/>,
+    hovericon : <ConfigurationHover style={{ transform : "scale(1.3)", ...drawerIconsStyle }} />,
     href : "#",
     title : "Configuration",
     show : true,
@@ -430,7 +435,7 @@ const categories = [
   {
     id : "Performance",
     icon : <PerformanceIcon style={{ transform : "scale(1.3)", ...drawerIconsStyle }} />,
-    hovericon : <PerformanceHover  style={drawerIconsStyle}/>,
+    hovericon : <PerformanceHover style={drawerIconsStyle} />,
     href : "/performance",
     title : "Performance",
     show : true,
@@ -473,6 +478,16 @@ const categories = [
       },
     ],
   },
+  {
+    id : "Extensions",
+    icon : <ExtensionIcon style={drawerIconsStyle} />,
+    hovericon : <ExtensionIcon style={drawerIconsStyle} />,
+    title : "Extensions",
+    show : true,
+    width : 12,
+    link : true,
+    href : "/extensions"
+  }
 ];
 
 const ExternalLinkIcon = <FontAwesomeIcon style={externalLinkIconStyle} icon={faExternalLinkAlt} transform="shrink-7" />
@@ -539,7 +554,6 @@ class Navigator extends React.Component {
     dataFetch(
       "/api/system/version",
       {
-        credentials : "same-origin",
         method : "GET",
         credentials : "include",
       },
@@ -562,7 +576,6 @@ class Navigator extends React.Component {
     dataFetch(
       "/api/provider/capabilities",
       {
-        credentials : "same-origin",
         method : "GET",
         credentials : "include",
       },
@@ -590,7 +603,7 @@ class Navigator extends React.Component {
       return (
         <List disablePadding>
           {children.map(({
-            id, onClickCallback, icon, href, title, children
+            id, icon, href, title, children, show : showc
           }) => {
             if (typeof showc !== "undefined" && !showc) {
               return "";
@@ -610,7 +623,7 @@ class Navigator extends React.Component {
                     isDrawerCollapsed && classes.noPadding
                   )}
                 >
-                  {this.extensionPointContent(icon, href, title, isDrawerCollapsed, onClickCallback)}
+                  {this.extensionPointContent(icon, href, title, isDrawerCollapsed)}
                 </ListItem>
                 {this.renderNavigatorExtensions(children, depth + 1)}
               </React.Fragment>
@@ -621,23 +634,11 @@ class Navigator extends React.Component {
     }
   }
 
-  onClickCallback(onClickCallback) {
-    switch (onClickCallback) {
-      case 0:
-        return this.toggleMiniDrawer(false)
-      case 1:
-        return this.toggleMiniDrawer(true)
-      default:
-        // by default, nothing happened
-        return undefined
-    }
-  }
-
-  extensionPointContent(icon, href, name, drawerCollapsed, onClickCallback) {
+  extensionPointContent(icon, href, name, drawerCollapsed) {
     const { classes } = this.props;
 
     const content = (
-      <div className={classNames(classes.link)} onClick={() => this.onClickCallback(onClickCallback)} data-cy={name}>
+      <div className={classNames(classes.link)} data-cy={name}>
         <Tooltip
           title={name}
           placement="right"
@@ -659,7 +660,13 @@ class Navigator extends React.Component {
       </div>
     );
 
-    if (href) return <Link href={href}>{content}</Link>;
+    if (href) {
+      return (
+        <Link href={href}>
+          {content}
+        </Link>
+      )
+    }
 
     return content;
   }
@@ -1107,7 +1114,7 @@ class Navigator extends React.Component {
                 <Link href={link
                   ? href
                   : ""}>
-                  <div data-cy={childId} className={classNames(classes.link)} onClick={() => this.onClickCallback(href)}>
+                  <div data-cy={childId} className={classNames(classes.link)}>
                     <Tooltip
                       title={childId}
                       placement="right"
@@ -1118,7 +1125,7 @@ class Navigator extends React.Component {
                       arrow
                     >
 
-                      { (isDrawerCollapsed && children && (this.state.hoveredId === childId  || this.state.openItems.includes(childId))) ?
+                      {(isDrawerCollapsed && (this.state.hoveredId === childId || this.state.openItems.includes(childId))) ?
                         <Tooltip
                           title={title}
                           placement="right"
@@ -1269,8 +1276,8 @@ class Navigator extends React.Component {
       </ListItem>
     )
     const Chevron = (
-      <div  className={classname} style={{ display : "flex", justifyContent : "center" }}
-        onClick ={this.toggleMiniDrawer}
+      <div className={classname} style={{ display : "flex", justifyContent : "center" }}
+        onClick={this.toggleMiniDrawer}
       >
         <FontAwesomeIcon
           icon={faAngleLeft}

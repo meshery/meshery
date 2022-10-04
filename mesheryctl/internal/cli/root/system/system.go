@@ -37,10 +37,12 @@ var SystemCmd = &cobra.Command{
 	Use:   "system",
 	Short: "Meshery Lifecycle Management",
 	Long:  `Manage the state and configuration of Meshery server, components, and client.`,
-	Args:  cobra.MinimumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
+		if len(args) == 0 {
+			return cmd.Help()
+		}
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
-			return errors.New(utils.SystemError(fmt.Sprintf("invalid command: \"%s\"", args[0])))
+			return errors.New(utils.SystemError(fmt.Sprintf("'%s' is a invalid command.  Use 'mesheryctl system --help' to display usage guide.\n", args[0])))
 		}
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
