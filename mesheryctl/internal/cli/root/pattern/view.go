@@ -57,7 +57,7 @@ mesheryctl pattern view [pattern-name | ID]
 			if viewAllFlag {
 				url += "/api/pattern?page_size=10000"
 			} else {
-				return errors.New("[pattern-name|pattern-id] not specified, use -a to view all patterns")
+				return errors.New("[pattern-name|pattern-id] is not specified, use -a to view all patterns")
 			}
 		} else if isID {
 			// if pattern is a valid uuid, then directly fetch the pattern
@@ -90,7 +90,7 @@ mesheryctl pattern view [pattern-name | ID]
 
 		var dat map[string]interface{}
 		if err = json.Unmarshal(body, &dat); err != nil {
-			return errors.Wrap(err, "failed to unmarshal response body")
+			return errors.Wrap(err, "couldn't process JSON response from server")
 		}
 
 		if isID {
@@ -106,7 +106,7 @@ mesheryctl pattern view [pattern-name | ID]
 			// use the first match from the result when searching by pattern name
 			arr := dat["patterns"].([]interface{})
 			if len(arr) == 0 {
-				utils.Log.Info(fmt.Sprintf("pattern with name: %s not found", pattern))
+				utils.Log.Info(fmt.Sprintf("pattern with name: %s not found , please enter the correct [pattern name | ID]", pattern))
 				return nil
 			}
 			if body, err = json.MarshalIndent(arr[0], "", "  "); err != nil {
