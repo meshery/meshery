@@ -134,7 +134,7 @@
         "code": "1014",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "Error occured while applying Helm Chart",
+        "short_description": "Error occurred while applying Helm Chart",
         "probable_cause": "",
         "suggested_remediation": ""
       },
@@ -151,9 +151,9 @@
         "name": "ErrParseOAMConfigCode",
         "code": "1016",
         "severity": "Alert",
-        "long_description": "Error occured while parsing configuration in the request made by Meshery Server",
+        "long_description": "Error occurred while parsing configuration in the request made by Meshery Server",
         "short_description": "error parsing the configuration",
-        "probable_cause": "Could not unmarshall OAM config recieved via ProcessOAM gRPC call into a valid Config struct",
+        "probable_cause": "Could not unmarshall OAM config received via ProcessOAM gRPC call into a valid Config struct",
         "suggested_remediation": "Check if Meshery Server is creating valid config for ProcessOAM gRPC call. This error should never happen and can be reported as a bug in Meshery Server. Also, confirm that Meshery Server and Adapters are referring to same config struct provided in MeshKit"
       },
       "1017": {
@@ -188,7 +188,7 @@
         "code": "1020",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "Error occured while applying namespace ",
+        "short_description": "Error occurred while applying namespace ",
         "probable_cause": "Trying to access a namespace which is not available",
         "suggested_remediation": "Verify presence of namespace. Confirm Meshery ServiceAccount permissions"
       }
