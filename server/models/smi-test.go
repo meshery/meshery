@@ -1,11 +1,14 @@
 package models
 
 import (
+	"time"
+
 	"github.com/gofrs/uuid"
 )
 
 type SmiResult struct {
 	ID                uuid.UUID `json:"id,omitempty"`
+	UpdatedAt         time.Time `json:"updated_at,omitempty"`
 	Date              string    `json:"date,omitempty"`
 	MeshName          string    `json:"mesh_name,omitempty"`
 	MeshVersion       string    `json:"mesh_version,omitempty"`
