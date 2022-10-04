@@ -53,7 +53,7 @@ func formatError(msg string, cmd cmdType) string {
 
 func ErrAttachAuthToken(err error) error {
 	return errors.New(ErrAttachAuthTokenCode, errors.Alert, []string{err.Error()},
-		[]string{"Authentication token not found. please supply a valid user token using `mesheryctl system config --token [path-to-file]`. or login with `mesheryctl system login`"}, []string{}, []string{})
+		[]string{"Authentication token not found. please supply a valid user token using `mesheryctl system config [aks|eks|gke|minikube] -t <path>`. or login with `mesheryctl system login`"}, []string{}, []string{})
 }
 
 func ErrFailRequest(err error) error {
