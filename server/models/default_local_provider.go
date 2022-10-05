@@ -9,7 +9,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"os"
@@ -1323,7 +1322,7 @@ func downloadApplicationsFromURL(downloadpath string, appname string, url string
 	if err != nil {
 		return err
 	}
-	content, err := ioutil.ReadAll(res.Body)
+	content, err := io.ReadAll(res.Body)
 	if err != nil {
 		return err
 	}
@@ -1343,7 +1342,7 @@ func downloadYAMLSintoSingleFile(f io.Writer, URLs []string) error {
 		if err != nil {
 			return err
 		}
-		content, err := ioutil.ReadAll(res.Body)
+		content, err := io.ReadAll(res.Body)
 		if err != nil {
 			return err
 		}
@@ -1405,7 +1404,7 @@ func getSeededAppLocation(path string) (map[string][]string, error) {
 	if err != nil {
 		return applicationsAndURLS, err
 	}
-	content, err := ioutil.ReadAll(f)
+	content, err := io.ReadAll(f)
 	if err != nil {
 		return applicationsAndURLS, err
 	}
@@ -1429,7 +1428,7 @@ func getSeededAppLocation(path string) (map[string][]string, error) {
 // 		return "", errors.New("failed to get latest stable release tag")
 // 	}
 
-// 	body, err := ioutil.ReadAll(resp.Body)
+// 	body, err := io.ReadAll(resp.Body)
 // 	if err != nil {
 // 		return "", errors.New("failed to get latest stable release tag")
 // 	}
