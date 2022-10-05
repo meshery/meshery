@@ -1,5 +1,5 @@
 import React, {useState} from 'react'
-import {Grid} from "@mui/material"
+import {Grid, Pagination} from "@mui/material"
 import MesheryDesignCard from "./MesheryDesignCard";
 
 const INITIAL_GRID_SIZE = { xl : 4, md : 6, xs : 12 };
@@ -15,11 +15,11 @@ function MesheryPatternsGridItem({ patterns, handleDeploy, handleUnDeploy, handl
          name={patterns.name}
          updated_at={patterns.updated_at}
          created_at={patterns.created_at}
-        //  patterns_file={patterns.patterns_file}
+         patterns_file={patterns.patterns_file}
          requestFullSize={() => setGridProps({ xl : 12, md : 12, xs : 12 })}
          requestSizeRestore={() => setGridProps(INITIAL_GRID_SIZE)}
-        //  handleDeploy={() => handleDeploy(patterns.patterns_file)}
-        //  handleUnDeploy={() => handleUnDeploy(patterns.patterns_file)}
+         handleDeploy={handleDeploy}
+         handleUnDeploy={handleUnDeploy}
         //  deleteHandler={() => handleSubmit({ data : yaml, id : patterns.id, type : FILE_OPS.DELETE ,name : patterns.name })}
         //  updateHandler={() => handleSubmit({ data : yaml, id : patterns.id, type : FILE_OPS.UPDATE ,name : patterns.name })}
          setSelectedPatterns={() => setSelectedPatterns({ patterns : patterns, show : true })}
@@ -59,15 +59,21 @@ function MesheryPatternGrid({ patterns=[],handleDeploy, handleUnDeploy, handleSu
             <MesheryPatternsGridItem
               key={patterns.id}
               patterns={patterns}
-              handleDeploy={handleDeploy}
-              // handleUnDeploy={handleUnDeploy}
-              // handleSubmit={handleSubmit}
+            //   handleDeploy={() => handleModalOpen(pattern, true)}
+            // handleUnDeploy={() => handleModalOpen(pattern, false)}
               setSelectedPatterns={setSelectedPatterns}
             />
           ))}
   
         </Grid>
         }
+        {patterns.length
+        ? (
+          <div  >
+            <Pagination count={pages} page={selectedPage+1} onChange={(_, page) => setPage(page - 1)} />  
+          </div>
+        )
+        : null}
       </div>
         );
 }

@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useRef} from 'react'
 import { Box, Button,} from "@mui/material";
 import { styled } from "@mui/material/styles";
 import UploadImport from "@/components/UploadImport";
@@ -8,7 +8,7 @@ import ApplicationTable from "./ApplicationTable";
 import { useTheme } from "@mui/system";
 import YAMLEditor from  "@/components/YamlDialog";
 import EmptyState from "@/components/EmptyStateComponent";
-import  fetchApplicationsQuery from "@/features/applications/ApplicationsQuery";
+import ConfigurationSubscription from "@/features/Configurations/subscriptions/ConfigurationSubscription"
 
 function resetSelectedApplication() {
   return { show : false, application : null };
@@ -25,6 +25,8 @@ function MesheryApplications({user}) {
     
  const [page, setPage] = useState(0);
  const [count, setCount] = useState(0);
+ const [search] = useState("");
+ const [sortOrder] = useState("");
  const [pageSize, setPageSize] = useState(10)
     const [applications, setApplications] = useState([]);
     const [selectedRowData, setSelectedRowData] = useState(null);
@@ -38,6 +40,7 @@ function MesheryApplications({user}) {
       /**  @type {TypeView} */
       ("grid")
     ); 
+    const disposeConfSubscriptionRef = useRef(null);
 
     function resetSelectedRowData() {
       return () => {
@@ -46,54 +49,46 @@ function MesheryApplications({user}) {
     }
    
     useEffect(() => {
-      fetchApplications(page, pageSize, search, sortOrder);
-    }, [page, pageSize, search, sortOrder]);
+      initAppsSubscription();
+      return () => {
+        console.log(disposeConfSubscriptionRef, "LLLLLLL");
+        disposeConfSubscriptionRef.current.dispose();
+      }
+    },[]);
 
-    function fetchApplications(page, pageSize, search, sortOrder) {
-      if (!search) search = "";
-      if (!sortOrder) sortOrder = "";
-       
-      fetchApplicationsQuery({
-        selector : {
-          pageSize : `${pageSize}`,
-          page : `${page}`,
-          search : `${encodeURIComponent(search)}`,
-          order : `${encodeURIComponent(sortOrder)}`,
-        },
-      }).subscribe({
-        next : (res) => {
-         let result = res?.fetchApplications;
-         if (typeof result !== "undefined") {
-          if (result) {
-            setApplications(result.applications || []);
-            setCount(result.total_count || 0);
-            setPage(result.page || 0);
-            setPageSize(result.page_size || 0);
-          }
-        }
-    }
-  })
-}
-
-    const applications1 = [
+    const initAppsSubscription = (page, pageSize, search, order) => {
+      if (disposeConfSubscriptionRef.current) {
+        disposeConfSubscriptionRef.current.dispose();
+      }
+      const configurationSubscription = ConfigurationSubscription((result) => {
+        setPage(result.configuration?.applications.page || 0);
+        setPageSize(result.configuration?.applications.page_size || 0);
+        setCount(result.configuration?.applications.total_count || 0);
+        setApplications(result.configuration?.applications.applications)
+      },
       {
-        id: "e7ccec75-bec6-4b28-b450-272aefa8a182",
-        name: "IstioFilterPattern.yaml",
-        user_id: "f714c166-5113-4f52-844c-38f0672b5e60",
-        created_at: "2022-07-14T13:50:46.375252Z",
-updated_at: "2022-07-14T13:53:35.479756Z"
+        applicationSelector : {
+          pageSize : pageSize,
+          page : page,
+          search : search,
+          order : order
         },
-        {
-        id: "fb43eb24-de45-481a-955c-3916440276eb",
-        name: "IstioFilterPattern (1).yaml",
-        user_id: "f714c166-5113-4f52-844c-38f0672b5e60",
-        created_at: "2022-07-14T13:50:46.375252Z",
-updated_at: "2022-07-14T13:53:35.479756Z"
-  }
-    ];
+        patternSelector : {
+          pageSize : pageSize,
+          page : page,
+          search : search,
+          order : order
+        },
+        filterSelector : {
+          pageSize : pageSize,
+          page : page,
+          search : search,
+          order : order
+        }
+      });
+      disposeConfSubscriptionRef.current = configurationSubscription
+    }
 
-   
-    const handleClick = () => setApplications(applications1);;
     
     const handleModalClose = () => {
       setModalOpen({
@@ -115,8 +110,7 @@ updated_at: "2022-07-14T13:53:35.479756Z"
     <div> 
                     {selectedRowData && Object.keys(selectedRowData).length > 0 && (
           <YAMLEditor application={selectedRowData} onClose={resetSelectedRowData()}  />
-          )}
-      <Button onClick={handleClick}>QWE</Button>     
+          )}  
       {!selectedApplication.show  &&  (applications.length > 0 || viewType === "table") &&
       <Box sx={{display: "flex"}}>  
        <UploadImport configuration="Applications" />
