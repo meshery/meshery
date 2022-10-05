@@ -44,7 +44,7 @@ jobs:
       - name: set env
         id: vars
         # https://github.community/t/how-to-get-just-the-tag-name/16241/7
-        run: echo ::set-output name=tag::${GITHUB_REF/refs\/tags\//}
+        run: echo ::set-output name=tag::${{ github.ref_name }}
       #- name: Publish Helm chart for edge latest
       #  if: startsWith(github.ref, 'refs/tags/') != true && success()
       #  uses: stefanprodan/helm-gh-pages@master
