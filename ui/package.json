@@ -38,7 +38,7 @@
   "dependencies": {
     "@cypress/code-coverage": "^3.10.0",
     "@date-io/moment": "^2.11.0",
-    "@fortawesome/fontawesome-svg-core": "^1.2.36",
+    "@fortawesome/fontawesome-svg-core": "^6.2.0",
     "@fortawesome/free-brands-svg-icons": "^6.0.0",
     "@fortawesome/free-regular-svg-icons": "^6.1.2",
     "@fortawesome/free-solid-svg-icons": "^6.1.1",
@@ -117,7 +117,7 @@
     "eslint-plugin-cypress": "^2.12.1",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-jsx-a11y": "^6.6.1",
-    "eslint-plugin-react": "^7.27.0",
+    "eslint-plugin-react": "^7.31.8",
     "eslint-plugin-react-hooks": "^4.3.0",
     "http-proxy": "^1.18.1",
     "husky": "^7.0.2",

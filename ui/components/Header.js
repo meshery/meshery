@@ -272,11 +272,6 @@ function K8sContextMenu({
   }
 
   const handleKubernetesDelete = (name, ctxId) => () => {
-    if (contexts?.total_count === 1) {
-      alert("You have only one kubernetes context connected to Meshery, Aborting delete operation");
-      return;
-    }
-
     if (confirm(`Are you sure you want to delete "${name}" cluster from Meshery?`)) {
       const successCallback = async () => {
         const updatedConfig = await loadActiveK8sContexts()
