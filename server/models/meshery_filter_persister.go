@@ -85,7 +85,7 @@ func (mfp *MesheryFilterPersister) CloneMesheryFilter(filterID string) ([]byte, 
 	filterUUID, _ := uuid.FromString(filterID)
 	err := mfp.DB.First(&mesheryFilter, filterUUID).Error
 	if err != nil || *mesheryFilter.ID == uuid.Nil {
-		return nil, fmt.Errorf("Unable to get filter: %w", err)
+		return nil, fmt.Errorf("unable to get filter: %w", err)
 	}
 
 	id, err := uuid.NewV4()
