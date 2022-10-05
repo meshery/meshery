@@ -8,7 +8,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"os"
@@ -468,7 +467,7 @@ func (l *RemoteProvider) GetK8sContexts(token, page, pageSize, search, order str
 	defer func() {
 		_ = resp.Body.Close()
 	}()
-	bdr, err := ioutil.ReadAll(resp.Body)
+	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
 		logrus.Errorf("unable to read response body: %v", err)
 		return nil, err
@@ -559,7 +558,7 @@ func (l *RemoteProvider) GetK8sContext(token, id string) (K8sContext, error) {
 		return kc, nil
 	}
 
-	bdr, err := ioutil.ReadAll(resp.Body)
+	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return K8sContext{}, ErrDataRead(err, "Kubernetes context")
 	}
@@ -596,7 +595,7 @@ func (l *RemoteProvider) GetK8sContext(token, id string) (K8sContext, error) {
 // 		return kc, nil
 // 	}
 
-// 	bdr, err := ioutil.ReadAll(resp.Body)
+// 	bdr, err := io.ReadAll(resp.Body)
 // 	if err != nil {
 // 		return K8sContext{}, ErrDataRead(err, "Kubernetes context")
 // 	}
@@ -632,7 +631,7 @@ func (l *RemoteProvider) GetK8sContext(token, id string) (K8sContext, error) {
 // 		return kc, nil
 // 	}
 
-// 	bdr, err := ioutil.ReadAll(resp.Body)
+// 	bdr, err := io.ReadAll(resp.Body)
 // 	if err != nil {
 // 		return K8sContext{}, ErrDataRead(err, "Kubernetes context")
 // 	}
@@ -843,7 +842,7 @@ func (l *RemoteProvider) FetchSmiResult(req *http.Request, page, pageSize, searc
 		_ = resp.Body.Close()
 	}()
 
-	bdr, err := ioutil.ReadAll(resp.Body)
+	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, ErrDataRead(err, "SMI Result")
 	}
@@ -1557,7 +1556,7 @@ func (l *RemoteProvider) DeleteMesheryPatterns(req *http.Request, patterns Meshe
 	defer func() {
 		_ = resp.Body.Close()
 	}()
-	bdr, err := ioutil.ReadAll(resp.Body)
+	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
 		logrus.Errorf("unable to read response body: %v", err)
 		return nil, err

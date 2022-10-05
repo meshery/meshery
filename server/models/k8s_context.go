@@ -6,7 +6,6 @@ import (
 	"encoding/base64"
 	"encoding/hex"
 	"encoding/json"
-	"io/ioutil"
 	"net"
 	"os"
 	"time"
@@ -166,14 +165,14 @@ func NewK8sContextFromInClusterConfig(contextName string, instanceID *uuid.UUID)
 		return nil, ErrMesheryNotInCluster
 	}
 
-	token, err := ioutil.ReadFile(tokenFile)
+	token, err := os.ReadFile(tokenFile)
 	if err != nil {
 		return nil, err
 	}
 
 	server := "https://" + net.JoinHostPort(host, port)
 
-	caData, err := ioutil.ReadFile(rootCAFile)
+	caData, err := os.ReadFile(rootCAFile)
 	if err != nil {
 		return nil, err
 	}
