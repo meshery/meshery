@@ -977,14 +977,14 @@ github.com/lann/ps v0.0.0-20150810152359-62de8c46ede0/go.mod h1:vmVJ0l/dxyfGW6Fm
 github.com/layer5io/gowrk2 v0.0.0-20191111234958-a4c9071c0f87 h1:qMO4fkVja8WatRrvEz6JCoq+81rNJZMjblqyRwywLns=
 github.com/layer5io/gowrk2 v0.0.0-20191111234958-a4c9071c0f87/go.mod h1:l7fQujTUkq0/ecH98qdKAgy9aCV+YvoyEF3nj2IIP50=
 github.com/layer5io/meshery-operator v0.5.5/go.mod h1:s2YXueMYV9uhkFAKHKS0XN/aS4+F3yjZ+UMD04HGRx0=
-github.com/layer5io/meshery-operator v0.6.4 h1:7Ec63YvwZjD3FtuZqQuX22KbeMeyNIs7f5McZjPsf7k=
-github.com/layer5io/meshery-operator v0.6.4/go.mod h1:CyNfxeUJq6O9fFOasYBw6tvj/slU+tnI3XSlRE9Xpfw=
+github.com/layer5io/meshery-operator v0.5.7 h1:P4U5NkSR5Z6VR+G/nyoEv69DkyizWoLfzh0smWeYZfE=
+github.com/layer5io/meshery-operator v0.5.7/go.mod h1:dXo/JjpSqGq5ZUPL1DCR9fCsY+NHTLVGtmbaBKe6Fx8=
 github.com/layer5io/meshkit v0.5.22/go.mod h1:EUfXIcztap9Dh0Ao3Dmoxf3FMsm4h7zFHGwagj+5ra4=
 github.com/layer5io/meshkit v0.5.32/go.mod h1:dt0uOluDzatK6hbJEDAZbUsm7LJNb4nsXXaGUDtYxD0=
 github.com/layer5io/meshkit v0.6.1 h1:MmHRPeLZYf3qDwemyc4TXLPDu/bOK5T2V2rJssj2GQ0=
 github.com/layer5io/meshkit v0.6.1/go.mod h1:1yyleAJTOzSzTA44u3cg764Yk0+pvCUwb/KikLkjea8=
-github.com/layer5io/meshsync v0.6.0 h1:oxBk1cWGZo95gOAYCJsZoY8CxXut7j+WQhTJUl8IDjg=
-github.com/layer5io/meshsync v0.6.0/go.mod h1:sg65N620OhfuoCHlH+tDvLaeRZEmsIIwgBLtJ9kaeck=
+github.com/layer5io/meshsync v0.5.10 h1:s+P5NRN26s9jVISCJMHOtoF8ZD+Sc9C3SvrcVWwdGTE=
+github.com/layer5io/meshsync v0.5.10/go.mod h1:eTyza8jLPWT5XfY2qDIyj+3oEzIPww8nvv2yknmyeGA=
 github.com/layer5io/nighthawk-go v0.6.0 h1:eb8aTFrrpTGGkkhDNc/JXWMymejK5K70f+M4fn7YLtw=
 github.com/layer5io/nighthawk-go v0.6.0/go.mod h1:KH069xC3b0fQWdbpw34WzMzBa1eotD12O6iyGnPelzQ=
 github.com/layer5io/service-mesh-performance v0.3.4 h1:aw/elsx0wkry7SyiQRIj31wW7TPCP4YfhINdNOLXVg8=
@@ -1191,7 +1191,7 @@ github.com/onsi/gomega v1.15.0/go.mod h1:cIuvLEne0aoVhAgh/O6ac0Op8WWw9H6eYCriF+t
 github.com/onsi/gomega v1.16.0/go.mod h1:HnhC7FXeEQY45zxNK3PPoIUhzk/80Xly9PcubAlGdZY=
 github.com/onsi/gomega v1.17.0/go.mod h1:HnhC7FXeEQY45zxNK3PPoIUhzk/80Xly9PcubAlGdZY=
 github.com/onsi/gomega v1.19.0/go.mod h1:LY+I3pBVzYsTBU1AnDwOSxaYi9WoWiqgwooUqq9yPro=
-github.com/onsi/gomega v1.20.2 h1:8uQq0zMgLEfa0vRrrBgaJF2gyW9Da9BmfGV+OyUzfkY=
+github.com/onsi/gomega v1.20.0 h1:8W0cWlwFkflGPLltQvLRB7ZVD5HuP6ng320w2IS245Q=
 github.com/opencontainers/go-digest v0.0.0-20170106003457-a6d0ee40d420/go.mod h1:cMLVZDEM3+U2I4VmLI6N8jQYUd2OVphdqWwCJHrFt2s=
 github.com/opencontainers/go-digest v0.0.0-20180430190053-c9281466c8b2/go.mod h1:cMLVZDEM3+U2I4VmLI6N8jQYUd2OVphdqWwCJHrFt2s=
 github.com/opencontainers/go-digest v1.0.0-rc1/go.mod h1:cMLVZDEM3+U2I4VmLI6N8jQYUd2OVphdqWwCJHrFt2s=
