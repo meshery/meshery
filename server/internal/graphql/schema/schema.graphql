@@ -364,7 +364,7 @@ type CatalogFilter {
   user_id: String!
   location: Location!
   visibility: String!
-  catalog_data: Map!
+  catalog_data: Map
   created_at: String
   updated_at: String 
 }
@@ -406,7 +406,7 @@ type CatalogPattern {
   pattern_file: String!
   location: Location!
   visibility: String!
-  catalog_data: Map!
+  catalog_data: Map
   created_at: String
   updated_at: String
 }

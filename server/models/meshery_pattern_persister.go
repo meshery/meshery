@@ -2,6 +2,7 @@ package models
 
 import (
 	"encoding/json"
+	"fmt"
 	"strings"
 
 	"github.com/gofrs/uuid"
@@ -22,7 +23,8 @@ type MesheryPatternPage struct {
 	Patterns   []*MesheryPattern `json:"patterns"`
 }
 
-// GetMesheryPatterns returns all of the performance profiles
+// GetMesheryPatterns returns all of the 'private' patterns. Though private has no meaning here since there is only
+// one local user. We make this distinction to be consistent with the remote provider
 func (mpp *MesheryPatternPersister) GetMesheryPatterns(search, order string, page, pageSize uint64) ([]byte, error) {
 	order = sanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
 
@@ -33,7 +35,7 @@ func (mpp *MesheryPatternPersister) GetMesheryPatterns(search, order string, pag
 	count := int64(0)
 	patterns := []*MesheryPattern{}
 
-	query := mpp.DB.Order(order)
+	query := mpp.DB.Where("visibility = 'private'").Order(order)
 
 	if search != "" {
 		like := "%" + strings.ToLower(search) + "%"
@@ -52,6 +54,49 @@ func (mpp *MesheryPatternPersister) GetMesheryPatterns(search, order string, pag
 	}
 
 	return marshalMesheryPatternPage(mesheryPatternPage), nil
+}
+
+// GetMesheryCatalogPatterns returns all of the public patterns
+func (mpp *MesheryPatternPersister) GetMesheryCatalogPatterns(search, order string) ([]byte, error) {
+	order = sanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
+
+	if order == "" {
+		order = "updated_at desc"
+	}
+
+	patterns := []*MesheryPattern{}
+
+	query := mpp.DB.Where("visibility = 'public'").Order(order)
+
+	if search != "" {
+		like := "%" + strings.ToLower(search) + "%"
+		query = query.Where("(lower(meshery_patterns.name) like ?)", like)
+	}
+
+	query.Find(&patterns)
+
+	marshalledPatterns, _ := json.Marshal(patterns)
+	return marshalledPatterns, nil
+}
+
+// CloneMesheryPattern clones meshery pattern to private
+func (mpp *MesheryPatternPersister) CloneMesheryPattern(patternID string) ([]byte, error) {
+	var mesheryPattern MesheryPattern
+	patternUUID, _ := uuid.FromString(patternID)
+	err := mpp.DB.First(&mesheryPattern, patternUUID).Error
+	if err != nil || *mesheryPattern.ID == uuid.Nil {
+		return nil, fmt.Errorf("unable to get pattern: %w", err)
+	}
+
+	id, err := uuid.NewV4()
+	if err != nil {
+		return nil, err
+	}
+
+	mesheryPattern.Visibility = "private"
+	mesheryPattern.ID = &id
+
+	return mpp.SaveMesheryPattern(&mesheryPattern)
 }
 
 // DeleteMesheryPattern takes in a profile id and delete it if it already exists
@@ -76,7 +121,9 @@ func (mpp *MesheryPatternPersister) DeleteMesheryPatterns(patterns MesheryPatter
 }
 
 func (mpp *MesheryPatternPersister) SaveMesheryPattern(pattern *MesheryPattern) ([]byte, error) {
-	pattern.Visibility = "private"
+	if pattern.Visibility == "" {
+		pattern.Visibility = "private"
+	}
 	if pattern.ID == nil {
 		id, err := uuid.NewV4()
 		if err != nil {
@@ -92,8 +139,12 @@ func (mpp *MesheryPatternPersister) SaveMesheryPattern(pattern *MesheryPattern) 
 // SaveMesheryPatterns batch inserts the given patterns
 func (mpp *MesheryPatternPersister) SaveMesheryPatterns(patterns []MesheryPattern) ([]byte, error) {
 	finalPatterns := []MesheryPattern{}
+	nilUserID := ""
 	for _, pattern := range patterns {
-		pattern.Visibility = "private"
+		if pattern.Visibility == "" {
+			pattern.Visibility = "private"
+		}
+		pattern.UserID = &nilUserID
 		if pattern.ID == nil {
 			id, err := uuid.NewV4()
 			if err != nil {

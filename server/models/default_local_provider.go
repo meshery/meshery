@@ -566,9 +566,8 @@ func (l *DefaultLocalProvider) GetMesheryPatterns(tokenString, page, pageSize, s
 }
 
 // GetCatalogMesheryPatterns gives the catalog patterns stored with the provider
-// Not supported by local provider
 func (l *DefaultLocalProvider) GetCatalogMesheryPatterns(tokenString string, search, order string) ([]byte, error) {
-	return []byte("{}"), nil
+	return l.MesheryPatternPersister.GetMesheryCatalogPatterns(search, order)
 }
 
 // GetMesheryPattern gets pattern for the given patternID
@@ -591,7 +590,7 @@ func (l *DefaultLocalProvider) DeleteMesheryPatterns(req *http.Request, patterns
 // CloneMesheryPattern clones a meshery pattern with the given id
 // Not supported by local provider
 func (l *DefaultLocalProvider) CloneMesheryPattern(req *http.Request, patternID string) ([]byte, error) {
-	return []byte("{}"), nil
+	return l.MesheryPatternPersister.CloneMesheryPattern(patternID)
 }
 
 // RemotePatternFile takes in the
@@ -674,9 +673,8 @@ func (l *DefaultLocalProvider) GetMesheryFilters(tokenString, page, pageSize, se
 }
 
 // GetCatalogMesheryFilters gives the catalog filters stored with the provider
-// Not supported by local provider
 func (l *DefaultLocalProvider) GetCatalogMesheryFilters(tokenString string, search, order string) ([]byte, error) {
-	return []byte("{}"), nil
+	return l.MesheryFilterPersister.GetMesheryCatalogFilters(search, order)
 }
 
 // GetMesheryFilterFile gets filter for the given filterID without the metadata
@@ -700,7 +698,7 @@ func (l *DefaultLocalProvider) DeleteMesheryFilter(req *http.Request, filterID s
 // CloneMesheryFilter clones a meshery filter with the given id
 // Not supported by local provider
 func (l *DefaultLocalProvider) CloneMesheryFilter(req *http.Request, filterID string) ([]byte, error) {
-	return []byte("{}"), nil
+	return l.MesheryFilterPersister.CloneMesheryFilter(filterID)
 }
 
 // RemoteFilterFile takes in the
@@ -950,6 +948,7 @@ func (l *DefaultLocalProvider) GetKubeClient() *mesherykube.Client {
 func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 	seededUUIDs := make([]uuid.UUID, 0)
 	seedContents := []string{"Pattern", "Application", "Filter"}
+	nilUserID := ""
 	for _, seedContent := range seedContents {
 		go func(comp string, log logger.Handler, seededUUIDs *[]uuid.UUID) {
 			names, content, err := getSeededComponents(comp, log)
@@ -965,6 +964,14 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 							PatternFile: content[i],
 							Name:        name,
 							ID:          &id,
+							UserID:      &nilUserID,
+							Visibility:  "public",
+							Location: map[string]interface{}{
+								"host":   "",
+								"path":   "",
+								"type":   "local",
+								"branch": "",
+							},
 						}
 						log.Debug("seeding "+comp+": ", name)
 						_, err := l.MesheryPatternPersister.SaveMesheryPattern(pattern)
@@ -980,6 +987,14 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 							FilterFile: content[i],
 							Name:       name,
 							ID:         &id,
+							UserID:     &nilUserID,
+							Visibility: "public",
+							Location: map[string]interface{}{
+								"host":   "",
+								"path":   "",
+								"type":   "local",
+								"branch": "",
+							},
 						}
 						log.Debug("seeding "+comp+": ", name)
 						_, err := l.MesheryFilterPersister.SaveMesheryFilter(filter)
