@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"path/filepath"
 
@@ -79,7 +78,7 @@ func (h *Handler) addK8SConfig(user *models.User, prefObj *models.Preference, w 
 		_ = k8sfile.Close()
 	}()
 
-	k8sConfigBytes, err := ioutil.ReadAll(k8sfile)
+	k8sConfigBytes, err := io.ReadAll(k8sfile)
 	if err != nil {
 		logrus.Error(ErrReadConfig(err))
 		http.Error(w, ErrReadConfig(err).Error(), http.StatusBadRequest)
