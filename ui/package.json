@@ -118,7 +118,7 @@
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-jsx-a11y": "^6.6.1",
     "eslint-plugin-react": "^7.31.8",
-    "eslint-plugin-react-hooks": "^4.3.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
     "http-proxy": "^1.18.1",
     "husky": "^7.0.2",
     "lint-staged": "^12.3.5",
