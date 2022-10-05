@@ -6,6 +6,7 @@ const useStyles= makeStyles((theme) => ({
     justifyContent : "flex-end",
     alignItems : "center",
     marginTop : "50px",
+    marginLeft : "22rem",
     height : '100%',
     width : '100%',
   },

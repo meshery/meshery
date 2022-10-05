@@ -81,7 +81,7 @@ function MesheryPatternCard({
         <>
           <div>
             <div style={{ display : "flex", justifyContent : "space-between" }}>
-              <Typography variant="h6" component="div">
+              <Typography style={{ overflow : "hidden", textOverflow : "ellipsis", width : '20rem' }} variant="h6" component="div">
                 {name}
               </Typography>
               <img  className={classes.img} src={`/static/img/${visibility}.svg`} />
@@ -137,7 +137,7 @@ function MesheryPatternCard({
                 <UndeployIcon fill="#ffffff" className={classes.iconPatt} />
                 <span className={classes.btnText}>Undeploy</span>
               </Button>
-              
+
               { visibility === "private" ?  <Button
                 title="Design"
                 variant="contained"
