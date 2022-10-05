@@ -42,7 +42,7 @@ mesheryctl pattern delete [file | URL]
 		if !govalidator.IsURL(file) {
 			content, err := os.ReadFile(file)
 			if err != nil {
-				return errors.New(utils.PatternError(fmt.Sprintf("failed to read file %s", file)))
+				return errors.New(utils.PatternError(fmt.Sprintf("failed to read file %s Ensure the file name or URL is correct", file)))
 			}
 
 			patternFile = string(content)
@@ -97,7 +97,7 @@ mesheryctl pattern delete [file | URL]
 
 			err = json.Unmarshal(body, &response)
 			if err != nil {
-				return errors.Wrap(err, "failed to unmarshal response body")
+				return errors.Wrap(err, "couldn't process JSON response from server")
 			}
 
 			patternFile = response[0].PatternFile

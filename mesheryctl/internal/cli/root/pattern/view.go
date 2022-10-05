@@ -106,7 +106,7 @@ mesheryctl pattern view [pattern-name | ID]
 			// use the first match from the result when searching by pattern name
 			arr := dat["patterns"].([]interface{})
 			if len(arr) == 0 {
-				utils.Log.Info(fmt.Sprintf("pattern with name: %s not found , please enter the correct [pattern name | ID]", pattern))
+				utils.Log.Info(fmt.Sprintf("pattern with name: %s not found , please enter the correct [pattern name | ID] ", pattern))
 				return nil
 			}
 			if body, err = json.MarshalIndent(arr[0], "", "  "); err != nil {
