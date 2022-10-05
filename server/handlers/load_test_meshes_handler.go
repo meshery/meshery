@@ -5,6 +5,9 @@ import (
 	"net/http"
 	"strings"
 
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
+
 	"github.com/layer5io/meshery/server/models"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
 )
@@ -22,7 +25,7 @@ func (h *Handler) GetSMPServiceMeshes(w http.ResponseWriter, r *http.Request, pr
 
 	for _, v := range SMP.ServiceMesh_Type_name {
 		if v != SMP.ServiceMesh_INVALID_MESH.String() {
-			meshes.AvailableMeshes = append(meshes.AvailableMeshes, strings.Title(strings.ToLower(strings.ReplaceAll(v, "_", " "))))
+			meshes.AvailableMeshes = append(meshes.AvailableMeshes, cases.Title(language.Und).String(strings.ToLower(strings.ReplaceAll(v, "_", " "))))
 		}
 	}
 
