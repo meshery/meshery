@@ -1,6 +1,6 @@
 module github.com/layer5io/meshery
 
-go 1.17
+go 1.19
 
 replace (
 	github.com/Sirupsen/logrus => github.com/sirupsen/logrus v1.6.0

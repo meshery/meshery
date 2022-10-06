@@ -20,7 +20,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.RELEASEDRAFTER_PAT }}
 
       # - name: Checkout
-      #   uses: actions/checkout@v3
+      #   uses: actions/checkout@master
 
       # - name: Write release notes to markdown file
       #   run: |
