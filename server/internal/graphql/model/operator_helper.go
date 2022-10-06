@@ -125,11 +125,15 @@ func GetMeshSyncInfo(mesheryclient operatorClient.Interface, mesheryKubeClient *
 
 	meshsyncDeployment, err := mesheryKubeClient.KubeClient.AppsV1().Deployments("meshery").Get(context.TODO(), "meshery-meshsync", metav1.GetOptions{})
 	meshsyncVersion := ""
+	var status string
 	if err == nil {
+		status = fmt.Sprintf("%s %s", StatusEnabled, meshsync.Status.PublishingTo)
 		meshsyncVersion = imageVersionExtractUtil(meshsyncDeployment.Spec.Template, "meshsync")
 	}
+	if err != nil && kubeerror.IsNotFound(err) {
+		status = StatusDisabled.String()
+	}
 
-	status := fmt.Sprintf("%s %s", StatusEnabled, meshsync.Status.PublishingTo)
 	meshsyncStatus.Status = Status(status)
 	meshsyncStatus.Name = "meshsync"
 	meshsyncStatus.Version = meshsyncVersion
