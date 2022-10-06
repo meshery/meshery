@@ -69,7 +69,7 @@ function Extension({ grafana, prometheus, updateLoadTestData, url, isDrawerColla
         ConfirmationModal,
         getComponentsinFile,
         UploadImport,
-        PromptComponent
+        PromptComponent,
         generateValidatePayload,
         Validation
       }}
