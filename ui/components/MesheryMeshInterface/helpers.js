@@ -35,8 +35,7 @@ import { CustomFieldTemplate } from "./PatternService/RJSFCustomComponents/Field
  */
 export async function getWorkloadDefinitionsForAdapter(adapter) {
   try {
-    const res = await promisifiedDataFetch("/api/oam/workload?trim=true");
-
+    const res = await promisifiedDataFetch("/api/oam/workload");
     if (adapter) return res?.filter((el) => el?.metadata?.["adapter.meshery.io/name"] === adapter);
     return res;
   } catch (error) {

@@ -58,7 +58,7 @@ Follow this tutorial to set up [ImageHub with Ingress](https://github.com/layer5
 
 ### [HTTPBin](https://httpbin.org)
 
-HttpBin is a simple HTTP request and response service that responds to many kinds of http/https requests including the standaard http request methods (or verbs) used by REST.
+HttpBin is a simple HTTP request and response service that responds to many kinds of http/https requests including the standard http request methods (or verbs) used by REST.
 
 <a href="{{ site.baseurl }}/assets/img/adapters/sample-apps/httpbin.png"><img alt="httpbin" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/adapters/sample-apps/httpbin.png" /></a>
 

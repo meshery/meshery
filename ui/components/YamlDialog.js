@@ -24,10 +24,14 @@ const YAMLDialog = ({
         <Typography variant="h6" className={classes.yamlDialogTitleText}>
           {name}
         </Typography>
-        <IconButton
-          onClick={toggleFullScreen}>
-          {fullScreen ? <FullscreenExit /> : <Fullscreen />}
-        </IconButton>
+        <Tooltip
+          title="Exit Fullscreen" arrow interactive placement="bottom"
+        >
+          <IconButton
+            onClick={toggleFullScreen}>
+            {fullScreen ? <FullscreenExit /> : <Fullscreen />}
+          </IconButton>
+        </Tooltip>
       </DialogTitle>
       <Divider variant="fullWidth" light />
       <DialogContent>

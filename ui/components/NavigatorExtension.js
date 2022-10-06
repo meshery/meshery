@@ -14,10 +14,11 @@ import LoadingScreen from "./LoadingComponents/LoadingComponent";
 import usePreventUserFromLeavingPage from "../utils/hooks/usePreventUserFromLeavingPage";
 import { getK8sClusterIdsFromCtxId } from "../utils/multi-ctx";
 import ConfirmationModal from "./ConfirmationModal"
-import { getComponentsinFile } from "../utils/utils";
+import { getComponentsinFile, generateValidatePayload } from "../utils/utils";
 import UploadImport from "./UploadImport";
 import ConfigurationSubscription from "../components/graphql/subscriptions/ConfigurationSubscription";
 import PromptComponent from "./PromptComponent";
+import Validation from "./Validation";
 
 const requires = createRequires(getDependencies);
 const useRemoteComponent = createUseRemoteComponent({ requires });
@@ -69,6 +70,8 @@ function Extension({ grafana, prometheus, updateLoadTestData, url, isDrawerColla
         getComponentsinFile,
         UploadImport,
         PromptComponent
+        generateValidatePayload,
+        Validation
       }}
     />
   );

@@ -8,7 +8,7 @@ mesheryOperator:
   name: manager
   image:
     repository: layer5/meshery-operator:stable-latest
-    pullPolicy: IfNotPresent
+    pullPolicy: Always
   args:
     - --metrics-addr=127.0.0.1:8080
     - --enable-leader-election
@@ -19,7 +19,7 @@ kubeRbac:
   name: kube-rbac-proxy
   image:
     repository: gcr.io/kubebuilder/kube-rbac-proxy:v0.5.0
-    pullPolicy: IfNotPresent
+    pullPolicy: Always
   args:
     - --secure-listen-address=0.0.0.0:8443
     - --upstream=http://127.0.0.1:8080/
@@ -106,60 +106,6 @@ testCase:
 
 # If need to use a different service accounts for the adapters, modify the serviceAccountNameOverride for the corresponding adapters here,
 # or set the serviceAccountNameOverride to empty while setting the serviceAccount information in the sub-chart accordingly
-meshery-app-mesh:
-  enabled: false
-  fullnameOverride: meshery-app-mesh
-  serviceAccountNameOverride: meshery-server
-
-meshery-istio:
-  enabled: true
-  fullnameOverride: meshery-istio
-  serviceAccountNameOverride: meshery-server
-
-meshery-linkerd:
-  enabled: true
-  fullnameOverride: meshery-linkerd
-  serviceAccountNameOverride: meshery-server
-
-meshery-consul:
-  enabled: true
-  fullnameOverride: meshery-consul
-  serviceAccountNameOverride: meshery-server
-
-meshery-kuma:
-  enabled: true
-  fullnameOverride: meshery-kuma
-  serviceAccountNameOverride: meshery-server
-
-meshery-osm:
-  enabled: true
-  fullnameOverride: meshery-osm
-  serviceAccountNameOverride: meshery-server
-
-meshery-nsm:
-  enabled: false
-  fullnameOverride: meshery-nsm
-  serviceAccountNameOverride: meshery-server
-
-meshery-nginx-sm:
-  enabled: false
-  fullnameOverride: meshery-nginx-sm
-  serviceAccountNameOverride: meshery-server
-
-meshery-traefik-mesh:
-  enabled: false
-  fullnameOverride: meshery-traefik-mesh
-  serviceAccountNameOverride: meshery-server
-
-meshery-cpx:
-  enabled: false
-  fullnameOverride: meshery-cpx
-  serviceAccountNameOverride: meshery-server
-
-meshery:
-  enabled: true
-  fullnameOverride: meshery-server
-  serviceAccountNameOverride: meshery-server
 
 meshery-broker:
   enabled: true
@@ -169,13 +115,4 @@ meshery-broker:
 meshery-meshsync:
   enabled: true
   fullnameOverride: meshery-meshsync
-  serviceAccountNameOverride: meshery-server
-
-meshery-cilium:
-  enabled: false
-  fullnameOverride: meshery-cilium
-
-meshery-perf:
-  enabled: false
-  fullnameOverride: meshery-perf
   serviceAccountNameOverride: meshery-server

@@ -35,6 +35,18 @@ export const rjsfTheme = createTheme({
         width : '70%',
       }
     },
+    MuiInputLabel : {
+      root : {
+        whiteSpace : "nowrap",
+        overflow : "hidden",
+        textOverflow : "ellipsis",
+        maxWidth : "75%",
+        height : "100%",
+        '&:hover' : {
+          overflow : "visible",
+        }
+      }
+    },
     MuiBox : {
       root : {
         marginTop : 0
