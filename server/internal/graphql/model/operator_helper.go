@@ -102,7 +102,6 @@ func GetControllersInfo(mesheryKubeClient *mesherykube.Client, brokerConn broker
 }
 
 func GetBrokerInfo(mesheryclient operatorClient.Interface, mesheryKubeClient *mesherykube.Client, brokerConn brokerpkg.Handler) (OperatorControllerStatus, error) {
-
 	broker := controllers.NewMesheryBrokerHandler(mesheryKubeClient)
 	brokerStatus := broker.GetStatus().String()
 
