@@ -83,7 +83,10 @@ function MesheryApplicationCard({
                   e.stopPropagation(); handleAppDownload(id ,source_type, name)
                 }}
               >
-                <img src={`/static/img/${(source_type).replaceAll(" ", "_").toLowerCase()}.svg`} width="45px" height="45px" />
+                {source_type== undefined || source_type == " " ?
+                    <img src={`/static/img/default_apps-green.svg`} width="45px" height="45px" />
+                  : <img src={`/static/img/${(source_type).replaceAll(" ", "_").toLowerCase()}.svg`} width="45px" height="45px" />
+                }
               </IconButton>
             </div>
             <div className={classes.lastRunText} >
