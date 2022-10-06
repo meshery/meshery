@@ -10,8 +10,7 @@ const CustomInputField = (props) => {
     display : "flex",
     alignItems : "center",
     justifyContent : "space-between",
-    marginRight : "4px",
-    marginTop : "-0.4em"
+    marginTop : '-0.3em'
   }
 
   return (
