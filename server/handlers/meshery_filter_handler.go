@@ -276,6 +276,43 @@ func (h *Handler) CloneMesheryFilterHandler(
 	fmt.Fprint(rw, string(resp))
 }
 
+// swagger:route POST /api/filter/catalog/publish FiltersAPI idPublishCatalogFilterHandler
+//
+// Publishes filter to Meshery Catalog by setting visibility to public and setting catalog data
+// responses:
+// 	200: noContentWrapper
+//
+// PublishCatalogFilterHandler makes filter with given id public
+func (h *Handler) PublishCatalogFilterHandler(
+	rw http.ResponseWriter,
+	r *http.Request,
+	prefObj *models.Preference,
+	user *models.User,
+	provider models.Provider,
+) {
+	defer func() {
+		_ = r.Body.Close()
+	}()
+
+	var parsedBody *models.MesheryCatalogFilterRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil {
+		h.log.Error(ErrRequestBody(err))
+		http.Error(rw, ErrRequestBody(err).Error(), http.StatusBadRequest)
+		return
+	}
+
+	resp, err := provider.PublishCatalogFilter(r, parsedBody)
+	if err != nil {
+		h.log.Error(ErrPublishCatalogFilter(err))
+		http.Error(rw, ErrPublishCatalogFilter(err).Error(), http.StatusInternalServerError)
+		return
+	}
+
+	go h.config.ConfigurationChannel.PublishFilters()
+	rw.Header().Set("Content-Type", "application/json")
+	fmt.Fprint(rw, string(resp))
+}
+
 // swagger:route GET /api/filter/{id} FiltersAPI idGetMesheryFilter
 // Handle GET request for a Meshery Filter
 //
