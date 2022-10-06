@@ -17,6 +17,7 @@ import ConfirmationModal from "./ConfirmationModal"
 import { getComponentsinFile, generateValidatePayload } from "../utils/utils";
 import UploadImport from "./UploadImport";
 import ConfigurationSubscription from "../components/graphql/subscriptions/ConfigurationSubscription";
+import PromptComponent from "./PromptComponent";
 import Validation from "./Validation";
 
 const requires = createRequires(getDependencies);
@@ -68,6 +69,7 @@ function Extension({ grafana, prometheus, updateLoadTestData, url, isDrawerColla
         ConfirmationModal,
         getComponentsinFile,
         UploadImport,
+        PromptComponent,
         generateValidatePayload,
         Validation
       }}
