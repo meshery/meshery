@@ -45,7 +45,7 @@ function RJSFButton({ handler, text, ...restParams }) {
   );
 }
 
-function RJSFFormChildComponent({ onSubmit, onDelete }){
+function RJSFFormChildComponent({ onSubmit, onDelete }) {
   return (
     <>
       <RJSFButton handler={onSubmit} text="Submit" />
@@ -71,7 +71,7 @@ function RJSFFormChildComponent({ onSubmit, onDelete }){
  * }} props
  * @returns
  */
-function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference, namespace, onSettingsChange, onTraitsChange, scroll=false }) {
+function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference, namespace, onSettingsChange, onTraitsChange, scroll = false }) {
   const [tab, setTab] = React.useState(0);
   const classes = useStyles({ color : getMeshProperties(getMeshName(schemaSet))?.color });
 
@@ -88,11 +88,15 @@ function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference
     };
     schemaSet.workload.properties.label = {
       description : "The label for the service",
-      type : "string"
+      additionalProperties : {
+        "type" : "string"
+      }
     };
     schemaSet.workload.properties.annotation = {
       description : "The annotation for the service",
-      type : "string"
+      additionalProperties : {
+        "type" : "string"
+      }
     };
   }, [])
 
@@ -129,7 +133,7 @@ function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference
                 style : {
                   display : "none",
                 },
-              }}  aria-label="Pattern Service" >
+              }} aria-label="Pattern Service" >
                 <Tab label={<div> <SettingsIcon className={classes.setIcon} />Settings</div>} {...a11yProps(0)} />
                 {
                   renderTraits()
@@ -139,7 +143,7 @@ function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference
               </Tabs>
             </AppBar>
             <TabPanel value={tab} index={0} className={classes.tabPanel}>
-              <SettingsForm RJSFFormChildComponent={RJSFFormChildComponent}  />
+              <SettingsForm RJSFFormChildComponent={RJSFFormChildComponent} />
             </TabPanel>
             <TabPanel value={tab} index={1} className={classes.tabPanel}>
               <TraitsForm />

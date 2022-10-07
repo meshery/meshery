@@ -277,7 +277,12 @@ function jsonSchemaBuilder(schema, obj) {
     return
   }
 
-  obj[uiDesc] = " ";
+
+  // Don't remove the description from additonal Fields Title
+  if (!schema?.additionalProperties) {
+    obj[uiDesc] = " ";
+  }
+
   if (obj["ui:widget"]) { // if widget is already assigned, don't go over
     return
   }
