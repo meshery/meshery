@@ -283,7 +283,6 @@ function jsonSchemaBuilder(schema, obj) {
   }
 
   if (schema.type === 'boolean') {
-    schema["default"] = false;
     obj["ui:widget"] = "checkbox";
   }
 

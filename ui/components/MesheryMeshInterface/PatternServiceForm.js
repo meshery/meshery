@@ -77,29 +77,24 @@ function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference
 
   useEffect(() => {
     schemaSet.workload.properties.name = {
-      description : "The Name for the service",
-      default : "default",
-      type : "string",
-      required : true
-    };
-    schemaSet.workload.properties.namespace = {
       description : "The Namespace for the service",
       default : "<Name of the Component>",
       type : "string"
     };
+    schemaSet.workload.properties.namespace = {
+      description : "The Name for the service",
+      default : "default",
+      type : "string",
+    };
     schemaSet.workload.properties.label = {
       description : "The label for the service",
-      default : "",
       type : "string"
     };
     schemaSet.workload.properties.annotation = {
       description : "The annotation for the service",
-      default : "",
       type : "string"
     };
   }, [])
-
-  console.log({ formData, schemaSet, onSubmit, onDelete, reference, namespace, onSettingsChange, onTraitsChange, scroll })
 
   const handleTabChange = (_, newValue) => {
     setTab(newValue);
