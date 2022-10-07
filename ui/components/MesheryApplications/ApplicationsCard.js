@@ -84,7 +84,7 @@ function MesheryApplicationCard({
                 }}
               >
                 {source_type== undefined || source_type == " " ?
-                    <img src={`/static/img/default_apps-green.svg`} width="45px" height="45px" />
+                  <img src={`/static/img/default_apps-green.svg`} width="45px" height="45px" />
                   : <img src={`/static/img/${(source_type).replaceAll(" ", "_").toLowerCase()}.svg`} width="45px" height="45px" />
                 }
               </IconButton>
