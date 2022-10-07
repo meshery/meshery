@@ -16,7 +16,6 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -57,7 +56,7 @@ mesheryctl exp filter apply --file https://github.com/layer5io/wasm-filters/tree
 			filterName := strings.Join(args, "%20")
 
 			// search and fetch filters with filter-name
-			log.Debug("Fetching filters")
+			utils.Log.Debug("Fetching filters")
 
 			req, err = utils.NewRequest("GET", filterURL+"?search="+filterName, nil)
 			if err != nil {
@@ -122,7 +121,7 @@ mesheryctl exp filter apply --file https://github.com/layer5io/wasm-filters/tree
 					if err != nil {
 						return err
 					}
-					log.Debug("saved filter file")
+					utils.Log.Debug("saved filter file")
 					var response []*models.MesheryApplication
 					// failsafe (bad api call)
 					if resp.StatusCode != 200 {
@@ -149,8 +148,8 @@ mesheryctl exp filter apply --file https://github.com/layer5io/wasm-filters/tree
 					return err
 				}
 
-				log.Debug(url)
-				log.Debug(path)
+				utils.Log.Debug(url)
+				utils.Log.Debug(path)
 
 				// save the filter with Github URL
 				if !skipSave {
@@ -189,7 +188,7 @@ mesheryctl exp filter apply --file https://github.com/layer5io/wasm-filters/tree
 				if err != nil {
 					return err
 				}
-				log.Debug("remote hosted filter request success")
+				utils.Log.Debug("remote hosted filter request success")
 				var response []*models.MesheryFilter
 				// failsafe (bad api call)
 				if resp.StatusCode != 200 {
@@ -228,9 +227,9 @@ mesheryctl exp filter apply --file https://github.com/layer5io/wasm-filters/tree
 		}
 
 		if res.StatusCode == 200 {
-			log.Info("filter successfully deployed")
+			utils.Log.Info("filter successfully deployed")
 		}
-		log.Info(string(body))
+		utils.Log.Info(string(body))
 		return nil
 	},
 }
@@ -251,7 +250,7 @@ func multipleFiltersConfirmation(profiles []models.MesheryFilter) int {
 		fmt.Printf("Enter the index of filter: ")
 		response, err := reader.ReadString('\n')
 		if err != nil {
-			log.Fatal(err)
+			utils.Log.Error(err)
 		}
 		response = strings.ToLower(strings.TrimSpace(response))
 		index, err := strconv.Atoi(response)

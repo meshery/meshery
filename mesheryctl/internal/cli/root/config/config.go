@@ -7,11 +7,10 @@ import (
 	"strings"
 
 	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 
 	"github.com/layer5io/meshery/mesheryctl/pkg/constants"
-
+	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"net/http"
 )
 
@@ -93,7 +92,7 @@ func (mc *MesheryCtlConfig) CheckIfGivenContextIsValid(name string) (*Context, e
 func (mc *MesheryCtlConfig) GetBaseMesheryURL() string {
 	currentContext, err := mc.CheckIfCurrentContextIsValid()
 	if err != nil {
-		log.Fatal(err)
+		utils.Log.Error(err)
 	}
 
 	return currentContext.Endpoint
@@ -107,7 +106,7 @@ func (mc *MesheryCtlConfig) GetCurrentContextName() string {
 func (mc *MesheryCtlConfig) GetCurrentContext() (*Context, error) {
 	currentContext, err := mc.CheckIfCurrentContextIsValid()
 	if err != nil {
-		log.Fatal(err)
+		utils.Log.Error(err)
 	}
 
 	return currentContext, err
@@ -117,7 +116,7 @@ func (mc *MesheryCtlConfig) GetCurrentContext() (*Context, error) {
 func (mc *MesheryCtlConfig) GetContext(name string) (*Context, error) {
 	context, err := mc.CheckIfGivenContextIsValid(name)
 	if err != nil {
-		log.Fatal(err)
+		utils.Log.Error(err)
 	}
 
 	return context, err
@@ -130,7 +129,7 @@ func (mc *MesheryCtlConfig) SetCurrentContext(contextName string) error {
 	}
 	_, err := mc.CheckIfCurrentContextIsValid()
 	if err != nil {
-		log.Errorf(err.Error())
+		utils.Log.Errorf(err.Error())
 	}
 
 	return err
@@ -237,16 +236,16 @@ func (ctx *Context) ValidateVersion() error {
 
 	defer func() {
 		if cerr := resp.Body.Close(); cerr != nil {
-			log.Error(cerr)
+			utils.Log.Error(cerr)
 		}
 	}()
 
 	if resp.StatusCode == 404 {
-		log.Fatal("version " + ctx.Version + " is not a valid Meshery release")
+		utils.Log.Error("version " + ctx.Version + " is not a valid Meshery release")
 	}
 
 	if resp.StatusCode != http.StatusOK {
-		log.Fatal("failed to validate Meshery release version " + ctx.Version)
+		utils.Log.Error("failed to validate Meshery release version " + ctx.Version)
 	}
 
 	if err != nil {
@@ -271,7 +270,7 @@ func (t *Token) GetLocation() string {
 	if strings.HasPrefix(t.Location, "~/") {
 		usr, err := os.UserHomeDir()
 		if err != nil {
-			log.Warn("failed to get user home directory")
+			utils.Log.Warn("failed to get user home directory")
 		}
 		return filepath.Join(usr, t.Location[2:])
 	}
@@ -280,7 +279,7 @@ func (t *Token) GetLocation() string {
 	// is in the .meshery directory
 	home, err := os.UserHomeDir()
 	if err != nil {
-		log.Warn("failed to get user home directory")
+		utils.Log.Warn("failed to get user home directory")
 	}
 
 	return filepath.Join(home, ".meshery", t.Location)
