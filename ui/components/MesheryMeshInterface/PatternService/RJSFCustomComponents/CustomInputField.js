@@ -10,7 +10,6 @@ const CustomInputField = (props) => {
     display : "flex",
     alignItems : "center",
     justifyContent : "space-between",
-    marginTop : '-0.3em'
   }
 
   return (
@@ -25,6 +24,7 @@ const CustomInputField = (props) => {
           error={props.rawErrors?.length > 0}
           onChange={e => props?.onChange(e.target.value)}
           label={`${prettifiedName}`}
+          style={{ marginTop : '0.3em' }}
           InputProps={{
             style : { padding : "2px 0px 3px 0px", backgroundColor : "rgba(255, 255, 255, 0.4)" },
             endAdornment : (<InputAdornment position="start">
