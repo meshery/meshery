@@ -10,33 +10,34 @@ const CustomInputField = (props) => {
     display : "flex",
     alignItems : "center",
     justifyContent : "space-between",
-    marginRight : "4px",
-    marginTop : "-0.4em"
   }
 
   return (
-    <div key={props.id} style={style}>
-      <TextField
-        variant="outlined"
-        size="small"
-        key={props.id}
-        value={props.value}
-        id={props.id}
-        error={props.rawErrors?.length > 0}
-        onChange={e => props?.onChange(e.target.value)}
-        label={`${prettifiedName}`}
-        InputProps={{
-          style : { padding : "2px 0px 3px 0px", backgroundColor : "rgba(255, 255, 255, 0.4)" },
-          endAdornment : (<InputAdornment position="start">
-            {props.schema?.description && (
-              <EnlargedTextTooltip title={props.schema?.description}>
-                <IconButton component="span" size="small">
-                  <HelpOutlineIcon />
-                </IconButton>
-              </EnlargedTextTooltip>
-            )}
-          </InputAdornment>),
-        }} />
+    <>
+      <div key={props.id} style={style}>
+        <TextField
+          variant="outlined"
+          size="small"
+          key={props.id}
+          value={props.value}
+          id={props.id}
+          error={props.rawErrors?.length > 0}
+          onChange={e => props?.onChange(e.target.value)}
+          label={`${prettifiedName}`}
+          style={{ marginTop : '0.3em' }}
+          InputProps={{
+            style : { padding : "2px 0px 3px 0px", backgroundColor : "rgba(255, 255, 255, 0.4)" },
+            endAdornment : (<InputAdornment position="start">
+              {props.schema?.description && (
+                <EnlargedTextTooltip title={props.schema?.description}>
+                  <IconButton component="span" size="small">
+                    <HelpOutlineIcon />
+                  </IconButton>
+                </EnlargedTextTooltip>
+              )}
+            </InputAdornment>),
+          }} />
+      </div>
       <div style={{ display : "flex" }}>
         {props.rawErrors?.map((errormsg, i) => (
           (errormsg === "is a required property" ? null
@@ -44,7 +45,7 @@ const CustomInputField = (props) => {
           )
         ))}
       </div>
-    </div>
+    </>
   )
 }
 
