@@ -346,12 +346,6 @@ See all [Contributor Guides](https://docs.meshery.io/project/contributing) in Me
 
 This repository and site are available as open-source under the terms of the [Apache 2.0 License](https://opensource.org/licenses/Apache-2.0).
 
-### About Layer5
+### Community
 
-**Community First**
-
-<p>The <a href="https://layer5.io">Layer5</a> community represents the largest collection of service mesh projects and their maintainers in the world.</p>
-
-**Open Source First**
-
-<p>Our projects establish industry standards and enable service developers, owners, and operators with repeatable patterns and best practices for managing all aspects of distributed services. Our shared commitment to the open-source spirit push the Layer5 community and its projects forward.</p>
+See an <a href="https://layer5.io/community/handbook/repository-overview">overview of repositories</a> and projects by tech stack in the <a href="https://layer5.io/community/handbook/">Community Handbook</a>.
