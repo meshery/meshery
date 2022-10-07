@@ -27,6 +27,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/vmihailenco/taskq/v3"
 	"github.com/vmihailenco/taskq/v3/memqueue"
+	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 )
 
 var (
@@ -51,7 +52,7 @@ func main() {
 		Format: logger.SyslogLogFormat,
 	})
 	if err != nil {
-		logrus.Error(err)
+		utils.Log.Error(err)
 		os.Exit(1)
 	}
 
@@ -63,7 +64,7 @@ func main() {
 
 	// operatingSystem, err := exec.Command("uname", "-s").Output()
 	// if err != nil {
-	// 	logrus.Error(err)
+	// 	utils.Log.Error(err)
 	// }
 
 	ctx := context.Background()

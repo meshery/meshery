@@ -52,7 +52,7 @@ mesheryctl version
 		mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			// get the currCtx
-			utils.Log.Error(ErrProcessingConfig(err))
+			tils.Log.Error(ErrProcessingConfig(err))u
 			userResponse := false
 			userResponse = utils.AskForConfirmation("Looks like you are using an outdated config file. Do you want to generate a new config file?")
 			if userResponse {
