@@ -38,8 +38,16 @@ import { getK8sConfigIdsFromK8sConfig } from '../utils/multi-ctx';
 import './../public/static/style/index.css';
 import subscribeK8sContext from "../components/graphql/subscriptions/K8sContextSubscription";
 import { bindActionCreators } from 'redux';
+import { inspect } from '@xstate/inspect';
 
 if (typeof window !== 'undefined') {
+  // for visualizing state machines in development mode
+  if (process.env.NODE_ENV !== "production")
+    inspect({
+      // options
+      // url: 'https://stately.ai/viz?inspect', // (default)
+      iframe : false // open in new window
+    });
   require('codemirror/mode/yaml/yaml');
   require('codemirror/mode/javascript/javascript');
   require('codemirror/addon/lint/lint');
@@ -92,7 +100,7 @@ class MesheryApp extends App {
       },
       err => console.error(err)
     )
-    const k8sContextSubscription = (page="", search="", pageSize="10", order="") => {
+    const k8sContextSubscription = (page = "", search = "", pageSize = "10", order = "") => {
       return subscribeK8sContext((result) => {
         this.setState({ k8sContexts : result.k8sContext }, () => this.setActiveContexts("all"))
         this.props.store.dispatch({ type : actionTypes.UPDATE_CLUSTER_CONFIG, k8sConfig : result.k8sContext.contexts });
@@ -156,7 +164,7 @@ class MesheryApp extends App {
    * Sets the selected k8s context on global level.
    * @param {Array.<string>} activeK8sContexts
    */
-  activeContextChangeCallback = (activeK8sContexts)  => {
+  activeContextChangeCallback = (activeK8sContexts) => {
     if (activeK8sContexts.includes("all")) {
       activeK8sContexts = ["all"];
     }
@@ -183,7 +191,7 @@ class MesheryApp extends App {
         let ids = [...(state.activeK8sContexts || [])];
         //pop event
         if (ids.includes(id)) {
-          ids  = ids.filter(id => id != "all")
+          ids = ids.filter(id => id != "all")
           return { activeK8sContexts : ids.filter(cid => cid !== id) }
         }
 
