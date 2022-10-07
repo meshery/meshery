@@ -30,15 +30,15 @@ export const rjsfTheme = createTheme({
         "&:hover" : "00b39f"
       }
     },
-    MuiInput : {
+    MuiTextField : {
       root : {
-        width : '70%',
+        marginRight : "0.5rem"
       }
     },
     MuiInputLabel : {
       root : {
         whiteSpace : "nowrap",
-        overflow : "hidden",
+        // overflow : "hidden",
         textOverflow : "ellipsis",
         maxWidth : "75%",
         height : "100%",
