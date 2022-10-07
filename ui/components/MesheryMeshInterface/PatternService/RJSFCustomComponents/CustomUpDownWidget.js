@@ -8,8 +8,8 @@ const style={
 const CustomHelperText=(props) => {
   return (
     <div style={style} id={props.id}>
-      <ErrorIcon style={{ color : "red",marginRight : "2px",height : "18px" }}/>
-      <FormHelperText error>{props.errormsg}</FormHelperText>
+      <ErrorIcon style={{ color : "#B32700",marginRight : "0.2rem",height : "1rem" }}/>
+      <FormHelperText error style={{ color : "#B32700" }}>{props.errormsg}</FormHelperText>
     </div>
 
   )
@@ -20,16 +20,19 @@ const CustomUpDownField = (props) => {
   return (
     <>
       <TextField
-        id="standard-number"
+        id={props.id}
+        size="small"
         label={name}
         key={props.id}
         value={props?.value}
-        variant="standard"
+        variant="outlined"
         onChange={e => e.target.value<0?props?.onChange(e.target.value=""):props?.onChange(e.target.value)}
         type="number"
-        margin="none"
         error={props.rawErrors?.length > 0}
-        size="large"
+        style={{ marginTop : '0.3em' }}
+        InputProps={{
+          style : { padding : "2px 0px 3px 0px", backgroundColor : "rgba(255, 255, 255, 0.4)" },
+        }}
       />
       <div style={{ display : "flex" }}>
         {props.rawErrors?.map((errormsg, i) => (
