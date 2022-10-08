@@ -22,6 +22,8 @@
   <img src="https://img.shields.io/badge/Slack-@layer5.svg?logo=slack"></a>
 <a href="https://twitter.com/intent/follow?screen_name=mesheryio" alt="Twitter Follow">
   <img src="https://img.shields.io/twitter/follow/mesheryio.svg?label=Follow+Meshery&style=social" /></a>
+<a href="https://github.com/meshery/meshery/releases" alt="Meshery Downloads">
+  <img src="https://img.shields.io/github/downloads/meshery/meshery/total" /></a>  
 </p>
 
 <h5><p align="center"><i>If you’re using Meshery or if you like the project, please <a href="https://github.com/layer5io/meshery/stargazers">★</a> this repository to show your support! 🤩</i></p></h5>
