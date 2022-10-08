@@ -10,6 +10,8 @@
   <img src="https://img.shields.io/github/issues/layer5io/meshery/help%20wanted.svg?color=informational" /></a>
 <a href="https://github.com/meshery/meshery" alt="LICENSE">
   <img src="https://img.shields.io/github/license/meshery/meshery?color=brightgreen" /></a>
+<a href="https://artifacthub.io/packages/helm/meshery/meshery" alt="Artifact hub Meshery">
+  <img src="https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/artifact-hub" /></a>  
 <a href="https://goreportcard.com/report/github.com/meshery/meshery" alt="Go Report Card">
   <img src="https://goreportcard.com/badge/github.com/meshery/meshery" /></a>
 <a href="https://github.com/meshery/meshery/actions" alt="Build Status">
@@ -26,6 +28,7 @@
   <img src="https://img.shields.io/github/downloads/meshery/meshery/total" /></a>  
 </p>
 
+
 <h5><p align="center"><i>If you’re using Meshery or if you like the project, please <a href="https://github.com/layer5io/meshery/stargazers">★</a> this repository to show your support! 🤩</i></p></h5>
 
 [Meshery](https://meshery.io) is the cloud native management plane offering lifecycle, configuration, and performance management of Kubernetes, service meshes, and your workloads.
@@ -37,6 +40,7 @@ MESHERY IS A CLOUD NATIVE COMPUTING FOUNDATION PROJECT
 <img src=".github/assets/images/readme/cncf-white.svg#gh-dark-mode-only" width="30%" align="center" />
 <img src=".github/assets/images/readme/cncf-black.svg#gh-light-mode-only" width="30%" align="center" />
 </p>
+
 
 <h2><a name="running"></a>Get Started with Meshery</h2>
 <p style="clear:both;">
