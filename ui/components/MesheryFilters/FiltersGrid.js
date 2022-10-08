@@ -1,16 +1,17 @@
 //@ts-check
-import { Grid } from "@material-ui/core";
+import { Grid, Paper, Typography, Button } from "@material-ui/core";
 import { Pagination } from "@material-ui/lab";
 import React, { useState } from "react";
 import FiltersCard from "./FiltersCard";
-import { makeStyles } from "@material-ui/core/styles";
-import FILE_OPS from "../../utils/configurationFileHandlersEnum";
+import { FILE_OPS } from "../../utils/Enum";
 import ConfirmationMsg from "../ConfirmationModal";
 import { getComponentsinFile } from "../../utils/utils";
+import PublishIcon from "@material-ui/icons/Publish";
+import useStyles from "../MesheryPatterns/Grid.styles";
 
 const INITIAL_GRID_SIZE = { xl : 4, md : 6, xs : 12 };
 
-function FilterCardGridItem({ filter, handleDeploy, handleUndeploy, handleSubmit, setSelectedFilters }) {
+function FilterCardGridItem({ filter, handleDeploy, handleUndeploy, handleSubmit, setSelectedFilters, handleClone }) {
   const [gridProps, setGridProps] = useState(INITIAL_GRID_SIZE);
   const [yaml, setYaml] = useState(filter.filter_file);
 
@@ -25,28 +26,36 @@ function FilterCardGridItem({ filter, handleDeploy, handleUndeploy, handleSubmit
         requestSizeRestore={() => setGridProps(INITIAL_GRID_SIZE)}
         handleDeploy={handleDeploy}
         handleUndeploy={handleUndeploy}
+        handleClone={handleClone}
         deleteHandler={() => handleSubmit({ data : yaml, id : filter.id, type : FILE_OPS.DELETE ,name : filter.name })}
         setSelectedFilters={() => setSelectedFilters({ filter : filter, show : true })}
         setYaml={setYaml}
+        description={filter.desciption}
+        visibility={filter.visibility}
       />
     </Grid>
   );
 }
-const useStyles = makeStyles(() => ({
-  pagination : {
-    display : "flex",
-    justifyContent : "center",
-    alignItems : "center",
-    marginTop : "2rem"
-  },
-  // text : {
-  //   padding : "5px"
-  // }
-}))
 
-function FiltersGrid({ filters=[],handleDeploy, handleUndeploy, handleSubmit, setSelectedFilter, selectedFilter, pages = 1,setPage, selectedPage }) {
+function FiltersGrid({ filters=[],handleDeploy, handleUndeploy, handleClone, handleSubmit,urlUploadHandler,uploadHandler, setSelectedFilter, selectedFilter, pages = 1,setPage, selectedPage, UploadImport }) {
 
   const classes = useStyles()
+
+  const [importModal, setImportModal] = useState({
+    open : false
+  });
+
+  const handleUploadImport = () => {
+    setImportModal({
+      open : true
+    });
+  }
+
+  const handleUploadImportClose = () => {
+    setImportModal({
+      open : false
+    });
+  }
 
   const [modalOpen, setModalOpen] = useState({
     open : false,
@@ -83,6 +92,7 @@ function FiltersGrid({ filters=[],handleDeploy, handleUndeploy, handleSubmit, se
           <FilterCardGridItem
             key={filter.id}
             filter={filter}
+            handleClone={() => handleClone(filter.id)}
             handleDeploy={() => handleModalOpen(filter, true)}
             handleUndeploy={() => handleModalOpen(filter, false)}
             handleSubmit={handleSubmit}
@@ -91,6 +101,29 @@ function FiltersGrid({ filters=[],handleDeploy, handleUndeploy, handleSubmit, se
         ))}
 
       </Grid>
+      }
+      {!selectedFilter.show && filters.length === 0 &&
+        <Paper className={classes.noPaper}>
+          <div className={classes.noContainer}>
+            <Typography align="center" color="textSecondary" className={classes.noText}>
+            No Filters Found
+            </Typography>
+            <div>
+              <Button
+                aria-label="Add Application"
+                variant="contained"
+                color="primary"
+                size="large"
+                // @ts-ignore
+                onClick={handleUploadImport}
+                style={{ marginRight : "2rem" }}
+              >
+                <PublishIcon className={classes.addIcon} />
+              Import Filter
+              </Button>
+            </div>
+          </div>
+        </Paper>
       }
       {filters.length
         ? (
@@ -110,6 +143,7 @@ function FiltersGrid({ filters=[],handleDeploy, handleUndeploy, handleSubmit, se
         componentCount = {modalOpen.count}
         tab={modalOpen.deploy ? 0 : 1}
       />
+      <UploadImport open={importModal.open} handleClose={handleUploadImportClose} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} configuration="Filter"  />
     </div>
   );
 }

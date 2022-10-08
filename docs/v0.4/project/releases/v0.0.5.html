@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+  <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/clipboard@1/dist/clipboard.min.js"></script>
+  <head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="generator" content="Hugo 0.55.6" />
+
+<META NAME="ROBOTS" CONTENT="INDEX, FOLLOW">
+
+<link rel="alternate" type="application/rss&#43;xml" href="/v0.4/index.xml">
+
+<link rel="shortcut icon" href="/v0.4/assets/favicons/favicon.ico" >
+<link rel="apple-touch-icon" href="/v0.4/assets/favicons/apple-touch-icon.png" sizes="180x180">
+<link rel="icon" type="image/png" href="/v0.4/assets/favicons/favicon-16x16.png" sizes="16x16">
+<link rel="icon" type="image/png" href="/v0.4/assets/favicons/favicon-32x32.png" sizes="32x32">
+<link rel="icon" type="image/png" href="/v0.4/assets/favicons/android-144x144.png" sizes="36x36">
+<link rel="icon" type="image/png" href="/v0.4/assets/favicons/android-144x144.png" sizes="48x48">
+<link rel="icon" type="image/png" href="/v0.4/assets/favicons/android-144x144.png" sizes="72x72">
+<link rel="icon" type="image/png" href="/v0.4/assets/favicons/android-144x144.png" sizes="96x196">
+<link rel="icon" type="image/png" href="/v0.4/assets/favicons/android-144x144.png" sizes="144x144">
+<link rel="icon" type="image/png" href="/v0.4/assets/favicons/android-192x192.png"sizes="192x192">
+
+<title>V0.0.5</title>
+<meta property="og:title" content="V0.0.5" />
+<meta property="og:description" content="Documentation for Meshery, the multi-service mesh management plane for Istio, Linkerd, Consul, Network Service Mesh, Octarine, Envoy, Kuma, Traefik Mesh, App Mesh, Citrix Service Mesh and other service meshes.
+" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="http://localhost:4000" />
+<meta property="og:site_name" content="http://localhost:4000" />
+
+<meta itemprop="name" content="V0.0.5">
+<meta itemprop="description" content="Documentation for Meshery, the multi-service mesh management plane for Istio, Linkerd, Consul, Network Service Mesh, Octarine, Envoy, Kuma, Traefik Mesh, App Mesh, Citrix Service Mesh and other service meshes.
+">
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="V0.0.5"/>
+<meta name="twitter:description" content="Documentation for Meshery, the multi-service mesh management plane for Istio, Linkerd, Consul, Network Service Mesh, Octarine, Envoy, Kuma, Traefik Mesh, App Mesh, Citrix Service Mesh and other service meshes.
+"/>
+
+<link rel="stylesheet" href="/v0.4/assets/css/main.css">
+<link rel="stylesheet" href="/v0.4/assets/css/palette.css">
+<link rel="stylesheet" href="/v0.4/assets/css/anchorjs.css">
+<link rel="stylesheet" href="/v0.4/assets/css/sass.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css">
+
+<script
+  src="https://code.jquery.com/jquery-3.3.1.min.js"
+  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+  crossorigin="anonymous"></script>
+  <!-- Anchorjs included for adding hover anchor links to headings -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.2.2/anchor.min.js"></script>
+  <script>  
+  $(function() {
+  /** AnchorJS options and selector */  
+   anchors.options = {
+      visible : 'hover',
+      placement: 'left'
+   };
+   anchors.add('h1, h2, h3, h4, h5');
+   });
+   </script>
+</head>
+<style>
+
+</style>
+  <body class="td-section">
+    <header>
+  <nav class="js-navbar-scroll navbar navbar-expand navbar-dark flex-column flex-md-row td-navbar">
+    <a class="navbar-brand" href="/v0.4/">
+      <div class="navbar-logo">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 279.49 51.83"><defs><style>.cls-1{fill:#00d3a9}.cls-2{fill:#00b39f}.cls-3{fill:#fff}</style></defs><title>Asset 14</title><g id="Layer_2" data-name="Layer 2"><g id="Layer_1-2" data-name="Layer 1"><polygon points="26.68 12.21 26.68 24.59 37.4 18.38 26.68 12.21" class="cls-1"/><polygon points="26.68 27.18 26.68 39.62 37.5 33.43 26.68 27.18" class="cls-1"/><polygon points="25.13 24.51 25.13 12.32 14.54 18.39 25.13 24.51" class="cls-2"/><path d="M3.88,39.58a26,26,0,0,0,8.22,8.27v-13Z" class="cls-2"/><polygon points="25.13 39.56 25.13 27.27 14.51 33.42 25.13 39.56" class="cls-2"/><polygon points="13.64 47.07 24.4 40.92 13.64 34.7 13.64 47.07" class="cls-1"/><polygon points="38.24 47.14 38.24 34.79 27.5 40.93 38.24 47.14" class="cls-2"/><path d="M48.76,38.14A25.71,25.71,0,0,0,51.8,27L40.6,33.44Z" class="cls-2"/><polygon points="39.78 32.13 50.58 25.95 39.78 19.75 39.78 32.13" class="cls-1"/><polygon points="38.24 17.08 38.24 4.81 27.55 10.94 38.24 17.08" class="cls-2"/><polygon points="38.24 32.07 38.24 19.68 27.52 25.89 38.24 32.07" class="cls-2"/><polygon points="25.9 51.83 25.91 51.83 25.9 51.83 25.9 51.83" class="cls-2"/><polygon points="13.64 19.66 13.64 32.14 24.43 25.89 13.64 19.66" class="cls-1"/><path d="M25.13,0A25.75,25.75,0,0,0,13.75,3L25.13,9.55Z" class="cls-2"/><polygon points="13.64 4.72 13.64 17.13 24.44 10.93 13.64 4.72" class="cls-1"/><path d="M12.1,4a26,26,0,0,0-8.22,8.27L12.1,17Z" class="cls-2"/><path d="M38.17,3.07A25.8,25.8,0,0,0,26.68,0V9.65Z" class="cls-1"/><path d="M0,26.82A25.76,25.76,0,0,0,3.1,38.24l8.32-4.82Z" class="cls-1"/><path d="M3.1,13.58A25.67,25.67,0,0,0,0,24.94l11.44-6.55Z" class="cls-1"/><path d="M13.73,48.8a25.81,25.81,0,0,0,11.4,3V42.28Z" class="cls-2"/><path d="M48,12.28A25.91,25.91,0,0,0,39.78,4V17Z" class="cls-1"/><path d="M39.78,47.8A26,26,0,0,0,48,39.48l-8.21-4.73Z" class="cls-1"/><path d="M51.8,24.88a25.84,25.84,0,0,0-3.07-11.27l-8.24,4.77Z" class="cls-2"/><path d="M26.68,51.82a25.81,25.81,0,0,0,11.37-3L26.68,42.24Z" class="cls-1"/><polygon points="12.1 32.03 12.1 19.79 1.47 25.88 12.1 32.03" class="cls-2"/><polygon points="197.13 19 197.13 20.13 197.13 25.45 197.13 31.94 197.13 41.41 222.35 41.41 222.35 36.09 202.45 36.09 202.45 31.94 202.45 30.77 217.74 30.77 217.74 25.45 202.45 25.45 202.45 20.13 222.35 20.13 222.35 14.81 197.13 14.81 197.13 19" class="cls-3"/><polygon points="100.14 19 100.14 20.13 100.14 25.45 100.14 31.94 100.14 41.41 125.35 41.41 125.35 36.09 105.46 36.09 105.46 31.94 105.46 30.77 120.74 30.77 120.74 25.45 105.46 25.45 105.46 20.13 125.35 20.13 125.35 14.81 100.14 14.81 100.14 19" class="cls-3"/><path d="M160.26,34.46a6.61,6.61,0,0,1-.55,2.69,7,7,0,0,1-1.51,2.22A7.34,7.34,0,0,1,156,40.86a6.7,6.7,0,0,1-2.71.55H128.38v-5.6h24.89a1.35,1.35,0,0,0,1.35-1.35V32.29A1.33,1.33,0,0,0,153.27,31H135.36a6.78,6.78,0,0,1-2.69-.55,7.19,7.19,0,0,1-2.24-1.51,7,7,0,0,1-1.5-2.23,6.62,6.62,0,0,1-.55-2.7V21.8a6.75,6.75,0,0,1,.55-2.72,7,7,0,0,1,1.5-2.21,7.19,7.19,0,0,1,2.24-1.51,6.61,6.61,0,0,1,2.69-.55h24.9v5.64h-24.9a1.27,1.27,0,0,0-1,.39,1.31,1.31,0,0,0-.4,1V24a1.31,1.31,0,0,0,.4,1,1.27,1.27,0,0,0,1,.39h17.91a6.7,6.7,0,0,1,2.71.55,7.11,7.11,0,0,1,3.73,3.72,6.74,6.74,0,0,1,.55,2.71Z" class="cls-3"/><path d="M193.81,41.41h-5.07V31H169V41.41h-5.08V25.31h24.86V14.81h5.07ZM169,22.81h-5.08v-8H169Z" class="cls-3"/><polygon points="266.19 24.12 259.55 14.81 252.9 14.81 263.54 30.77 263.54 41.41 268.86 41.41 268.86 30.77 279.49 14.81 272.93 14.81 266.19 24.12" class="cls-3"/><path d="M231.4,19.88H245v5.53h-11v5.08h2.52l9.65,10.92h6.57l-9.65-10.92h3.76A4.13,4.13,0,0,0,251,26.36V18.94a4.13,4.13,0,0,0-4.13-4.13H226.19v26.6h5.32Z" class="cls-3"/><path d="M96.05,41.41H90.41V22a1.38,1.38,0,0,0-.13-.6,1.56,1.56,0,0,0-.33-.5,1.77,1.77,0,0,0-.5-.34,1.53,1.53,0,0,0-.6-.12H62.78V14.81H88.85a6.88,6.88,0,0,1,2.78.57,7.08,7.08,0,0,1,3.85,3.85A6.88,6.88,0,0,1,96.05,22Zm-27.63,0H62.78v-21l5.64-1.55Zm13.8,0H76.58v-18h5.64Z" class="cls-3"/></g></g></svg><span class="font-weight-bold" style="vertical-align: bottom"
+          >Documentation</span
+        >
+      </div>
+    </a>
+    <div class="td-navbar-nav-scroll ml-md-auto" id="main_navbar">
+      <ul class="navbar-nav mt-2 mt-lg-0">
+        <!-- 
+			<li class="nav-item mr-4 mb-2 mb-lg-0">
+        <a class="nav-link" href="https://github.com/layer5io/meshery" target="_blank"><span>GitHub</span></a>
+      </li>  -->
+
+        <!-- Internal links -->
+        
+        <li class="nav-item mr-4 mb-2 mb-lg-0">
+          <a
+            class="nav-link"
+            href="/v0.4/installation/quick-start"
+            ><span>Quick Start</span></a
+          >
+        </li>
+        
+        <li class="nav-item mr-4 mb-2 mb-lg-0">
+          <a
+            class="nav-link"
+            href="/v0.4/installation/platforms"
+            ><span>All Platforms</span></a
+          >
+        </li>
+        
+        <li class="nav-item mr-4 mb-2 mb-lg-0">
+          <a
+            class="nav-link"
+            href="https://meshery.io"
+            ><span>Project</span></a
+          >
+        </li>
+        
+        <li class="nav-item mr-4 mb-2 mb-lg-0">
+          <a
+            class="nav-link"
+            href="http://slack.layer5.io"
+            ><span>Slack</span></a
+          >
+        </li>
+        
+        <li class="nav-item mr-4 mb-2 mb-lg-0">
+          <a
+            class="nav-link"
+            href="https://github.com/layer5io/meshery"
+            ><span>GitHub</span></a
+          >
+        </li>
+        
+        <li class="nav-item mr-4 mb-2 mb-lg-0">
+          <a
+            class="nav-link"
+            href="/v0.4/es"
+            ><span>🇲🇽 Español</span></a
+          >
+        </li>
+        
+      </ul>
+    </div>
+            <!--Version Selector -->
+
+            <select onchange="window.location=this.value" class="appearance-none flex-1 w-full px-0 py-1 placeholder-gray-900 tracking-wide focus:outline-none version-selector" name="versioningSelection" id="versioningSelection">
+              <!-- <option value="">Versions</option> -->
+              
+    
+              <!-- we get the version selected, and put it to the right option  --><option  value="/v0.4" class="nav-item mr-4 mb-2 mb-lg-0 text-black">
+                <span>v0.4</span>
+              </option>
+              <!-- we get the version selected, and put it to the right option  --><option  value="/" class="nav-item mr-4 mb-2 mb-lg-0 text-black">
+                <span>latest</span>
+              </option>
+              <!-- we get the version selected, and put it to the right option  --><option  value="/v0.5" class="nav-item mr-4 mb-2 mb-lg-0 text-black">
+                <span>v0.5</span>
+              </option>
+              
+              </select>
+        
+            </ul>
+        </div>
+
+    <!--Search Bar
+    <div class="navbar-nav d-none d-lg-block"><input type="search" class="form-control td-search-input" placeholder="&#xf002 Search this site…" aria-label="Search this site…" autocomplete="off"></div>-->
+
+    <!-- meshery-custom-begin
+
+	<div class="navbar-nav d-none d-lg-block">
+          <a class="gh-source" data-gh-source="github" href="https://github.com/layer5io/meshery" title="Go to repository" data-md-state="done">
+          <div class="gh-source__repository">
+            <i class="fab fa fa-github fa-2x" style='padding-right:20px; float:left; margin-top:5px'></i>
+            layer5io/meshery
+          <ul class="gh-source__facts"><li class="gh-source__fact" id='stars'></li><li id="forks" class="gh-source__fact"></li></ul></div></a>
+        </div>
+      </div>
+
+meshery-custom-end -->
+  </nav>
+</header>
+
+<!-- meshery-custom-begin
+
+<script>
+$(document).ready(function() {
+  var url = "https://api.github.com/search/repositories?q=layer5io/meshery";
+  fetch(url, { 
+      headers: {"Accept":"application/vnd.github.preview"}
+  }).then(function(e) {
+    return e.json()
+  }).then(function(r) {
+     console.log(r.items[0])
+     stars = r.items[0]['stargazers_count']
+     forks = r.items[0]['forks_count']
+     $('#stars').text(stars + " Stars")
+     $('#forks').text(forks + " Forks")
+  });
+});
+</script>
+
+meshery-custom-end -->
+
+    <div class="container-fluid td-outer">
+      <div class="td-main">
+        <div class="row flex-xl-nowrap">
+          <div class="col-12 col-md-3 col-xl-2 td-sidebar d-print-none">
+          <div id="td-sidebar-menu" class="td-sidebar__inner">  
+  <form class="td-sidebar__search d-flex align-items-center">
+ <input type="search" class="form-control td-search-input fas fa-search" placeholder="&#xf002" aria-label="Search this site…" autocomplete="off">
+    <button class="btn btn-link td-sidebar__toggle d-md-none p-0 ml-3 fas fa-bars" type="button" data-toggle="collapse" data-target="#td-section-nav" aria-controls="td-docs-nav" aria-expanded="false" aria-label="Toggle section navigation">
+    </button>
+  </form>  
+
+  <nav class="collapse td-sidebar-nav pt-2 pl-4" id="td-section-nav">
+  
+  <ul class="td-sidebar-nav__section pr-md-3">
+    
+    
+    <li class="td-sidebar-nav__section-title">
+      <a  href="/v0.4/" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">Documentation</a>
+    </li>
+    
+      <ul>
+        <li class="collapse show" id="documentation">
+            <ul class="td-sidebar-nav__section pr-md-3">
+              
+              <li class="td-sidebar-nav__section-title">
+                <a href="/v0.4/overview" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Overview</a>
+              </li>
+              
+            
+              <li class="td-sidebar-nav__section-title">
+                <a href="/v0.4/project" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Project</a>
+              </li>
+              
+              <ul>
+                <li class="collapse show" id="">
+                  
+                  
+                    <a class="td-sidebar-link td-sidebar-link__page " id="m-documentation-project-contributing" href="/v0.4/project/contributing">Contributing</a>
+                  
+                    <a class="td-sidebar-link td-sidebar-link__page " id="m-documentation-project-releases" href="/v0.4/project/releases">Releases</a>
+                  
+                    <a class="td-sidebar-link td-sidebar-link__page " id="m-documentation-project-build-release-ci" href="/v0.4/project/build-and-release">Build & Release (CI)</a>
+                  
+                    <a class="td-sidebar-link td-sidebar-link__page " id="m-documentation-project-vulnerabilities" href="/v0.4/project/security-vulnerabilities">Vulnerabilities</a>
+                  
+                    <a class="td-sidebar-link td-sidebar-link__page " id="m-documentation-project-faq" href="/v0.4/project/faq">FAQ</a>
+                  
+                  
+                </li>
+              </ul>
+              
+            
+              <li class="td-sidebar-nav__section-title">
+                <a href="/v0.4/installation/quick-start" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Quick Start</a>
+              </li>
+              
+            
+              <li class="td-sidebar-nav__section-title">
+                <a href="/v0.4/installation/platforms" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Supported Platforms</a>
+              </li>
+              
+            
+          </ul>
+      </ul>  
+        
+  </ul>
+  
+  <ul class="td-sidebar-nav__section pr-md-3">
+    
+    
+    <li class="td-sidebar-nav__section-title">
+      <a  href="/v0.4/concepts" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">Concepts</a>
+    </li>
+    
+      <ul>
+        <li class="collapse show" id="concepts">
+            <ul class="td-sidebar-nav__section pr-md-3">
+              
+              <li class="td-sidebar-nav__section-title">
+                <a href="/v0.4/concepts/architecture" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Architecture</a>
+              </li>
+              
+            
+              <li class="td-sidebar-nav__section-title">
+                <a href="/v0.4/concepts/architecture/adapters" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Adapters</a>
+              </li>
+              
+            
+          </ul>
+      </ul>  
+        
+  </ul>
+  
+  <ul class="td-sidebar-nav__section pr-md-3">
+    
+    
+    <li class="td-sidebar-nav__section-title">
+      <a  href="/v0.4/functionality" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">Functionality</a>
+    </li>
+    
+      <ul>
+        <li class="collapse show" id="functionality">
+            <ul class="td-sidebar-nav__section pr-md-3">
+              
+              <li class="td-sidebar-nav__section-title">
+                <a href="/v0.4/functionality/lifecycle-management" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Lifecycle Management</a>
+              </li>
+              
+            
+              <li class="td-sidebar-nav__section-title">
+                <a href="/v0.4/functionality/performance-management" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Performance Management</a>
+              </li>
+              
+            
+              <li class="td-sidebar-nav__section-title">
+                <a href="/v0.4/functionality/service-mesh-interface" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Service Mesh Interface (SMI)</a>
+              </li>
+              
+            
+          </ul>
+      </ul>  
+        
+  </ul>
+  
+  <ul class="td-sidebar-nav__section pr-md-3">
+    
+    
+    <li class="td-sidebar-nav__section-title">
+      <a  href="/v0.4/service-meshes" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">Service Meshes</a>
+    </li>
+    
+      <ul>
+        <li class="collapse show" id="service-meshes">
+            <ul class="td-sidebar-nav__section pr-md-3">
+              
+              <li class="td-sidebar-nav__section-title">
+                <a href="/v0.4/service-meshes/adapters/app-mesh" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">App Mesh</a>
+              </li>
+              
+            
+              <li class="td-sidebar-nav__section-title">
+                <a href="/v0.4/service-meshes/adapters/cpx" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Citrix Service Mesh</a>
+              </li>
+              
+            
+              <li class="td-sidebar-nav__section-title">
+                <a href="/v0.4/service-meshes/adapters/consul" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Consul</a>
+              </li>
+              
+            
+              <li class="td-sidebar-nav__section-title">
+                <a href="/v0.4/service-meshes/adapters/istio" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Istio</a>
+              </li>
+              
+            
+              <li class="td-sidebar-nav__section-title">
+                <a href="/v0.4/service-meshes/adapters/kuma" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Kuma</a>
+              </li>
+              
+            
+              <li class="td-sidebar-nav__section-title">
+                <a href="/v0.4/service-meshes/adapters/linkerd" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Linkerd</a>
+              </li>
+              
+            
+              <li class="td-sidebar-nav__section-title">
+                <a href="/v0.4/service-meshes/adapters/nsm" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Network Service Mesh</a>
+              </li>
+              
+            
+              <li class="td-sidebar-nav__section-title">
+                <a href="/v0.4/service-meshes/adapters/nginx-sm" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">NGINX Service Mesh</a>
+              </li>
+              
+            
+              <li class="td-sidebar-nav__section-title">
+                <a href="/v0.4/service-meshes/adapters/octarine" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Octarine</a>
+              </li>
+              
+            
+              <li class="td-sidebar-nav__section-title">
+                <a href="/v0.4/service-meshes/adapters/osm" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Open Service Mesh</a>
+              </li>
+              
+            
+              <li class="td-sidebar-nav__section-title">
+                <a href="/v0.4/service-meshes/adapters/tanzu-sm" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Tanzu</a>
+              </li>
+              
+            
+              <li class="td-sidebar-nav__section-title">
+                <a href="/v0.4/service-meshes/adapters/traefik-mesh" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Traefik Mesh</a>
+              </li>
+              
+            
+          </ul>
+      </ul>  
+        
+  </ul>
+  
+  <ul class="td-sidebar-nav__section pr-md-3">
+    
+    
+    <li class="td-sidebar-nav__section-title">
+      <a  href="/v0.4/guides" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">Guides</a>
+    </li>
+    
+      <ul>
+        <li class="collapse show" id="guides">
+            <ul class="td-sidebar-nav__section pr-md-3">
+              
+              <li class="td-sidebar-nav__section-title">
+                <a href="/v0.4/guides/sample-apps" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Deploying Sample Applications</a>
+              </li>
+              
+            
+              <li class="td-sidebar-nav__section-title">
+                <a href="/v0.4/guides/meshery-metrics" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Integrating Prometheus and Grafana</a>
+              </li>
+              
+            
+              <li class="td-sidebar-nav__section-title">
+                <a href="/v0.4/guides/upgrade" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Upgrading Meshery</a>
+              </li>
+              
+            
+              <li class="td-sidebar-nav__section-title">
+                <a href="/v0.4/guides/mesheryctl" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Using mesheryctl</a>
+              </li>
+              
+            
+              <li class="td-sidebar-nav__section-title">
+                <a href="/v0.4/guides/multiple-adapters" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Using Multiple Meshery Adapters</a>
+              </li>
+              
+            
+          </ul>
+      </ul>  
+        
+  </ul>
+  
+  <ul class="td-sidebar-nav__section pr-md-3">
+    
+    
+    <li class="td-sidebar-nav__section-title">
+      <a  href="/v0.4/extensibility" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">Extensibility</a>
+    </li>
+    
+      <ul>
+        <li class="collapse show" id="extensibility">
+            <ul class="td-sidebar-nav__section pr-md-3">
+              
+              <li class="td-sidebar-nav__section-title">
+                <a href="/v0.4/extensibility/adapters" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Service Mesh Adapters</a>
+              </li>
+              
+            
+              <li class="td-sidebar-nav__section-title">
+                <a href="/v0.4/extensibility/load-generators" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Load Generators</a>
+              </li>
+              
+            
+              <li class="td-sidebar-nav__section-title">
+                <a href="/v0.4/extensibility/providers" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Providers</a>
+              </li>
+              
+            
+          </ul>
+      </ul>  
+        
+  </ul>
+  
+  <ul class="td-sidebar-nav__section pr-md-3">
+    
+    
+    <li class="td-sidebar-nav__section-title">
+      <a  href="/v0.4/reference" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">Reference</a>
+    </li>
+    
+      <ul>
+        <li class="collapse show" id="reference">
+            <ul class="td-sidebar-nav__section pr-md-3">
+              
+              <li class="td-sidebar-nav__section-title">
+                <a href="/v0.4/reference/mesheryctl" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">mesheryctl Command Reference</a>
+              </li>
+              
+            
+          </ul>
+      </ul>  
+        
+  </ul>
+  
+  </nav>
+</div>
+          </div>
+          <div class="d-none d-xl-block col-xl-2 td-toc d-print-none">
+              <div class="td-page-meta ml-2 pb-1 pt-2 mb-0">
+                  <strong>Tools</strong>
+<a href="https://github.com/layer5io/meshery/issues/new?assignees=&labels=area/docs&template=documentation.md&title=&#91;Docs&#93;" target="_blank"><i class="fab fa-github fa-fw"></i> Create doc issue</a>
+<a href="https://github.com/layer5io/meshery/blob/master/docs/_releases/v0.0.5.md" target="_blank"><i class="fa fa-edit fa-fw"></i> Edit this page</a>
+<strong>Contents</strong>
+
+
+<!-- this will parse through the header fields and add a button to open
+     an issue / ask a question on Github. The editable field should be in
+     the post frontend matter, and refer to the label to open the issue for -->
+     
+
+              </div>
+              <nav id="TableOfContents"><ul>
+              <li><ul id="TOC">
+                <!-- Links will be appended here-->
+              </ul></li>
+              </ul></nav>
+          </div>
+          <main class="col-12 col-md-9 col-xl-8 pl-md-5" role="main">
+            <nav aria-label="breadcrumb" class="d-none d-md-block d-print-none">
+	      <ol class="breadcrumb spb-1">
+                <li class="breadcrumb-item active" aria-current="page">
+      <!-- meshery-custom-begin -->
+        <div id="breadcrumbs">
+
+<a href="/v0.4/">home</a>
+
+  
+    / <a href="/v0.4/project/">project</a> 
+  
+
+  
+    / <a href="/v0.4/project/releases/">releases</a> 
+  
+
+  
+    / v0.0.5
+  
+
+</div>
+
+<!-- <a href="http://idratherbewriting.com" class="noCrossRef productSubtitle"> Home </a> > <a class="noCrossRef productSubtitle" href="http://localhost:4000">Learn API Doc</a> > v0.0.5 -->
+
+	      <!-- <a href="/v0.4/project/releases/v0.0.5">V0.0.5</a> -->
+		  <!-- meshery-custom-end -->
+                </li>
+	      </ol>
+           </nav>
+           <div class="td-content">
+            
+	           <h1>Meshery v0.0.5
+
+    <a href="v0.0.5](https://github.com/layer5io/meshery/releases/tag/v0.0.5">
+    <img src="/v0.4/assets/img/github.svg" 
+        style="height:1.5em;display: inline;vertical-align: top;"/>
+</a>
+</h1>
+
+<h4>Released on April 12, 2019</h4>
+
+<p><strong>What’s new?</strong></p>
+
+<ul>
+  <li>
+    <p>Pre-alpha Linkerd adapter.</p>
+  </li>
+  <li>
+    <p>Ability to filter results.</p>
+  </li>
+</ul>
+
+ 
+
+<script
+  src="https://code.jquery.com/jquery-3.3.1.min.js"
+  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+  crossorigin="anonymous"></script>
+
+<script>
+$(document).ready(function() {
+
+    var toc = $('#TOC');
+
+    // Select each header
+    sections = $('.td-content h1');
+        $.each(sections, function(idx, v) {
+            section = $(v);
+            var div_id = $(section).attr('id');
+            if(!section.hasClass('noTOC')){
+               var div_text = section.text().split('¶')[0];
+              var parent = $("#" + div_id)
+              var content = '<li id="link_' + div_id + '" class="md-nav__item"><a class="md-nav__link" href="#' + div_id + '" title="' + div_text +'">' + div_text +'</a></li>';
+              $(toc).append(content);
+            }
+
+            // Add section code to subnavigation
+            var children = $('<nav class="md-nav"><ul class="md-nav__list"></nav></ul>')
+            var contenders = $("#" + div_id).nextUntil("h1");
+            $.each(contenders, function(idx, contender){
+               if( !$(contender).hasClass("noTOC") && ($(contender).is('h2') || $(contender).is('h3')) ) {
+                   var contender_id = $(contender).attr('id');
+                   var contender_text = $(contender).text().split('¶')[0];
+                   var content = '<li class="md-nav__item"><a class="md-nav__link" href="#' + contender_id + '" title="' + contender_text +'">' + contender_text +'</a></li>';
+                   children.append(content);
+                }
+             })
+             $("#link_" + div_id).append(children);
+        });
+    });
+</script>	
+              
+              <br/>
+
+
+           </div>
+          </main>
+        </div>
+      </div>
+      <footer class="bg-dark py-3 row d-print-none">
+  <div class="container-fluid mx-sm-5">
+    <div class="row">
+<!-- meshery-custom-begin"
+      <div class="col-6 col-sm-4 text-xs-center order-sm-2">
+
+<ul class="list-inline mb-0">
+  <li class="list-inline-item mx-2 h3" data-toggle="tooltip" data-placement="top" title="" aria-label="Twitter" data-original-title="Twitter">
+    <a class="text-white" target="_blank" href="https://twitter.com/layer5">
+      <i class="fab fa-twitter"></i>
+    </a>
+  </li>
+</ul>
+</div>
+<div class="col-6 col-sm-4 text-right text-xs-center order-sm-3">
+<ul class="list-inline mb-0">
+  <li class="list-inline-item mx-2 h3" data-toggle="tooltip" data-placement="top" title="" aria-label="GitHub" data-original-title="GitHub">
+    <a class="text-white" target="_blank" href="https://github.com/layer5io/meshery">
+      <i class="fab fa-github"></i>
+    </a>
+  </li>
+</ul>
+meshery-custom-end -->
+
+<div class="col-12 col-sm-4 text-center py-2 order-sm-2">
+  <small class="text-white">© 2020 Layer5 All Rights Reserved</small>
+  
+
+  <!-- meshery-custom-begin -->
+
+  <p class="mt-2">
+
+  <div class="footer-icons-list">
+
+    <div class="footer-icons">
+      <a class="social__link social__link--mail" href="mailto:community@layer5.io">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="50px" height="50px" >
+          <path fill="currentColor" d="M326.7,166.2c2-1.6,5-0.1,5,2.4v106c0,13.7-11.1,24.9-24.9,24.9H91.2c-13.7,0-24.9-11.1-24.9-24.9v-106
+            c0-2.6,3-4,5-2.4c11.6,9,27,20.5,79.9,58.9c10.9,8,29.4,24.8,47.8,24.7c18.5,0.2,37.3-17,47.8-24.7
+            C299.7,186.7,315.1,175.2,326.7,166.2z M199,233.2c12,0.2,29.3-15.1,38.1-21.5c68.8-49.9,74-54.3,89.9-66.7c3-2.3,4.8-6,4.8-9.8
+            v-9.8c0-13.7-11.1-24.9-24.9-24.9H91.2c-13.7,0-24.9,11.1-24.9,24.9v9.8c0,3.8,1.8,7.4,4.8,9.8c15.9,12.4,21.1,16.8,89.9,66.7
+            C169.7,218,187,233.4,199,233.2L199,233.2z"/>
+        </svg>
+
+      <span class="footer-icons-text">Get connected with the Layer5 community</span></a>
+    </div>
+
+    <div class="footer-icons">
+      <a class="social__link social__link--slack" href="http://slack.layer5.io/" >
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="50px" height="50px" >
+          <path fill="currentColor" stroke="currentColor" stroke-width="3" stroke-miterlimit="10" d="M214.6,76.3c-2.7-0.3-5.7,0.3-8.1,1.2c-10.5,3.6-16.2,15-12.6,25.5l8.4,24.9l-48,16.2l-7.8-24
+            c-3.6-10.5-15-16.2-25.5-12.6c-10.5,3.6-16.5,15-12.9,25.5l7.8,23.7L91,165.1c-10.5,3.6-16.2,15.3-12.6,25.8s15,16.2,25.5,12.6
+            l24.9-8.1l16.2,47.7l-24,7.8c-10.5,3.6-16.2,15-12.6,25.5c3.6,10.5,15,16.5,25.5,12.9l23.7-7.8l8.4,24.6
+            c3.6,10.5,15.3,16.2,25.8,12.6s16.2-15,12.6-25.5l-8.4-24.9l47.7-16.2l7.8,24c3.6,10.5,15,16.2,25.5,12.6
+            c10.5-3.6,16.5-15,12.9-25.5l-7.8-23.7l24.9-8.4c10.5-3.6,16.2-15.3,12.6-25.8c-3.6-10.5-15-16.2-25.5-12.6l-24.9,8.4L253,153.4
+            l24-7.8c10.5-3.6,16.2-15,12.6-25.5c-3.6-10.5-15-16.5-25.5-12.9l-23.7,7.8L232,90.1C229.3,82,222.4,76.9,214.6,76.3z M214.9,166.3
+            l16.2,47.7l-47.7,16.2l-16.2-47.7L214.9,166.3z"/>
+        </svg>
+
+      <span class="footer-icons-text">Join the Layer5 Slack</span></a>
+    </div>
+
+	<div class="footer-icons">
+      <a class="social__link social__link--calender" href="https://bit.ly/2SbrRhe" >
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="-200 -60 820 740" width="50px" height="50px">
+          <path fill="currentColor" stroke="currentColor" stroke-width="3" stroke-miterlimit="10" d="M336 292v24c0 6.6-5.4 12-12 12h-76v76c0
+		  6.6-5.4 12-12 12h-24c-6.6 0-12-5.4-12-12v-76h-76c-6.6 0-12-5.4-12-12v-24c0-6.6 5.4-12 12-12h76v-76c0-6.6 5.4-12 12-12h24c6.6 0 12
+		  5.4 12 12v76h76c6.6 0 12 5.4 12 12zm112-180v352c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V112c0-26.5 21.5-48 48-48h48V12c0-6.6
+		  5.4-12 12-12h40c6.6 0 12 5.4 12 12v52h128V12c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v52h48c26.5 0 48 21.5 48 48zm-48 346V160H48v298c0
+		  3.3 2.7 6 6 6h340c3.3 0 6-2.7 6-6z"/>
+        </svg>
+
+        <span class="footer-icons-text">Subscribe to the community calender</span></a>
+    </div>
+
+   <div class="footer-icons">
+      <a class="social__link social__link--twitter" href="https://twitter.com/layer5" >
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="50px" height="50px">
+          <path fill="currentColor" d="M153.6,301.6c94.3,0,145.9-78.2,145.9-145.9c0-2.2,0-4.4-0.1-6.6c10-7.2,18.7-16.3,25.6-26.6
+          c-9.2,4.1-19.1,6.8-29.5,8.1c10.6-6.3,18.7-16.4,22.6-28.4c-9.9,5.9-20.9,10.1-32.6,12.4c-9.4-10-22.7-16.2-37.4-16.2
+          c-28.3,0-51.3,23-51.3,51.3c0,4,0.5,7.9,1.3,11.7c-42.6-2.1-80.4-22.6-105.7-53.6c-4.4,7.6-6.9,16.4-6.9,25.8
+          c0,17.8,9.1,33.5,22.8,42.7c-8.4-0.3-16.3-2.6-23.2-6.4c0,0.2,0,0.4,0,0.7c0,24.8,17.7,45.6,41.1,50.3c-4.3,1.2-8.8,1.8-13.5,1.8
+          c-3.3,0-6.5-0.3-9.6-0.9c6.5,20.4,25.5,35.2,47.9,35.6c-17.6,13.8-39.7,22-63.7,22c-4.1,0-8.2-0.2-12.2-0.7
+          C97.7,293.1,124.7,301.6,153.6,301.6"/>
+        </svg>
+
+      <span class="footer-icons-text">Follow Layer5 on Twitter</span></a>
+    </div>
+
+    <div class="footer-icons">
+      <a class="social__link social__link--github" href="https://github.com/layer5io" >
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="50px" height="50px">
+          <path fill="currentColor" fill-rule="evenodd" clip-rule="evenodd" d="M203.9,60c-75.6,0-137,61.3-137,137c0,60.5,39.2,111.9,93.7,130c6.8,1.3,9.3-3,9.3-6.6c0-3.3-0.1-11.9-0.2-23.3
+         c-38.1,8.3-46.1-18.4-46.1-18.4c-6.2-15.8-15.2-20-15.2-20c-12.4-8.5,0.9-8.3,0.9-8.3c13.7,1,21,14.1,21,14.1
+         c12.2,20.9,32.1,14.9,39.9,11.4c1.2-8.9,4.8-14.9,8.7-18.3c-30.4-3.5-62.4-15.2-62.4-67.7c0-15,5.3-27.2,14.1-36.8
+         c-1.4-3.5-6.1-17.4,1.3-36.3c0,0,11.5-3.7,37.7,14c10.9-3,22.6-4.6,34.3-4.6c11.6,0.1,23.4,1.6,34.3,4.6c26.2-17.7,37.6-14,37.6-14
+         c7.5,18.9,2.8,32.8,1.4,36.3c8.8,9.6,14.1,21.8,14.1,36.8c0,52.6-32,64.2-62.5,67.6c4.9,4.2,9.3,12.6,9.3,25.4
+         c0,18.3-0.2,33.1-0.2,37.6c0,3.7,2.5,7.9,9.4,6.6c54.4-18.2,93.6-69.5,93.6-130C340.9,121.3,279.5,60,203.9,60z"/>
+        </svg>
+
+      <span class="footer-icons-text">Contribute to Layer5 projects</span></a>
+    </div>
+
+    <div class="footer-icons">
+      <a class="social__link social__link--youtube" href="https://www.youtube.com/playlist?list=PL3A-A6hPO2IMPPqVjuzgqNU5xwnFFn3n0" >
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="50px" height="50px">
+          <path fill="currentColor" d="M358.3,119.9c-3.8-14.3-15-25.6-29.2-29.4C303.3,83.6,200,83.6,200,83.6s-103.3,0-129.1,6.9
+           c-14.2,3.8-25.4,15.1-29.2,29.4c-6.9,25.9-6.9,80.1-6.9,80.1s0,54.1,6.9,80.1c3.8,14.3,15,25.6,29.2,29.4c25.8,7,129.1,7,129.1,7
+           s103.3,0,129.1-7c14.2-3.8,25.4-15.1,29.2-29.4c6.9-25.9,6.9-80.1,6.9-80.1S365.2,145.9,358.3,119.9z"/>
+           <polygon fill="#3C494F" points="166.2,249.1 252.6,200 166.2,150.9 "/>
+        </svg>
+      <span class="footer-icons-text">Watch community meeting recordings</span></a>
+    </div>
+
+    <div class="footer-icons">
+      <a class="social__link social__link--docker" href="https://hub.docker.com/u/layer5/">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="50px" height="50px">
+          <path fill="currentColor" stroke="#FFFFFF" stroke-miterlimit="10" d="M369.8,159.9c-11.4-6.7-26.6-7.5-39.4-3.7c-1.6-13.8-10.6-25.8-21.3-34.3l-4.3-3.5l-3.7,4.3
+           c-7.2,8.3-9.3,22.1-8.3,32.7c0.8,7.7,3.2,15.7,8,22.1c-3.7,2.1-7.7,5.1-11.4,6.4c-7.5,2.7-15.7,5.3-23.7,5.3h-17.8v-37.5h-34.6
+           V85.1h-39.9v31.9h-66.5v34.6H72.2v37.3H42.4l-0.5,4c-1.3,17,0.8,33.5,8,49.2l2.9,5.9l0.3,0.5c21,35.7,57.8,50.6,97.9,50.6
+           c77.7,0,141.9-34.9,171.1-108.1c19.7,1.1,39.9-4.8,49.5-23.7l2.4-4.8L369.8,159.9L369.8,159.9z M112.1,125h26.6v29.3h-26.6V125z
+            M147,242.7c0,4.5-3.7,8.3-8.3,8.3s-8.3-3.7-8.3-8.3c0-4.5,3.7-8.3,8.3-8.3C143.3,234.7,147,238.2,147,242.7z M112.1,159.6h26.6
+           v29.3h-26.6C112.1,188.9,112.1,159.6,112.1,159.6z M77.5,159.6h29.3v29.3H77.5V159.6z M151.3,293.3c-42.1-0.3-64.7-14.4-83.3-33
+           c5.6,0.3,10.9,0.5,15.7,0.5c4.3,0,8.5,0,12.5-0.3c10.4-0.5,19.4-1.9,26.9-4c6.1,14.1,17.3,27.1,37.3,36.7H151.3z M173.4,188.9
+           h-29.3v-29.3h29.3V188.9z M173.4,154.3h-29.3V125h29.3V154.3z M208,188.9h-29.3v-29.3H208V188.9z M208,154.3h-29.3V125H208V154.3z
+            M208,119.7h-29.3V90.4H208V119.7z M242.6,188.9h-29.3v-29.3h29.3V188.9z M140.9,237.4c-0.5-0.3-1.3-0.5-2.1-0.5
+           c-3.2,0-5.9,2.7-5.9,5.9c0,3.2,2.7,5.9,5.9,5.9c3.2,0,5.9-2.7,5.9-5.9c0-0.8-0.3-1.6-0.5-2.1c-0.5,0.8-1.1,1.3-2.1,1.3
+           c-1.3,0-2.4-1.1-2.4-2.4C139.8,238.4,140.4,237.6,140.9,237.4z"/>
+        </svg>
+      <span class="footer-icons-text">Access Docker images for Layer5 projects</span></a>
+    </div>
+  </div>
+    </p>
+  <!-- meshery-custom-end -->
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/clipboard@1/dist/clipboard.min.js"></script>
+
+<script type="text/javascript" src="/v0.4/assets/js/lightbox.js"></script>
+<link rel="stylesheet" href="/v0.4/assets/css/lightbox.css">
+
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+<script src="/v0.4/assets/js/main.js"></script>
+
+    <script async src='https://www.google-analytics.com/analytics.js'></script>
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-00000000-0', 'auto');
+	ga('send', 'pageview');
+}
+</script>
+
+  </body>
+</html>
+<script
+  src="https://code.jquery.com/jquery-3.3.1.min.js"
+  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+  crossorigin="anonymous"></script>
+
+<script>
+$(document).ready(function() {
+
+    var toc = $('#TOC');
+
+    // Select each header
+    sections = $('.td-content h1');
+        $.each(sections, function(idx, v) {
+            section = $(v);
+            var div_id = $(section).attr('id');
+            if(!section.hasClass('noTOC')){
+               var div_text = section.text().split('¶')[0];
+              var parent = $("#" + div_id)
+              var content = '<li id="link_' + div_id + '" class="md-nav__item"><a class="md-nav__link" href="#' + div_id + '" title="' + div_text +'">' + div_text +'</a></li>';
+              $(toc).append(content);
+            }
+
+            // Add section code to subnavigation
+            var children = $('<nav class="md-nav"><ul class="md-nav__list"></nav></ul>')
+            var contenders = $("#" + div_id).nextUntil("h1");
+            $.each(contenders, function(idx, contender){
+               if( !$(contender).hasClass("noTOC") && ($(contender).is('h2') || $(contender).is('h3')) ) {
+                   var contender_id = $(contender).attr('id');
+                   var contender_text = $(contender).text().split('¶')[0];
+                   var content = '<li class="md-nav__item"><a class="md-nav__link" href="#' + contender_id + '" title="' + contender_text +'">' + contender_text +'</a></li>';
+                   children.append(content);
+                }
+             })
+             $("#link_" + div_id).append(children);
+        });
+    });
+</script>

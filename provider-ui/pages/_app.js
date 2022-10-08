@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 import Paper from '@material-ui/core/Paper';
 import { NoSsr, Typography } from '@material-ui/core';
 import FavoriteIcon from '@material-ui/icons/Favorite';
-
+import { Global } from '@emotion/react';
 import { blueGrey } from '@material-ui/core/colors';
 import getPageContext from '../components/PageContext';
 
@@ -226,6 +226,14 @@ class MesheryProviderApp extends App {
     } = this.props;
     return (
       <NoSsr>
+        <Global
+      styles={{
+        body: {
+          margin: 0,
+          padding: 0
+        }
+      }}
+    />
           <Head>
             <title>Meshery</title>
           </Head>

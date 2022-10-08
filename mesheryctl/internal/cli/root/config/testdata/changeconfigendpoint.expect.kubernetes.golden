@@ -6,7 +6,7 @@ contexts:
     endpoint: http://localhost:9081
     platform: gke
     token: Default
-    version: v0.4.2
+    version: v0.6.1
   local:
     channel: stable
     components:
@@ -14,7 +14,7 @@ contexts:
     endpoint: http://localhost:9081
     platform: docker
     token: Default
-    version: v0.5.10
+    version: v0.6.9
   local2:
     endpoint: http://localhost:44444
     token: Default
@@ -22,7 +22,7 @@ contexts:
     components:
     - meshery-istio
     channel: stable
-    version: v0.5.10
+    version: v0.6.9
 current-context: local
 tokens:
 - location: auth.json

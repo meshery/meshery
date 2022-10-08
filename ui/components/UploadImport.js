@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react'
-import LinkIcon from '@material-ui/icons/Link';
-import { TextField, Button, Grid } from '@material-ui/core';
+import { TextField, Button, Grid, NativeSelect } from '@material-ui/core';
 import { makeStyles, MuiThemeProvider } from '@material-ui/core/styles';
 import { createTheme } from '@material-ui/core/styles';
 import { URLValidator } from '../utils/URLValidator';
@@ -9,6 +8,7 @@ import {
   DialogContent,
   DialogTitle
 } from '@material-ui/core';
+import { promisifiedDataFetch } from '../lib/data-fetch';
 
 const getMuiTheme = () => createTheme({
   palette : {
@@ -39,26 +39,40 @@ const styles = makeStyles(() => ({
     minWidth : 500,
     padding : '15px',
     color : '#fff',
-    backgroundColor : '#607d8b'
-  },
-  content : {
-    padding : "1.5rem"
+    backgroundColor : '#396679'
   },
   heading : {
     color : "#607d8b"
   },
-
-
+  selectType : {
+    color : "#607d8b",
+    marginRight : "1.2rem"
+  }
 }));
 
-
-
-const UploadImport = ({ handleUpload, handleImport, configuration }) => {
+function UploadImport(props) {
+  const { handleUpload, handleUrlUpload, configuration, isApplication, open, handleClose } = props;
   const classes = styles();
-  const [open, setOpen] = React.useState(false);
   const [input, setInput] = React.useState();
   const [isError, setIsError] = React.useState(false);
+  const [fileType, setFileType] = React.useState();
+  const [sourceType, setSourceType] = React.useState();
+  const [supportedTypes, setSupportedTypes] = React.useState();
 
+  useEffect(() => {
+    if (isApplication) {
+      (async () => {
+        setSupportedTypes(await promisifiedDataFetch("/api/application/types"));
+      })()
+    }
+  }, []);
+
+  const handleFileType = (index) => {
+    if (isApplication) {
+      setFileType(supportedTypes?.[index]?.supported_extensions);
+      setSourceType(supportedTypes?.[index]?.application_type);
+    }
+  }
 
   useEffect(() => {
     if (input) {
@@ -66,50 +80,43 @@ const UploadImport = ({ handleUpload, handleImport, configuration }) => {
     }
   }, [input])
 
-  const handleOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
+  useEffect(() => {
+    if (isApplication) {
+      setFileType(supportedTypes?.[0]?.supported_extensions)
+      setSourceType(supportedTypes?.[0]?.application_type);
+    }
+  }, [open])
 
   const handleSubmit = () => {
-    handleUpload(input)
+    handleUrlUpload(input, sourceType)
     handleClose()
   }
 
   const handleUploader = (input) => {
-    handleImport(input)
+    handleUpload(input, sourceType)
     handleClose()
   }
+
 
   return (
     <>
       <label htmlFor="url-upload-button">
-
-        <Button aria-label="URL-Upload" data-cy="import-button" variant="contained"
-          color="primary" className={classes.button}
-          size="large" onClick={handleOpen}>
-          <LinkIcon style={{ paddingRight : ".35rem" }} />
-          Import {configuration}
-        </Button>
-
         <Dialog
           open={open}
-          handleClose={handleClose}>
+          onClose={handleClose}>
 
           <MuiThemeProvider theme={getMuiTheme()}>
             <DialogTitle className={classes.title}>
               <b id="simple-modal-title" style={{ textAlign : "center" }} >Import {configuration}</b>
             </DialogTitle>
-            <DialogContent className={classes.content}>
-              <Grid container spacing={24}>
+            <DialogContent>
+              <Grid container spacing={24} alignItems="center">
                 <Grid item xs={3}>
                   <h4 className={classes.heading} > FROM URL </h4>
                 </Grid>
                 <Grid item xs={9}>
                   <TextField
+                    size="small"
                     error={isError}
                     helperText={isError && "Invalid URL"}
                     variant="outlined"
@@ -119,34 +126,66 @@ const UploadImport = ({ handleUpload, handleImport, configuration }) => {
                 </Grid>
               </Grid>
               <hr />
-              <Grid container spacing={24}>
-                <Grid item xs={3}>
-                  <h4 className={classes.heading}> UPLOAD FILE </h4>
-                </Grid>
-                <Grid item xs={6}>
-                  <TextField
-                    variant="outlined"
-                    label="Filename"
-                    style={{ width : "100%" }}
-                  />
-                </Grid>
-                <Grid item xs={3}>
-                  <label htmlFor="upload-button" className={classes.upload}>
+              {
+                sourceType !== "Helm Chart" && (
+                  <Grid container spacing={24} alignItems="center">
+                    <Grid item xs={3}>
+                      <h4 className={classes.heading}> UPLOAD FILE </h4>
+                    </Grid>
+                    <Grid item xs={6}>
+                      <TextField
+                        size="small"
+                        variant="outlined"
+                        label="Filename"
+                        style={{ width : "100%" }}
+                      />
+                    </Grid>
+                    <Grid item xs={3}>
 
-                    <Button variant="contained" size="large" color="primary" aria-label="Upload Button" component="span" >
-                      <input id="upload-button" type="file" accept=".yaml, .yml" hidden onChange={handleUploader} name="upload-button" data-cy="file-upload-button" />
-                      Browse
-                    </Button>
-                  </label>
-                </Grid>
+                      <label htmlFor="upload-button" className={classes.upload}>
+
+                        <Button disabled={sourceType === "Helm Chart"} variant="contained" color="primary" aria-label="Upload Button" onChange={sourceType === "Helm Chart" ? null : handleUploader} component="span" >
+                          <input id="upload-button" type="file" accept={fileType} disabled={sourceType === "Helm Chart"} hidden name="upload-button" data-cy="file-upload-button" />
+                          Browse
+                        </Button>
+                      </label>
+                    </Grid>
+                  </Grid>
+                )
+              }
+
+              <Grid container spacing={24} alignItems="center">
+                {
+                  isApplication &&
+                  <h4 className={classes.selectType}>SELECT TYPE </h4>
+                }
+                {isApplication &&
+                  <>
+                    <NativeSelect
+                      defaultValue={0}
+                      onChange={(e) => handleFileType(e.target.value)}
+                      inputProps={{
+                        name : 'name',
+                        id : 'uncontrolled-native',
+                      }}
+                    >
+                      {
+                        supportedTypes?.map((type, index) => (
+                          <option value={index}>
+                            {type.application_type}
+                          </option>
+                        ))
+                      }
+                    </NativeSelect>
+                  </>
+                }
               </Grid>
             </DialogContent>
             <DialogActions>
               <label htmlFor="cancel" className={classes.cancel}>
-                <Button variant="outlined" size="large" color="secondary" onClick={handleClose}>Cancel</Button>
+                <Button variant="outlined" color="secondary" onClick={handleClose}>Cancel</Button>
               </label>
-              <label htmlFor="URL">  <Button disabled={isError || !input} size="large" id="URL" variant="contained" color="primary" onClick={(e) => handleSubmit(e, handleUpload)}>Import</Button> </label>
-
+              <label htmlFor="URL">  <Button disabled={isError || !input} id="URL" variant="contained" color="primary" onClick={(e) => handleSubmit(e, handleUploader)}>Import</Button> </label>
             </DialogActions>
           </MuiThemeProvider>
         </Dialog>

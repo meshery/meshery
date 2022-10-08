@@ -409,7 +409,9 @@ class MesheryPerformanceComponent extends React.Component {
       .map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(data[key])}`)
       .join("&");
     console.log(params);
-    this.startEventStream(`/api/user/performance/profiles/${id}/run?${params}`);
+
+    const runURL = ctxUrl(`/api/user/performance/profiles/${id}/run`, this.props?.selectedK8sContexts);
+    this.startEventStream(`${runURL}${this.props?.selectedK8sContexts?.length > 0 ? "&" : "?"}${params}`);
     this.setState({ blockRunTest : true }); // to block the button
   };
 

@@ -59,7 +59,6 @@ To install `mesheryctl` using homebrew, execute the following commands.
 
 <pre class="codeblock-pre"><div class="codeblock">
  <div class="clipboardjs">
- $ brew tap meshery/tap
  $ brew install mesheryctl
  </div></div>
 </pre>
@@ -196,4 +195,3 @@ To upgrade `mesheryctl`, just execute the following command.
 </pre>
 
 Continue deploying Meshery onto one of the [Supported Platforms]({{ site.baseurl }}/installation/platforms).
-

@@ -133,7 +133,7 @@ func TestSystemCmdIntegration(t *testing.T) {
 			_ = utils.SetupMeshkitLoggerTesting(t, false)
 			SystemCmd.SetArgs(tt.Args)
 
-			t.Logf("%sing meshery", tt.Action)
+			t.Logf("Performing %s", tt.Action)
 			err := SystemCmd.Execute()
 			if err != nil {
 				t.Fatal(err)

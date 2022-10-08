@@ -1,3 +1,4 @@
+import React, { useEffect } from 'react';
 import { NoSsr } from '@material-ui/core';
 import makeStyles from '@material-ui/styles/makeStyles';
 
@@ -64,7 +65,7 @@ export default function GrafanaCustomGaugeChart(props) {
     }
 
     if (chartRef && chartRef !== null) {
-      bbChart = bb.generate({
+      self.chart = bb.generate({
         // oninit: function(args){
         //   console.log(JSON.stringify(args));
         // },

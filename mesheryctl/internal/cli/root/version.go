@@ -21,10 +21,10 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/layer5io/meshery/handlers"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/layer5io/meshery/server/handlers"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -45,7 +45,7 @@ mesheryctl version
 
 ! Refer below image link for usage
 * Usage of mesheryctl version
-# ![version-usage](../../../../docs/assets/img/mesheryctl/version.png)
+# ![version-usage](/assets/img/mesheryctl/version.png)
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		var err error

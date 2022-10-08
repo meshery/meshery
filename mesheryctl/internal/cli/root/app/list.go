@@ -10,7 +10,7 @@ import (
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/layer5io/meshery/models"
+	"github.com/layer5io/meshery/server/models"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -31,7 +31,7 @@ mesheryctl app list
 
 ! Refer below image link for usage
 * Usage of mesheryctl app list
-# ![app-list-usage](../../../../docs/assets/img/mesheryctl/app-list.png)
+# ![app-list-usage](/assets/img/mesheryctl/app-list.png)
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())

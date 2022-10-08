@@ -10,7 +10,7 @@ import (
 	"github.com/ghodss/yaml"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/layer5io/meshery/models"
+	"github.com/layer5io/meshery/server/models"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -37,7 +37,7 @@ mesheryctl app view --all
 
 ! Refer below image link for usage
 * Usage of mesheryctl app view
-# ![app-view-usage](../../../../docs/assets/img/mesheryctl/app-view.png)
+# ![app-view-usage](/assets/img/mesheryctl/app-view.png)
 	`,
 	Args: cobra.MinimumNArgs(0),
 	RunE: func(cmd *cobra.Command, args []string) error {

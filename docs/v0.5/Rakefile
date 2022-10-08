@@ -1,0 +1,31 @@
+require './lib/tasks/helper.rb'
+require './lib/tasks/renderer.rb'
+
+require 'rails'
+require 'graphql/rake_task'
+
+OUTPUT_DIR = File.expand_path("pages/reference", __dir__)
+SCHEMA_DIR = File.expand_path("../internal/graphql/schema/schema.graphql", __dir__)
+TEMPLATES_DIR = File.expand_path("lib/tasks/templates/default.md.haml", __dir__)
+
+namespace :graphql do
+
+  GraphQL::RakeTask.new(
+    schema_name: 'MesherySchema',
+    directory: SCHEMA_DIR,
+    idl_outfile: "schema.graphql",
+    json_outfile: "schema.json"
+  )
+
+    desc 'Meshery | GraphQL | Generate GraphQL docs'
+    task :compile_docs do
+      schema = SCHEMA_DIR
+      schemas = GraphQL::Schema.from_definition(schema)
+      renderer = Graphql::Docs::Renderer.new(schemas, OUTPUT_DIR, TEMPLATES_DIR)
+
+      renderer.write
+
+      puts "Documentation compiled."
+    end
+
+end

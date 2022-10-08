@@ -329,7 +329,7 @@ func DownloadDockerComposeFile(ctx *config.Context, force bool) error {
 		fileURL := ""
 
 		if ctx.Channel == "edge" {
-			fileURL = "https://raw.githubusercontent.com/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/master/docker-compose.yaml"
+			fileURL = "https://raw.githubusercontent.com/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/master/install/docker/docker-compose.yaml"
 		} else if ctx.Channel == "stable" {
 			if ctx.Version == "latest" {
 				ReleaseTag, err = GetLatestStableReleaseTag()
@@ -349,7 +349,7 @@ func DownloadDockerComposeFile(ctx *config.Context, force bool) error {
 				ReleaseTag = currCtx.GetVersion()
 			}
 
-			fileURL = "https://raw.githubusercontent.com/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/" + ReleaseTag + "/docker-compose.yaml"
+			fileURL = "https://raw.githubusercontent.com/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/" + ReleaseTag + "/install/docker/docker-compose.yaml"
 		} else {
 			return errors.Errorf("unknown channel %s", ctx.Channel)
 		}

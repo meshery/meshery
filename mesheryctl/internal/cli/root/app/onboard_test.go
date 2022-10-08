@@ -7,7 +7,14 @@ import (
 
 	"github.com/jarcoal/httpmock"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/spf13/pflag"
 )
+
+func clearAllFlags() {
+	onboardCmd.Flags().VisitAll(func(flag *pflag.Flag) {
+		_ = flag.Value.Set("")
+	})
+}
 
 func TestOnboardCmd(t *testing.T) {
 	// setup current context
@@ -38,12 +45,18 @@ func TestOnboardCmd(t *testing.T) {
 	}{
 		{
 			Name:             "Onboard Application",
-			Args:             []string{"onboard", "-f", filepath.Join(fixturesDir, "sampleApp.golden")},
+			Args:             []string{"onboard", "-f", filepath.Join(fixturesDir, "sampleApp.golden"), "-s", "Kubernetes Manifest"},
 			ExpectedResponse: "onboard.output.golden",
 			URLs: []utils.MockURL{
 				{
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/application/types",
+					Response:     "view.applicationTypes.response.golden",
+					ResponseCode: 200,
+				},
+				{
 					Method:       "POST",
-					URL:          testContext.BaseURL + "/api/application",
+					URL:          testContext.BaseURL + "/api/application/Kubernetes%20Manifest",
 					Response:     "onboard.applicationSave.response.golden",
 					ResponseCode: 200,
 				},
@@ -65,9 +78,15 @@ func TestOnboardCmd(t *testing.T) {
 		},
 		{
 			Name:             "Onboard Application with --skip-save",
-			Args:             []string{"onboard", "-f", filepath.Join(fixturesDir, "sampleApp.golden"), "--skip-save"},
+			Args:             []string{"onboard", "-f", filepath.Join(fixturesDir, "sampleApp.golden"), "--skip-save", "-s", "Kubernetes Manifest"},
 			ExpectedResponse: "onboard.output.golden",
 			URLs: []utils.MockURL{
+				{
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/application/types",
+					Response:     "view.applicationTypes.response.golden",
+					ResponseCode: 200,
+				},
 				{
 					Method:       "POST",
 					URL:          testContext.BaseURL + "/api/pattern",
@@ -135,6 +154,7 @@ func TestOnboardCmd(t *testing.T) {
 			expectedResponse := golden.Load()
 
 			utils.Equals(t, expectedResponse, actualResponse)
+			clearAllFlags()
 		})
 	}
 

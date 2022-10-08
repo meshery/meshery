@@ -57,7 +57,7 @@ mesheryctl version
 ## Screenshots
 
 Usage of mesheryctl version
-![version-usage](../../../../docs/assets/img/mesheryctl/version.png)
+![version-usage](/assets/img/mesheryctl/version.png)
 
 ## See Also
 

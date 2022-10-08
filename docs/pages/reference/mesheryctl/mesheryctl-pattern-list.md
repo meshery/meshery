@@ -58,7 +58,7 @@ mesheryctl pattern list
 ## Screenshots
 
 Usage of mesheryctl pattern list
-![pattern-list-usage](../../../../docs/assets/img/mesheryctl/patternList.png)
+![pattern-list-usage](/assets/img/mesheryctl/patternList.png)
 
 ## See Also
 

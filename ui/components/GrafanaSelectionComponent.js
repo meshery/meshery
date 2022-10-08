@@ -114,8 +114,7 @@ class GrafanaSelectionComponent extends Component {
           }
           this.props.updateProgress({ showProgress : true });
           const self = this;
-          dataFetch(queryURL, { credentials : 'same-origin',
-            credentials : 'include', }, (result) => {
+          dataFetch(queryURL, { credentials : 'include', }, (result) => {
             this.props.updateProgress({ showProgress : false });
             if (typeof result !== 'undefined') {
               let tmpVarOpts = [];

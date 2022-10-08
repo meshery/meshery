@@ -9,8 +9,7 @@ import { updateProgress } from "../../../lib/store";
 export const pingKubernetes = (successHandler,errorHandler, context) => {
   dataFetch(
     "/api/system/kubernetes/ping?context=" + context,
-    { credentials : "same-origin",
-      credentials : "include", },
+    { credentials : "include" },
     successHandler,
     errorHandler
   );
@@ -41,7 +40,7 @@ export const isKubernetesConnected = (isClusterConfigured,kubernetesPingStatus) 
 export const deleteKubernetesConfig = (successCb,errorCb, id) =>
   dataFetch(
     "/api/system/kubernetes/contexts/" + id,
-    { credentials : "same-origin",
+    {
       method : "DELETE",
       credentials : "include", },
     updateProgress({ showProgress : false }),
@@ -68,7 +67,6 @@ export const fetchContexts = (updateProgress, k8sfile) => {
     dataFetch(
       "/api/system/kubernetes/contexts",
       {
-        credentials : "same-origin",
         method : "POST",
         credentials : "include",
         body : formData,
@@ -107,7 +105,6 @@ export const submitConfig = (enqueueSnackbar, updateProgress, updateK8SConfig, a
   dataFetch(
     "/api/system/kubernetes",
     {
-      credentials : "same-origin",
       method : "POST",
       credentials : "include",
       body : formData,

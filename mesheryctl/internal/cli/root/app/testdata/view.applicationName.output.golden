@@ -20,6 +20,10 @@ location:
   path: ""
   type: local
 name: OApplicationPattern
+source_content: null
+type:
+  String: ""
+  Valid: false
 updated_at: "2021-07-30T23:14:38.57316422Z"
 user_id: null
 
@@ -45,6 +49,10 @@ location:
   path: ""
   type: local
 name: OApplicationPatternTwo
+source_content: null
+type:
+  String: ""
+  Valid: false
 updated_at: "2021-07-30T23:14:12.73454268Z"
 user_id: null
 
@@ -70,6 +78,10 @@ location:
   path: ""
   type: local
 name: OApplicationPatternTwo
+source_content: null
+type:
+  String: ""
+  Valid: false
 updated_at: "2021-07-30T23:13:56.319697422Z"
 user_id: null
 

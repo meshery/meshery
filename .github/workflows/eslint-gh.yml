@@ -1,0 +1,12 @@
+name: eslint-check
+on: [pull_request]
+jobs:
+  eslint:
+    name: runner / eslint
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run ESLint Meshery-UI
+      run: cd ui && npm i eslint && npx eslint .
+    - name: Run ESLint Provider-UI
+      run: cd provider-ui && npm i eslint && npx eslint .

@@ -1,0 +1,111 @@
+syntax="proto3";
+
+package meshes;
+
+option go_package = "github.com/layer5io/meshery/server/meshes;meshes";
+
+service MeshService {
+    rpc MeshName(MeshNameRequest) returns (MeshNameResponse) {}
+    rpc MeshVersions(MeshVersionsRequest) returns (MeshVersionsResponse) {}
+    rpc ApplyOperation(ApplyRuleRequest) returns(ApplyRuleResponse) {}
+    rpc SupportedOperations(SupportedOperationsRequest) returns (SupportedOperationsResponse) {}
+    rpc StreamEvents(EventsRequest) returns (stream EventsResponse) {}
+
+    rpc ProcessOAM(ProcessOAMRequest) returns (ProcessOAMResponse) {}
+
+    rpc ComponentInfo(ComponentInfoRequest) returns(ComponentInfoResponse) {}
+}
+
+
+
+message MeshNameRequest{}
+
+message MeshNameResponse {
+    string name = 1;
+}
+
+message ApplyRuleRequest {
+    string opName = 1;
+    string namespace = 2;
+    string username = 3;
+    string custom_body = 4;
+    bool delete_op = 5;
+    string operation_id = 6;
+    repeated string kube_configs=7;
+}
+
+message ApplyRuleResponse {
+    string error = 1;
+    string operation_id = 2;
+}
+
+message SupportedOperationsRequest {}
+
+message SupportedOperationsResponse {
+    repeated SupportedOperation ops = 1;
+    string error = 2;
+}
+
+message SupportedOperation {
+    string key = 1;
+    string value = 2;
+    OpCategory category = 3;
+}
+
+enum OpCategory {
+    INSTALL = 0;
+    SAMPLE_APPLICATION = 1;
+    CONFIGURE = 2;
+    VALIDATE = 3;
+    CUSTOM = 4;
+}
+
+enum EventType {
+    INFO = 0;
+    WARN = 1;
+    ERROR = 2;
+}
+
+message EventsRequest {}
+
+message EventsResponse {
+    EventType event_type = 1;
+    string summary = 2;
+    string details = 3;
+    string operation_id = 4;
+    string probable_cause = 5;
+    string suggested_remediation = 6;
+    string error_code = 7;
+    string component = 8;
+    string component_name = 9;
+}
+
+message ProcessOAMRequest {
+    string username = 1;
+    bool delete_op = 2;
+    
+    repeated string oam_comps = 3;
+    string oam_config = 4;
+    repeated string kube_configs=7;
+}
+
+message ProcessOAMResponse {
+    string message = 1;
+}
+
+message MeshVersionsRequest {}
+
+message MeshVersionsResponse {
+ repeated string version = 1;
+}
+
+// The idea is that all components' gRPC endpoint would provide a ComponentInfo function.
+message ComponentInfoRequest {}
+
+message ComponentInfoResponse {
+  string type = 1; // the component type, e.g. "adapter", as all components might provide a ComponentInfo function
+  string name = 2; // the component name, e.g. "kuma"
+  string version = 3; // the component version, e.g. v0.1.5
+  string git_sha = 4; // the git commit sha
+  map<string, string> properties = 5; // any other properties of interest
+}

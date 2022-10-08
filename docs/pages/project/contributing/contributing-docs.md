@@ -248,20 +248,23 @@ Whenever the code tags are detected, the clipboard javascript file is automatica
 
 ## Documentation Contribution Flow Summary
 
+**NOTE: For contributing `mesheryctl` reference section, refer [Contributing CLI](/contributing-cli)**
+
+
 The following is a concise summary of the steps to contribute to Meshery documentation.
 
 1. Create a fork, if you have not already, by following the steps described [here](CONTRIBUTING-gitflow.md)
-1. In the local copy of your fork, navigate to the docs folder.
+2. In the local copy of your fork, navigate to the docs folder.
    `cd docs`
-1. Create and checkout a new branch to make changes within
+3. Create and checkout a new branch to make changes within
    `git checkout -b <my-changes>`
-1. Edit/add documentation.
+4. Edit/add documentation.
    `vi <specific page>.md`
-1. Run site locally to preview changes.
+5. Run site locally to preview changes.
    `make site`
-1. Commit, [sign-off](#commit-signing), and push changes to your remote branch.
+6. Commit, [sign-off](#commit-signing), and push changes to your remote branch.
    `git push origin <my-changes>`
-1. Open a pull request (in your web browser) against the repo: https://github.com/layer5io/meshery.
+7. Open a pull request (in your web browser) against the repo: https://github.com/layer5io/meshery.
 
 ### Table of Contents in Sidebar (toc)
 

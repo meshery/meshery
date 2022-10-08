@@ -60,7 +60,7 @@ mesheryctl pattern view [pattern-name | ID]
 ## Screenshots
 
 Usage of mesheryctl pattern view
-![pattern-view-usage](../../../../docs/assets/img/mesheryctl/patternView.png)
+![pattern-view-usage](/assets/img/mesheryctl/patternView.png)
 
 ## See Also
 

@@ -7,7 +7,7 @@
         "name": "ErrInstallCiliumCode",
         "code": "1000",
         "severity": "Alert",
-        "long_description": "Error occured while installing Cilium mesh through Cilium",
+        "long_description": "Error occurred while installing Cilium mesh through Cilium",
         "short_description": "Error with Cilium operation",
         "probable_cause": "",
         "suggested_remediation": ""
@@ -43,7 +43,7 @@
         "name": "ErrDownloadBinaryCode",
         "code": "1004",
         "severity": "Alert",
-        "long_description": "Error occured while download Cilium binary from its github release",
+        "long_description": "Error occurred while download Cilium binary from its github release",
         "short_description": "Error downloading Cilium binary",
         "probable_cause": "Checkout https://docs.github.com/en/rest/reference/repos#releases for more details",
         "suggested_remediation": ""
@@ -61,7 +61,7 @@
         "name": "ErrSampleAppCode",
         "code": "1006",
         "severity": "Alert",
-        "long_description": "Error occured while trying to install a sample application using manifests",
+        "long_description": "Error occurred while trying to install a sample application using manifests",
         "short_description": "Error with sample app operation",
         "probable_cause": "Invalid kubeclient config\nInvalid manifest",
         "suggested_remediation": "Reconnect your adapter to Meshery Server to refresh the kubeclient"
@@ -70,7 +70,7 @@
         "name": "ErrCustomOperationCode",
         "code": "1007",
         "severity": "Alert",
-        "long_description": "Error occured while applying custom manifest to the cluster",
+        "long_description": "Error occurred while applying custom manifest to the cluster",
         "short_description": "Error with custom operation",
         "probable_cause": "Invalid kubeclient config\nInvalid manifest",
         "suggested_remediation": "Upload the kubconfig in the Meshery Server and reconnect the adapter"
@@ -79,7 +79,7 @@
         "name": "ErrCreatingNSCode",
         "code": "1008",
         "severity": "Alert",
-        "long_description": "Error occured while applying manifest to create a namespace",
+        "long_description": "Error occurred while applying manifest to create a namespace",
         "short_description": "Error creating namespace",
         "probable_cause": "Invalid kubeclient config\nInvalid manifest",
         "suggested_remediation": "Upload the kubeconfig in the Meshery Server and reconnect the adapter"
@@ -106,7 +106,7 @@
         "name": "ErrOpInvalidCode",
         "code": "1011",
         "severity": "Alert",
-        "long_description": "Cilium adapter recived an invalid operation from the meshey server",
+        "long_description": "Cilium adapter received an invalid operation from the meshey server",
         "short_description": "Invalid operation",
         "probable_cause": "The operation is not supported by the adapter\nInvalid operation name",
         "suggested_remediation": "Check if the operation name is valid and supported by the adapter"
@@ -116,7 +116,7 @@
         "code": "1012",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "Error occured while applying Helm Chart",
+        "short_description": "Error occurred while applying Helm Chart",
         "probable_cause": "",
         "suggested_remediation": ""
       },
@@ -169,7 +169,7 @@
         "name": "ErrParseOAMComponentCode",
         "code": "1018",
         "severity": "Alert",
-        "long_description": "Error occured while prasing application component in the OAM request made",
+        "long_description": "Error occurred while prasing application component in the OAM request made",
         "short_description": "error parsing the component",
         "probable_cause": "Invalid OAM component passed in OAM request",
         "suggested_remediation": "Check if your request has vaild OAM components"
@@ -178,7 +178,7 @@
         "name": "ErrParseOAMConfigCode",
         "code": "1019",
         "severity": "Alert",
-        "long_description": "Error occured while prasing component config in the OAM request made",
+        "long_description": "Error occurred while prasing component config in the OAM request made",
         "short_description": "error parsing the configuration",
         "probable_cause": "Invalid OAM config passed in OAM request",
         "suggested_remediation": "Check if your request has vaild OAM config"
@@ -242,7 +242,7 @@
         "code": "1026",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "Error occured while applying namespace ",
+        "short_description": "Error occurred while applying namespace ",
         "probable_cause": "Trying to access a namespace which is not available",
         "suggested_remediation": "Verify presence of namespace. Confirm Meshery ServiceAccount permissions"
       },
@@ -251,7 +251,7 @@
         "code": "1027",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "Error occured while unpacking tar",
+        "short_description": "Error occurred while unpacking tar",
         "probable_cause": "The gzip might be corrupt",
         "suggested_remediation": "Please retry operation."
       },
@@ -269,8 +269,8 @@
         "code": "1029",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "Error occured while downloading Cilium tar",
-        "probable_cause": "Error occured while download cilium tar from its release url",
+        "short_description": "Error occurred while downloading Cilium tar",
+        "probable_cause": "Error occurred while download cilium tar from its release url",
         "suggested_remediation": "Checkout https://github.com/cilium/cilium-cli/releases/download/<release>/cilium-<platform>-<arch>.tar.gz for more details"
       },
       "1030": {

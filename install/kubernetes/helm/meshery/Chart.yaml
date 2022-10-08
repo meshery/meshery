@@ -12,12 +12,8 @@ keywords:
   - meshery-osm
   - meshery-nsm
   - meshery-traefik-mesh
-  - meshery-cpx
   - meshery-nginx-sm
   - meshery-app-mesh
-  - meshery-operator
-  - meshery-broker
-  - meshery-meshsync
 source:
   - https://github.com/layer5io/meshery
 
@@ -37,7 +33,7 @@ type: application
 
 # This is the chart version. This version number should be incremented each time you make changes
 # to the chart and its templates, including the app version.
-version: 0.5.0
+version: 0.6.0
 
 # This is the version number of the application being deployed. This version number should be
 # incremented each time you make changes to the application.
@@ -68,28 +64,19 @@ dependencies:
     condition: meshery-traefik-mesh.enabled
   - name: meshery-cpx
     version: 0.5.0
-    condition: meshery-cpx.disabled
+    condition: meshery-cpx.enabled
   - name: meshery-nginx-sm
     version: 0.5.0
     condition: meshery-nginx-sm.enabled
   - name: meshery-app-mesh
     version: 0.5.0
     condition: meshery-app-mesh.enabled
-  - name: meshery-operator
-    version: 0.5.0
-    condition: meshery-operator.enabled
-  - name: meshery-broker
-    version: 0.5.0
-    condition: meshery-broker.enabled
-  - name: meshery-meshsync
-    version: 0.5.0
-    condition: meshery-meshsync.enabled
   - name: meshery-cilium
     version: 0.5.0
     condition: meshery-cilium.enabled
   - name: meshery-perf
     version: 0.5.0
-    condition: meshery-perf.disabled
+    condition: meshery-perf.enabled
 
 maintainers:
   - name: Meshery Authors

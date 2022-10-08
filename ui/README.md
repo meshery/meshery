@@ -11,7 +11,7 @@ If you don't have the `mesheryctl` tool installed already, you can follow the [m
 
 #### 2. Development Build:
 For purposes of actively developing Meshery UI, you first need to ensure you have npm v7 installed (`npm -v`) and if not install it (`npm -g i npm@7`), then install the dependencies using `make setup-ui-libs` and then you can use either of the following approaches to build Meshery UI:
-1. Follow the procedure mentioned in Step 1 (User build) above, and start Meshery UI sever on the 9081 port, and login to Meshery UI using either of the providers mentioned on the login page. Then, to run a development server of Meshery UI, install the dependencies using the command mentioned above, then build the UI package and export it using the command `make build-ui`, and finally execute `make run-ui-dev` to run the livereload-nodemon server on port 3000.
+1. Follow the procedure mentioned in Step 1 (User build) above, and start Meshery UI sever on the 9081 port, and login to Meshery UI using either of the providers mentioned on the login page. Then, to run a development server of Meshery UI, install the dependencies using the command mentioned above, then execute `make ui` to run the livereload-nodemon server on port 3000.
     > **NOTE:** Please run the steps in order to avoid issues, as Meshery server should be running and logged-in before accessing the development server
     > on 3000 port.
 

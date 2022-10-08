@@ -1,13 +1,12 @@
 package config
 
 import (
-	"flag"
 	"fmt"
 	"os"
 	"testing"
 )
 
-var update = flag.Bool("update", false, "update golden files")
+// var update = flag.Bool("update", false, "update golden files")
 
 var tests = []string{"ab2q3^$serhj", "klg434%$^", "m234@#$n", "op$#%G", "q$@#$r", "st4@#$23", "uv$@#$", "$@#TGGB#wx", "y@#$FG@$z", "1234"}
 

@@ -18,7 +18,7 @@ import (
 
 	"github.com/briandowns/spinner"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/models"
+	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/logger"
 	"github.com/layer5io/meshkit/utils"
 	"github.com/olekukonko/tablewriter"
@@ -45,11 +45,23 @@ const (
 	MeshsyncURL   = baseConfigURL + "samples/meshery_v1alpha1_meshsync.yaml"
 
 	// Documentation URLs
-	docsBaseURL    = "https://docs.meshery.io/"
-	rootUsageURL   = docsBaseURL + "reference/mesheryctl"
-	perfUsageURL   = docsBaseURL + "reference/mesheryctl/perf"
-	systemUsageURL = docsBaseURL + "reference/mesheryctl/system"
-	meshUsageURL   = docsBaseURL + "reference/mesheryctl/mesh"
+	docsBaseURL      = "https://docs.meshery.io/"
+	rootUsageURL     = docsBaseURL + "reference/mesheryctl"
+	perfUsageURL     = docsBaseURL + "reference/mesheryctl/perf"
+	systemUsageURL   = docsBaseURL + "reference/mesheryctl/system"
+	meshUsageURL     = docsBaseURL + "reference/mesheryctl/mesh"
+	expUsageURL      = docsBaseURL + "reference/mesheryctl/exp"
+	filterUsageURL   = docsBaseURL + "reference/mesheryctl/exp/filter"
+	patternUsageURL  = docsBaseURL + "reference/mesheryctl/pattern"
+	appUsageURL      = docsBaseURL + "reference/mesheryctl/app"
+	contextDeleteURL = docsBaseURL + "reference/mesheryctl/system/context/delete"
+	contextViewURL   = docsBaseURL + "reference/mesheryctl/system/context/view"
+	contextCreateURL = docsBaseURL + "reference/mesheryctl/system/context/create"
+	contextUsageURL  = docsBaseURL + "reference/mesheryctl/system/context"
+	channelUsageURL  = docsBaseURL + "reference/mesheryctl/system/channel"
+	channelSetURL    = docsBaseURL + "reference/mesheryctl/system/channel/set"
+	channelSwitchURL = docsBaseURL + "reference/mesheryctl/system/channel/switch"
+	channelViewURL   = docsBaseURL + "reference/mesheryctl/system/channel/view"
 
 	// Meshery Server Location
 	EndpointProtocol = "http"
@@ -58,15 +70,28 @@ const (
 type cmdType string
 
 const (
-	cmdRoot   cmdType = "root"
-	cmdPerf   cmdType = "perf"
-	cmdMesh   cmdType = "mesh"
-	cmdSystem cmdType = "system"
+	cmdRoot          cmdType = "root"
+	cmdPerf          cmdType = "perf"
+	cmdMesh          cmdType = "mesh"
+	cmdSystem        cmdType = "system"
+	cmdExp           cmdType = "exp"
+	cmdFilter        cmdType = "filter"
+	cmdPattern       cmdType = "pattern"
+	cmdApp           cmdType = "app"
+	cmdContext       cmdType = "context"
+	cmdContextDelete cmdType = "delete"
+	cmdContextCreate cmdType = "create"
+	cmdContextView   cmdType = "context view"
+	cmdChannel       cmdType = "channel"
+	cmdChannelSet    cmdType = "set"
+	cmdChannelSwitch cmdType = "switch"
+	cmdChannelView   cmdType = "channel view"
 )
 
 const (
-	HelmChartURL  = "https://meshery.io/charts/"
-	HelmChartName = "meshery"
+	HelmChartURL          = "https://meshery.io/charts/"
+	HelmChartName         = "meshery"
+	HelmChartOperatorName = "meshery-operator"
 )
 
 var (
@@ -541,9 +566,10 @@ func ContainsStringPrefix(arr []string, str string) bool {
 }
 
 // TransformYAML takes in:
-// 	yamlByt - YAML Byte slice that needs to be modified
+//
+//	yamlByt - YAML Byte slice that needs to be modified
 //	transform - function that will be executed on that value, the returned value will replace the current value
-// 	keys - takes in a series of keys which are supposed to be nested, numbers can also be passed to access an array
+//	keys - takes in a series of keys which are supposed to be nested, numbers can also be passed to access an array
 func TransformYAML(yamlByt []byte, transform func(interface{}) (interface{}, error), keys ...string) ([]byte, error) {
 	var data map[string]interface{}
 

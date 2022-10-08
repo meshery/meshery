@@ -38,7 +38,7 @@ mesheryctl system reset
 
 ! Refer below image link for usage
 * Usage of mesheryctl system reset
-# ![reset-usage](../../../../docs/assets/img/mesheryctl/reset.png)
+# ![reset-usage](/assets/img/mesheryctl/reset.png)
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		return resetMesheryConfig()

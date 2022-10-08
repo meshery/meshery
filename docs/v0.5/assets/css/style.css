@@ -1021,7 +1021,7 @@ pre { margin-top: 0; margin-bottom: 0; font-family: "SFMono-Regular", Consolas, 
 .mt-4 { margin-top: 24px !important; }
 
 /* Set a $size margin on the right at $breakpoint */
-.mr-4 { margin-right: 24px !important;color: black; }
+.mr-4 { margin-right: 24px !important; }
 
 /* Set a $size margin on the bottom at $breakpoint */
 .mb-4 { margin-bottom: 24px !important; }
@@ -1748,8 +1748,7 @@ pre { margin-top: 0; margin-bottom: 0; font-family: "SFMono-Regular", Consolas, 
 .px-1 { padding-right: 4px !important; padding-left: 4px !important; }
 
 /* Set a $size padding to the top & bottom at $breakpoint */
-.py-1 { padding-top: 4px !important; padding-bottom: 4px !important; color: rgba(255, 255, 255, .75);
-  font-weight: 900; }
+.py-1 { padding-top: 4px !important; padding-bottom: 4px !important; }
 
 /* Set a $size padding to all sides at $breakpoint */
 .p-2 { padding: 8px !important; }

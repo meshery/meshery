@@ -79,7 +79,7 @@ Please contribute! Meshery documentation uses GitHub Pages to host the docs site
 1. Edit/add documentation.
    `vi <specific page>.md`
 1. Run site locally to preview changes.
-   `make docs-run`
+   `make docs`
 
 - **Note:** _From the Makefile, this command is actually running `$ bundle exec jekyll serve --drafts --livereload --config _config_dev.yml`. If this command causes errors try running the server without Livereload with this command: `$ bundle exec jekyll serve --drafts --config _config_dev.yml`. Just keep in mind you will have to manually restart the server to reflect any changes made without Livereload. There are two Jekyll configuration, `jekyll serve` for developing locally and `jekyll build` when you need to generate the site artefacts for production._
 
@@ -98,13 +98,13 @@ Practices for Production Environments](https://peter.bourgon.org/go-in-productio
 
 ### Prerequisites for building Meshery in your development environment:
 
-1. `Go` version 1.15+ installed if you want to build and/or make changes to the existing code.
+1. Go version 1.19.1 must installed if you want to build and/or make changes to the existing code. The binary `go1.19.1` should be available in your path. If you don't want to disturb your existing version of Go, then follow these [instructions](https://go.dev/doc/manage-install#:~:text=and%20run%20them.-,Installing%20multiple%20Go%20versions,-You%20can%20install) to keep multiple versions of Go in your system.
 1. `GOPATH` environment variable should be configured appropriately
 1. `npm` and `node` should be installed on your machine, preferably the latest versions.
 1. Fork this repository (`git clone https://github.com/meshery/meshery.git`), clone your forked version of Meshery to your local, preferably outside `GOPATH`.
 1. `golangci-lint` should be installed if you want to test Go code, for MacOS and linux users.
 
-#### Build and run Meshery Server
+#### Build and Run Meshery Server
 
 Before you can access the Meshery UI, you need to install the UI dependencies,
 
@@ -115,7 +115,7 @@ make ui-setup
 and then build and export the UI
 
 ```sh
-make ui
+make ui-build
 ```
 
 To build & run Meshery Server, run the following command:
@@ -154,7 +154,7 @@ make docker
 Meshery uses adapters to provision and interact with different service meshes. Follow these instructions to create a new adapter or modify and existing adapter.
 
 1. Get the proto buf spec file from Meshery repo:
-   `wget https://raw.githubusercontent.com/meshery/meshery/master/meshes/meshops.proto`
+   `wget https://raw.githubusercontent.com/meshery/meshery/master/server/meshes/meshops.proto`
 1. Generate code
    1. Using Go as an example, do the following:
       - adding GOPATH to PATH: `export PATH=$PATH:$GOPATH/bin`

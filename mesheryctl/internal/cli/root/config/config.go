@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
@@ -266,7 +267,16 @@ func (t *Token) GetLocation() string {
 		return t.Location
 	}
 
-	// If file path is not absolute then assume that the file
+	// If file path is relative, then it has to be expanded
+	if strings.HasPrefix(t.Location, "~/") {
+		usr, err := os.UserHomeDir()
+		if err != nil {
+			log.Warn("failed to get user home directory")
+		}
+		return filepath.Join(usr, t.Location[2:])
+	}
+
+	// If file path is not absolute, then assume that the file
 	// is in the .meshery directory
 	home, err := os.UserHomeDir()
 	if err != nil {

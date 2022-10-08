@@ -24,7 +24,7 @@ import (
 var minAPIVersion = [3]int{1, 12, 0}
 var minKubectlVersion = minAPIVersion
 
-//GetK8sVersionInfo returns version.Info for the Kubernetes cluster.
+// GetK8sVersionInfo returns version.Info for the Kubernetes cluster.
 func GetK8sVersionInfo() (*version.Info, error) {
 	// create an kubernetes client
 	client, err := meshkitkube.New([]byte(""))

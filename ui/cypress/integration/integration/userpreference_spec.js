@@ -4,7 +4,7 @@ describe('User Preferences', () => {
       cy.intercept('GET', '/api/user/prefs', { fixture: 'stats.json' }).as('getUserStats');
 
       cy.visit('/user/preferences');
-      cy.get('.MuiFormLabel-root').should('have.text', 'Analytics and Improvement Program');
+      cy.get(':nth-child(2) > .MuiFormControl-root > .MuiFormLabel-root').should('have.text', 'Analytics and Improvement Program');
       cy.wait('@getUserStats');
     });
 
@@ -16,7 +16,7 @@ describe('User Preferences', () => {
       cy.get('[data-cy="UsageStatsPreference"]').should('not.have.class', 'Mui-checked');
     });
 
-    it('deactivates "Send Anonymous Performance Results"', () => {
+    it('activates "Send Anonymous Performance Results"', () => {
       cy.intercept('POST', '/api/user/prefs', { fixture: 'stats.json' }).as('postUserStats');
 
       cy.get('[data-cy="PerfResultPreference"]').click();

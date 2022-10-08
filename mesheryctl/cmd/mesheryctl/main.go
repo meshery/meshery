@@ -15,9 +15,14 @@
 package main
 
 import (
+	"os"
+
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root"
 )
 
 func main() {
-	root.Execute()
+	err := root.Execute()
+	if err != nil {
+		os.Exit(1)
+	}
 }

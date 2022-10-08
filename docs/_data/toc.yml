@@ -9,6 +9,8 @@
     - title: Contributing ↆ
       url: project/contributing
       children:
+        - title: Build & Release (CI)
+          url: project/contributing/build-and-release
         - title: Design and Code Conventions
           url: project/contributing/contributing-guide
         - title: Meshery Adapters
@@ -27,8 +29,6 @@
           url: project/contributing/contributing-cypress
     - title: Releases
       url: project/releases
-    - title: Build & Release (CI)
-      url: project/build-and-release
     - title: Vulnerabilities
       url: project/security-vulnerabilities
     - title: FAQ

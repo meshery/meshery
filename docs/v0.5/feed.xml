@@ -2,13 +2,13 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Documentation</title>
-    <description>Documentation for Meshery, the multi-service mesh management plane for Istio, Linkerd, Consul, Network Service Mesh, Octarine, Envoy, Kuma, Traefik Mesh, App Mesh, Citrix Service Mesh and other service meshes.
+    <description>Meshery is the open source, cloud native management plane that enables the adoption, operation, and management of Kubernetes, any service mesh, and their workloads.
 </description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Wed, 17 Nov 2021 14:50:57 +0530</pubDate>
-    <lastBuildDate>Wed, 17 Nov 2021 14:50:57 +0530</lastBuildDate>
-    <generator>Jekyll v3.9.0</generator>
+    <pubDate>Fri, 02 Sep 2022 19:55:00 +0530</pubDate>
+    <lastBuildDate>Fri, 02 Sep 2022 19:55:00 +0530</lastBuildDate>
+    <generator>Jekyll v3.9.2</generator>
     
   </channel>
 </rss>

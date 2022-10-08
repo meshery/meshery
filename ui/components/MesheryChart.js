@@ -5,7 +5,19 @@ import {
   fortioResultToJsChartData, makeChart, makeOverlayChart, makeMultiChart,
 } from '../lib/chartjs-formatter';
 import bb, { areaStep, line } from 'billboard.js'
-
+import {
+  TwitterShareButton,
+  LinkedinShareButton,
+  FacebookShareButton,
+  TwitterIcon,
+  LinkedinIcon,
+  FacebookIcon
+} from "react-share"
+import ReplyIcon from '@material-ui/icons/Reply';
+import IconButton from "@material-ui/core/IconButton";
+import Paper from '@material-ui/core/Paper';
+import { ClickAwayListener, Fade, Popper } from "@material-ui/core";
+import classNames from "classnames";
 
 const styles = (theme) => ({
   title : {
@@ -26,6 +38,22 @@ const styles = (theme) => ({
   },
   chartWrapper : {
     display : "flex", flexWrap : "no-wrap", justifyContent : "center", alignItems : "center"
+  },
+  share : {
+    transform : "scaleX(-1)"
+  },
+  popper : {
+    width : 500,
+  },
+  paper : {
+    padding : theme.spacing(1)
+  },
+  socialIcon : {
+    margin : theme.spacing(0.4)
+  },
+  shareIcon : {
+    display : "flex",
+    justifyContent : "flex-end"
   }
 });
 
@@ -48,6 +76,22 @@ class MesheryChart extends React.Component {
     this.chartRef = null;
     this.chart = null;
     this.percentileRef=null;
+    this.state = {
+      socialExpand : false,
+      anchorEl : null,
+      socialMessage : ""
+    }
+  }
+
+  getSocialMessageForPerformanceTest(rps, percentile) {
+    return `I achieved ${rps.trim()} RPS running my service at a P99.9 of ${percentile} ms using @mesheryio with @smp_spec! Find out how fast your service is with`
+  }
+
+  handleSocialExpandClick(e, chartData) {
+    this.setState({ anchorEl : e.currentTarget });
+    this.setState({ socialMessage : this.getSocialMessageForPerformanceTest(chartData.options.metadata.qps.display.value.split(' ')[1] ,chartData.percentiles[4].Value) })
+    e.stopPropagation();
+    this.setState((state) => ({ socialExpand : !state.socialExpand }));
   }
 
   singleChart = (rawdata,data) => {
@@ -301,6 +345,39 @@ class MesheryChart extends React.Component {
 
     return (
       <NoSsr>
+        <div className={classes.shareIcon}>
+          <IconButton
+            aria-label="Share"
+            className={classes.expand}
+            onClick={(e) => this.handleSocialExpandClick(e, chartData)}
+          >
+            <ReplyIcon className={classNames(classes.share, classes.iconColor)}
+            />
+          </IconButton>
+        </div>
+        <Popper open={this.state.socialExpand} anchorEl={this.state.anchorEl} transition style={{ zIndex : "1301" }}>
+          {({ TransitionProps }) => (
+            <ClickAwayListener onClickAway={() => this.setState({ socialExpand : false })}>
+              <Fade {...TransitionProps} timeout={350}>
+                <Paper className={classes.paper}>
+                  <TwitterShareButton className={classes.socialIcon} url={"https://meshery.io"} title={this.state.socialMessage}
+                    hashtags={["opensource"]}
+                  >
+                    <TwitterIcon  size={32} />
+                  </TwitterShareButton>
+                  <LinkedinShareButton className={classes.socialIcon} url={"https://meshery.io"} summary={this.state.socialMessage}>
+                    <LinkedinIcon  size={32}  />
+                  </LinkedinShareButton>
+                  <FacebookShareButton className={classes.socialIcon} url={"https://meshery.io"} quote={this.state.socialMessage}
+                    hashtag={"#opensource"}
+                  >
+                    <FacebookIcon  size={32}  />
+                  </FacebookShareButton>
+                </Paper>
+              </Fade>
+            </ClickAwayListener>
+          )}
+        </Popper>
         <div>
           <div ref={(ch) => this.titleRef = ch} className={classes.title} style={{ display : "none" }}/>
           <Grid container spacing={1} style={{ margin : "1rem" }} justifyContent="center">

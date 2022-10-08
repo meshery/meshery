@@ -11,7 +11,7 @@ const mesheryControllersStatusSubscription = graphql`
       }
 `;
 
-export default function subcribeControllersStatus(dataCB) {
+export default function subscribeMesheryControllersStatus(dataCB) {
   return requestSubscription(environment, {
     subscription : mesheryControllersStatusSubscription,
     variables : { k8scontextIDs : [""] },

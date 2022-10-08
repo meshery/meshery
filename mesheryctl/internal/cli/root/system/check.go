@@ -12,11 +12,11 @@ import (
 
 	"github.com/pkg/errors"
 
-	"github.com/layer5io/meshery/handlers"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/layer5io/meshery/models"
+	"github.com/layer5io/meshery/server/handlers"
+	"github.com/layer5io/meshery/server/models"
 	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
 	log "github.com/sirupsen/logrus"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -114,7 +114,7 @@ mesheryctl system check --report
 
 ! Refer below image link for usage
 * Usage of mesheryctl system check
-# ![check-usage](../../../../docs/assets/img/mesheryctl/check.jpeg)
+# ![check-usage](/assets/img/mesheryctl/check.jpeg)
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		hco := &HealthCheckOptions{
@@ -184,7 +184,7 @@ func (hc *HealthChecker) Run() error {
 	return nil
 }
 
-//Run preflight healthchecks to verify environment health
+// Run preflight healthchecks to verify environment health
 func (hc *HealthChecker) RunPreflightHealthChecks() error {
 	// Docker healthchecks are only invoked when it's not a PreRunExecution
 	// or it's a PreRunExecution and current platform is docker

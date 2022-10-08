@@ -116,7 +116,7 @@ mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --mesh i
 ## Screenshots
 
 Usage of mesheryctl perf apply
-![perf-apply-usage](../../../../docs/assets/img/mesheryctl/perf-apply.png)
+![perf-apply-usage](/assets/img/mesheryctl/perf-apply.png)
 
 ## See Also
 

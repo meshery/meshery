@@ -11,7 +11,7 @@ import (
 	"github.com/asaskevich/govalidator"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/layer5io/meshery/models"
+	"github.com/layer5io/meshery/server/models"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -20,13 +20,17 @@ import (
 var offboardCmd = &cobra.Command{
 	Use:   "offboard",
 	Short: "Offboard application",
-	Long:  `Offboard application will trigger deletion of the application file`,
+	Long:  `Offboard application will trigger undeploy of application`,
 	Args:  cobra.MinimumNArgs(0),
 	Example: `
 // Offboard application by providing file path
 mesheryctl app offboard -f [filepath]
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
+		if file == "" {
+			const errMsg = `Usage: mesheryctl app offboard -f [filepath]`
+			return fmt.Errorf("no file path provided \n\n%v", errMsg)
+		}
 		var req *http.Request
 		var err error
 		client := &http.Client{}
@@ -43,7 +47,7 @@ mesheryctl app offboard -f [filepath]
 		if !govalidator.IsURL(file) {
 			content, err := os.ReadFile(file)
 			if err != nil {
-				return errors.New(utils.SystemError(fmt.Sprintf("failed to read file %s", file)))
+				return errors.New(utils.AppError(fmt.Sprintf("failed to read file %s\n", file)))
 			}
 
 			appFile = string(content)
@@ -53,7 +57,7 @@ mesheryctl app offboard -f [filepath]
 
 		// Convert App File into Pattern File
 		jsonValues, _ := json.Marshal(map[string]interface{}{
-			"k8s_manifest": appFile,
+			"K8sManifest": appFile,
 		})
 
 		req, err = utils.NewRequest("POST", patternURL, bytes.NewBuffer(jsonValues))

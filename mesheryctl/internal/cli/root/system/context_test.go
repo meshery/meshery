@@ -270,9 +270,10 @@ func TestSwitchContextCmd(t *testing.T) {
 			Name: "error switching to an empty context",
 			Args: []string{"context", "switch"},
 			ErrorStringContains: []string{
-				"accepts single argument, received 0",
+				"please provide exactly one context name",
 				"Usage: mesheryctl system context switch [context name]",
 				"Example: mesheryctl system context switch k8s-sample",
+				"Description: Configures mesheryctl to actively use one one context vs. the another context",
 			},
 		},
 	}

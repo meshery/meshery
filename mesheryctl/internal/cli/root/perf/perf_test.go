@@ -25,7 +25,7 @@ func TestPerfCmd(t *testing.T) {
 			PerfCmd.SetArgs(tt.Args)
 			err := PerfCmd.Execute()
 			if err != nil {
-				if tt.ExpectError && strings.Contains(err.Error(), "invalid command") {
+				if tt.ExpectError && strings.Contains(err.Error(), "invalid") {
 					return
 				}
 				t.Error("Failed")

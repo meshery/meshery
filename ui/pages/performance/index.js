@@ -1,3 +1,4 @@
+import React from "react";
 import { NoSsr } from "@material-ui/core";
 import MesheryPerformanceComponent from "../../components/MesheryPerformance/Dashboard";
 import { updatepagepath } from "../../lib/store";

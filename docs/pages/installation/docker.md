@@ -31,4 +31,4 @@ Start Meshery by executing:
 
 Once you have verified that all the services are up and running, Meshery UI will be accessible on your local machine on port 9081. Open your browser and access Meshery at [`http://localhost:9081`](http://localhost:9081). Log into the [Provider](/extensibility/providers) of your choice.
 
-Upon starting Meshery successfully, instructions to access Meshery will be printed on the sceen. See these [guides]({{ site.baseurl }}/guides) for usage tips.
+Upon starting Meshery successfully, instructions to access Meshery will be printed on the screen. See these [guides]({{ site.baseurl }}/guides) for usage tips.

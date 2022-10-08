@@ -55,7 +55,7 @@ const styles = (theme) => ({
     margin : theme.spacing(0.5),
     padding : theme.spacing(1),
     borderRadius : 5,
-    backgroundColor : "#dc3545",
+    backgroundColor : "#8F1F00",
     "&:hover" : {
       backgroundColor : "#B32700",
     },
@@ -158,7 +158,13 @@ class MesherySettings extends React.Component {
   }
 
   componentDidMount() {
-    if (this.state.isMeshConfigured) this.fetchPromGrafanaScanData();
+    this.fetchPromGrafanaScanData();
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.selectedK8sContexts.length != this.props.selectedK8sContexts.length) {
+      this.fetchPromGrafanaScanData();
+    }
   }
 
   fetchPromGrafanaScanData = () => {
@@ -167,7 +173,6 @@ class MesherySettings extends React.Component {
     dataFetch(
       ctxUrl('/api/system/meshsync/grafana', this.props.selectedK8sContexts),
       {
-        credentials : "same-origin",
         method : "GET",
         credentials : "include",
       },
@@ -177,12 +182,12 @@ class MesherySettings extends React.Component {
 
         if (Array.isArray(result.prometheus)) {
           const urls = self.extractURLFromScanData(result.prometheus);
-          self.setState(state => ({ scannedPrometheus : [...state.scannedPrometheus, ...urls] }));
+          self.setState({ scannedPrometheus : urls });
         }
 
         if (Array.isArray(result.grafana)) {
           const urls = self.extractURLFromScanData(result.grafana);
-          self.setState(state => ({ scannedGrafana : [...state.scannedGrafana, ...urls] }));
+          self.setState({ scannedGrafana : urls });
         }
       },
       self.handleError("Unable to fetch Prometheus and Grafana details")

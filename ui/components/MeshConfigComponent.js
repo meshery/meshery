@@ -20,7 +20,7 @@ import MeshsyncStatusQuery from './graphql/queries/MeshsyncStatusQuery';
 import NatsStatusQuery from './graphql/queries/NatsStatusQuery';
 import changeOperatorState from './graphql/mutations/OperatorStatusMutation';
 import resetDatabase from "./graphql/queries/ResetDatabaseQuery";
-import { updateProgress, actionTypes, setMeshsyncSubscription } from "../lib/store";
+import { updateProgress } from "../lib/store";
 import fetchMesheryOperatorStatus from "./graphql/queries/OperatorStatusQuery";
 import _ from "lodash";
 
@@ -31,7 +31,7 @@ const styles = (theme) => ({
     },
   },
   icon : { width : theme.spacing(2.5), },
-  paper : { padding : theme.spacing(2), },
+  paper : { margin : theme.spacing(2), padding : theme.spacing(2), },
   heading : { textAlign : "center", },
   configBoxContainer : {
     [theme.breakpoints.down(1050)] : {
@@ -50,7 +50,6 @@ const styles = (theme) => ({
     },
     flexWrap : "noWrap",
   },
-  paper : { margin : theme.spacing(2), },
   fileInputStyle : { display : "none", },
   button : {
     padding : theme.spacing(1),
@@ -90,11 +89,17 @@ const styles = (theme) => ({
   },
   table : {
     marginTop : theme.spacing(1.5)
+  },
+  uploadCluster : {
+    overflow : "hidden"
   }
 });
 
+const ENABLED = "ENABLED"
+const DISABLED = "DISABLED"
+
 function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updateProgress,
-  operatorState, MeshSyncState, setMeshsyncSubscription, k8sconfig }) {
+  operatorState, k8sconfig }) {
   const [data, setData] = useState([])
   const [showMenu, setShowMenu] = useState([false])
   const [anchorEl, setAnchorEl] = useState(null);
@@ -120,41 +125,41 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
     updateFunc(newState);
   }
 
-  useEffect(() => {
+  const setTableData = () => {
     let tableInfo = [];
-    fetchAllContexts(25)
-      .then(res => {
-        if (res?.contexts) {
-          handleContexts(res.contexts);
-          res.contexts.forEach(ctx => {
-            let data = {
-              context : ctx.name,
-              location : ctx.server,
-              deployment_type : k8sconfig.find(context => context.contextID === ctx.id)?.inClusterConfig ? "In Cluster" : "Out of Cluster",
-              last_discovery : setDateTime(new Date()),
-              name : ctx.name,
-              id : ctx.id
-            };
-            tableInfo.push(data);
+    handleContexts(k8sconfig);
+    k8sconfig.forEach(ctx => {
+      let data = {
+        context : ctx.name,
+        location : ctx.server,
+        deployment_type : ctx.inClusterConfig ? "In Cluster" : "Out of Cluster",
+        last_discovery : setDateTime(new Date()),
+        id : ctx.id
+      };
+      tableInfo.push(data);
+    })
+    setData(tableInfo);
+  }
 
-            const tempSubscription = fetchMesheryOperatorStatus({ k8scontextID : ctx.id }).
-              subscribe({
-                next : (res) => {
-                  if (!_operatorState.find(opSt => opSt.contextID === ctx.id)) {
-                    const x = updateCtxInfo(ctx.id, res)
-                    _setOperatorState(x)
-                  }
-                  tempSubscription.unsubscribe();
-                },
-                error : (err) => console.log("error at operator scan: " + err),
-              })
-          })
-          setData(tableInfo);
-        }
-      })
-      .catch(handleError("failed to fetch contexts for the instance"))
-
-    getKubernetesVersion();
+  useEffect(() => {
+    setTableData();
+  },[k8sconfig])
+  useEffect(() => {
+    setTableData();
+    k8sconfig.forEach(ctx => {
+      const tempSubscription = fetchMesheryOperatorStatus({ k8scontextID : ctx.id }).
+        subscribe({
+          next : (res) => {
+            if (!_operatorState?.find(opSt => opSt.contextID === ctx.id)) {
+              const x = updateCtxInfo(ctx.id, res)
+              _setOperatorState(x)
+            }
+            tempSubscription.unsubscribe();
+          },
+          error : (err) => console.log("error at operator scan: " + err),
+        })
+    })
+    getKubernetesVersion(); // change to per context and also ping return server version. no need to check workload
   }, [])
 
   useEffect(() => {
@@ -167,8 +172,8 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
     return async () => {
       handleMenuClose(index);
       let response = await meshSyncResetRef.current.show({
-        title : "Flush MeshSync data?",
-        subtitle : "Are you sure to Flush MeshSync data?",
+        title : `Flush MeshSync data for ${data[index].context} ?`,
+        subtitle : `Are you sure to Flush MeshSync data for “${data[index].context}”? Fresh MeshSync data will be repopulated for this context, if MeshSync is actively running on this cluster.`,
         options : ["PROCEED", "CANCEL"]
       });
       if (response === "PROCEED") {
@@ -207,21 +212,20 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
   }
 
   const handleContexts = (contexts) => {
+    let ctxs = []
     contexts.forEach((ctx) => {
-      ctx.created_at = setDateTime(new Date(ctx.created_at));
-      ctx.updated_at = setDateTime(new Date(ctx.updated_at));
+      let tempCtx = { ...ctx }
+      tempCtx.created_at = setDateTime(new Date(ctx.created_at));
+      tempCtx.updated_at = setDateTime(new Date(ctx.updated_at));
+      ctxs.push(tempCtx);
     })
-    setContexts(contexts);
+    setContexts(ctxs);
   }
 
   const handleMenuClose = (index) => {
     let menu = [...showMenu];
     menu[index] = false;
     setShowMenu(menu)
-  }
-
-  async function fetchAllContexts(number) {
-    return await promisifiedDataFetch("/api/system/kubernetes/contexts?pageSize=" + number)
   }
 
   const handleError = (msg) => (error) => {
@@ -244,17 +248,47 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
     setShowMenu(menu);
   }
 
-  const handleSuccess = msg => {
+  const handleConfigSnackbars = ctxs => {
     updateProgress({ showProgress : false });
-    enqueueSnackbar(msg, {
-      variant : "success",
-      action : (key) => (
-        <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-          <CloseIcon />
-        </IconButton>
-      ),
-      autoHideDuration : 7000,
-    });
+
+    for (let ctx of ctxs.inserted_contexts) {
+      const msg = `Cluster ${ctx.name} at ${ctx.server} connected`
+      enqueueSnackbar(msg, {
+        variant : "success",
+        action : (key) => (
+          <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+            <CloseIcon />
+          </IconButton>
+        ),
+        autoHideDuration : 7000,
+      });
+    }
+
+    for (let ctx of ctxs.updated_contexts) {
+      const msg = `Cluster ${ctx.name} at ${ctx.server} already exists`
+      enqueueSnackbar(msg, {
+        variant : "info",
+        action : (key) => (
+          <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+            <CloseIcon />
+          </IconButton>
+        ),
+        autoHideDuration : 7000,
+      });
+    }
+
+    for (let ctx of ctxs.errored_contexts) {
+      const msg = `Failed to add cluster ${ctx.name} at ${ctx.server}`
+      enqueueSnackbar(msg, {
+        variant : "error",
+        action : (key) => (
+          <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+            <CloseIcon />
+          </IconButton>
+        ),
+        autoHideDuration : 7000,
+      });
+    }
   }
 
   const handleLastDiscover = (index) => {
@@ -274,7 +308,8 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
           let version = result[0]?.oam_definition?.spec?.metadata?.version;
           setK8sVersion(version);
         }
-      }
+      },
+      handleError("Failed to get Kubernetes version")
     )
   }
 
@@ -310,21 +345,21 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
     }
 
     const state = _operatorStateRef.current;
-    const op = state.find(ctx => ctx.contextID === ctxId);
+    const op = state?.find(ctx => ctx.contextID === ctxId);
     if (!op) {
       return [...state, { contextID : ctxId, operatorStatus : newInfo.operator }];
     }
 
     let ctx = { ...op };
-    const removeCtx = state.filter(ctx => ctx.contextID !== ctxId);
+    const removeCtx = state?.filter(ctx => ctx.contextID !== ctxId);
     ctx.operatorStatus = newInfo.operator;
-    return [...removeCtx, ctx];
+    return removeCtx ? [...removeCtx, ctx]: [ctx];
   }
 
   const handleOperatorSwitch = (index, checked) => {
     const contextId = contexts[index].id;
     const variables = {
-      status : `${checked ? "ENABLED" : "DISABLED"}`,
+      status : `${checked ? ENABLED : DISABLED}`,
       contextID : contextId
     };
 
@@ -391,19 +426,19 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
   }
 
   function getOperatorStatus(ctxId) {
-    const operator = _operatorState.find(op => op.contextID === ctxId);
+    const operator = _operatorState?.find(op => op.contextID === ctxId);
     if (!operator) {
       return {}
     }
     const operatorStatus = operator.operatorStatus;
     return {
-      operatorState : operatorStatus.status === "ENABLED",
+      operatorState : operatorStatus.status === ENABLED,
       operatorVersion : operatorStatus.version,
     }
   }
 
   const getContextStatus = (ctxId) => {
-    const operator = _operatorState.find(op => op.contextID === ctxId);
+    const operator = _operatorStateRef.current?.find(op => op.contextID === ctxId);
     if (!operator) {
       return {}
     }
@@ -413,10 +448,12 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
       if (!operatorStatus) return {};
       const { controllers } = operatorStatus;
       // meshsync is at 1st idx
-      const { status, version } = controllers[1];
-      return {
-        meshSyncState : status,
-        meshSyncVersion : version
+      if (controllers?.[1]) {
+        const { status, version } = controllers[1];
+        return {
+          meshSyncState : status,
+          meshSyncVersion : version
+        }
       }
     }
 
@@ -424,20 +461,24 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
       if (!operatorStatus) return {};
       const { controllers } = operatorStatus;
       // broker is at 0th idx
-      const { status, version } = controllers[0];
-      return {
-        natsState : status,
-        natsVersion : version
+      if (controllers?.[0]) {
+        const { status, version } = controllers[0];
+        if (status != "") {
+          return {
+            natsState : status,
+            natsVersion : version
+          }
+        }
       }
     }
 
     const defaultState = {
       operatorState : false,
       operatorVersion : null,
-      meshSyncState : "Not Active",
+      meshSyncState : DISABLED,
       meshSyncVersion : "Not Available",
       natsState : "Not Active",
-      natsVersion : "Not Avaiable"
+      natsVersion : "Not Available"
     }
 
     const actualOperatorState = {
@@ -450,7 +491,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
   }
 
   const uploadK8SConfig = async () => {
-    await promisifiedDataFetch(
+    return await promisifiedDataFetch(
       "/api/system/kubernetes",
       {
         method : "POST",
@@ -461,7 +502,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
 
   const columns = [
     {
-      name : "contexts",
+      name : "context",
       label : "Contexts",
       options : {
         filter : true,
@@ -480,7 +521,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
           return (
             <Tooltip title={`Server: ${tableMeta.rowData[2]}`}>
               <Chip
-                label={data[tableMeta.rowIndex].name}
+                label={data[tableMeta.rowIndex].context}
                 onDelete={() => handleConfigDelete(data[tableMeta.rowIndex].id, tableMeta.rowIndex)}
                 onClick={() => handleKubernetesClick(data[tableMeta.rowIndex].id, tableMeta.rowIndex)}
                 icon={<img src="/static/img/kubernetes.svg" className={classes.icon} />}
@@ -654,7 +695,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
                               <Tooltip title={`Server: ${contexts[rowMetaData.rowIndex].server}`}
                               >
                                 <Chip
-                                  label={data[rowMetaData.rowIndex].name}
+                                  label={data[rowMetaData.rowIndex].context}
                                   onClick={() => handleKubernetesClick(data[rowMetaData.rowIndex].id, rowMetaData.rowIndex)}
                                   icon={<img src="/static/img/kubernetes.svg" className={classes.icon} />}
                                   variant="outlined"
@@ -721,6 +762,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
                                 <Chip
                                   // label={inClusterConfig?'Using In Cluster Config': contextName + (configuredServer?' - ' + configuredServer:'')}
                                   label={"Operator"}
+                                  style={!operatorState ? { opacity : 0.5 }: {}}
                                   // onDelete={handleReconfigure}
                                   onClick={() => handleOperatorClick(rowMetaData.rowIndex)}
                                   icon={<img src="/static/img/meshery-operator.svg" className={classes.icon} />}
@@ -738,11 +780,12 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
                               <List>
                                 <ListItem>
                                   <Tooltip
-                                    title={meshSyncState ? `Ping MeshSync` : "Not Available"}
+                                    title={meshSyncState !== DISABLED ? `Ping MeshSync` : "Not Available"}
                                     aria-label="meshSync"
                                   >
                                     <Chip
                                       label={"MeshSync"}
+                                      style={ meshSyncState === DISABLED ? { opacity : 0.5 }: {}}
                                       onClick={() => handleMeshSyncClick(rowMetaData.rowIndex)}
                                       icon={<img src="/static/img/meshsync.svg" className={classes.icon} />}
                                       variant="outlined"
@@ -756,12 +799,13 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
                               <List>
                                 <ListItem>
                                   <Tooltip
-                                    title={natsState ? `Reconnect NATS` : "Not Available"}
+                                    title={natsState === "Not Active" ? "Not Available": `Reconnect NATS`}
                                     aria-label="nats"
                                   >
                                     <Chip
                                       label={"NATS"}
                                       onClick={() => handleNATSClick(rowMetaData.rowIndex)}
+                                      style={natsState === "Not Active" ? { opacity : 0.5 }: {}}
                                       icon={<img src="/static/img/nats-icon-color.svg" className={classes.icon} />}
                                       variant="outlined"
                                       data-cy="chipNATS"
@@ -826,7 +870,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
       title : "Add Kubernetes Cluster(s)",
       subtitle :
         <>
-          <div>
+          <div className={classes.uploadCluster}>
             <Typography variant="h6">
               Upload your kubeconfig
             </Typography>
@@ -881,15 +925,8 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
         return;
       }
 
-      uploadK8SConfig().then(() => {
-        handleSuccess("successfully uploaded kubernetes config");
-        fetchAllContexts(25)
-          .then(res => {
-            let newData = [...data];
-            setData(newData);
-            setContexts(res.contexts)
-          })
-          .catch(handleError("failed to get contexts"))
+      uploadK8SConfig().then((obj) => {
+        handleConfigSnackbars(obj);
       }).
         catch(err => {
           handleError("failed to upload kubernetes config")(err)
@@ -907,7 +944,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
           _setOperatorState(updateCtxInfo(ctxId, res))
 
           updateProgress({ showProgress : false });
-          if (!res.operator.error) {
+          if (!res.operator.error && res.operator.status === ENABLED ) {
             enqueueSnackbar("Operator was successfully pinged!", {
               variant : "success",
               autoHideDuration : 2000,
@@ -932,8 +969,8 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
       next : (res) => {
         updateProgress({ showProgress : false });
         if (res.controller.name === "broker" && res.controller.status.includes("CONNECTED")) {
-          let runningEndpoint = res.controller.status.substring("CONNECTED".length)
-          enqueueSnackbar(`Broker was successfully pinged. Running at ${runningEndpoint}`, {
+          let runningEndpoint = res.controller.status.substring("CONNECTED".length).trim();
+          enqueueSnackbar(`Broker was successfully pinged. ${runningEndpoint != "" ? `Running at ${runningEndpoint}` : ""}`, {
             variant : "success",
             action : (key) => (
               <IconButton key="close" aria-label="close" color="inherit" onClick={() => closeSnackbar(key)}>
@@ -953,19 +990,41 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
     });
   };
 
+  const setMeshSyncStatusForGivenContext = (ctxId, meshsyncStatus) => {
+    if (!ctxId) {
+      return;
+    }
+
+    let operator = _operatorStateRef.current?.find(context => context.contextID === ctxId);
+    if (operator) {
+      let controllers = [operator.operatorStatus.controllers[0], meshsyncStatus]
+      const newOperatorStatus = Object.assign({}, {
+        contextID : ctxId,
+        operatorStatus : {
+          ...operator.operatorStatus,
+          controllers,
+        }
+      })
+      let remainingOperatorArray = _operatorStateRef.current?.filter(context => context.contextID !== ctxId)
+      let finalOperatorArray = [...remainingOperatorArray, newOperatorStatus]
+      _setOperatorState(finalOperatorArray)
+    }
+  }
+
   const handleMeshSyncClick = (index) => {
     updateProgress({ showProgress : true });
-    MeshsyncStatusQuery(({ k8scontextID : contexts[index].id })).subscribe({
+    const ctxId = contexts[index].id;
+    MeshsyncStatusQuery(({ k8scontextID : ctxId })).subscribe({
       next : (res) => {
         updateProgress({ showProgress : false });
-        if (res.controller.name !== "meshsync" || !res.controller.status.includes("ENABLED")) {
-          let newMeshSyncState = [...MeshSyncState]
-          newMeshSyncState[index] = null;
-          setMeshsyncSubscription({ type : actionTypes.SET_MESHSYNC_SUBSCRIPTION, meshSyncState : newMeshSyncState })
+        if (res.controller.name === "meshsync") {
+          setMeshSyncStatusForGivenContext(ctxId, res.controller)
+        }
+        if (res.controller.status === DISABLED) {
           handleError("MeshSync could not be reached")("MeshSync is unavailable");
         } else {
-          let publishEndpoint = res.controller.status.substring("ENABLED".length)
-          enqueueSnackbar(`MeshSync was successfully pinged. Publishing to ${publishEndpoint} `, {
+          let publishEndpoint = res.controller.status.substring("ENABLED".length).trim()
+          enqueueSnackbar(`MeshSync was successfully pinged. ${publishEndpoint != "" ? `Publishing to ${publishEndpoint}` : ""}`, {
             variant : "success",
             action : (key) => (
               <IconButton key="close" aria-label="close" color="inherit" onClick={() => closeSnackbar(key)}>
@@ -1043,12 +1102,12 @@ const mapStateToProps = (state) => {
   const k8sconfig = state.get('k8sConfig');
   const selectedK8sContexts = state.get('selectedK8sContexts')
   const operatorState = state.get('operatorState');
-  const MeshSyncState = state.get('meshSyncState');
-  return { k8sconfig, selectedK8sContexts, operatorState, MeshSyncState };
+  // const MeshSyncState = state.get('meshSyncState'); // disfunctional at this point of time
+  return { k8sconfig, selectedK8sContexts, operatorState, /*MeshSyncState*/ };
 }
 const mapDispatchToProps = (dispatch) => ({
   updateProgress : bindActionCreators(updateProgress, dispatch),
-  setMeshsyncSubscription : bindActionCreators(setMeshsyncSubscription, dispatch)
+  // setMeshsyncSubscription : bindActionCreators(setMeshsyncSubscription, dispatch)
 });
 
 export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(withSnackbar(MesherySettingsNew)));

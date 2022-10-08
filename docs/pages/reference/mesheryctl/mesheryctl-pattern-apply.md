@@ -68,7 +68,7 @@ mesheryctl pattern apply [pattern-name]
 ## Screenshots
 
 Usage of mesheryctl pattern apply
-![pattern-apply-usage](../../../../docs/assets/img/mesheryctl/patternApply.png)
+![pattern-apply-usage](/assets/img/mesheryctl/patternApply.png)
 
 ## See Also
 

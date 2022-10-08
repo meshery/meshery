@@ -64,7 +64,7 @@ type: "project"
 </script>
 
 <style>
-  td:hover, tr:hover {
+td:hover,tr:hover {
     background-color: #ccfff9;
     cursor:pointer;
   }
@@ -129,11 +129,54 @@ type: "project"
   visibility: visible;
   opacity: 1;
 }
+
+.tablesorter-header-inner{
+    display: flex;
+    justify-content: space-between;
+}
+th span.sort-by { 
+	padding-right: 18px;
+	position: relative;
+    text-decoration: none;
+    margin-right:0 ;
+}
+span.sort-by:before,
+span.sort-by:after {
+	border: 4px solid transparent;
+	content: "";
+	display: block;
+	height: 0;
+	right: 5px;
+	top: 50%;
+	position: absolute;
+	width: 0;
+}
+span.sort-by:before {
+	border-bottom-color: #666;
+	margin-top: -9px;
+}
+span.sort-by:after {
+	border-top-color: #666;
+	margin-top: 1px;
+}
+
+table.tablesorter th.headerSortDown,
+table.tablesorter th.headerSortUp {
+background-color: #8dbdd8;
+}
+.tablesorter-headerRow{
+    background-color: rgb(244, 244, 244);
+}
+.tablesorter-headerRow:hover{
+    background-color:rgb(244, 244, 244) !important ;
+}
+
 </style>
 
 {% assign sorted_tests_group = site.compatibility | group_by: "meshery-component" %}
 {% assign k8s_tests_group = site.compatibility | group_by: "k8s-version" %}
 {% assign service_meshes = site.adapters  %}
+
  <div>
  </div>
 
@@ -143,95 +186,98 @@ Compatibility of Meshery with other integrated systems.
 
 <table>
   <th>Kubernetes Version</th>
-  <th><img style="height: 1rem; vertical-align: text-bottom;" src="{{site.baseurl}}/assets/img/service-meshes/istio.svg" /><a href="{{ site.repo }}-istio">meshery-istio</a></th>
-  <th><img style="height: 1rem; vertical-align: text-bottom;" src="{{site.baseurl}}/assets/img/service-meshes/linkerd.svg" /><a href="{{ site.repo }}-istio">meshery-linkerd</a></th>
-  <th><img style="height: 1rem; vertical-align: text-bottom;" src="{{site.baseurl}}/assets/img/service-meshes/kuma.svg" /><a href="{{ site.repo }}-istio">meshery-kuma</a></th>
-  <th><img style="height: 1rem; vertical-align: text-bottom;" src="{{site.baseurl}}/assets/img/service-meshes/osm.svg" /><a href="{{ site.repo }}-istio">meshery-osm</a></th>
-  <th><img style="height: 1rem; vertical-align: text-bottom;" src="{{site.baseurl}}/assets/img/service-meshes/nginx-sm.svg" /><a href="{{ site.repo }}-istio">meshery-nginx-sm</a></th>
-  <th><img style="height: 1rem; vertical-align: text-bottom;" src="{{site.baseurl}}/assets/img/service-meshes/traefik-mesh.svg" /><a href="{{ site.repo }}-istio">meshery-traefik-mesh</a></th>
-  <th><img style="height: 1rem; vertical-align: text-bottom;" src="{{site.baseurl}}/assets/img/service-meshes/cilium.svg" /><a href="{{ site.repo }}-istio">meshery-cilium</a></th>
-  
 
-  {% for k8s in k8s_tests_group limit: 1 %}
-    <tr class = "first-row">
-      {% assign successfull_istio = 0 %}
-      {% assign successfull_linkerd = 0 %}
-      {% assign successfull_cilium = 0 %}
-      {% assign successfull_osm = 0 %}
-      {% assign successfull_kuma = 0 %}
-      {% assign successfull_traefik_mesh = 0 %}
-      {% assign successfull_nginx_sm = 0 %}
-      <td>{{k8s.name}} and above</td>
-      {% assign k8s_items = k8s.items | group_by: "meshery-component"  %}
-      {% for k8s_item in k8s_items %}
-        {% if k8s_item.name == "meshery-linkerd" %}
-          {% assign linkerd_size = k8s_item.size | times:1.0 %}
-          {% for single in k8s_item.items %}
-            {% if single.overall-status == "passing" %}
-              {% assign successfull_linkerd = successfull_linkerd | plus:1 %}
-            {% endif %}
-          {% endfor %}
-        {% elsif k8s_item.name == "meshery-istio" %}
-          {% assign istio_size = k8s_item.size | times:1.0 | times:1.0 %}
-          {% for single in k8s_item.items %}
-            {% if single.overall-status == "passing" %}
-              {% assign successfull_istio = successfull_istio | plus:1 %}
-            {% endif %}
-          {% endfor %}
-        {% elsif k8s_item.name == "meshery-kuma" %}
-          {% assign kuma_size = k8s_item.size | times:1.0 %}
-          {% for single in k8s_item.items %}
-            {% if single.overall-status == "passing" %}
-              {% assign successfull_kuma = successfull_kuma | plus:1 %}
-            {% endif %}
-          {% endfor %}
-        {% elsif k8s_item.name == "meshery-osm" %}
-          {% assign osm_size = k8s_item.size | times:1.0 %}
-          {% for single in k8s_item.items %}
-            {% if single.overall-status == "passing" %}
-              {% assign successfull_osm = successfull_osm | plus:1 %}
-            {% endif %}
-          {% endfor %}
-        {% elsif k8s_item.name == "meshery-cilium" %}
-          {% assign cilium_size = k8s_item.size | times:1.0 %}
-          {% for single in k8s_item.items %}
-            {% if single.overall-status == "passing" %}
-              {% assign successfull_cilium = successfull_cilium | plus:1 %}
-            {% endif %}
-          {% endfor %}
-        {% elsif k8s_item.name == "meshery-nginx-sm"%}
-          {% assign nginx_size = k8s_item.size | times:1.0 %}
-          {% for single in k8s_item.items %}
-            {% if single.overall-status == "passing" %}
-              {% assign successfull_nginx_sm= successfull_nginx_sm| plus:1 %}
-            {% endif %}
-          {% endfor %}
-        {% elsif k8s_item.name == "meshery-traefik-mesh" %}
-          {% assign traefik_size = k8s_item.size | times:1.0 %}
-          {% for single in k8s_item.items %}
-            {% if single.overall-status == "passing" %}
-              {% assign successfull_traefik_mesh = successfull_traefik_mesh | plus:1 %}
-            {% endif %}
-          {% endfor %}
-        {% endif %}
-      {% endfor %}
-      {% assign istio_percentage = successfull_istio | divided_by:istio_size | times:100 | round:2 %}
-      <td onclick = "clickIcon(`meshery-istio`)" class = "compatibility">{{istio_percentage}}
-      </td>
-      {% assign linkerd_percentage = successfull_linkerd | divided_by:linkerd_size | times:100 | round:2 %}
-      <td onclick = "clickIcon(`meshery-linkerd`)" class = "compatibility">{{linkerd_percentage}}</td>
-      {% assign kuma_percentage = successfull_kuma | divided_by:kuma_size | times:100 | round:2 %}
-      <td onclick = "clickIcon(`meshery-kuma`)" class = "compatibility">{{kuma_percentage}}</td>
-      {% assign osm_percentage = successfull_osm | divided_by:osm_size | times:100 | round:2 %}
-      <td onclick = "clickIcon(`meshery-osm`)" class = "compatibility">{{osm_percentage}}%</td>
-      {% assign nginx_percentage = successfull_nginx_sm | divided_by:nginx_size | times:100 | round:2 %}
-      <td onclick = "clickIcon(`meshery-nginx-sm`)" class = "compatibility">{{nginx_percentage}}% </td>
-      {% assign traefik_percentage = successfull_traefik_mesh | divided_by:traefik_size | times:100 | round:2 %}
-      <td onclick = "clickIcon(`meshery-traefik-mesh`)" class = "compatibility">{{traefik_percentage}}%</td>
-      {% assign cilium_percentage = successfull_cilium | divided_by:cilium_size | times:100 | round:2 %}
-      <td onclick = "clickIcon(`meshery-cilium`)" class = "compatibility">{{cilium_percentage}}%</td>
-    </tr>
-  {% endfor %}
+  <th><img style="height: 1rem; vertical-align: text-bottom;" src="{{site.baseurl}}/assets/img/service-meshes/istio.svg" /><a href="{{ site.repo }}-istio">meshery-istio</a></th>
+  <th><img style="height: 1rem; vertical-align: text-bottom;" src="{{site.baseurl}}/assets/img/service-meshes/linkerd.svg" /><a href="{{ site.repo }}-linkerd">meshery-linkerd</a></th>
+  <th><img style="height: 1rem; vertical-align: text-bottom;" src="{{site.baseurl}}/assets/img/service-meshes/kuma.svg" /><a href="{{ site.repo }}-kuma">meshery-kuma</a></th>
+  <th><img style="height: 1rem; vertical-align: text-bottom;" src="{{site.baseurl}}/assets/img/service-meshes/osm.svg" /><a href="{{ site.repo }}-osm">meshery-osm</a></th>
+  <th><img style="height: 1rem; vertical-align: text-bottom;" src="{{site.baseurl}}/assets/img/service-meshes/nginx-sm.svg" /><a href="{{ site.repo }}-nginx-sm">meshery-nginx-sm</a></th>
+  <th><img style="height: 1rem; vertical-align: text-bottom;" src="{{site.baseurl}}/assets/img/service-meshes/traefik-mesh.svg" /><a href="{{ site.repo }}-traefik-mesh">meshery-traefik-mesh</a></th>
+  <th><img style="height: 1rem; vertical-align: text-bottom;" src="{{site.baseurl}}/assets/img/service-meshes/cilium.svg" /><a href="{{ site.repo }}-cilium">meshery-cilium</a></th>
+
+{% for k8s in k8s_tests_group%}
+
+<tr class = "first-row">
+{% assign successfull_istio = 0 %}
+{% assign successfull_linkerd = 0 %}
+{% assign successfull_cilium = 0 %}
+{% assign successfull_osm = 0 %}
+{% assign successfull_kuma = 0 %}
+{% assign successfull_traefik_mesh = 0 %}
+{% assign successfull_nginx_sm = 0 %}
+<td>{{k8s.name}}</td>
+{% assign k8s_items = k8s.items | group_by: "meshery-component"  %}
+{% for k8s_item in k8s_items %}
+{% if k8s_item.name == "meshery-linkerd" %}
+{% assign linkerd_size = k8s_item.size | times:1.0 %}
+{% for single in k8s_item.items %}
+{% if single.overall-status == "passing" %}
+{% assign successfull_linkerd = successfull_linkerd | plus:1 %}
+{% endif %}
+{% endfor %}
+{% elsif k8s_item.name == "meshery-istio" %}
+{% assign istio_size = k8s_item.size | times:1.0 | times:1.0 %}
+{% for single in k8s_item.items %}
+{% if single.overall-status == "passing" %}
+{% assign successfull_istio = successfull_istio | plus:1 %}
+{% endif %}
+{% endfor %}
+{% elsif k8s_item.name == "meshery-kuma" %}
+{% assign kuma_size = k8s_item.size | times:1.0 %}
+{% for single in k8s_item.items %}
+{% if single.overall-status == "passing" %}
+{% assign successfull_kuma = successfull_kuma | plus:1 %}
+{% endif %}
+{% endfor %}
+{% elsif k8s_item.name == "meshery-osm" %}
+{% assign osm_size = k8s_item.size | times:1.0 %}
+{% for single in k8s_item.items %}
+{% if single.overall-status == "passing" %}
+{% assign successfull_osm = successfull_osm | plus:1 %}
+{% endif %}
+{% endfor %}
+{% elsif k8s_item.name == "meshery-cilium" %}
+{% assign cilium_size = k8s_item.size | times:1.0 %}
+{% for single in k8s_item.items %}
+{% if single.overall-status == "passing" %}
+{% assign successfull_cilium = successfull_cilium | plus:1 %}
+{% endif %}
+{% endfor %}
+{% elsif k8s_item.name == "meshery-nginx-sm"%}
+{% assign nginx_size = k8s_item.size | times:1.0 %}
+{% for single in k8s_item.items %}
+{% if single.overall-status == "passing" %}
+{% assign successfull_nginx_sm= successfull_nginx_sm| plus:1 %}
+{% endif %}
+{% endfor %}
+{% elsif k8s_item.name == "meshery-traefik-mesh" %}
+{% assign traefik_size = k8s_item.size | times:1.0 %}
+{% for single in k8s_item.items %}
+{% if single.overall-status == "passing" %}
+{% assign successfull_traefik_mesh = successfull_traefik_mesh | plus:1 %}
+{% endif %}
+{% endfor %}
+{% endif %}
+{% endfor %}
+{% assign istio_percentage = successfull_istio | divided_by:istio_size | times:100 | round:2 %}
+<td onclick = "clickIcon(`meshery-istio`)" class = "compatibility">{{istio_percentage}}
+</td>
+{% assign linkerd_percentage = successfull_linkerd | divided_by:linkerd_size | times:100 | round:2 %}
+<td onclick = "clickIcon(`meshery-linkerd`)" class = "compatibility">{{linkerd_percentage}}</td>
+{% assign kuma_percentage = successfull_kuma | divided_by:kuma_size | times:100 | round:2 %}
+<td onclick = "clickIcon(`meshery-kuma`)" class = "compatibility">{{kuma_percentage}}</td>
+{% assign osm_percentage = successfull_osm | divided_by:osm_size | times:100 | round:2 %}
+<td onclick = "clickIcon(`meshery-osm`)" class = "compatibility">{{osm_percentage}}%</td>
+{% assign nginx_percentage = successfull_nginx_sm | divided_by:nginx_size | times:100 | round:2 %}
+<td onclick = "clickIcon(`meshery-nginx-sm`)" class = "compatibility">{{nginx_percentage}}% </td>
+{% assign traefik_percentage = successfull_traefik_mesh | divided_by:traefik_size | times:100 | round:2 %}
+<td onclick = "clickIcon(`meshery-traefik-mesh`)" class = "compatibility">{{traefik_percentage}}%</td>
+{% assign cilium_percentage = successfull_cilium | divided_by:cilium_size | times:100 | round:2 %}
+<td onclick = "clickIcon(`meshery-cilium`)" class = "compatibility">{{cilium_percentage}}%</td>
+</tr>
+{% endfor %}
+
+
 </table>
 
 <script>
@@ -241,7 +287,7 @@ Compatibility of Meshery with other integrated systems.
       for(let i = 0 ; i<percentContainer.length;i++){
         console.log(parseFloat(percentContainer[i].innerHTML));
         let percentage = parseFloat(percentContainer[i].innerHTML);
-        if (percentage == 100.00){
+        if (percentage >= 90.00){
           percentContainer[i].innerHTML = `
             <div class = "tooltipss">
               <img src = "{{site.baseurl}}/assets/img/passing.svg" class = "yellowCheckbox" >
@@ -249,7 +295,7 @@ Compatibility of Meshery with other integrated systems.
             </div>
           `
         }
-        else if(percentage >=1 && percentage<=99.99){
+        else if(percentage >=1 && percentage<=89.99){
           percentContainer[i].innerHTML = `<div class = "tooltipss">
               <img src = "{{site.baseurl}}/assets/img/YellowCheck.svg" class = "yellowCheckbox" >
               <span class = "tooltiptext">${percentage}%</span>
@@ -270,10 +316,10 @@ Compatibility of Meshery with other integrated systems.
 
 showCompatability()
 </script>
+
 ## Integration Tests
 
 As a key aspect of Meshery, its integrations with other systems are routinely tested. Unit, integration testing occurs before and after every pull request (before code is to be merged into the project and after code is merged into the project). Regression tests are run nightly.
-
 
 <div class="checkbox">
     <div>
@@ -286,14 +332,16 @@ As a key aspect of Meshery, its integrations with other systems are routinely te
     </div>
 </div>
 
-<table>
-  <th>Status</th>
-  <th>Meshery Component</th>
-  <th>Meshery Component Version</th>
-  <th>Meshery Server Version</th>
-  <th style = "whitespace:no-wrap;">Service Mesh</th>
-  <th>Service Mesh Version</th>
-
+<table id = "test-table" class="tablesorter">
+  <thead>
+    <th style="text-align: center;" >Status <span class="sort-by">  </span></th>
+        <th style="text-align: center;" ><span class="sort-by"> Meshery Component  </span> </th>
+        <th style="text-align: center;" ><span class="sort-by"> Meshery Component Version </span> </th>
+        <th style="text-align: center;" ><span class="sort-by"> Meshery Server Version </span> </th>
+        <th style="text-align: center;" > <span class="sort-by"> Service Mesh </span> </th>
+        <th style="text-align: center;" ><span class="sort-by"> Service Mesh Version </span></th>
+  </thead>
+  <tbody>
     {% for group in sorted_tests_group %}
       {% assign items = group.items | sort: "timestamp" | reverse %}
       {% for item in items limit: 1 %}
@@ -310,7 +358,7 @@ As a key aspect of Meshery, its integrations with other systems are routinely te
           {% else %}
             {% assign overall-status = "" %}
           {% endif %}
-          <tr style="visibility: hidden; display: none;" class="test-details edge edge_visible" onclick="toggle_visibility('{{item.meshery-component}}');">
+          <tr style="visibility: hidden; display: none; background: white" class="test-details edge edge_visible" onclick="toggle_visibility('{{item.meshery-component}}');">
             <td style="{{ overall-status }}">{{ item.timestamp }}</td>
             <td style="white-space:nowrap;"><a href="{{ site.repo }}-{{ item.service-mesh }}">{{ item.meshery-component }}</a></td>
             {% if item.meshery-component-version == "edge" %}
@@ -326,14 +374,14 @@ As a key aspect of Meshery, its integrations with other systems are routinely te
             <td style="white-space: nowrap;"><img style="height: 1rem; vertical-align: text-bottom;" src="{{site.baseurl}}/assets/img/service-meshes/{{item.service-mesh | downcase }}.svg" />&nbsp;<a href="{{ site.baseurl }}/service-meshes/adapters/{{ item.service-mesh }}">{{ item.service-mesh }}</a></td>
             <td>{{ item.service-mesh-version }}</td>
           </tr>
-          <tr id="{{item.meshery-component}}" style="visibility:hidden; display:none;">
+          <tr class="hidden-details" id="{{item.meshery-component}}" style="visibility:hidden; display:none;">
             <td colspan="2" class="details">
               <i>Platform:</i>
               <li><img style="height: 1rem; vertical-align: text-bottom;" src="{{site.baseurl}}/assets/img/kubernetes-icon-color.svg" />  {{item.k8s-distro}}  {{item.k8s-version}}</li>
             </td>
             <td colspan="3" class="details">
               <i>Test results:</i>
-              <table border="0">
+              <table style="border:0">
               {% for test in item.tests %}
                   <tr><td><img style="height: 24px; width: 24px" src="{{ result-state }}"></td><td>{{test[0] }}</td></tr>
               {% endfor %}
@@ -359,7 +407,7 @@ As a key aspect of Meshery, its integrations with other systems are routinely te
           {% else %}
             {% assign overall-status = "" %}
           {% endif %}
-          <tr style="visibility: hidden; display: none;" class="test-details edge edge_visible" onclick="toggle_visibility('{{items[1].meshery-component}}');">
+          <tr style="visibility: hidden; display: none; background:white" class="test-details edge edge_visible" onclick="toggle_visibility('{{items[1].meshery-component}}');">
             <td style="{{ overall-status }}">{{ items[1].timestamp }}</td>
             <td style="white-space:nowrap;"><a href="{{ site.repo }}-{{ items[1].service-mesh }}">{{ items[1].meshery-component }}</a></td>
             {% if items[1].meshery-component-version == "edge" %}
@@ -375,14 +423,14 @@ As a key aspect of Meshery, its integrations with other systems are routinely te
             <td style="white-space:nowrap;"><img style="height: 1rem; vertical-align: text-bottom;" src="{{site.baseurl}}/assets/img/service-meshes/{{items[1].service-mesh | downcase }}.svg" />&nbsp;<a href="{{ site.baseurl }}/service-meshes/adapters/{{ items[1].service-mesh }}">{{ items[1].service-mesh }}</a></td>
             <td>{{ items[1].service-mesh-version }}</td>
           </tr>
-          <tr id="{{items[1].meshery-component}}" style="visibility:hidden; display:none;">
+          <tr class="hidden-details" id="{{items[1].meshery-component}}" style="visibility:hidden; display:none;">
             <td colspan="2" class="details">
               <i>Platform:</i>
               <li><img style="height: 1rem; vertical-align: text-bottom;" src="{{site.baseurl}}/assets/img/kubernetes-icon-color.svg" />  {{items[1].k8s-distro}}  {{items[1].k8s-version}}</li>
             </td>
             <td colspan="3" class="details">
               <i>Test results:</i>
-              <table border="0">
+              <table style="border:0">
               {% for test in item.tests %}
                   <tr><td><img style="height:24px; width: 24px" src="{{result-state}}"></td><td>{{test[0] }}</td></tr>
               {% endfor %}
@@ -414,7 +462,7 @@ As a key aspect of Meshery, its integrations with other systems are routinely te
           {% else %}
             {% assign overall-status = "" %}
           {% endif %}
-          <tr style="visibility: hidden; display: none;" class="test-details stable stable_visible" onclick="toggle_visibility('{{item.meshery-component}}-stable');">
+          <tr style="visibility: hidden; display: none; background:white" class="test-details stable stable_visible" onclick="toggle_visibility('{{item.meshery-component}}-stable');">
             <td style="{{ overall-status }}">{{ item.timestamp }}</td>
             <td style = "white-space:nowrap;"><a href="{{ site.repo }}-{{ item.service-mesh }}">{{ item.meshery-component }}</a></td>
             <td><a href="{{ site.repo }}-{{ item.service-mesh }}/releases/tag/{{ item.meshery-component-version }}">{{ item.meshery-component-version }}</a></td>
@@ -422,14 +470,14 @@ As a key aspect of Meshery, its integrations with other systems are routinely te
             <td style="white-space:nowrap;"><img style="height: 1rem; vertical-align: text-bottom;" src="{{site.baseurl}}/assets/img/service-meshes/{{item.service-mesh | downcase }}.svg" />&nbsp;<a href="{{ site.baseurl }}/service-meshes/adapters/{{ item.service-mesh }}">{{ item.service-mesh }}</a></td>
             <td>{{ item.service-mesh-version }}</td>
           </tr>
-          <tr id="{{item.meshery-component}}-stable" style="visibility:hidden; display:none;">
+          <tr class="hidden-details" id="{{item.meshery-component}}-stable" style="visibility:hidden; display:none;">
             <td colspan="2" class="details">
               <i>Platform:</i>
               <li><img style="height: 1rem; vertical-align: text-bottom;" src="{{site.baseurl}}/assets/img/kubernetes-icon-color.svg" />  {{item.k8s-distro}}  {{item.k8s-version}}</li>
             </td>
             <td colspan="3" class="details">
               <i>Test results:</i>
-              <table border="0">
+              <table style="border:0">
               {% for test in item.tests %}
                   <tr><td><img style="height:24px; width: 24px" src="{{result-state}}"></td><td>{{test[0] }}</td></tr>
               {% endfor %}
@@ -442,7 +490,18 @@ As a key aspect of Meshery, its integrations with other systems are routinely te
         {% endif %}
       {% endfor %}
     {% endfor %}
-
+  </tbody>
 </table>
+
+
+<script type="text/javascript" >
+
+    $(function($) {
+            console.log("sorting table");
+            $("#test-table").tablesorter({
+                cssChildRow: "hidden-details",
+            });
+    });
+</script>
 
 

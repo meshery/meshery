@@ -16,7 +16,7 @@ Onboard application
 
 ## Synopsis
 
-Command will trigger deploy of Application file
+Command will trigger deploy of application
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
@@ -30,7 +30,21 @@ mesheryctl app onboard [flags]
 Onboard application by providing file path
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl app onboard -f [filepath]
+mesheryctl app onboard -f [filepath] -s [source type]
+
+</div>
+</pre> 
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+Example:
+
+</div>
+</pre> 
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl app onboard -f ./application.yml -s "Kubernetes Manifest"
 
 </div>
 </pre> 
@@ -39,9 +53,10 @@ mesheryctl app onboard -f [filepath]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  -f, --file string   Path to app file
-  -h, --help          help for onboard
-      --skip-save     Skip saving a app
+  -f, --file string          Path to app file
+  -h, --help                 help for onboard
+      --skip-save            Skip saving a app
+  -s, --source-type string   Type of source file (ex. manifest / compose / helm)
 
 </div>
 </pre>
@@ -60,7 +75,7 @@ mesheryctl app onboard -f [filepath]
 ## Screenshots
 
 Usage of mesheryctl app onboard
-![app-onboard-usage](../../../../docs/assets/img/mesheryctl/app-onboard.png)
+![app-onboard-usage](/assets/img/mesheryctl/app-onboard.png)
 
 ## See Also
 

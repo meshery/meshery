@@ -8,8 +8,6 @@ type: project
 category: contributing
 ---
 
-**See [Extensibility: Service Mesh Adapters]({{site.baseurl}}/extensibility/adapters)**
+Meshery Adapters are the Extension Points in Meshery's architecture. Their design, the process of creating a new adapter and guidelines for contributing to an existing adapter is documented in [Extensibility: Service Mesh Adapters]({{site.baseurl}}/extensibility/adapters).
 
-Meshery Adapters are an Extension Point in Meshery's architecture. Their design and the process of creating a new adapter or contributing to an existing adapter is documented in [Extensibility: Service Mesh Adapters]({{site.baseurl}}/extensibility/adapters).
 
-{% include suggested-reading.html %}
