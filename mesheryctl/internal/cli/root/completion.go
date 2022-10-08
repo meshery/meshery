@@ -77,7 +77,7 @@ var completionCmd = &cobra.Command{
 		case "fish":
 			return cmd.Root().GenFishCompletion(os.Stdout, true)
 		default:
-			return errors.New("shell not supported, requires one of the shells eg: [bash|zsh|fish]")
+			return errors.New("shell not supported, requires one of [bash|zsh|fish]")
 		}
 	},
 }
