@@ -24,9 +24,9 @@ const CustomInputField = (props) => {
           error={props.rawErrors?.length > 0}
           onChange={e => props?.onChange(e.target.value)}
           label={`${prettifiedName}`}
-          style={{ marginTop : '0.3em' }}
+          style={{ marginTop : '0rem' }}
           InputProps={{
-            style : { padding : "2px 0px 3px 0px", backgroundColor : "rgba(255, 255, 255, 0.4)" },
+            style : { padding : "0px 0px 0px 0px", backgroundColor : "rgba(255, 255, 255, 0.4)" },
             endAdornment : (<InputAdornment position="start">
               {props.schema?.description && (
                 <EnlargedTextTooltip title={props.schema?.description}>
@@ -40,7 +40,7 @@ const CustomInputField = (props) => {
       </div>
       <div style={{ display : "flex" }}>
         {props.rawErrors?.map((errormsg, i) => (
-          (errormsg === "is a required property" ? null
+          (errormsg === "required property" ? null
             : <CustomHelperText key={i} errormsg={errormsg} id={props.id} />
           )
         ))}

@@ -236,7 +236,7 @@ func newHub() *Hub {
 	}
 }
 
-var mainHub *Hub = nil
+var mainHub *Hub
 
 func serveWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
 	conn, err := upgrader.Upgrade(w, r, nil)
