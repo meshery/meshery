@@ -240,7 +240,10 @@ function PatternConfiguratorComponent({ pattern, onSubmit, show : setSelectedPat
           settings : reference.current?.getSettings(),
           traits : reference.current?.getTraits(),
           type : schemaSet?.oam_definition?.metadata?.name || "NA",
-          name : "<Name-Of-Component>",
+          name : reference.current?.getSettings().name,
+          namespace : reference.current?.getSettings().namespace,
+          label : reference.current?.getSettings().label,
+          annotation : reference.current?.getSettings().annotation
         }
       }
     }
