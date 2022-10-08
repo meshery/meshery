@@ -1,6 +1,6 @@
 // @ts-check
 import { AppBar, Button, makeStyles, Tab, Tabs, Typography } from "@material-ui/core";
-import React from "react";
+import React, { useEffect } from "react";
 import { getMeshProperties } from "../../utils/nameMapper";
 import PatternServiceFormCore from "./PatternServiceFormCore";
 import SettingsIcon from '@material-ui/icons/Settings';
@@ -15,7 +15,6 @@ const useStyles = makeStyles(() => ({
     zIndex : 'auto',
   },
   tabPanel : {
-    marginTop : "1.1rem",
     padding : "0px 2px"
   },
   formWrapper : {
@@ -46,7 +45,7 @@ function RJSFButton({ handler, text, ...restParams }) {
   );
 }
 
-function RJSFFormChildComponent({ onSubmit, onDelete }){
+function RJSFFormChildComponent({ onSubmit, onDelete }) {
   return (
     <>
       <RJSFButton handler={onSubmit} text="Submit" />
@@ -72,9 +71,34 @@ function RJSFFormChildComponent({ onSubmit, onDelete }){
  * }} props
  * @returns
  */
-function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference, namespace, onSettingsChange, onTraitsChange, scroll=false }) {
+function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference, namespace, onSettingsChange, onTraitsChange, scroll = false }) {
   const [tab, setTab] = React.useState(0);
   const classes = useStyles({ color : getMeshProperties(getMeshName(schemaSet))?.color });
+
+  useEffect(() => {
+    schemaSet.workload.properties.name = {
+      description : "The Namespace for the service",
+      default : "<Name of the Component>",
+      type : "string"
+    };
+    schemaSet.workload.properties.namespace = {
+      description : "The Name for the service",
+      default : "default",
+      type : "string",
+    };
+    schemaSet.workload.properties.label = {
+      description : "The label for the service",
+      additionalProperties : {
+        "type" : "string"
+      }
+    };
+    schemaSet.workload.properties.annotation = {
+      description : "The annotation for the service",
+      additionalProperties : {
+        "type" : "string"
+      }
+    };
+  }, [])
 
   const handleTabChange = (_, newValue) => {
     setTab(newValue);
@@ -109,7 +133,7 @@ function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference
                 style : {
                   display : "none",
                 },
-              }}  aria-label="Pattern Service" >
+              }} aria-label="Pattern Service" >
                 <Tab label={<div> <SettingsIcon className={classes.setIcon} />Settings</div>} {...a11yProps(0)} />
                 {
                   renderTraits()
@@ -119,7 +143,7 @@ function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference
               </Tabs>
             </AppBar>
             <TabPanel value={tab} index={0} className={classes.tabPanel}>
-              <SettingsForm RJSFFormChildComponent={RJSFFormChildComponent}  />
+              <SettingsForm RJSFFormChildComponent={RJSFFormChildComponent} />
             </TabPanel>
             <TabPanel value={tab} index={1} className={classes.tabPanel}>
               <TraitsForm />

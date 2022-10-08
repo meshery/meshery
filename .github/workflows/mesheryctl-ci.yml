@@ -23,13 +23,13 @@ jobs:
     if: github.repository == 'meshery/meshery'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-go@v3
+      - uses: actions/checkout@master
+      - uses: actions/setup-go@master
         with:
           check-latest: "true"
-          go-version: "1.17.x"
+          go-version: "1.19.x"
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@v3.2.0
+        uses: golangci/golangci-lint-action@v3
         with:
           # Required: the version of golangci-lint is required and must be specified without patch version: we always use the latest patch version.
           version: v1.47.3
@@ -48,13 +48,13 @@ jobs:
     needs: [golangci]
     steps:
       - name: Check out code
-        uses: actions/checkout@v3
+        uses: actions/checkout@master
       - name: Unshallow
         run: git fetch --prune --unshallow
       - name: Set up Go
-        uses: actions/setup-go@v3
+        uses: actions/setup-go@master
         with:
-          go-version: "1.17.x"
+          go-version: "1.19.x"
       - name: Setup Cache
         uses: actions/cache@v3
         with:
@@ -63,7 +63,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-go-
       - name: goreleaser WITHOUT tag
-        uses: goreleaser/goreleaser-action@v2.8.0
+        uses: goreleaser/goreleaser-action@latest
         if: success() && startsWith(github.ref, 'refs/tags/') == false
         env:
           RELEASE_CHANNEL: "edge"
@@ -88,9 +88,9 @@ jobs:
           repository: meshery/meshery
           token: ${{ secrets.GH_ACCESS_TOKEN }}
       - name: Setup go
-        uses: actions/setup-go@v3
+        uses: actions/setup-go@master
         with:
-          go-version: "1.17"
+          go-version: "1.19"
           check-latest: "true"
       - name: Run script 📜
         run: |
