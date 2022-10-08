@@ -639,7 +639,8 @@ function MesheryApplications({
             </TableCell>
           );
         },
-        customBodyRender : function CustomBody(_, tableMeta) {
+
+        customBodyRender : function CustomBody(_, tableMeta, source_type) {
           const rowData = applications[tableMeta.rowIndex];
           console.log(rowData);
           return (
@@ -648,7 +649,7 @@ function MesheryApplications({
                 title="click to download"
                 onClick={() => handleAppDownload(rowData.id ,rowData.type.String, rowData.name)}
               >
-                {source_type== undefined || source_type == " " ?
+                {source_type == undefined || source_type  == " " ?
                   <img src={`/static/img/default_apps-green.svg`} width="45px" height="45px" />
                   : <img src={`/static/img/${(rowData.type.String).replaceAll(" ", "_").toLowerCase()}.svg`} width="45px" height="45px" />
                 }
