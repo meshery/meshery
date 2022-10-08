@@ -55,7 +55,7 @@ func resetMesheryConfig() error {
 		userResponse = utils.AskForConfirmation("Meshery config file will be reset to system defaults. Are you sure you want to continue")
 	}
 	if !userResponse {
-		log.Info("Reset aborted.")
+		utils.Log.Info("Reset aborted.")
 		return nil
 	}
 
@@ -78,7 +78,7 @@ func resetMesheryConfig() error {
 		return ErrRetrievingCurrentContext(err)
 	}
 
-	log.Info("Meshery resetting...\n")
+	utils.Log.Info("Meshery resetting...\n")
 	log.Printf("Current Context: %s", mctlCfg.GetCurrentContextName())
 	log.Printf("Channel: %s", currCtx.GetChannel())
 	log.Printf("Version: %s", currCtx.GetVersion())
@@ -128,7 +128,7 @@ func fetchManifests(mctlCfg *config.MesheryCtlConfig) error {
 			return ErrDownloadFile(err, "operator manifest")
 		}
 
-		log.Info("...meshconfig (" + utils.DockerComposeFile + ") now reset to default settings.")
+		utils.Log.Info("...meshconfig (" + utils.DockerComposeFile + ") now reset to default settings.")
 
 	case "kubernetes":
 
@@ -140,7 +140,7 @@ func fetchManifests(mctlCfg *config.MesheryCtlConfig) error {
 			return err
 		}
 
-		log.Info("...meshconfig has been reset to default settings.")
+		utils.Log.Info("...meshconfig has been reset to default settings.")
 
 	default:
 		return fmt.Errorf("the platform %s is not supported currently. The supported platforms are:\ndocker\nkubernetes\nPlease check %s/config.yaml file", currCtx.Platform, utils.MesheryFolder)
