@@ -16,9 +16,11 @@ const { canExpand } = utils;
 
 const useStyles = makeStyles({
   objectFieldGrid : {
-    marginTop : 10,
+    marginTop : "0rem",
     // paddingLeft: "0.6rem",
-    padding : "0.6rem",
+    padding : ".5rem",
+    // margin: ".5rem",
+    backgroundColor : "#f4f4f4",
     border : '1px solid rgba(0, 0, 0, .125)',
   },
 });
@@ -43,7 +45,8 @@ const ObjectFieldTemplate = ({
     return <Box mb={1} mt={1} id={id} >
       <Grid container justify="space-between" alignItems="center">
         <Grid item mb={1} mt={1}>
-          <Typography variant="body1" style={{ fontWeight : "bold", display : "inline" }}>{title.charAt(0).toUpperCase() + title.slice(1)}{" "}</Typography>
+          <Typography variant="body1" style={{ fontWeight : "bold", display : "inline" }}>{title.charAt(0).toUpperCase() + title.slice(1)}{" "}
+          </Typography>
           {description &&
             <EnlargedTextTooltip title={description}>
               <HelpOutlineIcon />
