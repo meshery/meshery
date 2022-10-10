@@ -581,8 +581,6 @@ func (sap *serviceActionProvider) Mutate(p *core.Pattern) {
 			}
 		}
 	}
-	b, _ := p.ToYAML()
-	fmt.Println("thish" + string(b))
 }
 func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) (string, error) {
 	// Marshal the component
