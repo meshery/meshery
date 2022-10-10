@@ -435,7 +435,7 @@ func _processPattern(
 		chain := stages.CreateChain()
 		chain.
 			Add(stages.Import(sip, sap)).
-			Add(stages.ServiceIdentifier(sip, sap)).
+			Add(stages.ServiceIdentifierAndMutator(sip, sap)).
 			Add(stages.Filler(skipPrintLogs)).
 			Add(stages.Validator(sip, sap))
 
@@ -569,7 +569,21 @@ func (sap *serviceActionProvider) Terminate(err error) {
 	}
 	sap.err = err
 }
-
+func (sap *serviceActionProvider) Mutate(p *core.Pattern) {
+	//TODO: externalize these mutation rules with policies.
+	//1. Enforce the deployment of CRDs before other resources
+	for name, svc := range p.Services {
+		if svc.Type == "CustomResourceDefinition.K8s" {
+			for _, svc := range p.Services {
+				if svc.Type != "CustomResourceDefinition.K8s" {
+					svc.DependsOn = append(svc.DependsOn, name)
+				}
+			}
+		}
+	}
+	b, _ := p.ToYAML()
+	fmt.Println("thish" + string(b))
+}
 func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) (string, error) {
 	// Marshal the component
 	jsonComp, err := json.Marshal(ccp.Component)
