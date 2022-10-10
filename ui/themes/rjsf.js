@@ -69,7 +69,7 @@ export const rjsfTheme = createTheme({
       root : {
         color : "#333",
         fontSize : "0.8rem",
-        textTransform : "capitalize",
+        textTransform : "capitalize"
       }
     },
     MuiTypography : {
