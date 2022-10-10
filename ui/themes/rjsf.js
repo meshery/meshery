@@ -38,13 +38,21 @@ export const rjsfTheme = createTheme({
     MuiInputLabel : {
       root : {
         whiteSpace : "nowrap",
-        // overflow : "hidden",
+        overflow : "hidden",
         textOverflow : "ellipsis",
         maxWidth : "75%",
         height : "100%",
         '&:hover' : {
           overflow : "visible",
         }
+      },
+      shrink : {
+        maxWidth : "133%",
+      }
+    },
+    MuiFormControl : {
+      root : {
+        marginTop : "0.1em"
       }
     },
     MuiBox : {
@@ -61,7 +69,7 @@ export const rjsfTheme = createTheme({
       root : {
         color : "#333",
         fontSize : "0.8rem",
-        textTransform : "capitalize"
+        textTransform : "capitalize",
       }
     },
     MuiTypography : {
