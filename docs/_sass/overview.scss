@@ -3,7 +3,7 @@
 /*button style*/
 div.overview {
     display:flex;
-    text-align: center; 
+    text-align: center;
     /* position:relative;float:left; */
     /* background-color:#ebc017; */
     background: rgb(60,73,79);
@@ -34,6 +34,11 @@ h2[id]:before, h4[id]:before, h5[id]:before {
     height: 6rem;
     visibility: hidden;
 }
+
+#search-results h4[id]:before {
+  display: inline-block;
+}
+
 div.wrapper {
     width: 100%;
     text-align: justify;
@@ -41,8 +46,8 @@ div.wrapper {
     -ms-flex-align: center;
     justify-content:space-evenly;
     align-content: stretch;
-    margin: auto;  
-}  
+    margin: auto;
+}
 
 div.section {
     flex-basis: 47.5%;
@@ -72,7 +77,7 @@ div.overview:hover {
     div.overview{
         margin-left: 0px;
         margin-right: 20%;
-        overflow-x: hidden ;                   
+        overflow-x: hidden ;
     }
 }
 
