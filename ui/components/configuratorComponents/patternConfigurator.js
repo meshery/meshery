@@ -252,15 +252,16 @@ function PatternConfiguratorComponent({ pattern, onSubmit, show : setSelectedPat
       }
     } else { // normal rjsf
       const settings = reference.current?.getSettings();
+      const { name, namespace, labels, annotations } = settings;
       cfg = {
         [(Math.random() + 1).toString(36).substring(2)] : {
+          name,
+          namespace,
+          labels,
+          annotations,
+          type : schemaSet?.oam_definition?.metadata?.name || "NA",
           settings : removeRedundantFieldsFromSettings(settings),
           traits : reference.current?.getTraits(),
-          type : schemaSet?.oam_definition?.metadata?.name || "NA",
-          name : settings.name,
-          namespace : settings.namespace,
-          label : { ...settings.label },
-          annotation : { ...settings.annotation }
         }
       }
     }
