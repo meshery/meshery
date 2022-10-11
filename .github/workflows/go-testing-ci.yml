@@ -22,15 +22,15 @@ jobs:
     name: Unit tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3.0.0
+      - uses: actions/checkout@master
         with:
           fetch-depth: 2
       - name: Install lynx for xdg-open support
         run: sudo apt-get install lynx
       - name: Setup Go
-        uses: actions/setup-go@v3.0.0
+        uses: actions/setup-go@master
         with:
-          go-version: "1.17"
+          go-version: "1.19"
       - name: Run coverage
         run: go test --short ./... -race -coverprofile=coverage.txt -covermode=atomic
       - name: Upload coverage to Codecov
@@ -44,15 +44,15 @@ jobs:
     name: Integration tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@master
         with:
           fetch-depth: 2
       - name: Install lynx for xdg-open support
         run: sudo apt-get install lynx
       - name: Setup Go
-        uses: actions/setup-go@v3.0.0
+        uses: actions/setup-go@master
         with:
-          go-version: "1.17"
+          go-version: "1.19"
       - name: Create k8s Kind Cluster
         uses: helm/kind-action@v1.1.0
         with:

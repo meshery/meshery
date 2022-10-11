@@ -16,9 +16,10 @@ const { canExpand } = utils;
 
 const useStyles = makeStyles({
   objectFieldGrid : {
-    marginTop : 10,
     // paddingLeft: "0.6rem",
-    padding : "0.6rem",
+    padding : ".5rem",
+    // margin : ".5rem",
+    backgroundColor : "#f4f4f4",
     border : '1px solid rgba(0, 0, 0, .125)',
   },
 });
@@ -41,15 +42,7 @@ const ObjectFieldTemplate = ({
 
   const CustomTitleField = ({ title, id, description, properties }) => {
     return <Box mb={1} mt={1} id={id} >
-      <Grid container justify="space-between" alignItems="center">
-        <Grid item mb={1} mt={1}>
-          <Typography variant="body1" style={{ fontWeight : "bold", display : "inline" }}>{title.charAt(0).toUpperCase() + title.slice(1)}{" "}</Typography>
-          {description &&
-            <EnlargedTextTooltip title={description}>
-              <HelpOutlineIcon />
-            </EnlargedTextTooltip>}
-        </Grid>
-
+      <Grid container justify="flex-start" alignItems="center">
         {canExpand(schema, uiSchema, formData) ? (
           <Grid item={true} onClick={() => {
             if (!show) setShow(true);
@@ -59,7 +52,7 @@ const ObjectFieldTemplate = ({
               onClick={onAddClick(schema)}
               disabled={disabled || readonly}
             >
-              <AddButton />
+              <AddButton style={{ backgroundColor : "#647881", width : "1.25rem", height : "1.25rem", color : "#ffffff", borderRadius : ".2rem" }} />
             </IconButton>
           </Grid>
         ) : (
@@ -74,6 +67,17 @@ const ObjectFieldTemplate = ({
             </Grid>
           )
         )}
+
+        <Grid item mb={1} mt={1}>
+          <Typography variant="body1" style={{ fontWeight : "bold", display : "inline" }}>{title.charAt(0).toUpperCase() + title.slice(1)}{" "}
+          </Typography>
+          {description &&
+            <EnlargedTextTooltip title={description}>
+              <HelpOutlineIcon />
+            </EnlargedTextTooltip>}
+        </Grid>
+
+
       </Grid>
     </Box>
   };

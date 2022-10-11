@@ -7,7 +7,7 @@
         "name": "ErrInstallOSMCode",
         "code": "1000",
         "severity": "Alert",
-        "long_description": "Error occured while installing osm mesh through osmctl",
+        "long_description": "Error occurred while installing osm mesh through osmctl",
         "short_description": "Error with osm operation",
         "probable_cause": "",
         "suggested_remediation": ""
@@ -43,7 +43,7 @@
         "name": "ErrDownloadBinaryCode",
         "code": "1004",
         "severity": "Alert",
-        "long_description": "Error occured while download osm binary from its github release",
+        "long_description": "Error occurred while download osm binary from its github release",
         "short_description": "Error downloading osm binary",
         "probable_cause": "Checkout https://docs.github.com/en/rest/reference/repos#releases for more details",
         "suggested_remediation": ""
@@ -61,7 +61,7 @@
         "name": "ErrSampleAppCode",
         "code": "1006",
         "severity": "Alert",
-        "long_description": "Error occured while trying to install a sample application using manifests",
+        "long_description": "Error occurred while trying to install a sample application using manifests",
         "short_description": "Error with sample app operation",
         "probable_cause": "Invalid kubeclient config\nInvalid manifest",
         "suggested_remediation": "Reconnect your adapter to meshery server to refresh the kubeclient"
@@ -70,7 +70,7 @@
         "name": "ErrCustomOperationCode",
         "code": "1007",
         "severity": "Alert",
-        "long_description": "Error occured while applying custom manifest to the cluster",
+        "long_description": "Error occurred while applying custom manifest to the cluster",
         "short_description": "Error with custom operation",
         "probable_cause": "Invalid kubeclient config\nInvalid manifest",
         "suggested_remediation": "Reupload the kubconfig in the Meshery Server and reconnect the adapter"
@@ -79,7 +79,7 @@
         "name": "ErrCreatingNSCode",
         "code": "1008",
         "severity": "Alert",
-        "long_description": "Error occured while applying manifest to create a namespace",
+        "long_description": "Error occurred while applying manifest to create a namespace",
         "short_description": "Error creating namespace",
         "probable_cause": "Invalid kubeclient config\nInvalid manifest",
         "suggested_remediation": "Reupload the kubeconfig in the Meshery Server and reconnect the adapter"
@@ -97,8 +97,8 @@
         "name": "ErrSidecarInjectionCode",
         "code": "1010",
         "severity": "Alert",
-        "long_description": "Error occured while injecting sidercar using osm(ctl) `osm namespace add/remove <name>` ",
-        "short_description": "Error occured while injection sidecar",
+        "long_description": "Error occurred while injecting sidercar using osm(ctl) `osm namespace add/remove <name>` ",
+        "short_description": "Error occurred while injection sidecar",
         "probable_cause": "Corrupted binary\nInvalidoperation",
         "suggested_remediation": "Check if the adaptor is executing a deprecated command"
       },
@@ -106,7 +106,7 @@
         "name": "ErrOpInvalidCode",
         "code": "1011",
         "severity": "Alert",
-        "long_description": "Istio adapter recived an invalid operation from the meshey server",
+        "long_description": "Istio adapter received an invalid operation from the meshey server",
         "short_description": "Invalid operation",
         "probable_cause": "The operation is not supported by the adapter\nInvalid operation name",
         "suggested_remediation": "Check if the operation name is valid and supported by the adapter"
@@ -116,7 +116,7 @@
         "code": "1012",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "Error occured while applying Helm Chart",
+        "short_description": "Error occurred while applying Helm Chart",
         "probable_cause": "",
         "suggested_remediation": ""
       },
@@ -178,9 +178,9 @@
         "name": "ErrParseOAMConfigCode",
         "code": "1019",
         "severity": "Alert",
-        "long_description": "Error occured while parsing configuration in the request made by Meshery Server",
+        "long_description": "Error occurred while parsing configuration in the request made by Meshery Server",
         "short_description": "error parsing the configuration",
-        "probable_cause": "Could not unmarshall OAM config recieved via ProcessOAM gRPC call into a valid Config struct",
+        "probable_cause": "Could not unmarshall OAM config received via ProcessOAM gRPC call into a valid Config struct",
         "suggested_remediation": "Check if Meshery Server is creating valid config for ProcessOAM gRPC call. This error should never happen and can be reported as a bug in Meshery Server. Also, confirm that Meshery Server and Adapters are referring to same config struct provided in MeshKit"
       },
       "1020": {
@@ -197,7 +197,7 @@
         "code": "1021",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "Error occured while applying namespace ",
+        "short_description": "Error occurred while applying namespace ",
         "probable_cause": "Trying to access a namespace which is not available",
         "suggested_remediation": "Verify presence of namespace. Confirm Meshery ServiceAccount permissions"
       },

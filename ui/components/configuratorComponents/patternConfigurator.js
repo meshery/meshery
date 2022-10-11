@@ -21,6 +21,7 @@ import CodeEditor from "./CodeEditor";
 import NameToIcon from "./NameToIcon";
 import CustomBreadCrumb from "./CustomBreadCrumb";
 import { randomPatternNameGenerator as getRandomName } from "../../utils/utils"
+import _ from "lodash";
 
 const useStyles = makeStyles((theme) => ({
   backButton : {
@@ -92,6 +93,21 @@ const useStyles = makeStyles((theme) => ({
     fontWeight : theme.typography.fontWeightRegular,
   },
 }));
+
+function removeRedundantFieldsFromSettings(settings) {
+  if (!settings || _.isEmpty(settings)) {
+    return {}
+  }
+
+  const newSettings = { ...settings };
+
+  delete newSettings.name;
+  delete newSettings.namespace;
+  delete newSettings.labels;
+  delete newSettings.annotations;
+
+  return newSettings;
+}
 
 function PatternConfiguratorComponent({ pattern, onSubmit, show : setSelectedPattern }) {
   const { workloadTraitSet, meshWorkloads } = useContext(SchemaContext);
@@ -235,12 +251,17 @@ function PatternConfiguratorComponent({ pattern, onSubmit, show : setSelectedPat
         return;
       }
     } else { // normal rjsf
+      const settings = reference.current?.getSettings();
+      const { name, namespace, labels, annotations } = settings;
       cfg = {
         [(Math.random() + 1).toString(36).substring(2)] : {
-          settings : reference.current?.getSettings(),
-          traits : reference.current?.getTraits(),
+          name,
+          namespace,
+          labels,
+          annotations,
           type : schemaSet?.oam_definition?.metadata?.name || "NA",
-          name : "<Name-Of-Component>",
+          settings : removeRedundantFieldsFromSettings(settings),
+          traits : reference.current?.getTraits(),
         }
       }
     }

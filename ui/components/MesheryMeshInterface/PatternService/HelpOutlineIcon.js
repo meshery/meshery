@@ -3,7 +3,7 @@ import { withStyles } from "@material-ui/styles";
 
 const HelpOutlineIcon = withStyles(() => ({
   root : {
-    fontSize : 17,
+    fontSize : ".95rem",
     verticalAlign : "middle"
   }
 }))(HelpOutline)

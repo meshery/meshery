@@ -526,7 +526,7 @@ Deatils about the Addon Component.
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| <a id="catalogfiltercatalog_data"></a>`catalog_data` | [`Map!`](#map) |  |
+| <a id="catalogfiltercatalog_data"></a>`catalog_data` | [`Map`](#map) |  |
 | <a id="catalogfiltercreated_at"></a>`created_at` | [`String`](#string) |  |
 | <a id="catalogfilterfilter_file"></a>`filter_file` | [`String!`](#string) |  |
 | <a id="catalogfilterid"></a>`id` | [`ID!`](#id) |  |
@@ -542,7 +542,7 @@ Deatils about the Addon Component.
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| <a id="catalogpatterncatalog_data"></a>`catalog_data` | [`Map!`](#map) |  |
+| <a id="catalogpatterncatalog_data"></a>`catalog_data` | [`Map`](#map) |  |
 | <a id="catalogpatterncreated_at"></a>`created_at` | [`String`](#string) |  |
 | <a id="catalogpatternid"></a>`id` | [`ID!`](#id) |  |
 | <a id="catalogpatternlocation"></a>`location` | [`Location!`](#location) |  |
