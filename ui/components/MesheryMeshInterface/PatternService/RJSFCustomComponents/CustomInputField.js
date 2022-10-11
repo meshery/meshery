@@ -24,7 +24,6 @@ const CustomInputField = (props) => {
           error={props.rawErrors?.length > 0}
           onChange={e => props?.onChange(e.target.value)}
           label={`${prettifiedName}`}
-          style={{ marginTop : '0.3rem' }}
           InputProps={{
             style : { padding : "0px 0px 0px 0px", backgroundColor : "rgba(255, 255, 255, 0.4)" },
             endAdornment : (<InputAdornment position="start">

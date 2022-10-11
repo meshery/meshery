@@ -32,7 +32,7 @@ export const rjsfTheme = createTheme({
     },
     MuiTextField : {
       root : {
-        marginRight : "0.5rem"
+        width : "100%"
       }
     },
     MuiInputLabel : {
@@ -52,7 +52,7 @@ export const rjsfTheme = createTheme({
     },
     MuiFormControl : {
       root : {
-        marginTop : "0.1em"
+        marginTop : "0.3rem"
       }
     },
     MuiBox : {
@@ -160,6 +160,14 @@ export const rjsfTheme = createTheme({
           whiteSpace : "normal",
         }
       },
+      "grid-xs-6" : {
+        paddingRight : '0.5rem'
+      }
+    },
+    MuiIconButton : {
+      root : {
+        cursor : "default"
+      }
     },
     MuiPaper : {
       elevation2 : {

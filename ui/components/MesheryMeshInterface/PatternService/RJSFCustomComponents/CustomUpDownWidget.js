@@ -29,7 +29,6 @@ const CustomUpDownField = (props) => {
         onChange={e => e.target.value < 0 ? props?.onChange(e.target.value = "") : props?.onChange(e.target.value)}
         type="number"
         error={props.rawErrors?.length > 0}
-        style={{ marginTop : '0.3em' }}
         InputProps={{
           style : { padding : "0px 0px 0px 0px", backgroundColor : "rgba(255, 255, 255, 0.4)" },
         }}
