@@ -164,7 +164,6 @@ func createNativeArgoResource(opt RolloutEngineGenericOptions) v1alpha1.Rollout 
 			Namespace: opt.Namespace,
 			Labels: helpers.MergeStringMaps(
 				map[string]string{"app": opt.Name},
-				opt.Advanced.Labels,
 				opt.Metadata.Labels,
 			),
 			Annotations: helpers.MergeStringMaps(opt.Metadata.Annotations, opt.Metadata.Annotations),
@@ -183,7 +182,6 @@ func createNativeArgoResource(opt RolloutEngineGenericOptions) v1alpha1.Rollout 
 						map[string]string{
 							"app": opt.Name,
 						},
-						opt.Advanced.Labels,
 						opt.Metadata.Labels,
 					),
 				},
