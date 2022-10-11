@@ -14,20 +14,6 @@
           "type": "boolean",
           "title": "Expose as a Service",
           "default": true
-        },
-        "labels": {
-          "type": "object",
-          "additionalProperties": {
-            "format": "string",
-            "type": "string"
-          }    
-        },
-        "annotations": {
-          "type": "object",
-          "additionalProperties": {
-            "format": "string",
-            "type": "string"
-          }
         }
       }
     },

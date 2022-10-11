@@ -32,9 +32,7 @@ type PatternSetting struct {
 }
 
 type PatternSettingAdvanced struct {
-	CreateService *bool             `json:"create_service,omitempty"`
-	Labels        map[string]string `json:"labels,omitempty"`
-	Annotations   map[string]string `json:"annotations,omitempty"`
+	CreateService *bool `json:"create_service,omitempty"`
 }
 
 type PatternConfiguration struct {
