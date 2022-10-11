@@ -94,8 +94,8 @@ func Deploy(
 				Replicas:    settings.Replicas,
 				Containers:  settings.Containers,
 				Metadata: RolloutEngineGenericOptionsMetadata{
-					Labels:      oamComp.Labels,
-					Annotations: oamComp.Annotations,
+					Labels:      oamComp.ObjectMeta.Labels,
+					Annotations: oamComp.ObjectMeta.Annotations,
 				},
 				Delete:   isDel,
 				Advanced: settings.Advanced,
