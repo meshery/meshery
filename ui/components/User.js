@@ -18,6 +18,7 @@ import { withRouter } from 'next/router';
 import dataFetch from '../lib/data-fetch';
 import { updateUser } from '../lib/store';
 import classNames from 'classnames';
+import { ListItem, List } from '@material-ui/core';
 
 
 const styles = () => ({ popover : { color : 'black', }, });
@@ -102,7 +103,7 @@ class User extends React.Component {
 
     if (children && children.length > 0) {
       return (
-        <MenuList disablePadding>
+        <List disablePadding>
           {children.map(({
             id, href, title, show : showc
           }) => {
@@ -114,26 +115,26 @@ class User extends React.Component {
                 {
                   href ? (
                     <Link href={href}>
-                      <MenuItem
+                      <ListItem
                         button
                         key={id}
                       >
                         {this.extensionPointContent(title)}
-                      </MenuItem>
+                      </ListItem>
                     </Link>
                   ) : (
-                    <MenuItem
+                    <ListItem
                       button
                       key={id}
                     >
                       {this.extensionPointContent(title)}
-                    </MenuItem>
+                    </ListItem>
                   )
                 }
               </React.Fragment>
             );
           })}
-        </MenuList>
+        </List>
       );
     }
   }

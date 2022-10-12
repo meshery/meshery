@@ -49,11 +49,36 @@ class RemoteExtension extends React.Component {
     super(props)
     this.state = {
       componentTitle : "",
-      extensionType : ""
+      extensionType : "",
+      currentURI : "",
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    console.log("inside update");
+    console.log("prevState", prevState);
+    console.log("this.state.currentURI", this.state.currentURI);
+    if (prevState.currentURI !== getPath()) {
+      this.setState({ currentURI : getPath() });
+      getFullPageExtensions(extNames => {
+        extNames.forEach((ext) => {
+          const currentURI = extractComponentURI(getPath());
+          if (currentURI === ext.uri) {
+            this.setState({ extensionType : ext.name })
+            getCapabilities(ext.name, extensions => {
+              this.setState({ componentTitle : getComponentTitleFromPath(extensions, getPath()) });
+              this.props.updatepagetitle({ title : getComponentTitleFromPath(extensions, getPath()) });
+            });
+            console.log(`path: ${getPath()}`);
+            this.props.updatepagepath({ path : getPath() });
+          }
+        })
+      });
     }
   }
 
   componentDidMount() {
+    this.setState({ currentURI : getPath() });
     getFullPageExtensions(extNames => {
       extNames.forEach((ext) => {
         const currentURI = extractComponentURI(getPath());

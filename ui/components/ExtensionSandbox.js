@@ -275,6 +275,7 @@ function createPathForRemoteComponent(componentName) {
  * @param {{ type: "navigator" | "user_prefs" | "account", Extension: JSX.Element }} props
  */
 function ExtensionSandbox({ type, Extension, isDrawerCollapsed, toggleDrawer }) {
+  console.log("ExtensionSandbox", type, Extension);
   const [extensions, setExtensions] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
