@@ -1,85 +1,31 @@
+/* eslint-disable no-unused-vars */
 import { MuiThemeProvider } from '@material-ui/core/styles';
-import { withTheme } from "@rjsf/core";
-import { Theme as MaterialUITheme } from "@rjsf/material-ui";
+import Form from "@rjsf/core";
 import React, { useEffect } from "react";
 import JS4 from "../../../assets/jsonschema/schema-04.json";
 import { rjsfTheme } from "../../../themes";
-import handleError from '../../ErrorHandling';
-import { buildUiSchema } from "../helpers";
-import { getRefinedJsonSchema } from "./helper";
-import MesheryArrayFieldTemplate from "./RJSFCustomComponents/ArrayFieldTemlate";
-import CustomInputField from "./RJSFCustomComponents/CustomInputField";
-import MesheryCustomObjFieldTemplate from "./RJSFCustomComponents/ObjectFieldTemplate";
-import _ from "lodash"
-import { CustomUpDownField } from './RJSFCustomComponents/CustomUpDownWidget';
+import { recursiveCleanObject } from "../helpers";
+// import MesheryArrayFieldTemplate from "./RJSFCustomComponents/ArrayFieldTemlate";
+// import MesheryCustomObjFieldTemplate from "./RJSFCustomComponents/ObjectFieldTemplate";
+import { customizeValidator } from "@rjsf/validator-ajv6";
 
-const Form = withTheme(MaterialUITheme);
-
-// function RJSFButton({ handler, text, ...restParams }) {
-//   return (
-//     <Button variant="contained" color="primary" style={{ marginRight : "0.5rem" }} onClick={handler} {...restParams}>
-//       {text}
-//     </Button>
-//   );
-// }
-
-function RJSF(props) {
-  const {
-    formData,
-    jsonSchema,
-    onChange,
-    hideTitle,
-    RJSFWrapperComponent = React.Fragment,
-    RJSFFormChildComponent = React.Fragment, // eslint-disable-line no-unused-vars
-    //.. temporarily ignoring till handler is attached successfully
-  } = props;
-
-  const errorHandler = handleError();
-
-  const [data, setData] = React.useState(prev => ({ ...formData, ...prev }));
-  const [schema, setSchema] = React.useState({ rjsfSchema : {}, uiSchema : {} })
-  const [isLoading, setIsLoading] = React.useState(true)
-
-  React.useEffect(() => {
-    // Apply debouncing mechanism for the state propagation
-    const timer = setTimeout(() => {
-      onChange?.(data);
-    }, 300);
-
-    return () => clearTimeout(timer);
-  }, [data]);
-
-  React.useEffect(() => {
-    const rjsfSchema = getRefinedJsonSchema(jsonSchema, hideTitle, errorHandler)
-    // UI schema builds responsible for customizations in the RJSF fields shown to user
-    const uiSchema = buildUiSchema(rjsfSchema)
-    setSchema({ rjsfSchema, uiSchema })
-  }, [jsonSchema]) // to reduce heavy lifting on every react render
-
-  React.useEffect(() => {
-    if (!_.isEqual(schema, { rjsfSchema : {}, uiSchema : {} })) {
-      setTimeout(() => {
-        setIsLoading(false);
-      }, 300); // for showing circular progress
+export class ReactJSONSchemaForm extends Form {
+  constructor(props){
+    super(props)
+    let oldValidate = this.validate;
+    this.validate = (
+      formData,
+      schema,
+      additionalMetaSchemas,
+      customFormats,
+    ) => {
+      let fixedFormData = recursiveCleanObject(formData)
+      return oldValidate.call(this, fixedFormData, schema)
     }
-  }, [schema])
-
-  return (
-    <RJSFWrapperComponent {...props}>
-      <RJSFForm
-        isLoading={isLoading}
-        schema={schema}
-        data={data}
-        onChange={(e) => {
-          setData(e.formData)
-        }}
-        jsonSchema={jsonSchema}
-      />
-    </RJSFWrapperComponent>
-  );
+  }
 }
 
-export default RJSF;
+const validator = customizeValidator({ additionalMetaSchemas : [JS4] });
 
 /**
  * The Custom RJSF Form that accepts custom fields from the extension
@@ -97,8 +43,8 @@ function RJSFForm(props) {
     data,
     onChange,
     isLoading,
-    ArrayFieldTemplate = MesheryArrayFieldTemplate,
-    ObjectFieldTemplate = MesheryCustomObjFieldTemplate,
+    // ArrayFieldTemplate = MesheryArrayFieldTemplate,
+    // ObjectFieldTemplate = MesheryCustomObjFieldTemplate,
     LoadingComponent,
     ErrorList,
     // prop should be present in order for the cloned element to override this property
@@ -119,31 +65,35 @@ function RJSFForm(props) {
 
   return (
     <MuiThemeProvider theme={rjsfTheme}>
-      <Form
+      <ReactJSONSchemaForm
         schema={schema.rjsfSchema}
         idPrefix={jsonSchema?.title}
         onChange={onChange}
         formData={data}
-        ArrayFieldTemplate={ArrayFieldTemplate}
-        ObjectFieldTemplate={ObjectFieldTemplate}
-        additionalMetaSchemas={[JS4]}
-        uiSchema={schema.uiSchema}
-        widgets={{
-          TextWidget : CustomInputField,
-          UpDownWidget : CustomUpDownField
-        }}
+        validator={validator}
+        // ArrayFieldTemplate={ArrayFieldTemplate}
+        // ObjectFieldTemplate={ObjectFieldTemplate}
+        // additionalMetaSchemas={[JS4]}
+        // uiSchema={schema.uiSchema}
+        // widgets={{
+        //   TextWidget : CustomInputField,
+        //   UpDownWidget : CustomUpDownField
+        // }}
         liveValidate
-        showErrorList={false}
-        noHtml5Validate
-        ErrorList={ErrorList}
-        transformErrors={transformErrors}
+        // showErrorList={false}
+        // noHtml5Validate
+        // ErrorList={ErrorList}
+        // transformErrors={transformErrors}
       >
         {/* {hideSubmit ? true : <RJSFButton handler={onSubmit} text="Submit" {...restparams} />}
 {hideSubmit ? true : <RJSFButton handler={onDelete} text="Delete" />} */}
         {/* <RJSFFormChildComponent /> */}
         <></> {/* temporary change for functionality */}
-      </Form>
+      </ReactJSONSchemaForm>
 
     </MuiThemeProvider>
   )
 }
+
+export default RJSFForm;
+/* eslint-disable no-unused-vars */

@@ -1,7 +1,7 @@
 // @ts-check
 import React from "react";
 import Switch from "./Switch";
-import RJSF from "./RJSF";
+import RJSF from "./RJSF_wrapper";
 import { isEmptyObj } from "../../../utils/utils";
 
 /**
