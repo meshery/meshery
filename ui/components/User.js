@@ -9,8 +9,6 @@ import Link from "next/link";
 import MenuList from '@material-ui/core/MenuList';
 import Grow from '@material-ui/core/Grow';
 import MenuItem from '@material-ui/core/MenuItem';
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import Popper from '@material-ui/core/Popper';
 import Paper from '@material-ui/core/Paper';
@@ -104,7 +102,7 @@ class User extends React.Component {
 
     if (children && children.length > 0) {
       return (
-        <List disablePadding>
+        <MenuList disablePadding>
           {children.map(({
             id, href, title, show : showc
           }) => {
@@ -113,21 +111,34 @@ class User extends React.Component {
             }
             return (
               <React.Fragment key={id}>
-                <ListItem
-                  button
-                  key={id}
-                >
-                  {this.extensionPointContent(href, title)}
-                </ListItem>
+                {
+                  href ? (
+                    <Link href={href}>
+                      <MenuItem
+                        button
+                        key={id}
+                      >
+                        {this.extensionPointContent(title)}
+                      </MenuItem>
+                    </Link>
+                  ) : (
+                    <MenuItem
+                      button
+                      key={id}
+                    >
+                      {this.extensionPointContent(title)}
+                    </MenuItem>
+                  )
+                }
               </React.Fragment>
             );
           })}
-        </List>
+        </MenuList>
       );
     }
   }
 
-  extensionPointContent(href, name) {
+  extensionPointContent(name) {
     const { classes } = this.props;
 
     const content = (
@@ -139,8 +150,6 @@ class User extends React.Component {
         </ListItemText>
       </div>
     );
-
-    if (href) return <Link href={href}>{content}</Link>;
 
     return content;
   }
