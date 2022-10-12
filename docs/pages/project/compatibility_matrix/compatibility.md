@@ -340,7 +340,7 @@ As a key aspect of Meshery, its integrations with other systems are routinely te
         <th style="text-align: center;" ><span class="sort-by"> Meshery Server Version </span> </th>
         <th style="text-align: center;" > <span class="sort-by"> Service Mesh </span> </th>
         <th style="text-align: center;" ><span class="sort-by"> Service Mesh Version </span></th>
-  <thead>
+  </thead>
   <tbody>
     {% for group in sorted_tests_group %}
       {% assign items = group.items | sort: "timestamp" | reverse %}

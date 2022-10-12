@@ -81,7 +81,7 @@ function MesheryPatternCard({
         <>
           <div>
             <div style={{ display : "flex", justifyContent : "space-between" }}>
-              <Typography variant="h6" component="div">
+              <Typography style={{ overflow : "hidden", textOverflow : "ellipsis", width : '20rem' }} variant="h6" component="div">
                 {name}
               </Typography>
               <img  className={classes.img} src={`/static/img/${visibility}.svg`} />
@@ -137,8 +137,9 @@ function MesheryPatternCard({
                 <UndeployIcon fill="#ffffff" className={classes.iconPatt} />
                 <span className={classes.btnText}>Undeploy</span>
               </Button>
-``
+
               { visibility === "private" ?  <Button
+                title="Design"
                 variant="contained"
                 color="primary"
                 onClick={(ev) =>
@@ -147,8 +148,9 @@ function MesheryPatternCard({
                 className={classes.testsButton}
               >
                 <Avatar src="/static/img/pattern_trans.svg" className={classes.iconPatt} imgProps={{ height : "16px", width : "16px" }} />
-                Design
+                <span className={classes.btnText}> Design </span>
               </Button> : <Button
+                title="Clone"
                 variant="contained"
                 color="primary"
                 onClick={(ev) =>
@@ -156,8 +158,8 @@ function MesheryPatternCard({
                 }
                 className={classes.testsButton}
               >
-                <img src="/static/img/clone-white.svg" className={classes.iconPatt} />
-                Clone
+                <Avatar src="/static/img/clone-white.svg" className={classes.iconPatt} />
+                <span className={classes.btnText}> Clone </span>
               </Button>  }
 
             </div>

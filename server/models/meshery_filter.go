@@ -16,7 +16,7 @@ type MesheryFilter struct {
 	FilterFile []byte `json:"filter_file" gorm:"type:bytea"`
 	// Meshery doesn't have the user id fields
 	// but the remote provider is allowed to provide one
-	UserID *string `json:"user_id" gorm:"-"`
+	UserID *string `json:"user_id"`
 
 	Location    sql.Map `json:"location"`
 	Visibility  string  `json:"visibility"`

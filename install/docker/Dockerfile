@@ -1,4 +1,4 @@
-FROM golang:1.17 as meshery-server
+FROM golang:1.19 as meshery-server
 ARG TOKEN
 ARG GIT_VERSION
 ARG GIT_COMMITSHA

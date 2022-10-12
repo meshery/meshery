@@ -277,13 +277,17 @@ function jsonSchemaBuilder(schema, obj) {
     return
   }
 
-  obj[uiDesc] = " ";
+
+  // Don't remove the description from additonal Fields Title
+  if (!schema?.additionalProperties) {
+    obj[uiDesc] = " ";
+  }
+
   if (obj["ui:widget"]) { // if widget is already assigned, don't go over
     return
   }
 
   if (schema.type === 'boolean') {
-    schema["default"] = false;
     obj["ui:widget"] = "checkbox";
   }
 
@@ -312,7 +316,7 @@ export function buildUiSchema(schema) {
   jsonSchemaBuilder(schema, uiSchemaObj);
 
   // 2. Set the ordering of the components
-  uiSchemaObj["ui:order"] = ["name", "namespace", "*"]
+  uiSchemaObj["ui:order"] = ["name", "namespace", "label", "annotation", "*"]
 
   //3. Return the final uiSchema Object
   return uiSchemaObj
