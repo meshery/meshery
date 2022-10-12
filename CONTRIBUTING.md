@@ -159,7 +159,7 @@ Meshery uses adapters to provision and interact with different service meshes. F
    1. Using Go as an example, do the following:
       - adding GOPATH to PATH: `export PATH=$PATH:$GOPATH/bin`
       - install grpc: `go get -u google.golang.org/grpc`
-      - install protoc plugin for go: `go get -u github.com/golang/protobuf/protoc-gen-go`
+      - install protoc plugin for go: `go get -u google.golang.org/protobuf`
       - Generate Go code: `protoc -I meshes/ meshes/meshops.proto --go_out=plugins=grpc:./meshes/`
    1. For other languages, please refer to gRPC.io for language-specific guides.
 1. Implement the service methods and expose the gRPC server on a port of your choice (e.g. 10000).
