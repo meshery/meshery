@@ -37,8 +37,8 @@ func createK8sResourceStructure(comp v1alpha1.Component) map[string]interface{} 
 		"kind":       kind,
 		"metadata": map[string]interface{}{
 			"name":        comp.ObjectMeta.Name,
-			"annotations": comp.Annotations,
-			"labels":      comp.Labels,
+			"annotations": comp.ObjectMeta.Annotations,
+			"labels":      comp.ObjectMeta.Labels,
 		},
 	}
 

@@ -181,7 +181,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
         resetDatabase({
           selector : {
             clearDB : "true",
-            ReSync : "false",
+            ReSync : "true",
             hardReset : "false",
           },
           k8scontextID : contexts[index].id
