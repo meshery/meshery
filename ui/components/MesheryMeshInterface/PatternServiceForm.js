@@ -86,13 +86,13 @@ function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference
       default : "default",
       type : "string",
     };
-    schemaSet.workload.properties.label = {
+    schemaSet.workload.properties.labels = {
       description : "The label for the service",
       additionalProperties : {
         "type" : "string"
       }
     };
-    schemaSet.workload.properties.annotation = {
+    schemaSet.workload.properties.annotations = {
       description : "The annotation for the service",
       additionalProperties : {
         "type" : "string"
