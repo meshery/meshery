@@ -96,7 +96,8 @@ const ObjectFieldTemplate = ({
         ) : (
           <Grid
             item={true}
-            xs={
+            sm={12}
+            lg={
               element.type === "object" ||
               element.type === "array" ||
               element.__additional_property
