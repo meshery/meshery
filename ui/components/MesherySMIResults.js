@@ -222,12 +222,12 @@ class MesherySMIResults extends Component {
                   <Table  aria-label="a dense table">
                     <TableHead>
                       <TableRow>
-                        {column.map((val) => (<TableCell colSpan={colSpan}>{val}</TableCell>))}
+                        {column.map((val) => (<TableCell colSpan={colSpan} key={val.uniqueID}>{val}</TableCell>))}
                       </TableRow>
                     </TableHead>
                     <TableBody>
                       {data?.map((row) => (
-                        <TableRow >
+                        <TableRow key={row.uniqueID}>
                           {row?.map(val => {
                             if (val && val.match(/[0-9]+m[0-9]+.+[0-9]+s/i)!=null) {
                               const time = val.split(/m|s/)
