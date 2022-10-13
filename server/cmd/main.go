@@ -34,10 +34,6 @@ var (
 	version                        = "Not Set"
 	commitsha                      = "Not Set"
 	releasechannel                 = "Not Set"
-	dbUser                         = "postgres"
-	dbPass                         = "meshery"
-	dbHost                         = "localhost"
-	dbPort                         = "5432"
 )
 
 const (
@@ -81,7 +77,10 @@ func main() {
 	viper.SetDefault("COMMITSHA", commitsha)
 	viper.SetDefault("RELEASE_CHANNEL", releasechannel)
 	viper.SetDefault("INSTANCE_ID", &instanceID)
-
+	viper.SetDefault("DBHOST", "localhost")
+	viper.SetDefault("DBPORT", "5432")
+	viper.SetDefault("DBUSER", "postgres")
+	viper.SetDefault("DBPASS", "meshery")
 	viper.SetDefault("SKIP_DOWNLOAD_CONTENT", false)
 	viper.SetDefault("SKIP_COMP_GEN", false)
 	store.Initialize()
@@ -151,8 +150,7 @@ func main() {
 		os.Exit(1)
 	}
 	defer preferencePersister.ClosePersister()
-
-	dbHandler := models.GetNewDBInstance(dbUser, dbPass, dbHost, dbPort)
+	dbHandler := models.GetNewDBInstance(viper.GetString("DBUSER"), viper.GetString("DBPASS"), viper.GetString("DBHOST"), viper.GetString("DBPORT"))
 
 	meshsyncCh := make(chan struct{}, 10)
 	brokerConn := nats.NewEmptyConnection

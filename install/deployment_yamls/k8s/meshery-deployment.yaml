@@ -25,6 +25,8 @@ spec:
         - env:
             - name: EVENT
               value: mesheryLocal
+            - name: DBPASS
+              value: meshery
             - name: PROVIDER_BASE_URLS
               value: https://meshery.layer5.io
             - name: ADAPTER_URLS
@@ -34,6 +36,13 @@ spec:
           name: meshery
           ports:
             - containerPort: 8080
+          resources: {}
+        - env:
+            - name: POSTGRES_PASSWORD
+              value: meshery
+          name: pg 
+          image: postgres:10.22-alpine
+          imagePullPolicy: Always
           resources: {}
       restartPolicy: Always
 status: {}

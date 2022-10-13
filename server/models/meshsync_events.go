@@ -134,7 +134,6 @@ func (mh *MeshsyncDataHandler) meshsyncEventsAccumulator(event *broker.Message) 
 	if err != nil {
 		return ErrUnmarshal(err, objectJSON)
 	}
-
 	switch event.EventType {
 	case broker.Add, broker.Update:
 		result := mh.dbHandler.Create(&obj)
