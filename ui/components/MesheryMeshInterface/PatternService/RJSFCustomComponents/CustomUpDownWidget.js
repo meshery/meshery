@@ -1,15 +1,15 @@
 import { FormHelperText, TextField } from "@material-ui/core";
 import React from "react";
 import ErrorIcon from "@material-ui/icons/Error";
-const style={
+const style = {
   display : "flex",
   alignItems : "center",
 }
-const CustomHelperText=(props) => {
+const CustomHelperText = (props) => {
   return (
     <div style={style} id={props.id}>
-      <ErrorIcon style={{ color : "red",marginRight : "2px",height : "18px" }}/>
-      <FormHelperText error>{props.errormsg}</FormHelperText>
+      <ErrorIcon style={{ color : "#B32700", marginRight : "0.1rem", height : "1rem" }} />
+      <FormHelperText error style={{ color : "#B32700" }}>{props.errormsg}</FormHelperText>
     </div>
 
   )
@@ -20,21 +20,24 @@ const CustomUpDownField = (props) => {
   return (
     <>
       <TextField
-        id="standard-number"
+        id={props.id}
+        size="small"
         label={name}
         key={props.id}
         value={props?.value}
-        variant="standard"
-        onChange={e => e.target.value<0?props?.onChange(e.target.value=""):props?.onChange(e.target.value)}
+        variant="outlined"
+        onChange={e => e.target.value < 0 ? props?.onChange(e.target.value = "") : props?.onChange(e.target.value)}
         type="number"
-        margin="none"
         error={props.rawErrors?.length > 0}
-        size="large"
+        style={{ marginTop : '0.3em' }}
+        InputProps={{
+          style : { padding : "0px 0px 0px 0px", backgroundColor : "rgba(255, 255, 255, 0.4)" },
+        }}
       />
       <div style={{ display : "flex" }}>
         {props.rawErrors?.map((errormsg, i) => (
-          (errormsg==="is a required property"?null
-            :<CustomHelperText key={i} errormsg={errormsg}/>
+          (errormsg === "required property" ? null
+            : <CustomHelperText key={i} errormsg={errormsg} />
           )
         ))}
       </div>
@@ -43,4 +46,4 @@ const CustomUpDownField = (props) => {
   )
 }
 
-export { CustomUpDownField,CustomHelperText }
+export { CustomUpDownField, CustomHelperText }

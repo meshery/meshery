@@ -18,11 +18,11 @@ jobs:
           repository: meshery/meshery
           fetch-depth: 1
       - name: Setup Go
-        uses: actions/setup-go@v3.0.0
+        uses: actions/setup-go@master
         with:
-          go-version: "1.17"
+          go-version: "1.19"
       - name: Setup Cache
-        uses: actions/cache@v3.0.0
+        uses: actions/cache@v3
         with:
           path: ~/go/pkg/mod
           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
@@ -50,7 +50,7 @@ jobs:
       - run: sudo npm i -g npm@7
       - name: Cache node modules
         id: node-cache
-        uses: actions/cache@v3.0.0
+        uses: actions/cache@v3
         with:
           path: |
             ~/cache
