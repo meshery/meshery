@@ -26,7 +26,7 @@ const CustomUpDownField = (props) => {
         key={props.id}
         value={props?.value}
         variant="outlined"
-        onChange={e => e.target.value < 0 ? props?.onChange(e.target.value = "") : props?.onChange(e.target.value)}
+        onChange={e => props?.onChange(e.target.value=== "" ? props.options.emptyValue : e.target.value)}
         type="number"
         error={props.rawErrors?.length > 0}
         InputProps={{
@@ -35,7 +35,7 @@ const CustomUpDownField = (props) => {
       />
       <div style={{ display : "flex" }}>
         {props.rawErrors?.map((errormsg, i) => (
-          (errormsg === "required property" ? null
+          (errormsg === "is a required property" ? null
             : <CustomHelperText key={i} errormsg={errormsg} />
           )
         ))}

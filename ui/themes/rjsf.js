@@ -32,7 +32,7 @@ export const rjsfTheme = createTheme({
     },
     MuiTextField : {
       root : {
-        width : "100%"
+        width : "calc(100% - 4px)",
       }
     },
     MuiInputLabel : {
@@ -40,7 +40,7 @@ export const rjsfTheme = createTheme({
         whiteSpace : "nowrap",
         overflow : "hidden",
         textOverflow : "ellipsis",
-        maxWidth : "75%",
+        maxWidth : "70%",
         height : "100%",
         '&:hover' : {
           overflow : "visible",
@@ -74,7 +74,7 @@ export const rjsfTheme = createTheme({
     },
     MuiTypography : {
       body1 : {
-        fontSize : '0.8rem'
+        fontSize : '0.8rem',
       },
       h5 : {
         textTransform : 'capitalize',
@@ -154,15 +154,10 @@ export const rjsfTheme = createTheme({
         marginTop : '0.1rem !important',
         overflow : "hidden",
         textOverflow : "ellipsis",
-        whiteSpace : "nowrap",
         '&:hover' : {
           overflow : "visible",
-          whiteSpace : "normal",
         }
       },
-      "grid-xs-6" : {
-        paddingRight : '0.5rem'
-      }
     },
     MuiIconButton : {
       root : {
