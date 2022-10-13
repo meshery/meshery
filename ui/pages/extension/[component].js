@@ -7,8 +7,9 @@ import { updatepagepath, updatepagetitle } from "../../lib/store";
 import { connect } from "react-redux";
 import Head from "next/head";
 import { bindActionCreators } from "redux";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import RemoteComponent from "../../components/RemoteComponent";
+import { useRouter } from "next/router";
 
 
 /**
@@ -44,68 +45,81 @@ function capitalize(string) {
   return "";
 }
 
-class RemoteExtension extends React.Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      componentTitle : "",
-      extensionType : "",
-      currentURI : "",
-    }
-  }
+const RemoteExtension = (props) => {
+  const { updatepagetitle, updatepagepath } = props;
 
-  componentDidUpdate(prevProps, prevState) {
-    console.log("inside update");
-    console.log("prevState", prevState);
-    console.log("this.state.currentURI", this.state.currentURI);
-    if (prevState.currentURI !== getPath()) {
-      this.setState({ currentURI : getPath() });
-      getFullPageExtensions(extNames => {
-        extNames.forEach((ext) => {
-          const currentURI = extractComponentURI(getPath());
-          if (currentURI === ext.uri) {
-            this.setState({ extensionType : ext.name })
-            getCapabilities(ext.name, extensions => {
-              this.setState({ componentTitle : getComponentTitleFromPath(extensions, getPath()) });
-              this.props.updatepagetitle({ title : getComponentTitleFromPath(extensions, getPath()) });
-            });
-            console.log(`path: ${getPath()}`);
-            this.props.updatepagepath({ path : getPath() });
-          }
-        })
-      });
-    }
-  }
+  const [componentTitle, setComponentTitle] = useState("");
+  const [extensionType, setExtensionType] = useState("");
+  const [currentURI, setCurrentURI] = useState("");
+  const router = useRouter();
+  console.log("router: ", router);
+  const pid = router?.query?.component;
+  console.log("pid (init):", pid);
 
-  componentDidMount() {
-    this.setState({ currentURI : getPath() });
+  const renderExtension = () => {
     getFullPageExtensions(extNames => {
       extNames.forEach((ext) => {
         const currentURI = extractComponentURI(getPath());
+        console.log("currentURI: ", currentURI);
+        console.log("ext: ", ext);
         if (currentURI === ext.uri) {
-          this.setState({ extensionType : ext.name })
+          console.log("inside")
+          console.log("ext")
+          setExtensionType(ext.name)
           getCapabilities(ext.name, extensions => {
-            this.setState({ componentTitle : getComponentTitleFromPath(extensions, getPath()) });
-            this.props.updatepagetitle({ title : getComponentTitleFromPath(extensions, getPath()) });
+            setComponentTitle(getComponentTitleFromPath(extensions, getPath()))
+            updatepagetitle({ title : getComponentTitleFromPath(extensions, getPath()) })
           });
           console.log(`path: ${getPath()}`);
-          this.props.updatepagepath({ path : getPath() });
+          updatepagepath({ path : getPath() });
         }
       })
     });
   }
 
-  render() {
-    const { componentTitle, extensionType } = this.state;
-    return (
-      <NoSsr>
-        <Head>
-          <title>{`${componentTitle} | Meshery` || ""}</title>
-        </Head>
-        {
-          extensionType &&
+
+  useEffect(() => {
+    console.log("pid(useEffect): ", pid);
+    renderExtension();
+  }, [getPath()])
+
+  // componentDidUpdate(prevProps, prevState) {
+  //   console.log("inside update");
+  //   console.log("prevState", prevState);
+  //   console.log("this.state.currentURI", this.state.currentURI);
+
+  //   if (prevState.currentURI !== getPath()) {
+  //     this.setState({ currentURI : getPath() });
+  //     getFullPageExtensions(extNames => {
+  //       extNames.forEach((ext) => {
+  //         const currentURI = extractComponentURI(getPath());
+  //         if (currentURI === ext.uri) {
+  //           this.setState({ extensionType : ext.name })
+  //           getCapabilities(ext.name, extensions => {
+  //             this.setState({ componentTitle : getComponentTitleFromPath(extensions, getPath()) });
+  //             this.props.updatepagetitle({ title : getComponentTitleFromPath(extensions, getPath()) });
+  //           });
+  //           console.log(`path: ${getPath()}`);
+  //           this.props.updatepagepath({ path : getPath() });
+  //         }
+  //       })
+  //     });
+  //   }
+  // }
+
+  // componentDidMount() {
+  //   this.setState({ currentURI : getPath() });
+  // }
+
+  return (
+    <NoSsr>
+      <Head>
+        <title>{`${componentTitle} | Meshery` || ""}</title>
+      </Head>
+      {
+        extensionType &&
           <NoSsr>
-            {console.log("ext", extensionType)}
+            {console.log("ext(UI)", extensionType)}
             {
               (extensionType === 'navigator') ?
                 <ExtensionSandbox type={extensionType} Extension={Extension} />
@@ -113,10 +127,9 @@ class RemoteExtension extends React.Component {
                 <ExtensionSandbox type={extensionType} Extension={(url) => RemoteComponent({ url })} />
             }
           </NoSsr>
-        }
-      </NoSsr>
-    );
-  }
+      }
+    </NoSsr>
+  );
 }
 
 const mapDispatchToProps = (dispatch) => ({ updatepagepath : bindActionCreators(updatepagepath, dispatch),

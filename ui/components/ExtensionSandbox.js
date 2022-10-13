@@ -275,46 +275,50 @@ function createPathForRemoteComponent(componentName) {
  * @param {{ type: "navigator" | "user_prefs" | "account", Extension: JSX.Element }} props
  */
 function ExtensionSandbox({ type, Extension, isDrawerCollapsed, toggleDrawer }) {
-  console.log("ExtensionSandbox", type, Extension);
-  const [extensions, setExtensions] = useState([]);
+  console.log("ExtensionSandbox", type);
+  const [extension, setExtension] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    console.log("updating extension")
     getCapabilities(type, (data) => {
-      setExtensions(data);
+      setExtension(data);
       setIsLoading(false);
     });
     if (type === "navigator" && !isDrawerCollapsed) {
       toggleDrawer({ isDrawerCollapsed : !isDrawerCollapsed });
     }
-  }, []);
+  }, [type]);
 
-  if (type === "navigator") {
+  if (type === "navigator" && extension.length !== 0) {
+    console.log("extensions navigator", extension);
     return isLoading ?
       <LoadingScreen animatedIcon="AnimatedMeshery" message="Establishing Remote Connection" />
       : (
-        <Extension url={createPathForRemoteComponent(getComponentURIFromPathForNavigator(extensions, getPath()))} />
+        <Extension url={createPathForRemoteComponent(getComponentURIFromPathForNavigator(extension, getPath()))} />
       );
   }
 
-  if (type === "user_prefs") {
+  if (type === "user_prefs" && extension.length !== 0) {
+    console.log("extensions", extension);
     return isLoading
       ? <Typography align="center">
         <CircularProgress />
       </Typography>
       : (
-        getComponentURIFromPathForUserPrefs(extensions).map(uri => {
+        getComponentURIFromPathForUserPrefs(extension).map(uri => {
           return <Extension url={createPathForRemoteComponent(uri)} />
         })
       );
   }
 
-  if (type === "account") {
+  if (type === "account" && extension.length !== 0) {
+    console.log("extensions account", extension);
     return isLoading ?
       <LoadingScreen animatedIcon="AnimatedMeshery" message="Establishing Remote Connection" />
       :
       (
-        <Extension url={createPathForRemoteComponent(getComponentURIFromPathForAccount(extensions, getPath()))} />
+        <Extension url={createPathForRemoteComponent(getComponentURIFromPathForAccount(extension, getPath()))} />
       )
   }
 
