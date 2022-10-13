@@ -1,30 +1,33 @@
-/* eslint-disable no-unused-vars */
 import { MuiThemeProvider } from '@material-ui/core/styles';
-import Form from "@rjsf/core";
+import Form, { withTheme } from "@rjsf/core";
+import { Theme as MaterialUITheme, } from "@rjsf/material-ui";
 import React, { useEffect } from "react";
 import JS4 from "../../../assets/jsonschema/schema-04.json";
 import { rjsfTheme } from "../../../themes";
 import { recursiveCleanObject } from "../helpers";
-// import MesheryArrayFieldTemplate from "./RJSFCustomComponents/ArrayFieldTemlate";
-// import MesheryCustomObjFieldTemplate from "./RJSFCustomComponents/ObjectFieldTemplate";
+import MesheryArrayFieldTemplate from "./RJSFCustomComponents/ArrayFieldTemlate";
+import MesheryCustomObjFieldTemplate from "./RJSFCustomComponents/ObjectFieldTemplate";
 import { customizeValidator } from "@rjsf/validator-ajv6";
+import CustomInputField from "./RJSFCustomComponents/CustomInputField";
+import { CustomUpDownField } from './RJSFCustomComponents/CustomUpDownWidget';
+import _ from "lodash"
 
-export class ReactJSONSchemaForm extends Form {
+class RJSFOverridenComponent extends Form {
   constructor(props){
     super(props)
     let oldValidate = this.validate;
     this.validate = (
       formData,
       schema,
-      additionalMetaSchemas,
-      customFormats,
     ) => {
-      let fixedFormData = recursiveCleanObject(formData)
-      return oldValidate.call(this, fixedFormData, schema)
+      let fixedFormData = recursiveCleanObject(_.cloneDeep(formData));
+      return oldValidate.call(this, fixedFormData, schema);
     }
   }
 }
 
+// This is Patched change to include customised Forms
+const MuiRJSFForm = withTheme(MaterialUITheme, RJSFOverridenComponent);
 const validator = customizeValidator({ additionalMetaSchemas : [JS4] });
 
 /**
@@ -43,8 +46,8 @@ function RJSFForm(props) {
     data,
     onChange,
     isLoading,
-    // ArrayFieldTemplate = MesheryArrayFieldTemplate,
-    // ObjectFieldTemplate = MesheryCustomObjFieldTemplate,
+    ArrayFieldTemplate = MesheryArrayFieldTemplate,
+    ObjectFieldTemplate = MesheryCustomObjFieldTemplate,
     LoadingComponent,
     ErrorList,
     // prop should be present in order for the cloned element to override this property
@@ -65,35 +68,34 @@ function RJSFForm(props) {
 
   return (
     <MuiThemeProvider theme={rjsfTheme}>
-      <ReactJSONSchemaForm
+      <MuiRJSFForm
         schema={schema.rjsfSchema}
         idPrefix={jsonSchema?.title}
         onChange={onChange}
         formData={data}
         validator={validator}
-        // ArrayFieldTemplate={ArrayFieldTemplate}
-        // ObjectFieldTemplate={ObjectFieldTemplate}
-        // additionalMetaSchemas={[JS4]}
-        // uiSchema={schema.uiSchema}
-        // widgets={{
-        //   TextWidget : CustomInputField,
-        //   UpDownWidget : CustomUpDownField
-        // }}
+        ArrayFieldTemplate={ArrayFieldTemplate}
+        ObjectFieldTemplate={ObjectFieldTemplate}
+        uiSchema={schema.uiSchema}
+        widgets={{
+          TextWidget : CustomInputField,
+          UpDownWidget : CustomUpDownField
+        }}
         liveValidate
+        showErrorList
         // showErrorList={false}
         // noHtml5Validate
-        // ErrorList={ErrorList}
-        // transformErrors={transformErrors}
+        ErrorList={ErrorList}
+        transformErrors={transformErrors}
       >
         {/* {hideSubmit ? true : <RJSFButton handler={onSubmit} text="Submit" {...restparams} />}
 {hideSubmit ? true : <RJSFButton handler={onDelete} text="Delete" />} */}
         {/* <RJSFFormChildComponent /> */}
         <></> {/* temporary change for functionality */}
-      </ReactJSONSchemaForm>
+      </MuiRJSFForm>
 
     </MuiThemeProvider>
   )
 }
 
 export default RJSFForm;
-/* eslint-disable no-unused-vars */

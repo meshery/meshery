@@ -1,18 +1,13 @@
 import React from 'react';
-
 import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/styles';
-
-import { utils } from '@rjsf/core';
-
+import { canExpand } from '@rjsf/utils';
 import AddButton from "@material-ui/icons/Add";
 import { Box, IconButton, Typography } from '@material-ui/core';
 import EnlargedTextTooltip from '../EnlargedTextTooltip';
 import HelpOutlineIcon from '../HelpOutlineIcon';
 import ArrowDown from '@material-ui/icons/KeyboardArrowDown';
 import ArrowUp from '@material-ui/icons/KeyboardArrowUp';
-
-const { canExpand } = utils;
 
 const useStyles = makeStyles({
   objectFieldGrid : {

@@ -8,7 +8,7 @@ import _ from "lodash";
 import RJSFForm from './RJSF';
 
 
-function RJSF(props) {
+function RJSFWrapper(props) {
   const {
     formData,
     jsonSchema,
@@ -64,4 +64,4 @@ function RJSF(props) {
   );
 }
 
-export default RJSF;
+export default RJSFWrapper;
