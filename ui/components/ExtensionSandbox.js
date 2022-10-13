@@ -303,7 +303,7 @@ function ExtensionSandbox({ type, Extension, isDrawerCollapsed, toggleDrawer }) 
       </Typography>
       : (
         getComponentURIFromPathForUserPrefs(extensions).map(uri => {
-          return <Extension url={createPathForRemoteComponent(uri)} />
+          return <Extension key={uri.uniqueID} url={createPathForRemoteComponent(uri)} />
         })
       );
   }
