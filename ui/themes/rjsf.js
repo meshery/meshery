@@ -9,6 +9,7 @@ export const rjsfTheme = createTheme({
     },
   },
   typography : {
+    fontFamily : "Qanelas Soft, sans-serif",
     fontSize : 13,
   },
   props : {
