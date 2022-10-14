@@ -156,6 +156,14 @@ export const rjsfTheme = createTheme({
         textOverflow : "ellipsis",
         '&:hover' : {
           overflow : "visible",
+        },
+        // To scale the grid items
+        "& > *:nth-child(2)" : {
+          "& > *:nth-child(1)" : {
+            "& > *:nth-child(2)" : {
+              justifyContent : 'space-around'
+            }
+          },
         }
       },
     },

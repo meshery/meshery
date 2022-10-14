@@ -9,7 +9,6 @@ const CustomInputField = (props) => {
   const style = {
     display : "flex",
     alignItems : "center",
-    justifyContent : "space-between",
   }
 
   return (
