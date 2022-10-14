@@ -100,7 +100,7 @@ run-fast:
 server:
 	# docker container stop pg
 	# docker container rm pg
-	# docker run -d -p 5432:5432 -e POSTGRES_PASSWORD=meshery --name pg postgres
+	docker run -d -p 5432:5432 -e POSTGRES_PASSWORD=meshery --name pg postgres
 	cd server; cd cmd; go$(GOVERSION) mod tidy; \
 	BUILD="$(GIT_VERSION)" \
 	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \

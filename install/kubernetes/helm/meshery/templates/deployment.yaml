@@ -56,6 +56,17 @@ spec:
           {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+        - env:
+          {{- if .Values.dbenv }}
+          {{- range $key, $val := .Values.dbenv }}
+          - name: {{ $key }}
+            value: {{ $val }}
+          {{- end }}
+          {{- end }}
+          name: {{ .Values.db.container_name }}
+          image: {{ .Values.db.tag }}
+          imagePullPolicy: {{ .Values.db.pullPolicy }}
+          resources: {}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
