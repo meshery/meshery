@@ -71,6 +71,7 @@ class User extends React.Component {
 
   componentDidMount() {
     // console.log("fetching user data");
+    console.log("this.props", this.props);
     dataFetch('/api/user', {
       credentials : 'same-origin'
     }, (user) => {
@@ -86,6 +87,7 @@ class User extends React.Component {
         credentials : "include", },
       (result) => {
         if (result) {
+          this.props.updateExtensionType("account");
           this.setState({
             account : ExtensionPointSchemaValidator("account")(result?.extensions?.account),
             providerType : result?.provider_type

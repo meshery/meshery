@@ -290,7 +290,7 @@ function ExtensionSandbox({ type, Extension, isDrawerCollapsed, toggleDrawer }) 
     }
   }, [type]);
 
-  if (type === "navigator" && extension.length !== 0) {
+  if (type === "navigator" && extension?.length !== 0) {
     console.log("extensions navigator", extension);
     return isLoading ?
       <LoadingScreen animatedIcon="AnimatedMeshery" message="Establishing Remote Connection" />
@@ -299,7 +299,7 @@ function ExtensionSandbox({ type, Extension, isDrawerCollapsed, toggleDrawer }) 
       );
   }
 
-  if (type === "user_prefs" && extension.length !== 0) {
+  if (type === "user_prefs" && extension?.length !== 0) {
     console.log("extensions", extension);
     return isLoading
       ? <Typography align="center">
@@ -312,7 +312,7 @@ function ExtensionSandbox({ type, Extension, isDrawerCollapsed, toggleDrawer }) 
       );
   }
 
-  if (type === "account" && extension.length !== 0) {
+  if (type === "account" && extension?.length !== 0) {
     console.log("extensions account", extension);
     return isLoading ?
       <LoadingScreen animatedIcon="AnimatedMeshery" message="Establishing Remote Connection" />

@@ -39,7 +39,7 @@ import {
   faDigitalTachograph
 } from "@fortawesome/free-solid-svg-icons";
 import { faSlack } from "@fortawesome/free-brands-svg-icons";
-import { updatepagetitle, updatebetabadge, toggleDrawer, setAdapter } from "../lib/store";
+import { updatepagetitle, updatebetabadge, toggleDrawer, setAdapter, } from "../lib/store";
 import { ButtonGroup, IconButton, Tooltip } from "@material-ui/core";
 import ExtensionPointSchemaValidator from "../utils/ExtensionPointSchemaValidator";
 import dataFetch from "../lib/data-fetch";
@@ -551,6 +551,8 @@ class Navigator extends React.Component {
   }
 
   componentDidMount() {
+    console.log("this.props", this.props);
+
     dataFetch(
       "/api/system/version",
       {
@@ -581,6 +583,7 @@ class Navigator extends React.Component {
       },
       (result) => {
         if (result) {
+          this.props.updateExtensionType("navigator");
           this.setState({
             navigator : ExtensionPointSchemaValidator("navigator")(result?.extensions?.navigator),
             capabilities : result?.capabilities || [],

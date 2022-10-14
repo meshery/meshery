@@ -3,7 +3,7 @@
 import Extension from "../../components/NavigatorExtension";
 import ExtensionSandbox, { getCapabilities, getFullPageExtensions, getComponentTitleFromPath } from "../../components/ExtensionSandbox";
 import { NoSsr } from "@material-ui/core";
-import { updatepagepath, updatepagetitle } from "../../lib/store";
+import { updatepagepath, updatepagetitle, updateExtensionType } from "../../lib/store";
 import { connect } from "react-redux";
 import Head from "next/head";
 import { bindActionCreators } from "redux";
@@ -49,8 +49,9 @@ const RemoteExtension = (props) => {
   const { updatepagetitle, updatepagepath } = props;
 
   const [componentTitle, setComponentTitle] = useState("");
-  const [extensionType, setExtensionType] = useState("");
   const [currentURI, setCurrentURI] = useState("");
+  const extensionType = props.extensionType;
+  const updateExtensionType = props.setExtensionType;
   const router = useRouter();
   console.log("router: ", router);
   const pid = router?.query?.component;
@@ -65,7 +66,7 @@ const RemoteExtension = (props) => {
         if (currentURI === ext.uri) {
           console.log("inside")
           console.log("ext")
-          setExtensionType(ext.name)
+          updateExtensionType(ext.name)
           getCapabilities(ext.name, extensions => {
             setComponentTitle(getComponentTitleFromPath(extensions, getPath()))
             updatepagetitle({ title : getComponentTitleFromPath(extensions, getPath()) })
@@ -81,7 +82,7 @@ const RemoteExtension = (props) => {
   useEffect(() => {
     console.log("pid(useEffect): ", pid);
     renderExtension();
-  }, [getPath()])
+  }, [currentURI])
 
   // componentDidUpdate(prevProps, prevState) {
   //   console.log("inside update");
@@ -132,7 +133,16 @@ const RemoteExtension = (props) => {
   );
 }
 
-const mapDispatchToProps = (dispatch) => ({ updatepagepath : bindActionCreators(updatepagepath, dispatch),
-  updatepagetitle : bindActionCreators(updatepagetitle, dispatch), });
+const mapStateToProps = (state) => {
+  return ({
+    extensionType : state.get('extensionType'),
+  })
+};
 
-export default connect(null, mapDispatchToProps)(RemoteExtension);
+const mapDispatchToProps = (dispatch) => ({
+  updatepagepath : bindActionCreators(updatepagepath, dispatch),
+  updatepagetitle : bindActionCreators(updatepagetitle, dispatch),
+  setExtensionType : bindActionCreators(updateExtensionType, dispatch)
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(RemoteExtension);

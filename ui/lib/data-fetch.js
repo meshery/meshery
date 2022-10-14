@@ -32,7 +32,10 @@ const dataFetch = (url, options = {}, successFn, errorFn) => {
       }
 
     }).then(successFn)
-    .catch((e) => e.then(text => errorFn(text)));
+    .catch((e) => {
+      console.log("e", e)
+      return e.then(text => errorFn(text))
+    });
 }
 
 /**
