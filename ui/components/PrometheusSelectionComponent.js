@@ -326,7 +326,7 @@ class PrometheusSelectionComponent extends Component {
                     // if (ind === 0 || this.getSelectedTemplateVar(ind-1) !== ''){
                     if (ind === 0 || typeof this.getSelectedTemplateVar(ind - 1) !== 'undefined') {
                       return (
-                        <Grid item xs={12} sm={4}>
+                        <Grid key={ind} item xs={12} sm={4}>
                           <TextField
                             select
                             id={`template_var_${ind}`}

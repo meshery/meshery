@@ -171,7 +171,7 @@ function UploadImport(props) {
                     >
                       {
                         supportedTypes?.map((type, index) => (
-                          <option value={index}>
+                          <option key={index} value={index}>
                             {type.application_type}
                           </option>
                         ))
