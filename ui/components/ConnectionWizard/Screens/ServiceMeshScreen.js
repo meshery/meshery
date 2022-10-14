@@ -57,7 +57,7 @@ const ServiceMeshScreen = ({ meshAdapters, meshAdaptersts, updateProgress }) => 
 
   const itemsToBeRendered = serviceMeshComponents.map(comp => {
     return (
-      <ServiceCard serviceInfo={comp} isConnected={isAdapterActive(comp.adapterInfo.value)} />
+      <ServiceCard key={comp.uniqueID} serviceInfo={comp} isConnected={isAdapterActive(comp.adapterInfo.value)} />
     )
   })
 
