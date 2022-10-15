@@ -60,6 +60,7 @@ class RemoteExtension extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
+    // re-renders the extension if the extension type (redux store variable) changes
     if (this.props.extensionType !== prevProps.extensionType) {
       this.renderExtension();
     }

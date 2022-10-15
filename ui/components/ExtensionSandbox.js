@@ -286,6 +286,7 @@ function ExtensionSandbox({ type, Extension, isDrawerCollapsed, toggleDrawer }) 
     if (type === "navigator" && !isDrawerCollapsed) {
       toggleDrawer({ isDrawerCollapsed : !isDrawerCollapsed });
     }
+    // necessary to cleanup states on each unmount to prevent memory leaks and unwanted clashes between extension points
     return () => {
       setExtension([]);
       setIsLoading(true);
