@@ -305,7 +305,7 @@ export const setMeshsyncSubscription = ({meshSyncState}) => dispatch => {
   return dispatch({type: actionTypes.SET_MESHSYNC_SUBSCRIPTION, meshSyncState})
 }
 
-export const updateExtensionType = ({extensionType}) => dispatch => {
+export const updateExtensionType = ({ extensionType }) => dispatch => {
   return dispatch({type: actionTypes.UPDATE_EXTENSION_TYPE, extensionType})
 }
 
