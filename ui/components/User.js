@@ -115,7 +115,7 @@ class User extends React.Component {
                   button
                   key={id}
                 >
-                  {this.extensionPointContent(title, href)}
+                  {this.extensionPointContent(href, title)}
                 </ListItem>
               </React.Fragment>
             );
@@ -125,7 +125,7 @@ class User extends React.Component {
     }
   }
 
-  extensionPointContent(name, href) {
+  extensionPointContent(href, name) {
     const { classes } = this.props;
 
     const content = (
@@ -142,7 +142,9 @@ class User extends React.Component {
         <Link href={href}>
           <span
             onClick={() => this.props.updateExtensionType("account")}
-          >{content}</span>
+          >
+            {content}
+          </span>
         </Link>
       )
     }

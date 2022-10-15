@@ -82,12 +82,13 @@ class RemoteExtension extends React.Component {
   }
 
   render() {
-    const extensionType = this.props.extensionType;
+    const { extensionType } = this.props;
+    const { componentTitle } = this.state;
 
     return (
       <NoSsr>
         <Head>
-          <title>{`${this.state.componentTitle} | Meshery` || ""}</title>
+          <title>{`${componentTitle} | Meshery` || ""}</title>
         </Head>
         {
           extensionType &&

@@ -275,12 +275,10 @@ function createPathForRemoteComponent(componentName) {
  * @param {{ type: "navigator" | "user_prefs" | "account", Extension: JSX.Element }} props
  */
 function ExtensionSandbox({ type, Extension, isDrawerCollapsed, toggleDrawer }) {
-  console.log("ExtensionSandbox", type);
   const [extension, setExtension] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    console.log("updating extension", type)
     getCapabilities(type, (data) => {
       setExtension(data);
       setIsLoading(false);
@@ -296,7 +294,6 @@ function ExtensionSandbox({ type, Extension, isDrawerCollapsed, toggleDrawer }) 
 
   return (
     <>
-      {console.log("type", type, extension)}
       {
         (type === "navigator" && extension?.length !== 0)?
           isLoading ?
