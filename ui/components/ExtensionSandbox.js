@@ -294,33 +294,6 @@ function ExtensionSandbox({ type, Extension, isDrawerCollapsed, toggleDrawer }) 
     }
   }, [type]);
 
-  // if (type === "navigator" && extension?.length !== 0) {
-  //   console.log("extensions navigator", extension);
-  //   return isLoading ?
-  //     <LoadingScreen animatedIcon="AnimatedMeshery" message="Establishing Remote Connection" />
-  //     : (
-  //       <Extension url={createPathForRemoteComponent(getComponentURIFromPathForNavigator(extension, getPath()))} />
-  //     );
-  // }
-
-  // if (type === "user_prefs" && extension?.length !== 0) {
-  //   console.log("extensions", extension);
-  //   return isLoading
-  //     ? <Typography align="center">
-  //       <CircularProgress />
-  //     </Typography>
-  //     : (
-  //       getComponentURIFromPathForUserPrefs(extension).map(uri => {
-  //         return <Extension url={createPathForRemoteComponent(uri)} />
-  //       })
-  //     );
-  // }
-
-  // if (type === "account" && extension?.length !== 0) {
-  //   console.log("extensions account", extension);
-  //   i
-  // }
-
   return (
     <>
       {console.log("type", type, extension)}

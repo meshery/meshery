@@ -551,8 +551,6 @@ class Navigator extends React.Component {
   }
 
   componentDidMount() {
-    console.log("this.props", this.props);
-
     dataFetch(
       "/api/system/version",
       {
@@ -583,7 +581,6 @@ class Navigator extends React.Component {
       },
       (result) => {
         if (result) {
-          console.log("this.props(datafetch): ", this.props);
           this.setState({
             navigator : ExtensionPointSchemaValidator("navigator")(result?.extensions?.navigator),
             capabilities : result?.capabilities || [],

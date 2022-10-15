@@ -7,9 +7,8 @@ import { updatepagepath, updatepagetitle, updateExtensionType } from "../../lib/
 import { connect } from "react-redux";
 import Head from "next/head";
 import { bindActionCreators } from "redux";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import RemoteComponent from "../../components/RemoteComponent";
-import { useRouter } from "next/router";
 
 
 /**
@@ -57,7 +56,6 @@ class RemoteExtension extends React.Component {
   componentDidMount() {
     console.log(`path: ${getPath()}`);
     this.props.updatepagepath({ path : getPath() });
-    console.log("pid(useEffect): ", this.props.pid);
     this.renderExtension();
   }
 
@@ -71,11 +69,7 @@ class RemoteExtension extends React.Component {
     getFullPageExtensions(extNames => {
       extNames.forEach((ext) => {
         const currentURI = extractComponentURI(getPath());
-        console.log("currentURI: ", currentURI);
-        console.log("ext: ", ext);
         if (currentURI === ext.uri) {
-          console.log("inside")
-          console.log("ext")
           this.props.updateExtensionType({ extensionType : ext.name })
           getCapabilities(ext.name, extensions => {
             this.setState({ componentTitle : getComponentTitleFromPath(extensions, getPath()) });
@@ -88,7 +82,6 @@ class RemoteExtension extends React.Component {
   }
 
   render() {
-    console.log("props: ", this.props)
     const extensionType = this.props.extensionType;
 
     return (
@@ -99,7 +92,6 @@ class RemoteExtension extends React.Component {
         {
           extensionType &&
           <NoSsr>
-            {console.log("ext(UI)", extensionType)}
             {
               (extensionType === 'navigator') ?
                 <ExtensionSandbox type={extensionType} Extension={Extension} />
@@ -114,96 +106,6 @@ class RemoteExtension extends React.Component {
 
 }
 
-// const RemoteExtension = (props) => {
-//   const { updatepagetitle, updatepagepath, pid } = props;
-//   // const extensionType = "navigator"
-//   console.log("props: ", props)
-
-//   const [componentTitle, setComponentTitle] = useState("");
-//   // const [currentURI, setCurrentURI] = useState("");
-//   const extensionType = pid;
-//   // const updateExtensionType = props.setExtensionType;
-//   const router = useRouter();
-//   console.log("router: ", router);
-//   // const pid = router?.query?.component;
-//   console.log("pid (init):", pid);
-
-//   const renderExtension = () => {
-//     getFullPageExtensions(extNames => {
-//       extNames.forEach((ext) => {
-//         const currentURI = extractComponentURI(getPath());
-//         console.log("currentURI: ", currentURI);
-//         console.log("ext: ", ext);
-//         if (currentURI === ext.uri) {
-//           console.log("inside")
-//           console.log("ext")
-//           // updateExtensionType({ extensionType : pid })
-//           getCapabilities(ext.name, extensions => {
-//             setComponentTitle(getComponentTitleFromPath(extensions, getPath()))
-//             updatepagetitle({ title : getComponentTitleFromPath(extensions, getPath()) })
-//           });
-//         }
-//       })
-//     });
-//   }
-
-
-//   // useEffect(() => {
-//   //   console.log(`path: ${getPath()}`);
-//   //   updatepagepath({ path : getPath() });
-//   //   console.log("pid(useEffect): ", pid);
-//   //   renderExtension();
-//   // }, [])
-
-//   // componentDidUpdate(prevProps, prevState) {
-//   //   console.log("inside update");
-//   //   console.log("prevState", prevState);
-//   //   console.log("this.state.currentURI", this.state.currentURI);
-
-//   //   if (prevState.currentURI !== getPath()) {
-//   //     this.setState({ currentURI : getPath() });
-//   //     getFullPageExtensions(extNames => {
-//   //       extNames.forEach((ext) => {
-//   //         const currentURI = extractComponentURI(getPath());
-//   //         if (currentURI === ext.uri) {
-//   //           this.setState({ extensionType : ext.name })
-//   //           getCapabilities(ext.name, extensions => {
-//   //             this.setState({ componentTitle : getComponentTitleFromPath(extensions, getPath()) });
-//   //             this.props.updatepagetitle({ title : getComponentTitleFromPath(extensions, getPath()) });
-//   //           });
-//   //           console.log(`path: ${getPath()}`);
-//   //           this.props.updatepagepath({ path : getPath() });
-//   //         }
-//   //       })
-//   //     });
-//   //   }
-//   // }
-
-//   // componentDidMount() {
-//   //   this.setState({ currentURI : getPath() });
-//   // }
-
-//   return (
-//     <NoSsr>
-//       <Head>
-//         <title>{`${componentTitle} | Meshery` || ""}</title>
-//       </Head>
-//       {
-//         extensionType &&
-//           <NoSsr>
-//             {console.log("ext(UI)", extensionType)}
-//             {
-//               (extensionType === 'navigator') ?
-//                 <ExtensionSandbox type={extensionType} Extension={Extension} />
-//                 :
-//                 <ExtensionSandbox type={extensionType} Extension={(url) => RemoteComponent({ url })} />
-//             }
-//           </NoSsr>
-//       }
-//     </NoSsr>
-//   );
-// }
-
 const mapStateToProps = (state) => ({
   extensionType : state.get('extensionType'),
 });
@@ -216,28 +118,4 @@ const mapDispatchToProps = (dispatch) => ({
 
 export default connect(mapStateToProps, mapDispatchToProps)(RemoteExtension);
 
-// export async function getStaticProps({ params }) {
-//   console.log("param: ", params);
-//   let ext, exts = [];
-//   // getFullPageExtensions(extNames => extNames.forEach((ext) => exts.push(ext)));
-//   console.log("exts: ", exts);
-//   ext = params.component;
-//   console.log("ext: ", ext);
-//   return {
-//     props : {
-//       pid : ext
-//     }
-//   }
-// }
-// export const getStaticPaths = async () => {
-//   const pathsWithParams = [
-//     { params : { component : 'meshmap' } },
-//     { params : { component : 'account' } },
-//   ]
-
-//   return {
-//     paths : pathsWithParams,
-//     fallback : true
-//   }
-// }
 

@@ -70,8 +70,6 @@ class User extends React.Component {
   };
 
   componentDidMount() {
-    // console.log("fetching user data");
-    console.log("this.props", this.props);
     dataFetch('/api/user', {
       credentials : 'same-origin'
     }, (user) => {
@@ -139,7 +137,6 @@ class User extends React.Component {
         </ListItemText>
       </div>
     );
-    console.log("href: ", href)
     if (href) {
       return (
         <Link href={href}>
