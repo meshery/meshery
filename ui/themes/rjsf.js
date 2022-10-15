@@ -48,7 +48,7 @@ export const rjsfTheme = createTheme({
         }
       },
       shrink : {
-        maxWidth : "133%",
+        maxWidth : "100%",
       }
     },
     MuiFormControl : {
