@@ -583,7 +583,7 @@ class Navigator extends React.Component {
       },
       (result) => {
         if (result) {
-          this.props.updateExtensionType("navigator");
+          console.log("this.props(datafetch): ", this.props);
           this.setState({
             navigator : ExtensionPointSchemaValidator("navigator")(result?.extensions?.navigator),
             capabilities : result?.capabilities || [],
@@ -666,7 +666,9 @@ class Navigator extends React.Component {
     if (href) {
       return (
         <Link href={href}>
-          {content}
+          <span
+            onClick={() => this.props.updateExtensionType("navigator")}
+          >{content}</span>
         </Link>
       )
     }

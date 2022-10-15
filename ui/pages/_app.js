@@ -207,7 +207,7 @@ class MesheryApp extends App {
   }
 
   updateExtensionType = (type) => {
-    console.log("running extension type update");
+    console.log("running extension type update", type);
     this.props.store.dispatch({ type : actionTypes.UPDATE_EXTENSION_TYPE, extensionType : type });
   }
 

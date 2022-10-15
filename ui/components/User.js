@@ -87,7 +87,6 @@ class User extends React.Component {
         credentials : "include", },
       (result) => {
         if (result) {
-          this.props.updateExtensionType("account");
           this.setState({
             account : ExtensionPointSchemaValidator("account")(result?.extensions?.account),
             providerType : result?.provider_type
@@ -114,25 +113,12 @@ class User extends React.Component {
             }
             return (
               <React.Fragment key={id}>
-                {
-                  href ? (
-                    <Link href={href}>
-                      <ListItem
-                        button
-                        key={id}
-                      >
-                        {this.extensionPointContent(title)}
-                      </ListItem>
-                    </Link>
-                  ) : (
-                    <ListItem
-                      button
-                      key={id}
-                    >
-                      {this.extensionPointContent(title)}
-                    </ListItem>
-                  )
-                }
+                <ListItem
+                  button
+                  key={id}
+                >
+                  {this.extensionPointContent(title, href)}
+                </ListItem>
               </React.Fragment>
             );
           })}
@@ -141,7 +127,7 @@ class User extends React.Component {
     }
   }
 
-  extensionPointContent(name) {
+  extensionPointContent(name, href) {
     const { classes } = this.props;
 
     const content = (
@@ -153,13 +139,23 @@ class User extends React.Component {
         </ListItemText>
       </div>
     );
+    console.log("href: ", href)
+    if (href) {
+      return (
+        <Link href={href}>
+          <span
+            onClick={() => this.props.updateExtensionType("account")}
+          >{content}</span>
+        </Link>
+      )
+    }
 
     return content;
   }
 
   render() {
     const {
-      color, iconButtonClassName, avatarClassName, classes,
+      color, iconButtonClassName, avatarClassName, classes
     } = this.props;
     let avatar_url;
     if (this.state.user && this.state.user !== null) {

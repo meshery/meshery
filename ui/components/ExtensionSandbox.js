@@ -280,7 +280,7 @@ function ExtensionSandbox({ type, Extension, isDrawerCollapsed, toggleDrawer }) 
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    console.log("updating extension")
+    console.log("updating extension", type)
     getCapabilities(type, (data) => {
       setExtension(data);
       setIsLoading(false);
@@ -288,41 +288,70 @@ function ExtensionSandbox({ type, Extension, isDrawerCollapsed, toggleDrawer }) 
     if (type === "navigator" && !isDrawerCollapsed) {
       toggleDrawer({ isDrawerCollapsed : !isDrawerCollapsed });
     }
+    return () => {
+      setExtension([]);
+      setIsLoading(true);
+    }
   }, [type]);
 
-  if (type === "navigator" && extension?.length !== 0) {
-    console.log("extensions navigator", extension);
-    return isLoading ?
-      <LoadingScreen animatedIcon="AnimatedMeshery" message="Establishing Remote Connection" />
-      : (
-        <Extension url={createPathForRemoteComponent(getComponentURIFromPathForNavigator(extension, getPath()))} />
-      );
-  }
+  // if (type === "navigator" && extension?.length !== 0) {
+  //   console.log("extensions navigator", extension);
+  //   return isLoading ?
+  //     <LoadingScreen animatedIcon="AnimatedMeshery" message="Establishing Remote Connection" />
+  //     : (
+  //       <Extension url={createPathForRemoteComponent(getComponentURIFromPathForNavigator(extension, getPath()))} />
+  //     );
+  // }
 
-  if (type === "user_prefs" && extension?.length !== 0) {
-    console.log("extensions", extension);
-    return isLoading
-      ? <Typography align="center">
-        <CircularProgress />
-      </Typography>
-      : (
-        getComponentURIFromPathForUserPrefs(extension).map(uri => {
-          return <Extension url={createPathForRemoteComponent(uri)} />
-        })
-      );
-  }
+  // if (type === "user_prefs" && extension?.length !== 0) {
+  //   console.log("extensions", extension);
+  //   return isLoading
+  //     ? <Typography align="center">
+  //       <CircularProgress />
+  //     </Typography>
+  //     : (
+  //       getComponentURIFromPathForUserPrefs(extension).map(uri => {
+  //         return <Extension url={createPathForRemoteComponent(uri)} />
+  //       })
+  //     );
+  // }
 
-  if (type === "account" && extension?.length !== 0) {
-    console.log("extensions account", extension);
-    return isLoading ?
-      <LoadingScreen animatedIcon="AnimatedMeshery" message="Establishing Remote Connection" />
-      :
-      (
-        <Extension url={createPathForRemoteComponent(getComponentURIFromPathForAccount(extension, getPath()))} />
-      )
-  }
+  // if (type === "account" && extension?.length !== 0) {
+  //   console.log("extensions account", extension);
+  //   i
+  // }
 
-  return null
+  return (
+    <>
+      {console.log("type", type, extension)}
+      {
+        (type === "navigator" && extension?.length !== 0)?
+          isLoading ?
+            <LoadingScreen animatedIcon="AnimatedMeshery" message="Establishing Remote Connection" />
+            : (
+              <Extension url={createPathForRemoteComponent(getComponentURIFromPathForNavigator(extension, getPath()))} />
+            )
+          : (type === "user_prefs" && extension?.length !== 0)?
+            isLoading?
+              <Typography align="center">
+                <CircularProgress />
+              </Typography>
+              : (
+                getComponentURIFromPathForUserPrefs(extension).map(uri => {
+                  return <Extension url={createPathForRemoteComponent(uri)} />
+                })
+              )
+            : (type === "account" && extension?.length !== 0)?
+              isLoading ?
+                <LoadingScreen animatedIcon="AnimatedMeshery" message="Establishing Remote Connection" />
+                :
+                (
+                  <Extension url={createPathForRemoteComponent(getComponentURIFromPathForAccount(extension, getPath()))} />
+                )
+              : null
+      }
+    </>
+  )
 }
 
 const mapDispatchToProps = (dispatch) => ({
