@@ -637,7 +637,7 @@ class Navigator extends React.Component {
   extensionPointContent(icon, href, name, drawerCollapsed) {
     const { classes } = this.props;
 
-    const content = (
+    let content = (
       <div className={classNames(classes.link)} data-cy={name}>
         <Tooltip
           title={name}
@@ -661,15 +661,15 @@ class Navigator extends React.Component {
     );
 
     if (href) {
-      return (
+      content =
         <Link href={href}>
           <span
+            className={classNames(classes.link)}
             onClick={() => this.props.updateExtensionType("navigator")}
           >
             {content}
           </span>
         </Link>
-      )
     }
 
     return content;

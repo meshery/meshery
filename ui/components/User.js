@@ -21,7 +21,15 @@ import classNames from 'classnames';
 import { ListItem, List } from '@material-ui/core';
 
 
-const styles = () => ({ popover : { color : 'black', }, });
+const styles = () => ({
+  popover : { color : 'black', },
+  link : {
+    display : "inline-flex",
+    width : "100%",
+    height : "30px",
+    alignItems : "self-end"
+  },
+});
 
 function exportToJsonFile(jsonData, filename) {
   let dataStr = JSON.stringify(jsonData);
@@ -141,6 +149,7 @@ class User extends React.Component {
       return (
         <Link href={href}>
           <span
+            className={classNames(classes.link)}
             onClick={() => this.props.updateExtensionType("account")}
           >
             {content}
