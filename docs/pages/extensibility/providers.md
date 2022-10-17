@@ -18,7 +18,7 @@ Meshery offers Providers as a point of extensibility. With a built-in Local Prov
 
 ### Design Principles: Meshery Remote Provider Framework
 
-Meshery's Remote Provider extensbility framework is designed to enable:
+Meshery's Remote Provider extensibility framework is designed to enable:
 
 1. **Pluggable UI Functionality:**
 
