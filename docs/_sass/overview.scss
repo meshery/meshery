@@ -35,6 +35,9 @@ h2[id]:before, h4[id]:before, h5[id]:before {
     visibility: hidden;
 }
 
+/*
+For safari extraneous dot appearance
+ */
 #search-results h4[id]:before {
   display: inline-block;
 }
