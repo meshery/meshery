@@ -279,7 +279,7 @@ func (l *RemoteProvider) fetchUserDetails(tokenString string) (*User, error) {
 
 	resp, err := l.DoRequest(req, tokenString)
 	if err != nil {
-		return nil, ErrFetch(err, "User Data", resp.StatusCode)
+		return nil, ErrFetch(err, "User Data", http.StatusUnauthorized)
 	}
 	defer func() {
 		_ = resp.Body.Close()
