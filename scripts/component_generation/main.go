@@ -3,61 +3,153 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"os"
+	"path/filepath"
+	"sync"
 	"time"
+
+	// "time"
 
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 	"github.com/layer5io/meshkit/utils/artifacthub"
-	"github.com/layer5io/meshkit/utils/manifests"
 )
-
-type ExternalSystem struct {
-	SystemName string `json:"systemName"`
-	Version    string `json:"version"`
-}
 
 const ArtifactHubApiEndpoint = "https://artifacthub.io/api/v1/"
 
 var (
-	AhSearchEndpoint = ArtifactHubApiEndpoint + "packages/search"
-	Limit            = "50"
-	HELMKind         = "0"
+	AhSearchEndpoint = ArtifactHubApiEndpoint + "helm-exporter"
+
+	OutputDirectoryPath     = "./output"
+	ComponentsFileName      = "components.json"
+	ComponentModelsFileName = "component_models.json"
 )
 
+type ComponentModel struct {
+	SystemName string `json:"systemName"`
+	AhRepo     string `json:"ahRepo"`
+	Version    string `json:"version"`
+}
+
+func convertPackagesToCompModels(pkgs []artifacthub.AhPackage) []ComponentModel {
+	models := make([]ComponentModel, 0)
+	for _, ap := range pkgs {
+		models = append(models, ComponentModel{
+			SystemName: ap.Name,
+			Version:    ap.Version,
+			AhRepo:     ap.Repository,
+		})
+	}
+	return models
+}
+
+func convertCompModelsToPackages(models []ComponentModel) []artifacthub.AhPackage {
+	pkgs := make([]artifacthub.AhPackage, 0)
+	for _, cm := range models {
+		pkgs = append(pkgs, artifacthub.AhPackage{
+			Name:       cm.SystemName,
+			Version:    cm.Version,
+			Repository: cm.AhRepo,
+		})
+	}
+	return pkgs
+}
+
 func main() {
-	ticker := time.NewTicker(5 * time.Second)
-	quit := make(chan struct{})
-	ahPackages := make([]artifacthub.AhPackage, 0)
-	go func(pkgs *[]artifacthub.AhPackage, quitCh chan struct{}) {
-		err := getHelmChartsList(&ahPackages)
+	compsFd, err := os.OpenFile(filepath.Join(OutputDirectoryPath, ComponentsFileName), os.O_CREATE|os.O_RDWR, 0644)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	compsWriter := Writer{
+		file: compsFd,
+	}
+	modelsFd, err := os.OpenFile(filepath.Join(OutputDirectoryPath, ComponentModelsFileName), os.O_CREATE|os.O_RDWR, 0644)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	modelsWriter := Writer{
+		file: modelsFd,
+	}
+	defer modelsFd.Close()
+	defer compsFd.Close()
+	// move to a new function: getHelmPackages
+	content := make([]byte, 0)
+	models := make([]ComponentModel, 0)
+	pkgs := make([]artifacthub.AhPackage, 0)
+	content, err = ioutil.ReadAll(modelsFd)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	err = json.Unmarshal(content, &models)
+	if err != nil {
+		fmt.Println(err)
+	}
+	pkgs = convertCompModelsToPackages(models)
+	if pkgs == nil || len(pkgs) == 0 {
+		pkgs, err = GetAllAhHelmPackages()
 		if err != nil {
 			fmt.Println(err)
+			return
 		}
-		quitCh <- struct{}{}
-	}(&ahPackages, quit)
-
-	lastIndex := 0
-
-	for {
-		select {
-		case <-ticker.C:
-			if len(ahPackages) != 0 {
-				err := writeExternalSystems(ahPackages)
-				if err != nil {
-					fmt.Println(err)
-				}
-				err = writeComponents(ahPackages[lastIndex+1:])
-				if err != nil {
-					fmt.Println(err)
-				}
-				lastIndex = len(ahPackages) - 1
-			}
-		case <-quit:
-			ticker.Stop()
+		err = writeComponentModels(convertPackagesToCompModels(pkgs), &modelsWriter)
+		if err != nil {
+			fmt.Println(err)
 			return
 		}
 	}
+	inputChan := make(chan []artifacthub.AhPackage)
+	// for i := 0; i <= 10; i++ {
+	StartPipeline(inputChan, &compsWriter)
+	// }
+	for len(pkgs) != 0 {
+		if len(pkgs) < 50 {
+			inputChan <- pkgs
+			time.Sleep(10 * time.Second)
+			return
+		}
+		inputChan <- pkgs[:50]
+		pkgs = pkgs[50:]
+	}
+	time.Sleep(20 * time.Second)
+}
+
+func StartPipeline(in chan []artifacthub.AhPackage, writer *Writer) error {
+	pkgsChan := make(chan []artifacthub.AhPackage)
+	compsChan := make(chan []ComponentStruct)
+	// updating pacakge data
+	go func() {
+		for pkgs := range in {
+			ahPkgs := make([]artifacthub.AhPackage, 0)
+			for _, ap := range pkgs {
+				err := ap.UpdatePackageData()
+				if err != nil {
+					fmt.Println(err)
+				}
+				ahPkgs = append(ahPkgs, ap)
+			}
+			pkgsChan <- ahPkgs
+		}
+	}()
+	// generation of components
+	go func() {
+		for pkgs := range pkgsChan {
+			compsChan <- GenerateComponents(pkgs)
+		}
+	}()
+	// writer
+	go func() {
+		for comps := range compsChan {
+			err := writeComponents(comps, writer)
+			if err != nil {
+				fmt.Println(err)
+			}
+		}
+	}()
+	return nil
 }
 
 type ComponentStruct struct {
@@ -65,131 +157,89 @@ type ComponentStruct struct {
 	Components  []v1alpha1.Component `json:"components"`
 }
 
-func writeComponents(pkgs []artifacthub.AhPackage) error {
-	comps := make([]ComponentStruct, 0)
-	content, err := os.ReadFile("./output/components.json")
-	if err == nil {
-		err = json.Unmarshal(content, &comps)
-		if err != nil {
-			return err
-		}
-	}
-	for _, ap := range pkgs {
-		cmps_gen, err := ap.GenerateComponents()
-		if err != nil {
-			continue
-		}
-		cmp := ComponentStruct{
-			PackageName: ap.Name,
-			Components:  cmps_gen,
-		}
-		comps = append(comps, cmp)
-	}
-	val, err := json.MarshalIndent(comps, "", " ")
-	if err != nil {
-		return err
-	}
-	err = os.WriteFile("./output/components.json", val, 0666)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func writeExternalSystems(pkgs []artifacthub.AhPackage) error {
-	extSytms := make([]ExternalSystem, 0)
-	for _, ap := range pkgs {
-		extSytms = append(extSytms, ExternalSystem{
-			SystemName: ap.Name,
-			Version:    ap.Version,
-		})
-	}
-	val, err := json.MarshalIndent(extSytms, "", " ")
-	if err != nil {
-		return err
-	}
-	err = os.WriteFile("./output/external_systems.json", val, 0666)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func getKindFacet(facetsSlice []map[string]interface{}) map[string]interface{} {
-	for _, facet := range facetsSlice {
-		if facet["title"] == "Kind" {
-			return facet
-		}
-	}
-	return nil
-}
-
-func getTotalChartsCount(apiResponse map[string]([]map[string]interface{})) int {
-	kindFacet := getKindFacet(apiResponse["facets"])
-	if kindFacet == nil {
-		return 0
-	}
-	options := kindFacet["options"].([]interface{})
-	for _, option := range options {
-		option := option.(map[string]interface{})
-		if option["id"].(float64) == 0 {
-			return int(option["total"].(float64))
-		}
-	}
-	return 0
-}
-
-func getPackagesFromRes(res map[string]([]map[string]interface{})) []artifacthub.AhPackage {
-	ahPackages := make([]artifacthub.AhPackage, 0)
-	pkgs := res["packages"]
-	for _, pkg := range pkgs {
-		repo := pkg["repository"].(map[string]interface{})
-		ahPkg := artifacthub.AhPackage{Name: pkg["name"].(string), Repository: repo["name"].(string)}
-		ahPkg.UpdatePackageData()
-		crds, err := manifests.GetCrdsFromHelm(ahPkg.Url)
-		if err == nil && len(crds) != 0 {
-			fmt.Println("[Debug] Package with name: ", ahPkg.Name, " has been added to the list of HELM packages")
-			ahPackages = append(ahPackages, ahPkg)
-		}
-	}
-	return ahPackages
-}
-
-func getHelmChartsList(ahPackages *[]artifacthub.AhPackage) error {
-	res, err := getApiResponse(0, true)
-	if err != nil {
-		return err
-	}
-	pkgs := getPackagesFromRes(res)
-	*ahPackages = append(*ahPackages, pkgs...)
-	totalChartsCount := getTotalChartsCount(res)
-	loopCount := int((totalChartsCount / 50))
-	for i := 0; i < loopCount; i++ {
-		res, err := getApiResponse(50*(i+1), false)
-		if err != nil {
-			continue
-		}
-		pkgs := getPackagesFromRes(res)
-		*ahPackages = append(*ahPackages, pkgs...)
-	}
-	return nil
-}
-
-func getApiResponse(offset int, facet bool) (map[string]([]map[string]interface{}), error) {
-	reqUrl := fmt.Sprintf("%s?offset=%v&limit=%s&facets=%v&kind=%v&deprecated=false", AhSearchEndpoint, offset, Limit, facet, HELMKind)
-	resp, err := http.Get(reqUrl)
+func GetAllAhHelmPackages() ([]artifacthub.AhPackage, error) {
+	pkgs := make([]artifacthub.AhPackage, 0)
+	fmt.Println("[DEBUG] Getting packages from ArtifactHub")
+	resp, err := http.Get(AhSearchEndpoint)
 	if err != nil {
 		return nil, err
 	}
 	if resp.StatusCode != 200 {
-		err = fmt.Errorf("status code %d for %s", resp.StatusCode, reqUrl)
+		err = fmt.Errorf("status code %d for %s", resp.StatusCode, AhSearchEndpoint)
 		return nil, err
 	}
 	defer resp.Body.Close()
-	var res map[string]([]map[string]interface{})
+	var res []map[string]interface{}
 	err = json.NewDecoder(resp.Body).Decode(&res)
 	if err != nil {
 		return nil, err
 	}
-	return res, nil
+	for _, p := range res {
+		pkgs = append(pkgs, artifacthub.AhPackage{
+			Name:       p["name"].(string),
+			Version:    p["version"].(string),
+			Repository: p["repository"].(map[string]interface{})["name"].(string),
+		})
+	}
+	return pkgs, nil
+}
+
+func GenerateComponents(pkgs []artifacthub.AhPackage) []ComponentStruct {
+	result := make([]ComponentStruct, 0)
+	for _, ap := range pkgs {
+		comps, err := ap.GenerateComponents()
+		if err != nil {
+			fmt.Println(err)
+			continue
+		}
+		result = append(result, ComponentStruct{PackageName: ap.Name, Components: comps})
+	}
+	return result
+}
+
+type Writer struct {
+	file *os.File
+	m    sync.Mutex
+}
+
+func writeComponentModels(models []ComponentModel, writer *Writer) error {
+	writer.m.Lock()
+	defer writer.m.Unlock()
+	val, err := json.MarshalIndent(models, "", " ")
+	if err != nil {
+		return err
+	}
+	_, err = writer.file.Write(val)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func writeComponents(cmps []ComponentStruct, writer *Writer) error {
+	out := make([]ComponentStruct, 0)
+	var content []byte
+	writer.m.Lock()
+	defer writer.m.Unlock()
+	l, err := writer.file.Read(content)
+	if err == nil && l != 0 {
+		err = json.Unmarshal(content, &out)
+		if err != nil {
+			return err
+		}
+	}
+	for _, c := range cmps {
+		if len(c.Components) != 0 {
+			cmps = append(cmps, c)
+		}
+	}
+	val, err := json.MarshalIndent(out, "", " ")
+	if err != nil {
+		return err
+	}
+	_, err = writer.file.Write(val)
+	if err != nil {
+		return err
+	}
+	return nil
 }
