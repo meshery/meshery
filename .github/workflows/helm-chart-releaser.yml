@@ -101,7 +101,7 @@ jobs:
           chart_version: ${{github.event.inputs.release-ver}}
           app_version: ${{github.event.inputs.release-ver}}
 
-#The below job is to be removed and is present only for testing purposes of postgres migration
+#The below job is to be removed before merging PR #6318 and is present only for testing purposes of postgres migration
   release-chart-temp:
     runs-on: ubuntu-latest
     steps:
@@ -112,7 +112,6 @@ jobs:
         run: echo ::set-output name=tag::${{ github.ref_name }}   
 
       - name: Manually publish Helm chart with release version
-        if:  github.ref == 'refs/heads/postgres'
         uses: stefanprodan/helm-gh-pages@master
         with: 
           token: ${{ secrets.GH_ACCESS_TOKEN }}
