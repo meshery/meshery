@@ -225,15 +225,14 @@ jobs:
           cd ./meshery-istio
           go run main.go &
           sleep 60
-      - name: Run postgres server
-        run: |
-          docker run -d -p 5432:5432 -e POSTGRES_PASSWORD=meshery --name pg postgres
       - name: Run backend
         env:
           PROVIDER_BASE_URLS: http://localhost:9876
           PORT: 9081
           ADAPTER_URLS: "localhost:10000 localhost:10001 localhost:10002 localhost:10003 localhost:10004 localhost:10009 localhost:10007"
         run: |
+          docker run -d -p 5432:5432 -e POSTGRES_PASSWORD=meshery --name pg postgres
+          docker container ps
           chmod +x ./main
           ./main &
       - name: Cypress run

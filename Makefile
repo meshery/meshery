@@ -77,13 +77,15 @@ wrk2-setup:
 nighthawk-setup:
 	cd server; cd cmd; git clone https://github.com/layer5io/nighthawk-go.git; cd nighthawk-go; make setup; cd ..
 
+run-db:
+	chmod +x ./install/start_db.sh
+	./install/start_db.sh
 run-local: server-local error
-
 
 ## Build and run Meshery Server on your local machine
 ## and point to (expect) a locally running Meshery Cloud or other Provider(s)
 ## for user authentication (requires go${GOVERSION}).
-server-local:
+server-local: run-db
 	cd server; cd cmd; go$(GOVERSION) clean; go$(GOVERSION) mod tidy; \
 	BUILD="$(GIT_VERSION)" \
 	PROVIDER_BASE_URLS=$(REMOTE_PROVIDER_LOCAL) \
@@ -96,11 +98,7 @@ server-local:
 run-fast: 
 	## "DEPRECATED: This target is deprecated. Use `make server`.
 
-run-db:
-	# docker container stop pg
-	# docker container rm pg
-	chmod +x ./install/start_db.sh
-	./install/start_db.sh
+
 ## Build and run Meshery Server on your local machine (requires go${GOVERSION}).
 server: run-db
 	cd server; cd cmd; go$(GOVERSION) mod tidy; \
@@ -113,8 +111,7 @@ server: run-db
 	go$(GOVERSION) run main.go error.go;
 
 ## Build and run Meshery Server with no Kubernetes components on your local machine (requires go${GOVERSION}).
-server-skip-compgen:
-	docker run -d -p 5432:5432 -e POSTGRES_PASSWORD=meshery --name pg postgres
+server-skip-compgen: run-db
 	cd server; cd cmd; go$(GOVERSION) mod tidy; \
 	BUILD="$(GIT_VERSION)" \
 	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
@@ -126,8 +123,7 @@ server-skip-compgen:
 	go$(GOVERSION) run main.go error.go;
 		
 ## Build and run Meshery Server with no seed content (requires go$(GOVERSION)).
-server-no-content:
-	docker run -d -p 5432:5432 -e POSTGRES_PASSWORD=meshery --name pg postgres
+server-no-content: run-db
 	cd server; cd cmd; go$(GOVERSION) mod tidy; \
 	BUILD="$(GIT_VERSION)" \
 	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
