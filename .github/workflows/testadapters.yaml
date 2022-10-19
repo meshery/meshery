@@ -55,7 +55,7 @@ jobs:
           kubernetes version: '"${{ inputs.k8s_version }}"'
           driver: docker
       - name: Checkout Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@master
 
       # Build the image by setting appropriate environmental variables in order to access the image from minikube
       - name: Build the tagged Docker image

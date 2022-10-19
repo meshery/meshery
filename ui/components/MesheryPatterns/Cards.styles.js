@@ -5,7 +5,10 @@ const useStyles= makeStyles((theme) => ({
     display : "flex",
     justifyContent : "flex-end",
     alignItems : "center",
-    marginTop : "50px"
+    marginTop : "50px",
+    marginLeft : "22rem",
+    height : '100%',
+    width : '100%',
   },
   testsButton : {
     marginRight : "0.5rem"
@@ -69,7 +72,7 @@ const useStyles= makeStyles((theme) => ({
     marginRight : "5px",
   },
   btnText : {
-    [theme.breakpoints.between(960, 1190)] : { display : "none" },
+    [theme.breakpoints.between(960, 1370)] : { display : "none" },
     display : "flex",
     justifyContent : "center",
     paddingLeft : "0.35rem"

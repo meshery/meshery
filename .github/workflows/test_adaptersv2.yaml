@@ -1,0 +1,255 @@
+# This workflow will be called/referenced in each of the adapters and runs in the context of adapter
+name: Adapter Integration - Core v2
+
+on:
+  workflow_call:
+    inputs:
+      expected_resources:
+        required: true
+        type: string
+      expected_resources_types:
+        required: true
+        type: string
+      expected_resources_namespaces:
+        required: true
+        type: string
+      service_url:
+        required: false
+        type: string
+      deployment_url:
+        required: false
+        type: string
+      adapter_name:
+        required: false
+        type: string
+        default: meshery
+      patternfile_name:
+        required: true
+        type: string
+      k8s_cni:
+        required: false
+        type: string
+        default: 'bridge'
+      k8s_version:
+        required: false
+        type: string
+      sm_version:
+        required: false
+        type: string
+      output_filename:
+        required: true
+        type: string
+      adapter_version:
+        required: false
+        type: string
+      provider: #default to local
+        required: false
+        type: string
+    secrets:
+      token:
+        required: true
+
+jobs:
+  TestAdapter:
+    strategy:
+      fail-fast: false
+      matrix:
+        k8s_version: ['v1.20.11', 'v1.21.5', 'v1.22.2','v1.23.9']
+    runs-on: ubuntu-latest
+    outputs:
+      exitstatus: ${{ steps.runresources.outputs.exitstatus }}
+    steps:
+      - name: Setting up minikube
+        id: setk8s
+        uses: manusa/actions-setup-minikube@v2.4.1
+        with:
+          minikube version: "v1.23.2"
+          kubernetes version: '"${{ matrix.k8s_version }}"'
+          driver: docker
+          start args: --cni "${{ inputs.k8s_cni }}"
+      - name: Checkout Code
+        uses: actions/checkout@master
+
+      # Build the image by setting appropriate environmental variables in order to access the image from minikube
+      - name: Build the tagged Docker image
+        run: |
+          if [ "${{ inputs.adapter_name }}" != "meshery" ];then
+            eval $(minikube -p minikube docker-env) 
+            docker build -t test:test .
+          fi
+      - name: Retrieve kubeconfig
+        run: cat ~/.kube/config
+      # Setup meshery config.yaml and auth.json
+      - name: Setup meshery config and infinite token for use
+        env:
+          provider_token: ${{ secrets.token }}
+        run: |
+          echo $provider_token 
+          mkdir ~/.meshery
+          config='{"contexts":{"local":{"endpoint":"http://localhost:9081","token":"Default","platform":"kubernetes","adapters":[],"channel":"stable","version":"latest"}},"current-context":"local","tokens":[{"location":"auth.json","name":"Default"}]}'
+          echo $config > ~/.meshery/config.yaml 
+          cat ~/.meshery/config.yaml
+          echo "Using provider: ${{ inputs.provider }}"
+          if  [ "${{ inputs.provider }}" = "Meshery" ] && [ "$provider_token" != "" ] ;then
+            echo '{ "meshery-provider": "Meshery", "token": null }' | jq -c '.token = "'$provider_token'"' > ~/.meshery/auth.json
+          else
+            echo '{ "meshery-provider": "None", "token": "" }'  > ~/.meshery/auth.json
+          fi
+          cat ~/.meshery/auth.json
+
+      # Start Meshery Server (Assuming that this step will create the meshery namespace)
+      - name: Start Meshery Server using mesheryctl
+        run: |
+          curl -L https://meshery.io/install | PLATFORM=kubernetes bash -
+
+      # Start the adapter using yamls
+      - name: Start adapter
+        run: |
+          if [ "${{ inputs.adapter_name }}" != "meshery" ];then
+            touch testimagedep.yaml
+            curl ${{ inputs.deployment_url }} > ./testimagedep.yaml
+            yq e -i '.spec.template.spec.containers[0].image="test:test"' ./testimagedep.yaml 
+            yq e -i '.spec.template.spec.containers[0].imagePullPolicy="Never"' ./testimagedep.yaml 
+            cat testimagedep.yaml
+            kubectl apply -f testimagedep.yaml --namespace=meshery
+            kubectl apply -f ${{ inputs.service_url }} --namespace=meshery
+          fi
+
+
+      # Start tunnelling to allocate external IP to LoadBalancer type service(meshery)(SO that we can access meshery from outside)
+      - name: Start tunelling
+        run: minikube tunnel &> /dev/null &
+
+      # Checking meshery server logs
+      - name: Check Meshery pod logs
+        run: |
+          SECONDS=0
+          end=$((SECONDS+300))
+          while [ $SECONDS -lt $end ]; do
+              status=$(mesheryctl system  status -v | sed -n 2p | sed -e "s/[[:space:]]\+/ /g" |  cut -d " " -f 3)
+              if [ "$status" = "Running" ];then
+                break
+              fi
+          done
+          mesheryctl system  logs meshery
+      # If external IP has not been allotted then server is unreachable, exit here in that case
+      - name: Check if Meshery has been allotted external IP
+        run: |
+          svcstatus=$(kubectl get svc  -n meshery| grep meshery | tr -s ' ' | cut -d " " -f 4)
+          echo $svcstatus
+          if [ "$svcstatus" = "<pending>" ];then
+             exit 1
+          fi
+      # Reset meshery's address to the external IP in config.yaml such that mesheryctl can reach it
+      - name: Reset Meshery address
+        run: |
+          kubectl get svc -n meshery 
+          svcip="http://$(kubectl get svc -n meshery | grep "meshery " | tr -s ' ' | cut -d " " -f 3):9081"
+          echo "this is $svcip"
+          config='{"contexts":{"local":{"endpoint":'$svcip',"token":"Default","platform":"kubernetes","adapters":[],"channel":"stable","version":"latest"}},"current-context":"local","tokens":[{"location":"auth.json","name":"Default"}]}'
+          echo $config  > ~/.meshery/config.yaml
+      - name: Download patternfile
+        uses: actions/download-artifact@v2
+        with:
+          name: patternfile
+      - name: Wait for Meshery pods to come up 
+        run: sleep 100  
+      # This pattern will try to install  service mesh(the first attempt can fail currently fot k8s componets so we will wait 100 seconds after the first apply and then apply again. Since pattern apply is idempotent, this wont be an issue.)
+      - name: Pattern apply 
+        run: |
+          cat ./${{ inputs.patternfile_name }}
+          mesheryctl pattern apply -f ./${{ inputs.patternfile_name }}   
+      - name: Sleep 120 seconds
+        run: sleep 120   
+      - name: Pattern apply, second iteration. [IDEMPOTENT]
+        run: |
+          cat ./${{ inputs.patternfile_name }}
+          mesheryctl pattern apply -f ./${{ inputs.patternfile_name }}  
+      - name: Check adapter logs
+        run: |
+          if [ "${{ inputs.adapter_name }}" != "meshery" ];then
+            podname=$(kubectl get pods -n meshery | grep ${{ inputs.adapter_name }} | tr -s ' ' | cut -d " " -f 1)
+            kubectl logs pod/$podname -n meshery
+          fi
+      - name: Check Meshery logs
+        run: |
+          mesheryctl system  logs meshery
+      - name: Whole status for debugging
+        run: kubectl get all -A
+      # Check if all pods are in a Running state
+      - name: Check if all expected resources have started
+        id: runresources
+        run: |
+          SECONDS=0
+          exitstatus=0
+          end=$((SECONDS+300))
+          resourcenames="${{ inputs.expected_resources }}"
+          resourcetypes="${{ inputs.expected_resources_types }}"
+          nsnames="${{ inputs.expected_resources_namespaces}}"
+          set -f                      
+          resources=(${resourcenames//,/ })
+          types=(${resourcetypes//,/ })
+          ns=(${nsnames//,/ })
+
+          breakout=1
+
+          while [ $SECONDS -lt $end ]; do
+              for i in "${!resources[@]}"
+              do
+                  resourceinfo=$(kubectl get ${types[i]} -n ${ns[i]} | grep ${resources[i]} | tr -s ' ')
+                  resourcestarted=$(echo $resourceinfo | cut -d " " -f 1)
+                  resourcestatus=$(echo $resourceinfo | cut -d " " -f 3)
+                  if [[ ("${types[i]}" = "pod" && "$resourcestatus" != "Running") || ("${types[i]}" != "pod" && "$resourcestarted" = "") ]];then
+                    breakout=0
+                  fi
+              done
+              if [ $breakout -eq 1 ];then
+                break
+              fi
+              breakout=1
+          done
+          touch data.json
+          runon=$(date)
+          itran=0
+          itdidnotrun=0
+          echo "Ran on $runon"
+          echo '{"metadata":{ "k8s_version":"'${{ matrix.k8s_version }}'", "service_mesh_name":"'${{ inputs.adapter_name }}'", "service_mesh_version":"'${{ inputs.sm_version }}'","adapter_version":"'${{ inputs.adapter_version }}'" ,"runon":"'$runon'"}, "resources_status":{}, "overall-status":""}' | jq > ./data.json
+          for i in "${!resources[@]}"
+          do
+            resourceinfo=$(kubectl get ${types[i]} -n ${ns[i]} | grep ${resources[i]} | tr -s ' ')
+            resourcestarted=$(echo $resourceinfo | cut -d " " -f 1)
+            resourcestatus=$(echo $resourceinfo | cut -d " " -f 3)
+            if [[ ("${types[i]}" = "pod" && "$resourcestatus" = "Running") || ("${types[i]}" != "pod" && "$resourcestarted" != "") ]];then
+              itran=1
+              echo "${types[i]} ${resources[i]} started in namespace ${ns[i]}"
+              echo $(jq '.resources_status."'${types[i]}/${resources[i]}'" |=  "Running"' data.json) > data.json 
+            else
+              itdidnotrun=1
+              echo "${types[i]} ${resources[i]} did not start in namespace ${ns[i]} "
+              echo $(jq '.resources_status."'${types[i]}/${resources[i]}'" |=  "Not Running"' data.json) > data.json 
+              exitstatus=1
+            fi
+          done
+          status=""
+          if [ "$exitstatus" -eq 0 ];then
+              status="passing"       
+          else 
+              status="failing"
+          fi
+          if [ "$itran" -eq 1 ] && [ "$itdidnotrun" -eq 1  ] ;then
+              status="partial"
+          fi
+          echo $(jq '."overall-status" |=  "'$status'"' data.json) > data.json;     
+          MESHERY_VERSION=$(curl -L -s https://github.com/meshery/meshery/releases/latest | grep "/releases/tag/" | head -1 | awk -F '"' '{print $4}' | awk -F '/' '{print $NF}' )    
+          echo $(jq '.metadata."meshery-server-version" |="'$MESHERY_VERSION'"' data.json ) > data.json
+          echo "exitstatus=$exitstatus" >> $GITHUB_ENV
+      - name: UploadResults
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ inputs.output_filename }}
+          path: ./${{ inputs.output_filename }}
+      - name: exit
+        run: |
+          if [ "$exitstatus" -eq 1 ];then
+              exit 1
+          fi

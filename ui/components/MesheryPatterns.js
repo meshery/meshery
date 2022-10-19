@@ -12,30 +12,32 @@ import SaveIcon from '@material-ui/icons/Save';
 import MUIDataTable from "mui-datatables";
 import { withSnackbar } from "notistack";
 import AddIcon from "@material-ui/icons/AddCircleOutline";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { UnControlled as CodeMirror } from "react-codemirror2";
 import Moment from "react-moment";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import dataFetch from "../lib/data-fetch";
-import FILE_OPS from "../utils/configurationFileHandlersEnum";
 import { toggleCatalogContent, updateProgress } from "../lib/store";
-import PatternForm from "../components/configuratorComponents/patternConfigurator";
+import DesignConfigurator from "../components/configuratorComponents/patternConfigurator";
 import UploadImport from "./UploadImport";
 import { ctxUrl } from "../utils/multi-ctx";
-import { getComponentsinFile, randomPatternNameGenerator as getRandomName } from "../utils/utils";
+import { generateValidatePayload, getComponentsinFile, randomPatternNameGenerator as getRandomName } from "../utils/utils";
 import ViewSwitch from "./ViewSwitch";
 import CatalogFilter from "./CatalogFilter";
 import MesheryPatternGrid from "./MesheryPatterns/MesheryPatternGridView";
 import UndeployIcon from "../public/static/img/UndeployIcon";
 import DoneAllIcon from '@material-ui/icons/DoneAll';
+import DoneIcon from '@material-ui/icons/Done';
 import ConfirmationMsg from "./ConfirmationModal";
 import PublishIcon from "@material-ui/icons/Publish";
 import PromptComponent from "./PromptComponent";
 import ConfigurationSubscription from "./graphql/subscriptions/ConfigurationSubscription";
 import fetchCatalogPattern from "./graphql/queries/CatalogPatternQuery";
 import LoadingScreen from "./LoadingComponents/LoadingComponent";
-
+import { SchemaContext } from "../utils/context/schemaSet";
+import Validation from "./Validation";
+import { ACTIONS, FILE_OPS } from "../utils/Enum";
 
 const styles = (theme) => ({
   grid : {
@@ -238,19 +240,24 @@ function MesheryPatterns({
   const [patterns, setPatterns] = useState([]);
   const [selectedRowData, setSelectedRowData] = useState(null);
   const [selectedPattern, setSelectedPattern] = useState(resetSelectedPattern());
+
+  const [patternErrors, setPatternErrors] = useState(new Map());
+
   const [viewType, setViewType] = useState(
     /**  @type {TypeView} */
     ("grid")
   );
+
   const PATTERN_URL = '/api/pattern'
   const DEPLOY_URL = `${PATTERN_URL}/deploy`;
   const CLONE_URL = '/clone';
   const [modalOpen, setModalOpen] = useState({
     open : false,
-    deploy : false,
+    action : 0,
     pattern_file : null,
     name : "",
-    count : 0
+    count : 0,
+    validationBody : null
   });
 
   const [importModal, setImportModal] = useState({
@@ -261,6 +268,8 @@ function MesheryPatterns({
   const catalogContentRef = useRef();
   const catalogVisibilityRef = useRef();
   const disposeConfSubscriptionRef = useRef(null);
+
+  const { workloadTraitSet } = useContext(SchemaContext);
 
   const getMuiTheme = () => createTheme({
     overrides : {
@@ -434,14 +443,23 @@ function MesheryPatterns({
     });
   }
 
-  const handleModalOpen = (e, pattern_file, name, isDeploy) => {
+  const handleModalOpen = (e, pattern_file, name, errors, action) => {
     e.stopPropagation();
+    const compCount = getComponentsinFile(pattern_file);
+    const validationBody = (
+      <Validation
+        errors={errors}
+        compCount={compCount}
+        handleClose={() => setModalOpen({ ...modalOpen, open : false })}
+      />
+    )
     setModalOpen({
       open : true,
-      deploy : isDeploy,
+      action : action,
       pattern_file : pattern_file,
       name : name,
-      count : getComponentsinFile(pattern_file)
+      count : compCount,
+      validationBody : validationBody
     });
   }
 
@@ -482,6 +500,32 @@ function MesheryPatterns({
       handleError(ACTION_TYPES.DEPLOY_PATTERN),
     );
   };
+
+  const handleVerify = (e, pattern_file, pattern_id) => {
+    e.stopPropagation();
+    const validationPayloads = generateValidatePayload(pattern_file, workloadTraitSet);
+    if (validationPayloads.err) {
+      handleError(validationPayloads.err);
+    }
+    dataFetch("/api/meshmodel/validate", {
+      method : "POST",
+      credentials : "include",
+      body : JSON.stringify({ "validationItems" : validationPayloads })
+    }, (res) => {
+      let errors = [];
+      const keys = Object.keys(res.result);
+      keys.forEach((key) => {
+        const error = res.result[key];
+        if (!error.isValid) {
+          errors = errors.concat({ service : key, errors : error.errors })
+        }
+      })
+      setPatternErrors(prevErrors => new Map([...prevErrors, [pattern_id, errors]]));
+      handleModalOpen(e, pattern_file, patterns[0].name, errors, ACTIONS.VERIFY)
+    },
+    handleError("Error validating pattern"),
+    );
+  }
 
   const handleUnDeploy = (pattern_file) => {
     updateProgress({ showProgress : true });
@@ -794,14 +838,20 @@ function MesheryPatterns({
                 </IconButton> }
               {/*</Tooltip> */}
               <IconButton
+                title="Verify"
+                onClick={(e) => handleVerify(e, rowData.pattern_file, rowData.id)}
+              >
+                <DoneIcon data-cy="verify-button" />
+              </IconButton>
+              <IconButton
                 title="Deploy"
-                onClick={(e) => handleModalOpen(e, rowData.pattern_file, rowData.name, true)}
+                onClick={(e) => handleModalOpen(e, rowData.pattern_file, rowData.name, patternErrors.get(rowData.id), ACTIONS.DEPLOY)}
               >
                 <DoneAllIcon data-cy="deploy-button" />
               </IconButton>
               <IconButton
                 title="Undeploy"
-                onClick={(e) => handleModalOpen(e, rowData.pattern_file, rowData.name, false)}
+                onClick={(e) => handleModalOpen(e, rowData.pattern_file, rowData.name, patternErrors.get(rowData.id), ACTIONS.UNDEPLOY)}
               >
                 <UndeployIcon fill="#8F1F00" data-cy="undeploy-button" />
               </IconButton>
@@ -967,7 +1017,7 @@ function MesheryPatterns({
           <YAMLEditor pattern={selectedRowData} onClose={resetSelectedRowData()} onSubmit={handleSubmit} />
         )}
         {selectedPattern.show &&
-          <PatternForm onSubmit={handleSubmit} show={setSelectedPattern} pattern={selectedPattern.pattern} />
+          <DesignConfigurator onSubmit={handleSubmit} show={setSelectedPattern} pattern={selectedPattern.pattern} />
         }
         <div className={classes.topToolbar} >
           {!selectedPattern.show && (patterns.length>0 || viewType==="table") && <div className={classes.createButton}>
@@ -1033,6 +1083,7 @@ function MesheryPatterns({
             <MesheryPatternGrid
               patterns={patterns}
               handleDeploy={handleDeploy}
+              handleVerify={handleVerify}
               handleUnDeploy={handleUnDeploy}
               handleClone={handleClone}
               urlUploadHandler={urlUploadHandler}
@@ -1045,6 +1096,7 @@ function MesheryPatterns({
               setPage={setPage}
               selectedPage={page}
               UploadImport={UploadImport}
+              patternErrors={patternErrors}
             />
         }
         <ConfirmationMsg
@@ -1053,10 +1105,10 @@ function MesheryPatterns({
           submit={
             { deploy : () => handleDeploy(modalOpen.pattern_file),  unDeploy : () => handleUnDeploy(modalOpen.pattern_file) }
           }
-          isDelete={!modalOpen.deploy}
           title={modalOpen.name}
           componentCount={modalOpen.count}
-          tab={modalOpen.deploy ? 0 : 1}
+          tab={modalOpen.action}
+          validationBody={modalOpen.validationBody}
         />
         <UploadImport open={importModal.open} handleClose={handleUploadImportClose} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} configuration="Design" />
         <PromptComponent ref={modalRef} />

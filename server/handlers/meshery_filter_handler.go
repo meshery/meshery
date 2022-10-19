@@ -193,8 +193,8 @@ func (h *Handler) GetMesheryFiltersHandler(
 //
 // Used to get catalog filters
 // responses:
-// 	200: mesheryFilterResponseWrapper
 //
+//	200: mesheryFilterResponseWrapper
 func (h *Handler) GetCatalogMesheryFiltersHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
@@ -251,7 +251,8 @@ func (h *Handler) DeleteMesheryFilterHandler(
 //
 // Creates a local copy of a public filter with id: id
 // responses:
-// 	200: noContentWrapper
+//
+//	200: noContentWrapper
 //
 // CloneMesheryFilterHandler clones a filter with the given id
 func (h *Handler) CloneMesheryFilterHandler(

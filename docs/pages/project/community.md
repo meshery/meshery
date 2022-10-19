@@ -12,7 +12,7 @@ Meshery is a CNCF project maintained by engineers from Layer5, VMware, Red Hat, 
 
 #### Community First
 
-<p>Meshery is one of a number of open source projects orginated by the <a href="https://layer5.io">Layer5 community</a>, which represents the largest collection of service mesh projects and their maintainers in the world.</p>
+<p>Meshery is one of a number of open source projects originated by the <a href="https://layer5.io">Layer5 community</a>, which represents the largest collection of service mesh projects and their maintainers in the world.</p>
 
 The Meshery project is community-built and welcomes collaboration! 
 <br /><a href="https://github.com/meshery/meshery"><i class="fab fa-github"></i> Fork here on Github</a>

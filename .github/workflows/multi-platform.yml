@@ -2,28 +2,31 @@ name: Multi-Platform Build and Release
 on:
   release:
     types: [published]
+  pull_request:
+    branches:
+      - 'master'
   push:
     tags:
-      - "v*"
+      - 'v*'  
     branches:
-      - "master"
+      - 'master'
     paths-ignore:
-      - "docs/**"
-      # - '.github/**'
+      - 'docs/**'
+      - '.github/**'
   workflow_dispatch:
     inputs:
       release-ver:
-        description: "Stable Release Version"
-        required: true
-        default: "v"
+          description: 'Stable Release Version'     
+          required: true
+          default: 'v'
       stripped-release-ver:
-        description: "Stripped Stable Release Version"
-        required: true
-        default: ""
+          description: 'Stripped Stable Release Version'     
+          required: true
+          default: ''
       release-channel:
-        description: "Release Channel"
-        required: true
-        default: "edge"
+          description: 'Release Channel'     
+          required: true
+          default: 'edge'
 
 env:
   GIT_VERSION: ${{github.event.inputs.release-ver}}
@@ -35,44 +38,51 @@ jobs:
   print-inputs:
     runs-on: ubuntu-latest
     steps:
-      - run: |
-          echo "Dispatched GIT_VERSION: ${{github.event.inputs.release-ver}}"
-          echo " Dispatched GIT_STRIPPED_VERSION: ${{github.event.inputs.stripped-release-ver}}"
-          echo "Env RELEASE_CHANNEL: ${{env.RELEASE_CHANNEL}}"
-          echo "Env GIT_VERSION: ${{env.GIT_VERSION}}"
-          echo "Env GIT_STRIPPED_VERSION: ${{env.GIT_STRIPPED_VERSION}}"
-          echo "Env GIT_TAG: ${{ github.event.release.tag_name }}"
 
+    - run: |
+        echo "Dispatched GIT_VERSION: ${{github.event.inputs.release-ver}}"
+        echo "Dispatched GIT_STRIPPED_VERSION: ${{github.event.inputs.stripped-release-ver}}"
+        echo "Env RELEASE_CHANNEL: ${{env.RELEASE_CHANNEL}}"
+        echo "Env GIT_VERSION: ${{env.GIT_VERSION}}"
+        echo "Env GIT_STRIPPED_VERSION: ${{env.GIT_STRIPPED_VERSION}}"
+        echo "Env GIT_TAG: ${{ github.event.release.tag_name }}"
+        echo "Env GITHUB_REF: $GITHUB_REF"
+        echo "Env GITHUB_REF:" ${GITHUB_REF}
+  
   docker-build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v3
-      - name: Identify Release Values
+      - 
+        name: Checkout repo
+        uses: actions/checkout@master
+      - 
+        name: Identify Release Values
         if: "${{ github.event.inputs.release-ver}} != 'v' }}"
         run: |
-          GIT_TAG=`git symbolic-ref HEAD -q`
-          if [[ $GIT_TAG = refs/tags* ]]
+          if [[ ${GITHUB_REF} = refs/tags* ]]
           then
             echo RELEASE_CHANNEL=stable >> $GITHUB_ENV
           else
             echo RELEASE_CHANNEL=edge >> $GITHUB_ENV
           fi
-          echo "Release channel determined to be $RELEASE_CHANNEL"
           LATEST_VERSION=$(git ls-remote --tags | tail -1 | cut -f2 | sed 's/refs\/tags\///g') >> $GITHUB_ENV
           GIT_VERSION=$(git ls-remote --tags | tail -1 | cut -f2 | sed 's/refs\/tags\///g') >> $GITHUB_ENV
           # GIT_VERSION=$(git describe --tags `git rev-list --tags --max-count=1` --always) 
           GIT_STRIPPED_VERSION=$(git ls-remote --tags | tail -1 | cut -f2 | sed 's/refs\/tags\///g' | cut -c2-)
+          echo "Release channel determined to be $RELEASE_CHANNEL"
           echo "GIT_LATEST=$LATEST_VERSION" >> $GITHUB_ENV
           echo "GIT_VERSION=$GIT_VERSION" >> $GITHUB_ENV
-          echo "GIT_STRIPPED_VERSION=$GIT_STRIPPED_VERSION" >> $GITHUB_ENV
+          echo "GIT_STRIPPED_VERSION=$GIT_STRIPPED_VERSION" >> $GITHUB_ENV          
         shell: bash
 
-      - name: Set up QEMU
+      -
+        name: Set up QEMU
         uses: docker/setup-qemu-action@v1
-      - name: Set up Docker Buildx
+      -
+        name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
-      - name: Docker Meta
+      -
+        name: Docker Meta
         id: meta
         uses: docker/metadata-action@v3
         with:
@@ -82,16 +92,16 @@ jobs:
           tags: |
             type=raw,value=${{env.RELEASE_CHANNEL}}-{{sha}}
             type=semver,pattern={{version}},value=${{env.GIT_STRIPPED_VERSION}}
-            type=raw,pattern={{version}},value=${{env.RELEASE_CHANNEL}}-${{env.GIT_VERSION}}
             type=raw,value=${{env.RELEASE_CHANNEL}}-{{tag}},enable=${{ startsWith(github.ref, 'refs/tags/v') }}
             type=raw,value=${{env.RELEASE_CHANNEL}}-latest
-            type=semver,pattern={{version}},value=${{env.RELEASE_CHANNEL}}-${{env.GIT_VERSION}},enable=${{ startsWith(github.ref, 'refs/tags/v') }}
-      - name: Login to DockerHub
-        uses: docker/login-action@v1
+      -
+        name: Login to DockerHub
+        uses: docker/login-action@v1 
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-      - name: Build and Push
+      - 
+        name: Build and Push 
         uses: docker/build-push-action@v2
         with:
           context: install/docker/.
@@ -100,15 +110,13 @@ jobs:
             GIT_STRIPPED_VERSION=${{env.GIT_STRIPPED_VERSION}}
             GIT_VERSION=${{env.GIT_VERSION}}
             RELEASE_CHANNEL=${{env.RELEASE_CHANNEL}}
-          tags: ${{ steps.meta.outputs.tags }}
+          tags: ${{ steps.meta.outputs.tags }}     
           platforms: linux/amd64,linux/arm64
-
-      # -
-      #   name: Docker Hub Description
-      #   uses: peter-evans/dockerhub-description@v3
-      #   with:
-      #     username: ${{ secrets.DOCKER_USERNAME }}
-      #     password: ${{ secrets.DOCKER_PASSWORD }}
-      #     repository: meshery/meshery-docker-extension
-      #     readme-filepath: /install/docker-extension/README.md
-
+#       - 
+#         name: Docker Hub Description
+#         uses: peter-evans/dockerhub-description@v3
+#         with:
+#           username: ${{ secrets.DOCKER_USERNAME }}
+#           password: ${{ secrets.DOCKER_PASSWORD }}
+#           repository: ${{ secrets.IMAGE_NAME }}  
+#           readme-filepath: README.md 

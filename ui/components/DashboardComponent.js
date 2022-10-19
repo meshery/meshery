@@ -1127,7 +1127,7 @@ class DashboardComponent extends React.Component {
       chp = showConfigured;
     }
 
-    showConfigured = <div showConfigured>{chp}</div>;
+    showConfigured = <div>{chp}</div>;
 
     let showAdapters = "No adapters configured.";
     if (availableAdapters.length > 0) {

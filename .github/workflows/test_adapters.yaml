@@ -67,7 +67,7 @@ jobs:
           driver: docker
           start args: --cni "${{ inputs.k8s_cni }}"
       - name: Checkout Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@master
 
       # Build the image by setting appropriate environmental variables in order to access the image from minikube
       - name: Build the tagged Docker image
@@ -146,22 +146,19 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: patternfile
-      # This pattern will try to install  service mesh
-      - name: Pattern apply (Install service mesh)
+      - name: Wait for Meshery pods to come up 
+        run: sleep 100  
+      # This pattern will try to install  service mesh(the first attempt can fail currently fot k8s componets so we will wait 100 seconds after the first apply and then apply again. Since pattern apply is idempotent, this wont be an issue.)
+      - name: Pattern apply 
         run: |
           cat ./${{ inputs.patternfile_name }}
-          for n in {1..3}
-          do
-            x=$(mesheryctl pattern apply -f ./${{ inputs.patternfile_name }})
-            echo "pattern apply log: $x"
-            if [[ $x == "*invalid workload of type:*" ]];
-            then
-              sleep 30
-            else
-              break
-            fi    
-          done        
-
+          mesheryctl pattern apply -f ./${{ inputs.patternfile_name }}   
+      - name: Sleep 120 seconds
+        run: sleep 120   
+      - name: Pattern apply, second iteration. [IDEMPOTENT]
+        run: |
+          cat ./${{ inputs.patternfile_name }}
+          mesheryctl pattern apply -f ./${{ inputs.patternfile_name }}   
       - name: Check adapter logs
         run: |
           podname=$(kubectl get pods -n meshery | grep ${{ inputs.adapter_name }} | tr -s ' ' | cut -d " " -f 1)
