@@ -90,13 +90,15 @@ function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference
       description : "The label for the service",
       additionalProperties : {
         "type" : "string"
-      }
+      },
+      type : "object"
     };
     schemaSet.workload.properties.annotations = {
       description : "The annotation for the service",
       additionalProperties : {
         "type" : "string"
-      }
+      },
+      "type" : "object"
     };
   }, [])
 
