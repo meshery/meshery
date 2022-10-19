@@ -39,7 +39,13 @@ const ObjectFieldTemplate = ({
 }) => {
   const classes = useStyles();
   const [show, setShow] = React.useState(false);
-
+  properties.forEach((property, index) => {
+    if (schema.properties[property.name].type) {
+      properties[index].type = schema.properties[property.name].type;
+      properties[index].__additional_property =
+        schema.properties[property.name]?.__additional_property || false;
+    }
+  });
   const CustomTitleField = ({ title, id, description, properties }) => {
     return <Box mb={1} mt={1} id={id} >
       <Grid container justify="flex-start" alignItems="center">
@@ -90,7 +96,14 @@ const ObjectFieldTemplate = ({
         ) : (
           <Grid
             item={true}
-            xs={element.name === "name" || element.name === "namespace" ? 6 : 12}
+            sm={12}
+            lg={
+              element.type === "object" ||
+              element.type === "array" ||
+              element.__additional_property
+                ? 12
+                : 6
+            }
             key={index}
           >
             {element.content}
