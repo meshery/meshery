@@ -118,7 +118,7 @@ jobs:
           charts_dir: install/kubernetes/helm
           owner: Revolyssup
           repository: Revolyssup.github.io
-          branch: master
+          branch: main 
           target_dir: charts
           commit_username: l5io
           commit_email: l5io@layer5.io
