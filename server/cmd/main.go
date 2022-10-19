@@ -107,7 +107,6 @@ func main() {
 			log.Error(ErrRetrievingUserHomeDirectory(err))
 			os.Exit(1)
 		}
-
 	}
 	log.Info("Using kubeconfig at: ", viper.GetString("KUBECONFIG_FOLDER"))
 
