@@ -7,9 +7,13 @@
     text-decoration: none !important; /* do not underline */
     }
 
+/*
+Make anchor visible for each heading result
+ */
 #search-results .anchorjs-link {
-    right: 0;
+    opacity: 1;
 }
+
     @media (max-width: 768px) {
     /* Do not display AnchorJS icon on less than 768px view point */
     .anchorjs-link {

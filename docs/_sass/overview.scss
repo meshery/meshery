@@ -36,10 +36,10 @@ h2[id]:before, h4[id]:before, h5[id]:before {
 }
 
 /*
-For safari extraneous dot appearance
+Remove bullets on search results and use heading anchors instead
  */
-#search-results h4[id]:before {
-  display: inline-block;
+#search-results {
+  list-style-type: none;
 }
 
 div.wrapper {
