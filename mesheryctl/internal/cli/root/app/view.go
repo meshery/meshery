@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"io"
 	"net/http"
-	"regexp"
 	"strings"
 
 	"github.com/ghodss/yaml"
@@ -54,19 +53,7 @@ mesheryctl app view --all
 			if viewAllFlag {
 				return errors.New("-a cannot be used when [application-name|application-id] is specified")
 			}
-			applicationID = args[0]
-			// It checks if applicationID is present or not
-			applicationIDList, err := utils.GetID("application")
-			if err == nil {
-				for _, id := range applicationIDList {
-					if strings.HasPrefix(id, applicationID) {
-						applicationID = id
-
-					}
-				}
-			}
-			// check if the application argument is a valid uuid v4 string
-			isID, err = regexp.MatchString("^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-4[a-fA-F0-9]{3}-[8|9|aA|bB][a-fA-F0-9]{3}-[a-fA-F0-9]{12}$", applicationID)
+			applicationID, isID, err = utils.Valid(args[0], "application")
 			if err != nil {
 				return err
 			}

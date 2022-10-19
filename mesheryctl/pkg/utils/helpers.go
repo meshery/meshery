@@ -13,6 +13,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -504,6 +505,22 @@ func DeleteConfiguration(id string, configuration string) error {
 		return errors.Errorf("Response Status Code %d, possible invalid ID", res.StatusCode)
 	}
 	return nil
+}
+func Valid(args string, configuration string) (string, bool, error) {
+	isID := false
+	configID, err := GetID(configuration)
+	if err == nil {
+		for _, id := range configID {
+			if strings.HasPrefix(id, args) {
+				args = id
+			}
+		}
+	}
+	isID, err = regexp.MatchString("^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-4[a-fA-F0-9]{3}-[8|9|aA|bB][a-fA-F0-9]{3}-[a-fA-F0-9]{12}$", args)
+	if err != nil {
+		return "", false, err
+	}
+	return args, isID, nil
 }
 
 // AskForInput asks the user for an input and checks if it is in the available values
