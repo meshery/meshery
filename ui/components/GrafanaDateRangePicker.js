@@ -657,9 +657,9 @@ class GrafanaDateRangePicker extends Component {
                     Quick Ranges
                     <Grid container spacing={0}>
                       {quickRanges.map((qr) => (
-                        <Grid item xs={12} sm={3} className={classes.timeList}>
+                        <Grid item key={qr.uniqueID} xs={12} sm={3} className={classes.timeList}>
                           {qr.map((q) => (
-                            <Button variant="text" onClick={this.setRange(q)}>{q}</Button>
+                            <Button key={q.uniqueID} variant="text" onClick={this.setRange(q)}>{q}</Button>
                           ))}
                         </Grid>
                       ))}
