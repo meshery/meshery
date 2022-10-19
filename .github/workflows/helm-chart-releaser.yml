@@ -89,11 +89,26 @@ jobs:
       - name: Manually publish Helm chart with release version
         if:  github.event_name != 'pull_request' && ${{github.event.inputs.release-ver}} != "v"
         uses: stefanprodan/helm-gh-pages@master
-        with:
+        with: 
           token: ${{ secrets.GH_ACCESS_TOKEN }}
           charts_dir: install/kubernetes/helm
           owner: meshery
           repository: meshery.io
+          branch: master
+          target_dir: charts
+          commit_username: l5io
+          commit_email: l5io@layer5.io
+          chart_version: ${{github.event.inputs.release-ver}}
+          app_version: ${{github.event.inputs.release-ver}}
+#The below job is to be removed and is present only for testing purposes of postgres migration
+      - name: Manually publish Helm chart with release version
+        if:  github.ref == 'refs/heads/postgres'
+        uses: stefanprodan/helm-gh-pages@master
+        with: 
+          token: ${{ secrets.GH_ACCESS_TOKEN }}
+          charts_dir: install/kubernetes/helm
+          owner: Revolyssup
+          repository: Revolyssup.github.io
           branch: master
           target_dir: charts
           commit_username: l5io
