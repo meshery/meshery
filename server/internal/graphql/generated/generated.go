@@ -367,8 +367,6 @@ type ComplexityRoot struct {
 		ListenToAddonState                func(childComplexity int, filter *model.ServiceMeshFilter) int
 		ListenToControlPlaneState         func(childComplexity int, filter *model.ServiceMeshFilter) int
 		ListenToDataPlaneState            func(childComplexity int, filter *model.ServiceMeshFilter) int
-		ListenToMeshSyncEvents            func(childComplexity int, k8scontextIDs []string) int
-		ListenToOperatorState             func(childComplexity int, k8scontextIDs []string) int
 		SubscribeBrokerConnection         func(childComplexity int) int
 		SubscribeClusterResources         func(childComplexity int, k8scontextIDs []string, namespace string) int
 		SubscribeConfiguration            func(childComplexity int, applicationSelector model.PageFilter, patternSelector model.PageFilter, filterSelector model.PageFilter) int
@@ -411,8 +409,6 @@ type SubscriptionResolver interface {
 	ListenToAddonState(ctx context.Context, filter *model.ServiceMeshFilter) (<-chan []*model.AddonList, error)
 	ListenToControlPlaneState(ctx context.Context, filter *model.ServiceMeshFilter) (<-chan []*model.ControlPlane, error)
 	ListenToDataPlaneState(ctx context.Context, filter *model.ServiceMeshFilter) (<-chan []*model.DataPlane, error)
-	ListenToOperatorState(ctx context.Context, k8scontextIDs []string) (<-chan *model.OperatorStatusPerK8sContext, error)
-	ListenToMeshSyncEvents(ctx context.Context, k8scontextIDs []string) (<-chan *model.OperatorControllerStatusPerK8sContext, error)
 	SubscribePerfProfiles(ctx context.Context, selector model.PageFilter) (<-chan *model.PerfPageProfiles, error)
 	SubscribePerfResults(ctx context.Context, selector model.PageFilter, profileID string) (<-chan *model.PerfPageResult, error)
 	SubscribeBrokerConnection(ctx context.Context) (<-chan bool, error)
@@ -2010,30 +2006,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Subscription.ListenToDataPlaneState(childComplexity, args["filter"].(*model.ServiceMeshFilter)), true
 
-	case "Subscription.listenToMeshSyncEvents":
-		if e.complexity.Subscription.ListenToMeshSyncEvents == nil {
-			break
-		}
-
-		args, err := ec.field_Subscription_listenToMeshSyncEvents_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Subscription.ListenToMeshSyncEvents(childComplexity, args["k8scontextIDs"].([]string)), true
-
-	case "Subscription.listenToOperatorState":
-		if e.complexity.Subscription.ListenToOperatorState == nil {
-			break
-		}
-
-		args, err := ec.field_Subscription_listenToOperatorState_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Subscription.ListenToOperatorState(childComplexity, args["k8scontextIDs"].([]string)), true
-
 	case "Subscription.subscribeBrokerConnection":
 		if e.complexity.Subscription.SubscribeBrokerConnection == nil {
 			break
@@ -2825,16 +2797,6 @@ type Subscription {
     filter: ServiceMeshFilter
   ): [DataPlane!]!
 
-  # Listen to changes in status of Meshery Operator in your cluster
-  listenToOperatorState(
-    k8scontextIDs: [String!]
-  ): OperatorStatusPerK8sContext
-
-  # Listen to changes in the list of available Namesapces in your cluster
-  listenToMeshSyncEvents(
-    k8scontextIDs: [String!]
-  ): OperatorControllerStatusPerK8sContext
-
   # Listen to changes in Performance Profiles
   subscribePerfProfiles(selector: PageFilter!): PerfPageProfiles!
 
@@ -3388,36 +3350,6 @@ func (ec *executionContext) field_Subscription_listenToDataPlaneState_args(ctx c
 		}
 	}
 	args["filter"] = arg0
-	return args, nil
-}
-
-func (ec *executionContext) field_Subscription_listenToMeshSyncEvents_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 []string
-	if tmp, ok := rawArgs["k8scontextIDs"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("k8scontextIDs"))
-		arg0, err = ec.unmarshalOString2ᚕstringᚄ(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["k8scontextIDs"] = arg0
-	return args, nil
-}
-
-func (ec *executionContext) field_Subscription_listenToOperatorState_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 []string
-	if tmp, ok := rawArgs["k8scontextIDs"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("k8scontextIDs"))
-		arg0, err = ec.unmarshalOString2ᚕstringᚄ(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["k8scontextIDs"] = arg0
 	return args, nil
 }
 
@@ -13480,150 +13412,6 @@ func (ec *executionContext) fieldContext_Subscription_listenToDataPlaneState(ctx
 	return fc, nil
 }
 
-func (ec *executionContext) _Subscription_listenToOperatorState(ctx context.Context, field graphql.CollectedField) (ret func(ctx context.Context) graphql.Marshaler) {
-	fc, err := ec.fieldContext_Subscription_listenToOperatorState(ctx, field)
-	if err != nil {
-		return nil
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = nil
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Subscription().ListenToOperatorState(rctx, fc.Args["k8scontextIDs"].([]string))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return nil
-	}
-	if resTmp == nil {
-		return nil
-	}
-	return func(ctx context.Context) graphql.Marshaler {
-		select {
-		case res, ok := <-resTmp.(<-chan *model.OperatorStatusPerK8sContext):
-			if !ok {
-				return nil
-			}
-			return graphql.WriterFunc(func(w io.Writer) {
-				w.Write([]byte{'{'})
-				graphql.MarshalString(field.Alias).MarshalGQL(w)
-				w.Write([]byte{':'})
-				ec.marshalOOperatorStatusPerK8sContext2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐOperatorStatusPerK8sContext(ctx, field.Selections, res).MarshalGQL(w)
-				w.Write([]byte{'}'})
-			})
-		case <-ctx.Done():
-			return nil
-		}
-	}
-}
-
-func (ec *executionContext) fieldContext_Subscription_listenToOperatorState(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Subscription",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "contextID":
-				return ec.fieldContext_OperatorStatusPerK8sContext_contextID(ctx, field)
-			case "operatorStatus":
-				return ec.fieldContext_OperatorStatusPerK8sContext_operatorStatus(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type OperatorStatusPerK8sContext", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Subscription_listenToOperatorState_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Subscription_listenToMeshSyncEvents(ctx context.Context, field graphql.CollectedField) (ret func(ctx context.Context) graphql.Marshaler) {
-	fc, err := ec.fieldContext_Subscription_listenToMeshSyncEvents(ctx, field)
-	if err != nil {
-		return nil
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = nil
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Subscription().ListenToMeshSyncEvents(rctx, fc.Args["k8scontextIDs"].([]string))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return nil
-	}
-	if resTmp == nil {
-		return nil
-	}
-	return func(ctx context.Context) graphql.Marshaler {
-		select {
-		case res, ok := <-resTmp.(<-chan *model.OperatorControllerStatusPerK8sContext):
-			if !ok {
-				return nil
-			}
-			return graphql.WriterFunc(func(w io.Writer) {
-				w.Write([]byte{'{'})
-				graphql.MarshalString(field.Alias).MarshalGQL(w)
-				w.Write([]byte{':'})
-				ec.marshalOOperatorControllerStatusPerK8sContext2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐOperatorControllerStatusPerK8sContext(ctx, field.Selections, res).MarshalGQL(w)
-				w.Write([]byte{'}'})
-			})
-		case <-ctx.Done():
-			return nil
-		}
-	}
-}
-
-func (ec *executionContext) fieldContext_Subscription_listenToMeshSyncEvents(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Subscription",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "contextID":
-				return ec.fieldContext_OperatorControllerStatusPerK8sContext_contextID(ctx, field)
-			case "OperatorControllerStatus":
-				return ec.fieldContext_OperatorControllerStatusPerK8sContext_OperatorControllerStatus(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type OperatorControllerStatusPerK8sContext", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Subscription_listenToMeshSyncEvents_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _Subscription_subscribePerfProfiles(ctx context.Context, field graphql.CollectedField) (ret func(ctx context.Context) graphql.Marshaler) {
 	fc, err := ec.fieldContext_Subscription_subscribePerfProfiles(ctx, field)
 	if err != nil {
@@ -18625,10 +18413,6 @@ func (ec *executionContext) _Subscription(ctx context.Context, sel ast.Selection
 		return ec._Subscription_listenToControlPlaneState(ctx, fields[0])
 	case "listenToDataPlaneState":
 		return ec._Subscription_listenToDataPlaneState(ctx, fields[0])
-	case "listenToOperatorState":
-		return ec._Subscription_listenToOperatorState(ctx, fields[0])
-	case "listenToMeshSyncEvents":
-		return ec._Subscription_listenToMeshSyncEvents(ctx, fields[0])
 	case "subscribePerfProfiles":
 		return ec._Subscription_subscribePerfProfiles(ctx, fields[0])
 	case "subscribePerfResults":
@@ -20572,13 +20356,6 @@ func (ec *executionContext) marshalOOAMCapability2ᚖgithubᚗcomᚋlayer5ioᚋm
 	return ec._OAMCapability(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalOOperatorControllerStatusPerK8sContext2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐOperatorControllerStatusPerK8sContext(ctx context.Context, sel ast.SelectionSet, v *model.OperatorControllerStatusPerK8sContext) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._OperatorControllerStatusPerK8sContext(ctx, sel, v)
-}
-
 func (ec *executionContext) marshalOOperatorStatus2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐOperatorStatus(ctx context.Context, sel ast.SelectionSet, v *model.OperatorStatus) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
@@ -20592,13 +20369,6 @@ func (ec *executionContext) unmarshalOOperatorStatusInput2ᚖgithubᚗcomᚋlaye
 	}
 	res, err := ec.unmarshalInputOperatorStatusInput(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalOOperatorStatusPerK8sContext2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐOperatorStatusPerK8sContext(ctx context.Context, sel ast.SelectionSet, v *model.OperatorStatusPerK8sContext) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._OperatorStatusPerK8sContext(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalOPatternPageResult2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐPatternPageResult(ctx context.Context, sel ast.SelectionSet, v *model.PatternPageResult) graphql.Marshaler {

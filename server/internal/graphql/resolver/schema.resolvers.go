@@ -166,17 +166,6 @@ func (r *subscriptionResolver) ListenToDataPlaneState(ctx context.Context, filte
 	return nil, ErrInvalidRequest
 }
 
-func (r *subscriptionResolver) ListenToOperatorState(ctx context.Context, k8scontextIDs []string) (<-chan *model.OperatorStatusPerK8sContext, error) {
-	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
-	return r.listenToOperatorsState(ctx, provider, k8scontextIDs)
-}
-
-func (r *subscriptionResolver) ListenToMeshSyncEvents(ctx context.Context, k8scontextIDs []string) (<-chan *model.OperatorControllerStatusPerK8sContext, error) {
-	// provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
-	// return r.listenToMeshSyncEvents(ctx, provider)
-	return nil, nil
-}
-
 func (r *subscriptionResolver) SubscribePerfProfiles(ctx context.Context, selector model.PageFilter) (<-chan *model.PerfPageProfiles, error) {
 	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
 	return r.subscribePerfProfiles(ctx, provider, selector)
@@ -317,9 +306,9 @@ type subscriptionResolver struct{ *Resolver }
 // !!! WARNING !!!
 // The code below was going to be deleted when updating resolvers. It has been copied here so you have
 // one last chance to move it out of harms way if you want. There are two reasons this happens:
-//   - When renaming or deleting a resolver the old code will be put in here. You can safely delete
-//     it when you're done.
-//   - You have helper methods in this file. Move them out to keep these resolver files clean.
+//  - When renaming or deleting a resolver the old code will be put in here. You can safely delete
+//    it when you're done.
+//  - You have helper methods in this file. Move them out to keep these resolver files clean.
 func (r *subscriptionResolver) SubscribePerfResult(ctx context.Context, id string) (<-chan *model.MesheryResult, error) {
 	panic(fmt.Errorf("not implemented"))
 }

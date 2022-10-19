@@ -607,16 +607,6 @@ type Subscription {
     filter: ServiceMeshFilter
   ): [DataPlane!]!
 
-  # Listen to changes in status of Meshery Operator in your cluster
-  listenToOperatorState(
-    k8scontextIDs: [String!]
-  ): OperatorStatusPerK8sContext
-
-  # Listen to changes in the list of available Namesapces in your cluster
-  listenToMeshSyncEvents(
-    k8scontextIDs: [String!]
-  ): OperatorControllerStatusPerK8sContext
-
   # Listen to changes in Performance Profiles
   subscribePerfProfiles(selector: PageFilter!): PerfPageProfiles!
 
