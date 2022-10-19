@@ -101,26 +101,3 @@ jobs:
           chart_version: ${{github.event.inputs.release-ver}}
           app_version: ${{github.event.inputs.release-ver}}
 
-#The below job is to be removed before merging PR #6318 and is present only for testing purposes of postgres migration
-  release-chart-temp:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@master
-      - name: set env
-        id: vars
-        # https://github.community/t/how-to-get-just-the-tag-name/16241/7
-        run: echo ::set-output name=tag::${{ github.ref_name }}   
-
-      - name: Manually publish Helm chart with release version
-        uses: stefanprodan/helm-gh-pages@master
-        with: 
-          token: ${{ secrets.GH_ACCESS_TOKEN_POSTGRES_TEST }}
-          charts_dir: install/kubernetes/helm
-          owner: Revolyssup
-          repository: Revolyssup.github.io
-          branch: main 
-          target_dir: charts
-          commit_username: l5io
-          commit_email: l5io@layer5.io
-          chart_version: ${{github.event.inputs.release-ver}}
-          app_version: ${{github.event.inputs.release-ver}}
