@@ -6,6 +6,7 @@ import (
 	"net/url"
 	"os"
 	"os/signal"
+	"path"
 	"time"
 
 	"github.com/gofrs/uuid"
@@ -95,12 +96,28 @@ func main() {
 
 	// Get the channel
 	log.Info("Meshery Server release channel is: ", releasechannel)
+	home, err := os.UserHomeDir()
+	if viper.GetString("USER_DATA_FOLDER") == "" {
+		if err != nil {
+			log.Error(ErrRetrievingUserHomeDirectory(err))
+			os.Exit(1)
+		}
+		viper.SetDefault("USER_DATA_FOLDER", path.Join(home, ".meshery", "config"))
+	}
 
+	errDir := os.MkdirAll(viper.GetString("USER_DATA_FOLDER"), 0755)
+	if errDir != nil {
+		log.Error(ErrCreatingUserDataDirectory(viper.GetString("USER_DATA_FOLDER")))
+		os.Exit(1)
+	}
+
+	log.Info("Meshery Database is at: ", viper.GetString("USER_DATA_FOLDER"))
 	if viper.GetString("KUBECONFIG_FOLDER") == "" {
 		if err != nil {
 			log.Error(ErrRetrievingUserHomeDirectory(err))
 			os.Exit(1)
 		}
+		viper.SetDefault("KUBECONFIG_FOLDER", path.Join(home, ".kube"))
 	}
 	log.Info("Using kubeconfig at: ", viper.GetString("KUBECONFIG_FOLDER"))
 
