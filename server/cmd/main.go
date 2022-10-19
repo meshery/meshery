@@ -96,12 +96,6 @@ func main() {
 	// Get the channel
 	log.Info("Meshery Server release channel is: ", releasechannel)
 
-	errDir := os.MkdirAll(viper.GetString("USER_DATA_FOLDER"), 0755)
-	if errDir != nil {
-		log.Error(ErrCreatingUserDataDirectory(viper.GetString("USER_DATA_FOLDER")))
-		os.Exit(1)
-	}
-
 	if viper.GetString("KUBECONFIG_FOLDER") == "" {
 		if err != nil {
 			log.Error(ErrRetrievingUserHomeDirectory(err))

@@ -96,11 +96,13 @@ server-local:
 run-fast: 
 	## "DEPRECATED: This target is deprecated. Use `make server`.
 
-## Build and run Meshery Server on your local machine (requires go${GOVERSION}).
-server:
+run-db:
 	# docker container stop pg
 	# docker container rm pg
-	docker run -d -p 5432:5432 -e POSTGRES_PASSWORD=meshery --name pg postgres
+	chmod +x ./install/start_db.sh
+	./install/start_db.sh
+## Build and run Meshery Server on your local machine (requires go${GOVERSION}).
+server: run-db
 	cd server; cd cmd; go$(GOVERSION) mod tidy; \
 	BUILD="$(GIT_VERSION)" \
 	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
