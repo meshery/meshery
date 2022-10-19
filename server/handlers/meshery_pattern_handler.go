@@ -382,10 +382,12 @@ func (h *Handler) CloneMesheryPatternHandler(
 }
 
 // swagger:route POST /api/pattern/catalog/publish PatternsAPI idPublishCatalogPatternHandler
+// Handle Publish for a Meshery Pattern
 //
 // Publishes pattern to Meshery Catalog by setting visibility to public and setting catalog data
 // responses:
-// 	200: noContentWrapper
+//
+//	200: noContentWrapper
 //
 // PublishCatalogPatternHandler makes pattern with given id public
 func (h *Handler) PublishCatalogPatternHandler(

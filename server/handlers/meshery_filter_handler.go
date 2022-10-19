@@ -277,10 +277,12 @@ func (h *Handler) CloneMesheryFilterHandler(
 }
 
 // swagger:route POST /api/filter/catalog/publish FiltersAPI idPublishCatalogFilterHandler
+// Handle Publish for a Meshery Filter
 //
 // Publishes filter to Meshery Catalog by setting visibility to public and setting catalog data
 // responses:
-// 	200: noContentWrapper
+//
+//	200: noContentWrapper
 //
 // PublishCatalogFilterHandler makes filter with given id public
 func (h *Handler) PublishCatalogFilterHandler(
