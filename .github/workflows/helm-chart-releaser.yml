@@ -25,7 +25,7 @@ on:
 jobs:
   validate:
     runs-on: ubuntu-latest
-    if: ${{github.event_name == 'pull_request'}}
+    if: github.event_name == 'pull_request'
     steps:
     - uses: actions/checkout@master
     - uses: azure/setup-helm@v2.0
@@ -38,7 +38,7 @@ jobs:
       run: helm lint install/kubernetes/helm/meshery-operator --with-subcharts
   release-chart:
     runs-on: ubuntu-latest
-    if: ${{ github.event_name != 'pull_request' }} && ${{ github.ref == 'refs/heads/master' }}
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/master'
     steps:
       - uses: actions/checkout@master
       - name: set env
