@@ -225,6 +225,9 @@ jobs:
           cd ./meshery-istio
           go run main.go &
           sleep 60
+      - name: Run postgres server
+        run: |
+          docker run -d -p 5432:5432 -e POSTGRES_PASSWORD=meshery --name pg postgres
       - name: Run backend
         env:
           PROVIDER_BASE_URLS: http://localhost:9876
