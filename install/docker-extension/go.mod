@@ -1,6 +1,6 @@
 module github.com/docker/meshery-extension
 
-go 1.17
+go 1.19
 
 require (
 	github.com/labstack/echo v3.3.10+incompatible

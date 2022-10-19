@@ -11,7 +11,7 @@ import { IconButton } from "@material-ui/core";
 const useStyles = makeStyles((theme) => ({
   accordionRoot : {
     width : "100%",
-    marginBottom : "1rem"
+    marginBottom : "0rem"
   },
   heading : {
     fontSize : theme.typography.pxToRem(15),

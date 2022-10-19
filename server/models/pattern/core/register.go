@@ -53,7 +53,7 @@ type WorkloadCapability struct {
 	genericCapability
 }
 
-//present in metadata."adapter.meshery.io/name". Ex- core,kubernetes,istio,linkerd,etc
+// present in metadata."adapter.meshery.io/name". Ex- core,kubernetes,istio,linkerd,etc
 type ComponentTypes struct {
 	Names                     map[string]bool
 	LatestVersionForComponent map[string]string
@@ -126,8 +126,8 @@ func (c *ComponentTypes) FilterWorkloadByVersionAndTypeAndName(typ string, ver s
 	return
 }
 
-//ComponentTypesSingleton is initialized per meshery instance and acts as a helper middleware between client facing API and capability registry.
-//Examples of names stored in this struct are: core,kubernetes,istio,linkerd
+// ComponentTypesSingleton is initialized per meshery instance and acts as a helper middleware between client facing API and capability registry.
+// Examples of names stored in this struct are: core,kubernetes,istio,linkerd
 var ComponentTypesSingleton = ComponentTypes{
 	Names:                     make(map[string]bool),
 	LatestVersionForComponent: make(map[string]string),

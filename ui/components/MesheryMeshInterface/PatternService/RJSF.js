@@ -51,6 +51,7 @@ function RJSF(props) {
 
   React.useEffect(() => {
     const rjsfSchema = getRefinedJsonSchema(jsonSchema, hideTitle, errorHandler)
+    // UI schema builds responsible for customizations in the RJSF fields shown to user
     const uiSchema = buildUiSchema(rjsfSchema)
     setSchema({ rjsfSchema, uiSchema })
   }, [jsonSchema]) // to reduce heavy lifting on every react render

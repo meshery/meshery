@@ -62,15 +62,10 @@ func Provision(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFu
 				data.PatternSvcWorkloadCapabilities[name],
 				data.PatternSvcTraitCapabilities[name],
 			)
-
-			comp.SetLabels(map[string]string{
-				"resource.pattern.meshery.io/id": svc.ID.String(),
-			})
-
 			// Get annotations for the component, if any
-			comp.Annotations = helpers.MergeStringMaps(
+			comp.ObjectMeta.Annotations = helpers.MergeStringMaps(
 				selector.GetAnnotationsForWorkload(data.PatternSvcWorkloadCapabilities[name]),
-				comp.Annotations,
+				comp.ObjectMeta.Annotations,
 			)
 
 			ccp.Component = comp

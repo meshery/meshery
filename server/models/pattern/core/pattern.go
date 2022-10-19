@@ -87,7 +87,6 @@ func (p *Pattern) GetApplicationComponent(name string) (v1alpha1.Component, erro
 	if !ok {
 		return v1alpha1.Component{}, fmt.Errorf("invalid service name")
 	}
-
 	comp := v1alpha1.Component{
 		TypeMeta: v1.TypeMeta{Kind: "Component", APIVersion: "core.oam.dev/v1alpha2"},
 		ObjectMeta: v1.ObjectMeta{
@@ -102,7 +101,10 @@ func (p *Pattern) GetApplicationComponent(name string) (v1alpha1.Component, erro
 			Settings: svc.Settings,
 		},
 	}
-
+	if comp.ObjectMeta.Labels == nil {
+		comp.ObjectMeta.Labels = make(map[string]string)
+	}
+	comp.ObjectMeta.Labels["resource.pattern.meshery.io/id"] = svc.ID.String() //set the patternID to track back the object
 	return comp, nil
 }
 
