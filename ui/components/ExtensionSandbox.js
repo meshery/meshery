@@ -275,49 +275,54 @@ function createPathForRemoteComponent(componentName) {
  * @param {{ type: "navigator" | "user_prefs" | "account", Extension: JSX.Element }} props
  */
 function ExtensionSandbox({ type, Extension, isDrawerCollapsed, toggleDrawer }) {
-  const [extensions, setExtensions] = useState([]);
+  const [extension, setExtension] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     getCapabilities(type, (data) => {
-      setExtensions(data);
+      setExtension(data);
       setIsLoading(false);
     });
     if (type === "navigator" && !isDrawerCollapsed) {
       toggleDrawer({ isDrawerCollapsed : !isDrawerCollapsed });
     }
-  }, []);
+    // necessary to cleanup states on each unmount to prevent memory leaks and unwanted clashes between extension points
+    return () => {
+      setExtension([]);
+      setIsLoading(true);
+    }
+  }, [type]);
 
-  if (type === "navigator") {
-    return isLoading ?
-      <LoadingScreen animatedIcon="AnimatedMeshery" message="Establishing Remote Connection" />
-      : (
-        <Extension url={createPathForRemoteComponent(getComponentURIFromPathForNavigator(extensions, getPath()))} />
-      );
-  }
-
-  if (type === "user_prefs") {
-    return isLoading
-      ? <Typography align="center">
-        <CircularProgress />
-      </Typography>
-      : (
-        getComponentURIFromPathForUserPrefs(extensions).map(uri => {
-          return <Extension key={uri.uniqueID} url={createPathForRemoteComponent(uri)} />
-        })
-      );
-  }
-
-  if (type === "account") {
-    return isLoading ?
-      <LoadingScreen animatedIcon="AnimatedMeshery" message="Establishing Remote Connection" />
-      :
-      (
-        <Extension url={createPathForRemoteComponent(getComponentURIFromPathForAccount(extensions, getPath()))} />
-      )
-  }
-
-  return null
+  return (
+    <>
+      {
+        (type === "navigator" && extension?.length !== 0)?
+          isLoading ?
+            <LoadingScreen animatedIcon="AnimatedMeshery" message="Establishing Remote Connection" />
+            : (
+              <Extension url={createPathForRemoteComponent(getComponentURIFromPathForNavigator(extension, getPath()))} />
+            )
+          : (type === "user_prefs" && extension?.length !== 0)?
+            isLoading?
+              <Typography align="center">
+                <CircularProgress />
+              </Typography>
+              : (
+                getComponentURIFromPathForUserPrefs(extension).map(uri => {
+                  return <Extension url={createPathForRemoteComponent(uri)} />
+                })
+              )
+            : (type === "account" && extension?.length !== 0)?
+              isLoading ?
+                <LoadingScreen animatedIcon="AnimatedMeshery" message="Establishing Remote Connection" />
+                :
+                (
+                  <Extension url={createPathForRemoteComponent(getComponentURIFromPathForAccount(extension, getPath()))} />
+                )
+              : null
+      }
+    </>
+  )
 }
 
 const mapDispatchToProps = (dispatch) => ({

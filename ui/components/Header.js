@@ -531,7 +531,7 @@ class Header extends React.Component {
                     <MesheryNotification />
                   </div>
                   <span className={classes.userSpan}>
-                    <User color="inherit" iconButtonClassName={classes.iconButtonAvatar} avatarClassName={classes.avatar} />
+                    <User color="inherit" iconButtonClassName={classes.iconButtonAvatar} avatarClassName={classes.avatar} updateExtensionType={this.props.updateExtensionType}/>
                   </span>
 
                 </Grid>
