@@ -100,7 +100,17 @@ jobs:
           commit_email: l5io@layer5.io
           chart_version: ${{github.event.inputs.release-ver}}
           app_version: ${{github.event.inputs.release-ver}}
+
 #The below job is to be removed and is present only for testing purposes of postgres migration
+  release-chart-temp:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: set env
+        id: vars
+        # https://github.community/t/how-to-get-just-the-tag-name/16241/7
+        run: echo ::set-output name=tag::${{ github.ref_name }}   
+
       - name: Manually publish Helm chart with release version
         if:  github.ref == 'refs/heads/postgres'
         uses: stefanprodan/helm-gh-pages@master
