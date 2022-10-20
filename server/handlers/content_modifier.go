@@ -30,8 +30,8 @@ func NewContentModifier(token string,
 	}
 }
 
-// AddMetadataForPatterns TODO: Similar mechanisms for filters and applications
-// Takes in response bytes, and add metadata to it based on some checks
+// TODO: Similar mechanisms for filters and applications
+// AddMetadataForPatterns takes in response bytes, and add metadata to it based on some checks
 func (mc *ContentModifier) AddMetadataForPatterns(ctx context.Context, contentBytes *[]byte) error {
 	var patternsPage models.MesheryPatternPage
 	err := json.Unmarshal(*contentBytes, &patternsPage)
