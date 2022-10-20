@@ -27,7 +27,7 @@ var offboardCmd = &cobra.Command{
 mesheryctl app offboard -f [filepath]
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if file == "" && cmd.Flags().Changed("file") {
+		if cmd.Flags().Changed("file") && file == "" {
 			const errMsg = `Usage: mesheryctl app offboard -f [filepath]`
 			return fmt.Errorf("no file path provided \n\n%v", errMsg)
 		}
