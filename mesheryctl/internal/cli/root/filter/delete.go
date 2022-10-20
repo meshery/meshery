@@ -5,8 +5,6 @@ import (
 	"io"
 	"net/http"
 	"os"
-	"regexp"
-	"strings"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
@@ -36,18 +34,7 @@ mesheryctl exp filter delete test-wasm
 		filter := ""
 		isID := false
 		if len(args) > 0 {
-			filter = args[0]
-			// It checks if filterID is present or not
-			filterID, err := utils.GetID("filter")
-			if err == nil {
-				for _, id := range filterID {
-					if strings.HasPrefix(id, filter) {
-						filter = id
-					}
-				}
-			}
-			// check if the filter argument is a valid uuid v4 string
-			isID, err = regexp.MatchString("^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-4[a-fA-F0-9]{3}-[8|9|aA|bB][a-fA-F0-9]{3}-[a-fA-F0-9]{12}$", filter)
+			filter, isID, err = utils.Valid(args[0], "filter")
 			if err != nil {
 				return err
 			}

@@ -506,6 +506,8 @@ func DeleteConfiguration(id string, configuration string) error {
 	}
 	return nil
 }
+
+// Valid - Check the args and configuration are valid.
 func Valid(args string, configuration string) (string, bool, error) {
 	isID := false
 	configID, err := GetID(configuration)

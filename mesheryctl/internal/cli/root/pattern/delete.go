@@ -7,8 +7,6 @@ import (
 	"io"
 	"net/http"
 	"os"
-	"regexp"
-	"strings"
 
 	"github.com/asaskevich/govalidator"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
@@ -40,18 +38,7 @@ mesheryctl pattern delete [file | URL]
 		pattern := ""
 		isID := false
 		if len(args) > 0 {
-			pattern = args[0]
-			// It checks if patternID is present or not
-			patternID, err := utils.GetID("pattern")
-			if err == nil {
-				for _, id := range patternID {
-					if strings.HasPrefix(id, pattern) {
-						pattern = id
-					}
-				}
-			}
-			// check if the pattern argument is a valid uuid v4 string
-			isID, err = regexp.MatchString("^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-4[a-fA-F0-9]{3}-[8|9|aA|bB][a-fA-F0-9]{3}-[a-fA-F0-9]{12}$", pattern)
+			pattern, isID, err = utils.Valid(args[0], "pattern")
 			if err != nil {
 				return err
 			}

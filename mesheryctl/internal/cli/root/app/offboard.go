@@ -7,8 +7,6 @@ import (
 	"io"
 	"net/http"
 	"os"
-	"regexp"
-	"strings"
 
 	"github.com/asaskevich/govalidator"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
@@ -29,7 +27,7 @@ var offboardCmd = &cobra.Command{
 mesheryctl app offboard -f [filepath]
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if file == "" {
+		if file == "" && cmd.Flags().Changed("file") {
 			const errMsg = `Usage: mesheryctl app offboard -f [filepath]`
 			return fmt.Errorf("no file path provided \n\n%v", errMsg)
 		}
@@ -45,18 +43,7 @@ mesheryctl app offboard -f [filepath]
 		app := ""
 		isID := false
 		if len(args) > 0 {
-			app = args[0]
-			// It checks if appID is present or not
-			appID, err := utils.GetID("application")
-			if err == nil {
-				for _, id := range appID {
-					if strings.HasPrefix(id, app) {
-						app = id
-					}
-				}
-			}
-			// check if the app argument is a valid uuid v4 string
-			isID, err = regexp.MatchString("^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-4[a-fA-F0-9]{3}-[8|9|aA|bB][a-fA-F0-9]{3}-[a-fA-F0-9]{12}$", app)
+			app, isID, err = utils.Valid(args[0], "application")
 			if err != nil {
 				return err
 			}
