@@ -105,13 +105,6 @@ func main() {
 		viper.SetDefault("USER_DATA_FOLDER", path.Join(home, ".meshery", "config"))
 	}
 
-	errDir := os.MkdirAll(viper.GetString("USER_DATA_FOLDER"), 0755)
-	if errDir != nil {
-		log.Error(ErrCreatingUserDataDirectory(viper.GetString("USER_DATA_FOLDER")))
-		os.Exit(1)
-	}
-
-	log.Info("Meshery Database is at: ", viper.GetString("USER_DATA_FOLDER"))
 	if viper.GetString("KUBECONFIG_FOLDER") == "" {
 		if err != nil {
 			log.Error(ErrRetrievingUserHomeDirectory(err))

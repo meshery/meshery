@@ -5,10 +5,10 @@ import (
 	"os"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/layer5io/meshkit/database"
 	"github.com/layer5io/meshkit/logger"
-	"github.com/sirupsen/logrus"
 )
 
 // sanitizeOrderInput takes in the "order by" query, a validColums
@@ -58,18 +58,23 @@ func setNewDBInstance(user string, pass string, host string, port string) {
 		log.Error(err)
 		os.Exit(1)
 	}
-
-	dbHandler, err = database.New(database.Options{
-		Engine:   database.POSTGRES,
-		Username: user,
-		Password: pass,
-		Host:     host,
-		Port:     port,
-		Logger:   log,
-	})
-	if err != nil {
-		logrus.Fatal(err)
+	for {
+		dbHandler, err = database.New(database.Options{
+			Engine:   database.POSTGRES,
+			Username: user,
+			Password: pass,
+			Host:     host,
+			Port:     port,
+			Logger:   log,
+		})
+		if err != nil {
+			log.Error(fmt.Errorf("could not connect to database: %s. retrying after %d seconds..\n", err.Error(), 10))
+			time.Sleep(10 * time.Second)
+			continue
+		}
+		break
 	}
+
 }
 
 func GetNewDBInstance(user string, pass string, host string, port string) *database.Handler {

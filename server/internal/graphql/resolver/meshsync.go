@@ -2,16 +2,12 @@ package resolver
 
 import (
 	"context"
-	"io"
-	"os"
-	"path"
 	"time"
 
 	operatorClient "github.com/layer5io/meshery-operator/pkg/client"
 	"github.com/layer5io/meshery/server/internal/graphql/model"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/broker"
-	"github.com/layer5io/meshkit/utils"
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
 )
 
@@ -118,35 +114,12 @@ func (r *Resolver) getMeshSyncStatus(k8sctx models.K8sContext) model.OperatorCon
 
 func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, actions *model.ReSyncActions, k8scontextID string) (model.Status, error) {
 	if actions.ClearDb == "true" {
-		// copies the contents .meshery/config/mesherydb.sql to .meshery/config/.archive/mesherydb.sql
+		// TODO: Archive the database(postgres)
 		// then drops all the DB table and then migrate/create tables, missing foreign keys, constraints, columns and indexes.
 		if actions.HardReset == "true" {
-			mesherydbPath := path.Join(utils.GetHome(), ".meshery/config")
-			err := os.Mkdir(path.Join(mesherydbPath, ".archive"), os.ModePerm)
-			if err != nil && os.IsNotExist(err) {
-				return "", err
-			}
+			//TODO: Archive the database below-----
 
-			src := path.Join(mesherydbPath, "mesherydb.sql")
-			dst := path.Join(mesherydbPath, ".archive/mesherydb.sql")
-
-			fin, err := os.Open(src)
-			if err != nil {
-				return "", err
-			}
-			defer fin.Close()
-
-			fout, err := os.Create(dst)
-			if err != nil {
-				return "", err
-			}
-			defer fout.Close()
-
-			_, err = io.Copy(fout, fin)
-			if err != nil {
-				return "", err
-			}
-
+			//-----
 			dbHandler := provider.GetGenericPersister()
 			if dbHandler == nil {
 				return "", ErrEmptyHandler
