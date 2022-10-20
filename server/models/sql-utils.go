@@ -68,7 +68,8 @@ func setNewDBInstance(user string, pass string, host string, port string) {
 			Logger:   log,
 		})
 		if err != nil {
-			log.Error(fmt.Errorf("could not connect to database: %s. retrying after %d seconds..\n", err.Error(), 10))
+			log.Error(ErrConnectingDatabase(err))
+			log.Info(fmt.Sprintf("retrying after %d", 10))
 			time.Sleep(10 * time.Second)
 			continue
 		}

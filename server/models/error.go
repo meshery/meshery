@@ -87,6 +87,7 @@ const (
 	ErrBrokerSubscriptionCode             = "2238"
 	ErrContextAlreadyPersistedCode        = "2241"
 	ErrGetPackageCode                     = "2252"
+	ErrConnectingDatabaseCode             = "2253"
 )
 
 var (
@@ -117,6 +118,9 @@ var (
 	ErrContextAlreadyPersisted = errors.New(ErrContextAlreadyPersistedCode, errors.Alert, []string{"kubernetes context already persisted with provider"}, []string{"kubernetes context already persisted with provider"}, []string{}, []string{})
 )
 
+func ErrConnectingDatabase(err error) error {
+	return errors.New(ErrConnectingDatabaseCode, errors.Alert, []string{"Could not connect to the database"}, []string{"", err.Error()}, []string{""}, []string{"Make sure the configurations are correct"})
+}
 func ErrGetPackage(err error) error {
 	return errors.New(ErrGetPackageCode, errors.Alert, []string{"Could not get the package"}, []string{"", err.Error()}, []string{""}, []string{"Make sure the configurations are correct"})
 }
