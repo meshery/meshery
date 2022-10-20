@@ -75,7 +75,6 @@ func setNewDBInstance(user string, pass string, host string, port string) {
 		}
 		break
 	}
-
 }
 
 func GetNewDBInstance(user string, pass string, host string, port string) *database.Handler {
