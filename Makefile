@@ -139,7 +139,7 @@ proto-build:
 	# see https://grpc.io/docs/languages/go/quickstart/
 	export PATH=$(PATH):$(GOBIN)
 	go$(GOVERSION) install google.golang.org/protobuf/cmd/protoc-gen-go@latest
-	go$(GOVERSION) install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.2
+	go$(GOVERSION) install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
 	protoc --proto_path=server/meshes --go_out=server/meshes --go_opt=paths=source_relative --go-grpc_out=server/meshes --go-grpc_opt=paths=source_relative meshops.proto 
 
 ## Analyze error codes
