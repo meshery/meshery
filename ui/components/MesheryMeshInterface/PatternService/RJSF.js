@@ -9,7 +9,6 @@ import MesheryArrayFieldTemplate from "./RJSFCustomComponents/ArrayFieldTemlate"
 import MesheryCustomObjFieldTemplate from "./RJSFCustomComponents/ObjectFieldTemplate";
 import { customizeValidator } from "@rjsf/validator-ajv6";
 import CustomInputField from "./RJSFCustomComponents/CustomInputField";
-import { CustomUpDownField } from './RJSFCustomComponents/CustomUpDownWidget';
 import _ from "lodash"
 
 class RJSFOverridenComponent extends Form {
@@ -81,8 +80,7 @@ function RJSFForm(props) {
         templates={templates}
         uiSchema={schema.uiSchema}
         widgets={{
-          TextWidget : CustomInputField,
-          UpDownWidget : CustomUpDownField
+          TextWidget : CustomInputField
         }}
         liveValidate
         showErrorList
