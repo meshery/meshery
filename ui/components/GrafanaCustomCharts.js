@@ -200,7 +200,7 @@ class GrafanaCustomCharts extends Component {
 
             {boardPanelConfigs.map((config, ind) => (
               // <ExpansionPanel defaultExpanded={ind === 0?true:false}>
-              <ExpansionPanel square defaultExpanded={ind === 0}>
+              <ExpansionPanel key={ind} square defaultExpanded={ind === 0}>
                 <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
                   <div className={classes.column}>
                     <Typography variant="subtitle1" gutterBottom>{config.board && config.board.title

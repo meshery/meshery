@@ -60,7 +60,7 @@ function MesheryMeshInterface({ adapter, selectedK8sContexts }) {
               .filter((s) => s.type !== "addon")
               .sort((a, b) => (getPatternServiceName(a.workload) < getPatternServiceName(b.workload) ? -1 : 1))
               .map((s) => (
-                <Grid item xs={12}>
+                <Grid item xs={12} key={s}>
                   <PatternServiceForm schemaSet={s} onSubmit={handleSubmit} onDelete={handleDelete} namespace={ns} />
                 </Grid>
               ))}
@@ -77,7 +77,7 @@ function MesheryMeshInterface({ adapter, selectedK8sContexts }) {
               .filter((s) => s.type === "addon")
               .sort((a, b) => (getPatternServiceName(a.workload) < getPatternServiceName(b.workload) ? -1 : 1))
               .map((s) => (
-                <Grid item>
+                <Grid item key={s}>
                   <PatternServiceForm schemaSet={s} onSubmit={handleSubmit} onDelete={handleDelete} namespace={ns} />
                 </Grid>
               ))}

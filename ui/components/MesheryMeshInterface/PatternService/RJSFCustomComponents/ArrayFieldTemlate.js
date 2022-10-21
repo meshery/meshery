@@ -51,10 +51,7 @@ const ArrayFieldTitle = ({ TitleField, idSchema, title, required }) => {
     return null;
   }
 
-  const id = `${idSchema.$id}__title`;
-  // return <h3>{title?.charAt(0)?.toUpperCase() + title?.slice(1)}</h3>;
   return <Typography variant="body1" style={{ fontWeight : "bold", marginLeft : ".5rem", display : "inline" }}>{title.charAt(0).toUpperCase() + title.slice(1)}</Typography>;
-  // return <TitleField id={id} title={title} required={required} />;
 };
 
 const ArrayFieldDescription = ({ DescriptionField, idSchema, description }) => {

@@ -206,6 +206,10 @@ class MesheryApp extends App {
       .catch(err => console.error(err))
   }
 
+  updateExtensionType = (type) => {
+    this.props.store.dispatch({ type : actionTypes.UPDATE_EXTENSION_TYPE, extensionType : type });
+  }
+
   async loadConfigFromServer() {
     const { store } = this.props;
     dataFetch('/api/system/sync',
@@ -299,12 +303,15 @@ class MesheryApp extends App {
                 onClose={this.handleDrawerToggle}
                 onCollapseDrawer={(open = null) => this.handleCollapseDrawer(open)}
                 isDrawerCollapsed={isDrawerCollapsed}
+                updateExtensionType={this.updateExtensionType}
               />
             </Hidden>
             <Hidden xsDown implementation="css">
               <Navigator
                 onCollapseDrawer={(open = null) => this.handleCollapseDrawer(open)}
-                isDrawerCollapsed={isDrawerCollapsed} />
+                isDrawerCollapsed={isDrawerCollapsed}
+                updateExtensionType={this.updateExtensionType}
+              />
             </Hidden>
           </nav>
           <div className={classes.appContent}>
@@ -335,6 +342,7 @@ class MesheryApp extends App {
                 activeContexts={this.state.activeK8sContexts}
                 setActiveContexts={this.setActiveContexts}
                 searchContexts={this.searchContexts}
+                updateExtensionType={this.updateExtensionType}
               />
               <main className={classes.mainContent}>
                 <MuiPickersUtilsProvider utils={MomentUtils}>

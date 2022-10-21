@@ -956,8 +956,8 @@ class MesheryPerformanceComponent extends React.Component {
                     onChange={this.handleChange("loadGenerator")}
                     row
                   >
-                    {loadGenerators.map((lg) => (
-                      <FormControlLabel value={lg} control={<Radio color="primary" />} label={lg} />
+                    {loadGenerators.map((lg, index) => (
+                      <FormControlLabel key={index} value={lg} control={<Radio color="primary" />} label={lg} />
                     ))}
                   </RadioGroup>
                 </FormControl>

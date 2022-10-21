@@ -73,7 +73,7 @@ class GrafanaCharts extends Component {
               </div>
               {boardPanelConfigs.map((config, ind) => (
                 // <ExpansionPanel defaultExpanded={ind === 0?true:false}>
-                <ExpansionPanel square defaultExpanded={false}>
+                <ExpansionPanel key={ind} square defaultExpanded={false}>
                   <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
                     <div className={classes.column}>
                       <Typography variant="subtitle1" gutterBottom>{config.board.title}</Typography>
@@ -86,8 +86,8 @@ class GrafanaCharts extends Component {
                   </ExpansionPanelSummary>
                   <ExpansionPanelDetails>
                     <Grid container spacing={5}>
-                      {config.panels.map((panel) => (
-                        <Grid item xs={12} sm={6} className={classes.iframe}>
+                      {config.panels.map((panel, ind) => (
+                        <Grid key={ind} item xs={12} sm={6} className={classes.iframe}>
                           <LazyLoad once>
                             <iframe
                               key={`url_-_-${ind}`}
