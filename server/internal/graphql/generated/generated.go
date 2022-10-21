@@ -2252,17 +2252,17 @@ enum MesheryController {
     MESHSYNC
   }
 
-enum MesheryControllerStatus {
-    DEPLOYED
-    NOTDEPLOYED
-    DEPLOYING
-    UNKOWN
-  }
+# enum MesheryControllerStatus {
+#     DEPLOYED
+#     NOTDEPLOYED
+#     DEPLOYING
+#     UNKOWN
+#   }
 
 type MesheryControllersStatusListItem {
     contextId: String!
     controller: MesheryController! 
-    status: MesheryControllerStatus!
+    status: String!
   }
 
 type MeshSyncEvent {
@@ -8162,9 +8162,9 @@ func (ec *executionContext) _MesheryControllersStatusListItem_status(ctx context
 		}
 		return graphql.Null
 	}
-	res := resTmp.(model.MesheryControllerStatus)
+	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalNMesheryControllerStatus2githubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐMesheryControllerStatus(ctx, field.Selections, res)
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_MesheryControllersStatusListItem_status(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -8174,7 +8174,7 @@ func (ec *executionContext) fieldContext_MesheryControllersStatusListItem_status
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type MesheryControllerStatus does not have child fields")
+			return nil, errors.New("field of type String does not have child fields")
 		},
 	}
 	return fc, nil
@@ -19342,16 +19342,6 @@ func (ec *executionContext) unmarshalNMesheryController2githubᚗcomᚋlayer5io�
 }
 
 func (ec *executionContext) marshalNMesheryController2githubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐMesheryController(ctx context.Context, sel ast.SelectionSet, v model.MesheryController) graphql.Marshaler {
-	return v
-}
-
-func (ec *executionContext) unmarshalNMesheryControllerStatus2githubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐMesheryControllerStatus(ctx context.Context, v interface{}) (model.MesheryControllerStatus, error) {
-	var res model.MesheryControllerStatus
-	err := res.UnmarshalGQL(v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalNMesheryControllerStatus2githubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐMesheryControllerStatus(ctx context.Context, sel ast.SelectionSet, v model.MesheryControllerStatus) graphql.Marshaler {
 	return v
 }
 

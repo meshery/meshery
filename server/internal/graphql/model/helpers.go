@@ -11,7 +11,6 @@ import (
 	"github.com/layer5io/meshkit/broker"
 	"github.com/layer5io/meshkit/database"
 	"github.com/layer5io/meshkit/logger"
-	"github.com/layer5io/meshkit/models/controllers"
 	"github.com/layer5io/meshkit/utils"
 	"github.com/layer5io/meshkit/utils/broadcast"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
@@ -355,23 +354,6 @@ func GetInternalController(controller models.MesheryController) MesheryControlle
 		return MesheryControllerOperator
 	case models.Meshsync:
 		return MesheryControllerMeshsync
-	}
-	return ""
-}
-
-func GetInternalControllerStatus(status controllers.MesheryControllerStatus) MesheryControllerStatus {
-	switch status {
-	case controllers.Deployed:
-		return MesheryControllerStatusDeployed
-
-	case controllers.NotDeployed:
-		return MesheryControllerStatusNotdeployed
-
-	case controllers.Deploying:
-		return MesheryControllerStatusDeploying
-
-	case controllers.Unknown:
-		return MesheryControllerStatusUnkown
 	}
 	return ""
 }

@@ -62,17 +62,17 @@ enum MesheryController {
     MESHSYNC
   }
 
-enum MesheryControllerStatus {
-    DEPLOYED
-    NOTDEPLOYED
-    DEPLOYING
-    UNKOWN
-  }
+# enum MesheryControllerStatus {
+#     DEPLOYED
+#     NOTDEPLOYED
+#     DEPLOYING
+#     UNKOWN
+#   }
 
 type MesheryControllersStatusListItem {
     contextId: String!
     controller: MesheryController! 
-    status: MesheryControllerStatus!
+    status: String!
   }
 
 type MeshSyncEvent {
