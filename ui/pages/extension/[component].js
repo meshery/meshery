@@ -3,7 +3,7 @@
 import Extension from "../../components/NavigatorExtension";
 import ExtensionSandbox, { getCapabilities, getFullPageExtensions, getComponentTitleFromPath } from "../../components/ExtensionSandbox";
 import { NoSsr } from "@material-ui/core";
-import { updatepagepath, updatepagetitle } from "../../lib/store";
+import { updatepagepath, updatepagetitle, updateExtensionType } from "../../lib/store";
 import { connect } from "react-redux";
 import Head from "next/head";
 import { bindActionCreators } from "redux";
@@ -45,33 +45,47 @@ function capitalize(string) {
 }
 
 class RemoteExtension extends React.Component {
+
   constructor(props) {
-    super(props)
+    super(props);
     this.state = {
-      componentTitle : "",
-      extensionType : ""
+      componentTitle : ''
     }
   }
 
   componentDidMount() {
+    console.log(`path: ${getPath()}`);
+    this.props.updatepagepath({ path : getPath() });
+    this.renderExtension();
+  }
+
+  componentDidUpdate(prevProps) {
+    // re-renders the extension if the extension type (redux store variable) changes
+    if (this.props.extensionType !== prevProps.extensionType) {
+      this.renderExtension();
+    }
+  }
+
+  renderExtension = () => {
     getFullPageExtensions(extNames => {
       extNames.forEach((ext) => {
         const currentURI = extractComponentURI(getPath());
         if (currentURI === ext.uri) {
-          this.setState({ extensionType : ext.name })
+          this.props.updateExtensionType({ extensionType : ext.name })
           getCapabilities(ext.name, extensions => {
             this.setState({ componentTitle : getComponentTitleFromPath(extensions, getPath()) });
             this.props.updatepagetitle({ title : getComponentTitleFromPath(extensions, getPath()) });
           });
-          console.log(`path: ${getPath()}`);
-          this.props.updatepagepath({ path : getPath() });
         }
       })
     });
+
   }
 
   render() {
-    const { componentTitle, extensionType } = this.state;
+    const { extensionType } = this.props;
+    const { componentTitle } = this.state;
+
     return (
       <NoSsr>
         <Head>
@@ -80,7 +94,6 @@ class RemoteExtension extends React.Component {
         {
           extensionType &&
           <NoSsr>
-            {console.log("ext", extensionType)}
             {
               (extensionType === 'navigator') ?
                 <ExtensionSandbox type={extensionType} Extension={Extension} />
@@ -90,11 +103,21 @@ class RemoteExtension extends React.Component {
           </NoSsr>
         }
       </NoSsr>
-    );
+    )
   }
+
 }
 
-const mapDispatchToProps = (dispatch) => ({ updatepagepath : bindActionCreators(updatepagepath, dispatch),
-  updatepagetitle : bindActionCreators(updatepagetitle, dispatch), });
+const mapStateToProps = (state) => ({
+  extensionType : state.get('extensionType'),
+});
 
-export default connect(null, mapDispatchToProps)(RemoteExtension);
+const mapDispatchToProps = (dispatch) => ({
+  updatepagepath : bindActionCreators(updatepagepath, dispatch),
+  updatepagetitle : bindActionCreators(updatepagetitle, dispatch),
+  updateExtensionType : bindActionCreators(updateExtensionType, dispatch)
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(RemoteExtension);
+
+

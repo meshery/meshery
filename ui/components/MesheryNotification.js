@@ -373,6 +373,7 @@ class MesheryNotification extends React.Component {
                 </Tabs>
                 {getNotifications(this.props.events, this.state.displayEventType).map((event, ind) => (
                   <MesheryEventViewer
+                    key={ind}
                     eventVariant={event.event_type}
                     eventSummary={event.summary}
                     deleteEvent={self.deleteEvent(ind)}

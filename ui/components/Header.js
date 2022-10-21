@@ -394,7 +394,7 @@ function K8sContextMenu({
                     }
                   }
 
-                  return <div id={ctx.id} className={classes.chip}>
+                  return <div id={ctx.id} className={classes.chip} key={ctx.uniqueID}>
                     <Tooltip title={`Server: ${ctx.server},  Operator: ${getStatus(operStatus)}, MeshSync: ${getStatus(meshStatus)}, Broker: ${getStatus(brokerStatus)}`}>
                       <div style={{ display : "flex", justifyContent : "flex-start", alignItems : "center" }}>
                         <Checkbox
@@ -531,7 +531,7 @@ class Header extends React.Component {
                     <MesheryNotification />
                   </div>
                   <span className={classes.userSpan}>
-                    <User color="inherit" iconButtonClassName={classes.iconButtonAvatar} avatarClassName={classes.avatar} />
+                    <User color="inherit" iconButtonClassName={classes.iconButtonAvatar} avatarClassName={classes.avatar} updateExtensionType={this.props.updateExtensionType}/>
                   </span>
 
                 </Grid>
