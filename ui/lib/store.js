@@ -56,10 +56,11 @@ const initialState = fromJS({
   selectedAdapter : '',
   events:[],
   catalogVisibility: true,
+  extensionType: '',
 
   // global gql-subscriptions
   operatorState: null,
-  meshSyncState: null
+  meshSyncState: null,  
 });
 
 export const actionTypes = {
@@ -87,8 +88,9 @@ export const actionTypes = {
   UPDATE_EVENTS : 'UPDATE_EVENTS',
   SET_CATALOG_CONTENT : 'SET_CATALOG_CONTENT',
   SET_OPERATOR_SUBSCRIPTION: 'SET_OPERATOR_SUBSCRIPTION',
-  SET_MESHSYNC_SUBSCRIPTION: 'SET_MESHSYNC_SUBSCRIPTION'
+  SET_MESHSYNC_SUBSCRIPTION: 'SET_MESHSYNC_SUBSCRIPTION',
   // UPDATE_SMI_RESULT: 'UPDATE_SMI_RESULT',
+  UPDATE_EXTENSION_TYPE: 'UPDATE_EXTENSION_TYPE',
 };
 
 // REDUCERS
@@ -199,6 +201,9 @@ export const reducer = (state = initialState, action) => {
     case actionTypes.SET_MESHSYNC_SUBSCRIPTION: 
       return state.merge({meshSyncState: action.meshSyncState});
 
+    case actionTypes.UPDATE_EXTENSION_TYPE:
+        return state.merge({ extensionType: action.extensionType });
+
     default:
       return state;
   }
@@ -298,6 +303,10 @@ export const setOperatorSubscription = ({operatorState}) => dispatch => {
 
 export const setMeshsyncSubscription = ({meshSyncState}) => dispatch => {
   return dispatch({type: actionTypes.SET_MESHSYNC_SUBSCRIPTION, meshSyncState})
+}
+
+export const updateExtensionType = ({ extensionType }) => dispatch => {
+  return dispatch({type: actionTypes.UPDATE_EXTENSION_TYPE, extensionType})
 }
 
 // export const updateSMIResults = ({smi_result}) => dispatch => {

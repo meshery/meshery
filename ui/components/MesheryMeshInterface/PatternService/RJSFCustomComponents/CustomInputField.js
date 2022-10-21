@@ -9,7 +9,6 @@ const CustomInputField = (props) => {
   const style = {
     display : "flex",
     alignItems : "center",
-    justifyContent : "space-between",
   }
 
   return (
@@ -19,12 +18,11 @@ const CustomInputField = (props) => {
           variant="outlined"
           size="small"
           key={props.id}
-          value={props.value}
+          value={props?.value}
           id={props.id}
           error={props.rawErrors?.length > 0}
-          onChange={e => props?.onChange(e.target.value)}
+          onChange={e => props?.onChange(e.target.value=== "" ? props.options.emptyValue : e.target.value)}
           label={`${prettifiedName}`}
-          style={{ marginTop : '0rem' }}
           InputProps={{
             style : { padding : "0px 0px 0px 0px", backgroundColor : "rgba(255, 255, 255, 0.4)" },
             endAdornment : (<InputAdornment position="start">
@@ -40,7 +38,7 @@ const CustomInputField = (props) => {
       </div>
       <div style={{ display : "flex" }}>
         {props.rawErrors?.map((errormsg, i) => (
-          (errormsg === "required property" ? null
+          (errormsg === "is a required property" ? null
             : <CustomHelperText key={i} errormsg={errormsg} id={props.id} />
           )
         ))}

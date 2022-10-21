@@ -51,7 +51,7 @@ class MesheryResultDialog extends React.Component {
             <TableBody>
               {this.createTableRow('Kubernetes API Server', kubernetes.server_version)}
               {kubernetes.nodes.map((node, ind) => (
-                <NoSsr>
+                <NoSsr key={node.uniqueID}>
                   <TableRow>
                     <TableCell colSpan={2} className={classes.row} align="center">
                       <strong>
@@ -94,7 +94,7 @@ class MesheryResultDialog extends React.Component {
           <Table className={classes.table} size="small" aria-label="Service Mesh">
             <TableBody>
               {meshes.map(([mesh, version], ind) => (
-                <NoSsr>
+                <NoSsr key={mesh.uniqueID}>
                   {meshes.length > 1
                     ? (
                       <TableRow>
