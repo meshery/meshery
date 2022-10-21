@@ -53,6 +53,10 @@ function RJSFForm(props) {
     // prop should be present in order for the cloned element to override this property
     transformErrors
   } = props;
+  const templates={
+    ArrayFieldTemplate,
+    ObjectFieldTemplate,
+  }
 
   useEffect(() => {
     const extensionTooltipPortal = document.getElementById("extension-tooltip-portal");
@@ -74,8 +78,7 @@ function RJSFForm(props) {
         onChange={onChange}
         formData={data}
         validator={validator}
-        ArrayFieldTemplate={ArrayFieldTemplate}
-        ObjectFieldTemplate={ObjectFieldTemplate}
+        templates={templates}
         uiSchema={schema.uiSchema}
         widgets={{
           TextWidget : CustomInputField,
