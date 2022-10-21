@@ -413,7 +413,11 @@ func applyHelmCharts(kubeClient *meshkitkube.Client, currCtx *config.Context, me
 	if mesheryImageVersion != "latest" {
 		chartVersion = mesheryImageVersion
 	}
-	err := kubeClient.ApplyHelmChart(meshkitkube.ApplyHelmChartConfig{
+	action := "install"
+	if act == meshkitkube.UNINSTALL {
+		action = "uninstall"
+	}
+	errServer := kubeClient.ApplyHelmChart(meshkitkube.ApplyHelmChartConfig{
 		Namespace:       utils.MesheryNamespace,
 		ReleaseName:     "meshery",
 		CreateNamespace: true,
@@ -428,10 +432,7 @@ func applyHelmCharts(kubeClient *meshkitkube.Client, currCtx *config.Context, me
 		DownloadLocation: path.Join(utils.MesheryFolder, utils.ManifestsFolder),
 		DryRun:           dryRun,
 	})
-	if err != nil {
-		return err
-	}
-	err = kubeClient.ApplyHelmChart(meshkitkube.ApplyHelmChartConfig{
+	errOperator := kubeClient.ApplyHelmChart(meshkitkube.ApplyHelmChartConfig{
 		Namespace:       utils.MesheryNamespace,
 		ReleaseName:     "meshery-operator",
 		CreateNamespace: true,
@@ -445,5 +446,14 @@ func applyHelmCharts(kubeClient *meshkitkube.Client, currCtx *config.Context, me
 		DownloadLocation: path.Join(utils.MesheryFolder, utils.ManifestsFolder),
 		DryRun:           dryRun,
 	})
-	return err
+	if errServer != nil && errOperator != nil {
+		return fmt.Errorf("could not %s meshery server: %s\ncould not %s meshery-operator: %s", action, errServer.Error(), action, errOperator.Error())
+	}
+	if errServer != nil {
+		return fmt.Errorf("%s success for operator but failed for meshery server: %s", action, errServer.Error())
+	}
+	if errOperator != nil {
+		return fmt.Errorf("%s success for meshery server but failed for meshery operator: %s", action, errOperator.Error())
+	}
+	return nil
 }
