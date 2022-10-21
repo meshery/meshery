@@ -2,7 +2,7 @@ import React from "react";
 import { IconButton, InputAdornment, TextField } from "@material-ui/core";
 import HelpOutlineIcon from "../HelpOutlineIcon";
 import EnlargedTextTooltip from "../EnlargedTextTooltip";
-import { CustomHelperText } from "./CustomUpDownWidget";
+
 const CustomInputField = (props) => {
   const name = props.label // || props.id?.split('_')[-1].trim()
   const prettifiedName = name || 'Enter a value'
@@ -35,13 +35,6 @@ const CustomInputField = (props) => {
               )}
             </InputAdornment>),
           }} />
-      </div>
-      <div style={{ display : "flex" }}>
-        {props.rawErrors?.map((errormsg, i) => (
-          (errormsg === "is a required property" ? null
-            : <CustomHelperText key={i} errormsg={errormsg} id={props.id} />
-          )
-        ))}
       </div>
     </>
   )
