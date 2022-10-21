@@ -309,7 +309,7 @@ function ExtensionSandbox({ type, Extension, isDrawerCollapsed, toggleDrawer }) 
               </Typography>
               : (
                 getComponentURIFromPathForUserPrefs(extension).map(uri => {
-                  return <Extension url={createPathForRemoteComponent(uri)} />
+                  return <Extension url={createPathForRemoteComponent(uri)} key={uri} />
                 })
               )
             : (type === "account" && extension?.length !== 0)?
