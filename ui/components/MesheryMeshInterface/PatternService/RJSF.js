@@ -7,7 +7,7 @@ import { rjsfTheme } from "../../../themes";
 import { recursiveCleanObject } from "../helpers";
 import MesheryArrayFieldTemplate from "./RJSFCustomComponents/ArrayFieldTemlate";
 import MesheryCustomObjFieldTemplate from "./RJSFCustomComponents/ObjectFieldTemplate";
-import MesheryWrapIfAdditionalTemplate from './RJSFCustomComponents/WrapIfAdditionalTemplate';
+// import MesheryWrapIfAdditionalTemplate from './RJSFCustomComponents/WrapIfAdditionalTemplate';
 import { customizeValidator } from "@rjsf/validator-ajv6";
 import CustomInputField from "./RJSFCustomComponents/CustomInputField";
 import _ from "lodash"
@@ -48,7 +48,7 @@ function RJSFForm(props) {
     isLoading,
     ArrayFieldTemplate = MesheryArrayFieldTemplate,
     ObjectFieldTemplate = MesheryCustomObjFieldTemplate,
-    WrapIfAdditionalTemplate = MesheryWrapIfAdditionalTemplate,
+    // WrapIfAdditionalTemplate = MesheryWrapIfAdditionalTemplate,
     LoadingComponent,
     ErrorList,
     // prop should be present in order for the cloned element to override this property
@@ -57,7 +57,7 @@ function RJSFForm(props) {
   const templates={
     ArrayFieldTemplate,
     ObjectFieldTemplate,
-    WrapIfAdditionalTemplate,
+    // WrapIfAdditionalTemplate, // todo: enable it with some fixes
   }
 
   useEffect(() => {
@@ -86,9 +86,8 @@ function RJSFForm(props) {
           TextWidget : CustomInputField
         }}
         liveValidate
-        showErrorList
-        // showErrorList={false}
-        // noHtml5Validate
+        showErrorList={false}
+        noHtml5Validate
         ErrorList={ErrorList}
         transformErrors={transformErrors}
       >
