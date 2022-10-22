@@ -107,6 +107,8 @@ const (
 	ErrClonePatternCode                 = "2246"
 	ErrCloneFilterCode                  = "2247"
 	ErrGenerateComponentsCode           = "2254"
+	ErrPublishCatalogPatternCode        = "2255"
+	ErrPublishCatalogFilterCode         = "2256"
 )
 
 var (
@@ -462,4 +464,12 @@ func ErrClonePattern(err error) error {
 
 func ErrCloneFilter(err error) error {
 	return errors.New(ErrCloneFilterCode, errors.Alert, []string{"Error failed to clone filter"}, []string{err.Error()}, []string{"Failed to clone Filter with the given ID"}, []string{"Check if the Filter ID is correct and the Filter is public"})
+}
+
+func ErrPublishCatalogPattern(err error) error {
+	return errors.New(ErrPublishCatalogPatternCode, errors.Alert, []string{"Error failed to publish catalog pattern"}, []string{err.Error()}, []string{"Failed to publish catalog pattern"}, []string{"Check if the pattern ID is correct and you are admin"})
+}
+
+func ErrPublishCatalogFilter(err error) error {
+	return errors.New(ErrPublishCatalogFilterCode, errors.Alert, []string{"Error failed to publish catalog filter"}, []string{err.Error()}, []string{"Failed to publish catalog filter"}, []string{"Check if the filter ID is correct and you are admin"})
 }

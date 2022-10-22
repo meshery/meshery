@@ -19,7 +19,8 @@
     "ci-test-integration": "start-server-and-test dev http://localhost:3000 test-integration",
     "relay": "relay-compiler --src ./components --schema ../server/internal/graphql/schema/schema.graphql",
     "prepare": "cd .. && husky install ui/.husky",
-    "cy:dev:open": "start-server-and-test dev http://localhost:3000 cy:open"
+    "cy:dev:open": "start-server-and-test dev http://localhost:3000 cy:open",
+    "postinstall": "patch-package"
   },
   "husky": {
     "hooks": {
@@ -48,8 +49,9 @@
     "@material-ui/lab": "^4.0.0-alpha.61",
     "@material-ui/pickers": "^3.3.10",
     "@paciolan/remote-component": "^2.11.0",
-    "@rjsf/core": "^3.1.0",
-    "@rjsf/material-ui": "^3.0.0",
+    "@rjsf/core": "^5.0.0-beta.11",
+    "@rjsf/material-ui": "^5.0.0-beta.11",
+    "@rjsf/validator-ajv6": "^5.0.0-beta.11",
     "@zeit/next-css": "^1.0.1",
     "autoprefixer": "^10.4.7",
     "babel-plugin-istanbul": "^6.0.0",
@@ -76,13 +78,14 @@
     "next-compose": "0.0.2",
     "next-redux-wrapper": "^3.0.0-alpha.3",
     "notistack": "^1.0.10",
+    "patch-package": "^6.4.7",
     "path-parse": "^1.0.7",
     "postcss": "^8.4.14",
     "prop-types": "latest",
     "react": "^16.14.0",
     "react-big-calendar": "^0.35.0",
     "react-codemirror2": "^7.2.1",
-    "react-countdown-clock": "^2.6.0",
+    "react-countdown-clock": "2.7.0",
     "react-dom": "^16.14.0",
     "react-jss": "^10.9.0",
     "react-lazyload": "^3.2.0",
