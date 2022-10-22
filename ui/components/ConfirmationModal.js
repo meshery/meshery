@@ -227,7 +227,7 @@ function ConfirmationMsg(props) {
         matchedCtx.push(ctx);
       }
     });
-    setK8sContexts(matchedCtx);
+    setK8sContexts({ selectedK8sContexts : matchedCtx });
   }
 
   const setContextViewer = (id) => {
