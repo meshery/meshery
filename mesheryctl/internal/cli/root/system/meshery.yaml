@@ -1,11 +1,16 @@
 version: "3"
 services:
   meshery:
-    image: layer5/meshery:latest
+    image: layer5/meshery:stable-latest
+    depends_on:
+      - meshery-db
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
     environment:
       - "PROVIDER_BASE_URLS=https://meshery.layer5.io"
+      - "DBHOST=meshery-db"
+      - "DBPORT=5432"
+      - "DBPASS=meshery"
       - "SAAS_BASE_URL=https://meshery.layer5.io"
       - "ADAPTER_URLS=meshery-istio:10000 meshery-linkerd:10001 meshery-consul:10002 meshery-nsm:10004 meshery-app-mesh:10005 meshery-kuma:10007 meshery-osm:10009 meshery-traefik-mesh:10006 meshery-nginx-sm:10010 meshery-cilium:10012"
       - "EVENT=mesheryLocal"
@@ -15,6 +20,12 @@ services:
       - $HOME/.minikube:$HOME/.minikube:ro
     ports:
       - "9081:9081"
+  meshery-db:
+    image:  postgres:10.22-alpine
+    environment:
+      - "POSTGRES_PASSWORD=meshery"
+    ports:
+      - "5432:5432"
   meshery-istio:
     image: layer5/meshery-istio:stable-latest
     labels:
