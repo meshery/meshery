@@ -198,7 +198,7 @@ func start() error {
 		userPortMapping := userPort[len(userPort)-1] + ":" + containerPort[len(containerPort)-1]
 		services["meshery"].Ports[0] = userPortMapping
 
-		RequiredService := []string{"meshery", "watchtower"}
+		RequiredService := []string{"meshery", "watchtower", "meshery-db"}
 
 		AllowedServices := map[string]utils.Service{}
 		for _, v := range currCtx.GetComponents() {

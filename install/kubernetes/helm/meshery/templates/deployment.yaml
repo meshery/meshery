@@ -66,6 +66,13 @@ spec:
           name: {{ .Values.db.container_name }}
           image: {{ .Values.db.tag }}
           imagePullPolicy: {{ .Values.db.pullPolicy }}
+          ports:
+            - containerPort: 5432
+          livenessProbe:
+            tcpSocket:
+              port: 5432
+            initialDelaySeconds: 10
+            periodSeconds: 5
           resources: {}
       {{- with .Values.nodeSelector }}
       nodeSelector:

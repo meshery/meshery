@@ -40,9 +40,16 @@ spec:
         - env:
             - name: POSTGRES_PASSWORD
               value: meshery
-          name: pg 
+          name: meshery-db
           image: postgres:10.22-alpine
           imagePullPolicy: Always
+          ports:
+            - containerPort: 5432
           resources: {}
-      restartPolicy: Always
+          livenessProbe:
+            tcpSocket:
+              port: 5432
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            restartPolicy: Always
 status: {}
