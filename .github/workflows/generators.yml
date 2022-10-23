@@ -1,4 +1,4 @@
-name: ArtifactHub Component Generation
+name: Static Component Generation
 on: 
   workflow_dispatch:
 jobs:
@@ -27,4 +27,4 @@ jobs:
       - name: Commit results
         uses: EndBug/add-and-commit@v9
         with: 
-          add: "*.json"
+          add: "*.yaml"

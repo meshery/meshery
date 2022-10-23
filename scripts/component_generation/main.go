@@ -1,35 +1,32 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
-	"io/ioutil"
-	"net/http"
+	"io"
 	"os"
 	"path/filepath"
 	"sync"
-	"time"
 
-	// "time"
+	"time"
 
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 	"github.com/layer5io/meshkit/utils/artifacthub"
+	"gopkg.in/yaml.v3"
 )
 
-const ArtifactHubApiEndpoint = "https://artifacthub.io/api/v1/"
-
 var (
-	AhSearchEndpoint = ArtifactHubApiEndpoint + "helm-exporter"
+	AhSearchEndpoint = artifacthub.AhHelmExporterEndpoint
 
 	OutputDirectoryPath     = "./output"
-	ComponentsFileName      = "components.json"
-	ComponentModelsFileName = "component_models.json"
+	ComponentsFileName      = "components.yaml"
+	ComponentModelsFileName = "component_models.yaml"
 )
 
 type ComponentModel struct {
-	SystemName string `json:"systemName"`
-	AhRepo     string `json:"ahRepo"`
-	Version    string `json:"version"`
+	SystemName string `yaml:"systemName"`
+	AhRepo     string `yaml:"ahRepo"`
+	Version    string `yaml:"version"`
+	RepoUrl    string `yaml:"repoUrl"`
 }
 
 func convertPackagesToCompModels(pkgs []artifacthub.AhPackage) []ComponentModel {
@@ -39,6 +36,7 @@ func convertPackagesToCompModels(pkgs []artifacthub.AhPackage) []ComponentModel 
 			SystemName: ap.Name,
 			Version:    ap.Version,
 			AhRepo:     ap.Repository,
+			RepoUrl:    ap.RepoUrl,
 		})
 	}
 	return models
@@ -51,13 +49,14 @@ func convertCompModelsToPackages(models []ComponentModel) []artifacthub.AhPackag
 			Name:       cm.SystemName,
 			Version:    cm.Version,
 			Repository: cm.AhRepo,
+			RepoUrl:    cm.RepoUrl,
 		})
 	}
 	return pkgs
 }
 
 func main() {
-	compsFd, err := os.OpenFile(filepath.Join(OutputDirectoryPath, ComponentsFileName), os.O_CREATE|os.O_RDWR, 0644)
+	compsFd, err := os.OpenFile(filepath.Join(OutputDirectoryPath, ComponentsFileName), os.O_CREATE|os.O_RDWR|os.O_APPEND, 0644)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -79,18 +78,18 @@ func main() {
 	content := make([]byte, 0)
 	models := make([]ComponentModel, 0)
 	pkgs := make([]artifacthub.AhPackage, 0)
-	content, err = ioutil.ReadAll(modelsFd)
+	content, err = io.ReadAll(modelsFd)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	err = json.Unmarshal(content, &models)
+	err = yaml.Unmarshal(content, &models)
 	if err != nil {
 		fmt.Println(err)
 	}
 	pkgs = convertCompModelsToPackages(models)
 	if pkgs == nil || len(pkgs) == 0 {
-		pkgs, err = GetAllAhHelmPackages()
+		pkgs, err = artifacthub.GetAllAhHelmPackages()
 		if err != nil {
 			fmt.Println(err)
 			return
@@ -101,10 +100,12 @@ func main() {
 			return
 		}
 	}
+
 	inputChan := make(chan []artifacthub.AhPackage)
-	// for i := 0; i <= 10; i++ {
-	StartPipeline(inputChan, &compsWriter)
-	// }
+	for i := 0; i <= 10; i++ {
+		StartPipeline(inputChan, &compsWriter)
+	}
+	inputChan <- pkgs[:10]
 	for len(pkgs) != 0 {
 		if len(pkgs) < 50 {
 			inputChan <- pkgs
@@ -125,9 +126,11 @@ func StartPipeline(in chan []artifacthub.AhPackage, writer *Writer) error {
 		for pkgs := range in {
 			ahPkgs := make([]artifacthub.AhPackage, 0)
 			for _, ap := range pkgs {
+				fmt.Println("[DEBUG] Updating package data for: ", ap.Name)
 				err := ap.UpdatePackageData()
 				if err != nil {
 					fmt.Println(err)
+					continue
 				}
 				ahPkgs = append(ahPkgs, ap)
 			}
@@ -137,7 +140,17 @@ func StartPipeline(in chan []artifacthub.AhPackage, writer *Writer) error {
 	// generation of components
 	go func() {
 		for pkgs := range pkgsChan {
-			compsChan <- GenerateComponents(pkgs)
+			compStructs := make([]ComponentStruct, 0)
+			for _, ap := range pkgs {
+				fmt.Println("[DEBUG] Generating components for: ", ap.Name)
+				comps, err := ap.GenerateComponents()
+				if err != nil {
+					fmt.Println(err)
+					continue
+				}
+				compStructs = append(compStructs, wrapComponentsInWritableStruct(comps, ap.Name))
+			}
+			compsChan <- compStructs
 		}
 	}()
 	// writer
@@ -153,48 +166,16 @@ func StartPipeline(in chan []artifacthub.AhPackage, writer *Writer) error {
 }
 
 type ComponentStruct struct {
-	PackageName string               `json:"name"`
-	Components  []v1alpha1.Component `json:"components"`
+	PackageName string               `yaml:"name"`
+	Components  []v1alpha1.Component `yaml:"components"`
 }
 
-func GetAllAhHelmPackages() ([]artifacthub.AhPackage, error) {
-	pkgs := make([]artifacthub.AhPackage, 0)
-	fmt.Println("[DEBUG] Getting packages from ArtifactHub")
-	resp, err := http.Get(AhSearchEndpoint)
-	if err != nil {
-		return nil, err
+func wrapComponentsInWritableStruct(comps []v1alpha1.Component, pkgName string) ComponentStruct {
+	return ComponentStruct{
+		PackageName: pkgName,
+		Components:  comps,
 	}
-	if resp.StatusCode != 200 {
-		err = fmt.Errorf("status code %d for %s", resp.StatusCode, AhSearchEndpoint)
-		return nil, err
-	}
-	defer resp.Body.Close()
-	var res []map[string]interface{}
-	err = json.NewDecoder(resp.Body).Decode(&res)
-	if err != nil {
-		return nil, err
-	}
-	for _, p := range res {
-		pkgs = append(pkgs, artifacthub.AhPackage{
-			Name:       p["name"].(string),
-			Version:    p["version"].(string),
-			Repository: p["repository"].(map[string]interface{})["name"].(string),
-		})
-	}
-	return pkgs, nil
-}
 
-func GenerateComponents(pkgs []artifacthub.AhPackage) []ComponentStruct {
-	result := make([]ComponentStruct, 0)
-	for _, ap := range pkgs {
-		comps, err := ap.GenerateComponents()
-		if err != nil {
-			fmt.Println(err)
-			continue
-		}
-		result = append(result, ComponentStruct{PackageName: ap.Name, Components: comps})
-	}
-	return result
 }
 
 type Writer struct {
@@ -205,7 +186,7 @@ type Writer struct {
 func writeComponentModels(models []ComponentModel, writer *Writer) error {
 	writer.m.Lock()
 	defer writer.m.Unlock()
-	val, err := json.MarshalIndent(models, "", " ")
+	val, err := yaml.Marshal(models)
 	if err != nil {
 		return err
 	}
@@ -217,23 +198,39 @@ func writeComponentModels(models []ComponentModel, writer *Writer) error {
 }
 
 func writeComponents(cmps []ComponentStruct, writer *Writer) error {
-	out := make([]ComponentStruct, 0)
-	var content []byte
 	writer.m.Lock()
 	defer writer.m.Unlock()
-	l, err := writer.file.Read(content)
-	if err == nil && l != 0 {
-		err = json.Unmarshal(content, &out)
+	compsToWrite := make([]ComponentStruct, 0)
+	content, err := io.ReadAll(writer.file)
+	if err != nil {
+		return err
+	}
+	// 1. the file is empty
+	if string(content) == "" {
+		for _, cs := range cmps {
+			if len(cs.Components) != 0 {
+				compsToWrite = append(compsToWrite, cs)
+			}
+		}
+	}
+	// 2. the file already has some components in it
+	if string(content) != "" {
+		err = yaml.Unmarshal(content, &compsToWrite)
 		if err != nil {
 			return err
 		}
-	}
-	for _, c := range cmps {
-		if len(c.Components) != 0 {
-			cmps = append(cmps, c)
+		for _, cs := range cmps {
+			if len(cs.Components) != 0 {
+				fmt.Println("[DEBUG] Writing components for package: ", cs.PackageName)
+				compsToWrite = append(compsToWrite, cs)
+			}
 		}
 	}
-	val, err := json.MarshalIndent(out, "", " ")
+	if len(compsToWrite) == 0 {
+		return nil
+	}
+	// write components
+	val, err := yaml.Marshal(compsToWrite)
 	if err != nil {
 		return err
 	}
