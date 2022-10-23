@@ -10,6 +10,7 @@ import (
 	"os"
 	"time"
 
+	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/internal/sql"
@@ -328,4 +329,37 @@ func (kc *K8sContext) AssignServerID() error {
 	kc.KubernetesServerID = &ksUUID
 
 	return nil
+}
+
+
+func FlushMeshSyncData(ctxID string, provider Provider, ctx context.Context) {
+	k8sctxs, ok := ctx.Value(AllKubeClusterKey).([]K8sContext)
+	if !ok || len(k8sctxs) == 0 {
+		logrus.Error(ErrEmptyCurrentK8sContext)
+		return
+	}
+	var sid string
+	for _, k8ctx := range k8sctxs {
+		if k8ctx.ID == ctxID && k8ctx.KubernetesServerID != nil {
+			sid = k8ctx.KubernetesServerID.String()
+			break
+		}
+	}
+	var refCount int
+	for _, k8ctx := range k8sctxs {
+		if k8ctx.KubernetesServerID.String() == sid && k8ctx.ID != ctxID {
+			refCount++
+		}
+	}
+	if refCount == 1 {
+		if provider.GetGenericPersister() == nil {
+			logrus.Error(ErrEmptyHandler)
+			return
+		}
+		err := provider.GetGenericPersister().Where("cluster_id = ?", sid).Delete(&meshsyncmodel.Object{}).Error
+		if err != nil {
+			logrus.Error(ErrEmptyHandler)
+			return
+		}
+	}
 }

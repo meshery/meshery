@@ -75,18 +75,23 @@ const (
 	ErrFetchDataCode                      = "2147"
 	ErrIndexOutOfRangeCode                = "2148"
 	ErrSessionCopyCode                    = "2149"
+
 	ErrSavingSeededComponentsCode         = "2215"
 	ErrGettingSeededComponentsCode        = "2216"
 	ErrDownloadingSeededComponentsCode    = "2217"
 	ErrContextIDCode                      = "2218"
 	ErrMesheryInstanceIDCode              = "2219"
 	ErrMesheryNotInClusterCode            = "2220"
+	
+
 	ErrBrokerNotFoundCode                 = "2235"
 	ErrCreateOperatorDeploymentConfigCode = "2236"
 	ErrRequestMeshsyncStoreCode           = "2237"
 	ErrBrokerSubscriptionCode             = "2238"
+
 	ErrContextAlreadyPersistedCode        = "2241"
 	ErrGetPackageCode                     = "2252"
+
 )
 
 var (
