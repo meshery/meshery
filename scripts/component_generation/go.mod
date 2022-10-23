@@ -2,7 +2,7 @@ module github.com/layer5io/meshmodel_ahub_gen
 
 go 1.19
 
-require github.com/layer5io/meshkit v0.6.5
+require github.com/layer5io/meshkit v0.6.6
 
 require (
 	cuelang.org/go v0.4.3 // indirect
