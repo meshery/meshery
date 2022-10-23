@@ -28,13 +28,12 @@ var listCmd = &cobra.Command{
 // List all WASM filter files present
 mesheryctl exp filter list	
 	`,
-	Args: cobra.MinimumNArgs(0),
+	Args: cobra.MaximumNArgs(0),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			return errors.Wrap(err, "error processing config")
 		}
-
 		var response models.FiltersAPIResponse
 		client := &http.Client{}
 		req, err := utils.NewRequest("GET", mctlCfg.GetBaseMesheryURL()+"/api/filter", nil)
@@ -57,11 +56,11 @@ mesheryctl exp filter list
 		err = json.Unmarshal(body, &response)
 
 		if err != nil {
-			return err
+			return ErrUnmarshal(err)
 		}
 		tokenObj, err := utils.ReadToken(utils.TokenFlag)
 		if err != nil {
-			return err
+			return errors.New("Error reading token. Use 'mesheryctl exp filter list --help' for usage details. " + err.Error())
 		}
 		provider := tokenObj["meshery-provider"]
 		var data [][]string
