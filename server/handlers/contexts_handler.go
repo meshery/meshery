@@ -83,14 +83,7 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, prefOb
 		return
 	}
 
-	k8sctxs, ok := req.Context().Value(models.AllKubeClusterKey).([]models.K8sContext)
-	logrus.Info("k8sctxs: ", k8sctxs)
-	if !ok || len(k8sctxs) == 0 {
-		logrus.Error("ErrEmptyCurrentK8sContext")
-		return
-	}
-
-	go models.FlushMeshSyncData(mux.Vars(req)["id"], provider, k8sctxs)
+	go models.FlushMeshSyncData(mux.Vars(req)["id"], provider, req.Context())
 	h.config.K8scontextChannel.PublishContext()
 }
 

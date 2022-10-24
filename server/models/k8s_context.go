@@ -331,30 +331,37 @@ func (kc *K8sContext) AssignServerID() error {
 	return nil
 }
 
-
-func FlushMeshSyncData(ctxID string, provider Provider, k8sctxs []K8sContext){
+// FlushMeshSyncData will flush the meshsync data for the passed kubernetes contextID
+func FlushMeshSyncData(ctxID string, provider Provider, ctx context.Context){
+	// Gets all the available kubernetes contexts
+	k8sctxs, ok := ctx.Value(AllKubeClusterKey).([]K8sContext)
+	if !ok || len(k8sctxs) == 0 {
+		logrus.Error("ErrEmptyCurrentK8sContext")
+		return
+	}
 	var sid string
+	// Gets the serverID for the passed contextID
 	for _, k8ctx := range k8sctxs {
 		if k8ctx.ID == ctxID && k8ctx.KubernetesServerID != nil {
 			sid = k8ctx.KubernetesServerID.String()
 			break
 		}
 	}
-	logrus.Info("sid: ", sid)
 	var refCount int
+	// Counts the reference of the serverID
+	// As multiple context can have same serverID
 	for _, k8ctx := range k8sctxs {
 		if k8ctx.KubernetesServerID.String() == sid {
 			refCount++
 		}
 	}
-	logrus.Debug("refCount: ", refCount)
+	// If the reference count is 1 then only flush the meshsync data
+	// because this means its the last contextID referring to that Kubernetes Server
 	if refCount == 1 {
-		logrus.Info("inside deleting")
 		if provider.GetGenericPersister() == nil {
 			logrus.Error("ErrEmptyHandler")
 			return
 		}
-		logrus.Info("deleteing objects...")
 		err := provider.GetGenericPersister().Where("cluster_id = ?", sid).Delete(&meshsyncmodel.Object{}).Error
 		if err != nil {
 			logrus.Error("ErrEmptyHandler")
