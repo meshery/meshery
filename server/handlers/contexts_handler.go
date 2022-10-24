@@ -81,9 +81,14 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, prefOb
 		http.Error(w, "failed to delete context", http.StatusInternalServerError)
 		return
 	}
-
-	go models.FlushMeshSyncData(mux.Vars(req)["id"], provider, req.Context())
 	h.config.K8scontextChannel.PublishContext()
+
+	err = models.FlushMeshSyncData(mux.Vars(req)["id"], provider, req.Context())
+	if err != nil {
+		h.log.Error(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 }
 
 // func (h *Handler) GetCurrentContextHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
