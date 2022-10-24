@@ -5,7 +5,6 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"github.com/sirupsen/logrus"
 	"github.com/layer5io/meshery/server/models"
 )
 

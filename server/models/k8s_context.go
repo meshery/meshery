@@ -19,7 +19,6 @@ import (
 	"gopkg.in/yaml.v2"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/tools/clientcmd"
-	"github.com/layer5io/meshkit/logger"
 )
 
 type K8sContext struct {
