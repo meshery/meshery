@@ -332,12 +332,7 @@ func (kc *K8sContext) AssignServerID() error {
 }
 
 
-func FlushMeshSyncData(ctxID string, provider Provider, ctx context.Context) {
-	k8sctxs, ok := ctx.Value(AllKubeClusterKey).([]K8sContext)
-	if !ok || len(k8sctxs) == 0 {
-		logrus.Error(ErrEmptyCurrentK8sContext)
-		return
-	}
+func FlushMeshSyncData(ctxID string, provider Provider, k8sctxs []K8sContext){
 	var sid string
 	for _, k8ctx := range k8sctxs {
 		if k8ctx.ID == ctxID && k8ctx.KubernetesServerID != nil {
@@ -345,20 +340,24 @@ func FlushMeshSyncData(ctxID string, provider Provider, ctx context.Context) {
 			break
 		}
 	}
+	logrus.Info("sid: ", sid)
 	var refCount int
 	for _, k8ctx := range k8sctxs {
-		if k8ctx.KubernetesServerID.String() == sid && k8ctx.ID != ctxID {
+		if k8ctx.KubernetesServerID.String() == sid {
 			refCount++
 		}
 	}
+	logrus.Debug("refCount: ", refCount)
 	if refCount == 1 {
+		logrus.Info("inside deleting")
 		if provider.GetGenericPersister() == nil {
-			logrus.Error(ErrEmptyHandler)
+			logrus.Error("ErrEmptyHandler")
 			return
 		}
+		logrus.Info("deleteing objects...")
 		err := provider.GetGenericPersister().Where("cluster_id = ?", sid).Delete(&meshsyncmodel.Object{}).Error
 		if err != nil {
-			logrus.Error(ErrEmptyHandler)
+			logrus.Error("ErrEmptyHandler")
 			return
 		}
 	}
