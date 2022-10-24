@@ -19,6 +19,7 @@ import (
 	"gopkg.in/yaml.v2"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/tools/clientcmd"
+	"github.com/layer5io/meshkit/logger"
 )
 
 type K8sContext struct {
@@ -336,7 +337,7 @@ func FlushMeshSyncData(ctxID string, provider Provider, ctx context.Context){
 	// Gets all the available kubernetes contexts
 	k8sctxs, ok := ctx.Value(AllKubeClusterKey).([]K8sContext)
 	if !ok || len(k8sctxs) == 0 {
-		logrus.Error("ErrEmptyCurrentK8sContext")
+		logrus.Error(ErrEmptyCurrentK8sContext)
 		return
 	}
 	var sid string
@@ -359,12 +360,12 @@ func FlushMeshSyncData(ctxID string, provider Provider, ctx context.Context){
 	// because this means its the last contextID referring to that Kubernetes Server
 	if refCount == 1 {
 		if provider.GetGenericPersister() == nil {
-			logrus.Error("ErrEmptyHandler")
+			logrus.Error(ErrEmptyHandler)
 			return
 		}
 		err := provider.GetGenericPersister().Where("cluster_id = ?", sid).Delete(&meshsyncmodel.Object{}).Error
 		if err != nil {
-			logrus.Error("ErrEmptyHandler")
+			logrus.Error(ErrEmptyHandler)
 			return
 		}
 	}
