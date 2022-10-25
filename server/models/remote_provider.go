@@ -30,6 +30,7 @@ import (
 
 // RemoteProvider - represents a local provider
 type RemoteProvider struct {
+	sync.Mutex
 	ProviderProperties
 	*SessionPreferencePersister
 
@@ -3076,6 +3077,18 @@ func validateExtractPath(filePath string, destination string) error {
 // GetGenericPersister - to return persister
 func (l *RemoteProvider) GetGenericPersister() *database.Handler {
 	return l.GenericPersister
+}
+func (l *RemoteProvider) ChangeDatabase(opts database.Options) error {
+	l.Lock()
+	defer l.Unlock()
+	err := l.GenericPersister.ChangeDatabase(opts)
+	if err != nil {
+		return err
+	}
+	dbHandler := l.GenericPersister
+	l.SmiResultPersister = &SMIResultsPersister{DB: dbHandler}
+	l.SessionPreferencePersister = &SessionPreferencePersister{DB: dbHandler}
+	return nil
 }
 
 // SetKubeClient - to set meshery kubernetes client

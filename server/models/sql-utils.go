@@ -69,8 +69,8 @@ func setNewDBInstance(user string, pass string, host string, port string) {
 		})
 		if err != nil {
 			log.Error(ErrConnectingDatabase(err))
-			log.Info(fmt.Sprintf("retrying after %d", 10))
-			time.Sleep(10 * time.Second)
+			log.Info(fmt.Sprintf("retrying after %d", 5))
+			time.Sleep(5 * time.Second)
 			continue
 		}
 		break

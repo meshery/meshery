@@ -275,6 +275,7 @@ type Provider interface {
 	ReadMeshSyncData() ([]model.Object, error)
 	GetGenericPersister() *database.Handler
 
+	ChangeDatabase(opts database.Options) error
 	SetKubeClient(client *mesherykube.Client)
 	GetKubeClient() *mesherykube.Client
 

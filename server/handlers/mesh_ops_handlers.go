@@ -5,18 +5,84 @@ import (
 	"context"
 	"encoding/gob"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strings"
 
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/meshes"
 	"github.com/layer5io/meshery/server/models"
+	"github.com/layer5io/meshkit/database"
+	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
 
 func init() {
 	gob.Register([]*models.Adapter{})
+}
+
+// swagger:route GET /api/system/database SystemAPI
+func (h *Handler) DatabaseLifecycleHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+	if req.Method == http.MethodPost {
+		var opts database.Options
+		err := json.NewDecoder(req.Body).Decode(&opts)
+		if err != nil {
+			w.Write([]byte("invalid options found for database: " + err.Error()))
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+		err = h.dbHandler.ChangeDatabase(opts)
+		if err != nil {
+			w.Write([]byte("could not switch to new database: " + err.Error()))
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+		w.Write([]byte("successfully switched to new database"))
+	}
+	if req.Method == http.MethodGet {
+		byt, err := json.Marshal(h.dbHandler.GetInfo())
+
+		if err != nil {
+			w.Write([]byte("could not get database info: " + err.Error()))
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+		w.Write(byt)
+		fmt.Println("will reset database endpoint port to 5433")
+		err = h.dbHandler.ChangeDatabase(database.Options{
+			Username: "postgres",
+			Password: "meshery",
+			Host:     "localhost",
+			Port:     "5433",
+		})
+		if err != nil {
+			fmt.Println("errr: ", err.Error())
+		}
+		err = h.dbHandler.AutoMigrate(
+			&meshsyncmodel.Object{},
+			&meshsyncmodel.ResourceObjectMeta{},
+
+			&meshsyncmodel.KeyValue{},
+			&meshsyncmodel.ResourceSpec{},
+			&meshsyncmodel.ResourceStatus{},
+			&models.PerformanceProfile{},
+			&models.MesheryResult{},
+			&models.MesheryPattern{},
+			&models.MesheryFilter{},
+			&models.PatternResource{},
+			&models.MesheryApplication{},
+			&models.UserPreference{},
+			&models.PerformanceTestConfig{},
+			&models.SmiResultWithID{},
+			models.K8sContext{},
+		)
+		h.MesheryCtrlsHelper.DbHandler = h.dbHandler
+		if err != nil {
+			fmt.Println("err", err.Error())
+		}
+		fmt.Println("check ")
+	}
 }
 
 // swagger:route GET /api/system/adapters SystemAPI idGetSystemAdapters

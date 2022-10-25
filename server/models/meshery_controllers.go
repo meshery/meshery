@@ -42,7 +42,7 @@ type MesheryControllersHelper struct {
 
 	log          logger.Handler
 	oprDepConfig controllers.OperatorDeploymentConfig
-	dbHandler    *database.Handler
+	DbHandler    *database.Handler
 }
 
 func (mch *MesheryControllersHelper) GetControllerHandlersForEachContext() map[string]map[MesheryController]controllers.IMesheryController {
@@ -64,7 +64,7 @@ func NewMesheryControllersHelper(log logger.Handler, operatorDepConfig controlle
 		oprDepConfig:              operatorDepConfig,
 		ctxOperatorStatusMap:      make(map[string]controllers.MesheryControllerStatus),
 		ctxMeshsyncDataHandlerMap: make(map[string]MeshsyncDataHandler),
-		dbHandler:                 dbHandler,
+		DbHandler:                 dbHandler,
 	}
 }
 
@@ -105,7 +105,7 @@ func (mch *MesheryControllersHelper) UpdateMeshsynDataHandlers() *MesheryControl
 					continue
 				}
 				mch.log.Info(fmt.Sprintf("broker connection successfully established for contextId: %v with meshery-broker at: %v", ctxID, brokerEndpoint))
-				msDataHandler := NewMeshsyncDataHandler(brokerHandler, *mch.dbHandler, mch.log)
+				msDataHandler := NewMeshsyncDataHandler(brokerHandler, *mch.DbHandler, mch.log)
 				err = msDataHandler.Run()
 				if err != nil {
 					mch.log.Warn(err)

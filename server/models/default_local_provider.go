@@ -31,6 +31,7 @@ import (
 
 // DefaultLocalProvider - represents a local provider
 type DefaultLocalProvider struct {
+	sync.Mutex
 	*MapPreferencePersister
 	ProviderProperties
 	ProviderBaseURL                 string
@@ -942,6 +943,25 @@ func (l *DefaultLocalProvider) ReadMeshSyncData() ([]model.Object, error) {
 // GetGenericPersister - to return persister
 func (l *DefaultLocalProvider) GetGenericPersister() *database.Handler {
 	return l.GenericPersister
+}
+func (l *DefaultLocalProvider) ChangeDatabase(opts database.Options) error {
+	l.Lock()
+	defer l.Unlock()
+	err := l.GenericPersister.ChangeDatabase(opts)
+	if err != nil {
+		return err
+	}
+	dbHandler := l.GenericPersister
+	l.ResultPersister = &MesheryResultsPersister{DB: dbHandler}
+	l.SmiResultPersister = &SMIResultsPersister{DB: dbHandler}
+	l.TestProfilesPersister = &TestProfilesPersister{DB: dbHandler}
+	l.PerformanceProfilesPersister = &PerformanceProfilePersister{DB: dbHandler}
+	l.MesheryPatternPersister = &MesheryPatternPersister{DB: dbHandler}
+	l.MesheryFilterPersister = &MesheryFilterPersister{DB: dbHandler}
+	l.MesheryApplicationPersister = &MesheryApplicationPersister{DB: dbHandler}
+	l.MesheryPatternResourcePersister = &PatternResourcePersister{DB: dbHandler}
+	l.MesheryK8sContextPersister = &MesheryK8sContextPersister{DB: dbHandler}
+	return nil
 }
 
 // SetKubeClient - to set meshery kubernetes client

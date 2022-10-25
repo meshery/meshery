@@ -91,6 +91,7 @@ type HandlerInterface interface {
 	SessionSyncHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 
 	PatternFileHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
+	DatabaseLifecycleHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	OAMRegisterHandler(rw http.ResponseWriter, r *http.Request)
 	ComponentTypesHandler(rw http.ResponseWriter, r *http.Request)
 	ComponentsForTypeHandler(rw http.ResponseWriter, r *http.Request)
