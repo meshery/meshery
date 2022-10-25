@@ -81,8 +81,6 @@ const (
 	ErrContextIDCode                      = "2218"
 	ErrMesheryInstanceIDCode              = "2219"
 	ErrMesheryNotInClusterCode            = "2220"
-	ErrEmptyCurrentK8sContextCode         = "2221"
-	ErrEmptyHandlerCode                   = "2222"
 	ErrBrokerNotFoundCode                 = "2235"
 	ErrCreateOperatorDeploymentConfigCode = "2236"
 	ErrRequestMeshsyncStoreCode           = "2237"
@@ -117,8 +115,6 @@ var (
 	ErrMesheryInstanceID       = errors.New(ErrMesheryInstanceIDCode, errors.Alert, []string{"Error: Meshery Instance ID is empty or is invalid"}, []string{}, []string{}, []string{})
 	ErrMesheryNotInCluster     = errors.New(ErrMesheryNotInClusterCode, errors.Alert, []string{"Error: Meshery is not running inside a cluster"}, []string{}, []string{}, []string{})
 	ErrContextAlreadyPersisted = errors.New(ErrContextAlreadyPersistedCode, errors.Alert, []string{"kubernetes context already persisted with provider"}, []string{"kubernetes context already persisted with provider"}, []string{}, []string{})
-	ErrEmptyCurrentK8sContext  = errors.New(ErrEmptyCurrentK8sContextCode, errors.Alert, []string{"Current kubernetes context is empty"}, []string{"Meshery is not able to get the current kubernetes context"}, []string{"Meshery is crashed or not reachable"}, []string{"Restart Meshery Server", "Please check if Meshery server is accessible to the Database"})
-	ErrEmptyHandler            = errors.New(ErrEmptyHandlerCode, errors.Alert, []string{"Database handler not initialized"}, []string{"Meshery Database handler is not accessible to perform operations"}, []string{"Meshery Database is crashed or not reachable"}, []string{"Restart Meshery Server", "Please check if Meshery server is accessible to the Database"})
 )
 
 func ErrGetPackage(err error) error {
