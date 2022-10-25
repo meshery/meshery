@@ -240,6 +240,7 @@ class MeshAdapterConfigComponent extends React.Component {
 
             return (
               <Chip
+                key={adapter.uniqueID}
                 label={adapter.adapter_location}
                 onDelete={self.handleDelete(adapter.adapter_location)}
                 onClick={self.handleClick(adapter.adapter_location)}

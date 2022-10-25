@@ -86,7 +86,7 @@ const MetricsScreen = ({ grafana, prometheus, selectedK8sContexts }) => {
 
   const itemsToBeRendered = metricsComponents.map(comp => {
     return (
-      <ServiceCard key={comp.uniqueID} serviceInfo={comp} isConnected={getConnectionStatus(comp.name)} />
+      <ServiceCard serviceInfo={comp} isConnected={getConnectionStatus(comp.name)} key={comp.uniqueID} />
     )
   })
 

@@ -4174,6 +4174,36 @@ paths:
       summary: Handle GET request for a Meshery Filter
       tags:
       - FiltersAPI
+  /api/filter/catalog:
+    get:
+      description: Used to get catalog filters
+      operationId: idGetCatalogMesheryFiltersHandler
+      responses:
+        "200":
+          $ref: '#/responses/mesheryFilterResponseWrapper'
+      summary: Handle GET request for catalog filters
+      tags:
+      - FiltersAPI
+  /api/filter/catalog/publish:
+    post:
+      description: Publishes filter to Meshery Catalog by setting visibility to public and setting catalog data
+      operationId: idPublishCatalogFilterHandler
+      summary: Handle POST request to publish filter to catalog
+      responses:
+        "200":
+          $ref: '#/responses/noContentWrapper'
+      tags:
+      - FiltersAPI
+  /api/filter/clone/{id}:
+    post:
+      description: 'Creates a local copy of a public filter with id: id'
+      operationId: idCloneMesheryFilter
+      responses:
+        "200":
+          $ref: '#/responses/noContentWrapper'
+      summary: Handle Clone for a Meshery Filter
+      tags:
+      - FiltersAPI
   /api/filter/deploy:
     delete:
       description: Delete a deployed filter file with the request
@@ -4327,6 +4357,36 @@ paths:
         "200":
           $ref: '#/responses/mesheryPatternResponseWrapper'
       summary: Handle GET for a Meshery Pattern
+      tags:
+      - PatternsAPI
+  /api/pattern/catalog:
+    get:
+      description: Used to get catalog patterns
+      operationId: idGetCatalogMesheryPatternsHandler
+      responses:
+        "200":
+          $ref: '#/responses/mesheryPatternResponseWrapper'
+      summary: Handle GET request for catalog patterns
+      tags:
+      - PatternsAPI
+  /api/pattern/catalog/publish:
+    post:
+      description: Publishes pattern to Meshery Catalog by setting visibility to public and setting catalog data
+      operationId: idPublishCatalogPatternHandler
+      summary: Handle POST request for publishing pattern to catalog
+      responses:
+        "200":
+          $ref: '#/responses/noContentWrapper'
+      tags:
+      - PatternsAPI
+  /api/pattern/clone/{id}:
+    post:
+      description: 'Creates a local copy of a public pattern with id: id'
+      operationId: idCloneMesheryPattern
+      responses:
+        "200":
+          $ref: '#/responses/noContentWrapper'
+      summary: Handle Clone for a Meshery Pattern
       tags:
       - PatternsAPI
   /api/pattern/deploy:

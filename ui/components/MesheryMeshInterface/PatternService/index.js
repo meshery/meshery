@@ -1,7 +1,7 @@
 // @ts-check
 import React from "react";
 import Switch from "./Switch";
-import RJSF from "./RJSF";
+import RJSFWrapper from "./RJSF_wrapper";
 import { isEmptyObj } from "../../../utils/utils";
 
 /**
@@ -80,7 +80,7 @@ function PatternService({ formData, jsonSchema, onChange, type, onSubmit, onDele
   jsonSchema.properties = sortedProperties;
   if (ctype === "rjsf")
     return (
-      <RJSF
+      <RJSFWrapper
         formData={formData}
         hideSubmit={type === "trait"}
         hideTitle={type === "workload"}
