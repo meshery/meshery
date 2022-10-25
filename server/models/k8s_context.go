@@ -456,14 +456,14 @@ func FlushMeshSyncData(ctx context.Context, ctxID string, provider Provider, eb 
 			eb.Publish(&req)
 			return
 		}
-	}
 
-	req = meshes.EventsResponse{
-		Component:     "core",
-		ComponentName: "Meshery",
-		EventType:     meshes.EventType_INFO,
-		Summary:       "MeshSync data flushed successfully for context " + ctxID,
-		OperationId:   id.String(),
-	}
-	eb.Publish(&req)
+		req = meshes.EventsResponse{
+			Component:     "core",
+			ComponentName: "Meshery",
+			EventType:     meshes.EventType_INFO,
+			Summary:       "MeshSync data flushed successfully for context " + ctxID,
+			OperationId:   id.String(),
+		}
+		eb.Publish(&req)
+	}	
 }
