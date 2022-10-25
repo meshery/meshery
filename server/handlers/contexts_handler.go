@@ -83,7 +83,7 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, prefOb
 	}
 	h.config.K8scontextChannel.PublishContext()
 
-	err = models.FlushMeshSyncData(mux.Vars(req)["id"], provider, req.Context())
+	err = models.FlushMeshSyncData(req.Context(), mux.Vars(req)["id"], provider)
 	if err != nil {
 		h.log.Error(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)

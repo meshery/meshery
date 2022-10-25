@@ -223,23 +223,22 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 			if err != nil {
 				return "", ErrEmptyHandler
 			}
-			
+
 			err = provider.GetGenericPersister().Where("id IN (?)", provider.GetGenericPersister().Table("objects").Select("id").Where("cluster_id=?", sid)).Delete(&meshsyncmodel.ResourceSpec{}).Error
 			if err != nil {
 				return "", ErrEmptyHandler
 			}
-	
+
 			err = provider.GetGenericPersister().Where("id IN (?)", provider.GetGenericPersister().Table("objects").Select("id").Where("cluster_id=?", sid)).Delete(&meshsyncmodel.ResourceStatus{}).Error
 			if err != nil {
 				return "", ErrEmptyHandler
 			}
-	
+
 			err = provider.GetGenericPersister().Where("id IN (?)", provider.GetGenericPersister().Table("objects").Select("id").Where("cluster_id=?", sid)).Delete(&meshsyncmodel.ResourceObjectMeta{}).Error
 			if err != nil {
 				return "", ErrEmptyHandler
 			}
-			
-			
+
 			err = provider.GetGenericPersister().Where("cluster_id = ?", sid).Delete(&meshsyncmodel.Object{}).Error
 			if err != nil {
 				return "", ErrEmptyHandler

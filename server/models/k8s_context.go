@@ -9,12 +9,12 @@ import (
 	"net"
 	"os"
 	"time"
-	
-	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
+
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/internal/sql"
 	"github.com/layer5io/meshkit/utils/kubernetes"
+	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
 	"github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v2"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -332,11 +332,11 @@ func (kc *K8sContext) AssignServerID() error {
 }
 
 // FlushMeshSyncData will flush the meshsync data for the passed kubernetes contextID
-func FlushMeshSyncData(ctxID string, provider Provider, ctx context.Context) error {
+func FlushMeshSyncData(ctx context.Context, ctxID string, provider Provider) error {
 	// Gets all the available kubernetes contexts
 	k8sctxs, ok := ctx.Value(AllKubeClusterKey).([]K8sContext)
 	if !ok || len(k8sctxs) == 0 {
-		return ErrEmptyCurrentK8sContext		
+		return ErrEmptyCurrentK8sContext
 	}
 	var sid string
 	// Gets the serverID for the passed contextID
@@ -365,7 +365,7 @@ func FlushMeshSyncData(ctxID string, provider Provider, ctx context.Context) err
 		if err != nil {
 			return ErrEmptyHandler
 		}
-		
+
 		err = provider.GetGenericPersister().Where("id IN (?)", provider.GetGenericPersister().Table("objects").Select("id").Where("cluster_id=?", sid)).Delete(&meshsyncmodel.ResourceSpec{}).Error
 		if err != nil {
 			return ErrEmptyHandler
@@ -380,7 +380,7 @@ func FlushMeshSyncData(ctxID string, provider Provider, ctx context.Context) err
 		if err != nil {
 			return ErrEmptyHandler
 		}
-		
+
 		err = provider.GetGenericPersister().Where("cluster_id = ?", sid).Delete(&meshsyncmodel.Object{}).Error
 		if err != nil {
 			return ErrEmptyHandler

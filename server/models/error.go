@@ -89,7 +89,6 @@ const (
 	ErrBrokerSubscriptionCode             = "2238"
 	ErrContextAlreadyPersistedCode        = "2241"
 	ErrGetPackageCode                     = "2252"
-
 )
 
 var (
@@ -333,5 +332,3 @@ func ErrSavingSeededComponents(err error, content string) error {
 func ErrDownloadingSeededComponents(err error, content string) error {
 	return errors.New(ErrDownloadingSeededComponentsCode, errors.Alert, []string{"Could not download seed content for" + content}, []string{err.Error()}, []string{"The content is not present at the specified url endpoint", "HTTP requests failed"}, []string{"Make sure the content is available at the endpoints", "Make sure that Github is reachable and the http requests are not failing"})
 }
-
-
