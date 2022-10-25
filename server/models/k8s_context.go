@@ -13,8 +13,8 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/internal/sql"
-	"github.com/layer5io/meshkit/utils/events"
 	"github.com/layer5io/meshery/server/meshes"
+	"github.com/layer5io/meshkit/utils/events"
 	"github.com/layer5io/meshkit/utils/kubernetes"
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
 	"github.com/sirupsen/logrus"
@@ -390,7 +390,7 @@ func FlushMeshSyncData(ctx context.Context, ctxID string, provider Provider, eb 
 				EventType:            meshes.EventType_ERROR,
 				Summary:              "Meshery Database handler is not accessible to perform operations",
 				OperationId:          id.String(),
-				Details: 		          err.Error(),
+				Details:              err.Error(),
 				SuggestedRemediation: "Restart Meshery Server or Perform Hard Reset",
 			}
 			eb.Publish(&req)
@@ -405,7 +405,7 @@ func FlushMeshSyncData(ctx context.Context, ctxID string, provider Provider, eb 
 				EventType:            meshes.EventType_ERROR,
 				Summary:              "Meshery Database handler is not accessible to perform operations",
 				OperationId:          id.String(),
-				Details: 		          err.Error(),
+				Details:              err.Error(),
 				SuggestedRemediation: "Restart Meshery Server or Perform Hard Reset",
 			}
 			eb.Publish(&req)
@@ -420,7 +420,7 @@ func FlushMeshSyncData(ctx context.Context, ctxID string, provider Provider, eb 
 				EventType:            meshes.EventType_ERROR,
 				Summary:              "Meshery Database handler is not accessible to perform operations",
 				OperationId:          id.String(),
-				Details: 		          err.Error(),
+				Details:              err.Error(),
 				SuggestedRemediation: "Restart Meshery Server or Perform Hard Reset",
 			}
 			eb.Publish(&req)
@@ -435,7 +435,7 @@ func FlushMeshSyncData(ctx context.Context, ctxID string, provider Provider, eb 
 				EventType:            meshes.EventType_ERROR,
 				Summary:              "Meshery Database handler is not accessible to perform operations",
 				OperationId:          id.String(),
-				Details: 		          err.Error(),
+				Details:              err.Error(),
 				SuggestedRemediation: "Restart Meshery Server or Perform Hard Reset",
 			}
 			eb.Publish(&req)
@@ -450,7 +450,7 @@ func FlushMeshSyncData(ctx context.Context, ctxID string, provider Provider, eb 
 				EventType:            meshes.EventType_ERROR,
 				Summary:              "Meshery Database handler is not accessible to perform operations",
 				OperationId:          id.String(),
-				Details: 		          err.Error(),
+				Details:              err.Error(),
 				SuggestedRemediation: "Restart Meshery Server or Perform Hard Reset",
 			}
 			eb.Publish(&req)
@@ -465,5 +465,5 @@ func FlushMeshSyncData(ctx context.Context, ctxID string, provider Provider, eb 
 			OperationId:   id.String(),
 		}
 		eb.Publish(&req)
-	}	
+	}
 }
