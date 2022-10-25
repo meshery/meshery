@@ -457,7 +457,6 @@ func FlushMeshSyncData(ctx context.Context, ctxID string, provider Provider, eb 
 			return
 		}
 	}
-	logrus.Debug("delete successfull")
 
 	req = meshes.EventsResponse{
 		Component:     "core",
