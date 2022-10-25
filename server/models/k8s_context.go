@@ -9,8 +9,7 @@ import (
 	"net"
 	"os"
 	"time"
-	"gorm.io/gorm"
-
+	
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/helpers/utils"
@@ -361,7 +360,7 @@ func FlushMeshSyncData(ctxID string, provider Provider, ctx context.Context) err
 		if provider.GetGenericPersister() == nil {
 			return ErrEmptyHandler
 		}
-		
+
 		err := provider.GetGenericPersister().Where("id IN (?)", provider.GetGenericPersister().Table("objects").Select("id").Where("cluster_id=?", sid)).Delete(&meshsyncmodel.KeyValue{}).Error
 		if err != nil {
 			return ErrEmptyHandler
