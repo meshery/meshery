@@ -31,6 +31,23 @@ func SystemError(msg string) string {
 	return formatError(msg, cmdSystem)
 }
 
+func SystemLifeStyleError(msg string, cmd string) string {
+	switch cmd {
+	case "stop":
+		return formatError(msg, cmdSystemStop)
+	case "update":
+		return formatError(msg, cmdSystemUpdate)
+	case "reset":
+		return formatError(msg, cmdSystemReset)
+	case "status":
+		return formatError(msg, cmdSystemStatus)
+	case "restart":
+		return formatError(msg, cmdSystemRestart)
+	default:
+		return formatError(msg, cmdSystem)
+	}
+}
+
 // SystemContextSubError returns a formatted error message with a link to `context` command usage page
 // in addition to the error message
 func SystemContextSubError(msg string, cmd string) string {
@@ -97,6 +114,16 @@ func formatError(msg string, cmd cmdType) string {
 		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, meshUsageURL)
 	case cmdSystem:
 		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, systemUsageURL)
+	case cmdSystemStop:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, systemStopURL)
+	case cmdSystemUpdate:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, systemUpdateURL)
+	case cmdSystemReset:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, systemResetURL)
+	case cmdSystemStatus:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, systemStatusURL)
+	case cmdSystemRestart:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, systemRestartURL)
 	case cmdExp:
 		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, expUsageURL)
 	case cmdFilter:
