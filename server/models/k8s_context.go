@@ -9,6 +9,7 @@ import (
 	"net"
 	"os"
 	"time"
+	"gorm.io/gorm"
 
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
 	"github.com/gofrs/uuid"
@@ -335,7 +336,6 @@ func (kc *K8sContext) AssignServerID() error {
 func FlushMeshSyncData(ctxID string, provider Provider, ctx context.Context) error {
 	// Gets all the available kubernetes contexts
 	k8sctxs, ok := ctx.Value(AllKubeClusterKey).([]K8sContext)
-	k8sctxs = make([]K8sContext, 0)
 	if !ok || len(k8sctxs) == 0 {
 		return ErrEmptyCurrentK8sContext		
 	}
@@ -361,7 +361,28 @@ func FlushMeshSyncData(ctxID string, provider Provider, ctx context.Context) err
 		if provider.GetGenericPersister() == nil {
 			return ErrEmptyHandler
 		}
-		err := provider.GetGenericPersister().Where("cluster_id = ?", sid).Delete(&meshsyncmodel.Object{}).Error
+		
+		err := provider.GetGenericPersister().Where("id IN (?)", provider.GetGenericPersister().Table("objects").Select("id").Where("cluster_id=?", sid)).Delete(&meshsyncmodel.KeyValue{}).Error
+		if err != nil {
+			return ErrEmptyHandler
+		}
+		
+		err = provider.GetGenericPersister().Where("id IN (?)", provider.GetGenericPersister().Table("objects").Select("id").Where("cluster_id=?", sid)).Delete(&meshsyncmodel.ResourceSpec{}).Error
+		if err != nil {
+			return ErrEmptyHandler
+		}
+
+		err = provider.GetGenericPersister().Where("id IN (?)", provider.GetGenericPersister().Table("objects").Select("id").Where("cluster_id=?", sid)).Delete(&meshsyncmodel.ResourceStatus{}).Error
+		if err != nil {
+			return ErrEmptyHandler
+		}
+
+		err = provider.GetGenericPersister().Where("id IN (?)", provider.GetGenericPersister().Table("objects").Select("id").Where("cluster_id=?", sid)).Delete(&meshsyncmodel.ResourceObjectMeta{}).Error
+		if err != nil {
+			return ErrEmptyHandler
+		}
+		
+		err = provider.GetGenericPersister().Where("cluster_id = ?", sid).Delete(&meshsyncmodel.Object{}).Error
 		if err != nil {
 			return ErrEmptyHandler
 		}
