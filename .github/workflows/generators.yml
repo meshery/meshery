@@ -10,7 +10,9 @@ jobs:
       - name: Check out code
         uses: actions/checkout@master
         with:
+          token: ${{ secrets.GH_ACCESS_TOKEN }}
           fetch-depth: 1
+          
       - name: Setup Go
         uses: actions/setup-go@master
         with:
