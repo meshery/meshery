@@ -56,6 +56,11 @@ func convertCompModelsToPackages(models []ComponentModel) []artifacthub.AhPackag
 }
 
 func main() {
+	err := os.Mkdir(OutputDirectoryPath, 0744)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
 	compsFd, err := os.OpenFile(filepath.Join(OutputDirectoryPath, ComponentsFileName), os.O_CREATE|os.O_RDWR|os.O_APPEND, 0644)
 	if err != nil {
 		fmt.Println(err)
