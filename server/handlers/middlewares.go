@@ -43,14 +43,16 @@ func (h *Handler) ProviderMiddleware(next http.Handler) http.Handler {
 }
 
 // AuthMiddleware is a middleware to validate if a user is authenticated
-func (h *Handler) AuthMiddleware(next http.Handler, providerAuthentication bool) http.Handler {
+func (h *Handler) AuthMiddleware(next http.Handler, auth models.AuthenticationMechanism) http.Handler {
 	fn := func(w http.ResponseWriter, req *http.Request) {
 		enforcedProvider := h.EnforceProvider
-		if enforcedProvider != "" && !providerAuthentication {
-			w.WriteHeader(http.StatusUnauthorized)
-			return
-		}
-		if enforcedProvider != "" || providerAuthentication {
+		switch auth {
+		case models.NoAuth:
+			if enforcedProvider != "" {
+				w.WriteHeader(http.StatusUnauthorized)
+				return
+			}
+		case models.ProviderAuth:
 			providerI := req.Context().Value(models.ProviderCtxKey)
 			// logrus.Debugf("models.ProviderCtxKey %s", models.ProviderCtxKey)
 			provider, ok := providerI.(models.Provider)
@@ -79,11 +81,7 @@ func (h *Handler) AuthMiddleware(next http.Handler, providerAuthentication bool)
 				// Local Provider
 				h.LoginHandler(w, req, provider, true)
 			}
-		} else {
-			//TODO: Add logic here later for different type of authentication
-
 		}
-
 		next.ServeHTTP(w, req)
 	}
 	return http.HandlerFunc(fn)

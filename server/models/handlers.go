@@ -15,15 +15,12 @@ type HandlerInterface interface {
 
 	ProviderMiddleware(http.Handler) http.Handler
 
-	//Set the boolean as false to skip provider authentication for certain endpoints. If the provider is enforced, then this flag will not be respected.
+	//Set the AuthenticationMechanism as NoAuth to skip provider authentication for certain endpoints. If the provider is enforced, then this flag will not be respected.
 	//Make sure all the endpoints are behind this middleware thereby protecting them. The reason for not just skipping this middleware is:
 	//1. So that we can enfore provider through this middleware whenever want for use cases where no unauthenticated endpoints should be there, at buildtime.
 	//2. For adapter and other components of Meshery, they register/use endpoints without any provider authentication. Although we can have a different type of authentication built for
-	//such external systems trying to communicate without provider authentication. That non-provider authentication logic is executed whenever this flag is set to false
-	//Considerations: Here the other way was to set a value in request's context in provider middleware which enforces authentication in Auth middleware such that when provider middlerware
-	//is not used, we use the behavior of having this flag set as true. But that is less readable and doesn't show the intent just by reading the code. The enforceProviderAuthentication flag being set
-	//explicitly communicated the intent pretty clearly.
-	AuthMiddleware(http.Handler, bool) http.Handler
+	//such external systems trying to communicate without provider authentication. So for different endpoints, different authentication mechanisms other than provider can be used.
+	AuthMiddleware(http.Handler, AuthenticationMechanism) http.Handler
 	KubernetesMiddleware(func(http.ResponseWriter, *http.Request, *Preference, *User, Provider)) func(http.ResponseWriter, *http.Request, *Preference, *User, Provider)
 	MesheryControllersMiddleware(func(http.ResponseWriter, *http.Request, *Preference, *User, Provider)) func(http.ResponseWriter, *http.Request, *Preference, *User, Provider)
 	SessionInjectorMiddleware(func(http.ResponseWriter, *http.Request, *Preference, *User, Provider)) http.Handler
@@ -195,3 +192,20 @@ type SubmitMetricsConfig struct {
 	TokenVal string
 	Provider Provider
 }
+
+type AuthenticationMechanism int
+
+func (a AuthenticationMechanism) String() string {
+	switch a {
+	case 0:
+		return "no_auth"
+	case 1:
+		return "provider_auth"
+	}
+	return ""
+}
+
+const (
+	NoAuth AuthenticationMechanism = iota
+	ProviderAuth
+)
