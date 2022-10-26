@@ -15,6 +15,7 @@ import (
 	"github.com/layer5io/meshery/server/internal/graphql"
 	"github.com/layer5io/meshery/server/internal/store"
 	"github.com/layer5io/meshery/server/models"
+	meshmodelcore "github.com/layer5io/meshery/server/models/meshmodel/core"
 	"github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshery/server/router"
 	"github.com/layer5io/meshkit/broker/nats"
@@ -22,9 +23,8 @@ import (
 	"github.com/layer5io/meshkit/utils/broadcast"
 	"github.com/layer5io/meshkit/utils/events"
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
-	"github.com/spf13/viper"
-
 	"github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 	"github.com/vmihailenco/taskq/v3"
 	"github.com/vmihailenco/taskq/v3/memqueue"
 )
@@ -169,6 +169,7 @@ func main() {
 		&models.PerformanceTestConfig{},
 		&models.SmiResultWithID{},
 		models.K8sContext{},
+		meshmodelcore.ComponentCapability{},
 	)
 	if err != nil {
 		log.Error(ErrDatabaseAutoMigration(err))

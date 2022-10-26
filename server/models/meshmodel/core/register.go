@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
-
 	"github.com/layer5io/meshery/server/internal/store"
+	"github.com/layer5io/meshkit/database"
+	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 )
 
 type capability struct {
@@ -26,8 +26,8 @@ func (cap *capability) GetID() string {
 }
 
 type ComponentCapability struct {
-	v1alpha1.Component
-	capability
+	v1alpha1.Component `gorm:"embedded"`
+	capability         `gorm:"embedded"`
 }
 
 // RegisterComponent will register a component definition into the database
@@ -38,28 +38,33 @@ func RegisterComponent(data []byte, host string) (err error) {
 		return
 	}
 	component.Host = host
+
 	// Store it in the global store
 	key := fmt.Sprintf(
 		"/meshery/registry/definition/%s/%s/%s",
 		component.APIVersion,
 		component.Kind,
-		component.Metadata["name"].(string),
+		component.Component.GetMetadataValue("name").(string),
 	)
 	store.Set(key, &component)
 	return
 }
 
 // GetComponents return all of the components
-func GetComponents() (caps []ComponentCapability) {
-	key := "/meshery/registry/definition/core.meshery.io/v1alpha1/ComponentDefinition"
-
-	res := store.PrefixMatch(key)
-	for _, cc := range res {
-		casted, ok := cc.(*ComponentCapability)
-		if ok {
-			caps = append(caps, *casted)
-		}
+func GetComponents(dbHandler *database.Handler) (caps []ComponentCapability) {
+	err := dbHandler.DB.Find(&caps).Error
+	if err != nil {
+		fmt.Println("error: ", err.Error())
 	}
+	// key := "/meshery/registry/definition/core.meshery.io/v1alpha1/ComponentDefinition"
+
+	// res := store.PrefixMatch(key)
+	// for _, cc := range res {
+	// 	casted, ok := cc.(*ComponentCapability)
+	// 	if ok {
+	// 		caps = append(caps, *casted)
+	// 	}
+	// }
 
 	return
 }
