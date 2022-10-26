@@ -158,7 +158,7 @@ function MesheryPatternCard({
                 }
                 className={classes.testsButton}
               >
-                <Avatar src="/static/img/clone-white.svg" className={classes.iconPatt} />
+                <Avatar src="/static/img/clone-white.svg" className={classes.clonePatt} />
                 <span className={classes.btnText}> Clone </span>
               </Button>  }
 
