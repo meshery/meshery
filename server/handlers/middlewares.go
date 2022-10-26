@@ -43,32 +43,47 @@ func (h *Handler) ProviderMiddleware(next http.Handler) http.Handler {
 }
 
 // AuthMiddleware is a middleware to validate if a user is authenticated
-func (h *Handler) AuthMiddleware(next http.Handler) http.Handler {
+func (h *Handler) AuthMiddleware(next http.Handler, providerAuthentication bool) http.Handler {
 	fn := func(w http.ResponseWriter, req *http.Request) {
-		providerI := req.Context().Value(models.ProviderCtxKey)
-		// logrus.Debugf("models.ProviderCtxKey %s", models.ProviderCtxKey)
-		provider, ok := providerI.(models.Provider)
-		if !ok {
-			http.Redirect(w, req, "/provider", http.StatusFound)
+		enforcedProvider := h.EnforceProvider
+		if enforcedProvider != "" && !providerAuthentication {
+			w.WriteHeader(http.StatusUnauthorized)
 			return
 		}
-		// logrus.Debugf("provider %s", provider)
-		isValid := h.validateAuth(provider, req)
-		// logrus.Debugf("validate auth: %t", isValid)
-		if !isValid {
-			// if h.GetProviderType() == models.RemoteProviderType {
-			// 	http.Redirect(w, req, "/user/login", http.StatusFound)
-			// } else { // Local Provider
-			// 	h.LoginHandler(w, req)
-			// }
-			// return
-			if provider.GetProviderType() == models.RemoteProviderType {
-				provider.HandleUnAuthenticated(w, req)
+		if enforcedProvider != "" || providerAuthentication {
+			providerI := req.Context().Value(models.ProviderCtxKey)
+			// logrus.Debugf("models.ProviderCtxKey %s", models.ProviderCtxKey)
+			provider, ok := providerI.(models.Provider)
+			if !ok {
+				http.Redirect(w, req, "/provider", http.StatusFound)
 				return
 			}
-			// Local Provider
-			h.LoginHandler(w, req, provider, true)
+			if enforcedProvider != "" && enforcedProvider != string(provider.GetProviderType()) {
+				w.WriteHeader(http.StatusUnauthorized)
+				return
+			}
+			// logrus.Debugf("provider %s", provider)
+			isValid := h.validateAuth(provider, req)
+			// logrus.Debugf("validate auth: %t", isValid)
+			if !isValid {
+				// if h.GetProviderType() == models.RemoteProviderType {
+				// 	http.Redirect(w, req, "/user/login", http.StatusFound)
+				// } else { // Local Provider
+				// 	h.LoginHandler(w, req)
+				// }
+				// return
+				if provider.GetProviderType() == models.RemoteProviderType {
+					provider.HandleUnAuthenticated(w, req)
+					return
+				}
+				// Local Provider
+				h.LoginHandler(w, req, provider, true)
+			}
+		} else {
+			//TODO: Add logic here later for different type of authentication
+
 		}
+
 		next.ServeHTTP(w, req)
 	}
 	return http.HandlerFunc(fn)
