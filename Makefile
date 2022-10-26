@@ -104,10 +104,22 @@ server:
 	ADAPTER_URLS=$(ADAPTER_URLS) \
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
 	go$(GOVERSION) run main.go error.go;
-server-remote:
+server-remote-provider:
 	cd server; cd cmd; go$(GOVERSION) mod tidy; \
 	BUILD="$(GIT_VERSION)" \
 	ENFORCED_PROVIDER=$(REMOTE_PROVIDER) \
+	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
+	PORT=9081 \
+	DEBUG=true \
+	ADAPTER_URLS=$(ADAPTER_URLS) \
+	APP_PATH=$(APPLICATIONCONFIGPATH) \
+	go$(GOVERSION) run main.go error.go;
+
+
+server-local-provider:
+	cd server; cd cmd; go$(GOVERSION) mod tidy; \
+	BUILD="$(GIT_VERSION)" \
+	ENFORCED_PROVIDER=$(LOCAL_PROVIDER) \
 	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
 	PORT=9081 \
 	DEBUG=true \
