@@ -3,10 +3,13 @@ package core
 import (
 	"encoding/json"
 	"fmt"
+	"io"
+	"io/ioutil"
 
-	"github.com/layer5io/meshery/server/internal/store"
 	"github.com/layer5io/meshkit/database"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
+	"gopkg.in/yaml.v2"
+	"gorm.io/gorm"
 )
 
 type capability struct {
@@ -26,27 +29,20 @@ func (cap *capability) GetID() string {
 }
 
 type ComponentCapability struct {
+	gorm.Model
 	v1alpha1.Component `gorm:"embedded"`
 	capability         `gorm:"embedded"`
 }
 
 // RegisterComponent will register a component definition into the database
-func RegisterComponent(data []byte, host string) (err error) {
+func RegisterComponent(dbHandler *database.Handler, data []byte, host string) (err error) {
 	var component ComponentCapability
 
 	if err = json.Unmarshal(data, &component); err != nil {
 		return
 	}
 	component.Host = host
-
-	// Store it in the global store
-	key := fmt.Sprintf(
-		"/meshery/registry/definition/%s/%s/%s",
-		component.APIVersion,
-		component.Kind,
-		component.Component.GetMetadataValue("name").(string),
-	)
-	store.Set(key, &component)
+	err = dbHandler.DB.Create(&component).Error
 	return
 }
 
@@ -56,15 +52,55 @@ func GetComponents(dbHandler *database.Handler) (caps []ComponentCapability) {
 	if err != nil {
 		fmt.Println("error: ", err.Error())
 	}
-	// key := "/meshery/registry/definition/core.meshery.io/v1alpha1/ComponentDefinition"
-
-	// res := store.PrefixMatch(key)
-	// for _, cc := range res {
-	// 	casted, ok := cc.(*ComponentCapability)
-	// 	if ok {
-	// 		caps = append(caps, *casted)
-	// 	}
-	// }
-
 	return
+}
+
+type ComponentFile struct {
+	Name       string                `json:"name"`
+	Components []ComponentCapability `json:"components"`
+}
+
+func StreamComponents(f io.Reader) (chan ComponentCapability, chan bool) {
+	m := make(chan ComponentCapability, 10)
+	sync := make(chan bool)
+	go func(m chan ComponentCapability) {
+		defer func() {
+			close(m)
+			sync <- true
+		}()
+		b, err := ioutil.ReadAll(f)
+		if err != nil {
+			fmt.Println("bruh", err.Error())
+			return
+		}
+		var lol []ComponentFile
+		err = yaml.Unmarshal(b, &lol)
+		if err != nil {
+			fmt.Println("bruhL: ", err.Error())
+			return
+		}
+		for _, compfile := range lol {
+			for _, comp := range compfile.Components {
+				m <- comp
+			}
+		}
+
+	}(m)
+	return m, sync
+}
+func SaveComponent(dbHandler *database.Handler, cc chan ComponentCapability, sync chan bool) {
+	for {
+		select {
+		case <-sync:
+			break
+		default:
+			select {
+			case c := <-cc:
+				err := dbHandler.DB.Create(&c).Error
+				if err != nil {
+					fmt.Println("err: ", err.Error())
+				}
+			}
+		}
+	}
 }

@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"net/url"
 	"os"
@@ -169,7 +170,7 @@ func main() {
 		&models.PerformanceTestConfig{},
 		&models.SmiResultWithID{},
 		models.K8sContext{},
-		meshmodelcore.ComponentCapability{},
+		&meshmodelcore.ComponentCapability{},
 	)
 	if err != nil {
 		log.Error(ErrDatabaseAutoMigration(err))
@@ -269,7 +270,15 @@ func main() {
 	r := router.NewRouter(ctx, h, port, g, gp)
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt)
-
+	go func() {
+		f, err := os.Open("/home/ashish/dev/meshery/output/components.yaml")
+		if err != nil {
+			fmt.Println("bruh: ", err.Error())
+			return
+		}
+		comp, sync := meshmodelcore.StreamComponents(f)
+		meshmodelcore.SaveComponent(dbHandler, comp, sync)
+	}()
 	go func() {
 		log.Info("Meshery Server listening on: ", port)
 		if err := r.Run(); err != nil {
