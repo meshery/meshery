@@ -79,7 +79,17 @@ func (h *Handler) GetAllComponents(rw http.ResponseWriter, r *http.Request) {
 func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
-	res := meshmodelcore.GetComponents(h.dbHandler)
+	res := meshmodelcore.GetComponents(h.DbHandler)
+	if err := enc.Encode(res); err != nil {
+		h.log.Error(ErrWorkloadDefinition(err)) //TODO: Add appropriate meshkit error
+		http.Error(rw, ErrWorkloadDefinition(err).Error(), http.StatusInternalServerError)
+	}
+}
+func (h *Handler) GetMeshmodelComponentsByName(rw http.ResponseWriter, r *http.Request) {
+	rw.Header().Add("Content-Type", "application/json")
+	enc := json.NewEncoder(rw)
+	name := mux.Vars(r)["name"]
+	res := meshmodelcore.GetComponentsByName(h.DbHandler, name)
 	if err := enc.Encode(res); err != nil {
 		h.log.Error(ErrWorkloadDefinition(err)) //TODO: Add appropriate meshkit error
 		http.Error(rw, ErrWorkloadDefinition(err).Error(), http.StatusInternalServerError)

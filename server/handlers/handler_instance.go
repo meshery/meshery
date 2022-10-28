@@ -21,7 +21,7 @@ type Handler struct {
 	brokerConn         broker.Handler
 	K8sCompRegHelper   *models.ComponentsRegistrationHelper
 	MesheryCtrlsHelper *models.MesheryControllersHelper
-	dbHandler          *database.Handler
+	DbHandler          *database.Handler
 	EventsBuffer       *events.EventStreamer
 }
 
@@ -43,7 +43,7 @@ func NewHandlerInstance(
 		brokerConn:         brokerConn,
 		K8sCompRegHelper:   compRegHelper,
 		MesheryCtrlsHelper: mctrlHelper,
-		dbHandler:          dbHandler,
+		DbHandler:          dbHandler,
 		EventsBuffer:       eb,
 	}
 

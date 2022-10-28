@@ -524,6 +524,72 @@ type crdhelper struct {
 	Metadata map[string]interface{} `json:"metadata"`
 }
 
+// move to meshmodel
+// func GetK8sMeshModelComponents(ctx context.Context, kubeconfig []byte) ([]meshmodel.Component, error) {
+// 	cli, err := kubernetes.New(kubeconfig)
+// 	if err != nil {
+// 		return nil, ErrGetK8sComponents(err)
+// 	}
+// 	req := cli.KubeClient.RESTClient().Get().RequestURI("/openapi/v2")
+// 	k8version, err := cli.KubeClient.ServerVersion()
+// 	if err != nil {
+// 		return nil, ErrGetK8sComponents(err)
+// 	}
+// 	var customResources = make(map[string]bool)
+// 	crdresult, err := cli.KubeClient.RESTClient().Get().RequestURI("/apis/apiextensions.k8s.io/v1/customresourcedefinitions").Do(context.Background()).Raw()
+// 	if err != nil {
+// 		return nil, ErrGetK8sComponents(err)
+// 	}
+
+// 	var xcrd crd
+// 	err = json.Unmarshal(crdresult, &xcrd)
+// 	if err != nil {
+// 		return nil, ErrGetK8sComponents(err)
+// 	}
+// 	for _, item := range xcrd.Items {
+// 		customResources[item.Metadata["name"].(string)] = true
+// 	}
+// 	res := req.Do(context.Background())
+// 	content, err := res.Raw()
+// 	if err != nil {
+// 		return nil, ErrGetK8sComponents(err)
+// 	}
+// 	apiResources, err := getAPIRes(cli)
+// 	if err != nil {
+// 		return nil, ErrGetK8sComponents(err)
+// 	}
+
+// 	var arrAPIResources []string
+// 	for res := range apiResources {
+// 		arrAPIResources = append(arrAPIResources, res)
+// 	}
+// 	groups, err := getGroupsFromResource(cli) //change this
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	manifest := string(content)
+// 	crds := getCRDsFromManifest(manifest, arrAPIResources)
+// 	components := make([]meshmodel.Component, 1)
+// 	for _, crd := range crds {
+// 		c, err := component.Generate(crd)
+// 		if err != nil {
+// 			fmt.Println("err: ", err.Error())
+// 			continue
+// 		}
+// 		c.Metadata["k8sVersion"] = k8version
+// 		c.Metadata[customResourceKey] = "false" //default
+// 		c.Metadata["adapter.meshery.io/name"] = "kubernetes"
+// 		for cr := range customResources {
+// 			if groups[c.Metadata["name"].(string)][cr] {
+// 				c.Metadata[customResourceKey] = "true"
+// 				break
+// 			}
+// 		}
+// 		components = append(components, c)
+// 	}
+// 	return components, nil
+// }
+
 // GetK8Components returns all the generated definitions and schemas for available api resources
 func GetK8Components(ctxt context.Context, config []byte) (*manifests.Component, error) {
 	cli, err := kubernetes.New(config)
@@ -776,4 +842,46 @@ func getGroupsFromResource(cli *kubernetes.Client) (gr map[string]map[string]boo
 		}
 	}
 	return
+}
+
+func getCRDsFromManifest(manifest string, arrApiResources []string) []string {
+	crds := make([]string, 0)
+	cuectx := cuecontext.New()
+	cueParsedManExpr, err := cueJson.Extract("", []byte(manifest))
+	parsedManifest := cuectx.BuildExpr(cueParsedManExpr)
+	definitions := parsedManifest.LookupPath(cue.ParsePath("definitions"))
+	if err != nil {
+		fmt.Printf("%v", err)
+		return nil
+	}
+	for _, resource := range arrApiResources {
+		resource = strings.ToLower(resource)
+		fields, err := definitions.Fields()
+		if err != nil {
+			fmt.Printf("%v\n", err)
+			continue
+		}
+		for fields.Next() {
+			fieldVal := fields.Value()
+			kindCue := fieldVal.LookupPath(cue.ParsePath(`"x-kubernetes-group-version-kind"[0].kind`))
+			if kindCue.Err() != nil {
+				continue
+			}
+			kind, err := kindCue.String()
+			kind = strings.ToLower(kind)
+			if err != nil {
+				fmt.Printf("%v", err)
+				continue
+			}
+			if kind == resource {
+				crd, err := fieldVal.MarshalJSON()
+				if err != nil {
+					fmt.Printf("%v", err)
+					continue
+				}
+				crds = append(crds, string(crd))
+			}
+		}
+	}
+	return crds
 }

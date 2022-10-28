@@ -75,7 +75,7 @@ func (h *Handler) ComponentGenerationHandler(rw http.ResponseWriter, r *http.Req
 						continue
 					}
 					host := fmt.Sprintf("%s.artifacthub.meshery", gpi.Name)
-					err = core.RegisterComponent(h.dbHandler, c, host)
+					err = core.RegisterComponent(h.DbHandler, c, host)
 					if err != nil {
 						h.log.Error(ErrGenerateComponents(err))
 					}

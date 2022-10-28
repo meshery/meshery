@@ -2,9 +2,11 @@ package models
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/meshes"
+	"github.com/layer5io/meshkit/database"
 	"github.com/layer5io/meshkit/logger"
 	"github.com/layer5io/meshkit/utils/events"
 	"github.com/spf13/viper"
@@ -43,10 +45,10 @@ func (cg *ComponentsRegistrationHelper) UpdateContexts(ctxs []*K8sContext) *Comp
 	return cg
 }
 
-type k8sRegistrationFunction func(ctxt context.Context, config []byte, ctxID string) error
+type k8sRegistrationFunction func(ctxt context.Context, config []byte, ctxID string, db *database.Handler) error
 
 // start registration of components for the contexts
-func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, regFunc k8sRegistrationFunction, eb *events.EventStreamer) {
+func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, regFunc k8sRegistrationFunction, eb *events.EventStreamer, db *database.Handler) {
 	for _, ctx := range ctxs {
 		ctxID := ctx.ID
 		// do not do anything about the contexts that are not present in the ctxRegStatusMap
@@ -88,7 +90,8 @@ func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, r
 							cg.log.Error(err)
 							return
 						}
-						err = regFunc(context.Background(), cfg, ctxID)
+						fmt.Println("will execute")
+						err = regFunc(context.Background(), cfg, ctxID, db)
 						if err != nil {
 							cg.log.Error(err)
 							return

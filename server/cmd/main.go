@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"net/url"
 	"os"
@@ -16,11 +15,11 @@ import (
 	"github.com/layer5io/meshery/server/internal/graphql"
 	"github.com/layer5io/meshery/server/internal/store"
 	"github.com/layer5io/meshery/server/models"
-	meshmodelcore "github.com/layer5io/meshery/server/models/meshmodel/core"
 	"github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshery/server/router"
 	"github.com/layer5io/meshkit/broker/nats"
 	"github.com/layer5io/meshkit/logger"
+	meshmodelcore "github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 	"github.com/layer5io/meshkit/utils/broadcast"
 	"github.com/layer5io/meshkit/utils/events"
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
@@ -170,7 +169,7 @@ func main() {
 		&models.PerformanceTestConfig{},
 		&models.SmiResultWithID{},
 		models.K8sContext{},
-		&meshmodelcore.ComponentCapability{},
+		meshmodelcore.ComponentCapabilityDB{},
 	)
 	if err != nil {
 		log.Error(ErrDatabaseAutoMigration(err))
@@ -270,15 +269,15 @@ func main() {
 	r := router.NewRouter(ctx, h, port, g, gp)
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt)
-	go func() {
-		f, err := os.Open("/home/ashish/dev/meshery/output/components.yaml")
-		if err != nil {
-			fmt.Println("bruh: ", err.Error())
-			return
-		}
-		comp, sync := meshmodelcore.StreamComponents(f)
-		meshmodelcore.SaveComponent(dbHandler, comp, sync)
-	}()
+	// go func() {
+	// 	f, err := os.Open("/home/ashish/dev/meshery/output/components.yaml")
+	// 	if err != nil {
+	// 		fmt.Println("bruh: ", err.Error())
+	// 		return
+	// 	}
+	// 	comp, sync := meshmodelcore.StreamComponents(f)
+	// 	meshmodelcore.SaveComponent(dbHandler, comp, sync)
+	// }()
 	go func() {
 		log.Info("Meshery Server listening on: ", port)
 		if err := r.Run(); err != nil {
