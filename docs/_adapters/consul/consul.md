@@ -68,7 +68,7 @@ The {{ page.name }} will connect to {{ page.name }}'s Prometheus and Grafana ins
 
 ### Architecture
 
-[![Consul Service Mesh Archicture]({{ site.baseurl }}/service-meshes/adapters/consul/service-mesh-architecture-consul.png)]({{ site.baseurl }}/service-meshes/adapters/consul/service-mesh-architecture-consul.png)
+[![Consul Service Mesh Architecture]({{ site.baseurl }}/service-meshes/adapters/consul/service-mesh-architecture-consul.png)]({{ site.baseurl }}/service-meshes/adapters/consul/service-mesh-architecture-consul.png)
 
 ### Suggested Topics
 
