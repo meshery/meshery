@@ -46,7 +46,7 @@ Using Meshery CLI, you can get a copy of your authentication token by executing 
 
 <pre><code>mesheryctl system login</code></pre>
 
-In order to use this command, you must have a web broswer available on your system (this command cannot be executed on a headless system).  
+In order to use this command, you must have a web browser available on your system (this command cannot be executed on a headless system).  
 
 #### GraphQL
 
@@ -54,7 +54,7 @@ Meshery provides its GraphQl API at `hostname:9081/api/graphql/query`. A GraphQL
 
 Explore the Meshery GraphQL API using the `interactive Playground` provided with Meshery instance at `localhost:9081/api/system/graphql/playground`.
 
-Meshery GrahphQL API can be used to perform three operations:
+Meshery GraphQL API can be used to perform three operations:
 
 - Queries for data retrieval.
 - Mutations for creating, updating, and deleting data.
