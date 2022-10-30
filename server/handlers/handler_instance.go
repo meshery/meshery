@@ -21,7 +21,7 @@ type Handler struct {
 	brokerConn         broker.Handler
 	K8sCompRegHelper   *models.ComponentsRegistrationHelper
 	MesheryCtrlsHelper *models.MesheryControllersHelper
-	EnforceProvider    string //If this is set, then only this provider is enforced on all endpoints
+	EnforceProvider    string // When set, all endpoints consider tokens / identities / capabilities valid from the single, designated provider.
 	dbHandler          *database.Handler
 	EventsBuffer       *events.EventStreamer
 }
