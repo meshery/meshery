@@ -485,7 +485,7 @@ function MesheryPatterns({
         body : pattern_file,
       }, () => {
         updateProgress({ showProgress : false });
-        enqueueSnackbar("Pattern Successfully Deployed!", {
+        enqueueSnackbar("Pattern successfully deployed", {
           variant : "success",
           action : function Action(key) {
             return (
@@ -537,7 +537,7 @@ function MesheryPatterns({
         body : pattern_file,
       }, () => {
         updateProgress({ showProgress : false });
-        enqueueSnackbar("Pattern Successfully Undeployed!", {
+        enqueueSnackbar("Pattern successfully undeployed", {
           variant : "success",
           action : function Action(key) {
             return (
@@ -562,7 +562,7 @@ function MesheryPatterns({
       },
       () => {
         updateProgress({ showProgress : false });
-        enqueueSnackbar("Pattern Successfully Cloned!", {
+        enqueueSnackbar("Pattern successfully cloned", {
           variant : "success",
           action : function Action(key) {
             return (
@@ -894,7 +894,7 @@ function MesheryPatterns({
       console.log("PatternFile Delete Multiple API", `/api/pattern/delete`);
       updateProgress({ showProgress : false });
       setTimeout(() => {
-        enqueueSnackbar(`${patterns.patterns.length} Designs Deleted`,
+        enqueueSnackbar(`${patterns.patterns.length} Designs deleted`,
           {
             variant : "success",
             autoHideDuration : 2000,
