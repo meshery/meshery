@@ -13,7 +13,7 @@ export default function FieldErrorTemplate(props) {
   return (
     <List dense={true} disablePadding={true}>
       {errors.map((error, i) => {
-        return (error==="is a required property" ? null:
+        return (
           <ListItem key={i} disableGutters={true}>
             <FormHelperText id={id}>{error}</FormHelperText>
           </ListItem>
