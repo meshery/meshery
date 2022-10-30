@@ -8,7 +8,6 @@ import { recursiveCleanObject } from "../helpers";
 import MesheryArrayFieldTemplate from "./RJSFCustomComponents/ArrayFieldTemlate";
 import MesheryCustomObjFieldTemplate from "./RJSFCustomComponents/ObjectFieldTemplate";
 // import MesheryWrapIfAdditionalTemplate from './RJSFCustomComponents/WrapIfAdditionalTemplate';
-import MesheryFieldErrorTemplate from "./RJSFCustomComponents/FieldErrorTemplate"
 import { customizeValidator } from "@rjsf/validator-ajv6";
 import CustomInputField from "./RJSFCustomComponents/CustomInputField";
 import _ from "lodash"
@@ -50,7 +49,6 @@ function RJSFForm(props) {
     ArrayFieldTemplate = MesheryArrayFieldTemplate,
     ObjectFieldTemplate = MesheryCustomObjFieldTemplate,
     // WrapIfAdditionalTemplate = MesheryWrapIfAdditionalTemplate,
-    FieldErrorTemplate= MesheryFieldErrorTemplate,
     LoadingComponent,
     ErrorList,
     // prop should be present in order for the cloned element to override this property
@@ -60,7 +58,6 @@ function RJSFForm(props) {
     ArrayFieldTemplate,
     ObjectFieldTemplate,
     // WrapIfAdditionalTemplate, // todo: enable it with some fixes
-    FieldErrorTemplate
   }
 
   useEffect(() => {
