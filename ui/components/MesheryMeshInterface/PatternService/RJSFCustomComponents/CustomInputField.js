@@ -4,7 +4,8 @@ import HelpOutlineIcon from "../HelpOutlineIcon";
 import EnlargedTextTooltip from "../EnlargedTextTooltip";
 
 const CustomInputField = (props) => {
-  const name = props.label // || props.id?.split('_')[-1].trim()
+  const additional = props.schema?.__additional_property; // check if the field is additional
+  const name = (additional? "Value" : props.label) // || props.id?.split('_')[-1].trim()
   const prettifiedName = name || 'Enter a value'
   const style = {
     display : "flex",
