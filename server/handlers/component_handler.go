@@ -7,6 +7,7 @@ import (
 	"github.com/gorilla/mux"
 	meshmodelcore "github.com/layer5io/meshery/server/models/meshmodel/core"
 	"github.com/layer5io/meshery/server/models/pattern/core"
+	mcore "github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 )
 
 // TODO: Swagger API docs
@@ -93,5 +94,30 @@ func (h *Handler) GetMeshmodelComponentsByName(rw http.ResponseWriter, r *http.R
 	if err := enc.Encode(res); err != nil {
 		h.log.Error(ErrWorkloadDefinition(err)) //TODO: Add appropriate meshkit error
 		http.Error(rw, ErrWorkloadDefinition(err).Error(), http.StatusInternalServerError)
+	}
+}
+
+// swagger:route POST /api/meshmodel/components/register MeshmodelValidate idPostMeshModelValidate
+// Handle POST request for registering meshmodel components.
+//
+// Validate the given value with the given schema
+// responses:
+// 	200:
+
+// request body should be json
+// request body should be of ComponentCapability format
+func (h *Handler) RegisterMeshmodelComponents(rw http.ResponseWriter, r *http.Request) {
+	dec := json.NewDecoder(r.Body)
+	var cc mcore.ComponentCapability
+	err := dec.Decode(&cc)
+	if err != nil {
+		http.Error(rw, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	err = meshmodelcore.RegisterComponentCapability(h.DbHandler, mcore.ComponentCapabilityDBFromCC(cc))
+	if err != nil {
+		http.Error(rw, err.Error(), http.StatusBadRequest)
+		return
 	}
 }

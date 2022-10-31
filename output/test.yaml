@@ -1,0 +1,463 @@
+component:
+  typemeta:
+    kind: ComponentDefinition
+    apiversion: core.meshery.io/v1alpha1
+  componentspec:
+    schematic: {}
+  metadata:
+    name: Filter
+    version: 1.3.0
+  spec: |-
+    {
+      "description": "Specification of desired Filter configuration.",
+      "properties": {
+      "filters": {
+        "description": "A set of filter plugins in order.",
+        "items": {
+        "properties": {
+          "grep": {
+          "description": "Grep defines Grep Filter configuration.",
+          "properties": {
+            "exclude": {
+            "description": "Exclude records which field matches the regular expression. Value Format: FIELD REGEX",
+            "type": "string"
+            },
+            "regex": {
+            "description": "Keep records which field matches the regular expression. Value Format: FIELD REGEX",
+            "type": "string"
+            }
+          },
+          "type": "object"
+          },
+          "kubernetes": {
+          "description": "Kubernetes defines Kubernetes Filter configuration.",
+          "properties": {
+            "annotations": {
+            "description": "Include Kubernetes resource annotations in the extra metadata.",
+            "type": "boolean"
+            },
+            "bufferSize": {
+            "description": "Set the buffer size for HTTP client when reading responses from Kubernetes API server.",
+            "pattern": "^\\d+(k|K|KB|kb|m|M|MB|mb|g|G|GB|gb)?$",
+            "type": "string"
+            },
+            "dummyMeta": {
+            "description": "If set, use dummy-meta data (for test/dev purposes)",
+            "type": "boolean"
+            },
+            "k8sLoggingExclude": {
+            "description": "Allow Kubernetes Pods to exclude their logs from the log processor (read more about it in Kubernetes Annotations section).",
+            "type": "boolean"
+            },
+            "k8sLoggingParser": {
+            "description": "Allow Kubernetes Pods to suggest a pre-defined Parser (read more about it in Kubernetes Annotations section)",
+            "type": "boolean"
+            },
+            "keepLog": {
+            "description": "When Keep_Log is disabled, the log field is removed from the incoming message once it has been successfully merged (Merge_Log must be enabled as well).",
+            "type": "boolean"
+            },
+            "kubeCAFile": {
+            "description": "CA certificate file",
+            "type": "string"
+            },
+            "kubeCAPath": {
+            "description": "Absolute path to scan for certificate files",
+            "type": "string"
+            },
+            "kubeMetaPreloadCacheDir": {
+            "description": "If set, Kubernetes meta-data can be cached/pre-loaded from files in JSON format in this directory, named as namespace-pod.meta",
+            "type": "string"
+            },
+            "kubeTagPrefix": {
+            "description": "When the source records comes from Tail input plugin, this option allows to specify what's the prefix used in Tail configuration.",
+            "type": "string"
+            },
+            "kubeTokenFile": {
+            "description": "Token file",
+            "type": "string"
+            },
+            "kubeURL": {
+            "description": "API Server end-point",
+            "type": "string"
+            },
+            "labels": {
+            "description": "Include Kubernetes resource labels in the extra metadata.",
+            "type": "boolean"
+            },
+            "mergeLog": {
+            "description": "When enabled, it checks if the log field content is a JSON string map, if so, it append the map fields as part of the log structure.",
+            "type": "boolean"
+            },
+            "mergeLogKey": {
+            "description": "When Merge_Log is enabled, the filter tries to assume the log field from the incoming message is a JSON string message and make a structured representation of it at the same level of the log field in the map. Now if Merge_Log_Key is set (a string name), all the new structured fields taken from the original log content are inserted under the new key.",
+            "type": "string"
+            },
+            "mergeLogTrim": {
+            "description": "When Merge_Log is enabled, trim (remove possible \\n or \\r) field values.",
+            "type": "boolean"
+            },
+            "mergeParser": {
+            "description": "Optional parser name to specify how to parse the data contained in the log key. Recommended use is for developers or testing only.",
+            "type": "string"
+            },
+            "regexParser": {
+            "description": "Set an alternative Parser to process record Tag and extract pod_name, namespace_name, container_name and docker_id. The parser must be registered in a parsers file (refer to parser filter-kube-test as an example).",
+            "type": "string"
+            },
+            "tlsDebug": {
+            "description": "Debug level between 0 (nothing) and 4 (every detail).",
+            "format": "int32",
+            "type": "integer"
+            },
+            "tlsVerify": {
+            "description": "When enabled, turns on certificate validation when connecting to the Kubernetes API server.",
+            "type": "boolean"
+            },
+            "useJournal": {
+            "description": "When enabled, the filter reads logs coming in Journald format.",
+            "type": "boolean"
+            }
+          },
+          "type": "object"
+          },
+          "lua": {
+          "description": "Lua defines Lua Filter configuration.",
+          "properties": {
+            "call": {
+            "description": "Lua function name that will be triggered to do filtering. It's assumed that the function is declared inside the Script defined above.",
+            "type": "string"
+            },
+            "protectedMode": {
+            "description": "If enabled, Lua script will be executed in protected mode. It prevents to crash when invalid Lua script is executed. Default is true.",
+            "type": "boolean"
+            },
+            "script": {
+            "description": "Path to the Lua script that will be used.",
+            "properties": {
+              "key": {
+              "description": "The key to select.",
+              "type": "string"
+              },
+              "name": {
+              "description": "Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names TODO: Add other useful fields. apiVersion, kind, uid?",
+              "type": "string"
+              },
+              "optional": {
+              "description": "Specify whether the ConfigMap or its key must be defined",
+              "type": "boolean"
+              }
+            },
+            "required": [
+              "key"
+            ],
+            "type": "object"
+            },
+            "timeAsTable": {
+            "description": "By default when the Lua script is invoked, the record timestamp is passed as a Floating number which might lead to loss precision when the data is converted back. If you desire timestamp precision enabling this option will pass the timestamp as a Lua table with keys sec for seconds since epoch and nsec for nanoseconds.",
+            "type": "boolean"
+            },
+            "typeIntKey": {
+            "description": "If these keys are matched, the fields are converted to integer. If more than one key, delimit by space. Note that starting from Fluent Bit v1.6 integer data types are preserved and not converted to double as in previous versions.",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+            }
+          },
+          "required": [
+            "call",
+            "script"
+          ],
+          "type": "object"
+          },
+          "modify": {
+          "description": "Modify defines Modify Filter configuration.",
+          "properties": {
+            "conditions": {
+            "description": "All conditions have to be true for the rules to be applied.",
+            "items": {
+              "description": "The plugin supports the following conditions",
+              "properties": {
+              "aKeyMatches": {
+                "description": "Is true if a key matches regex KEY",
+                "type": "string"
+              },
+              "keyDoesNotExist": {
+                "additionalProperties": {
+                "type": "string"
+                },
+                "description": "Is true if KEY does not exist",
+                "type": "object"
+              },
+              "keyExists": {
+                "description": "Is true if KEY exists",
+                "type": "string"
+              },
+              "keyValueDoesNotEqual": {
+                "additionalProperties": {
+                "type": "string"
+                },
+                "description": "Is true if KEY exists and its value is not VALUE",
+                "type": "object"
+              },
+              "keyValueDoesNotMatch": {
+                "additionalProperties": {
+                "type": "string"
+                },
+                "description": "Is true if key KEY exists and its value does not match VALUE",
+                "type": "object"
+              },
+              "keyValueEquals": {
+                "additionalProperties": {
+                "type": "string"
+                },
+                "description": "Is true if KEY exists and its value is VALUE",
+                "type": "object"
+              },
+              "keyValueMatches": {
+                "additionalProperties": {
+                "type": "string"
+                },
+                "description": "Is true if key KEY exists and its value matches VALUE",
+                "type": "object"
+              },
+              "matchingKeysDoNotHaveMatchingValues": {
+                "additionalProperties": {
+                "type": "string"
+                },
+                "description": "Is true if all keys matching KEY have values that do not match VALUE",
+                "type": "object"
+              },
+              "matchingKeysHaveMatchingValues": {
+                "additionalProperties": {
+                "type": "string"
+                },
+                "description": "Is true if all keys matching KEY have values that match VALUE",
+                "type": "object"
+              },
+              "noKeyMatches": {
+                "description": "Is true if no key matches regex KEY",
+                "type": "string"
+              }
+              },
+              "type": "object"
+            },
+            "type": "array"
+            },
+            "rules": {
+            "description": "Rules are applied in the order they appear, with each rule operating on the result of the previous rule.",
+            "items": {
+              "description": "The plugin supports the following rules",
+              "properties": {
+              "add": {
+                "additionalProperties": {
+                "type": "string"
+                },
+                "description": "Add a key/value pair with key KEY and value VALUE if KEY does not exist",
+                "type": "object"
+              },
+              "copy": {
+                "additionalProperties": {
+                "type": "string"
+                },
+                "description": "Copy a key/value pair with key KEY to COPIED_KEY if KEY exists AND COPIED_KEY does not exist",
+                "type": "object"
+              },
+              "hardCopy": {
+                "additionalProperties": {
+                "type": "string"
+                },
+                "description": "Copy a key/value pair with key KEY to COPIED_KEY if KEY exists. If COPIED_KEY already exists, this field is overwritten",
+                "type": "object"
+              },
+              "hardRename": {
+                "additionalProperties": {
+                "type": "string"
+                },
+                "description": "Rename a key/value pair with key KEY to RENAMED_KEY if KEY exists. If RENAMED_KEY already exists, this field is overwritten",
+                "type": "object"
+              },
+              "remove": {
+                "description": "Remove a key/value pair with key KEY if it exists",
+                "type": "string"
+              },
+              "removeRegex": {
+                "description": "Remove all key/value pairs with key matching regexp KEY",
+                "type": "string"
+              },
+              "removeWildcard": {
+                "description": "Remove all key/value pairs with key matching wildcard KEY",
+                "type": "string"
+              },
+              "rename": {
+                "additionalProperties": {
+                "type": "string"
+                },
+                "description": "Rename a key/value pair with key KEY to RENAMED_KEY if KEY exists AND RENAMED_KEY does not exist",
+                "type": "object"
+              },
+              "set": {
+                "additionalProperties": {
+                "type": "string"
+                },
+                "description": "Add a key/value pair with key KEY and value VALUE. If KEY already exists, this field is overwritten",
+                "type": "object"
+              }
+              },
+              "type": "object"
+            },
+            "type": "array"
+            }
+          },
+          "type": "object"
+          },
+          "nest": {
+          "description": "Nest defines Nest Filter configuration.",
+          "properties": {
+            "addPrefix": {
+            "description": "Prefix affected keys with this string",
+            "type": "string"
+            },
+            "nestUnder": {
+            "description": "Nest records matching the Wildcard under this key",
+            "type": "string"
+            },
+            "nestedUnder": {
+            "description": "Lift records nested under the Nested_under key",
+            "type": "string"
+            },
+            "operation": {
+            "description": "Select the operation nest or lift",
+            "enum": [
+              "nest",
+              "lift"
+            ],
+            "type": "string"
+            },
+            "removePrefix": {
+            "description": "Remove prefix from affected keys if it matches this string",
+            "type": "string"
+            },
+            "wildcard": {
+            "description": "Nest records which field matches the wildcard",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+            }
+          },
+          "type": "object"
+          },
+          "parser": {
+          "description": "Parser defines Parser Filter configuration.",
+          "properties": {
+            "keyName": {
+            "description": "Specify field name in record to parse.",
+            "type": "string"
+            },
+            "parser": {
+            "description": "Specify the parser name to interpret the field. Multiple Parser entries are allowed (split by comma).",
+            "type": "string"
+            },
+            "preserveKey": {
+            "description": "Keep original Key_Name field in the parsed result. If false, the field will be removed.",
+            "type": "boolean"
+            },
+            "reserveData": {
+            "description": "Keep all other original fields in the parsed result. If false, all other original fields will be removed.",
+            "type": "boolean"
+            },
+            "unescapeKey": {
+            "description": "If the key is a escaped string (e.g: stringify JSON), unescape the string before to apply the parser.",
+            "type": "boolean"
+            }
+          },
+          "type": "object"
+          },
+          "recordModifier": {
+          "description": "RecordModifier defines Record Modifier Filter configuration.",
+          "properties": {
+            "records": {
+            "description": "Append fields. This parameter needs key and value pair.",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+            },
+            "removeKeys": {
+            "description": "If the key is matched, that field is removed.",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+            },
+            "whitelistKeys": {
+            "description": "If the key is not matched, that field is removed.",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+            }
+          },
+          "type": "object"
+          },
+          "rewriteTag": {
+          "description": "RewriteTag defines a RewriteTag configuration.",
+          "properties": {
+            "emitterName": {
+            "description": "When the filter emits a record under the new Tag, there is an internal emitter plugin that takes care of the job. Since this emitter expose metrics as any other component of the pipeline, you can use this property to configure an optional name for it.",
+            "type": "string"
+            },
+            "rules": {
+            "description": "Defines the matching criteria and the format of the Tag for the matching record. The Rule format have four components: KEY REGEX NEW_TAG KEEP.",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+            }
+          },
+          "type": "object"
+          },
+          "throttle": {
+          "description": "Throttle defines a Throttle configuration.",
+          "properties": {
+            "interval": {
+            "description": "Interval is the time interval expressed in \"sleep\" format. e.g. 3s, 1.5m, 0.5h, etc.",
+            "pattern": "^\\d+(\\.[0-9]{0,2})?(s|m|h|d)?$",
+            "type": "string"
+            },
+            "printStatus": {
+            "description": "PrintStatus represents whether to print status messages with current rate and the limits to information logs.",
+            "type": "boolean"
+            },
+            "rate": {
+            "description": "Rate is the amount of messages for the time.",
+            "format": "int64",
+            "type": "integer"
+            },
+            "window": {
+            "description": "Window is the amount of intervals to calculate average over.",
+            "format": "int64",
+            "type": "integer"
+            }
+          },
+          "type": "object"
+          }
+        },
+        "type": "object"
+        },
+        "type": "array"
+      },
+      "match": {
+        "description": "A pattern to match against the tags of incoming records. It's case sensitive and support the star (*) character as a wildcard.",
+        "type": "string"
+      },
+      "matchRegex": {
+        "description": "A regular expression to match against the tags of incoming records. Use this option if you want to use the full regex syntax.",
+        "type": "string"
+      }
+      },
+      "title": "Filter",
+      "type": "object"
+    }

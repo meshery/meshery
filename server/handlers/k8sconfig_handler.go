@@ -6,7 +6,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
+	"os"
+	"path"
 	"path/filepath"
 
 	// for GKE kube API authentication
@@ -18,6 +21,7 @@ import (
 	mcore "github.com/layer5io/meshery/server/models/meshmodel/core"
 	"github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshkit/database"
+	meshmodelcore "github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
 	"github.com/layer5io/meshkit/utils"
 	"github.com/pkg/errors"
@@ -300,8 +304,8 @@ func (h *Handler) LoadContextsAndPersist(token string, prov models.Provider) ([]
 	}
 	return contexts, nil
 }
+
 func RegisterK8sMeshModelComponents(ctx context.Context, config []byte, ctxID string, db *database.Handler) (err error) {
-	fmt.Println("at least here")
 	man, err := mcore.GetK8sMeshModelComponents(ctx, config)
 	if err != nil {
 		return ErrCreatingKubernetesComponents(err, ctxID)
@@ -309,7 +313,39 @@ func RegisterK8sMeshModelComponents(ctx context.Context, config []byte, ctxID st
 	if man == nil {
 		return ErrCreatingKubernetesComponents(errors.New("generated components are nil"), ctxID)
 	}
-	err = mcore.RegisterComponentCapability(db, man, "<none-local>")
+
+	for _, c := range man {
+		var cc meshmodelcore.ComponentCapability
+		cc.Host = "kubernetes"
+		cc.Component = c
+		cdb := meshmodelcore.ComponentCapabilityDBFromCC(cc)
+		err = mcore.RegisterComponentCapability(db, cdb)
+		go func(c meshmodelcore.ComponentCapability) {
+			var outputPath = "/Users/ashishtiwari/dev/meshery/meshmodel/kubernetes"
+			if v, ok := c.Metadata["k8sVersion"].(string); ok && v != "" {
+				outputPath = path.Join(outputPath, v)
+				if _, err := os.Stat(outputPath); errors.Is(err, os.ErrNotExist) {
+					err := os.Mkdir(outputPath, os.ModePerm)
+					if err != nil {
+						log.Println(err)
+						return
+					}
+				}
+			}
+			if n, ok := c.Metadata["name"].(string); ok && n != "" {
+				outputPath = path.Join(outputPath, n+".json")
+				if _, err := os.Stat(outputPath); errors.Is(err, os.ErrNotExist) {
+					file, err := os.Create(outputPath)
+					if err != nil {
+						log.Println(err)
+						return
+					}
+					byt, _ := json.MarshalIndent(c, "", "\t")
+					file.Write(byt)
+				}
+			}
+		}(cc)
+	}
 	return
 }
 

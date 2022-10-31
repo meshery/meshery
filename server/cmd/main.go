@@ -15,6 +15,7 @@ import (
 	"github.com/layer5io/meshery/server/internal/graphql"
 	"github.com/layer5io/meshery/server/internal/store"
 	"github.com/layer5io/meshery/server/models"
+	meshmodel "github.com/layer5io/meshery/server/models/meshmodel/core"
 	"github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshery/server/router"
 	"github.com/layer5io/meshkit/broker/nats"
@@ -269,15 +270,10 @@ func main() {
 	r := router.NewRouter(ctx, h, port, g, gp)
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt)
-	// go func() {
-	// 	f, err := os.Open("/home/ashish/dev/meshery/output/components.yaml")
-	// 	if err != nil {
-	// 		fmt.Println("bruh: ", err.Error())
-	// 		return
-	// 	}
-	// 	comp, sync := meshmodelcore.StreamComponents(f)
-	// 	meshmodelcore.SaveComponent(dbHandler, comp, sync)
-	// }()
+	go func() {
+		compStreamer := meshmodel.StreamComponents("/Users/ashishtiwari/dev/meshery/output")
+		meshmodel.SaveComponent(dbHandler, compStreamer)
+	}()
 	go func() {
 		log.Info("Meshery Server listening on: ", port)
 		if err := r.Run(); err != nil {

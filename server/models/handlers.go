@@ -96,6 +96,7 @@ type HandlerInterface interface {
 	ComponentsForTypeHandler(rw http.ResponseWriter, r *http.Request)
 	GetAllComponents(rw http.ResponseWriter, r *http.Request)
 	GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Request)
+	RegisterMeshmodelComponents(rw http.ResponseWriter, r *http.Request)
 	GetMeshmodelComponentsByName(rw http.ResponseWriter, r *http.Request)
 	ComponentVersionsHandler(rw http.ResponseWriter, r *http.Request)
 	ComponentsByNameHandler(rw http.ResponseWriter, r *http.Request)
