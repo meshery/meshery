@@ -246,7 +246,7 @@ class GrafanaSelectionComponent extends Component {
                     // if (ind === 0 || this.getSelectedTemplateVar(ind-1) !== ''){
                     if (ind === 0 || typeof this.getSelectedTemplateVar(ind - 1) !== 'undefined') {
                       return (
-                        <Grid item xs={12} sm={4}>
+                        <Grid item xs={12} sm={4} key={ind}>
                           <TextField
                             select
                             id={`template_var_${ind}`}

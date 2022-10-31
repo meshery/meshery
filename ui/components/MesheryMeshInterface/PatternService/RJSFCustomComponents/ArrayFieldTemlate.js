@@ -1,8 +1,5 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect } from "react";
-
-import { utils } from "@rjsf/core";
-
 import Box from "@material-ui/core/Box";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
@@ -12,7 +9,7 @@ import AddIcon from "@material-ui/icons/Add";
 import SimpleAccordion from "./Accordion";
 import EnlargedTextTooltip from "../EnlargedTextTooltip";
 import HelpOutlineIcon from "../HelpOutlineIcon";
-const { isMultiSelect, getDefaultRegistry } = utils;
+import { isMultiSelect, getDefaultFormState } from "@rjsf/utils";
 
 function getTitleForItem(props) {
   const title = getTitle(props);
@@ -36,7 +33,7 @@ function getTitle(props) {
 }
 
 const ArrayFieldTemplate = (props) => {
-  const { schema, registry = getDefaultRegistry() } = props;
+  const { schema, registry = getDefaultFormState() } = props;
 
   // TODO: update types so we don't have to cast registry as any
   if (isMultiSelect(schema, registry.rootSchema)) {
@@ -51,10 +48,7 @@ const ArrayFieldTitle = ({ TitleField, idSchema, title, required }) => {
     return null;
   }
 
-  const id = `${idSchema.$id}__title`;
-  // return <h3>{title?.charAt(0)?.toUpperCase() + title?.slice(1)}</h3>;
   return <Typography variant="body1" style={{ fontWeight : "bold", marginLeft : ".5rem", display : "inline" }}>{title.charAt(0).toUpperCase() + title.slice(1)}</Typography>;
-  // return <TitleField id={id} title={title} required={required} />;
 };
 
 const ArrayFieldDescription = ({ DescriptionField, idSchema, description }) => {

@@ -102,7 +102,12 @@ const useStyles= makeStyles((theme) => ({
   noText : {
     fontSize : "2rem",
     marginBottom : "2rem",
-  }
+  },
+  clonePatt : {
+    width : "20px",
+    height : "20px",
+    marginRight : "5px",
+  },
 }));
 
 export default useStyles;

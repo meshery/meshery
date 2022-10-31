@@ -14,7 +14,7 @@ Meshery UI has a number of extension points that allow for users to customize th
 The Meshery extension points are the way to extend meshery and derive the more custom use-cases out of it. We already have an extension point called MeshMap. 
 Meshery can provide the extension point in various ways by providing the feature of custom-components. One of the example where these custom components are used is RJSF forms in meshery-extension
 
-### Extensibilty: RJSF Custom Component
+### Extensibility: RJSF Custom Component
 RJSFWrapperComponent are the customizations done on RJSF forms overriding the default behaviour of meshery-ui rjsf forms.
 The [Rjsf forms are wrapped](https://github.com/meshery/meshery/blob/0bc68d1cd0ba80a565afa68bce80899c22db9a2e/ui/components/MesheryMeshInterface/PatternService/RJSF.js#L66) under these component to receive the custom-props from Meshery-extension.
 ```jsx
@@ -60,7 +60,7 @@ Submit an issue to request more documentation.
 1. **ui/components/MesheryMeshInterface/PatternServiceFormCore.js** - PatternServiceFormCore component which decouples the SettingsForm and TraitsForm from their UI representation while keeping the logic coupled. This design lets the Remote Provider amend the design of the components without interfering with Meshery UI's core logic.
 
 ### Using React JSON Schema Form
- Meshery exposes a custom RJSF Form component which is capable of generating "Pattern" YAMLs without being extremely opiniated about the UI. This custom component is available at `ui/components/MesheryMeshInterface/PatternServiceFormCore.js`. An example usage of the component which will render the logically coupled `SettingsForm` and `TraitsForm` in a Material UI `TabPanel`:
+ Meshery exposes a custom RJSF Form component which is capable of generating "Pattern" YAMLs without being extremely opinionated about the UI. This custom component is available at `ui/components/MesheryMeshInterface/PatternServiceFormCore.js`. An example usage of the component which will render the logically coupled `SettingsForm` and `TraitsForm` in a Material UI `TabPanel`:
 
  ```js
   <PatternServiceFormCore

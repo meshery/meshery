@@ -904,7 +904,7 @@ class DashboardComponent extends React.Component {
                 }
               >
                 {self.state.meshScanNamespaces[mesh.name] &&
-                    self.state.meshScanNamespaces[mesh.name].map((ns) => <MenuItem value={ns}>{ns}</MenuItem>)}
+                    self.state.meshScanNamespaces[mesh.name].map((ns) => <MenuItem key={ns.uniqueID} value={ns}>{ns}</MenuItem>)}
               </Select>
             )}
           </>
@@ -1020,7 +1020,7 @@ class DashboardComponent extends React.Component {
                    self.setState({ selectedNamespace : e.target.value })
                  }
                >
-                 {self.state.namespaceList && self.state.namespaceList.map((ns) => <MenuItem value={ns}>{ns}</MenuItem>)}
+                 {self.state.namespaceList && self.state.namespaceList.map((ns) => <MenuItem key={ns.uniqueID} value={ns}>{ns}</MenuItem>)}
                </Select>
              )}
            </>
@@ -1109,7 +1109,7 @@ class DashboardComponent extends React.Component {
     let chp = (
       <div>
         {k8sconfig?.map(ctx => (
-          <Tooltip title={`Server: ${ctx.server}`}>
+          <Tooltip key={ctx.uniqueID} title={`Server: ${ctx.server}`}>
             <Chip
               label={ctx?.name}
               className={classes.chip}
