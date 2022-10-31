@@ -71,7 +71,7 @@ jobs:
           minikube version: "v1.27.1"
           kubernetes version: '${{ matrix.k8s_version }}'
           driver: docker
-          start args: --cni bridge
+          start args: --cni "${{ inputs.k8s_cni }}"
       - name: Checkout Code
         uses: actions/checkout@master
 
@@ -154,12 +154,15 @@ jobs:
           echo "this is $svcip"
           config='{"contexts":{"local":{"endpoint":'$svcip',"token":"Default","platform":"kubernetes","adapters":[],"channel":"stable","version":"latest"}},"current-context":"local","tokens":[{"location":"auth.json","name":"Default"}]}'
           echo $config  > ~/.meshery/config.yaml
+      - name: Download patternfile
+        uses: actions/download-artifact@v2
+        with:
+          name: patternfile
       - name: Wait for Meshery pods to come up 
         run: sleep 100  
       # This pattern will try to install  service mesh(the first attempt can fail currently fot k8s componets so we will wait 100 seconds after the first apply and then apply again. Since pattern apply is idempotent, this wont be an issue.)
       - name: Pattern apply 
         run: |
-          wget https://raw.githubusercontent.com/service-mesh-patterns/service-mesh-patterns/master/samples/${{ inputs.patternfile_name }}
           cat ./${{ inputs.patternfile_name }}
           mesheryctl pattern apply -f ./${{ inputs.patternfile_name }}  
 
