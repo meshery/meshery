@@ -8,7 +8,7 @@ type: project
 category: contributing
 ---
 
-`mesheryctl` is written in Golang or the Go Programming Language. For development use Go version 19+.
+`mesheryctl` is written in Golang or the Go Programming Language. For development use Go version 1.19+.
 
 {% include alert.html
     type="info"

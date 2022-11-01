@@ -404,9 +404,9 @@ function MesheryPatterns({
       disposeConfSubscriptionRef.current.dispose();
     }
     const configurationSubscription = ConfigurationSubscription((result) => {
-      setPage(result.configuration?.patterns.page || 0);
-      setPageSize(result.configuration?.patterns.page_size || 0);
-      setCount(result.configuration?.patterns.total_count || 0);
+      setPage(result.configuration?.patterns?.page || 0);
+      setPageSize(result.configuration?.patterns?.page_size || 0);
+      setCount(result.configuration?.patterns?.total_count || 0);
       handleSetPatterns(result.configuration?.patterns.patterns);
       stillLoading(false);
     },

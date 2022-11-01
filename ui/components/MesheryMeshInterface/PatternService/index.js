@@ -1,7 +1,7 @@
 // @ts-check
 import React from "react";
 import Switch from "./Switch";
-import RJSF from "./RJSF";
+import RJSFWrapper from "./RJSF_wrapper";
 import { isEmptyObj } from "../../../utils/utils";
 
 /**
@@ -39,10 +39,48 @@ function componentType(jsonSchema) {
  */
 function PatternService({ formData, jsonSchema, onChange, type, onSubmit, onDelete, RJSFWrapperComponent, RJSFFormChildComponent }) {
   const ctype = componentType(jsonSchema);
-
+  const sortProperties = (properties, sortOrder) => {
+    const sortedProperties = {};
+    Object.keys(properties)
+      .sort((a, b) => {
+        return (
+          sortOrder.indexOf(properties[a]?.type) - sortOrder.indexOf(properties[b]?.type)
+        );
+      })
+      .forEach(key => {
+        sortedProperties[key] = properties[key];
+        if (properties[key]?.properties) {
+          sortedProperties[key].properties = sortProperties(
+            properties[key].properties,
+            sortOrder
+          );
+        }
+        if (properties[key].items?.properties) {
+          sortedProperties[key].items.properties = sortProperties(
+            properties[key].items.properties,
+            sortOrder
+          );
+        }
+      });
+    return sortedProperties;
+  };
+  // Order of properties in the form
+  const sortPropertiesOrder = [
+    "string",
+    "integer",
+    "number",
+    "boolean",
+    "array",
+    "object"
+  ];
+  const sortedProperties = sortProperties(
+    jsonSchema.properties,
+    sortPropertiesOrder
+  );
+  jsonSchema.properties = sortedProperties;
   if (ctype === "rjsf")
     return (
-      <RJSF
+      <RJSFWrapper
         formData={formData}
         hideSubmit={type === "trait"}
         hideTitle={type === "workload"}

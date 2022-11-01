@@ -1,0 +1,32 @@
+name: Static Component Generation
+on: 
+  workflow_dispatch:
+jobs:
+  run-script:
+    name: Run Script
+    if: github.repository == 'meshery/meshery'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@master
+        with:
+          token: ${{ secrets.GH_ACCESS_TOKEN }}
+          fetch-depth: 1
+          
+      - name: Setup Go
+        uses: actions/setup-go@master
+        with:
+          go-version: "1.19"
+      - name: Setup Cache
+        uses: actions/cache@v3
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+      - run: |
+          GOPROXY=https://proxy.golang.org,direct GOSUMDB=off go run ./scripts/component_generation/main.go
+      - name: Commit results
+        uses: EndBug/add-and-commit@v9
+        with: 
+          add: "*.yaml"
