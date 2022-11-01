@@ -485,7 +485,7 @@ function MesheryPatterns({
         body : pattern_file,
       }, () => {
         updateProgress({ showProgress : false });
-        enqueueSnackbar("Pattern successfully deployed", {
+        enqueueSnackbar("Design successfully deployed", {
           variant : "success",
           action : function Action(key) {
             return (
@@ -537,7 +537,7 @@ function MesheryPatterns({
         body : pattern_file,
       }, () => {
         updateProgress({ showProgress : false });
-        enqueueSnackbar("Pattern successfully undeployed", {
+        enqueueSnackbar("Design successfully undeployed", {
           variant : "success",
           action : function Action(key) {
             return (
@@ -562,7 +562,7 @@ function MesheryPatterns({
       },
       () => {
         updateProgress({ showProgress : false });
-        enqueueSnackbar("Pattern successfully cloned", {
+        enqueueSnackbar("Design successfully cloned", {
           variant : "success",
           action : function Action(key) {
             return (
