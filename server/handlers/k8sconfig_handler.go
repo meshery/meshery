@@ -318,8 +318,14 @@ func RegisterK8sMeshModelComponents(ctx context.Context, config []byte, ctxID st
 		var cc meshmodelcore.ComponentCapability
 		cc.Host = "kubernetes"
 		cc.Component = c
+		if cc.Metadata == nil {
+			cc.Metadata = make(map[string]interface{}, 0)
+		}
+		cc.Metadata["io.meshery.ctxid"] = ctxID
 		cdb := meshmodelcore.ComponentCapabilityDBFromCC(cc)
 		err = mcore.RegisterComponentCapability(db, cdb)
+
+		//Write it on the file system
 		go func(c meshmodelcore.ComponentCapability) {
 			outputPath, _ := filepath.Abs("../meshmodel")
 			outputPath = filepath.Join(outputPath, "kubernetes")
@@ -341,7 +347,7 @@ func RegisterK8sMeshModelComponents(ctx context.Context, config []byte, ctxID st
 						log.Println(err)
 						return
 					}
-					byt, _ := json.MarshalIndent(c, "", "\t")
+					byt, _ := json.Marshal(c)
 					file.Write(byt)
 				}
 			}

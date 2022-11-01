@@ -275,8 +275,8 @@ func main() {
 	go func() {
 		path, _ := filepath.Abs("../output")
 		path = filepath.Join(path, "output")
-		compStreamer := meshmodel.StreamComponents(path)
-		meshmodel.SaveComponent(dbHandler, compStreamer)
+		compStreamer, sync := meshmodel.StreamComponents(path, meshmodel.YAML)
+		meshmodel.SaveComponent(dbHandler, compStreamer, sync)
 	}()
 	go func() {
 		path, _ := filepath.Abs("../meshmodel/kubernetes")
@@ -284,8 +284,8 @@ func main() {
 		for _, item := range items {
 			if item.IsDir() {
 				thipath := filepath.Join(path, item.Name())
-				compStreamer := meshmodel.StreamComponents(thipath)
-				meshmodel.SaveComponent(dbHandler, compStreamer)
+				compStreamer, sync := meshmodel.StreamComponents(thipath, meshmodel.JSON)
+				meshmodel.SaveComponent(dbHandler, compStreamer, sync)
 			}
 		}
 
@@ -298,6 +298,13 @@ func main() {
 		}
 	}()
 	<-c
+	log.Info("Deleting all MeshModel components ...")
+	err = dbHandler.DB.Migrator().DropTable(meshmodelcore.ComponentCapabilityDB{})
+	if err != nil {
+		log.Error(ErrCleaningUpLocalProvider(err))
+	} else {
+		log.Info("Succesfully cleaned up meshmodel components")
+	}
 	log.Info("Doing seeded content cleanup...")
 	err = lProv.Cleanup()
 	if err != nil {

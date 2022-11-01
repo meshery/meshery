@@ -2,6 +2,7 @@ package core
 
 import (
 	"context"
+	"crypto/md5"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -96,7 +97,7 @@ func GetK8sMeshModelComponents(ctx context.Context, kubeconfig []byte) ([]meshmo
 		return nil, err
 	}
 	manifest := string(content)
-	crds := getCRDsFromManifest(manifest, arrAPIResources)
+	crds, names := getCRDsFromManifest(manifest, arrAPIResources)
 	components := make([]meshmodel.Component, 1)
 	for name, crd := range crds {
 		c := meshmodel.NewComponent()
@@ -104,6 +105,7 @@ func GetK8sMeshModelComponents(ctx context.Context, kubeconfig []byte) ([]meshmo
 		c.Metadata["k8sVersion"] = k8version.String()
 		c.Metadata[customResourceKey] = false
 		c.Metadata["name"] = name
+		c.Metadata["display-name"] = names[name]
 		for cr := range customResources {
 			if groups[c.Metadata["name"].(string)][cr] {
 				c.Metadata[customResourceKey] = true
@@ -118,7 +120,7 @@ func GetK8sMeshModelComponents(ctx context.Context, kubeconfig []byte) ([]meshmo
 const customResourceKey = "isCustomResource"
 
 func RegisterComponentCapability(dbHandler *database.Handler, mc meshmodel.ComponentCapabilityDB) (err error) {
-	fmt.Println("here ", mc.ComponentDB.Metadata)
+	mc.ID = getComponentCapabilityIDFromComponentCapability(mc)
 	err = dbHandler.DB.Create(&mc).Error
 	if err != nil {
 		return err
@@ -134,10 +136,14 @@ func RegisterComponent(dbHandler *database.Handler, data []byte, host string) (e
 	}
 	component.Host = host
 	cdb := meshmodel.ComponentCapabilityDBFromCC(component)
-	cdb.ID = uuid.NewMD5(uuid.New(), data)
+	cdb.ID = getComponentCapabilityIDFromComponentCapability(cdb)
 	err = dbHandler.DB.Create(&cdb).Error
-	fmt.Println("err: ", err.Error())
 	return
+}
+func getComponentCapabilityIDFromComponentCapability(cc meshmodel.ComponentCapabilityDB) uuid.UUID {
+	byt, _ := json.Marshal(cc)
+	md5 := md5.Sum(byt)
+	return md5
 }
 
 // GetComponents return all of the components
@@ -172,12 +178,17 @@ func GetComponentsByName(dbHandler *database.Handler, name string) (caps []meshm
 	return
 }
 
-func StreamComponents(dir string) chan meshmodel.ComponentCapability {
+type componentFileType string
+
+const (
+	YAML = "yaml"
+	JSON = "json"
+)
+
+func StreamComponents(dir string, typ componentFileType) (chan meshmodel.ComponentCapability, chan bool) {
 	m := make(chan meshmodel.ComponentCapability, 10)
-	go func(m chan meshmodel.ComponentCapability) {
-		defer func() {
-			close(m)
-		}()
+	done := make(chan bool)
+	go func(m chan meshmodel.ComponentCapability, done chan bool) {
 		files, err := ioutil.ReadDir(dir)
 		if err != nil {
 			return
@@ -194,23 +205,39 @@ func StreamComponents(dir string) chan meshmodel.ComponentCapability {
 				}
 				var comp meshmodel.ComponentCapability
 				comp.Host = "<none-local>"
-				err = yaml.Unmarshal(b, &comp)
+				switch typ {
+				case YAML:
+					err = yaml.Unmarshal(b, &comp)
+				case JSON:
+					err = json.Unmarshal(b, &comp)
+				default:
+					fmt.Println("unrecognized file type")
+					continue
+				}
+
 				if err != nil {
 					continue
 				}
+				fmt.Println("sending ", comp.Metadata["name"])
 				m <- comp
 			}
 		}
-	}(m)
-	return m
+		done <- true
+		close(m)
+	}(m, done)
+	return m, done
 }
 
-// SaveComponent saves the componentcapability using database instance and also writes it onto the file system if outputPath is passed.
-func SaveComponent(dbHandler *database.Handler, cc chan meshmodel.ComponentCapability) {
-	select {
-	case c := <-cc:
-		cdb := meshmodel.ComponentCapabilityDBFromCC(c)
-		dbHandler.DB.Create(&cdb)
+// SaveComponent saves the componentcapability using database instance
+func SaveComponent(dbHandler *database.Handler, cc chan meshmodel.ComponentCapability, done chan bool) {
+	for {
+		select {
+		case c := <-cc:
+			cdb := meshmodel.ComponentCapabilityDBFromCC(c)
+			dbHandler.DB.Create(&cdb)
+		case <-done:
+			return
+		}
 	}
 }
 
@@ -287,24 +314,25 @@ func getResolvedManifest(manifest string) (string, error) {
 	manifest = string(resolved)
 	return manifest, nil
 }
-func getCRDsFromManifest(manifest string, arrApiResources []string) map[string]string {
+func getCRDsFromManifest(manifest string, arrApiResources []string) (resourceToCRD map[string]string, resourceToName map[string]string) {
 	var err error
 	manifest, err = getResolvedManifest(manifest)
 	if err != nil {
 		fmt.Printf("%v", err)
-		return nil
+		return nil, nil
 	}
-	crds := make(map[string]string, 0)
+	resourceToCRD = make(map[string]string, 0)
+	resourceToName = make(map[string]string, 0)
 	cuectx := cuecontext.New()
 	cueParsedManExpr, err := cueJson.Extract("", []byte(manifest))
 	parsedManifest := cuectx.BuildExpr(cueParsedManExpr)
 	definitions := parsedManifest.LookupPath(cue.ParsePath("definitions"))
 	if err != nil {
 		fmt.Printf("%v", err)
-		return nil
+		return nil, nil
 	}
-	for _, resource := range arrApiResources {
-		resource = strings.ToLower(resource)
+	for _, name := range arrApiResources {
+		resource := strings.ToLower(name)
 		fields, err := definitions.Fields()
 		if err != nil {
 			fmt.Printf("%v\n", err)
@@ -328,9 +356,10 @@ func getCRDsFromManifest(manifest string, arrApiResources []string) map[string]s
 					fmt.Printf("%v", err)
 					continue
 				}
-				crds[resource] = string(crd)
+				resourceToCRD[resource] = string(crd)
+				resourceToName[resource] = name
 			}
 		}
 	}
-	return crds
+	return
 }

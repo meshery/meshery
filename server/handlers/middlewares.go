@@ -133,7 +133,7 @@ func (h *Handler) KubernetesMiddleware(next func(http.ResponseWriter, *http.Requ
 		}
 
 		// register kubernetes components
-		h.K8sCompRegHelper.UpdateContexts(contexts).RegisterComponents(contexts, RegisterK8sComponents, h.EventsBuffer, h.DbHandler)
+		// h.K8sCompRegHelper.UpdateContexts(contexts).RegisterComponents(contexts, RegisterK8sComponents, h.EventsBuffer, h.DbHandler)
 		h.K8sCompRegHelper.UpdateContexts(contexts).RegisterComponents(contexts, RegisterK8sMeshModelComponents, h.EventsBuffer, h.DbHandler)
 		// Identify custom contexts, if provided
 		k8sContextIDs := req.URL.Query()["contexts"]
