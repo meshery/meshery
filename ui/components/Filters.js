@@ -353,13 +353,13 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     );
   }
 
-  const handleDeploy = (filter_file) => {
+  const handleDeploy = (filter_file, name) => {
     dataFetch(
       ctxUrl(DEPLOY_URL, selectedK8sContexts),
       { credentials : "include", method : "POST", body : filter_file },
       () => {
         console.log("FilterFile Deploy API", `/api/filter/deploy`);
-        enqueueSnackbar("Filter successfully deployed", {
+        enqueueSnackbar(`"${name}" Filter successfully deployed`, {
           variant : "success",
           action : function Action(key) {
             return (
@@ -376,13 +376,13 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     );
   };
 
-  const handleUndeploy = (filter_file) => {
+  const handleUndeploy = (filter_file, name) => {
     dataFetch(
       ctxUrl(DEPLOY_URL, selectedK8sContexts),
       { credentials : "include", method : "DELETE", body : filter_file },
       () => {
         updateProgress({ showProgress : false });
-        enqueueSnackbar("Filter successfully undeployed", {
+        enqueueSnackbar(`"${name}" Filter successfully undeployed`, {
           variant : "success",
           action : function Action(key) {
             return (
@@ -398,7 +398,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     );
   };
 
-  function handleClone(filterID) {
+  function handleClone(filterID, name) {
     updateProgress({ showProgress : true });
     dataFetch(FILTER_URL.concat(CLONE_URL, "/", filterID),
       {
@@ -407,7 +407,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
       },
       () => {
         updateProgress({ showProgress : false });
-        enqueueSnackbar("Filter successfully cloned", {
+        enqueueSnackbar(`"${name}" Filter successfully cloned`, {
           variant : "success",
           action : function Action(key) {
             return (
@@ -677,7 +677,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
             <>
               {visibility === "public" ? <IconButton onClick={(e) => {
                 e.stopPropagation();
-                handleClone(rowData.id)
+                handleClone(rowData.id, rowData.name)
               }
               }>
                 <img src="/static/img/clone.svg" />
@@ -914,7 +914,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
           open={modalOpen.open}
           handleClose={handleModalClose}
           submit={
-            { deploy : () => handleDeploy(modalOpen.filter_file),  unDeploy : () => handleUndeploy(modalOpen.filter_file) }
+            { deploy : () => handleDeploy(modalOpen.filter_file, modalOpen.name),  unDeploy : () => handleUndeploy(modalOpen.filter_file, modalOpen.name) }
           }
           isDelete={!modalOpen.deploy}
           title={modalOpen.name}
