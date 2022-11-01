@@ -44,6 +44,7 @@ import { ButtonGroup, IconButton, Tooltip } from "@material-ui/core";
 import ExtensionPointSchemaValidator from "../utils/ExtensionPointSchemaValidator";
 import dataFetch from "../lib/data-fetch";
 import { Collapse } from "@material-ui/core";
+import { cursorNotAllowed, disabledStyle, enabledComponents } from "../css/disableComponent.styles";
 
 const styles = (theme) => ({
   categoryHeader : {
@@ -192,7 +193,8 @@ const styles = (theme) => ({
     position : "fixed",
     cursor : "pointer",
     backgroundColor : "#fff",
-
+    display : "flex",
+    justifyContent : "center",
     bottom : "12%",
     left : "257px",
     zIndex : "1400",
@@ -219,6 +221,8 @@ const styles = (theme) => ({
     width : "auto",
     transition : "left 225ms",
     transform : "rotate(180deg)",
+    display : "flex",
+    justifyContent : "center",
 
     "&:hover" : { opacity : 1 },
     "&:focus" : { opacity : 1 },
@@ -283,7 +287,9 @@ const styles = (theme) => ({
     "&::-webkit-scrollbar" : {
       display : "none"
     }
-  }
+  },
+  disabled : disabledStyle,
+  cursorNotAllowed : cursorNotAllowed
 });
 
 const drawerIconsStyle = { height : "1.21rem", width : "1.21rem", fontSize : "1.45rem" };
@@ -291,11 +297,11 @@ const externalLinkIconStyle = { width : "1.11rem", fontSize : "1.11rem" };
 
 const categories = [
   {
-    id : "Dashboard",
+    id : "dashboard",
     icon : <DashboardIcon style={drawerIconsStyle} />,
     href : "/",
     title : "Dashboard",
-    show : true,
+    show : enabledComponents?.navigator?.dashboard === "*",
     link : true,
   },
   {
@@ -304,7 +310,7 @@ const categories = [
     hovericon : <LifecycleHover style={drawerIconsStyle} />,
     href : "/management",
     title : "Lifecycle",
-    show : true,
+    show : enabledComponents?.navigator?.lifecycle === "*",
     link : true,
     children : [
       {
@@ -312,56 +318,56 @@ const categories = [
         href : "/management/app-mesh",
         title : "AWS App Mesh",
         link : true,
-        show : true,
+        show : enabledComponents?.navigator?.lifecycle === "*" || enabledComponents?.navigator?.lifecycle?.appMesh,
       },
       {
         id : "Citrix_Service_Mesh",
         href : "/management/citrix",
         title : "Citrix Service Mesh",
         link : true,
-        show : true,
+        show : enabledComponents?.navigator?.lifecycle === "*" || enabledComponents?.navigator?.lifecycle?.citrix,
       },
       {
         id : "Consul",
         href : "/management/consul",
         title : "Consul",
         link : true,
-        show : true,
+        show : enabledComponents?.navigator?.lifecycle === "*" || enabledComponents?.navigator?.lifecycle?.consul,
       },
       {
         id : "Cilium_Service_Mesh",
         href : "/management/cilium",
         title : "Cilium",
         link : true,
-        show : true,
+        show : enabledComponents?.navigator?.lifecycle === "*" || enabledComponents?.navigator?.lifecycle?.cilium,
       },
       {
         id : "Istio",
         href : "/management/istio",
         title : "Istio",
         link : true,
-        show : true,
+        show : enabledComponents?.navigator?.lifecycle === "*" || enabledComponents?.navigator?.lifecycle?.istio,
       },
       {
         id : "Kuma",
         href : "/management/kuma",
         title : "Kuma",
         link : true,
-        show : true,
+        show : enabledComponents?.navigator?.lifecycle === "*" || enabledComponents?.navigator?.lifecycle?.kuma,
       },
       {
         id : "Linkerd",
         href : "/management/linkerd",
         title : "Linkerd",
         link : true,
-        show : true,
+        show : enabledComponents?.navigator?.lifecycle === "*" || enabledComponents?.navigator?.lifecycle?.linkerd,
       },
       {
         id : "Network_Service_Mesh",
         href : "/management/nsm",
         title : "Network Service Mesh",
         link : true,
-        show : true,
+        show : enabledComponents?.navigator?.lifecycle === "*" || enabledComponents?.navigator?.lifecycle?.nsm,
       },
       {
         id : "NGINX_Service_Mesh",
@@ -369,38 +375,38 @@ const categories = [
         href : "/management/nginx",
         title : "NGINX Service Mesh",
         link : true,
-        show : true,
+        show : enabledComponents?.navigator?.lifecycle === "*" || enabledComponents?.navigator?.lifecycle?.nginx,
       },
       {
         id : "Octarine",
         href : "/management/octarine",
         title : "Octarine",
         link : true,
-        show : true,
+        show : enabledComponents?.navigator?.lifecycle === "*" || enabledComponents?.navigator?.lifecycle?.octarine,
       },
       {
         id : "Open_Service_Mesh",
         href : "/management/osm",
         title : "Open Service Mesh",
         link : true,
-        show : true,
+        show : enabledComponents?.navigator?.lifecycle === "*" || enabledComponents?.navigator?.lifecycle?.osm,
       },
       {
         id : "Traefik_Mesh",
         href : "/management/traefik-mesh",
         title : "Traefik Mesh",
         link : true,
-        show : true,
+        show : enabledComponents?.navigator?.lifecycle === "*" || enabledComponents?.navigator?.lifecycle?.traefik,
       },
     ],
   },
   {
-    id : "Configuration",
+    id : "configuration",
     icon : <img src="/static/img/configuration_trans.svg" style={{ width : "1.21rem" }} />,
     hovericon : <ConfigurationHover style={{ transform : "scale(1.3)", ...drawerIconsStyle }} />,
     href : "#",
     title : "Configuration",
-    show : true,
+    show : enabledComponents?.navigator?.configuration === "*",
     link : true,
     children : [
       {
@@ -408,7 +414,7 @@ const categories = [
         icon : <img src="/static/img/web-applications.svg" style={{ width : "1.21rem" }} />,
         href : "/configuration/applications",
         title : "Applications",
-        show : true,
+        show : enabledComponents?.navigator?.configuration === "*" || enabledComponents?.navigator?.configuration?.applications,
         link : true,
         isBeta : true
       },
@@ -417,7 +423,7 @@ const categories = [
         icon : <img src="/static/img/web-filters.svg" style={{ width : "1.21rem" }} />,
         href : "/configuration/filters",
         title : "Filters",
-        show : true,
+        show : enabledComponents?.navigator?.configuration === "*" || enabledComponents?.navigator?.configuration?.filters,
         link : true,
         isBeta : true
       },
@@ -426,7 +432,7 @@ const categories = [
         icon : <img src="/static/img/pattern_trans.svg" style={{ width : "1.21rem" }} />,
         href : "/configuration/patterns",
         title : "Designs",
-        show : false,
+        show : enabledComponents?.navigator?.configuration === "*" || enabledComponents?.navigator?.configuration?.designs,
         link : true,
         isBeta : true
       },
@@ -438,42 +444,35 @@ const categories = [
     hovericon : <PerformanceHover style={drawerIconsStyle} />,
     href : "/performance",
     title : "Performance",
-    show : true,
+    show : enabledComponents?.navigator?.performance === "*",
     link : true,
     children : [
       {
-        id : "Profiles",
+        id : "profiles",
         icon :
           <FontAwesomeIcon icon={faDigitalTachograph} style={{ fontSize : 24 }} />,
         href : "/performance/profiles",
         title : "Profiles",
-        show : true,
+        show : enabledComponents?.navigator?.performance === "*" || enabledComponents?.navigator?.performance?.profiles,
         link : true,
       },
     ],
   },
   {
-    id : "Settings",
-    href : "/settings",
-    title : "Settings",
-    show : false,
-    link : true,
-  }, // title is used for comparison in the Header.js file as well
-  {
-    id : "Conformance",
+    id : "conformance",
     icon : <ConformanceIcon style={drawerIconsStyle} />,
     hovericon : <ConformanceHover style={drawerIconsStyle} />,
     href : "/smi_results", //Temp
     title : "Conformance",
-    show : true,
+    show : enabledComponents?.navigator?.conformance === "*",
     link : true,
     children : [
       {
-        id : "Service Mesh Interface",
+        id : "serviceMeshInterface",
         icon : <SmiIcon style={drawerIconsStyle} />,
         href : "/smi_results",
         title : "Service Mesh Interface",
-        show : true,
+        show : enabledComponents?.navigator?.conformance === "*" || enabledComponents?.navigator?.conformance?.serviceMeshInterface,
         link : true,
       },
     ],
@@ -483,7 +482,7 @@ const categories = [
     icon : <ExtensionIcon style={drawerIconsStyle} />,
     hovericon : <ExtensionIcon style={drawerIconsStyle} />,
     title : "Extensions",
-    show : true,
+    show : enabledComponents?.navigator?.extensions === "*",
     width : 12,
     link : true,
     href : "/extensions"
@@ -549,6 +548,8 @@ class Navigator extends React.Component {
       },
     };
   }
+
+  componentId = "navigator";
 
   componentDidMount() {
     dataFetch(
@@ -901,11 +902,11 @@ class Navigator extends React.Component {
             {children.map(({
               id : idc, title : titlec, icon : iconc, href : hrefc, show : showc, link : linkc, children : childrenc
             }) => {
-              if (typeof showc !== "undefined" && !showc) {
-                return "";
-              }
+              // if (typeof showc !== "undefined" && !showc) {
+              //   return "";
+              // }
               return (
-                <React.Fragment key={idc}>
+                <div key={idc} className={!showc ? classes.cursorNotAllowed : null}>
                   <ListItem
                     data-cy={idc}
                     button
@@ -917,14 +918,15 @@ class Navigator extends React.Component {
                       classes.item,
                       classes.itemActionable,
                       path === hrefc && classes.itemActiveItem,
-                      isDrawerCollapsed && classes.noPadding
+                      isDrawerCollapsed && classes.noPadding,
+                      !showc && classes.disabled
                     )}
                     onClick={() => this.handleAdapterClick(idc, linkc)}
                   >
                     {this.linkContent(iconc, titlec, hrefc, linkc, isDrawerCollapsed)}
                   </ListItem>
                   {this.renderChildren(idname, childrenc, depth + 1)}
-                </React.Fragment>
+                </div>
               );
             })}
           </List>
@@ -1059,12 +1061,6 @@ class Navigator extends React.Component {
     const { classes, isDrawerCollapsed, ...other } = this.props;
     const { path, showHelperButton } = this.state;
     this.updateCategoriesMenus();
-    let classname;
-    if (isDrawerCollapsed) {
-      classname = classes.collapseButtonWrapperRotated;
-    } else {
-      classname = classes.collapseButtonWrapper;
-    }
 
     const Title = (
       <ListItem
@@ -1095,11 +1091,11 @@ class Navigator extends React.Component {
         {categories.map(({
           id : childId, title, icon, href, show, link, children, hovericon
         }) => {
-          if (typeof show !== "undefined" && !show) {
-            return "";
-          }
+          // if (typeof show !== "undefined" && !show) {
+          //   return "";
+          // }
           return (
-            <div key={childId}>
+            <div key={childId} style={!show ? cursorNotAllowed : {}}>
               <ListItem
                 button={!!link}
                 dense
@@ -1109,7 +1105,8 @@ class Navigator extends React.Component {
                   link
                     ? classes.itemActionable
                     : '',
-                  path === href && classes.itemActiveItem
+                  path === href && classes.itemActiveItem,
+                  !show && classes.disabled
                 )}
                 onClick={() => this.toggleItemCollapse(childId)}
                 onMouseOver={() => children && isDrawerCollapsed ? this.setState({ hoveredId : childId }) : null}
@@ -1279,23 +1276,26 @@ class Navigator extends React.Component {
         }
       </ListItem>
     )
+
     const Chevron = (
-      <div className={classname} style={{ display : "flex", justifyContent : "center" }}
-        onClick={this.toggleMiniDrawer}
+      <div
+        className={classNames(isDrawerCollapsed ? classes.collapseButtonWrapperRotated : classes.collapseButtonWrapper)}
+        style={cursorNotAllowed}
       >
-        <FontAwesomeIcon
-          icon={faAngleLeft}
-          fixedWidth
-          size="1.5x"
-          style={{ margin : "0.5rem 0.2rem ", width : "0.8rem" }}
-          alt="Sidebar collapse toggle icon"
-        />
-
+        <div
+          style={!enabledComponents?.navigator?.toggler ? disabledStyle : {}}
+          onClick={this.toggleMiniDrawer}
+        >
+          <FontAwesomeIcon
+            icon={faAngleLeft}
+            fixedWidth
+            size="1.5x"
+            style={{ margin : "0.5rem 0.2rem ", width : "0.8rem" }}
+            alt="Sidebar collapse toggle icon"
+          />
+        </div>
       </div>
-
     )
-
-
 
     return (
       <NoSsr>
