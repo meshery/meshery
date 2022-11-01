@@ -128,7 +128,7 @@ func formatError(msg string, cmd cmdType) string {
 
 func ErrAttachAuthToken(err error) error {
 	return errors.New(ErrAttachAuthTokenCode, errors.Alert, []string{err.Error()},
-		[]string{"Authentication token not found. Please supply a valid user token using the --token (or -t) flag. Or login with `mesheryctl system login`"}, []string{}, []string{})
+		[]string{"Authentication token not found. Login with `mesheryctl system login` or supply a valid user token using the --token (or -t) flag."}, []string{}, []string{})
 }
 
 func ErrFailRequest(err error) error {
