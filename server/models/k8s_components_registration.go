@@ -44,10 +44,10 @@ func (cg *ComponentsRegistrationHelper) UpdateContexts(ctxs []*K8sContext) *Comp
 	return cg
 }
 
-type k8sRegistrationFunction func(ctxt context.Context, config []byte, ctxID string, db *database.Handler) error
+type K8sRegistrationFunction func(ctxt context.Context, config []byte, ctxID string, db *database.Handler) error
 
 // start registration of components for the contexts
-func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, regFunc k8sRegistrationFunction, eb *events.EventStreamer, db *database.Handler) {
+func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, regFuncs []K8sRegistrationFunction, eb *events.EventStreamer, db *database.Handler) {
 	for _, ctx := range ctxs {
 		ctxID := ctx.ID
 		// do not do anything about the contexts that are not present in the ctxRegStatusMap
@@ -89,10 +89,11 @@ func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, r
 							cg.log.Error(err)
 							return
 						}
-						err = regFunc(context.Background(), cfg, ctxID, db)
-						if err != nil {
-							cg.log.Error(err)
-							return
+						for _, fn := range regFuncs {
+							err = fn(context.Background(), cfg, ctxID, db)
+							if err != nil {
+								cg.log.Error(err)
+							}
 						}
 					}()
 				}

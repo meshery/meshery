@@ -218,7 +218,6 @@ func StreamComponents(dir string, typ componentFileType) (chan meshmodel.Compone
 				if err != nil {
 					continue
 				}
-				fmt.Println("sending ", comp.Metadata["name"])
 				m <- comp
 			}
 		}
