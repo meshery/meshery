@@ -39,7 +39,7 @@ import {
   faDigitalTachograph
 } from "@fortawesome/free-solid-svg-icons";
 import { faSlack } from "@fortawesome/free-brands-svg-icons";
-import { updatepagetitle, updatebetabadge, toggleDrawer, setAdapter } from "../lib/store";
+import { updatepagetitle, updatebetabadge, toggleDrawer, setAdapter, updateCapabilities } from "../lib/store";
 import { ButtonGroup, IconButton, Tooltip } from "@material-ui/core";
 import ExtensionPointSchemaValidator from "../utils/ExtensionPointSchemaValidator";
 import dataFetch from "../lib/data-fetch";
@@ -584,8 +584,10 @@ class Navigator extends React.Component {
         if (result) {
           this.setState({
             navigator : ExtensionPointSchemaValidator("navigator")(result?.extensions?.navigator),
-            capabilities : result?.capabilities || [],
+            // capabilities: result?.capabilities || [],
           });
+          //global state
+          this.props.updateCapabilities({ capabilitiesRegistry : result })
         }
       },
       (err) => console.error(err)
@@ -692,7 +694,7 @@ class Navigator extends React.Component {
         let show = false;
         cat.children?.forEach((ch) => {
           if (ch.id === "Designs") {
-            const idx = self.state.capabilities.findIndex((cap) => cap.feature === "persist-meshery-patterns");
+            const idx = self.props.capabilitiesRegistry?.capabilities?.findIndex((cap) => cap.feature === "persist-meshery-patterns");
             if (idx != -1) {
               ch.show = true;
               show = true;
@@ -1062,6 +1064,8 @@ class Navigator extends React.Component {
     const { path, showHelperButton } = this.state;
     this.updateCategoriesMenus();
 
+    console.log("capapa", this.props.capabilitiesRegistry)
+
     const Title = (
       <ListItem
         component="a"
@@ -1335,17 +1339,16 @@ const mapDispatchToProps = (dispatch) => ({
   updatebetabadge : bindActionCreators(updatebetabadge, dispatch),
   toggleDrawer : bindActionCreators(toggleDrawer, dispatch),
   setAdapter : bindActionCreators(setAdapter, dispatch),
+  updateCapabilities : bindActionCreators(updateCapabilities, dispatch),
 });
 
 const mapStateToProps = (state) => {
   const meshAdapters = state.get("meshAdapters").toJS();
   const meshAdaptersts = state.get("meshAdaptersts");
   const path = state.get("page").get("path");
-  const isDrawerCollapsed = state.get("isDrawerCollapsed")
-  return { meshAdapters, meshAdaptersts, path, isDrawerCollapsed };
+  const isDrawerCollapsed = state.get("isDrawerCollapsed");
+  const capabilitiesRegistry = state.get("capabilitiesRegistry")
+  return { meshAdapters, meshAdaptersts, path, isDrawerCollapsed, capabilitiesRegistry };
 };
-
-
-
 
 export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(withRouter(Navigator)));
