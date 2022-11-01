@@ -80,6 +80,7 @@ func main() {
 
 	viper.SetDefault("SKIP_DOWNLOAD_CONTENT", false)
 	viper.SetDefault("SKIP_COMP_GEN", false)
+	viper.SetDefault("PLAYGROUND", false)
 	store.Initialize()
 
 	// Register local OAM traits and workloads

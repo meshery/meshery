@@ -91,7 +91,8 @@ func (l *RemoteProvider) loadCapabilities(token string) {
 
 	version := viper.GetString("BUILD")
 	os := viper.GetString("OS")
-	finalURL := fmt.Sprintf("%s/%s/capabilities?os=%s", l.RemoteProviderURL, version, os)
+	playground := viper.GetString("PLAYGROUND")
+	finalURL := fmt.Sprintf("%s/%s/capabilities?os=%s&playground=%s", l.RemoteProviderURL, version, os, playground)
 	finalURL = strings.TrimSuffix(finalURL, "\n")
 	remoteProviderURL, err := url.Parse(finalURL)
 	if err != nil {
