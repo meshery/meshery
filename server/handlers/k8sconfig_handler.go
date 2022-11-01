@@ -321,7 +321,8 @@ func RegisterK8sMeshModelComponents(ctx context.Context, config []byte, ctxID st
 		cdb := meshmodelcore.ComponentCapabilityDBFromCC(cc)
 		err = mcore.RegisterComponentCapability(db, cdb)
 		go func(c meshmodelcore.ComponentCapability) {
-			var outputPath = "/Users/ashishtiwari/dev/meshery/meshmodel/kubernetes"
+			outputPath, _ := filepath.Abs("../meshmodel")
+			outputPath = filepath.Join(outputPath, "kubernetes")
 			if v, ok := c.Metadata["k8sVersion"].(string); ok && v != "" {
 				outputPath = path.Join(outputPath, v)
 				if _, err := os.Stat(outputPath); errors.Is(err, os.ErrNotExist) {

@@ -91,7 +91,7 @@ func GetK8sMeshModelComponents(ctx context.Context, kubeconfig []byte) ([]meshmo
 	for res := range apiResources {
 		arrAPIResources = append(arrAPIResources, res)
 	}
-	// groups, err := getGroupsFromResource(cli) //change this
+	groups, err := getGroupsFromResource(cli) //change this
 	if err != nil {
 		return nil, err
 	}
@@ -104,12 +104,12 @@ func GetK8sMeshModelComponents(ctx context.Context, kubeconfig []byte) ([]meshmo
 		c.Metadata["k8sVersion"] = k8version.String()
 		c.Metadata[customResourceKey] = false
 		c.Metadata["name"] = name
-		// for cr := range customResources {
-		// 	if groups[c.GetMetadataValue("name").(string)][cr] {
-		// 		c.SetMetadata(customResourceKey, true)
-		// 		break
-		// 	}
-		// }
+		for cr := range customResources {
+			if groups[c.Metadata["name"].(string)][cr] {
+				c.Metadata[customResourceKey] = true
+				break
+			}
+		}
 		components = append(components, c)
 	}
 	return components, nil
@@ -118,6 +118,7 @@ func GetK8sMeshModelComponents(ctx context.Context, kubeconfig []byte) ([]meshmo
 const customResourceKey = "isCustomResource"
 
 func RegisterComponentCapability(dbHandler *database.Handler, mc meshmodel.ComponentCapabilityDB) (err error) {
+	fmt.Println("here ", mc.ComponentDB.Metadata)
 	err = dbHandler.DB.Create(&mc).Error
 	if err != nil {
 		return err

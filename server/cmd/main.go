@@ -2,11 +2,13 @@ package main
 
 import (
 	"context"
+	"io/ioutil"
 	"net/http"
 	"net/url"
 	"os"
 	"os/signal"
 	"path"
+	"path/filepath"
 	"time"
 
 	"github.com/gofrs/uuid"
@@ -271,8 +273,22 @@ func main() {
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt)
 	go func() {
-		compStreamer := meshmodel.StreamComponents("/Users/ashishtiwari/dev/meshery/output")
+		path, _ := filepath.Abs("../output")
+		path = filepath.Join(path, "output")
+		compStreamer := meshmodel.StreamComponents(path)
 		meshmodel.SaveComponent(dbHandler, compStreamer)
+	}()
+	go func() {
+		path, _ := filepath.Abs("../meshmodel/kubernetes")
+		items, _ := ioutil.ReadDir(path)
+		for _, item := range items {
+			if item.IsDir() {
+				thipath := filepath.Join(path, item.Name())
+				compStreamer := meshmodel.StreamComponents(thipath)
+				meshmodel.SaveComponent(dbHandler, compStreamer)
+			}
+		}
+
 	}()
 	go func() {
 		log.Info("Meshery Server listening on: ", port)

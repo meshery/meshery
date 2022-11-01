@@ -2,7 +2,6 @@ package models
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/meshes"
@@ -90,7 +89,6 @@ func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, r
 							cg.log.Error(err)
 							return
 						}
-						fmt.Println("will execute")
 						err = regFunc(context.Background(), cfg, ctxID, db)
 						if err != nil {
 							cg.log.Error(err)
