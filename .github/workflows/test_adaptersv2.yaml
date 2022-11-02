@@ -59,11 +59,11 @@ jobs:
     outputs:
       exitstatus: ${{ steps.runresources.outputs.exitstatus }}
     steps:
-      # - name: Set adapter_name for output
-      #   id: adapter_name
-      #   run: |
-      #     USER_INPUT=${{ github.event.inputs.adapter_name }}
-      #     echo "::set-output name=value::${USER_INPUT:-"meshery"}"
+      - name: Set adapter_name for output
+        id: adapter_name
+        run: |
+          USER_INPUT=${{ github.event.inputs.adapter_name }}
+          echo "::set-output name=value::${USER_INPUT:-"meshery"}"
       - name: Setting up minikube
         id: setk8s
         uses: manusa/actions-setup-minikube@v2.7.0
