@@ -559,7 +559,7 @@ function MesheryPatterns({
   const handlePublish= (catalog_data) => {
     updateProgress({ showProgress : true });
     dataFetch(
-      `/patterns/catalog/publish`,
+      `/api/pattern/catalog/publish`,
       { credentials : "include", method : "POST", body : JSON.stringify(catalog_data) },
       () => {
         updateProgress({ showProgress : false });
