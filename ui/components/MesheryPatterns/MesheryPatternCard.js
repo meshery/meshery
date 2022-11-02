@@ -16,6 +16,7 @@ import DoneAllIcon from '@material-ui/icons/DoneAll';
 import DoneIcon from '@material-ui/icons/Done';
 import useStyles from "./Cards.styles";
 import YAMLDialog from "../YamlDialog";
+import PublishIcon from '@material-ui/icons/Publish';
 
 const INITIAL_GRID_SIZE = { xl : 4, md : 6, xs : 12 };
 
@@ -26,6 +27,7 @@ function MesheryPatternCard({
   created_at,
   pattern_file,
   handleVerify,
+  handlePublishModal,
   handleDeploy,
   handleUnDeploy,
   updateHandler,
@@ -101,6 +103,15 @@ function MesheryPatternCard({
           <div className={classes.bottomPart} >
 
             <div className={classes.cardButtons} >
+              <Button
+                title="Publish"
+                variant="contained"
+                className={classes.testsButton}
+                onClick={(ev) => genericClickHandler(ev, handlePublishModal)}
+              >
+                <PublishIcon className={classes.iconPatt} />
+                <span className={classes.btnText}> Publish </span>
+              </Button>
 
               <Button
                 title="Verify"

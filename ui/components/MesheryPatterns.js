@@ -348,6 +348,10 @@ function MesheryPatterns({
     CLONE_PATTERN : {
       name : "CLONE_PATTERN",
       error_msg : "Failed to clone pattern file"
+    },
+    PUBLISH_CATALOG : {
+      name : "PUBLISH_CATALOG",
+      error_msg : "Failed to publish catalog"
     }
   };
 
@@ -552,7 +556,29 @@ function MesheryPatterns({
       handleError(ACTION_TYPES.UNDEPLOY_PATTERN),
     );
   };
+  const handlePublish= (catalog_data) => {
+    updateProgress({ showProgress : true });
+    dataFetch(
+      `/patterns/catalog/publish`,
+      { credentials : "include", method : "POST", body : JSON.stringify(catalog_data) },
+      () => {
+        updateProgress({ showProgress : false });
+        enqueueSnackbar("Pattern Successfully Published!", {
+          variant : "success",
+          action : function Action(key) {
+            return (
+              <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+                <CloseIcon />
+              </IconButton>
+            );
+          },
+          autoHideDuration : 2000,
+        });
+      },
+      handleError(ACTION_TYPES.PUBLISH_CATALOG),
+    );
 
+  }
   function handleClone(patternID) {
     updateProgress({ showProgress : true });
     dataFetch(PATTERN_URL.concat(CLONE_URL, "/", patternID),
@@ -1084,6 +1110,7 @@ function MesheryPatterns({
               patterns={patterns}
               handleDeploy={handleDeploy}
               handleVerify={handleVerify}
+              handlePublish={handlePublish}
               handleUnDeploy={handleUnDeploy}
               handleClone={handleClone}
               urlUploadHandler={urlUploadHandler}
