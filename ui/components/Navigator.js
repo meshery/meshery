@@ -1042,8 +1042,6 @@ class Navigator extends React.Component {
     const { classes, isDrawerCollapsed, ...other } = this.props;
     const { path, showHelperButton, navigatorComponents } = this.state;
 
-    console.log(this.state.navigatorComponents)
-
     const Title = (
       <ListItem
         component="a"
