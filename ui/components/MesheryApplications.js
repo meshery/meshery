@@ -344,7 +344,7 @@ function MesheryApplications({
         body : application_file,
       }, () => {
         console.log("ApplicationFile Deploy API", `/api/application/deploy`);
-        enqueueSnackbar(`${name} successfully deployed!!` , {
+        enqueueSnackbar(`"${name}" application successfully deployed` , {
           variant : "success",
           action : function Action(key) {
             return (
@@ -371,7 +371,7 @@ function MesheryApplications({
         body : application_file,
       }, () => {
         console.log("ApplicationFile Undeploy API", `/api/pattern/deploy`);
-        enqueueSnackbar(`${name} successfully undeployed!!`, {
+        enqueueSnackbar(`"${name}" application successfully undeployed`, {
           variant : "success",
           action : function Action(key) {
             return (
