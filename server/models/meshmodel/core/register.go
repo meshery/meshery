@@ -18,6 +18,7 @@ import (
 	"github.com/layer5io/meshkit/database"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 	meshmodel "github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
+	oamcore "github.com/layer5io/meshkit/models/oam/core/v1alpha1"
 	"github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/layer5io/meshkit/utils/manifests"
 	"gopkg.in/yaml.v2"
@@ -51,6 +52,60 @@ type crd struct {
 }
 type crdhelper struct {
 	Metadata map[string]interface{} `json:"metadata"`
+}
+
+//	func RegisterMeshmodelComponentsForCRDS(db *database.Handler, p core.Pattern) {
+//		for _, svc := range p.Services {
+//			if svc.Type == "CustomResourceDefinition.K8s" {
+//				out, err := yaml.Marshal(svc.Settings)
+//				if err != nil {
+//					continue
+//				}
+//				getCRDsFromManifest(string(out))
+//			}
+//		}
+//	}
+func RegisterMeshmodelComponentsForCRDS(db *database.Handler, k8sYaml []byte) {
+	//TODO: Replace GenerateComponents in meshkit to natively produce MeshModel components to avoid any interconversion
+	comp, err := manifests.GenerateComponents(context.Background(), string(k8sYaml), manifests.K8s, manifests.Config{
+		CrdFilter: manifests.NewCueCrdFilter(manifests.ExtractorPaths{
+			NamePath:    "spec.names.kind",
+			IdPath:      "spec.names.kind",
+			VersionPath: "spec.versions[0].name",
+			GroupPath:   "spec.group",
+			SpecPath:    "spec.versions[0].schema.openAPIV3Schema.properties.spec"}, false),
+		ExtractCrds: func(manifest string) []string {
+			crds := strings.Split(manifest, "---")
+			return crds
+		},
+	})
+	if err != nil {
+		fmt.Println("err: ", err.Error())
+		return
+	}
+	for i, schema := range comp.Schemas {
+		m := meshmodel.NewComponent()
+		m.Spec = schema
+		var def oamcore.WorkloadDefinition
+		err := json.Unmarshal([]byte(comp.Definitions[i]), &def)
+		if err != nil {
+			fmt.Println("err here: ", err.Error())
+			return
+		}
+		m.Metadata["name"] = def.Name
+		fmt.Println("name will be : ", m.Metadata["name"])
+		ccb := meshmodel.ComponentCapabilityDBFromCC(meshmodel.ComponentCapability{
+			Component: m,
+			Capability: meshmodel.Capability{
+				Host: "kubernetes",
+			},
+		})
+		err = db.DB.Create(&ccb).Error
+		if err != nil {
+			fmt.Println("err saving: ", err.Error())
+			return
+		}
+	}
 }
 
 // move to meshmodel

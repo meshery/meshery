@@ -15,6 +15,7 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/server/models"
+	meshmodel "github.com/layer5io/meshery/server/models/meshmodel/core"
 	"github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/layer5io/meshkit/utils/kubernetes/kompose"
@@ -221,6 +222,8 @@ func (h *Handler) handleApplicationPOST(
 				http.Error(rw, ErrApplicationFailure(err, obj).Error(), http.StatusInternalServerError)
 				return
 			}
+			//Register components from CustomResourceDefinition.K8s
+			go meshmodel.RegisterMeshmodelComponentsForCRDS(h.DbHandler, resp)
 			result := string(resp)
 			pattern, err := core.NewPatternFileFromK8sManifest(result, false)
 			if err != nil {
@@ -229,6 +232,7 @@ func (h *Handler) handleApplicationPOST(
 				http.Error(rw, ErrApplicationFailure(err, obj).Error(), http.StatusInternalServerError) // sending a 500 when we cannot convert the file into kuberentes manifest
 				return
 			}
+
 			response, err := yaml.Marshal(pattern)
 			if err != nil {
 				obj := "convert"

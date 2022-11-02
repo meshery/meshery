@@ -2,6 +2,7 @@ package models
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/meshes"
@@ -86,13 +87,13 @@ func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, r
 						// start registration
 						cfg, err := ctx.GenerateKubeConfig()
 						if err != nil {
-							cg.log.Error(err)
+							fmt.Println(err.Error())
 							return
 						}
 						for _, fn := range regFuncs {
 							err = fn(context.Background(), cfg, ctxID, db)
 							if err != nil {
-								cg.log.Error(err)
+								fmt.Println(err.Error())
 							}
 						}
 					}()
