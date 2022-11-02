@@ -278,6 +278,8 @@ func main() {
 		compStreamer, sync := meshmodel.StreamComponents(path, meshmodel.YAML)
 		meshmodel.SaveComponent(dbHandler, compStreamer, sync)
 	}()
+
+	//Registering static k8s components
 	go func() {
 		path, _ := filepath.Abs("../meshmodel/kubernetes")
 		items, _ := ioutil.ReadDir(path)

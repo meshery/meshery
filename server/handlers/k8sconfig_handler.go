@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -304,7 +305,15 @@ func (h *Handler) LoadContextsAndPersist(token string, prov models.Provider) ([]
 	}
 	return contexts, nil
 }
-
+func createDirectoryIfNotPresent(pathdir string) {
+	if _, err := os.Stat(pathdir); errors.Is(err, os.ErrNotExist) {
+		err := os.Mkdir(pathdir, os.ModePerm)
+		if err != nil {
+			log.Println(err)
+			return
+		}
+	}
+}
 func RegisterK8sMeshModelComponents(ctx context.Context, config []byte, ctxID string, db *database.Handler) (err error) {
 	man, err := mcore.GetK8sMeshModelComponents(ctx, config)
 	if err != nil {
@@ -313,7 +322,6 @@ func RegisterK8sMeshModelComponents(ctx context.Context, config []byte, ctxID st
 	if man == nil {
 		return ErrCreatingKubernetesComponents(errors.New("generated components are nil"), ctxID)
 	}
-
 	for _, c := range man {
 		var cc meshmodelcore.ComponentCapability
 		cc.Host = "kubernetes"
@@ -326,36 +334,24 @@ func RegisterK8sMeshModelComponents(ctx context.Context, config []byte, ctxID st
 		err = mcore.RegisterComponentCapability(db, cdb)
 
 		//Write it on the file system
-		go func(c meshmodelcore.ComponentCapability) {
-			outputPath, _ := filepath.Abs("../meshmodel")
-			outputPath = filepath.Join(outputPath, "kubernetes")
-			if v, ok := c.Metadata["k8sVersion"].(string); ok && v != "" {
-				outputPath = path.Join(outputPath, v)
-				if _, err := os.Stat(outputPath); errors.Is(err, os.ErrNotExist) {
-					err := os.Mkdir(outputPath, os.ModePerm)
-					if err != nil {
-						log.Println(err)
-						return
-					}
-				}
-			}
-			if n, ok := c.Metadata["name"].(string); ok && n != "" {
-				outputPath = path.Join(outputPath, n+".json")
-				if _, err := os.Stat(outputPath); errors.Is(err, os.ErrNotExist) {
-					file, err := os.Create(outputPath)
-					if err != nil {
-						log.Println(err)
-						return
-					}
-					byt, _ := json.Marshal(c)
-					file.Write(byt)
-				}
-			}
-		}(cc)
+		go writeK8sMeshModelComponentsOnFileSystem(cc)
 	}
 	return
 }
-
+func writeK8sMeshModelComponentsOnFileSystem(c meshmodelcore.ComponentCapability) {
+	outputPath, _ := filepath.Abs("../meshmodel")
+	outputPath = filepath.Join(outputPath, "kubernetes")
+	if v, ok := c.Metadata["k8sVersion"].(string); ok && v != "" {
+		outputPath = path.Join(outputPath, v)
+		createDirectoryIfNotPresent(outputPath)
+	}
+	if n, ok := c.Metadata["name"].(string); ok && n != "" {
+		outputPath = path.Join(outputPath, n+".json")
+		createDirectoryIfNotPresent(outputPath)
+		byt, _ := json.Marshal(c)
+		ioutil.WriteFile(outputPath, byt, 0777)
+	}
+}
 func RegisterK8sComponents(ctxt context.Context, config []byte, ctxID string, db *database.Handler) (err error) {
 	man, err := core.GetK8Components(ctxt, config)
 	if err != nil {
