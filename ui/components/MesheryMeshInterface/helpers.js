@@ -163,6 +163,7 @@ export function recursiveCleanObject(obj) {
 
     if (Object.keys(obj[k]).length === 0) delete obj[k];
   }
+  return obj
 }
 
 /**

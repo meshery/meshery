@@ -9,8 +9,6 @@ import Link from "next/link";
 import MenuList from '@material-ui/core/MenuList';
 import Grow from '@material-ui/core/Grow';
 import MenuItem from '@material-ui/core/MenuItem';
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import Popper from '@material-ui/core/Popper';
 import Paper from '@material-ui/core/Paper';
@@ -20,9 +18,18 @@ import { withRouter } from 'next/router';
 import dataFetch from '../lib/data-fetch';
 import { updateUser } from '../lib/store';
 import classNames from 'classnames';
+import { ListItem, List } from '@material-ui/core';
 
 
-const styles = () => ({ popover : { color : 'black', }, });
+const styles = () => ({
+  popover : { color : 'black', },
+  link : {
+    display : "inline-flex",
+    width : "100%",
+    height : "30px",
+    alignItems : "self-end"
+  },
+});
 
 function exportToJsonFile(jsonData, filename) {
   let dataStr = JSON.stringify(jsonData);
@@ -71,7 +78,6 @@ class User extends React.Component {
   };
 
   componentDidMount() {
-    // console.log("fetching user data");
     dataFetch('/api/user', {
       credentials : 'same-origin'
     }, (user) => {
@@ -139,15 +145,25 @@ class User extends React.Component {
         </ListItemText>
       </div>
     );
-
-    if (href) return <Link href={href}>{content}</Link>;
+    if (href) {
+      return (
+        <Link href={href}>
+          <span
+            className={classNames(classes.link)}
+            onClick={() => this.props.updateExtensionType(name)}
+          >
+            {content}
+          </span>
+        </Link>
+      )
+    }
 
     return content;
   }
 
   render() {
     const {
-      color, iconButtonClassName, avatarClassName, classes,
+      color, iconButtonClassName, avatarClassName, classes
     } = this.props;
     let avatar_url;
     if (this.state.user && this.state.user !== null) {
