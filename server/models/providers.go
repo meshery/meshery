@@ -63,9 +63,9 @@ type Adapters struct {
 }
 
 type Configuration struct {
-	Designs      bool `json:"designs"`
-	Applications bool `json:"applications"`
-	Filters      bool `json:"filters"`
+	Designs      bool `json:"designs,omitempty"`
+	Applications bool `json:"applications,omitempty"`
+	Filters      bool `json:"filters,omitempty"`
 }
 
 type NavigatorComponents struct {

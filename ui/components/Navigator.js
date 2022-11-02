@@ -44,8 +44,9 @@ import { ButtonGroup, IconButton, Tooltip } from "@material-ui/core";
 import ExtensionPointSchemaValidator from "../utils/ExtensionPointSchemaValidator";
 import dataFetch from "../lib/data-fetch";
 import { Collapse } from "@material-ui/core";
-import { cursorNotAllowed, disabledStyle, enabledComponents } from "../css/disableComponent.styles";
-
+import { cursorNotAllowed, disabledStyle } from "../css/disableComponent.styles";
+import { capabilitiesRegistry } from "../utils/disabledComponents";
+import { APPLICATION, APP_MESH, CILIUM_SM, CITRIX_SM,DESIGN, CONFIGURATION, CONFORMANCE, CONSUL, DASHBOARD, FILTER, ISTIO, KUMA, LIFECYCLE, LINKERD, NETWORK_SM, NGINX, OCTARINE, OSM, PERFORMANCE, TRAEFIK_SM, PROFILES, SMI, TOGGLER } from "../constants/navigator"
 const styles = (theme) => ({
   categoryHeader : {
     paddingTop : 16,
@@ -295,176 +296,176 @@ const styles = (theme) => ({
 const drawerIconsStyle = { height : "1.21rem", width : "1.21rem", fontSize : "1.45rem" };
 const externalLinkIconStyle = { width : "1.11rem", fontSize : "1.11rem" };
 
-const categories = [
+const getNavigatorComponents = (  /** @type {capabilitiesRegistry} */  capabilityRegistryObj) => [
   {
-    id : "dashboard",
+    id : DASHBOARD,
     icon : <DashboardIcon style={drawerIconsStyle} />,
     href : "/",
     title : "Dashboard",
-    show : enabledComponents?.navigator?.dashboard === "*",
+    show : capabilityRegistryObj.isNavigatorComponentEnabled([DASHBOARD]),
     link : true,
   },
   {
-    id : "Lifecycle",
+    id : LIFECYCLE,
     icon : <LifecycleIcon style={drawerIconsStyle} />,
     hovericon : <LifecycleHover style={drawerIconsStyle} />,
     href : "/management",
     title : "Lifecycle",
-    show : enabledComponents?.navigator?.lifecycle === "*",
+    show : capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE]),
     link : true,
     children : [
       {
-        id : "App_Mesh",
+        id : APP_MESH,
         href : "/management/app-mesh",
         title : "AWS App Mesh",
         link : true,
-        show : enabledComponents?.navigator?.lifecycle === "*" || enabledComponents?.navigator?.lifecycle?.appMesh,
+        show : capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, APP_MESH]),
       },
       {
-        id : "Citrix_Service_Mesh",
+        id : CITRIX_SM,
         href : "/management/citrix",
         title : "Citrix Service Mesh",
         link : true,
-        show : enabledComponents?.navigator?.lifecycle === "*" || enabledComponents?.navigator?.lifecycle?.citrix,
+        show : capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, CITRIX_SM]),
       },
       {
-        id : "Consul",
+        id : CONSUL,
         href : "/management/consul",
         title : "Consul",
         link : true,
-        show : enabledComponents?.navigator?.lifecycle === "*" || enabledComponents?.navigator?.lifecycle?.consul,
+        show : capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, CONSUL]),
       },
       {
-        id : "Cilium_Service_Mesh",
+        id : CILIUM_SM,
         href : "/management/cilium",
         title : "Cilium",
         link : true,
-        show : enabledComponents?.navigator?.lifecycle === "*" || enabledComponents?.navigator?.lifecycle?.cilium,
+        show : capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, CILIUM_SM]),
       },
       {
-        id : "Istio",
+        id : ISTIO,
         href : "/management/istio",
         title : "Istio",
         link : true,
-        show : enabledComponents?.navigator?.lifecycle === "*" || enabledComponents?.navigator?.lifecycle?.istio,
+        show : capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, ISTIO]),
       },
       {
-        id : "Kuma",
+        id : KUMA,
         href : "/management/kuma",
         title : "Kuma",
         link : true,
-        show : enabledComponents?.navigator?.lifecycle === "*" || enabledComponents?.navigator?.lifecycle?.kuma,
+        show : capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, KUMA]),
       },
       {
-        id : "Linkerd",
+        id : LINKERD,
         href : "/management/linkerd",
         title : "Linkerd",
         link : true,
-        show : enabledComponents?.navigator?.lifecycle === "*" || enabledComponents?.navigator?.lifecycle?.linkerd,
+        show : capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, LINKERD]),
       },
       {
-        id : "Network_Service_Mesh",
+        id : NETWORK_SM,
         href : "/management/nsm",
         title : "Network Service Mesh",
         link : true,
-        show : enabledComponents?.navigator?.lifecycle === "*" || enabledComponents?.navigator?.lifecycle?.nsm,
+        show : capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, NETWORK_SM]),
       },
       {
-        id : "NGINX_Service_Mesh",
+        id : NGINX,
         // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
         href : "/management/nginx",
         title : "NGINX Service Mesh",
         link : true,
-        show : enabledComponents?.navigator?.lifecycle === "*" || enabledComponents?.navigator?.lifecycle?.nginx,
+        show : capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, NGINX]),
       },
       {
-        id : "Octarine",
+        id : OCTARINE,
         href : "/management/octarine",
         title : "Octarine",
         link : true,
-        show : enabledComponents?.navigator?.lifecycle === "*" || enabledComponents?.navigator?.lifecycle?.octarine,
+        show : capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, OCTARINE]),
       },
       {
-        id : "Open_Service_Mesh",
+        id : OSM,
         href : "/management/osm",
         title : "Open Service Mesh",
         link : true,
-        show : enabledComponents?.navigator?.lifecycle === "*" || enabledComponents?.navigator?.lifecycle?.osm,
+        show : capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, OSM]),
       },
       {
-        id : "Traefik_Mesh",
+        id : TRAEFIK_SM,
         href : "/management/traefik-mesh",
         title : "Traefik Mesh",
         link : true,
-        show : enabledComponents?.navigator?.lifecycle === "*" || enabledComponents?.navigator?.lifecycle?.traefik,
+        show : capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, TRAEFIK_SM]),
       },
     ],
   },
   {
-    id : "configuration",
+    id : CONFIGURATION,
     icon : <img src="/static/img/configuration_trans.svg" style={{ width : "1.21rem" }} />,
     hovericon : <ConfigurationHover style={{ transform : "scale(1.3)", ...drawerIconsStyle }} />,
     href : "#",
     title : "Configuration",
-    show : enabledComponents?.navigator?.configuration === "*",
+    show : capabilityRegistryObj.isNavigatorComponentEnabled([CONFIGURATION]),
     link : true,
     children : [
       {
-        id : "Applications",
+        id : APPLICATION,
         icon : <img src="/static/img/web-applications.svg" style={{ width : "1.21rem" }} />,
         href : "/configuration/applications",
         title : "Applications",
-        show : enabledComponents?.navigator?.configuration === "*" || enabledComponents?.navigator?.configuration?.applications,
+        show : capabilityRegistryObj.isNavigatorComponentEnabled([CONFIGURATION, APPLICATION]),
         link : true,
         isBeta : true
       },
       {
-        id : "Filters",
+        id : FILTER,
         icon : <img src="/static/img/web-filters.svg" style={{ width : "1.21rem" }} />,
         href : "/configuration/filters",
         title : "Filters",
-        show : enabledComponents?.navigator?.configuration === "*" || enabledComponents?.navigator?.configuration?.filters,
+        show : capabilityRegistryObj.isNavigatorComponentEnabled([CONFIGURATION, FILTER]),
         link : true,
         isBeta : true
       },
       {
-        id : "Designs",
+        id : DESIGN,
         icon : <img src="/static/img/pattern_trans.svg" style={{ width : "1.21rem" }} />,
         href : "/configuration/patterns",
         title : "Designs",
-        show : enabledComponents?.navigator?.configuration === "*" || enabledComponents?.navigator?.configuration?.designs,
+        show : capabilityRegistryObj.isNavigatorComponentEnabled([CONFIGURATION, DESIGN]),
         link : true,
         isBeta : true
       },
     ],
   },
   {
-    id : "Performance",
+    id : PERFORMANCE,
     icon : <PerformanceIcon style={{ transform : "scale(1.3)", ...drawerIconsStyle }} />,
     hovericon : <PerformanceHover style={drawerIconsStyle} />,
     href : "/performance",
     title : "Performance",
-    show : enabledComponents?.navigator?.performance === "*",
+    show : capabilityRegistryObj.isNavigatorComponentEnabled([PERFORMANCE]),
     link : true,
     children : [
       {
-        id : "profiles",
+        id : PROFILES,
         icon :
           <FontAwesomeIcon icon={faDigitalTachograph} style={{ fontSize : 24 }} />,
         href : "/performance/profiles",
         title : "Profiles",
-        show : enabledComponents?.navigator?.performance === "*" || enabledComponents?.navigator?.performance?.profiles,
+        show : capabilityRegistryObj.isNavigatorComponentEnabled([PERFORMANCE, PROFILES]),
         link : true,
       },
     ],
   },
   {
-    id : "conformance",
+    id : CONFORMANCE,
     icon : <ConformanceIcon style={drawerIconsStyle} />,
     hovericon : <ConformanceHover style={drawerIconsStyle} />,
     href : "/smi_results", //Temp
     title : "Conformance",
-    show : enabledComponents?.navigator?.conformance === "*",
+    show : capabilityRegistryObj.isNavigatorComponentEnabled([CONFORMANCE]),
     link : true,
     children : [
       {
@@ -472,7 +473,7 @@ const categories = [
         icon : <SmiIcon style={drawerIconsStyle} />,
         href : "/smi_results",
         title : "Service Mesh Interface",
-        show : enabledComponents?.navigator?.conformance === "*" || enabledComponents?.navigator?.conformance?.serviceMeshInterface,
+        show : capabilityRegistryObj.isNavigatorComponentEnabled([CONFORMANCE, SMI]),
         link : true,
       },
     ],
@@ -482,7 +483,7 @@ const categories = [
     icon : <ExtensionIcon style={drawerIconsStyle} />,
     hovericon : <ExtensionIcon style={drawerIconsStyle} />,
     title : "Extensions",
-    show : enabledComponents?.navigator?.extensions === "*",
+    show : capabilityRegistryObj.isNavigatorComponentEnabled(["Extensions"]),
     width : 12,
     link : true,
     href : "/extensions"
@@ -536,9 +537,10 @@ class Navigator extends React.Component {
       // passed into it
       navigator : ExtensionPointSchemaValidator("navigator")(),
       showHelperButton : false,
-      capabilities : [],
       openItems : [],
       hoveredId : null,
+      /** @type {capabilitiesRegistry} */
+      capabilitiesRegistryObj : null,
       versionDetail : {
         build : "",
         latest : "",
@@ -546,6 +548,7 @@ class Navigator extends React.Component {
         commitsha : "",
         release_channel : "NA",
       },
+      navigatorComponents : []
     };
   }
 
@@ -582,9 +585,13 @@ class Navigator extends React.Component {
       },
       (result) => {
         if (result) {
+          const capabilitiesRegistryObj = new capabilitiesRegistry(result);
+          const navigatorComponents = getNavigatorComponents(capabilitiesRegistryObj);
+
           this.setState({
             navigator : ExtensionPointSchemaValidator("navigator")(result?.extensions?.navigator),
-            // capabilities: result?.capabilities || [],
+            capabilitiesRegistryObj,
+            navigatorComponents
           });
           //global state
           this.props.updateCapabilities({ capabilitiesRegistry : result })
@@ -678,47 +685,19 @@ class Navigator extends React.Component {
     return content;
   }
 
-  updateCategoriesMenus() {
-    const self = this;
-    categories.forEach((cat, ind) => {
-      if (cat.id === "Lifecycle") {
-        cat.children.forEach((catc, ind1) => {
-          const cr = self.fetchChildren(catc.id);
-          const icon = self.pickIcon(catc.id);
-          categories[ind].children[ind1].icon = icon;
-          categories[ind].children[ind1].children = cr;
-        });
-      }
-
-      if (cat.id === "Configuration") {
-        let show = false;
-        cat.children?.forEach((ch) => {
-          if (ch.id === "Designs") {
-            const idx = self.props.capabilitiesRegistry?.capabilities?.findIndex((cap) => cap.feature === "persist-meshery-patterns");
-            if (idx != -1) {
-              ch.show = true;
-              show = true;
-            }
-          }
-        });
-
-        cat.show = show;
-      }
-    });
-  }
-
   updateAdaptersLink() {
-    categories.forEach((cat, ind) => {
-      if (cat.id === "Lifecycle") {
+    const { navigatorComponents } = this.state
+    navigatorComponents.forEach((cat, ind) => {
+      if (cat.id === LIFECYCLE) {
         cat.children.forEach((catc, ind1) => {
           if (
-            typeof categories[ind].children[ind1].children[0] !== "undefined" &&
-            typeof categories[ind].children[ind1].children[0].href !== "undefined"
+            typeof navigatorComponents[ind].children[ind1].children[0] !== "undefined" &&
+            typeof navigatorComponents[ind].children[ind1].children[0].href !== "undefined"
           ) {
             const val = true;
-            const newhref = `${categories[ind].children[ind1].children[0].href}`;
-            categories[ind].children[ind1].link = val;
-            categories[ind].children[ind1].href = newhref;
+            const newhref = `${navigatorComponents[ind].children[ind1].children[0].href}`;
+            navigatorComponents[ind].children[ind1].link = val;
+            navigatorComponents[ind].children[ind1].href = newhref;
           }
         });
       }
@@ -747,7 +726,7 @@ class Navigator extends React.Component {
       }
     };
 
-    categories.forEach(({ title, href, children, isBeta }) => {
+    state.navigatorComponents.forEach(({ title, href, children, isBeta }) => {
       fetchNestedPathAndTitle(path, title, href, children, isBeta);
     });
     st.path = path;
@@ -864,7 +843,7 @@ class Navigator extends React.Component {
     const { classes, isDrawerCollapsed } = this.props;
     const { path } = this.state;
 
-    if (idname != "Lifecycle" && children && children.length > 0) {
+    if (idname != LIFECYCLE && children && children.length > 0) {
       return (
         <List disablePadding>
           {children.map(({
@@ -897,7 +876,7 @@ class Navigator extends React.Component {
         </List>
       );
     }
-    if (idname == "Lifecycle") {
+    if (idname == LIFECYCLE) {
       if (children && children.length > 1) {
         return (
           <List disablePadding>
@@ -1061,10 +1040,9 @@ class Navigator extends React.Component {
 
   render() {
     const { classes, isDrawerCollapsed, ...other } = this.props;
-    const { path, showHelperButton } = this.state;
-    this.updateCategoriesMenus();
+    const { path, showHelperButton, navigatorComponents } = this.state;
 
-    console.log("capapa", this.props.capabilitiesRegistry)
+    console.log(this.state.navigatorComponents)
 
     const Title = (
       <ListItem
@@ -1092,7 +1070,7 @@ class Navigator extends React.Component {
     )
     const Menu = (
       <List disablePadding className={classes.hideScrollbar}>
-        {categories.map(({
+        {navigatorComponents.map(({
           id : childId, title, icon, href, show, link, children, hovericon
         }) => {
           // if (typeof show !== "undefined" && !show) {
@@ -1287,7 +1265,7 @@ class Navigator extends React.Component {
         style={cursorNotAllowed}
       >
         <div
-          style={!enabledComponents?.navigator?.toggler ? disabledStyle : {}}
+          style={this.state?.capabilitiesRegistryObj?.isNavigatorComponentEnabled?.([TOGGLER]) ? disabledStyle : {}}
           onClick={this.toggleMiniDrawer}
         >
           <FontAwesomeIcon
