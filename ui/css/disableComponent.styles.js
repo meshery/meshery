@@ -9,6 +9,10 @@ export const disabledStyle = {
 
 export const cursorNotAllowed = {
   cursor : "not-allowed",
+}
+
+export const cursorNotAllowedWithLowOpacity = {
+  cursor : "not-allowed",
   opacity
 }
 

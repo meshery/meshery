@@ -29,3 +29,6 @@ export const PATTERN_PLURAL = "patterns";
 export const PROFILES = "profiles";
 export const SMI = "service_mesh_interface";
 export const TOGGLER = "toggler";
+
+export const SETTINGS = "settings"
+export const CONTEXT_SWITCHER = "contextSwitcher"
