@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, {
+  useEffect,
+  useState } from 'react';
 import Cookies from 'universal-cookie';
 import GenericModal from './GenericModal';
 import { makeStyles, MuiThemeProvider } from '@material-ui/core/styles';
 import { createTheme } from '@material-ui/core/styles';
-import { Typography } from '@material-ui/core';
+import { Typography, Grid, Button } from '@material-ui/core';
 
 
 const getMuiTheme = () => createTheme({
@@ -46,6 +48,12 @@ function Popup() {
   const cookies = new Cookies('registered');
   const classes = styles();
 
+  const handleOpen = () => {
+    const timer =  setTimeout(() => {
+      setIsOpen(true);
+    }, 10000)
+    return () => clearTimeout(timer);
+  }
 
   useEffect(() => {
     if (cookies.get('registered')) {
@@ -54,7 +62,7 @@ function Popup() {
       cookies.set('registered', 'true', {
         path : '/',
       });
-      setIsOpen(true);
+      handleOpen();
     }
   },[])
 
@@ -63,19 +71,27 @@ function Popup() {
   }
 
   return (
-    <GenericModal
-      open={isOpen}
-      handleClose={handleClose}
-      Content={
-        <MuiThemeProvider theme={getMuiTheme()}>
-          <div
-            className={classes.paper}
-          >
-            <Typography>Have you taken a look at MeshMap</Typography>
-          </div>
-        </MuiThemeProvider>
-      }
-    />
+    <div>
+      <GenericModal
+        open={isOpen}
+        handleClose={handleClose}
+        Content={
+          <MuiThemeProvider theme={getMuiTheme()}>
+            <div
+              className={classes.paper}
+            >
+              <Typography variant="h5" >Signup for Beta access of MeshMap!</Typography>
+              <div style={{ display : "flex", justifyContent : "flex-end" }}>
+                <Grid item xs={3}>
+                  <Button fullWidth variant="contained" color="primary" onClick={handleClose}>Close</Button>
+                </Grid>
+              </div>
+            </div>
+          </MuiThemeProvider>
+
+        }
+      />
+    </div>
   )
 }
 
