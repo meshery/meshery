@@ -11,6 +11,7 @@
     "build": "next build",
     "start": "NODE_ENV=production node ui_dev_server.js",
     "export": "next export",
+    "export-playground": "PLAYGROUND=true next export -o playground",
     "cy:run": "cypress run",
     "cy:open": "cypress open",
     "test": "start-server-and-test dev http://localhost:3000 cy:run && eslint .",
@@ -53,7 +54,7 @@
     "@rjsf/material-ui": "^5.0.0-beta.11",
     "@rjsf/validator-ajv6": "^5.0.0-beta.11",
     "@zeit/next-css": "^1.0.1",
-    "autoprefixer": "^10.4.7",
+    "autoprefixer": "^10.4.13",
     "babel-plugin-istanbul": "^6.0.0",
     "babel-plugin-relay": "^13.2.0",
     "billboard.js": "=3.3.3",
@@ -104,6 +105,7 @@
     "styled-jsx": "^4.0.1",
     "subscriptions-transport-ws": "^0.9.19",
     "tar": "^6.1.11",
+    "universal-cookie": "^4.0.4",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
