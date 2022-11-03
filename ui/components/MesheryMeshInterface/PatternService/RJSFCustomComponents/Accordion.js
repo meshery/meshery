@@ -22,7 +22,6 @@ const useStyles = makeStyles((theme) => ({
 export default function SimpleAccordion(props) {
   const classes = useStyles();
   const accordionDetailsRef = React.useRef(null);
-  const heading = props.heading.charAt(0).toUpperCase() + props.heading.slice(1);
 
   useEffect(() => {
     // for managing focus
@@ -45,7 +44,7 @@ export default function SimpleAccordion(props) {
           style={{ backgroundColor : "F7F7F7" }}
         >
 
-          <Typography className={classes.heading}>{heading}</Typography>
+          <Typography className={classes.heading}>{props.heading?.charAt(0).toUpperCase() + props.heading?.slice(1)}{" "}</Typography>
 
           {props.childProps.hasRemove && (
 
