@@ -329,6 +329,7 @@ func RegisterK8sMeshModelComponents(ctx context.Context, config []byte, ctxID st
 		if cc.Metadata == nil {
 			cc.Metadata = make(map[string]interface{}, 0)
 		}
+		cc.Metadata["registrant"] = "kubernetes"
 		cdb := meshmodelcore.ComponentCapabilityDBFromCC(cc)
 		err = mcore.RegisterComponentCapability(db, cdb)
 

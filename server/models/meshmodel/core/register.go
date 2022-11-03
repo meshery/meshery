@@ -166,6 +166,11 @@ const customResourceKey = "isCustomResource"
 
 func RegisterComponentCapability(dbHandler *database.Handler, mc meshmodel.ComponentCapabilityDB) (err error) {
 	mc.ID = getComponentCapabilityIDFromComponentCapability(mc)
+	var temp meshmodel.ComponentCapabilityDB
+	dbHandler.DB.Find(&temp).Where("id = ?")
+	if temp.ID == mc.ID {
+		return nil
+	}
 	err = dbHandler.DB.Create(&mc).Error
 	if err != nil {
 		return err
@@ -181,7 +186,7 @@ func RegisterComponent(dbHandler *database.Handler, data []byte, host string) (e
 	}
 	component.Host = host
 	cdb := meshmodel.ComponentCapabilityDBFromCC(component)
-	cdb.ID = getComponentCapabilityIDFromComponentCapability(cdb)
+	RegisterComponentCapability(dbHandler, cdb)
 	err = dbHandler.DB.Create(&cdb).Error
 	return
 }
@@ -278,7 +283,7 @@ func SaveComponent(dbHandler *database.Handler, cc chan meshmodel.ComponentCapab
 		select {
 		case c := <-cc:
 			cdb := meshmodel.ComponentCapabilityDBFromCC(c)
-			dbHandler.DB.Create(&cdb)
+			RegisterComponentCapability(dbHandler, cdb)
 		case <-done:
 			return
 		}
