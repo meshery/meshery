@@ -89,7 +89,6 @@ server-local:
 	DEBUG=true \
 	ADAPTER_URLS=$(ADAPTER_URLS) \
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
-	PLAYGROUND=true \
 	go$(GOVERSION) run main.go error.go
 	
 run-fast: 
