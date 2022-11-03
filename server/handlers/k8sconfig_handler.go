@@ -341,13 +341,13 @@ func RegisterK8sMeshModelComponents(ctx context.Context, config []byte, ctxID st
 func writeK8sMeshModelComponentsOnFileSystem(c meshmodelcore.ComponentCapability) {
 	outputPath, _ := filepath.Abs("../meshmodel")
 	outputPath = filepath.Join(outputPath, "kubernetes")
+	createDirectoryIfNotPresent(outputPath)
 	if v, ok := c.Metadata["k8sVersion"].(string); ok && v != "" {
 		outputPath = path.Join(outputPath, v)
 		createDirectoryIfNotPresent(outputPath)
 	}
 	if n, ok := c.Metadata["name"].(string); ok && n != "" {
 		outputPath = path.Join(outputPath, n+".json")
-		createDirectoryIfNotPresent(outputPath)
 		byt, _ := json.Marshal(c)
 		ioutil.WriteFile(outputPath, byt, 0777)
 	}

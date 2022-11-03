@@ -152,15 +152,15 @@ func GetK8sMeshModelComponents(ctx context.Context, kubeconfig []byte) ([]meshmo
 		return nil, err
 	}
 	manifest := string(content)
-	crds, names := getCRDsFromManifest(manifest, arrAPIResources)
+	crds, metadata := getCRDsFromManifest(manifest, arrAPIResources)
 	components := make([]meshmodel.Component, 1)
 	for name, crd := range crds {
 		c := meshmodel.NewComponent()
 		c.Spec = crd
 		c.Metadata["k8sVersion"] = k8version.String()
 		c.Metadata[customResourceKey] = false
-		c.Metadata["name"] = name
-		c.Metadata["display-name"] = names[name]
+		c.Metadata["name"] = metadata[name].Name
+		c.Metadata["display-name"] = metadata[name].DisplayName
 		for cr := range customResources {
 			if groups[c.Metadata["name"].(string)][cr] {
 				c.Metadata[customResourceKey] = true
@@ -368,15 +368,15 @@ func getResolvedManifest(manifest string) (string, error) {
 	manifest = string(resolved)
 	return manifest, nil
 }
-func getCRDsFromManifest(manifest string, arrApiResources []string) (resourceToCRD map[string]string, resourceToName map[string]string) {
+func getCRDsFromManifest(manifest string, arrApiResources []string) (map[string]string, map[string]k8sMetadata) {
 	var err error
 	manifest, err = getResolvedManifest(manifest)
 	if err != nil {
 		fmt.Printf("%v", err)
 		return nil, nil
 	}
-	resourceToCRD = make(map[string]string, 0)
-	resourceToName = make(map[string]string, 0)
+	resourceToCRD := make(map[string]string)
+	resourceToMetadata := make(map[string]k8sMetadata, 0)
 	cuectx := cuecontext.New()
 	cueParsedManExpr, err := cueJson.Extract("", []byte(manifest))
 	parsedManifest := cuectx.BuildExpr(cueParsedManExpr)
@@ -410,10 +410,23 @@ func getCRDsFromManifest(manifest string, arrApiResources []string) (resourceToC
 					fmt.Printf("%v", err)
 					continue
 				}
+				resourceToMetadata[resource] = k8sMetadata{
+					Name:        name + ".K8s",
+					K8sKind:     name,
+					DisplayName: manifests.FormatToReadableString(name),
+				}
 				resourceToCRD[resource] = string(crd)
-				resourceToName[resource] = name
+				// resourceToName[resource] = manifests.FormatToReadableString(name)
 			}
 		}
 	}
-	return
+	return resourceToCRD, resourceToMetadata
+}
+
+type k8sMetadata struct {
+	Name          string `json:"name"`
+	K8sAPIVersion string `json:"k8sAPIVersion"`
+	K8sKind       string `json:"k8sKind"`
+	Namespaced    bool   `json:"namespaced"`
+	DisplayName   string `json:"display-name"`
 }
