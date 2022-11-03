@@ -33,7 +33,7 @@ import { promisifiedDataFetch } from '../lib/data-fetch';
 import { updateK8SConfig, updateProgress } from '../lib/store';
 import { bindActionCreators } from 'redux';
 import BadgeAvatars from './CustomAvatar';
-import { capabilitiesRegistry as CapabilityRegistryClass } from '../utils/disabledComponents';
+import { CapabilitiesRegistry as CapabilityRegistryClass } from '../utils/disabledComponents';
 import _ from 'lodash';
 import { SETTINGS } from '../constants/navigator';
 import { cursorNotAllowed, disabledStyle } from '../css/disableComponent.styles';

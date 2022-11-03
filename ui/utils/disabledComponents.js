@@ -18,7 +18,8 @@ function recursivelySearchObjKey(obj, arr, index) {
   }
 }
 
-export class capabilitiesRegistry {
+
+export class CapabilitiesRegistry {
   capabilitiesRegistry;
   isPlaygroundEnv = false;
 

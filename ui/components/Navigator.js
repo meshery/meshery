@@ -45,7 +45,7 @@ import ExtensionPointSchemaValidator from "../utils/ExtensionPointSchemaValidato
 import dataFetch from "../lib/data-fetch";
 import { Collapse } from "@material-ui/core";
 import { cursorNotAllowed, disabledStyle } from "../css/disableComponent.styles";
-import { capabilitiesRegistry } from "../utils/disabledComponents";
+import {  CapabilitiesRegistry } from "../utils/disabledComponents";
 import { APPLICATION, APP_MESH, CILIUM_SM, CITRIX_SM,DESIGN, CONFIGURATION, CONFORMANCE, CONSUL, DASHBOARD, FILTER, ISTIO, KUMA, LIFECYCLE, LINKERD, NETWORK_SM, NGINX, OCTARINE, OSM, PERFORMANCE, TRAEFIK_SM, PROFILES, SMI, TOGGLER } from "../constants/navigator"
 const styles = (theme) => ({
   categoryHeader : {
@@ -296,7 +296,7 @@ const styles = (theme) => ({
 const drawerIconsStyle = { height : "1.21rem", width : "1.21rem", fontSize : "1.45rem" };
 const externalLinkIconStyle = { width : "1.11rem", fontSize : "1.11rem" };
 
-const getNavigatorComponents = (  /** @type {capabilitiesRegistry} */  capabilityRegistryObj) => [
+const getNavigatorComponents = (  /** @type {CapabilitiesRegistry} */  capabilityRegistryObj) => [
   {
     id : DASHBOARD,
     icon : <DashboardIcon style={drawerIconsStyle} />,
@@ -539,7 +539,7 @@ class Navigator extends React.Component {
       showHelperButton : false,
       openItems : [],
       hoveredId : null,
-      /** @type {capabilitiesRegistry} */
+      /** @type {CapabilitiesRegistry} */
       capabilitiesRegistryObj : null,
       versionDetail : {
         build : "",
@@ -585,7 +585,7 @@ class Navigator extends React.Component {
       },
       (result) => {
         if (result) {
-          const capabilitiesRegistryObj = new capabilitiesRegistry(result);
+          const capabilitiesRegistryObj = new CapabilitiesRegistry(result);
           const navigatorComponents = getNavigatorComponents(capabilitiesRegistryObj);
 
           this.setState({
