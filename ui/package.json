@@ -11,6 +11,7 @@
     "build": "next build",
     "start": "NODE_ENV=production node ui_dev_server.js",
     "export": "next export",
+    "export-playground": "PLAYGROUND=true next export -o playground",
     "cy:run": "cypress run",
     "cy:open": "cypress open",
     "test": "start-server-and-test dev http://localhost:3000 cy:run && eslint .",
