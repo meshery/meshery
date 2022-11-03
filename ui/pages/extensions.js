@@ -1,6 +1,6 @@
 import { Grid, Typography, Button, Switch, IconButton } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import CloseIcon from "@material-ui/icons/Close";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
@@ -52,12 +52,10 @@ const styles = (theme) => ({
 const INITIAL_GRID_SIZE = { lg : 6, md : 12, xs : 12 };
 
 const Extensions = ({ classes, catalogVisibility, toggleCatalogContent,  enqueueSnackbar, closeSnackbar }) => {
-  const [catalogContent, setCatalogContent] = useState(true)
   const handleToggle = (e) => {
     e.stopPropagation();
     console.log(`Meshery Catalog: ${catalogVisibility ? "enabled" : "disabled"}`)
-    toggleCatalogContent({ catalogVisibility : !catalogVisibility }),
-    handleCatalogPreference();
+    toggleCatalogContent({ catalogVisibility : !catalogVisibility })
   }
 
   useEffect(() => {
@@ -69,23 +67,25 @@ const Extensions = ({ classes, catalogVisibility, toggleCatalogContent,  enqueue
       },
       (result) => {
         if (result) {
-          setCatalogContent(result?.usersExtensionPreferences.catalogContent)
+          toggleCatalogContent({ catalogVisibility : !catalogVisibility });
         }
       },
       err => console.error(err)
     )
-  }, [])
+  }, []);
+
+  useEffect(() => {
+    handleCatalogPreference();
+  }, [catalogVisibility])
+
 
   const handleCatalogPreference = () => {
-    let usersExtensionPreferences = { catalogContent }
-    let body = usersExtensionPreferences
     dataFetch(
-      console.log(body, "TEST USER PERF"),
       "/api/user/prefs",
       {
         method : "POST",
         credentials : "include",
-        body : JSON.stringify({ usersExtensionPreferences : { catalogContent } })
+        body : JSON.stringify({ usersExtensionPreferences : { catalogVisibility } })
       },
       () => {
         enqueueSnackbar(`Catalog Content was ${catalogVisibility ? "enab" : "disab"}led`,
