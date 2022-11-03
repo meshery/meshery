@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"os"
 	"path"
@@ -305,14 +304,15 @@ func (h *Handler) LoadContextsAndPersist(token string, prov models.Provider) ([]
 	}
 	return contexts, nil
 }
-func createDirectoryIfNotPresent(pathdir string) {
-	if _, err := os.Stat(pathdir); errors.Is(err, os.ErrNotExist) {
-		err := os.Mkdir(pathdir, os.ModePerm)
+func createDirectoryIfNotPresent(pathdir string) error {
+	var err error
+	if _, err = os.Stat(pathdir); errors.Is(err, os.ErrNotExist) {
+		err := os.Mkdir(pathdir, 0777)
 		if err != nil {
-			log.Println(err)
-			return
+			return err
 		}
 	}
+	return err
 }
 func RegisterK8sMeshModelComponents(ctx context.Context, config []byte, ctxID string, db *database.Handler) (err error) {
 	man, err := mcore.GetK8sMeshModelComponents(ctx, config)
@@ -324,12 +324,11 @@ func RegisterK8sMeshModelComponents(ctx context.Context, config []byte, ctxID st
 	}
 	for _, c := range man {
 		var cc meshmodelcore.ComponentCapability
-		cc.Host = "kubernetes"
+		cc.Host = "<none-local>"
 		cc.Component = c
 		if cc.Metadata == nil {
 			cc.Metadata = make(map[string]interface{}, 0)
 		}
-		cc.Metadata["io.meshery.ctxid"] = ctxID
 		cdb := meshmodelcore.ComponentCapabilityDBFromCC(cc)
 		err = mcore.RegisterComponentCapability(db, cdb)
 
@@ -341,10 +340,11 @@ func RegisterK8sMeshModelComponents(ctx context.Context, config []byte, ctxID st
 func writeK8sMeshModelComponentsOnFileSystem(c meshmodelcore.ComponentCapability) {
 	outputPath, _ := filepath.Abs("../meshmodel")
 	outputPath = filepath.Join(outputPath, "kubernetes")
-	createDirectoryIfNotPresent(outputPath)
+	_ = createDirectoryIfNotPresent(outputPath)
+
 	if v, ok := c.Metadata["k8sVersion"].(string); ok && v != "" {
 		outputPath = path.Join(outputPath, v)
-		createDirectoryIfNotPresent(outputPath)
+		_ = createDirectoryIfNotPresent(outputPath)
 	}
 	if n, ok := c.Metadata["name"].(string); ok && n != "" {
 		outputPath = path.Join(outputPath, n+".json")

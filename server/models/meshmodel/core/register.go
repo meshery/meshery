@@ -51,20 +51,15 @@ type crd struct {
 	Items []crdhelper `json:"items"`
 }
 type crdhelper struct {
-	Metadata map[string]interface{} `json:"metadata"`
+	Spec spec `json:"spec"`
+}
+type spec struct {
+	Names names `json:"names"`
+}
+type names struct {
+	Kind string `json:"kind"`
 }
 
-//	func RegisterMeshmodelComponentsForCRDS(db *database.Handler, p core.Pattern) {
-//		for _, svc := range p.Services {
-//			if svc.Type == "CustomResourceDefinition.K8s" {
-//				out, err := yaml.Marshal(svc.Settings)
-//				if err != nil {
-//					continue
-//				}
-//				getCRDsFromManifest(string(out))
-//			}
-//		}
-//	}
 func RegisterMeshmodelComponentsForCRDS(db *database.Handler, k8sYaml []byte) {
 	//TODO: Replace GenerateComponents in meshkit to natively produce MeshModel components to avoid any interconversion
 	comp, err := manifests.GenerateComponents(context.Background(), string(k8sYaml), manifests.K8s, manifests.Config{
@@ -102,7 +97,6 @@ func RegisterMeshmodelComponentsForCRDS(db *database.Handler, k8sYaml []byte) {
 		})
 		err = db.DB.Create(&ccb).Error
 		if err != nil {
-			fmt.Println("err saving: ", err.Error())
 			return
 		}
 	}
@@ -131,7 +125,7 @@ func GetK8sMeshModelComponents(ctx context.Context, kubeconfig []byte) ([]meshmo
 		return nil, ErrGetK8sComponents(err)
 	}
 	for _, item := range xcrd.Items {
-		customResources[item.Metadata["name"].(string)] = true
+		customResources[item.Spec.Names.Kind] = true
 	}
 	res := req.Do(context.Background())
 	content, err := res.Raw()
@@ -148,7 +142,6 @@ func GetK8sMeshModelComponents(ctx context.Context, kubeconfig []byte) ([]meshmo
 		arrAPIResources = append(arrAPIResources, res)
 	}
 	groups, err := getGroupsFromResource(cli) //change this
-	fmt.Println("groups are: ", groups)
 	if err != nil {
 		return nil, err
 	}
@@ -159,17 +152,11 @@ func GetK8sMeshModelComponents(ctx context.Context, kubeconfig []byte) ([]meshmo
 		c := meshmodel.NewComponent()
 		c.Spec = crd
 		c.Metadata["k8sVersion"] = k8version.String()
-		c.Metadata[customResourceKey] = false
 		c.Metadata["k8sKind"] = metadata[name].K8sKind
 		c.Metadata["name"] = metadata[name].Name
 		c.Metadata["display.ui.meshery.io/name"] = metadata[name].DisplayName
-		for cr := range customResources {
-			fmt.Println("custom resrouce is: ", cr)
-			if groups[c.Metadata["k8sKind"].(string)][cr] {
-				c.Metadata[customResourceKey] = true
-				break
-			}
-		}
+		c.Metadata[customResourceKey] = customResources[metadata[name].K8sKind]
+		c.Metadata["k8sAPIVersion"] = groups[kind(metadata[name].K8sKind)]
 		components = append(components, c)
 	}
 	return components, nil
@@ -315,11 +302,17 @@ func getAPIRes(cli *kubernetes.Client) (map[string]v1.APIResource, error) {
 	return apiRes, nil
 }
 
-// TODO: To be moved in meshkit
-// Return a set of resource.groups(with resourcename appended) for a given kind //Example: {"CSIDriver":{"csidrivers.storage.k8s.io"}}
-func getGroupsFromResource(cli *kubernetes.Client) (gr map[string]map[string]bool, err error) {
-	gr = make(map[string]map[string]bool)
+type helperGV struct {
+	group   string
+	version string
+	isCRD   bool
+}
+type kind string
+type groupversion string
 
+// TODO: To be moved in meshkit
+func getGroupsFromResource(cli *kubernetes.Client) (hgv map[kind]groupversion, err error) {
+	hgv = make(map[kind]groupversion)
 	var gl v1.APIGroupList
 	gs, err := cli.KubeClient.RESTClient().Get().RequestURI("/apis").Do(context.Background()).Raw()
 	if err != nil {
@@ -331,6 +324,7 @@ func getGroupsFromResource(cli *kubernetes.Client) (gr map[string]map[string]boo
 	}
 
 	for _, g := range gl.Groups {
+
 		groupName := g.Name
 		var apig v1.APIGroup
 		apigbytes, err := cli.KubeClient.RESTClient().Get().RequestURI("/apis/" + groupName).Do(context.Background()).Raw()
@@ -345,12 +339,13 @@ func getGroupsFromResource(cli *kubernetes.Client) (gr map[string]map[string]boo
 		if err != nil {
 			return nil, err
 		}
-		for _, res := range apiRes.APIResources {
-			if gr[res.Kind] == nil {
-				gr[res.Kind] = make(map[string]bool)
+		if len(g.Versions) != 0 {
+			for _, res := range apiRes.APIResources {
+				hgv[kind(res.Kind)] = groupversion(g.Versions[0].GroupVersion)
+				break
 			}
-			gr[res.Kind][res.Name+"."+groupName] = true
 		}
+
 	}
 	return
 }
