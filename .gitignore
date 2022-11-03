@@ -33,6 +33,7 @@ fortio_chart.js
 
 **/out/
 
+**/playground/
 **/.next/
 
 cmd/meshery

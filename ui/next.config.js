@@ -12,4 +12,9 @@ module.exports = {
       return pathMap
     }
   },
+  webpack : (config)  => {
+    config.resolve.alias = { ...config.resolve.alias,
+      "remote-component.config.js" : __dirname + "/remote-component.config.js" };
+    return config;
+  }
 }
