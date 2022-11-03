@@ -357,10 +357,13 @@ class MesheryApp extends App {
                 </MuiPickersUtilsProvider>
               </main>
             </SnackbarProvider>
-            <footer className={classes.footer}>
-              <Typography variant="body2" align="center" color="textSecondary" component="p">
+            <footer className={this.props.capabilitiesRegistry?.restrictedAccess?.isMesheryUiRestricted ? classes.playgroundFooter :classes.footer}>
+              <Typography variant="body2" align="center" color="textSecondary" component="p"
+                style={this.props.capabilitiesRegistry?.restrictedAccess?.isMesheryUiRestricted ? { color : "#000" }: {}}
+              >
                 <span onClick={this.handleL5CommunityClick} className={classes.footerText}>
-                  Built with <FavoriteIcon className={classes.footerIcon} /> by the Layer5 Community</span>
+                  {this.props.capabilitiesRegistry?.restrictedAccess?.isMesheryUiRestricted ? "Playground Environment, some features might not be available": ( <> Built with <FavoriteIcon className={classes.footerIcon} /> by the Layer5 Community</>) }
+                </span>
               </Typography>
             </footer>
           </div>
@@ -376,7 +379,8 @@ const mapStateToProps = state => ({
   isDrawerCollapsed : state.get("isDrawerCollapsed"),
   k8sConfig : state.get("k8sConfig"),
   operatorSubscription : state.get("operatorSubscription"),
-  meshSyncSubscription : state.get("meshSyncSubscription")
+  meshSyncSubscription : state.get("meshSyncSubscription"),
+  capabilitiesRegistry : state.get("capabilitiesRegistry")
 })
 
 const mapDispatchToProps = dispatch => ({

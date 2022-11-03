@@ -129,6 +129,17 @@ server-no-content:
 	SKIP_DOWNLOAD_CONTENT=true \
 	go$(GOVERSION) run main.go error.go;
 
+server-playground:
+	cd server; cd cmd; go$(GOVERSION) mod tidy; \
+	BUILD="$(GIT_VERSION)" \
+	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
+	PORT=9081 \
+	DEBUG=true \
+	ADAPTER_URLS=$(ADAPTER_URLS) \
+	APP_PATH=$(APPLICATIONCONFIGPATH) \
+	PLAYGROUND=true \
+	go$(GOVERSION) run main.go error.go;
+
 ## Lint check Meshery Server.
 golangci: error
 	golangci-lint run
