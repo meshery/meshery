@@ -13,7 +13,7 @@ References for using Meshery's various features and components.
 
 <ul>
     {% for item in sorted_reference %}
-    {% if item.type=="Reference" -%}
+    {% if item.type=="Reference" and item.list!="exclude" and item.language !="es" -%}
       <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
       {% if item.abstract != " " %}
         -  {{ item.abstract }}
