@@ -102,7 +102,7 @@ function Popup() {
             className={classes.paper}
           >
 
-            <Typography className={classes.header} variant="h6" >Signup for Beta access of MeshMap!
+            <Typography className={classes.header} variant="h6" >Get early access to MeshMap!
             </Typography>
 
             <div style={{ display : "flex", justifyContent : "flex-end", whiteSpace : "nowrap", position : "relative" }}>
@@ -113,7 +113,7 @@ function Popup() {
             </div>
             <img className={classes.drawer} src="/static/img/designer-drawer.png" />
             <img className={classes.canvas} src="/static/img/designer-canvas.png" />
-            <Typography variant="subtitle1"><i>Friends dont let friends GitOps alone.</i></Typography>
+            <Typography variant="subtitle1"><i>Friends dont let friends GitOps alone. Visually design and collaborate in real-time with other MeshMap users.</i></Typography>
             <div style={{ display : "flex", justifyContent : "flex-end" }}>
               <Grid item xs={3}>
                 <Button fullWidth variant="contained" color="primary" onClick={(e) => handleSignUp(e)}>Sign up</Button>
