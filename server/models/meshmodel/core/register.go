@@ -148,6 +148,7 @@ func GetK8sMeshModelComponents(ctx context.Context, kubeconfig []byte) ([]meshmo
 		arrAPIResources = append(arrAPIResources, res)
 	}
 	groups, err := getGroupsFromResource(cli) //change this
+	fmt.Println("groups are: ", groups)
 	if err != nil {
 		return nil, err
 	}
@@ -159,10 +160,12 @@ func GetK8sMeshModelComponents(ctx context.Context, kubeconfig []byte) ([]meshmo
 		c.Spec = crd
 		c.Metadata["k8sVersion"] = k8version.String()
 		c.Metadata[customResourceKey] = false
+		c.Metadata["k8sKind"] = metadata[name].K8sKind
 		c.Metadata["name"] = metadata[name].Name
-		c.Metadata["display-name"] = metadata[name].DisplayName
+		c.Metadata["display.ui.meshery.io/name"] = metadata[name].DisplayName
 		for cr := range customResources {
-			if groups[c.Metadata["name"].(string)][cr] {
+			fmt.Println("custom resrouce is: ", cr)
+			if groups[c.Metadata["k8sKind"].(string)][cr] {
 				c.Metadata[customResourceKey] = true
 				break
 			}
