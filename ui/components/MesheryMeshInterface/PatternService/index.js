@@ -64,6 +64,22 @@ function PatternService({ formData, jsonSchema, onChange, type, onSubmit, onDele
       });
     return sortedProperties;
   };
+  // add p_type="array" to objects in array
+  const addPTypeToArray = (properties) => {
+    Object.keys(properties).forEach(key => {
+      if (properties[key]?.items?.type === "object") {
+        properties[key].items.p_type = "array";
+      }
+      if (properties[key]?.properties) {
+        properties[key].properties = addPTypeToArray(properties[key].properties);
+      }
+      if (properties[key]?.items?.properties) {
+        properties[key].items.properties = addPTypeToArray(properties[key].items.properties);
+      }
+    });
+    return properties;
+  };
+  addPTypeToArray(jsonSchema.properties);
   // Order of properties in the form
   const sortPropertiesOrder = [
     "string",

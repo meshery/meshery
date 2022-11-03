@@ -33,7 +33,7 @@ const ObjectFieldTemplate = ({
   onAddClick,
 }) => {
   const classes = useStyles();
-  const [show, setShow] = React.useState(false);
+  const [show, setShow] = React.useState(schema?.p_type ? true : false);
   properties.forEach((property, index) => {
     if (schema.properties[property.name].type) {
       properties[index].type = schema.properties[property.name].type;
@@ -114,12 +114,15 @@ const ObjectFieldTemplate = ({
     <>
       {fieldTitle ? (
         <>
-          <CustomTitleField
-            id={`${idSchema.$id}-title`}
-            title={fieldTitle}
-            description={description}
-            properties={properties}
-          />
+          {schema.p_type !== "array" ? (
+            <CustomTitleField
+              id={`${idSchema.$id}-title`}
+              title={fieldTitle}
+              description={description}
+              properties={properties}
+            />
+          ) : null
+          }
           {Object.keys(properties).length > 0 && show && Properties}
         </>
       ) : Properties}
