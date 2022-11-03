@@ -9,7 +9,7 @@
     "lint:fix": "eslint . --fix",
     "next": "next",
     "build": "next build",
-    "start": "NODE_ENV=production node ui_dev_server.js",
+    "start": "NODE_ENV=production NODE_OPTIONS=--openssl-legacy-provider  node ui_dev_server.js",
     "export": "next export",
     "cy:run": "cypress run",
     "cy:open": "cypress open",
