@@ -528,7 +528,7 @@ meshery-custom-end -->
 
 <h3 id="authentication">Authentication</h3>
 
-<p>Requests to any of the API endpoints must be authenticated and include a valid JWT access token in the HTTP headers. Type of authentication is determined by the selected <a href="#providers">Provider</a>. Use of the Local Provider, “None”, puts Meshery into single-user mode and does not require authentication.</p>
+<p>There are multiple kinds of authentication mechanisms like NoAuth for few open endpoints and ProviderAuth for much secure endpoints.The ENFORCED_PROVIDER flag can be passed at build time to not only enforce the provider authentication but also a specific type of provider authentication like remote or local. Requests to any of the API endpoints covered under ProviderAuth must be authenticated and include a valid JWT access token in the HTTP headers. Type of authentication is determined by the selected <a href="#providers">Provider</a>. Use of the Local Provider, “None”, puts Meshery into single-user mode and does not require authentication.</p>
 
 <h3 id="authorization">Authorization</h3>
 
