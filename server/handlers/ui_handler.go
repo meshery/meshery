@@ -9,7 +9,7 @@ import (
 )
 
 var dynamicUIEndpoints = map[string]string{
-	"/extension":   "/extension/[component].html",
+	"/extension":   "/extension/[...component].html",
 	"/management/": "/management/[mesh].html",
 }
 
