@@ -29,6 +29,7 @@ import fetchAvailableNamespaces from "./graphql/queries/NamespaceQuery";
 import { submitPrometheusConfigure } from "./PrometheusComponent";
 import MUIDataTable from "mui-datatables";
 import { MuiThemeProvider, createTheme } from '@material-ui/core/styles';
+import Popup from "./Popup";
 
 const styles = (theme) => ({
   rootClass : { backgroundColor : "#eaeff1", },
@@ -1347,6 +1348,7 @@ class DashboardComponent extends React.Component {
     );
     return (
       <NoSsr>
+        <Popup />
         <div className={classes.rootClass}>
           <Grid container spacing={2}>
             <Grid item xs={12} md={6}>
