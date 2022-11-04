@@ -24,7 +24,7 @@ import { CapabilitiesRegistry } from "../utils/disabledComponents";
 const requires = createRequires(getDependencies);
 const useRemoteComponent = createUseRemoteComponent({ requires });
 
-function Extension({ grafana, prometheus, updateLoadTestData, url, isDrawerCollapsed, selectedK8sContexts, k8sconfig, capabilitiesRegistry }) {
+function NavigatorExtension({ grafana, prometheus, updateLoadTestData, url, isDrawerCollapsed, selectedK8sContexts, k8sconfig, capabilitiesRegistry }) {
   const [loading, err, RemoteComponent] = useRemoteComponent(url);
 
   if (loading) {
@@ -95,4 +95,4 @@ const mapDispatchToProps = (dispatch) => ({ updateLoadTestData : bindActionCreat
   setK8sContexts : bindActionCreators(setK8sContexts, dispatch) }
 );
 
-export default connect(mapStateToProps, mapDispatchToProps)(Extension);
+export default connect(mapStateToProps, mapDispatchToProps)(NavigatorExtension);
