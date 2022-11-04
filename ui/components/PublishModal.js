@@ -96,11 +96,14 @@ function PublishModal(props) {
       }
     }
   }
-  const [data,setData]=React.useState(pattern?.catalog_data)
+  const [data,setData]=React.useState(null)
   const [payload,setPayload]=React.useState({
     "id" : pattern?.id,
     "catalog_data" : pattern?.catalog_data
   })
+  React.useEffect(() => {
+    setData(pattern.catalog_data)
+  },[pattern])
   React.useEffect(() => {
     setPayload({
       "id" : pattern?.id,
