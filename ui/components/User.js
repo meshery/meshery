@@ -150,7 +150,7 @@ class User extends React.Component {
         <Link href={href}>
           <span
             className={classNames(classes.link)}
-            onClick={() => this.props.updateExtensionType("account")}
+            onClick={() => this.props.updateExtensionType(name)}
           >
             {content}
           </span>

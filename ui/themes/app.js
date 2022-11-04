@@ -127,12 +127,15 @@ export const styles = {
   mainContent : { flex : 1,
     padding : '48px 36px 24px',
     background : '#eaeff1', },
-  footer : { backgroundColor : theme.palette.background.paper,
+  footer : {
+    backgroundColor : theme.palette.background.paper,
     padding : theme.spacing(2),
-    color : '#737373', },
-  footerText : { cursor : 'pointer',
+  },
+  footerText : {
+    cursor : 'pointer',
     display : 'inline',
-    verticalAlign : 'middle', },
+    verticalAlign : 'middle',
+  },
   footerIcon : { display : 'inline',
     verticalAlign : 'top', },
   icon : { fontSize : 20, },
@@ -144,4 +147,8 @@ export const styles = {
     color : `${notificationColors.warning} !important`, pointerEvents : "auto !important" },
   notifError : { backgroundColor : "rgba(255, 250, 250) !important",
     color : `${notificationColors.error} !important`, pointerEvents : "auto !important" },
+  playgroundFooter : {
+    backgroundColor : notificationColors.warning,
+    padding : theme.spacing(2),
+  }
 };
