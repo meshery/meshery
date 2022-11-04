@@ -64,7 +64,7 @@ function PatternService({ formData, jsonSchema, onChange, type, onSubmit, onDele
       });
     return sortedProperties;
   };
-  // add p_type="array" to objects in array
+  // added a p_type="array" to every object in an array to override the normal behaviour of objects.
   const addPTypeToArray = (properties) => {
     Object.keys(properties).forEach(key => {
       if (properties[key]?.items?.type === "object") {
