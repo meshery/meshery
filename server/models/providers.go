@@ -39,14 +39,61 @@ type ProviderType string
 
 // ProviderProperties represents the structure of properties that a provider has
 type ProviderProperties struct {
-	ProviderType        ProviderType `json:"provider_type,omitempty"`
-	PackageVersion      string       `json:"package_version,omitempty"`
-	PackageURL          string       `json:"package_url,omitempty"`
-	ProviderName        string       `json:"provider_name,omitempty"`
-	ProviderDescription []string     `json:"provider_description,omitempty"`
-	ProviderURL         string       `json:"provider_url,omitempty"`
-	Extensions          Extensions   `json:"extensions,omitempty"`
-	Capabilities        Capabilities `json:"capabilities,omitempty"`
+	ProviderType        ProviderType     `json:"provider_type,omitempty"`
+	PackageVersion      string           `json:"package_version,omitempty"`
+	PackageURL          string           `json:"package_url,omitempty"`
+	ProviderName        string           `json:"provider_name,omitempty"`
+	ProviderDescription []string         `json:"provider_description,omitempty"`
+	ProviderURL         string           `json:"provider_url,omitempty"`
+	Extensions          Extensions       `json:"extensions,omitempty"`
+	Capabilities        Capabilities     `json:"capabilities,omitempty"`
+	RestrictedAccess    RestrictedAccess `json:"restrictedAccess,omitempty"`
+}
+
+type Adapters struct {
+	Istio   bool `json:"istio,omitempty"`
+	Citrix  bool `json:"citrix,omitempty"`
+	Consul  bool `json:"consul,omitempty"`
+	Cilium  bool `json:"cilium,omitempty"`
+	AppMesh bool `json:"appMesh,omitempty"`
+	Kuma    bool `json:"kuma,omitempty"`
+	Linkerd bool `json:"linkerd,omitempty"`
+	Nginx   bool `json:"nginx,omitempty"`
+	NSM     bool `json:"nsm,omitempty"`
+}
+
+type Configuration struct {
+	Designs      bool `json:"designs,omitempty"`
+	Applications bool `json:"applications,omitempty"`
+	Filters      bool `json:"filters,omitempty"`
+}
+
+type NavigatorComponents struct {
+	Dashboard     bool          `json:"dashboard,omitempty"`
+	Performance   bool          `json:"performance,omitempty"`
+	Conformance   bool          `json:"conformance,omitempty"`
+	Extensions    bool          `json:"extensions,omitempty"`
+	Toggler       bool          `json:"toggler,omitempty"`
+	Help          bool          `json:"help,omitempty"`
+	Lifecycle     Adapters      `json:"lifecycle,omitempty"`
+	Configuration Configuration `json:"configuration,omitempty"`
+}
+
+type HeaderComponents struct {
+	ContextSwitcher bool `json:"contextSwitcher,omitempty"`
+	Settings        bool `json:"settings,omitempty"`
+	Notifications   bool `json:"notifications,omitempty"`
+	Profile         bool `json:"profile,omitempty"` // todo: account can have other structs, if needed needs to expand
+}
+
+type MesheryUICapabilities struct {
+	Navigator NavigatorComponents `json:"navigator,omitempty"`
+	Header    HeaderComponents    `json:"header,omitempty"`
+}
+
+type RestrictedAccess struct {
+	IsMesheryUIRestricted bool                  `json:"isMesheryUiRestricted"`
+	AllowedComponents     MesheryUICapabilities `json:"allowedComponents,omitempty"`
 }
 
 // Extensions defines the UI extension points
@@ -76,6 +123,23 @@ type GraphQLExtension struct {
 	Type      string `json:"type,omitempty"`
 }
 
+type DesignerComponents struct {
+	Design      bool `json:"design,omitempty"`
+	Application bool `json:"application,omitempty"`
+	Filter      bool `json:"filter,omitempty"`
+	Save        bool `json:"save,omitempty"`
+	New         bool `json:"new,omitempty"`
+	SaveAs      bool `json:"saveAs,omitempty"`
+	Validate    bool `json:"validate,omitempty"`
+	Deploy      bool `json:"deploy,omitempty"`
+	Undeploy    bool `json:"unDeploy,omitempty"`
+}
+
+type MeshMapComponentSet struct {
+	Designer   DesignerComponents `json:"designer,omitempty"`
+	Visualizer bool               `json:"visualizer,omitempty"` // todo: create a component set for visualizer
+}
+
 // NavigatorExtension describes the Navigator extension point in the UI
 type NavigatorExtension struct {
 	Title           string              `json:"title,omitempty"`
@@ -87,6 +151,7 @@ type NavigatorExtension struct {
 	Show            *bool               `json:"show,omitempty"`
 	Children        NavigatorExtensions `json:"children,omitempty"`
 	Type            string              `json:"type,omitempty"`
+	AllowedTo       MeshMapComponentSet `json:"allowedTo,omitempty"`
 }
 
 // AccountExtension describes the Account extension point in the UI

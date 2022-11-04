@@ -161,7 +161,7 @@ function MesheryApplicationGrid({ applications=[],handleDeploy, handleUnDeploy, 
         open={modalOpen.open}
         handleClose={handleModalClose}
         submit={
-          { deploy : () => handleDeploy(modalOpen.application_file), unDeploy : () => handleUnDeploy (modalOpen.application_file) }
+          { deploy : () => handleDeploy(modalOpen.application_file, modalOpen.name), unDeploy : () => handleUnDeploy (modalOpen.application_file, modalOpen.name) }
         }
         isDelete={!modalOpen.deploy}
         title={ modalOpen.name }
