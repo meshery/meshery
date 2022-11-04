@@ -119,7 +119,7 @@ function FiltersCard({
                 onClick={(ev) =>
                   genericClickHandler(ev, handleClone)
                 }>
-                <img src="/static/img/clone-white.svg" className={classes.iconPatt} />
+                <img src="/static/img/clone-white.svg" className={classes.clonePatt} />
                   Clone
               </Button> : null }
             </div>
