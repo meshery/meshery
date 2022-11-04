@@ -33,6 +33,7 @@ const ObjectFieldTemplate = ({
   onAddClick,
 }) => {
   const classes = useStyles();
+// If the parent type is an `array`, then expand the current object.
   const [show, setShow] = React.useState(schema?.p_type ? true : false);
   properties.forEach((property, index) => {
     if (schema.properties[property.name].type) {
