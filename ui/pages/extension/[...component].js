@@ -31,7 +31,7 @@ function extractComponentURI(path) {
 
 
 /**
- * matchComponent matches the last extensino URI with current
+ * matchComponent matches the extension URI with current
  * given path
  * @param {string} extensionURI
  * @param {string} currentURI
