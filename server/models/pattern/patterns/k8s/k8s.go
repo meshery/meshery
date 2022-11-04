@@ -137,8 +137,6 @@ func ConvertMapInterfaceMapString(v interface{}, prettify bool, endString bool) 
 				return strings.ReplaceAll(x, " ", "")
 			}
 		}
-
 	}
-
 	return v
 }
