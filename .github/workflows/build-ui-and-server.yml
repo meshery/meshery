@@ -209,7 +209,7 @@ jobs:
         run: |
           cd ui
           npm i
-          npm run start --openssl-legacy-provider build
+          npm run build
           npm run export
       # - name: Update /etc/hosts
       #   run: echo "127.0.0.1 mesherylocal.layer5.io" | sudo tee -a /etc/hosts
