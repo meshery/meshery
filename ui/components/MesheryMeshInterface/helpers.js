@@ -274,6 +274,7 @@ function jsonSchemaBuilder(schema, obj) {
 
   if (schema.type === 'array') {
     obj["items"] = {}
+    obj["ui:FieldTemplate"] = CustomFieldTemplate;
     jsonSchemaBuilder(schema.items, obj["items"]);
     return
   }
