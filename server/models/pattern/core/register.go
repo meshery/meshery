@@ -152,7 +152,7 @@ func RegisterWorkload(data []byte) (err error) {
 	schema := map[string]interface{}{}
 	_ = json.Unmarshal([]byte(workload.OAMRefSchema), &schema)
 	if k8s.Format {
-		k8s.Format.Prettify(schema)
+		schema = k8s.Format.Prettify(schema, true)
 	}
 	temp, _ := json.Marshal(schema)
 	workload.OAMRefSchema = string(temp)

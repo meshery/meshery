@@ -66,6 +66,11 @@ func main() {
 		fmt.Println(err)
 		return
 	}
+	err = SplitYamlIntoFiles(compsFd)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
 	compsWriter := Writer{
 		file: compsFd,
 	}
@@ -121,6 +126,18 @@ func main() {
 		pkgs = pkgs[50:]
 	}
 	time.Sleep(20 * time.Second)
+
+	// split files
+	err = SplitYamlIntoFiles(compsFd)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	err = os.Remove(filepath.Join(OutputDirectoryPath, ComponentsFileName))
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
 }
 
 func StartPipeline(in chan []artifacthub.AhPackage, writer *Writer) error {
@@ -243,5 +260,48 @@ func writeComponents(cmps []ComponentStruct, writer *Writer) error {
 	if err != nil {
 		return err
 	}
+	return nil
+}
+
+// this function should take in the file descriptor for a yaml
+// file that contains array of items and split that into multiple files
+// with each item having certain number of items
+// TODO: Refactor
+func SplitYamlIntoFiles(file *os.File) error {
+	fileContent, err := io.ReadAll(file)
+	if err != nil {
+		return err
+	}
+	var list []ComponentStruct
+	err = yaml.Unmarshal(fileContent, &list)
+	if err != nil {
+		return err
+	}
+
+	fmt.Println(list)
+	result := make([]([]ComponentStruct), 0)
+	dummy := make([]ComponentStruct, 0)
+	for i, comp := range list {
+		dummy = append(dummy, comp)
+		if (i+1)%30 == 0 || i+1 == len(list) {
+			result = append(result, dummy)
+			dummy = make([]ComponentStruct, 0)
+		}
+	}
+	for i, fileContent := range result {
+		file, err := os.Create(fmt.Sprintf("%s/components%d.yaml", OutputDirectoryPath, i+1))
+		if err != nil {
+			return err
+		}
+		out, err := yaml.Marshal(fileContent)
+		if err != nil {
+			return err
+		}
+		_, err = file.Write(out)
+		if err != nil {
+			return err
+		}
+	}
+
 	return nil
 }

@@ -4,7 +4,7 @@ title: Operator
 permalink: concepts/architecture/operator
 type: concepts
 redirect_from: architecture/operator
-abstract: "Meshery Operator controls and manages the lifeycle of components deployed inside a kubernetes cluster"
+abstract: "Meshery Operator controls and manages the lifecycle of components deployed inside a kubernetes cluster"
 language: en
 display-title: "false"
 list: include

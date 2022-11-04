@@ -91,7 +91,8 @@ func (l *RemoteProvider) loadCapabilities(token string) {
 
 	version := viper.GetString("BUILD")
 	os := viper.GetString("OS")
-	finalURL := fmt.Sprintf("%s/%s/capabilities?os=%s", l.RemoteProviderURL, version, os)
+	playground := viper.GetString("PLAYGROUND")
+	finalURL := fmt.Sprintf("%s/%s/capabilities?os=%s&playground=%s", l.RemoteProviderURL, version, os, playground)
 	finalURL = strings.TrimSuffix(finalURL, "\n")
 	remoteProviderURL, err := url.Parse(finalURL)
 	if err != nil {
@@ -2706,7 +2707,13 @@ func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, fr
 
 	// Proceed to redirect once the capabilities has loaded
 	// and the package has been downloaded
-	http.Redirect(w, r, "/", http.StatusFound)
+	redirectURL := "/"
+	isPlayGround, _ := strconv.ParseBool(viper.GetString("PLAYGROUND"))
+	if isPlayGround {
+		redirectURL = "/extension/meshmap"
+	}
+
+	http.Redirect(w, r, redirectURL, http.StatusFound)
 }
 
 // UpdateToken - in case the token was refreshed, this routine updates the response with the new token

@@ -104,7 +104,28 @@ server:
 	ADAPTER_URLS=$(ADAPTER_URLS) \
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
 	go$(GOVERSION) run main.go error.go;
+server-remote-provider:
+	cd server; cd cmd; go$(GOVERSION) mod tidy; \
+	BUILD="$(GIT_VERSION)" \
+	ENFORCED_PROVIDER=$(REMOTE_PROVIDER) \
+	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
+	PORT=9081 \
+	DEBUG=true \
+	ADAPTER_URLS=$(ADAPTER_URLS) \
+	APP_PATH=$(APPLICATIONCONFIGPATH) \
+	go$(GOVERSION) run main.go error.go;
 
+
+server-local-provider:
+	cd server; cd cmd; go$(GOVERSION) mod tidy; \
+	BUILD="$(GIT_VERSION)" \
+	ENFORCED_PROVIDER=$(LOCAL_PROVIDER) \
+	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
+	PORT=9081 \
+	DEBUG=true \
+	ADAPTER_URLS=$(ADAPTER_URLS) \
+	APP_PATH=$(APPLICATIONCONFIGPATH) \
+	go$(GOVERSION) run main.go error.go;
 ## Build and run Meshery Server with no Kubernetes components on your local machine (requires go${GOVERSION}).
 server-skip-compgen:
 	cd server; cd cmd; go$(GOVERSION) mod tidy; \
@@ -127,6 +148,17 @@ server-no-content:
 	ADAPTER_URLS=$(ADAPTER_URLS) \
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
 	SKIP_DOWNLOAD_CONTENT=true \
+	go$(GOVERSION) run main.go error.go;
+
+server-playground:
+	cd server; cd cmd; go$(GOVERSION) mod tidy; \
+	BUILD="$(GIT_VERSION)" \
+	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
+	PORT=9081 \
+	DEBUG=true \
+	ADAPTER_URLS=$(ADAPTER_URLS) \
+	APP_PATH=$(APPLICATIONCONFIGPATH) \
+	PLAYGROUND=true \
 	go$(GOVERSION) run main.go error.go;
 
 ## Lint check Meshery Server.
