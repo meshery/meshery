@@ -91,15 +91,14 @@ func main() {
 	if err := core.RegisterMesheryOAMWorkloads(); err != nil {
 		log.Error(ErrRegisteringMesheryOAMWorkloads(err))
 	}
-	if err = core.RegisterK8sOAMWorkloads(); err != nil {
-		log.Error(ErrRegisteringMesheryOAMWorkloads(err))
-	}
-	log.Info("Local Provider capabilities are: ", version)
 	if viper.GetBool("REGISTER_STATIC_K8S") {
-		go func() {
-
-		}()
+		if err = core.RegisterK8sOAMWorkloads(); err != nil {
+			log.Error(ErrRegisteringMesheryOAMWorkloads(err))
+		}
 	}
+
+	log.Info("Local Provider capabilities are: ", version)
+
 	// Get the channel
 	log.Info("Meshery Server release channel is: ", releasechannel)
 
