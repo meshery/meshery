@@ -1,6 +1,7 @@
 
 import { createTheme } from '@material-ui/core/styles';
-
+import createBreakpoints from '@material-ui/core/styles/createBreakpoints'
+const breakpoints = createBreakpoints({});
 
 export const rjsfTheme = createTheme({
   palette : {
@@ -157,14 +158,16 @@ export const rjsfTheme = createTheme({
         '&:hover' : {
           overflow : "visible",
         },
-        // To scale the grid items
-        "& > *:nth-child(2)" : {
-          "& > *:nth-child(1)" : {
-            "& > *:nth-child(2)" : {
-              justifyContent : 'space-around'
-            }
-          },
-        }
+        // To scale the grid items on a particular screen size
+        [breakpoints.up('lg')] : {
+          "& > *:nth-child(2)" : {
+            "& > *:nth-child(1)" : {
+              "& > *:nth-child(2)" : {
+                justifyContent : 'space-around',
+              }
+            },
+          }
+        },
       },
     },
     MuiIconButton : {
