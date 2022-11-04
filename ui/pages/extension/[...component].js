@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 
-import Extension from "../../components/NavigatorExtension";
+import NavigatorExtension from "../../components/NavigatorExtension";
 import ExtensionSandbox, { getCapabilities, getFullPageExtensions, getComponentTitleFromPath } from "../../components/ExtensionSandbox";
 import { NoSsr } from "@material-ui/core";
 import { updatepagepath, updatepagetitle, updateExtensionType } from "../../lib/store";
@@ -27,6 +27,18 @@ function getPath() {
  */
 function extractComponentURI(path) {
   return path.substring(path.lastIndexOf("/"));
+}
+
+
+/**
+ * matchComponent matches the last extensino URI with current
+ * given path
+ * @param {string} extensionURI
+ * @param {string} currentURI
+ * @returns {boolean}
+ */
+function matchComponentURI(extensionURI, currentURI) {
+  return currentURI.includes(extensionURI);
 }
 
 /**
@@ -69,8 +81,7 @@ class RemoteExtension extends React.Component {
   renderExtension = () => {
     getFullPageExtensions(extNames => {
       extNames.forEach((ext) => {
-        const currentURI = extractComponentURI(getPath());
-        if (currentURI === ext.uri) {
+        if (matchComponentURI(ext?.uri, getPath())) {
           this.props.updateExtensionType({ extensionType : ext.name })
           getCapabilities(ext.name, extensions => {
             this.setState({ componentTitle : getComponentTitleFromPath(extensions, getPath()) });
@@ -96,7 +107,7 @@ class RemoteExtension extends React.Component {
           <NoSsr>
             {
               (extensionType === 'navigator') ?
-                <ExtensionSandbox type={extensionType} Extension={Extension} />
+                <ExtensionSandbox type={extensionType} Extension={NavigatorExtension} />
                 :
                 <ExtensionSandbox type={extensionType} Extension={(url) => RemoteComponent({ url })} />
             }
