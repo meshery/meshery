@@ -144,7 +144,7 @@ func main() {
 		os.Exit(1)
 	}
 	defer preferencePersister.ClosePersister()
-	dbHandler := models.GetNewDBInstance(viper.GetString("DBUSER"), viper.GetString("DBPASS"), viper.GetString("DBHOST"), viper.GetString("DBPORT"))
+	dbHandler := models.GetNewSQLiteDBInstance()
 
 	meshsyncCh := make(chan struct{}, 10)
 	brokerConn := nats.NewEmptyConnection

@@ -7,7 +7,7 @@ ARG RELEASE_CHANNEL
 RUN adduser --disabled-login appuser
 WORKDIR /github.com/meshery/meshery
 ADD . .
-RUN go clean -modcache; cd server; cd cmd; GOPROXY=https://proxy.golang.org GOSUMDB=off go build -ldflags="-w -s -X main.globalTokenForAnonymousResults=$TOKEN -X main.version=$GIT_VERSION -X main.commitsha=$GIT_COMMITSHA -X main.releasechannel=$RELEASE_CHANNEL" -tags draft -a -o /meshery .
+RUN go clean -modcache; cd server; cd cmd; GOPROXY=https://proxy.golang.org GOSUMDB=off  CGO_ENABLED=0 go build -ldflags="-w -s -X main.globalTokenForAnonymousResults=$TOKEN -X main.version=$GIT_VERSION -X main.commitsha=$GIT_COMMITSHA -X main.releasechannel=$RELEASE_CHANNEL" -tags draft -a -o /meshery .
 
 FROM node:lts as ui
 ADD ui ui
@@ -62,12 +62,12 @@ RUN mkdir -p /seed_content/applications && cd /seed_content/applications \
 #RUN cd nighthawk-go/apinighthawk/bin && chmod +x ./nighthawk_client
 
 
-FROM frolvlad/alpine-glibc:alpine-3.13_glibc-2.32
+FROM alpine:latest
 #RUN apt-get update; apt-get install -y ca-certificates; update-ca-certificates && rm -rf /var/lib/apt/lists/*
-RUN apk update && apk add ca-certificates; update-ca-certificates && rm -rf /var/cache/apk/*
-RUN update-ca-certificates
-RUN apk upgrade --no-cache && \
-    apk add --no-cache libstdc++
+# RUN apk update && apk add ca-certificates; update-ca-certificates && rm -rf /var/cache/apk/*
+# RUN update-ca-certificates
+# RUN apk upgrade --no-cache && \
+#     apk add --no-cache libstdc++
 COPY ./server/oam /app/server/oam
 COPY --from=meshery-server /meshery /app/server/cmd/
 COPY --from=meshery-server /etc/passwd /etc/passwd

@@ -85,7 +85,7 @@ run-local: server-local error
 ## Build and run Meshery Server on your local machine
 ## and point to (expect) a locally running Meshery Cloud or other Provider(s)
 ## for user authentication (requires go${GOVERSION}).
-server-local: run-db
+server-local: 
 	cd server; cd cmd; go$(GOVERSION) clean; go$(GOVERSION) mod tidy; \
 	BUILD="$(GIT_VERSION)" \
 	PROVIDER_BASE_URLS=$(REMOTE_PROVIDER_LOCAL) \
@@ -100,7 +100,7 @@ run-fast:
 
 
 ## Build and run Meshery Server on your local machine (requires go${GOVERSION}).
-server: run-db
+server: 
 	cd server; cd cmd; go$(GOVERSION) mod tidy; \
 	BUILD="$(GIT_VERSION)" \
 	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
