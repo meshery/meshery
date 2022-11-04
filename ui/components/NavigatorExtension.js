@@ -73,7 +73,8 @@ function Extension({ grafana, prometheus, updateLoadTestData, url, isDrawerColla
         PromptComponent,
         generateValidatePayload,
         Validation,
-        capabilitiesRegistryObj : new CapabilitiesRegistry(capabilitiesRegistry)
+        capabilitiesRegistry,
+        CapabilitiesRegistryClass : CapabilitiesRegistry
       }}
     />
   );

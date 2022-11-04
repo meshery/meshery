@@ -8,7 +8,7 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "next": "next",
-    "build": "next build",
+    "build": "cross-env NODE_OPTIONS='--openssl-legacy-provider' next build",
     "start": "NODE_ENV=production node ui_dev_server.js",
     "export": "next export",
     "export-playground": "PLAYGROUND=true next export -o playground",
@@ -63,6 +63,7 @@
     "codemirror": "^5.65.8",
     "color-string": "^1.5.5",
     "cron-time-generator": "^1.3.0",
+    "cross-env": "^7.0.3",
     "eslint-loader": "^4.0.2",
     "glob-parent": "^5.1.2",
     "graphql": "^16.5.0",
@@ -105,6 +106,7 @@
     "styled-jsx": "^4.0.1",
     "subscriptions-transport-ws": "^0.9.19",
     "tar": "^6.1.11",
+    "universal-cookie": "^4.0.4",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
