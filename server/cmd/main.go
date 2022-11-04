@@ -78,6 +78,7 @@ func main() {
 	viper.SetDefault("RELEASE_CHANNEL", releasechannel)
 	viper.SetDefault("INSTANCE_ID", &instanceID)
 	viper.SetDefault("ENFORCED_PROVIDER", "")
+	viper.SetDefault("REGISTER_STATIC_K8S", false)
 	viper.SetDefault("SKIP_DOWNLOAD_CONTENT", false)
 	viper.SetDefault("SKIP_COMP_GEN", false)
 	viper.SetDefault("PLAYGROUND", false)
@@ -90,8 +91,15 @@ func main() {
 	if err := core.RegisterMesheryOAMWorkloads(); err != nil {
 		log.Error(ErrRegisteringMesheryOAMWorkloads(err))
 	}
+	if err = core.RegisterK8sOAMWorkloads(); err != nil {
+		log.Error(ErrRegisteringMesheryOAMWorkloads(err))
+	}
 	log.Info("Local Provider capabilities are: ", version)
+	if viper.GetBool("REGISTER_STATIC_K8S") {
+		go func() {
 
+		}()
+	}
 	// Get the channel
 	log.Info("Meshery Server release channel is: ", releasechannel)
 

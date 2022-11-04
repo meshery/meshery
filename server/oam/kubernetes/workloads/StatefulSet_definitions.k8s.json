@@ -1,0 +1,1 @@
+{"kind":"WorkloadDefinition","apiVersion":"core.oam.dev/v1alpha1","metadata":{"name":"StatefulSet.K8s","creationTimestamp":null},"spec":{"definitionRef":{"name":"statefulset.k8s.meshery.layer5.io"},"metadata":{"@type":"pattern.meshery.io/k8s","isCustomResource":"false","k8sAPIVersion":"apps/v1","k8sKind":"StatefulSet","namespaced":"true","version":"v1.25.0"}}}
