@@ -76,7 +76,7 @@
     "minimist": ">=1.2.2",
     "moment": "^2.29.4",
     "mui-datatables": "^3.7.8",
-    "next": "^10.0.1",
+    "next": "^13.0.2",
     "next-compose": "0.0.2",
     "next-redux-wrapper": "^3.0.0-alpha.3",
     "notistack": "^1.0.10",
@@ -132,7 +132,7 @@
     "nyc": "^15.1.0",
     "relay-compiler": "^13.2.0",
     "start-server-and-test": "^1.13.1",
-    "webpack": "^4.44.0",
+    "webpack": "^5.74.0",
     "webpack-cli": "^4.9.2"
   }
 }
