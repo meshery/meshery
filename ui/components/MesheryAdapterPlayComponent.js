@@ -791,7 +791,7 @@ class MesheryAdapterPlayComponent extends React.Component {
                   </TableHead>
                   <TableBody>
                     {data.map((row) => (
-                      <TableRow key={row}>
+                      <TableRow key={row?.uniqueID}>
                         {row.map((val) => {
                           if (val && val.match(/[0-9]+m[0-9]+.+[0-9]+s/i) != null) {
                             const time = val.split(/m|s/);
