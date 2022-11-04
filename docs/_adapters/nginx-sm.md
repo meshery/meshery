@@ -41,7 +41,7 @@ The {{ page.name }} includes a handful of sample applications. Use Meshery to de
 
   - Httpbin is a simple HTTP request and response service.
 
-- [NGINX Servce Mesh Books](https://github.com/BuoyantIO/booksapp)
+- [NGINX Service Mesh Books](https://github.com/BuoyantIO/booksapp)
   - Application that helps you manage your bookshelf.
 
 Identify overhead involved in running {{page.mesh_name}}, various {{page.mesh_name}} configurations while running different workloads and on different infrastructure. The adapter facilitates data plane and control plane performance testing.
