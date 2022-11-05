@@ -28,7 +28,6 @@ export const rjsfTheme = createTheme({
     MuiOutlinedInput : {
       root : {
         backgroundColor : '#ffffff',
-        borderRadius : '0.2rem',
       },
     },
     MuiButton : {
@@ -184,7 +183,7 @@ export const rjsfTheme = createTheme({
     },
     MuiPaper : {
       elevation0 : {
-        backgroundColor : "rgba(242,242,242,0.1)",
+        backgroundColor : "rgba(242,242,242,0.5)",
       },
       elevation2 : {
         boxShadow : "none"
