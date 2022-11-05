@@ -1,12 +1,11 @@
 import React from "react";
 
 export const CustomFieldTemplate=(props) => {
-  const {  classNames, help,  description,  children } = props;
+  const {  classNames, children } = props;
   return (
     <div className={classNames}>
-      {description}
+      <div style={{ marginTop : "5px" }}> {" "}  </div>
       {children}
-      {help}
     </div>
   )
 }
