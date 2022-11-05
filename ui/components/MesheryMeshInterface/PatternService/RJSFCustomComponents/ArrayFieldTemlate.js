@@ -158,7 +158,6 @@ const DefaultFixedArrayFieldTemplate = (props) => {
 };
 
 const DefaultNormalArrayFieldTemplate = (props) => {
-  console.log(props)
   return (
     <Paper elevation={0}>
       <Box p={1}>
