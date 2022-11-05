@@ -35,7 +35,7 @@ mesheryctl pattern apply --file [path to pattern file | URL of the file]
 </div>
 </pre> 
 
-Deprovision pattern file
+Delete pattern file
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl pattern delete --file [path to pattern file]
