@@ -96,14 +96,14 @@ run-fast:
 
 ## Build and run Meshery Server on your local machine (requires go${GOVERSION}).
 server:
-	cd server; cd cmd; go$(GOVERSION) mod tidy; \
+	cd server; cd cmd; go mod tidy; \
 	BUILD="$(GIT_VERSION)" \
 	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
 	PORT=9081 \
 	DEBUG=true \
 	ADAPTER_URLS=$(ADAPTER_URLS) \
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
-	go$(GOVERSION) run main.go error.go;
+	go run main.go error.go;
 server-remote-provider:
 	cd server; cd cmd; go$(GOVERSION) mod tidy; \
 	BUILD="$(GIT_VERSION)" \
@@ -187,8 +187,9 @@ ui-server: ui-meshery-build server
 .PHONY: setup-ui-libs ui-setup run-ui-dev ui ui-meshery-build ui ui-provider ui-lint ui-provider ui-meshery ui-build ui-provider-build ui-provider-test
 
 UI_BUILD_SCRIPT = build
-if [[ "$OSTYPE" == "darwin"* ]]; then
+ifeq ($(shell uname), Darwin)
 	UI_BUILD_SCRIPT = build-mac
+endif
 
 setup-ui-libs: ui-setup
 ## Install dependencies for building Meshery UI.
