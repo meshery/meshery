@@ -44,7 +44,7 @@ export default function SimpleAccordion(props) {
           style={{ backgroundColor : "F7F7F7" }}
         >
 
-          <Typography className={classes.heading}>{props.heading}</Typography>
+          <Typography className={classes.heading}>{props.heading?.charAt(0).toUpperCase() + props.heading?.slice(1)}{" "}</Typography>
 
           {props.childProps.hasRemove && (
 

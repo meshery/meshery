@@ -9,6 +9,7 @@
     "lint:fix": "eslint . --fix",
     "next": "next",
     "build": "cross-env NODE_OPTIONS='--openssl-legacy-provider' next build",
+    "build-mac": "next build",
     "start": "NODE_ENV=production node ui_dev_server.js",
     "export": "next export",
     "export-playground": "PLAYGROUND=true next export -o playground",
