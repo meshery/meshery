@@ -462,9 +462,9 @@ func registerK8sOAM(rootpath string, regFn func([]byte) error) error {
 		return err
 	}
 	for _, vitem := range items {
-		path := filepath.Join(rootpath, vitem.Name())
+		vpath := filepath.Join(rootpath, vitem.Name())
 		//iterate through all versions
-		items, err := ioutil.ReadDir(rootpath)
+		items, err := ioutil.ReadDir(vpath)
 		if err != nil {
 			errs = append(errs, err.Error())
 			continue
@@ -472,7 +472,7 @@ func registerK8sOAM(rootpath string, regFn func([]byte) error) error {
 		for _, item := range items {
 			if !item.IsDir() {
 				// Read the file definition file
-				path = fmt.Sprintf(path)
+				path := filepath.Join(vpath, item.Name())
 				if strings.HasSuffix(path, "_definitions.k8s.json") {
 					defFile, err := os.ReadFile(path)
 					if err != nil {
@@ -518,7 +518,6 @@ func registerK8sOAM(rootpath string, regFn func([]byte) error) error {
 
 			}
 		}
-
 	}
 
 	if len(errs) == 0 {
