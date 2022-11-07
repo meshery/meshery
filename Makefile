@@ -187,8 +187,9 @@ ui-server: ui-meshery-build server
 .PHONY: setup-ui-libs ui-setup run-ui-dev ui ui-meshery-build ui ui-provider ui-lint ui-provider ui-meshery ui-build ui-provider-build ui-provider-test
 
 UI_BUILD_SCRIPT = build
-if [[ "$OSTYPE" == "darwin"* ]]; then
+ifeq ($(shell uname), Darwin)
 	UI_BUILD_SCRIPT = build-mac
+endif
 
 setup-ui-libs: ui-setup
 ## Install dependencies for building Meshery UI.
