@@ -96,14 +96,14 @@ run-fast:
 
 ## Build and run Meshery Server on your local machine (requires go${GOVERSION}).
 server:
-	cd server; cd cmd; go mod tidy; \
+	cd server; cd cmd; go$(GOVERSION) mod tidy; \
 	BUILD="$(GIT_VERSION)" \
 	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
 	PORT=9081 \
 	DEBUG=true \
 	ADAPTER_URLS=$(ADAPTER_URLS) \
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
-	go run main.go error.go;
+	go$(GOVERSION) run main.go error.go;
 server-remote-provider:
 	cd server; cd cmd; go$(GOVERSION) mod tidy; \
 	BUILD="$(GIT_VERSION)" \
