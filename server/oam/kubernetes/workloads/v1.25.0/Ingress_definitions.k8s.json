@@ -1,0 +1,1 @@
+{"kind":"WorkloadDefinition","apiVersion":"core.oam.dev/v1alpha1","metadata":{"name":"Ingress.K8s","creationTimestamp":null},"spec":{"definitionRef":{"name":"ingress.k8s.meshery.layer5.io"},"metadata":{"@type":"pattern.meshery.io/k8s","isCustomResource":"false","k8sAPIVersion":"networking.k8s.io/v1","k8sKind":"Ingress","namespaced":"true","version":"v1.25.0"}}}
