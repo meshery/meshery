@@ -183,7 +183,7 @@ export const rjsfTheme = createTheme({
     },
     MuiPaper : {
       elevation0 : {
-        backgroundColor : "rgba(242,242,242,0.5)",
+        backgroundColor : "inherit",
       },
       elevation2 : {
         boxShadow : "none"
