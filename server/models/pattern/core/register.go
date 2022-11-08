@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
@@ -457,14 +456,14 @@ func RegisterK8sOAMWorkloads() error {
 }
 func registerK8sOAM(rootpath string, regFn func([]byte) error) error {
 	var errs []string
-	items, err := ioutil.ReadDir(rootpath)
+	items, err := os.ReadDir(rootpath)
 	if err != nil {
 		return err
 	}
 	for _, vitem := range items {
 		vpath := filepath.Join(rootpath, vitem.Name())
 		//iterate through all versions
-		items, err := ioutil.ReadDir(vpath)
+		items, err := os.ReadDir(vpath)
 		if err != nil {
 			errs = append(errs, err.Error())
 			continue
@@ -515,7 +514,6 @@ func registerK8sOAM(rootpath string, regFn func([]byte) error) error {
 						errs = append(errs, err.Error())
 					}
 				}
-
 			}
 		}
 	}
