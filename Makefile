@@ -95,6 +95,17 @@ run-fast:
 	## "DEPRECATED: This target is deprecated. Use `make server`.
 
 ## Build and run Meshery Server on your local machine (requires go${GOVERSION}).
+
+server-with-k8s:
+	cd server; cd cmd; go$(GOVERSION) mod tidy; \
+	BUILD="$(GIT_VERSION)" \
+	REGISTER_STATIC_K8S=true \
+	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
+	PORT=9081 \
+	DEBUG=true \
+	ADAPTER_URLS=$(ADAPTER_URLS) \
+	APP_PATH=$(APPLICATIONCONFIGPATH) \
+	go$(GOVERSION) run main.go error.go;
 server:
 	cd server; cd cmd; go$(GOVERSION) mod tidy; \
 	BUILD="$(GIT_VERSION)" \

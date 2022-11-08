@@ -30,7 +30,7 @@ func Validator(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFu
 				return
 			}
 
-			svcSettings := make(map[string]interface{})
+			var svcSettings map[string]interface{}
 			//deep copy settings for validation
 			if k8s.Format {
 				svcSettings = k8s.Format.Prettify(svc.Settings, true)

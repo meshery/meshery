@@ -256,7 +256,8 @@ function jsonSchemaBuilder(schema, obj) {
   if (!schema) return
 
   const uiDesc = "ui:description"
-
+  // applying field template universally to every field type.
+  obj["ui:FieldTemplate"] = CustomFieldTemplate;
   if (schema.type === 'object') {
     for (let key in schema.properties) {
       obj[key] = {};
@@ -274,7 +275,6 @@ function jsonSchemaBuilder(schema, obj) {
 
   if (schema.type === 'array') {
     obj["items"] = {}
-    obj["ui:FieldTemplate"] = CustomFieldTemplate;
     jsonSchemaBuilder(schema.items, obj["items"]);
     return
   }
@@ -293,15 +293,11 @@ function jsonSchemaBuilder(schema, obj) {
     obj["ui:widget"] = "checkbox";
   }
 
-  if (schema.type==='string'&&!schema?.enum) {
-    obj["ui:FieldTemplate"] = CustomFieldTemplate;
-  }
 
   if (schema.type === 'number' || schema.type === 'integer') {
     schema["maximum"] = 99999;
     schema["minimum"] = 0;
     obj["ui:widget"] = "updown";
-    obj["ui:FieldTemplate"] = CustomFieldTemplate;
   }
 }
 

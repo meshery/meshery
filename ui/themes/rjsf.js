@@ -25,6 +25,11 @@ export const rjsfTheme = createTheme({
     }
   },
   overrides : {
+    MuiOutlinedInput : {
+      root : {
+        backgroundColor : '#ffffff',
+      },
+    },
     MuiButton : {
       textSecondary : {
         color : "#00b39f",
@@ -110,7 +115,7 @@ export const rjsfTheme = createTheme({
     MuiAccordionSummary : {
       root : {
         // border: "5px solid red",
-        backgroundColor : "rgba(0, 0, 0, .03)",
+        backgroundColor : "rgba(242,242,242)",
         borderBottom : "1px solid rgba(0, 0, 0, .125)",
         marginBottom : -1,
         maxHeight : "1.5rem",
@@ -144,7 +149,8 @@ export const rjsfTheme = createTheme({
         },
         "&$expanded" : {
           margin : "auto"
-        }
+        },
+        backgroundColor : "rgba(242,242,242)",
       },
     },
     MuiGrid : {
@@ -176,6 +182,9 @@ export const rjsfTheme = createTheme({
       }
     },
     MuiPaper : {
+      elevation0 : {
+        backgroundColor : "inherit",
+      },
       elevation2 : {
         boxShadow : "none"
       }
