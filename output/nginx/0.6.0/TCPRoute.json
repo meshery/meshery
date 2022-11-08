@@ -1,0 +1,1 @@
+{"kind":"TCPRoute","apiVersion":"v1alpha3","Format":"JSON","Metadata":{"Model":"nginx","Version":"0.6.0","Category":"","SubCategory":"","Metadata":{"display-name":"TCP Route"}},"Schema":"{\n \"description\": \"TCPRouteSpec defines the desired state of TCPRoute\",\n \"title\": \"TCP Route\",\n \"type\": \"object\"\n}"}

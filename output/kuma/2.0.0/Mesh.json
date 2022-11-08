@@ -1,0 +1,1 @@
+{"kind":"Mesh","apiVersion":"v1alpha1","Format":"JSON","Metadata":{"Model":"kuma","Version":"2.0.0","Category":"","SubCategory":"","Metadata":{"display-name":"Mesh"}},"Schema":"{\n \"description\": \"Spec is the specification of the Kuma Mesh resource.\",\n \"title\": \"Mesh\",\n \"x-kubernetes-preserve-unknown-fields\": true\n}"}
