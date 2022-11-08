@@ -3,7 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -298,8 +298,8 @@ func (h *Handler) GetMesheryPatternsHandler(
 //
 // Used to get catalog patterns
 // responses:
-// 	200: mesheryPatternResponseWrapper
 //
+//	200: mesheryPatternResponseWrapper
 func (h *Handler) GetCatalogMesheryPatternsHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
@@ -356,7 +356,8 @@ func (h *Handler) DeleteMesheryPatternHandler(
 //
 // Creates a local copy of a public pattern with id: id
 // responses:
-// 	200: noContentWrapper
+//
+//	200: noContentWrapper
 //
 // CloneMesheryPatternHandler clones a pattern with the given id
 func (h *Handler) CloneMesheryPatternHandler(
@@ -380,6 +381,45 @@ func (h *Handler) CloneMesheryPatternHandler(
 	fmt.Fprint(rw, string(resp))
 }
 
+// swagger:route POST /api/pattern/catalog/publish PatternsAPI idPublishCatalogPatternHandler
+// Handle Publish for a Meshery Pattern
+//
+// Publishes pattern to Meshery Catalog by setting visibility to public and setting catalog data
+// responses:
+//
+//	200: noContentWrapper
+//
+// PublishCatalogPatternHandler makes pattern with given id public
+func (h *Handler) PublishCatalogPatternHandler(
+	rw http.ResponseWriter,
+	r *http.Request,
+	prefObj *models.Preference,
+	user *models.User,
+	provider models.Provider,
+) {
+	defer func() {
+		_ = r.Body.Close()
+	}()
+
+	var parsedBody *models.MesheryCatalogPatternRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil {
+		h.log.Error(ErrRequestBody(err))
+		http.Error(rw, ErrRequestBody(err).Error(), http.StatusBadRequest)
+		return
+	}
+
+	resp, err := provider.PublishCatalogPattern(r, parsedBody)
+	if err != nil {
+		h.log.Error(ErrPublishCatalogPattern(err))
+		http.Error(rw, ErrPublishCatalogPattern(err).Error(), http.StatusInternalServerError)
+		return
+	}
+
+	go h.config.ConfigurationChannel.PublishPatterns()
+	rw.Header().Set("Content-Type", "application/json")
+	fmt.Fprint(rw, string(resp))
+}
+
 // swagger:route DELETE /api/patterns PatternsAPI idDeleteMesheryPattern
 // Handle Delete for multiple Meshery Patterns
 //
@@ -391,7 +431,7 @@ func (h *Handler) DeleteMultiMesheryPatternsHandler(
 	user *models.User,
 	provider models.Provider,
 ) {
-	body, err := ioutil.ReadAll(r.Body)
+	body, err := io.ReadAll(r.Body)
 	if err != nil {
 		logrus.Error(rw, "err deleting pattern, converting bytes: ", err)
 	}

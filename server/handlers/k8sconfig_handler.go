@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"path/filepath"
 
@@ -79,7 +78,7 @@ func (h *Handler) addK8SConfig(user *models.User, prefObj *models.Preference, w 
 		_ = k8sfile.Close()
 	}()
 
-	k8sConfigBytes, err := ioutil.ReadAll(k8sfile)
+	k8sConfigBytes, err := io.ReadAll(k8sfile)
 	if err != nil {
 		logrus.Error(ErrReadConfig(err))
 		http.Error(w, ErrReadConfig(err).Error(), http.StatusBadRequest)
@@ -327,6 +326,8 @@ func RegisterK8sComponents(ctxt context.Context, config []byte, ctxID string) (e
 		if err != nil {
 			return ErrCreatingKubernetesComponents(err, ctxID)
 		}
+		// go writeDefK8sOnFileSystem(string(def), filepath.Join(rootpath, definition.Spec.Metadata["k8sKind"]+"_definitions.k8s.json"))
+		// go writeSchemaK8sFileSystem(ord.OAMRefSchema, filepath.Join(rootpath, definition.Spec.Metadata["k8sKind"]+"_schema.k8s.json"))
 		err = core.RegisterWorkload(content)
 		if err != nil {
 			return ErrCreatingKubernetesComponents(err, ctxID)
@@ -334,3 +335,17 @@ func RegisterK8sComponents(ctxt context.Context, config []byte, ctxID string) (e
 	}
 	return nil
 }
+
+// func writeDefK8sOnFileSystem(def string, path string) {
+// 	err := ioutil.WriteFile(path, []byte(def), 0777)
+// 	if err != nil {
+// 		fmt.Println("err def: ", err.Error())
+// 	}
+// }
+
+// func writeSchemaK8sFileSystem(schema string, path string) {
+// 	err := ioutil.WriteFile(path, []byte(schema), 0777)
+// 	if err != nil {
+// 		fmt.Println("err schema: ", err.Error())
+// 	}
+// }

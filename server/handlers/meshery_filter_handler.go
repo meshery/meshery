@@ -193,8 +193,8 @@ func (h *Handler) GetMesheryFiltersHandler(
 //
 // Used to get catalog filters
 // responses:
-// 	200: mesheryFilterResponseWrapper
 //
+//	200: mesheryFilterResponseWrapper
 func (h *Handler) GetCatalogMesheryFiltersHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
@@ -251,7 +251,8 @@ func (h *Handler) DeleteMesheryFilterHandler(
 //
 // Creates a local copy of a public filter with id: id
 // responses:
-// 	200: noContentWrapper
+//
+//	200: noContentWrapper
 //
 // CloneMesheryFilterHandler clones a filter with the given id
 func (h *Handler) CloneMesheryFilterHandler(
@@ -267,6 +268,45 @@ func (h *Handler) CloneMesheryFilterHandler(
 	if err != nil {
 		h.log.Error(ErrCloneFilter(err))
 		http.Error(rw, ErrCloneFilter(err).Error(), http.StatusInternalServerError)
+		return
+	}
+
+	go h.config.ConfigurationChannel.PublishFilters()
+	rw.Header().Set("Content-Type", "application/json")
+	fmt.Fprint(rw, string(resp))
+}
+
+// swagger:route POST /api/filter/catalog/publish FiltersAPI idPublishCatalogFilterHandler
+// Handle Publish for a Meshery Filter
+//
+// Publishes filter to Meshery Catalog by setting visibility to public and setting catalog data
+// responses:
+//
+//	200: noContentWrapper
+//
+// PublishCatalogFilterHandler makes filter with given id public
+func (h *Handler) PublishCatalogFilterHandler(
+	rw http.ResponseWriter,
+	r *http.Request,
+	prefObj *models.Preference,
+	user *models.User,
+	provider models.Provider,
+) {
+	defer func() {
+		_ = r.Body.Close()
+	}()
+
+	var parsedBody *models.MesheryCatalogFilterRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil {
+		h.log.Error(ErrRequestBody(err))
+		http.Error(rw, ErrRequestBody(err).Error(), http.StatusBadRequest)
+		return
+	}
+
+	resp, err := provider.PublishCatalogFilter(r, parsedBody)
+	if err != nil {
+		h.log.Error(ErrPublishCatalogFilter(err))
+		http.Error(rw, ErrPublishCatalogFilter(err).Error(), http.StatusInternalServerError)
 		return
 	}
 

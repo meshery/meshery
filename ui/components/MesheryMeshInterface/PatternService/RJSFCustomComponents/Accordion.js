@@ -11,7 +11,7 @@ import { IconButton } from "@material-ui/core";
 const useStyles = makeStyles((theme) => ({
   accordionRoot : {
     width : "100%",
-    marginBottom : "1rem"
+    marginBottom : "0rem"
   },
   heading : {
     fontSize : theme.typography.pxToRem(15),
@@ -44,7 +44,7 @@ export default function SimpleAccordion(props) {
           style={{ backgroundColor : "F7F7F7" }}
         >
 
-          <Typography className={classes.heading}>{props.heading}</Typography>
+          <Typography className={classes.heading}>{props.heading?.charAt(0).toUpperCase() + props.heading?.slice(1)}{" "}</Typography>
 
           {props.childProps.hasRemove && (
 

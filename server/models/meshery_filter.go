@@ -16,7 +16,7 @@ type MesheryFilter struct {
 	FilterFile string `json:"filter_file"`
 	// Meshery doesn't have the user id fields
 	// but the remote provider is allowed to provide one
-	UserID *string `json:"user_id" gorm:"-"`
+	UserID *string `json:"user_id"`
 
 	Location    sql.Map `json:"location"`
 	Visibility  string  `json:"visibility"`
@@ -24,6 +24,13 @@ type MesheryFilter struct {
 
 	UpdatedAt *time.Time `json:"updated_at,omitempty"`
 	CreatedAt *time.Time `json:"created_at,omitempty"`
+}
+
+// MesheryCatalogFilterRequestBody refers to the type of request body
+// that PublishCatalogFilter would receive
+type MesheryCatalogFilterRequestBody struct {
+	ID          uuid.UUID `json:"id,omitempty"`
+	CatalogData sql.Map   `json:"catalog_data,omitempty"`
 }
 
 // GetFilterName takes in a stringified filterfile and extracts the name from it

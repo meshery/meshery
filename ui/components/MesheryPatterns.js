@@ -19,7 +19,7 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import dataFetch from "../lib/data-fetch";
 import { toggleCatalogContent, updateProgress } from "../lib/store";
-import PatternForm from "../components/configuratorComponents/patternConfigurator";
+import DesignConfigurator from "../components/configuratorComponents/patternConfigurator";
 import UploadImport from "./UploadImport";
 import { ctxUrl } from "../utils/multi-ctx";
 import { generateValidatePayload, getComponentsinFile, randomPatternNameGenerator as getRandomName } from "../utils/utils";
@@ -323,31 +323,31 @@ function MesheryPatterns({
   const ACTION_TYPES = {
     FETCH_PATTERNS : {
       name : "FETCH_PATTERNS",
-      error_msg : "Failed to fetch patterns"
+      error_msg : "Failed to fetch designs"
     },
     UPDATE_PATTERN : {
       name : "UPDATE_PATTERN",
-      error_msg : "Failed to update pattern file"
+      error_msg : "Failed to update design file"
     },
     DELETE_PATTERN : {
       name : "DELETE_PATTERN",
-      error_msg : "Failed to delete pattern file"
+      error_msg : "Failed to delete design file"
     },
     DEPLOY_PATTERN : {
       name : "DEPLOY_PATTERN",
-      error_msg : "Failed to deploy pattern file"
+      error_msg : "Failed to deploy design file"
     },
     UNDEPLOY_PATTERN : {
       name : "UNDEPLOY_PATTERN",
-      error_msg : "Failed to undeploy pattern file"
+      error_msg : "Failed to undeploy design file"
     },
     UPLOAD_PATTERN : {
       name : "UPLOAD_PATTERN",
-      error_msg : "Failed to upload pattern file"
+      error_msg : "Failed to upload design file"
     },
     CLONE_PATTERN : {
       name : "CLONE_PATTERN",
-      error_msg : "Failed to clone pattern file"
+      error_msg : "Failed to clone design file"
     }
   };
 
@@ -404,9 +404,9 @@ function MesheryPatterns({
       disposeConfSubscriptionRef.current.dispose();
     }
     const configurationSubscription = ConfigurationSubscription((result) => {
-      setPage(result.configuration?.patterns.page || 0);
-      setPageSize(result.configuration?.patterns.page_size || 0);
-      setCount(result.configuration?.patterns.total_count || 0);
+      setPage(result.configuration?.patterns?.page || 0);
+      setPageSize(result.configuration?.patterns?.page_size || 0);
+      setCount(result.configuration?.patterns?.total_count || 0);
       handleSetPatterns(result.configuration?.patterns.patterns);
       stillLoading(false);
     },
@@ -475,7 +475,7 @@ function MesheryPatterns({
     });
   }
 
-  const handleDeploy = (pattern_file) => {
+  const handleDeploy = (pattern_file, name) => {
     updateProgress({ showProgress : true });
     dataFetch(
       ctxUrl(DEPLOY_URL, selectedK8sContexts),
@@ -485,7 +485,7 @@ function MesheryPatterns({
         body : pattern_file,
       }, () => {
         updateProgress({ showProgress : false });
-        enqueueSnackbar("Pattern Successfully Deployed!", {
+        enqueueSnackbar(`"${name}" Design successfully deployed`, {
           variant : "success",
           action : function Action(key) {
             return (
@@ -527,7 +527,7 @@ function MesheryPatterns({
     );
   }
 
-  const handleUnDeploy = (pattern_file) => {
+  const handleUnDeploy = (pattern_file, name) => {
     updateProgress({ showProgress : true });
     dataFetch(
       ctxUrl(DEPLOY_URL, selectedK8sContexts),
@@ -537,7 +537,7 @@ function MesheryPatterns({
         body : pattern_file,
       }, () => {
         updateProgress({ showProgress : false });
-        enqueueSnackbar("Pattern Successfully Undeployed!", {
+        enqueueSnackbar(`"${name}" Design successfully undeployed`, {
           variant : "success",
           action : function Action(key) {
             return (
@@ -553,7 +553,7 @@ function MesheryPatterns({
     );
   };
 
-  function handleClone(patternID) {
+  function handleClone(patternID, name) {
     updateProgress({ showProgress : true });
     dataFetch(PATTERN_URL.concat(CLONE_URL, "/", patternID),
       {
@@ -562,7 +562,7 @@ function MesheryPatterns({
       },
       () => {
         updateProgress({ showProgress : false });
-        enqueueSnackbar("Pattern Successfully Cloned!", {
+        enqueueSnackbar(`"${name}" Design successfully cloned`, {
           variant : "success",
           action : function Action(key) {
             return (
@@ -822,7 +822,7 @@ function MesheryPatterns({
             <>
               { visibility === "public" ? <IconButton onClick={(e) => {
                 e.stopPropagation();
-                handleClone(rowData.id)
+                handleClone(rowData.id, rowData.name)
               }
               }>
                 <img src="/static/img/clone.svg" />
@@ -894,7 +894,7 @@ function MesheryPatterns({
       console.log("PatternFile Delete Multiple API", `/api/pattern/delete`);
       updateProgress({ showProgress : false });
       setTimeout(() => {
-        enqueueSnackbar(`${patterns.patterns.length} Designs Deleted`,
+        enqueueSnackbar(`${patterns.patterns.length} Designs deleted`,
           {
             variant : "success",
             autoHideDuration : 2000,
@@ -1017,7 +1017,7 @@ function MesheryPatterns({
           <YAMLEditor pattern={selectedRowData} onClose={resetSelectedRowData()} onSubmit={handleSubmit} />
         )}
         {selectedPattern.show &&
-          <PatternForm onSubmit={handleSubmit} show={setSelectedPattern} pattern={selectedPattern.pattern} />
+          <DesignConfigurator onSubmit={handleSubmit} show={setSelectedPattern} pattern={selectedPattern.pattern} />
         }
         <div className={classes.topToolbar} >
           {!selectedPattern.show && (patterns.length>0 || viewType==="table") && <div className={classes.createButton}>
@@ -1103,7 +1103,7 @@ function MesheryPatterns({
           open={modalOpen.open}
           handleClose={handleModalClose}
           submit={
-            { deploy : () => handleDeploy(modalOpen.pattern_file),  unDeploy : () => handleUnDeploy(modalOpen.pattern_file) }
+            { deploy : () => handleDeploy(modalOpen.pattern_file, modalOpen.name),  unDeploy : () => handleUnDeploy(modalOpen.pattern_file, modalOpen.name) }
           }
           title={modalOpen.name}
           componentCount={modalOpen.count}

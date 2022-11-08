@@ -206,6 +206,10 @@ class MesheryApp extends App {
       .catch(err => console.error(err))
   }
 
+  updateExtensionType = (type) => {
+    this.props.store.dispatch({ type : actionTypes.UPDATE_EXTENSION_TYPE, extensionType : type });
+  }
+
   async loadConfigFromServer() {
     const { store } = this.props;
     dataFetch('/api/system/sync',
@@ -299,12 +303,15 @@ class MesheryApp extends App {
                 onClose={this.handleDrawerToggle}
                 onCollapseDrawer={(open = null) => this.handleCollapseDrawer(open)}
                 isDrawerCollapsed={isDrawerCollapsed}
+                updateExtensionType={this.updateExtensionType}
               />
             </Hidden>
             <Hidden xsDown implementation="css">
               <Navigator
                 onCollapseDrawer={(open = null) => this.handleCollapseDrawer(open)}
-                isDrawerCollapsed={isDrawerCollapsed} />
+                isDrawerCollapsed={isDrawerCollapsed}
+                updateExtensionType={this.updateExtensionType}
+              />
             </Hidden>
           </nav>
           <div className={classes.appContent}>
@@ -335,6 +342,7 @@ class MesheryApp extends App {
                 activeContexts={this.state.activeK8sContexts}
                 setActiveContexts={this.setActiveContexts}
                 searchContexts={this.searchContexts}
+                updateExtensionType={this.updateExtensionType}
               />
               <main className={classes.mainContent}>
                 <MuiPickersUtilsProvider utils={MomentUtils}>
@@ -349,10 +357,13 @@ class MesheryApp extends App {
                 </MuiPickersUtilsProvider>
               </main>
             </SnackbarProvider>
-            <footer className={classes.footer}>
-              <Typography variant="body2" align="center" color="textSecondary" component="p">
+            <footer className={this.props.capabilitiesRegistry?.restrictedAccess?.isMesheryUiRestricted ? classes.playgroundFooter :classes.footer}>
+              <Typography variant="body2" align="center" color="textSecondary" component="p"
+                style={this.props.capabilitiesRegistry?.restrictedAccess?.isMesheryUiRestricted ? { color : "#000" }: {}}
+              >
                 <span onClick={this.handleL5CommunityClick} className={classes.footerText}>
-                  Built with <FavoriteIcon className={classes.footerIcon} /> by the Layer5 Community</span>
+                  {this.props.capabilitiesRegistry?.restrictedAccess?.isMesheryUiRestricted ? "Playground Environment, some features might not be available": ( <> Built with <FavoriteIcon className={classes.footerIcon} /> by the Layer5 Community</>) }
+                </span>
               </Typography>
             </footer>
           </div>
@@ -368,7 +379,8 @@ const mapStateToProps = state => ({
   isDrawerCollapsed : state.get("isDrawerCollapsed"),
   k8sConfig : state.get("k8sConfig"),
   operatorSubscription : state.get("operatorSubscription"),
-  meshSyncSubscription : state.get("meshSyncSubscription")
+  meshSyncSubscription : state.get("meshSyncSubscription"),
+  capabilitiesRegistry : state.get("capabilitiesRegistry")
 })
 
 const mapDispatchToProps = dispatch => ({

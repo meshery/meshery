@@ -16,7 +16,7 @@ type MesheryPattern struct {
 	PatternFile string `json:"pattern_file"`
 	// Meshery doesn't have the user id fields
 	// but the remote provider is allowed to provide one
-	UserID *string `json:"user_id" gorm:"-"`
+	UserID *string `json:"user_id"`
 
 	Location    sql.Map `json:"location"`
 	Visibility  string  `json:"visibility"`
@@ -24,6 +24,13 @@ type MesheryPattern struct {
 
 	UpdatedAt *time.Time `json:"updated_at,omitempty"`
 	CreatedAt *time.Time `json:"created_at,omitempty"`
+}
+
+// MesheryCatalogPatternRequestBody refers to the type of request body
+// that PublishCatalogPattern would receive
+type MesheryCatalogPatternRequestBody struct {
+	ID          uuid.UUID `json:"id,omitempty"`
+	CatalogData sql.Map   `json:"catalog_data,omitempty"`
 }
 
 // GetPatternName takes in a stringified patternfile and extracts the name from it

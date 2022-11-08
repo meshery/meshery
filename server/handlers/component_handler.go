@@ -9,7 +9,7 @@ import (
 	"github.com/layer5io/meshery/server/models/pattern/core"
 )
 
-//TODO: Swagger API docs
+// TODO: Swagger API docs
 func (h *Handler) ComponentTypesHandler(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
@@ -20,7 +20,7 @@ func (h *Handler) ComponentTypesHandler(rw http.ResponseWriter, r *http.Request)
 	}
 }
 
-//TODO: Swagger API docs
+// TODO: Swagger API docs
 func (h *Handler) ComponentVersionsHandler(rw http.ResponseWriter, r *http.Request) {
 	t := mux.Vars(r)["type"]
 	rw.Header().Add("Content-Type", "application/json")
@@ -32,7 +32,7 @@ func (h *Handler) ComponentVersionsHandler(rw http.ResponseWriter, r *http.Reque
 	}
 }
 
-//TODO: Swagger API docs
+// TODO: Swagger API docs
 func (h *Handler) ComponentsByNameHandler(rw http.ResponseWriter, r *http.Request) {
 	t := mux.Vars(r)["type"]
 	v := r.URL.Query().Get("version")
@@ -49,7 +49,7 @@ func (h *Handler) ComponentsByNameHandler(rw http.ResponseWriter, r *http.Reques
 	}
 }
 
-//TODO: Swagger API docs
+// TODO: Swagger API docs
 func (h *Handler) ComponentsForTypeHandler(rw http.ResponseWriter, r *http.Request) {
 	t := mux.Vars(r)["type"]
 	version := r.URL.Query().Get("version")
@@ -65,7 +65,7 @@ func (h *Handler) ComponentsForTypeHandler(rw http.ResponseWriter, r *http.Reque
 	}
 }
 
-//TODO: Swagger API docs
+// TODO: Swagger API docs
 func (h *Handler) GetAllComponents(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)

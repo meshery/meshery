@@ -41,7 +41,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@master
       - name: Identify Release Values
         if: "${{ github.event.inputs.release-ver}} != 'v' }}"
         run: |
@@ -52,10 +52,9 @@ jobs:
           else
             echo RELEASE_CHANNEL=edge >> $GITHUB_ENV
           fi
-          LATEST_VERSION=$(git ls-remote --tags | tail -1 | cut -f2 | sed 's/refs\/tags\///g') >> $GITHUB_ENV
-          GIT_VERSION=$(git ls-remote --tags | tail -1 | cut -f2 | sed 's/refs\/tags\///g') >> $GITHUB_ENV
-          # GIT_VERSION=$(git describe --tags `git rev-list --tags --max-count=1` --always) 
-          GIT_STRIPPED_VERSION=$(git ls-remote --tags | tail -1 | cut -f2 | sed 's/refs\/tags\///g' | cut -c2-)
+          LATEST_VERSION=$(git ls-remote --sort='v:refname' --tags | tail -1 | cut -f2 | sed 's/refs\/tags\///g') >> $GITHUB_ENV
+          GIT_VERSION=$(git ls-remote --sort='v:refname' --tags | tail -1 | cut -f2 | sed 's/refs\/tags\///g') >> $GITHUB_ENV
+          GIT_STRIPPED_VERSION=$(git ls-remote --sort='v:refname' --tags | tail -1 | cut -f2 | sed 's/refs\/tags\///g' | cut -c2-)
           echo "Release channel determined to be $RELEASE_CHANNEL"
           echo "GIT_LATEST=$LATEST_VERSION" >> $GITHUB_ENV
           echo "GIT_VERSION=$GIT_VERSION" >> $GITHUB_ENV

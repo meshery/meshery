@@ -12,13 +12,13 @@ jobs:
     if: github.repository == 'meshery/meshery'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@master
         with:
           token: ${{ secrets.GH_ACCESS_TOKEN }}
           ref: "master"
 
       - name: Setup Go
-        uses: actions/setup-go@v3.0.0
+        uses: actions/setup-go@master
         with:
           go-version: ${{ secrets.GO_VERSION }}
 

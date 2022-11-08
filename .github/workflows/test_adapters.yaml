@@ -53,26 +53,26 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        k8s_version: ['v1.20.11', 'v1.21.5', 'v1.22.2','v1.23.9']
+        k8s_version: ['v1.23.13', 'v1.24.7', 'v1.25.3']
     runs-on: ubuntu-latest
     outputs:
       exitstatus: ${{ steps.runresources.outputs.exitstatus }}
     steps:
       - name: Setting up minikube
         id: setk8s
-        uses: manusa/actions-setup-minikube@v2.4.1
+        uses: manusa/actions-setup-minikube@v2.7.0
         with:
-          minikube version: "v1.23.2"
+          minikube version: "v1.26.1"
           kubernetes version: '"${{ matrix.k8s_version }}"'
           driver: docker
           start args: --cni "${{ inputs.k8s_cni }}"
       - name: Checkout Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@master
 
       # Build the image by setting appropriate environmental variables in order to access the image from minikube
       - name: Build the tagged Docker image
         run: |
-          eval $(minikube -p minikube docker-env) 
+          eval $(minikube -p minikube docker-env)
           docker build -t test:test .
       - name: Retrieve kubeconfig
         run: cat ~/.kube/config
@@ -81,10 +81,10 @@ jobs:
         env:
           provider_token: ${{ secrets.token }}
         run: |
-          echo $provider_token 
+          echo $provider_token
           mkdir ~/.meshery
           config='{"contexts":{"local":{"endpoint":"http://localhost:9081","token":"Default","platform":"kubernetes","adapters":[],"channel":"stable","version":"latest"}},"current-context":"local","tokens":[{"location":"auth.json","name":"Default"}]}'
-          echo $config > ~/.meshery/config.yaml 
+          echo $config > ~/.meshery/config.yaml
           cat ~/.meshery/config.yaml
           echo "Using provider: ${{ inputs.provider }}"
           if  [ "${{ inputs.provider }}" = "Meshery" ] && [ "$provider_token" != "" ] ;then
@@ -104,8 +104,8 @@ jobs:
         run: |
           touch testimagedep.yaml
           curl ${{ inputs.deployment_url }} > ./testimagedep.yaml
-          yq e -i '.spec.template.spec.containers[0].image="test:test"' ./testimagedep.yaml 
-          yq e -i '.spec.template.spec.containers[0].imagePullPolicy="Never"' ./testimagedep.yaml 
+          yq e -i '.spec.template.spec.containers[0].image="test:test"' ./testimagedep.yaml
+          yq e -i '.spec.template.spec.containers[0].imagePullPolicy="Never"' ./testimagedep.yaml
           cat testimagedep.yaml
           kubectl apply -f testimagedep.yaml --namespace=meshery
           kubectl apply -f ${{ inputs.service_url }} --namespace=meshery
@@ -137,28 +137,28 @@ jobs:
       # Reset meshery's address to the external IP in config.yaml such that mesheryctl can reach it
       - name: Reset Meshery address
         run: |
-          kubectl get svc -n meshery 
+          kubectl get svc -n meshery
           svcip="http://$(kubectl get svc -n meshery | grep "meshery " | tr -s ' ' | cut -d " " -f 3):9081"
           echo "this is $svcip"
           config='{"contexts":{"local":{"endpoint":'$svcip',"token":"Default","platform":"kubernetes","adapters":[],"channel":"stable","version":"latest"}},"current-context":"local","tokens":[{"location":"auth.json","name":"Default"}]}'
           echo $config  > ~/.meshery/config.yaml
       - name: Download patternfile
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: patternfile
-      - name: Wait for Meshery pods to come up 
-        run: sleep 100  
+      - name: Wait for Meshery pods to come up
+        run: sleep 100
       # This pattern will try to install  service mesh(the first attempt can fail currently fot k8s componets so we will wait 100 seconds after the first apply and then apply again. Since pattern apply is idempotent, this wont be an issue.)
-      - name: Pattern apply 
+      - name: Pattern apply
         run: |
           cat ./${{ inputs.patternfile_name }}
-          mesheryctl pattern apply -f ./${{ inputs.patternfile_name }}   
+          mesheryctl pattern apply -f ./${{ inputs.patternfile_name }}
       - name: Sleep 120 seconds
-        run: sleep 120   
+        run: sleep 120
       - name: Pattern apply, second iteration. [IDEMPOTENT]
         run: |
           cat ./${{ inputs.patternfile_name }}
-          mesheryctl pattern apply -f ./${{ inputs.patternfile_name }}   
+          mesheryctl pattern apply -f ./${{ inputs.patternfile_name }}
       - name: Check adapter logs
         run: |
           podname=$(kubectl get pods -n meshery | grep ${{ inputs.adapter_name }} | tr -s ' ' | cut -d " " -f 1)
@@ -178,7 +178,7 @@ jobs:
           resourcenames="${{ inputs.expected_resources }}"
           resourcetypes="${{ inputs.expected_resources_types }}"
           nsnames="${{ inputs.expected_resources_namespaces}}"
-          set -f                      
+          set -f
           resources=(${resourcenames//,/ })
           types=(${resourcetypes//,/ })
           ns=(${nsnames//,/ })
@@ -214,29 +214,29 @@ jobs:
             if [[ ("${types[i]}" = "pod" && "$resourcestatus" = "Running") || ("${types[i]}" != "pod" && "$resourcestarted" != "") ]];then
               itran=1
               echo "${types[i]} ${resources[i]} started in namespace ${ns[i]}"
-              echo $(jq '.resources_status."'${types[i]}/${resources[i]}'" |=  "Running"' data.json) > data.json 
+              echo $(jq '.resources_status."'${types[i]}/${resources[i]}'" |=  "Running"' data.json) > data.json
             else
               itdidnotrun=1
               echo "${types[i]} ${resources[i]} did not start in namespace ${ns[i]} "
-              echo $(jq '.resources_status."'${types[i]}/${resources[i]}'" |=  "Not Running"' data.json) > data.json 
+              echo $(jq '.resources_status."'${types[i]}/${resources[i]}'" |=  "Not Running"' data.json) > data.json
               exitstatus=1
             fi
           done
           status=""
           if [ "$exitstatus" -eq 0 ];then
-              status="passing"       
-          else 
+              status="passing"
+          else
               status="failing"
           fi
           if [ "$itran" -eq 1 ] && [ "$itdidnotrun" -eq 1  ] ;then
               status="partial"
           fi
-          echo $(jq '."overall-status" |=  "'$status'"' data.json) > data.json;     
-          MESHERY_VERSION=$(curl -L -s https://github.com/meshery/meshery/releases/latest | grep "/releases/tag/" | head -1 | awk -F '"' '{print $4}' | awk -F '/' '{print $NF}' )    
+          echo $(jq '."overall-status" |=  "'$status'"' data.json) > data.json;
+          MESHERY_VERSION=$(curl -L -s https://github.com/meshery/meshery/releases/latest | grep "/releases/tag/" | head -1 | awk -F '"' '{print $4}' | awk -F '/' '{print $NF}' )
           echo $(jq '.metadata."meshery-server-version" |="'$MESHERY_VERSION'"' data.json ) > data.json
           echo "exitstatus=$exitstatus" >> $GITHUB_ENV
       - name: UploadResults
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: ${{ inputs.output_filename }}
           path: ./${{ inputs.output_filename }}

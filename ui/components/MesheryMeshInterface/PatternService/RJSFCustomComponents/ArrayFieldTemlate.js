@@ -1,8 +1,5 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect } from "react";
-
-import { utils } from "@rjsf/core";
-
 import Box from "@material-ui/core/Box";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
@@ -12,8 +9,8 @@ import AddIcon from "@material-ui/icons/Add";
 import SimpleAccordion from "./Accordion";
 import EnlargedTextTooltip from "../EnlargedTextTooltip";
 import HelpOutlineIcon from "../HelpOutlineIcon";
-const { isMultiSelect, getDefaultRegistry } = utils;
-
+import { isMultiSelect, getDefaultFormState } from "@rjsf/utils";
+import ErrorIcon from "@material-ui/icons/Error";
 function getTitleForItem(props) {
   const title = getTitle(props);
 
@@ -36,7 +33,7 @@ function getTitle(props) {
 }
 
 const ArrayFieldTemplate = (props) => {
-  const { schema, registry = getDefaultRegistry() } = props;
+  const { schema, registry = getDefaultFormState() } = props;
 
   // TODO: update types so we don't have to cast registry as any
   if (isMultiSelect(schema, registry.rootSchema)) {
@@ -51,10 +48,7 @@ const ArrayFieldTitle = ({ TitleField, idSchema, title, required }) => {
     return null;
   }
 
-  const id = `${idSchema.$id}__title`;
-  // return <h3>{title?.charAt(0)?.toUpperCase() + title?.slice(1)}</h3>;
-  return <Typography variant="body1" style={{ fontWeight : "bold", display : "inline" }}>{title.charAt(0).toUpperCase() + title.slice(1)}</Typography>;
-  // return <TitleField id={id} title={title} required={required} />;
+  return <Typography variant="body1" style={{ fontWeight : "bold", marginLeft : ".5rem", display : "inline" }}>{title.charAt(0).toUpperCase() + title.slice(1)}</Typography>;
 };
 
 const ArrayFieldDescription = ({ DescriptionField, idSchema, description }) => {
@@ -70,10 +64,9 @@ const ArrayFieldDescription = ({ DescriptionField, idSchema, description }) => {
 const DefaultArrayItem = (props) => {
   const btnStyle = {
     flex : 1,
-    paddingLeft : 6,
+    paddingLeft : 0,
     paddingRight : 6,
     fontWeight : "bold",
-    minWidth : 0
   };
 
   return (
@@ -123,6 +116,16 @@ const DefaultArrayItem = (props) => {
 const DefaultFixedArrayFieldTemplate = (props) => {
   return (
     <fieldset className={props.className}>
+      {props.canAdd && (
+        <Button
+          className="array-item-add"
+          onClick={props.onAddClick}
+          disabled={props.disabled || props.readonly}
+        >
+          Add
+        </Button>
+      )}
+
       <ArrayFieldTitle
         key={`array-field-title-${props.idSchema.$id}`}
         TitleField={props.TitleField}
@@ -149,15 +152,7 @@ const DefaultFixedArrayFieldTemplate = (props) => {
         })}
       </div>
 
-      {props.canAdd && (
-        <Button
-          className="array-item-add"
-          onClick={props.onAddClick}
-          disabled={props.disabled || props.readonly}
-        >
-          Add
-        </Button>
-      )}
+
     </fieldset>
   );
 };
@@ -182,6 +177,24 @@ const DefaultNormalArrayFieldTemplate = (props) => {
                 <HelpOutlineIcon style={{ marginLeft : '4px' }} />
               </EnlargedTextTooltip>
             }
+            {props.rawErrors?.length > 0 && (
+              <EnlargedTextTooltip
+                interactive={true}
+                title={props.rawErrors?.map((error, index) => (
+                  <div key={index}>{error}</div>
+                ))}
+              >
+                <ErrorIcon
+                  fontSize="small"
+                  style={{
+                    color : "#B32700",
+                    marginLeft : "4px",
+                    verticalAlign : "middle",
+                    fontSize : 17
+                  }}
+                />
+              </EnlargedTextTooltip>
+            )}
 
           </Grid>
           <Grid item xs={4}>

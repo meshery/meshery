@@ -219,6 +219,15 @@
         "probable_cause": "Could not get the namespace in cluster\nCould not update namespace in cluster",
         "suggested_remediation": "Make sure the cluster is reachable"
       },
+      "1033": {
+        "name": "ErrFetchLinkerdVersionsCode",
+        "code": "1033",
+        "severity": "Alert",
+        "long_description": "versions for linkerd could not be fetched",
+        "short_description": "could not get any linkerd versions",
+        "probable_cause": "could not reach github.com/linkerd/linkerd2\nno versions could be fetched from linkerd release page",
+        "suggested_remediation": "make sure adapter is reachable to github"
+      },
       "1101": {
         "name": "ErrCertEncodeCode",
         "code": "1101",
