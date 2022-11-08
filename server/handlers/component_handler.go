@@ -5,8 +5,9 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	meshmodelcore "github.com/layer5io/meshery/server/models/meshmodel/core"
 	"github.com/layer5io/meshery/server/models/pattern/core"
+	"github.com/layer5io/meshkit/models/meshmodel"
+	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 )
 
 // TODO: Swagger API docs
@@ -79,9 +80,47 @@ func (h *Handler) GetAllComponents(rw http.ResponseWriter, r *http.Request) {
 func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
-	res := meshmodelcore.GetComponents()
+	res := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{})
 	if err := enc.Encode(res); err != nil {
 		h.log.Error(ErrWorkloadDefinition(err)) //TODO: Add appropriate meshkit error
 		http.Error(rw, ErrWorkloadDefinition(err).Error(), http.StatusInternalServerError)
+	}
+}
+func (h *Handler) GetMeshmodelComponentsByName(rw http.ResponseWriter, r *http.Request) {
+	rw.Header().Add("Content-Type", "application/json")
+	enc := json.NewEncoder(rw)
+	name := mux.Vars(r)["name"]
+	res := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
+		Name: name,
+	})
+	if err := enc.Encode(res); err != nil {
+		h.log.Error(ErrWorkloadDefinition(err)) //TODO: Add appropriate meshkit error
+		http.Error(rw, ErrWorkloadDefinition(err).Error(), http.StatusInternalServerError)
+	}
+}
+
+// swagger:route POST /api/meshmodel/components/register MeshmodelValidate idPostMeshModelValidate
+// Handle POST request for registering meshmodel components.
+//
+// Validate the given value with the given schema
+// responses:
+// 	200:
+
+// request body should be json
+// request body should be of ComponentCapability format
+func (h *Handler) RegisterMeshmodelComponents(rw http.ResponseWriter, r *http.Request) {
+	dec := json.NewDecoder(r.Body)
+	r.URL.Query()
+	var cc v1alpha1.ComponentDefinition
+	err := dec.Decode(&cc)
+	if err != nil {
+		http.Error(rw, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	err = h.registryManager.RegisterEntity(meshmodel.Host{}, cc)
+	if err != nil {
+		http.Error(rw, err.Error(), http.StatusBadRequest)
+		return
 	}
 }

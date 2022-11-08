@@ -19,6 +19,7 @@ import (
 	"github.com/layer5io/meshery/server/router"
 	"github.com/layer5io/meshkit/broker/nats"
 	"github.com/layer5io/meshkit/logger"
+	"github.com/layer5io/meshkit/models/meshmodel"
 	"github.com/layer5io/meshkit/utils/broadcast"
 	"github.com/layer5io/meshkit/utils/events"
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
@@ -150,7 +151,11 @@ func main() {
 	defer preferencePersister.ClosePersister()
 
 	dbHandler := models.GetNewDBInstance()
-
+	regManager, err := meshmodel.NewRegistryManager(dbHandler)
+	if err != nil {
+		log.Error(ErrInitializingRegistryManager(err))
+		os.Exit(1)
+	}
 	meshsyncCh := make(chan struct{}, 10)
 	brokerConn := nats.NewEmptyConnection
 
@@ -249,7 +254,7 @@ func main() {
 	mctrlHelper := models.NewMesheryControllersHelper(log, operatorDeploymentConfig, dbHandler)
 	k8sComponentsRegistrationHelper := models.NewComponentsRegistrationHelper(log)
 
-	h := handlers.NewHandlerInstance(hc, meshsyncCh, log, brokerConn, k8sComponentsRegistrationHelper, mctrlHelper, dbHandler, events.NewEventStreamer(), viper.GetString("ENFORCED_PROVIDER"))
+	h := handlers.NewHandlerInstance(hc, meshsyncCh, log, brokerConn, k8sComponentsRegistrationHelper, mctrlHelper, dbHandler, events.NewEventStreamer(), regManager, viper.GetString("ENFORCED_PROVIDER"))
 
 	b := broadcast.NewBroadcaster(100)
 	defer b.Close()
@@ -278,6 +283,7 @@ func main() {
 		}
 	}()
 	<-c
+	regManager.Cleanup()
 	log.Info("Doing seeded content cleanup...")
 	err = lProv.Cleanup()
 	if err != nil {
