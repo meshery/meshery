@@ -10,6 +10,7 @@ export const rjsfTheme = createTheme({
     },
   },
   typography : {
+    fontFamily : "inherit",
     fontSize : 13,
   },
   props : {
