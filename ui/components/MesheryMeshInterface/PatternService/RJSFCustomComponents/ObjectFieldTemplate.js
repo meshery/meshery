@@ -32,6 +32,7 @@ const ObjectFieldTemplate = ({
   formData,
   onAddClick,
 }) => {
+  const additional = schema?.__additional_property; // check if the object is additional
   const classes = useStyles();
   // If the parent type is an `array`, then expand the current object.
   const [show, setShow] = React.useState(schema?.p_type ? true : false);
@@ -96,7 +97,8 @@ const ObjectFieldTemplate = ({
             lg={
               element.type === "object" ||
               element.type === "array" ||
-              element.__additional_property
+              element.__additional_property ||
+              additional
                 ? 12
                 : 6
             }
@@ -118,7 +120,7 @@ const ObjectFieldTemplate = ({
           {schema.p_type !== "array" ? (
             <CustomTitleField
               id={`${idSchema.$id}-title`}
-              title={fieldTitle}
+              title={additional ? "Value" : fieldTitle}
               description={description}
               properties={properties}
             />
