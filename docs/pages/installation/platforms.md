@@ -55,9 +55,9 @@ Meshery deploys as a set of Docker containers, which can be deployed to either a
             {%include compatibilityMatrix.md k8s_tests_group=k8s_tests_group %}
             <p style="font-size:20px; text-align:center;"><a href="{{ site.baseurl }}/installation/platforms/kubernetes">Install Instruction</a></p>
         </div>
-        <div style="width: 1054px; height:477px; background-color:#E6E6E6; text-align:center;font-size:30px;padding:210px; color:#999999;" class="tab-pane fade" id="docker" role="tabpanel" aria-labelledby="docker-tab">Compatibility matrix not yet available<br><a style="font-size:20px" href="{{ site.baseurl }}/installation/platforms/docker">Install Instruction</a></div>
-        <div style="width: 1054px; height:477px; background-color:#E6E6E6; text-align:center;font-size:30px;padding:210px; color:#999999;" class="tab-pane fade" id="mac" role="tabpanel" aria-labelledby="mac-tab">Compatibility matrix not yet available<br> <a style="font-size:20px" href="{{ site.baseurl }}/installation/">Install Instruction</a></div>
-        <div style="width: 1054px; height:477px; background-color:#E6E6E6; text-align:center;font-size:30px;padding:210px; color:#999999;" class="tab-pane fade" id="windows" role="tabpanel" aria-labelledby="windows-tab">Compatibility matrix not yet available<br> <a style="font-size:20px" href="{{ site.baseurl }}/installation/platforms/windows">Install Instruction</a></div>
+        <div style="background-color:#E6E6E6; text-align:center;font-size:30px;padding:210px; color:#999999;" class="tab-pane fade" id="docker" role="tabpanel" aria-labelledby="docker-tab">Compatibility matrix not yet available<br><a style="font-size:20px" href="{{ site.baseurl }}/installation/platforms/docker">Install Instruction</a></div>
+        <div style="background-color:#E6E6E6; text-align:center;font-size:30px;padding:210px; color:#999999;" class="tab-pane fade" id="mac" role="tabpanel" aria-labelledby="mac-tab">Compatibility matrix not yet available<br> <a style="font-size:20px" href="{{ site.baseurl }}/installation/">Install Instruction</a></div>
+        <div style="background-color:#E6E6E6; text-align:center;font-size:30px;padding:210px; color:#999999;" class="tab-pane fade" id="windows" role="tabpanel" aria-labelledby="windows-tab">Compatibility matrix not yet available<br> <a style="font-size:20px" href="{{ site.baseurl }}/installation/platforms/windows">Install Instruction</a></div>
       </div>
     </div>
 
