@@ -148,7 +148,9 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int, g http.
 	gMux.Handle("/api/meshmodel/component/generate", h.AuthMiddleware(http.HandlerFunc(h.ComponentGenerationHandler), models.NoAuth)).Methods("POST")
 	gMux.Handle("/api/meshmodel/components", h.AuthMiddleware(http.HandlerFunc(h.GetAllMeshmodelComponents), models.NoAuth)).Methods("GET")
 	gMux.HandleFunc("/api/meshmodel/components/register", h.RegisterMeshmodelComponents).Methods("POST")
-	gMux.HandleFunc("/api/meshmodel/components/{name}", h.GetMeshmodelComponentsByName).Methods("GET")
+	gMux.HandleFunc("/api/meshmodel/components/types", h.MeshmodelComponentsForTypeHandler).Methods("GET")
+	gMux.HandleFunc("/api/meshmodel/components/{type}", h.GetMeshmodelComponentsByType).Methods("GET")
+	gMux.HandleFunc("/api/meshmodel/components/{type}/{name}", h.GetMeshmodelComponentsByName).Methods("GET")
 
 	gMux.Handle("/api/components", h.AuthMiddleware(http.HandlerFunc(h.GetAllComponents), models.NoAuth)).Methods("GET")
 	gMux.Handle("/api/components/types", h.AuthMiddleware(http.HandlerFunc(h.ComponentTypesHandler), models.NoAuth)).Methods("GET")

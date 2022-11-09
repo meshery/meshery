@@ -90,8 +90,40 @@ func (h *Handler) GetMeshmodelComponentsByName(rw http.ResponseWriter, r *http.R
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
 	name := mux.Vars(r)["name"]
+	typ := mux.Vars(r)["type"]
+	v := r.URL.Query().Get("version")
 	res := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
-		Name: name,
+		Name:      name,
+		ModelName: typ,
+		Version:   v,
+	})
+	if err := enc.Encode(res); err != nil {
+		h.log.Error(ErrWorkloadDefinition(err)) //TODO: Add appropriate meshkit error
+		http.Error(rw, ErrWorkloadDefinition(err).Error(), http.StatusInternalServerError)
+	}
+}
+func (h *Handler) MeshmodelComponentsForTypeHandler(rw http.ResponseWriter, r *http.Request) {
+	rw.Header().Add("Content-Type", "application/json")
+	enc := json.NewEncoder(rw)
+	res := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{})
+	modelNames := make([]string, 1)
+	for _, r := range res {
+		def, _ := r.(v1alpha1.ComponentDefinition)
+		modelNames = append(modelNames, def.Metadata.Model)
+	}
+	if err := enc.Encode(modelNames); err != nil {
+		h.log.Error(ErrWorkloadDefinition(err)) //TODO: Add appropriate meshkit error
+		http.Error(rw, ErrWorkloadDefinition(err).Error(), http.StatusInternalServerError)
+	}
+}
+func (h *Handler) GetMeshmodelComponentsByType(rw http.ResponseWriter, r *http.Request) {
+	rw.Header().Add("Content-Type", "application/json")
+	enc := json.NewEncoder(rw)
+	typ := mux.Vars(r)["type"]
+	v := r.URL.Query().Get("version")
+	res := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
+		ModelName: typ,
+		Version:   v,
 	})
 	if err := enc.Encode(res); err != nil {
 		h.log.Error(ErrWorkloadDefinition(err)) //TODO: Add appropriate meshkit error
