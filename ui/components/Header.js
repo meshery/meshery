@@ -275,7 +275,7 @@ function K8sContextMenu({
     )
   }
 
-  const handleKubernetesDelete = (name, ctxId) => async () => {
+  const handleKubernetesDelete = (name, ctxId) => async() => {
     let responseOfDeleteK8sCtx = await deleteCtxtRef.current.show({
       title : `Delete ${name} context ?`,
       subtitle : `Are you sure you want to delete ${name} cluster from Meshery?`,

@@ -110,6 +110,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
   const [discover, setLastDiscover] = useState(['']);
   const [_operatorState, _setOperatorState] = useState(operatorState || []);
   const ref = useRef(null);
+  const deleteCtxtRef = useRef(null);
   const meshSyncResetRef = useRef(null);
   const _operatorStateRef = useRef(_operatorState);
   _operatorStateRef.current = _operatorState;
@@ -392,23 +393,32 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
     }, variables);
   };
 
-  const handleConfigDelete = (id, index) => {
-    updateProgress({ showProgress : true });
-    dataFetch(
-      "/api/system/kubernetes/contexts/" + id,
-      {
-        credentials : "same-origin",
-        method : "DELETE"
-      },
-      () => {
-        updateProgress({ showProgress : false });
-        if (index != undefined) {
-          let newData = data.filter((dt, idx) => index != idx);
-          setData(newData);
-        }
-      },
-      handleError("failed to delete kubernetes context")
-    );
+  const handleConfigDelete = (id, name, index) => {
+    return async () => {
+      let responseOfDeleteK8sCtx = await deleteCtxtRef.current.show({
+        title : `Delete ${name} context ?`,
+        subtitle : `Are you sure you want to delete ${name} cluster from Meshery?`,
+        options : ["CONFIRM", "CANCEL"]
+      });
+      if (responseOfDeleteK8sCtx === "CONFIRM") {
+        updateProgress({ showProgress : true });
+        dataFetch(
+          "/api/system/kubernetes/contexts/" + id,
+          {
+            credentials : "same-origin",
+            method : "DELETE"
+          },
+          () => {
+            updateProgress({ showProgress : false });
+            if (index != undefined) {
+              let newData = data.filter((dt, idx) => index != idx);
+              setData(newData);
+            }
+          },
+          handleError("failed to delete kubernetes context")
+        );
+      }
+    }
   }
 
   const handleChange = () => {
@@ -518,11 +528,12 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
           );
         },
         customBodyRender : (_, tableMeta,) => {
+          console.log("tableMeta: ", tableMeta);
           return (
             <Tooltip title={`Server: ${tableMeta.rowData[2]}`}>
               <Chip
                 label={data[tableMeta.rowIndex].context}
-                onDelete={() => handleConfigDelete(data[tableMeta.rowIndex].id, tableMeta.rowIndex)}
+                onDelete={handleConfigDelete(data[tableMeta.rowIndex].id, data[tableMeta.rowIndex].context, tableMeta.rowIndex)}
                 onClick={() => handleKubernetesClick(data[tableMeta.rowIndex].id, tableMeta.rowIndex)}
                 icon={<img src="/static/img/kubernetes.svg" className={classes.icon} />}
                 variant="outlined"
@@ -671,7 +682,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
     },
     onRowsDelete : (td) => {
       td.data.forEach((item) => {
-        handleConfigDelete(data[item.index].id)
+        handleConfigDelete(data[item.index].id, data[item.index].context)
       })
     },
 
@@ -1095,6 +1106,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
       />
       <PromptComponent ref={ref} />
       <PromptComponent ref={meshSyncResetRef} />
+      <PromptComponent ref={deleteCtxtRef} />
     </div>
   )
 }
