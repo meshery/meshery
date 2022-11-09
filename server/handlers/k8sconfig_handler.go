@@ -326,6 +326,8 @@ func RegisterK8sComponents(ctxt context.Context, config []byte, ctxID string) (e
 		if err != nil {
 			return ErrCreatingKubernetesComponents(err, ctxID)
 		}
+		// go writeDefK8sOnFileSystem(string(def), filepath.Join(rootpath, definition.Spec.Metadata["k8sKind"]+"_definitions.k8s.json"))
+		// go writeSchemaK8sFileSystem(ord.OAMRefSchema, filepath.Join(rootpath, definition.Spec.Metadata["k8sKind"]+"_schema.k8s.json"))
 		err = core.RegisterWorkload(content)
 		if err != nil {
 			return ErrCreatingKubernetesComponents(err, ctxID)
@@ -333,3 +335,17 @@ func RegisterK8sComponents(ctxt context.Context, config []byte, ctxID string) (e
 	}
 	return nil
 }
+
+// func writeDefK8sOnFileSystem(def string, path string) {
+// 	err := ioutil.WriteFile(path, []byte(def), 0777)
+// 	if err != nil {
+// 		fmt.Println("err def: ", err.Error())
+// 	}
+// }
+
+// func writeSchemaK8sFileSystem(schema string, path string) {
+// 	err := ioutil.WriteFile(path, []byte(schema), 0777)
+// 	if err != nil {
+// 		fmt.Println("err schema: ", err.Error())
+// 	}
+// }

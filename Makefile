@@ -41,7 +41,7 @@ docker-build:
 ## Meshery Cloud for user authentication.
 ## Runs Meshery in a container locally and points to locally-running
 docker-local-cloud:
-	
+
 	(docker rm -f meshery) || true
 	docker run --name meshery -d \
 	--link meshery-cloud:meshery-cloud \
@@ -90,11 +90,22 @@ server-local:
 	ADAPTER_URLS=$(ADAPTER_URLS) \
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
 	go$(GOVERSION) run main.go error.go
-	
-run-fast: 
+
+run-fast:
 	## "DEPRECATED: This target is deprecated. Use `make server`.
 
 ## Build and run Meshery Server on your local machine (requires go${GOVERSION}).
+
+server-with-k8s:
+	cd server; cd cmd; go$(GOVERSION) mod tidy; \
+	BUILD="$(GIT_VERSION)" \
+	REGISTER_STATIC_K8S=true \
+	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
+	PORT=9081 \
+	DEBUG=true \
+	ADAPTER_URLS=$(ADAPTER_URLS) \
+	APP_PATH=$(APPLICATIONCONFIGPATH) \
+	go$(GOVERSION) run main.go error.go;
 server:
 	cd server; cd cmd; go$(GOVERSION) mod tidy; \
 	BUILD="$(GIT_VERSION)" \
@@ -104,7 +115,28 @@ server:
 	ADAPTER_URLS=$(ADAPTER_URLS) \
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
 	go$(GOVERSION) run main.go error.go;
+server-remote-provider:
+	cd server; cd cmd; go$(GOVERSION) mod tidy; \
+	BUILD="$(GIT_VERSION)" \
+	ENFORCED_PROVIDER=$(REMOTE_PROVIDER) \
+	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
+	PORT=9081 \
+	DEBUG=true \
+	ADAPTER_URLS=$(ADAPTER_URLS) \
+	APP_PATH=$(APPLICATIONCONFIGPATH) \
+	go$(GOVERSION) run main.go error.go;
 
+
+server-local-provider:
+	cd server; cd cmd; go$(GOVERSION) mod tidy; \
+	BUILD="$(GIT_VERSION)" \
+	ENFORCED_PROVIDER=$(LOCAL_PROVIDER) \
+	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
+	PORT=9081 \
+	DEBUG=true \
+	ADAPTER_URLS=$(ADAPTER_URLS) \
+	APP_PATH=$(APPLICATIONCONFIGPATH) \
+	go$(GOVERSION) run main.go error.go;
 ## Build and run Meshery Server with no Kubernetes components on your local machine (requires go${GOVERSION}).
 server-skip-compgen:
 	cd server; cd cmd; go$(GOVERSION) mod tidy; \
@@ -116,7 +148,7 @@ server-skip-compgen:
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
  	SKIP_COMP_GEN=true \
 	go$(GOVERSION) run main.go error.go;
-		
+
 ## Build and run Meshery Server with no seed content (requires go$(GOVERSION)).
 server-no-content:
 	cd server; cd cmd; go$(GOVERSION) mod tidy; \
@@ -127,6 +159,17 @@ server-no-content:
 	ADAPTER_URLS=$(ADAPTER_URLS) \
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
 	SKIP_DOWNLOAD_CONTENT=true \
+	go$(GOVERSION) run main.go error.go;
+
+server-playground:
+	cd server; cd cmd; go$(GOVERSION) mod tidy; \
+	BUILD="$(GIT_VERSION)" \
+	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
+	PORT=9081 \
+	DEBUG=true \
+	ADAPTER_URLS=$(ADAPTER_URLS) \
+	APP_PATH=$(APPLICATIONCONFIGPATH) \
+	PLAYGROUND=true \
 	go$(GOVERSION) run main.go error.go;
 
 ## Lint check Meshery Server.
@@ -140,7 +183,7 @@ proto-build:
 	export PATH=$(PATH):$(GOBIN)
 	go$(GOVERSION) install google.golang.org/protobuf/cmd/protoc-gen-go@latest
 	go$(GOVERSION) install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
-	protoc --proto_path=server/meshes --go_out=server/meshes --go_opt=paths=source_relative --go-grpc_out=server/meshes --go-grpc_opt=paths=source_relative meshops.proto 
+	protoc --proto_path=server/meshes --go_out=server/meshes --go_opt=paths=source_relative --go-grpc_out=server/meshes --go-grpc_opt=paths=source_relative meshops.proto
 
 ## Analyze error codes
 error:
@@ -153,6 +196,11 @@ ui-server: ui-meshery-build server
 # Meshery UI Native Builds.
 #-----------------------------------------------------------------------------
 .PHONY: setup-ui-libs ui-setup run-ui-dev ui ui-meshery-build ui ui-provider ui-lint ui-provider ui-meshery ui-build ui-provider-build ui-provider-test
+
+UI_BUILD_SCRIPT = build
+ifeq ($(shell uname), Darwin)
+	UI_BUILD_SCRIPT = build-mac
+endif
 
 setup-ui-libs: ui-setup
 ## Install dependencies for building Meshery UI.
@@ -186,14 +234,14 @@ ui-provider-test:
 
 build-ui: ui-build
 ## Buils all Meshery UIs  on your local machine.
-ui-build: 
-	cd ui; npm run build && npm run export; cd ..
+ui-build:
+	cd ui; npm run $(UI_BUILD_SCRIPT) && npm run export; cd ..
 	cd provider-ui; npm run build && npm run export; cd ..
 
 build-meshery-ui: ui-meshery-build
 ## Build only Meshery UI on your local machine.
 ui-meshery-build:
-	cd ui; npm run build && npm run export; cd ..
+	cd ui; npm run $(UI_BUILD_SCRIPT) && npm run export; cd ..
 
 build-provider-ui: ui-provider-build
 ## Builds only the provider user interface on your local machine
@@ -235,12 +283,12 @@ helm-docs: helm-operator-docs helm-meshery-docs
 
 ## Generate Meshery Operator Helm Chart documentation in markdown format.
 helm-operator-docs:
-	GO111MODULE=on go get github.com/norwoodj/helm-docs/cmd/helm-docs 
+	GO111MODULE=on go get github.com/norwoodj/helm-docs/cmd/helm-docs
 	$(GOPATH)/bin/helm-docs -c install/kubernetes/helm/meshery-operator
 
 ## Generate Meshery Server and Adapters Helm Chart documentation in markdown format.
 helm-meshery-docs:
-	GO111MODULE=on go get github.com/norwoodj/helm-docs/cmd/helm-docs 
+	GO111MODULE=on go get github.com/norwoodj/helm-docs/cmd/helm-docs
 	$(GOPATH)/bin/helm-docs -c install/kubernetes/helm/meshery
 
 ## Lint all of Meshery's Helm Charts
@@ -277,4 +325,3 @@ graphql-docs:
 ## Build Meshery GraphQl API specifications
 graphql-build:
 	cd server; cd internal/graphql; go run -mod=mod github.com/99designs/gqlgen generate
-
