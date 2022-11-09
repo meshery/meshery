@@ -382,68 +382,7 @@ func FlushMeshSyncData(ctx context.Context, ctxID string, provider Provider, eb 
 			return
 		}
 
-		// err := provider.GetGenericPersister().Where("id IN (?)", provider.GetGenericPersister().Table("objects").Select("id").Where("cluster_id=?", sid)).Delete(&meshsyncmodel.KeyValue{}).Error
-		// if err != nil {
-		// 	req = meshes.EventsResponse{
-		// 		Component:            "core",
-		// 		ComponentName:        "Meshery",
-		// 		EventType:            meshes.EventType_ERROR,
-		// 		Summary:              "Meshery Database handler is not accessible to perform operations",
-		// 		OperationId:          id.String(),
-		// 		Details:              err.Error(),
-		// 		SuggestedRemediation: "Restart Meshery Server or Perform Hard Reset",
-		// 	}
-		// 	eb.Publish(&req)
-		// 	return
-		// }
-
-		// err = provider.GetGenericPersister().Where("id IN (?)", provider.GetGenericPersister().Table("objects").Select("id").Where("cluster_id=?", sid)).Delete(&meshsyncmodel.ResourceSpec{}).Error
-		// if err != nil {
-		// 	req = meshes.EventsResponse{
-		// 		Component:            "core",
-		// 		ComponentName:        "Meshery",
-		// 		EventType:            meshes.EventType_ERROR,
-		// 		Summary:              "Meshery Database handler is not accessible to perform operations",
-		// 		OperationId:          id.String(),
-		// 		Details:              err.Error(),
-		// 		SuggestedRemediation: "Restart Meshery Server or Perform Hard Reset",
-		// 	}
-		// 	eb.Publish(&req)
-		// 	return
-		// }
-
-		// err = provider.GetGenericPersister().Where("id IN (?)", provider.GetGenericPersister().Table("objects").Select("id").Where("cluster_id=?", sid)).Delete(&meshsyncmodel.ResourceStatus{}).Error
-		// if err != nil {
-		// 	req = meshes.EventsResponse{
-		// 		Component:            "core",
-		// 		ComponentName:        "Meshery",
-		// 		EventType:            meshes.EventType_ERROR,
-		// 		Summary:              "Meshery Database handler is not accessible to perform operations",
-		// 		OperationId:          id.String(),
-		// 		Details:              err.Error(),
-		// 		SuggestedRemediation: "Restart Meshery Server or Perform Hard Reset",
-		// 	}
-		// 	eb.Publish(&req)
-		// 	return
-		// }
-
-		// err = provider.GetGenericPersister().Where("id IN (?)", provider.GetGenericPersister().Table("objects").Select("id").Where("cluster_id=?", sid)).Delete(&meshsyncmodel.ResourceObjectMeta{}).Error
-		// if err != nil {
-		// 	req = meshes.EventsResponse{
-		// 		Component:            "core",
-		// 		ComponentName:        "Meshery",
-		// 		EventType:            meshes.EventType_ERROR,
-		// 		Summary:              "Meshery Database handler is not accessible to perform operations",
-		// 		OperationId:          id.String(),
-		// 		Details:              err.Error(),
-		// 		SuggestedRemediation: "Restart Meshery Server or Perform Hard Reset",
-		// 	}
-		// 	eb.Publish(&req)
-		// 	return
-		// }
-
-		logrus.Debug("deleting.... objects")
-		err := provider.GetGenericPersister().Where("cluster_id = ?", sid).Delete(&meshsyncmodel.Object{}).Error
+		err := provider.GetGenericPersister().Where("id IN (?)", provider.GetGenericPersister().Table("objects").Select("id").Where("cluster_id=?", sid)).Delete(&meshsyncmodel.KeyValue{}).Error
 		if err != nil {
 			req = meshes.EventsResponse{
 				Component:            "core",
@@ -458,7 +397,66 @@ func FlushMeshSyncData(ctx context.Context, ctxID string, provider Provider, eb 
 			return
 		}
 
-		logrus.Debug("delete success......")
+		err = provider.GetGenericPersister().Where("id IN (?)", provider.GetGenericPersister().Table("objects").Select("id").Where("cluster_id=?", sid)).Delete(&meshsyncmodel.ResourceSpec{}).Error
+		if err != nil {
+			req = meshes.EventsResponse{
+				Component:            "core",
+				ComponentName:        "Meshery",
+				EventType:            meshes.EventType_ERROR,
+				Summary:              "Meshery Database handler is not accessible to perform operations",
+				OperationId:          id.String(),
+				Details:              err.Error(),
+				SuggestedRemediation: "Restart Meshery Server or Perform Hard Reset",
+			}
+			eb.Publish(&req)
+			return
+		}
+
+		err = provider.GetGenericPersister().Where("id IN (?)", provider.GetGenericPersister().Table("objects").Select("id").Where("cluster_id=?", sid)).Delete(&meshsyncmodel.ResourceStatus{}).Error
+		if err != nil {
+			req = meshes.EventsResponse{
+				Component:            "core",
+				ComponentName:        "Meshery",
+				EventType:            meshes.EventType_ERROR,
+				Summary:              "Meshery Database handler is not accessible to perform operations",
+				OperationId:          id.String(),
+				Details:              err.Error(),
+				SuggestedRemediation: "Restart Meshery Server or Perform Hard Reset",
+			}
+			eb.Publish(&req)
+			return
+		}
+
+		err = provider.GetGenericPersister().Where("id IN (?)", provider.GetGenericPersister().Table("objects").Select("id").Where("cluster_id=?", sid)).Delete(&meshsyncmodel.ResourceObjectMeta{}).Error
+		if err != nil {
+			req = meshes.EventsResponse{
+				Component:            "core",
+				ComponentName:        "Meshery",
+				EventType:            meshes.EventType_ERROR,
+				Summary:              "Meshery Database handler is not accessible to perform operations",
+				OperationId:          id.String(),
+				Details:              err.Error(),
+				SuggestedRemediation: "Restart Meshery Server or Perform Hard Reset",
+			}
+			eb.Publish(&req)
+			return
+		}
+
+		err = provider.GetGenericPersister().Where("cluster_id = ?", sid).Delete(&meshsyncmodel.Object{}).Error
+		if err != nil {
+			req = meshes.EventsResponse{
+				Component:            "core",
+				ComponentName:        "Meshery",
+				EventType:            meshes.EventType_ERROR,
+				Summary:              "Meshery Database handler is not accessible to perform operations",
+				OperationId:          id.String(),
+				Details:              err.Error(),
+				SuggestedRemediation: "Restart Meshery Server or Perform Hard Reset",
+			}
+			eb.Publish(&req)
+			return
+		}
+
 		req = meshes.EventsResponse{
 			Component:     "core",
 			ComponentName: "Meshery",
