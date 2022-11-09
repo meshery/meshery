@@ -65,7 +65,7 @@ func RegisterMeshmodelComponentsForCRDS(reg meshmodel.RegistryManager, k8sYaml [
 				Kind:       def.Spec.Metadata["k8sAPIVersion"],
 			},
 			Metadata: v1alpha1.ComponentMetadata{
-				Model:   "kubernete",
+				Model:   "kubernetes",
 				Version: version,
 			},
 		})
