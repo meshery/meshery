@@ -1,0 +1,1 @@
+{"kind":"ServerStatusRequest","apiVersion":"v1","Format":"JSON","Metadata":{"Model":"vmware-tanzu","Version":"2.32.1","Category":"","SubCategory":"","Metadata":{"display-name":"Server Status Request"}},"Schema":"{\n \"description\": \"ServerStatusRequestSpec is the specification for a ServerStatusRequest.\",\n \"title\": \"Server Status Request\",\n \"type\": \"object\"\n}"}

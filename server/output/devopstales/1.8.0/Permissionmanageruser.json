@@ -1,0 +1,1 @@
+{"kind":"Permissionmanageruser","apiVersion":"v1alpha1","Format":"JSON","Metadata":{"Model":"devopstales","Version":"1.8.0","Category":"","SubCategory":"","Metadata":{"display-name":"Permissionmanageruser"}},"Schema":"{\n \"properties\": {\n  \"name\": {\n   \"minLength\": 2,\n   \"type\": \"string\"\n  }\n },\n \"title\": \"Permissionmanageruser\",\n \"type\": \"object\"\n}"}

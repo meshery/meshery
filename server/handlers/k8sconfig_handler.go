@@ -9,6 +9,8 @@ import (
 	"net/http"
 	"path/filepath"
 
+	mcore "github.com/layer5io/meshery/server/models/meshmodel/core"
+
 	// for GKE kube API authentication
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 
@@ -17,6 +19,7 @@ import (
 	"github.com/layer5io/meshery/server/helpers"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/pattern/core"
+	"github.com/layer5io/meshkit/models/meshmodel"
 	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
 	"github.com/layer5io/meshkit/utils"
 	"github.com/pkg/errors"
@@ -300,7 +303,7 @@ func (h *Handler) LoadContextsAndPersist(token string, prov models.Provider) ([]
 	return contexts, nil
 }
 
-func RegisterK8sComponents(ctxt context.Context, config []byte, ctxID string) (err error) {
+func RegisterK8sComponents(ctxt context.Context, config []byte, ctxID string, reg *meshmodel.RegistryManager) (err error) {
 	man, err := core.GetK8Components(ctxt, config)
 	if err != nil {
 		return ErrCreatingKubernetesComponents(err, ctxID)
@@ -334,6 +337,23 @@ func RegisterK8sComponents(ctxt context.Context, config []byte, ctxID string) (e
 		}
 	}
 	return nil
+}
+
+func RegisterK8sMeshModelComponents(ctx context.Context, config []byte, ctxID string, reg *meshmodel.RegistryManager) (err error) {
+	man, err := mcore.GetK8sMeshModelComponents(ctx, config)
+	if err != nil {
+		return ErrCreatingKubernetesComponents(err, ctxID)
+	}
+	if man == nil {
+		return ErrCreatingKubernetesComponents(errors.New("generated components are nil"), ctxID)
+	}
+	for _, c := range man {
+		_ = reg.RegisterEntity(meshmodel.Host{
+			Hostname:  "kubernetes",
+			ContextID: ctxID,
+		}, c)
+	}
+	return
 }
 
 // func writeDefK8sOnFileSystem(def string, path string) {
