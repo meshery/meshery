@@ -218,7 +218,7 @@ func main() {
 			for {
 				select {
 				case comp := <-compChan:
-					regManager.RegisterEntity(meshmodel.Host{
+					_ = regManager.RegisterEntity(meshmodel.Host{
 						Hostname: ArtifactHubComponentsHandler,
 					}, comp)
 				case <-done:
@@ -231,7 +231,7 @@ func main() {
 			fmt.Println("err: ", err.Error())
 			return
 		}
-		err = filepath.Walk(path, func(path string, info fs.FileInfo, err error) error {
+		_ = filepath.Walk(path, func(path string, info fs.FileInfo, err error) error {
 			if !info.IsDir() {
 				var comp v1alpha1.ComponentDefinition
 				byt, err := os.ReadFile(path)

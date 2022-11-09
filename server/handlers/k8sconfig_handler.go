@@ -348,7 +348,7 @@ func RegisterK8sMeshModelComponents(ctx context.Context, config []byte, ctxID st
 		return ErrCreatingKubernetesComponents(errors.New("generated components are nil"), ctxID)
 	}
 	for _, c := range man {
-		reg.RegisterEntity(meshmodel.Host{
+		_ = reg.RegisterEntity(meshmodel.Host{
 			Hostname:  "kubernetes",
 			ContextID: ctxID,
 		}, c)

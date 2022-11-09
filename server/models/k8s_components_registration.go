@@ -96,7 +96,6 @@ func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, r
 								return
 							}
 						}
-
 					}()
 				}
 			}

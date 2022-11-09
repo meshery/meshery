@@ -55,7 +55,7 @@ func RegisterMeshmodelComponentsForCRDS(reg meshmodel.RegistryManager, k8sYaml [
 			fmt.Println("err here: ", err.Error())
 			return
 		}
-		reg.RegisterEntity(meshmodel.Host{
+		_ = reg.RegisterEntity(meshmodel.Host{
 			Hostname:  "kubernetes",
 			ContextID: contextID,
 		}, v1alpha1.ComponentDefinition{
@@ -159,7 +159,7 @@ func getResolvedManifest(manifest string) (string, error) {
 	manifest = string(resolved)
 	return manifest, nil
 }
-func getCRDsFromManifest(manifest string, arrApiResources []string) (map[string]string, map[string]k8sMetadata) {
+func getCRDsFromManifest(manifest string, arrAPIResources []string) (map[string]string, map[string]k8sMetadata) {
 	var err error
 	manifest, err = getResolvedManifest(manifest)
 	if err != nil {
@@ -176,7 +176,7 @@ func getCRDsFromManifest(manifest string, arrApiResources []string) (map[string]
 		fmt.Printf("%v", err)
 		return nil, nil
 	}
-	for _, name := range arrApiResources {
+	for _, name := range arrAPIResources {
 		resource := strings.ToLower(name)
 		fields, err := definitions.Fields()
 		if err != nil {
@@ -257,7 +257,6 @@ func getGroupsFromResource(cli *kubernetes.Client) (hgv map[kind]groupversion, e
 	}
 
 	for _, g := range gl.Groups {
-
 		groupName := g.Name
 		var apig v1.APIGroup
 		apigbytes, err := cli.KubeClient.RESTClient().Get().RequestURI("/apis/" + groupName).Do(context.Background()).Raw()
@@ -278,7 +277,6 @@ func getGroupsFromResource(cli *kubernetes.Client) (hgv map[kind]groupversion, e
 				break
 			}
 		}
-
 	}
 	return
 }
