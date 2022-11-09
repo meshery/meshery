@@ -226,7 +226,7 @@ func main() {
 				}
 			}
 		}(compChan)
-		path, err := filepath.Abs("../../output")
+		path, err := filepath.Abs("../output")
 		if err != nil {
 			fmt.Println("err: ", err.Error())
 			return

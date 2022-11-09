@@ -224,7 +224,7 @@ func writeComponents(cmps []v1alpha1.ComponentDefinition, writer *Writer) error 
 	// writer.m.Lock()
 	// defer writer.m.Unlock()
 	for _, comp := range cmps {
-		path := filepath.Join("../../output", comp.Metadata.Model)
+		path := filepath.Join("../../server/output", comp.Metadata.Model)
 		if _, err := os.Stat(path); errors.Is(err, os.ErrNotExist) {
 			err := os.Mkdir(path, os.ModePerm)
 			if err != nil {
