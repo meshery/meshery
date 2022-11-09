@@ -5,7 +5,7 @@ go 1.19
 replace github.com/layer5io/meshkit v0.6.6 => ../../../meshkit
 
 require (
-	github.com/layer5io/meshkit v0.6.6
+	github.com/layer5io/meshkit v0.6.8
 	gopkg.in/yaml.v3 v3.0.1
 )
 
