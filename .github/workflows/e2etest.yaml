@@ -11,8 +11,7 @@ on:
   pull_request:
     branches:
       - "*"
-  release:
-    types: [published]
+
 jobs:
   SetPatternfileForEmojivotoInstall:
     runs-on: ubuntu-latest
