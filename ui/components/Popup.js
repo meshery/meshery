@@ -57,10 +57,12 @@ const styles = makeStyles((theme) => ({
   },
   caption : {
     lineHeight : "1.2",
-    paddingBottom : "15px"
+    paddingBottom : "15px",
+    fontSize : ".75rem",
+    textAlign : "center"
   },
   imgWrapper : {
-    padding : "15px 0 15px 0",
+    padding : "15px 10px 15px 0",
     display : "flex"
   }
 }));
