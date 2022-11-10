@@ -1,0 +1,20 @@
+name: Deploy Meshery Playground
+on:
+  workflow_call:
+  workflow_dispatch:
+
+jobs:
+  deploy-playground:
+    runs-on: ubuntu-latest
+    steps:
+      - name: SSH and deploy playground
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.AZ_PLAYGROUND_HOST }}
+          username: ${{ secrets.AZ_PLAYGROUND_USERNAME }}
+          key: ${{ secrets.AZ_PLAYGROUND_KEY }}
+          port: 22
+          script: |
+            sudo docker pull layer5/meshery:playground-latest
+            sudo make play-prod-run
+

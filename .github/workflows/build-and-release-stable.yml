@@ -77,4 +77,9 @@ jobs:
     name: Build and Release Docker Extension
     uses: meshery/meshery/.github/workflows/build-and-release-dde.yml@master
     secrets: inherit
+  call-playground-deploy-workflow:
+    needs: build
+    name: Deploy Meshery Playground
+    uses: meshery/meshery/.github/workflows/deploy-meshery-playground.yml
+    secrets: inherit
 
