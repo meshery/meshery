@@ -56,7 +56,10 @@ const styles = makeStyles((theme) => ({
     paddingBottom : "0.5rem",
     paddingTop : "0.6rem",
     position : "absolute",
-    fontWeight : "bold"
+    fontWeight : "bold",
+    ["@media (max-width: 455px)"] : {
+      fontSize : "1rem"
+    },
   },
   caption : {
     lineHeight : "1.2",
