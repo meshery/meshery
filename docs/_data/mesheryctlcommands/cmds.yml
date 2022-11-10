@@ -527,7 +527,7 @@ mesh:
       flags:
         adapter:
           name: --adapter, -a
-          description: (required) adapter to use for validation. Defaults to "meshery-osm:10010"
+          description: (required) adapter to use for validation. Defaults to "meshery-istio:10000"
           usage:
               mesheryctl mesh validate --adapter [name of the adapter]
           example:
@@ -564,7 +564,7 @@ mesh:
       flags:
         adapter:
           name: --adapter, -a
-          description: (required) adapter to use for validation. Defaults to "meshery-osm:10010"
+          description: (required) adapter to use for validation. Defaults to "meshery-istio:10000"
           usage:
               mesheryctl mesh deploy --adapter [name of the adapter]
           example:
