@@ -27,8 +27,8 @@ jobs:
           docker tag ${{ secrets.IMAGE_NAME }}:stable-latest ${{ secrets.IMAGE_NAME }}:stable-${GITHUB_REF/refs\/tags\//}
           docker tag ${{ secrets.IMAGE_NAME }}:stable-latest ${{ secrets.IMAGE_NAME }}:stable-${GITHUB_SHA::8}
           docker tag ${{ secrets.IMAGE_NAME }}:stable-latest ${{ secrets.IMAGE_NAME }}:playground-latest
-          docker tag ${{ secrets.IMAGE_NAME }}:playground-latest ${{ secrets.IMAGE_NAME }}:stable-${GITHUB_REF/refs\/tags\//}
-          docker tag ${{ secrets.IMAGE_NAME }}:playground-latest ${{ secrets.IMAGE_NAME }}:stable-${GITHUB_SHA::8}
+          docker tag ${{ secrets.IMAGE_NAME }}:stable-latest ${{ secrets.IMAGE_NAME }}:playground-${GITHUB_REF/refs\/tags\//}
+          docker tag ${{ secrets.IMAGE_NAME }}:stable-latest ${{ secrets.IMAGE_NAME }}:playground-${GITHUB_SHA::8}
       - name: Docker stable and playground push
         run: |
           docker push ${{ secrets.IMAGE_NAME }}:stable-latest
