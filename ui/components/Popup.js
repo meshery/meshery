@@ -35,6 +35,9 @@ const styles = makeStyles((theme) => ({
     right : 0,
     bottom : 0,
     borderRadius : 10,
+    ["@media (max-width: 455px)"] : {
+      width : "100%"
+    },
   },
   grid : {
     width : '100%'
