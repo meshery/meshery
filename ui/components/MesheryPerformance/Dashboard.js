@@ -23,7 +23,7 @@ import fetchAllResults from "../graphql/queries/FetchAllResultsQuery";
 // const MESHERY_PERFORMANCE_TEST_URL = "/api/user/performance/profiles/results";
 
 const useStyles = makeStyles(() => ({
-  paper : { padding : "1rem", },
+  paper : { padding : "1rem", background : "black" },
   resultContainer : {
     display : "flex",
     flexDirection : "row",
@@ -37,7 +37,7 @@ const useStyles = makeStyles(() => ({
     width : "1px",
     background : "black",
     marginTop : "1.1rem",
-    bottom : "0" ,
+    bottom : "0",
     left : "36%",
     backgroundColor : "#36454f",
     opacity : "0.7",
@@ -53,7 +53,7 @@ const useStyles = makeStyles(() => ({
       height : "1px",
       background : "black",
       marginTop : "1.1rem",
-      bottom : "0" ,
+      bottom : "0",
       left : "36%",
       backgroundColor : "#36454f",
       opacity : "0.7",
@@ -69,7 +69,6 @@ function Dashboard({ updateProgress, enqueueSnackbar, closeSnackbar, grafana, ro
 
   const theme = useTheme();
   const matches = useMediaQuery(theme.breakpoints.up("xs"))
-
   if (matches) {
     console.log("HIT")
   }
@@ -100,8 +99,10 @@ function Dashboard({ updateProgress, enqueueSnackbar, closeSnackbar, grafana, ro
         updateProgress({ showProgress : false });
         if (typeof result !== "undefined") {
           if (result) {
-            setProfiles({ count : result.total_count || 0,
-              profiles : result.profiles || [], });
+            setProfiles({
+              count : result.total_count || 0,
+              profiles : result.profiles || [],
+            });
           }
         }
       },
@@ -129,8 +130,10 @@ function Dashboard({ updateProgress, enqueueSnackbar, closeSnackbar, grafana, ro
         updateProgress({ showProgress : false });
         if (typeof result !== "undefined") {
           if (result) {
-            setTests({ count : result.total_count || 0,
-              tests : result.results || [], });
+            setTests({
+              count : result.total_count || 0,
+              tests : result.results || [],
+            });
           }
         }
       },
@@ -142,7 +145,8 @@ function Dashboard({ updateProgress, enqueueSnackbar, closeSnackbar, grafana, ro
     return function (error) {
       updateProgress({ showProgress : false });
 
-      enqueueSnackbar(`${msg}: ${error}`, { variant : "error",
+      enqueueSnackbar(`${msg}: ${error}`, {
+        variant : "error",
         action : function Action(key) {
           return (
             <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
@@ -150,7 +154,8 @@ function Dashboard({ updateProgress, enqueueSnackbar, closeSnackbar, grafana, ro
             </IconButton>
           );
         },
-        autoHideDuration : 8000, });
+        autoHideDuration : 8000,
+      });
     };
   }
 
@@ -162,11 +167,11 @@ function Dashboard({ updateProgress, enqueueSnackbar, closeSnackbar, grafana, ro
             <Paper className={classes.paper}>
               <div className={classes.resultContainer}>
                 <div className={classes.paper}>
-                  <div style={{ display : "flex", alignItems : "center" , height : "6.8rem" }}>
+                  <div style={{ display : "flex", alignItems : "center", height : "6.8rem" }}>
                     <Typography variant="h2" component="div" color="primary" style={{ marginRight : "0.75rem" }}>
                       {(tests.count).toLocaleString('en')}
                     </Typography>
-                    <Typography variant="body1" style={{ color : "rgba(0, 0, 0, 0.54)" }} component="div">
+                    <Typography variant="body1" style={{ color : "#FAFAFA" }} component="div">
                       Results
                     </Typography>
                   </div>
