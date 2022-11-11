@@ -87,6 +87,8 @@ const (
 	ErrBrokerSubscriptionCode             = "2238"
 	ErrContextAlreadyPersistedCode        = "2241"
 	ErrGetPackageCode                     = "2252"
+	ErrTokenRevokeCode                    = "2253"
+	ErrTokenIntrospectCode                = "2254"
 )
 
 var (
@@ -283,6 +285,14 @@ func ErrPrometheusQueryRange(err error, query string, startTime, endTime time.Ti
 
 func ErrTokenRefresh(err error) error {
 	return errors.New(ErrTokenRefreshCode, errors.Alert, []string{"Error occurred while Refresing the token"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrTokenRevoke(err error) error {
+	return errors.New(ErrTokenRevokeCode, errors.Alert, []string{"Error occurred while revoking the token"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrTokenIntrospect(err error) error {
+	return errors.New(ErrTokenIntrospectCode, errors.Alert, []string{"Error occurred while introspecting the token"}, []string{err.Error()}, []string{}, []string{})
 }
 
 func ErrGetToken(err error) error {
