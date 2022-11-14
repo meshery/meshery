@@ -96,7 +96,18 @@ run-fast:
 
 ## Build and run Meshery Server on your local machine (requires go${GOVERSION}).
 
-server-with-k8s:
+server-without-k8s:
+	cd server; cd cmd; go$(GOVERSION) mod tidy; \
+	BUILD="$(GIT_VERSION)" \
+	REGISTER_STATIC_K8S=false \
+	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
+	PORT=9081 \
+	DEBUG=true \
+	ADAPTER_URLS=$(ADAPTER_URLS) \
+	APP_PATH=$(APPLICATIONCONFIGPATH) \
+	go$(GOVERSION) run main.go error.go;
+
+server:
 	cd server; cd cmd; go$(GOVERSION) mod tidy; \
 	BUILD="$(GIT_VERSION)" \
 	REGISTER_STATIC_K8S=true \
@@ -106,15 +117,7 @@ server-with-k8s:
 	ADAPTER_URLS=$(ADAPTER_URLS) \
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
 	go$(GOVERSION) run main.go error.go;
-server:
-	cd server; cd cmd; go$(GOVERSION) mod tidy; \
-	BUILD="$(GIT_VERSION)" \
-	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
-	PORT=9081 \
-	DEBUG=true \
-	ADAPTER_URLS=$(ADAPTER_URLS) \
-	APP_PATH=$(APPLICATIONCONFIGPATH) \
-	go$(GOVERSION) run main.go error.go;
+
 server-remote-provider:
 	cd server; cd cmd; go$(GOVERSION) mod tidy; \
 	BUILD="$(GIT_VERSION)" \
