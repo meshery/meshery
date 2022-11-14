@@ -202,7 +202,7 @@ UI_DEV_SCRIPT = dev16
 
 ifeq ($(findstring v18, $(shell node --version)), v18)
 	UI_BUILD_SCRIPT = build
-	UI_DEV_SCRIPT = dev
+	UI_DEV_SCRIPT = dev 
 else ifeq ($(findstring v17, $(shell node --version)), v17)
 	UI_BUILD_SCRIPT = build
 	UI_DEV_SCRIPT = dev
