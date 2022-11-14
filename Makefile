@@ -197,9 +197,12 @@ ui-server: ui-meshery-build server
 #-----------------------------------------------------------------------------
 .PHONY: setup-ui-libs ui-setup run-ui-dev ui ui-meshery-build ui ui-provider ui-lint ui-provider ui-meshery ui-build ui-provider-build ui-provider-test
 
-UI_BUILD_SCRIPT = build
-ifeq ($(shell uname), Darwin)
-	UI_BUILD_SCRIPT = build-mac
+UI_BUILD_SCRIPT = build16
+
+ifeq ($(findstring v18, $(shell node --version)), v18)
+	UI_BUILD_SCRIPT = build
+else ifeq ($(findstring v17, $(shell node --version)), v17)
+	UI_BUILD_SCRIPT = build
 endif
 
 setup-ui-libs: ui-setup
