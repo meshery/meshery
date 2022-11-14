@@ -1,0 +1,1 @@
+{"kind":"DevOpsProject","apiVersion":"v1alpha3","Format":"JSON","Metadata":{"Model":"kubesphere-test","Version":"0.2.0","Category":"","SubCategory":"","Metadata":{"display-name":"Dev Ops Project"}},"Schema":"{\n \"description\": \"DevOpsProjectSpec defines the desired state of DevOpsProject\",\n \"title\": \"Dev Ops Project\",\n \"type\": \"object\"\n}"}

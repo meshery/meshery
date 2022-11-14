@@ -30,7 +30,7 @@ func Validator(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFu
 				return
 			}
 
-			svcSettings := make(map[string]interface{})
+			var svcSettings map[string]interface{}
 			//deep copy settings for validation
 			if k8s.Format {
 				svcSettings = k8s.Format.Prettify(svc.Settings, true)
@@ -46,7 +46,6 @@ func Validator(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFu
 			if k8s.Format {
 				svc.Settings = k8s.Format.DePrettify(svc.Settings, false)
 			}
-
 			// Store the workload capability in the metadata
 			data.PatternSvcWorkloadCapabilities[svcName] = wc
 

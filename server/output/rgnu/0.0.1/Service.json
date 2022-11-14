@@ -1,0 +1,1 @@
+{"kind":"Service","apiVersion":"v1alpha1","Format":"JSON","Metadata":{"Model":"rgnu","Version":"0.0.1","Category":"","SubCategory":"","Metadata":{"display-name":"Service"}},"Schema":"{\n \"title\": \"Service\",\n \"x-kubernetes-preserve-unknown-fields\": true\n}"}

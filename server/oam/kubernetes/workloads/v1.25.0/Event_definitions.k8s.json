@@ -1,0 +1,1 @@
+{"kind":"WorkloadDefinition","apiVersion":"core.oam.dev/v1alpha1","metadata":{"name":"Event.K8s","creationTimestamp":null},"spec":{"definitionRef":{"name":"event.k8s.meshery.layer5.io"},"metadata":{"@type":"pattern.meshery.io/k8s","isCustomResource":"false","k8sAPIVersion":"events.k8s.io/v1","k8sKind":"Event","namespaced":"true","version":"v1.25.0"}}}

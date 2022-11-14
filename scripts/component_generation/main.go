@@ -1,6 +1,8 @@
 package main
 
 import (
+	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -142,7 +144,7 @@ func main() {
 
 func StartPipeline(in chan []artifacthub.AhPackage, writer *Writer) error {
 	pkgsChan := make(chan []artifacthub.AhPackage)
-	compsChan := make(chan []ComponentStruct)
+	compsChan := make(chan []v1alpha1.ComponentDefinition)
 	// updating pacakge data
 	go func() {
 		for pkgs := range in {
@@ -162,7 +164,6 @@ func StartPipeline(in chan []artifacthub.AhPackage, writer *Writer) error {
 	// generation of components
 	go func() {
 		for pkgs := range pkgsChan {
-			compStructs := make([]ComponentStruct, 0)
 			for _, ap := range pkgs {
 				fmt.Println("[DEBUG] Generating components for: ", ap.Name)
 				comps, err := ap.GenerateComponents()
@@ -170,9 +171,9 @@ func StartPipeline(in chan []artifacthub.AhPackage, writer *Writer) error {
 					fmt.Println(err)
 					continue
 				}
-				compStructs = append(compStructs, wrapComponentsInWritableStruct(comps, ap.Name))
+				compsChan <- comps
 			}
-			compsChan <- compStructs
+
 		}
 	}()
 	// writer
@@ -188,11 +189,11 @@ func StartPipeline(in chan []artifacthub.AhPackage, writer *Writer) error {
 }
 
 type ComponentStruct struct {
-	PackageName string               `yaml:"name"`
-	Components  []v1alpha1.Component `yaml:"components"`
+	PackageName string                         `yaml:"name"`
+	Components  []v1alpha1.ComponentDefinition `yaml:"components"`
 }
 
-func wrapComponentsInWritableStruct(comps []v1alpha1.Component, pkgName string) ComponentStruct {
+func wrapComponentsInWritableStruct(comps []v1alpha1.ComponentDefinition, pkgName string) ComponentStruct {
 	return ComponentStruct{
 		PackageName: pkgName,
 		Components:  comps,
@@ -219,48 +220,79 @@ func writeComponentModels(models []ComponentModel, writer *Writer) error {
 	return nil
 }
 
-func writeComponents(cmps []ComponentStruct, writer *Writer) error {
-	writer.m.Lock()
-	defer writer.m.Unlock()
-	compsToWrite := make([]ComponentStruct, 0)
-	content, err := io.ReadAll(writer.file)
-	if err != nil {
-		return err
-	}
-	// 1. the file is empty
-	if string(content) == "" {
-		for _, cs := range cmps {
-			if len(cs.Components) != 0 {
-				compsToWrite = append(compsToWrite, cs)
+func writeComponents(cmps []v1alpha1.ComponentDefinition, writer *Writer) error {
+	// writer.m.Lock()
+	// defer writer.m.Unlock()
+	for _, comp := range cmps {
+		path := filepath.Join("../../server/output", comp.Metadata.Model)
+		if _, err := os.Stat(path); errors.Is(err, os.ErrNotExist) {
+			err := os.Mkdir(path, os.ModePerm)
+			if err != nil {
+				return err
 			}
+			fmt.Println("created directory ", comp.Metadata.Model)
 		}
-	}
-	// 2. the file already has some components in it
-	if string(content) != "" {
-		err = yaml.Unmarshal(content, &compsToWrite)
+		path = filepath.Join(path, comp.Metadata.Version)
+		if _, err := os.Stat(path); errors.Is(err, os.ErrNotExist) {
+			err := os.Mkdir(path, os.ModePerm)
+			if err != nil {
+				return err
+			}
+			fmt.Println("created versioned directory ", comp.Metadata.Version)
+		}
+		f, err := os.Create(filepath.Join(path, comp.Kind+".json"))
 		if err != nil {
 			return err
 		}
-		for _, cs := range cmps {
-			if len(cs.Components) != 0 {
-				fmt.Println("[DEBUG] Writing components for package: ", cs.PackageName)
-				compsToWrite = append(compsToWrite, cs)
-			}
+		byt, err := json.Marshal(comp)
+		if err != nil {
+			return err
+		}
+		_, err = f.Write(byt)
+		if err != nil {
+			return err
 		}
 	}
-	if len(compsToWrite) == 0 {
-		return nil
-	}
-	// write components
-	val, err := yaml.Marshal(compsToWrite)
-	if err != nil {
-		return err
-	}
-	_, err = writer.file.Write(val)
-	if err != nil {
-		return err
-	}
 	return nil
+	// compsToWrite := make([]ComponentStruct, 0)
+	// content, err := io.ReadAll(writer.file)
+	// if err != nil {
+	// 	return err
+	// }
+	// // 1. the file is empty
+	// if string(content) == "" {
+	// 	for _, cs := range cmps {
+	// 		if len(cs.Components) != 0 {
+	// 			compsToWrite = append(compsToWrite, cs)
+	// 		}
+	// 	}
+	// }
+	// // 2. the file already has some components in it
+	// if string(content) != "" {
+	// 	err = yaml.Unmarshal(content, &compsToWrite)
+	// 	if err != nil {
+	// 		return err
+	// 	}
+	// 	for _, cs := range cmps {
+	// 		if len(cs.Components) != 0 {
+	// 			fmt.Println("[DEBUG] Writing components for package: ", cs.PackageName)
+	// 			compsToWrite = append(compsToWrite, cs)
+	// 		}
+	// 	}
+	// }
+	// if len(compsToWrite) == 0 {
+	// 	return nil
+	// }
+	// // write components
+	// val, err := yaml.Marshal(compsToWrite)
+	// if err != nil {
+	// 	return err
+	// }
+	// _, err = writer.file.Write(val)
+	// if err != nil {
+	// 	return err
+	// }
+	// return nil
 }
 
 // this function should take in the file descriptor for a yaml

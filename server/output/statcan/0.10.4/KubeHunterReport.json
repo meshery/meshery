@@ -1,0 +1,1 @@
+{"kind":"KubeHunterReport","apiVersion":"v1alpha1","Format":"JSON","Metadata":{"Model":"statcan","Version":"0.10.4","Category":"","SubCategory":"","Metadata":{"display-name":"Kube Hunter Report"}},"Schema":""}

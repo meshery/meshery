@@ -7,10 +7,10 @@ import Paper from "@material-ui/core/Paper";
 import { Button, IconButton, Typography } from "@material-ui/core";
 import AddIcon from "@material-ui/icons/Add";
 import SimpleAccordion from "./Accordion";
-import EnlargedTextTooltip from "../EnlargedTextTooltip";
+import { EnlargedTextTooltip } from "../EnlargedTextTooltip";
 import HelpOutlineIcon from "../HelpOutlineIcon";
 import { isMultiSelect, getDefaultFormState } from "@rjsf/utils";
-
+import ErrorIcon from "@material-ui/icons/Error";
 function getTitleForItem(props) {
   const title = getTitle(props);
 
@@ -177,6 +177,24 @@ const DefaultNormalArrayFieldTemplate = (props) => {
                 <HelpOutlineIcon style={{ marginLeft : '4px' }} />
               </EnlargedTextTooltip>
             }
+            {props.rawErrors?.length > 0 && (
+              <EnlargedTextTooltip
+                interactive={true}
+                title={props.rawErrors?.map((error, index) => (
+                  <div key={index}>{error}</div>
+                ))}
+              >
+                <ErrorIcon
+                  fontSize="small"
+                  style={{
+                    color : "#B32700",
+                    marginLeft : "4px",
+                    verticalAlign : "middle",
+                    fontSize : 17
+                  }}
+                />
+              </EnlargedTextTooltip>
+            )}
 
           </Grid>
           <Grid item xs={4}>
