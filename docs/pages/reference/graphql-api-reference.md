@@ -693,6 +693,7 @@ Data Plane for a particular Mesh.
 | <a id="k8scontextcluster"></a>`cluster` | [`Map!`](#map) |  |
 | <a id="k8scontextcreated_at"></a>`created_at` | [`String!`](#string) |  |
 | <a id="k8scontextcreated_by"></a>`created_by` | [`ID!`](#id) |  |
+| <a id="k8scontextdeployment_type"></a>`deployment_type` | [`String!`](#string) |  |
 | <a id="k8scontextid"></a>`id` | [`String!`](#string) |  |
 | <a id="k8scontextkubernetes_server_id"></a>`kubernetes_server_id` | [`ID!`](#id) |  |
 | <a id="k8scontextmeshery_instance_id"></a>`meshery_instance_id` | [`ID!`](#id) |  |
