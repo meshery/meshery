@@ -66,6 +66,7 @@ type prettifier bool
 
 // prettifyEndString will be true in cases of schema prettification where we want to prettify everything and will be false in
 // cases of YAML inputs from users where we want the end input as it is before sending to external systems such as kubernetes.
+// NOTE: For clients which want a complete prettified version, prettifyEndString will be passed true.
 func (p prettifier) Prettify(m map[string]interface{}, prettifyEndString bool) map[string]interface{} {
 	res := ConvertMapInterfaceMapString(m, true, prettifyEndString)
 	out, ok := res.(map[string]interface{})
@@ -97,7 +98,7 @@ func ConvertMapInterfaceMapString(v interface{}, prettify bool, endString bool) 
 				if prettify {
 					m[man.FormatToReadableString(k2)] = ConvertMapInterfaceMapString(v2, prettify, endString)
 				} else {
-					m[strings.ReplaceAll(k2, " ", "")] = ConvertMapInterfaceMapString(v2, prettify, endString)
+					m[man.DeFormatReadableString(k2)] = ConvertMapInterfaceMapString(v2, prettify, endString)
 				}
 			default:
 				m[fmt.Sprint(k)] = ConvertMapInterfaceMapString(v2, prettify, endString)
@@ -118,7 +119,7 @@ func ConvertMapInterfaceMapString(v interface{}, prettify bool, endString bool) 
 			if prettify {
 				m[man.FormatToReadableString(k)] = ConvertMapInterfaceMapString(v2, prettify, endString)
 			} else {
-				m[strings.ReplaceAll(k, " ", "")] = ConvertMapInterfaceMapString(v2, prettify, endString)
+				m[man.DeFormatReadableString(k)] = ConvertMapInterfaceMapString(v2, prettify, endString)
 			}
 			//Apply this fix only when the format specifies string|int and type specifies string therefore when there is a contradiction
 			if k == "format" && v2 == "int-or-string" {
@@ -133,8 +134,9 @@ func ConvertMapInterfaceMapString(v interface{}, prettify bool, endString bool) 
 		if endString {
 			if prettify {
 				return man.FormatToReadableString(x) //Whitespace formatting should be done at the time of prettification only
+			} else {
+				return man.DeFormatReadableString(x)
 			}
-			return strings.ReplaceAll(x, " ", "")
 		}
 	}
 	return v
