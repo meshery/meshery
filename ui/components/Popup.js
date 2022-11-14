@@ -32,32 +32,39 @@ const styles = makeStyles((theme) => ({
     border : '0px solid #000',
     boxShadow : theme.shadows[5],
     padding : theme.spacing(1, 2, 3, 4),
-    top : '70%',
-    left : '83%',
-    transform : `translate(-50%, -50%)`,
+    right : 0,
+    bottom : 0,
     borderRadius : 10,
+    ["@media (max-width: 455px)"] : {
+      width : "100%"
+    },
   },
   grid : {
     width : '100%'
   },
-  drawer : {
+  designerImg : {
     height : 300,
-    position : "relative"
-  },
-
-  canvas : {
-    width : 275,
-    position : "absolute",
-    paddingTop : "1rem",
-    right : 15
+    margin : "auto"
   },
   header : {
     paddingBottom : "0.5rem",
     paddingTop : "0.6rem",
-    position : "absolute"
+    position : "absolute",
+    fontWeight : "bold",
+    ["@media (max-width: 455px)"] : {
+      fontSize : "1rem"
+    },
+  },
+  caption : {
+    lineHeight : "1.2",
+    paddingBottom : "15px",
+    fontSize : ".75rem",
+    textAlign : "center"
+  },
+  imgWrapper : {
+    padding : "15px 10px 15px 0",
+    display : "flex"
   }
-
-
 }));
 
 function Popup() {
@@ -81,6 +88,7 @@ function Popup() {
       });
       handleOpen();
     }
+    handleOpen();
   },[])
 
   const handleClose = () => {
@@ -102,18 +110,21 @@ function Popup() {
             className={classes.paper}
           >
 
-            <Typography className={classes.header} variant="h6" >Get early access to MeshMap!
-            </Typography>
+            <div className={classes.headerWrapper}>
+              <Typography className={classes.header} variant="h6" >Get early access to MeshMap!
+              </Typography>
 
-            <div style={{ display : "flex", justifyContent : "flex-end", whiteSpace : "nowrap", position : "relative" }}>
-              <IconButton  key="close" aria-label="Close" color="inherit" onClick={() => setIsOpen(false)}>
-                <CloseIcon />
-              </IconButton>
-
+              <div style={{ display : "flex", justifyContent : "flex-end", whiteSpace : "nowrap", position : "relative" }}>
+                <IconButton  key="close" aria-label="Close" color="inherit" onClick={() => setIsOpen(false)}>
+                  <CloseIcon />
+                </IconButton>
+              </div>
             </div>
-            <img className={classes.drawer} src="/static/img/designer-drawer.png" />
-            <img className={classes.canvas} src="/static/img/designer-canvas.png" />
-            <Typography variant="subtitle1"><i>Friends dont let friends GitOps alone. Visually design and collaborate in real-time with other MeshMap users.</i></Typography>
+
+            <div className={classes.imgWrapper}>
+              <img className={classes.designerImg} src="/static/img/designer.png" />
+            </div>
+            <Typography className={classes.caption} variant="subtitle1"><i>Friends dont let friends GitOps alone. Visually design and collaborate in real-time with other MeshMap users.</i></Typography>
             <div style={{ display : "flex", justifyContent : "flex-end" }}>
               <Grid item xs={3}>
                 <Button fullWidth variant="contained" color="primary" onClick={(e) => handleSignUp(e)}>Sign up</Button>
