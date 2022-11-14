@@ -82,7 +82,7 @@ const styles = (theme) => ({
     color : "#000",
   },
   dashboardSection : {
-    backgroundColor : theme.palette.type == 'dark' ? "#212121" : "#fff",
+    backgroundColor : theme.palette.type === 'dark' ? "#212121" : "#fff",
     padding : theme.spacing(2),
     borderRadius : 4,
     height : "100%",
