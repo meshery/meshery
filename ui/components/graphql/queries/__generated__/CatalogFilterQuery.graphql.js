@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<84d9394ef265babad032c478ee6ac59a>>
+ * @generated SignedSource<<e6c8f534f70499df52c1519ce03be5cd>>
  * @flow
  * @lightSyntaxTransform
  * @nogrep
@@ -25,7 +25,7 @@ export type CatalogFilterQuery$data = {|
     +user_id: string,
     +filter_file: string,
     +visibility: string,
-    +catalog_data: any,
+    +catalog_data: ?any,
     +created_at: ?string,
     +updated_at: ?string,
   |}>,

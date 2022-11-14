@@ -268,6 +268,7 @@ func (h *Handler) LoadContextsAndPersist(token string, prov models.Provider) ([]
 		ctxName := "in-cluster"
 
 		cc, err := models.NewK8sContextFromInClusterConfig(ctxName, mid)
+		cc.DeploymentType = "in_cluster"
 		if err != nil || cc == nil {
 			logrus.Warn("failed to generate in cluster context: ", err)
 			return contexts, err
@@ -292,6 +293,7 @@ func (h *Handler) LoadContextsAndPersist(token string, prov models.Provider) ([]
 
 	// Persist the generated contexts
 	for _, ctx := range ctxs {
+		ctx.DeploymentType = "out_of_cluster"
 		_, err := prov.SaveK8sContext(token, ctx)
 		if err != nil {
 			logrus.Warn("failed to save the context: ", err)
