@@ -198,11 +198,14 @@ ui-server: ui-meshery-build server
 .PHONY: setup-ui-libs ui-setup run-ui-dev ui ui-meshery-build ui ui-provider ui-lint ui-provider ui-meshery ui-build ui-provider-build ui-provider-test
 
 UI_BUILD_SCRIPT = build16
+UI_DEV_SCRIPT = dev16
 
 ifeq ($(findstring v18, $(shell node --version)), v18)
 	UI_BUILD_SCRIPT = build
+	UI_DEV_SCRIPT = dev
 else ifeq ($(findstring v17, $(shell node --version)), v17)
 	UI_BUILD_SCRIPT = build
+	UI_DEV_SCRIPT = dev
 endif
 
 setup-ui-libs: ui-setup
@@ -214,7 +217,7 @@ ui-setup:
 run-ui-dev: ui
 ## Run Meshery UI on your local machine. Listen for changes.
 ui:
-	cd ui; npm run dev; cd ..
+	cd ui; npm run $(UI_DEV_SCRIPT); cd ..;
 
 run-provider-ui-dev: ui-provider
 ## Run Meshery Provider UI  on your local machine. Listen for changes.

@@ -4,7 +4,8 @@
   "description": "the service mesh management plane",
   "main": "index.js",
   "scripts": {
-    "dev": "eslint . --fix && node ui_dev_server.js",
+    "dev16": "eslint . --fix && node ui_dev_server.js",
+    "dev": "eslint . --fix && NODE_OPTIONS='--openssl-legacy-provider' node ui_dev_server.js",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "next": "next",
