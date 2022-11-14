@@ -42,15 +42,9 @@ const styles = makeStyles((theme) => ({
   grid : {
     width : '100%'
   },
-  drawer : {
+  designerImg : {
     height : 300,
-    position : "relative"
-  },
-
-  canvas : {
-    width : 275,
-    paddingTop : "1rem",
-    right : 15
+    margin : "auto"
   },
   header : {
     paddingBottom : "0.5rem",
@@ -128,8 +122,7 @@ function Popup() {
             </div>
 
             <div className={classes.imgWrapper}>
-              <img className={classes.drawer} src="/static/img/designer-drawer.png" />
-              <img className={classes.canvas} src="/static/img/designer-canvas.png" />
+              <img className={classes.designerImg} src="/static/img/designer.png" />
             </div>
             <Typography className={classes.caption} variant="subtitle1"><i>Friends dont let friends GitOps alone. Visually design and collaborate in real-time with other MeshMap users.</i></Typography>
             <div style={{ display : "flex", justifyContent : "flex-end" }}>
