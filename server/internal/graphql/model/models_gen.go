@@ -155,6 +155,7 @@ type K8sContext struct {
 	CreatedBy          string                 `json:"created_by"`
 	MesheryInstanceID  string                 `json:"meshery_instance_id"`
 	KubernetesServerID string                 `json:"kubernetes_server_id"`
+	DeploymentType     string                 `json:"deployment_type"`
 	UpdatedAt          string                 `json:"updated_at"`
 	CreatedAt          string                 `json:"created_at"`
 }

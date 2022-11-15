@@ -4,7 +4,7 @@ import { makeStyles } from '@material-ui/styles';
 import { canExpand } from '@rjsf/utils';
 import AddButton from "@material-ui/icons/Add";
 import { Box, IconButton, Typography } from '@material-ui/core';
-import EnlargedTextTooltip from '../EnlargedTextTooltip';
+import { EnlargedTextTooltip } from '../EnlargedTextTooltip';
 import HelpOutlineIcon from '../HelpOutlineIcon';
 import ArrowDown from '@material-ui/icons/KeyboardArrowDown';
 import ArrowUp from '@material-ui/icons/KeyboardArrowUp';
