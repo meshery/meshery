@@ -1,7 +1,7 @@
 import React from 'react';
 import { NoSsr, TableCell, } from '@material-ui/core';
 import { MuiThemeProvider } from '@material-ui/core/styles';
-import {  createTheme } from '@material-ui/core/styles';
+import { createTheme } from '@material-ui/core/styles';
 import MUIDataTable from "mui-datatables";
 import TableSortLabel from '@material-ui/core/TableSortLabel'
 
@@ -22,7 +22,7 @@ function NodeDetails(props) {
       },
       MUIDataTableSearch : {
         searchIcon : {
-          color : "#607d8b" ,
+          color : "#607d8b",
           marginTop : "7px",
           marginRight : "8px",
         },
@@ -54,7 +54,8 @@ function NodeDetails(props) {
   const chartData = props.result;
 
   const columns = [
-    { name : "hostname",
+    {
+      name : "hostname",
       label : "Hostname",
       options : {
         filter : false,
@@ -69,8 +70,10 @@ function NodeDetails(props) {
             </TableCell>
           );
         },
-      }, },
-    { name : "cpu",
+      },
+    },
+    {
+      name : "cpu",
       label : "CPU",
       options : {
         filter : false,
@@ -85,8 +88,10 @@ function NodeDetails(props) {
             </TableCell>
           );
         },
-      }, },
-    { name : "memory",
+      },
+    },
+    {
+      name : "memory",
       label : "Memory",
       options : {
         filter : false,
@@ -101,8 +106,10 @@ function NodeDetails(props) {
             </TableCell>
           );
         },
-      }, },
-    { name : "arch",
+      },
+    },
+    {
+      name : "arch",
       label : "Arch",
       options : {
         filter : false,
@@ -117,8 +124,10 @@ function NodeDetails(props) {
             </TableCell>
           );
         },
-      }, },
-    { name : "os",
+      },
+    },
+    {
+      name : "os",
       label : "OS",
       options : {
         filter : false,
@@ -133,8 +142,10 @@ function NodeDetails(props) {
             </TableCell>
           );
         },
-      }, },
-    { name : "kubeletVersion",
+      },
+    },
+    {
+      name : "kubeletVersion",
       label : "Kubelet Version",
       options : {
         filter : false,
@@ -149,8 +160,10 @@ function NodeDetails(props) {
             </TableCell>
           );
         },
-      }, },
-    { name : "containerRuntime",
+      },
+    },
+    {
+      name : "containerRuntime",
       label : "Container Runtime",
       options : {
         filter : false,
@@ -165,7 +178,8 @@ function NodeDetails(props) {
             </TableCell>
           );
         },
-      }, },]
+      },
+    },]
 
   let data = []
 
@@ -179,10 +193,10 @@ function NodeDetails(props) {
   chartData?.kubernetes?.nodes.map((node) => {
     let arr = []
     let m = node?.allocatable_memory
-    const mem = (String(m).slice(0, String(m).length-2)*0.000001024).toPrecision(5);
+    const mem = (String(m).slice(0, String(m).length - 2) * 0.000001024).toPrecision(5);
     arr.push(node?.hostname);
     arr.push(node?.allocatable_cpu);
-    arr.push(mem+"Gi");
+    arr.push(mem + "Gi");
     arr.push(node?.architecture);
     arr.push(node?.operating_system);
     arr.push(node?.kubelet_version);

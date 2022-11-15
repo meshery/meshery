@@ -51,11 +51,14 @@ darkTheme = {
         boxShadow : 'none',
         '&:active' : { boxShadow : 'none', },
       },
+      containedPrimary : {
+        backgroundColor : "#00382D",
+      },
     },
     MuiToggleButton : {
       label : {
         textTransform : 'initial',
-        color : '#607d8b',
+        color : '#396679',
       },
     },
     MuiTabs : {
@@ -82,7 +85,7 @@ darkTheme = {
         // },
       },
     },
-    MuiPaper : { root : { backgroundColor : '#313131' } },
+    MuiPaper : { root : { backgroundColor : '#363636' }, elevation2 : { boxShadow : "0px 1px 0px -2px rgb(0 179 159 / 10%), 0px 1px 0px 0px rgb(0 179 159 / 10%), 0px 2px 0px 0px rgb(0 179 159 / 20%)" } },
     MuiIconButton : { root : { padding : darkTheme.spacing(1), }, },
     MuiTooltip : { tooltip : { borderRadius : 4, }, },
     MuiDivider : { root : { backgroundColor : '#404854', }, },

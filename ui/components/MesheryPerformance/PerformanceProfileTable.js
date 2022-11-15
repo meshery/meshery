@@ -1,7 +1,7 @@
 // @ts-check
 import React, { useState, useRef, useEffect } from "react";
 import { withStyles, MuiThemeProvider } from "@material-ui/core/styles";
-import {  createTheme } from '@material-ui/core/styles';
+import { createTheme } from '@material-ui/core/styles';
 import {
   NoSsr, TableCell, IconButton, TableRow, Typography
 } from "@material-ui/core";
@@ -16,12 +16,18 @@ import PerformanceResults from "./PerformanceResults";
 import EditIcon from '@material-ui/icons/Edit';
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 
-const styles = (theme) => ({ grid : { padding : theme.spacing(2), },
-  tableHeader : { fontWeight : "bolder",
-    fontSize : 18, },
-  paper : { maxWidth : "90%",
+const styles = (theme) => ({
+  grid : { padding : theme.spacing(2), },
+  tableHeader : {
+    fontWeight : "bolder",
+    fontSize : 18,
+  },
+  paper : {
+    maxWidth : "90%",
     margin : "auto",
-    overflow : "hidden", }, });
+    overflow : "hidden",
+  },
+});
 
 /**
  *
@@ -67,7 +73,7 @@ function MesheryTestProfiles({
       },
       MUIDataTableSearch : {
         searchIcon : {
-          color : "#607d8b" ,
+          color : "#607d8b",
           marginTop : "7px",
           marginRight : "8px",
         },
@@ -98,7 +104,8 @@ function MesheryTestProfiles({
   })
 
   const columns = [
-    { name : "name",
+    {
+      name : "name",
       label : "Profile",
       options : {
         filter : false,
@@ -113,10 +120,13 @@ function MesheryTestProfiles({
             </TableCell>
           );
         },
-      }, },
-    { name : "endpoints",
+      },
+    },
+    {
+      name : "endpoints",
       label : "Endpoints",
-      options : { filter : false,
+      options : {
+        filter : false,
         sort : true,
         customHeadRender : function CustomHead({ index, ...column }, sortColumn) {
           return (
@@ -126,8 +136,11 @@ function MesheryTestProfiles({
               </TableSortLabel>
             </TableCell>
           );
-        }, }, },
-    { name : "last_run",
+        },
+      },
+    },
+    {
+      name : "last_run",
       label : "Last Run",
       options : {
         filter : false,
@@ -145,7 +158,8 @@ function MesheryTestProfiles({
         customBodyRender : function CustomBody(value) {
           return <Moment format="LLLL">{value}</Moment>;
         },
-      }, },
+      },
+    },
     // {
     //   name: "next_run",
     //   label: "Next Run",
@@ -167,7 +181,8 @@ function MesheryTestProfiles({
     //     },
     //   },
     // },
-    { name : "updated_on",
+    {
+      name : "updated_on",
       label : "Updated On",
       options : {
         filter : false,
@@ -185,8 +200,10 @@ function MesheryTestProfiles({
         customBodyRender : function CustomBody(value) {
           return <Moment format="LLLL">{value}</Moment>;
         },
-      }, },
-    { name : "Actions",
+      },
+    },
+    {
+      name : "Actions",
       options : {
         filter : false,
         sort : false,
@@ -226,7 +243,8 @@ function MesheryTestProfiles({
             </div>
           );
         },
-      }, },
+      },
+    },
   ];
 
   columns.forEach((column, idx) => {

@@ -2,7 +2,7 @@
 import {
   Avatar, Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, IconButton, NoSsr, TableCell, Tooltip, Typography
 } from "@material-ui/core";
-import { createTheme, makeStyles, MuiThemeProvider, withStyles } from "@material-ui/core/styles";
+import { makeStyles, withStyles } from "@material-ui/core/styles";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
 import CloseIcon from "@material-ui/icons/Close";
 import DeleteIcon from "@material-ui/icons/Delete";
@@ -271,54 +271,54 @@ function MesheryPatterns({
 
   const { workloadTraitSet } = useContext(SchemaContext);
 
-  const getMuiTheme = () => createTheme({
-    overrides : {
-      MuiInput : {
-        underline : {
-          "&:hover:not(.Mui-disabled):before" : {
-            borderBottom : "2px solid #222"
-          },
-          "&:after" : {
-            borderBottom : "2px solid #222"
-          }
-        }
-      },
-      MUIDataTableSearch : {
-        searchIcon : {
-          color : "#607d8b",
-          marginTop : "7px",
-          marginRight : "8px",
-        },
-        clearIcon : {
-          "&:hover" : {
-            color : "#607d8b"
-          }
-        },
-      },
-      MUIDataTableSelectCell : {
-        checkboxRoot : {
-          '&$checked' : {
-            color : '#607d8b',
-          },
-        },
-      },
-      MUIDataTableToolbar : {
-        iconActive : {
-          color : "#222"
-        },
-        icon : {
-          "&:hover" : {
-            color : "#607d8b"
-          }
-        },
-      },
-      MUIDataTableBodyCell : {
-        root : {
-          cursor : "pointer"
-        },
-      },
-    }
-  });
+  // const getMuiTheme = () => createTheme({
+  //   overrides: {
+  //     MuiInput: {
+  //       underline: {
+  //         "&:hover:not(.Mui-disabled):before": {
+  //           borderBottom: "2px solid #222"
+  //         },
+  //         "&:after": {
+  //           borderBottom: "2px solid #222"
+  //         }
+  //       }
+  //     },
+  //     MUIDataTableSearch: {
+  //       searchIcon: {
+  //         color: "#607d8b",
+  //         marginTop: "7px",
+  //         marginRight: "8px",
+  //       },
+  //       clearIcon: {
+  //         "&:hover": {
+  //           color: "#607d8b"
+  //         }
+  //       },
+  //     },
+  //     MUIDataTableSelectCell: {
+  //       checkboxRoot: {
+  //         '&$checked': {
+  //           color: '#607d8b',
+  //         },
+  //       },
+  //     },
+  //     MUIDataTableToolbar: {
+  //       iconActive: {
+  //         color: "#222"
+  //       },
+  //       icon: {
+  //         "&:hover": {
+  //           color: "#607d8b"
+  //         }
+  //       },
+  //     },
+  //     MUIDataTableBodyCell: {
+  //       root: {
+  //         cursor: "pointer"
+  //       },
+  //     },
+  //   }
+  // });
 
   const ACTION_TYPES = {
     FETCH_PATTERNS : {
@@ -385,7 +385,7 @@ function MesheryPatterns({
       disposeConfSubscriptionRef.current.dispose();
       fetchCatalogPatterns.unsubscribe();
     }
-  },[])
+  }, [])
 
   useEffect(() => {
     handleSetPatterns(patterns)
@@ -399,7 +399,7 @@ function MesheryPatterns({
     setPatterns(patterns.filter(content => content.visibility !== "public"))
   }
 
-  const initPatternsSubscription = (pageNo=page.toString(), pagesize=pageSize.toString(), searchText=search, order=sortOrder) => {
+  const initPatternsSubscription = (pageNo = page.toString(), pagesize = pageSize.toString(), searchText = search, order = sortOrder) => {
     if (disposeConfSubscriptionRef.current) {
       disposeConfSubscriptionRef.current.dispose();
     }
@@ -796,7 +796,7 @@ function MesheryPatterns({
           const visibility = patterns[tableMeta.rowIndex].visibility
           return (
             <div style={{ cursor : "default" }}>
-              <img  src={`/static/img/${visibility}.svg`} />
+              <img src={`/static/img/${visibility}.svg`} />
             </div>
           );
         },
@@ -820,7 +820,7 @@ function MesheryPatterns({
           const visibility = patterns[tableMeta.rowIndex].visibility
           return (
             <>
-              { visibility === "public" ? <IconButton onClick={(e) => {
+              {visibility === "public" ? <IconButton onClick={(e) => {
                 e.stopPropagation();
                 handleClone(rowData.id, rowData.name)
               }
@@ -835,7 +835,7 @@ function MesheryPatterns({
                 }
                 >
                   <Avatar src="/static/img/pattwhite.svg" className={classes.iconPatt} imgProps={{ height : "16px", width : "16px" }} />
-                </IconButton> }
+                </IconButton>}
               {/*</Tooltip> */}
               <IconButton
                 title="Verify"
@@ -944,7 +944,7 @@ function MesheryPatterns({
           name : patterns[idx]?.name,
         }
       ))
-      let response = await showModal(toBeDeleted.length, toBeDeleted.map(p => " "+p.name))
+      let response = await showModal(toBeDeleted.length, toBeDeleted.map(p => " " + p.name))
       if (response.toLowerCase() === "yes") {
         deletePatterns({ patterns : toBeDeleted })
       }
@@ -1020,7 +1020,7 @@ function MesheryPatterns({
           <DesignConfigurator onSubmit={handleSubmit} show={setSelectedPattern} pattern={selectedPattern.pattern} />
         }
         <div className={classes.topToolbar} >
-          {!selectedPattern.show && (patterns.length>0 || viewType==="table") && <div className={classes.createButton}>
+          {!selectedPattern.show && (patterns.length > 0 || viewType === "table") && <div className={classes.createButton}>
             <div>
               <Button
                 aria-label="Add Pattern"
@@ -1035,7 +1035,7 @@ function MesheryPatterns({
                 style={{ marginRight : "2rem" }}
               >
                 <AddIcon className={classes.addIcon} />
-              Create Design
+                Create Design
               </Button>
               <Button
                 aria-label="Add Pattern"
@@ -1047,63 +1047,63 @@ function MesheryPatterns({
                 style={{ marginRight : "2rem" }}
               >
                 <PublishIcon className={classes.addIcon} />
-              Import Design
+                Import Design
               </Button>
             </div>
           </div>
           }
 
           {!selectedPattern.show &&
-          <div style={{ justifySelf : "flex-end", marginLeft : "auto", paddingRight : "1rem", paddingTop : "0.2rem" }}>
-            <CatalogFilter catalogVisibility={catalogVisibility} handleCatalogVisibility={handleCatalogVisibility} />
-          </div>
+            <div style={{ justifySelf : "flex-end", marginLeft : "auto", paddingRight : "1rem", paddingTop : "0.2rem" }}>
+              <CatalogFilter catalogVisibility={catalogVisibility} handleCatalogVisibility={handleCatalogVisibility} />
+            </div>
           }
 
           {!selectedPattern.show &&
-          <div className={classes.viewSwitchButton}>
-            <ViewSwitch view={viewType} changeView={setViewType} />
-          </div>
+            <div className={classes.viewSwitchButton}>
+              <ViewSwitch view={viewType} changeView={setViewType} />
+            </div>
           }
         </div>
         {
-          !selectedPattern.show && viewType==="table" && <MuiThemeProvider theme={getMuiTheme() }>
-            <MUIDataTable
-              title={<div className={classes.tableHeader}>Designs</div>}
-              data={patterns}
-              columns={columns}
-              // @ts-ignore
-              options={options}
-              className={classes.muiRow}
-            />
-          </MuiThemeProvider>
+          !selectedPattern.show && viewType === "table" &&
+          <MUIDataTable
+            title={<div className={classes.tableHeader}>Designs</div>}
+            data={patterns}
+            columns={columns}
+            // @ts-ignore
+            options={options}
+            className={classes.muiRow}
+          />
+
         }
         {
-          !selectedPattern.show && viewType==="grid" &&
-            // grid vieww
-            <MesheryPatternGrid
-              patterns={patterns}
-              handleDeploy={handleDeploy}
-              handleVerify={handleVerify}
-              handleUnDeploy={handleUnDeploy}
-              handleClone={handleClone}
-              urlUploadHandler={urlUploadHandler}
-              uploadHandler={uploadHandler}
-              supportedTypes="null"
-              handleSubmit={handleSubmit}
-              setSelectedPattern={setSelectedPattern}
-              selectedPattern={selectedPattern}
-              pages={Math.ceil(count / pageSize)}
-              setPage={setPage}
-              selectedPage={page}
-              UploadImport={UploadImport}
-              patternErrors={patternErrors}
-            />
+          !selectedPattern.show && viewType === "grid" &&
+          // grid vieww
+          <MesheryPatternGrid
+            patterns={patterns}
+            handleDeploy={handleDeploy}
+            handleVerify={handleVerify}
+            handleUnDeploy={handleUnDeploy}
+            handleClone={handleClone}
+            urlUploadHandler={urlUploadHandler}
+            uploadHandler={uploadHandler}
+            supportedTypes="null"
+            handleSubmit={handleSubmit}
+            setSelectedPattern={setSelectedPattern}
+            selectedPattern={selectedPattern}
+            pages={Math.ceil(count / pageSize)}
+            setPage={setPage}
+            selectedPage={page}
+            UploadImport={UploadImport}
+            patternErrors={patternErrors}
+          />
         }
         <ConfirmationMsg
           open={modalOpen.open}
           handleClose={handleModalClose}
           submit={
-            { deploy : () => handleDeploy(modalOpen.pattern_file, modalOpen.name),  unDeploy : () => handleUnDeploy(modalOpen.pattern_file, modalOpen.name) }
+            { deploy : () => handleDeploy(modalOpen.pattern_file, modalOpen.name), unDeploy : () => handleUnDeploy(modalOpen.pattern_file, modalOpen.name) }
           }
           title={modalOpen.name}
           componentCount={modalOpen.count}
@@ -1120,7 +1120,8 @@ function MesheryPatterns({
 const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(updateProgress, dispatch), toggleCatalogContent : bindActionCreators(toggleCatalogContent, dispatch) });
 
 const mapStateToProps = (state) => {
-  return { user : state.get("user")?.toObject(), selectedK8sContexts : state.get("selectedK8sContexts"),
+  return {
+    user : state.get("user")?.toObject(), selectedK8sContexts : state.get("selectedK8sContexts"),
     catalogVisibility : state.get("catalogVisibility")
   };
 };

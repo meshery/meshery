@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { withStyles, makeStyles, MuiThemeProvider } from "@material-ui/core/styles";
-import {  createTheme } from '@material-ui/core/styles';
+import { createTheme } from '@material-ui/core/styles';
 import {
   NoSsr,
   TableCell,
@@ -215,7 +215,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
       },
       MUIDataTableSearch : {
         searchIcon : {
-          color : "#607d8b" ,
+          color : "#607d8b",
           marginTop : "7px",
           marginRight : "8px",
         },
@@ -315,7 +315,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
       fetchCatalogFilters.unsubscribe();
       disposeConfSubscriptionRef.current.dispose();
     }
-  },[])
+  }, [])
 
   /**
    * fetchFilters constructs the queries based on the parameters given
@@ -459,7 +459,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     setFilters(filters.filter(content => content.visibility !== "public"))
   }
 
-  const initFiltersSubscription = (pageNo=page.toString(), pagesize=pageSize.toString(), searchText=search, order=sortOrder) => {
+  const initFiltersSubscription = (pageNo = page.toString(), pagesize = pageSize.toString(), searchText = search, order = sortOrder) => {
     if (disposeConfSubscriptionRef.current) {
       disposeConfSubscriptionRef.current.dispose();
     }
@@ -528,10 +528,10 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
 
     if (type === FILE_OPS.FILE_UPLOAD || type === FILE_OPS.URL_UPLOAD) {
       let body = { save : true }
-      if (type ===FILE_OPS.FILE_UPLOAD) {
+      if (type === FILE_OPS.FILE_UPLOAD) {
         body = JSON.stringify({ ...body, filter_data : { filter_file : data } })
       }
-      if (type ===  FILE_OPS.URL_UPLOAD) {
+      if (type === FILE_OPS.URL_UPLOAD) {
         body = JSON.stringify({ ...body, url : data })
       }
       dataFetch(
@@ -569,7 +569,8 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     handleSubmit({
       data : link,
       name : "meshery_" + Math.floor(trueRandom() * 100),
-      type : FILE_OPS.URL_UPLOAD });
+      type : FILE_OPS.URL_UPLOAD
+    });
   }
 
   const columns = [
@@ -693,7 +694,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
                       setSelectedRowData(filters[tableMeta.rowIndex])
                     }}
                   />
-                </IconButton> }
+                </IconButton>}
               <IconButton>
                 <DoneAllIcon
                   title="Deploy"
@@ -724,11 +725,12 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
 
   async function showmodal(count) {
     let response = await modalRef.current.show({
-      title : `Delete ${count ? count : ""} Filter${count > 1 ? "s" : '' }?`,
+      title : `Delete ${count ? count : ""} Filter${count > 1 ? "s" : ''}?`,
 
-      subtitle : `Are you sure you want to delete ${count > 1 ? "these" : 'this' } ${count ? count : ""} filter${count > 1 ? "s" : '' }?`,
+      subtitle : `Are you sure you want to delete ${count > 1 ? "these" : 'this'} ${count ? count : ""} filter${count > 1 ? "s" : ''}?`,
 
-      options : ["Yes", "No"], })
+      options : ["Yes", "No"],
+    })
     return response;
   }
 
@@ -781,7 +783,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     },
 
     onRowsDelete : async function handleDelete(row) {
-      let response  = await showmodal(Object.keys(row.lookup).length)
+      let response = await showmodal(Object.keys(row.lookup).length)
       console.log(response)
       if (response === "Yes") {
         const fid = Object.keys(row.lookup).map((idx) => filters[idx]?.id);
@@ -853,7 +855,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
           <YAMLEditor filter={selectedRowData} onClose={resetSelectedRowData()} onSubmit={handleSubmit} />
         )}
         <div className={classes.topToolbar} >
-          {!selectedFilter.show && (filters.length>0 || viewType==="table") && <div className={classes.createButton}>
+          {!selectedFilter.show && (filters.length > 0 || viewType === "table") && <div className={classes.createButton}>
             <div>
               <Button
                 aria-label="Add Filter"
@@ -864,8 +866,8 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
                 onClick={handleUploadImport}
                 style={{ marginRight : "2rem" }}
               >
-                <PublishIcon className={classes.addIcon} data-cy="import-button"/>
-              Import Filters
+                <PublishIcon className={classes.addIcon} data-cy="import-button" />
+                Import Filters
               </Button>
             </div>
           </div>
@@ -874,13 +876,13 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
             <CatalogFilter catalogVisibility={catalogVisibility} handleCatalogVisibility={handleCatalogVisibility} />
           </div>
           {!selectedFilter.show &&
-          <div className={classes.viewSwitchButton}>
-            <ViewSwitch data-cy="table-view" view={viewType} changeView={setViewType} />
-          </div>
+            <div className={classes.viewSwitchButton}>
+              <ViewSwitch data-cy="table-view" view={viewType} changeView={setViewType} />
+            </div>
           }
         </div>
         {
-          !selectedFilter.show && viewType==="table" && <MuiThemeProvider theme={getMuiTheme() }>
+          !selectedFilter.show && viewType === "table" && <MuiThemeProvider theme={getMuiTheme()}>
             <MUIDataTable
               title={<div className={classes.tableHeader}>Filters</div>}
               data={filters}
@@ -892,29 +894,29 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
           </MuiThemeProvider>
         }
         {
-          !selectedFilter.show && viewType==="grid" &&
-            // grid vieww
-            <FiltersGrid
-              filters={filters}
-              handleDeploy={handleDeploy}
-              handleUndeploy={handleUndeploy}
-              handleSubmit={handleSubmit}
-              handleClone={handleClone}
-              urlUploadHandler={urlUploadHandler}
-              uploadHandler={uploadHandler}
-              setSelectedFilter={setSelectedFilter}
-              selectedFilter={selectedFilter}
-              pages={Math.ceil(count / pageSize)}
-              setPage={setPage}
-              selectedPage={page}
-              UploadImport={UploadImport}
-            />
+          !selectedFilter.show && viewType === "grid" &&
+          // grid vieww
+          <FiltersGrid
+            filters={filters}
+            handleDeploy={handleDeploy}
+            handleUndeploy={handleUndeploy}
+            handleSubmit={handleSubmit}
+            handleClone={handleClone}
+            urlUploadHandler={urlUploadHandler}
+            uploadHandler={uploadHandler}
+            setSelectedFilter={setSelectedFilter}
+            selectedFilter={selectedFilter}
+            pages={Math.ceil(count / pageSize)}
+            setPage={setPage}
+            selectedPage={page}
+            UploadImport={UploadImport}
+          />
         }
         <ConfirmationMsg
           open={modalOpen.open}
           handleClose={handleModalClose}
           submit={
-            { deploy : () => handleDeploy(modalOpen.filter_file, modalOpen.name),  unDeploy : () => handleUndeploy(modalOpen.filter_file, modalOpen.name) }
+            { deploy : () => handleDeploy(modalOpen.filter_file, modalOpen.name), unDeploy : () => handleUndeploy(modalOpen.filter_file, modalOpen.name) }
           }
           isDelete={!modalOpen.deploy}
           title={modalOpen.name}
@@ -927,12 +929,14 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
   );
 }
 
-const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(updateProgress, dispatch),
+const mapDispatchToProps = (dispatch) => ({
+  updateProgress : bindActionCreators(updateProgress, dispatch),
   toggleCatalogContent : bindActionCreators(toggleCatalogContent, dispatch)
 });
 
 const mapStateToProps = (state) => {
-  return { user : state.get("user")?.toObject(), selectedK8sContexts : state.get("selectedK8sContexts"),
+  return {
+    user : state.get("user")?.toObject(), selectedK8sContexts : state.get("selectedK8sContexts"),
     catalogVisibility : state.get("catalogVisibility")
   };
 };

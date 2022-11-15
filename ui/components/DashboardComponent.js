@@ -28,11 +28,13 @@ import subscribeClusterResources from "./graphql/subscriptions/ClusterResourcesS
 import fetchAvailableNamespaces from "./graphql/queries/NamespaceQuery";
 import { submitPrometheusConfigure } from "./PrometheusComponent";
 import MUIDataTable from "mui-datatables";
-import { MuiThemeProvider, createTheme } from '@material-ui/core/styles';
 import Popup from "./Popup";
 
 const styles = (theme) => ({
   rootClass : { backgroundColor : theme.palette.type == 'dark' ? "#303030" : "#eaeff1", },
+  datatable : {
+    boxShadow : "none",
+  },
   chip : {
     marginRight : theme.spacing(1),
     marginBottom : theme.spacing(1),
@@ -676,52 +678,6 @@ class DashboardComponent extends React.Component {
     );
   };
 
-  getMuiTheme = () => createTheme({
-    shadows : ["none"],
-    overrides : {
-      MUIDataTable : {
-      },
-      MuiInput : {
-        underline : {
-          "&:hover:not(.Mui-disabled):before" : {
-            borderBottom : "2px solid #222"
-          },
-          "&:after" : {
-            borderBottom : "2px solid #222"
-          }
-        }
-      },
-      MUIDataTableSearch : {
-        searchIcon : {
-          color : "#607d8b",
-          marginTop : "7px",
-          marginRight : "8px",
-        },
-        clearIcon : {
-          "&:hover" : {
-            color : "#607d8b"
-          }
-        },
-      },
-      MUIDataTableSelectCell : {
-        checkboxRoot : {
-          '&$checked' : {
-            color : '#607d8b',
-          },
-        },
-      },
-      MUIDataTableToolbar : {
-        iconActive : {
-          color : "#222"
-        },
-        icon : {
-          "&:hover" : {
-            color : "#607d8b"
-          }
-        },
-      },
-    }
-  })
 
 
   /**
@@ -919,21 +875,22 @@ class DashboardComponent extends React.Component {
     if (Array.isArray(components) && components.length)
       return (
         <Paper elevation={1} style={{ padding : "2rem", marginTop : "1rem" }}>
-          <MuiThemeProvider theme={this.getMuiTheme()}>
-            <MUIDataTable
-              title={
-                <>
-                  <div style={{ display : "flex", alignItems : "center", marginBottom : "1rem" }}>
-                    <img src={mesh.icon} className={this.props.classes.icon} style={{ marginRight : "0.75rem" }} />
-                    <Typography variant="h6">{mesh.tag}</Typography>
-                  </div>
-                </>
-              }
-              data={components}
-              options={options}
-              columns={columns}
-            />
-          </MuiThemeProvider>
+
+          <MUIDataTable
+            className={this.props.classes.datatable}
+            title={
+              <>
+                <div style={{ display : "flex", alignItems : "center", marginBottom : "1rem" }}>
+                  <img src={mesh.icon} className={this.props.classes.icon} style={{ marginRight : "0.75rem" }} />
+                  <Typography variant="h6">{mesh.tag}</Typography>
+                </div>
+              </>
+            }
+            data={components}
+            options={options}
+            columns={columns}
+          />
+
         </Paper>
       );
 
@@ -1037,21 +994,21 @@ class DashboardComponent extends React.Component {
     if (Array.isArray(resources) && resources.length)
       return (
         <Paper elevation={1} style={{ padding : "2rem" }}>
-          <MuiThemeProvider theme={this.getMuiTheme()}>
-            <MUIDataTable
-              title={
-                <>
-                  <div style={{ display : "flex", alignItems : "center", marginBottom : "1rem" }}>
-                    <img src={"/static/img/all_mesh.svg"} className={this.props.classes.icon} style={{ marginRight : "0.75rem" }} />
-                    <Typography variant="h6">All Workloads</Typography>
-                  </div>
-                </>
-              }
-              data={resources}
-              options={options}
-              columns={columns}
-            />
-          </MuiThemeProvider>
+
+          <MUIDataTable
+            className={this.props.classes.datatable}
+            title={
+              <>
+                <div style={{ display : "flex", alignItems : "center", marginBottom : "1rem" }}>
+                  <img src={"/static/img/all_mesh.svg"} className={this.props.classes.icon} style={{ marginRight : "0.75rem" }} />
+                  <Typography variant="h6">All Workloads</Typography>
+                </div>
+              </>
+            }
+            data={resources}
+            options={options}
+            columns={columns}
+          />
         </Paper>
       );
 
