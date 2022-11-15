@@ -288,7 +288,7 @@ func ErrTokenRefresh(err error) error {
 }
 
 func ErrTokenRevoke(err error) error {
-	return errors.New(ErrTokenRevokeCode, errors.Alert, []string{"Error occurred while revoking the token"}, []string{err.Error()}, []string{"malformed base64 token passed"}, []string{"retry logout action"})
+	return errors.New(ErrTokenRevokeCode, errors.Alert, []string{"Error occurred while revoking the token"}, []string{err.Error()}, []string{"Unable to revoke token. Token appears to be a malformed base64 token."}, []string{"Try logging out (again) in order to fully close your session (and revoke the session token)."})
 }
 
 func ErrTokenIntrospect(err error) error {
