@@ -18,6 +18,7 @@ play-prod-run:
 	-e PROVIDER_BASE_URLS=$(REMOTE_PROVIDER) \
 	-e DEBUG=$(DEBUG) \
 	-e PLAYGROUND=true \
+	-e MESHERY_SERVER_CALLBACK_URL=https://playground.meshery.io 
 	-p $(PROD_PLAYGROUND_PORT):8080 \
 	layer5/meshery:playground-latest ./meshery
 	
