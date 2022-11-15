@@ -288,11 +288,11 @@ func ErrTokenRefresh(err error) error {
 }
 
 func ErrTokenRevoke(err error) error {
-	return errors.New(ErrTokenRevokeCode, errors.Alert, []string{"Error occurred while revoking the token"}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrTokenRevokeCode, errors.Alert, []string{"Error occurred while revoking the token"}, []string{err.Error()}, []string{"malformed base64 token passed"}, []string{"retry logout action"})
 }
 
 func ErrTokenIntrospect(err error) error {
-	return errors.New(ErrTokenIntrospectCode, errors.Alert, []string{"Error occurred while introspecting the token"}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrTokenIntrospectCode, errors.Alert, []string{"token introspection failed"}, []string{err.Error()}, []string{"revoked token used"}, []string{"please login again"})
 }
 
 func ErrGetToken(err error) error {
