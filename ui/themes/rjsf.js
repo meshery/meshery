@@ -47,7 +47,7 @@ export const rjsfTheme = createTheme({
         whiteSpace : "nowrap",
         overflow : "hidden",
         textOverflow : "ellipsis",
-        maxWidth : "70%",
+        maxWidth : "60%",
         height : "100%",
         '&:hover' : {
           overflow : "visible",
@@ -180,6 +180,9 @@ export const rjsfTheme = createTheme({
     MuiIconButton : {
       root : {
         cursor : "default"
+      },
+      sizeSmall : {
+        padding : "1px"
       }
     },
     MuiPaper : {

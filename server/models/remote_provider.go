@@ -2702,8 +2702,10 @@ func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, fr
 	// Doing this here is important so that
 	l.loadCapabilities(tokenString)
 
-	// Download the package for the user
-	l.downloadProviderExtensionPackage()
+	// Download the package for the user only if they have extension capability
+	if len(l.GetProviderProperties().Extensions.Navigator) > 0 {
+		l.downloadProviderExtensionPackage()
+	}
 
 	// Proceed to redirect once the capabilities has loaded
 	// and the package has been downloaded
@@ -3000,7 +3002,8 @@ func TarXZF(srcURL, destination string) error {
 	}()
 
 	if resp.StatusCode != http.StatusOK {
-		return ErrFetch(err, "TarTZF file :"+srcURL, resp.StatusCode)
+		return ErrFetch(fmt.Errorf("failed GET request"), "TarTZF file :"+srcURL, resp.StatusCode)
+
 	}
 
 	return TarXZ(resp.Body, destination)

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<4ba67ecbe17a56aaa4d3b68dfaba890e>>
+ * @generated SignedSource<<59972572c395e75dfd7a7e54195b431c>>
  * @flow
  * @lightSyntaxTransform
  * @nogrep
@@ -35,6 +35,7 @@ export type K8sContextSubscription$data = {|
       +created_by: string,
       +meshery_instance_id: string,
       +kubernetes_server_id: string,
+      +deployment_type: string,
       +updated_at: string,
       +created_at: string,
     |}>,
@@ -151,6 +152,13 @@ v1 = [
             "alias": null,
             "args": null,
             "kind": "ScalarField",
+            "name": "deployment_type",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
             "name": "updated_at",
             "storageKey": null
           },
@@ -186,17 +194,17 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "0a9c00eaa40ee17df30b372f3698d6f4",
+    "cacheID": "277230e3e71a8325a1a2e075db2f7847",
     "id": null,
     "metadata": {},
     "name": "K8sContextSubscription",
     "operationKind": "subscription",
-    "text": "subscription K8sContextSubscription(\n  $selector: PageFilter!\n) {\n  k8sContext: subscribeK8sContext(selector: $selector) {\n    total_count\n    contexts {\n      id\n      name\n      auth\n      cluster\n      server\n      owner\n      created_by\n      meshery_instance_id\n      kubernetes_server_id\n      updated_at\n      created_at\n    }\n  }\n}\n"
+    "text": "subscription K8sContextSubscription(\n  $selector: PageFilter!\n) {\n  k8sContext: subscribeK8sContext(selector: $selector) {\n    total_count\n    contexts {\n      id\n      name\n      auth\n      cluster\n      server\n      owner\n      created_by\n      meshery_instance_id\n      kubernetes_server_id\n      deployment_type\n      updated_at\n      created_at\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node/*: any*/).hash = "87663c63ebdcff6e185259074bd22d7f";
+(node/*: any*/).hash = "844c4a5835b4f24315e540f72279fe7d";
 
 module.exports = ((node/*: any*/)/*: GraphQLSubscription<
   K8sContextSubscription$variables,
