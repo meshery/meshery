@@ -2,10 +2,9 @@ import React, {
   useEffect,
   useState } from 'react';
 import Cookies from 'universal-cookie';
-// import GenericModal from './GenericModal';
 import { makeStyles, MuiThemeProvider } from '@material-ui/core/styles';
 import { createTheme } from '@material-ui/core/styles';
-import { Typography, Grid, Button,Modal, IconButton } from '@material-ui/core';
+import { Typography, Grid, Button, IconButton } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 
 
@@ -26,7 +25,7 @@ const getMuiTheme = () => createTheme({
 
 const styles = makeStyles((theme) => ({
   paper : {
-    position : 'absolute',
+    position : 'fixed',
     width : 450,
     backgroundColor : theme.palette.background.paper,
     border : '0px solid #000',
@@ -38,6 +37,7 @@ const styles = makeStyles((theme) => ({
     ["@media (max-width: 455px)"] : {
       width : "100%"
     },
+    zIndex : 5
   },
   grid : {
     width : '100%'
@@ -88,65 +88,50 @@ function Popup() {
       });
       handleOpen();
     }
-    handleOpen();
   },[])
-
-  const handleClose = () => {
-    setIsOpen(false);
-  }
 
   const handleSignUp = (e) => {
     window.open("https://layer5.io/meshmap", "_blank")
     e.stopPropagation();
   };
 
-  return (
-    <div>
+  if (isOpen) {
+    return (
+      <div>
+        <div>
+          <MuiThemeProvider theme={getMuiTheme()}>
+            <div
+              className={classes.paper}
+            >
+              <div className={classes.headerWrapper}>
+                <Typography className={classes.header} variant="h6">Get early access to MeshMap!
+                </Typography>
 
-      <Modal hideBackdrop={true}    open={isOpen} onClose={handleClose}>
+                <div style={{ display : "flex", justifyContent : "flex-end", whiteSpace : "nowrap", position : "relative" }}>
+                  <IconButton key="close" aria-label="Close" color="inherit" onClick={() => setIsOpen(false)}>
+                    <CloseIcon/>
+                  </IconButton>
+                </div>
+              </div>
 
-        <MuiThemeProvider theme={getMuiTheme()}>
-          <div
-            className={classes.paper}
-          >
-
-            <div className={classes.headerWrapper}>
-              <Typography className={classes.header} variant="h6" >Get early access to MeshMap!
-              </Typography>
-
-              <div style={{ display : "flex", justifyContent : "flex-end", whiteSpace : "nowrap", position : "relative" }}>
-                <IconButton  key="close" aria-label="Close" color="inherit" onClick={() => setIsOpen(false)}>
-                  <CloseIcon />
-                </IconButton>
+              <div className={classes.imgWrapper}>
+                <img className={classes.designerImg} src="/static/img/designer.png"/>
+              </div>
+              <Typography className={classes.caption} variant="subtitle1"><i>Friends dont let friends GitOps alone.
+                Visually design and collaborate in real-time with other MeshMap users.</i></Typography>
+              <div style={{ display : "flex", justifyContent : "flex-end" }}>
+                <Grid item xs={3}>
+                  <Button fullWidth variant="contained" color="primary" onClick={(e) => handleSignUp(e)}>Sign up</Button>
+                </Grid>
               </div>
             </div>
+          </MuiThemeProvider>
+        </div>
+      </div>
+    )
+  }
 
-            <div className={classes.imgWrapper}>
-              <img className={classes.designerImg} src="/static/img/designer.png" />
-            </div>
-            <Typography className={classes.caption} variant="subtitle1"><i>Friends dont let friends GitOps alone. Visually design and collaborate in real-time with other MeshMap users.</i></Typography>
-            <div style={{ display : "flex", justifyContent : "flex-end" }}>
-              <Grid item xs={3}>
-                <Button fullWidth variant="contained" color="primary" onClick={(e) => handleSignUp(e)}>Sign up</Button>
-              </Grid>
-              {/* <Grid item xs={3}>
-                <Button fullWidth variant="contained" color="primary" onClick={() => setIsOpen(false)}>close</Button>
-              </Grid> */}
-            </div>
-          </div>
-        </MuiThemeProvider>
-
-      </Modal>
-
-      {/* <GenericModal
-        open={isOpen}
-        handleClose={handleClose}
-        Content={
-
-        }
-      /> */}
-    </div>
-  )
+  return null
 }
 
 export default Popup
