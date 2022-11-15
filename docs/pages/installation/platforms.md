@@ -57,7 +57,31 @@ Meshery deploys as a set of Docker containers, which can be deployed to either a
         </div>
         <div style="background-color:#E6E6E6; text-align:center;font-size:30px;padding:210px; color:#999999;" class="tab-pane fade" id="docker" role="tabpanel" aria-labelledby="docker-tab">Compatibility matrix not yet available<br><a style="font-size:20px" href="{{ site.baseurl }}/installation/platforms/docker">Install Instruction</a></div>
         <div style="background-color:#E6E6E6; text-align:center;font-size:30px;padding:210px; color:#999999;" class="tab-pane fade" id="mac" role="tabpanel" aria-labelledby="mac-tab">Compatibility matrix not yet available<br> <a style="font-size:20px" href="{{ site.baseurl }}/installation/">Install Instruction</a></div>
-        <div style="background-color:#E6E6E6; text-align:center;font-size:30px;padding:210px; color:#999999;" class="tab-pane fade" id="windows" role="tabpanel" aria-labelledby="windows-tab">Compatibility matrix not yet available<br> <a style="font-size:20px" href="{{ site.baseurl }}/installation/platforms/windows">Install Instruction</a></div>
+        <div style="text-align:center;" class="tab-pane fade" id="windows" role="tabpanel" aria-labelledby="windows-tab">
+          <h3 style="text-align:left;">The following minimum Windows build versions are required:</h3>
+          <table class="table table-striped table-bordered">
+            <tr style="text-align:center">
+              <th>Name</th>
+              <th>Version</th> 
+            </tr>
+            <tr>
+              <td><a href="{{site.baseurl}}/installation/platforms/windows#wsl1">WSL1</a></td>
+              <td><b>x64</b> - Windows 7 </td>
+            </tr>
+            <tr>
+              <td><a href="{{site.baseurl}}/installation/platforms/windows#wsl1">WSL2</a></td>
+              <td><b>x64</b> - Version 1903, Build 18362; <b>ARM 64</b> - Version 2004, Build 19041</td>
+            </tr>
+            <tr>
+              <td><a href="https://docs.microsoft.com/en-us/windows/wsl/release-notes#build-18945">Custom Kernel</a></td>
+              <td>Build 18945</td>
+            </tr>
+            <tr>
+              <td><a href="https://docs.microsoft.com/en-us/windows/wsl/release-notes#build-19013">Kernel with K8s required modules</a></td>
+              <td>Build 19013</td>
+            </tr>
+          </table>
+        <br> <a style="font-size:20px" href="{{ site.baseurl }}/installation/platforms/windows">Install Instruction</a></div>
       </div>
     </div>
 
