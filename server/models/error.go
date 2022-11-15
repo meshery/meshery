@@ -292,7 +292,7 @@ func ErrTokenRevoke(err error) error {
 }
 
 func ErrTokenIntrospect(err error) error {
-	return errors.New(ErrTokenIntrospectCode, errors.Alert, []string{"token introspection failed"}, []string{err.Error()}, []string{"revoked token used"}, []string{"please login again"})
+	return errors.New(ErrTokenIntrospectCode, errors.Alert, []string{"token introspection failed"}, []string{err.Error()}, []string{"Invalid session token. Token has revoked."}, []string{"Login again to establish a new session with valid token."})
 }
 
 func ErrGetToken(err error) error {
