@@ -46,7 +46,6 @@ func Validator(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFu
 			if k8s.Format {
 				svc.Settings = k8s.Format.DePrettify(svc.Settings, false)
 			}
-
 			// Store the workload capability in the metadata
 			data.PatternSvcWorkloadCapabilities[svcName] = wc
 

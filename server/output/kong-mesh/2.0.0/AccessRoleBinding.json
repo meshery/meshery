@@ -1,0 +1,1 @@
+{"kind":"AccessRoleBinding","apiVersion":"v1alpha1","Format":"JSON","Metadata":{"Model":"kong-mesh","Version":"2.0.0","Category":"","SubCategory":"","Metadata":{"display-name":"Access Role Binding"}},"Schema":"{\n \"title\": \"Access Role Binding\",\n \"type\": \"object\",\n \"x-kubernetes-preserve-unknown-fields\": true\n}"}

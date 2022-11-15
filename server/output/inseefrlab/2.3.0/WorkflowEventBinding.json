@@ -1,0 +1,1 @@
+{"kind":"WorkflowEventBinding","apiVersion":"v1alpha1","Format":"JSON","Metadata":{"Model":"inseefrlab","Version":"2.3.0","Category":"","SubCategory":"","Metadata":{"display-name":"Workflow Event Binding"}},"Schema":"{\n \"title\": \"Workflow Event Binding\",\n \"type\": \"object\",\n \"x-kubernetes-map-type\": \"atomic\",\n \"x-kubernetes-preserve-unknown-fields\": true\n}"}
