@@ -29,6 +29,7 @@ import MesheryPatternGrid from "./MesheryPatterns/MesheryPatternGridView";
 import UndeployIcon from "../public/static/img/UndeployIcon";
 import DoneAllIcon from '@material-ui/icons/DoneAll';
 import DoneIcon from '@material-ui/icons/Done';
+import PublicIcon from '@material-ui/icons/Public';
 import ConfirmationMsg from "./ConfirmationModal";
 import PublishIcon from "@material-ui/icons/Publish";
 import PromptComponent from "./PromptComponent";
@@ -38,6 +39,7 @@ import LoadingScreen from "./LoadingComponents/LoadingComponent";
 import { SchemaContext } from "../utils/context/schemaSet";
 import Validation from "./Validation";
 import { ACTIONS, FILE_OPS } from "../utils/Enum";
+import PublishModal from "./PublishModal";
 
 const styles = (theme) => ({
   grid : {
@@ -263,6 +265,10 @@ function MesheryPatterns({
   const [importModal, setImportModal] = useState({
     open : false
   })
+  const [publishModal, setPublishModal] = useState({
+    open : false,
+    pattern : {}
+  });
   const [loading, stillLoading] = useState(true);
 
   const catalogContentRef = useRef();
@@ -478,6 +484,20 @@ function MesheryPatterns({
       open : false
     });
   }
+
+  const handlePublishModal = (ev,pattern) => {
+    ev.stopPropagation();
+    setPublishModal({
+      open : true,
+      pattern : pattern
+    });
+  };
+  const handlePublishModalClose = () => {
+    setPublishModal({
+      open : false,
+      pattern : {}
+    });
+  };
 
   const handleDeploy = (pattern_file, name) => {
     updateProgress({ showProgress : true });
@@ -881,6 +901,13 @@ function MesheryPatterns({
               >
                 <UndeployIcon fill="#8F1F00" data-cy="undeploy-button" />
               </IconButton>
+              <IconButton
+                title="Publish"
+                onClick={(ev) => handlePublishModal(ev,rowData)}
+
+              >
+                <PublicIcon fill="#8F1F00" data-cy="publish-button" />
+              </IconButton>
             </>
           );
         },
@@ -1137,6 +1164,7 @@ function MesheryPatterns({
           tab={modalOpen.action}
           validationBody={modalOpen.validationBody}
         />
+        <PublishModal open={publishModal.open} handleClose={handlePublishModalClose} pattern={publishModal.pattern} aria-label="catalog publish" handlePublish={handlePublish} />
         <UploadImport open={importModal.open} handleClose={handleUploadImportClose} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} configuration="Design" />
         <PromptComponent ref={modalRef} />
       </NoSsr>
