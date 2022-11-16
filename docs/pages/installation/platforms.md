@@ -55,7 +55,23 @@ Meshery deploys as a set of Docker containers, which can be deployed to either a
             {%include compatibilityMatrix.md k8s_tests_group=k8s_tests_group %}
             <p style="font-size:20px; text-align:center;"><a href="{{ site.baseurl }}/installation/platforms/kubernetes">Install Instruction</a></p>
         </div>
-        <div style="background-color:#E6E6E6; text-align:center;font-size:30px;padding:210px; color:#999999;" class="tab-pane fade" id="docker" role="tabpanel" aria-labelledby="docker-tab">Compatibility matrix not yet available<br><a style="font-size:20px" href="{{ site.baseurl }}/installation/platforms/docker">Install Instruction</a></div>
+        <div style="text-align:center" class="tab-pane fade" id="docker" role="tabpanel" aria-labelledby="docker-tab">
+        <h3 style="text-align:left;">The following minimum Docker build versions are required:</h3>
+        <table class="table table-striped table-bordered">
+            <tr style="text-align:center">
+              <th>Name</th>
+              <th>Version</th> 
+            </tr>
+            <tr>
+              <td><a href="{{site.baseurl}}/installation/platforms/docker">Docker Engine</a></td>
+              <td><b>19.x</b> and above</td>
+            </tr>
+            <tr>
+              <td><a href="{{site.baseurl}}/installation/platforms/docker-extension">Docker Desktop<br></a><span style="color:#999999; text-decororation:none;"><em>Used through <b>Docker Extension</b></em></span></td>
+              <td><b>2.0.x</b> and above </td>
+            </tr>
+          </table>
+        <br><a style="font-size:20px" href="{{ site.baseurl }}/installation/platforms/docker">Install Instruction</a></div>
         <div style="background-color:#E6E6E6; text-align:center;font-size:30px;padding:210px; color:#999999;" class="tab-pane fade" id="mac" role="tabpanel" aria-labelledby="mac-tab">Compatibility matrix not yet available<br> <a style="font-size:20px" href="{{ site.baseurl }}/installation/">Install Instruction</a></div>
         <div style="text-align:center;" class="tab-pane fade" id="windows" role="tabpanel" aria-labelledby="windows-tab">
           <h3 style="text-align:left;">The following minimum Windows build versions are required:</h3>
