@@ -191,7 +191,7 @@ func (h *Handler) handleApplicationPOST(
 				obj := "convert"
 				h.log.Error(ErrApplicationFailure(err, obj))
 				http.Error(rw, ErrApplicationFailure(err, obj).Error(), http.StatusInternalServerError) // sending a 500 when we cannot convert the file into kuberentes manifest
-				addMeshkitErr(&res, ErrApplicationFailure(err, obj))
+				addMeshkitErr(&res, err)                                                                //this error is already a meshkit error so no further wrapping required
 				go h.EventsBuffer.Publish(&res)
 				return
 			}

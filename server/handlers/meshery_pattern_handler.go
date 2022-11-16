@@ -235,7 +235,7 @@ func (h *Handler) handlePatternPOST(
 		pattern, err := pCore.NewPatternFileFromK8sManifest(parsedBody.K8sManifest, false)
 		if err != nil {
 			http.Error(rw, fmt.Sprintf("failed to convert to pattern: %s", err), http.StatusBadRequest)
-			addMeshkitErr(&res, ErrSavePattern(err))
+			addMeshkitErr(&res, err) //this error is already a meshkit error so no further wrapping required
 			go h.EventsBuffer.Publish(&res)
 			return
 		}
