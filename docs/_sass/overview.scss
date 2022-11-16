@@ -30,8 +30,6 @@ h3[id]:before {
 h2[id]:before, h4[id]:before, h5[id]:before {
     display: block;
     content: " ";
-    margin-top: -4em;
-    height: 6rem;
     visibility: hidden;
 }
 div.wrapper {
