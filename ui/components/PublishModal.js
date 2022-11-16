@@ -1,6 +1,6 @@
 import React from 'react'
 import {  Button, Grid, IconButton } from '@material-ui/core';
-import { makeStyles, MuiThemeProvider } from '@material-ui/core/styles';
+import { MuiThemeProvider } from '@material-ui/core/styles';
 import { createTheme } from '@material-ui/core/styles';
 import validator from "@rjsf/validator-ajv6";
 import {
@@ -9,8 +9,8 @@ import {
   DialogTitle
 } from '@material-ui/core';
 import { Form } from '@rjsf/material-ui';
-
-import PublishIcon from '@material-ui/icons/Publish';
+import useStyles from "./MesheryPatterns/Cards.styles";
+import PublicIcon from '@material-ui/icons/Public';
 import CloseIcon from '@material-ui/icons/Close';
 const getMuiTheme = () => createTheme({
   palette : {
@@ -31,28 +31,9 @@ const getMuiTheme = () => createTheme({
 })
 
 
-const styles = makeStyles(() => ({
-  title : {
-    display : 'flex',
-    justifyContent : 'space-between',
-    alignItems : 'center',
-  },
-  btn : {
-    backgroundColor : '#607d8b',
-  },
-  iconPatt : {
-    color : '#fff',
-    marginRight : '0.5rem',
-  },
-  btnText : {
-    color : '#fff',
-  },
-
-}));
-
 function PublishModal(props) {
   const {  open, handleClose ,pattern,handlePublish } = props;
-  const classes = styles();
+  const classes = useStyles();
   const schema={
     "type" : "object",
     "properties" : {
@@ -112,8 +93,6 @@ function PublishModal(props) {
     console.log(payload)
   },[data])
 
-
-
   return (
     <>
       <Dialog
@@ -122,7 +101,7 @@ function PublishModal(props) {
 
         <MuiThemeProvider theme={getMuiTheme()}>
           <DialogTitle>
-            <div className={classes.title}>
+            <div className={classes.publishTitle}>
 
               <b id="simple-modal-title" style={{ textAlign : "center" }} > {pattern?.name}</b>
               <IconButton aria-label="close" className={classes.closeButton} onClick={handleClose}>
@@ -140,13 +119,14 @@ function PublishModal(props) {
             <Button
               title="Publish"
               variant="contained"
-              className={classes.btn}
+              color="primary"
+              className={classes.testsButton}
               onClick={() => {
                 handleClose();
                 handlePublish(payload)
               }}
             >
-              <PublishIcon className={classes.iconPatt} />
+              <PublicIcon className={classes.iconPatt} />
               <span className={classes.btnText}> Publish </span>
             </Button>
           </DialogActions>
