@@ -335,6 +335,10 @@ func (l *RemoteProvider) GetSession(req *http.Request) error {
 		logrus.Infof("session not found")
 		return err
 	}
+	err = l.introspectToken(ts)
+	if err != nil {
+		return err
+	}
 
 	_, err = l.VerifyToken(ts)
 	if err != nil {
@@ -367,10 +371,18 @@ func (l *RemoteProvider) GetProviderToken(req *http.Request) (string, error) {
 func (l *RemoteProvider) Logout(w http.ResponseWriter, req *http.Request) {
 	ck, err := req.Cookie(tokenName)
 	if err == nil {
-		ck.MaxAge = -1
-		ck.Path = "/"
-		http.SetCookie(w, ck)
+		err = l.revokeToken(ck.Value)
 	}
+	if err != nil {
+		logrus.Errorf("error performing logout, token cannot be revoked: %v", err)
+
+		http.Error(w, "error performing logout", http.StatusInternalServerError)
+		return
+	}
+
+	ck.MaxAge = -1
+	ck.Path = "/"
+	http.SetCookie(w, ck)
 	http.Redirect(w, req, "/provider", http.StatusFound)
 }
 
@@ -2702,8 +2714,10 @@ func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, fr
 	// Doing this here is important so that
 	l.loadCapabilities(tokenString)
 
-	// Download the package for the user
-	l.downloadProviderExtensionPackage()
+	// Download the package for the user only if they have extension capability
+	if len(l.GetProviderProperties().Extensions.Navigator) > 0 {
+		l.downloadProviderExtensionPackage()
+	}
 
 	// Proceed to redirect once the capabilities has loaded
 	// and the package has been downloaded

@@ -23,6 +23,7 @@ import resetDatabase from "./graphql/queries/ResetDatabaseQuery";
 import { updateProgress } from "../lib/store";
 import fetchMesheryOperatorStatus from "./graphql/queries/OperatorStatusQuery";
 import _ from "lodash";
+import { DEPLOYMENT_TYPE } from '../utils/Enum';
 
 const styles = (theme) => ({
   operationButton : {
@@ -133,7 +134,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
       let data = {
         context : ctx.name,
         location : ctx.server,
-        deployment_type : ctx.inClusterConfig ? "In Cluster" : "Out of Cluster",
+        deployment_type : ctx.deployment_type === DEPLOYMENT_TYPE.IN_CLUSTER ? "In Cluster" : "Out of Cluster",
         last_discovery : setDateTime(new Date()),
         id : ctx.id
       };
