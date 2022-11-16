@@ -52,13 +52,14 @@ darkTheme = {
         '&:active' : { boxShadow : 'none', },
       },
       containedPrimary : {
-        backgroundColor : "#00382D",
+        backgroundColor : "#00B39F",
+        '&:hover' : { backgroundColor : "#00D3A9", },
       },
     },
     MuiToggleButton : {
       label : {
         textTransform : 'initial',
-        color : '#396679',
+        color : '#00B39F',
       },
     },
     MuiTabs : {
@@ -249,17 +250,17 @@ theme = {
     MuiCssBaseline : {
       "@global" : {
         body : {
-          scrollbarColor : "#6b6b6b #263238",
+          scrollbarColor : "#DDDDDD #FFF",
           backgroundColor : "red",
           "&::-webkit-scrollbar, & *::-webkit-scrollbar" : {
-            backgroundColor : "#263238",
+            backgroundColor : "#DDDDDD",
             width : '0.7rem',
           },
           "&::-webkit-scrollbar-thumb, & *::-webkit-scrollbar-thumb" : {
             borderRadius : 8,
-            backgroundColor : "#6b6b6b",
+            backgroundColor : "#959595",
             minHeight : 24,
-            border : "3px solid #263238",
+            border : "3px solid #DDDDDD",
           },
           "&::-webkit-scrollbar-thumb:focus, & *::-webkit-scrollbar-thumb:focus" : {
             backgroundColor : "#959595",

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
-import { withStyles, makeStyles, MuiThemeProvider } from "@material-ui/core/styles";
-import { createTheme } from '@material-ui/core/styles';
+import { withStyles, makeStyles } from "@material-ui/core/styles";
+// import { createTheme } from '@material-ui/core/styles';
 import {
   NoSsr,
   TableCell,
@@ -201,49 +201,49 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
   const catalogVisibilityRef = useRef();
   const disposeConfSubscriptionRef = useRef(null);
 
-  const getMuiTheme = () => createTheme({
-    overrides : {
-      MuiInput : {
-        underline : {
-          "&:hover:not(.Mui-disabled):before" : {
-            borderBottom : "2px solid #222"
-          },
-          "&:after" : {
-            borderBottom : "2px solid #222"
-          }
-        }
-      },
-      MUIDataTableSearch : {
-        searchIcon : {
-          color : "#607d8b",
-          marginTop : "7px",
-          marginRight : "8px",
-        },
-        clearIcon : {
-          "&:hover" : {
-            color : "#607d8b"
-          }
-        },
-      },
-      MUIDataTableSelectCell : {
-        checkboxRoot : {
-          '&$checked' : {
-            color : '#607d8b',
-          },
-        },
-      },
-      MUIDataTableToolbar : {
-        iconActive : {
-          color : "#222"
-        },
-        icon : {
-          "&:hover" : {
-            color : "#607d8b"
-          }
-        },
-      },
-    }
-  })
+  // const getMuiTheme = () => createTheme({
+  //   overrides : {
+  //     MuiInput : {
+  //       underline : {
+  //         "&:hover:not(.Mui-disabled):before" : {
+  //           borderBottom : "2px solid #222"
+  //         },
+  //         "&:after" : {
+  //           borderBottom : "2px solid #222"
+  //         }
+  //       }
+  //     },
+  //     MUIDataTableSearch : {
+  //       searchIcon : {
+  //         color : "#607d8b",
+  //         marginTop : "7px",
+  //         marginRight : "8px",
+  //       },
+  //       clearIcon : {
+  //         "&:hover" : {
+  //           color : "#607d8b"
+  //         }
+  //       },
+  //     },
+  //     MUIDataTableSelectCell : {
+  //       checkboxRoot : {
+  //         '&$checked' : {
+  //           color : '#607d8b',
+  //         },
+  //       },
+  //     },
+  //     MUIDataTableToolbar : {
+  //       iconActive : {
+  //         color : "#222"
+  //       },
+  //       icon : {
+  //         "&:hover" : {
+  //           color : "#607d8b"
+  //         }
+  //       },
+  //     },
+  //   }
+  // })
 
   const ACTION_TYPES = {
     FETCH_FILTERS : {
@@ -882,16 +882,16 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
           }
         </div>
         {
-          !selectedFilter.show && viewType === "table" && <MuiThemeProvider theme={getMuiTheme()}>
-            <MUIDataTable
-              title={<div className={classes.tableHeader}>Filters</div>}
-              data={filters}
-              columns={columns}
-              // @ts-ignore
-              options={options}
-              className={classes.muiRow}
-            />
-          </MuiThemeProvider>
+          !selectedFilter.show && viewType === "table" &&
+          <MUIDataTable
+            title={<div className={classes.tableHeader}>Filters</div>}
+            data={filters}
+            columns={columns}
+            // @ts-ignore
+            options={options}
+            className={classes.muiRow}
+          />
+
         }
         {
           !selectedFilter.show && viewType === "grid" &&
