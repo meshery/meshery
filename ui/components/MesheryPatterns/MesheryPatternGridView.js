@@ -150,7 +150,7 @@ function MesheryPatternGrid({ patterns=[], handleVerify, handlePublish,handleDep
           <PatternCardGridItem
             key={pattern.id}
             pattern={pattern}
-            handleClone={() => handleClone(pattern.id)}
+            handleClone={() => handleClone(pattern.id, pattern.name)}
             handleDeploy={() => handleModalOpen(pattern, ACTIONS.DEPLOY)}
             handleUnDeploy={() => handleModalOpen(pattern, ACTIONS.UNDEPLOY)}
             handleVerify={(e) => handleVerify(e, pattern.pattern_file, pattern.id)}
@@ -196,7 +196,7 @@ function MesheryPatternGrid({ patterns=[], handleVerify, handlePublish,handleDep
         open={modalOpen.open}
         handleClose={handleModalClose}
         submit={
-          { deploy : () => handleDeploy(modalOpen.pattern_file), unDeploy : () => handleUnDeploy(modalOpen.pattern_file) }
+          { deploy : () => handleDeploy(modalOpen.pattern_file, modalOpen.name), unDeploy : () => handleUnDeploy(modalOpen.pattern_file, modalOpen.name) }
         }
         title={ modalOpen.name }
         componentCount={modalOpen.count}

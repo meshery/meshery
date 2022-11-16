@@ -7,10 +7,11 @@ import { rjsfTheme } from "../../../themes";
 import { recursiveCleanObject } from "../helpers";
 import MesheryArrayFieldTemplate from "./RJSFCustomComponents/ArrayFieldTemlate";
 import MesheryCustomObjFieldTemplate from "./RJSFCustomComponents/ObjectFieldTemplate";
-// import MesheryWrapIfAdditionalTemplate from './RJSFCustomComponents/WrapIfAdditionalTemplate';
+import MesheryWrapIfAdditionalTemplate from './RJSFCustomComponents/WrapIfAdditionalTemplate';
 import { customizeValidator } from "@rjsf/validator-ajv6";
-import CustomInputField from "./RJSFCustomComponents/CustomInputField";
 import _ from "lodash"
+import CustomTextWidget from './RJSFCustomComponents/CustomTextWidget';
+import CustomDateTimeWidget from './RJSFCustomComponents/CustomDateTimeWidget';
 
 class RJSFOverridenComponent extends Form {
   constructor(props){
@@ -48,7 +49,7 @@ function RJSFForm(props) {
     isLoading,
     ArrayFieldTemplate = MesheryArrayFieldTemplate,
     ObjectFieldTemplate = MesheryCustomObjFieldTemplate,
-    // WrapIfAdditionalTemplate = MesheryWrapIfAdditionalTemplate,
+    WrapIfAdditionalTemplate = MesheryWrapIfAdditionalTemplate,
     LoadingComponent,
     ErrorList,
     // prop should be present in order for the cloned element to override this property
@@ -57,7 +58,7 @@ function RJSFForm(props) {
   const templates={
     ArrayFieldTemplate,
     ObjectFieldTemplate,
-    // WrapIfAdditionalTemplate, // todo: enable it with some fixes
+    WrapIfAdditionalTemplate,
   }
 
   useEffect(() => {
@@ -83,7 +84,11 @@ function RJSFForm(props) {
         templates={templates}
         uiSchema={schema.uiSchema}
         widgets={{
-          TextWidget : CustomInputField
+          TextWidget : CustomTextWidget,
+          // Custom components to be added here
+          DateTimeWidget : CustomDateTimeWidget,
+          // SelectWidget: CustomSelectWidget,
+          // CheckboxWidget: CustomBooleanWidget,
         }}
         liveValidate
         showErrorList={false}

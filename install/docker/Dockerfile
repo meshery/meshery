@@ -9,7 +9,7 @@ WORKDIR /github.com/meshery/meshery
 ADD . .
 RUN go clean -modcache; cd server; cd cmd; GOPROXY=https://proxy.golang.org GOSUMDB=off go build -ldflags="-w -s -X main.globalTokenForAnonymousResults=$TOKEN -X main.version=$GIT_VERSION -X main.commitsha=$GIT_COMMITSHA -X main.releasechannel=$RELEASE_CHANNEL" -tags draft -a -o /meshery .
 
-FROM node:lts-slim as ui
+FROM node:lts as ui
 ADD ui ui
 RUN cd ui; npm install --only=production; npm run build && npm run export; mv out /
 
@@ -69,6 +69,7 @@ RUN update-ca-certificates
 RUN apk upgrade --no-cache && \
     apk add --no-cache libstdc++
 COPY ./server/oam /app/server/oam
+COPY ./server/output /app/server/output
 COPY --from=meshery-server /meshery /app/server/cmd/
 COPY --from=meshery-server /etc/passwd /etc/passwd
 COPY --from=meshery-server /github.com/meshery/meshery/server/helpers/swagger.yaml /app/server/helpers/swagger.yaml

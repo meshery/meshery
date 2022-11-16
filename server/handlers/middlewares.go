@@ -43,31 +43,44 @@ func (h *Handler) ProviderMiddleware(next http.Handler) http.Handler {
 }
 
 // AuthMiddleware is a middleware to validate if a user is authenticated
-func (h *Handler) AuthMiddleware(next http.Handler) http.Handler {
+func (h *Handler) AuthMiddleware(next http.Handler, auth models.AuthenticationMechanism) http.Handler {
 	fn := func(w http.ResponseWriter, req *http.Request) {
-		providerI := req.Context().Value(models.ProviderCtxKey)
-		// logrus.Debugf("models.ProviderCtxKey %s", models.ProviderCtxKey)
-		provider, ok := providerI.(models.Provider)
-		if !ok {
-			http.Redirect(w, req, "/provider", http.StatusFound)
-			return
-		}
-		// logrus.Debugf("provider %s", provider)
-		isValid := h.validateAuth(provider, req)
-		// logrus.Debugf("validate auth: %t", isValid)
-		if !isValid {
-			// if h.GetProviderType() == models.RemoteProviderType {
-			// 	http.Redirect(w, req, "/user/login", http.StatusFound)
-			// } else { // Local Provider
-			// 	h.LoginHandler(w, req)
-			// }
-			// return
-			if provider.GetProviderType() == models.RemoteProviderType {
-				provider.HandleUnAuthenticated(w, req)
+		enforcedProvider := h.EnforceProvider
+		switch auth {
+		case models.NoAuth:
+			if enforcedProvider != "" {
+				w.WriteHeader(http.StatusUnauthorized)
 				return
 			}
-			// Local Provider
-			h.LoginHandler(w, req, provider, true)
+		case models.ProviderAuth:
+			providerI := req.Context().Value(models.ProviderCtxKey)
+			// logrus.Debugf("models.ProviderCtxKey %s", models.ProviderCtxKey)
+			provider, ok := providerI.(models.Provider)
+			if !ok {
+				http.Redirect(w, req, "/provider", http.StatusFound)
+				return
+			}
+			if enforcedProvider != "" && enforcedProvider != string(provider.GetProviderType()) {
+				w.WriteHeader(http.StatusUnauthorized)
+				return
+			}
+			// logrus.Debugf("provider %s", provider)
+			isValid := h.validateAuth(provider, req)
+			// logrus.Debugf("validate auth: %t", isValid)
+			if !isValid {
+				// if h.GetProviderType() == models.RemoteProviderType {
+				// 	http.Redirect(w, req, "/user/login", http.StatusFound)
+				// } else { // Local Provider
+				// 	h.LoginHandler(w, req)
+				// }
+				// return
+				if provider.GetProviderType() == models.RemoteProviderType {
+					provider.HandleUnAuthenticated(w, req)
+					return
+				}
+				// Local Provider
+				h.LoginHandler(w, req, provider, true)
+			}
 		}
 		next.ServeHTTP(w, req)
 	}
@@ -133,7 +146,7 @@ func (h *Handler) KubernetesMiddleware(next func(http.ResponseWriter, *http.Requ
 		}
 
 		// register kubernetes components
-		h.K8sCompRegHelper.UpdateContexts(contexts).RegisterComponents(contexts, RegisterK8sComponents, h.EventsBuffer)
+		h.K8sCompRegHelper.UpdateContexts(contexts).RegisterComponents(contexts, []models.K8sRegistrationFunction{RegisterK8sComponents, RegisterK8sMeshModelComponents}, h.EventsBuffer, h.registryManager)
 
 		// Identify custom contexts, if provided
 		k8sContextIDs := req.URL.Query()["contexts"]

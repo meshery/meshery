@@ -1,0 +1,1 @@
+{"kind":"TrafficLog","apiVersion":"v1alpha1","Format":"JSON","Metadata":{"Model":"kuma","Version":"2.0.0","Category":"","SubCategory":"","Metadata":{"display-name":"Traffic Log"}},"Schema":"{\n \"description\": \"Spec is the specification of the Kuma TrafficLog resource.\",\n \"title\": \"Traffic Log\",\n \"x-kubernetes-preserve-unknown-fields\": true\n}"}

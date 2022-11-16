@@ -1,0 +1,1 @@
+{"kind":"RbacAssessmentReport","apiVersion":"v1alpha1","Format":"JSON","Metadata":{"Model":"giantswarm","Version":"0.2.1","Category":"","SubCategory":"","Metadata":{"display-name":"Rbac Assessment Report"}},"Schema":""}

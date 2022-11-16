@@ -1,6 +1,7 @@
 
 import { createTheme } from '@material-ui/core/styles';
-
+import createBreakpoints from '@material-ui/core/styles/createBreakpoints'
+const breakpoints = createBreakpoints({});
 
 export const rjsfTheme = createTheme({
   palette : {
@@ -9,6 +10,7 @@ export const rjsfTheme = createTheme({
     },
   },
   typography : {
+    fontFamily : "inherit",
     fontSize : 13,
   },
   props : {
@@ -24,6 +26,11 @@ export const rjsfTheme = createTheme({
     }
   },
   overrides : {
+    MuiOutlinedInput : {
+      root : {
+        backgroundColor : '#ffffff',
+      },
+    },
     MuiButton : {
       textSecondary : {
         color : "#00b39f",
@@ -40,7 +47,7 @@ export const rjsfTheme = createTheme({
         whiteSpace : "nowrap",
         overflow : "hidden",
         textOverflow : "ellipsis",
-        maxWidth : "70%",
+        maxWidth : "60%",
         height : "100%",
         '&:hover' : {
           overflow : "visible",
@@ -109,7 +116,7 @@ export const rjsfTheme = createTheme({
     MuiAccordionSummary : {
       root : {
         // border: "5px solid red",
-        backgroundColor : "rgba(0, 0, 0, .03)",
+        backgroundColor : "rgba(242,242,242)",
         borderBottom : "1px solid rgba(0, 0, 0, .125)",
         marginBottom : -1,
         maxHeight : "1.5rem",
@@ -143,7 +150,8 @@ export const rjsfTheme = createTheme({
         },
         "&$expanded" : {
           margin : "auto"
-        }
+        },
+        backgroundColor : "rgba(242,242,242)",
       },
     },
     MuiGrid : {
@@ -157,22 +165,30 @@ export const rjsfTheme = createTheme({
         '&:hover' : {
           overflow : "visible",
         },
-        // To scale the grid items
-        "& > *:nth-child(2)" : {
-          "& > *:nth-child(1)" : {
-            "& > *:nth-child(2)" : {
-              justifyContent : 'space-around'
-            }
-          },
-        }
+        // To scale the grid items on a particular screen size
+        [breakpoints.up('lg')] : {
+          "& > *:nth-child(2)" : {
+            "& > *:nth-child(1)" : {
+              "& > *:nth-child(2)" : {
+                justifyContent : 'space-around',
+              }
+            },
+          }
+        },
       },
     },
     MuiIconButton : {
       root : {
         cursor : "default"
+      },
+      sizeSmall : {
+        padding : "1px"
       }
     },
     MuiPaper : {
+      elevation0 : {
+        backgroundColor : "inherit",
+      },
       elevation2 : {
         boxShadow : "none"
       }

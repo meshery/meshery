@@ -1,0 +1,1 @@
+{"kind":"MeshInsight","apiVersion":"v1alpha1","Format":"JSON","Metadata":{"Model":"kong-mesh","Version":"2.0.0","Category":"","SubCategory":"","Metadata":{"display-name":"Mesh Insight"}},"Schema":"{\n \"description\": \"Spec is the specification of the Kuma MeshInsight resource.\",\n \"title\": \"Mesh Insight\",\n \"x-kubernetes-preserve-unknown-fields\": true\n}"}

@@ -1,0 +1,1 @@
+{"kind":"Viewer","apiVersion":"v1beta1","Format":"JSON","Metadata":{"Model":"kubeflow","Version":"1.5.1","Category":"","SubCategory":"","Metadata":{"display-name":"Viewer"}},"Schema":"{\n \"title\": \"Viewer\",\n \"type\": \"object\",\n \"x-kubernetes-map-type\": \"atomic\",\n \"x-kubernetes-preserve-unknown-fields\": true\n}"}
