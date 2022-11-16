@@ -253,7 +253,7 @@ func (h *Handler) handleApplicationPOST(
 				obj := "convert"
 				h.log.Error(ErrApplicationFailure(err, obj))
 				http.Error(rw, ErrApplicationFailure(err, obj).Error(), http.StatusInternalServerError) // sending a 500 when we cannot convert the file into kuberentes manifest
-				addMeshkitErr(&res, ErrApplicationFailure(err, obj))
+				addMeshkitErr(&res, err)
 				go h.EventsBuffer.Publish(&res)
 				return
 			}
@@ -315,7 +315,7 @@ func (h *Handler) handleApplicationPOST(
 				pfs, err := githubRepoApplicationScan(owner, repo, path, branch, sourcetype)
 				if err != nil {
 					http.Error(rw, ErrRemoteApplication(err).Error(), http.StatusInternalServerError)
-					addMeshkitErr(&res, ErrRemoteApplication(err))
+					addMeshkitErr(&res, err) //error gauranteed to be meshkit error
 					go h.EventsBuffer.Publish(&res)
 					return
 				}
@@ -326,7 +326,7 @@ func (h *Handler) handleApplicationPOST(
 				pfs, err := genericHTTPApplicationFile(parsedBody.URL, sourcetype)
 				if err != nil {
 					http.Error(rw, ErrRemoteApplication(err).Error(), http.StatusInternalServerError)
-					addMeshkitErr(&res, ErrRemoteApplication(err))
+					addMeshkitErr(&res, err) //error gauranteed to be meshkit error
 					go h.EventsBuffer.Publish(&res)
 					return
 				}
@@ -634,6 +634,7 @@ func (h *Handler) formatApplicationOutput(rw http.ResponseWriter, content []byte
 	go h.EventsBuffer.Publish(res)
 }
 
+// Note: This function is gauranteed to return meshkit errors
 func githubRepoApplicationScan(
 	owner,
 	repo,
@@ -658,16 +659,16 @@ func githubRepoApplicationScan(
 				if sourceType == string(models.DockerCompose) {
 					k8sres, err = kompose.Convert([]byte(f.Content))
 					if err != nil {
-						return err
+						return ErrRemoteApplication(err)
 					}
 				}
 				pattern, err := core.NewPatternFileFromK8sManifest(k8sres, false)
 				if err != nil {
-					return err
+					return err //always a meshkit error
 				}
 				response, err := yaml.Marshal(pattern)
 				if err != nil {
-					return err
+					return ErrMarshal(err, string(response))
 				}
 
 				af := models.MesheryApplication{
@@ -695,23 +696,24 @@ func githubRepoApplicationScan(
 		}).
 		Walk()
 
-	return result, err
+	return result, ErrRemoteApplication(err)
 }
 
+// Note: Always return meshkit error from this function
 func genericHTTPApplicationFile(fileURL, sourceType string) ([]models.MesheryApplication, error) {
 	resp, err := http.Get(fileURL)
 	if err != nil {
-		return nil, err
+		return nil, ErrRemoteApplication(err)
 	}
 	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("file not found")
+		return nil, ErrRemoteApplication(fmt.Errorf("file not found"))
 	}
 
 	defer models.SafeClose(resp.Body)
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return nil, err
+		return nil, ErrRemoteApplication(err)
 	}
 
 	k8sres := string(body)
@@ -719,18 +721,18 @@ func genericHTTPApplicationFile(fileURL, sourceType string) ([]models.MesheryApp
 	if sourceType == string(models.DockerCompose) {
 		k8sres, err = kompose.Convert(body)
 		if err != nil {
-			return nil, err
+			return nil, ErrRemoteApplication(err)
 		}
 	}
 
 	pattern, err := core.NewPatternFileFromK8sManifest(k8sres, false)
 	if err != nil {
-		return nil, err
+		return nil, err //This error is already a meshkit error
 	}
 	response, err := yaml.Marshal(pattern)
 
 	if err != nil {
-		return nil, err
+		return nil, ErrMarshal(err, string(response))
 	}
 
 	url := strings.Split(fileURL, "/")

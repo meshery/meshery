@@ -376,7 +376,6 @@ func NewPatternFileFromK8sManifest(data string, ignoreErrors bool) (Pattern, err
 			if ignoreErrors {
 				continue
 			}
-
 			return pattern, ErrCreatePatternService(fmt.Errorf("failed to create pattern service from kubernetes component: %s", err))
 		}
 
