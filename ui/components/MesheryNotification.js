@@ -131,11 +131,6 @@ class MesheryNotification extends React.Component {
   state = {
     open : false,
     dialogShow : false,
-    k8sConfig : { inClusterConfig : false,
-      clusterConfigured : false,
-      contextName : '', },
-    meshAdapters : [],
-    createStream : false,
     displayEventType : "*",
     tabValue : 0,
   }
@@ -175,16 +170,6 @@ class MesheryNotification extends React.Component {
       ), });
   }
 
-  static getDerivedStateFromProps(props, state) {
-    if (JSON.stringify(props.k8sConfig) !== JSON.stringify(state.k8sConfig)
-        || JSON.stringify(props.meshAdapters) !== JSON.stringify(state.meshAdapters)) {
-      return { createStream : true,
-        k8sConfig : props.k8sConfig,
-        meshAdapters : props.meshAdapters };
-    }
-    return null;
-  }
-
   componentDidMount() {
     this.startEventStream();
   }
@@ -194,7 +179,6 @@ class MesheryNotification extends React.Component {
     this.eventStream = new EventSource('/api/events');
     this.eventStream.onmessage = this.handleEvents();
     this.eventStream.onerror = this.handleError();
-    this.setState({ createStream : false });
   }
 
   handleEvents() {
@@ -397,10 +381,8 @@ const mapDispatchToProps = (dispatch) => ({
 // });
 
 const mapStateToProps = (state) => {
-  const k8sConfig = state.get('k8sConfig');
-  const meshAdapters = state.get('meshAdapters').toJS();
   const events = state.get("events");
-  return { k8sConfig, meshAdapters, events };
+  return {  events };
 };
 
 export default withStyles(styles)(connect(
