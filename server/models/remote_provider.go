@@ -3015,7 +3015,6 @@ func TarXZF(srcURL, destination string) error {
 
 	if resp.StatusCode != http.StatusOK {
 		return ErrFetch(fmt.Errorf("failed GET request"), "TarTZF file :"+srcURL, resp.StatusCode)
-
 	}
 
 	return TarXZ(resp.Body, destination)
