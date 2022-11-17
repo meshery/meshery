@@ -10,10 +10,11 @@ import { getComponentsinFile } from "../../utils/utils";
 import PublishIcon from "@material-ui/icons/Publish";
 import useStyles from "./Grid.styles";
 import Validation from "../Validation";
+import PublishModal from "../PublishModal";
 
 const INITIAL_GRID_SIZE = { xl : 4, md : 6, xs : 12 };
 
-function PatternCardGridItem({ pattern, handleDeploy, handleVerify, handleUnDeploy, handleClone, handleSubmit, setSelectedPatterns }) {
+function PatternCardGridItem({ pattern, handleDeploy, handleVerify, handlePublishModal, handleUnDeploy, handleClone, handleSubmit, setSelectedPatterns }) {
   const [gridProps, setGridProps] = useState(INITIAL_GRID_SIZE);
   const [yaml, setYaml] = useState(pattern.pattern_file);
 
@@ -29,6 +30,7 @@ function PatternCardGridItem({ pattern, handleDeploy, handleVerify, handleUnDepl
         requestSizeRestore={() => setGridProps(INITIAL_GRID_SIZE)}
         handleDeploy={handleDeploy}
         handleVerify={handleVerify}
+        handlePublishModal={handlePublishModal}
         handleUnDeploy={handleUnDeploy}
         handleClone={handleClone}
         deleteHandler={() => handleSubmit({ data : yaml, id : pattern.id, type : FILE_OPS.DELETE ,name : pattern.name })}
@@ -52,6 +54,7 @@ function PatternCardGridItem({ pattern, handleDeploy, handleVerify, handleUnDepl
  *  pattern_file: string,
  * }>,
  *  handleVerify: (e: Event, pattern_file: any, pattern_id: string) => void,
+ *  handlePublish: (catalog_data : any) => void,
  *  handleDeploy: (pattern_file: any) => void,
  *  handleUnDeploy: (pattern_file: any) => void,
  *  handleSubmit: (data: any, id: string, name: string, type: string) => void,
@@ -64,13 +67,29 @@ function PatternCardGridItem({ pattern, handleDeploy, handleVerify, handleUnDepl
  * }} props props
  */
 
-function MesheryPatternGrid({ patterns=[], handleVerify, handleDeploy, handleUnDeploy, urlUploadHandler, handleClone, uploadHandler, handleSubmit, setSelectedPattern, selectedPattern, pages = 1,setPage, selectedPage, UploadImport, patternErrors  }) {
+function MesheryPatternGrid({ patterns=[], handleVerify, handlePublish,handleDeploy, handleUnDeploy, urlUploadHandler, handleClone, uploadHandler, handleSubmit, setSelectedPattern, selectedPattern, pages = 1,setPage, selectedPage, UploadImport, patternErrors  }) {
 
   const classes = useStyles()
 
   const [importModal, setImportModal] = useState({
     open : false
   });
+  const [publishModal, setPublishModal] = useState({
+    open : false,
+    pattern : {}
+  });
+  const handlePublishModal = (pattern) => {
+    setPublishModal({
+      open : true,
+      pattern : pattern
+    });
+  };
+  const handlePublishModalClose = () => {
+    setPublishModal({
+      open : false,
+      pattern : {}
+    });
+  };
 
   const handleUploadImport = () => {
     setImportModal({
@@ -131,10 +150,11 @@ function MesheryPatternGrid({ patterns=[], handleVerify, handleDeploy, handleUnD
           <PatternCardGridItem
             key={pattern.id}
             pattern={pattern}
-            handleClone={() => handleClone(pattern.id)}
+            handleClone={() => handleClone(pattern.id, pattern.name)}
             handleDeploy={() => handleModalOpen(pattern, ACTIONS.DEPLOY)}
             handleUnDeploy={() => handleModalOpen(pattern, ACTIONS.UNDEPLOY)}
             handleVerify={(e) => handleVerify(e, pattern.pattern_file, pattern.id)}
+            handlePublishModal={() => handlePublishModal(pattern)}
             handleSubmit={handleSubmit}
             setSelectedPatterns={setSelectedPattern}
           />
@@ -176,13 +196,14 @@ function MesheryPatternGrid({ patterns=[], handleVerify, handleDeploy, handleUnD
         open={modalOpen.open}
         handleClose={handleModalClose}
         submit={
-          { deploy : () => handleDeploy(modalOpen.pattern_file), unDeploy : () => handleUnDeploy(modalOpen.pattern_file) }
+          { deploy : () => handleDeploy(modalOpen.pattern_file, modalOpen.name), unDeploy : () => handleUnDeploy(modalOpen.pattern_file, modalOpen.name) }
         }
         title={ modalOpen.name }
         componentCount={modalOpen.count}
         tab={modalOpen.action}
         validationBody={modalOpen.validationBody}
       />
+      <PublishModal open={publishModal.open} handleClose={handlePublishModalClose} pattern={publishModal.pattern} aria-label="catalog publish" handlePublish={handlePublish} />
       <UploadImport open={importModal.open} handleClose={handleUploadImportClose} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} configuration="Designs"  />
     </div>
   );

@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/gofrs/uuid"
+	"github.com/layer5io/meshery/server/models/pattern/patterns/k8s"
 	"github.com/layer5io/meshery/server/models/pattern/utils"
 	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
 	"github.com/sirupsen/logrus"
@@ -87,7 +88,6 @@ func (p *Pattern) GetApplicationComponent(name string) (v1alpha1.Component, erro
 	if !ok {
 		return v1alpha1.Component{}, fmt.Errorf("invalid service name")
 	}
-
 	comp := v1alpha1.Component{
 		TypeMeta: v1.TypeMeta{Kind: "Component", APIVersion: "core.oam.dev/v1alpha2"},
 		ObjectMeta: v1.ObjectMeta{
@@ -102,7 +102,10 @@ func (p *Pattern) GetApplicationComponent(name string) (v1alpha1.Component, erro
 			Settings: svc.Settings,
 		},
 	}
-
+	if comp.ObjectMeta.Labels == nil {
+		comp.ObjectMeta.Labels = make(map[string]string)
+	}
+	comp.ObjectMeta.Labels["resource.pattern.meshery.io/id"] = svc.ID.String() //set the patternID to track back the object
 	return comp, nil
 }
 
@@ -436,7 +439,7 @@ func createPatternServiceFromK8s(manifest map[string]interface{}) (string, Servi
 			castedAnnotation[k] = cv
 		}
 	}
-
+	rest = k8s.Format.Prettify(rest, true)
 	svc := Service{
 		Name:        name,
 		Type:        w[0].OAMDefinition.Name,

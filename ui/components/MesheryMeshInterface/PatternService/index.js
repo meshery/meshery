@@ -1,7 +1,7 @@
 // @ts-check
 import React from "react";
 import Switch from "./Switch";
-import RJSF from "./RJSF";
+import RJSFWrapper from "./RJSF_wrapper";
 import { isEmptyObj } from "../../../utils/utils";
 
 /**
@@ -21,6 +21,22 @@ function componentType(jsonSchema) {
     return "switch";
   }
 }
+
+// added a p_type="array" to every object in an array to override the normal behaviour of objects.
+const addPTypeToArray = (properties) => {
+  Object.keys(properties).forEach(key => {
+    if (properties[key]?.items?.type === "object") {
+      properties[key].items.p_type = "array";
+    }
+    if (properties[key]?.properties) {
+      properties[key].properties = addPTypeToArray(properties[key].properties);
+    }
+    if (properties[key]?.items?.properties) {
+      properties[key].items.properties = addPTypeToArray(properties[key].items.properties);
+    }
+  });
+  return properties;
+};
 
 /**
  * PatternService returns a component for the given jsonSchema
@@ -64,6 +80,8 @@ function PatternService({ formData, jsonSchema, onChange, type, onSubmit, onDele
       });
     return sortedProperties;
   };
+
+  addPTypeToArray(jsonSchema.properties);
   // Order of properties in the form
   const sortPropertiesOrder = [
     "string",
@@ -80,7 +98,7 @@ function PatternService({ formData, jsonSchema, onChange, type, onSubmit, onDele
   jsonSchema.properties = sortedProperties;
   if (ctype === "rjsf")
     return (
-      <RJSF
+      <RJSFWrapper
         formData={formData}
         hideSubmit={type === "trait"}
         hideTitle={type === "workload"}

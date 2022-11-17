@@ -1,0 +1,1 @@
+{"kind":"MeshGateway","apiVersion":"v1alpha1","Format":"JSON","Metadata":{"Model":"kong-mesh","Version":"2.0.0","Category":"","SubCategory":"","Metadata":{"display-name":"Mesh Gateway"}},"Schema":"{\n \"description\": \"Spec is the specification of the Kuma MeshGateway resource.\",\n \"title\": \"Mesh Gateway\",\n \"x-kubernetes-preserve-unknown-fields\": true\n}"}

@@ -99,10 +99,20 @@ const useStyles= makeStyles((theme) => ({
     alignItems : "center",
     flexDirection : "column",
   },
+  publishTitle : {
+    display : 'flex',
+    justifyContent : 'space-between',
+    alignItems : 'center',
+  },
   noText : {
     fontSize : "2rem",
     marginBottom : "2rem",
-  }
+  },
+  clonePatt : {
+    width : "20px",
+    height : "20px",
+    marginRight : "5px",
+  },
 }));
 
 export default useStyles;

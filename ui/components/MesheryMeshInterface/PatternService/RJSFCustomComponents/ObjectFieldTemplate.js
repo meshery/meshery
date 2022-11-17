@@ -1,18 +1,13 @@
 import React from 'react';
-
 import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/styles';
-
-import { utils } from '@rjsf/core';
-
+import { canExpand } from '@rjsf/utils';
 import AddButton from "@material-ui/icons/Add";
 import { Box, IconButton, Typography } from '@material-ui/core';
-import EnlargedTextTooltip from '../EnlargedTextTooltip';
+import { EnlargedTextTooltip } from '../EnlargedTextTooltip';
 import HelpOutlineIcon from '../HelpOutlineIcon';
 import ArrowDown from '@material-ui/icons/KeyboardArrowDown';
 import ArrowUp from '@material-ui/icons/KeyboardArrowUp';
-
-const { canExpand } = utils;
 
 const useStyles = makeStyles({
   objectFieldGrid : {
@@ -37,9 +32,17 @@ const ObjectFieldTemplate = ({
   formData,
   onAddClick,
 }) => {
+  const additional = schema?.__additional_property; // check if the object is additional
   const classes = useStyles();
-  const [show, setShow] = React.useState(false);
-
+  // If the parent type is an `array`, then expand the current object.
+  const [show, setShow] = React.useState(schema?.p_type ? true : false);
+  properties.forEach((property, index) => {
+    if (schema.properties[property.name].type) {
+      properties[index].type = schema.properties[property.name].type;
+      properties[index].__additional_property =
+        schema.properties[property.name]?.__additional_property || false;
+    }
+  });
   const CustomTitleField = ({ title, id, description, properties }) => {
     return <Box mb={1} mt={1} id={id} >
       <Grid container justify="flex-start" alignItems="center">
@@ -90,7 +93,15 @@ const ObjectFieldTemplate = ({
         ) : (
           <Grid
             item={true}
-            xs={element.name === "name" || element.name === "namespace" ? 6 : 12}
+            sm={12}
+            lg={
+              element.type === "object" ||
+              element.type === "array" ||
+              element.__additional_property ||
+              additional
+                ? 12
+                : 6
+            }
             key={index}
           >
             {element.content}
@@ -106,12 +117,15 @@ const ObjectFieldTemplate = ({
     <>
       {fieldTitle ? (
         <>
-          <CustomTitleField
-            id={`${idSchema.$id}-title`}
-            title={fieldTitle}
-            description={description}
-            properties={properties}
-          />
+          {schema.p_type !== "array" ? (
+            <CustomTitleField
+              id={`${idSchema.$id}-title`}
+              title={additional ? "Value" : fieldTitle}
+              description={description}
+              properties={properties}
+            />
+          ) : null
+          }
           {Object.keys(properties).length > 0 && show && Properties}
         </>
       ) : Properties}

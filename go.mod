@@ -37,9 +37,9 @@ require (
 	github.com/jarcoal/httpmock v1.2.0
 	github.com/jinzhu/copier v0.0.0-20190924061706-b57f9002281a
 	github.com/layer5io/gowrk2 v0.0.0-20191111234958-a4c9071c0f87
-	github.com/layer5io/meshery-operator v0.6.4
-	github.com/layer5io/meshkit v0.6.2
-	github.com/layer5io/meshsync v0.6.5
+	github.com/layer5io/meshery-operator v0.6.5
+	github.com/layer5io/meshkit v0.6.9
+	github.com/layer5io/meshsync v0.6.7
 	github.com/layer5io/nighthawk-go v0.6.0
 	github.com/layer5io/service-mesh-performance v0.3.4
 	github.com/lib/pq v1.10.6
@@ -65,10 +65,10 @@ require (
 	gopkg.in/yaml.v2 v2.4.0
 	gorm.io/gorm v1.23.10
 	k8s.io/api v0.25.2
-	k8s.io/apiextensions-apiserver v0.25.1
+	k8s.io/apiextensions-apiserver v0.25.2
 	k8s.io/apimachinery v0.25.2
 	k8s.io/client-go v0.25.2
-	sigs.k8s.io/controller-runtime v0.12.2
+	sigs.k8s.io/controller-runtime v0.13.0
 )
 
 require (
@@ -154,6 +154,14 @@ require (
 	github.com/huandu/xstrings v1.3.2 // indirect
 	github.com/imdario/mergo v0.3.12 // indirect
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
+	github.com/jackc/chunkreader/v2 v2.0.1 // indirect
+	github.com/jackc/pgconn v1.13.0 // indirect
+	github.com/jackc/pgio v1.0.0 // indirect
+	github.com/jackc/pgpassfile v1.0.0 // indirect
+	github.com/jackc/pgproto3/v2 v2.3.1 // indirect
+	github.com/jackc/pgservicefile v0.0.0-20200714003250-2b9c44734f2b // indirect
+	github.com/jackc/pgtype v1.12.0 // indirect
+	github.com/jackc/pgx/v4 v4.17.2 // indirect
 	github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.4 // indirect
@@ -228,7 +236,7 @@ require (
 	golang.org/x/sync v0.0.0-20220722155255-886fb9371eb4 // indirect
 	golang.org/x/sys v0.0.0-20220722155257-8c9f86f7a55f // indirect
 	golang.org/x/term v0.0.0-20210927222741-03fcf44c2211 // indirect
-	golang.org/x/time v0.0.0-20220210224613-90d013bbcef8 // indirect
+	golang.org/x/time v0.0.0-20220609170525-579cf78fd858 // indirect
 	golang.org/x/tools v0.1.12 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/genproto v0.0.0-20220714211235-042d03aeabc9 // indirect
@@ -236,9 +244,10 @@ require (
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/warnings.v0 v0.1.2 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
+	gorm.io/driver/postgres v1.3.10 // indirect
 	gorm.io/driver/sqlite v1.3.1 // indirect
 	helm.sh/helm/v3 v3.9.4 // indirect
-	k8s.io/apiserver v0.25.1 // indirect
+	k8s.io/apiserver v0.25.2 // indirect
 	k8s.io/cli-runtime v0.25.2 // indirect
 	k8s.io/component-base v0.25.2 // indirect
 	k8s.io/klog/v2 v2.70.1 // indirect

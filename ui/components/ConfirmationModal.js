@@ -219,21 +219,22 @@ function ConfirmationMsg(props) {
 
   const searchContexts = (search) => {
     if (search === "") {
-      setK8sContexts(k8scontext);
+      setContexts(k8scontext);
+      return
     }
     let matchedCtx = [];
     k8scontext.forEach(ctx => {
-      if (ctx.name.startsWith(search)) {
+      if (ctx.name.includes(search)) {
         matchedCtx.push(ctx);
       }
     });
-    setK8sContexts(matchedCtx);
+    setContexts(matchedCtx);
   }
 
   const setContextViewer = (id) => {
     if (id === "all") {
-      if (selectedK8sContexts.includes("all")) {
-        updateProgress({ showProgress : true })
+      if (selectedK8sContexts?.includes("all")) {
+        // updateProgress({ showProgress : true })
         setK8sContexts({ selectedK8sContexts : [] })
       } else {
         setK8sContexts({ selectedK8sContexts : ["all"] });
@@ -241,7 +242,7 @@ function ConfirmationMsg(props) {
       return;
     }
 
-    if (selectedK8sContexts.includes(id)) {
+    if (selectedK8sContexts?.includes(id)) {
       const filteredContexts = selectedK8sContexts.filter(cid => cid !== id);
       setK8sContexts({ selectedK8sContexts : filteredContexts })
     } else if (selectedK8sContexts[0] === "all") {
@@ -336,7 +337,7 @@ function ConfirmationMsg(props) {
                                 <Tooltip title={`Server: ${ctx.server}`}>
                                   <div style={{ display : "flex", justifyContent : "flex-wrap", alignItems : "center" }}>
                                     <Checkbox
-                                      checked={selectedK8sContexts.includes(ctx.id) || (selectedK8sContexts.length > 0 && selectedK8sContexts[0] === "all")}
+                                      checked={selectedK8sContexts?.includes(ctx.id) || (selectedK8sContexts?.length > 0 && selectedK8sContexts[0] === "all")}
                                       onChange={() => setContextViewer(ctx.id)}
                                       color="primary"
                                     />

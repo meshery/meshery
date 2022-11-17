@@ -19,11 +19,12 @@ import UploadImport from "./UploadImport";
 import ConfigurationSubscription from "../components/graphql/subscriptions/ConfigurationSubscription";
 import PromptComponent from "./PromptComponent";
 import Validation from "./Validation";
+import { CapabilitiesRegistry } from "../utils/disabledComponents";
 
 const requires = createRequires(getDependencies);
 const useRemoteComponent = createUseRemoteComponent({ requires });
 
-function Extension({ grafana, prometheus, updateLoadTestData, url, isDrawerCollapsed, selectedK8sContexts, k8sconfig }) {
+function NavigatorExtension({ grafana, prometheus, updateLoadTestData, url, isDrawerCollapsed, selectedK8sContexts, k8sconfig, capabilitiesRegistry }) {
   const [loading, err, RemoteComponent] = useRemoteComponent(url);
 
   if (loading) {
@@ -71,7 +72,9 @@ function Extension({ grafana, prometheus, updateLoadTestData, url, isDrawerColla
         UploadImport,
         PromptComponent,
         generateValidatePayload,
-        Validation
+        Validation,
+        capabilitiesRegistry,
+        CapabilitiesRegistryClass : CapabilitiesRegistry
       }}
     />
   );
@@ -83,12 +86,13 @@ const mapStateToProps = (st) => {
   const isDrawerCollapsed = st.get("isDrawerCollapsed");
   const selectedK8sContexts = st.get('selectedK8sContexts');
   const k8sconfig = st.get("k8sConfig");
+  const capabilitiesRegistry = st.get("capabilitiesRegistry")
 
-  return { grafana, prometheus, isDrawerCollapsed, selectedK8sContexts, k8sconfig };
+  return { grafana, prometheus, isDrawerCollapsed, selectedK8sContexts, k8sconfig, capabilitiesRegistry };
 };
 
 const mapDispatchToProps = (dispatch) => ({ updateLoadTestData : bindActionCreators(updateLoadTestData, dispatch),
   setK8sContexts : bindActionCreators(setK8sContexts, dispatch) }
 );
 
-export default connect(mapStateToProps, mapDispatchToProps)(Extension);
+export default connect(mapStateToProps, mapDispatchToProps)(NavigatorExtension);

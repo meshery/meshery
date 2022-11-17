@@ -30,7 +30,7 @@ ARG GIT_STRIPPED_VERSION
 ARG GIT_VERSION
 ARG RELEASE_CHANNEL
 LABEL org.opencontainers.image.title="Meshery" \
-  org.opencontainers.image.description="Design and operate your cloud native deployments with the extensible management plane, Meshery." \
+  org.opencontainers.image.description="Meshery is the open source, cloud native manager that enables the adoption, operation, and management of Kubernetes, any service mesh, and their workloads. With visual infrastructure as code plugins like MeshMap, you can collaboratively design and operate your cloud native deployments with teammates in real-time." \
   org.opencontainers.image.vendor="Layer5, Inc." \
   com.docker.desktop.extension.api.version=">= 0.2.0" \
    com.docker.extension.screenshots="[ \
@@ -43,10 +43,10 @@ LABEL org.opencontainers.image.title="Meshery" \
       } \
     ]" \
   com.docker.extension.detailed-description="\
-  <h2>MeshMap is the world's only visual designer for Kubernetes and service mesh deployments.</h2> \
+  <h2>Visually and collaboratively design and operate your Kubernetes clusters.</h2> \
   <p>The Meshery Docker Extension extends Docker Desktop’s position as the cloud native developer’s go-to Kubernetes environment with easy access to the next layer of cloud native infrastructure: service meshes.</p> \
   <ul> \
-    <li><b>Detection of Kubernetes environments -</b> scan your kubeconfig and select your current Kubernetes environment. Switch from one environment to another one.</li> \
+    <li><b>Discovery of your Kubernetes environments</b> - Meshery is a multi-cluster manager and will scan your kubeconfig, allowing you to select which of your Kubernetes contexts to connect. Switch from one K8s cluster to the next or manage multiple concurrently.</li> \
     <li><b>Service mesh support for your Docker Compose apps -</b> Import your Docker Compose apps. Configure and deploy them to Kubernetes and any service mesh.</li> \
     <li><b>Visual designer for Docker Compose apps -</b> Early access to the Docker Extension for Meshery that offers a visual topology for designing Docker Compose applications, operating Kubernetes, service meshes, and their workloads.</li> \
     <li><b>Single-click deployment of any service mesh -</b> Support of 10 different service meshes to the fingertips of developers in connection with Docker Desktop’s ability to deliver Kubernetes locally.</li> \

@@ -21,4 +21,5 @@ type ServiceActionProvider interface {
 	Terminate(error)
 	Provision(CompConfigPair) (string, error)
 	Persist(string, core.Service, bool) error
+	Mutate(*core.Pattern) //Uses pre-defined policies/configuration to mutate the pattern
 }

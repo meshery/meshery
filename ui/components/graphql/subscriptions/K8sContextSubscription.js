@@ -15,6 +15,7 @@ subscription K8sContextSubscription($selector: PageFilter!) {
         created_by
         meshery_instance_id
         kubernetes_server_id
+        deployment_type
         updated_at
         created_at 
       }  
