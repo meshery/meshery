@@ -1260,10 +1260,10 @@ class Navigator extends React.Component {
     const Chevron = (
       <div
         className={classNames(isDrawerCollapsed ? classes.collapseButtonWrapperRotated : classes.collapseButtonWrapper)}
-        style={cursorNotAllowed}
+        style={this.state?.capabilitiesRegistryObj?.isNavigatorComponentEnabled?.([TOGGLER]) ? {} : cursorNotAllowed}
       >
         <div
-          style={this.state?.capabilitiesRegistryObj?.isNavigatorComponentEnabled?.([TOGGLER]) ? disabledStyle : {}}
+          style={this.state?.capabilitiesRegistryObj?.isNavigatorComponentEnabled?.([TOGGLER]) ? {} : disabledStyle}
           onClick={this.toggleMiniDrawer}
         >
           <FontAwesomeIcon

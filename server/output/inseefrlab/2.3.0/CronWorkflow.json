@@ -1,0 +1,1 @@
+{"kind":"CronWorkflow","apiVersion":"v1alpha1","Format":"JSON","Metadata":{"Model":"inseefrlab","Version":"2.3.0","Category":"","SubCategory":"","Metadata":{"display-name":"Cron Workflow"}},"Schema":"{\n \"title\": \"Cron Workflow\",\n \"type\": \"object\",\n \"x-kubernetes-map-type\": \"atomic\",\n \"x-kubernetes-preserve-unknown-fields\": true\n}"}

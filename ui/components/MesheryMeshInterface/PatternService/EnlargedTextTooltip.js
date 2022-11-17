@@ -16,4 +16,20 @@ const EnlargedTextTooltip = withStyles((theme) => ({
   }
 }))(Tooltip);
 
-export default EnlargedTextTooltip;
+const EnlargedTextErrorTooltip = withStyles((theme) => ({
+  tooltip : {
+    backgroundColor : '#B32700',
+    color : '#fff',
+    opacity : '100%',
+    fontSize : theme.typography.pxToRem(13),
+    // border : '1px solid #dadde9',
+    borderRadius : "0.9375rem",
+    padding : "0.9rem",
+  },
+  popper : {
+    zIndex : "99999 !important"
+  }
+}))(Tooltip);
+
+
+export { EnlargedTextTooltip, EnlargedTextErrorTooltip };

@@ -1,0 +1,1 @@
+{"kind":"ServiceInsight","apiVersion":"v1alpha1","Format":"JSON","Metadata":{"Model":"kuma","Version":"2.0.0","Category":"","SubCategory":"","Metadata":{"display-name":"Service Insight"}},"Schema":"{\n \"description\": \"Spec is the specification of the Kuma ServiceInsight resource.\",\n \"title\": \"Service Insight\",\n \"x-kubernetes-preserve-unknown-fields\": true\n}"}

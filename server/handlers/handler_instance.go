@@ -6,6 +6,7 @@ import (
 	"github.com/layer5io/meshkit/broker"
 	"github.com/layer5io/meshkit/database"
 	"github.com/layer5io/meshkit/logger"
+	"github.com/layer5io/meshkit/models/meshmodel"
 	"github.com/layer5io/meshkit/utils/events"
 	"github.com/vmihailenco/taskq/v3"
 )
@@ -23,6 +24,7 @@ type Handler struct {
 	MesheryCtrlsHelper *models.MesheryControllersHelper
 	EnforceProvider    string // When set, all endpoints consider tokens / identities / capabilities valid from the single, designated provider.
 	dbHandler          *database.Handler
+	registryManager    *meshmodel.RegistryManager
 	EventsBuffer       *events.EventStreamer
 }
 
@@ -36,6 +38,7 @@ func NewHandlerInstance(
 	mctrlHelper *models.MesheryControllersHelper,
 	dbHandler *database.Handler,
 	eb *events.EventStreamer,
+	regManager *meshmodel.RegistryManager,
 	enforcedProvider string,
 ) models.HandlerInterface {
 	h := &Handler{
@@ -47,6 +50,7 @@ func NewHandlerInstance(
 		MesheryCtrlsHelper: mctrlHelper,
 		dbHandler:          dbHandler,
 		EventsBuffer:       eb,
+		registryManager:    regManager,
 		EnforceProvider:    enforcedProvider,
 	}
 

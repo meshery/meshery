@@ -1,0 +1,1 @@
+{"kind":"MutatorPodStatus","apiVersion":"v1beta1","Format":"JSON","Metadata":{"Model":"gatekeeper","Version":"3.11.0-beta.0","Category":"","SubCategory":"","Metadata":{"display-name":"Mutator Pod Status"}},"Schema":""}

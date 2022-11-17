@@ -1,0 +1,1 @@
+{"kind":"ClusterConfigAuditReport","apiVersion":"v1alpha1","Format":"JSON","Metadata":{"Model":"statcan","Version":"0.10.4","Category":"","SubCategory":"","Metadata":{"display-name":"Cluster Config Audit Report"}},"Schema":""}
