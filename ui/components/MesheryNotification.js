@@ -47,27 +47,36 @@ const styles = (theme) => ({
   notificationTitle : { textAlign : 'left', },
   notifSelector : { display : 'flex', },
   icon : { fontSize : 20, },
-  iconVariant : { opacity : 0.9,
+  iconVariant : {
+    opacity : 0.9,
     marginRight : theme.spacing(1),
-    marginTop : theme.spacing(1) * 3 / 4, },
+    marginTop : theme.spacing(1) * 3 / 4,
+  },
   error : { backgroundColor : theme.palette.error.dark, },
   info : { backgroundColor : theme.palette.primary.dark, },
   warning : { backgroundColor : amber[700], },
-  message : { display : 'flex',
+  message : {
+    display : 'flex',
     // alignItems: 'center',
   },
-  clearAllButton : { display : 'flex',
-    justifyContent : 'flex-end' },
-  HeaderItem : { fontSize : '1.6rem',
+  clearAllButton : {
+    display : 'flex',
+    justifyContent : 'flex-end'
+  },
+  HeaderItem : {
+    fontSize : '1.6rem',
     height : '1.6rem',
-    width : '1.6rem', },
+    width : '1.6rem',
+  },
   drawerButton : {
     padding : '0.45rem',
     margin : '0.2rem',
     backgroundColor : theme.palette.secondary.dark,
     color : '#FFFFFF',
-    "&:hover" : { backgroundColor : '#FFFFFF',
-      color : theme.palette.secondary.dark }
+    "&:hover" : {
+      backgroundColor : '#FFFFFF',
+      color : theme.palette.secondary.dark
+    }
   }
 });
 
@@ -121,10 +130,10 @@ function getNotificationCount(events) {
  * icons based on the "type" prop
  * @param {{ type: string,className: string }} props
  */
-function NotificationIcon ({ type, className }) {
-  if (type === "error") return <ErrorIcon className={className}/>
+function NotificationIcon({ type, className }) {
+  if (type === "error") return <ErrorIcon className={className} />
 
-  return <BellIcon className={className}/>
+  return <BellIcon className={className} />
 }
 
 class MesheryNotification extends React.Component {
@@ -156,7 +165,8 @@ class MesheryNotification extends React.Component {
    */
   notificationDispatcher(type, message) {
     const self = this;
-    self.props.enqueueSnackbar(message, { variant : eventTypes[type]?.type,
+    self.props.enqueueSnackbar(message, {
+      variant : eventTypes[type]?.type,
       autoHideDuration : 5000,
       action : (key) => (
         <IconButton
@@ -167,7 +177,8 @@ class MesheryNotification extends React.Component {
         >
           <CloseIcon />
         </IconButton>
-      ), });
+      ),
+    });
   }
 
   componentDidMount() {
@@ -256,8 +267,10 @@ class MesheryNotification extends React.Component {
   }
 
   handleBellButtonClick = () => {
-    this.setState({ tabValue : 0,
-      displayEventType : '*' })
+    this.setState({
+      tabValue : 0,
+      displayEventType : '*'
+    })
   }
 
   render() {
@@ -315,7 +328,7 @@ class MesheryNotification extends React.Component {
                         className={classes.drawerButton}
                         onClick={this.handleBellButtonClick}
                       >
-                        <BellIcon className={classes.HeaderItem}/>
+                        <BellIcon className={classes.HeaderItem} />
                       </IconButton>
                     </Tooltip>
                   </div>
@@ -331,7 +344,7 @@ class MesheryNotification extends React.Component {
                         className={classes.drawerButton}
                         onClick={this.handleClearAllNotifications()}
                       >
-                        <DoneAllIcon className={classes.HeaderItem}/>
+                        <DoneAllIcon className={classes.HeaderItem} />
                       </IconButton>
                     </Tooltip>
                   </div>
@@ -344,10 +357,10 @@ class MesheryNotification extends React.Component {
                   textColor="primary"
                   variant="fullWidth"
                 >
-                  <Tab label="All" onClick={this.handleNotifFiltering('*')} style={{ minWidth : "15%" }}/>
-                  <Tab label="Error"  onClick={this.handleNotifFiltering('error')} style={{ minWidth : "15%" }}/>
-                  <Tab label="Warning" onClick={this.handleNotifFiltering('warning')} style={{ minWidth : "15%" }}/>
-                  <Tab label="Success" onClick={this.handleNotifFiltering('success')} style={{ minWidth : "15%" }}/>
+                  <Tab label="All" onClick={this.handleNotifFiltering('*')} style={{ minWidth : "15%" }} />
+                  <Tab label="Error" onClick={this.handleNotifFiltering('error')} style={{ minWidth : "15%" }} />
+                  <Tab label="Warning" onClick={this.handleNotifFiltering('warning')} style={{ minWidth : "15%" }} />
+                  <Tab label="Success" onClick={this.handleNotifFiltering('success')} style={{ minWidth : "15%" }} />
                 </Tabs>
                 {getNotifications(this.props.events, this.state.displayEventType).map((event, ind) => (
                   <MesheryEventViewer
@@ -382,7 +395,7 @@ const mapDispatchToProps = (dispatch) => ({
 
 const mapStateToProps = (state) => {
   const events = state.get("events");
-  return {  events };
+  return { events };
 };
 
 export default withStyles(styles)(connect(
