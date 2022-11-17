@@ -1,9 +1,0 @@
-name: logs
-description: Starts tailing Meshery server debug logs
-usage: |
-
-    # View the logs for a specific component
-    mesheryctl system logs [component-name]
-
-    # Example
-    mesheryctl system logs meshery-istio

@@ -7,7 +7,7 @@ import (
 
 func (s *Selector) Trait(name string) (core.TraitCapability, bool) {
 	data := store.GetAll(generateTraitKey(name))
-	traits := convertInterfaceSliceToTraitSlice(data)
+	traits := convertValueInterfaceSliceToTraitSlice(data)
 
 	filteredTraits, typ := filterTraitByType(traits)
 
@@ -137,13 +137,13 @@ func filterTraitByType(ws []core.TraitCapability) ([]core.TraitCapability, strin
 	return k8s, K8sResource
 }
 
-func convertInterfaceSliceToTraitSlice(data []interface{}) []core.TraitCapability {
+func convertValueInterfaceSliceToTraitSlice(data []store.Value) []core.TraitCapability {
 	res := []core.TraitCapability{}
 
 	for _, el := range data {
-		elc, ok := el.(core.TraitCapability)
+		elc, ok := el.(*core.TraitCapability)
 		if ok {
-			res = append(res, elc)
+			res = append(res, *elc)
 		}
 	}
 

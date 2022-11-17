@@ -36,6 +36,9 @@ pre.codeblock-pre {
 .btn-copy-wrap {
    
     align-content: flex-end;
+    float: right;
+    z-index: 9;
+    position:relative
 }
 
 .clipbtn {

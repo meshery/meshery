@@ -1,0 +1,474 @@
+global:
+  name: mesheryctl
+  description: Muestra ayuda sobre cualquier comando.
+  usage: mesheryctl
+
+  flags:
+    config:
+      name: --config
+      description: configura Meshery con kubeconfig, generado con la ayuda de los detalles del usuario, para proporcionar acceso al clúster para nubes públicas(GKE/EKS).
+      usage: mesheryctl system reset --config=[path to config file]
+    help:
+      name: --help, -h
+      description: Muestra información útil sobre cualquier comando.
+      usage: |
+        mesheryctl --help
+          mesheryctl system --help
+          meshery system start --help
+    verbose:
+      name: --verbose, -v
+      description: Establece el nivel de registro para depurar la salida detallada y muestra registros detallados / de depuración.
+      usage: mesheryctl system update --verbose
+
+  subcommands:
+    version:
+      name: version
+      description: Muestra la versión de Meshery Client (mesheryctl) y el SHA del binario de lanzamiento.
+      usage: mesheryctl version
+
+    completion:
+      name: completion
+      description: Código de finalización del shell de salida.
+      usage: mesheryctl completion [bash|zsh|fish]
+
+system:
+  name: system
+  description: Gestión del ciclo de vida de las implementaciones de Meshery
+  usage: mesheryctl system [flags]
+
+  flags:
+    context:
+      name: --context, -c
+      arg: system
+      description: Cambiar temporalmente el contexto actual.
+      usage: mesheryctl system reset -c [temporary context name]
+
+  subcommands:
+    start:
+      name: start
+      arg: system
+      description: Iniciar Meshery
+      usage: mesheryctl system start
+      notes:
+        name: Set k8s context
+        description: Para crear un nuevo contexto para las implementaciones de Kubernetes dentro del clúster y establecer el nuevo contexto como su contexto actual.
+        usage: mesheryctl system context create k8s -p kubernetes -s
+      flags:
+        skip-update:
+          name: --skip-update
+          description: (opcional) omita la búsqueda de nuevas actualizaciones disponibles en Meshery.
+          usage: mesheryctl system start --skip-update
+        reset:
+          name: --reset
+          description: Restablece el archivo de configuración de Meshery a la configuración predeterminada.
+          usage: mesheryctl system start --reset
+        silent:
+          name: --silent
+          description: Cree silenciosamente el archivo de configuración de Meshery con la configuración predeterminada.
+          usage: mesheryctl system start --silent
+
+    stop:
+      name: stop
+      arg: system
+      description: Detener Meshery
+      usage: mesheryctl system stop
+      flags:
+        reset:
+          name: --reset
+          description: Restablece el archivo de configuración de Meshery a la configuración predeterminada.
+          usage: mesheryctl system stop --reset
+
+    update:
+      name: update
+      description: Extraiga nuevas imágenes de Meshery de Docker Hub. No actualiza `mesheryctl`. Este comando se puede ejecutar mientras se ejecuta Meshery.
+      usage: mesheryctl system update
+      flags:
+        skip-reset:
+          name: --skip-reset
+          description: Extraiga los archivos de manifiesto más recientes
+          usage: mesheryctl system update --skip-reset
+
+    config:
+      name: config
+      description: Configura Meshery para usar un clúster de Kubernetes.
+      usage: mesheryctl system config [minikube | gke | aks | eks] [flags]
+      flags:
+        token:
+          name: --token
+          description: Ruta al token para autenticarse en la API de Meshery.
+          usage: mesheryctl system config --token [path-to-file]
+      examples:
+        aks:
+          name: aks
+          description: Para configurar Meshery para usar Azure Kubernetes Service.
+          usage: mesheryctl system config aks --token [path-to-token]
+        eks:
+          name: eks
+          description: Para configurar Meshery para usar Elastic Kubernetes Service
+          usage: mesheryctl system config eks --token [path-to-token]
+        gke:
+          name: gke
+          description: Para configurar Meshery para utilizar Google Kubernetes Engine
+          usage: mesheryctl system config gke --token [path-to-token]
+
+    logs:
+      name: logs
+      description: Inicia el seguimiento de los registros de depuración del servidor Meshery
+      usage: |
+
+        # View the logs for a specific component
+        mesheryctl system logs [component-name]
+
+        # Example
+        mesheryctl system logs meshery-istio
+
+    reset:
+      name: reset
+      description: Restablece el archivo meshery.yaml con una copia del repositorio de Meshery
+      usage: mesheryctl system reset
+
+    restart:
+      name: restart
+      description: reiniciar todos los contenedores de Meshery, sus instancias y sus volúmenes conectados
+      usage: mesheryctl system restart
+      flags:
+        skip-update:
+          name: --skip-update
+          description: (Opcional) omita la búsqueda de nuevas actualizaciones disponibles en Meshery.
+          usage: mesheryctl system restart --skip-update
+
+    status:
+      name: status
+      description: Verifique el estado de Meshery, adaptadores de Meshery, Operador de Meshery y sus controladores.
+      usage: mesheryctl system status
+
+    login:
+      name: login
+      description: "Autentíquese con el proveedor de Meshery de su elección: el proveedor local o un proveedor remoto."
+      usage: mesheryctl system login
+
+    logout:
+      name: logout
+      description: Invalide la sesión actual con su proveedor de Meshery.
+      usage: mesheryctl system logout
+
+system-channel:
+  name: system-channel
+  description: Cambiar entre canales de liberación.
+  usage: mesheryctl system channel
+
+  subcommands:
+    set:
+      name: set
+      description: establecer el canal de lanzamiento y la versión.
+      usage: mesheryctl system channel set [stable|stable-version|edge|edge-version]
+
+    switch:
+      name: switch
+      description: cambiar el canal de liberación y la versión
+      usage: mesheryctl system channel switch [stable|stable-version|edge|edge-version]
+
+    view:
+      name: view
+      description: ver el canal de lanzamiento y la versión
+      usage: mesheryctl system channel view
+      flags:
+        all:
+          name: --all, -a
+          description: ver el canal de lanzamiento y la versión
+          usage: mesheryctl system channel view --all
+
+system-context:
+  name: system-context
+  description: Muestra el contexto actual.
+  usage: mesheryctl system context
+
+  subcommands:
+    create:
+      name: create
+      description: crea un nuevo contexto en el archivo config.yaml
+      usage: mesheryctl system context create [context name]
+
+      flags:
+        adapters:
+          name: --adapters
+          description: cree un nuevo contexto en el archivo config.yaml- especifique la lista de adaptadores que se agregarán
+          usage: mesheryctl system context create [context name] --adapters [list of adapters]
+        set:
+          name: --set, -s
+          description: crear un nuevo contexto en el archivo config.yaml- establecer como contexto actual
+          usage: mesheryctl system context create [context name] --set
+        url:
+          name: --url, -u
+          description: cree un nuevo contexto en el archivo config.yaml- configure la URL del servidor Meshery. Predeterminado a"https://localhost:9081"
+          usage: mesheryctl system context create [context name] --url [URL]
+
+    delete:
+      name: delete
+      description: eliminar un contexto existente del archivo de configuración de Meshery
+      usage: mesheryctl system context delete [context name]
+
+    switch:
+      name: switch
+      description: configurar mesheryctl para usar activamente un contexto frente al otro context
+      usage: mesheryctl system context switch [context name]
+
+    view:
+      name: view
+      description: ver las configuraciones del contexto actual
+      usage: mesheryctl system context view
+      flags:
+        context:
+          name: --context
+          description: ver las configuraciones del contexto especificado
+          usage: mesheryctl system context view --context [context name]
+        all:
+          name: --all
+          description: si se establece, muestra las configuraciones de todos los contextos
+          usage: mesheryctl system context view --all
+
+perf:
+  name: perf
+  description: Gestión del rendimiento y evaluación comparativa mediante la CLI de Meshery
+  usage: mesheryctl perf --name "a quick stress test" --url http://192.168.1.15/productpage --qps 300 --concurrent-requests 2 --duration 30s --token "provider=Meshery"
+
+  flags:
+    output-format:
+      name: --output-format, -o
+      description: formato para mostrar en json o yaml.
+      usage: mesheryctl perf --token [path to access token] --output-format [format]
+    token:
+      name: --token
+      description: (obligatorio) Ruta al token de acceso del usuario de Meshery.
+      usage: mesheryctl perf --token [path to access token]
+
+  subcommands:
+    apply:
+      name: apply
+      description: Ejecuta una prueba de rendimiento usando perfiles existentes o usando banderas.
+      usage: |
+
+        # Execute a Performance test with the specified performance profile
+        mesheryctl perf apply [profile-name] --flags
+
+        # Execute a Performance test without a specified performance profile
+        mesheryctl perf apply --profile [profile-name] --url [url]
+
+        # Run Performance test using SMP compatible test configuration
+        mesheryctl perf apply -f [filepath]
+      flags:
+        concurrent-requests:
+          name: --concurrent-requests
+          arg: apply
+          description: "Número de solicitudes paralelas (defecto: 1)."
+          usage: mesheryctl perf apply [profile-name] --url [URL] --concurrent-requests [number of requests]
+        duration:
+          name: --duration
+          arg: apply
+          description: Duración de la prueba.
+          usage: mesheryctl perf apply [profile-name] --url [URL] --duration [time]
+        file:
+          name: --file
+          arg: apply
+          description: "Ruta al archivo de configuración de prueba de rendimiento de la malla de servicios (predeterminado: cadena vacía)."
+          usage: mesheryctl perf apply [profile-name] --url [URL] --file [path to file]
+        load-generator:
+          name: --load-generator
+          arg: apply
+          description: "Elección del generador de carga: fortio (OR) wrk2 (predeterminado: fortio)."
+          usage: mesheryctl perf apply [profile-name] --url [URL] --load-generator [fortio/wrk2]
+        mesh:
+          name: --mesh
+          arg: apply
+          description: Nombre de la malla de servicios.
+          usage: mesheryctl perf apply [profile-name] --url [URL] --mesh [name]
+        name:
+          name: --name
+          arg: apply
+          description: "Un nombre memorable para la prueba (predeterminado: cadena aleatoria)."
+          usage: mesheryctl perf apply [profile-name] --url [URL] --name "name"
+        profile:
+          name: --profile
+          arg: apply
+          description: "(obligatorio / opcional) Nombre del nuevo perfil de rendimiento."
+          usage: mesheryctl perf apply --profile [profile-name] --url [URL]
+        qps:
+          name: --qps
+          arg: apply
+          description: "Consultas por segundo (predeterminado: 0) (0 - significa usar la CPU sin límites para generar tantas solicitudes como sea posible)."
+          usage: mesheryctl perf apply [profile-name] --url [URL] --qps [queries]
+        url:
+          name: --url
+          arg: apply
+          description: (obligatorio / opcional) URL del punto final al que se envía la carga durante la prueba. (obligatorio / opcional) URL del punto final al que se envía la carga durante la prueba.
+          usage: mesheryctl perf apply [profile-name] --url [URL]
+
+    list:
+      name: list
+      description: Muestra todos los perfiles de rendimiento disponibles y los resultados de un perfil de rendimiento.
+      usage: |
+
+        mesheryctl perf list
+
+        mesheryctl perf list [profile-id]
+
+    view:
+      name: view
+      description: Configuración de perfil de desempeño.
+      usage: |
+
+        # View performance profile
+        mesheryctl perf view [profile-name]
+
+        # View performance results
+        mesheryctl perf view [profile-id] [test-name]
+
+mesh:
+  name: mesh
+  description: Gestión del ciclo de vida de las mallas de servicio
+
+  subcommands:
+    validate:
+      name: validate
+      description: validar la conformidad de la malla de servicio con diferentes especificaciones estándar
+      flags:
+        adapter:
+          name: --adapter, -a
+          description: (obligatorio) adaptador que se utilizará para la validación. El valor predeterminado es "meshery-osm:10010"
+          usage: mesheryctl mesh validate --adapter [name of the adapter]
+        namespace:
+          name: --namespace, -n
+          description: Espacio de nombres de Kubernetes que se utilizará para implementar las pruebas de validación y la carga de trabajo de muestra
+          usage: mesheryctl mesh validate --namespace [namespace to be used]
+        spec:
+          name: --spec, -s
+          description: Especificación (requerida) que se utilizará para la prueba de conformidad. El valor predeterminado es "smi"
+          usage: mesheryctl mesh validate --spec [specification to be used for conformance test]
+        tokenpath:
+          name: --tokenpath, -t
+          description: (obligatorio) ruta al token para autenticarse en la API de Meshery
+          usage: mesheryctl mesh validate --tokenPath [path to token for authentication]
+
+    deploy:
+      name: deploy
+      description: Implementar una malla de servicios en el clúster
+      usage: mesheryctl mesh deploy [flags]
+      flags:
+        adapter:
+          name: --adapter, -a
+          description: (obligatorio) adaptador que se utilizará para la validación. El valor predeterminado es "meshery-osm:10010".
+          usage: mesheryctl mesh deploy --adapter [name of the adapter]
+        namespace:
+          name: --namespace, -n
+          description: Espacio de nombres de Kubernetes que se utilizará para implementar las pruebas de validación y la carga de trabajo de muestra
+          usage: mesheryctl mesh deploy --namespace [namespace to be used]
+        token:
+          name: --tokenpath, -t
+          description: (obligatorio) ruta al token para autenticarse en la API de Meshery
+          usage: mesheryctl mesh deploy --tokenPath [path to token for authentication]
+
+pattern:
+  name: pattern
+  description:
+  usage: mesheryctl pattern
+
+  flags:
+    file:
+      name: --file, -f
+      description: (obligatorio) ruta al archivo de patrón.
+      usage: |
+        mesheryctl pattern apply --file [pattern path]
+        mesheryctl pattern delete --file [pattern path]
+
+  subcommands:
+    apply:
+      name: apply
+      description: Aplicar archivo de patrón activará la implementación del archivo de patrón
+      usage: mesheryctl pattern apply [flags]
+      flags:
+        file:
+          name: --file, -f
+          description: Aplicar archivo de patrón activará la implementación del archivo de patrón y también admite la recuperación de archivos de GitHub
+          usage: mesheryctl exp pattern apply --file [path to pattern file]
+
+    delete:
+      name: delete
+      description: Desaprovisionar la malla de recursos / servicios utilizando el archivo de patrón
+      usage: mesheryctl pattern delete [flags]
+      flags:
+        file:
+          name: --file, -f
+          description: Elimina los recursos que se crearon mediante el archivo de patrón.
+          usage: mesheryctl pattern delete -f [path to pattern file]
+
+    list:
+      name: list
+      description: muestra una lista de archivos de patrones disponibles
+      usage: mesheryctl pattern list
+      flags:
+        all:
+          name: --all, -a
+          description: mostrar todos los metadatos del archivo de patrón
+          usage: mesheryctl pattern list --all
+
+    view:
+      name: view
+      description: muestra el contenido de un archivo de patrón específico
+      usage: mesheryctl pattern view [pattern-name|pattern-id]
+      flags:
+        all:
+          name: --all, -a
+          description: mostrar todo el contenido del archivo de patrón
+          usage: mesheryctl pattern view [pattern-name|pattern-id] --all
+        json:
+          name: -o json
+          description: mostrar el contenido de un patrón en formato json
+          usage: mesheryctl pattern view [pattern-name|pattern-id] -o json
+
+app:
+  name: app
+  description: Gestión de aplicaciones Service Mesh
+  usage: mesheryctl app
+  flags:
+    file:
+      name: --file, -f
+      description: (obligatorio) ruta al archivo de patrón
+      usage: mesheryctl app --file [path to pattern file]
+  subcommands:
+    list:
+      name: list
+      description: muestra una lista de aplicaciones disponibles
+      usage: mesheryctl app list
+    offboard:
+      name: offboard
+      description: aplicación externa
+      usage: mesheryctl app offboard [app name] [flags]
+      flags:
+        file:
+          name: --file, -f
+          description: Aplicación externa con un archivo de aplicación
+          usage: mesheryctl app offboard -f [filepath]
+    onboard:
+      name: onboard
+      description: aplicación a bordo
+      usage: mesheryctl app onboard [app name] [flags]
+      flags:
+        file:
+          name: --file, -f
+          description: aplicación a bordo con archivo de aplicación
+          usage: mesheryctl app onboard --file [filepath]
+    view:
+      name: view
+      description: muestra el contenido de una aplicación
+      usage: |
+        mesheryctl app view [application-name|application-id]
+      flags:
+        view-all:
+          name: --all, -a
+          description: mostrar todo el contenido del archivo de la aplicación
+          usage: mesheryctl app view --all
+        view-json:
+          name: -o json
+          description: mostrar el contenido de una aplicación en formato json
+          usage: |
+            mesheryctl app view [application-name|application-id] -o json

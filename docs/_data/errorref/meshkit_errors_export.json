@@ -48,6 +48,15 @@
         "probable_cause": "Yaml could not be populated with the returned manifests",
         "suggested_remediation": ""
       },
+      "1006": {
+        "name": "ErrAbsentFilterCode",
+        "code": "1006",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error with passed filters",
+        "probable_cause": "ItrFilter or ItrSpecFilter is either not passed or empty",
+        "suggested_remediation": "Pass the correct ItrFilter and ItrSpecFilter"
+      },
       "11010": {
         "name": "ErrNoneDatabaseCode",
         "code": "11010",
@@ -110,6 +119,15 @@
         "short_description": "",
         "probable_cause": "",
         "suggested_remediation": ""
+      },
+      "11017": {
+        "name": "ErrClosingDatabaseConnectionCode",
+        "code": "11017",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "failed to close database connection",
+        "probable_cause": "Invalid database instance passed.",
+        "suggested_remediation": "Make sure the DB handler has a valid database instance."
       },
       "11021": {
         "name": "ErrApplyManifestCode",
@@ -381,15 +399,6 @@
         "probable_cause": "File doesnt exist in the location\nFile name is incorrect",
         "suggested_remediation": "Make sure to input the right file name and location"
       },
-      "11055": {
-        "name": "ErrEmptyConfigCode",
-        "code": "11055",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "Config not initialized",
-        "probable_cause": "Viper is crashing",
-        "suggested_remediation": "Make sure viper is configured properly"
-      },
       "11056": {
         "name": "ErrViperCode",
         "code": "11056",
@@ -531,6 +540,24 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11072": {
+        "name": "ErrInvalidSizeFileCode",
+        "code": "11072",
+        "severity": "Alert",
+        "long_description": "Could not read the file while walking the repo",
+        "short_description": "",
+        "probable_cause": "Given file size is either 0 or exceeds the limit of 50 MB",
+        "suggested_remediation": ""
+      },
+      "11073": {
+        "name": "ErrCloningRepoCode",
+        "code": "11073",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "could not clone the repo",
         "probable_cause": "",
         "suggested_remediation": ""
       }

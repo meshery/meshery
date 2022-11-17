@@ -43,6 +43,7 @@ func loop(reader *bufio.Reader, events chan Event) {
 			fmt.Fprintf(os.Stderr, "error during resp.Body read:%s\n", err)
 
 			close(events)
+			return
 		}
 
 		switch {
@@ -88,21 +89,9 @@ func loop(reader *bufio.Reader, events chan Event) {
 
 		default:
 			close(events)
+			return
 		}
 	}
-}
-
-func get(rawurl string) (*http.Response, error) {
-	resp, err := http.Get(rawurl)
-	if err != nil {
-		return nil, err
-	}
-
-	if resp.StatusCode != 200 {
-		return nil, fmt.Errorf("got response status code %d", resp.StatusCode)
-	}
-
-	return resp, nil
 }
 
 func hasPrefix(s []byte, prefix string) bool {

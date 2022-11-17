@@ -1,6 +1,6 @@
 <header>
   <nav class="js-navbar-scroll navbar navbar-expand navbar-dark flex-column flex-md-row td-navbar">
-    <a class="navbar-brand" href="{{ site.baseurl }}/">
+    <a class="navbar-brand" href="{{ site.baseurl }}/{{linkUrlSelected}}">
       <div class="navbar-logo">
         {% include meshery-logo-text.svg %}<span class="font-weight-bold" style="vertical-align: bottom"
           >{{ site.title }}</span
@@ -15,16 +15,38 @@
       </li>{% endif %}  -->
 
         <!-- Internal links -->
-        {% for link in site.data.navigation %}
-        <li class="nav-item mr-4 mb-2 mb-lg-0">
-          <a
-            class="nav-link"
-            href="{% if link.url %}{{ site.baseurl }}/{{ link.url }}{% else %}{{ link.external_url }}{% endif %}"
-            ><span>{{ link.title }}</span></a
-          >
-        </li>
+        {% for link in site.data.navigation %} 
+            <li class="nav-item mr-4 mb-2 mb-lg-0">
+              <a
+                class="nav-link"
+                href="{% if link.url %}{{ site.baseurl }}/{{ link.url }}{% else %}{{ link.external_url }}{% endif %}"
+                ><span>{{ link.title }}</span></a
+              >
+            </li>
         {% endfor %}
-      </ul>
+
+        <!--Version Selector -->
+
+        <select onchange="window.location=this.value" class="appearance-none flex-1 w-full px-0 py-1 placeholder-gray-900 tracking-wide focus:outline-none version-selector" name="versioningSelection" id="versioningSelection">
+          <!-- <option value="">Versions</option> -->
+          {% assign versions = site.data.versions  %}
+
+          {% for link in versions%}
+          {%- capture linkUrl -%}/{{link.url}}/{%- endcapture -%}
+          <!-- we get the version selected, and put it to the right option  -->
+          {%- if page.url==linkUrl or page.url contains linkUrl -%}
+            {%- assign optionSelected = "selected" -%}
+            {%- assign linkUrlSelected = linkUrl -%}
+          {%- else -%}
+            {%- assign optionSelected = "" -%}
+          {%- endif -%}
+          <option {{optionSelected}} value="{% if link.url %}{{ site.baseurl }}/{{ link.url }}{% endif %}" class="nav-item mr-4 mb-2 mb-lg-0 text-black">
+            <span>{{ link.version }}</span>
+          </option>
+          {% endfor %}
+          </select>
+    
+        </ul>
     </div>
 
     <!--Search Bar

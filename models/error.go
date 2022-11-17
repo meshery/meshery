@@ -9,97 +9,128 @@ import (
 )
 
 const (
-	ErrGrafanaClientCode          = "2073"
-	ErrPageSizeCode               = "2074"
-	ErrPageNumberCode             = "2075"
-	ErrResultIDCode               = "2076"
-	ErrPerfIDCode                 = "2077"
-	ErrMarshalCode                = "2078"
-	ErrUnmarshalCode              = "2079"
-	ErrGenerateUUIDCode           = "2080"
-	ErrLocalProviderSupportCode   = "2081"
-	ErrGrafanaOrgCode             = "2082"
-	ErrGrafanaBoardsCode          = "2083"
-	ErrGrafanaDashboardCode       = "2084"
-	ErrGrafanaDataSourceCode      = "2085"
-	ErrNilQueryCode               = "2086"
-	ErrGrafanaDataCode            = "2087"
-	ErrApplicationFileNameCode    = "2088"
-	ErrFilterFileNameCode         = "2089"
-	ErrPatternFileNameCode        = "2090"
-	ErrMakeDirCode                = "2091"
-	ErrFolderStatCode             = "2092"
-	ErrUserIDCode                 = "2093"
-	ErrDBConnectionCode           = "2094"
-	ErrNilConfigDataCode          = "2095"
-	ErrDBOpenCode                 = "2096"
-	ErrDBRLockCode                = "2097"
-	ErrDBLockCode                 = "2098"
-	ErrDBReadCode                 = "2099"
-	ErrDBDeleteCode               = "2100"
-	ErrCopyCode                   = "2101"
-	ErrDBPutCode                  = "2102"
-	ErrPrometheusGetNodesCode     = "2103"
-	ErrPrometheusLabelSeriesCode  = "2104"
-	ErrPrometheusQueryRangeCode   = "2105"
-	ErrPrometheusStaticBoardCode  = "2106"
-	ErrTokenRefreshCode           = "2107"
-	ErrGetTokenCode               = "2108"
-	ErrDataReadCode               = "2109"
-	ErrTokenDecodeCode            = "2110"
-	ErrNilJWKsCode                = "2111"
-	ErrNilKeysCode                = "2112"
-	ErrTokenExpiredCode           = "2113"
-	ErrTokenClaimsCode            = "2114"
-	ErrTokenClientCheckCode       = "2115"
-	ErrTokenPraseCode             = "2116"
-	ErrJWKsKeysCode               = "2117"
-	ErrDecodeBase64Code           = "2118"
-	ErrMarshalPKIXCode            = "2119"
-	ErrEncodingPEMCode            = "2120"
-	ErrPraseUnverifiedCode        = "2121"
-	ErrEncodingCode               = "2122"
-	ErrFetchCode                  = "2123"
-	ErrPostCode                   = "2124"
-	ErrDeleteCode                 = "2125"
-	ErrInvalidCapabilityCode      = "2126"
-	ErrResultDataCode             = "2127"
-	ErrUnableToPersistsResultCode = "2128"
-	ErrValidURLCode               = "2129"
-	ErrTestEndpointCode           = "2130"
-	ErrLoadgeneratorCode          = "2131"
-	ErrProtocolCode               = "2132"
-	ErrTestClientCode             = "2133"
-	ErrParsingTestCode            = "2134"
-	ErrFieldCode                  = "2135"
-	ErrFetchDataCode              = "2147"
-	ErrIndexOutOfRangeCode        = "2148"
-	ErrSessionCopyCode            = "2149"
+	ErrGrafanaClientCode                  = "2073"
+	ErrPageSizeCode                       = "2074"
+	ErrPageNumberCode                     = "2075"
+	ErrResultIDCode                       = "2076"
+	ErrPerfIDCode                         = "2077"
+	ErrMarshalCode                        = "2078"
+	ErrUnmarshalCode                      = "2079"
+	ErrGenerateUUIDCode                   = "2080"
+	ErrLocalProviderSupportCode           = "2081"
+	ErrGrafanaOrgCode                     = "2082"
+	ErrGrafanaBoardsCode                  = "2083"
+	ErrGrafanaDashboardCode               = "2084"
+	ErrGrafanaDataSourceCode              = "2085"
+	ErrNilQueryCode                       = "2086"
+	ErrGrafanaDataCode                    = "2087"
+	ErrApplicationFileNameCode            = "2088"
+	ErrFilterFileNameCode                 = "2089"
+	ErrPatternFileNameCode                = "2090"
+	ErrMakeDirCode                        = "2091"
+	ErrFolderStatCode                     = "2092"
+	ErrUserIDCode                         = "2093"
+	ErrDBConnectionCode                   = "2094"
+	ErrNilConfigDataCode                  = "2095"
+	ErrDBOpenCode                         = "2096"
+	ErrDBRLockCode                        = "2097"
+	ErrDBLockCode                         = "2098"
+	ErrDBReadCode                         = "2099"
+	ErrDBDeleteCode                       = "2100"
+	ErrCopyCode                           = "2101"
+	ErrDBPutCode                          = "2102"
+	ErrPrometheusGetNodesCode             = "2103"
+	ErrPrometheusLabelSeriesCode          = "2104"
+	ErrPrometheusQueryRangeCode           = "2105"
+	ErrPrometheusStaticBoardCode          = "2106"
+	ErrTokenRefreshCode                   = "2107"
+	ErrGetTokenCode                       = "2108"
+	ErrDataReadCode                       = "2109"
+	ErrTokenDecodeCode                    = "2110"
+	ErrNilJWKsCode                        = "2111"
+	ErrNilKeysCode                        = "2112"
+	ErrTokenExpiredCode                   = "2113"
+	ErrTokenClaimsCode                    = "2114"
+	ErrTokenClientCheckCode               = "2115"
+	ErrTokenPraseCode                     = "2116"
+	ErrJWKsKeysCode                       = "2117"
+	ErrDecodeBase64Code                   = "2118"
+	ErrMarshalPKIXCode                    = "2119"
+	ErrEncodingPEMCode                    = "2120"
+	ErrPraseUnverifiedCode                = "2121"
+	ErrEncodingCode                       = "2122"
+	ErrFetchCode                          = "2123"
+	ErrPostCode                           = "2124"
+	ErrDeleteCode                         = "2125"
+	ErrInvalidCapabilityCode              = "2126"
+	ErrResultDataCode                     = "2127"
+	ErrUnableToPersistsResultCode         = "2128"
+	ErrValidURLCode                       = "2129"
+	ErrTestEndpointCode                   = "2130"
+	ErrLoadgeneratorCode                  = "2131"
+	ErrProtocolCode                       = "2132"
+	ErrTestClientCode                     = "2133"
+	ErrParsingTestCode                    = "2134"
+	ErrFieldCode                          = "2135"
+	ErrFetchDataCode                      = "2147"
+	ErrIndexOutOfRangeCode                = "2148"
+	ErrSessionCopyCode                    = "2149"
+	ErrSavingSeededComponentsCode         = "2215"
+	ErrGettingSeededComponentsCode        = "2216"
+	ErrDownloadingSeededComponentsCode    = "2217"
+	ErrContextIDCode                      = "2218"
+	ErrMesheryInstanceIDCode              = "2219"
+	ErrMesheryNotInClusterCode            = "2220"
+	ErrBrokerNotFoundCode                 = "2235"
+	ErrCreateOperatorDeploymentConfigCode = "2236"
+	ErrRequestMeshsyncStoreCode           = "2237"
+	ErrBrokerSubscriptionCode             = "2238"
+	ErrContextAlreadyPersistedCode        = "2241"
 )
 
 var (
-	ErrResultID             = errors.New(ErrResultIDCode, errors.Alert, []string{"Given resultID is not valid"}, []string{"Given resultID is nil"}, []string{}, []string{})
-	ErrLocalProviderSupport = errors.New(ErrLocalProviderSupportCode, errors.Alert, []string{"Method not supported by local provider"}, []string{}, []string{}, []string{})
-	ErrNilQuery             = errors.New(ErrNilQueryCode, errors.Alert, []string{"Query data passed is nil"}, []string{}, []string{}, []string{})
-	ErrApplicationFileName  = errors.New(ErrApplicationFileNameCode, errors.Alert, []string{"Invalid Applicationfile"}, []string{"Name field is either not present or is not valid"}, []string{}, []string{})
-	ErrFilterFileName       = errors.New(ErrFilterFileNameCode, errors.Alert, []string{"Invalid Filterfile"}, []string{"Name field is either not present or is not valid"}, []string{}, []string{})
-	ErrPatternFileName      = errors.New(ErrPatternFileNameCode, errors.Alert, []string{"Invalid Patternfile"}, []string{"Name field is either not present or is not valid"}, []string{}, []string{})
-	ErrUserID               = errors.New(ErrUserIDCode, errors.Alert, []string{"User ID is empty"}, []string{}, []string{}, []string{})
-	ErrDBConnection         = errors.New(ErrDBConnectionCode, errors.Alert, []string{"Connection to DataBase does not exist"}, []string{}, []string{}, []string{})
-	ErrNilConfigData        = errors.New(ErrNilConfigDataCode, errors.Alert, []string{"Given config data is nil"}, []string{}, []string{}, []string{})
-	ErrNilJWKs              = errors.New(ErrNilJWKsCode, errors.Alert, []string{"Invalid JWks"}, []string{"Value of JWKs is nil"}, []string{}, []string{})
-	ErrNilKeys              = errors.New(ErrNilKeysCode, errors.Alert, []string{"Key not found"}, []string{"JWK not found for the given KeyID"}, []string{}, []string{})
-	ErrTokenExpired         = errors.New(ErrTokenExpiredCode, errors.Alert, []string{"Token has expired"}, []string{"Token is invalid, it has expired"}, []string{}, []string{})
-	ErrTokenClaims          = errors.New(ErrTokenClaimsCode, errors.Alert, []string{"Error occurred while prasing claims"}, []string{}, []string{}, []string{})
-	ErrValidURL             = errors.New(ErrValidURLCode, errors.Alert, []string{"Enter valid URLs"}, []string{}, []string{}, []string{})
-	ErrTestEndpoint         = errors.New(ErrTestEndpointCode, errors.Alert, []string{"minimum one test endpoint needs to be specified"}, []string{}, []string{}, []string{})
-	ErrLoadgenerator        = errors.New(ErrLoadgeneratorCode, errors.Alert, []string{"specify valid Loadgenerator"}, []string{}, []string{}, []string{})
-	ErrProtocol             = errors.New(ErrProtocolCode, errors.Alert, []string{"specify the Protocol for all clients"}, []string{}, []string{}, []string{})
-	ErrTestClient           = errors.New(ErrTestClientCode, errors.Alert, []string{"minimum one test client needs to be specified"}, []string{}, []string{}, []string{})
-	ErrParsingTest          = errors.New(ErrParsingTestCode, errors.Alert, []string{"error parsing test duration, please refer to: https://docs.meshery.io/guides/mesheryctl#performance-management"}, []string{}, []string{}, []string{})
-	ErrField                = errors.New(ErrFieldCode, errors.Alert, []string{"Error: name field is blank"}, []string{}, []string{}, []string{})
-	ErrIndexOutOfRange      = errors.New(ErrIndexOutOfRangeCode, errors.Alert, []string{"Error: index out of range"}, []string{}, []string{}, []string{})
+	ErrResultID                = errors.New(ErrResultIDCode, errors.Alert, []string{"Given resultID is not valid"}, []string{"Given resultID is nil"}, []string{}, []string{})
+	ErrLocalProviderSupport    = errors.New(ErrLocalProviderSupportCode, errors.Alert, []string{"Method not supported by local provider"}, []string{}, []string{}, []string{})
+	ErrNilQuery                = errors.New(ErrNilQueryCode, errors.Alert, []string{"Query data passed is nil"}, []string{}, []string{}, []string{})
+	ErrApplicationFileName     = errors.New(ErrApplicationFileNameCode, errors.Alert, []string{"Invalid Applicationfile"}, []string{"Name field is either not present or is not valid"}, []string{}, []string{})
+	ErrFilterFileName          = errors.New(ErrFilterFileNameCode, errors.Alert, []string{"Invalid Filterfile"}, []string{"Name field is either not present or is not valid"}, []string{}, []string{})
+	ErrPatternFileName         = errors.New(ErrPatternFileNameCode, errors.Alert, []string{"Invalid Patternfile"}, []string{"Name field is either not present or is not valid"}, []string{}, []string{})
+	ErrUserID                  = errors.New(ErrUserIDCode, errors.Alert, []string{"User ID is empty"}, []string{}, []string{}, []string{})
+	ErrDBConnection            = errors.New(ErrDBConnectionCode, errors.Alert, []string{"Connection to DataBase does not exist"}, []string{}, []string{}, []string{})
+	ErrNilConfigData           = errors.New(ErrNilConfigDataCode, errors.Alert, []string{"Given config data is nil"}, []string{}, []string{}, []string{})
+	ErrNilJWKs                 = errors.New(ErrNilJWKsCode, errors.Alert, []string{"Invalid JWks"}, []string{"Value of JWKs is nil"}, []string{}, []string{})
+	ErrNilKeys                 = errors.New(ErrNilKeysCode, errors.Alert, []string{"Key not found"}, []string{"JWK not found for the given KeyID"}, []string{}, []string{})
+	ErrTokenExpired            = errors.New(ErrTokenExpiredCode, errors.Alert, []string{"Token has expired"}, []string{"Token is invalid, it has expired"}, []string{}, []string{})
+	ErrTokenClaims             = errors.New(ErrTokenClaimsCode, errors.Alert, []string{"Error occurred while prasing claims"}, []string{}, []string{}, []string{})
+	ErrValidURL                = errors.New(ErrValidURLCode, errors.Alert, []string{"Enter valid URLs"}, []string{}, []string{}, []string{})
+	ErrTestEndpoint            = errors.New(ErrTestEndpointCode, errors.Alert, []string{"minimum one test endpoint needs to be specified"}, []string{}, []string{}, []string{})
+	ErrLoadgenerator           = errors.New(ErrLoadgeneratorCode, errors.Alert, []string{"specify valid Loadgenerator"}, []string{}, []string{}, []string{})
+	ErrProtocol                = errors.New(ErrProtocolCode, errors.Alert, []string{"specify the Protocol for all clients"}, []string{}, []string{}, []string{})
+	ErrTestClient              = errors.New(ErrTestClientCode, errors.Alert, []string{"minimum one test client needs to be specified"}, []string{}, []string{}, []string{})
+	ErrParsingTest             = errors.New(ErrParsingTestCode, errors.Alert, []string{"error parsing test duration, please refer to: https://docs.meshery.io/guides/mesheryctl#performance-management"}, []string{}, []string{}, []string{})
+	ErrField                   = errors.New(ErrFieldCode, errors.Alert, []string{"Error: name field is blank"}, []string{}, []string{}, []string{})
+	ErrIndexOutOfRange         = errors.New(ErrIndexOutOfRangeCode, errors.Alert, []string{"Error: index out of range"}, []string{}, []string{}, []string{})
+	ErrContextID               = errors.New(ErrContextIDCode, errors.Alert, []string{"Error: Context ID is empty"}, []string{}, []string{}, []string{})
+	ErrMesheryInstanceID       = errors.New(ErrMesheryInstanceIDCode, errors.Alert, []string{"Error: Meshery Instance ID is empty or is invalid"}, []string{}, []string{}, []string{})
+	ErrMesheryNotInCluster     = errors.New(ErrMesheryNotInClusterCode, errors.Alert, []string{"Error: Meshery is not running inside a cluster"}, []string{}, []string{}, []string{})
+	ErrContextAlreadyPersisted = errors.New(ErrContextAlreadyPersistedCode, errors.Alert, []string{"kubernetes context already persisted with provider"}, []string{"kubernetes context already persisted with provider"}, []string{}, []string{})
 )
+
+func ErrBrokerSubscription(err error) error {
+	return errors.New(ErrBrokerSubscriptionCode, errors.Alert, []string{"Could not subscribe to the broker subject"}, []string{"", err.Error()}, []string{""}, []string{"Make sure meshery broker is healthy"})
+}
+
+func ErrRequestMeshsyncStore(err error) error {
+	return errors.New(ErrRequestMeshsyncStoreCode, errors.Alert, []string{"Meshsync store request could not be issued"}, []string{"", err.Error()}, []string{""}, []string{"Make sure meshery broker is healthy"})
+}
+
+func ErrCreateOperatorDeploymentConfig(err error) error {
+	return errors.New(ErrCreateOperatorDeploymentConfigCode, errors.Alert, []string{"Operator deployment configuration could not be created."}, []string{"", err.Error()}, []string{""}, []string{""})
+}
+
+func ErrBrokerNotFound(err error) error {
+	return errors.New(ErrBrokerNotFoundCode, errors.Alert, []string{"Meshery broker not found"}, []string{"Unable to find meshery broker in the cluster", err.Error()}, []string{"Invalid Grafana Endpoint or API-Key"}, []string{"Update your Grafana URL and API-Key from the settings page in the UI"})
+}
 
 func ErrGrafanaClient(err error) error {
 	return errors.New(ErrGrafanaClientCode, errors.Alert, []string{"Unable to initialize Grafana Client"}, []string{"Unable to initializes client for interacting with an instance of Grafana server", err.Error()}, []string{"Invalid Grafana Endpoint or API-Key"}, []string{"Update your Grafana URL and API-Key from the settings page in the UI"})
@@ -279,4 +310,16 @@ func ErrFetchData(err error) error {
 
 func ErrSessionCopy(err error) error {
 	return errors.New(ErrSessionCopyCode, errors.Alert, []string{"Error: session copy error"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrGettingSeededComponents(err error, content string) error {
+	return errors.New(ErrGettingSeededComponentsCode, errors.Alert, []string{"Error while getting ", content, " from sample content"}, []string{err.Error()}, []string{"Sample content does not exist.\nContent file format not supported.\nUser doesn't have permission to read sample content.\nContent file corrupt."}, []string{"Try restarting Meshery.\nTry fetching content again."})
+}
+
+func ErrSavingSeededComponents(err error, content string) error {
+	return errors.New(ErrSavingSeededComponentsCode, errors.Alert, []string{"Error while saving sample ", content}, []string{err.Error()}, []string{"User doesn't have permission to save content.\nDatabase unreachable.\nDatabase locked or corrupt.\nContent unsupported."}, []string{"Retry fetching content\nRetry sigining in\nLogin with correct user account\nRetry after deleting '~/.meshery/config'."})
+}
+
+func ErrDownloadingSeededComponents(err error, content string) error {
+	return errors.New(ErrDownloadingSeededComponentsCode, errors.Alert, []string{"Could not download seed content for" + content}, []string{err.Error()}, []string{"The content is not present at the specified url endpoint", "HTTP requests failed"}, []string{"Make sure the content is available at the endpoints", "Make sure that Github is reachable and the http requests are not failing"})
 }

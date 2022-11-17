@@ -1,39 +1,40 @@
 contexts:
-  local:
-    endpoint: http://localhost:9081
-    token: Default
-    platform: kubernetes
-    adapters:
-    - meshery-istio
-    channel: stable
-    version: latest
-  local2:
-    endpoint: http://localhost:32242
-    token: Default2
-    platform: docker
-    adapters:
-    - meshery-istio
-    channel: stable
-    version: latest
-  local3:
-    endpoint: http://localhost:9081
-    token: Default
-    platform: docker
-    adapters:
-    - meshery-istio
-    - meshery-linkerd
-    - meshery-consul
-    - meshery-nsm
-    - meshery-kuma
-    - meshery-cpx
-    - meshery-osm
-    - meshery-traefik-mesh
-    - meshery-nginx-sm
-    channel: stable
-    version: latest
+    local:
+        endpoint: http://localhost:9081
+        token: Default
+        platform: kubernetes
+        components:
+            - meshery-istio
+        channel: stable
+        version: latest
+    local2:
+        endpoint: http://localhost:32242
+        token: Default2
+        platform: docker
+        components:
+            - meshery-istio
+        channel: stable
+        version: latest
+    local3:
+        endpoint: http://localhost:9081
+        token: Default
+        platform: kubernetes
+        components:
+            - meshery-app-mesh
+            - meshery-istio
+            - meshery-linkerd
+            - meshery-consul
+            - meshery-nsm
+            - meshery-kuma
+            - meshery-osm
+            - meshery-traefik-mesh
+            - meshery-nginx-sm
+            - meshery-cilium
+        channel: stable
+        version: latest
 current-context: local
 tokens:
-- name: Default
-  location: auth.json
-- name: Default2
-  location: auth.json
+    - name: Default
+      location: auth.json
+    - name: Default2
+      location: auth.json

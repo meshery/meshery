@@ -5,6 +5,7 @@ RELEASE_CHANNEL="edge"
 LDFLAGS="-w -s -X github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants.version=${GIT_VERSION} -X github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants.commitsha=${GIT_COMMITSHA} -X github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants.releasechannel=${RELEASE_CHANNEL}"
 
 make:
+	gofmt -l -s -w .
 	go build -ldflags=${LDFLAGS} -o mesheryctl cmd/mesheryctl/main.go
 forwin:
 	go build -ldflags=${LDFLAGS} -o mesheryctl.exe cmd/mesheryctl/main.go

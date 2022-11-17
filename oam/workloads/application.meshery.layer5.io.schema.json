@@ -10,8 +10,10 @@
     "advanced": {
       "type": "object",
       "properties": {
-        "skip_service": {
-          "type": "boolean"
+        "create_service": {
+          "type": "boolean",
+          "title": "Expose as a Service",
+          "default": true
         },
         "labels": {
           "type": "object",
@@ -39,6 +41,12 @@
           },
           "image": {
             "type": "string"
+          },
+          "commands": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           },
           "ports": {
             "type": "array",

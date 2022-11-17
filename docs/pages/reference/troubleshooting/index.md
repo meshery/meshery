@@ -20,5 +20,12 @@ Troubleshooting guides to using Meshery's various features and components.
 
 #### See Also
 
-- [Error Code Reference](/reference/error-codes)
+<div class="section">
+<ul>
+<li><a href="{{ site.baseurl }}/reference/error-codes">Meshery Error Code Reference</a></li>
+</ul>
+.
+</div> 
+
+{% include discuss.html %}
 <!-- {:toc} -->

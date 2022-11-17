@@ -1,14 +1,8 @@
 const { createServer } = require('http');
 const { parse } = require('url');
 const next = require('next');
-const detect = require('detect-port');
 
-var port = parseInt(process.env.PORT, 10) || 4002
-detect(port, (err, _port) => {
-  while (port !== _port) {
-    port = port + 1;
-  }
-})
+const port = parseInt(process.env.PORT, 10) || 3001;
 const dev = process.env.NODE_ENV !== 'production';
 const app = next({ dev });
 const handle = app.getRequestHandler();

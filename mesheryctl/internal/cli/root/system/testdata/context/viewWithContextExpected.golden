@@ -5,7 +5,7 @@ endpoint: http://localhost:32242
 token: Default2
 token-location: auth.json
 platform: docker
-adapters:
+components:
 - meshery-istio
 channel: stable
 version: latest

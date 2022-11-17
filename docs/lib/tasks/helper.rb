@@ -127,7 +127,7 @@ module Graphql
           render_input_type(field),
           render_connection_note(field),
           render_argument_table(heading_level, args, arg_owner),
-          render_return_fields(field, owner: owner)
+          render_return_fields(field)
         ]
 
         join(:block, chunks)
@@ -291,7 +291,7 @@ module Graphql
         )
       end
 
-      def render_return_fields(mutation, owner:)
+      def render_return_fields(mutation)
         fields = mutation[:return_fields]
         return if fields.blank?
 
@@ -347,7 +347,7 @@ module Graphql
                   "The connection type for [`#{base}`](##{base.downcase})."
                 else
                   object[:description]&.strip
-                end
+               end
 
         return if desc.blank?
 

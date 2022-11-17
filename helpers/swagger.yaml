@@ -3,6 +3,40 @@ consumes:
 - application/json
 - multipart/form-data
 definitions:
+  AccountExtension:
+    description: AccountExtension describes the Account extension point in the UI
+    properties:
+      children:
+        $ref: '#/definitions/AccountExtensions'
+      component:
+        type: string
+        x-go-name: Component
+      href:
+        $ref: '#/definitions/Href'
+      link:
+        type: boolean
+        x-go-name: Link
+      on_click_callback:
+        format: int64
+        type: integer
+        x-go-name: OnClickCallback
+      show:
+        type: boolean
+        x-go-name: Show
+      title:
+        type: string
+        x-go-name: Title
+      type:
+        type: string
+        x-go-name: Type
+    type: object
+    x-go-package: github.com/layer5io/meshery/models
+  AccountExtensions:
+    description: NavigatorExtensions is a collection of NavigatorExtension
+    items:
+      $ref: '#/definitions/AccountExtension'
+    type: array
+    x-go-package: github.com/layer5io/meshery/models
   Adapter:
     description: Adapter represents an adapter in Meshery
     properties:
@@ -330,6 +364,78 @@ definitions:
         x-go-name: ValueMaps
     type: object
     x-go-package: github.com/grafana-tools/sdk
+  Condition:
+    description: |-
+      This struct is intended for direct use as an array at the field path .status.conditions.  For example,
+      type FooStatus struct{
+      Represents the observations of a foo's current state.
+      Known .status.conditions.type are: "Available", "Progressing", and "Degraded"
+      +patchMergeKey=type
+      +patchStrategy=merge
+      +listType=map
+      +listMapKey=type
+      Conditions []metav1.Condition `json:"conditions,omitempty" patchStrategy:"merge" patchMergeKey:"type" protobuf:"bytes,1,rep,name=conditions"`
+
+      other fields
+      }
+    properties:
+      lastTransitionTime:
+        $ref: '#/definitions/Time'
+      message:
+        description: |-
+          message is a human readable message indicating details about the transition.
+          This may be an empty string.
+          +required
+          +kubebuilder:validation:Required
+          +kubebuilder:validation:MaxLength=32768
+        type: string
+        x-go-name: Message
+      observedGeneration:
+        description: |-
+          observedGeneration represents the .metadata.generation that the condition was set based upon.
+          For instance, if .metadata.generation is currently 12, but the .status.conditions[x].observedGeneration is 9, the condition is out of date
+          with respect to the current state of the instance.
+          +optional
+          +kubebuilder:validation:Minimum=0
+        format: int64
+        type: integer
+        x-go-name: ObservedGeneration
+      reason:
+        description: |-
+          reason contains a programmatic identifier indicating the reason for the condition's last transition.
+          Producers of specific condition types may define expected values and meanings for this field,
+          and whether the values are considered a guaranteed API.
+          The value should be a CamelCase string.
+          This field may not be empty.
+          +required
+          +kubebuilder:validation:Required
+          +kubebuilder:validation:MaxLength=1024
+          +kubebuilder:validation:MinLength=1
+          +kubebuilder:validation:Pattern=`^[A-Za-z]([A-Za-z0-9_,:]*[A-Za-z0-9_])?$`
+        type: string
+        x-go-name: Reason
+      status:
+        $ref: '#/definitions/ConditionStatus'
+      type:
+        description: |-
+          type of condition in CamelCase or in foo.example.com/CamelCase.
+
+          Many .condition.type values are consistent across resources like Available, but because arbitrary conditions can be
+          useful (see .node.status.conditions), the ability to deconflict is important.
+          The regex it matches is (dns1123SubdomainFmt/)?(qualifiedNameFmt)
+          +required
+          +kubebuilder:validation:Required
+          +kubebuilder:validation:Pattern=`^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$`
+          +kubebuilder:validation:MaxLength=316
+        type: string
+        x-go-name: Type
+    title: Condition contains details for one aspect of the current state of this
+      API Resource.
+    type: object
+    x-go-package: k8s.io/apimachinery/pkg/apis/meta/v1
+  ConditionStatus:
+    type: string
+    x-go-package: k8s.io/apimachinery/pkg/apis/meta/v1
   ContainerChangeResponseItem:
     description: ContainerChangeResponseItem change item in response to ContainerChanges
       operation
@@ -367,8 +473,9 @@ definitions:
     description: ContainerTopOKBody OK response to ContainerTop operation
     properties:
       Processes:
-        description: Each process running in the container, where each is process
-          is an array of values corresponding to the titles
+        description: |-
+          Each process running in the container, where each is process
+          is an array of values corresponding to the titles.
         items:
           items:
             type: string
@@ -432,6 +539,8 @@ definitions:
   Extensions:
     description: Extensions defines the UI extension points
     properties:
+      account:
+        $ref: '#/definitions/AccountExtensions'
       graphql:
         $ref: '#/definitions/GraphQLExtensions'
       navigator:
@@ -485,6 +594,7 @@ definitions:
       If a key maps to an empty Fields value, the field that key represents is part of the set.
 
       The exact format is defined in sigs.k8s.io/structured-merge-diff
+      +protobuf.options.(gogoproto.goproto_stringer)=false
     title: FieldsV1 stores a set of fields in a data structure like a Trie, in JSON
       format.
     type: object
@@ -662,6 +772,9 @@ definitions:
       path:
         type: string
         x-go-name: Path
+      type:
+        type: string
+        x-go-name: Type
     type: object
     x-go-package: github.com/layer5io/meshery/models
   GraphQLExtensions:
@@ -720,7 +833,14 @@ definitions:
   IPFamily:
     description: |-
       IPFamily represents the IP Family (IPv4 or IPv6). This type is used
-      to express the family of an IP expressed by a type (i.e. service.Spec.IPFamily)
+      to express the family of an IP expressed by a type (e.g. service.spec.ipFamilies).
+      +enum
+    type: string
+    x-go-package: k8s.io/api/core/v1
+  IPFamilyPolicyType:
+    description: |-
+      IPFamilyPolicyType represents the dual-stack-ness requested or required by a Service
+      +enum
     type: string
     x-go-package: k8s.io/api/core/v1
   IdResponse:
@@ -837,96 +957,6 @@ definitions:
       or ints: 100 or "100"'
     type: object
     x-go-package: github.com/grafana-tools/sdk
-  K8SConfig:
-    description: K8SConfig represents all the k8s session config
-    properties:
-      clusterConfigured:
-        type: boolean
-        x-go-name: ClusterConfigured
-      config:
-        items:
-          format: uint8
-          type: integer
-        type: array
-        x-go-name: Config
-      configuredServer:
-        type: string
-        x-go-name: Server
-      contextName:
-        type: string
-        x-go-name: ContextName
-      inClusterConfig:
-        type: boolean
-        x-go-name: InClusterConfig
-      k8sfile:
-        type: string
-        x-go-name: K8Sfile
-      nodes:
-        items:
-          $ref: '#/definitions/K8SNode'
-        type: array
-        x-go-name: Nodes
-      server_version:
-        type: string
-        x-go-name: ServerVersion
-    type: object
-    x-go-package: github.com/layer5io/meshery/models
-  K8SContext:
-    description: K8SContext is just used to send contexts to the UI
-    properties:
-      clusterName:
-        type: string
-        x-go-name: ClusterName
-      contextName:
-        type: string
-        x-go-name: ContextName
-      currentContext:
-        description: ContextDisplayName string `json:"context-display-name"`
-        type: boolean
-        x-go-name: IsCurrentContext
-    type: object
-    x-go-package: github.com/layer5io/meshery/models
-  K8SNode:
-    description: K8SNode - represents a kubernetes node
-    properties:
-      allocatable_cpu:
-        type: string
-        x-go-name: AllocatableCPU
-      allocatable_memory:
-        type: string
-        x-go-name: AllocatableMemory
-      architecture:
-        type: string
-        x-go-name: Architecture
-      capacity_cpu:
-        type: string
-        x-go-name: CapacityCPU
-      capacity_memory:
-        type: string
-        x-go-name: CapacityMemory
-      container_runtime_version:
-        type: string
-        x-go-name: ContainerRuntimeVersion
-      hostname:
-        type: string
-        x-go-name: HostName
-      internal_ip:
-        type: string
-        x-go-name: InternalIP
-      kubelet_version:
-        type: string
-        x-go-name: KubeletVersion
-      kubeproxy_version:
-        type: string
-        x-go-name: KubeProxyVersion
-      operating_system:
-        type: string
-        x-go-name: OperatingSystem
-      os_image:
-        type: string
-        x-go-name: OSImage
-    type: object
-    x-go-package: github.com/layer5io/meshery/models
   LatenciesMs:
     description: LatenciesMs - represents a collection of important latencies
     properties:
@@ -1054,6 +1084,16 @@ definitions:
           +optional
         type: string
         x-go-name: IP
+      ports:
+        description: |-
+          Ports is a list of records of service ports
+          If used, every port defined in the service should have an entry in it
+          +listType=atomic
+          +optional
+        items:
+          $ref: '#/definitions/PortStatus'
+        type: array
+        x-go-name: Ports
     title: 'LoadBalancerIngress represents the status of a load-balancer ingress point:'
     type: object
     x-go-package: k8s.io/api/core/v1
@@ -1117,6 +1157,17 @@ definitions:
         x-go-name: Manager
       operation:
         $ref: '#/definitions/ManagedFieldsOperationType'
+      subresource:
+        description: |-
+          Subresource is the name of the subresource used to update that object, or
+          empty string if the object was updated through the main resource. The
+          value of this field is used to distinguish between managers, even if they
+          share the same name. For example, a status update will be distinct from a
+          regular update using the same manager name.
+          Note that the APIVersion field is not related to the Subresource field and
+          it always corresponds to the version of the main resource.
+        type: string
+        x-go-name: Subresource
       time:
         $ref: '#/definitions/Time'
     type: object
@@ -1164,6 +1215,14 @@ definitions:
       name:
         type: string
         x-go-name: Name
+      source_content:
+        items:
+          format: uint8
+          type: integer
+        type: array
+        x-go-name: SourceContent
+      type:
+        $ref: '#/definitions/NullString'
       updated_at:
         format: date-time
         type: string
@@ -1251,12 +1310,19 @@ definitions:
       link:
         type: boolean
         x-go-name: Link
+      on_click_callback:
+        format: int64
+        type: integer
+        x-go-name: OnClickCallback
       show:
         type: boolean
         x-go-name: Show
       title:
         type: string
         x-go-name: Title
+      type:
+        type: string
+        x-go-name: Type
     type: object
     x-go-package: github.com/layer5io/meshery/models
   NavigatorExtensions:
@@ -1265,6 +1331,27 @@ definitions:
       $ref: '#/definitions/NavigatorExtension'
     type: array
     x-go-package: github.com/layer5io/meshery/models
+  NullString:
+    description: |-
+      var s NullString
+      err := db.QueryRow("SELECT name FROM foo WHERE id=?", id).Scan(&s)
+      ...
+      if s.Valid {
+      use s.String
+      } else {
+      NULL value
+      }
+    properties:
+      String:
+        type: string
+      Valid:
+        type: boolean
+    title: |-
+      NullString represents a string that may be null.
+      NullString implements the Scanner interface so
+      it can be used as a scan destination:
+    type: object
+    x-go-package: database/sql
   OpCategory:
     format: int32
     type: integer
@@ -1317,6 +1404,7 @@ definitions:
       OwnerReference contains enough information to let you identify an owning
       object. An owning object must be in the same namespace as the dependent, or
       be cluster-scoped, so there is no namespace field.
+      +structType=atomic
     properties:
       apiVersion:
         description: API version of the referent.
@@ -1327,6 +1415,8 @@ definitions:
           If true, AND if the owner has the "foregroundDeletion" finalizer, then
           the owner cannot be deleted from the key-value store until this
           reference is removed.
+          See https://kubernetes.io/docs/concepts/architecture/garbage-collection/#foreground-deletion
+          for how the garbage collector interacts with this field and enforces the foreground deletion.
           Defaults to false.
           To set this field, a user needs "delete" permission of the owner,
           otherwise 422 (Unprocessable Entity) will be returned.
@@ -2530,6 +2620,34 @@ definitions:
     - Type
     type: object
     x-go-package: github.com/docker/docker/api/types
+  PortStatus:
+    properties:
+      error:
+        description: |-
+          Error is to record the problem with the service port
+          The format of the error shall comply with the following rules:
+          built-in error values shall be specified in this file and those shall use
+          CamelCase names
+          cloud provider specific error values must have names that comply with the
+          format foo.example.com/CamelCase.
+
+          The regex it matches is (dns1123SubdomainFmt/)?(qualifiedNameFmt)
+          +optional
+          +kubebuilder:validation:Required
+          +kubebuilder:validation:Pattern=`^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$`
+          +kubebuilder:validation:MaxLength=316
+        type: string
+        x-go-name: Error
+      port:
+        description: Port is the port number of the service port of which status is
+          recorded here
+        format: int32
+        type: integer
+        x-go-name: Port
+      protocol:
+        $ref: '#/definitions/Protocol'
+    type: object
+    x-go-package: k8s.io/api/core/v1
   Preference:
     description: Preference represents the data stored in session / local DB
     properties:
@@ -2541,8 +2659,6 @@ definitions:
         x-go-name: AnonymousUsageStats
       grafana:
         $ref: '#/definitions/Grafana'
-      k8sConfig:
-        $ref: '#/definitions/K8SConfig'
       loadTestPrefs:
         $ref: '#/definitions/LoadTestPreferences'
       meshAdapters:
@@ -2556,6 +2672,11 @@ definitions:
         format: date-time
         type: string
         x-go-name: UpdatedAt
+      usersExtensionPreferences:
+        additionalProperties:
+          type: object
+        type: object
+        x-go-name: UsersExtensionPreferences
     type: object
     x-go-package: github.com/layer5io/meshery/models
   PreferenceParams:
@@ -2583,6 +2704,7 @@ definitions:
     type: object
     x-go-package: github.com/layer5io/meshery/models
   Protocol:
+    description: +enum
     title: Protocol defines network protocols supported for things like container
       ports.
     type: string
@@ -2638,7 +2760,6 @@ definitions:
       ActualDuration:
         format: uint64
         type: integer
-        x-go-name: Duration
       ActualQPS:
         format: double
         type: number
@@ -2667,6 +2788,8 @@ definitions:
               type: object
             type: array
         type: object
+      RequestedDuration:
+        type: string
       StartTime:
         format: date-time
         type: string
@@ -2806,12 +2929,15 @@ definitions:
         x-go-name: APIVersion
       clusterName:
         description: |-
-          The name of the cluster which the object belongs to.
-          This is used to distinguish resources with same name and namespace in different clusters.
-          This field is not set anywhere right now and apiserver is going to ignore it if set in create or update request.
+          Deprecated: ClusterName is a legacy field that was always cleared by
+          the system and never used; it will be removed completely in 1.25.
+
+          The name in the go struct is changed to help clients detect
+          accidental use.
+
           +optional
         type: string
-        x-go-name: ClusterName
+        x-go-name: ZZZ_DeprecatedClusterName
       creationTimestamp:
         $ref: '#/definitions/Time'
       deletionGracePeriodSeconds:
@@ -2857,10 +2983,7 @@ definitions:
           and may be truncated by the length of the suffix required to make the value
           unique on the server.
 
-          If this field is specified and the generated name exists, the server will
-          NOT return a 409 - instead, it will either return 201 Created or 500 with Reason
-          ServerTimeout indicating a unique name could not be found in the time allotted, and the client
-          should retry (optionally after the time indicated in the Retry-After header).
+          If this field is specified and the generated name exists, the server will return a 409.
 
           Applied only if Name is not specified.
           More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#idempotency
@@ -2924,7 +3047,7 @@ definitions:
         x-go-name: Name
       namespace:
         description: |-
-          Namespace defines the space within each name must be unique. An empty namespace is
+          Namespace defines the space within which each name must be unique. An empty namespace is
           equivalent to the "default" namespace, but "default" is the canonical representation.
           Not all objects are required to be scoped to a namespace - the value of this field for
           those objects will be empty.
@@ -2965,13 +3088,7 @@ definitions:
         x-go-name: ResourceVersion
       selfLink:
         description: |-
-          SelfLink is a URL representing this object.
-          Populated by the system.
-          Read-only.
-
-          DEPRECATED
-          Kubernetes will stop propagating this field in 1.20 release and the field is planned
-          to be removed in 1.21 release.
+          Deprecated: selfLink is a legacy read-only field that is no longer populated by the system.
           +optional
         type: string
         x-go-name: SelfLink
@@ -2984,11 +3101,22 @@ definitions:
     type: object
     x-go-package: k8s.io/api/core/v1
   ServiceAffinity:
-    description: Session Affinity Type string
+    description: |-
+      Session Affinity Type string
+      +enum
     type: string
     x-go-package: k8s.io/api/core/v1
   ServiceExternalTrafficPolicyType:
-    description: Service External Traffic Policy Type string
+    description: |-
+      Service External Traffic Policy Type string
+      +enum
+    type: string
+    x-go-package: k8s.io/api/core/v1
+  ServiceInternalTrafficPolicyType:
+    description: |-
+      ServiceInternalTrafficPolicyType describes the type of traffic routing for
+      internal traffic
+      +enum
     type: string
     x-go-package: k8s.io/api/core/v1
   ServicePort:
@@ -2998,10 +3126,9 @@ definitions:
           The application protocol for this port.
           This field follows standard Kubernetes label syntax.
           Un-prefixed names are reserved for IANA standard service names (as per
-          RFC-6335 and http://www.iana.org/assignments/service-names).
+          RFC-6335 and https://www.iana.org/assignments/service-names).
           Non-standard protocols should use prefixed names such as
           mycompany.com/my-custom-protocol.
-          Field can be enabled with ServiceAppProtocol feature gate.
           +optional
         type: string
         x-go-name: AppProtocol
@@ -3017,10 +3144,14 @@ definitions:
         x-go-name: Name
       nodePort:
         description: |-
-          The port on each node on which this service is exposed when type=NodePort or LoadBalancer.
-          Usually assigned by the system. If specified, it will be allocated to the service
-          if unused or else creation of the service will fail.
-          Default is to auto-allocate a port if the ServiceType of this Service requires one.
+          The port on each node on which this service is exposed when type is
+          NodePort or LoadBalancer.  Usually assigned by the system. If a value is
+          specified, in-range, and not in use it will be used, otherwise the
+          operation will fail.  If not specified, a port will be allocated if this
+          Service requires one.  If this field is specified when creating a
+          Service which does not need it, creation will fail. This field will be
+          wiped when updating a Service to no longer need it (e.g. changing type
+          from NodePort to ClusterIP).
           More info: https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport
           +optional
         format: int32
@@ -3040,20 +3171,69 @@ definitions:
     x-go-package: k8s.io/api/core/v1
   ServiceSpec:
     properties:
+      allocateLoadBalancerNodePorts:
+        description: |-
+          allocateLoadBalancerNodePorts defines if NodePorts will be automatically
+          allocated for services with type LoadBalancer.  Default is "true". It
+          may be set to "false" if the cluster load-balancer does not rely on
+          NodePorts.  If the caller requests specific NodePorts (by specifying a
+          value), those requests will be respected, regardless of this field.
+          This field may only be set for services with type LoadBalancer and will
+          be cleared if the type is changed to any other type.
+          +optional
+        type: boolean
+        x-go-name: AllocateLoadBalancerNodePorts
       clusterIP:
         description: |-
           clusterIP is the IP address of the service and is usually assigned
-          randomly by the master. If an address is specified manually and is not in
-          use by others, it will be allocated to the service; otherwise, creation
-          of the service will fail. This field can not be changed through updates.
-          Valid values are "None", empty string (""), or a valid IP address. "None"
-          can be specified for headless services when proxying is not required.
-          Only applies to types ClusterIP, NodePort, and LoadBalancer. Ignored if
-          type is ExternalName.
+          randomly. If an address is specified manually, is in-range (as per
+          system configuration), and is not in use, it will be allocated to the
+          service; otherwise creation of the service will fail. This field may not
+          be changed through updates unless the type field is also being changed
+          to ExternalName (which requires this field to be blank) or the type
+          field is being changed from ExternalName (in which case this field may
+          optionally be specified, as describe above).  Valid values are "None",
+          empty string (""), or a valid IP address. Setting this to "None" makes a
+          "headless service" (no virtual IP), which is useful when direct endpoint
+          connections are preferred and proxying is not required.  Only applies to
+          types ClusterIP, NodePort, and LoadBalancer. If this field is specified
+          when creating a Service of type ExternalName, creation will fail. This
+          field will be wiped when updating a Service to type ExternalName.
           More info: https://kubernetes.io/docs/concepts/services-networking/service/#virtual-ips-and-service-proxies
           +optional
         type: string
         x-go-name: ClusterIP
+      clusterIPs:
+        description: |-
+          ClusterIPs is a list of IP addresses assigned to this service, and are
+          usually assigned randomly.  If an address is specified manually, is
+          in-range (as per system configuration), and is not in use, it will be
+          allocated to the service; otherwise creation of the service will fail.
+          This field may not be changed through updates unless the type field is
+          also being changed to ExternalName (which requires this field to be
+          empty) or the type field is being changed from ExternalName (in which
+          case this field may optionally be specified, as describe above).  Valid
+          values are "None", empty string (""), or a valid IP address.  Setting
+          this to "None" makes a "headless service" (no virtual IP), which is
+          useful when direct endpoint connections are preferred and proxying is
+          not required.  Only applies to types ClusterIP, NodePort, and
+          LoadBalancer. If this field is specified when creating a Service of type
+          ExternalName, creation will fail. This field will be wiped when updating
+          a Service to type ExternalName.  If this field is not specified, it will
+          be initialized from the clusterIP field.  If this field is specified,
+          clients must ensure that clusterIPs[0] and clusterIP have the same
+          value.
+
+          This field may hold a maximum of two entries (dual-stack IPs, in either order).
+          These IPs must correspond to the values of the ipFamilies field. Both
+          clusterIPs and ipFamilies are governed by the ipFamilyPolicy field.
+          More info: https://kubernetes.io/docs/concepts/services-networking/service/#virtual-ips-and-service-proxies
+          +listType=atomic
+          +optional
+        items:
+          type: string
+        type: array
+        x-go-name: ClusterIPs
       externalIPs:
         description: |-
           externalIPs is a list of IP addresses for which nodes in the cluster
@@ -3068,10 +3248,10 @@ definitions:
         x-go-name: ExternalIPs
       externalName:
         description: |-
-          externalName is the external reference that kubedns or equivalent will
-          return as a CNAME record for this service. No proxying will be involved.
-          Must be a valid RFC-1123 hostname (https://tools.ietf.org/html/rfc1123)
-          and requires Type to be ExternalName.
+          externalName is the external reference that discovery mechanisms will
+          return as an alias for this service (e.g. a DNS CNAME record). No
+          proxying will be involved.  Must be a lowercase RFC-1123 hostname
+          (https://tools.ietf.org/html/rfc1123) and requires `type` to be "ExternalName".
           +optional
         type: string
         x-go-name: ExternalName
@@ -3080,23 +3260,72 @@ definitions:
       healthCheckNodePort:
         description: |-
           healthCheckNodePort specifies the healthcheck nodePort for the service.
-          If not specified, HealthCheckNodePort is created by the service api
-          backend with the allocated nodePort. Will use user-specified nodePort value
-          if specified by the client. Only effects when Type is set to LoadBalancer
-          and ExternalTrafficPolicy is set to Local.
+          This only applies when type is set to LoadBalancer and
+          externalTrafficPolicy is set to Local. If a value is specified, is
+          in-range, and is not in use, it will be used.  If not specified, a value
+          will be automatically allocated.  External systems (e.g. load-balancers)
+          can use this port to determine if a given node holds endpoints for this
+          service or not.  If this field is specified when creating a Service
+          which does not need it, creation will fail. This field will be wiped
+          when updating a Service to no longer need it (e.g. changing type).
           +optional
         format: int32
         type: integer
         x-go-name: HealthCheckNodePort
-      ipFamily:
-        $ref: '#/definitions/IPFamily'
+      internalTrafficPolicy:
+        $ref: '#/definitions/ServiceInternalTrafficPolicyType'
+      ipFamilies:
+        description: |-
+          IPFamilies is a list of IP families (e.g. IPv4, IPv6) assigned to this
+          service. This field is usually assigned automatically based on cluster
+          configuration and the ipFamilyPolicy field. If this field is specified
+          manually, the requested family is available in the cluster,
+          and ipFamilyPolicy allows it, it will be used; otherwise creation of
+          the service will fail. This field is conditionally mutable: it allows
+          for adding or removing a secondary IP family, but it does not allow
+          changing the primary IP family of the Service. Valid values are "IPv4"
+          and "IPv6".  This field only applies to Services of types ClusterIP,
+          NodePort, and LoadBalancer, and does apply to "headless" services.
+          This field will be wiped when updating a Service to type ExternalName.
+
+          This field may hold a maximum of two entries (dual-stack families, in
+          either order).  These families must correspond to the values of the
+          clusterIPs field, if specified. Both clusterIPs and ipFamilies are
+          governed by the ipFamilyPolicy field.
+          +listType=atomic
+          +optional
+        items:
+          $ref: '#/definitions/IPFamily'
+        type: array
+        x-go-name: IPFamilies
+      ipFamilyPolicy:
+        $ref: '#/definitions/IPFamilyPolicyType'
+      loadBalancerClass:
+        description: |-
+          loadBalancerClass is the class of the load balancer implementation this Service belongs to.
+          If specified, the value of this field must be a label-style identifier, with an optional prefix,
+          e.g. "internal-vip" or "example.com/internal-vip". Unprefixed names are reserved for end-users.
+          This field can only be set when the Service type is 'LoadBalancer'. If not set, the default load
+          balancer implementation is used, today this is typically done through the cloud provider integration,
+          but should apply for any default implementation. If set, it is assumed that a load balancer
+          implementation is watching for Services with a matching class. Any default load balancer
+          implementation (e.g. cloud providers) should ignore Services that set this field.
+          This field can only be set when creating or updating a Service to type 'LoadBalancer'.
+          Once set, it can not be changed. This field will be wiped when a service is updated to a non 'LoadBalancer' type.
+          +featureGate=LoadBalancerClass
+          +optional
+        type: string
+        x-go-name: LoadBalancerClass
       loadBalancerIP:
         description: |-
-          Only applies to Service Type: LoadBalancer
-          LoadBalancer will get created with the IP specified in this field.
+          Only applies to Service Type: LoadBalancer.
           This feature depends on whether the underlying cloud-provider supports specifying
           the loadBalancerIP when a load balancer is created.
           This field will be ignored if the cloud-provider does not support the feature.
+          Deprecated: This field was under-specified and its meaning varies across implementations,
+          and it cannot support dual-stack.
+          As of Kubernetes v1.24, users are encouraged to use implementation-specific annotations when available.
+          This field may be removed in a future API version.
           +optional
         type: string
         x-go-name: LoadBalancerIP
@@ -3105,7 +3334,7 @@ definitions:
           If specified and supported by the platform, this will restrict traffic through the cloud-provider
           load-balancer will be restricted to the specified client IPs. This field will be ignored if the
           cloud-provider does not support the feature."
-          More info: https://kubernetes.io/docs/tasks/access-application-cluster/configure-cloud-provider-firewall/
+          More info: https://kubernetes.io/docs/tasks/access-application-cluster/create-external-load-balancer/
           +optional
         items:
           type: string
@@ -3126,12 +3355,14 @@ definitions:
         x-go-name: Ports
       publishNotReadyAddresses:
         description: |-
-          publishNotReadyAddresses, when set to true, indicates that DNS implementations
-          must publish the notReadyAddresses of subsets for the Endpoints associated with
-          the Service. The default value is false.
-          The primary use case for setting this field is to use a StatefulSet's Headless Service
-          to propagate SRV records for its Pods without respect to their readiness for purpose
-          of peer discovery.
+          publishNotReadyAddresses indicates that any agent which deals with endpoints for this
+          Service should disregard any indications of ready/not-ready.
+          The primary use case for setting this field is for a StatefulSet's Headless Service to
+          propagate SRV DNS records for its Pods for the purpose of peer discovery.
+          The Kubernetes controllers that generate Endpoints and EndpointSlice resources for
+          Services interpret this to mean that all endpoints are considered "ready" even if the
+          Pods themselves are not. Agents which consume only Kubernetes generated endpoints
+          through the Endpoints or EndpointSlice resources can safely assume this behavior.
           +optional
         type: boolean
         x-go-name: PublishNotReadyAddresses
@@ -3146,31 +3377,13 @@ definitions:
           Ignored if type is ExternalName.
           More info: https://kubernetes.io/docs/concepts/services-networking/service/
           +optional
+          +mapType=atomic
         type: object
         x-go-name: Selector
       sessionAffinity:
         $ref: '#/definitions/ServiceAffinity'
       sessionAffinityConfig:
         $ref: '#/definitions/SessionAffinityConfig'
-      topologyKeys:
-        description: |-
-          topologyKeys is a preference-order list of topology keys which
-          implementations of services should use to preferentially sort endpoints
-          when accessing this Service, it can not be used at the same time as
-          externalTrafficPolicy=Local.
-          Topology keys must be valid label keys and at most 16 keys may be specified.
-          Endpoints are chosen based on the first topology key with available backends.
-          If this field is specified and all entries have no backends that match
-          the topology of the client, the service has no backends for that client
-          and connections should fail.
-          The special value "*" may be used to mean "any topology". This catch-all
-          value, if used, only makes sense as the last value in the list.
-          If this is not specified or empty, no topology constraints will be applied.
-          +optional
-        items:
-          type: string
-        type: array
-        x-go-name: TopologyKeys
       type:
         $ref: '#/definitions/ServiceType'
     title: ServiceSpec describes the attributes that a user creates on a service.
@@ -3178,13 +3391,27 @@ definitions:
     x-go-package: k8s.io/api/core/v1
   ServiceStatus:
     properties:
+      conditions:
+        description: |-
+          Current service state
+          +optional
+          +patchMergeKey=type
+          +patchStrategy=merge
+          +listType=map
+          +listMapKey=type
+        items:
+          $ref: '#/definitions/Condition'
+        type: array
+        x-go-name: Conditions
       loadBalancer:
         $ref: '#/definitions/LoadBalancerStatus'
     title: ServiceStatus represents the current status of a service.
     type: object
     x-go-package: k8s.io/api/core/v1
   ServiceType:
-    description: Service Type string describes ingress methods for a service
+    description: |-
+      Service Type string describes ingress methods for a service
+      +enum
     type: string
     x-go-package: k8s.io/api/core/v1
   ServiceUpdateResponse:
@@ -3634,6 +3861,9 @@ definitions:
       component:
         type: string
         x-go-name: Component
+      type:
+        type: string
+        x-go-name: Type
     type: object
     x-go-package: github.com/layer5io/meshery/models
   UserPrefsExtensions:
@@ -3702,7 +3932,8 @@ definitions:
         description: The driver specific options used when creating the volume.
         type: object
       Scope:
-        description: The level at which the volume exists. Either `global` for cluster-wide,
+        description: |-
+          The level at which the volume exists. Either `global` for cluster-wide,
           or `local` for machine level.
         type: string
       Status:
@@ -3736,8 +3967,9 @@ definitions:
       DriverOpts:
         additionalProperties:
           type: string
-        description: A mapping of driver options and values. These options are passed
-          directly to the driver and are driver specific.
+        description: |-
+          A mapping of driver options and values. These options are
+          passed directly to the driver and are driver specific.
         type: object
       Labels:
         additionalProperties:
@@ -3763,7 +3995,7 @@ definitions:
           $ref: '#/definitions/Volume'
         type: array
       Warnings:
-        description: Warnings that occurred when fetching the list of volumes
+        description: Warnings that occurred when fetching the list of volumes.
         items:
           type: string
         type: array
@@ -3874,7 +4106,9 @@ paths:
       tags:
       - ApplicationsAPI
     post:
-      description: Deploy an attached application file with the request
+      description: |-
+        Handle POST request for Application File Deploy
+        Deploy an attached application file with the request
       operationId: idPostDeployApplicationFile
       parameters:
       - in: formData
@@ -3884,7 +4118,6 @@ paths:
       responses:
         "200":
           $ref: '#/responses/applicationFilesResponseWrapper'
-      summary: Handle POST request for Application File Deploy
       tags:
       - ApplicationsAPI
   /api/filter:
@@ -3941,6 +4174,25 @@ paths:
       summary: Handle GET request for a Meshery Filter
       tags:
       - FiltersAPI
+  /api/filter/deploy:
+    delete:
+      description: Delete a deployed filter file with the request
+      operationId: idDeleteFilterFile
+      responses:
+        "200":
+          description: ""
+      summary: Handle DELETE request for Filter File Deploy
+      tags:
+      - FilterAPI
+    post:
+      description: Deploy an attached filter file with the request
+      operationId: idPostDeployFilterFile
+      responses:
+        "200":
+          $ref: '#/responses/FilterFilesResponseWrapper'
+      summary: Handle POST request for Filter File Deploy
+      tags:
+      - FilterAPI
   /api/filter/file/{id}:
     get:
       description: Returns the Meshery Filter file saved by the current user with
@@ -3952,12 +4204,23 @@ paths:
       summary: Handle GET request for filter file with given id
       tags:
       - FiltersAPI
+  /api/meshmodel/validate:
+    post:
+      description: Validate the given value with the given schema
+      operationId: idPostMeshModelValidate
+      responses:
+        "200":
+          description: ""
+      summary: Handle POST request for validate
+      tags:
+      - MeshmodelValidate
   /api/oam/{type}:
     get:
       description: |-
         Getting list of workloads/traits/scopes
 
         {type} being of either trait, scope, workload; registration of adapter capabilities.
+        Example: /api/oam/workload => Here {type} is "workload"
       operationId: idGETOAMMesheryPattern
       responses:
         "200":
@@ -3970,11 +4233,43 @@ paths:
         Adding a workload/trait/scope
 
         {type} being of either trait, scope, workload; registration of adapter capabilities.
-      operationId: idPOSTOAMMesheryPattern
+        Example: /api/oam/trait => Here {type} is "trait"
+      operationId: idPOSTOAMRegister
       responses:
         "200":
           description: ""
       summary: Handles registering OMA objects
+      tags:
+      - PatternsAPI
+  /api/oam/{type}/{name}:
+    get:
+      description: |-
+        Returns component details of a workload/trait/scope by given name in the URL
+
+        {type} being of either trait, scope, workload; registration of adapter capabilities.
+        Example: /api/oam/workload/Application => Here {type} is "workload" and {name} is "Application"
+        it should be noted that both {type} and {name} should be valid
+      operationId: idOAMComponentDetails
+      responses:
+        "200":
+          description: ""
+      summary: Handles GET requests for component details for OAM objects
+      tags:
+      - PatternsAPI
+  /api/oam/{type}/{name}/{id}:
+    get:
+      description: |-
+        Returns details of a workload/trait/scope by given name and id in the URL
+
+        {type} being of either trait, scope, workload; registration of adapter capabilities.
+        Example: /api/oam/workload/Application/asdqe123sa275sasd => Here {type} is "workload"
+        {name} is "Application" and {id} is "asdqe123sa275sasd". It should be noted that all of three, i.e {type},
+        {name} and {id} must be valid
+      operationId: idOAMComponentDetailByID
+      responses:
+        "200":
+          description: ""
+      summary: Handles GET requests for component details for OAM objects
       tags:
       - PatternsAPI
   /api/pattern:
@@ -4000,7 +4295,8 @@ paths:
       - PatternsAPI
   /api/pattern/{id}:
     delete:
-      description: 'Deletes a meshery pattern with ID: id'
+      description: DeleteMultiMesheryPatternsHandler deletes patterns with the given
+        ids
       operationId: idDeleteMesheryPattern
       parameters:
       - description: id for a specific
@@ -4013,7 +4309,7 @@ paths:
       responses:
         "200":
           $ref: '#/responses/noContentWrapper'
-      summary: Handle Delete for a Meshery Pattern
+      summary: Handle Delete for multiple Meshery Patterns
       tags:
       - PatternsAPI
     get:
@@ -4055,6 +4351,25 @@ paths:
         "200":
           description: ""
       summary: Handle POST request for Pattern Deploy
+      tags:
+      - PatternsAPI
+  /api/patterns:
+    delete:
+      description: DeleteMultiMesheryPatternsHandler deletes patterns with the given
+        ids
+      operationId: idDeleteMesheryPattern
+      parameters:
+      - description: id for a specific
+        format: uuid
+        in: path
+        name: id
+        required: true
+        type: string
+        x-go-name: ID
+      responses:
+        "200":
+          $ref: '#/responses/noContentWrapper'
+      summary: Handle Delete for multiple Meshery Patterns
       tags:
       - PatternsAPI
   /api/perf/profile:
@@ -4246,7 +4561,7 @@ paths:
       summary: Handle POST requests for Kubernetes Context list
       tags:
       - SystemAPI
-  /api/system/kubernetes/ping:
+  /api/system/kubernetes/ping?contexts={id}:
     get:
       description: Fetches server version to simulate ping
       operationId: idGetKubernetesPing
@@ -4749,6 +5064,10 @@ paths:
 produces:
 - application/json
 responses:
+  FilterFilesResponseWrapper:
+    description: Returns the response of the Filter files
+    schema:
+      $ref: '#/definitions/MesheryFilter'
   applicationFilesResponseWrapper:
     description: Returns the response of the application files
     schema:
@@ -4765,14 +5084,8 @@ responses:
       $ref: '#/definitions/Grafana'
   k8sConfigRespWrapper:
     description: Returns saved kubernetes config
-    schema:
-      $ref: '#/definitions/K8SConfig'
   k8sContextsRespWrapper:
     description: Returns kubernetes context list
-    schema:
-      items:
-        $ref: '#/definitions/K8SContext'
-      type: array
   listProvidersRespWrapper:
     description: Returns a list of available providers
     schema:

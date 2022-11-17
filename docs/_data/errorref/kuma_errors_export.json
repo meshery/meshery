@@ -25,7 +25,7 @@
         "name": "ErrOpInvalidCode",
         "code": "1002",
         "severity": "Alert",
-        "long_description": "Istio adapter recived an invalid operation from the meshey server",
+        "long_description": "Kuma adapter recived an invalid operation from the meshey server",
         "short_description": "Invalid operation",
         "probable_cause": "The operation is not supported by the adapter\nInvalid operation name",
         "suggested_remediation": "Check if the operation name is valid and supported by the adapter"
@@ -46,7 +46,7 @@
         "long_description": "Error getting MeshSpecKey config from in-memory configuration",
         "short_description": "Error configuration mesh",
         "probable_cause": "",
-        "suggested_remediation": "Reconnect the adaptor to the meshkit server"
+        "suggested_remediation": "Reconnect the adapter to the Meshery Server"
       },
       "1005": {
         "name": "ErrFetchManifestCode",
@@ -91,7 +91,7 @@
         "long_description": "Error occured while trying to install a sample application using manifests",
         "short_description": "Error with sample app operation",
         "probable_cause": "Invalid kubeclient config\nInvalid manifest",
-        "suggested_remediation": "Reconnect your adapter to meshery server to refresh the kubeclient"
+        "suggested_remediation": "Reconnect your adapter to Meshery Server to refresh the kubeclient"
       },
       "1010": {
         "name": "ErrGetKumactlCode",
@@ -161,9 +161,9 @@
         "code": "1017",
         "severity": "Alert",
         "long_description": "Kubernetes client is nil",
-        "short_description": "kubernetes client not initialized",
-        "probable_cause": "kubernetes client not initialized",
-        "suggested_remediation": "Reconnect the adaptor to Meshery server"
+        "short_description": "Kubernetes client not initialized",
+        "probable_cause": "Kubernetes client not initialized",
+        "suggested_remediation": "Reconnect the adapter to Meshery Server"
       },
       "1018": {
         "name": "ErrApplyHelmChartCode",
@@ -174,68 +174,86 @@
         "probable_cause": "",
         "suggested_remediation": "Invalid helm chart configuration"
       },
-      "1030": {
-        "name": "ErrEmptyConfigCode",
-        "code": "1030",
+      "1019": {
+        "name": "ErrGetLatestReleaseCode",
+        "code": "1019",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "Config is empty",
-        "probable_cause": "",
+        "short_description": "Could not get latest version",
+        "probable_cause": "Latest version could not be found at the specified url",
         "suggested_remediation": ""
       },
-      "1031": {
+      "1021": {
         "name": "ErrInvalidOAMComponentTypeCode",
-        "code": "1031",
+        "code": "1021",
         "severity": "Alert",
         "long_description": "",
         "short_description": "invalid OAM component name: ",
         "probable_cause": "",
         "suggested_remediation": ""
       },
-      "1032": {
+      "1022": {
         "name": "ErrKumaCoreComponentFailCode",
-        "code": "1032",
+        "code": "1022",
         "severity": "Alert",
         "long_description": "",
         "short_description": "error in kuma core component",
         "probable_cause": "",
         "suggested_remediation": ""
       },
-      "1033": {
+      "1023": {
         "name": "ErrProcessOAMCode",
-        "code": "1033",
+        "code": "1023",
         "severity": "Alert",
         "long_description": "",
         "short_description": "error performing OAM operations",
         "probable_cause": "",
         "suggested_remediation": ""
       },
-      "1034": {
+      "1024": {
         "name": "ErrParseKumaCoreComponentCode",
-        "code": "1034",
+        "code": "1024",
         "severity": "Alert",
         "long_description": "",
         "short_description": "kuma core component manifest parsing failing",
         "probable_cause": "",
         "suggested_remediation": ""
       },
-      "1035": {
+      "1025": {
         "name": "ErrParseOAMComponentCode",
-        "code": "1035",
+        "code": "1025",
         "severity": "Alert",
-        "long_description": "Error occured while prasing application component in the OAM request made",
+        "long_description": "Error occurred while parsing application component in the OAM request made by Meshery server",
         "short_description": "error parsing the component",
-        "probable_cause": "Invalid OAM component passed in OAM request",
-        "suggested_remediation": "Check if your request has vaild OAM components"
+        "probable_cause": "Could not unmarshall configuration component received via ProcessOAM gRPC call into a valid Component struct",
+        "suggested_remediation": "Check if Meshery Server is creating valid component for ProcessOAM gRPC call. This error should never happen and can be reported as a bug in Meshery Server. Also check if Meshery Server and adapters are referring to same component struct provided in MeshKit."
       },
-      "1036": {
+      "1026": {
         "name": "ErrParseOAMConfigCode",
-        "code": "1036",
+        "code": "1026",
         "severity": "Alert",
-        "long_description": "Error occured while prasing component config in the OAM request made",
+        "long_description": "Error occured while parsing configuration in the request made by Meshery Server",
         "short_description": "error parsing the configuration",
-        "probable_cause": "Invalid OAM config passed in OAM request",
-        "suggested_remediation": "Check if your request has vaild OAM config"
+        "probable_cause": "Could not unmarshall OAM config recieved via ProcessOAM gRPC call into a valid Config struct",
+        "suggested_remediation": "Check if Meshery Server is creating valid config for ProcessOAM gRPC call. This error should never happen and can be reported as a bug in Meshery Server. Also, confirm that Meshery Server and Adapters are referring to same config struct provided in MeshKit"
+      },
+      "1027": {
+        "name": "ErrEmptyConfigCode",
+        "code": "1027",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Config is empty",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1028": {
+        "name": "ErrLoadNamespaceCode",
+        "code": "1028",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error occured while applying namespace ",
+        "probable_cause": "Trying to access a namespace which is not available",
+        "suggested_remediation": "Verify presence of namespace. Confirm Meshery ServiceAccount permissions"
       }
     }
   }

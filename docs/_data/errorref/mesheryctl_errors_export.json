@@ -9,8 +9,8 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "Error resetting meshconfig",
-        "probable_cause": "",
-        "suggested_remediation": ""
+        "probable_cause": "Meshery server config file is not reset to default settings",
+        "suggested_remediation": "Verify Meshery server config file is reset to default settings by executing `mesheryctl system context view`"
       },
       "1005": {
         "name": "ErrApplyManifestCode",
@@ -52,7 +52,7 @@
         "name": "ErrNoAdaptersCode",
         "code": "1010",
         "severity": "Fatal",
-        "long_description": "",
+        "long_description": "Adapter for required mesh not found",
         "short_description": "Adapter for required mesh not found",
         "probable_cause": "",
         "suggested_remediation": "Deploy the proper Meshery Adapter for your service mesh"
@@ -106,7 +106,7 @@
         "name": "ErrTimeoutWaitingForDeployResponseCode",
         "code": "1016",
         "severity": "Fatal",
-        "long_description": "",
+        "long_description": "Timed out waiting for deployment",
         "short_description": "Timed out waiting for deploy event",
         "probable_cause": "",
         "suggested_remediation": "Check your environment and try again"
@@ -115,7 +115,7 @@
         "name": "ErrFailedDeployingMeshCode",
         "code": "1017",
         "severity": "Fatal",
-        "long_description": "",
+        "long_description": "Failed to deploy the service mesh",
         "short_description": "Failed to deploy the service mesh",
         "probable_cause": "",
         "suggested_remediation": "Check your environment and try again"
@@ -142,7 +142,7 @@
         "name": "ErrTimeoutWaitingForValidateResponseCode",
         "code": "1020",
         "severity": "Fatal",
-        "long_description": "",
+        "long_description": "Timed out waiting for validate response",
         "short_description": "Timed out waiting for validate response",
         "probable_cause": "",
         "suggested_remediation": "Check your environment and try again"
@@ -151,10 +151,325 @@
         "name": "ErrSMIConformanceTestsFailedCode",
         "code": "1021",
         "severity": "Fatal",
-        "long_description": "",
+        "long_description": "SMI conformance tests failed",
         "short_description": "SMI conformance tests failed",
         "probable_cause": "",
         "suggested_remediation": "Join https://layer5io.slack.com/archives/C010H0HE2E6"
+      },
+      "1022": {
+        "name": "ErrRetrievingCurrentContextCode",
+        "code": "1022",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1023": {
+        "name": "ErrSettingTemporaryContextCode",
+        "code": "1023",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error setting temporary context",
+        "probable_cause": "temporary context is not set properly",
+        "suggested_remediation": "Verify the temporary context is set properly using the -c flag provided"
+      },
+      "1024": {
+        "name": "ErrCreateManifestsFolderCode",
+        "code": "1024",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error creating manifest folder",
+        "probable_cause": "system error in creating manifest folder",
+        "suggested_remediation": "Make sure manifest folder (.meshery/manifests) is created properly"
+      },
+      "1025": {
+        "name": "ErrProcessingMctlConfigCode",
+        "code": "1025",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error processing config",
+        "probable_cause": "Error due to invalid format of Mesheryctl config",
+        "suggested_remediation": "Make sure Mesheryctl config is in correct format and valid"
+      },
+      "1026": {
+        "name": "ErrRestartMesheryCode",
+        "code": "1026",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error restarting Meshery",
+        "probable_cause": "Meshery is not running",
+        "suggested_remediation": "Restart Meshery instance"
+      },
+      "1027": {
+        "name": "ErrMesheryConfigCode",
+        "code": "1027",
+        "severity": "Alert",
+        "long_description": "error processing config",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1028": {
+        "name": "ErrReadFilepathCode",
+        "code": "1028",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1029": {
+        "name": "ErrNoProfileNameCode",
+        "code": "1029",
+        "severity": "Alert",
+        "long_description": "please enter a profile-name",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1030": {
+        "name": "ErrNoTestURLCode",
+        "code": "1030",
+        "severity": "Alert",
+        "long_description": "please enter a test URL",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1031": {
+        "name": "ErrNotValidURLCode",
+        "code": "1031",
+        "severity": "Alert",
+        "long_description": "please enter a valid test URL",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1032": {
+        "name": "ErrFailMarshalCode",
+        "code": "1032",
+        "severity": "Alert",
+        "long_description": "failed to marshal values",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1033": {
+        "name": "ErrAttachAuthTokenCode",
+        "code": "1033",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1034": {
+        "name": "ErrFailRequestCode",
+        "code": "1034",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1035": {
+        "name": "ErrFailReqStatusCode",
+        "code": "1035",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1036": {
+        "name": "ErrFailUnmarshalCode",
+        "code": "1036",
+        "severity": "Alert",
+        "long_description": "failed to unmarshal response body",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1037": {
+        "name": "ErrNoProfileFoundCode",
+        "code": "1037",
+        "severity": "Alert",
+        "long_description": "no profiles found with given name",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1038": {
+        "name": "ErrFailTestRunCode",
+        "code": "1038",
+        "severity": "Alert",
+        "long_description": "failed to run test",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1039": {
+        "name": "ErrInvalidOutputChoiceCode",
+        "code": "1039",
+        "severity": "Alert",
+        "long_description": "output-format choice invalid, use [json|yaml]",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1040": {
+        "name": "ErrUnauthenticatedCode",
+        "code": "1040",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1044": {
+        "name": "ErrFailRequestCode",
+        "code": "1044",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1045": {
+        "name": "ErrFailReqStatusCode",
+        "code": "1045",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1046": {
+        "name": "ErrAttachAuthTokenCode",
+        "code": "1046",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1047": {
+        "name": "ErrInitPortForwardCode",
+        "code": "1047",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1048": {
+        "name": "ErrRunPortForwardCode",
+        "code": "1048",
+        "severity": "Fatal",
+        "long_description": "Error running port-forward for Meshery",
+        "short_description": "Failed to run port-forward",
+        "probable_cause": "Meshery pod is not in running phase\nmesheryctl can't connect to kubernetes with client-go",
+        "suggested_remediation": "Make sure Meshery pod exists and is in running state\nCheck if mesheryctl is connected to kubernetes with `mesheryctl system check`"
+      },
+      "1049": {
+        "name": "ErrFailedGetEphemeralPortCode",
+        "code": "1049",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1050": {
+        "name": "ErrProcessingConfigCode",
+        "code": "1050",
+        "severity": "Alert",
+        "long_description": "Error processing config",
+        "short_description": "Error processing config",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1051": {
+        "name": "ErrCreatingConfigFileCode",
+        "code": "1051",
+        "severity": "Alert",
+        "long_description": "Unable to create config file",
+        "short_description": "Unable to create config file",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1052": {
+        "name": "ErrAddingTokenToConfigCode",
+        "code": "1052",
+        "severity": "Alert",
+        "long_description": "Unable to add token to config",
+        "short_description": "Unable to add token to config",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1053": {
+        "name": "ErrAddingContextToConfigCode",
+        "code": "1053",
+        "severity": "Alert",
+        "long_description": "Unable to add context to config",
+        "short_description": "Unable to add context to config",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1054": {
+        "name": "ErrUnmarshallingConfigFileCode",
+        "code": "1054",
+        "severity": "Alert",
+        "long_description": "Error unmarshalling config file",
+        "short_description": "Error unmarshalling config file",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1055": {
+        "name": "ErrGettingRequestContextCode",
+        "code": "1055",
+        "severity": "Fatal",
+        "long_description": "Unable to add token to config",
+        "short_description": "Unable to add token to config",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1056": {
+        "name": "ErrInvalidAPIResponseCode",
+        "code": "1056",
+        "severity": "Fatal",
+        "long_description": "Invalid API response",
+        "short_description": "Invalid API response",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1057": {
+        "name": "ErrUnmarshallingAPIDataCode",
+        "code": "1057",
+        "severity": "Fatal",
+        "long_description": "Error unmarshalling API data",
+        "short_description": "Error unmarshalling API data",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1058": {
+        "name": "ErrConnectingToServerCode",
+        "code": "1058",
+        "severity": "Fatal",
+        "long_description": "Unable to communicate with Meshery server\nSee https://docs.meshery.io for help getting started with Meshery",
+        "short_description": "Unable to communicate with Meshery server",
+        "probable_cause": "",
+        "suggested_remediation": "See https://docs.meshery.io for help getting started with Meshery"
+      },
+      "1059": {
+        "name": "ErrSettingDefaultContextToConfigCode",
+        "code": "1059",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
       }
     }
   }

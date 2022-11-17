@@ -53,8 +53,8 @@ module.exports = {
         "react/jsx-no-undef": "error",
         "no-console": 0,
         "no-unused-vars": "error",
-        "react/jsx-key": "off",
-        "no-dupe-keys": "off",
+        "react/jsx-key": "warn",
+        "no-dupe-keys": "error",
         "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }]
     }
 };

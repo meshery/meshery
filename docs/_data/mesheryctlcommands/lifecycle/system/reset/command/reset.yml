@@ -1,4 +1,0 @@
-name: reset
-description: Resets meshery.yaml file with a copy from Meshery repo
-usage: |
-    mesheryctl system reset

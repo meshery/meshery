@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f ../docker-compose.yaml
+    kompose.version: 1.17.0 ()
+  creationTimestamp: null
+  labels:
+    io.kompose.service: meshery-cilium
+  name: meshery-cilium
+spec:
+  selector:
+    matchLabels:
+      io.kompose.service: meshery-cilium
+  replicas: 1
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        io.kompose.service: meshery-cilium
+    spec:
+      serviceAccount: meshery-server
+      containers:
+      - image: layer5/meshery-cilium:stable-latest
+        imagePullPolicy: Always
+        name: meshery-cilium
+        ports:
+        - containerPort: 10012
+        resources: {}
+      restartPolicy: Always
+status: {}

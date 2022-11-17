@@ -1,0 +1,17 @@
+{% if include.diffName != "true" %}
+# Suggested Reading
+{% endif %}
+
+{% assign sorted_reading = site.pages | sort: page.title | reverse %}
+
+<ul>
+  {% if include.isDiffTag == "true"%}
+  {{ include.diffTag }}
+  {% endif %}
+  {% for item in sorted_reading %}
+  {% if item.type==page.type and item.category==page.category and item.list!="exclude" and page.url!=item.url and item.language == include.language %}
+  <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
+  </li>
+  {% endif %}
+  {% endfor %}
+</ul>

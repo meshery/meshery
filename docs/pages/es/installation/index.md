@@ -31,7 +31,6 @@ Instala `mesheryctl` y ejecuta Meshery en Mac con Homebrew.
 Para instalar `mesheryctl`, ejecute el siguiente comando:
 
 ```bash
-brew tap layer5io/tap
 brew install mesheryctl
 mesheryctl system start
 ```
@@ -51,7 +50,7 @@ brew upgrade mesheryctl
 Instala `mesheryctl` y ejecuta Meshery en Mac ó Linux con este script:
 
 ```bash
-curl -L https://git.io/meshery | bash -
+curl -L https://meshery.io/install | bash -
 ```
 
 **Actualizando con Bash**
@@ -59,7 +58,7 @@ curl -L https://git.io/meshery | bash -
 Actualiza `mesheryctl` y corre Meshery en Mac ó Linux con este script:
 
 ```bash
-curl -L https://git.io/meshery | bash -
+curl -L https://meshery.io/install | bash -
 ```
 
 ### Windows

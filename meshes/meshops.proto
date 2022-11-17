@@ -2,10 +2,9 @@ syntax="proto3";
 
 package meshes;
 
-// option go_package = "github.com/layer5io/meshery/meshes;meshes";
+option go_package = "github.com/layer5io/meshery/meshes;meshes";
 
 service MeshService {
-    rpc CreateMeshInstance(CreateMeshInstanceRequest) returns (CreateMeshInstanceResponse) {}
     rpc MeshName(MeshNameRequest) returns (MeshNameResponse) {}
     rpc MeshVersions(MeshVersionsRequest) returns (MeshVersionsResponse) {}
     rpc ApplyOperation(ApplyRuleRequest) returns(ApplyRuleResponse) {}
@@ -17,12 +16,7 @@ service MeshService {
     rpc ComponentInfo(ComponentInfoRequest) returns(ComponentInfoResponse) {}
 }
 
-message CreateMeshInstanceRequest {
-    bytes k8sConfig = 1;
-    string contextName = 2;
-}
 
-message CreateMeshInstanceResponse {}
 
 message MeshNameRequest{}
 
@@ -37,6 +31,7 @@ message ApplyRuleRequest {
     string custom_body = 4;
     bool delete_op = 5;
     string operation_id = 6;
+    repeated string kube_configs=7;
 }
 
 message ApplyRuleResponse {
@@ -83,9 +78,10 @@ message EventsResponse {
 message ProcessOAMRequest {
     string username = 1;
     bool delete_op = 2;
-
+    
     repeated string oam_comps = 3;
     string oam_config = 4;
+    repeated string kube_configs=7;
 }
 
 message ProcessOAMResponse {

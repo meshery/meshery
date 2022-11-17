@@ -6,8 +6,8 @@ services:
     settings:
       replicas: 1
       containers:
-        - name: meshy
-          image: utkarsh23/meshy:v5
+        - name: Meshery
+          image: layer5/meshery:stable-latest
           ports:
             - name: http
               containerPort: 8080

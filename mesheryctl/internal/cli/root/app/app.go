@@ -11,7 +11,6 @@ import (
 var (
 	availableSubcommands []*cobra.Command
 	file                 string
-	tokenPath            string
 )
 
 // AppCmd represents the root command for app commands
@@ -19,7 +18,11 @@ var AppCmd = &cobra.Command{
 	Use:   "app",
 	Short: "Service Mesh Apps Management",
 	Long:  `Manage all apps operations; ;list, view, onboard and offboard`,
-	Args:  cobra.MinimumNArgs(1),
+	Example: `
+// Base command
+mesheryctl app [subcommand]
+	`,
+	Args: cobra.MinimumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
 			return errors.New(utils.SystemError(fmt.Sprintf("invalid command: \"%s\"", args[0])))
@@ -29,7 +32,7 @@ var AppCmd = &cobra.Command{
 }
 
 func init() {
-	AppCmd.PersistentFlags().StringVarP(&tokenPath, "token", "t", "", "Path to token file default from current context")
+	AppCmd.PersistentFlags().StringVarP(&utils.TokenFlag, "token", "t", "", "Path to token file default from current context")
 
 	availableSubcommands = []*cobra.Command{onboardCmd, viewCmd, offboardCmd, listCmd}
 	AppCmd.AddCommand(availableSubcommands...)

@@ -3,6 +3,123 @@
     "component_name": "meshery-server",
     "component_type": "component",
     "errors": {
+      "1000": {
+        "name": "ErrInvalidRequestCode",
+        "code": "1000",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1001": {
+        "name": "ErrNilClientCode",
+        "code": "1001",
+        "severity": "Alert",
+        "long_description": "Kubernetes config is not initialized with Meshery",
+        "short_description": "Kubernetes client not initialized",
+        "probable_cause": "Kubernetes config is not accessible to meshery or not valid",
+        "suggested_remediation": "Upload your kubernetes config via the settings dashboard. If uploaded, wait for a minute for it to get initialized"
+      },
+      "1002": {
+        "name": "ErrCreateDataCode",
+        "code": "1002",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1003": {
+        "name": "ErrQueryCode",
+        "code": "1003",
+        "severity": "Alert",
+        "long_description": "Invalid Query performed in Meshery Database",
+        "short_description": "Error while querying data",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1004": {
+        "name": "ErrMeshsyncSubscriptionCode",
+        "code": "1004",
+        "severity": "Alert",
+        "long_description": "GraphQL subscription for MeshSync stopped",
+        "short_description": "MeshSync Subscription failed",
+        "probable_cause": "Could be a network issue",
+        "suggested_remediation": "Check if meshery server is reachable from the browser"
+      },
+      "1005": {
+        "name": "ErrOperatorSubscriptionCode",
+        "code": "1005",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1006": {
+        "name": "ErrAddonSubscriptionCode",
+        "code": "1006",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1007": {
+        "name": "ErrControlPlaneSubscriptionCode",
+        "code": "1007",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1008": {
+        "name": "ErrMesheryClientCode",
+        "code": "1008",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1009": {
+        "name": "ErrSubscribeChannelCode",
+        "code": "1009",
+        "severity": "Alert",
+        "long_description": "Unable to create a broker subscription",
+        "short_description": "Unable to subscribe to channel",
+        "probable_cause": "Could be a network issue\nMeshery Broker could have crashed",
+        "suggested_remediation": "Check if Meshery Broker is reachable from Meshery Server\nCheck if Meshery Broker is up and running inside the configured cluster"
+      },
+      "1010": {
+        "name": "ErrPublishBrokerCode",
+        "code": "1010",
+        "severity": "Alert",
+        "long_description": "Unable to create a broker publisher",
+        "short_description": "Unable to publish to broker",
+        "probable_cause": "Could be a network issue\nMeshery Broker could have crashed",
+        "suggested_remediation": "Check if Meshery Broker is reachable from Meshery Server\nCheck if Meshery Broker is up and running inside the configured cluster"
+      },
+      "1011": {
+        "name": "ErrNoMeshSyncCode",
+        "code": "1011",
+        "severity": "Alert",
+        "long_description": "Meshery Database handler is not accessible to perform operations",
+        "short_description": "Database handler not initialized",
+        "probable_cause": "Meshery Database is crashed or not reachable",
+        "suggested_remediation": "Restart Meshery Server\nPlease check if Meshery server is accessible to the Database"
+      },
+      "1012": {
+        "name": "ErrNoExternalEndpointCode",
+        "code": "1012",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
       "1013": {
         "name": "ErrDataPlaneSubscriptionCode",
         "code": "1013",
@@ -11,6 +128,24 @@
         "short_description": "Data Plane Subscription failed",
         "probable_cause": "Could be a network issue",
         "suggested_remediation": "Check if meshery server is reachable from the browser"
+      },
+      "1014": {
+        "name": "ErrGettingNamespaceCode",
+        "code": "1014",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Cannot get available namespaces",
+        "probable_cause": "The table in the database might not exist",
+        "suggested_remediation": ""
+      },
+      "1015": {
+        "name": "ErrFetchingPatternsCode",
+        "code": "1015",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Cannot fetch patterns",
+        "probable_cause": "There might be something wrong with the Meshery or Meshery Cloud",
+        "suggested_remediation": "Try again, if still exist, please post an issue on Meshery repository"
       },
       "2000": {
         "name": "ErrInvalidK8SConfigCode",
@@ -24,11 +159,11 @@
       "2001": {
         "name": "ErrNilClientCode",
         "code": "2001",
-        "severity": "",
-        "long_description": "",
-        "short_description": "",
-        "probable_cause": "",
-        "suggested_remediation": ""
+        "severity": "Alert",
+        "long_description": "Kubernetes config is not initialized with Meshery",
+        "short_description": "Kubernetes client not initialized",
+        "probable_cause": "Kubernetes config is not accessible to meshery or not valid",
+        "suggested_remediation": "Upload your kubernetes config via the settings dashboard. If uploaded, wait for a minute for it to get initialized"
       },
       "2002": {
         "name": "ErrPrometheusScanCode",
@@ -288,7 +423,7 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "error getting k8s file",
-        "probable_cause": "The kube config file does not exist in the location",
+        "probable_cause": "The kubeconfig file does not exist in the location",
         "suggested_remediation": "Make sure to upload the correct kubeconfig file"
       },
       "2031": {
@@ -435,176 +570,50 @@
         "probable_cause": "Meshery Database could be down or not reachable",
         "suggested_remediation": "Restart Meshery instance and make sure database is up and reachable"
       },
-      "2047": {
-        "name": "ErrFailToLoadExtensionsCode",
-        "code": "2047",
+      "2048": {
+        "name": "ErrErrNewDynamicClientGeneratorCode",
+        "code": "2048",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "Failed to Load Extensions from Package",
-        "probable_cause": "Plugin is not available in the location\nplugin does not match with meshery version",
-        "suggested_remediation": "Make sure the plugin is compatible with Meshery server"
+        "short_description": "Unable to generate the dynamic client generator",
+        "probable_cause": "Kubernetes config is not accessible to meshery or not valid",
+        "suggested_remediation": "Upload your kubernetes config via the settings dashboard. If uploaded, wait for a minute for it to get initialized"
       },
-      "2055": {
-        "name": "ErrRetrievePodListCode",
-        "code": "2055",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "Unable to retrieve pod list",
-        "probable_cause": "Kubernetes API server might not be reachable from the Meshery server\nRequested resource might not be available",
-        "suggested_remediation": "Make sure kubernetes API server is reachable from meshery server\nMake sure you are requesting for a valid resource"
-      },
-      "2056": {
-        "name": "ErrDetectServiceForDeploymentImageCode",
-        "code": "2056",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "Unable to detect service for deployment image",
-        "probable_cause": "Kubernetes API server might not be reachable from the Meshery server\nRequested resource might not be available",
-        "suggested_remediation": "Make sure kubernetes API server is reachable from meshery server\nMake sure you are requesting for a valid resource"
-      },
-      "2057": {
-        "name": "ErrRetrieveNamespacesListCode",
-        "code": "2057",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "Unable to get the list of namespaces",
-        "probable_cause": "Kubernetes API server might not be reachable from the Meshery server\nRequested resource might not be available",
-        "suggested_remediation": "Make sure kubernetes API server is reachable from meshery server\nMake sure you are requesting for a valid resource"
-      },
-      "2058": {
-        "name": "ErrGetNamespaceDeploymentsCode",
-        "code": "2058",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "Unable to get deployments in the \nnamespace",
-        "probable_cause": "Kubernetes API server might not be reachable from the Meshery server\nRequested resource might not be available",
-        "suggested_remediation": "Make sure kubernetes API server is reachable from meshery server\nMake sure you are requesting for a valid resource"
-      },
-      "2059": {
-        "name": "ErrDetectServiceWithNameCode",
-        "code": "2059",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "Unable to get services from the cluster with the name given in names parameter",
-        "probable_cause": "Kubernetes API server might not be reachable from the Meshery server\nRequested resource might not reachable from Meshery server",
-        "suggested_remediation": "Make sure kubernetes API server is reachable from meshery server\nMake sure the network connectivity is up between meshery server and the service endpoint"
-      },
-      "2060": {
-        "name": "ErrGeneratingLoadTestCode",
-        "code": "2060",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "Unable to generate load test",
-        "probable_cause": "",
-        "suggested_remediation": ""
-      },
-      "2061": {
-        "name": "ErrRunningTestCode",
-        "code": "2061",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "Unable to run test",
-        "probable_cause": "",
-        "suggested_remediation": ""
-      },
-      "2062": {
-        "name": "ErrConvertingResultToMapCode",
-        "code": "2062",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "Unable to convert from the result to map",
-        "probable_cause": "",
-        "suggested_remediation": ""
-      },
-      "2063": {
-        "name": "ErrUnmarshalCode",
-        "code": "2063",
+      "2049": {
+        "name": "ErrInvalidK8SConfigCode",
+        "code": "2049",
         "severity": "",
         "long_description": "",
         "short_description": "",
         "probable_cause": "",
         "suggested_remediation": ""
       },
-      "2064": {
-        "name": "ErrGrpcSupportCode",
-        "code": "2064",
-        "severity": "Alert",
+      "2050": {
+        "name": "ErrClientConfigCode",
+        "code": "2050",
+        "severity": "",
         "long_description": "",
-        "short_description": " does not support gRPC load testing",
+        "short_description": "",
         "probable_cause": "",
         "suggested_remediation": ""
       },
-      "2065": {
-        "name": "ErrStartingNighthawkServerCode",
-        "code": "2065",
+      "2051": {
+        "name": "ErrFetchKubernetesNodesCode",
+        "code": "2051",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "Unable to start the nighthawk server",
-        "probable_cause": "",
-        "suggested_remediation": ""
+        "short_description": "Unable to fetch kubernetes nodes",
+        "probable_cause": "Kubernetes API server might not be reachable from the Meshery server",
+        "suggested_remediation": "Make sure kubernetes API server is reachable from meshery server"
       },
-      "2066": {
-        "name": "ErrTransformingDataCode",
-        "code": "2066",
+      "2053": {
+        "name": "ErrInvalidLTURLCode",
+        "code": "2053",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "Error while transforming data",
-        "probable_cause": "",
-        "suggested_remediation": ""
-      },
-      "2067": {
-        "name": "ErrRunningNighthawkServerCode",
-        "code": "2067",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "Error while running nighthawk server",
-        "probable_cause": "",
-        "suggested_remediation": ""
-      },
-      "2068": {
-        "name": "ErrAddAndValidateExtraHeaderCode",
-        "code": "2068",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "Unable to add and validate extra header",
-        "probable_cause": "",
-        "suggested_remediation": ""
-      },
-      "2069": {
-        "name": "ErrInClusterConfigCode",
-        "code": "2069",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "Unable to load in-cluster kubeconfig",
-        "probable_cause": "",
-        "suggested_remediation": ""
-      },
-      "2070": {
-        "name": "ErrNewKubeClientGeneratorCode",
-        "code": "2070",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "Unable to generate new kube dynamic client",
-        "probable_cause": "",
-        "suggested_remediation": ""
-      },
-      "2071": {
-        "name": "ErrRestConfigFromKubeConfigCode",
-        "code": "2071",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "Unable to create rest config from kube congif",
-        "probable_cause": "",
-        "suggested_remediation": ""
-      },
-      "2072": {
-        "name": "ErrNewKubeClientCode",
-        "code": "2072",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "Unable to create new kube client",
-        "probable_cause": "",
-        "suggested_remediation": ""
+        "short_description": "invalid loadtest url: ",
+        "probable_cause": "URL for load test could be invalid",
+        "suggested_remediation": "please refer to:  https://docs.meshery.io/guides/mesheryctl#performance-management"
       },
       "2073": {
         "name": "ErrGrafanaClientCode",
@@ -1194,9 +1203,9 @@
       "2138": {
         "name": "ErrVersionCompareCode",
         "code": "2138",
-        "severity": "Alert",
+        "severity": "",
         "long_description": "",
-        "short_description": "failed to compare latest and current version of Meshery",
+        "short_description": "",
         "probable_cause": "",
         "suggested_remediation": ""
       },
@@ -1320,6 +1329,807 @@
       "2152": {
         "name": "ErrChangeK8sContextCode",
         "code": "2152",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "2155": {
+        "name": "ErrApplyHelmChartCode",
+        "code": "2155",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error occurred while applying Helm Chart",
+        "probable_cause": "Kubernetes cluster might not be connected\nLeftover resources from partial install",
+        "suggested_remediation": "Try reinstalling\nTry reconnecting your kubernetes cluster\nClean up artifacts from preinstalled helm release manually"
+      },
+      "2156": {
+        "name": "ErrGetFilterCode",
+        "code": "2156",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error failed to get filter",
+        "probable_cause": "Cannot get the filter with the given Filter ID",
+        "suggested_remediation": "Check if the given Filter ID is correct"
+      },
+      "2157": {
+        "name": "ErrSaveFilterCode",
+        "code": "2157",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error failed to save filter",
+        "probable_cause": "Cannot save the Filter due to wrong path or URL",
+        "suggested_remediation": "Check if the given path or URL of the filter is correct"
+      },
+      "2158": {
+        "name": "ErrDecodeFilterCode",
+        "code": "2158",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error failed to decode filters data into go slice",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "2159": {
+        "name": "ErrEncodeFilterCode",
+        "code": "2159",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error failed to encode filter",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "2160": {
+        "name": "ErrImportFilterCode",
+        "code": "2160",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error failed to import filter",
+        "probable_cause": "Cannot save the Filter due to wrong path or URL",
+        "suggested_remediation": "Check if the given path or URL of the Filter is correct"
+      },
+      "2161": {
+        "name": "ErrFetchFilterCode",
+        "code": "2161",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error failed to fetch filter",
+        "probable_cause": "Failed to retrieve the list of all the Filters",
+        "suggested_remediation": ""
+      },
+      "2162": {
+        "name": "ErrDeleteFilterCode",
+        "code": "2162",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error failed to delete filter",
+        "probable_cause": "Failed to delete Filter with the given ID",
+        "suggested_remediation": "Check if the Filter ID is correct"
+      },
+      "2163": {
+        "name": "ErrSavePatternCode",
+        "code": "2163",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error failed to save pattern",
+        "probable_cause": "Cannot save the Pattern due to wrong path or URL",
+        "suggested_remediation": "Check if the given path or URL of the Pattern is correct"
+      },
+      "2164": {
+        "name": "ErrGetPatternCode",
+        "code": "2164",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error failed to get pattern",
+        "probable_cause": "Cannot get the Pattern with the given Pattern ID",
+        "suggested_remediation": "Check if the given Pattern ID is correct"
+      },
+      "2165": {
+        "name": "ErrDeletePatternCode",
+        "code": "2165",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error failed to delete pattern",
+        "probable_cause": "Failed to delete Pattern with the given ID",
+        "suggested_remediation": "Check if the Pattern ID is correct"
+      },
+      "2166": {
+        "name": "ErrFetchPatternCode",
+        "code": "2166",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error failed to fetch pattern",
+        "probable_cause": "Failed to retrieve the list of all the Patterns",
+        "suggested_remediation": ""
+      },
+      "2167": {
+        "name": "ErrImportPatternCode",
+        "code": "2167",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error failed to import pattern",
+        "probable_cause": "Cannot save the Pattern due to wrong path or URL",
+        "suggested_remediation": "Check if the given path or URL of the Pattern is correct"
+      },
+      "2168": {
+        "name": "ErrEncodePatternCode",
+        "code": "2168",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error failed to encode pattern",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "2169": {
+        "name": "ErrDecodePatternCode",
+        "code": "2169",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error failed to decode patterns data into go slice",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "2170": {
+        "name": "ErrParsePatternCode",
+        "code": "2170",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error failed to parse pattern file",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "2171": {
+        "name": "ErrConvertPatternCode",
+        "code": "2171",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error failed to convert PatternFile to Cytoscape object",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "2172": {
+        "name": "ErrSavingUserPreferenceCode",
+        "code": "2172",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error saving user preference.",
+        "probable_cause": "Invalid data passed\nUnable to connect with provider",
+        "suggested_remediation": "Pass valid values for preferences\nMake sure provider supports saving user preferences\nMake sure you're connected with provider\nMake sure extension provides these preferences"
+      },
+      "2173": {
+        "name": "ErrMesheryInstanceIDCode",
+        "code": "2173",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "2174": {
+        "name": "ErrInvalidKubeConfigCode",
+        "code": "2174",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Invalid Kube Config ",
+        "probable_cause": "Meshery handler failed to find a valid kubernetes config for the deployment",
+        "suggested_remediation": "Try uploading a new kubeconfig and also ensure that meshery can reach kubernetes API server"
+      },
+      "2175": {
+        "name": "ErrInvalidKubeHandlerCode",
+        "code": "2175",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Invalid Kube Handler",
+        "probable_cause": "Meshery handler failed to find a valid kubernetes handler for the deployment",
+        "suggested_remediation": "Try uploading a new kubeconfig and also ensure that meshery can reach kubernetes API server"
+      },
+      "2176": {
+        "name": "ErrInvalidKubeContextCode",
+        "code": "2176",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Invalid Kube Context",
+        "probable_cause": "Meshery handler failed to find a valid kubernetes context for the deployment",
+        "suggested_remediation": "Try uploading a new kubeconfig and also ensure that meshery can reach kubernetes API server"
+      },
+      "2177": {
+        "name": "ErrCreatingKubernetesComponentsCode",
+        "code": "2177",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "component generation was canceled due to deletion or reload of K8s context\nInvalid kubeconfig\nFilters passed incorrectly in config\nCould not fetch API resources from Kubernetes server",
+        "suggested_remediation": "If there is the log \\\"Starting to register ...\\\" for the same contextID after this error means that for some reason the context was reloaded which caused this run to abort. In that case, this error can be ignored.\nMake sure that the configuration filters passed are in accordance with output from /openapi/v2"
+      },
+      "2178": {
+        "name": "ErrInvalidOAMTypeCode",
+        "code": "2178",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "2179": {
+        "name": "ErrKubectlDescribeCode",
+        "code": "2179",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "2180": {
+        "name": "ErrEmptyCurrentK8sContextCode",
+        "code": "2180",
+        "severity": "Alert",
+        "long_description": "Meshery is not able to get the current kubernetes context",
+        "short_description": "Current kubernetes context is empty",
+        "probable_cause": "Meshery is crashed or not reachable",
+        "suggested_remediation": "Restart Meshery Server\nPlease check if Meshery server is accessible to the Database"
+      },
+      "2181": {
+        "name": "ErrFetchNodesCode",
+        "code": "2181",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to get the list of nodes",
+        "probable_cause": "Kubernetes API server might not be reachable from the Meshery server",
+        "suggested_remediation": "Make sure kubernetes API server is reachable from meshery server"
+      },
+      "2182": {
+        "name": "ErrFetchKubernetesVersionCode",
+        "code": "2182",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to fetch kubernetes version",
+        "probable_cause": "Kubernetes API server might not be reachable from the Meshery server",
+        "suggested_remediation": "Make sure kubernetes API server is reachable from meshery server"
+      },
+      "2183": {
+        "name": "ErrScanKubernetesCode",
+        "code": "2183",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to scan kubernetes",
+        "probable_cause": "Kubernetes API server might not be reachable from the Meshery server",
+        "suggested_remediation": "Make sure kubernetes API server is reachable from meshery server"
+      },
+      "2184": {
+        "name": "ErrRetrievePodListCode",
+        "code": "2184",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to retrieve pod list",
+        "probable_cause": "Kubernetes API server might not be reachable from the Meshery server\nRequested resource might not be available",
+        "suggested_remediation": "Make sure kubernetes API server is reachable from meshery server\nMake sure you are requesting for a valid resource"
+      },
+      "2185": {
+        "name": "ErrDetectServiceForDeploymentImageCode",
+        "code": "2185",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to detect service for deployment image",
+        "probable_cause": "Kubernetes API server might not be reachable from the Meshery server\nRequested resource might not be available",
+        "suggested_remediation": "Make sure kubernetes API server is reachable from meshery server\nMake sure you are requesting for a valid resource"
+      },
+      "2186": {
+        "name": "ErrRetrieveNamespacesListCode",
+        "code": "2186",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to get the list of namespaces",
+        "probable_cause": "Kubernetes API server might not be reachable from the Meshery server\nRequested resource might not be available",
+        "suggested_remediation": "Make sure kubernetes API server is reachable from meshery server\nMake sure you are requesting for a valid resource"
+      },
+      "2187": {
+        "name": "ErrGetNamespaceDeploymentsCode",
+        "code": "2187",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to get deployments in the \nnamespace",
+        "probable_cause": "Kubernetes API server might not be reachable from the Meshery server\nRequested resource might not be available",
+        "suggested_remediation": "Make sure kubernetes API server is reachable from meshery server\nMake sure you are requesting for a valid resource"
+      },
+      "2188": {
+        "name": "ErrDetectServiceWithNameCode",
+        "code": "2188",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to get services from the cluster with the name given in names parameter",
+        "probable_cause": "Kubernetes API server might not be reachable from the Meshery server\nRequested resource might not reachable from Meshery server",
+        "suggested_remediation": "Make sure kubernetes API server is reachable from meshery server\nMake sure the network connectivity is up between meshery server and the service endpoint"
+      },
+      "2189": {
+        "name": "ErrGeneratingLoadTestCode",
+        "code": "2189",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to generate load test",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "2190": {
+        "name": "ErrRunningTestCode",
+        "code": "2190",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to run test",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "2191": {
+        "name": "ErrConvertingResultToMapCode",
+        "code": "2191",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to convert from the result to map",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "2192": {
+        "name": "ErrUnmarshalCode",
+        "code": "2192",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "2193": {
+        "name": "ErrGrpcSupportCode",
+        "code": "2193",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": " does not support gRPC load testing",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "2194": {
+        "name": "ErrStartingNighthawkServerCode",
+        "code": "2194",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to start the nighthawk server",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "2195": {
+        "name": "ErrTransformingDataCode",
+        "code": "2195",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error while transforming data",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "2196": {
+        "name": "ErrRunningNighthawkServerCode",
+        "code": "2196",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error while running nighthawk server",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "2197": {
+        "name": "ErrAddAndValidateExtraHeaderCode",
+        "code": "2197",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to add and validate extra header",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "2198": {
+        "name": "ErrInClusterConfigCode",
+        "code": "2198",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to load in-cluster kubeconfig",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "2199": {
+        "name": "ErrNewKubeClientGeneratorCode",
+        "code": "2199",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to generate new kube dynamic client",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "2200": {
+        "name": "ErrRestConfigFromKubeConfigCode",
+        "code": "2200",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to create rest config from kube congif",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "2201": {
+        "name": "ErrNewKubeClientCode",
+        "code": "2201",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to create new kube client",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "2202": {
+        "name": "ErrWriteResponseCode",
+        "code": "2202",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error writing response",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "2203": {
+        "name": "ErrTestConfigsCode",
+        "code": "2203",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error fetching test configs",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "2204": {
+        "name": "ErrInvalidGenValueCode",
+        "code": "2204",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Invalid value for gen",
+        "probable_cause": "",
+        "suggested_remediation": "please provide a valid value for gen (load generator)"
+      },
+      "2205": {
+        "name": "ErrFailToLoadExtensionsCode",
+        "code": "2205",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to Load Extensions from Package",
+        "probable_cause": "Plugin is not available in the location\nplugin does not match with meshery version",
+        "suggested_remediation": "Make sure the plugin is compatible with Meshery server"
+      },
+      "2206": {
+        "name": "ErrConversionCode",
+        "code": "2206",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "unable to convert YAML to JSON",
+        "probable_cause": "Yaml provided is not valid",
+        "suggested_remediation": "Make sure the yaml is valid and has the right parameters"
+      },
+      "2207": {
+        "name": "ErrParseDurationCode",
+        "code": "2207",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "error parsing test duration",
+        "probable_cause": "The format of the duration passed could be incorrect",
+        "suggested_remediation": "please refer to:  https://docs.meshery.io/guides/mesheryctl#performance-management"
+      },
+      "2208": {
+        "name": "ErrLoadTestCode",
+        "code": "2208",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "2209": {
+        "name": "ErrFetchKubernetesCode",
+        "code": "2209",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "2210": {
+        "name": "ErrPanicRecoveryCode",
+        "code": "2210",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Recovered from panic",
+        "probable_cause": "Meshery crashes",
+        "suggested_remediation": "Restart Meshery"
+      },
+      "2211": {
+        "name": "ErrBlankNameCode",
+        "code": "2211",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error: name field is blank",
+        "probable_cause": "Load test name empty or not valid",
+        "suggested_remediation": "Provide a name for the test"
+      },
+      "2212": {
+        "name": "ErrGetK8sComponentsCode",
+        "code": "2212",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Could not get K8s components for registration",
+        "probable_cause": "Invalid kubeconfig\nFilters passed incorrectly in config\nCould not fetch API resources from Kubernetes server",
+        "suggested_remediation": "Make sure that the configuration filters passed are in accordance with output from /openapi/v2"
+      },
+      "2213": {
+        "name": "ErrParseK8sManifestCode",
+        "code": "2213",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "2214": {
+        "name": "ErrCreatePatternServiceCode",
+        "code": "2214",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "2215": {
+        "name": "ErrSavingSeededComponentsCode",
+        "code": "2215",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error while saving sample ",
+        "probable_cause": "User doesn't have permission to save content.\\nDatabase unreachable.\\nDatabase locked or corrupt.\\nContent unsupported.",
+        "suggested_remediation": "Retry fetching content\\nRetry sigining in\\nLogin with correct user account\\nRetry after deleting '~/.meshery/config'."
+      },
+      "2216": {
+        "name": "ErrGettingSeededComponentsCode",
+        "code": "2216",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error while getting \n from sample content",
+        "probable_cause": "Sample content does not exist.\\nContent file format not supported.\\nUser doesn't have permission to read sample content.\\nContent file corrupt.",
+        "suggested_remediation": "Try restarting Meshery.\\nTry fetching content again."
+      },
+      "2217": {
+        "name": "ErrDownloadingSeededComponentsCode",
+        "code": "2217",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "The content is not present at the specified url endpoint\nHTTP requests failed",
+        "suggested_remediation": "Make sure the content is available at the endpoints\nMake sure that Github is reachable and the http requests are not failing"
+      },
+      "2218": {
+        "name": "ErrContextIDCode",
+        "code": "2218",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error: Context ID is empty",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "2219": {
+        "name": "ErrMesheryInstanceIDCode",
+        "code": "2219",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "2220": {
+        "name": "ErrMesheryNotInClusterCode",
+        "code": "2220",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error: Meshery is not running inside a cluster",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "2221": {
+        "name": "ErrBrokerNotConnectedCode",
+        "code": "2221",
+        "severity": "Alert",
+        "long_description": "Meshery Broker is not connected to Meshery Server",
+        "short_description": "Broker not connected",
+        "probable_cause": "Meshery Broker is crashed or not reachable",
+        "suggested_remediation": "Restart Meshery Server\nPlease check if Meshery server has access to the Broker"
+      },
+      "2222": {
+        "name": "ErrResolverInvalidRequestCode",
+        "code": "2222",
+        "severity": "Alert",
+        "long_description": "The Graphql query requested is invalid",
+        "short_description": "Invalid query, please check syntax",
+        "probable_cause": "",
+        "suggested_remediation": "Check the query parameters and syntax of the query being run"
+      },
+      "2223": {
+        "name": "ErrResolverNilClientCode",
+        "code": "2223",
+        "severity": "Alert",
+        "long_description": "Kubernetes config is not initialized with Meshery",
+        "short_description": "Kubernetes client not initialized",
+        "probable_cause": "",
+        "suggested_remediation": "Upload your kubernetes config via the settings dashboard. If uploaded, wait for a minute for it to get initialized"
+      },
+      "2224": {
+        "name": "ErrResolverCreateDataCode",
+        "code": "2224",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "2225": {
+        "name": "ErrResolverQueryCode",
+        "code": "2225",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "2226": {
+        "name": "ErrResolverMeshsyncSubscriptionCode",
+        "code": "2226",
+        "severity": "Alert",
+        "long_description": "GraphQL subscription for MeshSync stopped",
+        "short_description": "MeshSync Subscription failed",
+        "probable_cause": "Could be a network issue",
+        "suggested_remediation": "Check if meshery server is reachable from the browser"
+      },
+      "2227": {
+        "name": "ErrResolverOperatorSubscriptionCode",
+        "code": "2227",
+        "severity": "Alert",
+        "long_description": "GraphQL subscription for Operator stopped",
+        "short_description": "Operator Subscription failed",
+        "probable_cause": "Could be a network issue",
+        "suggested_remediation": "Check if meshery server is reachable from the browser"
+      },
+      "2228": {
+        "name": "ErrResolverAddonSubscriptionCode",
+        "code": "2228",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "2229": {
+        "name": "ErrResolverControlPlaneSubscriptionCode",
+        "code": "2229",
+        "severity": "Alert",
+        "long_description": "GraphQL subscription for Control Plane stopped",
+        "short_description": "Control Plane Subscription failed",
+        "probable_cause": "Could be a network issue",
+        "suggested_remediation": "Confirm that Meshery Server is reachable from your browser."
+      },
+      "2230": {
+        "name": "ErrResolverMesheryClientCode",
+        "code": "2230",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "2231": {
+        "name": "ErrResolverSubscribeChannelCode",
+        "code": "2231",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "2232": {
+        "name": "ErrResolverPublishBrokerCode",
+        "code": "2232",
+        "severity": "Alert",
+        "long_description": "Unable to create a broker publisher",
+        "short_description": "Unable to publish to broker",
+        "probable_cause": "Could be a network issue\nMeshery Broker could have crashed",
+        "suggested_remediation": "Check if Meshery Broker is reachable from Meshery Server\nCheck if Meshery Broker is up and running inside the configured cluster"
+      },
+      "2233": {
+        "name": "ErrResolverNoMeshSyncCode",
+        "code": "2233",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "2234": {
+        "name": "ErrResolverNoExternalEndpointCode",
+        "code": "2234",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "2235": {
+        "name": "ErrBrokerNotFoundCode",
+        "code": "2235",
+        "severity": "Alert",
+        "long_description": "Unable to find meshery broker in the cluster",
+        "short_description": "Meshery broker not found",
+        "probable_cause": "Invalid Grafana Endpoint or API-Key",
+        "suggested_remediation": "Update your Grafana URL and API-Key from the settings page in the UI"
+      },
+      "2236": {
+        "name": "ErrCreateOperatorDeploymentConfigCode",
+        "code": "2236",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Operator deployment configuration could not be created.",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "2237": {
+        "name": "ErrRequestMeshsyncStoreCode",
+        "code": "2237",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Meshsync store request could not be issued",
+        "probable_cause": "",
+        "suggested_remediation": "Make sure meshery broker is healthy"
+      },
+      "2238": {
+        "name": "ErrBrokerSubscriptionCode",
+        "code": "2238",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Could not subscribe to the broker subject",
+        "probable_cause": "",
+        "suggested_remediation": "Make sure meshery broker is healthy"
+      },
+      "2239": {
+        "name": "ErrMesheryControllersStatusSubscriptionCode",
+        "code": "2239",
+        "severity": "Alert",
+        "long_description": "Meshery controller handlers may not be available",
+        "short_description": "Could not create meshery controllers status subcription",
+        "probable_cause": "",
+        "suggested_remediation": "Make sure the controllers are deployed and their handlers are configured"
+      },
+      "2240": {
+        "name": "ErrMeshSyncEventsSubscriptionCode",
+        "code": "2240",
+        "severity": "Alert",
+        "long_description": "Meshery controller handlers may not be available",
+        "short_description": "Could not create MeshSync events subcription",
+        "probable_cause": "",
+        "suggested_remediation": "Make sure the controllers are deployed and their handlers are configured"
+      },
+      "2243": {
+        "name": "ErrConfigurationApplicationsCode",
+        "code": "2243",
+        "severity": "Alert",
+        "long_description": "GraphQL subscription for Applications stopped",
+        "short_description": "Configuration Subscription failed",
+        "probable_cause": "Could be a network issue",
+        "suggested_remediation": "Confirm that Meshery Server is reachable from your browser."
+      },
+      "2244": {
+        "name": "ErrConfigurationFiltersCode",
+        "code": "2244",
+        "severity": "Alert",
+        "long_description": "GraphQL subscription for Filters stopped",
+        "short_description": "Configuration Subscription failed",
+        "probable_cause": "Could be a network issue",
+        "suggested_remediation": "Confirm that Meshery Server is reachable from your browser."
+      },
+      "2245": {
+        "name": "ErrK8sContextCode",
+        "code": "2245",
         "severity": "",
         "long_description": "",
         "short_description": "",

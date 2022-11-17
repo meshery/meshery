@@ -6,7 +6,5 @@ Version: latest
 Platform: docker
 
 Fetching default docker-compose file as per current-context: local2...
-
-Fetching Meshery Operator manifests...
-
-...Meshery config (meshery.yaml) now reset to default settings.
+...fetching Meshery Operator manifests for Kubernetes...
+...meshconfig (meshery.yaml) now reset to default settings.

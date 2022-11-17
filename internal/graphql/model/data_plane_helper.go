@@ -1,6 +1,7 @@
 package model
 
 import (
+	"context"
 	"reflect"
 	"strings"
 
@@ -11,25 +12,43 @@ import (
 	corev1 "k8s.io/api/core/v1"
 )
 
-func GetDataPlaneState(selectors []MeshType, provider models.Provider) ([]*DataPlane, error) {
+func GetDataPlaneState(ctx context.Context, selectors []MeshType, provider models.Provider, cid []string) ([]*DataPlane, error) {
 	object := []meshsyncmodel.Object{}
 	dataPlaneList := make([]*DataPlane, 0)
-
+	cidMap := make(map[string]bool)
+	if len(cid) == 1 && cid[0] == "all" {
+		k8sctxs, ok := ctx.Value(models.AllKubeClusterKey).([]models.K8sContext)
+		if !ok || len(k8sctxs) == 0 {
+			return nil, ErrMesheryClient(nil)
+		}
+		for _, k8ctx := range k8sctxs {
+			if k8ctx.KubernetesServerID != nil {
+				cidMap[k8ctx.KubernetesServerID.String()] = true
+			}
+		}
+	} else {
+		for _, c := range cid {
+			cidMap[c] = true
+		}
+	}
 	for _, selector := range selectors {
 		result := provider.GetGenericPersister().Model(&meshsyncmodel.Object{}).
-			Preload("ObjectMeta", "namespace = ?", controlPlaneNamespace[MeshType(selector)]).
+			Preload("ObjectMeta", "namespace IN ?", controlPlaneNamespace[MeshType(selector)]).
 			Preload("Status").
-			Preload("Spec").
-			// get only resources specs that has proxy string inside its attributes
+			Preload("Spec"). // get only resources specs that has proxy string inside its attributes
 			Where("EXISTS(SELECT 1 FROM resource_specs rsp WHERE rsp.attribute LIKE ? AND rsp.id = objects.id)", `%proxy%`).
 			// get only resources statuses that has proxy string inside its attributes
 			Where("EXISTS(SELECT 1 FROM resource_statuses rst WHERE rst.attribute LIKE ? AND rst.id = objects.id)", `%proxy%`).
 			Find(&object, "kind = ?", "Pod")
+
 		if result.Error != nil {
 			return nil, ErrQuery(result.Error)
 		}
 		proxies := make([]*Container, 0)
 		for _, obj := range object {
+			if !cidMap[obj.ClusterID] {
+				continue
+			}
 			if meshsyncmodel.IsObject(obj) {
 				objspec := corev1.PodSpec{}
 				objstatus := corev1.PodStatus{}
@@ -98,11 +117,11 @@ func GetDataPlaneState(selectors []MeshType, provider models.Provider) ([]*DataP
 					}
 				}
 			}
+			dataPlaneList = append(dataPlaneList, &DataPlane{
+				Name:    strings.ToLower(selector.String()),
+				Proxies: proxies,
+			})
 		}
-		dataPlaneList = append(dataPlaneList, &DataPlane{
-			Name:    strings.ToLower(selector.String()),
-			Proxies: proxies,
-		})
 	}
 	return dataPlaneList, nil
 }

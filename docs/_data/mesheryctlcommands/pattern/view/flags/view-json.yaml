@@ -1,4 +1,0 @@
-name: -o json
-description: display the content of a pattern in json format
-usage: |
-    mesheryctl pattern view [pattern-name|pattern-id] -o json

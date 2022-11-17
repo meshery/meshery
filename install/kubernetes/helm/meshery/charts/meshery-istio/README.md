@@ -1,6 +1,6 @@
 # meshery-istio
 
-![Version: 2.1.2](https://img.shields.io/badge/Version-2.1.2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: stable-latest](https://img.shields.io/badge/AppVersion-stable--latest-informational?style=flat-square)
+![Version: 0.5.0](https://img.shields.io/badge/Version-0.5.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: stable-latest](https://img.shields.io/badge/AppVersion-stable--latest-informational?style=flat-square)
 
 Meshery Adapter for Istio chart.
 
@@ -8,8 +8,8 @@ Meshery Adapter for Istio chart.
 
 | Name | Email | Url |
 | ---- | ------ | --- |
-| aisuko | urakiny@gmail.com |  |
-| leecalcote | leecalcote@gmail.com |  |
+| aisuko | <urakiny@gmail.com> |  |
+| leecalcote | <leecalcote@gmail.com> |  |
 
 ## Values
 
@@ -19,7 +19,7 @@ Meshery Adapter for Istio chart.
 | annotations | object | `{}` |  |
 | env | object | `{}` |  |
 | fullnameOverride | string | `""` |  |
-| image.pullPolicy | string | `"IfNotPresent"` |  |
+| image.pullPolicy | string | `"Always"` |  |
 | image.repository | string | `"layer5/meshery-istio:stable-latest"` |  |
 | imagePullSecrets | list | `[]` |  |
 | ingress.annotations | string | `nil` |  |
@@ -30,6 +30,7 @@ Meshery Adapter for Istio chart.
 | nameOverride | string | `""` |  |
 | nodeSelector | object | `{}` |  |
 | podSecurityContext | object | `{}` |  |
+| ports.http | int | `10000` |  |
 | probe.livenessProbe.enabled | bool | `false` |  |
 | probe.readinessProbe.enabled | bool | `false` |  |
 | replicaCount | int | `1` |  |
@@ -38,8 +39,9 @@ Meshery Adapter for Istio chart.
 | service.annotations | object | `{}` |  |
 | service.port | int | `10000` |  |
 | service.type | string | `"ClusterIP"` |  |
-| serviceAccount.create | bool | `true` |  |
-| serviceAccount.name | string | `"meshery-adapter-istio"` |  |
+| serviceAccount.create | bool | `false` |  |
+| serviceAccount.name | string | `""` |  |
+| serviceAccountNameOverride | string | `""` |  |
 | testCase.enabled | bool | `false` |  |
 | tolerations | list | `[]` |  |
 

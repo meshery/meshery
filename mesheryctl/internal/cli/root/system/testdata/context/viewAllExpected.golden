@@ -3,7 +3,7 @@ local:
   token: Default
   token-location: auth.json
   platform: kubernetes
-  adapters:
+  components:
   - meshery-istio
   channel: stable
   version: latest
@@ -12,7 +12,7 @@ local2:
   token: Default2
   token-location: auth.json
   platform: docker
-  adapters:
+  components:
   - meshery-istio
   channel: stable
   version: latest

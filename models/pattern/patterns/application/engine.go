@@ -26,6 +26,7 @@ type RolloutEngineGenericOptionsMetadata struct {
 type RolloutEngineContainer struct {
 	Name      string
 	Image     string
+	Commands  []string
 	Ports     []RolloutEngineContainerPort
 	Resources []RolloutEngineContainerResource
 	Envs      []v1.EnvVar

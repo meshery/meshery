@@ -1,12 +1,9 @@
 package perf
 
 import (
-	"bytes"
 	"path/filepath"
 	"runtime"
 	"testing"
-
-	log "github.com/sirupsen/logrus"
 
 	"github.com/jarcoal/httpmock"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
@@ -15,200 +12,109 @@ import (
 var existingProfileID = "8f3daf25-e58e-4c59-8bf8-f474b76463ec"
 var newProfileID = "906f8876-33b5-4a97-906e-7a409d3b8ae9"
 
+// golden file responses
+var (
+	// server returning existing profile "new"
+	apply1001 = "1001.golden"
+	// server running test with existing profile
+	apply1002 = "1002.golden"
+	// server response for no protocol added to url
+	apply1003 = "1003.golden"
+	// server response for creating new profile "test"
+	apply1004 = "1004.golden"
+	// server response for running test with new created profile
+	apply1005 = "1005.golden"
+	// server response for no profiles found
+	apply1006 = "1006.golden"
+)
+
+var (
+	// mesheryctl response for success fully ran test
+	apply1001output = "1001.golden"
+	// mesheryctl response for url not having protocol added
+	apply1002output = "1002.golden"
+	// mesheryctl response for no url
+	apply1003output = "1003.golden"
+	// mesheryctl response for invalid url
+	apply1004output = "1004.golden"
+	// mesheryctl response for no existing profile provided neither new profile-name
+	apply1005output = "1005.golden"
+	// mesheryctl response for no profiles found
+	apply1006output = "1006.golden"
+)
+
 func TestApplyCmd(t *testing.T) {
-	// setup current context
 	utils.SetupContextEnv(t)
-
-	// initialize mock server for handling requests
 	utils.StartMockery(t)
-
-	// create a test helper
 	testContext := utils.NewTestHelper(t)
-
 	// get current directory
 	_, filename, _, ok := runtime.Caller(0)
 	if !ok {
 		t.Fatal("Not able to get current working directory")
 	}
 	currDir := filepath.Dir(filename)
-	fixturesDir := filepath.Join(currDir, "fixtures")
+	fixturesDir := filepath.Join(currDir, "fixtures", "apply")
+	testToken := filepath.Join(currDir, "fixtures", "auth.json")
+	profileURL := testContext.BaseURL + "/api/user/performance/profiles"
+	existingProfileRunTest := testContext.BaseURL + "/api/user/performance/profiles/" + existingProfileID + "/run"
+	newProfileRunTest := testContext.BaseURL + "/api/user/performance/profiles/" + newProfileID + "/run"
+	testdataDir := filepath.Join(currDir, "testdata", "apply")
 
 	// test scenrios for fetching data
-	tests := []struct {
-		Name             string
-		Args             []string
-		ExpectedResponse string
-		URLs             []utils.MockURL
-		Token            string
-		ExpectError      bool
-	}{
-		{
-			Name:             "Run Test with Existing profile",
-			Args:             []string{"apply", "new", "--token", filepath.Join(fixturesDir, "token.golden")},
-			ExpectedResponse: "apply.success.output.golden",
-			URLs: []utils.MockURL{
-				{
-					Method:       "GET",
-					URL:          testContext.BaseURL + "/api/user/performance/profiles?search=new",
-					Response:     "apply.fetch.profile.response.golden",
-					ResponseCode: 200,
-				},
-				{
-					Method:       "GET",
-					URL:          testContext.BaseURL + "/api/user/performance/profiles/" + existingProfileID + "/run",
-					Response:     "apply.run.existing.perf.test.response.golden",
-					ResponseCode: 200,
-				},
+	tests := []tempTestStruct{
+		{"Run Test with Existing profile", []string{"apply", "new"},
+			[]utils.MockURL{
+				{Method: "GET", URL: profileURL, Response: apply1001, ResponseCode: 200},
+				{Method: "GET", URL: existingProfileRunTest, Response: apply1002, ResponseCode: 200},
 			},
-			Token:       filepath.Join(fixturesDir, "token.golden"),
-			ExpectError: false,
+			apply1001output,
+			testToken, false,
 		},
-		{
-			Name:             "Run Test with Existing profile with --url",
-			Args:             []string{"apply", "new", "--url", "https://www.google.com", "--token", filepath.Join(fixturesDir, "token.golden")},
-			ExpectedResponse: "apply.success.output.golden",
-			URLs: []utils.MockURL{
-				{
-					Method:       "GET",
-					URL:          testContext.BaseURL + "/api/user/performance/profiles?search=new",
-					Response:     "apply.fetch.profile.response.golden",
-					ResponseCode: 200,
-				},
-				{
-					Method:       "GET",
-					URL:          testContext.BaseURL + "/api/user/performance/profiles/" + existingProfileID + "/run",
-					Response:     "apply.run.new.perf.test.response.golden",
-					ResponseCode: 200,
-				},
+		{"Run Test with Existing profile with --url", []string{"apply", "new", "--url", "https://www.google.com"},
+			[]utils.MockURL{
+				{Method: "GET", URL: profileURL, Response: apply1001, ResponseCode: 200},
+				{Method: "GET", URL: existingProfileRunTest, Response: apply1002, ResponseCode: 200},
 			},
-			Token:       filepath.Join(fixturesDir, "token.golden"),
-			ExpectError: false,
+			apply1001output,
+			testToken, false,
 		},
-		{
-			Name:             "Run Test with Existing profile with --url without protocol",
-			Args:             []string{"apply", "new", "--url", "www.google.com", "--token", filepath.Join(fixturesDir, "token.golden")},
-			ExpectedResponse: "apply.no.protocol.output.golden",
-			URLs: []utils.MockURL{
-				{
-					Method:       "GET",
-					URL:          testContext.BaseURL + "/api/user/performance/profiles?search=new",
-					Response:     "apply.fetch.profile.response.golden",
-					ResponseCode: 200,
-				},
-				{
-					Method:       "GET",
-					URL:          testContext.BaseURL + "/api/user/performance/profiles/" + existingProfileID + "/run",
-					Response:     "apply.no.protocol.response.golden",
-					ResponseCode: 400,
-				},
+		{"Run Test with Existing profile with --url without protocol", []string{"apply", "new", "--url", "www.google.com"},
+			[]utils.MockURL{
+				{Method: "GET", URL: profileURL, Response: apply1001, ResponseCode: 200},
+				{Method: "GET", URL: existingProfileRunTest, Response: apply1003, ResponseCode: 400},
 			},
-			Token:       filepath.Join(fixturesDir, "token.golden"),
-			ExpectError: true,
+			apply1002output,
+			testToken, true,
 		},
-		{
-			Name:             "Run Test with new profile with --url without protocol",
-			Args:             []string{"apply", "--profile", "test", "--url", "www.google.com", "--token", filepath.Join(fixturesDir, "token.golden")},
-			ExpectedResponse: "apply.no.protocol.output.golden",
-			URLs: []utils.MockURL{
-				{
-					Method:       "POST",
-					URL:          testContext.BaseURL + "/api/user/performance/profiles",
-					Response:     "apply.create.profile.response.golden",
-					ResponseCode: 200,
-				},
-				{
-					Method:       "GET",
-					URL:          testContext.BaseURL + "/api/user/performance/profiles/" + newProfileID + "/run",
-					Response:     "apply.no.protocol.response.golden",
-					ResponseCode: 400,
-				},
+		{"Run Test with new profile with --url without protocol", []string{"apply", "test", "--url", "www.google.com"},
+			[]utils.MockURL{
+				{Method: "POST", URL: profileURL, Response: apply1004, ResponseCode: 200},
+				{Method: "GET", URL: newProfileRunTest, Response: apply1003, ResponseCode: 400},
 			},
-			Token:       filepath.Join(fixturesDir, "token.golden"),
-			ExpectError: true,
+			apply1002output,
+			testToken, true,
 		},
-		{
-			Name:             "Run Test with new profile",
-			Args:             []string{"apply", "--profile", "test", "--url", "https://www.google.com", "--token", filepath.Join(fixturesDir, "token.golden")},
-			ExpectedResponse: "apply.success.output.golden",
-			URLs: []utils.MockURL{
-				{
-					Method:       "POST",
-					URL:          testContext.BaseURL + "/api/user/performance/profiles",
-					Response:     "apply.create.profile.response.golden",
-					ResponseCode: 200,
-				},
-				{
-					Method:       "GET",
-					URL:          testContext.BaseURL + "/api/user/performance/profiles/" + newProfileID + "/run",
-					Response:     "apply.run.new.profile.test.response.golden",
-					ResponseCode: 200,
-				},
-			},
-			Token:       filepath.Join(fixturesDir, "token.golden"),
-			ExpectError: false,
+		{"Run Test without profile-name and id", []string{"apply"},
+			[]utils.MockURL{},
+			apply1005output,
+			testToken, true,
 		},
-		{
-			Name:             "Run Test with new profile but without URL",
-			Args:             []string{"apply", "--profile", "test", "--url", "", "--token", filepath.Join(fixturesDir, "token.golden")},
-			ExpectedResponse: "apply.no.url.output.golden",
-			URLs: []utils.MockURL{
-				{
-					Method:       "POST",
-					URL:          testContext.BaseURL + "/api/user/performance/profiles",
-					Response:     "apply.create.profile.response.golden",
-					ResponseCode: 200,
-				},
-				{
-					Method:       "GET",
-					URL:          testContext.BaseURL + "/api/user/performance/profiles/" + newProfileID + "/run",
-					Response:     "apply.run.new.profile.test.response.golden",
-					ResponseCode: 200,
-				},
+		{"No profiles found with given name", []string{"apply", "new", "--yes"},
+			[]utils.MockURL{
+				{Method: "GET", URL: profileURL, Response: apply1006, ResponseCode: 200},
 			},
-			Token:       filepath.Join(fixturesDir, "token.golden"),
-			ExpectError: true,
+			apply1006output,
+			testToken, true,
 		},
-		{
-			Name:             "Run Test with new profile with Invalid URL",
-			Args:             []string{"apply", "--profile", "test", "--url", "invalid-url", "--token", filepath.Join(fixturesDir, "token.golden")},
-			ExpectedResponse: "apply.invalid.url.output.golden",
-			URLs: []utils.MockURL{
-				{
-					Method:       "POST",
-					URL:          testContext.BaseURL + "/api/user/performance/profiles",
-					Response:     "apply.create.profile.response.golden",
-					ResponseCode: 200,
-				},
-				{
-					Method:       "GET",
-					URL:          testContext.BaseURL + "/api/user/performance/profiles/" + newProfileID + "/run",
-					Response:     "apply.run.new.profile.test.response.golden",
-					ResponseCode: 200,
-				},
-			},
-			Token:       filepath.Join(fixturesDir, "token.golden"),
-			ExpectError: true,
+		{"Run Test with new profile with Invalid URL", []string{"apply", "test", "--url", "invalid-url"},
+			[]utils.MockURL{},
+			apply1004output,
+			testToken, true,
 		},
-		{
-			Name:             "Run Test with Existing profile with Invalid URL",
-			Args:             []string{"apply", "new", "--url", "invalid-url", "--token", filepath.Join(fixturesDir, "token.golden")},
-			ExpectedResponse: "apply.invalid.url.output.golden",
-			URLs: []utils.MockURL{
-				{
-					Method:       "GET",
-					URL:          testContext.BaseURL + "/api/user/performance/profiles?search=new",
-					Response:     "apply.fetch.profile.response.golden",
-					ResponseCode: 200,
-				},
-				{
-					Method:       "GET",
-					URL:          testContext.BaseURL + "/api/user/performance/profiles/" + existingProfileID + "/run",
-					Response:     "apply.run.new.perf.test.response.golden",
-					ResponseCode: 200,
-				},
-			},
-			Token:       filepath.Join(fixturesDir, "token.golden"),
-			ExpectError: true,
+		{"Run Test with Existing profile with Invalid URL", []string{"apply", "new", "--url", "invalid-url"},
+			[]utils.MockURL{{Method: "GET", URL: profileURL, Response: apply1001, ResponseCode: 200}},
+			apply1004output,
+			testToken, true,
 		},
 	}
 
@@ -216,56 +122,55 @@ func TestApplyCmd(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
 			for _, url := range tt.URLs {
-				// View api response from golden files
 				apiResponse := utils.NewGoldenFile(t, url.Response, fixturesDir).Load()
-
-				// mock response
 				httpmock.RegisterResponder(url.Method, url.URL,
 					httpmock.NewStringResponder(url.ResponseCode, apiResponse))
 			}
 
-			// set token
-			tokenPath = tt.Token
-
-			// Expected response
-			testdataDir := filepath.Join(currDir, "testdata")
+			utils.TokenFlag = tt.Token
 			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
-
-			// setting up log to grab logs
-			var buf bytes.Buffer
-			log.SetOutput(&buf)
-			utils.SetupLogrusFormatter()
+			b := utils.SetupMeshkitLoggerTesting(t, false)
 
 			PerfCmd.SetArgs(tt.Args)
+			PerfCmd.SetOutput(b)
 			err := PerfCmd.Execute()
 			if err != nil {
-				// if we're supposed to get an error
 				if tt.ExpectError {
-					// write it in file
 					if *update {
 						golden.Write(err.Error())
 					}
 					expectedResponse := golden.Load()
-
 					utils.Equals(t, expectedResponse, err.Error())
+					resetVariables()
 					return
 				}
 				t.Error(err)
 			}
 
-			// response being printed in console
-			actualResponse := buf.String()
-
-			// write it in file
+			actualResponse := b.String()
 			if *update {
 				golden.Write(actualResponse)
 			}
 			expectedResponse := golden.Load()
-
 			utils.Equals(t, expectedResponse, actualResponse)
+			resetVariables()
 		})
 	}
-
-	// stop mock server
 	utils.StopMockery(t)
+}
+
+func resetVariables() {
+	// reset the variables after each test
+	profileName = ""
+	testURL = ""
+	testName = ""
+	testMesh = "none"
+	qps = "0"
+	concurrentRequests = "1"
+	testDuration = "30s"
+	loadGenerator = "fortio"
+	filePath = ""
+	outputFormatFlag = ""
+	viewSingleProfile = false
+	viewSingleResult = false
 }

@@ -1,6 +1,6 @@
 # meshery-osm
 
-![Version: 1.0.1](https://img.shields.io/badge/Version-1.0.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: stable-latest](https://img.shields.io/badge/AppVersion-stable--latest-informational?style=flat-square)
+![Version: 0.5.0](https://img.shields.io/badge/Version-0.5.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: stable-latest](https://img.shields.io/badge/AppVersion-stable--latest-informational?style=flat-square)
 
 Meshery Adapter for Open Service Mesh
 
@@ -8,9 +8,9 @@ Meshery Adapter for Open Service Mesh
 
 | Name | Email | Url |
 | ---- | ------ | --- |
-| Layer5 Authors | community@layer5.io |  |
-| aisuko | urakiny@gmail.com |  |
-| leecalcote | lee.calcote@layer5.io |  |
+| Meshery Authors | <maintainers@meshery.io> |  |
+| aisuko | <urakiny@gmail.com> |  |
+| leecalcote | <lee.calcote@layer5.io> |  |
 
 ## Values
 
@@ -20,7 +20,7 @@ Meshery Adapter for Open Service Mesh
 | annotations | object | `{}` |  |
 | env | object | `{}` |  |
 | fullnameOverride | string | `""` |  |
-| image.pullPolicy | string | `"IfNotPresent"` |  |
+| image.pullPolicy | string | `"Always"` |  |
 | image.repository | string | `"layer5/meshery-osm:stable-latest"` |  |
 | imagePullSecrets | list | `[]` |  |
 | ingress.annotations | string | `nil` |  |
@@ -40,8 +40,9 @@ Meshery Adapter for Open Service Mesh
 | service.annotations | object | `{}` |  |
 | service.port | int | `10009` |  |
 | service.type | string | `"ClusterIP"` |  |
-| serviceAccount.create | bool | `true` |  |
-| serviceAccount.name | string | `"meshery-adapter-osm"` |  |
+| serviceAccount.create | bool | `false` |  |
+| serviceAccount.name | string | `""` |  |
+| serviceAccountNameOverride | string | `""` |  |
 | testCase.enabled | bool | `false` |  |
 | tolerations | list | `[]` |  |
 

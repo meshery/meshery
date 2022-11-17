@@ -37,3 +37,4 @@ The following points of extension are currently incorporated into Meshery.
 1. Patterns (Open Application Model (OAM))
 1. [Providers]({{site.baseurl}}/extensibility/providers)
 1. [REST API](/extensibility/api#rest)
+1. [UI Plugins](extensibility/ui)

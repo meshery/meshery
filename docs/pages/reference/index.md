@@ -6,6 +6,7 @@ redirect_from: reference/
 language: en
 list: exclude
 ---
+
 References for using Meshery's various features and components.
 
 {% assign sorted_reference = site.pages | sort: "type" | reverse %}
@@ -21,7 +22,3 @@ References for using Meshery's various features and components.
       {% endif %}
     {% endfor %}
 </ul>
-
-{% include toc.html page=reference %}
-
-{:toc}

@@ -14,7 +14,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/dgrijalva/jwt-go"
+	"github.com/golang-jwt/jwt"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/oauth2"
 )
@@ -29,10 +29,18 @@ func SafeClose(co io.Closer) {
 	}
 }
 
-//DoRequest - executes a request and does refreshing automatically
+// DoRequest - executes a request and does refreshing automatically
 func (l *RemoteProvider) DoRequest(req *http.Request, tokenString string) (*http.Response, error) {
 	resp, err := l.doRequestHelper(req, tokenString)
+	if err != nil {
+		return nil, ErrTokenRefresh(err)
+	}
+
 	if resp.StatusCode == 401 || resp.StatusCode == 403 {
+		// Read and close response body before reusing request
+		// https://github.com/golang/go/issues/19653#issuecomment-341540384
+		_, _ = ioutil.ReadAll(resp.Body)
+		resp.Body.Close()
 		logrus.Warn("trying after refresh")
 		newToken, err := l.refreshToken(tokenString)
 		logrus.Info("token refresh successful")
@@ -63,6 +71,10 @@ func (l *RemoteProvider) refreshToken(tokenString string) (string, error) {
 	if err != nil {
 		return "", err
 	}
+	if r.StatusCode == http.StatusInternalServerError {
+		return "", ErrTokenRefresh(fmt.Errorf("failed to refresh token: status code 500"))
+	}
+
 	defer SafeClose(r.Body)
 	var target map[string]string
 	err = json.NewDecoder(r.Body).Decode(&target)
@@ -71,7 +83,7 @@ func (l *RemoteProvider) refreshToken(tokenString string) (string, error) {
 	}
 	l.TokenStore[tokenString] = target[tokenName]
 	time.AfterFunc(1*time.Hour, func() {
-		logrus.Infof("deleting old ts")
+		logrus.Infof("deleting old token string")
 		delete(l.TokenStore, tokenString)
 	})
 	return target[tokenName], nil
@@ -122,7 +134,7 @@ func (l *RemoteProvider) UpdateJWKs() error {
 		return ErrJWKsKeys(err)
 	}
 	defer SafeClose(resp.Body)
-	jsonDataFromHTTP, err := ioutil.ReadAll(resp.Body)
+	jsonDataFromHTTP, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return ErrDataRead(err, "Response Body")
 	}
@@ -222,9 +234,12 @@ func (l *RemoteProvider) VerifyToken(tokenString string) (*jwt.MapClaims, error)
 
 	// TODO: Once hydra fixes https://github.com/ory/hydra/issues/1542
 	// we should rather configure hydra auth server to remove nbf field in the token
-	exp := int64(jtk["exp"].(float64))
-	if jwt.TimeFunc().Unix() > exp {
-		return nil, ErrTokenExpired
+	_, ok := jtk["exp"]
+	if ok {
+		exp := int64(jtk["exp"].(float64))
+		if jwt.TimeFunc().Unix() > exp {
+			return nil, ErrTokenExpired
+		}
 	}
 
 	keyJSON, err := l.GetJWK(kid)

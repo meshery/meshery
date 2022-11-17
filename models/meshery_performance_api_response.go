@@ -79,7 +79,8 @@ type PerformanceResult struct {
 type RunnerResults struct {
 	URL               string     `json:"URL"`
 	LoadGenerator     string     `json:"load-generator"`
-	Duration          uint64     `json:"ActualDuration"`
+	ActualDuration    uint64     `json:"ActualDuration"`
+	RequestedDuration string     `json:"RequestedDuration"`
 	QPS               float64    `json:"ActualQPS"`
 	StartTime         *time.Time `json:"StartTime"`
 	DurationHistogram struct {

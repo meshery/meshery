@@ -12,6 +12,9 @@ import (
 	SMP "github.com/layer5io/service-mesh-performance/spec"
 )
 
+// ContextKey is a custom type for setting context key
+type ContextKey string
+
 // ExtensionInput - input for a plugin
 type ExtensionInput struct {
 	DBHandler       *database.Handler
@@ -51,6 +54,7 @@ type Extensions struct {
 	Navigator NavigatorExtensions `json:"navigator,omitempty"`
 	UserPrefs UserPrefsExtensions `json:"user_prefs,omitempty"`
 	GraphQL   GraphQLExtensions   `json:"graphql,omitempty"`
+	Acccount  AccountExtensions   `json:"account,omitempty"`
 }
 
 // NavigatorExtensions is a collection of NavigatorExtension
@@ -62,26 +66,45 @@ type UserPrefsExtensions []UserPrefsExtension
 // GraphQLExtensions is a collection of GraphQLExtension endpoints
 type GraphQLExtensions []GraphQLExtension
 
+// NavigatorExtensions is a collection of NavigatorExtension
+type AccountExtensions []AccountExtension
+
 // GraphQLExtension describes the graphql server extension point in the backend
 type GraphQLExtension struct {
 	Component string `json:"component,omitempty"`
 	Path      string `json:"path,omitempty"`
+	Type      string `json:"type,omitempty"`
 }
 
 // NavigatorExtension describes the Navigator extension point in the UI
 type NavigatorExtension struct {
-	Title     string              `json:"title,omitempty"`
-	Href      Href                `json:"href,omitempty"`
-	Component string              `json:"component,omitempty"`
-	Icon      string              `json:"icon,omitempty"`
-	Link      *bool               `json:"link,omitempty"`
-	Show      *bool               `json:"show,omitempty"`
-	Children  NavigatorExtensions `json:"children,omitempty"`
+	Title           string              `json:"title,omitempty"`
+	OnClickCallback int                 `json:"on_click_callback,omitempty"`
+	Href            Href                `json:"href,omitempty"`
+	Component       string              `json:"component,omitempty"`
+	Icon            string              `json:"icon,omitempty"`
+	Link            *bool               `json:"link,omitempty"`
+	Show            *bool               `json:"show,omitempty"`
+	Children        NavigatorExtensions `json:"children,omitempty"`
+	Type            string              `json:"type,omitempty"`
+}
+
+// AccountExtension describes the Account extension point in the UI
+type AccountExtension struct {
+	Title           string            `json:"title,omitempty"`
+	OnClickCallback int               `json:"on_click_callback,omitempty"`
+	Href            Href              `json:"href,omitempty"`
+	Component       string            `json:"component,omitempty"`
+	Link            *bool             `json:"link,omitempty"`
+	Show            *bool             `json:"show,omitempty"`
+	Children        AccountExtensions `json:"children,omitempty"`
+	Type            string            `json:"type,omitempty"`
 }
 
 // UserPrefsExtension describes the user preference extension point in the UI
 type UserPrefsExtension struct {
 	Component string `json:"component,omitempty"`
+	Type      string `json:"type,omitempty"`
 }
 
 // Href describes a link along with its type
@@ -97,6 +120,12 @@ type Capabilities []Capability
 type Capability struct {
 	Feature  Feature `json:"feature,omitempty"`
 	Endpoint string  `json:"endpoint,omitempty"`
+}
+
+// K8sContextResponse - struct of response sent by provider when requested to persist k8s config
+type K8sContextPersistResponse struct {
+	K8sContext K8sContext `json:"k8s_context,omitempty"`
+	Inserted   bool       `json:"inserted,omitempty"`
 }
 
 // Feature is a type to store the features of the provider
@@ -139,16 +168,22 @@ const (
 	RemoteProviderType ProviderType = "remote"
 
 	// ProviderCtxKey is the context key for persisting provider to context
-	ProviderCtxKey = "provider"
+	ProviderCtxKey ContextKey = "provider"
 
 	// TokenCtxKey is the context key for persisting token to context
-	TokenCtxKey = "token"
+	TokenCtxKey ContextKey = "token"
 
 	// UserCtxKey is the context key for persisting user to context
-	UserCtxKey = "user"
+	UserCtxKey ContextKey = "user"
 
 	// UserPrefsCtxKey is the context key for persisting user preferences to context
-	PerfObjCtxKey = "perf_obj"
+	PerfObjCtxKey ContextKey = "perf_obj"
+
+	KubeClustersKey   ContextKey = "kubeclusters"
+	AllKubeClusterKey ContextKey = "allkubeclusters"
+
+	MesheryControllerHandlersKey ContextKey = "mesherycontrollerhandlerskey"
+	MeshSyncDataHandlersKey      ContextKey = "meshsyncdatahandlerskey"
 )
 
 // IsSupported returns true if the given feature is listed as one of
@@ -204,14 +239,24 @@ type Provider interface {
 	GetProviderToken(req *http.Request) (string, error)
 	UpdateToken(http.ResponseWriter, *http.Request) string
 	Logout(http.ResponseWriter, *http.Request)
+	HandleUnAuthenticated(w http.ResponseWriter, req *http.Request)
 	FetchResults(tokenVal string, page, pageSize, search, order, profileID string) ([]byte, error)
-	FetchAllResults(req *http.Request, page, pageSize, search, order, from, to string) ([]byte, error)
+	FetchAllResults(tokenVal string, page, pageSize, search, order, from, to string) ([]byte, error)
 	PublishResults(req *http.Request, result *MesheryResult, profileID string) (string, error)
 	FetchSmiResults(req *http.Request, page, pageSize, search, order string) ([]byte, error)
+	FetchSmiResult(req *http.Request, page, pageSize, search, order string, resultID uuid.UUID) ([]byte, error)
 	PublishSmiResults(result *SmiResult) (string, error)
 	PublishMetrics(tokenVal string, data *MesheryResult) error
 	GetResult(tokenVal string, resultID uuid.UUID) (*MesheryResult, error)
 	RecordPreferences(req *http.Request, userID string, data *Preference) error
+
+	SaveK8sContext(token string, k8sContext K8sContext) (K8sContext, error)
+	GetK8sContexts(token, page, pageSize, search, order string) ([]byte, error)
+	DeleteK8sContext(token, id string) (K8sContext, error)
+	GetK8sContext(token, id string) (K8sContext, error)
+	LoadAllK8sContext(token string) ([]*K8sContext, error)
+	// SetCurrentContext(token, id string) (K8sContext, error)
+	// GetCurrentContext(token string) (K8sContext, error)
 
 	SMPTestConfigStore(req *http.Request, perfConfig *SMP.PerformanceTestConfig) (string, error)
 	SMPTestConfigGet(req *http.Request, testUUID string) (*SMP.PerformanceTestConfig, error)
@@ -226,8 +271,9 @@ type Provider interface {
 	GetKubeClient() *mesherykube.Client
 
 	SaveMesheryPattern(tokenString string, pattern *MesheryPattern) ([]byte, error)
-	GetMesheryPatterns(req *http.Request, page, pageSize, search, order string) ([]byte, error)
+	GetMesheryPatterns(tokenString, page, pageSize, search, order string) ([]byte, error)
 	DeleteMesheryPattern(req *http.Request, patternID string) ([]byte, error)
+	DeleteMesheryPatterns(req *http.Request, patterns MesheryPatternDeleteRequestBody) ([]byte, error)
 	GetMesheryPattern(req *http.Request, patternID string) ([]byte, error)
 	RemotePatternFile(req *http.Request, resourceURL, path string, save bool) ([]byte, error)
 	SaveMesheryPatternResource(token string, resource *PatternResource) (*PatternResource, error)
@@ -236,20 +282,21 @@ type Provider interface {
 	DeleteMesheryPatternResource(token, resourceID string) error
 
 	SaveMesheryFilter(tokenString string, filter *MesheryFilter) ([]byte, error)
-	GetMesheryFilters(req *http.Request, page, pageSize, search, order string) ([]byte, error)
+	GetMesheryFilters(tokenString, page, pageSize, search, order string) ([]byte, error)
 	DeleteMesheryFilter(req *http.Request, filterID string) ([]byte, error)
 	GetMesheryFilter(req *http.Request, filterID string) ([]byte, error)
 	GetMesheryFilterFile(req *http.Request, filterID string) ([]byte, error)
 	RemoteFilterFile(req *http.Request, resourceURL, path string, save bool) ([]byte, error)
 
 	SaveMesheryApplication(tokenString string, application *MesheryApplication) ([]byte, error)
-	GetMesheryApplications(req *http.Request, page, pageSize, search, order string) ([]byte, error)
+	SaveApplicationSourceContent(token string, applicationID string, sourceContent []byte) error
+	GetApplicationSourceContent(req *http.Request, applicationID string) ([]byte, error)
+	GetMesheryApplications(tokenString, page, pageSize, search, order string) ([]byte, error)
 	DeleteMesheryApplication(req *http.Request, applicationID string) ([]byte, error)
 	GetMesheryApplication(req *http.Request, applicationID string) ([]byte, error)
-	RemoteApplicationFile(req *http.Request, resourceURL, path string, save bool) ([]byte, error)
 
 	SavePerformanceProfile(tokenString string, performanceProfile *PerformanceProfile) ([]byte, error)
-	GetPerformanceProfiles(req *http.Request, page, pageSize, search, order string) ([]byte, error)
+	GetPerformanceProfiles(tokenString string, page, pageSize, search, order string) ([]byte, error)
 	GetPerformanceProfile(req *http.Request, performanceProfileID string) ([]byte, error)
 	DeletePerformanceProfile(req *http.Request, performanceProfileID string) ([]byte, error)
 
@@ -257,4 +304,6 @@ type Provider interface {
 	GetSchedules(req *http.Request, page, pageSize, order string) ([]byte, error)
 	GetSchedule(req *http.Request, scheduleID string) ([]byte, error)
 	DeleteSchedule(req *http.Request, scheduleID string) ([]byte, error)
+
+	ExtensionProxy(req *http.Request) ([]byte, error)
 }

@@ -4,6 +4,8 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/internal/sql"
 	"github.com/lib/pq"
+
+	SMP "github.com/layer5io/service-mesh-performance/spec"
 )
 
 // PerformanceProfile represents the performance profile that needs
@@ -29,4 +31,9 @@ type PerformanceProfile struct {
 
 	UpdatedAt *sql.Time `json:"updated_at,omitempty"`
 	CreatedAt *sql.Time `json:"created_at,omitempty"`
+}
+
+type PerformanceTestConfigFile struct {
+	Config      *SMP.PerformanceTestConfig `json:"test,omitempty"`
+	ServiceMesh *SMP.ServiceMesh           `json:"mesh,omitempty"`
 }

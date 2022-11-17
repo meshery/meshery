@@ -1,20 +1,23 @@
-import React, {useState} from 'react'
+
+import React, {useState, useEffect, useRef} from 'react'
 import { Box, Button, Divider, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Typography, Tooltip,} from "@mui/material";
 import { styled } from "@mui/material/styles";
 import UploadImport from "@/components/UploadImport";
 import ViewSwitch from "@/components/ViewSwitch";
-import SaveIcon from '@mui/icons-material/Save';
-import DeleteIcon from '@mui/icons-material/Delete';
-import FullscreenIcon from '@mui/icons-material/Fullscreen';
-import FullscreenExitIcon from '@mui/icons-material/FullscreenExit';
+import SaveIcon from "@mui/icons-material/Save";
+import DeleteIcon from "@mui/icons-material/Delete";
+import FullscreenIcon from "@mui/icons-material/Fullscreen";
+import FullscreenExitIcon from "@mui/icons-material/FullscreenExit";
 import MesheryPatternGrid from "./MesheryPatternGrid";
 import MesheryPatternTable from "./MesheryPatternTable";
-import AddCircleOutlineRoundedIcon from '@mui/icons-material/AddCircleOutlineRounded';
+import AddCircleOutlineRoundedIcon from "@mui/icons-material/AddCircleOutlineRounded";
 import EmptyState from "@/components/EmptyStateComponent";
 import { useTheme } from "@mui/system";
+import ConfigurationSubscription from "@/features/Configurations/subscriptions/ConfigurationSubscription"
+import PatternConfigurator from "./PatternConfigurator/PatternConfigurator";
 
 function resetSelectedPattern() {
-  return { show : false, pattern : null };
+  return { show: false, pattern: null };
 }
 
 function Mesherypatterns({user}) {
@@ -25,8 +28,13 @@ function Mesherypatterns({user}) {
     marginLeft : "auto",
     paddingLeft : theme.spacing(2),
  }))
-
-    const [patterns, setpatterns] = useState([]);
+    
+    const [page, setPage] = useState(0);
+    const [search] = useState("");
+    const [sortOrder] = useState("");
+    const [count, setCount] = useState(0);
+    const [pageSize, setPageSize] = useState(10);
+    const [patterns, setPatterns] = useState([]);
     const [selectedRowData, setSelectedRowData] = useState(null);
     const [selectedPattern, setSelectedPattern] = useState(resetSelectedPattern());
     const [modalOpen, setModalOpen] = useState({
@@ -38,144 +46,159 @@ function Mesherypatterns({user}) {
       /**  @type {TypeView} */
       ("grid")
     ); 
-  
+    
+    const disposeConfSubscriptionRef = useRef(null);
+
     function resetSelectedRowData() {
       return () => {
         setSelectedRowData(null);
       };
-    }
+    } 
 
-    function fetchpatterns(page, pageSize, search, sortOrder) {
-      if (!search) search = "";
-      if (!sortOrder) sortOrder = "";
+    useEffect(() => {
+      initPatternsSubscription();
+      return () => disposeConfSubscriptionRef.current.dispose();
+    },[])
 
-      const query = `?page=${page}&page_size=${pageSize}&search=${encodeURIComponent(search)}&order=${encodeURIComponent(
-        sortOrder
-      )}`;
-
-      updateProgress({ showProgress : true });
-
-      dataFetch(
-        `/api/pattern${query}`,
-        { credentials : "include", },
-        (result) => {
-          console.log("patternFile API", `/api/pattern${query}`);
-          updateProgress({ showProgress : false });
-          if (result) {
-            setpatterns(result.patterns || []);
-            setCount(result.total_count || 0);
-          }
+    const initPatternsSubscription = (page, pageSize, search, order) => {
+      if (disposeConfSubscriptionRef.current) {
+        disposeConfSubscriptionRef.current.dispose();
+      }
+      const configurationSubscription = ConfigurationSubscription((result) => {
+        setPage(result.configuration?.patterns.page || 0);
+        setPageSize(result.configuration?.patterns.page_size || 0);
+        setCount(result.configuration?.patterns.total_count || 0);
+        setPatterns(result.configuration?.patterns.patterns)
+      },
+      {
+        applicationSelector : {
+          pageSize : pageSize,
+          page : page,
+          search : search,
+          order : order
         },
-        // handleError
-        handleError(ACTION_TYPES.FETCH_patternS)
-      );
-    }
-
-    const handleModalClose = () => {
-      setModalOpen({
-        open : false,
-        pattern_file : null
+        patternSelector : {
+          pageSize : pageSize,
+          page : page,
+          search : search,
+          order : order
+        },
+        filterSelector : {
+          pageSize : pageSize,
+          page : page,
+          search : search,
+          order : order
+        }
       });
+      disposeConfSubscriptionRef.current = configurationSubscription
     }
 
-    const handleModalOpen = (app_file, isDeploy) => {
-      setModalOpen({
-        open : true,
-        deploy : isDeploy,
-        pattern_file : app_file
-      });
-    }
+  function TooltipIcon({ children, onClick, title }) {
+    return (
+      <Tooltip title={title} placement="top" arrow interactive>
+        <IconButton onClick={onClick}>{children}</IconButton>
+      </Tooltip>
+    );
+  }
 
-    function TooltipIcon({ children, onClick, title }) {
-      return (
-        <Tooltip title={title} placement="top" arrow interactive >
-          <IconButton onClick={onClick}>
-            {children}
-          </IconButton>
-        </Tooltip>
-      );
-    }
+  function YAMLEditor({ pattern, onClose, onSubmit }) {
+    const [yaml, setYaml] = useState("");
+    const [fullScreen, setFullScreen] = useState(false);
 
-    function YAMLEditor({ pattern, onClose, onSubmit }) {
-      const [yaml, setYaml] = useState("");
-      const [fullScreen, setFullScreen] = useState(false);
-    
-      const toggleFullScreen = () => {
-        setFullScreen(!fullScreen);
-      };
-    
-      return (
-        <Dialog onClose={onClose} aria-labelledby="pattern-dialog-title" open maxWidth="md" fullScreen={fullScreen} fullWidth={!fullScreen}>
-          <DialogTitle disableTypography id="pattern-dialog-title" sx={{background: "#fff", color: "#000000" }}>
-             <Typography variant="h6" >
-              {pattern.name}
-            </Typography>
-            <TooltipIcon
-              title={fullScreen ? "Exit Fullscreen" : "Enter Fullscreen"}
-              onClick={toggleFullScreen}>
-              {fullScreen ? <FullscreenExitIcon /> : <FullscreenIcon />}
-            </TooltipIcon>
-            {/* <TooltipIcon title="Exit" onClick={onClose}>
+    const toggleFullScreen = () => {
+      setFullScreen(!fullScreen);
+    };
+
+    return (
+      <Dialog
+        onClose={onClose}
+        aria-labelledby="pattern-dialog-title"
+        open
+        maxWidth="md"
+        fullScreen={fullScreen}
+        fullWidth={!fullScreen}
+      >
+        <DialogTitle disableTypography id="pattern-dialog-title" sx={{ background: "#fff", color: "#000000" }}>
+          <Typography variant="h6">{pattern.name}</Typography>
+          <TooltipIcon title={fullScreen ? "Exit Fullscreen" : "Enter Fullscreen"} onClick={toggleFullScreen}>
+            {fullScreen ? <FullscreenExitIcon /> : <FullscreenIcon />}
+          </TooltipIcon>
+          {/* <TooltipIcon title="Exit" onClick={onClose}>
               <CloseIcon />
             </TooltipIcon> */}
-          </DialogTitle>
-          <Divider variant="fullWidth" light />
-          <DialogContent>
-
-          </DialogContent>
-          <Divider variant="fullWidth" light />
-          <DialogActions>
-            <Tooltip title="Update Pattern">
-              <IconButton
-                aria-label="Update"
-                color="primary"
-                onClick={() => onSubmit({
-                  data : yaml, id : pattern.id, name : pattern.name, type : FILE_OPS.UPDATE
-                })}
-              >
-                <SaveIcon />
-              </IconButton>
-            </Tooltip>
-            <Tooltip title="Delete Pattern">
-              <IconButton
-                aria-label="Delete"
-                color="primary"
-                onClick={() => onSubmit({
-                  data : yaml,
-                  id : pattern.id,
-                  name : pattern.name,
-                  type : FILE_OPS.DELETE
-                })}
-              >
-                <DeleteIcon />
-              </IconButton>
-            </Tooltip>
-          </DialogActions>
-        </Dialog>
-      );
-    }
-    
+        </DialogTitle>
+        <Divider variant="fullWidth" light />
+        <DialogContent></DialogContent>
+        <Divider variant="fullWidth" light />
+        <DialogActions>
+          <Tooltip title="Update Pattern">
+            <IconButton
+              aria-label="Update"
+              color="primary"
+              onClick={() =>
+                onSubmit({
+                  data: yaml,
+                  id: pattern.id,
+                  name: pattern.name,
+                  type: FILE_OPS.UPDATE,
+                })
+              }
+            >
+              <SaveIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Delete Pattern">
+            <IconButton
+              aria-label="Delete"
+              color="primary"
+              onClick={() =>
+                onSubmit({
+                  data: yaml,
+                  id: pattern.id,
+                  name: pattern.name,
+                  type: FILE_OPS.DELETE,
+                })
+              }
+            >
+              <DeleteIcon />
+            </IconButton>
+          </Tooltip>
+        </DialogActions>
+      </Dialog>
+    );
+  }
 
   return (
-    <> 
-            {selectedRowData && Object.keys(selectedRowData).length > 0 && (
-          <YAMLEditor pattern={selectedRowData} onClose={resetSelectedRowData()}  />
-        )}
-        
-      {!selectedPattern.show  &&  (patterns.length > 0 || viewType === "table") &&
-       <Box sx={{display: "flex"}}>
-         
-      <Button aria-label="Add Pattern" variant="contained"
-          color="primary"
-          size="large"
-           sx={{marginBottom: theme.spacing(2) , marginRight: theme.spacing(2)}} >
-           <AddCircleOutlineRoundedIcon sx={{ paddingRight : ".35rem" }} />
-          Create Design
-        </Button>    
-       <UploadImport configuration="Designs" />
-       <CustomBox >
+    <>
+      {selectedRowData && Object.keys(selectedRowData).length > 0 && (
+        <YAMLEditor pattern={selectedRowData} onClose={resetSelectedRowData()} />
+      )}
+      {selectedPattern.show && (
+        <PatternConfigurator onSubmit={handleSubmit} show={setSelectedPattern} pattern={selectedPattern.pattern} />
+      )}
+      {!selectedPattern.show && (patterns.length > 0 || viewType === "table") && (
+        <Box sx={{ display: "flex" }}>
+          <Button
+            aria-label="Add Pattern"
+            variant="contained"
+            color="primary"
+            size="large"
+            sx={{ marginBottom: theme.spacing(2), marginRight: theme.spacing(2) }}
+            onClick={() =>
+              setSelectedPattern({
+                pattern: { id: null, name: "New Pattern", pattern_file: "name: New Pattern\nservices:" },
+                show: true,
+              })
+            }
+          >
+            <AddCircleOutlineRoundedIcon sx={{ paddingRight: ".35rem" }} />
+            Create Design
+          </Button>
+          <UploadImport configuration="Designs" />
+          <CustomBox>
             <ViewSwitch view={viewType} changeView={setViewType} />
           </CustomBox>
+
        </Box>
       }
     
@@ -185,6 +208,10 @@ function Mesherypatterns({user}) {
          setSelectedRowData = {setSelectedRowData}
          handleModalOpen = {handleModalOpen}
          user={user}
+         page ={page}
+         count = {count}
+         pageSize = {pageSize}
+         sortOrder ={sortOrder}
          />
 }
 {!selectedPattern.show && viewType === "grid" && patterns.length === 0 &&
@@ -196,10 +223,18 @@ function Mesherypatterns({user}) {
               color="primary"
               size="large"
               // @ts-ignore
-              sx={{marginBottom: theme.spacing(2) , marginRight: theme.spacing(2)}} >  
-              <AddCircleOutlineRoundedIcon  sx={{ paddingRight : ".35rem" }} />
+              onClick={() =>
+                setSelectedPattern({
+                  pattern: { id: null, name: "New Pattern", pattern_file: "name: New Pattern\nservices:" },
+                  show: true,
+                })
+              }
+              sx={{ marginBottom: theme.spacing(2), marginRight: theme.spacing(2) }}
+            >
+              <AddCircleOutlineRoundedIcon sx={{ paddingRight: ".35rem" }} />
               Create Design
             </Button>
+
             }
             Button2={
               <UploadImport configuration="Designs" />
@@ -214,13 +249,14 @@ function Mesherypatterns({user}) {
             //  handleSubmit={handleSubmit}
              setSelectedPattern={setSelectedPattern}
              selectedPattern={selectedPattern}
-            //  pages={Math.ceil(count / pageSize)}
-            //  setPage={setPage}
-            //  selectedPage={page}
+             pages={Math.ceil(count / pageSize)}  
+             setPage={setPage}
+             selectedPage={page}
            />
 }
   </>
   )
+
 }
 
-export default Mesherypatterns
+export default Mesherypatterns;

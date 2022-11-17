@@ -101,52 +101,35 @@ STOP:
 				meshAdapters = []*models.Adapter{}
 			}
 
-			if prefObj.K8SConfig == nil || !prefObj.K8SConfig.InClusterConfig && (prefObj.K8SConfig.Config == nil || len(prefObj.K8SConfig.Config) == 0) {
-				log.Debug("No valid Kubernetes config found.") // switching from Error to Debug to prevent it from filling up the logs
-				// http.Error(w, `No valid Kubernetes config found.`, http.StatusBadRequest)
-				// return
-				localMeshAdaptersLock.Lock()
-				for _, mcl := range localMeshAdapters {
-					_ = mcl.Close()
-				}
-				localMeshAdapters = map[string]*meshes.MeshClient{}
-				localMeshAdaptersLock.Unlock()
+			adaptersLen := len(meshAdapters)
+			if adaptersLen == 0 {
+				log.Debug("No valid mesh adapter(s) found.") // switching from Error to Debug to prevent it from filling up the logs
+
+				// Clear the adapter cache
+				localMeshAdapters = closeAdapterConnections(localMeshAdaptersLock, localMeshAdapters)
 			} else {
-				adaptersLen := len(meshAdapters)
-				if adaptersLen == 0 {
-					log.Debug("No valid mesh adapter(s) found.") // switching from Error to Debug to prevent it from filling up the logs
-					// http.Error(w, `No valid mesh adapter(s) found.`, http.StatusBadRequest)
-					// return
-					localMeshAdaptersLock.Lock()
-					for _, mcl := range localMeshAdapters {
-						_ = mcl.Close()
-					}
-					localMeshAdapters = map[string]*meshes.MeshClient{}
-					localMeshAdaptersLock.Unlock()
-				} else {
-					localMeshAdaptersLock.Lock()
-					for _, ma := range meshAdapters {
-						mClient, ok := localMeshAdapters[ma.Location]
-						if !ok {
-							mClient, err = meshes.CreateClient(req.Context(), prefObj.K8SConfig.Config, prefObj.K8SConfig.ContextName, ma.Location)
-							if err == nil {
-								localMeshAdapters[ma.Location] = mClient
-							}
+				localMeshAdaptersLock.Lock()
+				for _, ma := range meshAdapters {
+					mClient, ok := localMeshAdapters[ma.Location]
+					if !ok {
+						mClient, err = meshes.CreateClient(req.Context(), ma.Location)
+						if err == nil {
+							localMeshAdapters[ma.Location] = mClient
 						}
-						if mClient != nil {
-							_, err = mClient.MClient.MeshName(req.Context(), &meshes.MeshNameRequest{})
-							if err != nil {
-								_ = mClient.Close()
-								delete(localMeshAdapters, ma.Location)
-							} else {
-								if !ok { // reusing the map check, only when ok is false a new entry will be added
-									newAdaptersChan <- mClient
-								}
+					}
+					if mClient != nil {
+						_, err = mClient.MClient.MeshName(req.Context(), &meshes.MeshNameRequest{})
+						if err != nil {
+							_ = mClient.Close()
+							delete(localMeshAdapters, ma.Location)
+						} else {
+							if !ok { // reusing the map check, only when ok is false a new entry will be added
+								newAdaptersChan <- mClient
 							}
 						}
 					}
-					localMeshAdaptersLock.Unlock()
 				}
+				localMeshAdaptersLock.Unlock()
 			}
 		}
 		time.Sleep(5 * time.Second)
@@ -201,4 +184,14 @@ func listenForAdapterEvents(ctx context.Context, mClient *meshes.MeshClient, res
 		}
 		respChan <- data
 	}
+}
+
+func closeAdapterConnections(localMeshAdaptersLock *sync.Mutex, localMeshAdapters map[string]*meshes.MeshClient) map[string]*meshes.MeshClient {
+	localMeshAdaptersLock.Lock()
+	for _, mcl := range localMeshAdapters {
+		_ = mcl.Close()
+	}
+	localMeshAdaptersLock.Unlock()
+
+	return map[string]*meshes.MeshClient{}
 }

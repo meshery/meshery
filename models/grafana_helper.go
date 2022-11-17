@@ -3,16 +3,15 @@ package models
 import (
 	"context"
 	"encoding/json"
-	"io/ioutil"
+	"fmt"
+	"io"
 	"net/http"
 	"net/url"
 	"strings"
+	"time"
 
 	"github.com/gosimple/slug"
 	"github.com/sirupsen/logrus"
-
-	"fmt"
-	"time"
 
 	"github.com/grafana-tools/sdk"
 )
@@ -84,7 +83,7 @@ func (g *GrafanaClient) makeRequest(ctx context.Context, queryURL, APIKey string
 	defer func() {
 		_ = resp.Body.Close()
 	}()
-	data, err := ioutil.ReadAll(resp.Body)
+	data, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}

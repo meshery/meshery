@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"net/http"
 	"strings"
-	"time"
 
 	models "github.com/layer5io/meshery/models"
 )
@@ -24,11 +23,16 @@ func (h *Handler) ProviderHandler(w http.ResponseWriter, r *http.Request) {
 			http.SetCookie(w, &http.Cookie{
 				Name:     h.config.ProviderCookieName,
 				Value:    p.Name(),
-				Expires:  time.Now().Add(h.config.ProviderCookieDuration),
 				Path:     "/",
 				HttpOnly: true,
 			})
-			http.Redirect(w, r, "/", http.StatusFound)
+
+			redirectURL := "/user/login"
+			if provider == "None" {
+				redirectURL = "/"
+			}
+
+			http.Redirect(w, r, redirectURL, http.StatusFound)
 			return
 		}
 	}

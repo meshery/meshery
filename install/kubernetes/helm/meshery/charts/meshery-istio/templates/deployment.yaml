@@ -33,7 +33,7 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: http
-              containerPort: 10000
+              containerPort: {{ .Values.ports.http }}
               protocol: TCP
           {{- if .Values.probe.livenessProbe.enabled }}
           livenessProbe:

@@ -4,11 +4,13 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"strings"
 	"time"
 
+	"cuelang.org/go/cue"
+	"cuelang.org/go/cue/cuecontext"
 	"github.com/ghodss/yaml"
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
@@ -17,7 +19,7 @@ import (
 	"github.com/layer5io/meshery/models/pattern/core"
 	"github.com/layer5io/meshery/models/pattern/patterns"
 	"github.com/layer5io/meshery/models/pattern/stages"
-	meshkube "github.com/layer5io/meshkit/utils/kubernetes"
+	"github.com/layer5io/meshkit/utils"
 	"github.com/sirupsen/logrus"
 )
 
@@ -30,6 +32,143 @@ const (
 	noneLocal  patternCallType = "<none-local>"
 	oamAdapter patternCallType = ""
 )
+
+type validationInputType string
+
+const (
+	jsontype       validationInputType = "JSON"
+	yamltype       validationInputType = "YAML"
+	jsonschematype validationInputType = "JSONSCHEMA"
+)
+
+func getAppropriateCueVal(value string, valType string) (cue.Value, error) {
+	switch valType {
+	case string(jsontype):
+		out, err := utils.JsonToCue([]byte(value))
+		if err != nil {
+			return cue.Value{}, err
+		}
+		return out, nil
+	case string(yamltype):
+		out, err := utils.YamlToCue(value)
+		if err != nil {
+			return cue.Value{}, err
+		}
+		return out, nil
+	case string(jsonschematype):
+		out, err := utils.JsonSchemaToCue(value)
+		if err != nil {
+			return cue.Value{}, err
+		}
+		return out, nil
+	default:
+		cuectx := cuecontext.New()
+		out := cuectx.CompileString(value)
+		if out.Err() != nil {
+			return out, out.Err()
+		}
+		return out, nil
+	}
+}
+
+func validate(val ValidationInfo) (bool, error) {
+	schema, err := getAppropriateCueVal(val.Schema, val.SchemaType)
+	if err != nil {
+		return false, err
+	}
+	value, err := getAppropriateCueVal(val.Value, val.ValueType)
+	if err != nil {
+		return false, err
+	}
+	isValid, err := utils.Validate(schema, value)
+	return isValid, err
+}
+
+type ValidationInfo struct {
+	Schema     string `json:"schema"`
+	SchemaType string `json:"schemaType"`
+	Value      string `json:"value"`
+	ValueType  string `json:"valueType"`
+	ID         string `json:"id"`
+}
+
+type ValidationPayload struct {
+	ValidationInfo
+	List []ValidationInfo `json:"list"`
+}
+
+// swagger:route POST /api/meshmodel/validate MeshmodelValidate idPostMeshModelValidate
+// Handle POST request for validate
+//
+// Validate the given value with the given schema
+// responses:
+// 	200:
+
+// request body should be json
+// request body should be of format - {schema: string, schemaType: "JSON" | "YAML" | "JSONSCHEMA", value: string, valueType: "JSON" | "YAML" } or {list: []validationInfo}
+// it will respond with error if any occurred, or with `isValid: bool` json
+func (h *Handler) ValidationHandler(rw http.ResponseWriter, r *http.Request) {
+	// extract schema and value
+	body, err := io.ReadAll(r.Body)
+	if err != nil {
+		h.log.Error(ErrRequestBody(err))
+		http.Error(rw, ErrRequestBody(err).Error(), http.StatusInternalServerError)
+
+		rw.WriteHeader(http.StatusBadRequest)
+		fmt.Fprintf(rw, "failed to read request body: %s", err)
+		return
+	}
+	// schemaType and valueType can be `yaml`, `jsonschema`, `json` etc.
+	val := ValidationPayload{}
+	err = json.Unmarshal(body, &val)
+	if err != nil {
+		h.log.Error(ErrUnmarshal(err, string(body)))
+		http.Error(rw, ErrUnmarshal(err, string(body)).Error(), http.StatusInternalServerError)
+
+		rw.WriteHeader(http.StatusBadRequest)
+		fmt.Fprintf(rw, "failed to read unmarshal content: %s", err)
+		return
+	}
+	validationErrors := make(map[string][]string, 0)
+	if val.List != nil {
+		for _, valInfo := range val.List {
+			errs := make([]string, 0)
+			isValid, err := validate(valInfo)
+			if err != nil {
+				errs = append(errs, err.Error())
+			}
+			if !isValid {
+				errs = append(errs, "workload not valid")
+			}
+			if len(errs) != 0 {
+				validationErrors[val.ID] = errs
+			}
+		}
+	}
+	isValid, err := validate(ValidationInfo{ID: val.ID, Schema: val.Schema, SchemaType: val.SchemaType, ValueType: val.ValueType})
+	if err != nil {
+		h.log.Error(ErrValidate(err))
+		http.Error(rw, ErrValidate(err).Error(), http.StatusInternalServerError)
+
+		rw.WriteHeader(http.StatusBadRequest)
+		fmt.Fprintf(rw, "failed to parse schema: %s", err)
+	}
+	rw.Header().Set("Content-Type", "application/json")
+	err = json.NewEncoder(rw).Encode(struct {
+		IsValid          bool                `json:"isValid"`
+		ValidationErrors map[string][]string `json:"errors"`
+	}{
+		IsValid:          isValid,
+		ValidationErrors: validationErrors,
+	})
+	if err != nil {
+		h.log.Error(ErrValidate(err))
+		http.Error(rw, ErrValidate(err).Error(), http.StatusInternalServerError)
+
+		rw.WriteHeader(http.StatusBadRequest)
+		fmt.Fprintf(rw, "failed to marshal the result: %s", err)
+	}
+}
 
 // swagger:route POST /api/pattern/deploy PatternsAPI idPostDeployPattern
 // Handle POST request for Pattern Deploy
@@ -54,7 +193,7 @@ func (h *Handler) PatternFileHandler(
 	provider models.Provider,
 ) {
 	// Read the PatternFile
-	body, err := ioutil.ReadAll(r.Body)
+	body, err := io.ReadAll(r.Body)
 	if err != nil {
 		h.log.Error(ErrRequestBody(err))
 		http.Error(rw, ErrRequestBody(err).Error(), http.StatusInternalServerError)
@@ -73,14 +212,6 @@ func (h *Handler) PatternFileHandler(
 		}
 	}
 
-	// Get the user token
-	token, err := provider.GetProviderToken(r)
-	if err != nil {
-		rw.WriteHeader(http.StatusUnauthorized)
-		fmt.Fprintf(rw, "failed to read request body: %s", err)
-		return
-	}
-
 	isDel := r.Method == http.MethodDelete
 
 	// Generate the pattern file object
@@ -91,26 +222,15 @@ func (h *Handler) PatternFileHandler(
 		return
 	}
 
-	// If DynamicKubeClient hasn't been created yet then create one
-	if h.config.KubeClient.DynamicKubeClient == nil {
-		kc, err := meshkube.New(prefObj.K8SConfig.Config)
-		if err != nil {
-			h.log.Error(ErrInvalidPattern(err))
-			http.Error(rw, ErrInvalidPattern(err).Error(), http.StatusInternalServerError)
-			return
-		}
-
-		h.config.KubeClient = kc
-	}
-
 	msg, err := _processPattern(
-		token,
+		r.Context(),
 		provider,
 		patternFile,
 		prefObj,
-		h.config.KubeClient,
 		user.UserID,
 		isDel,
+		r.URL.Query().Get("verify") == "true",
+		false,
 	)
 
 	if err != nil {
@@ -121,6 +241,32 @@ func (h *Handler) PatternFileHandler(
 
 	fmt.Fprintf(rw, "%s", msg)
 }
+
+// swagger:route GET /api/oam/{type} PatternsAPI idGetOAMRegister
+// Handles GET requests for list of OAM objects
+//
+// Returns a list of workloads/traits/scopes by given type in the URL
+//
+// {type} being of either trait, scope, workload; registration of adapter capabilities.
+// Example: /api/oam/workload => Here {type} is "workload"
+//
+// deprecated: true
+//
+// responses:
+// 	200:
+
+// swagger:route POST /api/oam/{type} PatternsAPI idPostOAMRegister
+// Handles POST requests for adding OAM objects
+//
+// Adding a workloads/traits/scopes by given type in the URL
+//
+// {type} being of either trait, scope, workload; registration of adapter capabilities.
+// Example: /api/oam/workload => Here {type} is "workload"
+//
+// deprecated: true
+//
+// responses:
+// 	200:
 
 // OAMRegisterHandler handles OAM registry related operations
 //
@@ -145,16 +291,117 @@ func (h *Handler) OAMRegisterHandler(rw http.ResponseWriter, r *http.Request) {
 		}
 	}
 	if method == "GET" {
-		h.GETOAMRegisterHandler(typ, rw)
+		h.GETOAMRegisterHandler(typ, rw, r.URL.Query().Get("trim") == "true")
 	}
 }
 
-// swagger:route POST /api/oam/{type} PatternsAPI idPOSTOAMMesheryPattern
+// swagger:route GET /api/oam/{type}/{name} PatternsAPI idOAMComponentDetails
+// Handles GET requests for component details for OAM objects
+//
+// Returns component details of a workload/trait/scope by given name in the URL
+//
+// {type} being of either trait, scope, workload; registration of adapter capabilities.
+// Example: /api/oam/workload/Application => Here {type} is "workload" and {name} is "Application"
+// it should be noted that both {type} and {name} should be valid
+//
+// responses:
+// 	200:
+
+func (h *Handler) OAMComponentDetailsHandler(rw http.ResponseWriter, r *http.Request) {
+	typ := mux.Vars(r)["type"]
+
+	if !(typ == "workload" || typ == "trait" || typ == "scope") {
+		rw.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	name := mux.Vars(r)["name"]
+	res := []interface{}{}
+
+	if typ == "workload" {
+		data := core.GetWorkload(name)
+		for _, d := range data {
+			res = append(res, d)
+		}
+	}
+
+	if typ == "trait" {
+		data := core.GetTrait(name)
+		for _, d := range data {
+			res = append(res, d)
+		}
+	}
+
+	if typ == "scope" {
+		data := core.GetScope(name)
+		for _, d := range data {
+			res = append(res, d)
+		}
+	}
+
+	if err := json.NewEncoder(rw).Encode(res); err != nil {
+		rw.WriteHeader(http.StatusInternalServerError)
+		h.log.Debug(err)
+		_, _ = rw.Write([]byte(err.Error()))
+	}
+}
+
+// swagger:route GET /api/oam/{type}/{name}/{id} PatternsAPI idOAMComponentDetailByID
+// Handles GET requests for component details for OAM objects
+//
+// Returns details of a workload/trait/scope by given name and id in the URL
+//
+// {type} being of either trait, scope, workload; registration of adapter capabilities.
+// Example: /api/oam/workload/Application/asdqe123sa275sasd => Here {type} is "workload"
+// {name} is "Application" and {id} is "asdqe123sa275sasd". It should be noted that all of three, i.e {type},
+// {name} and {id} must be valid
+//
+// responses:
+// 	200:
+
+func (h *Handler) OAMComponentDetailByIDHandler(rw http.ResponseWriter, r *http.Request) {
+	typ := mux.Vars(r)["type"]
+
+	if !(typ == "workload" || typ == "trait" || typ == "scope") {
+		rw.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	name := mux.Vars(r)["name"]
+	id := mux.Vars(r)["id"]
+	var res interface{}
+
+	if typ == "workload" {
+		res = core.GetWorkloadByID(name, id)
+	}
+
+	if typ == "trait" {
+		res = core.GetTraitByID(name, id)
+	}
+
+	if typ == "scope" {
+		res = core.GetScopeByID(name, id)
+	}
+
+	if res == nil {
+		http.Error(rw, "not found", http.StatusNotFound)
+		return
+	}
+
+	if err := json.NewEncoder(rw).Encode(res); err != nil {
+		rw.WriteHeader(http.StatusInternalServerError)
+		h.log.Debug(err)
+		_, _ = rw.Write([]byte(err.Error()))
+	}
+}
+
+// swagger:route POST /api/oam/{type} PatternsAPI idPOSTOAMRegister
 // Handles registering OMA objects
 //
 // Adding a workload/trait/scope
 //
 // {type} being of either trait, scope, workload; registration of adapter capabilities.
+// Example: /api/oam/trait => Here {type} is "trait"
 //
 // responses:
 // 	200:
@@ -162,7 +409,7 @@ func (h *Handler) OAMRegisterHandler(rw http.ResponseWriter, r *http.Request) {
 // POSTOAMRegisterHandler handles registering OMA objects
 func (h *Handler) POSTOAMRegisterHandler(typ string, r *http.Request) error {
 	// Get the body
-	body, err := ioutil.ReadAll(r.Body)
+	body, err := io.ReadAll(r.Body)
 	if err != nil {
 		return err
 	}
@@ -186,17 +433,25 @@ func (h *Handler) POSTOAMRegisterHandler(typ string, r *http.Request) error {
 // Getting list of workloads/traits/scopes
 //
 // {type} being of either trait, scope, workload; registration of adapter capabilities.
+// Example: /api/oam/workload => Here {type} is "workload"
 //
 // responses:
 // 	200:
 
 // GETOAMRegisterHandler handles the get requests for the OAM objects
-func (h *Handler) GETOAMRegisterHandler(typ string, rw http.ResponseWriter) {
+func (h *Handler) GETOAMRegisterHandler(typ string, rw http.ResponseWriter, trim bool) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
 
 	if typ == "workload" {
 		res := core.GetWorkloads()
+
+		// If trim is set to true then remove the schema from the response
+		if trim {
+			for i := range res {
+				res[i].OAMRefSchema = ""
+			}
+		}
 
 		if err := enc.Encode(res); err != nil {
 			h.log.Error(ErrWorkloadDefinition(err))
@@ -207,6 +462,13 @@ func (h *Handler) GETOAMRegisterHandler(typ string, rw http.ResponseWriter) {
 	if typ == "trait" {
 		res := core.GetTraits()
 
+		// If trim is set to true then remove the schema from the response
+		if trim {
+			for i := range res {
+				res[i].OAMRefSchema = ""
+			}
+		}
+
 		enc := json.NewEncoder(rw)
 		if err := enc.Encode(res); err != nil {
 			h.log.Error(ErrTraitDefinition(err))
@@ -216,6 +478,13 @@ func (h *Handler) GETOAMRegisterHandler(typ string, rw http.ResponseWriter) {
 
 	if typ == "scope" {
 		res := core.GetScopes()
+
+		// If trim is set to true then remove the schema from the response
+		if trim {
+			for i := range res {
+				res[i].OAMRefSchema = ""
+			}
+		}
 
 		enc := json.NewEncoder(rw)
 		if err := enc.Encode(res); err != nil {
@@ -238,58 +507,147 @@ func mergeMsgs(msgs []string) string {
 }
 
 func _processPattern(
-	token string,
+	ctx context.Context,
 	provider models.Provider,
 	pattern core.Pattern,
 	prefObj *models.Preference,
-	kubeClient *meshkube.Client,
 	userID string,
 	isDelete bool,
+	verify bool,
+	skipPrintLogs bool,
 ) (string, error) {
-	sip := &serviceInfoProvider{
-		token:      token,
-		provider:   provider,
-		opIsDelete: isDelete,
-	}
-	sap := &serviceActionProvider{
-		token:      token,
-		provider:   provider,
-		prefObj:    prefObj,
-		kubeClient: kubeClient,
-		opIsDelete: isDelete,
-		userID:     userID,
-
-		accumulatedMsgs: []string{},
-		err:             nil,
+	// Get the token from the context
+	token, ok := ctx.Value(models.TokenCtxKey).(string)
+	if !ok {
+		return "", ErrRetrieveUserToken(fmt.Errorf("token not found in the context"))
 	}
 
-	chain := stages.CreateChain()
-	chain.
-		Add(stages.ServiceIdentifier(sip, sap)).
-		Add(stages.Filler).
-		Add(stages.Validator(sip, sap)).
-		Add(stages.Provision(sip, sap)).
-		Add(stages.Persist(sip, sap)).
-		Add(func(data *stages.Data, err error, next stages.ChainStageNextFunction) {
-			data.Lock.Lock()
-			for k, v := range data.Other {
-				if strings.HasSuffix(k, stages.ProvisionSuffixKey) {
-					msg, ok := v.(string)
-					if ok {
-						sap.accumulatedMsgs = append(sap.accumulatedMsgs, msg)
+	// // Get the kubehandler from the context
+	k8scontexts, ok := ctx.Value(models.KubeClustersKey).([]models.K8sContext)
+	if !ok || len(k8scontexts) == 0 {
+		return "", ErrInvalidKubeHandler(fmt.Errorf("failed to find k8s handler"), "_processPattern couldn't find a valid k8s handler")
+	}
+
+	// // Get the kubernetes config from the context
+	// kubecfg, ok := ctx.Value(models.KubeConfigKey).([]byte)
+	// if !ok || kubecfg == nil {
+	// 	return "", ErrInvalidKubeConfig(fmt.Errorf("failed to find k8s config"), "_processPattern couldn't find a valid k8s config")
+	// }
+
+	// // Get the kubernetes context from the context
+	// mk8scontext, ok := ctx.Value(models.KubeContextKey).(*models.K8sContext)
+	// if !ok || mk8scontext == nil {
+	// 	return "", ErrInvalidKubeContext(fmt.Errorf("failed to find k8s context"), "_processPattern couldn't find a valid k8s context")
+	// }
+	var configs []string
+	for _, ctx := range k8scontexts {
+		cfg, err := ctx.GenerateKubeConfig()
+		if err != nil {
+			return "", ErrInvalidKubeConfig(fmt.Errorf("failed to find k8s config"), "_processPattern couldn't find a valid k8s config")
+		}
+		configs = append(configs, string(cfg))
+	}
+	internal := func(mk8scontext []models.K8sContext) (string, error) {
+		sip := &serviceInfoProvider{
+			token:      token,
+			provider:   provider,
+			opIsDelete: isDelete,
+		}
+		sap := &serviceActionProvider{
+			token:    token,
+			provider: provider,
+			prefObj:  prefObj,
+			// kubeClient:    kubeClient,
+			opIsDelete: isDelete,
+			userID:     userID,
+			// kubeconfig:    kubecfg,
+			// kubecontext:   mk8scontext,
+			skipPrintLogs:   skipPrintLogs,
+			kubeconfigs:     configs,
+			accumulatedMsgs: []string{},
+			err:             nil,
+		}
+
+		chain := stages.CreateChain()
+		chain.
+			Add(stages.Import(sip, sap)).
+			Add(stages.ServiceIdentifier(sip, sap)).
+			Add(stages.Filler(skipPrintLogs)).
+			Add(stages.Validator(sip, sap))
+
+		if !verify {
+			chain.
+				Add(stages.Provision(sip, sap)).
+				Add(stages.Persist(sip, sap))
+		}
+
+		chain.
+			Add(func(data *stages.Data, err error, next stages.ChainStageNextFunction) {
+				data.Lock.Lock()
+				for k, v := range data.Other {
+					if strings.HasSuffix(k, stages.ProvisionSuffixKey) {
+						msg, ok := v.(string)
+						if ok {
+							sap.accumulatedMsgs = append(sap.accumulatedMsgs, msg)
+						}
 					}
 				}
-			}
-			data.Lock.Unlock()
+				data.Lock.Unlock()
 
-			sap.err = err
-		}).
-		Process(&stages.Data{
-			Pattern: &pattern,
-			Other:   map[string]interface{}{},
-		})
+				sap.err = err
+			}).
+			Process(&stages.Data{
+				Pattern: &pattern,
+				Other:   map[string]interface{}{},
+			})
 
-	return mergeMsgs(sap.accumulatedMsgs), sap.err
+		return mergeMsgs(sap.accumulatedMsgs), sap.err
+	}
+	return internal(k8scontexts)
+
+	// customK8scontexts, ok := ctx.Value(models.KubeClustersKey).([]models.K8sContext)
+	// if ok && len(customK8scontexts) > 0 {
+	// 	var wg sync.WaitGroup
+	// 	resp := []string{}
+	// 	errs := []string{}
+
+	// 	for _, c := range customK8scontexts {
+	// 		wg.Add(1)
+	// 		go func(c *models.K8sContext) {
+	// 			defer wg.Done()
+
+	// 			// Generate Kube Handler
+	// 			kh, err := c.GenerateKubeHandler()
+	// 			if err != nil {
+	// 				errs = append(errs, err.Error())
+	// 				return
+	// 			}
+
+	// 			// Generate kube config
+	// 			kcfg, err := c.GenerateKubeConfig()
+	// 			if err != nil {
+	// 				errs = append(errs, err.Error())
+	// 				return
+	// 			}
+
+	// 			res, err := internal(k8scontexts)
+	// 			if err != nil {
+	// 				errs = append(errs, err.Error())
+	// 				return
+	// 			}
+
+	// 			resp = append(resp, res)
+	// 		}(&c)
+	// 	}
+
+	// 	wg.Wait()
+
+	// 	if len(errs) == 0 {
+	// 		return mergeMsgs(resp), nil
+	// 	}
+
+	// 	return mergeMsgs(resp), fmt.Errorf(mergeMsgs(errs))
+	// }
 }
 
 type serviceInfoProvider struct {
@@ -326,19 +684,24 @@ func (sip *serviceInfoProvider) IsDelete() bool {
 }
 
 type serviceActionProvider struct {
-	token      string
-	provider   models.Provider
-	prefObj    *models.Preference
-	kubeClient *meshkube.Client
-	opIsDelete bool
-	userID     string
-
+	token    string
+	provider models.Provider
+	prefObj  *models.Preference
+	// kubeClient      *meshkube.Client
+	kubeconfigs []string
+	opIsDelete  bool
+	userID      string
+	// kubeconfig  []byte
+	// kubecontext     *models.K8sContext
+	skipPrintLogs   bool
 	accumulatedMsgs []string
 	err             error
 }
 
 func (sap *serviceActionProvider) Terminate(err error) {
-	logrus.Error(err)
+	if !sap.skipPrintLogs {
+		logrus.Error(err)
+	}
 	sap.err = err
 }
 
@@ -362,16 +725,10 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) (string, 
 
 		logrus.Debugf("Adapter to execute operations on: %s", adapter)
 
-		if sap.prefObj.K8SConfig == nil ||
-			!sap.prefObj.K8SConfig.InClusterConfig &&
-				(sap.prefObj.K8SConfig.Config == nil || len(sap.prefObj.K8SConfig.Config) == 0) {
-			return "", fmt.Errorf("no valid kubernetes config found")
-		}
-
 		// Local call
 		if strings.HasPrefix(adapter, string(noneLocal)) {
 			resp, err := patterns.ProcessOAM(
-				sap.kubeClient,
+				sap.kubeconfigs,
 				[]string{string(jsonComp)},
 				string(jsonConfig),
 				sap.opIsDelete,
@@ -383,8 +740,6 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) (string, 
 		// Create mesh client
 		mClient, err := meshes.CreateClient(
 			context.TODO(),
-			sap.prefObj.K8SConfig.Config,
-			sap.prefObj.K8SConfig.ContextName,
 			adapter,
 		)
 		if err != nil {
@@ -397,10 +752,11 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) (string, 
 		// Execute operation on the adapter with raw data
 		if strings.HasPrefix(adapter, string(rawAdapter)) {
 			resp, err := mClient.MClient.ApplyOperation(context.TODO(), &meshes.ApplyRuleRequest{
-				Username:  sap.userID,
-				DeleteOp:  sap.opIsDelete,
-				OpName:    "custom",
-				Namespace: "",
+				Username:    sap.userID,
+				DeleteOp:    sap.opIsDelete,
+				OpName:      "custom",
+				Namespace:   "",
+				KubeConfigs: sap.kubeconfigs,
 			})
 
 			return resp.String(), err
@@ -408,10 +764,11 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) (string, 
 
 		// Else it is an OAM adapter call
 		resp, err := mClient.MClient.ProcessOAM(context.TODO(), &meshes.ProcessOAMRequest{
-			Username:  sap.userID,
-			DeleteOp:  sap.opIsDelete,
-			OamComps:  []string{string(jsonComp)},
-			OamConfig: string(jsonConfig),
+			Username:    sap.userID,
+			DeleteOp:    sap.opIsDelete,
+			OamComps:    []string{string(jsonComp)},
+			OamConfig:   string(jsonConfig),
+			KubeConfigs: sap.kubeconfigs,
 		})
 
 		return resp.GetMessage(), err

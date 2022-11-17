@@ -16,8 +16,11 @@ func (r *Resolver) getControlPlanes(ctx context.Context, provider models.Provide
 	} else {
 		selectors = append(selectors, *filter.Type)
 	}
-
-	controlplanelist, err := model.GetControlPlaneState(selectors, provider)
+	var cids []string
+	if len(filter.K8sClusterIDs) != 0 {
+		cids = filter.K8sClusterIDs
+	}
+	controlplanelist, err := model.GetControlPlaneState(ctx, selectors, provider, cids)
 	if err != nil {
 		r.Log.Error(err)
 		return nil, err
@@ -33,25 +36,24 @@ func (r *Resolver) listenToControlPlaneState(ctx context.Context, provider model
 
 	go func() {
 		r.Log.Info("Initializing ControlPlane subscription")
-		err := r.connectToBroker(context.TODO(), provider)
-		if err != nil && err != ErrNoMeshSync {
-			r.Log.Error(err)
-			return
-		}
 
-		for {
-			select {
-			case <-r.MeshSyncChannel:
-				status, err := r.getControlPlanes(ctx, provider, filter)
-				if err != nil {
-					r.Log.Error(ErrControlPlaneSubscription(err))
-					break
+		for _, ctxID := range filter.K8sClusterIDs {
+			go func(ctxID string) {
+				for {
+					select {
+					case <-r.MeshSyncChannelPerK8sContext[ctxID]:
+						status, err := r.getControlPlanes(ctx, provider, filter)
+						if err != nil {
+							r.Log.Error(ErrControlPlaneSubscription(err))
+							break
+						}
+						r.controlPlaneChannel <- status
+					case <-ctx.Done():
+						r.Log.Info("ControlPlane subscription stopped")
+						return
+					}
 				}
-				r.controlPlaneChannel <- status
-			case <-ctx.Done():
-				r.Log.Info("ControlPlane subscription stopped")
-				return
-			}
+			}(ctxID)
 		}
 	}()
 	return r.controlPlaneChannel, nil

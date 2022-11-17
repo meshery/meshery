@@ -17,8 +17,8 @@
 #-----------------------------------------------------------------------------
 GIT_VERSION	= $(shell git describe --tags `git rev-list --tags --max-count=1`)
 GIT_COMMITSHA = $(shell git rev-list -1 HEAD)
+GIT_STRIPPED_VERSION=$(shell git describe --tags `git rev-list --tags --max-count=1` | cut -c 2-)
 
-GOVERSION = 1.17.8
 GOPATH = $(shell go env GOPATH)
 GOBIN  = $(GOPATH)/bin
 
@@ -27,7 +27,7 @@ SHELL :=/bin/bash -o pipefail
 #-----------------------------------------------------------------------------
 # Components
 #-----------------------------------------------------------------------------
-ADAPTER_URLS := "localhost:10000 localhost:10001 localhost:10002 localhost:10004 localhost:10005 localhost:10006 localhost:10007 localhost:10008 localhost:10009 localhost:10010 localhost:10012"
+ADAPTER_URLS := "localhost:10000 localhost:10001 localhost:10002 localhost:10004 localhost:10005 localhost:10006 localhost:10007 localhost:10009 localhost:10010 localhost:10012"
 
 #-----------------------------------------------------------------------------
 # Providers

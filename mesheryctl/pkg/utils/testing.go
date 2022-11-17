@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -37,7 +36,7 @@ type MockURL struct {
 func NewTestHelper(t *testing.T) *TestHelper {
 	return &TestHelper{
 		Version: "v0.5.10",
-		BaseURL: "http://localhost:9081",
+		BaseURL: MesheryEndpoint,
 	}
 }
 
@@ -47,6 +46,7 @@ type CmdTestInput struct {
 	ExpectedResponse     string
 	ExpectedResponseYaml string
 	ExpectError          bool
+	ErrorStringContains  []string
 }
 
 type GoldenFile struct {
@@ -82,7 +82,7 @@ func GetBasePath(t *testing.T) string {
 func (tf *GoldenFile) Load() string {
 	tf.t.Helper()
 	path := filepath.Join(tf.dir, tf.name)
-	content, err := ioutil.ReadFile(path)
+	content, err := os.ReadFile(path)
 	if err != nil {
 		tf.t.Fatalf("could not read file %s: %v", tf.name, err)
 	}
@@ -94,7 +94,7 @@ func (tf *GoldenFile) Load() string {
 func (tf *GoldenFile) LoadByte() []byte {
 	tf.t.Helper()
 	path := filepath.Join(tf.dir, tf.name)
-	content, err := ioutil.ReadFile(path)
+	content, err := os.ReadFile(path)
 	if err != nil {
 		tf.t.Fatalf("could not read file %s: %v", tf.name, err)
 	}
@@ -110,7 +110,7 @@ func (tf *GoldenFile) Write(content string) {
 	_, err := os.Stat(path)
 	if err != nil {
 		if os.IsNotExist(err) {
-			err := ioutil.WriteFile(path, []byte(content), 0755)
+			err := os.WriteFile(path, []byte(content), 0755)
 			if err != nil {
 				fmt.Printf("Unable to write file: %v", err)
 			}
@@ -119,7 +119,7 @@ func (tf *GoldenFile) Write(content string) {
 		tf.t.Fatal(err)
 	}
 
-	err = ioutil.WriteFile(path, []byte(content), 0644)
+	err = os.WriteFile(path, []byte(content), 0644)
 	if err != nil {
 		tf.t.Fatalf("could not write %s: %v", tf.name, err)
 	}
@@ -129,7 +129,7 @@ func (tf *GoldenFile) Write(content string) {
 func (tf *GoldenFile) WriteInByte(content []byte) {
 	tf.t.Helper()
 	path := filepath.Join(tf.dir, tf.name)
-	err := ioutil.WriteFile(path, content, 0644)
+	err := os.WriteFile(path, content, 0644)
 	if err != nil {
 		tf.t.Fatalf("could not write %s: %v", tf.name, err)
 	}
@@ -157,16 +157,26 @@ func SetupContextEnv(t *testing.T) {
 }
 
 // setup logrus formatter and return the buffer in which commands output is to be set.
-func SetupLogrusGrabTesting(t *testing.T) *bytes.Buffer {
+func SetupLogrusGrabTesting(t *testing.T, verbose bool) *bytes.Buffer {
 	b := bytes.NewBufferString("")
 	logrus.SetOutput(b)
 	SetupLogrusFormatter()
 	return b
 }
 
+// setup meshkit logger for testing and return the buffer in which commands output is to be set.
+func SetupMeshkitLoggerTesting(t *testing.T, verbose bool) *bytes.Buffer {
+	b := bytes.NewBufferString("")
+	SetupMeshkitLogger(verbose, b)
+	return b
+}
+
 // setup custom context with SetupCustomContextEnv
 func SetupCustomContextEnv(t *testing.T, pathToContext string) {
 	viper.Reset()
+	ViperCompose = viper.New()
+	ViperMeshconfig = viper.New()
+
 	viper.SetConfigFile(pathToContext)
 	DefaultConfigPath = pathToContext
 	//fmt.Println(viper.ConfigFileUsed())
@@ -197,7 +207,7 @@ func StartMockery(t *testing.T) {
 	apiResponse := NewGoldenFile(t, "validate.version.github.golden", fixturesDir).Load()
 
 	// For validate version requests
-	url1 := "https://api.github.com/repos/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/git/trees/" + "v0.5.10" + "?recursive=1"
+	url1 := "https://github.com/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/releases/tag/" + "v0.5.54"
 	httpmock.RegisterResponder("GET", url1,
 		httpmock.NewStringResponder(200, apiResponse))
 }
@@ -208,11 +218,12 @@ func StopMockery(t *testing.T) {
 }
 
 // Set file location for testing stuff
-func SetFileLocationTesting(t *testing.T, dir string) {
+func SetFileLocationTesting(dir string) {
 	MesheryFolder = filepath.Join(dir, "fixtures", MesheryFolder)
 	DockerComposeFile = filepath.Join(MesheryFolder, DockerComposeFile)
 	AuthConfigFile = filepath.Join(MesheryFolder, AuthConfigFile)
 }
+
 func Populate(src, dst string) error {
 	sourceFileStat, err := os.Stat(src)
 	if err != nil {

@@ -5,6 +5,7 @@ import (
 
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
 // MeshClient represents a gRPC adapter client
@@ -14,7 +15,7 @@ type MeshClient struct {
 }
 
 // CreateClient creates a MeshClient for the given params
-func CreateClient(ctx context.Context, k8sConfigBytes []byte, contextName, meshLocationURL string) (*MeshClient, error) {
+func CreateClient(ctx context.Context, meshLocationURL string) (*MeshClient, error) {
 	var opts []grpc.DialOption
 	// creds, err := credentials.NewClientTLSFromFile(*caFile, *serverHostOverride)
 	// 	if err != nil {
@@ -22,7 +23,7 @@ func CreateClient(ctx context.Context, k8sConfigBytes []byte, contextName, meshL
 	// 	}
 	// 	opts = append(opts, grpc.WithTransportCredentials(creds))
 	// } else {
-	opts = append(opts, grpc.WithInsecure())
+	opts = append(opts, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	// }
 	conn, err := grpc.Dial(meshLocationURL, opts...)
 	if err != nil {
@@ -31,13 +32,6 @@ func CreateClient(ctx context.Context, k8sConfigBytes []byte, contextName, meshL
 
 	mClient := NewMeshServiceClient(conn)
 
-	_, err = mClient.CreateMeshInstance(ctx, &CreateMeshInstanceRequest{
-		K8SConfig:   k8sConfigBytes,
-		ContextName: contextName,
-	})
-	if err != nil {
-		return nil, err
-	}
 	return &MeshClient{
 		conn:    conn,
 		MClient: mClient,

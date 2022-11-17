@@ -2,9 +2,9 @@
 # Collect all Sass
 ---
 
-$darkjunglegreen: #1E2117;
-$charcoal: #3C494F;
-$charcoal_rgba: rgba(60,73,79,1);
+$darkjunglegreen: #1e2117;
+$charcoal: #3c494f;
+$charcoal_rgba: rgba(60, 73, 79, 1);
 $keppel: #00b39f;
 $caribbeangreen: #00d3a9;
 
@@ -12,4 +12,5 @@ $caribbeangreen: #00d3a9;
 @import "clipboard";
 @import "overview";
 @import "mesheryctl";
-@import "swagger"
+@import "navbar";
+@import "swagger";

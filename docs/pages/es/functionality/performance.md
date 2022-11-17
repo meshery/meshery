@@ -1,15 +1,15 @@
 ---
 layout: page
-title: Performance Management
+title: Gestión del rendimiento
 permalink: es/functionality/performance-management
-type: functionality 
+type: functionality
 language: es
 ---
 
-# Gestión del rendimiento
 La clave del funcionamiento eficiente de cualquier service mesh es la medición y gestión de su rendimiento.
 
 ## Generadores de carga
+
 Meshery proporciona a los usuarios la opción de elegir qué generador de carga prefieren usar para una prueba de rendimiento determinada. Los usuarios pueden establecer su configuración basada en su propia preferencia de generador de carga diferente al generador de carga por defecto.
 
 Meshery soporta los siguientes generadores de carga y es [extensible](extensibility) para soportar otros:
@@ -47,14 +47,16 @@ Conecte Meshery a su instancia de Grafana existente y Meshery importará los tab
 </a>
 
 ### Conexión a Grafana
+
 Si tiene una clave de API configurada para restringir el acceso a sus tableros de Grafana, deberá ingresar la clave de API cuando establezca la conexión de Meshery con Grafana.
 
-* Importación de tableros de Grafana
-    - Importación de tablero existente de Grafana a través de API
-    - Importación de tablero personalizado de Grafana a través de yaml
-* Configuración de las preferencias del panel de gráficos
+- Importación de tableros de Grafana
+  - Importación de tablero existente de Grafana a través de API
+  - Importación de tablero personalizado de Grafana a través de yaml
+- Configuración de las preferencias del panel de gráficos
 
 ## Prometheus y Meshery
+
 Meshery permite a los usuarios conectarse a una o más instancias de Prometheus para recopilar datos telemétricos (en forma de métricas). Estas métricas pueden pertenecer al service mesh, Kubernetes, aplicaciones en la malla o realmente... cualquier métrica que Prometheus haya recolectado.
 
 Una vez que haya conectado Meshery a su (s) despliegue (es) de Prometheus, puede realizar pruebas de conectividad ad-hoc para verificar la comunicación entre Meshery y Prometheus.
