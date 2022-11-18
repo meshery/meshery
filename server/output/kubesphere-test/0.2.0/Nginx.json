@@ -1,0 +1,1 @@
+{"kind":"Nginx","apiVersion":"v1alpha1","Format":"JSON","Metadata":{"Model":"kubesphere-test","Version":"0.2.0","Category":"","SubCategory":"","Metadata":{"display-name":"Nginx"}},"Schema":"{\n \"description\": \"Spec defines the desired state of Nginx\",\n \"title\": \"Nginx\",\n \"type\": \"object\",\n \"x-kubernetes-preserve-unknown-fields\": true\n}"}

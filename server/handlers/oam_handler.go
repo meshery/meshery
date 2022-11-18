@@ -137,12 +137,10 @@ func (h *Handler) PatternFileHandler(
 // 2. Getting list of workloads/traits/scopes
 func (h *Handler) OAMRegisterHandler(rw http.ResponseWriter, r *http.Request) {
 	typ := mux.Vars(r)["type"]
-
 	if !(typ == "workload" || typ == "trait" || typ == "scope") {
 		rw.WriteHeader(http.StatusNotFound)
 		return
 	}
-
 	method := r.Method
 	if method == "POST" {
 		if err := h.POSTOAMRegisterHandler(typ, r); err != nil {
@@ -151,9 +149,6 @@ func (h *Handler) OAMRegisterHandler(rw http.ResponseWriter, r *http.Request) {
 			_, _ = rw.Write([]byte(err.Error()))
 			return
 		}
-	}
-	if method == "GET" {
-		h.GETOAMRegisterHandler(typ, rw, r.URL.Query().Get("trim") == "true")
 	}
 }
 
@@ -301,7 +296,17 @@ func (h *Handler) POSTOAMRegisterHandler(typ string, r *http.Request) error {
 // 	200:
 
 // GETOAMRegisterHandler handles the get requests for the OAM objects
-func (h *Handler) GETOAMRegisterHandler(typ string, rw http.ResponseWriter, trim bool) {
+func (h *Handler) GETOAMRegisterHandler(rw http.ResponseWriter,
+	r *http.Request,
+	prefObj *models.Preference,
+	user *models.User,
+	provider models.Provider) {
+	typ := mux.Vars(r)["type"]
+	if !(typ == "workload" || typ == "trait" || typ == "scope") {
+		rw.WriteHeader(http.StatusNotFound)
+		return
+	}
+	trim := r.URL.Query().Get("trim") == "true"
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
 
@@ -435,7 +440,7 @@ func _processPattern(
 		chain := stages.CreateChain()
 		chain.
 			Add(stages.Import(sip, sap)).
-			Add(stages.ServiceIdentifier(sip, sap)).
+			Add(stages.ServiceIdentifierAndMutator(sip, sap)).
 			Add(stages.Filler(skipPrintLogs)).
 			Add(stages.Validator(sip, sap))
 
@@ -569,7 +574,19 @@ func (sap *serviceActionProvider) Terminate(err error) {
 	}
 	sap.err = err
 }
-
+func (sap *serviceActionProvider) Mutate(p *core.Pattern) {
+	//TODO: externalize these mutation rules with policies.
+	//1. Enforce the deployment of CRDs before other resources
+	for name, svc := range p.Services {
+		if svc.Type == "CustomResourceDefinition.K8s" {
+			for _, svc := range p.Services {
+				if svc.Type != "CustomResourceDefinition.K8s" {
+					svc.DependsOn = append(svc.DependsOn, name)
+				}
+			}
+		}
+	}
+}
 func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) (string, error) {
 	// Marshal the component
 	jsonComp, err := json.Marshal(ccp.Component)

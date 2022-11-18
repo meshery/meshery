@@ -1,0 +1,1 @@
+{"kind":"PerconaXtraDBCluster","apiVersion":"v1alpha1","Format":"JSON","Metadata":{"Model":"percona","Version":"1.11.5","Category":"","SubCategory":"","Metadata":{"display-name":"Percona Xtra DB Cluster"}},"Schema":"{\n \"title\": \"Percona Xtra DB Cluster\",\n \"type\": \"object\",\n \"x-kubernetes-preserve-unknown-fields\": true\n}"}

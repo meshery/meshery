@@ -29,6 +29,7 @@ import MesheryPatternGrid from "./MesheryPatterns/MesheryPatternGridView";
 import UndeployIcon from "../public/static/img/UndeployIcon";
 import DoneAllIcon from '@material-ui/icons/DoneAll';
 import DoneIcon from '@material-ui/icons/Done';
+import PublicIcon from '@material-ui/icons/Public';
 import ConfirmationMsg from "./ConfirmationModal";
 import PublishIcon from "@material-ui/icons/Publish";
 import PromptComponent from "./PromptComponent";
@@ -38,6 +39,7 @@ import LoadingScreen from "./LoadingComponents/LoadingComponent";
 import { SchemaContext } from "../utils/context/schemaSet";
 import Validation from "./Validation";
 import { ACTIONS, FILE_OPS } from "../utils/Enum";
+import PublishModal from "./PublishModal";
 
 const styles = (theme) => ({
   grid : {
@@ -263,6 +265,10 @@ function MesheryPatterns({
   const [importModal, setImportModal] = useState({
     open : false
   })
+  const [publishModal, setPublishModal] = useState({
+    open : false,
+    pattern : {}
+  });
   const [loading, stillLoading] = useState(true);
 
   const catalogContentRef = useRef();
@@ -348,6 +354,10 @@ function MesheryPatterns({
     CLONE_PATTERN : {
       name : "CLONE_PATTERN",
       error_msg : "Failed to clone design file"
+    },
+    PUBLISH_CATALOG : {
+      name : "PUBLISH_CATALOG",
+      error_msg : "Failed to publish catalog"
     }
   };
 
@@ -475,6 +485,20 @@ function MesheryPatterns({
     });
   }
 
+  const handlePublishModal = (ev,pattern) => {
+    ev.stopPropagation();
+    setPublishModal({
+      open : true,
+      pattern : pattern
+    });
+  };
+  const handlePublishModalClose = () => {
+    setPublishModal({
+      open : false,
+      pattern : {}
+    });
+  };
+
   const handleDeploy = (pattern_file, name) => {
     updateProgress({ showProgress : true });
     dataFetch(
@@ -552,7 +576,29 @@ function MesheryPatterns({
       handleError(ACTION_TYPES.UNDEPLOY_PATTERN),
     );
   };
+  const handlePublish= (catalog_data) => {
+    updateProgress({ showProgress : true });
+    dataFetch(
+      `/api/pattern/catalog/publish`,
+      { credentials : "include", method : "POST", body : JSON.stringify(catalog_data) },
+      () => {
+        updateProgress({ showProgress : false });
+        enqueueSnackbar("Pattern Successfully Published!", {
+          variant : "success",
+          action : function Action(key) {
+            return (
+              <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+                <CloseIcon />
+              </IconButton>
+            );
+          },
+          autoHideDuration : 2000,
+        });
+      },
+      handleError(ACTION_TYPES.PUBLISH_CATALOG),
+    );
 
+  }
   function handleClone(patternID, name) {
     updateProgress({ showProgress : true });
     dataFetch(PATTERN_URL.concat(CLONE_URL, "/", patternID),
@@ -855,6 +901,13 @@ function MesheryPatterns({
               >
                 <UndeployIcon fill="#8F1F00" data-cy="undeploy-button" />
               </IconButton>
+              <IconButton
+                title="Publish"
+                onClick={(ev) => handlePublishModal(ev,rowData)}
+
+              >
+                <PublicIcon fill="#8F1F00" data-cy="publish-button" />
+              </IconButton>
             </>
           );
         },
@@ -1084,6 +1137,7 @@ function MesheryPatterns({
               patterns={patterns}
               handleDeploy={handleDeploy}
               handleVerify={handleVerify}
+              handlePublish={handlePublish}
               handleUnDeploy={handleUnDeploy}
               handleClone={handleClone}
               urlUploadHandler={urlUploadHandler}
@@ -1110,6 +1164,7 @@ function MesheryPatterns({
           tab={modalOpen.action}
           validationBody={modalOpen.validationBody}
         />
+        <PublishModal open={publishModal.open} handleClose={handlePublishModalClose} pattern={publishModal.pattern} aria-label="catalog publish" handlePublish={handlePublish} />
         <UploadImport open={importModal.open} handleClose={handleUploadImportClose} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} configuration="Design" />
         <PromptComponent ref={modalRef} />
       </NoSsr>
