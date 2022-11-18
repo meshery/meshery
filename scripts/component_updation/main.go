@@ -76,7 +76,7 @@ func main() {
 							component.Metadata.Category = value
 						} else if key == "Sub-Category" {
 							component.Metadata.SubCategory = value
-						} else {
+						} else if isInColumnNames(key) {
 							component.Metadata.Metadata[key] = value
 						}
 					}
@@ -98,4 +98,12 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+}
+func isInColumnNames(key string) bool {
+	for _, n := range ColumnNamesToExtract {
+		if n == key {
+			return true
+		}
+	}
+	return false
 }
