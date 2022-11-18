@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/csv"
 	"encoding/json"
-	"io"
 	"log"
 	"os"
 	"path/filepath"
@@ -49,35 +48,49 @@ func main() {
 		if err != nil {
 			return err
 		}
-		for _, entry := range entries {
-			f, err := os.OpenFile(filepath.Join(dirpath, entry.Name()), os.O_APPEND|os.O_WRONLY, os.ModeAppend)
-			if err != nil {
-				return err
+		for _, versionentry := range entries {
+			if versionentry.IsDir() {
+				entries, err := os.ReadDir(filepath.Join(dirpath, versionentry.Name()))
+				if err != nil {
+					return err
+				}
+				for _, entry := range entries {
+					path, err := filepath.Abs(filepath.Join(dirpath, versionentry.Name(), entry.Name()))
+					if err != nil {
+						return err
+					}
+					byt, err := os.ReadFile(path)
+					if err != nil {
+						return err
+					}
+					var component v1alpha1.ComponentDefinition
+					err = json.Unmarshal(byt, &component)
+					if err != nil {
+						return err
+					}
+					if component.Metadata.Metadata == nil {
+						component.Metadata.Metadata = make(map[string]interface{})
+					}
+					for key, value := range changeFields {
+						if key == "Category" {
+							component.Metadata.Category = value
+						} else if key == "Sub-Category" {
+							component.Metadata.SubCategory = value
+						} else {
+							component.Metadata.Metadata[key] = value
+						}
+					}
+					byt, err = json.Marshal(component)
+					if err != nil {
+						return err
+					}
+					err = os.WriteFile(filepath.Join(dirpath, versionentry.Name(), entry.Name()), byt, 0777)
+					if err != nil {
+						return err
+					}
+				}
 			}
-			byt, err := io.ReadAll(f)
-			if err != nil {
-				return err
-			}
-			var component v1alpha1.ComponentDefinition
-			err = json.Unmarshal(byt, &component)
-			if err != nil {
-				return err
-			}
-			if component.Metadata.Metadata == nil {
-				component.Metadata.Metadata = make(map[string]interface{})
-			}
-			for key, value := range changeFields {
-				component.Metadata.Metadata[key] = value
-			}
-			byt, err = json.Marshal(component)
-			if err != nil {
-				return err
-			}
-			_, err = f.Write(byt)
-			if err != nil {
-				return err
-			}
-			f.Close()
+
 		}
 
 		return nil

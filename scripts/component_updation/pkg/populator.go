@@ -3,7 +3,6 @@ package pkg
 import (
 	"io/fs"
 	"path/filepath"
-	"strings"
 )
 
 type jsonpopulator func(filepath string, changeFields map[string]string) error
@@ -13,11 +12,13 @@ func PopulateEntries(dir string, entries []map[string]string, entryAsFileName st
 	//Step 1: Create a map of fileNames->[filePaths]
 	dirNames := make(map[string][]string)
 	err := filepath.WalkDir(dir, func(path string, d fs.DirEntry, err error) error {
-		name := strings.TrimSuffix(d.Name(), ".json")
-		if dirNames[name] == nil {
-			dirNames[name] = make([]string, 0)
+		if d.IsDir() {
+			name := d.Name()
+			if dirNames[name] == nil {
+				dirNames[name] = make([]string, 0)
+			}
+			dirNames[name] = append(dirNames[name], path)
 		}
-		dirNames[name] = append(dirNames[name], path)
 		return nil
 	})
 	if err != nil {
