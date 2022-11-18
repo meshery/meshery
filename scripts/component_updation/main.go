@@ -12,7 +12,7 @@ import (
 )
 
 var (
-	ColumnNamesToExtract = []string{"Project Name", "Helm Chart", "Category", "Sub-Category", "Shape", "Primary Color", "Secondary Color", "Logo URL"}
+	ColumnNamesToExtract = []string{"Project Name", "Helm Chart", "Category", "Sub-Category", "Shape", "Primary Color", "Secondary Color", "Logo URL", "SVG_Color", "SVG_White"}
 	PrimaryColumnName    = "Helm Chart"
 	OutputPath           = "../../server/output"
 )

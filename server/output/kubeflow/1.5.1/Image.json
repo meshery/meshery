@@ -1,1 +1,1 @@
-{"kind":"Image","apiVersion":"v1alpha1","Format":"JSON","Metadata":{"Model":"kubeflow","Version":"1.5.1","Category":"","SubCategory":"","Metadata":{"display-name":"Image"}},"Schema":""}
+{"kind":"Image","apiVersion":"v1alpha1","format":"JSON","metadata":{"model":"kubeflow","version":"1.5.1","category":"Machine Learning","sub-category":"Machine Learning","metadata":{"Helm Chart":"kubeflow","Logo URL":"","Primary Color":"","Project Name":"Kubeflow","SVG_Color":"","SVG_White":"","Secondary Color":"","Shape":"circle","display-name":"Image"}},"schema":""}

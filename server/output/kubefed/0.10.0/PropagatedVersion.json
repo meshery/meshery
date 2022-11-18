@@ -1,1 +1,1 @@
-{"kind":"PropagatedVersion","apiVersion":"v1alpha1","Format":"JSON","Metadata":{"Model":"kubefed","Version":"0.10.0","Category":"","SubCategory":"","Metadata":{"display-name":"Propagated Version"}},"Schema":""}
+{"kind":"PropagatedVersion","apiVersion":"v1alpha1","format":"JSON","metadata":{"model":"kubefed","version":"0.10.0","category":"","sub-category":"","metadata":{"Helm Chart":"kubefed","Logo URL":"","Primary Color":"","Project Name":"kubefed","SVG_Color":"","SVG_White":"","Secondary Color":"","Shape":"circle","display-name":"Propagated Version"}},"schema":""}

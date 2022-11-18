@@ -1,1 +1,1 @@
-{"kind":"ZFSNode","apiVersion":"v1","Format":"JSON","Metadata":{"Model":"openebs","Version":"3.3.1","Category":"","SubCategory":"","Metadata":{"display-name":"ZFS Node"}},"Schema":""}
+{"kind":"ZFSNode","apiVersion":"v1","format":"JSON","metadata":{"model":"openebs","version":"3.3.1","category":"Runtime","sub-category":"Cloud Native Storage","metadata":{"Helm Chart":"openebs","Logo URL":"","Primary Color":"","Project Name":"openebs","SVG_Color":"","SVG_White":"","Secondary Color":"","Shape":"","display-name":"ZFS Node"}},"schema":""}
