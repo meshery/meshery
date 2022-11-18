@@ -1,11 +1,12 @@
 import { Grid, Typography, Button, Switch, IconButton } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import CloseIcon from "@material-ui/icons/Close";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { toggleCatalogContent } from "../lib/store";
 import Head from 'next/head';
+import { withSnackbar } from "notistack";
 import dataFetch from "../lib/data-fetch";
 
 const styles = (theme) => ({
@@ -52,13 +53,17 @@ const styles = (theme) => ({
 const INITIAL_GRID_SIZE = { lg : 6, md : 12, xs : 12 };
 
 const Extensions = ({ classes, catalogVisibility, toggleCatalogContent,  enqueueSnackbar, closeSnackbar }) => {
+  const catalogVisibilityRef = useRef();
+
   const handleToggle = (e) => {
     e.stopPropagation();
     console.log(`Meshery Catalog: ${catalogVisibility ? "enabled" : "disabled"}`)
-    toggleCatalogContent({ catalogVisibility : !catalogVisibility })
+    catalogVisibilityRef.current = !catalogVisibility
+    toggleCatalogContent({ catalogVisibility : !catalogVisibility }, () => handleCatalogPreference());
   }
 
   useEffect(() => {
+    catalogVisibilityRef.current = catalogVisibility
     dataFetch(
       "/api/user/prefs",
       {
@@ -75,6 +80,7 @@ const Extensions = ({ classes, catalogVisibility, toggleCatalogContent,  enqueue
   }, []);
 
   useEffect(() => {
+    catalogVisibilityRef.current = catalogVisibility
     handleCatalogPreference();
   }, [catalogVisibility])
 
@@ -103,6 +109,7 @@ const Extensions = ({ classes, catalogVisibility, toggleCatalogContent,  enqueue
             ),
           });
       },
+      err => console.error(err),
     )
   }
 
@@ -186,4 +193,4 @@ const mapDispatchToProps = dispatch => ({
   toggleCatalogContent : bindActionCreators(toggleCatalogContent, dispatch)
 })
 
-export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(Extensions));
+export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(withSnackbar(Extensions)));
