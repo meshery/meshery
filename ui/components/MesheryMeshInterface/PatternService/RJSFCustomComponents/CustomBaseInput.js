@@ -22,7 +22,7 @@ const BaseInput = (props) => {
           focused={focused}
           type={props.options?.inputType}
           key={props.id}
-          value={props?.value}
+          value={additional && props?.value==="New Value" ? "" : props?.value } // remove the default value i.e. New Value for additionalFields
           id={props.id}
           error={props.rawErrors?.length > 0}
           onChange={e => props?.onChange(e.target.value=== "" ? props.options.emptyValue : e.target.value)}
