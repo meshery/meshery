@@ -17,7 +17,7 @@ const BaseInput = (props) => {
     <>
       <div key={props.id} style={style}>
         <TextField
-          variant="outlined"
+          variant={additional ? "standard" : "outlined"}
           size="small"
           focused={focused}
           type={props.options?.inputType}
