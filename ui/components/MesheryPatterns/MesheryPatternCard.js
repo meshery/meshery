@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import {
   Avatar, Divider, Grid, IconButton, Typography, Tooltip
 } from "@material-ui/core";
-import Button from "@material-ui/core/Button";
 import DeleteIcon from "@material-ui/icons/Delete";
 import Save from "@material-ui/icons/Save";
 import Fullscreen from "@material-ui/icons/Fullscreen";
@@ -17,19 +16,9 @@ import DoneIcon from '@material-ui/icons/Done';
 import useStyles from "./Cards.styles";
 import YAMLDialog from "../YamlDialog";
 import PublicIcon from '@material-ui/icons/Public';
+import TooltipButton from '../../utils/TooltipButton'
 
 const INITIAL_GRID_SIZE = { xl : 4, md : 6, xs : 12 };
-
-function TooltipButton({ children, onClick, title, className, variant,...props }) {
-  return (
-    <Tooltip title={title} placement="top" arrow interactive >
-      <Button className={className} variant={variant} onClick={onClick} {...props}>
-        {children}
-      </Button>
-    </Tooltip>
-  );
-}
-
 
 function MesheryPatternCard({
   name,

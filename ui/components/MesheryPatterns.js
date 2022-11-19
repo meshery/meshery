@@ -1194,7 +1194,6 @@ function MesheryPatterns({
           </div>
           }
         </div>
-        {console.log(patterns)}
         {
           !selectedPattern.show && viewType==="table" && <MuiThemeProvider theme={getMuiTheme() }>
             <MUIDataTable

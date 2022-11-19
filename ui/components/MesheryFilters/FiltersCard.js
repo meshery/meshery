@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import {
   Divider, Grid, IconButton, Typography, Tooltip
 } from "@material-ui/core";
-import Button from "@material-ui/core/Button";
 import DeleteIcon from "@material-ui/icons/Delete";
 import Fullscreen from "@material-ui/icons/Fullscreen";
 import Moment from "react-moment";
@@ -14,6 +13,7 @@ import DoneAllIcon from '@material-ui/icons/DoneAll';
 import useStyles from "../MesheryPatterns/Cards.styles";
 import YAMLDialog from "../YamlDialog";
 import UndeployIcon from "../../public/static/img/UndeployIcon";
+import TooltipButton from '../../utils/TooltipButton.js'
 
 const INITIAL_GRID_SIZE = { xl : 4, md : 6, xs : 12 };
 
@@ -92,7 +92,8 @@ function FiltersCard({
           <div className={classes.bottomPart} >
 
             <div className={classes.cardButtons} >
-              <Button
+              <TooltipButton
+                title="undeploy"
                 variant="contained"
                 className={classes.undeployButton}
                 onClick={(ev) =>
@@ -101,8 +102,9 @@ function FiltersCard({
               >
                 <UndeployIcon fill="#ffffff" className={classes.iconPatt} />
                 Undeploy
-              </Button>
-              <Button
+              </TooltipButton>
+              <TooltipButton
+                title="deploy"
                 variant="contained"
                 color="primary"
                 onClick={(ev) =>
@@ -112,8 +114,9 @@ function FiltersCard({
               >
                 <DoneAllIcon className={classes.iconPatt}/>
               Deploy
-              </Button>
-              {visibility === "public" ? <Button
+              </TooltipButton>
+              {visibility === "public" ? <TooltipButton
+                title="clone"
                 variant="contained"
                 color="primary"
                 onClick={(ev) =>
@@ -121,7 +124,7 @@ function FiltersCard({
                 }>
                 <img src="/static/img/clone-white.svg" className={classes.clonePatt} />
                   Clone
-              </Button> : null }
+              </TooltipButton> : null }
             </div>
           </div>
         </>

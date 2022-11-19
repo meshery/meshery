@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import {
   Divider, Grid, IconButton, Typography, Tooltip
 } from "@material-ui/core";
-import Button from "@material-ui/core/Button";
 import DeleteIcon from "@material-ui/icons/Delete";
 import Save from "@material-ui/icons/Save";
 import Fullscreen from "@material-ui/icons/Fullscreen";
@@ -15,6 +14,7 @@ import UndeployIcon from "../../public/static/img/UndeployIcon";
 import DoneAllIcon from '@material-ui/icons/DoneAll';
 import useStyles from "../MesheryPatterns/Cards.styles";
 import YAMLDialog from "../YamlDialog";
+import TooltipButton from '../../utils/TooltipButton.js'
 
 const INITIAL_GRID_SIZE = { xl : 4, md : 6, xs : 12 };
 
@@ -101,7 +101,8 @@ function MesheryApplicationCard({
           <div className={classes.bottomPart} >
 
             <div className={classes.cardButtons} >
-              <Button
+              <TooltipButton
+                title="undeploy"
                 variant="contained"
                 className={classes.undeployButton}
                 onClick={(ev) =>
@@ -110,8 +111,9 @@ function MesheryApplicationCard({
               >
                 <UndeployIcon fill="#ffffff" className={classes.iconPatt} />
                 Undeploy
-              </Button>
-              <Button
+              </TooltipButton>
+              <TooltipButton
+                title="deploy"
                 variant="contained"
                 color="primary"
                 onClick={(ev) =>
@@ -121,7 +123,7 @@ function MesheryApplicationCard({
               >
                 <DoneAllIcon className={classes.iconPatt} />
                 Deploy
-              </Button>
+              </TooltipButton>
 
             </div>
           </div>
