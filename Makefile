@@ -331,8 +331,8 @@ INSTALLED_GO_VERSION=$(shell go version)
 
 dep-check:
 	ifeq (,$(findstring $(GOVERSION), $(INSTALLED_GO_VERSION)))
-# Uncomment to only send a warning.
-		@echo "Dependency missing: go$(GOVERSION). Ensure 'go$(GOVERSION).x' is installed and available in your 'PATH'"	
-# Uncomment to force error and stop. Careful that ui builds may fail, too.
+# Only send a warning.
+#		@echo "Dependency missing: go$(GOVERSION). Ensure 'go$(GOVERSION).x' is installed and available in your 'PATH'"	
+# Force error and stop.
 	$(error Dependency missing: go$(GOVERSION). Ensure 'go$(GOVERSION).x' is installed and available in your 'PATH')
 	endif
