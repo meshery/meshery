@@ -959,32 +959,31 @@ function MesheryPatterns({
                 >
                   <Avatar src="/static/img/pattwhite.svg" className={classes.iconPatt} imgProps={{ height : "16px", width : "16px" }} />
                 </IconButton> }
-              {/*</Tooltip> */}
-              <IconButton
+              <TooltipIcon
                 title="Validate"
                 onClick={(e) => handleVerify(e, rowData.pattern_file, rowData.id)}
               >
                 <DoneIcon data-cy="verify-button" />
-              </IconButton>
-              <IconButton
+              </TooltipIcon>
+
+              <TooltipIcon
                 title="Undeploy"
                 onClick={(e) => handleModalOpen(e, rowData.pattern_file, rowData.name, patternErrors.get(rowData.id), ACTIONS.UNDEPLOY)}
               >
                 <UndeployIcon fill="#8F1F00" data-cy="undeploy-button" />
-              </IconButton>
-              <IconButton
+              </TooltipIcon>
+              <TooltipIcon
                 title="Deploy"
                 onClick={(e) => handleModalOpen(e, rowData.pattern_file, rowData.name, patternErrors.get(rowData.id), ACTIONS.DEPLOY)}
               >
                 <DoneAllIcon data-cy="deploy-button" />
-              </IconButton>
-              <IconButton
+              </TooltipIcon>
+              <TooltipIcon
                 title="Publish"
                 onClick={(ev) => handlePublishModal(ev,rowData)}
-
               >
                 <PublicIcon fill="#8F1F00" data-cy="publish-button" />
-              </IconButton>
+              </TooltipIcon>
             </>
           );
         },
@@ -1195,6 +1194,7 @@ function MesheryPatterns({
           </div>
           }
         </div>
+        {console.log(patterns)}
         {
           !selectedPattern.show && viewType==="table" && <MuiThemeProvider theme={getMuiTheme() }>
             <MUIDataTable

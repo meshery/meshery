@@ -20,6 +20,16 @@ import PublicIcon from '@material-ui/icons/Public';
 
 const INITIAL_GRID_SIZE = { xl : 4, md : 6, xs : 12 };
 
+function TooltipButton({ children, onClick, title, className, variant,...props }) {
+  return (
+    <Tooltip title={title} placement="top" arrow interactive >
+      <Button className={className} variant={variant} onClick={onClick} {...props}>
+        {children}
+      </Button>
+    </Tooltip>
+  );
+}
+
 
 function MesheryPatternCard({
   name,
@@ -103,17 +113,17 @@ function MesheryPatternCard({
           <div className={classes.bottomPart} >
 
             <div className={classes.cardButtons} >
-              <Button
-                title="Publish"
+              <TooltipButton
                 variant="contained"
+                title="Publish"
                 className={classes.testsButton}
                 onClick={(ev) => genericClickHandler(ev, handlePublishModal)}
               >
                 <PublicIcon className={classes.iconPatt} />
                 <span className={classes.btnText}> Publish </span>
-              </Button>
+              </TooltipButton>
 
-              <Button
+              <TooltipButton
                 title="Valildate"
                 variant="contained"
                 className={classes.testsButton}
@@ -123,20 +133,7 @@ function MesheryPatternCard({
               >
                 <DoneIcon className={classes.iconPatt} />
                 <span className={classes.btnText}> Validate </span>
-              </Button>
-
-
-              <Button
-                title="Undeploy"
-                variant="contained"
-                className={classes.undeployButton}
-                onClick={(ev) =>
-                  genericClickHandler(ev, handleUnDeploy)
-                }
-              >
-                <UndeployIcon fill="#ffffff" className={classes.iconPatt} />
-                <span className={classes.btnText}>Undeploy</span>
-              </Button>
+              </TooltipButton>
 
               <Button
                 title="Deploy"
@@ -150,7 +147,19 @@ function MesheryPatternCard({
                 <span className={classes.btnText}>Deploy</span>
               </Button>
 
-              { visibility === "private" ?  <Button
+              <TooltipButton
+                title="Undeploy"
+                variant="contained"
+                className={classes.undeployButton}
+                onClick={(ev) =>
+                  genericClickHandler(ev, handleUnDeploy)
+                }
+              >
+                <UndeployIcon fill="#ffffff" className={classes.iconPatt} />
+                <span className={classes.btnText}>Undeploy</span>
+              </TooltipButton>
+
+              { visibility === "private" ?  <TooltipButton
                 title="Design"
                 variant="contained"
                 color="primary"
@@ -161,7 +170,7 @@ function MesheryPatternCard({
               >
                 <Avatar src="/static/img/pattern_trans.svg" className={classes.iconPatt} imgProps={{ height : "16px", width : "16px" }} />
                 <span className={classes.btnText}> Design </span>
-              </Button> : <Button
+              </TooltipButton> : <TooltipButton
                 title="Clone"
                 variant="contained"
                 color="primary"
@@ -172,7 +181,7 @@ function MesheryPatternCard({
               >
                 <Avatar src="/static/img/clone-white.svg" className={classes.clonePatt} />
                 <span className={classes.btnText}> Clone </span>
-              </Button>  }
+              </TooltipButton>  }
 
             </div>
           </div>
