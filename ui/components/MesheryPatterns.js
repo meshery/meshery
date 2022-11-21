@@ -272,7 +272,7 @@ function MesheryPatterns({
   const [loading, stillLoading] = useState(true);
 
   const catalogContentRef = useRef();
-  const catalogVisibilityRef = useRef();
+  const catalogVisibilityRef = useRef(false);
   const disposeConfSubscriptionRef = useRef(null);
 
   const { workloadTraitSet } = useContext(SchemaContext);
@@ -392,7 +392,9 @@ function MesheryPatterns({
     });
     initPatternsSubscription();
     return () => {
-      disposeConfSubscriptionRef.current.dispose();
+      if (disposeConfSubscriptionRef.current){
+        disposeConfSubscriptionRef.current.dispose();
+      }
       fetchCatalogPatterns.unsubscribe();
     }
   },[])
