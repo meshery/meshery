@@ -7,6 +7,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshkit/models/meshmodel"
+	"github.com/layer5io/meshkit/models/meshmodel/core/types"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 )
 
@@ -143,14 +144,22 @@ func (h *Handler) GetMeshmodelComponentsByType(rw http.ResponseWriter, r *http.R
 func (h *Handler) RegisterMeshmodelComponents(rw http.ResponseWriter, r *http.Request) {
 	dec := json.NewDecoder(r.Body)
 	r.URL.Query()
-	var cc v1alpha1.ComponentDefinition
+	var cc meshmodel.MeshModelRegistrantData
 	err := dec.Decode(&cc)
 	if err != nil {
 		http.Error(rw, err.Error(), http.StatusBadRequest)
 		return
 	}
-
-	err = h.registryManager.RegisterEntity(meshmodel.Host{}, cc)
+	switch cc.EntityType {
+	case types.ComponentDefinition:
+		var c v1alpha1.ComponentDefinition
+		err = json.Unmarshal(cc.Entity, &c)
+		if err != nil {
+			http.Error(rw, err.Error(), http.StatusBadRequest)
+			return
+		}
+		err = h.registryManager.RegisterEntity(cc.Host, c)
+	}
 	if err != nil {
 		http.Error(rw, err.Error(), http.StatusBadRequest)
 		return
