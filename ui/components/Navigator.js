@@ -883,9 +883,6 @@ class Navigator extends React.Component {
             {children.map(({
               id : idc, title : titlec, icon : iconc, href : hrefc, show : showc, link : linkc, children : childrenc
             }) => {
-              // if (typeof showc !== "undefined" && !showc) {
-              //   return "";
-              // }
               return (
                 <div key={idc} className={!showc ? classes.cursorNotAllowed : null}>
                   <ListItem
