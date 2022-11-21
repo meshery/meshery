@@ -208,9 +208,10 @@ jobs:
       - name: Build Next App
         run: |
           cd ui
+          node --version
           npm i
-          npm run build
-          npm run export
+          cd ../
+          make build-meshery-ui
       # - name: Update /etc/hosts
       #   run: echo "127.0.0.1 mesherylocal.layer5.io" | sudo tee -a /etc/hosts
       - name: Run meshery-consul
