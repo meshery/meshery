@@ -94,7 +94,7 @@ mesheryctl version
 				}
 				return nil
 			}
-			return handlers.ErrUnmarshal(errors.New("invalid config file"), "meshconfig")
+			return handlers.ErrUnmarshal(errors.New("invalid config file, encountered error processing json"), "meshconfig")
 		}
 		currCtx, err := mctlCfg.GetCurrentContext()
 		if err != nil {

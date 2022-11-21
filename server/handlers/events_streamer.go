@@ -150,7 +150,7 @@ func listenForCoreEvents(ctx context.Context, eb *events.EventStreamer, resp cha
 			data, err := json.Marshal(event)
 			if err != nil {
 				log.Error(ErrMarshal(err, "event"))
-				return
+				continue
 			}
 			resp <- data
 

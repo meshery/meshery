@@ -161,6 +161,7 @@ export const rjsfTheme = createTheme({
         },
         marginTop : '0.1rem !important',
         overflow : "hidden",
+        alignSelf : "center",
         textOverflow : "ellipsis",
         '&:hover' : {
           overflow : "visible",

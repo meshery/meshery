@@ -47,27 +47,36 @@ const styles = (theme) => ({
   notificationTitle : { textAlign : 'left', },
   notifSelector : { display : 'flex', },
   icon : { fontSize : 20, },
-  iconVariant : { opacity : 0.9,
+  iconVariant : {
+    opacity : 0.9,
     marginRight : theme.spacing(1),
-    marginTop : theme.spacing(1) * 3 / 4, },
+    marginTop : theme.spacing(1) * 3 / 4,
+  },
   error : { backgroundColor : theme.palette.error.dark, },
   info : { backgroundColor : theme.palette.primary.dark, },
   warning : { backgroundColor : amber[700], },
-  message : { display : 'flex',
+  message : {
+    display : 'flex',
     // alignItems: 'center',
   },
-  clearAllButton : { display : 'flex',
-    justifyContent : 'flex-end' },
-  HeaderItem : { fontSize : '1.6rem',
+  clearAllButton : {
+    display : 'flex',
+    justifyContent : 'flex-end'
+  },
+  HeaderItem : {
+    fontSize : '1.6rem',
     height : '1.6rem',
-    width : '1.6rem', },
+    width : '1.6rem',
+  },
   drawerButton : {
     padding : '0.45rem',
     margin : '0.2rem',
     backgroundColor : theme.palette.secondary.dark,
     color : '#FFFFFF',
-    "&:hover" : { backgroundColor : '#FFFFFF',
-      color : theme.palette.secondary.dark }
+    "&:hover" : {
+      backgroundColor : '#FFFFFF',
+      color : theme.palette.secondary.dark
+    }
   }
 });
 
@@ -121,21 +130,16 @@ function getNotificationCount(events) {
  * icons based on the "type" prop
  * @param {{ type: string,className: string }} props
  */
-function NotificationIcon ({ type, className }) {
-  if (type === "error") return <ErrorIcon className={className}/>
+function NotificationIcon({ type, className }) {
+  if (type === "error") return <ErrorIcon className={className} />
 
-  return <BellIcon className={className}/>
+  return <BellIcon className={className} />
 }
 
 class MesheryNotification extends React.Component {
   state = {
     open : false,
     dialogShow : false,
-    k8sConfig : { inClusterConfig : false,
-      clusterConfigured : false,
-      contextName : '', },
-    meshAdapters : [],
-    createStream : false,
     displayEventType : "*",
     tabValue : 0,
   }
@@ -161,7 +165,8 @@ class MesheryNotification extends React.Component {
    */
   notificationDispatcher(type, message) {
     const self = this;
-    self.props.enqueueSnackbar(message, { variant : eventTypes[type]?.type,
+    self.props.enqueueSnackbar(message, {
+      variant : eventTypes[type]?.type,
       autoHideDuration : 5000,
       action : (key) => (
         <IconButton
@@ -172,27 +177,12 @@ class MesheryNotification extends React.Component {
         >
           <CloseIcon />
         </IconButton>
-      ), });
+      ),
+    });
   }
 
-  static getDerivedStateFromProps(props, state) {
-    if (JSON.stringify(props.k8sConfig) !== JSON.stringify(state.k8sConfig)
-        || JSON.stringify(props.meshAdapters) !== JSON.stringify(state.meshAdapters)) {
-      return { createStream : true,
-        k8sConfig : props.k8sConfig,
-        meshAdapters : props.meshAdapters };
-    }
-    return null;
-  }
-
-  componentDidUpdate() {
-    const { createStream, k8sConfig, meshAdapters } = this.state;
-    if (k8sConfig.length === 0 || meshAdapters.length === 0) {
-      this.closeEventStream();
-    }
-    if (createStream && k8sConfig.length > 0 && typeof meshAdapters !== 'undefined' && meshAdapters.length > 0) {
-      this.startEventStream();
-    }
+  componentDidMount() {
+    this.startEventStream();
   }
 
   async startEventStream() {
@@ -200,7 +190,6 @@ class MesheryNotification extends React.Component {
     this.eventStream = new EventSource('/api/events');
     this.eventStream.onmessage = this.handleEvents();
     this.eventStream.onerror = this.handleError();
-    this.setState({ createStream : false });
   }
 
   handleEvents() {
@@ -278,8 +267,10 @@ class MesheryNotification extends React.Component {
   }
 
   handleBellButtonClick = () => {
-    this.setState({ tabValue : 0,
-      displayEventType : '*' })
+    this.setState({
+      tabValue : 0,
+      displayEventType : '*'
+    })
   }
 
   render() {
@@ -337,7 +328,7 @@ class MesheryNotification extends React.Component {
                         className={classes.drawerButton}
                         onClick={this.handleBellButtonClick}
                       >
-                        <BellIcon className={classes.HeaderItem}/>
+                        <BellIcon className={classes.HeaderItem} />
                       </IconButton>
                     </Tooltip>
                   </div>
@@ -353,7 +344,7 @@ class MesheryNotification extends React.Component {
                         className={classes.drawerButton}
                         onClick={this.handleClearAllNotifications()}
                       >
-                        <DoneAllIcon className={classes.HeaderItem}/>
+                        <DoneAllIcon className={classes.HeaderItem} />
                       </IconButton>
                     </Tooltip>
                   </div>
@@ -366,10 +357,10 @@ class MesheryNotification extends React.Component {
                   textColor="primary"
                   variant="fullWidth"
                 >
-                  <Tab label="All" onClick={this.handleNotifFiltering('*')} style={{ minWidth : "15%" }}/>
-                  <Tab label="Error"  onClick={this.handleNotifFiltering('error')} style={{ minWidth : "15%" }}/>
-                  <Tab label="Warning" onClick={this.handleNotifFiltering('warning')} style={{ minWidth : "15%" }}/>
-                  <Tab label="Success" onClick={this.handleNotifFiltering('success')} style={{ minWidth : "15%" }}/>
+                  <Tab label="All" onClick={this.handleNotifFiltering('*')} style={{ minWidth : "15%" }} />
+                  <Tab label="Error" onClick={this.handleNotifFiltering('error')} style={{ minWidth : "15%" }} />
+                  <Tab label="Warning" onClick={this.handleNotifFiltering('warning')} style={{ minWidth : "15%" }} />
+                  <Tab label="Success" onClick={this.handleNotifFiltering('success')} style={{ minWidth : "15%" }} />
                 </Tabs>
                 {getNotifications(this.props.events, this.state.displayEventType).map((event, ind) => (
                   <MesheryEventViewer
@@ -403,10 +394,8 @@ const mapDispatchToProps = (dispatch) => ({
 // });
 
 const mapStateToProps = (state) => {
-  const k8sConfig = state.get('k8sConfig');
-  const meshAdapters = state.get('meshAdapters').toJS();
   const events = state.get("events");
-  return { k8sConfig, meshAdapters, events };
+  return { events };
 };
 
 export default withStyles(styles)(connect(
