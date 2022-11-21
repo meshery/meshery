@@ -269,14 +269,14 @@ func (l *RemoteProvider) VerifyToken(tokenString string) (*jwt.MapClaims, error)
 	return &claims, nil
 }
 
-func(l *RemoteProvider) revokeToken(tokenString string) error {	
+func (l *RemoteProvider) revokeToken(tokenString string) error {
 	jsonData := make(map[string]string)
 	token, err := l.DecodeTokenData(tokenString)
 
 	if err != nil {
-		return ErrTokenDecode(err)	
+		return ErrTokenDecode(err)
 	}
-	
+
 	jsonData["token"] = token.RefreshToken
 
 	body, err := json.Marshal(jsonData)
@@ -303,14 +303,14 @@ func(l *RemoteProvider) revokeToken(tokenString string) error {
 	return nil
 }
 
-func (l *RemoteProvider) introspectToken(tokenString string) error{
+func (l *RemoteProvider) introspectToken(tokenString string) error {
 	jsonData := make(map[string]string)
 	token, err := l.DecodeTokenData(tokenString)
 
 	if err != nil {
-		return ErrTokenDecode(err)	
+		return ErrTokenDecode(err)
 	}
-	
+
 	jsonData["token"] = token.AccessToken
 	body, err := json.Marshal(jsonData)
 
@@ -328,9 +328,9 @@ func (l *RemoteProvider) introspectToken(tokenString string) error{
 		logrus.Errorf("Error introspecting token: %v", err)
 		return err
 	}
-	
+
 	if r.StatusCode == http.StatusUnauthorized {
-		return ErrTokenIntrospect(fmt.Errorf("unauthorised access: status %d", r.StatusCode))
+		return ErrTokenIntrospect(fmt.Errorf("unauthorized access: status %d", r.StatusCode))
 	}
 
 	if r.StatusCode != http.StatusOK {
@@ -338,5 +338,4 @@ func (l *RemoteProvider) introspectToken(tokenString string) error{
 	}
 
 	return nil
-
-} 
+}

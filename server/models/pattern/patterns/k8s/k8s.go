@@ -134,9 +134,8 @@ func ConvertMapInterfaceMapString(v interface{}, prettify bool, endString bool) 
 		if endString {
 			if prettify {
 				return man.FormatToReadableString(x) //Whitespace formatting should be done at the time of prettification only
-			} else {
-				return man.DeFormatReadableString(x)
 			}
+			return man.DeFormatReadableString(x)
 		}
 	}
 	return v
