@@ -29,7 +29,7 @@ const useStyles = makeStyles((theme) => ({
   },
   appBar : {
     marginBottom : "16px",
-    backgroundColor : "#fff",
+    backgroundColor : theme.palette.type == 'dark' ? "#363636" : "#FFF",
     borderRadius : "8px"
   },
   yamlDialogTitle : {
@@ -48,7 +48,7 @@ const useStyles = makeStyles((theme) => ({
   },
   patternType : {
     padding : '0px',
-    paddingBottom : '5px' ,
+    paddingBottom : '5px',
     paddingTop : '5px',
     justifyContent : 'center'
   },

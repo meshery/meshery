@@ -3,21 +3,22 @@ import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/styles';
 import { canExpand } from '@rjsf/utils';
 import AddButton from "@material-ui/icons/Add";
-import { Box, IconButton, Typography } from '@material-ui/core';
+import { Box, IconButton, NoSsr, Typography } from '@material-ui/core';
 import EnlargedTextTooltip from '../EnlargedTextTooltip';
 import HelpOutlineIcon from '../HelpOutlineIcon';
 import ArrowDown from '@material-ui/icons/KeyboardArrowDown';
 import ArrowUp from '@material-ui/icons/KeyboardArrowUp';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
   objectFieldGrid : {
     // paddingLeft: "0.6rem",
     padding : ".5rem",
     // margin : ".5rem",
-    backgroundColor : "#f4f4f4",
+    backgroundColor : theme.palette.type === 'dark' ? "#212121" : "#f4f4f4",
     border : '1px solid rgba(0, 0, 0, .125)',
   },
-});
+}));
+
 
 const ObjectFieldTemplate = ({
   description,
@@ -84,7 +85,7 @@ const ObjectFieldTemplate = ({
     </Box>
   };
 
-  const Properties = (<Grid container={true} spacing={2} className={classes.objectFieldGrid} style={Object.keys(properties).length === 0 || schema["$schema"] ? { border : "none" } : null}>
+  const Properties = (<NoSsr><Grid container={true} spacing={2} className={classes.objectFieldGrid} style={Object.keys(properties).length === 0 || schema["$schema"] ? { border : "none" } : null}>
     {properties.map((element, index) => {
       return (
         element.hidden ? (
@@ -95,8 +96,8 @@ const ObjectFieldTemplate = ({
             sm={12}
             lg={
               element.type === "object" ||
-              element.type === "array" ||
-              element.__additional_property
+                element.type === "array" ||
+                element.__additional_property
                 ? 12
                 : 6
             }
@@ -107,7 +108,8 @@ const ObjectFieldTemplate = ({
         )
       );
     })}
-  </Grid>)
+  </Grid>
+  </NoSsr>)
 
   const fieldTitle = uiSchema['ui:title'] || title;
 

@@ -22,8 +22,8 @@ import fetchAllResults from "../graphql/queries/FetchAllResultsQuery";
 // const MESHERY_PERFORMANCE_URL = "/api/user/performance/profiles";
 // const MESHERY_PERFORMANCE_TEST_URL = "/api/user/performance/profiles/results";
 
-const useStyles = makeStyles(() => ({
-  paper : { padding : "1rem", background : "black" },
+const useStyles = makeStyles((theme) => ({
+  paper : { padding : "1rem" },
   resultContainer : {
     display : "flex",
     flexDirection : "row",
@@ -58,7 +58,13 @@ const useStyles = makeStyles(() => ({
       backgroundColor : "#36454f",
       opacity : "0.7",
     }
-  }
+  },
+  resultText : {
+    color : theme.palette.type === 'dark' ? "rgba(255, 255, 255, 0.54)" : "rgba(0, 0, 0, 0.54)",
+  },
+  profileText : {
+    color : theme.palette.type === 'dark' ? "rgba(255, 255, 255, 0.54)" : "rgba(0, 0, 0, 0.54)",
+  },
 }));
 
 function Dashboard({ updateProgress, enqueueSnackbar, closeSnackbar, grafana, router }) {
@@ -171,7 +177,7 @@ function Dashboard({ updateProgress, enqueueSnackbar, closeSnackbar, grafana, ro
                     <Typography variant="h2" component="div" color="primary" style={{ marginRight : "0.75rem" }}>
                       {(tests.count).toLocaleString('en')}
                     </Typography>
-                    <Typography variant="body1" style={{ color : "#FAFAFA" }} component="div">
+                    <Typography variant="body1" className={classes.resultText} component="div">
                       Results
                     </Typography>
                   </div>
@@ -188,7 +194,7 @@ function Dashboard({ updateProgress, enqueueSnackbar, closeSnackbar, grafana, ro
                     <Typography variant="h2" component="div" color="primary" style={{ marginRight : "0.75rem" }}>
                       {profiles.count}
                     </Typography>
-                    <Typography variant="body1" style={{ color : "rgba(0, 0, 0, 0.54)" }} component="div">
+                    <Typography variant="body1" className={classes.profileText} component="div">
                       Profiles
                     </Typography>
                   </div>

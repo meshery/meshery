@@ -512,7 +512,13 @@ class Header extends React.Component {
     return (
       <NoSsr>
         <React.Fragment>
-          <NavigationWrap className={`nav-block ${scroll ? "scrolled" : ""}`}>
+          <NavigationWrap style={{
+            position : "sticky",
+            top : "0",
+            left : "auto",
+            right : "0",
+            zIndex : "1201",
+          }}>
             <AppBar color="primary" position="sticky" elevation={2} className={onDrawerCollapse
               ? classes.appBarOnDrawerClosed
               : classes.appBarOnDrawerOpen}>

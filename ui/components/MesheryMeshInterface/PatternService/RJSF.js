@@ -1,4 +1,4 @@
-import { MuiThemeProvider } from '@material-ui/core/styles';
+import { MuiThemeProvider, useTheme } from '@material-ui/core/styles';
 import Form, { withTheme } from "@rjsf/core";
 import { Theme as MaterialUITheme, } from "@rjsf/material-ui";
 import React, { useEffect } from "react";
@@ -11,9 +11,10 @@ import MesheryWrapIfAdditionalTemplate from './RJSFCustomComponents/WrapIfAdditi
 import { customizeValidator } from "@rjsf/validator-ajv6";
 import CustomInputField from "./RJSFCustomComponents/CustomInputField";
 import _ from "lodash"
+import rjsfDarkTheme from '../../../themes/rjsf';
 
 class RJSFOverridenComponent extends Form {
-  constructor(props){
+  constructor(props) {
     super(props)
     let oldValidate = this.validate;
     this.validate = (
@@ -54,7 +55,7 @@ function RJSFForm(props) {
     // prop should be present in order for the cloned element to override this property
     transformErrors
   } = props;
-  const templates={
+  const templates = {
     ArrayFieldTemplate,
     ObjectFieldTemplate,
     WrapIfAdditionalTemplate,
@@ -71,9 +72,10 @@ function RJSFForm(props) {
   if (isLoading && LoadingComponent) {
     return <LoadingComponent />
   }
-
+  const theme = useTheme();
+  console.log("hello", theme)
   return (
-    <MuiThemeProvider theme={rjsfTheme}>
+    <MuiThemeProvider theme={this.state.theme === "dark" ? rjsfDarkTheme : rjsfTheme}>
       <MuiRJSFForm
         schema={schema.rjsfSchema}
         idPrefix={jsonSchema?.title}

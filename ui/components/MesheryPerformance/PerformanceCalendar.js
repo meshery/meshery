@@ -12,12 +12,55 @@ import "react-big-calendar/lib/css/react-big-calendar.css";
 import GenericModal from "../GenericModal";
 import GrafanaCustomCharts from "../GrafanaCustomCharts";
 import MesheryChart from "../MesheryChart";
-import { Paper } from "@material-ui/core";
+import { makeStyles, Paper } from "@material-ui/core";
 import { Typography } from "@material-ui/core";
 import fetchAllResults from '../graphql/queries/FetchAllResultsQuery'
 
 const localizer = momentLocalizer(moment);
-
+const useStyles = makeStyles((theme) => ({
+  paper : { padding : "3rem" },
+  resultContainer : {
+    display : "flex",
+    flexDirection : "row",
+    justifyContent : "space-between",
+    ["@media (max-width: 830px)"] : {
+      flexDirection : "column"
+    },
+  },
+  vSep : {
+    height : "10.4rem",
+    width : "1px",
+    background : "black",
+    marginTop : "1.1rem",
+    bottom : "0",
+    left : "36%",
+    backgroundColor : "#36454f",
+    opacity : "0.7",
+    ["@media (max-width: 830px)"] : {
+      display : "none",
+    }
+  },
+  hSep : {
+    display : "none",
+    ["@media (max-width: 830px)"] : {
+      display : "block",
+      width : "100%",
+      height : "1px",
+      background : "black",
+      marginTop : "1.1rem",
+      bottom : "0",
+      left : "36%",
+      backgroundColor : "#36454f",
+      opacity : "0.7",
+    }
+  },
+  resultText : {
+    color : theme.palette.type === 'dark' ? "rgba(255, 255, 255, 0.54)" : "rgba(0, 0, 0, 0.54)",
+  },
+  profileText : {
+    color : theme.palette.type === 'dark' ? "rgba(255, 255, 255, 0.54)" : "rgba(0, 0, 0, 0.54)",
+  },
+}));
 // const PERFORMANCE_PROFILE_RESULTS_URL = "/api/user/performance/profiles/results";
 
 /**
@@ -68,12 +111,16 @@ function generateCalendarEventsFromResults(results) {
  */
 function generateDateRange(from, to) {
   if (from && to) {
-    return { start : moment(from).format("YYYY-MM-DD"),
-      end : moment(to).format("YYYY-MM-DD"), };
+    return {
+      start : moment(from).format("YYYY-MM-DD"),
+      end : moment(to).format("YYYY-MM-DD"),
+    };
   }
 
-  return { start : moment().startOf("M").format("YYYY-MM-DD"),
-    end : moment().add(1, "M").startOf("M").format("YYYY-MM-DD"), };
+  return {
+    start : moment().startOf("M").format("YYYY-MM-DD"),
+    end : moment().add(1, "M").startOf("M").format("YYYY-MM-DD"),
+  };
 }
 
 /**
@@ -130,7 +177,8 @@ function PerformanceCalendar({
     return function (error) {
       updateProgress({ showProgress : false });
 
-      enqueueSnackbar(`${msg}: ${error}`, { variant : "error",
+      enqueueSnackbar(`${msg}: ${error}`, {
+        variant : "error",
         action : function Action(key) {
           return (
             <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
@@ -138,7 +186,8 @@ function PerformanceCalendar({
             </IconButton>
           );
         },
-        autoHideDuration : 8000, });
+        autoHideDuration : 8000,
+      });
     };
   }
 
@@ -156,9 +205,11 @@ function PerformanceCalendar({
     const endTime = new Date(startTime.getTime() + row.ActualDuration / 1000000);
     return (
       <Paper
-        style={{ width : "100%",
+        style={{
+          width : "100%",
           maxWidth : "90vw",
-          padding : "0.5rem" }}
+          padding : "0.5rem"
+        }}
       >
         <div>
           <Typography variant="h6" gutterBottom align="center">Performance Graph</Typography>
@@ -183,7 +234,7 @@ function PerformanceCalendar({
       </Paper>
     );
   }
-
+  const classes = useStyles();
   return (
     <div style={style}>
       <Calendar
@@ -194,6 +245,7 @@ function PerformanceCalendar({
         showMultiDayTimes
         defaultDate={new Date()}
         localizer={localizer}
+        classNames={classes.calender}
         style={{ height : "100%", }}
         // @ts-ignore
         onRangeChange={(range) => setTime(generateDateRange(range.start, range.end))}
