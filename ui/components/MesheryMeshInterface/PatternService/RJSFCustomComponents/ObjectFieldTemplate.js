@@ -3,8 +3,8 @@ import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/styles';
 import { canExpand } from '@rjsf/utils';
 import AddButton from "@material-ui/icons/Add";
-import { Box, IconButton, NoSsr, Typography } from '@material-ui/core';
-import EnlargedTextTooltip from '../EnlargedTextTooltip';
+import { Box, IconButton, Typography } from '@material-ui/core';
+import { EnlargedTextTooltip } from '../EnlargedTextTooltip';
 import HelpOutlineIcon from '../HelpOutlineIcon';
 import ArrowDown from '@material-ui/icons/KeyboardArrowDown';
 import ArrowUp from '@material-ui/icons/KeyboardArrowUp';
@@ -33,6 +33,7 @@ const ObjectFieldTemplate = ({
   formData,
   onAddClick,
 }) => {
+  const additional = schema?.__additional_property; // check if the object is additional
   const classes = useStyles();
   // If the parent type is an `array`, then expand the current object.
   const [show, setShow] = React.useState(schema?.p_type ? true : false);
@@ -85,7 +86,7 @@ const ObjectFieldTemplate = ({
     </Box>
   };
 
-  const Properties = (<NoSsr><Grid container={true} spacing={2} className={classes.objectFieldGrid} style={Object.keys(properties).length === 0 || schema["$schema"] ? { border : "none" } : null}>
+  const Properties = (<Grid container={true} spacing={2} className={classes.objectFieldGrid} style={Object.keys(properties).length === 0 || schema["$schema"] ? { border : "none" } : null}>
     {properties.map((element, index) => {
       return (
         element.hidden ? (
@@ -97,7 +98,8 @@ const ObjectFieldTemplate = ({
             lg={
               element.type === "object" ||
                 element.type === "array" ||
-                element.__additional_property
+                element.__additional_property ||
+                additional
                 ? 12
                 : 6
             }
@@ -109,7 +111,7 @@ const ObjectFieldTemplate = ({
       );
     })}
   </Grid>
-  </NoSsr>)
+  )
 
   const fieldTitle = uiSchema['ui:title'] || title;
 
@@ -120,7 +122,7 @@ const ObjectFieldTemplate = ({
           {schema.p_type !== "array" ? (
             <CustomTitleField
               id={`${idSchema.$id}-title`}
-              title={fieldTitle}
+              title={additional ? "Value" : fieldTitle}
               description={description}
               properties={properties}
             />

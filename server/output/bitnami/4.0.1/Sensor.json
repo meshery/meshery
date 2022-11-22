@@ -1,0 +1,1 @@
+{"kind":"Sensor","apiVersion":"v1alpha1","Format":"JSON","Metadata":{"Model":"bitnami","Version":"4.0.1","Category":"","SubCategory":"","Metadata":{"display-name":"Sensor"}},"Schema":"{\n \"title\": \"Sensor\",\n \"type\": \"object\",\n \"x-kubernetes-preserve-unknown-fields\": true\n}"}

@@ -1,0 +1,1 @@
+{"kind":"PolicyBinding","apiVersion":"v1alpha1","Format":"JSON","Metadata":{"Model":"rgnu","Version":"0.0.1","Category":"","SubCategory":"","Metadata":{"display-name":"Policy Binding"}},"Schema":"{\n \"title\": \"Policy Binding\",\n \"x-kubernetes-preserve-unknown-fields\": true\n}"}

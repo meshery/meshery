@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<6c6b4a45ea2e5653d87fbc74cbebbb61>>
+ * @generated SignedSource<<f748126ea7823a3d1bb7ec5d378be920>>
  * @flow
  * @lightSyntaxTransform
  * @nogrep
@@ -25,7 +25,7 @@ export type CatalogPatternQuery$data = {|
     +user_id: string,
     +pattern_file: string,
     +visibility: string,
-    +catalog_data: any,
+    +catalog_data: ?any,
     +created_at: ?string,
     +updated_at: ?string,
   |}>,

@@ -9,9 +9,10 @@ import MesheryArrayFieldTemplate from "./RJSFCustomComponents/ArrayFieldTemlate"
 import MesheryCustomObjFieldTemplate from "./RJSFCustomComponents/ObjectFieldTemplate";
 import MesheryWrapIfAdditionalTemplate from './RJSFCustomComponents/WrapIfAdditionalTemplate';
 import { customizeValidator } from "@rjsf/validator-ajv6";
-import CustomInputField from "./RJSFCustomComponents/CustomInputField";
 import _ from "lodash"
 import rjsfDarkTheme from '../../../themes/rjsf';
+import CustomTextWidget from './RJSFCustomComponents/CustomTextWidget';
+import CustomDateTimeWidget from './RJSFCustomComponents/CustomDateTimeWidget';
 
 class RJSFOverridenComponent extends Form {
   constructor(props) {
@@ -85,7 +86,11 @@ function RJSFForm(props) {
         templates={templates}
         uiSchema={schema.uiSchema}
         widgets={{
-          TextWidget : CustomInputField
+          TextWidget : CustomTextWidget,
+          // Custom components to be added here
+          DateTimeWidget : CustomDateTimeWidget,
+          // SelectWidget: CustomSelectWidget,
+          // CheckboxWidget: CustomBooleanWidget,
         }}
         liveValidate
         showErrorList={false}

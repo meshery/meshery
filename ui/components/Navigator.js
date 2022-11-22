@@ -883,9 +883,6 @@ class Navigator extends React.Component {
             {children.map(({
               id : idc, title : titlec, icon : iconc, href : hrefc, show : showc, link : linkc, children : childrenc
             }) => {
-              // if (typeof showc !== "undefined" && !showc) {
-              //   return "";
-              // }
               return (
                 <div key={idc} className={!showc ? classes.cursorNotAllowed : null}>
                   <ListItem
@@ -1260,10 +1257,10 @@ class Navigator extends React.Component {
     const Chevron = (
       <div
         className={classNames(isDrawerCollapsed ? classes.collapseButtonWrapperRotated : classes.collapseButtonWrapper)}
-        style={cursorNotAllowed}
+        style={this.state?.capabilitiesRegistryObj?.isNavigatorComponentEnabled?.([TOGGLER]) ? {} : cursorNotAllowed}
       >
         <div
-          style={this.state?.capabilitiesRegistryObj?.isNavigatorComponentEnabled?.([TOGGLER]) ? disabledStyle : {}}
+          style={this.state?.capabilitiesRegistryObj?.isNavigatorComponentEnabled?.([TOGGLER]) ? {} : disabledStyle}
           onClick={this.toggleMiniDrawer}
         >
           <FontAwesomeIcon

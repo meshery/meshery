@@ -13,7 +13,10 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/internal/sql"
+	"github.com/layer5io/meshery/server/meshes"
+	"github.com/layer5io/meshkit/utils/events"
 	"github.com/layer5io/meshkit/utils/kubernetes"
+	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
 	"github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v2"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -30,6 +33,7 @@ type K8sContext struct {
 	CreatedBy          *uuid.UUID `json:"created_by,omitempty" gorm:"-" yaml:"created_by,omitempty"`
 	MesheryInstanceID  *uuid.UUID `json:"meshery_instance_id,omitempty" yaml:"meshery_instance_id,omitempty"`
 	KubernetesServerID *uuid.UUID `json:"kubernetes_server_id,omitempty" yaml:"kubernetes_server_id,omitempty"`
+	DeploymentType     string     `json:"deployment_type,omitempty" yaml:"deployment_type,omitempty" default:"out_cluster"`
 
 	UpdatedAt *time.Time `json:"updated_at,omitempty" yaml:"updated_at,omitempty"`
 	CreatedAt *time.Time `json:"created_at,omitempty" yaml:"created_at,omitempty"`
@@ -328,4 +332,139 @@ func (kc *K8sContext) AssignServerID() error {
 	kc.KubernetesServerID = &ksUUID
 
 	return nil
+}
+
+// FlushMeshSyncData will flush the meshsync data for the passed kubernetes contextID
+func FlushMeshSyncData(ctx context.Context, ctxID string, provider Provider, eb *events.EventStreamer) {
+	var req meshes.EventsResponse
+	id, _ := uuid.NewV4()
+	// Gets all the available kubernetes contexts
+	k8sctxs, ok := ctx.Value(AllKubeClusterKey).([]K8sContext)
+	if !ok || len(k8sctxs) == 0 {
+		req = meshes.EventsResponse{
+			Component:     "core",
+			ComponentName: "Meshery",
+			EventType:     meshes.EventType_ERROR,
+			Summary:       "No kubernetes context found",
+			OperationId:   id.String(),
+		}
+		eb.Publish(&req)
+		return
+	}
+	var sid string
+	var refCount int
+	// Gets the serverID for the passed contextID
+	for _, k8ctx := range k8sctxs {
+		if k8ctx.ID == ctxID && k8ctx.KubernetesServerID != nil {
+			sid = k8ctx.KubernetesServerID.String()
+			break
+		}
+	}
+	// Counts the reference of the serverID
+	// As multiple context can have same serverID
+	for _, k8ctx := range k8sctxs {
+		if k8ctx.KubernetesServerID.String() == sid {
+			refCount++
+		}
+	}
+	// If the reference count is 1 then only flush the meshsync data
+	// because this means its the last contextID referring to that Kubernetes Server
+	if refCount == 1 {
+		if provider.GetGenericPersister() == nil {
+			req = meshes.EventsResponse{
+				Component:            "core",
+				ComponentName:        "Meshery",
+				EventType:            meshes.EventType_ERROR,
+				Summary:              "Meshery Database handler is not accessible to perform operations",
+				OperationId:          id.String(),
+				SuggestedRemediation: "Restart Meshery Server or Perform Hard Reset",
+			}
+			eb.Publish(&req)
+			return
+		}
+
+		err := provider.GetGenericPersister().Where("id IN (?)", provider.GetGenericPersister().Table("objects").Select("id").Where("cluster_id=?", sid)).Delete(&meshsyncmodel.KeyValue{}).Error
+		if err != nil {
+			req = meshes.EventsResponse{
+				Component:            "core",
+				ComponentName:        "Meshery",
+				EventType:            meshes.EventType_ERROR,
+				Summary:              "Meshery Database handler is not accessible to perform operations",
+				OperationId:          id.String(),
+				Details:              err.Error(),
+				SuggestedRemediation: "Restart Meshery Server or Perform Hard Reset",
+			}
+			eb.Publish(&req)
+			return
+		}
+
+		err = provider.GetGenericPersister().Where("id IN (?)", provider.GetGenericPersister().Table("objects").Select("id").Where("cluster_id=?", sid)).Delete(&meshsyncmodel.ResourceSpec{}).Error
+		if err != nil {
+			req = meshes.EventsResponse{
+				Component:            "core",
+				ComponentName:        "Meshery",
+				EventType:            meshes.EventType_ERROR,
+				Summary:              "Meshery Database handler is not accessible to perform operations",
+				OperationId:          id.String(),
+				Details:              err.Error(),
+				SuggestedRemediation: "Restart Meshery Server or Perform Hard Reset",
+			}
+			eb.Publish(&req)
+			return
+		}
+
+		err = provider.GetGenericPersister().Where("id IN (?)", provider.GetGenericPersister().Table("objects").Select("id").Where("cluster_id=?", sid)).Delete(&meshsyncmodel.ResourceStatus{}).Error
+		if err != nil {
+			req = meshes.EventsResponse{
+				Component:            "core",
+				ComponentName:        "Meshery",
+				EventType:            meshes.EventType_ERROR,
+				Summary:              "Meshery Database handler is not accessible to perform operations",
+				OperationId:          id.String(),
+				Details:              err.Error(),
+				SuggestedRemediation: "Restart Meshery Server or Perform Hard Reset",
+			}
+			eb.Publish(&req)
+			return
+		}
+
+		err = provider.GetGenericPersister().Where("id IN (?)", provider.GetGenericPersister().Table("objects").Select("id").Where("cluster_id=?", sid)).Delete(&meshsyncmodel.ResourceObjectMeta{}).Error
+		if err != nil {
+			req = meshes.EventsResponse{
+				Component:            "core",
+				ComponentName:        "Meshery",
+				EventType:            meshes.EventType_ERROR,
+				Summary:              "Meshery Database handler is not accessible to perform operations",
+				OperationId:          id.String(),
+				Details:              err.Error(),
+				SuggestedRemediation: "Restart Meshery Server or Perform Hard Reset",
+			}
+			eb.Publish(&req)
+			return
+		}
+
+		err = provider.GetGenericPersister().Where("cluster_id = ?", sid).Delete(&meshsyncmodel.Object{}).Error
+		if err != nil {
+			req = meshes.EventsResponse{
+				Component:            "core",
+				ComponentName:        "Meshery",
+				EventType:            meshes.EventType_ERROR,
+				Summary:              "Meshery Database handler is not accessible to perform operations",
+				OperationId:          id.String(),
+				Details:              err.Error(),
+				SuggestedRemediation: "Restart Meshery Server or Perform Hard Reset",
+			}
+			eb.Publish(&req)
+			return
+		}
+
+		req = meshes.EventsResponse{
+			Component:     "core",
+			ComponentName: "Meshery",
+			EventType:     meshes.EventType_INFO,
+			Summary:       "MeshSync data flushed successfully for context " + ctxID,
+			OperationId:   id.String(),
+		}
+		eb.Publish(&req)
+	}
 }

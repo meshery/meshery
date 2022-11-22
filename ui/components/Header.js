@@ -39,6 +39,8 @@ import _ from 'lodash';
 import { SETTINGS } from '../constants/navigator';
 import { cursorNotAllowed, disabledStyle } from '../css/disableComponent.styles';
 import NavigationWrap from "./navigation.style";
+import PromptComponent from './PromptComponent';
+
 const lightColor = 'rgba(255, 255, 255, 0.7)';
 const styles = (theme) => ({
   secondaryBar : { zIndex : 0, },
@@ -239,6 +241,7 @@ function K8sContextMenu({
   const [anchorEl, setAnchorEl] = React.useState(false);
   const [showFullContextMenu, setShowFullContextMenu] = React.useState(false);
   const [transformProperty, setTransformProperty] = React.useState(100)
+  const deleteCtxtRef = React.createRef();
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
   const styleSlider = {
@@ -311,14 +314,20 @@ function K8sContextMenu({
     )
   }
 
-  const handleKubernetesDelete = (name, ctxId) => () => {
-    if (confirm(`Are you sure you want to delete "${name}" cluster from Meshery?`)) {
+  const handleKubernetesDelete = (name, ctxId) => async () => {
+    let responseOfDeleteK8sCtx = await deleteCtxtRef.current.show({
+      title : `Delete ${name} context ?`,
+      subtitle : `Are you sure you want to delete ${name} cluster from Meshery?`,
+      options : ["CONFIRM", "CANCEL"]
+    });
+    if (responseOfDeleteK8sCtx === "CONFIRM") {
       const successCallback = async () => {
         const updatedConfig = await loadActiveK8sContexts()
         if (Array.isArray(updatedConfig)) {
           updateK8SConfig({ k8sConfig : updatedConfig })
         }
       }
+
       deleteKubernetesConfig(
         successHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Kubernetes config successfully removed", successCallback),
         errorHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Not able to remove config"),
@@ -472,6 +481,8 @@ function K8sContextMenu({
           </ClickAwayListener>
         </div>
       </Slide>
+
+      <PromptComponent ref={deleteCtxtRef} />
     </>
   )
 }

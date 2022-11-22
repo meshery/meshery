@@ -6,6 +6,7 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/meshes"
 	"github.com/layer5io/meshkit/logger"
+	"github.com/layer5io/meshkit/models/meshmodel"
 	"github.com/layer5io/meshkit/utils/events"
 	"github.com/spf13/viper"
 )
@@ -43,10 +44,10 @@ func (cg *ComponentsRegistrationHelper) UpdateContexts(ctxs []*K8sContext) *Comp
 	return cg
 }
 
-type k8sRegistrationFunction func(ctxt context.Context, config []byte, ctxID string) error
+type K8sRegistrationFunction func(ctxt context.Context, config []byte, ctxID string, reg *meshmodel.RegistryManager) error
 
 // start registration of components for the contexts
-func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, regFunc k8sRegistrationFunction, eb *events.EventStreamer) {
+func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, regFunc []K8sRegistrationFunction, eb *events.EventStreamer, reg *meshmodel.RegistryManager) {
 	for _, ctx := range ctxs {
 		ctxID := ctx.ID
 		// do not do anything about the contexts that are not present in the ctxRegStatusMap
@@ -88,10 +89,12 @@ func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, r
 							cg.log.Error(err)
 							return
 						}
-						err = regFunc(context.Background(), cfg, ctxID)
-						if err != nil {
-							cg.log.Error(err)
-							return
+						for _, f := range regFunc {
+							err = f(context.Background(), cfg, ctxID, reg)
+							if err != nil {
+								cg.log.Error(err)
+								return
+							}
 						}
 					}()
 				}

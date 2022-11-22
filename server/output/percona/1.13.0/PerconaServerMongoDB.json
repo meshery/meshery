@@ -1,0 +1,1 @@
+{"kind":"PerconaServerMongoDB","apiVersion":"v1-2-0","Format":"JSON","Metadata":{"Model":"percona","Version":"1.13.0","Category":"","SubCategory":"","Metadata":{"display-name":"Percona Server Mongo DB"}},"Schema":"{\n \"title\": \"Percona Server Mongo DB\",\n \"type\": \"object\",\n \"x-kubernetes-preserve-unknown-fields\": true\n}"}

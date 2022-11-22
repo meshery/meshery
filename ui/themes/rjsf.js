@@ -205,6 +205,7 @@ export const rjsfTheme = createTheme({
     },
   },
   typography : {
+    fontFamily : "inherit",
     fontSize : 13,
   },
   props : {
@@ -241,7 +242,7 @@ export const rjsfTheme = createTheme({
         whiteSpace : "nowrap",
         overflow : "hidden",
         textOverflow : "ellipsis",
-        maxWidth : "70%",
+        maxWidth : "60%",
         height : "100%",
         '&:hover' : {
           overflow : "visible",
@@ -355,6 +356,7 @@ export const rjsfTheme = createTheme({
         },
         marginTop : '0.1rem !important',
         overflow : "hidden",
+        alignSelf : "center",
         textOverflow : "ellipsis",
         '&:hover' : {
           overflow : "visible",
@@ -374,6 +376,9 @@ export const rjsfTheme = createTheme({
     MuiIconButton : {
       root : {
         cursor : "default"
+      },
+      sizeSmall : {
+        padding : "1px"
       }
     },
     MuiPaper : {
