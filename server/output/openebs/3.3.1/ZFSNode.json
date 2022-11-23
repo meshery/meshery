@@ -1,1 +1,1 @@
-{"kind":"ZFSNode","apiVersion":"v1","Format":"JSON","Metadata":{"Model":"openebs","Version":"3.3.1","Category":"","SubCategory":"","Metadata":{"display-name":"ZFS Node"}},"Schema":""}
+{"kind":"ZFSNode","apiVersion":"v1","display-name":"ZFS Node","format":"JSON","metadata":{},"model":{"name":"openebs","version":"3.3.1","display-name":"","category":"","sub-category":""},"schema":""}

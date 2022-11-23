@@ -107,12 +107,16 @@ func (h *Handler) MeshmodelComponentsForTypeHandler(rw http.ResponseWriter, r *h
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
 	res := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{})
-	modelNames := make([]string, 1)
+	countModelNames := make(map[string]map[string]int) //modelsname -> versions
 	for _, r := range res {
 		def, _ := r.(v1alpha1.ComponentDefinition)
-		modelNames = append(modelNames, def.Metadata.Model)
+		if countModelNames[def.Model.Name] == nil {
+			countModelNames[def.Model.Name] = make(map[string]int, 0)
+		}
+
+		countModelNames[def.Model.Name][def.Model.Version]++
 	}
-	if err := enc.Encode(modelNames); err != nil {
+	if err := enc.Encode(countModelNames); err != nil {
 		h.log.Error(ErrWorkloadDefinition(err)) //TODO: Add appropriate meshkit error
 		http.Error(rw, ErrWorkloadDefinition(err).Error(), http.StatusInternalServerError)
 	}
