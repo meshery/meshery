@@ -1,1 +1,1 @@
-{"kind":"Template","apiVersion":"v1alpha1","Format":"JSON","Metadata":{"Model":"stakater","Version":"0.7.0","Category":"","SubCategory":"","Metadata":{"display-name":"Template"}},"Schema":""}
+{"kind":"Template","apiVersion":"v1alpha1","display-name":"Template","format":"JSON","metadata":{},"model":{"name":"stakater","version":"0.7.0","display-name":"","category":"","sub-category":""},"schema":""}

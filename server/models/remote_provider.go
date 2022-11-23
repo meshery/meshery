@@ -370,9 +370,9 @@ func (l *RemoteProvider) GetProviderToken(req *http.Request) (string, error) {
 // It is assumed that every remote provider will support this feature
 func (l *RemoteProvider) Logout(w http.ResponseWriter, req *http.Request) {
 	ck, err := req.Cookie(tokenName)
-	if err == nil {
-		// err = l.revokeToken(ck.Value)
-	}
+	// if err == nil {
+	// 	// err = l.revokeToken(ck.Value)
+	// }
 	if err != nil {
 		logrus.Errorf("error performing logout, token cannot be revoked: %v", err)
 
