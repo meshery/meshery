@@ -218,12 +218,9 @@ func main() {
 			for {
 				select {
 				case comp := <-compChan:
-					err = regManager.RegisterEntity(meshmodel.Host{
+					_ = regManager.RegisterEntity(meshmodel.Host{
 						Hostname: ArtifactHubComponentsHandler,
 					}, comp)
-					if err != nil {
-						fmt.Println("bruh: ", err.Error())
-					}
 				case <-done:
 					return
 				}
