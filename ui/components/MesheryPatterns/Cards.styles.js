@@ -81,6 +81,7 @@ const useStyles= makeStyles((theme) => ({
     backgroundColor : "#8F1F00",
     color : "#ffffff",
     padding : "6px 9px",
+    minWidth : "unset",
     "&:hover" : {
       backgroundColor : "#B32700",
     },
