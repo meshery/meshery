@@ -1,1 +1,1 @@
-{"kind":"Domain","apiVersion":"v1alpha1","Format":"JSON","Metadata":{"Model":"banzaicloud-stable","Version":"0.3.1-banzai.1","Category":"","SubCategory":"","Metadata":{"display-name":"Domain"}},"Schema":""}
+{"kind":"Domain","apiVersion":"v1alpha1","display-name":"Domain","format":"JSON","metadata":{},"model":{"name":"banzaicloud-stable","version":"0.3.1-banzai.1","display-name":"","category":"","sub-category":""},"schema":""}

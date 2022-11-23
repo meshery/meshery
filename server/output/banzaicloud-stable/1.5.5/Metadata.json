@@ -1,1 +1,1 @@
-{"kind":"Metadata","apiVersion":"v1alpha1","Format":"JSON","Metadata":{"Model":"banzaicloud-stable","Version":"1.5.5","Category":"","SubCategory":"","Metadata":{"display-name":"Metadata"}},"Schema":""}
+{"kind":"Metadata","apiVersion":"v1alpha1","display-name":"Metadata","format":"JSON","metadata":{},"model":{"name":"banzaicloud-stable","version":"1.5.5","display-name":"","category":"","sub-category":""},"schema":""}

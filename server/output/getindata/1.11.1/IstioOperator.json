@@ -1,1 +1,1 @@
-{"kind":"IstioOperator","apiVersion":"v1alpha1","Format":"JSON","Metadata":{"Model":"getindata","Version":"1.11.1","Category":"","SubCategory":"","Metadata":{"display-name":"Istio Operator"}},"Schema":""}
+{"kind":"IstioOperator","apiVersion":"v1alpha1","display-name":"Istio Operator","format":"JSON","metadata":{},"model":{"name":"getindata","version":"1.11.1","display-name":"","category":"","sub-category":""},"schema":""}

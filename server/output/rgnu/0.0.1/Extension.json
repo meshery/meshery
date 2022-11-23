@@ -1,1 +1,1 @@
-{"kind":"Extension","apiVersion":"v1alpha1","Format":"JSON","Metadata":{"Model":"rgnu","Version":"0.0.1","Category":"","SubCategory":"","Metadata":{"display-name":"Extension"}},"Schema":"{\n \"title\": \"Extension\",\n \"x-kubernetes-preserve-unknown-fields\": true\n}"}
+{"kind":"Extension","apiVersion":"v1alpha1","display-name":"Extension","format":"JSON","metadata":{},"model":{"name":"rgnu","version":"0.0.1","display-name":"","category":"","sub-category":""},"schema":"{\n \"title\": \"Extension\",\n \"x-kubernetes-preserve-unknown-fields\": true\n}"}

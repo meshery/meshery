@@ -18,13 +18,13 @@ func ErrInvalidAuthToken() error {
 }
 
 func ErrInvalidAPICall(statusCode int) error {
-	return errors.New(ErrInvalidAPICallCode, errors.Alert, []string{"Response Status Code ", strconv.Itoa(statusCode), " possible Server Error"}, []string{}, []string{}, []string{})
+	return errors.New(ErrInvalidAPICallCode, errors.Alert, []string{"Response Status Code ", strconv.Itoa(statusCode), " possible Server Error"}, []string{"Response Status Code " + strconv.Itoa(statusCode) + " possible Server Error"}, []string{}, []string{})
 }
 
 func ErrReadAPIResponse(err error) error {
-	return errors.New(ErrReadAPIResponseCode, errors.Alert, []string{"failed to read response body"}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrReadAPIResponseCode, errors.Alert, []string{"failed to read response body"}, []string{"Failed to read response body", " " + err.Error()}, []string{}, []string{})
 }
 
 func ErrUnmarshal(err error) error {
-	return errors.New(ErrUnmarshalCode, errors.Alert, []string{"Error unmarshalling response "}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrUnmarshalCode, errors.Alert, []string{"Error unmarshalling response"}, []string{"Error processing JSON response from server.\n" + err.Error()}, []string{}, []string{})
 }

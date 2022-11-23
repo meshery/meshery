@@ -335,10 +335,10 @@ func (l *RemoteProvider) GetSession(req *http.Request) error {
 		logrus.Infof("session not found")
 		return err
 	}
-	err = l.introspectToken(ts)
-	if err != nil {
-		return err
-	}
+	// err = l.introspectToken(ts)
+	// if err != nil {
+	// 	return err
+	// }
 
 	_, err = l.VerifyToken(ts)
 	if err != nil {
@@ -370,9 +370,9 @@ func (l *RemoteProvider) GetProviderToken(req *http.Request) (string, error) {
 // It is assumed that every remote provider will support this feature
 func (l *RemoteProvider) Logout(w http.ResponseWriter, req *http.Request) {
 	ck, err := req.Cookie(tokenName)
-	if err == nil {
-		err = l.revokeToken(ck.Value)
-	}
+	// if err == nil {
+	// 	// err = l.revokeToken(ck.Value)
+	// }
 	if err != nil {
 		logrus.Errorf("error performing logout, token cannot be revoked: %v", err)
 
@@ -3015,7 +3015,6 @@ func TarXZF(srcURL, destination string) error {
 
 	if resp.StatusCode != http.StatusOK {
 		return ErrFetch(fmt.Errorf("failed GET request"), "TarTZF file :"+srcURL, resp.StatusCode)
-
 	}
 
 	return TarXZ(resp.Body, destination)
