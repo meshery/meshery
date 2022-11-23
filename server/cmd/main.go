@@ -98,11 +98,11 @@ func main() {
 	if err := core.RegisterMesheryOAMWorkloads(); err != nil {
 		log.Error(ErrRegisteringMesheryOAMWorkloads(err))
 	}
-	// if viper.GetBool("REGISTER_STATIC_K8S") {
-	// 	if err = core.RegisterK8sOAMWorkloads(); err != nil {
-	// 		log.Error(ErrRegisteringMesheryOAMWorkloads(err))
-	// 	}
-	// }
+	if viper.GetBool("REGISTER_STATIC_K8S") {
+		if err = core.RegisterK8sOAMWorkloads(); err != nil {
+			log.Error(ErrRegisteringMesheryOAMWorkloads(err))
+		}
+	}
 
 	log.Info("Local Provider capabilities are: ", version)
 
