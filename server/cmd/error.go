@@ -14,7 +14,12 @@ const (
 	ErrListenAndServeCode                         = "2248"
 	ErrCleaningUpLocalProviderCode                = "2249"
 	ErrClosingDatabaseInstanceCode                = "2250"
+	ErrInitializingRegistryManagerCode            = "2251"
 )
+
+func ErrInitializingRegistryManager(err error) error {
+	return errors.New(ErrInitializingRegistryManagerCode, errors.Fatal, []string{"could not initialize registry manager"}, []string{err.Error()}, []string{"could not migrate tables into the database"}, []string{"make sure the database instance passed is not nil"})
+}
 
 func ErrCreatingUUIDInstance(err error) error {
 	return errors.New(ErrCreatingUUIDInstanceCode, errors.Fatal, []string{"Unable to create UUID instance"}, []string{"Unable to create UUID instance: ", err.Error()}, []string{}, []string{})

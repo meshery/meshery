@@ -97,6 +97,7 @@ type HandlerInterface interface {
 	SessionSyncHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 
 	PatternFileHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
+	GETOAMRegisterHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	OAMRegisterHandler(rw http.ResponseWriter, r *http.Request)
 	ComponentTypesHandler(rw http.ResponseWriter, r *http.Request)
 	ComponentsForTypeHandler(rw http.ResponseWriter, r *http.Request)
@@ -106,6 +107,12 @@ type HandlerInterface interface {
 	ComponentsByNameHandler(rw http.ResponseWriter, r *http.Request)
 	ValidationHandler(rw http.ResponseWriter, r *http.Request)
 	ComponentGenerationHandler(rw http.ResponseWriter, r *http.Request)
+	RegisterMeshmodelComponents(rw http.ResponseWriter, r *http.Request)
+
+	GetMeshmodelComponentsByName(rw http.ResponseWriter, r *http.Request)
+	GetMeshmodelComponentsByType(rw http.ResponseWriter, r *http.Request)
+	MeshmodelComponentsForTypeHandler(rw http.ResponseWriter, r *http.Request)
+
 	OAMComponentDetailsHandler(rw http.ResponseWriter, r *http.Request)
 	OAMComponentDetailByIDHandler(rw http.ResponseWriter, r *http.Request)
 	PatternFileRequestHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)

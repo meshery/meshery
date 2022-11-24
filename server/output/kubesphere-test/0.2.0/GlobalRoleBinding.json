@@ -1,0 +1,1 @@
+{"kind":"GlobalRoleBinding","apiVersion":"v1alpha2","display-name":"Global Role Binding","format":"JSON","metadata":{},"model":{"name":"kubesphere-test","version":"0.2.0","display-name":"","category":"","sub-category":""},"schema":""}

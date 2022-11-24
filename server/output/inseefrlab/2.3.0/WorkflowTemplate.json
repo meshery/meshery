@@ -1,0 +1,1 @@
+{"kind":"WorkflowTemplate","apiVersion":"v1alpha1","display-name":"Workflow Template","format":"JSON","metadata":{},"model":{"name":"inseefrlab","version":"2.3.0","display-name":"","category":"","sub-category":""},"schema":"{\n \"title\": \"Workflow Template\",\n \"type\": \"object\",\n \"x-kubernetes-map-type\": \"atomic\",\n \"x-kubernetes-preserve-unknown-fields\": true\n}"}

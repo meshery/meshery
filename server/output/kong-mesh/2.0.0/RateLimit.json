@@ -1,0 +1,1 @@
+{"kind":"RateLimit","apiVersion":"v1alpha1","display-name":"Rate Limit","format":"JSON","metadata":{},"model":{"name":"kong-mesh","version":"2.0.0","display-name":"","category":"","sub-category":""},"schema":"{\n \"description\": \"Spec is the specification of the Kuma RateLimit resource.\",\n \"title\": \"Rate Limit\",\n \"x-kubernetes-preserve-unknown-fields\": true\n}"}

@@ -1,0 +1,1 @@
+{"kind":"NamespaceScanner","apiVersion":"v1","display-name":"Namespace Scanner","format":"JSON","metadata":{},"model":{"name":"devopstales","version":"2.5.0","display-name":"","category":"","sub-category":""},"schema":"{\n \"title\": \"Namespace Scanner\",\n \"type\": \"object\",\n \"x-kubernetes-preserve-unknown-fields\": true\n}"}

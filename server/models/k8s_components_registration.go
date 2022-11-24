@@ -6,6 +6,7 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/meshes"
 	"github.com/layer5io/meshkit/logger"
+	"github.com/layer5io/meshkit/models/meshmodel"
 	"github.com/layer5io/meshkit/utils/events"
 	"github.com/spf13/viper"
 )
@@ -43,10 +44,10 @@ func (cg *ComponentsRegistrationHelper) UpdateContexts(ctxs []*K8sContext) *Comp
 	return cg
 }
 
-type k8sRegistrationFunction func(ctxt context.Context, config []byte, ctxID string) error
+type K8sRegistrationFunction func(ctxt context.Context, config []byte, ctxID string, reg *meshmodel.RegistryManager) error
 
 // start registration of components for the contexts
-func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, regFunc k8sRegistrationFunction, eb *events.EventStreamer) {
+func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, regFunc []K8sRegistrationFunction, eb *events.EventStreamer, reg *meshmodel.RegistryManager) {
 	for _, ctx := range ctxs {
 		ctxID := ctx.ID
 		status, ok := cg.ctxRegStatusMap[ctxID]
@@ -89,6 +90,7 @@ func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, r
 					EventType:     meshes.EventType_INFO,
 					Summary:       "Registration of k8s native components completed for contextID" + ctxID,
 					OperationId:   id.String(),
+
 				}
 				eb.Publish(&req)
 			}()

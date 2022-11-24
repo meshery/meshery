@@ -2,16 +2,16 @@ import { makeStyles } from "@material-ui/core";
 
 const useStyles= makeStyles((theme) => ({
   cardButtons : {
-    display : "flex",
-    justifyContent : "flex-end",
-    alignItems : "center",
+    display : "grid",
+    gridTemplateColumns : "repeat(5,1fr)",
     marginTop : "50px",
-    marginLeft : "22rem",
     height : '100%',
     width : '100%',
+    gap : ".5rem"
   },
   testsButton : {
-    marginRight : "0.5rem"
+    minWidth : "100%",
+    padding : "6px 9px"
   },
   perfResultsContainer : {
     marginTop : "0.5rem"
@@ -70,20 +70,27 @@ const useStyles= makeStyles((theme) => ({
     width : "24px",
     height : "24px",
     marginRight : "5px",
+
   },
   btnText : {
     [theme.breakpoints.between(960, 1370)] : { display : "none" },
     display : "flex",
     justifyContent : "center",
-    paddingLeft : "0.35rem"
   },
   undeployButton : {
     backgroundColor : "#8F1F00",
     color : "#ffffff",
+    padding : "6px 9px",
+    minWidth : "unset",
     "&:hover" : {
       backgroundColor : "#B32700",
     },
-    marginRight : "0.5rem"
+    '& > span' : {
+      width : "unset",
+    },
+    '& > span > svg' : {
+      marginRight : "5px"
+    }
   },
   img : {
     marginRight : "0.5rem"
@@ -98,6 +105,11 @@ const useStyles= makeStyles((theme) => ({
     justifyContent : "center",
     alignItems : "center",
     flexDirection : "column",
+  },
+  publishTitle : {
+    display : 'flex',
+    justifyContent : 'space-between',
+    alignItems : 'center',
   },
   noText : {
     fontSize : "2rem",

@@ -1,0 +1,1 @@
+{"kind":"RoleBase","apiVersion":"v1alpha2","display-name":"Role Base","format":"JSON","metadata":{},"model":{"name":"kubesphere-test","version":"0.2.0","display-name":"","category":"","sub-category":""},"schema":""}

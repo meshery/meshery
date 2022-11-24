@@ -12,3 +12,8 @@ export const ACTIONS = {
   UNDEPLOY : 1,
   VERIFY : 2,
 }
+
+export const DEPLOYMENT_TYPE = {
+  IN_CLUSTER : "in_cluster",
+  OUT_CLUSTER : "out_of_cluster"
+}

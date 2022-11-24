@@ -96,16 +96,17 @@ run-fast:
 
 ## Build and run Meshery Server on your local machine (requires go${GOVERSION}).
 
-server-with-k8s:
+server-without-k8s:
 	cd server; cd cmd; go$(GOVERSION) mod tidy; \
 	BUILD="$(GIT_VERSION)" \
-	REGISTER_STATIC_K8S=true \
+	REGISTER_STATIC_K8S=false \
 	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
 	PORT=9081 \
 	DEBUG=true \
 	ADAPTER_URLS=$(ADAPTER_URLS) \
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
 	go$(GOVERSION) run main.go error.go;
+
 server:
 	cd server; cd cmd; go$(GOVERSION) mod tidy; \
 	BUILD="$(GIT_VERSION)" \
@@ -115,6 +116,7 @@ server:
 	ADAPTER_URLS=$(ADAPTER_URLS) \
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
 	go$(GOVERSION) run main.go error.go;
+
 server-remote-provider:
 	cd server; cd cmd; go$(GOVERSION) mod tidy; \
 	BUILD="$(GIT_VERSION)" \
@@ -197,9 +199,15 @@ ui-server: ui-meshery-build server
 #-----------------------------------------------------------------------------
 .PHONY: setup-ui-libs ui-setup run-ui-dev ui ui-meshery-build ui ui-provider ui-lint ui-provider ui-meshery ui-build ui-provider-build ui-provider-test
 
-UI_BUILD_SCRIPT = build
-ifeq ($(shell uname), Darwin)
-	UI_BUILD_SCRIPT = build-mac
+UI_BUILD_SCRIPT = build16
+UI_DEV_SCRIPT = dev16
+
+ifeq ($(findstring v18, $(shell node --version)), v18)
+	UI_BUILD_SCRIPT = build
+	UI_DEV_SCRIPT = dev 
+else ifeq ($(findstring v17, $(shell node --version)), v17)
+	UI_BUILD_SCRIPT = build
+	UI_DEV_SCRIPT = dev
 endif
 
 setup-ui-libs: ui-setup
@@ -211,7 +219,7 @@ ui-setup:
 run-ui-dev: ui
 ## Run Meshery UI on your local machine. Listen for changes.
 ui:
-	cd ui; npm run dev; cd ..
+	cd ui; npm run $(UI_DEV_SCRIPT); cd ..;
 
 run-provider-ui-dev: ui-provider
 ## Run Meshery Provider UI  on your local machine. Listen for changes.

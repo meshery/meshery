@@ -1,0 +1,1 @@
+{"kind":"VolumeSnapshotClass","apiVersion":"v1","display-name":"Volume Snapshot Class","format":"JSON","metadata":{},"model":{"name":"democratic-csi","version":"0.2.2","display-name":"","category":"","sub-category":""},"schema":""}

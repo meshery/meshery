@@ -1,0 +1,1 @@
+{"kind":"MutatorPodStatus","apiVersion":"v1beta1","display-name":"Mutator Pod Status","format":"JSON","metadata":{},"model":{"name":"gatekeeper","version":"3.11.0-beta.0","display-name":"","category":"","sub-category":""},"schema":""}
