@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/layer5io/meshery/server/models/pattern/core"
+	"github.com/layer5io/meshkit/models/meshmodel"
 )
 
 const (
@@ -19,12 +20,14 @@ type Helpers interface {
 }
 
 type Selector struct {
-	helpers Helpers
+	registry *meshmodel.RegistryManager
+	helpers  Helpers
 }
 
-func New(helpers Helpers) *Selector {
+func New(reg *meshmodel.RegistryManager, helpers Helpers) *Selector {
 	return &Selector{
-		helpers: helpers,
+		registry: reg,
+		helpers:  helpers,
 	}
 }
 

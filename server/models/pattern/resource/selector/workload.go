@@ -3,9 +3,19 @@ package selector
 import (
 	"github.com/layer5io/meshery/server/internal/store"
 	"github.com/layer5io/meshery/server/models/pattern/core"
+	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 )
 
-func (s *Selector) Workload(name string) (core.WorkloadCapability, bool) {
+func (s *Selector) Workload(name string, version string, model string) (core.WorkloadCapability, bool) {
+	var comp v1alpha1.ComponentDefinition
+	entities := s.registry.GetEntities(&v1alpha1.ComponentFilter{
+		Name:      name,
+		ModelName: model,
+		Version:   version,
+	})
+	if len(entities) != 0 {
+		comp := entities[0].(v1alpha1.ComponentDefinition)
+	}
 	data := store.GetAll(generateWorkloadKey(name))
 	workloads := convertValueInterfaceSliceToWorkloadSlice(data)
 

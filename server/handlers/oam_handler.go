@@ -17,6 +17,7 @@ import (
 	"github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshery/server/models/pattern/patterns"
 	"github.com/layer5io/meshery/server/models/pattern/stages"
+	"github.com/layer5io/meshkit/models/meshmodel"
 	"github.com/layer5io/meshkit/utils/events"
 	"github.com/sirupsen/logrus"
 )
@@ -92,6 +93,7 @@ func (h *Handler) PatternFileHandler(
 		isDel,
 		r.URL.Query().Get("verify") == "true",
 		false,
+		h.registryManager,
 		h.EventsBuffer,
 	)
 
@@ -382,6 +384,7 @@ func _processPattern(
 	isDelete bool,
 	verify bool,
 	skipPrintLogs bool,
+	registry *meshmodel.RegistryManager,
 	eb *events.EventStreamer,
 ) (string, error) {
 	// Get the token from the context
@@ -428,6 +431,7 @@ func _processPattern(
 			// kubeClient:    kubeClient,
 			opIsDelete: isDelete,
 			userID:     userID,
+			registry:   registry,
 			// kubeconfig:    kubecfg,
 			// kubecontext:   mk8scontext,
 			skipPrintLogs:   skipPrintLogs,
@@ -566,8 +570,12 @@ type serviceActionProvider struct {
 	accumulatedMsgs []string
 	err             error
 	eventbuffer     *events.EventStreamer
+	registry        *meshmodel.RegistryManager
 }
 
+func (sap *serviceActionProvider) GetRegistry() *meshmodel.RegistryManager {
+	return sap.registry
+}
 func (sap *serviceActionProvider) Terminate(err error) {
 	if !sap.skipPrintLogs {
 		logrus.Error(err)
