@@ -189,7 +189,7 @@ class MesheryPlayComponent extends React.Component {
                         horizontal : "left",
                       },
                       getContentAnchorEl : null,
-                    },
+                    }
                   }}
                 >
                   {meshAdapters.map((ada) => (
