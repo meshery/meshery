@@ -103,16 +103,32 @@ func (h *Handler) GetMeshmodelComponentsByName(rw http.ResponseWriter, r *http.R
 		http.Error(rw, ErrWorkloadDefinition(err).Error(), http.StatusInternalServerError)
 	}
 }
+
+type typesResponseWithModelname struct {
+	DisplayName string   `json:"display-name"`
+	Versions    []string `json:"versions"`
+}
+
 func (h *Handler) MeshmodelComponentsForTypeHandler(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
 	res := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{})
-	modelNames := make([]string, 1)
+	var response = make(map[string]*typesResponseWithModelname)
 	for _, r := range res {
 		def, _ := r.(v1alpha1.ComponentDefinition)
-		modelNames = append(modelNames, def.Metadata.Model)
+		if response[def.Model.Name] == nil {
+			response[def.Model.Name] = &typesResponseWithModelname{
+				DisplayName: def.Model.DisplayName,
+				Versions:    []string{def.Model.Version},
+			}
+		} else {
+			response[def.Model.Name].Versions = append(response[def.Model.Name].Versions, def.Model.Version)
+		}
 	}
-	if err := enc.Encode(modelNames); err != nil {
+	for _, x := range response {
+		x.Versions = filterUniqueElementsArray(x.Versions)
+	}
+	if err := enc.Encode(response); err != nil {
 		h.log.Error(ErrWorkloadDefinition(err)) //TODO: Add appropriate meshkit error
 		http.Error(rw, ErrWorkloadDefinition(err).Error(), http.StatusInternalServerError)
 	}
@@ -164,4 +180,15 @@ func (h *Handler) RegisterMeshmodelComponents(rw http.ResponseWriter, r *http.Re
 		http.Error(rw, err.Error(), http.StatusBadRequest)
 		return
 	}
+}
+func filterUniqueElementsArray(s []string) []string {
+	m := make(map[string]bool)
+	for _, ele := range s {
+		m[ele] = true
+	}
+	ans := make([]string, 0)
+	for a := range m {
+		ans = append(ans, a)
+	}
+	return ans
 }

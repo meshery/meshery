@@ -1,1 +1,1 @@
-{"kind":"KongConsumer","apiVersion":"v1","Format":"JSON","Metadata":{"Model":"wallarm","Version":"4.2.4","Category":"","SubCategory":"","Metadata":{"display-name":"Kong Consumer"}},"Schema":""}
+{"kind":"KongConsumer","apiVersion":"v1","display-name":"Kong Consumer","format":"JSON","metadata":{},"model":{"name":"wallarm","version":"4.2.4","display-name":"","category":"","sub-category":""},"schema":""}

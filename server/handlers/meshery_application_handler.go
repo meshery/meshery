@@ -315,7 +315,7 @@ func (h *Handler) handleApplicationPOST(
 				pfs, err := githubRepoApplicationScan(owner, repo, path, branch, sourcetype)
 				if err != nil {
 					http.Error(rw, ErrRemoteApplication(err).Error(), http.StatusInternalServerError)
-					addMeshkitErr(&res, err) //error gauranteed to be meshkit error
+					addMeshkitErr(&res, err) //error guaranteed to be meshkit error
 					go h.EventsBuffer.Publish(&res)
 					return
 				}
@@ -326,7 +326,7 @@ func (h *Handler) handleApplicationPOST(
 				pfs, err := genericHTTPApplicationFile(parsedBody.URL, sourcetype)
 				if err != nil {
 					http.Error(rw, ErrRemoteApplication(err).Error(), http.StatusInternalServerError)
-					addMeshkitErr(&res, err) //error gauranteed to be meshkit error
+					addMeshkitErr(&res, err) //error guaranteed to be meshkit error
 					go h.EventsBuffer.Publish(&res)
 					return
 				}
@@ -634,7 +634,7 @@ func (h *Handler) formatApplicationOutput(rw http.ResponseWriter, content []byte
 	go h.EventsBuffer.Publish(res)
 }
 
-// Note: This function is gauranteed to return meshkit errors
+// Note: This function is guaranteed to return meshkit errors
 func githubRepoApplicationScan(
 	owner,
 	repo,

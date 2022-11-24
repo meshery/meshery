@@ -49,7 +49,7 @@ mesheryctl exp filter view test-wasm
 			// check if the filter argument is a valid uuid v4 string
 			isID, err = regexp.MatchString("^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-4[a-fA-F0-9]{3}-[8|9|aA|bB][a-fA-F0-9]{3}-[a-fA-F0-9]{12}$", filter)
 			if err != nil {
-				return err
+				return errors.New("Invalid filter ID / filter name. " + err.Error())
 			}
 		}
 		url := mctlCfg.GetBaseMesheryURL()
@@ -90,7 +90,7 @@ mesheryctl exp filter view test-wasm
 
 		var dat map[string]interface{}
 		if err = json.Unmarshal(body, &dat); err != nil {
-			return errors.Wrap(err, "failed to unmarshal response body")
+			return ErrUnmarshal(err)
 		}
 
 		if isID {

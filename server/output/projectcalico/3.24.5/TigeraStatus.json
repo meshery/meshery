@@ -1,0 +1,1 @@
+{"kind":"TigeraStatus","apiVersion":"v1","display-name":"Tigera Status","format":"JSON","metadata":{},"model":{"name":"projectcalico","version":"3.24.5","display-name":"","category":"","sub-category":""},"schema":"{\n \"description\": \"TigeraStatusSpec defines the desired state of TigeraStatus\",\n \"title\": \"Tigera Status\",\n \"type\": \"object\"\n}"}
