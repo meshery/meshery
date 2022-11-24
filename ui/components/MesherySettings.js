@@ -37,6 +37,7 @@ const styles = (theme) => ({
   tab : {
     minWidth : 40,
     paddingLeft : 0,
+    color : theme.palette.type == 'dark' ? "rgba(255, 255, 255, 0.7)" : "rgba(0, 0, 0, 0.54)",
     paddingRight : 0,
   },
   icon : {
@@ -45,6 +46,7 @@ const styles = (theme) => ({
     width : theme.spacing(1.75),
     marginLeft : theme.spacing(0.5),
   },
+
   iconText : {
     display : 'inline',
     verticalAlign : 'middle',

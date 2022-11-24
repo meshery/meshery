@@ -75,14 +75,14 @@ const styles = (theme) => ({
     [theme.breakpoints.up('sm')] : { fontSize : '1.65rem', },
   },
   appBarOnDrawerOpen : {
-    backgroundColor : "#396679",
+    backgroundColor : theme.palette.secondary.mainBackground,
     shadowColor : " #808080",
     zIndex : theme.zIndex.drawer + 1,
     [theme.breakpoints.between(635, 732)] : { padding : theme.spacing(0.75, 1.4), },
     [theme.breakpoints.between(600, 635)] : { padding : theme.spacing(0.4, 1.4), },
   },
   appBarOnDrawerClosed : {
-    backgroundColor : "#396679",
+    backgroundColor : theme.palette.secondary.mainBackground,
     zIndex : theme.zIndex.drawer + 1,
   },
   toolbarOnDrawerClosed : {
@@ -90,7 +90,7 @@ const styles = (theme) => ({
     padding : theme.spacing(2.4),
     paddingLeft : 34,
     paddingRight : 34,
-    backgroundColor : "#396679"
+    backgroundColor : theme.palette.secondary.mainBackground,
   },
   toolbarOnDrawerOpen : {
     minHeight : 58,

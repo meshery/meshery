@@ -135,7 +135,7 @@ function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference
                   display : "none",
                 },
               }} aria-label="Pattern Service" >
-                <Tab label={<div> <SettingsIcon className={classes.setIcon} />Settings</div>} {...a11yProps(0)} />
+                <Tab label={<div style={{ display : "flex" }}> <SettingsIcon className={classes.setIcon} />Settings</div>} {...a11yProps(0)} />
                 {
                   renderTraits()
                     ? <Tab label="Traits" {...a11yProps(1)} />

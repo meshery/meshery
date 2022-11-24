@@ -1,14 +1,14 @@
 import { ClickAwayListener, makeStyles } from "@material-ui/core"
 import React, { useEffect, useState } from "react"
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   designWrapper : {
     width : "100%",
     color : "#fff",
     position : "fixed",
     top : 80,
     // left: 0,
-    backgroundColor : "#477E96",
+    backgroundColor : theme.palette.type == 'dark' ? "#222222" : "#477E96",
     zIndex : "1",
     marginLeft : "4px",
     padding : "4px 50px",

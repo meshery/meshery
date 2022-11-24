@@ -1,26 +1,26 @@
 import React, { useEffect } from 'react'
 import LinkIcon from '@material-ui/icons/Link';
 import { Tooltip, IconButton, TextField, Button, Grid } from '@material-ui/core';
-import { makeStyles, MuiThemeProvider } from '@material-ui/core/styles';
-import { createTheme } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
+// import { createTheme } from '@material-ui/core/styles';
 import { URLValidator } from '../utils/URLValidator';
 
 
 
-const getMuiTheme = () => createTheme({
-  palette : {
-    primary : {
-      main : "#607d8b"
-    }
-  },
-  overrides : {
-    MuiGrid : {
-      input : {
-        color : '#607d8b'
-      }
-    },
-  }
-})
+// const getMuiTheme = () => createTheme({
+//   palette : {
+//     primary : {
+//       main : "#607d8b"
+//     }
+//   },
+//   overrides : {
+//     MuiGrid : {
+//       input : {
+//         color : '#607d8b'
+//       }
+//     },
+//   }
+// })
 
 
 const styles = makeStyles((theme) => ({
@@ -83,37 +83,36 @@ const URLUploader = ({ onSubmit }) => {
           open={open}
           handleClose={handleClose}
           Content={
-            <MuiThemeProvider theme={getMuiTheme()}>
-              <div
-                className={classes.paper}
+            <div
+              className={classes.paper}
+            >
+              <Grid
+                container spacing={2}
               >
                 <Grid
-                  container spacing={2}
-                >
-                  <Grid
-                    item xs={12}>
-                    <h2 id="simple-modal-title">Import using URL</h2>
-                  </Grid>
-                  <Grid
-                    item xs={12}>
-                    <TextField
-                      error={isError}
-                      helperText={isError && "Invalid URL"}
-                      variant="outlined"
-                      label="Paste URL here"
-                      fullWidth
-                      onChange={(e) => setInput(e.target.value)} />
-                  </Grid>
-                  <Grid item xs={12} sm={6}>
-                    <Button fullWidth variant="contained" onClick={handleClose}>Cancel</Button>
-                  </Grid>
-                  <Grid item xs={12} sm={6}>
-                    <Button disabled={isError || !input} fullWidth variant="contained" color="primary" onClick={() => handleSubmit()}>Import</Button>
-                  </Grid>
+                  item xs={12}>
+                  <h2 id="simple-modal-title">Import using URL</h2>
                 </Grid>
+                <Grid
+                  item xs={12}>
+                  <TextField
+                    error={isError}
+                    helperText={isError && "Invalid URL"}
+                    variant="outlined"
+                    label="Paste URL here"
+                    fullWidth
+                    onChange={(e) => setInput(e.target.value)} />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <Button fullWidth variant="contained" onClick={handleClose}>Cancel</Button>
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <Button disabled={isError || !input} fullWidth variant="contained" color="primary" onClick={() => handleSubmit()}>Import</Button>
+                </Grid>
+              </Grid>
 
-              </div>
-            </MuiThemeProvider>
+            </div>
+
           }
         />
       </label>

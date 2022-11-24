@@ -1,13 +1,13 @@
 import React from "react";
 import { IconButton, InputAdornment, TextField } from "@material-ui/core";
 import HelpOutlineIcon from "../HelpOutlineIcon";
-import { EnlargedTextTooltip,EnlargedTextErrorTooltip } from "../EnlargedTextTooltip";
+import { EnlargedTextTooltip, EnlargedTextErrorTooltip } from "../EnlargedTextTooltip";
 import { ErrorOutline } from "@material-ui/icons";
 
 const BaseInput = (props) => {
   const additional = props.schema?.__additional_property; // check if the field is additional
-  const name = (additional? "Value" : props.label) // || props.id?.split('_')[-1].trim()
-  const focused=props.options?.focused // true for datetime-local
+  const name = (additional ? "Value" : props.label) // || props.id?.split('_')[-1].trim()
+  const focused = props.options?.focused // true for datetime-local
   const prettifiedName = name || 'Enter a value'
   const style = {
     display : "flex",
@@ -22,10 +22,12 @@ const BaseInput = (props) => {
           focused={focused}
           type={props.options?.inputType}
           key={props.id}
-          value={additional && props?.value==="New Value" ? "" : props?.value } // remove the default value i.e. New Value for additionalFields
+          style={{ width : "100%" }}
+          value={additional && props?.value === "New Value" ? "" : props?.value} // remove the default value i.e. New Value for additionalFields
           id={props.id}
+          margin="dense"
           error={props.rawErrors?.length > 0}
-          onChange={e => props?.onChange(e.target.value=== "" ? props.options.emptyValue : e.target.value)}
+          onChange={e => props?.onChange(e.target.value === "" ? props.options.emptyValue : e.target.value)}
           label={`${prettifiedName}`}
           InputProps={{
             style : { padding : "0px 0px 0px 0px" },

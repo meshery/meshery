@@ -3,7 +3,7 @@ import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/styles';
 import { canExpand } from '@rjsf/utils';
 import AddButton from "@material-ui/icons/Add";
-import { Box, IconButton, Typography } from '@material-ui/core';
+import { Box, CssBaseline, IconButton, Typography } from '@material-ui/core';
 import { EnlargedTextTooltip } from '../EnlargedTextTooltip';
 import HelpOutlineIcon from '../HelpOutlineIcon';
 import ArrowDown from '@material-ui/icons/KeyboardArrowDown';
@@ -13,9 +13,12 @@ const useStyles = makeStyles((theme) => ({
   objectFieldGrid : {
     // paddingLeft: "0.6rem",
     padding : ".5rem",
+    paddingTop : "0.7rem",
     // margin : ".5rem",
-    backgroundColor : theme.palette.type === 'dark' ? "#212121" : "#f4f4f4",
+    backgroundColor : theme.palette.type === 'dark' ? "#545454" : "#f4f4f4",
     border : '1px solid rgba(0, 0, 0, .125)',
+    width : "100%",
+    margin : "0px"
   },
 }));
 
@@ -35,6 +38,7 @@ const ObjectFieldTemplate = ({
 }) => {
   const additional = schema?.__additional_property; // check if the object is additional
   const classes = useStyles();
+
   // If the parent type is an `array`, then expand the current object.
   const [show, setShow] = React.useState(schema?.p_type ? true : false);
   properties.forEach((property, index) => {
@@ -46,6 +50,7 @@ const ObjectFieldTemplate = ({
   });
   const CustomTitleField = ({ title, id, description, properties }) => {
     return <Box mb={1} mt={1} id={id} >
+      <CssBaseline />
       <Grid container justify="flex-start" alignItems="center">
         {canExpand(schema, uiSchema, formData) ? (
           <Grid item={true} onClick={() => {

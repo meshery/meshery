@@ -1,4 +1,4 @@
-import { MuiThemeProvider, useTheme } from '@material-ui/core/styles';
+import { useTheme } from '@material-ui/core/styles';
 import Form, { withTheme } from "@rjsf/core";
 import { Theme as MaterialUITheme, } from "@rjsf/material-ui";
 import React, { useEffect } from "react";
@@ -10,7 +10,6 @@ import MesheryCustomObjFieldTemplate from "./RJSFCustomComponents/ObjectFieldTem
 import MesheryWrapIfAdditionalTemplate from './RJSFCustomComponents/WrapIfAdditionalTemplate';
 import { customizeValidator } from "@rjsf/validator-ajv6";
 import _ from "lodash"
-import rjsfDarkTheme from '../../../themes/rjsf';
 import CustomTextWidget from './RJSFCustomComponents/CustomTextWidget';
 import CustomDateTimeWidget from './RJSFCustomComponents/CustomDateTimeWidget';
 
@@ -76,35 +75,34 @@ function RJSFForm(props) {
   const theme = useTheme();
   console.log("hello", theme)
   return (
-    <MuiThemeProvider theme={this.state.theme === "dark" ? rjsfDarkTheme : rjsfTheme}>
-      <MuiRJSFForm
-        schema={schema.rjsfSchema}
-        idPrefix={jsonSchema?.title}
-        onChange={onChange}
-        formData={data}
-        validator={validator}
-        templates={templates}
-        uiSchema={schema.uiSchema}
-        widgets={{
-          TextWidget : CustomTextWidget,
-          // Custom components to be added here
-          DateTimeWidget : CustomDateTimeWidget,
-          // SelectWidget: CustomSelectWidget,
-          // CheckboxWidget: CustomBooleanWidget,
-        }}
-        liveValidate
-        showErrorList={false}
-        noHtml5Validate
-        ErrorList={ErrorList}
-        transformErrors={transformErrors}
-      >
-        {/* {hideSubmit ? true : <RJSFButton handler={onSubmit} text="Submit" {...restparams} />}
-{hideSubmit ? true : <RJSFButton handler={onDelete} text="Delete" />} */}
-        {/* <RJSFFormChildComponent /> */}
-        <></> {/* temporary change for functionality */}
-      </MuiRJSFForm>
 
-    </MuiThemeProvider>
+    <MuiRJSFForm
+      schema={schema.rjsfSchema}
+      idPrefix={jsonSchema?.title}
+      onChange={onChange}
+      formData={data}
+      validator={validator}
+      templates={templates}
+      uiSchema={schema.uiSchema}
+      widgets={{
+        TextWidget : CustomTextWidget,
+        // Custom components to be added here
+        DateTimeWidget : CustomDateTimeWidget,
+        // SelectWidget: CustomSelectWidget,
+        // CheckboxWidget: CustomBooleanWidget,
+      }}
+      liveValidate
+      showErrorList={false}
+      noHtml5Validate
+      ErrorList={ErrorList}
+      transformErrors={transformErrors}
+    >
+      {/* {hideSubmit ? true : <RJSFButton handler={onSubmit} text="Submit" {...restparams} />}
+{hideSubmit ? true : <RJSFButton handler={onDelete} text="Delete" />} */}
+      {/* <RJSFFormChildComponent /> */}
+      <></> {/* temporary change for functionality */}
+    </MuiRJSFForm>
+
   )
 }
 
