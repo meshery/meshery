@@ -31,7 +31,7 @@ func SystemError(msg string) string {
 	return formatError(msg, cmdSystem)
 }
 
-func SystemLifeStyleError(msg string, cmd string) string {
+func SystemLifeCycleError(msg string, cmd string) string {
 	switch cmd {
 	case "stop":
 		return formatError(msg, cmdSystemStop)

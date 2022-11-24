@@ -72,7 +72,7 @@ mesheryctl system stop --force
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) != 0 {
-			return errors.New(utils.SystemLifeStyleError(fmt.Sprintf("this command takes no arguments. See '%s --help' for more information.\n", cmd.CommandPath()), "stop"))
+			return errors.New(utils.SystemLifeCycleError(fmt.Sprintf("this command takes no arguments. See '%s --help' for more information.\n", cmd.CommandPath()), "stop"))
 		}
 		if err := stop(); err != nil {
 			return errors.Wrap(err, utils.SystemError("failed to stop Meshery"))
