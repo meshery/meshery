@@ -242,6 +242,7 @@ func NewPatternFileFromCytoscapeJSJSON(name string, byt []byte) (Pattern, error)
 			}
 		}
 		svc.Name, ok = svc.Settings["name"].(string)
+		svc.Namespace, _ = svc.Settings["namespace"].(string)
 		if !ok {
 			return fmt.Errorf("required service setting: \"name\" missing")
 		}
