@@ -5,12 +5,12 @@ import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 
 import { Button, IconButton, Typography } from "@material-ui/core";
-import AddIcon from "@material-ui/icons/Add";
+import AddIcon from "../../../../assets/icons/AddIcon";
 import SimpleAccordion from "./Accordion";
 import { EnlargedTextTooltip } from "../EnlargedTextTooltip";
-import HelpOutlineIcon from "../HelpOutlineIcon";
+import HelpOutlineIcon from "../../../../assets/icons/HelpOutlineIcon";
 import { isMultiSelect, getDefaultFormState } from "@rjsf/utils";
-import ErrorIcon from "@material-ui/icons/Error";
+import ErrorIcon from "../../../../assets/icons/ErrorIcon"
 function getTitleForItem(props) {
   const title = getTitle(props);
 
@@ -174,7 +174,9 @@ const DefaultNormalArrayFieldTemplate = (props) => {
             {
               (props.uiSchema["ui:description"] || props.schema.description) &&
               <EnlargedTextTooltip title={props.uiSchema["ui:description"] || props.schema.description}>
-                <HelpOutlineIcon style={{ marginLeft : '4px' }} />
+                <IconButton  disableTouchRipple="true" disableRipple="true">
+                  <HelpOutlineIcon width="14px" height="14px" fill="black" style={{ marginLeft : '4px' }} />
+                </IconButton>
               </EnlargedTextTooltip>
             }
             {props.rawErrors?.length > 0 && (
@@ -184,15 +186,14 @@ const DefaultNormalArrayFieldTemplate = (props) => {
                   <div key={index}>{error}</div>
                 ))}
               >
-                <ErrorIcon
-                  fontSize="small"
-                  style={{
-                    color : "#B32700",
-                    marginLeft : "4px",
-                    verticalAlign : "middle",
-                    fontSize : 17
-                  }}
-                />
+                <IconButton  component="span" size="small" disableTouchRipple="true" disableRipple="true">
+                  <ErrorIcon
+                    width="16px"
+                    height="16px"
+                    fill="#B32700"
+                    style={{ marginLeft : "4px", verticalAlign : "middle" }}
+                  />
+                </IconButton>
               </EnlargedTextTooltip>
             )}
 
@@ -207,7 +208,7 @@ const DefaultNormalArrayFieldTemplate = (props) => {
                       onClick={props.onAddClick}
                       disabled={props.disabled || props.readonly}
                     >
-                      <AddIcon />
+                      <AddIcon width="18px" height="18px" fill="gray" />
                     </IconButton>
                   </Box>
                 </Grid>
