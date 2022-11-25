@@ -35,10 +35,18 @@ mesheryctl exp filter apply --file [GitHub Link]
 </div>
 </pre> 
 
-Apply the file
+Apply a remote filter file
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl exp filter apply --file https://github.com/layer5io/wasm-filters/tree/master/http-auth
+
+</div>
+</pre> 
+
+Apply a filter file using file name
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl exp filter apply [File Name]
 
 </div>
 </pre> 
