@@ -330,9 +330,14 @@ graphql-build: dep-check
 INSTALLED_GO_VERSION=$(shell go version)
 
 dep-check:
-	ifeq (,$(findstring $(GOVERSION), $(INSTALLED_GO_VERSION)))
+	
+ifeq (,$(findstring $(GOVERSION), $(INSTALLED_GO_VERSION)))
 # Only send a warning.
-#		@echo "Dependency missing: go$(GOVERSION). Ensure 'go$(GOVERSION).x' is installed and available in your 'PATH'"	
+# @echo "Dependency missing: go$(GOVERSION). Ensure 'go$(GOVERSION).x' is installed and available in your 'PATH'"	
+	@echo "GOVERSION: " $(GOVERSION)
+	@echo "INSTALLED_GO_VERSION: " $(INSTALLED_GO_VERSION) 
 # Force error and stop.
-	$(error Dependency missing: go$(GOVERSION). Ensure 'go$(GOVERSION).x' is installed and available in your 'PATH')
-	endif
+	$(error Found $(INSTALLED_GO_VERSION). \
+	 Required golang version is: 'go$(GOVERSION).x'. \
+	 Ensure go '$(GOVERSION).x' is installed and available in your 'PATH'.)
+endif
