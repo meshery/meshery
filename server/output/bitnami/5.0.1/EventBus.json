@@ -1,0 +1,1 @@
+{"kind":"EventBus","apiVersion":"v1alpha1","display-name":"Event Bus","format":"JSON","metadata":{},"model":{"name":"bitnami","version":"5.0.1","display-name":"","category":"","sub-category":""},"schema":"{\n \"title\": \"Event Bus\",\n \"type\": \"object\",\n \"x-kubernetes-preserve-unknown-fields\": true\n}"}

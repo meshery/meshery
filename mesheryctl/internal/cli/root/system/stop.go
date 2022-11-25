@@ -16,6 +16,7 @@ package system
 
 import (
 	"context"
+	"fmt"
 	"os"
 	"os/exec"
 
@@ -46,7 +47,6 @@ var stopCmd = &cobra.Command{
 	Use:   "stop",
 	Short: "Stop Meshery",
 	Long:  `Stop all Meshery containers / remove all Meshery resources.`,
-	Args:  cobra.NoArgs,
 	Example: `
 // Stop Meshery
 mesheryctl system stop
@@ -71,6 +71,9 @@ mesheryctl system stop --force
 		return hc.RunPreflightHealthChecks()
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
+		if len(args) != 0 {
+			return errors.New(utils.SystemLifeCycleError(fmt.Sprintf("this command takes no arguments. See '%s --help' for more information.\n", cmd.CommandPath()), "stop"))
+		}
 		if err := stop(); err != nil {
 			return errors.Wrap(err, utils.SystemError("failed to stop Meshery"))
 		}

@@ -66,7 +66,7 @@ Visit Meshery's web-based user interface `http://<hostname>:9081`. When Meshery 
 
 ## Select a Provider
 
-Select from the list of [Providers]({{site.baseurl}}/extensibility#providers) in order to login to Meshery. Authenticate with your chosen your Provider.
+Select from the list of [Providers]({{site.baseurl}}/extensibility#providers) in order to login to Meshery. Authenticate with your chosen Provider.
 
 <a href="/assets/img/meshery-server-page.png">
   <img style="width:300px;" src="/assets/img/meshery-server-page.png" />

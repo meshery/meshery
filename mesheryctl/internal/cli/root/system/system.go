@@ -39,7 +39,7 @@ var SystemCmd = &cobra.Command{
 	Long:  `Manage the state and configuration of Meshery server, components, and client.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
-			return cmd.Help()
+			return errors.New(utils.SystemError("please specify a flag or subcommand. Use 'mesheryctl system --help' to display user guide.\n"))
 		}
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
 			return errors.New(utils.SystemError(fmt.Sprintf("'%s' is a invalid command.  Use 'mesheryctl system --help' to display usage guide.\n", args[0])))

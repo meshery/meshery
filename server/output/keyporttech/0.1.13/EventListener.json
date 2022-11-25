@@ -1,1 +1,1 @@
-{"kind":"EventListener","apiVersion":"v1alpha1","Format":"JSON","Metadata":{"Model":"keyporttech","Version":"0.1.13","Category":"","SubCategory":"","Metadata":{"display-name":"Event Listener"}},"Schema":""}
+{"kind":"EventListener","apiVersion":"v1alpha1","display-name":"Event Listener","format":"JSON","metadata":{},"model":{"name":"keyporttech","version":"0.1.13","display-name":"","category":"","sub-category":""},"schema":""}

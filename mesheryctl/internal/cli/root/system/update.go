@@ -15,6 +15,8 @@
 package system
 
 import (
+	"fmt"
+
 	"github.com/pkg/errors"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
@@ -32,7 +34,6 @@ var updateCmd = &cobra.Command{
 	Use:   "update",
 	Short: "Pull new Meshery images/manifest files.",
 	Long:  `Pull new Meshery container images and manifests from artifact repository.`,
-	Args:  cobra.NoArgs,
 	Example: `
 // Pull new Meshery images from Docker Hub. This does not update mesheryctl. This command may be executed while Meshery is running.
 mesheryctl system update
@@ -58,6 +59,9 @@ mesheryctl system update --skip-reset
 		return hc.RunPreflightHealthChecks()
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
+		if len(args) != 0 {
+			return errors.New(utils.SystemLifeCycleError(fmt.Sprintf("this command takes no arguments. See '%s --help' for more information.\n", cmd.CommandPath()), "update"))
+		}
 		// Get viper instance used for context
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {

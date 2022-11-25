@@ -1,1 +1,1 @@
-{"kind":"TridentOrchestrator","apiVersion":"v1","Format":"JSON","Metadata":{"Model":"netapp-trident","Version":"22.10.0","Category":"","SubCategory":"","Metadata":{"display-name":"Trident Orchestrator"}},"Schema":""}
+{"kind":"TridentOrchestrator","apiVersion":"v1","display-name":"Trident Orchestrator","format":"JSON","metadata":{},"model":{"name":"netapp-trident","version":"22.10.0","display-name":"","category":"","sub-category":""},"schema":""}
