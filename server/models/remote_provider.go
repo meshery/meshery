@@ -338,8 +338,8 @@ func (l *RemoteProvider) GetSession(req *http.Request) error {
 	jwtClaims, err := l.VerifyToken(ts)
 	// we verify the signature of the token and check if it has exp claim,
 	// if not present it's an infinite JWT, hence skip the introspect step
-	// 
-	if ((*jwtClaims)["exp"] != nil) {
+	//
+	if (*jwtClaims)["exp"] != nil {
 		err = l.introspectToken(ts)
 		if err != nil {
 			return err
