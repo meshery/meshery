@@ -195,6 +195,15 @@ Automatically the `Gemfile.lock` will update once the `make site` is given (for 
 
 **WARNING: If you have followed the third step then please don't commit the changes made on `Gemfile` and `Gemfile.lock` in your branch to preserve integrity, else the CI action will fail to generate the site preview during PR**.
 
+
+### Make Necessary Changes
+- Make changes as required by the issue you are solving
+- Be sure check that your changes appear correctly locally by serving the site using `make site`
+
+#### Note
+- If the issue requires making new doc page that replaces the old page, please don't forget to add a redirect link on the old page. This redirect link field should have the link of the new page created.
+
+
 ### Create a Pull Request
 
 - After making changes, don't forget to commit with the sign-off flag (-s)!
@@ -260,6 +269,7 @@ The following is a concise summary of the steps to contribute to Meshery documen
    `git checkout -b <my-changes>`
 4. Edit/add documentation.
    `vi <specific page>.md`
+5. Add redirect link on the old page (only when a new page is created that replaces the old page)
 5. Run site locally to preview changes.
    `make site`
 6. Commit, [sign-off](#commit-signing), and push changes to your remote branch.
