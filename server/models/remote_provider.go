@@ -449,6 +449,7 @@ func (l *RemoteProvider) Logout(w http.ResponseWriter, req *http.Request) {
 	logrus.Infof("response successfully retrieved from remote provider")
 
 	// if request succeeds then redirect to Provider UI
+	// And empties the token and ory_kratos_session cookies
 	if resp.StatusCode == http.StatusFound || resp.StatusCode == http.StatusOK {
 		ck.MaxAge = -1
 		ck.Path = "/"
