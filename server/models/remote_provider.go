@@ -400,23 +400,23 @@ func (l *RemoteProvider) Logout(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	ory_kratos_session, err := req.Cookie("ory_kratos_session")
+	oryKratosSession, err := req.Cookie("ory_kratos_session")
 	if err != nil {
 		logrus.Debug("Error getting ory_kratos_session cookie")
 		http.Error(w, "error performing logout", http.StatusInternalServerError)
 		return
-	} else {
-		cReq.AddCookie(&http.Cookie{
-			Name: "ory_kratos_session", 
-			Value: ory_kratos_session.Value, 
-			Path: "/",
-			HttpOnly: true,
-			MaxAge: 0,
-			SameSite: http.SameSiteLaxMode,
-		})
-		cReq.AddCookie(&http.Cookie{Name: "return_to", Value: "provider_ui"})
-		cReq.AddCookie(&http.Cookie{Name: "provider_token", Value: tokenString})
-	}
+	} 
+
+	cReq.AddCookie(&http.Cookie{
+		Name: "ory_kratos_session", 
+		Value: oryKratosSession.Value, 
+		Path: "/",
+		HttpOnly: true,
+		MaxAge: -1,
+		SameSite: http.SameSiteLaxMode,
+	})
+	cReq.AddCookie(&http.Cookie{Name: "return_to", Value: "provider_ui"})
+	cReq.AddCookie(&http.Cookie{Name: "provider_token", Value: tokenString})
 
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
@@ -2764,8 +2764,7 @@ func (l *RemoteProvider) RecordPreferences(req *http.Request, userID string, dat
 // TokenHandler - specific to remote auth
 func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, fromMiddleWare bool) {
 	tokenString := r.URL.Query().Get(tokenName)
-	ory_kratos_session := r.URL.Query().Get("ory_kratos_session")
-	logrus.Debug("cookie: ", r.Header.Get("Cookie"))
+	oryKratosSession := r.URL.Query().Get("ory_kratos_session")
 	logrus.Debugf("token : %v", tokenString)
 	ck := &http.Cookie{
 		Name:     tokenName,
@@ -2776,7 +2775,7 @@ func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, fr
 	http.SetCookie(w, ck)
 	http.SetCookie(w, &http.Cookie{
 		Name: "ory_kratos_session",
-		Value: ory_kratos_session,
+		Value: oryKratosSession,
 		Path: "/",
 		HttpOnly: true,
 	})
@@ -3018,11 +3017,18 @@ func (l *RemoteProvider) ExtensionProxy(req *http.Request) ([]byte, error) {
 		return nil, err
 	}
 
-	ory_kratos_session, err := req.Cookie("ory_kratos_session")
+	oryKratosSession, err := req.Cookie("ory_kratos_session")
 	if err != nil {
 		logrus.Debug("Error getting ory_kratos_session cookie")
 	} else {
-		cReq.Header.Set("Cookie", fmt.Sprintf("ory_kratos_session=%s", ory_kratos_session.Value))
+		cReq.AddCookie(&http.Cookie{
+			Name: "ory_kratos_session", 
+			Value: oryKratosSession.Value, 
+			Path: "/",
+			HttpOnly: true,
+			MaxAge: -1,
+			SameSite: http.SameSiteLaxMode,
+		})
 	}
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
