@@ -13,7 +13,8 @@ import {
   Tab
 } from '@material-ui/core';
 import BellIcon from '@material-ui/icons/Notifications';
-import DoneAllIcon from '@material-ui/icons/DoneAll';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBroomBall } from "@fortawesome/free-solid-svg-icons";
 import ErrorIcon from '@material-ui/icons/Error';
 import { withStyles } from '@material-ui/core/styles';
 import amber from '@material-ui/core/colors/amber';
@@ -344,7 +345,7 @@ class MesheryNotification extends React.Component {
                         className={classes.drawerButton}
                         onClick={this.handleClearAllNotifications()}
                       >
-                        <DoneAllIcon className={classes.HeaderItem} />
+                        <FontAwesomeIcon icon={faBroomBall} className={classes.HeaderItem} />
                       </IconButton>
                     </Tooltip>
                   </div>
