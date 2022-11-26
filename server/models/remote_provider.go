@@ -393,7 +393,7 @@ func (l *RemoteProvider) Logout(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	// contruct remote provider logout url
+	// construct remote provider logout url
 	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s", l.RemoteProviderURL, "/logout"))
 	logrus.Debugf("constructed url: %s", remoteProviderURL.String())
 
@@ -405,7 +405,7 @@ func (l *RemoteProvider) Logout(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, "error performing logout", http.StatusInternalServerError)
 		return
 	}
-	
+
 	// gets ory_kratos_session cookie from the request headers
 	oryKratosSession, err := req.Cookie("ory_kratos_session")
 	if err != nil {
@@ -426,7 +426,7 @@ func (l *RemoteProvider) Logout(w http.ResponseWriter, req *http.Request) {
 	})
 
 	// adds return_to cookie to the new request headers
-	// neccessary to inform remote provider to return back to Meshery UI
+	// necessary to inform remote provider to return back to Meshery UI
 	cReq.AddCookie(&http.Cookie{Name: "return_to", Value: "provider_ui"})
 
 	// make request to remote provider with contructed URL and updated headers (like ory_kratos_session, return_to cookies)
@@ -3029,8 +3029,8 @@ func (l *RemoteProvider) ExtensionProxy(req *http.Request) ([]byte, error) {
 	// gets the avaibale query parameters
 	q := req.URL.Query().Encode()
 	if len(q) > 0 {
-		// if avaiable, then add it to <remote-provider-endpoint>
-		// eg: /<remote-provider-endpoint>?<query-parameters> 
+		// if available, then add it to <remote-provider-endpoint>
+		// eg: /<remote-provider-endpoint>?<query-parameters>
 		path = fmt.Sprintf("%s?%s", path, q)
 	}
 	// then attach the final path to the remote provider URL
