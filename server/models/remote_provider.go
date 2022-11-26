@@ -453,6 +453,9 @@ func (l *RemoteProvider) Logout(w http.ResponseWriter, req *http.Request) {
 		ck.MaxAge = -1
 		ck.Path = "/"
 		http.SetCookie(w, ck)
+		oryKratosSession.MaxAge = -1
+		oryKratosSession.Path = "/"
+		http.SetCookie(w, oryKratosSession)
 		logrus.Info("successfully logged out from remote provider")
 		http.Redirect(w, req, "/provider", http.StatusFound)
 		return
