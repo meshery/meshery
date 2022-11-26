@@ -384,6 +384,9 @@ func (l *RemoteProvider) GetProviderToken(req *http.Request) (string, error) {
 func (l *RemoteProvider) Logout(w http.ResponseWriter, req *http.Request) {
 	// gets the token from the request headers
 	ck, err := req.Cookie(tokenName)
+	if err == nil {
+		err = l.revokeToken(ck.Value)
+	}
 	if err != nil {
 		logrus.Errorf("error performing logout, token cannot be revoked: %v", err)
 		http.Error(w, "error performing logout", http.StatusInternalServerError)
@@ -426,11 +429,7 @@ func (l *RemoteProvider) Logout(w http.ResponseWriter, req *http.Request) {
 	// neccessary to inform remote provider to return back to Meshery UI
 	cReq.AddCookie(&http.Cookie{Name: "return_to", Value: "provider_ui"})
 
-	// adds provider_token cookie to the new request headers
-	// neccessary to revoke this token for hydra_flow to end
-	cReq.AddCookie(&http.Cookie{Name: "provider_token", Value: tokenString})
-
-	// make request to remote provider with contructed URL and updated headers (like ory_kratos_session, return_to, provider_token cookies)
+	// make request to remote provider with contructed URL and updated headers (like ory_kratos_session, return_to cookies)
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
 		logrus.Error("Error performing logout: ", err)
