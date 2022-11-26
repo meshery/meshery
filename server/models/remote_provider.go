@@ -382,6 +382,7 @@ func (l *RemoteProvider) GetProviderToken(req *http.Request) (string, error) {
 //
 // It is assumed that every remote provider will support this feature
 func (l *RemoteProvider) Logout(w http.ResponseWriter, req *http.Request) {
+	// gets the token from the request headers
 	ck, err := req.Cookie(tokenName)
 	if err != nil {
 		logrus.Errorf("error performing logout, token cannot be revoked: %v", err)
@@ -389,9 +390,11 @@ func (l *RemoteProvider) Logout(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	// contruct remote provider logout url
 	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s", l.RemoteProviderURL, "/logout"))
 	logrus.Debugf("constructed url: %s", remoteProviderURL.String())
 
+	// make http.Request type variable with the constructed URL
 	cReq, _ := http.NewRequest(req.Method, remoteProviderURL.String(), req.Body)
 	tokenString, err := l.GetToken(req)
 	if err != nil {
@@ -399,7 +402,8 @@ func (l *RemoteProvider) Logout(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, "error performing logout", http.StatusInternalServerError)
 		return
 	}
-
+	
+	// gets ory_kratos_session cookie from the request headers
 	oryKratosSession, err := req.Cookie("ory_kratos_session")
 	if err != nil {
 		logrus.Debug("Error getting ory_kratos_session cookie")
@@ -407,6 +411,8 @@ func (l *RemoteProvider) Logout(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	// adds ory_kratos_session cookie to the new request headers
+	// necessary to run logout flow on the remote provider
 	cReq.AddCookie(&http.Cookie{
 		Name:     "ory_kratos_session",
 		Value:    oryKratosSession.Value,
@@ -415,9 +421,16 @@ func (l *RemoteProvider) Logout(w http.ResponseWriter, req *http.Request) {
 		MaxAge:   -1,
 		SameSite: http.SameSiteLaxMode,
 	})
+
+	// adds return_to cookie to the new request headers
+	// neccessary to inform remote provider to return back to Meshery UI
 	cReq.AddCookie(&http.Cookie{Name: "return_to", Value: "provider_ui"})
+
+	// adds provider_token cookie to the new request headers
+	// neccessary to revoke this token for hydra_flow to end
 	cReq.AddCookie(&http.Cookie{Name: "provider_token", Value: tokenString})
 
+	// make request to remote provider with contructed URL and updated headers (like ory_kratos_session, return_to, provider_token cookies)
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
 		logrus.Error("Error performing logout: ", err)
@@ -436,17 +449,18 @@ func (l *RemoteProvider) Logout(w http.ResponseWriter, req *http.Request) {
 	}
 	logrus.Infof("response successfully retrieved from remote provider")
 
-	if resp.StatusCode != http.StatusFound {
-		logrus.Error("Error performing logout: ", err)
-		http.Error(w, "error performing logout", http.StatusInternalServerError)
+	// if request succeeds then redirect to Provider UI
+	if resp.StatusCode == http.StatusFound || resp.StatusCode == http.StatusOK {
+		ck.MaxAge = -1
+		ck.Path = "/"
+		http.SetCookie(w, ck)
+		logrus.Info("successfully logged out from remote provider")
+		http.Redirect(w, req, "/provider", http.StatusFound)
 		return
 	}
 
-	ck.MaxAge = -1
-	ck.Path = "/"
-	http.SetCookie(w, ck)
-	logrus.Info("successfully logged out from remote provider")
-	http.Redirect(w, req, "/provider", http.StatusFound)
+	logrus.Error("Error performing logout: ", err)
+	http.Error(w, "error performing logout", http.StatusInternalServerError)
 }
 
 // HandleUnAuthenticated
@@ -2764,7 +2778,9 @@ func (l *RemoteProvider) RecordPreferences(req *http.Request, userID string, dat
 // TokenHandler - specific to remote auth
 func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, fromMiddleWare bool) {
 	tokenString := r.URL.Query().Get(tokenName)
+	// gets the ory_kratos_session cookie from remote provider
 	oryKratosSession := r.URL.Query().Get("ory_kratos_session")
+
 	logrus.Debugf("token : %v", tokenString)
 	ck := &http.Cookie{
 		Name:     tokenName,
@@ -2773,6 +2789,7 @@ func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, fr
 		HttpOnly: true,
 	}
 	http.SetCookie(w, ck)
+	// sets the ory_kratos_session cookie for Meshery Session
 	http.SetCookie(w, &http.Cookie{
 		Name:     "ory_kratos_session",
 		Value:    oryKratosSession,
@@ -2998,18 +3015,26 @@ func (l *RemoteProvider) SMPTestConfigDelete(req *http.Request, testUUID string)
 	return ErrDelete(fmt.Errorf("could not delete the test profile: %d", resp.StatusCode), "Perf Test Config :"+testUUID, resp.StatusCode)
 }
 
+// ExtensionProxy - proxy requests to the remote provider which are specific to user_account extension
 func (l *RemoteProvider) ExtensionProxy(req *http.Request) ([]byte, error) {
 	logrus.Infof("attempting to request remote provider")
+	// gets the requested path from user_account extension UI in Meshery UI
+	// splits the requested path into '/api/extensions' and '/<remote-provider-endpoint>'
 	p := req.URL.Path
 	split := strings.Split(p, "/api/extensions")
 	path := split[1]
+	// gets the avaibale query parameters
 	q := req.URL.Query().Encode()
 	if len(q) > 0 {
+		// if avaiable, then add it to <remote-provider-endpoint>
+		// eg: /<remote-provider-endpoint>?<query-parameters> 
 		path = fmt.Sprintf("%s?%s", path, q)
 	}
+	// then attach the final path to the remote provider URL
 	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s", l.RemoteProviderURL, path))
 	logrus.Debugf("constructed url: %s", remoteProviderURL.String())
 
+	// make http.Request type variable with the constructed URL
 	cReq, _ := http.NewRequest(req.Method, remoteProviderURL.String(), req.Body)
 	tokenString, err := l.GetToken(req)
 
@@ -3017,7 +3042,12 @@ func (l *RemoteProvider) ExtensionProxy(req *http.Request) ([]byte, error) {
 		return nil, err
 	}
 
+	// gets the ory_kratos_session cookie from request headers
+	// necessary to run flows in remote provider specific to user_account extension
 	oryKratosSession, err := req.Cookie("ory_kratos_session")
+
+	// if cookie is not found then gracefully skip adding it the new request headers
+	// considering not every endpoint in remote provider requires it
 	if err != nil {
 		logrus.Debug("Error getting ory_kratos_session cookie")
 	} else {
@@ -3030,6 +3060,7 @@ func (l *RemoteProvider) ExtensionProxy(req *http.Request) ([]byte, error) {
 			SameSite: http.SameSiteLaxMode,
 		})
 	}
+	// make request to remote provider with contructed URL and updated headers (like ory_kratos_session cookie)
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
 		return nil, err
