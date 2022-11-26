@@ -405,14 +405,14 @@ func (l *RemoteProvider) Logout(w http.ResponseWriter, req *http.Request) {
 		logrus.Debug("Error getting ory_kratos_session cookie")
 		http.Error(w, "error performing logout", http.StatusInternalServerError)
 		return
-	} 
+	}
 
 	cReq.AddCookie(&http.Cookie{
-		Name: "ory_kratos_session", 
-		Value: oryKratosSession.Value, 
-		Path: "/",
+		Name:     "ory_kratos_session",
+		Value:    oryKratosSession.Value,
+		Path:     "/",
 		HttpOnly: true,
-		MaxAge: -1,
+		MaxAge:   -1,
 		SameSite: http.SameSiteLaxMode,
 	})
 	cReq.AddCookie(&http.Cookie{Name: "return_to", Value: "provider_ui"})
@@ -2774,9 +2774,9 @@ func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, fr
 	}
 	http.SetCookie(w, ck)
 	http.SetCookie(w, &http.Cookie{
-		Name: "ory_kratos_session",
-		Value: oryKratosSession,
-		Path: "/",
+		Name:     "ory_kratos_session",
+		Value:    oryKratosSession,
+		Path:     "/",
 		HttpOnly: true,
 	})
 
@@ -3022,11 +3022,11 @@ func (l *RemoteProvider) ExtensionProxy(req *http.Request) ([]byte, error) {
 		logrus.Debug("Error getting ory_kratos_session cookie")
 	} else {
 		cReq.AddCookie(&http.Cookie{
-			Name: "ory_kratos_session", 
-			Value: oryKratosSession.Value, 
-			Path: "/",
+			Name:     "ory_kratos_session",
+			Value:    oryKratosSession.Value,
+			Path:     "/",
 			HttpOnly: true,
-			MaxAge: -1,
+			MaxAge:   -1,
 			SameSite: http.SameSiteLaxMode,
 		})
 	}
