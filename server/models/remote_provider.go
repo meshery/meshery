@@ -383,15 +383,62 @@ func (l *RemoteProvider) GetProviderToken(req *http.Request) (string, error) {
 // It is assumed that every remote provider will support this feature
 func (l *RemoteProvider) Logout(w http.ResponseWriter, req *http.Request) {
 	ck, err := req.Cookie(tokenName)
-	if err == nil {
-		err = l.revokeToken(ck.Value)
-	}
+	// if err == nil {
+	// 	err = l.revokeToken(ck.Value)
+	// }
 	if err != nil {
 		logrus.Errorf("error performing logout, token cannot be revoked: %v", err)
-
 		http.Error(w, "error performing logout", http.StatusInternalServerError)
 		return
 	}
+
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s", l.RemoteProviderURL, "/user/logout"))
+	logrus.Debugf("constructed url: %s", remoteProviderURL.String())
+
+	cReq, _ := http.NewRequest(req.Method, remoteProviderURL.String(), req.Body)
+	tokenString, err := l.GetToken(req)
+	if err != nil {
+		logrus.Error("Error performing logout: ", err)
+		http.Error(w, "error performing logout", http.StatusInternalServerError)
+		return
+	}
+
+	ory_kratos_session, err := req.Cookie("ory_kratos_session")
+	if err != nil {
+		logrus.Debug("Error getting ory_kratos_session cookie")
+		http.Error(w, "error performing logout", http.StatusInternalServerError)
+		return
+	} else {
+		cReq.Header.Set("Cookie", fmt.Sprintf("ory_kratos_session=%s; return_to=%s; provider_token=%s", ory_kratos_session.Value, "provider_ui", tokenString))
+	}
+
+	resp, err := l.DoRequest(cReq, tokenString)
+	if err != nil {
+		logrus.Error("Error performing logout: ", err)
+		http.Error(w, "error performing logout", http.StatusInternalServerError)
+		return
+	}
+
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+	_, err = io.ReadAll(resp.Body)
+	if err != nil {
+		logrus.Error("Error performing logout: ", err)
+		http.Error(w, "error performing logout", http.StatusInternalServerError)
+		return
+	}
+	logrus.Infof("response successfully retrieved from remote provider")
+
+	logrus.Debug("resp: ", resp)
+
+	if resp.StatusCode != http.StatusOK {
+		logrus.Error("Error performing logout: ", err)
+		http.Error(w, "error performing logout", http.StatusInternalServerError)
+		return
+	}
+
+	logrus.Info("successfully logged out from remote provider")
 
 	ck.MaxAge = -1
 	ck.Path = "/"
@@ -2714,6 +2761,8 @@ func (l *RemoteProvider) RecordPreferences(req *http.Request, userID string, dat
 // TokenHandler - specific to remote auth
 func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, fromMiddleWare bool) {
 	tokenString := r.URL.Query().Get(tokenName)
+	ory_kratos_session := r.URL.Query().Get("ory_kratos_session")
+	logrus.Debug("cookie: ", r.Header.Get("Cookie"))
 	logrus.Debugf("token : %v", tokenString)
 	ck := &http.Cookie{
 		Name:     tokenName,
@@ -2722,6 +2771,12 @@ func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, fr
 		HttpOnly: true,
 	}
 	http.SetCookie(w, ck)
+	http.SetCookie(w, &http.Cookie{
+		Name: "ory_kratos_session",
+		Value: ory_kratos_session,
+		Path: "/",
+		HttpOnly: true,
+	})
 
 	// Get new capabilities
 	// Doing this here is important so that
@@ -2958,6 +3013,13 @@ func (l *RemoteProvider) ExtensionProxy(req *http.Request) ([]byte, error) {
 
 	if err != nil {
 		return nil, err
+	}
+
+	ory_kratos_session, err := req.Cookie("ory_kratos_session")
+	if err != nil {
+		logrus.Debug("Error getting ory_kratos_session cookie")
+	} else {
+		cReq.Header.Set("Cookie", fmt.Sprintf("ory_kratos_session=%s", ory_kratos_session.Value))
 	}
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
