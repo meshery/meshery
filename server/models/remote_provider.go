@@ -383,16 +383,13 @@ func (l *RemoteProvider) GetProviderToken(req *http.Request) (string, error) {
 // It is assumed that every remote provider will support this feature
 func (l *RemoteProvider) Logout(w http.ResponseWriter, req *http.Request) {
 	ck, err := req.Cookie(tokenName)
-	// if err == nil {
-	// 	err = l.revokeToken(ck.Value)
-	// }
 	if err != nil {
 		logrus.Errorf("error performing logout, token cannot be revoked: %v", err)
 		http.Error(w, "error performing logout", http.StatusInternalServerError)
 		return
 	}
 
-	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s", l.RemoteProviderURL, "/user/logout"))
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s", l.RemoteProviderURL, "/logout"))
 	logrus.Debugf("constructed url: %s", remoteProviderURL.String())
 
 	cReq, _ := http.NewRequest(req.Method, remoteProviderURL.String(), req.Body)
@@ -409,7 +406,15 @@ func (l *RemoteProvider) Logout(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, "error performing logout", http.StatusInternalServerError)
 		return
 	} else {
-		cReq.Header.Set("Cookie", fmt.Sprintf("ory_kratos_session=%s; return_to=%s; provider_token=%s", ory_kratos_session.Value, "provider_ui", tokenString))
+		cReq.AddCookie(&http.Cookie{
+			Name: "ory_kratos_session", 
+			Value: ory_kratos_session.Value, Path: "/",
+			HttpOnly: true,
+			MaxAge: 0,
+			SameSite: http.SameSiteLaxMode,
+		})
+		cReq.AddCookie(&http.Cookie{Name: "return_to", Value: "provider_ui"})
+		cReq.AddCookie(&http.Cookie{Name: "provider_token", Value: tokenString})
 	}
 
 	resp, err := l.DoRequest(cReq, tokenString)
@@ -430,19 +435,16 @@ func (l *RemoteProvider) Logout(w http.ResponseWriter, req *http.Request) {
 	}
 	logrus.Infof("response successfully retrieved from remote provider")
 
-	logrus.Debug("resp: ", resp)
-
-	if resp.StatusCode != http.StatusOK {
+	if resp.StatusCode != http.StatusFound {
 		logrus.Error("Error performing logout: ", err)
 		http.Error(w, "error performing logout", http.StatusInternalServerError)
 		return
 	}
 
-	logrus.Info("successfully logged out from remote provider")
-
 	ck.MaxAge = -1
 	ck.Path = "/"
 	http.SetCookie(w, ck)
+	logrus.Info("successfully logged out from remote provider")
 	http.Redirect(w, req, "/provider", http.StatusFound)
 }
 
