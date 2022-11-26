@@ -408,7 +408,8 @@ func (l *RemoteProvider) Logout(w http.ResponseWriter, req *http.Request) {
 	} else {
 		cReq.AddCookie(&http.Cookie{
 			Name: "ory_kratos_session", 
-			Value: ory_kratos_session.Value, Path: "/",
+			Value: ory_kratos_session.Value, 
+			Path: "/",
 			HttpOnly: true,
 			MaxAge: 0,
 			SameSite: http.SameSiteLaxMode,
