@@ -1,0 +1,1 @@
+{"kind":"ZoneInsight","apiVersion":"v1alpha1","display-name":"Zone Insight","format":"JSON","metadata":{},"model":{"name":"kuma","version":"2.0.0","display-name":"","category":"","sub-category":""},"schema":"{\n \"description\": \"Spec is the specification of the Kuma ZoneInsight resource.\",\n \"title\": \"Zone Insight\",\n \"x-kubernetes-preserve-unknown-fields\": true\n}"}

@@ -91,7 +91,8 @@ func (l *RemoteProvider) loadCapabilities(token string) {
 
 	version := viper.GetString("BUILD")
 	os := viper.GetString("OS")
-	finalURL := fmt.Sprintf("%s/%s/capabilities?os=%s", l.RemoteProviderURL, version, os)
+	playground := viper.GetString("PLAYGROUND")
+	finalURL := fmt.Sprintf("%s/%s/capabilities?os=%s&playground=%s", l.RemoteProviderURL, version, os, playground)
 	finalURL = strings.TrimSuffix(finalURL, "\n")
 	remoteProviderURL, err := url.Parse(finalURL)
 	if err != nil {
@@ -334,8 +335,25 @@ func (l *RemoteProvider) GetSession(req *http.Request) error {
 		logrus.Infof("session not found")
 		return err
 	}
+	jwtClaims, err := l.VerifyToken(ts)
+	if err != nil {
+		logrus.Error(err)
+		return err
+	}
+	if jwtClaims == nil {
+		logrus.Error("invalid JWT claim found")
+		return fmt.Errorf("invalid or nil JWT claim found")
+	}
+	// we verify the signature of the token and check if it has exp claim,
+	// if not present it's an infinite JWT, hence skip the introspect step
+	//
+	if (*jwtClaims)["exp"] != nil {
+		err = l.introspectToken(ts)
+		if err != nil {
+			return err
+		}
+	}
 
-	_, err = l.VerifyToken(ts)
 	if err != nil {
 		logrus.Infof("Token validation error : %v", err.Error())
 		newts, err := l.refreshToken(ts)
@@ -366,10 +384,18 @@ func (l *RemoteProvider) GetProviderToken(req *http.Request) (string, error) {
 func (l *RemoteProvider) Logout(w http.ResponseWriter, req *http.Request) {
 	ck, err := req.Cookie(tokenName)
 	if err == nil {
-		ck.MaxAge = -1
-		ck.Path = "/"
-		http.SetCookie(w, ck)
+		err = l.revokeToken(ck.Value)
 	}
+	if err != nil {
+		logrus.Errorf("error performing logout, token cannot be revoked: %v", err)
+
+		http.Error(w, "error performing logout", http.StatusInternalServerError)
+		return
+	}
+
+	ck.MaxAge = -1
+	ck.Path = "/"
+	http.SetCookie(w, ck)
 	http.Redirect(w, req, "/provider", http.StatusFound)
 }
 
@@ -2701,12 +2727,20 @@ func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, fr
 	// Doing this here is important so that
 	l.loadCapabilities(tokenString)
 
-	// Download the package for the user
-	l.downloadProviderExtensionPackage()
+	// Download the package for the user only if they have extension capability
+	if len(l.GetProviderProperties().Extensions.Navigator) > 0 {
+		l.downloadProviderExtensionPackage()
+	}
 
 	// Proceed to redirect once the capabilities has loaded
 	// and the package has been downloaded
-	http.Redirect(w, r, "/", http.StatusFound)
+	redirectURL := "/"
+	isPlayGround, _ := strconv.ParseBool(viper.GetString("PLAYGROUND"))
+	if isPlayGround {
+		redirectURL = "/extension/meshmap"
+	}
+
+	http.Redirect(w, r, redirectURL, http.StatusFound)
 }
 
 // UpdateToken - in case the token was refreshed, this routine updates the response with the new token
@@ -2993,7 +3027,7 @@ func TarXZF(srcURL, destination string) error {
 	}()
 
 	if resp.StatusCode != http.StatusOK {
-		return ErrFetch(err, "TarTZF file :"+srcURL, resp.StatusCode)
+		return ErrFetch(fmt.Errorf("failed GET request"), "TarTZF file :"+srcURL, resp.StatusCode)
 	}
 
 	return TarXZ(resp.Body, destination)

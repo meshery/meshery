@@ -1,0 +1,1 @@
+{"kind":"CISKubeBenchReport","apiVersion":"v1alpha1","display-name":"CIS Kube Bench Report","format":"JSON","metadata":{},"model":{"name":"giantswarm","version":"0.8.0","display-name":"","category":"","sub-category":""},"schema":""}

@@ -48,10 +48,14 @@ mesheryctl exp filter delete test-wasm
 			return err
 		}
 
+		if res.StatusCode != 200 {
+			return ErrInvalidAPICall(res.StatusCode)
+		}
+
 		defer res.Body.Close()
 		body, err := io.ReadAll(res.Body)
 		if err != nil {
-			return err
+			return errors.New("Error processing response body. " + err.Error())
 		}
 
 		utils.Log.Info(string(body))

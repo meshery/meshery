@@ -2,12 +2,12 @@ import React from 'react';
 import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/styles';
 import { canExpand } from '@rjsf/utils';
-import AddButton from "@material-ui/icons/Add";
+import AddIcon from '../../../../assets/icons/AddIcon';
 import { Box, IconButton, Typography } from '@material-ui/core';
-import EnlargedTextTooltip from '../EnlargedTextTooltip';
-import HelpOutlineIcon from '../HelpOutlineIcon';
-import ArrowDown from '@material-ui/icons/KeyboardArrowDown';
-import ArrowUp from '@material-ui/icons/KeyboardArrowUp';
+import { EnlargedTextTooltip } from '../EnlargedTextTooltip';
+import HelpOutlineIcon from '../../../../assets/icons/HelpOutlineIcon';
+import ExpandMoreIcon from '../../../../assets/icons/ExpandMoreIcon';
+import ExpandLessIcon from '../../../../assets/icons/ExpandLessIcon'
 
 const useStyles = makeStyles({
   objectFieldGrid : {
@@ -32,8 +32,10 @@ const ObjectFieldTemplate = ({
   formData,
   onAddClick,
 }) => {
+  const additional = schema?.__additional_property; // check if the object is additional
   const classes = useStyles();
-  const [show, setShow] = React.useState(false);
+  // If the parent type is an `array`, then expand the current object.
+  const [show, setShow] = React.useState(schema?.p_type ? true : false);
   properties.forEach((property, index) => {
     if (schema.properties[property.name].type) {
       properties[index].type = schema.properties[property.name].type;
@@ -53,7 +55,7 @@ const ObjectFieldTemplate = ({
               onClick={onAddClick(schema)}
               disabled={disabled || readonly}
             >
-              <AddButton style={{ backgroundColor : "#647881", width : "1.25rem", height : "1.25rem", color : "#ffffff", borderRadius : ".2rem" }} />
+              <AddIcon width="18px" height="18px" fill="white" style={{ backgroundColor : "#647881", width : "1.25rem", height : "1.25rem", color : "#ffffff", borderRadius : ".2rem" }} />
             </IconButton>
           </Grid>
         ) : (
@@ -63,7 +65,7 @@ const ObjectFieldTemplate = ({
                 className="object-property-expand"
                 onClick={() => setShow(!show)}
               >
-                {show ? <ArrowUp /> : <ArrowDown />}
+                {show ? <ExpandLessIcon width="18px" height="18px" fill="gray" /> : <ExpandMoreIcon width="18px" height="18px" fill="gray"  />}
               </IconButton>
             </Grid>
           )
@@ -74,7 +76,9 @@ const ObjectFieldTemplate = ({
           </Typography>
           {description &&
             <EnlargedTextTooltip title={description}>
-              <HelpOutlineIcon />
+              <IconButton disableTouchRipple="true" disableRipple="true" component="span" size="small">
+                <HelpOutlineIcon width="14px" height="14px" fill="black" style={{ marginLeft : "4px", verticalAlign : "middle" }}/>
+              </IconButton>
             </EnlargedTextTooltip>}
         </Grid>
 
@@ -95,7 +99,8 @@ const ObjectFieldTemplate = ({
             lg={
               element.type === "object" ||
               element.type === "array" ||
-              element.__additional_property
+              element.__additional_property ||
+              additional
                 ? 12
                 : 6
             }
@@ -114,12 +119,15 @@ const ObjectFieldTemplate = ({
     <>
       {fieldTitle ? (
         <>
-          <CustomTitleField
-            id={`${idSchema.$id}-title`}
-            title={fieldTitle}
-            description={description}
-            properties={properties}
-          />
+          {schema.p_type !== "array" ? (
+            <CustomTitleField
+              id={`${idSchema.$id}-title`}
+              title={additional ? "Value" : fieldTitle}
+              description={description}
+              properties={properties}
+            />
+          ) : null
+          }
           {Object.keys(properties).length > 0 && show && Properties}
         </>
       ) : Properties}

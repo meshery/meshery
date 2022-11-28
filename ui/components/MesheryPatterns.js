@@ -29,6 +29,7 @@ import MesheryPatternGrid from "./MesheryPatterns/MesheryPatternGridView";
 import UndeployIcon from "../public/static/img/UndeployIcon";
 import DoneAllIcon from '@material-ui/icons/DoneAll';
 import DoneIcon from '@material-ui/icons/Done';
+import PublicIcon from '@material-ui/icons/Public';
 import ConfirmationMsg from "./ConfirmationModal";
 import PublishIcon from "@material-ui/icons/Publish";
 import PromptComponent from "./PromptComponent";
@@ -38,6 +39,7 @@ import LoadingScreen from "./LoadingComponents/LoadingComponent";
 import { SchemaContext } from "../utils/context/schemaSet";
 import Validation from "./Validation";
 import { ACTIONS, FILE_OPS } from "../utils/Enum";
+import PublishModal from "./PublishModal";
 
 const styles = (theme) => ({
   grid : {
@@ -263,6 +265,10 @@ function MesheryPatterns({
   const [importModal, setImportModal] = useState({
     open : false
   })
+  const [publishModal, setPublishModal] = useState({
+    open : false,
+    pattern : {}
+  });
   const [loading, stillLoading] = useState(true);
 
   const catalogContentRef = useRef();
@@ -323,31 +329,35 @@ function MesheryPatterns({
   const ACTION_TYPES = {
     FETCH_PATTERNS : {
       name : "FETCH_PATTERNS",
-      error_msg : "Failed to fetch patterns"
+      error_msg : "Failed to fetch designs"
     },
     UPDATE_PATTERN : {
       name : "UPDATE_PATTERN",
-      error_msg : "Failed to update pattern file"
+      error_msg : "Failed to update design file"
     },
     DELETE_PATTERN : {
       name : "DELETE_PATTERN",
-      error_msg : "Failed to delete pattern file"
+      error_msg : "Failed to delete design file"
     },
     DEPLOY_PATTERN : {
       name : "DEPLOY_PATTERN",
-      error_msg : "Failed to deploy pattern file"
+      error_msg : "Failed to deploy design file"
     },
     UNDEPLOY_PATTERN : {
       name : "UNDEPLOY_PATTERN",
-      error_msg : "Failed to undeploy pattern file"
+      error_msg : "Failed to undeploy design file"
     },
     UPLOAD_PATTERN : {
       name : "UPLOAD_PATTERN",
-      error_msg : "Failed to upload pattern file"
+      error_msg : "Failed to upload design file"
     },
     CLONE_PATTERN : {
       name : "CLONE_PATTERN",
-      error_msg : "Failed to clone pattern file"
+      error_msg : "Failed to clone design file"
+    },
+    PUBLISH_CATALOG : {
+      name : "PUBLISH_CATALOG",
+      error_msg : "Failed to publish catalog"
     }
   };
 
@@ -475,7 +485,21 @@ function MesheryPatterns({
     });
   }
 
-  const handleDeploy = (pattern_file) => {
+  const handlePublishModal = (ev,pattern) => {
+    ev.stopPropagation();
+    setPublishModal({
+      open : true,
+      pattern : pattern
+    });
+  };
+  const handlePublishModalClose = () => {
+    setPublishModal({
+      open : false,
+      pattern : {}
+    });
+  };
+
+  const handleDeploy = (pattern_file, name) => {
     updateProgress({ showProgress : true });
     dataFetch(
       ctxUrl(DEPLOY_URL, selectedK8sContexts),
@@ -485,7 +509,7 @@ function MesheryPatterns({
         body : pattern_file,
       }, () => {
         updateProgress({ showProgress : false });
-        enqueueSnackbar("Pattern Successfully Deployed!", {
+        enqueueSnackbar(`"${name}" Design successfully deployed`, {
           variant : "success",
           action : function Action(key) {
             return (
@@ -527,7 +551,7 @@ function MesheryPatterns({
     );
   }
 
-  const handleUnDeploy = (pattern_file) => {
+  const handleUnDeploy = (pattern_file, name) => {
     updateProgress({ showProgress : true });
     dataFetch(
       ctxUrl(DEPLOY_URL, selectedK8sContexts),
@@ -537,7 +561,7 @@ function MesheryPatterns({
         body : pattern_file,
       }, () => {
         updateProgress({ showProgress : false });
-        enqueueSnackbar("Pattern Successfully Undeployed!", {
+        enqueueSnackbar(`"${name}" Design successfully undeployed`, {
           variant : "success",
           action : function Action(key) {
             return (
@@ -552,8 +576,30 @@ function MesheryPatterns({
       handleError(ACTION_TYPES.UNDEPLOY_PATTERN),
     );
   };
+  const handlePublish= (catalog_data) => {
+    updateProgress({ showProgress : true });
+    dataFetch(
+      `/api/pattern/catalog/publish`,
+      { credentials : "include", method : "POST", body : JSON.stringify(catalog_data) },
+      () => {
+        updateProgress({ showProgress : false });
+        enqueueSnackbar("Pattern Successfully Published!", {
+          variant : "success",
+          action : function Action(key) {
+            return (
+              <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+                <CloseIcon />
+              </IconButton>
+            );
+          },
+          autoHideDuration : 2000,
+        });
+      },
+      handleError(ACTION_TYPES.PUBLISH_CATALOG),
+    );
 
-  function handleClone(patternID) {
+  }
+  function handleClone(patternID, name) {
     updateProgress({ showProgress : true });
     dataFetch(PATTERN_URL.concat(CLONE_URL, "/", patternID),
       {
@@ -562,7 +608,7 @@ function MesheryPatterns({
       },
       () => {
         updateProgress({ showProgress : false });
-        enqueueSnackbar("Pattern Successfully Cloned!", {
+        enqueueSnackbar(`"${name}" Design successfully cloned`, {
           variant : "success",
           action : function Action(key) {
             return (
@@ -822,7 +868,7 @@ function MesheryPatterns({
             <>
               { visibility === "public" ? <IconButton onClick={(e) => {
                 e.stopPropagation();
-                handleClone(rowData.id)
+                handleClone(rowData.id, rowData.name)
               }
               }>
                 <img src="/static/img/clone.svg" />
@@ -854,6 +900,13 @@ function MesheryPatterns({
                 onClick={(e) => handleModalOpen(e, rowData.pattern_file, rowData.name, patternErrors.get(rowData.id), ACTIONS.UNDEPLOY)}
               >
                 <UndeployIcon fill="#8F1F00" data-cy="undeploy-button" />
+              </IconButton>
+              <IconButton
+                title="Publish"
+                onClick={(ev) => handlePublishModal(ev,rowData)}
+
+              >
+                <PublicIcon fill="#8F1F00" data-cy="publish-button" />
               </IconButton>
             </>
           );
@@ -894,7 +947,7 @@ function MesheryPatterns({
       console.log("PatternFile Delete Multiple API", `/api/pattern/delete`);
       updateProgress({ showProgress : false });
       setTimeout(() => {
-        enqueueSnackbar(`${patterns.patterns.length} Designs Deleted`,
+        enqueueSnackbar(`${patterns.patterns.length} Designs deleted`,
           {
             variant : "success",
             autoHideDuration : 2000,
@@ -1084,6 +1137,7 @@ function MesheryPatterns({
               patterns={patterns}
               handleDeploy={handleDeploy}
               handleVerify={handleVerify}
+              handlePublish={handlePublish}
               handleUnDeploy={handleUnDeploy}
               handleClone={handleClone}
               urlUploadHandler={urlUploadHandler}
@@ -1103,13 +1157,14 @@ function MesheryPatterns({
           open={modalOpen.open}
           handleClose={handleModalClose}
           submit={
-            { deploy : () => handleDeploy(modalOpen.pattern_file),  unDeploy : () => handleUnDeploy(modalOpen.pattern_file) }
+            { deploy : () => handleDeploy(modalOpen.pattern_file, modalOpen.name),  unDeploy : () => handleUnDeploy(modalOpen.pattern_file, modalOpen.name) }
           }
           title={modalOpen.name}
           componentCount={modalOpen.count}
           tab={modalOpen.action}
           validationBody={modalOpen.validationBody}
         />
+        <PublishModal open={publishModal.open} handleClose={handlePublishModalClose} pattern={publishModal.pattern} aria-label="catalog publish" handlePublish={handlePublish} />
         <UploadImport open={importModal.open} handleClose={handleUploadImportClose} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} configuration="Design" />
         <PromptComponent ref={modalRef} />
       </NoSsr>

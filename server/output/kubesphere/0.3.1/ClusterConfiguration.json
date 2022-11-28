@@ -1,0 +1,1 @@
+{"kind":"ClusterConfiguration","apiVersion":"v1alpha1","display-name":"Cluster Configuration","format":"JSON","metadata":{},"model":{"name":"kubesphere","version":"0.3.1","display-name":"","category":"","sub-category":""},"schema":"{\n \"title\": \"Cluster Configuration\",\n \"type\": \"object\",\n \"x-kubernetes-preserve-unknown-fields\": true\n}"}

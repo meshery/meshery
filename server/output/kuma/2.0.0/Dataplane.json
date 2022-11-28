@@ -1,0 +1,1 @@
+{"kind":"Dataplane","apiVersion":"v1alpha1","display-name":"Dataplane","format":"JSON","metadata":{},"model":{"name":"kuma","version":"2.0.0","display-name":"","category":"","sub-category":""},"schema":"{\n \"description\": \"Spec is the specification of the Kuma Dataplane resource.\",\n \"title\": \"Dataplane\",\n \"x-kubernetes-preserve-unknown-fields\": true\n}"}

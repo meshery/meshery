@@ -1,0 +1,1 @@
+{"kind":"ControllerRevision","apiVersion":"v1alpha1","display-name":"Controller Revision","format":"JSON","metadata":{},"model":{"name":"kubeflow","version":"1.5.1","display-name":"","category":"","sub-category":""},"schema":""}

@@ -31,7 +31,7 @@ export function getCapabilities(type, cb) {
       credentials : "include",
     },
     (result) => {
-      if (result) {
+      if (typeof result !== "undefined") {
         cb(ExtensionPointSchemaValidator(type)(result?.extensions[type]));
       }
     },
@@ -279,10 +279,14 @@ function ExtensionSandbox({ type, Extension, isDrawerCollapsed, toggleDrawer }) 
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    getCapabilities(type, (data) => {
-      setExtension(data);
-      setIsLoading(false);
-    });
+    (async () => {
+      getCapabilities(type, (data) => {
+        if (typeof data !== "undefined") {
+          setExtension(data);
+          setIsLoading(false);
+        }
+      });
+    })();
     if (type === "navigator" && !isDrawerCollapsed) {
       toggleDrawer({ isDrawerCollapsed : !isDrawerCollapsed });
     }
@@ -309,7 +313,7 @@ function ExtensionSandbox({ type, Extension, isDrawerCollapsed, toggleDrawer }) 
               </Typography>
               : (
                 getComponentURIFromPathForUserPrefs(extension).map(uri => {
-                  return <Extension url={createPathForRemoteComponent(uri)} />
+                  return <Extension url={createPathForRemoteComponent(uri)} key={uri} />
                 })
               )
             : (type === "account" && extension?.length !== 0)?
@@ -329,9 +333,8 @@ const mapDispatchToProps = (dispatch) => ({
   toggleDrawer : bindActionCreators(toggleDrawer, dispatch),
 });
 
-const mapStateToProps = (state) => {
-  const isDrawerCollapsed = state.get("isDrawerCollapsed")
-  return { isDrawerCollapsed };
-};
+const mapStateToProps = (state) => ({
+  isDrawerCollapsed : state.get("isDrawerCollapsed"),
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(ExtensionSandbox);

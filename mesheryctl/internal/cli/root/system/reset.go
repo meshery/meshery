@@ -19,6 +19,7 @@ import (
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/pkg/errors"
 
 	log "github.com/sirupsen/logrus"
 
@@ -31,7 +32,6 @@ var resetCmd = &cobra.Command{
 	Use:   "reset",
 	Short: "Reset Meshery's configuration",
 	Long:  `Reset Meshery to it's default configuration.`,
-	Args:  cobra.NoArgs,
 	Example: `
 // Resets meshery.yaml file with a copy from Meshery repo
 mesheryctl system reset
@@ -41,6 +41,9 @@ mesheryctl system reset
 # ![reset-usage](/assets/img/mesheryctl/reset.png)
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
+		if len(args) != 0 {
+			return errors.New(utils.SystemLifeCycleError(fmt.Sprintf("this command takes no arguments. See '%s --help' for more information.\n", cmd.CommandPath()), "reset"))
+		}
 		return resetMesheryConfig()
 	},
 }

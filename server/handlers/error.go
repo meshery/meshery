@@ -88,6 +88,7 @@ const (
 	ErrFetchFilterCode                  = "2161"
 	ErrDeleteFilterCode                 = "2162"
 	ErrSavePatternCode                  = "2163"
+	ErrSaveApplicationCode              = "2266"
 	ErrGetPatternCode                   = "2164"
 	ErrDeletePatternCode                = "2165"
 	ErrFetchPatternCode                 = "2166"
@@ -422,6 +423,9 @@ func ErrSavePattern(err error) error {
 	return errors.New(ErrSavePatternCode, errors.Alert, []string{"Error failed to save pattern"}, []string{err.Error()}, []string{"Cannot save the Pattern due to wrong path or URL"}, []string{"Check if the given path or URL of the Pattern is correct"})
 }
 
+func ErrSaveApplication(err error) error {
+	return errors.New(ErrSaveApplicationCode, errors.Alert, []string{"Error failed to save application"}, []string{err.Error()}, []string{"Cannot save the Application due to wrong path or URL"}, []string{"Check if the given path or URL of the Pattern is correct"})
+}
 func ErrGetPattern(err error) error {
 	return errors.New(ErrGetPatternCode, errors.Alert, []string{"Error failed to get pattern"}, []string{err.Error()}, []string{"Cannot get the Pattern with the given Pattern ID"}, []string{"Check if the given Pattern ID is correct"})
 }

@@ -1,0 +1,1 @@
+{"kind":"ScheduledWorkflow","apiVersion":"v1beta1","display-name":"Scheduled Workflow","format":"JSON","metadata":{},"model":{"name":"kubeflow","version":"1.5.1","display-name":"","category":"","sub-category":""},"schema":"{\n \"title\": \"Scheduled Workflow\",\n \"type\": \"object\",\n \"x-kubernetes-map-type\": \"atomic\",\n \"x-kubernetes-preserve-unknown-fields\": true\n}"}

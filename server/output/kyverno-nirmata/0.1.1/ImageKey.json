@@ -1,0 +1,15 @@
+{
+	"kind": "ImageKey",
+	"apiVersion": "v1",
+	"display-name": "Image Key",
+	"format": "JSON",
+	"metadata": {},
+	"model": {
+		"name": "kyverno-nirmata",
+		"version": "0.1.1",
+		"display-name": "",
+		"category": "",
+		"sub-category": ""
+	},
+	"schema": "{\n \"description\": \"ImageKeySpec defines the desired state of ImageKey\",\n \"properties\": {\n  \"venafiPKCS11Config\": {\n   \"description\": \"VenafiPKCS11Config contains the Venafi PKCS11 client configuration used to retrieve public keys.\",\n   \"properties\": {\n    \"additionalCertSecretName\": {\n     \"description\": \"The resource name for a Secret in the current namespace that contains the additional trusted certificate to be configured in Venafi Trust Protection Platform (TPP) before obtaining the grant.\",\n     \"type\": \"string\"\n    },\n    \"authURL\": {\n     \"description\": \"The authentication URL for the Venafi Trust Protection Platform (TPP).\",\n     \"type\": \"string\"\n    },\n    \"configMap\": {\n     \"description\": \"A ConfigMap in which to store the label and retrieved public key. The label is used as the map key.\",\n     \"type\": \"string\"\n    },\n    \"fetchType\": {\n     \"description\": \"Whether to fetch the publickey or certificate corresponding to other Venafi Trust Protection Platform (TPP) parameters provided. Either key (default) or certificate.\",\n     \"type\": \"string\"\n    },\n    \"hostAlias\": {\n     \"description\": \"A host alias to access the Venafi Trust Protection Platform (TPP) system.\",\n     \"type\": \"string\"\n    },\n    \"hsmURL\": {\n     \"description\": \"The HSM URL for the Venafi Trust Protection Platform (TPP).\",\n     \"type\": \"string\"\n    },\n    \"imagepullsecret\": {\n     \"description\": \"Imagepullsecret to be used by venafi pod if any\",\n     \"type\": \"string\"\n    },\n    \"interval\": {\n     \"description\": \"The time interval in minutes to check for new or updated keys.\",\n     \"type\": \"integer\"\n    },\n    \"keyfetchClientRegistry\": {\n     \"description\": \"KeyfetchClientRegistry housing keyfetch client\",\n     \"type\": \"string\"\n    },\n    \"label\": {\n     \"description\": \"The label to use for fetching public keys from the Venafi Trust Protection Platform (TPP) environment.\",\n     \"type\": \"string\"\n    },\n    \"passwordSecretName\": {\n     \"description\": \"The resource name for a Secret in the current namespace that contains the password to access the Venafi Trust Protection Platform (TPP).\",\n     \"type\": \"string\"\n    },\n    \"username\": {\n     \"description\": \"The username to access the Venafi Trust Protection Platform (TPP).\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"authURL\",\n    \"configMap\",\n    \"hsmURL\",\n    \"label\",\n    \"passwordSecretName\",\n    \"username\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Image Key\",\n \"type\": \"object\"\n}"
+}

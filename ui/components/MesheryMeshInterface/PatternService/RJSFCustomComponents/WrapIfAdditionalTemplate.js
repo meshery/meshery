@@ -22,6 +22,7 @@ const WrapIfAdditionalTemplate = ({
   registry,
 }) => {
   const { RemoveButton } = registry.templates.ButtonTemplates;
+  const value=label.startsWith("newKey")?"":label; // removing the default value i.e newKey.
   const keyLabel = `Key`
   const additional = ADDITIONAL_PROPERTY_FLAG in schema;
   const btnStyle= {
@@ -34,7 +35,7 @@ const WrapIfAdditionalTemplate = ({
   if (!additional) {
     return <div className={classNames}>{children}</div>;
   }
-  const handleBlur = ({ target }) =>
+  const handleChange = ({ target }) =>
     onKeyChange(target.value);
 
   return (
@@ -49,14 +50,20 @@ const WrapIfAdditionalTemplate = ({
         <FormControl fullWidth={true} required={required}>
           <InputLabel>{keyLabel}</InputLabel>
           <Input
-            defaultValue={label}
+            autoFocus={true}
+            defaultValue={value}
             disabled={disabled || readonly}
             id={`${id}-key`}
             name={`${id}-key`}
-            onBlur={!readonly ? handleBlur : undefined}
+            onChange={!readonly ? handleChange : undefined}
             type="text"
           />
         </FormControl>
+      </Grid>
+      <Grid item style={{ alignSelf : 'flex-end' }}>
+        <span style={{ fontSize : "1.25rem", color : "#1E2117" }}>
+          &nbsp;:&nbsp;
+        </span>
       </Grid>
       <Grid item={true} xs>
         {children}

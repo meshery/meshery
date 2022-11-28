@@ -17,8 +17,6 @@ import Chip from '@material-ui/core/Chip';
 import MesheryNotification from './MesheryNotification';
 import User from './User';
 import subscribeBrokerStatusEvents from "./graphql/subscriptions/BrokerStatusSubscription"
-import mesheryControllersStatusSubcription from "./graphql/subscriptions/MesheryControllersStatusSubscription"
-import meshSyncEventsSub from "./graphql/subscriptions/MeshSyncEventsSubscription"
 import Slide from '@material-ui/core/Slide';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import { Checkbox, Button } from '@material-ui/core';
@@ -31,11 +29,16 @@ import { useSnackbar } from "notistack";
 import { deleteKubernetesConfig, pingKubernetes } from './ConnectionWizard/helpers/kubernetesHelpers';
 import {
   successHandlerGenerator, errorHandlerGenerator, closeButtonForSnackbarAction } from './ConnectionWizard/helpers/common';
-import { getFirstCtxIdFromSelectedCtxIds } from '../utils/multi-ctx';
 import { promisifiedDataFetch } from '../lib/data-fetch';
 import { updateK8SConfig, updateProgress } from '../lib/store';
 import { bindActionCreators } from 'redux';
 import BadgeAvatars from './CustomAvatar';
+import { CapabilitiesRegistry as CapabilityRegistryClass } from '../utils/disabledComponents';
+import _ from 'lodash';
+import { SETTINGS } from '../constants/navigator';
+import { cursorNotAllowed, disabledStyle } from '../css/disableComponent.styles';
+import PromptComponent from './PromptComponent';
+
 const lightColor = 'rgba(255, 255, 255, 0.7)';
 const styles = (theme) => ({
   secondaryBar : { zIndex : 0, },
@@ -199,6 +202,7 @@ function K8sContextMenu({
   const [anchorEl, setAnchorEl] = React.useState(false);
   const [showFullContextMenu, setShowFullContextMenu] = React.useState(false);
   const [transformProperty, setTransformProperty] = React.useState(100)
+  const deleteCtxtRef = React.createRef();
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
   const styleSlider = {
@@ -271,14 +275,20 @@ function K8sContextMenu({
     )
   }
 
-  const handleKubernetesDelete = (name, ctxId) => () => {
-    if (confirm(`Are you sure you want to delete "${name}" cluster from Meshery?`)) {
+  const handleKubernetesDelete = (name, ctxId) => async() => {
+    let responseOfDeleteK8sCtx = await deleteCtxtRef.current.show({
+      title : `Delete ${name} context ?`,
+      subtitle : `Are you sure you want to delete ${name} cluster from Meshery?`,
+      options : ["CONFIRM", "CANCEL"]
+    });
+    if (responseOfDeleteK8sCtx === "CONFIRM") {
       const successCallback = async () => {
         const updatedConfig = await loadActiveK8sContexts()
         if (Array.isArray(updatedConfig)) {
           updateK8SConfig({ k8sConfig : updatedConfig })
         }
       }
+
       deleteKubernetesConfig(
         successHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Kubernetes config successfully removed", successCallback),
         errorHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Not able to remove config"),
@@ -432,6 +442,8 @@ function K8sContextMenu({
           </ClickAwayListener>
         </div>
       </Slide>
+
+      <PromptComponent ref={deleteCtxtRef} />
     </>
   )
 }
@@ -442,6 +454,8 @@ class Header extends React.Component {
     this.state = {
       brokerStatusSubscription : null,
       brokerStatus : false,
+      /** @type {CapabilityRegistryClass} */
+      capabilityregistryObj : null
     }
   }
 
@@ -452,22 +466,12 @@ class Header extends React.Component {
       this.setState({ brokerStatus : data?.subscribeBrokerConnection })
     });
     this.setState({ brokerStatusSubscription : brokerStatusSub })
-
-    mesheryControllersStatusSubcription(data => {
-      console.log({ status : data })
-      // this.setState({ brokerStatus: data?.subscribeBrokerConnection })
-    });
-
-    meshSyncEventsSub(data => {
-      console.log({ event : data })
-      // this.setState({ brokerStatus: data?.subscribeBrokerConnection })
-    });
   }
 
-
-
-  getSelectedContextId = () => {
-    return getFirstCtxIdFromSelectedCtxIds(["all"], this.props.k8sconfig)
+  componentDidUpdate(prevProps) {
+    if (!_.isEqual(prevProps.capabilitiesRegistry, this.props.capabilitiesRegistry)) {
+      this.setState({ capabilityregistryObj : new CapabilityRegistryClass(this.props.capabilitiesRegistry) });
+    }
   }
 
   componentWillUnmount = () => {
@@ -476,6 +480,7 @@ class Header extends React.Component {
 
   render() {
     const { classes, title, onDrawerToggle, onDrawerCollapse, isBeta } = this.props;
+
     return (
       <NoSsr>
         <React.Fragment>
@@ -517,8 +522,8 @@ class Header extends React.Component {
                     />
                   </div>
 
-                  <div data-test="settings-button">
-                    <IconButton color="inherit">
+                  <div data-test="settings-button" style={!this.state.capabilityregistryObj?.isHeaderComponentEnabled([SETTINGS]) ? cursorNotAllowed : {}}>
+                    <IconButton style={!this.state.capabilityregistryObj?.isHeaderComponentEnabled([SETTINGS]) ? disabledStyle : {}} color="inherit">
                       <Link href="/settings">
                         <SettingsIcon className={classes.headerIcons + " " + (title === 'Settings'
                           ? classes.itemActiveItem
@@ -556,7 +561,8 @@ const mapStateToProps = (state) => {
     selectedK8sContexts : state.get('selectedK8sContexts'),
     k8sconfig : state.get('k8sConfig'),
     operatorState : state.get('operatorState'),
-    meshSyncState : state.get('meshSyncState')
+    meshSyncState : state.get('meshSyncState'),
+    capabilitiesRegistry : state.get("capabilitiesRegistry")
   })
 };
 

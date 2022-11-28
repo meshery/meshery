@@ -4,8 +4,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 
+	guid "github.com/google/uuid"
 	"github.com/gorilla/mux"
+	"github.com/layer5io/meshery/server/meshes"
 	"github.com/layer5io/meshery/server/models"
 )
 
@@ -90,13 +93,18 @@ func (h *Handler) handleFilterPOST(
 	defer func() {
 		_ = r.Body.Close()
 	}()
-
+	res := meshes.EventsResponse{
+		Component:     "core",
+		ComponentName: "Filters",
+		OperationId:   guid.NewString(),
+		EventType:     meshes.EventType_INFO,
+	}
 	var parsedBody *MesheryFilterRequestBody
 	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil {
 		h.log.Error(ErrRequestBody(err))
 		http.Error(rw, ErrGetFilter(err).Error(), http.StatusBadRequest)
-		// rw.WriteHeader(http.StatusBadRequest)
-		// fmt.Fprintf(rw, "failed to read request body: %s", err)
+		addMeshkitErr(&res, ErrGetFilter(err))
+		go h.EventsBuffer.Publish(&res)
 		return
 	}
 
@@ -104,6 +112,8 @@ func (h *Handler) handleFilterPOST(
 	if err != nil {
 		h.log.Error(ErrRetrieveUserToken(err))
 		http.Error(rw, ErrRetrieveUserToken(err).Error(), http.StatusInternalServerError)
+		addMeshkitErr(&res, ErrRetrieveUserToken(err))
+		go h.EventsBuffer.Publish(&res)
 		return
 	}
 
@@ -133,11 +143,13 @@ func (h *Handler) handleFilterPOST(
 			if err != nil {
 				h.log.Error(ErrSaveFilter(err))
 				http.Error(rw, ErrSaveFilter(err).Error(), http.StatusInternalServerError)
+				addMeshkitErr(&res, ErrSaveFilter(err))
+				go h.EventsBuffer.Publish(&res)
 				return
 			}
 
 			go h.config.ConfigurationChannel.PublishFilters()
-			formatFilterOutput(rw, resp, format)
+			h.formatFilterOutput(rw, resp, format, &res)
 			return
 		}
 
@@ -145,10 +157,12 @@ func (h *Handler) handleFilterPOST(
 		if err != nil {
 			h.log.Error(ErrEncodeFilter(err))
 			http.Error(rw, ErrEncodeFilter(err).Error(), http.StatusInternalServerError)
+			addMeshkitErr(&res, ErrEncodeFilter(err))
+			go h.EventsBuffer.Publish(&res)
 			return
 		}
 
-		formatFilterOutput(rw, byt, format)
+		h.formatFilterOutput(rw, byt, format, &res)
 		return
 	}
 
@@ -161,7 +175,7 @@ func (h *Handler) handleFilterPOST(
 			return
 		}
 
-		formatFilterOutput(rw, resp, format)
+		h.formatFilterOutput(rw, resp, format, &res)
 		return
 	}
 }
@@ -343,13 +357,13 @@ func (h *Handler) GetMesheryFilterHandler(
 	fmt.Fprint(rw, string(resp))
 }
 
-func formatFilterOutput(rw http.ResponseWriter, content []byte, format string) {
+func (h *Handler) formatFilterOutput(rw http.ResponseWriter, content []byte, format string, res *meshes.EventsResponse) {
 	contentMesheryFilterSlice := make([]models.MesheryFilter, 0)
-
+	names := []string{}
 	if err := json.Unmarshal(content, &contentMesheryFilterSlice); err != nil {
 		http.Error(rw, ErrDecodeFilter(err).Error(), http.StatusInternalServerError)
-		// rw.WriteHeader(http.StatusInternalServerError)
-		// fmt.Fprintf(rw, "failed to decode filters data into go slice: %s", err)
+		addMeshkitErr(res, ErrDecodeFilter(err))
+		go h.EventsBuffer.Publish(res)
 		return
 	}
 
@@ -359,13 +373,19 @@ func formatFilterOutput(rw http.ResponseWriter, content []byte, format string) {
 	if err != nil {
 		obj := "filter file"
 		http.Error(rw, ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
-		// rw.WriteHeader(http.StatusInternalServerError)
-		// fmt.Fprintf(rw, "failed to marshal filter file: %s", err)
+		addMeshkitErr(res, ErrMarshal(err, obj))
+		go h.EventsBuffer.Publish(res)
 		return
 	}
 
 	rw.Header().Set("Content-Type", "application/json")
 	fmt.Fprint(rw, string(data))
+	for _, filter := range contentMesheryFilterSlice {
+		names = append(names, filter.Name)
+	}
+	res.Details = "filters successfully saved"
+	res.Summary = "following filters were saved: " + strings.Join(names, ",")
+	go h.EventsBuffer.Publish(res)
 }
 
 // swagger:route POST /api/filter/deploy FilterAPI idPostDeployFilterFile

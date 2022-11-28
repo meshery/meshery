@@ -9,22 +9,29 @@ import MesheryArrayFieldTemplate from "./RJSFCustomComponents/ArrayFieldTemlate"
 import MesheryCustomObjFieldTemplate from "./RJSFCustomComponents/ObjectFieldTemplate";
 import MesheryWrapIfAdditionalTemplate from './RJSFCustomComponents/WrapIfAdditionalTemplate';
 import { customizeValidator } from "@rjsf/validator-ajv6";
-import CustomInputField from "./RJSFCustomComponents/CustomInputField";
 import _ from "lodash"
+import CustomTextWidget from './RJSFCustomComponents/CustomTextWidget';
+import CustomDateTimeWidget from './RJSFCustomComponents/CustomDateTimeWidget';
 
+/*eslint-disable */
 class RJSFOverridenComponent extends Form {
   constructor(props){
-    super(props)
-    let oldValidate = this.validate;
-    this.validate = (
-      formData,
-      schema,
-    ) => {
-      let fixedFormData = recursiveCleanObject(_.cloneDeep(formData));
-      return oldValidate.call(this, fixedFormData, schema);
+    try {
+      super(props)
+      let oldValidate = this.validate;
+      this.validate = (
+        formData,
+        schema,
+      ) => {
+        let fixedFormData = recursiveCleanObject(_.cloneDeep(formData));
+        return oldValidate.call(this, fixedFormData, schema);
+      }
+    } catch (e) {
+      console.error("An RJSF error occurred", e)
     }
   }
 }
+/*eslint-enable */
 
 // This is Patched change to include customised Forms
 const MuiRJSFForm = withTheme(MaterialUITheme, RJSFOverridenComponent);
@@ -83,7 +90,11 @@ function RJSFForm(props) {
         templates={templates}
         uiSchema={schema.uiSchema}
         widgets={{
-          TextWidget : CustomInputField
+          TextWidget : CustomTextWidget,
+          // Custom components to be added here
+          DateTimeWidget : CustomDateTimeWidget,
+          // SelectWidget: CustomSelectWidget,
+          // CheckboxWidget: CustomBooleanWidget,
         }}
         liveValidate
         showErrorList={false}
