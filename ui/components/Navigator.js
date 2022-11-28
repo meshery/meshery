@@ -45,8 +45,8 @@ import ExtensionPointSchemaValidator from "../utils/ExtensionPointSchemaValidato
 import dataFetch from "../lib/data-fetch";
 import { Collapse } from "@material-ui/core";
 import { cursorNotAllowed, disabledStyle } from "../css/disableComponent.styles";
-import {  CapabilitiesRegistry } from "../utils/disabledComponents";
-import { APPLICATION, APP_MESH, CILIUM_SM, CITRIX_SM,DESIGN, CONFIGURATION, CONFORMANCE, CONSUL, DASHBOARD, FILTER, ISTIO, KUMA, LIFECYCLE, LINKERD, NETWORK_SM, NGINX, OCTARINE, OSM, PERFORMANCE, TRAEFIK_SM, PROFILES, SMI, TOGGLER } from "../constants/navigator"
+import { CapabilitiesRegistry } from "../utils/disabledComponents";
+import { APPLICATION, APP_MESH, CILIUM_SM, CITRIX_SM, DESIGN, CONFIGURATION, CONFORMANCE, CONSUL, DASHBOARD, FILTER, ISTIO, KUMA, LIFECYCLE, LINKERD, NETWORK_SM, NGINX, OCTARINE, OSM, PERFORMANCE, TRAEFIK_SM, PROFILES, SMI, TOGGLER } from "../constants/navigator"
 const styles = (theme) => ({
   categoryHeader : {
     paddingTop : 16,
@@ -193,7 +193,6 @@ const styles = (theme) => ({
     borderRadius : "0 5px 5px 0",
     position : "fixed",
     cursor : "pointer",
-    backgroundColor : "#fff",
     display : "flex",
     justifyContent : "center",
     bottom : "12%",

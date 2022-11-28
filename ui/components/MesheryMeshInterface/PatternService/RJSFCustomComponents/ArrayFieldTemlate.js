@@ -4,13 +4,18 @@ import Box from "@material-ui/core/Box";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 
-import { Button, IconButton, Typography } from "@material-ui/core";
+import { Button, IconButton, makeStyles, Typography } from "@material-ui/core";
 import AddIcon from "@material-ui/icons/Add";
 import SimpleAccordion from "./Accordion";
 import { EnlargedTextTooltip } from "../EnlargedTextTooltip";
 import HelpOutlineIcon from "../HelpOutlineIcon";
 import { isMultiSelect, getDefaultFormState } from "@rjsf/utils";
 import ErrorIcon from "@material-ui/icons/Error";
+const useStyles = makeStyles((theme) => ({
+  typography : {
+    fontSize : "0.8rem",
+  },
+}));
 function getTitleForItem(props) {
   const title = getTitle(props);
 
@@ -34,7 +39,7 @@ function getTitle(props) {
 
 const ArrayFieldTemplate = (props) => {
   const { schema, registry = getDefaultFormState() } = props;
-
+  const classes = useStyles();
   // TODO: update types so we don't have to cast registry as any
   if (isMultiSelect(schema, registry.rootSchema)) {
     return <DefaultFixedArrayFieldTemplate {...props} />;
@@ -44,11 +49,12 @@ const ArrayFieldTemplate = (props) => {
 };
 
 const ArrayFieldTitle = ({ TitleField, idSchema, title, required }) => {
+  const classes = useStyles();
   if (!title) {
     return null;
   }
 
-  return <Typography variant="body1" style={{ fontWeight : "bold", marginLeft : ".5rem", display : "inline" }}>{title.charAt(0).toUpperCase() + title.slice(1)}</Typography>;
+  return <Typography className={classes.typography} variant="body1" style={{ fontWeight : "bold", marginLeft : ".5rem", display : "inline" }}>{title.charAt(0).toUpperCase() + title.slice(1)}</Typography>;
 };
 
 const ArrayFieldDescription = ({ DescriptionField, idSchema, description }) => {

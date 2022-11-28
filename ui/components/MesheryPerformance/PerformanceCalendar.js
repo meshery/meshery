@@ -54,6 +54,33 @@ const useStyles = makeStyles((theme) => ({
       opacity : "0.7",
     }
   },
+  calender : {
+    "& .rbc-btn-group" : {
+      color : theme.palette.type === 'dark' ? "rgba(255, 255, 255, 0.54)" : "rgba(0, 0, 0, 0.54)",
+    },
+    "& .rbc-toolbar button" : {
+
+      color : theme.palette.type === 'dark' ? "rgba(255, 255, 255, 0.54)" : "rgba(0, 0, 0, 0.54)",
+
+
+    },
+    "& .rbc-today" : {
+      backgroundColor : theme.palette.type === 'dark' ? "#505050" : "#eaf6ff;",
+    },
+    "& .rbc-day-slot .rbc-time-slot" : {
+      borderTop : `1px solid ${theme.palette.type === 'dark' ? "#555555" : "#eaf6ff"}`,
+    },
+    "& .rbc-toolbar button.rbc-active" : {
+      backgroundColor : theme.palette.type === 'dark' ? "#505050" : "#eaf6ff;",
+      color : theme.palette.type === 'dark' ? "white" : "black",
+    },
+    "& .rbc-toolbar button:hover" : {
+      backgroundColor : theme.palette.type === 'dark' ? "rgba(0, 0, 0, 0.54)" : "rgba(255, 255, 255, 0.54)"
+    },
+    "& .rbc-toolbar button.rbc-active:hover" : {
+      backgroundColor : theme.palette.type === 'dark' ? "#909090" : "#eaf6ff;",
+    },
+  },
   resultText : {
     color : theme.palette.type === 'dark' ? "rgba(255, 255, 255, 0.54)" : "rgba(0, 0, 0, 0.54)",
   },
@@ -245,7 +272,7 @@ function PerformanceCalendar({
         showMultiDayTimes
         defaultDate={new Date()}
         localizer={localizer}
-        classNames={classes.calender}
+        className={classes.calender}
         style={{ height : "100%", }}
         // @ts-ignore
         onRangeChange={(range) => setTime(generateDateRange(range.start, range.end))}

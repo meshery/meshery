@@ -16,7 +16,10 @@ const useStyles = makeStyles((theme) => ({
   heading : {
     fontSize : theme.typography.pxToRem(15),
     fontWeight : theme.typography.fontWeightRegular
-  }
+  },
+  typography : {
+    fontSize : "0.8rem",
+  },
 }));
 
 export default function SimpleAccordion(props) {

@@ -1,5 +1,5 @@
 import React from "react";
-import { IconButton, InputAdornment, TextField } from "@material-ui/core";
+import { IconButton, InputAdornment, makeStyles, TextField } from "@material-ui/core";
 import HelpOutlineIcon from "../HelpOutlineIcon";
 import { EnlargedTextTooltip, EnlargedTextErrorTooltip } from "../EnlargedTextTooltip";
 import { ErrorOutline } from "@material-ui/icons";
@@ -13,12 +13,24 @@ const BaseInput = (props) => {
     display : "flex",
     alignItems : "center",
   }
+
+  const useStyles = makeStyles(() => ({
+    root : {
+      "& .MuiFormLabel-root" : {
+        textTransform : "capitalize"
+      },
+
+
+    }
+  }));
+  const classes = useStyles();
   return (
     <>
       <div key={props.id} style={style}>
         <TextField
           variant={additional ? "standard" : "outlined"}
           size="small"
+          className={classes.root}
           focused={focused}
           type={props.options?.inputType}
           key={props.id}
@@ -30,7 +42,7 @@ const BaseInput = (props) => {
           onChange={e => props?.onChange(e.target.value === "" ? props.options.emptyValue : e.target.value)}
           label={`${prettifiedName}`}
           InputProps={{
-            style : { padding : "0px 0px 0px 0px" },
+            style : { padding : "0px 0px 0px 0px", },
             endAdornment : (<InputAdornment position="start">
               {props.rawErrors?.length > 0 && (
                 <EnlargedTextErrorTooltip title={

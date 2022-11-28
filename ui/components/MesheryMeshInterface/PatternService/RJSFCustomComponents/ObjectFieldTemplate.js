@@ -20,7 +20,11 @@ const useStyles = makeStyles((theme) => ({
     width : "100%",
     margin : "0px"
   },
+  typography : {
+    fontSize : "0.8rem",
+  },
 }));
+
 
 
 const ObjectFieldTemplate = ({
@@ -78,7 +82,7 @@ const ObjectFieldTemplate = ({
         )}
 
         <Grid item mb={1} mt={1}>
-          <Typography variant="body1" style={{ fontWeight : "bold", display : "inline" }}>{title.charAt(0).toUpperCase() + title.slice(1)}{" "}
+          <Typography variant="body1" className={classes.typography} style={{ fontWeight : "bold", display : "inline" }}>{title.charAt(0).toUpperCase() + title.slice(1)}{" "}
           </Typography>
           {description &&
             <EnlargedTextTooltip title={description}>
