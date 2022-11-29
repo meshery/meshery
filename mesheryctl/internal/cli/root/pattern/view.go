@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"regexp"
 
 	"github.com/ghodss/yaml"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
@@ -45,9 +44,7 @@ mesheryctl pattern view [pattern-name | ID]
 			if viewAllFlag {
 				return errors.New("-a cannot be used when [pattern-name|pattern-id] is specified")
 			}
-			pattern = args[0]
-			// check if the pattern argument is a valid uuid v4 string
-			isID, err = regexp.MatchString("^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-4[a-fA-F0-9]{3}-[8|9|aA|bB][a-fA-F0-9]{3}-[a-fA-F0-9]{12}$", pattern)
+			pattern, isID, err = utils.Valid(args[0], "pattern")
 			if err != nil {
 				return err
 			}
