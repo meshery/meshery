@@ -107,7 +107,7 @@
     "set-value": "^4.0.1",
     "styled-jsx": "^4.0.1",
     "subscriptions-transport-ws": "^0.9.19",
-    "tar": "^6.1.11",
+    "tar": "^6.1.12",
     "universal-cookie": "^4.0.4",
     "uuid": "^8.3.2"
   },
