@@ -27,7 +27,7 @@ var offboardCmd = &cobra.Command{
 mesheryctl app offboard -f [filepath]
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if file == "" {
+		if cmd.Flags().Changed("file") && file == "" {
 			const errMsg = `Usage: mesheryctl app offboard -f [filepath]`
 			return fmt.Errorf("no file path provided \n\n%v", errMsg)
 		}
@@ -38,6 +38,25 @@ mesheryctl app offboard -f [filepath]
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			return errors.Wrap(err, "error processing config")
+		}
+
+		app := ""
+		isID := false
+		if len(args) > 0 {
+			app, isID, err = utils.Valid(args[0], "application")
+			if err != nil {
+				return err
+			}
+		}
+
+		// Delete the app using the id
+		if isID {
+			err := utils.DeleteConfiguration(app, "application")
+			if err != nil {
+				return errors.Wrap(err, utils.AppError(fmt.Sprintf("failed to delete application %s", args[0])))
+			}
+			utils.Log.Info("Application ", args[0], " deleted successfully")
+			return nil
 		}
 
 		deployURL := mctlCfg.GetBaseMesheryURL() + "/api/application/deploy"

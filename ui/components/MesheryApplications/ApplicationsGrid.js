@@ -91,12 +91,13 @@ function MesheryApplicationGrid({ applications=[],handleDeploy, handleUnDeploy, 
   });
 
   const handleModalClose = () => {
-    setModalOpen({
+    setModalOpen((prevState) => ({
+      ...prevState,
       open : false,
       application_file : null,
       name : "",
       count : 0
-    });
+    } ))
   }
 
   const handleModalOpen = (app, isDeploy) => {
