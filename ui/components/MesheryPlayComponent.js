@@ -14,29 +14,45 @@ import { setAdapter } from "../lib/store";
 
 const styles = (theme) => ({
   icon : { fontSize : 20, },
-  playRoot : { padding : theme.spacing(0),
-    marginBottom : theme.spacing(2), },
-  buttons : { display : "flex",
-    justifyContent : "flex-end", },
-  button : { marginTop : theme.spacing(3),
-    marginLeft : theme.spacing(1), },
+  playRoot : {
+    padding : theme.spacing(0),
+    marginBottom : theme.spacing(2),
+  },
+  buttons : {
+    display : "flex",
+    justifyContent : "flex-end",
+  },
+  button : {
+    marginTop : theme.spacing(3),
+    marginLeft : theme.spacing(1),
+  },
   margin : { margin : theme.spacing(1), },
-  alreadyConfigured : { textAlign : "center",
-    padding : theme.spacing(20), },
-  colorSwitchBase : { color : blue[300],
-    "&$colorChecked" : { color : blue[500],
-      "& + $colorBar" : { backgroundColor : blue[500], }, }, },
+  alreadyConfigured : {
+    textAlign : "center",
+    padding : theme.spacing(20),
+  },
+  colorSwitchBase : {
+    color : blue[300],
+    "&$colorChecked" : {
+      color : blue[500],
+      "& + $colorBar" : { backgroundColor : blue[500], },
+    },
+  },
   colorBar : {},
   colorChecked : {},
-  uploadButton : { margin : theme.spacing(1),
-    marginTop : theme.spacing(3), },
+  uploadButton : {
+    margin : theme.spacing(1),
+    marginTop : theme.spacing(3),
+  },
   fileLabel : { width : "100%", },
   editorContainer : { width : "100%", },
   deleteLabel : { paddingRight : theme.spacing(2), },
   alignRight : { textAlign : "right", },
-  expTitleIcon : { width : theme.spacing(3),
+  expTitleIcon : {
+    width : theme.spacing(3),
     display : "inline",
-    verticalAlign : "middle", },
+    verticalAlign : "middle",
+  },
   expIstioTitleIcon : {
     width : theme.spacing(2),
     display : "inline",
@@ -44,19 +60,23 @@ const styles = (theme) => ({
     marginLeft : theme.spacing(0.5),
     marginRight : theme.spacing(0.5),
   },
-  expTitle : { display : "inline",
+  expTitle : {
+    display : "inline",
     verticalAlign : "middle",
-    marginLeft : theme.spacing(1), },
-  paneSection : { backgroundColor : "#fff",
+    marginLeft : theme.spacing(1),
+  },
+  paneSection : {
+    backgroundColor : theme.palette.secondary.elevatedComponents,
     padding : theme.spacing(2.5),
-    borderRadius : 4, },
+    borderRadius : 4,
+  },
 });
 
 class MesheryPlayComponent extends React.Component {
   constructor(props) {
     super(props);
 
-    const {  meshAdapters } = props;
+    const { meshAdapters } = props;
     let adapter = {};
     if (meshAdapters && meshAdapters.size > 0) {
       adapter = meshAdapters[0];
@@ -66,7 +86,7 @@ class MesheryPlayComponent extends React.Component {
     };
   }
 
-  handleRouteChange =  () => {
+  handleRouteChange = () => {
     const queryParam = this.props?.router?.query?.adapter;
     if (queryParam) {
       const selectedAdapter = this.props.meshAdapters.find(({ adapter_location }) => adapter_location === queryParam);
@@ -114,7 +134,7 @@ class MesheryPlayComponent extends React.Component {
   handleAdapterChange = () => {
     const self = this;
     return (event) => {
-      const { setAdapter,meshAdapters } = self.props;
+      const { setAdapter, meshAdapters } = self.props;
       if (event.target.value !== "") {
         const selectedAdapter = meshAdapters.filter(({ adapter_location }) => adapter_location === event.target.value);
         if (selectedAdapter && selectedAdapter.size === 1) {
@@ -149,7 +169,7 @@ class MesheryPlayComponent extends React.Component {
   }
 
   render() {
-    const { classes,  meshAdapters } = this.props;
+    const { classes, meshAdapters } = this.props;
     let { adapter } = this.state;
 
     if (meshAdapters.size === 0) {

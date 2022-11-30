@@ -1258,7 +1258,7 @@ class DashboardComponent extends React.Component {
                 flexDirection : "column",
               }}
             >
-              <Typography style={{ fontSize : "1.5rem", marginBottom : "2rem", color : "#FAFAFA" }} align="center" >
+              <Typography style={{ fontSize : "1.5rem", marginBottom : "2rem" }} align="center" >
                 {this.emptyStateMessageForServiceMeshesInfo()}
               </Typography>
               <Button

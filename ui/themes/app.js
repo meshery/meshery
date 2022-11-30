@@ -25,6 +25,7 @@ export var darkTheme = createTheme({
       main : '#EE5351',
       dark : '#121212',
       mainBackground : '#202020',
+      elevatedComponents : '#202020'
     },
   },
   p : {
@@ -171,6 +172,7 @@ let theme = createTheme({
       main : '#EE5351',
       dark : '#455a64',
       mainBackground : '#396679',
+      elevatedComponents : '#FFF'
     },
   },
   shape : { borderRadius : 8, },
