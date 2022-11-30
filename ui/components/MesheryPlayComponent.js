@@ -1,9 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
 import NoSsr from "@material-ui/core/NoSsr";
-import {
-  withStyles, Button, Divider, MenuItem, TextField, Grid
-} from "@material-ui/core";
+import { withStyles, Button, Divider, MenuItem, TextField, Grid } from "@material-ui/core";
 import { blue } from "@material-ui/core/colors";
 import PropTypes from "prop-types";
 import { withRouter } from "next/router";
@@ -91,34 +89,32 @@ class MesheryPlayComponent extends React.Component {
     if (queryParam) {
       const selectedAdapter = this.props.meshAdapters.find(({ adapter_location }) => adapter_location === queryParam);
       if (selectedAdapter) {
-        this.setState({ adapter : selectedAdapter })
+        this.setState({ adapter : selectedAdapter });
       }
     } else if (this.props.meshAdapters.size > 0) {
-      this.setState({ adapter : this.props.meshAdapters.get(0) })
+      this.setState({ adapter : this.props.meshAdapters.get(0) });
     }
-  }
+  };
 
   componentDidMount() {
     const { router } = this.props;
-    router.events.on('routeChangeComplete', this.handleRouteChange)
+    router.events.on("routeChangeComplete", this.handleRouteChange);
   }
 
   componentDidUpdate(prevProps) {
     // update the adapter when the meshadapters props are changed
-    if (prevProps.meshAdapters?.size !== this.props.meshAdapters?.size
-      && this.props.meshAdapters.size > 0
-    ) {
+    if (prevProps.meshAdapters?.size !== this.props.meshAdapters?.size && this.props.meshAdapters.size > 0) {
       this.handleRouteChange();
     }
   }
 
   componentWillUnmount() {
-    this.props.router.events.off('routeChangeComplete', this.handleRouteChange)
+    this.props.router.events.off("routeChangeComplete", this.handleRouteChange);
   }
 
   handleConfigure = () => {
     this.props.router.push("/settings#service-mesh");
-  }
+  };
 
   pickImage(adapter) {
     const { classes } = this.props;
@@ -208,12 +204,23 @@ class MesheryPlayComponent extends React.Component {
                   name="adapter_name"
                   label="Select Service Mesh Type"
                   fullWidth
-                  value={adapter && adapter.adapter_location
-                    ? adapter.adapter_location
-                    : ""}
+                  value={adapter && adapter.adapter_location ? adapter.adapter_location : ""}
                   margin="normal"
                   variant="outlined"
                   onChange={this.handleAdapterChange()}
+                  SelectProps={{
+                    MenuProps : {
+                      anchorOrigin : {
+                        vertical : "bottom",
+                        horizontal : "left",
+                      },
+                      transformOrigin : {
+                        vertical : "top",
+                        horizontal : "left",
+                      },
+                      getContentAnchorEl : null,
+                    }
+                  }}
                 >
                   {meshAdapters.map((ada) => (
                     <MenuItem key={`${ada.adapter_location}_${new Date().getTime()}`} value={ada.adapter_location}>
@@ -237,10 +244,10 @@ class MesheryPlayComponent extends React.Component {
   }
 }
 
-MesheryPlayComponent.propTypes = { classes : PropTypes.object.isRequired, };
+MesheryPlayComponent.propTypes = { classes : PropTypes.object.isRequired };
 
 const mapDispatchToProps = (dispatch) => ({
-  setAdapter : bindActionCreators(setAdapter, dispatch)
+  setAdapter : bindActionCreators(setAdapter, dispatch),
 });
 
 const mapStateToProps = (state) => {
@@ -252,3 +259,4 @@ const mapStateToProps = (state) => {
 };
 
 export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(withRouter(MesheryPlayComponent)));
+
