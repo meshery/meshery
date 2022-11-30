@@ -8,7 +8,7 @@ import {
   Button, Grid, Paper, Typography
 } from "@material-ui/core";
 import IconButton from "@material-ui/core/IconButton";
-import { makeStyles, useTheme } from "@material-ui/core/styles";
+import { useTheme, withStyles } from "@material-ui/core/styles";
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import CloseIcon from "@material-ui/icons/Close";
 import { withRouter } from "next/router";
@@ -22,7 +22,7 @@ import fetchAllResults from "../graphql/queries/FetchAllResultsQuery";
 // const MESHERY_PERFORMANCE_URL = "/api/user/performance/profiles";
 // const MESHERY_PERFORMANCE_TEST_URL = "/api/user/performance/profiles/results";
 
-const useStyles = makeStyles((theme) => ({
+const styles = (theme) => ({
   paper : { padding : "1rem" },
   resultContainer : {
     display : "flex",
@@ -65,13 +65,12 @@ const useStyles = makeStyles((theme) => ({
   profileText : {
     color : theme.palette.type === 'dark' ? "rgba(255, 255, 255, 0.54)" : "rgba(0, 0, 0, 0.54)",
   },
-}));
+});
 
-function Dashboard({ updateProgress, enqueueSnackbar, closeSnackbar, grafana, router }) {
+function Dashboard({ updateProgress, enqueueSnackbar, closeSnackbar, grafana, router, classes }) {
   const [profiles, setProfiles] = useState({ count : 0, profiles : [] });
   const [tests, setTests] = useState({ count : 0, tests : [] });
   const [runTest, setRunTest] = useState(false);
-  const classes = useStyles();
 
   const theme = useTheme();
   const matches = useMediaQuery(theme.breakpoints.up("xs"))
@@ -245,4 +244,4 @@ const mapStateToProps = (st) => {
 
 const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(updateProgress, dispatch), });
 
-export default connect(mapStateToProps, mapDispatchToProps)(withRouter(withSnackbar(Dashboard)));
+export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(withRouter(withSnackbar(Dashboard))));

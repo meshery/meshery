@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { withStyles, makeStyles } from "@material-ui/core/styles";
+import { withStyles } from "@material-ui/core/styles";
 // import { createTheme } from '@material-ui/core/styles';
 import {
   NoSsr,
@@ -68,12 +68,6 @@ const styles = (theme) => ({
     justifySelf : "flex-end",
     paddingLeft : "1rem"
   },
-  // text : {
-  //   padding : "5px"
-  // }
-});
-
-const useStyles = makeStyles(() => ({
   ymlDialogTitle : {
     display : "flex",
     alignItems : "center"
@@ -88,8 +82,10 @@ const useStyles = makeStyles(() => ({
       height : '100%',
     }
   },
-
-}))
+  // text : {
+  //   padding : "5px"
+  // }
+});
 
 function TooltipIcon({ children, onClick, title }) {
   return (
@@ -101,8 +97,7 @@ function TooltipIcon({ children, onClick, title }) {
   )
 }
 
-function YAMLEditor({ filter, onClose, onSubmit }) {
-  const classes = useStyles();
+function YAMLEditor({ filter, onClose, onSubmit, classes }) {
   const [yaml, setYaml] = useState("");
   const [fullScreen, setFullScreen] = useState(false);
 
@@ -852,7 +847,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
 
       <NoSsr>
         {selectedRowData && Object.keys(selectedRowData).length > 0 && (
-          <YAMLEditor filter={selectedRowData} onClose={resetSelectedRowData()} onSubmit={handleSubmit} />
+          <YAMLEditor filter={selectedRowData} onClose={resetSelectedRowData()} onSubmit={handleSubmit} classes={classes} />
         )}
         <div className={classes.topToolbar} >
           {!selectedFilter.show && (filters.length > 0 || viewType === "table") && <div className={classes.createButton}>

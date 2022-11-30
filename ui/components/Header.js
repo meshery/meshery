@@ -38,7 +38,6 @@ import { CapabilitiesRegistry as CapabilityRegistryClass } from '../utils/disabl
 import _ from 'lodash';
 import { SETTINGS } from '../constants/navigator';
 import { cursorNotAllowed, disabledStyle } from '../css/disableComponent.styles';
-import NavigationWrap from "./navigation.style";
 import PromptComponent from './PromptComponent';
 
 const lightColor = 'rgba(255, 255, 255, 0.7)';
@@ -60,6 +59,7 @@ const styles = (theme) => ({
   userContainer : {
     paddingLeft : 1,
     display : 'flex',
+
 
     alignItems : 'center'
   },
@@ -86,6 +86,7 @@ const styles = (theme) => ({
     zIndex : theme.zIndex.drawer + 1,
   },
   toolbarOnDrawerClosed : {
+
     minHeight : 59,
     padding : theme.spacing(2.4),
     paddingLeft : 34,
@@ -163,8 +164,35 @@ const styles = (theme) => ({
   },
   searchIcon : {
     width : theme.spacing(3.5),
-  }
-});
+  },
+  darkThemeToggle : {
+
+    marginLeft : "1.5em",
+
+  },
+
+  toggle : {
+    appearance : "none",
+    outline : "none",
+    cursor : "pointer",
+    width : "1.5rem",
+    height : "1.5rem",
+    boxShadow : "inset calc(1.5rem * 0.33) calc(1.5rem * -0.25) 0",
+    borderRadius : "999px",
+    color : "#00B39F",
+    transition : "all 500ms",
+    zIndex : "1",
+    '&:checked' : {
+      width : "1.5rem",
+      height : "1.5rem",
+      borderRadius : "50%",
+      background : "orange",
+      boxShadow : "0 0 10px orange, 0 0 60px orange,0 0 200px yellow, inset 0 0 80px yellow",
+    }
+  },
+
+}
+);
 
 const CONTROLLERS = {
   BROKER : 0,
@@ -189,8 +217,8 @@ async function loadActiveK8sContexts() {
     console.error("An error occurred while loading k8sconfig", e)
   }
 }
-function ThemeTogller({
-  theme, themeSetter
+function ThemeToggler({
+  theme, themeSetter, classes
 }) {
   const [themeToggle, setthemeToggle] = useState(false);
   const defaultTheme = "light";
@@ -217,12 +245,10 @@ function ThemeTogller({
     theme === "light" ? themeSetter("dark") : themeSetter("light");
   };
 
-
-
   return (
     <>
-      <div className="dark-theme-toggle">
-        <input id="toggle" className="toggle" type="checkbox" onChange={themeToggler} checked={!themeToggle} />
+      <div className={classes.darkThemeToggle}>
+        <input id="toggle" className={classes.toggle} type="checkbox" onChange={themeToggler} checked={!themeToggle} />
       </div>
     </>
   )
@@ -523,77 +549,70 @@ class Header extends React.Component {
     return (
       <NoSsr>
         <React.Fragment>
-          <NavigationWrap style={{
-            position : "sticky",
-            top : "0",
-            left : "auto",
-            right : "0",
-            zIndex : "1201",
-          }}>
-            <AppBar color="primary" position="sticky" elevation={2} className={onDrawerCollapse
-              ? classes.appBarOnDrawerClosed
-              : classes.appBarOnDrawerOpen}>
-              <Toolbar className={onDrawerCollapse
-                ? classes.toolbarOnDrawerClosed
-                : classes.toolbarOnDrawerOpen}>
-                <Grid container alignItems="center" >
-                  <Hidden smUp>
-                    <Grid item>
-                      <IconButton
-                        color="inherit"
-                        aria-label="Open drawer"
-                        onClick={onDrawerToggle}
-                        className={classes.menuButton}
-                      >
-                        <MenuIcon className={classes.headerIcons} />
-                      </IconButton>
-                    </Grid>
-                  </Hidden>
-                  <Grid item xs container alignItems="center" className={classes.pageTitleWrapper}>
-                    <Typography color="inherit" variant="h5" className={classes.pageTitle} data-cy="headerPageTitle">
-                      {title}{isBeta ? <sup className={classes.betaBadge}>BETA</sup> : ""}
-                    </Typography>
+
+          <AppBar color="primary" position="sticky" elevation={2} className={onDrawerCollapse
+            ? classes.appBarOnDrawerClosed
+            : classes.appBarOnDrawerOpen}>
+            <Toolbar className={onDrawerCollapse
+              ? classes.toolbarOnDrawerClosed
+              : classes.toolbarOnDrawerOpen}>
+              <Grid container alignItems="center" >
+                <Hidden smUp>
+                  <Grid item>
+                    <IconButton
+                      color="inherit"
+                      aria-label="Open drawer"
+                      onClick={onDrawerToggle}
+                      className={classes.menuButton}
+                    >
+                      <MenuIcon className={classes.headerIcons} />
+                    </IconButton>
                   </Grid>
-                  <Grid item className={classes.userContainer}>
-                    <div className={classes.userSpan} style={{ position : "relative" }}>
-                      <K8sContextMenu
-                        classes={classes}
-                        contexts={this.props.contexts}
-                        activeContexts={this.props.activeContexts}
-                        setActiveContexts={this.props.setActiveContexts}
-                        searchContexts={this.props.searchContexts}
-                        runningStatus={{ operatorStatus : this.props.operatorState, meshSyncStatus : this.props.meshSyncState }}
-                        updateK8SConfig={this.props.updateK8SConfig}
-                        updateProgress={this.props.updateProgress}
-                      />
-                    </div>
+                </Hidden>
+                <Grid item xs container alignItems="center" className={classes.pageTitleWrapper}>
+                  <Typography color="inherit" variant="h5" className={classes.pageTitle} data-cy="headerPageTitle">
+                    {title}{isBeta ? <sup className={classes.betaBadge}>BETA</sup> : ""}
+                  </Typography>
+                </Grid>
+                <Grid item className={classes.userContainer}>
+                  <div className={classes.userSpan} style={{ position : "relative" }}>
+                    <K8sContextMenu
+                      classes={classes}
+                      contexts={this.props.contexts}
+                      activeContexts={this.props.activeContexts}
+                      setActiveContexts={this.props.setActiveContexts}
+                      searchContexts={this.props.searchContexts}
+                      runningStatus={{ operatorStatus : this.props.operatorState, meshSyncStatus : this.props.meshSyncState }}
+                      updateK8SConfig={this.props.updateK8SConfig}
+                      updateProgress={this.props.updateProgress}
+                    />
+                  </div>
 
-                    <div data-test="settings-button" style={!this.state.capabilityregistryObj?.isHeaderComponentEnabled([SETTINGS]) ? cursorNotAllowed : {}}>
-                      <IconButton style={!this.state.capabilityregistryObj?.isHeaderComponentEnabled([SETTINGS]) ? disabledStyle : {}} color="inherit">
-                        <Link href="/settings">
-                          <SettingsIcon className={classes.headerIcons + " " + (title === 'Settings'
-                            ? classes.itemActiveItem
-                            : '')} />
-                        </Link>
-                      </IconButton>
-                    </div>
+                  <div data-test="settings-button" style={!this.state.capabilityregistryObj?.isHeaderComponentEnabled([SETTINGS]) ? cursorNotAllowed : {}}>
+                    <IconButton style={!this.state.capabilityregistryObj?.isHeaderComponentEnabled([SETTINGS]) ? disabledStyle : {}} color="inherit">
+                      <Link href="/settings">
+                        <SettingsIcon className={classes.headerIcons + " " + (title === 'Settings'
+                          ? classes.itemActiveItem
+                          : '')} />
+                      </Link>
+                    </IconButton>
+                  </div>
 
 
-                    <div data-test="notification-button">
-                      <MesheryNotification />
-                    </div>
-                    <span className={classes.userSpan}>
-                      <User color="inherit" iconButtonClassName={classes.iconButtonAvatar} avatarClassName={classes.avatar} updateExtensionType={this.props.updateExtensionType} />
-                    </span>
-                    {/* <div className="dark-theme-toggle">
+                  <div data-test="notification-button">
+                    <MesheryNotification />
+                  </div>
+                  <span className={classes.userSpan}>
+                    <User color="inherit" iconButtonClassName={classes.iconButtonAvatar} avatarClassName={classes.avatar} updateExtensionType={this.props.updateExtensionType} />
+                  </span>
+                  {/* <div className="dark-theme-toggle">
                       <input id="toggle" className="toggle" type="checkbox" onChange={themeToggler} checked={!themeToggle} />
                     </div> */}
-                    <ThemeTogller theme={theme} themeSetter={themeSetter} />
-                  </Grid>
+                  <ThemeToggler classes={classes} theme={theme} themeSetter={themeSetter} />
                 </Grid>
-              </Toolbar>
-            </AppBar>
-          </NavigationWrap>
+              </Grid>
+            </Toolbar>
+          </AppBar>
         </React.Fragment>
       </NoSsr >
     );
