@@ -5,16 +5,16 @@ import flush from "styled-jsx/server";
 
 /**
  * setupGA setups up the google analtyics in meshery UI
- * 
+ *
  * This function may not be invoked here (server side) as "window" object does
  * not exist on the server side. Hence this function is stringified and
  * forced to execute on the client side only.
- * 
+ *
  */
 function setupGA() {
   window.dataLayer = window.dataLayer || [];
 
-  function gtag() { 
+  function gtag() {
     dataLayer.push(arguments);
   }
 
@@ -37,9 +37,13 @@ class MesheryDocument extends Document {
       <Html lang="en" dir="ltr">
         <Head>
           <meta charSet="utf-8" />
+          {/**
+           * content="no-referrer" included to avoid 403 errors on Google avatars
+          */}
+          <meta name="referrer" content="no-referrer" />
           <link rel="icon" href="/static/favicon.png" />
 
-          
+
 
           <script async src={`https://www.googletagmanager.com/gtag/js?id=G-8Q51RLT8TZ`} />
 
@@ -49,7 +53,7 @@ class MesheryDocument extends Document {
             }}
           />
 
-        {/** 
+        {/**
           * For hiding the scrollbar without losing the scroll functionality
           * add the class "hide-scrollbar" to hide scrollbar for that element
           * Only applicable for Chrome, safari and newest version of Opera
@@ -64,7 +68,7 @@ class MesheryDocument extends Document {
           "}
         </style>
 
-        
+
         </Head>
         <body>
           <Main />
