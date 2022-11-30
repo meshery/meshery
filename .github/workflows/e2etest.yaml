@@ -17,9 +17,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v2   
+        uses: actions/checkout@v2.5.0
       - name: Uploading file
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: patternfile
           path: ./.github/samples/emojivoto.yaml

@@ -58,7 +58,7 @@ az aks get-credentials --resource-group [RESOURCE_GROUP] --name [AKS_SERVICE_NAM
 4. Set your cluster context and check your cluster-info
 <pre class="codeblock-pre"><div class="codeblock">
 <div class="clipboardjs">
-kubectl set-context AKS_SERVICE_NAME
+kubectl config set-context AKS_SERVICE_NAME
 kubectl cluster-info
 </div></div>
 </pre>
