@@ -336,10 +336,18 @@ func (l *RemoteProvider) GetSession(req *http.Request) error {
 		return err
 	}
 	jwtClaims, err := l.VerifyToken(ts)
+	if err != nil {
+		logrus.Error(err)
+		return err
+	}
+	if jwtClaims == nil {
+		logrus.Error("invalid JWT claim found")
+		return fmt.Errorf("invalid or nil JWT claim found")
+	}
 	// we verify the signature of the token and check if it has exp claim,
 	// if not present it's an infinite JWT, hence skip the introspect step
-	// 
-	if ((*jwtClaims)["exp"] != nil) {
+	//
+	if (*jwtClaims)["exp"] != nil {
 		err = l.introspectToken(ts)
 		if err != nil {
 			return err

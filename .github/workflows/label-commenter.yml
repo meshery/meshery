@@ -24,4 +24,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Label Commenter
-        uses: peaceiris/actions-label-commenter@v1
+        uses: peaceiris/actions-label-commenter@@v1.10.0

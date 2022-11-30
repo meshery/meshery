@@ -1,8 +1,8 @@
 import React from "react";
 import { IconButton, InputAdornment, makeStyles, TextField } from "@material-ui/core";
-import HelpOutlineIcon from "../HelpOutlineIcon";
 import { EnlargedTextTooltip, EnlargedTextErrorTooltip } from "../EnlargedTextTooltip";
-import { ErrorOutline } from "@material-ui/icons";
+import HelpOutlineIcon from "../../../../assets/icons/HelpOutlineIcon";
+import ErrorOutlineIcon from "../../../../assets/icons/ErrorOutlineIcon";
 
 const BaseInput = (props) => {
   const additional = props.schema?.__additional_property; // check if the field is additional
@@ -54,19 +54,14 @@ const BaseInput = (props) => {
 
                 }>
                   <IconButton component="span" size="small">
-                    <ErrorOutline style={{
-                      color : "red",
-                      fontSize : ".95rem",
-                      verticalAlign : "middle"
-                    }}
-                    />
+                    <ErrorOutlineIcon width="14px" height="14px" fill="#B32700" style={{ verticalAlign : "middle" }} />
                   </IconButton>
                 </EnlargedTextErrorTooltip>
               )}
               {props.schema?.description && (
                 <EnlargedTextTooltip title={props.schema?.description}>
                   <IconButton component="span" size="small">
-                    <HelpOutlineIcon />
+                    <HelpOutlineIcon width="14px" height="14px" fill="black" style={{ verticalAlign : "middle" }} />
                   </IconButton>
                 </EnlargedTextTooltip>
               )}

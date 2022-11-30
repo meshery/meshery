@@ -1,8 +1,7 @@
-**Description**
+**Notes for Reviewers**
 
 This PR fixes #
 
-**Notes for Reviewers**
 
 
 **[Signed commits](https://github.com/meshery/meshery/blob/master/CONTRIBUTING.md#signing-off-on-commits-developer-certificate-of-origin)**

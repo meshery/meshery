@@ -177,6 +177,17 @@ export const rjsfTheme = createTheme({
         },
       },
     },
+    MuiCheckbox : {
+      // checkboxes white background
+      root : {
+        marginLeft : "4px",
+        "& > *:nth-child(1)" : {
+          backgroundColor : "#ffffff",
+          width : "1rem",
+          height : "1rem"
+        },
+      }
+    },
     MuiIconButton : {
       root : {
         cursor : "default"
