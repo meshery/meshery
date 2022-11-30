@@ -31,7 +31,7 @@ import MUIDataTable from "mui-datatables";
 import Popup from "./Popup";
 
 const styles = (theme) => ({
-  rootClass : { backgroundColor : theme.palette.type == 'dark' ? "#303030" : "#eaeff1", },
+  rootClass : { backgroundColor : theme.palette.secondary.elevatedComponents2, },
   datatable : {
     boxShadow : "none",
   },
@@ -84,7 +84,7 @@ const styles = (theme) => ({
     color : "#000",
   },
   dashboardSection : {
-    backgroundColor : theme.palette.type === 'dark' ? "#212121" : "#fff",
+    backgroundColor : theme.palette.secondary.elevatedComponents,
     padding : theme.spacing(2),
     borderRadius : 4,
     height : "100%",
@@ -1291,7 +1291,7 @@ class DashboardComponent extends React.Component {
                 flexDirection : "column",
               }}
             >
-              <Typography style={{ fontSize : "1.5rem", marginBottom : "2rem", colr : "#FAFAFA" }} align="center" >
+              <Typography style={{ fontSize : "1.5rem", marginBottom : "2rem" }} align="center" >
                 {this.emptyStateMessageForClusterResources()}
               </Typography>
               <Button

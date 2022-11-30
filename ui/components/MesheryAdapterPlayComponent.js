@@ -31,7 +31,7 @@ import ReactSelectWrapper from "./ReactSelectWrapper";
 import ConfirmationMsg from "./ConfirmationModal";
 
 const styles = (theme) => ({
-  smWrapper : { backgroundColor : theme.palette.type === 'dark' ? "#303030" : "#eaeff1", },
+  smWrapper : { backgroundColor : theme.palette.secondary.elevatedComponents2, },
   buttons : { width : "100%", },
   button : {
     marginTop : theme.spacing(3),

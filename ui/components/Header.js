@@ -129,7 +129,6 @@ const styles = (theme) => ({
     height : 24
   },
   Chip : {
-    backgroundColor : "white",
     flexGrow : 1,
     cursor : "pointer",
     "& .MuiChip-label" : {
@@ -137,7 +136,7 @@ const styles = (theme) => ({
     }
   },
   cMenuContainer : {
-    backgroundColor : "revert",
+    backgroundColor : theme.palette.type === 'dark' ? "#202020" : "#eeeeee",
     marginTop : "-0.7rem",
     borderRadius : "3px",
     padding : "1rem",
@@ -271,7 +270,6 @@ function K8sContextMenu({
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
   const styleSlider = {
-    backgroundColor : "#EEEEEE",
     position : "absolute",
     left : "-5rem",
     zIndex : "-1",

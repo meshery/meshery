@@ -21,7 +21,7 @@ const styles = (theme) => ({
     borderRadius : theme.spacing(1),
     transformStyle : "preserve-3d",
     boxShadow : "0 4px 8px 0 rgba(0,0,0,0.2)",
-    backgroundColor : theme.palette.type == 'dark' ? "#212121" : "#fff",
+    backgroundColor : theme.palette.secondary.elevatedComponents,
     minHeight : "250px",
     position : "relative",
   },
