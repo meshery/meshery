@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useLayoutEffect } from 'react';
 import PropTypes from 'prop-types';
 import AppBar from '@material-ui/core/AppBar';
 import Grid from '@material-ui/core/Grid';
@@ -216,42 +216,23 @@ async function loadActiveK8sContexts() {
     console.error("An error occurred while loading k8sconfig", e)
   }
 }
-// function ThemeToggler({
-//   theme, themeSetter, classes
-// }) {
-//   const [themeToggle, setthemeToggle] = useState(false);
-//   const defaultTheme = "light";
-//   const handle = () => {
-//     theme === "dark" ? setthemeToggle(true) : setthemeToggle(false);
+function LoadTheme({
+  themeSetter
+}) {
+  const defaultTheme = "light";
+  useLayoutEffect(() => {
+    if (localStorage.getItem("Theme") === null) {
+      themeSetter(defaultTheme);
+    } else {
+      themeSetter(localStorage.getItem("Theme"));
+    }
+  }, []);
+  return (
+    <>
+    </>
+  )
+}
 
-//     localStorage.setItem("Theme", theme);
-
-//   };
-
-//   useLayoutEffect(() => {
-//     if (localStorage.getItem("Theme") === null) {
-//       themeSetter(defaultTheme);
-//     } else {
-//       themeSetter(localStorage.getItem("Theme"));
-//     }
-
-//   }, []);
-
-//   useLayoutEffect(() => {
-//     handle();
-//   }, [theme]);
-//   const themeToggler = () => {
-//     theme === "light" ? themeSetter("dark") : themeSetter("light");
-//   };
-
-//   return (
-//     <>
-//       <div className={classes.darkThemeToggle}>
-//         <input id="toggle" className={classes.toggle} type="checkbox" onChange={themeToggler} checked={!themeToggle} />
-//       </div>
-//     </>
-//   )
-// }
 function K8sContextMenu({
   classes = {},
   contexts = {},
@@ -522,7 +503,6 @@ class Header extends React.Component {
       capabilityregistryObj : null
     }
   }
-
   componentDidMount() {
     this._isMounted = true;
     const brokerStatusSub = subscribeBrokerStatusEvents(data => {
@@ -536,18 +516,23 @@ class Header extends React.Component {
     if (!_.isEqual(prevProps.capabilitiesRegistry, this.props.capabilitiesRegistry)) {
       this.setState({ capabilityregistryObj : new CapabilityRegistryClass(this.props.capabilitiesRegistry) });
     }
+
+
+
+
   }
 
   componentWillUnmount = () => {
     this._isMounted = false;
   }
+
   render() {
     const { classes, title, onDrawerToggle, isBeta, theme, themeSetter, onDrawerCollapse } = this.props;
 
     return (
       <NoSsr>
         <React.Fragment>
-
+          <LoadTheme theme={theme} themeSetter={themeSetter} />
           <AppBar color="primary" position="sticky" elevation={2} className={onDrawerCollapse
             ? classes.appBarOnDrawerClosed
             : classes.appBarOnDrawerOpen}>
@@ -606,7 +591,7 @@ class Header extends React.Component {
                   {/* <div className="dark-theme-toggle">
                       <input id="toggle" className="toggle" type="checkbox" onChange={themeToggler} checked={!themeToggle} />
                     </div> */}
-                  {/* <ThemeToggler classes={classes} theme={theme} themeSetter={themeSetter} /> */}
+
                 </Grid>
               </Grid>
             </Toolbar>
