@@ -65,6 +65,12 @@ const styles = (theme) => ({
   profileText : {
     color : theme.palette.type === 'dark' ? "rgba(255, 255, 255, 0.54)" : "rgba(0, 0, 0, 0.54)",
   },
+  resultNum : {
+    color : theme.palette.type === 'dark' ? "rgb(57, 102, 121)" : "#607d8b",
+  },
+  profileNum : {
+    color : theme.palette.type === 'dark' ? "rgb(57, 102, 121)" : "#607d8b",
+  },
 });
 
 function Dashboard({ updateProgress, enqueueSnackbar, closeSnackbar, grafana, router, classes }) {
@@ -173,7 +179,7 @@ function Dashboard({ updateProgress, enqueueSnackbar, closeSnackbar, grafana, ro
               <div className={classes.resultContainer}>
                 <div className={classes.paper}>
                   <div style={{ display : "flex", alignItems : "center", height : "6.8rem" }}>
-                    <Typography variant="h2" component="div" color="primary" style={{ marginRight : "0.75rem" }}>
+                    <Typography className={classes.resultNum} variant="h2" component="div" color="primary" style={{ marginRight : "0.75rem" }}>
                       {(tests.count).toLocaleString('en')}
                     </Typography>
                     <Typography variant="body1" className={classes.resultText} component="div">
@@ -190,7 +196,7 @@ function Dashboard({ updateProgress, enqueueSnackbar, closeSnackbar, grafana, ro
                 <div className={classes.hSep} />
                 <div className={classes.paper}>
                   <div style={{ display : "flex", alignItems : "center", height : "6.8rem" }}>
-                    <Typography variant="h2" component="div" color="primary" style={{ marginRight : "0.75rem" }}>
+                    <Typography className={classes.profileNum} variant="h2" component="div" color="primary" style={{ marginRight : "0.75rem" }}>
                       {profiles.count}
                     </Typography>
                     <Typography variant="body1" className={classes.profileText} component="div">

@@ -65,20 +65,24 @@ const styles = (theme) => ({
 
     },
     "& .rbc-today" : {
-      backgroundColor : theme.palette.type === 'dark' ? "#505050" : "#eaf6ff;",
+      backgroundColor : theme.palette.type === 'dark' ? "#505050" : "#eaf6ff",
     },
     "& .rbc-day-slot .rbc-time-slot" : {
       borderTop : `1px solid ${theme.palette.type === 'dark' ? "#555555" : "#eaf6ff"}`,
     },
     "& .rbc-toolbar button.rbc-active" : {
-      backgroundColor : theme.palette.type === 'dark' ? "#505050" : "#eaf6ff;",
+      backgroundColor : theme.palette.type === 'dark' ? "#505050" : "#eaf6ff",
       color : theme.palette.type === 'dark' ? "white" : "black",
     },
     "& .rbc-toolbar button:hover" : {
       backgroundColor : theme.palette.type === 'dark' ? "rgba(0, 0, 0, 0.54)" : "rgba(255, 255, 255, 0.54)"
     },
     "& .rbc-toolbar button.rbc-active:hover" : {
-      backgroundColor : theme.palette.type === 'dark' ? "#909090" : "#eaf6ff;",
+      backgroundColor : theme.palette.type === 'dark' ? "#909090" : "#eaf6ff",
+    },
+    "& .rbc-toolbar button:focus " : {
+      backgroundColor : theme.palette.type === 'dark' ? "#505050" : "#eaf6ff",
+      color : theme.palette.type === 'dark' ? "white" : "black",
     },
   },
   resultText : {
