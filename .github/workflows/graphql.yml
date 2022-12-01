@@ -11,7 +11,8 @@ jobs:
     runs-on: ubuntu-latest
     if: github.repository == 'meshery/meshery'
     steps:
-      - uses: actions/checkout@master
+      - name: Checkout repo 🛎️
+        uses: actions/checkout@master
         with:
           token: ${{ secrets.GH_ACCESS_TOKEN }}
 
@@ -36,3 +37,4 @@ jobs:
           commit_options: "--signoff"
           commit_message: "[Docs] Generated documentation for GraphQL API"
           branch: master
+
