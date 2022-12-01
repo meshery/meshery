@@ -1,16 +1,13 @@
 import React from 'react';
 import Grid from '@material-ui/core/Grid';
-import { makeStyles } from '@material-ui/styles';
 import { canExpand } from '@rjsf/utils';
-import { Box, CssBaseline, IconButton, Typography, useTheme } from '@material-ui/core';
+import { Box, CssBaseline, IconButton, Typography, useTheme, withStyles } from '@material-ui/core';
 import AddIcon from '../../../../assets/icons/AddIcon';
 import { EnlargedTextTooltip } from '../EnlargedTextTooltip';
 import HelpOutlineIcon from '../../../../assets/icons/HelpOutlineIcon';
 import ExpandMoreIcon from '../../../../assets/icons/ExpandMoreIcon';
 import ExpandLessIcon from '../../../../assets/icons/ExpandLessIcon'
-import createBreakpoints from '@material-ui/core/styles/createBreakpoints'
-const breakpoints = createBreakpoints({});
-const useStyles = makeStyles((theme) => ({
+const styles = (theme) => ({
   objectFieldGrid : {
     // paddingLeft: "0.6rem",
     padding : ".5rem",
@@ -25,208 +22,8 @@ const useStyles = makeStyles((theme) => ({
     fontFamily : "inherit",
     fontSize : 13,
   },
-  props : {
-    MuiTextField : {
-      variant : 'outlined',
-      margin : 'dense',
-    },
-    MuiCheckbox : {
-      color : 'primary',
-    },
-    MuiMenu : {
-      variant : "outlined",
-    }
-  },
-  TopClass : {
 
-    MuiButton : {
-      textSecondary : {
-        color : "#00b39f",
-        "&:hover" : "00b39f"
-      }
-    },
-    MuiTextField : {
-      root : {
-        width : "calc(100% - 4px)",
-      }
-    },
-    MuiInputLabel : {
-      root : {
-        whiteSpace : "nowrap",
-        overflow : "hidden",
-        textOverflow : "ellipsis",
-        maxWidth : "60%",
-        height : "100%",
-        '&:hover' : {
-          overflow : "visible",
-        }
-      },
-      shrink : {
-        maxWidth : "100%",
-      }
-    },
-    MuiFormControl : {
-      root : {
-        marginTop : "0.3rem"
-      }
-    },
-    MuiBox : {
-      root : {
-        marginTop : 0
-      }
-    },
-    MuiDivider : {
-      root : {
-        height : "0.5px"
-      }
-    },
-    MuiFormLabel : {
-      root : {
-        color : "#333",
-        fontSize : "0.8rem",
-        textTransform : "capitalize"
-      }
-    },
-    MuiTypography : {
-      body1 : {
-        fontSize : '0.8rem',
-      },
-      h5 : {
-        textTransform : 'capitalize',
-        fontSize : '1.1rem',
-        fontWeight : "bold"
-      },
-      subtitle2 : {
-        fontSize : '0.8rem',
-        fontStyle : "italic",
-        color : "#565656"
-      },
-    },
-    MuiInputBase : {
-      root : {
-        fontSize : "0.8rem" // same as title
-      }
-    },
-    MuiTooltip : {
-      tooltip : {
-        backgroundColor : " #3C494F",
-        color : "#fff",
-        opacity : "100%",
-        fontSize : "14px",
-        borderRadius : "0.9375rem",
-        padding : "0.9rem",
-        zIndex : "99999999999"
-      },
-      popper : {
-        zIndex : "99999 !important"
-      }
-    },
-    MuiAccordionSummary : {
-      root : {
-        // border: "5px solid red",
-        backgroundColor : "rgba(242,242,242)",
-        borderBottom : "1px solid rgba(0, 0, 0, .125)",
-        marginBottom : -1,
-        maxHeight : "1.5rem",
-        "&$expanded" : {
-          minHeight : 56
-        }
-      },
-      content : {
-        // border: "5px solid green",
-        justifyContent : "space-between",
-        "&$expanded" : {
-          margin : "12px 0",
-          justifyContent : "space-between"
-        }
-      },
-    },
-    MuiAccordionDetails : {
-      root : {
-        padding : 16
-      }
-    },
-    MuiAccordion : {
-      root : {
-        border : "1px solid rgba(0, 0, 0, .125)",
-        boxShadow : "none",
-        "&:not(:last-child)" : {
-          borderBottom : 0
-        },
-        "&:before" : {
-          display : "none"
-        },
-        "&$expanded" : {
-          margin : "auto"
-        },
-        backgroundColor : "rgba(242,242,242)",
-      },
-    },
-    MuiGrid : {
-      root : {
-        "& > *" : {
-          border : 'none !important'
-        },
-        marginTop : '0.1rem !important',
-        overflow : "hidden",
-        alignSelf : "center",
-        textOverflow : "ellipsis",
-        '&:hover' : {
-          overflow : "visible",
-        },
-        // To scale the grid items on a particular screen size
-        [breakpoints.up('lg')] : {
-          "& > *:nth-child(2)" : {
-            "& > *:nth-child(1)" : {
-              "& > *:nth-child(2)" : {
-                justifyContent : 'space-around',
-              }
-            },
-          }
-        },
-      },
-    },
-    MuiCheckbox : {
-      // checkboxes white background
-      root : {
-        marginLeft : "4px",
-        "& > *:nth-child(1)" : {
-          backgroundColor : "#ffffff",
-          width : "1rem",
-          height : "1rem"
-        },
-      }
-    },
-    MuiIconButton : {
-      root : {
-        cursor : "default"
-      },
-      sizeSmall : {
-        padding : "1px"
-      }
-    },
-    MuiPaper : {
-      elevation0 : {
-        backgroundColor : "inherit",
-      },
-      elevation2 : {
-        boxShadow : "none"
-      }
-    },
-    "spacing-xs-2" : {
-      padding : 0,
-      "& > *" : {
-        paddingTop : "0 !important",
-        paddingBottom : "0 !important"
-      }
-    }
-  }
-
-
-
-}));
-
-
+});
 
 const ObjectFieldTemplate = ({
   description,
@@ -240,10 +37,11 @@ const ObjectFieldTemplate = ({
   schema,
   formData,
   onAddClick,
+  classes
 }) => {
   const additional = schema?.__additional_property; // check if the object is additional
-  const classes = useStyles();
   const theme = useTheme();
+
   // If the parent type is an `array`, then expand the current object.
   const [show, setShow] = React.useState(schema?.p_type ? true : false);
   properties.forEach((property, index) => {
@@ -347,4 +145,4 @@ const ObjectFieldTemplate = ({
   );
 };
 
-export default ObjectFieldTemplate;
+export default withStyles(styles)(ObjectFieldTemplate);

@@ -12,12 +12,12 @@ import "react-big-calendar/lib/css/react-big-calendar.css";
 import GenericModal from "../GenericModal";
 import GrafanaCustomCharts from "../GrafanaCustomCharts";
 import MesheryChart from "../MesheryChart";
-import { makeStyles, Paper } from "@material-ui/core";
+import { Paper, withStyles } from "@material-ui/core";
 import { Typography } from "@material-ui/core";
 import fetchAllResults from '../graphql/queries/FetchAllResultsQuery'
 
 const localizer = momentLocalizer(moment);
-const useStyles = makeStyles((theme) => ({
+const styles = (theme) => ({
   paper : { padding : "3rem" },
   resultContainer : {
     display : "flex",
@@ -87,7 +87,7 @@ const useStyles = makeStyles((theme) => ({
   profileText : {
     color : theme.palette.type === 'dark' ? "rgba(255, 255, 255, 0.54)" : "rgba(0, 0, 0, 0.54)",
   },
-}));
+});
 // const PERFORMANCE_PROFILE_RESULTS_URL = "/api/user/performance/profiles/results";
 
 /**
@@ -161,7 +161,7 @@ function generateDateRange(from, to) {
  * @returns
  */
 function PerformanceCalendar({
-  style, updateProgress, enqueueSnackbar, closeSnackbar
+  style, updateProgress, enqueueSnackbar, closeSnackbar, classes
 }) {
   const [time, setTime] = useState(generateDateRange());
   const [results, setResults] = useState([]);
@@ -261,7 +261,6 @@ function PerformanceCalendar({
       </Paper>
     );
   }
-  const classes = useStyles();
   return (
     <div style={style}>
       <Calendar
@@ -291,4 +290,4 @@ function PerformanceCalendar({
 
 const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(updateProgress, dispatch), });
 
-export default connect(null, mapDispatchToProps)(withSnackbar(PerformanceCalendar));
+export default withStyles(styles)(connect(null, mapDispatchToProps)(withSnackbar(PerformanceCalendar)));

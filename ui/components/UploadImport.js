@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { TextField, Button, Grid, NativeSelect } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import { withStyles } from '@material-ui/core/styles';
 import { URLValidator } from '../utils/URLValidator';
 import {
   Dialog, DialogActions,
@@ -12,7 +12,7 @@ import { promisifiedDataFetch } from '../lib/data-fetch';
 
 
 
-const styles = makeStyles(() => ({
+const styles = () => ({
   upload : {
     paddingLeft : "0.7rem",
     paddingTop : "8px"
@@ -31,11 +31,10 @@ const styles = makeStyles(() => ({
     color : "#607d8b",
     marginRight : "1.2rem"
   }
-}));
+});
 
 function UploadImport(props) {
-  const { handleUpload, handleUrlUpload, configuration, isApplication, open, handleClose } = props;
-  const classes = styles();
+  const { handleUpload, handleUrlUpload, configuration, isApplication, open, handleClose, classes } = props;
   const [input, setInput] = React.useState();
   const [isError, setIsError] = React.useState(false);
   const [fileType, setFileType] = React.useState();
@@ -178,4 +177,4 @@ function UploadImport(props) {
   )
 }
 
-export default UploadImport
+export default withStyles(styles)(UploadImport);

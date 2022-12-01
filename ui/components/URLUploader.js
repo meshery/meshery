@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import LinkIcon from '@material-ui/icons/Link';
 import { Tooltip, IconButton, TextField, Button, Grid } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import { withStyles } from '@material-ui/core/styles';
 // import { createTheme } from '@material-ui/core/styles';
 import { URLValidator } from '../utils/URLValidator';
 
@@ -23,7 +23,7 @@ import { URLValidator } from '../utils/URLValidator';
 // })
 
 
-const styles = makeStyles((theme) => ({
+const styles = (theme) => ({
   paper : {
     position : 'absolute',
     width : 600,
@@ -41,12 +41,11 @@ const styles = makeStyles((theme) => ({
   },
 
 
-}));
+});
 import GenericModal from "./GenericModal";
 
 
-const URLUploader = ({ onSubmit }) => {
-  const classes = styles();
+const URLUploader = ({ onSubmit, classes }) => {
   const [open, setOpen] = React.useState(false);
   const [input, setInput] = React.useState();
   const [isError, setIsError] = React.useState(false);
@@ -120,4 +119,4 @@ const URLUploader = ({ onSubmit }) => {
   )
 }
 
-export default URLUploader
+export default withStyles(styles)(URLUploader);

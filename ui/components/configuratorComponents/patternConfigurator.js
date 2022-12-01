@@ -1,6 +1,6 @@
 
 import {
-  Accordion, AccordionDetails, AccordionSummary, AppBar, ButtonGroup, CircularProgress, Divider, FormControl, Grid, IconButton, makeStyles, MenuItem, Paper, TextField, Toolbar, Tooltip, Typography,
+  Accordion, AccordionDetails, AccordionSummary, AppBar, ButtonGroup, CircularProgress, Divider, FormControl, Grid, IconButton, MenuItem, Paper, TextField, Toolbar, Tooltip, Typography, withStyles,
 } from "@material-ui/core";
 import DeleteIcon from "@material-ui/icons/Delete";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
@@ -23,7 +23,7 @@ import CustomBreadCrumb from "./CustomBreadCrumb";
 import { randomPatternNameGenerator as getRandomName } from "../../utils/utils"
 import _ from "lodash";
 
-const useStyles = makeStyles((theme) => ({
+const styles = (theme) => ({
   backButton : {
     marginRight : theme.spacing(2),
   },
@@ -92,7 +92,7 @@ const useStyles = makeStyles((theme) => ({
     fontSize : theme.typography.pxToRem(15),
     fontWeight : theme.typography.fontWeightRegular,
   },
-}));
+});
 
 function removeRedundantFieldsFromSettings(settings) {
   if (!settings || _.isEmpty(settings)) {
@@ -109,7 +109,7 @@ function removeRedundantFieldsFromSettings(settings) {
   return newSettings;
 }
 
-function PatternConfiguratorComponent({ pattern, onSubmit, show : setSelectedPattern }) {
+function PatternConfiguratorComponent({ pattern, onSubmit, show : setSelectedPattern, classes }) {
   const { workloadTraitSet, meshWorkloads } = useContext(SchemaContext);
   const [workloadTraitsSet, setWorkloadTraitsSet] = useState(workloadTraitSet);
   const [deployServiceConfig, setDeployServiceConfig] = useState(getPatternJson());
@@ -122,7 +122,6 @@ function PatternConfiguratorComponent({ pattern, onSubmit, show : setSelectedPat
   const [viewType, setViewType] = useState("list");
   const [activeCR, setActiveCR] = useState({});
   const [patternName, setPatternName] = useState(pattern.name)
-  const classes = useStyles();
   const reference = useRef({});
 
   useEffect(() => {
@@ -619,4 +618,4 @@ function PatternConfiguratorComponent({ pattern, onSubmit, show : setSelectedPat
 }
 
 
-export default PatternConfiguratorComponent;
+export default withStyles(styles)(PatternConfiguratorComponent);

@@ -3,7 +3,7 @@ import React, {
   useState
 } from 'react';
 import Cookies from 'universal-cookie';
-import { makeStyles } from '@material-ui/core/styles';
+import { withStyles } from '@material-ui/core/styles';
 // import { createTheme } from '@material-ui/core/styles';
 import { Typography, Grid, Button, IconButton } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
@@ -24,7 +24,7 @@ import CloseIcon from '@material-ui/icons/Close';
 //   }
 // })
 
-const styles = makeStyles((theme) => ({
+const styles = (theme) => ({
   paper : {
     position : 'fixed',
     width : 450,
@@ -66,12 +66,11 @@ const styles = makeStyles((theme) => ({
     padding : "15px 10px 15px 0",
     display : "flex"
   }
-}));
+});
 
-function Popup() {
+function Popup({ classes }) {
   const [isOpen, setIsOpen] = useState(true);
   const cookies = new Cookies('registered');
-  const classes = styles();
 
   const handleOpen = () => {
     const timer = setTimeout(() => {
@@ -134,4 +133,4 @@ function Popup() {
   return null
 }
 
-export default Popup
+export default withStyles(styles)(Popup);
