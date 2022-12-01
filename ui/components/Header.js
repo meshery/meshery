@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import AppBar from '@material-ui/core/AppBar';
 import Grid from '@material-ui/core/Grid';
@@ -47,8 +47,8 @@ const styles = (theme) => ({
   iconButtonAvatar : { padding : 4, },
   link : {
     textDecoration : 'none',
-    color : lightColor,
-    '&:hover' : { color : theme.palette.common.white, },
+    color : theme.palette.type === 'dark' ? "lightColor" : "#000",
+
   },
   button : { borderColor : lightColor, },
   notifications : {
@@ -216,42 +216,42 @@ async function loadActiveK8sContexts() {
     console.error("An error occurred while loading k8sconfig", e)
   }
 }
-function ThemeToggler({
-  theme, themeSetter, classes
-}) {
-  const [themeToggle, setthemeToggle] = useState(false);
-  const defaultTheme = "light";
-  const handle = () => {
-    theme === "dark" ? setthemeToggle(true) : setthemeToggle(false);
+// function ThemeToggler({
+//   theme, themeSetter, classes
+// }) {
+//   const [themeToggle, setthemeToggle] = useState(false);
+//   const defaultTheme = "light";
+//   const handle = () => {
+//     theme === "dark" ? setthemeToggle(true) : setthemeToggle(false);
 
-    localStorage.setItem("Theme", theme);
+//     localStorage.setItem("Theme", theme);
 
-  };
+//   };
 
-  useLayoutEffect(() => {
-    if (localStorage.getItem("Theme") === null) {
-      themeSetter(defaultTheme);
-    } else {
-      themeSetter(localStorage.getItem("Theme"));
-    }
+//   useLayoutEffect(() => {
+//     if (localStorage.getItem("Theme") === null) {
+//       themeSetter(defaultTheme);
+//     } else {
+//       themeSetter(localStorage.getItem("Theme"));
+//     }
 
-  }, []);
+//   }, []);
 
-  useLayoutEffect(() => {
-    handle();
-  }, [theme]);
-  const themeToggler = () => {
-    theme === "light" ? themeSetter("dark") : themeSetter("light");
-  };
+//   useLayoutEffect(() => {
+//     handle();
+//   }, [theme]);
+//   const themeToggler = () => {
+//     theme === "light" ? themeSetter("dark") : themeSetter("light");
+//   };
 
-  return (
-    <>
-      <div className={classes.darkThemeToggle}>
-        <input id="toggle" className={classes.toggle} type="checkbox" onChange={themeToggler} checked={!themeToggle} />
-      </div>
-    </>
-  )
-}
+//   return (
+//     <>
+//       <div className={classes.darkThemeToggle}>
+//         <input id="toggle" className={classes.toggle} type="checkbox" onChange={themeToggler} checked={!themeToggle} />
+//       </div>
+//     </>
+//   )
+// }
 function K8sContextMenu({
   classes = {},
   contexts = {},
@@ -601,12 +601,12 @@ class Header extends React.Component {
                     <MesheryNotification />
                   </div>
                   <span className={classes.userSpan}>
-                    <User color="inherit" iconButtonClassName={classes.iconButtonAvatar} avatarClassName={classes.avatar} updateExtensionType={this.props.updateExtensionType} />
+                    <User classes={classes} theme={theme} themeSetter={themeSetter} color="inherit" iconButtonClassName={classes.iconButtonAvatar} avatarClassName={classes.avatar} updateExtensionType={this.props.updateExtensionType} />
                   </span>
                   {/* <div className="dark-theme-toggle">
                       <input id="toggle" className="toggle" type="checkbox" onChange={themeToggler} checked={!themeToggle} />
                     </div> */}
-                  <ThemeToggler classes={classes} theme={theme} themeSetter={themeSetter} />
+                  {/* <ThemeToggler classes={classes} theme={theme} themeSetter={themeSetter} /> */}
                 </Grid>
               </Grid>
             </Toolbar>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useLayoutEffect, useState } from 'react';
 import IconButton from '@material-ui/core/IconButton';
 import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
 import Avatar from '@material-ui/core/Avatar';
@@ -18,11 +18,10 @@ import { withRouter } from 'next/router';
 import dataFetch from '../lib/data-fetch';
 import { updateUser } from '../lib/store';
 import classNames from 'classnames';
-import { ListItem, List } from '@material-ui/core';
+import { ListItem, List, Checkbox } from '@material-ui/core';
 
 
 const styles = () => ({
-  popover : { color : 'black', },
   link : {
     display : "inline-flex",
     width : "100%",
@@ -30,10 +29,44 @@ const styles = () => ({
     alignItems : "self-end"
   },
 });
+function ThemeToggler({
+  theme, themeSetter
+}) {
+  const [themeToggle, setthemeToggle] = useState(false);
+  const defaultTheme = "light";
+  const handle = () => {
+    theme === "dark" ? setthemeToggle(true) : setthemeToggle(false);
 
+    localStorage.setItem("Theme", theme);
+
+  };
+
+  useLayoutEffect(() => {
+    if (localStorage.getItem("Theme") === null) {
+      themeSetter(defaultTheme);
+    } else {
+      themeSetter(localStorage.getItem("Theme"));
+    }
+
+  }, []);
+
+  useLayoutEffect(() => {
+    handle();
+  }, [theme]);
+  const themeToggler = () => {
+    theme === "light" ? themeSetter("dark") : themeSetter("light");
+  };
+
+  return (
+    <>
+      Dark Mode <Checkbox checked={themeToggle} onChange={themeToggler} />
+
+    </>
+  )
+}
 function exportToJsonFile(jsonData, filename) {
   let dataStr = JSON.stringify(jsonData);
-  let dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+  let dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
 
   let exportFileDefaultName = filename;
 
@@ -90,7 +123,8 @@ class User extends React.Component {
     dataFetch(
       "/api/provider/capabilities", {
         method : "GET",
-        credentials : "include", },
+        credentials : "include",
+      },
       (result) => {
         if (result) {
           this.setState({
@@ -163,7 +197,7 @@ class User extends React.Component {
 
   render() {
     const {
-      color, iconButtonClassName, avatarClassName, classes
+      color, iconButtonClassName, avatarClassName, classes, theme, themeSetter,
     } = this.props;
     let avatar_url;
     if (this.state.user && this.state.user !== null) {
@@ -189,18 +223,22 @@ class User extends React.Component {
               <Avatar className={avatarClassName} src={avatar_url} imgProps={{ referrerPolicy : "no-referrer" }} />
             </IconButton>
           </div>
-          <Popper open={open} anchorEl={this.anchorEl} transition  style={{ zIndex : 10000 }} placement="top-end">
+          <Popper open={open} anchorEl={this.anchorEl} transition style={{ zIndex : 10000 }} placement="top-end">
             {({ TransitionProps, placement }) => (
               <Grow
                 {...TransitionProps}
                 id="menu-list-grow"
-                style={{ transformOrigin : placement === 'bottom'
-                  ? 'left top'
-                  : 'left bottom' }}
+                style={{
+                  transformOrigin : placement === 'bottom'
+                    ? 'left top'
+                    : 'left bottom'
+                }}
               >
                 <Paper className={classes.popover}>
                   <ClickAwayListener onClickAway={this.handleClose}>
+
                     <MenuList>
+
                       {
                         this.state.account && this.state.account.length ?
                           (
@@ -214,6 +252,7 @@ class User extends React.Component {
                       <MenuItem onClick={this.handleGetToken}>Get Token</MenuItem>
                       <MenuItem onClick={this.handlePreference}>Preferences</MenuItem>
                       <MenuItem onClick={this.handleLogout}>Logout</MenuItem>
+                      <MenuItem >  <ThemeToggler classes={classes} theme={theme} themeSetter={themeSetter} /></MenuItem>
                     </MenuList>
                   </ClickAwayListener>
                 </Paper>

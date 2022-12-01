@@ -1,6 +1,6 @@
 import { makeStyles } from "@material-ui/core";
 
-const useStyles= makeStyles((theme) => ({
+const useStyles = makeStyles((theme) => ({
   cardButtons : {
     display : "grid",
     gridTemplateColumns : "repeat(5,1fr)",
@@ -93,7 +93,8 @@ const useStyles= makeStyles((theme) => ({
     }
   },
   img : {
-    marginRight : "0.5rem"
+    marginRight : "0.5rem",
+    filter : theme.palette.type === 'dark' ? "invert(0.8)" : "none",
   },
   noPaper : {
     padding : "0.5rem",
