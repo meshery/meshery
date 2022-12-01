@@ -13,6 +13,11 @@ const useStyles = makeStyles((theme) => ({
   typography : {
     fontSize : "0.8rem",
   },
+  root : {
+    "& .MuiPaper-root" : {
+      backgroundColor : "#f4f4f4",
+    },
+  }
 }));
 import ErrorOutlineIcon from "../../../../assets/icons/ErrorOutlineIcon";
 function getTitleForItem(props) {
@@ -163,8 +168,9 @@ const DefaultFixedArrayFieldTemplate = (props) => {
 };
 
 const DefaultNormalArrayFieldTemplate = (props) => {
+  const classes = useStyles();
   return (
-    <Paper elevation={0}>
+    <Paper className={classes.root} elevation={0}>
       <Box p={1}>
         <Grid item container alignItems="center" xs={12} justify="space-between" style={{ marginBottom : "0.3rem" }}>
           <Grid item xs={4}>
