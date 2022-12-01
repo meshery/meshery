@@ -104,6 +104,9 @@ const styles = (theme) => ({
   addIcon : {
     paddingRight : ".35rem",
   },
+  visibilityImg : {
+    filter : theme.palette.type === 'dark' ? "invert(0.8)" : "none",
+  }
   // text : {
   //   padding : "5px"
   // }
@@ -392,7 +395,7 @@ function MesheryPatterns({
     });
     initPatternsSubscription();
     return () => {
-      if (disposeConfSubscriptionRef.current){
+      if (disposeConfSubscriptionRef.current) {
         disposeConfSubscriptionRef.current.dispose();
       }
       fetchCatalogPatterns.unsubscribe();
@@ -844,7 +847,7 @@ function MesheryPatterns({
           const visibility = patterns[tableMeta.rowIndex].visibility
           return (
             <div style={{ cursor : "default" }}>
-              <img src={`/static/img/${visibility}.svg`} />
+              <img className={classes.visibilityImg} src={`/static/img/${visibility}.svg`} />
             </div>
           );
         },

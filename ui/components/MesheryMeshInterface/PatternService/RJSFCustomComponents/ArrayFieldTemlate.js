@@ -3,13 +3,13 @@ import React, { useEffect } from "react";
 import Box from "@material-ui/core/Box";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
-import { Button, IconButton, makeStyles, Typography } from "@material-ui/core";
+import { Button, IconButton, makeStyles, Typography, withStyles } from "@material-ui/core";
 import AddIcon from "@material-ui/icons/Add";
 import SimpleAccordion from "./Accordion";
 import { EnlargedTextErrorTooltip, EnlargedTextTooltip } from "../EnlargedTextTooltip";
 import HelpOutlineIcon from "../../../../assets/icons/HelpOutlineIcon";
 import { isMultiSelect, getDefaultFormState } from "@rjsf/utils";
-const useStyles = makeStyles((theme) => ({
+const styles = (theme) => ({
   typography : {
     fontSize : "0.8rem",
   },
@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor : "#f4f4f4",
     },
   }
-}));
+});
 import ErrorOutlineIcon from "../../../../assets/icons/ErrorOutlineIcon";
 function getTitleForItem(props) {
   const title = getTitle(props);
@@ -42,8 +42,7 @@ function getTitle(props) {
 }
 
 const ArrayFieldTemplate = (props) => {
-  const { schema, registry = getDefaultFormState() } = props;
-  const classes = useStyles();
+  const { schema, registry = getDefaultFormState(), classes } = props;
   // TODO: update types so we don't have to cast registry as any
   if (isMultiSelect(schema, registry.rootSchema)) {
     return <DefaultFixedArrayFieldTemplate {...props} />;
@@ -52,8 +51,7 @@ const ArrayFieldTemplate = (props) => {
   }
 };
 
-const ArrayFieldTitle = ({ TitleField, idSchema, title, required }) => {
-  const classes = useStyles();
+const ArrayFieldTitle = ({ TitleField, idSchema, title, required, classes }) => {
   if (!title) {
     return null;
   }
@@ -124,6 +122,7 @@ const DefaultArrayItem = (props) => {
 };
 
 const DefaultFixedArrayFieldTemplate = (props) => {
+  const { classes } = props;
   return (
     <fieldset className={props.className}>
       {props.canAdd && (
@@ -142,6 +141,7 @@ const DefaultFixedArrayFieldTemplate = (props) => {
         idSchema={props.idSchema}
         title={getTitle(props)}
         required={props.required}
+        classes={classes}
       />
 
       {(props.uiSchema["ui:description"] || props.schema.description) && (
@@ -168,7 +168,7 @@ const DefaultFixedArrayFieldTemplate = (props) => {
 };
 
 const DefaultNormalArrayFieldTemplate = (props) => {
-  const classes = useStyles();
+  const { classes } = props;
   return (
     <Paper className={classes.root} elevation={0}>
       <Box p={1}>
@@ -180,6 +180,7 @@ const DefaultNormalArrayFieldTemplate = (props) => {
               idSchema={props.idSchema}
               title={getTitle(props)}
               required={props.required}
+              classes={classes}
             />
 
             {
@@ -251,4 +252,4 @@ const DefaultNormalArrayFieldTemplate = (props) => {
   );
 };
 
-export default ArrayFieldTemplate;
+export default withStyles(styles)(ArrayFieldTemplate);

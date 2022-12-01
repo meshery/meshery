@@ -1,4 +1,4 @@
-import { makeStyles, useTheme } from '@material-ui/core/styles';
+import { useTheme, withStyles } from '@material-ui/core/styles';
 import Form, { withTheme } from "@rjsf/core";
 import { Theme as MaterialUITheme, } from "@rjsf/material-ui";
 import React, { useEffect } from "react";
@@ -14,7 +14,7 @@ import CustomTextWidget from './RJSFCustomComponents/CustomTextWidget';
 import CustomDateTimeWidget from './RJSFCustomComponents/CustomDateTimeWidget';
 import createBreakpoints from '@material-ui/core/styles/createBreakpoints'
 const breakpoints = createBreakpoints({});
-const useStyles = makeStyles((theme) => ({
+const styles = (theme) => ({
   root : {
     "& .MuiFormLabel-root" : {
       "& .Mui-error" : {
@@ -134,10 +134,10 @@ const useStyles = makeStyles((theme) => ({
 
     },
 
-    MuiAccordionDetails : {
-      root : {
-        padding : 16
-      }
+    "& .MuiAccordionDetails-root" : {
+
+      padding : 16
+
     },
     "& .MuiAccordion-root" : {
       border : `1px solid  ${theme.palette.type === 'dark' ? "rgba(255, 255, 255, .45)" : "rgba(0, 0, 0, .125)"}`,
@@ -212,7 +212,7 @@ const useStyles = makeStyles((theme) => ({
   }
 
 
-}));
+});
 /*eslint-disable */
 class RJSFOverridenComponent extends Form {
   constructor(props) {
@@ -279,7 +279,7 @@ function RJSFForm(props) {
     return <LoadingComponent />
   }
   const theme = useTheme();
-  const classes = useStyles();
+  const { classes } = props;
   console.log("hello", theme)
   return (
 
@@ -315,4 +315,4 @@ function RJSFForm(props) {
   )
 }
 
-export default RJSFForm;
+export default withStyles(styles)(RJSFForm);
