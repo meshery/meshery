@@ -51,6 +51,9 @@ darkTheme = {
       label : { textTransform : 'initial', },
       contained : {
         boxShadow : 'none',
+        color : "rgba(255, 255, 255, 0.87)",
+        backgroundColor : "#3C494F",
+        '&:hover' : { backgroundColor : "#505b61", },
         '&:active' : { boxShadow : 'none', },
       },
       containedPrimary : {
