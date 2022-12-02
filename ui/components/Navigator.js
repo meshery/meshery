@@ -45,8 +45,8 @@ import ExtensionPointSchemaValidator from "../utils/ExtensionPointSchemaValidato
 import dataFetch from "../lib/data-fetch";
 import { Collapse } from "@material-ui/core";
 import { cursorNotAllowed, disabledStyle } from "../css/disableComponent.styles";
-import {  CapabilitiesRegistry } from "../utils/disabledComponents";
-import { APPLICATION, APP_MESH, CILIUM_SM, CITRIX_SM,DESIGN, CONFIGURATION, CONFORMANCE, CONSUL, DASHBOARD, FILTER, ISTIO, KUMA, LIFECYCLE, LINKERD, NETWORK_SM, NGINX, OCTARINE, OSM, PERFORMANCE, TRAEFIK_SM, PROFILES, SMI, TOGGLER } from "../constants/navigator"
+import { CapabilitiesRegistry } from "../utils/disabledComponents";
+import { APPLICATION, APP_MESH, CILIUM_SM, CITRIX_SM, DESIGN, CONFIGURATION, CONFORMANCE, CONSUL, DASHBOARD, FILTER, ISTIO, KUMA, LIFECYCLE, LINKERD, NETWORK_SM, NGINX, OCTARINE, OSM, PERFORMANCE, TRAEFIK_SM, PROFILES, SMI, TOGGLER } from "../constants/navigator"
 const styles = (theme) => ({
   categoryHeader : {
     paddingTop : 16,
@@ -317,6 +317,7 @@ const getNavigatorComponents = (  /** @type {CapabilitiesRegistry} */  capabilit
       {
         id : APP_MESH,
         href : "/management/app-mesh",
+        icon : <img src="/static/img/app_mesh-light.svg" style={{ width : "1.21rem" }} />,
         title : "AWS App Mesh",
         link : true,
         show : capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, APP_MESH]),
@@ -324,6 +325,7 @@ const getNavigatorComponents = (  /** @type {CapabilitiesRegistry} */  capabilit
       {
         id : CITRIX_SM,
         href : "/management/citrix",
+        icon : <img src="/static/img/citrix_service_mesh-white.svg" style={{ width : "1.21rem" }} />,
         title : "Citrix Service Mesh",
         link : true,
         show : capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, CITRIX_SM]),
@@ -331,6 +333,7 @@ const getNavigatorComponents = (  /** @type {CapabilitiesRegistry} */  capabilit
       {
         id : CONSUL,
         href : "/management/consul",
+        icon : <img src="/static/img/consul-white.svg" style={{ width : "1.21rem" }} />,
         title : "Consul",
         link : true,
         show : capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, CONSUL]),
@@ -338,6 +341,7 @@ const getNavigatorComponents = (  /** @type {CapabilitiesRegistry} */  capabilit
       {
         id : CILIUM_SM,
         href : "/management/cilium",
+        icon : <img src="/static/img/cilium_service_mesh-light.svg" style={{ width : "1.21rem" }} />,
         title : "Cilium",
         link : true,
         show : capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, CILIUM_SM]),
@@ -345,6 +349,7 @@ const getNavigatorComponents = (  /** @type {CapabilitiesRegistry} */  capabilit
       {
         id : ISTIO,
         href : "/management/istio",
+        icon : <img src="/static/img/istio-white.svg" style={{ width : "1.21rem" }} />,
         title : "Istio",
         link : true,
         show : capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, ISTIO]),
@@ -352,6 +357,7 @@ const getNavigatorComponents = (  /** @type {CapabilitiesRegistry} */  capabilit
       {
         id : KUMA,
         href : "/management/kuma",
+        icon : <img src="/static/img/kuma-white.svg" style={{ width : "1.21rem" }} />,
         title : "Kuma",
         link : true,
         show : capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, KUMA]),
@@ -359,6 +365,7 @@ const getNavigatorComponents = (  /** @type {CapabilitiesRegistry} */  capabilit
       {
         id : LINKERD,
         href : "/management/linkerd",
+        icon : <img src="/static/img/linkerd-white.svg" style={{ width : "1.21rem" }} />,
         title : "Linkerd",
         link : true,
         show : capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, LINKERD]),
@@ -366,6 +373,7 @@ const getNavigatorComponents = (  /** @type {CapabilitiesRegistry} */  capabilit
       {
         id : NETWORK_SM,
         href : "/management/nsm",
+        icon : <img src="/static/img/network_service_mesh-white.svg" style={{ width : "1.21rem" }} />,
         title : "Network Service Mesh",
         link : true,
         show : capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, NETWORK_SM]),
@@ -374,6 +382,7 @@ const getNavigatorComponents = (  /** @type {CapabilitiesRegistry} */  capabilit
         id : NGINX,
         // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
         href : "/management/nginx",
+        icon : <img src="/static/img/nginx_service_mesh-light.svg" style={{ width : "1.21rem" }} />,
         title : "NGINX Service Mesh",
         link : true,
         show : capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, NGINX]),
@@ -381,6 +390,7 @@ const getNavigatorComponents = (  /** @type {CapabilitiesRegistry} */  capabilit
       {
         id : OCTARINE,
         href : "/management/octarine",
+        icon : <img src="/static/img/octarine-white.svg" style={{ width : "1.21rem" }} />,
         title : "Octarine",
         link : true,
         show : capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, OCTARINE]),
@@ -388,6 +398,7 @@ const getNavigatorComponents = (  /** @type {CapabilitiesRegistry} */  capabilit
       {
         id : OSM,
         href : "/management/osm",
+        icon : <img src="/static/img/open_service_mesh-white.svg" style={{ width : "1.21rem" }} />,
         title : "Open Service Mesh",
         link : true,
         show : capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, OSM]),
@@ -395,6 +406,7 @@ const getNavigatorComponents = (  /** @type {CapabilitiesRegistry} */  capabilit
       {
         id : TRAEFIK_SM,
         href : "/management/traefik-mesh",
+        icon : <img src="/static/img/traefik_mesh-light.svg" style={{ width : "1.21rem" }} />,
         title : "Traefik Mesh",
         link : true,
         show : capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, TRAEFIK_SM]),
@@ -422,7 +434,7 @@ const getNavigatorComponents = (  /** @type {CapabilitiesRegistry} */  capabilit
       {
         id : FILTER,
         icon : <img src="/static/img/web-filters.svg" style={{ width : "1.21rem" }} />,
-        href : "/configuration/filters",
+        href : "/configuration/applications",
         title : "Filters",
         show : capabilityRegistryObj.isNavigatorComponentEnabled([CONFIGURATION, FILTER]),
         link : true,
@@ -431,7 +443,7 @@ const getNavigatorComponents = (  /** @type {CapabilitiesRegistry} */  capabilit
       {
         id : DESIGN,
         icon : <img src="/static/img/pattern_trans.svg" style={{ width : "1.21rem" }} />,
-        href : "/configuration/patterns",
+        href : "/configuration/applications",
         title : "Designs",
         show : capabilityRegistryObj.isNavigatorComponentEnabled([CONFIGURATION, DESIGN]),
         link : true,
@@ -938,7 +950,7 @@ class Navigator extends React.Component {
           disableHoverListener={!drawerCollapsed}
           disableTouchListener={!drawerCollapsed}
         >
-          <ListItemIcon className={classes.listIcon}>{iconc}</ListItemIcon>
+          <ListItemIcon className={classes.listIcon}>{iconc}{console.log("iconc", iconc)} </ListItemIcon>
         </Tooltip>
         <ListItemText
           className={drawerCollapsed
