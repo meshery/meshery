@@ -54,7 +54,7 @@ jobs:
 
           # private-cluster: true
           manifests: |
-            install/deployment_yamls/k8s/meshery-deployment.yaml
+            install/playground/meshery-playground-deployment.yaml
           images: |
             hub.docker.com/r/layer5/meshery:playground-latest
 
