@@ -542,7 +542,7 @@ class Navigator extends React.Component {
       openItems : [],
       hoveredId : null,
       /** @type {CapabilitiesRegistry} */
-      CapabilitiesRegistryObj : null,
+      capabilitiesRegistryObj : null,
       versionDetail : {
         build : "",
         latest : "",
@@ -587,12 +587,12 @@ class Navigator extends React.Component {
       },
       (result) => {
         if (result) {
-          const CapabilitiesRegistryObj = new CapabilitiesRegistry(result);
-          const navigatorComponents = getNavigatorComponents(CapabilitiesRegistryObj);
+          const capabilitiesRegistryObj = new CapabilitiesRegistry(result);
+          const navigatorComponents = getNavigatorComponents(capabilitiesRegistryObj);
 
           this.setState({
             navigator : ExtensionPointSchemaValidator("navigator")(result?.extensions?.navigator),
-            CapabilitiesRegistryObj,
+            capabilitiesRegistryObj,
             navigatorComponents
           });
           //global state
@@ -1139,19 +1139,21 @@ class Navigator extends React.Component {
                     >
 
                       {(isDrawerCollapsed && (this.state.hoveredId === childId || this.state.openItems.includes(childId))) ?
-                        <Tooltip
-                          title={title}
-                          placement="right"
-                          TransitionComponent={Zoom}
-                          arrow
-                        >
-                          <ListItemIcon
-                            onClick={() => this.toggleItemCollapse(childId)}
+                        <div>
+                          <Tooltip
+                            title={title}
+                            placement="right"
+                            TransitionComponent={Zoom}
+                            arrow
+                          >
+                            <ListItemIcon
+                              onClick={() => this.toggleItemCollapse(childId)}
 
-                            style={{ marginLeft : "20%", marginBottom : "0.4rem" }}>
-                            {hovericon}
-                          </ListItemIcon>
-                        </Tooltip>
+                              style={{ marginLeft : "20%", marginBottom : "0.4rem" }}>
+                              {hovericon}
+                            </ListItemIcon>
+                          </Tooltip>
+                        </div>
                         :
                         <ListItemIcon className={classes.listIcon}>
                           {icon}
@@ -1292,10 +1294,10 @@ class Navigator extends React.Component {
     const Chevron = (
       <div
         className={classNames(isDrawerCollapsed ? classes.collapseButtonWrapperRotated : classes.collapseButtonWrapper)}
-        style={cursorNotAllowed}
+        style={this.state?.capabilitiesRegistryObj?.isNavigatorComponentEnabled?.([TOGGLER]) ? {} : cursorNotAllowed}
       >
         <div
-          style={this.state?.CapabilitiesRegistryObj?.isNavigatorComponentEnabled?.([TOGGLER]) ? disabledStyle : {}}
+          style={this.state?.capabilitiesRegistryObj?.isNavigatorComponentEnabled?.([TOGGLER]) ? {} : disabledStyle}
           onClick={this.toggleMiniDrawer}
         >
           <FontAwesomeIcon
