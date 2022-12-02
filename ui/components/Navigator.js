@@ -46,7 +46,7 @@ import dataFetch from "../lib/data-fetch";
 import { Collapse } from "@material-ui/core";
 import { cursorNotAllowed, disabledStyle } from "../css/disableComponent.styles";
 import { CapabilitiesRegistry } from "../utils/disabledComponents";
-import { APPLICATION, APP_MESH, CILIUM_SM, CITRIX_SM, DESIGN, CONFIGURATION, CONFORMANCE, CONSUL, DASHBOARD, FILTER, ISTIO, KUMA, LIFECYCLE, LINKERD, NETWORK_SM, NGINX, OCTARINE, OSM, PERFORMANCE, TRAEFIK_SM, PROFILES, SMI, TOGGLER } from "../constants/navigator"
+import { APPLICATION, APP_MESH, CILIUM_SM, CITRIX_SM, DESIGN, CONFIGURATION, CONFORMANCE, CONSUL, DASHBOARD, FILTER, ISTIO, KUMA, LIFECYCLE, LINKERD, NETWORK_SM, NGINX, OSM, PERFORMANCE, TRAEFIK_SM, PROFILES, SMI, TOGGLER } from "../constants/navigator"
 const styles = (theme) => ({
   categoryHeader : {
     paddingTop : 16,
@@ -377,13 +377,6 @@ const getNavigatorComponents = (  /** @type {CapabilitiesRegistry} */  capabilit
         title : "NGINX Service Mesh",
         link : true,
         show : capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, NGINX]),
-      },
-      {
-        id : OCTARINE,
-        href : "/management/octarine",
-        title : "Octarine",
-        link : true,
-        show : capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, OCTARINE]),
       },
       {
         id : OSM,
