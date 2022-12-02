@@ -130,11 +130,11 @@ mesheryctl system channel set [stable|stable-version|edge|edge-version]
 
 		if len(channelNameSeperated) > 1 {
 			if channelNameSeperated[0] == "edge" {
-				if channelNameSeperated[1] != version {
+				if channelNameSeperated[1] != "latest" {
 					return errors.New("edge channel only supports latest as version argument")
 				}
 			} else if channelNameSeperated[0] == "stable" {
-				if channelNameSeperated[1] != version {
+				if channelNameSeperated[1] != "latest" {
 					currCtx := mctlCfg.Contexts[focusedContext]
 					currCtx.Version = channelNameSeperated[1]
 				}
