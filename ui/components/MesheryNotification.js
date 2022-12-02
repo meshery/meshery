@@ -13,8 +13,6 @@ import {
   Tab
 } from '@material-ui/core';
 import BellIcon from '@material-ui/icons/Notifications';
-// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-// import { faBroomBall } from "@fortawesome/free-solid-svg-icons";
 import ClearIcon from "../assets/icons/ClearIcon";
 import ErrorIcon from '@material-ui/icons/Error';
 import { withStyles } from '@material-ui/core/styles';
