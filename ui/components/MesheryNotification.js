@@ -13,8 +13,9 @@ import {
   Tab
 } from '@material-ui/core';
 import BellIcon from '@material-ui/icons/Notifications';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBroomBall } from "@fortawesome/free-solid-svg-icons";
+// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+// import { faBroomBall } from "@fortawesome/free-solid-svg-icons";
+import ClearIcon from "../assets/icons/ClearIcon";
 import ErrorIcon from '@material-ui/icons/Error';
 import { withStyles } from '@material-ui/core/styles';
 import amber from '@material-ui/core/colors/amber';
@@ -344,8 +345,15 @@ class MesheryNotification extends React.Component {
                         color="inherit"
                         className={classes.drawerButton}
                         onClick={this.handleClearAllNotifications()}
+                        onMouseOver={(e) => {
+                          e.target.style.fill = "black"
+                          console.log(e.target.style.fill)
+                        }}
+                        onMouseOut={(e) => {
+                          e.target.style.fill = "white"
+                        }}
                       >
-                        <FontAwesomeIcon icon={faBroomBall} className={classes.HeaderItem} />
+                        <ClearIcon height="1em" width="1em" fill="white" />
                       </IconButton>
                     </Tooltip>
                   </div>
