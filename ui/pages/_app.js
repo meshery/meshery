@@ -39,10 +39,6 @@ import './../public/static/style/index.css';
 import subscribeK8sContext from "../components/graphql/subscriptions/K8sContextSubscription";
 import { bindActionCreators } from 'redux';
 
-import "@fortawesome/fontawesome-svg-core/styles.css";
-import { config } from "@fortawesome/fontawesome-svg-core";
-config.autoAddCss = false;
-
 if (typeof window !== 'undefined') {
   require('codemirror/mode/yaml/yaml');
   require('codemirror/mode/javascript/javascript');
