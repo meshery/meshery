@@ -40,7 +40,7 @@ jobs:
   docker-extension:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repo
+      - name: Checkout 🛎️ repo
         uses: actions/checkout@master
       - name: Identify Release Values
         if: "${{ github.event.inputs.release-ver}} != 'v' }}"

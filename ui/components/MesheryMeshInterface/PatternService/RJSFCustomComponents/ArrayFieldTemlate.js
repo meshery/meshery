@@ -7,10 +7,10 @@ import Paper from "@material-ui/core/Paper";
 import { Button, IconButton, Typography } from "@material-ui/core";
 import AddIcon from "../../../../assets/icons/AddIcon";
 import SimpleAccordion from "./Accordion";
-import { EnlargedTextTooltip } from "../EnlargedTextTooltip";
+import { EnlargedTextErrorTooltip, EnlargedTextTooltip } from "../EnlargedTextTooltip";
 import HelpOutlineIcon from "../../../../assets/icons/HelpOutlineIcon";
 import { isMultiSelect, getDefaultFormState } from "@rjsf/utils";
-import ErrorIcon from "../../../../assets/icons/ErrorIcon"
+import ErrorOutlineIcon from "../../../../assets/icons/ErrorOutlineIcon";
 function getTitleForItem(props) {
   const title = getTitle(props);
 
@@ -180,21 +180,21 @@ const DefaultNormalArrayFieldTemplate = (props) => {
               </EnlargedTextTooltip>
             }
             {props.rawErrors?.length > 0 && (
-              <EnlargedTextTooltip
+              <EnlargedTextErrorTooltip
                 interactive={true}
                 title={props.rawErrors?.map((error, index) => (
                   <div key={index}>{error}</div>
                 ))}
               >
                 <IconButton  component="span" size="small" disableTouchRipple="true" disableRipple="true">
-                  <ErrorIcon
+                  <ErrorOutlineIcon
                     width="16px"
                     height="16px"
                     fill="#B32700"
                     style={{ marginLeft : "4px", verticalAlign : "middle" }}
                   />
                 </IconButton>
-              </EnlargedTextTooltip>
+              </EnlargedTextErrorTooltip>
             )}
 
           </Grid>

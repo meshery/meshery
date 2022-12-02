@@ -1104,19 +1104,21 @@ class Navigator extends React.Component {
                     >
 
                       {(isDrawerCollapsed && (this.state.hoveredId === childId || this.state.openItems.includes(childId))) ?
-                        <Tooltip
-                          title={title}
-                          placement="right"
-                          TransitionComponent={Zoom}
-                          arrow
-                        >
-                          <ListItemIcon
-                            onClick={() => this.toggleItemCollapse(childId)}
+                        <div>
+                          <Tooltip
+                            title={title}
+                            placement="right"
+                            TransitionComponent={Zoom}
+                            arrow
+                          >
+                            <ListItemIcon
+                              onClick={() => this.toggleItemCollapse(childId)}
 
-                            style={{ marginLeft : "20%", marginBottom : "0.4rem" }}>
-                            {hovericon}
-                          </ListItemIcon>
-                        </Tooltip>
+                              style={{ marginLeft : "20%", marginBottom : "0.4rem" }}>
+                              {hovericon}
+                            </ListItemIcon>
+                          </Tooltip>
+                        </div>
                         :
                         <ListItemIcon className={classes.listIcon}>
                           {icon}
