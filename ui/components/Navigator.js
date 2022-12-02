@@ -333,7 +333,6 @@ const getNavigatorComponents = (  /** @type {CapabilitiesRegistry} */  capabilit
       {
         id : CONSUL,
         href : "/management/consul",
-        icon : <img src="/static/img/consul-white.svg" style={{ width : "1.21rem" }} />,
         title : "Consul",
         link : true,
         show : capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, CONSUL]),
@@ -341,7 +340,6 @@ const getNavigatorComponents = (  /** @type {CapabilitiesRegistry} */  capabilit
       {
         id : CILIUM_SM,
         href : "/management/cilium",
-        icon : <img src="/static/img/cilium_service_mesh-light.svg" style={{ width : "1.21rem" }} />,
         title : "Cilium",
         link : true,
         show : capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, CILIUM_SM]),
@@ -349,7 +347,6 @@ const getNavigatorComponents = (  /** @type {CapabilitiesRegistry} */  capabilit
       {
         id : ISTIO,
         href : "/management/istio",
-        icon : <img src="/static/img/istio-white.svg" style={{ width : "1.21rem" }} />,
         title : "Istio",
         link : true,
         show : capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, ISTIO]),
@@ -357,7 +354,6 @@ const getNavigatorComponents = (  /** @type {CapabilitiesRegistry} */  capabilit
       {
         id : KUMA,
         href : "/management/kuma",
-        icon : <img src="/static/img/kuma-white.svg" style={{ width : "1.21rem" }} />,
         title : "Kuma",
         link : true,
         show : capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, KUMA]),
@@ -365,7 +361,6 @@ const getNavigatorComponents = (  /** @type {CapabilitiesRegistry} */  capabilit
       {
         id : LINKERD,
         href : "/management/linkerd",
-        icon : <img src="/static/img/linkerd-white.svg" style={{ width : "1.21rem" }} />,
         title : "Linkerd",
         link : true,
         show : capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, LINKERD]),
@@ -373,7 +368,6 @@ const getNavigatorComponents = (  /** @type {CapabilitiesRegistry} */  capabilit
       {
         id : NETWORK_SM,
         href : "/management/nsm",
-        icon : <img src="/static/img/network_service_mesh-white.svg" style={{ width : "1.21rem" }} />,
         title : "Network Service Mesh",
         link : true,
         show : capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, NETWORK_SM]),
@@ -382,7 +376,6 @@ const getNavigatorComponents = (  /** @type {CapabilitiesRegistry} */  capabilit
         id : NGINX,
         // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
         href : "/management/nginx",
-        icon : <img src="/static/img/nginx_service_mesh-light.svg" style={{ width : "1.21rem" }} />,
         title : "NGINX Service Mesh",
         link : true,
         show : capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, NGINX]),
@@ -390,7 +383,6 @@ const getNavigatorComponents = (  /** @type {CapabilitiesRegistry} */  capabilit
       {
         id : OCTARINE,
         href : "/management/octarine",
-        icon : <img src="/static/img/octarine-white.svg" style={{ width : "1.21rem" }} />,
         title : "Octarine",
         link : true,
         show : capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, OCTARINE]),
@@ -398,7 +390,6 @@ const getNavigatorComponents = (  /** @type {CapabilitiesRegistry} */  capabilit
       {
         id : OSM,
         href : "/management/osm",
-        icon : <img src="/static/img/open_service_mesh-white.svg" style={{ width : "1.21rem" }} />,
         title : "Open Service Mesh",
         link : true,
         show : capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, OSM]),
@@ -406,7 +397,6 @@ const getNavigatorComponents = (  /** @type {CapabilitiesRegistry} */  capabilit
       {
         id : TRAEFIK_SM,
         href : "/management/traefik-mesh",
-        icon : <img src="/static/img/traefik_mesh-light.svg" style={{ width : "1.21rem" }} />,
         title : "Traefik Mesh",
         link : true,
         show : capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, TRAEFIK_SM]),
@@ -552,7 +542,7 @@ class Navigator extends React.Component {
       openItems : [],
       hoveredId : null,
       /** @type {CapabilitiesRegistry} */
-      capabilitiesRegistryObj : null,
+      CapabilitiesRegistryObj : null,
       versionDetail : {
         build : "",
         latest : "",
@@ -597,16 +587,16 @@ class Navigator extends React.Component {
       },
       (result) => {
         if (result) {
-          const capabilitiesRegistryObj = new CapabilitiesRegistry(result);
-          const navigatorComponents = getNavigatorComponents(capabilitiesRegistryObj);
+          const CapabilitiesRegistryObj = new CapabilitiesRegistry(result);
+          const navigatorComponents = getNavigatorComponents(CapabilitiesRegistryObj);
 
           this.setState({
             navigator : ExtensionPointSchemaValidator("navigator")(result?.extensions?.navigator),
-            capabilitiesRegistryObj,
+            CapabilitiesRegistryObj,
             navigatorComponents
           });
           //global state
-          this.props.updateCapabilities({ capabilitiesRegistry : result })
+          this.props.updateCapabilities({ CapabilitiesRegistry : result })
         }
       },
       (err) => console.error(err)
@@ -696,7 +686,35 @@ class Navigator extends React.Component {
 
     return content;
   }
+  updatenavigatorComponentsMenus() {
+    const self = this;
+    const { navigatorComponents } = this.state
+    navigatorComponents.forEach((cat, ind) => {
+      if (cat.id === LIFECYCLE) {
+        cat.children.forEach((catc, ind1) => {
+          const cr = self.fetchChildren(catc.id);
+          const icon = self.pickIcon(catc.id);
+          navigatorComponents[ind].children[ind1].icon = icon;
+          navigatorComponents[ind].children[ind1].children = cr;
+        });
+      }
 
+      if (cat.id === "Configuration") {
+        let show = false;
+        cat.children?.forEach((ch) => {
+          if (ch.id === "Designs") {
+            const idx = self.props.capabilitiesRegistry?.capabilities?.findIndex((cap) => cap.feature === "persist-meshery-patterns");
+            if (idx != -1) {
+              ch.show = true;
+              show = true;
+            }
+          }
+        });
+
+        cat.show = show;
+      }
+    });
+  }
   updateAdaptersLink() {
     const { navigatorComponents } = this.state
     navigatorComponents.forEach((cat, ind) => {
@@ -895,6 +913,9 @@ class Navigator extends React.Component {
             {children.map(({
               id : idc, title : titlec, icon : iconc, href : hrefc, show : showc, link : linkc, children : childrenc
             }) => {
+              // if (typeof showc !== "undefined" && !showc) {
+              //   return "";
+              // }
               return (
                 <div key={idc} className={!showc ? classes.cursorNotAllowed : null}>
                   <ListItem
@@ -1050,6 +1071,8 @@ class Navigator extends React.Component {
   render() {
     const { classes, isDrawerCollapsed, ...other } = this.props;
     const { path, showHelperButton, navigatorComponents } = this.state;
+    this.updatenavigatorComponentsMenus();
+    console.log(this.state.navigatorComponents)
 
     const Title = (
       <ListItem
@@ -1116,21 +1139,19 @@ class Navigator extends React.Component {
                     >
 
                       {(isDrawerCollapsed && (this.state.hoveredId === childId || this.state.openItems.includes(childId))) ?
-                        <div>
-                          <Tooltip
-                            title={title}
-                            placement="right"
-                            TransitionComponent={Zoom}
-                            arrow
-                          >
-                            <ListItemIcon
-                              onClick={() => this.toggleItemCollapse(childId)}
+                        <Tooltip
+                          title={title}
+                          placement="right"
+                          TransitionComponent={Zoom}
+                          arrow
+                        >
+                          <ListItemIcon
+                            onClick={() => this.toggleItemCollapse(childId)}
 
-                              style={{ marginLeft : "20%", marginBottom : "0.4rem" }}>
-                              {hovericon}
-                            </ListItemIcon>
-                          </Tooltip>
-                        </div>
+                            style={{ marginLeft : "20%", marginBottom : "0.4rem" }}>
+                            {hovericon}
+                          </ListItemIcon>
+                        </Tooltip>
                         :
                         <ListItemIcon className={classes.listIcon}>
                           {icon}
@@ -1271,10 +1292,10 @@ class Navigator extends React.Component {
     const Chevron = (
       <div
         className={classNames(isDrawerCollapsed ? classes.collapseButtonWrapperRotated : classes.collapseButtonWrapper)}
-        style={this.state?.capabilitiesRegistryObj?.isNavigatorComponentEnabled?.([TOGGLER]) ? {} : cursorNotAllowed}
+        style={cursorNotAllowed}
       >
         <div
-          style={this.state?.capabilitiesRegistryObj?.isNavigatorComponentEnabled?.([TOGGLER]) ? {} : disabledStyle}
+          style={this.state?.CapabilitiesRegistryObj?.isNavigatorComponentEnabled?.([TOGGLER]) ? disabledStyle : {}}
           onClick={this.toggleMiniDrawer}
         >
           <FontAwesomeIcon
@@ -1334,8 +1355,8 @@ const mapStateToProps = (state) => {
   const meshAdaptersts = state.get("meshAdaptersts");
   const path = state.get("page").get("path");
   const isDrawerCollapsed = state.get("isDrawerCollapsed");
-  const capabilitiesRegistry = state.get("capabilitiesRegistry")
-  return { meshAdapters, meshAdaptersts, path, isDrawerCollapsed, capabilitiesRegistry };
+  const CapabilitiesRegistry = state.get("CapabilitiesRegistry")
+  return { meshAdapters, meshAdaptersts, path, isDrawerCollapsed, CapabilitiesRegistry };
 };
 
 export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(withRouter(Navigator)));
