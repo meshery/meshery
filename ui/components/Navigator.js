@@ -317,7 +317,6 @@ const getNavigatorComponents = (  /** @type {CapabilitiesRegistry} */  capabilit
       {
         id : APP_MESH,
         href : "/management/app-mesh",
-        icon : <img src="/static/img/app_mesh-light.svg" style={{ width : "1.21rem" }} />,
         title : "AWS App Mesh",
         link : true,
         show : capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, APP_MESH]),
@@ -325,7 +324,6 @@ const getNavigatorComponents = (  /** @type {CapabilitiesRegistry} */  capabilit
       {
         id : CITRIX_SM,
         href : "/management/citrix",
-        icon : <img src="/static/img/citrix_service_mesh-white.svg" style={{ width : "1.21rem" }} />,
         title : "Citrix Service Mesh",
         link : true,
         show : capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, CITRIX_SM]),
@@ -596,7 +594,7 @@ class Navigator extends React.Component {
             navigatorComponents
           });
           //global state
-          this.props.updateCapabilities({ CapabilitiesRegistry : result })
+          this.props.updateCapabilities({ capabilitiesRegistry : result })
         }
       },
       (err) => console.error(err)
@@ -1072,7 +1070,6 @@ class Navigator extends React.Component {
     const { classes, isDrawerCollapsed, ...other } = this.props;
     const { path, showHelperButton, navigatorComponents } = this.state;
     this.updatenavigatorComponentsMenus();
-    console.log(this.state.navigatorComponents)
 
     const Title = (
       <ListItem
@@ -1357,8 +1354,8 @@ const mapStateToProps = (state) => {
   const meshAdaptersts = state.get("meshAdaptersts");
   const path = state.get("page").get("path");
   const isDrawerCollapsed = state.get("isDrawerCollapsed");
-  const CapabilitiesRegistry = state.get("CapabilitiesRegistry")
-  return { meshAdapters, meshAdaptersts, path, isDrawerCollapsed, CapabilitiesRegistry };
+  const capabilitiesRegistry = state.get("capabilitiesRegistry")
+  return { meshAdapters, meshAdaptersts, path, isDrawerCollapsed, capabilitiesRegistry };
 };
 
 export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(withRouter(Navigator)));
