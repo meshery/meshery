@@ -26,6 +26,15 @@ jobs:
   deploy-playground:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout source code
+        uses: actions/checkout@v3
+      - uses: azure/setup-kubectl@v3
+        # with:
+        # version: '<version>' # default is latest stable
+        id: install-kubectl
+      - uses: Azure/k8s-set-context@v2
+        with:
+          kubeconfig: ${{ secrets.AKS_PLAYGROUND_KUBECONFIG }}
       # - name: SSH and deploy playground
       #   uses: appleboy/ssh-action@master
       #   with:
