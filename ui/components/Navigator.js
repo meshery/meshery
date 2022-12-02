@@ -434,7 +434,7 @@ const getNavigatorComponents = (  /** @type {CapabilitiesRegistry} */  capabilit
       {
         id : FILTER,
         icon : <img src="/static/img/web-filters.svg" style={{ width : "1.21rem" }} />,
-        href : "/configuration/applications",
+        href : "/configuration/filters",
         title : "Filters",
         show : capabilityRegistryObj.isNavigatorComponentEnabled([CONFIGURATION, FILTER]),
         link : true,
@@ -443,7 +443,7 @@ const getNavigatorComponents = (  /** @type {CapabilitiesRegistry} */  capabilit
       {
         id : DESIGN,
         icon : <img src="/static/img/pattern_trans.svg" style={{ width : "1.21rem" }} />,
-        href : "/configuration/applications",
+        href : "/configuration/patterns",
         title : "Designs",
         show : capabilityRegistryObj.isNavigatorComponentEnabled([CONFIGURATION, DESIGN]),
         link : true,
@@ -950,7 +950,7 @@ class Navigator extends React.Component {
           disableHoverListener={!drawerCollapsed}
           disableTouchListener={!drawerCollapsed}
         >
-          <ListItemIcon className={classes.listIcon}>{iconc}{console.log("iconc", iconc)} </ListItemIcon>
+          <ListItemIcon className={classes.listIcon}>{iconc}</ListItemIcon>
         </Tooltip>
         <ListItemText
           className={drawerCollapsed
