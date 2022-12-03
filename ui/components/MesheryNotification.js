@@ -345,7 +345,6 @@ class MesheryNotification extends React.Component {
                         onClick={this.handleClearAllNotifications()}
                         onMouseOver={(e) => {
                           e.target.style.fill = "black"
-                          console.log(e.target.style.fill)
                         }}
                         onMouseOut={(e) => {
                           e.target.style.fill = "white"
