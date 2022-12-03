@@ -43,7 +43,7 @@ mesheryctl mesh remove [mesh adapter name]
 		RunE: func(cmd *cobra.Command, args []string) error {
 
 			if len(args) > 0 {
-				return errors.New(utils.MeshError(fmt.Sprintf("'%s' is an invalid argument. 'mesheryctl mesh remove' should not have any arguments.\n",args[0])))
+				return errors.New(utils.MeshError(fmt.Sprintf("'%s' is an invalid argument. 'mesheryctl mesh remove' should not have any arguments.\n", args[0])))
 			}
 
 			s := utils.CreateDefaultSpinner(fmt.Sprintf("Removing %s", meshName), fmt.Sprintf("\n%s service mesh removed successfully", meshName))
