@@ -7,7 +7,10 @@ on:
     tags:
       - "v*"
     paths-ignore:
-      - 'docs/**'
+      - 'docs/**/*'
+      - 'ui/**/*'
+      - 'provider-ui/**/*'
+      - '.github/**/*'
   pull_request:
     branches:
       - "*"
