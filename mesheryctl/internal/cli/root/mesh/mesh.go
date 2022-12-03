@@ -28,7 +28,7 @@ mesheryctl mesh
 		}
 
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
-			return errors.New(utils.MeshError(fmt.Sprintf("'%s' command not found.  Use 'mesheryctl mesh --help' to display usage guide.'\n ", args[0])))
+			return errors.New(utils.MeshError(fmt.Sprintf("'%s' is an invalid command. Use 'mesheryctl mesh --help' to display usage guide.\n ", args[0])))
 		}
 
 		return nil
