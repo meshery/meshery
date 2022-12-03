@@ -13,19 +13,25 @@ import _ from "lodash"
 import CustomTextWidget from './RJSFCustomComponents/CustomTextWidget';
 import CustomDateTimeWidget from './RJSFCustomComponents/CustomDateTimeWidget';
 
+/*eslint-disable */
 class RJSFOverridenComponent extends Form {
   constructor(props){
-    super(props)
-    let oldValidate = this.validate;
-    this.validate = (
-      formData,
-      schema,
-    ) => {
-      let fixedFormData = recursiveCleanObject(_.cloneDeep(formData));
-      return oldValidate.call(this, fixedFormData, schema);
+    try {
+      super(props)
+      let oldValidate = this.validate;
+      this.validate = (
+        formData,
+        schema,
+      ) => {
+        let fixedFormData = recursiveCleanObject(_.cloneDeep(formData));
+        return oldValidate.call(this, fixedFormData, schema);
+      }
+    } catch (e) {
+      console.error("An RJSF error occurred", e)
     }
   }
 }
+/*eslint-enable */
 
 // This is Patched change to include customised Forms
 const MuiRJSFForm = withTheme(MaterialUITheme, RJSFOverridenComponent);

@@ -389,7 +389,7 @@ func (l *RemoteProvider) Logout(w http.ResponseWriter, req *http.Request) {
 	}
 	if err != nil {
 		logrus.Errorf("error performing logout, token cannot be revoked: %v", err)
-		http.Error(w, "error performing logout", http.StatusInternalServerError)
+		http.Redirect(w, req, "/user/login", http.StatusFound)
 		return
 	}
 
