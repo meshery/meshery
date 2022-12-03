@@ -21,7 +21,7 @@ import (
 func checkArgs(n int) cobra.PositionalArgs {
 	return func(cmd *cobra.Command, args []string) error {
 		if len(args) < n || args[0] == "" {
-			return fmt.Errorf("the '-a' (Adapter to use for installation) argument is required in the mesh command")
+			return fmt.Errorf("the '-a' (Adapter to use for installation) argument is required in the mesh command.")
 		}
 		return nil
 	}
