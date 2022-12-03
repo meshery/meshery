@@ -26,14 +26,35 @@ jobs:
   deploy-playground:
     runs-on: ubuntu-latest
     steps:
-      - name: SSH and deploy playground
-        uses: appleboy/ssh-action@master
+      - name: Checkout source code
+        uses: actions/checkout@v3
+      - uses: azure/setup-kubectl@v3
+        # with:
+        # version: '<version>' # default is latest stable
+        id: install-kubectl
+      - uses: Azure/k8s-set-context@v2
         with:
-          host: ${{ secrets.AZ_PLAYGROUND_HOST }}
-          username: ${{ secrets.AZ_PLAYGROUND_USERNAME }}
-          key: ${{ secrets.AZ_PLAYGROUND_KEY }}
-          port: 22
-          script: |
-            sudo docker pull layer5/meshery:playground-latest
-            sudo make play-prod-run
+          kubeconfig: ${{ secrets.AKS_PLAYGROUND_KUBECONFIG }}
+      # - name: SSH and deploy playground
+      #   uses: appleboy/ssh-action@master
+      #   with:
+      #     host: ${{ secrets.AZ_PLAYGROUND_HOST }}
+      #     username: ${{ secrets.AZ_PLAYGROUND_USERNAME }}
+      #     key: ${{ secrets.AZ_PLAYGROUND_KEY }}
+      #     port: 22
+      #     script: |
+      #       sudo docker pull layer5/meshery:playground-latest
+      #       sudo make play-prod-run
+      - uses: Azure/k8s-deploy@v4
+        with:
+          resource-group: Meshery
+          name: playground
+          action: deploy
+          strategy: basic
+
+          # private-cluster: true
+          manifests: |
+            install/playground/meshery-playground-deployment.yaml
+          images: |
+            hub.docker.com/r/layer5/meshery:playground-latest
 
