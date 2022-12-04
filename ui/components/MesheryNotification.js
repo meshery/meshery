@@ -337,20 +337,15 @@ class MesheryNotification extends React.Component {
                       Notifications
                     </Typography>
                   </div>
-                  <div className={classes.clearAllButton}>
+                  <div
+                    className={classes.clearAllButton}>
                     <Tooltip title="Clear all notifications">
                       <IconButton
                         color="inherit"
                         className={classes.drawerButton}
                         onClick={this.handleClearAllNotifications()}
-                        onMouseOver={(e) => {
-                          e.target.style.fill = "black"
-                        }}
-                        onMouseOut={(e) => {
-                          e.target.style.fill = "white"
-                        }}
                       >
-                        <ClearIcon height="1em" width="1em" fill="white" />
+                        <ClearIcon width={'1em'} height={'1em'} fill={'white'}/>
                       </IconButton>
                     </Tooltip>
                   </div>
