@@ -11,7 +11,6 @@ import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import NoSsr from "@material-ui/core/NoSsr";
 import RemoveIcon from "@material-ui/icons/Remove";
-import GitHubIcon from "@material-ui/icons/GitHub";
 import Zoom from '@material-ui/core/Zoom';
 import Link from "next/link";
 import { connect } from "react-redux";
@@ -45,6 +44,7 @@ import { CapabilitiesRegistry } from "../utils/disabledComponents";
 import { APPLICATION, APP_MESH, CILIUM_SM, CITRIX_SM, DESIGN, CONFIGURATION, CONFORMANCE, CONSUL, DASHBOARD, FILTER, ISTIO, KUMA, LIFECYCLE, LINKERD, NETWORK_SM, NGINX, OSM, PERFORMANCE, TRAEFIK_SM, PROFILES, SMI, TOGGLER } from "../constants/navigator"
 import DocumentIcon from "../assets/icons/DocumentIcon";
 import SlackIcon from "../assets/icons/SlackIcon";
+import GithubIcon from "../assets/icons/GithubIcon";
 const styles = (theme) => ({
   categoryHeader : {
     paddingTop : 16,
@@ -509,7 +509,7 @@ const externlinks = [
     id : "issues",
     href : "https://github.com/meshery/meshery/issues/new/choose",
     title : "Issues",
-    icon : <GitHubIcon style={drawerIconsStyle} />,
+    icon : <GithubIcon style={drawerIconsStyle} />,
     external_icon : ExternalLinkIcon,
   },
 ];
