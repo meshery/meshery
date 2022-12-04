@@ -31,10 +31,10 @@ mesheryctl app [subcommand]
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
-			return cmd.Help()
+			return errors.New(utils.AppError("please specify a flag or subcommand. Use 'mesheryctl app --help' to display user guide.\n"))
 		}
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
-			return errors.New(utils.AppError(fmt.Sprintf("'%s' is a invalid command. Use 'mesheryctl app --help' to display usage guide.\n", args[0])))
+			return errors.New(utils.AppError(fmt.Sprintf("'%s' is an invalid command. Include one of these arguments: [ import | list | offboard | onboard | view]. Use 'mesheryctl app --help' to display sample usage.\n", args[0])))
 		}
 		return nil
 	},

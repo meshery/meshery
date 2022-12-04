@@ -38,7 +38,6 @@ mesheryctl app view --all
 * Usage of mesheryctl app view
 # ![app-view-usage](/assets/img/mesheryctl/app-view.png)
 	`,
-	Args: cobra.MinimumNArgs(0),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {

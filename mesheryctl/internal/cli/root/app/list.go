@@ -24,7 +24,6 @@ var listCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List applications",
 	Long:  `Display list of all available applications.`,
-	Args:  cobra.MinimumNArgs(0),
 	Example: `
 // List all the applications
 mesheryctl app list

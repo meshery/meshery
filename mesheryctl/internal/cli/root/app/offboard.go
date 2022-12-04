@@ -21,7 +21,6 @@ var offboardCmd = &cobra.Command{
 	Use:   "offboard",
 	Short: "Offboard application",
 	Long:  `Offboard application will trigger undeploy of application`,
-	Args:  cobra.MinimumNArgs(0),
 	Example: `
 // Offboard application by providing file path
 mesheryctl app offboard -f [filepath]
