@@ -273,7 +273,7 @@ function MesheryPatterns({
   const [loading, stillLoading] = useState(true);
 
   const catalogContentRef = useRef();
-  const catalogVisibilityRef = useRef();
+  const catalogVisibilityRef = useRef(false);
   const disposeConfSubscriptionRef = useRef(null);
 
   const { workloadTraitSet } = useContext(SchemaContext);
@@ -444,7 +444,9 @@ function MesheryPatterns({
       error : (err) => console.log("There was an error fetching Catalog Pattern: ", err)
     });
     return () => {
-      disposeConfSubscriptionRef.current.dispose();
+      if (disposeConfSubscriptionRef.current){
+        disposeConfSubscriptionRef.current.dispose();
+      }
       fetchCatalogPatterns.unsubscribe();
     }
   },[])

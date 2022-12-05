@@ -47,7 +47,6 @@ jobs:
       - uses: actions/setup-node@v3.0.0
         with:
           node-version: ${{ secrets.NODE_VERSION }}
-      - run: sudo npm i -g npm@7
       - name: Cache node modules
         id: node-cache
         uses: actions/cache@v3

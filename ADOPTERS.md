@@ -12,5 +12,8 @@
   - "As we are a very modern technology company, we always want to use the cutting edge, open source technology to excel. All our microservices are modern in nature and so is their infrastructure. We are cloud agnostic and at the same time, we are fascinated by service meshes to empower us with secure, reliable, intelligent infrastructure. When we are in an Istio world, the need for managing the mesh was always been a gap. With **Meshery**, we believe we can nurture our service mesh to perform better and more efficiently."
 - [BootLabs](https://www.bootlabs.in/)
   - "We are a true Boutique Tech Consulting partner who understands the pain points of all-sized company in terms of embracing Cloud.  Being obsessed about anything “CLOUD” and automation first, we drive our partner to success. We always strive to provide our customers ,the cutting edge technology and the trend is ServiceMesh now. We enable our Client to make their Micoservices more secure with Mesh. When we talk about ServiceMeshes, Meshery comes handy. We have seen the imact meshery has done for the Mesh deployment and Management and reduced the time to market "
+- [Intel](https://www.intel.com)
+  - "We are working on the acceleration and security of open source Service Mesh projects. Meshery is the best tool for managing and operating different Service Mesh projects, it greatly helped us compare the functions and performance of them, and demonstrate the results of our efforts. We also love Meshery's community where we can connect with Service Mesh talents and enthusiasts from all over the world!"
+- [Red Hat](https://www.redhat.com)
 ---
 If you're using Meshery and aren't on this list, please [submit a pull request](https://github.com/meshery/meshery/pulls)!

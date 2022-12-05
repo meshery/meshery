@@ -1,1 +1,1 @@
-{"kind":"KongClusterPlugin","apiVersion":"v1","Format":"JSON","Metadata":{"Model":"wallarm","Version":"4.2.4","Category":"","SubCategory":"","Metadata":{"display-name":"Kong Cluster Plugin"}},"Schema":""}
+{"kind":"KongClusterPlugin","apiVersion":"v1","display-name":"Kong Cluster Plugin","format":"JSON","metadata":{},"model":{"name":"wallarm","version":"4.2.4","display-name":"","category":"","sub-category":""},"schema":""}

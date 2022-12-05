@@ -45,8 +45,8 @@ import ExtensionPointSchemaValidator from "../utils/ExtensionPointSchemaValidato
 import dataFetch from "../lib/data-fetch";
 import { Collapse } from "@material-ui/core";
 import { cursorNotAllowed, disabledStyle } from "../css/disableComponent.styles";
-import {  CapabilitiesRegistry } from "../utils/disabledComponents";
-import { APPLICATION, APP_MESH, CILIUM_SM, CITRIX_SM,DESIGN, CONFIGURATION, CONFORMANCE, CONSUL, DASHBOARD, FILTER, ISTIO, KUMA, LIFECYCLE, LINKERD, NETWORK_SM, NGINX, OCTARINE, OSM, PERFORMANCE, TRAEFIK_SM, PROFILES, SMI, TOGGLER } from "../constants/navigator"
+import { CapabilitiesRegistry } from "../utils/disabledComponents";
+import { APPLICATION, APP_MESH, CILIUM_SM, CITRIX_SM, DESIGN, CONFIGURATION, CONFORMANCE, CONSUL, DASHBOARD, FILTER, ISTIO, KUMA, LIFECYCLE, LINKERD, NETWORK_SM, NGINX, OSM, PERFORMANCE, TRAEFIK_SM, PROFILES, SMI, TOGGLER } from "../constants/navigator"
 const styles = (theme) => ({
   categoryHeader : {
     paddingTop : 16,
@@ -379,13 +379,6 @@ const getNavigatorComponents = (  /** @type {CapabilitiesRegistry} */  capabilit
         show : capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, NGINX]),
       },
       {
-        id : OCTARINE,
-        href : "/management/octarine",
-        title : "Octarine",
-        link : true,
-        show : capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, OCTARINE]),
-      },
-      {
         id : OSM,
         href : "/management/osm",
         title : "Open Service Mesh",
@@ -684,7 +677,35 @@ class Navigator extends React.Component {
 
     return content;
   }
+  updatenavigatorComponentsMenus() {
+    const self = this;
+    const { navigatorComponents } = this.state
+    navigatorComponents.forEach((cat, ind) => {
+      if (cat.id === LIFECYCLE) {
+        cat.children.forEach((catc, ind1) => {
+          const cr = self.fetchChildren(catc.id);
+          const icon = self.pickIcon(catc.id);
+          navigatorComponents[ind].children[ind1].icon = icon;
+          navigatorComponents[ind].children[ind1].children = cr;
+        });
+      }
 
+      if (cat.id === "Configuration") {
+        let show = false;
+        cat.children?.forEach((ch) => {
+          if (ch.id === "Designs") {
+            const idx = self.props.capabilitiesRegistry?.capabilities?.findIndex((cap) => cap.feature === "persist-meshery-patterns");
+            if (idx != -1) {
+              ch.show = true;
+              show = true;
+            }
+          }
+        });
+
+        cat.show = show;
+      }
+    });
+  }
   updateAdaptersLink() {
     const { navigatorComponents } = this.state
     navigatorComponents.forEach((cat, ind) => {
@@ -1041,6 +1062,7 @@ class Navigator extends React.Component {
   render() {
     const { classes, isDrawerCollapsed, ...other } = this.props;
     const { path, showHelperButton, navigatorComponents } = this.state;
+    this.updatenavigatorComponentsMenus();
 
     const Title = (
       <ListItem
@@ -1107,19 +1129,21 @@ class Navigator extends React.Component {
                     >
 
                       {(isDrawerCollapsed && (this.state.hoveredId === childId || this.state.openItems.includes(childId))) ?
-                        <Tooltip
-                          title={title}
-                          placement="right"
-                          TransitionComponent={Zoom}
-                          arrow
-                        >
-                          <ListItemIcon
-                            onClick={() => this.toggleItemCollapse(childId)}
+                        <div>
+                          <Tooltip
+                            title={title}
+                            placement="right"
+                            TransitionComponent={Zoom}
+                            arrow
+                          >
+                            <ListItemIcon
+                              onClick={() => this.toggleItemCollapse(childId)}
 
-                            style={{ marginLeft : "20%", marginBottom : "0.4rem" }}>
-                            {hovericon}
-                          </ListItemIcon>
-                        </Tooltip>
+                              style={{ marginLeft : "20%", marginBottom : "0.4rem" }}>
+                              {hovericon}
+                            </ListItemIcon>
+                          </Tooltip>
+                        </div>
                         :
                         <ListItemIcon className={classes.listIcon}>
                           {icon}

@@ -1,9 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
 import NoSsr from "@material-ui/core/NoSsr";
-import {
-  withStyles, Button, Divider, MenuItem, TextField, Grid
-} from "@material-ui/core";
+import { withStyles, Button, Divider, MenuItem, TextField, Grid } from "@material-ui/core";
 import { blue } from "@material-ui/core/colors";
 import PropTypes from "prop-types";
 import { withRouter } from "next/router";
@@ -13,30 +11,24 @@ import { bindActionCreators } from "redux";
 import { setAdapter } from "../lib/store";
 
 const styles = (theme) => ({
-  icon : { fontSize : 20, },
-  playRoot : { padding : theme.spacing(0),
-    marginBottom : theme.spacing(2), },
-  buttons : { display : "flex",
-    justifyContent : "flex-end", },
-  button : { marginTop : theme.spacing(3),
-    marginLeft : theme.spacing(1), },
-  margin : { margin : theme.spacing(1), },
-  alreadyConfigured : { textAlign : "center",
-    padding : theme.spacing(20), },
-  colorSwitchBase : { color : blue[300],
-    "&$colorChecked" : { color : blue[500],
-      "& + $colorBar" : { backgroundColor : blue[500], }, }, },
+  icon : { fontSize : 20 },
+  playRoot : { padding : theme.spacing(0), marginBottom : theme.spacing(2) },
+  buttons : { display : "flex", justifyContent : "flex-end" },
+  button : { marginTop : theme.spacing(3), marginLeft : theme.spacing(1) },
+  margin : { margin : theme.spacing(1) },
+  alreadyConfigured : { textAlign : "center", padding : theme.spacing(20) },
+  colorSwitchBase : {
+    color : blue[300],
+    "&$colorChecked" : { color : blue[500], "& + $colorBar" : { backgroundColor : blue[500] } },
+  },
   colorBar : {},
   colorChecked : {},
-  uploadButton : { margin : theme.spacing(1),
-    marginTop : theme.spacing(3), },
-  fileLabel : { width : "100%", },
-  editorContainer : { width : "100%", },
-  deleteLabel : { paddingRight : theme.spacing(2), },
-  alignRight : { textAlign : "right", },
-  expTitleIcon : { width : theme.spacing(3),
-    display : "inline",
-    verticalAlign : "middle", },
+  uploadButton : { margin : theme.spacing(1), marginTop : theme.spacing(3) },
+  fileLabel : { width : "100%" },
+  editorContainer : { width : "100%" },
+  deleteLabel : { paddingRight : theme.spacing(2) },
+  alignRight : { textAlign : "right" },
+  expTitleIcon : { width : theme.spacing(3), display : "inline", verticalAlign : "middle" },
   expIstioTitleIcon : {
     width : theme.spacing(2),
     display : "inline",
@@ -44,19 +36,15 @@ const styles = (theme) => ({
     marginLeft : theme.spacing(0.5),
     marginRight : theme.spacing(0.5),
   },
-  expTitle : { display : "inline",
-    verticalAlign : "middle",
-    marginLeft : theme.spacing(1), },
-  paneSection : { backgroundColor : "#fff",
-    padding : theme.spacing(2.5),
-    borderRadius : 4, },
+  expTitle : { display : "inline", verticalAlign : "middle", marginLeft : theme.spacing(1) },
+  paneSection : { backgroundColor : "#fff", padding : theme.spacing(2.5), borderRadius : 4 },
 });
 
 class MesheryPlayComponent extends React.Component {
   constructor(props) {
     super(props);
 
-    const {  meshAdapters } = props;
+    const { meshAdapters } = props;
     let adapter = {};
     if (meshAdapters && meshAdapters.size > 0) {
       adapter = meshAdapters[0];
@@ -66,39 +54,37 @@ class MesheryPlayComponent extends React.Component {
     };
   }
 
-  handleRouteChange =  () => {
+  handleRouteChange = () => {
     const queryParam = this.props?.router?.query?.adapter;
     if (queryParam) {
       const selectedAdapter = this.props.meshAdapters.find(({ adapter_location }) => adapter_location === queryParam);
       if (selectedAdapter) {
-        this.setState({ adapter : selectedAdapter })
+        this.setState({ adapter : selectedAdapter });
       }
     } else if (this.props.meshAdapters.size > 0) {
-      this.setState({ adapter : this.props.meshAdapters.get(0) })
+      this.setState({ adapter : this.props.meshAdapters.get(0) });
     }
-  }
+  };
 
   componentDidMount() {
     const { router } = this.props;
-    router.events.on('routeChangeComplete', this.handleRouteChange)
+    router.events.on("routeChangeComplete", this.handleRouteChange);
   }
 
   componentDidUpdate(prevProps) {
     // update the adapter when the meshadapters props are changed
-    if (prevProps.meshAdapters?.size !== this.props.meshAdapters?.size
-      && this.props.meshAdapters.size > 0
-    ) {
+    if (prevProps.meshAdapters?.size !== this.props.meshAdapters?.size && this.props.meshAdapters.size > 0) {
       this.handleRouteChange();
     }
   }
 
   componentWillUnmount() {
-    this.props.router.events.off('routeChangeComplete', this.handleRouteChange)
+    this.props.router.events.off("routeChangeComplete", this.handleRouteChange);
   }
 
   handleConfigure = () => {
     this.props.router.push("/settings#service-mesh");
-  }
+  };
 
   pickImage(adapter) {
     const { classes } = this.props;
@@ -114,7 +100,7 @@ class MesheryPlayComponent extends React.Component {
   handleAdapterChange = () => {
     const self = this;
     return (event) => {
-      const { setAdapter,meshAdapters } = self.props;
+      const { setAdapter, meshAdapters } = self.props;
       if (event.target.value !== "") {
         const selectedAdapter = meshAdapters.filter(({ adapter_location }) => adapter_location === event.target.value);
         if (selectedAdapter && selectedAdapter.size === 1) {
@@ -149,7 +135,7 @@ class MesheryPlayComponent extends React.Component {
   }
 
   render() {
-    const { classes,  meshAdapters } = this.props;
+    const { classes, meshAdapters } = this.props;
     let { adapter } = this.state;
 
     if (meshAdapters.size === 0) {
@@ -188,12 +174,23 @@ class MesheryPlayComponent extends React.Component {
                   name="adapter_name"
                   label="Select Service Mesh Type"
                   fullWidth
-                  value={adapter && adapter.adapter_location
-                    ? adapter.adapter_location
-                    : ""}
+                  value={adapter && adapter.adapter_location ? adapter.adapter_location : ""}
                   margin="normal"
                   variant="outlined"
                   onChange={this.handleAdapterChange()}
+                  SelectProps={{
+                    MenuProps : {
+                      anchorOrigin : {
+                        vertical : "bottom",
+                        horizontal : "left",
+                      },
+                      transformOrigin : {
+                        vertical : "top",
+                        horizontal : "left",
+                      },
+                      getContentAnchorEl : null,
+                    }
+                  }}
                 >
                   {meshAdapters.map((ada) => (
                     <MenuItem key={`${ada.adapter_location}_${new Date().getTime()}`} value={ada.adapter_location}>
@@ -217,10 +214,10 @@ class MesheryPlayComponent extends React.Component {
   }
 }
 
-MesheryPlayComponent.propTypes = { classes : PropTypes.object.isRequired, };
+MesheryPlayComponent.propTypes = { classes : PropTypes.object.isRequired };
 
 const mapDispatchToProps = (dispatch) => ({
-  setAdapter : bindActionCreators(setAdapter, dispatch)
+  setAdapter : bindActionCreators(setAdapter, dispatch),
 });
 
 const mapStateToProps = (state) => {
@@ -232,3 +229,4 @@ const mapStateToProps = (state) => {
 };
 
 export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(withRouter(MesheryPlayComponent)));
+

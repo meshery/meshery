@@ -1,1 +1,1 @@
-{"kind":"WorkflowTaskResult","apiVersion":"v1alpha1","Format":"JSON","Metadata":{"Model":"inseefrlab","Version":"2.3.0","Category":"","SubCategory":"","Metadata":{"display-name":"Workflow Task Result"}},"Schema":""}
+{"kind":"WorkflowTaskResult","apiVersion":"v1alpha1","display-name":"Workflow Task Result","format":"JSON","metadata":{},"model":{"name":"inseefrlab","version":"2.3.0","display-name":"","category":"","sub-category":""},"schema":""}
