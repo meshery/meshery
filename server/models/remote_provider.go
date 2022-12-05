@@ -419,10 +419,6 @@ func (l *RemoteProvider) Logout(w http.ResponseWriter, req *http.Request) {
 	cReq.AddCookie(&http.Cookie{
 		Name:     "session_cookie",
 		Value:    sessionCookie.Value,
-		Path:     "/",
-		HttpOnly: true,
-		MaxAge:   -1,
-		SameSite: http.SameSiteLaxMode,
 	})
 
 	// adds return_to cookie to the new request headers
@@ -2782,7 +2778,7 @@ func (l *RemoteProvider) RecordPreferences(req *http.Request, userID string, dat
 func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, fromMiddleWare bool) {
 	tokenString := r.URL.Query().Get(tokenName)
 	// gets the session cookie from remote provider
-	session_cookie := r.URL.Query().Get("session_cookie")
+	sessionCookie := r.URL.Query().Get("session_cookie")
 
 	logrus.Debugf("token : %v", tokenString)
 	ck := &http.Cookie{
@@ -2795,7 +2791,7 @@ func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, fr
 	// sets the session cookie for Meshery Session
 	http.SetCookie(w, &http.Cookie{
 		Name:     "session_cookie",
-		Value:    session_cookie,
+		Value:    sessionCookie,
 		Path:     "/",
 		HttpOnly: true,
 	})
@@ -3057,10 +3053,6 @@ func (l *RemoteProvider) ExtensionProxy(req *http.Request) ([]byte, error) {
 		cReq.AddCookie(&http.Cookie{
 			Name:     "session_cookie",
 			Value:    sessionCookie.Value,
-			Path:     "/",
-			HttpOnly: true,
-			MaxAge:   -1,
-			SameSite: http.SameSiteLaxMode,
 		})
 	}
 	// make request to remote provider with contructed URL and updated headers (like session cookie)
