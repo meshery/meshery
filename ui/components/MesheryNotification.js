@@ -30,7 +30,7 @@ const styles = (theme) => ({
   sidelist : { width : 450, },
   notificationButton : { height : '100%', },
   notificationDrawer : {
-    backgroundColor : '#FFFFFF',
+    backgroundColor : theme.palette.type === 'dark' ? "#263238" : "rgb(255, 255, 255)",
     display : 'flex',
     flexDirection : 'column',
     justifyContent : 'space-between'
