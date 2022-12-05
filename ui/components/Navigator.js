@@ -11,10 +11,7 @@ import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import NoSsr from "@material-ui/core/NoSsr";
 import RemoveIcon from "@material-ui/icons/Remove";
-import GitHubIcon from "@material-ui/icons/GitHub";
 import Zoom from '@material-ui/core/Zoom';
-import DescriptionOutlinedIcon from "@material-ui/icons/DescriptionOutlined";
-// import MailIcon from "@material-ui/icons/Mail";
 import Link from "next/link";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
@@ -27,18 +24,20 @@ import PerformanceIcon from '../public/static/img/drawer-icons/performance_svg';
 import ConformanceIcon from '../public/static/img/drawer-icons/conformance_svg';
 import ExtensionIcon from "../public/static/img/drawer-icons/extensions_svg";
 import LifecycleHover from '../public/static/img/drawer-icons/lifecycle_hover_svg';
-import ConfigurationHover from '../public/static/img/drawer-icons/configuration_hover_svg';
 import PerformanceHover from '../public/static/img/drawer-icons/performance_hover_svg';
+import ConfigurationIcon from "../assets/icons/ConfigurationIcon";
+import DocumentIcon from "../assets/icons/DocumentIcon";
+import SlackIcon from "../assets/icons/SlackIcon";
+import GithubIcon from "../assets/icons/GithubIcon";
+import ChatIcon from "../assets/icons/ChatIcon";
 import ConformanceHover from '../public/static/img/drawer-icons/conformance_hover_svg';
 import SmiIcon from '../public/static/img/drawer-icons/servicemeshinterface-icon-white_svg';
-import DiscussIcon from '../public/static/img/drawer-icons/discuss_forum_svg.js';
 import OpenInNewIcon from "@material-ui/icons/OpenInNew";
 import {
   faAngleLeft, faCaretDown,
   faExternalLinkAlt,
   faDigitalTachograph
 } from "@fortawesome/free-solid-svg-icons";
-import { faSlack } from "@fortawesome/free-brands-svg-icons";
 import { updatepagetitle, updatebetabadge, toggleDrawer, setAdapter, updateCapabilities } from "../lib/store";
 import { ButtonGroup, IconButton, Tooltip } from "@material-ui/core";
 import ExtensionPointSchemaValidator from "../utils/ExtensionPointSchemaValidator";
@@ -47,6 +46,7 @@ import { Collapse } from "@material-ui/core";
 import { cursorNotAllowed, disabledStyle } from "../css/disableComponent.styles";
 import { CapabilitiesRegistry } from "../utils/disabledComponents";
 import { APPLICATION, APP_MESH, CILIUM_SM, CITRIX_SM, DESIGN, CONFIGURATION, CONFORMANCE, CONSUL, DASHBOARD, FILTER, ISTIO, KUMA, LIFECYCLE, LINKERD, NETWORK_SM, NGINX, OSM, PERFORMANCE, TRAEFIK_SM, PROFILES, SMI, TOGGLER } from "../constants/navigator"
+
 const styles = (theme) => ({
   categoryHeader : {
     paddingTop : 16,
@@ -77,10 +77,11 @@ const styles = (theme) => ({
     zIndex : 5
   },
   link : {
-    display : "inline-flex",
+    display : "flex",
+    alignItems : "center",
+    justifyContent : "center",
     width : "100%",
     height : "30px",
-    alignItems : "self-end"
   },
 
   itemActionable : { "&:hover" : { backgroundColor : "rgb(0, 187, 166, 0.5)", }, },
@@ -238,10 +239,9 @@ const styles = (theme) => ({
   },
   avatarGroup : { '& .MuiAvatarGroup-avatar' : { border : 'none', } },
   marginLeft : {
-    marginLeft : 8,
-    "& .MuiListItem-gutters" : {
-      paddingLeft : 8,
-      paddingRight : 8
+    padding : "5px",
+    "& > li" : {
+      padding : "0"
     }
   },
   rightMargin : { marginRight : 8 },
@@ -263,8 +263,11 @@ const styles = (theme) => ({
     },
   },
   extraPadding : {
-    paddingTop : 4,
-    paddingBottom : 4
+    // paddingTop : 4,
+    // paddingBottom : 4,
+    display : "flex",
+    alignItems : "center",
+    justifyContent : "center"
   },
   restrictPointer : { pointerEvents : 'none' },
   expandMoreIcon : {
@@ -395,8 +398,8 @@ const getNavigatorComponents = (  /** @type {CapabilitiesRegistry} */  capabilit
   },
   {
     id : CONFIGURATION,
-    icon : <img src="/static/img/configuration_trans.svg" style={{ width : "1.21rem" }} />,
-    hovericon : <ConfigurationHover style={{ transform : "scale(1.3)", ...drawerIconsStyle }} />,
+    icon : <ConfigurationIcon {...drawerIconsStyle}/>,
+    hovericon : <ConfigurationIcon style={{ transform : "scale(1.3)", ...drawerIconsStyle }} />,
     href : "#",
     title : "Configuration",
     show : capabilityRegistryObj.isNavigatorComponentEnabled([CONFIGURATION]),
@@ -489,28 +492,28 @@ const externlinks = [
     id : "doc",
     href : "https://docs.meshery.io",
     title : "Documentation",
-    icon : <DescriptionOutlinedIcon style={drawerIconsStyle} />,
+    icon : <DocumentIcon style={drawerIconsStyle} />,
     external_icon : ExternalLinkIcon,
   },
   {
     id : "community",
     href : "https://slack.layer5.io",
     title : "Community",
-    icon : <FontAwesomeIcon style={{ marginBottom : 2, ...drawerIconsStyle }} icon={faSlack} transform="grow-1" />,
+    icon : <SlackIcon style={{ ...drawerIconsStyle,height : "1.5rem",width : "1.5rem",marginTop : "" }}/>,
     external_icon : ExternalLinkIcon,
   },
   {
     id : "forum",
     href : "https://discuss.layer5.io",
     title : "Discussion Forum",
-    icon : <DiscussIcon style={drawerIconsStyle} />,
+    icon : <ChatIcon style={drawerIconsStyle} />,
     external_icon : ExternalLinkIcon,
   },
   {
     id : "issues",
     href : "https://github.com/meshery/meshery/issues/new/choose",
     title : "Issues",
-    icon : <GitHubIcon style={drawerIconsStyle} />,
+    icon : <GithubIcon style={drawerIconsStyle} />,
     external_icon : ExternalLinkIcon,
   },
 ];

@@ -1,11 +1,13 @@
-import { Grid, Typography, Button, Switch } from "@material-ui/core";
+import { Grid, Typography, Button, Switch, IconButton } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import CloseIcon from "@material-ui/icons/Close";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { toggleCatalogContent } from "../lib/store";
 import Head from 'next/head';
-
+import { withSnackbar } from "notistack";
+import dataFetch from "../lib/data-fetch";
 
 const styles = (theme) => ({
   button : {
@@ -50,12 +52,62 @@ const styles = (theme) => ({
 
 const INITIAL_GRID_SIZE = { lg : 6, md : 12, xs : 12 };
 
-const Extensions = ({ classes, catalogVisibility, toggleCatalogContent }) => {
+const Extensions = ({ classes, toggleCatalogContent,  enqueueSnackbar, closeSnackbar }) => {
+  const [catalogContent, setCatalogContent] = useState(true);
+  const [extensionPreferences, setExtensionPreferences] = useState({})
 
-  const handleToggle = (e) => {
-    e.stopPropagation();
-    console.log(`Meshery Catalog: ${catalogVisibility ? "enabled" : "disabled"}`)
-    toggleCatalogContent({ catalogVisibility : !catalogVisibility });
+  const handleToggle = () => {
+    toggleCatalogContent({ catalogVisibility : !catalogContent });
+    setCatalogContent(!catalogContent);
+    handleCatalogPreference(!catalogContent);
+  }
+
+  useEffect(() => {
+    dataFetch(
+      "/api/user/prefs",
+      {
+        method : "GET",
+        credentials : "include",
+      },
+      (result) => {
+        if (result) {
+          setExtensionPreferences(result?.usersExtensionPreferences)
+          setCatalogContent(result?.usersExtensionPreferences?.catalogContent)
+        }
+      },
+      err => console.error(err)
+    )
+  }, []);
+
+  const handleCatalogPreference = (catalogPref) => {
+    let body = Object.assign({}, extensionPreferences)
+    body["catalogContent"] = catalogPref
+
+    dataFetch(
+      "/api/user/prefs",
+      {
+        method : "POST",
+        credentials : "include",
+        body : JSON.stringify({ usersExtensionPreferences : body })
+      },
+      () => {
+        enqueueSnackbar(`Catalog Content was ${catalogPref ? "enab" : "disab"}led`,
+          { variant : 'success',
+            autoHideDuration : 4000,
+            action : (key) => (
+              <IconButton
+                key="close"
+                aria-label="Close"
+                color="inherit"
+                onClick={() => closeSnackbar(key)}
+              >
+                <CloseIcon />
+              </IconButton>
+            ),
+          });
+      },
+      err => console.error(err),
+    )
   }
 
   const handleSignUp = (e) => {
@@ -116,16 +168,16 @@ const Extensions = ({ classes, catalogVisibility, toggleCatalogContent }) => {
 
               <div style={{ textAlign : "right" }}>
                 <Switch
-                  checked={catalogVisibility}
-                  onClick={(e) => handleToggle(e)}
+                  checked={catalogContent}
+                  onChange={handleToggle}
                   name="OperatorSwitch"
                   color="primary"
                 />
               </div>
             </Grid>
           </div>
-        </Grid >
-      </Grid >
+        </Grid>
+      </Grid>
     </React.Fragment>
   )
 }
@@ -138,4 +190,4 @@ const mapDispatchToProps = dispatch => ({
   toggleCatalogContent : bindActionCreators(toggleCatalogContent, dispatch)
 })
 
-export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(Extensions));
+export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(withSnackbar(Extensions)));

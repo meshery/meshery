@@ -245,6 +245,7 @@ function MesheryPatterns({
   const [patterns, setPatterns] = useState([]);
   const [selectedRowData, setSelectedRowData] = useState(null);
   const [selectedPattern, setSelectedPattern] = useState(resetSelectedPattern());
+  const [extensionPreferences, setExtensionPreferences] = useState({});
 
   const [patternErrors, setPatternErrors] = useState(new Map());
 
@@ -375,12 +376,63 @@ function MesheryPatterns({
     return (() => document.body.style.overflowX = "auto")
   }, [page, pageSize, search, sortOrder]);
 
+
+  const handleCatalogPreference = (catalogPref) => {
+    let body = Object.assign({}, extensionPreferences)
+    body["catalogContent"] = catalogPref
+
+    dataFetch(
+      "/api/user/prefs",
+      {
+        method : "POST",
+        credentials : "include",
+        body : JSON.stringify({ usersExtensionPreferences : body })
+      },
+      () => {
+        enqueueSnackbar(`Catalog Content was ${catalogPref ? "enab" : "disab"}led`,
+          { variant : 'success',
+            autoHideDuration : 4000,
+            action : (key) => (
+              <IconButton
+                key="close"
+                aria-label="Close"
+                color="inherit"
+                onClick={() => closeSnackbar(key)}
+              >
+                <CloseIcon />
+              </IconButton>
+            ),
+          });
+      },
+      err => console.error(err),
+    )
+  }
+
+  const fetchUserPrefs = () => {
+    dataFetch(
+      "/api/user/prefs",
+      {
+        method : "GET",
+        credentials : "include",
+      },
+      (result) => {
+        if (result) {
+          setExtensionPreferences(result?.usersExtensionPreferences)
+        }
+      },
+      err => console.error(err)
+    )
+  }
+
+
   const handleCatalogVisibility = () => {
+    handleCatalogPreference(!catalogVisibilityRef.current);
     catalogVisibilityRef.current = !catalogVisibility
     toggleCatalogContent({ catalogVisibility : !catalogVisibility });
   }
 
   useEffect(() => {
+    fetchUserPrefs();
     catalogVisibilityRef.current = catalogVisibility
     const fetchCatalogPatterns = fetchCatalogPattern({
       selector : {
@@ -390,10 +442,10 @@ function MesheryPatterns({
     }).subscribe({
       next : (result) => {
         catalogContentRef.current = result?.catalogPatterns;
+        initPatternsSubscription();
       },
       error : (err) => console.log("There was an error fetching Catalog Pattern: ", err)
     });
-    initPatternsSubscription();
     return () => {
       if (disposeConfSubscriptionRef.current) {
         disposeConfSubscriptionRef.current.dispose();
@@ -637,7 +689,6 @@ function MesheryPatterns({
     )}`;
 
     updateProgress({ showProgress : true });
-
     dataFetch(
       `/api/pattern${query}`,
       { credentials : "include", },
