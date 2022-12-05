@@ -24,6 +24,7 @@ func (h *Handler) ProviderMiddleware(next http.Handler) http.Handler {
 			providerName = req.Header.Get(h.config.ProviderCookieName)
 			// allow provider to be set using query parameter
 			// this is OK since provider information is not sensitive
+
 			if providerName == "" {
 				providerName = req.URL.Query().Get(providerQParamName)
 			}
