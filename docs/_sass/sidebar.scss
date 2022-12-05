@@ -1,0 +1,110 @@
+.sidebar-container {
+    flex: 0 0 22%;
+    padding: 1rem 1.8rem;
+    background: var(--background-neumorphic);
+
+    @media (max-width:1200px) {
+        position: fixed;
+        top: 4.5rem;
+        left: 0;
+        width: 30%;
+        height: calc(100vh - 4.5rem);
+        z-index: 9;
+    }
+
+    & .sidebar-menu {
+
+        & .sidebar__search {
+            &-form {
+                width: 100%;
+                margin: 2rem 0 2rem;
+                position: relative;
+
+                &>svg {
+                    position: absolute;
+                    top: 50%;
+                    right: 5%;
+                    width: 20px;
+                    height: 20px;
+                    transform: translateY(-50%);
+                    fill: var(--color-grey-light);
+
+                }
+            }
+
+            &-input {
+                border: none;
+                width: 100%;
+                border-radius: 21px;
+                background: var(--background-neumorphic);
+                box-shadow: var(--box-shadow-neumorphic);
+                padding: 5px 2px 5px 8px;
+            }
+
+        }
+
+        & .sidebar-nav {
+            &>*:not(:last-child) {
+                border-bottom: 1px solid grey;
+            }
+
+            & .sidebar-nav__section {
+                list-style: none;
+                padding: 15px 0;
+                margin: 0;
+
+                &-title {
+                    margin-bottom: 5px;
+                    font-weight: 600;
+                }
+
+                &-link {
+                    color: var(--color-secondary-medium);
+                    position: relative;
+                    width: fit-content;
+
+                    & a:hover{
+                        text-decoration: none;
+                    }
+
+                    &:hover {
+                        text-decoration: none;
+                        &::after {
+                            width: 100%;
+                        }
+                    }
+
+                    &::after {
+                        content: "";
+                        width: 0px;
+                        height: .1rem;
+                        bottom: -2px;
+                        left: 50%;
+                        transform: translateX(-50%);
+                        position: absolute;
+                        background: var(--background-primary);
+                        transition: all .3s;
+                    }
+                }
+
+                &>ul {
+                    padding-inline-start: 23px;
+                    list-style: none;
+
+                    &>li>ul {
+                        list-style: none;
+                        display: flex;
+                        flex-direction: column;
+                        gap: 3px;
+                        padding-inline-start: 0px;
+                        & > ul{
+                            list-style: none;
+                        }
+                    }
+                }
+            }
+
+        }
+    }
+
+}

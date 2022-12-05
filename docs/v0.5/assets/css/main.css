@@ -271,7 +271,7 @@ sup {
 }
 
 a {
-    color: #00B39F;
+    color: var(--color-secondary-medium);
     text-decoration: none;
     background-color: transparent;
     -webkit-text-decoration-skip: objects
@@ -4810,7 +4810,7 @@ input[type=button].btn-block {
 .nav-link:hover,
 .nav-link:focus {
     text-decoration: none;
-    color: #fff !important;
+    color: var(--color-secondary-medium);
 }
 
 .nav-link.disabled {
@@ -5236,7 +5236,7 @@ input[type=button].btn-block {
     }
 }
 
-.navbar-expand {
+/* .navbar-expand {
     -webkit-box-orient: horizontal;
     -webkit-box-direction: normal;
     -webkit-flex-flow: row nowrap;
@@ -5252,33 +5252,33 @@ input[type=button].btn-block {
 .navbar-expand>.container-fluid {
     padding-right: 0;
     padding-left: 0
-}
+} */
 
-.navbar-expand .navbar-nav {
+/* .navbar-expand .navbar-nav {
     -webkit-box-orient: horizontal;
     -webkit-box-direction: normal;
     -webkit-flex-direction: row;
     -ms-flex-direction: row;
     flex-direction: row
-}
-
+} */
+/* 
 .navbar-expand .navbar-nav .dropdown-menu {
     position: absolute
-}
+} */
 
-.navbar-expand .navbar-nav .nav-link {
+/* .navbar-expand .navbar-nav .nav-link {
     padding-right: .5rem;
     padding-left: .5rem
-}
+} */
 
-.navbar-expand>.container,
+/* .navbar-expand>.container,
 .navbar-expand>.container-fluid {
     -webkit-flex-wrap: nowrap;
     -ms-flex-wrap: nowrap;
     flex-wrap: nowrap
-}
+} */
 
-.navbar-expand .navbar-collapse {
+/* .navbar-expand .navbar-collapse {
     display: -webkit-box!important;
     display: -webkit-flex!important;
     display: -ms-flexbox!important;
@@ -5286,11 +5286,11 @@ input[type=button].btn-block {
     -webkit-flex-basis: auto;
     -ms-flex-preferred-size: auto;
     flex-basis: auto
-}
+} */
 
-.navbar-expand .navbar-toggler {
+/* .navbar-expand .navbar-toggler {
     display: none
-}
+} */
 
 .navbar-light .navbar-brand {
     color: rgba(0, 0, 0, .9)
@@ -5347,7 +5347,7 @@ input[type=button].btn-block {
     color: #fff
 }
 
-.navbar-dark .navbar-brand:hover,
+/* .navbar-dark .navbar-brand:hover,
 .navbar-dark .navbar-brand:focus {
     color: #fff
 }
@@ -5392,7 +5392,7 @@ input[type=button].btn-block {
 .navbar-dark .navbar-text a:hover,
 .navbar-dark .navbar-text a:focus {
     color: #fff
-}
+} */
 
 .card,
 .td-content .highlight {
@@ -17913,7 +17913,7 @@ a.text-dark:focus {
     white-space: pre;
     border: 0
 }
-
+/* 
 .td-navbar-cover {
     background: #3C494F
 }
@@ -17995,7 +17995,7 @@ a.text-dark:focus {
 
 .td-navbar .dropdown {
     min-width: 100px
-}
+} */
 
 .headerlink {
     display: inline-block;

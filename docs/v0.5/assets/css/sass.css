@@ -64,7 +64,7 @@ main nav .breadcrumb { padding-top: 1.5rem; }
 
 div .td-toc { padding-top: 2rem; }
 
-@media (min-width: 768px) { .td-navbar { position: fixed; top: 0; width: 100%; padding-top: 1.35rem; padding-bottom: 1.35rem; } }
+/* @media (min-width: 768px) { .td-navbar { position: fixed; top: 0; width: 100%; padding-top: 1.35rem; padding-bottom: 1.35rem; } } */
 @media (min-width: 768px) { .td-sidebar-nav { max-height: -webkit-calc(100vh - 11.5rem); max-height: calc(100vh - 11.5rem); overflow-y: auto; } }
 .swagger-path { font-weight: bolder; font-size: 19.2px; margin: 0 0 30px 0; font-family: open sans, -apple-system, BlinkMacSystemFont, segoe ui, Roboto, helvetica neue, Arial, sans-serif, apple color emoji, segoe ui emoji, segoe ui symbol; }
 
@@ -117,3 +117,6 @@ div .td-toc { padding-top: 2rem; }
 .swagger-parameters-table th { background: #f7f7f7; }
 
 .swagger-parameter-required:after { content: " *"; color: red; }
+
+
+

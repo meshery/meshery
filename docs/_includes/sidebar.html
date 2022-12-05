@@ -1,33 +1,36 @@
-<div id="td-sidebar-menu" class="td-sidebar__inner">  
-    <form class="td-sidebar__search d-flex align-items-center">
-   <input type="search" class="form-control td-search-input fas fa-search" placeholder="&#xf002" aria-label="Search this site…" autocomplete="off">
-      <button class="btn btn-link td-sidebar__toggle d-md-none p-0 ml-3 fas fa-bars" type="button" data-toggle="collapse" data-target="#td-section-nav" aria-controls="td-docs-nav" aria-expanded="false" aria-label="Toggle section navigation">
-      </button>
+<div class="sidebar-menu">  
+    <form class="sidebar__search-form">
+   <input type="search" class="sidebar__search-input" placeholder="Search this site" aria-label="Search this site…" autocomplete="off">
+  <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="48" height="48" viewBox="0 0 64 64">
+    <path
+      d="M 27 9 C 17.075 9 9 17.075 9 27 C 9 36.925 17.075 45 27 45 C 31.129213 45 34.9263 43.587367 37.966797 41.240234 L 51.048828 54.322266 C 51.952828 55.226266 53.418266 55.226266 54.322266 54.322266 C 55.226266 53.418266 55.226266 51.952828 54.322266 51.048828 L 41.240234 37.966797 C 43.587367 34.9263 45 31.129213 45 27 C 45 17.075 36.925 9 27 9 z M 27 13 C 34.719 13 41 19.281 41 27 C 41 34.719 34.719 41 27 41 C 19.281 41 13 34.719 13 27 C 13 19.281 19.281 13 27 13 z">
+    </path>
+  </svg>
     </form>  
 
-    <nav class="collapse td-sidebar-nav pt-1 pl-3" id="td-section-nav">
+    <nav class="sidebar-nav" id="td-section-nav">
       
     {% for section in site.data.toc %}
-    <ul class="td-sidebar-nav__section pr-md-3">
+    <ul class="sidebar-nav__section">
       {% capture sectionUrl %}{{ section.url | replace: "/", "" }}{% endcapture %}
       {% capture pageUrl %}{{ page.url | replace: "/", "" }}{% endcapture %}
-      <li class="td-sidebar-nav__section-title">
+      <li class="sidebar-nav__section-title">
         <a  href="{% if section.url %}{{ site.baseurl }}{{linkUrlSelected}}/{{ section.url }}{% else %}{{ section.external_url }}{% endif %}" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">{{ section.title }}</a>
       </li>
       {% if section.links %}
         <ul>
-          <li class="collapse show" id="{{ section.title | slugify }}">
-              <ul class="td-sidebar-nav__section pr-md-3">
+          <li id="{{ section.title | slugify }}">
+              <ul class="td-sidebar-nav__section">
                 {% for entry in section.links %}
-                <li class="td-sidebar-nav__section-title">
+                <li class="sidebar-nav__section-link">
                   <a href="{% if entry.url %}{{ site.baseurl }}{{linkUrlSelected}}/{{ entry.url }}{% else %}{{ entry.external_url }}{% endif %}" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">{{ entry.title }}</a>
                 </li>
                 {% if page.url contains entry.url or pageUrl == sectionUrl %}
                 <ul>
-                  <li class="collapse show" id="{{ child.title | slugify }}">
+                  <li id="{{ child.title | slugify }}">
                     {% if entry.children %}
                     {% for child in entry.children %}
-                      <a class="td-sidebar-link td-sidebar-link__page " id="m-{{ section.title | slugify }}-{{ entry.title | slugify }}-{{ child.title | slugify }}" href="{% if child.url %}{{ site.baseurl }}{{linkUrlSelected}}/{{ child.url }}{% else %}{{ child.external_url }}{% endif %}">{{ child.title }}</a>
+                      <a class="sidebar-nav__section-link " id="m-{{ section.title | slugify }}-{{ entry.title | slugify }}-{{ child.title | slugify }}" href="{% if child.url %}{{ site.baseurl }}{{linkUrlSelected}}/{{ child.url }}{% else %}{{ child.external_url }}{% endif %}">{{ child.title }}</a>
                     {% endfor %}
                     {% endif %}
                   </li>
