@@ -1,0 +1,20 @@
+@mixin link-hover-primary {
+    position: relative;
+	&:hover{
+		&::after{
+		  width: 100%;
+		}
+	  }
+
+    &::after{
+    content: "";
+    width: 0px;
+    height: 2px;
+    bottom: -4px;
+    left: 50%;
+    transform: translateX(-50%);
+    position: absolute;
+    background: var(--background-primary);
+    transition: all .3s;
+    }
+}

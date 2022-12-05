@@ -44,7 +44,7 @@ layout: null
     var Search = {
         init: function() {
             $(document).ready(function() {
-                $(document).on('keypress', '.td-search-input', function(e) {
+                $(document).on('keypress', '.sidebar__search-input', function(e) {
                     if (e.keyCode !== 13) {
                         return
                     }

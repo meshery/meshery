@@ -9,14 +9,14 @@ main nav .breadcrumb {
 div .td-toc {
   padding-top: 2rem;
 }
-
 @media (min-width: 768px) {
   .td-navbar {
     position: fixed;
     top: 0;
     width: 100%;
-    padding-top: 1.35rem;
-    padding-bottom: 1.35rem;
+    padding: .8vw 4vw !important;
+    background: var(--background-light-cards);
+    box-shadow: var(--box-shadow-navbar);
   }
 }
 
@@ -26,4 +26,114 @@ div .td-toc {
     max-height: calc(100vh - 11.5rem);
     overflow-y: auto;
   }
+}
+
+
+//New Code ////////////////////////////////////////////////////////////////////////////////////////////////////
+
+header{
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  width: 100%;
+}
+
+.navbar{
+    width: 100%;
+    height: 4.5rem;
+    padding: 0 2rem !important;
+    background: var(--background-light-cards);
+    box-shadow: var(--box-shadow-navbar);
+    display: flex;
+    align-items: center;
+    z-index: 10;
+
+    & #document-nav-toggle-btn{
+      width: 20px;
+      height: 20px;
+      fill: var(--color-secondary-medium);
+    }
+
+    & #menu-nav-toggle-btn{
+      width: 20px;
+      height: 20px;
+      fill: var(--color-secondary-medium);
+    }
+
+    & .navbar-brand{
+      display: inline-block;
+      font-size: 1.25rem;
+      line-height: inherit;
+      white-space: nowrap;
+      & img, svg{
+        display: inline-block;
+        margin: 0 10px;
+        height: 35px;
+        margin-right: .5rem;
+      }
+      & > span{
+        font-weight: 700 !important;
+        vertical-align: bottom;
+        color: var(--color-secondary-medium);
+
+      }
+    }
+
+    & #main_navbar{
+      overflow: hidden;
+      font-size: .875rem;
+      margin-left: auto!important;
+
+      @media (max-width:1200px) {
+        position: fixed;
+        top: 4.5rem;
+        right: 0;
+        width: 25%;
+        height: calc(100vh - 4.5rem);
+        z-index: 9;
+      }
+      
+      & .navbar-nav{
+        white-space: nowrap;
+        display: flex;
+        flex-direction: row;
+        gap: 1.5rem;
+        
+        @media (max-width:1200px) {
+          width: 100%;
+          background-color: var(--background-neumorphic);
+          flex-direction: column;
+          height: 100%;
+          padding: 2rem 1.8rem;
+      }
+
+        & .nav-item{
+          color: var(--color-secondary-medium);
+          position: relative;
+
+          @media (max-width:1200px) {
+            width: fit-content;
+        }
+
+          &:hover{
+            &::after{
+              width: 100%;
+            }
+            }
+        
+            &::after{
+            content: "";
+            width: 0px;
+            height: .1rem;
+            bottom: 5px;
+            left: 50%;
+            transform: translateX(-50%);
+            position: absolute;
+            background: var(--background-primary);
+            transition: all .3s;
+            }
+        }
+      }
+    }
+
 }
