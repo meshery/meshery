@@ -20,7 +20,7 @@ import subscribeBrokerStatusEvents from "./graphql/subscriptions/BrokerStatusSub
 import Slide from '@material-ui/core/Slide';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import { Checkbox, Button } from '@material-ui/core';
-import AddIcon from '@material-ui/icons/Add';
+import AddIconCircleBorder from '../assets/icons/AddIconCircleBorder';
 import { Search } from '@material-ui/icons';
 import { TextField } from '@material-ui/core';
 import Avatar from '@material-ui/core/Avatar';
@@ -386,7 +386,7 @@ function K8sContextMenu({
                         size="large"
                         style={{ margin : "0.5rem 0.5rem", whiteSpace : "nowrap" }}
                       >
-                        <AddIcon className={classes.AddIcon} />
+                        <AddIconCircleBorder className={classes.AddIcon} />
                         Connect Clusters
                       </Button>
                     </Link>
