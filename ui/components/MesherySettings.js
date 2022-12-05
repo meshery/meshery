@@ -12,7 +12,7 @@ import {
 } from '@material-ui/core';
 import CloseIcon from "@material-ui/icons/Close";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowLeft, faPoll, faDatabase } from '@fortawesome/free-solid-svg-icons';
+import { faArrowLeft, faDatabase } from '@fortawesome/free-solid-svg-icons';
 // import {faTachometerAlt} from '@fortawesome/free-solid-svg-icons';
 // import { faMendeley } from '@fortawesome/free-brands-svg-icons';
 import Link from 'next/link';
@@ -29,6 +29,7 @@ import PromptComponent from './PromptComponent';
 import resetDatabase from './graphql/queries/ResetDatabaseQuery';
 import CloudIcon from '../assets/icons/CloudIcon';
 import MendeleyIcon from '../assets/icons/MendeleyIcon';
+import SquarePollVerticalIcon from '../assets/icons/SquarePollVerticalIcon';
 
 const styles = (theme) => ({
   wrapperClss : {
@@ -401,7 +402,7 @@ class MesherySettings extends React.Component {
               <Tab
                 className={classes.tab}
                 icon={
-                  <FontAwesomeIcon icon={faPoll} transform={mainIconScale} fixedWidth />
+                  <SquarePollVerticalIcon style={{ width : "24px",height : "24px" }}/>
                 }
                 label="Metrics"
                 tab="tabMetrics"
