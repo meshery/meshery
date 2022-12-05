@@ -12,9 +12,9 @@ import {
 } from '@material-ui/core';
 import CloseIcon from "@material-ui/icons/Close";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowLeft, faCloud, faPoll, faDatabase } from '@fortawesome/free-solid-svg-icons';
+import { faArrowLeft, faPoll, faDatabase } from '@fortawesome/free-solid-svg-icons';
 // import {faTachometerAlt} from '@fortawesome/free-solid-svg-icons';
-import { faMendeley } from '@fortawesome/free-brands-svg-icons';
+// import { faMendeley } from '@fortawesome/free-brands-svg-icons';
 import Link from 'next/link';
 import MeshConfigComponent from './MeshConfigComponent';
 import GrafanaComponent from './GrafanaComponent';
@@ -27,6 +27,8 @@ import { withSnackbar } from "notistack";
 import { ctxUrl } from '../utils/multi-ctx';
 import PromptComponent from './PromptComponent';
 import resetDatabase from './graphql/queries/ResetDatabaseQuery';
+import CloudIcon from '../assets/icons/CloudIcon';
+import MendeleyIcon from '../assets/icons/MendeleyIcon';
 
 const styles = (theme) => ({
   wrapperClss : {
@@ -38,6 +40,11 @@ const styles = (theme) => ({
     minWidth : 40,
     paddingLeft : 0,
     paddingRight : 0,
+  },
+  headerIcon : {
+    width : "28px",
+    height : "28px",
+    marginBottom : "0 !important"
   },
   icon : {
     display : 'inline',
@@ -354,7 +361,6 @@ class MesherySettings extends React.Component {
           <Link href="/management">
             <div className={classes.link}>
               <FontAwesomeIcon icon={faArrowLeft} transform="grow-4" fixedWidth />
-              {' '}
               You are ready to manage cloud native infrastructure
             </div>
           </Link>
@@ -375,7 +381,7 @@ class MesherySettings extends React.Component {
               <Tab
                 className={classes.tab}
                 icon={
-                  <FontAwesomeIcon icon={faCloud} transform={mainIconScale} />
+                  <CloudIcon className={classes.headerIcon} />
                 }
                 label="Environment"
                 data-cy="tabEnvironment"
@@ -385,7 +391,7 @@ class MesherySettings extends React.Component {
               <Tab
                 className={classes.tab}
                 icon={
-                  <FontAwesomeIcon icon={faMendeley} transform={mainIconScale} />
+                  <MendeleyIcon className={classes.headerIcon} />
                 }
                 label="Adapters"
                 data-cy="tabServiceMeshes"
