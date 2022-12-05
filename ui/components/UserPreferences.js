@@ -181,7 +181,7 @@ class UserPreference extends React.Component {
       "anonymousPerfResults" : perfResultStats,
     });
 
-    console.log(requestBody,anonymousStats,perfResultStats);
+    // console.log(requestBody,anonymousStats,perfResultStats);
 
     this.props.updateProgress({ showProgress : true });
     dataFetch(
