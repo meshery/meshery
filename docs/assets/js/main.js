@@ -88,3 +88,20 @@ getcodeelement.each(function(i) {
 });
 
 new Clipboard('.clipbtn');
+const toggleBtnSidebarNav=document.querySelector(".nav-toggle-btn--document");
+
+toggleBtnSidebarNav.addEventListener("click",()=>{
+    let sidebarNav=document.querySelector(".sidebar-container")
+    if(sidebarNav){
+        sidebarNav.classList.toggle("sidebar-container--active")
+    }
+})
+
+const toggleBtnMainNav=document.querySelector(".nav-toggle-btn--main");
+
+toggleBtnMainNav.addEventListener("click",()=>{
+    let sidebarNav=document.getElementById("main_navbar")
+    if(sidebarNav){
+        sidebarNav.classList.toggle("main-navbar--active")
+    }
+})

@@ -12,7 +12,8 @@
     --color-secondary-dark:#212529;
     --color-grey-light:#868e96;
     
-    --box-shadow-primary:3px 3px 10px rgba( 134, 142, 150,  .8);
+    --box-shadow-primary:3px 3px 10px rgba(0, 0, 0, 0.4);
+    --box-shadow-primary-left:-3px 6px 10px rgb(0 0 0 / 40%);
     --box-shadow-navbar:-1px 6px 8px 2px rgba(0,0,0,0.04);
     --box-shadow-neumorphic:inset 3px 3px 7px #cbced1, inset -3px -3px 2px #fff;
     --integrations-box-shadow:4px 4px 14px #cbced1,
@@ -45,6 +46,7 @@
     --color-grey-light:#ced4da;
 
     --box-shadow-primary:4px 4px 8px rgba(0, 0, 0, 1);
+    --box-shadow-primary-left:-4px 8px 8px rgb(0 0 0 / 10%);
     --box-shadow-neumorphic:inset 3px 3px 7px #040404, inset -3px -3px 2px #171a1d;
 
     // --box-shadow-primary:4px 4px 8px rgba(255, 255, 255, 0.4);
