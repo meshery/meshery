@@ -173,7 +173,7 @@ type HandlerConfig struct {
 
 	// GraphQLHandler           http.Handler
 	// GraphQLPlaygroundHandler http.Handler
-
+	PlaygroundBuild        bool
 	Providers              map[string]Provider
 	ProviderCookieName     string
 	ProviderCookieDuration time.Duration

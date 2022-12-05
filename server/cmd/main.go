@@ -281,9 +281,9 @@ func main() {
 		Providers:              provs,
 		ProviderCookieName:     "meshery-provider",
 		ProviderCookieDuration: 30 * 24 * time.Hour,
-
-		AdapterTracker: adapterTracker,
-		QueryTracker:   queryTracker,
+		PlaygroundBuild:        viper.GetBool("PLAYGROUND"),
+		AdapterTracker:         adapterTracker,
+		QueryTracker:           queryTracker,
 
 		Queue: mainQueue,
 
