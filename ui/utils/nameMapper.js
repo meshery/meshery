@@ -40,6 +40,7 @@ export const podNameMapper = (serviceMeshName, podName) => {
 export const versionMapper = (versionName) => (versionName.charAt(0) === "v" ? versionName : `v${versionName}`);
 
 
+
 export function getMeshProperties(name) {
   switch (name) {
     case "istio": return { name, img : "/static/img/istio.svg", color : "#466BB0" }

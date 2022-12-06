@@ -1,6 +1,7 @@
 import VisibilityIcon from '@material-ui/icons/Visibility';
 import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
 import { Button } from "@material-ui/core";
+import PropTypes from "prop-types";
 
 function CatalogFilter({ catalogVisibility, handleCatalogVisibility, hideCatalog }) {
   return (
@@ -14,4 +15,9 @@ function CatalogFilter({ catalogVisibility, handleCatalogVisibility, hideCatalog
   )
 }
 
+CatalogFilter.propTypes={
+  catalogVisibility : PropTypes.bool.isRequired,
+  handleCatalogVisibility : PropTypes.func.isRequired,
+  hideCatalog : PropTypes.bool
+}
 export default CatalogFilter

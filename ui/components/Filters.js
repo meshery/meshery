@@ -176,6 +176,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
   const [filters, setFilters] = useState([]);
   const [selectedFilter, setSelectedFilter] = useState(resetSelectedFilter());
   const [selectedRowData, setSelectedRowData] = useState(null);
+  const [extensionPreferences, setExtensionPreferences] = useState({});
   const [viewType, setViewType] = useState(
     /**  @type {TypeView} */
     ("grid")
@@ -286,19 +287,66 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     });
   }
 
+  const handleCatalogPreference = (catalogPref) => {
+    let body = Object.assign({}, extensionPreferences)
+    body["catalogContent"] = catalogPref
+
+    dataFetch(
+      "/api/user/prefs",
+      {
+        method : "POST",
+        credentials : "include",
+        body : JSON.stringify({ usersExtensionPreferences : body })
+      },
+      () => {
+        enqueueSnackbar(`Catalog Content was ${catalogPref ? "enab" : "disab"}led`,
+          { variant : 'success',
+            autoHideDuration : 4000,
+            action : (key) => (
+              <IconButton
+                key="close"
+                aria-label="Close"
+                color="inherit"
+                onClick={() => closeSnackbar(key)}
+              >
+                <CloseIcon />
+              </IconButton>
+            ),
+          });
+      },
+      err => console.error(err),
+    )
+  }
+
+  const fetchUserPrefs = () => {
+    dataFetch(
+      "/api/user/prefs",
+      {
+        method : "GET",
+        credentials : "include",
+      },
+      (result) => {
+        if (result) {
+          setExtensionPreferences(result?.usersExtensionPreferences)
+        }
+      },
+      err => console.error(err)
+    )
+  }
+
   const handleCatalogVisibility = () => {
+    handleCatalogPreference(!catalogVisibilityRef.current);
     catalogVisibilityRef.current = !catalogVisibility
     toggleCatalogContent({ catalogVisibility : !catalogVisibility });
   }
 
   useEffect(() => {
+    fetchUserPrefs();
     handleSetFilters(filters)
   }, [catalogVisibility])
 
   useEffect(() => {
     catalogVisibilityRef.current = catalogVisibility
-    initFiltersSubscription();
-
     const fetchCatalogFilters = fetchCatalogFilter({
       selector : {
         search : "",
@@ -307,6 +355,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     }).subscribe({
       next : (result) => {
         catalogContentRef.current = result?.catalogFilters;
+        initFiltersSubscription();
       },
       error : (err) => console.log("There was an error fetching Catalog Filter: ", err)
     });
