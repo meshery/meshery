@@ -44,7 +44,7 @@ jobs:
 
       - name: Get Date
         id: date
-        run: echo "::set-output name=date::$(date +'%Y-%m-%d-%H.%M.%S')"
+        run: echo "date=date +'%Y-%m-%d-%H.%M.%S'" >> $GITHUB_OUTPUT
 
       - name: Checkout Code
         uses: actions/checkout@master
@@ -98,7 +98,7 @@ jobs:
 
       - name: Get Date
         id: date
-        run: echo "::set-output name=date::$(date +'%Y-%m-%d-%H.%M.%S')"
+        run: echo "date=(date +'%Y-%m-%d-%H.%M.%S')" >> $GITHUB_OUTPUT
 
       - name: Checkout Code
         uses: actions/checkout@master

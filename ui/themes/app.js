@@ -347,11 +347,11 @@ export const styles = (theme) => ({
   },
   icon : { fontSize : 20, },
   notifSuccess : {
-    backgroundColor : "rgba(248, 252, 248) !important",
+    backgroundColor : theme.palette.type == 'dark' ? "#303030 !important" : "rgb(248, 252, 248) !important",
     color : `${notificationColors.success} !important`, pointerEvents : "auto !important"
   },
   notifInfo : {
-    backgroundColor : "rgba(250, 254, 255) !important",
+    backgroundColor : theme.palette.type == 'dark' ? "#303030 !important" : "rgb(248, 252, 248) !important",
     color : `${notificationColors.info} !important`, pointerEvents : "auto !important"
   },
   notifWarn : {
@@ -359,7 +359,7 @@ export const styles = (theme) => ({
     color : `${notificationColors.warning} !important`, pointerEvents : "auto !important"
   },
   notifError : {
-    backgroundColor : "rgba(255, 250, 250) !important",
+    backgroundColor : theme.palette.type == 'dark' ? "#303030 !important" : "rgb(248, 252, 248) !important",
     color : `${notificationColors.error} !important`, pointerEvents : "auto !important"
   },
   playgroundFooter : {

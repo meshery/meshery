@@ -368,15 +368,15 @@ class MesheryApp extends App {
                   </MuiPickersUtilsProvider>
                 </main>
               </SnackbarProvider>
-              <footer style={{
+              <footer className={this.props.capabilitiesRegistry?.restrictedAccess?.isMesheryUiRestricted ? classes.playgroundFooter : classes.footer} style={{
 
                 backgroundColor : this.state.theme === "dark" ? '#212121' : '#FFF',
-              }} className={this.props.capabilitiesRegistry?.restrictedAccess?.isMesheryUiRestricted ? classes.playgroundFooter : classes.footer} >
+              }} >
                 <Typography variant="body2" align="center" color="textSecondary" component="p"
                   style={this.props.capabilitiesRegistry?.restrictedAccess?.isMesheryUiRestricted ? { color : "#000" } : {}}
                 >
                   <span onClick={this.handleL5CommunityClick} className={classes.footerText}>
-                    {this.props.capabilitiesRegistry?.restrictedAccess?.isMesheryUiRestricted ? "Playground Environment, some features might not be available" : (<> Built with <FavoriteIcon className={classes.footerIcon} /> by the Layer5 Community</>)}
+                    {this.props.capabilitiesRegistry?.restrictedAccess?.isMesheryUiRestricted ? "ACCESS LIMITED IN MESHERY PLAYGROUND. DEPLOY MESHERY TO ACCESS ALL FEATURES." : (<> Built with <FavoriteIcon className={classes.footerIcon} /> by the Layer5 Community</>)}
                   </span>
                 </Typography>
               </footer>
