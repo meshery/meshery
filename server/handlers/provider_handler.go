@@ -75,6 +75,17 @@ func (h *Handler) ProvidersHandler(w http.ResponseWriter, r *http.Request) {
 
 // ProviderUIHandler - serves providers UI
 func (h *Handler) ProviderUIHandler(w http.ResponseWriter, r *http.Request) {
+	if h.config.PlaygroundBuild { //Always use Remote provider for Playground build
+		http.SetCookie(w, &http.Cookie{
+			Name:     h.config.ProviderCookieName,
+			Value:    "Meshery",
+			Path:     "/",
+			HttpOnly: true,
+		})
+		redirectURL := "/user/login"
+		http.Redirect(w, r, redirectURL, http.StatusFound)
+		return
+	}
 	ServeUI(w, r, "/provider", "../../provider-ui/out/")
 }
 

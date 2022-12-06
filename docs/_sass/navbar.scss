@@ -10,6 +10,13 @@ div .td-toc {
   padding-top: 2rem;
 }
 
+@media (min-width:768px) and (max-width:995px) {
+  div .td-sidebar__search {
+    padding-top: 2.5rem;
+    margin-top: 1rem;
+  }
+}
+
 @media (min-width: 768px) {
   .td-navbar {
     position: fixed;
