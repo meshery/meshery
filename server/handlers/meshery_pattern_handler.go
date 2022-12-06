@@ -133,7 +133,7 @@ func (h *Handler) handlePatternPOST(
 				return
 			}
 			go h.config.ConfigurationChannel.PublishPatterns()
-			h.formatPatternOutput(rw, resp, format, &res)
+			h.formatPatternOutput(rw, resp, format, &res, parsedBody.Save)
 			return
 		}
 
@@ -146,7 +146,7 @@ func (h *Handler) handlePatternPOST(
 			return
 		}
 
-		h.formatPatternOutput(rw, byt, format, &res)
+		h.formatPatternOutput(rw, byt, format, &res, parsedBody.Save)
 		return
 	}
 
@@ -161,7 +161,7 @@ func (h *Handler) handlePatternPOST(
 			return
 		}
 
-		h.formatPatternOutput(rw, resp, format, &res)
+		h.formatPatternOutput(rw, resp, format, &res, parsedBody.Save)
 		return
 	}
 
@@ -214,7 +214,7 @@ func (h *Handler) handlePatternPOST(
 			}
 
 			go h.config.ConfigurationChannel.PublishPatterns()
-			h.formatPatternOutput(rw, resp, format, &res)
+			h.formatPatternOutput(rw, resp, format, &res, parsedBody.Save)
 			return
 		}
 
@@ -227,7 +227,7 @@ func (h *Handler) handlePatternPOST(
 			return
 		}
 
-		h.formatPatternOutput(rw, byt, format, &res)
+		h.formatPatternOutput(rw, byt, format, &res, parsedBody.Save)
 		return
 	}
 
@@ -277,7 +277,7 @@ func (h *Handler) handlePatternPOST(
 			}
 
 			go h.config.ConfigurationChannel.PublishPatterns()
-			h.formatPatternOutput(rw, resp, format, &res)
+			h.formatPatternOutput(rw, resp, format, &res, parsedBody.Save)
 			return
 		}
 
@@ -289,7 +289,7 @@ func (h *Handler) handlePatternPOST(
 			return
 		}
 
-		h.formatPatternOutput(rw, byt, format, &res)
+		h.formatPatternOutput(rw, byt, format, &res, parsedBody.Save)
 		return
 	}
 }
@@ -525,7 +525,7 @@ func (h *Handler) GetMesheryPatternHandler(
 	fmt.Fprint(rw, string(resp))
 }
 
-func (h *Handler) formatPatternOutput(rw http.ResponseWriter, content []byte, format string, res *meshes.EventsResponse) {
+func (h *Handler) formatPatternOutput(rw http.ResponseWriter, content []byte, format string, res *meshes.EventsResponse, save bool) {
 	contentMesheryPatternSlice := make([]models.MesheryPattern, 0)
 
 	if err := json.Unmarshal(content, &contentMesheryPatternSlice); err != nil {
@@ -578,9 +578,11 @@ func (h *Handler) formatPatternOutput(rw http.ResponseWriter, content []byte, fo
 	}
 	rw.Header().Set("Content-Type", "application/json")
 	fmt.Fprint(rw, string(data))
-	res.Details = "patternfiles successfully saved"
-	res.Summary = "following patternfiles were saved: " + strings.Join(names, ",")
-	go h.EventsBuffer.Publish(res)
+	if save {
+		res.Details = "patternfiles successfully saved"
+		res.Summary = "following patternfiles were saved: " + strings.Join(names, ",")
+		go h.EventsBuffer.Publish(res)
+	}
 }
 
 // Since the client currently does not support pattern imports and externalized variables, the first(import) stage of pattern engine
