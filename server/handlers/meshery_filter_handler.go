@@ -5,11 +5,13 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
+	"time"
 
 	guid "github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/server/meshes"
 	"github.com/layer5io/meshery/server/models"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 // MesheryFilterRequestBody refers to the type of request body that
@@ -94,6 +96,8 @@ func (h *Handler) handleFilterPOST(
 		_ = r.Body.Close()
 	}()
 	res := meshes.EventsResponse{
+		Timestamp:     timestamppb.New(time.Now()),
+		Silent:        true,
 		Component:     "core",
 		ComponentName: "Filters",
 		OperationId:   guid.NewString(),

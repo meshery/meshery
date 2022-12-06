@@ -11,6 +11,7 @@ import (
 	"path/filepath"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/gofrs/uuid"
 	guid "github.com/google/uuid"
@@ -21,6 +22,7 @@ import (
 	"github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/layer5io/meshkit/utils/kubernetes/kompose"
 	"github.com/layer5io/meshkit/utils/walker"
+	"google.golang.org/protobuf/types/known/timestamppb"
 	"gopkg.in/yaml.v2"
 )
 
@@ -115,6 +117,8 @@ func (h *Handler) handleApplicationPOST(
 		_ = r.Body.Close()
 	}()
 	res := meshes.EventsResponse{
+		Timestamp:     timestamppb.New(time.Now()),
+		Silent:        true,
 		Component:     "core",
 		ComponentName: "Application",
 		OperationId:   guid.NewString(),
@@ -404,6 +408,8 @@ func (h *Handler) handleApplicationUpdate(rw http.ResponseWriter,
 		_ = r.Body.Close()
 	}()
 	res := meshes.EventsResponse{
+		Timestamp:     timestamppb.New(time.Now()),
+		Silent:        true,
 		Component:     "core",
 		ComponentName: "Design",
 		OperationId:   guid.NewString(),

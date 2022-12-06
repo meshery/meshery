@@ -3,6 +3,7 @@ syntax="proto3";
 package meshes;
 
 option go_package = "github.com/layer5io/meshery/server/meshes;meshes";
+import "google/protobuf/timestamp.proto";
 
 service MeshService {
     rpc MeshName(MeshNameRequest) returns (MeshNameResponse) {}
@@ -78,6 +79,8 @@ message EventsResponse {
     string error_code = 7;
     string component = 8;
     string component_name = 9;
+    google.protobuf.Timestamp timestamp = 10;
+    bool silent = 11;
 }
 
 message ProcessOAMRequest {

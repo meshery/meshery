@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
@@ -13,6 +14,7 @@ import (
 	"github.com/layer5io/meshery/server/meshes"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/errors"
+	"google.golang.org/protobuf/types/known/timestamppb"
 
 	pCore "github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshery/server/models/pattern/stages"
@@ -71,6 +73,8 @@ func (h *Handler) handlePatternPOST(
 
 	var err error
 	res := meshes.EventsResponse{
+		Timestamp:     timestamppb.New(time.Now()),
+		Silent:        true,
 		Component:     "core",
 		ComponentName: "Design",
 		OperationId:   uuid.NewString(),
