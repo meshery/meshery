@@ -1,1 +1,1 @@
-{"kind":"IstioOperator","apiVersion":"v1alpha1","Format":"JSON","Metadata":{"Model":"particuleio","Version":"1.7.0","Category":"","SubCategory":"","Metadata":{"display-name":"Istio Operator"}},"Schema":""}
+{"kind":"IstioOperator","apiVersion":"v1alpha1","display-name":"Istio Operator","format":"JSON","metadata":{},"model":{"name":"particuleio","version":"1.7.0","display-name":"","category":"","sub-category":""},"schema":""}

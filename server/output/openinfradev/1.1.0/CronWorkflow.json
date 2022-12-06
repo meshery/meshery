@@ -1,1 +1,1 @@
-{"kind":"CronWorkflow","apiVersion":"v1alpha1","Format":"JSON","Metadata":{"Model":"openinfradev","Version":"1.1.0","Category":"","SubCategory":"","Metadata":{"display-name":"Cron Workflow"}},"Schema":""}
+{"kind":"CronWorkflow","apiVersion":"v1alpha1","display-name":"Cron Workflow","format":"JSON","metadata":{},"model":{"name":"openinfradev","version":"1.1.0","display-name":"","category":"","sub-category":""},"schema":""}

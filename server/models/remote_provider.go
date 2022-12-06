@@ -335,12 +335,25 @@ func (l *RemoteProvider) GetSession(req *http.Request) error {
 		logrus.Infof("session not found")
 		return err
 	}
-	err = l.introspectToken(ts)
+	jwtClaims, err := l.VerifyToken(ts)
 	if err != nil {
+		logrus.Error(err)
 		return err
 	}
+	if jwtClaims == nil {
+		logrus.Error("invalid JWT claim found")
+		return fmt.Errorf("invalid or nil JWT claim found")
+	}
+	// we verify the signature of the token and check if it has exp claim,
+	// if not present it's an infinite JWT, hence skip the introspect step
+	//
+	if (*jwtClaims)["exp"] != nil {
+		err = l.introspectToken(ts)
+		if err != nil {
+			return err
+		}
+	}
 
-	_, err = l.VerifyToken(ts)
 	if err != nil {
 		logrus.Infof("Token validation error : %v", err.Error())
 		newts, err := l.refreshToken(ts)
@@ -374,9 +387,8 @@ func (l *RemoteProvider) Logout(w http.ResponseWriter, req *http.Request) {
 		err = l.revokeToken(ck.Value)
 	}
 	if err != nil {
-		logrus.Errorf("error performing logout, token cannot be revoked: %v", err)
-
-		http.Error(w, "error performing logout", http.StatusInternalServerError)
+		logrus.Errorf("error performing logout, token cannot be revoked: %v, redirecting to login", err)
+		http.Redirect(w, req, "/user/login", http.StatusFound)
 		return
 	}
 
@@ -3015,7 +3027,6 @@ func TarXZF(srcURL, destination string) error {
 
 	if resp.StatusCode != http.StatusOK {
 		return ErrFetch(fmt.Errorf("failed GET request"), "TarTZF file :"+srcURL, resp.StatusCode)
-
 	}
 
 	return TarXZ(resp.Body, destination)

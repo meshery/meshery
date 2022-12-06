@@ -58,10 +58,12 @@ func convertCompModelsToPackages(models []ComponentModel) []artifacthub.AhPackag
 }
 
 func main() {
-	err := os.Mkdir(OutputDirectoryPath, 0744)
-	if err != nil {
-		fmt.Println(err)
-		return
+	if _, err := os.Stat(OutputDirectoryPath); err != nil {
+		err := os.Mkdir(OutputDirectoryPath, 0744)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
 	}
 	compsFd, err := os.OpenFile(filepath.Join(OutputDirectoryPath, ComponentsFileName), os.O_CREATE|os.O_RDWR|os.O_APPEND, 0644)
 	if err != nil {
@@ -224,21 +226,21 @@ func writeComponents(cmps []v1alpha1.ComponentDefinition, writer *Writer) error 
 	// writer.m.Lock()
 	// defer writer.m.Unlock()
 	for _, comp := range cmps {
-		path := filepath.Join("../../server/output", comp.Metadata.Model)
+		path := filepath.Join("../../server/output", comp.Model.Name)
 		if _, err := os.Stat(path); errors.Is(err, os.ErrNotExist) {
 			err := os.Mkdir(path, os.ModePerm)
 			if err != nil {
 				return err
 			}
-			fmt.Println("created directory ", comp.Metadata.Model)
+			fmt.Println("created directory ", comp.Model.Name)
 		}
-		path = filepath.Join(path, comp.Metadata.Version)
+		path = filepath.Join(path, comp.Model.Version)
 		if _, err := os.Stat(path); errors.Is(err, os.ErrNotExist) {
 			err := os.Mkdir(path, os.ModePerm)
 			if err != nil {
 				return err
 			}
-			fmt.Println("created versioned directory ", comp.Metadata.Version)
+			fmt.Println("created versioned directory ", comp.Model.Version)
 		}
 		f, err := os.Create(filepath.Join(path, comp.Kind+".json"))
 		if err != nil {

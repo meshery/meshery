@@ -186,7 +186,7 @@ class User extends React.Component {
               aria-haspopup="true"
               onClick={this.handleToggle}
             >
-              <Avatar className={avatarClassName} src={avatar_url} />
+              <Avatar className={avatarClassName} src={avatar_url} imgProps={{ referrerPolicy : "no-referrer" }} />
             </IconButton>
           </div>
           <Popper open={open} anchorEl={this.anchorEl} transition  style={{ zIndex : 10000 }} placement="top-end">

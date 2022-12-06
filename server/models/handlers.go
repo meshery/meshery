@@ -108,6 +108,7 @@ type HandlerInterface interface {
 	ValidationHandler(rw http.ResponseWriter, r *http.Request)
 	ComponentGenerationHandler(rw http.ResponseWriter, r *http.Request)
 	RegisterMeshmodelComponents(rw http.ResponseWriter, r *http.Request)
+
 	GetMeshmodelComponentsByName(rw http.ResponseWriter, r *http.Request)
 	GetMeshmodelComponentsByType(rw http.ResponseWriter, r *http.Request)
 	MeshmodelComponentsForTypeHandler(rw http.ResponseWriter, r *http.Request)
@@ -172,7 +173,7 @@ type HandlerConfig struct {
 
 	// GraphQLHandler           http.Handler
 	// GraphQLPlaygroundHandler http.Handler
-
+	PlaygroundBuild        bool
 	Providers              map[string]Provider
 	ProviderCookieName     string
 	ProviderCookieDuration time.Duration

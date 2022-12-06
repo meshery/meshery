@@ -64,8 +64,8 @@ func RegisterMeshmodelComponentsForCRDS(reg meshmodel.RegistryManager, k8sYaml [
 				APIVersion: def.Spec.Metadata["k8sKind"],
 				Kind:       def.Spec.Metadata["k8sAPIVersion"],
 			},
-			Metadata: v1alpha1.ComponentMetadata{
-				Model:   "kubernetes",
+			Model: v1alpha1.Models{
+				Name:    "kubernetes",
 				Version: version,
 			},
 		})
@@ -120,7 +120,6 @@ func GetK8sMeshModelComponents(ctx context.Context, kubeconfig []byte) ([]v1alph
 	components := make([]v1alpha1.ComponentDefinition, 1)
 	for name, crd := range crds {
 		m := make(map[string]interface{})
-		m["display-name"] = manifests.FormatToReadableString(metadata[name].K8sKind)
 		m[customResourceKey] = customResources[metadata[name].K8sKind]
 		c := v1alpha1.ComponentDefinition{
 			Format: v1alpha1.JSON,
@@ -129,10 +128,11 @@ func GetK8sMeshModelComponents(ctx context.Context, kubeconfig []byte) ([]v1alph
 				Kind:       metadata[name].K8sKind,
 				APIVersion: string(groups[kind(metadata[name].K8sKind)]),
 			},
-			Metadata: v1alpha1.ComponentMetadata{
-				Version:  k8version.String(),
-				Model:    "kubernetes",
-				Metadata: m,
+			Metadata:    m,
+			DisplayName: manifests.FormatToReadableString(metadata[name].K8sKind),
+			Model: v1alpha1.Models{
+				Version: k8version.String(),
+				Name:    "kubernetes",
 			},
 		}
 		components = append(components, c)

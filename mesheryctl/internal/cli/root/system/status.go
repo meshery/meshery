@@ -37,7 +37,6 @@ var verboseStatus bool
 var statusCmd = &cobra.Command{
 	Use:   "status",
 	Short: "Check Meshery status",
-	Args:  cobra.NoArgs,
 	Long:  `Check status of Meshery and Meshery components.`,
 	Example: `
 // Check status of Meshery, Meshery adapters, Meshery Operator and its controllers.
@@ -67,6 +66,9 @@ mesheryctl system status
 		return err
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
+		if len(args) != 0 {
+			return errors.New(utils.SystemLifeCycleError(fmt.Sprintf("this command takes no arguments. See '%s --help' for more information.\n", cmd.CommandPath()), "status"))
+		}
 		// Get viper instance used for context
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {

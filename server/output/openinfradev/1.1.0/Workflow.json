@@ -1,1 +1,1 @@
-{"kind":"Workflow","apiVersion":"v1alpha1","Format":"JSON","Metadata":{"Model":"openinfradev","Version":"1.1.0","Category":"","SubCategory":"","Metadata":{"display-name":"Workflow"}},"Schema":""}
+{"kind":"Workflow","apiVersion":"v1alpha1","display-name":"Workflow","format":"JSON","metadata":{},"model":{"name":"openinfradev","version":"1.1.0","display-name":"","category":"","sub-category":""},"schema":""}
