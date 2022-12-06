@@ -84,9 +84,9 @@ class MesheryApp extends App {
         credentials : "include",
       },
       (result) => {
-        if (result) {
+        if (typeof result?.usersExtensionPreferences?.catalogContent !== 'undefined') {
           this.props.toggleCatalogContent({
-            catalogVisibility : result?.usersExtensionPreferences?.catalogContent || true
+            catalogVisibility : result?.usersExtensionPreferences?.catalogContent
           })
         }
       },
@@ -362,7 +362,7 @@ class MesheryApp extends App {
                 style={this.props.capabilitiesRegistry?.restrictedAccess?.isMesheryUiRestricted ? { color : "#000" }: {}}
               >
                 <span onClick={this.handleL5CommunityClick} className={classes.footerText}>
-                  {this.props.capabilitiesRegistry?.restrictedAccess?.isMesheryUiRestricted ? "Playground Environment, some features might not be available": ( <> Built with <FavoriteIcon className={classes.footerIcon} /> by the Layer5 Community</>) }
+                  {this.props.capabilitiesRegistry?.restrictedAccess?.isMesheryUiRestricted ? "ACCESS LIMITED IN MESHERY PLAYGROUND. DEPLOY MESHERY TO ACCESS ALL FEATURES.": ( <> Built with <FavoriteIcon className={classes.footerIcon} /> by the Layer5 Community</>) }
                 </span>
               </Typography>
             </footer>
