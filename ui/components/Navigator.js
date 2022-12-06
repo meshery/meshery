@@ -46,6 +46,8 @@ import { Collapse } from "@material-ui/core";
 import { cursorNotAllowed, disabledStyle } from "../css/disableComponent.styles";
 import { CapabilitiesRegistry } from "../utils/disabledComponents";
 import { APPLICATION, APP_MESH, CILIUM_SM, CITRIX_SM, DESIGN, CONFIGURATION, CONFORMANCE, CONSUL, DASHBOARD, FILTER, ISTIO, KUMA, LIFECYCLE, LINKERD, NETWORK_SM, NGINX, OSM, PERFORMANCE, TRAEFIK_SM, PROFILES, SMI, TOGGLER } from "../constants/navigator"
+import AwsAppMeshIcon from "../assets/icons/LifecycleIcons/AwsAppMeshIcon";
+import ConsulIcon from "../assets/icons/LifecycleIcons/ConsulIcon";
 
 const styles = (theme) => ({
   categoryHeader : {
@@ -323,6 +325,7 @@ const getNavigatorComponents = (  /** @type {CapabilitiesRegistry} */  capabilit
         title : "AWS App Mesh",
         link : true,
         show : capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, APP_MESH]),
+        icon : <AwsAppMeshIcon style={drawerIconsStyle}/>
       },
       {
         id : CITRIX_SM,
@@ -337,6 +340,7 @@ const getNavigatorComponents = (  /** @type {CapabilitiesRegistry} */  capabilit
         title : "Consul",
         link : true,
         show : capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, CONSUL]),
+        icon : <ConsulIcon style={drawerIconsStyle}/>
       },
       {
         id : CILIUM_SM,
@@ -687,7 +691,7 @@ class Navigator extends React.Component {
       if (cat.id === LIFECYCLE) {
         cat.children.forEach((catc, ind1) => {
           const cr = self.fetchChildren(catc.id);
-          const icon = self.pickIcon(catc.id);
+          const icon = catc.icon ? catc.icon : self.pickIcon(catc.id);
           navigatorComponents[ind].children[ind1].icon = icon;
           navigatorComponents[ind].children[ind1].children = cr;
         });
