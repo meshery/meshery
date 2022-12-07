@@ -903,7 +903,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
                 id="k8sfileLabelText"
                 name="k8sfileLabelText"
                 className={classes.fileLabelText}
-                label="Upload kubeconfig"
+                placeholder="Upload kubeconfig"
                 variant="outlined"
                 fullWidth
                 onClick={() => {
