@@ -24,7 +24,7 @@ jobs:
           spreadsheetId: 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw
           commands: | # list of commands, specified as a valid JSON string
             [
-              { "command": "getData", "args": { "range": "'Meshery Integrations'!AA4:BB499" } }
+              { "command": "getData", "args": { "range": "'Meshery Integrations'!AA4:AB515" } }
             ]
         env:
           GSHEET_CLIENT_EMAIL: ${{ secrets.GSHEET_CLIENT_EMAIL }}
