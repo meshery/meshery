@@ -148,6 +148,7 @@ function TooltipIcon({ children, onClick, title }) {
     <Tooltip title={title} placement="top" arrow interactive >
       <IconButton onClick={onClick}>
         {children}
+        sjvjnjvs
       </IconButton>
     </Tooltip>
   );
@@ -280,6 +281,14 @@ function MesheryPatterns({
 
   const getMuiTheme = () => createTheme({
     overrides : {
+      MuiCheckbox : {
+        colorPrimary : {
+          color : "#607d8b",
+          "&$checked" : {
+            color : "#607d8b",
+          }
+        },
+      },
       MuiInput : {
         underline : {
           "&:hover:not(.Mui-disabled):before" : {
@@ -1174,7 +1183,7 @@ function MesheryPatterns({
         {
           !selectedPattern.show && viewType==="table" && <MuiThemeProvider theme={getMuiTheme() }>
             <MUIDataTable
-              title={<div className={classes.tableHeader}>Designs</div>}
+              title={<div className={classes.tableHeader}>Designs Partik</div>}
               data={patterns}
               columns={columns}
               // @ts-ignore
