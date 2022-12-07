@@ -1,0 +1,28 @@
+a{
+    &:hover{
+        text-decoration: none;
+    }
+
+    &:hover {
+        text-decoration: none;
+        &::after {
+            width: 100%;
+        }
+    }
+
+    &::after {
+        content: "";
+        width: 0px;
+        height: 1px;
+        bottom: -2px;
+        left: 50%;
+        transform: translateX(-50%);
+        position: absolute;
+        background: var(--background-primary);
+        transition: all .3s;
+    }
+}
+
+img{
+    width: 100%;
+}
