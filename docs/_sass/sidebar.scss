@@ -1,13 +1,15 @@
 .sidebar-container {
-    flex: 0 0 20%;
     padding: 1rem 2.5rem;
     background: var(--background-grey);
     overflow-y: scroll;
     box-shadow: var(--box-shadow-primary);
-    height: calc(100vh - var(--navbar-height));
     z-index: 9;
+    height: calc(100vh - var(--navbar-height));
+    position: fixed;
     transition: all .5s ease-in-out;
     font-size: 1.5rem;
+    // height: 100%;
+    width: 22%;
 
     &::-webkit-scrollbar{
         width: 10px;

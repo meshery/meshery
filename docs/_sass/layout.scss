@@ -35,13 +35,22 @@ html {
 }
 
 
-ul{
+ul,ol{
     list-style: none;
     text-decoration: none;
 }
 
 
 .flex-container{
-    display: flex ;
-    flex-wrap: wrap;
+    display: grid ;
+    grid-template-columns: 2.2fr 6.3fr 1.5fr;
+}
+
+.main-container{
+  padding: 3.5rem 4.5rem;
+  grid-column: 2/span 1;
+}
+
+.breadcrumb-div{
+
 }
