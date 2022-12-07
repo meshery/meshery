@@ -72,7 +72,7 @@ mesheryctl mesh validate --adapter [name of the adapter] --tokenPath [path to to
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) > 0 {
-			return errors.New(utils.MeshError(fmt.Sprintf("'%s' is an invalid argument for 'mesheryctl mesh validate'. Use 'mesheryctl mesh vslidate --help' to display usage guide.\n", args[0])))
+			return errors.New(utils.MeshError(fmt.Sprintf("'%s' is an invalid argument for 'mesheryctl mesh validate'. Use 'mesheryctl mesh validate --help' to display usage guide.\n", args[0])))
 		}
 
 		log.Infof("Starting service mesh validation...")
