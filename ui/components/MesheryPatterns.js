@@ -284,7 +284,7 @@ function MesheryPatterns({
         colorPrimary : {
           color : "#607d8b",
           "&$checked" : {
-            color : "#607d8b",
+            color : "#607d8b"
           }
         },
       },
