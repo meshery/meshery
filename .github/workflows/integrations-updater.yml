@@ -18,17 +18,22 @@ jobs:
     steps:
       - name: Checkout repo 🛎️
         uses: actions/checkout@master
-      - id: googlesheet_actions
-        uses: rjoydip/googlesheet-actions@0.1.1
+      - id: "update_worksheet"
+        uses: jroehl/gsheet.action@release # you can specify '@release' to always have the latest changes
         with:
-          sheet-id: 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw
-      - id: echo
-        uses: actions/github-script@v2
-        with:
-          github-token: ${{secrets.GITHUB_TOKEN}}
-          script: |
-            console.log(${{steps.googlesheet_actions.outputs.result}})
-      - name: test
-        run: |
-          cat $HOME/data.json
+          spreadsheetId: 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw
+          commands: | # list of commands, specified as a valid JSON string
+            [
+              { "command": "getData", "args": { "range": "'<worksheetTitle>'!A2:B3" } }
+            ]
+        env:
+          GSHEET_CLIENT_EMAIL: ${{ secrets.GSHEET_CLIENT_EMAIL }}
+          GSHEET_PRIVATE_KEY: ${{ secrets.GSHEET_PRIVATE_KEY }}
+      - name: dump results
+        env:
+          #  the output of the action can be found in ${{ steps.update_worksheet.outputs.results }}
+          RESULTS: ${{ steps.update_worksheet.outputs.results }}
+        run: echo "$RESULTS" | jq
 
+    # { "command": "addWorksheet", "args": { "worksheetTitle": "<worksheetTitle>" }},
+    #           { "command": "updateData", "args": { "data": [["A1", "A2", "A3"]] }},
