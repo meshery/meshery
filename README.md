@@ -44,7 +44,7 @@ MESHERY IS A CLOUD NATIVE COMPUTING FOUNDATION PROJECT
 
 <h2><a name="running"></a>Get Started with Meshery</h2>
 <p style="clear:both;">
-<img alt="Control service meshes with mesheryctl" src=".github/assets/images/readme/mesheryctl.png"  style="margin-left:10px; margin-bottom:10px;" width="50%" align="right"/>
+<img alt="Control Kubernetes and your workloads with mesheryctl" src=".github/assets/images/readme/mesheryctl.png"  style="margin-left:10px; margin-bottom:10px;" width="50%" align="right"/>
 <h3>Using `mesheryctl`</h3>
 <p>Meshery runs as a set of containers inside or outside of your Kubernetes clusters.</p>
 <pre>curl -L https://meshery.io/install | bash -</pre>
@@ -86,14 +86,14 @@ See the [getting started](https://meshery.io/#getting-started) section to quickl
 
 <p style="clear:both;">&nbsp;</p>
  
-<h3><a name="service-meshes"></a>Supported Service Meshes</h3>
-<p>Meshery supports 10 different service meshes.</p>
+<h3><a name="service-meshes"></a>Supported Cloud Native Infrastructure and Applications</h3>
+<p>Meshery supports <a href="https://meshery.io/integrations">100+ cloud native integrations</a>.</p>
 
 <details>
-  <summary><strong>See all Supported Service Meshes</strong></summary>
+  <summary><strong>See all of Meshery's pluggable adapters</strong></summary>
 <div class="container flex">
   <div class="text editable">
-    <p>Service mesh adapters provision, configure, and manage their respective service meshes.
+    <p>Meshery adapters provision, configure, and manage their respective cloud native infrastructure.
       <table class="adapters">
         <thead style="display:none;">
           <th>Status</th>
@@ -111,6 +111,11 @@ See the [getting started](https://meshery.io/#getting-started) section to quickl
         <tr>
           <td><a href="https://github.com/layer5io/meshery-linkerd">
             <img src='https://docs.meshery.io/assets/img/service-meshes/linkerd.svg' alt='Linkerd' align="middle" hspace="5px" vspace="5px" height="30px" width="30px"> Meshery adapter for Linkerd</a>
+          </td>
+        </tr>
+        <tr>
+          <td><a href="https://github.com/meshery/meshery-cilium">
+            <img src='https://docs.meshery.io/assets/img/service-meshes/cilium.svg' alt='Cilium Service mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery Adapter for Cilium Service Mesh</a>
           </td>
         </tr>
         <tr>
@@ -171,11 +176,6 @@ See the [getting started](https://meshery.io/#getting-started) section to quickl
             <img src='https://docs.meshery.io/assets/img/service-meshes/tanzu.svg' alt='Tanzu Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for Tanzu SM</a>
           </td>
         </tr>
-           <tr>
-          <td><a href="https://github.com/meshery/meshery-cilium">
-            <img src='https://docs.meshery.io/assets/img/service-meshes/cilium.svg' alt='Cilium Service mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery Adapter for Cilium Service Mesh</a>
-          </td>
-        </tr>
         <tr><td colspan="2" class="alpha-adapters"></td></tr>
         </tbody>
     </table>
@@ -187,7 +187,7 @@ See the [getting started](https://meshery.io/#getting-started) section to quickl
 <hr />
 <p style="clear:both;">&nbsp;</p>
 
-<a href="https://docs.google.com/presentation/d/14kxjwYSJ_FyE3K_6CDEd6oq2kqwn0OSE8RDJ4H-KlKU/edit?usp=sharing"><img alt="Layer5 Service Mesh Management" src=".github/assets/images/meshery/meshery-logo-dark-text-side.png"  style="margin-left:10px; margin-bottom:10px;" width="45%" align="left"/></a>
+<a href="https://docs.google.com/presentation/d/14kxjwYSJ_FyE3K_6CDEd6oq2kqwn0OSE8RDJ4H-KlKU/edit?usp=sharing"><img alt="Meshery Logo" src=".github/assets/images/meshery/meshery-logo-dark-text-side.png"  style="margin-left:10px; margin-bottom:10px;" width="45%" align="left"/></a>
 
 <h3 style="margin:auto;"><br /><br />
   <a href="https://docs.google.com/presentation/d/14kxjwYSJ_FyE3K_6CDEd6oq2kqwn0OSE8RDJ4H-KlKU/edit?usp=sharing"><center><i>Project Overview Presentation</i></center></a>
@@ -212,15 +212,15 @@ Interoperate multiple service meshes with service mesh adapters provision, confi
 <p style="clear:both;">
 <a href="https://docs.meshery.io/assets/img/readme/meshery_lifecycle_management.png"><img alt="Layer5 Service Mesh Configuration Management" src="https://docs.meshery.io/assets/img/readme/meshery_lifecycle_management.png"  style="margin-right:10px;margin-bottom:10px;" width="45%" align="left"/></a>
   <br /><br /><br />
-<h3>Service Mesh Configuration Management</h3>
+<h3>Kubernetes and Cloud Native Configuration Management</h3>
 
-Assess your service mesh configuration against deployment and operational best practices with Meshery's configuration validator.
-Onboard your workload onto the service mesh with confidence. Check your service mesh configuration for anti-patterns and avoid common pitfalls.
+Assess your cloud native infrastructure configuration against deployment and operational best practices with Meshery's configuration validator.
+Onboard your workload onto the service mesh with confidence. Check your Kubernetes configuration for anti-patterns and avoid common pitfalls.
 <br /><br /><br /><br />
 
 </p>
 
-<h3>Adhering to Service Mesh Standards</h3>
+<h3>Adhering to Cloud Native Standards</h3>
 
 <picture align="left">
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/layer5io/layer5/master/src/assets/images/service-mesh-performance/stacked/smp-light-text.svg"  width="18%" align="left" style="margin-left:10px;">
@@ -232,9 +232,9 @@ In an effort to produce service mesh agnostic tooling, Meshery uses the [service
 <p style="clear:both;">
 <a href="https://raw.githubusercontent.com/meshery/meshery/master/.github/assets/images/smp/service-mesh-performance-example.gif"><img alt="Layer5 Service Mesh Performance Management" src="https://raw.githubusercontent.com/meshery/meshery/master/.github/assets/images/smp/service-mesh-performance-example.gif" style="margin-left:10px;margin-bottom:10px;" width="45%" align="right" /></a>
 <!-- <a href="https://raw.githubusercontent.com/layer5io/meshery/master/assets/img/readme/Meshery-Grafana-Charts.png"><img alt="Meshery Grafana Boards" src="https://docs.meshery.io/assets/img/readme/Meshery-Grafana-Charts.png" style="padding-top:10px;margin-left:10px;" width="45%" align="right" /></a> -->
-<h4>Standardized Service Performance Management</h4>
+<h4>Standardized Cloud Native Performance Management</h4>
 
-Meshery is the service-mesh-neutral utility for uniformly managing the performance of services and the meshes that run them. As an implementation of the Service Mesh Performance ([SMP](https://layer5.io/performance)), Meshery enables you to measure the value provided by a service mesh in the context of the overhead incurred.
+Meshery is the cloud native utility for uniformly managing the performance of microservices and the infrastructure that run them. As an implementation of the Service Mesh Performance ([SMP](https://layer5.io/performance)), Meshery enables you to measure the value provided by Docker, Kubernetes, or a service mesh in the context of the overhead incurred.
 <br /><br />
 
 </p>
@@ -277,7 +277,7 @@ Learn more about <a href="https://docs.meshery.io/architecture">Meshery's archit
 
 <div>&nbsp;</div>
 
-## Join the service mesh community!
+## Join the Meshery community!
 
 <a name="contributing"></a><a name="community"></a>
 Our projects are community-built and welcome collaboration. 👍 Be sure to see the <a href="https://docs.google.com/document/d/17OPtDE_rdnPQxmk2Kauhm3GwXF1R5dZ3Cj8qZLKdo5E/edit">Layer5 Community Welcome Guide</a> for a tour of resources available to you and see the <a href="https://docs.google.com/document/d/1brtiJhdzal_O6NBZU_JQXiBff2InNtmgL_G1JgAiZtk/edit?usp=sharing">Layer5 Repository Overview</a> for a cursory description of repository by technology and programming language. Jump into community <a href="http://slack.layer5.io">Slack</a> to engage!
@@ -302,7 +302,7 @@ Find out more on the <a href="https://layer5.io/community#meshmate">Layer5 commu
 </picture>
 </a>
 
-<a href="https://meshery.io/community"><img alt="Layer5 Service Mesh Community" src="https://docs.meshery.io/assets/img/readme/community.png" style="margin-right:8px;padding-top:5px;" width="140px" align="left" /></a>
+<a href="https://meshery.io/community"><img alt="Layer5 Cloud Native Community" src="https://docs.meshery.io/assets/img/readme/community.png" style="margin-right:8px;padding-top:5px;" width="140px" align="left" /></a>
 
 <p>
 ✔️ <em><strong>Join</strong></em> any or all of the weekly meetings on <a href="https://calendar.google.com/calendar/b/1?cid=bGF5ZXI1LmlvX2VoMmFhOWRwZjFnNDBlbHZvYzc2MmpucGhzQGdyb3VwLmNhbGVuZGFyLmdvb2dsZS5jb20">community calendar</a>.<br />
