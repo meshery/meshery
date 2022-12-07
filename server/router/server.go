@@ -228,7 +228,6 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int, g http.
 		providerI := req.Context().Value(models.ProviderCtxKey)
 		provider, ok := providerI.(models.Provider)
 		if !ok {
-			logrus.Debug("Inside not OK")
 			http.Redirect(w, req, "/provider", http.StatusFound)
 			return
 		}
