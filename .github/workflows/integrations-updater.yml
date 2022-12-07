@@ -16,12 +16,12 @@ jobs:
   integrations:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout 🛎️ repo
+      - name: Checkout repo 🛎️
         uses: actions/checkout@master
       - id: googlesheet_actions
         uses: rjoydip/googlesheet-actions@0.1.1
         with:
-          sheet-id: ${{ secrets.SHEET_ID }}
+          sheet-id: 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw
       - id: echo
         uses: actions/github-script@v2
         with:
@@ -31,3 +31,4 @@ jobs:
       - name: test
         run: |
           cat $HOME/data.json
+
