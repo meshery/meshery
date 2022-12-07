@@ -148,7 +148,6 @@ function TooltipIcon({ children, onClick, title }) {
     <Tooltip title={title} placement="top" arrow interactive >
       <IconButton onClick={onClick}>
         {children}
-        sjvjnjvs
       </IconButton>
     </Tooltip>
   );
@@ -1183,7 +1182,7 @@ function MesheryPatterns({
         {
           !selectedPattern.show && viewType==="table" && <MuiThemeProvider theme={getMuiTheme() }>
             <MUIDataTable
-              title={<div className={classes.tableHeader}>Designs Partik</div>}
+              title={<div className={classes.tableHeader}>Designs</div>}
               data={patterns}
               columns={columns}
               // @ts-ignore
