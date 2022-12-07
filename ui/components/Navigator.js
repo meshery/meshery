@@ -25,6 +25,7 @@ import ConformanceIcon from '../public/static/img/drawer-icons/conformance_svg';
 import ExtensionIcon from "../public/static/img/drawer-icons/extensions_svg";
 import LifecycleHover from '../public/static/img/drawer-icons/lifecycle_hover_svg';
 import PerformanceHover from '../public/static/img/drawer-icons/performance_hover_svg';
+import ConfigurationHover from '../public/static/img/drawer-icons/configuration_hover_svg';
 import ConfigurationIcon from "../assets/icons/ConfigurationIcon";
 import DocumentIcon from "../assets/icons/DocumentIcon";
 import SlackIcon from "../assets/icons/SlackIcon";
@@ -46,6 +47,8 @@ import { Collapse } from "@material-ui/core";
 import { cursorNotAllowed, disabledStyle } from "../css/disableComponent.styles";
 import { CapabilitiesRegistry } from "../utils/disabledComponents";
 import { APPLICATION, APP_MESH, CILIUM_SM, CITRIX_SM, DESIGN, CONFIGURATION, CONFORMANCE, CONSUL, DASHBOARD, FILTER, ISTIO, KUMA, LIFECYCLE, LINKERD, NETWORK_SM, NGINX, OSM, PERFORMANCE, TRAEFIK_SM, PROFILES, SMI, TOGGLER } from "../constants/navigator"
+import AwsAppMeshIcon from "../assets/icons/LifecycleIcons/AwsAppMeshIcon";
+import ConsulIcon from "../assets/icons/LifecycleIcons/ConsulIcon";
 
 const styles = (theme) => ({
   categoryHeader : {
@@ -323,6 +326,7 @@ const getNavigatorComponents = (  /** @type {CapabilitiesRegistry} */  capabilit
         title : "AWS App Mesh",
         link : true,
         show : capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, APP_MESH]),
+        icon : <AwsAppMeshIcon style={drawerIconsStyle}/>
       },
       {
         id : CITRIX_SM,
@@ -337,6 +341,7 @@ const getNavigatorComponents = (  /** @type {CapabilitiesRegistry} */  capabilit
         title : "Consul",
         link : true,
         show : capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, CONSUL]),
+        icon : <ConsulIcon style={drawerIconsStyle}/>
       },
       {
         id : CILIUM_SM,
@@ -400,7 +405,7 @@ const getNavigatorComponents = (  /** @type {CapabilitiesRegistry} */  capabilit
   {
     id : CONFIGURATION,
     icon : <ConfigurationIcon {...drawerIconsStyle}/>,
-    hovericon : <ConfigurationIcon style={{ transform : "scale(1.3)", ...drawerIconsStyle }} />,
+    hovericon : <ConfigurationHover style={drawerIconsStyle} />,
     href : "#",
     title : "Configuration",
     show : capabilityRegistryObj.isNavigatorComponentEnabled([CONFIGURATION]),
@@ -687,7 +692,7 @@ class Navigator extends React.Component {
       if (cat.id === LIFECYCLE) {
         cat.children.forEach((catc, ind1) => {
           const cr = self.fetchChildren(catc.id);
-          const icon = self.pickIcon(catc.id);
+          const icon = catc.icon ? catc.icon : self.pickIcon(catc.id);
           navigatorComponents[ind].children[ind1].icon = icon;
           navigatorComponents[ind].children[ind1].children = cr;
         });
