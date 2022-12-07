@@ -25,6 +25,7 @@ import ConformanceIcon from '../public/static/img/drawer-icons/conformance_svg';
 import ExtensionIcon from "../public/static/img/drawer-icons/extensions_svg";
 import LifecycleHover from '../public/static/img/drawer-icons/lifecycle_hover_svg';
 import PerformanceHover from '../public/static/img/drawer-icons/performance_hover_svg';
+import ConfigurationHover from '../public/static/img/drawer-icons/configuration_hover_svg';
 import ConfigurationIcon from "../assets/icons/ConfigurationIcon";
 import DocumentIcon from "../assets/icons/DocumentIcon";
 import SlackIcon from "../assets/icons/SlackIcon";
@@ -404,7 +405,7 @@ const getNavigatorComponents = (  /** @type {CapabilitiesRegistry} */  capabilit
   {
     id : CONFIGURATION,
     icon : <ConfigurationIcon {...drawerIconsStyle}/>,
-    hovericon : <ConfigurationIcon style={{ transform : "scale(1.3)", ...drawerIconsStyle }} />,
+    hovericon : <ConfigurationHover style={drawerIconsStyle} />,
     href : "#",
     title : "Configuration",
     show : capabilityRegistryObj.isNavigatorComponentEnabled([CONFIGURATION]),
