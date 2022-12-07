@@ -1,0 +1,39 @@
+name: Meshery Integrations Updater
+on:
+  workflow_dispatch:
+
+jobs:
+  # print-inputs:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - run: |
+  #         echo "Dispatched GIT_VERSION: ${{github.event.inputs.release-ver}}"
+  #         echo " Dispatched GIT_STRIPPED_VERSION: ${{github.event.inputs.stripped-release-ver}}"
+  #         echo "Env RELEASE_CHANNEL: ${{env.RELEASE_CHANNEL}}"
+  #         echo "Env GIT_VERSION: ${{env.GIT_VERSION}}"
+  #         echo "Env GIT_STRIPPED_VERSION: ${{env.GIT_STRIPPED_VERSION}}"
+  #         echo "Env GIT_TAG: ${{ github.event.release.tag_name }}"
+  integrations:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo 🛎️
+        uses: actions/checkout@master
+      - id: "update_worksheet"
+        uses: jroehl/gsheet.action@release # you can specify '@release' to always have the latest changes
+        with:
+          spreadsheetId: 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw
+          commands: | # list of commands, specified as a valid JSON string
+            [
+              { "command": "getData", "args": { "range": "'<worksheetTitle>'!A2:B3" } }
+            ]
+        env:
+          GSHEET_CLIENT_EMAIL: ${{ secrets.GSHEET_CLIENT_EMAIL }}
+          GSHEET_PRIVATE_KEY: ${{ secrets.GSHEET_PRIVATE_KEY }}
+      - name: dump results
+        env:
+          #  the output of the action can be found in ${{ steps.update_worksheet.outputs.results }}
+          RESULTS: ${{ steps.update_worksheet.outputs.results }}
+        run: echo "$RESULTS" | jq
+
+    # { "command": "addWorksheet", "args": { "worksheetTitle": "<worksheetTitle>" }},
+    #           { "command": "updateData", "args": { "data": [["A1", "A2", "A3"]] }},
