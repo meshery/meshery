@@ -1,0 +1,33 @@
+name: Meshery Integrations Updater
+on:
+  workflow_dispatch:
+
+jobs:
+  # print-inputs:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - run: |
+  #         echo "Dispatched GIT_VERSION: ${{github.event.inputs.release-ver}}"
+  #         echo " Dispatched GIT_STRIPPED_VERSION: ${{github.event.inputs.stripped-release-ver}}"
+  #         echo "Env RELEASE_CHANNEL: ${{env.RELEASE_CHANNEL}}"
+  #         echo "Env GIT_VERSION: ${{env.GIT_VERSION}}"
+  #         echo "Env GIT_STRIPPED_VERSION: ${{env.GIT_STRIPPED_VERSION}}"
+  #         echo "Env GIT_TAG: ${{ github.event.release.tag_name }}"
+  integrations:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 🛎️ repo
+        uses: actions/checkout@master
+      - id: googlesheet_actions
+        uses: rjoydip/googlesheet-actions@0.1.1
+        with:
+          sheet-id: ${{ secrets.SHEET_ID }}
+      - id: echo
+        uses: actions/github-script@v2
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            console.log(${{steps.googlesheet_actions.outputs.result}})
+      - name: test
+        run: |
+          cat $HOME/data.json
