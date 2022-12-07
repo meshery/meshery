@@ -80,7 +80,7 @@ func (mpp *MesheryPatternPersister) GetMesheryCatalogPatterns(search, order stri
 }
 
 // CloneMesheryPattern clones meshery pattern to private
-func (mpp *MesheryPatternPersister) CloneMesheryPattern(patternID string) ([]byte, error) {
+func (mpp *MesheryPatternPersister) CloneMesheryPattern(patternID string, clonePatternRequest *MesheryClonePatternRequestBody) ([]byte, error) {
 	var mesheryPattern MesheryPattern
 	patternUUID, _ := uuid.FromString(patternID)
 	err := mpp.DB.First(&mesheryPattern, patternUUID).Error
@@ -95,6 +95,7 @@ func (mpp *MesheryPatternPersister) CloneMesheryPattern(patternID string) ([]byt
 
 	mesheryPattern.Visibility = "private"
 	mesheryPattern.ID = &id
+	mesheryPattern.Name = clonePatternRequest.Name
 
 	return mpp.SaveMesheryPattern(&mesheryPattern)
 }

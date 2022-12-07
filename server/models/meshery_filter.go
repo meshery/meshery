@@ -33,6 +33,12 @@ type MesheryCatalogFilterRequestBody struct {
 	CatalogData sql.Map   `json:"catalog_data,omitempty"`
 }
 
+// MesheryCatalogFilterRequestBody refers to the type of request body
+// that CloneMesheryFilterHandler would receive
+type MesheryCloneFilterRequestBody struct {
+	Name string `json:"name,omitempty"`
+}
+
 // GetFilterName takes in a stringified filterfile and extracts the name from it
 func GetFilterName(stringifiedFile string) (string, error) {
 	out := map[string]interface{}{}

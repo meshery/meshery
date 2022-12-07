@@ -453,6 +453,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
       {
         credentials : "include",
         method : "POST",
+        body : JSON.stringify({ name : name + " (Copy)" }),
       },
       () => {
         updateProgress({ showProgress : false });
