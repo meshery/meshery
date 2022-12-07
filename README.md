@@ -87,13 +87,13 @@ See the [getting started](https://meshery.io/#getting-started) section to quickl
 <p style="clear:both;">&nbsp;</p>
  
 <h3><a name="service-meshes"></a>Supported Cloud Native Infrastructure and Applications</h3>
-<p>Meshery supports 100+ cloud native integrations.</p>
+<p>Meshery supports [100+ cloud native integrations](https://meshery.io/integrations).</p>
 
 <details>
-  <summary><strong>See all Supported Cloud Native Integrations</strong></summary>
+  <summary><strong>See all of Meshery's pluggable adapters</strong></summary>
 <div class="container flex">
   <div class="text editable">
-    <p>Service mesh adapters provision, configure, and manage their respective service meshes.
+    <p>Meshery adapters provision, configure, and manage their respective cloud native infrastructure.
       <table class="adapters">
         <thead style="display:none;">
           <th>Status</th>
@@ -111,6 +111,11 @@ See the [getting started](https://meshery.io/#getting-started) section to quickl
         <tr>
           <td><a href="https://github.com/layer5io/meshery-linkerd">
             <img src='https://docs.meshery.io/assets/img/service-meshes/linkerd.svg' alt='Linkerd' align="middle" hspace="5px" vspace="5px" height="30px" width="30px"> Meshery adapter for Linkerd</a>
+          </td>
+        </tr>
+        <tr>
+          <td><a href="https://github.com/meshery/meshery-cilium">
+            <img src='https://docs.meshery.io/assets/img/service-meshes/cilium.svg' alt='Cilium Service mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery Adapter for Cilium Service Mesh</a>
           </td>
         </tr>
         <tr>
@@ -169,11 +174,6 @@ See the [getting started](https://meshery.io/#getting-started) section to quickl
         <tr>
           <td><a href="https://github.com/meshery/meshery-tanzu-sm">
             <img src='https://docs.meshery.io/assets/img/service-meshes/tanzu.svg' alt='Tanzu Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for Tanzu SM</a>
-          </td>
-        </tr>
-           <tr>
-          <td><a href="https://github.com/meshery/meshery-cilium">
-            <img src='https://docs.meshery.io/assets/img/service-meshes/cilium.svg' alt='Cilium Service mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery Adapter for Cilium Service Mesh</a>
           </td>
         </tr>
         <tr><td colspan="2" class="alpha-adapters"></td></tr>
