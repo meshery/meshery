@@ -2,11 +2,11 @@ name: Deploy Meshery Playground
 on:
   workflow_call:
   workflow_dispatch:
-     inputs:
+    inputs:
       release-ver:
-       description: "Stable Release Version"
-       required: true
-       default: "v"
+        description: "Stable Release Version"
+        required: true
+        default: "v"
       release-channel:
         description: "Release Channel"
         required: false
