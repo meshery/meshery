@@ -44,13 +44,44 @@ ul,ol{
 .flex-container{
     display: grid ;
     grid-template-columns: 2.2fr 6.3fr 1.5fr;
+    border-bottom: 3px dashed var(--brand-color-primary);
+    @media (max-width:75em) {
+      display: flex;
+      flex-direction: column;
+    }
 }
 
 .main-container{
   padding: 3.5rem 4.5rem;
   grid-column: 2/span 1;
+  @media (max-width:75em) {
+  }
 }
 
-.breadcrumb-div{
+.content-table{
+    padding: 1rem 1.5rem;
+    background: var(--background-grey);
+    box-shadow: var(--box-shadow-primary);
+    z-index: 9;
+    max-height: calc(100vh - var(--navbar-height));
+    height: fit-content;
+    position: sticky;
+    transition: all .5s ease-in-out;
+    font-size: 1.5rem;
+    top: calc(var(--navbar-height) + 5rem );
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    font-size: 1.4rem;
+    border-radius: 7px;
+    width: 90%;
+    margin: 0 auto;
 
+    &__editable{
+      display: flex;
+      flex-direction: column;
+      & > strong {
+        // margin-bottom: 5px;
+      }
+    }
 }

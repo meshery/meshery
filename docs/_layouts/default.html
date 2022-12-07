@@ -4,9 +4,8 @@
 {% include head.html %}
 
 <body class="td-section">
-  {% include header.html %}
-  <div>
-      <div class="flex-container">
+    <div class="flex-container">
+        {% include header.html %}
         <div class="sidebar-container">
           {% include sidebar.html %}
         </div>
@@ -37,11 +36,12 @@
             {% include feedback.html %}
           </div>
         </main>
-        <div class="d-none d-xl-block col-xl-2 td-toc d-print-none">
-          <div class="td-page-meta ml-2 pb-1 pt-2 mb-0">
+        <div class="content-table">
+          <div class="content-table__editable">
             {% include editable.html %}
           </div>
           <nav id="TableOfContents">
+            <strong>Contents</strong>
             <ul>
               <li>
                 <ul id="TOC">
@@ -51,8 +51,7 @@
             </ul>
           </nav>
         </div>
-      </div>
-    {% include footer.html %}
+    <!-- {% include footer.html %} -->
   </div>
   {% include scripts.html %}
   {% include google-analytics.html %}

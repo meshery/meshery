@@ -5,12 +5,11 @@
     box-shadow: var(--box-shadow-primary);
     z-index: 9;
     height: calc(100vh - var(--navbar-height));
-    position: fixed;
+    position: sticky;
     transition: all .5s ease-in-out;
     font-size: 1.5rem;
-    // height: 100%;
-    width: 22%;
-
+    // width: 22%;
+    top: var(--navbar-height);
     &::-webkit-scrollbar{
         width: 10px;
     }
@@ -80,7 +79,7 @@
 
         & .sidebar-nav {
             &>*:not(:last-child) {
-                border-bottom: 1px solid var(--color-grey-light);
+                border-bottom: 1px solid var(--color-grey-medium);
             }
 
             & .sidebar-nav__section {
@@ -137,8 +136,13 @@
                         flex-direction: column;
                         gap: .5rem;
                         padding-inline-start: 0px;
-                        &  ul{
+                        &  ul li{
                             list-style: none;
+                            list-style: none;
+                            display: flex;
+                            flex-direction: column;
+                            gap: .5rem;
+                            padding-inline-start: 2.3rem;
                         }
                     }
                 }

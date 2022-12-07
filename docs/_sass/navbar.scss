@@ -1,59 +1,60 @@
 // div .td-sidebar__search {
-//   padding-top: 2.5rem;
-// }
-
-// main nav .breadcrumb {
-//   padding-top: 1.5rem;
-// }
-
-// div .td-toc {
-//   padding-top: 2rem;
-// }
-
-// @media (min-width:768px) and (max-width:995px) {
-//   div .td-sidebar__search {
-//     padding-top: 2.5rem;
-//     margin-top: 1rem;
-//   }
-// }
-
-// @media (min-width: 768px) {
-//   .td-navbar {
-//     position: fixed;
-//     top: 0;
-//     width: 100%;
-//     padding: .8vw 4vw !important;
-//     background: var(--background-light-cards);
-//     box-shadow: var(--box-shadow-navbar);
-//   }
-// }
-
-// @media (min-width: 768px) {
-//   .td-sidebar-nav {
-//     max-height: -webkit-calc(100vh - 11.5rem);
-//     max-height: calc(100vh - 11.5rem);
-//     overflow-y: auto;
-//   }
-// }
-
-
-//New Code ////////////////////////////////////////////////////////////////////////////////////////////////////
-
-header {
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  width: 100%;
-}
-
-.navbar {
-  width: 100%;
-  height: var(--navbar-height);
-  padding: 0 2rem !important;
-  background: var(--background-light-cards);
-  box-shadow: var(--box-shadow-navbar);
-  display: flex;
-  align-items: center;
+  //   padding-top: 2.5rem;
+  // }
+  
+  // main nav .breadcrumb {
+    //   padding-top: 1.5rem;
+    // }
+    
+    // div .td-toc {
+      //   padding-top: 2rem;
+      // }
+      
+      // @media (min-width:768px) and (max-width:995px) {
+        //   div .td-sidebar__search {
+          //     padding-top: 2.5rem;
+          //     margin-top: 1rem;
+          //   }
+          // }
+          
+          // @media (min-width: 768px) {
+            //   .td-navbar {
+              //     position: fixed;
+              //     top: 0;
+              //     width: 100%;
+              //     padding: .8vw 4vw !important;
+              //     background: var(--background-light-cards);
+              //     box-shadow: var(--box-shadow-navbar);
+              //   }
+              // }
+              
+              // @media (min-width: 768px) {
+                //   .td-sidebar-nav {
+                  //     max-height: -webkit-calc(100vh - 11.5rem);
+                  //     max-height: calc(100vh - 11.5rem);
+                  //     overflow-y: auto;
+                  //   }
+                  // }
+                  
+                  
+                  //New Code ////////////////////////////////////////////////////////////////////////////////////////////////////
+                  
+                  header {
+                    position: sticky;
+                    top: 0;
+                    z-index: 10;
+                    width: 100%;
+                    grid-column: 1/-1;
+                  }
+                  
+                  .navbar {
+                    width: 100%;
+                    height: var(--navbar-height);
+                    padding: 0 2rem !important;
+                    background: var(--background-light-cards);
+                    box-shadow: var(--box-shadow-navbar);
+                    display: flex;
+                    align-items: center;
   z-index: 10;
 
   @media (max-width:1200px) {
