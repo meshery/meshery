@@ -7,10 +7,10 @@ on:
        description: "Stable Release Version"
        required: true
        default: "v"
-    # stripped-release-ver:
-    #   description: "Stripped Stable Release Version"
-    #   required: true
-    #   default: ""
+# stripped-release-ver:
+#   description: "Stripped Stable Release Version"
+#   required: true
+#   default: ""
 #       release-channel:
 #         description: "Release Channel"
 #         required: true
