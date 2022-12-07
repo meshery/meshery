@@ -87,7 +87,7 @@ See the [getting started](https://meshery.io/#getting-started) section to quickl
 <p style="clear:both;">&nbsp;</p>
  
 <h3><a name="service-meshes"></a>Supported Cloud Native Infrastructure and Applications</h3>
-<p>Meshery supports [100+ cloud native integrations](https://meshery.io/integrations).</p>
+<p>Meshery supports <a href="https://meshery.io/integrations">100+ cloud native integrations</a>.</p>
 
 <details>
   <summary><strong>See all of Meshery's pluggable adapters</strong></summary>
