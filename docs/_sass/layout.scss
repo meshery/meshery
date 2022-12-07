@@ -1,9 +1,47 @@
-body{
+html {
+    font-size: 62.5%;
+    box-sizing: border-box;
+  
+    @media (max-width: 75em) {
+      font-size: 56.25%;
+    }
+  
+    @media (max-width: 56.25em) {
+      font-size: 50%;
+    }
+  
+    @media (max-width: 37.5em) {
+      font-size: 43.75%;
+    }
+  }
+  
+  *,
+  *::after,
+  *::before {
+    margin: 0;
+    padding: 0;
+    box-sizing: inherit;
+    color: var(--color-secondary-light);
+    text-decoration: none;
+  }
+  
+  body {
+    font-weight: 400;
     position: relative;
+    line-height: 1.5;
+    background-repeat: no-repeat;
+    color:var(--color-secondary-light);
+    font-family: open sans, -apple-system, BlinkMacSystemFont, segoe ui, Roboto, helvetica neue, Arial, sans-serif, apple color emoji, segoe ui emoji, segoe ui symbol;
 }
+
+
+ul{
+    list-style: none;
+    text-decoration: none;
+}
+
 
 .flex-container{
     display: flex ;
     flex-wrap: wrap;
-    // position: relative;
 }

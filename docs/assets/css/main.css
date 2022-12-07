@@ -1,4 +1,4 @@
----
+/* ---
 layout: null
 excluded_in_search: true
 ---
@@ -284,8 +284,6 @@ a {
 
 a:hover {
     /* color: #00b39f; */
-    font-weight: normal;
-    text-decoration: underline;
     color: var(--color-secondary-dark);
 }
 
@@ -4816,7 +4814,7 @@ input[type=button].btn-block {
 .nav-link:hover,
 .nav-link:focus {
     text-decoration: none;
-    color: #fff !important;
+    color: var(--color-secondary-dark);
 }
 
 .nav-link.disabled {
@@ -18822,4 +18820,4 @@ footer {
         position: relative;
         width:600px;
     }
-}
+} */

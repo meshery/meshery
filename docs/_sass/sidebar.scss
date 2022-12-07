@@ -1,9 +1,13 @@
 .sidebar-container {
-    flex: 0 0 22%;
-    padding: 1rem 1.8rem;
+    flex: 0 0 20%;
+    padding: 1rem 2.5rem;
     background: var(--background-grey);
     overflow-y: scroll;
     box-shadow: var(--box-shadow-primary);
+    height: calc(100vh - var(--navbar-height));
+    z-index: 9;
+    transition: all .5s ease-in-out;
+    font-size: 1.5rem;
 
     &::-webkit-scrollbar{
         width: 10px;
@@ -11,7 +15,7 @@
     
     &::-webkit-scrollbar-track{
         background-color:#f8f9fa;
-        width: 10px;
+        width: 1.2rem;
         // border-radius: 11px;
     }
     &::-webkit-scrollbar-thumb{
@@ -20,19 +24,25 @@
         // border-radius: 6px;
     }
 
-    @media (max-width:1200px) {
+    @media (max-width:75em) {
         position: fixed;
-        top: 4.5rem;
+        top: var(--navbar-height);
         left: 0;
-        width: 30%;
-        height: calc(100vh - 4.5rem);
+        width: max(30vh, 30vw);
+        height: calc(100vh - var(--navbar-height));
         z-index: 9;
         transform: translateX(-100%);
         transition: all .5s ease-in-out;
+        padding: 1rem 2rem;
+    }
+
+    @media (max-width:37.5em) {
+        padding: 1rem 1.5rem;
     }
 
     &--active{
         transform: translateX(0%);
+        box-shadow: var(--box-shadow-primary);
     }
 
     & .sidebar-menu {
@@ -47,8 +57,8 @@
                     position: absolute;
                     top: 50%;
                     right: 5%;
-                    width: 20px;
-                    height: 20px;
+                    width: 2rem;
+                    height: 2rem;
                     transform: translateY(-50%);
                     fill: var(--color-grey-light);
 
@@ -73,12 +83,13 @@
 
             & .sidebar-nav__section {
                 list-style: none;
-                padding: 15px 0;
+                padding: 1.5rem 0;
                 margin: 0;
 
                 &-title {
-                    margin-bottom: 5px;
+                    // margin-bottom: 5px;
                     font-weight: 600;
+                    margin-bottom: 1rem;
 
                     &:hover{
                         font-weight: 600;
@@ -104,7 +115,7 @@
                     &::after {
                         content: "";
                         width: 0px;
-                        height: .1rem;
+                        height: 1px;
                         bottom: -2px;
                         left: 50%;
                         transform: translateX(-50%);
@@ -115,16 +126,16 @@
                 }
 
                 &>ul {
-                    padding-inline-start: 23px;
+                    padding-inline-start: 2.3rem;
                     list-style: none;
 
-                    &>li>ul {
+                    &>li ul {
                         list-style: none;
                         display: flex;
                         flex-direction: column;
-                        gap: 3px;
+                        gap: .5rem;
                         padding-inline-start: 0px;
-                        & > ul{
+                        &  ul{
                             list-style: none;
                         }
                     }
