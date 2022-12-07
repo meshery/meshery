@@ -12,11 +12,9 @@ on:
         required: false
         default: "playground"
 
- env:
-    GIT_VERSION: ${{github.event.inputs.release-ver}}
-#   GIT_STRIPPED_VERSION: ${{github.event.inputs.stripped-release-ver}}
-#   RELEASE_CHANNEL: ${{github.event.inputs.release-channel}}
-#   GIT_TAG: ${{ github.event.release.tag_name }}
+env:
+  GIT_VERSION: ${{github.event.inputs.release-ver}}
+  RELEASE_CHANNEL: ${{github.event.inputs.release-channel}}
 
 jobs:
   deploy-playground:
