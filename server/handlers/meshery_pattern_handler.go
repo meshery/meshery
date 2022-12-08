@@ -578,8 +578,8 @@ func (h *Handler) formatPatternOutput(rw http.ResponseWriter, content []byte, fo
 	}
 	rw.Header().Set("Content-Type", "application/json")
 	fmt.Fprint(rw, string(data))
-	res.Details = "patternfiles successfully saved"
-	res.Summary = "following patternfiles were saved: " + strings.Join(names, ",")
+	res.Details = "Design successfully saved"
+	res.Summary = "Design: " + strings.Join(names, ",") + "saved successfully"
 	go h.EventsBuffer.Publish(res)
 }
 
