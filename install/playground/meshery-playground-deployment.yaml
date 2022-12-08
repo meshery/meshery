@@ -26,7 +26,7 @@ spec:
               value: remote
             - name: PLAYGROUND
               value: "true"
-          image: layer5/meshery:playground-latest
+          image: layer5/meshery
           imagePullPolicy: Always
           name: meshery
           ports:

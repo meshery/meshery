@@ -11,6 +11,7 @@ on:
       - 'ui/**/*'
       - 'provider-ui/**/*'
       - '.github/**/*'
+      - '*.md'
   pull_request:
     branches:
       - "*"

@@ -120,6 +120,10 @@ darkTheme = {
             backgroundColor : "#263238",
             width : '0.7rem',
           },
+          "&::-webkit-scrollbar-track, & *::-webkit-scrollbar-track" : {
+            backgroundColor : "#263238",
+            width : '0.7rem',
+          },
           "&::-webkit-scrollbar-thumb, & *::-webkit-scrollbar-thumb" : {
             borderRadius : 8,
             backgroundColor : "#6b6b6b",
