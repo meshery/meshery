@@ -35,8 +35,9 @@ jobs:
       - name: dump results
         env:
           #  the output of the action can be found in ${{ steps.update_worksheet.outputs.results }}
-          RESULTS: ${{ steps.read_worksheet.outputs.results }}
-        run: echo "$RESULTS" | jq ' .results[].result.rawData[0][0]' --raw-output
+          INTEGRATIONS: ${{ steps.read_worksheet.outputs.results }}
+        run: bash ./github/scripts/integration_publisher.sh
+        # run: echo "$INTEGRATIONS" | jq ' .results[].result.rawData[0][0]' --raw-output
 
       # { "command": "addWorksheet", "args": { "worksheetTitle": "<worksheetTitle>" }},
       #           { "command": "updateData", "args": { "data": [["A1", "A2", "A3"]] }},
