@@ -42,7 +42,7 @@ jobs:
       #           { "command": "updateData", "args": { "data": [["A1", "A2", "A3"]] }},
       - name: parse results
         env:
-          RESULTS: ${{ steps.read_worksheet.outputs.results }}
+          INTEGRATIONS: ${{ steps.read_worksheet.outputs.results }}
         run: bash ./github/scripts/integration_publisher.sh
         # run: echo ${{ steps.read_worksheet.outputs.results }} | jq " .results[].result.rawData[0][1]" --raw-output
 
