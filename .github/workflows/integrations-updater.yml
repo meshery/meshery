@@ -45,21 +45,3 @@ jobs:
         env:
           RESULTS: ${{ steps.read_worksheet.outputs.results }}
         run: echo "$RESULTS" | jq " .results[].result.rawData[0][1]" --raw-output
-
-      - name: Overwrite file
-        uses: "DamianReeves/write-file-action@master"
-        with:
-          path: path/to/file.js
-          write-mode: overwrite
-          contents: |
-            console.log('some contents')
-
-      - name: Commit & Push
-        uses: Andro999b/push@v1.3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: main
-          force: true
-          message: "Overwritten by Github Actions - ${date}"
-
-Rabi 
