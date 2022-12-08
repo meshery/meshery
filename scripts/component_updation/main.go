@@ -76,9 +76,12 @@ func main() {
 							component.Model.Category = value
 						} else if key == "Sub-Category" {
 							component.Model.SubCategory = value
-						} else if isInColumnNames(key) {
+						} else if isInColumnNames(key) != -1 {
 							component.Metadata[key] = value
 						}
+					}
+					if i := isInColumnNames("Project Name"); i != -1 {
+						component.Model.DisplayName = changeFields[ColumnNamesToExtract[i]]
 					}
 					byt, err = json.Marshal(component)
 					if err != nil {
@@ -99,11 +102,13 @@ func main() {
 		log.Fatal(err)
 	}
 }
-func isInColumnNames(key string) bool {
-	for _, n := range ColumnNamesToExtract {
+
+// returns the index of column. Returns -1 if doesn't exist
+func isInColumnNames(key string) int {
+	for i, n := range ColumnNamesToExtract {
 		if n == key {
-			return true
+			return i
 		}
 	}
-	return false
+	return -1
 }
