@@ -26,18 +26,18 @@ jobs:
     steps:
       - name: GITHUB_WORKSPACE
         run: |
-          echo $GITHUB_WORKSPACE
-          echo pwd
-          echo ls
+          echo {{$GITHUB_WORKSPACE}}
+          pwd
+          ls
       - name: Checkout Meshery repo
         uses: actions/checkout@master
         with:
           path: meshery
       - name: GITHUB_WORKSPACE
         run: |
-          echo $GITHUB_WORKSPACE
-          echo pwd
-          echo ls
+          echo {{$GITHUB_WORKSPACE}}
+          pwd
+          ls
       - name: Checkout site repo
         uses: actions/checkout@master
         with:
@@ -45,9 +45,9 @@ jobs:
           path: site
       - name: GITHUB_WORKSPACE
         run: |
-          echo $GITHUB_WORKSPACE
-          echo pwd
-          echo ls
+          echo {{$GITHUB_WORKSPACE}}
+          pwd
+          ls
       - id: "read_worksheet"
         uses: jroehl/gsheet.action@release # you can specify '@release' to always have the latest changes
         with:
