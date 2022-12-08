@@ -1,5 +1,10 @@
 name: Meshery Integrations Updater
 on:
+  push:
+    branches:
+      - "master"
+    paths:
+      - ".github/workflows/integrations-updater.yml"
   workflow_dispatch:
 
 # This workflow uses the service account: meshery-integrations-sheet@meshery-237716.iam.gserviceaccount.com
@@ -20,16 +25,29 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: GITHUB_WORKSPACE
-        run: echo $GITHUB_WORKSPACE
+        run: |
+          echo $GITHUB_WORKSPACE
+          echo pwd
+          echo ls
       - name: Checkout Meshery repo
         uses: actions/checkout@master
         with:
           path: meshery
+      - name: GITHUB_WORKSPACE
+        run: |
+          echo $GITHUB_WORKSPACE
+          echo pwd
+          echo ls
       - name: Checkout site repo
         uses: actions/checkout@master
         with:
           repository: layer5io/layer5
           path: site
+      - name: GITHUB_WORKSPACE
+        run: |
+          echo $GITHUB_WORKSPACE
+          echo pwd
+          echo ls
       - id: "read_worksheet"
         uses: jroehl/gsheet.action@release # you can specify '@release' to always have the latest changes
         with:
