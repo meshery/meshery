@@ -19,8 +19,17 @@ jobs:
   integrations:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repo 🛎️
+      - name: GITHUB_WORKSPACE
+        run: echo $GITHUB_WORKSPACE
+      - name: Checkout Meshery repo
         uses: actions/checkout@master
+        with:
+          path: meshery
+      - name: Checkout site repo
+        uses: actions/checkout@master
+        with:
+          repository: layer5io/layer5
+          path: site
       - id: "read_worksheet"
         uses: jroehl/gsheet.action@release # you can specify '@release' to always have the latest changes
         with:
@@ -42,7 +51,7 @@ jobs:
       - name: save results
         run: |
           set echo off
-          cat {{ steps.read_worksheet.outputs.results }} > ./github/scripts/integrations.json
+          cat {{ steps.read_worksheet.outputs.results }} > meshery/.github/scripts/integrations.json
       - name: dump results
         # env:
         #   #  the output of the action can be found in ${{ steps.update_worksheet.outputs.results }}
