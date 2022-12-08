@@ -37,7 +37,7 @@ jobs:
         run: |
           echo {{$GITHUB_WORKSPACE}}
           pwd
-          ls
+          ls -al meshery
       - name: Checkout site repo
         uses: actions/checkout@master
         with:
@@ -47,7 +47,7 @@ jobs:
         run: |
           echo {{$GITHUB_WORKSPACE}}
           pwd
-          ls
+          ls -al site
       - id: "read_worksheet"
         uses: jroehl/gsheet.action@release # you can specify '@release' to always have the latest changes
         with:
@@ -69,19 +69,19 @@ jobs:
       - name: save results
         run: |
           set echo off
-          cat {{ steps.read_worksheet.outputs.results }} > meshery/.github/scripts/integrations.json
+          cat {{ steps.read_worksheet.outputs.results }} > integrations.json
       - name: dump results
         # env:
         #   #  the output of the action can be found in ${{ steps.update_worksheet.outputs.results }}
         #   INTEGRATIONS: ${{ steps.read_worksheet.outputs.results }}
-        run: bash ./github/scripts/integration_publisher.sh
+        run: bash integration_publisher.sh
         # run: echo "$INTEGRATIONS" | jq ' .results[].result.rawData[0][0]' --raw-output
 
       # { "command": "addWorksheet", "args": { "worksheetTitle": "<worksheetTitle>" }},
       #           { "command": "updateData", "args": { "data": [["A1", "A2", "A3"]] }},
       - name: parse results
         run: |
-          INTEGRATIONS=$(< .github/scripts/integrations.json)
+          INTEGRATIONS=$(< integrations.json)
           integration_count=$(jq ' .results[].result.rawData | length' $INTEGRATIONS)
 
           for (( i=0; i<integration_count; i++ ))
