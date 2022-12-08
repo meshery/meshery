@@ -1,1 +1,1 @@
-{"kind":"ClusterComplianceDetailReport","apiVersion":"v1alpha1","display-name":"Cluster Compliance Detail Report","format":"JSON","metadata":{},"model":{"name":"statcan","version":"0.10.4","display-name":"","category":"","sub-category":""},"schema":""}
+{"kind":"ClusterComplianceDetailReport","apiVersion":"v1alpha1","display-name":"Cluster Compliance Detail Report","format":"JSON","metadata":{},"model":{"name":"statcan","version":"0.10.4","display-name":"statcan","category":"","sub-category":""},"schema":""}
