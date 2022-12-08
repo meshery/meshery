@@ -69,7 +69,8 @@ jobs:
       - name: save results
         run: |
           set echo off
-          cat {{ steps.read_worksheet.outputs.results }} > integrations.json
+          echo {{ steps.read_worksheet.outputs.results }} > integrations.json
+          cat <<< {{ steps.read_worksheet.outputs.results }} > integrations2.json
       - name: dump results
         # env:
         #   #  the output of the action can be found in ${{ steps.update_worksheet.outputs.results }}
