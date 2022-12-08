@@ -6,6 +6,7 @@
 
 # Setup for repository-based run
 #results=$(< results.json)
+INTEGRATIONS=$(< .github/scripts/integrations.json)
 integration_count=$(jq ' .results[].result.rawData | length' $INTEGRATIONS)
 
 for (( i=0; i<integration_count; i++ ))

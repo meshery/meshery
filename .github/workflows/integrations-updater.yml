@@ -32,18 +32,46 @@ jobs:
         env:
           GSHEET_CLIENT_EMAIL: ${{ secrets.GSHEET_CLIENT_EMAIL }}
           GSHEET_PRIVATE_KEY: ${{ secrets.GSHEET_PRIVATE_KEY }}
+      - name: Overwrite integrations
+        uses: "DamianReeves/write-file-action@master"
+        with:
+          path: .github/scripts/integrations.json
+          write-mode: overwrite
+          contents: |
+            ${{ steps.read_worksheet.outputs.results }}
       - name: dump results
-        env:
-          #  the output of the action can be found in ${{ steps.update_worksheet.outputs.results }}
-          INTEGRATIONS: ${{ steps.read_worksheet.outputs.results }}
+        # env:
+        #   #  the output of the action can be found in ${{ steps.update_worksheet.outputs.results }}
+        #   INTEGRATIONS: ${{ steps.read_worksheet.outputs.results }}
         run: bash ./github/scripts/integration_publisher.sh
         # run: echo "$INTEGRATIONS" | jq ' .results[].result.rawData[0][0]' --raw-output
 
       # { "command": "addWorksheet", "args": { "worksheetTitle": "<worksheetTitle>" }},
       #           { "command": "updateData", "args": { "data": [["A1", "A2", "A3"]] }},
       - name: parse results
-        env:
-          INTEGRATIONS: ${{ steps.read_worksheet.outputs.results }}
-        run: bash ./github/scripts/integration_publisher.sh
-        # run: echo ${{ steps.read_worksheet.outputs.results }} | jq " .results[].result.rawData[0][1]" --raw-output
+        run: |
+          INTEGRATIONS=$(< .github/scripts/integrations.json)
+          integration_count=$(jq ' .results[].result.rawData | length' $INTEGRATIONS)
+
+          for (( i=0; i<integration_count; i++ ))
+          do 
+              integration_name=$(jq " .results[].result.rawData[${i}][0]" -r $INTEGRATIONS)
+              integration_data=$(jq " .results[].result.rawData[${i}][1]" -r $INTEGRATIONS)
+              mkdir -p ${integration_name}/icon/color
+              mkdir -p ${integration_name}/icon/white
+              echo $integration_data > ${integration_name}/index.mdx   
+          done
+      # bash ./github/scripts/integration_publisher.sh
+      # run: echo ${{ steps.read_worksheet.outputs.results }} | jq " .results[].result.rawData[0][1]" --raw-output
+
+      # - name: Commit changes
+      #   uses: stefanzweifel/git-auto-commit-action@v4
+      #   with:
+      #     file_pattern: docs/
+      #     commit_user_name: l5io
+      #     commit_user_email: ci@layer5.io
+      #     commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
+      #     commit_options: "--signoff"
+      #     commit_message: "[Docs] Generated documentation for GraphQL API"
+      #     branch: master
 
