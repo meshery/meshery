@@ -32,13 +32,17 @@ jobs:
         env:
           GSHEET_CLIENT_EMAIL: ${{ secrets.GSHEET_CLIENT_EMAIL }}
           GSHEET_PRIVATE_KEY: ${{ secrets.GSHEET_PRIVATE_KEY }}
-      - name: Overwrite integrations
-        uses: "DamianReeves/write-file-action@master"
-        with:
-          path: .github/scripts/integrations.json
-          write-mode: overwrite
-          contents: |
-            ${{ steps.read_worksheet.outputs.results }}
+      # - name: Overwrite integrations
+      #   uses: "DamianReeves/write-file-action@master"
+      #   with:
+      #     path: .github/scripts/integrations.json
+      #     write-mode: overwrite
+      #     contents: |
+      #       ${{ steps.read_worksheet.outputs.results }}
+      - name: save results
+        run: |
+          set echo off
+          cat {{ steps.read_worksheet.outputs.results }} > ./github/scripts/integrations.json
       - name: dump results
         # env:
         #   #  the output of the action can be found in ${{ steps.update_worksheet.outputs.results }}
