@@ -12,8 +12,9 @@ echo $GITHUB_PATH
 echo "{path}" >> $GITHUB_PATH
 pwd
 ls
+echo $GITHUB_WORKSPACE
 
-INTEGRATIONS=$(< ../../../integrations.json)
+INTEGRATIONS=$(< $GITHUB_WORKSPACE/integrations.json)
 integration_count=$(jq ' .results[].result.rawData | length' $INTEGRATIONS)
 
 for (( i=0; i<integration_count; i++ ))
