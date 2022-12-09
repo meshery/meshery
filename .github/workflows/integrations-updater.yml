@@ -81,7 +81,7 @@ jobs:
         # env:
         #   #  the output of the action can be found in ${{ steps.update_worksheet.outputs.results }}
         #   INTEGRATIONS: ${{ steps.read_worksheet.outputs.results }}
-        run: bash integration_publisher.sh
+        run: bash meshery/.github/scripts/integration_publisher.sh
         # run: echo "$INTEGRATIONS" | jq ' .results[].result.rawData[0][0]' --raw-output
 
       # { "command": "addWorksheet", "args": { "worksheetTitle": "<worksheetTitle>" }},
@@ -96,6 +96,20 @@ jobs:
           do 
               integration_name=$(jq " .results[].result.rawData[${i}][0]" -r $INTEGRATIONS)
               integration_data=$(jq " .results[].result.rawData[${i}][1]" -r $INTEGRATIONS)
+              mkdir -p ${integration_name}/icon/color
+              mkdir -p ${integration_name}/icon/white
+              echo $integration_data > ${integration_name}/index.mdx   
+          done
+      - name: reparse results
+        id: reparse_results
+        run: |
+
+          integration_count=$(jq ' .results[].result.rawData | length' ${{ steps.read_worksheet.outputs.results }})
+
+          for (( i=0; i<integration_count; i++ ))
+          do 
+              integration_name=$(jq " .results[].result.rawData[${i}][0]" -r ${{ steps.read_worksheet.outputs.results }})
+              integration_data=$(jq " .results[].result.rawData[${i}][1]" -r ${{ steps.read_worksheet.outputs.results }})
               mkdir -p ${integration_name}/icon/color
               mkdir -p ${integration_name}/icon/white
               echo $integration_data > ${integration_name}/index.mdx   
