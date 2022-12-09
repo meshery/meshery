@@ -27,30 +27,31 @@ jobs:
       output1: ${{ steps.step1.outputs.test }}
       output2: ${{ steps.step2.outputs.test }}
     steps:
-      - name: GITHUB_WORKSPACE
-        run: |
-          echo {{$GITHUB_WORKSPACE}}
-          pwd
-          ls
-      - name: Checkout Meshery repo
-        uses: actions/checkout@master
-        with:
-          path: meshery
-      - name: GITHUB_WORKSPACE
-        run: |
-          echo {{$GITHUB_WORKSPACE}}
-          pwd
-          ls -al meshery
-      - name: Checkout site repo
-        uses: actions/checkout@master
-        with:
-          repository: layer5io/layer5
-          path: site
-      - name: GITHUB_WORKSPACE
-        run: |
-          echo {{$GITHUB_WORKSPACE}}
-          pwd
-          ls -al site
+      # - name: GITHUB_WORKSPACE
+      #   run: |
+      #     echo {{$GITHUB_WORKSPACE}}
+      #     pwd
+      #     ls
+      # - name: Checkout Meshery repo
+      #   uses: actions/checkout@master
+      #   with:
+      #     path: meshery
+      # - name: GITHUB_WORKSPACE
+      #   run: |
+      #     echo {{$GITHUB_WORKSPACE}}
+      #     pwd
+      #     ls -al meshery
+      # - name: Checkout site repo
+      #   uses: actions/checkout@master
+      #   with:
+      #     repository: layer5io/layer5
+      #     path: site
+      #     fetch-depth: "1"
+      # - name: GITHUB_WORKSPACE
+      #   run: |
+      #     echo {{$GITHUB_WORKSPACE}}
+      #     pwd
+      #     ls -al site
       - id: "read_worksheet"
         uses: jroehl/gsheet.action@release # you can specify '@release' to always have the latest changes
         with:
@@ -75,7 +76,6 @@ jobs:
         run: |
           set echo off
           echo ${{ steps.read_worksheet.outputs.results }} > integrations.json
-          head integrations.json
       # - name: dump results
       #   id: dump_results
       #   # env:
@@ -86,21 +86,21 @@ jobs:
 
       # # { "command": "addWorksheet", "args": { "worksheetTitle": "<worksheetTitle>" }},
       # #           { "command": "updateData", "args": { "data": [["A1", "A2", "A3"]] }},
-      - name: parse results
-        id: parse_results
-        run: |
-          ls
-          cat integrations.json
-          integration_count=$(jq ' .results[].result.rawData | length' integrations.json)
+      # - name: parse results
+      #   id: parse_results
+      #   run: |
+      #     ls
+      #     # cat integrations.json
+      #     echo integration_count=$(jq ' .results[].result.rawData | length' integrations.json)
 
-          for (( i=0; i<integration_count; i++ ))
-          do 
-              integration_name=$(jq " .results[].result.rawData[${i}][0]" -r integrations.json)
-              integration_data=$(jq " .results[].result.rawData[${i}][1]" -r integrations.json)
-              mkdir -p ${integration_name}/icon/color
-              mkdir -p ${integration_name}/icon/white
-              echo $integration_data > ${integration_name}/index.mdx   
-          done
+      #     for (( i=0; i<integration_count; i++ ))
+      #     do
+      #         integration_name=$(jq " .results[].result.rawData[${i}][0]" -r integrations.json)
+      #         integration_data=$(jq " .results[].result.rawData[${i}][1]" -r integrations.json)
+      #         mkdir -p ${integration_name}/icon/color
+      #         mkdir -p ${integration_name}/icon/white
+      #         echo $integration_data > ${integration_name}/index.mdx
+      #     done
       - name: reparse results
         id: reparse_results
         run: |
