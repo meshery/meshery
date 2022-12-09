@@ -227,39 +227,39 @@ class MesheryProviderApp extends App {
     return (
       <NoSsr>
         <Global
-      styles={{
-        body: {
-          margin: 0,
-          padding: 0
-        }
-      }}
-    />
-          <Head>
-            <title>Meshery</title>
-          </Head>
-          <MuiThemeProvider theme={theme}>
-            <div className={classes.root}>
+          styles={{
+            body: {
+              margin: 0,
+              padding: 0
+            }
+          }}
+        />
+        <Head>
+          <title>Meshery</title>
+        </Head>
 
-              <div className={classes.appContent}>
-                <main className={classes.mainContent}>
-                  <Paper className={classes.paper}>
-                    <Component pageContext={this.pageContext} {...pageProps} />
-                  </Paper>
-                </main>
-                <footer className={classes.footer}>
-                  <Typography variant="body2" align="center" color="textSecondary" component="p">
-                    <span onClick={this.handleL5CommunityClick} className={classes.footerText}>
-                      Built with
-                      {' '}
-                      <FavoriteIcon className={classes.footerIcon} />
-                      {' '}
-                      by the Layer5 Community
-                    </span>
-                  </Typography>
-                </footer>
-              </div>
-            </div>
-          </MuiThemeProvider>
+        <div className={classes.root}>
+
+          <div className={classes.appContent}>
+            <main className={classes.mainContent}>
+              <Paper className={classes.paper}>
+                <Component pageContext={this.pageContext} {...pageProps} />
+              </Paper>
+            </main>
+            <footer className={classes.footer}>
+              <Typography variant="body2" align="center" color="textSecondary" component="p">
+                <span onClick={this.handleL5CommunityClick} className={classes.footerText}>
+                  Built with
+                  {' '}
+                  <FavoriteIcon className={classes.footerIcon} />
+                  {' '}
+                  by the Layer5 Community
+                </span>
+              </Typography>
+            </footer>
+          </div>
+        </div>
+
       </NoSsr>
     );
   }

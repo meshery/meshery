@@ -13,7 +13,7 @@ const styles = (theme) => ({
     padding : ".5rem",
     paddingTop : "0.7rem",
     // margin : ".5rem",
-    backgroundColor : theme.palette.type === 'dark' ? "#545454" : "#f4f4f4",
+    backgroundColor : theme.palette.type === 'dark' ? "#303030" : "#f4f4f4",
     border : `1px solid  ${theme.palette.type === 'dark' ? "rgba(255, 255, 255, .45)" : "rgba(0, 0, 0, .125)"}`,
     width : "100%",
     margin : "0px"

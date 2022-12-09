@@ -302,6 +302,12 @@ export const notificationColors = {
   success : "#206D24",
   info : "#2196F3"
 };
+export const darkNotificationColors = {
+  error : "#B32700",
+  warning : "#F0D053",
+  success : "#78C57C",
+  info : "#5FD4FF"
+};
 
 export const styles = (theme) => ({
   root : {
@@ -351,11 +357,11 @@ export const styles = (theme) => ({
   },
   icon : { fontSize : 20, },
   notifSuccess : {
-    backgroundColor : theme.palette.type == 'dark' ? "#303030 !important" : "rgb(248, 252, 248) !important",
+    backgroundColor : "rgb(248, 252, 248) !important",
     color : `${notificationColors.success} !important`, pointerEvents : "auto !important"
   },
   notifInfo : {
-    backgroundColor : theme.palette.type == 'dark' ? "#303030 !important" : "rgb(248, 252, 248) !important",
+    backgroundColor : "rgb(248, 252, 248) !important",
     color : `${notificationColors.info} !important`, pointerEvents : "auto !important"
   },
   notifWarn : {
@@ -363,8 +369,29 @@ export const styles = (theme) => ({
     color : `${notificationColors.warning} !important`, pointerEvents : "auto !important"
   },
   notifError : {
-    backgroundColor : theme.palette.type == 'dark' ? "#303030 !important" : "rgb(248, 252, 248) !important",
-    color : `${notificationColors.error} !important`, pointerEvents : "auto !important"
+    backgroundColor : "rgb(248, 252, 248) !important",
+    color : `${notificationColors.error} !important`,
+    pointerEvents : "auto !important"
+  },
+  darknotifSuccess : {
+    backgroundColor : "#323232 !important",
+    color : `${darkNotificationColors.success} !important`,
+    pointerEvents : "auto !important"
+  },
+  darknotifInfo : {
+    backgroundColor : "#323232 !important",
+    color : `${darkNotificationColors.info} !important`,
+    pointerEvents : "auto !important"
+  },
+  darknotifWarn : {
+    backgroundColor : "#323232 !important",
+    color : `${darkNotificationColors.warning} !important`,
+    pointerEvents : "auto !important"
+  },
+  darknotifError : {
+    backgroundColor : "#323232 !important",
+    color : `${darkNotificationColors.error} !important`,
+    pointerEvents : "auto !important"
   },
   playgroundFooter : {
     backgroundColor : notificationColors.warning,

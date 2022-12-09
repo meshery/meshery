@@ -1,4 +1,4 @@
-import { useTheme, withStyles } from '@material-ui/core/styles';
+import { MuiThemeProvider, useTheme } from '@material-ui/core/styles';
 import Form, { withTheme } from "@rjsf/core";
 import { Theme as MaterialUITheme, } from "@rjsf/material-ui";
 import React, { useEffect } from "react";
@@ -12,207 +12,8 @@ import { customizeValidator } from "@rjsf/validator-ajv6";
 import _ from "lodash"
 import CustomTextWidget from './RJSFCustomComponents/CustomTextWidget';
 import CustomDateTimeWidget from './RJSFCustomComponents/CustomDateTimeWidget';
-import createBreakpoints from '@material-ui/core/styles/createBreakpoints'
-const breakpoints = createBreakpoints({});
-const styles = (theme) => ({
-  root : {
-    "& .MuiFormLabel-root" : {
-      "& .Mui-error" : {
-        color : "#f44336"
-      },
-      textTransform : "capitalize",
-      fontSize : "0.8rem",
+import darkRjsfTheme from '../../../themes/rjsf';
 
-    },
-    "& .MuiPaper-root" : {
-      backgroundColor : "inherit",
-    },
-    typography : {
-      fontFamily : "inherit",
-      fontSize : 13,
-
-      props : {
-        MuiTextField : {
-          variant : 'outlined',
-          margin : 'dense',
-        },
-        MuiCheckbox : {
-          color : 'primary',
-        },
-        MuiMenu : {
-          variant : "outlined",
-        }
-      },
-    },
-    "& .MuiOutlinedInput-root" : {
-      position : "relative",
-      borderRadius : "4px",
-      backgroundColor : theme.palette.type === 'dark' ? "#606060" : "#ffffff",
-
-    },
-    "& .MuiButton" : {
-      textSecondary : {
-        color : "#00b39f",
-        "&:hover" : "00b39f"
-      }
-    },
-    "& .MuiTextField-root" : {
-
-      width : "calc(100% - 4px)",
-
-    },
-    "& .MuiInputLabel-root" : {
-      whiteSpace : "nowrap",
-      overflow : "hidden",
-      textOverflow : "ellipsis",
-      maxWidth : "60%",
-      height : "100%",
-      '&:hover' : {
-        overflow : "visible",
-      },
-
-      shrink : {
-        maxWidth : "100%",
-      }
-    },
-    "& .MuiFormControl-root" : {
-      marginTop : "0.3rem"
-    },
-    "& .MuiBox-root" : {
-      marginTop : 0
-    },
-    "& .MuiDivider-root" : {
-
-      height : "0.5px"
-
-    },
-
-    "& .MuiTypography-body1" : {
-
-      fontSize : '0.8rem',
-      h5 : {
-        textTransform : 'capitalize',
-        fontSize : '1.1rem',
-        fontWeight : "bold"
-      },
-      subtitle2 : {
-        fontSize : '0.8rem',
-        fontStyle : "italic",
-        color : "#565656"
-      },
-    },
-    "& .MuiInputBase-root" : {
-      fontSize : "0.8rem" // same as title
-    },
-    MuiTooltip : {
-      tooltip : {
-        backgroundColor : " #3C494F",
-        color : "#fff",
-        opacity : "100%",
-        fontSize : "14px",
-        borderRadius : "0.9375rem",
-        padding : "0.9rem",
-        zIndex : "99999999999"
-      },
-      popper : {
-        zIndex : "99999 !important"
-      }
-    },
-    "& .MuiAccordionSummary-root" : {
-
-      // border: "5px solid red",
-      backgroundColor : theme.palette.type === 'dark' ? "inherit" : "rgba(242,242,242)",
-      borderBottom : `1px solid  ${theme.palette.type === 'dark' ? "rgba(255, 255, 255, .45)" : "rgba(0, 0, 0, .125)"}`,
-      marginBottom : -1,
-      maxHeight : "1.5rem",
-      "&$expanded" : {
-        minHeight : 56
-      }
-    },
-    "& .MuiAccordionSummary-content" : {
-      justifyContent : "space-between",
-
-    },
-
-    "& .MuiAccordionDetails-root" : {
-
-      padding : 16
-
-    },
-    "& .MuiAccordion-root" : {
-      border : `1px solid  ${theme.palette.type === 'dark' ? "rgba(255, 255, 255, .45)" : "rgba(0, 0, 0, .125)"}`,
-      boxShadow : "none",
-      "&:not(:last-child)" : {
-        borderBottom : 0
-      },
-      "&:before" : {
-        display : "none"
-      },
-      "&$expanded" : {
-        margin : "auto"
-      },
-      backgroundColor : theme.palette.type === 'dark' ? "inherit" : "rgba(242,242,242)",
-
-    },
-    "& .MuiGrid-root" : {
-      "& > *" : {
-        border : 'none !important'
-      },
-      marginTop : '0.1rem !important',
-      overflow : "hidden",
-      alignSelf : "center",
-      textOverflow : "ellipsis",
-      '&:hover' : {
-        overflow : "visible",
-      },
-      // To scale the grid items on a particular screen size
-      [breakpoints.up('lg')] : {
-        "& > *:nth-child(2)" : {
-          "& > *:nth-child(1)" : {
-            "& > *:nth-child(2)" : {
-              justifyContent : 'space-around',
-            }
-          },
-        }
-      },
-
-    },
-    "& .MuiCheckbox-root" : {
-      // checkboxes white background
-
-      marginLeft : "4px",
-      "& > *:nth-child(1)" : {
-        backgroundColor : "#ffffff",
-        width : "1rem",
-        height : "1rem"
-      }
-    },
-    "& .MuiIconButton-root" : {
-
-      cursor : "default",
-      sizeSmall : {
-        padding : "1px"
-      }
-    },
-    MuiPaper : {
-      elevation0 : {
-        backgroundColor : "inherit",
-      },
-      elevation2 : {
-        boxShadow : "none"
-      }
-    },
-    "spacing-xs-2" : {
-      padding : 0,
-      "& > *" : {
-        paddingTop : "0 !important",
-        paddingBottom : "0 !important"
-      }
-    }
-  }
-
-
-});
 /*eslint-disable */
 class RJSFOverridenComponent extends Form {
   constructor(props) {
@@ -266,7 +67,7 @@ function RJSFForm(props) {
     ObjectFieldTemplate,
     WrapIfAdditionalTemplate,
   }
-
+  const globalTheme = useTheme()
   useEffect(() => {
     const extensionTooltipPortal = document.getElementById("extension-tooltip-portal");
     if (extensionTooltipPortal) {
@@ -278,18 +79,15 @@ function RJSFForm(props) {
   if (isLoading && LoadingComponent) {
     return <LoadingComponent />
   }
-  const theme = useTheme();
-  const { classes } = props;
-  console.log("hello", theme)
-  return (
 
-    <div>
+  return (
+    <MuiThemeProvider
+      theme={globalTheme.palette.type == "dark" ? darkRjsfTheme : rjsfTheme}>
       <MuiRJSFForm
         schema={schema.rjsfSchema}
         idPrefix={jsonSchema?.title}
         onChange={onChange}
         formData={data}
-        className={classes.root}
         validator={validator}
         templates={templates}
         uiSchema={schema.uiSchema}
@@ -311,8 +109,9 @@ function RJSFForm(props) {
         {/* <RJSFFormChildComponent /> */}
         <></> {/* temporary change for functionality */}
       </MuiRJSFForm>
-    </div>
+
+    </MuiThemeProvider>
   )
 }
 
-export default withStyles(styles)(RJSFForm);
+export default RJSFForm;

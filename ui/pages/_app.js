@@ -332,10 +332,10 @@ class MesheryApp extends App {
                   info : <Info style={{ marginRight : "0.5rem" }} />
                 }}
                 classes={{
-                  variantSuccess : classes.notifSuccess,
-                  variantError : classes.notifError,
-                  variantWarning : classes.notifWarn,
-                  variantInfo : classes.notifInfo,
+                  variantSuccess : this.state.theme === "dark" ? classes.darknotifSuccess : classes.notifSuccess,
+                  variantError : this.state.theme === "dark" ? classes.darknotifError : classes.notifError,
+                  variantWarning : this.state.theme === "dark" ? classes.darknotifWarn : classes.notifWarn,
+                  variantInfo : this.state.theme === "dark" ? classes.darknotifInfo : classes.notifInfo,
                 }}
                 maxSnack={10}
               >

@@ -22,10 +22,10 @@ const WrapIfAdditionalTemplate = ({
   registry,
 }) => {
   const { RemoveButton } = registry.templates.ButtonTemplates;
-  const value=label.startsWith("newKey")?"":label; // removing the default value i.e newKey.
+  const value = label.startsWith("newKey") ? "" : label; // removing the default value i.e newKey.
   const keyLabel = `Key`
   const additional = ADDITIONAL_PROPERTY_FLAG in schema;
-  const btnStyle= {
+  const btnStyle = {
     flex : 1,
     paddingLeft : 6,
     paddingRight : 6,
@@ -61,7 +61,7 @@ const WrapIfAdditionalTemplate = ({
         </FormControl>
       </Grid>
       <Grid item style={{ alignSelf : 'flex-end' }}>
-        <span style={{ fontSize : "1.25rem", color : "#1E2117" }}>
+        <span style={{ fontSize : "1.25rem" }}>
           &nbsp;:&nbsp;
         </span>
       </Grid>
