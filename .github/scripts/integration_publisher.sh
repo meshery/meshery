@@ -14,8 +14,8 @@ pwd
 ls
 echo $GITHUB_WORKSPACE
 
-INTEGRATIONS=$(< $GITHUB_WORKSPACE/integrations.json)
-echo integration_count=$(jq ' .results[].result.rawData | length' $GITHUB_WORKSPACE/integrations.json)
+#INTEGRATIONS=$(< $GITHUB_WORKSPACE/integrations.json)
+integration_count=$(jq ' .results[].result.rawData | length' $GITHUB_WORKSPACE/integrations.json)
 
 for (( i=0; i<integration_count; i++ ))
 do 
