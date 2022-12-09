@@ -62,10 +62,7 @@ jobs:
         env:
           GSHEET_CLIENT_EMAIL: ${{ secrets.GSHEET_CLIENT_EMAIL }}
           GSHEET_PRIVATE_KEY: ${{ secrets.GSHEET_PRIVATE_KEY }}
-        run: |
-          set echo off
-          echo ${{ steps.read_worksheet.outputs.results }} > integrations.json
-          head integrations.json
+
       # - name: Overwrite integrations
       #   uses: "DamianReeves/write-file-action@master"
       #   with:
