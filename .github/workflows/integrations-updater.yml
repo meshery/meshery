@@ -23,6 +23,9 @@ jobs:
   #         echo "Env GIT_TAG: ${{ github.event.release.tag_name }}"
   integrations:
     runs-on: ubuntu-latest
+    outputs:
+      output1: ${{ steps.step1.outputs.test }}
+      output2: ${{ steps.step2.outputs.test }}
     steps:
       - name: GITHUB_WORKSPACE
         run: |
@@ -59,6 +62,10 @@ jobs:
         env:
           GSHEET_CLIENT_EMAIL: ${{ secrets.GSHEET_CLIENT_EMAIL }}
           GSHEET_PRIVATE_KEY: ${{ secrets.GSHEET_PRIVATE_KEY }}
+        run: |
+          set echo off
+          echo ${{ steps.read_worksheet.outputs.results }} > integrations.json
+          head integrations.json
       # - name: Overwrite integrations
       #   uses: "DamianReeves/write-file-action@master"
       #   with:
@@ -67,11 +74,13 @@ jobs:
       #     contents: |
       #       ${{ steps.read_worksheet.outputs.results }}
       - name: save results
+        id: save_results
         run: |
           set echo off
-          echo {{ steps.read_worksheet.outputs.results }} > integrations.json
+          echo ${{ steps.read_worksheet.outputs.results }} > integrations.json
           head integrations.json
       - name: dump results
+        id: dump_results
         # env:
         #   #  the output of the action can be found in ${{ steps.update_worksheet.outputs.results }}
         #   INTEGRATIONS: ${{ steps.read_worksheet.outputs.results }}
@@ -81,6 +90,7 @@ jobs:
       # { "command": "addWorksheet", "args": { "worksheetTitle": "<worksheetTitle>" }},
       #           { "command": "updateData", "args": { "data": [["A1", "A2", "A3"]] }},
       - name: parse results
+        id: parse_results
         run: |
           INTEGRATIONS=$(< integrations.json)
           integration_count=$(jq ' .results[].result.rawData | length' $INTEGRATIONS)
