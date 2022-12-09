@@ -6,6 +6,9 @@
 
 # Setup for repository-based run
 #results=$(< results.json)
+curl -o integrations.csv https://docs.google.com/spreadsheets/d/e/2PACX-1vSgOXuiqbhUgtC9oNbJlz9PYpOEaFVoGNUFMIk4NZciFfQv1ewZg8ahdrWHKI79GkKK9TbmnZx8CqIe/pub?gid=0&single=true&output=csv
+brew install xsv
+xsv slice -i 7 integrations.csv | xsv select 28 | xsv flatten > a.txt
 echo "$PATH"
 echo "{path}" 
 echo $GITHUB_PATH
