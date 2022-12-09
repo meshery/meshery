@@ -90,8 +90,7 @@ jobs:
         id: parse_results
         run: |
           ls
-
-          INTEGRATIONS=$(< integrations.json)
+          cat integrations.json
           integration_count=$(jq ' .results[].result.rawData | length' integrations.json)
 
           for (( i=0; i<integration_count; i++ ))
