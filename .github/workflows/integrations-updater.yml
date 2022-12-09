@@ -77,7 +77,7 @@ jobs:
           set echo off
           echo ${{ steps.read_worksheet.outputs.results }} > integrations.json
       - name: get integrations
-        run: wget https://docs.google.com/spreadsheets/d/e/2PACX-1vSgOXuiqbhUgtC9oNbJlz9PYpOEaFVoGNUFMIk4NZciFfQv1ewZg8ahdrWHKI79GkKK9TbmnZx8CqIe/pub?gid=0&single=true&output=csv -o integrations.csv
+        run: curl https://docs.google.com/spreadsheets/d/e/2PACX-1vSgOXuiqbhUgtC9oNbJlz9PYpOEaFVoGNUFMIk4NZciFfQv1ewZg8ahdrWHKI79GkKK9TbmnZx8CqIe/pub?gid=0&single=true&output=csv -o integrations.csv
       # - name: dump results
       #   id: dump_results
       #   # env:
