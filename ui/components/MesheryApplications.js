@@ -256,6 +256,7 @@ function MesheryApplications({
    * fetch applications when the page loads
    */
   useEffect(() => {
+    fetchApplications(page, pageSize, search, sortOrder)
   }, [page, pageSize, search, sortOrder]);
 
   /**
