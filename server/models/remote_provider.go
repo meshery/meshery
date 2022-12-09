@@ -17,6 +17,7 @@ import (
 	"strings"
 	"sync"
 	"time"
+	"errors"
 
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshkit/database"
@@ -381,18 +382,7 @@ func (l *RemoteProvider) GetProviderToken(req *http.Request) (string, error) {
 // Logout - logout from provider backend
 //
 // It is assumed that every remote provider will support this feature
-func (l *RemoteProvider) Logout(w http.ResponseWriter, req *http.Request) {
-	// gets the token from the request headers
-	ck, err := req.Cookie(tokenName)
-	if err == nil {
-		err = l.revokeToken(ck.Value)
-	}
-	if err != nil {
-		logrus.Errorf("error performing logout, token cannot be revoked: %v", err)
-		http.Redirect(w, req, "/user/login", http.StatusFound)
-		return
-	}
-
+func (l *RemoteProvider) Logout(w http.ResponseWriter, req *http.Request) error {
 	// construct remote provider logout url
 	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s", l.RemoteProviderURL, "/logout"))
 	logrus.Debugf("constructed url: %s", remoteProviderURL.String())
@@ -401,17 +391,15 @@ func (l *RemoteProvider) Logout(w http.ResponseWriter, req *http.Request) {
 	cReq, _ := http.NewRequest(req.Method, remoteProviderURL.String(), req.Body)
 	tokenString, err := l.GetToken(req)
 	if err != nil {
-		logrus.Error("Error performing logout: ", err)
-		http.Error(w, "error performing logout", http.StatusInternalServerError)
-		return
+		logrus.Errorf("error performing logout: %v", err)
+		return err
 	}
 
 	// gets session cookie from the request headers
 	sessionCookie, err := req.Cookie("session_cookie")
 	if err != nil {
-		logrus.Debug("Error getting session cookie")
-		http.Error(w, "error performing logout", http.StatusInternalServerError)
-		return
+		logrus.Errorf("error getting session cookie: %v", err)
+		return err
 	}
 
 	// adds session cookie to the new request headers
@@ -425,28 +413,38 @@ func (l *RemoteProvider) Logout(w http.ResponseWriter, req *http.Request) {
 	// necessary to inform remote provider to return back to Meshery UI
 	cReq.AddCookie(&http.Cookie{Name: "return_to", Value: "provider_ui"})
 
+	logrus.Debug("headers: ", cReq.Header)
+
 	// make request to remote provider with contructed URL and updated headers (like session_cookie, return_to cookies)
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
-		logrus.Error("Error performing logout: ", err)
-		http.Error(w, "error performing logout", http.StatusInternalServerError)
-		return
+		logrus.Errorf("error performing logout: %v", err)
+		return err
 	}
 
 	defer func() {
 		_ = resp.Body.Close()
 	}()
-	_, err = io.ReadAll(resp.Body)
+	bd, err := io.ReadAll(resp.Body)
 	if err != nil {
-		logrus.Error("Error performing logout: ", err)
-		http.Error(w, "error performing logout", http.StatusInternalServerError)
-		return
+		logrus.Errorf("error performing logout: %v", err)
+		return err
 	}
 	logrus.Infof("response successfully retrieved from remote provider")
-
+	logrus.Debug("resp: ", resp)
 	// if request succeeds then redirect to Provider UI
 	// And empties the token and session cookies
 	if resp.StatusCode == http.StatusFound || resp.StatusCode == http.StatusOK {
+		// gets the token from the request headers
+		ck, err := req.Cookie(tokenName)
+		if err == nil {
+			err = l.revokeToken(ck.Value)
+		}
+		if err != nil {
+			logrus.Errorf("error performing logout, token cannot be revoked: %v", err)
+			http.Redirect(w, req, "/user/login", http.StatusFound)
+			return nil
+		}
 		ck.MaxAge = -1
 		ck.Path = "/"
 		http.SetCookie(w, ck)
@@ -454,12 +452,11 @@ func (l *RemoteProvider) Logout(w http.ResponseWriter, req *http.Request) {
 		sessionCookie.Path = "/"
 		http.SetCookie(w, sessionCookie)
 		logrus.Info("successfully logged out from remote provider")
-		http.Redirect(w, req, "/provider", http.StatusFound)
-		return
+		return nil
 	}
 
-	logrus.Error("Error performing logout: ", err)
-	http.Error(w, "error performing logout", http.StatusInternalServerError)
+	logrus.Errorf("Error performing logout: %v", string(bd))
+	return errors.New(string(bd))
 }
 
 // HandleUnAuthenticated
