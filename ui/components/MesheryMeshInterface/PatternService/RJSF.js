@@ -12,6 +12,7 @@ import { customizeValidator } from "@rjsf/validator-ajv6";
 import _ from "lodash"
 import CustomTextWidget from './RJSFCustomComponents/CustomTextWidget';
 import CustomDateTimeWidget from './RJSFCustomComponents/CustomDateTimeWidget';
+import ObjectFieldWithErrors from './RJSFCustomComponents/CustomObjectField';
 
 /*eslint-disable */
 class RJSFOverridenComponent extends Form {
@@ -79,6 +80,7 @@ function RJSFForm(props) {
     return <LoadingComponent />
   }
 
+
   return (
     <MuiThemeProvider theme={rjsfTheme}>
       <MuiRJSFForm
@@ -89,6 +91,7 @@ function RJSFForm(props) {
         validator={validator}
         templates={templates}
         uiSchema={schema.uiSchema}
+        fields={{ ObjectField : ObjectFieldWithErrors }}
         widgets={{
           TextWidget : CustomTextWidget,
           // Custom components to be added here
