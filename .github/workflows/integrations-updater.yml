@@ -90,10 +90,9 @@ jobs:
         id: parse_results
         run: |
           ls
-          jq . -r integrations.json
-          which jq
+
           cat integrations.json
-          jq "" .results[].result.rawData | length" integrations.json
+          jq " .results[].result.rawData | length" integrations.json
           echo jq "" .results[].result.rawData | length" integrations.json >> $int_count
           echo "int_count: "$int_count
           integration_count=$(`jq ' .results[].result.rawData | length' integrations.json`)
