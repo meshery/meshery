@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import "./animatedMeshSync.css";
+import "./animatedMeshSync.module.css";
 
 function getClassName(className, isActive) {
   if (!isActive) {

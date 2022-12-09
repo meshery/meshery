@@ -16,7 +16,7 @@ import { updateGrafanaConfig, updateProgress, updatePrometheusConfig } from "../
 import ReactSelectWrapper from "../../ReactSelectWrapper"
 import { handleGrafanaConfigure, handlePrometheusConfigure } from "../helpers/metrics";
 import CloseIcon from "@material-ui/icons/Close";
-import { composeWithDevTools } from "redux-devtools-extension";
+import { composeWithDevTools } from "@redux-devtools/extension";
 
 
 const styles = () => ({})
