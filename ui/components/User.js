@@ -66,13 +66,10 @@ class User extends React.Component {
   }
 
   handleLogout = () => {
-    // window.location = '/user/logout';
-    console.log("handle logout")
     dataFetch('/user/logout', {
       credentials : 'same-origin',
       method : "GET",
-    }, (resp) => {
-      console.log("logout successful, ", resp);
+    }, () => {
       this.props.enqueueSnackbar(`Successful logout` , {
         variant : "success",
         action : function Action(key) {
@@ -91,8 +88,6 @@ class User extends React.Component {
   };
 
   handleError = (error) => {
-    // updateProgress({ showProgress : false });
-    console.log("inside handle err: ", error)
     this.props.enqueueSnackbar(`Error performing logout: ${error}`, {
       variant : "error",
       action : function Action(key) {
