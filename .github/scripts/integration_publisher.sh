@@ -6,6 +6,10 @@
 
 # Setup for repository-based run
 #results=$(< results.json)
+echo "$PATH"
+echo "{path}" 
+echo $GITHUB_PATH
+echo "{path}" >> $GITHUB_PATH
 INTEGRATIONS=$(< ../../../integrations.json)
 integration_count=$(jq ' .results[].result.rawData | length' $INTEGRATIONS)
 
