@@ -87,7 +87,7 @@ jobs:
       # # { "command": "addWorksheet", "args": { "worksheetTitle": "<worksheetTitle>" }},
       # #           { "command": "updateData", "args": { "data": [["A1", "A2", "A3"]] }},
       - uses: actions/checkout@v2
-      - uses: actions-rs/install@v0.1
+      - uses: actions-rs/install@v0.1.2
         with:
           crate: xsv
           version: latest
