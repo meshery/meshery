@@ -6,6 +6,7 @@ import (
 	"compress/gzip"
 	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -17,7 +18,6 @@ import (
 	"strings"
 	"sync"
 	"time"
-	"errors"
 
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshkit/database"
@@ -405,8 +405,8 @@ func (l *RemoteProvider) Logout(w http.ResponseWriter, req *http.Request) error 
 	// adds session cookie to the new request headers
 	// necessary to run logout flow on the remote provider
 	cReq.AddCookie(&http.Cookie{
-		Name:     "session_cookie",
-		Value:    sessionCookie.Value,
+		Name:  "session_cookie",
+		Value: sessionCookie.Value,
 	})
 
 	// adds return_to cookie to the new request headers
@@ -3048,8 +3048,8 @@ func (l *RemoteProvider) ExtensionProxy(req *http.Request) ([]byte, error) {
 		logrus.Debug("Error getting session cookie")
 	} else {
 		cReq.AddCookie(&http.Cookie{
-			Name:     "session_cookie",
-			Value:    sessionCookie.Value,
+			Name:  "session_cookie",
+			Value: sessionCookie.Value,
 		})
 	}
 	// make request to remote provider with contructed URL and updated headers (like session cookie)
