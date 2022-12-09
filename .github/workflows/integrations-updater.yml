@@ -91,13 +91,13 @@ jobs:
         run: |
           ls
 
-          sed "s/'/\"/g" integrations.json > integration.json
-          jq " .results[].result.rawData | length" integration.json
-          echo jq "" .results[].result.rawData | length" integration.json >> $int_count
-          echo "int_count: "$int_count
-          integration_count=$(`jq ' .results[].result.rawData | length' integration.json`)
+          int_count=$(sed "s/'/\"/g" integrations.json | jq " .results[].result.rawData | length")
 
-          for (( i=0; i<integration_count; i++ ))
+
+          echo "int_count: "$int_count
+          # integration_count=$(`jq ' .results[].result.rawData | length' integration.json`)
+
+          for (( i=0; i<int_count; i++ ))
           do
               integration_name=$(jq " .results[].result.rawData[${i}][0]" -r integration.json)
               integration_data=$(jq " .results[].result.rawData[${i}][1]" -r integration.json)
