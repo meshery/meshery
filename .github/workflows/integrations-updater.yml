@@ -90,6 +90,10 @@ jobs:
         id: parse_results
         run: |
           curl -o integrations.csv https://docs.google.com/spreadsheets/d/e/2PACX-1vSgOXuiqbhUgtC9oNbJlz9PYpOEaFVoGNUFMIk4NZciFfQv1ewZg8ahdrWHKI79GkKK9TbmnZx8CqIe/pub?gid=0&single=true&output=csv
+          cargo install xsv
+          git clone git://github.com/BurntSushi/xsv
+          cd xsv
+          cargo build --release
           brew install xsv
           xsv slice -i 7 integrations.csv | xsv select 28 | xsv flatten > a.txt
 
