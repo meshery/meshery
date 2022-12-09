@@ -76,6 +76,8 @@ jobs:
         run: |
           set echo off
           echo ${{ steps.read_worksheet.outputs.results }} > integrations.json
+      - name: get integrations
+        run: curl -L https://docs.google.com/spreadsheets/d/e/2PACX-1vSgOXuiqbhUgtC9oNbJlz9PYpOEaFVoGNUFMIk4NZciFfQv1ewZg8ahdrWHKI79GkKK9TbmnZx8CqIe/pub?gid=0&single=true&output=csv -o integrations.csv
       # - name: dump results
       #   id: dump_results
       #   # env:
@@ -100,7 +102,7 @@ jobs:
       - name: parse results
         id: parse_results
         run: |
-          curl -L https://docs.google.com/spreadsheets/d/e/2PACX-1vSgOXuiqbhUgtC9oNbJlz9PYpOEaFVoGNUFMIk4NZciFfQv1ewZg8ahdrWHKI79GkKK9TbmnZx8CqIe/pub?gid=0&single=true&output=csv -o integrations.csv
+
           which wget
           # cargo install xsv
           # git clone git://github.com/BurntSushi/xsv
