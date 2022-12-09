@@ -106,7 +106,8 @@ jobs:
           # cd xsv
           # cargo build --release
           # brew install xsv
-          echo int_count=$(xsv count integrations.csv)
+          ls
+          echo int_count=$(./xsv count integrations.csv)
           ./xsv slice -i 7 integrations.csv | xsv select 28 | xsv flatten > a.txt
           cat a.txt
           # int_count=$(sed "s/'/\"/g" integrations.json | jq " .results[].result.rawData | length")
