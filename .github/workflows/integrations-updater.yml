@@ -96,7 +96,7 @@ jobs:
           curl -L https://github.com/BurntSushi/xsv/releases/download/0.13.0/xsv-0.13.0-x86_64-unknown-linux-musl.tar.gz | tar -xz
           ls
           chmod +x xsv
-          xsv --version
+          ./xsv --version
       - name: parse results
         id: parse_results
         run: |
@@ -107,7 +107,7 @@ jobs:
           # cargo build --release
           # brew install xsv
           echo int_count=$(xsv count integrations.csv)
-          xsv slice -i 7 integrations.csv | xsv select 28 | xsv flatten > a.txt
+          ./xsv slice -i 7 integrations.csv | xsv select 28 | xsv flatten > a.txt
           cat a.txt
           # int_count=$(sed "s/'/\"/g" integrations.json | jq " .results[].result.rawData | length")
 
@@ -117,8 +117,8 @@ jobs:
 
           for (( i=0; i<int_count; i++ ))
           do
-              integration_name=$(xsv slice -i ${i} integrations.csv | xsv select 27 | xsv flatten)
-              integration_data=$(xsv slice -i ${i} integrations.csv | xsv select 28 | xsv flatten)
+              integration_name=$(./xsv slice -i ${i} integrations.csv | ./xsv select 27 | ./xsv flatten)
+              integration_data=$(./xsv slice -i ${i} integrations.csv | ./xsv select 28 | ./xsv flatten)
               mkdir -p ${integration_name}/icon/color
               mkdir -p ${integration_name}/icon/white
               echo $integration_data > ${integration_name}/index.mdx
