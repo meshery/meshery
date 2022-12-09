@@ -90,7 +90,7 @@ jobs:
         id: parse_results
         run: |
           ls
-          jq . integrations.json
+          jq . -r integrations.json
           which jq
           cat integrations.json
           jq "" .results[].result.rawData | length" integrations.json
