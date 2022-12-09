@@ -93,16 +93,19 @@ jobs:
           jq
           which jq
           # cat integrations.json
-          integration_count=$(jq ' .results[].result.rawData | length' integrations.json)
+          jq ' .results[].result.rawData | length' integrations.json
+          echo jq ' .results[].result.rawData | length' integrations.json >> $int_count
+          echo "int_count: "$int_count
+          integration_count=$(`jq ' .results[].result.rawData | length' integrations.json`)
 
-      #     for (( i=0; i<integration_count; i++ ))
-      #     do
-      #         integration_name=$(jq " .results[].result.rawData[${i}][0]" -r integrations.json)
-      #         integration_data=$(jq " .results[].result.rawData[${i}][1]" -r integrations.json)
-      #         mkdir -p ${integration_name}/icon/color
-      #         mkdir -p ${integration_name}/icon/white
-      #         echo $integration_data > ${integration_name}/index.mdx
-      #     done
+          for (( i=0; i<integration_count; i++ ))
+          do
+              integration_name=$(jq " .results[].result.rawData[${i}][0]" -r integrations.json)
+              integration_data=$(jq " .results[].result.rawData[${i}][1]" -r integrations.json)
+              mkdir -p ${integration_name}/icon/color
+              mkdir -p ${integration_name}/icon/white
+              echo $integration_data > ${integration_name}/index.mdx
+          done
       # - name: reparse results
       #   id: reparse_results
       #   run: |
