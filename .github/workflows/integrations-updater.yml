@@ -86,11 +86,11 @@ jobs:
 
       # # { "command": "addWorksheet", "args": { "worksheetTitle": "<worksheetTitle>" }},
       # #           { "command": "updateData", "args": { "data": [["A1", "A2", "A3"]] }},
-      - uses: actions-rs/install@v0.1.2
-        with:
-          crate: xsv
-          version: latest
-      - run: xsv --version
+      # - uses: actions-rs/install@v0.1.2
+      #   with:
+      #     crate: xsv
+      #     version: latest
+      # - run: xsv --version
       - name: install-xsv
         run: curl -L https://github.com/BurntSushi/xsv/releases/download/0.13.0/xsv-0.13.0-x86_64-unknown-linux-musl.tar.gz | tar -xz
       - name: parse results
