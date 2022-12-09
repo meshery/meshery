@@ -89,7 +89,9 @@ jobs:
       - name: parse results
         id: parse_results
         run: |
-          ls
+          curl -o integrations.csv https://docs.google.com/spreadsheets/d/e/2PACX-1vSgOXuiqbhUgtC9oNbJlz9PYpOEaFVoGNUFMIk4NZciFfQv1ewZg8ahdrWHKI79GkKK9TbmnZx8CqIe/pub?gid=0&single=true&output=csv
+          brew install xsv
+          xsv slice -i 7 integrations.csv | xsv select 28 | xsv flatten > a.txt
 
           int_count=$(sed "s/'/\"/g" integrations.json | jq " .results[].result.rawData | length")
 
