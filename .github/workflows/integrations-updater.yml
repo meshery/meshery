@@ -32,10 +32,10 @@ jobs:
       #     echo {{$GITHUB_WORKSPACE}}
       #     pwd
       #     ls
-      # - name: Checkout Meshery repo
-      #   uses: actions/checkout@master
-      #   with:
-      #     path: meshery
+      - name: Checkout Meshery repo
+        uses: actions/checkout@master
+        with:
+          path: meshery
       # - name: GITHUB_WORKSPACE
       #   run: |
       #     echo {{$GITHUB_WORKSPACE}}
