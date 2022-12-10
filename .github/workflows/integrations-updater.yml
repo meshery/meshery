@@ -52,7 +52,9 @@ jobs:
       #     echo {{$GITHUB_WORKSPACE}}
       #     pwd
       #     ls -al site
-      - id: "read_worksheet"
+      - name: read worksheet
+        id: "read_worksheet"
+        if: false
         uses: jroehl/gsheet.action@release # you can specify '@release' to always have the latest changes
         with:
           spreadsheetId: 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw
@@ -72,6 +74,7 @@ jobs:
       #     contents: |
       #       ${{ steps.read_worksheet.outputs.results }}
       - name: save results
+        if: false
         id: save_results
         run: |
           set echo off
