@@ -127,6 +127,7 @@ jobs:
           # brew install xsv
           ls -lh $HOME
           ls -lh 
+          ./xsv index $HOME/integrations.csv
           int_count=$($HOME/xsv count $HOME/integrations.csv)
           echo "int_count: "$int_count
           ./xsv count $HOME/integrations.csv > $int_count
@@ -135,21 +136,22 @@ jobs:
           cat a.txt
           # int_count=$(sed "s/'/\"/g" integrations.json | jq " .results[].result.rawData | length")
 
-
-
           # integration_count=$(`jq ' .results[].result.rawData | length' integration.json`)
 
           for (( i=0; i<int_count; i++ ))
           do
-              integration_name=$($HOME/xsv slice -i ${i} $HOME/integrations.csv | ./xsv select 27 | $HOME/xsv flatten)
-              echo "test: "
-              $HOME/xsv slice -i ${i} $HOME/integrations.csv | ./xsv select 27 | $HOME/xsv flatten
-              integration_data=$($HOME/xsv slice -i ${i} $HOME/integrations.csv | ./xsv select 28 | $HOME/xsv flatten)
-            echo "1: " ${integration_name}
-              echo "2: " $integration_name
-              mkdir -p $HOME/${integration_name}/icon/color
-              mkdir -p $HOME/${integration_name}/icon/white
-              echo $integration_data > ${integration_name}/index.mdx
+              if [$HOME/xsv slice -i ${i} $HOME/integrations.csv | ./xsv select 29]
+              then
+                integration_name=$($HOME/xsv slice -i ${i} $HOME/integrations.csv | ./xsv select 27 | $HOME/xsv flatten)
+                echo "test: "
+                $HOME/xsv slice -i ${i} $HOME/integrations.csv | ./xsv select 27 | $HOME/xsv flatten
+                integration_data=$($HOME/xsv slice -i ${i} $HOME/integrations.csv | ./xsv select 28 | $HOME/xsv flatten)
+                echo "1: " ${integration_name}
+                echo "2: " $integration_name
+                mkdir -p $HOME/${integration_name}/icon/color
+                mkdir -p $HOME/${integration_name}/icon/white
+                echo $integration_data > ${integration_name}/index.mdx
+              fi
             done
 
           #do
