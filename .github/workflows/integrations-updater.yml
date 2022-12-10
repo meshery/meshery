@@ -140,8 +140,7 @@ jobs:
 
           for (( i=0; i<int_count; i++ ))
           do
-              if [$HOME/xsv slice -i ${i} $HOME/integrations.csv | $HOME/xsv flatten) | ./xsv select 29]
-              then
+              if [$HOME/xsv slice -i ${i} $HOME/integrations.csv | $HOME/xsv flatten) | ./xsv select 29]; then
                 integration_name=$($HOME/xsv slice -i ${i} $HOME/integrations.csv | ./xsv select 27 | $HOME/xsv flatten)
                 echo "test: "
                 $HOME/xsv slice -i ${i} $HOME/integrations.csv | ./xsv select 27 | $HOME/xsv flatten
