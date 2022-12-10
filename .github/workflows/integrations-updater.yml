@@ -125,13 +125,16 @@ jobs:
           # brew install xsv
           ls -lh $HOME
           ls -lh 
-          echo int_count=$($HOME/xsv count $HOME/integrations.csv)
+          int_count=$($HOME/xsv count $HOME/integrations.csv)
+          echo "int_count: "$int_count
+          $HOME/xsv count $HOME/integrations.csv > $int_count
+          echo "int_count: "$int_count
           $HOME/xsv slice -i 7 $HOME/integrations.csv | xsv select 28 | xsv flatten > a.txt
           cat a.txt
           # int_count=$(sed "s/'/\"/g" integrations.json | jq " .results[].result.rawData | length")
 
 
-          # echo "int_count: "$int_count
+
           # integration_count=$(`jq ' .results[].result.rawData | length' integration.json`)
 
           for (( i=0; i<int_count; i++ ))
