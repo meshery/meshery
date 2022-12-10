@@ -109,7 +109,7 @@ jobs:
           chmod +x xsv
           echo "GITHUB_PATH: " $GITHUB_PATH
           echo "pwd: " `pwd`
-          echo $GITHUB_WORKSPACE >> $GITHUB_PATH
+          echo $HOME >> $GITHUB_PATH
           echo "GITHUB_PATH: " $GITHUB_PATH
           ls -al 
           xsv --version
