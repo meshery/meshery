@@ -82,7 +82,7 @@ jobs:
           ls -l $HOME/integrations.csv
       - name: get integrations
         if: false
-        run: curl https://docs.google.com/spreadsheets/d/e/2PACX-1vSgOXuiqbhUgtC9oNbJlz9PYpOEaFVoGNUFMIk4NZciFfQv1ewZg8ahdrWHKI79GkKK9TbmnZx8CqIe/pub?gid=0&single=true&output=csv -o ./integrations.csv
+        run: curl https://docs.google.com/spreadsheets/d/e/2PACX-1vSgOXuiqbhUgtC9oNbJlz9PYpOEaFVoGNUFMIk4NZciFfQv1ewZg8ahdrWHKI79GkKK9TbmnZx8CqIe/pub?gid=0&single=true&output=csv -o $HOME/integrations.csv
       # - name: dump results
       #   id: dump_results
       #   # env:
@@ -124,8 +124,8 @@ jobs:
           # cargo build --release
           # brew install xsv
           ls
-          echo int_count=$(xsv count integrations.csv)
-          $HOME/xsv slice -i 7 integrations.csv | xsv select 28 | xsv flatten > a.txt
+          echo int_count=$(xsv count $HOME/integrations.csv)
+          $HOME/xsv slice -i 7 $HOME/integrations.csv | xsv select 28 | xsv flatten > a.txt
           cat a.txt
           # int_count=$(sed "s/'/\"/g" integrations.json | jq " .results[].result.rawData | length")
 
@@ -135,8 +135,8 @@ jobs:
 
           for (( i=0; i<int_count; i++ ))
           do
-              integration_name=$($HOME/xsv slice -i ${i} integrations.csv | ./xsv select 27 | $HOME/xsv flatten)
-              integration_data=$($HOME/xsv slice -i ${i} integrations.csv | ./xsv select 28 | $HOME/xsv flatten)
+              integration_name=$($HOME/xsv slice -i ${i} $HOME/integrations.csv | ./xsv select 27 | $HOME/xsv flatten)
+              integration_data=$($HOME/xsv slice -i ${i} $HOME/integrations.csv | ./xsv select 28 | $HOME/xsv flatten)
               mkdir -p ${integration_name}/icon/color
               mkdir -p ${integration_name}/icon/white
               echo $integration_data > ${integration_name}/index.mdx
