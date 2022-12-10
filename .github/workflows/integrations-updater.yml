@@ -100,8 +100,9 @@ jobs:
       - name: install-xsv
         run: |
           echo "GITHUB_WORKSPACE: " $GITHUB_WORKSPACE
-          curl -sSL https://github.com/BurntSushi/xsv/releases/download/0.13.0/xsv-0.13.0-x86_64-unknown-linux-musl.tar.gz > xsv.tar.gz 
-          file $(which curl)
+          curl -L https://github.com/BurntSushi/xsv/releases/download/0.13.0/xsv-0.13.0-x86_64-unknown-linux-musl.tar.gz > ./xsv.tar.gz 
+          pwd
+          ls
           tar –xvzf xsv.tar.gz
           ls -al xsv
           chmod +x xsv
