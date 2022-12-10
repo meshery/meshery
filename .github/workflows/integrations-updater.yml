@@ -117,6 +117,7 @@ jobs:
       - name: parse results
         id: parse_results
         run: |
+          cd $HOME
           # which wget
           # cargo install xsv
           # git clone git://github.com/BurntSushi/xsv
@@ -127,9 +128,9 @@ jobs:
           ls -lh 
           int_count=$($HOME/xsv count $HOME/integrations.csv)
           echo "int_count: "$int_count
-          $HOME/xsv count $HOME/integrations.csv > $int_count
+          ./xsv count $HOME/integrations.csv > $int_count
           echo "int_count: "$int_count
-          $HOME/xsv slice -i 7 $HOME/integrations.csv | xsv select 28 | xsv flatten > a.txt
+          ./xsv slice -i 7 $HOME/integrations.csv | xsv select 28 | xsv flatten > a.txt
           cat a.txt
           # int_count=$(sed "s/'/\"/g" integrations.json | jq " .results[].result.rawData | length")
 
