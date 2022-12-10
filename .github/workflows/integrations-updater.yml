@@ -54,7 +54,7 @@ jobs:
       #     ls -al site
       - name: read worksheet
         id: "read_worksheet"
-        if: false
+        # if: false
         uses: jroehl/gsheet.action@release # you can specify '@release' to always have the latest changes
         with:
           spreadsheetId: 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw
