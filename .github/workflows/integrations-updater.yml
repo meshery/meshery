@@ -112,7 +112,7 @@ jobs:
           echo $HOME >> $GITHUB_PATH
           echo "GITHUB_PATH: " $GITHUB_PATH
           ls -al 
-          xsv --version
+          ./xsv --version
       - name: parse results
         id: parse_results
         run: |
