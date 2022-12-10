@@ -103,7 +103,7 @@ jobs:
           curl -L https://github.com/BurntSushi/xsv/releases/download/0.13.0/xsv-0.13.0-x86_64-unknown-linux-musl.tar.gz > ./xsv.tar.gz 
           pwd
           ls
-          tar –xvzf xsv.tar.gz
+          tar -xf xsv.tar.gz
           ls -al xsv
           chmod +x xsv
           echo "GITHUB_PATH: " $GITHUB_PATH
