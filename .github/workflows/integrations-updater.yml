@@ -54,7 +54,7 @@ jobs:
       #     ls -al site
       - name: read worksheet
         id: "read_worksheet"
-        # if: false
+        if: false
         uses: jroehl/gsheet.action@release # you can specify '@release' to always have the latest changes
         with:
           spreadsheetId: 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw
@@ -81,7 +81,7 @@ jobs:
           echo ${{ steps.read_worksheet.outputs.results }} > $HOME/integrations.csv
           ls -l $HOME/integrations.csv
       - name: get integrations
-        if: false
+        if: true
         run: curl https://docs.google.com/spreadsheets/d/e/2PACX-1vSgOXuiqbhUgtC9oNbJlz9PYpOEaFVoGNUFMIk4NZciFfQv1ewZg8ahdrWHKI79GkKK9TbmnZx8CqIe/pub?gid=0&single=true&output=csv -o $HOME/integrations.csv
       # - name: dump results
       #   id: dump_results
