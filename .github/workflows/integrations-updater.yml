@@ -102,8 +102,8 @@ jobs:
           curl -L https://github.com/BurntSushi/xsv/releases/download/0.13.0/xsv-0.13.0-x86_64-unknown-linux-musl.tar.gz | tar -xz
           ls
           chmod +x xsv
-          mv xsv $HOME/.local/bin
-          echo "$HOME/.local/bin" >> $GITHUB_PATH
+          echo $GITHUB_PATH
+          echo `pwd` >> $GITHUB_PATH
           xsv --version
       - name: parse results
         id: parse_results
