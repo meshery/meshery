@@ -6,6 +6,7 @@ import (
 	"compress/gzip"
 	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -381,21 +382,81 @@ func (l *RemoteProvider) GetProviderToken(req *http.Request) (string, error) {
 // Logout - logout from provider backend
 //
 // It is assumed that every remote provider will support this feature
-func (l *RemoteProvider) Logout(w http.ResponseWriter, req *http.Request) {
-	ck, err := req.Cookie(tokenName)
-	if err == nil {
-		err = l.revokeToken(ck.Value)
-	}
+func (l *RemoteProvider) Logout(w http.ResponseWriter, req *http.Request) error {
+	// construct remote provider logout url
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s", l.RemoteProviderURL, "/logout"))
+	logrus.Debugf("constructed url: %s", remoteProviderURL.String())
+
+	// make http.Request type variable with the constructed URL
+	cReq, _ := http.NewRequest(req.Method, remoteProviderURL.String(), req.Body)
+	tokenString, err := l.GetToken(req)
 	if err != nil {
-		logrus.Errorf("error performing logout, token cannot be revoked: %v, redirecting to login", err)
-		http.Redirect(w, req, "/user/login", http.StatusFound)
-		return
+		logrus.Errorf("error performing logout: %v", err)
+		return err
 	}
 
-	ck.MaxAge = -1
-	ck.Path = "/"
-	http.SetCookie(w, ck)
-	http.Redirect(w, req, "/provider", http.StatusFound)
+	// gets session cookie from the request headers
+	sessionCookie, err := req.Cookie("session_cookie")
+	if err != nil {
+		logrus.Errorf("error getting session cookie: %v", err)
+		return err
+	}
+
+	// adds session cookie to the new request headers
+	// necessary to run logout flow on the remote provider
+	cReq.AddCookie(&http.Cookie{
+		Name:  "session_cookie",
+		Value: sessionCookie.Value,
+	})
+
+	// adds return_to cookie to the new request headers
+	// necessary to inform remote provider to return back to Meshery UI
+	cReq.AddCookie(&http.Cookie{Name: "return_to", Value: "provider_ui"})
+
+	logrus.Debug("headers: ", cReq.Header)
+
+	// make request to remote provider with contructed URL and updated headers (like session_cookie, return_to cookies)
+	resp, err := l.DoRequest(cReq, tokenString)
+	if err != nil {
+		logrus.Errorf("error performing logout: %v", err)
+		return err
+	}
+
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+	bd, err := io.ReadAll(resp.Body)
+	if err != nil {
+		logrus.Errorf("error performing logout: %v", err)
+		return err
+	}
+	logrus.Infof("response successfully retrieved from remote provider")
+	logrus.Debug("resp: ", resp)
+	// if request succeeds then redirect to Provider UI
+	// And empties the token and session cookies
+	if resp.StatusCode == http.StatusFound || resp.StatusCode == http.StatusOK {
+		// gets the token from the request headers
+		ck, err := req.Cookie(tokenName)
+		if err == nil {
+			err = l.revokeToken(ck.Value)
+		}
+		if err != nil {
+			logrus.Errorf("error performing logout, token cannot be revoked: %v", err)
+			http.Redirect(w, req, "/user/login", http.StatusFound)
+			return nil
+		}
+		ck.MaxAge = -1
+		ck.Path = "/"
+		http.SetCookie(w, ck)
+		sessionCookie.MaxAge = -1
+		sessionCookie.Path = "/"
+		http.SetCookie(w, sessionCookie)
+		logrus.Info("successfully logged out from remote provider")
+		return nil
+	}
+
+	logrus.Errorf("Error performing logout: %v", string(bd))
+	return errors.New(string(bd))
 }
 
 // HandleUnAuthenticated
@@ -2713,6 +2774,9 @@ func (l *RemoteProvider) RecordPreferences(req *http.Request, userID string, dat
 // TokenHandler - specific to remote auth
 func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, fromMiddleWare bool) {
 	tokenString := r.URL.Query().Get(tokenName)
+	// gets the session cookie from remote provider
+	sessionCookie := r.URL.Query().Get("session_cookie")
+
 	logrus.Debugf("token : %v", tokenString)
 	ck := &http.Cookie{
 		Name:     tokenName,
@@ -2721,6 +2785,13 @@ func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, fr
 		HttpOnly: true,
 	}
 	http.SetCookie(w, ck)
+	// sets the session cookie for Meshery Session
+	http.SetCookie(w, &http.Cookie{
+		Name:     "session_cookie",
+		Value:    sessionCookie,
+		Path:     "/",
+		HttpOnly: true,
+	})
 
 	// Get new capabilities
 	// Doing this here is important so that
@@ -2940,24 +3011,48 @@ func (l *RemoteProvider) SMPTestConfigDelete(req *http.Request, testUUID string)
 	return ErrDelete(fmt.Errorf("could not delete the test profile: %d", resp.StatusCode), "Perf Test Config :"+testUUID, resp.StatusCode)
 }
 
+// ExtensionProxy - proxy requests to the remote provider which are specific to user_account extension
 func (l *RemoteProvider) ExtensionProxy(req *http.Request) ([]byte, error) {
 	logrus.Infof("attempting to request remote provider")
+	// gets the requested path from user_account extension UI in Meshery UI
+	// splits the requested path into '/api/extensions' and '/<remote-provider-endpoint>'
 	p := req.URL.Path
 	split := strings.Split(p, "/api/extensions")
 	path := split[1]
+	// gets the available query parameters
 	q := req.URL.Query().Encode()
 	if len(q) > 0 {
+		// if available, then add it to <remote-provider-endpoint>
+		// eg: /<remote-provider-endpoint>?<query-parameters>
 		path = fmt.Sprintf("%s?%s", path, q)
 	}
+	// then attach the final path to the remote provider URL
 	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s", l.RemoteProviderURL, path))
 	logrus.Debugf("constructed url: %s", remoteProviderURL.String())
 
+	// make http.Request type variable with the constructed URL
 	cReq, _ := http.NewRequest(req.Method, remoteProviderURL.String(), req.Body)
 	tokenString, err := l.GetToken(req)
 
 	if err != nil {
 		return nil, err
 	}
+
+	// gets the session cookie from request headers
+	// necessary to run flows in remote provider specific to user_account extension
+	sessionCookie, err := req.Cookie("session_cookie")
+
+	// if cookie is not found then gracefully skip adding it the new request headers
+	// considering not every endpoint in remote provider requires it
+	if err != nil {
+		logrus.Debug("Error getting session cookie")
+	} else {
+		cReq.AddCookie(&http.Cookie{
+			Name:  "session_cookie",
+			Value: sessionCookie.Value,
+		})
+	}
+	// make request to remote provider with contructed URL and updated headers (like session cookie)
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
 		return nil, err

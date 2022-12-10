@@ -19,6 +19,8 @@ import dataFetch from '../lib/data-fetch';
 import { updateUser } from '../lib/store';
 import classNames from 'classnames';
 import { ListItem, List } from '@material-ui/core';
+import { withSnackbar } from "notistack";
+import CloseIcon from "@material-ui/icons/Close";
 
 
 const styles = () => ({
@@ -64,7 +66,39 @@ class User extends React.Component {
   }
 
   handleLogout = () => {
-    window.location = '/user/logout';
+    dataFetch('/user/logout', {
+      credentials : 'same-origin',
+      method : "GET",
+    }, () => {
+      this.props.enqueueSnackbar(`Successful logout` , {
+        variant : "success",
+        action : function Action(key) {
+          return (
+            <IconButton key="close" aria-label="Close" color="inherit" onClick={() => this.props.closeSnackbar(key)}>
+              <CloseIcon />
+            </IconButton>
+          );
+        },
+        autoHideDuration : 2000,
+      });
+      // updateProgress({ showProgress : false });
+    },
+    err => this.handleError(err)
+    );
+  };
+
+  handleError = (error) => {
+    this.props.enqueueSnackbar(`Error performing logout: ${error}`, {
+      variant : "error",
+      action : function Action(key) {
+        return (
+          <IconButton key="close" aria-label="Close" color="inherit" onClick={() => this.prop.closeSnackbar(key)}>
+            <CloseIcon />
+          </IconButton>
+        );
+      },
+      autoHideDuration : 8000,
+    });
   };
 
   handlePreference = () => {
@@ -231,4 +265,4 @@ const mapDispatchToProps = (dispatch) => ({ updateUser : bindActionCreators(upda
 export default withStyles(styles)(connect(
   null,
   mapDispatchToProps,
-)(withRouter(User)));
+)(withSnackbar((withRouter(User)))));
