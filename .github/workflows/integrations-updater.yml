@@ -23,19 +23,19 @@ jobs:
   #         echo "Env GIT_TAG: ${{ github.event.release.tag_name }}"
   integrations:
     runs-on: ubuntu-latest
-    outputs:
-      output1: ${{ steps.step1.outputs.test }}
-      output2: ${{ steps.step2.outputs.test }}
+    # outputs:
+    #   output1: ${{ steps.step1.outputs.test }}
+    #   output2: ${{ steps.step2.outputs.test }}
     steps:
       # - name: GITHUB_WORKSPACE
       #   run: |
       #     echo {{$GITHUB_WORKSPACE}}
       #     pwd
       #     ls
-      - name: Checkout Meshery repo
-        uses: actions/checkout@master
-        with:
-          path: meshery
+      # - name: Checkout Meshery repo
+      #   uses: actions/checkout@master
+      #   with:
+      #     path: meshery
       # - name: GITHUB_WORKSPACE
       #   run: |
       #     echo {{$GITHUB_WORKSPACE}}
@@ -74,12 +74,13 @@ jobs:
       #     contents: |
       #       ${{ steps.read_worksheet.outputs.results }}
       - name: save results
-        if: false
+        # if: false
         id: save_results
         run: |
           set echo off
-          echo ${{ steps.read_worksheet.outputs.results }} > integrations.json
+          echo ${{ steps.read_worksheet.outputs.results }} > integrations.csv
       - name: get integrations
+        if: false
         run: curl https://docs.google.com/spreadsheets/d/e/2PACX-1vSgOXuiqbhUgtC9oNbJlz9PYpOEaFVoGNUFMIk4NZciFfQv1ewZg8ahdrWHKI79GkKK9TbmnZx8CqIe/pub?gid=0&single=true&output=csv -o integrations.csv
       # - name: dump results
       #   id: dump_results
