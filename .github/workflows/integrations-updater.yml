@@ -102,11 +102,12 @@ jobs:
           curl -L https://github.com/BurntSushi/xsv/releases/download/0.13.0/xsv-0.13.0-x86_64-unknown-linux-musl.tar.gz | tar -xz
           ls
           chmod +x xsv
-          ./xsv --version
+          mv xsv $HOME/.local/bin
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+          xsv --version
       - name: parse results
         id: parse_results
         run: |
-
           which wget
           # cargo install xsv
           # git clone git://github.com/BurntSushi/xsv
@@ -114,7 +115,7 @@ jobs:
           # cargo build --release
           # brew install xsv
           ls
-          echo int_count=$(./xsv count integrations.csv)
+          echo int_count=$(xsv count integrations.csv)
           ./xsv slice -i 7 integrations.csv | xsv select 28 | xsv flatten > a.txt
           cat a.txt
           # int_count=$(sed "s/'/\"/g" integrations.json | jq " .results[].result.rawData | length")
