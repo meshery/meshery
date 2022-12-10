@@ -79,7 +79,6 @@ jobs:
         run: |
           set echo off
           echo ${{ steps.read_worksheet.outputs.results }} > $HOME/integrations.csv
-          ls -l integrations.csv
           ls -l $HOME/integrations.csv
       - name: get integrations
         if: false
