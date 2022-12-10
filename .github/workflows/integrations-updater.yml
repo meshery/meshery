@@ -143,8 +143,8 @@ jobs:
           do
               integration_name=$($HOME/xsv slice -i ${i} $HOME/integrations.csv | ./xsv select 27 | $HOME/xsv flatten)
               integration_data=$($HOME/xsv slice -i ${i} $HOME/integrations.csv | ./xsv select 28 | $HOME/xsv flatten)
-              mkdir -p ${integration_name}/icon/color
-              mkdir -p ${integration_name}/icon/white
+              mkdir -p $HOME/${integration_name}/icon/color
+              mkdir -p $HOME/${integration_name}/icon/white
               echo $integration_data > ${integration_name}/index.mdx
             done
 
