@@ -82,7 +82,7 @@ jobs:
           ls -l $HOME/integrations.csv
       - name: get integrations
         if: true
-        run: curl -L https://docs.google.com/spreadsheets/d/e/2PACX-1vSgOXuiqbhUgtC9oNbJlz9PYpOEaFVoGNUFMIk4NZciFfQv1ewZg8ahdrWHKI79GkKK9TbmnZx8CqIe/pub?gid=0&single=true&output=csv -o $HOME/integrations.csv
+        run: curl -L https://docs.google.com/spreadsheets/d/e/2PACX-1vSgOXuiqbhUgtC9oNbJlz9PYpOEaFVoGNUFMIk4NZciFfQv1ewZg8ahdrWHKI79GkKK9TbmnZx8CqIe/pub?gid=0&single=true&output=csv > $HOME/integrations.csv
       # - name: dump results
       #   id: dump_results
       #   # env:
