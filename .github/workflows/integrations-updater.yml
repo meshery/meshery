@@ -132,8 +132,8 @@ jobs:
           echo "int_count: "$int_count
           ./xsv count $HOME/integrations.csv > $int_count
           echo "int_count: "$int_count
-          ./xsv slice -i 7 $HOME/integrations.csv | xsv select 28 | xsv flatten > a.txt
-          cat a.txt
+          echo ./xsv slice -i 7 $HOME/integrations.csv | xsv select 28 | xsv flatten 
+          # cat a.txt
           # int_count=$(sed "s/'/\"/g" integrations.json | jq " .results[].result.rawData | length")
 
           # integration_count=$(`jq ' .results[].result.rawData | length' integration.json`)
