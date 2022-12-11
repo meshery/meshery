@@ -26,7 +26,8 @@ export var darkTheme = createTheme({
       dark : '#121212',
       mainBackground : '#202020',
       elevatedComponents : '#202020',
-      elevatedComponents2 : '#303030'
+      elevatedComponents2 : '#303030',
+      red : "red",
     },
   },
   p : {

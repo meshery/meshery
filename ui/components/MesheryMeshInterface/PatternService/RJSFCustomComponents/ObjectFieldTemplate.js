@@ -7,6 +7,7 @@ import { EnlargedTextTooltip } from '../EnlargedTextTooltip';
 import HelpOutlineIcon from '../../../../assets/icons/HelpOutlineIcon';
 import ExpandMoreIcon from '../../../../assets/icons/ExpandMoreIcon';
 import ExpandLessIcon from '../../../../assets/icons/ExpandLessIcon'
+import ErrorOutlineIcon from '../../../../assets/icons/ErrorOutlineIcon';
 const styles = (theme) => ({
   objectFieldGrid : {
     // paddingLeft: "0.6rem",
@@ -37,7 +38,8 @@ const ObjectFieldTemplate = ({
   schema,
   formData,
   onAddClick,
-  classes
+  classes,
+  rawErrors
 }) => {
   const additional = schema?.__additional_property; // check if the object is additional
   const theme = useTheme();
@@ -87,6 +89,14 @@ const ObjectFieldTemplate = ({
             <EnlargedTextTooltip title={description}>
               <IconButton disableTouchRipple="true" disableRipple="true" component="span" size="small">
                 <HelpOutlineIcon width="14px" height="14px" fill={theme.palette.type === 'dark' ? "white" : "black"} style={{ marginLeft : "4px", verticalAlign : "middle" }} />
+              </IconButton>
+            </EnlargedTextTooltip>}
+          {rawErrors?.length &&
+            <EnlargedTextTooltip title={rawErrors?.map((error, index) => (
+              <div key={index}>{error}</div>
+            ))}>
+              <IconButton disableTouchRipple="true" disableRipple="true" component="span" size="small">
+                <ErrorOutlineIcon width="14px" height="14px" fill="red" style={{ marginLeft : "4px", verticalAlign : "middle" }} />
               </IconButton>
             </EnlargedTextTooltip>}
         </Grid>

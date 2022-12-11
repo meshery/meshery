@@ -1,6 +1,8 @@
-name: Static Component Generation
+name: Static Component Generation and Updation
 on: 
   workflow_dispatch:
+  schedule:
+    - cron: "0 0 * * *"
 jobs:
   run-script:
     name: Run Script
@@ -26,6 +28,9 @@ jobs:
             ${{ runner.os }}-go-
       - run: |
           GOPROXY=https://proxy.golang.org,direct GOSUMDB=off go run ./scripts/component_generation/main.go
+      - run: |
+          GOPROXY=https://proxy.golang.org,direct GOSUMDB=off go build ./scripts/component_updation/main.go
+          ./main https://docs.google.com/spreadsheets/d/e/2PACX-1vSgOXuiqbhUgtC9oNbJlz9PYpOEaFVoGNUFMIk4NZciFfQv1ewZg8ahdrWHKI79GkKK9TbmnZx8CqIe/pub\?gid\=0\&single\=true\&output\=csv
       - name: Commit results
         uses: EndBug/add-and-commit@v9
         with: 
