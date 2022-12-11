@@ -6,11 +6,12 @@ pre.codeblock-pre {
     align-content: left;
     flex-wrap: nowrap;
     flex-direction: row;
-    background-color: #111;
     margin: 0;
     padding: 10px;
-    border-radius: 0.3rem;
+    border-radius: 4px;
     width: 100%;
+    box-shadow: var(--box-shadow-primary);
+    background-color: #212529;
 }
 
 .codeblock {
@@ -41,13 +42,15 @@ pre.codeblock-pre {
 
 .clipbtn {
     position: absolute;
-    top: -35px;
+    top: -3.5rem;
     right: 0;
     margin: 5px;
     border: 0px;
     background-color: transparent;
-    color: #ccc;
-    font-size: 1.2rem;
+    font-size: 2rem;
+    & i::before{
+        color: #f1f3f5 !important;
+    }
 }
 
 .clipbtn:hover {

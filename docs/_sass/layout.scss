@@ -21,16 +21,17 @@ html {
     margin: 0;
     padding: 0;
     box-sizing: inherit;
-    color: var(--color-secondary-light);
+    color:var(--color-secondary-dark);
     text-decoration: none;
+
   }
   
   body {
     font-weight: 400;
     position: relative;
-    line-height: 1.5;
+    line-height: 1.3;
     background-repeat: no-repeat;
-    color:var(--color-secondary-light);
+    color:var(--color-secondary-dark);
     font-family: open sans, -apple-system, BlinkMacSystemFont, segoe ui, Roboto, helvetica neue, Arial, sans-serif, apple color emoji, segoe ui emoji, segoe ui symbol;
 }
 
