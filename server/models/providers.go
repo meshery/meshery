@@ -311,7 +311,7 @@ type Provider interface {
 	GetUserDetails(*http.Request) (*User, error)
 	GetProviderToken(req *http.Request) (string, error)
 	UpdateToken(http.ResponseWriter, *http.Request) string
-	Logout(http.ResponseWriter, *http.Request)
+	Logout(http.ResponseWriter, *http.Request) error
 	HandleUnAuthenticated(w http.ResponseWriter, req *http.Request)
 	FetchResults(tokenVal string, page, pageSize, search, order, profileID string) ([]byte, error)
 	FetchAllResults(tokenVal string, page, pageSize, search, order, from, to string) ([]byte, error)

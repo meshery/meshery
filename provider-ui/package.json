@@ -35,7 +35,6 @@
     "styled-jsx": "^4.0.1"
   },
   "devDependencies": {
-    "babel-eslint": "^10.1.0",
     "cypress": "^11.2.0",
     "eslint": "^8.26.0",
     "eslint-config-next": "^13.0.6",

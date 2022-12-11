@@ -1,6 +1,6 @@
 import { useTheme } from "@material-ui/core";
 import React, { useState, useEffect } from "react";
-import "./animatedMeshPattern.css";
+import "./animatedMeshPattern.module.css";
 
 function getClassName(className, isActive) {
   if (!isActive) {

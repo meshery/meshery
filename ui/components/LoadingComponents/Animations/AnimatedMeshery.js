@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import "./animatedMeshery.css";
+import "./animatedMeshery.module.css";
 
 function getClassName(className, isActive) {
   if (!isActive) {
