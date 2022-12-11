@@ -24,7 +24,7 @@ on:
           default: 'v'
 jobs:
   validate:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     if: ${{github.event_name == 'pull_request'}}
     steps:
     - uses: actions/checkout@master
