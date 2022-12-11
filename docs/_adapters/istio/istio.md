@@ -6,12 +6,25 @@ mesh_name: Istio
 earliest_version: v1.6.0
 port: 10000/gRPC
 project_status: stable
-adapter_version: v0.5.4
 lab: istio-meshery-adapter
 github_link: https://github.com/meshery/meshery-istio
 image: /assets/img/service-meshes/istio.svg
 permalink: service-meshes/adapters/istio
 ---
+
+{% assign sorted_tests_group = site.compatibility | group_by: "meshery-component" %}
+{% for group in sorted_tests_group %}
+      {% if group.name == "meshery-istio" %}
+        {% assign items = group.items | sort: "meshery-component-version" | reverse %}
+        {% for item in items limit: 1 %}
+          {% if item.meshery-component-version != "edge" %}
+            {% if item.overall-status == "passing" %}
+              {% assign adapter_version_dynamic = item.meshery-component-version %}
+            {% endif %}
+          {% endif %}
+        {% endfor %} 
+      {% endif %}
+{% endfor %}
 
 {% include adapter-status.html %}
 
