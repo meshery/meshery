@@ -78,12 +78,26 @@ ul,ol{
     border-radius: 7px;
     width: 90%;
     margin: 0 auto;
-
+    
+    &  strong {
+      margin-bottom: 8px;
+    }
     &__editable{
       display: flex;
       flex-direction: column;
-      & > strong {
-        // margin-bottom: 5px;
+      & a:first-of-type{
+        margin-bottom: 4px;
       }
     }
+
+      & #TableOfContents{
+        display: flex;
+        flex-direction: column;
+        // gap: 10px;
+        & .md-nav{
+          display: flex;
+          flex-direction: column;
+          gap: 4px;
+        }
+      }
 }
