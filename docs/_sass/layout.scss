@@ -1,103 +1,123 @@
 html {
-    font-size: 62.5%;
-    box-sizing: border-box;
-  
-    @media (max-width: 75em) {
-      font-size: 56.25%;
-    }
-  
-    @media (max-width: 56.25em) {
-      font-size: 50%;
-    }
-  
-    @media (max-width: 37.5em) {
-      font-size: 43.75%;
-    }
+  font-size: 62.5%;
+  box-sizing: border-box;
+
+  @media (max-width: 75em) {
+    font-size: 56.25%;
   }
-  
-  *,
-  *::after,
-  *::before {
-    margin: 0;
-    padding: 0;
-    box-sizing: inherit;
-    color:var(--color-secondary-dark);
-    text-decoration: none;
 
+  @media (max-width: 56.25em) {
+    font-size: 50%;
   }
-  
-  body {
-    font-weight: 400;
-    position: relative;
-    line-height: 1.3;
-    background-repeat: no-repeat;
-    color:var(--color-secondary-dark);
-    background: var(--background-light);
-    font-family: open sans, -apple-system, BlinkMacSystemFont, segoe ui, Roboto, helvetica neue, Arial, sans-serif, apple color emoji, segoe ui emoji, segoe ui symbol;
+
+  @media (max-width: 37.5em) {
+    font-size: 43.75%;
+  }
+}
+
+*,
+*::after,
+*::before {
+  margin: 0;
+  padding: 0;
+  box-sizing: inherit;
+  color: var(--color-secondary-dark);
+  text-decoration: none;
+
+}
+
+body {
+  font-weight: 400;
+  position: relative;
+  line-height: 1.3;
+  background-repeat: no-repeat;
+  color: var(--color-secondary-dark);
+  background: var(--background-light);
+  font-family: open sans, -apple-system, BlinkMacSystemFont, segoe ui, Roboto, helvetica neue, Arial, sans-serif, apple color emoji, segoe ui emoji, segoe ui symbol;
 }
 
 
-ul,ol{
-    list-style: none;
-    text-decoration: none;
+ul,
+ol {
+  list-style: none;
+  text-decoration: none;
 }
 
 
-.flex-container{
-    display: grid ;
-    grid-template-columns: 2.2fr 6.3fr 1.5fr;
-    border-bottom: 3px dashed var(--brand-color-primary);
-    @media (max-width:75em) {
-      display: flex;
-      flex-direction: column;
-    }
-}
+.flex-container {
+  display: grid;
+  grid-template-columns: 2.2fr 6.3fr 1.5fr;
+  border-bottom: 3px dashed var(--brand-color-primary);
 
-.main-container{
-  padding: 3.5rem 4.5rem;
-  grid-column: 2/span 1;
   @media (max-width:75em) {
-  }
-}
-
-.content-table{
-    padding: 1rem 1.5rem;
-    background: var(--background-grey);
-    box-shadow: var(--box-shadow-primary);
-    z-index: 9;
-    max-height: calc(100vh - var(--navbar-height));
-    height: fit-content;
-    position: sticky;
-    transition: all .5s ease-in-out;
-    font-size: 1.5rem;
-    top: calc(var(--navbar-height) + 5rem );
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
-    font-size: 1.4rem;
-    border-radius: 7px;
-    width: 90%;
-    margin: 0 auto;
-    
-    &  strong {
-      margin-bottom: 8px;
+  }
+}
+
+.main-container {
+  padding: 3.5rem 4.5rem;
+  grid-column: 2/span 1;
+
+  @media (max-width:75em) {}
+}
+
+.content-table {
+  padding: 1rem 1.5rem;
+  background: var(--background-grey);
+  box-shadow: var(--box-shadow-primary);
+  z-index: 9;
+  max-height: calc(100vh - var(--navbar-height));
+  height: fit-content;
+  position: sticky;
+  transition: all .5s ease-in-out;
+  font-size: 1.5rem;
+  top: calc(var(--navbar-height) + 5rem);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  font-size: 1.4rem;
+  border-radius: 7px;
+  width: 90%;
+  margin: 0 auto;
+
+  & strong {
+    margin-bottom: 8px;
+  }
+
+  &__editable {
+    display: flex;
+    flex-direction: column;
+
+    & a:first-of-type {
+      margin-bottom: 4px;
     }
-    &__editable{
-      display: flex;
-      flex-direction: column;
-      & a:first-of-type{
-        margin-bottom: 4px;
+  }
+
+  & #TableOfContents {
+    display: flex;
+    flex-direction: column;
+
+    // gap: 10px;
+    & ul {
+      & li {
+        list-style: none !important;
+
+        & a{
+          color: var(--color-secondary-medium) !important;
+
+          &:hover {
+            color: var(--color-secondary-dark) !important;
+          }
+        }
+
       }
     }
 
-      & #TableOfContents{
-        display: flex;
-        flex-direction: column;
-        // gap: 10px;
-        & .md-nav{
-          display: flex;
-          flex-direction: column;
-          gap: 4px;
-        }
-      }
+    & .md-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+  }
 }

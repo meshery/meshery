@@ -1,20 +1,38 @@
-@mixin link-hover-primary {
-    position: relative;
-	&:hover{
-		&::after{
-		  width: 100%;
-		}
-	  }
 
-    &::after{
-    content: "";
-    width: 0px;
-    height: 2px;
-    bottom: -4px;
-    left: 50%;
-    transform: translateX(-50%);
-    position: absolute;
-    background: var(--background-primary);
-    transition: all .3s;
+// FLEX /////////////////////////////////////////////////////////////////////////////////////////////////////
+
+.flex {
+  display: flex;
+  justify-content: space-evenly;
+  gap: var(--col-gap);
+  flex-wrap: wrap;
+
+  &.flex-col--2 {
+    &>* {
+      flex: 0 0 calc(50% - calc(var(--col-gap) / 2));
     }
+  }
+
+  &.flex-col--3 {
+    &>* {
+      flex: 0 0 calc(33.33% - calc(var(--col-gap) / 3));
+    }
+  }
+
+}
+
+// BUTTONS /////////////////////////////////////////////////////////////////////////////////////////////////////
+
+.btn-primary{
+  padding: 1rem 2rem;
+  background: var(--brand-color-secondary);
+  border-radius: 11px;
+  color: white;
+  text-align: center;
+  font-size: 2rem;
+  transition: all .4s;
+  
+  &:hover{
+    background: var(--brand-color-primary);
+  }
 }

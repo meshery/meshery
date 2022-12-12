@@ -97,6 +97,13 @@
                     }
                 }
 
+                & a{
+                    color: var(--color-secondary-medium) !important;
+                    &:hover{
+                    color: var(--color-secondary-dark) !important;
+                    }
+                }
+
                 &-link,&-title {
                     color: var(--color-secondary-medium);
                     position: relative;

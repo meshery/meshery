@@ -1,35 +1,19 @@
 a{
-    // &:hover{
-    //     text-decoration: none;
-    // }
 
-    // &:hover {
-    //     text-decoration: none;
-    //     &::after {
-    //         width: 100%;
-    //     }
-    // }
-
-    // &::after {
-    //     content: "";
-    //     width: 0px;
-    //     height: 1px;
-    //     bottom: -2px;
-    //     left: 50%;
-    //     transform: translateX(-50%);
-    //     position: absolute;
-    //     background: var(--background-primary);
-    //     transition: all .3s;
-    // }
 }
+
 
 img{
     width: 100%;
 }
 
 p{
-    font-size: 1.6rem;
+    font-size: 1.5rem;
     margin: .6rem 0 1.6rem 0;
+
+    & > a{
+        color: var(--brand-color-secondary);
+    }
 }
 
 
@@ -50,8 +34,27 @@ h2{
 h3{
     font-size:2.4rem;
 }
+h6{
+    font-size: 1.7rem;
+}
 
+// LIST (UL,OL) ////////////////////////////////////////////////////////////////////////////////////////////////////
+ul{
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    font-size: 1.4rem;
+    list-style: inside;
 
+    & a{
+        color: var(--brand-color-secondary);
+        transition: all .3s;
+
+        &:hover{
+            color: var(--brand-color-primary);
+        }
+    }
+}
 .terminal{
 
 }

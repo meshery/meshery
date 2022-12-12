@@ -13,16 +13,15 @@ display-title: "false"
          src="/assets/img/meshery/meshery-logo-light-text-side.svg" />
     </a>
 </div>
-<p style="margin:auto;padding:1rem;font-size: 1.25rem;">Meshery is the open source, cloud native management plane that enables the adoption, operation, and management of Kubernetes, any service mesh, and their workloads.</p>
+<p style="margin:auto;padding:1.6rem;font-size: 2rem;">Meshery is the open source, cloud native management plane that enables the adoption, operation, and management of Kubernetes, any service mesh, and their workloads.</p>
 
-<p style="padding:1rem;">Follow on <a href="https://twitter.com/mesheryio">Twitter</a> or subscribe to our <a href="https://meshery.io/subscribe">newsletter</a> for the latest updates. Get support on our <a href="https://discuss.layer5.io">forum</a>. Join our <a href="https://slack.layer5.io">Slack</a> to interact directly with other users and contributors.</p>
+<p style="padding:1.6rem;">Follow on <a href="https://twitter.com/mesheryio">Twitter</a> or subscribe to our <a href="https://meshery.io/subscribe">newsletter</a> for the latest updates. Get support on our <a href="https://discuss.layer5.io">forum</a>. Join our <a href="https://slack.layer5.io">Slack</a> to interact directly with other users and contributors.</p>
 
-<div class="wrapper" style="text-align: left;">
-
+<div class="flex flex-col--2"  style="text-align: left; padding:1.6rem ;--col-gap:1rem">
   <!-- QUICK START -->
   <div class="section">
     <a href="{{ site.baseurl }}/installation/quick-start">
-        <div class="overview">Quick&nbsp;Start</div>
+        <div class="btn-primary">Quick&nbsp;Start</div>
     </a>
     <h6>Getting Started</h6>
     <ul>
@@ -44,7 +43,7 @@ display-title: "false"
   <!-- CONCEPTS -->
   <div class="section">
     <a href="{{ site.baseurl }}/concepts">
-        <div class="overview">Concepts</div>
+        <div class="btn-primary">Concepts</div>
     </a>
     <h6><a href="{{ site.baseurl }}/concepts" class="text-black section-title">Concepts</a></h6>
     <ul>
@@ -58,12 +57,12 @@ display-title: "false"
   </div>
 
 </div>
-<div class="wrapper" style="text-align: left;">
+<div class="flex flex-col--2"  style="text-align: left; padding:1.6rem ;--col-gap:1rem">
 
   <!-- FUNCTIONALITY -->
   <div class="section">
     <a href="{{ site.baseurl }}/functionality">
-        <div class="overview">Functionality</div>
+        <div class="btn-primary">Functionality</div>
     </a>
     <h6><a href="{{ site.baseurl }}/functionality" class="text-black section-title">Cloud Native Management</a></h6>
     <ul>
@@ -93,7 +92,7 @@ display-title: "false"
   <!-- GUIDES -->
   <div class="section">
     <a href="{{ site.baseurl }}/guides">
-        <div class="overview">Guides</div>
+        <div class="btn-primary">Guides</div>
     </a>
     <h6><a href="{{ site.baseurl }}/guides" class="text-black section-title">Guides</a></h6>
     <ul>
