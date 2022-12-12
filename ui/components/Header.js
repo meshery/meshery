@@ -127,7 +127,7 @@ const styles = (theme) => ({
   },
   Chip : {
     backgroundColor : "white",
-    width : '205px',
+    width : '12.8rem',
     textAlign : 'center',
     cursor : "pointer",
     "& .MuiChip-label" : {
