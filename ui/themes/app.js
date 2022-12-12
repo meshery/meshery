@@ -36,6 +36,7 @@ export var darkTheme = createTheme({
       img : 'invert(0.8)',
       appBar : '#363636',
       number : 'rgb(57, 102, 121)',
+      completeInvert : 'invert(0.8)',
 
 
     },
@@ -202,6 +203,7 @@ let theme = createTheme({
       img : 'none',
       appBar : '#FFF',
       number : '#607d8b',
+      completeInvert : 'none',
     },
   },
   shape : { borderRadius : 8, },
