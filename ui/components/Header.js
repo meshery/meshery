@@ -47,7 +47,7 @@ const styles = (theme) => ({
   iconButtonAvatar : { padding : 4, },
   link : {
     textDecoration : 'none',
-    color : theme.palette.type === 'dark' ? "lightColor" : "#000",
+    color : theme.palette.secondary.link
 
   },
   button : { borderColor : lightColor, },
@@ -136,7 +136,7 @@ const styles = (theme) => ({
     }
   },
   cMenuContainer : {
-    backgroundColor : theme.palette.type === 'dark' ? "#202020" : "#eeeeee",
+    backgroundColor : theme.palette.secondary.headerColor,
     marginTop : "-0.7rem",
     borderRadius : "3px",
     padding : "1rem",
@@ -574,7 +574,7 @@ class Header extends React.Component {
                   <div data-test="settings-button" style={!this.state.capabilityregistryObj?.isHeaderComponentEnabled([SETTINGS]) ? cursorNotAllowed : {}}>
                     <IconButton style={!this.state.capabilityregistryObj?.isHeaderComponentEnabled([SETTINGS]) ? disabledStyle : {}} color="inherit">
                       <Link href="/settings">
-                        <SettingsIcon style={{ width : "1.2rem",height : "1.2rem" }} className={classes.headerIcons + " " + (title === 'Settings'
+                        <SettingsIcon style={{ width : "1.2rem", height : "1.2rem" }} className={classes.headerIcons + " " + (title === 'Settings'
                           ? classes.itemActiveItem
                           : '')} />
                       </Link>

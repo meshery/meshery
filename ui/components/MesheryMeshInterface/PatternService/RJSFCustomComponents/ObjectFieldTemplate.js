@@ -88,7 +88,7 @@ const ObjectFieldTemplate = ({
           {description &&
             <EnlargedTextTooltip title={description}>
               <IconButton disableTouchRipple="true" disableRipple="true" component="span" size="small">
-                <HelpOutlineIcon width="14px" height="14px" fill={theme.palette.type === 'dark' ? "white" : "black"} style={{ marginLeft : "4px", verticalAlign : "middle" }} />
+                <HelpOutlineIcon width="14px" height="14px" fill={theme.palette.secondary.icon2} style={{ marginLeft : "4px", verticalAlign : "middle" }} />
               </IconButton>
             </EnlargedTextTooltip>}
           {rawErrors?.length &&

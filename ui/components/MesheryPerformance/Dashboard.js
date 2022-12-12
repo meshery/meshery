@@ -60,16 +60,16 @@ const styles = (theme) => ({
     }
   },
   resultText : {
-    color : theme.palette.type === 'dark' ? "rgba(255, 255, 255, 0.54)" : "rgba(0, 0, 0, 0.54)",
+    color : theme.palette.secondary.lightText,
   },
   profileText : {
-    color : theme.palette.type === 'dark' ? "rgba(255, 255, 255, 0.54)" : "rgba(0, 0, 0, 0.54)",
+    color : theme.palette.secondary.lightText,
   },
   resultNum : {
-    color : theme.palette.type === 'dark' ? "rgb(57, 102, 121)" : "#607d8b",
+    color : theme.palette.secondary.number,
   },
   profileNum : {
-    color : theme.palette.type === 'dark' ? "rgb(57, 102, 121)" : "#607d8b",
+    color : theme.palette.secondary.number,
   },
 });
 

@@ -50,7 +50,7 @@ const BaseInput = (props) => {
               {props.schema?.description && (
                 <EnlargedTextTooltip title={props.schema?.description}>
                   <IconButton component="span" size="small">
-                    <HelpOutlineIcon width="14px" height="14px" fill={theme.palette.type === 'dark' ? "white" : "black"} style={{ verticalAlign : "middle" }} />
+                    <HelpOutlineIcon width="14px" height="14px" fill={theme.palette.secondary.icon2} style={{ verticalAlign : "middle" }} />
                   </IconButton>
                 </EnlargedTextTooltip>
               )}

@@ -284,7 +284,7 @@ function ConfirmationMsg(props) {
             />
             <Tab
               className={classes.tab}
-              label={<div style={{ display : "flex" }}> <div style={{ margin : "2px" }}> <UndeployIcon fill={theme.palette.type === 'dark' ? "rgba(255, 255, 255, 0.54)" : "rgba(0, 0, 0, 0.54)"} width="20" height="20" /> </div> <span className={classes.tabLabel}>Undeploy</span> </div>}
+              label={<div style={{ display : "flex" }}> <div style={{ margin : "2px" }}> <UndeployIcon fill={theme.palette.secondary.icon} width="20" height="20" /> </div> <span className={classes.tabLabel}>Undeploy</span> </div>}
             />
             {!!validationBody &&
               <Tab

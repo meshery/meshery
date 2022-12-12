@@ -41,7 +41,7 @@ const styles = (theme) => ({
   tab : {
     minWidth : 40,
     paddingLeft : 0,
-    color : theme.palette.type == 'dark' ? "rgba(255, 255, 255, 0.7)" : "rgba(0, 0, 0, 0.54)",
+    color : theme.palette.secondary.icon,
     paddingRight : 0,
   },
   headerIcon : {
@@ -404,7 +404,7 @@ class MesherySettings extends React.Component {
               <Tab
                 className={classes.tab}
                 icon={
-                  <SquarePollVerticalIcon style={{ width : "24px",height : "24px" }}/>
+                  <SquarePollVerticalIcon style={{ width : "24px", height : "24px" }} />
                 }
                 label="Metrics"
                 tab="tabMetrics"
@@ -414,7 +414,7 @@ class MesherySettings extends React.Component {
               <Tab
                 className={classes.tab}
                 icon={
-                  <DatabaseIcon style={{ width : "20px",height : "20px" }} />
+                  <DatabaseIcon style={{ width : "20px", height : "20px" }} />
                 }
                 label="Reset"
                 tab="systemReset"

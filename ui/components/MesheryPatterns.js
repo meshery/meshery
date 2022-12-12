@@ -105,7 +105,7 @@ const styles = (theme) => ({
     paddingRight : ".35rem",
   },
   visibilityImg : {
-    filter : theme.palette.type === 'dark' ? "invert(0.8)" : "none",
+    filter : theme.palette.secondary.img,
   }
   // text : {
   //   padding : "5px"

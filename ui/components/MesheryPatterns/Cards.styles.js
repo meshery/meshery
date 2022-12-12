@@ -94,7 +94,7 @@ const useStyles = makeStyles((theme) => ({
   },
   img : {
     marginRight : "0.5rem",
-    filter : theme.palette.type === 'dark' ? "invert(0.8)" : "none",
+    filter : theme.palette.secondary.img
   },
   noPaper : {
     padding : "0.5rem",

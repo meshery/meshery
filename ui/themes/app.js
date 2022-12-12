@@ -27,7 +27,17 @@ export var darkTheme = createTheme({
       mainBackground : '#202020',
       elevatedComponents : '#202020',
       elevatedComponents2 : '#303030',
-      red : "red",
+      lightText : 'rgba(255, 255, 255, 0.54)',
+      icon : 'rgba(255, 255, 255, 0.54)',
+      icon2 : '#FFF',
+      link : 'rgba(255, 255, 255, 0.7)',
+      headerColor : '#202020',
+      sideBar : '#263238',
+      img : 'invert(0.8)',
+      appBar : '#363636',
+      number : 'rgb(57, 102, 121)',
+
+
     },
   },
   p : {
@@ -183,6 +193,15 @@ let theme = createTheme({
       mainBackground : '#396679',
       elevatedComponents : '#FFF',
       elevatedComponents2 : "#eaeff1",
+      lightText : 'rgba(0, 0, 0, 0.54)',
+      icon : 'rgba(0, 0, 0, 0.54)',
+      icon2 : '#000',
+      link : '#000',
+      headerColor : '#eeeeee',
+      sideBar : '#FFF',
+      img : 'none',
+      appBar : '#FFF',
+      number : '#607d8b',
     },
   },
   shape : { borderRadius : 8, },
@@ -341,7 +360,6 @@ export const styles = (theme) => ({
   mainContent : {
     flex : 1,
     padding : '48px 36px 24px',
-    backgroundColor : theme.palette.type == 'dark' ? "rgb(20, 20, 20)" : "rgb(250, 250, 250)",
   },
   footer : {
     backgroundColor : "#212121",

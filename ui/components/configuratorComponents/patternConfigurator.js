@@ -29,7 +29,7 @@ const styles = (theme) => ({
   },
   appBar : {
     marginBottom : "16px",
-    backgroundColor : theme.palette.type == 'dark' ? "#363636" : "#FFF",
+    backgroundColor : theme.palette.secondary.appBar,
     borderRadius : "8px"
   },
   yamlDialogTitle : {

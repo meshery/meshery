@@ -56,11 +56,11 @@ const styles = (theme) => ({
   },
   calender : {
     "& .rbc-btn-group" : {
-      color : theme.palette.type === 'dark' ? "rgba(255, 255, 255, 0.54)" : "rgba(0, 0, 0, 0.54)",
+      color : theme.palette.secondary.lightText,
     },
     "& .rbc-toolbar button" : {
 
-      color : theme.palette.type === 'dark' ? "rgba(255, 255, 255, 0.54)" : "rgba(0, 0, 0, 0.54)",
+      color : theme.palette.secondary.lightText,
 
 
     },
@@ -86,10 +86,10 @@ const styles = (theme) => ({
     },
   },
   resultText : {
-    color : theme.palette.type === 'dark' ? "rgba(255, 255, 255, 0.54)" : "rgba(0, 0, 0, 0.54)",
+    color : theme.palette.secondary.lightText,
   },
   profileText : {
-    color : theme.palette.type === 'dark' ? "rgba(255, 255, 255, 0.54)" : "rgba(0, 0, 0, 0.54)",
+    color : theme.palette.secondary.lightText,
   },
 });
 // const PERFORMANCE_PROFILE_RESULTS_URL = "/api/user/performance/profiles/results";
