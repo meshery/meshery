@@ -38,6 +38,10 @@ import { getK8sConfigIdsFromK8sConfig } from '../utils/multi-ctx';
 import './../public/static/style/index.css';
 import subscribeK8sContext from "../components/graphql/subscriptions/K8sContextSubscription";
 import { bindActionCreators } from 'redux';
+import "./styles/AnimatedFilter.css"
+import "./styles/AnimatedMeshery.css"
+import "./styles/AnimatedMeshPattern.css"
+import "./styles/AnimatedMeshSync.css"
 
 if (typeof window !== 'undefined') {
   require('codemirror/mode/yaml/yaml');
