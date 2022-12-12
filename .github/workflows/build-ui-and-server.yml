@@ -215,6 +215,7 @@ jobs:
           start: npm start
           wait-on: http://localhost:3000
           spec: cypress/e2e/e2e/**/*
+          browser: chrome
           record: true
           tag: node-${{ matrix.node }}
         env:
