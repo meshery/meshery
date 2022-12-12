@@ -214,7 +214,7 @@ jobs:
           working-directory: ui
           start: npm start
           wait-on: http://localhost:3000
-          spec: cypress/integration/e2e/**/*
+          spec: cypress/e2e/e2e/**/*
           record: true
           tag: node-${{ matrix.node }}
         env:
