@@ -44,7 +44,8 @@ ul{
     flex-direction: column;
     gap: 2px;
     font-size: 1.4rem;
-    list-style: inside;
+    list-style: disc;
+    padding-inline-start: 2rem;
 
     & a{
         color: var(--brand-color-secondary);
