@@ -67,12 +67,13 @@ ol {
   background: var(--background-grey);
   box-shadow: var(--box-shadow-primary);
   z-index: 9;
-  max-height: calc(100vh - var(--navbar-height));
+  max-height: calc(100vh - calc(var(--navbar-height) + 10rem));
   height: fit-content;
   position: sticky;
   transition: all .5s ease-in-out;
   font-size: 1.5rem;
   top: calc(var(--navbar-height) + 5rem);
+  // bottom: 5rem;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
@@ -80,8 +81,8 @@ ol {
   border-radius: 7px;
   width: 90%;
   margin: 0 auto;
-  overflow-y: scroll;
-  
+  overflow-y: auto;
+
   &::-webkit-scrollbar{
     width: 10px;
 }
@@ -90,11 +91,14 @@ ol {
     background-color:#f8f9fa;
     width: 1.2rem;
     // border-radius: 11px;
+    overflow: hidden;
+    border-top-right-radius: 7px;
+    border-bottom-right-radius: 7px;
 }
 &::-webkit-scrollbar-thumb{
     background:#868e96;
-    // background: #343a40;
-    // border-radius: 6px;
+    border-top-right-radius: 7px;
+    border-bottom-right-radius: 7px;
 }
 
   & strong {

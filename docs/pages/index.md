@@ -83,7 +83,7 @@ display-title: "false"
       {% endfor %}
       {% for adapter in site.adapters -%}
       {% if adapter.project_status -%}
-        <li><img src="{{ adapter.image }}" style="width:20px" /> <a href="{{ site.baseurl }}{{ adapter.url }}">{{ adapter.name }}</a></li>
+        <li><img src="{{ adapter.image }}" style="width:20px;height:20px; transform:translateY(5px)"/> <a href="{{ site.baseurl }}{{ adapter.url }}">{{ adapter.name }}</a></li>
       {% endif -%}
       {% endfor %}
     </ul>
