@@ -16,10 +16,13 @@ permalink: service-meshes/adapters/istio
 {% for group in sorted_tests_group %}
       {% if group.name == "meshery-istio" %}
         {% assign items = group.items | sort: "meshery-component-version" | reverse %}
-        {% for item in items limit: 1 %}
+        {% for item in items %}
           {% if item.meshery-component-version != "edge" %}
             {% if item.overall-status == "passing" %}
               {% assign adapter_version_dynamic = item.meshery-component-version %}
+              {% break %}
+            {% elsif item.overall-status == "failing" %}
+              {% continue %}
             {% endif %}
           {% endif %}
         {% endfor %} 
