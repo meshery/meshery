@@ -9,7 +9,7 @@ on:
 jobs:
   update_release_draft:
     if: github.repository == 'meshery/meshery'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Drafting release
         id: release_drafter
