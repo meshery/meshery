@@ -629,8 +629,8 @@ func (h *Handler) formatApplicationOutput(rw http.ResponseWriter, content []byte
 	for _, app := range contentMesheryApplicationSlice {
 		names = append(names, app.Name)
 	}
-	res.Details = "applications successfully saved"
-	res.Summary = "following application were saved: " + strings.Join(names, ",")
+	res.Details = "\"" + strings.Join(names, ",") + "\" application saved"
+	res.Summary = "Changes to the \"" + strings.Join(names, ",") + "\" application have been saved."
 	// go h.EventsBuffer.Publish(res)
 }
 
