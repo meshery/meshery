@@ -631,7 +631,7 @@ func (h *Handler) formatApplicationOutput(rw http.ResponseWriter, content []byte
 	}
 	res.Details = "applications successfully saved"
 	res.Summary = "following application were saved: " + strings.Join(names, ",")
-	go h.EventsBuffer.Publish(res)
+	// go h.EventsBuffer.Publish(res)
 }
 
 // Note: This function is guaranteed to return meshkit errors

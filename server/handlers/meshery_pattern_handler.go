@@ -580,7 +580,7 @@ func (h *Handler) formatPatternOutput(rw http.ResponseWriter, content []byte, fo
 	fmt.Fprint(rw, string(data))
 	res.Details = "Design successfully saved"
 	res.Summary = "Design: " + strings.Join(names, ",") + "saved"
-	go h.EventsBuffer.Publish(res)
+	// go h.EventsBuffer.Publish(res)
 }
 
 // Since the client currently does not support pattern imports and externalized variables, the first(import) stage of pattern engine
