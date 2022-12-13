@@ -24,7 +24,7 @@ on:
           default: 'v'
 jobs:
   validate:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     if: ${{github.event_name == 'pull_request'}}
     steps:
     - uses: actions/checkout@master
@@ -37,7 +37,7 @@ jobs:
     - name: validate meshery-operator
       run: helm lint install/kubernetes/helm/meshery-operator --with-subcharts
   release-chart:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     if: ${{ github.event_name != 'pull_request' }} && ${{ github.ref == 'refs/heads/master' }}
     steps:
       - uses: actions/checkout@master

@@ -20,7 +20,7 @@ on:
 jobs:
   unit-tests:
     name: Unit tests
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@master
         with:
@@ -42,7 +42,7 @@ jobs:
           fail_ci_if_error: true
   integration-tests:
     name: Integration tests
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@master
         with:

@@ -25,7 +25,7 @@ jobs:
   build-backend:
     name: Backend build
     if: github.repository == 'meshery/meshery'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Check out code
         uses: actions/checkout@master
@@ -52,7 +52,7 @@ jobs:
   build-ui:
     name: UI build
     if: github.repository == 'meshery/meshery'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Check out code
         uses: actions/checkout@master
@@ -92,7 +92,7 @@ jobs:
     needs: [build-ui]
     name: UI integration tests
     if: github.repository == 'meshery/meshery'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Check out code
         uses: actions/checkout@master
@@ -133,7 +133,7 @@ jobs:
     needs: [build-backend, build-ui]
     name: UI end-to-end tests
     if: github.repository == 'meshery/meshery'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Check out code
         uses: actions/checkout@master
@@ -230,7 +230,7 @@ jobs:
   docker-build-test:
     name: Docker build
     if: github.repository == 'meshery/meshery'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Check out code
         uses: actions/checkout@master
@@ -261,7 +261,7 @@ jobs:
   swaggerci:
     if: github.repository == 'meshery/meshery'
     name: swagger-docs
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@master
       - name: Check if handlers were modified
@@ -287,7 +287,7 @@ jobs:
   garphql_validate:
     name: Validate GraphQL schema
     if: github.repository == 'meshery/meshery'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Check out code
         uses: actions/checkout@master
