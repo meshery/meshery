@@ -1,5 +1,9 @@
 package pkg
 
+import (
+	"os"
+)
+
 const template string = `---
 title: <Project Name>
 subtitle: <Page Subtitle>
@@ -49,7 +53,7 @@ type TemplateAttributes struct {
 	DarkModeIntegrationIcon string
 }
 
-func (t *TemplateAttributes) CreateMarkDown() string {
+func (t TemplateAttributes) CreateMarkDown() string {
 	markdown := "---\n"
 	markdown += "title: " + t.Title + "\n"
 	markdown += "subtitle: " + t.Subtitle + "\n"
@@ -69,11 +73,37 @@ func (t *TemplateAttributes) CreateMarkDown() string {
 	return markdown
 }
 func WriteMarkDown(path string, md string) error {
-	//ADD LOGIC
+	file, err := os.Create(path)
+	if err != nil {
+		panic(err)
+	}
+
+	_, err = file.WriteString(md)
+	if err != nil {
+		panic(err)
+	}
+	// Close the file to save the changes.
+	err = file.Close()
+	if err != nil {
+		panic(err)
+	}
 	return nil
 }
 func WriteSVG(path string, svg string) error {
-	//ADD LOGIC
+	file, err := os.Create(path)
+	if err != nil {
+		return err
+	}
+
+	_, err = file.WriteString(svg)
+	if err != nil {
+		return err
+	}
+	// Close the file to save the changes.
+	err = file.Close()
+	if err != nil {
+		return err
+	}
 	return nil
 }
 

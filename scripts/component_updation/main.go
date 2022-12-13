@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/csv"
 	"encoding/json"
+	"fmt"
 	"log"
 	"os"
 	"path/filepath"
@@ -52,8 +53,9 @@ func main() {
 		file.Close()
 		os.Remove(file.Name())
 		for _, out := range output {
-			var t *pkg.TemplateAttributes
+			var t pkg.TemplateAttributes
 			for key, val := range out {
+
 				switch key {
 				case "Project Name":
 					t.Title = val
@@ -81,12 +83,38 @@ func main() {
 			t.WorkingSlides = `[
 				../_images/meshmap-visualizer.png,
 				../_images/meshmap-designer.png]`
+
+			//Write
 			md := t.CreateMarkDown()
-			_ = pkg.WriteMarkDown(pathToIntegrations, md)
+			if out["Project Name"] == "Istio" {
+				fmt.Println(md)
+			}
+			pathToIntegrations, _ := filepath.Abs(filepath.Join("../../../", pathToIntegrations, out["Project Name"]))
+			err = os.MkdirAll(pathToIntegrations, 0777)
+			if err != nil {
+				panic(err)
+			}
+			_ = pkg.WriteMarkDown(filepath.Join(pathToIntegrations, "index.mdx"), md)
 			svgcolor := out["SVG_Color"]
 			svgwhite := out["SVG_White"]
-			_ = pkg.WriteSVG(pathToIntegrations, svgcolor) //CHANGE PATH
-			_ = pkg.WriteSVG(pathToIntegrations, svgwhite) //CHANGE PATH
+			//pathToIntegrations => layer5/src/collections
+			err = os.MkdirAll(filepath.Join(pathToIntegrations, "icon", "color"), 0777)
+			if err != nil {
+				panic(err)
+			}
+
+			err = pkg.WriteSVG(filepath.Join(pathToIntegrations, "icon", "color", out["Project Name"]+".svg"), svgcolor) //CHANGE PATH
+			if err != nil {
+				panic(err)
+			}
+			err = os.MkdirAll(filepath.Join(pathToIntegrations, "icon", "white"), 0777)
+			if err != nil {
+				panic(err)
+			}
+			err = pkg.WriteSVG(filepath.Join(pathToIntegrations, "icon", "white", out["Project Name"]+".svg"), svgwhite) //CHANGE PATH
+			if err != nil {
+				panic(err)
+			}
 		}
 	} else {
 		output, err := pkg.GetEntries(csvReader, ColumnNamesToExtract)
