@@ -6,15 +6,15 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import CloseIcon from "@material-ui/icons/Close";
 import { withSnackbar } from "notistack";
-import dataFetch from "../lib/data-fetch";
+import dataFetch from "../../../lib/data-fetch";
 import GrafanaConfigComponent from "./GrafanaConfigComponent";
 import GrafanaSelectionComponent from "./GrafanaSelectionComponent";
 import GrafanaDisplaySelection from "./GrafanaDisplaySelection";
 // import GrafanaCharts from './GrafanaCharts';
-import { updateGrafanaConfig, updateProgress } from "../lib/store";
+import { updateGrafanaConfig, updateProgress } from "../../../lib/store";
 import GrafanaCustomCharts from "./GrafanaCustomCharts";
-import fetchAvailableAddons from "./graphql/queries/AddonsStatusQuery";
-import { getK8sClusterIdsFromCtxId } from "../utils/multi-ctx";
+import fetchAvailableAddons from "../../graphql/queries/AddonsStatusQuery";
+import { getK8sClusterIdsFromCtxId } from "../../../utils/multi-ctx";
 
 const grafanaStyles = (theme) => ({
   buttons : { display : "flex",

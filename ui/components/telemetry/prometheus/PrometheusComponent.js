@@ -6,14 +6,14 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import CloseIcon from "@material-ui/icons/Close";
 import { withSnackbar } from "notistack";
-import dataFetch from "../lib/data-fetch";
+import dataFetch from "../../../lib/data-fetch";
 import PrometheusSelectionComponent from "./PrometheusSelectionComponent";
-import GrafanaDisplaySelection from "./GrafanaDisplaySelection";
-import { updateGrafanaConfig, updateProgress, updatePrometheusConfig } from "../lib/store";
-import GrafanaCustomCharts from "./GrafanaCustomCharts";
+import GrafanaDisplaySelection from "../grafana/GrafanaDisplaySelection";
+import { updateGrafanaConfig, updateProgress, updatePrometheusConfig } from "../../../lib/store";
+import GrafanaCustomCharts from "../grafana/GrafanaCustomCharts";
 import PrometheusConfigComponent from "./PrometheusConfigComponent";
-import { getK8sClusterIdsFromCtxId } from "../utils/multi-ctx";
-import fetchAvailableAddons from "./graphql/queries/AddonsStatusQuery";
+import { getK8sClusterIdsFromCtxId } from "../../../utils/multi-ctx";
+import fetchAvailableAddons from "../../graphql/queries/AddonsStatusQuery";
 
 const promStyles = (theme) => ({
   buttons : { display : "flex",

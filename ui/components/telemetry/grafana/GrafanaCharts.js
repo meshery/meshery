@@ -7,7 +7,7 @@ import {
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import LazyLoad from 'react-lazyload';
 import GrafanaDateRangePicker from './GrafanaDateRangePicker';
-import { ExpansionPanel, ExpansionPanelSummary } from './ExpansionPanels';
+import { ExpansionPanel, ExpansionPanelSummary } from '../../ExpansionPanels';
 
 const grafanaStyles = (theme) => ({
   wrapper : { width : '100%', },

@@ -23,6 +23,7 @@ jobs:
         uses: actions/checkout@master
         with:
           repository: layer5io/layer5
+          token: ${{ secrets.GH_ACCESS_TOKEN }}
           path: layer5
       - name: Run utility
         run: cd meshery/scripts/component_updation; go build main.go; ./main https://docs.google.com/spreadsheets/d/e/2PACX-1vSgOXuiqbhUgtC9oNbJlz9PYpOEaFVoGNUFMIk4NZciFfQv1ewZg8ahdrWHKI79GkKK9TbmnZx8CqIe/pub\?gid\=0\&single\=true\&output\=csv --update-docs layer5/src/collections/integrations
