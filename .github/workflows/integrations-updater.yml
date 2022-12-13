@@ -29,7 +29,6 @@ jobs:
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
-          file_pattern: docs/
           commit_user_name: l5io
           repository: ./layer5
           commit_user_email: ci@layer5.io
