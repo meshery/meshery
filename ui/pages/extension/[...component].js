@@ -2,13 +2,16 @@
 
 import NavigatorExtension from "../../components/NavigatorExtension";
 import ExtensionSandbox, { getCapabilities, getFullPageExtensions, getComponentTitleFromPath } from "../../components/ExtensionSandbox";
-import { NoSsr } from "@material-ui/core";
+import { Box, CircularProgress, NoSsr } from "@material-ui/core";
 import { updatepagepath, updatepagetitle, updateExtensionType } from "../../lib/store";
 import { connect } from "react-redux";
 import Head from "next/head";
 import { bindActionCreators } from "redux";
 import React from "react";
 import RemoteComponent from "../../components/RemoteComponent";
+import { WrappedMeshMapSignupCard } from "../extensions";
+import _ from "lodash"
+import { MeshMapEarlyAccessCard } from "../../components/Popup";
 
 
 /**
@@ -26,7 +29,8 @@ function getPath() {
  * @returns {string}
  */
 function extractComponentURI(path) {
-  return path.substring(path.lastIndexOf("/"));
+  const pathSplit = path.split("/")
+  return pathSplit[pathSplit.length - 1];
 }
 
 
@@ -57,16 +61,15 @@ function capitalize(string) {
 }
 
 class RemoteExtension extends React.Component {
-
   constructor(props) {
     super(props);
     this.state = {
-      componentTitle : ''
+      componentTitle : '',
+      isLoading : true
     }
   }
 
   componentDidMount() {
-    console.log(`path: ${getPath()}`);
     this.props.updatepagepath({ path : getPath() });
     this.renderExtension();
   }
@@ -84,18 +87,23 @@ class RemoteExtension extends React.Component {
         if (matchComponentURI(ext?.uri, getPath())) {
           this.props.updateExtensionType({ extensionType : ext.name })
           getCapabilities(ext.name, extensions => {
-            this.setState({ componentTitle : getComponentTitleFromPath(extensions, getPath()) });
+            this.setState({ componentTitle : getComponentTitleFromPath(extensions, getPath()), isLoading : false });
             this.props.updatepagetitle({ title : getComponentTitleFromPath(extensions, getPath()) });
           });
         }
       })
     });
 
+    // loading state may set to false, either if the extension
+    // is there or no extension after waiting for
+    setTimeout(() => {
+      this.setState({ isLoading : false })
+    }, 1500)
   }
 
   render() {
     const { extensionType } = this.props;
-    const { componentTitle } = this.state;
+    const { componentTitle, isLoading } = this.state;
 
     return (
       <NoSsr>
@@ -103,15 +111,22 @@ class RemoteExtension extends React.Component {
           <title>{`${componentTitle} | Meshery` || ""}</title>
         </Head>
         {
-          extensionType &&
-          <NoSsr>
-            {
-              (extensionType === 'navigator') ?
-                <ExtensionSandbox type={extensionType} Extension={NavigatorExtension} />
-                :
-                <ExtensionSandbox type={extensionType} Extension={(url) => RemoteComponent({ url })} />
-            }
-          </NoSsr>
+          extensionType ?
+            (<NoSsr>
+              {
+                (extensionType === 'navigator') ?
+                  <ExtensionSandbox type={extensionType} Extension={NavigatorExtension} />
+                  :
+                  <ExtensionSandbox type={extensionType} Extension={(url) => RemoteComponent({ url })} />
+              }
+            </NoSsr>) : (!isLoading && (
+              <Box display="flex" justifyContent="center">
+                <MeshMapEarlyAccessCard rootStyle={{ position : "relative" }} />
+              </Box>)
+            )
+        }
+        {
+          isLoading && <CircularProgress />
         }
       </NoSsr>
     )
