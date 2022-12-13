@@ -23,7 +23,6 @@ html {
   box-sizing: inherit;
   color: var(--color-secondary-dark);
   text-decoration: none;
-
 }
 
 body {
@@ -33,9 +32,9 @@ body {
   background-repeat: no-repeat;
   color: var(--color-secondary-dark);
   background: var(--background-light);
-  font-family: open sans, -apple-system, BlinkMacSystemFont, segoe ui, Roboto, helvetica neue, Arial, sans-serif, apple color emoji, segoe ui emoji, segoe ui symbol;
+  font-family: "Open Sans", -apple-system, BlinkMacSystemFont, segoe ui, Roboto, helvetica neue, Arial, sans-serif,
+    apple color emoji, segoe ui emoji, segoe ui symbol;
 }
-
 
 ul,
 ol {
@@ -43,13 +42,12 @@ ol {
   text-decoration: none;
 }
 
-
 .flex-container {
   display: grid;
   grid-template-columns: 2.2fr 6.3fr 1.5fr;
   border-bottom: 3px dashed var(--brand-color-primary);
 
-  @media (max-width:75em) {
+  @media (max-width: 75em) {
     display: flex;
     flex-direction: column;
   }
@@ -57,8 +55,9 @@ ol {
 
 .main-container {
   padding: 3.5rem 4.5rem;
-  grid-column: 2/span 1;
+  grid-column: 2 / span 1;
 
-  @media (max-width:75em) {}
+  @media (max-width: 75em) {
+  }
 }
 

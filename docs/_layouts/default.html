@@ -1,61 +1,55 @@
 <!DOCTYPE html>
 <html lang="en" class="no-js">
-<script src="https://cdn.jsdelivr.net/npm/clipboard@1/dist/clipboard.min.js"></script>
-{% include head.html %}
+  <script src="https://cdn.jsdelivr.net/npm/clipboard@1/dist/clipboard.min.js"></script>
+  {% include head.html %}
 
-<body class="td-section">
+  <body class="td-section">
     <div class="flex-container">
-        {% include header.html %}
-        <div class="sidebar-container">
-          {% include sidebar.html %}
-        </div>
-        <main class="main-container" role="main">
-          <nav aria-label="breadcrumb" class="d-none d-md-block d-print-none">
-            <ol class="breadcrumb spb-1">
-              <li class="breadcrumb-item active" aria-current="page">
-                {% include breadcrumbs.html %}
-              </li>
-            </ol>
-          </nav>
-          <div class="td-content">
-            {% if page.display-title != "false" and layout.display-title != "false" %}
-            <h1>{{page.title}}</h1>
-            {% endif %}
-            {{ content }}
-            {% if section.links %}<div class="section-index">
-              <hr class="panel-line">{% for child in section.links %}
-              <div class="entry">
-                <h5>
-                  <a
-                    href="{% if child.url %}{{ site.baseurl }}{{ child.url }}{% else %}{{ child.external_url }}{% endif %}">{{
-                    child.title }}</a>
-                </h5>
-                <p>{{ child.description }}</p>
-              </div>{% endfor %}
-            </div>{% endif %}
-            {% include feedback.html %}
+      {% include header.html %}
+      <div class="sidebar-container">{% include sidebar.html %}</div>
+      <main class="main-container" role="main">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb spb-1">
+            <li class="breadcrumb-item active" aria-current="page">{% include breadcrumbs.html %}</li>
+          </ol>
+        </nav>
+        <div class="td-content">
+          {% if page.display-title != "false" and layout.display-title != "false" %}
+          <h1>{{page.title}}</h1>
+          {% endif %} {{ content }} {% if section.links %}
+          <div class="section-index">
+            <hr class="panel-line" />
+            {% for child in section.links %}
+            <div class="entry">
+              <h5>
+                <a
+                  href="{% if child.url %}{{ site.baseurl }}{{ child.url }}{% else %}{{ child.external_url }}{% endif %}"
+                  >{{ child.title }}</a
+                >
+              </h5>
+              <p>{{ child.description }}</p>
+            </div>
+            {% endfor %}
           </div>
-        </main>
-        <div class="content-table">
-          <div class="content-table__editable">
-            {% include editable.html %}
-          </div>
-          <nav id="TableOfContents">
-            <strong>Contents</strong>
-            <ul>
-              <li>
-                <ul id="TOC">
-                  <!-- Links will be appended here-->
-                </ul>
-              </li>
-            </ul>
-          </nav>
+          {% endif %} {% include feedback.html %}
         </div>
-    <!-- {% include footer.html %} -->
-  </div>
-  {% include scripts.html %}
-  {% include google-analytics.html %}
-</body>
-
+      </main>
+      <div class="content-table">
+        <div class="content-table__editable">{% include editable.html %}</div>
+        <nav id="TableOfContents">
+          <strong>Contents</strong>
+          <ul>
+            <li>
+              <ul id="TOC">
+                <!-- Links will be appended here-->
+              </ul>
+            </li>
+          </ul>
+        </nav>
+      </div>
+      <!-- {% include footer.html %} -->
+    </div>
+    {% include scripts.html %} {% include google-analytics.html %}
+  </body>
 </html>
 {% include toc.html %}
