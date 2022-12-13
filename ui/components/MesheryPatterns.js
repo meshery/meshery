@@ -280,6 +280,14 @@ function MesheryPatterns({
 
   const getMuiTheme = () => createTheme({
     overrides : {
+      MuiCheckbox : {
+        colorPrimary : {
+          color : "#607d8b",
+          "&$checked" : {
+            color : "#607d8b",
+          }
+        },
+      },
       MuiInput : {
         underline : {
           "&:hover:not(.Mui-disabled):before" : {
