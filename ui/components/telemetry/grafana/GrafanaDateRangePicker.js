@@ -7,7 +7,7 @@ import Moment from 'react-moment';
 import AccessTimeIcon from '@material-ui/icons/AccessTime';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
-import MesheryDateTimePicker from './MesheryDateTimePicker';
+import MesheryDateTimePicker from '../../MesheryDateTimePicker';
 import { Close } from '@material-ui/icons';
 
 const styles = (theme) => ({

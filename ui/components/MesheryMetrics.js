@@ -2,7 +2,7 @@
 import React from "react";
 import { Typography, Button } from "@material-ui/core";
 import AddIcon from "@material-ui/icons/AddCircleOutline";
-import GrafanaCustomCharts from "./GrafanaCustomCharts";
+import GrafanaCustomCharts from "./telemetry/grafana/GrafanaCustomCharts";
 import { makeStyles, } from "@material-ui/core/styles";
 
 const useStyles = makeStyles(() => ({

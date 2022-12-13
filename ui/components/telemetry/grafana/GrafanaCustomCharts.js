@@ -6,7 +6,7 @@ import {
 } from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import GrafanaDateRangePicker from './GrafanaDateRangePicker';
-import { ExpansionPanel, ExpansionPanelSummary } from './ExpansionPanels';
+import { ExpansionPanel, ExpansionPanelSummary } from '../../ExpansionPanels';
 import GrafanaCustomChart from './GrafanaCustomChart';
 
 const grafanaStyles = (theme) => ({
