@@ -15,8 +15,7 @@ import { bindActionCreators } from 'redux';
 import dataFetch, { promisifiedDataFetch } from '../lib/data-fetch';
 import PromptComponent from './PromptComponent';
 import CloudUploadIcon from "@material-ui/icons/CloudUpload";
-// import AddIcon from "@material-ui/icons/AddCircleOutline";
-import AddIconCircleBorder from '../assets/icons/AddIconCircleBorder';
+import AddIcon from "@material-ui/icons/AddCircleOutline";
 import MeshsyncStatusQuery from './graphql/queries/MeshsyncStatusQuery';
 import NatsStatusQuery from './graphql/queries/NatsStatusQuery';
 import changeOperatorState from './graphql/mutations/OperatorStatusMutation';
@@ -169,7 +168,6 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
     if (operatorState) {
       _setOperatorState(operatorState);
     }
-
   }, [operatorState])
 
   const handleFlushMeshSync = (index) => {
@@ -1098,7 +1096,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
             className={classes.button}
             data-cy="btnResetDatabase"
           >
-            <AddIconCircleBorder style={{ width : "20px",height : "20px" }} />
+            <AddIcon fontSize="small" />
             <Typography className={classes.addIcon}> Add Cluster</Typography>
           </Button>
         }
