@@ -26,13 +26,12 @@ jobs:
           path: layer5
       - name: Run utility
         run: cd meshery/scripts/component_updation; go build main.go; ./main https://docs.google.com/spreadsheets/d/e/2PACX-1vSgOXuiqbhUgtC9oNbJlz9PYpOEaFVoGNUFMIk4NZciFfQv1ewZg8ahdrWHKI79GkKK9TbmnZx8CqIe/pub\?gid\=0\&single\=true\&output\=csv --update-docs layer5/src/collections/integrations
-      - name: Go to layer5 dir
-        run: pwd; cd ../../../layer5
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
           file_pattern: docs/
           commit_user_name: l5io
+          repository: ./layer5
           commit_user_email: ci@layer5.io
           commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
           commit_options: "--signoff"
