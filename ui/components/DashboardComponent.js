@@ -726,8 +726,12 @@ class DashboardComponent extends React.Component {
     }
   })
   getDarkMuiTheme = () => createTheme({
+    shadows : ["none"],
     palette : {
       type : "dark",
+    },
+    overrides : {
+      MuiPaper : { root : { backgroundColor : '#363636' } },
     }
   })
 
@@ -745,6 +749,7 @@ class DashboardComponent extends React.Component {
     let versionSort = "asc";
     let proxySort = "asc";
     let tempComp = [];
+    const { theme } = this.props;
     components
       .filter((comp) => comp.namespace === self.state.activeMeshScanNamespace[mesh.name])
       .map((component) => tempComp.push(component))
@@ -926,7 +931,8 @@ class DashboardComponent extends React.Component {
     if (Array.isArray(components) && components.length)
       return (
         <Paper elevation={1} style={{ padding : "2rem", marginTop : "1rem" }}>
-          <MuiThemeProvider theme={this.getMuiTheme()}>
+          <MuiThemeProvider theme={theme.palette.type == "dark" ? this.getDarkMuiTheme() : this.getMuiTheme()}>
+
             <MUIDataTable
               className={this.props.classes.datatable}
               title={
@@ -958,6 +964,7 @@ class DashboardComponent extends React.Component {
     const self = this;
     let kindSort = "asc";
     let countSort = "asc";
+    const { theme } = this.props;
     const switchSortOrder = (type) => {
       if (type === "kindSort") {
         kindSort = (kindSort === "asc") ? "desc" : "asc";
@@ -1045,7 +1052,7 @@ class DashboardComponent extends React.Component {
     if (Array.isArray(resources) && resources.length)
       return (
         <Paper elevation={1} style={{ padding : "2rem" }}>
-          <MuiThemeProvider theme={this.getMuiTheme()}>
+          <MuiThemeProvider theme={theme.palette.type == "dark" ? this.getDarkMuiTheme() : this.getMuiTheme()}>
             <MUIDataTable
               title={
                 <>
@@ -1280,7 +1287,7 @@ class DashboardComponent extends React.Component {
       </Grid>
     );
 
-    const showServiceMesh = (
+    const showServiceMesh =(
       <>
         {self?.state?.meshScan && Object.keys(self?.state?.meshScan).length
           ? (
@@ -1429,6 +1436,6 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default withStyles(styles)(
+export default withStyles(styles, { withTheme : true })(
   connect(mapStateToProps, mapDispatchToProps)(withRouter(withSnackbar(DashboardComponent)))
 );
