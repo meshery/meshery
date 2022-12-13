@@ -17,7 +17,7 @@ import TableSortLabel from "@material-ui/core/TableSortLabel";
 // import dataFetch from "../../lib/data-fetch";
 import CustomToolbarSelect from "../CustomToolbarSelect";
 import MesheryChart from "../MesheryChart";
-import GrafanaCustomCharts from "../GrafanaCustomCharts";
+import GrafanaCustomCharts from "../telemetry/grafana/GrafanaCustomCharts";
 import GenericModal from "../GenericModal";
 import BarChartIcon from '@material-ui/icons/BarChart';
 import InfoIcon from '@material-ui/icons/Info';

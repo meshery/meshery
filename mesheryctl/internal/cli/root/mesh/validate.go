@@ -1,6 +1,7 @@
 package mesh
 
 import (
+	"fmt"
 	"io"
 	"net/http"
 	"net/url"
@@ -28,13 +29,11 @@ var spec string
 var adapterURL string
 var namespace string
 var watch bool
-var err error
 
 // validateCmd represents the service mesh validation command
 var validateCmd = &cobra.Command{
 	Use:   "validate",
 	Short: "Validate conformance to service mesh standards",
-	Args:  cobra.NoArgs,
 	Example: `
 // Validate conformance to service mesh standards
 mesheryctl mesh validate --adapter [name of the adapter] --tokenPath [path to token for authentication] --spec [specification to be used for conformance test] --namespace [namespace to be used]
@@ -72,6 +71,10 @@ mesheryctl mesh validate --adapter [name of the adapter] --tokenPath [path to to
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
+		if len(args) > 0 {
+			return errors.New(utils.MeshError(fmt.Sprintf("'%s' is an invalid argument for 'mesheryctl mesh validate'. Use 'mesheryctl mesh validate --help' to display usage guide.\n", args[0])))
+		}
+
 		log.Infof("Starting service mesh validation...")
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())

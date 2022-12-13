@@ -42,7 +42,7 @@ import {
 import dataFetch from "../../lib/data-fetch";
 import MesheryChart from "../MesheryChart";
 import LoadTestTimerDialog from "../load-test-timer-dialog";
-import GrafanaCustomCharts from "../GrafanaCustomCharts";
+import GrafanaCustomCharts from "../telemetry/grafana/GrafanaCustomCharts";
 import { durationOptions } from "../../lib/prePopulatedOptions";
 import fetchControlPlanes from "../graphql/queries/ControlPlanesQuery";
 import { ctxUrl, getK8sClusterIdsFromCtxId } from "../../utils/multi-ctx";

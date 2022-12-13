@@ -12,8 +12,8 @@ import moment from 'moment';
 import OpenInNewIcon from '@material-ui/icons/OpenInNewOutlined';
 import WarningIcon from '@material-ui/icons/Warning';
 import CachedIcon from '@material-ui/icons/Cached';
-import dataFetch from '../lib/data-fetch';
-import { updateProgress } from '../lib/store';
+import dataFetch from '../../../lib/data-fetch';
+import { updateProgress } from '../../../lib/store';
 import GrafanaCustomGaugeChart from './GrafanaCustomGaugeChart';
 
 import bb, { area, line } from 'billboard.js'
@@ -410,7 +410,13 @@ class GrafanaCustomChart extends Component {
       }
       const start = Math.round(grafanaDateRangeToDate(from).getTime() / 1000);
       const end = Math.round(grafanaDateRangeToDate(to).getTime() / 1000);
-      let queryParams = `ds=${panel.datasource}&query=${encodeURIComponent(expr)}&start=${start}&end=${end}&step=${self.computeStep(start, end)}`;
+      let ds;
+      if (typeof panel.datasource !== "string") {
+        ds = panel?.datasource?.type.charAt(0).toUpperCase() + panel.datasource.type.substring(1);
+      } else {
+        ds = panel?.datasource?.charAt(0).toUpperCase() + panel.datasource.substring(1);
+      }
+      let queryParams = `ds=${ds}&query=${encodeURIComponent(expr)}&start=${start}&end=${end}&step=${self.computeStep(start, end)}`;
       if (testUUID && testUUID.trim() !== '') {
         queryParams += `&uuid=${encodeURIComponent(testUUID)}`; // static_chart=true ?
       }
@@ -725,7 +731,7 @@ class GrafanaCustomChart extends Component {
         );
       }
 
-      if (errorCount > 3*panel.targets.length && typeof self.interval !== 'undefined') {
+      if (errorCount > 3*panel?.targets?.length && typeof self.interval !== 'undefined') {
         clearInterval(self.interval); // clearing the interval to prevent further calls to get chart data
         loadingBar = null;
         reloadButton = (

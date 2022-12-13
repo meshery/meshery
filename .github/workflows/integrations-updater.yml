@@ -13,7 +13,10 @@ on:
 jobs:
 
   integrations:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
+    # outputs:
+    #   output1: ${{ steps.step1.outputs.test }}
+    #   output2: ${{ steps.step2.outputs.test }}
     steps:
       - name: Checkout Meshery repo
         uses: actions/checkout@master

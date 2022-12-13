@@ -40,6 +40,11 @@ import subscribeK8sContext from "../components/graphql/subscriptions/K8sContextS
 import { bindActionCreators } from 'redux';
 import { darkTheme } from '../themes/app';
 import { styles } from '../themes';
+import "./styles/AnimatedFilter.css"
+import "./styles/AnimatedMeshery.css"
+import "./styles/AnimatedMeshPattern.css"
+import "./styles/AnimatedMeshSync.css"
+
 if (typeof window !== 'undefined') {
   require('codemirror/mode/yaml/yaml');
   require('codemirror/mode/javascript/javascript');

@@ -6,9 +6,9 @@ import {
 } from '@material-ui/core';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import dataFetch from '../lib/data-fetch';
-import { updateProgress } from '../lib/store';
-import { trueRandom } from '../lib/trueRandom';
+import dataFetch from '../../../lib/data-fetch';
+import { updateProgress } from '../../../lib/store';
+import { trueRandom } from '../../../lib/trueRandom';
 
 const grafanaStyles = (theme) => ({
   grafanaRoot : { padding : theme.spacing(5), },

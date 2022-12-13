@@ -5,7 +5,7 @@ import {
 // import {Table, TableBody, TableContainer, TableHead, TableRow,} from "@material-ui/core"
 import blue from "@material-ui/core/colors/blue";
 import Grid from "@material-ui/core/Grid";
-import { withStyles } from "@material-ui/core/styles";
+import { createTheme, withStyles, MuiThemeProvider } from "@material-ui/core/styles";
 // import AddIcon from "@material-ui/icons/AddCircleOutline";
 import AddIconCircleBorder from "../assets/icons/AddIconCircleBorder";
 import SettingsIcon from "../assets/icons/SettingsIcon";
@@ -20,14 +20,14 @@ import dataFetch from "../lib/data-fetch";
 import { updateGrafanaConfig, updateProgress, updatePrometheusConfig } from "../lib/store";
 import { getK8sClusterIdsFromCtxId, getK8sClusterNamesFromCtxId } from "../utils/multi-ctx";
 import { versionMapper } from "../utils/nameMapper";
-import { submitGrafanaConfigure } from "./GrafanaComponent";
+import { submitGrafanaConfigure } from "./telemetry/grafana/GrafanaComponent";
 import fetchAvailableAddons from "./graphql/queries/AddonsStatusQuery";
 import fetchControlPlanes from "./graphql/queries/ControlPlanesQuery";
 import fetchDataPlanes from "./graphql/queries/DataPlanesQuery";
 import fetchClusterResources from "./graphql/queries/ClusterResourcesQuery";
 import subscribeClusterResources from "./graphql/subscriptions/ClusterResourcesSubscription";
 import fetchAvailableNamespaces from "./graphql/queries/NamespaceQuery";
-import { submitPrometheusConfigure } from "./PrometheusComponent";
+import { submitPrometheusConfigure } from "./telemetry/prometheus/PrometheusComponent";
 import MUIDataTable from "mui-datatables";
 import Popup from "./Popup";
 
@@ -679,6 +679,57 @@ class DashboardComponent extends React.Component {
     );
   };
 
+  getMuiTheme = () => createTheme({
+    shadows : ["none"],
+    overrides : {
+      MUIDataTable : {
+      },
+      MuiInput : {
+        underline : {
+          "&:hover:not(.Mui-disabled):before" : {
+            borderBottom : "2px solid #222"
+          },
+          "&:after" : {
+            borderBottom : "2px solid #222"
+          }
+        }
+      },
+      MUIDataTableSearch : {
+        searchIcon : {
+          color : "#607d8b",
+          marginTop : "7px",
+          marginRight : "8px",
+        },
+        clearIcon : {
+          "&:hover" : {
+            color : "#607d8b"
+          }
+        },
+      },
+      MUIDataTableSelectCell : {
+        checkboxRoot : {
+          '&$checked' : {
+            color : '#607d8b',
+          },
+        },
+      },
+      MUIDataTableToolbar : {
+        iconActive : {
+          color : "#222"
+        },
+        icon : {
+          "&:hover" : {
+            color : "#607d8b"
+          }
+        },
+      },
+    }
+  })
+  getDarkMuiTheme = () => createTheme({
+    palette : {
+      type : "dark",
+    }
+  })
 
 
   /**
@@ -694,7 +745,6 @@ class DashboardComponent extends React.Component {
     let versionSort = "asc";
     let proxySort = "asc";
     let tempComp = [];
-
     components
       .filter((comp) => comp.namespace === self.state.activeMeshScanNamespace[mesh.name])
       .map((component) => tempComp.push(component))
@@ -876,22 +926,22 @@ class DashboardComponent extends React.Component {
     if (Array.isArray(components) && components.length)
       return (
         <Paper elevation={1} style={{ padding : "2rem", marginTop : "1rem" }}>
-
-          <MUIDataTable
-            className={this.props.classes.datatable}
-            title={
-              <>
-                <div style={{ display : "flex", alignItems : "center", marginBottom : "1rem" }}>
-                  <img src={mesh.icon} className={this.props.classes.icon} style={{ marginRight : "0.75rem" }} />
-                  <Typography variant="h6">{mesh.tag}</Typography>
-                </div>
-              </>
-            }
-            data={components}
-            options={options}
-            columns={columns}
-          />
-
+          <MuiThemeProvider theme={this.getMuiTheme()}>
+            <MUIDataTable
+              className={this.props.classes.datatable}
+              title={
+                <>
+                  <div style={{ display : "flex", alignItems : "center", marginBottom : "1rem" }}>
+                    <img src={mesh.icon} className={this.props.classes.icon} style={{ marginRight : "0.75rem" }} />
+                    <Typography variant="h6">{mesh.tag}</Typography>
+                  </div>
+                </>
+              }
+              data={components}
+              options={options}
+              columns={columns}
+            />
+          </MuiThemeProvider >
         </Paper>
       );
 
@@ -995,21 +1045,21 @@ class DashboardComponent extends React.Component {
     if (Array.isArray(resources) && resources.length)
       return (
         <Paper elevation={1} style={{ padding : "2rem" }}>
-
-          <MUIDataTable
-            className={this.props.classes.datatable}
-            title={
-              <>
-                <div style={{ display : "flex", alignItems : "center", marginBottom : "1rem" }}>
-                  <img src={"/static/img/all_mesh.svg"} className={this.props.classes.icon} style={{ marginRight : "0.75rem" }} />
-                  <Typography variant="h6">All Workloads</Typography>
-                </div>
-              </>
-            }
-            data={resources}
-            options={options}
-            columns={columns}
-          />
+          <MuiThemeProvider theme={this.getMuiTheme()}>
+            <MUIDataTable
+              title={
+                <>
+                  <div style={{ display : "flex", alignItems : "center", marginBottom : "1rem" }}>
+                    <img src={"/static/img/all_mesh.svg"} className={this.props.classes.icon} style={{ marginRight : "0.75rem" }} />
+                    <Typography variant="h6">All Workloads</Typography>
+                  </div>
+                </>
+              }
+              data={resources}
+              options={options}
+              columns={columns}
+            />
+          </MuiThemeProvider>
         </Paper>
       );
 
