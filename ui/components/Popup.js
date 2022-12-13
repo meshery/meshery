@@ -61,7 +61,7 @@ function MeshMapEarlyAccessCardPopup() {
   const handleOpen = () => {
     const timer = setTimeout(() => {
       setIsOpen(true);
-    }, 1)
+    }, 10000)
     return () => clearTimeout(timer);
   }
 
