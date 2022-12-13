@@ -92,7 +92,7 @@ export const submitGrafanaConfigure = (self, cb) => {
     (result) => {
       self.props.updateProgress({ showProgress : false });
       if (typeof result !== "undefined") {
-        self.props.enqueueSnackbar("Grafana was successfully configured!", { variant : "success",
+        self.props.enqueueSnackbar("Grafana was configured!", { variant : "success",
           autoHideDuration : 2000,
           action : function Loader(key) {
             return (
@@ -276,7 +276,7 @@ class GrafanaComponent extends Component {
       (result) => {
         this.props.updateProgress({ showProgress : false });
         if (typeof result !== "undefined") {
-          this.props.enqueueSnackbar("Grafana successfully pinged!", { variant : "success",
+          this.props.enqueueSnackbar("Grafana pinged!", { variant : "success",
             autoHideDuration : 2000,
             action : (key) => (
               <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
@@ -332,7 +332,7 @@ class GrafanaComponent extends Component {
             selectedBoardsConfigs,
           }, });
 
-          self.props.enqueueSnackbar("Grafana board selection was successfully saved!", { variant : "success",
+          self.props.enqueueSnackbar("Grafana board selection was saved!", { variant : "success",
             autoHideDuration : 2000,
             action : (key) => (
               <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>

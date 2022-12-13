@@ -55,7 +55,7 @@ export const submitPrometheusConfigure = (self, cb = () => {}) => {
     (result) => {
       self.props.updateProgress({ showProgress : false });
       if (typeof result !== "undefined") {
-        self.props.enqueueSnackbar("Prometheus was successfully configured!", { variant : "success",
+        self.props.enqueueSnackbar("Prometheus was configured!", { variant : "success",
           autoHideDuration : 2000,
           action : function Loader(key) {
             return (
@@ -215,7 +215,7 @@ class PrometheusComponent extends Component {
       (result) => {
         self.props.updateProgress({ showProgress : false });
         if (typeof result !== "undefined") {
-          self.props.enqueueSnackbar("Prometheus successfully pinged!", { variant : "success",
+          self.props.enqueueSnackbar("Prometheus pinged!", { variant : "success",
             autoHideDuration : 2000,
             action : (key) => (
               <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
