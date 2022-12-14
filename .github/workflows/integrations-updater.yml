@@ -7,12 +7,13 @@ on:
     - cron:  '0 0 * * *'  # Run the job every day at midnight
   workflow_dispatch:
     inputs:
-      published-only:
+      flags:
+        default: "--published-only"
         type: choice
         description: Only publish integrations marked for publishing
         options: 
         - --published-only
-
+        - --update-docs
 
 # This workflow uses the service account: meshery-integrations-sheet@meshery-237716.iam.gserviceaccount.com
 # See these instructions for setup - https://theoephraim.github.io/node-google-spreadsheet/#/getting-started/authentication
