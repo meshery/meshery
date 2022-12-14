@@ -54,8 +54,9 @@ const styles = makeStyles((theme) => ({
   }
 }));
 
-function MeshMapEarlyAccessCardPopup() {
-  const [isOpen, setIsOpen] = useState(true);
+function MeshMapEarlyAccessCardPopup(props) {
+  // props would be coming and you can change anything 
+  const [isOpen, setIsOpen] = useState(props.isOpen);
   const cookies = new Cookies('registered');
 
   const handleOpen = () => {
@@ -76,12 +77,13 @@ function MeshMapEarlyAccessCardPopup() {
     }
   }, [])
 
-  if (isOpen) {
-    return <MeshMapEarlyAccessCard closeForm={() => setIsOpen(false)} />
+  if (props.isOpen) {
+    return <MeshMapEarlyAccessCard closeForm={() => setIsOpen(false)} rootStyle={props.rootStyle} />
   }
+  return <></>;
 }
 
-export function MeshMapEarlyAccessCard({ rootStyle = {}, closeForm = () => {} }) {
+export function MeshMapEarlyAccessCard({ rootStyle, closeForm = () => {} }) {
   const classes = styles();
 
   const handleSignUp = (e) => {
