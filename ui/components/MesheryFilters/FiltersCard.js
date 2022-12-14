@@ -116,7 +116,7 @@ function FiltersCard({
               Deploy
               </TooltipButton>
               {visibility === "public" ? <TooltipButton
-                title="clone"
+                title="Clone"
                 variant="contained"
                 color="primary"
                 onClick={(ev) =>

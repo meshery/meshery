@@ -102,7 +102,7 @@ function MesheryApplicationCard({
 
             <div className={classes.cardButtons} >
               <TooltipButton
-                title="undeploy"
+                title="Undeploy"
                 variant="contained"
                 className={classes.undeployButton}
                 onClick={(ev) =>
