@@ -1073,28 +1073,30 @@ class Navigator extends React.Component {
     this.updatenavigatorComponentsMenus();
 
     const Title = (
-      <ListItem
-        component="a"
-        onClick={this.handleTitleClick}
-        className={classNames(classes.firebase, classes.item, classes.itemCategory, classes.cursorPointer)}
-      >
-        <img
-          className={isDrawerCollapsed
-            ? classes.mainLogoCollapsed
-            : classes.mainLogo}
-          src="/static/img/meshery-logo.png"
+      <div style={ !this.state.capabilitiesRegistryObj?.isNavigatorComponentEnabled([DASHBOARD]) ? cursorNotAllowed : {}}>
+        <ListItem
+          component="a"
           onClick={this.handleTitleClick}
-        />
-        <img
-          className={isDrawerCollapsed
-            ? classes.mainLogoTextCollapsed
-            : classes.mainLogoText}
-          src="/static/img/meshery-logo-text.png"
-          onClick={this.handleTitleClick}
-        />
+          className={classNames(classes.firebase, classes.item, classes.itemCategory, classes.cursorPointer,!this.state.capabilitiesRegistryObj?.isNavigatorComponentEnabled([DASHBOARD]) && classes.disabled)}
+        >
+          <img
+            className={isDrawerCollapsed
+              ? classes.mainLogoCollapsed
+              : classes.mainLogo}
+            src="/static/img/meshery-logo.png"
+            onClick={this.handleTitleClick}
+          />
+          <img
+            className={isDrawerCollapsed
+              ? classes.mainLogoTextCollapsed
+              : classes.mainLogoText}
+            src="/static/img/meshery-logo-text.png"
+            onClick={this.handleTitleClick}
+          />
 
-        {/* <span className={isDrawerCollapsed ? classes.isHidden : classes.isDisplayed}>Meshery</span> */}
-      </ListItem>
+          {/* <span className={isDrawerCollapsed ? classes.isHidden : classes.isDisplayed}>Meshery</span> */}
+        </ListItem>
+      </div>
     )
     const Menu = (
       <List disablePadding className={classes.hideScrollbar}>
