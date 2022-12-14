@@ -8,9 +8,8 @@ display-title: "false"
 {% assign sorted_pages = site.pages | sort: "name" | alphabetical %}
 
 <div style="display: block; text-align: center; margin-bottom: 30px;">
-    <a href="https://layer5.io/meshery">
-    <img style="width: calc(100% / 2.5); " 
-         src="/assets/img/meshery/meshery-logo-light-text-side.svg" />
+     <a href="https://layer5.io/meshery" class="svg-lg">
+        {% include svg/meshery-logo.html %}
     </a>
 </div>
 <p style="margin:auto;padding:1.6rem;font-size: 2rem;">Meshery is the open source, cloud native management plane that enables the adoption, operation, and management of Kubernetes, any service mesh, and their workloads.</p>

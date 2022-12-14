@@ -26,6 +26,7 @@
   --image-color: brightness(15%);
   --image-filter-light: invert(27%) sepia(34%) saturate(217%) hue-rotate(154deg) brightness(92%) contrast(95%);
   --image-filter-dark: brightness(40) invert(1);
+  --meshery-logo-text-fill:#3c494f;
 
   --logo-filter: brightness(100%) invert(0);
 
@@ -61,6 +62,7 @@
 }
 
 .dark-mode {
+  
   --color-primary-light: #212529;
   --color-primary-medium: #343a40;
   --color-primary-dark: #495057;
@@ -115,6 +117,7 @@
   --image-filter-light: brightness(40) invert(1);
   --image-filter-dark: invert(27%) sepia(34%) saturate(217%) hue-rotate(154deg) brightness(92%) contrast(95%);
   --logo-filter: invert(0.9) grayscale(1.6) brightness(1.5);
+  --meshery-logo-text-fill:#ffffff;
 
   --integrations-bg: #676e76;
   --integrations-box-shadow: 4px 4px 14px #41454a, -4px -4px 10px #78808a;

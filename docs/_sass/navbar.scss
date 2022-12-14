@@ -61,26 +61,55 @@ header {
     justify-content: space-between;
   }
 
-  & .nav-toggle-btn {
-    border-radius: 100%;
-    border: none;
-    padding: 7px;
+  & .icon-container {
     display: flex;
     align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    // box-shadow: inset 3px 3px 7px #eff0f1, inset -3px -3px 2px #fff;
-    display: none;
-    background: none;
 
-    @media (max-width: 1200px) {
-      display: block;
+    .nav-mode-icon {
+      background: none;
+      border: none;
+
+      &>img {
+        padding: 0 !important;
+        margin-left: 1rem;
+        width: 2.5rem;
+        height: 2.5rem;
+        filter: var(--image-color);
+        transition: filter .3s;
+      }
+
+      @media (max-width:1140px) {
+        // margin-left: .5rem !important;
+        // margin-top: .5rem !important;
+      }
+
+      @media (max-width:840px) {
+        // margin-left: 1rem !important;
+        // margin-top: .5rem !important;
+      }
     }
 
-    &:hover,
-    &:active,
-    &:focus {
-      outline: none;
+    & .nav-toggle-btn {
+      border-radius: 100%;
+      border: none;
+      padding: 7px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      // box-shadow: inset 3px 3px 7px #eff0f1, inset -3px -3px 2px #fff;
+      display: none;
+      background: none;
+
+      @media (max-width: 1200px) {
+        display: block;
+      }
+
+      &:hover,
+      &:active,
+      &:focus {
+        outline: none;
+      }
     }
 
     & #document-nav-toggle-btn {
@@ -102,7 +131,7 @@ header {
     line-height: inherit;
     white-space: nowrap;
 
-    & > .navbar-logo {
+    &>.navbar-logo {
       display: flex;
       align-items: center;
 
@@ -113,6 +142,10 @@ header {
       @media (max-width: 600px) {
         justify-content: center;
         flex-direction: column;
+
+        & > span {
+          margin-left: 5rem;
+        }
       }
 
       & img,
@@ -123,7 +156,7 @@ header {
         margin-right: 0.5rem;
       }
 
-      & > span {
+      &>span {
         font-weight: 600 !important;
         color: var(--color-secondary-medium);
       }
@@ -159,6 +192,7 @@ header {
       flex-direction: row;
       gap: 2rem;
       list-style: none;
+
       @media (max-width: 1200px) {
         width: 100%;
         background: var(--background-grey);
@@ -204,4 +238,3 @@ header {
     }
   }
 }
-
