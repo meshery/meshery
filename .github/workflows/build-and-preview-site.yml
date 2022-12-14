@@ -8,7 +8,7 @@ on:
       - 'docs/**'
 jobs:
   trigger-site-preview:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout 🛎️
         uses: actions/checkout@master

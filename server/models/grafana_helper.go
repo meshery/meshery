@@ -171,10 +171,10 @@ func (g *GrafanaClient) ProcessBoard(ctx context.Context, c *sdk.Client, board *
 				if ok {
 					if !strings.HasPrefix(dataSource, "$") {
 						dsName = dataSource
-						} else {
-							dsName = tmpDsName[strings.Replace(dataSource, "$", "", 1)]
-						}
+					} else {
+						dsName = tmpDsName[strings.Replace(dataSource, "$", "", 1)]
 					}
+				}
 			} else {
 				err := fmt.Errorf("unable to get datasource name for tmpvar: %+#v", tmpVar)
 				logrus.Error(err)
@@ -214,7 +214,7 @@ func (g *GrafanaClient) ProcessBoard(ctx context.Context, c *sdk.Client, board *
 						}
 					}
 				}
-				
+
 				grafBoard.Panels = append(grafBoard.Panels, p1)
 			} else if p1.OfType != sdk.TextType && p1.OfType != sdk.TableType && p1.Type == "row" && len(p1.Panels) > 0 { // Looking for Panels with Row
 				for _, p2 := range p1.Panels { // Adding Panels inside the Row Panel to grafBoard

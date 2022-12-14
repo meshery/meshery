@@ -1,7 +1,7 @@
 package mesh
 
 import (
-	"fmt"
+	"errors"
 	"io"
 	"net/http"
 	"net/url"
@@ -21,7 +21,7 @@ import (
 func checkArgs(n int) cobra.PositionalArgs {
 	return func(cmd *cobra.Command, args []string) error {
 		if len(args) < n || args[0] == "" {
-			return fmt.Errorf("the '-a' (Adapter to use for installation) argument is required in the mesh command")
+			return errors.New(utils.MeshError("'--adapter' (Adapter to use for installation) argument is required in the 'mesheryctl mesh deploy' command.\n"))
 		}
 		return nil
 	}
