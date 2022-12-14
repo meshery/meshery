@@ -78,6 +78,8 @@ function MeshMapEarlyAccessCardPopup() {
 
   if (isOpen) {
     return <MeshMapEarlyAccessCard closeForm={() => setIsOpen(false)} />
+  } else {
+    return <></>
   }
 }
 
