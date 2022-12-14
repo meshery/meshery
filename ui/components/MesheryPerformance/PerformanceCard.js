@@ -10,7 +10,7 @@ import PerformanceResults from "./PerformanceResults";
 import FlipCard from "../FlipCard";
 import { makeStyles } from "@material-ui/core/styles";
 
-const useStyles= makeStyles(() => ({
+const useStyles= makeStyles((theme) => ({
   cardButtons : {
     display : "flex",
     justifyContent : "flex-end",
@@ -44,7 +44,10 @@ const useStyles= makeStyles(() => ({
   },
   lastRunText : {
     marginRight : "0.5rem"
-  }
+  },
+  resultText : {
+    color : theme.palette.secondary.lightText,
+  },
 }))
 
 function PerformanceCard({
@@ -96,7 +99,7 @@ function PerformanceCard({
               <Typography variant="h2" component="div" color="primary" style={{ marginRight : "0.75rem" }}>
                 {(results).toLocaleString('en')}
               </Typography>
-              <Typography variant="body1" style={{ color : "rgba(0, 0, 0, 0.54)" }} component="div">
+              <Typography variant="body1" className={classes.resultText} component="div">
                 Results
               </Typography>
             </div>

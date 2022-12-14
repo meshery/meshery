@@ -16,7 +16,7 @@ import dataFetch from '../lib/data-fetch';
 
 const styles = (theme) => ({
   grid : { padding : theme.spacing(2), },
-  secondaryTable : { borderRadius : 10 },
+  secondaryTable : { borderRadius : 10, backgroundColor : theme.palette.secondary.elevatedComponents2, },
   tableHeader : {
     fontWeight : 'bolder',
     fontSize : 18,
@@ -99,12 +99,8 @@ class MesherySMIResults extends Component {
     const { classes, user } = this.props;
     const { smi_pageSize, smi_results, count } = this.state;
 
-    const smi_resultsForDisplay = [];
-    if (smi_results && smi_results?.results) {
-      smi_results?.results?.map((val) => {
-        smi_resultsForDisplay.push([val.id, val.date, val.mesh_name, val.mesh_version, val.passing_percentage, val.status])
-      })
-    }
+    const smi_resultsForDisplay = [["fdjfhdjs"]];
+
 
     const smi_columns = [
       {

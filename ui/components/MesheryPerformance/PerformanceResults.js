@@ -46,7 +46,7 @@ const styles = (theme) => ({
   },
   share : {
     transform : "scaleX(-1)",
-    color : "#000"
+    color : theme.palette.secondary.icon2,
   },
   paper : {
     padding : theme.spacing(1)
