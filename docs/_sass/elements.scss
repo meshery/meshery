@@ -48,11 +48,11 @@ ul{
     padding-inline-start: 2rem;
 
     & a{
-        color: var(--brand-color-secondary);
+        color: var(--color-secondary-medium);
         transition: all .3s;
 
         &:hover{
-            color: var(--brand-color-primary);
+            color: var(--color-secondary-dark);
         }
     }
 }
