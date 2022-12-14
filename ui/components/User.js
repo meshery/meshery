@@ -61,7 +61,7 @@ function ThemeToggler({
 
   return (
     <>
-      Dark Mode <Checkbox checked={themeToggle} onChange={themeToggler} />
+      Dark Mode <Checkbox color="success" checked={themeToggle} onChange={themeToggler} />
 
     </>
   )

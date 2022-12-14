@@ -3,12 +3,13 @@ import React, { useEffect } from "react";
 import Box from "@material-ui/core/Box";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
-import { Button, IconButton, makeStyles, Typography, withStyles } from "@material-ui/core";
+import { Button, IconButton, makeStyles, Typography, useTheme, withStyles } from "@material-ui/core";
 import AddIcon from "@material-ui/icons/Add";
 import SimpleAccordion from "./Accordion";
 import { EnlargedTextErrorTooltip, EnlargedTextTooltip } from "../EnlargedTextTooltip";
 import HelpOutlineIcon from "../../../../assets/icons/HelpOutlineIcon";
 import { isMultiSelect, getDefaultFormState } from "@rjsf/utils";
+import ErrorOutlineIcon from "../../../../assets/icons/ErrorOutlineIcon";
 const styles = (theme) => ({
   typography : {
     fontSize : "0.8rem",
@@ -19,7 +20,7 @@ const styles = (theme) => ({
     },
   }
 });
-import ErrorOutlineIcon from "../../../../assets/icons/ErrorOutlineIcon";
+const theme=useTheme();
 function getTitleForItem(props) {
   const title = getTitle(props);
 
@@ -187,7 +188,7 @@ const DefaultNormalArrayFieldTemplate = (props) => {
               (props.uiSchema["ui:description"] || props.schema.description) &&
               <EnlargedTextTooltip title={props.uiSchema["ui:description"] || props.schema.description}>
                 <IconButton disableTouchRipple="true" disableRipple="true">
-                  <HelpOutlineIcon width="14px" height="14px" fill="black" style={{ marginLeft : '4px' }} />
+                  <HelpOutlineIcon width="14px" height="14px" fill={theme.palette.type === 'dark' ? "white" : "black"} style={{ marginLeft : '4px' }} />
                 </IconButton>
               </EnlargedTextTooltip>
             }

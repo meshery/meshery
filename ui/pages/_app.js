@@ -356,11 +356,7 @@ class MesheryApp extends App {
                   theme={this.state.theme}
                   themeSetter={this.themeSetter}
                 />
-                <main style={{
-                  flex : 1,
-                  padding : '48px 36px 24px',
-                  backgroundColor : this.state.theme === "dark" ? '#303030' : '#eaeff1',
-                }}>
+                <main className={classes.mainContent}>
                   <MuiPickersUtilsProvider utils={MomentUtils}>
                     <Component
                       pageContext={this.pageContext}

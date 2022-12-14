@@ -22,7 +22,7 @@ export var darkTheme = createTheme({
     type : "dark",
     primary : blueGrey,
     secondary : {
-      main : '#EE5351',
+      main : '#303030',
       dark : '#121212',
       text : '#FFF',
       text2 : '#7494a1',
@@ -47,7 +47,8 @@ export var darkTheme = createTheme({
       canvas : '#1F1F1F',
       brightness : 'brightness(200%)',
       switcherButtons : '#1e1e1e',
-
+      honeyComb : '#202020',
+      filterChipBackground : '#222222'
     },
   },
   p : {
@@ -132,10 +133,11 @@ darkTheme = {
         height : 32,
       },
     },
-    // Global scrollbar styles
+    // Global scrollbar and body styles
     MuiCssBaseline : {
       "@global" : {
         body : {
+          backgroundColor : "#303030",
           scrollbarColor : "#6b6b6b #263238",
           "&::-webkit-scrollbar, & *::-webkit-scrollbar" : {
             backgroundColor : "#263238",
@@ -172,15 +174,6 @@ darkTheme = {
 };
 
 let theme = createTheme({
-  overrides : {
-    MuiCssBaseline : {
-      "@global" : {
-        body : {
-          backgroundColor : "red"
-        }
-      }
-    }
-  },
   typography : {
     useNextVariants : true,
     h5 : {
@@ -198,7 +191,7 @@ let theme = createTheme({
     // },
     primary : blueGrey,
     secondary : {
-      main : '#EE5351',
+      main : '#ebeff1',
       dark : '#455a64',
       text : '#000',
       text2 : 'rgba(57, 102, 121, .9)',
@@ -223,6 +216,8 @@ let theme = createTheme({
       canvas : '#fff',
       brightness : 'none',
       switcherButtons : '#335c6d',
+      honeyComb : '#F0F0F0',
+      filterChipBackground : '#CCCCCC'
     },
   },
   shape : { borderRadius : 8, },
@@ -301,9 +296,10 @@ theme = {
     // Global scrollbar styles
     MuiCssBaseline : {
       "@global" : {
+
         body : {
+          backgroundColor : "#eaeff1",
           scrollbarColor : "#DDDDDD #FFF",
-          backgroundColor : "red",
           "&::-webkit-scrollbar, & *::-webkit-scrollbar" : {
             backgroundColor : "#DDDDDD",
             width : '0.7rem',
