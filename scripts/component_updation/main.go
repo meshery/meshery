@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 
 	"github.com/layer5io/component_scraper/pkg"
@@ -28,10 +29,19 @@ func main() {
 		return
 	}
 	var updateDocs bool //If updateDocs is set true then it updates the website docs instead of updating the components onto the filesystem
+	updateOnlyPublished := false
 	var pathToIntegrations string
-	if len(os.Args) > 3 && os.Args[2] == "--update-docs" {
-		updateDocs = true
-		pathToIntegrations = os.Args[3]
+	if len(os.Args) > 3 {
+		if os.Args[2] == "--update-docs" {
+			updateDocs = true
+			pathToIntegrations = os.Args[3]
+			if len(os.Args) > 4 && os.Args[4] == "--only-published" {
+				updateOnlyPublished = true
+			}
+		}
+		if os.Args[2] == "--only-published" {
+			updateOnlyPublished = true
+		}
 	}
 	filep, err := pkg.DownloadCSV(url)
 	if err != nil {
@@ -54,8 +64,14 @@ func main() {
 		os.Remove(file.Name())
 		for _, out := range output {
 			var t pkg.TemplateAttributes
+			publishValue, err := strconv.ParseBool(out["Publish?"])
+			if err != nil {
+				publishValue = false
+			}
+			if updateOnlyPublished && !publishValue {
+				continue
+			}
 			for key, val := range out {
-
 				switch key {
 				case "Project Name":
 					t.Title = val
