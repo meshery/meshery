@@ -21,7 +21,7 @@ jobs:
   golangci:
     name: golangci-lint
     if: github.repository == 'meshery/meshery'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@master
       - uses: actions/setup-go@master
@@ -72,7 +72,7 @@ jobs:
           args: release --snapshot --skip-publish --rm-dist
   mesheryctl_docs:
     if: "always() && github.event_name != 'pull_request' "
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Skip if needed
         run: |

@@ -13,7 +13,7 @@ jobs:
   notify-meshmap-build:
     name: Notify Meshmap Build
     if: github.repository == 'meshery/meshery'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
     - name: trigger plugins for edge
       if: startsWith(github.ref, 'refs/tags/') != true && success()

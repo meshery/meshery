@@ -413,8 +413,6 @@ func (l *RemoteProvider) Logout(w http.ResponseWriter, req *http.Request) error 
 	// necessary to inform remote provider to return back to Meshery UI
 	cReq.AddCookie(&http.Cookie{Name: "return_to", Value: "provider_ui"})
 
-	logrus.Debug("headers: ", cReq.Header)
-
 	// make request to remote provider with contructed URL and updated headers (like session_cookie, return_to cookies)
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
@@ -431,7 +429,6 @@ func (l *RemoteProvider) Logout(w http.ResponseWriter, req *http.Request) error 
 		return err
 	}
 	logrus.Infof("response successfully retrieved from remote provider")
-	logrus.Debug("resp: ", resp)
 	// if request succeeds then redirect to Provider UI
 	// And empties the token and session cookies
 	if resp.StatusCode == http.StatusFound || resp.StatusCode == http.StatusOK {
