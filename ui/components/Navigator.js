@@ -44,7 +44,7 @@ import { ButtonGroup, IconButton, Tooltip } from "@material-ui/core";
 import ExtensionPointSchemaValidator from "../utils/ExtensionPointSchemaValidator";
 import dataFetch from "../lib/data-fetch";
 import { Collapse } from "@material-ui/core";
-import { cursorNotAllowed, disabledStyle } from "../css/disableComponent.styles";
+import { cursorNotAllowed, disabledStyle, disabledStyleWithOutOpacity } from "../css/disableComponent.styles";
 import { CapabilitiesRegistry } from "../utils/disabledComponents";
 import { APPLICATION, APP_MESH, CILIUM_SM, CITRIX_SM, DESIGN, CONFIGURATION, CONFORMANCE, CONSUL, DASHBOARD, FILTER, ISTIO, KUMA, LIFECYCLE, LINKERD, NETWORK_SM, NGINX, OSM, PERFORMANCE, TRAEFIK_SM, PROFILES, SMI, TOGGLER } from "../constants/navigator"
 import AwsAppMeshIcon from "../assets/icons/LifecycleIcons/AwsAppMeshIcon";
@@ -296,6 +296,7 @@ const styles = (theme) => ({
     }
   },
   disabled : disabledStyle,
+  disableLogo : disabledStyleWithOutOpacity,
   cursorNotAllowed : cursorNotAllowed
 });
 
@@ -1077,7 +1078,7 @@ class Navigator extends React.Component {
         <ListItem
           component="a"
           onClick={this.handleTitleClick}
-          className={classNames(classes.firebase, classes.item, classes.itemCategory, classes.cursorPointer,!this.state.capabilitiesRegistryObj?.isNavigatorComponentEnabled([DASHBOARD]) && classes.disabled)}
+          className={classNames(classes.firebase, classes.item, classes.itemCategory, classes.cursorPointer,!this.state.capabilitiesRegistryObj?.isNavigatorComponentEnabled([DASHBOARD]) && classes.disableLogo)}
         >
           <img
             className={isDrawerCollapsed
