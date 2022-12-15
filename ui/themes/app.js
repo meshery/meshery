@@ -22,7 +22,8 @@ export var darkTheme = createTheme({
     type : "dark",
     primary : blueGrey,
     secondary : {
-      main : '#303030',
+      main : '#EE5351',
+      primeColor : '#303030',
       dark : '#121212',
       text : '#FFF',
       text2 : '#7494a1',
@@ -191,7 +192,8 @@ let theme = createTheme({
     // },
     primary : blueGrey,
     secondary : {
-      main : '#ebeff1',
+      main : '#EE5351',
+      primeColor : '#ebeff1',
       dark : '#455a64',
       text : '#000',
       text2 : 'rgba(57, 102, 121, .9)',

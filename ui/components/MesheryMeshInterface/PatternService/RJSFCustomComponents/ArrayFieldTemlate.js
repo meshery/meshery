@@ -20,7 +20,6 @@ const styles = (theme) => ({
     },
   }
 });
-const theme=useTheme();
 function getTitleForItem(props) {
   const title = getTitle(props);
 
@@ -169,7 +168,7 @@ const DefaultFixedArrayFieldTemplate = (props) => {
 };
 
 const DefaultNormalArrayFieldTemplate = (props) => {
-  const { classes } = props;
+  const { classes,theme } = props;
   return (
     <Paper className={classes.root} elevation={0}>
       <Box p={1}>
@@ -253,4 +252,4 @@ const DefaultNormalArrayFieldTemplate = (props) => {
   );
 };
 
-export default withStyles(styles)(ArrayFieldTemplate);
+export default withStyles(styles,{ withTheme : true })(ArrayFieldTemplate);
