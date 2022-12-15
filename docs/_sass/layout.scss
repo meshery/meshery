@@ -59,5 +59,12 @@ ol {
 
   @media (max-width: 75em) {
   }
+
+  & #breadcrumbs{
+    font-size: 1.5rem;
+    & a{
+      color:var(--brand-color-secondary)
+    }
+  }
 }
 

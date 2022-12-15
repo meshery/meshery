@@ -76,6 +76,7 @@ header {
         height: 2.5rem;
         filter: var(--image-color);
         transition: filter .3s;
+        cursor: pointer;
       }
 
       @media (max-width:1140px) {
@@ -113,21 +114,21 @@ header {
     }
 
     & #document-nav-toggle-btn {
-      width: 2.5rem;
-      height: 2.5rem;
+      width: 3.2rem;
+      height: 3.2rem;
       fill: var(--color-secondary-dark);
     }
 
     & #menu-nav-toggle-btn {
-      width: 2.5rem;
-      height: 2.5rem;
+      width: 3.2rem;
+      height: 3.2rem;
       stroke: var(--color-secondary-dark);
     }
   }
 
   & .navbar-brand {
     display: inline-block;
-    font-size: 2rem;
+    font-size: 3.2rem;
     line-height: inherit;
     white-space: nowrap;
 

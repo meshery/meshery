@@ -26,28 +26,26 @@
   --image-color: brightness(15%);
   --image-filter-light: invert(27%) sepia(34%) saturate(217%) hue-rotate(154deg) brightness(92%) contrast(95%);
   --image-filter-dark: brightness(40) invert(1);
-  --meshery-logo-text-fill:#3c494f;
+  --meshery-logo-text-fill: #3c494f;
 
   --logo-filter: brightness(100%) invert(0);
 
   --background-primary: linear-gradient(250deg, #477e96 0%, #00b39f 35%, rgb(60, 73, 79) 100%);
   --background-primary-2: linear-gradient(100deg, #477e96 0%, #00b39f 35%, #5a6f79 100%);
   --background-light: linear-gradient(to right top, #fff, #fff);
-  --background-light-cards: linear-gradient(
-    to left bottom,
-    #f1f3f5,
-    #f4f5f7,
-    #f7f7f9,
-    #ffffff,
-    #ffffff,
-    #ffffff,
-    #ffffff,
-    #ffffff,
-    #ffffff,
-    #f7f7f9,
-    #f4f5f7,
-    #f1f3f5
-  );
+  --background-light-cards: linear-gradient(to left bottom,
+      #f1f3f5,
+      #f4f5f7,
+      #f7f7f9,
+      #ffffff,
+      #ffffff,
+      #ffffff,
+      #ffffff,
+      #ffffff,
+      #ffffff,
+      #f7f7f9,
+      #f4f5f7,
+      #f1f3f5);
   --background-grey: linear-gradient(to right top, #dee2e6, #d2d7dc, #c5cbd1, #b9c0c7, #adb5bd);
   --background-grey-secondary: linear-gradient(to right top, #868e96, #767e86, #676e76, #585f66, #495057);
   --background-neumorphic: #ecf0f3;
@@ -62,7 +60,7 @@
 }
 
 .dark-mode {
-  
+
   --color-primary-light: #212529;
   --color-primary-medium: #343a40;
   --color-primary-dark: #495057;
@@ -79,45 +77,41 @@
 
   // --box-shadow-primary:4px 4px 8px rgba(255, 255, 255, 0.4);
 
-  --background-light: linear-gradient(
-    to right top,
-    #3d3d3d,
-    #343434,
-    #2b2b2b,
-    #222222,
-    #1a1a1a,
-    #181818,
-    #161616,
-    #141414,
-    #181818,
-    #1c1c1c,
-    #212121,
-    #252525
-  );
+  --background-light: linear-gradient(to right top,
+      #3d3d3d,
+      #343434,
+      #2b2b2b,
+      #222222,
+      #1a1a1a,
+      #181818,
+      #161616,
+      #141414,
+      #181818,
+      #1c1c1c,
+      #212121,
+      #252525);
   --background-grey: linear-gradient(to right top, #495057, #495057, #495057, #495057, #495057, #474e55, #464c53, #444a51, #40464d, #3c4248, #383e44, #343a40);
   --background-grey-secondary: linear-gradient(to right bottom, #dee2e6, #d2d7dc, #c5cbd1, #b9c0c7, #adb5bd);
-  --background-light-cards: linear-gradient(
-    to right top,
-    #3d3d3d,
-    #343434,
-    #2b2b2b,
-    #222222,
-    #1a1a1a,
-    #181818,
-    #161616,
-    #141414,
-    #181818,
-    #1c1c1c,
-    #212121,
-    #252525
-  );
+  --background-light-cards: linear-gradient(to right top,
+      #3d3d3d,
+      #343434,
+      #2b2b2b,
+      #222222,
+      #1a1a1a,
+      #181818,
+      #161616,
+      #141414,
+      #181818,
+      #1c1c1c,
+      #212121,
+      #252525);
   --background-neumorphic: #212529;
 
   --image-color: brightness(0) invert(1);
   --image-filter-light: brightness(40) invert(1);
   --image-filter-dark: invert(27%) sepia(34%) saturate(217%) hue-rotate(154deg) brightness(92%) contrast(95%);
   --logo-filter: invert(0.9) grayscale(1.6) brightness(1.5);
-  --meshery-logo-text-fill:#ffffff;
+  --meshery-logo-text-fill: #ffffff;
 
   --integrations-bg: #676e76;
   --integrations-box-shadow: 4px 4px 14px #41454a, -4px -4px 10px #78808a;
@@ -128,4 +122,3 @@
     --navbar-height: 9.5rem;
   }
 }
-
