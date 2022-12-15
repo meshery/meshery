@@ -10,7 +10,7 @@ jobs:
     if: github.repository == 'meshery/meshery'
     env:
       RELEASE_CHANNEL: "stable"
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Check out code
         uses: actions/checkout@master

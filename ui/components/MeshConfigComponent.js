@@ -265,7 +265,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
         updateProgress({ showProgress : false });
         if (typeof result !== "undefined") {
           handleLastDiscover(index);
-          enqueueSnackbar("Kubernetes was successfully pinged!", {
+          enqueueSnackbar("Kubernetes was pinged!", {
             variant : "success",
             "data-cy" : "k8sSuccessSnackbar",
             autoHideDuration : 2000,
@@ -805,7 +805,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
 
           updateProgress({ showProgress : false });
           if (!res.operator.error && res.operator.status === ENABLED ) {
-            enqueueSnackbar("Operator was successfully pinged!", {
+            enqueueSnackbar("Operator was pinged!", {
               variant : "success",
               autoHideDuration : 2000,
               action : (key) => (
@@ -830,7 +830,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
         updateProgress({ showProgress : false });
         if (res.controller.name === "broker" && res.controller.status.includes("CONNECTED")) {
           let runningEndpoint = res.controller.status.substring("CONNECTED".length).trim();
-          enqueueSnackbar(`Broker was successfully pinged. ${runningEndpoint != "" ? `Running at ${runningEndpoint}` : ""}`, {
+          enqueueSnackbar(`Broker was pinged. ${runningEndpoint != "" ? `Running at ${runningEndpoint}` : ""}`, {
             variant : "success",
             action : (key) => (
               <IconButton key="close" aria-label="close" color="inherit" onClick={() => closeSnackbar(key)}>
@@ -884,7 +884,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
           handleError("MeshSync could not be reached")("MeshSync is unavailable");
         } else {
           let publishEndpoint = res.controller.status.substring("ENABLED".length).trim()
-          enqueueSnackbar(`MeshSync was successfully pinged. ${publishEndpoint != "" ? `Publishing to ${publishEndpoint}` : ""}`, {
+          enqueueSnackbar(`MeshSync was pinged. ${publishEndpoint != "" ? `Publishing to ${publishEndpoint}` : ""}`, {
             variant : "success",
             action : (key) => (
               <IconButton key="close" aria-label="close" color="inherit" onClick={() => closeSnackbar(key)}>

@@ -42,7 +42,7 @@ import {
 import dataFetch from "../../lib/data-fetch";
 import MesheryChart from "../MesheryChart";
 import LoadTestTimerDialog from "../load-test-timer-dialog";
-import GrafanaCustomCharts from "../GrafanaCustomCharts";
+import GrafanaCustomCharts from "../telemetry/grafana/GrafanaCustomCharts";
 import { durationOptions } from "../../lib/prePopulatedOptions";
 import fetchControlPlanes from "../graphql/queries/ControlPlanesQuery";
 import { ctxUrl, getK8sClusterIdsFromCtxId } from "../../utils/multi-ctx";
@@ -329,7 +329,7 @@ class MesheryPerformanceComponent extends React.Component {
           });
 
           if (generateNotif) {
-            this.props.enqueueSnackbar("Performance Profile Successfully Created!", {
+            this.props.enqueueSnackbar("Performance Profile Created!", {
               variant : "success",
               autoHideDuration : 2000,
               action : (key) => (
@@ -420,7 +420,7 @@ class MesheryPerformanceComponent extends React.Component {
     return (result) => {
       const { testName, meshName, url, qps, c, t, loadGenerator } = this.state;
       if (typeof result !== "undefined" && typeof result.runner_results !== "undefined") {
-        self.props.enqueueSnackbar("Successfully fetched the data.", {
+        self.props.enqueueSnackbar("fetched the data.", {
           variant : "success",
           autoHideDuration : 2000,
           action : (key) => (
@@ -455,7 +455,7 @@ class MesheryPerformanceComponent extends React.Component {
     this.eventStream.onerror = this.handleError(
       "Connection to the server got disconnected. Load test might be running in the background. Please check the results page in a few."
     );
-    this.props.enqueueSnackbar("Load test has been successfully submitted", {
+    this.props.enqueueSnackbar("Load test has been submitted", {
       variant : "info",
       autoHideDuration : 1000,
       action : (key) => (
@@ -488,7 +488,7 @@ class MesheryPerformanceComponent extends React.Component {
           }
           break;
         case "error":
-          self.handleError("Load test did not run successfully with msg")(data.message);
+          self.handleError("Load test did not run with msg")(data.message);
           break;
         case "success":
           self.handleSuccess()(data.result);

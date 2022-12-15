@@ -2774,7 +2774,6 @@ func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, fr
 	// gets the session cookie from remote provider
 	sessionCookie := r.URL.Query().Get("session_cookie")
 
-	logrus.Debugf("token : %v", tokenString)
 	ck := &http.Cookie{
 		Name:     tokenName,
 		Value:    string(tokenString),
@@ -2850,7 +2849,7 @@ func (l *RemoteProvider) ExtractToken(w http.ResponseWriter, r *http.Request) {
 		"meshery-provider": l.Name(),
 		tokenName:          tokenString,
 	}
-	logrus.Debugf("encoded response : %v", resp)
+	logrus.Debugf("token sent for meshery-provider %v", l.Name())
 	if err := json.NewEncoder(w).Encode(resp); err != nil {
 		err = ErrEncoding(err, "Auth Details")
 		logrus.Error(err)

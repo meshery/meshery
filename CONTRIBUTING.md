@@ -203,7 +203,7 @@ make setup-ui-libs
 To build and export the UI code:
 
 ```
-make build-ui
+make ui-setup
 ```
 
 Now that the UI code is built, Meshery UI will be available at `http://localhost:9081`.
