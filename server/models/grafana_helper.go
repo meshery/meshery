@@ -73,7 +73,7 @@ func (g *GrafanaClient) makeRequest(ctx context.Context, queryURL, APIKey string
 		return nil, err
 	}
 	if !g.promMode {
-		req.Header.Set("Authorization", APIKey)
+		req.Header.Set("Authorization", "Bearer " + APIKey)
 	}
 	req.Header.Set("Accept", "application/json")
 	req.Header.Set("Content-Type", "application/json")
