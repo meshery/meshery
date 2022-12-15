@@ -18,6 +18,14 @@
     width: 90%;
     margin: 0 auto;
     overflow-y: auto;
+
+    @media (max-width: 75em) {
+      flex: 0 0 23%;
+      // overflow-x: scroll;
+    }
+    @media (max-width: 56.25em) {
+      display: none;
+    }
   
     &::-webkit-scrollbar{
       width: 10px;

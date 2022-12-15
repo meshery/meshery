@@ -45,6 +45,10 @@ header {
   z-index: 10;
   width: 100%;
   grid-column: 1/-1;
+
+  @media (max-width: 75em) {
+    flex: 0 0 100%;
+  }
 }
 
 .navbar {
@@ -72,8 +76,8 @@ header {
       &>img {
         padding: 0 !important;
         margin-left: 1rem;
-        width: 2.5rem;
-        height: 2.5rem;
+        width: 2.8rem;
+        height: 2.8rem;
         filter: var(--image-color);
         transition: filter .3s;
         cursor: pointer;
@@ -114,14 +118,14 @@ header {
     }
 
     & #document-nav-toggle-btn {
-      width: 3.2rem;
-      height: 3.2rem;
+      width: 2.8rem;
+      height: 2.8rem;
       fill: var(--color-secondary-dark);
     }
 
     & #menu-nav-toggle-btn {
-      width: 3.2rem;
-      height: 3.2rem;
+      width: 2.8rem;
+      height: 2.8rem;
       stroke: var(--color-secondary-dark);
     }
   }
@@ -186,6 +190,11 @@ header {
       transform: translateX(100%);
       transition: all 0.5s ease-in-out;
     }
+    @media (max-width: 37.5em) {
+     & ul{
+       font-size: 1.8rem;
+     } 
+    }
 
     & .navbar-nav {
       white-space: nowrap;
@@ -230,11 +239,14 @@ header {
       }
 
       & select {
-        font-size: 1.5rem;
+        font-size: inherit;
         font-weight: 400;
         border: 1px solid var(--color-grey-light);
         border-radius: 3px;
         background: var(--background-light);
+        & > *{
+          background: var(--color-primary-dark);
+        }
       }
     }
   }

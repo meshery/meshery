@@ -45,25 +45,40 @@ ol {
 .flex-container {
   display: grid;
   grid-template-columns: 2.2fr 6.3fr 1.5fr;
-  border-bottom: 3px dashed var(--brand-color-primary);
+  // border-bottom: 3px dashed var(--brand-color-primary);
 
+  @media (max-width: 81.25em) {
+    grid-template-columns: 2.2fr 5.8fr 2fr;
+  }
   @media (max-width: 75em) {
     display: flex;
-    flex-direction: column;
+    // flex-direction: column;
+    flex-wrap: wrap;
   }
+  
 }
 
 .main-container {
-  padding: 3.5rem 4.5rem;
+  padding: 3.5rem min(4.5vh,1vw);
   grid-column: 2 / span 1;
 
   @media (max-width: 75em) {
+    flex: 0 0 75%;
+    overflow-x: auto;
+  }
+
+  @media (max-width: 56.25em) {
+    flex: 0 0 100%;
   }
 
   & #breadcrumbs{
-    font-size: 1.5rem;
+    font-size: 1.4rem;
     & a{
-      color:var(--brand-color-secondary)
+      color:var(--color-grey-dark);
+      transition: all .3s;
+      &:hover{
+        color: var(--color-secondary-dark);
+      }
     }
   }
 }

@@ -47,6 +47,10 @@ ul{
     list-style: disc;
     padding-inline-start: 2rem;
 
+    @media (max-width: 37.5em) {
+          font-size: 1.8rem;
+       }
+
     & a{
         color: var(--color-secondary-medium);
         transition: all .3s;
