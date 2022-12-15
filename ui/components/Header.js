@@ -242,6 +242,7 @@ function K8sContextMenu({
   contexts = {},
   activeContexts = [],
   runningStatus,
+  show,
   updateK8SConfig,
   updateProgress,
 
@@ -260,6 +261,11 @@ function K8sContextMenu({
     zIndex : "-1",
     bottom : "-55%",
     transform : showFullContextMenu ? `translateY(${transformProperty}%)` : "translateY(0)"
+  }
+
+  const ctxStyle = {
+    ...disabledStyle,
+    marginRight : "0.5rem",
   }
 
   const getOperatorStatus = (contextId) => {
@@ -357,34 +363,36 @@ function K8sContextMenu({
 
   return (
     <>
-      <IconButton
-        aria-label="contexts"
-        className="k8s-icon-button"
-        onClick={(e) => {
-          e.preventDefault();
-          setShowFullContextMenu(prev => !prev);
-        }}
-        onMouseOver={(e) => {
-          e.preventDefault();
-          setAnchorEl(true);
-        }}
+      <div style={ show ? cursorNotAllowed : {}}>
+        <IconButton
+          aria-label="contexts"
+          className="k8s-icon-button"
+          onClick={(e) => {
+            e.preventDefault();
+            setShowFullContextMenu(prev => !prev);
+          }}
+          onMouseOver={(e) => {
+            e.preventDefault();
+            setAnchorEl(true);
+          }}
 
-        onMouseLeave={(e) => {
-          e.preventDefault();
-          setAnchorEl(false)
-        }}
+          onMouseLeave={(e) => {
+            e.preventDefault();
+            setAnchorEl(false)
+          }}
 
-        aria-owns={open
-          ? 'menu-list-grow'
-          : undefined}
-        aria-haspopup="true"
-        style={{ marginRight : "0.5rem" }}
-      >
-        <div className={classes.cbadgeContainer}>
-          <img className="k8s-image" src="/static/img/kubernetes.svg" width="24px" height="24px" style={{ zIndex : "2" }} />
-          <div className={classes.cbadge}>{contexts?.total_count || 0}</div>
-        </div>
-      </IconButton>
+          aria-owns={open
+            ? 'menu-list-grow'
+            : undefined}
+          aria-haspopup="true"
+          style={show? ctxStyle  : { marginRight : "0.5rem" }}
+        >
+          <div className={classes.cbadgeContainer}>
+            <img className="k8s-image" src="/static/img/kubernetes.svg" width="24px" height="24px" style={{ zIndex : "2" }} />
+            <div className={classes.cbadge}>{contexts?.total_count || 0}</div>
+          </div>
+        </IconButton>
+      </div>
 
       <Slide direction="down" style={styleSlider} timeout={400} in={open} mountOnEnter unmountOnExit>
         <div>
@@ -566,6 +574,7 @@ class Header extends React.Component {
                     <K8sContextMenu
                       classes={classes}
                       contexts={this.props.contexts}
+                      show={!this.state.capabilityregistryObj?.isHeaderComponentEnabled([SETTINGS])}
                       activeContexts={this.props.activeContexts}
                       setActiveContexts={this.props.setActiveContexts}
                       searchContexts={this.props.searchContexts}
