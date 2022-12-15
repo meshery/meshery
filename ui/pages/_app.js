@@ -76,8 +76,7 @@ class MesheryApp extends App {
       operatorSubscription : null,
       meshSyncSubscription : null,
       disposeK8sContextSubscription : null,
-      isOpen : false,
-      showSignUpCard : false
+      isOpen : false
     };
   }
 
@@ -153,9 +152,7 @@ class MesheryApp extends App {
   }
 
   handleL5CommunityClick = () => {
-    console.log("MesheryCard");
-    this.setState(state => ({ isOpen: !state.isOpen }));
-
+    this.setState(state => ({ isOpen : !state.isOpen }));
   };
 
   /**
@@ -374,7 +371,7 @@ class MesheryApp extends App {
             </footer>
           </div>
         </div>
-        <MeshMapEarlyAccessCardPopup closeForm isOpen={this.state.isOpen} rootStyle={{ zIndex: "9999999" }} />
+        <MeshMapEarlyAccessCardPopup closeForm isOpen={this.state.isOpen} rootStyle={{ zIndex : "9999" }} />
       </NoSsr>
     );
   }
