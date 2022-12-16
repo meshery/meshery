@@ -1,0 +1,22 @@
+{
+  "apiVersion": "core.meshery.io/v1alpha1",
+  "kind": "Edge",
+  "metadata": {
+    "description": "A relationship that defines network edges between components"
+  },
+  "subType": "network",
+  "selectors": {
+    "from": {
+      "kind": "Service",
+      "model": "Kubernetes"
+    },
+    "to": {
+      "kind": [
+        "Pod",
+        "Deployment",
+        "Endpoint"
+      ],
+      "model": "Kubernetes"
+    }
+  }
+}
