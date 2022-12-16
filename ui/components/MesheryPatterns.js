@@ -750,6 +750,17 @@ function MesheryPatterns({
         () => {
           console.log("PatternFile API", `/api/pattern/${id}`);
           updateProgress({ showProgress : false });
+          enqueueSnackbar(`"${name}" Design deleted`, {
+            variant : "success",
+            action : function Action(key) {
+              return (
+                <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+                  <CloseIcon />
+                </IconButton>
+              );
+            },
+            autoHideDuration : 2000,
+          });
           resetSelectedRowData()();
         },
         handleError(ACTION_TYPES.DELETE_PATTERN)
