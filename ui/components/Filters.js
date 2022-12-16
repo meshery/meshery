@@ -403,7 +403,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
       { credentials : "include", method : "POST", body : filter_file },
       () => {
         console.log("FilterFile Deploy API", `/api/filter/deploy`);
-        enqueueSnackbar(`"${name}" Filter successfully deployed`, {
+        enqueueSnackbar(`"${name}" Filter deployed`, {
           variant : "success",
           action : function Action(key) {
             return (
@@ -426,7 +426,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
       { credentials : "include", method : "DELETE", body : filter_file },
       () => {
         updateProgress({ showProgress : false });
-        enqueueSnackbar(`"${name}" Filter successfully undeployed`, {
+        enqueueSnackbar(`"${name}" Filter undeployed`, {
           variant : "success",
           action : function Action(key) {
             return (
@@ -451,7 +451,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
       },
       () => {
         updateProgress({ showProgress : false });
-        enqueueSnackbar(`"${name}" Filter successfully cloned`, {
+        enqueueSnackbar(`"${name}" Filter cloned`, {
           variant : "success",
           action : function Action(key) {
             return (
@@ -788,7 +788,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
       () => {
         updateProgress({ showProgress : false });
 
-        enqueueSnackbar("Filter successfully deleted", {
+        enqueueSnackbar("Filter deleted", {
           variant : "success",
           autoHideDuration : 2000,
           action : function Action(key) {

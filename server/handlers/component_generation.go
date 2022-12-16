@@ -77,11 +77,11 @@ func (h *Handler) ComponentGenerationHandler(rw http.ResponseWriter, r *http.Req
 					if err != nil {
 						h.log.Error(ErrGenerateComponents(err))
 					}
+					h.log.Info(comp.DisplayName, " component for ", gpi.Name, " generated")
 				}
 			}
 		}
 		responseItem.Components = comps
-		h.log.Info("component generation for ", gpi.Name, " successfully completed")
 		response = append(response, responseItem)
 	}
 	// Send response

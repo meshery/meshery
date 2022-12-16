@@ -84,7 +84,7 @@ const ServiceMeshDataPlane= ({
     (result) => {
       updateProgress({ showProgress : false });
       if (typeof result !== "undefined") {
-        enqueueSnackbar("Adapter was successfully removed!", { variant : "success",
+        enqueueSnackbar("Adapter was removed!", { variant : "success",
           autoHideDuration : 2000,
           action : AdapterPingSnackbarAction(closeSnackbar) });
         updateAdaptersInfo({ meshAdapters : result });

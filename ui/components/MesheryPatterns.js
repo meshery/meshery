@@ -575,7 +575,7 @@ function MesheryPatterns({
         body : pattern_file,
       }, () => {
         updateProgress({ showProgress : false });
-        enqueueSnackbar(`"${name}" Design successfully deployed`, {
+        enqueueSnackbar(`"${name}" Design deployed`, {
           variant : "success",
           action : function Action(key) {
             return (
@@ -627,7 +627,7 @@ function MesheryPatterns({
         body : pattern_file,
       }, () => {
         updateProgress({ showProgress : false });
-        enqueueSnackbar(`"${name}" Design successfully undeployed`, {
+        enqueueSnackbar(`"${name}" Design undeployed`, {
           variant : "success",
           action : function Action(key) {
             return (
@@ -649,7 +649,7 @@ function MesheryPatterns({
       { credentials : "include", method : "POST", body : JSON.stringify(catalog_data) },
       () => {
         updateProgress({ showProgress : false });
-        enqueueSnackbar("Pattern Successfully Published!", {
+        enqueueSnackbar("Design Published!", {
           variant : "success",
           action : function Action(key) {
             return (
@@ -674,7 +674,7 @@ function MesheryPatterns({
       },
       () => {
         updateProgress({ showProgress : false });
-        enqueueSnackbar(`"${name}" Design successfully cloned`, {
+        enqueueSnackbar(`"${name}" Design cloned`, {
           variant : "success",
           action : function Action(key) {
             return (

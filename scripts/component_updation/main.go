@@ -16,7 +16,7 @@ import (
 
 var (
 	ColumnNamesToExtract        = []string{"Project Name", "Helm Chart", "Category", "Sub-Category", "Shape", "Primary Color", "Secondary Color", "Logo URL", "SVG_Color", "SVG_White"}
-	ColumnNamesToExtractForDocs = []string{"Project Name", "Page Subtitle", "Docs URL", "Category", "Sub-Category", "Feature 1", "Feature 2", "Feature 3", "howItWorks", "howItWorksDetails", "Publish?", "About Project", "Standard Blurb", "SVG_Color", "SVG_White"}
+	ColumnNamesToExtractForDocs = []string{"Project Name", "Page Subtitle", "Docs URL", "Category", "Sub-Category", "Feature 1", "Feature 2", "Feature 3", "howItWorks", "howItWorksDetails", "Publish?", "About Project", "Standard Blurb", "SVG_Color", "SVG_White", "Full Page", "Helm Chart"}
 	PrimaryColumnName           = "Helm Chart"
 	OutputPath                  = "../../server/output"
 )
@@ -93,6 +93,8 @@ func main() {
 					t.AboutProject = val
 				case "Standard Blurb":
 					t.StandardBlurb = val
+				case "Full Page":
+					t.FullPage = val
 				}
 			}
 			t.FeatureList = "[" + strings.Join([]string{out["Feature 1"], out["Feature 2"], out["Feature 3"]}, ",") + "]"
@@ -105,7 +107,7 @@ func main() {
 			if out["Project Name"] == "Istio" {
 				fmt.Println(md)
 			}
-			pathToIntegrations, _ := filepath.Abs(filepath.Join("../../../", pathToIntegrations, out["Project Name"]))
+			pathToIntegrations, _ := filepath.Abs(filepath.Join("../../../", pathToIntegrations, out["Helm Chart"]))
 			err = os.MkdirAll(pathToIntegrations, 0777)
 			if err != nil {
 				panic(err)

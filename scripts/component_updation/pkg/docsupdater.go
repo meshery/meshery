@@ -51,26 +51,27 @@ type TemplateAttributes struct {
 	Published               string
 	IntegrationIcon         string
 	DarkModeIntegrationIcon string
+	FullPage                string
 }
 
 func (t TemplateAttributes) CreateMarkDown() string {
-	markdown := "---\n"
-	markdown += "title: " + t.Title + "\n"
-	markdown += "subtitle: " + t.Subtitle + "\n"
-	markdown += "integrationIcon: " + t.IntegrationIcon + "\n"
-	markdown += "darkModeIntegrationIcon: " + t.DarkModeIntegrationIcon + "\n"
-	markdown += "docURL: " + t.DocURL + "\n"
-	markdown += "category: " + t.Category + "\n"
-	markdown += "subcategory: " + t.Subcategory + "\n"
-	markdown += "featureList: " + t.FeatureList + "\n"
-	markdown += "workingSlides: " + t.WorkingSlides + "\n"
-	markdown += "howItWorks: " + t.HowItWorks + "\n"
-	markdown += "howItWorksDetails: " + t.HowItWorksDetails + "\n"
-	markdown += "published: " + t.Published + "\n"
-	markdown += "---\n"
-	markdown += t.AboutProject + "\n"
-	markdown += t.StandardBlurb
-	return markdown
+	// markdown := "---\n"
+	// markdown += "title: " + t.Title + "\n"
+	// markdown += "subtitle: " + t.Subtitle + "\n"
+	// markdown += "integrationIcon: " + t.IntegrationIcon + "\n"
+	// markdown += "darkModeIntegrationIcon: " + t.DarkModeIntegrationIcon + "\n"
+	// markdown += "docURL: " + t.DocURL + "\n"
+	// markdown += "category: " + t.Category + "\n"
+	// markdown += "subcategory: " + t.Subcategory + "\n"
+	// markdown += "featureList: " + t.FeatureList + "\n"
+	// markdown += "workingSlides: " + t.WorkingSlides + "\n"
+	// markdown += "howItWorks: " + t.HowItWorks + "\n"
+	// markdown += "howItWorksDetails: " + t.HowItWorksDetails + "\n"
+	// markdown += "published: " + t.Published + "\n"
+	// markdown += "---\n"
+	// markdown += t.AboutProject + "\n"
+	// markdown += t.StandardBlurb
+	return t.FullPage
 }
 func WriteMarkDown(path string, md string) error {
 	file, err := os.Create(path)
