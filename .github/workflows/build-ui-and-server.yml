@@ -22,34 +22,10 @@ on:
         default: "warning"
 
 jobs:
-  golangci:
-    name: golangci-lint
-    if: github.repository == 'meshery/meshery'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@master
-      - uses: actions/setup-go@master
-        with:
-          check-latest: "true"
-          go-version: "1.19"
-      - name: golangci-lint
-        uses: golangci/golangci-lint-action@v3
-        with:
-          # Required: the version of golangci-lint is required and must be specified without patch version: we always use the latest patch version.
-          version: latest
-
-          # Optional: working directory, useful for monorepos
-          # working-directory: somedir
-
-          # Optional: golangci-lint command line arguments.
-          # args: --disable-all -E revive -E gosec -E errcheck -E nilerr -E govet -E gofmt -E goimports -E staticcheck
-
-          # Optional: show only new issues if it's a pull request. The default value is `false`.
-          # only-new-issues: true
   build-backend:
     name: Backend build
     if: github.repository == 'meshery/meshery'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Check out code
         uses: actions/checkout@master
@@ -76,7 +52,7 @@ jobs:
   build-ui:
     name: UI build
     if: github.repository == 'meshery/meshery'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Check out code
         uses: actions/checkout@master
@@ -85,7 +61,6 @@ jobs:
       - uses: actions/setup-node@v3.0.0
         with:
           node-version: ${{ secrets.NODE_VERSION }}
-      - run: sudo npm i -g npm@7
       - name: Cache node modules
         id: node-cache
         uses: actions/cache@v3
@@ -117,7 +92,7 @@ jobs:
     needs: [build-ui]
     name: UI integration tests
     if: github.repository == 'meshery/meshery'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Check out code
         uses: actions/checkout@master
@@ -126,7 +101,6 @@ jobs:
       - uses: actions/setup-node@v3.0.0
         with:
           node-version: ${{ secrets.NODE_VERSION }}
-      - run: sudo npm i -g npm@7
       - name: Cache node modules
         id: node-cache
         uses: actions/cache@v3
@@ -159,7 +133,7 @@ jobs:
     needs: [build-backend, build-ui]
     name: UI end-to-end tests
     if: github.repository == 'meshery/meshery'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Check out code
         uses: actions/checkout@master
@@ -256,7 +230,7 @@ jobs:
   docker-build-test:
     name: Docker build
     if: github.repository == 'meshery/meshery'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Check out code
         uses: actions/checkout@master
@@ -287,7 +261,7 @@ jobs:
   swaggerci:
     if: github.repository == 'meshery/meshery'
     name: swagger-docs
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@master
       - name: Check if handlers were modified
@@ -313,7 +287,7 @@ jobs:
   garphql_validate:
     name: Validate GraphQL schema
     if: github.repository == 'meshery/meshery'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Check out code
         uses: actions/checkout@master

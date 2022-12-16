@@ -7,19 +7,23 @@ on:
     tags:
       - "v*"
     paths-ignore:
-      - 'docs/**'
+      - 'docs/**/*'
+      - 'ui/**/*'
+      - 'provider-ui/**/*'
+      - '.github/**/*'
+      - '*.md'
   pull_request:
     branches:
       - "*"
 
 jobs:
   SetPatternfileForEmojivotoInstall:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v2   
+        uses: actions/checkout@v2.5.0
       - name: Uploading file
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: patternfile
           path: ./.github/samples/emojivoto.yaml

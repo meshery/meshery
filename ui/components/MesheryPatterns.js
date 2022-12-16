@@ -242,6 +242,7 @@ function MesheryPatterns({
   const [patterns, setPatterns] = useState([]);
   const [selectedRowData, setSelectedRowData] = useState(null);
   const [selectedPattern, setSelectedPattern] = useState(resetSelectedPattern());
+  const [extensionPreferences, setExtensionPreferences] = useState({});
 
   const [patternErrors, setPatternErrors] = useState(new Map());
 
@@ -272,13 +273,21 @@ function MesheryPatterns({
   const [loading, stillLoading] = useState(true);
 
   const catalogContentRef = useRef();
-  const catalogVisibilityRef = useRef();
+  const catalogVisibilityRef = useRef(false);
   const disposeConfSubscriptionRef = useRef(null);
 
   const { workloadTraitSet } = useContext(SchemaContext);
 
   const getMuiTheme = () => createTheme({
     overrides : {
+      MuiCheckbox : {
+        colorPrimary : {
+          color : "#607d8b",
+          "&$checked" : {
+            color : "#607d8b",
+          }
+        },
+      },
       MuiInput : {
         underline : {
           "&:hover:not(.Mui-disabled):before" : {
@@ -372,12 +381,63 @@ function MesheryPatterns({
     return (() => document.body.style.overflowX = "auto")
   }, [page, pageSize, search, sortOrder]);
 
+
+  const handleCatalogPreference = (catalogPref) => {
+    let body = Object.assign({}, extensionPreferences)
+    body["catalogContent"] = catalogPref
+
+    dataFetch(
+      "/api/user/prefs",
+      {
+        method : "POST",
+        credentials : "include",
+        body : JSON.stringify({ usersExtensionPreferences : body })
+      },
+      () => {
+        enqueueSnackbar(`Catalog Content was ${catalogPref ? "enab" : "disab"}led`,
+          { variant : 'success',
+            autoHideDuration : 4000,
+            action : (key) => (
+              <IconButton
+                key="close"
+                aria-label="Close"
+                color="inherit"
+                onClick={() => closeSnackbar(key)}
+              >
+                <CloseIcon />
+              </IconButton>
+            ),
+          });
+      },
+      err => console.error(err),
+    )
+  }
+
+  const fetchUserPrefs = () => {
+    dataFetch(
+      "/api/user/prefs",
+      {
+        method : "GET",
+        credentials : "include",
+      },
+      (result) => {
+        if (result) {
+          setExtensionPreferences(result?.usersExtensionPreferences)
+        }
+      },
+      err => console.error(err)
+    )
+  }
+
+
   const handleCatalogVisibility = () => {
+    handleCatalogPreference(!catalogVisibilityRef.current);
     catalogVisibilityRef.current = !catalogVisibility
     toggleCatalogContent({ catalogVisibility : !catalogVisibility });
   }
 
   useEffect(() => {
+    fetchUserPrefs();
     catalogVisibilityRef.current = catalogVisibility
     const fetchCatalogPatterns = fetchCatalogPattern({
       selector : {
@@ -387,12 +447,14 @@ function MesheryPatterns({
     }).subscribe({
       next : (result) => {
         catalogContentRef.current = result?.catalogPatterns;
+        initPatternsSubscription();
       },
       error : (err) => console.log("There was an error fetching Catalog Pattern: ", err)
     });
-    initPatternsSubscription();
     return () => {
-      disposeConfSubscriptionRef.current.dispose();
+      if (disposeConfSubscriptionRef.current){
+        disposeConfSubscriptionRef.current.dispose();
+      }
       fetchCatalogPatterns.unsubscribe();
     }
   },[])
@@ -509,7 +571,7 @@ function MesheryPatterns({
         body : pattern_file,
       }, () => {
         updateProgress({ showProgress : false });
-        enqueueSnackbar(`"${name}" Design successfully deployed`, {
+        enqueueSnackbar(`"${name}" Design deployed`, {
           variant : "success",
           action : function Action(key) {
             return (
@@ -561,7 +623,7 @@ function MesheryPatterns({
         body : pattern_file,
       }, () => {
         updateProgress({ showProgress : false });
-        enqueueSnackbar(`"${name}" Design successfully undeployed`, {
+        enqueueSnackbar(`"${name}" Design undeployed`, {
           variant : "success",
           action : function Action(key) {
             return (
@@ -583,7 +645,7 @@ function MesheryPatterns({
       { credentials : "include", method : "POST", body : JSON.stringify(catalog_data) },
       () => {
         updateProgress({ showProgress : false });
-        enqueueSnackbar("Pattern Successfully Published!", {
+        enqueueSnackbar("Design Published!", {
           variant : "success",
           action : function Action(key) {
             return (
@@ -608,7 +670,7 @@ function MesheryPatterns({
       },
       () => {
         updateProgress({ showProgress : false });
-        enqueueSnackbar(`"${name}" Design successfully cloned`, {
+        enqueueSnackbar(`"${name}" Design cloned`, {
           variant : "success",
           action : function Action(key) {
             return (
@@ -632,7 +694,6 @@ function MesheryPatterns({
     )}`;
 
     updateProgress({ showProgress : true });
-
     dataFetch(
       `/api/pattern${query}`,
       { credentials : "include", },
@@ -884,22 +945,22 @@ function MesheryPatterns({
                 </IconButton> }
               {/*</Tooltip> */}
               <IconButton
-                title="Verify"
+                title="Validate"
                 onClick={(e) => handleVerify(e, rowData.pattern_file, rowData.id)}
               >
                 <DoneIcon data-cy="verify-button" />
-              </IconButton>
-              <IconButton
-                title="Deploy"
-                onClick={(e) => handleModalOpen(e, rowData.pattern_file, rowData.name, patternErrors.get(rowData.id), ACTIONS.DEPLOY)}
-              >
-                <DoneAllIcon data-cy="deploy-button" />
               </IconButton>
               <IconButton
                 title="Undeploy"
                 onClick={(e) => handleModalOpen(e, rowData.pattern_file, rowData.name, patternErrors.get(rowData.id), ACTIONS.UNDEPLOY)}
               >
                 <UndeployIcon fill="#8F1F00" data-cy="undeploy-button" />
+              </IconButton>
+              <IconButton
+                title="Deploy"
+                onClick={(e) => handleModalOpen(e, rowData.pattern_file, rowData.name, patternErrors.get(rowData.id), ACTIONS.DEPLOY)}
+              >
+                <DoneAllIcon data-cy="deploy-button" />
               </IconButton>
               <IconButton
                 title="Publish"

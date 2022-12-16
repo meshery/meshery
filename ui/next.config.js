@@ -1,4 +1,3 @@
-const withCSS = require('@zeit/next-css');
 const compose = require('next-compose');
 
 // module.exports = {
@@ -21,7 +20,6 @@ const compose = require('next-compose');
 // }
 
 module.exports = compose([
-  [withCSS, {}],
   { exportPathMap : function () {
     return {
       '/404' : { page : '/404' },

@@ -20,7 +20,7 @@ GIT_COMMITSHA = $(shell git rev-list -1 HEAD)
 GIT_STRIPPED_VERSION=$(shell git describe --tags `git rev-list --tags --max-count=1` | cut -c 2-)
 REMOTE_PROVIDER="remote"
 LOCAL_PROVIDER="local"
-GOVERSION = 1.19.1
+GOVERSION = 1.19
 GOPATH = $(shell go env GOPATH)
 GOBIN  = $(GOPATH)/bin
 
@@ -34,8 +34,8 @@ ADAPTER_URLS := "localhost:10000 localhost:10001 localhost:10002 localhost:10004
 #-----------------------------------------------------------------------------
 # Providers
 #-----------------------------------------------------------------------------
-REMOTE_PROVIDER_LOCAL="http://localhost:9876"
-MESHERY_CLOUD_DEV="http://localhost:9876"
+REMOTE_PROVIDER_LOCAL="http://127.0.0.1:9876"
+MESHERY_CLOUD_DEV="http://127.0.0.1:9876"
 MESHERY_CLOUD_PROD="https://meshery.layer5.io"
 MESHERY_CLOUD_STAGING="https://staging-meshery.layer5.io"
 

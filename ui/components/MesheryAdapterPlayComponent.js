@@ -501,7 +501,7 @@ class MesheryAdapterPlayComponent extends React.Component {
       (result) => {
         this.props.updateProgress({ showProgress : false });
         if (typeof result !== "undefined") {
-          this.props.enqueueSnackbar("Adapter successfully pinged!", {
+          this.props.enqueueSnackbar("Adapter pinged!", {
             variant : "success",
             autoHideDuration : 2000,
             action : (key) => (

@@ -27,8 +27,27 @@ mesheryctl exp filter delete test-wasm
 	Args: cobra.MinimumNArgs(0),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+		client := &http.Client{}
 		if err != nil {
 			return errors.Wrap(err, "error processing config")
+		}
+		filter := ""
+		isID := false
+		if len(args) > 0 {
+			filter, isID, err = utils.Valid(args[0], "filter")
+			if err != nil {
+				return err
+			}
+		}
+
+		// Delete the filter using the id
+		if isID {
+			err := utils.DeleteConfiguration(filter, "filter")
+			if err != nil {
+				return errors.Wrap(err, utils.FilterError(fmt.Sprintf("failed to delete filter %s", args[0])))
+			}
+			utils.Log.Info("Filter ", args[0], " deleted successfully")
+			return nil
 		}
 
 		// Read file
@@ -37,7 +56,6 @@ mesheryctl exp filter delete test-wasm
 			return errors.New(utils.SystemError(fmt.Sprintf("failed to read file %s", file)))
 		}
 
-		client := &http.Client{}
 		req, err := utils.NewRequest("DELETE", mctlCfg.GetBaseMesheryURL()+"/api/filter/deploy", fileReader)
 		if err != nil {
 			return err

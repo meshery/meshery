@@ -37,6 +37,12 @@ func (h *Handler) LogoutHandler(w http.ResponseWriter, req *http.Request, p mode
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
+
+	err := p.Logout(w, req)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 	http.SetCookie(w, &http.Cookie{
 		Name:     h.config.ProviderCookieName,
 		Value:    p.Name(),
@@ -44,7 +50,11 @@ func (h *Handler) LogoutHandler(w http.ResponseWriter, req *http.Request, p mode
 		Path:     "/",
 		HttpOnly: true,
 	})
-	p.Logout(w, req)
+	if p.Name() == "None" {
+		http.Redirect(w, req, "/user/login", http.StatusFound)
+		return
+	}
+	http.Redirect(w, req, "/provider", http.StatusFound)
 }
 
 // swagger:route GET /api/user/token UserAPI idGetTokenProvider

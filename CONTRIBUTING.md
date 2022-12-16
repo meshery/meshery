@@ -78,6 +78,7 @@ Please contribute! Meshery documentation uses GitHub Pages to host the docs site
    `git checkout -b <my-changes>`
 1. Edit/add documentation.
    `vi <specific page>.md`
+1. Add redirect link on the old page (only when a new page is created that replaces the old page)
 1. Run site locally to preview changes.
    `make docs`
 
@@ -202,7 +203,7 @@ make setup-ui-libs
 To build and export the UI code:
 
 ```
-make build-ui
+make ui-setup
 ```
 
 Now that the UI code is built, Meshery UI will be available at `http://localhost:9081`.

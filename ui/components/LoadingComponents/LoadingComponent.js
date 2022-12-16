@@ -5,6 +5,7 @@ import AnimatedMeshSync from "./Animations/AnimatedMeshSync";
 import AnimatedMeshPattern from "./Animations/AnimatedMeshPattern";
 import AnimatedMeshery from "./Animations/AnimatedMeshery";
 import AnimatedFilter from "./Animations/AnimatedFilter";
+import PropTypes from "prop-types";
 
 const useStyles = makeStyles(() => ({
   loadingWrapper : {
@@ -31,7 +32,8 @@ const animatedIconList = {
   AnimatedMeshery : <AnimatedMeshery style={{ height : "100px", margin : "4px 0px 8px" }} />,
 };
 
-function LoadingScreen({ message, className, animatedIcon, ...other }) {
+function LoadingScreen(props) {
+  const { message, className, animatedIcon, ...other } = props
   const classes = useStyles();
 
   return (
@@ -42,6 +44,14 @@ function LoadingScreen({ message, className, animatedIcon, ...other }) {
       </Typography>
     </div>
   );
+}
+
+
+
+LoadingScreen.propTypes={
+  message : PropTypes.string.isRequired,
+  className : PropTypes.string,
+  animatedIcon : PropTypes.string.isRequired,
 }
 
 export default LoadingScreen;

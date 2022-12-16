@@ -2,12 +2,13 @@ import React from 'react';
 import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/styles';
 import { canExpand } from '@rjsf/utils';
-import AddButton from "@material-ui/icons/Add";
+import AddIcon from '../../../../assets/icons/AddIcon';
 import { Box, IconButton, Typography } from '@material-ui/core';
 import { EnlargedTextTooltip } from '../EnlargedTextTooltip';
-import HelpOutlineIcon from '../HelpOutlineIcon';
-import ArrowDown from '@material-ui/icons/KeyboardArrowDown';
-import ArrowUp from '@material-ui/icons/KeyboardArrowUp';
+import HelpOutlineIcon from '../../../../assets/icons/HelpOutlineIcon';
+import ExpandMoreIcon from '../../../../assets/icons/ExpandMoreIcon';
+import ExpandLessIcon from '../../../../assets/icons/ExpandLessIcon'
+import ErrorOutlineIcon from '../../../../assets/icons/ErrorOutlineIcon';
 
 const useStyles = makeStyles({
   objectFieldGrid : {
@@ -31,6 +32,7 @@ const ObjectFieldTemplate = ({
   schema,
   formData,
   onAddClick,
+  rawErrors
 }) => {
   const additional = schema?.__additional_property; // check if the object is additional
   const classes = useStyles();
@@ -55,7 +57,7 @@ const ObjectFieldTemplate = ({
               onClick={onAddClick(schema)}
               disabled={disabled || readonly}
             >
-              <AddButton style={{ backgroundColor : "#647881", width : "1.25rem", height : "1.25rem", color : "#ffffff", borderRadius : ".2rem" }} />
+              <AddIcon width="18px" height="18px" fill="white" style={{ backgroundColor : "#647881", width : "1.25rem", height : "1.25rem", color : "#ffffff", borderRadius : ".2rem" }} />
             </IconButton>
           </Grid>
         ) : (
@@ -65,7 +67,7 @@ const ObjectFieldTemplate = ({
                 className="object-property-expand"
                 onClick={() => setShow(!show)}
               >
-                {show ? <ArrowUp /> : <ArrowDown />}
+                {show ? <ExpandLessIcon width="18px" height="18px" fill="gray" /> : <ExpandMoreIcon width="18px" height="18px" fill="gray"  />}
               </IconButton>
             </Grid>
           )
@@ -76,7 +78,17 @@ const ObjectFieldTemplate = ({
           </Typography>
           {description &&
             <EnlargedTextTooltip title={description}>
-              <HelpOutlineIcon />
+              <IconButton disableTouchRipple="true" disableRipple="true" component="span" size="small">
+                <HelpOutlineIcon width="14px" height="14px" fill="black" style={{ marginLeft : "4px", verticalAlign : "middle" }}/>
+              </IconButton>
+            </EnlargedTextTooltip>}
+          {rawErrors?.length &&
+            <EnlargedTextTooltip title={rawErrors?.map((error, index) => (
+              <div key={index}>{error}</div>
+            ))}>
+              <IconButton disableTouchRipple="true" disableRipple="true" component="span" size="small">
+                <ErrorOutlineIcon width="14px" height="14px" fill="red" style={{ marginLeft : "4px", verticalAlign : "middle" }} />
+              </IconButton>
             </EnlargedTextTooltip>}
         </Grid>
 
