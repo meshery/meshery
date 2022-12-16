@@ -31,21 +31,15 @@ func Validator(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFu
 			}
 
 			var svcSettings map[string]interface{}
-			//deep copy settings for validation
 			if k8s.Format {
-				svcSettings = k8s.Format.Prettify(svc.Settings, false)
-			} else {
-				svcSettings = svc.Settings
+				svc.Settings = k8s.Format.DePrettify(svc.Settings, false)
 			}
-
 			//Validate workload definition
 			if err := validateWorkload(svcSettings, wc); err != nil {
 				act.Terminate(fmt.Errorf("invalid workload definition: %s", err))
 				return
 			}
-			if k8s.Format {
-				svc.Settings = k8s.Format.DePrettify(svc.Settings, false)
-			}
+
 			// Store the workload capability in the metadata
 			data.PatternSvcWorkloadCapabilities[svcName] = wc
 

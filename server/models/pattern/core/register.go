@@ -398,6 +398,11 @@ func GetScopesByK8sAPIVersionKind(apiVersion, kind string) (s []ScopeCapability)
 func GetWorkloadByID(name, id string) *WorkloadCapability {
 	res := GetWorkload(name)
 	for _, f := range res {
+		m := make(map[string]interface{})
+		_ = json.Unmarshal([]byte(f.OAMRefSchema), &m)
+		m = k8s.Format.Prettify(m, false)
+		b, _ := json.Marshal(m)
+		f.OAMRefSchema = string(b)
 		if f.GetID() == id {
 			return &f
 		}
