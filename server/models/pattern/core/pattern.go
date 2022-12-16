@@ -42,6 +42,7 @@ type Service struct {
 	// from the parent
 	Name        string            `yaml:"name,omitempty" json:"name,omitempty"`
 	Type        string            `yaml:"type,omitempty" json:"type,omitempty"`
+	APIVersion  string            `yaml:"apiVersion,omitempty" json:"apiVersion,omitempty"`
 	Namespace   string            `yaml:"namespace" json:"namespace"`
 	Version     string            `yaml:"version,omitempty" json:"version,omitempty"`
 	Labels      map[string]string `yaml:"labels,omitempty" json:"labels,omitempty"`
