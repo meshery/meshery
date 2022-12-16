@@ -441,7 +441,7 @@ func createPatternServiceFromK8s(manifest map[string]interface{}) (string, Servi
 			castedAnnotation[k] = cv
 		}
 	}
-	rest = k8s.Format.Prettify(rest, true)
+	rest = k8s.Format.Prettify(rest, false)
 	svc := Service{
 		Name:        name,
 		Type:        w[0].OAMDefinition.Name,
