@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { withStyles, makeStyles, MuiThemeProvider } from "@material-ui/core/styles";
-import { createTheme } from "@material-ui/core/styles";
+import {  createTheme } from '@material-ui/core/styles';
 import {
   NoSsr,
   TableCell,
@@ -12,7 +12,7 @@ import {
   Divider,
   Tooltip,
   Typography,
-  Button,
+  Button
 } from "@material-ui/core";
 import { UnControlled as CodeMirror } from "react-codemirror2";
 import DeleteIcon from "@material-ui/icons/Delete";
@@ -23,14 +23,13 @@ import Moment from "react-moment";
 import { withSnackbar } from "notistack";
 import CloseIcon from "@material-ui/icons/Close";
 import EditIcon from "@material-ui/icons/Edit";
-import DoneAllIcon from "@material-ui/icons/DoneAll";
+import DoneAllIcon from '@material-ui/icons/DoneAll';
 import { toggleCatalogContent, updateProgress } from "../lib/store";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
 import dataFetch from "../lib/data-fetch";
-import PromptComponent from "./PromptComponent";
 import UploadImport from "./UploadImport";
-import FullscreenIcon from "@material-ui/icons/Fullscreen";
-import FullscreenExitIcon from "@material-ui/icons/FullscreenExit";
+import FullscreenIcon from '@material-ui/icons/Fullscreen';
+import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
 import { FILE_OPS } from "../utils/Enum";
 import ViewSwitch from "./ViewSwitch";
 import CatalogFilter from "./CatalogFilter";
@@ -63,11 +62,11 @@ const styles = (theme) => ({
     margin : "2rem auto",
     display : "flex",
     justifyContent : "space-between",
-    paddingLeft : "1rem",
+    paddingLeft : "1rem"
   },
   viewSwitchButton : {
     justifySelf : "flex-end",
-    paddingLeft : "1rem",
+    paddingLeft : "1rem"
   },
   // text : {
   //   padding : "5px"
@@ -77,26 +76,29 @@ const styles = (theme) => ({
 const useStyles = makeStyles(() => ({
   ymlDialogTitle : {
     display : "flex",
-    alignItems : "center",
+    alignItems : "center"
   },
   ymlDialogTitleText : {
-    flexGrow : 1,
+    flexGrow : 1
   },
   fullScreenCodeMirror : {
-    height : "100%",
-    "& .CodeMirror" : {
+    height : '100%',
+    '& .CodeMirror' : {
       minHeight : "300px",
-      height : "100%",
-    },
+      height : '100%',
+    }
   },
-}));
+
+}))
 
 function TooltipIcon({ children, onClick, title }) {
   return (
-    <Tooltip title={title} placement="top" arrow interactive>
-      <IconButton onClick={onClick}>{children}</IconButton>
+    <Tooltip title={title} placement="top" arrow interactive >
+      <IconButton onClick={onClick}>
+        {children}
+      </IconButton>
     </Tooltip>
-  );
+  )
 }
 
 function YAMLEditor({ filter, onClose, onSubmit }) {
@@ -106,22 +108,17 @@ function YAMLEditor({ filter, onClose, onSubmit }) {
 
   const toggleFullScreen = () => {
     setFullScreen(!fullScreen);
-  };
+  }
 
   return (
-    <Dialog
-      onClose={onClose}
-      aria-labelledby="filter-dialog-title"
-      open
-      maxWidth="md"
-      fullScreen={fullScreen}
-      fullWidth={!fullScreen}
-    >
+    <Dialog onClose={onClose} aria-labelledby="filter-dialog-title" open maxWidth="md" fullScreen={fullScreen} fullWidth={!fullScreen}>
       <DialogTitle disableTypography id="filter-dialog-title" className={classes.ymlDialogTitle}>
         <Typography variant="h6" className={classes.ymlDialogTitleText}>
           {filter.name}
         </Typography>
-        <TooltipIcon title={fullScreen ? "Exit Fullscreen" : "Enter Fullscreen"} onClick={toggleFullScreen}>
+        <TooltipIcon
+          title={fullScreen ? "Exit Fullscreen" : "Enter Fullscreen"}
+          onClick={toggleFullScreen}>
           {fullScreen ? <FullscreenExitIcon /> : <FullscreenIcon />}
         </TooltipIcon>
         <TooltipIcon title="Exit" onClick={onClose}>
@@ -150,14 +147,12 @@ function YAMLEditor({ filter, onClose, onSubmit }) {
           <IconButton
             aria-label="Delete"
             color="primary"
-            onClick={() =>
-              onSubmit({
-                data : yaml,
-                id : filter.id,
-                name : filter.name,
-                type : FILE_OPS.DELETE,
-              })
-            }
+            onClick={() => onSubmit({
+              data : yaml,
+              id : filter.id,
+              name : filter.name,
+              type : FILE_OPS.DELETE
+            })}
           >
             <DeleteIcon />
           </IconButton>
@@ -171,16 +166,7 @@ function resetSelectedFilter() {
   return { show : false, filter : null };
 }
 
-function MesheryFilters({
-  updateProgress,
-  enqueueSnackbar,
-  closeSnackbar,
-  user,
-  classes,
-  selectedK8sContexts,
-  catalogVisibility,
-  toggleCatalogContent,
-}) {
+function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, classes, selectedK8sContexts, catalogVisibility, toggleCatalogContent }) {
   const [page, setPage] = useState(0);
   const [search] = useState("");
   const [sortOrder] = useState("");
@@ -195,7 +181,7 @@ function MesheryFilters({
     /**  @type {TypeView} */
     ("grid")
   );
-  const FILTER_URL = "/api/filter";
+  const FILTER_URL = "/api/filter"
   const DEPLOY_URL = FILTER_URL + "/deploy";
   const CLONE_URL = "/clone";
 
@@ -204,62 +190,61 @@ function MesheryFilters({
     filter_file : null,
     deploy : false,
     name : "",
-    count : 0,
+    count : 0
   });
 
   const [importModal, setImportModal] = useState({
-    open : false,
-  });
+    open : false
+  })
   const [loading, stillLoading] = useState(true);
 
   const catalogContentRef = useRef();
   const catalogVisibilityRef = useRef();
   const disposeConfSubscriptionRef = useRef(null);
 
-  const getMuiTheme = () =>
-    createTheme({
-      overrides : {
-        MuiInput : {
-          underline : {
-            "&:hover:not(.Mui-disabled):before" : {
-              borderBottom : "2px solid #222",
-            },
-            "&:after" : {
-              borderBottom : "2px solid #222",
-            },
+  const getMuiTheme = () => createTheme({
+    overrides : {
+      MuiInput : {
+        underline : {
+          "&:hover:not(.Mui-disabled):before" : {
+            borderBottom : "2px solid #222"
           },
+          "&:after" : {
+            borderBottom : "2px solid #222"
+          }
+        }
+      },
+      MUIDataTableSearch : {
+        searchIcon : {
+          color : "#607d8b" ,
+          marginTop : "7px",
+          marginRight : "8px",
         },
-        MUIDataTableSearch : {
-          searchIcon : {
-            color : "#607d8b",
-            marginTop : "7px",
-            marginRight : "8px",
-          },
-          clearIcon : {
-            "&:hover" : {
-              color : "#607d8b",
-            },
-          },
+        clearIcon : {
+          "&:hover" : {
+            color : "#607d8b"
+          }
         },
-        MUIDataTableSelectCell : {
-          checkboxRoot : {
-            "&$checked" : {
-              color : "#607d8b",
-            },
-          },
-        },
-        MUIDataTableToolbar : {
-          iconActive : {
-            color : "#222",
-          },
-          icon : {
-            "&:hover" : {
-              color : "#607d8b",
-            },
+      },
+      MUIDataTableSelectCell : {
+        checkboxRoot : {
+          '&$checked' : {
+            color : '#607d8b',
           },
         },
       },
-    });
+      MUIDataTableToolbar : {
+        iconActive : {
+          color : "#222"
+        },
+        icon : {
+          "&:hover" : {
+            color : "#607d8b"
+          }
+        },
+      },
+    }
+  })
 
   const ACTION_TYPES = {
     FETCH_FILTERS : {
@@ -284,49 +269,54 @@ function MesheryFilters({
     },
     CLONE_FILTERS : {
       name : "CLONE_FILTER",
-      error_msg : "Failed to clone filter file",
-    },
+      error_msg : "Failed to clone filter file"
+    }
   };
 
   const searchTimeout = useRef(null);
 
   const handleUploadImport = () => {
     setImportModal({
-      open : true,
+      open : true
     });
-  };
+  }
 
   const handleUploadImportClose = () => {
     setImportModal({
-      open : false,
+      open : false
     });
-  };
+  }
 
   const handleCatalogPreference = (catalogPref) => {
-    let body = Object.assign({}, extensionPreferences);
-    body["catalogContent"] = catalogPref;
+    let body = Object.assign({}, extensionPreferences)
+    body["catalogContent"] = catalogPref
 
     dataFetch(
       "/api/user/prefs",
       {
         method : "POST",
         credentials : "include",
-        body : JSON.stringify({ usersExtensionPreferences : body }),
+        body : JSON.stringify({ usersExtensionPreferences : body })
       },
       () => {
-        enqueueSnackbar(`Catalog Content was ${catalogPref ? "enab" : "disab"}led`, {
-          variant : "success",
-          autoHideDuration : 4000,
-          action : (key) => (
-            <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-              <CloseIcon />
-            </IconButton>
-          ),
-        });
+        enqueueSnackbar(`Catalog Content was ${catalogPref ? "enab" : "disab"}led`,
+          { variant : 'success',
+            autoHideDuration : 4000,
+            action : (key) => (
+              <IconButton
+                key="close"
+                aria-label="Close"
+                color="inherit"
+                onClick={() => closeSnackbar(key)}
+              >
+                <CloseIcon />
+              </IconButton>
+            ),
+          });
       },
-      (err) => console.error(err)
-    );
-  };
+      err => console.error(err),
+    )
+  }
 
   const fetchUserPrefs = () => {
     dataFetch(
@@ -337,44 +327,44 @@ function MesheryFilters({
       },
       (result) => {
         if (result) {
-          setExtensionPreferences(result?.usersExtensionPreferences);
+          setExtensionPreferences(result?.usersExtensionPreferences)
         }
       },
-      (err) => console.error(err)
-    );
-  };
+      err => console.error(err)
+    )
+  }
 
   const handleCatalogVisibility = () => {
     handleCatalogPreference(!catalogVisibilityRef.current);
-    catalogVisibilityRef.current = !catalogVisibility;
+    catalogVisibilityRef.current = !catalogVisibility
     toggleCatalogContent({ catalogVisibility : !catalogVisibility });
-  };
+  }
 
   useEffect(() => {
     fetchUserPrefs();
-    handleSetFilters(filters);
-  }, [catalogVisibility]);
+    handleSetFilters(filters)
+  }, [catalogVisibility])
 
   useEffect(() => {
-    catalogVisibilityRef.current = catalogVisibility;
+    catalogVisibilityRef.current = catalogVisibility
     const fetchCatalogFilters = fetchCatalogFilter({
       selector : {
         search : "",
-        order : "",
-      },
+        order : ""
+      }
     }).subscribe({
       next : (result) => {
         catalogContentRef.current = result?.catalogFilters;
         initFiltersSubscription();
       },
-      error : (err) => console.log("There was an error fetching Catalog Filter: ", err),
+      error : (err) => console.log("There was an error fetching Catalog Filter: ", err)
     });
 
     return () => {
       fetchCatalogFilters.unsubscribe();
       disposeConfSubscriptionRef.current.dispose();
-    };
-  }, []);
+    }
+  },[])
 
   /**
    * fetchFilters constructs the queries based on the parameters given
@@ -459,8 +449,7 @@ function MesheryFilters({
 
   function handleClone(filterID, name) {
     updateProgress({ showProgress : true });
-    dataFetch(
-      FILTER_URL.concat(CLONE_URL, "/", filterID),
+    dataFetch(FILTER_URL.concat(CLONE_URL, "/", filterID),
       {
         credentials : "include",
         method : "POST",
@@ -479,7 +468,7 @@ function MesheryFilters({
           autoHideDuration : 2000,
         });
       },
-      handleError(ACTION_TYPES.CLONE_FILTERS)
+      handleError(ACTION_TYPES.CLONE_FILTERS),
     );
   }
 
@@ -501,73 +490,66 @@ function MesheryFilters({
   };
 
   const handleModalOpen = (e, filter_file, name, isDeploy) => {
-    e.stopPropagation();
+    e.stopPropagation()
     setModalOpen({
       open : true,
       filter_file : filter_file,
       deploy : isDeploy,
       name : name,
-      count : getComponentsinFile(filter_file),
+      count : getComponentsinFile(filter_file)
     });
-  };
+  }
 
   const handleSetFilters = (filters) => {
     if (catalogVisibilityRef.current && catalogContentRef.current?.length > 0) {
-      setFilters([...catalogContentRef.current, ...filters.filter((content) => content.visibility !== "public")]);
-      return;
+      setFilters([...catalogContentRef.current, ...filters.filter(content => content.visibility !== "public")])
+      return
     }
-    setFilters(filters.filter((content) => content.visibility !== "public"));
-  };
+    setFilters(filters.filter(content => content.visibility !== "public"))
+  }
 
-  const initFiltersSubscription = (
-    pageNo = page.toString(),
-    pagesize = pageSize.toString(),
-    searchText = search,
-    order = sortOrder
-  ) => {
+  const initFiltersSubscription = (pageNo=page.toString(), pagesize=pageSize.toString(), searchText=search, order=sortOrder) => {
     if (disposeConfSubscriptionRef.current) {
       disposeConfSubscriptionRef.current.dispose();
     }
-    const configurationSubscription = ConfigurationSubscription(
-      (result) => {
-        stillLoading(false);
-        setPage(result.configuration?.filters.page || 0);
-        setPageSize(result.configuration?.filters.page_size || 0);
-        setCount(result.configuration?.filters.total_count || 0);
-        handleSetFilters(result.configuration?.filters.filters);
+    const configurationSubscription = ConfigurationSubscription((result) => {
+      stillLoading(false);
+      setPage(result.configuration?.filters.page || 0);
+      setPageSize(result.configuration?.filters.page_size || 0);
+      setCount(result.configuration?.filters.total_count || 0);
+      handleSetFilters(result.configuration?.filters.filters);
+    },
+    {
+      applicationSelector : {
+        pageSize : pagesize,
+        page : pageNo,
+        search : searchText,
+        order : order
       },
-      {
-        applicationSelector : {
-          pageSize : pagesize,
-          page : pageNo,
-          search : searchText,
-          order : order,
-        },
-        patternSelector : {
-          pageSize : pagesize,
-          page : pageNo,
-          search : searchText,
-          order : order,
-        },
-        filterSelector : {
-          pageSize : pagesize,
-          page : pageNo,
-          search : searchText,
-          order : order,
-        },
+      patternSelector : {
+        pageSize : pagesize,
+        page : pageNo,
+        search : searchText,
+        order : order
+      },
+      filterSelector : {
+        pageSize : pagesize,
+        page : pageNo,
+        search : searchText,
+        order : order
       }
-    );
-    disposeConfSubscriptionRef.current = configurationSubscription;
-  };
+    });
+    disposeConfSubscriptionRef.current = configurationSubscription
+  }
 
   const handleModalClose = () => {
     setModalOpen({
       open : false,
       filter_file : null,
       name : "",
-      count : 0,
+      count : 0
     });
-  };
+  }
 
   function resetSelectedRowData() {
     return () => {
@@ -575,33 +557,17 @@ function MesheryFilters({
     };
   }
 
-  async function handleSubmit({ data, name, id, type }) {
+  function handleSubmit({ data, name, id, type }) {
     // TODO: use filter name
     console.info("posting filter", name);
     updateProgress({ showProgress : true });
     if (type === FILE_OPS.DELETE) {
-      const response = await showmodal(1);
-      if (response == "No") {
-        updateProgress({ showProgress : false });
-        return;
-      }
       dataFetch(
         `/api/filter/${id}`,
         { credentials : "include", method : "DELETE" },
         () => {
           console.log("FilterFile API", `/api/filter/${id}`);
           updateProgress({ showProgress : false });
-          enqueueSnackbar(`"${name}" Filter deleted`, {
-            variant : "success",
-            action : function Action(key) {
-              return (
-                <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-                  <CloseIcon />
-                </IconButton>
-              );
-            },
-            autoHideDuration : 2000,
-          });
           resetSelectedRowData()();
         },
         // handleError
@@ -610,12 +576,12 @@ function MesheryFilters({
     }
 
     if (type === FILE_OPS.FILE_UPLOAD || type === FILE_OPS.URL_UPLOAD) {
-      let body = { save : true };
-      if (type === FILE_OPS.FILE_UPLOAD) {
-        body = JSON.stringify({ ...body, filter_data : { filter_file : data } });
+      let body = { save : true }
+      if (type ===FILE_OPS.FILE_UPLOAD) {
+        body = JSON.stringify({ ...body, filter_data : { filter_file : data } })
       }
-      if (type === FILE_OPS.URL_UPLOAD) {
-        body = JSON.stringify({ ...body, url : data });
+      if (type ===  FILE_OPS.URL_UPLOAD) {
+        body = JSON.stringify({ ...body, url : data })
       }
       dataFetch(
         `/api/filter`,
@@ -641,19 +607,18 @@ function MesheryFilters({
       handleSubmit({
         data : event.target.result,
         name : file?.name || "meshery_" + Math.floor(trueRandom() * 100),
-        type : FILE_OPS.FILE_UPLOAD,
+        type : FILE_OPS.FILE_UPLOAD
       });
     });
     reader.readAsText(file);
   }
 
   function urlUploadHandler(link) {
-    console.log("handling things....");
+    console.log("handling things....")
     handleSubmit({
       data : link,
       name : "meshery_" + Math.floor(trueRandom() * 100),
-      type : FILE_OPS.URL_UPLOAD,
-    });
+      type : FILE_OPS.URL_UPLOAD });
   }
 
   const columns = [
@@ -732,7 +697,7 @@ function MesheryFilters({
           );
         },
         customBodyRender : function CustomBody(_, tableMeta) {
-          const visibility = filters[tableMeta.rowIndex].visibility;
+          const visibility = filters[tableMeta.rowIndex].visibility
           return (
             <>
               <img src={`/static/img/${visibility}.svg`} />
@@ -756,31 +721,28 @@ function MesheryFilters({
         },
         customBodyRender : function CustomBody(_, tableMeta) {
           const rowData = filters[tableMeta.rowIndex];
-          const visibility = filters[tableMeta.rowIndex].visibility;
+          const visibility = filters[tableMeta.rowIndex].visibility
           return (
             <>
-              {visibility === "public" ? (
-                <IconButton
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleClone(rowData.id, rowData.name);
-                  }}
-                >
-                  <img src="/static/img/clone.svg" />
-                </IconButton>
-              ) : (
+              {visibility === "public" ? <IconButton onClick={(e) => {
+                e.stopPropagation();
+                handleClone(rowData.id, rowData.name)
+              }
+              }>
+                <img src="/static/img/clone.svg" />
+              </IconButton>
+                :
                 <IconButton>
                   <EditIcon
                     title="Config"
                     aria-label="config"
                     color="inherit"
                     onClick={(e) => {
-                      e.stopPropagation();
-                      setSelectedRowData(filters[tableMeta.rowIndex]);
+                      e.stopPropagation()
+                      setSelectedRowData(filters[tableMeta.rowIndex])
                     }}
                   />
-                </IconButton>
-              )}
+                </IconButton> }
               <IconButton>
                 <DoneAllIcon
                   title="Deploy"
@@ -811,14 +773,11 @@ function MesheryFilters({
 
   async function showmodal(count) {
     let response = await modalRef.current.show({
-      title : `Delete ${count ? count : ""} Filter${count > 1 ? "s" : ""}?`,
+      title : `Delete ${count ? count : ""} Filter${count > 1 ? "s" : '' }?`,
 
-      subtitle : `Are you sure you want to delete ${count > 1 ? "these" : "this"} ${count ? count : ""} filter${
-        count > 1 ? "s" : ""
-      }?`,
+      subtitle : `Are you sure you want to delete ${count > 1 ? "these" : 'this' } ${count ? count : ""} filter${count > 1 ? "s" : '' }?`,
 
-      options : ["Yes", "No"],
-    });
+      options : ["Yes", "No"], })
     return response;
   }
 
@@ -843,6 +802,7 @@ function MesheryFilters({
             );
           },
         });
+
       },
       handleError("Failed To Delete Filter")
     );
@@ -865,13 +825,13 @@ function MesheryFilters({
     download : false,
     textLabels : {
       selectedRows : {
-        text : "filter(s) selected",
-      },
+        text : "filter(s) selected"
+      }
     },
 
     onRowsDelete : async function handleDelete(row) {
-      let response = await showmodal(Object.keys(row.lookup).length);
-      console.log(response);
+      let response  = await showmodal(Object.keys(row.lookup).length)
+      console.log(response)
       if (response === "Yes") {
         const fid = Object.keys(row.lookup).map((idx) => filters[idx]?.id);
         fid.forEach((fid) => deleteFilter(fid));
@@ -889,7 +849,7 @@ function MesheryFilters({
 
       switch (action) {
         case "changePage":
-          initFiltersSubscription(tableState.page.toString(), pageSize.toString(), search, sortOrder);
+          initFiltersSubscription(tableState.page.toString(), pageSize.toString(), search, sortOrder)
           break;
         case "changeRowsPerPage":
           initFiltersSubscription(page.toString(), tableState.rowsPerPage.toString(), search, sortOrder);
@@ -920,14 +880,14 @@ function MesheryFilters({
     },
     setRowProps : (row, dataIndex, rowIndex) => {
       return {
-        "data-cy" : `config-row-${rowIndex}`,
-      };
+        "data-cy" : `config-row-${rowIndex}`
+      }
     },
     setTableProps : () => {
       return {
-        "data-cy" : "filters-grid",
-      };
-    },
+        "data-cy" : "filters-grid"
+      }
+    }
   };
 
   if (loading) {
@@ -936,40 +896,40 @@ function MesheryFilters({
 
   return (
     <>
+
       <NoSsr>
         {selectedRowData && Object.keys(selectedRowData).length > 0 && (
           <YAMLEditor filter={selectedRowData} onClose={resetSelectedRowData()} onSubmit={handleSubmit} />
         )}
-        <div className={classes.topToolbar}>
-          {!selectedFilter.show && (filters.length > 0 || viewType === "table") && (
-            <div className={classes.createButton}>
-              <div>
-                <Button
-                  aria-label="Add Filter"
-                  variant="contained"
-                  color="primary"
-                  size="large"
-                  // @ts-ignore
-                  onClick={handleUploadImport}
-                  style={{ marginRight : "2rem" }}
-                >
-                  <PublishIcon className={classes.addIcon} data-cy="import-button" />
-                  Import Filters
-                </Button>
-              </div>
+        <div className={classes.topToolbar} >
+          {!selectedFilter.show && (filters.length>0 || viewType==="table") && <div className={classes.createButton}>
+            <div>
+              <Button
+                aria-label="Add Filter"
+                variant="contained"
+                color="primary"
+                size="large"
+                // @ts-ignore
+                onClick={handleUploadImport}
+                style={{ marginRight : "2rem" }}
+              >
+                <PublishIcon className={classes.addIcon} data-cy="import-button"/>
+              Import Filters
+              </Button>
             </div>
-          )}
+          </div>
+          }
           <div style={{ justifySelf : "flex-end", marginLeft : "auto", paddingRight : "1rem", paddingTop : "0.2rem" }}>
             <CatalogFilter catalogVisibility={catalogVisibility} handleCatalogVisibility={handleCatalogVisibility} />
           </div>
-          {!selectedFilter.show && (
-            <div className={classes.viewSwitchButton}>
-              <ViewSwitch data-cy="table-view" view={viewType} changeView={setViewType} />
-            </div>
-          )}
+          {!selectedFilter.show &&
+          <div className={classes.viewSwitchButton}>
+            <ViewSwitch data-cy="table-view" view={viewType} changeView={setViewType} />
+          </div>
+          }
         </div>
-        {!selectedFilter.show && viewType === "table" && (
-          <MuiThemeProvider theme={getMuiTheme()}>
+        {
+          !selectedFilter.show && viewType==="table" && <MuiThemeProvider theme={getMuiTheme() }>
             <MUIDataTable
               title={<div className={classes.tableHeader}>Filters</div>}
               data={filters}
@@ -979,64 +939,52 @@ function MesheryFilters({
               className={classes.muiRow}
             />
           </MuiThemeProvider>
-        )}
-        {!selectedFilter.show && viewType === "grid" && (
-          // grid vieww
-          <FiltersGrid
-            filters={filters}
-            handleDeploy={handleDeploy}
-            handleUndeploy={handleUndeploy}
-            handleSubmit={handleSubmit}
-            handleClone={handleClone}
-            urlUploadHandler={urlUploadHandler}
-            uploadHandler={uploadHandler}
-            setSelectedFilter={setSelectedFilter}
-            selectedFilter={selectedFilter}
-            pages={Math.ceil(count / pageSize)}
-            setPage={setPage}
-            selectedPage={page}
-            UploadImport={UploadImport}
-          />
-        )}
+        }
+        {
+          !selectedFilter.show && viewType==="grid" &&
+            // grid vieww
+            <FiltersGrid
+              filters={filters}
+              handleDeploy={handleDeploy}
+              handleUndeploy={handleUndeploy}
+              handleSubmit={handleSubmit}
+              handleClone={handleClone}
+              urlUploadHandler={urlUploadHandler}
+              uploadHandler={uploadHandler}
+              setSelectedFilter={setSelectedFilter}
+              selectedFilter={selectedFilter}
+              pages={Math.ceil(count / pageSize)}
+              setPage={setPage}
+              selectedPage={page}
+              UploadImport={UploadImport}
+            />
+        }
         <ConfirmationMsg
           open={modalOpen.open}
           handleClose={handleModalClose}
-          submit={{
-            deploy : () => handleDeploy(modalOpen.filter_file, modalOpen.name),
-            unDeploy : () => handleUndeploy(modalOpen.filter_file, modalOpen.name),
-          }}
+          submit={
+            { deploy : () => handleDeploy(modalOpen.filter_file, modalOpen.name),  unDeploy : () => handleUndeploy(modalOpen.filter_file, modalOpen.name) }
+          }
           isDelete={!modalOpen.deploy}
           title={modalOpen.name}
           componentCount={modalOpen.count}
           tab={modalOpen.deploy ? 0 : 1}
         />
-        <PromptComponent ref={modalRef} />
-        <UploadImport
-          open={importModal.open}
-          handleClose={handleUploadImportClose}
-          aria-label="URL upload button"
-          handleUrlUpload={urlUploadHandler}
-          handleUpload={uploadHandler}
-          configuration="Filter"
-        />
+        <UploadImport open={importModal.open} handleClose={handleUploadImportClose} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} configuration="Filter" />
       </NoSsr>
     </>
   );
 }
 
-const mapDispatchToProps = (dispatch) => ({
-  updateProgress : bindActionCreators(updateProgress, dispatch),
-  toggleCatalogContent : bindActionCreators(toggleCatalogContent, dispatch),
+const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(updateProgress, dispatch),
+  toggleCatalogContent : bindActionCreators(toggleCatalogContent, dispatch)
 });
 
 const mapStateToProps = (state) => {
-  return {
-    user : state.get("user")?.toObject(),
-    selectedK8sContexts : state.get("selectedK8sContexts"),
-    catalogVisibility : state.get("catalogVisibility"),
+  return { user : state.get("user")?.toObject(), selectedK8sContexts : state.get("selectedK8sContexts"),
+    catalogVisibility : state.get("catalogVisibility")
   };
 };
 
 // @ts-ignore
 export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(withSnackbar(MesheryFilters)));
-
