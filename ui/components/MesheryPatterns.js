@@ -733,9 +733,14 @@ function MesheryPatterns({
     };
   }
 
-  function handleSubmit({ data, id, name, type }) {
+  async function handleSubmit({ data, id, name, type }) {
     updateProgress({ showProgress : true })
     if (type === FILE_OPS.DELETE) {
+      const response = await showModal(1, name)
+      if (response=="No"){
+        updateProgress({ showProgress : false })
+        return;
+      }
       dataFetch(
         `/api/pattern/${id}`,
         {
