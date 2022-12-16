@@ -209,7 +209,7 @@ function ConfirmationMsg(props) {
         });
     }
 
-    if (tabVal === 0) {
+    if (tabVal === 2) {
       submit.deploy();
     } else if (tabVal === 1) {
       submit.unDeploy();
