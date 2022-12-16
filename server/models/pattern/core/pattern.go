@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/gofrs/uuid"
+	"github.com/layer5io/meshery/server/models/pattern/patterns/k8s"
 	"github.com/layer5io/meshery/server/models/pattern/utils"
 	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
 	"github.com/sirupsen/logrus"
@@ -371,7 +372,7 @@ func NewPatternFileFromK8sManifest(data string, ignoreErrors bool) (Pattern, err
 			}
 			return pattern, ErrParseK8sManifest(fmt.Errorf("failed to parse manifest into an internal representation"))
 		}
-
+		manifest = k8s.Format.Prettify(manifest, false)
 		name, svc, err := createPatternServiceFromK8s(manifest)
 		if err != nil {
 			if ignoreErrors {
