@@ -30,12 +30,11 @@ func Validator(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFu
 				return
 			}
 
-			var svcSettings map[string]interface{}
 			if k8s.Format {
 				svc.Settings = k8s.Format.DePrettify(svc.Settings, false)
 			}
 			//Validate workload definition
-			if err := validateWorkload(svcSettings, wc); err != nil {
+			if err := validateWorkload(svc.Settings, wc); err != nil {
 				act.Terminate(fmt.Errorf("invalid workload definition: %s", err))
 				return
 			}
