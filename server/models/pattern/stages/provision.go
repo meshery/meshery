@@ -8,13 +8,15 @@ import (
 	"github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshery/server/models/pattern/planner"
 	"github.com/layer5io/meshery/server/models/pattern/resource/selector"
+	"github.com/layer5io/meshkit/models/meshmodel"
+	meshmodelv1alpha1 "github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
 )
 
 type CompConfigPair struct {
 	Component     v1alpha1.Component
 	Configuration v1alpha1.Configuration
-	Hosts         map[string]bool
+	Hosts         map[meshmodel.Host]bool
 }
 
 const ProvisionSuffixKey = ".isProvisioned"
@@ -61,6 +63,7 @@ func Provision(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFu
 			ccp.Hosts = generateHosts(
 				data.PatternSvcWorkloadCapabilities[name],
 				data.PatternSvcTraitCapabilities[name],
+				act.GetRegistry(),
 			)
 			// Get annotations for the component, if any
 			comp.ObjectMeta.Annotations = helpers.MergeStringMaps(
@@ -95,13 +98,13 @@ func Provision(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFu
 	}
 }
 
-func generateHosts(wc core.WorkloadCapability, tcs []core.TraitCapability) map[string]bool {
-	res := map[string]bool{}
-
-	res[wc.Host] = true
-	for _, tc := range tcs {
-		res[tc.Host] = true
-	}
+func generateHosts(wc meshmodelv1alpha1.ComponentDefinition, tcs []core.TraitCapability, reg *meshmodel.RegistryManager) map[meshmodel.Host]bool {
+	res := map[meshmodel.Host]bool{}
+	host := reg.GetRegistrant(wc)
+	res[host] = true
+	// for _, tc := range tcs {
+	// 	res[tc.Host] = true
+	// }
 
 	return res
 }

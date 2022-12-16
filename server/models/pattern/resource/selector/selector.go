@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshkit/models/meshmodel"
+	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 )
 
 const (
@@ -31,21 +31,19 @@ func New(reg *meshmodel.RegistryManager, helpers Helpers) *Selector {
 	}
 }
 
-func GetAnnotationsForWorkload(w core.WorkloadCapability) map[string]string {
+const annotationsPrefix = "design.meshmodel.io"
+
+func GetAnnotationsForWorkload(w v1alpha1.ComponentDefinition) map[string]string {
 	res := map[string]string{}
 
-	metadata := w.OAMDefinition.Spec.Metadata
-	typ, ok := metadata["@type"]
-	if ok {
-		for k, v := range metadata {
-			if k == "@type" {
-				continue
-			}
-
-			res[fmt.Sprintf("%s.%s", strings.ReplaceAll(typ, "/", "."), k)] = v
+	for key, val := range w.Metadata {
+		if v, ok := val.(string); ok {
+			res[strings.ReplaceAll(fmt.Sprintf("%s.%s", annotationsPrefix, key), " ", "")] = v
 		}
 	}
-
+	res[fmt.Sprintf("%s.model.name", annotationsPrefix)] = w.Model.Name
+	res[fmt.Sprintf("%s.model.version", annotationsPrefix)] = w.Model.Version
+	res[fmt.Sprintf("%s.model.category", annotationsPrefix)] = w.Model.Category
 	return res
 }
 

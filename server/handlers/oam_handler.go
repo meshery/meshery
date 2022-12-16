@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 
@@ -608,15 +609,15 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) (string, 
 		return "", fmt.Errorf("failed to serialize the data: %s", err)
 	}
 
-	for adapter := range ccp.Hosts {
+	for host := range ccp.Hosts {
 		// Hack until adapters fix the concurrent client
 		// creation issue: https://github.com/layer5io/meshery-adapter-library/issues/32
 		time.Sleep(50 * time.Microsecond)
 
-		logrus.Debugf("Adapter to execute operations on: %s", adapter)
+		logrus.Debugf("Adapter to execute operations on: %s", host.Hostname)
 
 		// Local call
-		if strings.HasPrefix(adapter, string(noneLocal)) {
+		if strings.HasPrefix(host.Hostname, string(noneLocal)) {
 			resp, err := patterns.ProcessOAM(
 				sap.kubeconfigs,
 				[]string{string(jsonComp)},
@@ -627,11 +628,14 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) (string, 
 
 			return resp, err
 		}
-
+		addr := host.Hostname
+		if host.Port != 0 {
+			addr = ":" + strconv.Itoa(host.Port)
+		}
 		// Create mesh client
 		mClient, err := meshes.CreateClient(
 			context.TODO(),
-			adapter,
+			addr,
 		)
 		if err != nil {
 			return "", fmt.Errorf("error creating a mesh client: %v", err)
@@ -641,17 +645,17 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) (string, 
 		}()
 
 		// Execute operation on the adapter with raw data
-		if strings.HasPrefix(adapter, string(rawAdapter)) {
-			resp, err := mClient.MClient.ApplyOperation(context.TODO(), &meshes.ApplyRuleRequest{
-				Username:    sap.userID,
-				DeleteOp:    sap.opIsDelete,
-				OpName:      "custom",
-				Namespace:   "",
-				KubeConfigs: sap.kubeconfigs,
-			})
+		// if strings.HasPrefix(adapter, string(rawAdapter)) {
+		// 	resp, err := mClient.MClient.ApplyOperation(context.TODO(), &meshes.ApplyRuleRequest{
+		// 		Username:    sap.userID,
+		// 		DeleteOp:    sap.opIsDelete,
+		// 		OpName:      "custom",
+		// 		Namespace:   "",
+		// 		KubeConfigs: sap.kubeconfigs,
+		// 	})
 
-			return resp.String(), err
-		}
+		// 	return resp.String(), err
+		// }
 
 		// Else it is an OAM adapter call
 		resp, err := mClient.MClient.ProcessOAM(context.TODO(), &meshes.ProcessOAMRequest{

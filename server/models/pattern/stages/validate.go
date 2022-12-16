@@ -9,6 +9,7 @@ import (
 	"github.com/layer5io/meshery/server/models/pattern/jsonschema"
 	"github.com/layer5io/meshery/server/models/pattern/patterns/k8s"
 	"github.com/layer5io/meshery/server/models/pattern/resource/selector"
+	meshmodel "github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 )
 
 func Validator(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFunction {
@@ -20,7 +21,7 @@ func Validator(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFu
 			return
 		}
 
-		data.PatternSvcWorkloadCapabilities = map[string]core.WorkloadCapability{}
+		data.PatternSvcWorkloadCapabilities = map[string]meshmodel.ComponentDefinition{}
 		data.PatternSvcTraitCapabilities = map[string][]core.TraitCapability{}
 
 		for svcName, svc := range data.Pattern.Services {
@@ -75,10 +76,10 @@ func Validator(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFu
 	}
 }
 
-func validateWorkload(comp map[string]interface{}, wc core.WorkloadCapability) error {
+func validateWorkload(comp map[string]interface{}, wc meshmodel.ComponentDefinition) error {
 	// Create schema validator from the schema
 	rs := jsonschema.GlobalJSONSchema()
-	if err := json.Unmarshal([]byte(wc.OAMRefSchema), rs); err != nil {
+	if err := json.Unmarshal([]byte(wc.Schema), rs); err != nil {
 		return fmt.Errorf("failed to create schema: %s", err)
 	}
 
