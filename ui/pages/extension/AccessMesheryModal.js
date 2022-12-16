@@ -80,7 +80,7 @@ export function PlayCard({ rootStyle, closeForm }) {
       style={rootStyle}
     >
       <div className={classes.headerWrapper}>
-        <Typography className={classes.header} variant="h6">Access all features</Typography>
+        <Typography className={classes.header} variant="h6">The Cloud Native Playground</Typography>
         <div style={{ display : "flex", justifyContent : "flex-end", whiteSpace : "nowrap", position : "relative" }}>
           <IconButton key="close" aria-label="Close" color="inherit" onClick={closeForm}>
             <CloseIcon className={classes.closing} />
@@ -91,10 +91,9 @@ export function PlayCard({ rootStyle, closeForm }) {
         <img width="60%" height="60%" src="/static/img/meshery-logo-light-text-side.png" />
       </div>
       <div style={{ display : "flex", justifyContent : "center", padding : "1.5rem", width : "100%" }} >
-        <Typography>Access is limited in Meshery <span style={{ color : "#F0A303" }}>Playground.</span> <br />
-                    To get full access, Deploy Meshery locally.</Typography>
+        <Typography>Meshery Playground gives you hands-on experience using not just Kubernetes, but every CNCF project and surrounding ecosystem. Choose your <a href="https://layer5.io/learn/learning-paths">Learning Path</a> and follow their labs in your browser as you visually and collaboratively learn by doing without having to install a single thing.</Typography>
       </div>
-      <Typography style={{ textAlign : "center", marginBottom : "1rem" }}>&#x26A1; Deploy Meshery in seconds</Typography>
+      <Typography style={{ textAlign : "center", marginBottom : "1rem" }}>To ensure that Meshery Playground remains a clean sandbox of all to use, many of Meshery's features are disabled. For full access to all of Meshery's features, deploy your own instance of Meshery.</Typography>
       <div style={{ display : "flex", justifyContent : "center" }}>
         <Grid item xs={3}>
           <Button fullWidth variant="outlined" color="primary" onClick={(e) => handlePage(e)}>Get Started</Button>
