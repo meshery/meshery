@@ -400,6 +400,7 @@ func GetWorkloadByID(name, id string) *WorkloadCapability {
 	for _, f := range res {
 		m := make(map[string]interface{})
 		_ = json.Unmarshal([]byte(f.OAMRefSchema), &m)
+		// prettify(m, false) False here means the disablement of prettification for terminal values in component schemas
 		m = k8s.Format.Prettify(m, false)
 		b, _ := json.Marshal(m)
 		f.OAMRefSchema = string(b)
