@@ -2,6 +2,7 @@ package pkg
 
 import (
 	"os"
+	"strings"
 )
 
 const template string = `---
@@ -71,7 +72,10 @@ func (t TemplateAttributes) CreateMarkDown() string {
 	// markdown += "---\n"
 	// markdown += t.AboutProject + "\n"
 	// markdown += t.StandardBlurb
-	return t.FullPage
+	markdown := t.FullPage
+	markdown = strings.ReplaceAll(markdown, "published: TRUE", "published: true")
+	markdown = strings.ReplaceAll(markdown, "published: FALSE", "published: false")
+	return markdown
 }
 func WriteMarkDown(path string, md string) error {
 	file, err := os.Create(path)

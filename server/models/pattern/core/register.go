@@ -734,7 +734,7 @@ func GetK8Components(ctxt context.Context, config []byte) (*manifests.Component,
 			delete(prop, "kind")
 			delete(prop, "status")
 			schema["properties"] = prop
-			schema["$schema"] = "http://json-schema.org/draft-04/schema"
+			schema["$schema"] = "http://json-schema.org/draft-07/schema"
 
 			b, err = json.Marshal(schema)
 			if err != nil {

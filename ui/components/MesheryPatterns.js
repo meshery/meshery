@@ -950,22 +950,22 @@ function MesheryPatterns({
                 </IconButton> }
               {/*</Tooltip> */}
               <IconButton
-                title="Verify"
+                title="Validate"
                 onClick={(e) => handleVerify(e, rowData.pattern_file, rowData.id)}
               >
                 <DoneIcon data-cy="verify-button" />
-              </IconButton>
-              <IconButton
-                title="Deploy"
-                onClick={(e) => handleModalOpen(e, rowData.pattern_file, rowData.name, patternErrors.get(rowData.id), ACTIONS.DEPLOY)}
-              >
-                <DoneAllIcon data-cy="deploy-button" />
               </IconButton>
               <IconButton
                 title="Undeploy"
                 onClick={(e) => handleModalOpen(e, rowData.pattern_file, rowData.name, patternErrors.get(rowData.id), ACTIONS.UNDEPLOY)}
               >
                 <UndeployIcon fill="#8F1F00" data-cy="undeploy-button" />
+              </IconButton>
+              <IconButton
+                title="Deploy"
+                onClick={(e) => handleModalOpen(e, rowData.pattern_file, rowData.name, patternErrors.get(rowData.id), ACTIONS.DEPLOY)}
+              >
+                <DoneAllIcon data-cy="deploy-button" />
               </IconButton>
               <IconButton
                 title="Publish"
