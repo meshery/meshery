@@ -93,7 +93,7 @@ export function PlayCard({ rootStyle, closeForm }) {
       <div style={{ display : "flex", justifyContent : "center", padding : "1.5rem", width : "100%" }} >
         <Typography>Meshery Playground gives you hands-on experience using not just Kubernetes, but every CNCF project and surrounding ecosystem. Choose your <a href="https://layer5.io/learn/learning-paths">Learning Path</a> and follow their labs in your browser as you visually and collaboratively learn by doing without having to install a single thing.</Typography>
       </div>
-      <Typography style={{ textAlign : "center", marginBottom : "1rem" }}>To ensure that Meshery Playground remains a clean sandbox of all to use, many of Meshery's features are disabled. For full access to all of Meshery's features, deploy your own instance of Meshery.</Typography>
+      <Typography style={{ textAlign : "center", marginBottom : "1rem" }}>To ensure that Meshery Playground remains a clean sandbox of all to use, many of Meshery&apos;s features are disabled. For full access to all of Meshery&apos;s features, deploy your own instance of Meshery.</Typography>
       <div style={{ display : "flex", justifyContent : "center" }}>
         <Grid item xs={3}>
           <Button fullWidth variant="outlined" color="primary" onClick={(e) => handlePage(e)}>Get Started</Button>
