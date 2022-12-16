@@ -4,19 +4,27 @@
   "metadata": {
     "description": "A relationship that defines network edges between components"
   },
-  "subType": "network",
+  "subType": "Network",
   "selectors": {
-    "from": {
-      "kind": "Service",
-      "model": "Kubernetes"
-    },
-    "to": {
-      "kind": [
-        "Pod",
-        "Deployment",
-        "Endpoint"
-      ],
-      "model": "Kubernetes"
-    }
+    "from": [
+      {
+        "kind": "Service",
+        "model": "Kubernetes"
+      }
+    ],
+    "to": [
+      {
+        "kind": "Endpoint",
+        "model": "Kubernetes"
+      },
+      {
+        "kind": "Pod",
+        "model": "Kubernetes"
+      },
+      {
+        "kind": "Deployment",
+        "model": "Kubernetes"
+      }
+    ]
   }
 }
