@@ -181,7 +181,7 @@ All the images or icons needs to be sourced from the [public directory of images
             └── color
                 └── meshery.svg
     ```
-5. Avoid any kind of duplicacy in the versions of icon used.
+5. Avoid any kind of duplicity in the versions of icon used.
 
 For accessing the svg file as data-url, the utf8 encoding should be used in place of base64.Use [encodeURIComponent](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURIComponent) on SVG data URIs. \
   ```
