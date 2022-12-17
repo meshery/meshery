@@ -152,7 +152,7 @@ func RegisterWorkload(data []byte) (err error) {
 	schema := map[string]interface{}{}
 	_ = json.Unmarshal([]byte(workload.OAMRefSchema), &schema)
 	if k8s.Format {
-		schema = k8s.Format.Prettify(schema, true)
+		schema = k8s.Format.Prettify(schema, false)
 	}
 	temp, _ := json.Marshal(schema)
 	workload.OAMRefSchema = string(temp)
@@ -398,6 +398,12 @@ func GetScopesByK8sAPIVersionKind(apiVersion, kind string) (s []ScopeCapability)
 func GetWorkloadByID(name, id string) *WorkloadCapability {
 	res := GetWorkload(name)
 	for _, f := range res {
+		m := make(map[string]interface{})
+		_ = json.Unmarshal([]byte(f.OAMRefSchema), &m)
+		// prettify(m, false) False here means the disablement of prettification for terminal values in component schemas
+		m = k8s.Format.Prettify(m, false)
+		b, _ := json.Marshal(m)
+		f.OAMRefSchema = string(b)
 		if f.GetID() == id {
 			return &f
 		}
@@ -734,7 +740,7 @@ func GetK8Components(ctxt context.Context, config []byte) (*manifests.Component,
 			delete(prop, "kind")
 			delete(prop, "status")
 			schema["properties"] = prop
-			schema["$schema"] = "http://json-schema.org/draft-04/schema"
+			schema["$schema"] = "http://json-schema.org/draft-07/schema"
 
 			b, err = json.Marshal(schema)
 			if err != nil {

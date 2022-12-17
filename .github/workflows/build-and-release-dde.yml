@@ -27,7 +27,7 @@ env:
 
 jobs:
   print-inputs:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - run: |
           echo "Dispatched GIT_VERSION: ${{github.event.inputs.release-ver}}"
@@ -38,7 +38,7 @@ jobs:
           echo "Env GIT_TAG: ${{ github.event.release.tag_name }}"
 
   docker-extension:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout 🛎️ repo
         uses: actions/checkout@master

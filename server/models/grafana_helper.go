@@ -73,7 +73,7 @@ func (g *GrafanaClient) makeRequest(ctx context.Context, queryURL, APIKey string
 		return nil, err
 	}
 	if !g.promMode {
-		req.Header.Set("Authorization", APIKey)
+		req.Header.Set("Authorization", "Bearer " + APIKey)
 	}
 	req.Header.Set("Accept", "application/json")
 	req.Header.Set("Content-Type", "application/json")
@@ -167,10 +167,13 @@ func (g *GrafanaClient) ProcessBoard(ctx context.Context, c *sdk.Client, board *
 				dsName = cases.Title(language.Und).String(strings.ToLower(fmt.Sprint(tmpVar.Query))) // datasource name can be found in the query field
 				tmpDsName[tmpVar.Name] = dsName
 			} else if tmpVar.Type == "query" && tmpVar.Datasource != nil {
-				if !strings.HasPrefix(*tmpVar.Datasource, "$") {
-					dsName = *tmpVar.Datasource
-				} else {
-					dsName = tmpDsName[strings.Replace(*tmpVar.Datasource, "$", "", 1)]
+				dataSource, ok := (tmpVar.Datasource).(string)
+				if ok {
+					if !strings.HasPrefix(dataSource, "$") {
+						dsName = dataSource
+					} else {
+						dsName = tmpDsName[strings.Replace(dataSource, "$", "", 1)]
+					}
 				}
 			} else {
 				err := fmt.Errorf("unable to get datasource name for tmpvar: %+#v", tmpVar)
@@ -185,7 +188,6 @@ func (g *GrafanaClient) ProcessBoard(ctx context.Context, c *sdk.Client, board *
 			} else {
 				ds.Name = dsName
 			}
-
 			tvVal := tmpVar.Current.Text
 			grafBoard.TemplateVars = append(grafBoard.TemplateVars, &GrafanaTemplateVars{
 				Name:  tmpVar.Name,
@@ -205,16 +207,23 @@ func (g *GrafanaClient) ProcessBoard(ctx context.Context, c *sdk.Client, board *
 		for _, p1 := range board.Panels {
 			if p1.OfType != sdk.TextType && p1.OfType != sdk.TableType && p1.Type != "row" { // turning off text ,table and row panels for now
 				if p1.Datasource != nil {
-					if strings.HasPrefix(*p1.Datasource, "$") { // Formating Datasource id
-						*p1.Datasource = tmpDsName[strings.Replace(*p1.Datasource, "$", "", 1)]
+					dataSource, ok := (p1.Datasource).(string)
+					if ok {
+						if strings.HasPrefix(dataSource, "$") { // Formating Datasource id
+							p1.Datasource = tmpDsName[strings.Replace(dataSource, "$", "", 1)]
+						}
 					}
 				}
+
 				grafBoard.Panels = append(grafBoard.Panels, p1)
 			} else if p1.OfType != sdk.TextType && p1.OfType != sdk.TableType && p1.Type == "row" && len(p1.Panels) > 0 { // Looking for Panels with Row
 				for _, p2 := range p1.Panels { // Adding Panels inside the Row Panel to grafBoard
 					if p2.OfType != sdk.TextType && p2.OfType != sdk.TableType && p2.Type != "row" {
-						if strings.HasPrefix(*p2.Datasource, "$") { // Formating Datasource id
-							*p2.Datasource = tmpDsName[strings.Replace(*p2.Datasource, "$", "", 1)]
+						dataSource, ok := (p2.Datasource).(string)
+						if ok {
+							if strings.HasPrefix(dataSource, "$") { // Formating Datasource id
+								p2.Datasource = tmpDsName[strings.Replace(dataSource, "$", "", 1)]
+							}
 						}
 						p3, _ := p2.MarshalJSON()
 						p4 := &sdk.Panel{}
@@ -230,8 +239,12 @@ func (g *GrafanaClient) ProcessBoard(ctx context.Context, c *sdk.Client, board *
 		for _, r1 := range board.Rows {
 			for _, p2 := range r1.Panels {
 				if p2.OfType != sdk.TextType && p2.OfType != sdk.TableType && p2.Type != "row" { // turning off text, table and row panels for now
-					if strings.HasPrefix(*p2.Datasource, "$") { // Formating Datasource id
-						*p2.Datasource = tmpDsName[strings.Replace(*p2.Datasource, "$", "", 1)]
+					dataSource, ok := (p2.Datasource).(map[string]interface{})
+					if ok {
+						dsType, ok := dataSource["type"].(string)
+						if ok && strings.HasPrefix(dsType, "$") { // Formating Datasource id
+							p2.Datasource = tmpDsName[strings.Replace(dsType, "$", "", 1)]
+						}
 					}
 					p3, _ := p2.MarshalJSON()
 					p4 := &sdk.Panel{}

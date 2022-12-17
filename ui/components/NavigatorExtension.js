@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { createUseRemoteComponent, getDependencies, createRequires } from "@paciolan/remote-component";
 import { bindActionCreators } from "redux";
 import { updateLoadTestData, setK8sContexts } from "../lib/store";
-import GrafanaCustomCharts from "./GrafanaCustomCharts";
+import GrafanaCustomCharts from "./telemetry/grafana/GrafanaCustomCharts";
 import MesheryPerformanceComponent from "./MesheryPerformance";
 import dataFetch from "../lib/data-fetch";
 import PatternServiceForm from "./MesheryMeshInterface/PatternServiceForm";

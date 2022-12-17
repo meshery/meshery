@@ -18,7 +18,7 @@ env:
 
 jobs:
   deploy-playground:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout source code
         uses: actions/checkout@v3
@@ -56,5 +56,5 @@ jobs:
           manifests: |
             install/playground/meshery-playground-deployment.yaml
           images: |
-            hub.docker.com/r/layer5/meshery:playground-layer5/meshery:playground-${{env.GIT_VERSION}}
+            hub.docker.com/r/layer5/meshery:playground-${{env.GIT_VERSION}}
 

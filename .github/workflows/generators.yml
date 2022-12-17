@@ -7,7 +7,7 @@ jobs:
   run-script:
     name: Run Script
     if: github.repository == 'meshery/meshery'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Check out code
         uses: actions/checkout@master

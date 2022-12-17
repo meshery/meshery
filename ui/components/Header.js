@@ -127,11 +127,15 @@ const styles = (theme) => ({
   },
   Chip : {
     backgroundColor : "white",
-    flexGrow : 1,
+    width : '12.8rem',
+    textAlign : 'center',
     cursor : "pointer",
     "& .MuiChip-label" : {
       flexGrow : 1
-    }
+    },
+    overflow : "hidden",
+    whiteSpace : "nowrap",
+    textOverflow : "ellipsis"
   },
   cMenuContainer : {
     backgroundColor : "revert",
@@ -193,6 +197,7 @@ function K8sContextMenu({
   contexts = {},
   activeContexts = [],
   runningStatus,
+  show,
   updateK8SConfig,
   updateProgress,
 
@@ -212,6 +217,11 @@ function K8sContextMenu({
     zIndex : "-1",
     bottom : showFullContextMenu ? "-55%" : "-195%",
     transform : showFullContextMenu ? `translateY(${transformProperty}%)` : "translateY(0)"
+  }
+
+  const ctxStyle = {
+    ...disabledStyle,
+    marginRight : "0.5rem",
   }
 
   const getOperatorStatus = (contextId) => {
@@ -269,8 +279,8 @@ function K8sContextMenu({
     updateProgress({ showProgress : true })
 
     pingKubernetes(
-      successHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Kubernetes succesfully pinged", () => updateProgress({ showProgress : false })),
-      errorHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Kubernetes not pinged successfully", () => updateProgress({ showProgress : false })),
+      successHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Kubernetes pinged", () => updateProgress({ showProgress : false })),
+      errorHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Kubernetes not pinged", () => updateProgress({ showProgress : false })),
       id
     )
   }
@@ -290,7 +300,7 @@ function K8sContextMenu({
       }
 
       deleteKubernetesConfig(
-        successHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Kubernetes config successfully removed", successCallback),
+        successHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Kubernetes config removed", successCallback),
         errorHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Not able to remove config"),
         ctxId
       )
@@ -309,34 +319,36 @@ function K8sContextMenu({
 
   return (
     <>
-      <IconButton
-        aria-label="contexts"
-        className="k8s-icon-button"
-        onClick={(e) => {
-          e.preventDefault();
-          setShowFullContextMenu(prev => !prev);
-        }}
-        onMouseOver={(e) => {
-          e.preventDefault();
-          setAnchorEl(true);
-        }}
+      <div style={ show ? cursorNotAllowed : {}}>
+        <IconButton
+          aria-label="contexts"
+          className="k8s-icon-button"
+          onClick={(e) => {
+            e.preventDefault();
+            setShowFullContextMenu(prev => !prev);
+          }}
+          onMouseOver={(e) => {
+            e.preventDefault();
+            setAnchorEl(true);
+          }}
 
-        onMouseLeave={(e) => {
-          e.preventDefault();
-          setAnchorEl(false)
-        }}
+          onMouseLeave={(e) => {
+            e.preventDefault();
+            setAnchorEl(false)
+          }}
 
-        aria-owns={open
-          ? 'menu-list-grow'
-          : undefined}
-        aria-haspopup="true"
-        style={{ marginRight : "0.5rem" }}
-      >
-        <div className={classes.cbadgeContainer}>
-          <img className="k8s-image" src="/static/img/kubernetes.svg" width="24px" height="24px" style={{ zIndex : "2" }} />
-          <div className={classes.cbadge}>{contexts?.total_count || 0}</div>
-        </div>
-      </IconButton>
+          aria-owns={open
+            ? 'menu-list-grow'
+            : undefined}
+          aria-haspopup="true"
+          style={show? ctxStyle  : { marginRight : "0.5rem" }}
+        >
+          <div className={classes.cbadgeContainer}>
+            <img className="k8s-image" src="/static/img/kubernetes.svg" width="24px" height="24px" style={{ zIndex : "2" }} />
+            <div className={classes.cbadge}>{contexts?.total_count || 0}</div>
+          </div>
+        </IconButton>
+      </div>
 
       <Slide direction="down" style={styleSlider} timeout={400} in={open} mountOnEnter unmountOnExit>
         <div>
@@ -513,6 +525,7 @@ class Header extends React.Component {
                     <K8sContextMenu
                       classes={classes}
                       contexts={this.props.contexts}
+                      show={!this.state.capabilityregistryObj?.isHeaderComponentEnabled([SETTINGS])}
                       activeContexts={this.props.activeContexts}
                       setActiveContexts={this.props.setActiveContexts}
                       searchContexts={this.props.searchContexts}
