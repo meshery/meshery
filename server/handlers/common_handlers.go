@@ -38,13 +38,6 @@ func (h *Handler) LogoutHandler(w http.ResponseWriter, req *http.Request, p mode
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
-
-	err := p.Logout(w, req)
-	if err != nil {
-		logrus.Errorf("Error performing logout: %v", err.Error())
-		http.Redirect(w, req, "/user/login", http.StatusFound)
-		return
-	}
 	http.SetCookie(w, &http.Cookie{
 		Name:     h.config.ProviderCookieName,
 		Value:    p.Name(),
@@ -52,6 +45,12 @@ func (h *Handler) LogoutHandler(w http.ResponseWriter, req *http.Request, p mode
 		Path:     "/",
 		HttpOnly: true,
 	})
+	err := p.Logout(w, req)
+	if err != nil {
+		logrus.Errorf("Error performing logout: %v", err.Error())
+		http.Redirect(w, req, "/user/login", http.StatusFound)
+		return
+	}
 	logrus.Infof("successfully logged out from %v provider", p.Name())
 	http.Redirect(w, req, "/provider", http.StatusFound)
 }
