@@ -18,12 +18,17 @@ include install/Makefile.show-help.mk
 #-----------------------------------------------------------------------------
 # Docker-based Builds
 #-----------------------------------------------------------------------------
-.PHONY: docker-build docker-local-cloud docker-cloud
+.PHONY: docker-build docker-local-cloud docker-cloud docker-playground-build
 ## Build Meshery Server and UI containers.
 docker-build:
-	# `make docker` builds Meshery inside of a multi-stage Docker container.
+	# `make docker-build` builds Meshery inside of a multi-stage Docker container.
 	# This method does NOT require that you have Go, NPM, etc. installed locally.
 	DOCKER_BUILDKIT=1 docker build -f install/docker/Dockerfile -t layer5/meshery --build-arg TOKEN=$(GLOBAL_TOKEN) --build-arg GIT_COMMITSHA=$(GIT_COMMITSHA) --build-arg GIT_VERSION=$(GIT_VERSION) --build-arg RELEASE_CHANNEL=${RELEASE_CHANNEL} .
+
+docker-playground-build:
+	# `make docker-playground-build` builds Meshery inside of a multi-stage Docker container.
+	# This method does NOT require that you have Go, NPM, etc. installed locally.
+	DOCKER_BUILDKIT=1 docker build -f install/docker/Dockerfile -t layer5/meshery --build-arg TOKEN=$(GLOBAL_TOKEN) --build-arg GIT_COMMITSHA=$(GIT_COMMITSHA) --build-arg GIT_VERSION=$(GIT_VERSION) --build-arg RELEASE_CHANNEL=${RELEASE_CHANNEL} --build-arg ENFORCED_PROVIDER=$(LOCAL_PROVIDER) --build-arg PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) .	
 
 ## Meshery Cloud for user authentication.
 ## Runs Meshery in a container locally and points to locally-running
@@ -153,6 +158,7 @@ server-no-content:
 server-playground: dep-check
 	cd server; cd cmd; go mod tidy; \
 	BUILD="$(GIT_VERSION)" \
+	ENFORCED_PROVIDER=$(REMOTE_PROVIDER) \
 	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
 	PORT=9081 \
 	DEBUG=true \
@@ -189,7 +195,10 @@ ui-server: ui-meshery-build server
 UI_BUILD_SCRIPT = build16
 UI_DEV_SCRIPT = dev16
 
-ifeq ($(findstring v18, $(shell node --version)), v18)
+ifeq ($(findstring v19, $(shell node --version)), v19)
+	UI_BUILD_SCRIPT = build
+	UI_DEV_SCRIPT = dev 
+else ifeq ($(findstring v18, $(shell node --version)), v18)
 	UI_BUILD_SCRIPT = build
 	UI_DEV_SCRIPT = dev 
 else ifeq ($(findstring v17, $(shell node --version)), v17)

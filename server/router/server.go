@@ -6,7 +6,6 @@ import (
 	"net/http"
 
 	"github.com/go-openapi/runtime/middleware"
-	"github.com/sirupsen/logrus"
 
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/server/handlers"
@@ -228,7 +227,6 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int, g http.
 		providerI := req.Context().Value(models.ProviderCtxKey)
 		provider, ok := providerI.(models.Provider)
 		if !ok {
-			logrus.Debug("Inside not OK")
 			http.Redirect(w, req, "/provider", http.StatusFound)
 			return
 		}

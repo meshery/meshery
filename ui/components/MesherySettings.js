@@ -12,14 +12,14 @@ import {
 } from '@material-ui/core';
 import CloseIcon from "@material-ui/icons/Close";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowLeft, faCloud, faPoll, faDatabase } from '@fortawesome/free-solid-svg-icons';
+import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 // import {faTachometerAlt} from '@fortawesome/free-solid-svg-icons';
-import { faMendeley } from '@fortawesome/free-brands-svg-icons';
+// import { faMendeley } from '@fortawesome/free-brands-svg-icons';
 import Link from 'next/link';
 import MeshConfigComponent from './MeshConfigComponent';
-import GrafanaComponent from './GrafanaComponent';
+import GrafanaComponent from './telemetry/grafana/GrafanaComponent';
 import MeshAdapterConfigComponent from './MeshAdapterConfigComponent';
-import PrometheusComponent from './PrometheusComponent';
+import PrometheusComponent from './telemetry/prometheus/PrometheusComponent';
 // import MesherySettingsPerformanceComponent from "../components/MesherySettingsPerformanceComponent";
 import dataFetch from '../lib/data-fetch';
 import { updateProgress } from "../lib/store";
@@ -27,6 +27,11 @@ import { withSnackbar } from "notistack";
 import { ctxUrl } from '../utils/multi-ctx';
 import PromptComponent from './PromptComponent';
 import resetDatabase from './graphql/queries/ResetDatabaseQuery';
+import CloudIcon from '../assets/icons/CloudIcon';
+import MendeleyIcon from '../assets/icons/MendeleyIcon';
+import SquarePollVerticalIcon from '../assets/icons/SquarePollVerticalIcon';
+import DatabaseIcon from '../assets/icons/DatabaseIcon';
+import MesherySettingsEnvButtons from './MesherySettingsEnvButtons';
 
 const styles = (theme) => ({
   wrapperClss : {
@@ -38,6 +43,11 @@ const styles = (theme) => ({
     minWidth : 40,
     paddingLeft : 0,
     paddingRight : 0,
+  },
+  headerIcon : {
+    width : "28px",
+    height : "28px",
+    marginBottom : "0 !important"
   },
   icon : {
     display : 'inline',
@@ -64,6 +74,18 @@ const styles = (theme) => ({
     display : "flex",
     justifyContent : "center",
     margin : theme.spacing(2),
+  },
+  paper : {
+    maxWidth : '90%',
+    margin : 'auto',
+    overflow : 'hidden',
+  },
+  topToolbar : {
+    margin : "2rem auto",
+    display : "flex",
+    justifyContent : "space-between",
+    paddingLeft : "1rem",
+    maxWidth : "90%"
   }
 });
 
@@ -346,7 +368,6 @@ class MesherySettings extends React.Component {
       tabVal, subTabVal, k8sconfig, meshAdapters,
     } = this.state;
 
-    const mainIconScale = 'grow-10';
     let backToPlay = '';
     if (k8sconfig.clusterConfigured === true && meshAdapters.length > 0) {
       backToPlay = (
@@ -354,7 +375,6 @@ class MesherySettings extends React.Component {
           <Link href="/management">
             <div className={classes.link}>
               <FontAwesomeIcon icon={faArrowLeft} transform="grow-4" fixedWidth />
-              {' '}
               You are ready to manage cloud native infrastructure
             </div>
           </Link>
@@ -362,59 +382,67 @@ class MesherySettings extends React.Component {
       );
     }
     return (
-      <div className={classes.wrapperClss}>
-        <Paper square className={classes.wrapperClss}>
-          <Tabs
-            value={tabVal}
-            onChange={this.handleChange('tabVal')}
-            variant="fullWidth"
-            indicatorColor="primary"
-            textColor="primary"
-          >
-            <Tooltip title="Identify your cluster" placement="top">
-              <Tab
-                className={classes.tab}
-                icon={
-                  <FontAwesomeIcon icon={faCloud} transform={mainIconScale} />
-                }
-                label="Environment"
-                data-cy="tabEnvironment"
-              />
-            </Tooltip>
-            <Tooltip title="Connect Meshery Adapters" placement="top">
-              <Tab
-                className={classes.tab}
-                icon={
-                  <FontAwesomeIcon icon={faMendeley} transform={mainIconScale} />
-                }
-                label="Adapters"
-                data-cy="tabServiceMeshes"
-              />
-            </Tooltip>
-            <Tooltip title="Configure Metrics backends" placement="top">
-              <Tab
-                className={classes.tab}
-                icon={
-                  <FontAwesomeIcon icon={faPoll} transform={mainIconScale} fixedWidth />
-                }
-                label="Metrics"
-                tab="tabMetrics"
-              />
-            </Tooltip>
-            <Tooltip title="Reset System" placement="top">
-              <Tab
-                className={classes.tab}
-                icon={
-                  <FontAwesomeIcon icon={faDatabase} transform={mainIconScale} fixedWidth />
-                }
-                label="Reset"
-                tab="systemReset"
-              />
-            </Tooltip>
+      <>
+        {tabVal ===0 && <div
+          className={classes.topToolbar}
+        >
+          <MesherySettingsEnvButtons/>
+        </div>
+        }
+        <Paper className={classes.paper}>
+          <div className={classes.wrapperClss}>
+            <Paper square className={classes.wrapperClss}>
+              <Tabs
+                value={tabVal}
+                onChange={this.handleChange('tabVal')}
+                variant="fullWidth"
+                indicatorColor="primary"
+                textColor="primary"
+              >
+                <Tooltip title="Identify your cluster" placement="top">
+                  <Tab
+                    className={classes.tab}
+                    icon={
+                      <CloudIcon className={classes.headerIcon} />
+                    }
+                    label="Environment"
+                    data-cy="tabEnvironment"
+                  />
+                </Tooltip>
+                <Tooltip title="Connect Meshery Adapters" placement="top">
+                  <Tab
+                    className={classes.tab}
+                    icon={
+                      <MendeleyIcon className={classes.headerIcon} />
+                    }
+                    label="Adapters"
+                    data-cy="tabServiceMeshes"
+                  />
+                </Tooltip>
+                <Tooltip title="Configure Metrics backends" placement="top">
+                  <Tab
+                    className={classes.tab}
+                    icon={
+                      <SquarePollVerticalIcon style={{ width : "24px",height : "24px" }}/>
+                    }
+                    label="Metrics"
+                    tab="tabMetrics"
+                  />
+                </Tooltip>
+                <Tooltip title="Reset System" placement="top">
+                  <Tab
+                    className={classes.tab}
+                    icon={
+                      <DatabaseIcon style={{ width : "20px",height : "20px" }} />
+                    }
+                    label="Reset"
+                    tab="systemReset"
+                  />
+                </Tooltip>
 
-            {/*NOTE: Functionality of performance tab will be modified, until then keeping it and the related code commented */}
+                {/*NOTE: Functionality of performance tab will be modified, until then keeping it and the related code commented */}
 
-            {/* <Tooltip title="Choose Performance Test Defaults" placement="top">
+                {/* <Tooltip title="Choose Performance Test Defaults" placement="top">
               <Tab
                 className={classes.tab}
                 icon={
@@ -424,17 +452,17 @@ class MesherySettings extends React.Component {
                 tab="tabPerformance"
               />
             </Tooltip> */}
-          </Tabs>
-        </Paper>
-        {tabVal === 0 && (
-          <MeshConfigComponent />
-        )}
-        {tabVal === 1 && (
-          <TabContainer>
-            <MeshAdapterConfigComponent />
-          </TabContainer>
-        )}
-        {tabVal === 2
+              </Tabs>
+            </Paper>
+            {tabVal === 0 && (
+              <MeshConfigComponent />
+            )}
+            {tabVal === 1 && (
+              <TabContainer>
+                <MeshAdapterConfigComponent />
+              </TabContainer>
+            )}
+            {tabVal === 2
           && (
             <TabContainer>
               <AppBar position="static" color="default">
@@ -474,34 +502,36 @@ class MesherySettings extends React.Component {
               )}
             </TabContainer>
           )}
-        {tabVal === 3 && (
-          <TabContainer>
-            <div className={classes.container}>
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                size="large"
-                onClick={this.handleResetDatabase()}
-                className={classes.DBBtn}
-                data-cy="btnResetDatabase"
+            {tabVal === 3 && (
+              <TabContainer>
+                <div className={classes.container}>
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                    size="large"
+                    onClick={this.handleResetDatabase()}
+                    className={classes.DBBtn}
+                    data-cy="btnResetDatabase"
 
-              >
-                <Typography> System Reset </Typography>
-              </Button>
-            </div>
-          </TabContainer>
-        )}
-        {/* {tabVal === 3 && (
+                  >
+                    <Typography> System Reset </Typography>
+                  </Button>
+                </div>
+              </TabContainer>
+            )}
+            {/* {tabVal === 3 && (
           <TabContainer>
             <MesherySettingsPerformanceComponent />
 
           </TabContainer>
         )} */}
 
-        {backToPlay}
-        <PromptComponent ref={this.systemResetRef} />
-      </div>
+            {backToPlay}
+            <PromptComponent ref={this.systemResetRef} />
+          </div>
+        </Paper>
+      </>
     );
   }
 }

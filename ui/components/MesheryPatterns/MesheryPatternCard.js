@@ -114,7 +114,7 @@ function MesheryPatternCard({
               </Button>
 
               <Button
-                title="Verify"
+                title="Valildate"
                 variant="contained"
                 className={classes.testsButton}
                 onClick={
@@ -122,7 +122,20 @@ function MesheryPatternCard({
                 }
               >
                 <DoneIcon className={classes.iconPatt} />
-                <span className={classes.btnText}> Verify </span>
+                <span className={classes.btnText}> Validate </span>
+              </Button>
+
+
+              <Button
+                title="Undeploy"
+                variant="contained"
+                className={classes.undeployButton}
+                onClick={(ev) =>
+                  genericClickHandler(ev, handleUnDeploy)
+                }
+              >
+                <UndeployIcon fill="#ffffff" className={classes.iconPatt} />
+                <span className={classes.btnText}>Undeploy</span>
               </Button>
 
               <Button
@@ -135,18 +148,6 @@ function MesheryPatternCard({
               >
                 <DoneAllIcon className={classes.iconPatt} />
                 <span className={classes.btnText}>Deploy</span>
-              </Button>
-
-              <Button
-                title="Undeploy"
-                variant="contained"
-                className={classes.undeployButton}
-                onClick={(ev) =>
-                  genericClickHandler(ev, handleUnDeploy)
-                }
-              >
-                <UndeployIcon fill="#ffffff" className={classes.iconPatt} />
-                <span className={classes.btnText}>Undeploy</span>
               </Button>
 
               { visibility === "private" ?  <Button

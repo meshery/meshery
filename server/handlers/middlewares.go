@@ -24,6 +24,7 @@ func (h *Handler) ProviderMiddleware(next http.Handler) http.Handler {
 			providerName = req.Header.Get(h.config.ProviderCookieName)
 			// allow provider to be set using query parameter
 			// this is OK since provider information is not sensitive
+
 			if providerName == "" {
 				providerName = req.URL.Query().Get(providerQParamName)
 			}
@@ -200,7 +201,12 @@ func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http
 		// ensuring session is intact before running load test
 		err := provider.GetSession(req)
 		if err != nil {
-			provider.Logout(w, req)
+			err := provider.Logout(w, req)
+			if err != nil {
+				logrus.Errorf("Error: unable to logout: %v", err)
+				http.Error(w, "unable to logout", http.StatusInternalServerError)
+				return
+			}
 			logrus.Errorf("Error: unable to get session: %v", err)
 			http.Error(w, "unable to get session", http.StatusUnauthorized)
 			return

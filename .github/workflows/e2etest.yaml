@@ -7,14 +7,18 @@ on:
     tags:
       - "v*"
     paths-ignore:
-      - 'docs/**'
+      - 'docs/**/*'
+      - 'ui/**/*'
+      - 'provider-ui/**/*'
+      - '.github/**/*'
+      - '*.md'
   pull_request:
     branches:
       - "*"
 
 jobs:
   SetPatternfileForEmojivotoInstall:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout Code
         uses: actions/checkout@v2.5.0

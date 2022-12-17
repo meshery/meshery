@@ -199,16 +199,17 @@ var listContextCmd = &cobra.Command{
 // List all contexts present
 mesheryctl system context list
 	`,
-	Args:         cobra.NoArgs,
 	SilenceUsage: true,
 	RunE: func(cmd *cobra.Command, args []string) error {
+		if len(args) != 0 {
+			return errors.New(utils.SystemContextSubError("this command takes no arguments.\n", "list"))
+		}
 		err := viper.Unmarshal(&configuration)
 		if err != nil {
 			return err
 		}
 		var contexts = configuration.Contexts
 		if contexts == nil {
-			// return errors.New("no available contexts")
 			log.Print("No contexts available. Use `mesheryctl system context create <name>` to create a new Meshery deployment context.\n")
 			return nil
 		}
@@ -412,17 +413,11 @@ mesheryctl system context
 	Args: cobra.MaximumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
-			currentContext := viper.GetString("current-context")
-			if currentContext == "" {
-				return errors.New("current context not set")
-			}
-
-			log.Printf("Current context: %s\n", currentContext)
-			return cmd.Help()
+			return errors.New(utils.SystemContextSubError("please specify a flag or subcommand. Use 'mesheryctl system context --help' to display user guide.\n", "context"))
 		}
 
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
-			return errors.New(utils.SystemContextSubError(fmt.Sprintf("'%s' is a invalid command.  Use 'mesheryctl system context --help' to display usage guide.\n", args[0]), "context"))
+			return errors.New(utils.SystemContextSubError(fmt.Sprintf("'%s' is a invalid command. Include one of these arguments: [ create | delete | list | switch | view ]. Use 'mesheryctl system context --help' to display sample usage.\n", args[0]), "context"))
 		}
 		return nil
 	},

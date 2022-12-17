@@ -8,9 +8,9 @@ export const FILE_OPS = {
 }
 
 export const ACTIONS = {
-  DEPLOY : 0,
+  DEPLOY : 2,
   UNDEPLOY : 1,
-  VERIFY : 2,
+  VERIFY : 0,
 }
 
 export const DEPLOYMENT_TYPE = {

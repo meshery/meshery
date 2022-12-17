@@ -1,27 +1,11 @@
 import React, {
   useEffect,
-  useState } from 'react';
+  useState
+} from 'react';
 import Cookies from 'universal-cookie';
-import { makeStyles, MuiThemeProvider } from '@material-ui/core/styles';
-import { createTheme } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import { Typography, Grid, Button, IconButton } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
-
-
-const getMuiTheme = () => createTheme({
-  palette : {
-    primary : {
-      main : "#607d8b"
-    }
-  },
-  overrides : {
-    MuiGrid : {
-      input : {
-        color : '#607d8b'
-      }
-    },
-  }
-})
 
 const styles = makeStyles((theme) => ({
   paper : {
@@ -64,16 +48,18 @@ const styles = makeStyles((theme) => ({
   imgWrapper : {
     padding : "15px 10px 15px 0",
     display : "flex"
+  },
+  headerWrapper : {
+    marginBottom : 12
   }
 }));
 
-function Popup() {
+function MeshMapEarlyAccessCardPopup() {
   const [isOpen, setIsOpen] = useState(true);
   const cookies = new Cookies('registered');
-  const classes = styles();
 
   const handleOpen = () => {
-    const timer =  setTimeout(() => {
+    const timer = setTimeout(() => {
       setIsOpen(true);
     }, 10000)
     return () => clearTimeout(timer);
@@ -88,50 +74,51 @@ function Popup() {
       });
       handleOpen();
     }
-  },[])
+  }, [])
+
+  if (isOpen) {
+    return <MeshMapEarlyAccessCard closeForm={() => setIsOpen(false)} />
+  } else {
+    return <></>
+  }
+}
+
+export function MeshMapEarlyAccessCard({ rootStyle = {}, closeForm = () => {} }) {
+  const classes = styles();
 
   const handleSignUp = (e) => {
     window.open("https://layer5.io/meshmap", "_blank")
     e.stopPropagation();
   };
 
-  if (isOpen) {
-    return (
-      <div>
-        <div>
-          <MuiThemeProvider theme={getMuiTheme()}>
-            <div
-              className={classes.paper}
-            >
-              <div className={classes.headerWrapper}>
-                <Typography className={classes.header} variant="h6">Get early access to MeshMap!
-                </Typography>
+  return (
+    <div
+      className={classes.paper}
+      style={rootStyle}
+    >
+      <div className={classes.headerWrapper}>
+        <Typography className={classes.header} variant="h6">Get early access to MeshMap!
+        </Typography>
 
-                <div style={{ display : "flex", justifyContent : "flex-end", whiteSpace : "nowrap", position : "relative" }}>
-                  <IconButton key="close" aria-label="Close" color="inherit" onClick={() => setIsOpen(false)}>
-                    <CloseIcon/>
-                  </IconButton>
-                </div>
-              </div>
-
-              <div className={classes.imgWrapper}>
-                <img className={classes.designerImg} src="/static/img/designer.png"/>
-              </div>
-              <Typography className={classes.caption} variant="subtitle1"><i>Friends dont let friends GitOps alone.
-                Visually design and collaborate in real-time with other MeshMap users.</i></Typography>
-              <div style={{ display : "flex", justifyContent : "flex-end" }}>
-                <Grid item xs={3}>
-                  <Button fullWidth variant="contained" color="primary" onClick={(e) => handleSignUp(e)}>Sign up</Button>
-                </Grid>
-              </div>
-            </div>
-          </MuiThemeProvider>
+        <div style={{ display : "flex", justifyContent : "flex-end", whiteSpace : "nowrap", position : "relative" }}>
+          <IconButton key="close" aria-label="Close" color="inherit" onClick={closeForm}>
+            <CloseIcon />
+          </IconButton>
         </div>
       </div>
-    )
-  }
 
-  return null
+      <div className={classes.imgWrapper}>
+        <img className={classes.designerImg} src="/static/img/designer.png" />
+      </div>
+      <Typography className={classes.caption} variant="subtitle1"><i>Friends dont let friends GitOps alone.
+        Visually design and collaborate in real-time with other MeshMap users.</i></Typography>
+      <div style={{ display : "flex", justifyContent : "flex-end" }}>
+        <Grid item xs={3}>
+          <Button fullWidth variant="contained" color="primary" onClick={(e) => handleSignUp(e)}>Sign up</Button>
+        </Grid>
+      </div>
+    </div>
+  )
 }
 
-export default Popup
+export default MeshMapEarlyAccessCardPopup;

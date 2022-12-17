@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import "./animatedMeshPattern.css";
 
 function getClassName(className, isActive) {
   if (!isActive) {

@@ -6,6 +6,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/server/models/pattern/core"
+	"github.com/layer5io/meshery/server/models/pattern/patterns/k8s"
 	"github.com/layer5io/meshkit/models/meshmodel"
 	"github.com/layer5io/meshkit/models/meshmodel/core/types"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
@@ -82,7 +83,17 @@ func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Requ
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
 	res := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{})
-	if err := enc.Encode(res); err != nil {
+	var comps []v1alpha1.ComponentDefinition
+	for _, r := range res {
+		m := make(map[string]interface{})
+		comp, _ := r.(v1alpha1.ComponentDefinition)
+		_ = json.Unmarshal([]byte(comp.Schema), &m)
+		m = k8s.Format.Prettify(m, false)
+		b, _ := json.Marshal(m)
+		comp.Schema = string(b)
+		comps = append(comps, comp)
+	}
+	if err := enc.Encode(comps); err != nil {
 		h.log.Error(ErrWorkloadDefinition(err)) //TODO: Add appropriate meshkit error
 		http.Error(rw, ErrWorkloadDefinition(err).Error(), http.StatusInternalServerError)
 	}
@@ -98,7 +109,17 @@ func (h *Handler) GetMeshmodelComponentsByName(rw http.ResponseWriter, r *http.R
 		ModelName: typ,
 		Version:   v,
 	})
-	if err := enc.Encode(res); err != nil {
+	var comps []v1alpha1.ComponentDefinition
+	for _, r := range res {
+		m := make(map[string]interface{})
+		comp, _ := r.(v1alpha1.ComponentDefinition)
+		_ = json.Unmarshal([]byte(comp.Schema), &m)
+		m = k8s.Format.Prettify(m, false)
+		b, _ := json.Marshal(m)
+		comp.Schema = string(b)
+		comps = append(comps, comp)
+	}
+	if err := enc.Encode(comps); err != nil {
 		h.log.Error(ErrWorkloadDefinition(err)) //TODO: Add appropriate meshkit error
 		http.Error(rw, ErrWorkloadDefinition(err).Error(), http.StatusInternalServerError)
 	}
@@ -128,7 +149,17 @@ func (h *Handler) MeshmodelComponentsForTypeHandler(rw http.ResponseWriter, r *h
 	for _, x := range response {
 		x.Versions = filterUniqueElementsArray(x.Versions)
 	}
-	if err := enc.Encode(response); err != nil {
+	var comps []v1alpha1.ComponentDefinition
+	for _, r := range res {
+		m := make(map[string]interface{})
+		comp, _ := r.(v1alpha1.ComponentDefinition)
+		_ = json.Unmarshal([]byte(comp.Schema), &m)
+		m = k8s.Format.Prettify(m, false)
+		b, _ := json.Marshal(m)
+		comp.Schema = string(b)
+		comps = append(comps, comp)
+	}
+	if err := enc.Encode(comps); err != nil {
 		h.log.Error(ErrWorkloadDefinition(err)) //TODO: Add appropriate meshkit error
 		http.Error(rw, ErrWorkloadDefinition(err).Error(), http.StatusInternalServerError)
 	}
@@ -142,7 +173,17 @@ func (h *Handler) GetMeshmodelComponentsByType(rw http.ResponseWriter, r *http.R
 		ModelName: typ,
 		Version:   v,
 	})
-	if err := enc.Encode(res); err != nil {
+	var comps []v1alpha1.ComponentDefinition
+	for _, r := range res {
+		m := make(map[string]interface{})
+		comp, _ := r.(v1alpha1.ComponentDefinition)
+		_ = json.Unmarshal([]byte(comp.Schema), &m)
+		m = k8s.Format.Prettify(m, false)
+		b, _ := json.Marshal(m)
+		comp.Schema = string(b)
+		comps = append(comps, comp)
+	}
+	if err := enc.Encode(comps); err != nil {
 		h.log.Error(ErrWorkloadDefinition(err)) //TODO: Add appropriate meshkit error
 		http.Error(rw, ErrWorkloadDefinition(err).Error(), http.StatusInternalServerError)
 	}

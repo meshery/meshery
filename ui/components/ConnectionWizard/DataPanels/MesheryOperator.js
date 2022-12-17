@@ -35,11 +35,11 @@ const MesheryOperatorDataPanel = ({
 
     const successCb = (res) => {
       if (res?.operator?.status == "ENABLED") {
-        enqueueSnackbar('Operator was successfully pinged!', { variant : 'success',
+        enqueueSnackbar('Operator was pinged!', { variant : 'success',
           autoHideDuration : 2000,
           action : closeButtonForSnackbarAction(closeSnackbar) })
       } else {
-        enqueueSnackbar('Operator was not successfully pinged!', { variant : 'failure',
+        enqueueSnackbar('Operator was not pinged!', { variant : 'failure',
           autoHideDuration : 2000,
           action : closeButtonForSnackbarAction(closeSnackbar) })
       }
