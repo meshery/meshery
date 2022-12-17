@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/sirupsen/logrus"
 	"github.com/layer5io/meshery/server/models"
 )
 
@@ -40,7 +41,8 @@ func (h *Handler) LogoutHandler(w http.ResponseWriter, req *http.Request, p mode
 
 	err := p.Logout(w, req)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		logrus.Errorf("Error performing logout: %v", err.Error())
+		http.Redirect(w, req, "/user/login", http.StatusFound)
 		return
 	}
 	http.SetCookie(w, &http.Cookie{
@@ -50,10 +52,7 @@ func (h *Handler) LogoutHandler(w http.ResponseWriter, req *http.Request, p mode
 		Path:     "/",
 		HttpOnly: true,
 	})
-	if p.Name() == "None" {
-		http.Redirect(w, req, "/user/login", http.StatusFound)
-		return
-	}
+	logrus.Infof("successfully logged out from %v provider", p.Name())
 	http.Redirect(w, req, "/provider", http.StatusFound)
 }
 
