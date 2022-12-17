@@ -41,7 +41,7 @@ export default function PlaygroundMeshDeploy(props) {
 
   return (
     <div>
-      <Dialog aria-labelledby="customized-dialog-title" open={props.isOpen} >
+      <Dialog aria-labelledby="customized-dialog-title" open={props.isOpen} onClose={props.closeForm}>
         <DialogTitle id="customized-dialog-title" className={classes.dialogTitle}>
           <Typography variant="h6">The Cloud Native Playground</Typography>
           <IconButton aria-label="close" className={classes.closeButton} onClick={props.closeForm}>
