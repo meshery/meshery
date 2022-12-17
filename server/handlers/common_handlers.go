@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/sirupsen/logrus"
 	"github.com/layer5io/meshery/server/models"
+	"github.com/sirupsen/logrus"
 )
 
 // swagger:route GET /api/user/login UserAPI idGetUserLogin
