@@ -69,20 +69,20 @@ func ProcessOAM(kconfigs []string, oamComps []string, oamConfig string, isDel bo
 							Component:     "core",
 							ComponentName: "Meshery",
 							EventType:     meshes.EventType_INFO,
-							Summary:       "Successfully deployed application: " + comp.Name,
+							Summary:       "Deployed application: " + comp.Name,
 							OperationId:   id.String(),
 						}
-						msgs = append(msgs, "successfully deployed application: "+comp.Name)
+						msgs = append(msgs, "Deployed application: "+comp.Name)
 					} else {
 						req = meshes.EventsResponse{
 							Component:     "core",
 							ComponentName: "Meshery",
 							EventType:     meshes.EventType_INFO,
-							Summary:       "Successfully deleted application: " + comp.Name,
+							Summary:       "Deleted application: " + comp.Name,
 							OperationId:   id.String(),
 						}
 
-						msgs = append(msgs, "successfully deleted application: "+comp.Name)
+						msgs = append(msgs, "Deleted application: "+comp.Name)
 					}
 					eb.Publish(&req)
 					continue
@@ -107,19 +107,19 @@ func ProcessOAM(kconfigs []string, oamComps []string, oamConfig string, isDel bo
 							Component:     "core",
 							ComponentName: "Kubernetes",
 							EventType:     meshes.EventType_INFO,
-							Summary:       fmt.Sprintf("Successfully deployed %s: %s", strings.TrimSuffix(comp.Spec.Type, ".K8s"), comp.Name),
+							Summary:       fmt.Sprintf("Deployed %s: %s", strings.TrimSuffix(comp.Spec.Type, ".K8s"), comp.Name),
 							OperationId:   id.String(),
 						}
-						msgs = append(msgs, fmt.Sprintf("successfully deployed %s: %s", strings.TrimSuffix(comp.Spec.Type, ".K8s"), comp.Name))
+						msgs = append(msgs, fmt.Sprintf("Deployed %s: %s", strings.TrimSuffix(comp.Spec.Type, ".K8s"), comp.Name))
 					} else {
 						req = meshes.EventsResponse{
 							Component:     "core",
 							ComponentName: "Kubernetes",
 							EventType:     meshes.EventType_INFO,
-							Summary:       fmt.Sprintf("Successfully deleted %s: %s", strings.TrimSuffix(comp.Spec.Type, ".K8s"), comp.Name),
+							Summary:       fmt.Sprintf("Deleted %s: %s", strings.TrimSuffix(comp.Spec.Type, ".K8s"), comp.Name),
 							OperationId:   id.String(),
 						}
-						msgs = append(msgs, fmt.Sprintf("successfully deleted %s: %s", strings.TrimSuffix(comp.Spec.Type, ".K8s"), comp.Name))
+						msgs = append(msgs, fmt.Sprintf("Deleted %s: %s", strings.TrimSuffix(comp.Spec.Type, ".K8s"), comp.Name))
 					}
 					eb.Publish(&req)
 				}

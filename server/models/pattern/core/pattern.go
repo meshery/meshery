@@ -42,6 +42,7 @@ type Service struct {
 	// from the parent
 	Name        string            `yaml:"name,omitempty" json:"name,omitempty"`
 	Type        string            `yaml:"type,omitempty" json:"type,omitempty"`
+	APIVersion  string            `yaml:"apiVersion,omitempty" json:"apiVersion,omitempty"`
 	Namespace   string            `yaml:"namespace" json:"namespace"`
 	Version     string            `yaml:"version,omitempty" json:"version,omitempty"`
 	Labels      map[string]string `yaml:"labels,omitempty" json:"labels,omitempty"`
@@ -371,7 +372,7 @@ func NewPatternFileFromK8sManifest(data string, ignoreErrors bool) (Pattern, err
 			}
 			return pattern, ErrParseK8sManifest(fmt.Errorf("failed to parse manifest into an internal representation"))
 		}
-
+		manifest = k8s.Format.Prettify(manifest, false)
 		name, svc, err := createPatternServiceFromK8s(manifest)
 		if err != nil {
 			if ignoreErrors {
@@ -440,7 +441,7 @@ func createPatternServiceFromK8s(manifest map[string]interface{}) (string, Servi
 			castedAnnotation[k] = cv
 		}
 	}
-	rest = k8s.Format.Prettify(rest, true)
+	// rest = k8s.Format.Prettify(rest, false)
 	svc := Service{
 		Name:        name,
 		Type:        w[0].OAMDefinition.Name,

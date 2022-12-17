@@ -2,6 +2,7 @@ package pkg
 
 import (
 	"os"
+	"strings"
 )
 
 const template string = `---
@@ -51,25 +52,29 @@ type TemplateAttributes struct {
 	Published               string
 	IntegrationIcon         string
 	DarkModeIntegrationIcon string
+	FullPage                string
 }
 
 func (t TemplateAttributes) CreateMarkDown() string {
-	markdown := "---\n"
-	markdown += "title: " + t.Title + "\n"
-	markdown += "subtitle: " + t.Subtitle + "\n"
-	markdown += "integrationIcon: " + t.IntegrationIcon + "\n"
-	markdown += "darkModeIntegrationIcon: " + t.DarkModeIntegrationIcon + "\n"
-	markdown += "docURL: " + t.DocURL + "\n"
-	markdown += "category: " + t.Category + "\n"
-	markdown += "subcategory: " + t.Subcategory + "\n"
-	markdown += "featureList: " + t.FeatureList + "\n"
-	markdown += "workingSlides: " + t.WorkingSlides + "\n"
-	markdown += "howItWorks: " + t.HowItWorks + "\n"
-	markdown += "howItWorksDetails: " + t.HowItWorksDetails + "\n"
-	markdown += "published: " + t.Published + "\n"
-	markdown += "---\n"
-	markdown += t.AboutProject + "\n"
-	markdown += t.StandardBlurb
+	// markdown := "---\n"
+	// markdown += "title: " + t.Title + "\n"
+	// markdown += "subtitle: " + t.Subtitle + "\n"
+	// markdown += "integrationIcon: " + t.IntegrationIcon + "\n"
+	// markdown += "darkModeIntegrationIcon: " + t.DarkModeIntegrationIcon + "\n"
+	// markdown += "docURL: " + t.DocURL + "\n"
+	// markdown += "category: " + t.Category + "\n"
+	// markdown += "subcategory: " + t.Subcategory + "\n"
+	// markdown += "featureList: " + t.FeatureList + "\n"
+	// markdown += "workingSlides: " + t.WorkingSlides + "\n"
+	// markdown += "howItWorks: " + t.HowItWorks + "\n"
+	// markdown += "howItWorksDetails: " + t.HowItWorksDetails + "\n"
+	// markdown += "published: " + t.Published + "\n"
+	// markdown += "---\n"
+	// markdown += t.AboutProject + "\n"
+	// markdown += t.StandardBlurb
+	markdown := t.FullPage
+	markdown = strings.ReplaceAll(markdown, "published: TRUE", "published: true")
+	markdown = strings.ReplaceAll(markdown, "published: FALSE", "published: false")
 	return markdown
 }
 func WriteMarkDown(path string, md string) error {

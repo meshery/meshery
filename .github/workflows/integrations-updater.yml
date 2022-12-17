@@ -1,8 +1,10 @@
 name: Meshery Integrations Updater
 on:
   push:
-    branches:
-      - "master"
+     branches:
+       - "master"
+     paths:
+       - ".github/workflows/integrations-updater.yml"
   schedule:
     - cron:  '0 0 * * *'  # Run the job every day at midnight
   workflow_dispatch:
@@ -37,7 +39,7 @@ jobs:
           token: ${{ secrets.GH_ACCESS_TOKEN }}
           path: layer5
       - name: Run utility
-        run: cd meshery/scripts/component_updation; go build main.go; ./main https://docs.google.com/spreadsheets/d/e/2PACX-1vSgOXuiqbhUgtC9oNbJlz9PYpOEaFVoGNUFMIk4NZciFfQv1ewZg8ahdrWHKI79GkKK9TbmnZx8CqIe/pub\?gid\=0\&single\=true\&output\=csv --update-docs ${{ github.event.inputs.flags }} layer5/src/collections/integrations 
+        run: cd meshery/scripts/component_updation; go build main.go; ./main https://docs.google.com/spreadsheets/d/e/2PACX-1vSgOXuiqbhUgtC9oNbJlz9PYpOEaFVoGNUFMIk4NZciFfQv1ewZg8ahdrWHKI79GkKK9TbmnZx8CqIe/pub\?gid\=0\&single\=true\&output\=csv --update-docs ${{ github.event.inputs.flags }} layer5/src/collections/integrations --only-published
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v4
         with:

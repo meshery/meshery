@@ -204,7 +204,7 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar }) 
       () => {
         updateProgress({ showProgress : false });
 
-        enqueueSnackbar("Performance Profile Successfully Deleted!", {
+        enqueueSnackbar("Performance Profile Deleted!", {
           variant : "success",
           autoHideDuration : 2000,
           action : function Action(key) {

@@ -123,7 +123,6 @@ func (h *Handler) handlePatternPOST(
 		}
 
 		mesheryPattern := &models.MesheryPattern{
-			ID:          parsedBody.PatternData.ID,
 			Name:        patternName,
 			PatternFile: string(pfByt),
 			Location: map[string]interface{}{
@@ -132,7 +131,9 @@ func (h *Handler) handlePatternPOST(
 				"type": "local",
 			},
 		}
-
+		if parsedBody.PatternData != nil {
+			mesheryPattern.ID = parsedBody.PatternData.ID
+		}
 		if parsedBody.Save {
 			resp, err := provider.SaveMesheryPattern(token, mesheryPattern)
 			if err != nil {

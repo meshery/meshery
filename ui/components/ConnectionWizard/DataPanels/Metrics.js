@@ -112,7 +112,7 @@ const MetricsDataPlane = ({
         updatePrometheusConfig({ prometheus : { prometheusURL : "",
           selectedPrometheusBoardsConfigs : [], }, });
 
-        enqueueSnackbar(`${componentName} was successfully disconnected!` , { variant : "success",
+        enqueueSnackbar(`${componentName} was disconnected!` , { variant : "success",
           autoHideDuration : 2000,
           action : AdapterPingSnackbarAction })
       }
