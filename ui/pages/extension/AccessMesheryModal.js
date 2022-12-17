@@ -1,6 +1,8 @@
+import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography, Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
+import Slide from '@material-ui/core/Slide';
 
 const styles = makeStyles((theme) => ({
   root : {
@@ -9,9 +11,9 @@ const styles = makeStyles((theme) => ({
   },
   closeButton : {
     position : "absolute",
+    color : theme.palette.common.white,
     right : theme.spacing(1),
     top : theme.spacing(1),
-    color : theme.palette.common.white,
     transform : "rotate(-90deg)",
     "&:hover" : {
       transform : "rotate(90deg)",
@@ -21,7 +23,7 @@ const styles = makeStyles((theme) => ({
   dialogTitle : {
     textAlign : "center",
     backgroundColor : "#252E31",
-    color : "#fff"
+    color : theme.palette.common.white
   },
   imgWrapper : {
     display : "flex",
@@ -30,6 +32,9 @@ const styles = makeStyles((theme) => ({
   }
 }));
 
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
 
 export default function PlaygroundMeshDeploy(props) {
   const classes = styles();
@@ -41,7 +46,7 @@ export default function PlaygroundMeshDeploy(props) {
 
   return (
     <div>
-      <Dialog aria-labelledby="customized-dialog-title" open={props.isOpen} onClose={props.closeForm}>
+      <Dialog aria-labelledby="customized-dialog-title" open={props.isOpen} onClose={props.closeForm} TransitionComponent={Transition} >
         <DialogTitle id="customized-dialog-title" className={classes.dialogTitle}>
           <Typography variant="h6">The Cloud Native Playground</Typography>
           <IconButton aria-label="close" className={classes.closeButton} onClick={props.closeForm}>
@@ -62,7 +67,7 @@ export default function PlaygroundMeshDeploy(props) {
           </Typography>
         </DialogContent>
         <DialogActions style={{ diasplay : "flex", justifyContent : "center" }}>
-          <Button size="medium" variant="outlined" color="primary" onClick={(e) => handlePage(e)}>Get Started</Button>
+          <Button size="large" variant="outlined" color="primary" onClick={(e) => handlePage(e)}>Get Started</Button>
         </DialogActions>
       </Dialog>
     </div>
