@@ -58,12 +58,12 @@ export default function PlaygroundMeshDeploy(props) {
             <img width="60%" height="60%" src="/static/img/meshery-logo-light-text-side.png" />
           </div>
           <Typography gutterBottom>
-            Meshery Playground gives you hands-on experience using not just Kubernetes, but every CNCF project and surrounding ecosystem.
-            Choose your <a href="https://layer5.io/learn/learning-paths">Learning Path</a> and follow their labs in your browser as you visually and collaboratively learn by doing without having to install a single thing.
+            Meshery Playground gives you hands-on experience with designing cloud native systems - from your browser - using every CNCF project.
+            Choose a <a href="https://layer5.io/learn/learning-paths">Learning Path</a> and work through labs as you visually and collaboratively learn-by-doing without having to install a single thing.
           </Typography>
           <Typography gutterBottom>
             To ensure that Meshery Playground remains a clean sandbox of all to use, many of Meshery&apos;s features are disabled.
-            aaFor full access to all of Meshery&apos;s features, deploy your own instance of Meshery.
+            For full access to all of Meshery&apos;s features, deploy your own instance of Meshery.
           </Typography>
         </DialogContent>
         <DialogActions style={{ diasplay : "flex", justifyContent : "center" }}>
