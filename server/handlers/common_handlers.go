@@ -46,9 +46,9 @@ func (h *Handler) LogoutHandler(w http.ResponseWriter, req *http.Request, p mode
 		HttpOnly: true,
 	})
 	err := p.Logout(w, req)
-	if err != nil {
+	if err != nil {		
 		logrus.Errorf("Error performing logout: %v", err.Error())
-		http.Redirect(w, req, "/user/login", http.StatusFound)
+		p.HandleUnAuthenticated(w, req)
 		return
 	}
 	logrus.Infof("successfully logged out from %v provider", p.Name())
