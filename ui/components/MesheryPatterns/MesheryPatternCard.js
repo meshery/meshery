@@ -124,7 +124,7 @@ function MesheryPatternCard({
                 <span className={classes.btnText}> Validate </span>
               </TooltipButton>
 
-              <Button
+              <TooltipButton
                 title="Deploy"
                 variant="contained"
                 onClick={(ev) =>
@@ -134,7 +134,7 @@ function MesheryPatternCard({
               >
                 <DoneAllIcon className={classes.iconPatt} />
                 <span className={classes.btnText}>Deploy</span>
-              </Button>
+              </TooltipButton>
 
               <TooltipButton
                 title="Undeploy"
