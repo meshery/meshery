@@ -87,7 +87,7 @@
     "postcss": "^8.4.14",
     "prop-types": "latest",
     "react": "^16.14.0",
-    "react-big-calendar": "^0.35.0",
+    "react-big-calendar": "^0.40.8",
     "react-codemirror2": "^7.2.1",
     "react-countdown-clock": "2.7.0",
     "react-dom": "^16.14.0",
