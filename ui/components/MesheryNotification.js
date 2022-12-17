@@ -12,7 +12,7 @@ import {
   Tabs,
   Tab
 } from '@material-ui/core';
-import BellIcon from '@material-ui/icons/Notifications';
+import BellIcon from "../assets/icons/BellIcon";
 import ClearIcon from "../assets/icons/ClearIcon";
 import ErrorIcon from '@material-ui/icons/Error';
 import { withStyles } from '@material-ui/core/styles';
