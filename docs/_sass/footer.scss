@@ -39,10 +39,11 @@
                     margin-bottom: .5rem;
                 }
 
-                & img,
-                span {
+                & img,svg{
                     transition: all .3s;
                     filter: grayscale(1) invert(0.35);
+                    width: 30px;
+                    height: 30px;
 
                     &:hover {
                         filter: none;
@@ -52,6 +53,10 @@
                         }
                     }
 
+                }
+                & svg:hover, img.github:hover{
+                    filter: brightness(0) invert(1);
+                    fill: white;
                 }
             }
         }
