@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { TextField, Button, Grid, NativeSelect } from '@material-ui/core';
-import { withStyles } from '@material-ui/core/styles';
+import { createTheme, MuiThemeProvider, useTheme, withStyles } from '@material-ui/core/styles';
 import { URLValidator } from '../utils/URLValidator';
 import {
   Dialog, DialogActions,
@@ -9,8 +9,38 @@ import {
 } from '@material-ui/core';
 import { promisifiedDataFetch } from '../lib/data-fetch';
 
-
-
+const getMuiTheme = () => createTheme({
+  palette : {
+    primary : {
+      main : "#607d8b"
+    },
+    secondary : {
+      main : "#666666"
+    }
+  },
+  overrides : {
+    MuiGrid : {
+      input : {
+        color : '#607d8b'
+      }
+    },
+  }
+})
+const getDarkMuiTheme = () => createTheme({
+  palette : {
+    type : "dark",
+    primary : {
+      main : "#607d8b"
+    },
+  },
+  overrides : {
+    MuiGrid : {
+      input : {
+        color : '#607d8b'
+      }
+    },
+  }
+})
 
 const styles = () => ({
   upload : {
@@ -40,7 +70,7 @@ function UploadImport(props) {
   const [fileType, setFileType] = React.useState();
   const [sourceType, setSourceType] = React.useState();
   const [supportedTypes, setSupportedTypes] = React.useState();
-
+  const theme=useTheme()
   useEffect(() => {
     if (isApplication) {
       (async () => {
@@ -87,61 +117,61 @@ function UploadImport(props) {
           open={open}
           onClose={handleClose}>
 
-
-          <DialogTitle className={classes.title}>
-            <b id="simple-modal-title" style={{ textAlign : "center" }} >Import {configuration}</b>
-          </DialogTitle>
-          <DialogContent>
-            <Grid container spacing={24} alignItems="center">
-              <Grid item xs={3}>
-                <h4 className={classes.heading} > FROM URL </h4>
-              </Grid>
-              <Grid item xs={9}>
-                <TextField
-                  size="small"
-                  error={isError}
-                  helperText={isError && "Invalid URL"}
-                  variant="outlined"
-                  label={`URL for ${configuration}`}
-                  style={{ width : "100%" }}
-                  onChange={(e) => setInput(e.target.value)} />
-              </Grid>
-            </Grid>
-            <hr />
-            {
-              sourceType !== "Helm Chart" && (
-                <Grid container spacing={24} alignItems="center">
-                  <Grid item xs={3}>
-                    <h4 className={classes.heading}> UPLOAD FILE </h4>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <TextField
-                      size="small"
-                      variant="outlined"
-                      label="Filename"
-                      style={{ width : "100%" }}
-                    />
-                  </Grid>
-                  <Grid item xs={3}>
-
-                    <label htmlFor="upload-button" className={classes.upload}>
-
-                      <Button disabled={sourceType === "Helm Chart"} variant="contained" color="primary" aria-label="Upload Button" onChange={sourceType === "Helm Chart" ? null : handleUploader} component="span" >
-                        <input id="upload-button" type="file" accept={fileType} disabled={sourceType === "Helm Chart"} hidden name="upload-button" data-cy="file-upload-button" />
-                        Browse
-                      </Button>
-                    </label>
-                  </Grid>
+          <MuiThemeProvider theme={theme.palette.type == "dark" ? getDarkMuiTheme() : getMuiTheme()}>
+            <DialogTitle className={classes.title}>
+              <b id="simple-modal-title" style={{ textAlign : "center" }} >Import {configuration}</b>
+            </DialogTitle>
+            <DialogContent>
+              <Grid container spacing={24} alignItems="center">
+                <Grid item xs={3}>
+                  <h4 className={classes.heading} > FROM URL </h4>
                 </Grid>
-              )
-            }
-
-            <Grid container spacing={24} alignItems="center">
+                <Grid item xs={9}>
+                  <TextField
+                    size="small"
+                    error={isError}
+                    helperText={isError && "Invalid URL"}
+                    variant="outlined"
+                    label={`URL for ${configuration}`}
+                    style={{ width : "100%" }}
+                    onChange={(e) => setInput(e.target.value)} />
+                </Grid>
+              </Grid>
+              <hr />
               {
-                isApplication &&
-                <h4 className={classes.selectType}>SELECT TYPE </h4>
+                sourceType !== "Helm Chart" && (
+                  <Grid container spacing={24} alignItems="center">
+                    <Grid item xs={3}>
+                      <h4 className={classes.heading}> UPLOAD FILE </h4>
+                    </Grid>
+                    <Grid item xs={6}>
+                      <TextField
+                        size="small"
+                        variant="outlined"
+                        label="Filename"
+                        style={{ width : "100%" }}
+                      />
+                    </Grid>
+                    <Grid item xs={3}>
+
+                      <label htmlFor="upload-button" className={classes.upload}>
+
+                        <Button disabled={sourceType === "Helm Chart"} variant="contained" color="primary" aria-label="Upload Button" onChange={sourceType === "Helm Chart" ? null : handleUploader} component="span" >
+                          <input id="upload-button" type="file" accept={fileType} disabled={sourceType === "Helm Chart"} hidden name="upload-button" data-cy="file-upload-button" />
+                        Browse
+                        </Button>
+                      </label>
+                    </Grid>
+                  </Grid>
+                )
               }
-              {isApplication &&
+
+              <Grid container spacing={24} alignItems="center">
+                {
+                  isApplication &&
+                <h4 className={classes.selectType}>SELECT TYPE </h4>
+                }
+                {isApplication &&
                 <>
                   <NativeSelect
                     defaultValue={0}
@@ -160,16 +190,16 @@ function UploadImport(props) {
                     }
                   </NativeSelect>
                 </>
-              }
-            </Grid>
-          </DialogContent>
-          <DialogActions>
-            <label htmlFor="cancel" className={classes.cancel}>
-              <Button variant="outlined" color="secondary" onClick={handleClose}>Cancel</Button>
-            </label>
-            <label htmlFor="URL">  <Button disabled={isError || !input} id="URL" variant="contained" color="primary" onClick={(e) => handleSubmit(e, handleUploader)}>Import</Button> </label>
-          </DialogActions>
-
+                }
+              </Grid>
+            </DialogContent>
+            <DialogActions>
+              <label htmlFor="cancel" className={classes.cancel}>
+                <Button variant="outlined" color="secondary" onClick={handleClose}>Cancel</Button>
+              </label>
+              <label htmlFor="URL">  <Button disabled={isError || !input} id="URL" variant="contained" color="primary" onClick={(e) => handleSubmit(e, handleUploader)}>Import</Button> </label>
+            </DialogActions>
+          </MuiThemeProvider>
         </Dialog>
 
       </label>

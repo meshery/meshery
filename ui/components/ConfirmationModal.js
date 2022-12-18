@@ -153,7 +153,6 @@ const styles = (theme) => ({
     alignItems : "center",
     justifyContent : "center",
     marginTop : "1rem",
-    backgroundColor : "rgb(234, 235, 236)",
     padding : "10px",
     borderRadius : "10px"
   },

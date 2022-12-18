@@ -39,7 +39,7 @@ const animatedLightIconList = {
     <>
       <AnimatedMeshSync style={{ height : "75px" }} />
       <img
-        src="/static/img/meshery-logo/meshery-black.svg"
+        src="/static/img/meshery-logo/meshery-white.svg"
         alt="mehsery-logo"
         width="125px"
         style={{ margin : "4px 0px 8px" }}

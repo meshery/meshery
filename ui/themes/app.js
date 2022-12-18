@@ -27,6 +27,7 @@ export var darkTheme = createTheme({
       dark : '#121212',
       text : '#FFF',
       text2 : '#7494a1',
+      text3 : '#FFF',
       mainBackground : '#202020',
       mainBackground2 : '#121212',
       elevatedComponents : '#202020',
@@ -50,7 +51,9 @@ export var darkTheme = createTheme({
       switcherButtons : '#1e1e1e',
       honeyComb : '#202020',
       filterChipBackground : '#222222',
-      tabs : '#20202087'
+      tabs : '#20202087',
+      tabHover : '#212121',
+      confirmationModal : '#111111'
     },
   },
   p : {
@@ -198,6 +201,7 @@ let theme = createTheme({
       dark : '#455a64',
       text : '#000',
       text2 : 'rgba(57, 102, 121, .9)',
+      text3 : '#333333',
       mainBackground : '#396679',
       mainBackground2 : '#FFF',
       elevatedComponents : '#FFF',
@@ -221,7 +225,9 @@ let theme = createTheme({
       switcherButtons : '#335c6d',
       honeyComb : '#F0F0F0',
       filterChipBackground : '#CCCCCC',
-      tabs : '#eeeeee87'
+      tabs : '#eeeeee87',
+      tabHover : '#e3e3e3',
+      confirmationModal : 'rgb(234, 235, 236)'
     },
   },
   shape : { borderRadius : 8, },
@@ -322,9 +328,6 @@ theme = {
           },
           "&::-webkit-scrollbar-thumb:hover, & *::-webkit-scrollbar-thumb:hover" : {
             backgroundColor : "#959595",
-          },
-          "&::-webkit-scrollbar-corner, & *::-webkit-scrollbar-corner" : {
-            backgroundColor : "#263238",
           },
         },
       },
