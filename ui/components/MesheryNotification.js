@@ -83,7 +83,7 @@ const styles = (theme) => ({
     right : 0,
   },
   peekView : {
-    right : "-23.5rem"
+    right : "-26.1rem"
   }
 });
 
