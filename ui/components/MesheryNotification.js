@@ -286,14 +286,19 @@ class MesheryNotification extends React.Component {
       open = showFullNotificationCenter;
     }
 
-    let toolTipMsg = `There are ${events.length} events`;
-    switch (events.length) {
-      case 0:
-        toolTipMsg = 'There are no events';
-        break;
-      case 1:
-        toolTipMsg = 'There is 1 event';
-        break;
+    let toolTipMsg;
+    if (typeof events?.length !== 'undefined') {
+      toolTipMsg = `There are ${events.length} events`;
+      switch (events?.length) {
+        case 0:
+          toolTipMsg = 'There are no events';
+          break;
+        case 1:
+          toolTipMsg = 'There is 1 event';
+          break;
+      }
+    } else { // takes care of case when (typeof events.length === undefined)
+      toolTipMsg = 'There are no events';
     }
     let badgeColorVariant = 'default';
     events.forEach((eev) => {
