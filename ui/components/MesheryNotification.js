@@ -301,7 +301,6 @@ class MesheryNotification extends React.Component {
         badgeColorVariant = 'error';
       }
     });
-    console.log("open: ", open)
 
     return (
       <div>
@@ -318,13 +317,11 @@ class MesheryNotification extends React.Component {
 
               onMouseOver={(e) => {
                 e.preventDefault();
-                console.log("setting anchorEl to true")
                 this.setState({ anchorEl : true })
               }}
 
               onMouseLeave={(e) => {
                 e.preventDefault();
-                console.log("setting anchorEl to false")
                 this.setState({ anchorEl : false })
               }}
             >
