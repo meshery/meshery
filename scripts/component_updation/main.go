@@ -18,7 +18,7 @@ var (
 	ColumnNamesToExtract        = []string{"Project Name", "Helm Chart", "Category", "Sub-Category", "Shape", "Primary Color", "Secondary Color", "Logo URL", "SVG_Color", "SVG_White"}
 	ColumnNamesToExtractForDocs = []string{"Project Name", "Page Subtitle", "Docs URL", "Category", "Sub-Category", "Feature 1", "Feature 2", "Feature 3", "howItWorks", "howItWorksDetails", "Publish?", "About Project", "Standard Blurb", "SVG_Color", "SVG_White", "Full Page", "Helm Chart"}
 	PrimaryColumnName           = "Helm Chart"
-	OutputPath                  = "../../server/output"
+	OutputPath                  = "../../server/meshmodel_components"
 )
 
 func main() {
