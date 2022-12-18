@@ -18,7 +18,6 @@ func (s *Selector) Workload(name string, version string, model string) (v1alpha1
 		ModelName: model,
 		Version:   version,
 	})
-	fmt.Println("bro: ", entities)
 	if len(entities) != 0 {
 		for _, en := range entities {
 			if en != nil {
@@ -26,7 +25,6 @@ func (s *Selector) Workload(name string, version string, model string) (v1alpha1
 			}
 		}
 	}
-	fmt.Println(comp)
 	// data := store.GetAll(generateWorkloadKey(name))
 	// workloads := convertValueInterfaceSliceToWorkloadSlice(data)
 
