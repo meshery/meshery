@@ -51,7 +51,8 @@ func ProcessOAM(kconfigs []string, oamComps []string, oamConfig string, isDel bo
 			id, _ := uuid.NewV4()
 			for _, comp := range comps {
 				var req meshes.EventsResponse
-				if comp.Spec.Type == "Application" {
+				fmt.Println("COMP: ", comp)
+				if comp.Spec.Model == "core" || comp.Spec.Type == "Application" { //TODO: Remove second condition once "core" is added to MeshModels
 					if err := application.Deploy(kcli, comp, config, isDel); err != nil {
 						req = meshes.EventsResponse{
 							Component:     "core",
@@ -86,10 +87,9 @@ func ProcessOAM(kconfigs []string, oamComps []string, oamConfig string, isDel bo
 					}
 					eb.Publish(&req)
 					continue
-				}
-
-				// Handle all of the k8s component here
-				if comp.Spec.Model == "kubernetes" {
+				} else {
+					//All other components will be handled directly by Kubernetes
+					//TODO: Add a Mapper utility function which carries the logic for X hosts can handle Y components under Z circumstances.
 					if err := k8s.Deploy(kcli, comp, config, isDel); err != nil {
 						errs = append(errs, err)
 						req = meshes.EventsResponse{
@@ -123,6 +123,7 @@ func ProcessOAM(kconfigs []string, oamComps []string, oamConfig string, isDel bo
 					}
 					eb.Publish(&req)
 				}
+
 			}
 		}(kcli)
 	}

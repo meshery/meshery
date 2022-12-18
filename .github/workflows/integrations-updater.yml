@@ -1,5 +1,10 @@
 name: Meshery Integrations Updater
 on:
+  push:
+     branches:
+       - "master"
+     paths:
+       - ".github/workflows/integrations-updater.yml"
   schedule:
     - cron:  '0 0 * * *'  # Run the job every day at midnight
   workflow_dispatch:

@@ -13,7 +13,7 @@ import {
   Tab
 } from '@material-ui/core';
 import BellIcon from "../assets/icons/BellIcon";
-import DoneAllIcon from '@material-ui/icons/DoneAll';
+import ClearIcon from "../assets/icons/ClearIcon";
 import ErrorIcon from '@material-ui/icons/Error';
 import { withStyles } from '@material-ui/core/styles';
 import amber from '@material-ui/core/colors/amber';
@@ -337,14 +337,15 @@ class MesheryNotification extends React.Component {
                       Notifications
                     </Typography>
                   </div>
-                  <div className={classes.clearAllButton}>
+                  <div
+                    className={classes.clearAllButton}>
                     <Tooltip title="Clear all notifications">
                       <IconButton
                         color="inherit"
                         className={classes.drawerButton}
                         onClick={this.handleClearAllNotifications()}
                       >
-                        <DoneAllIcon className={classes.HeaderItem} />
+                        <ClearIcon width={'1em'} height={'1em'} fill={'white'}/>
                       </IconButton>
                     </Tooltip>
                   </div>
