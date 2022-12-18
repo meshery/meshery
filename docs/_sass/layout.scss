@@ -59,7 +59,7 @@ ol {
 }
 
 .main-container {
-  padding: 3.5rem min(4.5vh,1vw);
+  padding: 3.5rem min(4.5vh,2.5vw);
   grid-column: 2 / span 1;
 
   @media (max-width: 75em) {
