@@ -206,7 +206,7 @@ function K8sContextMenu({
 }) {
   const [anchorEl, setAnchorEl] = React.useState(false);
   const [showFullContextMenu, setShowFullContextMenu] = React.useState(false);
-  const [transformProperty, setTransformProperty] = React.useState(100)
+  const [transformProperty, setTransformProperty] = React.useState(100);
   const deleteCtxtRef = React.createRef();
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
