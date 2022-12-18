@@ -248,6 +248,20 @@ func main() {
 		})
 		done <- true
 	}()
+	// seed relationships
+	go func() {
+		staticRelationshipsPath, err := filepath.Abs("../../meshmodel/relationships")
+		if err != nil {
+			fmt.Println("Error registering relationships: ", err.Error())
+			return
+		}
+		err = handlers.RegisterStaticMeshmodelRelationships(*regManager, staticRelationshipsPath)
+		if err != nil {
+			fmt.Println("Error registering relationships: ", err.Error())
+			return
+		}
+	}()
+
 	lProv.SeedContent(log)
 	provs[lProv.Name()] = lProv
 

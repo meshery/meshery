@@ -113,6 +113,9 @@ type HandlerInterface interface {
 	GetMeshmodelComponentsByType(rw http.ResponseWriter, r *http.Request)
 	MeshmodelComponentsForTypeHandler(rw http.ResponseWriter, r *http.Request)
 
+	GetAllMeshmodelRelationships(rw http.ResponseWriter, r *http.Request)
+	RegisterMeshmodelRelationships(rw http.ResponseWriter, r *http.Request)
+
 	OAMComponentDetailsHandler(rw http.ResponseWriter, r *http.Request)
 	OAMComponentDetailByIDHandler(rw http.ResponseWriter, r *http.Request)
 	PatternFileRequestHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
