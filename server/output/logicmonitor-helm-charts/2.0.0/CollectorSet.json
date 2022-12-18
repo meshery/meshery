@@ -1,1 +1,0 @@
-{"kind":"CollectorSet","apiVersion":"v1alpha1","display-name":"Collector Set","format":"JSON","metadata":{},"model":{"name":"logicmonitor-helm-charts","version":"2.0.0","display-name":"logicmonitor-helm-charts","category":"","sub-category":""},"schema":""}
