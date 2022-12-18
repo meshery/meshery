@@ -617,7 +617,7 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) (string, 
 		logrus.Debugf("Adapter to execute operations on: %s", host.Hostname)
 
 		// Local call
-		if strings.HasPrefix(host.Hostname, string(noneLocal)) {
+		if strings.HasPrefix(host.Hostname, string(noneLocal)) || strings.HasPrefix(host.Hostname, "kubernetes") {
 			resp, err := patterns.ProcessOAM(
 				sap.kubeconfigs,
 				[]string{string(jsonComp)},

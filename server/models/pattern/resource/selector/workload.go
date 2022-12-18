@@ -1,6 +1,9 @@
 package selector
 
 import (
+	"fmt"
+	"strings"
+
 	"github.com/layer5io/meshery/server/internal/store"
 	"github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
@@ -8,14 +11,22 @@ import (
 
 func (s *Selector) Workload(name string, version string, model string) (v1alpha1.ComponentDefinition, bool) {
 	var comp v1alpha1.ComponentDefinition
+	name = strings.Split(name, ".")[0]
+	fmt.Println(name, model, version)
 	entities := s.registry.GetEntities(&v1alpha1.ComponentFilter{
 		Name:      name,
 		ModelName: model,
 		Version:   version,
 	})
+	fmt.Println("bro: ", entities)
 	if len(entities) != 0 {
-		comp = entities[0].(v1alpha1.ComponentDefinition)
+		for _, en := range entities {
+			if en != nil {
+				comp = en.(v1alpha1.ComponentDefinition)
+			}
+		}
 	}
+	fmt.Println(comp)
 	// data := store.GetAll(generateWorkloadKey(name))
 	// workloads := convertValueInterfaceSliceToWorkloadSlice(data)
 

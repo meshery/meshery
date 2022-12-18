@@ -89,7 +89,7 @@ func ProcessOAM(kconfigs []string, oamComps []string, oamConfig string, isDel bo
 				}
 
 				// Handle all of the k8s component here
-				if strings.HasSuffix(strings.ToLower(comp.Spec.Type), ".k8s") {
+				if comp.Spec.Model == "kubernetes" {
 					if err := k8s.Deploy(kcli, comp, config, isDel); err != nil {
 						errs = append(errs, err)
 						req = meshes.EventsResponse{

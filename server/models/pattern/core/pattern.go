@@ -98,9 +98,11 @@ func (p *Pattern) GetApplicationComponent(name string) (v1alpha1.Component, erro
 			Annotations: svc.Annotations,
 		},
 		Spec: v1alpha1.ComponentSpec{
-			Type:     svc.Type,
-			Version:  svc.Version,
-			Settings: svc.Settings,
+			Type:       svc.Type,
+			Version:    svc.Version,
+			Model:      svc.Model,
+			APIVersion: svc.APIVersion,
+			Settings:   svc.Settings,
 		},
 	}
 	if comp.ObjectMeta.Labels == nil {

@@ -53,11 +53,11 @@ func createK8sResourceStructure(comp v1alpha1.Component) map[string]interface{} 
 }
 
 func getAPIVersionFromComponent(comp v1alpha1.Component) string {
-	return comp.Annotations["pattern.meshery.io.k8s.k8sAPIVersion"]
+	return comp.Annotations["design.meshmodel.io.k8s.k8sAPIVersion"]
 }
 
 func getKindFromComponent(comp v1alpha1.Component) string {
-	kind := strings.TrimPrefix(comp.Annotations["pattern.meshery.io.k8s.k8sKind"], "/")
+	kind := strings.TrimPrefix(comp.Annotations["design.meshmodel.io.k8s.k8sKind"], "/")
 
 	return kind
 }
