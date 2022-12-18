@@ -150,19 +150,16 @@ class MesheryNotification extends React.Component {
     displayEventType : "*",
     tabValue : 0,
     anchorEl : false,
-    showFullContextMenu : false,
+    showFullNotificationCenter : false,
   }
 
   handleToggle = () => {
-    // this.setState((state) => ({ open : !state.open }));
-    console.log("setting toggle")
-    this.setState({ showFullContextMenu : !this.state.showFullContextMenu })
+    this.setState({ showFullNotificationCenter : !this.state.showFullNotificationCenter })
   };
 
   handleClose = () => {
-    console.log("inside close")
     this.setState({ anchorEl : false });
-    this.setState({ showFullContextMenu : false })
+    this.setState({ showFullNotificationCenter : false })
   }
 
   /**
@@ -282,11 +279,11 @@ class MesheryNotification extends React.Component {
 
   render() {
     const { classes, events } = this.props;
-    const { anchorEl, showFullContextMenu } = this.state;
+    const { anchorEl, showFullNotificationCenter } = this.state;
     const self = this;
     let open = Boolean(anchorEl);
-    if (showFullContextMenu) {
-      open = showFullContextMenu;
+    if (showFullNotificationCenter) {
+      open = showFullNotificationCenter;
     }
 
     let toolTipMsg = `There are ${events.length} events`;
@@ -339,27 +336,18 @@ class MesheryNotification extends React.Component {
 
           <ClickAwayListener onClickAway={(e) => {
             let whiteListedIds = ["notification-button", "notification-icon", "error-icon", "bell-icon-path1", "bell-icon-path2", "notification-badge", "bell-icon-svg"]
-            console.log("e: ", e)
-            console.log("e.target?.id: ", e.target?.id)
-            console.log("whiteListedIds.includes(e.target?.id): ", whiteListedIds.includes(e.target?.id))
             whiteListedIds.includes(e.target?.id) ? null : this.handleClose();
-            // if (!e?.target?.className?.includes("notification-button") && !e?.target?.className?.SVGAnimatedString?.baseVal?.includes("notification-button")) {
-            //   this.handleClose();
-            // }
           }}>
             <Drawer
-              // open={true}
               anchor="right"
               variant="persistent"
               open={open}
-              // onClose={this.handleClose}
               classes={{
                 paper : classes.notificationDrawer,
-                paperAnchorRight : showFullContextMenu? classes.fullView : classes.peekView,
+                paperAnchorRight : showFullNotificationCenter? classes.fullView : classes.peekView,
               }}
             >
               <div>
-                {/* <Paper className={classes.notificationDrawer}> */}
                 <div>
                   <div className={classes.sidelist}>
                     <div className={classes.listTop}>
@@ -421,11 +409,9 @@ class MesheryNotification extends React.Component {
                     ))}
                   </div>
                 </div>
-                {/* </Paper> */}
               </div>
             </Drawer>
           </ClickAwayListener>
-          {/* </Slide> */}
         </NoSsr>
       </div>
     );
