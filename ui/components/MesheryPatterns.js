@@ -737,9 +737,14 @@ function MesheryPatterns({
     };
   }
 
-  function handleSubmit({ data, id, name, type }) {
+  async function handleSubmit({ data, id, name, type }) {
     updateProgress({ showProgress : true })
     if (type === FILE_OPS.DELETE) {
+      const response = await showModal(1, name)
+      if (response=="No"){
+        updateProgress({ showProgress : false })
+        return;
+      }
       dataFetch(
         `/api/pattern/${id}`,
         {
@@ -749,6 +754,17 @@ function MesheryPatterns({
         () => {
           console.log("PatternFile API", `/api/pattern/${id}`);
           updateProgress({ showProgress : false });
+          enqueueSnackbar(`"${name}" Design deleted`, {
+            variant : "success",
+            action : function Action(key) {
+              return (
+                <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+                  <CloseIcon />
+                </IconButton>
+              );
+            },
+            autoHideDuration : 2000,
+          });
           resetSelectedRowData()();
         },
         handleError(ACTION_TYPES.DELETE_PATTERN)
@@ -949,22 +965,22 @@ function MesheryPatterns({
                 </IconButton>}
               {/*</Tooltip> */}
               <IconButton
-                title="Verify"
+                title="Validate"
                 onClick={(e) => handleVerify(e, rowData.pattern_file, rowData.id)}
               >
                 <DoneIcon data-cy="verify-button" />
-              </IconButton>
-              <IconButton
-                title="Deploy"
-                onClick={(e) => handleModalOpen(e, rowData.pattern_file, rowData.name, patternErrors.get(rowData.id), ACTIONS.DEPLOY)}
-              >
-                <DoneAllIcon data-cy="deploy-button" />
               </IconButton>
               <IconButton
                 title="Undeploy"
                 onClick={(e) => handleModalOpen(e, rowData.pattern_file, rowData.name, patternErrors.get(rowData.id), ACTIONS.UNDEPLOY)}
               >
                 <UndeployIcon fill="#8F1F00" data-cy="undeploy-button" />
+              </IconButton>
+              <IconButton
+                title="Deploy"
+                onClick={(e) => handleModalOpen(e, rowData.pattern_file, rowData.name, patternErrors.get(rowData.id), ACTIONS.DEPLOY)}
+              >
+                <DoneAllIcon data-cy="deploy-button" />
               </IconButton>
               <IconButton
                 title="Publish"

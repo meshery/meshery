@@ -49,7 +49,8 @@ export var darkTheme = createTheme({
       brightness : 'brightness(200%)',
       switcherButtons : '#1e1e1e',
       honeyComb : '#202020',
-      filterChipBackground : '#222222'
+      filterChipBackground : '#222222',
+      tabs : '#20202087'
     },
   },
   p : {
@@ -219,7 +220,8 @@ let theme = createTheme({
       brightness : 'none',
       switcherButtons : '#335c6d',
       honeyComb : '#F0F0F0',
-      filterChipBackground : '#CCCCCC'
+      filterChipBackground : '#CCCCCC',
+      tabs : '#eeeeee87'
     },
   },
   shape : { borderRadius : 8, },

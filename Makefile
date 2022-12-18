@@ -76,7 +76,7 @@ run-local: server-local error
 server-local: dep-check
 	cd server; cd cmd; go clean; go mod tidy; \
 	BUILD="$(GIT_VERSION)" \
-	PROVIDER_BASE_URLS \
+	PROVIDER_BASE_URLS=$(REMOTE_PROVIDER_LOCAL) \
 	PORT=9081 \
 	DEBUG=true \
 	ADAPTER_URLS=$(ADAPTER_URLS) \
