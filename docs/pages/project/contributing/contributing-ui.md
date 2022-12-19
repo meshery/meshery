@@ -78,8 +78,8 @@ The designs in this specification should result in enabling:
 ### Node Version Recommendations 
 We recommend to use LTS versions of node:
 
-Node 16 LTS: https://nodejs.org/download/release/v16.19.0/ \
-Node 18 LTS: https://nodejs.org/en/
+- Node 16 LTS: https://nodejs.org/download/release/v16.19.0/ \
+- Node 18 LTS: https://nodejs.org/en/
 
 Although, the script supports other node versions as well like node15 and node17, it is recommended to use node version above 15 and mainly the use of LTS versions like 16 and 18 is highly encouraged.
 
