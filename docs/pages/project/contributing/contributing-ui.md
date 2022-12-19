@@ -150,7 +150,7 @@ Refer to [Meshery Cypress Testing](contributing-cypress) for details of how to c
 
 All of the above steps would get the Meshery's development server running for you to work on in any IDE of your choice.
 
-### Meshery static files and icons
+### Static files and icons
 
 The Meshery public folder contains static files and its folder structure may look like this:
 ```
@@ -185,10 +185,10 @@ All the images or icons needs to be sourced from the [public directory of images
         └── meshery
             ├── white
             |   └── meshery.svg
-            └── colored
+            └── color
                 └── meshery.svg
     ```
-5. Avoid any kind of duplicacy in the versions of icon used.
+5. Avoid any kind of duplicity in the versions of icon used.
 
 For accessing the svg file as data-url, the utf8 encoding should be used in place of base64.Use [encodeURIComponent](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURIComponent) on SVG data URIs. \
   ```
