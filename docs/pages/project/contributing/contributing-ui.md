@@ -75,6 +75,13 @@ The designs in this specification should result in enabling:
 
 ## Setup
 
+### Node Version Recommendations
+We recommend to use LTS versions of node:
+Node 16 LTS: https://nodejs.org/download/release/v16.19.0/
+Node 18 LTS: https://nodejs.org/en/
+
+Although, the script support other node versions as well like node15 and node17, but it is recommended to use node version above 15 and mainly the use of LTS versions like 16 and 18 is mostly recommended.
+
 ### Linting-UI
 
 - When contributing to this project, it is advisable to
