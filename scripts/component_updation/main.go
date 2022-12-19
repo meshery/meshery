@@ -121,7 +121,7 @@ func main() {
 				panic(err)
 			}
 
-			err = pkg.WriteSVG(filepath.Join(pathToIntegrations, "icon", "color", out["Helm Chart"]+".svg"), svgcolor) //CHANGE PATH
+			err = pkg.WriteSVG(filepath.Join(pathToIntegrations, "icon", "color", out["Helm Chart"]+"-color.svg"), svgcolor) //CHANGE PATH
 			if err != nil {
 				panic(err)
 			}
@@ -129,7 +129,7 @@ func main() {
 			if err != nil {
 				panic(err)
 			}
-			err = pkg.WriteSVG(filepath.Join(pathToIntegrations, "icon", "white", out["Helm Chart"]+".svg"), svgwhite) //CHANGE PATH
+			err = pkg.WriteSVG(filepath.Join(pathToIntegrations, "icon", "white", out["Helm Chart"]+"-white.svg"), svgwhite) //CHANGE PATH
 			if err != nil {
 				panic(err)
 			}
