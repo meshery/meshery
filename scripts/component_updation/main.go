@@ -3,12 +3,10 @@ package main
 import (
 	"encoding/csv"
 	"encoding/json"
-	"fmt"
 	"log"
 	"os"
 	"path/filepath"
 	"strconv"
-	"strings"
 
 	"github.com/layer5io/component_scraper/pkg"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
@@ -54,6 +52,8 @@ func main() {
 		return
 	}
 	csvReader := csv.NewReader(file)
+
+	//*** UPDATE WEBSITE ***/
 	if updateDocs {
 		output, err := pkg.GetEntries(csvReader, ColumnNamesToExtractForDocs)
 		if err != nil {
@@ -73,40 +73,40 @@ func main() {
 			}
 			for key, val := range out {
 				switch key {
-				case "Project Name":
-					t.Title = val
-				case "Page Subtitle":
-					t.Subtitle = val
-				case "Docs URL":
-					t.DocURL = val
-				case "Category":
-					t.Category = val
-				case "Sub-Category":
-					t.Subcategory = val
-				case "howItWorks":
-					t.HowItWorks = val
-				case "hotItWorksDetails":
-					t.HowItWorksDetails = val
-				case "Publish?":
-					t.Published = val
-				case "About Project":
-					t.AboutProject = val
-				case "Standard Blurb":
-					t.StandardBlurb = val
+				// case "Project Name":
+				// 	t.Title = val
+				// case "Page Subtitle":
+				// 	t.Subtitle = val
+				// case "Docs URL":
+				// 	t.DocURL = val
+				// case "Category":
+				// 	t.Category = val
+				// case "Sub-Category":
+				// 	t.Subcategory = val
+				// case "howItWorks":
+				// 	t.HowItWorks = val
+				// case "hotItWorksDetails":
+				// 	t.HowItWorksDetails = val
+				// case "Publish?":
+				// 	t.Published = val
+				// case "About Project":
+				// 	t.AboutProject = val
+				// case "Standard Blurb":
+				// 	t.StandardBlurb = val
 				case "Full Page":
 					t.FullPage = val
 				}
 			}
-			t.FeatureList = "[" + strings.Join([]string{out["Feature 1"], out["Feature 2"], out["Feature 3"]}, ",") + "]"
-			t.WorkingSlides = `[
-				../_images/meshmap-visualizer.png,
-				../_images/meshmap-designer.png]`
+			// t.FeatureList = "[" + strings.Join([]string{out["Feature 1"], out["Feature 2"], out["Feature 3"]}, ",") + "]"
+			// t.WorkingSlides = `[
+			// 	../_images/meshmap-visualizer.png,
+			// 	../_images/meshmap-designer.png]`
 
 			//Write
-			md := t.CreateMarkDown()
-			if out["Project Name"] == "Istio" {
-				fmt.Println(md)
-			}
+			// md := t.CreateMarkDown()
+			// if out["Project Name"] == "Istio" {
+			// 	fmt.Println(md)
+			// }
 			pathToIntegrations, _ := filepath.Abs(filepath.Join("../../../", pathToIntegrations, out["Helm Chart"]))
 			err = os.MkdirAll(pathToIntegrations, 0777)
 			if err != nil {
@@ -121,7 +121,7 @@ func main() {
 				panic(err)
 			}
 
-			err = pkg.WriteSVG(filepath.Join(pathToIntegrations, "icon", "color", out["Project Name"]+".svg"), svgcolor) //CHANGE PATH
+			err = pkg.WriteSVG(filepath.Join(pathToIntegrations, "icon", "color", out["Helm Chart"]+".svg"), svgcolor) //CHANGE PATH
 			if err != nil {
 				panic(err)
 			}
@@ -129,7 +129,7 @@ func main() {
 			if err != nil {
 				panic(err)
 			}
-			err = pkg.WriteSVG(filepath.Join(pathToIntegrations, "icon", "white", out["Project Name"]+".svg"), svgwhite) //CHANGE PATH
+			err = pkg.WriteSVG(filepath.Join(pathToIntegrations, "icon", "white", out["Helm Chart"]+".svg"), svgwhite) //CHANGE PATH
 			if err != nil {
 				panic(err)
 			}
