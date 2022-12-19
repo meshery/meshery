@@ -226,7 +226,7 @@ func main() {
 				}
 			}
 		}(compChan)
-		path, err := filepath.Abs("../meshmodel_components")
+		path, err := filepath.Abs("../meshmodel/components")
 		if err != nil {
 			fmt.Println("err: ", err.Error())
 			return
