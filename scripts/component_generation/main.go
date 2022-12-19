@@ -19,7 +19,7 @@ import (
 var (
 	AhSearchEndpoint = artifacthub.AhHelmExporterEndpoint
 
-	OutputDirectoryPath     = "./output"
+	OutputDirectoryPath     = "./meshmodel_components"
 	ComponentsFileName      = "components.yaml"
 	ComponentModelsFileName = "component_models.yaml"
 )
@@ -226,7 +226,7 @@ func writeComponents(cmps []v1alpha1.ComponentDefinition, writer *Writer) error 
 	// writer.m.Lock()
 	// defer writer.m.Unlock()
 	for _, comp := range cmps {
-		path := filepath.Join("../../server/output", comp.Model.Name)
+		path := filepath.Join("../../server/meshmodel_components", comp.Model.Name)
 		if _, err := os.Stat(path); errors.Is(err, os.ErrNotExist) {
 			err := os.Mkdir(path, os.ModePerm)
 			if err != nil {

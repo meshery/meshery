@@ -749,32 +749,34 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
                 <img src="/static/img/clone.svg" />
               </IconButton>
                 :
-                <IconButton>
+                <TooltipIcon
+                  title="Config"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    setSelectedRowData(filters[tableMeta.rowIndex])
+                  }}
+                >
                   <EditIcon
-                    title="Config"
                     aria-label="config"
                     color="inherit"
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      setSelectedRowData(filters[tableMeta.rowIndex])
-                    }}
                   />
-                </IconButton> }
-              <IconButton>
+                </TooltipIcon> }
+              <TooltipIcon
+                title="Deploy"
+                onClick={(e) => handleModalOpen(e, rowData.filter_file, rowData.name, true)}
+              >
                 <DoneAllIcon
-                  title="Deploy"
                   aria-label="deploy"
                   color="inherit"
-                  onClick={(e) => handleModalOpen(e, rowData.filter_file, rowData.name, true)}
                   data-cy="deploy-button"
                 />
-              </IconButton>
-              <IconButton
+              </TooltipIcon>
+              <TooltipIcon
                 title="Undeploy"
                 onClick={(e) => handleModalOpen(e, rowData.filter_file, rowData.name, false)}
               >
                 <UndeployIcon fill="#8F1F00" data-cy="undeploy-button" />
-              </IconButton>
+              </TooltipIcon>
             </>
           );
         },

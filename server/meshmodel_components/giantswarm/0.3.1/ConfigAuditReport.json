@@ -1,0 +1,1 @@
+{"kind":"ConfigAuditReport","apiVersion":"v1alpha1","display-name":"Config Audit Report","format":"JSON","metadata":{},"model":{"name":"giantswarm","version":"0.3.1","display-name":"giantswarm","category":"","sub-category":""},"schema":""}
