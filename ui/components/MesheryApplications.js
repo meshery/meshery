@@ -689,18 +689,18 @@ function MesheryApplications({
           const rowData = applications[tableMeta.rowIndex];
           return (
             <>
-              <IconButton
+              <TooltipIcon
                 title="Deploy"
                 onClick={() => handleModalOpen(rowData.application_file, rowData.name, true)}
               >
                 <DoneAllIcon data-cy="deploy-button" />
-              </IconButton>
-              <IconButton
+              </TooltipIcon>
+              <TooltipIcon
                 title="Undeploy"
                 onClick={() => handleModalOpen(rowData.application_file, rowData.name, false)}
               >
                 <UndeployIcon fill="#8F1F00" data-cy="undeploy-button" />
-              </IconButton>
+              </TooltipIcon>
             </>
           );
         },
