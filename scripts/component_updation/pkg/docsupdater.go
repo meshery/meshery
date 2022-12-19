@@ -73,8 +73,7 @@ func (t TemplateAttributes) CreateMarkDown() string {
 	// markdown += t.AboutProject + "\n"
 	// markdown += t.StandardBlurb
 	markdown := t.FullPage
-	markdown = strings.ReplaceAll(markdown, "published: TRUE", "published: true")
-	markdown = strings.ReplaceAll(markdown, "published: FALSE", "published: false")
+	markdown = strings.ReplaceAll(markdown, "\r", "\n")
 	return markdown
 }
 func WriteMarkDown(path string, md string) error {
