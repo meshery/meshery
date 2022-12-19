@@ -103,7 +103,7 @@ func main() {
 			// 	../_images/meshmap-designer.png]`
 
 			//Write
-			// md := t.CreateMarkDown()
+			md := t.CreateMarkDown()
 			// if out["Project Name"] == "Istio" {
 			// 	fmt.Println(md)
 			// }
