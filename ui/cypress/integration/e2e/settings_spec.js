@@ -28,7 +28,7 @@ describe('Settings', () => {
         .click();
 
       cy.wait('@postMeshManage');
-      cy.contains("Adapter was successfully configured!")
+      cy.contains("Adapter was configured!")
     });
 
     it('ping and Submit Istio', () => {
@@ -49,7 +49,7 @@ describe('Settings', () => {
         .click();
 
       cy.wait('@postMeshManage');
-      cy.contains("Adapter was successfully configured!")
+      cy.contains("Adapter was configured!")
     });
   });
 });

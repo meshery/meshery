@@ -102,8 +102,7 @@ const styles = (theme) => ({
   },
   actions : {
     display : 'flex',
-    justifyContent : 'space-evenly',
-    marginTop : theme.spacing(-3)
+    justifyContent : 'space-evenly'
   },
   all : {
     display : "table"
