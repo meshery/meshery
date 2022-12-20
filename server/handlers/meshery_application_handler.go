@@ -436,6 +436,11 @@ func (h *Handler) handleApplicationUpdate(rw http.ResponseWriter,
 		return
 	}
 	format := r.URL.Query().Get("output")
+	mesheryApplication := parsedBody.ApplicationData
+	mesheryApplication.Type = sql.NullString{
+		String: sourcetype,
+		Valid:  true,
+	}
 	if parsedBody.CytoscapeJSON != "" {
 		pf, err := pCore.NewPatternFileFromCytoscapeJSJSON(parsedBody.Name, []byte(parsedBody.CytoscapeJSON))
 		if err != nil {
@@ -464,9 +469,9 @@ func (h *Handler) handleApplicationUpdate(rw http.ResponseWriter,
 			return
 		}
 
-		mesheryPattern := &models.MesheryPattern{
-			Name:        patternName,
-			PatternFile: string(pfByt),
+		mesheryApplication = &models.MesheryApplication{
+			Name:            patternName,
+			ApplicationFile: string(pfByt),
 			Location: map[string]interface{}{
 				"host": "",
 				"path": "",
@@ -474,10 +479,10 @@ func (h *Handler) handleApplicationUpdate(rw http.ResponseWriter,
 			},
 		}
 		if parsedBody.ApplicationData != nil {
-			mesheryPattern.ID = parsedBody.ApplicationData.ID
+			mesheryApplication.ID = parsedBody.ApplicationData.ID
 		}
 		if parsedBody.Save {
-			resp, err := provider.SaveMesheryPattern(token, mesheryPattern)
+			resp, err := provider.SaveMesheryApplication(token, mesheryApplication)
 			if err != nil {
 				h.log.Error(ErrSavePattern(err))
 				http.Error(rw, ErrSavePattern(err).Error(), http.StatusInternalServerError)
@@ -491,7 +496,7 @@ func (h *Handler) handleApplicationUpdate(rw http.ResponseWriter,
 			return
 		}
 
-		byt, err := json.Marshal([]models.MesheryPattern{*mesheryPattern})
+		byt, err := json.Marshal([]models.MesheryApplication{*mesheryApplication})
 		if err != nil {
 			h.log.Error(ErrEncodePattern(err))
 			http.Error(rw, ErrEncodePattern(err).Error(), http.StatusInternalServerError)
@@ -502,11 +507,6 @@ func (h *Handler) handleApplicationUpdate(rw http.ResponseWriter,
 
 		h.formatApplicationOutput(rw, byt, format, &res)
 		return
-	}
-	mesheryApplication := parsedBody.ApplicationData
-	mesheryApplication.Type = sql.NullString{
-		String: sourcetype,
-		Valid:  true,
 	}
 	resp, err := provider.SaveMesheryApplication(token, mesheryApplication)
 	if err != nil {
