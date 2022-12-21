@@ -293,7 +293,6 @@ func getGroupsFromResource(cli *kubernetes.Client) (hgv map[kind]groupversion, e
 		for _, res := range apiRes.APIResources {
 			hgv[kind(res.Kind)] = groupversion("v1")
 		}
-
 	}
 	return
 }
