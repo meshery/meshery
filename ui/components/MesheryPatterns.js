@@ -1067,6 +1067,7 @@ function MesheryPatterns({
         text : "pattern(s) selected"
       }
     },
+
     onCellClick : (_, meta) => meta.colIndex !== 3 && setSelectedRowData(patterns[meta.rowIndex]),
 
     onRowsDelete : async function handleDelete(row) {
@@ -1080,6 +1081,8 @@ function MesheryPatterns({
       if (response.toLowerCase() === "yes") {
         deletePatterns({ patterns : toBeDeleted })
       }
+      // if (response.toLowerCase() === "no")
+      // fetchPatterns(page, pageSize, search, sortOrder);
     },
 
     onTableChange : (action, tableState) => {
