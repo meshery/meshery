@@ -4,7 +4,7 @@ import { makeStyles } from '@material-ui/styles';
 import { canExpand } from '@rjsf/utils';
 import AddIcon from '../../../../assets/icons/AddIcon';
 import { Box, IconButton, Typography } from '@material-ui/core';
-import { EnlargedTextTooltip } from '../EnlargedTextTooltip';
+import { CustomTextTooltip } from '../CustomTextTooltip';
 import HelpOutlineIcon from '../../../../assets/icons/HelpOutlineIcon';
 import ExpandMoreIcon from '../../../../assets/icons/ExpandMoreIcon';
 import ExpandLessIcon from '../../../../assets/icons/ExpandLessIcon'
@@ -77,19 +77,19 @@ const ObjectFieldTemplate = ({
           <Typography variant="body1" style={{ fontWeight : "bold", display : "inline" }}>{title.charAt(0).toUpperCase() + title.slice(1)}{" "}
           </Typography>
           {description &&
-            <EnlargedTextTooltip title={description}>
+            <CustomTextTooltip backgroundColor="#3C494F" title={description}>
               <IconButton disableTouchRipple="true" disableRipple="true" component="span" size="small">
                 <HelpOutlineIcon width="14px" height="14px" fill="black" style={{ marginLeft : "4px", verticalAlign : "middle" }}/>
               </IconButton>
-            </EnlargedTextTooltip>}
+            </CustomTextTooltip>}
           {rawErrors?.length &&
-            <EnlargedTextTooltip title={rawErrors?.map((error, index) => (
+            <CustomTextTooltip backgroundColor="#B32700" title={rawErrors?.map((error, index) => (
               <div key={index}>{error}</div>
             ))}>
               <IconButton disableTouchRipple="true" disableRipple="true" component="span" size="small">
                 <ErrorOutlineIcon width="14px" height="14px" fill="red" style={{ marginLeft : "4px", verticalAlign : "middle" }} />
               </IconButton>
-            </EnlargedTextTooltip>}
+            </CustomTextTooltip>}
         </Grid>
 
 
