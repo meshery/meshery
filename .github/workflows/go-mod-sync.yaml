@@ -1,0 +1,41 @@
+name: Meshery extensions go.mod sync
+on:
+  push:
+    branches:
+      - "master"
+    paths:
+      - "go.mod"
+jobs:
+  sync:
+    name: sync
+    runs-on: ubuntu-22.04
+    steps:
+    - name: check out code for meshery
+      uses: actions/checkout@master
+      with:
+        repository: meshery/meshery
+        token: ${{ secrets.RELEASEDRAFTER_PAT }}
+        path: meshery
+    - name: Check out code for meshery-extensions
+      uses: actions/checkout@master
+      with:
+        repository: layer5labs/meshery-extensions
+        token: ${{ secrets.RELEASEDRAFTER_PAT }}
+        path: meshery-extensions
+    - name: Setup Go
+      uses: actions/setup-go@master
+      with:
+        go-version: '1.19'
+    - name: Go mod sync utility
+      run: cd meshery-extensions;make graphql-sync;
+
+    - name: Commit
+      uses: stefanzweifel/git-auto-commit-action@v4
+      with:
+        repository: meshery-extensions
+        commit_user_name: l5io
+        commit_user_email: ci@layer5.io
+        commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
+        commit_options: '--signoff'
+        commit_message: 'Upgrading go.mod in response to meshery/meshery'
+        branch: master
