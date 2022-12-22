@@ -232,6 +232,9 @@ func main() {
 			return
 		}
 		_ = filepath.Walk(path, func(path string, info fs.FileInfo, err error) error {
+			if info == nil {
+				return fmt.Errorf("invalid/nil fileinfo while walking %s", path)
+			}
 			if !info.IsDir() {
 				var comp v1alpha1.ComponentDefinition
 				byt, err := os.ReadFile(path)
