@@ -112,7 +112,7 @@ export const submitConfig = (enqueueSnackbar, updateProgress, updateK8SConfig, a
     (result) => {
       updateProgress({ showProgress : false });
       if (typeof result !== "undefined") {
-        enqueueSnackbar("Kubernetes config was successfully validated!", { variant : "success",
+        enqueueSnackbar("Kubernetes config was validated!", { variant : "success",
           autoHideDuration : 2000,
           action });
         updateK8SConfig({ k8sConfig : {

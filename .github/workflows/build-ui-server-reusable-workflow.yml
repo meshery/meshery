@@ -10,7 +10,7 @@ on:
 jobs:
   build-backend:
     name: Backend build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Check out code
         uses: actions/checkout@master
@@ -37,7 +37,7 @@ jobs:
           path: ./main
   build-ui:
     name: UI build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Check out code
         uses: actions/checkout@master

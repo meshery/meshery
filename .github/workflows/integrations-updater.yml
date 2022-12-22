@@ -1,187 +1,53 @@
 name: Meshery Integrations Updater
 on:
   push:
-    branches:
-      - "master"
-    paths:
-      - ".github/workflows/integrations-updater.yml"
+     branches:
+       - "master"
+     paths:
+       - ".github/workflows/integrations-updater.yml"
+  schedule:
+    - cron:  '0 0 * * *'  # Run the job every day at midnight
   workflow_dispatch:
+    inputs:
+      flags:
+        default: "--published-only"
+        type: choice
+        description: Only publish integrations marked for publishing
+        options: 
+        - --published-only
+        - --update-docs
 
 # This workflow uses the service account: meshery-integrations-sheet@meshery-237716.iam.gserviceaccount.com
 # See these instructions for setup - https://theoephraim.github.io/node-google-spreadsheet/#/getting-started/authentication
 
 jobs:
-  # print-inputs:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - run: |
-  #         echo "Dispatched GIT_VERSION: ${{github.event.inputs.release-ver}}"
-  #         echo " Dispatched GIT_STRIPPED_VERSION: ${{github.event.inputs.stripped-release-ver}}"
-  #         echo "Env RELEASE_CHANNEL: ${{env.RELEASE_CHANNEL}}"
-  #         echo "Env GIT_VERSION: ${{env.GIT_VERSION}}"
-  #         echo "Env GIT_STRIPPED_VERSION: ${{env.GIT_STRIPPED_VERSION}}"
-  #         echo "Env GIT_TAG: ${{ github.event.release.tag_name }}"
+
   integrations:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     # outputs:
     #   output1: ${{ steps.step1.outputs.test }}
     #   output2: ${{ steps.step2.outputs.test }}
     steps:
-      # - name: GITHUB_WORKSPACE
-      #   run: |
-      #     echo {{$GITHUB_WORKSPACE}}
-      #     pwd
-      #     ls
-      # - name: Checkout Meshery repo
-      #   uses: actions/checkout@master
-      #   with:
-      #     path: meshery
-      # - name: GITHUB_WORKSPACE
-      #   run: |
-      #     echo {{$GITHUB_WORKSPACE}}
-      #     pwd
-      #     ls -al meshery
-      # - name: Checkout site repo
-      #   uses: actions/checkout@master
-      #   with:
-      #     repository: layer5io/layer5
-      #     path: site
-      #     fetch-depth: "1"
-      # - name: GITHUB_WORKSPACE
-      #   run: |
-      #     echo {{$GITHUB_WORKSPACE}}
-      #     pwd
-      #     ls -al site
-      - name: read worksheet
-        id: "read_worksheet"
-        if: false
-        uses: jroehl/gsheet.action@release # you can specify '@release' to always have the latest changes
+      - name: Checkout Meshery repo
+        uses: actions/checkout@master
         with:
-          spreadsheetId: 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw
-          commands: | # list of commands, specified as a valid JSON string
-            [
-              { "command": "getData", "args": { "range": "'Meshery Integrations'!AA4:AC11", "output": "yaml" } }
-            ]
-        env:
-          GSHEET_CLIENT_EMAIL: ${{ secrets.GSHEET_CLIENT_EMAIL }}
-          GSHEET_PRIVATE_KEY: ${{ secrets.GSHEET_PRIVATE_KEY }}
-
-      # - name: Overwrite integrations
-      #   uses: "DamianReeves/write-file-action@master"
-      #   with:
-      #     path: .github/scripts/integrations.json
-      #     write-mode: overwrite
-      #     contents: |
-      #       ${{ steps.read_worksheet.outputs.results }}
-      - name: save results
-        # if: false
-        id: save_results
-        run: |
-          set echo off
-          echo ${{ steps.read_worksheet.outputs.results }} > $HOME/integrations.csv
-          ls -l $HOME/integrations.csv
-      - name: get integrations
-        if: true
-        run: |
-          curl -L --silent 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSgOXuiqbhUgtC9oNbJlz9PYpOEaFVoGNUFMIk4NZciFfQv1ewZg8ahdrWHKI79GkKK9TbmnZx8CqIe/pub?gid=0&single=true&output=csv' -o $HOME/integrations.csv
-      # - name: dump results
-      #   id: dump_results
-      #   # env:
-      #   #   #  the output of the action can be found in ${{ steps.update_worksheet.outputs.results }}
-      #   #   INTEGRATIONS: ${{ steps.read_worksheet.outputs.results }}
-      # run: bash meshery/.github/scripts/integration_publisher.sh
-      #   # run: echo "$INTEGRATIONS" | jq ' .results[].result.rawData[0][0]' --raw-output
-
-      # # { "command": "addWorksheet", "args": { "worksheetTitle": "<worksheetTitle>" }},
-      # #           { "command": "updateData", "args": { "data": [["A1", "A2", "A3"]] }},
-      # - uses: actions-rs/install@v0.1.2
-      #   with:
-      #     crate: xsv
-      #     version: latest
-      # - run: xsv --version
-      - name: install-xsv
-        run: |
-          cd $HOME
-          echo "GITHUB_WORKSPACE: " $GITHUB_WORKSPACE
-          curl -L https://github.com/BurntSushi/xsv/releases/download/0.13.0/xsv-0.13.0-x86_64-unknown-linux-musl.tar.gz > ./xsv.tar.gz 
-          pwd
-          ls
-          tar -xf xsv.tar.gz
-          ls -al xsv
-          chmod +x xsv
-          echo "GITHUB_PATH: " $GITHUB_PATH
-          echo "pwd: " `pwd`
-          echo $HOME >> $GITHUB_PATH
-          echo "GITHUB_PATH: " $GITHUB_PATH
-          ls -al 
-          ./xsv --version
-      - name: parse results
-        id: parse_results
-        run: |
-          cd $HOME
-          # which wget
-          # cargo install xsv
-          # git clone git://github.com/BurntSushi/xsv
-          # cd xsv
-          # cargo build --release
-          # brew install xsv
-          ls -lh $HOME
-          ls -lh 
-          ./xsv index $HOME/integrations.csv
-          int_count=$($HOME/xsv count $HOME/integrations.csv)
-          echo "int_count: "$int_count
-          ./xsv count $HOME/integrations.csv > $int_count
-          echo "int_count: "$int_count
-          echo ./xsv slice -i 7 $HOME/integrations.csv | xsv select 28 | xsv flatten 
-          # cat a.txt
-          # int_count=$(sed "s/'/\"/g" integrations.json | jq " .results[].result.rawData | length")
-
-          # integration_count=$(`jq ' .results[].result.rawData | length' integration.json`)
-
-          for (( i=0; i<int_count; i++ ))
-          do
-              if [$HOME/xsv slice -i ${i} $HOME/integrations.csv | $HOME/xsv flatten) | ./xsv select 29]; then
-                integration_name=$($HOME/xsv slice -i ${i} $HOME/integrations.csv | ./xsv select 27 | $HOME/xsv flatten)
-                echo "test: "
-                $HOME/xsv slice -i ${i} $HOME/integrations.csv | ./xsv select 27 | $HOME/xsv flatten
-                integration_data=$($HOME/xsv slice -i ${i} $HOME/integrations.csv | ./xsv select 28 | $HOME/xsv flatten)
-                echo "1: " ${integration_name}
-                echo "2: " $integration_name
-                mkdir -p $HOME/${integration_name}/icon/color
-                mkdir -p $HOME/${integration_name}/icon/white
-                echo $integration_data > ${integration_name}/index.mdx
-              fi
-            done
-
-          #do
-          #    integration_name=$(jq " .results[].result.rawData[${i}][0]" -r integration.json)
-          #    integration_data=$(jq " .results[].result.rawData[${i}][1]" -r integration.json)
-          # done
-      # - name: reparse results
-      #   id: reparse_results
-      #   run: |
-
-      #     integration_count=$(jq ' .results[].result.rawData | length' ${{ steps.read_worksheet.outputs.results }})
-
-      #     for (( i=0; i<integration_count; i++ ))
-      #     do
-      #         integration_name=$(jq " .results[].result.rawData[${i}][0]" -r ${{ steps.read_worksheet.outputs.results }})
-      #         integration_data=$(jq " .results[].result.rawData[${i}][1]" -r ${{ steps.read_worksheet.outputs.results }})
-      #         mkdir -p ${integration_name}/icon/color
-      #         mkdir -p ${integration_name}/icon/white
-      #         echo $integration_data > ${integration_name}/index.mdx
-      #     done
-      # bash ./github/scripts/integration_publisher.sh
-      # run: echo ${{ steps.read_worksheet.outputs.results }} | jq " .results[].result.rawData[0][1]" --raw-output
-
-      # - name: Commit changes
-      #   uses: stefanzweifel/git-auto-commit-action@v4
-      #   with:
-      #     file_pattern: docs/
-      #     commit_user_name: l5io
-      #     commit_user_email: ci@layer5.io
-      #     commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
-      #     commit_options: "--signoff"
-      #     commit_message: "[Docs] Generated documentation for GraphQL API"
-      #     branch: master
+          path: meshery
+      - name: Checkout site repo
+        uses: actions/checkout@master
+        with:
+          repository: layer5io/layer5
+          token: ${{ secrets.GH_ACCESS_TOKEN }}
+          path: layer5
+      - name: Run utility
+        run: cd meshery/scripts/component_updation; go build main.go; ./main https://docs.google.com/spreadsheets/d/e/2PACX-1vSgOXuiqbhUgtC9oNbJlz9PYpOEaFVoGNUFMIk4NZciFfQv1ewZg8ahdrWHKI79GkKK9TbmnZx8CqIe/pub\?gid\=0\&single\=true\&output\=csv --update-docs ${{ github.event.inputs.flags }} layer5/src/collections/integrations --only-published
+      - name: Commit changes
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_user_name: l5io
+          repository: ./layer5
+          commit_user_email: ci@layer5.io
+          commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
+          commit_options: "--signoff"
+          commit_message: "[Docs] Generated documentation for Integration"
+          branch: master
 

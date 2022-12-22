@@ -2,31 +2,29 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    io.kompose.service: meshery
+    app: meshery
   name: meshery
 spec:
   selector:
     matchLabels:
-      io.kompose.service: meshery
+      app: meshery
   replicas: 1
   strategy: {}
   template:
     metadata:
       labels:
-        io.kompose.service: meshery
+        app: meshery
     spec:
       serviceAccountName: meshery-server
       containers:
         - env:
-            - name: EVENT
-              value: mesheryLocal
             - name: PROVIDER_BASE_URLS
               value: https://meshery.layer5.io
             - name: ENFORCED_PROVIDER
               value: remote
             - name: PLAYGROUND
               value: "true"
-          image: layer5/meshery
+          image: layer5/meshery:playground-v0.6.35
           imagePullPolicy: Always
           name: meshery
           ports:

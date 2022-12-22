@@ -91,6 +91,7 @@
     "react-codemirror2": "^7.2.1",
     "react-countdown-clock": "2.7.0",
     "react-dom": "^16.14.0",
+    "react-draggable": "^4.4.5",
     "react-jss": "^10.9.0",
     "react-lazyload": "^3.2.0",
     "react-moment": "^1.1.2",

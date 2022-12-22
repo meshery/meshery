@@ -64,7 +64,7 @@ const KubernetesDataPanel = ({
     const handlerCb = () => resetKubernetesConfig()
 
     deleteKubernetesConfig(
-      successHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Kubernetes config successfully removed", handlerCb),
+      successHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Kubernetes config removed", handlerCb),
       errorHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Not able to remove config")
     )
   }
@@ -72,8 +72,8 @@ const KubernetesDataPanel = ({
   const handleKubernetesClick = () => {
     // showProgress()
     pingKubernetes(
-      successHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Kubernetes succesfully pinged"/*, () => hideProgress()*/),
-      errorHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Kubernetes not pinged successfully"/*, () => hideProgress()*/)
+      successHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Kubernetes pinged"/*, () => hideProgress()*/),
+      errorHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Kubernetes not pinged"/*, () => hideProgress()*/)
     )
 
   }

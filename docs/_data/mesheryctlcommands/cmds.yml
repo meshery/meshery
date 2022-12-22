@@ -189,6 +189,10 @@ system:
       description: Check status of Meshery, Meshery adapters, Meshery Operator and its controllers.
       usage:
           mesheryctl system status
+    
+    dashboard:
+      name: dashboard
+      description: Open Meshery UI in browser.
 
     login:
       name: login

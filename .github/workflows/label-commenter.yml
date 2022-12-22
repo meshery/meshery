@@ -16,7 +16,7 @@ permissions:
 
 jobs:
   comment:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout repo 🛎️
         uses: actions/checkout@master
