@@ -70,6 +70,11 @@ type ClusterResources struct {
 	Resources []*Resource `json:"resources"`
 }
 
+type Components struct {
+	Name  string `json:"name"`
+	Count int    `json:"count"`
+}
+
 type ConfigurationPage struct {
 	Applications *ApplicationPage   `json:"applications"`
 	Patterns     *PatternPageResult `json:"patterns"`
@@ -175,6 +180,15 @@ type Location struct {
 	Host   *string `json:"host"`
 	Path   *string `json:"path"`
 	Type   *string `json:"type"`
+}
+
+type MeshModelSummary struct {
+	Components    []*Components    `json:"components"`
+	Relationships []*Relationships `json:"relationships"`
+}
+
+type MeshModelSummarySelector struct {
+	Type string `json:"type"`
 }
 
 type MeshSyncEvent struct {
@@ -321,6 +335,11 @@ type ReSyncActions struct {
 	ClearDb   string `json:"clearDB"`
 	ReSync    string `json:"ReSync"`
 	HardReset string `json:"hardReset"`
+}
+
+type Relationships struct {
+	Name string `json:"name"`
+	Kind string `json:"kind"`
 }
 
 type Resource struct {
