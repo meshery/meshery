@@ -253,7 +253,7 @@ func main() {
 	}()
 	// seed relationships
 	go func() {
-		staticRelationshipsPath, err := filepath.Abs("../../meshmodel/relationships")
+		staticRelationshipsPath, err := filepath.Abs("../meshmodel/relationships")
 		if err != nil {
 			fmt.Println("Error registering relationships: ", err.Error())
 			return
