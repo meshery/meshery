@@ -56,5 +56,5 @@ jobs:
           manifests: |
             install/playground/meshery-playground-deployment.yaml
           images: |
-            hub.docker.com/r/layer5/meshery:playground-${{env.GIT_VERSION}}
+            layer5/meshery:playground-${{env.GIT_VERSION}}
 
