@@ -209,7 +209,7 @@ jobs:
           chmod +x ./main
           ./main &
       - name: Cypress run
-        uses: cypress-io/github-action@v4
+        uses: cypress-io/github-action@v5
         with:
           working-directory: ui
           start: npm start
@@ -217,7 +217,7 @@ jobs:
           spec: cypress/e2e/e2e/**/*
           browser: chrome
           record: true
-          tag: node-${{ matrix.node }}
+          tag: node-${{ secrets.NODE_VERSION }}
         env:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
