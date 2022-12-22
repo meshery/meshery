@@ -488,6 +488,28 @@ input ReSyncActions {
   hardReset: String!
 }
 
+# ============== MeshModel =============================
+
+input MeshModelSummarySelector {
+  type: String!
+}
+
+# Type MeshModelComponentsSummary define the summary of a Mesh Model
+type MeshModelSummary {
+  components: [Components!]
+  relationships: [Relationships!]
+}
+
+type Components {
+  name: String!
+  count: Int!
+}
+
+type Relationships {
+  name: String!
+  kind: String!
+}
+
 # ============== ROOT =================================
 
 type Query {
@@ -577,8 +599,10 @@ type Query {
   fetchFilterCatalogContent(selector: CatalogSelector): [CatalogFilter!]!
 
   # Query for getting cluster info
-
   getClusterResources(k8scontextIDs: [String!], namespace: String!): ClusterResources!
+
+  # Query for meshmodel summary
+  getMeshModelSummary(selector: MeshModelSummarySelector!): MeshModelSummary!
 }
 
 
@@ -646,6 +670,8 @@ type Subscription {
   ): ClusterResources!
 
   subscribeK8sContext(selector: PageFilter!) : K8sContextsPage!
+
+  subscribeMeshModelSummary(selector: MeshModelSummarySelector!) : MeshModelSummary!
 
 }
 
