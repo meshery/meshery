@@ -1,0 +1,16 @@
+name: Send a Tweet
+on: [push]
+
+jobs:
+  post_tweet_job:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Tweets contents of PR
+      uses: ethomson/send-tweet-action@v1
+      with:
+        name : [issue | pull request]
+        status: "link-to-issue-or-pr"
+        consumer-key: ${{ secrets.TWITTER_CONSUMER_API_KEY }}
+        consumer-secret: ${{ secrets.TWITTER_CONSUMER_API_SECRET }}
+        access-token: ${{ secrets.TWITTER_ACCESS_TOKEN }}
+        access-token-secret: ${{ secrets.TWITTER_ACCESS_TOKEN_SECRET }}

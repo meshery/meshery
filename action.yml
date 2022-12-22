@@ -1,0 +1,22 @@
+name: 'Send Tweet Action'
+description: 'Send tweet on PR merge'
+inputs:
+  consumer-key:
+    description: >
+      Consumer API key, available in the "Keys and tokens"
+
+  consumer-secret:
+    description: >
+      Consumer API secret key, available in the "Keys and tokens"
+
+  access-token:
+    description: >
+      Application access token, available in the "Keys and tokens"
+
+  access-token-secret:
+    description: >
+      Application access token secret, available in the "Keys and tokens"
+
+runs:
+  using: 'node16'
+  main: 'index.js'
