@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http"
 
+	"github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/models"
 	meshkitmodels "github.com/layer5io/meshkit/models"
 	"github.com/layer5io/meshkit/models/meshmodel"
@@ -77,6 +78,7 @@ func (h *Handler) ComponentGenerationHandler(rw http.ResponseWriter, r *http.Req
 					if err != nil {
 						h.log.Error(ErrGenerateComponents(err))
 					}
+					go utils.WriteSVGsOnFileSystem(comp)
 					h.log.Info(comp.DisplayName, " component for ", gpi.Name, " generated")
 				}
 			}

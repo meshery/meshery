@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshery/server/models/pattern/patterns/k8s"
 	"github.com/layer5io/meshkit/models/meshmodel"
@@ -197,9 +198,9 @@ func (h *Handler) RegisterMeshmodelComponents(rw http.ResponseWriter, r *http.Re
 		http.Error(rw, err.Error(), http.StatusBadRequest)
 		return
 	}
+	var c v1alpha1.ComponentDefinition
 	switch cc.EntityType {
 	case types.ComponentDefinition:
-		var c v1alpha1.ComponentDefinition
 		err = json.Unmarshal(cc.Entity, &c)
 		if err != nil {
 			http.Error(rw, err.Error(), http.StatusBadRequest)
@@ -211,6 +212,7 @@ func (h *Handler) RegisterMeshmodelComponents(rw http.ResponseWriter, r *http.Re
 		http.Error(rw, err.Error(), http.StatusBadRequest)
 		return
 	}
+	go utils.WriteSVGsOnFileSystem(c)
 }
 func filterUniqueElementsArray(s []string) []string {
 	m := make(map[string]bool)

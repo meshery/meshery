@@ -3,8 +3,12 @@ package utils
 import (
 	"encoding/json"
 	"fmt"
+	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
+
+	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 )
 
 // RecursiveCastMapStringInterfaceToMapStringInterface will convert a
@@ -107,4 +111,67 @@ func IsClosed(ch chan struct{}) bool {
 	default:
 	}
 	return false
+}
+
+const UI = "../../ui/public/static/img" //Relative to cmd/main.go
+var UISVGPaths = make([]string, 1)
+
+func WriteSVGsOnFileSystem(comp v1alpha1.ComponentDefinition) {
+	successCreatingDirectory := false
+	defer func(s bool) {
+		if successCreatingDirectory {
+			UISVGPaths = append(UISVGPaths, filepath.Join(UI, comp.Model.Name))
+		}
+	}(successCreatingDirectory)
+	if comp.Metadata["SVG_Color"] != "" {
+		path := filepath.Join(UI, comp.Model.Name, "color")
+		err := os.MkdirAll(path, 0777)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		successCreatingDirectory = true
+		f, err := os.Create(filepath.Join(path, comp.Model.DisplayName+"-color.svg"))
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		x, ok := comp.Metadata["SVG_Color"].(string)
+		if ok {
+			_, err = f.WriteString(x)
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+		}
+
+	}
+	if comp.Metadata["SVG_White"] != "" {
+		path := filepath.Join(UI, comp.Model.Name, "white")
+		err := os.MkdirAll(path, 0777)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		successCreatingDirectory = true
+		f, err := os.Create(filepath.Join(path, comp.Model.DisplayName+"-white.svg"))
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		x, ok := comp.Metadata["SVG_White"].(string)
+		if ok {
+			_, err = f.WriteString(x)
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+		}
+	}
+}
+
+func DeleteSVGsFromFileSystem() {
+	for _, path := range UISVGPaths {
+		os.RemoveAll(path)
+	}
 }

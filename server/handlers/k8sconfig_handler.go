@@ -17,6 +17,7 @@ import (
 	"github.com/gofrs/uuid"
 
 	"github.com/layer5io/meshery/server/helpers"
+	mutil "github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshkit/models/meshmodel"
@@ -354,10 +355,13 @@ func RegisterK8sMeshModelComponents(ctx context.Context, config []byte, ctxID st
 		return ErrCreatingKubernetesComponents(errors.New("generated components are nil"), ctxID)
 	}
 	for _, c := range man {
-		_ = reg.RegisterEntity(meshmodel.Host{
+		err = reg.RegisterEntity(meshmodel.Host{
 			Hostname:  "kubernetes",
 			ContextID: ctxID,
 		}, c)
+		if err == nil {
+			go mutil.WriteSVGsOnFileSystem(c)
+		}
 	}
 	return
 }
