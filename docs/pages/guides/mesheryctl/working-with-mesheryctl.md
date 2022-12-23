@@ -98,7 +98,7 @@ services:
       - "com.centurylinklabs.watchtower.enable=true"
 ```
 
-# Suggested Reading
+### Suggested Reading
 
 For an exhaustive list of `mesheryctl` commands and syntax:
 
@@ -113,6 +113,8 @@ Guides to using Meshery's various features and components.
 {% endcapture %}
 
 {% include suggested-reading.html diffName="true" isDiffTag="true" diffTag=tag %}
+
+{% include related-discussions.html tag="mesheryctl" %}
 
 <!-- ## Related Guides
 
@@ -234,3 +236,4 @@ To upgrade `mesheryctl`, execute the following command:
 -->
 
 {% include discuss.html %}
+
