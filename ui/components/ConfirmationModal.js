@@ -102,8 +102,7 @@ const styles = (theme) => ({
   },
   actions : {
     display : 'flex',
-    justifyContent : 'space-evenly',
-    marginTop : theme.spacing(-3)
+    justifyContent : 'space-evenly'
   },
   all : {
     display : "table"
@@ -113,7 +112,10 @@ const styles = (theme) => ({
     flexWrap : "wrap"
   },
   tabs : {
-    marginLeft : 0
+    marginLeft : 0,
+    "& .MuiTab-root.Mui-selected" : {
+      backgroundColor : '#D9D9D9'
+    }
   },
   tabLabel : {
     tabLabel : {

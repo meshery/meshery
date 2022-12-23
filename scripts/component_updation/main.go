@@ -1,3 +1,24 @@
+/*
+Meshery Component Updater
+Uses a spreadsheet of centralized information about MeshModel components and their metadata like color, icon, and so on. Script is used to update both components that are registered in thee Capabilities Registry and on the websites.
+
+Usage: (order of flags matters)
+
+    ./main [--update_doc] [path-to-spreadsheet] [--only-published]
+
+Example:
+
+	./main https://docs.google.com/spreadsheets/d/e/2PACX-1vSgOXuiqbhUgtC9oNbJlz9PYpOEaFVoGNUFMIk4NZciFfQv1ewZg8ahdrWHKI79GkKK9TbmnZx8CqIe/pub\?gid\=0\&single\=true\&output\=csv --update-docs layer5/src/collections/integrations --only-published
+
+The flags are:
+
+    --update-docs
+        Skip updating components in meshery/meshery. Update website(s) only.
+
+	--only-published
+        Only handle components that have a value of "true" under the "Published?" column in spreadsheet.
+*/
+
 package main
 
 import (
@@ -7,6 +28,7 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
+	"strings"
 
 	"github.com/layer5io/component_scraper/pkg"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
@@ -20,14 +42,18 @@ var (
 )
 
 func main() {
-
 	url := os.Args[1]
 	if url == "" {
 		log.Fatal("provide a valid URL")
 		return
 	}
-	var updateDocs bool //If updateDocs is set true then it updates the website docs instead of updating the components onto the filesystem
+
+	// If updateDocs is set true then it updates the website docs instead of updating the components onto the filesystem
+	var updateDocs bool
+
+	// If updateOnlyPublished is set true, then only update site pages that have "Published?" set to true.
 	updateOnlyPublished := false
+
 	var pathToIntegrations string
 	if len(os.Args) > 3 {
 		if os.Args[2] == "--update-docs" {
@@ -73,34 +99,34 @@ func main() {
 			}
 			for key, val := range out {
 				switch key {
-				// case "Project Name":
-				// 	t.Title = val
-				// case "Page Subtitle":
-				// 	t.Subtitle = val
-				// case "Docs URL":
-				// 	t.DocURL = val
-				// case "Category":
-				// 	t.Category = val
-				// case "Sub-Category":
-				// 	t.Subcategory = val
-				// case "howItWorks":
-				// 	t.HowItWorks = val
-				// case "hotItWorksDetails":
-				// 	t.HowItWorksDetails = val
-				// case "Publish?":
-				// 	t.Published = val
-				// case "About Project":
-				// 	t.AboutProject = val
-				// case "Standard Blurb":
-				// 	t.StandardBlurb = val
+				case "Project Name":
+					t.Title = val
+				case "Page Subtitle":
+					t.Subtitle = val
+				case "Docs URL":
+					t.DocURL = val
+				case "Category":
+					t.Category = val
+				case "Sub-Category":
+					t.Subcategory = val
+				case "howItWorks":
+					t.HowItWorks = val
+				case "hotItWorksDetails":
+					t.HowItWorksDetails = val
+				case "Publish?":
+					t.Published = val
+				case "About Project":
+					t.AboutProject = val
+				case "Standard Blurb":
+					t.StandardBlurb = val
 				case "Full Page":
 					t.FullPage = val
 				}
 			}
-			// t.FeatureList = "[" + strings.Join([]string{out["Feature 1"], out["Feature 2"], out["Feature 3"]}, ",") + "]"
-			// t.WorkingSlides = `[
-			// 	../_images/meshmap-visualizer.png,
-			// 	../_images/meshmap-designer.png]`
+			t.FeatureList = "[" + strings.Join([]string{out["Feature 1"], out["Feature 2"], out["Feature 3"]}, ",") + "]"
+			t.WorkingSlides = `[
+				../_images/meshmap-visualizer.png,
+				../_images/meshmap-designer.png]`
 
 			//Write
 			md := t.CreateMarkDown()
