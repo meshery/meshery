@@ -9,6 +9,7 @@ import HelpOutlineIcon from '../../../../assets/icons/HelpOutlineIcon';
 import ExpandMoreIcon from '../../../../assets/icons/ExpandMoreIcon';
 import ExpandLessIcon from '../../../../assets/icons/ExpandLessIcon'
 import ErrorOutlineIcon from '../../../../assets/icons/ErrorOutlineIcon';
+import { ERROR_COLOR } from '../../../../constants/colors';
 
 const useStyles = makeStyles({
   objectFieldGrid : {
@@ -83,7 +84,7 @@ const ObjectFieldTemplate = ({
               </IconButton>
             </CustomTextTooltip>}
           {rawErrors?.length &&
-            <CustomTextTooltip backgroundColor="#B32700" title={rawErrors?.map((error, index) => (
+            <CustomTextTooltip backgroundColor={ERROR_COLOR} title={rawErrors?.map((error, index) => (
               <div key={index}>{error}</div>
             ))}>
               <IconButton disableTouchRipple="true" disableRipple="true" component="span" size="small">

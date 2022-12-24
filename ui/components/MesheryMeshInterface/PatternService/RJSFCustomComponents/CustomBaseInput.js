@@ -3,6 +3,7 @@ import { IconButton, InputAdornment, TextField } from "@material-ui/core";
 import HelpOutlineIcon from "../../../../assets/icons/HelpOutlineIcon";
 import { CustomTextTooltip } from "../CustomTextTooltip";
 import ErrorOutlineIcon from "../../../../assets/icons/ErrorOutlineIcon";
+import { ERROR_COLOR } from "../../../../constants/colors";
 
 const BaseInput = (props) => {
   const additional = props.schema?.__additional_property; // check if the field is additional
@@ -32,7 +33,7 @@ const BaseInput = (props) => {
             endAdornment : (<InputAdornment position="start">
               {props.rawErrors?.length > 0 && (
                 <CustomTextTooltip
-                  backgroundColor="#B32700"
+                  backgroundColor={ERROR_COLOR}
                   flag={props?.formContext?.overrideFlag}
                   title={
                     <div>

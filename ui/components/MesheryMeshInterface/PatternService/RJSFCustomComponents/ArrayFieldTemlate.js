@@ -11,6 +11,7 @@ import { CustomTextTooltip } from "../CustomTextTooltip";
 import HelpOutlineIcon from "../../../../assets/icons/HelpOutlineIcon";
 import { isMultiSelect, getDefaultFormState } from "@rjsf/utils";
 import ErrorOutlineIcon from "../../../../assets/icons/ErrorOutlineIcon";
+import { ERROR_COLOR } from "../../../../constants/colors";
 function getTitleForItem(props) {
   const title = getTitle(props);
 
@@ -181,7 +182,7 @@ const DefaultNormalArrayFieldTemplate = (props) => {
             }
             {props.rawErrors?.length > 0 && (
               <CustomTextTooltip
-                backgroundColor="#B32700"
+                backgroundColor={ERROR_COLOR}
                 interactive={true}
                 title={props.rawErrors?.map((error, index) => (
                   <div key={index}>{error}</div>
