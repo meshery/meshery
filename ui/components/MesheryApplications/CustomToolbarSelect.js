@@ -27,11 +27,10 @@ class CustomToolbarSelect extends React.Component {
     if (response.toLowerCase()=="no"){
       return;
     }
-    toBeDeleted.map((e) => {
+    await toBeDeleted.map((e) => {
       this.props.deleteApplication(e.id)
-    }).then(() => {
-      this.props.setSelectedRows([])
     })
+    this.props.setSelectedRows([])
   };
 
   render() {
