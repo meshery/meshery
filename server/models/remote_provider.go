@@ -3040,20 +3040,10 @@ func (l *RemoteProvider) ExtensionProxy(req *http.Request) ([]byte, error) {
 		return nil, err
 	}
 
-	// gets the session cookie from request headers
-	// necessary to run flows in remote provider specific to user_account extension
-	sessionCookie, err := req.Cookie("session_cookie")
+	// update the request headers with the headers from the original request
+	// original headers includes cookies likes session_cookie necessary to run user management flows
+	cReq.Header = req.Header
 
-	// if cookie is not found then gracefully skip adding it the new request headers
-	// considering not every endpoint in remote provider requires it
-	if err != nil {
-		logrus.Debug("Error getting session cookie")
-	} else {
-		cReq.AddCookie(&http.Cookie{
-			Name:  "session_cookie",
-			Value: sessionCookie.Value,
-		})
-	}
 	// make request to remote provider with contructed URL and updated headers (like session cookie)
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
