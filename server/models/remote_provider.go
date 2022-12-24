@@ -3024,13 +3024,9 @@ func (l *RemoteProvider) ExtensionProxy(req *http.Request) ([]byte, error) {
 	// then attach the final path to the remote provider URL
 	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s", l.RemoteProviderURL, path))
 	logrus.Debugf("constructed url: %s", remoteProviderURL.String())
-	
-	defer req.Body.Close()
-	bd, _ := io.ReadAll(req.Body)
-	bf := bytes.NewBuffer(bd)
 
 	// make http.Request type variable with the constructed URL
-	cReq, err := http.NewRequest(req.Method, remoteProviderURL.String(), bf)
+	cReq, err := http.NewRequest(req.Method, remoteProviderURL.String(), req.Body)
 	if err != nil {
 		return nil, err
 	}
