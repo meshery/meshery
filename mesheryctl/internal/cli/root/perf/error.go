@@ -83,7 +83,7 @@ func ErrFailReqStatus(statusCode int) error {
 
 func ErrFailUnmarshal(err error) error {
 	return errors.New(ErrFailUnmarshalCode, errors.Alert, []string{},
-		[]string{"failed to unmarshal response body", err.Error(), formatErrorWithReference()}, []string{}, []string{})
+		[]string{"couldn't process JSON response from server", err.Error(), formatErrorWithReference()}, []string{}, []string{})
 }
 
 func ErrNoProfileFound() error {

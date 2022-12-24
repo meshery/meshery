@@ -69,7 +69,7 @@ mesheryctl perf result -o yaml
 			return cmd.Help()
 		}
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
-			return errors.New(utils.PerfError(fmt.Sprintf("'%s' is a invalid command.  Use 'mesheryctl perf --help' to display usage guide.'\n", args[0])))
+			return errors.New(utils.PerfError(fmt.Sprintf("You are misspelling the command as '%s'. Use 'mesheryctl perf --help' to display usage guide.'\n", args[0])))
 		}
 		return nil
 	},

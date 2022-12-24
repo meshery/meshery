@@ -498,7 +498,7 @@ func GetID(configuration string) ([]string, error) {
 	}
 	var dat map[string]interface{}
 	if err = json.Unmarshal(body, &dat); err != nil {
-		return idList, errors.Wrap(err, "failed to unmarshal response body")
+		return idList, errors.Wrap(err, "couldn't process JSON response from server")
 	}
 	if dat == nil {
 		return idList, errors.New("no data found")

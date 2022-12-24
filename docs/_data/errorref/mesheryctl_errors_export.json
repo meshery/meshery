@@ -286,7 +286,7 @@
         "name": "ErrFailUnmarshalCode",
         "code": "1036",
         "severity": "Alert",
-        "long_description": "failed to unmarshal response body",
+        "long_description": "couldn't process JSON response from server",
         "short_description": "",
         "probable_cause": "",
         "suggested_remediation": ""

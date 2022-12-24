@@ -100,7 +100,7 @@ mesheryctl app view --all
 
 		var dat map[string]interface{}
 		if err = json.Unmarshal(body, &dat); err != nil {
-			return errors.Wrap(err, "failed to unmarshal response body")
+			return errors.Wrap(err, "couldn't process JSON response from server")
 		}
 		if isID {
 			if body, err = json.MarshalIndent(dat, "", "  "); err != nil {
@@ -112,7 +112,7 @@ mesheryctl app view --all
 			}
 		} else {
 			if err = json.Unmarshal(body, &response); err != nil {
-				return errors.Wrap(err, "failed to unmarshal response body")
+				return errors.Wrap(err, "couldn't process JSON response from server")
 			}
 			if response.TotalCount == 0 {
 				return errors.New("application does not exit. Please get an app name and try again. Use `mesheryctl app list` to see a list of applications")

@@ -103,7 +103,7 @@ mesheryctl app offboard -f [filepath]
 
 		err = json.Unmarshal(body, &response)
 		if err != nil {
-			return errors.Wrap(err, "failed to unmarshal response body")
+			return errors.Wrap(err, "couldn't process JSON response from server")
 		}
 
 		utils.Log.Debug("application file converted to pattern file")

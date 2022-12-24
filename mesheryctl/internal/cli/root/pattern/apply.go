@@ -86,7 +86,7 @@ mesheryctl pattern apply [pattern-name]
 			}
 			err = json.Unmarshal(body, &response)
 			if err != nil {
-				return errors.Wrap(err, "failed to unmarshal response body")
+				return errors.Wrap(err, "couldn't process JSON response from server")
 			}
 
 			index := 0
@@ -143,7 +143,7 @@ mesheryctl pattern apply [pattern-name]
 					}
 					err = json.Unmarshal(body, &response)
 					if err != nil {
-						return errors.Wrap(err, "failed to unmarshal response body")
+						return errors.Wrap(err, "couldn't process JSON response from server")
 					}
 				}
 
@@ -210,7 +210,7 @@ mesheryctl pattern apply [pattern-name]
 				}
 				err = json.Unmarshal(body, &response)
 				if err != nil {
-					return errors.Wrap(err, "failed to unmarshal response body")
+					return errors.Wrap(err, "couldn't process JSON response from server")
 				}
 
 				// setup pattern file here
