@@ -436,11 +436,7 @@ func (h *Handler) handleApplicationUpdate(rw http.ResponseWriter,
 		return
 	}
 	format := r.URL.Query().Get("output")
-	mesheryApplication := parsedBody.ApplicationData
-	mesheryApplication.Type = sql.NullString{
-		String: sourcetype,
-		Valid:  true,
-	}
+
 	if parsedBody.CytoscapeJSON != "" {
 		pf, err := pCore.NewPatternFileFromCytoscapeJSJSON(parsedBody.Name, []byte(parsedBody.CytoscapeJSON))
 		if err != nil {
@@ -469,13 +465,17 @@ func (h *Handler) handleApplicationUpdate(rw http.ResponseWriter,
 			return
 		}
 
-		mesheryApplication = &models.MesheryApplication{
+		mesheryApplication := &models.MesheryApplication{
 			Name:            patternName,
 			ApplicationFile: string(pfByt),
 			Location: map[string]interface{}{
 				"host": "",
 				"path": "",
 				"type": "local",
+			},
+			Type: sql.NullString{
+				String: sourcetype,
+				Valid:  true,
 			},
 		}
 		if parsedBody.ApplicationData != nil {
@@ -507,6 +507,11 @@ func (h *Handler) handleApplicationUpdate(rw http.ResponseWriter,
 
 		h.formatApplicationOutput(rw, byt, format, &res)
 		return
+	}
+	mesheryApplication := parsedBody.ApplicationData
+	mesheryApplication.Type = sql.NullString{
+		String: sourcetype,
+		Valid:  true,
 	}
 	resp, err := provider.SaveMesheryApplication(token, mesheryApplication)
 	if err != nil {
