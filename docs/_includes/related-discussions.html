@@ -1,5 +1,14 @@
+<style>
+  .posts{
+    list-style-image: url("/assets/img/meshery/meshery-logo-light.svg");
+  }
+  .post{
+    padding: 0.3rem 0.4rem ;
+  }
+</style>
+
 <h3>Recent Discussions with "{{ include.tag }}" Tag</h3>
-<ul style="list-style-image: url(/assets/img/meshery/meshery-logo-light.svg)">
+<ul class="posts">
   {% if include.tag == "mesheryctl" %}
   <!-- -->
   {% assign item = site.data.discuss.mesheryctl -%}
@@ -15,10 +24,10 @@
 
   {% for post in topics %}
   <!-- -->
-  <li>
-    {{ post.created_at | date: "%b %d" }}
+  <li class="post">
+    <span class="post-date"> {{ post.created_at | date: "%b %d" }} | </span>
     <a href="https://discuss.layer5.io/t/{{ post.topics[0].slug }}/{{ post.id }}"> {{ post.title }}</a>
-    by {{ post.last_poster_username }}
+    <span class="poost-author"> by {{ post.last_poster_username }} </span>
   </li>
   {% endfor %}
 </ul>
