@@ -66,25 +66,7 @@ class User extends React.Component {
   }
 
   handleLogout = () => {
-    dataFetch('/user/logout', {
-      credentials : 'same-origin',
-      method : "GET",
-    }, () => {
-      this.props.enqueueSnackbar(`Successful logout` , {
-        variant : "success",
-        action : function Action(key) {
-          return (
-            <IconButton key="close" aria-label="Close" color="inherit" onClick={() => this.props.closeSnackbar(key)}>
-              <CloseIcon />
-            </IconButton>
-          );
-        },
-        autoHideDuration : 2000,
-      });
-      // updateProgress({ showProgress : false });
-    },
-    err => this.handleError(err)
-    );
+    window.location = '/user/logout'
   };
 
   handleError = (error) => {

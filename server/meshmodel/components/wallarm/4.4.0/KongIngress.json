@@ -1,0 +1,1 @@
+{"kind":"KongIngress","apiVersion":"v1","display-name":"Kong Ingress","format":"JSON","metadata":{"Helm Chart":"wallarm","Logo URL":"","Primary Color":"","Project Name":"","SVG_Color":"","SVG_White":"","Secondary Color":"","Shape":""},"model":{"name":"wallarm","version":"4.4.0","display-name":"","category":"","sub-category":""},"schema":""}

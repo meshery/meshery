@@ -49,6 +49,7 @@ type K8sRegistrationFunction func(ctxt context.Context, config []byte, ctxID str
 // start registration of components for the contexts
 func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, regFunc []K8sRegistrationFunction, eb *events.EventStreamer, reg *meshmodel.RegistryManager) {
 	for _, ctx := range ctxs {
+		ctxName := ctx.Name
 		ctxID := ctx.ID
 		// do not do anything about the contexts that are not present in the ctxRegStatusMap
 		if status, ok := cg.ctxRegStatusMap[ctxID]; ok {
@@ -58,26 +59,26 @@ func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, r
 					id, _ := uuid.NewV4()
 					// update the status
 					cg.ctxRegStatusMap[ctxID] = Registering
-					cg.log.Info("registration of k8s native components started for contextID: ", ctxID)
+					cg.log.Info("Registration of ", ctxName, " components started for contextID: ", ctxID)
 					req := meshes.EventsResponse{
 						Component:     "core",
 						ComponentName: "Kubernetes",
 						EventType:     meshes.EventType_INFO,
-						Summary:       "Registration of k8s native components started for contextID " + ctxID,
+						Summary:       "Registration of " + ctxName + " components started for contextID: " + ctxID,
 						OperationId:   id.String(),
 					}
 					eb.Publish(&req)
-					go func() {
+					go func(ctx *K8sContext) {
 						// set the status to RegistrationComplete
 						defer func() {
 							cg.ctxRegStatusMap[ctxID] = RegistrationComplete
 
-							cg.log.Info("registration of k8s native components completed for contextID: ", ctxID)
+							cg.log.Info(ctxName, " components for contextID:", ctxID, " registered")
 							req := meshes.EventsResponse{
 								Component:     "core",
 								ComponentName: "Kubernetes",
 								EventType:     meshes.EventType_INFO,
-								Summary:       "Registration of k8s native components completed for contextID " + ctxID,
+								Summary:       ctxName + " components for contextID:" + ctxID + " registered",
 								OperationId:   id.String(),
 							}
 							eb.Publish(&req)
@@ -96,7 +97,7 @@ func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, r
 								return
 							}
 						}
-					}()
+					}(ctx)
 				}
 			}
 		}
