@@ -4,7 +4,7 @@ Uses a spreadsheet of centralized information about MeshModel components and the
 
 Usage: (order of flags matters)
 
-    ./main [--update_doc] [path-to-spreadsheet] [--only-published]
+    ./main [path-to-spreadsheet] [--update_doc] [relative path to docs in website] [--only-published]
 
 Example:
 
@@ -88,6 +88,7 @@ func main() {
 		}
 		file.Close()
 		os.Remove(file.Name())
+		output = cleanupDuplicatesAndPreferEmptyComponentField(output, "Helm Chart")
 		for _, out := range output {
 			var t pkg.TemplateAttributes
 			publishValue, err := strconv.ParseBool(out["Publish?"])
@@ -180,6 +181,9 @@ func main() {
 						return err
 					}
 					for _, entry := range entries {
+						if changeFields["Component"] != "" || !strings.HasPrefix(entry.Name(), changeFields["Component"]) { //This is a component specific entry and only fill this when the filename matches component name
+							continue
+						}
 						path, err := filepath.Abs(filepath.Join(dirpath, versionentry.Name(), entry.Name()))
 						if err != nil {
 							return err
@@ -237,4 +241,24 @@ func isInColumnNames(key string, col []string) int {
 		}
 	}
 	return -1
+}
+
+// For Docs, entries with empty Component field are preferred as they are considered general
+func cleanupDuplicatesAndPreferEmptyComponentField(out []map[string]string, groupBykey string) (out2 []map[string]string) {
+	keyToComponent := make(map[string]string)
+	keyToEntry := make(map[string]map[string]string)
+	for _, o := range out {
+		gkey := o[groupBykey]
+		if keyToComponent[gkey] == "" {
+			keyToComponent[gkey] = o["Component"]
+		}
+		if keyToEntry[gkey] == nil || keyToEntry[gkey]["Component"] == "" {
+			keyToEntry[gkey] = o
+		}
+
+	}
+	for _, entry := range keyToEntry {
+		out2 = append(out2, entry)
+	}
+	return out2
 }
