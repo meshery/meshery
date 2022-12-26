@@ -183,7 +183,7 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int, g http.
 	gMux.Handle("/api/application/deploy", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.KubernetesMiddleware(h.ApplicationFileHandler)), models.ProviderAuth))).
 		Methods("POST", "DELETE")
 	gMux.Handle("/api/application", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.ApplicationFileRequestHandler), models.ProviderAuth))).
-		Methods("GET")
+		Methods("GET", "POST")
 	gMux.Handle("/api/application/{sourcetype}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.ApplicationFileRequestHandler), models.ProviderAuth))).
 		Methods("POST", "PUT")
 	gMux.Handle("/api/application/types", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetMesheryApplicationTypesHandler), models.ProviderAuth))).
