@@ -17,8 +17,12 @@ div.overview {
     // width: calc(100% / 3.4);
     overflow-wrap: break-word;
     border-radius: 1rem;
-    justify-content: space-evenly;
+    justify-content: space-evenly; 
     align-content: stretch;
+}
+div.overview_wrapper{
+    display:flex;
+    justify-content: center;
 }
 h3[id]:before {
     display: block;
@@ -51,25 +55,14 @@ div.overview:hover {
     color: #eee;
 }
 
-
-
-@media (max-width: 900px) {
-    div.wrapper {
-      display: block;
-    }
-    div.overview {
-      margin-left:20%;
-      margin-right:20%;
-      overflow-x:hidden;
-    }
-}
 @media (max-width: 62rem) {
     div.wrapper{
         display:block;
     }
     div.overview{
-        margin-left: 0px;
-        margin-right: 20%;
+        margin-left: auto;
+        margin-right: auto;
+        max-width: 80%;
         overflow-x: hidden ;                   
     }
 }
