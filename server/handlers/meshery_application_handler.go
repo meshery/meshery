@@ -17,7 +17,6 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/server/meshes"
 	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshery/server/models/pattern/core"
 	pCore "github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/layer5io/meshkit/utils/kubernetes/kompose"
@@ -189,7 +188,7 @@ func (h *Handler) handleApplicationPOST(
 				}
 			}
 
-			pattern, err := core.NewPatternFileFromK8sManifest(k8sres, false)
+			pattern, err := pCore.NewPatternFileFromK8sManifest(k8sres, false)
 			if err != nil {
 				obj := "convert"
 				h.log.Error(ErrApplicationFailure(err, obj))
@@ -251,7 +250,7 @@ func (h *Handler) handleApplicationPOST(
 				return
 			}
 			result := string(resp)
-			pattern, err := core.NewPatternFileFromK8sManifest(result, false)
+			pattern, err := pCore.NewPatternFileFromK8sManifest(result, false)
 			if err != nil {
 				obj := "convert"
 				h.log.Error(ErrApplicationFailure(err, obj))
@@ -731,7 +730,7 @@ func githubRepoApplicationScan(
 						return ErrRemoteApplication(err)
 					}
 				}
-				pattern, err := core.NewPatternFileFromK8sManifest(k8sres, false)
+				pattern, err := pCore.NewPatternFileFromK8sManifest(k8sres, false)
 				if err != nil {
 					return err //always a meshkit error
 				}
@@ -794,7 +793,7 @@ func genericHTTPApplicationFile(fileURL, sourceType string) ([]models.MesheryApp
 		}
 	}
 
-	pattern, err := core.NewPatternFileFromK8sManifest(k8sres, false)
+	pattern, err := pCore.NewPatternFileFromK8sManifest(k8sres, false)
 	if err != nil {
 		return nil, err //This error is already a meshkit error
 	}
