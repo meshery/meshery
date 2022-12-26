@@ -8,13 +8,6 @@ on:
   schedule:
     - cron:  '0 0 * * *'  # Run the job every day at midnight
   workflow_dispatch:
-    inputs:
-      flags:
-        default: "--published-only"
-        type: choice
-        description: Only publish integrations marked for publishing
-        options: 
-        - --published-only
 
 # This workflow uses the service account: meshery-integrations-sheet@meshery-237716.iam.gserviceaccount.com
 # See these instructions for setup - https://theoephraim.github.io/node-google-spreadsheet/#/getting-started/authentication
@@ -38,7 +31,7 @@ jobs:
           token: ${{ secrets.GH_ACCESS_TOKEN }}
           path: layer5
       - name: Run utility
-        run: cd meshery/scripts/component_updation; go build main.go; ./main https://docs.google.com/spreadsheets/d/e/2PACX-1vSgOXuiqbhUgtC9oNbJlz9PYpOEaFVoGNUFMIk4NZciFfQv1ewZg8ahdrWHKI79GkKK9TbmnZx8CqIe/pub\?gid\=0\&single\=true\&output\=csv --update-docs  layer5/src/collections/integrations ${{ github.event.inputs.flags }}
+        run: cd meshery/scripts/component_updation; go build main.go; ./main https://docs.google.com/spreadsheets/d/e/2PACX-1vSgOXuiqbhUgtC9oNbJlz9PYpOEaFVoGNUFMIk4NZciFfQv1ewZg8ahdrWHKI79GkKK9TbmnZx8CqIe/pub\?gid\=0\&single\=true\&output\=csv --update-docs  layer5/src/collections/integrations" --published-only"
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
