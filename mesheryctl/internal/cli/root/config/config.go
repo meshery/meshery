@@ -257,12 +257,12 @@ func (ctx *Context) ValidateVersion() error {
 	return nil
 }
 
-// GetProvider returns the enforced provider of the current context
+// GetProvider returns the provider of the current context
 func (ctx *Context) GetProvider() string {
 	return ctx.Provider
 }
 
-// SetProvider sets the enforced provider of the current context
+// SetProvider sets the provider of the current context
 func (ctx *Context) SetProvider(provider string) {
 	ctx.Provider = provider
 }

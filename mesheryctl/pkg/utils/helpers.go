@@ -928,10 +928,10 @@ func SetOverrideValues(ctx *config.Context, mesheryImageVersion string) map[stri
 		"tag": ctx.GetChannel() + "-" + mesheryImageVersion,
 	}
 
-	// set the enforced provider
+	// set the provider
 	if ctx.GetProvider() != "" {
 		valueOverrides["env"] = map[string]interface{}{
-			"ENFORCED_PROVIDER": ctx.GetProvider(),
+			"PROVIDER": ctx.GetProvider(),
 		}
 	}
 
