@@ -36,9 +36,9 @@ import (
 )
 
 var (
-	ColumnNamesToExtract        = []string{"Project Name", "Helm Chart", "Category", "Sub-Category", "Shape", "Primary Color", "Secondary Color", "Logo URL", "SVG_Color", "SVG_White"}
-	ColumnNamesToExtractForDocs = []string{"Project Name", "Page Subtitle", "Docs URL", "Category", "Sub-Category", "Feature 1", "Feature 2", "Feature 3", "howItWorks", "howItWorksDetails", "Publish?", "About Project", "Standard Blurb", "SVG_Color", "SVG_White", "Full Page", "Helm Chart"}
-	PrimaryColumnName           = "Helm Chart"
+	ColumnNamesToExtract        = []string{"Model Display Name", "Model", "Category", "Sub-Category", "Shape", "Primary Color", "Secondary Color", "Logo URL", "SVG_Color", "SVG_White"}
+	ColumnNamesToExtractForDocs = []string{"Model Display Name", "Page Subtitle", "Docs URL", "Category", "Sub-Category", "Feature 1", "Feature 2", "Feature 3", "howItWorks", "howItWorksDetails", "Publish?", "About Project", "Standard Blurb", "SVG_Color", "SVG_White", "Full Page", "Model"}
+	PrimaryColumnName           = "Model"
 	OutputPath                  = "../../server/meshmodel/components"
 )
 
@@ -89,7 +89,7 @@ func main() {
 		}
 		file.Close()
 		os.Remove(file.Name())
-		output = cleanupDuplicatesAndPreferEmptyComponentField(output, "Helm Chart")
+		output = cleanupDuplicatesAndPreferEmptyComponentField(output, "Model")
 		for _, out := range output {
 			var t pkg.TemplateAttributes
 			publishValue, err := strconv.ParseBool(out["Publish?"])
@@ -101,7 +101,7 @@ func main() {
 			}
 			for key, val := range out {
 				switch key {
-				case "Project Name":
+				case "Model Display Name":
 					t.Title = val
 				case "Page Subtitle":
 					t.Subtitle = val
@@ -132,10 +132,10 @@ func main() {
 
 			//Write
 			md := t.CreateMarkDown()
-			// if out["Project Name"] == "Istio" {
+			// if out["Model Display Name"] == "Istio" {
 			// 	fmt.Println(md)
 			// }
-			pathToIntegrations, _ := filepath.Abs(filepath.Join("../../../", pathToIntegrations, out["Helm Chart"]))
+			pathToIntegrations, _ := filepath.Abs(filepath.Join("../../../", pathToIntegrations, out["Model"]))
 			err = os.MkdirAll(pathToIntegrations, 0777)
 			if err != nil {
 				panic(err)
@@ -149,7 +149,7 @@ func main() {
 				panic(err)
 			}
 
-			err = pkg.WriteSVG(filepath.Join(pathToIntegrations, "icon", "color", out["Helm Chart"]+"-color.svg"), svgcolor) //CHANGE PATH
+			err = pkg.WriteSVG(filepath.Join(pathToIntegrations, "icon", "color", out["Model"]+"-color.svg"), svgcolor) //CHANGE PATH
 			if err != nil {
 				panic(err)
 			}
@@ -157,7 +157,7 @@ func main() {
 			if err != nil {
 				panic(err)
 			}
-			err = pkg.WriteSVG(filepath.Join(pathToIntegrations, "icon", "white", out["Helm Chart"]+"-white.svg"), svgwhite) //CHANGE PATH
+			err = pkg.WriteSVG(filepath.Join(pathToIntegrations, "icon", "white", out["Model"]+"-white.svg"), svgwhite) //CHANGE PATH
 			if err != nil {
 				panic(err)
 			}
@@ -213,7 +213,7 @@ func main() {
 								component.Metadata[key] = value
 							}
 						}
-						if i := isInColumnNames("Project Name", ColumnNamesToExtract); i != -1 {
+						if i := isInColumnNames("Model Display Name", ColumnNamesToExtract); i != -1 {
 							component.Model.DisplayName = changeFields[ColumnNamesToExtract[i]]
 						}
 						byt, err = json.Marshal(component)
