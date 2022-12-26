@@ -24,6 +24,7 @@ package main
 import (
 	"encoding/csv"
 	"encoding/json"
+	"fmt"
 	"log"
 	"os"
 	"path/filepath"
@@ -181,9 +182,11 @@ func main() {
 						return err
 					}
 					for _, entry := range entries {
-						if changeFields["Component"] != "" || !strings.HasPrefix(entry.Name(), changeFields["Component"]) { //This is a component specific entry and only fill this when the filename matches component name
+						name := strings.TrimSuffix(strings.TrimSpace(entry.Name()), ".json")
+						if changeFields["Component"] != "" && changeFields["Component"] != name { //This is a component specific entry and only fill this when the filename matches component name
 							continue
 						}
+
 						path, err := filepath.Abs(filepath.Join(dirpath, versionentry.Name(), entry.Name()))
 						if err != nil {
 							return err
@@ -197,6 +200,7 @@ func main() {
 						if err != nil {
 							return err
 						}
+						fmt.Println("updating for", component.Kind)
 						if component.Metadata == nil {
 							component.Metadata = make(map[string]interface{})
 						}
