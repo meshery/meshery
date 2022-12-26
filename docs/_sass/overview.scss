@@ -17,12 +17,8 @@ div.overview {
     // width: calc(100% / 3.4);
     overflow-wrap: break-word;
     border-radius: 1rem;
-    justify-content: space-evenly; 
+    justify-content: space-evenly;
     align-content: stretch;
-}
-div.overview_wrapper{
-    display:flex;
-    justify-content: center;
 }
 h3[id]:before {
     display: block;
