@@ -53,7 +53,7 @@ func main() {
 	var updateDocs bool
 
 	// If updateOnlyPublished is set true, then only update site pages that have "Published?" set to true.
-	updateOnlyPublished := false
+	updateOnlyPublished := true
 
 	var pathToIntegrations string
 	if len(os.Args) > 3 {
@@ -249,7 +249,7 @@ func isInColumnNames(key string, col []string) int {
 
 // For Docs:: entries with empty Component field are preferred as they are considered general
 // In other words, the absence of a component name indicates that a given row is a Model-level entry.
-// And that for docs/websites updates, the values found in this row should be used to represent the 
+// And that for docs/websites updates, the values found in this row should be used to represent the
 // integration overall (whether there is 1 or many 10s of components contained in the package / in the integration).
 func cleanupDuplicatesAndPreferEmptyComponentField(out []map[string]string, groupBykey string) (out2 []map[string]string) {
 	keyToComponent := make(map[string]string)
