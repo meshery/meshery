@@ -99,8 +99,8 @@ func (h *Handler) ApplicationFileRequestHandler(
 	}
 }
 
-// swagger:route PUT /api/application/{sourcetype} ApplicationsAPI idPutApplicationFileRequest
-// Handle PUT request for Application Files
+// swagger:route POST /api/application/{sourcetype} ApplicationsAPI idPutApplicationFileRequest
+// Handle POST request for Application Files
 //
 // Updates the design for the provided application
 // responses:
