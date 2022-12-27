@@ -221,6 +221,18 @@ jobs:
         env:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload artifacts
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: cypress-ss
+          path: /home/runner/work/meshery/meshery/ui/cypress/screenshots
+      - name: Upload Videos
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: cypress-ss
+          path: /home/runner/work/meshery/meshery/ui/cypress/videos
       - name: Upload coverage to Codecov (ui)
         uses: codecov/codecov-action@v1
         with:
