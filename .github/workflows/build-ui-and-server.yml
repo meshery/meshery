@@ -149,14 +149,30 @@ jobs:
         with:
           repository: layer5io/meshery-consul
           path: ./meshery-consul
-      - name: Download artifacts
-        uses: actions/download-artifact@v3.0.0
-        with:
-          name: meshery
       - name: Setup go
         uses: actions/setup-go@master
         with:
           go-version: "1.19"
+      - name: Create k8s Kind Cluster
+        uses: helm/kind-action@v1.3.0
+        with:
+          cluster_name: "kind-cluster"
+      - name: Run meshery-istio
+        run: |
+          mkdir -p /home/runner/.meshery/bin
+          cd ./meshery-istio
+          go run main.go &
+          sleep 60
+      - name: Run meshery-consul
+        run: |
+          mkdir -p /home/runner/.meshery/bin
+          cd ./meshery-consul
+          go run main.go &
+          sleep 60
+      - name: Download artifacts
+        uses: actions/download-artifact@v3.0.0
+        with:
+          name: meshery
       - name: Setup node
         uses: actions/setup-node@v3.0.0
         with:
@@ -174,11 +190,7 @@ jobs:
             /home/runner/.cache/Cypress
           key: ${{ runner.os }}-node-${{ hashFiles('**/lockfiles') }}
           restore-keys: |
-            ${{ runner.os }}-node-
-      - name: Create k8s Kind Cluster
-        uses: helm/kind-action@v1.3.0
-        with:
-          cluster_name: "kind-cluster"
+            ${{ runner.os }}-node-  
       - name: Build Next App
         run: |
           cd ui
