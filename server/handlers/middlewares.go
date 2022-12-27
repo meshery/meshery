@@ -202,7 +202,7 @@ func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http
 		err := provider.GetSession(req)
 		if err != nil {
 			err := provider.Logout(w, req)
-			if err != nil {		
+			if err != nil {
 				logrus.Errorf("Error performing logout: %v", err.Error())
 				provider.HandleUnAuthenticated(w, req)
 				return
