@@ -13,7 +13,7 @@ var proxy = httpProxy.createProxyServer({ target : { host : "localhost", port : 
 
 proxy.on("error", function (err, req, res) {
   res.writeHead(500, { "Content-Type" : "text/plain" });
-  res.end('Proxy issue.', err);
+  res.end('Proxy issue in Meshery-UI');
 });
 
 app.prepare().then(() => {
