@@ -448,7 +448,6 @@ func (l *RemoteProvider) Logout(w http.ResponseWriter, req *http.Request) error 
 		sessionCookie.MaxAge = -1
 		sessionCookie.Path = "/"
 		http.SetCookie(w, sessionCookie)
-		logrus.Info("successfully logged out from remote provider")
 		return nil
 	}
 

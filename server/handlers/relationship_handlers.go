@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/fs"
 	"net/http"
 	"os"
@@ -50,6 +51,9 @@ func (h *Handler) RegisterMeshmodelRelationships(rw http.ResponseWriter, r *http
 // while parsing, if an error is encountered, it will return the list of relationships that have already been parsed along with the error
 func parseStaticRelationships(sourceDirPath string) (rs []v1alpha1.RelationshipDefinition, err error) {
 	err = filepath.Walk(sourceDirPath, func(path string, info fs.FileInfo, err error) error {
+		if info == nil {
+			return fmt.Errorf("invalid/nil fileinfo while walking %s", path)
+		}
 		if !info.IsDir() {
 			var rel v1alpha1.RelationshipDefinition
 			byt, err := os.ReadFile(path)

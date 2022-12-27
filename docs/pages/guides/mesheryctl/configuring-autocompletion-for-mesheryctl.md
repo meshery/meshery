@@ -87,7 +87,7 @@ To load fish shell completions for each session, execute once:
  </div></div>
  </pre>
 
-# Suggested Reading
+#### Suggested Reading
 
 For an exhaustive list of `mesheryctl` commands and syntax:
 
@@ -102,3 +102,5 @@ Guides to using Meshery's various features and components.
 {% endcapture %}
 
 {% include suggested-reading.html diffName="true" isDiffTag="true" diffTag=tag %}
+
+{% include related-discussions.html tag="mesheryctl" %}

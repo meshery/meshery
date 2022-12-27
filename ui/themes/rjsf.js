@@ -191,7 +191,7 @@ export const rjsfTheme = createTheme({
     },
     MuiIconButton : {
       root : {
-        cursor : "default"
+        cursor : "pointer"
       },
       sizeSmall : {
         padding : "1px"
