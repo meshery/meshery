@@ -71,7 +71,8 @@ const styles = (theme) => ({
   FlushBtn : {
     margin : theme.spacing(0.5),
     padding : theme.spacing(1),
-    borderRadius : 5
+    borderRadius : 5,
+    pointerEvents : "auto"
   },
   menu : {
     display : 'flex',
@@ -80,6 +81,19 @@ const styles = (theme) => ({
   table : {
     marginTop : theme.spacing(1.5)
   },
+  uploadCluster : {
+    overflow : "hidden"
+  },
+  MenuItem : {
+    backgroundColor : theme.palette.common.white,
+    "&:hover" : {
+      backgroundColor : theme.palette.common.white
+    },
+    pointerEvents : "none"
+  },
+  OperatorSwitch : {
+    pointerEvents : "auto"
+  }
 });
 
 const ENABLED = "ENABLED"
@@ -265,7 +279,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
         updateProgress({ showProgress : false });
         if (typeof result !== "undefined") {
           handleLastDiscover(index);
-          enqueueSnackbar("Kubernetes was successfully pinged!", {
+          enqueueSnackbar("Kubernetes was pinged!", {
             variant : "success",
             "data-cy" : "k8sSuccessSnackbar",
             autoHideDuration : 2000,
@@ -558,23 +572,28 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
                 open={showMenu[tableMeta.rowIndex]}
                 onClose={() => handleMenuClose(tableMeta.rowIndex)}
               >
-                <Button
-                  type="submit"
-                  variant="contained"
-                  color="primary"
-                  size="large"
-                  onClick={handleFlushMeshSync(tableMeta.rowIndex)}
-                  className={classes.FlushBtn}
-                  data-cy="btnResetDatabase"
-                >
-                  <Typography> Flush MeshSync </Typography>
-                </Button>
-                <MenuItem>
+                <MenuItem
+                  className={classes.MenuItem}>
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                    size="large"
+                    onClick={handleFlushMeshSync(tableMeta.rowIndex)}
+                    className={classes.FlushBtn}
+                    data-cy="btnResetDatabase"
+                  >
+                    <Typography> Flush MeshSync </Typography>
+                  </Button>
+                </MenuItem>
+                <MenuItem
+                  className={classes.MenuItem}>
                   <Switch
                     checked={getOperatorStatus(contexts[tableMeta.rowIndex].id)?.operatorState}
                     onClick={(e) => handleOperatorSwitch(tableMeta.rowIndex, e.target.checked)}
                     name="OperatorSwitch"
                     color="primary"
+                    className={classes.OperatorSwitch}
                   />
                   Operator
                 </MenuItem>
@@ -805,7 +824,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
 
           updateProgress({ showProgress : false });
           if (!res.operator.error && res.operator.status === ENABLED ) {
-            enqueueSnackbar("Operator was successfully pinged!", {
+            enqueueSnackbar("Operator was pinged!", {
               variant : "success",
               autoHideDuration : 2000,
               action : (key) => (
@@ -830,7 +849,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
         updateProgress({ showProgress : false });
         if (res.controller.name === "broker" && res.controller.status.includes("CONNECTED")) {
           let runningEndpoint = res.controller.status.substring("CONNECTED".length).trim();
-          enqueueSnackbar(`Broker was successfully pinged. ${runningEndpoint != "" ? `Running at ${runningEndpoint}` : ""}`, {
+          enqueueSnackbar(`Broker was pinged. ${runningEndpoint != "" ? `Running at ${runningEndpoint}` : ""}`, {
             variant : "success",
             action : (key) => (
               <IconButton key="close" aria-label="close" color="inherit" onClick={() => closeSnackbar(key)}>
@@ -884,7 +903,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
           handleError("MeshSync could not be reached")("MeshSync is unavailable");
         } else {
           let publishEndpoint = res.controller.status.substring("ENABLED".length).trim()
-          enqueueSnackbar(`MeshSync was successfully pinged. ${publishEndpoint != "" ? `Publishing to ${publishEndpoint}` : ""}`, {
+          enqueueSnackbar(`MeshSync was pinged. ${publishEndpoint != "" ? `Publishing to ${publishEndpoint}` : ""}`, {
             variant : "success",
             action : (key) => (
               <IconButton key="close" aria-label="close" color="inherit" onClick={() => closeSnackbar(key)}>

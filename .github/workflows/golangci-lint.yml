@@ -18,7 +18,7 @@ jobs:
     strategy:
       matrix:
         go: [1.19]
-        os: [ubuntu-latest]
+        os: [ubuntu-22.04]
     name: golangci-lint
     if: github.repository == 'meshery/meshery'
     runs-on: ${{ matrix.os }}

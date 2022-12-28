@@ -53,36 +53,44 @@ func ProcessOAM(kconfigs []string, oamComps []string, oamConfig string, isDel bo
 				var req meshes.EventsResponse
 				if comp.Spec.Type == "Application" {
 					if err := application.Deploy(kcli, comp, config, isDel); err != nil {
+						var summary string
+						if isDel {
+							summary = "Error undeploying application: " + comp.Name
+						} else {
+							summary = "Error deploying application: " + comp.Name
+						}
 						req = meshes.EventsResponse{
 							Component:     "core",
 							ComponentName: "Meshery",
 							EventType:     meshes.EventType_ERROR,
-							Summary:       "Error deploying application: " + comp.Name,
+							Summary:       summary,
 							Details:       err.Error(),
 							OperationId:   id.String(),
 						}
 						errs = append(errs, err)
+						eb.Publish(&req)
 						continue
-					}
-					if !isDel {
-						req = meshes.EventsResponse{
-							Component:     "core",
-							ComponentName: "Meshery",
-							EventType:     meshes.EventType_INFO,
-							Summary:       "Successfully deployed application: " + comp.Name,
-							OperationId:   id.String(),
-						}
-						msgs = append(msgs, "successfully deployed application: "+comp.Name)
 					} else {
-						req = meshes.EventsResponse{
-							Component:     "core",
-							ComponentName: "Meshery",
-							EventType:     meshes.EventType_INFO,
-							Summary:       "Successfully deleted application: " + comp.Name,
-							OperationId:   id.String(),
-						}
+						if !isDel {
+							req = meshes.EventsResponse{
+								Component:     "core",
+								ComponentName: "Meshery",
+								EventType:     meshes.EventType_INFO,
+								Summary:       "Deployed application: " + comp.Name,
+								OperationId:   id.String(),
+							}
+							msgs = append(msgs, "Deployed application: "+comp.Name)
+						} else {
+							req = meshes.EventsResponse{
+								Component:     "core",
+								ComponentName: "Meshery",
+								EventType:     meshes.EventType_INFO,
+								Summary:       "Deleted application: " + comp.Name,
+								OperationId:   id.String(),
+							}
 
-						msgs = append(msgs, "successfully deleted application: "+comp.Name)
+							msgs = append(msgs, "Deleted application: "+comp.Name)
+						}
 					}
 					eb.Publish(&req)
 					continue
@@ -92,35 +100,44 @@ func ProcessOAM(kconfigs []string, oamComps []string, oamConfig string, isDel bo
 				if strings.HasSuffix(strings.ToLower(comp.Spec.Type), ".k8s") {
 					if err := k8s.Deploy(kcli, comp, config, isDel); err != nil {
 						errs = append(errs, err)
+						var summary string
+						if isDel {
+							summary = fmt.Sprintf("error deploying %s: %s", strings.TrimSuffix(comp.Spec.Type, ".K8s"), comp.Name)
+						} else {
+							summary = fmt.Sprintf("error undeploying %s: %s", strings.TrimSuffix(comp.Spec.Type, ".K8s"), comp.Name)
+						}
 						req = meshes.EventsResponse{
 							Component:     "core",
 							ComponentName: "Kubernetes",
 							EventType:     meshes.EventType_ERROR,
-							Summary:       fmt.Sprintf("error deploying %s: %s", strings.TrimSuffix(comp.Spec.Type, ".K8s"), comp.Name),
+							Summary:       summary,
 							Details:       err.Error(),
 							OperationId:   id.String(),
 						}
+						eb.Publish(&req)
 						continue
-					}
-					if !isDel {
-						req = meshes.EventsResponse{
-							Component:     "core",
-							ComponentName: "Kubernetes",
-							EventType:     meshes.EventType_INFO,
-							Summary:       fmt.Sprintf("Successfully deployed %s: %s", strings.TrimSuffix(comp.Spec.Type, ".K8s"), comp.Name),
-							OperationId:   id.String(),
-						}
-						msgs = append(msgs, fmt.Sprintf("successfully deployed %s: %s", strings.TrimSuffix(comp.Spec.Type, ".K8s"), comp.Name))
 					} else {
-						req = meshes.EventsResponse{
-							Component:     "core",
-							ComponentName: "Kubernetes",
-							EventType:     meshes.EventType_INFO,
-							Summary:       fmt.Sprintf("Successfully deleted %s: %s", strings.TrimSuffix(comp.Spec.Type, ".K8s"), comp.Name),
-							OperationId:   id.String(),
+						if !isDel {
+							req = meshes.EventsResponse{
+								Component:     "core",
+								ComponentName: "Kubernetes",
+								EventType:     meshes.EventType_INFO,
+								Summary:       fmt.Sprintf("Deployed %s: %s", strings.TrimSuffix(comp.Spec.Type, ".K8s"), comp.Name),
+								OperationId:   id.String(),
+							}
+							msgs = append(msgs, fmt.Sprintf("Deployed %s: %s", strings.TrimSuffix(comp.Spec.Type, ".K8s"), comp.Name))
+						} else {
+							req = meshes.EventsResponse{
+								Component:     "core",
+								ComponentName: "Kubernetes",
+								EventType:     meshes.EventType_INFO,
+								Summary:       fmt.Sprintf("Deleted %s: %s", strings.TrimSuffix(comp.Spec.Type, ".K8s"), comp.Name),
+								OperationId:   id.String(),
+							}
+							msgs = append(msgs, fmt.Sprintf("Deleted %s: %s", strings.TrimSuffix(comp.Spec.Type, ".K8s"), comp.Name))
 						}
-						msgs = append(msgs, fmt.Sprintf("successfully deleted %s: %s", strings.TrimSuffix(comp.Spec.Type, ".K8s"), comp.Name))
 					}
+
 					eb.Publish(&req)
 				}
 			}

@@ -3,7 +3,7 @@ on: [pull_request]
 jobs:
   eslint:
     name: runner / eslint
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
     - uses: actions/checkout@v3
     - name: Run ESLint Meshery-UI

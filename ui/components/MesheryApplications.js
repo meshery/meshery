@@ -345,7 +345,7 @@ function MesheryApplications({
         body : application_file,
       }, () => {
         console.log("ApplicationFile Deploy API", `/api/application/deploy`);
-        enqueueSnackbar(`"${name}" application successfully deployed` , {
+        enqueueSnackbar(`"${name}" application deployed` , {
           variant : "success",
           action : function Action(key) {
             return (
@@ -372,7 +372,7 @@ function MesheryApplications({
         body : application_file,
       }, () => {
         console.log("ApplicationFile Undeploy API", `/api/pattern/deploy`);
-        enqueueSnackbar(`"${name}" application successfully undeployed`, {
+        enqueueSnackbar(`"${name}" application undeployed`, {
           variant : "success",
           action : function Action(key) {
             return (
@@ -473,9 +473,14 @@ function MesheryApplications({
     };
   }
 
-  function handleSubmit({ data, id, name, type, source_type }) {
+  async function handleSubmit({ data, id, name, type, source_type }) {
     updateProgress({ showProgress : true })
     if (type === FILE_OPS.DELETE) {
+      const response = await showModal(1);
+      if (response=="No"){
+        updateProgress({ showProgress : false })
+        return;
+      }
       dataFetch(
         `/api/application/${id}`,
         {
@@ -485,6 +490,17 @@ function MesheryApplications({
         () => {
           console.log("ApplicationFile API", `/api/application/${id}`);
           updateProgress({ showProgress : false });
+          enqueueSnackbar(`"${name}" Application deleted`, {
+            variant : "success",
+            action : function Action(key) {
+              return (
+                <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+                  <CloseIcon />
+                </IconButton>
+              );
+            },
+            autoHideDuration : 2000,
+          });
           resetSelectedRowData()();
         },
         // handleError
@@ -673,18 +689,18 @@ function MesheryApplications({
           const rowData = applications[tableMeta.rowIndex];
           return (
             <>
-              <IconButton
+              <TooltipIcon
                 title="Deploy"
                 onClick={() => handleModalOpen(rowData.application_file, rowData.name, true)}
               >
                 <DoneAllIcon data-cy="deploy-button" />
-              </IconButton>
-              <IconButton
+              </TooltipIcon>
+              <TooltipIcon
                 title="Undeploy"
                 onClick={() => handleModalOpen(rowData.application_file, rowData.name, false)}
               >
                 <UndeployIcon fill="#8F1F00" data-cy="undeploy-button" />
-              </IconButton>
+              </TooltipIcon>
             </>
           );
         },

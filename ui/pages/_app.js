@@ -38,6 +38,11 @@ import { getK8sConfigIdsFromK8sConfig } from '../utils/multi-ctx';
 import './../public/static/style/index.css';
 import subscribeK8sContext from "../components/graphql/subscriptions/K8sContextSubscription";
 import { bindActionCreators } from 'redux';
+import "./styles/AnimatedFilter.css"
+import "./styles/AnimatedMeshery.css"
+import "./styles/AnimatedMeshPattern.css"
+import "./styles/AnimatedMeshSync.css"
+import PlaygroundMeshDeploy from './extension/AccessMesheryModal';
 
 if (typeof window !== 'undefined') {
   require('codemirror/mode/yaml/yaml');
@@ -70,7 +75,8 @@ class MesheryApp extends App {
       activeK8sContexts : [],
       operatorSubscription : null,
       meshSyncSubscription : null,
-      disposeK8sContextSubscription : null
+      disposeK8sContextSubscription : null,
+      isOpen : false
     };
   }
 
@@ -146,10 +152,7 @@ class MesheryApp extends App {
   }
 
   handleL5CommunityClick = () => {
-    if (typeof window !== 'undefined') {
-      const w = window.open('https://layer5.io', '_blank');
-      w.focus();
-    }
+    this.setState(state => ({ isOpen : !state.isOpen }));
   };
 
   /**
@@ -368,6 +371,7 @@ class MesheryApp extends App {
             </footer>
           </div>
         </div>
+        <PlaygroundMeshDeploy closeForm={() => this.setState({ isOpen : false })} isOpen={this.state.isOpen} />
       </NoSsr>
     );
   }
