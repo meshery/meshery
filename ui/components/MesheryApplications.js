@@ -482,14 +482,10 @@ function MesheryApplications({
         return;
       }
       deleteApplication(id);
+
     }
 
     if (type === FILE_OPS.UPDATE) {
-      let response = await showUpdateModel("");
-      if (response=="No"){
-        updateProgress({ showProgress : false })
-        return;
-      }
       dataFetch(
         `/api/application/${source_type}`,
         {
@@ -500,17 +496,6 @@ function MesheryApplications({
         () => {
           console.log("ApplicationFile API", `/api/application/${source_type}`);
           updateProgress({ showProgress : false });
-          enqueueSnackbar(`"${name}" Application Updated Successfully`, {
-            variant : "success",
-            action : function Action(key) {
-              return (
-                <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-                  <CloseIcon />
-                </IconButton>
-              );
-            },
-            autoHideDuration : 2000,
-          });
         },
         // handleError
         handleError(ACTION_TYPES.UPDATE_APPLICATIONS)
@@ -715,14 +700,6 @@ function MesheryApplications({
     return response;
   }
 
-  async function showUpdateModel(count){
-    let response = await modalRef.current.show({
-      title : `Update ${count ? count : ""} Application${count > 1 ? "s" : ''}?`,
-      subtitle : `Are you sure you want to update ${count > 1 ? "these" : 'this'} ${count ? count : ""} application${count > 1 ? "s" : ''}?`,
-      options : ["Yes","No"],
-    });
-    return response;
-  }
   async function deleteApplication(id) {
     dataFetch(
       `/api/application/${id}`,
@@ -778,6 +755,8 @@ function MesheryApplications({
       if (response === "Yes") {
         const fid = Object.keys(row.lookup).map(idx => applications[idx]?.id);
         fid.forEach(fid => deleteApplication(fid));
+      } else {
+        fetchApplications(page, pageSize, search, sortOrder);
       }
       // if (response === "No")
       // fetchApplications(page, pageSize, search, sortOrder);
