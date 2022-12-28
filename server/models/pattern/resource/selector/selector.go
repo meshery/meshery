@@ -42,6 +42,8 @@ func GetAnnotationsForWorkload(w v1alpha1.ComponentDefinition) map[string]string
 		}
 	}
 	res[fmt.Sprintf("%s.model.name", annotationsPrefix)] = w.Model.Name
+	res[fmt.Sprintf("%s.k8s.APIVersion", annotationsPrefix)] = w.APIVersion
+	res[fmt.Sprintf("%s.k8s.Kind", annotationsPrefix)] = w.Kind
 	res[fmt.Sprintf("%s.model.version", annotationsPrefix)] = w.Model.Version
 	res[fmt.Sprintf("%s.model.category", annotationsPrefix)] = w.Model.Category
 	return res

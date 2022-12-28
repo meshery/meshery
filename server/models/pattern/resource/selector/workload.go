@@ -13,7 +13,7 @@ func (s *Selector) Workload(name string, version string, model string) (v1alpha1
 	var comp v1alpha1.ComponentDefinition
 	name = strings.Split(name, ".")[0]
 	fmt.Println(name, model, version)
-	if model == "" { //If model is not passed, default to core
+	if model == "" && name == "Application" { //If model is not passed, default to core
 		model = "core"
 	}
 	entities := s.registry.GetEntities(&v1alpha1.ComponentFilter{

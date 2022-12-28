@@ -20,7 +20,6 @@ func Deploy(kubeClient *meshkube.Client, oamComp v1alpha1.Component, oamConfig v
 	if err != nil {
 		return err
 	}
-
 	return kubeClient.ApplyManifest(manifest, meshkube.ApplyOptions{
 		Namespace: oamComp.Namespace,
 		Update:    true,
@@ -53,11 +52,11 @@ func createK8sResourceStructure(comp v1alpha1.Component) map[string]interface{} 
 }
 
 func getAPIVersionFromComponent(comp v1alpha1.Component) string {
-	return comp.Annotations["design.meshmodel.io.k8s.k8sAPIVersion"]
+	return comp.Annotations["design.meshmodel.io.k8s.APIVersion"]
 }
 
 func getKindFromComponent(comp v1alpha1.Component) string {
-	kind := strings.TrimPrefix(comp.Annotations["design.meshmodel.io.k8s.k8sKind"], "/")
+	kind := strings.TrimPrefix(comp.Annotations["design.meshmodel.io.k8s.Kind"], "/")
 
 	return kind
 }
