@@ -51,8 +51,8 @@ describe("Test Lifecycle Paths With None Provider", () => {
 
   it("Visit Istio by button Click", () => {
     cy.visit("/")
-    cy.get('[data-cy="Lifecycle"]').click();
-    cy.get('[data-cy="Istio"]').click();
+    cy.get('[data-cy="lifecycle"]').click();
+    cy.get('[data-cy="istio"]').click();
     doGeneralIstioLifecycleChecks(cy);
     verifyAllIstioAddons(cy);
   })
@@ -64,8 +64,8 @@ describe("Test Lifecycle Paths With None Provider", () => {
 
   it("Visit Consul by button Click", () => {
     cy.visit("/")
-    cy.get('[data-cy="Lifecycle"]').click();
-    cy.get('[data-cy="Consul"]').click();
+    cy.get('[data-cy="lifecycle"]').click();
+    cy.get('[data-cy="consul"]').click();
     doGeneralConsulLifecycleChecks(cy);
   })
 
