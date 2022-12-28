@@ -25,7 +25,7 @@ jobs:
   build-backend:
     name: Backend build
     if: github.repository == 'meshery/meshery'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Check out code
         uses: actions/checkout@master
@@ -52,7 +52,7 @@ jobs:
   build-ui:
     name: UI build
     if: github.repository == 'meshery/meshery'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Check out code
         uses: actions/checkout@master
@@ -92,7 +92,7 @@ jobs:
     needs: [build-ui]
     name: UI integration tests
     if: github.repository == 'meshery/meshery'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Check out code
         uses: actions/checkout@master
@@ -133,30 +133,46 @@ jobs:
     needs: [build-backend, build-ui]
     name: UI end-to-end tests
     if: github.repository == 'meshery/meshery'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Check out code
         uses: actions/checkout@master
         with:
           fetch-depth: 0
-      - name: Check out meshery-consul code
-        uses: actions/checkout@master
-        with:
-          repository: layer5io/meshery-consul
-          path: ./meshery-consul
       - name: Check out meshery-istio code
         uses: actions/checkout@master
         with:
           repository: layer5io/meshery-istio
           path: ./meshery-istio
-      - name: Download artifacts
-        uses: actions/download-artifact@v3.0.0
+      - name: Check out meshery-consul code
+        uses: actions/checkout@master
         with:
-          name: meshery
+          repository: layer5io/meshery-consul
+          path: ./meshery-consul
       - name: Setup go
         uses: actions/setup-go@master
         with:
           go-version: "1.19"
+      - name: Create k8s Kind Cluster
+        uses: helm/kind-action@v1.3.0
+        with:
+          cluster_name: "kind-cluster"
+      - name: Run meshery-istio
+        run: |
+          mkdir -p /home/runner/.meshery/bin
+          cd ./meshery-istio
+          go run main.go &
+          sleep 60
+      - name: Run meshery-consul
+        run: |
+          mkdir -p /home/runner/.meshery/bin
+          cd ./meshery-consul
+          go run main.go &
+          sleep 60
+      - name: Download artifacts
+        uses: actions/download-artifact@v3.0.0
+        with:
+          name: meshery
       - name: Setup node
         uses: actions/setup-node@v3.0.0
         with:
@@ -174,11 +190,7 @@ jobs:
             /home/runner/.cache/Cypress
           key: ${{ runner.os }}-node-${{ hashFiles('**/lockfiles') }}
           restore-keys: |
-            ${{ runner.os }}-node-
-      - name: Create k8s Kind Cluster
-        uses: helm/kind-action@v1.3.0
-        with:
-          cluster_name: "kind-cluster"
+            ${{ runner.os }}-node-  
       - name: Build Next App
         run: |
           cd ui
@@ -209,17 +221,30 @@ jobs:
           chmod +x ./main
           ./main &
       - name: Cypress run
-        uses: cypress-io/github-action@v4
+        uses: cypress-io/github-action@v5
         with:
           working-directory: ui
           start: npm start
           wait-on: http://localhost:3000
-          spec: cypress/integration/e2e/**/*
+          spec: cypress/e2e/e2e/**/*
+          browser: chrome
           record: true
-          tag: node-${{ matrix.node }}
+          tag: node-${{ secrets.NODE_VERSION }}
         env:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload artifacts
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: cypress-ss
+          path: /home/runner/work/meshery/meshery/ui/cypress/screenshots
+      - name: Upload Videos
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: cypress-ss
+          path: /home/runner/work/meshery/meshery/ui/cypress/videos
       - name: Upload coverage to Codecov (ui)
         uses: codecov/codecov-action@v1
         with:
@@ -230,7 +255,7 @@ jobs:
   docker-build-test:
     name: Docker build
     if: github.repository == 'meshery/meshery'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Check out code
         uses: actions/checkout@master
@@ -261,7 +286,7 @@ jobs:
   swaggerci:
     if: github.repository == 'meshery/meshery'
     name: swagger-docs
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@master
       - name: Check if handlers were modified
@@ -287,7 +312,7 @@ jobs:
   garphql_validate:
     name: Validate GraphQL schema
     if: github.repository == 'meshery/meshery'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Check out code
         uses: actions/checkout@master

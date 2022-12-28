@@ -23,7 +23,7 @@ export const pingGrafanaWithNotification = (updateProgress, action, enqueueSnack
   const successCb = (result) => {
     updateProgress({ showProgress : false });
     if (typeof result !== "undefined") {
-      enqueueSnackbar("Grafana successfully pinged!", { variant : "success",
+      enqueueSnackbar("Grafana pinged!", { variant : "success",
         autoHideDuration : 2000,
         action });
     }
@@ -69,7 +69,7 @@ export const pingPrometheusWithNotification = (updateProgress, action, enqueueSn
   const successCb = (result) => {
     updateProgress({ showProgress : false });
     if (typeof result !== "undefined") {
-      enqueueSnackbar("Prometheus successfully pinged!", { variant : "success",
+      enqueueSnackbar("Prometheus pinged!", { variant : "success",
         autoHideDuration : 2000,
         action });
     }
@@ -198,7 +198,7 @@ export const handleGrafanaConfigure = (grafanaURL, grafanaAPIKey, updateProgress
     (result) => {
       updateProgress({ showProgress : false });
       if (typeof result !== "undefined") {
-        enqueueSnackbar("Grafana was successfully configured!", { variant : "success",
+        enqueueSnackbar("Grafana was configured!", { variant : "success",
           autoHideDuration : 2000,
           action });
         updateGrafanaConfig({ grafana : { grafanaURL,
@@ -208,7 +208,7 @@ export const handleGrafanaConfigure = (grafanaURL, grafanaAPIKey, updateProgress
     (err) => {
       updateProgress({ showProgress : false });
       if (typeof result !== "undefined") {
-        enqueueSnackbar("Grafana was not successfully configured! :" + err, { variant : "error",
+        enqueueSnackbar("Grafana was not configured! :" + err, { variant : "error",
           autoHideDuration : 2000,
           action });
       }
@@ -242,7 +242,7 @@ export const handlePrometheusConfigure = (prometheusURL, updateProgress, enqueue
     (result) => {
       updateProgress({ showProgress : false });
       if (typeof result !== "undefined") {
-        enqueueSnackbar("Prometheus was successfully configured!", { variant : "success",
+        enqueueSnackbar("Prometheus was configured!", { variant : "success",
           autoHideDuration : 2000,
           action });
         updatePrometheusConfig({ prometheus : { prometheusURL,
@@ -252,7 +252,7 @@ export const handlePrometheusConfigure = (prometheusURL, updateProgress, enqueue
     (err) => {
       updateProgress({ showProgress : false });
       if (typeof result !== "undefined") {
-        enqueueSnackbar("Prometheus was not successfully configured! :" + err, { variant : "error",
+        enqueueSnackbar("Prometheus was not configured! :" + err, { variant : "error",
           autoHideDuration : 2000,
           action });
       }

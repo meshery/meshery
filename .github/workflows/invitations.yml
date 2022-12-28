@@ -6,7 +6,7 @@ on:
 jobs:
   automate_invite:
     if: contains(github.event.issue.labels.*.name, 'issue/invite') && github.repository == 'meshery/'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Invite on label
         uses: vj-abigo/invite-on-label@v1.2

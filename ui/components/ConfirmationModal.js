@@ -102,8 +102,7 @@ const styles = (theme) => ({
   },
   actions : {
     display : 'flex',
-    justifyContent : 'space-evenly',
-    marginTop : theme.spacing(-3)
+    justifyContent : 'space-evenly'
   },
   all : {
     display : "table"
@@ -113,7 +112,10 @@ const styles = (theme) => ({
     flexWrap : "wrap"
   },
   tabs : {
-    marginLeft : 0
+    marginLeft : 0,
+    "& .MuiTab-root.Mui-selected" : {
+      backgroundColor : '#D9D9D9'
+    }
   },
   tabLabel : {
     tabLabel : {
@@ -189,8 +191,8 @@ function ConfirmationMsg(props) {
   const handleKubernetesClick = (ctxID) => {
     updateProgress({ showProgress : true })
     pingKubernetes(
-      successHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Kubernetes succesfully pinged", () => updateProgress({ showProgress : false })),
-      errorHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Kubernetes not pinged successfully", () => updateProgress({ showProgress : false })),
+      successHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Kubernetes pinged", () => updateProgress({ showProgress : false })),
+      errorHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Kubernetes not pinged", () => updateProgress({ showProgress : false })),
       ctxID
     )
   }
@@ -209,7 +211,7 @@ function ConfirmationMsg(props) {
         });
     }
 
-    if (tabVal === 0) {
+    if (tabVal === 2) {
       submit.deploy();
     } else if (tabVal === 1) {
       submit.unDeploy();
@@ -278,20 +280,20 @@ function ConfirmationMsg(props) {
             textColor="primary"
             className={classes.tabs}
           >
-            <Tab
-              className={classes.tab}
-              label={<div style={{ display : "flex" }}> <DoneAllIcon style={{ margin : "2px" }} fontSize="small" /> <span className={classes.tabLabel}>Deploy</span> </div>}
-            />
-            <Tab
-              className={classes.tab}
-              label={<div style={{ display : "flex" }}> <div style={{ margin : "2px" }}> <UndeployIcon fill="rgba(0, 0, 0, 0.54)" width="20" height="20"/> </div> <span className={classes.tabLabel}>Undeploy</span> </div>}
-            />
             {!!validationBody &&
             <Tab
               className={classes.tab}
               label={<div style={{ display : "flex" }}> <DoneIcon style={{ margin : "2px" }}  fontSize="small"/><span className={classes.tabLabel}>Validate</span> </div>
               }
             />}
+            <Tab
+              className={classes.tab}
+              label={<div style={{ display : "flex" }}> <div style={{ margin : "2px" }}> <UndeployIcon fill="rgba(0, 0, 0, 0.54)" width="20" height="20"/> </div> <span className={classes.tabLabel}>Undeploy</span> </div>}
+            />
+            <Tab
+              className={classes.tab}
+              label={<div style={{ display : "flex" }}> <DoneAllIcon style={{ margin : "2px" }} fontSize="small" /> <span className={classes.tabLabel}>Deploy</span> </div>}
+            />
           </Tabs>
 
           {(tabVal === ACTIONS.DEPLOY || tabVal === ACTIONS.UNDEPLOY) &&

@@ -10,6 +10,7 @@ import FullscreenIcon from '@material-ui/icons/Fullscreen';
 import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
 import SaveIcon from '@material-ui/icons/Save';
 import MUIDataTable from "mui-datatables";
+import CustomToolbarSelect from "./MesheryPatterns/CustomToolbarSelect";
 import { withSnackbar } from "notistack";
 import AddIcon from "@material-ui/icons/AddCircleOutline";
 import React, { useContext, useEffect, useRef, useState } from "react";
@@ -479,7 +480,7 @@ function MesheryPatterns({
       setPage(result.configuration?.patterns?.page || 0);
       setPageSize(result.configuration?.patterns?.page_size || 0);
       setCount(result.configuration?.patterns?.total_count || 0);
-      handleSetPatterns(result.configuration?.patterns.patterns);
+      handleSetPatterns(result.configuration?.patterns?.patterns ?? [] );
       stillLoading(false);
     },
     {
@@ -571,7 +572,7 @@ function MesheryPatterns({
         body : pattern_file,
       }, () => {
         updateProgress({ showProgress : false });
-        enqueueSnackbar(`"${name}" Design successfully deployed`, {
+        enqueueSnackbar(`"${name}" Design deployed`, {
           variant : "success",
           action : function Action(key) {
             return (
@@ -623,7 +624,7 @@ function MesheryPatterns({
         body : pattern_file,
       }, () => {
         updateProgress({ showProgress : false });
-        enqueueSnackbar(`"${name}" Design successfully undeployed`, {
+        enqueueSnackbar(`"${name}" Design undeployed`, {
           variant : "success",
           action : function Action(key) {
             return (
@@ -645,7 +646,7 @@ function MesheryPatterns({
       { credentials : "include", method : "POST", body : JSON.stringify(catalog_data) },
       () => {
         updateProgress({ showProgress : false });
-        enqueueSnackbar("Pattern Successfully Published!", {
+        enqueueSnackbar("Design Published!", {
           variant : "success",
           action : function Action(key) {
             return (
@@ -670,7 +671,7 @@ function MesheryPatterns({
       },
       () => {
         updateProgress({ showProgress : false });
-        enqueueSnackbar(`"${name}" Design successfully cloned`, {
+        enqueueSnackbar(`"${name}" Design cloned`, {
           variant : "success",
           action : function Action(key) {
             return (
@@ -733,9 +734,14 @@ function MesheryPatterns({
     };
   }
 
-  function handleSubmit({ data, id, name, type }) {
+  async function handleSubmit({ data, id, name, type }) {
     updateProgress({ showProgress : true })
     if (type === FILE_OPS.DELETE) {
+      const response = await showModal(1, name)
+      if (response=="No"){
+        updateProgress({ showProgress : false })
+        return;
+      }
       dataFetch(
         `/api/pattern/${id}`,
         {
@@ -745,6 +751,17 @@ function MesheryPatterns({
         () => {
           console.log("PatternFile API", `/api/pattern/${id}`);
           updateProgress({ showProgress : false });
+          enqueueSnackbar(`"${name}" Design deleted`, {
+            variant : "success",
+            action : function Action(key) {
+              return (
+                <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+                  <CloseIcon />
+                </IconButton>
+              );
+            },
+            autoHideDuration : 2000,
+          });
           resetSelectedRowData()();
         },
         handleError(ACTION_TYPES.DELETE_PATTERN)
@@ -943,32 +960,31 @@ function MesheryPatterns({
                 >
                   <Avatar src="/static/img/pattwhite.svg" className={classes.iconPatt} imgProps={{ height : "16px", width : "16px" }} />
                 </IconButton> }
-              {/*</Tooltip> */}
-              <IconButton
-                title="Verify"
+              <TooltipIcon
+                title="Validate"
                 onClick={(e) => handleVerify(e, rowData.pattern_file, rowData.id)}
               >
                 <DoneIcon data-cy="verify-button" />
-              </IconButton>
-              <IconButton
-                title="Deploy"
-                onClick={(e) => handleModalOpen(e, rowData.pattern_file, rowData.name, patternErrors.get(rowData.id), ACTIONS.DEPLOY)}
-              >
-                <DoneAllIcon data-cy="deploy-button" />
-              </IconButton>
-              <IconButton
+              </TooltipIcon>
+
+              <TooltipIcon
                 title="Undeploy"
                 onClick={(e) => handleModalOpen(e, rowData.pattern_file, rowData.name, patternErrors.get(rowData.id), ACTIONS.UNDEPLOY)}
               >
                 <UndeployIcon fill="#8F1F00" data-cy="undeploy-button" />
-              </IconButton>
-              <IconButton
+              </TooltipIcon>
+              <TooltipIcon
+                title="Deploy"
+                onClick={(e) => handleModalOpen(e, rowData.pattern_file, rowData.name, patternErrors.get(rowData.id), ACTIONS.DEPLOY)}
+              >
+                <DoneAllIcon data-cy="deploy-button" />
+              </TooltipIcon>
+              <TooltipIcon
                 title="Publish"
                 onClick={(ev) => handlePublishModal(ev,rowData)}
-
               >
                 <PublicIcon fill="#8F1F00" data-cy="publish-button" />
-              </IconButton>
+              </TooltipIcon>
             </>
           );
         },
@@ -1029,6 +1045,9 @@ function MesheryPatterns({
   }
 
   const options = {
+    customToolbarSelect : (selectedRows, displayData, setSelectedRows) => (
+      <CustomToolbarSelect selectedRows={selectedRows} displayData={displayData} setSelectedRows={setSelectedRows} patterns={patterns} deletePatterns={deletePatterns} showModal={showModal}/>
+    ),
     filter : false,
     sort : !(user && user.user_id === "meshery"),
     search : !(user && user.user_id === "meshery"),

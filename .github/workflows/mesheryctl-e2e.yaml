@@ -21,7 +21,7 @@ on:
 jobs:
   manual-test:
     name: Manual e2e Test
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     if: ${{ github.event_name == 'workflow_dispatch' }}
     strategy:
       fail-fast: false
@@ -75,7 +75,7 @@ jobs:
   
   scheduled-test:
     name: Scheduled e2e Test
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     if: ${{ github.event_name == 'schedule' }}
     strategy:
       fail-fast: false

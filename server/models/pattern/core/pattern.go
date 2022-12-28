@@ -42,6 +42,7 @@ type Service struct {
 	// from the parent
 	Name        string            `yaml:"name,omitempty" json:"name,omitempty"`
 	Type        string            `yaml:"type,omitempty" json:"type,omitempty"`
+	APIVersion  string            `yaml:"apiVersion,omitempty" json:"apiVersion,omitempty"`
 	Namespace   string            `yaml:"namespace" json:"namespace"`
 	Version     string            `yaml:"version,omitempty" json:"version,omitempty"`
 	Labels      map[string]string `yaml:"labels,omitempty" json:"labels,omitempty"`
@@ -387,6 +388,7 @@ func NewPatternFileFromK8sManifest(data string, ignoreErrors bool) (Pattern, err
 }
 
 func createPatternServiceFromK8s(manifest map[string]interface{}) (string, Service, error) {
+
 	apiVersion, _ := manifest["apiVersion"].(string)
 	kind, _ := manifest["kind"].(string)
 	metadata, _ := manifest["metadata"].(map[string]interface{})
@@ -440,10 +442,11 @@ func createPatternServiceFromK8s(manifest map[string]interface{}) (string, Servi
 			castedAnnotation[k] = cv
 		}
 	}
-	rest = k8s.Format.Prettify(rest, true)
+	rest = k8s.Format.Prettify(rest, false)
 	svc := Service{
 		Name:        name,
 		Type:        w[0].OAMDefinition.Name,
+		APIVersion:  apiVersion,
 		Namespace:   namespace,
 		Labels:      castedLabel,
 		Annotations: castedAnnotation,
