@@ -124,7 +124,6 @@
             {% assign osm_items = k8s_item.items | sort: "meshery-component-version" | reverse  %}
           {%endif%}
           {% for single in osm_items limit: 1 %}
-          
              {% if single.overall-status == "passing" %}
               {% assign successfull_osm = 1 %}
             {% elsif single.overall-status == "failing" %}
