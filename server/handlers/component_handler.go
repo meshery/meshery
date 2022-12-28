@@ -172,17 +172,7 @@ func (h *Handler) MeshmodelComponentsForTypeHandler(rw http.ResponseWriter, r *h
 	for _, x := range response {
 		x.Versions = filterUniqueElementsArray(x.Versions)
 	}
-	var comps []v1alpha1.ComponentDefinition
-	for _, r := range res {
-		m := make(map[string]interface{})
-		comp, _ := r.(v1alpha1.ComponentDefinition)
-		_ = json.Unmarshal([]byte(comp.Schema), &m)
-		m = k8s.Format.Prettify(m, false)
-		b, _ := json.Marshal(m)
-		comp.Schema = string(b)
-		comps = append(comps, comp)
-	}
-	if err := enc.Encode(comps); err != nil {
+	if err := enc.Encode(response); err != nil {
 		h.log.Error(ErrWorkloadDefinition(err)) //TODO: Add appropriate meshkit error
 		http.Error(rw, ErrWorkloadDefinition(err).Error(), http.StatusInternalServerError)
 	}

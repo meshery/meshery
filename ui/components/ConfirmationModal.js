@@ -112,7 +112,10 @@ const styles = (theme) => ({
     flexWrap : "wrap"
   },
   tabs : {
-    marginLeft : 0
+    marginLeft : 0,
+    "& .MuiTab-root.Mui-selected" : {
+      backgroundColor : '#D9D9D9'
+    }
   },
   tabLabel : {
     tabLabel : {

@@ -68,7 +68,7 @@ func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, r
 						OperationId:   id.String(),
 					}
 					eb.Publish(&req)
-					go func() {
+					go func(ctx *K8sContext) {
 						// set the status to RegistrationComplete
 						defer func() {
 							cg.ctxRegStatusMap[ctxID] = RegistrationComplete
@@ -97,7 +97,7 @@ func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, r
 								return
 							}
 						}
-					}()
+					}(ctx)
 				}
 			}
 		}

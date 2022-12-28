@@ -232,15 +232,18 @@ func main() {
 			return
 		}
 		_ = filepath.Walk(path, func(path string, info fs.FileInfo, err error) error {
+			if info == nil {
+				return nil
+			}
 			if !info.IsDir() {
 				var comp v1alpha1.ComponentDefinition
 				byt, err := os.ReadFile(path)
 				if err != nil {
-					return err
+					return nil
 				}
 				err = json.Unmarshal(byt, &comp)
 				if err != nil {
-					return err
+					return nil
 				}
 				compChan <- comp
 			}
@@ -250,7 +253,7 @@ func main() {
 	}()
 	// seed relationships
 	go func() {
-		staticRelationshipsPath, err := filepath.Abs("../../meshmodel/relationships")
+		staticRelationshipsPath, err := filepath.Abs("../meshmodel/relationships")
 		if err != nil {
 			fmt.Println("Error registering relationships: ", err.Error())
 			return
