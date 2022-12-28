@@ -211,7 +211,7 @@ function K8sContextMenu({
     left : "-5rem",
     zIndex : "-1",
     bottom : "-55%",
-    transform : showFullContextMenu ? `translateY(${transformProperty}%)` : "translateY(0)"
+    transform : !showFullContextMenu ? anchorEl ? "translateY(1.25rem)" : "translateY(0)"  : `translateY(${transformProperty}%)`
   }
 
   const getOperatorStatus = (contextId) => {
@@ -306,7 +306,7 @@ function K8sContextMenu({
   useEffect(() => {
     setTransformProperty(prev => (prev + (contexts.total_count ? contexts.total_count * 3.125 : 0)))
   }, [])
-
+  console.log(anchorEl);
   return (
     <>
       <IconButton

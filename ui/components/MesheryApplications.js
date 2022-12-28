@@ -473,23 +473,28 @@ function MesheryApplications({
     };
   }
 
-  function handleSubmit({ data, id, name, type, source_type }) {
+  async function handleSubmit({ data, id, name, type, source_type }) {
     updateProgress({ showProgress : true })
     if (type === FILE_OPS.DELETE) {
-      dataFetch(
-        `/api/application/${id}`,
-        {
-          credentials : "include",
-          method : "DELETE",
-        },
-        () => {
-          console.log("ApplicationFile API", `/api/application/${id}`);
-          updateProgress({ showProgress : false });
-          resetSelectedRowData()();
-        },
-        // handleError
-        handleError(ACTION_TYPES.DELETE_APPLICATIONS)
-      );
+      // TODO: delete
+      let response = await showModal("");
+      console.log(response);
+      if (response ==="Yes"){
+        dataFetch(
+          `/api/application/${id}`,
+          {
+            credentials : "include",
+            method : "DELETE",
+          },
+          () => {
+            console.log("ApplicationFile API", `/api/application/${id}`);
+            updateProgress({ showProgress : false });
+            resetSelectedRowData()();
+          },
+          // handleError
+          handleError(ACTION_TYPES.DELETE_APPLICATIONS)
+        );
+      }
     }
 
     if (type === FILE_OPS.UPDATE) {
