@@ -183,6 +183,7 @@ function ConfirmationMsg(props) {
   },[selectedK8sContexts]);
 
   const handleTabValChange = (event, newVal) => {
+    console.log(newVal);
     setTabVal(newVal);
   }
 
@@ -271,8 +272,7 @@ function ConfirmationMsg(props) {
           </DialogTitle>
           {/* <Paper square className={classes.paperRoot}> */}
           <Tabs
-            value={tabVal}
-            onChange={handleTabValChange}
+            value={validationBody ? (tabVal) : (tabVal === 2 ? 1 : 0) }
             variant="fullWidth"
             indicatorColor="primary"
             textColor="primary"
@@ -281,16 +281,22 @@ function ConfirmationMsg(props) {
             {!!validationBody &&
             <Tab
               className={classes.tab}
-              label={<div style={{ display : "flex" }}> <DoneIcon style={{ margin : "2px" }}  fontSize="small"/><span className={classes.tabLabel}>Validate</span> </div>
+              label={<div style={{ display : "flex" }}
+                onClick={(e) => handleTabValChange(e,0)}
+              > <DoneIcon style={{ margin : "2px" }}  fontSize="small"/><span className={classes.tabLabel}>Validate</span> </div>
               }
             />}
             <Tab
               className={classes.tab}
-              label={<div style={{ display : "flex" }}> <div style={{ margin : "2px" }}> <UndeployIcon fill="rgba(0, 0, 0, 0.54)" width="20" height="20"/> </div> <span className={classes.tabLabel}>Undeploy</span> </div>}
+              label={<div style={{ display : "flex" }}
+                onClick={(e) => handleTabValChange(e,1)}
+              > <div style={{ margin : "2px" }}> <UndeployIcon fill="rgba(0, 0, 0, 0.54)" width="20" height="20"/> </div> <span className={classes.tabLabel}>Undeploy</span> </div>}
             />
             <Tab
               className={classes.tab}
-              label={<div style={{ display : "flex" }}> <DoneAllIcon style={{ margin : "2px" }} fontSize="small" /> <span className={classes.tabLabel}>Deploy</span> </div>}
+              label={<div style={{ display : "flex" }}
+                onClick={(e) => handleTabValChange(e,2)}
+              > <DoneAllIcon style={{ margin : "2px" }} fontSize="small" /> <span className={classes.tabLabel}>Deploy</span> </div>}
             />
           </Tabs>
 
