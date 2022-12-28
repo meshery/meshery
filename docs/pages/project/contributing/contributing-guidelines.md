@@ -83,7 +83,7 @@ You will need to provide a short and long description of the command for the hel
 
 If you are working on a new command or adding a new feature on an existing command, it is recommended to setup a design spec so that other contributors can weigh in on the design before you start to code.
 
-Broader features should have a design spec made in Google Doc using [this template](https://drive.google.com/drive/folders/1KHtJc4ToklBQ_UUsDgAL2sVZNhOQGzbh).
+Broader features should have a design spec made in Google Doc. Check [this Google Doc](https://docs.google.com/document/d/1RP3IWLc-MiQS-QYasqCoVuCH7--G87p5ezE5f_nOzB8/edit?usp=sharing) out, which has detailed information on creating a Design Specification.
 
 For small changes, communicating over the [issue tracker](https://github.com/layer5io/meshery/issues) or the [discussions](https://github.com/layer5io/meshery/discussions) will be helpful.
 
