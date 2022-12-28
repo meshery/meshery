@@ -124,6 +124,7 @@
             {% assign osm_items = k8s_item.items | sort: "meshery-component-version" | reverse  %}
           {%endif%}
           {% for single in osm_items limit: 1 %}
+          
              {% if single.overall-status == "passing" %}
               {% assign successfull_osm = 1 %}
             {% elsif single.overall-status == "failing" %}
@@ -135,7 +136,7 @@
 
         {% elsif k8s_item.name == "meshery-cilium" %}
           {% assign cilium_size = k8s_item.size | times:1.0 %}
-          {% assign clium_items = k8s_item.items | sort: "meshery-component-version" | reverse  %}
+          {% assign cilium_items = k8s_item.items | sort: "meshery-component-version" | reverse  %}
           {% for single in cilium_items limit: 1 %}
             {% if single.overall-status == "passing" %}
               {% assign successfull_cilium = 1 %}
