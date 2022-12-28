@@ -1,444 +1,479 @@
-basePath: /
 consumes:
     - application/json
     - multipart/form-data
-definitions:
-    AuthenticateOKBody:
-        description: AuthenticateOKBody authenticate o k body
-        x-go-package: github.com/docker/docker/api/types/registry
-    ContainerChangeResponseItem:
-        description: ContainerChangeResponseItem change item in response to ContainerChanges operation
-        x-go-package: github.com/docker/docker/api/types/container
-    ContainerCreateCreatedBody:
-        description: ContainerCreateCreatedBody OK response to ContainerCreate operation
-        x-go-package: github.com/docker/docker/api/types/container
-    ContainerTopOKBody:
-        description: ContainerTopOKBody OK response to ContainerTop operation
-        x-go-package: github.com/docker/docker/api/types/container
-    ContainerUpdateOKBody:
-        description: ContainerUpdateOKBody OK response to ContainerUpdate operation
-        x-go-package: github.com/docker/docker/api/types/container
-    ContainerWaitOKBody:
-        description: ContainerWaitOKBody OK response to ContainerWait operation
-        x-go-package: github.com/docker/docker/api/types/container
-    ContainerWaitOKBodyError:
-        description: ContainerWaitOKBodyError container waiting error, if any
-        x-go-package: github.com/docker/docker/api/types/container
-    ErrorResponse:
-        title: ErrorResponse Represents an error.
-        x-go-package: github.com/docker/docker/api/types
-    GraphDriverData:
-        title: GraphDriverData Information about a container's graph driver.
-        x-go-package: github.com/docker/docker/api/types
-    HistoryResponseItem:
-        description: HistoryResponseItem individual image layer information in response to ImageHistory operation
-        x-go-package: github.com/docker/docker/api/types/image
-    IdResponse:
-        description: IDResponse Response to an API call that returns just an Id
-        x-go-name: IDResponse
-        x-go-package: github.com/docker/docker/api/types
-    ImageDeleteResponseItem:
-        description: ImageDeleteResponseItem image delete response item
-        x-go-package: github.com/docker/docker/api/types
-    ImageSummary:
-        description: ImageSummary image summary
-        x-go-package: github.com/docker/docker/api/types
-    Plugin:
-        description: Plugin A plugin for the Engine API
-        x-go-package: github.com/docker/docker/api/types
-    PluginConfig:
-        title: PluginConfig The config of a plugin.
-        x-go-package: github.com/docker/docker/api/types
-    PluginConfigArgs:
-        description: PluginConfigArgs plugin config args
-        x-go-package: github.com/docker/docker/api/types
-    PluginConfigInterface:
-        description: PluginConfigInterface The interface between Docker and the plugin
-        x-go-package: github.com/docker/docker/api/types
-    PluginConfigLinux:
-        description: PluginConfigLinux plugin config linux
-        x-go-package: github.com/docker/docker/api/types
-    PluginConfigNetwork:
-        description: PluginConfigNetwork plugin config network
-        x-go-package: github.com/docker/docker/api/types
-    PluginConfigRootfs:
-        description: PluginConfigRootfs plugin config rootfs
-        x-go-package: github.com/docker/docker/api/types
-    PluginConfigUser:
-        description: PluginConfigUser plugin config user
-        x-go-package: github.com/docker/docker/api/types
-    PluginDevice:
-        description: PluginDevice plugin device
-        x-go-package: github.com/docker/docker/api/types
-    PluginEnv:
-        description: PluginEnv plugin env
-        x-go-package: github.com/docker/docker/api/types
-    PluginInterfaceType:
-        description: PluginInterfaceType plugin interface type
-        x-go-package: github.com/docker/docker/api/types
-    PluginMount:
-        description: PluginMount plugin mount
-        x-go-package: github.com/docker/docker/api/types
-    PluginSettings:
-        title: PluginSettings Settings that can be modified by users.
-        x-go-package: github.com/docker/docker/api/types
-    Port:
-        description: Port An open port on a container
-        x-go-package: github.com/docker/docker/api/types
-    ServiceUpdateResponse:
-        description: ServiceUpdateResponse service update response
-        x-go-package: github.com/docker/docker/api/types
-    Volume:
-        description: Volume volume
-        x-go-package: github.com/docker/docker/api/types
-    VolumeCreateBody:
-        description: VolumeCreateBody Volume configuration
-        x-go-package: github.com/docker/docker/api/types/volume
-    VolumeListOKBody:
-        description: VolumeListOKBody Volume list response
-        x-go-package: github.com/docker/docker/api/types/volume
-    VolumeUsageData:
-        description: |-
-            VolumeUsageData Usage details about the volume. This information is used by the
-            `GET /system/df` endpoint, and omitted in other endpoints.
-        x-go-package: github.com/docker/docker/api/types
+produces:
+    - application/json
+schemes:
+    - http
+swagger: "2.0"
 info:
+    license:
+        name: Apache-2.0
+        url: http://www.apache.org/licenses/LICENSE-2.0.txt
+    version: 0.4.27
     description: |-
         the purpose of this application is to provide an application
         that is using plain go code to define an API
 
         This should demonstrate all the possible comment annotations
         that are available to turn go code into a fully compliant swagger 2.0 spec
-    license:
-        name: Apache-2.0
-        url: http://www.apache.org/licenses/LICENSE-2.0.txt
     title: Meshery API.
-    version: 0.4.27
+basePath: /
 paths:
-    /api/application/:
-        get:
-            description: Returns requests for all Meshery Applications
-            operationId: idGetApplicationFileRequest
-            responses:
-                "200":
-                    $ref: '#/responses/mesheryApplicationsResponseWrapper'
-            summary: Handle GET request for Application Files
-            tags:
-                - ApplicationsAPI
-    /api/application/{id}:
-        delete:
-            description: 'Deletes a meshery application file with ID: id'
-            operationId: idDeleteMesheryApplicationFile
-            parameters:
-                - description: id for a specific
-                  format: uuid
-                  in: path
-                  name: id
-                  required: true
-                  type: string
-                  x-go-name: ID
-            responses:
-                "200":
-                    $ref: '#/responses/noContentWrapper'
-            summary: Handle Delete for a Meshery Application File
-            tags:
-                - ApplicationsAPI
-        get:
-            description: Fetches the list of all applications saved by the current user
-            operationId: idGetMesheryApplication
-            parameters:
-                - description: id for a specific
-                  format: uuid
-                  in: path
-                  name: id
-                  required: true
-                  type: string
-                  x-go-name: ID
-            responses:
-                "200":
-                    $ref: '#/responses/mesheryApplicationResponseWrapper'
-            summary: Handle GET request for Meshery Application with the given id
-            tags:
-                - ApplicationsAPI
-    /api/application/{sourcetype}:
+    /api/system/kubernetes:
         post:
-            description: Creates a new application with source-content
-            operationId: idPostApplicationFileRequest
+            description: Used to add kubernetes config to System
+            tags:
+                - SystemAPI
+            summary: Handle POST request for Kubernetes Config
+            operationId: idPostK8SConfig
             responses:
                 "200":
-                    $ref: '#/responses/mesheryApplicationResponseWrapper'
-            summary: Handle POST request for Application Files
+                    description: Returns saved kubernetes config
+        delete:
             tags:
-                - ApplicationsAPI
-        put:
-            description: Updates the design for the provided application
-            operationId: idPutApplicationFileRequest
+                - SystemAPI
+            summary: Handle DELETE request for Kubernetes Config
+            operationId: idDeleteK8SConfig
             responses:
                 "200":
-                    $ref: '#/responses/mesheryApplicationResponseWrapper'
-            summary: Handle PUT request for Application Files
+                    description: ""
+            description: Used to delete kubernetes config to System
+    /api/system/kubernetes/contexts:
+        post:
+            description: Returns the context list for a given k8s config
             tags:
-                - ApplicationsAPI
+                - SystemAPI
+            summary: Handle POST requests for Kubernetes Context list
+            operationId: idPostK8SContexts
+            responses:
+                "200":
+                    description: Returns kubernetes context list
+    /api/system/kubernetes/ping?contexts={id}:
+        get:
+            description: Fetches server version to simulate ping
+            tags:
+                - SystemAPI
+            summary: Handle GET request for Kubernetes ping
+            operationId: idGetKubernetesPing
+            responses:
+                "200":
+                    description: ""
+    /api/telemetry/metrics/ping:
+        get:
+            description: Used to ping prometheus
+            tags:
+                - PrometheusAPI
+            summary: Handle GET request for Prometheus Ping
+            operationId: idGetPrometheusPing
+            responses:
+                "200":
+                    description: ""
+    /api/user/performance/profiles:
+        post:
+            description: Save performance profile using the current provider's persistence mechanism
+            tags:
+                - PerformanceAPI
+            summary: Handle POST requests for saving performance profile
+            operationId: idSavePerformanceProfile
+            parameters:
+                - name: Body
+                  in: body
+                  schema: {}
+            responses:
+                "200":
+                    description: Returns a single performance profile
+        get:
+            description: Returns the list of all the performance profiles saved by the current user
+            tags:
+                - PerformanceAPI
+            summary: Handle GET requests for performance profiles
+            operationId: idGetPerformanceProfiles
+            responses:
+                "200":
+                    description: Returns all the performance profiles
+    /api/user/schedules/{id}:
+        get:
+            summary: Handle GET reqeuest for Schedules
+            operationId: idGetSingleSchedule
+            parameters:
+                - x-go-name: ID
+                  description: id for a specific
+                  name: id
+                  in: path
+                  required: true
+                  type: string
+                  format: uuid
+            responses:
+                "200":
+                    description: Returns a single schedules
+            description: Fetches and returns the schedule with the given id
+            tags:
+                - SchedulesAPI
+        delete:
+            responses:
+                "200":
+                    description: Returns List of saved schedules
+            description: Deletes a schedule with the given id
+            tags:
+                - SchedulesAPI
+            summary: Handle DELETE reqeuest for Schedules
+            operationId: idDeleteSchedules
+            parameters:
+                - x-go-name: ID
+                  description: id for a specific
+                  name: id
+                  in: path
+                  required: true
+                  type: string
+                  format: uuid
+    /api/pattern/clone/{id}:
+        post:
+            description: 'Creates a local copy of a public pattern with id: id'
+            tags:
+                - PatternsAPI
+            summary: Handle Clone for a Meshery Pattern
+            operationId: idCloneMesheryPattern
+            responses:
+                "200":
+                    description: ""
+    /api/system/meshsync/grafana:
+        get:
+            description: Fetches Prometheus and Grafana
+            tags:
+                - SystemAPI
+            summary: Handle GET request for mesh-sync grafana
+            operationId: idMeshSyncGrafana
+            responses:
+                "200":
+                    schema:
+                        additionalProperties: false
+                        type: object
+                    description: Returns a map for v1 services
+    /api/telemetry/metrics/grafana/scan:
+        get:
+            description: Fetches and returns Grafana
+            tags:
+                - GrafanaAPI
+            summary: Handle GET request for Grafana
+            operationId: idGetGrafana
+            responses:
+                "200":
+                    description: Returns a map for v1 services
+                    schema:
+                        type: object
+                        additionalProperties: false
+    /api/user/performance/profiles/results:
+        get:
+            tags:
+                - PerformanceAPI
+            summary: Handles GET requests for performance results
+            operationId: idGetAllPerformanceResults
+            responses:
+                "200":
+                    description: Returns all performance results
+            description: Returns pages of all the performance results from Remote Provider
+    /api/user/performance/profiles/{id}/results:
+        get:
+            parameters:
+                - x-go-name: ID
+                  description: id for a specific
+                  name: id
+                  in: path
+                  required: true
+                  type: string
+                  format: uuid
+            responses:
+                "200":
+                    description: Returns all performance results
+            description: Fetchs pages of results from Remote Provider for the given id
+            tags:
+                - PerformanceAPI
+            summary: Handle GET request for results of a profile
+            operationId: idGETProfileResults
+    /api/user/schedules:
+        get:
+            responses:
+                "200":
+                    description: Returns List of saved schedules
+            description: Returns the list of all the schedules saved by the current user
+            tags:
+                - SchedulesAPI
+            summary: Handle GET reqeuest for Schedules
+            operationId: idGetSchedules
+        post:
+            summary: Handle POST reqeuest for Schedules
+            operationId: idPostSchedules
+            responses:
+                "200":
+                    description: Returns a single schedules
+            description: Save schedule using the current provider's persistence mechanism
+            tags:
+                - SchedulesAPI
+    /api/perf/profile/result/{id}:
+        get:
+            description: Returns an individual result from provider
+            tags:
+                - PerfAPI
+            summary: Handles GET requests for perf result
+            operationId: idGetSinglePerfResult
+            responses:
+                "200":
+                    description: Returns Single test result
+    /api/patterns:
+        delete:
+            description: DeleteMultiMesheryPatternsHandler deletes patterns with the given ids
+            tags:
+                - PatternsAPI
+            summary: Handle Delete for multiple Meshery Patterns
+            operationId: idDeleteMesheryPattern
+            parameters:
+                - type: string
+                  format: uuid
+                  x-go-name: ID
+                  description: id for a specific
+                  name: id
+                  in: path
+                  required: true
+            responses:
+                "200":
+                    description: ""
+    /api/provider:
+        get:
+            description: Update the choice of provider in system
+            tags:
+                - ProvidersAPI
+            summary: Handle GET request for the choice of provider
+            operationId: idChoiceProvider
+            parameters:
+                - type: string
+                  x-go-name: Provider
+                  name: provider
+                  in: query
+            responses:
+                "200":
+                    description: ""
+    /api/user/performance/profiles/{id}:
+        get:
+            summary: Handle GET requests for performance results of a profile
+            operationId: idGetSinglePerformanceProfile
+            parameters:
+                - type: string
+                  format: uuid
+                  x-go-name: ID
+                  description: id for a specific
+                  name: id
+                  in: path
+                  required: true
+            responses:
+                "200":
+                    description: Returns a single performance profile
+            description: Returns single performance profile with the given id
+            tags:
+                - PerformanceAPI
+        delete:
+            summary: Handle Delete requests for performance profiles
+            operationId: idDeletePerformanceProfile
+            parameters:
+                - type: string
+                  format: uuid
+                  x-go-name: ID
+                  description: id for a specific
+                  name: id
+                  in: path
+                  required: true
+            responses:
+                "200":
+                    description: ""
+            description: Deletes a performance profile with the given id
+            tags:
+                - PerformanceAPI
     /api/application/deploy:
+        post:
+            responses:
+                "200":
+                    description: Returns the response of the application files
+            description: Deploy an attached application file with the request
+            tags:
+                - ApplicationsAPI
+            summary: Handle POST request for Application File Deploy
+            operationId: idPostDeployApplicationFile
+            parameters:
+                - in: formData
+                  type: file
+                  x-go-name: FormFile
+                  name: Upload Yaml/Yml File
         delete:
             description: Delete a deployed application file with the request
+            tags:
+                - ApplicationsAPI
+            summary: Handle DELETE request for Application File Deploy
             operationId: idDeleteApplicationFile
             responses:
                 "200":
                     description: ""
-            summary: Handle DELETE request for Application File Deploy
-            tags:
-                - ApplicationsAPI
+    /api/system/adapter/manage:
         post:
-            description: Deploy an attached application file with the request
-            operationId: idPostDeployApplicationFile
+            responses:
+                "200":
+                    description: Returns all the meshery adapters
+                    schema:
+                        type: array
+                        items: {}
+            description: Used to persist adapter config
+            tags:
+                - SystemAPI
+            summary: Handle POST requests to persist adapter config
+            operationId: idPostAdapterConfig
             parameters:
-                - in: formData
-                  name: Upload Yaml/Yml File
-                  type: file
-                  x-go-name: FormFile
-            responses:
-                "200":
-                    $ref: '#/responses/applicationFilesResponseWrapper'
-            summary: Handle POST request for Application File Deploy
-            tags:
-                - ApplicationsAPI
-    /api/application/download/{id}/{sourcetype}:
-        get:
-            description: Get the application source-content
-            operationId: typeGetApplication
-            parameters:
-                - in: formData
-                  name: Upload Yaml/Yml File
-                  type: file
-                  x-go-name: FormFile
-            responses: {}
-            summary: Handle GET request for Meshery Application with of source content
-            tags:
-                - ApplicationsAPI
-    /api/application/types:
-        get:
-            description: Get application file type
-            operationId: typeGetMesheryApplication
-            responses:
-                "200":
-                    $ref: '#/responses/mesheryApplicationResponseWrapper'
-            summary: Handle GET request for Meshery Application with the provided type
-            tags:
-                - ApplicationsAPI
-    /api/filter:
-        get:
-            description: Returns all the Meshery Filters saved by the current user
-            operationId: idGetFilterFile
-            responses:
-                "200":
-                    $ref: '#/responses/mesheryFiltersResponseWrapper'
-            summary: Handle GET request for all filters
-            tags:
-                - FiltersAPI
-        post:
-            description: Used to save/update a Meshery Filter
-            operationId: idPostFilterFile
-            responses:
-                "200":
-                    $ref: '#/responses/mesheryFilterResponseWrapper'
-            summary: Handle POST requests for Meshery Filters
-            tags:
-                - FiltersAPI
-    /api/filter/{id}:
+                - x-go-name: MeshLocationURL
+                  name: meshLocationURL
+                  in: body
+                  schema:
+                    type: string
         delete:
-            description: 'Deletes a meshery filter with ID: id'
-            operationId: idDeleteMesheryFilter
             parameters:
-                - description: id for a specific
-                  format: uuid
-                  in: path
-                  name: id
-                  required: true
+                - name: adapter
+                  in: query
                   type: string
-                  x-go-name: ID
-            responses:
-                "200":
-                    $ref: '#/responses/noContentWrapper'
-            summary: Handle Delete for a Meshery Filter
-            tags:
-                - FiltersAPI
-        get:
-            description: Fetches the Meshery Filter with the given id
-            operationId: idGetMesheryFilter
-            parameters:
-                - description: id for a specific
-                  format: uuid
-                  in: path
-                  name: id
-                  required: true
-                  type: string
-                  x-go-name: ID
-            responses:
-                "200":
-                    $ref: '#/responses/mesheryFilterResponseWrapper'
-            summary: Handle GET request for a Meshery Filter
-            tags:
-                - FiltersAPI
-    /api/filter/catalog:
-        post:
-            description: Used to get catalog filters
-            operationId: idGetCatalogMesheryFiltersHandler
-            responses:
-                "200":
-                    $ref: '#/responses/mesheryFilterResponseWrapper'
-            summary: Handle GET request for catalog filters
-            tags:
-                - FiltersAPI
-    /api/filter/catalog/publish:
-        post:
-            description: Publishes filter to Meshery Catalog by setting visibility to public and setting catalog data
-            operationId: idPublishCatalogFilterHandler
-            responses:
-                "200":
-                    $ref: '#/responses/noContentWrapper'
-            summary: Handle Publish for a Meshery Filter
-            tags:
-                - FiltersAPI
-    /api/filter/clone/{id}:
-        post:
-            description: 'Creates a local copy of a public filter with id: id'
-            operationId: idCloneMesheryFilter
-            responses:
-                "200":
-                    $ref: '#/responses/noContentWrapper'
-            summary: Handle Clone for a Meshery Filter
-            tags:
-                - FiltersAPI
-    /api/filter/deploy:
-        delete:
-            description: Delete a deployed filter file with the request
-            operationId: idDeleteFilterFile
+                  x-go-name: Adapter
             responses:
                 "200":
                     description: ""
-            summary: Handle DELETE request for Filter File Deploy
+            description: Used to delete adapter configuration
             tags:
-                - FilterAPI
+                - SystemAPI
+            summary: Handle DELETE requests to delete adapter config
+            operationId: idDeleteAdapterConfig
+    /api/telemetry/metrics/query:
+        get:
+            responses:
+                "200":
+                    description: ""
+            description: Used to prometheus queries
+            tags:
+                - PrometheusAPI
+            summary: Handle GET request for Prometheus Query
+            operationId: idGetPrometheusQuery
+    /api/pattern/catalog:
+        post:
+            tags:
+                - PatternsAPI
+            summary: Handle GET request for catalog patterns
+            operationId: idGetCatalogMesheryPatternsHandler
+            responses:
+                "200":
+                    description: Returns a single meshery pattern
+            description: Used to get catalog patterns
+    /api/provider/extension:
+        get:
+            description: handles the requests to serve react components from the provider package
+            tags:
+                - ProvidersAPI
+            summary: Handle GET request for React Components
+            operationId: idReactComponents
+            responses:
+                "200":
+                    description: ""
+    /api/perf/profile/result:
+        get:
+            responses:
+                "200":
+                    description: Returns all performance results
+            description: Returns pages of all the perf results from Remote Provider
+            tags:
+                - PerfAPI
+            summary: Handles GET requests for perf results
+            operationId: idGetAllPerfResults
+    /api/filter/deploy:
         post:
             description: Deploy an attached filter file with the request
+            tags:
+                - FilterAPI
+            summary: Handle POST request for Filter File Deploy
             operationId: idPostDeployFilterFile
             responses:
                 "200":
-                    $ref: '#/responses/FilterFilesResponseWrapper'
-            summary: Handle POST request for Filter File Deploy
+                    description: Returns the response of the Filter files
+        delete:
+            responses:
+                "200":
+                    description: ""
+            description: Delete a deployed filter file with the request
             tags:
                 - FilterAPI
-    /api/filter/file/{id}:
-        get:
-            description: Returns the Meshery Filter file saved by the current user with the given id
-            operationId: idGetFilterFiles
+            summary: Handle DELETE request for Filter File Deploy
+            operationId: idDeleteFilterFile
+    /api/pattern/deploy:
+        post:
             responses:
                 "200":
-                    $ref: '#/responses/mesheryFilterResponseWrapper'
-            summary: Handle GET request for filter file with given id
+                    description: ""
+            description: Deploy an attached pattern with the request
+            tags:
+                - PatternsAPI
+            summary: Handle POST request for Pattern Deploy
+            operationId: idPostDeployPattern
+            parameters:
+                - x-go-name: FormFile
+                  name: Upload Yaml/Yml File
+                  in: formData
+                  type: file
+        delete:
+            tags:
+                - PatternsAPI
+            summary: Handle DELETE request for Pattern Deploy
+            operationId: idDeleteDeployPattern
+            responses:
+                "200":
+                    description: ""
+            description: Delete a deployed pattern with the request
+    /api/telemetry/metrics/boards:
+        post:
+            parameters:
+                - name: Body
+                  in: body
+                  required: true
+                  schema:
+                    type: array
+                    items: {}
+            responses:
+                "200":
+                    description: ""
+            description: Used to persist selected board and panels
+            tags:
+                - PrometheusAPI
+            summary: Handle POST request for Prometheus board
+            operationId: idPostPrometheusBoard
+    /api/user/token:
+        post:
+            tags:
+                - UserAPI
+            summary: Handle POST request for tokens
+            operationId: idPostTokenProvider
+            description: |-
+                Receives token from the actual provider
+                resposese:
+                200:
+        get:
+            description: |-
+                Returns token from the actual provider in a file
+                resposese:
+                200:
+            tags:
+                - UserAPI
+            summary: Handle GET request for tokens
+            operationId: idGetTokenProvider
+    /api/filter/clone/{id}:
+        post:
+            responses:
+                "200":
+                    description: ""
+            description: 'Creates a local copy of a public filter with id: id'
             tags:
                 - FiltersAPI
-    /api/meshmodel/component/generate:
-        post:
-            description: Generates Meshery Components for the given payload
-            operationId: idPostMeshModelComponentGenerate
-            responses:
-                "200":
-                    description: ""
-            summary: Handle POST request for component generation
-            tags:
-                - MeshmodelComponentGenerate
-    /api/meshmodel/components:
-        get:
-            description: Components can be further filtered through query parameter ?version=
-            operationId: idMeshmodelGet
-            responses:
-                "200":
-                    $ref: '#/responses/ComponentDefinition'
-            summary: Handle GET request for getting all meshmodel components.
-            tags:
-                - MeshmodelGet
-    /api/meshmodel/components/{type}:
-        get:
-            description: |-
-                Example: /api/meshmodel/components/kubernetes
-                Components can be further filtered through query parameter ?version=
-            operationId: idMeshmodelGetByType
-            responses:
-                "200":
-                    $ref: '#/responses/ComponentDefinition'
-            summary: Handle GET request for getting meshmodel components of a specific type.
-            tags:
-                - MeshmodelGetByType
-    /api/meshmodel/components/{type}/{name}:
-        get:
-            description: |-
-                Example: /api/meshmodel/components/kubernetes/Namespace
-                Components can be further filtered through query parameter ?version=
-            operationId: idMeshmodelGetByName
-            responses:
-                "200":
-                    $ref: '#/responses/ComponentDefinition'
-            summary: Handle GET request for getting meshmodel components of a specific type by name.
-            tags:
-                - MeshmodelGetByName
-    /api/meshmodel/components/register:
-        post:
-            description: Validate the given value with the given schema
-            operationId: idPostMeshModelValidate
-            responses:
-                "200":
-                    description: ""
-            summary: Handle POST request for registering meshmodel components.
-            tags:
-                - MeshmodelValidate
-    /api/meshmodel/components/types:
-        get:
-            operationId: idMeshmodelComponentsForTypeHandler
-            responses:
-                "200":
-                    $ref: '#/responses/responseTypesWithModelName'
-            summary: Handle GET request for getting meshmodel types or model names.
-            tags:
-                - MeshmodelComponentsForTypeHandler
-    /api/meshmodel/validate:
-        post:
-            description: Validate the given value with the given schema
-            operationId: idPostMeshModelValidate
-            responses:
-                "200":
-                    description: ""
-            summary: Handle POST request for validate
-            tags:
-                - MeshmodelValidate
-    /api/oam/{type}:
-        get:
-            description: |-
-                Getting list of workloads/traits/scopes
-
-                {type} being of either trait, scope, workload; registration of adapter capabilities.
-                Example: /api/oam/workload => Here {type} is "workload"
-            operationId: idGETOAMMesheryPattern
-            responses:
-                "200":
-                    description: ""
-            summary: Handles the get requests for the OAM objects
-            tags:
-                - PatternsAPI
-        post:
-            description: |-
-                Adding a workload/trait/scope
-
-                {type} being of either trait, scope, workload; registration of adapter capabilities.
-                Example: /api/oam/trait => Here {type} is "trait"
-            operationId: idPOSTOAMRegister
-            responses:
-                "200":
-                    description: ""
-            summary: Handles registering OMA objects
-            tags:
-                - PatternsAPI
+            summary: Handle Clone for a Meshery Filter
+            operationId: idCloneMesheryFilter
     /api/oam/{type}/{name}:
         get:
             description: |-
@@ -447,15 +482,546 @@ paths:
                 {type} being of either trait, scope, workload; registration of adapter capabilities.
                 Example: /api/oam/workload/Application => Here {type} is "workload" and {name} is "Application"
                 it should be noted that both {type} and {name} should be valid
+            tags:
+                - PatternsAPI
+            summary: Handles GET requests for component details for OAM objects
             operationId: idOAMComponentDetails
             responses:
                 "200":
                     description: ""
-            summary: Handles GET requests for component details for OAM objects
+    /api/filter/file/{id}:
+        get:
+            tags:
+                - FiltersAPI
+            summary: Handle GET request for filter file with given id
+            operationId: idGetFilterFiles
+            responses:
+                "200":
+                    description: Returns a single meshery filter
+            description: Returns the Meshery Filter file saved by the current user with the given id
+    /api/meshmodel/validate:
+        post:
+            description: Validate the given value with the given schema
+            tags:
+                - MeshmodelValidate
+            summary: Handle POST request for validate
+            operationId: idPostMeshModelValidate
+            responses:
+                "200":
+                    description: ""
+    /api/oam/{type}:
+        post:
             tags:
                 - PatternsAPI
+            summary: Handles registering OMA objects
+            operationId: idPOSTOAMRegister
+            responses:
+                "200":
+                    description: ""
+            description: |-
+                Adding a workload/trait/scope
+
+                {type} being of either trait, scope, workload; registration of adapter capabilities.
+                Example: /api/oam/trait => Here {type} is "trait"
+        get:
+            responses:
+                "200":
+                    description: ""
+            description: |-
+                Getting list of workloads/traits/scopes
+
+                {type} being of either trait, scope, workload; registration of adapter capabilities.
+                Example: /api/oam/workload => Here {type} is "workload"
+            tags:
+                - PatternsAPI
+            summary: Handles the get requests for the OAM objects
+            operationId: idGETOAMMesheryPattern
+    /api/telemetry/metrics/board_import:
+        post:
+            responses:
+                "200":
+                    description: Response for prometheus board import
+            description: Used for importing Grafana board for Prometheus
+            tags:
+                - PrometheusAPI
+            summary: Handle POST request for Prometheus board import
+            operationId: idPostPrometheusBoardImport
+    /api/telemetry/metrics/grafana/boards:
+        get:
+            description: Used for fetching Grafana boards and panels
+            tags:
+                - GrafanaAPI
+            summary: Handle GET request for Grafana boards
+            operationId: idGetGrafanaBoards
+            parameters:
+                - type: string
+                  x-go-name: DashboardSearch
+                  name: dashboardSearch
+                  in: query
+            responses:
+                "200":
+                    description: Returns Grafana boards and panels
+                    schema:
+                        type: array
+                        items: {}
+        post:
+            operationId: idPostGrafanaBoards
+            responses:
+                "200":
+                    description: ""
+            description: Used for persist Grafana boards and panel selections
+            tags:
+                - GrafanaAPI
+            summary: Handle POST request for Grafana boards
+    /api/user/prefs/perf:
+        get:
+            description: Used for fetching load test preferences
+            tags:
+                - UserAPI
+            summary: Handle GET request for load test preferences
+            operationId: idGetLoadPreferences
+            parameters:
+                - name: uuid
+                  in: query
+                  type: string
+                  format: uuid
+                  x-go-name: UUID
+            responses:
+                "200":
+                    description: Returns load test preferences
+        post:
+            description: Used for persisting load test preferences
+            tags:
+                - UserAPI
+            summary: Handle POST request for load test preferences
+            operationId: idPostLoadPreferences
+            parameters:
+                - name: Body
+                  in: body
+                  schema: {}
+            responses:
+                "200":
+                    description: ""
+        delete:
+            parameters:
+                - type: string
+                  format: uuid
+                  x-go-name: UUID
+                  name: uuid
+                  in: query
+            responses:
+                "200":
+                    description: ""
+            description: Used for deleting load test preferences
+            tags:
+                - UserAPI
+            summary: Handle DELETE request for load test preferences
+            operationId: idDeleteLoadPreferences
+    /api/application/{id}:
+        get:
+            description: Fetches the list of all applications saved by the current user
+            tags:
+                - ApplicationsAPI
+            summary: Handle GET request for Meshery Application with the given id
+            operationId: idGetMesheryApplication
+            parameters:
+                - type: string
+                  format: uuid
+                  x-go-name: ID
+                  description: id for a specific
+                  name: id
+                  in: path
+                  required: true
+            responses:
+                "200":
+                    description: Fetches a single Meshery Application
+        delete:
+            tags:
+                - ApplicationsAPI
+            summary: Handle Delete for a Meshery Application File
+            operationId: idDeleteMesheryApplicationFile
+            parameters:
+                - format: uuid
+                  x-go-name: ID
+                  description: id for a specific
+                  name: id
+                  in: path
+                  required: true
+                  type: string
+            responses:
+                "200":
+                    description: ""
+            description: 'Deletes a meshery application file with ID: id'
+    /api/meshmodel/components:
+        get:
+            description: Components can be further filtered through query parameter ?version=
+            tags:
+                - MeshmodelGet
+            summary: Handle GET request for getting all meshmodel components.
+            operationId: idMeshmodelGet
+            responses:
+                "200":
+                    description: ""
+                    schema:
+                        type: object
+                        additionalProperties: false
+                    headers:
+                        format: {}
+                        kind:
+                            type: string
+                        metadata: {}
+                        model: {}
+                        schema:
+                            type: string
+                        apiVersion:
+                            type: string
+                        display-name:
+                            type: string
+    /api/perf/profile:
+        get:
+            description: Runs the load test with the given parameters
+            tags:
+                - PerfAPI
+            summary: Handle GET request to run a test
+            operationId: idRunPerfTest
+            parameters:
+                - name: Query
+                  in: query
+                - name: Body
+                  in: body
+                  schema: {}
+            responses:
+                "200":
+                    description: ""
+    /api/system/adapter/operation:
+        post:
+            summary: Handle POST requests for Adapter Operations
+            operationId: idPostAdapterOperation
+            parameters:
+                - type: string
+                  x-go-name: Adapter
+                  name: adapter
+                  in: query
+                - in: query
+                  type: string
+                  x-go-name: Query
+                  name: query
+                - type: string
+                  x-go-name: CustomBody
+                  name: customBody
+                  in: query
+                - type: string
+                  x-go-name: Namespace
+                  name: namespace
+                  in: query
+                - name: deleteOp
+                  in: query
+                  type: string
+                  x-go-name: Delete
+            responses:
+                "200":
+                    description: ""
+            description: Used to send operations to the adapters
+            tags:
+                - SystemAPI
+    /api/telemetry/metrics/grafana/ping:
+        get:
+            tags:
+                - GrafanaAPI
+            summary: Handle GET request for Grafana ping
+            operationId: idGetGrafanaPing
+            responses:
+                "200":
+                    description: ""
+            description: Used to initiate a Grafana ping
+    /api/application/{sourcetype}:
+        put:
+            description: Updates the design for the provided application
+            tags:
+                - ApplicationsAPI
+            summary: Handle PUT request for Application Files
+            operationId: idPutApplicationFileRequest
+            responses:
+                "200":
+                    description: Fetches a single Meshery Application
+        post:
+            description: Creates a new application with source-content
+            tags:
+                - ApplicationsAPI
+            summary: Handle POST request for Application Files
+            operationId: idPostApplicationFileRequest
+            responses:
+                "200":
+                    description: Fetches a single Meshery Application
+    /api/filter/{id}:
+        get:
+            description: Fetches the Meshery Filter with the given id
+            tags:
+                - FiltersAPI
+            summary: Handle GET request for a Meshery Filter
+            operationId: idGetMesheryFilter
+            parameters:
+                - in: path
+                  required: true
+                  type: string
+                  format: uuid
+                  x-go-name: ID
+                  description: id for a specific
+                  name: id
+            responses:
+                "200":
+                    description: Returns a single meshery filter
+        delete:
+            operationId: idDeleteMesheryFilter
+            parameters:
+                - in: path
+                  required: true
+                  type: string
+                  format: uuid
+                  x-go-name: ID
+                  description: id for a specific
+                  name: id
+            responses:
+                "200":
+                    description: ""
+            description: 'Deletes a meshery filter with ID: id'
+            tags:
+                - FiltersAPI
+            summary: Handle Delete for a Meshery Filter
+    /api/meshmodel/components/{type}:
+        get:
+            responses:
+                "200":
+                    description: ""
+                    schema:
+                        type: object
+                        additionalProperties: false
+                    headers:
+                        kind:
+                            type: string
+                        metadata: {}
+                        model: {}
+                        schema:
+                            type: string
+                        apiVersion:
+                            type: string
+                        display-name:
+                            type: string
+                        format: {}
+            description: |-
+                Example: /api/meshmodel/components/kubernetes
+                Components can be further filtered through query parameter ?version=
+            tags:
+                - MeshmodelGetByType
+            summary: Handle GET request for getting meshmodel components of a specific type.
+            operationId: idMeshmodelGetByType
+    /api/pattern/catalog/publish:
+        post:
+            description: Publishes pattern to Meshery Catalog by setting visibility to public and setting catalog data
+            tags:
+                - PatternsAPI
+            summary: Handle Publish for a Meshery Pattern
+            operationId: idPublishCatalogPatternHandler
+            responses:
+                "200":
+                    description: ""
+    /api/provider/capabilities:
+        get:
+            summary: Handle GET requests for Provider
+            operationId: idGetProviderCapabilities
+            responses:
+                "200":
+                    description: ""
+            description: Returns the capabilities.json for the provider
+            tags:
+                - ProvidersAPI
+    /provider:
+        get:
+            operationId: idProvider
+            responses:
+                "200":
+                    description: ""
+            description: Servers providers UI
+            tags:
+                - ProvidersAPI
+            summary: Handle GET request to provider UI
+    /api/application/types:
+        get:
+            tags:
+                - ApplicationsAPI
+            summary: Handle GET request for Meshery Application with the provided type
+            operationId: typeGetMesheryApplication
+            responses:
+                "200":
+                    description: Fetches a single Meshery Application
+            description: Get application file type
+    /api/pattern:
+        post:
+            description: Edit/update a meshery pattern
+            tags:
+                - PatternsAPI
+            summary: Handle POST requests for patterns
+            operationId: idPostPatternFile
+            responses:
+                "200":
+                    description: Returns a single meshery pattern
+        get:
+            description: |-
+                Returns the list of all the patterns saved by the current user
+                This will return all the patterns with their details
+            tags:
+                - PatternsAPI
+            summary: Handle GET request for patterns
+            operationId: idGetPatternFiles
+            responses:
+                "200":
+                    description: Returns all meshery patterns
+    /api/system/adapters:
+        get:
+            summary: Handle GET request for adapters
+            operationId: idGetSystemAdapters
+            parameters:
+                - type: string
+                  x-go-name: Adapter
+                  name: adapter
+                  in: query
+            responses:
+                "200":
+                    description: Return all the adapters
+                    schema:
+                        type: array
+                        items: {}
+            description: Fetches and returns all the adapters and ping adapters
+            tags:
+                - SystemAPI
+    /api/system/version:
+        get:
+            operationId: idGetSystemVersion
+            responses:
+                "200":
+                    description: Returns Meshery version
+            description: Returns the running Meshery version
+            tags:
+                - SystemAPI
+            summary: Handle GET request for system/server version
+    /api/user/prefs:
+        post:
+            description: Updates User Load Test Preferences
+            tags:
+                - UserAPI
+            summary: Handle GET for User Load Test Preferences
+            operationId: idPostUserTestPrefs
+            responses:
+                "200":
+                    description: Returns User Load Test Preferencee
+        get:
+            description: Returns User Load Test Preferences
+            tags:
+                - UserAPI
+            summary: Handle GET for User Load Test Preferences
+            operationId: idGetUserTestPrefs
+            responses:
+                "200":
+                    description: Returns User Load Test Preferencee
+    /api/filter:
+        get:
+            operationId: idGetFilterFile
+            responses:
+                "200":
+                    description: Returns all meshery filters
+            description: Returns all the Meshery Filters saved by the current user
+            tags:
+                - FiltersAPI
+            summary: Handle GET request for all filters
+        post:
+            summary: Handle POST requests for Meshery Filters
+            operationId: idPostFilterFile
+            responses:
+                "200":
+                    description: Returns a single meshery filter
+            description: Used to save/update a Meshery Filter
+            tags:
+                - FiltersAPI
+    /api/meshmodel/components/types:
+        get:
+            description: '200: responseTypesWithModelName'
+            tags:
+                - MeshmodelComponentsForTypeHandler
+            summary: |-
+                Handle GET request for getting meshmodel types or model names.
+                response:
+            operationId: idMeshmodelComponentsForTypeHandler
+    /api/pattern/{id}:
+        get:
+            tags:
+                - PatternsAPI
+            summary: Handle GET for a Meshery Pattern
+            operationId: idGetMesheryPattern
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  type: string
+                  format: uuid
+                  x-go-name: ID
+                  description: id for a specific
+            responses:
+                "200":
+                    description: Returns a single meshery pattern
+            description: Fetches the pattern with the given id
+        delete:
+            parameters:
+                - description: id for a specific
+                  name: id
+                  in: path
+                  required: true
+                  type: string
+                  format: uuid
+                  x-go-name: ID
+            responses:
+                "200":
+                    description: ""
+            description: DeleteMultiMesheryPatternsHandler deletes patterns with the given ids
+            tags:
+                - PatternsAPI
+            summary: Handle Delete for multiple Meshery Patterns
+            operationId: idDeleteMesheryPattern
+    /api/system/sync:
+        get:
+            responses:
+                "200":
+                    description: Returns User Load Test Preferencee
+            description: Used to send session data to the UI for initial sync
+            tags:
+                - SystemAPI
+            summary: Handle GET request for config sync
+            operationId: idSystemSync
+    /api/meshmodel/components/register:
+        post:
+            summary: Handle POST request for registering meshmodel components.
+            operationId: idPostMeshModelValidate
+            responses:
+                "200":
+                    description: ""
+            description: Validate the given value with the given schema
+            tags:
+                - MeshmodelValidate
+    /api/filter/catalog:
+        post:
+            responses:
+                "200":
+                    description: Returns a single meshery filter
+            description: Used to get catalog filters
+            tags:
+                - FiltersAPI
+            summary: Handle GET request for catalog filters
+            operationId: idGetCatalogMesheryFiltersHandler
     /api/oam/{type}/{name}/{id}:
         get:
+            operationId: idOAMComponentDetailByID
+            responses:
+                "200":
+                    description: ""
             description: |-
                 Returns details of a workload/trait/scope by given name and id in the URL
 
@@ -463,828 +1029,371 @@ paths:
                 Example: /api/oam/workload/Application/asdqe123sa275sasd => Here {type} is "workload"
                 {name} is "Application" and {id} is "asdqe123sa275sasd". It should be noted that all of three, i.e {type},
                 {name} and {id} must be valid
-            operationId: idOAMComponentDetailByID
-            responses:
-                "200":
-                    description: ""
+            tags:
+                - PatternsAPI
             summary: Handles GET requests for component details for OAM objects
-            tags:
-                - PatternsAPI
-    /api/pattern:
-        get:
-            description: |-
-                Returns the list of all the patterns saved by the current user
-                This will return all the patterns with their details
-            operationId: idGetPatternFiles
-            responses:
-                "200":
-                    $ref: '#/responses/mesheryPatternsResponseWrapper'
-            summary: Handle GET request for patterns
-            tags:
-                - PatternsAPI
-        post:
-            description: Edit/update a meshery pattern
-            operationId: idPostPatternFile
-            responses:
-                "200":
-                    $ref: '#/responses/mesheryPatternResponseWrapper'
-            summary: Handle POST requests for patterns
-            tags:
-                - PatternsAPI
-    /api/pattern/{id}:
-        delete:
-            description: DeleteMultiMesheryPatternsHandler deletes patterns with the given ids
-            operationId: idDeleteMesheryPattern
-            parameters:
-                - description: id for a specific
-                  format: uuid
-                  in: path
-                  name: id
-                  required: true
-                  type: string
-                  x-go-name: ID
-            responses:
-                "200":
-                    $ref: '#/responses/noContentWrapper'
-            summary: Handle Delete for multiple Meshery Patterns
-            tags:
-                - PatternsAPI
-        get:
-            description: Fetches the pattern with the given id
-            operationId: idGetMesheryPattern
-            parameters:
-                - description: id for a specific
-                  format: uuid
-                  in: path
-                  name: id
-                  required: true
-                  type: string
-                  x-go-name: ID
-            responses:
-                "200":
-                    $ref: '#/responses/mesheryPatternResponseWrapper'
-            summary: Handle GET for a Meshery Pattern
-            tags:
-                - PatternsAPI
-    /api/pattern/catalog:
-        post:
-            description: Used to get catalog patterns
-            operationId: idGetCatalogMesheryPatternsHandler
-            responses:
-                "200":
-                    $ref: '#/responses/mesheryPatternResponseWrapper'
-            summary: Handle GET request for catalog patterns
-            tags:
-                - PatternsAPI
-    /api/pattern/catalog/publish:
-        post:
-            description: Publishes pattern to Meshery Catalog by setting visibility to public and setting catalog data
-            operationId: idPublishCatalogPatternHandler
-            responses:
-                "200":
-                    $ref: '#/responses/noContentWrapper'
-            summary: Handle Publish for a Meshery Pattern
-            tags:
-                - PatternsAPI
-    /api/pattern/clone/{id}:
-        post:
-            description: 'Creates a local copy of a public pattern with id: id'
-            operationId: idCloneMesheryPattern
-            responses:
-                "200":
-                    $ref: '#/responses/noContentWrapper'
-            summary: Handle Clone for a Meshery Pattern
-            tags:
-                - PatternsAPI
-    /api/pattern/deploy:
-        delete:
-            description: Delete a deployed pattern with the request
-            operationId: idDeleteDeployPattern
-            responses:
-                "200":
-                    description: ""
-            summary: Handle DELETE request for Pattern Deploy
-            tags:
-                - PatternsAPI
-        post:
-            description: Deploy an attached pattern with the request
-            operationId: idPostDeployPattern
-            parameters:
-                - in: formData
-                  name: Upload Yaml/Yml File
-                  type: file
-                  x-go-name: FormFile
-            responses:
-                "200":
-                    description: ""
-            summary: Handle POST request for Pattern Deploy
-            tags:
-                - PatternsAPI
-    /api/patterns:
-        delete:
-            description: DeleteMultiMesheryPatternsHandler deletes patterns with the given ids
-            operationId: idDeleteMesheryPattern
-            parameters:
-                - description: id for a specific
-                  format: uuid
-                  in: path
-                  name: id
-                  required: true
-                  type: string
-                  x-go-name: ID
-            responses:
-                "200":
-                    $ref: '#/responses/noContentWrapper'
-            summary: Handle Delete for multiple Meshery Patterns
-            tags:
-                - PatternsAPI
-    /api/perf/profile:
-        get:
-            description: Runs the load test with the given parameters
-            operationId: idRunPerfTest
-            parameters:
-                - in: query
-                  name: Query
-                - in: body
-                  name: Body
-                  schema: {}
-            responses:
-                "200":
-                    description: ""
-            summary: Handle GET request to run a test
-            tags:
-                - PerfAPI
-    /api/perf/profile/result:
-        get:
-            description: Returns pages of all the perf results from Remote Provider
-            operationId: idGetAllPerfResults
-            responses:
-                "200":
-                    $ref: '#/responses/performanceResultsResponseWrapper'
-            summary: Handles GET requests for perf results
-            tags:
-                - PerfAPI
-    /api/perf/profile/result/{id}:
-        get:
-            description: Returns an individual result from provider
-            operationId: idGetSinglePerfResult
-            responses:
-                "200":
-                    $ref: '#/responses/perfSingleResultRespWrapper'
-            summary: Handles GET requests for perf result
-            tags:
-                - PerfAPI
-    /api/provider:
-        get:
-            description: Update the choice of provider in system
-            operationId: idChoiceProvider
-            parameters:
-                - in: query
-                  name: provider
-                  type: string
-                  x-go-name: Provider
-            responses:
-                "200":
-                    description: ""
-            summary: Handle GET request for the choice of provider
-            tags:
-                - ProvidersAPI
-    /api/provider/capabilities:
-        get:
-            description: Returns the capabilities.json for the provider
-            operationId: idGetProviderCapabilities
-            responses:
-                "200":
-                    description: ""
-            summary: Handle GET requests for Provider
-            tags:
-                - ProvidersAPI
-    /api/provider/extension:
-        get:
-            description: handles the requests to serve react components from the provider package
-            operationId: idReactComponents
-            responses:
-                "200":
-                    description: ""
-            summary: Handle GET request for React Components
-            tags:
-                - ProvidersAPI
     /api/providers:
         get:
             description: Returns the available list of providers
+            tags:
+                - ProvidersAPI
+            summary: Handle GET request for list of providers
             operationId: idGetProvidersList
             responses:
                 "200":
-                    $ref: '#/responses/listProvidersRespWrapper'
-            summary: Handle GET request for list of providers
-            tags:
-                - ProvidersAPI
-    /api/system/adapter/manage:
-        delete:
-            description: Used to delete adapter configuration
-            operationId: idDeleteAdapterConfig
-            parameters:
-                - in: query
-                  name: adapter
-                  type: string
-                  x-go-name: Adapter
-            responses:
-                "200":
-                    description: ""
-            summary: Handle DELETE requests to delete adapter config
-            tags:
-                - SystemAPI
-        post:
-            description: Used to persist adapter config
-            operationId: idPostAdapterConfig
-            parameters:
-                - in: body
-                  name: meshLocationURL
-                  schema:
-                    type: string
-                  x-go-name: MeshLocationURL
-            responses:
-                "200":
-                    $ref: '#/responses/mesheryAdaptersRespWrapper'
-            summary: Handle POST requests to persist adapter config
-            tags:
-                - SystemAPI
-    /api/system/adapter/operation:
-        post:
-            description: Used to send operations to the adapters
-            operationId: idPostAdapterOperation
-            parameters:
-                - in: query
-                  name: adapter
-                  type: string
-                  x-go-name: Adapter
-                - in: query
-                  name: query
-                  type: string
-                  x-go-name: Query
-                - in: query
-                  name: customBody
-                  type: string
-                  x-go-name: CustomBody
-                - in: query
-                  name: namespace
-                  type: string
-                  x-go-name: Namespace
-                - in: query
-                  name: deleteOp
-                  type: string
-                  x-go-name: Delete
-            responses:
-                "200":
-                    description: ""
-            summary: Handle POST requests for Adapter Operations
-            tags:
-                - SystemAPI
-    /api/system/adapters:
-        get:
-            description: Fetches and returns all the adapters and ping adapters
-            operationId: idGetSystemAdapters
-            parameters:
-                - in: query
-                  name: adapter
-                  type: string
-                  x-go-name: Adapter
-            responses:
-                "200":
-                    $ref: '#/responses/systemAdaptersRespWrapper'
-            summary: Handle GET request for adapters
-            tags:
-                - SystemAPI
-    /api/system/kubernetes:
-        delete:
-            description: Used to delete kubernetes config to System
-            operationId: idDeleteK8SConfig
-            responses:
-                "200":
-                    description: ""
-            summary: Handle DELETE request for Kubernetes Config
-            tags:
-                - SystemAPI
-        post:
-            description: Used to add kubernetes config to System
-            operationId: idPostK8SConfig
-            responses:
-                "200":
-                    $ref: '#/responses/k8sConfigRespWrapper'
-            summary: Handle POST request for Kubernetes Config
-            tags:
-                - SystemAPI
-    /api/system/kubernetes/contexts:
-        post:
-            description: Returns the context list for a given k8s config
-            operationId: idPostK8SContexts
-            responses:
-                "200":
-                    $ref: '#/responses/k8sContextsRespWrapper'
-            summary: Handle POST requests for Kubernetes Context list
-            tags:
-                - SystemAPI
-    /api/system/kubernetes/ping?contexts={id}:
-        get:
-            description: Fetches server version to simulate ping
-            operationId: idGetKubernetesPing
-            responses:
-                "200":
-                    description: ""
-            summary: Handle GET request for Kubernetes ping
-            tags:
-                - SystemAPI
-    /api/system/meshsync/grafana:
-        get:
-            description: Fetches Prometheus and Grafana
-            operationId: idMeshSyncGrafana
-            responses:
-                "200":
-                    $ref: '#/responses/v1ServicesMapResponseWrapper'
-            summary: Handle GET request for mesh-sync grafana
-            tags:
-                - SystemAPI
-    /api/system/meshsync/prometheus:
-        get:
-            description: Fetches Prometheus
-            operationId: idMeshSyncPrometheus
-            responses:
-                "200":
-                    $ref: '#/responses/v1ServicesMapResponseWrapper'
-            summary: Handle GET request for fetching prometheus
-            tags:
-                - SystemAPI
-    /api/system/sync:
-        get:
-            description: Used to send session data to the UI for initial sync
-            operationId: idSystemSync
-            responses:
-                "200":
-                    $ref: '#/responses/userLoadTestPrefsRespWrapper'
-            summary: Handle GET request for config sync
-            tags:
-                - SystemAPI
-    /api/system/version:
-        get:
-            description: Returns the running Meshery version
-            operationId: idGetSystemVersion
-            responses:
-                "200":
-                    $ref: '#/responses/mesheryVersionRespWrapper'
-            summary: Handle GET request for system/server version
-            tags:
-                - SystemAPI
-    /api/telemetry/metrics/board_import:
-        post:
-            description: Used for importing Grafana board for Prometheus
-            operationId: idPostPrometheusBoardImport
-            responses:
-                "200":
-                    $ref: '#/responses/prometheusBoardImportRespWrapper'
-            summary: Handle POST request for Prometheus board import
-            tags:
-                - PrometheusAPI
-    /api/telemetry/metrics/boards:
-        post:
-            description: Used to persist selected board and panels
-            operationId: idPostPrometheusBoard
-            parameters:
-                - in: body
-                  name: Body
-                  required: true
-                  schema:
-                    items: {}
-                    type: array
-            responses:
-                "200":
-                    description: ""
-            summary: Handle POST request for Prometheus board
-            tags:
-                - PrometheusAPI
-    /api/telemetry/metrics/config:
-        delete:
-            description: Used for deleting Prometheus configuration
-            operationId: idDeletePrometheusConfig
-            responses:
-                "200":
-                    description: ""
-            summary: Handle DELETE for Prometheus configuration
-            tags:
-                - PrometheusAPI
-        get:
-            description: Used for fetching Prometheus configuration
-            operationId: idGetPrometheusConfig
-            responses:
-                "200":
-                    $ref: '#/responses/prometheusConfigResponseWrapper'
-            summary: Handle GET for Prometheus configuration
-            tags:
-                - PrometheusAPI
-        post:
-            description: Used for persisting Prometheus configuration
-            operationId: idPostPrometheusConfig
-            parameters:
-                - in: body
-                  name: prometheusURL
-                  schema:
-                    type: string
-                  x-go-name: PrometheusURL
-            responses:
-                "200":
-                    description: ""
-            summary: Handle POST for Prometheus configuration
-            tags:
-                - PrometheusAPI
-    /api/telemetry/metrics/grafana/boards:
-        get:
-            description: Used for fetching Grafana boards and panels
-            operationId: idGetGrafanaBoards
-            parameters:
-                - in: query
-                  name: dashboardSearch
-                  type: string
-                  x-go-name: DashboardSearch
-            responses:
-                "200":
-                    $ref: '#/responses/grafanaBoardsResponseWrapper'
-            summary: Handle GET request for Grafana boards
-            tags:
-                - GrafanaAPI
-        post:
-            description: Used for persist Grafana boards and panel selections
-            operationId: idPostGrafanaBoards
-            responses:
-                "200":
-                    description: ""
-            summary: Handle POST request for Grafana boards
-            tags:
-                - GrafanaAPI
+                    description: Returns a list of available providers
+                    schema:
+                        additionalProperties: false
+                        type: object
     /api/telemetry/metrics/grafana/config:
+        get:
+            operationId: idGetGrafanaConfig
+            responses:
+                "200":
+                    description: Returns Grafana configs
+            description: Used for fetching Grafana configuration
+            tags:
+                - GrafanaAPI
+            summary: Handle GET request for Grafana configuration
+        post:
+            parameters:
+                - required: true
+                  schema: {}
+                  name: Body
+                  in: body
+            responses:
+                "200":
+                    description: ""
+            description: Used for persisting Grafana configuration
+            tags:
+                - GrafanaAPI
+            summary: Handle POST request for Grafana configuration
+            operationId: idPostGrafanaConfig
         delete:
             description: Used for Delete Grafana configuration
+            tags:
+                - GrafanaAPI
+            summary: Handle DELETE request for Grafana configuration
             operationId: idDeleteGrafanaConfig
             responses:
                 "200":
                     description: ""
-            summary: Handle DELETE request for Grafana configuration
-            tags:
-                - GrafanaAPI
+    /api/telemetry/metrics/static-board:
         get:
-            description: Used for fetching Grafana configuration
-            operationId: idGetGrafanaConfig
+            description: Used to fetch the static board
+            tags:
+                - PrometheusAPI
+            summary: Handle GET request for Prometheus static board
+            operationId: idGetPrometheusStaticBoard
             responses:
                 "200":
-                    $ref: '#/responses/grafanaConfigResponseWrapper'
-            summary: Handle GET request for Grafana configuration
+                    schema:
+                        additionalProperties: false
+                        type: object
+                    description: Returns Prometheus static board
+    /api/user/performance/profiles/{id}/run:
+        get:
+            description: Runs the load test with the given parameters
             tags:
-                - GrafanaAPI
-        post:
-            description: Used for persisting Grafana configuration
-            operationId: idPostGrafanaConfig
+                - PerformanceAPI
+            summary: Handle GET request to run a performance test
+            operationId: idRunPerformanceTest
             parameters:
-                - in: body
-                  name: Body
-                  required: true
-                  schema: {}
+                - name: Body
+                  in: query
             responses:
                 "200":
                     description: ""
-            summary: Handle POST request for Grafana configuration
-            tags:
-                - GrafanaAPI
-    /api/telemetry/metrics/grafana/ping:
+    /api/application/download/{id}/{sourcetype}:
         get:
-            description: Used to initiate a Grafana ping
-            operationId: idGetGrafanaPing
+            summary: Handle GET request for Meshery Application with of source content
+            operationId: typeGetApplication
+            parameters:
+                - type: file
+                  x-go-name: FormFile
+                  name: Upload Yaml/Yml File
+                  in: formData
+            responses: {}
+            description: Get the application source-content
+            tags:
+                - ApplicationsAPI
+    /api/telemetry/metrics/config:
+        get:
+            summary: Handle GET for Prometheus configuration
+            operationId: idGetPrometheusConfig
+            responses:
+                "200":
+                    description: Returns prometheus configuration
+            description: Used for fetching Prometheus configuration
+            tags:
+                - PrometheusAPI
+        post:
+            description: Used for persisting Prometheus configuration
+            tags:
+                - PrometheusAPI
+            summary: Handle POST for Prometheus configuration
+            operationId: idPostPrometheusConfig
+            parameters:
+                - x-go-name: PrometheusURL
+                  name: prometheusURL
+                  in: body
+                  schema:
+                    type: string
             responses:
                 "200":
                     description: ""
-            summary: Handle GET request for Grafana ping
+        delete:
+            description: Used for deleting Prometheus configuration
             tags:
-                - GrafanaAPI
+                - PrometheusAPI
+            summary: Handle DELETE for Prometheus configuration
+            operationId: idDeletePrometheusConfig
+            responses:
+                "200":
+                    description: ""
     /api/telemetry/metrics/grafana/query:
         get:
             description: Used for handling Grafana queries
+            tags:
+                - GrafanaAPI
+            summary: Handle GET request for Grafana queries
             operationId: idGetGrafanaQuery
             responses:
                 "200":
                     description: ""
-            summary: Handle GET request for Grafana queries
-            tags:
-                - GrafanaAPI
-    /api/telemetry/metrics/grafana/scan:
+    /api/system/meshsync/prometheus:
         get:
-            description: Fetches and returns Grafana
-            operationId: idGetGrafana
+            description: Fetches Prometheus
+            tags:
+                - SystemAPI
+            summary: Handle GET request for fetching prometheus
+            operationId: idMeshSyncPrometheus
             responses:
                 "200":
-                    $ref: '#/responses/v1ServicesMapResponseWrapper'
-            summary: Handle GET request for Grafana
-            tags:
-                - GrafanaAPI
-    /api/telemetry/metrics/ping:
-        get:
-            description: Used to ping prometheus
-            operationId: idGetPrometheusPing
-            responses:
-                "200":
-                    description: ""
-            summary: Handle GET request for Prometheus Ping
-            tags:
-                - PrometheusAPI
-    /api/telemetry/metrics/query:
-        get:
-            description: Used to prometheus queries
-            operationId: idGetPrometheusQuery
+                    description: Returns a map for v1 services
+                    schema:
+                        type: object
+                        additionalProperties: false
+    /api/filter/catalog/publish:
+        post:
+            summary: Handle Publish for a Meshery Filter
+            operationId: idPublishCatalogFilterHandler
             responses:
                 "200":
                     description: ""
-            summary: Handle GET request for Prometheus Query
+            description: Publishes filter to Meshery Catalog by setting visibility to public and setting catalog data
             tags:
-                - PrometheusAPI
-    /api/telemetry/metrics/static-board:
-        get:
-            description: Used to fetch the static board
-            operationId: idGetPrometheusStaticBoard
+                - FiltersAPI
+    /api/meshmodel/component/generate:
+        post:
+            tags:
+                - MeshmodelComponentGenerate
+            summary: Handle POST request for component generation
+            operationId: idPostMeshModelComponentGenerate
             responses:
                 "200":
-                    $ref: '#/responses/prometheusStaticBoardRespWrapper'
-            summary: Handle GET request for Prometheus static board
+                    description: ""
+            description: Generates Meshery Components for the given payload
+    /api/application/:
+        get:
+            description: Returns requests for all Meshery Applications
             tags:
-                - PrometheusAPI
+                - ApplicationsAPI
+            summary: Handle GET request for Application Files
+            operationId: idGetApplicationFileRequest
+            responses:
+                "200":
+                    description: Returns all meshery applications
     /api/user/login:
         get:
-            description: Redirects user for auth or issues session
+            tags:
+                - UserAPI
+            summary: Handlers GET request for User login
             operationId: idGetUserLogin
             responses:
                 "200":
                     description: ""
-            summary: Handlers GET request for User login
-            tags:
-                - UserAPI
+            description: Redirects user for auth or issues session
     /api/user/logout:
         get:
+            responses:
+                "200":
+                    description: ""
             description: Redirects user for auth or issues session
-            operationId: idGetUserLogout
-            responses:
-                "200":
-                    description: ""
+            tags:
+                - UserAPI
             summary: Handlers GET request for User logout
-            tags:
-                - UserAPI
-    /api/user/performance/profiles:
-        get:
-            description: Returns the list of all the performance profiles saved by the current user
-            operationId: idGetPerformanceProfiles
-            responses:
-                "200":
-                    $ref: '#/responses/performanceProfilesResponseWrapper'
-            summary: Handle GET requests for performance profiles
-            tags:
-                - PerformanceAPI
-        post:
-            description: Save performance profile using the current provider's persistence mechanism
-            operationId: idSavePerformanceProfile
-            parameters:
-                - in: body
-                  name: Body
-                  schema: {}
-            responses:
-                "200":
-                    $ref: '#/responses/performanceProfileResponseWrapper'
-            summary: Handle POST requests for saving performance profile
-            tags:
-                - PerformanceAPI
-    /api/user/performance/profiles/{id}:
-        delete:
-            description: Deletes a performance profile with the given id
-            operationId: idDeletePerformanceProfile
-            parameters:
-                - description: id for a specific
-                  format: uuid
-                  in: path
-                  name: id
-                  required: true
-                  type: string
-                  x-go-name: ID
-            responses:
-                "200":
-                    $ref: '#/responses/noContentWrapper'
-            summary: Handle Delete requests for performance profiles
-            tags:
-                - PerformanceAPI
-        get:
-            description: Returns single performance profile with the given id
-            operationId: idGetSinglePerformanceProfile
-            parameters:
-                - description: id for a specific
-                  format: uuid
-                  in: path
-                  name: id
-                  required: true
-                  type: string
-                  x-go-name: ID
-            responses:
-                "200":
-                    $ref: '#/responses/performanceProfileResponseWrapper'
-            summary: Handle GET requests for performance results of a profile
-            tags:
-                - PerformanceAPI
-    /api/user/performance/profiles/{id}/results:
-        get:
-            description: Fetchs pages of results from Remote Provider for the given id
-            operationId: idGETProfileResults
-            parameters:
-                - description: id for a specific
-                  format: uuid
-                  in: path
-                  name: id
-                  required: true
-                  type: string
-                  x-go-name: ID
-            responses:
-                "200":
-                    $ref: '#/responses/performanceResultsResponseWrapper'
-            summary: Handle GET request for results of a profile
-            tags:
-                - PerformanceAPI
-    /api/user/performance/profiles/{id}/run:
-        get:
-            description: Runs the load test with the given parameters
-            operationId: idRunPerformanceTest
-            parameters:
-                - in: query
-                  name: Body
-            responses:
-                "200":
-                    description: ""
-            summary: Handle GET request to run a performance test
-            tags:
-                - PerformanceAPI
-    /api/user/performance/profiles/results:
-        get:
-            description: Returns pages of all the performance results from Remote Provider
-            operationId: idGetAllPerformanceResults
-            responses:
-                "200":
-                    $ref: '#/responses/performanceResultsResponseWrapper'
-            summary: Handles GET requests for performance results
-            tags:
-                - PerformanceAPI
-    /api/user/prefs:
-        get:
-            description: Returns User Load Test Preferences
-            operationId: idGetUserTestPrefs
-            responses:
-                "200":
-                    $ref: '#/responses/userLoadTestPrefsRespWrapper'
-            summary: Handle GET for User Load Test Preferences
-            tags:
-                - UserAPI
-        post:
-            description: Updates User Load Test Preferences
-            operationId: idPostUserTestPrefs
-            responses:
-                "200":
-                    $ref: '#/responses/userLoadTestPrefsRespWrapper'
-            summary: Handle GET for User Load Test Preferences
-            tags:
-                - UserAPI
-    /api/user/prefs/perf:
-        delete:
-            description: Used for deleting load test preferences
-            operationId: idDeleteLoadPreferences
-            parameters:
-                - format: uuid
-                  in: query
-                  name: uuid
-                  type: string
-                  x-go-name: UUID
-            responses:
-                "200":
-                    description: ""
-            summary: Handle DELETE request for load test preferences
-            tags:
-                - UserAPI
-        get:
-            description: Used for fetching load test preferences
-            operationId: idGetLoadPreferences
-            parameters:
-                - format: uuid
-                  in: query
-                  name: uuid
-                  type: string
-                  x-go-name: UUID
-            responses:
-                "200":
-                    $ref: '#/responses/loadTestPreferencesWrapper'
-            summary: Handle GET request for load test preferences
-            tags:
-                - UserAPI
-        post:
-            description: Used for persisting load test preferences
-            operationId: idPostLoadPreferences
-            parameters:
-                - in: body
-                  name: Body
-                  schema: {}
-            responses:
-                "200":
-                    description: ""
-            summary: Handle POST request for load test preferences
-            tags:
-                - UserAPI
-    /api/user/schedules:
-        get:
-            description: Returns the list of all the schedules saved by the current user
-            operationId: idGetSchedules
-            responses:
-                "200":
-                    $ref: '#/responses/schedulesResponseWrapper'
-            summary: Handle GET reqeuest for Schedules
-            tags:
-                - SchedulesAPI
-        post:
-            description: Save schedule using the current provider's persistence mechanism
-            operationId: idPostSchedules
-            responses:
-                "200":
-                    $ref: '#/responses/singleScheduleResponseWrapper'
-            summary: Handle POST reqeuest for Schedules
-            tags:
-                - SchedulesAPI
-    /api/user/schedules/{id}:
-        delete:
-            description: Deletes a schedule with the given id
-            operationId: idDeleteSchedules
-            parameters:
-                - description: id for a specific
-                  format: uuid
-                  in: path
-                  name: id
-                  required: true
-                  type: string
-                  x-go-name: ID
-            responses:
-                "200":
-                    $ref: '#/responses/schedulesResponseWrapper'
-            summary: Handle DELETE reqeuest for Schedules
-            tags:
-                - SchedulesAPI
-        get:
-            description: Fetches and returns the schedule with the given id
-            operationId: idGetSingleSchedule
-            parameters:
-                - description: id for a specific
-                  format: uuid
-                  in: path
-                  name: id
-                  required: true
-                  type: string
-                  x-go-name: ID
-            responses:
-                "200":
-                    $ref: '#/responses/singleScheduleResponseWrapper'
-            summary: Handle GET reqeuest for Schedules
-            tags:
-                - SchedulesAPI
-    /api/user/token:
+            operationId: idGetUserLogout
+    /api/meshmodel/components/{type}/{name}:
         get:
             description: |-
-                Returns token from the actual provider in a file
-                resposese:
-                200:
-            operationId: idGetTokenProvider
-            summary: Handle GET request for tokens
+                Example: /api/meshmodel/components/kubernetes/Namespace
+                Components can be further filtered through query parameter ?version=
             tags:
-                - UserAPI
-        post:
-            description: |-
-                Receives token from the actual provider
-                resposese:
-                200:
-            operationId: idPostTokenProvider
-            summary: Handle POST request for tokens
-            tags:
-                - UserAPI
-    /provider:
-        get:
-            description: Servers providers UI
-            operationId: idProvider
+                - MeshmodelGetByName
+            summary: Handle GET request for getting meshmodel components of a specific type by name.
+            operationId: idMeshmodelGetByName
             responses:
                 "200":
                     description: ""
-            summary: Handle GET request to provider UI
-            tags:
-                - ProvidersAPI
-produces:
-    - application/json
+                    schema:
+                        type: object
+                        additionalProperties: false
+                    headers:
+                        apiVersion:
+                            type: string
+                        display-name:
+                            type: string
+                        format: {}
+                        kind:
+                            type: string
+                        metadata: {}
+                        model: {}
+                        schema:
+                            type: string
+definitions:
+    HistoryResponseItem:
+        description: HistoryResponseItem individual image layer information in response to ImageHistory operation
+        x-go-package: github.com/docker/docker/api/types/image
+    PluginConfigNetwork:
+        description: PluginConfigNetwork plugin config network
+        x-go-package: github.com/docker/docker/api/types
+    VolumeListOKBody:
+        description: VolumeListOKBody Volume list response
+        x-go-package: github.com/docker/docker/api/types/volume
+    ImageDeleteResponseItem:
+        description: ImageDeleteResponseItem image delete response item
+        x-go-package: github.com/docker/docker/api/types
+    PluginConfig:
+        title: PluginConfig The config of a plugin.
+        x-go-package: github.com/docker/docker/api/types
+    PluginConfigInterface:
+        description: PluginConfigInterface The interface between Docker and the plugin
+        x-go-package: github.com/docker/docker/api/types
+    AuthenticateOKBody:
+        description: AuthenticateOKBody authenticate o k body
+        x-go-package: github.com/docker/docker/api/types/registry
+    GraphDriverData:
+        title: GraphDriverData Information about a container's graph driver.
+        x-go-package: github.com/docker/docker/api/types
+    IdResponse:
+        description: IDResponse Response to an API call that returns just an Id
+        x-go-name: IDResponse
+        x-go-package: github.com/docker/docker/api/types
+    PluginSettings:
+        title: PluginSettings Settings that can be modified by users.
+        x-go-package: github.com/docker/docker/api/types
+    VolumeUsageData:
+        description: |-
+            VolumeUsageData Usage details about the volume. This information is used by the
+            `GET /system/df` endpoint, and omitted in other endpoints.
+        x-go-package: github.com/docker/docker/api/types
+    Port:
+        x-go-package: github.com/docker/docker/api/types
+        description: Port An open port on a container
+    ImageSummary:
+        description: ImageSummary image summary
+        x-go-package: github.com/docker/docker/api/types
+    PluginConfigRootfs:
+        description: PluginConfigRootfs plugin config rootfs
+        x-go-package: github.com/docker/docker/api/types
+    PluginInterfaceType:
+        description: PluginInterfaceType plugin interface type
+        x-go-package: github.com/docker/docker/api/types
+    PluginMount:
+        description: PluginMount plugin mount
+        x-go-package: github.com/docker/docker/api/types
+    ServiceUpdateResponse:
+        description: ServiceUpdateResponse service update response
+        x-go-package: github.com/docker/docker/api/types
+    ContainerTopOKBody:
+        description: ContainerTopOKBody OK response to ContainerTop operation
+        x-go-package: github.com/docker/docker/api/types/container
+    ContainerWaitOKBodyError:
+        description: ContainerWaitOKBodyError container waiting error, if any
+        x-go-package: github.com/docker/docker/api/types/container
+    PluginEnv:
+        description: PluginEnv plugin env
+        x-go-package: github.com/docker/docker/api/types
+    PluginConfigUser:
+        description: PluginConfigUser plugin config user
+        x-go-package: github.com/docker/docker/api/types
+    ContainerCreateCreatedBody:
+        description: ContainerCreateCreatedBody OK response to ContainerCreate operation
+        x-go-package: github.com/docker/docker/api/types/container
+    ContainerUpdateOKBody:
+        description: ContainerUpdateOKBody OK response to ContainerUpdate operation
+        x-go-package: github.com/docker/docker/api/types/container
+    PluginConfigArgs:
+        description: PluginConfigArgs plugin config args
+        x-go-package: github.com/docker/docker/api/types
+    PluginDevice:
+        description: PluginDevice plugin device
+        x-go-package: github.com/docker/docker/api/types
+    Volume:
+        x-go-package: github.com/docker/docker/api/types
+        description: Volume volume
+    ErrorResponse:
+        title: ErrorResponse Represents an error.
+        x-go-package: github.com/docker/docker/api/types
+    Plugin:
+        description: Plugin A plugin for the Engine API
+        x-go-package: github.com/docker/docker/api/types
+    PluginConfigLinux:
+        description: PluginConfigLinux plugin config linux
+        x-go-package: github.com/docker/docker/api/types
+    ContainerChangeResponseItem:
+        description: ContainerChangeResponseItem change item in response to ContainerChanges operation
+        x-go-package: github.com/docker/docker/api/types/container
+    ContainerWaitOKBody:
+        description: ContainerWaitOKBody OK response to ContainerWait operation
+        x-go-package: github.com/docker/docker/api/types/container
+    VolumeCreateBody:
+        description: VolumeCreateBody Volume configuration
+        x-go-package: github.com/docker/docker/api/types/volume
 responses:
+    listProvidersRespWrapper:
+        description: Returns a list of available providers
+        schema:
+            type: object
+            additionalProperties: false
+    loadTestPreferencesWrapper:
+        description: Returns load test preferences
+    mesheryApplicationsResponseWrapper:
+        description: Returns all meshery applications
+    grafanaConfigResponseWrapper:
+        description: Returns Grafana configs
+    mesheryFilterResponseWrapper:
+        description: Returns a single meshery filter
+    k8sContextsRespWrapper:
+        description: Returns kubernetes context list
+    mesheryApplicationResponseWrapper:
+        description: Fetches a single Meshery Application
+    mesheryFiltersResponseWrapper:
+        description: Returns all meshery filters
+    noContentWrapper:
+        description: ""
+    performanceResultsResponseWrapper:
+        description: Returns all performance results
+    schedulesResponseWrapper:
+        description: Returns List of saved schedules
+    singleScheduleResponseWrapper:
+        description: Returns a single schedules
+    userLoadTestPrefsRespWrapper:
+        description: Returns User Load Test Preferencee
+    grafanaBoardsResponseWrapper:
+        description: Returns Grafana boards and panels
+        schema:
+            type: array
+            items: {}
+    mesheryPatternResponseWrapper:
+        description: Returns a single meshery pattern
     ComponentDefinition:
         description: ""
+        schema:
+            type: object
+            additionalProperties: false
         headers:
-            apiVersion:
-                type: string
             display-name:
                 type: string
             format: {}
@@ -1294,95 +1403,55 @@ responses:
             model: {}
             schema:
                 type: string
-        schema:
-            additionalProperties: {}
-            type: object
-    FilterFilesResponseWrapper:
-        description: Returns the response of the Filter files
-    applicationFilesResponseWrapper:
-        description: Returns the response of the application files
-    grafanaBoardsResponseWrapper:
-        description: Returns Grafana boards and panels
-        schema:
-            items: {}
-            type: array
-    grafanaConfigResponseWrapper:
-        description: Returns Grafana configs
+            apiVersion:
+                type: string
+    mesheryPatternsResponseWrapper:
+        description: Returns all meshery patterns
+    perfTestPrefsRespWrapper:
+        description: Returns Perf test preference
     k8sConfigRespWrapper:
         description: Returns saved kubernetes config
-    k8sContextsRespWrapper:
-        description: Returns kubernetes context list
-    listProvidersRespWrapper:
-        description: Returns a list of available providers
-        schema:
-            additionalProperties: {}
-            type: object
-    loadTestPreferencesWrapper:
-        description: Returns load test preferences
     mesheryAdaptersRespWrapper:
         description: Returns all the meshery adapters
         schema:
-            items: {}
             type: array
-    mesheryApplicationResponseWrapper:
-        description: Fetches a single Meshery Application
-    mesheryApplicationsResponseWrapper:
-        description: Returns all meshery applications
-    mesheryFilterResponseWrapper:
-        description: Returns a single meshery filter
-    mesheryFiltersResponseWrapper:
-        description: Returns all meshery filters
-    mesheryPatternResponseWrapper:
-        description: Returns a single meshery pattern
-    mesheryPatternsResponseWrapper:
-        description: Returns all meshery patterns
+            items: {}
     mesheryVersionRespWrapper:
         description: Returns Meshery version
-    noContentWrapper:
-        description: ""
     perfSingleResultRespWrapper:
         description: Returns Single test result
-    perfTestPrefsRespWrapper:
-        description: Returns Perf test preference
+    prometheusBoardImportRespWrapper:
+        description: Response for prometheus board import
+    applicationFilesResponseWrapper:
+        description: Returns the response of the application files
+    systemAdaptersRespWrapper:
+        schema:
+            type: array
+            items: {}
+        description: Return all the adapters
+    prometheusConfigResponseWrapper:
+        description: Returns prometheus configuration
     performanceProfileResponseWrapper:
         description: Returns a single performance profile
     performanceProfilesResponseWrapper:
         description: Returns all the performance profiles
-    performanceResultsResponseWrapper:
-        description: Returns all performance results
-    prometheusBoardImportRespWrapper:
-        description: Response for prometheus board import
-    prometheusConfigResponseWrapper:
-        description: Returns prometheus configuration
     prometheusStaticBoardRespWrapper:
         description: Returns Prometheus static board
         schema:
-            additionalProperties: {}
             type: object
-    schedulesResponseWrapper:
-        description: Returns List of saved schedules
-    singleScheduleResponseWrapper:
-        description: Returns a single schedules
-    systemAdaptersRespWrapper:
-        description: Return all the adapters
-        schema:
-            items: {}
-            type: array
-    userLoadTestPrefsRespWrapper:
-        description: Returns User Load Test Preferencee
+            additionalProperties: false
     v1ServicesMapResponseWrapper:
-        description: Returns a map for v1 services
         schema:
-            additionalProperties: {}
             type: object
-schemes:
-    - http
+            additionalProperties: false
+        description: Returns a map for v1 services
+    FilterFilesResponseWrapper:
+        description: Returns the response of the Filter files
+securityDefinitions:
+    token:
+        type: apiKey
+        name: token
+        in: cookie
 security:
     - token:
         - '[]'
-securityDefinitions:
-    token:
-        in: cookie
-        name: token
-        type: apiKey
-swagger: "2.0"

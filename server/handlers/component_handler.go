@@ -139,16 +139,20 @@ func (h *Handler) GetMeshmodelComponentsByName(rw http.ResponseWriter, r *http.R
 	}
 }
 
+// swagger: response typesResponseWithModelname
 type typesResponseWithModelname struct {
 	DisplayName string   `json:"display-name"`
 	Versions    []string `json:"versions"`
 }
 
+// swagger: response responseTypesWithModelName
+type responseTypesWithModelName map[string]*typesResponseWithModelname
+
 // swagger:route GET /api/meshmodel/components/types MeshmodelComponentsForTypeHandler idMeshmodelComponentsForTypeHandler
 // Handle GET request for getting meshmodel types or model names.
-// responses:
+// response:
 //
-//	200:responseTypesWithModelName
+//	200: responseTypesWithModelName
 func (h *Handler) MeshmodelComponentsForTypeHandler(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
@@ -183,9 +187,6 @@ func (h *Handler) MeshmodelComponentsForTypeHandler(rw http.ResponseWriter, r *h
 		http.Error(rw, ErrWorkloadDefinition(err).Error(), http.StatusInternalServerError)
 	}
 }
-
-// swagger: responses responseTypesWithModelName
-type responseTypesWithModelName map[string]*typesResponseWithModelname
 
 // swagger:route GET /api/meshmodel/components/{type} MeshmodelGetByType idMeshmodelGetByType
 // Handle GET request for getting meshmodel components of a specific type.
