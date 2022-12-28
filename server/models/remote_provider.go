@@ -448,7 +448,6 @@ func (l *RemoteProvider) Logout(w http.ResponseWriter, req *http.Request) error 
 		sessionCookie.MaxAge = -1
 		sessionCookie.Path = "/"
 		http.SetCookie(w, sessionCookie)
-		logrus.Info("successfully logged out from remote provider")
 		return nil
 	}
 
@@ -3027,32 +3026,26 @@ func (l *RemoteProvider) ExtensionProxy(req *http.Request) ([]byte, error) {
 	logrus.Debugf("constructed url: %s", remoteProviderURL.String())
 
 	// make http.Request type variable with the constructed URL
-	cReq, _ := http.NewRequest(req.Method, remoteProviderURL.String(), req.Body)
-	tokenString, err := l.GetToken(req)
-
+	cReq, err := http.NewRequest(req.Method, remoteProviderURL.String(), req.Body)
 	if err != nil {
 		return nil, err
 	}
 
-	// gets the session cookie from request headers
-	// necessary to run flows in remote provider specific to user_account extension
-	sessionCookie, err := req.Cookie("session_cookie")
-
-	// if cookie is not found then gracefully skip adding it the new request headers
-	// considering not every endpoint in remote provider requires it
+	tokenString, err := l.GetToken(req)
 	if err != nil {
-		logrus.Debug("Error getting session cookie")
-	} else {
-		cReq.AddCookie(&http.Cookie{
-			Name:  "session_cookie",
-			Value: sessionCookie.Value,
-		})
+		return nil, err
 	}
+
+	// update the request headers with the headers from the original request
+	// original headers includes cookies likes session_cookie necessary to run user management flows
+	cReq.Header = req.Header
+
 	// make request to remote provider with contructed URL and updated headers (like session cookie)
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
 		return nil, err
 	}
+
 	defer func() {
 		_ = resp.Body.Close()
 	}()

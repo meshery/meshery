@@ -2,10 +2,11 @@ package pkg
 
 import (
 	"os"
+	"strings"
 )
 
 const template string = `---
-title: <Project Name>
+title: <Model Display Name>
 subtitle: <Page Subtitle>
 integrationIcon: ../../../assets/images/service-mesh-icons/aws-app-mesh.svg
 darkModeIntegrationIcon: ../../../assets/images/service-mesh-icons/aws-app-mesh_white.svg
@@ -71,7 +72,9 @@ func (t TemplateAttributes) CreateMarkDown() string {
 	// markdown += "---\n"
 	// markdown += t.AboutProject + "\n"
 	// markdown += t.StandardBlurb
-	return t.FullPage
+	markdown := t.FullPage
+	markdown = strings.ReplaceAll(markdown, "\r", "\n")
+	return markdown
 }
 func WriteMarkDown(path string, md string) error {
 	file, err := os.Create(path)

@@ -1,0 +1,21 @@
+{
+  "apiVersion": "core.meshery.io/v1alpha1",
+  "kind": "Hierarchical",
+  "metadata": {
+    "description": "A relationship that defines whether a component can be a parent of other components. It is read like: `from` can be a parent of `to`, where from and to are any components that match the from and to selectors respectively"
+  },
+  "subType": "Parent",
+  "selectors": {
+    "from": [
+      {
+        "kind": "Namespace",
+        "model": "Kubernetes"
+      }
+    ],
+    "to": [
+      {
+        "model": "Kubernetes"
+      }
+    ]
+  }
+}

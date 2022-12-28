@@ -121,12 +121,13 @@ func GetK8sMeshModelComponents(ctx context.Context, kubeconfig []byte) ([]v1alph
 	for name, crd := range crds {
 		m := make(map[string]interface{})
 		m[customResourceKey] = customResources[metadata[name].K8sKind]
+		apiVersion := string(groups[kind(metadata[name].K8sKind)])
 		c := v1alpha1.ComponentDefinition{
 			Format: v1alpha1.JSON,
 			Schema: crd,
 			TypeMeta: v1alpha1.TypeMeta{
 				Kind:       metadata[name].K8sKind,
-				APIVersion: string(groups[kind(metadata[name].K8sKind)]),
+				APIVersion: apiVersion,
 			},
 			Metadata:    m,
 			DisplayName: manifests.FormatToReadableString(metadata[name].K8sKind),
@@ -267,15 +268,30 @@ func getGroupsFromResource(cli *kubernetes.Client) (hgv map[kind]groupversion, e
 		if err != nil {
 			return nil, err
 		}
-		apiRes, err := cli.KubeClient.DiscoveryClient.ServerResourcesForGroupVersion(apig.PreferredVersion.GroupVersion)
+		for _, v := range apig.Versions {
+			apiRes, err := cli.KubeClient.DiscoveryClient.ServerResourcesForGroupVersion(v.GroupVersion)
+			if err != nil {
+				return nil, err
+			}
+			if err != nil {
+				return nil, err
+			}
+			for _, res := range apiRes.APIResources {
+				hgv[kind(res.Kind)] = groupversion(v.GroupVersion)
+				if hgv[kind(res.Kind)] == "" {
+					hgv[kind(res.Kind)] = groupversion(v.Version)
+				}
+			}
+		}
+		apiRes, err := cli.KubeClient.DiscoveryClient.ServerResourcesForGroupVersion("v1")
 		if err != nil {
 			return nil, err
 		}
-		if len(g.Versions) != 0 {
-			for _, res := range apiRes.APIResources {
-				hgv[kind(res.Kind)] = groupversion(g.Versions[0].GroupVersion)
-				break
-			}
+		if err != nil {
+			return nil, err
+		}
+		for _, res := range apiRes.APIResources {
+			hgv[kind(res.Kind)] = groupversion("v1")
 		}
 	}
 	return
