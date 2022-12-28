@@ -481,31 +481,7 @@ function MesheryApplications({
         updateProgress({ showProgress : false })
         return;
       }
-      dataFetch(
-        `/api/application/${id}`,
-        {
-          credentials : "include",
-          method : "DELETE",
-        },
-        () => {
-          console.log("ApplicationFile API", `/api/application/${id}`);
-          updateProgress({ showProgress : false });
-          enqueueSnackbar(`"${name}" Application deleted`, {
-            variant : "success",
-            action : function Action(key) {
-              return (
-                <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-                  <CloseIcon />
-                </IconButton>
-              );
-            },
-            autoHideDuration : 2000,
-          });
-          resetSelectedRowData()();
-        },
-        // handleError
-        handleError(ACTION_TYPES.DELETE_APPLICATIONS)
-      );
+      deleteApplication(id);
     }
 
     if (type === FILE_OPS.UPDATE) {
