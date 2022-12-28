@@ -188,17 +188,22 @@ func (g *GrafanaClient) ProcessBoard(ctx context.Context, c *sdk.Client, board *
 			} else {
 				ds.Name = dsName
 			}
-			tvVal := tmpVar.Current.Text
-			grafBoard.TemplateVars = append(grafBoard.TemplateVars, &GrafanaTemplateVars{
-				Name:  tmpVar.Name,
-				Query: fmt.Sprint(tmpVar.Query),
-				Datasource: &GrafanaDataSource{
-					ID:   ds.ID,
-					Name: ds.Name,
-				},
-				Hide:  tmpVar.Hide,
-				Value: tvVal,
-			})
+			query, ok := tmpVar.Query.(map[string]interface{})
+			if ok {
+				if pnlQuery, ok := query["query"].(string); ok {
+					tvVal := tmpVar.Current.Text
+					grafBoard.TemplateVars = append(grafBoard.TemplateVars, &GrafanaTemplateVars{
+						Name:  tmpVar.Name,
+						Query: pnlQuery,
+						Datasource: &GrafanaDataSource{
+							ID:   ds.ID,
+							Name: ds.Name,
+						},
+						Hide:  tmpVar.Hide,
+						Value: tvVal,
+					})
+				}
+			}
 		}
 	}
 
