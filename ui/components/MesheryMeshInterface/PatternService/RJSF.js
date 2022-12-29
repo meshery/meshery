@@ -60,7 +60,8 @@ function RJSFForm(props) {
     LoadingComponent,
     ErrorList,
     // prop should be present in order for the cloned element to override this property
-    transformErrors
+    transformErrors,
+    override,
   } = props;
   const templates={
     ArrayFieldTemplate,
@@ -90,6 +91,7 @@ function RJSFForm(props) {
         formData={data}
         validator={validator}
         templates={templates}
+        formContext={{ overrideFlag : override }}
         uiSchema={schema.uiSchema}
         fields={{ ObjectField : ObjectFieldWithErrors }}
         widgets={{
