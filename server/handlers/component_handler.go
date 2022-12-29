@@ -179,7 +179,7 @@ func (h *Handler) MeshmodelComponentsForTypeHandler(rw http.ResponseWriter, r *h
 }
 
 // swagger:route GET /api/meshmodel/components/{type} MeshmodelGetByType idMeshmodelGetByType
-// Handle GET request for getting meshmodel components of a specific type.
+// Handle GET request for getting meshmodel components of a specific type. The component type/model name should be lowercase like "kubernetes", "istio"
 // Example: /api/meshmodel/components/kubernetes
 // Components can be further filtered through query parameter ?version=
 // responses:
