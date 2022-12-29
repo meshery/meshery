@@ -26,6 +26,8 @@ import fetchControlPlanes from "./graphql/queries/ControlPlanesQuery";
 import fetchDataPlanes from "./graphql/queries/DataPlanesQuery";
 import fetchClusterResources from "./graphql/queries/ClusterResourcesQuery";
 import subscribeClusterResources from "./graphql/subscriptions/ClusterResourcesSubscription";
+import subscribeMeshModelSummary from "./graphql/subscriptions/MeshModelSummarySubscription";
+import fetchMeshModelSummary from "./graphql/queries/MeshModelSummaryQuery";
 import fetchAvailableNamespaces from "./graphql/queries/NamespaceQuery";
 import { submitPrometheusConfigure } from "./telemetry/prometheus/PrometheusComponent";
 import MUIDataTable from "mui-datatables";
@@ -130,6 +132,8 @@ class DashboardComponent extends React.Component {
       clusterResources : [],
       namespaceList : [],
       selectedNamespace : "default",
+      meshmodelSummarySelector : { type : "Components" },
+      meshmodelSummary : [],
 
       // subscriptions disposable
       dataPlaneSubscription : null,
@@ -137,6 +141,8 @@ class DashboardComponent extends React.Component {
       clusterResourcesSubscription : null,
       clusterResourcesQuery : null,
       namespaceQuery : null,
+      meshmodelSummarySubscription : null,
+      meshmodelSummaryQuery : null,
     };
   }
 
@@ -169,6 +175,11 @@ class DashboardComponent extends React.Component {
       this.state.controlPlaneSubscription.unsubscribe()
     }
     this.disposeWorkloadWidgetSubscription();
+  }
+
+  disposeMeshModelSummarySubscriptions = () => {
+    this.state.meshmodelSummarySubscription && this.state.meshmodelSummarySubscription.dispose();
+    this.state.meshmodelSummaryQuery && this.state.meshmodelSummaryQuery.unsubscribe();
   }
 
   initMeshSyncControlPlaneSubscription = () => {
@@ -254,6 +265,40 @@ class DashboardComponent extends React.Component {
     }
   }
 
+  initDashboardMeshModelSummaryQuery = () => {
+    const self = this;
+    let selector = self.state.meshmodelSummarySelector;
+
+    if (self._isMounted) {
+      // @ts-ignore
+      const meshmodelSummaryQuery = fetchMeshModelSummary(selector).subscribe({
+        next : (res) => {
+          console.log("res: ", res)
+          this.setState({ meshmodelSummary : res?.meshmodelSummary })
+        },
+        error : (err) => console.log(err),
+      })
+
+      this.setState({ meshmodelSummaryQuery });
+    }
+  }
+
+  initDashboardMeshModelSummarySubscription = () => {
+    const self = this;
+    let selector = self.state.meshmodelSummarySelector;
+
+    if (self._isMounted) {
+      // @ts-ignore
+      const meshmodelSummarySubscription = subscribeMeshModelSummary((res) => {
+        console.log("res: ", res)
+        this.setState({ meshmodelSummary : res?.meshmodelSummary })
+      }, {
+        selector : selector
+      });
+      this.setState({ meshmodelSummarySubscription });
+    }
+  }
+
   componentWillUnmount = () => {
     this._isMounted = false
     this.disposeSubscriptions()
@@ -272,6 +317,8 @@ class DashboardComponent extends React.Component {
       this.initDashboardClusterResourcesQuery();
       this.initDashboardClusterResourcesSubscription();
       this.initNamespaceQuery()
+      this.initDashboardMeshModelSummaryQuery();
+      this.initDashboardMeshModelSummarySubscription();
     }
   };
 
@@ -309,6 +356,12 @@ class DashboardComponent extends React.Component {
       this.initDashboardClusterResourcesSubscription();
       this.initDashboardClusterResourcesQuery();
       this.initNamespaceQuery();
+    }
+
+    if (prevState?.meshmodelSummarySelector !== this.state?.meshmodelSummarySelector) {
+      this.disposeMeshModelSummarySubscriptions();
+      this.initDashboardMeshModelSummaryQuery();
+      this.initDashboardMeshModelSummarySubscription();
     }
   }
 
@@ -1059,6 +1112,128 @@ class DashboardComponent extends React.Component {
     return null;
   };
 
+   /**
+   * MeshModelSummaryCard takes in the meshmodel related data
+   * and renders a table with registered meshmodel information of
+   * the selected type of model (like relationships, components etc)
+   * @param {
+   * {
+   *   kind, count
+   * }[]
+   * } meshmodelSummary
+   */
+   MeshModelSummaryCard = (meshmodelSummary = []) => {
+     //  const self = this;
+     let kindSort = "asc";
+     let countSort = "asc";
+     const switchSortOrder = (type) => {
+       if (type === "kindSort") {
+         kindSort = (kindSort === "asc") ? "desc" : "asc";
+         countSort = "asc";
+       } else if (type === "countSort") {
+         countSort = (countSort === "asc") ? "desc" : "asc";
+         kindSort = "asc";
+       }
+     }
+
+     const columns = [
+       {
+         name : "name",
+         label : "Name",
+         options : {
+           filter : false,
+           sort : true,
+           searchable : true,
+           setCellProps : () => ({ style : { textAlign : "center" } }),
+           customHeadRender : ({ index, ...column }, sortColumn) => {
+             return (
+               <TableCell key={index} style={{ textAlign : "center" }} onClick={() => {
+                 sortColumn(index); switchSortOrder("kindSort");
+               }}>
+                 <TableSortLabel active={column.sortDirection != null} direction={kindSort} >
+                   <b>{column.label}</b>
+                 </TableSortLabel>
+               </TableCell>
+
+             )
+           }
+         },
+       },
+       {
+         name : "count",
+         label : "Count",
+         options : {
+           filter : false,
+           sort : true,
+           searchable : true,
+           setCellProps : () => ({ style : { textAlign : "center" } }),
+           customHeadRender : ({ index, ...column }, sortColumn) => {
+             return (
+               <TableCell key={index} style={{ textAlign : "center" }} onClick={() => {
+                 sortColumn(index); switchSortOrder("countSort");
+               }}>
+                 <TableSortLabel active={column.sortDirection != null} direction={countSort} >
+                   <b>{column.label}</b>
+                 </TableSortLabel>
+               </TableCell>
+
+             )
+           }
+         },
+       },
+     ]
+
+     const options = {
+       filter : false,
+       selectableRows : "none",
+       responsive : "scrollMaxHeight",
+       print : false,
+       download : false,
+       viewColumns : false,
+       pagination : false,
+       fixedHeader : true,
+       //  customToolbar : () => {
+       //    return (
+       //      <>
+       //        {self.state.namespaceList && (
+       //          <Select
+       //            value={self.state.selectedNamespace}
+       //            onChange={(e) =>
+       //              self.setState({ selectedNamespace : e.target.value })
+       //            }
+       //          >
+       //            {self.state.namespaceList && self.state.namespaceList.map((ns) => <MenuItem key={ns.uniqueID} value={ns}>{ns}</MenuItem>)}
+       //          </Select>
+       //        )}
+       //      </>
+       //    )
+       //  }
+     }
+
+     if (Array.isArray(meshmodelSummary) && meshmodelSummary?.length)
+       return (
+         <Paper elevation={1} style={{ padding : "2rem" }}>
+           <MuiThemeProvider theme={this.getMuiTheme()}>
+             <MUIDataTable
+               title={
+                 <>
+                   <div style={{ display : "flex", alignItems : "center", marginBottom : "1rem" }}>
+                     <img src={"/static/img/all_mesh.svg"} className={this.props.classes.icon} style={{ marginRight : "0.75rem" }} />
+                     <Typography variant="h6">Registered MeshModel</Typography>
+                   </div>
+                 </>
+               }
+               data={meshmodelSummary}
+               options={options}
+               columns={columns}
+             />
+           </MuiThemeProvider>
+         </Paper>
+       );
+
+     return null;
+   };
+
   handlePrometheusClick = () => {
     this.props.updateProgress({ showProgress : true });
     const self = this;
@@ -1352,6 +1527,31 @@ class DashboardComponent extends React.Component {
           )}
       </>
     );
+    const showMeshModelSummary = (
+      <>
+        {console.log("self.state.meshmodeSummary: ", self?.state?.meshmodelSummary)}
+        {/* {self?.state?.meshmodelSummary && Object.keys(self?.state?.meshmodelSummary) && self?.state?.clusterResources?.resources?.length > 0 */}
+        {self?.state?.meshmodelSummary && self?.state?.meshmodelSummary?.length > 0
+          ? (
+            self.MeshModelSummaryCard(self?.state?.meshmodelSummary)
+          )
+          : (
+            <div
+              style={{
+                padding : "2rem",
+                display : "flex",
+                justifyContent : "center",
+                alignItems : "center",
+                flexDirection : "column",
+              }}
+            >
+              <Typography style={{ fontSize : "1.5rem", marginBottom : "2rem" }} align="center" color="textSecondary">
+                No meshmodel registered.....
+              </Typography>
+            </div>
+          )}
+      </>
+    );
     return (
       <NoSsr>
         <Popup />
@@ -1364,6 +1564,14 @@ class DashboardComponent extends React.Component {
                     Workloads
                   </Typography>
                   {showClusterResources}
+                </div>
+              </Grid>
+              <Grid item xs={12} md={12}>
+                <div className={classes.dashboardSection} data-test="workloads">
+                  <Typography variant="h6" gutterBottom className={classes.chartTitle}>
+                    MeshModel
+                  </Typography>
+                  {showMeshModelSummary}
                 </div>
               </Grid>
               <Grid item xs={12} md={12}>
