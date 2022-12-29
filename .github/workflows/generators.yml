@@ -29,7 +29,7 @@ jobs:
       - run: |
           GOPROXY=https://proxy.golang.org,direct GOSUMDB=off go run ./scripts/component_generation/main.go
       - run: |
-          GOPROXY=https://proxy.golang.org,direct GOSUMDB=off go build ./scripts/component_updation/main.go
+          cd scripts/component_updation ;go build main.go
           ./main https://docs.google.com/spreadsheets/d/e/2PACX-1vSgOXuiqbhUgtC9oNbJlz9PYpOEaFVoGNUFMIk4NZciFfQv1ewZg8ahdrWHKI79GkKK9TbmnZx8CqIe/pub\?gid\=0\&single\=true\&output\=csv
       - name: Commit results
         uses: EndBug/add-and-commit@v9

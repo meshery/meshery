@@ -17,7 +17,6 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/server/meshes"
 	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshery/server/models/pattern/core"
 	pCore "github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/layer5io/meshkit/utils/kubernetes/kompose"
@@ -100,8 +99,8 @@ func (h *Handler) ApplicationFileRequestHandler(
 	}
 }
 
-// swagger:route PUT /api/application/{sourcetype} ApplicationsAPI idPutApplicationFileRequest
-// Handle PUT request for Application Files
+// swagger:route POST /api/application/{sourcetype} ApplicationsAPI idPutApplicationFileRequest
+// Handle POST request for Application Files
 //
 // Updates the design for the provided application
 // responses:
@@ -189,7 +188,7 @@ func (h *Handler) handleApplicationPOST(
 				}
 			}
 
-			pattern, err := core.NewPatternFileFromK8sManifest(k8sres, false)
+			pattern, err := pCore.NewPatternFileFromK8sManifest(k8sres, false)
 			if err != nil {
 				obj := "convert"
 				h.log.Error(ErrApplicationFailure(err, obj))
@@ -251,7 +250,7 @@ func (h *Handler) handleApplicationPOST(
 				return
 			}
 			result := string(resp)
-			pattern, err := core.NewPatternFileFromK8sManifest(result, false)
+			pattern, err := pCore.NewPatternFileFromK8sManifest(result, false)
 			if err != nil {
 				obj := "convert"
 				h.log.Error(ErrApplicationFailure(err, obj))
@@ -436,11 +435,7 @@ func (h *Handler) handleApplicationUpdate(rw http.ResponseWriter,
 		return
 	}
 	format := r.URL.Query().Get("output")
-	mesheryApplication := parsedBody.ApplicationData
-	mesheryApplication.Type = sql.NullString{
-		String: sourcetype,
-		Valid:  true,
-	}
+
 	if parsedBody.CytoscapeJSON != "" {
 		pf, err := pCore.NewPatternFileFromCytoscapeJSJSON(parsedBody.Name, []byte(parsedBody.CytoscapeJSON))
 		if err != nil {
@@ -469,13 +464,17 @@ func (h *Handler) handleApplicationUpdate(rw http.ResponseWriter,
 			return
 		}
 
-		mesheryApplication = &models.MesheryApplication{
+		mesheryApplication := &models.MesheryApplication{
 			Name:            patternName,
 			ApplicationFile: string(pfByt),
 			Location: map[string]interface{}{
 				"host": "",
 				"path": "",
 				"type": "local",
+			},
+			Type: sql.NullString{
+				String: sourcetype,
+				Valid:  true,
 			},
 		}
 		if parsedBody.ApplicationData != nil {
@@ -507,6 +506,11 @@ func (h *Handler) handleApplicationUpdate(rw http.ResponseWriter,
 
 		h.formatApplicationOutput(rw, byt, format, &res)
 		return
+	}
+	mesheryApplication := parsedBody.ApplicationData
+	mesheryApplication.Type = sql.NullString{
+		String: sourcetype,
+		Valid:  true,
 	}
 	resp, err := provider.SaveMesheryApplication(token, mesheryApplication)
 	if err != nil {
@@ -731,7 +735,7 @@ func githubRepoApplicationScan(
 						return ErrRemoteApplication(err)
 					}
 				}
-				pattern, err := core.NewPatternFileFromK8sManifest(k8sres, false)
+				pattern, err := pCore.NewPatternFileFromK8sManifest(k8sres, false)
 				if err != nil {
 					return err //always a meshkit error
 				}
@@ -794,7 +798,7 @@ func genericHTTPApplicationFile(fileURL, sourceType string) ([]models.MesheryApp
 		}
 	}
 
-	pattern, err := core.NewPatternFileFromK8sManifest(k8sres, false)
+	pattern, err := pCore.NewPatternFileFromK8sManifest(k8sres, false)
 	if err != nil {
 		return nil, err //This error is already a meshkit error
 	}
