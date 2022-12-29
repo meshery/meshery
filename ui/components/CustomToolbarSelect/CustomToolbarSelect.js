@@ -19,8 +19,8 @@ class CustomToolbarSelect extends React.Component {
   handleClickDelete = async() => {
     const toBeDeleted = this.props.selectedRows.data.map(idx => (
       {
-        id : this.props.applications[idx.index]?.id,
-        name : this.props.applications[idx.index]?.name,
+        id : this.props.items[idx.index]?.id,
+        name : this.props.items[idx.index]?.name,
       }
     ))
     let response = await this.props.showModal(toBeDeleted.length, toBeDeleted.map(p => " "+p.name))
@@ -28,7 +28,7 @@ class CustomToolbarSelect extends React.Component {
       return;
     }
     await toBeDeleted.map((e) => {
-      this.props.deleteApplication(e.id)
+      this.props.deleteItem(e.id)
     })
     this.props.setSelectedRows([])
   };

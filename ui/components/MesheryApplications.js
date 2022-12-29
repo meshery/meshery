@@ -10,7 +10,7 @@ import FullscreenIcon from '@material-ui/icons/Fullscreen';
 import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
 import SaveIcon from '@material-ui/icons/Save';
 import MUIDataTable from "mui-datatables";
-import CustomToolbarSelect from "./MesheryApplications/CustomToolbarSelect";
+import CustomToolbarSelect from "./CustomToolbarSelect/CustomToolbarSelect";
 import { withSnackbar } from "notistack";
 import React, { useEffect, useRef, useState } from "react";
 import { UnControlled as CodeMirror } from "react-codemirror2";
@@ -752,7 +752,7 @@ function MesheryApplications({
 
   const options = {
     customToolbarSelect : (selectedRows, displayData, setSelectedRows) => (
-      <CustomToolbarSelect selectedRows={selectedRows} displayData={displayData} setSelectedRows={setSelectedRows} applications={applications} deleteApplication={deleteApplication} showModal={showModal}/>
+      <CustomToolbarSelect selectedRows={selectedRows} displayData={displayData} setSelectedRows={setSelectedRows} items={applications} deleteItem={deleteApplication} showModal={showModal}/>
     ),
     filter : false,
     sort : !(user && user.user_id === "meshery"),

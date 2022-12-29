@@ -19,6 +19,7 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import MUIDataTable from "mui-datatables";
+import CustomToolbarSelect from "./CustomToolbarSelect/CustomToolbarSelect";
 import Moment from "react-moment";
 import { withSnackbar } from "notistack";
 import CloseIcon from "@material-ui/icons/Close";
@@ -828,6 +829,9 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
   }
 
   const options = {
+    customToolbarSelect : (selectedRows, displayData, setSelectedRows) => (
+      <CustomToolbarSelect selectedRows={selectedRows} displayData={displayData} setSelectedRows={setSelectedRows} items={filters} deleteItem={deleteFilter} showModal={showmodal}/>
+    ),
     filter : false,
     sort : !(user && user.user_id === "meshery"),
     search : !(user && user.user_id === "meshery"),
