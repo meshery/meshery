@@ -300,10 +300,7 @@ func (h *Handler) POSTOAMRegisterHandler(typ string, r *http.Request) error {
 
 // GETOAMRegisterHandler handles the get requests for the OAM objects
 func (h *Handler) GETOAMRegisterHandler(rw http.ResponseWriter,
-	r *http.Request,
-	prefObj *models.Preference,
-	user *models.User,
-	provider models.Provider) {
+	r *http.Request) {
 	typ := mux.Vars(r)["type"]
 	if !(typ == "workload" || typ == "trait" || typ == "scope") {
 		rw.WriteHeader(http.StatusNotFound)
