@@ -97,11 +97,6 @@ type ComplexityRoot struct {
 		Resources func(childComplexity int) int
 	}
 
-	Components struct {
-		Count func(childComplexity int) int
-		Name  func(childComplexity int) int
-	}
-
 	ConfigurationPage struct {
 		Applications func(childComplexity int) int
 		Filters      func(childComplexity int) int
@@ -207,6 +202,16 @@ type ComplexityRoot struct {
 		Host   func(childComplexity int) int
 		Path   func(childComplexity int) int
 		Type   func(childComplexity int) int
+	}
+
+	MeshModelComponent struct {
+		Count func(childComplexity int) int
+		Name  func(childComplexity int) int
+	}
+
+	MeshModelRelationship struct {
+		Count func(childComplexity int) int
+		Kind  func(childComplexity int) int
 	}
 
 	MeshModelSummary struct {
@@ -368,11 +373,6 @@ type ComplexityRoot struct {
 		GetTraits                  func(childComplexity int, name *string, id *string, trim *bool) int
 		GetWorkloads               func(childComplexity int, name *string, id *string, trim *bool) int
 		ResyncCluster              func(childComplexity int, selector *model.ReSyncActions, k8scontextID string) int
-	}
-
-	Relationships struct {
-		Kind func(childComplexity int) int
-		Name func(childComplexity int) int
 	}
 
 	Resource struct {
@@ -688,20 +688,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ClusterResources.Resources(childComplexity), true
-
-	case "Components.count":
-		if e.complexity.Components.Count == nil {
-			break
-		}
-
-		return e.complexity.Components.Count(childComplexity), true
-
-	case "Components.name":
-		if e.complexity.Components.Name == nil {
-			break
-		}
-
-		return e.complexity.Components.Name(childComplexity), true
 
 	case "ConfigurationPage.applications":
 		if e.complexity.ConfigurationPage.Applications == nil {
@@ -1157,6 +1143,34 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Location.Type(childComplexity), true
+
+	case "MeshModelComponent.count":
+		if e.complexity.MeshModelComponent.Count == nil {
+			break
+		}
+
+		return e.complexity.MeshModelComponent.Count(childComplexity), true
+
+	case "MeshModelComponent.name":
+		if e.complexity.MeshModelComponent.Name == nil {
+			break
+		}
+
+		return e.complexity.MeshModelComponent.Name(childComplexity), true
+
+	case "MeshModelRelationship.count":
+		if e.complexity.MeshModelRelationship.Count == nil {
+			break
+		}
+
+		return e.complexity.MeshModelRelationship.Count(childComplexity), true
+
+	case "MeshModelRelationship.kind":
+		if e.complexity.MeshModelRelationship.Kind == nil {
+			break
+		}
+
+		return e.complexity.MeshModelRelationship.Kind(childComplexity), true
 
 	case "MeshModelSummary.components":
 		if e.complexity.MeshModelSummary.Components == nil {
@@ -2027,20 +2041,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.ResyncCluster(childComplexity, args["selector"].(*model.ReSyncActions), args["k8scontextID"].(string)), true
 
-	case "Relationships.kind":
-		if e.complexity.Relationships.Kind == nil {
-			break
-		}
-
-		return e.complexity.Relationships.Kind(childComplexity), true
-
-	case "Relationships.name":
-		if e.complexity.Relationships.Name == nil {
-			break
-		}
-
-		return e.complexity.Relationships.Name(childComplexity), true
-
 	case "Resource.count":
 		if e.complexity.Resource.Count == nil {
 			break
@@ -2808,18 +2808,18 @@ input MeshModelSummarySelector {
 
 # Type MeshModelComponentsSummary define the summary of a Mesh Model
 type MeshModelSummary {
-  components: [Components!]
-  relationships: [Relationships!]
+  components: [MeshModelComponent!]
+  relationships: [MeshModelRelationship!]
 }
 
-type Components {
+type MeshModelComponent {
   name: String!
   count: Int!
 }
 
-type Relationships {
-  name: String!
+type MeshModelRelationship {
   kind: String!
+  count: Int!
 }
 
 # ============== ROOT =================================
@@ -5231,94 +5231,6 @@ func (ec *executionContext) fieldContext_ClusterResources_resources(ctx context.
 				return ec.fieldContext_Resource_count(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Resource", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Components_name(ctx context.Context, field graphql.CollectedField, obj *model.Components) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Components_name(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Name, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Components_name(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Components",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Components_count(ctx context.Context, field graphql.CollectedField, obj *model.Components) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Components_count(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Count, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(int)
-	fc.Result = res
-	return ec.marshalNInt2int(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Components_count(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Components",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Int does not have child fields")
 		},
 	}
 	return fc, nil
@@ -8269,6 +8181,182 @@ func (ec *executionContext) fieldContext_Location_type(ctx context.Context, fiel
 	return fc, nil
 }
 
+func (ec *executionContext) _MeshModelComponent_name(ctx context.Context, field graphql.CollectedField, obj *model.MeshModelComponent) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_MeshModelComponent_name(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Name, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_MeshModelComponent_name(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "MeshModelComponent",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _MeshModelComponent_count(ctx context.Context, field graphql.CollectedField, obj *model.MeshModelComponent) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_MeshModelComponent_count(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Count, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_MeshModelComponent_count(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "MeshModelComponent",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _MeshModelRelationship_kind(ctx context.Context, field graphql.CollectedField, obj *model.MeshModelRelationship) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_MeshModelRelationship_kind(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Kind, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_MeshModelRelationship_kind(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "MeshModelRelationship",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _MeshModelRelationship_count(ctx context.Context, field graphql.CollectedField, obj *model.MeshModelRelationship) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_MeshModelRelationship_count(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Count, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_MeshModelRelationship_count(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "MeshModelRelationship",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _MeshModelSummary_components(ctx context.Context, field graphql.CollectedField, obj *model.MeshModelSummary) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_MeshModelSummary_components(ctx, field)
 	if err != nil {
@@ -8292,9 +8380,9 @@ func (ec *executionContext) _MeshModelSummary_components(ctx context.Context, fi
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.([]*model.Components)
+	res := resTmp.([]*model.MeshModelComponent)
 	fc.Result = res
-	return ec.marshalOComponents2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐComponentsᚄ(ctx, field.Selections, res)
+	return ec.marshalOMeshModelComponent2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐMeshModelComponentᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_MeshModelSummary_components(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -8306,11 +8394,11 @@ func (ec *executionContext) fieldContext_MeshModelSummary_components(ctx context
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "name":
-				return ec.fieldContext_Components_name(ctx, field)
+				return ec.fieldContext_MeshModelComponent_name(ctx, field)
 			case "count":
-				return ec.fieldContext_Components_count(ctx, field)
+				return ec.fieldContext_MeshModelComponent_count(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type Components", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type MeshModelComponent", field.Name)
 		},
 	}
 	return fc, nil
@@ -8339,9 +8427,9 @@ func (ec *executionContext) _MeshModelSummary_relationships(ctx context.Context,
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.([]*model.Relationships)
+	res := resTmp.([]*model.MeshModelRelationship)
 	fc.Result = res
-	return ec.marshalORelationships2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐRelationshipsᚄ(ctx, field.Selections, res)
+	return ec.marshalOMeshModelRelationship2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐMeshModelRelationshipᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_MeshModelSummary_relationships(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -8352,12 +8440,12 @@ func (ec *executionContext) fieldContext_MeshModelSummary_relationships(ctx cont
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "name":
-				return ec.fieldContext_Relationships_name(ctx, field)
 			case "kind":
-				return ec.fieldContext_Relationships_kind(ctx, field)
+				return ec.fieldContext_MeshModelRelationship_kind(ctx, field)
+			case "count":
+				return ec.fieldContext_MeshModelRelationship_count(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type Relationships", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type MeshModelRelationship", field.Name)
 		},
 	}
 	return fc, nil
@@ -13607,94 +13695,6 @@ func (ec *executionContext) fieldContext_Query___schema(ctx context.Context, fie
 	return fc, nil
 }
 
-func (ec *executionContext) _Relationships_name(ctx context.Context, field graphql.CollectedField, obj *model.Relationships) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Relationships_name(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Name, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Relationships_name(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Relationships",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Relationships_kind(ctx context.Context, field graphql.CollectedField, obj *model.Relationships) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Relationships_kind(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Kind, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Relationships_kind(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Relationships",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _Resource_kind(ctx context.Context, field graphql.CollectedField, obj *model.Resource) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Resource_kind(ctx, field)
 	if err != nil {
@@ -17190,41 +17190,6 @@ func (ec *executionContext) _ClusterResources(ctx context.Context, sel ast.Selec
 	return out
 }
 
-var componentsImplementors = []string{"Components"}
-
-func (ec *executionContext) _Components(ctx context.Context, sel ast.SelectionSet, obj *model.Components) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, componentsImplementors)
-	out := graphql.NewFieldSet(fields)
-	var invalids uint32
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("Components")
-		case "name":
-
-			out.Values[i] = ec._Components_name(ctx, field, obj)
-
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "count":
-
-			out.Values[i] = ec._Components_count(ctx, field, obj)
-
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch()
-	if invalids > 0 {
-		return graphql.Null
-	}
-	return out
-}
-
 var configurationPageImplementors = []string{"ConfigurationPage"}
 
 func (ec *executionContext) _ConfigurationPage(ctx context.Context, sel ast.SelectionSet, obj *model.ConfigurationPage) graphql.Marshaler {
@@ -17894,6 +17859,76 @@ func (ec *executionContext) _Location(ctx context.Context, sel ast.SelectionSet,
 
 			out.Values[i] = ec._Location_type(ctx, field, obj)
 
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var meshModelComponentImplementors = []string{"MeshModelComponent"}
+
+func (ec *executionContext) _MeshModelComponent(ctx context.Context, sel ast.SelectionSet, obj *model.MeshModelComponent) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, meshModelComponentImplementors)
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("MeshModelComponent")
+		case "name":
+
+			out.Values[i] = ec._MeshModelComponent_name(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "count":
+
+			out.Values[i] = ec._MeshModelComponent_count(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var meshModelRelationshipImplementors = []string{"MeshModelRelationship"}
+
+func (ec *executionContext) _MeshModelRelationship(ctx context.Context, sel ast.SelectionSet, obj *model.MeshModelRelationship) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, meshModelRelationshipImplementors)
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("MeshModelRelationship")
+		case "kind":
+
+			out.Values[i] = ec._MeshModelRelationship_kind(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "count":
+
+			out.Values[i] = ec._MeshModelRelationship_count(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -19291,41 +19326,6 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 	return out
 }
 
-var relationshipsImplementors = []string{"Relationships"}
-
-func (ec *executionContext) _Relationships(ctx context.Context, sel ast.SelectionSet, obj *model.Relationships) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, relationshipsImplementors)
-	out := graphql.NewFieldSet(fields)
-	var invalids uint32
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("Relationships")
-		case "name":
-
-			out.Values[i] = ec._Relationships_name(ctx, field, obj)
-
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "kind":
-
-			out.Values[i] = ec._Relationships_kind(ctx, field, obj)
-
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch()
-	if invalids > 0 {
-		return graphql.Null
-	}
-	return out
-}
-
 var resourceImplementors = []string{"Resource"}
 
 func (ec *executionContext) _Resource(ctx context.Context, sel ast.SelectionSet, obj *model.Resource) graphql.Marshaler {
@@ -19937,16 +19937,6 @@ func (ec *executionContext) marshalNClusterResources2ᚖgithubᚗcomᚋlayer5io�
 	return ec._ClusterResources(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNComponents2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐComponents(ctx context.Context, sel ast.SelectionSet, v *model.Components) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
-		}
-		return graphql.Null
-	}
-	return ec._Components(ctx, sel, v)
-}
-
 func (ec *executionContext) marshalNConfigurationPage2githubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐConfigurationPage(ctx context.Context, sel ast.SelectionSet, v model.ConfigurationPage) graphql.Marshaler {
 	return ec._ConfigurationPage(ctx, sel, &v)
 }
@@ -20304,6 +20294,26 @@ func (ec *executionContext) marshalNMap2map(ctx context.Context, sel ast.Selecti
 	return res
 }
 
+func (ec *executionContext) marshalNMeshModelComponent2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐMeshModelComponent(ctx context.Context, sel ast.SelectionSet, v *model.MeshModelComponent) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._MeshModelComponent(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNMeshModelRelationship2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐMeshModelRelationship(ctx context.Context, sel ast.SelectionSet, v *model.MeshModelRelationship) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._MeshModelRelationship(ctx, sel, v)
+}
+
 func (ec *executionContext) marshalNMeshModelSummary2githubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐMeshModelSummary(ctx context.Context, sel ast.SelectionSet, v model.MeshModelSummary) graphql.Marshaler {
 	return ec._MeshModelSummary(ctx, sel, &v)
 }
@@ -20588,16 +20598,6 @@ func (ec *executionContext) marshalNPerfPageResult2ᚖgithubᚗcomᚋlayer5ioᚋ
 		return graphql.Null
 	}
 	return ec._PerfPageResult(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalNRelationships2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐRelationships(ctx context.Context, sel ast.SelectionSet, v *model.Relationships) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
-		}
-		return graphql.Null
-	}
-	return ec._Relationships(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNResource2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐResourceᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Resource) graphql.Marshaler {
@@ -21037,53 +21037,6 @@ func (ec *executionContext) unmarshalOCatalogSelector2ᚖgithubᚗcomᚋlayer5io
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalOComponents2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐComponentsᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Components) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalNComponents2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐComponents(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-
-	for _, e := range ret {
-		if e == graphql.Null {
-			return graphql.Null
-		}
-	}
-
-	return ret
-}
-
 func (ec *executionContext) marshalOContainer2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐContainerᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Container) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
@@ -21301,6 +21254,100 @@ func (ec *executionContext) marshalOMap2map(ctx context.Context, sel ast.Selecti
 	}
 	res := graphql.MarshalMap(v)
 	return res
+}
+
+func (ec *executionContext) marshalOMeshModelComponent2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐMeshModelComponentᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.MeshModelComponent) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNMeshModelComponent2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐMeshModelComponent(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalOMeshModelRelationship2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐMeshModelRelationshipᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.MeshModelRelationship) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNMeshModelRelationship2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐMeshModelRelationship(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
 }
 
 func (ec *executionContext) unmarshalOMeshType2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐMeshType(ctx context.Context, v interface{}) (*model.MeshType, error) {
@@ -21553,53 +21600,6 @@ func (ec *executionContext) unmarshalOReSyncActions2ᚖgithubᚗcomᚋlayer5io�
 	}
 	res, err := ec.unmarshalInputReSyncActions(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalORelationships2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐRelationshipsᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Relationships) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalNRelationships2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐRelationships(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-
-	for _, e := range ret {
-		if e == graphql.Null {
-			return graphql.Null
-		}
-	}
-
-	return ret
 }
 
 func (ec *executionContext) unmarshalOServiceMeshFilter2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐServiceMeshFilter(ctx context.Context, v interface{}) (*model.ServiceMeshFilter, error) {
