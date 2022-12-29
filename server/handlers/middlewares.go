@@ -222,6 +222,7 @@ func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http
 		ctx := context.WithValue(req.Context(), models.TokenCtxKey, token)
 		ctx = context.WithValue(ctx, models.PerfObjCtxKey, prefObj)
 		ctx = context.WithValue(ctx, models.UserCtxKey, user)
+		ctx = context.WithValue(ctx, models.RegistryManagerKey, h.registryManager)
 
 		req1 := req.WithContext(ctx)
 		next(w, req1, prefObj, user, provider)

@@ -257,6 +257,8 @@ const (
 
 	MesheryControllerHandlersKey ContextKey = "mesherycontrollerhandlerskey"
 	MeshSyncDataHandlersKey      ContextKey = "meshsyncdatahandlerskey"
+
+	RegistryManagerKey ContextKey = "registrymanagerkey"
 )
 
 // IsSupported returns true if the given feature is listed as one of
