@@ -83,9 +83,6 @@ server-local: dep-check
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
 	go run main.go error.go
 
-run-fast:
-	## "DEPRECATED: This target is deprecated. Use `make server`.
-
 ## Build and run Meshery Server on your local machine (requires go${GOVERSION}).
 
 server-without-k8s: dep-check
@@ -217,17 +214,14 @@ run-ui-dev: ui
 ui:
 	cd ui; npm run $(UI_DEV_SCRIPT); cd ..;
 
-run-provider-ui-dev: ui-provider
 ## Run Meshery Provider UI  on your local machine. Listen for changes.
 ui-provider:
 	cd provider-ui; npm run dev; cd ..
 
-lint-ui: ui-lint
 ## Lint check Meshery UI and Provider UI on your local machine.
 ui-lint:
 	cd ui; npm run lint; cd ..
 
-lint-provider-ui: ui-provider-lint
 ## Lint check Meshery Provider UI on your local machine.
 ui-provider-lint:
 	cd provider-ui; npm run lint; cd ..
