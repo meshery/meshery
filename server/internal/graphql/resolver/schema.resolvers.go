@@ -140,7 +140,8 @@ func (r *queryResolver) GetClusterResources(ctx context.Context, k8scontextIDs [
 }
 
 func (r *queryResolver) GetMeshModelSummary(ctx context.Context, selector model.MeshModelSummarySelector) (*model.MeshModelSummary, error) {
-	panic(fmt.Errorf("not implemented"))
+	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	return r.getMeshModelSummary(ctx, provider, selector)
 }
 
 func (r *subscriptionResolver) ListenToAddonState(ctx context.Context, filter *model.ServiceMeshFilter) (<-chan []*model.AddonList, error) {
@@ -306,7 +307,8 @@ func (r *subscriptionResolver) SubscribeK8sContext(ctx context.Context, selector
 }
 
 func (r *subscriptionResolver) SubscribeMeshModelSummary(ctx context.Context, selector model.MeshModelSummarySelector) (<-chan *model.MeshModelSummary, error) {
-	panic(fmt.Errorf("not implemented"))
+	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	return r.subscribeMeshModelSummary(ctx, provider, selector)
 }
 
 // Mutation returns generated.MutationResolver implementation.
