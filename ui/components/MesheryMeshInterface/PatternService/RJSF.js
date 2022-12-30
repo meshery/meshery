@@ -13,6 +13,7 @@ import _ from "lodash"
 import CustomTextWidget from './RJSFCustomComponents/CustomTextWidget';
 import CustomDateTimeWidget from './RJSFCustomComponents/CustomDateTimeWidget';
 import ObjectFieldWithErrors from './RJSFCustomComponents/CustomObjectField';
+import { CustomTextTooltip } from './CustomTextTooltip';
 
 /*eslint-disable */
 class RJSFOverridenComponent extends Form {
@@ -91,7 +92,7 @@ function RJSFForm(props) {
         formData={data}
         validator={validator}
         templates={templates}
-        formContext={{ overrideFlag : override }}
+        formContext={{ overrideFlag : override, CustomTextTooltip : CustomTextTooltip }}
         uiSchema={schema.uiSchema}
         fields={{ ObjectField : ObjectFieldWithErrors }}
         widgets={{
