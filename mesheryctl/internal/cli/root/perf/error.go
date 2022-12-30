@@ -28,7 +28,7 @@ const (
 
 func ErrMesheryConfig(err error) error {
 	return errors.New(ErrMesheryConfigCode, errors.Alert, []string{},
-		[]string{"error processing config", err.Error(), formatErrorWithReference()}, []string{}, []string{})
+		[]string{"Error processing config", err.Error(), formatErrorWithReference()}, []string{}, []string{})
 }
 
 func ErrReadFilepath(err error) error {
@@ -38,27 +38,27 @@ func ErrReadFilepath(err error) error {
 
 func ErrNoProfileName() error {
 	return errors.New(ErrNoProfileNameCode, errors.Alert, []string{},
-		[]string{"please enter a profile-name", formatErrorWithReference()}, []string{}, []string{})
+		[]string{"Please enter a profile-name", formatErrorWithReference()}, []string{}, []string{})
 }
 
 func ErrNoTestURL() error {
 	return errors.New(ErrNoTestURLCode, errors.Alert, []string{},
-		[]string{"please enter a test URL", formatErrorWithReference()}, []string{}, []string{})
+		[]string{"Please enter a test URL", formatErrorWithReference()}, []string{}, []string{})
 }
 
 func ErrNotValidURL() error {
 	return errors.New(ErrNotValidURLCode, errors.Alert, []string{},
-		[]string{"please enter a valid test URL", formatErrorWithReference()}, []string{}, []string{})
+		[]string{"Please enter a valid test URL", formatErrorWithReference()}, []string{}, []string{})
 }
 
 func ErrFailMarshal(err error) error {
 	return errors.New(ErrFailMarshalCode, errors.Alert, []string{},
-		[]string{"failed to marshal values", err.Error(), formatErrorWithReference()}, []string{}, []string{})
+		[]string{"Failed to marshal values", err.Error(), formatErrorWithReference()}, []string{}, []string{})
 }
 
 func ErrAttachAuthToken(err error) error {
 	return errors.New(ErrAttachAuthTokenCode, errors.Alert, []string{err.Error()},
-		[]string{"authentication token not found. Run `mesheryctl system login` to generate a new token or supply a valid token with the `--token` flag.", formatErrorWithReference()}, []string{}, []string{})
+		[]string{"Authentication token not found. Run `mesheryctl system login` to generate a new token or supply a valid token with the `--token` flag.", formatErrorWithReference()}, []string{}, []string{})
 }
 
 func ErrFailRequest(err error) error {
@@ -83,17 +83,17 @@ func ErrFailReqStatus(statusCode int) error {
 
 func ErrFailUnmarshal(err error) error {
 	return errors.New(ErrFailUnmarshalCode, errors.Alert, []string{},
-		[]string{"failed to unmarshal response body", err.Error(), formatErrorWithReference()}, []string{}, []string{})
+		[]string{"Failed to process JSON response from server", err.Error(), formatErrorWithReference()}, []string{}, []string{})
 }
 
 func ErrNoProfileFound() error {
 	return errors.New(ErrNoProfileFoundCode, errors.Alert, []string{},
-		[]string{"no profiles found with given name", formatErrorWithReference()}, []string{}, []string{})
+		[]string{"No profiles found with given name", formatErrorWithReference()}, []string{}, []string{})
 }
 
 func ErrFailTestRun() error {
 	return errors.New(ErrFailTestRunCode, errors.Alert, []string{},
-		[]string{"failed to run test", formatErrorWithReference()}, []string{}, []string{})
+		[]string{"Failed to run test", formatErrorWithReference()}, []string{}, []string{})
 }
 
 func ErrInvalidOutputChoice() error {
@@ -102,12 +102,12 @@ func ErrInvalidOutputChoice() error {
 
 func ErrFailUnmarshalFile(err error) error {
 	return errors.New(ErrFailUnmarshalFileCode, errors.Alert, []string{},
-		[]string{"failed to unmarshal configuration file", err.Error(), formatErrorWithReference()}, []string{}, []string{})
+		[]string{"Failed to process configuration file", err.Error(), formatErrorWithReference()}, []string{}, []string{})
 }
 
 func ErrInvalidTestConfigFile() error {
 	return errors.New(ErrInvalidTestConfigFileCode, errors.Alert, []string{},
-		[]string{"invalid test configuration file", formatErrorWithReference()}, []string{"the test configuration is outdated or incorrect"}, []string{"see https://docs.meshery.io/guides/performance-management#running-performance-benchmarks-through-mesheryctl for a valid configuration file"})
+		[]string{"Invalid test configuration file", formatErrorWithReference()}, []string{"the test configuration is outdated or incorrect"}, []string{"see https://docs.meshery.io/guides/performance-management#running-performance-benchmarks-through-mesheryctl for a valid configuration file"})
 }
 
 func formatErrorWithReference() string {
