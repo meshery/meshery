@@ -10,7 +10,6 @@ import FullscreenIcon from '@material-ui/icons/Fullscreen';
 import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
 import SaveIcon from '@material-ui/icons/Save';
 import MUIDataTable from "mui-datatables";
-import CustomToolbarSelect from "./CustomToolbarSelect/CustomToolbarSelect";
 import { withSnackbar } from "notistack";
 import React, { useEffect, useRef, useState } from "react";
 import { UnControlled as CodeMirror } from "react-codemirror2";
@@ -751,9 +750,6 @@ function MesheryApplications({
   }
 
   const options = {
-    customToolbarSelect : (selectedRows, displayData, setSelectedRows) => (
-      <CustomToolbarSelect selectedRows={selectedRows} displayData={displayData} setSelectedRows={setSelectedRows} items={applications} deleteItem={deleteApplication} showModal={showModal}/>
-    ),
     filter : false,
     sort : !(user && user.user_id === "meshery"),
     search : !(user && user.user_id === "meshery"),
@@ -901,6 +897,7 @@ function MesheryApplications({
               setPage={setPage}
               selectedPage={page}
               UploadImport={UploadImport}
+              fetch={() => fetchApplications(page, pageSize, search, sortOrder)}
               types={types}
               handleAppDownload={handleAppDownload}
             />
@@ -918,7 +915,7 @@ function MesheryApplications({
         />
         <PromptComponent ref={modalRef} />
         <UploadImport open={importModal.open} handleClose={handleUploadImportClose} isApplication = {true} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler}
-          supportedTypes={types} configuration="Application"  />
+          supportedTypes={types} fetch={() => fetchApplications(page, pageSize, search, sortOrder)} configuration="Application"  />
       </NoSsr>
     </>
   );

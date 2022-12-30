@@ -19,7 +19,6 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import MUIDataTable from "mui-datatables";
-import CustomToolbarSelect from "./CustomToolbarSelect/CustomToolbarSelect";
 import Moment from "react-moment";
 import { withSnackbar } from "notistack";
 import CloseIcon from "@material-ui/icons/Close";
@@ -829,9 +828,6 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
   }
 
   const options = {
-    customToolbarSelect : (selectedRows, displayData, setSelectedRows) => (
-      <CustomToolbarSelect selectedRows={selectedRows} displayData={displayData} setSelectedRows={setSelectedRows} items={filters} deleteItem={deleteFilter} showModal={showmodal}/>
-    ),
     filter : false,
     sort : !(user && user.user_id === "meshery"),
     search : !(user && user.user_id === "meshery"),
@@ -980,6 +976,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
               setPage={setPage}
               selectedPage={page}
               UploadImport={UploadImport}
+              fetch={() => fetchFilters(page, pageSize, search, sortOrder)}
             />
         }
         <ConfirmationMsg
@@ -994,7 +991,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
           tab={modalOpen.deploy ? 0 : 1}
         />
         <PromptComponent ref={modalRef} />
-        <UploadImport open={importModal.open} handleClose={handleUploadImportClose} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} configuration="Filter" />
+        <UploadImport open={importModal.open} handleClose={handleUploadImportClose} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} fetch={() => fetchFilters(page, pageSize, search, sortOrder) } configuration="Filter" />
       </NoSsr>
     </>
   );
