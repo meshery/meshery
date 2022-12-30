@@ -480,7 +480,7 @@ function MesheryPatterns({
       setPage(result.configuration?.patterns?.page || 0);
       setPageSize(result.configuration?.patterns?.page_size || 0);
       setCount(result.configuration?.patterns?.total_count || 0);
-      handleSetPatterns(result.configuration?.patterns.patterns);
+      handleSetPatterns(result.configuration?.patterns?.patterns ?? [] );
       stillLoading(false);
     },
     {
