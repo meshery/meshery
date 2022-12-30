@@ -104,7 +104,7 @@ func (h *Handler) ExtensionsVersionHandler(w http.ResponseWriter, req *http.Requ
 func (h *Handler) ExtensionsHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	resp, err := provider.ExtensionProxy(req)
 	if err != nil {
-		http.Error(w, "Error", http.StatusInternalServerError)
+		http.Error(w, fmt.Sprintf("Error: %v", err.Error()), http.StatusInternalServerError)
 		return
 	}
 

@@ -1,8 +1,10 @@
 import React from "react";
 import { IconButton, InputAdornment, TextField, useTheme } from "@material-ui/core";
-import { EnlargedTextTooltip, EnlargedTextErrorTooltip } from "../EnlargedTextTooltip";
 import HelpOutlineIcon from "../../../../assets/icons/HelpOutlineIcon";
+import { CustomTextTooltip } from "../CustomTextTooltip";
 import ErrorOutlineIcon from "../../../../assets/icons/ErrorOutlineIcon";
+import { ERROR_COLOR } from "../../../../constants/colors";
+
 const BaseInput = (props) => {
   const additional = props.schema?.__additional_property; // check if the field is additional
   const name = (additional ? "Value" : props.label) // || props.id?.split('_')[-1].trim()
@@ -34,25 +36,28 @@ const BaseInput = (props) => {
             style : { padding : "0px 0px 0px 0px", },
             endAdornment : (<InputAdornment position="start">
               {props.rawErrors?.length > 0 && (
-                <EnlargedTextErrorTooltip title={
-                  <div>
-                    {props.rawErrors?.map((error, index) => (
-                      <div key={index}>{error}</div>
-                    ))}
-                  </div>
+                <CustomTextTooltip
+                  backgroundColor={ERROR_COLOR}
+                  flag={props?.formContext?.overrideFlag}
+                  title={
+                    <div>
+                      {props.rawErrors?.map((error, index) => (
+                        <div key={index}>{error}</div>
+                      ))}
+                    </div>
 
-                }>
+                  }>
                   <IconButton component="span" size="small">
                     <ErrorOutlineIcon width="14px" height="14px" fill="#B32700" style={{ verticalAlign : "middle" }} />
                   </IconButton>
-                </EnlargedTextErrorTooltip>
+                </CustomTextTooltip>
               )}
               {props.schema?.description && (
-                <EnlargedTextTooltip title={props.schema?.description}>
+                <CustomTextTooltip backgroundColor="#3C494F" flag={props?.formContext?.overrideFlag} title={props.schema?.description}>
                   <IconButton component="span" size="small">
                     <HelpOutlineIcon width="14px" height="14px" fill={theme.palette.type === 'dark' ? "white" : "black"} style={{ verticalAlign : "middle" }} />
                   </IconButton>
-                </EnlargedTextTooltip>
+                </CustomTextTooltip>
               )}
             </InputAdornment>),
           }} />

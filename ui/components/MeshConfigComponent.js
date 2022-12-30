@@ -72,7 +72,8 @@ const styles = (theme) => ({
   FlushBtn : {
     margin : theme.spacing(0.5),
     padding : theme.spacing(1),
-    borderRadius : 5
+    borderRadius : 5,
+    pointerEvents : "auto"
   },
   menu : {
     display : 'flex',
@@ -81,6 +82,19 @@ const styles = (theme) => ({
   table : {
     marginTop : theme.spacing(1.5)
   },
+  uploadCluster : {
+    overflow : "hidden"
+  },
+  MenuItem : {
+    backgroundColor : theme.palette.common.white,
+    "&:hover" : {
+      backgroundColor : theme.palette.common.white
+    },
+    pointerEvents : "none"
+  },
+  OperatorSwitch : {
+    pointerEvents : "auto"
+  }
 });
 
 const ENABLED = "ENABLED"
@@ -559,23 +573,28 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
                 open={showMenu[tableMeta.rowIndex]}
                 onClose={() => handleMenuClose(tableMeta.rowIndex)}
               >
-                <Button
-                  type="submit"
-                  variant="contained"
-                  color="primary"
-                  size="large"
-                  onClick={handleFlushMeshSync(tableMeta.rowIndex)}
-                  className={classes.FlushBtn}
-                  data-cy="btnResetDatabase"
-                >
-                  <Typography> Flush MeshSync </Typography>
-                </Button>
-                <MenuItem>
+                <MenuItem
+                  className={classes.MenuItem}>
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                    size="large"
+                    onClick={handleFlushMeshSync(tableMeta.rowIndex)}
+                    className={classes.FlushBtn}
+                    data-cy="btnResetDatabase"
+                  >
+                    <Typography> Flush MeshSync </Typography>
+                  </Button>
+                </MenuItem>
+                <MenuItem
+                  className={classes.MenuItem}>
                   <Switch
                     checked={getOperatorStatus(contexts[tableMeta.rowIndex].id)?.operatorState}
                     onClick={(e) => handleOperatorSwitch(tableMeta.rowIndex, e.target.checked)}
                     name="OperatorSwitch"
                     color="primary"
+                    className={classes.OperatorSwitch}
                   />
                   Operator
                 </MenuItem>

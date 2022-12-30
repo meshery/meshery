@@ -1,14 +1,18 @@
 import React from 'react';
 import Grid from '@material-ui/core/Grid';
 import { canExpand } from '@rjsf/utils';
-import { Box, CssBaseline, IconButton, Typography, useTheme, withStyles } from '@material-ui/core';
+import { CssBaseline,useTheme, withStyles } from '@material-ui/core';
 import AddIcon from '../../../../assets/icons/AddIcon';
-import { EnlargedTextTooltip } from '../EnlargedTextTooltip';
+import { Box, IconButton, Typography } from '@material-ui/core';
+import { CustomTextTooltip } from '../CustomTextTooltip';
 import HelpOutlineIcon from '../../../../assets/icons/HelpOutlineIcon';
 import ExpandMoreIcon from '../../../../assets/icons/ExpandMoreIcon';
 import ExpandLessIcon from '../../../../assets/icons/ExpandLessIcon'
 import ErrorOutlineIcon from '../../../../assets/icons/ErrorOutlineIcon';
+import { ERROR_COLOR } from '../../../../constants/colors';
 const styles = (theme) => ({
+
+
   objectFieldGrid : {
     // paddingLeft: "0.6rem",
     padding : ".5rem",
@@ -86,19 +90,19 @@ const ObjectFieldTemplate = ({
           <Typography variant="body1" className={classes.typography} style={{ fontWeight : "bold", display : "inline" }}>{title.charAt(0).toUpperCase() + title.slice(1)}{" "}
           </Typography>
           {description &&
-            <EnlargedTextTooltip title={description}>
+            <CustomTextTooltip backgroundColor="#3C494F" title={description}>
               <IconButton disableTouchRipple="true" disableRipple="true" component="span" size="small">
                 <HelpOutlineIcon width="14px" height="14px" fill={theme.palette.type === 'dark' ? "white" : "black"} style={{ marginLeft : "4px", verticalAlign : "middle" }} />
               </IconButton>
-            </EnlargedTextTooltip>}
+            </CustomTextTooltip>}
           {rawErrors?.length &&
-            <EnlargedTextTooltip title={rawErrors?.map((error, index) => (
+            <CustomTextTooltip backgroundColor={ERROR_COLOR} title={rawErrors?.map((error, index) => (
               <div key={index}>{error}</div>
             ))}>
               <IconButton disableTouchRipple="true" disableRipple="true" component="span" size="small">
                 <ErrorOutlineIcon width="14px" height="14px" fill="red" style={{ marginLeft : "4px", verticalAlign : "middle" }} />
               </IconButton>
-            </EnlargedTextTooltip>}
+            </CustomTextTooltip>}
         </Grid>
 
 
