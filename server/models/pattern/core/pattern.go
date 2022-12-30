@@ -274,6 +274,13 @@ func NewPatternFileFromCytoscapeJSJSON(name string, byt []byte) (Pattern, error)
 		if err != nil {
 			return err
 		}
+
+		// clean some reedundant fields from the settings
+		delete(svc.Settings, "name")
+		delete(svc.Settings, "namespace")
+		delete(svc.Settings, "annotations")
+		delete(svc.Settings, "labels")
+
 		//Only make the name unique when duplicates are encountered. This allows clients to preserve and propagate the unique name they want to give to their workload
 		if countDuplicates[svc.Name] > 1 {
 			//set appropriate unique service name
