@@ -196,7 +196,7 @@ func (p *Pattern) ToYAML() ([]byte, error) {
 	return yaml.Marshal(p)
 }
 
-func addNameNamespaceAnnotationLabelsInSvc(svc Service) error {
+func addNameNamespaceAnnotationLabelsInSvc(svc *Service) error {
 	var ok bool
 	svc.Name, ok = svc.Settings["name"].(string)
 	svc.Namespace, _ = svc.Settings["namespace"].(string)
@@ -205,21 +205,22 @@ func addNameNamespaceAnnotationLabelsInSvc(svc Service) error {
 	}
 
 	if svc.Settings["labels"] != nil {
-		labels := make(map[string]string)
-		for k, v := range svc.Settings["labels"].(map[string]interface{}) {
-			labels[k] = v.(string)
+		if svc.Labels == nil {
+			svc.Labels = make(map[string]string)
 		}
-		svc.Labels = labels
+		for k, v := range svc.Settings["labels"].(map[string]interface{}) {
+			svc.Labels[k] = v.(string)
+		}
 	}
 
 	if svc.Settings["annotations"] != nil {
-		annotations := make(map[string]string)
-		for k, v := range svc.Settings["annotations"].(map[string]interface{}) {
-			annotations[k] = v.(string)
+		if svc.Annotations == nil {
+			svc.Annotations = make(map[string]string)
 		}
-		svc.Annotations = annotations
+		for k, v := range svc.Settings["annotations"].(map[string]interface{}) {
+			svc.Annotations[k] = v.(string)
+		}
 	}
-
 	return nil
 }
 
@@ -270,16 +271,10 @@ func NewPatternFileFromCytoscapeJSJSON(name string, byt []byte) (Pattern, error)
 			}
 		}
 
-		err := addNameNamespaceAnnotationLabelsInSvc(svc)
+		err := addNameNamespaceAnnotationLabelsInSvc(&svc)
 		if err != nil {
 			return err
 		}
-
-		// clean some reedundant fields from the settings
-		delete(svc.Settings, "name")
-		delete(svc.Settings, "namespace")
-		delete(svc.Settings, "annotations")
-		delete(svc.Settings, "labels")
 
 		//Only make the name unique when duplicates are encountered. This allows clients to preserve and propagate the unique name they want to give to their workload
 		if countDuplicates[svc.Name] > 1 {
@@ -289,6 +284,13 @@ func NewPatternFileFromCytoscapeJSJSON(name string, byt []byte) (Pattern, error)
 		}
 		eleToSvc[ele.Data.ID] = svc.Name //will be used while adding depends-on
 		pf.Services[svc.Name] = &svc
+
+		// clean some redundant fields from the settings
+		delete(svc.Settings, "name")
+		delete(svc.Settings, "namespace")
+		delete(svc.Settings, "annotations")
+		delete(svc.Settings, "labels")
+
 		return nil
 	})
 	if err == nil {
@@ -337,8 +339,6 @@ func processCytoElementsWithPattern(eles []cytoscapejs.Element, pf *Pattern, cal
 		if err != nil {
 			return fmt.Errorf("failed to serialize service from the metadata in the scratch")
 		}
-
-		fmt.Println("svc****", svcByt)
 
 		// Unmarshal the JSON into a service
 		svc := Service{
