@@ -196,6 +196,33 @@ func (p *Pattern) ToYAML() ([]byte, error) {
 	return yaml.Marshal(p)
 }
 
+func addNameNamespaceAnnotationLabelsInSvc(svc Service) error {
+	var ok bool
+	svc.Name, ok = svc.Settings["name"].(string)
+	svc.Namespace, _ = svc.Settings["namespace"].(string)
+	if !ok {
+		return fmt.Errorf("required service setting: \"name\" missing")
+	}
+
+	if svc.Settings["labels"] != nil {
+		labels := make(map[string]string)
+		for k, v := range svc.Settings["labels"].(map[string]interface{}) {
+			labels[k] = v.(string)
+		}
+		svc.Labels = labels
+	}
+
+	if svc.Settings["annotations"] != nil {
+		annotations := make(map[string]string)
+		for k, v := range svc.Settings["annotations"].(map[string]interface{}) {
+			annotations[k] = v.(string)
+		}
+		svc.Annotations = annotations
+	}
+
+	return nil
+}
+
 // NewPatternFileFromCytoscapeJSJSON takes in CytoscapeJS JSON
 // and creates a PatternFile from it
 func NewPatternFileFromCytoscapeJSJSON(name string, byt []byte) (Pattern, error) {
@@ -242,10 +269,10 @@ func NewPatternFileFromCytoscapeJSJSON(name string, byt []byte) (Pattern, error)
 				dependsOnMap[elementID] = append(dependsOnMap[elementID], parentID)
 			}
 		}
-		svc.Name, ok = svc.Settings["name"].(string)
-		svc.Namespace, _ = svc.Settings["namespace"].(string)
-		if !ok {
-			return fmt.Errorf("required service setting: \"name\" missing")
+
+		err := addNameNamespaceAnnotationLabelsInSvc(svc)
+		if err != nil {
+			return err
 		}
 		//Only make the name unique when duplicates are encountered. This allows clients to preserve and propagate the unique name they want to give to their workload
 		if countDuplicates[svc.Name] > 1 {
@@ -303,6 +330,8 @@ func processCytoElementsWithPattern(eles []cytoscapejs.Element, pf *Pattern, cal
 		if err != nil {
 			return fmt.Errorf("failed to serialize service from the metadata in the scratch")
 		}
+
+		fmt.Println("svc****", svcByt)
 
 		// Unmarshal the JSON into a service
 		svc := Service{
