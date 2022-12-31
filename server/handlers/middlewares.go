@@ -32,10 +32,6 @@ func (h *Handler) ProviderMiddleware(next http.Handler) http.Handler {
 		if providerName != "" {
 			provider = h.config.Providers[providerName]
 		}
-		if provider == nil {
-			http.Redirect(w, req, "/provider", http.StatusFound)
-			return
-		}
 		ctx := context.WithValue(req.Context(), models.ProviderCtxKey, provider) // nolint
 		req1 := req.WithContext(ctx)
 		next.ServeHTTP(w, req1)
@@ -47,12 +43,15 @@ func (h *Handler) ProviderMiddleware(next http.Handler) http.Handler {
 func (h *Handler) AuthMiddleware(next http.Handler, auth models.AuthenticationMechanism) http.Handler {
 	fn := func(w http.ResponseWriter, req *http.Request) {
 		providerH := h.Provider
+		if auth == models.NoAuth && providerH != "" {
+			auth = models.ProviderAuth //If a provider is enforced then use provider authentication even in case of NoAuth
+		}
 		switch auth {
-		case models.NoAuth:
-			if providerH != "" {
-				w.WriteHeader(http.StatusUnauthorized)
-				return
-			}
+		// case models.NoAuth:
+		// 	if providerH != "" {
+		// 		w.WriteHeader(http.StatusUnauthorized)
+		// 		return
+		// 	}
 		case models.ProviderAuth:
 			providerI := req.Context().Value(models.ProviderCtxKey)
 			// logrus.Debugf("models.ProviderCtxKey %s", models.ProviderCtxKey)
@@ -61,7 +60,7 @@ func (h *Handler) AuthMiddleware(next http.Handler, auth models.AuthenticationMe
 				http.Redirect(w, req, "/provider", http.StatusFound)
 				return
 			}
-			if providerH != "" && providerH != string(provider.Name()) {
+			if providerH != "" && providerH != provider.Name() {
 				w.WriteHeader(http.StatusUnauthorized)
 				return
 			}
@@ -203,8 +202,8 @@ func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http
 		if err != nil {
 			err := provider.Logout(w, req)
 			if err != nil {
-				logrus.Errorf("Error: unable to logout: %v", err)
-				http.Error(w, "unable to logout", http.StatusInternalServerError)
+				logrus.Errorf("Error performing logout: %v", err.Error())
+				provider.HandleUnAuthenticated(w, req)
 				return
 			}
 			logrus.Errorf("Error: unable to get session: %v", err)

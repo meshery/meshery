@@ -1,8 +1,8 @@
 ---
 layout: default
-title: "Meshery Contributing Guidelines"
+title: "Meshery CLI Contributing Guidelines"
 abstract: "Design principles and code conventions."
-permalink: project/contributing/contributing-guide
+permalink: project/contributing/contributing-cli-guide
 type: project
 language: en
 category: contributing
@@ -24,11 +24,7 @@ Commands should be designed in such a way that they are intuitive. Users should 
 
 For example, `mesheryctl pattern apply -f <pattern name>` requires no further clarification as it is evident that the command will apply the pattern specified.
 
-Consistency is key when designing intuitive interfaces. Although `mesheryctl perf run -f <performance profile name>` may sound more intuitive, users who are experienced in using the CLI will prefer the consistant verb `apply` over `run`.
-
-This will also ensure a consistent command language making memorizing easier.
-
-Consistency should also be enforced when chaining commands and using flags.
+Consistency is key when designing intuitive interfaces. Although `mesheryctl perf run -f <performance profile name>` may sound more intuitive, users who are experienced in using the CLI will prefer the consistant verb `apply` over `run`. This will also ensure a consistent command language making memorizing easier. Consistency should also be enforced when chaining commands and using flags.
 
 For example, if `mesheryctl pattern` has a `list` and `view` command and has an `-all` and `--output` flag, then, similar commands like `mesheryctl perf` should also support the same commands and flags and provide a consistent user experience.
 
@@ -55,7 +51,24 @@ Command line interfaces offer less context to the user, which makes them inheren
 
 ## Process
 
-When designing for the CLI, consider:
+### Contributor-facing Design Artifacts
+
+The following table outlines a set of design artifacts produced in the process of creating and implementing functional specifications.
+
+| **Document** | **Purpose** |
+| [Meshery CLI Commands & Documentation](https://docs.google.com/document/d/1xRlFpElRmybJ3WacgPKXgCSiQ2poJl3iCCV1dAalf0k/edit#) | Overarching index of all mesheryctl commands |
+| [Meshery CLI Design Specification](https://docs.google.com/document/d/1Iw88bZEL_fWeajxHh0BgmhuXGKl455P4CF-vm1yCkU8/edit#) - See [Creating a Functional Specification](https://docs.google.com/document/d/1RP3IWLc-MiQS-QYasqCoVuCH7--G87p5ezE5f_nOzB8/edit) | Breakout of individual command purpose, syntax, flags, and behavior. Links to these separate, breakout documents should be pasted into the Meshery CLI Commands & Documentation doc. |
+| [Mesheryctl Command Matrix](https://docs.google.com/spreadsheets/d/1q63sIGAuCnIeDs8PeM-0BAkNj8BBgPUXhLbe1Y-318o/edit#gid=0) | A spreadsheet of all commands, subcommands and flags with an indication of their implementation status would be most helpful for both documentation and planning purposes. |
+
+### User-facing Documentation Artifacts
+
+The following table outlines a set of design artifacts produced in the process of creating and implementing functional specifications.
+
+| **Document** | **Purpose** |
+| [mesheryctl Command Reference](https://docs.meshery.io/reference/mesheryctl) | Overarching index in the form of succinct, categorized, and tabularly displayed reference of all commands and their syntax with simple example usage. |
+| `mesheryctl <name of command>` | Breakout of individual command purpose, syntax, flags, and behavior. Links to these separate, breakout documents should be available from the mesheryctl Command Reference. |
+
+## When designing for the CLI, consider...
 
 ### What the command does
 
@@ -79,12 +92,13 @@ What should be outputted normally and what falls into debug logs?
 
 You will need to provide a short and long description of the command for the help pages and also for the Meshery Documentation.
 
-## Creating design specifications
+## Proposing new features / creating a design specification
 
 If you are working on a new command or adding a new feature on an existing command, it is recommended to setup a design spec so that other contributors can weigh in on the design before you start to code.
 
-Broader features should have a design spec made in Google Doc using [this template](https://drive.google.com/drive/folders/1KHtJc4ToklBQ_UUsDgAL2sVZNhOQGzbh).
+Broader features should have a design specification created in the form of a Google Doc. Refer to "[Process: Creating a Functional Specification or other Document](https://docs.google.com/document/d/1RP3IWLc-MiQS-QYasqCoVuCH7--G87p5ezE5f_nOzB8/edit?usp=sharing)", which has detailed information on creating a design specification.
 
 For small changes, communicating over the [issue tracker](https://github.com/layer5io/meshery/issues) or the [discussions](https://github.com/layer5io/meshery/discussions) will be helpful.
 
 {% include suggested-reading.html %}
+

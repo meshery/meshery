@@ -226,21 +226,24 @@ func main() {
 				}
 			}
 		}(compChan)
-		path, err := filepath.Abs("../output")
+		path, err := filepath.Abs("../meshmodel/components")
 		if err != nil {
 			fmt.Println("err: ", err.Error())
 			return
 		}
 		_ = filepath.Walk(path, func(path string, info fs.FileInfo, err error) error {
+			if info == nil {
+				return nil
+			}
 			if !info.IsDir() {
 				var comp v1alpha1.ComponentDefinition
 				byt, err := os.ReadFile(path)
 				if err != nil {
-					return err
+					return nil
 				}
 				err = json.Unmarshal(byt, &comp)
 				if err != nil {
-					return err
+					return nil
 				}
 				compChan <- comp
 			}
@@ -248,6 +251,20 @@ func main() {
 		})
 		done <- true
 	}()
+	// seed relationships
+	go func() {
+		staticRelationshipsPath, err := filepath.Abs("../meshmodel/relationships")
+		if err != nil {
+			fmt.Println("Error registering relationships: ", err.Error())
+			return
+		}
+		err = handlers.RegisterStaticMeshmodelRelationships(*regManager, staticRelationshipsPath)
+		if err != nil {
+			fmt.Println("Error registering relationships: ", err.Error())
+			return
+		}
+	}()
+
 	lProv.SeedContent(log)
 	provs[lProv.Name()] = lProv
 

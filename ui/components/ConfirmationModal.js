@@ -102,8 +102,7 @@ const styles = (theme) => ({
   },
   actions : {
     display : 'flex',
-    justifyContent : 'space-evenly',
-    marginTop : theme.spacing(-3)
+    justifyContent : 'space-evenly'
   },
   all : {
     display : "table"
@@ -113,7 +112,10 @@ const styles = (theme) => ({
     flexWrap : "wrap"
   },
   tabs : {
-    marginLeft : 0
+    marginLeft : 0,
+    "& .MuiTab-root.Mui-selected" : {
+      backgroundColor : '#D9D9D9'
+    }
   },
   tabLabel : {
     tabLabel : {
@@ -280,15 +282,18 @@ function ConfirmationMsg(props) {
           >
             {!!validationBody &&
             <Tab
+              data-cy="validate-btn-modal"
               className={classes.tab}
               label={<div style={{ display : "flex" }}> <DoneIcon style={{ margin : "2px" }}  fontSize="small"/><span className={classes.tabLabel}>Validate</span> </div>
               }
             />}
             <Tab
+              data-cy="Undeploy-btn-modal"
               className={classes.tab}
               label={<div style={{ display : "flex" }}> <div style={{ margin : "2px" }}> <UndeployIcon fill="rgba(0, 0, 0, 0.54)" width="20" height="20"/> </div> <span className={classes.tabLabel}>Undeploy</span> </div>}
             />
             <Tab
+              data-cy="deploy-btn-modal"
               className={classes.tab}
               label={<div style={{ display : "flex" }}> <DoneAllIcon style={{ margin : "2px" }} fontSize="small" /> <span className={classes.tabLabel}>Deploy</span> </div>}
             />

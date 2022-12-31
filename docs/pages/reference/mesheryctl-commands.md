@@ -8,8 +8,8 @@ redirect_from:
   - reference/mesheryctl/commands
   - reference/mesheryctl/
 type: Reference
-
 ---
+
 ## Categories and Command Structure
 
 Meshery CLI commands are categorized by function, which are:
@@ -17,11 +17,10 @@ Meshery CLI commands are categorized by function, which are:
 - `mesheryctl` - Global flags and CLI configuration
 - `mesheryctl system` - Meshery Lifecycle and Troubleshooting
 - `mesheryctl mesh` - Service Mesh Lifecycle & Configuration Management: provisioning and configuration best practices
-- `mesheryctl perf` -  Service Mesh Performance Management: Workload and service mesh performance characterization
+- `mesheryctl perf` - Service Mesh Performance Management: Workload and service mesh performance characterization
 - `mesheryctl pattern` - Service Mesh Pattern Configuration & Management: Service mesh patterns and Open Application Model integration
 - `mesheryctl app` - Service Mesh Application Management
 - `mesheryctl filter` - Data Plane Intelligence: Registry and configuration of WebAssembly filters for Envoy (experimental feature)
-
 
 ## Global Commands and Flags
 
@@ -390,7 +389,6 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
 </thead>
 </table>
 
-
 ## Service Mesh Lifecycle and Configuration Management
 
 <table>
@@ -657,3 +655,5 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
       {% endfor %}
 </thead>
 </table>
+{% include related-discussions.html tag="mesheryctl" %}
+

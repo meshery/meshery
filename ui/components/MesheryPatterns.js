@@ -10,6 +10,7 @@ import FullscreenIcon from '@material-ui/icons/Fullscreen';
 import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
 import SaveIcon from '@material-ui/icons/Save';
 import MUIDataTable from "mui-datatables";
+import CustomToolbarSelect from "./MesheryPatterns/CustomToolbarSelect";
 import { withSnackbar } from "notistack";
 import AddIcon from "@material-ui/icons/AddCircleOutline";
 import React, { useContext, useEffect, useRef, useState } from "react";
@@ -479,7 +480,7 @@ function MesheryPatterns({
       setPage(result.configuration?.patterns?.page || 0);
       setPageSize(result.configuration?.patterns?.page_size || 0);
       setCount(result.configuration?.patterns?.total_count || 0);
-      handleSetPatterns(result.configuration?.patterns.patterns);
+      handleSetPatterns(result.configuration?.patterns?.patterns ?? [] );
       stillLoading(false);
     },
     {
@@ -959,32 +960,31 @@ function MesheryPatterns({
                 >
                   <Avatar src="/static/img/pattwhite.svg" className={classes.iconPatt} imgProps={{ height : "16px", width : "16px" }} />
                 </IconButton> }
-              {/*</Tooltip> */}
-              <IconButton
+              <TooltipIcon
                 title="Validate"
                 onClick={(e) => handleVerify(e, rowData.pattern_file, rowData.id)}
               >
                 <DoneIcon data-cy="verify-button" />
-              </IconButton>
-              <IconButton
+              </TooltipIcon>
+
+              <TooltipIcon
                 title="Undeploy"
                 onClick={(e) => handleModalOpen(e, rowData.pattern_file, rowData.name, patternErrors.get(rowData.id), ACTIONS.UNDEPLOY)}
               >
                 <UndeployIcon fill="#8F1F00" data-cy="undeploy-button" />
-              </IconButton>
-              <IconButton
+              </TooltipIcon>
+              <TooltipIcon
                 title="Deploy"
                 onClick={(e) => handleModalOpen(e, rowData.pattern_file, rowData.name, patternErrors.get(rowData.id), ACTIONS.DEPLOY)}
               >
                 <DoneAllIcon data-cy="deploy-button" />
-              </IconButton>
-              <IconButton
+              </TooltipIcon>
+              <TooltipIcon
                 title="Publish"
                 onClick={(ev) => handlePublishModal(ev,rowData)}
-
               >
                 <PublicIcon fill="#8F1F00" data-cy="publish-button" />
-              </IconButton>
+              </TooltipIcon>
             </>
           );
         },
@@ -1045,6 +1045,9 @@ function MesheryPatterns({
   }
 
   const options = {
+    customToolbarSelect : (selectedRows, displayData, setSelectedRows) => (
+      <CustomToolbarSelect selectedRows={selectedRows} displayData={displayData} setSelectedRows={setSelectedRows} patterns={patterns} deletePatterns={deletePatterns} showModal={showModal}/>
+    ),
     filter : false,
     sort : !(user && user.user_id === "meshery"),
     search : !(user && user.user_id === "meshery"),
