@@ -500,7 +500,7 @@ function MesheryApplications({
         () => {
           console.log("ApplicationFile API", `/api/application/${source_type}`);
           updateProgress({ showProgress : false });
-          enqueueSnackbar(`"${name}" Application Updated Successfully`, {
+          enqueueSnackbar(`"${name}" Application updated`, {
             variant : "success",
             action : function Action(key) {
               return (
