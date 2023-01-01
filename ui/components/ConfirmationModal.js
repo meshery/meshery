@@ -282,6 +282,7 @@ function ConfirmationMsg(props) {
           >
             {!!validationBody &&
             <Tab
+              data-cy="validate-btn-modal"
               className={classes.tab}
               label={<div style={{ display : "flex" }}
                 onClick={(e) => handleTabValChange(e,0)}
@@ -289,12 +290,14 @@ function ConfirmationMsg(props) {
               }
             />}
             <Tab
+              data-cy="Undeploy-btn-modal"
               className={classes.tab}
               label={<div style={{ display : "flex" }}
                 onClick={(e) => handleTabValChange(e,1)}
               > <div style={{ margin : "2px" }}> <UndeployIcon fill="rgba(0, 0, 0, 0.54)" width="20" height="20"/> </div> <span className={classes.tabLabel}>Undeploy</span> </div>}
             />
             <Tab
+              data-cy="deploy-btn-modal"
               className={classes.tab}
               label={<div style={{ display : "flex" }}
                 onClick={(e) => handleTabValChange(e,2)}

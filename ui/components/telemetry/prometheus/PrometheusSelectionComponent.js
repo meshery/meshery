@@ -131,7 +131,7 @@ class PrometheusSelectionComponent extends Component {
         },
         (result) => {
           this.props.updateProgress({ showProgress : false });
-          var panels = result.panels.filter((panel) => panel.targets !== undefined && panel.datasource === 'Prometheus');
+          var panels = result.panels.filter((panel) => panel.targets !== undefined && panel.datasource.type.toLowerCase() === 'prometheus');
           if (typeof result !== 'undefined') {
             this.setState({
               grafanaBoardObject : result,
