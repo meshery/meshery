@@ -13,6 +13,7 @@ import _ from "lodash"
 import CustomTextWidget from './RJSFCustomComponents/CustomTextWidget';
 import CustomDateTimeWidget from './RJSFCustomComponents/CustomDateTimeWidget';
 import ObjectFieldWithErrors from './RJSFCustomComponents/CustomObjectField';
+import { CustomTextTooltip } from './CustomTextTooltip';
 
 /*eslint-disable */
 class RJSFOverridenComponent extends Form {
@@ -60,7 +61,8 @@ function RJSFForm(props) {
     LoadingComponent,
     ErrorList,
     // prop should be present in order for the cloned element to override this property
-    transformErrors
+    transformErrors,
+    override,
   } = props;
   const templates={
     ArrayFieldTemplate,
@@ -90,6 +92,7 @@ function RJSFForm(props) {
         formData={data}
         validator={validator}
         templates={templates}
+        formContext={{ overrideFlag : override, CustomTextTooltip : CustomTextTooltip }}
         uiSchema={schema.uiSchema}
         fields={{ ObjectField : ObjectFieldWithErrors }}
         widgets={{

@@ -639,7 +639,7 @@ func (h *Handler) GetMesheryApplicationTypesHandler(
 //
 // Get the application source-content
 // responses:
-//  200: applicationFileParamsWrapper
+//  200
 
 // GetMesheryApplicationHandler fetched the application with the given id
 func (h *Handler) GetMesheryApplicationSourceHandler(

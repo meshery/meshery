@@ -388,7 +388,6 @@ func NewPatternFileFromK8sManifest(data string, ignoreErrors bool) (Pattern, err
 }
 
 func createPatternServiceFromK8s(manifest map[string]interface{}) (string, Service, error) {
-
 	apiVersion, _ := manifest["apiVersion"].(string)
 	kind, _ := manifest["kind"].(string)
 	metadata, _ := manifest["metadata"].(map[string]interface{})
