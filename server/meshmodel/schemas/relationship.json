@@ -1,0 +1,55 @@
+{
+  "$id": "http://schema.meshery.io/relationships.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "additionalProperties": false,
+  "definitions": {
+    "io.meshery.core.Relationship": {
+      "description": "Relationships offer context-awareness as to how a particular Component is related to the other Component. There are many types of Relationships.",
+      "type": "string",
+      "pattern": "^[a-zA-Z_][a-zA-Z0-9_]*$"
+    },
+  },
+}
+apiVersion: core.meshery.io/v1alpha1
+kind: RelationshipDefinition
+metadata:
+  name: Network Edge Relationship
+  description: Network edge relationship
+  type: string
+sub-type: string
+status:
+spec:
+  schematic:
+  cue: |
+"selectors": {
+  "description": "Optional from and component kind selectors to limit the relationship to a subset of potential matches.",
+  "type": ["array", "null"],
+    "items": {
+      "type": "object",
+      "properties": {
+      "role": {
+        "type": "string"
+      },
+      "label": {
+                  "type": ["string", "null"]
+                },
+                "field": {
+                  "type": ["string", "null"]
+                }
+              },
+              "required": ["role"],
+              "additionalProperties": false
+            }
+          }  
+  "from": {
+  "kind": ["string", "null"]
+  },
+  fromKind: # (assume !* when null)
+    model: (assume !* when null)
+    version: (assume * when null)
+  to: [self | other]
+  toKind:
+    # (assume * when null)
+    # (a package can reference components from another package)
+    model: (assume * when null)
+    version: (assume * when null)
