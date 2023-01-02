@@ -26,8 +26,8 @@
   <img src="https://img.shields.io/twitter/follow/mesheryio.svg?label=Follow+Meshery&style=social" /></a>
 <a href="https://github.com/meshery/meshery/releases" alt="Meshery Downloads">
   <img src="https://img.shields.io/github/downloads/meshery/meshery/total" /></a>  
-<a href="https://app.fossa.com/reports/a433093d-5e24-45d6-8063-1ce2a62c205a" alt="License Scan Report">
-  <img src="https://app.fossa.io/api/projects/git%2Bgithub.com%2FAthari%2FCsConsoleFormat.svg"/></a>  
+<a href="https://app.fossa.com/projects/git%2Bgithub.com%2Fmeshery%2Fmeshery?ref=badge_shield" alt="License Scan Report">
+  <img src="https://app.fossa.com/api/projects/git%2Bgithub.com%2Fmeshery%2Fmeshery.svg?type=shield"/></a>  
 </p>
 
 
