@@ -22,7 +22,7 @@
   {% assign topics = item.topic_list.topics %}
   <!-- -->
 
-  {% for post in topics %}
+  {% for post in topics limit:10 %}
   <!-- -->
   <li class="post">
     <span class="post-date"> {{ post.created_at | date: "%b %d" }} | </span>
