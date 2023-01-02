@@ -366,6 +366,22 @@ func RegisterK8sMeshModelComponents(ctx context.Context, config []byte, ctxID st
 	return
 }
 
+// func writeMeshModelComponentsOnFileSystem(c meshmodelv1alpha1.ComponentDefinition, dirpath string) {
+// 	fileName := c.Kind + ".json"
+// 	file, err := os.Create(filepath.Join(dirpath, fileName))
+// 	if err != nil {
+// 		fmt.Println("err: ", err.Error())
+// 	}
+// 	byt, err := json.Marshal(c)
+// 	if err != nil {
+// 		fmt.Println("err: ", err.Error())
+// 	}
+// 	_, err = file.Write(byt)
+// 	if err != nil {
+// 		fmt.Println("err: ", err.Error())
+// 	}
+// }
+
 // func writeDefK8sOnFileSystem(def string, path string) {
 // 	err := ioutil.WriteFile(path, []byte(def), 0777)
 // 	if err != nil {

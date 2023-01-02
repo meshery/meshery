@@ -237,17 +237,17 @@ func main() {
 		}
 		_ = filepath.Walk(path, func(path string, info fs.FileInfo, err error) error {
 			if info == nil {
-				return fmt.Errorf("invalid/nil fileinfo while walking %s", path)
+				return nil
 			}
 			if !info.IsDir() {
 				var comp v1alpha1.ComponentDefinition
 				byt, err := os.ReadFile(path)
 				if err != nil {
-					return err
+					return nil
 				}
 				err = json.Unmarshal(byt, &comp)
 				if err != nil {
-					return err
+					return nil
 				}
 				compChan <- comp
 			}
