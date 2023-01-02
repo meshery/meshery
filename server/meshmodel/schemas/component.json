@@ -1,0 +1,39 @@
+{
+  "$id": "https://schema.meshery.io/components.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "description": "Components are the atomic units for designing infrastructure.",
+  "required": [
+    "apiVersion",
+    "kind",
+    "schema"
+  ],
+  "additionalProperties": false,
+  "type": "object",
+  "properties": {
+    "apiVersion": "string",
+    "kind": "string",
+    "metadata": {
+      "type": "object",
+      "required": [
+        "name",
+        "version"
+      ],
+      "properties": {
+        "description": "string",
+        "name": "string",
+        "version": "string"
+      }
+    },
+    "displayName": "string",
+    "format": {
+      "type": "string",
+      "enum": [
+        "JSON",
+        "CUE"
+      ],
+      "default": "JSON",
+      "description": "Format specifies the format used in the `schema` field. JSON will be used as a default format."
+    },
+    "schema": "string"
+  }
+}
