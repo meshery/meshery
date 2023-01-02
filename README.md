@@ -200,10 +200,10 @@ See the [getting started](https://meshery.io/#getting-started) section to quickl
 ## <a name="functionality">Functionality</a>
 
 <p style="clear:both;">
-<h3>Service Mesh Lifecycle Management</h3>
-Meshery manages the provisioning, configuration and operation your service mesh. While supporting different types of service meshes, Meshery also offers a simple way to explore each service mesh and compare them using bundled sample applications.
+<h3>Cloud Native Lifecycle Management</h3>
+Meshery manages the provisioning, configuration and operation your Kubernetes clusters, workloads, and service meshes. While supporting hundreds of different type so cloud native infrastructure integrations, Meshery also offers a [catalog of curated design templates](https://meshery.io/catalog) filled with configuration best practices.
 
-Interoperate multiple service meshes with service mesh adapters provision, configure, and manage their respective service meshes. Meshery is an implementation of the Service Mesh Interface (SMI).
+Using a GitOps-centric approach, visually and collaboratively design and manage your infrastructure and microservices. Use Meshery to interoperate your various cloud native systems. With both REST and GraphQL APIs, integrating with Meshery as an extensible platform is facilitated through NATS, CloudEvents, gRPC, Service Mesh Interface (SMI), and Service Mesh Performance (SMP).
 
 <a href="https://raw.githubusercontent.com/meshery/meshery/master/docs/assets/img/readme/meshery_multi_mesh.png"><img alt="Layer5 Service Mesh Management" src="https://docs.meshery.io/assets/img/readme/meshery_multi_mesh.png"  style="margin-left:10px; margin-bottom:10px;" width="100%" align="center"/></a>
 <br /><br />
@@ -213,8 +213,7 @@ Interoperate multiple service meshes with service mesh adapters provision, confi
 <p style="clear:both;">
 <h3>Kubernetes and Cloud Native Configuration Management</h3>
 
-Assess your cloud native infrastructure configuration against deployment and operational best practices with Meshery's configuration validator.
-Onboard your workload onto the service mesh with confidence. Check your Kubernetes configuration for anti-patterns and avoid common pitfalls.
+Assess your cloud native infrastructure configuration against deployment and operational best practices with Meshery's configuration validator. Onboard your workload onto the service mesh with confidence. Check your Kubernetes configuration for anti-patterns and avoid common pitfalls.
 
 <a href="https://docs.meshery.io/assets/img/readme/meshery_lifecycle_management.png"><img alt="Layer5 Service Mesh Configuration Management" src="https://docs.meshery.io/assets/img/readme/meshery_lifecycle_management.png"  style="margin-right:10px;margin-bottom:10px;" width="100%" align="center"/></a>
 <br /><br />
