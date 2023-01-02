@@ -189,10 +189,10 @@ See the [getting started](https://meshery.io/#getting-started) section to quickl
 
 <a href="https://docs.google.com/presentation/d/14kxjwYSJ_FyE3K_6CDEd6oq2kqwn0OSE8RDJ4H-KlKU/edit?usp=sharing"><img alt="Meshery Logo" src=".github/assets/images/meshery/meshery-logo-dark-text-side.png"  style="margin-left:10px; margin-bottom:10px;" width="45%" align="left"/></a>
 
-<h3 style="margin:auto;"><br /><br />
+<!-- <h3 style="margin:auto;"><br /><br />
   <a href="https://docs.google.com/presentation/d/14kxjwYSJ_FyE3K_6CDEd6oq2kqwn0OSE8RDJ4H-KlKU/edit?usp=sharing"><center><i>Project Overview Presentation</i></center></a>
   <br /><br /><br />
-</h3>
+</h3> -->
 <p style="clear:both;">&nbsp;</p>
 
 <br /><br />
