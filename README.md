@@ -179,7 +179,7 @@ See the [getting started](https://meshery.io/#getting-started) section to quickl
         <tr><td colspan="2" class="alpha-adapters"></td></tr>
         </tbody>
     </table>
-   ** Depreciating
+   ** Depricating
   </p>
 </div>
  </details>
