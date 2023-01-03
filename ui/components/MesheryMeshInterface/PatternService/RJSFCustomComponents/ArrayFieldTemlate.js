@@ -205,7 +205,7 @@ const DefaultNormalArrayFieldTemplate = (props) => {
                   <ErrorOutlineIcon
                     width="16px"
                     height="16px"
-                    fill="#B32700"
+                    fill={theme.palette.type === 'dark' ? "#F91313" : "#B32700"}
                     style={{ marginLeft : "4px", verticalAlign : "middle" }}
                   />
                 </IconButton>

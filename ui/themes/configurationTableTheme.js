@@ -46,6 +46,13 @@ const configurationTableTheme = () => createTheme({
         cursor : "pointer"
       },
     },
+    MuiFormLabel : {
+      root : {
+        "&$focused" : {
+          color : "#00B39F",
+        },
+      }
+    },
   }
 });
 

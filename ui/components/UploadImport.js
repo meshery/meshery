@@ -41,9 +41,9 @@ const getDarkMuiTheme = () => createTheme({
     },
     MuiFormLabel : {
       root : {
-        color : "#333",
-        fontSize : "0.8rem",
-        textTransform : "capitalize"
+        "&$focused" : {
+          color : "#00B39F",
+        },
       }
     },
   }

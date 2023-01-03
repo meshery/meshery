@@ -38,6 +38,7 @@ export var darkTheme = createTheme({
       icon2 : '#FFF',
       chevron : 'rgb(255, 255, 255, 0.2)',
       link : 'rgba(255, 255, 255, 0.7)',
+      link2 : "#05FFCD",
       headerColor : '#202020',
       sideBar : '#263238',
       drawer : '#252E31',
@@ -84,9 +85,9 @@ darkTheme = {
     MuiDrawer : { paper : { backgroundColor : '#263238', }, },
     MuiFormLabel : {
       root : {
-        color : "#333",
-        fontSize : "0.8rem",
-        textTransform : "capitalize"
+        "&$focused" : {
+          color : "#00B39F",
+        },
       }
     },
     MuiButton : {
@@ -227,6 +228,7 @@ let theme = createTheme({
       icon2 : '#000',
       chevron : '#FFF',
       link : '#000',
+      link2 : "#00b39F",
       headerColor : '#eeeeee',
       sideBar : '#FFF',
       drawer : '#FFF',

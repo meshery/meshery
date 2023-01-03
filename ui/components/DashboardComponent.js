@@ -732,6 +732,13 @@ class DashboardComponent extends React.Component {
     },
     overrides : {
       MuiPaper : { root : { backgroundColor : '#363636' } },
+      MuiFormLabel : {
+        root : {
+          "&$focused" : {
+            color : "#00B39F",
+          },
+        }
+      },
     }
   })
 

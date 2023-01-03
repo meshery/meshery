@@ -46,7 +46,7 @@ const styles = (theme) => ({
   },
   link : {
     textDecoration : "none",
-    color : "#00b39F",
+    color : theme.palette.secondary.link2,
   },
 });
 
