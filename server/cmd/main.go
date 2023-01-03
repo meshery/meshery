@@ -219,12 +219,10 @@ func main() {
 			for {
 				select {
 				case comp := <-compChan:
+					utils.WriteSVGsOnFileSystem(&comp)
 					err = regManager.RegisterEntity(meshmodel.Host{
 						Hostname: ArtifactHubComponentsHandler,
 					}, comp)
-					if err == nil {
-						go utils.WriteSVGsOnFileSystem(comp)
-					}
 				case <-done:
 					return
 				}

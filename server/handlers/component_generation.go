@@ -71,6 +71,7 @@ func (h *Handler) ComponentGenerationHandler(rw http.ResponseWriter, r *http.Req
 		if gpi.Register == true {
 			if len(comps) != 0 {
 				for _, comp := range comps {
+					utils.WriteSVGsOnFileSystem(&comp)
 					host := fmt.Sprintf("%s.artifacthub.meshery", gpi.Name)
 					err = h.registryManager.RegisterEntity(meshmodel.Host{
 						Hostname: host,
@@ -78,7 +79,7 @@ func (h *Handler) ComponentGenerationHandler(rw http.ResponseWriter, r *http.Req
 					if err != nil {
 						h.log.Error(ErrGenerateComponents(err))
 					}
-					go utils.WriteSVGsOnFileSystem(comp)
+
 					h.log.Info(comp.DisplayName, " component for ", gpi.Name, " generated")
 				}
 			}

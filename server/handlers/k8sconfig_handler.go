@@ -355,13 +355,11 @@ func RegisterK8sMeshModelComponents(ctx context.Context, config []byte, ctxID st
 		return ErrCreatingKubernetesComponents(errors.New("generated components are nil"), ctxID)
 	}
 	for _, c := range man {
+		mutil.WriteSVGsOnFileSystem(&c)
 		err = reg.RegisterEntity(meshmodel.Host{
 			Hostname:  "kubernetes",
 			ContextID: ctxID,
 		}, c)
-		if err == nil {
-			go mutil.WriteSVGsOnFileSystem(c)
-		}
 	}
 	return
 }

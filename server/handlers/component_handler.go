@@ -237,13 +237,14 @@ func (h *Handler) RegisterMeshmodelComponents(rw http.ResponseWriter, r *http.Re
 			http.Error(rw, err.Error(), http.StatusBadRequest)
 			return
 		}
+		utils.WriteSVGsOnFileSystem(&c)
 		err = h.registryManager.RegisterEntity(cc.Host, c)
 	}
 	if err != nil {
 		http.Error(rw, err.Error(), http.StatusBadRequest)
 		return
 	}
-	go utils.WriteSVGsOnFileSystem(c)
+
 }
 func filterUniqueElementsArray(s []string) []string {
 	m := make(map[string]bool)
