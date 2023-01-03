@@ -1,0 +1,21 @@
+{
+  "$id": "https://schema.meshery.io/model.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "description": "Model is a construct used for namespacing MeshModel entities.",
+  "additionalProperties": false,
+  "type": "object",
+  "required": [
+    "name",
+    "version",
+    "category"
+  ],
+  "properties": {
+    "name": "string",
+    "displayName": {
+      "$ref": "https://schema.meshery.io/core.json#inputString"
+    },
+    "version": "string",
+    "category": "string",
+    "subCategory": "string"
+  }
+}

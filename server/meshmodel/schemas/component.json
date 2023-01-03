@@ -1,11 +1,12 @@
 {
-  "$id": "https://schema.meshery.io/components.json",
+  "$id": "https://schema.meshery.io/component.json",
   "$schema": "http://json-schema.org/draft-07/schema#",
   "description": "Components are the atomic units for designing infrastructure.",
   "required": [
     "apiVersion",
     "kind",
-    "schema"
+    "schema",
+    "model"
   ],
   "additionalProperties": false,
   "type": "object",
@@ -24,7 +25,12 @@
         "version": "string"
       }
     },
-    "displayName": "string",
+    "model": {
+      "$ref": "https://schema.meshery.io/model.json#"
+    },
+    "displayName": {
+      "$ref": "https://schema.meshery.io/core.json#inputString"
+    },
     "format": {
       "type": "string",
       "enum": [

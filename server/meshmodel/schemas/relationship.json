@@ -1,11 +1,12 @@
 {
-  "$id": "https://schema.meshery.io/relationships.json",
+  "$id": "https://schema.meshery.io/relationship.json",
   "$schema": "http://json-schema.org/draft-07/schema#",
   "description": "Relationships offer context-awareness as to how a particular Component is related to the other Component. There are many types of Relationships.",
   "required": [
     "apiVersion",
     "kind",
-    "subType"
+    "subType",
+    "model"
   ],
   "additionalProperties": false,
   "type": "object",
@@ -17,6 +18,9 @@
       "properties": {
         "description": "string"
       }
+    },
+    "model": {
+      "$ref": "https://schema.meshery.io/model.json"
     },
     "subType": {
       "type": "string",
