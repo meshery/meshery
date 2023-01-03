@@ -372,7 +372,7 @@ func NewPatternFileFromK8sManifest(data string, ignoreErrors bool) (Pattern, err
 			}
 			return pattern, ErrParseK8sManifest(fmt.Errorf("failed to parse manifest into an internal representation"))
 		}
-		manifest = k8s.Format.Prettify(manifest, false)
+
 		name, svc, err := createPatternServiceFromK8s(manifest)
 		if err != nil {
 			if ignoreErrors {
@@ -441,10 +441,11 @@ func createPatternServiceFromK8s(manifest map[string]interface{}) (string, Servi
 			castedAnnotation[k] = cv
 		}
 	}
-	// rest = k8s.Format.Prettify(rest, false)
+	rest = k8s.Format.Prettify(rest, false)
 	svc := Service{
 		Name:        name,
 		Type:        w[0].OAMDefinition.Name,
+		APIVersion:  apiVersion,
 		Namespace:   namespace,
 		Labels:      castedLabel,
 		Annotations: castedAnnotation,

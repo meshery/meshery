@@ -480,7 +480,7 @@ function MesheryPatterns({
       setPage(result.configuration?.patterns?.page || 0);
       setPageSize(result.configuration?.patterns?.page_size || 0);
       setCount(result.configuration?.patterns?.total_count || 0);
-      handleSetPatterns(result.configuration?.patterns.patterns);
+      handleSetPatterns(result.configuration?.patterns?.patterns ?? [] );
       stillLoading(false);
     },
     {
@@ -1230,6 +1230,7 @@ function MesheryPatterns({
               setPage={setPage}
               selectedPage={page}
               UploadImport={UploadImport}
+              fetch={() => fetchPatterns(page, pageSize, search, sortOrder)}
               patternErrors={patternErrors}
             />
         }
@@ -1245,7 +1246,7 @@ function MesheryPatterns({
           validationBody={modalOpen.validationBody}
         />
         <PublishModal open={publishModal.open} handleClose={handlePublishModalClose} pattern={publishModal.pattern} aria-label="catalog publish" handlePublish={handlePublish} />
-        <UploadImport open={importModal.open} handleClose={handleUploadImportClose} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} configuration="Design" />
+        <UploadImport open={importModal.open} handleClose={handleUploadImportClose} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} fetch={() => fetchPatterns(page, pageSize, search, sortOrder)} configuration="Design" />
         <PromptComponent ref={modalRef} />
       </NoSsr>
     </>
