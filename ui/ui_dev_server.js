@@ -2,7 +2,8 @@
 const { createServer } = require("http");
 const { parse } = require("url");
 const next = require("next");
-
+const { zone } = require("next/zone");
+const path = require("path");
 const port = parseInt(process.env.PORT, 10) || 3000;
 const dev = process.env.NODE_ENV !== "production";
 const app = next({ dev });
@@ -20,6 +21,7 @@ app.prepare().then(() => {
   let server = createServer((req, res) => {
     // Be sure to pass `true` as the second argument to `url.parse`.
     // This tells it to parse the query portion of the URL.
+
     const { pathname } = parse(req.url, true);
     if (
       pathname.startsWith("/api") ||
@@ -32,6 +34,15 @@ app.prepare().then(() => {
       handle(req, res);
     }
   });
+
+  const meshmodelZone = zone({ dir : "../server/meshmodel/components" });
+  meshmodelZone.use((req, res) => {
+    const filePath = path.join(meshmodelZone.dir, req.url);
+    res.sendFile(filePath);
+  });
+
+  meshmodelZone.listen();
+
   server.on("upgrade", (req, socket, head) => {
     proxy.ws(req, socket, head, (err) => {
       socket.write("HTTP/" + req.httpVersion + " 500 Connection error\r\n\r\n");
