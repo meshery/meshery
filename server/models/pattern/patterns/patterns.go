@@ -139,7 +139,6 @@ func ProcessOAM(kconfigs []string, oamComps []string, oamConfig string, isDel bo
 
 					eb.Publish(&req)
 				}
-
 			}
 		}(kcli)
 	}
