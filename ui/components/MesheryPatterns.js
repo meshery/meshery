@@ -41,6 +41,7 @@ import { SchemaContext } from "../utils/context/schemaSet";
 import Validation from "./Validation";
 import { ACTIONS, FILE_OPS } from "../utils/Enum";
 import PublishModal from "./PublishModal";
+import CloneIcon from "../public/static/img/CloneIcon";
 
 const styles = (theme) => ({
   grid : {
@@ -58,6 +59,7 @@ const styles = (theme) => ({
   iconPatt : {
     width : "24px",
     height : "24px",
+    filter : theme.palette.secondary.brightness
   },
   topToolbar : {
     margin : "2rem auto",
@@ -953,7 +955,7 @@ function MesheryPatterns({
                 handleClone(rowData.id, rowData.name)
               }
               }>
-                <img src="/static/img/clone.svg" />
+                <CloneIcon fill="#ffffff" className={classes.iconPatt} />
               </IconButton> :
 
                 <IconButton onClick={(e) => {
@@ -975,7 +977,7 @@ function MesheryPatterns({
                 title="Undeploy"
                 onClick={(e) => handleModalOpen(e, rowData.pattern_file, rowData.name, patternErrors.get(rowData.id), ACTIONS.UNDEPLOY)}
               >
-                <UndeployIcon fill="#8F1F00" data-cy="undeploy-button" />
+                <UndeployIcon fill="#F91313" data-cy="undeploy-button" />
               </TooltipIcon>
               <TooltipIcon
                 title="Deploy"
@@ -987,7 +989,7 @@ function MesheryPatterns({
                 title="Publish"
                 onClick={(ev) => handlePublishModal(ev,rowData)}
               >
-                <PublicIcon fill="#8F1F00" data-cy="publish-button" />
+                <PublicIcon fill="#F91313" data-cy="publish-button" />
               </TooltipIcon>
             </>
           );

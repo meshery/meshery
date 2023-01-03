@@ -23,7 +23,8 @@ import fetchAllResults from "../graphql/queries/FetchAllResultsQuery";
 // const MESHERY_PERFORMANCE_TEST_URL = "/api/user/performance/profiles/results";
 
 const styles = (theme) => ({
-  paper : { padding : "1rem" },
+  paper : { padding : "1rem",
+    backgroundColor : theme.palette.secondary.elevatedComponents, },
   resultContainer : {
     display : "flex",
     flexDirection : "row",

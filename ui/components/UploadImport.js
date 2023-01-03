@@ -39,6 +39,13 @@ const getDarkMuiTheme = () => createTheme({
         color : '#607d8b'
       }
     },
+    MuiFormLabel : {
+      root : {
+        color : "#333",
+        fontSize : "0.8rem",
+        textTransform : "capitalize"
+      }
+    },
   }
 })
 

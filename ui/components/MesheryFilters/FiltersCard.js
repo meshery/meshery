@@ -13,6 +13,7 @@ import DoneAllIcon from '@material-ui/icons/DoneAll';
 import useStyles from "../MesheryPatterns/Cards.styles";
 import YAMLDialog from "../YamlDialog";
 import UndeployIcon from "../../public/static/img/UndeployIcon";
+import CloneIcon from "../../public/static/img/CloneIcon";
 import TooltipButton from '../../utils/TooltipButton.js'
 
 const INITIAL_GRID_SIZE = { xl : 4, md : 6, xs : 12 };
@@ -122,7 +123,7 @@ function FiltersCard({
                 onClick={(ev) =>
                   genericClickHandler(ev, handleClone)
                 }>
-                <img src="/static/img/clone-white.svg" className={classes.clonePatt} />
+                <CloneIcon fill="#ffffff" className={classes.iconPatt} />
                   Clone
               </TooltipButton> : null }
             </div>

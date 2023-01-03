@@ -20,6 +20,7 @@ import DoneIcon from "@material-ui/icons/Done";
 import Link from 'next/link';
 import Operator from "../assets/img/Operator";
 import { ACTIONS } from "../utils/Enum";
+import OperatorLight from "../assets/img/OperatorLight";
 
 const styles = (theme) => ({
   dialogBox : {
@@ -94,7 +95,7 @@ const styles = (theme) => ({
     padding : theme.spacing(1),
     borderRadius : 5,
     "&:disabled" : {
-      backgroundColor : "#FF3D3D",
+      backgroundColor : theme.palette.type=="dark"? "grey": "#FF3D3D",
       color : "#fff"
     },
     minWidth : 100,
@@ -113,7 +114,7 @@ const styles = (theme) => ({
   tabs : {
     marginLeft : 0,
     "& .MuiTab-root.Mui-selected" : {
-      backgroundColor : '#D9D9D9'
+      backgroundColor : theme.palette.secondary.modalTabs
     }
   },
   tabLabel : {
@@ -294,7 +295,7 @@ function ConfirmationMsg(props) {
             <Tab
               data-cy="deploy-btn-modal"
               className={classes.tab}
-              label={<div style={{ display : "flex" }}> <DoneAllIcon style={{ margin : "2px" }} fontSize="small" /> <span className={classes.tabLabel}>Deploy</span> </div>}
+              label={<div style={{ display : "flex" }}> <DoneAllIcon color={theme.palette.secondary.icon} style={{ margin : "2px" }} fontSize="small" /> <span className={classes.tabLabel}>Deploy</span> </div>}
             />
           </Tabs>
 
@@ -363,7 +364,7 @@ function ConfirmationMsg(props) {
                     </Typography>
                     :
                     <div className={classes.textContent}>
-                      <Operator />
+                      {theme.palette.type=="dark"? <OperatorLight /> : <Operator />}
                       <Typography variant="h5">No cluster connected yet</Typography>
 
                       <Link href="/settings">

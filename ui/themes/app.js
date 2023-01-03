@@ -44,7 +44,7 @@ export var darkTheme = createTheme({
       drawerHover : '#3b4346',
       img : 'invert(0.8)',
       appBar : '#363636',
-      number : 'rgb(57, 102, 121)',
+      number : '#eee',
       completeInvert : 'invert(1)',
       canvas : '#1F1F1F',
       brightness : 'brightness(200%)',
@@ -52,6 +52,7 @@ export var darkTheme = createTheme({
       honeyComb : '#202020',
       filterChipBackground : '#222222',
       tabs : '#20202087',
+      modalTabs : '#1e1e1e',
       tabHover : '#212121',
       confirmationModal : '#111111'
     },
@@ -73,7 +74,21 @@ export var darkTheme = createTheme({
 darkTheme = {
   ...darkTheme,
   overrides : {
+    MuiCheckbox : {
+      colorPrimary : {
+        "&$checked" : {
+          color : "rgba(255, 255, 255, 0.7)",
+        }
+      },
+    },
     MuiDrawer : { paper : { backgroundColor : '#263238', }, },
+    MuiFormLabel : {
+      root : {
+        color : "#333",
+        fontSize : "0.8rem",
+        textTransform : "capitalize"
+      }
+    },
     MuiButton : {
       label : { textTransform : 'initial', },
       contained : {
@@ -226,6 +241,7 @@ let theme = createTheme({
       honeyComb : '#F0F0F0',
       filterChipBackground : '#CCCCCC',
       tabs : '#eeeeee87',
+      modalTabs : '#dddddd',
       tabHover : '#e3e3e3',
       confirmationModal : 'rgb(234, 235, 236)'
     },
@@ -347,7 +363,7 @@ export const notificationColors = {
   info : "#2196F3"
 };
 export const darkNotificationColors = {
-  error : "#B32700",
+  error : "#F91313",
   warning : "#F0D053",
   success : "#78C57C",
   info : "#5FD4FF"

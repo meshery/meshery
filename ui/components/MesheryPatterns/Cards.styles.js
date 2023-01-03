@@ -77,6 +77,12 @@ const useStyles = makeStyles((theme) => ({
     display : "flex",
     justifyContent : "center",
   },
+  cloneBtnText : {
+    [theme.breakpoints.between(960, 1370)] : { display : "none" },
+    display : "flex",
+    justifyContent : "center",
+    marginLeft : "3px",
+  },
   undeployButton : {
     backgroundColor : "#8F1F00",
     color : "#ffffff",

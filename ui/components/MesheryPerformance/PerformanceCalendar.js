@@ -55,6 +55,13 @@ const styles = (theme) => ({
     }
   },
   calender : {
+    "& .rbc-off-range-bg" : {
+      backgroundColor : theme.palette.type === 'dark' ? "#a9a9a9" : "#e6e6e6",
+      color : theme.palette.type === 'dark' ? "white" : "black",
+    },
+    "& .rbc-off-range " : {
+      color : theme.palette.secondary.lightText,
+    },
     "& .rbc-btn-group" : {
       color : theme.palette.secondary.lightText,
     },

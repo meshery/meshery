@@ -42,7 +42,6 @@ const styles = (theme) => ({
   tab : {
     minWidth : 40,
     paddingLeft : 0,
-    color : theme.palette.secondary.icon,
     paddingRight : 0,
   },
   headerIcon : {
