@@ -2,10 +2,8 @@ package selector
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/layer5io/meshkit/models/meshmodel"
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 )
 
 const (
@@ -30,25 +28,6 @@ func New(reg *meshmodel.RegistryManager, helpers Helpers) *Selector {
 		helpers:  helpers,
 	}
 }
-
-const annotationsPrefix = "design.meshmodel.io"
-
-func GetAnnotationsForWorkload(w v1alpha1.ComponentDefinition) map[string]string {
-	res := map[string]string{}
-
-	for key, val := range w.Metadata {
-		if v, ok := val.(string); ok {
-			res[strings.ReplaceAll(fmt.Sprintf("%s.%s", annotationsPrefix, key), " ", "")] = v
-		}
-	}
-	res[fmt.Sprintf("%s.model.name", annotationsPrefix)] = w.Model.Name
-	res[fmt.Sprintf("%s.k8s.APIVersion", annotationsPrefix)] = w.APIVersion
-	res[fmt.Sprintf("%s.k8s.Kind", annotationsPrefix)] = w.Kind
-	res[fmt.Sprintf("%s.model.version", annotationsPrefix)] = w.Model.Version
-	res[fmt.Sprintf("%s.model.category", annotationsPrefix)] = w.Model.Category
-	return res
-}
-
 func generateWorkloadKey(name string) string {
 	return fmt.Sprintf(
 		"/meshery/registry/definition/%s/%s/%s",

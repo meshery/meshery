@@ -7,7 +7,6 @@ import (
 	"github.com/layer5io/meshery/server/helpers"
 	"github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshery/server/models/pattern/planner"
-	"github.com/layer5io/meshery/server/models/pattern/resource/selector"
 	"github.com/layer5io/meshkit/models/meshmodel"
 	meshmodelv1alpha1 "github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
@@ -67,12 +66,10 @@ func Provision(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFu
 			)
 			// Get annotations for the component, if any
 			comp.ObjectMeta.Annotations = helpers.MergeStringMaps(
-				selector.GetAnnotationsForWorkload(data.PatternSvcWorkloadCapabilities[name]),
+				v1alpha1.GetAnnotationsForWorkload(data.PatternSvcWorkloadCapabilities[name]),
 				comp.ObjectMeta.Annotations,
 			)
-
 			ccp.Component = comp
-
 			// Add configuration only if traits are applied to the component
 			if len(svc.Traits) > 0 {
 				ccp.Configuration = config
@@ -83,7 +80,6 @@ func Provision(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFu
 				errs = append(errs, err)
 				return false
 			}
-
 			data.Lock.Lock()
 			// Store that this service was provisioned successfully
 			data.Other[fmt.Sprintf("%s%s", name, ProvisionSuffixKey)] = msg

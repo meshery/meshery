@@ -2,7 +2,6 @@ package k8s
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
 	meshkube "github.com/layer5io/meshkit/utils/kubernetes"
@@ -28,8 +27,8 @@ func Deploy(kubeClient *meshkube.Client, oamComp v1alpha1.Component, oamConfig v
 }
 
 func createK8sResourceStructure(comp v1alpha1.Component) map[string]interface{} {
-	apiVersion := getAPIVersionFromComponent(comp)
-	kind := getKindFromComponent(comp)
+	apiVersion := v1alpha1.GetAPIVersionFromComponent(comp)
+	kind := v1alpha1.GetKindFromComponent(comp)
 
 	component := map[string]interface{}{
 		"apiVersion": apiVersion,
@@ -49,16 +48,6 @@ func createK8sResourceStructure(comp v1alpha1.Component) map[string]interface{} 
 		component[k] = v
 	}
 	return component
-}
-
-func getAPIVersionFromComponent(comp v1alpha1.Component) string {
-	return comp.Annotations["design.meshmodel.io.k8s.APIVersion"]
-}
-
-func getKindFromComponent(comp v1alpha1.Component) string {
-	kind := strings.TrimPrefix(comp.Annotations["design.meshmodel.io.k8s.Kind"], "/")
-
-	return kind
 }
 
 type prettifier bool
