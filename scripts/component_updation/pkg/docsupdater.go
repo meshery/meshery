@@ -6,7 +6,7 @@ import (
 )
 
 const template string = `---
-title: <Model Display Name>
+title: <model-display-name>
 subtitle: <Page Subtitle>
 integrationIcon: ../../../assets/images/service-mesh-icons/aws-app-mesh.svg
 darkModeIntegrationIcon: ../../../assets/images/service-mesh-icons/aws-app-mesh_white.svg
