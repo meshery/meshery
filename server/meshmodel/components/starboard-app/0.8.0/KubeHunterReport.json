@@ -1,0 +1,1 @@
+{"kind":"KubeHunterReport","apiVersion":"v1alpha1","display-name":"Kube Hunter Report","format":"JSON","metadata":{},"model":{"name":"starboard-app","version":"0.8.0","display-name":"starboard-app","category":"","sub-category":""},"schema":""}
