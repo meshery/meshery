@@ -4,11 +4,11 @@ Uses a spreadsheet of centralized information about MeshModel components and the
 
 Usage: (order of flags matters)
 
-    ./main [path-to-spreadsheet] [--update_doc] [relative path to docs in website] [--only-published]
+    ./main [path-to-spreadsheet] [--update_doc] [relative path to docs in layer5 website] [relative path to docs in meshery website] [--only-published]
 
 Example:
 
-	./main https://docs.google.com/spreadsheets/d/e/2PACX-1vSgOXuiqbhUgtC9oNbJlz9PYpOEaFVoGNUFMIk4NZciFfQv1ewZg8ahdrWHKI79GkKK9TbmnZx8CqIe/pub\?gid\=0\&single\=true\&output\=csv --update-docs layer5/src/collections/integrations --only-published
+	./main https://docs.google.com/spreadsheets/d/e/2PACX-1vSgOXuiqbhUgtC9oNbJlz9PYpOEaFVoGNUFMIk4NZciFfQv1ewZg8ahdrWHKI79GkKK9TbmnZx8CqIe/pub\?gid\=0\&single\=true\&output\=csv --update-docs layer5/src/collections/integrations meshery.io/integrations --only-published
 
 The flags are:
 
@@ -55,12 +55,14 @@ func main() {
 	// If updateOnlyPublished is set true, then only update site pages that have "Published?" set to true.
 	updateOnlyPublished := true
 
-	var pathToIntegrations string
-	if len(os.Args) > 3 {
+	var pathToIntegrationsLayer5 string
+	var pathToIntegrationsMeshery string
+	if len(os.Args) > 4 {
 		if os.Args[2] == "--update-docs" {
 			updateDocs = true
-			pathToIntegrations = os.Args[3]
-			if len(os.Args) > 4 && os.Args[4] == "--only-published" {
+			pathToIntegrationsLayer5 = os.Args[3]
+			pathToIntegrationsMeshery = os.Args[4]
+			if len(os.Args) > 5 && os.Args[5] == "--only-published" {
 				updateOnlyPublished = true
 			}
 		}
@@ -90,6 +92,7 @@ func main() {
 		file.Close()
 		os.Remove(file.Name())
 		output = cleanupDuplicatesAndPreferEmptyComponentField(output, "model")
+		mesheryDocsJSON := "["
 		for _, out := range output {
 			var t pkg.TemplateAttributes
 			publishValue, err := strconv.ParseBool(out["Publish?"])
@@ -103,6 +106,8 @@ func main() {
 				switch key {
 				case "model-display-name":
 					t.Title = val
+				case "model":
+					t.ModelName = val
 				case "Page Subtitle":
 					t.Subtitle = val
 				case "Docs URL":
@@ -123,6 +128,10 @@ func main() {
 					t.StandardBlurb = val
 				case "Full Page":
 					t.FullPage = val
+				case "svg_color":
+					t.ColorSVG = val
+				case "svg_white":
+					t.WhiteSVG = val
 				}
 			}
 			t.FeatureList = "[" + strings.Join([]string{out["Feature 1"], out["Feature 2"], out["Feature 3"]}, ",") + "]"
@@ -130,38 +139,65 @@ func main() {
 				../_images/meshmap-visualizer.png,
 				../_images/meshmap-designer.png]`
 
-			//Write
 			md := t.CreateMarkDown()
+			jsonItem := t.CreateJSONItem()
 			// if out["model-display-name"] == "Istio" {
 			// 	fmt.Println(md)
 			// }
-			pathToIntegrations, _ := filepath.Abs(filepath.Join("../../../", pathToIntegrations, out["model"]))
-			err = os.MkdirAll(pathToIntegrations, 0777)
+			mesheryDocsJSON += jsonItem + ","
+
+			pathToIntegrationsLayer5, _ := filepath.Abs(filepath.Join("../../../", pathToIntegrationsLayer5, out["model"]))
+			pathToIntegrationsMeshery, _ := filepath.Abs(filepath.Join("../../../", pathToIntegrationsMeshery))
+			err = os.MkdirAll(pathToIntegrationsLayer5, 0777)
 			if err != nil {
 				panic(err)
 			}
-			_ = pkg.WriteMarkDown(filepath.Join(pathToIntegrations, "index.mdx"), md)
+			_ = pkg.WriteToFile(filepath.Join(pathToIntegrationsLayer5, "index.mdx"), md)
 			svgcolor := out["svg_color"]
 			svgwhite := out["svg_white"]
-			//pathToIntegrations => layer5/src/collections
-			err = os.MkdirAll(filepath.Join(pathToIntegrations, "icon", "color"), 0777)
+
+			// Write SVGs to Layer5 docs
+			err = os.MkdirAll(filepath.Join(pathToIntegrationsLayer5, "icon", "color"), 0777)
 			if err != nil {
 				panic(err)
 			}
 
-			err = pkg.WriteSVG(filepath.Join(pathToIntegrations, "icon", "color", out["model"]+"-color.svg"), svgcolor) //CHANGE PATH
+			err = pkg.WriteSVG(filepath.Join(pathToIntegrationsLayer5, "icon", "color", out["model"]+"-color.svg"), svgcolor) //CHANGE PATH
 			if err != nil {
 				panic(err)
 			}
-			err = os.MkdirAll(filepath.Join(pathToIntegrations, "icon", "white"), 0777)
+			err = os.MkdirAll(filepath.Join(pathToIntegrationsLayer5, "icon", "white"), 0777)
 			if err != nil {
 				panic(err)
 			}
-			err = pkg.WriteSVG(filepath.Join(pathToIntegrations, "icon", "white", out["model"]+"-white.svg"), svgwhite) //CHANGE PATH
+			err = pkg.WriteSVG(filepath.Join(pathToIntegrationsLayer5, "icon", "white", out["model"]+"-white.svg"), svgwhite) //CHANGE PATH
+			if err != nil {
+				panic(err)
+			}
+
+			// Write SVGs to Meshery docs
+			err = os.MkdirAll(filepath.Join(pathToIntegrationsMeshery, "../", "images"), 0777)
+			if err != nil {
+				panic(err)
+			}
+
+			err = pkg.WriteSVG(filepath.Join(pathToIntegrationsMeshery, "../", "images", out["model"]+".svg"), svgcolor) //CHANGE PATH
+			if err != nil {
+				panic(err)
+			}
+
+			err = pkg.WriteSVG(filepath.Join(pathToIntegrationsMeshery, "../", "images", out["model"]+"-white.svg"), svgwhite) //CHANGE PATH
 			if err != nil {
 				panic(err)
 			}
 		}
+
+		mesheryDocsJSON = strings.TrimSuffix(mesheryDocsJSON, ",")
+		mesheryDocsJSON += "]"
+		if err := pkg.WriteToFile(filepath.Join("../../../", pathToIntegrationsMeshery, "data.json"), mesheryDocsJSON); err != nil {
+			log.Fatal(err)
+		}
+
 	} else {
 		output, err := pkg.GetEntries(csvReader, ColumnNamesToExtract)
 		if err != nil {
