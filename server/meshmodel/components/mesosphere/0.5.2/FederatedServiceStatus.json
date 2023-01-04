@@ -1,1 +1,0 @@
-{"kind":"FederatedServiceStatus","apiVersion":"v1alpha1","display-name":"Federated Service Status","format":"JSON","metadata":{},"model":{"name":"mesosphere","version":"0.5.2","display-name":"mesosphere","category":"","sub-category":""},"schema":""}
