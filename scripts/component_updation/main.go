@@ -36,9 +36,9 @@ import (
 )
 
 var (
-	ColumnNamesToExtract        = []string{"Model Display Name", "Model", "Category", "Sub-Category", "Shape", "Primary Color", "Secondary Color", "Logo URL", "SVG_Color", "SVG_White"}
-	ColumnNamesToExtractForDocs = []string{"Model Display Name", "Page Subtitle", "Docs URL", "Category", "Sub-Category", "Feature 1", "Feature 2", "Feature 3", "howItWorks", "howItWorksDetails", "Publish?", "About Project", "Standard Blurb", "SVG_Color", "SVG_White", "Full Page", "Model"}
-	PrimaryColumnName           = "Model"
+	ColumnNamesToExtract        = []string{"model-display-name", "model", "category", "sub-category", "shape", "primary-color", "secondary-color", "logo-URL", "svg_color", "svg_white"}
+	ColumnNamesToExtractForDocs = []string{"model-display-name", "Page Subtitle", "Docs URL", "category", "sub-category", "Feature 1", "Feature 2", "Feature 3", "howItWorks", "howItWorksDetails", "Publish?", "About Project", "Standard Blurb", "svg_color", "svg_white", "Full Page", "model"}
+	PrimaryColumnName           = "model"
 	OutputPath                  = "../../server/meshmodel/components"
 )
 
@@ -89,7 +89,7 @@ func main() {
 		}
 		file.Close()
 		os.Remove(file.Name())
-		output = cleanupDuplicatesAndPreferEmptyComponentField(output, "Model")
+		output = cleanupDuplicatesAndPreferEmptyComponentField(output, "model")
 		for _, out := range output {
 			var t pkg.TemplateAttributes
 			publishValue, err := strconv.ParseBool(out["Publish?"])
@@ -101,15 +101,15 @@ func main() {
 			}
 			for key, val := range out {
 				switch key {
-				case "Model Display Name":
+				case "model-display-name":
 					t.Title = val
 				case "Page Subtitle":
 					t.Subtitle = val
 				case "Docs URL":
 					t.DocURL = val
-				case "Category":
+				case "category":
 					t.Category = val
-				case "Sub-Category":
+				case "sub-category":
 					t.Subcategory = val
 				case "howItWorks":
 					t.HowItWorks = val
@@ -132,24 +132,24 @@ func main() {
 
 			//Write
 			md := t.CreateMarkDown()
-			// if out["Model Display Name"] == "Istio" {
+			// if out["model-display-name"] == "Istio" {
 			// 	fmt.Println(md)
 			// }
-			pathToIntegrations, _ := filepath.Abs(filepath.Join("../../../", pathToIntegrations, out["Model"]))
+			pathToIntegrations, _ := filepath.Abs(filepath.Join("../../../", pathToIntegrations, out["model"]))
 			err = os.MkdirAll(pathToIntegrations, 0777)
 			if err != nil {
 				panic(err)
 			}
 			_ = pkg.WriteMarkDown(filepath.Join(pathToIntegrations, "index.mdx"), md)
-			svgcolor := out["SVG_Color"]
-			svgwhite := out["SVG_White"]
+			svgcolor := out["svg_color"]
+			svgwhite := out["svg_white"]
 			//pathToIntegrations => layer5/src/collections
 			err = os.MkdirAll(filepath.Join(pathToIntegrations, "icon", "color"), 0777)
 			if err != nil {
 				panic(err)
 			}
 
-			err = pkg.WriteSVG(filepath.Join(pathToIntegrations, "icon", "color", out["Model"]+"-color.svg"), svgcolor) //CHANGE PATH
+			err = pkg.WriteSVG(filepath.Join(pathToIntegrations, "icon", "color", out["model"]+"-color.svg"), svgcolor) //CHANGE PATH
 			if err != nil {
 				panic(err)
 			}
@@ -157,7 +157,7 @@ func main() {
 			if err != nil {
 				panic(err)
 			}
-			err = pkg.WriteSVG(filepath.Join(pathToIntegrations, "icon", "white", out["Model"]+"-white.svg"), svgwhite) //CHANGE PATH
+			err = pkg.WriteSVG(filepath.Join(pathToIntegrations, "icon", "white", out["model"]+"-white.svg"), svgwhite) //CHANGE PATH
 			if err != nil {
 				panic(err)
 			}
@@ -205,15 +205,15 @@ func main() {
 							component.Metadata = make(map[string]interface{})
 						}
 						for key, value := range changeFields {
-							if key == "Category" {
+							if key == "category" {
 								component.Model.Category = value
-							} else if key == "Sub-Category" {
+							} else if key == "sub-category" {
 								component.Model.SubCategory = value
 							} else if isInColumnNames(key, ColumnNamesToExtract) != -1 {
 								component.Metadata[key] = value
 							}
 						}
-						if i := isInColumnNames("Model Display Name", ColumnNamesToExtract); i != -1 {
+						if i := isInColumnNames("model-display-name", ColumnNamesToExtract); i != -1 {
 							component.Model.DisplayName = changeFields[ColumnNamesToExtract[i]]
 						}
 						byt, err = json.Marshal(component)
