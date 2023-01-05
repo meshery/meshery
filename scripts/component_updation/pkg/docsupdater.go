@@ -1,8 +1,9 @@
 package pkg
 
 import (
-	"os"
-	"strings"
+   "fmt"
+   "os"
+   "strings"
 )
 
 const template string = `---
@@ -29,155 +30,176 @@ published: <Publish>
 </p>`
 
 // func createEmptyMarkdown(path string) error {
-// 	file, err := os.Create(path)
-// 	if err != nil {
-// 		return err
-// 	}
-// 	_, err = file.Write([]byte(template))
-// 	return err
+//    file, err := os.Create(path)
+//    if err != nil {
+//       return err
+//    }
+//    _, err = file.Write([]byte(template))
+//    return err
 // }
 
 type TemplateAttributes struct {
-	Title                   string
-	Subtitle                string
-	DocURL                  string
-	Category                string
-	Subcategory             string
-	FeatureList             string
-	HowItWorks              string
-	HowItWorksDetails       string
-	AboutProject            string
-	StandardBlurb           string
-	WorkingSlides           string
-	Published               string
-	IntegrationIcon         string
-	DarkModeIntegrationIcon string
-	FullPage                string
+   Title                   string
+   ModelName               string
+   Subtitle                string
+   DocURL                  string
+   Category                string
+   Subcategory             string
+   FeatureList             string
+   HowItWorks              string
+   HowItWorksDetails       string
+   AboutProject            string
+   StandardBlurb           string
+   WorkingSlides           string
+   Published               string
+   IntegrationIcon         string
+   DarkModeIntegrationIcon string
+   FullPage                string
+   ColorSVG                string
+   WhiteSVG                string
 }
 
 func (t TemplateAttributes) CreateMarkDown() string {
-	// markdown := "---\n"
-	// markdown += "title: " + t.Title + "\n"
-	// markdown += "subtitle: " + t.Subtitle + "\n"
-	// markdown += "integrationIcon: " + t.IntegrationIcon + "\n"
-	// markdown += "darkModeIntegrationIcon: " + t.DarkModeIntegrationIcon + "\n"
-	// markdown += "docURL: " + t.DocURL + "\n"
-	// markdown += "category: " + t.Category + "\n"
-	// markdown += "subcategory: " + t.Subcategory + "\n"
-	// markdown += "featureList: " + t.FeatureList + "\n"
-	// markdown += "workingSlides: " + t.WorkingSlides + "\n"
-	// markdown += "howItWorks: " + t.HowItWorks + "\n"
-	// markdown += "howItWorksDetails: " + t.HowItWorksDetails + "\n"
-	// markdown += "published: " + t.Published + "\n"
-	// markdown += "---\n"
-	// markdown += t.AboutProject + "\n"
-	// markdown += t.StandardBlurb
-	markdown := t.FullPage
-	markdown = strings.ReplaceAll(markdown, "\r", "\n")
-	return markdown
+   // markdown := "---\n"
+   // markdown += "title: " + t.Title + "\n"
+   // markdown += "subtitle: " + t.Subtitle + "\n"
+   // markdown += "integrationIcon: " + t.IntegrationIcon + "\n"
+   // markdown += "darkModeIntegrationIcon: " + t.DarkModeIntegrationIcon + "\n"
+   // markdown += "docURL: " + t.DocURL + "\n"
+   // markdown += "category: " + t.Category + "\n"
+   // markdown += "subcategory: " + t.Subcategory + "\n"
+   // markdown += "featureList: " + t.FeatureList + "\n"
+   // markdown += "workingSlides: " + t.WorkingSlides + "\n"
+   // markdown += "howItWorks: " + t.HowItWorks + "\n"
+   // markdown += "howItWorksDetails: " + t.HowItWorksDetails + "\n"
+   // markdown += "published: " + t.Published + "\n"
+   // markdown += "---\n"
+   // markdown += t.AboutProject + "\n"
+   // markdown += t.StandardBlurb
+   markdown := t.FullPage
+   markdown = strings.ReplaceAll(markdown, "\r", "\n")
+   return markdown
 }
-func WriteMarkDown(path string, md string) error {
-	file, err := os.Create(path)
-	if err != nil {
-		panic(err)
-	}
 
-	_, err = file.WriteString(md)
-	if err != nil {
-		panic(err)
-	}
-	// Close the file to save the changes.
-	err = file.Close()
-	if err != nil {
-		panic(err)
-	}
-	return nil
+// Creates JSON formatted meshmodel attribute item for Meshery docs
+func (t TemplateAttributes) CreateJSONItem() string {
+   json := "{"
+   json += fmt.Sprintf("\"name\":\"%s\"", t.Title)
+   // If SVGs exist, then add the paths to json
+   if t.ColorSVG != "" {
+      json += fmt.Sprintf(",\"color\":\"../images/integration/%s/%s.svg\"", t.ModelName, t.ModelName)
+   }
+
+   if t.WhiteSVG != "" {
+      json += fmt.Sprintf(",\"white\":\"../images/integration/%s/%s-white.svg\"", t.ModelName, t.ModelName)
+   }
+
+   json += "}"
+   return json
+}
+
+func WriteToFile(path string, content string) error {
+   file, err := os.Create(path)
+   if err != nil {
+      panic(err)
+   }
+
+   _, err = file.WriteString(content)
+   if err != nil {
+      panic(err)
+   }
+   // Close the file to save the changes.
+   err = file.Close()
+   if err != nil {
+      panic(err)
+   }
+   return nil
 }
 func WriteSVG(path string, svg string) error {
-	file, err := os.Create(path)
-	if err != nil {
-		return err
-	}
+   file, err := os.Create(path)
+   if err != nil {
+      return err
+   }
 
-	_, err = file.WriteString(svg)
-	if err != nil {
-		return err
-	}
-	// Close the file to save the changes.
-	err = file.Close()
-	if err != nil {
-		return err
-	}
-	return nil
+   _, err = file.WriteString(svg)
+   if err != nil {
+      return err
+   }
+   // Close the file to save the changes.
+   err = file.Close()
+   if err != nil {
+      return err
+   }
+   return nil
 }
 
 // func (t *templateAttributes) fillAttributes(path string) error {
-// 	file, err := os.Open(path)
-// 	if err != nil {
-// 		return err
-// 	}
-// 	defer file.Close()
-// 	scanner := bufio.NewScanner(file)
-// 	scanner.Split(bufio.ScanLines)
-// 	aboutProjectRead := false
-// 	for scanner.Scan() {
-// 		line := scanner.Text()
-// 		if strings.HasPrefix(line, "title:") {
-// 			t.title = strings.TrimSpace(strings.TrimPrefix(line, "title:"))
-// 		} else if strings.HasPrefix(line, "subtitle:") {
-// 			t.subtitle = strings.TrimSpace(strings.TrimPrefix(line, "subtitle:"))
-// 		} else if strings.HasPrefix(line, "docURL:") {
-// 			t.docURL = strings.TrimSpace(strings.TrimPrefix(line, "docURL:"))
-// 		} else if strings.HasPrefix(line, "category:") {
-// 			t.category = strings.TrimSpace(strings.TrimPrefix(line, "category:"))
-// 		} else if strings.HasPrefix(line, "subcategory:") {
-// 			t.subcategory = strings.TrimSpace(strings.TrimPrefix(line, "subcategory:"))
-// 		} else if strings.HasPrefix(line, "subtitle:") {
-// 			t.howItWorks = strings.TrimSpace(strings.TrimPrefix(line, "howItWorks:"))
-// 		} else if strings.HasPrefix(line, "howItWorksDetails:") {
-// 			t.howItWorksDetails = strings.TrimSpace(strings.TrimPrefix(line, "howItWorksDetails:"))
-// 		} else if strings.HasPrefix(line, "workingSlides:") {
-// 			t.workingSlides = strings.TrimSpace(strings.TrimPrefix(line, "workingSlides:"))
-// 			if !strings.HasSuffix(t.workingSlides, "]") {
-// 				for scanner.Scan() {
-// 					subline := scanner.Text()
-// 					t.workingSlides += "\n" + subline
-// 					if strings.HasSuffix(subline, "]") {
-// 						break
-// 					}
-// 				}
-// 			}
-// 		} else if strings.HasPrefix(line, "integrationIcon") {
-// 			t.integrationIcon = strings.TrimSpace(strings.TrimPrefix(line, "integrationIcon:"))
-// 		} else if strings.HasPrefix(line, "darkModeIntegrationIcon") {
-// 			t.darkModeIntegrationIcon = strings.TrimSpace(strings.TrimPrefix(line, "darkModeIntegrationIcon:"))
-// 		} else if strings.HasPrefix(line, "published") {
-// 			t.published = strings.TrimSpace(strings.TrimPrefix(line, "published:"))
-// 		} else if strings.HasPrefix(line, "<p>") {
-// 			if !aboutProjectRead {
-// 				t.aboutProject = line
-// 				if !strings.HasSuffix(t.aboutProject, "</p>") {
-// 					for scanner.Scan() {
-// 						subline := scanner.Text()
-// 						t.aboutProject += "\n" + subline
-// 						if strings.HasSuffix(subline, "</p>") {
-// 							break
-// 						}
-// 					}
-// 				}
-// 			} else {
-// 				t.standardBlurb = line
-// 				if !strings.HasSuffix(t.aboutProject, "</p>") {
-// 					for scanner.Scan() {
-// 						subline := scanner.Text()
-// 						t.standardBlurb += "\n" + subline
-// 						if strings.HasSuffix(subline, "</p>") {
-// 							break
-// 						}
-// 					}
-// 				}
-// 			}
-// 		}
-// 	}
-// 	return nil
+//    file, err := os.Open(path)
+//    if err != nil {
+//       return err
+//    }
+//    defer file.Close()
+//    scanner := bufio.NewScanner(file)
+//    scanner.Split(bufio.ScanLines)
+//    aboutProjectRead := false
+//    for scanner.Scan() {
+//       line := scanner.Text()
+//       if strings.HasPrefix(line, "title:") {
+//          t.title = strings.TrimSpace(strings.TrimPrefix(line, "title:"))
+//       } else if strings.HasPrefix(line, "subtitle:") {
+//          t.subtitle = strings.TrimSpace(strings.TrimPrefix(line, "subtitle:"))
+//       } else if strings.HasPrefix(line, "docURL:") {
+//          t.docURL = strings.TrimSpace(strings.TrimPrefix(line, "docURL:"))
+//       } else if strings.HasPrefix(line, "category:") {
+//          t.category = strings.TrimSpace(strings.TrimPrefix(line, "category:"))
+//       } else if strings.HasPrefix(line, "subcategory:") {
+//          t.subcategory = strings.TrimSpace(strings.TrimPrefix(line, "subcategory:"))
+//       } else if strings.HasPrefix(line, "subtitle:") {
+//          t.howItWorks = strings.TrimSpace(strings.TrimPrefix(line, "howItWorks:"))
+//       } else if strings.HasPrefix(line, "howItWorksDetails:") {
+//          t.howItWorksDetails = strings.TrimSpace(strings.TrimPrefix(line, "howItWorksDetails:"))
+//       } else if strings.HasPrefix(line, "workingSlides:") {
+//          t.workingSlides = strings.TrimSpace(strings.TrimPrefix(line, "workingSlides:"))
+//          if !strings.HasSuffix(t.workingSlides, "]") {
+//             for scanner.Scan() {
+//                subline := scanner.Text()
+//                t.workingSlides += "\n" + subline
+//                if strings.HasSuffix(subline, "]") {
+//                   break
+//                }
+//             }
+//          }
+//       } else if strings.HasPrefix(line, "integrationIcon") {
+//          t.integrationIcon = strings.TrimSpace(strings.TrimPrefix(line, "integrationIcon:"))
+//       } else if strings.HasPrefix(line, "darkModeIntegrationIcon") {
+//          t.darkModeIntegrationIcon = strings.TrimSpace(strings.TrimPrefix(line, "darkModeIntegrationIcon:"))
+//       } else if strings.HasPrefix(line, "published") {
+//          t.published = strings.TrimSpace(strings.TrimPrefix(line, "published:"))
+//       } else if strings.HasPrefix(line, "<p>") {
+//          if !aboutProjectRead {
+//             t.aboutProject = line
+//             if !strings.HasSuffix(t.aboutProject, "</p>") {
+//                for scanner.Scan() {
+//                   subline := scanner.Text()
+//                   t.aboutProject += "\n" + subline
+//                   if strings.HasSuffix(subline, "</p>") {
+//                      break
+//                   }
+//                }
+//             }
+//          } else {
+//             t.standardBlurb = line
+//             if !strings.HasSuffix(t.aboutProject, "</p>") {
+//                for scanner.Scan() {
+//                   subline := scanner.Text()
+//                   t.standardBlurb += "\n" + subline
+//                   if strings.HasSuffix(subline, "</p>") {
+//                      break
+//                   }
+//                }
+//             }
+//          }
+//       }
+//    }
+//    return nil
 // }
