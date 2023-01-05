@@ -185,9 +185,9 @@ All the images or icons needs to be sourced from the [public directory of images
     └── img
         └── meshery
             ├── white
-            |   └── meshery.svg
+            |   └── meshery-white.svg
             └── color
-                └── meshery.svg
+                └── meshery-color.svg
     ```
 5. Avoid any kind of duplicity in the versions of icon used.
 
