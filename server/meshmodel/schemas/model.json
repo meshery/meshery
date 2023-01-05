@@ -10,12 +10,20 @@
     "category"
   ],
   "properties": {
-    "name": "string",
+    "name": {
+      "type": "string"
+    },
     "displayName": {
       "$ref": "https://schema.meshery.io/core.json#inputString"
     },
-    "version": "string",
-    "category": "string",
-    "subCategory": "string"
+    "version": {
+      "type": "string"
+    },
+    "category": {
+      "type": "string"
+    },
+    "subCategory": {
+      "type": "string"
+    }
   }
 }

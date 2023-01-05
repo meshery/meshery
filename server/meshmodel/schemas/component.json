@@ -11,8 +11,12 @@
   "additionalProperties": false,
   "type": "object",
   "properties": {
-    "apiVersion": "string",
-    "kind": "string",
+    "apiVersion": {
+      "type": "string"
+    },
+    "kind": {
+      "type": "string"
+    },
     "metadata": {
       "type": "object",
       "required": [
@@ -20,9 +24,15 @@
         "version"
       ],
       "properties": {
-        "description": "string",
-        "name": "string",
-        "version": "string"
+        "description": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        }
       }
     },
     "model": {
@@ -40,6 +50,8 @@
       "default": "JSON",
       "description": "Format specifies the format used in the `schema` field. JSON will be used as a default format."
     },
-    "schema": "string"
+    "schema": {
+      "type": "string"
+    }
   }
 }
