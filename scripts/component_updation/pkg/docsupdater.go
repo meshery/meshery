@@ -91,11 +91,11 @@ func (t TemplateAttributes) CreateJSONItem() string {
 	json += fmt.Sprintf("\"name\":\"%s\"", t.Title)
 	// If SVGs exist, then add the paths to json
 	if t.ColorSVG != "" {
-		json += fmt.Sprintf(",\"color\":\"../images/integration/%s/%s.svg\"", t.ModelName, t.ModelName)
+		json += fmt.Sprintf(",\"color\":\"../images/integration/%s-color.svg\"", t.ModelName)
 	}
 
 	if t.WhiteSVG != "" {
-		json += fmt.Sprintf(",\"white\":\"../images/integration/%s/%s-white.svg\"", t.ModelName, t.ModelName)
+		json += fmt.Sprintf(",\"white\":\"../images/integration/%s-white.svg\"", t.ModelName)
 	}
 
 	json += "}"
