@@ -171,7 +171,7 @@ All the images or icons needs to be sourced from the [public directory of images
 
 ##### Conventions for svg files
 1. svg icons should be optimized and compressed, there are online [svg optimizers and viewers](https://www.svgviewer.dev/) that can compress the svg files to smaller size.
-2. All svg icons should have "height" and "width" properties set to 20px*20px. If the svg should have been bigger in size according to the needs in UI, it should be provided as a style prop from the react component. Ensure height and width attributes are always set in original svg.
+2. All svg icons should have "height" and "width" properties set to 20px*20px. If the svg should have been bigger in size according to the needs in UI, it should be provided as a style prop from the react component. Ensure that height and width attributes are always set in original svg.
 3. Always include this XML header in each SVG image:
       ```
       <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE svg>
