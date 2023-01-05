@@ -42,6 +42,11 @@ var (
 	OutputPath                  = "../../server/meshmodel/components"
 )
 
+const (
+	SVG_WIDTH  = 20
+	SVG_HEIGHT = 20
+)
+
 func main() {
 	url := os.Args[1]
 	if url == "" {
@@ -245,6 +250,12 @@ func main() {
 								component.Model.Category = value
 							} else if key == "sub-category" {
 								component.Model.SubCategory = value
+							} else if key == "svg_color" || key == "svg_white" {
+								component.Metadata[key], err = pkg.UpdateSVGString(value, SVG_WIDTH, SVG_HEIGHT)
+								if err != nil {
+									fmt.Println("err for: ", component.Kind, err.Error())
+								}
+								// component.Metadata[key] = value
 							} else if isInColumnNames(key, ColumnNamesToExtract) != -1 {
 								component.Metadata[key] = value
 							}
