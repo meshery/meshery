@@ -360,7 +360,6 @@ function K8sContextMenu({
   useEffect(() => {
     setTransformProperty(prev => (prev + (contexts.total_count ? contexts.total_count * 3.125 : 0)))
   }, [])
-
   return (
     <>
       <div style={ show ? cursorNotAllowed : {}}>

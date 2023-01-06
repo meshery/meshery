@@ -1217,27 +1217,28 @@ function MesheryPatterns({
 
         }
         {
-          !selectedPattern.show && viewType === "grid" &&
-          // grid vieww
-          <MesheryPatternGrid
-            patterns={patterns}
-            handleDeploy={handleDeploy}
-            handleVerify={handleVerify}
-            handlePublish={handlePublish}
-            handleUnDeploy={handleUnDeploy}
-            handleClone={handleClone}
-            urlUploadHandler={urlUploadHandler}
-            uploadHandler={uploadHandler}
-            supportedTypes="null"
-            handleSubmit={handleSubmit}
-            setSelectedPattern={setSelectedPattern}
-            selectedPattern={selectedPattern}
-            pages={Math.ceil(count / pageSize)}
-            setPage={setPage}
-            selectedPage={page}
-            UploadImport={UploadImport}
-            patternErrors={patternErrors}
-          />
+          !selectedPattern.show && viewType==="grid" &&
+            // grid vieww
+            <MesheryPatternGrid
+              patterns={patterns}
+              handleDeploy={handleDeploy}
+              handleVerify={handleVerify}
+              handlePublish={handlePublish}
+              handleUnDeploy={handleUnDeploy}
+              handleClone={handleClone}
+              urlUploadHandler={urlUploadHandler}
+              uploadHandler={uploadHandler}
+              supportedTypes="null"
+              handleSubmit={handleSubmit}
+              setSelectedPattern={setSelectedPattern}
+              selectedPattern={selectedPattern}
+              pages={Math.ceil(count / pageSize)}
+              setPage={setPage}
+              selectedPage={page}
+              UploadImport={UploadImport}
+              fetch={() => fetchPatterns(page, pageSize, search, sortOrder)}
+              patternErrors={patternErrors}
+            />
         }
         <ConfirmationMsg
           open={modalOpen.open}
@@ -1251,7 +1252,7 @@ function MesheryPatterns({
           validationBody={modalOpen.validationBody}
         />
         <PublishModal open={publishModal.open} handleClose={handlePublishModalClose} pattern={publishModal.pattern} aria-label="catalog publish" handlePublish={handlePublish} />
-        <UploadImport open={importModal.open} handleClose={handleUploadImportClose} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} configuration="Design" />
+        <UploadImport open={importModal.open} handleClose={handleUploadImportClose} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} fetch={() => fetchPatterns(page, pageSize, search, sortOrder)} configuration="Design" />
         <PromptComponent ref={modalRef} />
       </NoSsr>
     </>

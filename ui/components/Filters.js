@@ -957,23 +957,24 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
 
         }
         {
-          !selectedFilter.show && viewType === "grid" &&
-          // grid vieww
-          <FiltersGrid
-            filters={filters}
-            handleDeploy={handleDeploy}
-            handleUndeploy={handleUndeploy}
-            handleSubmit={handleSubmit}
-            handleClone={handleClone}
-            urlUploadHandler={urlUploadHandler}
-            uploadHandler={uploadHandler}
-            setSelectedFilter={setSelectedFilter}
-            selectedFilter={selectedFilter}
-            pages={Math.ceil(count / pageSize)}
-            setPage={setPage}
-            selectedPage={page}
-            UploadImport={UploadImport}
-          />
+          !selectedFilter.show && viewType==="grid" &&
+            // grid vieww
+            <FiltersGrid
+              filters={filters}
+              handleDeploy={handleDeploy}
+              handleUndeploy={handleUndeploy}
+              handleSubmit={handleSubmit}
+              handleClone={handleClone}
+              urlUploadHandler={urlUploadHandler}
+              uploadHandler={uploadHandler}
+              setSelectedFilter={setSelectedFilter}
+              selectedFilter={selectedFilter}
+              pages={Math.ceil(count / pageSize)}
+              setPage={setPage}
+              selectedPage={page}
+              UploadImport={UploadImport}
+              fetch={() => fetchFilters(page, pageSize, search, sortOrder)}
+            />
         }
         <ConfirmationMsg
           open={modalOpen.open}
@@ -987,7 +988,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
           tab={modalOpen.deploy ? 0 : 1}
         />
         <PromptComponent ref={modalRef} />
-        <UploadImport open={importModal.open} handleClose={handleUploadImportClose} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} configuration="Filter" />
+        <UploadImport open={importModal.open} handleClose={handleUploadImportClose} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} fetch={() => fetchFilters(page, pageSize, search, sortOrder) } configuration="Filter" />
       </NoSsr>
     </>
   );

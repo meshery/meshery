@@ -1,0 +1,1 @@
+{"kind":"Template","apiVersion":"v1alpha1","display-name":"Template","format":"JSON","metadata":{},"model":{"name":"tenant-operator","version":"0.7.0","display-name":"tenant-operator","category":"","sub-category":""},"schema":""}

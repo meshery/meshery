@@ -71,7 +71,7 @@ const styles = () => ({
 });
 
 function UploadImport(props) {
-  const { handleUpload, handleUrlUpload, configuration, isApplication, open, handleClose, classes } = props;
+  const { handleUpload, handleUrlUpload, configuration, isApplication, open, handleClose, classes, fetch } = props;
   const [input, setInput] = React.useState();
   const [isError, setIsError] = React.useState(false);
   const [fileType, setFileType] = React.useState();
@@ -106,13 +106,13 @@ function UploadImport(props) {
     }
   }, [open])
 
-  const handleSubmit = () => {
-    handleUrlUpload(input, sourceType)
+  const handleSubmit = async() => {
+    await handleUrlUpload(input, sourceType)
     handleClose()
   }
 
-  const handleUploader = (input) => {
-    handleUpload(input, sourceType)
+  const handleUploader = async(input) => {
+    await handleUpload(input, sourceType)
     handleClose()
   }
 
@@ -204,7 +204,9 @@ function UploadImport(props) {
               <label htmlFor="cancel" className={classes.cancel}>
                 <Button variant="outlined" color="secondary" onClick={handleClose}>Cancel</Button>
               </label>
-              <label htmlFor="URL">  <Button disabled={isError || !input} id="URL" variant="contained" color="primary" onClick={(e) => handleSubmit(e, handleUploader)}>Import</Button> </label>
+              <label htmlFor="URL">  <Button disabled={isError || !input} id="URL" variant="contained" color="primary" onClick={async(e) => {
+                await handleSubmit(e, handleUploader);fetch();
+              }}>Import</Button> </label>
             </DialogActions>
           </MuiThemeProvider>
         </Dialog>

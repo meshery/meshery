@@ -48,6 +48,13 @@ const styles = (theme) => ({
     textDecoration : "none",
     color : theme.palette.secondary.link2,
   },
+  switchBase : {
+    color : '#647881',
+    "&$checked" : { color : '#00b39f' },
+    "&$checked + $track" : { backgroundColor : 'rgba(0,179,159,0.5)' },
+  },
+  track : { backgroundColor : 'rgba(100,120,129,0.5)', },
+  checked : {},
 });
 
 const INITIAL_GRID_SIZE = { lg : 6, md : 12, xs : 12 };
@@ -180,6 +187,9 @@ const Extensions = ({ classes, toggleCatalogContent,  enqueueSnackbar, closeSnac
                   onChange={handleToggle}
                   name="OperatorSwitch"
                   color="primary"
+                  classes={{ switchBase : classes.switchBase,
+                    track : classes.track,
+                    checked : classes.checked, }}
                 />
               </div>
             </Grid>
