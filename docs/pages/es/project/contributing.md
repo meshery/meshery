@@ -151,7 +151,7 @@ Meshery está escrito en `Go` (Golang) y aprovecha los módulos Go. La interfaz 
 Para instalar/actualizar las dependencias de UI:
 
 ```
-make setup-ui-libs
+make ui-setup
 ```
 
 #### Construir y exportar UI
@@ -159,7 +159,7 @@ make setup-ui-libs
 Para construir y exportar el código de UI:
 
 ```
-make build-ui
+make ui-build
 ```
 
 Ahora que el código de la interfaz de usuario está creado, la interfaz de usuario de Meshery estará disponible en` http: // localhost: 9081`.
@@ -170,7 +170,7 @@ Cada vez que se realizan cambios en el código de la interfaz de usuario, el có
 Si deseas trabajar en la UI, será una buena idea utilizar el servidor de desarrollo de UI incluido. Puedes ejecutar el servidor de desarrollo de UI ejecutando el siguiente comando:
 
 ```
-make run-ui-dev
+make ui
 ```
 
 Asegúrete de tener el servidor Meshery configurado y en funcionamiento en el puerto predeterminado `http://localhost:9081` antes de proceder a acceder y trabajar en el servidor de UI en `http://localhost:3000`.

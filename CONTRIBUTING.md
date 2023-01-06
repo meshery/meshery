@@ -201,7 +201,7 @@ Meshery is written in `Go` (Golang) and leverages Go Modules. UI is built on Rea
 To install/update the UI dependencies:
 
 ```
-make setup-ui-libs
+make ui-setup
 ```
 
 ### Build and export UI
@@ -220,7 +220,7 @@ Any time changes are made to the UI code, the above code will have to run to reb
 If you want to work on the UI, it will be a good idea to use the included UI development server. You can run the UI development server by running the following command:
 
 ```
-make run-ui-dev
+make ui
 ```
 
 Once you have the server configured, and running successfully on the default port `http://localhost:9081`, you may proceed to access the Meshery UI at `http://localhost:3000`.

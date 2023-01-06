@@ -187,7 +187,7 @@ ui-server: ui-meshery-build server
 #-----------------------------------------------------------------------------
 # Meshery UI Native Builds.
 #-----------------------------------------------------------------------------
-.PHONY: setup-ui-libs ui-setup run-ui-dev ui ui-meshery-build ui ui-provider ui-lint ui-provider ui-meshery ui-build ui-provider-build ui-provider-test
+.PHONY: ui-setup ui ui-meshery-build ui-provider ui-lint ui-provider ui-meshery ui-build ui-provider-build ui-provider-test
 
 UI_BUILD_SCRIPT = build16
 UI_DEV_SCRIPT = dev16
@@ -203,13 +203,11 @@ else ifeq ($(findstring v17, $(shell node --version)), v17)
 	UI_DEV_SCRIPT = dev
 endif
 
-setup-ui-libs: ui-setup
 ## Install dependencies for building Meshery UI.
 ui-setup:
 	cd ui; npm i; cd ..
 	cd provider-ui; npm i; cd ..
 
-run-ui-dev: ui
 ## Run Meshery UI on your local machine. Listen for changes.
 ui:
 	cd ui; npm run $(UI_DEV_SCRIPT); cd ..;
@@ -230,23 +228,19 @@ ui-provider-lint:
 ui-provider-test:
 	cd provider-ui; npm run test; cd ..
 
-build-ui: ui-build
 ## Buils all Meshery UIs  on your local machine.
 ui-build:
 	cd ui; npm run $(UI_BUILD_SCRIPT) && npm run export; cd ..
 	cd provider-ui; npm run build && npm run export; cd ..
 
-build-meshery-ui: ui-meshery-build
 ## Build only Meshery UI on your local machine.
 ui-meshery-build:
 	cd ui; npm run $(UI_BUILD_SCRIPT) && npm run export; cd ..
 
-build-provider-ui: ui-provider-build
 ## Builds only the provider user interface on your local machine
 ui-provider-build:
 	cd provider-ui; npm run build && npm run export; cd ..
 
-run-ui-integration-tests: ui-integration-tests
 ## Run Meshery Cypress Integration Tests against your local Meshery UI (cypress runs in non-interactive mode).
 ui-integration-tests: ui-setup
 	cd ui; npm run ci-test-integration; cd ..
