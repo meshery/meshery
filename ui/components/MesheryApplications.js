@@ -496,6 +496,17 @@ function MesheryApplications({
         () => {
           console.log("ApplicationFile API", `/api/application/${source_type}`);
           updateProgress({ showProgress : false });
+          enqueueSnackbar(`"${name}" Application updated`, {
+            variant : "success",
+            action : function Action(key) {
+              return (
+                <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+                  <CloseIcon />
+                </IconButton>
+              );
+            },
+            autoHideDuration : 2000,
+          });
         },
         // handleError
         handleError(ACTION_TYPES.UPDATE_APPLICATIONS)
