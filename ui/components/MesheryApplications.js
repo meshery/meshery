@@ -482,10 +482,14 @@ function MesheryApplications({
         return;
       }
       deleteApplication(id);
-
     }
 
     if (type === FILE_OPS.UPDATE) {
+      let response = await showUpdateModel("");
+      if (response=="No"){
+        updateProgress({ showProgress : false })
+        return;
+      }
       dataFetch(
         `/api/application/${source_type}`,
         {
@@ -711,6 +715,14 @@ function MesheryApplications({
     return response;
   }
 
+  async function showUpdateModel(count){
+    let response = await modalRef.current.show({
+      title : `Update ${count ? count : ""} Application${count > 1 ? "s" : ''}?`,
+      subtitle : `Are you sure you want to update ${count > 1 ? "these" : 'this'} ${count ? count : ""} application${count > 1 ? "s" : ''}?`,
+      options : ["Yes","No"],
+    });
+    return response;
+  }
   async function deleteApplication(id) {
     dataFetch(
       `/api/application/${id}`,
@@ -766,8 +778,6 @@ function MesheryApplications({
       if (response === "Yes") {
         const fid = Object.keys(row.lookup).map(idx => applications[idx]?.id);
         fid.forEach(fid => deleteApplication(fid));
-      } else {
-        fetchApplications(page, pageSize, search, sortOrder);
       }
       // if (response === "No")
       // fetchApplications(page, pageSize, search, sortOrder);
@@ -887,7 +897,6 @@ function MesheryApplications({
               setPage={setPage}
               selectedPage={page}
               UploadImport={UploadImport}
-              fetch={() => fetchApplications(page, pageSize, search, sortOrder)}
               types={types}
               handleAppDownload={handleAppDownload}
             />
@@ -905,7 +914,7 @@ function MesheryApplications({
         />
         <PromptComponent ref={modalRef} />
         <UploadImport open={importModal.open} handleClose={handleUploadImportClose} isApplication = {true} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler}
-          supportedTypes={types} fetch={() => fetchApplications(page, pageSize, search, sortOrder)} configuration="Application"  />
+          supportedTypes={types} configuration="Application"  />
       </NoSsr>
     </>
   );
