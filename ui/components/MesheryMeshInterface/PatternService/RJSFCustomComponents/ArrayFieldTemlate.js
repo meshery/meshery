@@ -7,10 +7,11 @@ import Paper from "@material-ui/core/Paper";
 import { Button, IconButton, Typography } from "@material-ui/core";
 import AddIcon from "../../../../assets/icons/AddIcon";
 import SimpleAccordion from "./Accordion";
-import { EnlargedTextErrorTooltip, EnlargedTextTooltip } from "../EnlargedTextTooltip";
+import { CustomTextTooltip } from "../CustomTextTooltip";
 import HelpOutlineIcon from "../../../../assets/icons/HelpOutlineIcon";
 import { isMultiSelect, getDefaultFormState } from "@rjsf/utils";
 import ErrorOutlineIcon from "../../../../assets/icons/ErrorOutlineIcon";
+import { ERROR_COLOR } from "../../../../constants/colors";
 function getTitleForItem(props) {
   const title = getTitle(props);
 
@@ -173,14 +174,15 @@ const DefaultNormalArrayFieldTemplate = (props) => {
 
             {
               (props.uiSchema["ui:description"] || props.schema.description) &&
-              <EnlargedTextTooltip title={props.uiSchema["ui:description"] || props.schema.description}>
+              <CustomTextTooltip backgroundColor="#3C494F" title={props.uiSchema["ui:description"] || props.schema.description}>
                 <IconButton  disableTouchRipple="true" disableRipple="true">
                   <HelpOutlineIcon width="14px" height="14px" fill="black" style={{ marginLeft : '4px' }} />
                 </IconButton>
-              </EnlargedTextTooltip>
+              </CustomTextTooltip>
             }
             {props.rawErrors?.length > 0 && (
-              <EnlargedTextErrorTooltip
+              <CustomTextTooltip
+                backgroundColor={ERROR_COLOR}
                 interactive={true}
                 title={props.rawErrors?.map((error, index) => (
                   <div key={index}>{error}</div>
@@ -194,7 +196,7 @@ const DefaultNormalArrayFieldTemplate = (props) => {
                     style={{ marginLeft : "4px", verticalAlign : "middle" }}
                   />
                 </IconButton>
-              </EnlargedTextErrorTooltip>
+              </CustomTextTooltip>
             )}
 
           </Grid>

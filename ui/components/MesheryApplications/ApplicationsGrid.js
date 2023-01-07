@@ -62,7 +62,7 @@ function ApplicationsGridItem({ application,  handleDeploy, handleUnDeploy, hand
  * }} props props
  */
 
-function MesheryApplicationGrid({ applications=[],handleDeploy, handleUnDeploy, handleSubmit,urlUploadHandler,uploadHandler, setSelectedApplication, selectedApplication, pages = 1,setPage, selectedPage, UploadImport, handleAppDownload }) {
+function MesheryApplicationGrid({ applications=[],handleDeploy, handleUnDeploy, handleSubmit,urlUploadHandler,uploadHandler, setSelectedApplication, selectedApplication, pages = 1,setPage, selectedPage, UploadImport, fetch, handleAppDownload }) {
 
   const classes = useStyles()
 
@@ -169,7 +169,7 @@ function MesheryApplicationGrid({ applications=[],handleDeploy, handleUnDeploy, 
         componentCount={ modalOpen.count }
         tab={modalOpen.deploy ? 2 : 1}
       />
-      <UploadImport open={importModal.open} handleClose={handleUploadImportClose} isApplication = {true} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} configuration="Application"  />
+      <UploadImport open={importModal.open} handleClose={handleUploadImportClose} isApplication = {true} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} fetch={() => fetch()} configuration="Application"  />
     </div>
   );
 }
