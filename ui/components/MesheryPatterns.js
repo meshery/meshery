@@ -591,6 +591,7 @@ function MesheryPatterns({
   const handleVerify = (e, pattern_file, pattern_id) => {
     e.stopPropagation();
     const validationPayloads = generateValidatePayload(pattern_file, workloadTraitSet);
+    console.log(validationPayloads);
     if (validationPayloads.err) {
       handleError(validationPayloads.err);
     }
@@ -1237,8 +1238,13 @@ function MesheryPatterns({
           open={modalOpen.open}
           handleClose={handleModalClose}
           submit={
-            { deploy : () => handleDeploy(modalOpen.pattern_file, modalOpen.name),  unDeploy : () => handleUnDeploy(modalOpen.pattern_file, modalOpen.name) }
+            {
+              deploy : () => handleDeploy(modalOpen.pattern_file, modalOpen.name),  unDeploy : () => handleUnDeploy(modalOpen.pattern_file, modalOpen.name), verify : () => handleVerify(modalOpen.pattern_file, modalOpen.name)
+            }
           }
+          verify={() => {
+            handleVerify(modalOpen.pattern_file, modalOpen.name)
+          }}
           title={modalOpen.name}
           componentCount={modalOpen.count}
           tab={modalOpen.action}

@@ -98,18 +98,24 @@ export function getComponentsinFile(file) {
 
 export function generateValidatePayload(pattern_file, workloadTraitSet) {
   let pattern = jsYaml.loadAll(pattern_file)
+  console.log("Pattern",pattern);
   const services = pattern[0]?.services;
   if (!services) {
     return { err : "Services not found in the design" };
   }
 
   const validationPayloads = {};
-
-  for (const serviceId in services) {
+  console.log("Services",services);
+  console.log(typeof services);
+  const objectKeys =  Object.keys(services)
+  console.log(objectKeys);
+  for (const serviceId of objectKeys) {
+    console.log(services[serviceId].type);
     let valueType;
 
     let { workload } = findWorkloadByName(services[serviceId].type, workloadTraitSet);
-
+    // let  workload  = findWorkloadByName(services[serviceId].type, workloadTraitSet);
+    console.log(workload);
     if (!(workload && workload?.oam_ref_schema)) {
       continue;
     }
@@ -124,6 +130,7 @@ export function generateValidatePayload(pattern_file, workloadTraitSet) {
       value : JSON.stringify(value),
       valueType
     };
+    console.log(validationPayload);
     validationPayloads[serviceId] = validationPayload;
   }
 

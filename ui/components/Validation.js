@@ -46,9 +46,9 @@ const ValidationComponent = ({ errors, compCount, classes, handleClose }) => {
     setOpen(updatedState);
   };
 
-  let errorCount = errors.reduce((count, ele) => {
+  let errorCount = errors ? errors.reduce((count, ele) => {
     return ele.errors.length + count
-  }, 0)
+  }, 0) : 0;
   console.log("validation", errors);
   return (
     <List

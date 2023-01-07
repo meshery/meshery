@@ -168,7 +168,7 @@ const styles = (theme) => ({
 
 function ConfirmationMsg(props) {
   const { classes, open, handleClose, submit,
-    selectedK8sContexts, k8scontext, title, validationBody, setK8sContexts, enqueueSnackbar, closeSnackbar, componentCount, tab } = props
+    selectedK8sContexts, k8scontext, title, validationBody, setK8sContexts, enqueueSnackbar, closeSnackbar, componentCount, tab,verify } = props
 
   const [tabVal, setTabVal] = useState(tab);
   const [disabled, setDisabled] = useState(true);
@@ -216,6 +216,9 @@ function ConfirmationMsg(props) {
       submit.deploy();
     } else if (tabVal === 1) {
       submit.unDeploy();
+    } else {
+      console.log(submit,verify);
+      submit.verify();
     }
     handleClose();
   }
@@ -428,7 +431,7 @@ function ConfirmationMsg(props) {
                 </Button>
               </>
               :
-              <Button onClick={handleClose}
+              <Button onClick={handleSubmit}
                 className={classes.button} autoFocus type="submit"
                 variant="contained"
                 color="primary"
