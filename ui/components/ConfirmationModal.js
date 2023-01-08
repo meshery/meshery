@@ -185,7 +185,6 @@ function ConfirmationMsg(props) {
   },[selectedK8sContexts]);
 
   const handleTabValChange = (event, newVal) => {
-    console.log(newVal);
     setTabVal(newVal);
   }
 
