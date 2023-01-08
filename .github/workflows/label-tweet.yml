@@ -3,6 +3,8 @@ name: 'Tweet when Labeled'
 on:
   issues:
     types: labeled
+  pull_request:
+    types: labeled
 
 permissions:
   contents: read
@@ -13,18 +15,28 @@ jobs:
     if: ${{ github.event.label.name == 'issue/tweet' }}
     runs-on: ubuntu-latest
     steps:
-        - name: Check if organization member
-          id: is_organization_member
-          uses: jamessingleton/is-organization-member@1.0.0
+        - name: Check if organization maintainer
+          uses: tspascoal/get-user-teams-membership@v2
+          id: checkUserMember
           with:
-            organization: meshery
-            username: ${{ github.event.issue.user.login }}
-            token: ${{ github.token }}
-        - name: Print Output
-          if: ${{ steps.is_organization_member.outputs.result == 'true' }}
+            username: ${{ github.actor }}
+            organization: 'meshery'
+            team: 'maintainers'
+            GITHUB_TOKEN: ${{ secrets.PAT }}
+        - name: Check if it is issue
+          if: ${{ github.event.issue && steps.checkUserMember.outputs.isTeamMember == 'true' }}
           uses: ethomson/send-tweet-action@v1
           with:
-            status: "Hello Twitter, Checkout this issue - ${{ github.event.issue.html_url }} with the title ${{ github.event.issue.title }}"
+            status: 'Help wanted on this issue: "${{ github.event.issue.title }}" - ${{ github.event.issue.html_url }} \#opensource'
+            consumer-key: ${{ secrets.TWITTER_CONSUMER_API_KEY }}
+            consumer-secret: ${{ secrets.TWITTER_CONSUMER_API_SECRET }}
+            access-token: ${{ secrets.TWITTER_ACCESS_TOKEN }}
+            access-token-secret: ${{ secrets.TWITTER_ACCESS_TOKEN_SECRET }}
+        - name: Check if it is PR
+          if: ${{ github.event.pull_request && steps.checkUserMember.outputs.isTeamMember == 'true' }}
+          uses: ethomson/send-tweet-action@v1
+          with:
+            status: 'Help wanted on thi PR: "${{ github.event.pull_request.title }}" - ${{ github.event.pull_request.html_url }} \#opensource'
             consumer-key: ${{ secrets.TWITTER_CONSUMER_API_KEY }}
             consumer-secret: ${{ secrets.TWITTER_CONSUMER_API_SECRET }}
             access-token: ${{ secrets.TWITTER_ACCESS_TOKEN }}
