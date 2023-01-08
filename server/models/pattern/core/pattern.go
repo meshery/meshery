@@ -45,6 +45,7 @@ type Service struct {
 	APIVersion  string            `yaml:"apiVersion,omitempty" json:"apiVersion,omitempty"`
 	Namespace   string            `yaml:"namespace" json:"namespace"`
 	Version     string            `yaml:"version,omitempty" json:"version,omitempty"`
+	Model       string            `yaml:"model,omitempty" json:"model,omitempty"`
 	Labels      map[string]string `yaml:"labels,omitempty" json:"labels,omitempty"`
 	Annotations map[string]string `yaml:"annotations,omitempty" json:"annotations,omitempty"`
 	// DependsOn correlates one or more objects as a required dependency of this service
@@ -98,9 +99,11 @@ func (p *Pattern) GetApplicationComponent(name string) (v1alpha1.Component, erro
 			Annotations: svc.Annotations,
 		},
 		Spec: v1alpha1.ComponentSpec{
-			Type:     svc.Type,
-			Version:  svc.Version,
-			Settings: svc.Settings,
+			Type:       svc.Type,
+			Version:    svc.Version,
+			Model:      svc.Model,
+			APIVersion: svc.APIVersion,
+			Settings:   svc.Settings,
 		},
 	}
 	if comp.ObjectMeta.Labels == nil {
@@ -372,7 +375,7 @@ func NewPatternFileFromK8sManifest(data string, ignoreErrors bool) (Pattern, err
 			}
 			return pattern, ErrParseK8sManifest(fmt.Errorf("failed to parse manifest into an internal representation"))
 		}
-		manifest = k8s.Format.Prettify(manifest, false)
+
 		name, svc, err := createPatternServiceFromK8s(manifest)
 		if err != nil {
 			if ignoreErrors {
@@ -441,10 +444,11 @@ func createPatternServiceFromK8s(manifest map[string]interface{}) (string, Servi
 			castedAnnotation[k] = cv
 		}
 	}
-	// rest = k8s.Format.Prettify(rest, false)
+	rest = k8s.Format.Prettify(rest, false)
 	svc := Service{
 		Name:        name,
 		Type:        w[0].OAMDefinition.Name,
+		APIVersion:  apiVersion,
 		Namespace:   namespace,
 		Labels:      castedLabel,
 		Annotations: castedAnnotation,

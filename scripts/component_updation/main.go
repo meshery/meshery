@@ -4,11 +4,11 @@ Uses a spreadsheet of centralized information about MeshModel components and the
 
 Usage: (order of flags matters)
 
-    ./main [--update_doc] [path-to-spreadsheet] [--only-published]
+    ./main [path-to-spreadsheet] [--update_doc] [relative path to docs in layer5 website] [relative path to docs in meshery website] [--only-published]
 
 Example:
 
-	./main https://docs.google.com/spreadsheets/d/e/2PACX-1vSgOXuiqbhUgtC9oNbJlz9PYpOEaFVoGNUFMIk4NZciFfQv1ewZg8ahdrWHKI79GkKK9TbmnZx8CqIe/pub\?gid\=0\&single\=true\&output\=csv --update-docs layer5/src/collections/integrations --only-published
+	./main https://docs.google.com/spreadsheets/d/e/2PACX-1vSgOXuiqbhUgtC9oNbJlz9PYpOEaFVoGNUFMIk4NZciFfQv1ewZg8ahdrWHKI79GkKK9TbmnZx8CqIe/pub\?gid\=0\&single\=true\&output\=csv --update-docs layer5/src/collections/integrations meshery.io/integrations --only-published
 
 The flags are:
 
@@ -24,6 +24,7 @@ package main
 import (
 	"encoding/csv"
 	"encoding/json"
+	"fmt"
 	"log"
 	"os"
 	"path/filepath"
@@ -35,10 +36,15 @@ import (
 )
 
 var (
-	ColumnNamesToExtract        = []string{"Project Name", "Helm Chart", "Category", "Sub-Category", "Shape", "Primary Color", "Secondary Color", "Logo URL", "SVG_Color", "SVG_White"}
-	ColumnNamesToExtractForDocs = []string{"Project Name", "Page Subtitle", "Docs URL", "Category", "Sub-Category", "Feature 1", "Feature 2", "Feature 3", "howItWorks", "howItWorksDetails", "Publish?", "About Project", "Standard Blurb", "SVG_Color", "SVG_White", "Full Page", "Helm Chart"}
-	PrimaryColumnName           = "Helm Chart"
+	ColumnNamesToExtract        = []string{"model-display-name", "model", "category", "sub-category", "shape", "primary-color", "secondary-color", "logo-URL", "svg_color", "svg_white"}
+	ColumnNamesToExtractForDocs = []string{"model-display-name", "Page Subtitle", "Docs URL", "category", "sub-category", "Feature 1", "Feature 2", "Feature 3", "howItWorks", "howItWorksDetails", "Publish?", "About Project", "Standard Blurb", "svg_color", "svg_white", "Full Page", "model"}
+	PrimaryColumnName           = "model"
 	OutputPath                  = "../../server/meshmodel/components"
+)
+
+const (
+	SVG_WIDTH  = 20
+	SVG_HEIGHT = 20
 )
 
 func main() {
@@ -52,14 +58,16 @@ func main() {
 	var updateDocs bool
 
 	// If updateOnlyPublished is set true, then only update site pages that have "Published?" set to true.
-	updateOnlyPublished := false
+	updateOnlyPublished := true
 
-	var pathToIntegrations string
-	if len(os.Args) > 3 {
+	var pathToIntegrationsLayer5 string
+	var pathToIntegrationsMeshery string
+	if len(os.Args) > 4 {
 		if os.Args[2] == "--update-docs" {
 			updateDocs = true
-			pathToIntegrations = os.Args[3]
-			if len(os.Args) > 4 && os.Args[4] == "--only-published" {
+			pathToIntegrationsLayer5 = os.Args[3]
+			pathToIntegrationsMeshery = os.Args[4]
+			if len(os.Args) > 5 && os.Args[5] == "--only-published" {
 				updateOnlyPublished = true
 			}
 		}
@@ -88,6 +96,8 @@ func main() {
 		}
 		file.Close()
 		os.Remove(file.Name())
+		output = cleanupDuplicatesAndPreferEmptyComponentField(output, "model")
+		mesheryDocsJSON := "["
 		for _, out := range output {
 			var t pkg.TemplateAttributes
 			publishValue, err := strconv.ParseBool(out["Publish?"])
@@ -99,15 +109,17 @@ func main() {
 			}
 			for key, val := range out {
 				switch key {
-				case "Project Name":
+				case "model-display-name":
 					t.Title = val
+				case "model":
+					t.ModelName = val
 				case "Page Subtitle":
 					t.Subtitle = val
 				case "Docs URL":
 					t.DocURL = val
-				case "Category":
+				case "category":
 					t.Category = val
-				case "Sub-Category":
+				case "sub-category":
 					t.Subcategory = val
 				case "howItWorks":
 					t.HowItWorks = val
@@ -121,6 +133,10 @@ func main() {
 					t.StandardBlurb = val
 				case "Full Page":
 					t.FullPage = val
+				case "svg_color":
+					t.ColorSVG = val
+				case "svg_white":
+					t.WhiteSVG = val
 				}
 			}
 			t.FeatureList = "[" + strings.Join([]string{out["Feature 1"], out["Feature 2"], out["Feature 3"]}, ",") + "]"
@@ -128,38 +144,65 @@ func main() {
 				../_images/meshmap-visualizer.png,
 				../_images/meshmap-designer.png]`
 
-			//Write
 			md := t.CreateMarkDown()
-			// if out["Project Name"] == "Istio" {
+			jsonItem := t.CreateJSONItem()
+			// if out["model-display-name"] == "Istio" {
 			// 	fmt.Println(md)
 			// }
-			pathToIntegrations, _ := filepath.Abs(filepath.Join("../../../", pathToIntegrations, out["Helm Chart"]))
-			err = os.MkdirAll(pathToIntegrations, 0777)
+			mesheryDocsJSON += jsonItem + ","
+
+			pathToIntegrationsLayer5, _ := filepath.Abs(filepath.Join("../../../", pathToIntegrationsLayer5, out["model"]))
+			pathToIntegrationsMeshery, _ := filepath.Abs(filepath.Join("../../../", pathToIntegrationsMeshery))
+			err = os.MkdirAll(pathToIntegrationsLayer5, 0777)
 			if err != nil {
 				panic(err)
 			}
-			_ = pkg.WriteMarkDown(filepath.Join(pathToIntegrations, "index.mdx"), md)
-			svgcolor := out["SVG_Color"]
-			svgwhite := out["SVG_White"]
-			//pathToIntegrations => layer5/src/collections
-			err = os.MkdirAll(filepath.Join(pathToIntegrations, "icon", "color"), 0777)
+			_ = pkg.WriteToFile(filepath.Join(pathToIntegrationsLayer5, "index.mdx"), md)
+			svgcolor := out["svg_color"]
+			svgwhite := out["svg_white"]
+
+			// Write SVGs to Layer5 docs
+			err = os.MkdirAll(filepath.Join(pathToIntegrationsLayer5, "icon", "color"), 0777)
 			if err != nil {
 				panic(err)
 			}
 
-			err = pkg.WriteSVG(filepath.Join(pathToIntegrations, "icon", "color", out["Helm Chart"]+"-color.svg"), svgcolor) //CHANGE PATH
+			err = pkg.WriteSVG(filepath.Join(pathToIntegrationsLayer5, "icon", "color", out["model"]+"-color.svg"), svgcolor) //CHANGE PATH
 			if err != nil {
 				panic(err)
 			}
-			err = os.MkdirAll(filepath.Join(pathToIntegrations, "icon", "white"), 0777)
+			err = os.MkdirAll(filepath.Join(pathToIntegrationsLayer5, "icon", "white"), 0777)
 			if err != nil {
 				panic(err)
 			}
-			err = pkg.WriteSVG(filepath.Join(pathToIntegrations, "icon", "white", out["Helm Chart"]+"-white.svg"), svgwhite) //CHANGE PATH
+			err = pkg.WriteSVG(filepath.Join(pathToIntegrationsLayer5, "icon", "white", out["model"]+"-white.svg"), svgwhite) //CHANGE PATH
+			if err != nil {
+				panic(err)
+			}
+
+			// Write SVGs to Meshery docs
+			err = os.MkdirAll(filepath.Join(pathToIntegrationsMeshery, "../", "images"), 0777)
+			if err != nil {
+				panic(err)
+			}
+
+			err = pkg.WriteSVG(filepath.Join(pathToIntegrationsMeshery, "../", "images", out["model"]+"-color.svg"), svgcolor) //CHANGE PATH
+			if err != nil {
+				panic(err)
+			}
+
+			err = pkg.WriteSVG(filepath.Join(pathToIntegrationsMeshery, "../", "images", out["model"]+"-white.svg"), svgwhite) //CHANGE PATH
 			if err != nil {
 				panic(err)
 			}
 		}
+
+		mesheryDocsJSON = strings.TrimSuffix(mesheryDocsJSON, ",")
+		mesheryDocsJSON += "]"
+		if err := pkg.WriteToFile(filepath.Join("../../../", pathToIntegrationsMeshery, "data.json"), mesheryDocsJSON); err != nil {
+			log.Fatal(err)
+		}
+
 	} else {
 		output, err := pkg.GetEntries(csvReader, ColumnNamesToExtract)
 		if err != nil {
@@ -180,6 +223,11 @@ func main() {
 						return err
 					}
 					for _, entry := range entries {
+						name := strings.TrimSuffix(strings.TrimSpace(entry.Name()), ".json")
+						if changeFields["Component"] != "" && changeFields["Component"] != name { //This is a component specific entry and only fill this when the filename matches component name
+							continue
+						}
+
 						path, err := filepath.Abs(filepath.Join(dirpath, versionentry.Name(), entry.Name()))
 						if err != nil {
 							return err
@@ -193,19 +241,26 @@ func main() {
 						if err != nil {
 							return err
 						}
+						fmt.Println("updating for", component.Kind)
 						if component.Metadata == nil {
 							component.Metadata = make(map[string]interface{})
 						}
 						for key, value := range changeFields {
-							if key == "Category" {
+							if key == "category" {
 								component.Model.Category = value
-							} else if key == "Sub-Category" {
+							} else if key == "sub-category" {
 								component.Model.SubCategory = value
+							} else if key == "svg_color" || key == "svg_white" {
+								component.Metadata[key], err = pkg.UpdateSVGString(value, SVG_WIDTH, SVG_HEIGHT)
+								if err != nil {
+									fmt.Println("err for: ", component.Kind, err.Error())
+								}
+								// component.Metadata[key] = value
 							} else if isInColumnNames(key, ColumnNamesToExtract) != -1 {
 								component.Metadata[key] = value
 							}
 						}
-						if i := isInColumnNames("Project Name", ColumnNamesToExtract); i != -1 {
+						if i := isInColumnNames("model-display-name", ColumnNamesToExtract); i != -1 {
 							component.Model.DisplayName = changeFields[ColumnNamesToExtract[i]]
 						}
 						byt, err = json.Marshal(component)
@@ -237,4 +292,27 @@ func isInColumnNames(key string, col []string) int {
 		}
 	}
 	return -1
+}
+
+// For Docs:: entries with empty Component field are preferred as they are considered general
+// In other words, the absence of a component name indicates that a given row is a Model-level entry.
+// And that for docs/websites updates, the values found in this row should be used to represent the
+// integration overall (whether there is 1 or many 10s of components contained in the package / in the integration).
+func cleanupDuplicatesAndPreferEmptyComponentField(out []map[string]string, groupBykey string) (out2 []map[string]string) {
+	keyToComponent := make(map[string]string)
+	keyToEntry := make(map[string]map[string]string)
+	for _, o := range out {
+		gkey := o[groupBykey]
+		if keyToComponent[gkey] == "" {
+			keyToComponent[gkey] = o["Component"]
+		}
+		if keyToEntry[gkey] == nil || keyToEntry[gkey]["Component"] == "" {
+			keyToEntry[gkey] = o
+		}
+
+	}
+	for _, entry := range keyToEntry {
+		out2 = append(out2, entry)
+	}
+	return out2
 }

@@ -1,0 +1,1 @@
+{"kind":"Group","apiVersion":"v1alpha2","display-name":"Group","format":"JSON","metadata":{},"model":{"name":"ks-core","version":"0.2.0","display-name":"ks-core","category":"","sub-category":""},"schema":"{\n \"description\": \"GroupSpec defines the desired state of Group\",\n \"title\": \"Group\",\n \"type\": \"object\"\n}"}
