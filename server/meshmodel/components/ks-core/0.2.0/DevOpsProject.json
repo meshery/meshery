@@ -1,0 +1,1 @@
+{"kind":"DevOpsProject","apiVersion":"v1alpha3","display-name":"Dev Ops Project","format":"JSON","metadata":{},"model":{"name":"ks-core","version":"0.2.0","display-name":"ks-core","category":"","sub-category":""},"schema":"{\n \"description\": \"DevOpsProjectSpec defines the desired state of DevOpsProject\",\n \"title\": \"Dev Ops Project\",\n \"type\": \"object\"\n}"}
