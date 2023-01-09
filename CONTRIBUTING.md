@@ -78,6 +78,7 @@ Please contribute! Meshery documentation uses GitHub Pages to host the docs site
    `git checkout -b <my-changes>`
 1. Edit/add documentation.
    `vi <specific page>.md`
+1. Add redirect link on the old page (only when a new page is created that replaces the old page)
 1. Run site locally to preview changes.
    `make docs`
 
@@ -131,6 +132,12 @@ To access the [Meshery UI Development Server](#ui-development-server) on port `3
 
 **Please note**: When running `make server` on the macOS platform, some may face errors with the crypto module in Go. This is caused due to invalid C headers in Clang installed with XCode platform tools. Replacing Clang with gcc by adding `export CC=gcc` to .bashrc / .zshrc should fix the issue. More information on the issue can be found [here](https://github.com/golang/go/issues/30072)
 
+**Please Note** : Little minor things where you can face some issues in the windows platform -
+
+1. Meshery requires gcc at the `make server` step, **x64 windows** architecture can face issues while finding the best **GCC compiler**, You can install [tdm64-GCC](https://jmeubank.github.io/tdm-gcc/) which worked smoothly but many compilers other than that can cause issues, you also have to set an environment variable for this step.
+
+2. Installing `make` in windows requires you to install [choco](https://chocolatey.org/install) first, which makes it easier to install `make` then, It requires security access which can only be done in admin mode. 
+
 #### Tests
 
 Users can now test their code changes on their local machine against the CI checks implemented through golang-ci lint.
@@ -151,16 +158,21 @@ make docker
 
 #### <a name="adapter">Writing a Meshery Adapter</a>
 
-Meshery uses adapters to provision and interact with different service meshes. Follow these instructions to create a new adapter or modify and existing adapter.
+Meshery uses adapters to provision and interact with different service meshes. Follow these instructions to create a new adapter or modify an existing adapter.
 
 1. Get the proto buf spec file from Meshery repo:
    `wget https://raw.githubusercontent.com/meshery/meshery/master/server/meshes/meshops.proto`
 1. Generate code
    1. Using Go as an example, do the following:
-      - adding GOPATH to PATH: `export PATH=$PATH:$GOPATH/bin`
-      - install grpc: `go get -u google.golang.org/grpc`
-      - install protoc plugin for go: `go get -u github.com/golang/protobuf/protoc-gen-go`
-      - Generate Go code: `protoc -I meshes/ meshes/meshops.proto --go_out=plugins=grpc:./meshes/`
+      - install the protocol buffer compiler: https://grpc.io/docs/protoc-installation/
+      - add GOPATH to PATH: `export PATH=$PATH:$(go env GOPATH)/bin`
+      - install the protocol compiler plugins for go: 
+               `go install google.golang.org/protobuf/cmd/protoc-gen-go@latest`
+               `go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest`
+      - create a directory _meshes_
+      - Generate Go code: 
+         	`protoc --proto_path=. --go_out=meshes --go_opt=paths=source_relative --go-grpc_out=meshes --go-grpc_opt=paths=source_relative meshops.proto`
+
    1. For other languages, please refer to gRPC.io for language-specific guides.
 1. Implement the service methods and expose the gRPC server on a port of your choice (e.g. 10000).
 
@@ -197,7 +209,7 @@ make setup-ui-libs
 To build and export the UI code:
 
 ```
-make build-ui
+make ui-setup
 ```
 
 Now that the UI code is built, Meshery UI will be available at `http://localhost:9081`.

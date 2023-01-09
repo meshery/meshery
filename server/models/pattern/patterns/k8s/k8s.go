@@ -2,7 +2,6 @@ package k8s
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
 	meshkube "github.com/layer5io/meshkit/utils/kubernetes"
@@ -20,7 +19,6 @@ func Deploy(kubeClient *meshkube.Client, oamComp v1alpha1.Component, oamConfig v
 	if err != nil {
 		return err
 	}
-
 	return kubeClient.ApplyManifest(manifest, meshkube.ApplyOptions{
 		Namespace: oamComp.Namespace,
 		Update:    true,
@@ -29,8 +27,8 @@ func Deploy(kubeClient *meshkube.Client, oamComp v1alpha1.Component, oamConfig v
 }
 
 func createK8sResourceStructure(comp v1alpha1.Component) map[string]interface{} {
-	apiVersion := getAPIVersionFromComponent(comp)
-	kind := getKindFromComponent(comp)
+	apiVersion := v1alpha1.GetAPIVersionFromComponent(comp)
+	kind := v1alpha1.GetKindFromComponent(comp)
 
 	component := map[string]interface{}{
 		"apiVersion": apiVersion,
@@ -52,28 +50,21 @@ func createK8sResourceStructure(comp v1alpha1.Component) map[string]interface{} 
 	return component
 }
 
-func getAPIVersionFromComponent(comp v1alpha1.Component) string {
-	return comp.Annotations["pattern.meshery.io.k8s.k8sAPIVersion"]
-}
-
-func getKindFromComponent(comp v1alpha1.Component) string {
-	kind := strings.TrimPrefix(comp.Annotations["pattern.meshery.io.k8s.k8sKind"], "/")
-
-	return kind
-}
-
 type prettifier bool
 
-func (p prettifier) Prettify(m map[string]interface{}) map[string]interface{} {
-	res := ConvertMapInterfaceMapString(m, true)
+// prettifyEndString will be true in cases of schema prettification where we want to prettify everything and will be false in
+// cases of YAML inputs from users where we want the end input as it is before sending to external systems such as kubernetes.
+// NOTE: For clients which want a complete prettified version, prettifyEndString will be passed true.
+func (p prettifier) Prettify(m map[string]interface{}, prettifyEndString bool) map[string]interface{} {
+	res := ConvertMapInterfaceMapString(m, true, prettifyEndString)
 	out, ok := res.(map[string]interface{})
 	if !ok {
 		fmt.Println("failed to cast")
 	}
 	return out
 }
-func (p prettifier) DePrettify(m map[string]interface{}) map[string]interface{} {
-	res := ConvertMapInterfaceMapString(m, false)
+func (p prettifier) DePrettify(m map[string]interface{}, deprettifyEndString bool) map[string]interface{} {
+	res := ConvertMapInterfaceMapString(m, false, deprettifyEndString)
 	out, ok := res.(map[string]interface{})
 	if !ok {
 		fmt.Println("failed to cast")
@@ -85,38 +76,38 @@ func (p prettifier) DePrettify(m map[string]interface{}) map[string]interface{} 
 // ConvertMapInterfaceMapString converts map[interface{}]interface{} => map[string]interface{}
 //
 // It will also convert []interface{} => []string
-func ConvertMapInterfaceMapString(v interface{}, prettify bool) interface{} {
+func ConvertMapInterfaceMapString(v interface{}, prettify bool, endString bool) interface{} {
 	switch x := v.(type) {
 	case map[interface{}]interface{}:
 		m := map[string]interface{}{}
 		for k, v2 := range x {
 			switch k2 := k.(type) {
 			case string:
-				delete(m, k2)
 				if prettify {
-					m[man.FormatToReadableString(k2)] = ConvertMapInterfaceMapString(v2, prettify)
+					m[man.FormatToReadableString(k2)] = ConvertMapInterfaceMapString(v2, prettify, endString)
 				} else {
-					m[strings.ReplaceAll(k2, " ", "")] = ConvertMapInterfaceMapString(v2, prettify)
+					m[man.DeFormatReadableString(k2)] = ConvertMapInterfaceMapString(v2, prettify, endString)
 				}
 			default:
-				m[fmt.Sprint(k)] = ConvertMapInterfaceMapString(v2, prettify)
+				m[fmt.Sprint(k)] = ConvertMapInterfaceMapString(v2, prettify, endString)
 			}
 		}
-		v = m
+		return m
 
 	case []interface{}:
+		x2 := make([]interface{}, len(x))
 		for i, v2 := range x {
-			x[i] = ConvertMapInterfaceMapString(v2, prettify)
+			x2[i] = ConvertMapInterfaceMapString(v2, prettify, endString)
 		}
-
+		return x2
 	case map[string]interface{}:
+		m := map[string]interface{}{}
 		foundFormatIntOrString := false
 		for k, v2 := range x {
-			delete(x, k)
 			if prettify {
-				x[man.FormatToReadableString(k)] = ConvertMapInterfaceMapString(v2, prettify)
+				m[man.FormatToReadableString(k)] = ConvertMapInterfaceMapString(v2, prettify, endString)
 			} else {
-				x[strings.ReplaceAll(k, " ", "")] = ConvertMapInterfaceMapString(v2, prettify)
+				m[man.DeFormatReadableString(k)] = ConvertMapInterfaceMapString(v2, prettify, endString)
 			}
 			//Apply this fix only when the format specifies string|int and type specifies string therefore when there is a contradiction
 			if k == "format" && v2 == "int-or-string" {
@@ -124,14 +115,16 @@ func ConvertMapInterfaceMapString(v interface{}, prettify bool) interface{} {
 			}
 		}
 		if x["type"] == "string" && foundFormatIntOrString {
-			x["type"] = "integer"
+			m["type"] = "integer"
 		}
+		return m
 	case string:
-		if prettify {
-			return man.FormatToReadableString(x) //Whitespace formatting should be done at the time of prettification only
+		if endString {
+			if prettify {
+				return man.FormatToReadableString(x) //Whitespace formatting should be done at the time of prettification only
+			}
+			return man.DeFormatReadableString(x)
 		}
-		return strings.ReplaceAll(x, " ", "")
 	}
-
 	return v
 }

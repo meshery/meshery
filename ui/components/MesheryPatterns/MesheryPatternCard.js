@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import {
   Avatar, Divider, Grid, IconButton, Typography, Tooltip
 } from "@material-ui/core";
-import Button from "@material-ui/core/Button";
 import DeleteIcon from "@material-ui/icons/Delete";
 import Save from "@material-ui/icons/Save";
 import Fullscreen from "@material-ui/icons/Fullscreen";
@@ -16,9 +15,10 @@ import DoneAllIcon from '@material-ui/icons/DoneAll';
 import DoneIcon from '@material-ui/icons/Done';
 import useStyles from "./Cards.styles";
 import YAMLDialog from "../YamlDialog";
+import PublicIcon from '@material-ui/icons/Public';
+import TooltipButton from '../../utils/TooltipButton'
 
 const INITIAL_GRID_SIZE = { xl : 4, md : 6, xs : 12 };
-
 
 function MesheryPatternCard({
   name,
@@ -26,6 +26,7 @@ function MesheryPatternCard({
   created_at,
   pattern_file,
   handleVerify,
+  handlePublishModal,
   handleDeploy,
   handleUnDeploy,
   updateHandler,
@@ -101,9 +102,18 @@ function MesheryPatternCard({
           <div className={classes.bottomPart} >
 
             <div className={classes.cardButtons} >
+              <TooltipButton
+                variant="contained"
+                title="Publish"
+                className={classes.testsButton}
+                onClick={(ev) => genericClickHandler(ev, handlePublishModal)}
+              >
+                <PublicIcon className={classes.iconPatt} />
+                <span className={classes.btnText}> Publish </span>
+              </TooltipButton>
 
-              <Button
-                title="Verify"
+              <TooltipButton
+                title="Valildate"
                 variant="contained"
                 className={classes.testsButton}
                 onClick={
@@ -111,10 +121,10 @@ function MesheryPatternCard({
                 }
               >
                 <DoneIcon className={classes.iconPatt} />
-                <span className={classes.btnText}> Verify </span>
-              </Button>
+                <span className={classes.btnText}> Validate </span>
+              </TooltipButton>
 
-              <Button
+              <TooltipButton
                 title="Deploy"
                 variant="contained"
                 onClick={(ev) =>
@@ -124,9 +134,9 @@ function MesheryPatternCard({
               >
                 <DoneAllIcon className={classes.iconPatt} />
                 <span className={classes.btnText}>Deploy</span>
-              </Button>
+              </TooltipButton>
 
-              <Button
+              <TooltipButton
                 title="Undeploy"
                 variant="contained"
                 className={classes.undeployButton}
@@ -136,9 +146,9 @@ function MesheryPatternCard({
               >
                 <UndeployIcon fill="#ffffff" className={classes.iconPatt} />
                 <span className={classes.btnText}>Undeploy</span>
-              </Button>
+              </TooltipButton>
 
-              { visibility === "private" ?  <Button
+              { visibility === "private" ?  <TooltipButton
                 title="Design"
                 variant="contained"
                 color="primary"
@@ -149,7 +159,7 @@ function MesheryPatternCard({
               >
                 <Avatar src="/static/img/pattern_trans.svg" className={classes.iconPatt} imgProps={{ height : "16px", width : "16px" }} />
                 <span className={classes.btnText}> Design </span>
-              </Button> : <Button
+              </TooltipButton> : <TooltipButton
                 title="Clone"
                 variant="contained"
                 color="primary"
@@ -158,9 +168,9 @@ function MesheryPatternCard({
                 }
                 className={classes.testsButton}
               >
-                <Avatar src="/static/img/clone-white.svg" className={classes.iconPatt} />
+                <Avatar src="/static/img/clone-white.svg" className={classes.clonePatt} />
                 <span className={classes.btnText}> Clone </span>
-              </Button>  }
+              </TooltipButton>  }
 
             </div>
           </div>

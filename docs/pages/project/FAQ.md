@@ -44,7 +44,7 @@ _Popular Installers:_
 
 #### Question: What systems is Meshery compatible with?
 
-  **Answer:** _Many. See Meshery's [Compatibility Matrix]({{site.baseurl}}/project/compatibility-matrix)._
+  **Answer:** _Many. See Meshery's [Compatibility Matrix]({{site.baseurl}}/installation/platforms)._
 
 #### Question: Why is Meshery Server only receiving MeshSync updates from one of my Kubernetes Clusters?
 

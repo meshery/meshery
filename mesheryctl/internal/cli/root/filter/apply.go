@@ -34,8 +34,11 @@ var applyCmd = &cobra.Command{
 // Apply WASM filter file (login required)
 mesheryctl exp filter apply --file [GitHub Link]
 
-// Apply the file
+// Apply a remote filter file
 mesheryctl exp filter apply --file https://github.com/layer5io/wasm-filters/tree/master/http-auth
+
+// Apply a filter file using file name
+mesheryctl exp filter apply [File Name]
 	`,
 	Args: cobra.MinimumNArgs(0),
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -48,8 +51,16 @@ mesheryctl exp filter apply --file https://github.com/layer5io/wasm-filters/tree
 			return errors.Wrap(err, "error processing config")
 		}
 
-		deployURL := mctlCfg.GetBaseMesheryURL() + "/api/experimental/filter/deploy"
-		filterURL := mctlCfg.GetBaseMesheryURL() + "/api/experimental/filter"
+		deployURL := mctlCfg.GetBaseMesheryURL() + "/api/filter/deploy"
+		filterURL := mctlCfg.GetBaseMesheryURL() + "/api/filter"
+
+		if len(args) == 0 && file == "" {
+			return errors.New(utils.FilterError("Filter 'file link/path' or 'file name' is required. Use 'mesheryctl exp filter apply --help' to display usage guide.\n"))
+		}
+
+		if len(args) > 0 && file != "" {
+			return errors.New(utils.FilterError("Please specify either 'filter file link/path' or 'filter file name' not both. Use 'mesheryctl exp filter apply --help' to display usage guide.\n"))
+		}
 
 		// filter name has been passed
 		if len(args) > 0 {
@@ -86,7 +97,7 @@ mesheryctl exp filter apply --file https://github.com/layer5io/wasm-filters/tree
 
 			index := 0
 			if len(response.Filters) == 0 {
-				return errors.New("no filters found with the given name")
+				return errors.New("No filters found with the given name")
 			} else if len(response.Filters) == 1 {
 				filterFile = response.Filters[0].FilterFile
 			} else {
@@ -99,7 +110,7 @@ mesheryctl exp filter apply --file https://github.com/layer5io/wasm-filters/tree
 			if validURL := govalidator.IsURL(file); !validURL {
 				content, err := os.ReadFile(file)
 				if err != nil {
-					return err
+					return errors.New("Unable to read file. " + err.Error())
 				}
 				text := string(content)
 
@@ -112,7 +123,7 @@ mesheryctl exp filter apply --file https://github.com/layer5io/wasm-filters/tree
 						"save": true,
 					})
 					if err != nil {
-						return err
+						return errors.New("Unable to convert file to json. " + err.Error())
 					}
 					req, err = utils.NewRequest("POST", filterURL, bytes.NewBuffer(jsonValues))
 					if err != nil {
@@ -146,7 +157,7 @@ mesheryctl exp filter apply --file https://github.com/layer5io/wasm-filters/tree
 				var jsonValues []byte
 				url, path, err := utils.ParseURLGithub(file)
 				if err != nil {
-					return err
+					return errors.New(utils.FilterError("Invalid github url. Use 'mesheryctl exp filter --help' to display usage guide.\n" + err.Error()))
 				}
 
 				log.Debug(url)
@@ -206,6 +217,7 @@ mesheryctl exp filter apply --file https://github.com/layer5io/wasm-filters/tree
 					return ErrUnmarshal(err)
 				}
 
+				fmt.Println(response)
 				// setup filter file here
 				filterFile = response[0].FilterFile
 			}
@@ -221,15 +233,18 @@ mesheryctl exp filter apply --file https://github.com/layer5io/wasm-filters/tree
 			return err
 		}
 
+		if res.StatusCode != 200 {
+			return ErrInvalidAPICall(res.StatusCode)
+		}
+
 		defer res.Body.Close()
 		body, err := io.ReadAll(res.Body)
 		if err != nil {
 			return err
 		}
 
-		if res.StatusCode == 200 {
-			log.Info("filter successfully deployed")
-		}
+		log.Info("filter successfully deployed")
+
 		log.Info(string(body))
 		return nil
 	},

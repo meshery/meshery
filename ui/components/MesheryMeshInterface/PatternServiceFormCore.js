@@ -41,7 +41,11 @@ function PatternServiceFormCore({ formData, schemaSet, onSubmit, onDelete, refer
   const child = React.useRef(null);
 
   const submitHandler = (val) => {
-    onSubmit?.(createPatternFromConfig({ [getPatternAttributeName(schemaSet.workload)] : val }, namespace))
+    try {
+      onSubmit?.(createPatternFromConfig({ [getPatternAttributeName(schemaSet.workload)] : val }, namespace));
+    } catch (e) {
+      console.log("error while submitting form-data", e)
+    }
   };
 
   const deleteHandler = (val) => {

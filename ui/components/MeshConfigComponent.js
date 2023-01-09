@@ -1,7 +1,6 @@
 import {
   Chip, Grid, IconButton, List, ListItem, ListItemText, Menu, MenuItem, Switch,
   Tooltip, Paper, NoSsr, TableCell, TableContainer, Table, Button, Typography,
-  TextField, FormGroup, InputAdornment
 } from '@material-ui/core';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import TableSortLabel from "@material-ui/core/TableSortLabel";
@@ -12,10 +11,8 @@ import DataTable from "mui-datatables";
 import { withStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import dataFetch, { promisifiedDataFetch } from '../lib/data-fetch';
+import dataFetch from '../lib/data-fetch';
 import PromptComponent from './PromptComponent';
-import CloudUploadIcon from "@material-ui/icons/CloudUpload";
-import AddIcon from "@material-ui/icons/AddCircleOutline";
 import MeshsyncStatusQuery from './graphql/queries/MeshsyncStatusQuery';
 import NatsStatusQuery from './graphql/queries/NatsStatusQuery';
 import changeOperatorState from './graphql/mutations/OperatorStatusMutation';
@@ -23,6 +20,7 @@ import resetDatabase from "./graphql/queries/ResetDatabaseQuery";
 import { updateProgress } from "../lib/store";
 import fetchMesheryOperatorStatus from "./graphql/queries/OperatorStatusQuery";
 import _ from "lodash";
+import { DEPLOYMENT_TYPE } from '../utils/Enum';
 
 const styles = (theme) => ({
   operationButton : {
@@ -60,10 +58,6 @@ const styles = (theme) => ({
     padding : theme.spacing(2),
     borderRadius : "inherit",
   },
-  fileLabelText : {
-    cursor : "pointer",
-    "& *" : { cursor : "pointer", },
-  },
   subtitle : {
     minWidth : 400,
     overflowWrap : 'anywhere',
@@ -74,14 +68,11 @@ const styles = (theme) => ({
     width : "80%",
     wordWrap : "break-word"
   },
-  addIcon : {
-    paddingLeft : theme.spacing(.5),
-    marginRight : theme.spacing(.5),
-  },
   FlushBtn : {
     margin : theme.spacing(0.5),
     padding : theme.spacing(1),
-    borderRadius : 5
+    borderRadius : 5,
+    pointerEvents : "auto"
   },
   menu : {
     display : 'flex',
@@ -92,6 +83,16 @@ const styles = (theme) => ({
   },
   uploadCluster : {
     overflow : "hidden"
+  },
+  MenuItem : {
+    backgroundColor : theme.palette.common.white,
+    "&:hover" : {
+      backgroundColor : theme.palette.common.white
+    },
+    pointerEvents : "none"
+  },
+  OperatorSwitch : {
+    pointerEvents : "auto"
   }
 });
 
@@ -109,15 +110,12 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
   const [k8sVersion, setK8sVersion] = useState(["N/A"]);
   const [discover, setLastDiscover] = useState(['']);
   const [_operatorState, _setOperatorState] = useState(operatorState || []);
-  const ref = useRef(null);
+  const deleteCtxtRef = useRef(null);
   const meshSyncResetRef = useRef(null);
   const _operatorStateRef = useRef(_operatorState);
   _operatorStateRef.current = _operatorState;
 
   const dateOptions = { weekday : 'long', year : 'numeric', month : 'long', day : 'numeric' };
-
-  let k8sfileElementVal = "";
-  let formData = new FormData();
 
   const stateUpdater = (state, updateFunc, updateValue, index) => {
     let newState = [...state];
@@ -132,7 +130,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
       let data = {
         context : ctx.name,
         location : ctx.server,
-        deployment_type : ctx.inClusterConfig ? "In Cluster" : "Out of Cluster",
+        deployment_type : ctx.deployment_type === DEPLOYMENT_TYPE.IN_CLUSTER ? "In Cluster" : "Out of Cluster",
         last_discovery : setDateTime(new Date()),
         id : ctx.id
       };
@@ -166,6 +164,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
     if (operatorState) {
       _setOperatorState(operatorState);
     }
+
   }, [operatorState])
 
   const handleFlushMeshSync = (index) => {
@@ -248,48 +247,6 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
     setShowMenu(menu);
   }
 
-  const handleConfigSnackbars = ctxs => {
-    updateProgress({ showProgress : false });
-
-    for (let ctx of ctxs.inserted_contexts) {
-      const msg = `Cluster ${ctx.name} at ${ctx.server} connected`
-      enqueueSnackbar(msg, {
-        variant : "success",
-        action : (key) => (
-          <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-            <CloseIcon />
-          </IconButton>
-        ),
-        autoHideDuration : 7000,
-      });
-    }
-
-    for (let ctx of ctxs.updated_contexts) {
-      const msg = `Cluster ${ctx.name} at ${ctx.server} already exists`
-      enqueueSnackbar(msg, {
-        variant : "info",
-        action : (key) => (
-          <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-            <CloseIcon />
-          </IconButton>
-        ),
-        autoHideDuration : 7000,
-      });
-    }
-
-    for (let ctx of ctxs.errored_contexts) {
-      const msg = `Failed to add cluster ${ctx.name} at ${ctx.server}`
-      enqueueSnackbar(msg, {
-        variant : "error",
-        action : (key) => (
-          <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-            <CloseIcon />
-          </IconButton>
-        ),
-        autoHideDuration : 7000,
-      });
-    }
-  }
 
   const handleLastDiscover = (index) => {
     let dt = new Date();
@@ -322,7 +279,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
         updateProgress({ showProgress : false });
         if (typeof result !== "undefined") {
           handleLastDiscover(index);
-          enqueueSnackbar("Kubernetes was successfully pinged!", {
+          enqueueSnackbar("Kubernetes was pinged!", {
             variant : "success",
             "data-cy" : "k8sSuccessSnackbar",
             autoHideDuration : 2000,
@@ -392,38 +349,34 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
     }, variables);
   };
 
-  const handleConfigDelete = (id, index) => {
-    updateProgress({ showProgress : true });
-    dataFetch(
-      "/api/system/kubernetes/contexts/" + id,
-      {
-        credentials : "same-origin",
-        method : "DELETE"
-      },
-      () => {
-        updateProgress({ showProgress : false });
-        if (index != undefined) {
-          let newData = data.filter((dt, idx) => index != idx);
-          setData(newData);
-        }
-      },
-      handleError("failed to delete kubernetes context")
-    );
-  }
-
-  const handleChange = () => {
-    const field = document.getElementById("k8sfile");
-    const textField = document.getElementById("k8sfileLabelText");
-    if (field instanceof HTMLInputElement) {
-      if (field.files.length < 1) return;
-      const name = field.files[0].name;
-      const formdata = new FormData();
-      formdata.append("k8sfile", field.files[0])
-      textField.value = name;
-      formData = formdata;
-
+  const handleConfigDelete = (id, name, index) => {
+    return async () => {
+      let responseOfDeleteK8sCtx = await deleteCtxtRef.current.show({
+        title : `Delete ${name} context ?`,
+        subtitle : `Are you sure you want to delete ${name} cluster from Meshery?`,
+        options : ["CONFIRM", "CANCEL"]
+      });
+      if (responseOfDeleteK8sCtx === "CONFIRM") {
+        updateProgress({ showProgress : true });
+        dataFetch(
+          "/api/system/kubernetes/contexts/" + id,
+          {
+            credentials : "same-origin",
+            method : "DELETE"
+          },
+          () => {
+            updateProgress({ showProgress : false });
+            if (index != undefined) {
+              let newData = data.filter((dt, idx) => index != idx);
+              setData(newData);
+            }
+          },
+          handleError("failed to delete kubernetes context")
+        );
+      }
     }
   }
+
 
   function getOperatorStatus(ctxId) {
     const operator = _operatorState?.find(op => op.contextID === ctxId);
@@ -490,15 +443,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
     return _.merge(defaultState, actualOperatorState);
   }
 
-  const uploadK8SConfig = async () => {
-    return await promisifiedDataFetch(
-      "/api/system/kubernetes",
-      {
-        method : "POST",
-        body : formData,
-      }
-    )
-  }
+
 
   const columns = [
     {
@@ -518,11 +463,12 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
           );
         },
         customBodyRender : (_, tableMeta,) => {
+          console.log("tableMeta: ", tableMeta);
           return (
             <Tooltip title={`Server: ${tableMeta.rowData[2]}`}>
               <Chip
                 label={data[tableMeta.rowIndex].context}
-                onDelete={() => handleConfigDelete(data[tableMeta.rowIndex].id, tableMeta.rowIndex)}
+                onDelete={handleConfigDelete(data[tableMeta.rowIndex].id, data[tableMeta.rowIndex].context, tableMeta.rowIndex)}
                 onClick={() => handleKubernetesClick(data[tableMeta.rowIndex].id, tableMeta.rowIndex)}
                 icon={<img src="/static/img/kubernetes.svg" className={classes.icon} />}
                 variant="outlined"
@@ -626,23 +572,28 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
                 open={showMenu[tableMeta.rowIndex]}
                 onClose={() => handleMenuClose(tableMeta.rowIndex)}
               >
-                <Button
-                  type="submit"
-                  variant="contained"
-                  color="primary"
-                  size="large"
-                  onClick={handleFlushMeshSync(tableMeta.rowIndex)}
-                  className={classes.FlushBtn}
-                  data-cy="btnResetDatabase"
-                >
-                  <Typography> Flush MeshSync </Typography>
-                </Button>
-                <MenuItem>
+                <MenuItem
+                  className={classes.MenuItem}>
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                    size="large"
+                    onClick={handleFlushMeshSync(tableMeta.rowIndex)}
+                    className={classes.FlushBtn}
+                    data-cy="btnResetDatabase"
+                  >
+                    <Typography> Flush MeshSync </Typography>
+                  </Button>
+                </MenuItem>
+                <MenuItem
+                  className={classes.MenuItem}>
                   <Switch
                     checked={getOperatorStatus(contexts[tableMeta.rowIndex].id)?.operatorState}
                     onClick={(e) => handleOperatorSwitch(tableMeta.rowIndex, e.target.checked)}
                     name="OperatorSwitch"
                     color="primary"
+                    className={classes.OperatorSwitch}
                   />
                   Operator
                 </MenuItem>
@@ -671,7 +622,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
     },
     onRowsDelete : (td) => {
       td.data.forEach((item) => {
-        handleConfigDelete(data[item.index].id)
+        handleConfigDelete(data[item.index].id, data[item.index].context)
       })
     },
 
@@ -863,78 +814,6 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
       )
     }
   }
-
-  const handleClick = async () => {
-    const modal = ref.current;
-    let response = await modal.show({
-      title : "Add Kubernetes Cluster(s)",
-      subtitle :
-        <>
-          <div className={classes.uploadCluster}>
-            <Typography variant="h6">
-              Upload your kubeconfig
-            </Typography>
-            <Typography variant="body2">
-              commonly found at ~/.kube/config
-            </Typography>
-            <FormGroup>
-              <input
-                id="k8sfile"
-                type="file"
-                value={k8sfileElementVal}
-                onChange={handleChange}
-                className={classes.fileInputStyle}
-              />
-              <TextField
-                id="k8sfileLabelText"
-                name="k8sfileLabelText"
-                className={classes.fileLabelText}
-                label="Upload kubeconfig"
-                variant="outlined"
-                fullWidth
-                onClick={() => {
-                  document.querySelector("#k8sfile")?.click();
-                }}
-                margin="normal"
-                InputProps={{
-                  readOnly : true,
-                  endAdornment : (
-                    <InputAdornment position="end">
-                      <CloudUploadIcon />
-                    </InputAdornment>
-                  ),
-                }}
-              />
-            </FormGroup>
-          </div>
-        </>,
-      options : ["IMPORT","CANCEL"]
-    })
-
-    if (response === "IMPORT") {
-      if (formData.get("k8sfile") === null) {
-        handleError("No file selected")("Please select a valid kube config")
-        return;
-      }
-
-      const inputFile = ( formData.get( "k8sfile" ).name );
-      const invalidExtensions = /^.*\.(jpg|gif|jpeg|pdf|png|svg)$/i;
-
-      if (invalidExtensions.test(inputFile)  ) {
-        handleError("Invalid file selected")("Please select a valid kube config")
-        return;
-      }
-
-      uploadK8SConfig().then((obj) => {
-        handleConfigSnackbars(obj);
-      }).
-        catch(err => {
-          handleError("failed to upload kubernetes config")(err)
-        })
-      formData.delete("k8sfile");
-    }
-  }
-
   const handleOperatorClick = (index) => {
     updateProgress({ showProgress : true });
     const ctxId = contexts[index].id
@@ -945,7 +824,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
 
           updateProgress({ showProgress : false });
           if (!res.operator.error && res.operator.status === ENABLED ) {
-            enqueueSnackbar("Operator was successfully pinged!", {
+            enqueueSnackbar("Operator was pinged!", {
               variant : "success",
               autoHideDuration : 2000,
               action : (key) => (
@@ -970,7 +849,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
         updateProgress({ showProgress : false });
         if (res.controller.name === "broker" && res.controller.status.includes("CONNECTED")) {
           let runningEndpoint = res.controller.status.substring("CONNECTED".length).trim();
-          enqueueSnackbar(`Broker was successfully pinged. ${runningEndpoint != "" ? `Running at ${runningEndpoint}` : ""}`, {
+          enqueueSnackbar(`Broker was pinged. ${runningEndpoint != "" ? `Running at ${runningEndpoint}` : ""}`, {
             variant : "success",
             action : (key) => (
               <IconButton key="close" aria-label="close" color="inherit" onClick={() => closeSnackbar(key)}>
@@ -1024,7 +903,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
           handleError("MeshSync could not be reached")("MeshSync is unavailable");
         } else {
           let publishEndpoint = res.controller.status.substring("ENABLED".length).trim()
-          enqueueSnackbar(`MeshSync was successfully pinged. ${publishEndpoint != "" ? `Publishing to ${publishEndpoint}` : ""}`, {
+          enqueueSnackbar(`MeshSync was pinged. ${publishEndpoint != "" ? `Publishing to ${publishEndpoint}` : ""}`, {
             variant : "success",
             action : (key) => (
               <IconButton key="close" aria-label="close" color="inherit" onClick={() => closeSnackbar(key)}>
@@ -1074,27 +953,13 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
   return (
     <div style={{ display : 'table', tableLayout : 'fixed', width : '100%' }}>
       <DataTable
-        title={
-          <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            size="large"
-            onClick={handleClick}
-            className={classes.button}
-            data-cy="btnResetDatabase"
-          >
-            <AddIcon fontSize="small" />
-            <Typography className={classes.addIcon}> Add Cluster</Typography>
-          </Button>
-        }
         columns={columns}
         data={data}
         options={options}
         className={classes.table}
       />
-      <PromptComponent ref={ref} />
       <PromptComponent ref={meshSyncResetRef} />
+      <PromptComponent ref={deleteCtxtRef} />
     </div>
   )
 }

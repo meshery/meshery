@@ -6,9 +6,10 @@ import {
 import blue from "@material-ui/core/colors/blue";
 import Grid from "@material-ui/core/Grid";
 import { withStyles } from "@material-ui/core/styles";
-import AddIcon from "@material-ui/icons/AddCircleOutline";
+// import AddIcon from "@material-ui/icons/AddCircleOutline";
+import AddIconCircleBorder from "../assets/icons/AddIconCircleBorder";
+import SettingsIcon from "../assets/icons/SettingsIcon";
 import CloseIcon from "@material-ui/icons/Close";
-import SettingsIcon from "@material-ui/icons/Settings";
 import { withRouter } from "next/router";
 import { withSnackbar } from "notistack";
 import PropTypes from "prop-types";
@@ -19,16 +20,17 @@ import dataFetch from "../lib/data-fetch";
 import { updateGrafanaConfig, updateProgress, updatePrometheusConfig } from "../lib/store";
 import { getK8sClusterIdsFromCtxId, getK8sClusterNamesFromCtxId } from "../utils/multi-ctx";
 import { versionMapper } from "../utils/nameMapper";
-import { submitGrafanaConfigure } from "./GrafanaComponent";
+import { submitGrafanaConfigure } from "./telemetry/grafana/GrafanaComponent";
 import fetchAvailableAddons from "./graphql/queries/AddonsStatusQuery";
 import fetchControlPlanes from "./graphql/queries/ControlPlanesQuery";
 import fetchDataPlanes from "./graphql/queries/DataPlanesQuery";
 import fetchClusterResources from "./graphql/queries/ClusterResourcesQuery";
 import subscribeClusterResources from "./graphql/subscriptions/ClusterResourcesSubscription";
 import fetchAvailableNamespaces from "./graphql/queries/NamespaceQuery";
-import { submitPrometheusConfigure } from "./PrometheusComponent";
+import { submitPrometheusConfigure } from "./telemetry/prometheus/PrometheusComponent";
 import MUIDataTable from "mui-datatables";
 import { MuiThemeProvider, createTheme } from '@material-ui/core/styles';
+import Popup from "./Popup";
 
 const styles = (theme) => ({
   rootClass : { backgroundColor : "#eaeff1", },
@@ -63,7 +65,7 @@ const styles = (theme) => ({
   icon : { width : theme.spacing(2.5), },
   istioIcon : { width : theme.spacing(1.5), },
   settingsIcon : {
-    width : theme.spacing(2.5),
+    width : theme.spacing(2.2),
     paddingRight : theme.spacing(0.5),
   },
   addIcon : {
@@ -692,7 +694,7 @@ class DashboardComponent extends React.Component {
       },
       MUIDataTableSearch : {
         searchIcon : {
-          color : "#607d8b" ,
+          color : "#607d8b",
           marginTop : "7px",
           marginRight : "8px",
         },
@@ -744,16 +746,16 @@ class DashboardComponent extends React.Component {
     components = tempComp;
 
     const switchSortOrder = (type) => {
-      if (type==="componentSort") {
-        componentSort = (componentSort==="asc")? "desc" : "asc";
+      if (type === "componentSort") {
+        componentSort = (componentSort === "asc") ? "desc" : "asc";
         versionSort = "asc";
         proxySort = "asc";
-      } else if (type==="versionSort") {
-        versionSort = (versionSort==="asc")? "desc" : "asc";
+      } else if (type === "versionSort") {
+        versionSort = (versionSort === "asc") ? "desc" : "asc";
         componentSort = "asc";
         proxySort = "asc";
-      } else if (type==="proxySort") {
-        proxySort = (proxySort==="asc")? "desc" : "asc";
+      } else if (type === "proxySort") {
+        proxySort = (proxySort === "asc") ? "desc" : "asc";
         componentSort = "asc";
         versionSort = "asc";
       }
@@ -780,7 +782,8 @@ class DashboardComponent extends React.Component {
 
             )
           }
-        }, },
+        },
+      },
       {
         name : "version",
         label : "Version",
@@ -804,7 +807,8 @@ class DashboardComponent extends React.Component {
           customBodyRender : (value) => {
             return (versionMapper(value))
           },
-        }, },
+        },
+      },
       {
         name : "data_planes",
         label : "Proxy",
@@ -853,19 +857,19 @@ class DashboardComponent extends React.Component {
                             <p>Ports: <br /> {cont?.ports && cont.ports.map(port => `[ ${port?.name ? port.name : 'Unknown'}, ${port?.containerPort ? port.containerPort : 'Unknown'}, ${port?.protocol ? port.protocol : 'Unknown'} ]`).join(', ')}</p>
                             {cont?.resources && (
                               <div>
-                                        Resources used: <br />
+                                Resources used: <br />
 
                                 <div style={{ paddingLeft : '2vh' }}>
                                   {cont?.resources?.limits && (
                                     <div>
                                       <p>Limits: <br />
-                                                CPU: {cont?.resources?.limits?.cpu} - Memory: {cont?.resources?.limits?.memory}</p>
+                                        CPU: {cont?.resources?.limits?.cpu} - Memory: {cont?.resources?.limits?.memory}</p>
                                     </div>
                                   )}
                                   {cont?.resources?.requests && (
                                     <div>
                                       <p>Requests: <br />
-                                                CPU: {cont?.resources?.requests?.cpu} - Memory: {cont?.resources?.requests?.memory}</p>
+                                        CPU: {cont?.resources?.requests?.cpu} - Memory: {cont?.resources?.requests?.memory}</p>
                                     </div>
                                   )}
                                 </div>
@@ -881,7 +885,8 @@ class DashboardComponent extends React.Component {
               </>
             );
           }
-        }, },
+        },
+      },
     ]
 
     const options = {
@@ -904,7 +909,7 @@ class DashboardComponent extends React.Component {
                 }
               >
                 {self.state.meshScanNamespaces[mesh.name] &&
-                    self.state.meshScanNamespaces[mesh.name].map((ns) => <MenuItem value={ns}>{ns}</MenuItem>)}
+                  self.state.meshScanNamespaces[mesh.name].map((ns) => <MenuItem key={ns.uniqueID} value={ns}>{ns}</MenuItem>)}
               </Select>
             )}
           </>
@@ -942,115 +947,117 @@ class DashboardComponent extends React.Component {
    * the selected cluster and namespace
    * @param {{kind, number}[]} resources
    */
-   ClusterResourcesCard = (resources = []) => {
-     const self = this;
-     let kindSort = "asc";
-     let countSort = "asc";
-     const switchSortOrder = (type) => {
-       if (type==="kindSort") {
-         kindSort = (kindSort==="asc")? "desc" : "asc";
-         countSort = "asc";
-       } else if (type==="countSort") {
-         countSort = (countSort==="asc")? "desc" : "asc";
-         kindSort = "asc";
-       }
-     }
+  ClusterResourcesCard = (resources = []) => {
+    const self = this;
+    let kindSort = "asc";
+    let countSort = "asc";
+    const switchSortOrder = (type) => {
+      if (type === "kindSort") {
+        kindSort = (kindSort === "asc") ? "desc" : "asc";
+        countSort = "asc";
+      } else if (type === "countSort") {
+        countSort = (countSort === "asc") ? "desc" : "asc";
+        kindSort = "asc";
+      }
+    }
 
-     const columns = [
-       {
-         name : "kind",
-         label : "Resources",
-         options : {
-           filter : false,
-           sort : true,
-           searchable : true,
-           setCellProps : () => ({ style : { textAlign : "center" } }),
-           customHeadRender : ({ index, ...column }, sortColumn) => {
-             return (
-               <TableCell key={index} style={{ textAlign : "center" }} onClick={() => {
-                 sortColumn(index); switchSortOrder("kindSort");
-               }}>
-                 <TableSortLabel active={column.sortDirection != null} direction={kindSort} >
-                   <b>{column.label}</b>
-                 </TableSortLabel>
-               </TableCell>
+    const columns = [
+      {
+        name : "kind",
+        label : "Resources",
+        options : {
+          filter : false,
+          sort : true,
+          searchable : true,
+          setCellProps : () => ({ style : { textAlign : "center" } }),
+          customHeadRender : ({ index, ...column }, sortColumn) => {
+            return (
+              <TableCell key={index} style={{ textAlign : "center" }} onClick={() => {
+                sortColumn(index); switchSortOrder("kindSort");
+              }}>
+                <TableSortLabel active={column.sortDirection != null} direction={kindSort} >
+                  <b>{column.label}</b>
+                </TableSortLabel>
+              </TableCell>
 
-             )
-           }
-         }, },
-       {
-         name : "count",
-         label : "Count",
-         options : {
-           filter : false,
-           sort : true,
-           searchable : true,
-           setCellProps : () => ({ style : { textAlign : "center" } }),
-           customHeadRender : ({ index, ...column }, sortColumn) => {
-             return (
-               <TableCell key={index} style={{ textAlign : "center" }} onClick={() => {
-                 sortColumn(index); switchSortOrder("countSort");
-               }}>
-                 <TableSortLabel active={column.sortDirection != null} direction={countSort} >
-                   <b>{column.label}</b>
-                 </TableSortLabel>
-               </TableCell>
+            )
+          }
+        },
+      },
+      {
+        name : "count",
+        label : "Count",
+        options : {
+          filter : false,
+          sort : true,
+          searchable : true,
+          setCellProps : () => ({ style : { textAlign : "center" } }),
+          customHeadRender : ({ index, ...column }, sortColumn) => {
+            return (
+              <TableCell key={index} style={{ textAlign : "center" }} onClick={() => {
+                sortColumn(index); switchSortOrder("countSort");
+              }}>
+                <TableSortLabel active={column.sortDirection != null} direction={countSort} >
+                  <b>{column.label}</b>
+                </TableSortLabel>
+              </TableCell>
 
-             )
-           }
-         }, },
-     ]
+            )
+          }
+        },
+      },
+    ]
 
-     const options = {
-       filter : false,
-       selectableRows : "none",
-       responsive : "scrollMaxHeight",
-       print : false,
-       download : false,
-       viewColumns : false,
-       pagination : false,
-       fixedHeader : true,
-       customToolbar : () => {
-         return (
-           <>
-             {self.state.namespaceList && (
-               <Select
-                 value={self.state.selectedNamespace}
-                 onChange={(e) =>
-                   self.setState({ selectedNamespace : e.target.value })
-                 }
-               >
-                 {self.state.namespaceList && self.state.namespaceList.map((ns) => <MenuItem value={ns}>{ns}</MenuItem>)}
-               </Select>
-             )}
-           </>
-         )
-       }
-     }
+    const options = {
+      filter : false,
+      selectableRows : "none",
+      responsive : "scrollMaxHeight",
+      print : false,
+      download : false,
+      viewColumns : false,
+      pagination : false,
+      fixedHeader : true,
+      customToolbar : () => {
+        return (
+          <>
+            {self.state.namespaceList && (
+              <Select
+                value={self.state.selectedNamespace}
+                onChange={(e) =>
+                  self.setState({ selectedNamespace : e.target.value })
+                }
+              >
+                {self.state.namespaceList && self.state.namespaceList.map((ns) => <MenuItem key={ns.uniqueID} value={ns}>{ns}</MenuItem>)}
+              </Select>
+            )}
+          </>
+        )
+      }
+    }
 
-     if (Array.isArray(resources) && resources.length)
-       return (
-         <Paper elevation={1} style={{ padding : "2rem" }}>
-           <MuiThemeProvider theme={this.getMuiTheme()}>
-             <MUIDataTable
-               title={
-                 <>
-                   <div style={{ display : "flex", alignItems : "center", marginBottom : "1rem" }}>
-                     <img src={"/static/img/all_mesh.svg"} className={this.props.classes.icon} style={{ marginRight : "0.75rem" }} />
-                     <Typography variant="h6">All Workloads</Typography>
-                   </div>
-                 </>
-               }
-               data={resources}
-               options={options}
-               columns={columns}
-             />
-           </MuiThemeProvider>
-         </Paper>
-       );
+    if (Array.isArray(resources) && resources.length)
+      return (
+        <Paper elevation={1} style={{ padding : "2rem" }}>
+          <MuiThemeProvider theme={this.getMuiTheme()}>
+            <MUIDataTable
+              title={
+                <>
+                  <div style={{ display : "flex", alignItems : "center", marginBottom : "1rem" }}>
+                    <img src={"/static/img/all_mesh.svg"} className={this.props.classes.icon} style={{ marginRight : "0.75rem" }} />
+                    <Typography variant="h6">All Workloads</Typography>
+                  </div>
+                </>
+              }
+              data={resources}
+              options={options}
+              columns={columns}
+            />
+          </MuiThemeProvider>
+        </Paper>
+      );
 
-     return null;
-   };
+    return null;
+  };
 
   handlePrometheusClick = () => {
     this.props.updateProgress({ showProgress : true });
@@ -1109,7 +1116,7 @@ class DashboardComponent extends React.Component {
     let chp = (
       <div>
         {k8sconfig?.map(ctx => (
-          <Tooltip title={`Server: ${ctx.server}`}>
+          <Tooltip key={ctx.uniqueID} title={`Server: ${ctx.server}`}>
             <Chip
               label={ctx?.name}
               className={classes.chip}
@@ -1305,7 +1312,7 @@ class DashboardComponent extends React.Component {
                 size="large"
                 onClick={() => self.props.router.push("/management")}
               >
-                <AddIcon className={classes.addIcon} />
+                <AddIconCircleBorder className={classes.addIcon} />
                 Install Service Mesh
               </Button>
             </div>
@@ -1338,7 +1345,7 @@ class DashboardComponent extends React.Component {
                 size="large"
                 onClick={() => self.props.router.push("/settings")}
               >
-                <AddIcon className={classes.addIcon} />
+                <AddIconCircleBorder className={classes.addIcon} />
                 Connect Cluster
               </Button>
             </div>
@@ -1347,6 +1354,7 @@ class DashboardComponent extends React.Component {
     );
     return (
       <NoSsr>
+        <Popup />
         <div className={classes.rootClass}>
           <Grid container spacing={2}>
             <Grid item xs={12} md={6}>

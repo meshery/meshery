@@ -142,8 +142,8 @@ func (l *DefaultLocalProvider) GetProviderToken(req *http.Request) (string, erro
 }
 
 // Logout - logout from provider backend
-func (l *DefaultLocalProvider) Logout(w http.ResponseWriter, req *http.Request) {
-	http.Redirect(w, req, "/user/login", http.StatusFound)
+func (l *DefaultLocalProvider) Logout(w http.ResponseWriter, req *http.Request) error {
+	return nil
 }
 
 // HandleUnAuthenticated - logout from provider backend
@@ -439,7 +439,7 @@ func (l *DefaultLocalProvider) ExtractToken(w http.ResponseWriter, r *http.Reque
 		"meshery-provider": l.Name(),
 		tokenName:          "",
 	}
-	logrus.Debugf("encoded response : %v", resp)
+	logrus.Debugf("token sent for meshery-provider %v", l.Name())
 	if err := json.NewEncoder(w).Encode(resp); err != nil {
 		logrus.Errorf("Unable to extract auth details: %v", err)
 		http.Error(w, "unable to extract auth details", http.StatusInternalServerError)
@@ -570,6 +570,12 @@ func (l *DefaultLocalProvider) GetCatalogMesheryPatterns(tokenString string, sea
 	return l.MesheryPatternPersister.GetMesheryCatalogPatterns(search, order)
 }
 
+// PublishCatalogPattern publishes pattern to catalog
+// Not supported by local provider
+func (l *DefaultLocalProvider) PublishCatalogPattern(req *http.Request, publishPatternRequest *MesheryCatalogPatternRequestBody) ([]byte, error) {
+	return []byte(""), nil
+}
+
 // GetMesheryPattern gets pattern for the given patternID
 func (l *DefaultLocalProvider) GetMesheryPattern(req *http.Request, patternID string) ([]byte, error) {
 	id := uuid.FromStringOrNil(patternID)
@@ -588,7 +594,6 @@ func (l *DefaultLocalProvider) DeleteMesheryPatterns(req *http.Request, patterns
 }
 
 // CloneMesheryPattern clones a meshery pattern with the given id
-// Not supported by local provider
 func (l *DefaultLocalProvider) CloneMesheryPattern(req *http.Request, patternID string) ([]byte, error) {
 	return l.MesheryPatternPersister.CloneMesheryPattern(patternID)
 }
@@ -677,6 +682,12 @@ func (l *DefaultLocalProvider) GetCatalogMesheryFilters(tokenString string, sear
 	return l.MesheryFilterPersister.GetMesheryCatalogFilters(search, order)
 }
 
+// PublishCatalogFilter publishes filter to catalog
+// Not supported by local provider
+func (l *DefaultLocalProvider) PublishCatalogFilter(req *http.Request, publishFilterRequest *MesheryCatalogFilterRequestBody) ([]byte, error) {
+	return []byte(""), nil
+}
+
 // GetMesheryFilterFile gets filter for the given filterID without the metadata
 func (l *DefaultLocalProvider) GetMesheryFilterFile(req *http.Request, filterID string) ([]byte, error) {
 	id := uuid.FromStringOrNil(filterID)
@@ -696,7 +707,6 @@ func (l *DefaultLocalProvider) DeleteMesheryFilter(req *http.Request, filterID s
 }
 
 // CloneMesheryFilter clones a meshery filter with the given id
-// Not supported by local provider
 func (l *DefaultLocalProvider) CloneMesheryFilter(req *http.Request, filterID string) ([]byte, error) {
 	return l.MesheryFilterPersister.CloneMesheryFilter(filterID)
 }

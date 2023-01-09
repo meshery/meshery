@@ -1,25 +1,48 @@
 package selector
 
 import (
+	"fmt"
+	"strings"
+
 	"github.com/layer5io/meshery/server/internal/store"
 	"github.com/layer5io/meshery/server/models/pattern/core"
+	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 )
 
-func (s *Selector) Workload(name string) (core.WorkloadCapability, bool) {
-	data := store.GetAll(generateWorkloadKey(name))
-	workloads := convertValueInterfaceSliceToWorkloadSlice(data)
-
-	filteredWorkloads, typ := filterWorkloadByType(workloads)
-
-	if typ == CoreResource {
-		return s.selectCoreWorkload(filteredWorkloads)
+func (s *Selector) Workload(name string, version string, model string) (v1alpha1.ComponentDefinition, bool) {
+	var comp v1alpha1.ComponentDefinition
+	name = strings.Split(name, ".")[0]
+	fmt.Println(name, model, version)
+	if model == "" && name == "Application" { //If model is not passed, default to core
+		model = "core"
 	}
-
-	if typ == K8sResource {
-		return s.selectK8sWorkload(filteredWorkloads)
+	entities := s.registry.GetEntities(&v1alpha1.ComponentFilter{
+		Name:      name,
+		ModelName: model,
+		Version:   version,
+	})
+	if len(entities) != 0 {
+		for _, en := range entities {
+			if en != nil {
+				comp = en.(v1alpha1.ComponentDefinition)
+			}
+		}
 	}
+	// data := store.GetAll(generateWorkloadKey(name))
+	// workloads := convertValueInterfaceSliceToWorkloadSlice(data)
 
-	return s.selectMeshWorkload(filteredWorkloads)
+	// filteredWorkloads, typ := filterWorkloadByType(workloads)
+
+	// if typ == CoreResource {
+	// 	return s.selectCoreWorkload(filteredWorkloads)
+	// }
+
+	// if typ == K8sResource {
+	// 	return s.selectK8sWorkload(filteredWorkloads)
+	// }
+
+	// return s.selectMeshWorkload(filteredWorkloads)
+	return comp, true
 }
 
 // selectCoreWorkload selects a core workload - first workload from the list is selected

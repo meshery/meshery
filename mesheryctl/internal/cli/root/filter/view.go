@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"regexp"
 
 	"github.com/ghodss/yaml"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
@@ -45,11 +44,9 @@ mesheryctl exp filter view test-wasm
 			if viewAllFlag {
 				return errors.New("-a cannot be used when [filter-name|filter-id] is specified")
 			}
-			filter = args[0]
-			// check if the filter argument is a valid uuid v4 string
-			isID, err = regexp.MatchString("^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-4[a-fA-F0-9]{3}-[8|9|aA|bB][a-fA-F0-9]{3}-[a-fA-F0-9]{12}$", filter)
+			filter, isID, err = utils.Valid(args[0], "filter")
 			if err != nil {
-				return err
+				return errors.New("Invalid filter ID / filter name. " + err.Error())
 			}
 		}
 		url := mctlCfg.GetBaseMesheryURL()
@@ -90,7 +87,7 @@ mesheryctl exp filter view test-wasm
 
 		var dat map[string]interface{}
 		if err = json.Unmarshal(body, &dat); err != nil {
-			return errors.Wrap(err, "failed to unmarshal response body")
+			return ErrUnmarshal(err)
 		}
 
 		if isID {

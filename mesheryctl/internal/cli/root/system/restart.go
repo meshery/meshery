@@ -15,8 +15,11 @@
 package system
 
 import (
+	"fmt"
+
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/pkg/errors"
 
 	log "github.com/sirupsen/logrus"
 
@@ -33,7 +36,6 @@ var restartCmd = &cobra.Command{
 	Use:   "restart",
 	Short: "Stop, then start Meshery",
 	Long:  `Restart all Meshery containers / pods.`,
-	Args:  cobra.NoArgs,
 	Example: `
 // Restart all Meshery containers, their instances and their connected volumes
 mesheryctl system restart
@@ -61,6 +63,9 @@ mesheryctl system restart --skip-update
 		return err
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
+		if len(args) != 0 {
+			return errors.New(utils.SystemLifeCycleError(fmt.Sprintf("this command takes no arguments. See '%s --help' for more information.\n", cmd.CommandPath()), "restart"))
+		}
 		return restart()
 	},
 }

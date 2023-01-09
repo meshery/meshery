@@ -1,0 +1,60 @@
+name: Deploy Meshery Playground
+on:
+  workflow_call:
+  workflow_dispatch:
+    inputs:
+      release-ver:
+        description: "Stable Release Version"
+        required: true
+        default: "v"
+      release-channel:
+        description: "Release Channel"
+        required: false
+        default: "playground"
+
+env:
+  GIT_VERSION: ${{github.event.inputs.release-ver}}
+  RELEASE_CHANNEL: ${{github.event.inputs.release-channel}}
+
+jobs:
+  deploy-playground:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v3
+      - name: Identify Release Values
+        if: "${{ github.event.inputs.release-ver}} != 'v' }}"
+        run: |
+          # GIT_TAG=`git symbolic-ref HEAD`
+          if [[ ${GITHUB_REF} = refs/tags* ]]
+          then
+            echo RELEASE_CHANNEL=stable >> $GITHUB_ENV
+          else
+            echo RELEASE_CHANNEL=edge >> $GITHUB_ENV
+          fi
+          LATEST_VERSION=$(git ls-remote --sort='v:refname' --tags | tail -1 | cut -f2 | sed 's/refs\/tags\///g') >> $GITHUB_ENV
+          GIT_VERSION=$(git ls-remote --sort='v:refname' --tags | tail -1 | cut -f2 | sed 's/refs\/tags\///g') >> $GITHUB_ENV
+          GIT_STRIPPED_VERSION=$(git ls-remote --sort='v:refname' --tags | tail -1 | cut -f2 | sed 's/refs\/tags\///g' | cut -c2-)
+          echo "Release channel determined to be $RELEASE_CHANNEL"
+          echo "GIT_LATEST=$LATEST_VERSION" >> $GITHUB_ENV
+          echo "GIT_VERSION=$GIT_VERSION" >> $GITHUB_ENV
+          echo "GIT_STRIPPED_VERSION=$GIT_STRIPPED_VERSION" >> $GITHUB_ENV
+        shell: bash
+      - uses: azure/setup-kubectl@v3
+        # with:
+        # version: '<version>' # default is latest stable
+        id: install-kubectl
+      - uses: Azure/k8s-set-context@v2
+        with:
+          kubeconfig: ${{ secrets.AKS_PLAYGROUND_KUBECONFIG }}
+      - uses: Azure/k8s-deploy@v4
+        with:
+          resource-group: Meshery
+          name: playground
+          action: deploy
+          strategy: basic
+          manifests: |
+            install/playground/meshery-playground-deployment.yaml
+          images: |
+            layer5/meshery:playground-${{env.GIT_VERSION}}
+

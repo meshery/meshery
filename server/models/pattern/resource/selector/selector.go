@@ -2,9 +2,8 @@ package selector
 
 import (
 	"fmt"
-	"strings"
 
-	"github.com/layer5io/meshery/server/models/pattern/core"
+	"github.com/layer5io/meshkit/models/meshmodel"
 )
 
 const (
@@ -19,33 +18,16 @@ type Helpers interface {
 }
 
 type Selector struct {
-	helpers Helpers
+	registry *meshmodel.RegistryManager
+	helpers  Helpers
 }
 
-func New(helpers Helpers) *Selector {
+func New(reg *meshmodel.RegistryManager, helpers Helpers) *Selector {
 	return &Selector{
-		helpers: helpers,
+		registry: reg,
+		helpers:  helpers,
 	}
 }
-
-func GetAnnotationsForWorkload(w core.WorkloadCapability) map[string]string {
-	res := map[string]string{}
-
-	metadata := w.OAMDefinition.Spec.Metadata
-	typ, ok := metadata["@type"]
-	if ok {
-		for k, v := range metadata {
-			if k == "@type" {
-				continue
-			}
-
-			res[fmt.Sprintf("%s.%s", strings.ReplaceAll(typ, "/", "."), k)] = v
-		}
-	}
-
-	return res
-}
-
 func generateWorkloadKey(name string) string {
 	return fmt.Sprintf(
 		"/meshery/registry/definition/%s/%s/%s",

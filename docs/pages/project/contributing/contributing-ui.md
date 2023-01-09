@@ -75,6 +75,14 @@ The designs in this specification should result in enabling:
 
 ## Setup
 
+### Node Version Recommendations 
+We recommend to use LTS versions of node:
+
+- Node 16 LTS: https://nodejs.org/download/release/v16.19.0/ \
+- Node 18 LTS: https://nodejs.org/en/
+
+The script supports other node versions as well, including node15 and node17, but is recommended to use node versions above 15 and especially node LTS v18.
+
 ### Linting-UI
 
 - When contributing to this project, it is advisable to
@@ -143,5 +151,49 @@ Refer to [Meshery Cypress Testing](contributing-cypress) for details of how to c
 
 All of the above steps would get the Meshery's development server running for you to work on in any IDE of your choice.
 
-{% include suggested-reading.html %}
+### Static files and icons
 
+The Meshery public folder contains static files and its folder structure may look like this:
+```
+meshery
+└── ui
+    └── public
+        └── static
+            ├── favicon.png
+            ├── fonts
+            ├── img
+            └── style
+```
+
+#### Meshery Icons and Images
+
+All the images or icons needs to be sourced from the [public directory of images](https://github.com/meshery/meshery/tree/master/ui/public/static/img). The files written inside this directory should only end with the extensions like `.svg`, `.png`, `.jpg` or `.jpeg`. Among all the `.svg` and `.png` are most favourable for usage.
+
+##### Conventions for svg files
+1. svg icons should be optimized and compressed, there are online [svg optimizers and viewers](https://www.svgviewer.dev/) that can compress the svg files to smaller size.
+2. All svg icons should have "height" and "width" properties set to 20px*20px. If the svg should have been bigger in size according to the needs in UI, it should be provided as a style prop from the react component. Ensure that height and width attributes are always set in original svg.
+3. Always include this XML header in each SVG image:
+      ```
+      <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE svg>
+      ```
+4. Svg can only fall under two categories, and this categories should be the name of folder \
+    1. white: containg white or mono-colored version of that svg
+    2. colored: containing colored version of that svg. \
+    
+    e.g.: for meshery icon, the colored and white version's folder structure may look like this
+    ```
+    └── img
+        └── meshery
+            ├── white
+            |   └── meshery-white.svg
+            └── color
+                └── meshery-color.svg
+    ```
+5. Avoid any kind of duplicity in the versions of icon used.
+
+For accessing the svg file as data-url, the utf8 encoding should be used in place of base64.Use [encodeURIComponent](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURIComponent) on SVG data URIs. \
+  ```
+  let svg = 'data:image/svg+xml;utf8,' + encodeURIComponent(svgFile);
+  ```
+
+{% include suggested-reading.html %}

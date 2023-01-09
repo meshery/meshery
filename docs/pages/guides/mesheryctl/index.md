@@ -12,6 +12,7 @@ list: exclude
 Guides to using Meshery's various features and components.
 
 {% assign sorted_guides = site.pages | sort: "name" %}
+
 <ul>
   {% for item in sorted_guides %}
   {% if item.type=="Guides" and item.category=="mesheryctl" and item.list!="exclude" and item.language=="en" -%}
@@ -22,8 +23,9 @@ Guides to using Meshery's various features and components.
     <li><a href="{{ site.baseurl }}/guides/upgrade#upgrading-meshery-cli">Upgrading Meshery CLI</a></li>
 </ul>
 
-
 {% include suggested-reading.html diffName="true" isDiffTag="true" diffTag=tag %}
+
+{% include related-discussions.html tag="mesheryctl" %}
 
 <!-- {% include toc.html page=Guides %} -->
 
@@ -46,3 +48,4 @@ Guides to using Meshery's various features and components.
 <h2 id="{{guide[0] | uri_escape | downcase }}">{{guide[0] | capitalize}}</h2>
 
 {% endfor %} -->
+

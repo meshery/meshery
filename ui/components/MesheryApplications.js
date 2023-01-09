@@ -256,6 +256,7 @@ function MesheryApplications({
    * fetch applications when the page loads
    */
   useEffect(() => {
+    fetchApplications(page, pageSize, search, sortOrder)
   }, [page, pageSize, search, sortOrder]);
 
   /**
@@ -344,7 +345,7 @@ function MesheryApplications({
         body : application_file,
       }, () => {
         console.log("ApplicationFile Deploy API", `/api/application/deploy`);
-        enqueueSnackbar(`${name} successfully deployed!!` , {
+        enqueueSnackbar(`"${name}" application deployed` , {
           variant : "success",
           action : function Action(key) {
             return (
@@ -371,7 +372,7 @@ function MesheryApplications({
         body : application_file,
       }, () => {
         console.log("ApplicationFile Undeploy API", `/api/pattern/deploy`);
-        enqueueSnackbar(`${name} successfully undeployed!!`, {
+        enqueueSnackbar(`"${name}" application undeployed`, {
           variant : "success",
           action : function Action(key) {
             return (
@@ -472,26 +473,23 @@ function MesheryApplications({
     };
   }
 
-  function handleSubmit({ data, id, name, type, source_type }) {
+  async function handleSubmit({ data, id, name, type, source_type }) {
     updateProgress({ showProgress : true })
     if (type === FILE_OPS.DELETE) {
-      dataFetch(
-        `/api/application/${id}`,
-        {
-          credentials : "include",
-          method : "DELETE",
-        },
-        () => {
-          console.log("ApplicationFile API", `/api/application/${id}`);
-          updateProgress({ showProgress : false });
-          resetSelectedRowData()();
-        },
-        // handleError
-        handleError(ACTION_TYPES.DELETE_APPLICATIONS)
-      );
+      const response = await showModal(1);
+      if (response=="No"){
+        updateProgress({ showProgress : false })
+        return;
+      }
+      deleteApplication(id);
     }
 
     if (type === FILE_OPS.UPDATE) {
+      let response = await showUpdateModel("");
+      if (response=="No"){
+        updateProgress({ showProgress : false })
+        return;
+      }
       dataFetch(
         `/api/application/${source_type}`,
         {
@@ -502,6 +500,17 @@ function MesheryApplications({
         () => {
           console.log("ApplicationFile API", `/api/application/${source_type}`);
           updateProgress({ showProgress : false });
+          enqueueSnackbar(`"${name}" Application updated`, {
+            variant : "success",
+            action : function Action(key) {
+              return (
+                <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+                  <CloseIcon />
+                </IconButton>
+              );
+            },
+            autoHideDuration : 2000,
+          });
         },
         // handleError
         handleError(ACTION_TYPES.UPDATE_APPLICATIONS)
@@ -672,18 +681,18 @@ function MesheryApplications({
           const rowData = applications[tableMeta.rowIndex];
           return (
             <>
-              <IconButton
+              <TooltipIcon
                 title="Deploy"
                 onClick={() => handleModalOpen(rowData.application_file, rowData.name, true)}
               >
                 <DoneAllIcon data-cy="deploy-button" />
-              </IconButton>
-              <IconButton
+              </TooltipIcon>
+              <TooltipIcon
                 title="Undeploy"
                 onClick={() => handleModalOpen(rowData.application_file, rowData.name, false)}
               >
                 <UndeployIcon fill="#8F1F00" data-cy="undeploy-button" />
-              </IconButton>
+              </TooltipIcon>
             </>
           );
         },
@@ -706,6 +715,14 @@ function MesheryApplications({
     return response;
   }
 
+  async function showUpdateModel(count){
+    let response = await modalRef.current.show({
+      title : `Update ${count ? count : ""} Application${count > 1 ? "s" : ''}?`,
+      subtitle : `Are you sure you want to update ${count > 1 ? "these" : 'this'} ${count ? count : ""} application${count > 1 ? "s" : ''}?`,
+      options : ["Yes","No"],
+    });
+    return response;
+  }
   async function deleteApplication(id) {
     dataFetch(
       `/api/application/${id}`,

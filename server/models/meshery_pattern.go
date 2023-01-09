@@ -26,6 +26,13 @@ type MesheryPattern struct {
 	CreatedAt *time.Time `json:"created_at,omitempty"`
 }
 
+// MesheryCatalogPatternRequestBody refers to the type of request body
+// that PublishCatalogPattern would receive
+type MesheryCatalogPatternRequestBody struct {
+	ID          uuid.UUID `json:"id,omitempty"`
+	CatalogData sql.Map   `json:"catalog_data,omitempty"`
+}
+
 // GetPatternName takes in a stringified patternfile and extracts the name from it
 func GetPatternName(stringifiedFile string) (string, error) {
 	out := map[string]interface{}{}

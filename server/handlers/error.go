@@ -88,6 +88,7 @@ const (
 	ErrFetchFilterCode                  = "2161"
 	ErrDeleteFilterCode                 = "2162"
 	ErrSavePatternCode                  = "2163"
+	ErrSaveApplicationCode              = "2266"
 	ErrGetPatternCode                   = "2164"
 	ErrDeletePatternCode                = "2165"
 	ErrFetchPatternCode                 = "2166"
@@ -107,6 +108,8 @@ const (
 	ErrClonePatternCode                 = "2246"
 	ErrCloneFilterCode                  = "2247"
 	ErrGenerateComponentsCode           = "2254"
+	ErrPublishCatalogPatternCode        = "2255"
+	ErrPublishCatalogFilterCode         = "2256"
 )
 
 var (
@@ -420,6 +423,9 @@ func ErrSavePattern(err error) error {
 	return errors.New(ErrSavePatternCode, errors.Alert, []string{"Error failed to save pattern"}, []string{err.Error()}, []string{"Cannot save the Pattern due to wrong path or URL"}, []string{"Check if the given path or URL of the Pattern is correct"})
 }
 
+func ErrSaveApplication(err error) error {
+	return errors.New(ErrSaveApplicationCode, errors.Alert, []string{"Error failed to save application"}, []string{err.Error()}, []string{"Cannot save the Application due to wrong path or URL"}, []string{"Check if the given path or URL of the Pattern is correct"})
+}
 func ErrGetPattern(err error) error {
 	return errors.New(ErrGetPatternCode, errors.Alert, []string{"Error failed to get pattern"}, []string{err.Error()}, []string{"Cannot get the Pattern with the given Pattern ID"}, []string{"Check if the given Pattern ID is correct"})
 }
@@ -462,4 +468,12 @@ func ErrClonePattern(err error) error {
 
 func ErrCloneFilter(err error) error {
 	return errors.New(ErrCloneFilterCode, errors.Alert, []string{"Error failed to clone filter"}, []string{err.Error()}, []string{"Failed to clone Filter with the given ID"}, []string{"Check if the Filter ID is correct and the Filter is public"})
+}
+
+func ErrPublishCatalogPattern(err error) error {
+	return errors.New(ErrPublishCatalogPatternCode, errors.Alert, []string{"Error failed to publish catalog pattern"}, []string{err.Error()}, []string{"Failed to publish catalog pattern"}, []string{"Check if the pattern ID is correct and you are admin"})
+}
+
+func ErrPublishCatalogFilter(err error) error {
+	return errors.New(ErrPublishCatalogFilterCode, errors.Alert, []string{"Error failed to publish catalog filter"}, []string{err.Error()}, []string{"Failed to publish catalog filter"}, []string{"Check if the filter ID is correct and you are admin"})
 }

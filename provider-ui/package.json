@@ -4,7 +4,7 @@
   "description": "the service mesh management plane",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon ui_dev_server.js",
+    "dev": "node ui_dev_server.js",
     "lint": "eslint --fix .",
     "next": "next",
     "build": "next build",
@@ -21,7 +21,7 @@
   "dependencies": {
     "@babel/eslint-parser": "^7.19.1",
     "@cypress/code-coverage": "^3.10.0",
-    "@emotion/react": "^11.10.4",
+    "@emotion/react": "^11.10.5",
     "@material-ui/core": "^4.12.4",
     "@material-ui/icons": "^4.11.3",
     "babel-plugin-istanbul": "^6.0.0",
@@ -35,15 +35,13 @@
     "styled-jsx": "^4.0.1"
   },
   "devDependencies": {
-    "babel-eslint": "^10.1.0",
-    "cypress": "^10.9.0",
-    "eslint": "^8.24.0",
-    "eslint-config-next": "^12.3.1",
+    "cypress": "^11.2.0",
+    "eslint": "^8.26.0",
+    "eslint-config-next": "^13.0.6",
     "eslint-plugin-cypress": "^2.12.1",
-    "eslint-plugin-react": "^7.31.8",
+    "eslint-plugin-react": "^7.31.11",
     "http-proxy": "^1.18.1",
-    "nodemon": "^2.0.20",
     "nyc": "^15.1.0",
-    "start-server-and-test": "^1.14.0"
+    "start-server-and-test": "^1.15.2"
   }
 }

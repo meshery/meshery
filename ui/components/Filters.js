@@ -27,6 +27,7 @@ import DoneAllIcon from '@material-ui/icons/DoneAll';
 import { toggleCatalogContent, updateProgress } from "../lib/store";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
 import dataFetch from "../lib/data-fetch";
+import PromptComponent from "./PromptComponent";
 import UploadImport from "./UploadImport";
 import FullscreenIcon from '@material-ui/icons/Fullscreen';
 import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
@@ -176,6 +177,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
   const [filters, setFilters] = useState([]);
   const [selectedFilter, setSelectedFilter] = useState(resetSelectedFilter());
   const [selectedRowData, setSelectedRowData] = useState(null);
+  const [extensionPreferences, setExtensionPreferences] = useState({});
   const [viewType, setViewType] = useState(
     /**  @type {TypeView} */
     ("grid")
@@ -286,19 +288,66 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     });
   }
 
+  const handleCatalogPreference = (catalogPref) => {
+    let body = Object.assign({}, extensionPreferences)
+    body["catalogContent"] = catalogPref
+
+    dataFetch(
+      "/api/user/prefs",
+      {
+        method : "POST",
+        credentials : "include",
+        body : JSON.stringify({ usersExtensionPreferences : body })
+      },
+      () => {
+        enqueueSnackbar(`Catalog Content was ${catalogPref ? "enab" : "disab"}led`,
+          { variant : 'success',
+            autoHideDuration : 4000,
+            action : (key) => (
+              <IconButton
+                key="close"
+                aria-label="Close"
+                color="inherit"
+                onClick={() => closeSnackbar(key)}
+              >
+                <CloseIcon />
+              </IconButton>
+            ),
+          });
+      },
+      err => console.error(err),
+    )
+  }
+
+  const fetchUserPrefs = () => {
+    dataFetch(
+      "/api/user/prefs",
+      {
+        method : "GET",
+        credentials : "include",
+      },
+      (result) => {
+        if (result) {
+          setExtensionPreferences(result?.usersExtensionPreferences)
+        }
+      },
+      err => console.error(err)
+    )
+  }
+
   const handleCatalogVisibility = () => {
+    handleCatalogPreference(!catalogVisibilityRef.current);
     catalogVisibilityRef.current = !catalogVisibility
     toggleCatalogContent({ catalogVisibility : !catalogVisibility });
   }
 
   useEffect(() => {
+    fetchUserPrefs();
     handleSetFilters(filters)
   }, [catalogVisibility])
 
   useEffect(() => {
     catalogVisibilityRef.current = catalogVisibility
-    initFiltersSubscription();
-
     const fetchCatalogFilters = fetchCatalogFilter({
       selector : {
         search : "",
@@ -307,6 +356,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     }).subscribe({
       next : (result) => {
         catalogContentRef.current = result?.catalogFilters;
+        initFiltersSubscription();
       },
       error : (err) => console.log("There was an error fetching Catalog Filter: ", err)
     });
@@ -353,13 +403,13 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     );
   }
 
-  const handleDeploy = (filter_file) => {
+  const handleDeploy = (filter_file, name) => {
     dataFetch(
       ctxUrl(DEPLOY_URL, selectedK8sContexts),
       { credentials : "include", method : "POST", body : filter_file },
       () => {
         console.log("FilterFile Deploy API", `/api/filter/deploy`);
-        enqueueSnackbar("Filter Successfully Deployed!", {
+        enqueueSnackbar(`"${name}" Filter deployed`, {
           variant : "success",
           action : function Action(key) {
             return (
@@ -376,13 +426,13 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     );
   };
 
-  const handleUndeploy = (filter_file) => {
+  const handleUndeploy = (filter_file, name) => {
     dataFetch(
       ctxUrl(DEPLOY_URL, selectedK8sContexts),
       { credentials : "include", method : "DELETE", body : filter_file },
       () => {
         updateProgress({ showProgress : false });
-        enqueueSnackbar("Filter Successfully Undeployed!", {
+        enqueueSnackbar(`"${name}" Filter undeployed`, {
           variant : "success",
           action : function Action(key) {
             return (
@@ -398,7 +448,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     );
   };
 
-  function handleClone(filterID) {
+  function handleClone(filterID, name) {
     updateProgress({ showProgress : true });
     dataFetch(FILTER_URL.concat(CLONE_URL, "/", filterID),
       {
@@ -407,7 +457,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
       },
       () => {
         updateProgress({ showProgress : false });
-        enqueueSnackbar("Filter Successfully Cloned!", {
+        enqueueSnackbar(`"${name}" Filter cloned`, {
           variant : "success",
           action : function Action(key) {
             return (
@@ -508,17 +558,33 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     };
   }
 
-  function handleSubmit({ data, name, id, type }) {
+  async function handleSubmit({ data, name, id, type }) {
     // TODO: use filter name
     console.info("posting filter", name);
     updateProgress({ showProgress : true });
     if (type === FILE_OPS.DELETE) {
+      const response = await showmodal(1);
+      if (response == "No") {
+        updateProgress({ showProgress : false });
+        return;
+      }
       dataFetch(
         `/api/filter/${id}`,
         { credentials : "include", method : "DELETE" },
         () => {
           console.log("FilterFile API", `/api/filter/${id}`);
           updateProgress({ showProgress : false });
+          enqueueSnackbar(`"${name}" Filter deleted`, {
+            variant : "success",
+            action : function Action(key) {
+              return (
+                <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+                  <CloseIcon />
+                </IconButton>
+              );
+            },
+            autoHideDuration : 2000,
+          });
           resetSelectedRowData()();
         },
         // handleError
@@ -677,38 +743,40 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
             <>
               {visibility === "public" ? <IconButton onClick={(e) => {
                 e.stopPropagation();
-                handleClone(rowData.id)
+                handleClone(rowData.id, rowData.name)
               }
               }>
                 <img src="/static/img/clone.svg" />
               </IconButton>
                 :
-                <IconButton>
+                <TooltipIcon
+                  title="Config"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    setSelectedRowData(filters[tableMeta.rowIndex])
+                  }}
+                >
                   <EditIcon
-                    title="Config"
                     aria-label="config"
                     color="inherit"
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      setSelectedRowData(filters[tableMeta.rowIndex])
-                    }}
                   />
-                </IconButton> }
-              <IconButton>
+                </TooltipIcon> }
+              <TooltipIcon
+                title="Deploy"
+                onClick={(e) => handleModalOpen(e, rowData.filter_file, rowData.name, true)}
+              >
                 <DoneAllIcon
-                  title="Deploy"
                   aria-label="deploy"
                   color="inherit"
-                  onClick={(e) => handleModalOpen(e, rowData.filter_file, rowData.name, true)}
                   data-cy="deploy-button"
                 />
-              </IconButton>
-              <IconButton
+              </TooltipIcon>
+              <TooltipIcon
                 title="Undeploy"
                 onClick={(e) => handleModalOpen(e, rowData.filter_file, rowData.name, false)}
               >
                 <UndeployIcon fill="#8F1F00" data-cy="undeploy-button" />
-              </IconButton>
+              </TooltipIcon>
             </>
           );
         },
@@ -742,7 +810,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
       () => {
         updateProgress({ showProgress : false });
 
-        enqueueSnackbar("Filter Successfully Deleted!", {
+        enqueueSnackbar("Filter deleted", {
           variant : "success",
           autoHideDuration : 2000,
           action : function Action(key) {
@@ -908,20 +976,22 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
               setPage={setPage}
               selectedPage={page}
               UploadImport={UploadImport}
+              fetch={() => fetchFilters(page, pageSize, search, sortOrder)}
             />
         }
         <ConfirmationMsg
           open={modalOpen.open}
           handleClose={handleModalClose}
           submit={
-            { deploy : () => handleDeploy(modalOpen.filter_file),  unDeploy : () => handleUndeploy(modalOpen.filter_file) }
+            { deploy : () => handleDeploy(modalOpen.filter_file, modalOpen.name),  unDeploy : () => handleUndeploy(modalOpen.filter_file, modalOpen.name) }
           }
           isDelete={!modalOpen.deploy}
           title={modalOpen.name}
           componentCount={modalOpen.count}
           tab={modalOpen.deploy ? 0 : 1}
         />
-        <UploadImport open={importModal.open} handleClose={handleUploadImportClose} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} configuration="Filter" />
+        <PromptComponent ref={modalRef} />
+        <UploadImport open={importModal.open} handleClose={handleUploadImportClose} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} fetch={() => fetchFilters(page, pageSize, search, sortOrder) } configuration="Filter" />
       </NoSsr>
     </>
   );
