@@ -284,7 +284,7 @@ function ConfirmationMsg(props) {
               data-cy="validate-btn-modal"
               className={classes.tab}
               label={<div style={{ display : "flex" }}
-                onClick={(e) => handleTabValChange(e,0)}
+                onClick={(event) => handleTabValChange(event,0)}
               > <DoneIcon style={{ margin : "2px" }}  fontSize="small"/><span className={classes.tabLabel}>Validate</span> </div>
               }
             />}
@@ -292,14 +292,14 @@ function ConfirmationMsg(props) {
               data-cy="Undeploy-btn-modal"
               className={classes.tab}
               label={<div style={{ display : "flex" }}
-                onClick={(e) => handleTabValChange(e,1)}
+                onClick={(event) => handleTabValChange(event,1)}
               > <div style={{ margin : "2px" }}> <UndeployIcon fill="rgba(0, 0, 0, 0.54)" width="20" height="20"/> </div> <span className={classes.tabLabel}>Undeploy</span> </div>}
             />
             <Tab
               data-cy="deploy-btn-modal"
               className={classes.tab}
               label={<div style={{ display : "flex" }}
-                onClick={(e) => handleTabValChange(e,2)}
+                onClick={(event) => handleTabValChange(event,2)}
               > <DoneAllIcon style={{ margin : "2px" }} fontSize="small" /> <span className={classes.tabLabel}>Deploy</span> </div>}
             />
           </Tabs>
