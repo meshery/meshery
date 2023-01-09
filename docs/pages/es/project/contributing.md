@@ -85,7 +85,7 @@ O puedes configurar tu IDE, por ejemplo , Visual Studio Code para cerrar automá
 1. Edita/agrega documentación:
    `vi <specific page>.md`
 1. Ejecuta el sitio localmente para obtener una vista previa de los cambios:
-   `make site`
+   `make docs`
 1. Has commit, [sign-off](#commit-signing), y envía los cambios a tu rama remota
    `git push origin <my-changes>`
 1. Abre pull request (en su navegador web) en nuestro repositorio principal: https://github.com/meshery/meshery.
