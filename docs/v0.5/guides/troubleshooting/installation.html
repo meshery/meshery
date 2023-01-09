@@ -599,6 +599,27 @@ meshery-custom-end -->
   </li>
 </ol>
 
+<h2 id="setting-up-meshery-using-kind-or-minikube">Setting up Meshery using Kind or Minikube</h2>
+
+<p>The difficulty with Minikube and Kind clusters is that they typically don't have a loadbalancer, whereas Meshery gives its users complete control over how networking is configured. As a result, networking for these deployments is more complex. Few of the alternatives are:</p>
+
+<ol>
+  <li>
+    <p>Use the MetalLB minikube add-on that provides load balancing.<code class="language-plaintext highlighter-rouge">minikube addons enable metallb</code></p>
+    <p>MetalLB setup: <a href="https://kubebyexample.com/learning-paths/metallb/install">link</a></p>
+  </li>
+  <li>
+    <p>Use minikube tunnel to expose services.<code class="language-plaintext highlighter-rouge">minikube tunnel</code></p>
+    <p>Docs: <a href="https://minikube.sigs.k8s.io/docs/handbook/accessing/#using-minikube-tunnel">link</a></p>
+    <p>A more simple way to resolve this issue can be <code class="language-plaintext highlighter-rouge">port-forwarding</code>. Run the following command in terminal:</a></p>
+    <p><code class="language-plaintext highlighter-rouge">kubectl port-forward service/meshery 9081:9081 -n meshery</code></p>
+  </li>
+  <li>
+    <p>For <code class="language-plaintext highlighter-rouge">kind</code>`, I prefer installing MetalLB with a custom configmap.</p>
+    <p>Docs: <a href="https://kind.sigs.k8s.io/docs/user/loadbalancer/">link</a></p>
+  </li>
+</ol>
+
 <h2 id="meshery-operator">Meshery Operator</h2>
 
 <h3 id="meshery-broker">Meshery Broker</h3>
