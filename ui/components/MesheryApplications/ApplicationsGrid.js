@@ -167,7 +167,7 @@ function MesheryApplicationGrid({ applications=[],handleDeploy, handleUnDeploy, 
         isDelete={!modalOpen.deploy}
         title={ modalOpen.name }
         componentCount={ modalOpen.count }
-        tab={modalOpen.deploy ? 0 : 1}
+        tab={modalOpen.deploy ? 2 : 1}
       />
       <UploadImport open={importModal.open} handleClose={handleUploadImportClose} isApplication = {true} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} fetch={() => fetch()} configuration="Application"  />
     </div>
