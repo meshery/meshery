@@ -106,11 +106,13 @@ type HandlerInterface interface {
 	ComponentVersionsHandler(rw http.ResponseWriter, r *http.Request)
 	ComponentsByNameHandler(rw http.ResponseWriter, r *http.Request)
 	ValidationHandler(rw http.ResponseWriter, r *http.Request)
-	ComponentGenerationHandler(rw http.ResponseWriter, r *http.Request)
+	MeshModelGenerationHandler(rw http.ResponseWriter, r *http.Request)
+	GetMeshmodelModels(rw http.ResponseWriter, r *http.Request)
 	RegisterMeshmodelComponents(rw http.ResponseWriter, r *http.Request)
 
 	GetMeshmodelComponentsByName(rw http.ResponseWriter, r *http.Request)
-	GetMeshmodelComponentsByType(rw http.ResponseWriter, r *http.Request)
+	GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.Request)
+	GetMeshmodelEntititiesByModel(rw http.ResponseWriter, r *http.Request)
 	MeshmodelComponentsForTypeHandler(rw http.ResponseWriter, r *http.Request)
 
 	GetAllMeshmodelRelationships(rw http.ResponseWriter, r *http.Request)

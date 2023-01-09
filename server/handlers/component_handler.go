@@ -116,7 +116,7 @@ func (h *Handler) GetMeshmodelComponentsByName(rw http.ResponseWriter, r *http.R
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
 	name := mux.Vars(r)["name"]
-	typ := mux.Vars(r)["type"]
+	typ := mux.Vars(r)["model"]
 	v := r.URL.Query().Get("version")
 	res := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
 		Name:      name,
@@ -178,17 +178,17 @@ func (h *Handler) MeshmodelComponentsForTypeHandler(rw http.ResponseWriter, r *h
 	}
 }
 
-// swagger:route GET /api/meshmodel/components/{type} MeshmodelGetByType idMeshmodelGetByType
+// swagger:route GET /api/meshmodel/model/{model}/component MeshmodelGetByType idMeshmodelGetByType
 // Handle GET request for getting meshmodel components of a specific type. The component type/model name should be lowercase like "kubernetes", "istio"
 // Example: /api/meshmodel/components/kubernetes
 // Components can be further filtered through query parameter ?version=
 // responses:
 //
 //	200: []ComponentDefinition
-func (h *Handler) GetMeshmodelComponentsByType(rw http.ResponseWriter, r *http.Request) {
+func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
-	typ := mux.Vars(r)["type"]
+	typ := mux.Vars(r)["model"]
 	v := r.URL.Query().Get("version")
 	res := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
 		ModelName: typ,
@@ -241,6 +241,72 @@ func (h *Handler) RegisterMeshmodelComponents(rw http.ResponseWriter, r *http.Re
 	if err != nil {
 		http.Error(rw, err.Error(), http.StatusBadRequest)
 		return
+	}
+}
+
+type ModelResponse struct {
+	v1alpha1.Model
+	Components    []v1alpha1.ComponentDefinition    `json:"components"`
+	Relationships []v1alpha1.RelationshipDefinition `json:"relationships"`
+}
+
+func (h *Handler) GetMeshmodelEntititiesByModel(rw http.ResponseWriter, r *http.Request) {
+	rw.Header().Add("Content-Type", "application/json")
+	enc := json.NewEncoder(rw)
+	typ := mux.Vars(r)["model"]
+	v := r.URL.Query().Get("version")
+	res := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
+		ModelName: typ,
+		Version:   v,
+	})
+	var comps []v1alpha1.ComponentDefinition
+	for _, r := range res {
+		m := make(map[string]interface{})
+		comp, _ := r.(v1alpha1.ComponentDefinition)
+		_ = json.Unmarshal([]byte(comp.Schema), &m)
+		m = k8s.Format.Prettify(m, false)
+		b, _ := json.Marshal(m)
+		comp.Schema = string(b)
+		comps = append(comps, comp)
+	}
+	res2 := h.registryManager.GetEntities(&v1alpha1.RelationshipFilter{
+		ModelName: typ,
+	})
+	var relationships []v1alpha1.RelationshipDefinition
+	for _, r := range res2 {
+		rel, _ := r.(v1alpha1.RelationshipDefinition)
+
+		relationships = append(relationships, rel)
+	}
+	var mres ModelResponse
+	mod := h.registryManager.GetModels(&v1alpha1.ModelFilter{
+		Name:    typ,
+		Version: v,
+	})
+	if len(mod) != 0 {
+		mres.Model = mod[0]
+	}
+	mres.Relationships = relationships
+	mres.Components = comps
+	if err := enc.Encode(mres); err != nil {
+		h.log.Error(ErrWorkloadDefinition(err)) //TODO: Add appropriate meshkit error
+		http.Error(rw, ErrWorkloadDefinition(err).Error(), http.StatusInternalServerError)
+	}
+}
+func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
+	rw.Header().Add("Content-Type", "application/json")
+	enc := json.NewEncoder(rw)
+	name := r.URL.Query().Get("name")
+	v := r.URL.Query().Get("version")
+	cat := r.URL.Query().Get("category")
+	res := h.registryManager.GetModels(&v1alpha1.ModelFilter{
+		Name:     name,
+		Version:  v,
+		Category: cat,
+	})
+	if err := enc.Encode(res); err != nil {
+		h.log.Error(ErrWorkloadDefinition(err)) //TODO: Add appropriate meshkit error
+		http.Error(rw, ErrWorkloadDefinition(err).Error(), http.StatusInternalServerError)
 	}
 }
 func filterUniqueElementsArray(s []string) []string {
