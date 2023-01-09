@@ -305,7 +305,6 @@ func cleanupDuplicatesAndPreferEmptyComponentField(out []map[string]string, grou
 		//If the row with given gkey is encountered for the first time, or the given row already exists but with a non-empty component field then use the new entry.
 		//This logic will prioritize empty component fields to not be overriden
 		if keyToEntry[gkey] == nil || keyToEntry[gkey]["Component"] != "" {
-			fmt.Println("for model ", gkey, " will use ")
 			keyToEntry[gkey] = o
 		}
 
