@@ -69,7 +69,7 @@ export default function CodeEditor({ yaml, saveCodeEditorChanges, cleanHandler }
             style={{
               '& .CodeMirror' : {
                 minHeight : "300px",
-                height : '67vh',
+                height : '54vh',
               }
             }}
           />
