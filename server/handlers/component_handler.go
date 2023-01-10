@@ -3,6 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"net/http"
+	"strconv"
 
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/server/models/pattern/core"
@@ -122,11 +123,26 @@ func (h *Handler) GetMeshmodelComponentsByName(rw http.ResponseWriter, r *http.R
 	if r.URL.Query().Get("search") == "true" {
 		search = true
 	}
+	var sort bool
+	if r.URL.Query().Get("sort") == "true" {
+		sort = true
+	}
+	limitstr := r.URL.Query().Get("pagesize")
+	limit, _ := strconv.Atoi(limitstr)
+	pagestr := r.URL.Query().Get("page")
+	page, _ := strconv.Atoi(pagestr)
+	if page == 0 {
+		page = 1
+	}
+	offset := (page - 1) * limit
 	res := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
 		Name:      name,
 		ModelName: typ,
 		Version:   v,
 		Greedy:    search,
+		Offset:    offset,
+		Limit:     limit,
+		Sort:      sort,
 	})
 	var comps []v1alpha1.ComponentDefinition
 	for _, r := range res {
@@ -195,9 +211,24 @@ func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.R
 	enc := json.NewEncoder(rw)
 	typ := mux.Vars(r)["model"]
 	v := r.URL.Query().Get("version")
+	var sort bool
+	if r.URL.Query().Get("sort") == "true" {
+		sort = true
+	}
+	limitstr := r.URL.Query().Get("pagesize")
+	limit, _ := strconv.Atoi(limitstr)
+	pagestr := r.URL.Query().Get("page")
+	page, _ := strconv.Atoi(pagestr)
+	if page == 0 {
+		page = 1
+	}
+	offset := (page - 1) * limit
 	res := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
 		ModelName: typ,
 		Version:   v,
+		Limit:     limit,
+		Offset:    offset,
+		Sort:      sort,
 	})
 	var comps []v1alpha1.ComponentDefinition
 	for _, r := range res {
@@ -260,9 +291,24 @@ func (h *Handler) GetMeshmodelEntititiesByModel(rw http.ResponseWriter, r *http.
 	enc := json.NewEncoder(rw)
 	typ := mux.Vars(r)["model"]
 	v := r.URL.Query().Get("version")
+	var sort bool
+	if r.URL.Query().Get("sort") == "true" {
+		sort = true
+	}
+	limitstr := r.URL.Query().Get("pagesize")
+	limit, _ := strconv.Atoi(limitstr)
+	pagestr := r.URL.Query().Get("page")
+	page, _ := strconv.Atoi(pagestr)
+	if page == 0 {
+		page = 1
+	}
+	offset := (page - 1) * limit
 	res := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
 		ModelName: typ,
 		Version:   v,
+		Limit:     limit,
+		Offset:    offset,
+		Sort:      sort,
 	})
 	var comps []v1alpha1.ComponentDefinition
 	for _, r := range res {
@@ -276,6 +322,9 @@ func (h *Handler) GetMeshmodelEntititiesByModel(rw http.ResponseWriter, r *http.
 	}
 	res2 := h.registryManager.GetEntities(&v1alpha1.RelationshipFilter{
 		ModelName: typ,
+		Limit:     limit,
+		Offset:    offset,
+		Sort:      sort,
 	})
 	var relationships []v1alpha1.RelationshipDefinition
 	for _, r := range res2 {
@@ -304,10 +353,25 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 	name := r.URL.Query().Get("name")
 	v := r.URL.Query().Get("version")
 	cat := r.URL.Query().Get("category")
+	var sort bool
+	if r.URL.Query().Get("sort") == "true" {
+		sort = true
+	}
+	limitstr := r.URL.Query().Get("pagesize")
+	limit, _ := strconv.Atoi(limitstr)
+	pagestr := r.URL.Query().Get("page")
+	page, _ := strconv.Atoi(pagestr)
+	if page == 0 {
+		page = 1
+	}
+	offset := (page - 1) * limit
 	res := h.registryManager.GetModels(&v1alpha1.ModelFilter{
 		Name:     name,
 		Version:  v,
 		Category: cat,
+		Limit:    limit,
+		Offset:   offset,
+		Sort:     sort,
 	})
 	if err := enc.Encode(res); err != nil {
 		h.log.Error(ErrWorkloadDefinition(err)) //TODO: Add appropriate meshkit error
