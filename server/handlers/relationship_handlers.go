@@ -16,6 +16,40 @@ import (
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 )
 
+func (h *Handler) GetMeshmodelRelationshipByName(rw http.ResponseWriter, r *http.Request) {
+	rw.Header().Add("Content-Type", "application/json")
+	enc := json.NewEncoder(rw)
+	typ := mux.Vars(r)["model"]
+	name := mux.Vars(r)["name"]
+	var sort bool
+	if r.URL.Query().Get("sort") == "true" {
+		sort = true
+	}
+	var greedy bool
+	if r.URL.Query().Get("search") == "true" {
+		greedy = true
+	}
+	limitstr := r.URL.Query().Get("pagesize")
+	limit, _ := strconv.Atoi(limitstr)
+	pagestr := r.URL.Query().Get("page")
+	page, _ := strconv.Atoi(pagestr)
+	if page == 0 {
+		page = 1
+	}
+	offset := (page - 1) * limit
+	res := h.registryManager.GetEntities(&v1alpha1.RelationshipFilter{
+		Kind:      name,
+		ModelName: typ,
+		Greedy:    greedy,
+		Limit:     limit,
+		Offset:    offset,
+		Sort:      sort,
+	})
+	if err := enc.Encode(res); err != nil {
+		h.log.Error(ErrWorkloadDefinition(err)) //TODO: Add appropriate meshkit error
+		http.Error(rw, ErrWorkloadDefinition(err).Error(), http.StatusInternalServerError)
+	}
+}
 func (h *Handler) GetAllMeshmodelRelationships(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)

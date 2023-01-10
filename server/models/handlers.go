@@ -116,6 +116,7 @@ type HandlerInterface interface {
 	MeshmodelComponentsForTypeHandler(rw http.ResponseWriter, r *http.Request)
 
 	GetAllMeshmodelRelationships(rw http.ResponseWriter, r *http.Request)
+	GetMeshmodelRelationshipByName(rw http.ResponseWriter, r *http.Request)
 	RegisterMeshmodelRelationships(rw http.ResponseWriter, r *http.Request)
 
 	OAMComponentDetailsHandler(rw http.ResponseWriter, r *http.Request)
