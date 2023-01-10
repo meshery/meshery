@@ -22,20 +22,20 @@ Anytime a `mesheryctl system` command is executed, a series of preflight checks 
 
 ## Setting up Meshery using Kind or Minikube
 
-The difficulty with Minikube and Kind clusters is that they typically don't have a loadbalancer, whereas Meshery gives its users complete control over how networking is configured. As a result, networking for these deployments is more complex. Few of the alternatives are:
-1. Use the MetalLB minikube add-on that provides load balancing. `minikube addons enable metallb`
+The difficulty with Minikube and Kind clusters is that they typically don't have a LoadBalancer, whereas Meshery gives its users complete control over how networking is configured. As a result, networking for these deployments is more complex. Few of the alternatives are:
+1. Use the MetalLB Minikube add-on that provides load balancing. `minikube addons enable metallb`
 
     MetalLB setup: [link](https://kubebyexample.com/learning-paths/metallb/install)
 
-2. Use minikube tunnel to expose services. `minikube tunnel`. 
+2. Use Minikube tunnel to expose services. `minikube tunnel`. 
 
     Docs: [link](https://minikube.sigs.k8s.io/docs/handbook/accessing/#using-minikube-tunnel)
 
-    A more simple way to resolve this issue can be `port-forwarding`. Run the following command in terminal:
+    A simpler way to resolve this issue can be `port-forwarding`. Run the following command in terminal:
 
     `kubectl port-forward service/meshery 9081:9081 -n meshery`
 
-3. For `kind`, I prefer installing MetalLB with a custom configmap.
+3. For `kind`, you can prefer installing MetalLB with a custom configmap.
 
     Docs: [link](https://kind.sigs.k8s.io/docs/user/loadbalancer/)
 
