@@ -259,6 +259,11 @@ function jsonSchemaBuilder(schema, obj) {
   // applying field template universally to every field type.
   obj["ui:FieldTemplate"] = CustomFieldTemplate;
   if (schema.type === 'object') {
+    if (schema.additionalProperties){
+      obj["additionalProperties"]={  // remove the description from additional fields
+        "ui:description" : " "
+      }
+    }
     for (let key in schema.properties) {
       obj[key] = {};
 
