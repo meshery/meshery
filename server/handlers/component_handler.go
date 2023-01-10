@@ -105,7 +105,7 @@ func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Requ
 	}
 }
 
-// swagger:route GET /api/meshmodel/components/{type}/{name} MeshmodelGetByName idMeshmodelGetByName
+// swagger:route GET /api/meshmodel/model/{model}/component/{name} MeshmodelGetByName idMeshmodelGetByName
 // Handle GET request for getting meshmodel components of a specific type by name.
 // Example: /api/meshmodel/components/kubernetes/Namespace
 // Components can be further filtered through query parameter ?version=
@@ -118,10 +118,15 @@ func (h *Handler) GetMeshmodelComponentsByName(rw http.ResponseWriter, r *http.R
 	name := mux.Vars(r)["name"]
 	typ := mux.Vars(r)["model"]
 	v := r.URL.Query().Get("version")
+	var search bool
+	if r.URL.Query().Get("search") == "true" {
+		search = true
+	}
 	res := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
 		Name:      name,
 		ModelName: typ,
 		Version:   v,
+		Greedy:    search,
 	})
 	var comps []v1alpha1.ComponentDefinition
 	for _, r := range res {
