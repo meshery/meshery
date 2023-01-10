@@ -764,7 +764,7 @@ The Meshery Docs site is built using Jekyll - a simple static site generator. Je
 
 <ul>
   <li>Serve the code locally
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>make docs
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>make site
 </code></pre></div>    </div>
   </li>
   <li>
@@ -808,7 +808,7 @@ The Meshery Docs site is built using Jekyll - a simple static site generator. Je
 ruby '2.7.1' //to any version you have installed
 </code></pre></div></div>
 
-<p>Automatically the <code class="language-plaintext highlighter-rouge">Gemfile.lock</code> will update once the <code class="language-plaintext highlighter-rouge">make docs</code> is given (for Windows, run <code class="language-plaintext highlighter-rouge">bundle exec jekyll serve</code> if WSL2 isn’t present)</p>
+<p>Automatically the <code class="language-plaintext highlighter-rouge">Gemfile.lock</code> will update once the <code class="language-plaintext highlighter-rouge">make site</code> is given (for Windows, run <code class="language-plaintext highlighter-rouge">bundle exec jekyll serve</code> if WSL2 isn’t present)</p>
 
 <p><strong>WARNING: If you have followed the third step then please don’t commit the changes made on <code class="language-plaintext highlighter-rouge">Gemfile</code> and <code class="language-plaintext highlighter-rouge">Gemfile.lock</code> in your branch to preserve integrity, else the CI action will fail to generate the site preview during PR</strong>.</p>
 
@@ -879,7 +879,7 @@ ruby '2.7.1' //to any version you have installed
   <li>Edit/add documentation.
 <code class="language-plaintext highlighter-rouge">vi &lt;specific page&gt;.md</code></li>
   <li>Run site locally to preview changes.
-<code class="language-plaintext highlighter-rouge">make docs</code></li>
+<code class="language-plaintext highlighter-rouge">make site</code></li>
   <li>Commit, <a href="#commit-signing">sign-off</a>, and push changes to your remote branch.
 <code class="language-plaintext highlighter-rouge">git push origin &lt;my-changes&gt;</code></li>
   <li>Open a pull request (in your web browser) against the repo: https://github.com/layer5io/meshery.</li>
