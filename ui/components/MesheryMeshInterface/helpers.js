@@ -255,7 +255,6 @@ export function formatString(text) {
 function jsonSchemaBuilder(schema, obj) {
   if (!schema) return
 
-  const uiDesc = "ui:description"
   // applying field template universally to every field type.
   obj["ui:FieldTemplate"] = CustomFieldTemplate;
   if (schema.type === 'object') {
@@ -282,12 +281,6 @@ function jsonSchemaBuilder(schema, obj) {
     obj["items"] = {}
     jsonSchemaBuilder(schema.items, obj["items"]);
     return
-  }
-
-
-  // Don't remove the description from additonal Fields Title
-  if (!schema?.additionalProperties) {
-    obj[uiDesc] = " ";
   }
 
   if (obj["ui:widget"]) { // if widget is already assigned, don't go over
