@@ -36,8 +36,8 @@ jobs:
         if: ${{ github.event.pull_request && steps.checkUserMember.outputs.isTeamMember == 'true' }}
         uses: ethomson/send-tweet-action@v1
         with:
-          status: 'Help wanted on thi PR: "${{ github.event.pull_request.title }}" - ${{ github.event.pull_request.html_url }} \#opensource'
-          consumer-key: ${{ secrets.TWITTER_CONSUMER_API_KEY }}
-          consumer-secret: ${{ secrets.TWITTER_CONSUMER_API_SECRET }}
-          access-token: ${{ secrets.TWITTER_ACCESS_TOKEN }}
-          access-token-secret: ${{ secrets.TWITTER_ACCESS_TOKEN_SECRET }}
+          status: 'Help wanted on this PR: "${{ github.event.pull_request.title }}" - ${{ github.event.pull_request.html_url }} \#opensource'
+          consumer-key: ${{ secrets.TWITTER_CONSUMER_API_KEY_MESHERY }}
+          consumer-secret: ${{ secrets.TWITTER_CONSUMER_API_SECRET_MESHERY }}
+          access-token: ${{ secrets.TWITTER_ACCESS_TOKEN_MESHERY }}
+          access-token-secret: ${{ secrets.TWITTER_ACCESS_TOKEN_SECRET_MESHERY }}
