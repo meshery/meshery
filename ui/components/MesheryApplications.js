@@ -897,7 +897,6 @@ function MesheryApplications({
               setPage={setPage}
               selectedPage={page}
               UploadImport={UploadImport}
-              fetch={() => fetchApplications(page, pageSize, search, sortOrder)}
               types={types}
               handleAppDownload={handleAppDownload}
             />
@@ -915,7 +914,7 @@ function MesheryApplications({
         />
         <PromptComponent ref={modalRef} />
         <UploadImport open={importModal.open} handleClose={handleUploadImportClose} isApplication = {true} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler}
-          supportedTypes={types} fetch={() => fetchApplications(page, pageSize, search, sortOrder)} configuration="Application"  />
+          supportedTypes={types} configuration="Application"  />
       </NoSsr>
     </>
   );
