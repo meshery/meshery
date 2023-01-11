@@ -21,6 +21,12 @@ import (
 // Example: /api/meshmodel/model/kubernetes/relationship/Edge
 // Components can be further filtered through query parameter ?version=
 // responses:
+// ?version={version}
+// ?order={field} orders on the passed field
+// ?sort={[asc/desc]} Default behavior is asc
+// ?search={[true/false]} If search is true then a greedy search is performed
+// ?page={page-number}
+// ?pagesize={pagesize}
 //
 //	200: []RelationshipDefinition
 func (h *Handler) GetMeshmodelRelationshipByName(rw http.ResponseWriter, r *http.Request) {
@@ -28,10 +34,6 @@ func (h *Handler) GetMeshmodelRelationshipByName(rw http.ResponseWriter, r *http
 	enc := json.NewEncoder(rw)
 	typ := mux.Vars(r)["model"]
 	name := mux.Vars(r)["name"]
-	var sort bool
-	if r.URL.Query().Get("sort") == "true" {
-		sort = true
-	}
 	var greedy bool
 	if r.URL.Query().Get("search") == "true" {
 		greedy = true
@@ -50,7 +52,8 @@ func (h *Handler) GetMeshmodelRelationshipByName(rw http.ResponseWriter, r *http
 		Greedy:    greedy,
 		Limit:     limit,
 		Offset:    offset,
-		Sort:      sort,
+		OrderOn:   r.URL.Query().Get("order"),
+		Sort:      r.URL.Query().Get("sort"),
 	})
 	if err := enc.Encode(res); err != nil {
 		h.log.Error(ErrWorkloadDefinition(err)) //TODO: Add appropriate meshkit error
@@ -63,16 +66,17 @@ func (h *Handler) GetMeshmodelRelationshipByName(rw http.ResponseWriter, r *http
 // Example: /api/meshmodel/model/kubernetes/relationship
 // Components can be further filtered through query parameter ?version=
 // responses:
+// ?version={version}
+// ?order={field} orders on the passed field
+// ?sort={[asc/desc]} Default behavior is asc
+// ?page={page-number}
+// ?pagesize={pagesize}
 //
 //	200: []RelationshipDefinition
 func (h *Handler) GetAllMeshmodelRelationships(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
 	typ := mux.Vars(r)["model"]
-	var sort bool
-	if r.URL.Query().Get("sort") == "true" {
-		sort = true
-	}
 	limitstr := r.URL.Query().Get("pagesize")
 	limit, _ := strconv.Atoi(limitstr)
 	pagestr := r.URL.Query().Get("page")
@@ -82,10 +86,12 @@ func (h *Handler) GetAllMeshmodelRelationships(rw http.ResponseWriter, r *http.R
 	}
 	offset := (page - 1) * limit
 	res := h.registryManager.GetEntities(&v1alpha1.RelationshipFilter{
+		Version:   r.URL.Query().Get("version"),
 		ModelName: typ,
 		Limit:     limit,
 		Offset:    offset,
-		Sort:      sort,
+		OrderOn:   r.URL.Query().Get("order"),
+		Sort:      r.URL.Query().Get("sort"),
 	})
 	if err := enc.Encode(res); err != nil {
 		h.log.Error(ErrWorkloadDefinition(err)) //TODO: Add appropriate meshkit error

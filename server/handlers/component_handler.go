@@ -80,27 +80,44 @@ func (h *Handler) GetAllComponents(rw http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// swagger:route GET /api/meshmodel/components MeshmodelGet idMeshmodelGet
-// Handle GET request for getting all meshmodel components.
-// Components can be further filtered through query parameter ?version=
+/**Meshmodel endpoints **/
+
+// swagger:route GET /api/meshmodel/model GetMeshmodelModels idGetMeshmodelModels
+// Handle GET request for getting all meshmodel models. The component type/model name should be lowercase like "kubernetes", "istio"
 // responses:
+// ?version={version}
+// ?order={field} orders on the passed field
+// ?category={category of model}
+// ?sort={[asc/desc]} Default behavior is asc
+// ?search={[true/false]} If search is true then a greedy search is performed
+// ?page={page-number}
+// ?pagesize={pagesize}
 //
-//	200: []ComponentDefinition
-func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Request) {
+//	200: []Model
+func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
-	res := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{})
-	var comps []v1alpha1.ComponentDefinition
-	for _, r := range res {
-		m := make(map[string]interface{})
-		comp, _ := r.(v1alpha1.ComponentDefinition)
-		_ = json.Unmarshal([]byte(comp.Schema), &m)
-		m = k8s.Format.Prettify(m, false)
-		b, _ := json.Marshal(m)
-		comp.Schema = string(b)
-		comps = append(comps, comp)
+	name := r.URL.Query().Get("name")
+	v := r.URL.Query().Get("version")
+	cat := r.URL.Query().Get("category")
+	limitstr := r.URL.Query().Get("pagesize")
+	limit, _ := strconv.Atoi(limitstr)
+	pagestr := r.URL.Query().Get("page")
+	page, _ := strconv.Atoi(pagestr)
+	if page == 0 {
+		page = 1
 	}
-	if err := enc.Encode(comps); err != nil {
+	offset := (page - 1) * limit
+	res := h.registryManager.GetModels(&v1alpha1.ModelFilter{
+		Name:     name,
+		Version:  v,
+		Category: cat,
+		Limit:    limit,
+		Offset:   offset,
+		OrderOn:  r.URL.Query().Get("order"),
+		Sort:     r.URL.Query().Get("sort"),
+	})
+	if err := enc.Encode(res); err != nil {
 		h.log.Error(ErrWorkloadDefinition(err)) //TODO: Add appropriate meshkit error
 		http.Error(rw, ErrWorkloadDefinition(err).Error(), http.StatusInternalServerError)
 	}
@@ -111,6 +128,12 @@ func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Requ
 // Example: /api/meshmodel/model/kubernetes/component/Namespace
 // Components can be further filtered through query parameter ?version=
 // responses:
+// ?version={version}
+// ?order={field} orders on the passed field
+// ?sort={[asc/desc]} Default behavior is asc
+// ?search={[true/false]} If search is true then a greedy search is performed
+// ?page={page-number}
+// ?pagesize={pagesize}
 //
 //	200: []ComponentDefinition
 func (h *Handler) GetMeshmodelComponentsByName(rw http.ResponseWriter, r *http.Request) {
@@ -122,10 +145,6 @@ func (h *Handler) GetMeshmodelComponentsByName(rw http.ResponseWriter, r *http.R
 	var search bool
 	if r.URL.Query().Get("search") == "true" {
 		search = true
-	}
-	var sort bool
-	if r.URL.Query().Get("sort") == "true" {
-		sort = true
 	}
 	limitstr := r.URL.Query().Get("pagesize")
 	limit, _ := strconv.Atoi(limitstr)
@@ -142,7 +161,8 @@ func (h *Handler) GetMeshmodelComponentsByName(rw http.ResponseWriter, r *http.R
 		Greedy:    search,
 		Offset:    offset,
 		Limit:     limit,
-		Sort:      sort,
+		OrderOn:   r.URL.Query().Get("order"),
+		Sort:      r.URL.Query().Get("sort"),
 	})
 	var comps []v1alpha1.ComponentDefinition
 	for _, r := range res {
@@ -204,6 +224,11 @@ func (h *Handler) MeshmodelComponentsForTypeHandler(rw http.ResponseWriter, r *h
 // Example: /api/meshmodel/model/kubernetes/component
 // Components can be further filtered through query parameter ?version=
 // responses:
+// ?version={version}
+// ?order={field} orders on the passed field
+// ?sort={[asc/desc]} Default behavior is asc
+// ?page={page-number}
+// ?pagesize={pagesize}
 //
 //	200: []ComponentDefinition
 func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.Request) {
@@ -211,10 +236,6 @@ func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.R
 	enc := json.NewEncoder(rw)
 	typ := mux.Vars(r)["model"]
 	v := r.URL.Query().Get("version")
-	var sort bool
-	if r.URL.Query().Get("sort") == "true" {
-		sort = true
-	}
 	limitstr := r.URL.Query().Get("pagesize")
 	limit, _ := strconv.Atoi(limitstr)
 	pagestr := r.URL.Query().Get("page")
@@ -228,7 +249,8 @@ func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.R
 		Version:   v,
 		Limit:     limit,
 		Offset:    offset,
-		Sort:      sort,
+		OrderOn:   r.URL.Query().Get("order"),
+		Sort:      r.URL.Query().Get("sort"),
 	})
 	var comps []v1alpha1.ComponentDefinition
 	for _, r := range res {
@@ -290,7 +312,13 @@ type ModelResponse struct {
 // swagger:route GET /api/meshmodel/model/{model} GetMeshmodelEntititiesByModel idGetMeshmodelEntititiesByModel
 // Handle GET request for getting all meshmodel entities of a specific model.
 // Example: /api/meshmodel/model/kubernetes
-// Models can be further filtered through query parameter ?version=
+// Models can be further filtered through query parameter
+// ?version={version}
+// ?order={field} orders on the passed field
+// ?sort={[asc/desc]} Default behavior is asc
+// ?search={[true/false]} If search is true then a greedy search is performed
+// ?page={page-number}
+// ?pagesize={pagesize}
 // responses:
 //
 //	200: ModelResponse
@@ -299,9 +327,9 @@ func (h *Handler) GetMeshmodelEntititiesByModel(rw http.ResponseWriter, r *http.
 	enc := json.NewEncoder(rw)
 	typ := mux.Vars(r)["model"]
 	v := r.URL.Query().Get("version")
-	var sort bool
-	if r.URL.Query().Get("sort") == "true" {
-		sort = true
+	var greedy bool
+	if r.URL.Query().Get("search") == "true" {
+		greedy = true
 	}
 	limitstr := r.URL.Query().Get("pagesize")
 	limit, _ := strconv.Atoi(limitstr)
@@ -311,87 +339,52 @@ func (h *Handler) GetMeshmodelEntititiesByModel(rw http.ResponseWriter, r *http.
 		page = 1
 	}
 	offset := (page - 1) * limit
-	res := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
-		ModelName: typ,
-		Version:   v,
-		Limit:     limit,
-		Offset:    offset,
-		Sort:      sort,
-	})
-	var comps []v1alpha1.ComponentDefinition
-	for _, r := range res {
-		m := make(map[string]interface{})
-		comp, _ := r.(v1alpha1.ComponentDefinition)
-		_ = json.Unmarshal([]byte(comp.Schema), &m)
-		m = k8s.Format.Prettify(m, false)
-		b, _ := json.Marshal(m)
-		comp.Schema = string(b)
-		comps = append(comps, comp)
-	}
-	res2 := h.registryManager.GetEntities(&v1alpha1.RelationshipFilter{
-		ModelName: typ,
-		Limit:     limit,
-		Offset:    offset,
-		Sort:      sort,
-	})
-	var relationships []v1alpha1.RelationshipDefinition
-	for _, r := range res2 {
-		rel, _ := r.(v1alpha1.RelationshipDefinition)
-
-		relationships = append(relationships, rel)
-	}
 	var mres ModelResponse
 	mod := h.registryManager.GetModels(&v1alpha1.ModelFilter{
 		Name:    typ,
 		Version: v,
+		Greedy:  greedy,
 	})
 	if len(mod) != 0 {
 		mres.Model = mod[0]
 	}
-	mres.Relationships = relationships
-	mres.Components = comps
+	if mres.Name != "" {
+		res := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
+			ModelName: mres.Name,
+			Version:   v,
+			Limit:     limit,
+			Offset:    offset,
+		})
+		var comps []v1alpha1.ComponentDefinition
+		for _, r := range res {
+			m := make(map[string]interface{})
+			comp, _ := r.(v1alpha1.ComponentDefinition)
+			_ = json.Unmarshal([]byte(comp.Schema), &m)
+			m = k8s.Format.Prettify(m, false)
+			b, _ := json.Marshal(m)
+			comp.Schema = string(b)
+			comps = append(comps, comp)
+		}
+		res2 := h.registryManager.GetEntities(&v1alpha1.RelationshipFilter{
+			ModelName: mres.Name,
+			Limit:     limit,
+			Offset:    offset,
+		})
+		var relationships []v1alpha1.RelationshipDefinition
+		for _, r := range res2 {
+			rel, _ := r.(v1alpha1.RelationshipDefinition)
+
+			relationships = append(relationships, rel)
+		}
+		mres.Relationships = relationships
+		mres.Components = comps
+	}
 	if err := enc.Encode(mres); err != nil {
 		h.log.Error(ErrWorkloadDefinition(err)) //TODO: Add appropriate meshkit error
 		http.Error(rw, ErrWorkloadDefinition(err).Error(), http.StatusInternalServerError)
 	}
 }
 
-// swagger:route GET /api/meshmodel/model GetMeshmodelModels idGetMeshmodelModels
-// Handle GET request for getting all meshmodel models. The component type/model name should be lowercase like "kubernetes", "istio"
-// responses:
-//
-//	200: []Model
-func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
-	rw.Header().Add("Content-Type", "application/json")
-	enc := json.NewEncoder(rw)
-	name := r.URL.Query().Get("name")
-	v := r.URL.Query().Get("version")
-	cat := r.URL.Query().Get("category")
-	var sort bool
-	if r.URL.Query().Get("sort") == "true" {
-		sort = true
-	}
-	limitstr := r.URL.Query().Get("pagesize")
-	limit, _ := strconv.Atoi(limitstr)
-	pagestr := r.URL.Query().Get("page")
-	page, _ := strconv.Atoi(pagestr)
-	if page == 0 {
-		page = 1
-	}
-	offset := (page - 1) * limit
-	res := h.registryManager.GetModels(&v1alpha1.ModelFilter{
-		Name:     name,
-		Version:  v,
-		Category: cat,
-		Limit:    limit,
-		Offset:   offset,
-		Sort:     sort,
-	})
-	if err := enc.Encode(res); err != nil {
-		h.log.Error(ErrWorkloadDefinition(err)) //TODO: Add appropriate meshkit error
-		http.Error(rw, ErrWorkloadDefinition(err).Error(), http.StatusInternalServerError)
-	}
-}
 func filterUniqueElementsArray(s []string) []string {
 	m := make(map[string]bool)
 	for _, ele := range s {
