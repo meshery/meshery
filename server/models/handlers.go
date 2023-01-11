@@ -112,7 +112,6 @@ type HandlerInterface interface {
 	GetMeshmodelComponentsByName(rw http.ResponseWriter, r *http.Request)
 	GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.Request)
 	GetMeshmodelEntititiesByModel(rw http.ResponseWriter, r *http.Request)
-	MeshmodelComponentsForTypeHandler(rw http.ResponseWriter, r *http.Request)
 
 	GetAllMeshmodelRelationships(rw http.ResponseWriter, r *http.Request)
 	GetMeshmodelRelationshipByName(rw http.ResponseWriter, r *http.Request)

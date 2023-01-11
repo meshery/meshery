@@ -186,39 +186,6 @@ type typesResponseWithModelname struct {
 	Versions    []string `json:"versions"`
 }
 
-// swagger: response responseTypesWithModelName
-type responseTypesWithModelName map[string]*typesResponseWithModelname
-
-// swagger:route GET /api/meshmodel/components/types MeshmodelComponentsForTypeHandler idMeshmodelComponentsForTypeHandler
-// Handle GET request for getting meshmodel types or model names.
-// response:
-//
-//	200: responseTypesWithModelName
-func (h *Handler) MeshmodelComponentsForTypeHandler(rw http.ResponseWriter, r *http.Request) {
-	rw.Header().Add("Content-Type", "application/json")
-	enc := json.NewEncoder(rw)
-	res := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{})
-	var response = make(responseTypesWithModelName)
-	for _, r := range res {
-		def, _ := r.(v1alpha1.ComponentDefinition)
-		if response[def.Model.Name] == nil {
-			response[def.Model.Name] = &typesResponseWithModelname{
-				DisplayName: def.Model.DisplayName,
-				Versions:    []string{def.Model.Version},
-			}
-		} else {
-			response[def.Model.Name].Versions = append(response[def.Model.Name].Versions, def.Model.Version)
-		}
-	}
-	for _, x := range response {
-		x.Versions = filterUniqueElementsArray(x.Versions)
-	}
-	if err := enc.Encode(response); err != nil {
-		h.log.Error(ErrWorkloadDefinition(err)) //TODO: Add appropriate meshkit error
-		http.Error(rw, ErrWorkloadDefinition(err).Error(), http.StatusInternalServerError)
-	}
-}
-
 // swagger:route GET /api/meshmodel/model/{model}/component MeshmodelGetByType idMeshmodelGetByType
 // Handle GET request for getting meshmodel components of a specific type. The component type/model name should be lowercase like "kubernetes", "istio"
 // Example: /api/meshmodel/model/kubernetes/component
