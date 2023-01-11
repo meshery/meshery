@@ -149,13 +149,12 @@ func getResolvedManifest(manifest string) (string, error) {
 	parsedManifest := cuectx.BuildExpr(cueParsedManExpr)
 	definitions := parsedManifest.LookupPath(cue.ParsePath("definitions"))
 	if err != nil {
-		fmt.Printf("%v", err)
-		return "", nil
+		return "", err
 	}
 	resol := manifests.ResolveOpenApiRefs{}
 	resolved, err := resol.ResolveReferences([]byte(manifest), definitions)
 	if err != nil {
-		panic(err)
+		return "", err
 	}
 	manifest = string(resolved)
 	return manifest, nil

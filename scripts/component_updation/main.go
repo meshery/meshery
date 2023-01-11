@@ -299,14 +299,12 @@ func isInColumnNames(key string, col []string) int {
 // And that for docs/websites updates, the values found in this row should be used to represent the
 // integration overall (whether there is 1 or many 10s of components contained in the package / in the integration).
 func cleanupDuplicatesAndPreferEmptyComponentField(out []map[string]string, groupBykey string) (out2 []map[string]string) {
-	keyToComponent := make(map[string]string)
 	keyToEntry := make(map[string]map[string]string)
 	for _, o := range out {
 		gkey := o[groupBykey]
-		if keyToComponent[gkey] == "" {
-			keyToComponent[gkey] = o["Component"]
-		}
-		if keyToEntry[gkey] == nil || keyToEntry[gkey]["Component"] == "" {
+		//If the row with given gkey is encountered for the first time, or the given row already exists but with a non-empty component field then use the new entry.
+		//This logic will prioritize empty component fields to not be overriden
+		if keyToEntry[gkey] == nil || keyToEntry[gkey]["Component"] != "" {
 			keyToEntry[gkey] = o
 		}
 
