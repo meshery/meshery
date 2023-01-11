@@ -27,7 +27,7 @@ jobs:
         if: ${{ github.event.issue && steps.checkUserMember.outputs.isTeamMember == 'true' }}
         uses: ethomson/send-tweet-action@v1
         with:
-          status: 'Help wanted on this issue: "${{ github.event.issue.title }}" - ${{ github.event.issue.html_url }} \#opensource'
+          status: 'Help Wanted: "${{ github.event.issue.title }}" - ${{ github.event.issue.html_url }} #opensource'
           consumer-key: ${{ secrets.TWITTER_CONSUMER_API_KEY_MESHERY }}
           consumer-secret: ${{ secrets.TWITTER_CONSUMER_API_SECRET_MESHERY }}
           access-token: ${{ secrets.TWITTER_ACCESS_TOKEN_MESHERY }}
