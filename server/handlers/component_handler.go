@@ -84,7 +84,6 @@ func (h *Handler) GetAllComponents(rw http.ResponseWriter, r *http.Request) {
 
 // swagger:route GET /api/meshmodel/model GetMeshmodelModels idGetMeshmodelModels
 // Handle GET request for getting all meshmodel models. The component type/model name should be lowercase like "kubernetes", "istio"
-// responses:
 // ?version={version}
 // ?order={field} orders on the passed field
 // ?category={category of model}
@@ -92,6 +91,7 @@ func (h *Handler) GetAllComponents(rw http.ResponseWriter, r *http.Request) {
 // ?search={[true/false]} If search is true then a greedy search is performed
 // ?page={page-number}
 // ?pagesize={pagesize}
+// responses:
 //
 //	200: []Model
 func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
@@ -126,14 +126,14 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 // swagger:route GET /api/meshmodel/model/{model}/component/{name} MeshmodelGetByName idMeshmodelGetByName
 // Handle GET request for getting meshmodel components of a specific type by name.
 // Example: /api/meshmodel/model/kubernetes/component/Namespace
-// Components can be further filtered through query parameter ?version=
-// responses:
+// Components can be further filtered through query parameter
 // ?version={version}
 // ?order={field} orders on the passed field
 // ?sort={[asc/desc]} Default behavior is asc
 // ?search={[true/false]} If search is true then a greedy search is performed
 // ?page={page-number}
 // ?pagesize={pagesize}
+// responses:
 //
 //	200: []ComponentDefinition
 func (h *Handler) GetMeshmodelComponentsByName(rw http.ResponseWriter, r *http.Request) {
@@ -222,13 +222,13 @@ func (h *Handler) MeshmodelComponentsForTypeHandler(rw http.ResponseWriter, r *h
 // swagger:route GET /api/meshmodel/model/{model}/component MeshmodelGetByType idMeshmodelGetByType
 // Handle GET request for getting meshmodel components of a specific type. The component type/model name should be lowercase like "kubernetes", "istio"
 // Example: /api/meshmodel/model/kubernetes/component
-// Components can be further filtered through query parameter ?version=
-// responses:
+// Components can be further filtered through query parameter
 // ?version={version}
 // ?order={field} orders on the passed field
 // ?sort={[asc/desc]} Default behavior is asc
 // ?page={page-number}
 // ?pagesize={pagesize}
+// responses:
 //
 //	200: []ComponentDefinition
 func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.Request) {
