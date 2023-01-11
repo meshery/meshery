@@ -60,7 +60,7 @@ jobs:
           fetch-depth: 1
       - uses: actions/setup-node@v3.0.0
         with:
-          node-version: ${{ secrets.NODE_VERSION }}
+          node-version: v18.12.1 # ${{ secrets.NODE_VERSION }}
       - name: Cache node modules
         id: node-cache
         uses: actions/cache@v3
@@ -100,7 +100,7 @@ jobs:
           fetch-depth: 0
       - uses: actions/setup-node@v3.0.0
         with:
-          node-version: ${{ secrets.NODE_VERSION }}
+          node-version: v18.12.1 # ${{ secrets.NODE_VERSION }}
       - name: Cache node modules
         id: node-cache
         uses: actions/cache@v3
@@ -176,7 +176,7 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@v3.0.0
         with:
-          node-version: ${{ secrets.NODE_VERSION }}
+          node-version: v18.12.1 # ${{ secrets.NODE_VERSION }}
       - name: Cache node modules
         id: node-cache
         uses: actions/cache@v3
@@ -190,7 +190,7 @@ jobs:
             /home/runner/.cache/Cypress
           key: ${{ runner.os }}-node-${{ hashFiles('**/lockfiles') }}
           restore-keys: |
-            ${{ runner.os }}-node-  
+            ${{ runner.os }}-node-
       - name: Build Next App
         run: |
           cd ui
