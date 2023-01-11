@@ -298,6 +298,10 @@ function PatternConfiguratorComponent({ pattern, onSubmit, show : setSelectedPat
     setYaml(deployConfigYaml);
   };
 
+  function deleteConfiguration() {
+    setSelectedPattern(resetSelectedPattern());
+  }
+
   function handleSubmitFinalPattern(yaml, id, name, action) {
     console.log("submitting a new pattern", yaml)
     onSubmit({
@@ -502,7 +506,10 @@ function PatternConfiguratorComponent({ pattern, onSubmit, show : setSelectedPat
             <IconButton
               aria-label="Delete"
               color="primary"
-              onClick={() => handleSubmitFinalPattern(yaml, pattern.id, pattern.name, "delete")}
+              // onClick={() => handleSubmitFinalPattern(yaml, pattern.id, pattern.name, "delete")}
+              onClick={() => {
+                deleteConfiguration()
+              }}
             >
               <DeleteIcon />
             </IconButton>

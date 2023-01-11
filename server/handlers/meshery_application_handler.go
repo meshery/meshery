@@ -490,7 +490,7 @@ func (h *Handler) handleApplicationUpdate(rw http.ResponseWriter,
 				return
 			}
 
-			go h.config.ConfigurationChannel.PublishPatterns()
+			go h.config.ConfigurationChannel.PublishApplications()
 			h.formatApplicationOutput(rw, resp, format, &res)
 			return
 		}
