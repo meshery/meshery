@@ -1,7 +1,7 @@
 import React from 'react';
 import App from 'next/app';
 import Head from 'next/head';
-import { MuiThemeProvider, createTheme, withStyles } from '@material-ui/core/styles';
+import { createTheme, withStyles } from '@material-ui/core/styles';
 // TODO: check if below CssBaseline import can be removed, its causing 'error  'CssBaseline' is defined but never used  no-unused-vars'
 // during cypress e2e test run (i.e. `npm run test`)
 // import CssBaseline from '@material-ui/core/CssBaseline';
