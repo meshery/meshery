@@ -92,8 +92,7 @@ func (h *Handler) GetAllComponents(rw http.ResponseWriter, r *http.Request) {
 // ?page={page-number}
 // ?pagesize={pagesize}
 // responses:
-//
-//	200: []Model
+// 200: []Model
 func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
@@ -134,8 +133,7 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 // ?page={page-number}
 // ?pagesize={pagesize}
 // responses:
-//
-//	200: []ComponentDefinition
+// 200: []ComponentDefinition
 func (h *Handler) GetMeshmodelComponentsByName(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
@@ -196,8 +194,7 @@ type typesResponseWithModelname struct {
 // ?page={page-number}
 // ?pagesize={pagesize}
 // responses:
-//
-//	200: []ComponentDefinition
+// 200: []ComponentDefinition
 func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)

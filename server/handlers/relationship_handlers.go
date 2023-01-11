@@ -27,8 +27,7 @@ import (
 // ?page={page-number}
 // ?pagesize={pagesize}
 // responses:
-//
-//	200: []RelationshipDefinition
+// 200: []RelationshipDefinition
 func (h *Handler) GetMeshmodelRelationshipByName(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
@@ -71,8 +70,7 @@ func (h *Handler) GetMeshmodelRelationshipByName(rw http.ResponseWriter, r *http
 // ?page={page-number}
 // ?pagesize={pagesize}
 // responses:
-//
-//	200: []RelationshipDefinition
+// 200: []RelationshipDefinition
 func (h *Handler) GetAllMeshmodelRelationships(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
