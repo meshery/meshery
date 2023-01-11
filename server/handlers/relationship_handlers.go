@@ -16,6 +16,13 @@ import (
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 )
 
+// swagger:route GET /api/meshmodel/model/{model}/relationship/{name} GetMeshmodelRelationshipByName idGetMeshmodelRelationshipByName
+// Handle GET request for getting meshmodel relationships of a specific model by name.
+// Example: /api/meshmodel/model/kubernetes/relationship/Edge
+// Components can be further filtered through query parameter ?version=
+// responses:
+//
+//	200: []RelationshipDefinition
 func (h *Handler) GetMeshmodelRelationshipByName(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
@@ -50,6 +57,14 @@ func (h *Handler) GetMeshmodelRelationshipByName(rw http.ResponseWriter, r *http
 		http.Error(rw, ErrWorkloadDefinition(err).Error(), http.StatusInternalServerError)
 	}
 }
+
+// swagger:route GET /api/meshmodel/model/{model}/relationship GetAllMeshmodelRelationships idGetAllMeshmodelRelationships
+// Handle GET request for getting meshmodel relationships of a specific model.
+// Example: /api/meshmodel/model/kubernetes/relationship
+// Components can be further filtered through query parameter ?version=
+// responses:
+//
+//	200: []RelationshipDefinition
 func (h *Handler) GetAllMeshmodelRelationships(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)

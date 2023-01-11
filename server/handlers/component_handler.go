@@ -108,7 +108,7 @@ func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Requ
 
 // swagger:route GET /api/meshmodel/model/{model}/component/{name} MeshmodelGetByName idMeshmodelGetByName
 // Handle GET request for getting meshmodel components of a specific type by name.
-// Example: /api/meshmodel/components/kubernetes/Namespace
+// Example: /api/meshmodel/model/kubernetes/component/Namespace
 // Components can be further filtered through query parameter ?version=
 // responses:
 //
@@ -201,7 +201,7 @@ func (h *Handler) MeshmodelComponentsForTypeHandler(rw http.ResponseWriter, r *h
 
 // swagger:route GET /api/meshmodel/model/{model}/component MeshmodelGetByType idMeshmodelGetByType
 // Handle GET request for getting meshmodel components of a specific type. The component type/model name should be lowercase like "kubernetes", "istio"
-// Example: /api/meshmodel/components/kubernetes
+// Example: /api/meshmodel/model/kubernetes/component
 // Components can be further filtered through query parameter ?version=
 // responses:
 //
@@ -280,12 +280,20 @@ func (h *Handler) RegisterMeshmodelComponents(rw http.ResponseWriter, r *http.Re
 	}
 }
 
+// swagger:response ModelResponse
 type ModelResponse struct {
 	v1alpha1.Model
 	Components    []v1alpha1.ComponentDefinition    `json:"components"`
 	Relationships []v1alpha1.RelationshipDefinition `json:"relationships"`
 }
 
+// swagger:route GET /api/meshmodel/model/{model} GetMeshmodelEntititiesByModel idGetMeshmodelEntititiesByModel
+// Handle GET request for getting all meshmodel entities of a specific model.
+// Example: /api/meshmodel/model/kubernetes
+// Models can be further filtered through query parameter ?version=
+// responses:
+//
+//	200: ModelResponse
 func (h *Handler) GetMeshmodelEntititiesByModel(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
@@ -347,6 +355,12 @@ func (h *Handler) GetMeshmodelEntititiesByModel(rw http.ResponseWriter, r *http.
 		http.Error(rw, ErrWorkloadDefinition(err).Error(), http.StatusInternalServerError)
 	}
 }
+
+// swagger:route GET /api/meshmodel/model GetMeshmodelModels idGetMeshmodelModels
+// Handle GET request for getting all meshmodel models. The component type/model name should be lowercase like "kubernetes", "istio"
+// responses:
+//
+//	200: []Model
 func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
