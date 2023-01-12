@@ -22,7 +22,7 @@ Anytime a `mesheryctl system` command is executed, a series of preflight checks 
 
 ## Setting up Meshery using Kind or Minikube
 
-The difficulty with Minikube and Kind clusters is that they typically don't have a LoadBalancer, whereas Meshery gives its users complete control over how networking is configured. As a result, networking for these deployments is more complex. Few of the alternatives are:
+The difficulty with Minikube and Kind clusters is that they typically don't support LoadBalancer service networking by default. Meshery UI and Meshery Broker are configured for LoadBalancer service networking by default. There are a number of solutions this overcoming this challenge. Here are a few methods:
 1. Use the MetalLB Minikube add-on that provides load balancing. `minikube addons enable metallb`
 
     MetalLB setup: [link](https://kubebyexample.com/learning-paths/metallb/install)
