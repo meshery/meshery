@@ -26,5 +26,5 @@ func ErrReadAPIResponse(err error) error {
 }
 
 func ErrUnmarshal(err error) error {
-	return errors.New(ErrUnmarshalCode, errors.Alert, []string{"Error unmarshalling response"}, []string{"Error processing JSON response from server.\n" + err.Error()}, []string{}, []string{})
+	return errors.New(ErrUnmarshalCode, errors.Alert, []string{"Error processing JSON Response from server"}, []string{"Error processing JSON response from server.\n" + err.Error()}, []string{}, []string{})
 }
