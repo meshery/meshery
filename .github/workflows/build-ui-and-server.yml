@@ -49,7 +49,7 @@ jobs:
         with:
           name: meshery
           path: ./main
-  build-ui:
+  ui-build:
     name: UI build
     if: github.repository == 'meshery/meshery'
     runs-on: ubuntu-22.04
@@ -84,12 +84,12 @@ jobs:
           npm i
       - name: build meshery-ui
         run: |
-          make build-meshery-ui
+          make ui-meshery-build
       - name: build provider-ui
         run: |
-          make build-provider-ui
+          make ui-provider-build
   tests-ui:
-    needs: [build-ui]
+    needs: [ui-build]
     name: UI integration tests
     if: github.repository == 'meshery/meshery'
     runs-on: ubuntu-22.04
@@ -129,7 +129,7 @@ jobs:
           directory: ./provider-ui/coverage/lcov-report
           flags: integrationtests
   tests-ui-e2e:
-    needs: [build-backend, build-ui]
+    needs: [build-backend, ui-build]
     name: UI end-to-end tests
     if: github.repository == 'meshery/meshery'
     runs-on: ubuntu-22.04
@@ -196,7 +196,7 @@ jobs:
           node --version
           npm i
           cd ../
-          make build-meshery-ui
+          make ui-meshery-build
       # - name: Update /etc/hosts
       #   run: echo "127.0.0.1 mesherylocal.layer5.io" | sudo tee -a /etc/hosts
       - name: Run meshery-consul
