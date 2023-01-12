@@ -27,9 +27,7 @@ func (s *Selector) Workload(name string, version string, model string) (v1alpha1
 			if en != nil {
 				var ok bool
 				comp, ok = en.(v1alpha1.ComponentDefinition)
-				if !ok {
-					continue
-				} else {
+				if ok {
 					found = true
 					break
 				}
