@@ -25,7 +25,7 @@ import (
 // ?sort={[asc/desc]} Default behavior is asc
 // ?search={[true/false]} If search is true then a greedy search is performed
 // ?page={page-number} Default page number is 1
-// ?pagesize={pagesize} Default pagesize is 25
+// ?pagesize={pagesize} Default pagesize is 25. To return all results: pagesize=all
 // responses:
 // 200: []RelationshipDefinition
 func (h *Handler) GetMeshmodelRelationshipByName(rw http.ResponseWriter, r *http.Request) {
@@ -38,9 +38,12 @@ func (h *Handler) GetMeshmodelRelationshipByName(rw http.ResponseWriter, r *http
 		greedy = true
 	}
 	limitstr := r.URL.Query().Get("pagesize")
-	limit, _ := strconv.Atoi(limitstr)
-	if limit == 0 { //If limit is unspecified then it defaults to 25
-		limit = DefaultPageSizeForMeshModelComponents
+	var limit int
+	if limitstr != "all" {
+		limit, _ = strconv.Atoi(limitstr)
+		if limit == 0 { //If limit is unspecified then it defaults to 25
+			limit = DefaultPageSizeForMeshModelComponents
+		}
 	}
 	pagestr := r.URL.Query().Get("page")
 	page, _ := strconv.Atoi(pagestr)
@@ -71,7 +74,7 @@ func (h *Handler) GetMeshmodelRelationshipByName(rw http.ResponseWriter, r *http
 // ?order={field} orders on the passed field
 // ?sort={[asc/desc]} Default behavior is asc
 // ?page={page-number} Default page number is 1
-// ?pagesize={pagesize} Default pagesize is 25
+// ?pagesize={pagesize} Default pagesize is 25. To return all results: pagesize=all
 // responses:
 // 200: []RelationshipDefinition
 func (h *Handler) GetAllMeshmodelRelationships(rw http.ResponseWriter, r *http.Request) {
@@ -79,9 +82,12 @@ func (h *Handler) GetAllMeshmodelRelationships(rw http.ResponseWriter, r *http.R
 	enc := json.NewEncoder(rw)
 	typ := mux.Vars(r)["model"]
 	limitstr := r.URL.Query().Get("pagesize")
-	limit, _ := strconv.Atoi(limitstr)
-	if limit == 0 { //If limit is unspecified then it defaults to 25
-		limit = DefaultPageSizeForMeshModelComponents
+	var limit int
+	if limitstr != "all" {
+		limit, _ = strconv.Atoi(limitstr)
+		if limit == 0 { //If limit is unspecified then it defaults to 25
+			limit = DefaultPageSizeForMeshModelComponents
+		}
 	}
 	pagestr := r.URL.Query().Get("page")
 	page, _ := strconv.Atoi(pagestr)

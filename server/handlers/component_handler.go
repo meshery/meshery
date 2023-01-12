@@ -91,7 +91,7 @@ const DefaultPageSizeForMeshModelComponents = 25
 // ?sort={[asc/desc]} Default behavior is asc
 // ?search={[true/false]} If search is true then a greedy search is performed
 // ?page={page-number} Default page number is 1
-// ?pagesize={pagesize} Default pagesize is 25
+// ?pagesize={pagesize} Default pagesize is 25. To return all results: pagesize=all
 // responses:
 // 200: []Model
 func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
@@ -101,9 +101,12 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 	v := r.URL.Query().Get("version")
 	cat := r.URL.Query().Get("category")
 	limitstr := r.URL.Query().Get("pagesize")
-	limit, _ := strconv.Atoi(limitstr)
-	if limit == 0 { //If limit is unspecified then it defaults to 25
-		limit = DefaultPageSizeForMeshModelComponents
+	var limit int
+	if limitstr != "all" {
+		limit, _ = strconv.Atoi(limitstr)
+		if limit == 0 { //If limit is unspecified then it defaults to 25
+			limit = DefaultPageSizeForMeshModelComponents
+		}
 	}
 	pagestr := r.URL.Query().Get("page")
 	page, _ := strconv.Atoi(pagestr)
@@ -135,7 +138,7 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 // ?sort={[asc/desc]} Default behavior is asc
 // ?search={[true/false]} If search is true then a greedy search is performed
 // ?page={page-number} Default page number is 1
-// ?pagesize={pagesize} Default pagesize is 25
+// ?pagesize={pagesize} Default pagesize is 25. To return all results: pagesize=all
 // responses:
 // 200: []ComponentDefinition
 func (h *Handler) GetMeshmodelComponentsByName(rw http.ResponseWriter, r *http.Request) {
@@ -149,9 +152,12 @@ func (h *Handler) GetMeshmodelComponentsByName(rw http.ResponseWriter, r *http.R
 		search = true
 	}
 	limitstr := r.URL.Query().Get("pagesize")
-	limit, _ := strconv.Atoi(limitstr)
-	if limit == 0 { //If limit is unspecified then it defaults to 25
-		limit = DefaultPageSizeForMeshModelComponents
+	var limit int
+	if limitstr != "all" {
+		limit, _ = strconv.Atoi(limitstr)
+		if limit == 0 { //If limit is unspecified then it defaults to 25
+			limit = DefaultPageSizeForMeshModelComponents
+		}
 	}
 	pagestr := r.URL.Query().Get("page")
 	page, _ := strconv.Atoi(pagestr)
@@ -199,7 +205,7 @@ type typesResponseWithModelname struct {
 // ?order={field} orders on the passed field
 // ?sort={[asc/desc]} Default behavior is asc
 // ?page={page-number} Default page number is 1
-// ?pagesize={pagesize} Default pagesize is 25
+// ?pagesize={pagesize} Default pagesize is 25. To return all results: pagesize=all
 // responses:
 // 200: []ComponentDefinition
 func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.Request) {
@@ -208,9 +214,12 @@ func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.R
 	typ := mux.Vars(r)["model"]
 	v := r.URL.Query().Get("version")
 	limitstr := r.URL.Query().Get("pagesize")
-	limit, _ := strconv.Atoi(limitstr)
-	if limit == 0 { //If limit is unspecified then it defaults to 25
-		limit = DefaultPageSizeForMeshModelComponents
+	var limit int
+	if limitstr != "all" {
+		limit, _ = strconv.Atoi(limitstr)
+		if limit == 0 { //If limit is unspecified then it defaults to 25
+			limit = DefaultPageSizeForMeshModelComponents
+		}
 	}
 	pagestr := r.URL.Query().Get("page")
 	page, _ := strconv.Atoi(pagestr)
@@ -292,7 +301,7 @@ type ModelResponse struct {
 // ?sort={[asc/desc]} Default behavior is asc
 // ?search={[true/false]} If search is true then a greedy search is performed
 // ?page={page-number} Default page number is 1
-// ?pagesize={pagesize} Default pagesize is 25
+// ?pagesize={pagesize} Default pagesize is 25. To return all results: pagesize=all
 // responses:
 //
 //	200: ModelResponse
@@ -306,9 +315,12 @@ func (h *Handler) GetMeshmodelEntititiesByModel(rw http.ResponseWriter, r *http.
 		greedy = true
 	}
 	limitstr := r.URL.Query().Get("pagesize")
-	limit, _ := strconv.Atoi(limitstr)
-	if limit == 0 { //If limit is unspecified then it defaults to 25
-		limit = DefaultPageSizeForMeshModelComponents
+	var limit int
+	if limitstr != "all" {
+		limit, _ = strconv.Atoi(limitstr)
+		if limit == 0 { //If limit is unspecified then it defaults to 25
+			limit = DefaultPageSizeForMeshModelComponents
+		}
 	}
 	pagestr := r.URL.Query().Get("page")
 	page, _ := strconv.Atoi(pagestr)
