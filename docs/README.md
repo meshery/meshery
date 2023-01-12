@@ -39,7 +39,7 @@ Alternatively, if you are running Windows 10, you may install the Windows Subsys
 
 - Serve the code locally
   ```bash
-  $ make site
+  $ make docs
   ```
   _Note: From the Makefile, this command is actually running `$ bundle exec jekyll serve --drafts --livereload`. There are two Jekyll configuration, `jekyll serve` for developing locally and `jekyll build` when you need to generate the site artifacts for production._
 
