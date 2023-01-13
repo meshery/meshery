@@ -243,13 +243,13 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: cypress-ss
-          path: /home/runner/work/meshery/ui/cypress/screenshots
+          path: ./ui/cypress/screenshots
       - name: Upload Videos
         uses: actions/upload-artifact@v3
         if: always()
         with:
           name: cypress-ss
-          path: /home/runner/work/meshery/ui/cypress/videos
+          path: ./ui/cypress/videos
       - name: Upload coverage to Codecov (ui)
         uses: codecov/codecov-action@v3
         with:
