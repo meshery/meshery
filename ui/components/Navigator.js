@@ -51,6 +51,12 @@ import AwsAppMeshIcon from "../assets/icons/LifecycleIcons/AwsAppMeshIcon";
 import ConsulIcon from "../assets/icons/LifecycleIcons/ConsulIcon";
 
 const styles = (theme) => ({
+  root : {
+    '& svg' : {
+      width : '1.21rem',
+      height : '1.21rem'
+    }
+  },
   categoryHeader : {
     paddingTop : 16,
     paddingBottom : 16,
@@ -1108,7 +1114,7 @@ class Navigator extends React.Component {
           //   return "";
           // }
           return (
-            <div key={childId} style={!show ? cursorNotAllowed : {}}>
+            <div key={childId} style={!show ? cursorNotAllowed : {}} className={classes.root}>
               <ListItem
                 button={!!link}
                 dense
