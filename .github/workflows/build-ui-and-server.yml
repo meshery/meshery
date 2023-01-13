@@ -189,7 +189,7 @@ jobs:
             /home/runner/.cache/Cypress
           key: ${{ runner.os }}-node-${{ hashFiles('**/lockfiles') }}
           restore-keys: |
-            ${{ runner.os }}-node-  
+            ${{ runner.os }}-node-
       - name: Build Next App
         run: |
           cd ui
