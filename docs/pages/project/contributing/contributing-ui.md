@@ -107,9 +107,15 @@ To build and export the UI code:
 make ui-build
 ```
 
-> Now that the UI code is built, Meshery UI will be available at `http://localhost:9081` when Meshery Server is running (Read below).
+Using this command, changes that you make are not rebuilt automatically. You will have to run this command again to rebuild the UI and see them.
 
-> Changes are not recompiled directly, you will have to run to rebuild the UI to see them
+Now that the UI code is built, Meshery UI will be available at `http://localhost:9081` when Meshery Server is running (Read below).
+
+To build and export the UI code _and_ build and run Meshery Server:
+
+```
+make ui-server
+```
 
 ## Run Meshery Server
 
@@ -118,7 +124,7 @@ To start running Meshery Server locally:
 ```
 $ make server
 ```
-> Now, Meshery will run on the default port `http://localhost:9081`.
+Now, Meshery will run on the default port `http://localhost:9081`.
 
 {% include alert.html type="warning" title="Usage of 'make run-fast' is deprecated!" %}
 
