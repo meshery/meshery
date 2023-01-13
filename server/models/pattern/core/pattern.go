@@ -220,10 +220,7 @@ func NewPatternFileFromCytoscapeJSJSON(name string, byt []byte) (Pattern, error)
 	countDuplicates := make(map[string]int)
 	//store the names of services and their count
 	err := processCytoElementsWithPattern(cy.Elements, &pf, func(svc Service, ele cytoscapejs.Element) error {
-		name, ok := svc.Settings["name"].(string)
-		if !ok {
-			return fmt.Errorf("missing name in service settings")
-		}
+		name := svc.Name
 		countDuplicates[name]++
 		return nil
 	})
@@ -245,11 +242,7 @@ func NewPatternFileFromCytoscapeJSJSON(name string, byt []byte) (Pattern, error)
 				dependsOnMap[elementID] = append(dependsOnMap[elementID], parentID)
 			}
 		}
-		svc.Name, ok = svc.Settings["name"].(string)
-		svc.Namespace, _ = svc.Settings["namespace"].(string)
-		if !ok {
-			return fmt.Errorf("required service setting: \"name\" missing")
-		}
+
 		//Only make the name unique when duplicates are encountered. This allows clients to preserve and propagate the unique name they want to give to their workload
 		if countDuplicates[svc.Name] > 1 {
 			//set appropriate unique service name
