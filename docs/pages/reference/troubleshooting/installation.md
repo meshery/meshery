@@ -20,6 +20,25 @@ Anytime a `mesheryctl system` command is executed, a series of preflight checks 
 
     Situation: Unable to start Meshery Server with `make run-local` due to error of `key/value size is invalid`
 
+## Setting up Meshery using Kind or Minikube
+
+The difficulty with Minikube and Kind clusters is that they typically don't support LoadBalancer service networking by default. Meshery UI and Meshery Broker are configured for LoadBalancer service networking by default. There are a number of solutions this overcoming this challenge. Here are a few methods:
+1. Use the MetalLB Minikube add-on that provides load balancing. `minikube addons enable metallb`
+
+    MetalLB setup: [link](https://kubebyexample.com/learning-paths/metallb/install)
+
+2. Use Minikube tunnel to expose services. `minikube tunnel`. 
+
+    Docs: [link](https://minikube.sigs.k8s.io/docs/handbook/accessing/#using-minikube-tunnel)
+
+    A simpler way to resolve this issue can be `port-forwarding`. Run the following command in terminal:
+
+    `kubectl port-forward service/meshery 9081:9081 -n meshery`
+
+3. For `kind`, you can prefer installing MetalLB with a custom configmap.
+
+    Docs: [link](https://kind.sigs.k8s.io/docs/user/loadbalancer/)
+
 ## Meshery Operator
 
 ### Meshery Broker

@@ -49,7 +49,7 @@ jobs:
         with:
           name: meshery
           path: ./main
-  build-ui:
+  ui-build:
     name: UI build
     if: github.repository == 'meshery/meshery'
     runs-on: ubuntu-22.04
@@ -84,12 +84,12 @@ jobs:
           npm i
       - name: build meshery-ui
         run: |
-          make build-meshery-ui
+          make ui-meshery-build
       - name: build provider-ui
         run: |
-          make build-provider-ui
+          make ui-provider-build
   tests-ui:
-    needs: [build-ui]
+    needs: [ui-build]
     name: UI integration tests
     if: github.repository == 'meshery/meshery'
     runs-on: ubuntu-22.04
@@ -123,14 +123,13 @@ jobs:
           npm test
           cd ..
       - name: Upload coverage to Codecov (ui)
-        uses: codecov/codecov-action@v1
+        uses: codecov/codecov-action@v3
         with:
           files: ./provider-ui/coverage/coverage-summary.json
           directory: ./provider-ui/coverage/lcov-report
           flags: integrationtests
-          fail_ci_if_error: true
   tests-ui-e2e:
-    needs: [build-backend, build-ui]
+    needs: [build-backend, ui-build]
     name: UI end-to-end tests
     if: github.repository == 'meshery/meshery'
     runs-on: ubuntu-22.04
@@ -197,7 +196,7 @@ jobs:
           node --version
           npm i
           cd ../
-          make build-meshery-ui
+          make ui-meshery-build
       # - name: Update /etc/hosts
       #   run: echo "127.0.0.1 mesherylocal.layer5.io" | sudo tee -a /etc/hosts
       - name: Run meshery-consul
@@ -246,12 +245,11 @@ jobs:
           name: cypress-ss
           path: /home/runner/work/meshery/meshery/ui/cypress/videos
       - name: Upload coverage to Codecov (ui)
-        uses: codecov/codecov-action@v1
+        uses: codecov/codecov-action@v3
         with:
           files: ./ui/coverage/coverage-summary.json
           directory: ./ui/coverage/lcov-report
           flags: e2etests
-          fail_ci_if_error: true
   docker-build-test:
     name: Docker build
     if: github.repository == 'meshery/meshery'
