@@ -114,6 +114,8 @@
     "@babel/types": "^7.19.3",
     "@next/eslint-plugin-next": "^13.1.2",
     "@types/react-relay": "^14.1.2",
+    "ajv": "^8.12.0",
+    "babel-loader": "^9.1.2",
     "cypress": "^12.0.2",
     "cypress-file-upload": "^5.0.8",
     "eslint": "^7.32.0",
@@ -127,7 +129,7 @@
     "nyc": "^15.1.0",
     "relay-compiler": "^13.2.0",
     "start-server-and-test": "^1.13.1",
-    "webpack": "^4.44.0",
+    "webpack": "^5.75.0",
     "webpack-cli": "^4.9.2"
   }
 }
