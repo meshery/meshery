@@ -138,10 +138,10 @@ Refer to [Contributing to Meshery Server](contributing-server), if needed.
 
 ### Running Cypress integration tests
 
-To run cypress integration tests, a convenience make target called `run-ui-integration-tests` that installs dependencies in `/ui` and `/provider-ui` folders as prerequisite and invokes `ci-test-integration` npm script found in [/ui/package.json](https://github.com/meshery/meshery/blob/master/ui/package.json)
+To run cypress integration tests, a convenience make target called `ui-integration-tests` that installs dependencies in `/ui` and `/provider-ui` folders as prerequisite and invokes `ci-test-integration` npm script found in [/ui/package.json](https://github.com/meshery/meshery/blob/master/ui/package.json)
 <pre class="codeblock-pre"><div class="codeblock">
    <code class="clipboardjs">
-     $ make run-ui-integration-tests
+     $ make ui-integration-tests
    </code></div></pre>
 {% include alert.html type="info" title="Above command must be run from Meshery repository's root folder." %}
 

@@ -35,7 +35,7 @@ jobs:
         with:
           name: meshery
           path: ./main
-  build-ui:
+  ui-build:
     name: UI build
     runs-on: ubuntu-22.04
     steps:
@@ -70,10 +70,10 @@ jobs:
           npm i
       - name: build meshery-ui
         run: |
-          make build-meshery-ui
+          make ui-meshery-build
       - name: build provider-ui
         run: |
-          make build-provider-ui
+          make ui-provider-build
       - name: upload meshery-ui artifact
         uses: actions/upload-artifact@v3
         with:

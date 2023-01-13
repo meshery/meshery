@@ -35,11 +35,10 @@ jobs:
         run: go test --short ./... -race -coverprofile=coverage.txt -covermode=atomic
       - name: Upload coverage to Codecov
         if: github.repository == 'meshery/meshery'
-        uses: codecov/codecov-action@v1
+        uses: codecov/codecov-action@v3
         with:
           files: ./coverage.txt
           flags: unittests
-          fail_ci_if_error: true
   integration-tests:
     name: Integration tests
     runs-on: ubuntu-22.04
@@ -61,9 +60,8 @@ jobs:
         run: go test -run Integration ./... -race -coverprofile=coverage.txt -covermode=atomic -timeout 40m
       - name: Upload coverage to Codecov
         if: github.repository == 'meshery/meshery'
-        uses: codecov/codecov-action@v1
+        uses: codecov/codecov-action@v3
         with:
           files: ./coverage.txt
           flags: gointegrationtests
-          fail_ci_if_error: true
 

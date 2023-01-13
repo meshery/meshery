@@ -35,7 +35,7 @@
     "styled-jsx": "^4.0.1"
   },
   "devDependencies": {
-    "cypress": "^11.2.0",
+    "cypress": "^12.2.0",
     "eslint": "^8.26.0",
     "eslint-config-next": "^13.0.6",
     "eslint-plugin-cypress": "^2.12.1",
