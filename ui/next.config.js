@@ -7,7 +7,7 @@ module.exports = {
       '/configuration/patterns' : { page : '/configuration/patterns' },
       '/extension/[...component]' : { page : '/extension/[...component]' },
       '/extensions' : { page : '/extensions' },
-      '/' : { page : '/' },
+      '/' : { page : '/', query : { __nextDefaultLocale : 'en' } },
       '/management/[mesh]' : { page : '/management/[mesh]' },
       '/management' : { page : '/management' },
       '/performance' : { page : '/performance' },

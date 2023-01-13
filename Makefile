@@ -210,7 +210,7 @@ ui-setup:
 
 ## Run Meshery UI on your local machine. Listen for changes.
 ui:
-	cd ui; npm run $(UI_DEV_SCRIPT); cd ..;
+	cd ui; npm run dev; cd ..;
 
 ## Run Meshery Provider UI  on your local machine. Listen for changes.
 ui-provider:
@@ -230,7 +230,7 @@ ui-provider-test:
 
 ## Buils all Meshery UIs  on your local machine.
 ui-build:
-	cd ui; npm run $(UI_BUILD_SCRIPT) && npm run export; cd ..
+	cd ui; npm run build && npm run export; cd ..
 	cd provider-ui; npm run build && npm run export; cd ..
 
 ## Build only Meshery UI on your local machine.

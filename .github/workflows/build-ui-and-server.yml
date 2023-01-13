@@ -55,10 +55,10 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Check out code
-        uses: actions/checkout@master
+        uses: actions/checkout@v3
         with:
           fetch-depth: 1
-      - uses: actions/setup-node@v3.0.0
+      - uses: actions/setup-node@v3
         with:
           node-version: ${{ secrets.NODE_VERSION }}
       - name: Cache node modules
@@ -72,11 +72,14 @@ jobs:
             !~/cache/exclude
             **/node_modules
             /home/runner/.cache/Cypress
-          key: ${{ runner.os }}-node-${{ hashFiles('**/lockfiles') }}
+            ~/.npm
+            ${{ github.workspace }}/.next/cache
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
           restore-keys: |
-            ${{ runner.os }}-node-
+            ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
       - name: Install dependencies
         run: |
+          node --version
           cd ui
           npm i
           cd ..
@@ -98,7 +101,7 @@ jobs:
         uses: actions/checkout@master
         with:
           fetch-depth: 0
-      - uses: actions/setup-node@v3.0.0
+      - uses: actions/setup-node@v3
         with:
           node-version: ${{ secrets.NODE_VERSION }}
       - name: Cache node modules
@@ -169,11 +172,11 @@ jobs:
           go run main.go &
           sleep 60
       - name: Download artifacts
-        uses: actions/download-artifact@v3.0.0
+        uses: actions/download-artifact@v3
         with:
           name: meshery
       - name: Setup node
-        uses: actions/setup-node@v3.0.0
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ secrets.NODE_VERSION }}
       - name: Cache node modules
@@ -237,13 +240,13 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: cypress-ss
-          path: /home/runner/work/meshery/meshery/ui/cypress/screenshots
+          path: /home/runner/work/meshery/ui/cypress/screenshots
       - name: Upload Videos
         uses: actions/upload-artifact@v3
         if: always()
         with:
           name: cypress-ss
-          path: /home/runner/work/meshery/meshery/ui/cypress/videos
+          path: /home/runner/work/meshery/ui/cypress/videos
       - name: Upload coverage to Codecov (ui)
         uses: codecov/codecov-action@v3
         with:
