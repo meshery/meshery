@@ -60,7 +60,7 @@ jobs:
           fetch-depth: 1
       - uses: actions/setup-node@v3.0.0
         with:
-          node-version: ${{ secrets.NODE_VERSION }}
+          node-version: 18
       - name: Cache node modules
         id: node-cache
         uses: actions/cache@v3
@@ -100,7 +100,7 @@ jobs:
           fetch-depth: 0
       - uses: actions/setup-node@v3.0.0
         with:
-          node-version: ${{ secrets.NODE_VERSION }}
+          node-version: 18
       - name: Cache node modules
         id: node-cache
         uses: actions/cache@v3
@@ -175,7 +175,7 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@v3.0.0
         with:
-          node-version: ${{ secrets.NODE_VERSION }}
+          node-version: 18
       - name: Cache node modules
         id: node-cache
         uses: actions/cache@v3
@@ -228,7 +228,7 @@ jobs:
           spec: cypress/e2e/e2e/**/*
           browser: chrome
           record: true
-          tag: node-${{ secrets.NODE_VERSION }}
+          tag: node-18
         env:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
