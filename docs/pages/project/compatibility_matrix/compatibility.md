@@ -134,7 +134,7 @@ background-color: #8dbdd8;
 </style>
 
 {% assign sorted_tests_group = site.compatibility | group_by: "meshery-component" %}
-{% assign k8s_tests_group = site.compatibility | group_by: "k8s-version" %}
+{% assign k8s_tests_group = site.compatibility | group_by: "k8s-version" | sort: "k8s-version" | reverse %}
 {% assign service_meshes = site.adapters  %}
 
  <div>
