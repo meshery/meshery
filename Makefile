@@ -235,7 +235,7 @@ ui-build:
 
 ## Build only Meshery UI on your local machine.
 ui-meshery-build:
-	cd ui; npm run $(UI_BUILD_SCRIPT) && npm run export; cd ..
+	cd ui; npm run build && npm run export; cd ..
 
 ## Builds only the provider user interface on your local machine
 ui-provider-build:
