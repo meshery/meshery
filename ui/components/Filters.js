@@ -198,49 +198,6 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
   const catalogVisibilityRef = useRef();
   const disposeConfSubscriptionRef = useRef(null);
 
-  // const getMuiTheme = () => createTheme({
-  //   overrides : {
-  //     MuiInput : {
-  //       underline : {
-  //         "&:hover:not(.Mui-disabled):before" : {
-  //           borderBottom : "2px solid #222"
-  //         },
-  //         "&:after" : {
-  //           borderBottom : "2px solid #222"
-  //         }
-  //       }
-  //     },
-  //     MUIDataTableSearch : {
-  //       searchIcon : {
-  //         color : "#607d8b",
-  //         marginTop : "7px",
-  //         marginRight : "8px",
-  //       },
-  //       clearIcon : {
-  //         "&:hover" : {
-  //           color : "#607d8b"
-  //         }
-  //       },
-  //     },
-  //     MUIDataTableSelectCell : {
-  //       checkboxRoot : {
-  //         '&$checked' : {
-  //           color : '#607d8b',
-  //         },
-  //       },
-  //     },
-  //     MUIDataTableToolbar : {
-  //       iconActive : {
-  //         color : "#222"
-  //       },
-  //       icon : {
-  //         "&:hover" : {
-  //           color : "#607d8b"
-  //         }
-  //       },
-  //     },
-  //   }
-  // })
 
   const ACTION_TYPES = {
     FETCH_FILTERS : {

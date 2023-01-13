@@ -6,50 +6,7 @@ import TableSortLabel from '@material-ui/core/TableSortLabel'
 
 function NodeDetails(props) {
 
-  // const getMuiTheme = () => createTheme({
-  //   shadows : ["none"],
-  //   overrides : {
-  //     MuiInput : {
-  //       underline : {
-  //         "&:hover:not(.Mui-disabled):before" : {
-  //           borderBottom : "2px solid #222"
-  //         },
-  //         "&:after" : {
-  //           borderBottom : "2px solid #222"
-  //         }
-  //       }
-  //     },
-  //     MUIDataTableSearch : {
-  //       searchIcon : {
-  //         color : "#607d8b",
-  //         marginTop : "7px",
-  //         marginRight : "8px",
-  //       },
-  //       clearIcon : {
-  //         "&:hover" : {
-  //           color : "#607d8b"
-  //         }
-  //       },
-  //     },
-  //     MUIDataTableSelectCell : {
-  //       checkboxRoot : {
-  //         '&$checked' : {
-  //           color : '#607d8b',
-  //         },
-  //       },
-  //     },
-  //     MUIDataTableToolbar : {
-  //       iconActive : {
-  //         color : "#222"
-  //       },
-  //       icon : {
-  //         "&:hover" : {
-  //           color : "#607d8b"
-  //         }
-  //       },
-  //     }
-  //   }
-  // })
+
   const chartData = props.result;
 
   const columns = [
