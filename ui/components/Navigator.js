@@ -558,28 +558,6 @@ class Navigator extends React.Component {
 
   componentDidMount() {
     dataFetch(
-      "/api/system/version",
-      {
-        method : "GET",
-        credentials : "include",
-      },
-      (result) => {
-        if (typeof result !== "undefined") {
-          this.setState({ versionDetail : result });
-        } else {
-          this.setState({
-            versionDetail : {
-              build : "Unknown",
-              latest : "Unknown",
-              outdated : false,
-              commitsha : "Unknown",
-            },
-          });
-        }
-      },
-      (err) => console.error(err)
-    );
-    dataFetch(
       "/api/provider/capabilities",
       {
         method : "GET",
@@ -597,6 +575,28 @@ class Navigator extends React.Component {
           });
           //global state
           this.props.updateCapabilities({ capabilitiesRegistry : result })
+        }
+      },
+      (err) => console.error(err)
+    );
+    dataFetch(
+      "/api/system/version",
+      {
+        method : "GET",
+        credentials : "include",
+      },
+      (result) => {
+        if (typeof result !== "undefined") {
+          this.setState({ versionDetail : result });
+        } else {
+          this.setState({
+            versionDetail : {
+              build : "Unknown",
+              latest : "Unknown",
+              outdated : false,
+              commitsha : "Unknown",
+            },
+          });
         }
       },
       (err) => console.error(err)
