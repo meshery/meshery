@@ -28,7 +28,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Check out code
-        uses: actions/checkout@master
+        uses: actions/checkout@v3
         with:
           fetch-depth: 1
       - name: Setup Go
@@ -55,10 +55,10 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Check out code
-        uses: actions/checkout@master
+        uses: actions/checkout@v3
         with:
           fetch-depth: 1
-      - uses: actions/setup-node@v3.0.0
+      - uses: actions/setup-node@v3
         with:
           node-version: 18
       - name: Cache node modules
@@ -72,9 +72,11 @@ jobs:
             !~/cache/exclude
             **/node_modules
             /home/runner/.cache/Cypress
-          key: ${{ runner.os }}-node-${{ hashFiles('**/lockfiles') }}
+            ~/.npm
+            ${{ github.workspace }}/.next/cache
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
           restore-keys: |
-            ${{ runner.os }}-node-
+            ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
       - name: Install dependencies
         run: |
           cd ui
@@ -95,10 +97,10 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Check out code
-        uses: actions/checkout@master
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      - uses: actions/setup-node@v3.0.0
+      - uses: actions/setup-node@v3
         with:
           node-version: 18
       - name: Cache node modules
@@ -111,7 +113,9 @@ jobs:
             !~/cache/exclude
             **/node_modules
             /home/runner/.cache
-          key: ${{ runner.os }}-node-${{ hashFiles('**/lockfiles') }}
+            ~/.npm
+            ${{ github.workspace }}/.next/cache
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
       - name: Run tests
         run: |
           cd ui
@@ -135,16 +139,16 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Check out code
-        uses: actions/checkout@master
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
       - name: Check out meshery-istio code
-        uses: actions/checkout@master
+        uses: actions/checkout@v3
         with:
           repository: layer5io/meshery-istio
           path: ./meshery-istio
       - name: Check out meshery-consul code
-        uses: actions/checkout@master
+        uses: actions/checkout@v3
         with:
           repository: layer5io/meshery-consul
           path: ./meshery-consul
@@ -169,11 +173,11 @@ jobs:
           go run main.go &
           sleep 60
       - name: Download artifacts
-        uses: actions/download-artifact@v3.0.0
+        uses: actions/download-artifact@v3
         with:
           name: meshery
       - name: Setup node
-        uses: actions/setup-node@v3.0.0
+        uses: actions/setup-node@v3
         with:
           node-version: 18
       - name: Cache node modules
@@ -187,9 +191,11 @@ jobs:
             !~/cache/exclude
             **/node_modules
             /home/runner/.cache/Cypress
-          key: ${{ runner.os }}-node-${{ hashFiles('**/lockfiles') }}
+            ~/.npm
+            ${{ github.workspace }}/.next/cache
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
           restore-keys: |
-            ${{ runner.os }}-node-
+            ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
       - name: Build Next App
         run: |
           cd ui
@@ -237,13 +243,13 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: cypress-ss
-          path: /home/runner/work/meshery/meshery/ui/cypress/screenshots
+          path: ./ui/cypress/screenshots
       - name: Upload Videos
         uses: actions/upload-artifact@v3
         if: always()
         with:
           name: cypress-ss
-          path: /home/runner/work/meshery/meshery/ui/cypress/videos
+          path: ./ui/cypress/videos
       - name: Upload coverage to Codecov (ui)
         uses: codecov/codecov-action@v3
         with:
@@ -256,7 +262,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Check out code
-        uses: actions/checkout@master
+        uses: actions/checkout@v3
         with:
           fetch-depth: 1
       - name: Docker edge build & tag
@@ -286,7 +292,7 @@ jobs:
     name: swagger-docs
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v3
       - name: Check if handlers were modified
         uses: dorny/paths-filter@v2
         id: changes
@@ -313,7 +319,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Check out code
-        uses: actions/checkout@master
+        uses: actions/checkout@v3
         with:
           fetch-depth: 1
       - name: Check if schema was modified
