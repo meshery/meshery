@@ -60,6 +60,15 @@ func TestPatternList(t *testing.T) {
 			Token:            filepath.Join(fixturesDir, "local.token.golden"),
 			ExpectError:      false,
 		},
+		{
+            Name: "Unable to reach Meshery server",
+            Args: []string{"list"},
+            URL:  testContext.BaseURL + "/api/pattern",
+            Fixture: "",
+            Token: filepath.Join(fixturesDir, "token.golden"),
+            ExpectedResponse: "unable.to.reach.meshery.server.error.golden",
+            ExpectError: true,
+        },
 	}
 
 	// Run tests
@@ -72,53 +81,56 @@ func TestPatternList(t *testing.T) {
 			utils.TokenFlag = tt.Token
 
 			// mock response
+		if tt.ExpectError {
+			httpmock.RegisterResponder("GET", tt.URL,
+				httpmock.NewStringResponder(500, "Internal Server Error"))
+		} else {
 			httpmock.RegisterResponder("GET", tt.URL,
 				httpmock.NewStringResponder(200, apiResponse))
+		}
 
-			// Expected response
-			testdataDir := filepath.Join(currDir, "testdata")
-			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
+		// Expected response
+		testdataDir := filepath.Join(currDir, "testdata")
+		golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
 
-			// Grab console prints
-			rescueStdout := os.Stdout
-			r, w, _ := os.Pipe()
-			os.Stdout = w
-			_ = utils.SetupMeshkitLoggerTesting(t, false)
-			PatternCmd.SetArgs(tt.Args)
-			PatternCmd.SetOutput(rescueStdout)
-			err := PatternCmd.Execute()
-			if err != nil {
-				// if we're supposed to get an error
-				if tt.ExpectError {
-					// write it in file
-					if *update {
-						golden.Write(err.Error())
-					}
-					expectedResponse := golden.Load()
+		// Grab console prints
+		rescueStdout := os.Stdout
+		r, w, _ := os.Pipe()
+		os.Stdout = w
+		_ = utils.SetupMeshkitLoggerTesting(t, false)
+		PatternCmd.SetArgs(tt.Args)
+		PatternCmd.SetOutput(rescueStdout)
+		err := PatternCmd.Execute()
 
-					utils.Equals(t, expectedResponse, err.Error())
-					return
+		if err != nil {
+			// if we're supposed to get an error
+			if tt.ExpectError {
+				expectedError := errors.Errorf("Unable to reach Meshery server at %s. Verify your environment's readiness for a Meshery deployment by running `mesheryctl system check`. ", mctlCfg.GetBaseMesheryURL())
+				//check if the error message is what is expected
+				if err.Error() != expectedError.Error() {
+					t.Errorf("Expected error message %s but got %s", expectedError, err)
 				}
-				t.Fatal(err)
+				return
 			}
+			t.Fatal(err)
+		}
+		w.Close()
+		out, _ := io.ReadAll(r)
+		os.Stdout = rescueStdout
 
-			w.Close()
-			out, _ := io.ReadAll(r)
-			os.Stdout = rescueStdout
+		// response being printed in console
+		actualResponse := string(out)
 
-			// response being printed in console
-			actualResponse := string(out)
+		// write it in file
+		if *update {
+			golden.Write(actualResponse)
+		}
+		expectedResponse := golden.Load()
 
-			// write it in file
-			if *update {
-				golden.Write(actualResponse)
-			}
-			expectedResponse := golden.Load()
+		utils.Equals(t, expectedResponse, actualResponse)
+	})
+}
 
-			utils.Equals(t, expectedResponse, actualResponse)
-		})
-	}
-
-	// stop mock server
-	utils.StopMockery(t)
+// stop mock server
+utils.StopMockery(t)
 }
