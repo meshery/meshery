@@ -28,7 +28,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Check out code
-        uses: actions/checkout@master
+        uses: actions/checkout@v3
         with:
           fetch-depth: 1
       - name: Setup Go
@@ -60,7 +60,7 @@ jobs:
           fetch-depth: 1
       - uses: actions/setup-node@v3
         with:
-          node-version: ${{ secrets.NODE_VERSION }}
+          node-version: 18
       - name: Cache node modules
         id: node-cache
         uses: actions/cache@v3
@@ -98,12 +98,12 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Check out code
-        uses: actions/checkout@master
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
       - uses: actions/setup-node@v3
         with:
-          node-version: ${{ secrets.NODE_VERSION }}
+          node-version: 18
       - name: Cache node modules
         id: node-cache
         uses: actions/cache@v3
@@ -138,16 +138,16 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Check out code
-        uses: actions/checkout@master
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
       - name: Check out meshery-istio code
-        uses: actions/checkout@master
+        uses: actions/checkout@v3
         with:
           repository: layer5io/meshery-istio
           path: ./meshery-istio
       - name: Check out meshery-consul code
-        uses: actions/checkout@master
+        uses: actions/checkout@v3
         with:
           repository: layer5io/meshery-consul
           path: ./meshery-consul
@@ -178,7 +178,7 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@v3
         with:
-          node-version: ${{ secrets.NODE_VERSION }}
+          node-version: 18
       - name: Cache node modules
         id: node-cache
         uses: actions/cache@v3
@@ -231,7 +231,7 @@ jobs:
           spec: cypress/e2e/e2e/**/*
           browser: chrome
           record: true
-          tag: node-${{ secrets.NODE_VERSION }}
+          tag: node-18
         env:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -259,7 +259,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Check out code
-        uses: actions/checkout@master
+        uses: actions/checkout@v3
         with:
           fetch-depth: 1
       - name: Docker edge build & tag
@@ -289,7 +289,7 @@ jobs:
     name: swagger-docs
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v3
       - name: Check if handlers were modified
         uses: dorny/paths-filter@v2
         id: changes
@@ -316,7 +316,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Check out code
-        uses: actions/checkout@master
+        uses: actions/checkout@v3
         with:
           fetch-depth: 1
       - name: Check if schema was modified
