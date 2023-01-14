@@ -73,22 +73,22 @@ header {
       background: none;
       border: none;
 
-      &>img {
+      & > img {
         padding: 0 !important;
-        margin-left: 1rem;
+        margin-left: 3rem;
         width: 2.8rem;
         height: 2.8rem;
         filter: var(--image-color);
-        transition: filter .3s;
+        transition: filter 0.3s;
         cursor: pointer;
       }
 
-      @media (max-width:1140px) {
+      @media (max-width: 1140px) {
         // margin-left: .5rem !important;
         // margin-top: .5rem !important;
       }
 
-      @media (max-width:840px) {
+      @media (max-width: 840px) {
         // margin-left: 1rem !important;
         // margin-top: .5rem !important;
       }
@@ -136,7 +136,7 @@ header {
     line-height: inherit;
     white-space: nowrap;
 
-    &>.navbar-logo {
+    & > .navbar-logo {
       display: flex;
       align-items: center;
 
@@ -161,7 +161,7 @@ header {
         margin-right: 0.5rem;
       }
 
-      &>span {
+      & > span {
         font-weight: 600 !important;
         color: var(--color-secondary-medium);
       }
@@ -191,17 +191,18 @@ header {
       transition: all 0.5s ease-in-out;
     }
     @media (max-width: 37.5em) {
-     & ul{
-       font-size: 1.8rem;
-     } 
+      & ul {
+        font-size: 1.8rem;
+      }
     }
 
     & .navbar-nav {
       white-space: nowrap;
       display: flex;
       flex-direction: row;
-      gap: 2rem;
+      gap: 3rem;
       list-style: none;
+      align-items: center;
 
       @media (max-width: 1200px) {
         width: 100%;
@@ -219,17 +220,17 @@ header {
           width: fit-content;
         }
 
-        &:hover {
+        & a:hover {
           &::after {
             width: 100%;
           }
         }
 
-        &::after {
+        & a::after {
           content: "";
           width: 0px;
-          height: 0.1rem;
-          bottom: 0px;
+          height: 0.3rem;
+          bottom: -3px;
           left: 50%;
           transform: translateX(-50%);
           position: absolute;
@@ -244,10 +245,12 @@ header {
         border: 1px solid var(--color-grey-light);
         border-radius: 3px;
         background: var(--background-light);
-        & > *{
+        padding: 5px;
+        & > * {
           background: var(--color-primary-dark);
         }
       }
     }
   }
 }
+
