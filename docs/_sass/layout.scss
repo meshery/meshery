@@ -1,3 +1,4 @@
+@import "https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,700,700i";
 html {
   font-size: 62.5%;
   box-sizing: border-box;
@@ -55,11 +56,10 @@ ol {
     // flex-direction: column;
     flex-wrap: wrap;
   }
-  
 }
 
 .main-container {
-  padding: 3.5rem min(4.5vh,2.5vw);
+  padding: 3.5rem min(4.5vh, 2.5vw);
   grid-column: 2 / span 1;
 
   @media (max-width: 75em) {
@@ -71,12 +71,12 @@ ol {
     flex: 0 0 100%;
   }
 
-  & #breadcrumbs{
+  & #breadcrumbs {
     font-size: 1.4rem;
-    & a{
-      color:var(--color-grey-dark);
-      transition: all .3s;
-      &:hover{
+    & a {
+      color: var(--color-grey-dark);
+      transition: all 0.3s;
+      &:hover {
         color: var(--color-secondary-dark);
       }
     }
