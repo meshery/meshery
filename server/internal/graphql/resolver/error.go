@@ -34,6 +34,7 @@ const (
 	ErrMeshModelSummarySubscriptionCode     = "2248"
 	ErrGettingMeshModelSummaryCode          = "2249"
 	ErrGettingRegistryManagerCode           = "2250"
+	ErrGettingTelemetryComponentsCode		= "2251"
 )
 
 var (
@@ -185,4 +186,8 @@ func ErrGettingRegistryManager(err error) error {
 
 func ErrK8sContextSubscription(err error) error {
 	return errors.New(ErrK8sContextCode, errors.Alert, []string{"Failed to get k8s context from remote provider", err.Error()}, []string{"There might be something wrong with the Meshery or Meshery Cloud"}, []string{"Could be a network issue"}, nil)
+}
+
+func ErrGettingTelemetryComponents(err error) error {
+	return errors.New(ErrGettingTelemetryComponentsCode, errors.Alert, []string{"unable to retrieve telemetry components"}, []string{err.Error()}, []string{"table in the database might be corrupted"}, []string{"try resetting database from settings"})
 }

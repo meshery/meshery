@@ -36,6 +36,10 @@ var meshesMeta = map[string][]string{
 	},
 }
 
+var TelemetryComps = []string{
+	"prometheus", "grafana",
+}
+
 // ScanKubernetes scans kubernetes to find the pods for each service mesh
 func ScanKubernetes(kubeconfig []byte, contextName string) (map[string][]corev1.Pod, error) {
 	clientset, err := getK8SClientSet(kubeconfig, contextName)
