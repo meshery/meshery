@@ -37,6 +37,10 @@ const styles = (theme) => ({
   fileInputStyle : { opacity : "0.01", },
   icon : { width : theme.spacing(2.5), },
   istioIcon : { width : theme.spacing(1.5), },
+  chip : {
+    marginRight : theme.spacing(1),
+    marginBottom : theme.spacing(1),
+  }
 });
 
 class MeshAdapterConfigComponent extends React.Component {
@@ -241,6 +245,7 @@ class MeshAdapterConfigComponent extends React.Component {
             return (
               <Chip
                 key={adapter.uniqueID}
+                className={classes.chip}
                 label={adapter.adapter_location}
                 onDelete={self.handleDelete(adapter.adapter_location)}
                 onClick={self.handleClick(adapter.adapter_location)}
