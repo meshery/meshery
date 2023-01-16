@@ -26,7 +26,7 @@
     "@material-ui/icons": "^4.11.3",
     "babel-plugin-istanbul": "^6.0.0",
     "glob-parent": ">=6.0.2",
-    "isomorphic-unfetch": "^3.1.0",
+    "isomorphic-unfetch": "^4.0.2",
     "jss": "latest",
     "next": "12.3.1",
     "prop-types": "latest",
