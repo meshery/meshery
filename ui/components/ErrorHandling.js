@@ -1,6 +1,7 @@
 import { IconButton } from "@material-ui/core";
 import { Cancel } from "@material-ui/icons";
 import { useSnackbar } from "notistack";
+import { iconMedium } from "../css/icons.styles";
 
 /**
  *  Show Snackbar when error occurs. Can be used in catch blocks
@@ -27,6 +28,7 @@ function HandleError() {
           <IconButton
             onClick={() => closeSnackbar(key)}
             color="secondary"
+            style={iconMedium}
           >
             <Cancel />
           </IconButton>
