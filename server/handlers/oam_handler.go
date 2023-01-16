@@ -17,9 +17,12 @@ import (
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshery/server/models/pattern/patterns"
+	"github.com/layer5io/meshery/server/models/pattern/patterns/k8s"
 	"github.com/layer5io/meshery/server/models/pattern/stages"
 	"github.com/layer5io/meshkit/models/meshmodel"
+	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
 	"github.com/layer5io/meshkit/utils/events"
+	meshkube "github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/sirupsen/logrus"
 )
 
@@ -85,7 +88,7 @@ func (h *Handler) PatternFileHandler(
 		return
 	}
 
-	msg, err := _processPattern(
+	response, err := _processPattern(
 		r.Context(),
 		provider,
 		patternFile,
@@ -93,18 +96,18 @@ func (h *Handler) PatternFileHandler(
 		user.UserID,
 		isDel,
 		r.URL.Query().Get("verify") == "true",
+		r.URL.Query().Get("dryRun") == "true",
 		false,
 		h.registryManager,
 		h.EventsBuffer,
 	)
-
 	if err != nil {
 		h.log.Error(ErrCompConfigPairs(err))
 		http.Error(rw, ErrCompConfigPairs(err).Error(), http.StatusInternalServerError)
 		return
 	}
-
-	fmt.Fprintf(rw, "%s", msg)
+	ec := json.NewEncoder(rw)
+	ec.Encode(response)
 }
 
 // swagger:route GET /api/oam/{type} PatternsAPI idGetOAMRegister
@@ -381,20 +384,22 @@ func _processPattern(
 	userID string,
 	isDelete bool,
 	verify bool,
+	dryRun bool,
 	skipPrintLogs bool,
 	registry *meshmodel.RegistryManager,
 	eb *events.EventStreamer,
-) (string, error) {
+) (map[string]interface{}, error) {
+	resp := make(map[string]interface{})
+
 	// Get the token from the context
 	token, ok := ctx.Value(models.TokenCtxKey).(string)
 	if !ok {
-		return "", ErrRetrieveUserToken(fmt.Errorf("token not found in the context"))
+		return nil, ErrRetrieveUserToken(fmt.Errorf("token not found in the context"))
 	}
-
 	// // Get the kubehandler from the context
 	k8scontexts, ok := ctx.Value(models.KubeClustersKey).([]models.K8sContext)
 	if !ok || len(k8scontexts) == 0 {
-		return "", ErrInvalidKubeHandler(fmt.Errorf("failed to find k8s handler"), "_processPattern couldn't find a valid k8s handler")
+		return nil, ErrInvalidKubeHandler(fmt.Errorf("failed to find k8s handler"), "_processPattern couldn't find a valid k8s handler")
 	}
 
 	// // Get the kubernetes config from the context
@@ -412,11 +417,11 @@ func _processPattern(
 	for _, ctx := range k8scontexts {
 		cfg, err := ctx.GenerateKubeConfig()
 		if err != nil {
-			return "", ErrInvalidKubeConfig(fmt.Errorf("failed to find k8s config"), "_processPattern couldn't find a valid k8s config")
+			return nil, ErrInvalidKubeConfig(fmt.Errorf("failed to find k8s config"), "_processPattern couldn't find a valid k8s config")
 		}
 		configs = append(configs, string(cfg))
 	}
-	internal := func(mk8scontext []models.K8sContext) (string, error) {
+	internal := func(mk8scontext []models.K8sContext) (map[string]interface{}, error) {
 		sip := &serviceInfoProvider{
 			token:      token,
 			provider:   provider,
@@ -438,20 +443,20 @@ func _processPattern(
 			err:             nil,
 			eventbuffer:     eb,
 		}
-
 		chain := stages.CreateChain()
 		chain.
 			Add(stages.Import(sip, sap)).
 			Add(stages.ServiceIdentifierAndMutator(sip, sap)).
 			Add(stages.Filler(skipPrintLogs)).
 			Add(stages.Validator(sip, sap))
-
-		if !verify {
+		if dryRun {
+			chain.Add(stages.DryRun(sip, sap))
+		}
+		if !verify && !dryRun {
 			chain.
 				Add(stages.Provision(sip, sap)).
 				Add(stages.Persist(sip, sap))
 		}
-
 		chain.
 			Add(func(data *stages.Data, err error, next stages.ChainStageNextFunction) {
 				data.Lock.Lock()
@@ -462,20 +467,23 @@ func _processPattern(
 							sap.accumulatedMsgs = append(sap.accumulatedMsgs, msg)
 						}
 					}
+					if k == stages.DRY_RUN_RESPONSE_KEY {
+						if v != nil {
+							resp["dryRunResponse"] = v
+						}
+					}
 				}
 				data.Lock.Unlock()
-
 				sap.err = err
 			}).
 			Process(&stages.Data{
 				Pattern: &pattern,
 				Other:   map[string]interface{}{},
 			})
-
-		return mergeMsgs(sap.accumulatedMsgs), sap.err
+		resp["messages"] = mergeMsgs(sap.accumulatedMsgs)
+		return resp, sap.err
 	}
 	return internal(k8scontexts)
-
 	// customK8scontexts, ok := ctx.Value(models.KubeClustersKey).([]models.K8sContext)
 	// if ok && len(customK8scontexts) > 0 {
 	// 	var wg sync.WaitGroup
@@ -593,8 +601,40 @@ func (sap *serviceActionProvider) Mutate(p *core.Pattern) {
 		}
 	}
 }
-func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) (string, error) {
-	// Marshal the component
+
+func (sap *serviceActionProvider) DryRun(comps []v1alpha1.Component) (resp map[string][]stages.DryRunResponse, err error) {
+	for _, cmp := range comps {
+		for _, kc := range sap.kubeconfigs {
+			cl, err := meshkube.New([]byte(kc))
+			if err != nil {
+				return resp, err
+			}
+			st, err := k8s.DryRunHelper(cl, cmp)
+			if err != nil {
+				return resp, err
+			}
+			dResp := stages.DryRunResponse{}
+			dResp.Status = *st.Status
+			dResp.Causes = make([]stages.DryRunFailureCause, 0)
+			for _, c := range st.Details.Causes {
+				dResp.Causes = append(dResp.Causes, stages.DryRunFailureCause{Message: *c.Message, Field: *c.Field, Type: string(*c.Type)})
+			}
+			// a slice of DryRunResponse is used to concatenate the response for all the clusters
+			respSlice := make([]stages.DryRunResponse, 0)
+			if resp == nil {
+				resp = make(map[string][]stages.DryRunResponse)
+			}
+			if resp[cmp.Name] != nil {
+				respSlice = resp[cmp.Name]
+			}
+			respSlice = append(respSlice, dResp)
+			resp[cmp.Name] = respSlice
+		}
+	}
+	return
+}
+
+func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) (string, error) { // Marshal the component
 	jsonComp, err := json.Marshal(ccp.Component)
 	if err != nil {
 		return "", fmt.Errorf("failed to serialize the data: %s", err)
@@ -622,7 +662,6 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) (string, 
 				sap.opIsDelete,
 				sap.eventbuffer,
 			)
-
 			return resp, err
 		}
 		addr := host.Hostname
