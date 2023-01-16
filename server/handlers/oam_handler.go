@@ -627,7 +627,7 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) (string, 
 		}
 		addr := host.Hostname
 		if host.Port != 0 {
-			addr = ":" + strconv.Itoa(host.Port)
+			addr += ":" + strconv.Itoa(host.Port)
 		}
 		// Create mesh client
 		mClient, err := meshes.CreateClient(

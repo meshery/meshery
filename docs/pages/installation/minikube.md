@@ -101,7 +101,7 @@ To establish connectivity between a particular Meshery Adapter and Kubernetes se
  </div></div>
  </pre>
 
-### 2. Configure Meshery to use minikube
+### 3. Configure Meshery to use minikube
 
 1. Login to Meshery. Under your user profile, click _Get Token_.
 

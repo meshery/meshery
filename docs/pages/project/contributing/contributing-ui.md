@@ -107,9 +107,15 @@ To build and export the UI code:
 make ui-build
 ```
 
-> Now that the UI code is built, Meshery UI will be available at `http://localhost:9081` when Meshery Server is running (Read below).
+Using this command, changes that you make are not rebuilt automatically. You will have to run this command again to rebuild the UI and see them.
 
-> Changes are not recompiled directly, you will have to run to rebuild the UI to see them
+Now that the UI code is built, Meshery UI will be available at `http://localhost:9081` when Meshery Server is running (Read below).
+
+To build and export the UI code _and_ build and run Meshery Server:
+
+```
+make ui-server
+```
 
 ## Run Meshery Server
 
@@ -118,9 +124,8 @@ To start running Meshery Server locally:
 ```
 $ make server
 ```
-> Now, Meshery will run on the default port `http://localhost:9081`.
+Now, Meshery will run on the default port `http://localhost:9081`.
 
-{% include alert.html type="warning" title="Usage of 'make run-fast' is deprecated!" %}
 
 ### UI Development Server
 
@@ -134,26 +139,23 @@ Refer to [Contributing to Meshery Server](contributing-server), if needed.
 
 > Make sure to have Meshery Server configured, up and running on the default port `http://localhost:9081` before proceeding to access and work on the UI server at `http://localhost:3000`.
 
-> Any UI changes made now will _automatically_ be recompiled and served in the browser.
+Any UI changes made now will _automatically_ be rebuilt and served in your browser.
 
 ### Running Cypress integration tests
 
-To run cypress integration tests, a convenience make target called `run-ui-integration-tests` that installs dependencies in `/ui` and `/provider-ui` folders as prerequisite and invokes `ci-test-integration` npm script found in [/ui/package.json](https://github.com/meshery/meshery/blob/master/ui/package.json)
+To run cypress integration tests, a convenience make target called `ui-integration-tests` that installs dependencies in `/ui` and `/provider-ui` folders as prerequisite and invokes `ci-test-integration` npm script found in [/ui/package.json](https://github.com/meshery/meshery/blob/master/ui/package.json)
 <pre class="codeblock-pre"><div class="codeblock">
    <code class="clipboardjs">
-     $ make run-ui-integration-tests
+     $ make ui-integration-tests
    </code></div></pre>
 {% include alert.html type="info" title="Above command must be run from Meshery repository's root folder." %}
 
 Refer to [Meshery Cypress Testing](contributing-cypress) for details of how to contribute and benefit from Meshery Cypress (integration & end-to-end) testing.
 
-### Running Meshery from IDE
 
-All of the above steps would get the Meshery's development server running for you to work on in any IDE of your choice.
+### Static Files, Icons and Images
 
-### Static files and icons
-
-The Meshery public folder contains static files and its folder structure may look like this:
+The Meshery UI public folder contains static files. Its folder structure looks like this:
 ```
 meshery
 └── ui
@@ -165,31 +167,30 @@ meshery
             └── style
 ```
 
-#### Meshery Icons and Images
+Images and icons used in Meshery UI need to be sourced from the [public directory of images](https://github.com/meshery/meshery/tree/master/ui/public/static/img). The files written inside this directory should only end with the extensions like `.svg`, `.png`, `.jpg` or `.jpeg`. Always use vector-based graphics (`.svg`), unless your have extenuating circumstances.
 
-All the images or icons needs to be sourced from the [public directory of images](https://github.com/meshery/meshery/tree/master/ui/public/static/img). The files written inside this directory should only end with the extensions like `.svg`, `.png`, `.jpg` or `.jpeg`. Among all the `.svg` and `.png` are most favourable for usage.
-
-##### Conventions for svg files
-1. svg icons should be optimized and compressed, there are online [svg optimizers and viewers](https://www.svgviewer.dev/) that can compress the svg files to smaller size.
-2. All svg icons should have "height" and "width" properties set to some value. If it can be possible try to give the icons the default height and width according to their needs in UI, e.g. if its a small icons `20px*20px` is a good choice, if its medium `24px*24px` works well, and accordingly.
-3. Always include this XML header in each SVG image:
+##### Conventions for SVG files
+1. SVGs should be optimized and compressed. 
+    1. Use an online, SVG optimizer, like https://www.svgviewer.dev, to compress the file(s) to smaller size.
+3. All SVGs should have `height` and `width` properties set to 20px x 20px by default. Ensure that height and width attributes are always set in original SVG.
+4. All SVGs should have `height` and `width` included as a style prop in their React component. 
+5. Always include this XML header in each SVG image:
       ```
       <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE svg>
       ```
 4. Svg can only fall under two categories, and this categories should be the name of folder \
-    1. white: containg white or mono-colored version of that svg
-    2. colored: containing colored version of that svg. \
-    
-    e.g.: for meshery icon, the colored and white version's folder structure may look like this
+    1. white: containing white or mono-colored version of that SVG
+    2. color: containing colored version of that SVG.
+    e.g.: the Meshery logo icon folder structure looks like this:
     ```
     └── img
         └── meshery
             ├── white
-            |   └── meshery.svg
+            |   └── meshery-white.svg
             └── color
-                └── meshery.svg
+                └── meshery-color.svg
     ```
-5. Avoid any kind of duplicity in the versions of icon used.
+5. Avoid any kind of duplicity in the versions of icons used.
 
 For accessing the svg file as data-url, the utf8 encoding should be used in place of base64.Use [encodeURIComponent](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURIComponent) on SVG data URIs. \
   ```

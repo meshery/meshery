@@ -316,8 +316,8 @@ On release of a new major version, the static html files for the most recent ver
 
 ##### Steps:
 After cloning the Meshery repository
-1. `cd docs` > `bundle install` > `make site`
-1. On executing `make site` a `_site` folder is created which has static html files. 
+1. `cd docs` > `bundle install` > `make docs`
+1. On executing `make docs` a `_site` folder is created which has static html files. 
 1. The `_site` folder is renamed to `v0.x`. 
 1. This `v0.x` folder is now the latest version of docs. 
 
@@ -340,8 +340,8 @@ For older releases we have to travel back in time. Using the `Tags` in github we
   <img src="{{ site.baseurl }}/assets/img/versioning-guide/commit-ID.png" />
 </a>
 
-1. `git checkout <commit ID>` > `cd docs` > `bundle install` > `make site`
-1.  On executing `make site` a `_site` folder is created which has static html files. 
+1. `git checkout <commit ID>` > `cd docs` > `bundle install` > `make docs`
+1.  On executing `make docs` a `_site` folder is created which has static html files. 
 1.  The `_site` folder is renamed to `v0.X` and is copied into the `docs` folder of the present version. 
 
 The above [steps]({{site.baseurl}}/project/build-and-release#in-the-v0x-folder) for replacing all the instances of direct path are to be followed. 

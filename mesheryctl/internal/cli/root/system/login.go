@@ -78,7 +78,7 @@ mesheryctl system login
 		}
 
 		if err != nil {
-			log.Println("authentication failed:", err)
+			log.Printf("authentication failed: Unable to reach Meshery server at %s. Verify your environment's readiness for a Meshery deployment by running `mesheryctl system check`.", mctlCfg.GetBaseMesheryURL())
 			return nil
 		}
 
