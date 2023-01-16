@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles } from '@mui/styles';
 import {
   NoSsr, TextField, Grid, Button, Chip, MenuItem,
-} from '@material-ui/core';
+} from '@mui/material';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Controlled as CodeMirror } from 'react-codemirror2';

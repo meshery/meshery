@@ -1,9 +1,9 @@
 import {
   Button, Checkbox, Chip, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, Tab, Tabs, TextField,
   Tooltip, Typography
-} from "@material-ui/core";
+} from "@mui/material";
 import CloseIcon from "@material-ui/icons/Close";
-import { withStyles } from "@material-ui/core/styles";
+import { withStyles } from "@mui/styles";
 import { Search } from "@material-ui/icons";
 import { withSnackbar } from "notistack";
 import { connect } from "react-redux";

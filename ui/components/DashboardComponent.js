@@ -1,11 +1,11 @@
 import {
   Button, Card, CardContent, CardHeader, Chip,
   IconButton, MenuItem, NoSsr, Paper, Select, TableCell, TableSortLabel, Tooltip, Typography
-} from "@material-ui/core";
-// import {Table, TableBody, TableContainer, TableHead, TableRow,} from "@material-ui/core"
-import blue from "@material-ui/core/colors/blue";
-import Grid from "@material-ui/core/Grid";
-import { withStyles } from "@material-ui/core/styles";
+} from "@mui/material";
+// import {Table, TableBody, TableContainer, TableHead, TableRow,} from "@mui/material"
+import blue from "@mui/material/colors/blue";
+import Grid from "@mui/material/Grid";
+import { withStyles } from "@mui/styles";
 import AddIcon from "@material-ui/icons/AddCircleOutline";
 import CloseIcon from "@material-ui/icons/Close";
 import SettingsIcon from "@material-ui/icons/Settings";
@@ -28,7 +28,7 @@ import subscribeClusterResources from "./graphql/subscriptions/ClusterResourcesS
 import fetchAvailableNamespaces from "./graphql/queries/NamespaceQuery";
 import { submitPrometheusConfigure } from "./telemetry/prometheus/PrometheusComponent";
 import MUIDataTable from "mui-datatables";
-import { MuiThemeProvider, createTheme } from '@material-ui/core/styles';
+import { MuiThemeProvider, createTheme } from '@mui/styles';
 import Popup from "./Popup";
 import { iconMedium } from "../css/icons.styles";
 

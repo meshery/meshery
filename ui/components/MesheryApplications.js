@@ -1,9 +1,9 @@
 import {
   Dialog, DialogActions, DialogContent, DialogTitle, Divider, IconButton, NoSsr,
   TableCell, Tooltip, Typography, Button
-} from "@material-ui/core";
-import { makeStyles, withStyles } from "@material-ui/core/styles";
-import TableSortLabel from "@material-ui/core/TableSortLabel";
+} from "@mui/material";
+import { makeStyles, withStyles } from "@mui/styles";
+import TableSortLabel from "@mui/material/TableSortLabel";
 import CloseIcon from "@material-ui/icons/Close";
 import DeleteIcon from "@material-ui/icons/Delete";
 import FullscreenIcon from '@material-ui/icons/Fullscreen';

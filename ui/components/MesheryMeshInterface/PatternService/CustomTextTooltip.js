@@ -1,5 +1,5 @@
 import { withStyles } from "@material-ui/styles";
-import { Tooltip } from "@material-ui/core";
+import { Tooltip } from "@mui/material";
 import { ziCalc } from "../../../utils/zIndex";
 
 export const CustomTextTooltip = ({ backgroundColor, flag, ...props }) => {

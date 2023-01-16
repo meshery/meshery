@@ -1,5 +1,5 @@
 import React from "react";
-import { NoSsr, Paper, withStyles } from "@material-ui/core";
+import { NoSsr, Paper, withStyles } from "@mui/material";
 import MesheryResults from "../../components/MesheryResults";
 import { updatepagepath } from "../../lib/store";
 import { connect } from "react-redux";

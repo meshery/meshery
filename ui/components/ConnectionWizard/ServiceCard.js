@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles } from '@mui/styles';
 import {
   Card, CardContent, Container, Typography
-} from '@material-ui/core';
+} from '@mui/material';
 
 
 // const MeshySwitch = withStyles({

@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles } from '@mui/styles';
 import {
   NoSsr, TextField, Grid, Button,
-} from '@material-ui/core';
+} from '@mui/material';
 import ReactSelectWrapper from '../../ReactSelectWrapper'
 
 const grafanaStyles = (theme) => ({

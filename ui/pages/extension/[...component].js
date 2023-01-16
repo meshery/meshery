@@ -2,7 +2,7 @@
 
 import NavigatorExtension from "../../components/NavigatorExtension";
 import ExtensionSandbox, { getCapabilities, getFullPageExtensions, getComponentTitleFromPath } from "../../components/ExtensionSandbox";
-import { Box, CircularProgress, NoSsr } from "@material-ui/core";
+import { Box, CircularProgress, NoSsr } from "@mui/material";
 import { updatepagepath, updatepagetitle, updateExtensionType } from "../../lib/store";
 import { connect } from "react-redux";
 import Head from "next/head";

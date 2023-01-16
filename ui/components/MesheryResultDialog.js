@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles } from '@mui/styles';
 import {
   NoSsr, Grid, Table, TableRow, TableCell, TableBody, Typography,
-} from '@material-ui/core';
+} from '@mui/material';
 import MesheryChartDialog from './MesheryChartDialog';
 
 

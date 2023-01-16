@@ -1,7 +1,7 @@
 import { Component } from 'react';
 import { withSnackbar } from 'notistack';
 import { connect } from 'react-redux';
-import { LinearProgress } from '@material-ui/core';
+import { LinearProgress } from '@mui/material';
 
 class MesheryProgressBar extends Component {
     key = '';

@@ -1,4 +1,4 @@
-import { styled } from "@mui/material/styles";
+import { styled } from "@mui/styles";
 
 export const IconDiv = styled('div')(() => ({
     position: "absolute",

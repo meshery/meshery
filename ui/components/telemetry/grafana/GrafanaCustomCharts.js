@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles } from '@mui/styles';
 import {
   NoSsr, Grid, ExpansionPanelDetails, Typography, Dialog, Button, DialogActions, DialogContent, DialogTitle, Chip
-} from '@material-ui/core';
+} from '@mui/material';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import GrafanaDateRangePicker from './GrafanaDateRangePicker';
 import { ExpansionPanel, ExpansionPanelSummary } from '../../ExpansionPanels';

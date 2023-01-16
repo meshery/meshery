@@ -4,7 +4,7 @@ import {
   Typography,
   makeStyles,
   Link
-} from "@material-ui/core";
+} from "@mui/material";
 
 const styles = makeStyles(() => ({
   rootClass : {

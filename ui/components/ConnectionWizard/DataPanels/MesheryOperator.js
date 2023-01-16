@@ -8,12 +8,12 @@ import {
   IconButton,
   List,
   Paper,
-} from "@material-ui/core/";
+} from "@mui/material/";
 import { withSnackbar } from "notistack";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
+import ListItem from '@mui/material/ListItem';
+import ListItemText from '@mui/material/ListItemText';
 import { updateProgress } from "../../../lib/store";
 import { pingMesheryOperator, pingMesheryOperatorWithNotification } from "../helpers/mesheryOperator";
 import fetchMesheryOperatorStatus from "../../graphql/queries/OperatorStatusQuery";

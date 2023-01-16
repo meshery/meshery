@@ -1,17 +1,17 @@
 import React from "react";
 import PropTypes from "prop-types";
 import classNames from "classnames";
-import { withStyles } from "@material-ui/core/styles";
-import Divider from "@material-ui/core/Divider";
-import Drawer from "@material-ui/core/Drawer";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import Grow from '@material-ui/core/Grow';
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import ListItemText from "@material-ui/core/ListItemText";
-import NoSsr from "@material-ui/core/NoSsr";
+import { withStyles } from "@mui/styles";
+import Divider from "@mui/material/Divider";
+import Drawer from "@mui/material/Drawer";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import Grow from '@mui/material/Grow';
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemText from "@mui/material/ListItemText";
+import NoSsr from "@mui/material/NoSsr";
 import RemoveIcon from "@material-ui/icons/Remove";
-import Zoom from '@material-ui/core/Zoom';
+import Zoom from '@mui/material/Zoom';
 import Link from "next/link";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
@@ -40,10 +40,10 @@ import {
   faDigitalTachograph
 } from "@fortawesome/free-solid-svg-icons";
 import { updatepagetitle, updatebetabadge, toggleDrawer, setAdapter, updateCapabilities } from "../lib/store";
-import { ButtonGroup, IconButton, Tooltip } from "@material-ui/core";
+import { ButtonGroup, IconButton, Tooltip } from "@mui/material";
 import ExtensionPointSchemaValidator from "../utils/ExtensionPointSchemaValidator";
 import dataFetch from "../lib/data-fetch";
-import { Collapse } from "@material-ui/core";
+import { Collapse } from "@mui/material";
 import { cursorNotAllowed, disabledStyle, disabledStyleWithOutOpacity } from "../css/disableComponent.styles";
 import { CapabilitiesRegistry } from "../utils/disabledComponents";
 import { APPLICATION, APP_MESH, CILIUM_SM, CITRIX_SM, DESIGN, CONFIGURATION, CONFORMANCE, CONSUL, DASHBOARD, FILTER, ISTIO, KUMA, LIFECYCLE, LINKERD, NETWORK_SM, NGINX, OSM, PERFORMANCE, TRAEFIK_SM, PROFILES, SMI, TOGGLER } from "../constants/navigator"

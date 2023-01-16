@@ -1,5 +1,5 @@
-import { Grid, Typography, Button, Switch, IconButton } from "@material-ui/core";
-import { withStyles } from "@material-ui/core/styles";
+import { Grid, Typography, Button, Switch, IconButton } from "@mui/material";
+import { withStyles } from "@mui/styles";
 import React, { useEffect, useState } from "react";
 import CloseIcon from "@material-ui/icons/Close";
 import { connect } from "react-redux";

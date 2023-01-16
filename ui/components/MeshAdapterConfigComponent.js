@@ -1,10 +1,10 @@
 import React from "react";
 import PropTypes from "prop-types";
-import Button from "@material-ui/core/Button";
-import { withStyles } from "@material-ui/core/styles";
-import Grid from "@material-ui/core/Grid";
-import { NoSsr, Chip, IconButton } from "@material-ui/core";
-import blue from "@material-ui/core/colors/blue";
+import Button from "@mui/material/Button";
+import { withStyles } from "@mui/styles";
+import Grid from "@mui/material/Grid";
+import { NoSsr, Chip, IconButton } from "@mui/material";
+import blue from "@mui/material/colors/blue";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { withRouter } from "next/router";

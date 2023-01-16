@@ -3,7 +3,7 @@ import MesheryOperatorIcon from "../icons/MesheryOperatorIcon.js"
 import fetchMesheryOperatorStatus from '../../graphql/queries/OperatorStatusQuery';
 import subscribeOperatorStatusEvents from '../../graphql/subscriptions/OperatorStatusSubscription';
 import ServiceCard from "../ServiceCard"
-import { CircularProgress, Grid } from "@material-ui/core"
+import { CircularProgress, Grid } from "@mui/material"
 import MesheryOperatorDataPanel from "../DataPanels/MesheryOperator"
 import { useEffect, useState } from "react"
 import { getOperatorStatusFromQueryResult, isMesheryOperatorConnected } from "../helpers/mesheryOperator.js";

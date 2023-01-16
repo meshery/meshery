@@ -1,7 +1,7 @@
 // @ts-check
 import {
   Grid, Paper, TextField, Typography
-} from "@material-ui/core";
+} from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { ctxUrl } from "../../utils/multi-ctx";

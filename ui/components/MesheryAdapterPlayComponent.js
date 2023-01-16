@@ -3,9 +3,9 @@ import {
   DialogTitle, Divider, FormControl, FormControlLabel, FormGroup, FormLabel, Grid,
   IconButton, Menu, MenuItem, Switch, Table, TableBody, TableCell, TableHead, TableRow,
   Tooltip, Typography, withStyles
-} from "@material-ui/core";
-import { blue } from "@material-ui/core/colors";
-import NoSsr from "@material-ui/core/NoSsr";
+} from "@mui/material";
+import { blue } from "@mui/material/colors";
+import NoSsr from "@mui/material/NoSsr";
 import AddIcon from "@material-ui/icons/Add";
 import CloseIcon from "@material-ui/icons/Close";
 import DeleteIcon from "@material-ui/icons/Delete";

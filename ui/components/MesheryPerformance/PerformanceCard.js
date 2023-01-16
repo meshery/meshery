@@ -2,13 +2,13 @@
 import React, { useState } from "react";
 import {
   Button, Grid, IconButton, Typography
-} from "@material-ui/core";
+} from "@mui/material";
 import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
 import Moment from "react-moment";
 import PerformanceResults from "./PerformanceResults";
 import FlipCard from "../FlipCard";
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles } from "@mui/styles";
 
 const useStyles= makeStyles(() => ({
   cardButtons : {

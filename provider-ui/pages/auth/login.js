@@ -1,10 +1,10 @@
-import { Typography } from "@material-ui/core";
+import { Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { withStyles } from '@material-ui/core/styles';
-import Dialog from '@material-ui/core/Dialog';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle'
+import { withStyles } from '@mui/styles';
+import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle'
 import WarningIcon from '@material-ui/icons/Warning';
 
 const styles = (() => ({

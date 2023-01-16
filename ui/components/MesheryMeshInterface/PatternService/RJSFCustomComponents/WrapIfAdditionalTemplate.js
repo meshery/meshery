@@ -1,13 +1,13 @@
 import React from "react";
-import FormControl from "@material-ui/core/FormControl";
-import Grid from "@material-ui/core/Grid";
+import FormControl from "@mui/material/FormControl";
+import Grid from "@mui/material/Grid";
 import DeleteIcon from "@material-ui/icons/Delete";
-import InputLabel from "@material-ui/core/InputLabel";
-import Input from "@material-ui/core/Input";
+import InputLabel from "@mui/material/InputLabel";
+import Input from "@mui/material/Input";
 import {
   ADDITIONAL_PROPERTY_FLAG,
 } from "@rjsf/utils";
-import { IconButton } from "@material-ui/core";
+import { IconButton } from "@mui/material";
 
 const WrapIfAdditionalTemplate = ({
   children,

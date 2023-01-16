@@ -1,5 +1,5 @@
 //@ts-check
-import { Grid, Paper, Typography, Button } from "@material-ui/core";
+import { Grid, Paper, Typography, Button } from "@mui/material";
 import { Pagination } from "@material-ui/lab";
 import React, { useState } from "react";
 import FiltersCard from "./FiltersCard";

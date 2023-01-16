@@ -1,13 +1,13 @@
 import React from 'react'
-import {  Button, Grid, IconButton } from '@material-ui/core';
-import { MuiThemeProvider } from '@material-ui/core/styles';
-import { createTheme } from '@material-ui/core/styles';
+import {  Button, Grid, IconButton } from '@mui/material';
+import { MuiThemeProvider } from '@mui/styles';
+import { createTheme } from '@mui/styles';
 import validator from "@rjsf/validator-ajv6";
 import {
   Dialog, DialogActions,
   DialogContent,
   DialogTitle
-} from '@material-ui/core';
+} from '@mui/material';
 import { Form } from '@rjsf/material-ui';
 import useStyles from "./MesheryPatterns/Cards.styles";
 import PublicIcon from '@material-ui/icons/Public';

@@ -1,5 +1,5 @@
 /* eslint-disable react/display-name */
-import { IconButton } from "@material-ui/core"
+import { IconButton } from "@mui/material"
 import CloseIcon from "@material-ui/icons/Close";
 
 export const closeButtonForSnackbarAction = (closeSnackbar) => (key) => (

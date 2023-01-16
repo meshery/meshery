@@ -1,7 +1,7 @@
 
 import {
   Accordion, AccordionDetails, AccordionSummary, AppBar, ButtonGroup, CircularProgress, Divider, FormControl, Grid, IconButton, makeStyles, MenuItem, Paper, TextField, Toolbar, Tooltip, Typography,
-} from "@material-ui/core";
+} from "@mui/material";
 import DeleteIcon from "@material-ui/icons/Delete";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import FileCopyIcon from '@material-ui/icons/FileCopy';

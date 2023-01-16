@@ -5,7 +5,7 @@ import IstioIcon from "../../img/SVGs/IstioIcon";
 import KumaIcon from "../../img/SVGs/kumaIcon";
 import Joyride from "react-joyride";
 import Tour from "../Walkthrough/Tour";
-import { createTheme } from "@mui/material/styles";
+import { createTheme } from "@mui/styles";
 import LinkerdIcon from "../../img/SVGs/linkerdIcon";
 
 import NginxIcon from "../../img/SVGs/nginxIcon";

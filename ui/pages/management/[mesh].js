@@ -1,4 +1,4 @@
-import { Button, makeStyles, NoSsr, Container, Typography } from "@material-ui/core";
+import { Button, makeStyles, NoSsr, Container, Typography } from "@mui/material";
 import SettingsIcon from "@material-ui/icons/Settings";
 import Head from "next/head";
 import { useRouter } from "next/router";

@@ -2,10 +2,10 @@ import React from 'react';
 import { Component } from 'react';
 import {
   NoSsr, Button, TextField, MenuItem, Grid, Dialog, DialogContent, DialogContentText, DialogTitle, Divider, FormControlLabel, Switch, IconButton,
-} from '@material-ui/core';
+} from '@mui/material';
 import Moment from 'react-moment';
 import AccessTimeIcon from '@material-ui/icons/AccessTime';
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import MesheryDateTimePicker from '../../MesheryDateTimePicker';
 import { Close } from '@material-ui/icons';

@@ -1,6 +1,6 @@
 //@ts-check
 import React, { useState, useRef, useEffect } from "react";
-import { withStyles } from "@material-ui/core/styles";
+import { withStyles } from "@mui/styles";
 
 const styles = (theme) => ({
   card : { height : '100%',

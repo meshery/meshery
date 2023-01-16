@@ -1,9 +1,9 @@
 //@ts-check
-import { Grid } from "@material-ui/core";
+import { Grid } from "@mui/material";
 import { Pagination } from "@material-ui/lab";
 import React, { useState } from "react";
 import PerformanceCard from "./PerformanceCard";
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles } from "@mui/styles";
 
 
 const INITIAL_GRID_SIZE = { xl : 4, md : 6, xs : 12 };

@@ -1,5 +1,5 @@
 import MesherySettings from "../components/MesherySettings";
-import { NoSsr, withStyles } from "@material-ui/core";
+import { NoSsr, withStyles } from "@mui/material";
 import { updatepagepath } from "../lib/store";
 import { connect } from "react-redux";
 import Head from 'next/head';

@@ -1,7 +1,7 @@
 import { Component } from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
-import { MenuItem, NoSsr, TextField } from '@material-ui/core';
+import { withStyles } from '@mui/styles';
+import { MenuItem, NoSsr, TextField } from '@mui/material';
 import { connect } from 'react-redux';
 
 const grafanaStyles = () => ({ root : { width : '100%', }, });

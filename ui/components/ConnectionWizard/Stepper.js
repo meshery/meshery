@@ -7,7 +7,7 @@ import {
   Step,
   StepLabel,
   StepConnector,
-} from "@material-ui/core/";
+} from "@mui/material/";
 
 import svgIcons from "./icons/icons.js";
 

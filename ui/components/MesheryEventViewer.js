@@ -1,7 +1,7 @@
-import NoSsr from '@material-ui/core/NoSsr';
+import NoSsr from '@mui/material/NoSsr';
 import React from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles } from '@mui/styles';
 import MesherySnackbarWrapper from './MesherySnackbarWrapper';
 import { eventTypes } from '../lib/event-types';
 const styles = (theme) => ({ event : { margin : theme.spacing(0.5, 1), }, });

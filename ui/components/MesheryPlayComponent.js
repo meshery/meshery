@@ -1,8 +1,8 @@
 import React from "react";
 import { connect } from "react-redux";
-import NoSsr from "@material-ui/core/NoSsr";
-import { withStyles, Button, Divider, MenuItem, TextField, Grid } from "@material-ui/core";
-import { blue } from "@material-ui/core/colors";
+import NoSsr from "@mui/material/NoSsr";
+import { withStyles, Button, Divider, MenuItem, TextField, Grid } from "@mui/material";
+import { blue } from "@mui/material/colors";
 import PropTypes from "prop-types";
 import { withRouter } from "next/router";
 import SettingsIcon from "@material-ui/icons/Settings";

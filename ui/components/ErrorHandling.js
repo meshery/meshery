@@ -1,4 +1,4 @@
-import { IconButton } from "@material-ui/core";
+import { IconButton } from "@mui/material";
 import { Cancel } from "@material-ui/icons";
 import { useSnackbar } from "notistack";
 import { iconMedium } from "../css/icons.styles";

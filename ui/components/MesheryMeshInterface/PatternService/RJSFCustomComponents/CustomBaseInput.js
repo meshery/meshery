@@ -1,5 +1,5 @@
 import React from "react";
-import { IconButton, InputAdornment, TextField } from "@material-ui/core";
+import { IconButton, InputAdornment, TextField } from "@mui/material";
 import HelpOutlineIcon from "../../../../assets/icons/HelpOutlineIcon";
 import { CustomTextTooltip } from "../CustomTextTooltip";
 import ErrorOutlineIcon from "../../../../assets/icons/ErrorOutlineIcon";

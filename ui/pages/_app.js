@@ -1,8 +1,8 @@
 import MomentUtils from '@date-io/moment';
-import { NoSsr, Typography } from '@material-ui/core';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import Hidden from '@material-ui/core/Hidden';
-import { MuiThemeProvider, withStyles } from '@material-ui/core/styles';
+import { NoSsr, Typography } from '@mui/material';
+import CssBaseline from '@mui/material/CssBaseline';
+import Hidden from '@mui/material/Hidden';
+import { MuiThemeProvider, withStyles } from '@mui/styles';
 import {
   CheckCircle, Error, Info, Warning
 } from '@material-ui/icons';
@@ -28,7 +28,7 @@ import { connect, Provider } from "react-redux";
 import Header from '../components/Header';
 import MesheryProgressBar from '../components/MesheryProgressBar';
 import Navigator from '../components/Navigator';
-import getPageContext from '../components/PageContext';
+// import getPageContext from '../components/PageContext';
 import { MESHSYNC_EVENT_SUBSCRIPTION, OPERATOR_EVENT_SUBSCRIPTION } from '../components/subscription/helpers';
 import { GQLSubscription } from '../components/subscription/subscriptionhandler';
 import dataFetch, { promisifiedDataFetch } from '../lib/data-fetch';
@@ -67,7 +67,7 @@ async function fetchContexts(number = 10, search = "") {
 class MesheryApp extends App {
   constructor() {
     super();
-    this.pageContext = getPageContext();
+    // this.pageContext = getPageContext();
 
     this.state = {
       mobileOpen : false,
@@ -357,7 +357,7 @@ class MesheryApp extends App {
               <main className={classes.mainContent}>
                 <MuiPickersUtilsProvider utils={MomentUtils}>
                   <Component
-                    pageContext={this.pageContext}
+                    // pageContext={this.pageContext} // does it have any adverse affect? have to see...
                     contexts={this.state.k8sContexts}
                     activeContexts={this.state.activeK8sContexts}
                     setActiveContexts={this.setActiveContexts}

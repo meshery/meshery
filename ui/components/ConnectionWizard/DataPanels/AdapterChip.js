@@ -5,7 +5,7 @@ import {
   Grid,
   Chip,
   IconButton,
-} from "@material-ui/core/";
+} from "@mui/material/";
 import { withSnackbar } from "notistack";
 
 const chipStyles = (theme) => ({ chipIcon : { width : theme.spacing(2.5) },

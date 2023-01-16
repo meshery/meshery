@@ -1,5 +1,5 @@
 import React from "react";
-import { NoSsr } from "@material-ui/core";
+import { NoSsr } from "@mui/material";
 import MesheryPerformanceComponent from "../../components/MesheryPerformance/Dashboard";
 import { updatepagepath } from "../../lib/store";
 import { connect } from "react-redux";

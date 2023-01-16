@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
-import { NoSsr, Grid, Button, } from '@material-ui/core';
+import { withStyles } from '@mui/styles';
+import { NoSsr, Grid, Button, } from '@mui/material';
 import ReactSelectWrapper from "../../ReactSelectWrapper";
 
 const promStyles = (theme) => ({ promRoot : { padding : theme.spacing(5), },

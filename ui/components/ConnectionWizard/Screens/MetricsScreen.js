@@ -5,7 +5,7 @@ import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import MetricsConfig from "../ConfigComponents/Metrics.js"
 import ServiceCard from "../ServiceCard.js"
-import { Grid } from "@material-ui/core"
+import { Grid } from "@mui/material"
 import VerticalCarousel from "../../VerticalCarousel/VerticalCarousel"
 import MetricsDataPanel from "../DataPanels/Metrics"
 import {

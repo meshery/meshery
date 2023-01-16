@@ -5,7 +5,7 @@ import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import ServiceMeshConfig from "../ConfigComponents/ServiceMesh"
 import ServiceCard from "../ServiceCard"
-import { Grid } from "@material-ui/core"
+import { Grid } from "@mui/material"
 import VerticalCarousel from "../../VerticalCarousel/VerticalCarousel"
 import ServiceMeshDataPanel from "../DataPanels/ServiceMesh"
 import { createRef, useEffect, useState } from "react"

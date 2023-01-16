@@ -1,17 +1,17 @@
 // @ts-check
 import React, { useState, useRef, useEffect } from "react";
-import { withStyles, MuiThemeProvider } from "@material-ui/core/styles";
-import {  createTheme } from '@material-ui/core/styles';
+import { withStyles, MuiThemeProvider } from "@mui/styles";
+import {  createTheme } from '@mui/styles';
 import {
   NoSsr, TableCell, IconButton, TableRow, Typography
-} from "@material-ui/core";
+} from "@mui/material";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import MUIDataTable from "mui-datatables";
 import Moment from "react-moment";
 import { withSnackbar } from "notistack";
 import { updateProgress } from "../../lib/store";
-import TableSortLabel from "@material-ui/core/TableSortLabel";
+import TableSortLabel from "@mui/material/TableSortLabel";
 import PerformanceResults from "./PerformanceResults";
 import EditIcon from '@material-ui/icons/Edit';
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';

@@ -1,7 +1,7 @@
 import React from 'react';
-import IconButton from '@material-ui/core/IconButton';
-import Tooltip from '@material-ui/core/Tooltip';
-import { withStyles } from '@material-ui/core/styles';
+import IconButton from '@mui/material/IconButton';
+import Tooltip from '@mui/material/Tooltip';
+import { withStyles } from '@mui/styles';
 import DeleteIcon from '@material-ui/icons/Delete';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';

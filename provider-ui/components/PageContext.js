@@ -1,9 +1,9 @@
 import { SheetsRegistry } from 'jss';
-import { createTheme } from '@material-ui/core/styles';
+import { createTheme } from '@mui/styles';
 
 // Please use this imports if you are using the optional theme
-// import purple from '@material-ui/core/colors/purple';
-// import green from '@material-ui/core/colors/green';
+// import purple from '@mui/material/colors/purple';
+// import green from '@mui/material/colors/green';
 
 // A theme with custom primary and secondary color.
 // It's optional.

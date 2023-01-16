@@ -1,5 +1,5 @@
 
-import { styled } from "@mui/material/styles";
+import { styled } from "@mui/styles";
 import {Typography} from "@mui/material";
 
 export const StyledDiv = styled('div')(() => ({

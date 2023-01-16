@@ -1,4 +1,4 @@
-import { makeStyles } from "@material-ui/core";
+import { makeStyles } from "@mui/material";
 
 const useStyles= makeStyles((theme) => ({
   cardButtons : {

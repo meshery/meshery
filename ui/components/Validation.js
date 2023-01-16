@@ -8,7 +8,7 @@ import {
   Typography,
   Collapse,
   withStyles
-} from "@material-ui/core";
+} from "@mui/material";
 import { ExpandLess, ExpandMore } from "@material-ui/icons";
 
 const styles = theme => ({

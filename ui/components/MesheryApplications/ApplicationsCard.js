@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import {
   Divider, Grid, IconButton, Typography, Tooltip
-} from "@material-ui/core";
+} from "@mui/material";
 import DeleteIcon from "@material-ui/icons/Delete";
 import Save from "@material-ui/icons/Save";
 import Fullscreen from "@material-ui/icons/Fullscreen";

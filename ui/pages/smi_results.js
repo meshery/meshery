@@ -5,7 +5,7 @@ import { connect } from "react-redux";
 import { bindActionCreators } from 'redux';
 import Head from 'next/head';
 import { getPath } from "../lib/path";
-import { Paper, withStyles } from '@material-ui/core';
+import { Paper, withStyles } from '@mui/material';
 
 const styles = { paper : { maxWidth : '90%',
   margin : 'auto',

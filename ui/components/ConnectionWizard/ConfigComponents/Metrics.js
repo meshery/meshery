@@ -7,7 +7,7 @@ import {
   Grid,
   Button,
   IconButton,
-} from "@material-ui/core/";
+} from "@mui/material/";
 import { withSnackbar } from "notistack";
 import { useState } from "react";
 import { connect } from "react-redux";

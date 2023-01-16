@@ -1,6 +1,6 @@
 // @ts-check
 import React from "react";
-import { Modal, Backdrop, Fade } from "@material-ui/core";
+import { Modal, Backdrop, Fade } from "@mui/material";
 
 /**
  *

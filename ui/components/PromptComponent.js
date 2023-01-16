@@ -8,7 +8,7 @@ import {
   DialogContentText,
   DialogContent,
   DialogTitle
-} from "@material-ui/core";
+} from "@mui/material";
 import classNames from 'classnames';
 
 const styles = (theme) => ({

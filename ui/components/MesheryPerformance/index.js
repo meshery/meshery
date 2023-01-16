@@ -1,11 +1,11 @@
 //@ts-check
 import React from "react";
 import PropTypes from "prop-types";
-import Button from "@material-ui/core/Button";
-import Typography from "@material-ui/core/Typography";
+import Button from "@mui/material/Button";
+import Typography from "@mui/material/Typography";
 import { Autocomplete } from "@material-ui/lab";
-import { withStyles } from "@material-ui/core/styles";
-import Grid from "@material-ui/core/Grid";
+import { withStyles } from "@mui/styles";
+import Grid from "@mui/material/Grid";
 import { URLValidator } from "../../utils/URLValidator";
 import {
   NoSsr,
@@ -23,8 +23,8 @@ import {
   ExpansionPanel,
   ExpansionPanelSummary,
   ExpansionPanelDetails,
-} from "@material-ui/core";
-import TextField from "@material-ui/core/TextField";
+} from "@mui/material";
+import TextField from "@mui/material/TextField";
 import { withSnackbar } from "notistack";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";

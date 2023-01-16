@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react'
 import LinkIcon from '@material-ui/icons/Link';
-import { Tooltip, IconButton, TextField, Button, Grid } from '@material-ui/core';
-import { makeStyles, MuiThemeProvider } from '@material-ui/core/styles';
-import { createTheme } from '@material-ui/core/styles';
+import { Tooltip, IconButton, TextField, Button, Grid } from '@mui/material';
+import { makeStyles, MuiThemeProvider } from '@mui/styles';
+import { createTheme } from '@mui/styles';
 import { URLValidator } from '../utils/URLValidator';
 
 

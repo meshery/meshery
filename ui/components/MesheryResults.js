@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles } from '@mui/styles';
 import {
   NoSsr, TableRow, TableCell, IconButton,
-} from '@material-ui/core';
+} from '@mui/material';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import MUIDataTable from 'mui-datatables';
@@ -12,7 +12,7 @@ import { withSnackbar } from 'notistack';
 import CloseIcon from '@material-ui/icons/Close';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import { updateResultsSelection, clearResultsSelection, updateProgress, } from '../lib/store';
-import TableSortLabel from '@material-ui/core/TableSortLabel'
+import TableSortLabel from '@mui/material/TableSortLabel'
 import dataFetch from '../lib/data-fetch';
 import CustomToolbarSelect from './CustomToolbarSelect';
 import MesheryChart from './MesheryChart';

@@ -1,9 +1,9 @@
 import React from 'react';
-import { NoSsr, TableCell, } from '@material-ui/core';
-import { MuiThemeProvider } from '@material-ui/core/styles';
-import {  createTheme } from '@material-ui/core/styles';
+import { NoSsr, TableCell, } from '@mui/material';
+import { MuiThemeProvider } from '@mui/styles';
+import {  createTheme } from '@mui/styles';
 import MUIDataTable from "mui-datatables";
-import TableSortLabel from '@material-ui/core/TableSortLabel'
+import TableSortLabel from '@mui/material/TableSortLabel'
 
 function NodeDetails(props) {
 

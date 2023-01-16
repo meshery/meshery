@@ -1,7 +1,7 @@
 import { DateTimePicker } from '@material-ui/pickers';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
-import { TextField } from '@material-ui/core';
+import { TextField } from '@mui/material';
 import moment from 'moment';
 
 class MesheryDateTimePicker extends Component {

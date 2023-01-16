@@ -2,7 +2,7 @@
 import React from "react";
 import {
   makeStyles, Container, Button, Fade, Grid
-} from "@material-ui/core";
+} from "@mui/material";
 import { useRouter } from "next/router"
 
 import Stepper from "./Stepper.js";

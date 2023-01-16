@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles } from '@mui/styles';
 import {
   TableRow, TableCell, IconButton, Table, TableBody, TableHead, Tooltip
-} from '@material-ui/core';
+} from '@mui/material';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import MUIDataTable from 'mui-datatables';

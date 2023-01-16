@@ -1,12 +1,12 @@
 import React, { useEffect } from "react";
-import { makeStyles } from "@material-ui/core/styles";
-import MuiAccordion from "@material-ui/core/Accordion";
-import MuiAccordionSummary from "@material-ui/core/AccordionSummary";
-import MuiAccordionDetails from "@material-ui/core/AccordionDetails";
+import { makeStyles } from "@mui/styles";
+import MuiAccordion from "@mui/material/Accordion";
+import MuiAccordionSummary from "@mui/material/AccordionSummary";
+import MuiAccordionDetails from "@mui/material/AccordionDetails";
 import DeleteIcon from "../../../../assets/icons/DeleteIcon";
-import Typography from "@material-ui/core/Typography";
+import Typography from "@mui/material/Typography";
 import ExpandMoreIcon from "../../../../assets/icons/ExpandMoreIcon"
-import { IconButton } from "@material-ui/core";
+import { IconButton } from "@mui/material";
 
 const useStyles = makeStyles((theme) => ({
   accordionRoot : {

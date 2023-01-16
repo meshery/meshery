@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
-import { Chip, NoSsr } from '@material-ui/core';
+import { withStyles } from '@mui/styles';
+import { Chip, NoSsr } from '@mui/material';
 import MUIDataTable from 'mui-datatables';
 
 const grafanaStyles = (theme) => ({ root : { padding : theme.spacing(5), },

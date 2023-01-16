@@ -1,13 +1,13 @@
 import React, { useEffect } from 'react'
-import { TextField, Button, Grid, NativeSelect } from '@material-ui/core';
-import { makeStyles, MuiThemeProvider } from '@material-ui/core/styles';
-import { createTheme } from '@material-ui/core/styles';
+import { TextField, Button, Grid, NativeSelect } from '@mui/material';
+import { makeStyles, MuiThemeProvider } from '@mui/styles';
+import { createTheme } from '@mui/styles';
 import { URLValidator } from '../utils/URLValidator';
 import {
   Dialog, DialogActions,
   DialogContent,
   DialogTitle
-} from '@material-ui/core';
+} from '@mui/material';
 import { promisifiedDataFetch } from '../lib/data-fetch';
 
 const getMuiTheme = () => createTheme({

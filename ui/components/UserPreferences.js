@@ -3,17 +3,17 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'next/router';
 import { withSnackbar } from 'notistack';
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles } from '@mui/styles';
 import CloseIcon from '@material-ui/icons/Close';
 import {
   IconButton, FormControl, FormLabel, FormGroup, FormControlLabel, Switch
-} from '@material-ui/core';
-import NoSsr from '@material-ui/core/NoSsr';
+} from '@mui/material';
+import NoSsr from '@mui/material/NoSsr';
 import dataFetch from '../lib/data-fetch';
 import { updateUser, updateProgress, toggleCatalogContent } from '../lib/store';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
-import { Paper, Tooltip } from '@material-ui/core';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
+import { Paper, Tooltip } from '@mui/material';
 import SettingsRemoteIcon from '@material-ui/icons/SettingsRemote';
 import SettingsCellIcon from '@material-ui/icons/SettingsCell';
 import ExtensionSandbox from "./ExtensionSandbox";

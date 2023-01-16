@@ -1,4 +1,4 @@
-import { NoSsr } from '@material-ui/core';
+import { NoSsr } from '@mui/material';
 import React from 'react';
 import ProviderComponent from '../components/ProviderComponent';
 

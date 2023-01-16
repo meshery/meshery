@@ -1,9 +1,9 @@
 //@ts-check
 import React from "react";
-import { Typography, Button } from "@material-ui/core";
+import { Typography, Button } from "@mui/material";
 import AddIcon from "@material-ui/icons/AddCircleOutline";
 import GrafanaCustomCharts from "./telemetry/grafana/GrafanaCustomCharts";
-import { makeStyles, } from "@material-ui/core/styles";
+import { makeStyles, } from "@mui/styles";
 import { iconMedium } from "../css/icons.styles";
 
 const useStyles = makeStyles(() => ({

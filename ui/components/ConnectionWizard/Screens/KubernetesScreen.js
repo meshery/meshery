@@ -2,7 +2,7 @@
 import KubernetesIcon from "../icons/KubernetesIcon.js";
 import KubernetesConfig from "../ConfigComponents/Kubernetes.js";
 import ServiceCard from "../ServiceCard.js";
-import { CircularProgress, Grid } from "@material-ui/core";
+import { CircularProgress, Grid } from "@mui/material";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux"; import { updateProgress, updateK8SConfig } from "../../../lib/store";
 import { withSnackbar } from "notistack";

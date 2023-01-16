@@ -1,5 +1,5 @@
 import UserPreferences from "../../components/UserPreferences";
-import { NoSsr, Paper, withStyles } from "@material-ui/core";
+import { NoSsr, Paper, withStyles } from "@mui/material";
 import { updatepagepath } from "../../lib/store";
 import { connect } from "react-redux";
 import { bindActionCreators } from 'redux';

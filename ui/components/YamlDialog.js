@@ -1,6 +1,6 @@
 import {
   Dialog, DialogActions, DialogContent, DialogTitle, Divider, IconButton, Tooltip, Typography
-} from "@material-ui/core";
+} from "@mui/material";
 import useStyles from "./MesheryPatterns/Cards.styles";
 import { UnControlled as CodeMirror } from "react-codemirror2";
 import FullscreenExit from "@material-ui/icons/FullscreenExit";

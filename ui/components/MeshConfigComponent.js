@@ -1,14 +1,14 @@
 import {
   Chip, Grid, IconButton, List, ListItem, ListItemText, Menu, MenuItem, Switch,
   Tooltip, Paper, NoSsr, TableCell, TableContainer, Table, Button, Typography,
-} from '@material-ui/core';
+} from '@mui/material';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
-import TableSortLabel from "@material-ui/core/TableSortLabel";
+import TableSortLabel from "@mui/material/TableSortLabel";
 import CloseIcon from "@material-ui/icons/Close";
 import { withSnackbar } from "notistack";
 import { useState, useEffect, useRef } from 'react';
 import DataTable from "mui-datatables";
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles } from '@mui/styles';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import dataFetch from '../lib/data-fetch';
