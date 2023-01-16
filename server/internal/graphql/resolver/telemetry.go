@@ -39,7 +39,7 @@ func (r *Resolver) getTelemetryComps(ctx context.Context, provider models.Provid
 		r.Log.Error(ErrGettingTelemetryComponents(err))
 	}
 
-	components := make([] *model.TelemetryComp, 0)
+	components := make([]*model.TelemetryComp, 0)
 	defer rows.Close()
 	for rows.Next() {
 		var component model.TelemetryComp
@@ -49,10 +49,9 @@ func (r *Resolver) getTelemetryComps(ctx context.Context, provider models.Provid
 			return nil, err
 		}
 
-		if (utils.SliceContains(helpers.TelemetryComps, component.Name)) {
+		if utils.SliceContains(helpers.TelemetryComps, component.Name) {
 			components = append(components, &component)
 		}
 	}
 	return components, nil
-
 }
