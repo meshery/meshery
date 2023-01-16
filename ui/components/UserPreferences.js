@@ -23,6 +23,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTachometerAlt } from '@fortawesome/free-solid-svg-icons';
 import MesherySettingsPerformanceComponent from './MesherySettingsPerformanceComponent';
 import { ctxUrl } from '../utils/multi-ctx';
+import { iconMedium } from '../css/icons.styles';
 
 
 const styles = (theme) => ({
@@ -126,7 +127,7 @@ class UserPreference extends React.Component {
                 color="inherit"
                 onClick={() => self.props.closeSnackbar(key)}
               >
-                <CloseIcon />
+                <CloseIcon style={iconMedium} />
               </IconButton>
             ),
           });
@@ -155,7 +156,7 @@ class UserPreference extends React.Component {
           color="inherit"
           onClick={() => self.props.closeSnackbar(key)}
         >
-          <CloseIcon />
+          <CloseIcon style={iconMedium} />
         </IconButton>
       ),
       autoHideDuration : 8000, });
@@ -205,7 +206,7 @@ class UserPreference extends React.Component {
               color="inherit"
               onClick={() => self.props.closeSnackbar(key)}
             >
-              <CloseIcon />
+              <CloseIcon style={iconMedium} />
             </IconButton>
           ), });
         }
@@ -253,7 +254,7 @@ class UserPreference extends React.Component {
     } = this.state;
     const { classes } = this.props;
 
-    const mainIconScale = 'grow-10';
+    // const mainIconScale = 'grow-10';
 
     return (
       <NoSsr>
@@ -270,7 +271,7 @@ class UserPreference extends React.Component {
               <Tab
                 className={classes.tab}
                 icon={
-                  <SettingsCellIcon />
+                  <SettingsCellIcon style={iconMedium} />
                 }
                 label={<span className={classes.tabLabel}>General</span>}
               />
@@ -279,7 +280,7 @@ class UserPreference extends React.Component {
               <Tab
                 className={classes.tab}
                 icon={
-                  <FontAwesomeIcon icon={faTachometerAlt} transform={mainIconScale} fixedWidth />
+                  <FontAwesomeIcon icon={faTachometerAlt} style={iconMedium}/>
                 }
                 label={<span className={classes.tabLabel}>Performance</span>}
               />
@@ -290,7 +291,7 @@ class UserPreference extends React.Component {
                 <Tab
                   className={classes.tab}
                   icon={
-                    <SettingsRemoteIcon />
+                    <SettingsRemoteIcon style={iconMedium} />
                   }
                   label={<span className={classes.tabLabel}>Remote Provider</span>}
                 />

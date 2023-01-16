@@ -359,7 +359,6 @@ class MesherySettings extends React.Component {
       tabVal, subTabVal, k8sconfig, meshAdapters,
     } = this.state;
 
-    // const mainIconScale = 'grow-10';
     let backToPlay = '';
     if (k8sconfig.clusterConfigured === true && meshAdapters.length > 0) {
       backToPlay = (
