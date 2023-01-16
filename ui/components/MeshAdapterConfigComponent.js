@@ -13,6 +13,7 @@ import CloseIcon from "@material-ui/icons/Close";
 import ReactSelectWrapper from "./ReactSelectWrapper";
 import { updateAdaptersInfo, updateProgress } from "../lib/store";
 import dataFetch from "../lib/data-fetch";
+import { iconMedium } from "../css/icons.styles";
 
 const styles = (theme) => ({
   wrapperClass : { padding : theme.spacing(5), },
@@ -146,7 +147,7 @@ class MeshAdapterConfigComponent extends React.Component {
             autoHideDuration : 2000,
             action : (key) => (
               <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
-                <CloseIcon />
+                <CloseIcon  style={iconMedium} />
               </IconButton>
             ),
           });
