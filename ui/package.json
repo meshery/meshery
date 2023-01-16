@@ -101,7 +101,7 @@
     "redux-thunk": "^2.4.0",
     "relay-runtime": "^14.0.0",
     "set-value": "^4.0.1",
-    "styled-jsx": "^4.0.1",
+    "styled-jsx": "^5.1.1",
     "subscriptions-transport-ws": "^0.9.19",
     "tar": "^6.1.12",
     "universal-cookie": "^4.0.4",
