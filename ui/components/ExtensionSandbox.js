@@ -274,19 +274,11 @@ function createPathForRemoteComponent(componentName) {
  *  3. account - for user account
  * @param {{ type: "navigator" | "user_prefs" | "account", Extension: JSX.Element }} props
  */
-function ExtensionSandbox({ type, Extension, isDrawerCollapsed, toggleDrawer }) {
+function ExtensionSandbox({ type, Extension, isDrawerCollapsed, toggleDrawer, capabilitiesRegistry }) {
   const [extension, setExtension] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    (async () => {
-      getCapabilities(type, (data) => {
-        if (typeof data !== "undefined") {
-          setExtension(data);
-          setIsLoading(false);
-        }
-      });
-    })();
     if (type === "navigator" && !isDrawerCollapsed) {
       toggleDrawer({ isDrawerCollapsed : !isDrawerCollapsed });
     }
@@ -296,6 +288,14 @@ function ExtensionSandbox({ type, Extension, isDrawerCollapsed, toggleDrawer }) 
       setIsLoading(true);
     }
   }, [type]);
+
+  useEffect(() => {
+    if (capabilitiesRegistry) {
+      const data = ExtensionPointSchemaValidator(type)(capabilitiesRegistry?.extensions[type]);
+      setExtension(data);
+      setIsLoading(false);
+    }
+  },[capabilitiesRegistry])
 
   return (
     <>
@@ -335,6 +335,7 @@ const mapDispatchToProps = (dispatch) => ({
 
 const mapStateToProps = (state) => ({
   isDrawerCollapsed : state.get("isDrawerCollapsed"),
+  capabilitiesRegistry : state.get("capabilitiesRegistry"),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ExtensionSandbox);

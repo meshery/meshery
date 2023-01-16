@@ -51,7 +51,8 @@ class User extends React.Component {
     user : null,
     open : false,
     account : ExtensionPointSchemaValidator("account")(),
-    providerType : ''
+    providerType : '',
+    capabilitiesLoaded : false
   }
 
   handleToggle = () => {
@@ -66,25 +67,7 @@ class User extends React.Component {
   }
 
   handleLogout = () => {
-    dataFetch('/user/logout', {
-      credentials : 'same-origin',
-      method : "GET",
-    }, () => {
-      this.props.enqueueSnackbar(`Successful logout` , {
-        variant : "success",
-        action : function Action(key) {
-          return (
-            <IconButton key="close" aria-label="Close" color="inherit" onClick={() => this.props.closeSnackbar(key)}>
-              <CloseIcon />
-            </IconButton>
-          );
-        },
-        autoHideDuration : 2000,
-      });
-      // updateProgress({ showProgress : false });
-    },
-    err => this.handleError(err)
-    );
+    window.location = '/user/logout'
   };
 
   handleError = (error) => {
@@ -120,21 +103,17 @@ class User extends React.Component {
     }, (error) => ({
       error,
     }));
+  }
 
-    dataFetch(
-      "/api/provider/capabilities", {
-        method : "GET",
-        credentials : "include", },
-      (result) => {
-        if (result) {
-          this.setState({
-            account : ExtensionPointSchemaValidator("account")(result?.extensions?.account),
-            providerType : result?.provider_type
-          })
-        }
-      },
-      err => console.error(err)
-    )
+  componentDidUpdate() {
+    const { capabilitiesRegistry } = this.props;
+    if (!this.state.capabilitiesLoaded && capabilitiesRegistry) {
+      this.setState({
+        capabilitiesLoaded : true, // to prevent re-compute
+        account : ExtensionPointSchemaValidator("account")(capabilitiesRegistry?.extensions?.account),
+        providerType : capabilitiesRegistry?.provider_type,
+      })
+    }
   }
 
   /**
@@ -261,8 +240,11 @@ class User extends React.Component {
 }
 
 const mapDispatchToProps = (dispatch) => ({ updateUser : bindActionCreators(updateUser, dispatch), });
+const mapStateToProps = state => ({
+  capabilitiesRegistry : state.get("capabilitiesRegistry")
+})
 
 export default withStyles(styles)(connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps,
 )(withSnackbar((withRouter(User)))));

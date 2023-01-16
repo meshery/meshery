@@ -44,11 +44,17 @@ import { ButtonGroup, IconButton, Tooltip } from "@material-ui/core";
 import ExtensionPointSchemaValidator from "../utils/ExtensionPointSchemaValidator";
 import dataFetch from "../lib/data-fetch";
 import { Collapse } from "@material-ui/core";
-import { cursorNotAllowed, disabledStyle } from "../css/disableComponent.styles";
+import { cursorNotAllowed, disabledStyle, disabledStyleWithOutOpacity } from "../css/disableComponent.styles";
 import { CapabilitiesRegistry } from "../utils/disabledComponents";
 import { APPLICATION, APP_MESH, CILIUM_SM, CITRIX_SM, DESIGN, CONFIGURATION, CONFORMANCE, CONSUL, DASHBOARD, FILTER, ISTIO, KUMA, LIFECYCLE, LINKERD, NETWORK_SM, NGINX, OSM, PERFORMANCE, TRAEFIK_SM, PROFILES, SMI, TOGGLER } from "../constants/navigator"
 
 const styles = (theme) => ({
+  root : {
+    '& svg' : {
+      width : '1.21rem',
+      height : '1.21rem'
+    }
+  },
   categoryHeader : {
     paddingTop : 16,
     paddingBottom : 16,
@@ -294,6 +300,7 @@ const styles = (theme) => ({
     }
   },
   disabled : disabledStyle,
+  disableLogo : disabledStyleWithOutOpacity,
   cursorNotAllowed : cursorNotAllowed
 });
 
@@ -553,28 +560,6 @@ class Navigator extends React.Component {
 
   componentDidMount() {
     dataFetch(
-      "/api/system/version",
-      {
-        method : "GET",
-        credentials : "include",
-      },
-      (result) => {
-        if (typeof result !== "undefined") {
-          this.setState({ versionDetail : result });
-        } else {
-          this.setState({
-            versionDetail : {
-              build : "Unknown",
-              latest : "Unknown",
-              outdated : false,
-              commitsha : "Unknown",
-            },
-          });
-        }
-      },
-      (err) => console.error(err)
-    );
-    dataFetch(
       "/api/provider/capabilities",
       {
         method : "GET",
@@ -592,6 +577,28 @@ class Navigator extends React.Component {
           });
           //global state
           this.props.updateCapabilities({ capabilitiesRegistry : result })
+        }
+      },
+      (err) => console.error(err)
+    );
+    dataFetch(
+      "/api/system/version",
+      {
+        method : "GET",
+        credentials : "include",
+      },
+      (result) => {
+        if (typeof result !== "undefined") {
+          this.setState({ versionDetail : result });
+        } else {
+          this.setState({
+            versionDetail : {
+              build : "Unknown",
+              latest : "Unknown",
+              outdated : false,
+              commitsha : "Unknown",
+            },
+          });
         }
       },
       (err) => console.error(err)
@@ -1069,28 +1076,30 @@ class Navigator extends React.Component {
     this.updatenavigatorComponentsMenus();
 
     const Title = (
-      <ListItem
-        component="a"
-        onClick={this.handleTitleClick}
-        className={classNames(classes.firebase, classes.item, classes.itemCategory, classes.cursorPointer)}
-      >
-        <img
-          className={isDrawerCollapsed
-            ? classes.mainLogoCollapsed
-            : classes.mainLogo}
-          src="/static/img/meshery-logo.png"
+      <div style={ !this.state.capabilitiesRegistryObj?.isNavigatorComponentEnabled([DASHBOARD]) ? cursorNotAllowed : {}}>
+        <ListItem
+          component="a"
           onClick={this.handleTitleClick}
-        />
-        <img
-          className={isDrawerCollapsed
-            ? classes.mainLogoTextCollapsed
-            : classes.mainLogoText}
-          src="/static/img/meshery-logo-text.png"
-          onClick={this.handleTitleClick}
-        />
+          className={classNames(classes.firebase, classes.item, classes.itemCategory, classes.cursorPointer,!this.state.capabilitiesRegistryObj?.isNavigatorComponentEnabled([DASHBOARD]) && classes.disableLogo)}
+        >
+          <img
+            className={isDrawerCollapsed
+              ? classes.mainLogoCollapsed
+              : classes.mainLogo}
+            src="/static/img/meshery-logo.png"
+            onClick={this.handleTitleClick}
+          />
+          <img
+            className={isDrawerCollapsed
+              ? classes.mainLogoTextCollapsed
+              : classes.mainLogoText}
+            src="/static/img/meshery-logo-text.png"
+            onClick={this.handleTitleClick}
+          />
 
-        {/* <span className={isDrawerCollapsed ? classes.isHidden : classes.isDisplayed}>Meshery</span> */}
-      </ListItem>
+          {/* <span className={isDrawerCollapsed ? classes.isHidden : classes.isDisplayed}>Meshery</span> */}
+        </ListItem>
+      </div>
     )
     const Menu = (
       <List disablePadding className={classes.hideScrollbar}>
@@ -1101,7 +1110,7 @@ class Navigator extends React.Component {
           //   return "";
           // }
           return (
-            <div key={childId} style={!show ? cursorNotAllowed : {}}>
+            <div key={childId} style={!show ? cursorNotAllowed : {}} className={classes.root}>
               <ListItem
                 button={!!link}
                 dense

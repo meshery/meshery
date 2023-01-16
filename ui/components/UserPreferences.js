@@ -97,7 +97,8 @@ class UserPreference extends React.Component {
       userPrefs : ExtensionPointSchemaValidator("user_prefs")(),
       providerType : '',
       catalogContent : true,
-      extensionPreferences : {}
+      extensionPreferences : {},
+      capabilitiesLoaded : false
     };
   }
 
@@ -217,23 +218,6 @@ class UserPreference extends React.Component {
 
   componentDidMount = () => {
     dataFetch(
-      "/api/provider/capabilities",
-      {
-        method : "GET",
-        credentials : "include",
-      },
-      (result) => {
-        if (result) {
-          this.setState({
-            userPrefs : ExtensionPointSchemaValidator("user_prefs")(result?.extensions?.user_prefs),
-            providerType : result?.provider_type
-          })
-        }
-      },
-      err => console.error(err)
-    )
-
-    dataFetch(
       "/api/user/prefs",
       {
         method : "GET",
@@ -250,6 +234,17 @@ class UserPreference extends React.Component {
       err => console.error(err)
     )
 
+  }
+
+  componentDidUpdate() {
+    const { capabilitiesRegistry } = this.props;
+    if (capabilitiesRegistry && !this.state.capabilitiesLoaded) {
+      this.setState({
+        capabilitiesLoaded : true, // to prevent re-compute
+        userPrefs : ExtensionPointSchemaValidator("user_prefs")(capabilitiesRegistry?.extensions?.user_prefs),
+        providerType : capabilitiesRegistry?.provider_type,
+      })
+    }
   }
 
   render() {
@@ -387,10 +382,12 @@ const mapDispatchToProps = (dispatch) => ({ updateUser : bindActionCreators(upda
 
 const mapStateToProps = (state) => {
   const selectedK8sContexts = state.get('selectedK8sContexts');
-  const catalogVisibility = state.get('catalogVisibility')
+  const catalogVisibility = state.get('catalogVisibility');
+  const capabilitiesRegistry = state.get("capabilitiesRegistry")
   return {
     selectedK8sContexts,
-    catalogVisibility
+    catalogVisibility,
+    capabilitiesRegistry
   };
 };
 

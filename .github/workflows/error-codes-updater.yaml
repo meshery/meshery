@@ -10,7 +10,7 @@ jobs:
   Update-error-codes:
     name: Error codes utility
     if: github.repository == 'meshery/meshery'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@master
         with:

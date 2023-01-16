@@ -17,9 +17,9 @@ import { faArrowLeft, faCloud, faPoll, faDatabase } from '@fortawesome/free-soli
 import { faMendeley } from '@fortawesome/free-brands-svg-icons';
 import Link from 'next/link';
 import MeshConfigComponent from './MeshConfigComponent';
-import GrafanaComponent from './GrafanaComponent';
+import GrafanaComponent from './telemetry/grafana/GrafanaComponent';
 import MeshAdapterConfigComponent from './MeshAdapterConfigComponent';
-import PrometheusComponent from './PrometheusComponent';
+import PrometheusComponent from './telemetry/prometheus/PrometheusComponent';
 // import MesherySettingsPerformanceComponent from "../components/MesherySettingsPerformanceComponent";
 import dataFetch from '../lib/data-fetch';
 import { updateProgress } from "../lib/store";
@@ -64,6 +64,18 @@ const styles = (theme) => ({
     display : "flex",
     justifyContent : "center",
     margin : theme.spacing(2),
+  },
+  paper : {
+    maxWidth : '90%',
+    margin : 'auto',
+    overflow : 'hidden',
+  },
+  topToolbar : {
+    margin : "2rem auto",
+    display : "flex",
+    justifyContent : "space-between",
+    paddingLeft : "1rem",
+    maxWidth : "90%"
   }
 });
 
@@ -346,7 +358,7 @@ class MesherySettings extends React.Component {
       tabVal, subTabVal, k8sconfig, meshAdapters,
     } = this.state;
 
-    const mainIconScale = 'grow-10';
+    // const mainIconScale = 'grow-10';
     let backToPlay = '';
     if (k8sconfig.clusterConfigured === true && meshAdapters.length > 0) {
       backToPlay = (
@@ -375,7 +387,7 @@ class MesherySettings extends React.Component {
               <Tab
                 className={classes.tab}
                 icon={
-                  <FontAwesomeIcon icon={faCloud} transform={mainIconScale} />
+                  <FontAwesomeIcon icon={faCloud} />
                 }
                 label="Environment"
                 data-cy="tabEnvironment"
@@ -385,7 +397,7 @@ class MesherySettings extends React.Component {
               <Tab
                 className={classes.tab}
                 icon={
-                  <FontAwesomeIcon icon={faMendeley} transform={mainIconScale} />
+                  <FontAwesomeIcon icon={faMendeley} />
                 }
                 label="Adapters"
                 data-cy="tabServiceMeshes"
@@ -395,7 +407,7 @@ class MesherySettings extends React.Component {
               <Tab
                 className={classes.tab}
                 icon={
-                  <FontAwesomeIcon icon={faPoll} transform={mainIconScale} fixedWidth />
+                  <FontAwesomeIcon icon={faPoll} fixedWidth />
                 }
                 label="Metrics"
                 tab="tabMetrics"
@@ -405,7 +417,7 @@ class MesherySettings extends React.Component {
               <Tab
                 className={classes.tab}
                 icon={
-                  <FontAwesomeIcon icon={faDatabase} transform={mainIconScale} fixedWidth />
+                  <FontAwesomeIcon icon={faDatabase} fixedWidth />
                 }
                 label="Reset"
                 tab="systemReset"

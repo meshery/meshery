@@ -10,7 +10,7 @@ import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import GenericModal from "../GenericModal";
-import GrafanaCustomCharts from "../GrafanaCustomCharts";
+import GrafanaCustomCharts from "../telemetry/grafana/GrafanaCustomCharts";
 import MesheryChart from "../MesheryChart";
 import { Paper } from "@material-ui/core";
 import { Typography } from "@material-ui/core";

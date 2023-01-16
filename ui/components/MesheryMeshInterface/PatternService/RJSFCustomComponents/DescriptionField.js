@@ -11,17 +11,13 @@ const useStyles = makeStyles({
 });
 
 const DescriptionField = ({ description }) => {
-  if (description) {
-    const classes = useStyles();
+  const classes = useStyles();
 
-    return (
-      <Typography variant="caption" className={classes.typography}>
-        {description}
-      </Typography>
-    );
-  }
-
-  return null;
-};
+  return (
+    <Typography variant="caption" className={classes.typography}>
+      {description}
+    </Typography>
+  );
+}
 
 export default DescriptionField;

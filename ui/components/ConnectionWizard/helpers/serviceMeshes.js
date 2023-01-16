@@ -38,7 +38,7 @@ export const pingAdapterWithNotification = (updateProgress, enqueueSnackbar, act
   const successCb = (result) => {
     updateProgress({ showProgress : false });
     if (typeof result !== "undefined") {
-      enqueueSnackbar("Adapter successfully pinged!", { variant : "success",
+      enqueueSnackbar("Adapter pinged!", { variant : "success",
         autoHideDuration : 2000,
         action });
     }
@@ -71,7 +71,7 @@ export const configureAdapterWithNotification = (enqueueSnackbar, updateProgress
   const successCb = (result) => {
     updateProgress({ showProgress : false });
     if (typeof result !== "undefined") {
-      enqueueSnackbar("Adapter was successfully configured!", {
+      enqueueSnackbar("Adapter was configured!", {
         variant : "success",
         "data-cy" : "adapterSuccessSnackbar",
         autoHideDuration : 2000,

@@ -38,6 +38,12 @@ import { getK8sConfigIdsFromK8sConfig } from '../utils/multi-ctx';
 import './../public/static/style/index.css';
 import subscribeK8sContext from "../components/graphql/subscriptions/K8sContextSubscription";
 import { bindActionCreators } from 'redux';
+import "./styles/AnimatedFilter.css"
+import "./styles/AnimatedMeshery.css"
+import "./styles/AnimatedMeshPattern.css"
+import "./styles/AnimatedMeshSync.css"
+import PlaygroundMeshDeploy from './extension/AccessMesheryModal';
+import Router from "next/router";
 
 if (typeof window !== 'undefined') {
   require('codemirror/mode/yaml/yaml');
@@ -70,7 +76,8 @@ class MesheryApp extends App {
       activeK8sContexts : [],
       operatorSubscription : null,
       meshSyncSubscription : null,
-      disposeK8sContextSubscription : null
+      disposeK8sContextSubscription : null,
+      isOpen : false
     };
   }
 
@@ -111,7 +118,13 @@ class MesheryApp extends App {
   }
 
   componentDidUpdate(prevProps) {
-    const { k8sConfig } = this.props;
+    const { k8sConfig, capabilitiesRegistry } = this.props;
+
+    // in case the meshery-ui is restricted, the user will be redirected to signup/extension page
+    if (capabilitiesRegistry?.restrictedAccess?.isMesheryUiRestricted) {
+      Router.push("/extension/meshmap")
+    }
+
     if (!_.isEqual(prevProps.k8sConfig, k8sConfig)) {
       const { operatorSubscription, meshSyncSubscription } = this.state;
       console.log("k8sconfig changed, re-initialising subscriptions");
@@ -146,10 +159,7 @@ class MesheryApp extends App {
   }
 
   handleL5CommunityClick = () => {
-    if (typeof window !== 'undefined') {
-      const w = window.open('https://layer5.io', '_blank');
-      w.focus();
-    }
+    this.setState(state => ({ isOpen : !state.isOpen }));
   };
 
   /**
@@ -368,6 +378,7 @@ class MesheryApp extends App {
             </footer>
           </div>
         </div>
+        <PlaygroundMeshDeploy closeForm={() => this.setState({ isOpen : false })} isOpen={this.state.isOpen} />
       </NoSsr>
     );
   }

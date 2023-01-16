@@ -20,9 +20,6 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function SimpleAccordion(props) {
-  const classes = useStyles();
-  const accordionDetailsRef = React.useRef(null);
-
   useEffect(() => {
     // for managing focus
     if (accordionDetailsRef.current) {
@@ -32,7 +29,11 @@ export default function SimpleAccordion(props) {
       });
     }
 
-  }, [accordionDetailsRef.current]);
+  }, []);
+  // React Hook useEffect has an unnecessary dependency: 'accordionDetailsRef.current'. Either exclude it or remove the dependency array. Mutable values like 'accordionDetailsRef.current' aren't valid dependencies because mutating them doesn't re-render the component.
+
+  const classes = useStyles();
+  const accordionDetailsRef = React.useRef(null);
 
   return (
     <div className={classes.accordionRoot}>
