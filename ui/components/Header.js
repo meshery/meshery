@@ -38,6 +38,7 @@ import _ from 'lodash';
 import { SETTINGS } from '../constants/navigator';
 import { cursorNotAllowed, disabledStyle } from '../css/disableComponent.styles';
 import PromptComponent from './PromptComponent';
+import { iconMedium } from '../css/icons.styles';
 
 const lightColor = 'rgba(255, 255, 255, 0.7)';
 const styles = (theme) => ({
@@ -371,7 +372,7 @@ function K8sContextMenu({
                   InputProps={{
                     endAdornment :
                       (
-                        <Search className={classes.searchIcon} />
+                        <Search className={classes.searchIcon}  style={iconMedium} />
                       )
                   }}
                 />
@@ -397,7 +398,7 @@ function K8sContextMenu({
                         size="large"
                         style={{ margin : "0.5rem 0.5rem", whiteSpace : "nowrap" }}
                       >
-                        <AddIcon className={classes.AddIcon} />
+                        <AddIcon className={classes.AddIcon} style={iconMedium} />
                         Connect Clusters
                       </Button>
                     </Link>
@@ -510,7 +511,7 @@ class Header extends React.Component {
                       onClick={onDrawerToggle}
                       className={classes.menuButton}
                     >
-                      <MenuIcon className={classes.headerIcons} />
+                      <MenuIcon className={classes.headerIcons} style={iconMedium} />
                     </IconButton>
                   </Grid>
                 </Hidden>
@@ -539,7 +540,7 @@ class Header extends React.Component {
                       <Link href="/settings">
                         <SettingsIcon className={classes.headerIcons + " " + (title === 'Settings'
                           ? classes.itemActiveItem
-                          : '')} />
+                          : '')} style={iconMedium} />
                       </Link>
                     </IconButton>
                   </div>

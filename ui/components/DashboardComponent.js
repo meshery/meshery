@@ -30,6 +30,7 @@ import { submitPrometheusConfigure } from "./telemetry/prometheus/PrometheusComp
 import MUIDataTable from "mui-datatables";
 import { MuiThemeProvider, createTheme } from '@material-ui/core/styles';
 import Popup from "./Popup";
+import { iconMedium } from "../css/icons.styles";
 
 const styles = (theme) => ({
   rootClass : { backgroundColor : "#eaeff1", },
@@ -507,7 +508,7 @@ class DashboardComponent extends React.Component {
       variant : "error", preventDuplicate : true,
       action : (key) => (
         <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
-          <CloseIcon />
+          <CloseIcon style={iconMedium} />
         </IconButton>
       ),
       autoHideDuration : 7000,
@@ -546,12 +547,12 @@ class DashboardComponent extends React.Component {
               self.props.closeSnackbar(key);
             }}
           >
-            <SettingsIcon className={classes.settingsIcon} />
+            <SettingsIcon className={classes.settingsIcon}  />
             Settings
           </Button>
 
           <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
-            <CloseIcon />
+            <CloseIcon  style={iconMedium} />
           </IconButton>
         </>
       ),
@@ -579,7 +580,7 @@ class DashboardComponent extends React.Component {
             autoHideDuration : 2000,
             action : (key) => (
               <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
-                <CloseIcon />
+                <CloseIcon  style={iconMedium} />
               </IconButton>
             ),
           });
@@ -639,7 +640,7 @@ class DashboardComponent extends React.Component {
             autoHideDuration : 2000,
             action : (key) => (
               <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
-                <CloseIcon />
+                <CloseIcon style={iconMedium} />
               </IconButton>
             ),
           });
@@ -666,7 +667,7 @@ class DashboardComponent extends React.Component {
             autoHideDuration : 2000,
             action : (key) => (
               <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
-                <CloseIcon />
+                <CloseIcon style={iconMedium} />
               </IconButton>
             ),
           });
@@ -1075,7 +1076,7 @@ class DashboardComponent extends React.Component {
             autoHideDuration : 2000,
             action : (key) => (
               <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
-                <CloseIcon />
+                <CloseIcon  style={iconMedium} />
               </IconButton>
             ),
           });
@@ -1206,7 +1207,7 @@ class DashboardComponent extends React.Component {
             className={classes.metricsButton}
             onClick={() => this.handleConfigure("grafana")}
           >
-            <SettingsIcon className={classes.settingsIcon} />
+            <SettingsIcon className={classes.settingsIcon} style={iconMedium} />
             Configure Grafana
           </Button>
         </div>
@@ -1236,7 +1237,7 @@ class DashboardComponent extends React.Component {
             className={classes.metricsButton}
             onClick={() => this.handleConfigure("prometheus")}
           >
-            <SettingsIcon className={classes.settingsIcon} />
+            <SettingsIcon className={classes.settingsIcon} style={iconMedium} />
             Configure Prometheus
           </Button>
         </div>
@@ -1311,7 +1312,7 @@ class DashboardComponent extends React.Component {
                 size="large"
                 onClick={() => self.props.router.push("/management")}
               >
-                <AddIcon className={classes.addIcon} />
+                <AddIcon style={iconMedium} className={classes.addIcon} />
                 Install Service Mesh
               </Button>
             </div>
@@ -1344,7 +1345,7 @@ class DashboardComponent extends React.Component {
                 size="large"
                 onClick={() => self.props.router.push("/settings")}
               >
-                <AddIcon className={classes.addIcon} />
+                <AddIcon style={iconMedium} className={classes.addIcon} />
                 Connect Cluster
               </Button>
             </div>

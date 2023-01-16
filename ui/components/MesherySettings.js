@@ -27,6 +27,7 @@ import { withSnackbar } from "notistack";
 import { ctxUrl } from '../utils/multi-ctx';
 import PromptComponent from './PromptComponent';
 import resetDatabase from './graphql/queries/ResetDatabaseQuery';
+import { iconMedium } from '../css/icons.styles';
 
 const styles = (theme) => ({
   wrapperClss : {
@@ -387,7 +388,7 @@ class MesherySettings extends React.Component {
               <Tab
                 className={classes.tab}
                 icon={
-                  <FontAwesomeIcon icon={faCloud} />
+                  <FontAwesomeIcon icon={faCloud}  style={iconMedium} />
                 }
                 label="Environment"
                 data-cy="tabEnvironment"
@@ -397,7 +398,7 @@ class MesherySettings extends React.Component {
               <Tab
                 className={classes.tab}
                 icon={
-                  <FontAwesomeIcon icon={faMendeley} />
+                  <FontAwesomeIcon icon={faMendeley}  style={iconMedium}/>
                 }
                 label="Adapters"
                 data-cy="tabServiceMeshes"
@@ -407,7 +408,7 @@ class MesherySettings extends React.Component {
               <Tab
                 className={classes.tab}
                 icon={
-                  <FontAwesomeIcon icon={faPoll} fixedWidth />
+                  <FontAwesomeIcon icon={faPoll}   style={iconMedium}/>
                 }
                 label="Metrics"
                 tab="tabMetrics"
@@ -417,7 +418,7 @@ class MesherySettings extends React.Component {
               <Tab
                 className={classes.tab}
                 icon={
-                  <FontAwesomeIcon icon={faDatabase} fixedWidth />
+                  <FontAwesomeIcon icon={faDatabase}  style={iconMedium} />
                 }
                 label="Reset"
                 tab="systemReset"

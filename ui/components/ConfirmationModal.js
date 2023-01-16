@@ -20,6 +20,7 @@ import DoneIcon from "@material-ui/icons/Done";
 import Link from 'next/link';
 import Operator from "../assets/img/Operator";
 import { ACTIONS } from "../utils/Enum";
+import { iconMedium, iconSmall } from "../css/icons.styles";
 
 const styles = (theme) => ({
   dialogBox : {
@@ -204,7 +205,7 @@ function ConfirmationMsg(props) {
           variant : "info", preventDuplicate : true,
           action : (key) => (
             <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-              <CloseIcon />
+              <CloseIcon style={iconMedium} />
             </IconButton>
           ),
           autoHideDuration : 3000,
@@ -285,7 +286,7 @@ function ConfirmationMsg(props) {
               className={classes.tab}
               onClick={(event) => handleTabValChange(event,0)}
               label={<div style={{ display : "flex" }}
-              > <DoneIcon style={{ margin : "2px" }}  fontSize="small"/><span className={classes.tabLabel}>Validate</span> </div>
+              > <DoneIcon style={{ margin : "2px", ...iconSmall }}  fontSize="small"/><span className={classes.tabLabel}>Validate</span> </div>
               }
             />}
             <Tab
@@ -293,14 +294,14 @@ function ConfirmationMsg(props) {
               className={classes.tab}
               onClick={(event) => handleTabValChange(event,1)}
               label={<div style={{ display : "flex" }}
-              > <div style={{ margin : "2px" }}> <UndeployIcon fill="rgba(0, 0, 0, 0.54)" width="20" height="20"/> </div> <span className={classes.tabLabel}>Undeploy</span> </div>}
+              > <div style={{ margin : "2px" }}> <UndeployIcon style={iconSmall} fill="rgba(0, 0, 0, 0.54)" width="20" height="20"/> </div> <span className={classes.tabLabel}>Undeploy</span> </div>}
             />
             <Tab
               data-cy="deploy-btn-modal"
               className={classes.tab}
               onClick={(event) => handleTabValChange(event,2)}
               label={<div style={{ display : "flex" }}
-              > <DoneAllIcon style={{ margin : "2px" }} fontSize="small" /> <span className={classes.tabLabel}>Deploy</span> </div>}
+              > <DoneAllIcon style={{ margin : "2px", ...iconSmall }} fontSize="small" /> <span className={classes.tabLabel}>Deploy</span> </div>}
             />
           </Tabs>
 
@@ -320,7 +321,7 @@ function ConfirmationMsg(props) {
                           style={{ width : "100%", backgroundColor : "rgba(102, 102, 102, 0.12)", margin : "1px 1px 8px " }}
                           InputProps={{
                             endAdornment : (
-                              <Search />
+                              <Search style={iconMedium} />
                             )
                           }}
                         // margin="none"
