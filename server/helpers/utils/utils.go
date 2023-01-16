@@ -134,7 +134,7 @@ func WriteSVGsOnFileSystem(comp *v1alpha1.ComponentDefinition) {
 			UISVGPaths = append(UISVGPaths, filepath.Join(UI, comp.Model.Name))
 		}
 	}(successCreatingDirectory)
-	if comp.Metadata["SVG_Color"] != "" {
+	if comp.Metadata["svg_color"] != "" {
 		path := filepath.Join(UI, comp.Model.Name, "color")
 		err := os.MkdirAll(path, 0777)
 		if err != nil {
@@ -143,13 +143,13 @@ func WriteSVGsOnFileSystem(comp *v1alpha1.ComponentDefinition) {
 		}
 		successCreatingDirectory = true
 
-		x, ok := comp.Metadata["SVG_Color"].(string)
+		x, ok := comp.Metadata["svg_color"].(string)
 		if ok {
 			hash := md5.Sum([]byte(x))
 			hashString := hex.EncodeToString(hash[:])
 			pathsvg := hashCheckSVG[hashString]
 			if pathsvg != "" { // the image has already been loaded, point the component to that path
-				comp.Metadata["SVG_Color"] = pathsvg
+				comp.Metadata["svg_color"] = pathsvg
 				goto White
 			} else {
 				f, err := os.Create(filepath.Join(path, comp.Kind+"-"+comp.Model.DisplayName+"-color.svg"))
@@ -162,15 +162,15 @@ func WriteSVGsOnFileSystem(comp *v1alpha1.ComponentDefinition) {
 					fmt.Println(err)
 					return
 				}
-				comp.Metadata["SVG_Color"] = getRelativePathForAPI(filepath.Join(comp.Model.Name, "color", comp.Kind+"-"+comp.Model.DisplayName+"-color.svg")) //Replace the actual SVG with path to SVG
-				writeHashCheckSVG(hashString, comp.Metadata["SVG_Color"].(string))
+				comp.Metadata["svg_color"] = getRelativePathForAPI(filepath.Join(comp.Model.Name, "color", comp.Kind+"-"+comp.Model.DisplayName+"-color.svg")) //Replace the actual SVG with path to SVG
+				writeHashCheckSVG(hashString, comp.Metadata["svg_color"].(string))
 			}
 
 		}
 
 	}
 White:
-	if comp.Metadata["SVG_White"] != "" {
+	if comp.Metadata["svg_white"] != "" {
 		path := filepath.Join(UI, comp.Model.Name, "white")
 		err := os.MkdirAll(path, 0777)
 		if err != nil {
@@ -179,13 +179,13 @@ White:
 		}
 		successCreatingDirectory = true
 
-		x, ok := comp.Metadata["SVG_White"].(string)
+		x, ok := comp.Metadata["svg_white"].(string)
 		if ok {
 			hash := md5.Sum([]byte(x))
 			hashString := hex.EncodeToString(hash[:])
 			pathsvg := hashCheckSVG[hashString]
 			if pathsvg != "" { // the image has already been loaded, point the component to that path
-				comp.Metadata["SVG_White"] = pathsvg
+				comp.Metadata["svg_white"] = pathsvg
 				return
 			} else {
 				f, err := os.Create(filepath.Join(path, comp.Kind+"-"+comp.Model.DisplayName+"-white.svg"))
@@ -198,8 +198,8 @@ White:
 					fmt.Println(err)
 					return
 				}
-				comp.Metadata["SVG_White"] = getRelativePathForAPI(filepath.Join(comp.Model.Name, "white", comp.Kind+"-"+comp.Model.DisplayName+"-white.svg")) //Replace the actual SVG with path to SVG
-				writeHashCheckSVG(hashString, comp.Metadata["SVG_White"].(string))
+				comp.Metadata["svg_white"] = getRelativePathForAPI(filepath.Join(comp.Model.Name, "white", comp.Kind+"-"+comp.Model.DisplayName+"-white.svg")) //Replace the actual SVG with path to SVG
+				writeHashCheckSVG(hashString, comp.Metadata["svg_white"].(string))
 			}
 
 		}
