@@ -4,6 +4,9 @@
   "metadata": {
     "description": "A relationship that defines network edges between components"
   },
+  "model":{
+    "name":"core"
+  },
   "subType": "Network",
   "selectors": {
     "from": [

@@ -29,7 +29,14 @@ const styles = makeStyles((theme) => ({
     display : "flex",
     justifyContent : "center",
     padding : "1rem"
+  },
+  installButton : {
+    marginBottom : "1rem",
+  },
+  p : {
+    margin : "1rem auto",
   }
+
 }));
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -62,12 +69,12 @@ export default function PlaygroundMeshDeploy(props) {
             Choose a <a href="https://layer5.io/learn/learning-paths">Learning Path</a> and work through labs as you visually and collaboratively learn-by-doing without having to install a single thing.
           </Typography>
           <Typography gutterBottom>
-            To ensure that Meshery Playground remains a clean sandbox of all to use, many of Meshery&apos;s features are disabled.
+            To ensure that Meshery Playground remains a clean sandbox for all to use, many of Meshery&apos;s features are disabled.
             For full access to all of Meshery&apos;s features, deploy your own instance of Meshery.
           </Typography>
         </DialogContent>
-        <DialogActions style={{ diasplay : "flex", justifyContent : "center" }}>
-          <Button size="large" variant="outlined" color="primary" onClick={(e) => handlePage(e)}>Get Started</Button>
+        <DialogActions style={{ display : "flex", justifyContent : "center" }}>
+          <Button className={classes.installButton} size="large" variant="contained" color="primary" onClick={(e) => handlePage(e)}>Install Meshery</Button>
         </DialogActions>
       </Dialog>
     </div>

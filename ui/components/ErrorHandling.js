@@ -7,7 +7,7 @@ import { useSnackbar } from "notistack";
  *  of functions.
  *
  */
-function handleError() {
+function HandleError() {
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   /**
     *
@@ -37,4 +37,4 @@ function handleError() {
   return errorH
 }
 
-export default handleError
+export default HandleError
