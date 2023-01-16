@@ -1,5 +1,5 @@
 import { SheetsRegistry } from 'jss';
-import { createTheme } from '@mui/styles';
+import { createTheme } from '@mui/material/styles';
 
 // a theme with custom primary and secondary color.
 // it's optional.

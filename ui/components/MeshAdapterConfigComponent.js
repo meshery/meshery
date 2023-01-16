@@ -4,7 +4,7 @@ import Button from "@mui/material/Button";
 import { withStyles } from "@mui/styles";
 import Grid from "@mui/material/Grid";
 import { NoSsr, Chip, IconButton } from "@mui/material";
-import blue from "@mui/material/colors/blue";
+import blue from "@material-ui/core/colors/blue";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { withRouter } from "next/router";

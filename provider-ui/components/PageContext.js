@@ -1,5 +1,5 @@
 import { SheetsRegistry } from 'jss';
-import { createTheme } from '@mui/styles';
+import { createTheme } from '@mui/material/styles';
 
 // Please use this imports if you are using the optional theme
 // import purple from '@mui/material/colors/purple';

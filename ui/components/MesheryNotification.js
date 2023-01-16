@@ -17,7 +17,7 @@ import BellIcon from '@material-ui/icons/Notifications';
 import ClearIcon from '@material-ui/icons/Clear';
 import ErrorIcon from '@material-ui/icons/Error';
 import { withStyles } from '@mui/styles';
-import amber from '@mui/material/colors/amber';
+import amber from '@material-ui/core/colors/amber';
 import { eventTypes } from '../lib/event-types';
 import MesheryEventViewer from './MesheryEventViewer';
 // import { bindActionCreators } from 'redux';

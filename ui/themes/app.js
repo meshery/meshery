@@ -1,4 +1,4 @@
-import { createTheme } from '@mui/styles';
+import { createTheme } from '@mui/material/styles';
 import { blueGrey } from '@mui/material/colors';
 
 const drawerWidth = 256;
