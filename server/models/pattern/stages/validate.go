@@ -27,7 +27,7 @@ func Validator(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFu
 		for svcName, svc := range data.Pattern.Services {
 			wc, ok := s.Workload(svc.Type, svc.Version, svc.Model)
 			if !ok {
-				act.Terminate(fmt.Errorf("invalid workload of type: %s", svc.Type))
+				act.Terminate(fmt.Errorf("cannot recognize workload '%s' of type '%s' not found", svc.Name, svc.Type))
 				return
 			}
 
@@ -36,7 +36,7 @@ func Validator(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFu
 			}
 			//Validate workload definition
 			if err := validateWorkload(svc.Settings, wc); err != nil {
-				act.Terminate(fmt.Errorf("invalid workload definition: %s", err))
+				act.Terminate(fmt.Errorf("invalid workload configuration for: %s", svc.Name))
 				return
 			}
 
