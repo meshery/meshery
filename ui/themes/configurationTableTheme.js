@@ -27,7 +27,7 @@ const configurationTableTheme = () => createTheme({
     MUIDataTableSelectCell : {
       checkboxRoot : {
         '&$checked' : {
-          color : '#607d8b',
+          color : '#3C494F',
         },
       },
     },

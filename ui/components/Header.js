@@ -12,7 +12,7 @@ import { withStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
 import NoSsr from '@material-ui/core/NoSsr';
 import Link from 'next/link';
-import SettingsIcon from '../assets/icons/SettingsIcon';
+import SettingsIcon from '@material-ui/icons/Settings';
 import Chip from '@material-ui/core/Chip';
 import MesheryNotification from './MesheryNotification';
 import User from './User';
@@ -20,7 +20,7 @@ import subscribeBrokerStatusEvents from "./graphql/subscriptions/BrokerStatusSub
 import Slide from '@material-ui/core/Slide';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import { Checkbox, Button } from '@material-ui/core';
-import AddIconCircleBorder from '../assets/icons/AddIconCircleBorder';
+import AddIcon from '@material-ui/icons/Add';
 import { Search } from '@material-ui/icons';
 import { TextField } from '@material-ui/core';
 import Avatar from '@material-ui/core/Avatar';
@@ -38,6 +38,7 @@ import _ from 'lodash';
 import { SETTINGS } from '../constants/navigator';
 import { cursorNotAllowed, disabledStyle } from '../css/disableComponent.styles';
 import PromptComponent from './PromptComponent';
+import { iconMedium } from '../css/icons.styles';
 
 const lightColor = 'rgba(255, 255, 255, 0.7)';
 const styles = (theme) => ({
@@ -371,7 +372,7 @@ function K8sContextMenu({
                   InputProps={{
                     endAdornment :
                       (
-                        <Search className={classes.searchIcon} />
+                        <Search className={classes.searchIcon}  style={iconMedium} />
                       )
                   }}
                 />
@@ -397,7 +398,7 @@ function K8sContextMenu({
                         size="large"
                         style={{ margin : "0.5rem 0.5rem", whiteSpace : "nowrap" }}
                       >
-                        <AddIconCircleBorder className={classes.AddIcon} />
+                        <AddIcon className={classes.AddIcon} style={iconMedium} />
                         Connect Clusters
                       </Button>
                     </Link>
@@ -510,7 +511,7 @@ class Header extends React.Component {
                       onClick={onDrawerToggle}
                       className={classes.menuButton}
                     >
-                      <MenuIcon className={classes.headerIcons} />
+                      <MenuIcon className={classes.headerIcons} style={iconMedium} />
                     </IconButton>
                   </Grid>
                 </Hidden>
@@ -537,9 +538,9 @@ class Header extends React.Component {
                   <div data-test="settings-button" style={!this.state.capabilityregistryObj?.isHeaderComponentEnabled([SETTINGS]) ? cursorNotAllowed : {}}>
                     <IconButton style={!this.state.capabilityregistryObj?.isHeaderComponentEnabled([SETTINGS]) ? disabledStyle : {}} color="inherit">
                       <Link href="/settings">
-                        <SettingsIcon style={{ width : "1.2rem",height : "1.2rem" }} className={classes.headerIcons + " " + (title === 'Settings'
+                        <SettingsIcon className={classes.headerIcons + " " + (title === 'Settings'
                           ? classes.itemActiveItem
-                          : '')} />
+                          : '')} style={iconMedium} />
                       </Link>
                     </IconButton>
                   </div>

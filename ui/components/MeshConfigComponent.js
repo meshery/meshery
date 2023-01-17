@@ -21,6 +21,7 @@ import { updateProgress } from "../lib/store";
 import fetchMesheryOperatorStatus from "./graphql/queries/OperatorStatusQuery";
 import _ from "lodash";
 import { DEPLOYMENT_TYPE } from '../utils/Enum';
+import { iconMedium } from '../css/icons.styles';
 
 const styles = (theme) => ({
   operationButton : {
@@ -164,7 +165,6 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
     if (operatorState) {
       _setOperatorState(operatorState);
     }
-
   }, [operatorState])
 
   const handleFlushMeshSync = (index) => {
@@ -192,7 +192,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
                 variant : "success",
                 action : (key) => (
                   <IconButton key="close" aria-label="close" color="inherit" onClick={() => closeSnackbar(key)}>
-                    <CloseIcon />
+                    <CloseIcon style={iconMedium} />
                   </IconButton>
                 ),
                 autohideduration : 2000,
@@ -233,7 +233,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
       variant : "error", preventDuplicate : true,
       action : (key) => (
         <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-          <CloseIcon />
+          <CloseIcon style={iconMedium} />
         </IconButton>
       ),
       autoHideDuration : 7000,
@@ -285,7 +285,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
             autoHideDuration : 2000,
             action : (key) => (
               <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-                <CloseIcon />
+                <CloseIcon style={iconMedium} />
               </IconButton>
             ),
           });
@@ -333,7 +333,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
         autoHideDuration : 2000,
         action : (key) => (
           <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-            <CloseIcon />
+            <CloseIcon style={iconMedium} />
           </IconButton>
         ),
       });
@@ -560,7 +560,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
                 aria-haspopup="true"
                 onClick={(e) => handleMenuOpen(e, tableMeta.rowIndex)}
               >
-                <MoreVertIcon />
+                <MoreVertIcon style={iconMedium} />
               </IconButton>
               <Menu
                 className={classes.menu}
@@ -829,7 +829,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
               autoHideDuration : 2000,
               action : (key) => (
                 <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-                  <CloseIcon />
+                  <CloseIcon style={iconMedium} />
                 </IconButton>
               ),
             });
@@ -853,7 +853,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
             variant : "success",
             action : (key) => (
               <IconButton key="close" aria-label="close" color="inherit" onClick={() => closeSnackbar(key)}>
-                <CloseIcon />
+                <CloseIcon style={iconMedium} />
               </IconButton>
             ),
             autohideduration : 2000,
@@ -907,7 +907,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
             variant : "success",
             action : (key) => (
               <IconButton key="close" aria-label="close" color="inherit" onClick={() => closeSnackbar(key)}>
-                <CloseIcon />
+                <CloseIcon style={iconMedium} />
               </IconButton>
             ),
             autohideduration : 2000,
@@ -925,7 +925,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
     //         variant : "info",
     //         action : (key) => (
     //           <IconButton key="close" aria-label="close" color="inherit" onClick={() => closesnackbar(key)}>
-    //             <CloseIcon />
+    //             <CloseIcon style={iconMedium} />
     //           </IconButton>
     //         ),
     //         autohideduration : 7000,
@@ -937,7 +937,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
     //         variant : "success",
     //         action : (key) => (
     //           <IconButton key="close" aria-label="close" color="inherit" onClick={() => self.props.closesnackbar(key)}>
-    //             <CloseIcon />
+    //             <CloseIcon style={iconMedium} />
     //           </IconButton>
     //         ),
     //         autohideduration : 7000,
