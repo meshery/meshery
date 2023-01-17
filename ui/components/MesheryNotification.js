@@ -13,8 +13,8 @@ import {
   Tab,
   ClickAwayListener
 } from '@material-ui/core';
-import BellIcon from "../assets/icons/BellIcon";
-import ClearIcon from "../assets/icons/ClearIcon";
+import BellIcon from '@material-ui/icons/Notifications';
+import ClearIcon from '@material-ui/icons/Clear';
 import ErrorIcon from '@material-ui/icons/Error';
 import { withStyles } from '@material-ui/core/styles';
 import amber from '@material-ui/core/colors/amber';
@@ -26,6 +26,7 @@ import dataFetch from '../lib/data-fetch';
 import { withSnackbar } from 'notistack'
 import { bindActionCreators } from "redux";
 import { updateEvents } from "../lib/store";
+import { iconMedium } from "../css/icons.styles";
 
 const styles = (theme) => ({
   sidelist : { width : 450, },
@@ -63,11 +64,6 @@ const styles = (theme) => ({
   clearAllButton : {
     display : 'flex',
     justifyContent : 'flex-end'
-  },
-  HeaderItem : {
-    fontSize : '1.6rem',
-    height : '1.6rem',
-    width : '1.6rem',
   },
   drawerButton : {
     padding : '0.45rem',
@@ -179,7 +175,7 @@ class MesheryNotification extends React.Component {
           color="inherit"
           onClick={() => self.props.closeSnackbar(key)}
         >
-          <CloseIcon />
+          <CloseIcon style={iconMedium} />
         </IconButton>
       ),
     });
@@ -331,7 +327,7 @@ class MesheryNotification extends React.Component {
               }}
             >
               <Badge id="notification-badge" badgeContent={getNotificationCount(events)} color={badgeColorVariant}>
-                <NotificationIcon className={classes.HeaderItem} type={badgeColorVariant} />
+                <NotificationIcon  style={iconMedium}  type={badgeColorVariant} />
               </Badge>
             </IconButton>
           </Tooltip>
@@ -360,7 +356,7 @@ class MesheryNotification extends React.Component {
                             className={classes.drawerButton}
                             onClick={this.handleBellButtonClick}
                           >
-                            <BellIcon className={classes.HeaderItem} />
+                            <BellIcon  style={iconMedium}  />
                           </IconButton>
                         </Tooltip>
                       </div>

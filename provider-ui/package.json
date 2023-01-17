@@ -35,13 +35,13 @@
     "styled-jsx": "^4.0.1"
   },
   "devDependencies": {
-    "cypress": "^11.2.0",
+    "cypress": "^12.2.0",
     "eslint": "^8.26.0",
     "eslint-config-next": "^13.0.6",
     "eslint-plugin-cypress": "^2.12.1",
     "eslint-plugin-react": "^7.31.11",
     "http-proxy": "^1.18.1",
     "nyc": "^15.1.0",
-    "start-server-and-test": "^1.14.0"
+    "start-server-and-test": "^1.15.2"
   }
 }

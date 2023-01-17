@@ -4,6 +4,7 @@ import { Typography, Button } from "@material-ui/core";
 import AddIcon from "@material-ui/icons/AddCircleOutline";
 import GrafanaCustomCharts from "./telemetry/grafana/GrafanaCustomCharts";
 import { makeStyles, } from "@material-ui/core/styles";
+import { iconMedium } from "../css/icons.styles";
 
 const useStyles = makeStyles(() => ({
   addIcon : {
@@ -56,7 +57,7 @@ function MesheryMetrics({
         size="large"
         onClick={() => handleGrafanaChartAddition()}
       >
-        <AddIcon className={classes.addIcon} />
+        <AddIcon className={classes.addIcon}  style={iconMedium}  />
         Configure Service Mesh Metrics
       </Button>
     </div>

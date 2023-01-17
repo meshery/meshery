@@ -243,7 +243,7 @@ func (ctx *Context) ValidateVersion() error {
 	}()
 
 	if resp.StatusCode == 404 {
-		log.Fatal("version " + ctx.Version + " is not a valid Meshery release")
+		log.Fatal("version '" + ctx.Version + "' is not a valid Meshery release.")
 	}
 
 	if resp.StatusCode != http.StatusOK {
