@@ -44,6 +44,7 @@ import PublishIcon from "@material-ui/icons/Publish";
 import ConfigurationSubscription from "./graphql/subscriptions/ConfigurationSubscription";
 import fetchCatalogFilter from "./graphql/queries/CatalogFilterQuery";
 import LoadingScreen from "./LoadingComponents/LoadingComponent";
+import { iconMedium } from "../css/icons.styles";
 
 const styles = (theme) => ({
   grid : {
@@ -115,10 +116,10 @@ function YAMLEditor({ filter, onClose, onSubmit, classes }) {
         <TooltipIcon
           title={fullScreen ? "Exit Fullscreen" : "Enter Fullscreen"}
           onClick={toggleFullScreen}>
-          {fullScreen ? <FullscreenExitIcon /> : <FullscreenIcon />}
+          {fullScreen ? <FullscreenExitIcon  style={iconMedium} /> : <FullscreenIcon  style={iconMedium} />}
         </TooltipIcon>
         <TooltipIcon title="Exit" onClick={onClose}>
-          <CloseIcon />
+          <CloseIcon style={iconMedium} />
         </TooltipIcon>
       </DialogTitle>
       <Divider variant="fullWidth" light />
@@ -150,7 +151,7 @@ function YAMLEditor({ filter, onClose, onSubmit, classes }) {
               type : FILE_OPS.DELETE
             })}
           >
-            <DeleteIcon />
+            <DeleteIcon  style={iconMedium} />
           </IconButton>
         </Tooltip>
       </DialogActions>
@@ -262,7 +263,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
                 color="inherit"
                 onClick={() => closeSnackbar(key)}
               >
-                <CloseIcon />
+                <CloseIcon style={iconMedium} />
               </IconButton>
             ),
           });
@@ -366,7 +367,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
           action : function Action(key) {
             return (
               <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-                <CloseIcon />
+                <CloseIcon style={iconMedium} />
               </IconButton>
             );
           },
@@ -389,7 +390,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
           action : function Action(key) {
             return (
               <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-                <CloseIcon />
+                <CloseIcon style={iconMedium} />
               </IconButton>
             );
           },
@@ -414,7 +415,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
           action : function Action(key) {
             return (
               <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-                <CloseIcon />
+                <CloseIcon  style={iconMedium}/>
               </IconButton>
             );
           },
@@ -434,7 +435,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
       action : function Action(key) {
         return (
           <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-            <CloseIcon />
+            <CloseIcon  style={iconMedium}/>
           </IconButton>
         );
       },
@@ -531,7 +532,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
             action : function Action(key) {
               return (
                 <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-                  <CloseIcon />
+                  <CloseIcon  style={iconMedium}/>
                 </IconButton>
               );
             },
@@ -712,6 +713,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
                   <EditIcon
                     aria-label="config"
                     color="inherit"
+                    style={iconMedium}
                   />
                 </TooltipIcon> }
               <TooltipIcon
@@ -722,6 +724,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
                   aria-label="deploy"
                   color="inherit"
                   data-cy="deploy-button"
+                  style={iconMedium}
                 />
               </TooltipIcon>
               <TooltipIcon
@@ -770,7 +773,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
           action : function Action(key) {
             return (
               <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-                <CloseIcon />
+                <CloseIcon  style={iconMedium}/>
               </IconButton>
             );
           },
@@ -886,8 +889,8 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
                 onClick={handleUploadImport}
                 style={{ marginRight : "2rem" }}
               >
-                <PublishIcon className={classes.addIcon} data-cy="import-button" />
-                Import Filters
+                <PublishIcon  style={iconMedium} className={classes.addIcon} data-cy="import-button"/>
+              Import Filters
               </Button>
             </div>
           </div>

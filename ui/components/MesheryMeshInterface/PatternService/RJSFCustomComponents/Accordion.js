@@ -1,14 +1,13 @@
 import React, { useEffect } from "react";
-import { withStyles } from "@material-ui/core/styles";
 import MuiAccordion from "@material-ui/core/Accordion";
 import MuiAccordionSummary from "@material-ui/core/AccordionSummary";
 import MuiAccordionDetails from "@material-ui/core/AccordionDetails";
 import DeleteIcon from "../../../../assets/icons/DeleteIcon";
 import Typography from "@material-ui/core/Typography";
 import ExpandMoreIcon from "../../../../assets/icons/ExpandMoreIcon"
-import { IconButton } from "@material-ui/core";
+import { IconButton, makeStyles } from "@material-ui/core";
 
-const styles = (theme) => ({
+const useStyles = makeStyles((theme) => ({
   accordionRoot : {
     width : "100%",
     marginBottom : "0rem"
@@ -20,12 +19,9 @@ const styles = (theme) => ({
   typography : {
     fontSize : "0.8rem",
   },
-});
+}));
 
-function SimpleAccordion(props) {
-  const { classes } = props;
-  const accordionDetailsRef = React.useRef(null);
-
+export default function SimpleAccordion(props) {
   useEffect(() => {
     // for managing focus
     if (accordionDetailsRef.current) {
@@ -35,7 +31,11 @@ function SimpleAccordion(props) {
       });
     }
 
-  }, [accordionDetailsRef.current]);
+  }, []);
+  // React Hook useEffect has an unnecessary dependency: 'accordionDetailsRef.current'. Either exclude it or remove the dependency array. Mutable values like 'accordionDetailsRef.current' aren't valid dependencies because mutating them doesn't re-render the component.
+
+  const classes = useStyles();
+  const accordionDetailsRef = React.useRef(null);
 
   return (
     <div className={classes.accordionRoot}>
@@ -69,4 +69,3 @@ function SimpleAccordion(props) {
     </div>
   );
 }
-export default withStyles(styles)(SimpleAccordion);

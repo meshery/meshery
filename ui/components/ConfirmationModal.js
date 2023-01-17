@@ -21,6 +21,7 @@ import Link from 'next/link';
 import Operator from "../assets/img/Operator";
 import { ACTIONS } from "../utils/Enum";
 import OperatorLight from "../assets/img/OperatorLight";
+import { iconMedium, iconSmall } from "../css/icons.styles";
 
 const styles = (theme) => ({
   dialogBox : {
@@ -204,7 +205,7 @@ function ConfirmationMsg(props) {
           variant : "info", preventDuplicate : true,
           action : (key) => (
             <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-              <CloseIcon />
+              <CloseIcon style={iconMedium} />
             </IconButton>
           ),
           autoHideDuration : 3000,
@@ -285,7 +286,7 @@ function ConfirmationMsg(props) {
               className={classes.tab}
               onClick={(event) => handleTabValChange(event,0)}
               label={<div style={{ display : "flex" }}
-              > <DoneIcon style={{ margin : "2px" }}  fontSize="small"/><span className={classes.tabLabel}>Validate</span> </div>
+              > <DoneIcon style={{ margin : "2px", ...iconSmall }}  fontSize="small"/><span className={classes.tabLabel}>Validate</span> </div>
               }
             />}
             <Tab
@@ -293,107 +294,107 @@ function ConfirmationMsg(props) {
               className={classes.tab}
               onClick={(event) => handleTabValChange(event,1)}
               label={<div style={{ display : "flex" }}
-              > <div style={{ margin : "2px" }}> <UndeployIcon fill={theme.palette.secondary.icon} width="20" height="20"/> </div> <span className={classes.tabLabel}>Undeploy</span> </div>}
+              > <div style={{ margin : "2px" }}> <UndeployIcon style={iconSmall} fill={theme.palette.secondary.icon} width="20" height="20"/> </div> <span className={classes.tabLabel}>Undeploy</span> </div>}
             />
             <Tab
               data-cy="deploy-btn-modal"
               className={classes.tab}
               onClick={(event) => handleTabValChange(event,2)}
               label={<div style={{ display : "flex" }}
-              > <DoneAllIcon color={theme.palette.secondary.icon} style={{ margin : "2px" }} fontSize="small" /> <span className={classes.tabLabel}>Deploy</span> </div>}
+              > <DoneAllIcon style={{ margin : "2px", ...iconSmall }} fontSize="small" /> <span className={classes.tabLabel}>Deploy</span> </div>}
             />
           </Tabs>
 
           {(tabVal === ACTIONS.DEPLOY || tabVal === ACTIONS.UNDEPLOY) &&
-            <DialogContent>
-              <DialogContentText id="alert-dialog-description" className={classes.subtitle}>
-                <Typography variant="subtitle1" style={{ marginBottom : "0.8rem" }}> {componentCount !== undefined ? <> {componentCount} component{componentCount > 1 ? "s" : ""} </> : ""}</Typography>
-                {
-                  k8scontext.length > 0 ?
-                    <Typography variant="body1">
-                      <TextField
-                        id="search-ctx"
-                        label="Search"
-                        size="small"
-                        variant="outlined"
-                        onChange={(event) => searchContexts(event.target.value)}
-                        style={{ width : "100%", backgroundColor : "rgba(102, 102, 102, 0.12)", margin : "1px 1px 8px " }}
-                        InputProps={{
-                          endAdornment : (
-                            <Search />
-                          )
-                        }}
-                      // margin="none"
-                      />
-                      {context.length > 0 ?
-                        <div className={classes.all}>
-                          <Checkbox
-                            checked={selectedK8sContexts?.includes("all")}
-                            onChange={() => setContextViewer("all")}
-                            color="primary"
-                          />
-                          <span style={{ fontWeight : "bolder" }}>select all</span>
-                        </div>
-                        :
-                        <Typography variant="subtitle1">
+              <DialogContent>
+                <DialogContentText id="alert-dialog-description" className={classes.subtitle}>
+                  <Typography variant="subtitle1" style={{ marginBottom : "0.8rem" }}> {componentCount !== undefined ? <> {componentCount} component{componentCount > 1 ? "s" : ""} </> : "" }</Typography>
+                  {
+                    k8scontext.length > 0 ?
+                      <Typography variant="body1">
+                        <TextField
+                          id="search-ctx"
+                          label="Search"
+                          size="small"
+                          variant="outlined"
+                          onChange={(event) => searchContexts(event.target.value)}
+                          style={{ width : "100%", backgroundColor : "rgba(102, 102, 102, 0.12)", margin : "1px 1px 8px " }}
+                          InputProps={{
+                            endAdornment : (
+                              <Search style={iconMedium} />
+                            )
+                          }}
+                        // margin="none"
+                        />
+                        {context.length > 0?
+                          <div className={classes.all}>
+                            <Checkbox
+                              checked={selectedK8sContexts?.includes("all")}
+                              onChange={() => setContextViewer("all")}
+                              color="primary"
+                            />
+                            <span style={{ fontWeight : "bolder" }}>select all</span>
+                          </div>
+                          :
+                          <Typography variant="subtitle1">
                           No Context found
-                        </Typography>
-                      }
-
-                      <div className={classes.contexts}>
-                        {
-                          context.map((ctx) => (
-                            <div id={ctx.id} className={classes.chip} key={ctx.id}>
-                              <Tooltip title={`Server: ${ctx.server}`}>
-                                <div style={{ display : "flex", justifyContent : "flex-wrap", alignItems : "center" }}>
-                                  <Checkbox
-                                    checked={selectedK8sContexts?.includes(ctx.id) || (selectedK8sContexts?.length > 0 && selectedK8sContexts[0] === "all")}
-                                    onChange={() => setContextViewer(ctx.id)}
-                                    color="primary"
-                                  />
-                                  <Chip
-                                    label={ctx.name}
-                                    className={classes.ctxChip}
-                                    onClick={() => handleKubernetesClick(ctx.id)}
-                                    icon={<img src="/static/img/kubernetes.svg" className={classes.ctxIcon} />}
-                                    variant="outlined"
-                                    data-cy="chipContextName"
-                                  />
-                                </div>
-
-                              </Tooltip>
-                            </div>
-                          ))
+                          </Typography>
                         }
-                      </div>
-                    </Typography>
-                    :
-                    <div className={classes.textContent}>
-                      {theme.palette.type=="dark"? <OperatorLight /> : <Operator />}
-                      <Typography variant="h5">No cluster connected yet</Typography>
 
-                      <Link href="/settings">
-                        <Button
-                          type="submit"
-                          variant="contained"
-                          color="primary"
-                          style={{ margin : "0.6rem 0.6rem", whiteSpace : "nowrap" }}
-                        >
-                          <AddIcon className={classes.AddIcon} />
+                        <div className={classes.contexts}>
+                          {
+                            context.map((ctx) => (
+                              <div id={ctx.id} className={classes.chip} key={ctx.id}>
+                                <Tooltip title={`Server: ${ctx.server}`}>
+                                  <div style={{ display : "flex", justifyContent : "flex-wrap", alignItems : "center" }}>
+                                    <Checkbox
+                                      checked={selectedK8sContexts?.includes(ctx.id) || (selectedK8sContexts?.length > 0 && selectedK8sContexts[0] === "all")}
+                                      onChange={() => setContextViewer(ctx.id)}
+                                      color="primary"
+                                    />
+                                    <Chip
+                                      label={ctx.name}
+                                      className={classes.ctxChip}
+                                      onClick={() => handleKubernetesClick(ctx.id)}
+                                      icon={<img src="/static/img/kubernetes.svg" className={classes.ctxIcon} />}
+                                      variant="outlined"
+                                      data-cy="chipContextName"
+                                    />
+                                  </div>
+
+                                </Tooltip>
+                              </div>
+                            ))
+                          }
+                        </div>
+                      </Typography>
+                      :
+                      <div className={classes.textContent}>
+                        {theme.palette.type=="dark"? <OperatorLight /> : <Operator />}
+                        <Typography variant="h5">No cluster connected yet</Typography>
+
+                        <Link href="/settings">
+                          <Button
+                            type="submit"
+                            variant="contained"
+                            color="primary"
+                            style={{ margin : "0.6rem 0.6rem", whiteSpace : "nowrap" }}
+                          >
+                            <AddIcon className={classes.AddIcon} />
                           Connect Clusters
-                        </Button>
-                      </Link>
-                    </div>
-                }
-              </DialogContentText>
-            </DialogContent>
+                          </Button>
+                        </Link>
+                      </div>
+                  }
+                </DialogContentText>
+              </DialogContent>
           }
           {tabVal === ACTIONS.VERIFY &&// Validate
-            <DialogContent>
-              <DialogContentText>
-                {validationBody}
-              </DialogContentText>
-            </DialogContent>
+              <DialogContent>
+                <DialogContentText>
+                  { validationBody }
+                </DialogContentText>
+              </DialogContent>
           }
           {/* </Paper> */}
 

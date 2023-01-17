@@ -47,10 +47,14 @@ import { Collapse } from "@material-ui/core";
 import { cursorNotAllowed, disabledStyle, disabledStyleWithOutOpacity } from "../css/disableComponent.styles";
 import { CapabilitiesRegistry } from "../utils/disabledComponents";
 import { APPLICATION, APP_MESH, CILIUM_SM, CITRIX_SM, DESIGN, CONFIGURATION, CONFORMANCE, CONSUL, DASHBOARD, FILTER, ISTIO, KUMA, LIFECYCLE, LINKERD, NETWORK_SM, NGINX, OSM, PERFORMANCE, TRAEFIK_SM, PROFILES, SMI, TOGGLER } from "../constants/navigator"
-import AwsAppMeshIcon from "../assets/icons/LifecycleIcons/AwsAppMeshIcon";
-import ConsulIcon from "../assets/icons/LifecycleIcons/ConsulIcon";
 
 const styles = (theme) => ({
+  root : {
+    '& svg' : {
+      width : '1.21rem',
+      height : '1.21rem'
+    }
+  },
   categoryHeader : {
     paddingTop : 16,
     paddingBottom : 16,
@@ -326,7 +330,6 @@ const getNavigatorComponents = (  /** @type {CapabilitiesRegistry} */  capabilit
         title : "AWS App Mesh",
         link : true,
         show : capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, APP_MESH]),
-        icon : <AwsAppMeshIcon style={drawerIconsStyle}/>
       },
       {
         id : CITRIX_SM,
@@ -341,7 +344,6 @@ const getNavigatorComponents = (  /** @type {CapabilitiesRegistry} */  capabilit
         title : "Consul",
         link : true,
         show : capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, CONSUL]),
-        icon : <ConsulIcon style={drawerIconsStyle}/>
       },
       {
         id : CILIUM_SM,
@@ -557,28 +559,6 @@ class Navigator extends React.Component {
 
   componentDidMount() {
     dataFetch(
-      "/api/system/version",
-      {
-        method : "GET",
-        credentials : "include",
-      },
-      (result) => {
-        if (typeof result !== "undefined") {
-          this.setState({ versionDetail : result });
-        } else {
-          this.setState({
-            versionDetail : {
-              build : "Unknown",
-              latest : "Unknown",
-              outdated : false,
-              commitsha : "Unknown",
-            },
-          });
-        }
-      },
-      (err) => console.error(err)
-    );
-    dataFetch(
       "/api/provider/capabilities",
       {
         method : "GET",
@@ -596,6 +576,28 @@ class Navigator extends React.Component {
           });
           //global state
           this.props.updateCapabilities({ capabilitiesRegistry : result })
+        }
+      },
+      (err) => console.error(err)
+    );
+    dataFetch(
+      "/api/system/version",
+      {
+        method : "GET",
+        credentials : "include",
+      },
+      (result) => {
+        if (typeof result !== "undefined") {
+          this.setState({ versionDetail : result });
+        } else {
+          this.setState({
+            versionDetail : {
+              build : "Unknown",
+              latest : "Unknown",
+              outdated : false,
+              commitsha : "Unknown",
+            },
+          });
         }
       },
       (err) => console.error(err)
@@ -692,7 +694,7 @@ class Navigator extends React.Component {
       if (cat.id === LIFECYCLE) {
         cat.children.forEach((catc, ind1) => {
           const cr = self.fetchChildren(catc.id);
-          const icon = catc.icon ? catc.icon : self.pickIcon(catc.id);
+          const icon = self.pickIcon(catc.id);
           navigatorComponents[ind].children[ind1].icon = icon;
           navigatorComponents[ind].children[ind1].children = cr;
         });
@@ -1107,7 +1109,7 @@ class Navigator extends React.Component {
           //   return "";
           // }
           return (
-            <div key={childId} style={!show ? cursorNotAllowed : {}}>
+            <div key={childId} style={!show ? cursorNotAllowed : {}} className={classes.root}>
               <ListItem
                 button={!!link}
                 dense
