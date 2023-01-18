@@ -51,44 +51,59 @@ func (r *Resolver) getMeshModelSummary(ctx context.Context, provider models.Prov
 		return nil, err1
 	}
 	switch selector.Type {
-	case "Components" :
+	case "components" :
 		components := getMeshModelComponents(regManager)
 		summary.Components = components
-	// case "relationships" :
-	// 	relationships := getMeshModelRelationships(regManager)
-	// 	summary.Relationships = relationships
-	// 	summary.Components = []*model.MeshModelComponent{}
-	// 	break
+		summary.Relationships = []*model.MeshModelRelationship{}
+	case "relationships" :
+		relationships := getMeshModelRelationships(regManager)
+		summary.Relationships = relationships
+		summary.Components = []*model.MeshModelComponent{}
 	}
 	return summary, nil
 }
 
-// func getMeshModelRelationships(regManager *meshmodel.RegistryManager) []*model.MeshModelRelationship{
-// 	res := regManager.GetEntities(&v1alpha1.RelationshipFilter{})
-// 	relationships := make([]*model.MeshModelRelationship, 0)
-// 	var relmap := make(map[string]*relationships)
-// 	for _, r := range res {
-// 		def, _ := r.(v1alpha1.RelationshipDefinition)
-// 		if relmap[def.Model.Name] == nil {
 
-// 		}
-// 	}
-// }
+type MeshModelResponse struct {
+  Name     string   `json:"name"`
+	Versions []string `json:"versions"`
+}
 
-
-type typesResponseWithModelname struct {
-  Name string   `json:"name"`
-	Versions    []string `json:"versions"`
+func getMeshModelRelationships(regManager *meshmodel.RegistryManager) []*model.MeshModelRelationship{
+	res := regManager.GetEntities(&v1alpha1.RelationshipFilter{})
+	relationships := make([]*model.MeshModelRelationship, 0)
+	var relmap = make(map[string]*MeshModelResponse)
+	for _, r := range res {
+		def, _ := r.(v1alpha1.RelationshipDefinition)
+		if relmap[def.Model.Name] == nil {
+			relmap[def.Model.Name] = &MeshModelResponse{
+				Name:     def.Model.Name,
+				Versions: []string{def.Model.Version},
+			}
+		} else {
+			relmap[def.Model.Name].Versions = append(relmap[def.Model.Name].Versions, def.Model.Version)
+		}
+	}
+	for _, x := range relmap {
+		x.Versions = filterUniqueElementsArray(x.Versions)
+	}
+	for _, x := range relmap {
+		relationships = append(relationships, &model.MeshModelRelationship{
+			Name:  x.Name,
+			Count: len(x.Versions),
+		})
+	}
+	return relationships
 }
 
 func getMeshModelComponents(regManager *meshmodel.RegistryManager) []*model.MeshModelComponent {
 	res := regManager.GetEntities(&v1alpha1.ComponentFilter{})
 	components := make([]*model.MeshModelComponent, 0)
-	var response = make(map[string]*typesResponseWithModelname)
+	var response = make(map[string]*MeshModelResponse)
 	for _, r := range res {
 		def, _ := r.(v1alpha1.ComponentDefinition)
 		if response[def.Model.Name] == nil {
-			response[def.Model.Name] = &typesResponseWithModelname{
+			response[def.Model.Name] = &MeshModelResponse{
 				Name:     def.Model.Name,
 				Versions: []string{def.Model.Version},
 			}

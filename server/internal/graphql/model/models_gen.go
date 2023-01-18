@@ -183,12 +183,13 @@ type MeshModelComponent struct {
 }
 
 type MeshModelRelationship struct {
-	Kind  string `json:"kind"`
+	Name  string `json:"name"`
 	Count int    `json:"count"`
 }
 
 type MeshModelSummary struct {
-	Components []*MeshModelComponent `json:"components"`
+	Components    []*MeshModelComponent    `json:"components"`
+	Relationships []*MeshModelRelationship `json:"relationships"`
 }
 
 type MeshModelSummarySelector struct {
