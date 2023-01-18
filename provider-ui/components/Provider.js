@@ -15,11 +15,12 @@ import Grid from '@mui/material/Grid'
 import IconButton from '@mui/material/IconButton'
 import MenuList from '@mui/material/MenuList'
 import MenuItem from '@mui/material/MenuItem'
-import Menu from '@mui/material/Menu'
 import Paper from '@mui/material/Paper'
+import Popper from '@mui/material/Popper'
+import Grow from '@mui/material/Grow'
 import CircularProgress from '@mui/material/CircularProgress'
 import ClickAwayListener from '@mui/material/ClickAwayListener'
-import ArrowDropIcon from '@mui/icons-material/ArrowDropDown'
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown'
 import CloseIcon from '@mui/icons-material/Close'
 
 // Call providers via getServerSideProps
@@ -48,11 +49,9 @@ function DialogTitle ({ children, onClose, ...other }) {
 export default function ProviderComponent () {
   const [availableProviders, setAvailableProviders] = useState({})
   const [selectedProvider, setSelectedProvider] = useState('')
-  const [open, setOpen] = useState(false)
+  // const [open, setOpen] = useState(false)
   const [modalOpen, setModalOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-  const [anchorEl] = React.useState(null)
-  // const anchorRef = React.useRef(null)
 
   useEffect(() => {
     loadProvidersFromServer()
@@ -85,15 +84,30 @@ export default function ProviderComponent () {
 
   const handleModalOpen = () => setModalOpen(true)
   const handleModalClose = () => setModalOpen(false)
-  const handleToggle = () => setOpen(true)
-  const handleClickAway = () => setOpen(false)
+  // const handleToggle = () => setOpen(true)
+  // const handleClickAway = () => setOpen(false)
 
-  function handleMenuItemClick (e, provider) {
-    e.preventDefault()
+  const [open, setOpen] = React.useState(false)
+  const anchorRef = React.useRef(null)
+
+  const handleMenuItemClick = (event, provider) => {
+    event.preventDefault()
     setSelectedProvider(provider)
     setOpen(false)
     setIsLoading(true)
     window.location.href = `/api/provider?provider=${encodeURIComponent(provider)}`
+  }
+
+  const handleToggle = () => {
+    setOpen((prevOpen) => !prevOpen)
+  }
+
+  const handleClose = (event) => {
+    if (anchorRef.current && anchorRef.current.contains(event.target)) {
+      return
+    }
+
+    setOpen(false)
   }
 
   return (
@@ -169,17 +183,12 @@ export default function ProviderComponent () {
         <Grid item xs={12} justify="center">
           {availableProviders !== '' && (
             <>
-              <ButtonGroup
-                variant="contained"
-                color="primary"
-                aria-label="split button"
-              >
+              <ButtonGroup variant="contained" ref={anchorRef} aria-label="split button">
                 <Button
                   size="large"
-                  id="basic-button"
                   aria-controls={open ? 'split-button-menu' : undefined}
                   aria-expanded={open ? 'true' : undefined}
-                  aria-label="Select your provider"
+                  aria-label="select your provider"
                   data-cy="select_provider"
                   aria-haspopup="menu"
                   onClick={handleToggle}
@@ -187,46 +196,56 @@ export default function ProviderComponent () {
                   {isLoading && <CircularProgress
                     size={20} sx={{ color: 'white', marginRight: 8 }} />}
                   {selectedProvider !== '' ? selectedProvider : 'Select your provider'}
-                  <ArrowDropIcon />
+                  <ArrowDropDownIcon />
                 </Button>
               </ButtonGroup>
-              <Menu
-                id="basic-menu"
-                anchorEl={anchorEl}
-                open={open}
-                onClose={handleToggle}
-                MenuListProps={{
-                  'aria-labelledby': 'basic-button'
+              <Popper
+                sx={{
+                  zIndex: 1
                 }}
+                open={open}
+                anchorEl={anchorRef.current}
+                role={undefined}
+                transition
+                disablePortal
               >
-                <Paper sx={{ justify: 'center' }}>
-                  <ClickAwayListener onClickAway={handleClickAway}>
-                    <MenuList id="split-button-menu">
-                      {Object.keys(availableProviders).map((key) => (
-                        <MenuItem key={key} onClick={(e) => handleMenuItemClick(e, key)}>
-                          {key}
-                        </MenuItem>
-                      ))}
-                      <Divider sx={{
-                        backgroundColor: '#c1c8d2',
-                        marginLeft: '10px',
-                        marginRight: '10px'
-                      }} />
-                      <MenuProviderDisabled disabled={true} key="SMI">
-                        SMI Conformance <span>Disabled</span>
-                      </MenuProviderDisabled>
-                      <MenuProviderDisabled disabled={true} key="UT Austin">
-                        The University of Texas at Austin{'\u00A0'}<span>Disabled</span>
-                      </MenuProviderDisabled>
-                      <MenuProviderDisabled disabled={true} key="CNCF Cluster">
-                        CNCF Cluster{'\u00A0'}<span>Disabled</span>
-                      </MenuProviderDisabled>
-                    </MenuList>
-                  </ClickAwayListener>
-                </Paper>
-              </Menu>
-            </>
-          )}
+                {({ TransitionProps, placement }) => (
+                  <Grow
+                    {...TransitionProps}
+                    style={{
+                      transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom'
+                    }}
+                  >
+                    <Paper>
+                      <ClickAwayListener onClickAway={handleClose}>
+                        <MenuList id="split-button-menu" autoFocusItem>
+                        {Object.keys(availableProviders).map((key) => (
+                             <MenuItem key={key} onClick={(e) => handleMenuItemClick(e, key)}>
+                              {key}
+                            </MenuItem>
+                          ))}
+                          <Divider
+                            sx={{
+                              backgroundColor: '#c1c8d2',
+                              marginLeft: '10px',
+                              marginRight: '10px'
+                            }} />
+                          <MenuProviderDisabled disabled={true} key="SMI">
+                            SMI Conformance <span>Disabled</span>
+                          </MenuProviderDisabled>
+                          <MenuProviderDisabled disabled={true} key="UT Austin">
+                            The University of Texas at Austin{'\u00A0'}<span>Disabled</span>
+                          </MenuProviderDisabled>
+                          <MenuProviderDisabled disabled={true} key="CNCF Cluster">
+                            CNCF Cluster{'\u00A0'}<span>Disabled</span>
+                          </MenuProviderDisabled>
+                        </MenuList>
+                      </ClickAwayListener>
+                    </Paper>
+                  </Grow>
+                )}
+              </Popper>
+            </>)}
         </Grid>
       </Div>
     </ProviderLayout>

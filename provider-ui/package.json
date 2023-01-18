@@ -4,8 +4,8 @@
   "description": "the service mesh management plane",
   "main": "index.js",
   "scripts": {
-    "dev": "next dev -p 3001",
-    "build": "next lint --fix && next build",
+    "dev": "node ui_dev_server.js",
+    "build": "next build",
     "export": "next export",
     "start": "NODE_ENV=production node server.js",
     "lint": "next lint",
@@ -19,6 +19,7 @@
   "repository": "https://github.com/meshery/meshery",
   "license": "Apache-2.0",
   "dependencies": {
+    "@cypress/code-coverage": "^3.10.0",
     "@emotion/cache": "^11.10.5",
     "@emotion/react": "latest",
     "@emotion/server": "^11.10.0",
@@ -36,14 +37,12 @@
   },
   "devDependencies": {
     "@babel/eslint-plugin": "^7.19.1",
-    "@cypress/code-coverage": "^3.10.0",
     "@next/eslint-plugin-next": "^13.1.2",
     "cypress": "^12.3.0",
     "eslint": "^8.32.0",
     "eslint-config-next": "latest",
     "eslint-config-standard": "^17.0.0",
     "eslint-plugin-cypress": "^2.12.1",
-    "eslint-plugin-import": "^2.27.5",
     "eslint-plugin-n": "^15.6.1",
     "eslint-plugin-promise": "^6.1.1",
     "eslint-plugin-react": "^7.32.1",

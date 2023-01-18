@@ -19,7 +19,7 @@ module.exports = {
     "Atomics": "readonly",
     "SharedArrayBuffer": "readonly"
   },
-  parser: '@babel/eslint-plugin',
+  'parser': '@babel/eslint-parser',
   parserOptions: {
     ecmaFeatures: {
       jsx: true,
@@ -57,6 +57,12 @@ module.exports = {
     "no-unused-vars": "error",
     "react/jsx-key": "warn",
     "no-dupe-keys": "error",
-    "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }]
+    "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
+    "no-restricted-imports": [
+      "error",
+      {
+        "patterns": ["@mui/*/*/*"]
+      }
+    ]
   }
 }
