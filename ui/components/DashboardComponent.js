@@ -132,7 +132,8 @@ class DashboardComponent extends React.Component {
       clusterResources : [],
       namespaceList : [],
       selectedNamespace : "default",
-      meshmodelSummarySelector : { type : "Components" },
+      meshmodelSummarySelector : { type : "components" },
+      meshmodelSummarySelectorList : ["components", "relationships"],
       meshmodelSummary : [],
 
       // subscriptions disposable
@@ -1127,7 +1128,7 @@ class DashboardComponent extends React.Component {
    * } meshmodelSummary
    */
    MeshModelSummaryCard = (meshmodelSummary = []) => {
-     //  const self = this;
+     const self = this;
      let kindSort = "asc";
      let countSort = "asc";
      const switchSortOrder = (type) => {
@@ -1196,25 +1197,25 @@ class DashboardComponent extends React.Component {
        viewColumns : false,
        pagination : false,
        fixedHeader : true,
-       //  customToolbar : () => {
-       //    return (
-       //      <>
-       //        {self.state.namespaceList && (
-       //          <Select
-       //            value={self.state.selectedNamespace}
-       //            onChange={(e) =>
-       //              self.setState({ selectedNamespace : e.target.value })
-       //            }
-       //          >
-       //            {self.state.namespaceList && self.state.namespaceList.map((ns) => <MenuItem key={ns.uniqueID} value={ns}>{ns}</MenuItem>)}
-       //          </Select>
-       //        )}
-       //      </>
-       //    )
-       //  }
+       customToolbar : () => {
+         return (
+           <>
+             {self.state.meshmodelSummarySelectorList && (
+               <Select
+                 value={self.state.meshmodelSummarySelector.type}
+                 onChange={(e) =>
+                   self.setState({ meshmodelSummarySelector : { type : e.target.value } })
+                 }
+               >
+                 {self.state.meshmodelSummarySelectorList && self.state.meshmodelSummarySelectorList.map((opts) => <MenuItem key={opts} value={opts}>{opts}</MenuItem>)}
+               </Select>
+             )}
+           </>
+         )
+       }
      }
 
-     if (Array.isArray(meshmodelSummary?.components) && meshmodelSummary?.components?.length)
+     if (Array.isArray(meshmodelSummary) && meshmodelSummary?.length)
        return (
          <Paper elevation={1} style={{ padding : "2rem" }}>
            <MuiThemeProvider theme={this.getMuiTheme()}>
@@ -1227,7 +1228,7 @@ class DashboardComponent extends React.Component {
                    </div>
                  </>
                }
-               data={meshmodelSummary?.components}
+               data={meshmodelSummary}
                options={options}
                columns={columns}
              />
@@ -1531,11 +1532,12 @@ class DashboardComponent extends React.Component {
           )}
       </>
     );
+
     const showMeshModelSummary = (
       <>
-        {self?.state?.meshmodelSummary && self?.state?.meshmodelSummary?.components?.length > 0
+        {self?.state?.meshmodelSummary[self?.state?.meshmodelSummarySelector?.type] && self?.state?.meshmodelSummary[self?.state?.meshmodelSummarySelector?.type].length > 0
           ? (
-            self.MeshModelSummaryCard(self?.state?.meshmodelSummary)
+            self.MeshModelSummaryCard(self?.state?.meshmodelSummary[self?.state?.meshmodelSummarySelector?.type])
           )
           : (
             <div
