@@ -497,6 +497,7 @@ input MeshModelSummarySelector {
 # Type MeshModelComponentsSummary define the summary of a Mesh Model
 type MeshModelSummary {
   components: [MeshModelComponent!]
+  relationships: [MeshModelRelationship!]
 }
 
 type MeshModelComponent {
@@ -505,7 +506,7 @@ type MeshModelComponent {
 }
 
 type MeshModelRelationship {
-  kind: String!
+  name: String!
   count: Int!
 }
 
