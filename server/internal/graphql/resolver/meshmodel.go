@@ -64,33 +64,39 @@ func (r *Resolver) getMeshModelSummary(ctx context.Context, provider models.Prov
 }
 
 
-type MeshModelResponse struct {
+type MeshModelComponentResponse struct {
   Name     string   `json:"name"`
 	Versions []string `json:"versions"`
 }
 
+type MeshModelRelationshipResponse struct {
+  Name     string   `json:"name"`
+	Subtype []string  `json:"subType"`
+}
+
+
 func getMeshModelRelationships(regManager *meshmodel.RegistryManager) []*model.MeshModelRelationship{
 	res := regManager.GetEntities(&v1alpha1.RelationshipFilter{})
 	relationships := make([]*model.MeshModelRelationship, 0)
-	var relmap = make(map[string]*MeshModelResponse)
+	var relmap = make(map[string]*MeshModelRelationshipResponse)
 	for _, r := range res {
 		def, _ := r.(v1alpha1.RelationshipDefinition)
-		if relmap[def.Model.Name] == nil {
-			relmap[def.Model.Name] = &MeshModelResponse{
-				Name:     def.Model.Name,
-				Versions: []string{def.Model.Version},
+		if relmap[def.Kind] == nil {
+			relmap[def.Kind] = &MeshModelRelationshipResponse{
+				Name:     def.Kind,
+				Subtype: []string{def.SubType},
 			}
 		} else {
-			relmap[def.Model.Name].Versions = append(relmap[def.Model.Name].Versions, def.Model.Version)
+			relmap[def.Kind].Subtype = append(relmap[def.Kind].Subtype, def.SubType)
 		}
 	}
 	for _, x := range relmap {
-		x.Versions = filterUniqueElementsArray(x.Versions)
+		x.Subtype = filterUniqueElementsArray(x.Subtype)
 	}
 	for _, x := range relmap {
 		relationships = append(relationships, &model.MeshModelRelationship{
 			Name:  x.Name,
-			Count: len(x.Versions),
+			Count: len(x.Subtype),
 		})
 	}
 	return relationships
@@ -99,11 +105,11 @@ func getMeshModelRelationships(regManager *meshmodel.RegistryManager) []*model.M
 func getMeshModelComponents(regManager *meshmodel.RegistryManager) []*model.MeshModelComponent {
 	res := regManager.GetEntities(&v1alpha1.ComponentFilter{})
 	components := make([]*model.MeshModelComponent, 0)
-	var response = make(map[string]*MeshModelResponse)
+	var response = make(map[string]*MeshModelComponentResponse)
 	for _, r := range res {
 		def, _ := r.(v1alpha1.ComponentDefinition)
 		if response[def.Model.Name] == nil {
-			response[def.Model.Name] = &MeshModelResponse{
+			response[def.Model.Name] = &MeshModelComponentResponse{
 				Name:     def.Model.Name,
 				Versions: []string{def.Model.Version},
 			}
