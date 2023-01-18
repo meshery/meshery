@@ -24,8 +24,7 @@ func (r *Resolver) subscribeMeshModelSummary(ctx context.Context, provider model
 			case <-ch: 
 			  meshModelSummary, err := r.getMeshModelSummary(ctx, provider, selector)
 				if err != nil {
-					logrus.Error("Error while fetching MeshModelSummary: ", err)
-					// r.Log.Error(err)
+					logrus.Error(ErrMeshModelSummarySubscription(err))
 					break
 				}
 				respChan <- meshModelSummary
@@ -46,9 +45,8 @@ func (r *Resolver) getMeshModelSummary(ctx context.Context, provider models.Prov
 	regManager, ok := ctx.Value(models.RegistryManagerKey).(*meshmodel.RegistryManager)
 	summary := &model.MeshModelSummary{}
 	if !ok {
-		logrus.Error("Error while fetching RegistryManager")
-		err1 := errors.New("Error while fetching RegistryManager")
-		return nil, err1
+		err := errors.New("unable to get registry manager from context")
+		return nil, ErrGettingRegistryManager(err)
 	}
 	switch selector.Type {
 	case "components" :
