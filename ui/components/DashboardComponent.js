@@ -274,7 +274,6 @@ class DashboardComponent extends React.Component {
       // @ts-ignore
       const meshmodelSummaryQuery = fetchMeshModelSummary(selector).subscribe({
         next : (res) => {
-          console.log("res(query): ", res)
           this.setState({ meshmodelSummary : res?.meshmodelSummary })
         },
         error : (err) => console.log(err),
@@ -291,7 +290,6 @@ class DashboardComponent extends React.Component {
     if (self._isMounted) {
       // @ts-ignore
       const meshmodelSummarySubscription = subscribeMeshModelSummary((res) => {
-        console.log("res(subscription): ", res)
         this.setState({ meshmodelSummary : res?.meshmodelSummary })
       }, {
         selector : selector
