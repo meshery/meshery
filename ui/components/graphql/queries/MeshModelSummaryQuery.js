@@ -13,6 +13,10 @@ export default function fetchMeshModelSummary(selector) {
           name,
           count
         },
+        relationships {
+          name,
+          count
+        }
       }
     }
   `;

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<0967080ea24a31d0abac0519b441e3b2>>
+ * @generated SignedSource<<c7993af69a7029ac9585746143552568>>
  * @flow
  * @lightSyntaxTransform
  * @nogrep
@@ -23,6 +23,10 @@ export type MeshModelSummarySubscription$data = {|
       +name: string,
       +count: number,
     |}>,
+    +relationships: ?$ReadOnlyArray<{|
+      +name: string,
+      +count: number,
+    |}>,
   |},
 |};
 export type MeshModelSummarySubscription = {|
@@ -40,6 +44,22 @@ var v0 = [
   }
 ],
 v1 = [
+  {
+    "alias": null,
+    "args": null,
+    "kind": "ScalarField",
+    "name": "name",
+    "storageKey": null
+  },
+  {
+    "alias": null,
+    "args": null,
+    "kind": "ScalarField",
+    "name": "count",
+    "storageKey": null
+  }
+],
+v2 = [
   {
     "alias": "meshmodelSummary",
     "args": [
@@ -61,22 +81,17 @@ v1 = [
         "kind": "LinkedField",
         "name": "components",
         "plural": true,
-        "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "name",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "count",
-            "storageKey": null
-          }
-        ],
+        "selections": (v1/*: any*/),
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "concreteType": "MeshModelRelationship",
+        "kind": "LinkedField",
+        "name": "relationships",
+        "plural": true,
+        "selections": (v1/*: any*/),
         "storageKey": null
       }
     ],
@@ -89,7 +104,7 @@ return {
     "kind": "Fragment",
     "metadata": null,
     "name": "MeshModelSummarySubscription",
-    "selections": (v1/*: any*/),
+    "selections": (v2/*: any*/),
     "type": "Subscription",
     "abstractKey": null
   },
@@ -98,20 +113,20 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "MeshModelSummarySubscription",
-    "selections": (v1/*: any*/)
+    "selections": (v2/*: any*/)
   },
   "params": {
-    "cacheID": "e3df394d3f5405ea5cb8d232e5aa9fc2",
+    "cacheID": "458b92d09a21e56a16ddbc316c2f1596",
     "id": null,
     "metadata": {},
     "name": "MeshModelSummarySubscription",
     "operationKind": "subscription",
-    "text": "subscription MeshModelSummarySubscription(\n  $selector: MeshModelSummarySelector!\n) {\n  meshmodelSummary: subscribeMeshModelSummary(selector: $selector) {\n    components {\n      name\n      count\n    }\n  }\n}\n"
+    "text": "subscription MeshModelSummarySubscription(\n  $selector: MeshModelSummarySelector!\n) {\n  meshmodelSummary: subscribeMeshModelSummary(selector: $selector) {\n    components {\n      name\n      count\n    }\n    relationships {\n      name\n      count\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node/*: any*/).hash = "df62dc502a31750c294f4bbabf29c4e0";
+(node/*: any*/).hash = "f9ce6171759cd696ee275c65c930974b";
 
 module.exports = ((node/*: any*/)/*: GraphQLSubscription<
   MeshModelSummarySubscription$variables,
