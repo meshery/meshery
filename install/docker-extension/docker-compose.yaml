@@ -10,7 +10,6 @@ services:
     pull_policy: always
     environment:
       - "PROVIDER_BASE_URLS=https://meshery.layer5.io"
-      - "SAAS_BASE_URL=https://meshery.layer5.io"
       - "ADAPTER_URLS=meshery-istio:10000 meshery-linkerd:10001 meshery-consul:10002 meshery-nginx-sm:10010 meshery-app-mesh:10005 meshery-kuma:10007 meshery-osm:10009 meshery-traefik-mesh:10006  meshery-cilium:10012"
       - "EVENT=mesheryLocal"
       - "PORT=9081"
