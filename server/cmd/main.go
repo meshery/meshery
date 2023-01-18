@@ -19,6 +19,7 @@ import (
 	"github.com/layer5io/meshery/server/internal/graphql"
 	"github.com/layer5io/meshery/server/internal/store"
 	"github.com/layer5io/meshery/server/models"
+	mesherymeshmodel "github.com/layer5io/meshery/server/models/meshmodel"
 	"github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshery/server/router"
 	"github.com/layer5io/meshkit/broker/nats"
@@ -210,6 +211,32 @@ func main() {
 	}
 	lProv.Initialize()
 
+	hc := &models.HandlerConfig{
+		Providers:              provs,
+		ProviderCookieName:     "meshery-provider",
+		ProviderCookieDuration: 30 * 24 * time.Hour,
+		PlaygroundBuild:        viper.GetBool("PLAYGROUND"),
+		AdapterTracker:         adapterTracker,
+		QueryTracker:           queryTracker,
+
+		Queue: mainQueue,
+
+		KubeConfigFolder: viper.GetString("KUBECONFIG_FOLDER"),
+
+		GrafanaClient:         models.NewGrafanaClient(),
+		GrafanaClientForQuery: models.NewGrafanaClientWithHTTPClient(&http.Client{Timeout: time.Second}),
+
+		PrometheusClient:         models.NewPrometheusClient(),
+		PrometheusClientForQuery: models.NewPrometheusClientWithHTTPClient(&http.Client{Timeout: time.Second}),
+
+		ConfigurationChannel: models.NewConfigurationHelper(),
+
+		DashboardK8sResourcesChan: models.NewDashboardK8sResourcesHelper(),
+		MeshModelSummaryChannel: mesherymeshmodel.NewMeshModelSummaryHelper(),
+
+		K8scontextChannel: models.NewContextHelper(),
+	}
+
 	//seed the local meshmodel components
 	go func() {
 		compChan := make(chan v1alpha1.ComponentDefinition, 1)
@@ -221,6 +248,7 @@ func main() {
 					_ = regManager.RegisterEntity(meshmodel.Host{
 						Hostname: ArtifactHubComponentsHandler,
 					}, comp)
+					go hc.MeshModelSummaryChannel.Publish()
 				case <-done:
 					return
 				}
@@ -292,31 +320,6 @@ func main() {
 		cp.SyncPreferences()
 		defer cp.StopSyncPreferences()
 		provs[cp.Name()] = cp
-	}
-
-	hc := &models.HandlerConfig{
-		Providers:              provs,
-		ProviderCookieName:     "meshery-provider",
-		ProviderCookieDuration: 30 * 24 * time.Hour,
-		PlaygroundBuild:        viper.GetBool("PLAYGROUND"),
-		AdapterTracker:         adapterTracker,
-		QueryTracker:           queryTracker,
-
-		Queue: mainQueue,
-
-		KubeConfigFolder: viper.GetString("KUBECONFIG_FOLDER"),
-
-		GrafanaClient:         models.NewGrafanaClient(),
-		GrafanaClientForQuery: models.NewGrafanaClientWithHTTPClient(&http.Client{Timeout: time.Second}),
-
-		PrometheusClient:         models.NewPrometheusClient(),
-		PrometheusClientForQuery: models.NewPrometheusClientWithHTTPClient(&http.Client{Timeout: time.Second}),
-
-		ConfigurationChannel: models.NewConfigurationHelper(),
-
-		DashboardK8sResourcesChan: models.NewDashboardK8sResourcesHelper(),
-
-		K8scontextChannel: models.NewContextHelper(),
 	}
 
 	operatorDeploymentConfig := models.NewOperatorDeploymentConfig(adapterTracker)

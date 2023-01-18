@@ -13,8 +13,10 @@ import (
 
 func (r *Resolver) subscribeMeshModelSummary(ctx context.Context, provider models.Provider, selector model.MeshModelSummarySelector) (<-chan *model.MeshModelSummary, error) {
 	ch := make(chan struct{}, 1)
+	ch <- struct{}{}
 	respChan := make(chan *model.MeshModelSummary)
 
+	r.Config.MeshModelSummaryChannel.Subscribe(ch)
 	go func() {
 		r.Log.Info("Initializing MeshModelSummary subscription")
 		for {
@@ -28,6 +30,8 @@ func (r *Resolver) subscribeMeshModelSummary(ctx context.Context, provider model
 				}
 				respChan <- meshModelSummary
 			case <-ctx.Done():
+				close(respChan)
+				close(ch)
 				r.Log.Info("Closing MeshModelSummary subscription")
 				return
 			}
