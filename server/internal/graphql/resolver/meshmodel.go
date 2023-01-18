@@ -49,10 +49,7 @@ func (r *Resolver) getMeshModelSummary(ctx context.Context, provider models.Prov
 	switch selector.Type {
 	case "Components" :
 		components := getMeshModelComponents(regManager)
-		logrus.Debug("components: ", components)
 		summary.Components = components
-		summary.Relationships = []*model.MeshModelRelationship{}
-		break
 	// case "relationships" :
 	// 	relationships := getMeshModelRelationships(regManager)
 	// 	summary.Relationships = relationships
@@ -76,21 +73,20 @@ func (r *Resolver) getMeshModelSummary(ctx context.Context, provider models.Prov
 
 
 type typesResponseWithModelname struct {
-	DisplayName string   `json:"display-name"`
+  Name string   `json:"name"`
 	Versions    []string `json:"versions"`
 }
 
 func getMeshModelComponents(regManager *meshmodel.RegistryManager) []*model.MeshModelComponent {
 	res := regManager.GetEntities(&v1alpha1.ComponentFilter{})
-	logrus.Debug("res: ", res)
 	components := make([]*model.MeshModelComponent, 0)
 	var response = make(map[string]*typesResponseWithModelname)
 	for _, r := range res {
 		def, _ := r.(v1alpha1.ComponentDefinition)
 		if response[def.Model.Name] == nil {
 			response[def.Model.Name] = &typesResponseWithModelname{
-				DisplayName: def.Model.DisplayName,
-				Versions:    []string{def.Model.Version},
+				Name:     def.Model.Name,
+				Versions: []string{def.Model.Version},
 			}
 		} else {
 			response[def.Model.Name].Versions = append(response[def.Model.Name].Versions, def.Model.Version)
@@ -101,8 +97,8 @@ func getMeshModelComponents(regManager *meshmodel.RegistryManager) []*model.Mesh
 	}
 	for _, x := range response {
 		components = append(components, &model.MeshModelComponent{
-			Name: x.DisplayName,
-			Count:  len(x.Versions),
+			Name:  x.Name,
+			Count: len(x.Versions),
 		})
 	}
 	return components

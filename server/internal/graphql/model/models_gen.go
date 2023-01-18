@@ -188,8 +188,7 @@ type MeshModelRelationship struct {
 }
 
 type MeshModelSummary struct {
-	Components    []*MeshModelComponent    `json:"components"`
-	Relationships []*MeshModelRelationship `json:"relationships"`
+	Components []*MeshModelComponent `json:"components"`
 }
 
 type MeshModelSummarySelector struct {
