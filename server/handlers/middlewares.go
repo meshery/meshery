@@ -32,10 +32,6 @@ func (h *Handler) ProviderMiddleware(next http.Handler) http.Handler {
 		if providerName != "" {
 			provider = h.config.Providers[providerName]
 		}
-		if provider == nil {
-			http.Redirect(w, req, "/provider", http.StatusFound)
-			return
-		}
 		ctx := context.WithValue(req.Context(), models.ProviderCtxKey, provider) // nolint
 		req1 := req.WithContext(ctx)
 		next.ServeHTTP(w, req1)
@@ -47,12 +43,15 @@ func (h *Handler) ProviderMiddleware(next http.Handler) http.Handler {
 func (h *Handler) AuthMiddleware(next http.Handler, auth models.AuthenticationMechanism) http.Handler {
 	fn := func(w http.ResponseWriter, req *http.Request) {
 		enforcedProvider := h.EnforceProvider
+		if auth == models.NoAuth && enforcedProvider != "" {
+			auth = models.ProviderAuth //If a provider is enforced then use provider authentication even in case of NoAuth
+		}
 		switch auth {
-		case models.NoAuth:
-			if enforcedProvider != "" {
-				w.WriteHeader(http.StatusUnauthorized)
-				return
-			}
+		// case models.NoAuth:
+		// 	if enforcedProvider != "" {
+		// 		w.WriteHeader(http.StatusUnauthorized)
+		// 		return
+		// 	}
 		case models.ProviderAuth:
 			providerI := req.Context().Value(models.ProviderCtxKey)
 			// logrus.Debugf("models.ProviderCtxKey %s", models.ProviderCtxKey)

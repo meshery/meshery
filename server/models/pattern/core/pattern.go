@@ -45,6 +45,7 @@ type Service struct {
 	APIVersion  string            `yaml:"apiVersion,omitempty" json:"apiVersion,omitempty"`
 	Namespace   string            `yaml:"namespace" json:"namespace"`
 	Version     string            `yaml:"version,omitempty" json:"version,omitempty"`
+	Model       string            `yaml:"model,omitempty" json:"model,omitempty"`
 	Labels      map[string]string `yaml:"labels,omitempty" json:"labels,omitempty"`
 	Annotations map[string]string `yaml:"annotations,omitempty" json:"annotations,omitempty"`
 	// DependsOn correlates one or more objects as a required dependency of this service
@@ -98,9 +99,11 @@ func (p *Pattern) GetApplicationComponent(name string) (v1alpha1.Component, erro
 			Annotations: svc.Annotations,
 		},
 		Spec: v1alpha1.ComponentSpec{
-			Type:     svc.Type,
-			Version:  svc.Version,
-			Settings: svc.Settings,
+			Type:       svc.Type,
+			Version:    svc.Version,
+			Model:      svc.Model,
+			APIVersion: svc.APIVersion,
+			Settings:   svc.Settings,
 		},
 	}
 	if comp.ObjectMeta.Labels == nil {
@@ -217,10 +220,7 @@ func NewPatternFileFromCytoscapeJSJSON(name string, byt []byte) (Pattern, error)
 	countDuplicates := make(map[string]int)
 	//store the names of services and their count
 	err := processCytoElementsWithPattern(cy.Elements, &pf, func(svc Service, ele cytoscapejs.Element) error {
-		name, ok := svc.Settings["name"].(string)
-		if !ok {
-			return fmt.Errorf("missing name in service settings")
-		}
+		name := svc.Name
 		countDuplicates[name]++
 		return nil
 	})
@@ -242,11 +242,7 @@ func NewPatternFileFromCytoscapeJSJSON(name string, byt []byte) (Pattern, error)
 				dependsOnMap[elementID] = append(dependsOnMap[elementID], parentID)
 			}
 		}
-		svc.Name, ok = svc.Settings["name"].(string)
-		svc.Namespace, _ = svc.Settings["namespace"].(string)
-		if !ok {
-			return fmt.Errorf("required service setting: \"name\" missing")
-		}
+
 		//Only make the name unique when duplicates are encountered. This allows clients to preserve and propagate the unique name they want to give to their workload
 		if countDuplicates[svc.Name] > 1 {
 			//set appropriate unique service name
@@ -388,7 +384,6 @@ func NewPatternFileFromK8sManifest(data string, ignoreErrors bool) (Pattern, err
 }
 
 func createPatternServiceFromK8s(manifest map[string]interface{}) (string, Service, error) {
-
 	apiVersion, _ := manifest["apiVersion"].(string)
 	kind, _ := manifest["kind"].(string)
 	metadata, _ := manifest["metadata"].(map[string]interface{})

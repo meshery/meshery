@@ -1,0 +1,25 @@
+name: Discussion data files update
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Fetch data for mesheryctl tag
+        run: curl https://discuss.layer5.io/tag/mesheryctl.json -o docs/_data/discuss/mesheryctl.json
+      - name: Fetch data for meshery tag
+        run: curl https://discuss.layer5.io/tag/meshery.json -o docs/_data/discuss/meshery.json
+      - name: Commit changes 
+        uses: stefanzweifel/git-auto-commit-action@v4 
+        with: 
+          file_pattern: docs/_data/discuss/*.json
+          commit_user_name: Discussions bot
+          commit_user_email: discussions@meshery.io
+          commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
+          commit_options: "--signoff"
+          commit_message: "latest discussion data files added"

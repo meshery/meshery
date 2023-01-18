@@ -2,7 +2,6 @@ package k8s
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
 	meshkube "github.com/layer5io/meshkit/utils/kubernetes"
@@ -20,7 +19,6 @@ func Deploy(kubeClient *meshkube.Client, oamComp v1alpha1.Component, oamConfig v
 	if err != nil {
 		return err
 	}
-
 	return kubeClient.ApplyManifest(manifest, meshkube.ApplyOptions{
 		Namespace: oamComp.Namespace,
 		Update:    true,
@@ -29,8 +27,8 @@ func Deploy(kubeClient *meshkube.Client, oamComp v1alpha1.Component, oamConfig v
 }
 
 func createK8sResourceStructure(comp v1alpha1.Component) map[string]interface{} {
-	apiVersion := getAPIVersionFromComponent(comp)
-	kind := getKindFromComponent(comp)
+	apiVersion := v1alpha1.GetAPIVersionFromComponent(comp)
+	kind := v1alpha1.GetKindFromComponent(comp)
 
 	component := map[string]interface{}{
 		"apiVersion": apiVersion,
@@ -50,16 +48,6 @@ func createK8sResourceStructure(comp v1alpha1.Component) map[string]interface{} 
 		component[k] = v
 	}
 	return component
-}
-
-func getAPIVersionFromComponent(comp v1alpha1.Component) string {
-	return comp.Annotations["pattern.meshery.io.k8s.k8sAPIVersion"]
-}
-
-func getKindFromComponent(comp v1alpha1.Component) string {
-	kind := strings.TrimPrefix(comp.Annotations["pattern.meshery.io.k8s.k8sKind"], "/")
-
-	return kind
 }
 
 type prettifier bool

@@ -8,7 +8,7 @@ Please do! Thanks for your help in improving the project! :balloon:
 
 ---
 
-All contributors are welcome. Not sure where to start? Please see the [newcomers welcome guide](https://docs.google.com/document/d/17OPtDE_rdnPQxmk2Kauhm3GwXF1R5dZ3Cj8qZLKdo5E/edit) for how, where, and why to contribute. This project is community-built and welcomes collaboration. Contributors are expected to adhere to our [Code of Conduct](CODE_OF_CONDUCT.md).
+All contributors are welcome. Not sure where to start? Please see the [newcomers welcome guide](https://layer5.io/community/handbook/repository-overview) for how, where, and why to contribute. This project is community-built and welcomes collaboration. Contributors are expected to adhere to our [Code of Conduct](CODE_OF_CONDUCT.md).
 
 All set to contribute? Grab an open issue with the [help-wanted label](../../labels/help%20wanted) and jump in. Join our [Slack channel](http://slack.layer5.io) and engage in conversation. Create a [new issue](/../../issues/new/choose) if needed. All [pull requests](/../../pulls) should ideally reference an open [issue](/../../issues). Include keywords in your pull request descriptions, as well as commit messages, to [automatically close related issues in GitHub](https://help.github.com/en/github/managing-your-work-on-github/closing-issues-using-keywords).
 
@@ -201,7 +201,7 @@ Meshery is written in `Go` (Golang) and leverages Go Modules. UI is built on Rea
 To install/update the UI dependencies:
 
 ```
-make setup-ui-libs
+make ui-setup
 ```
 
 ### Build and export UI
@@ -220,7 +220,7 @@ Any time changes are made to the UI code, the above code will have to run to reb
 If you want to work on the UI, it will be a good idea to use the included UI development server. You can run the UI development server by running the following command:
 
 ```
-make run-ui-dev
+make ui
 ```
 
 Once you have the server configured, and running successfully on the default port `http://localhost:9081`, you may proceed to access the Meshery UI at `http://localhost:3000`.

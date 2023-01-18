@@ -64,7 +64,7 @@ func RegisterMeshmodelComponentsForCRDS(reg meshmodel.RegistryManager, k8sYaml [
 				APIVersion: def.Spec.Metadata["k8sKind"],
 				Kind:       def.Spec.Metadata["k8sAPIVersion"],
 			},
-			Model: v1alpha1.Models{
+			Model: v1alpha1.Model{
 				Name:    "kubernetes",
 				Version: version,
 			},
@@ -131,7 +131,7 @@ func GetK8sMeshModelComponents(ctx context.Context, kubeconfig []byte) ([]v1alph
 			},
 			Metadata:    m,
 			DisplayName: manifests.FormatToReadableString(metadata[name].K8sKind),
-			Model: v1alpha1.Models{
+			Model: v1alpha1.Model{
 				Version: k8version.String(),
 				Name:    "kubernetes",
 			},
@@ -149,13 +149,12 @@ func getResolvedManifest(manifest string) (string, error) {
 	parsedManifest := cuectx.BuildExpr(cueParsedManExpr)
 	definitions := parsedManifest.LookupPath(cue.ParsePath("definitions"))
 	if err != nil {
-		fmt.Printf("%v", err)
-		return "", nil
+		return "", err
 	}
 	resol := manifests.ResolveOpenApiRefs{}
 	resolved, err := resol.ResolveReferences([]byte(manifest), definitions)
 	if err != nil {
-		panic(err)
+		return "", err
 	}
 	manifest = string(resolved)
 	return manifest, nil

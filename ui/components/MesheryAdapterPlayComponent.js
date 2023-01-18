@@ -29,6 +29,7 @@ import MesheryMetrics from "./MesheryMetrics";
 import MesheryResultDialog from "./MesheryResultDialog";
 import ReactSelectWrapper from "./ReactSelectWrapper";
 import ConfirmationMsg from "./ConfirmationModal";
+import { iconMedium } from "../css/icons.styles";
 
 const styles = (theme) => ({
   smWrapper : { backgroundColor : "#eaeff1", },
@@ -480,7 +481,7 @@ class MesheryAdapterPlayComponent extends React.Component {
             autoHideDuration : 2000,
             action : (key) => (
               <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
-                <CloseIcon />
+                <CloseIcon style={iconMedium} />
               </IconButton>
             ),
           });
@@ -506,7 +507,7 @@ class MesheryAdapterPlayComponent extends React.Component {
             autoHideDuration : 2000,
             action : (key) => (
               <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
-                <CloseIcon />
+                <CloseIcon style={iconMedium} />
               </IconButton>
             ),
           });
@@ -574,7 +575,7 @@ class MesheryAdapterPlayComponent extends React.Component {
         variant : "error",
         action : (key) => (
           <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
-            <CloseIcon />
+            <CloseIcon style={iconMedium} />
           </IconButton>
         ),
         autoHideDuration : 8000,
@@ -982,8 +983,8 @@ class MesheryAdapterPlayComponent extends React.Component {
         <DialogActions>
           <IconButton aria-label="Apply" color="primary" onClick={this.handleSubmit(cat, "custom", isDelete)}>
             {/* <FontAwesomeIcon icon={faArrowRight} transform="shrink-4" fixedWidth /> */}
-            {!isDelete && <PlayIcon />}
-            {isDelete && <DeleteIcon />}
+            {!isDelete && <PlayIcon  style={iconMedium}  />}
+            {isDelete && <DeleteIcon  style={iconMedium}  />}
           </IconButton>
         </DialogActions>
       </Dialog>
@@ -1063,8 +1064,8 @@ class MesheryAdapterPlayComponent extends React.Component {
             onClick={this.addDelHandleClick(cat, false)}
           >
             {cat !== 4
-              ? <AddIcon />
-              : <PlayIcon />}
+              ? <AddIcon style={iconMedium} />
+              : <PlayIcon style={iconMedium}  />}
           </IconButton>
           {cat !== 4 && this.generateMenu(cat, false, selectedAdapterOps)}
           {cat === 4 && this.generateYAMLEditor(cat, false)}
@@ -1076,7 +1077,7 @@ class MesheryAdapterPlayComponent extends React.Component {
                 className={classes.deleteRight}
                 onClick={this.addDelHandleClick(cat, true)}
               >
-                <DeleteIcon />
+                <DeleteIcon  style={iconMedium}  />
               </IconButton>
               {cat !== 4 && this.generateMenu(cat, true, selectedAdapterOps)}
               {cat === 4 && this.generateYAMLEditor(cat, true)}
