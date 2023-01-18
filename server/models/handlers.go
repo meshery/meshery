@@ -5,6 +5,7 @@ import (
 
 	"time"
 
+	"github.com/layer5io/meshery/server/models/meshmodel"
 	"github.com/layer5io/meshkit/utils/events"
 	"github.com/vmihailenco/taskq/v3"
 )
@@ -191,6 +192,8 @@ type HandlerConfig struct {
 	ConfigurationChannel *ConfigurationChannel
 
 	DashboardK8sResourcesChan *DashboardK8sResourcesChan
+  MeshModelSummaryChannel   *meshmodel.MeshModelSummaryChannel
+
 	K8scontextChannel         *K8scontextChan
 	EventsBuffer              *events.EventStreamer
 }
