@@ -51,8 +51,8 @@ export default function ProviderComponent () {
   const [open, setOpen] = useState(false)
   const [modalOpen, setModalOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const anchorRef = React.useRef(null)
+  const [anchorEl] = React.useState(null)
+  // const anchorRef = React.useRef(null)
 
   useEffect(() => {
     loadProvidersFromServer()
@@ -199,7 +199,7 @@ export default function ProviderComponent () {
                   'aria-labelledby': 'basic-button'
                 }}
               >
-                <Paper sx={{ justify: "center" }}>
+                <Paper sx={{ justify: 'center' }}>
                   <ClickAwayListener onClickAway={handleClickAway}>
                     <MenuList id="split-button-menu">
                       {Object.keys(availableProviders).map((key) => (
