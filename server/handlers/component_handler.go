@@ -283,6 +283,7 @@ func (h *Handler) RegisterMeshmodelComponents(rw http.ResponseWriter, r *http.Re
 		http.Error(rw, err.Error(), http.StatusBadRequest)
 		return
 	}
+	go h.config.MeshModelSummaryChannel.Publish()
 }
 
 // swagger:response ModelResponse

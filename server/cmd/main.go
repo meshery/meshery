@@ -248,8 +248,8 @@ func main() {
 					_ = regManager.RegisterEntity(meshmodel.Host{
 						Hostname: ArtifactHubComponentsHandler,
 					}, comp)
-					go hc.MeshModelSummaryChannel.Publish()
 				case <-done:
+					go hc.MeshModelSummaryChannel.Publish()
 					return
 				}
 			}
@@ -291,6 +291,7 @@ func main() {
 			fmt.Println("Error registering relationships: ", err.Error())
 			return
 		}
+		go hc.MeshModelSummaryChannel.Publish()
 	}()
 
 	lProv.SeedContent(log)
