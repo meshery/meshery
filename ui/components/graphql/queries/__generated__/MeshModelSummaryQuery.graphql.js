@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<97cb8728db91c2cde8eeb0e8c9eaf6d3>>
+ * @generated SignedSource<<162cc142fdd38d257fa9bf34317e7677>>
  * @flow
  * @lightSyntaxTransform
  * @nogrep
@@ -23,10 +23,6 @@ export type MeshModelSummaryQuery$data = {|
       +name: string,
       +count: number,
     |}>,
-    +relationships: ?$ReadOnlyArray<{|
-      +kind: string,
-      +count: number,
-    |}>,
   |},
 |};
 export type MeshModelSummaryQuery = {|
@@ -43,14 +39,7 @@ var v0 = [
     "name": "selector"
   }
 ],
-v1 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "count",
-  "storageKey": null
-},
-v2 = [
+v1 = [
   {
     "alias": "meshmodelSummary",
     "args": [
@@ -80,26 +69,13 @@ v2 = [
             "name": "name",
             "storageKey": null
           },
-          (v1/*: any*/)
-        ],
-        "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": null,
-        "concreteType": "MeshModelRelationship",
-        "kind": "LinkedField",
-        "name": "relationships",
-        "plural": true,
-        "selections": [
           {
             "alias": null,
             "args": null,
             "kind": "ScalarField",
-            "name": "kind",
+            "name": "count",
             "storageKey": null
-          },
-          (v1/*: any*/)
+          }
         ],
         "storageKey": null
       }
@@ -113,7 +89,7 @@ return {
     "kind": "Fragment",
     "metadata": null,
     "name": "MeshModelSummaryQuery",
-    "selections": (v2/*: any*/),
+    "selections": (v1/*: any*/),
     "type": "Query",
     "abstractKey": null
   },
@@ -122,20 +98,20 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "MeshModelSummaryQuery",
-    "selections": (v2/*: any*/)
+    "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "763e9b1c1381f34d10ec4d6acb511612",
+    "cacheID": "3591b13ea3bc9d4aa8b7adaa55ef3981",
     "id": null,
     "metadata": {},
     "name": "MeshModelSummaryQuery",
     "operationKind": "query",
-    "text": "query MeshModelSummaryQuery(\n  $selector: MeshModelSummarySelector!\n) {\n  meshmodelSummary: getMeshModelSummary(selector: $selector) {\n    components {\n      name\n      count\n    }\n    relationships {\n      kind\n      count\n    }\n  }\n}\n"
+    "text": "query MeshModelSummaryQuery(\n  $selector: MeshModelSummarySelector!\n) {\n  meshmodelSummary: getMeshModelSummary(selector: $selector) {\n    components {\n      name\n      count\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node/*: any*/).hash = "58e0fe0f73c993bc3b8d94581034494e";
+(node/*: any*/).hash = "12fdc86cb35a88e25632cd3b3d830a77";
 
 module.exports = ((node/*: any*/)/*: Query<
   MeshModelSummaryQuery$variables,

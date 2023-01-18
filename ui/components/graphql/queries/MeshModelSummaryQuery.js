@@ -9,14 +9,10 @@ export default function fetchMeshModelSummary(selector) {
   const query = graphql`
     query MeshModelSummaryQuery($selector: MeshModelSummarySelector!) {
       meshmodelSummary: getMeshModelSummary(selector: $selector) {
-      components {
-        name,
-        count
-      },
-      relationships {
-        kind,
-        count
-      }
+        components {
+          name,
+          count
+        },
       }
     }
   `;

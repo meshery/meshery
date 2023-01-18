@@ -273,7 +273,7 @@ class DashboardComponent extends React.Component {
       // @ts-ignore
       const meshmodelSummaryQuery = fetchMeshModelSummary(selector).subscribe({
         next : (res) => {
-          console.log("res: ", res)
+          console.log("res(query): ", res)
           this.setState({ meshmodelSummary : res?.meshmodelSummary })
         },
         error : (err) => console.log(err),
@@ -290,7 +290,7 @@ class DashboardComponent extends React.Component {
     if (self._isMounted) {
       // @ts-ignore
       const meshmodelSummarySubscription = subscribeMeshModelSummary((res) => {
-        console.log("res: ", res)
+        console.log("res(subscription): ", res)
         this.setState({ meshmodelSummary : res?.meshmodelSummary })
       }, {
         selector : selector
@@ -671,6 +671,10 @@ class DashboardComponent extends React.Component {
       return `No resources detected in any of the cluster.`
     }
     return `No resources detected in the ${clusters.join(", ")} cluster(s).`
+  }
+
+  emptyStateMessageForMeshModelSummary = () => {
+    return "No MeshModel registered."
   }
 
   handleKubernetesClick = (id) => {
@@ -1210,7 +1214,7 @@ class DashboardComponent extends React.Component {
        //  }
      }
 
-     if (Array.isArray(meshmodelSummary) && meshmodelSummary?.length)
+     if (Array.isArray(meshmodelSummary?.components) && meshmodelSummary?.components?.length)
        return (
          <Paper elevation={1} style={{ padding : "2rem" }}>
            <MuiThemeProvider theme={this.getMuiTheme()}>
@@ -1223,7 +1227,7 @@ class DashboardComponent extends React.Component {
                    </div>
                  </>
                }
-               data={meshmodelSummary}
+               data={meshmodelSummary?.components}
                options={options}
                columns={columns}
              />
@@ -1529,9 +1533,7 @@ class DashboardComponent extends React.Component {
     );
     const showMeshModelSummary = (
       <>
-        {console.log("self.state.meshmodeSummary: ", self?.state?.meshmodelSummary)}
-        {/* {self?.state?.meshmodelSummary && Object.keys(self?.state?.meshmodelSummary) && self?.state?.clusterResources?.resources?.length > 0 */}
-        {self?.state?.meshmodelSummary && self?.state?.meshmodelSummary?.length > 0
+        {self?.state?.meshmodelSummary && self?.state?.meshmodelSummary?.components?.length > 0
           ? (
             self.MeshModelSummaryCard(self?.state?.meshmodelSummary)
           )
@@ -1546,7 +1548,7 @@ class DashboardComponent extends React.Component {
               }}
             >
               <Typography style={{ fontSize : "1.5rem", marginBottom : "2rem" }} align="center" color="textSecondary">
-                No meshmodel registered.....
+                {this.emptyStateMessageForMeshModelSummary()}
               </Typography>
             </div>
           )}

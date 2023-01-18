@@ -8,10 +8,6 @@ export const meshmodelSummarySubscription = graphql`
         name,
         count
       },
-      relationships {
-        kind,
-        count
-      }
     }
   }
 `;
