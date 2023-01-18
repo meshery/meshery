@@ -25,6 +25,7 @@
     "@emotion/styled": "^11.10.5",
     "@mui/icons-material": "^5.11.0",
     "@mui/material": "^5.11.5",
+    "babel-plugin-istanbul": "^6.1.1",
     "cross-env": "^7.0.3",
     "http-proxy": "^1.18.1",
     "isomorphic-unfetch": "^4.0.2",
@@ -34,9 +35,9 @@
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
+    "@babel/eslint-plugin": "^7.19.1",
     "@cypress/code-coverage": "^3.10.0",
     "@next/eslint-plugin-next": "^13.1.2",
-    "babel-plugin-istanbul": "^6.1.1",
     "cypress": "^12.3.0",
     "eslint": "^8.32.0",
     "eslint-config-next": "latest",

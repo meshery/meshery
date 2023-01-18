@@ -15,12 +15,22 @@ module.exports = {
   ],
   overrides: [
   ],
+  "globals": {
+    "Atomics": "readonly",
+    "SharedArrayBuffer": "readonly"
+  },
+  parser: '@babel/eslint-plugin',
   parserOptions: {
+    ecmaFeatures: {
+      jsx: true,
+    },
     ecmaVersion: 'latest',
+    requireConfigFIle: false,
     sourceType: 'module'
   },
   plugins: [
-    'react'
+    'react',
+    'cypress'
   ],
   rules: {
     "arrow-spacing": [
