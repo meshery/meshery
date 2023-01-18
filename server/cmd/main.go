@@ -232,7 +232,7 @@ func main() {
 		ConfigurationChannel: models.NewConfigurationHelper(),
 
 		DashboardK8sResourcesChan: models.NewDashboardK8sResourcesHelper(),
-		MeshModelSummaryChannel: mesherymeshmodel.NewMeshModelSummaryHelper(),
+		MeshModelSummaryChannel:   mesherymeshmodel.NewMeshModelSummaryHelper(),
 
 		K8scontextChannel: models.NewContextHelper(),
 	}

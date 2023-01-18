@@ -8,7 +8,7 @@ import (
 
 type MeshModelSummaryChannel struct {
 	channel []chan struct{}
-	mx 		  sync.Mutex
+	mx      sync.Mutex
 }
 
 func NewMeshModelSummaryHelper() *MeshModelSummaryChannel {

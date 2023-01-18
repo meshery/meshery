@@ -192,10 +192,10 @@ type HandlerConfig struct {
 	ConfigurationChannel *ConfigurationChannel
 
 	DashboardK8sResourcesChan *DashboardK8sResourcesChan
-  MeshModelSummaryChannel   *meshmodel.MeshModelSummaryChannel
+	MeshModelSummaryChannel   *meshmodel.MeshModelSummaryChannel
 
-	K8scontextChannel         *K8scontextChan
-	EventsBuffer              *events.EventStreamer
+	K8scontextChannel *K8scontextChan
+	EventsBuffer      *events.EventStreamer
 }
 
 // SubmitMetricsConfig is used to store config used for submitting metrics
