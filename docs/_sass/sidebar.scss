@@ -98,8 +98,9 @@
 
         & a {
           color: var(--color-secondary-medium) !important;
+          letter-spacing: 0.2px;
           &:hover {
-            color: var(--color-secondary-dark) !important;
+            color: var(--sidenav-hover) !important;
           }
         }
 
@@ -111,25 +112,15 @@
 
           & a:hover {
             text-decoration: none;
+            color: #008979;
           }
 
           &:hover {
             text-decoration: none;
+            color: #008979;
             &::after {
               width: 100%;
             }
-          }
-
-          &::after {
-            content: "";
-            width: 0px;
-            height: 1px;
-            bottom: -2px;
-            left: 50%;
-            transform: translateX(-50%);
-            position: absolute;
-            background: var(--background-primary);
-            transition: all 0.3s;
           }
         }
 
