@@ -64,6 +64,9 @@
     flex-direction: column;
 
     // gap: 10px;
+    .selected {
+      font-weight: 600;
+    }
     & ul {
       padding-inline-start: 0px;
       & li {
@@ -83,9 +86,6 @@
       display: flex;
       flex-direction: column;
       gap: 4px;
-      .selected {
-        font-weight: 600;
-      }
     }
   }
 }
