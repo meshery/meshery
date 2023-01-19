@@ -83,6 +83,9 @@
       display: flex;
       flex-direction: column;
       gap: 4px;
+      .selected {
+        font-weight: 600;
+      }
     }
   }
 }
