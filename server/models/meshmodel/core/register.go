@@ -122,7 +122,7 @@ func GetK8sMeshModelComponents(ctx context.Context, kubeconfig []byte) ([]v1alph
 	}
 	manifest := string(content)
 	crds, metadata := getCRDsFromManifest(manifest, arrAPIResources)
-	components := make([]v1alpha1.ComponentDefinition, 1)
+	components := make([]v1alpha1.ComponentDefinition, 0)
 	for name, crd := range crds {
 		m := make(map[string]interface{})
 		m[customResourceKey] = customResources[metadata[name].K8sKind]
