@@ -8,7 +8,9 @@
   position: sticky;
   transition: all 0.5s ease-in-out;
   font-size: 1.5rem;
-  // width: 22%;
+  width: 80%;
+  max-width: 400px;
+  min-width: 250px;
   top: var(--navbar-height);
   &::-webkit-scrollbar {
     width: 10px;

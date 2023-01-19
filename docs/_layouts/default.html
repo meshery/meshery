@@ -1,11 +1,9 @@
 <!DOCTYPE html>
 <html lang="en" class="no-js">
   <script src="https://cdn.jsdelivr.net/npm/clipboard@1/dist/clipboard.min.js"></script>
-  {% include head.html %}
-
+  {% include head.html %} {% include header.html %}
   <body class="td-section">
     <div class="flex-container">
-      {% include header.html %}
       <div class="sidebar-container">{% include sidebar.html %}</div>
       <main class="main-container" role="main">
         <nav aria-label="breadcrumb">
@@ -48,8 +46,7 @@
         </nav>
       </div>
     </div>
-    {% include footer.html %}
-    {% include scripts.html %} {% include google-analytics.html %}
+    {% include footer.html %} {% include scripts.html %} {% include google-analytics.html %}
   </body>
 </html>
 {% include toc.html %}

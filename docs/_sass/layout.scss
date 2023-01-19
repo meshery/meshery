@@ -44,12 +44,10 @@ ol {
 }
 
 .flex-container {
-  display: grid;
-  grid-template-columns: 2.2fr 6.3fr 1.5fr;
-  // border-bottom: 3px dashed var(--brand-color-primary);
+  display: flex;
 
   @media (max-width: 81.25em) {
-    grid-template-columns: 2.2fr 5.8fr 2fr;
+    // grid-template-columns: 2.2fr 5.8fr 2fr;
   }
   @media (max-width: 75em) {
     display: flex;
@@ -60,7 +58,7 @@ ol {
 
 .main-container {
   padding: 3.5rem min(4.5vh, 2.5vw);
-  grid-column: 2 / span 1;
+  overflow: hidden;
 
   @media (max-width: 75em) {
     flex: 0 0 75%;
