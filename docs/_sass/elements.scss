@@ -1,65 +1,67 @@
-a{
-
+a {
 }
 
-
-img{
-    width: 100%;
+img {
+  width: 100%;
 }
 
-p{
-    font-size: 1.5rem;
-    margin: .6rem 0 1.6rem 0;
+p {
+  font-size: 1.5rem;
+  margin: 0.6rem 0 1.6rem 0;
 
-    & > a{
-        color: var(--brand-color-secondary);
-    }
+  & > a {
+    color: var(--brand-color-secondary);
+  }
 }
 
-
-h1,h2,h3,h4,h5,h6{
-    margin: 1.6rem 0 1rem;
-    font-weight: 500;
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 1.6rem 0 1rem;
+  font-weight: 500;
 }
 
-h1{
-    font-size: 3.6rem;
-    font-weight: 700;
+h1 {
+  font-size: 3.6rem;
+  font-weight: 700;
 }
 
-h2{
-    font-size:3.2rem;
+h2 {
+  font-size: 3.2rem;
 }
 
-h3{
-    font-size:2.4rem;
+h3 {
+  font-size: 2.4rem;
 }
-h6{
-    font-size: 1.7rem;
+h6 {
+  font-size: 1.7rem;
 }
 
 // LIST (UL,OL) ////////////////////////////////////////////////////////////////////////////////////////////////////
-ul{
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    font-size: 1.4rem;
-    list-style: disc;
-    padding-inline-start: 2rem;
+ul {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 1.4rem;
+  list-style: disc;
+  padding-inline-start: 4rem;
 
-    @media (max-width: 37.5em) {
-          font-size: 1.8rem;
-       }
+  @media (max-width: 37.5em) {
+    font-size: 1.8rem;
+  }
 
-    & a{
-        color: var(--color-secondary-medium);
-        transition: all .3s;
-
-        &:hover{
-            color: var(--color-secondary-dark);
-        }
+  & li {
+    margin: 2px 0;
+  }
+  & a {
+    &:hover {
+      text-decoration: underline;
     }
+  }
 }
-.terminal{
+.terminal {
+}
 
-}
