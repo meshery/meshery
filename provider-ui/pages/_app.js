@@ -1,16 +1,16 @@
 import React from 'react';
 import App from 'next/app';
 import Head from 'next/head';
-import { MuiThemeProvider, createTheme, withStyles } from '@mui/styles';
+import { MuiThemeProvider, createTheme, withStyles } from '@material-ui/core/styles';
 // TODO: check if below CssBaseline import can be removed, its causing 'error  'CssBaseline' is defined but never used  no-unused-vars'
 // during cypress e2e test run (i.e. `npm run test`)
-// import CssBaseline from '@mui/material/CssBaseline';
+// import CssBaseline from '@material-ui/core/CssBaseline';
 import PropTypes from 'prop-types';
-import Paper from '@mui/material/Paper';
-import { NoSsr, Typography } from '@mui/material';
+import Paper from '@material-ui/core/Paper';
+import { NoSsr, Typography } from '@material-ui/core';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import { Global } from '@emotion/react';
-import { blueGrey } from '@mui/material/colors';
+import { blueGrey } from '@material-ui/core/colors';
 import getPageContext from '../components/PageContext';
 
 let theme = createTheme({
