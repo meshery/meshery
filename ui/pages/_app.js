@@ -43,6 +43,7 @@ import "./styles/AnimatedMeshery.css"
 import "./styles/AnimatedMeshPattern.css"
 import "./styles/AnimatedMeshSync.css"
 import PlaygroundMeshDeploy from './extension/AccessMesheryModal';
+import Router from "next/router";
 
 if (typeof window !== 'undefined') {
   require('codemirror/mode/yaml/yaml');
@@ -61,6 +62,11 @@ if (typeof window !== 'undefined') {
 
 async function fetchContexts(number = 10, search = "") {
   return await promisifiedDataFetch(`/api/system/kubernetes/contexts?pageSize=${number}&search=${encodeURIComponent(search)}`)
+}
+
+const playgroundExtensionRoute = "/extension/meshmap";
+function isMesheryUiRestrictedAndThePageIsNotPlayground(capabilitiesRegistry) {
+  return !window.location.pathname.startsWith(playgroundExtensionRoute) && capabilitiesRegistry?.restrictedAccess?.isMesheryUiRestricted
 }
 
 class MesheryApp extends App {
@@ -117,7 +123,13 @@ class MesheryApp extends App {
   }
 
   componentDidUpdate(prevProps) {
-    const { k8sConfig } = this.props;
+    const { k8sConfig, capabilitiesRegistry } = this.props;
+
+    // in case the meshery-ui is restricted, the user will be redirected to signup/extension page
+    if (isMesheryUiRestrictedAndThePageIsNotPlayground(capabilitiesRegistry)) {
+      Router.push(playgroundExtensionRoute);
+    }
+
     if (!_.isEqual(prevProps.k8sConfig, k8sConfig)) {
       const { operatorSubscription, meshSyncSubscription } = this.state;
       console.log("k8sconfig changed, re-initialising subscriptions");

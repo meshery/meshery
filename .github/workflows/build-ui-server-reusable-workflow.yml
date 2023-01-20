@@ -1,10 +1,10 @@
 name: Re-usable Workflow - Build UI and Server
 on:
-  workflow_call: 
-    secrets: 
+  workflow_call:
+    secrets:
       NODE_VERSION:
         required: true
-      GO_VERSION: 
+      GO_VERSION:
         required: true
 
 jobs:
@@ -46,7 +46,7 @@ jobs:
           fetch-depth: 1
       - uses: actions/setup-node@v3.0.0
         with:
-          node-version: ${{ secrets.NODE_VERSION }}
+          node-version: 18
       - name: Cache node modules
         id: node-cache
         uses: actions/cache@v3
@@ -81,6 +81,7 @@ jobs:
           path: ui/out/
       - name: upload Meshery-provider-ui artifacts
         uses: actions/upload-artifact@v3
-        with: 
+        with:
           name: meshery-provider-ui build
           path: provider-ui/out/
+
