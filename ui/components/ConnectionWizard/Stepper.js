@@ -1,14 +1,13 @@
 import React from "react";
 import clsx from "clsx";
 import {
-  makeStyles,
   withStyles,
   Stepper as Stepperr,
   Step,
   StepLabel,
   StepConnector,
 } from "@mui/material/";
-
+import { makeStyles } from '@mui/styles';
 import svgIcons from "./icons/icons.js";
 
 const ColorlibConnector = withStyles({

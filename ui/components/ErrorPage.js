@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import {
   NoSsr,
   Typography,
-  makeStyles,
   Link
 } from "@mui/material";
+import { makeStyles } from '@mui/styles';
 
 const styles = makeStyles(() => ({
   rootClass : {

@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { NoSsr } from '@mui/material';
-import makeStyles from '@material-ui/styles/makeStyles';
+import { makeStyles } from '@mui/styles';
 
 import bb, { gauge } from 'billboard.js'
 

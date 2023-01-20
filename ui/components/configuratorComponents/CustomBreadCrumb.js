@@ -1,4 +1,5 @@
-import { ClickAwayListener, makeStyles } from "@mui/material"
+import { ClickAwayListener } from "@mui/material"
+import { makeStyles } from '@mui/styles';
 import React, { useEffect, useState } from "react"
 
 const useStyles = makeStyles(() => ({

@@ -1,10 +1,10 @@
 /* eslint-disable no-unused-vars */
 import React from "react";
 import {
-  makeStyles, Container, Button, Fade, Grid
+  Container, Button, Fade, Grid
 } from "@mui/material";
 import { useRouter } from "next/router"
-
+import { makeStyles } from '@mui/styles';
 import Stepper from "./Stepper.js";
 import KubernetesScreen from "./Screens/KubernetesScreen";
 import MesheryOperatorScreen from "./Screens/MesheryOperatorScreen";

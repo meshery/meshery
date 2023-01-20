@@ -1,6 +1,6 @@
 import React from 'react';
 import Grid from '@mui/material/Grid';
-import { makeStyles } from '@material-ui/styles';
+import { makeStyles } from '@mui/styles';
 import { canExpand } from '@rjsf/utils';
 import AddIcon from '../../../../assets/icons/AddIcon';
 import { Box, IconButton, Typography } from '@mui/material';

@@ -1,5 +1,6 @@
 // @ts-check
-import { AppBar, Button, makeStyles, Tab, Tabs, Typography } from "@mui/material";
+import { AppBar, Button, Tab, Tabs, Typography } from "@mui/material";
+import { makeStyles } from '@mui/styles';
 import React, { useEffect } from "react";
 import { getMeshProperties } from "../../utils/nameMapper";
 import PatternServiceFormCore from "./PatternServiceFormCore";

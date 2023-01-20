@@ -1,6 +1,7 @@
 import React from 'react'
 import Link from 'next/link'
-import { makeStyles, Button, Typography, Container } from '@mui/material/'
+import { Button, Typography, Container } from '@mui/material'
+import { makeStyles } from '@mui/styles';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle'
 
 const useStyles = makeStyles(() => ({
