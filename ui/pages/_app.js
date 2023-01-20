@@ -64,6 +64,11 @@ async function fetchContexts(number = 10, search = "") {
   return await promisifiedDataFetch(`/api/system/kubernetes/contexts?pageSize=${number}&search=${encodeURIComponent(search)}`)
 }
 
+const playgroundExtensionRoute = "/extension/meshmap";
+function isMesheryUiRestrictedAndThePageIsNotPlayground(capabilitiesRegistry) {
+  return !window.location.pathname.startsWith(playgroundExtensionRoute) && capabilitiesRegistry?.restrictedAccess?.isMesheryUiRestricted
+}
+
 class MesheryApp extends App {
   constructor() {
     super();
@@ -121,8 +126,8 @@ class MesheryApp extends App {
     const { k8sConfig, capabilitiesRegistry } = this.props;
 
     // in case the meshery-ui is restricted, the user will be redirected to signup/extension page
-    if (capabilitiesRegistry?.restrictedAccess?.isMesheryUiRestricted) {
-      Router.push("/extension/meshmap")
+    if (isMesheryUiRestrictedAndThePageIsNotPlayground(capabilitiesRegistry)) {
+      Router.push(playgroundExtensionRoute);
     }
 
     if (!_.isEqual(prevProps.k8sConfig, k8sConfig)) {
