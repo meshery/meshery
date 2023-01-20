@@ -25,7 +25,7 @@ type MesheryPatternPage struct {
 
 // GetMesheryPatterns returns all of the 'private' patterns. Though private has no meaning here since there is only
 // one local user. We make this distinction to be consistent with the remote provider
-func (mpp *MesheryPatternPersister) GetMesheryPatterns(search, order string, page, pageSize uint64) ([]byte, error) {
+func (mpp *MesheryPatternPersister) GetMesheryPatterns(search, order string, page, pageSize uint64, updatedAfter string) ([]byte, error) {
 	order = sanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
 
 	if order == "" {
@@ -34,8 +34,7 @@ func (mpp *MesheryPatternPersister) GetMesheryPatterns(search, order string, pag
 
 	count := int64(0)
 	patterns := []*MesheryPattern{}
-
-	query := mpp.DB.Where("visibility = 'private'").Order(order)
+	query := mpp.DB.Where("visibility = 'private'").Where("updated_at > ?", updatedAfter).Order(order)
 
 	if search != "" {
 		like := "%" + strings.ToLower(search) + "%"
