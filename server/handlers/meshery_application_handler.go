@@ -531,6 +531,11 @@ func (h *Handler) handleApplicationUpdate(rw http.ResponseWriter,
 // Handle GET request for Meshery Application with the given id
 //
 // Fetches the list of all applications saved by the current user
+// ?updated_after=<timestamp> timestamp should be of the format `YYYY-MM-DD HH:MM:SS`
+// ?order={field} orders on the passed field
+// ?search=<application name> A string matching is done on the specified application name
+// ?page={page-number} Default page number is 1
+// ?pagesize={pagesize} Default pagesize is 10
 // responses:
 //  200: mesheryApplicationResponseWrapper
 
