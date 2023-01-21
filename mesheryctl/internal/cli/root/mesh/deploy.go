@@ -1,8 +1,7 @@
 package mesh
 
 import (
-	"errors"
-	"io"
+	"fmt"
 	"net/http"
 	"strings"
 	"time"
@@ -13,22 +12,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// checkArgs checks whether the user has supplied an adapter(-a) argument
-func checkArgs(n int) cobra.PositionalArgs {
-	return func(cmd *cobra.Command, args []string) error {
-		if len(args) < n || args[0] == "" {
-			return errors.New(utils.MeshError("'--adapter' (Adapter to use for installation) argument is required in the 'mesheryctl mesh deploy' command.\n"))
-		}
-		return nil
-	}
-}
-
 var (
-	meshName  string
 	deployCmd = &cobra.Command{
 		Use:   "deploy",
 		Short: "Deploy a service mesh to the Kubernetes cluster",
-		Args:  checkArgs(1),
 		Long:  `Deploy a service mesh to the connected Kubernetes cluster`,
 		Example: `
 // Deploy a service mesh from an interactive on the default namespace
@@ -39,23 +26,27 @@ mesheryctl mesh deploy linkerd --namespace linkerd-ns
 
 // Deploy Linkerd and wait for it to be deployed:
 mesheryctl mesh deploy linkerd --watch`,
-	RunE: func(cmd *cobra.Command, args []string) error {
-		log.Infof(fmt.Sprintf("Deploying %s...", meshName))
-		_, err = sendOperationRequest(mctlCfg, strings.ToLower(meshName), false)
-		if err != nil {
-			log.Fatalln(err)
-		}
-
-		if watch {
-			_, err = waitForDeployResponse(mctlCfg, "mesh is now installed")
+		RunE: func(cmd *cobra.Command, args []string) error {
+			s := utils.CreateDefaultSpinner(fmt.Sprintf("Deploying %s", meshName), fmt.Sprintf("\n%s service mesh installed successfully", meshName))
+			s.Start()
+			_, err = sendOperationRequest(mctlCfg, strings.ToLower(meshName), false)
 			if err != nil {
 				log.Fatalln(err)
 			}
-		}
+			s.Stop()
 
-		return nil
-	},
-}
+			if watch {
+				log.Infof(fmt.Sprintf("Deploying %s...", meshName))
+				_, err = waitForDeployResponse(mctlCfg, "mesh is now installed")
+				if err != nil {
+					log.Fatalln(err)
+				}
+			}
+
+			return nil
+		},
+	}
+)
 
 func init() {
 	deployCmd.Flags().StringVarP(

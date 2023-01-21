@@ -4,9 +4,11 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 var (
@@ -51,16 +53,17 @@ mesheryctl mesh remove [mesh adapter name]
 				return errors.Wrap(err, "error processing config")
 			}
 
-		s.Start()
-		_, err = sendOperationRequest(mctlCfg, strings.ToLower(meshName), true)
-		if err != nil {
-			return errors.Wrap(err, "error installing service mesh")
-		}
-		s.Stop()
+			s.Start()
+			_, err = sendOperationRequest(mctlCfg, strings.ToLower(meshName), true)
+			if err != nil {
+				return errors.Wrap(err, "error installing service mesh")
+			}
+			s.Stop()
 
-		return nil
-	},
-}
+			return nil
+		},
+	}
+)
 
 func init() {
 	removeCmd.Flags().StringVarP(

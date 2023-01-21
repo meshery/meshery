@@ -2,7 +2,6 @@ package mesh
 
 import (
 	"fmt"
-	"io"
 	"net/http"
 	"strings"
 	"time"
@@ -12,6 +11,7 @@ import (
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 // Operation is the common body type to be passed for Mesh Ops
@@ -24,9 +24,6 @@ type Operation struct {
 }
 
 var spec string
-var adapterURL string
-var namespace string
-var watch bool
 
 // validateCmd represents the service mesh validation command
 var validateCmd = &cobra.Command{
@@ -75,38 +72,37 @@ mesheryctl mesh validate --adapter [name of the adapter] --tokenPath [path to to
 
 		log.Infof("Starting service mesh validation...")
 
-			// Choose which specification to use for conformance test
-			var query string
-			switch spec {
-			case "smi":
-				query = "smi_conformance"
-			case "istio-vet":
-				if adapterURL == "meshery-istio:10000" {
-					query = "istio-vet"
-					break
-				}
-				return errors.New("only Istio supports istio-vet operation")
-			default:
-				return errors.New("specification not found or not yet supported")
+		// Choose which specification to use for conformance test
+		var query string
+		switch spec {
+		case "smi":
+			query = "smi_conformance"
+		case "istio-vet":
+			if adapterURL == "meshery-istio:10000" {
+				query = "istio-vet"
+				break
 			}
+			return errors.New("only Istio supports istio-vet operation")
+		default:
+			return errors.New("specification not found or not yet supported")
+		}
 
-			_, err = sendOperationRequest(mctlCfg, query, false)
+		_, err = sendOperationRequest(mctlCfg, query, false)
+		if err != nil {
+			log.Fatalln(err)
+		}
+
+		if watch {
+			log.Infof("Verifying Operation")
+			_, err = waitForValidateResponse(mctlCfg, "SMI conformance test")
 			if err != nil {
 				log.Fatalln(err)
 			}
+		}
 
-			if watch {
-				log.Infof("Verifying Operation")
-				_, err = waitForValidateResponse(mctlCfg, "SMI conformance test")
-				if err != nil {
-					log.Fatalln(err)
-				}
-			}
-
-			return nil
-		},
-	}
-)
+		return nil
+	},
+}
 
 func init() {
 	validateCmd.Flags().StringVarP(

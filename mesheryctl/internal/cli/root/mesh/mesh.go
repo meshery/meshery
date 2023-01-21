@@ -26,7 +26,7 @@ var (
 	adapterURL string
 	err        error
 	mctlCfg    *config.MesheryCtlConfig
-	meshName   = ""
+	meshName   string
 	namespace  string
 	watch      bool
 	MeshCmd    = &cobra.Command{
