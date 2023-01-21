@@ -223,7 +223,7 @@ export default function ProviderComponent () {
                              <MenuItem key={key} onClick={(e) => handleMenuItemClick(e, key)}>
                               {key}
                             </MenuItem>
-                          ))}
+                        ))}
                           <Divider
                             sx={{
                               backgroundColor: '#c1c8d2',
