@@ -344,7 +344,7 @@ type Provider interface {
 	GetKubeClient() *mesherykube.Client
 
 	SaveMesheryPattern(tokenString string, pattern *MesheryPattern) ([]byte, error)
-	GetMesheryPatterns(tokenString, page, pageSize, search, order string) ([]byte, error)
+	GetMesheryPatterns(tokenString, page, pageSize, search, order string, updatedAfter string) ([]byte, error)
 	GetCatalogMesheryPatterns(tokenString string, search, order string) ([]byte, error)
 	PublishCatalogPattern(req *http.Request, publishPatternRequest *MesheryCatalogPatternRequestBody) ([]byte, error)
 	DeleteMesheryPattern(req *http.Request, patternID string) ([]byte, error)
@@ -370,7 +370,7 @@ type Provider interface {
 	SaveMesheryApplication(tokenString string, application *MesheryApplication) ([]byte, error)
 	SaveApplicationSourceContent(token string, applicationID string, sourceContent []byte) error
 	GetApplicationSourceContent(req *http.Request, applicationID string) ([]byte, error)
-	GetMesheryApplications(tokenString, page, pageSize, search, order string) ([]byte, error)
+	GetMesheryApplications(tokenString, page, pageSize, search, order string, updatedAfter string) ([]byte, error)
 	DeleteMesheryApplication(req *http.Request, applicationID string) ([]byte, error)
 	GetMesheryApplication(req *http.Request, applicationID string) ([]byte, error)
 

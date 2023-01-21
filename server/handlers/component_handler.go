@@ -285,7 +285,6 @@ func (h *Handler) RegisterMeshmodelComponents(rw http.ResponseWriter, r *http.Re
 		http.Error(rw, err.Error(), http.StatusBadRequest)
 		return
 	}
-
 }
 
 // swagger:response ModelResponse

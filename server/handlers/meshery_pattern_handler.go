@@ -298,6 +298,11 @@ func (h *Handler) handlePatternPOST(
 //
 // Returns the list of all the patterns saved by the current user
 // This will return all the patterns with their details
+// ?updated_after=<timestamp> timestamp should be of the format `YYYY-MM-DD HH:MM:SS`
+// ?order={field} orders on the passed field
+// ?search=<design name> A string matching is done on the specified design name
+// ?page={page-number} Default page number is 1
+// ?pagesize={pagesize} Default pagesize is 10
 // responses:
 // 	200: mesheryPatternsResponseWrapper
 
@@ -311,8 +316,8 @@ func (h *Handler) GetMesheryPatternsHandler(
 ) {
 	q := r.URL.Query()
 	tokenString := r.Context().Value(models.TokenCtxKey).(string)
-
-	resp, err := provider.GetMesheryPatterns(tokenString, q.Get("page"), q.Get("page_size"), q.Get("search"), q.Get("order"))
+	updateAfter := q.Get("updated_after")
+	resp, err := provider.GetMesheryPatterns(tokenString, q.Get("page"), q.Get("page_size"), q.Get("search"), q.Get("order"), updateAfter)
 	if err != nil {
 		h.log.Error(ErrFetchPattern(err))
 		http.Error(rw, ErrFetchPattern(err).Error(), http.StatusInternalServerError)
