@@ -64,7 +64,7 @@ const theme = createTheme({
     MuiList: {
       styleOverrides: {
         root: {
-          width: "fit-content"
+          width: 'fit-content'
         }
       }
     }

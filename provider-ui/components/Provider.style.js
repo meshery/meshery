@@ -23,12 +23,12 @@ export const MenuProviderDisabled = styled(MenuItem)(() => ({
 
 export const CustomDialogTitle = styled(DialogTitle)(({ theme }) => ({
   margin: 0,
-  padding: theme.spacing(2),
+  padding: theme.spacing(2)
 }))
 
 export const CustomIconButton = styled(IconButton)(({ theme }) => ({
-  position: "absolute",
+  position: 'absolute',
   right: theme.spacing(1),
   top: theme.spacing(1),
-  color: theme.palette.grey[500],
+  color: theme.palette.grey[500]
 }))
