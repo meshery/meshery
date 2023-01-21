@@ -254,12 +254,13 @@ type OperatorStatusPerK8sContext struct {
 }
 
 type PageFilter struct {
-	Page     string  `json:"page"`
-	PageSize string  `json:"pageSize"`
-	Order    *string `json:"order"`
-	Search   *string `json:"search"`
-	From     *string `json:"from"`
-	To       *string `json:"to"`
+	Page         string  `json:"page"`
+	PageSize     string  `json:"pageSize"`
+	Order        *string `json:"order"`
+	Search       *string `json:"search"`
+	From         *string `json:"from"`
+	To           *string `json:"to"`
+	UpdatedAfter *string `json:"updated_after"`
 }
 
 type PatternPageResult struct {

@@ -1066,6 +1066,7 @@ Input for changing Addon Status.
 | <a id="pagefilterpagesize"></a>`pageSize` | [`String!`](#string) |  |
 | <a id="pagefiltersearch"></a>`search` | [`String`](#string) |  |
 | <a id="pagefilterto"></a>`to` | [`String`](#string) |  |
+| <a id="pagefilterupdated_after"></a>`updated_after` | [`String`](#string) |  |
 
 ### `ReSyncActions`
 
