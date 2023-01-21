@@ -25,6 +25,7 @@
     "@emotion/react": "latest",
     "@emotion/server": "^11.10.0",
     "@emotion/styled": "^11.10.5",
+    "@mui/base": "^5.0.0-alpha.114",
     "@mui/icons-material": "^5.11.0",
     "@mui/material": "^5.11.5",
     "babel-plugin-istanbul": "^6.1.1",

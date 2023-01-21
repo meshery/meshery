@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import dataFetch from '../lib/data-fetch'
 import ProviderLayout from './ProviderLayout'
-import { Div, MesheryLogo, MenuProviderDisabled } from './Provider.style'
+import { styled } from '@mui/material'
+import { Div, MesheryLogo, CustomDialogTitle, MenuProviderDisabled, CustomIconButton } from './Provider.style'
 import Typography from '@mui/material/Typography'
 import Tooltip from '@mui/material/Tooltip'
 import Dialog from '@mui/material/Dialog'
-import MuiDialogTitle from '@mui/material/DialogTitle'
+// import MuiDialogTitle from '@mui/material/DialogTitle'
 import DialogContent from '@mui/material/DialogContent'
 import DialogActions from '@mui/material/DialogActions'
 import Button from '@mui/material/Button'
@@ -16,7 +17,8 @@ import IconButton from '@mui/material/IconButton'
 import MenuList from '@mui/material/MenuList'
 import MenuItem from '@mui/material/MenuItem'
 import Paper from '@mui/material/Paper'
-import Popper from '@mui/material/Popper'
+// import Popper from '@mui/material/Popper'
+import PopperUnstyled from '@mui/base/PopperUnstyled';
 import Grow from '@mui/material/Grow'
 import CircularProgress from '@mui/material/CircularProgress'
 import ClickAwayListener from '@mui/material/ClickAwayListener'
@@ -33,18 +35,22 @@ export async function getServerSideProps () {
 
 function DialogTitle ({ children, onClose, ...other }) {
   return (
-    <MuiDialogTitle disableTypography {...other}>
+    <CustomDialogTitle disableTypography {...other}>
       <Typography variant="h6">{children}</Typography>
       {onClose
         ? (
-          <IconButton aria-label="close" onClick={onClose}>
+          <CustomIconButton aria-label="close" onClick={onClose}>
             <CloseIcon />
-          </IconButton>
+          </CustomIconButton>
           )
         : null}
-    </MuiDialogTitle>
+    </CustomDialogTitle>
   )
 }
+
+const Popper = styled(PopperUnstyled)`
+  z-index: 1;
+`;
 
 export default function ProviderComponent () {
   const [availableProviders, setAvailableProviders] = useState({})
@@ -174,7 +180,12 @@ export default function ProviderComponent () {
           </Typography>
         </DialogContent>
         <DialogActions>
-          <Button autoFocus onClick={handleModalClose} color="primary" data-cy="providers-modal-button-ok" variant="contained">
+          <Button 
+            onClick={handleModalClose}
+            color="primary"
+            data-cy="providers-modal-button-ok"
+            variant="contained"
+          >
             OK
           </Button>
         </DialogActions>
@@ -200,9 +211,6 @@ export default function ProviderComponent () {
                 </Button>
               </ButtonGroup>
               <Popper
-                sx={{
-                  zIndex: 1
-                }}
                 open={open}
                 anchorEl={anchorRef.current}
                 role={undefined}

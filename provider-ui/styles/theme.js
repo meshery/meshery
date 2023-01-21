@@ -49,7 +49,6 @@ const theme = createTheme({
     MuiPaper: {
       styleOverrides: {
         root: {
-          maxWidth: '90%',
           margin: 'auto',
           overflow: 'hidden'
         }
@@ -59,6 +58,13 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           fontSize: 20
+        }
+      }
+    },
+    MuiList: {
+      styleOverrides: {
+        root: {
+          width: "fit-content"
         }
       }
     }
