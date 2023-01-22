@@ -24,6 +24,16 @@
     margin-bottom: 1rem;
   }
 }
+.alert-warning {
+  border-style: solid;
+  border-color: #f7820a;
+  border-width: 0 0 0 4px;
+  & .alert-heading {
+    color: #f7820a;
+    margin: 0;
+    margin-bottom: 1rem;
+  }
+}
 
 .td-content .alert:not(:first-child) {
   margin-top: 3rem;
