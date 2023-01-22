@@ -1,23 +1,29 @@
-.content-table {
-  padding: 1rem 1.5rem;
+.content-table-wrapper {
+  padding: 0.5rem;
   background: var(--background-grey);
   box-shadow: var(--box-shadow-primary);
   z-index: 9;
-  max-height: calc(100vh - calc(var(--navbar-height) + 10rem));
   height: fit-content;
+  top: calc(var(--navbar-height) + 5rem);
   position: sticky;
+  margin: 0 0 0 auto;
+  margin-right: 5rem;
+  border-radius: 7px;
+  width: 90%;
+  max-width: 200px;
+}
+
+.content-table {
+  max-height: calc(100vh - (calc(var(--navbar-height) + 30rem)));
+  height: fit-content;
+  padding: 1rem 1.5rem;
   transition: all 0.5s ease-in-out;
   font-size: 1.5rem;
-  top: calc(var(--navbar-height) + 5rem);
   // bottom: 5rem;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
   font-size: 1.4rem;
-  border-radius: 7px;
-  width: 90%;
-  max-width: 200px;
-  margin: 0 0 0 auto;
   overflow-y: auto;
 
   @media (max-width: 75em) {
@@ -29,21 +35,18 @@
   }
 
   &::-webkit-scrollbar {
-    width: 10px;
+    width: 5px;
   }
 
   &::-webkit-scrollbar-track {
-    background-color: #f8f9fa;
-    width: 1.2rem;
-    // border-radius: 11px;
+    width: 0.5rem;
+    border-radius: 11px;
     overflow: hidden;
-    border-top-right-radius: 7px;
-    border-bottom-right-radius: 7px;
   }
   &::-webkit-scrollbar-thumb {
     background: #868e96;
-    border-top-right-radius: 7px;
-    border-bottom-right-radius: 7px;
+    width: 0.2rem;
+    border-radius: 11px;
   }
 
   & strong {

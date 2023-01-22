@@ -32,21 +32,24 @@
           {% endif %} {% include feedback.html %}
         </div>
       </main>
-      <div class="content-table">
-        <div class="content-table__editable">{% include editable.html %}</div>
-        <nav id="TableOfContents">
-          <strong>Contents</strong>
-          <ul>
-            <li>
-              <ul id="TOC">
-                <!-- Links will be appended here-->
-              </ul>
-            </li>
-          </ul>
-        </nav>
+      <div class="content-table-wrapper">
+        <div class="content-table">
+          <div class="content-table__editable">{% include editable.html %}</div>
+          <nav id="TableOfContents">
+            <strong>Contents</strong>
+            <ul>
+              <li>
+                <ul id="TOC">
+                  <!-- Links will be appended here-->
+                </ul>
+              </li>
+            </ul>
+          </nav>
+        </div>
       </div>
     </div>
     {% include footer.html %} {% include scripts.html %} {% include google-analytics.html %}
   </body>
 </html>
 {% include toc.html %}
+
