@@ -65,8 +65,11 @@ func RegisterMeshmodelComponentsForCRDS(reg meshmodel.RegistryManager, k8sYaml [
 				Kind:       def.Spec.Metadata["k8sAPIVersion"],
 			},
 			Model: v1alpha1.Model{
-				Name:    "kubernetes",
-				Version: version,
+				Name:        "kubernetes",
+				Version:     version,
+				DisplayName: "Kubernetes",
+				Category:    "Orchestration & Management",
+				SubCategory: "Scheduling & Orchestration",
 			},
 		})
 	}
@@ -108,7 +111,9 @@ func GetK8sMeshModelComponents(ctx context.Context, kubeconfig []byte) ([]v1alph
 	}
 
 	var arrAPIResources []string
-	for res := range apiResources {
+	kindToNamespace := make(map[string]bool)
+	for res, api := range apiResources {
+		kindToNamespace[api.Kind] = api.Namespaced
 		arrAPIResources = append(arrAPIResources, res)
 	}
 	groups, err := getGroupsFromResource(cli) //change this
@@ -117,10 +122,11 @@ func GetK8sMeshModelComponents(ctx context.Context, kubeconfig []byte) ([]v1alph
 	}
 	manifest := string(content)
 	crds, metadata := getCRDsFromManifest(manifest, arrAPIResources)
-	components := make([]v1alpha1.ComponentDefinition, 1)
+	components := make([]v1alpha1.ComponentDefinition, 0)
 	for name, crd := range crds {
 		m := make(map[string]interface{})
 		m[customResourceKey] = customResources[metadata[name].K8sKind]
+		m[namespacedKey] = kindToNamespace[metadata[name].K8sKind]
 		apiVersion := string(groups[kind(metadata[name].K8sKind)])
 		c := v1alpha1.ComponentDefinition{
 			Format: v1alpha1.JSON,
@@ -132,8 +138,11 @@ func GetK8sMeshModelComponents(ctx context.Context, kubeconfig []byte) ([]v1alph
 			Metadata:    m,
 			DisplayName: manifests.FormatToReadableString(metadata[name].K8sKind),
 			Model: v1alpha1.Model{
-				Version: k8version.String(),
-				Name:    "kubernetes",
+				Version:     k8version.String(),
+				Name:        "kubernetes",
+				DisplayName: "Kubernetes",
+				Category:    "Orchestration & Management",
+				SubCategory: "Scheduling & Orchestration",
 			},
 		}
 		components = append(components, c)
@@ -142,6 +151,7 @@ func GetK8sMeshModelComponents(ctx context.Context, kubeconfig []byte) ([]v1alph
 }
 
 const customResourceKey = "isCustomResource"
+const namespacedKey = "isNamespaced"
 
 func getResolvedManifest(manifest string) (string, error) {
 	cuectx := cuecontext.New()

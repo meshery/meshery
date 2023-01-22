@@ -102,6 +102,8 @@ func (t TemplateAttributes) CreateJSONItem() string {
 	return json
 }
 
+const XMLTAG = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><!DOCTYPE svg>"
+
 func WriteToFile(path string, content string) error {
 	file, err := os.Create(path)
 	if err != nil {
@@ -183,9 +185,9 @@ func UpdateSVGString(svgStr string, width, height int) (string, error) {
 	if err := e.Flush(); err != nil {
 		return "", err
 	}
-
+	svg := XMLTAG + b.String()
 	// Convert the buffer to a string and return it.
-	return b.String(), nil
+	return svg, nil
 }
 
 // func (t *templateAttributes) fillAttributes(path string) error {

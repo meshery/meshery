@@ -472,6 +472,7 @@ input PageFilter {
   search: String
   from: String
   to: String
+  updated_after: String
 }
 
 input CatalogSelector {

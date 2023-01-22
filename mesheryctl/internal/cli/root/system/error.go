@@ -47,7 +47,7 @@ func ErrStopMeshery(err error) error {
 }
 
 func ErrResetMeshconfig(err error) error {
-	return errors.New(ErrResetMeshconfigCode, errors.Alert, []string{"Error resetting meshconfig"}, []string{err.Error()}, []string{"Meshery server config file is not reset to default settings"}, []string{"Verify Meshery server config file is reset to default settings by executing `mesheryctl system context view`"})
+	return errors.New(ErrResetMeshconfigCode, errors.Alert, []string{"Error resetting meshconfig to default settings"}, []string{err.Error()}, []string{"Meshery server config file is not reset to default settings"}, []string{"Verify Meshery server config file is reset to default settings by executing `mesheryctl system context view`"})
 }
 
 func ErrApplyManifest(err error, deleteStatus, updateStatus bool) error {
@@ -67,7 +67,7 @@ func ErrUnmarshal(err error, obj string) error {
 }
 
 func ErrUnsupportedPlatform(platform string, config string) error {
-	return errors.New(ErrUnsupportedPlatformCode, errors.Alert, []string{}, []string{"the platform ", platform, " is not supported. Supported platforms are:\n\n- docker\n- kubernetes\n\nVerify this setting in your meshconfig at ", config, " or verify by executing `mesheryctl system context view`"}, []string{}, []string{})
+	return errors.New(ErrUnsupportedPlatformCode, errors.Alert, []string{}, []string{"The platform ", platform, " is not supported for the deployment of Meshery. Supported platforms are:\n\n- docker\n- kubernetes\n\nVerify this setting in your meshconfig at ", config, " or verify by executing `mesheryctl system context view`"}, []string{}, []string{})
 }
 
 func ErrRetrievingCurrentContext(err error) error {

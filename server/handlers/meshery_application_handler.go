@@ -531,6 +531,11 @@ func (h *Handler) handleApplicationUpdate(rw http.ResponseWriter,
 // Handle GET request for Meshery Application with the given id
 //
 // Fetches the list of all applications saved by the current user
+// ?updated_after=<timestamp> timestamp should be of the format `YYYY-MM-DD HH:MM:SS`
+// ?order={field} orders on the passed field
+// ?search=<application name> A string matching is done on the specified application name
+// ?page={page-number} Default page number is 1
+// ?pagesize={pagesize} Default pagesize is 10
 // responses:
 //  200: mesheryApplicationResponseWrapper
 
@@ -545,7 +550,7 @@ func (h *Handler) GetMesheryApplicationsHandler(
 	q := r.URL.Query()
 	tokenString := r.Context().Value(models.TokenCtxKey).(string)
 
-	resp, err := provider.GetMesheryApplications(tokenString, q.Get("page"), q.Get("page_size"), q.Get("search"), q.Get("order"))
+	resp, err := provider.GetMesheryApplications(tokenString, q.Get("page"), q.Get("page_size"), q.Get("search"), q.Get("order"), q.Get("updated_after"))
 	if err != nil {
 		obj := "fetch"
 		h.log.Error(ErrApplicationFailure(err, obj))
