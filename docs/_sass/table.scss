@@ -18,7 +18,7 @@ table {
 .td-content > table td {
   padding: 1rem;
   vertical-align: top;
-  border-top: 1px solid var(--color-grey-light);
+  //   border-top: 1px solid var(--color-grey-light);
 }
 
 .table thead th,
@@ -78,7 +78,7 @@ table {
 .td-box .row.section > table tbody tr:nth-of-type(odd),
 .td-content > table tbody tr:nth-of-type(odd) {
   //   background-color: rgba(0, 0, 0, 0.05);
-  background-color: var(--color-primary-medium) !important;
+  background-color: var(--color-primary-dark) !important;
 }
 
 .table-striped tbody tr:nth-of-type(even),
