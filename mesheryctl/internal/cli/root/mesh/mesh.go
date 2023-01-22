@@ -1,12 +1,14 @@
 package mesh
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
 	"net/url"
 	"regexp"
 	"strings"
+	"time"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
@@ -26,7 +28,6 @@ var (
 	adapterURL string
 	err        error
 	mctlCfg    *config.MesheryCtlConfig
-	meshName   string
 	namespace  string
 	watch      bool
 	MeshCmd    = &cobra.Command{
@@ -179,3 +180,226 @@ func sendOperationRequest(mctlCfg *config.MesheryCtlConfig, query string, delete
 	}
 	return string(body), nil
 }
+
+func sendValidateRequest(mctlCfg *config.MesheryCtlConfig, query string, delete bool) (string, error) {
+	path := mctlCfg.GetBaseMesheryURL() + "/api/system/adapter/operation"
+	method := "POST"
+	data := url.Values{}
+	data.Set("adapter", adapterURL)
+	data.Set("query", query)
+	data.Set("customBody", "")
+	data.Set("namespace", namespace)
+	if delete {
+		data.Set("deleteOp", "on")
+	} else {
+		data.Set("deleteOp", "")
+	}
+
+	// Choose which specification to use for conformance test
+	switch spec {
+	case "smi":
+		{
+			data.Set("query", "smi_conformance")
+			break
+		}
+	case "istio-vet":
+		{
+			if adapterURL == "meshery-istio:10000" {
+				data.Set("query", "istio-vet")
+				break
+			}
+			return "", errors.New("only Istio supports istio-vet operation")
+		}
+	default:
+		{
+			return "", errors.New("specified specification not found or not yet supported")
+		}
+	}
+
+	payload := strings.NewReader(data.Encode())
+
+	client := &http.Client{}
+	req, err := utils.NewRequest(method, path, payload)
+	if err != nil {
+		return "", ErrCreatingValidateRequest(err)
+	}
+	req.Header.Add("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8")
+
+	res, err := client.Do(req)
+	if err != nil {
+		return "", ErrCreatingDeployRequest(err)
+	}
+	defer res.Body.Close()
+
+	body, err := io.ReadAll(res.Body)
+	if err != nil {
+		return "", err
+	}
+	return string(body), nil
+}
+
+func sendDeployRequest(mctlCfg *config.MesheryCtlConfig, query string, delete bool) (string, error) {
+	path := mctlCfg.GetBaseMesheryURL() + "/api/system/adapter/operation"
+	method := "POST"
+
+	data := url.Values{}
+	data.Set("adapter", adapterURL)
+	data.Set("query", query)
+	data.Set("customBody", "")
+	data.Set("namespace", namespace)
+	if delete {
+		data.Set("deleteOp", "on")
+	} else {
+		data.Set("deleteOp", "")
+	}
+
+	payload := strings.NewReader(data.Encode())
+
+	client := &http.Client{}
+	req, err := utils.NewRequest(method, path, payload)
+	if err != nil {
+		return "", ErrCreatingDeployRequest(err)
+	}
+	req.Header.Add("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8")
+
+	res, err := client.Do(req)
+	if err != nil {
+		return "", ErrCreatingDeployRequest(err)
+	}
+	defer res.Body.Close()
+
+	body, err := io.ReadAll(res.Body)
+	if err != nil {
+		return "", err
+	}
+	return string(body), nil
+}
+
+func waitForDeployResponse(mctlCfg *config.MesheryCtlConfig, query string) (string, error) {
+	path := mctlCfg.GetBaseMesheryURL() + "/api/events?client=cli_deploy"
+	method := "GET"
+	client := &http.Client{}
+	req, err := utils.NewRequest(method, path, nil)
+	if err != nil {
+		return "", ErrCreatingDeployRequest(err)
+	}
+
+	res, err := client.Do(req)
+	if err != nil {
+		return "", ErrCreatingDeployResponseRequest(err)
+	}
+	defer res.Body.Close()
+
+	event, err := utils.ConvertRespToSSE(res)
+	if err != nil {
+		return "", ErrCreatingDeployResponseStream(err)
+	}
+
+	timer := time.NewTimer(time.Duration(1200) * time.Second)
+	eventChan := make(chan string)
+
+	//Run a goroutine to wait for the response
+	go func() {
+		for i := range event {
+			if strings.Contains(i.Data.Details, query) {
+				eventChan <- "successful"
+				log.Infof("%s\n%s\n", i.Data.Summary, i.Data.Details)
+			} else if strings.Contains(i.Data.Details, "Error") {
+				eventChan <- "error"
+				log.Infof("%s\n", i.Data.Summary)
+			}
+		}
+	}()
+
+	select {
+	case <-timer.C:
+		return "", ErrTimeoutWaitingForDeployResponse
+	case event := <-eventChan:
+		if event != "successful" {
+			return "", ErrFailedDeployingMesh
+		}
+	}
+
+	return "", nil
+}
+
+/*
+func validateAdapter(mctlCfg *config.MesheryCtlConfig, name string) error {
+	prefs, err := utils.GetSessionData(mctlCfg)
+	if err != nil {
+		return ErrGettingSessionData(err)
+	}
+
+	adapterNames := []string{}
+	for _, adapter := range prefs.MeshAdapters {
+		if adapter.Name == name || adapter.Name == strings.ToUpper(name) {
+			adapterNames = append(adapterNames, adapter.Location)
+		}
+		if adapter.Location == adapterURL {
+			return nil
+		}
+	}
+
+	if len(adapterNames) == 0 {
+		return ErrNoAdapters
+	}
+
+	if len(adapterNames) == 1 {
+		adapterURL = adapterNames[0]
+		return nil
+	}
+
+	prompt := promptui.Select{
+		Label: "Select an Adapter from the list",
+		Items: adapterNames,
+	}
+
+	i, _, err := prompt.Run()
+	if err != nil {
+		return ErrPrompt(err)
+	}
+
+	adapterURL = adapterNames[i]
+	return nil
+}
+
+func validateMesh(mctlCfg *config.MesheryCtlConfig, name string) (string, error) {
+	if name != "" {
+		if _, ok := smp.ServiceMesh_Type_value[name]; ok {
+			return strings.ToLower(name), nil
+		}
+		if _, ok := smp.ServiceMesh_Type_value[strings.ToUpper(name)]; ok {
+			return strings.ToLower(name), nil
+		}
+	}
+
+	prefs, err := utils.GetSessionData(mctlCfg)
+	if err != nil {
+		// ErrGettingSessionData
+		return "", ErrGettingSessionData(err)
+	}
+
+	meshNameMap := make(map[string]struct{})
+	meshNames := []string{}
+	for _, adapter := range prefs.MeshAdapters {
+		if _, ok := meshNameMap[adapter.Name]; !ok {
+			meshNames = append(meshNames, adapter.Name)
+		}
+	}
+
+	if len(meshNames) == 0 {
+		return "", ErrNoAdapters
+	}
+	prompt := promptui.Select{
+		Label: "Select a Service Mesh from the list",
+		Items: meshNames,
+	}
+
+	i, _, err := prompt.Run()
+	if err != nil {
+		return "", ErrPrompt(err)
+	}
+
+	return strings.ToLower(meshNames[i]), nil
+}
+*/

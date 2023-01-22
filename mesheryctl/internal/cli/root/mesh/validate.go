@@ -72,29 +72,18 @@ mesheryctl mesh validate --adapter [name of the adapter] --tokenPath [path to to
 
 		log.Infof("Starting service mesh validation...")
 
-		// Choose which specification to use for conformance test
-		var query string
-		switch spec {
-		case "smi":
-			query = "smi_conformance"
-		case "istio-vet":
-			if adapterURL == "meshery-istio:10000" {
-				query = "istio-vet"
-				break
-			}
-			return errors.New("only Istio supports istio-vet operation")
-		default:
-			return errors.New("specification not found or not yet supported")
+		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+		if err != nil {
+			log.Fatalln(err)
 		}
-
-		_, err = sendOperationRequest(mctlCfg, query, false)
+		_, err = sendValidateRequest(mctlCfg, meshName, false)
 		if err != nil {
 			log.Fatalln(err)
 		}
 
 		if watch {
 			log.Infof("Verifying Operation")
-			_, err = waitForValidateResponse(mctlCfg, "SMI conformance test")
+			_, err = waitForValidateResponse(mctlCfg, "Smi conformance test")
 			if err != nil {
 				log.Fatalln(err)
 			}
@@ -105,21 +94,12 @@ mesheryctl mesh validate --adapter [name of the adapter] --tokenPath [path to to
 }
 
 func init() {
-	validateCmd.Flags().StringVarP(
-		&spec,
-		"spec",
-		"s",
-		"smi",
-		"Specification to be used for conformance test [smi (default), istio-vet]",
-	)
-	validateCmd.Flags().StringVarP(
-		&namespace, "namespace", "n", "default",
-		"Kubernetes namespace where the mesh is deployed",
-	)
-	validateCmd.Flags().BoolVarP(
-		&watch, "watch", "w", false,
-		"Watch for events and verify operation (in beta testing)",
-	)
+	validateCmd.Flags().StringVarP(&spec, "spec", "s", "smi", "specification to be used for conformance test")
+	_ = validateCmd.MarkFlagRequired("spec")
+	validateCmd.Flags().StringVarP(&adapterURL, "adapter", "a", "meshery-osm", "Adapter to use for validation")
+	_ = validateCmd.MarkFlagRequired("adapter")
+	validateCmd.Flags().StringVarP(&utils.TokenFlag, "token", "t", "", "Path to token for authenticating to Meshery API")
+	validateCmd.Flags().BoolVarP(&watch, "watch", "w", false, "Watch for events and verify operation (in beta testing)")
 }
 
 func waitForValidateResponse(mctlCfg *config.MesheryCtlConfig, query string) (string, error) {
