@@ -35,41 +35,50 @@
   transition: background-color 0.9s ease-out;
   overflow: hidden;
 
-  &::after, &::before{
+  &::after,
+  &::before {
     content: "";
     position: absolute;
     width: 100%;
     height: 100%;
     top: 0;
     z-index: -1;
-    transition: all .3s;
+    transition: all 0.3s;
   }
-  &::after{
+  &::after {
     left: 0;
     background: var(--section-button);
   }
-  &::before{
+  &::before {
     left: 100%;
     background: var(--section-button-hover);
   }
 
   &:hover {
-    &::after{
+    &::after {
       left: -100%;
       background: var(--section-button);
     }
-    &::before{
+    &::before {
       left: 0%;
       background: var(--section-button-hover);
-    }  
+    }
   }
 }
 
-
-
 // SVG's ///////////////////////////////////////////////////////////////////////////////////////////
-.svg-lg{
-  & svg{
-    width:calc(100% / 2.5)
+.svg-lg {
+  & svg {
+    width: calc(100% / 2.5);
   }
+}
+
+// Embeds
+
+iframe.container {
+  width: 100%;
+  padding-right: 15px;
+  padding-left: 15px;
+  margin-right: auto;
+  margin-left: auto;
 }

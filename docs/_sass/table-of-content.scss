@@ -57,6 +57,12 @@
     & a:first-of-type {
       margin-bottom: 4px;
     }
+    & a {
+      color: var(--color-secondary-medium);
+      &:hover {
+        text-decoration: underline;
+      }
+    }
   }
 
   & #TableOfContents {
@@ -66,6 +72,9 @@
     // gap: 10px;
     .selected {
       font-weight: 600;
+      &:hover {
+        text-decoration: none;
+      }
     }
     & ul {
       padding-inline-start: 0px;

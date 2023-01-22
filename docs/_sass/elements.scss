@@ -1,4 +1,10 @@
-a {
+body {
+  line-height: 1.5;
+}
+a > * {
+  color: #00b39f;
+  text-decoration: none;
+  background-color: transparent;
 }
 
 img {
@@ -35,6 +41,10 @@ h2 {
 
 h3 {
   font-size: 2.4rem;
+}
+h4,
+.h4 {
+  font-size: 2.3rem;
 }
 h6 {
   font-size: 1.7rem;

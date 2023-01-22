@@ -1,0 +1,59 @@
+.td-content {
+  p code,
+  li > code,
+  table code {
+    color: inherit;
+    padding: 0.2em 0.4em;
+    margin: 0;
+    font-size: 85%;
+    word-break: normal;
+    background-color: rgba(0, 0, 0, 0.05);
+    border-radius: 0.25rem;
+  }
+}
+.card,
+.td-content .highlight {
+  position: relative;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  min-width: 0;
+  word-wrap: break-word;
+  background-color: #fff;
+  background-clip: border-box;
+  border: 1px solid rgba(0, 0, 0, 0.125);
+  border-radius: 0.25rem;
+}
+.td-content .highlight {
+  margin: 2rem 0;
+  padding: 1rem;
+  background-color: #f8f9fa;
+}
+.td-content pre > code {
+  padding: 0;
+  margin: 0;
+  font-size: 100%;
+  word-break: normal;
+  white-space: pre;
+  border: 0;
+}
+.td-content .highlight pre {
+  margin: 0;
+  padding: 0;
+}
+pre {
+  display: block;
+  font-size: 87.5%;
+  color: #222;
+}
+
+.highlight pre {
+  border: none !important;
+}
+
