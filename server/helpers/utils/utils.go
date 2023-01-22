@@ -1,10 +1,17 @@
 package utils
 
 import (
+	"crypto/md5"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
+	"sync"
+
+	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 )
 
 // RecursiveCastMapStringInterfaceToMapStringInterface will convert a
@@ -107,4 +114,100 @@ func IsClosed(ch chan struct{}) bool {
 	default:
 	}
 	return false
+}
+
+const UI = "../../ui/public/static/img/meshmodels" //Relative to cmd/main.go
+var UISVGPaths = make([]string, 1)
+var hashCheckSVG = make(map[string]string)
+var mx sync.Mutex
+
+func writeHashCheckSVG(key string, val string) {
+	mx.Lock()
+	hashCheckSVG[key] = val
+	mx.Unlock()
+}
+
+func WriteSVGsOnFileSystem(comp *v1alpha1.ComponentDefinition) {
+	successCreatingDirectory := false
+	defer func(s bool) {
+		if successCreatingDirectory {
+			UISVGPaths = append(UISVGPaths, filepath.Join(UI, comp.Model.Name))
+		}
+	}(successCreatingDirectory)
+	if comp.Metadata["svg_color"] != "" {
+		path := filepath.Join(UI, comp.Model.Name, "color")
+		err := os.MkdirAll(path, 0777)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		successCreatingDirectory = true
+
+		x, ok := comp.Metadata["svg_color"].(string)
+		if ok {
+			hash := md5.Sum([]byte(x))
+			hashString := hex.EncodeToString(hash[:])
+			pathsvg := hashCheckSVG[hashString]
+			if pathsvg != "" { // the image has already been loaded, point the component to that path
+				comp.Metadata["svg_color"] = pathsvg
+				goto White
+			} else {
+				f, err := os.Create(filepath.Join(path, comp.Kind+"-"+comp.Model.DisplayName+"-color.svg"))
+				if err != nil {
+					fmt.Println(err)
+					return
+				}
+				_, err = f.WriteString(x)
+				if err != nil {
+					fmt.Println(err)
+					return
+				}
+				comp.Metadata["svg_color"] = getRelativePathForAPI(filepath.Join(comp.Model.Name, "color", comp.Kind+"-"+comp.Model.DisplayName+"-color.svg")) //Replace the actual SVG with path to SVG
+				writeHashCheckSVG(hashString, comp.Metadata["svg_color"].(string))
+			}
+		}
+	}
+White:
+	if comp.Metadata["svg_white"] != "" {
+		path := filepath.Join(UI, comp.Model.Name, "white")
+		err := os.MkdirAll(path, 0777)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		successCreatingDirectory = true
+
+		x, ok := comp.Metadata["svg_white"].(string)
+		if ok {
+			hash := md5.Sum([]byte(x))
+			hashString := hex.EncodeToString(hash[:])
+			pathsvg := hashCheckSVG[hashString]
+			if pathsvg != "" { // the image has already been loaded, point the component to that path
+				comp.Metadata["svg_white"] = pathsvg
+				return
+			}
+			f, err := os.Create(filepath.Join(path, comp.Kind+"-"+comp.Model.DisplayName+"-white.svg"))
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+			_, err = f.WriteString(x)
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+			comp.Metadata["svg_white"] = getRelativePathForAPI(filepath.Join(comp.Model.Name, "white", comp.Kind+"-"+comp.Model.DisplayName+"-white.svg")) //Replace the actual SVG with path to SVG
+			writeHashCheckSVG(hashString, comp.Metadata["svg_white"].(string))
+		}
+	}
+}
+
+func DeleteSVGsFromFileSystem() {
+	for _, path := range UISVGPaths {
+		os.RemoveAll(path)
+	}
+}
+func getRelativePathForAPI(path string) string {
+	ui := strings.TrimPrefix(UI, "../../")
+	return filepath.Join(ui, path)
 }

@@ -443,6 +443,7 @@ func createPatternServiceFromK8s(manifest map[string]interface{}) (string, Servi
 		Type:        w[0].OAMDefinition.Name,
 		APIVersion:  apiVersion,
 		Namespace:   namespace,
+		Model:       "kubernetes",
 		Labels:      castedLabel,
 		Annotations: castedAnnotation,
 		Settings:    rest,
