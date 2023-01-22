@@ -8,7 +8,7 @@ a > * {
 }
 
 img {
-  width: 100%;
+  // width: 100%;
   vertical-align: middle;
   border-style: none;
 }
@@ -91,6 +91,9 @@ ol {
 }
 ul {
   list-style: disc;
+}
+ol {
+  list-style-type: decimal;
 }
 
 .terminal {

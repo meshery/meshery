@@ -69,6 +69,10 @@ ol {
     flex: 0 0 100%;
   }
 
+  & .breadcrumb {
+    list-style: none;
+  }
+
   & #breadcrumbs {
     font-size: 1.4rem;
     & a {
