@@ -22,7 +22,7 @@ RUN apt-get -y update && apt-get -y install git && apt-get clean && rm -rf /var/
 RUN apt-get -y update && apt-get -y  install build-essential libssl-dev git zlib1g-dev
 RUN git config --global user.email "meshery@layer5.io"
 RUN git config --global user.name "meshery"
-RUN git clone --depth=1 https://github.com/layer5io/wrk2 && cd wrk2 && make
+RUN git clone --depth=1 https://github.com/lolverae/meshery-wrk2 && cd wrk2 && make
 
 FROM alpine:3.15.3 as seed_content
 RUN apk add --no-cache curl
@@ -62,7 +62,7 @@ RUN mkdir -p /seed_content/applications && cd /seed_content/applications \
 #RUN cd nighthawk-go/apinighthawk/bin && chmod +x ./nighthawk_client
 
 
-FROM frolvlad/alpine-glibc:alpine-3.13_glibc-2.32
+FROM lolverae/alpine-glibc:alpine-3.17_glibc-2.34
 #RUN apt-get update; apt-get install -y ca-certificates; update-ca-certificates && rm -rf /var/lib/apt/lists/*
 RUN apk update && apk add ca-certificates; update-ca-certificates && rm -rf /var/cache/apk/*
 RUN update-ca-certificates
