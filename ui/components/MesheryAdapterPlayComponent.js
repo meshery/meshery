@@ -487,7 +487,7 @@ class MesheryAdapterPlayComponent extends React.Component {
           });
         }
       },
-      self.handleError(cat, deleteOp)
+      self.handleError(cat, deleteOp, selectedOp)
     );
   };
 
@@ -557,7 +557,7 @@ class MesheryAdapterPlayComponent extends React.Component {
     self.setState({ ["customDialogSMI"] : true });
   };
 
-  handleError = (cat, deleteOp) => {
+  handleError = (cat, deleteOp, selectedOp) => {
     const self = this;
     return (error) => {
       if (cat && deleteOp) {
@@ -570,6 +570,8 @@ class MesheryAdapterPlayComponent extends React.Component {
           : "customDialogAdd";
         self.setState({ menuState, [dlg] : false });
       }
+      self.setState(
+        { addonSwitchGroup : { ...self.addonSwitchGroup, [selectedOp] : deleteOp } })
       self.props.updateProgress({ showProgress : false });
       self.props.enqueueSnackbar(`Operation submission failed: ${error}`, {
         variant : "error",
