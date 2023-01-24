@@ -311,10 +311,12 @@ const getNavigatorComponents = (  /** @type {CapabilitiesRegistry} */  capabilit
   {
     id : DASHBOARD,
     icon : <DashboardIcon style={drawerIconsStyle} />,
+    hovericon : <DashboardIcon style={drawerIconsStyle} />,
     href : "/",
     title : "Dashboard",
     show : capabilityRegistryObj.isNavigatorComponentEnabled([DASHBOARD]),
     link : true,
+    submenu : false,
   },
   {
     id : LIFECYCLE,
@@ -324,6 +326,7 @@ const getNavigatorComponents = (  /** @type {CapabilitiesRegistry} */  capabilit
     title : "Lifecycle",
     show : capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE]),
     link : true,
+    submenu : true,
     children : [
       {
         id : APP_MESH,
@@ -413,6 +416,7 @@ const getNavigatorComponents = (  /** @type {CapabilitiesRegistry} */  capabilit
     title : "Configuration",
     show : capabilityRegistryObj.isNavigatorComponentEnabled([CONFIGURATION]),
     link : true,
+    submenu : true,
     children : [
       {
         id : APPLICATION,
@@ -421,7 +425,7 @@ const getNavigatorComponents = (  /** @type {CapabilitiesRegistry} */  capabilit
         title : "Applications",
         show : capabilityRegistryObj.isNavigatorComponentEnabled([CONFIGURATION, APPLICATION]),
         link : true,
-        isBeta : true
+        isBeta : true,
       },
       {
         id : FILTER,
@@ -430,7 +434,7 @@ const getNavigatorComponents = (  /** @type {CapabilitiesRegistry} */  capabilit
         title : "Filters",
         show : capabilityRegistryObj.isNavigatorComponentEnabled([CONFIGURATION, FILTER]),
         link : true,
-        isBeta : true
+        isBeta : true,
       },
       {
         id : DESIGN,
@@ -439,7 +443,7 @@ const getNavigatorComponents = (  /** @type {CapabilitiesRegistry} */  capabilit
         title : "Designs",
         show : capabilityRegistryObj.isNavigatorComponentEnabled([CONFIGURATION, DESIGN]),
         link : true,
-        isBeta : true
+        isBeta : true,
       },
     ],
   },
@@ -451,6 +455,7 @@ const getNavigatorComponents = (  /** @type {CapabilitiesRegistry} */  capabilit
     title : "Performance",
     show : capabilityRegistryObj.isNavigatorComponentEnabled([PERFORMANCE]),
     link : true,
+    submenu : true,
     children : [
       {
         id : PROFILES,
@@ -471,6 +476,7 @@ const getNavigatorComponents = (  /** @type {CapabilitiesRegistry} */  capabilit
     title : "Conformance",
     show : capabilityRegistryObj.isNavigatorComponentEnabled([CONFORMANCE]),
     link : true,
+    submenu : true,
     children : [
       {
         id : "serviceMeshInterface",
@@ -490,7 +496,8 @@ const getNavigatorComponents = (  /** @type {CapabilitiesRegistry} */  capabilit
     show : capabilityRegistryObj.isNavigatorComponentEnabled(["Extensions"]),
     width : 12,
     link : true,
-    href : "/extensions"
+    href : "/extensions",
+    submenu : false,
   }
 ];
 
@@ -1104,7 +1111,7 @@ class Navigator extends React.Component {
     const Menu = (
       <List disablePadding className={classes.hideScrollbar}>
         {navigatorComponents.map(({
-          id : childId, title, icon, href, show, link, children, hovericon
+          id : childId, title, icon, href, show, link, children, hovericon, submenu
         }) => {
           // if (typeof show !== "undefined" && !show) {
           //   return "";
@@ -1124,8 +1131,8 @@ class Navigator extends React.Component {
                   !show && classes.disabled
                 )}
                 onClick={() => this.toggleItemCollapse(childId)}
-                onMouseOver={() => children && isDrawerCollapsed ? this.setState({ hoveredId : childId }) : null}
-                onMouseLeave={() => !this.state.openItems.includes(childId) ? this.setState({ hoveredId : null }) : null}
+                onMouseOver={() => isDrawerCollapsed ? this.setState({ hoveredId : childId }) : null}
+                onMouseLeave={() =>  !submenu || !this.state.openItems.includes(childId) ? this.setState({ hoveredId : false }) : null}
               >
                 <Link href={link
                   ? href
@@ -1141,7 +1148,7 @@ class Navigator extends React.Component {
                       arrow
                     >
 
-                      {(isDrawerCollapsed && (this.state.hoveredId === childId || this.state.openItems.includes(childId))) ?
+                      {(isDrawerCollapsed && (this.state.hoveredId === childId || (this.state.openItems.includes(childId) && submenu))) ?
                         <div>
                           <Tooltip
                             title={title}
