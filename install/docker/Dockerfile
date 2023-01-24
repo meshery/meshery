@@ -22,7 +22,7 @@ RUN apt-get -y update && apt-get -y install git && apt-get clean && rm -rf /var/
 RUN apt-get -y update && apt-get -y  install build-essential libssl-dev git zlib1g-dev
 RUN git config --global user.email "meshery@layer5.io"
 RUN git config --global user.name "meshery"
-RUN git clone --depth=1 https://github.com/lolverae/meshery-wrk2 && cd wrk2 && make
+RUN git clone --depth=1 https://github.com/lolverae/meshery-wrk2 && cd meshery-wrk2 && make
 
 FROM alpine:3.15.3 as seed_content
 RUN apk add --no-cache curl
@@ -77,8 +77,8 @@ COPY --from=meshery-server /github.com/meshery/meshery/server/helpers/swagger.ya
 COPY --from=ui /out /app/ui/out
 COPY --from=ui /public /app/ui/public
 COPY --from=provider-ui /out /app/provider-ui/out
-COPY --from=wrk2 /wrk2 /app/server/cmd/wrk2
-COPY --from=wrk2 /wrk2/wrk /usr/local/bin
+COPY --from=wrk2 /meshery-wrk2 /app/server/cmd/wrk2
+COPY --from=wrk2 /meshery-wrk2/wrk /usr/local/bin
 COPY --from=seed_content /seed_content /home/appuser/.meshery/seed_content
 COPY --from=layer5/getnighthawk:latest /usr/local/bin/nighthawk_service /app/server/cmd/
 COPY --from=layer5/getnighthawk:latest /usr/local/bin/nighthawk_output_transform /app/server/cmd/
