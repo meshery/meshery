@@ -26,7 +26,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
       - name: Docker edge build & tag
         run: |
-          DOCKER_BUILDKIT=1 docker build -f install/docker/Dockerfile --no-cache -t ${{ secrets.IMAGE_NAME }}:edge-latest --build-arg TOKEN=${{ secrets.GLOBAL_TOKEN }} --build-arg GIT_COMMITSHA=${GITHUB_SHA::8} --build-arg GIT_VERSION="edge-latest" --build-arg RELEASE_CHANNEL=${RELEASE_CHANNEL} .
+          DOCKER_BUILDKIT=1 docker buildx build -f install/docker/Dockerfile  --platform linux/amd64,linux/arm64 --no-cache -t ${{ secrets.IMAGE_NAME }}:edge-latest --build-arg TOKEN=${{ secrets.GLOBAL_TOKEN }} --build-arg GIT_COMMITSHA=${GITHUB_SHA::8} --build-arg GIT_VERSION="edge-latest" --build-arg RELEASE_CHANNEL=${RELEASE_CHANNEL} .
           docker tag ${{ secrets.IMAGE_NAME }}:edge-latest ${{ secrets.IMAGE_NAME }}:edge-${GITHUB_SHA::8}
       - name: Docker edge push
         run: |
