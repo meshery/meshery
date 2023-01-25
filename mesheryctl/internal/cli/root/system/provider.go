@@ -118,7 +118,7 @@ mesheryctl system provider list
 
 		providers, err := utils.GetProviderInfo(mctlCfg)
 		if err != nil {
-			log.Fatalln("\nUnable to fetch providers\nStart Meshery or see https://docs.meshery.io/extensibility/providers#types-of-providers\n")
+			log.Fatalln("Unable to fetch providers\nStart Meshery or see https://docs.meshery.io/extensibility/providers#types-of-providers")
 		}
 
 		log.Print("Available providers:\n")
