@@ -272,7 +272,8 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int, g http.
 	swaggerSh := middleware.SwaggerUI(swaggerOpts, nil)
 	gMux.Handle("/swagger.yaml", http.FileServer(http.Dir("../helpers/")))
 	gMux.Handle("/docs", swaggerSh)
-
+	fs := http.FileServer(http.Dir("../../ui"))
+	gMux.PathPrefix("/ui/public/static/img/meshmodels").Handler(http.StripPrefix("/ui/", fs)).Methods("GET")
 	gMux.PathPrefix("/").
 		Handler(h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			handlers.ServeUI(w, r, "", "../../ui/out/")

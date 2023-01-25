@@ -16,6 +16,7 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/handlers"
 	"github.com/layer5io/meshery/server/helpers"
+	"github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/internal/graphql"
 	"github.com/layer5io/meshery/server/internal/store"
 	"github.com/layer5io/meshery/server/models"
@@ -245,7 +246,8 @@ func main() {
 			for {
 				select {
 				case comp := <-compChan:
-					_ = regManager.RegisterEntity(meshmodel.Host{
+					utils.WriteSVGsOnFileSystem(&comp)
+					err = regManager.RegisterEntity(meshmodel.Host{
 						Hostname: ArtifactHubComponentsHandler,
 					}, comp)
 				case <-done:
@@ -362,7 +364,7 @@ func main() {
 	if err != nil {
 		log.Error(ErrCleaningUpLocalProvider(err))
 	}
-
+	utils.DeleteSVGsFromFileSystem()
 	log.Info("Closing database instance...")
 	err = dbHandler.DBClose()
 	if err != nil {

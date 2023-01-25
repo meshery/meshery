@@ -544,7 +544,7 @@ func (l *DefaultLocalProvider) SaveMesheryPattern(tokenString string, pattern *M
 }
 
 // GetMesheryPatterns gives the patterns stored with the provider
-func (l *DefaultLocalProvider) GetMesheryPatterns(tokenString, page, pageSize, search, order string) ([]byte, error) {
+func (l *DefaultLocalProvider) GetMesheryPatterns(tokenString, page, pageSize, search, order string, updatedAfter string) ([]byte, error) {
 	if page == "" {
 		page = "0"
 	}
@@ -561,8 +561,7 @@ func (l *DefaultLocalProvider) GetMesheryPatterns(tokenString, page, pageSize, s
 	if err != nil {
 		return nil, ErrPageSize(err)
 	}
-
-	return l.MesheryPatternPersister.GetMesheryPatterns(search, order, pg, pgs)
+	return l.MesheryPatternPersister.GetMesheryPatterns(search, order, pg, pgs, updatedAfter)
 }
 
 // GetCatalogMesheryPatterns gives the catalog patterns stored with the provider
@@ -779,7 +778,7 @@ func (l *DefaultLocalProvider) GetApplicationSourceContent(req *http.Request, ap
 }
 
 // GetMesheryApplications gives the applications stored with the provider
-func (l *DefaultLocalProvider) GetMesheryApplications(tokenString, page, pageSize, search, order string) ([]byte, error) {
+func (l *DefaultLocalProvider) GetMesheryApplications(tokenString, page, pageSize, search, order string, updatedAfter string) ([]byte, error) {
 	if page == "" {
 		page = "0"
 	}
@@ -797,7 +796,7 @@ func (l *DefaultLocalProvider) GetMesheryApplications(tokenString, page, pageSiz
 		return nil, ErrPageSize(err)
 	}
 
-	return l.MesheryApplicationPersister.GetMesheryApplications(search, order, pg, pgs)
+	return l.MesheryApplicationPersister.GetMesheryApplications(search, order, pg, pgs, updatedAfter)
 }
 
 // GetMesheryApplication gets application for the given applicationID

@@ -2784,6 +2784,7 @@ input PageFilter {
   search: String
   from: String
   to: String
+  updated_after: String
 }
 
 input CatalogSelector {
@@ -16773,6 +16774,14 @@ func (ec *executionContext) unmarshalInputPageFilter(ctx context.Context, obj in
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("to"))
 			it.To, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "updated_after":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updated_after"))
+			it.UpdatedAfter, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
