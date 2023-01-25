@@ -346,7 +346,9 @@ Example: mesheryctl system config eks
 Description: Configure the Kubernetes cluster used by Meshery.`
 
 		if len(args) == 0 {
-			return fmt.Errorf("config name not provided\n\n%v", errMsg)
+			return fmt.Errorf("name of kubernetes cluster to configure meshery not provided\n\n%v", errMsg)
+		} else if len(args) > 1 {
+			return fmt.Errorf("Expected one argument recieved multiple arguments")
 		}
 		return nil
 	},
