@@ -51,7 +51,9 @@ func dryRun(rClient rest.Interface, k8sResource map[string]interface{}, namespac
 	}
 	path := fmt.Sprintf("/%s/%s/namespaces/%s/%s", apiString, aV, "default", kindToResource(k8sResource["kind"].(string)))
 	data, err := json.Marshal(k8sResource)
-	// TODO: Refactor the configuration options
+	if err != nil {
+		return
+	}
 	req := rClient.Post().AbsPath(path).Body(data).SetHeader("Content-Type", "application/json").SetHeader("Accept", "application/json").Param("dryRun", "All").Param("fieldValidation", "Strict").Param("fieldManager", "meshery")
 	res := req.Do(context.Background())
 	// ignoring the error since this client-go treats failure of dryRun as an error

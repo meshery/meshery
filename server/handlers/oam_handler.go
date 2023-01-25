@@ -448,7 +448,11 @@ func _processPattern(
 			Add(stages.Import(sip, sap)).
 			Add(stages.ServiceIdentifierAndMutator(sip, sap)).
 			Add(stages.Filler(skipPrintLogs)).
-			Add(stages.Validator(sip, sap))
+			// Calling this stage `The Validation stage` is a bit deceiving considering
+			// that the validation stage also formats the `data` (chain function parameter) that the
+			// subsequent stages depend on.
+			// We are skipping the `Validation` part in case of dryRun
+			Add(stages.Validator(sip, sap, dryRun))
 		if dryRun {
 			chain.Add(stages.DryRun(sip, sap))
 		}
