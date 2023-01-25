@@ -13,8 +13,19 @@ func (r *Resolver) fetchPatterns(ctx context.Context, provider models.Provider, 
 	tokenString := ctx.Value(models.TokenCtxKey).(string)
 	// user := ctx.Value(models.UserCtxKey).(*models.User)
 	// prefObj := ctx.Value(models.PerfObjCtxKey).(*models.Preference)
-
-	resp, err := provider.GetMesheryPatterns(tokenString, selector.Page, selector.PageSize, *selector.Search, *selector.Order)
+	var updateAfter string
+	if selector.UpdatedAfter != nil {
+		updateAfter = *selector.UpdatedAfter
+	}
+	var order string
+	if selector.Order != nil {
+		order = *selector.Order
+	}
+	var search string
+	if selector.Search != nil {
+		search = *selector.Search
+	}
+	resp, err := provider.GetMesheryPatterns(tokenString, selector.Page, selector.PageSize, search, order, updateAfter)
 
 	if err != nil {
 		r.Log.Error(ErrFetchingPatterns(err))
