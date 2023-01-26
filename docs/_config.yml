@@ -69,6 +69,7 @@ exclude: [_site, CHANGELOG.md, LICENSE, README.md, vendor, Makefile]
 
 plugins:
   - jekyll-redirect-from
+  - jekyll-sort
 
 sass:
     sass_dir: _sass
