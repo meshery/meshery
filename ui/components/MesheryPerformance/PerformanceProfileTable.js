@@ -1,7 +1,7 @@
 // @ts-check
 import React, { useState, useRef, useEffect } from "react";
-import { withStyles, MuiThemeProvider } from "@mui/styles";
-import {  createTheme } from '@mui/styles';
+import { withStyles } from "@mui/styles";
+import { createTheme, ThemeProvider as MuiThemeProvider } from '@mui/material/styles';
 import {
   NoSsr, TableCell, IconButton, TableRow, Typography
 } from "@mui/material";

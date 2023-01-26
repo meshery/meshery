@@ -1,7 +1,6 @@
 import React from 'react';
 import { NoSsr, TableCell, } from '@mui/material';
-import { MuiThemeProvider } from '@mui/styles';
-import {  createTheme } from '@mui/styles';
+import { createTheme, ThemeProvider as MuiThemeProvider } from '@mui/material/styles';
 import MUIDataTable from "mui-datatables";
 import TableSortLabel from '@mui/material/TableSortLabel'
 

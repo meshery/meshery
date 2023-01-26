@@ -1,7 +1,7 @@
 //@ts-check
 import React, { useEffect, useState, useRef } from "react";
 import {
-  NoSsr, TableCell, IconButton, Paper, createTheme, Popper, ClickAwayListener, Fade
+  NoSsr, TableCell, IconButton, Paper, Popper, ClickAwayListener, Fade
 } from "@mui/material";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
@@ -10,7 +10,8 @@ import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Moment from "react-moment";
 import { withSnackbar } from "notistack";
-import { MuiThemeProvider, withStyles } from '@mui/styles';
+import { withStyles } from '@mui/styles';
+import { createTheme, ThemeProvider as MuiThemeProvider } from '@mui/material/styles';
 import CloseIcon from "@mui/icons-material/Close";
 import { updateResultsSelection, clearResultsSelection, updateProgress } from "../../lib/store";
 import TableSortLabel from "@mui/material/TableSortLabel";

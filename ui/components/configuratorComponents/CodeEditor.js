@@ -1,6 +1,5 @@
 import { Card, CardContent,  IconButton } from "@mui/material";
 import { makeStyles } from '@mui/styles';
-import {  Eco } from "@mui/icons-material";
 import { useEffect, useState } from "react";
 import { UnControlled as CodeMirror } from "react-codemirror2";
 
@@ -75,7 +74,9 @@ export default function CodeEditor({ yaml, saveCodeEditorChanges, cleanHandler }
             }}
           />
           <IconButton className={classes.icon} onClick={cleanHandler}>
+            {/* Icon doesn't seem to be available in @mui/icons-material
             <Eco />
+          */}
           </IconButton>
         </CardContent>
       </Card>

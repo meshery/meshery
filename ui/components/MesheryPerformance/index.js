@@ -20,9 +20,9 @@ import {
   Radio,
   Divider,
   Link,
-  ExpansionPanel,
-  ExpansionPanelSummary,
-  ExpansionPanelDetails,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails
 } from "@mui/material";
 import TextField from "@mui/material/TextField";
 import { withSnackbar } from "notistack";
@@ -874,13 +874,13 @@ class MesheryPerformanceComponent extends React.Component {
                 </Tooltip>
               </Grid>
               <Grid item xs={12} md={12}>
-                <ExpansionPanel className={classes.expansionPanel}>
-                  <ExpansionPanelSummary expanded={true} expandIcon={<ExpandMoreIcon />}>
+                <Accordion className={classes.expansionPanel}>
+                  <AccordionSummary expanded={true} expandIcon={<ExpandMoreIcon />}>
                     <Typography align="center" color="textSecondary" variant="h6">
                       Advanced Options
                     </Typography>
-                  </ExpansionPanelSummary>
-                  <ExpansionPanelDetails>
+                  </AccordionSummary>
+                  <AccordionDetails>
                     <Grid container spacing={1}>
                       <Grid item xs={12}>
                         <TextField
@@ -935,8 +935,8 @@ class MesheryPerformanceComponent extends React.Component {
                         ></TextField>
                       </Grid>
                     </Grid>
-                  </ExpansionPanelDetails>
-                </ExpansionPanel>
+                  </AccordionDetails>
+                </Accordion>
               </Grid>
               <Grid item xs={12} md={4}>
                 <FormControl component="loadGenerator" className={classes.margin}>

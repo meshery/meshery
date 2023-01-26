@@ -2,7 +2,8 @@
 import {
   Avatar, Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, IconButton, NoSsr, TableCell, Tooltip, Typography
 } from "@mui/material";
-import { createTheme, makeStyles, MuiThemeProvider, withStyles } from "@mui/styles";
+import { makeStyles, withStyles } from "@mui/styles";
+import { createTheme, ThemeProvider as MuiThemeProvider } from '@mui/material/styles';
 import TableSortLabel from "@mui/material/TableSortLabel";
 import CloseIcon from "@mui/icons-material/Close";
 import DeleteIcon from "@mui/icons-material/Delete";

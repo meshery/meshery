@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
-import { withStyles, makeStyles, MuiThemeProvider } from "@mui/styles";
-import {  createTheme } from '@mui/styles';
+import { withStyles, makeStyles } from "@mui/styles";
+import { createTheme, ThemeProvider as MuiThemeProvider } from '@mui/material/styles';
 import {
   NoSsr,
   TableCell,

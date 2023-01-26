@@ -1,3 +1,7 @@
+import React from "react";
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
 import {
   Button, Card, CardContent, CardHeader, Chip,
   IconButton, MenuItem, NoSsr, Paper, Select, TableCell, TableSortLabel, Tooltip, Typography
@@ -6,15 +10,12 @@ import {
 import blue from "@material-ui/core/colors/blue";
 import Grid from "@mui/material/Grid";
 import { withStyles } from "@mui/styles";
+import { createTheme, ThemeProvider as MuiThemeProvider } from '@mui/material/styles';
 import AddIcon from "@mui/icons-material/AddCircleOutline";
 import CloseIcon from "@mui/icons-material/Close";
 import SettingsIcon from "@mui/icons-material/Settings";
 import { withRouter } from "next/router";
 import { withSnackbar } from "notistack";
-import PropTypes from "prop-types";
-import React from "react";
-import { connect } from "react-redux";
-import { bindActionCreators } from "redux";
 import dataFetch from "../lib/data-fetch";
 import { updateGrafanaConfig, updateProgress, updatePrometheusConfig } from "../lib/store";
 import { getK8sClusterIdsFromCtxId, getK8sClusterNamesFromCtxId } from "../utils/multi-ctx";
@@ -28,7 +29,6 @@ import subscribeClusterResources from "./graphql/subscriptions/ClusterResourcesS
 import fetchAvailableNamespaces from "./graphql/queries/NamespaceQuery";
 import { submitPrometheusConfigure } from "./telemetry/prometheus/PrometheusComponent";
 import MUIDataTable from "mui-datatables";
-import { MuiThemeProvider, createTheme } from '@mui/styles';
 import Popup from "./Popup";
 import { iconMedium } from "../css/icons.styles";
 

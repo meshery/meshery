@@ -1,7 +1,6 @@
 import React from 'react'
 import {  Button, Grid, IconButton } from '@mui/material';
-import { MuiThemeProvider } from '@mui/styles';
-import { createTheme } from '@mui/styles';
+import { createTheme, ThemeProvider as MuiThemeProvider } from '@mui/material/styles';
 import validator from "@rjsf/validator-ajv6";
 import {
   Dialog, DialogActions,

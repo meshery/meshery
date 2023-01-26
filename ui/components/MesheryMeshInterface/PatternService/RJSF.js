@@ -1,4 +1,4 @@
-import { MuiThemeProvider } from '@mui/styles';
+import { ThemeProvider as MuiThemeProvider } from '@mui/material/styles';
 import Form, { withTheme } from "@rjsf/core";
 import { Theme as MaterialUITheme, } from "@rjsf/material-ui";
 import React, { useEffect } from "react";

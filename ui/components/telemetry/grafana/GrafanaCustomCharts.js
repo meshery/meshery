@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@mui/styles';
 import {
-  NoSsr, Grid, ExpansionPanelDetails, Typography, Dialog, Button, DialogActions, DialogContent, DialogTitle, Chip
+  NoSsr, Grid, Typography, Dialog, Button, DialogActions, DialogContent, DialogTitle, Chip, AccordionDetails
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import GrafanaDateRangePicker from './GrafanaDateRangePicker';
@@ -216,7 +216,7 @@ class GrafanaCustomCharts extends Component {
                       </Typography>
                     </div>)}
                 </ExpansionPanelSummary>
-                <ExpansionPanelDetails>
+                <AccordionDetails>
                   <Grid container spacing={3}>
                     {config.panels.map((panel, i) =>
                     // if(panel.type === 'graph'){
@@ -254,7 +254,7 @@ class GrafanaCustomCharts extends Component {
                       // } else return '';
                     )}
                   </Grid>
-                </ExpansionPanelDetails>
+                </AccordionDetails>
               </ExpansionPanel>
             ))}
           </div>

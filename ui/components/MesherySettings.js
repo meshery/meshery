@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@mui/styles';
+import { createTheme, ThemeProvider as MuiThemeProvider } from '@mui/material/styles';
 import { withRouter } from 'next/router';
 import { connect } from 'react-redux';
 import { bindActionCreators } from "redux";
@@ -34,7 +35,6 @@ import resetDatabase from './graphql/queries/ResetDatabaseQuery';
 import { iconMedium } from '../css/icons.styles';
 import subscribeMeshModelSummary from "./graphql/subscriptions/MeshModelSummarySubscription";
 import fetchMeshModelSummary from "./graphql/queries/MeshModelSummaryQuery";
-import { MuiThemeProvider, createTheme } from '@material-ui/core/styles';
 import MUIDataTable from "mui-datatables";
 
 
