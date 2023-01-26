@@ -27,7 +27,10 @@ import (
 	"github.com/spf13/viper"
 )
 
-var showProviderForAllContext bool
+var (
+	showProviderForAllContext bool
+	forceSetProvider          bool
+)
 
 // PrintProviderToStdout to return provider details for a context
 func PrintProviderToStdout(ctx config.Context, contextName string) string {
@@ -44,7 +47,7 @@ mesheryctl system provider view
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) != 0 {
-			return errors.New(utils.SystemProviderSubError("this command takes no arguments.\n", "view"))
+			return errors.New(utils.SystemProviderSubError("this command takes no arguments\n", "view"))
 		}
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
@@ -91,7 +94,7 @@ mesheryctl system provider list
 	SilenceUsage: true,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) != 0 {
-			return errors.New(utils.SystemProviderSubError("this command takes no arguments.\n", "list"))
+			return errors.New(utils.SystemProviderSubError("this command takes no arguments\n", "list"))
 		}
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
@@ -136,9 +139,9 @@ mesheryctl system provider list
 
 		if currCtx.Provider == "" {
 			if tempContext == "" {
-				log.Print("\nRun `mesheryctl system provider set <provider>` to set the provider.")
+				log.Print("\nRun `mesheryctl system provider set <provider>` to set the provider")
 			} else {
-				log.Printf("\nRun `mesheryctl system provider set <provider> --context %s` to set the provider.", tempContext)
+				log.Printf("\nRun `mesheryctl system provider set <provider> --context %s` to set the provider", tempContext)
 			}
 		}
 		log.Println()
@@ -159,7 +162,7 @@ mesheryctl system provider set <provider>
 		if len(args) == 0 {
 			return fmt.Errorf("provider not specified\n\n%v", errMsg)
 		} else if len(args) > 1 {
-			return fmt.Errorf("too many arguments.\n\n%v", errMsg)
+			return fmt.Errorf("too many arguments\n\n%v", errMsg)
 		}
 		return nil
 	},
@@ -187,31 +190,34 @@ mesheryctl system provider set <provider>
 
 		provider := args[0]
 
-		availableProviders, err := utils.GetProviderInfo(mctlCfg)
+		if !forceSetProvider {
+			// Verify provider
+			availableProviders, err := utils.GetProviderInfo(mctlCfg)
 
-		if err != nil {
-			log.Error("Unable to verify provider\nStart Meshery or see https://docs.meshery.io/extensibility/providers#types-of-providers\n")
-		} else {
-			keys := make([]string, 0, len(availableProviders))
-			isValidProvider := false
+			if err != nil {
+				log.Fatalln("Unable to verify provider\nStart Meshery or see https://docs.meshery.io/extensibility/providers#types-of-providers\n\nRun `mesheryctl system provider set <provider> --force` to force set the provider")
+			} else {
+				keys := make([]string, 0, len(availableProviders))
+				isValidProvider := false
 
-			for k := range availableProviders {
-				if provider == k {
-					isValidProvider = true
+				for k := range availableProviders {
+					if provider == k {
+						isValidProvider = true
+					}
+					keys = append(keys, k)
 				}
-				keys = append(keys, k)
-			}
 
-			if !isValidProvider {
-				log.Error("Invalid provider\nPlease specify a valid provider\n")
+				if !isValidProvider {
+					log.Error("Invalid provider\nPlease specify a valid provider\n")
 
-				log.Print("Available providers:\n")
-				//sorting the contexts to get a consistent order on each subsequent run
-				sort.Strings(keys)
-				for _, k := range keys {
-					log.Printf("- %s", k)
+					log.Print("Available providers:\n")
+					//sorting the contexts to get a consistent order on each subsequent run
+					sort.Strings(keys)
+					for _, k := range keys {
+						log.Printf("- %s", k)
+					}
+					os.Exit(1)
 				}
-				os.Exit(1)
 			}
 		}
 
@@ -387,5 +393,6 @@ mesheryctl system provider reset
 
 func init() {
 	viewProviderCmd.Flags().BoolVarP(&showProviderForAllContext, "all", "a", false, "Show provider for all contexts")
+	setProviderCmd.Flags().BoolVarP(&forceSetProvider, "force", "f", false, "Force set provider")
 	providerCmd.AddCommand(viewProviderCmd, listProviderCmd, setProviderCmd, switchProviderCmd, resetProviderCmd)
 }
