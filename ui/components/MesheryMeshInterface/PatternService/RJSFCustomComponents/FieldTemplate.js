@@ -1,10 +1,15 @@
 import React from "react";
+import { getTemplate, getUiOptions } from "@rjsf/utils";
+
 
 export const CustomFieldTemplate=(props) => {
-  const {  classNames, children } = props;
+  const { children , registry, uiSchema } = props;
+  const uiOptions = getUiOptions(uiSchema);
+  const WrapIfAdditionalTemplate = getTemplate("WrapIfAdditionalTemplate",registry,uiOptions);
+
   return (
-    <div className={classNames}>
+    <WrapIfAdditionalTemplate {...props}>
       {children}
-    </div>
+    </WrapIfAdditionalTemplate>
   )
 }
