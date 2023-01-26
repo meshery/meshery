@@ -102,6 +102,8 @@ func (t TemplateAttributes) CreateJSONItem() string {
 	return json
 }
 
+const XMLTAG = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><!DOCTYPE svg>"
+
 func WriteToFile(path string, content string) error {
 	file, err := os.Create(path)
 	if err != nil {
@@ -162,17 +164,60 @@ func UpdateSVGString(svgStr string, width, height int) (string, error) {
 		}
 
 		// If the token is an element name, check if it is an "svg" element.
-		if se, ok := t.(xml.StartElement); ok && se.Name.Local == "svg" {
-			// Set the width and height attributes to the desired values.
-			for i, a := range se.Attr {
-				if a.Name.Local == "width" {
-					se.Attr[i].Value = strconv.Itoa(width)
-				} else if a.Name.Local == "height" {
-					se.Attr[i].Value = strconv.Itoa(height)
+		if se, ok := t.(xml.StartElement); ok {
+			if se.Name.Local == "svg" {
+				// Set the width and height attributes to the desired values.
+				updatedH := false
+				updatedW := false
+				xmlnsindex := -1
+				for i, a := range se.Attr {
+					if a.Name.Local == "width" {
+						se.Attr[i].Value = strconv.Itoa(width)
+						updatedW = true
+					} else if a.Name.Local == "height" {
+						se.Attr[i].Value = strconv.Itoa(height)
+						updatedH = true
+					}
+					if a.Name.Local == "xmlns" {
+						xmlnsindex = i
+					}
+				}
+				if !updatedH {
+					se.Attr = append(se.Attr, xml.Attr{
+						Name: xml.Name{
+							Local: "height",
+						},
+						Value: strconv.Itoa(height),
+					})
+				}
+				if !updatedW {
+					se.Attr = append(se.Attr, xml.Attr{
+						Name: xml.Name{
+							Local: "width",
+						},
+						Value: strconv.Itoa(width),
+					})
+				}
+				if xmlnsindex > -1 {
+					se.Attr = append(se.Attr[0:xmlnsindex], se.Attr[xmlnsindex+1:]...)
+				}
+			} else {
+				for i, a := range se.Attr {
+					xmlnsindex := -1
+					nahbro := 0
+					if a.Name.Local == "xmlns" {
+						fmt.Println("found at ", i)
+						fmt.Println(a.Name)
+						xmlnsindex = i
+						nahbro++
+					}
+					if xmlnsindex > -1 {
+						se.Attr = append(se.Attr[0:xmlnsindex], se.Attr[xmlnsindex+1:]...)
+					}
 				}
 			}
+			t = se
 		}
-
 		// Write the modified token to the buffer.
 		if err := e.EncodeToken(t); err != nil {
 			return "", err
@@ -183,9 +228,11 @@ func UpdateSVGString(svgStr string, width, height int) (string, error) {
 	if err := e.Flush(); err != nil {
 		return "", err
 	}
-
-	// Convert the buffer to a string and return it.
-	return b.String(), nil
+	var svg string
+	if b.String() != "" {
+		svg = XMLTAG + b.String()
+	}
+	return svg, nil
 }
 
 // func (t *templateAttributes) fillAttributes(path string) error {

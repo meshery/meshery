@@ -131,6 +131,7 @@ func (h *Handler) RegisterMeshmodelRelationships(rw http.ResponseWriter, r *http
 		http.Error(rw, err.Error(), http.StatusBadRequest)
 		return
 	}
+	go h.config.MeshModelSummaryChannel.Publish()
 }
 
 // while parsing, if an error is encountered, it will return the list of relationships that have already been parsed along with the error

@@ -310,6 +310,7 @@ class DashboardComponent extends React.Component {
       this.initDashboardClusterResourcesQuery();
       this.initNamespaceQuery();
     }
+
   }
 
   getK8sClusterIds = () => {
@@ -1352,6 +1353,7 @@ class DashboardComponent extends React.Component {
           )}
       </>
     );
+
     return (
       <NoSsr>
         <Popup />

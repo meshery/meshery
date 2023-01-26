@@ -20,8 +20,8 @@ spec:
         - env:
             - name: PROVIDER_BASE_URLS
               value: https://meshery.layer5.io
-            - name: ENFORCED_PROVIDER
-              value: remote
+            - name: PROVIDER
+              value: Meshery
             - name: PLAYGROUND
               value: "true"
           image: layer5/meshery:playground-v0.6.35

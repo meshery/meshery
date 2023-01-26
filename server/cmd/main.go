@@ -16,9 +16,11 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/handlers"
 	"github.com/layer5io/meshery/server/helpers"
+	"github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/internal/graphql"
 	"github.com/layer5io/meshery/server/internal/store"
 	"github.com/layer5io/meshery/server/models"
+	mesherymeshmodel "github.com/layer5io/meshery/server/models/meshmodel"
 	"github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshery/server/router"
 	"github.com/layer5io/meshkit/broker/nats"
@@ -84,7 +86,7 @@ func main() {
 	viper.SetDefault("COMMITSHA", commitsha)
 	viper.SetDefault("RELEASE_CHANNEL", releasechannel)
 	viper.SetDefault("INSTANCE_ID", &instanceID)
-	viper.SetDefault("ENFORCED_PROVIDER", "")
+	viper.SetDefault("PROVIDER", "")
 	viper.SetDefault("REGISTER_STATIC_K8S", true)
 	viper.SetDefault("SKIP_DOWNLOAD_CONTENT", false)
 	viper.SetDefault("SKIP_COMP_GEN", false)
@@ -210,6 +212,32 @@ func main() {
 	}
 	lProv.Initialize()
 
+	hc := &models.HandlerConfig{
+		Providers:              provs,
+		ProviderCookieName:     "meshery-provider",
+		ProviderCookieDuration: 30 * 24 * time.Hour,
+		PlaygroundBuild:        viper.GetBool("PLAYGROUND"),
+		AdapterTracker:         adapterTracker,
+		QueryTracker:           queryTracker,
+
+		Queue: mainQueue,
+
+		KubeConfigFolder: viper.GetString("KUBECONFIG_FOLDER"),
+
+		GrafanaClient:         models.NewGrafanaClient(),
+		GrafanaClientForQuery: models.NewGrafanaClientWithHTTPClient(&http.Client{Timeout: time.Second}),
+
+		PrometheusClient:         models.NewPrometheusClient(),
+		PrometheusClientForQuery: models.NewPrometheusClientWithHTTPClient(&http.Client{Timeout: time.Second}),
+
+		ConfigurationChannel: models.NewConfigurationHelper(),
+
+		DashboardK8sResourcesChan: models.NewDashboardK8sResourcesHelper(),
+		MeshModelSummaryChannel:   mesherymeshmodel.NewMeshModelSummaryHelper(),
+
+		K8scontextChannel: models.NewContextHelper(),
+	}
+
 	//seed the local meshmodel components
 	go func() {
 		compChan := make(chan v1alpha1.ComponentDefinition, 1)
@@ -218,10 +246,12 @@ func main() {
 			for {
 				select {
 				case comp := <-compChan:
-					_ = regManager.RegisterEntity(meshmodel.Host{
+					utils.WriteSVGsOnFileSystem(&comp)
+					err = regManager.RegisterEntity(meshmodel.Host{
 						Hostname: ArtifactHubComponentsHandler,
 					}, comp)
 				case <-done:
+					go hc.MeshModelSummaryChannel.Publish()
 					return
 				}
 			}
@@ -263,6 +293,7 @@ func main() {
 			fmt.Println("Error registering relationships: ", err.Error())
 			return
 		}
+		go hc.MeshModelSummaryChannel.Publish()
 	}()
 
 	lProv.SeedContent(log)
@@ -294,36 +325,11 @@ func main() {
 		provs[cp.Name()] = cp
 	}
 
-	hc := &models.HandlerConfig{
-		Providers:              provs,
-		ProviderCookieName:     "meshery-provider",
-		ProviderCookieDuration: 30 * 24 * time.Hour,
-		PlaygroundBuild:        viper.GetBool("PLAYGROUND"),
-		AdapterTracker:         adapterTracker,
-		QueryTracker:           queryTracker,
-
-		Queue: mainQueue,
-
-		KubeConfigFolder: viper.GetString("KUBECONFIG_FOLDER"),
-
-		GrafanaClient:         models.NewGrafanaClient(),
-		GrafanaClientForQuery: models.NewGrafanaClientWithHTTPClient(&http.Client{Timeout: time.Second}),
-
-		PrometheusClient:         models.NewPrometheusClient(),
-		PrometheusClientForQuery: models.NewPrometheusClientWithHTTPClient(&http.Client{Timeout: time.Second}),
-
-		ConfigurationChannel: models.NewConfigurationHelper(),
-
-		DashboardK8sResourcesChan: models.NewDashboardK8sResourcesHelper(),
-
-		K8scontextChannel: models.NewContextHelper(),
-	}
-
 	operatorDeploymentConfig := models.NewOperatorDeploymentConfig(adapterTracker)
 	mctrlHelper := models.NewMesheryControllersHelper(log, operatorDeploymentConfig, dbHandler)
 	k8sComponentsRegistrationHelper := models.NewComponentsRegistrationHelper(log)
 
-	h := handlers.NewHandlerInstance(hc, meshsyncCh, log, brokerConn, k8sComponentsRegistrationHelper, mctrlHelper, dbHandler, events.NewEventStreamer(), regManager, viper.GetString("ENFORCED_PROVIDER"))
+	h := handlers.NewHandlerInstance(hc, meshsyncCh, log, brokerConn, k8sComponentsRegistrationHelper, mctrlHelper, dbHandler, events.NewEventStreamer(), regManager, viper.GetString("PROVIDER"))
 
 	b := broadcast.NewBroadcaster(100)
 	defer b.Close()
@@ -358,7 +364,7 @@ func main() {
 	if err != nil {
 		log.Error(ErrCleaningUpLocalProvider(err))
 	}
-
+	utils.DeleteSVGsFromFileSystem()
 	log.Info("Closing database instance...")
 	err = dbHandler.DBClose()
 	if err != nil {
