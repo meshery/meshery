@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { makeStyles } from "@mui/styles";
+import styled from "@mui/material";
 import MuiAccordion from "@mui/material/Accordion";
 import MuiAccordionSummary from "@mui/material/AccordionSummary";
 import MuiAccordionDetails from "@mui/material/AccordionDetails";
@@ -8,15 +8,9 @@ import Typography from "@mui/material/Typography";
 import ExpandMoreIcon from "../../../../assets/icons/ExpandMoreIcon"
 import { IconButton } from "@mui/material";
 
-const useStyles = makeStyles((theme) => ({
-  accordionRoot : {
-    width : "100%",
-    marginBottom : "0rem"
-  },
-  heading : {
-    fontSize : theme.typography.pxToRem(15),
-    fontWeight : theme.typography.fontWeightRegular
-  }
+const TypographyHeading = styled(Typography)(({ theme }) => ({
+  fontSize : theme.typography.pxToRem(15),
+  fontWeight : theme.typography.fontWeightRegular,
 }));
 
 export default function SimpleAccordion(props) {
@@ -28,27 +22,24 @@ export default function SimpleAccordion(props) {
         block : "nearest",
       });
     }
-
   }, []);
   // React Hook useEffect has an unnecessary dependency: 'accordionDetailsRef.current'. Either exclude it or remove the dependency array. Mutable values like 'accordionDetailsRef.current' aren't valid dependencies because mutating them doesn't re-render the component.
-
-  const classes = useStyles();
   const accordionDetailsRef = React.useRef(null);
 
   return (
-    <div className={classes.accordionRoot}>
+    <div style={{ width : "100%", mb : "0rem" }}>
       <MuiAccordion defaultExpanded elevation={0}>
         <MuiAccordionSummary
-          expandIcon={<ExpandMoreIcon width="14px" height="14px" fill="gray"/>}
+          expandIcon={<ExpandMoreIcon width="14px" height="14px" fill="gray" />}
           aria-controls="panel1a-content"
           id="panel1a-header"
           style={{ backgroundColor : "F7F7F7" }}
         >
-
-          <Typography className={classes.heading}>{props.heading?.charAt(0).toUpperCase() + props.heading?.slice(1)}{" "}</Typography>
+          <TypographyHeading>
+            {props.heading?.charAt(0).toUpperCase() + props.heading?.slice(1)}{" "}
+          </TypographyHeading>
 
           {props.childProps.hasRemove && (
-
             <IconButton
               style={{ padding : "0" }}
               // style={btnStyle}
@@ -57,12 +48,13 @@ export default function SimpleAccordion(props) {
                 props.childProps.index
               )}
             >
-              <DeleteIcon width="18px" height="18px" fill="gray"/>
+              <DeleteIcon width="18px" height="18px" fill="gray" />
             </IconButton>
           )}
         </MuiAccordionSummary>
-        <MuiAccordionDetails ref={accordionDetailsRef} >{props.children}</MuiAccordionDetails>
-
+        <MuiAccordionDetails ref={accordionDetailsRef}>
+          {props.children}
+        </MuiAccordionDetails>
       </MuiAccordion>
     </div>
   );
