@@ -23,7 +23,8 @@ export default function MyApp(props) {
       <ThemeProvider theme={theme}>
         {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
         <CssBaseline />
-        <div style={{ display: "flex", minHeight: "100vh" }}>
+        <div style={{display:"flex", flexDirection: "column", minHeight: "100vh"}}>
+        <div style={{ display: "flex", flexGrow: 1 }}>
           <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
             <main style={{
               flex: 1,
@@ -37,6 +38,7 @@ export default function MyApp(props) {
           </div>
         </div>
         <Footer />
+        </div>
       </ThemeProvider>
     </CacheProvider>
   );
