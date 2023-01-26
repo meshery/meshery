@@ -11,6 +11,7 @@ module.exports = {
     extends: [
       'plugin:react/recommended',
       'plugin:@next/next/recommended',
+      "plugin:cypress/recommended",
       'next/core-web-vitals',
     ],
     overrides: [
