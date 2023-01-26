@@ -27,9 +27,12 @@ app.prepare().then(() => {
             const parsedUrl = parse(req.url, true)
             const { pathname, query } = parsedUrl
 
-            if (pathname.startsWith('/api')) {
+            if (pathname.startsWith('/api') || 
+                pathname.startsWith('/user/logout') || 
+                pathname.startsWith('/user/login')) 
+            {
                 proxy.web(req, res, {
-                    target: 'http://localhost:9081',
+                    target: `http://${hostname}:9081`,
                 })
             } else {
                 if (req.url.startsWith('/provider')) {
