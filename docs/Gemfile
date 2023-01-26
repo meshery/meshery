@@ -25,5 +25,6 @@ group :graphqlDocs_plugins do
  gem "rails"
  gem "graphql-docs"
  gem "haml"
+ gem "jekyll-sort"
 
 end
