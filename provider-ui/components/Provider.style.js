@@ -1,9 +1,10 @@
-import { styled } from '@mui/material/styles'
+import { styled, alpha } from '@mui/material/styles'
+import Menu from "@mui/material/Menu"
 import MenuItem from '@mui/material/MenuItem'
-import DialogTitle from '@mui/material/DialogTitle'
-import IconButton from '@mui/material/IconButton'
+import Dialog from "@mui/material/Dialog";
 
-export const Div = styled('div')(({ theme }) => ({
+
+export const CustomDiv = styled('div')(({ theme }) => ({
   width: '60%',
   marginLeft: 'auto',
   marginRight: 'auto',
@@ -21,14 +22,11 @@ export const MenuProviderDisabled = styled(MenuItem)(() => ({
   justifyContent: 'space-between'
 }))
 
-export const CustomDialogTitle = styled(DialogTitle)(({ theme }) => ({
-  margin: 0,
-  padding: theme.spacing(2)
-}))
-
-export const CustomIconButton = styled(IconButton)(({ theme }) => ({
-  position: 'absolute',
-  right: theme.spacing(1),
-  top: theme.spacing(1),
-  color: theme.palette.grey[500]
-}))
+export const CustomDialog = styled(Dialog)(({ theme }) => ({
+  '& .MuiDialogContent-root': {
+      padding: theme.spacing(2),
+  },
+  '& .MuiDialogActions-root': {
+      padding: theme.spacing(1),
+  },
+}));

@@ -16,7 +16,3 @@ yarn-error.log*
 
 # Next.js
 /.next
-
-out
-static
-cypress

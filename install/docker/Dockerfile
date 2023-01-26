@@ -13,7 +13,7 @@ FROM node:lts as ui
 ADD ui ui
 RUN cd ui; npm install --omit-dev; npm run build && npm run export; mv out /
 
-FROM node:18 as provider-ui
+FROM node:lts as provider-ui
 ADD provider-ui provider-ui
 RUN cd provider-ui; npm install --omit=dev; npm run build && npm run export; mv out /
 

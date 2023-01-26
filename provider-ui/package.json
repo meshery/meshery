@@ -22,34 +22,27 @@
     "@babel/eslint-parser": "^7.19.1",
     "@cypress/code-coverage": "^3.10.0",
     "@emotion/cache": "^11.10.5",
-    "@emotion/react": "latest",
+    "@emotion/react": "^11.10.5",
     "@emotion/server": "^11.10.0",
     "@emotion/styled": "^11.10.5",
-    "@mui/base": "^5.0.0-alpha.114",
     "@mui/icons-material": "^5.11.0",
-    "@mui/material": "^5.11.5",
+    "@mui/material": "^5.11.6",
     "babel-plugin-istanbul": "^6.1.1",
-    "cross-env": "^7.0.3",
     "http-proxy": "^1.18.1",
     "isomorphic-unfetch": "^4.0.2",
-    "next": "^13.1.2",
+    "next": "^13.1.5",
     "prop-types": "^15.8.1",
-    "react": "latest",
+    "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@babel/eslint-plugin": "^7.19.1",
-    "@next/eslint-plugin-next": "^13.1.2",
-    "cypress": "^12.3.0",
+    "cypress": "^12.4.0",
     "eslint": "^8.32.0",
-    "eslint-config-next": "latest",
-    "eslint-config-standard": "^17.0.0",
+    "eslint-config-next": "^13.1.5",
     "eslint-plugin-cypress": "^2.12.1",
-    "eslint-plugin-n": "^15.6.1",
-    "eslint-plugin-promise": "^6.1.1",
-    "eslint-plugin-react": "^7.32.1",
-    "nodemon": "^2.0.20",
-    "nyc": "^15.1.0",
-    "start-server-and-test": "^1.15.2"
+    "start-server-and-test": "^1.15.3"
+  },
+  "engines": {
+    "node": "^16 || ^18"
   }
 }

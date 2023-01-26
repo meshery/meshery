@@ -50,7 +50,8 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           margin: 'auto',
-          overflow: 'hidden'
+          overflow: 'hidden',
+          maxWidth: "90%",
         }
       }
     },
