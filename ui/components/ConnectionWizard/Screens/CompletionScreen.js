@@ -2,7 +2,7 @@ import React from 'react'
 import Link from 'next/link'
 import { Button, Typography, Container } from '@mui/material'
 import { makeStyles } from '@mui/styles';
-import CheckCircleIcon from '@material-ui/icons/CheckCircle'
+import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 
 const useStyles = makeStyles(() => ({
   container : {

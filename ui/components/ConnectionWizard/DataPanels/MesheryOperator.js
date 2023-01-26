@@ -1,6 +1,6 @@
 /* eslint-disable react/display-name */
 /* eslint-disable  no-unused-vars*/
-import CloseIcon from "@material-ui/icons/Close";
+import CloseIcon from "@mui/icons-material/Close";
 import {
   withStyles,
   Grid,

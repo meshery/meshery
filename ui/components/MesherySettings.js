@@ -6,11 +6,15 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from "redux";
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
+import TableCell from "@mui/material/TableCell";
+import TableSortLabel from "@mui/material/TableSortLabel";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
 import Typography from '@mui/material/Typography';
 import {
   AppBar, Paper, Tooltip, IconButton, Button
 } from '@mui/material';
-import CloseIcon from "@material-ui/icons/Close";
+import CloseIcon from "@mui/icons-material/Close";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faCloud, faPoll, faDatabase } from '@fortawesome/free-solid-svg-icons';
 // import {faTachometerAlt} from '@fortawesome/free-solid-svg-icons';

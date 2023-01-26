@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux';
 import { withRouter } from 'next/router';
 import { withSnackbar } from 'notistack';
 import { withStyles } from '@mui/styles';
-import CloseIcon from '@material-ui/icons/Close';
+import CloseIcon from '@mui/icons-material/Close';
 import {
   IconButton, FormControl, FormLabel, FormGroup, FormControlLabel, Switch
 } from '@mui/material';
@@ -14,8 +14,8 @@ import { updateUser, updateProgress, toggleCatalogContent } from '../lib/store';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import { Paper, Tooltip } from '@mui/material';
-import SettingsRemoteIcon from '@material-ui/icons/SettingsRemote';
-import SettingsCellIcon from '@material-ui/icons/SettingsCell';
+import SettingsRemoteIcon from '@mui/icons-material/SettingsRemote';
+import SettingsCellIcon from '@mui/icons-material/SettingsCell';
 import ExtensionSandbox from "./ExtensionSandbox";
 import RemoteComponent from "./RemoteComponent";
 import ExtensionPointSchemaValidator from "../utils/ExtensionPointSchemaValidator";

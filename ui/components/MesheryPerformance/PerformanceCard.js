@@ -3,8 +3,8 @@ import React, { useState } from "react";
 import {
   Button, Grid, IconButton, Typography
 } from "@mui/material";
-import DeleteIcon from "@material-ui/icons/Delete";
-import EditIcon from "@material-ui/icons/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
 import Moment from "react-moment";
 import PerformanceResults from "./PerformanceResults";
 import FlipCard from "../FlipCard";

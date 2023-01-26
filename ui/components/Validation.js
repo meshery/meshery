@@ -9,7 +9,7 @@ import {
   Collapse,
   withStyles
 } from "@mui/material";
-import { ExpandLess, ExpandMore } from "@material-ui/icons";
+import { ExpandLess, ExpandMore } from "@mui/icons-material";
 
 const styles = theme => ({
   nested : {

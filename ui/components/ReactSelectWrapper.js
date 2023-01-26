@@ -9,7 +9,7 @@ import TextField from '@mui/material/TextField';
 import Paper from '@mui/material/Paper';
 import Chip from '@mui/material/Chip';
 import MenuItem from '@mui/material/MenuItem';
-import CancelIcon from '@material-ui/icons/Cancel';
+import CancelIcon from '@mui/icons-material/Cancel';
 
 const styles = () => ({ input : { display : 'flex', },
   valueContainer : {

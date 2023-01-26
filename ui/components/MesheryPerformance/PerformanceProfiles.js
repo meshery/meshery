@@ -2,14 +2,14 @@
 import { ToggleButton, ToggleButtonGroup } from "@material-ui/lab";
 import React, { useEffect, useState, useRef } from "react";
 import PromptComponent from "../PromptComponent";
-import GridOnIcon from "@material-ui/icons/GridOn";
-import CloseIcon from "@material-ui/icons/Close";
-import TableChartIcon from "@material-ui/icons/TableChart";
+import GridOnIcon from "@mui/icons-material/GridOn";
+import CloseIcon from "@mui/icons-material/Close";
+import TableChartIcon from "@mui/icons-material/TableChart";
 import PerformanceProfileTable from "./PerformanceProfileTable";
 import PerformanceProfileGrid from "./PerformanceProfileGrid";
 import dataFetch from "../../lib/data-fetch";
 import IconButton from "@mui/material/IconButton";
-import AddIcon from "@material-ui/icons/AddCircleOutline";
+import AddIcon from "@mui/icons-material/AddCircleOutline";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import { updateProgress } from "../../lib/store";

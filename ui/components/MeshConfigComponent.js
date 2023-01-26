@@ -2,9 +2,9 @@ import {
   Chip, Grid, IconButton, List, ListItem, ListItemText, Menu, MenuItem, Switch,
   Tooltip, Paper, NoSsr, TableCell, TableContainer, Table, Button, Typography,
 } from '@mui/material';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 import TableSortLabel from "@mui/material/TableSortLabel";
-import CloseIcon from "@material-ui/icons/Close";
+import CloseIcon from "@mui/icons-material/Close";
 import { withSnackbar } from "notistack";
 import { useState, useEffect, useRef } from 'react';
 import DataTable from "mui-datatables";

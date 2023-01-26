@@ -10,7 +10,7 @@ import { Controlled as CodeMirror } from 'react-codemirror2';
 import { updateProgress } from '../../../lib/store';
 import { trueRandom } from '../../../lib/trueRandom';
 import dataFetch from '../../../lib/data-fetch';
-import CodeIcon from '@material-ui/icons/Code';
+import CodeIcon from '@mui/icons-material/Code';
 import Alert from '@material-ui/lab/Alert';
 
 const promStyles = (theme) => ({

@@ -1,6 +1,6 @@
 import { Card, CardContent,  IconButton } from "@mui/material";
 import { makeStyles } from '@mui/styles';
-import {  Eco } from "@material-ui/icons";
+import {  Eco } from "@mui/icons-material";
 import { useEffect, useState } from "react";
 import { UnControlled as CodeMirror } from "react-codemirror2";
 

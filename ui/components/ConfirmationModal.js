@@ -2,9 +2,9 @@ import {
   Button, Checkbox, Chip, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, Tab, Tabs, TextField,
   Tooltip, Typography
 } from "@mui/material";
-import CloseIcon from "@material-ui/icons/Close";
+import CloseIcon from "@mui/icons-material/Close";
 import { withStyles } from "@mui/styles";
-import { Search } from "@material-ui/icons";
+import { Search } from "@mui/icons-material";
 import { withSnackbar } from "notistack";
 import { connect } from "react-redux";
 import { setK8sContexts, updateProgress } from "../lib/store";
@@ -14,9 +14,9 @@ import { getK8sConfigIdsFromK8sConfig } from "../utils/multi-ctx";
 import { bindActionCreators } from "redux";
 import { useEffect, useState } from "react";
 import UndeployIcon from "../public/static/img/UndeployIcon";
-import DoneAllIcon from '@material-ui/icons/DoneAll';
-import AddIcon from '@material-ui/icons/Add';
-import DoneIcon from "@material-ui/icons/Done";
+import DoneAllIcon from '@mui/icons-material/DoneAll';
+import AddIcon from '@mui/icons-material/Add';
+import DoneIcon from "@mui/icons-material/Done";
 import Link from 'next/link';
 import Operator from "../assets/img/Operator";
 import { ACTIONS } from "../utils/Enum";

@@ -28,11 +28,11 @@ import TextField from "@mui/material/TextField";
 import { withSnackbar } from "notistack";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import CloseIcon from "@material-ui/icons/Close";
-import GetAppIcon from "@material-ui/icons/GetApp";
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import HelpOutlineOutlinedIcon from "@material-ui/icons/HelpOutlineOutlined";
-import SaveOutlinedIcon from "@material-ui/icons/SaveOutlined";
+import CloseIcon from "@mui/icons-material/Close";
+import GetAppIcon from "@mui/icons-material/GetApp";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import HelpOutlineOutlinedIcon from "@mui/icons-material/HelpOutlineOutlined";
+import SaveOutlinedIcon from "@mui/icons-material/SaveOutlined";
 import {
   updateLoadTestData,
   updateStaticPrometheusBoardConfig,

@@ -10,15 +10,15 @@ import Grow from '@mui/material/Grow';
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import NoSsr from "@mui/material/NoSsr";
-import RemoveIcon from "@material-ui/icons/Remove";
+import RemoveIcon from "@mui/icons-material/Remove";
 import Zoom from '@mui/material/Zoom';
 import Link from "next/link";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { withRouter } from "next/router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import HelpIcon from '@material-ui/icons/Help';
-import DashboardIcon from '@material-ui/icons/Dashboard';
+import HelpIcon from '@mui/icons-material/Help';
+import DashboardIcon from '@mui/icons-material/Dashboard';
 import LifecycleIcon from '../public/static/img/drawer-icons/lifecycle_mgmt_svg';
 import PerformanceIcon from '../public/static/img/drawer-icons/performance_svg';
 import ConformanceIcon from '../public/static/img/drawer-icons/conformance_svg';
@@ -33,7 +33,7 @@ import GithubIcon from "../assets/icons/GithubIcon";
 import ChatIcon from "../assets/icons/ChatIcon";
 import ConformanceHover from '../public/static/img/drawer-icons/conformance_hover_svg';
 import SmiIcon from '../public/static/img/drawer-icons/servicemeshinterface-icon-white_svg';
-import OpenInNewIcon from "@material-ui/icons/OpenInNew";
+import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import {
   faAngleLeft, faCaretDown,
   faExternalLinkAlt,

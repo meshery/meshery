@@ -1,7 +1,7 @@
 //@ts-check
 import React from "react";
 import { Typography, Button } from "@mui/material";
-import AddIcon from "@material-ui/icons/AddCircleOutline";
+import AddIcon from "@mui/icons-material/AddCircleOutline";
 import GrafanaCustomCharts from "./telemetry/grafana/GrafanaCustomCharts";
 import { makeStyles, } from "@mui/styles";
 import { iconMedium } from "../css/icons.styles";

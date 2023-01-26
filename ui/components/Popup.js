@@ -5,7 +5,7 @@ import React, {
 import Cookies from 'universal-cookie';
 import { makeStyles } from '@mui/styles';
 import { Typography, Grid, Button, IconButton } from '@mui/material';
-import CloseIcon from '@material-ui/icons/Close';
+import CloseIcon from '@mui/icons-material/Close';
 
 const styles = makeStyles((theme) => ({
   paper : {

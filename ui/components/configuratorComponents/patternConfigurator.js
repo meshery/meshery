@@ -2,11 +2,11 @@ import { makeStyles } from '@mui/styles';
 import {
   Accordion, AccordionDetails, AccordionSummary, AppBar, ButtonGroup, CircularProgress, Divider, FormControl, Grid, IconButton, MenuItem, Paper, TextField, Toolbar, Tooltip, Typography,
 } from "@mui/material";
-import DeleteIcon from "@material-ui/icons/Delete";
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import FileCopyIcon from '@material-ui/icons/FileCopy';
-import ListAltIcon from '@material-ui/icons/ListAlt';
-import SaveIcon from '@material-ui/icons/Save';
+import DeleteIcon from "@mui/icons-material/Delete";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import FileCopyIcon from '@mui/icons-material/FileCopy';
+import ListAltIcon from '@mui/icons-material/ListAlt';
+import SaveIcon from '@mui/icons-material/Save';
 import { Autocomplete } from '@material-ui/lab';
 import jsYaml from "js-yaml";
 import React, { useContext, useEffect, useRef, useState } from "react";

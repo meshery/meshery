@@ -4,7 +4,7 @@ import { withStyles } from '@mui/styles';
 import {
   NoSsr, Grid, ExpansionPanelDetails, Typography, Dialog, Button, DialogActions, DialogContent, DialogTitle, Chip
 } from '@mui/material';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import GrafanaDateRangePicker from './GrafanaDateRangePicker';
 import { ExpansionPanel, ExpansionPanelSummary } from '../../ExpansionPanels';
 import GrafanaCustomChart from './GrafanaCustomChart';

@@ -2,7 +2,7 @@ import React from 'react';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import { withStyles } from '@mui/styles';
-import DeleteIcon from '@material-ui/icons/Delete';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { clearResultsSelection } from '../../lib/store';

@@ -9,7 +9,7 @@ import { bindActionCreators } from 'redux';
 import MUIDataTable from 'mui-datatables';
 import Moment from 'react-moment';
 import { withSnackbar } from 'notistack';
-import CloseIcon from '@material-ui/icons/Close';
+import CloseIcon from '@mui/icons-material/Close';
 import { updateProgress, } from '../lib/store';
 import dataFetch from '../lib/data-fetch';
 

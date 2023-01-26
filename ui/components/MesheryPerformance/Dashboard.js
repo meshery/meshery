@@ -10,7 +10,7 @@ import {
 import IconButton from "@mui/material/IconButton";
 import { makeStyles, useTheme } from "@mui/styles";
 import useMediaQuery from '@mui/material/useMediaQuery';
-import CloseIcon from "@material-ui/icons/Close";
+import CloseIcon from "@mui/icons-material/Close";
 import { withRouter } from "next/router";
 import MesheryMetrics from "../MesheryMetrics";
 import PerformanceCalendar from "./PerformanceCalendar";

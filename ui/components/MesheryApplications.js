@@ -4,11 +4,11 @@ import {
 } from "@mui/material";
 import { makeStyles, withStyles } from "@mui/styles";
 import TableSortLabel from "@mui/material/TableSortLabel";
-import CloseIcon from "@material-ui/icons/Close";
-import DeleteIcon from "@material-ui/icons/Delete";
-import FullscreenIcon from '@material-ui/icons/Fullscreen';
-import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
-import SaveIcon from '@material-ui/icons/Save';
+import CloseIcon from "@mui/icons-material/Close";
+import DeleteIcon from "@mui/icons-material/Delete";
+import FullscreenIcon from '@mui/icons-material/Fullscreen';
+import FullscreenExitIcon from '@mui/icons-material/FullscreenExit';
+import SaveIcon from '@mui/icons-material/Save';
 import MUIDataTable from "mui-datatables";
 import { withSnackbar } from "notistack";
 import React, { useEffect, useRef, useState } from "react";
@@ -24,14 +24,14 @@ import { getComponentsinFile, randomPatternNameGenerator as getRandomName } from
 import PromptComponent from "./PromptComponent";
 import UploadImport from "./UploadImport";
 import UndeployIcon from "../public/static/img/UndeployIcon";
-import DoneAllIcon from '@material-ui/icons/DoneAll';
+import DoneAllIcon from '@mui/icons-material/DoneAll';
 import ConfirmationMsg from "./ConfirmationModal";
 import ViewSwitch from "./ViewSwitch";
 import ApplicationsGrid from "./MesheryApplications/ApplicationsGrid";
 import { fileDownloader } from "../utils/fileDownloader";
 import { trueRandom } from "../lib/trueRandom";
-import PublishIcon from "@material-ui/icons/Publish";
-import InfoIcon from '@material-ui/icons/Info';
+import PublishIcon from "@mui/icons-material/Publish";
+import InfoIcon from '@mui/icons-material/Info';
 import ConfigurationSubscription from "./graphql/subscriptions/ConfigurationSubscription";
 import { iconMedium, iconSmall } from "../css/icons.styles";
 

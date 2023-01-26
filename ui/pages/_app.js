@@ -6,8 +6,8 @@ import { ThemeProvider as MuiThemeProvider } from '@mui/material/styles';
 import { withStyles } from "@mui/styles"
 import {
   CheckCircle, Error, Info, Warning
-} from '@material-ui/icons';
-import FavoriteIcon from '@material-ui/icons/Favorite';
+} from '@mui/icons-material';
+import FavoriteIcon from '@mui/icons-material/Favorite';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 // import 'billboard.js/dist/theme/insight.min.css';
 // import 'billboard.js/dist/theme/graph.min.css';

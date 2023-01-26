@@ -1,4 +1,4 @@
-import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
 const ConfigurationHover = ({  fill, className, ...rest }) => (
   <>

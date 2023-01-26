@@ -6,9 +6,9 @@ import {
 import blue from "@material-ui/core/colors/blue";
 import Grid from "@mui/material/Grid";
 import { withStyles } from "@mui/styles";
-import AddIcon from "@material-ui/icons/AddCircleOutline";
-import CloseIcon from "@material-ui/icons/Close";
-import SettingsIcon from "@material-ui/icons/Settings";
+import AddIcon from "@mui/icons-material/AddCircleOutline";
+import CloseIcon from "@mui/icons-material/Close";
+import SettingsIcon from "@mui/icons-material/Settings";
 import { withRouter } from "next/router";
 import { withSnackbar } from "notistack";
 import PropTypes from "prop-types";

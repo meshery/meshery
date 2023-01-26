@@ -1,7 +1,7 @@
 import { Grid, Typography, Button, Switch, IconButton } from "@mui/material";
 import { withStyles } from "@mui/styles";
 import React, { useEffect, useState } from "react";
-import CloseIcon from "@material-ui/icons/Close";
+import CloseIcon from "@mui/icons-material/Close";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { toggleCatalogContent } from "../lib/store";

@@ -6,7 +6,7 @@ import {
   MenuItem,
   Grid,
 } from "@mui/material/";
-import BackupIcon from "@material-ui/icons/Backup";
+import BackupIcon from "@mui/icons-material/Backup";
 import { withSnackbar } from "notistack";
 import { useState } from "react";
 import { fetchContexts, submitConfig } from "../helpers/kubernetesHelpers";

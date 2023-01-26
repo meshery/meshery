@@ -7,7 +7,7 @@ import { updateProgress } from "../../lib/store";
 import { bindActionCreators } from "redux";
 import { withSnackbar } from "notistack";
 import IconButton from "@mui/material/IconButton";
-import CloseIcon from "@material-ui/icons/Close";
+import CloseIcon from "@mui/icons-material/Close";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import GenericModal from "../GenericModal";
 import GrafanaCustomCharts from "../telemetry/grafana/GrafanaCustomCharts";

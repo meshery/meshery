@@ -4,7 +4,7 @@ import { makeStyles } from '@mui/styles';
 import React, { useEffect } from "react";
 import { getMeshProperties } from "../../utils/nameMapper";
 import PatternServiceFormCore from "./PatternServiceFormCore";
-import SettingsIcon from '@material-ui/icons/Settings';
+import SettingsIcon from '@mui/icons-material/Settings';
 
 const useStyles = makeStyles(() => ({
   appBar : {

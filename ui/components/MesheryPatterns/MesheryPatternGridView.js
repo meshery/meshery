@@ -7,7 +7,7 @@ import PatternConfiguratorComponent from "../configuratorComponents/patternConfi
 import { FILE_OPS, ACTIONS } from "../../utils/Enum";
 import ConfirmationMsg from "../ConfirmationModal";
 import { getComponentsinFile } from "../../utils/utils";
-import PublishIcon from "@material-ui/icons/Publish";
+import PublishIcon from "@mui/icons-material/Publish";
 import useStyles from "./Grid.styles";
 import Validation from "../Validation";
 import PublishModal from "../PublishModal";

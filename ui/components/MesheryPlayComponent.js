@@ -5,7 +5,7 @@ import { withStyles, Button, Divider, MenuItem, TextField, Grid } from "@mui/mat
 import { blue } from "@mui/material/colors";
 import PropTypes from "prop-types";
 import { withRouter } from "next/router";
-import SettingsIcon from "@material-ui/icons/Settings";
+import SettingsIcon from "@mui/icons-material/Settings";
 import MesheryAdapterPlayComponent from "./MesheryAdapterPlayComponent";
 import { bindActionCreators } from "redux";
 import { setAdapter } from "../lib/store";

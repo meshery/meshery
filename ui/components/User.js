@@ -20,7 +20,7 @@ import { updateUser } from '../lib/store';
 import classNames from 'classnames';
 import { ListItem, List } from '@mui/material';
 import { withSnackbar } from "notistack";
-import CloseIcon from "@material-ui/icons/Close";
+import CloseIcon from "@mui/icons-material/Close";
 
 
 const styles = () => ({

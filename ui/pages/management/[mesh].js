@@ -1,6 +1,6 @@
 import { Button, NoSsr, Container, Typography } from "@mui/material";
 import { makeStyles } from '@mui/styles';
-import SettingsIcon from "@material-ui/icons/Settings";
+import SettingsIcon from "@mui/icons-material/Settings";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import React from "react";

@@ -2,9 +2,9 @@ import { Button, Typography,FormGroup,TextField,InputAdornment, IconButton } fro
 import React from 'react'
 import { useRef } from 'react';
 import AddIconCircleBorder from '../assets/icons/AddIconCircleBorder'
-import CloseIcon from "@material-ui/icons/Close";
+import CloseIcon from "@mui/icons-material/Close";
 import PromptComponent from './PromptComponent';
-import CloudUploadIcon from "@material-ui/icons/CloudUpload";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { promisifiedDataFetch } from "../lib/data-fetch";
 import { updateProgress } from '../lib/store';
 import { withSnackbar } from 'notistack';

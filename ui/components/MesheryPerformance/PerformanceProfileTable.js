@@ -13,8 +13,8 @@ import { withSnackbar } from "notistack";
 import { updateProgress } from "../../lib/store";
 import TableSortLabel from "@mui/material/TableSortLabel";
 import PerformanceResults from "./PerformanceResults";
-import EditIcon from '@material-ui/icons/Edit';
-import PlayArrowIcon from '@material-ui/icons/PlayArrow';
+import EditIcon from '@mui/icons-material/Edit';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 
 const styles = (theme) => ({ grid : { padding : theme.spacing(2), },
   tableHeader : { fontWeight : "bolder",

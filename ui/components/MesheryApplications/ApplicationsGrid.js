@@ -5,7 +5,7 @@ import React, { useState } from "react";
 import MesheryApplicationCard from "./ApplicationsCard";
 import ConfirmationMsg from "../ConfirmationModal";
 import { getComponentsinFile } from "../../utils/utils";
-import PublishIcon from "@material-ui/icons/Publish";
+import PublishIcon from "@mui/icons-material/Publish";
 import useStyles from "../MesheryPatterns/Grid.styles";
 import { FILE_OPS } from "../../utils/Enum";
 

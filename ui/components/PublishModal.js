@@ -10,8 +10,8 @@ import {
 } from '@mui/material';
 import { Form } from '@rjsf/material-ui';
 import useStyles from "./MesheryPatterns/Cards.styles";
-import PublicIcon from '@material-ui/icons/Public';
-import CloseIcon from '@material-ui/icons/Close';
+import PublicIcon from '@mui/icons-material/Public';
+import CloseIcon from '@mui/icons-material/Close';
 const getMuiTheme = () => createTheme({
   palette : {
     primary : {

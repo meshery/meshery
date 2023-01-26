@@ -4,7 +4,7 @@ import { withStyles } from '@mui/styles';
 import {
   NoSsr, Grid, ExpansionPanelDetails, Typography,
 } from '@mui/material';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import LazyLoad from 'react-lazyload';
 import GrafanaDateRangePicker from './GrafanaDateRangePicker';
 import { ExpansionPanel, ExpansionPanelSummary } from '../../ExpansionPanels';

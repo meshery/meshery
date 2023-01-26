@@ -1,13 +1,13 @@
 import React from 'react';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
-import IndeterminateCheckBoxIcon from '@material-ui/icons/IndeterminateCheckBox';
-import CompareArrowsIcon from '@material-ui/icons/CompareArrows';
+import IndeterminateCheckBoxIcon from '@mui/icons-material/IndeterminateCheckBox';
+import CompareArrowsIcon from '@mui/icons-material/CompareArrows';
 import { withStyles } from '@mui/styles';
 import { NoSsr } from '@mui/material';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import GetAppIcon from '@material-ui/icons/GetApp';
+import GetAppIcon from '@mui/icons-material/GetApp';
 import MesheryChartDialog from './MesheryChartDialog';
 import MesheryChart from './MesheryChart';
 import { clearResultsSelection } from '../lib/store';

@@ -4,7 +4,7 @@ import { withStyles } from "@mui/styles";
 import { NoSsr, Typography, IconButton } from "@mui/material";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import CloseIcon from "@material-ui/icons/Close";
+import CloseIcon from "@mui/icons-material/Close";
 import { withSnackbar } from "notistack";
 import dataFetch from "../../../lib/data-fetch";
 import PrometheusSelectionComponent from "./PrometheusSelectionComponent";

@@ -4,11 +4,11 @@ import {
   NoSsr, Button, TextField, MenuItem, Grid, Dialog, DialogContent, DialogContentText, DialogTitle, Divider, FormControlLabel, Switch, IconButton,
 } from '@mui/material';
 import Moment from 'react-moment';
-import AccessTimeIcon from '@material-ui/icons/AccessTime';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import MesheryDateTimePicker from '../../MesheryDateTimePicker';
-import { Close } from '@material-ui/icons';
+import { Close } from '@mui/icons-material';
 
 const styles = (theme) => ({
   rangeDialog : {

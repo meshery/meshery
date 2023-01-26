@@ -1,6 +1,6 @@
 import React from "react";
 import IconButton from '@mui/material/IconButton';
-import CloseIcon from '@material-ui/icons/Close';
+import CloseIcon from '@mui/icons-material/Close';
 import { connect } from 'react-redux';
 import NoSsr from '@mui/material/NoSsr';
 import {
@@ -13,9 +13,9 @@ import {
   Tab,
   ClickAwayListener
 } from '@mui/material';
-import BellIcon from '@material-ui/icons/Notifications';
-import ClearIcon from '@material-ui/icons/Clear';
-import ErrorIcon from '@material-ui/icons/Error';
+import BellIcon from '@mui/icons-material/Notifications';
+import ClearIcon from '@mui/icons-material/Clear';
+import ErrorIcon from '@mui/icons-material/Error';
 import { withStyles } from '@mui/styles';
 import amber from '@material-ui/core/colors/amber';
 import { eventTypes } from '../lib/event-types';

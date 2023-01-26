@@ -15,7 +15,7 @@ import { bindActionCreators } from "redux";
 import { updateGrafanaConfig, updateProgress, updatePrometheusConfig } from "../../../lib/store";
 import ReactSelectWrapper from "../../ReactSelectWrapper"
 import { handleGrafanaConfigure, handlePrometheusConfigure } from "../helpers/metrics";
-import CloseIcon from "@material-ui/icons/Close";
+import CloseIcon from "@mui/icons-material/Close";
 import { composeWithDevTools } from "@redux-devtools/extension";
 
 

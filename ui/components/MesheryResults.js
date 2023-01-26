@@ -9,8 +9,8 @@ import { bindActionCreators } from 'redux';
 import MUIDataTable from 'mui-datatables';
 import Moment from 'react-moment';
 import { withSnackbar } from 'notistack';
-import CloseIcon from '@material-ui/icons/Close';
-import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
+import CloseIcon from '@mui/icons-material/Close';
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { updateResultsSelection, clearResultsSelection, updateProgress, } from '../lib/store';
 import TableSortLabel from '@mui/material/TableSortLabel'
 import dataFetch from '../lib/data-fetch';

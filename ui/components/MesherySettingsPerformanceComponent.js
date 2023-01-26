@@ -2,7 +2,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Button from '@mui/material/Button';
-import SaveOutlinedIcon from '@material-ui/icons/SaveOutlined';
+import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
 import { withStyles } from '@mui/styles';
 import { Autocomplete } from '@material-ui/lab'
 import Grid from '@mui/material/Grid';
@@ -14,7 +14,7 @@ import TextField from '@mui/material/TextField';
 import { withSnackbar } from 'notistack';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import CloseIcon from '@material-ui/icons/Close';
+import CloseIcon from '@mui/icons-material/Close';
 import { updateLoadTestPref, updateProgress } from '../lib/store';
 import { durationOptions } from '../lib/prePopulatedOptions';
 import { ctxUrl } from '../utils/multi-ctx';

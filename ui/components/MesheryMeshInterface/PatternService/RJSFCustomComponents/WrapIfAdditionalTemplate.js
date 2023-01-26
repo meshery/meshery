@@ -1,7 +1,7 @@
 import React from "react";
 import FormControl from "@mui/material/FormControl";
 import Grid from "@mui/material/Grid";
-import DeleteIcon from "@material-ui/icons/Delete";
+import DeleteIcon from "@mui/icons-material/Delete";
 import InputLabel from "@mui/material/InputLabel";
 import Input from "@mui/material/Input";
 import {

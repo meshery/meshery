@@ -6,10 +6,10 @@ import {
 } from "@mui/material";
 import { blue } from "@mui/material/colors";
 import NoSsr from "@mui/material/NoSsr";
-import AddIcon from "@material-ui/icons/Add";
-import CloseIcon from "@material-ui/icons/Close";
-import DeleteIcon from "@material-ui/icons/Delete";
-import PlayIcon from "@material-ui/icons/PlayArrow";
+import AddIcon from "@mui/icons-material/Add";
+import CloseIcon from "@mui/icons-material/Close";
+import DeleteIcon from "@mui/icons-material/Delete";
+import PlayIcon from "@mui/icons-material/PlayArrow";
 import MUIDataTable from "mui-datatables";
 import { withRouter } from "next/router";
 import { withSnackbar } from "notistack";
