@@ -2,7 +2,6 @@ import React from "react";
 import { createUseRemoteComponent, getDependencies, createRequires } from "@paciolan/remote-component";
 import CircularProgress from "@mui/material/CircularProgress";
 
-
 const requires = createRequires(getDependencies);
 
 const useRemoteComponent = createUseRemoteComponent({ requires });

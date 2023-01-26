@@ -5,7 +5,7 @@ import AccordionDetails from "@mui/material/AccordionDetails";
 import Typography from "@mui/material/Typography";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { promisifiedDataFetch } from "../../lib/data-fetch";
-import { CircularProgress, styled } from "@mui/material";
+import { CircularProgress } from "@mui/material";
 import PatternServiceForm from "./PatternServiceForm";
 import {
   getPatternServiceName as getItemName,
@@ -15,12 +15,6 @@ import {
 } from "./helpers";
 import { isEmptyObj } from "../../utils/utils";
 import { useSnackbar } from 'notistack';
-
-const TypographyHeading = styled(Typography)(({ theme }) => ({
-  fontSize : theme.typography.pxToRem(15),
-  fontWeight : theme.typography.fontWeightRegular,
-}));
-
 
 // Question: So this function only returns the response coming from "/api/oam/(workload/trait)/--"
 // So, it is not present in the current schemaSet because we had passed trim=true
@@ -112,9 +106,9 @@ export default function LazyPatternServiceForm(props) {
         onChange={() => expand(!expanded)}
       >
         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-          <TypographyHeading>
+          <Typography>
             {getReadableItemName(props?.schemaSet?.workload)}
-          </TypographyHeading>
+          </Typography>
         </AccordionSummary>
         <LazyAccordionDetails expanded={expanded}>
           {isEmptyObj(schemaSet) ? (

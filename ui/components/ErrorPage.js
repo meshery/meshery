@@ -4,42 +4,44 @@ import {
   Typography,
   Link
 } from "@mui/material";
-import { makeStyles } from '@mui/styles';
+import { styled } from "@mui/material/styles"
 
-const styles = makeStyles(() => ({
-  rootClass : {
-    backgroundColor : "#fff",
-    padding : "2rem",
-    textAlign : "center",
-    borderRadius : 4,
-    height : "100%",
-  },
-  errorSection : {
-  },
-  message : {
-    fontSize : "3rem",
-    lineHeight : "2rem",
-    marginBottom : "2rem",
-  },
-  errMessage : {
-    fontWeight : "400",
-    fontSize : "1.5rem",
-    color : "gray",
-    fontStyle : "italic",
-    marginTop : "2.5rem",
-  },
-  mesh : {
-    display : "block",
-    margin : "auto",
-    marginTop : "3.125rem",
-    maxWidth : "50%",
-    height : "45%"
-  },
-  helpMessage : {
-    marginTop : "5rem",
-    color : "rgba(0, 0, 0, 0.87)"
-  },
-}))
+const DivRootClass = styled("div")(() => ({
+  backgroundColor : "#fff",
+  padding : "2rem",
+  textAlign : "center",
+  borderRadius : 4,
+  height : "100%",
+}));
+
+const DivErrorSection = styled("div")(() => ({}));
+
+const DivMessage = styled("div")(() => ({
+  fontSize : "3rem",
+  lineHeight : "2rem",
+  marginBottom : "2rem",
+}));
+
+const DivErrMessage = styled("div")(() => ({
+  fontWeight : "400",
+  fontSize : "1.5rem",
+  color : "gray",
+  fontStyle : "italic",
+  marginTop : "2.5rem",
+}));
+
+const ImgMesh = styled("img")(() => ({
+  display : "block",
+  margin : "auto",
+  marginTop : "3.125rem",
+  maxWidth : "50%",
+  height : "45%",
+}));
+
+const PHelpMessage = styled("p")(() => ({
+  marginTop : "5rem",
+  color : "rgba(0, 0, 0, 0.87)",
+}));
 
 const customMessages = [
   "Oh, no. Please pardon our meshy app.",
@@ -48,39 +50,47 @@ const customMessages = [
   "Please pardon our mesh.",
   "How did this mesh happen?",
   "Well, isn't this a mesh?",
-  "Yikes. Things are a mesh here."
+  "Yikes. Things are a mesh here.",
 ];
 
-function CustomErrorMessage(){
-  const classes = styles();
+function CustomErrorMessage() {
   const [customMessage, setCustomMessage] = useState(customMessages[0]);
 
-  useEffect( () => {
-    setCustomMessage(customMessages[Math.floor(Math.random()*customMessages.length)]);
-  },[]);
+  useEffect(() => {
+    setCustomMessage(
+      customMessages[Math.floor(Math.random() * customMessages.length)]
+    );
+  }, []);
 
   return (
     <NoSsr>
-      <div className={classes.rootClass}>
-        <div className={classes.errorSection}>
+      <DivRootClass>
+        <DivErrorSection>
           <Typography variant="h1">
-            <div className={classes.message}>
-              {customMessage}
-            </div>
+            <DivMessage>{customMessage}</DivMessage>
           </Typography>
           <Typography variant="h5">
-            <div className={classes.errMessage}>
-            Page does not exist.
-            </div>
+            <DivErrMessage>Page does not exist.</DivErrMessage>
           </Typography>
-        </div>
-        <img src="/static/img/service-mesh.svg" alt="service meshed" className={classes.mesh}/>
+        </DivErrorSection>
+        <ImgMesh src="/static/img/service-mesh.svg" alt="service meshed" />
         <Typography variant="body1">
-          <p className={classes.helpMessage}>Start a conversation at Layer5 community <Link underline="none" href="https://discuss.layer5.io/c/meshery/5" target="_blank">discussion forum</Link>.</p>
+          <PHelpMessage>
+            Start a conversation at Layer5 community{" "}
+            <Link
+              underline="none"
+              href="https://discuss.layer5.io/c/meshery/5"
+              target="_blank"
+            >
+              discussion forum
+            </Link>
+            .
+          </PHelpMessage>
         </Typography>
-      </div>
+      </DivRootClass>
     </NoSsr>
-  )
+  );
 }
 
 export default CustomErrorMessage;
+

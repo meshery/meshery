@@ -4,7 +4,7 @@ import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidato
 import Avatar from '@mui/material/Avatar';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { withStyles } from '@mui/styles';
+import { styled } from "@mui/material/styles"
 import Link from "next/link";
 import MenuList from '@mui/material/MenuList';
 import Grow from '@mui/material/Grow';
@@ -22,16 +22,19 @@ import { ListItem, List } from '@mui/material';
 import { withSnackbar } from "notistack";
 import CloseIcon from "@mui/icons-material/Close";
 
+const DivLink = styled("div")(() => ({
+  display : "inline-flex",
+  width : "100%",
+  height : "30px",
+  alignItems : "self-end",
+}));
 
-const styles = () => ({
-  popover : { color : 'black', },
-  link : {
-    display : "inline-flex",
-    width : "100%",
-    height : "30px",
-    alignItems : "self-end"
-  },
-});
+const SpanLink = styled("span")(() => ({
+  display : "inline-flex",
+  width : "100%",
+  height : "30px",
+  alignItems : "self-end",
+}));
 
 function exportToJsonFile(jsonData, filename) {
   let dataStr = JSON.stringify(jsonData);
@@ -51,9 +54,9 @@ class User extends React.Component {
     user : null,
     open : false,
     account : ExtensionPointSchemaValidator("account")(),
-    providerType : '',
-    capabilitiesLoaded : false
-  }
+    providerType : "",
+    capabilitiesLoaded : false,
+  };
 
   handleToggle = () => {
     this.setState((state) => ({ open : !state.open }));
@@ -64,10 +67,10 @@ class User extends React.Component {
       return;
     }
     this.setState({ open : false });
-  }
+  };
 
   handleLogout = () => {
-    window.location = '/user/logout'
+    window.location = "/user/logout";
   };
 
   handleError = (error) => {
@@ -75,7 +78,12 @@ class User extends React.Component {
       variant : "error",
       action : function Action(key) {
         return (
-          <IconButton key="close" aria-label="Close" color="inherit" onClick={() => this.prop.closeSnackbar(key)}>
+          <IconButton
+            key="close"
+            aria-label="Close"
+            color="inherit"
+            onClick={() => this.prop.closeSnackbar(key)}
+          >
             <CloseIcon />
           </IconButton>
         );
@@ -85,24 +93,34 @@ class User extends React.Component {
   };
 
   handlePreference = () => {
-    this.props.router.push('/user/preferences');
+    this.props.router.push("/user/preferences");
   };
 
   handleGetToken = () => {
-    dataFetch('/api/token', { credentials : 'same-origin' }, (data) => {
-      exportToJsonFile(data, "auth.json");
-    }, (error) => ({ error, }));
+    dataFetch(
+      "/api/token",
+      { credentials : "same-origin" },
+      (data) => {
+        exportToJsonFile(data, "auth.json");
+      },
+      (error) => ({ error })
+    );
   };
 
   componentDidMount() {
-    dataFetch('/api/user', {
-      credentials : 'same-origin'
-    }, (user) => {
-      this.setState({ user });
-      this.props.updateUser({ user });
-    }, (error) => ({
-      error,
-    }));
+    dataFetch(
+      "/api/user",
+      {
+        credentials : "same-origin",
+      },
+      (user) => {
+        this.setState({ user });
+        this.props.updateUser({ user });
+      },
+      (error) => ({
+        error,
+      })
+    );
   }
 
   componentDidUpdate() {
@@ -110,9 +128,11 @@ class User extends React.Component {
     if (!this.state.capabilitiesLoaded && capabilitiesRegistry) {
       this.setState({
         capabilitiesLoaded : true, // to prevent re-compute
-        account : ExtensionPointSchemaValidator("account")(capabilitiesRegistry?.extensions?.account),
+        account : ExtensionPointSchemaValidator("account")(
+          capabilitiesRegistry?.extensions?.account
+        ),
         providerType : capabilitiesRegistry?.provider_type,
-      })
+      });
     }
   }
 
@@ -120,22 +140,16 @@ class User extends React.Component {
    * @param {import("../utils/ExtensionPointSchemaValidator").AccountSchema[]} children
    */
   renderAccountExtension(children) {
-
     if (children && children.length > 0) {
       return (
         <List disablePadding>
-          {children.map(({
-            id, href, title, show : showc
-          }) => {
+          {children.map(({ id, href, title, show : showc }) => {
             if (typeof showc !== "undefined" && !showc) {
               return "";
             }
             return (
               <React.Fragment key={id}>
-                <ListItem
-                  button
-                  key={id}
-                >
+                <ListItem button key={id}>
                   {this.extensionPointContent(href, title)}
                 </ListItem>
               </React.Fragment>
@@ -150,34 +164,30 @@ class User extends React.Component {
     const { classes } = this.props;
 
     const content = (
-      <div className={classNames(classes.link)} >
-        <ListItemText
-          classes={{ primary : classes.itemPrimary, }}
-        >
+      <DivLink className={classNames()}>
+        <ListItemText classes={{ primary : classes.itemPrimary }}>
           {name}
         </ListItemText>
-      </div>
+      </DivLink>
     );
     if (href) {
       return (
         <Link href={href}>
-          <span
-            className={classNames(classes.link)}
+          <SpanLink
+            className={classNames()}
             onClick={() => this.props.updateExtensionType(name)}
           >
             {content}
-          </span>
+          </SpanLink>
         </Link>
-      )
+      );
     }
 
     return content;
   }
 
   render() {
-    const {
-      color, iconButtonClassName, avatarClassName, classes
-    } = this.props;
+    const { color, iconButtonClassName, avatarClassName } = this.props;
     let avatar_url;
     if (this.state.user && this.state.user !== null) {
       avatar_url = this.state.user.avatar_url;
@@ -193,39 +203,45 @@ class User extends React.Component {
               buttonRef={(node) => {
                 this.anchorEl = node;
               }}
-              aria-owns={open
-                ? 'menu-list-grow'
-                : undefined}
+              aria-owns={open ? "menu-list-grow" : undefined}
               aria-haspopup="true"
               onClick={this.handleToggle}
             >
-              <Avatar className={avatarClassName} src={avatar_url} imgProps={{ referrerPolicy : "no-referrer" }} />
+              <Avatar
+                className={avatarClassName}
+                src={avatar_url}
+                imgProps={{ referrerPolicy : "no-referrer" }}
+              />
             </IconButton>
           </div>
-          <Popper open={open} anchorEl={this.anchorEl} transition  style={{ zIndex : 10000 }} placement="top-end">
+          <Popper
+            open={open}
+            anchorEl={this.anchorEl}
+            transition
+            style={{ zIndex : 10000 }}
+            placement="top-end"
+          >
             {({ TransitionProps, placement }) => (
               <Grow
                 {...TransitionProps}
                 id="menu-list-grow"
-                style={{ transformOrigin : placement === 'bottom'
-                  ? 'left top'
-                  : 'left bottom' }}
+                style={{
+                  transformOrigin :
+                    placement === "bottom" ? "left top" : "left bottom",
+                }}
               >
-                <Paper className={classes.popover}>
+                <Paper sx={{ color : "black" }}>
                   <ClickAwayListener onClickAway={this.handleClose}>
                     <MenuList>
-                      {
-                        this.state.account && this.state.account.length ?
-                          (
-                            <>
-                              {this.renderAccountExtension(this.state.account)}
-                            </>
-                          )
-                          :
-                          null
-                      }
-                      <MenuItem onClick={this.handleGetToken}>Get Token</MenuItem>
-                      <MenuItem onClick={this.handlePreference}>Preferences</MenuItem>
+                      {this.state.account && this.state.account.length ? (
+                        <>{this.renderAccountExtension(this.state.account)}</>
+                      ) : null}
+                      <MenuItem onClick={this.handleGetToken}>
+                        Get Token
+                      </MenuItem>
+                      <MenuItem onClick={this.handlePreference}>
+                        Preferences
+                      </MenuItem>
                       <MenuItem onClick={this.handleLogout}>Logout</MenuItem>
                     </MenuList>
                   </ClickAwayListener>
@@ -239,12 +255,13 @@ class User extends React.Component {
   }
 }
 
-const mapDispatchToProps = (dispatch) => ({ updateUser : bindActionCreators(updateUser, dispatch), });
-const mapStateToProps = state => ({
-  capabilitiesRegistry : state.get("capabilitiesRegistry")
-})
+const mapDispatchToProps = (dispatch) => ({
+  updateUser : bindActionCreators(updateUser, dispatch),
+});
+const mapStateToProps = (state) => ({
+  capabilitiesRegistry : state.get("capabilitiesRegistry"),
+});
 
-export default withStyles(styles)(connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(withSnackbar((withRouter(User)))));
+export default (
+  connect(mapStateToProps, mapDispatchToProps)(withSnackbar(withRouter(User)))
+);

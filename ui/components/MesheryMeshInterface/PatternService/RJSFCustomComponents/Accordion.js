@@ -1,5 +1,4 @@
 import React, { useEffect } from "react";
-import styled from "@mui/material";
 import MuiAccordion from "@mui/material/Accordion";
 import MuiAccordionSummary from "@mui/material/AccordionSummary";
 import MuiAccordionDetails from "@mui/material/AccordionDetails";
@@ -7,11 +6,6 @@ import DeleteIcon from "../../../../assets/icons/DeleteIcon";
 import Typography from "@mui/material/Typography";
 import ExpandMoreIcon from "../../../../assets/icons/ExpandMoreIcon"
 import { IconButton } from "@mui/material";
-
-const TypographyHeading = styled(Typography)(({ theme }) => ({
-  fontSize : theme.typography.pxToRem(15),
-  fontWeight : theme.typography.fontWeightRegular,
-}));
 
 export default function SimpleAccordion(props) {
   useEffect(() => {
@@ -35,9 +29,9 @@ export default function SimpleAccordion(props) {
           id="panel1a-header"
           style={{ backgroundColor : "F7F7F7" }}
         >
-          <TypographyHeading>
+          <Typography>
             {props.heading?.charAt(0).toUpperCase() + props.heading?.slice(1)}{" "}
-          </TypographyHeading>
+          </Typography>
 
           {props.childProps.hasRemove && (
             <IconButton

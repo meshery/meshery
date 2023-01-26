@@ -1,4 +1,3 @@
-// @ts-check
 import React from "react";
 import { Modal, Backdrop, Fade } from "@mui/material";
 
@@ -12,22 +11,24 @@ import { Modal, Backdrop, Fade } from "@mui/material";
  * }} props
  * @returns
  */
-export default function GenericModal({
-  open, Content, handleClose, container
-}) {
+export default function GenericModal({ open, handleClose, Content, container }) {
   return (
     <Modal
-      style={{ display : "flex",
+      sx={{
+        display : "flex",
         alignItems : "center",
-        justifyContent : "center", }}
+        justifyContent : "center",
+      }}
       open={open}
       onClose={handleClose}
       closeAfterTransition
-      BackdropComponent={Backdrop}
-      BackdropProps={{ timeout : 200, }}
+      slots={Backdrop}
+      slotProps={{ timeout : 200 }}
       container={container}
     >
-      <Fade in={open} style={{ maxHeight : "90vh", overflow : "auto" }} >{Content}</Fade>
+      <Fade in={open} sx={{ maxHeight : "90vh", overflow : "auto" }}>
+        {Content}
+      </Fade>
     </Modal>
   );
 }

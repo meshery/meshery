@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'next/router';
 import { withSnackbar } from 'notistack';
-import { withStyles } from '@mui/styles';
+import { styled } from "@mui/material/styles"
 import CloseIcon from '@mui/icons-material/Close';
 import {
   IconButton, FormControl, FormLabel, FormGroup, FormControlLabel, Switch
@@ -25,68 +25,58 @@ import MesherySettingsPerformanceComponent from './MesherySettingsPerformanceCom
 import { ctxUrl } from '../utils/multi-ctx';
 import { iconMedium } from '../css/icons.styles';
 
+const PaperStatsWrapper = styled(Paper)(() => ({
+  maxWidth : "100%",
+  height : "auto",
+  borderTopLeftRadius : 0,
+  borderTopRightRadius : 0,
+  borderBottomLeftRadius : 3,
+  borderBottomRightRadius : 3,
+}));
 
-const styles = (theme) => ({
-  statsWrapper : {
-    maxWidth : "100%",
-    height : 'auto',
-    borderTopLeftRadius : 0,
-    borderTopRightRadius : 0,
-    borderBottomLeftRadius : 3,
-    borderBottomRightRadius : 3,
+const PaperPaperRoot = styled(Paper)(() => ({
+  flexGrow : 1,
+  maxWidth : "100%",
+  marginLeft : 0,
+  borderTopLeftRadius : 3,
+  borderTopRightRadius : 3,
+}));
+
+const StyledTabs = styled(Tabs)(() => ({
+  marginLeft : 0,
+}));
+
+const StyledTab = styled(Tab)(() => ({
+  maxWidth : "min(33%, 200px)",
+  minWidth : "50px",
+  margin : 0,
+}));
+
+const DivFormContainer = styled("div")(() => ({
+  display : "flex",
+  "flex-wrap" : "wrap",
+  "justify-content" : "space-evenly",
+  padding : 50,
+}));
+
+const FormControlFormGrp = styled(FormControl)(() => ({
+  padding : 20,
+  border : "1.5px solid #969696",
+}));
+
+const FormLabelFormLegend = styled(FormLabel)(() => ({
+  fontSize : 20,
+}));
+
+const SpanTabLabel = styled("span")(({ theme }) => ({
+  [theme.breakpoints.up("sm")] : {
+    fontSize : "1em",
   },
-  paperRoot : {
-    flexGrow : 1,
-    maxWidth : "100%",
-    marginLeft : 0,
-    borderTopLeftRadius : 3,
-    borderTopRightRadius : 3,
+
+  [theme.breakpoints.between("xs", "sm")] : {
+    fontSize : "0.8em",
   },
-  tabs : { marginLeft : 0 },
-  tab : {
-    maxWidth : 'min(33%, 200px)',
-    minWidth : '50px',
-    margin : 0
-  },
-  icon : {
-    display : 'inline',
-    verticalAlign : 'text-top',
-    width : theme.spacing(1.75),
-    marginLeft : theme.spacing(0.5),
-  },
-  iconText : {
-    display : 'inline',
-    verticalAlign : 'middle',
-  },
-  backToPlay : { margin : theme.spacing(2), },
-  link : { cursor : 'pointer', },
-  formContainer : {
-    display : 'flex',
-    'flex-wrap' : 'wrap',
-    'justify-content' : 'space-evenly',
-    padding : 50
-  },
-  formGrp : {
-    padding : 20,
-    border : '1.5px solid #969696',
-  },
-  formLegend : { fontSize : 20, },
-  switchBase : {
-    color : '#647881',
-    "&$checked" : { color : '#00b39f' },
-    "&$checked + $track" : { backgroundColor : 'rgba(0,179,159,0.5)' },
-  },
-  track : { backgroundColor : 'rgba(100,120,129,0.5)', },
-  checked : {},
-  tabLabel : {
-    [theme.breakpoints.up("sm")] : {
-      fontSize : '1em'
-    },
-    [theme.breakpoints.between("xs", 'sm')] : {
-      fontSize : '0.8em'
-    }
-  }
-});
+}));
 
 class UserPreference extends React.Component {
   constructor(props) {
@@ -96,29 +86,40 @@ class UserPreference extends React.Component {
       perfResultStats : props.perfResultStats,
       tabVal : 0,
       userPrefs : ExtensionPointSchemaValidator("user_prefs")(),
-      providerType : '',
+      providerType : "",
       catalogContent : true,
       extensionPreferences : {},
-      capabilitiesLoaded : false
+      capabilitiesLoaded : false,
     };
   }
 
   handleCatalogContentToggle = () => {
-    this.props.toggleCatalogContent({ catalogVisibility : !this.state.catalogContent });
-    this.setState((state) => ({ catalogContent : !state.catalogContent }), () => this.handleCatalogPreference());
-  }
+    this.props.toggleCatalogContent({
+      catalogVisibility : !this.state.catalogContent,
+    });
+    this.setState(
+      (state) => ({ catalogContent : !state.catalogContent }),
+      () => this.handleCatalogPreference()
+    );
+  };
 
   handleCatalogPreference = () => {
-    let body = Object.assign({}, this.state.extensionPreferences)
-    body["catalogContent"] = this.state.catalogContent
-    dataFetch("/api/user/prefs",
-      { credentials : "include",
+    let body = Object.assign({}, this.state.extensionPreferences);
+    body["catalogContent"] = this.state.catalogContent;
+    dataFetch(
+      "/api/user/prefs",
+      {
+        credentials : "include",
         method : "POST",
-        body : JSON.stringify({ usersExtensionPreferences : body })
+        body : JSON.stringify({ usersExtensionPreferences : body }),
       },
       () => {
-        this.props.enqueueSnackbar(`Catalog Content was ${this.state.catalogContent ? "enab" : "disab"}led`,
-          { variant : 'success',
+        this.props.enqueueSnackbar(
+          `Catalog Content was ${
+            this.state.catalogContent ? "enab" : "disab"
+          }led`,
+          {
+            variant : "success",
             autoHideDuration : 4000,
             action : (key) => (
               <IconButton
@@ -130,25 +131,33 @@ class UserPreference extends React.Component {
                 <CloseIcon style={iconMedium} />
               </IconButton>
             ),
-          });
+          }
+        );
       },
       this.handleError("There was an error sending your preference")
-    )
-  }
+    );
+  };
 
   handleToggle = (name) => () => {
     const self = this;
-    if (name == 'anonymousUsageStats') {
-      self.setState((state) => ({ anonymousStats : !state.anonymousStats }), () => this.handleChange(name));
+    if (name == "anonymousUsageStats") {
+      self.setState(
+        (state) => ({ anonymousStats : !state.anonymousStats }),
+        () => this.handleChange(name)
+      );
     } else {
-      self.setState((state) => ({ perfResultStats : !state.perfResultStats }), () => this.handleChange(name));
+      self.setState(
+        (state) => ({ perfResultStats : !state.perfResultStats }),
+        () => this.handleChange(name)
+      );
     }
-  }
+  };
 
   handleError = (msg) => () => {
     const self = this;
     this.props.updateProgress({ showProgress : false });
-    this.props.enqueueSnackbar(msg, { variant : 'error',
+    this.props.enqueueSnackbar(msg, {
+      variant : "error",
       action : (key) => (
         <IconButton
           key="close"
@@ -159,14 +168,15 @@ class UserPreference extends React.Component {
           <CloseIcon style={iconMedium} />
         </IconButton>
       ),
-      autoHideDuration : 8000, });
-  }
+      autoHideDuration : 8000,
+    });
+  };
 
   handleChange = (name) => {
     const self = this;
     const { anonymousStats, perfResultStats } = this.state;
     let val, msg;
-    if (name == 'anonymousUsageStats') {
+    if (name == "anonymousUsageStats") {
       val = anonymousStats;
       msg = val
         ? "Sending anonymous usage statistics was enabled"
@@ -179,43 +189,47 @@ class UserPreference extends React.Component {
     }
 
     const requestBody = JSON.stringify({
-      "anonymousUsageStats" : anonymousStats,
-      "anonymousPerfResults" : perfResultStats,
+      anonymousUsageStats : anonymousStats,
+      anonymousPerfResults : perfResultStats,
     });
 
     // console.log(requestBody,anonymousStats,perfResultStats);
 
     this.props.updateProgress({ showProgress : true });
     dataFetch(
-      ctxUrl('/api/user/prefs', this.props.selectedK8sContexts), {
-        credentials : 'include',
-        method : 'POST',
-        headers : { 'Content-Type' : 'application/json;charset=UTF-8', },
+      ctxUrl("/api/user/prefs", this.props.selectedK8sContexts),
+      {
+        credentials : "include",
+        method : "POST",
+        headers : { "Content-Type" : "application/json;charset=UTF-8" },
         body : requestBody,
-      }, (result) => {
+      },
+      (result) => {
         this.props.updateProgress({ showProgress : false });
-        if (typeof result !== 'undefined') {
-          this.props.enqueueSnackbar(msg, { variant : val
-            ? 'success'
-            : 'info',
-          autoHideDuration : 4000,
-          action : (key) => (
-            <IconButton
-              key="close"
-              aria-label="Close"
-              color="inherit"
-              onClick={() => self.props.closeSnackbar(key)}
-            >
-              <CloseIcon style={iconMedium} />
-            </IconButton>
-          ), });
+        if (typeof result !== "undefined") {
+          this.props.enqueueSnackbar(msg, {
+            variant : val ? "success" : "info",
+            autoHideDuration : 4000,
+            action : (key) => (
+              <IconButton
+                key="close"
+                aria-label="Close"
+                color="inherit"
+                onClick={() => self.props.closeSnackbar(key)}
+              >
+                <CloseIcon style={iconMedium} />
+              </IconButton>
+            ),
+          });
         }
-      }, self.handleError('There was an error sending your preference'));
-  }
+      },
+      self.handleError("There was an error sending your preference")
+    );
+  };
 
   handleTabValChange = (event, newVal) => {
     this.setState({ tabVal : newVal });
-  }
+  };
 
   componentDidMount = () => {
     dataFetch(
@@ -228,29 +242,35 @@ class UserPreference extends React.Component {
         if (result) {
           this.setState({
             extensionPreferences : result?.usersExtensionPreferences,
-            catalogContent : result?.usersExtensionPreferences?.catalogContent
-          })
+            catalogContent : result?.usersExtensionPreferences?.catalogContent,
+          });
         }
       },
-      err => console.error(err)
-    )
-
-  }
+      (err) => console.error(err)
+    );
+  };
 
   componentDidUpdate() {
     const { capabilitiesRegistry } = this.props;
     if (capabilitiesRegistry && !this.state.capabilitiesLoaded) {
       this.setState({
         capabilitiesLoaded : true, // to prevent re-compute
-        userPrefs : ExtensionPointSchemaValidator("user_prefs")(capabilitiesRegistry?.extensions?.user_prefs),
+        userPrefs : ExtensionPointSchemaValidator("user_prefs")(
+          capabilitiesRegistry?.extensions?.user_prefs
+        ),
         providerType : capabilitiesRegistry?.provider_type,
-      })
+      });
     }
   }
 
   render() {
     const {
-      anonymousStats, perfResultStats, tabVal, userPrefs, providerType, catalogContent
+      anonymousStats,
+      perfResultStats,
+      tabVal,
+      userPrefs,
+      providerType,
+      catalogContent,
     } = this.state;
     const { classes } = this.props;
 
@@ -258,142 +278,149 @@ class UserPreference extends React.Component {
 
     return (
       <NoSsr>
-        <Paper square className={classes.paperRoot}>
-          <Tabs
+        <PaperPaperRoot square>
+          <StyledTabs
             value={tabVal}
             onChange={this.handleTabValChange}
             variant="fullWidth"
             indicatorColor="primary"
             textColor="primary"
-            className={classes.tabs}
           >
             <Tooltip title="General preferences" placement="top">
-              <Tab
-                className={classes.tab}
-                icon={
-                  <SettingsCellIcon style={iconMedium} />
-                }
-                label={<span className={classes.tabLabel}>General</span>}
+              <StyledTab
+                icon={<SettingsCellIcon style={iconMedium} />}
+                label={<SpanTabLabel>General</SpanTabLabel>}
               />
             </Tooltip>
             <Tooltip title="Choose Performance Test Defaults" placement="top">
-              <Tab
-                className={classes.tab}
+              <StyledTab
                 icon={
-                  <FontAwesomeIcon icon={faTachometerAlt} style={iconMedium}/>
+                  <FontAwesomeIcon icon={faTachometerAlt} style={iconMedium} />
                 }
-                label={<span className={classes.tabLabel}>Performance</span>}
+                label={<SpanTabLabel>Performance</SpanTabLabel>}
               />
             </Tooltip>
             {/* NOTE: This tab's appearance is logical hence it must be put at last here! Otherwise added logic will need to be added for tab numbers!*/}
-            {userPrefs && providerType != 'local' &&
+            {userPrefs && providerType != "local" && (
               <Tooltip title="Remote Provider preferences" placement="top">
-                <Tab
-                  className={classes.tab}
-                  icon={
-                    <SettingsRemoteIcon style={iconMedium} />
-                  }
-                  label={<span className={classes.tabLabel}>Remote Provider</span>}
+                <StyledTab
+                  icon={<SettingsRemoteIcon style={iconMedium} />}
+                  label={<SpanTabLabel>Remote Provider</SpanTabLabel>}
                 />
               </Tooltip>
-            }
-          </Tabs>
-        </Paper>
-        <Paper className={classes.statsWrapper}>
-          {tabVal == 0 &&
-          <>
-            <div className={classes.formContainer}>
-              <FormControl component="fieldset" className={classes.formGrp}>
-                <FormLabel component="legend" className={classes.formLegend}>Extensions</FormLabel>
-                <FormGroup>
-                  <FormControlLabel
-                    key="CatalogContentPreference"
-                    control={(
-                      <Switch
-                        checked={catalogContent}
-                        onChange={this.handleCatalogContentToggle}
-                        color="primary"
-                        classes={{ switchBase : classes.switchBase,
-                          track : classes.track,
-                          checked : classes.checked, }}
-                        data-cy="CatalogContentPreference"
-                      />
-                    )}
-                    labelPlacement="end"
-                    label="Meshery Catalog Content"
-                  />
-                </FormGroup>
-              </FormControl>
-            </div>
-            <div className={classes.formContainer}>
-              <FormControl component="fieldset" className={classes.formGrp}>
-                <FormLabel component="legend" className={classes.formLegend}>Analytics and Improvement Program</FormLabel>
-                <FormGroup>
-                  <FormControlLabel
-                    key="UsageStatsPreference"
-                    control={(
-                      <Switch
-                        checked={anonymousStats}
-                        onChange={this.handleToggle('anonymousUsageStats')}
-                        color="primary"
-                        classes={{ switchBase : classes.switchBase,
-                          track : classes.track,
-                          checked : classes.checked, }}
-                        data-cy="UsageStatsPreference"
-                      />
-                    )}
-                    labelPlacement="end"
-                    label="Send Anonymous Usage Statistics"
-                  />
-                  <FormControlLabel
-                    key="PerfResultPreference"
-                    control={(
-                      <Switch
-                        checked={perfResultStats}
-                        onChange={this.handleToggle('anonymousPerfResults')}
-                        color="primary"
-                        classes={{ switchBase : classes.switchBase,
-                          track : classes.track,
-                          checked : classes.checked, }}
-                        data-cy="PerfResultPreference"
-                      />
-                    )}
-                    labelPlacement="end"
-                    label="Send Anonymous Performance Results"
-                  />
-                </FormGroup>
-              </FormControl>
-            </div>
-          </>
-          }
-          {tabVal === 1 &&
-            <MesherySettingsPerformanceComponent />
-          }
-          {tabVal == 2 && userPrefs && providerType != 'local' &&
-            <ExtensionSandbox type="user_prefs" Extension={(url) => RemoteComponent({ url })} />
-          }
-        </Paper>
+            )}
+          </StyledTabs>
+        </PaperPaperRoot>
+        <PaperStatsWrapper>
+          {tabVal == 0 && (
+            <>
+              <DivFormContainer>
+                <FormControlFormGrp component="fieldset">
+                  <FormLabelFormLegend component="legend">
+                    Extensions
+                  </FormLabelFormLegend>
+                  <FormGroup>
+                    <FormControlLabel
+                      key="CatalogContentPreference"
+                      control={
+                        <Switch
+                          checked={catalogContent}
+                          onChange={this.handleCatalogContentToggle}
+                          color="primary"
+                          classes={{
+                            switchBase : classes.switchBase,
+                            track : classes.track,
+                            checked : classes.checked,
+                          }}
+                          data-cy="CatalogContentPreference"
+                        />
+                      }
+                      labelPlacement="end"
+                      label="Meshery Catalog Content"
+                    />
+                  </FormGroup>
+                </FormControlFormGrp>
+              </DivFormContainer>
+              <DivFormContainer>
+                <FormControlFormGrp component="fieldset">
+                  <FormLabelFormLegend component="legend">
+                    Analytics and Improvement Program
+                  </FormLabelFormLegend>
+                  <FormGroup>
+                    <FormControlLabel
+                      key="UsageStatsPreference"
+                      control={
+                        <Switch
+                          checked={anonymousStats}
+                          onChange={this.handleToggle("anonymousUsageStats")}
+                          color="primary"
+                          classes={{
+                            switchBase : classes.switchBase,
+                            track : classes.track,
+                            checked : classes.checked,
+                          }}
+                          data-cy="UsageStatsPreference"
+                        />
+                      }
+                      labelPlacement="end"
+                      label="Send Anonymous Usage Statistics"
+                    />
+                    <FormControlLabel
+                      key="PerfResultPreference"
+                      control={
+                        <Switch
+                          checked={perfResultStats}
+                          onChange={this.handleToggle("anonymousPerfResults")}
+                          color="primary"
+                          classes={{
+                            switchBase : classes.switchBase,
+                            track : classes.track,
+                            checked : classes.checked,
+                          }}
+                          data-cy="PerfResultPreference"
+                        />
+                      }
+                      labelPlacement="end"
+                      label="Send Anonymous Performance Results"
+                    />
+                  </FormGroup>
+                </FormControlFormGrp>
+              </DivFormContainer>
+            </>
+          )}
+          {tabVal === 1 && <MesherySettingsPerformanceComponent />}
+          {tabVal == 2 && userPrefs && providerType != "local" && (
+            <ExtensionSandbox
+              type="user_prefs"
+              Extension={(url) => RemoteComponent({ url })}
+            />
+          )}
+        </PaperStatsWrapper>
       </NoSsr>
     );
   }
 }
 
-const mapDispatchToProps = (dispatch) => ({ updateUser : bindActionCreators(updateUser, dispatch),
-  updateProgress : bindActionCreators(updateProgress, dispatch), toggleCatalogContent : bindActionCreators(toggleCatalogContent, dispatch) });
+const mapDispatchToProps = (dispatch) => ({
+  updateUser : bindActionCreators(updateUser, dispatch),
+  updateProgress : bindActionCreators(updateProgress, dispatch),
+  toggleCatalogContent : bindActionCreators(toggleCatalogContent, dispatch),
+});
 
 const mapStateToProps = (state) => {
-  const selectedK8sContexts = state.get('selectedK8sContexts');
-  const catalogVisibility = state.get('catalogVisibility');
-  const capabilitiesRegistry = state.get("capabilitiesRegistry")
+  const selectedK8sContexts = state.get("selectedK8sContexts");
+  const catalogVisibility = state.get("catalogVisibility");
+  const capabilitiesRegistry = state.get("capabilitiesRegistry");
   return {
     selectedK8sContexts,
     catalogVisibility,
-    capabilitiesRegistry
+    capabilitiesRegistry,
   };
 };
 
-
-export default withStyles(styles)(connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(withRouter(withSnackbar(UserPreference))));
+export default (
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )(withRouter(withSnackbar(UserPreference)))
+);

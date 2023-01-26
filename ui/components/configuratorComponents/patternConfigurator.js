@@ -87,11 +87,7 @@ const useStyles = makeStyles((theme) => ({
   },
   wrapper : {
     width : '100%'
-  },
-  heading : {
-    fontSize : theme.typography.pxToRem(15),
-    fontWeight : theme.typography.fontWeightRegular,
-  },
+  }
 }));
 
 function removeRedundantFieldsFromSettings(settings) {
@@ -584,7 +580,7 @@ function PatternConfiguratorComponent({ pattern, onSubmit, show : setSelectedPat
                     <div className={classes.wrapper}>
                       <Accordion elevation={0} style={{ width : '100%' }}>
                         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                          <Typography className={classes.heading}>
+                          <Typography>
                             Configure Addons
                           </Typography>
                         </AccordionSummary>

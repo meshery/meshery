@@ -1,7 +1,4 @@
-// @ts-check
 import React, { useState, useRef, useEffect } from "react";
-import { withStyles } from "@mui/styles";
-import { createTheme, ThemeProvider as MuiThemeProvider } from '@mui/material/styles';
 import {
   NoSsr, TableCell, IconButton, TableRow, Typography
 } from "@mui/material";
@@ -15,13 +12,12 @@ import TableSortLabel from "@mui/material/TableSortLabel";
 import PerformanceResults from "./PerformanceResults";
 import EditIcon from '@mui/icons-material/Edit';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import { styled } from "@mui/material";
 
-const styles = (theme) => ({ grid : { padding : theme.spacing(2), },
-  tableHeader : { fontWeight : "bolder",
-    fontSize : 18, },
-  paper : { maxWidth : "90%",
-    margin : "auto",
-    overflow : "hidden", }, });
+const DivTableHeader = styled("div")(() => ({
+  fontWeight : "bolder",
+  fontSize : 18,
+}));
 
 /**
  *
@@ -29,7 +25,6 @@ const styles = (theme) => ({ grid : { padding : theme.spacing(2), },
  */
 function MesheryTestProfiles({
   user,
-  classes,
   page = 0,
   setPage,
   search = "",
@@ -43,7 +38,7 @@ function MesheryTestProfiles({
   setProfileForModal,
   handleDelete,
   showModal,
-  fetchTestProfiles
+  fetchTestProfiles,
 }) {
   const [selectedProfile, setSelectedProfile] = useState();
 
@@ -53,6 +48,7 @@ function MesheryTestProfiles({
 
   const searchTimeout = useRef(null);
 
+  /*
   const getMuiTheme = () => createTheme({
     overrides : {
       MuiInput : {
@@ -95,48 +91,73 @@ function MesheryTestProfiles({
         },
       }
     }
-  })
+  })*/
 
   const columns = [
-    { name : "name",
+    {
+      name : "name",
       label : "Profile",
       options : {
         filter : false,
         sort : true,
         searchable : true,
-        customHeadRender : function CustomHead({ index, ...column }, sortColumn) {
+        customHeadRender : function CustomHead(
+          { index, ...column },
+          sortColumn
+        ) {
           return (
             <TableCell key={index} onClick={() => sortColumn(index)}>
-              <TableSortLabel active={column.sortDirection != null} direction={column.sortDirection || "asc"}>
+              <TableSortLabel
+                active={column.sortDirection != null}
+                direction={column.sortDirection || "asc"}
+              >
                 <b>{column.label}</b>
               </TableSortLabel>
             </TableCell>
           );
         },
-      }, },
-    { name : "endpoints",
+      },
+    },
+    {
+      name : "endpoints",
       label : "Endpoints",
-      options : { filter : false,
+      options : {
+        filter : false,
         sort : true,
-        customHeadRender : function CustomHead({ index, ...column }, sortColumn) {
+        customHeadRender : function CustomHead(
+          { index, ...column },
+          sortColumn
+        ) {
           return (
             <TableCell key={index} onClick={() => sortColumn(index)}>
-              <TableSortLabel active={column.sortDirection != null} direction={column.sortDirection || "asc"}>
+              <TableSortLabel
+                active={column.sortDirection != null}
+                direction={column.sortDirection || "asc"}
+              >
                 <b>{column.label}</b>
               </TableSortLabel>
             </TableCell>
           );
-        }, }, },
-    { name : "last_run",
+        },
+      },
+    },
+    {
+      name : "last_run",
       label : "Last Run",
       options : {
         filter : false,
         sort : true,
         searchable : true,
-        customHeadRender : function CustomHead({ index, ...column }, sortColumn) {
+        customHeadRender : function CustomHead(
+          { index, ...column },
+          sortColumn
+        ) {
           return (
             <TableCell key={index} onClick={() => sortColumn(index)}>
-              <TableSortLabel active={column.sortDirection != null} direction={column.sortDirection || "asc"}>
+              <TableSortLabel
+                active={column.sortDirection != null}
+                direction={column.sortDirection || "asc"}
+              >
                 <b>{column.label}</b>
               </TableSortLabel>
             </TableCell>
@@ -145,7 +166,8 @@ function MesheryTestProfiles({
         customBodyRender : function CustomBody(value) {
           return <Moment format="LLLL">{value}</Moment>;
         },
-      }, },
+      },
+    },
     // {
     //   name: "next_run",
     //   label: "Next Run",
@@ -167,16 +189,23 @@ function MesheryTestProfiles({
     //     },
     //   },
     // },
-    { name : "updated_on",
+    {
+      name : "updated_on",
       label : "Updated On",
       options : {
         filter : false,
         sort : true,
         searchable : true,
-        customHeadRender : function CustomHead({ index, ...column }, sortColumn) {
+        customHeadRender : function CustomHead(
+          { index, ...column },
+          sortColumn
+        ) {
           return (
             <TableCell key={index} onClick={() => sortColumn(index)}>
-              <TableSortLabel active={column.sortDirection != null} direction={column.sortDirection || "asc"}>
+              <TableSortLabel
+                active={column.sortDirection != null}
+                direction={column.sortDirection || "asc"}
+              >
                 <b>{column.label}</b>
               </TableSortLabel>
             </TableCell>
@@ -185,8 +214,10 @@ function MesheryTestProfiles({
         customBodyRender : function CustomBody(value) {
           return <Moment format="LLLL">{value}</Moment>;
         },
-      }, },
-    { name : "Actions",
+      },
+    },
+    {
+      name : "Actions",
       options : {
         filter : false,
         sort : false,
@@ -215,7 +246,10 @@ function MesheryTestProfiles({
               <IconButton
                 onClick={(ev) => {
                   ev.stopPropagation();
-                  setSelectedProfile({ ...testProfiles[tableMeta.rowIndex], runTest : true });
+                  setSelectedProfile({
+                    ...testProfiles[tableMeta.rowIndex],
+                    runTest : true,
+                  });
                 }}
                 aria-label="run"
                 // @ts-ignore
@@ -226,7 +260,8 @@ function MesheryTestProfiles({
             </div>
           );
         },
-      }, },
+      },
+    },
   ];
 
   columns.forEach((column, idx) => {
@@ -253,16 +288,18 @@ function MesheryTestProfiles({
     download : false,
     textLabels : {
       selectedRows : {
-        text : "profile(s) selected"
-      }
+        text : "profile(s) selected",
+      },
     },
 
     onRowsDelete : async function handleDeleteRow(row) {
-      let response = await showModal(Object.keys(row.lookup).length)
-      console.log(response)
+      let response = await showModal(Object.keys(row.lookup).length);
+      console.log(response);
       if (response === "Yes") {
-        const pids = Object.keys(row.lookup).map(idx => testProfiles[idx]?.id)
-        pids.forEach(pid => handleDelete(pid))
+        const pids = Object.keys(row.lookup).map(
+          (idx) => testProfiles[idx]?.id
+        );
+        pids.forEach((pid) => handleDelete(pid));
       }
       if (response === "No") {
         fetchTestProfiles(page, pageSize, search, sortOrder);
@@ -288,7 +325,8 @@ function MesheryTestProfiles({
         case "search":
           if (searchTimeout.current) clearTimeout(searchTimeout.current);
           searchTimeout.current = setTimeout(() => {
-            if (search !== tableState.searchText) setSearch(tableState.searchText);
+            if (search !== tableState.searchText)
+              setSearch(tableState.searchText);
           }, 500);
           break;
         case "sort":
@@ -314,7 +352,9 @@ function MesheryTestProfiles({
               // @ts-ignore
               CustomHeader={<Typography variant="h6">Test Results</Typography>}
               // @ts-ignore
-              endpoint={`/api/user/performance/profiles/${testProfiles[rowMeta.rowIndex].id}/results`}
+              endpoint={`/api/user/performance/profiles/${
+                testProfiles[rowMeta.rowIndex].id
+              }/results`}
               // @ts-ignore
               elevation={0}
             />
@@ -326,24 +366,27 @@ function MesheryTestProfiles({
 
   return (
     <NoSsr>
-      <MuiThemeProvider theme={getMuiTheme()}>
-        <MUIDataTable
-          title={<div className={classes.tableHeader}>Profiles</div>}
-          data={testProfiles}
-          columns={columns}
-          // @ts-ignore
-          options={options}
-        />
-      </MuiThemeProvider>
+      <MUIDataTable
+        title={<DivTableHeader>Profiles</DivTableHeader>}
+        data={testProfiles}
+        columns={columns}
+        // @ts-ignore
+        options={options}
+      />
     </NoSsr>
   );
 }
 
-const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(updateProgress, dispatch), });
+const mapDispatchToProps = (dispatch) => ({
+  updateProgress : bindActionCreators(updateProgress, dispatch),
+});
 
 const mapStateToProps = (state) => {
-  return { user : state.get("user")?.toObject(), };
+  return { user : state.get("user")?.toObject() };
 };
 
 // @ts-ignore
-export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(withSnackbar(MesheryTestProfiles)));
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withSnackbar(MesheryTestProfiles));

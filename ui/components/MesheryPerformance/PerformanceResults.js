@@ -1,4 +1,3 @@
-//@ts-check
 import React, { useEffect, useState, useRef } from "react";
 import {
   NoSsr, TableCell, IconButton, Paper, Popper, ClickAwayListener, Fade
@@ -11,11 +10,9 @@ import Tab from '@mui/material/Tab';
 import Moment from "react-moment";
 import { withSnackbar } from "notistack";
 import { withStyles } from '@mui/styles';
-import { createTheme, ThemeProvider as MuiThemeProvider } from '@mui/material/styles';
 import CloseIcon from "@mui/icons-material/Close";
 import { updateResultsSelection, clearResultsSelection, updateProgress } from "../../lib/store";
 import TableSortLabel from "@mui/material/TableSortLabel";
-// import dataFetch from "../../lib/data-fetch";
 import CustomToolbarSelect from "../CustomToolbarSelect";
 import MesheryChart from "../MesheryChart";
 import GrafanaCustomCharts from "../telemetry/grafana/GrafanaCustomCharts";
@@ -326,17 +323,6 @@ function generateSelectedRows(results_selection, page, pageSize) {
 
 function ResultChart({ result, handleTabChange, tabValue }) {
   if (!result) return <div />;
-
-  const getMuiTheme = () => createTheme({
-    overrides : {
-      MuiTab : {
-        textColorInherit : {
-          textTransform : "none",
-          backgroundColor : "#eaeff1"
-        }
-      }
-    }
-  })
   const row = result.runner_results;
   const boardConfig = result.server_board_config;
   const serverMetrics = result.server_metrics;
@@ -344,57 +330,55 @@ function ResultChart({ result, handleTabChange, tabValue }) {
   const endTime = new Date(startTime.getTime() + row.ActualDuration / 1000000);
 
   return (
-    <MuiThemeProvider theme={getMuiTheme()}>
-      <Paper
-        style={{ width : "100%",
-          maxWidth : "90vw",
-          padding : "0.5rem" }}
+    <Paper
+      style={{ width : "100%",
+        maxWidth : "90vw",
+        padding : "0.5rem" }}
+    >
+      <Tabs
+        value={tabValue}
+        onChange={handleTabChange}
+        TabIndicatorProps={{
+          style : {
+            backgroundColor : "#00B39F"
+          }
+        }}
       >
-        <Tabs
-          value={tabValue}
-          onChange={handleTabChange}
-          TabIndicatorProps={{
-            style : {
-              backgroundColor : "#00B39F"
-            }
-          }}
-        >
-          <Tab label="Performance Chart" />
-          <Tab label="Node Details" />
-        </Tabs>
+        <Tab label="Performance Chart" />
+        <Tab label="Node Details" />
+      </Tabs>
 
-        {
-          (tabValue == 0) ?
+      {
+        (tabValue == 0) ?
+          <div>
             <div>
+              <MesheryChart
+                rawdata={[result && result.runner_results ? result : {}]}
+                data={[result && result.runner_results ? result.runner_results : {}]}
+              />
+            </div>
+            {boardConfig && boardConfig !== null && Object.keys(boardConfig).length > 0 && (
               <div>
-                <MesheryChart
-                  rawdata={[result && result.runner_results ? result : {}]}
-                  data={[result && result.runner_results ? result.runner_results : {}]}
+                <GrafanaCustomCharts
+                  boardPanelConfigs={[boardConfig]}
+                  // @ts-ignore
+                  boardPanelData={[serverMetrics]}
+                  startDate={startTime}
+                  from={startTime.getTime().toString()}
+                  endDate={endTime}
+                  to={endTime.getTime().toString()}
+                  liveTail={false}
                 />
               </div>
-              {boardConfig && boardConfig !== null && Object.keys(boardConfig).length > 0 && (
-                <div>
-                  <GrafanaCustomCharts
-                    boardPanelConfigs={[boardConfig]}
-                    // @ts-ignore
-                    boardPanelData={[serverMetrics]}
-                    startDate={startTime}
-                    from={startTime.getTime().toString()}
-                    endDate={endTime}
-                    to={endTime.getTime().toString()}
-                    liveTail={false}
-                  />
-                </div>
-              )}
+            )}
+          </div>
+          : (tabValue == 1) ?
+            <div>
+              <NodeDetails result={row}/>
             </div>
-            : (tabValue == 1) ?
-              <div>
-                <NodeDetails result={row}/>
-              </div>
-              : <div />
-        }
-      </Paper>
-    </MuiThemeProvider>
+            : <div />
+      }
+    </Paper>
   );
 }
 

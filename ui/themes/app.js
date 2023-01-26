@@ -1,3 +1,64 @@
+import { blueGrey } from "@mui/material/colors"
+import { createTheme } from "@mui/material/styles"
+
+const defaultTheme = createTheme({})
+
+const theme = createTheme({
+  palette : {
+    primary : {
+      main : blueGrey[500]
+    },
+    secondary : {
+      main : "#666666"
+    }
+  },
+  components : {
+    MuiTypography : {
+      styleOverrides : {
+        root : {
+          fontSize : defaultTheme.typography.pxToRem(15),
+          fontWeight : defaultTheme.typography.fontWeightRegular
+        }
+      }
+    },
+    MuiGrid : {
+      styleOverrides : {
+        root : {
+          input : {
+            color : "#607d8b"
+          }
+        }
+      }
+    },
+    MuiInput : {
+      styleOverrides : {
+        root : {
+          underline : {
+            "&:hover:not(.Mui-disabled):before" : {
+              borderBottom : "2px solid #222"
+            },
+            "&:after" : {
+              borderBottom : "2px solid #222"
+            }
+          }
+        }
+      }
+    },
+    MuiTab : {
+      styleOverrides : {
+        root : {
+          textColorInherit : {
+            textTransform : "none",
+            backgroundColor : "#eaeff1"
+          }
+        }
+      }
+    }
+  }
+})
+
+export default theme
+
 /*
 import { createTheme } from '@mui/material/styles';
 import { blueGrey } from '@mui/material/colors';

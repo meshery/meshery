@@ -1,6 +1,5 @@
 import React from 'react'
 import {  Button, Grid, IconButton } from '@mui/material';
-import { createTheme, ThemeProvider as MuiThemeProvider } from '@mui/material/styles';
 import validator from "@rjsf/validator-ajv6";
 import {
   Dialog, DialogActions,
@@ -11,24 +10,6 @@ import { Form } from '@rjsf/material-ui';
 import useStyles from "./MesheryPatterns/Cards.styles";
 import PublicIcon from '@mui/icons-material/Public';
 import CloseIcon from '@mui/icons-material/Close';
-const getMuiTheme = () => createTheme({
-  palette : {
-    primary : {
-      main : "#607d8b"
-    },
-    secondary : {
-      main : "#666666"
-    }
-  },
-  overrides : {
-    MuiGrid : {
-      input : {
-        color : '#607d8b'
-      }
-    },
-  }
-})
-
 
 function PublishModal(props) {
   const {  open, handleClose ,pattern,handlePublish } = props;
@@ -97,39 +78,34 @@ function PublishModal(props) {
       <Dialog
         open={open}
         onClose={handleClose}>
-
-        <MuiThemeProvider theme={getMuiTheme()}>
-          <DialogTitle>
-            <div className={classes.publishTitle}>
-
-              <b id="simple-modal-title" style={{ textAlign : "center" }} > {pattern?.name}</b>
-              <IconButton aria-label="close" className={classes.closeButton} onClick={handleClose}>
-                <CloseIcon />
-              </IconButton>
-            </div>
-          </DialogTitle>
-          <DialogContent>
-            <Grid container spacing={24} alignItems="center">
-              <Form schema={schema} formData={data} validator={validator} onChange={(e) => setData(e.formData)} ><></></Form>
-            </Grid>
-
-          </DialogContent>
-          <DialogActions>
-            <Button
-              title="Publish"
-              variant="contained"
-              color="primary"
-              className={classes.testsButton}
-              onClick={() => {
-                handleClose();
-                handlePublish(payload)
-              }}
-            >
-              <PublicIcon className={classes.iconPatt} />
-              <span className={classes.btnText}> Publish </span>
-            </Button>
-          </DialogActions>
-        </MuiThemeProvider>
+        <DialogTitle>
+          <div className={classes.publishTitle}>
+            <b id="simple-modal-title" style={{ textAlign : "center" }} > {pattern?.name}</b>
+            <IconButton aria-label="close" className={classes.closeButton} onClick={handleClose}>
+              <CloseIcon />
+            </IconButton>
+          </div>
+        </DialogTitle>
+        <DialogContent>
+          <Grid container spacing={24} alignItems="center">
+            <Form schema={schema} formData={data} validator={validator} onChange={(e) => setData(e.formData)} ><></></Form>
+          </Grid>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            title="Publish"
+            variant="contained"
+            color="primary"
+            className={classes.testsButton}
+            onClick={() => {
+              handleClose();
+              handlePublish(payload)
+            }}
+          >
+            <PublicIcon className={classes.iconPatt} />
+            <span className={classes.btnText}> Publish </span>
+          </Button>
+        </DialogActions>
       </Dialog>
     </>
   )
