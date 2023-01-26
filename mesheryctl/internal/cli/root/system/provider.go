@@ -121,7 +121,7 @@ mesheryctl system provider list
 
 		providers, err := utils.GetProviderInfo(mctlCfg)
 		if err != nil {
-			log.Fatalln("Unable to fetch providers\nStart Meshery or see https://docs.meshery.io/extensibility/providers#types-of-providers")
+			log.Fatalln("unable to fetch providers\nStart Meshery or see https://docs.meshery.io/extensibility/providers#types-of-providers")
 		}
 
 		log.Print("Available providers:\n")
@@ -195,7 +195,7 @@ mesheryctl system provider set <provider>
 			availableProviders, err := utils.GetProviderInfo(mctlCfg)
 
 			if err != nil {
-				log.Fatalln("Unable to verify provider\nStart Meshery or see https://docs.meshery.io/extensibility/providers#types-of-providers\n\nRun `mesheryctl system provider set <provider> --force` to force set the provider")
+				log.Fatalln("unable to verify provider\nStart Meshery or see https://docs.meshery.io/extensibility/providers#types-of-providers\n\nRun `mesheryctl system provider set <provider> --force` to force set the provider")
 			} else {
 				keys := make([]string, 0, len(availableProviders))
 				isValidProvider := false
@@ -208,7 +208,7 @@ mesheryctl system provider set <provider>
 				}
 
 				if !isValidProvider {
-					log.Error("Invalid provider\nPlease specify a valid provider\n")
+					log.Error("invalid provider\nPlease specify a valid provider\n")
 
 					log.Print("Available providers:\n")
 					//sorting the contexts to get a consistent order on each subsequent run
