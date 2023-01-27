@@ -8,15 +8,15 @@ import DialogContentText from '@mui/material/DialogContentText'
 import WarningIcon from '@mui/icons-material/Warning'
 
 const SessionExpired = styled(DialogContentText)(() => ({
-  minWidth: 400,
-  overflowWrap: 'anywhere',
-  textAlign: 'center',
-  padding: 5,
-  margin: 2,
-  display: 'flex',
-  flexDirection: 'column',
-  height: '7rem',
-  justifyContent: 'space-evenly'
+  minWidth : 400,
+  overflowWrap : 'anywhere',
+  textAlign : 'center',
+  padding : 5,
+  margin : 2,
+  display : 'flex',
+  flexDirection : 'column',
+  height : '7rem',
+  justifyContent : 'space-evenly'
 }))
 
 function AlertUnauthenticatedSession () {
@@ -50,11 +50,11 @@ function AlertUnauthenticatedSession () {
       aria-describedby="alert-dialog-description"
     >
       <DialogTitle id="alert-dialog-title" sx={{
-        textAlign: 'center',
-        minWidth: 400,
-        padding: '10px',
-        color: '#ebf1f5',
-        backgroundColor: '#F0A303'
+        textAlign : 'center',
+        minWidth : 400,
+        padding : '10px',
+        color : '#ebf1f5',
+        backgroundColor : '#F0A303'
       }}>
         <span>
           <WarningIcon color="#F0D053" />

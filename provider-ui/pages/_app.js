@@ -25,15 +25,15 @@ export default function MyApp(props) {
         {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
         <CssBaseline />
         <Box
-          sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}
+          sx={{ display : "flex", flexDirection : "column", minHeight : "100vh" }}
         >
-        <Box sx={{ display: "flex", flexGrow: 1 }}>
-            <Box sx={{ display: "flex", flex: 1, flexDirection: "column" }}>
+          <Box sx={{ display : "flex", flexGrow : 1 }}>
+            <Box sx={{ display : "flex", flex : 1, flexDirection : "column" }}>
               <Box
                 sx={{
-                  flex: 1,
-                  padding: "48px 36px 24px",
-                  background: "#eaeff1",
+                  flex : 1,
+                  padding : "48px 36px 24px",
+                  background : "#eaeff1",
                 }}
               >
                 <Paper>
@@ -42,7 +42,7 @@ export default function MyApp(props) {
               </Box>
             </Box>
           </Box>
-        <Footer />
+          <Footer />
         </Box>
       </ThemeProvider>
     </CacheProvider>
@@ -50,7 +50,7 @@ export default function MyApp(props) {
 }
 
 MyApp.propTypes = {
-  Component: PropTypes.elementType.isRequired,
-  emotionCache: PropTypes.object,
-  pageProps: PropTypes.object.isRequired,
+  Component : PropTypes.elementType.isRequired,
+  emotionCache : PropTypes.object,
+  pageProps : PropTypes.object.isRequired,
 };

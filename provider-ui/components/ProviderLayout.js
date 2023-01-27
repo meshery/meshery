@@ -6,7 +6,7 @@ export default function ProviderLayout({ children }) {
   return (
     <>
       <NoSsr>
-        <div data-cy="root" style={{ padding: '170px 0px', textAlign: 'center' }}>
+        <div data-cy="root" style={{ padding : '170px 0px', textAlign : 'center' }}>
           {children}
         </div>
       </NoSsr>
@@ -15,5 +15,5 @@ export default function ProviderLayout({ children }) {
 }
 
 ProviderLayout.propTypes = {
-  children: PropTypes.node.isRequired
+  children : PropTypes.node.isRequired
 }
