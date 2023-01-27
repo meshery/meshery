@@ -9,10 +9,11 @@ module.exports = {
     es2021 : true
   },
   extends : [
+    'eslint:recommended',
+    'next',
     'plugin:react/recommended',
     'plugin:@next/next/recommended',
     "plugin:cypress/recommended",
-    'next/core-web-vitals',
   ],
   overrides : [
   ],

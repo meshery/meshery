@@ -12,7 +12,7 @@ const Item = styled(Paper)(({ theme }) => ({
   border : '0'
 }))
 
-export default function Footer () {
+export default function Footer() {
   const handleL5CommunityClick = () => {
     if (typeof window !== 'undefined') {
       const w = window.open('https://layer5.io', '_blank')
