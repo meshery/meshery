@@ -6,12 +6,12 @@
 	"metadata": {
 		"logo-URL": "",
 		"model": "core",
-		"model-display-name": "core",
-		"primary-color": "",
-		"secondary-color": "",
+		"modelDisplayName": "core",
+		"primaryColor": "",
+		"secondaryColor": "",
 		"shape": "circle",
-		"svg_color": "",
-		"svg_white": ""
+		"svgColor": "",
+		"svgWhite": ""
 	},
 	"model": {
 		"name": "core",

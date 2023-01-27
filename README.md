@@ -201,7 +201,7 @@ See the [getting started](https://meshery.io/#getting-started) section to quickl
 
 <p style="clear:both;">
 <h3>Cloud Native Lifecycle Management</h3>
-Meshery manages the provisioning, configuration and operation your Kubernetes clusters, workloads, and service meshes. While supporting hundreds of different type so cloud native infrastructure integrations, Meshery also offers a [catalog of curated design templates](https://meshery.io/catalog) filled with configuration best practices.
+Meshery manages the provisioning, configuration and operation of your Kubernetes clusters, workloads, and service meshes. While supporting hundreds of different types of cloud native infrastructure integrations, Meshery also offers a [catalog of curated design templates](https://meshery.io/catalog) filled with configuration best practices.
 
 Using a GitOps-centric approach, visually and collaboratively design and manage your infrastructure and microservices. Use Meshery to interoperate your various cloud native systems. With both REST and GraphQL APIs, integrating with Meshery as an extensible platform is facilitated through NATS, CloudEvents, gRPC, Service Mesh Interface (SMI), and Service Mesh Performance (SMP).
 

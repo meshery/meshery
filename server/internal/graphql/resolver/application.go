@@ -11,8 +11,19 @@ import (
 
 func (r *Resolver) fetchApplications(ctx context.Context, provider models.Provider, selector model.PageFilter) (*model.ApplicationPage, error) {
 	tokenString := ctx.Value(models.TokenCtxKey).(string)
-
-	resp, err := provider.GetMesheryApplications(tokenString, selector.Page, selector.PageSize, *selector.Search, *selector.Order)
+	var updateAfter string
+	if selector.UpdatedAfter != nil {
+		updateAfter = *selector.UpdatedAfter
+	}
+	var order string
+	if selector.Order != nil {
+		order = *selector.Order
+	}
+	var search string
+	if selector.Search != nil {
+		search = *selector.Search
+	}
+	resp, err := provider.GetMesheryApplications(tokenString, selector.Page, selector.PageSize, search, order, updateAfter)
 
 	if err != nil {
 		r.Log.Error(err)

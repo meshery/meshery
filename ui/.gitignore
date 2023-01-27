@@ -4,3 +4,6 @@ cypress/screenshots
 # Code coverage
 coverage
 .nyc_output
+
+# Locally registered MeshModel packages
+public/static/img/meshmodels/
