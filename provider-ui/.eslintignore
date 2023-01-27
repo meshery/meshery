@@ -7,5 +7,3 @@ package-lock.json
 nodemon.json
 lib/
 cypress/
-pages/_document.js
-ui_dev_server.js
