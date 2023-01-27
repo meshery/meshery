@@ -974,7 +974,7 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 							Name:        name,
 							ID:          &id,
 							UserID:      &nilUserID,
-							Visibility:  "public",
+							Visibility:  Published,
 							Location: map[string]interface{}{
 								"host":   "",
 								"path":   "",
@@ -997,7 +997,7 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 							Name:       name,
 							ID:         &id,
 							UserID:     &nilUserID,
-							Visibility: "public",
+							Visibility: Published,
 							Location: map[string]interface{}{
 								"host":   "",
 								"path":   "",

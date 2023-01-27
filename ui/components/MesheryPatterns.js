@@ -39,7 +39,7 @@ import fetchCatalogPattern from "./graphql/queries/CatalogPatternQuery";
 import LoadingScreen from "./LoadingComponents/LoadingComponent";
 import { SchemaContext } from "../utils/context/schemaSet";
 import Validation from "./Validation";
-import { ACTIONS, FILE_OPS } from "../utils/Enum";
+import { ACTIONS, FILE_OPS, VISIBILITY } from "../utils/Enum";
 import PublishModal from "./PublishModal";
 
 const styles = (theme) => ({
@@ -466,10 +466,10 @@ function MesheryPatterns({
 
   const handleSetPatterns = (patterns) => {
     if (catalogVisibilityRef.current && catalogContentRef.current?.length > 0) {
-      setPatterns([...catalogContentRef.current, ...patterns.filter(content => content.visibility !== "public")])
+      setPatterns([...catalogContentRef.current, ...patterns.filter(content => content.visibility !== VISIBILITY.PUBLISHED)])
       return
     }
-    setPatterns(patterns.filter(content => content.visibility !== "public"))
+    setPatterns(patterns.filter(content => content.visibility !== VISIBILITY.PUBLISHED))
   }
 
   const initPatternsSubscription = (pageNo=page.toString(), pagesize=pageSize.toString(), searchText=search, order=sortOrder) => {
@@ -944,7 +944,7 @@ function MesheryPatterns({
           const visibility = patterns[tableMeta.rowIndex].visibility
           return (
             <>
-              { visibility === "public" ? <IconButton onClick={(e) => {
+              { visibility === VISIBILITY.PUBLISHED ? <IconButton onClick={(e) => {
                 e.stopPropagation();
                 handleClone(rowData.id, rowData.name)
               }
