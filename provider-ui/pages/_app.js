@@ -6,7 +6,8 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { CacheProvider } from '@emotion/react';
 import theme from '../styles/theme';
 import createEmotionCache from '../lib/createEmotionCache';
-import Paper from "@mui/material/Paper"
+import Box from "@mui/material/Box";
+import Paper from "@mui/material/Paper";
 import Footer from "../components/Footer";
 
 // Client-side cache, shared for the whole session of the user in the browser.
@@ -23,22 +24,26 @@ export default function MyApp(props) {
       <ThemeProvider theme={theme}>
         {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
         <CssBaseline />
-        <div style={{display:"flex", flexDirection: "column", minHeight: "100vh"}}>
-        <div style={{ display: "flex", flexGrow: 1 }}>
-          <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
-            <main style={{
-              flex: 1,
-              padding: '48px 36px 24px',
-              background: '#eaeff1'
-            }}>
-              <Paper>
-                <Component {...pageProps} />
-              </Paper>
-            </main>
-          </div>
-        </div>
+        <Box
+          sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}
+        >
+        <Box sx={{ display: "flex", flexGrow: 1 }}>
+            <Box sx={{ display: "flex", flex: 1, flexDirection: "column" }}>
+              <Box
+                sx={{
+                  flex: 1,
+                  padding: "48px 36px 24px",
+                  background: "#eaeff1",
+                }}
+              >
+                <Paper>
+                  <Component {...pageProps} />
+                </Paper>
+              </Box>
+            </Box>
+          </Box>
         <Footer />
-        </div>
+        </Box>
       </ThemeProvider>
     </CacheProvider>
   );

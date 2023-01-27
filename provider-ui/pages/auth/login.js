@@ -19,7 +19,7 @@ const SessionExpired = styled(DialogContentText)(() => ({
   justifyContent: 'space-evenly'
 }))
 
-function AlertUnauthenticatedSession (props) {
+function AlertUnauthenticatedSession () {
   const [open, setOpen] = useState(false)
   const [countDown, setCountDown] = useState(3)
 

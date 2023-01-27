@@ -55,7 +55,7 @@ export default function Provider() {
     const [availableProviders, setAvailableProviders] = useState({})
     const [selectedProvider, setSelectedProvider] = useState('')
     const [isLoading, setIsLoading] = useState(false)
-    const [openMenu, setOpenMenu] = useState(false)
+    const [setOpenMenu] = useState(false)
     const [openModal, setModalOpen] = React.useState(false)
 
     const handleClick = (event) => {
