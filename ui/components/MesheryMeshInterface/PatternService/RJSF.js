@@ -15,6 +15,7 @@ import CustomDateTimeWidget from './RJSFCustomComponents/CustomDateTimeWidget';
 import darkRjsfTheme from '../../../themes/rjsf';
 import ObjectFieldWithErrors from './RJSFCustomComponents/CustomObjectField';
 import { CustomTextTooltip } from './CustomTextTooltip';
+import { CustomFieldTemplate } from './RJSFCustomComponents/FieldTemplate';
 
 /*eslint-disable */
 class RJSFOverridenComponent extends Form {
@@ -69,6 +70,7 @@ function RJSFForm(props) {
     ArrayFieldTemplate,
     ObjectFieldTemplate,
     WrapIfAdditionalTemplate,
+    FieldTemplate : CustomFieldTemplate, // applying field template universally to every field type.
   }
   const globalTheme = useTheme()
   useEffect(() => {

@@ -333,8 +333,10 @@ class MesheryNotification extends React.Component {
           </Tooltip>
 
           <ClickAwayListener onClickAway={(e) => {
-            let whiteListedIds = ["notification-button", "notification-icon", "error-icon", "bell-icon-path1", "bell-icon-path2", "notification-badge", "bell-icon-svg"]
-            whiteListedIds.includes(e.target?.id) ? null : this.handleClose();
+            if (e.target.className.baseVal !== "" && e.target.className.baseVal !== "MuiSvgIcon-root" &&
+              !e.target.className?.includes("MesheryNotification")) {
+              this.handleClose();
+            }
           }}>
             <Drawer
               anchor="right"

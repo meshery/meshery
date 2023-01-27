@@ -12,14 +12,13 @@ const styles = () => ({
 });
 
 const DescriptionField = ({ description, classes }) => {
-  if (description) {
 
-    return (
-      <Typography variant="caption" className={classes.typography}>
-        {description}
-      </Typography>
-    );
-  }
+
+  return (
+    <Typography variant="caption" className={classes.typography}>
+      {description}
+    </Typography>
+  );
 }
 
 export default withStyles(styles)(DescriptionField);

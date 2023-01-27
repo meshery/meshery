@@ -7,8 +7,8 @@ import blue from "@material-ui/core/colors/blue";
 import Grid from "@material-ui/core/Grid";
 import { createTheme, withStyles, MuiThemeProvider } from "@material-ui/core/styles";
 import AddIcon from "@material-ui/icons/AddCircleOutline";
-import SettingsIcon from "@material-ui/icons/Settings";
 import CloseIcon from "@material-ui/icons/Close";
+import SettingsIcon from "@material-ui/icons/Settings";
 import { withRouter } from "next/router";
 import { withSnackbar } from "notistack";
 import PropTypes from "prop-types";
@@ -66,7 +66,7 @@ const styles = (theme) => ({
   icon : { width : theme.spacing(2.5), },
   istioIcon : { width : theme.spacing(1.5), },
   settingsIcon : {
-    width : theme.spacing(2.2),
+    width : theme.spacing(2.5),
     paddingRight : theme.spacing(0.5),
   },
   addIcon : {
@@ -311,6 +311,7 @@ class DashboardComponent extends React.Component {
       this.initDashboardClusterResourcesQuery();
       this.initNamespaceQuery();
     }
+
   }
 
   getK8sClusterIds = () => {
@@ -509,7 +510,7 @@ class DashboardComponent extends React.Component {
       variant : "error", preventDuplicate : true,
       action : (key) => (
         <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
-          <CloseIcon />
+          <CloseIcon style={iconMedium} />
         </IconButton>
       ),
       autoHideDuration : 7000,
@@ -548,12 +549,12 @@ class DashboardComponent extends React.Component {
               self.props.closeSnackbar(key);
             }}
           >
-            <SettingsIcon className={classes.settingsIcon} />
+            <SettingsIcon className={classes.settingsIcon}  />
             Settings
           </Button>
 
           <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
-            <CloseIcon />
+            <CloseIcon  style={iconMedium} />
           </IconButton>
         </>
       ),
@@ -581,7 +582,7 @@ class DashboardComponent extends React.Component {
             autoHideDuration : 2000,
             action : (key) => (
               <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
-                <CloseIcon />
+                <CloseIcon  style={iconMedium} />
               </IconButton>
             ),
           });
@@ -641,7 +642,7 @@ class DashboardComponent extends React.Component {
             autoHideDuration : 2000,
             action : (key) => (
               <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
-                <CloseIcon />
+                <CloseIcon style={iconMedium} />
               </IconButton>
             ),
           });
@@ -668,7 +669,7 @@ class DashboardComponent extends React.Component {
             autoHideDuration : 2000,
             action : (key) => (
               <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
-                <CloseIcon />
+                <CloseIcon style={iconMedium} />
               </IconButton>
             ),
           });
@@ -1096,7 +1097,7 @@ class DashboardComponent extends React.Component {
             autoHideDuration : 2000,
             action : (key) => (
               <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
-                <CloseIcon />
+                <CloseIcon  style={iconMedium} />
               </IconButton>
             ),
           });
@@ -1227,7 +1228,7 @@ class DashboardComponent extends React.Component {
             className={classes.metricsButton}
             onClick={() => this.handleConfigure("grafana")}
           >
-            <SettingsIcon className={classes.settingsIcon} />
+            <SettingsIcon className={classes.settingsIcon} style={iconMedium} />
             Configure Grafana
           </Button>
         </div>
@@ -1257,7 +1258,7 @@ class DashboardComponent extends React.Component {
             className={classes.metricsButton}
             onClick={() => this.handleConfigure("prometheus")}
           >
-            <SettingsIcon className={classes.settingsIcon} />
+            <SettingsIcon className={classes.settingsIcon} style={iconMedium} />
             Configure Prometheus
           </Button>
         </div>
@@ -1372,6 +1373,7 @@ class DashboardComponent extends React.Component {
           )}
       </>
     );
+
     return (
       <NoSsr>
         <Popup />

@@ -134,6 +134,8 @@ Query available Namesapces in your cluster.
 
 ### `Query.getClusterResources`
 
+Query for getting cluster info.
+
 ###### **Returns** [`ClusterResources!`](#clusterresources).
 
 #### **Arguments**
@@ -180,6 +182,18 @@ Query for getting kubectl describe details with meshkit.
 | <a id="querygetkubectldescribekind"></a>`kind` | [`String!`](#string) |  |
 | <a id="querygetkubectldescribename"></a>`name` | [`String!`](#string) |  |
 | <a id="querygetkubectldescribenamespace"></a>`namespace` | [`String!`](#string) |  |
+
+### `Query.getMeshModelSummary`
+
+Query for meshmodel summary.
+
+###### **Returns** [`MeshModelSummary!`](#meshmodelsummary).
+
+#### **Arguments**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="querygetmeshmodelsummaryselector"></a>`selector` | [`MeshModelSummarySelector!`](#meshmodelsummaryselector) |  |
 
 ### `Query.getMeshsyncStatus`
 
@@ -419,6 +433,16 @@ Listen to changes in Broker (NATS) Connection.
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | <a id="subscriptionsubscribek8scontextselector"></a>`selector` | [`PageFilter!`](#pagefilter) |  |
+
+### `Subscription.subscribeMeshModelSummary`
+
+###### **Returns** [`MeshModelSummary!`](#meshmodelsummary).
+
+#### **Arguments**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="subscriptionsubscribemeshmodelsummaryselector"></a>`selector` | [`MeshModelSummarySelector!`](#meshmodelsummaryselector) |  |
 
 ### `Subscription.subscribeMeshSyncEvents`
 
@@ -730,6 +754,35 @@ Data Plane for a particular Mesh.
 | <a id="locationhost"></a>`host` | [`String`](#string) |  |
 | <a id="locationpath"></a>`path` | [`String`](#string) |  |
 | <a id="locationtype"></a>`type` | [`String`](#string) |  |
+
+### `MeshModelComponent`
+
+#### **Fields**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="meshmodelcomponentcount"></a>`count` | [`Int!`](#int) |  |
+| <a id="meshmodelcomponentname"></a>`name` | [`String!`](#string) |  |
+
+### `MeshModelRelationship`
+
+#### **Fields**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="meshmodelrelationshipcount"></a>`count` | [`Int!`](#int) |  |
+| <a id="meshmodelrelationshipname"></a>`name` | [`String!`](#string) |  |
+
+### `MeshModelSummary`
+
+Type MeshModelComponentsSummary define the summary of a Mesh Model.
+
+#### **Fields**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="meshmodelsummarycomponents"></a>`components` | [`[MeshModelComponent!]`](#meshmodelcomponent) |  |
+| <a id="meshmodelsummaryrelationships"></a>`relationships` | [`[MeshModelRelationship!]`](#meshmodelrelationship) |  |
 
 ### `MeshSyncEvent`
 
@@ -1054,6 +1107,14 @@ Input for changing Addon Status.
 | <a id="catalogselectororder"></a>`order` | [`String!`](#string) |  |
 | <a id="catalogselectorsearch"></a>`search` | [`String!`](#string) |  |
 
+### `MeshModelSummarySelector`
+
+#### **Arguments**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="meshmodelsummaryselectortype"></a>`type` | [`String!`](#string) |  |
+
 ### `PageFilter`
 
 #### **Arguments**
@@ -1066,6 +1127,7 @@ Input for changing Addon Status.
 | <a id="pagefilterpagesize"></a>`pageSize` | [`String!`](#string) |  |
 | <a id="pagefiltersearch"></a>`search` | [`String`](#string) |  |
 | <a id="pagefilterto"></a>`to` | [`String`](#string) |  |
+| <a id="pagefilterupdated_after"></a>`updated_after` | [`String`](#string) |  |
 
 ### `ReSyncActions`
 
