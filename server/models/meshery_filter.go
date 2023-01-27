@@ -26,8 +26,7 @@ type MesheryFilter struct {
 	CreatedAt *time.Time `json:"created_at,omitempty"`
 }
 
-// MesheryCatalogFilterRequestBody refers to the type of request body
-// that PublishCatalogFilter would receive
+// MesheryCatalogFilterRequestBody refers to the type of request body that PublishCatalogFilter would receive
 type MesheryCatalogFilterRequestBody struct {
 	ID          uuid.UUID `json:"id,omitempty"`
 	CatalogData sql.Map   `json:"catalog_data,omitempty"`

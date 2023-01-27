@@ -17,3 +17,9 @@ export const DEPLOYMENT_TYPE = {
   IN_CLUSTER : "in_cluster",
   OUT_CLUSTER : "out_of_cluster"
 }
+
+export const VISIBILITY = {
+  PRIVATE : "private",
+  PUBLIC : "public",
+  PUBLISHED : "published"
+}
