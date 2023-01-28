@@ -811,6 +811,10 @@ func (l *DefaultLocalProvider) DeleteMesheryApplication(req *http.Request, appli
 	return l.MesheryApplicationPersister.DeleteMesheryApplication(id)
 }
 
+func (l *DefaultLocalProvider) ShareDesign(req *http.Request) (int, error) {
+	return http.StatusForbidden, ErrLocalProviderSupport
+}
+
 // SavePerformanceProfile saves given performance profile with the provider
 func (l *DefaultLocalProvider) SavePerformanceProfile(tokenString string, performanceProfile *PerformanceProfile) ([]byte, error) {
 	var uid uuid.UUID

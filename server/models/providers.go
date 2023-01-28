@@ -231,6 +231,8 @@ const (
 	CloneMesheryPatterns Feature = "clone-meshery-patterns" // /patterns/clone
 
 	CloneMesheryFilters Feature = "clone-meshery-filters" // /filters/clone
+
+	ShareDesigns Feature = "share-designs"
 )
 
 const (
@@ -375,6 +377,7 @@ type Provider interface {
 	GetMesheryApplications(tokenString, page, pageSize, search, order string, updatedAfter string) ([]byte, error)
 	DeleteMesheryApplication(req *http.Request, applicationID string) ([]byte, error)
 	GetMesheryApplication(req *http.Request, applicationID string) ([]byte, error)
+	ShareDesign(req *http.Request) (int, error)
 
 	SavePerformanceProfile(tokenString string, performanceProfile *PerformanceProfile) ([]byte, error)
 	GetPerformanceProfiles(tokenString string, page, pageSize, search, order string) ([]byte, error)
