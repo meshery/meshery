@@ -8,6 +8,7 @@ import {
   ADDITIONAL_PROPERTY_FLAG,
 } from "@rjsf/utils";
 import { IconButton } from "@material-ui/core";
+import { iconMedium } from "../../../../css/icons.styles";
 
 const WrapIfAdditionalTemplate = ({
   children,
@@ -67,7 +68,7 @@ const WrapIfAdditionalTemplate = ({
           disabled={disabled || readonly}
           onClick={onDropPropertyClick(label)}
         >
-          <DeleteIcon/>
+          <DeleteIcon style={iconMedium} />
         </IconButton>
       </Grid>
     </Grid>
