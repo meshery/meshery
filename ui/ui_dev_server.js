@@ -9,7 +9,7 @@ const app = next({ dev });
 const handle = app.getRequestHandler();
 var httpProxy = require("http-proxy");
 
-var proxy = httpProxy.createProxyServer({ target : { host : "localhost", port : 30137 } });
+var proxy = httpProxy.createProxyServer({ target : { host : "localhost", port : 9018 } });
 
 proxy.on("error", function (err, req, res) {
   res.writeHead(500, { "Content-Type" : "text/plain" });
