@@ -60,7 +60,14 @@ func (h *Handler) GetMeshmodelRelationshipByName(rw http.ResponseWriter, r *http
 		OrderOn:   r.URL.Query().Get("order"),
 		Sort:      r.URL.Query().Get("sort"),
 	})
-	if err := enc.Encode(res); err != nil {
+	var rels []v1alpha1.RelationshipDefinition
+	for _, r := range res {
+		rel, ok := r.(v1alpha1.RelationshipDefinition)
+		if ok {
+			rels = append(rels, rel)
+		}
+	}
+	if err := enc.Encode(rels); err != nil {
 		h.log.Error(ErrWorkloadDefinition(err)) //TODO: Add appropriate meshkit error
 		http.Error(rw, ErrWorkloadDefinition(err).Error(), http.StatusInternalServerError)
 	}
@@ -103,7 +110,14 @@ func (h *Handler) GetAllMeshmodelRelationships(rw http.ResponseWriter, r *http.R
 		OrderOn:   r.URL.Query().Get("order"),
 		Sort:      r.URL.Query().Get("sort"),
 	})
-	if err := enc.Encode(res); err != nil {
+	var rels []v1alpha1.RelationshipDefinition
+	for _, r := range res {
+		rel, ok := r.(v1alpha1.RelationshipDefinition)
+		if ok {
+			rels = append(rels, rel)
+		}
+	}
+	if err := enc.Encode(rels); err != nil {
 		h.log.Error(ErrWorkloadDefinition(err)) //TODO: Add appropriate meshkit error
 		http.Error(rw, ErrWorkloadDefinition(err).Error(), http.StatusInternalServerError)
 	}
@@ -131,6 +145,7 @@ func (h *Handler) RegisterMeshmodelRelationships(rw http.ResponseWriter, r *http
 		http.Error(rw, err.Error(), http.StatusBadRequest)
 		return
 	}
+	go h.config.MeshModelSummaryChannel.Publish()
 }
 
 // while parsing, if an error is encountered, it will return the list of relationships that have already been parsed along with the error

@@ -34,7 +34,7 @@ func (mpp *MesheryPatternPersister) GetMesheryPatterns(search, order string, pag
 
 	count := int64(0)
 	patterns := []*MesheryPattern{}
-	query := mpp.DB.Where("visibility = 'private'").Where("updated_at > ?", updatedAfter).Order(order)
+	query := mpp.DB.Where("visibility = ?", Private).Where("updated_at > ?", updatedAfter).Order(order)
 
 	if search != "" {
 		like := "%" + strings.ToLower(search) + "%"
@@ -55,7 +55,7 @@ func (mpp *MesheryPatternPersister) GetMesheryPatterns(search, order string, pag
 	return marshalMesheryPatternPage(mesheryPatternPage), nil
 }
 
-// GetMesheryCatalogPatterns returns all of the public patterns
+// GetMesheryCatalogPatterns returns all of the published patterns
 func (mpp *MesheryPatternPersister) GetMesheryCatalogPatterns(search, order string) ([]byte, error) {
 	order = sanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
 
@@ -65,7 +65,7 @@ func (mpp *MesheryPatternPersister) GetMesheryCatalogPatterns(search, order stri
 
 	patterns := []*MesheryPattern{}
 
-	query := mpp.DB.Where("visibility = 'public'").Order(order)
+	query := mpp.DB.Where("visibility = ?", Published).Order(order)
 
 	if search != "" {
 		like := "%" + strings.ToLower(search) + "%"
@@ -92,7 +92,7 @@ func (mpp *MesheryPatternPersister) CloneMesheryPattern(patternID string) ([]byt
 		return nil, err
 	}
 
-	mesheryPattern.Visibility = "private"
+	mesheryPattern.Visibility = Private
 	mesheryPattern.ID = &id
 
 	return mpp.SaveMesheryPattern(&mesheryPattern)
@@ -121,7 +121,7 @@ func (mpp *MesheryPatternPersister) DeleteMesheryPatterns(patterns MesheryPatter
 
 func (mpp *MesheryPatternPersister) SaveMesheryPattern(pattern *MesheryPattern) ([]byte, error) {
 	if pattern.Visibility == "" {
-		pattern.Visibility = "private"
+		pattern.Visibility = Private
 	}
 	if pattern.ID == nil {
 		id, err := uuid.NewV4()
@@ -141,7 +141,7 @@ func (mpp *MesheryPatternPersister) SaveMesheryPatterns(patterns []MesheryPatter
 	nilUserID := ""
 	for _, pattern := range patterns {
 		if pattern.Visibility == "" {
-			pattern.Visibility = "private"
+			pattern.Visibility = Private
 		}
 		pattern.UserID = &nilUserID
 		if pattern.ID == nil {

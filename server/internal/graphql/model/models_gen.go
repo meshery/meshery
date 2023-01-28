@@ -177,6 +177,25 @@ type Location struct {
 	Type   *string `json:"type"`
 }
 
+type MeshModelComponent struct {
+	Name  string `json:"name"`
+	Count int    `json:"count"`
+}
+
+type MeshModelRelationship struct {
+	Name  string `json:"name"`
+	Count int    `json:"count"`
+}
+
+type MeshModelSummary struct {
+	Components    []*MeshModelComponent    `json:"components"`
+	Relationships []*MeshModelRelationship `json:"relationships"`
+}
+
+type MeshModelSummarySelector struct {
+	Type string `json:"type"`
+}
+
 type MeshSyncEvent struct {
 	Type      string      `json:"type"`
 	Object    interface{} `json:"object"`

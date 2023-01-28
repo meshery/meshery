@@ -14,6 +14,7 @@ import useStyles from "../MesheryPatterns/Cards.styles";
 import YAMLDialog from "../YamlDialog";
 import UndeployIcon from "../../public/static/img/UndeployIcon";
 import TooltipButton from '../../utils/TooltipButton.js'
+import { VISIBILITY } from "../../utils/Enum";
 
 const INITIAL_GRID_SIZE = { xl : 4, md : 6, xs : 12 };
 
@@ -115,7 +116,7 @@ function FiltersCard({
                 <DoneAllIcon className={classes.iconPatt}/>
               Deploy
               </TooltipButton>
-              {visibility === "public" ? <TooltipButton
+              {visibility === VISIBILITY.PUBLISHED ? <TooltipButton
                 title="Clone"
                 variant="contained"
                 color="primary"
@@ -211,7 +212,7 @@ function FiltersCard({
             </Grid>
 
             <Grid item xs={12}>
-              { visibility === "private" ? <div className={classes.deleteButton} >
+              { visibility === VISIBILITY.PRIVATE ? <div className={classes.deleteButton} >
                 <Tooltip
                   title="Delete" arrow interactive placement="bottom"
                 >

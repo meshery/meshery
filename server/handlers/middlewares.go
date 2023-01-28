@@ -147,6 +147,7 @@ func (h *Handler) KubernetesMiddleware(next func(http.ResponseWriter, *http.Requ
 
 		// register kubernetes components
 		h.K8sCompRegHelper.UpdateContexts(contexts).RegisterComponents(contexts, []models.K8sRegistrationFunction{RegisterK8sComponents, RegisterK8sMeshModelComponents}, h.EventsBuffer, h.registryManager)
+		go h.config.MeshModelSummaryChannel.Publish()
 
 		// Identify custom contexts, if provided
 		k8sContextIDs := req.URL.Query()["contexts"]
@@ -221,6 +222,7 @@ func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http
 		ctx := context.WithValue(req.Context(), models.TokenCtxKey, token)
 		ctx = context.WithValue(ctx, models.PerfObjCtxKey, prefObj)
 		ctx = context.WithValue(ctx, models.UserCtxKey, user)
+		ctx = context.WithValue(ctx, models.RegistryManagerKey, h.registryManager)
 
 		req1 := req.WithContext(ctx)
 		next(w, req1, prefObj, user, provider)
