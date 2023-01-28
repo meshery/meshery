@@ -36,8 +36,8 @@ import (
 )
 
 var (
-	ColumnNamesToExtract        = []string{"model-display-name", "model", "category", "sub-category", "shape", "primary-color", "secondary-color", "logo-URL", "svg_color", "svg_white"}
-	ColumnNamesToExtractForDocs = []string{"model-display-name", "Page Subtitle", "Docs URL", "category", "sub-category", "Feature 1", "Feature 2", "Feature 3", "howItWorks", "howItWorksDetails", "Publish?", "About Project", "Standard Blurb", "svg_color", "svg_white", "Full Page", "model"}
+	ColumnNamesToExtract        = []string{"modelDisplayName", "model", "category", "subCategory", "shape", "primaryColor", "secondaryColor", "logo-URL", "svgColor", "svgWhite"}
+	ColumnNamesToExtractForDocs = []string{"modelDisplayName", "Page Subtitle", "Docs URL", "category", "subCategory", "Feature 1", "Feature 2", "Feature 3", "howItWorks", "howItWorksDetails", "Publish?", "About Project", "Standard Blurb", "svgColor", "svgWhite", "Full Page", "model"}
 	PrimaryColumnName           = "model"
 	OutputPath                  = "../../server/meshmodel/components"
 )
@@ -109,7 +109,7 @@ func main() {
 			}
 			for key, val := range out {
 				switch key {
-				case "model-display-name":
+				case "modelDisplayName":
 					t.Title = val
 				case "model":
 					t.ModelName = val
@@ -119,7 +119,7 @@ func main() {
 					t.DocURL = val
 				case "category":
 					t.Category = val
-				case "sub-category":
+				case "subCategory":
 					t.Subcategory = val
 				case "howItWorks":
 					t.HowItWorks = val
@@ -133,9 +133,9 @@ func main() {
 					t.StandardBlurb = val
 				case "Full Page":
 					t.FullPage = val
-				case "svg_color":
+				case "svgColor":
 					t.ColorSVG = val
-				case "svg_white":
+				case "svgWhite":
 					t.WhiteSVG = val
 				}
 			}
@@ -146,7 +146,7 @@ func main() {
 
 			md := t.CreateMarkDown()
 			jsonItem := t.CreateJSONItem()
-			// if out["model-display-name"] == "Istio" {
+			// if out["modelDisplayName"] == "Istio" {
 			// 	fmt.Println(md)
 			// }
 			mesheryDocsJSON += jsonItem + ","
@@ -158,8 +158,8 @@ func main() {
 				panic(err)
 			}
 			_ = pkg.WriteToFile(filepath.Join(pathToIntegrationsLayer5, "index.mdx"), md)
-			svgcolor := out["svg_color"]
-			svgwhite := out["svg_white"]
+			svgcolor := out["svgColor"]
+			svgwhite := out["svgWhite"]
 
 			// Write SVGs to Layer5 docs
 			err = os.MkdirAll(filepath.Join(pathToIntegrationsLayer5, "icon", "color"), 0777)
@@ -248,9 +248,9 @@ func main() {
 						for key, value := range changeFields {
 							if key == "category" {
 								component.Model.Category = value
-							} else if key == "sub-category" {
+							} else if key == "subCategory" {
 								component.Model.SubCategory = value
-							} else if key == "svg_color" || key == "svg_white" {
+							} else if key == "svgColor" || key == "svgWhite" {
 								component.Metadata[key], err = pkg.UpdateSVGString(value, SVG_WIDTH, SVG_HEIGHT)
 								if err != nil {
 									fmt.Println("err for: ", component.Kind, err.Error())
@@ -260,7 +260,7 @@ func main() {
 								component.Metadata[key] = value
 							}
 						}
-						if i := isInColumnNames("model-display-name", ColumnNamesToExtract); i != -1 {
+						if i := isInColumnNames("modelDisplayName", ColumnNamesToExtract); i != -1 {
 							component.Model.DisplayName = changeFields[ColumnNamesToExtract[i]]
 						}
 						byt, err = json.Marshal(component)

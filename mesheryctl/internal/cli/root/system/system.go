@@ -65,6 +65,7 @@ func init() {
 		configCmd,
 		ContextCmd,
 		channelCmd,
+		providerCmd,
 		checkCmd,
 		loginCmd,
 		logoutCmd,

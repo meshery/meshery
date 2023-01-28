@@ -178,13 +178,15 @@ func (h *Handler) GetMeshmodelComponentsByName(rw http.ResponseWriter, r *http.R
 	})
 	var comps []v1alpha1.ComponentDefinition
 	for _, r := range res {
-		m := make(map[string]interface{})
-		comp, _ := r.(v1alpha1.ComponentDefinition)
-		_ = json.Unmarshal([]byte(comp.Schema), &m)
-		m = k8s.Format.Prettify(m, false)
-		b, _ := json.Marshal(m)
-		comp.Schema = string(b)
-		comps = append(comps, comp)
+		comp, ok := r.(v1alpha1.ComponentDefinition)
+		if ok {
+			m := make(map[string]interface{})
+			_ = json.Unmarshal([]byte(comp.Schema), &m)
+			m = k8s.Format.Prettify(m, false)
+			b, _ := json.Marshal(m)
+			comp.Schema = string(b)
+			comps = append(comps, comp)
+		}
 	}
 	if err := enc.Encode(comps); err != nil {
 		h.log.Error(ErrWorkloadDefinition(err)) //TODO: Add appropriate meshkit error
@@ -238,13 +240,15 @@ func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.R
 	})
 	var comps []v1alpha1.ComponentDefinition
 	for _, r := range res {
-		m := make(map[string]interface{})
-		comp, _ := r.(v1alpha1.ComponentDefinition)
-		_ = json.Unmarshal([]byte(comp.Schema), &m)
-		m = k8s.Format.Prettify(m, false)
-		b, _ := json.Marshal(m)
-		comp.Schema = string(b)
-		comps = append(comps, comp)
+		comp, ok := r.(v1alpha1.ComponentDefinition)
+		if ok {
+			m := make(map[string]interface{})
+			_ = json.Unmarshal([]byte(comp.Schema), &m)
+			m = k8s.Format.Prettify(m, false)
+			b, _ := json.Marshal(m)
+			comp.Schema = string(b)
+			comps = append(comps, comp)
+		}
 	}
 	if err := enc.Encode(comps); err != nil {
 		h.log.Error(ErrWorkloadDefinition(err)) //TODO: Add appropriate meshkit error
@@ -350,12 +354,14 @@ func (h *Handler) GetMeshmodelEntititiesByModel(rw http.ResponseWriter, r *http.
 		var comps []v1alpha1.ComponentDefinition
 		for _, r := range res {
 			m := make(map[string]interface{})
-			comp, _ := r.(v1alpha1.ComponentDefinition)
-			_ = json.Unmarshal([]byte(comp.Schema), &m)
-			m = k8s.Format.Prettify(m, false)
-			b, _ := json.Marshal(m)
-			comp.Schema = string(b)
-			comps = append(comps, comp)
+			comp, ok := r.(v1alpha1.ComponentDefinition)
+			if ok {
+				_ = json.Unmarshal([]byte(comp.Schema), &m)
+				m = k8s.Format.Prettify(m, false)
+				b, _ := json.Marshal(m)
+				comp.Schema = string(b)
+				comps = append(comps, comp)
+			}
 		}
 		res2 := h.registryManager.GetEntities(&v1alpha1.RelationshipFilter{
 			ModelName: mres.Name,
@@ -364,9 +370,10 @@ func (h *Handler) GetMeshmodelEntititiesByModel(rw http.ResponseWriter, r *http.
 		})
 		var relationships []v1alpha1.RelationshipDefinition
 		for _, r := range res2 {
-			rel, _ := r.(v1alpha1.RelationshipDefinition)
-
-			relationships = append(relationships, rel)
+			rel, ok := r.(v1alpha1.RelationshipDefinition)
+			if ok {
+				relationships = append(relationships, rel)
+			}
 		}
 		mres.Relationships = relationships
 		mres.Components = comps

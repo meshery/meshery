@@ -95,10 +95,6 @@ const styles = (theme) => ({
     margin : theme.spacing(0.5),
     padding : theme.spacing(1),
     borderRadius : 5,
-    "&:disabled" : {
-      backgroundColor : "#FF3D3D",
-      color : "#fff"
-    },
     minWidth : 100,
   },
   actions : {
