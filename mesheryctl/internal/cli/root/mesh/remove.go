@@ -18,22 +18,16 @@ var (
 		Long:  `remove service mesh in the connected kubernetes cluster`,
 		Example: `
 // Remove a service mesh
-mesheryctl mesh remove [mesh adapter name]
+mesheryctl mesh remove linkerd
+
+// Remove a service mesh under a specific namespace
+mesheryctl mesh remove linkerd --namespace linkerd-ns
 		`,
 		PreRunE: func(cmd *cobra.Command, args []string) error {
 			utils.Log.Info("Verifying prerequisites...")
 			mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 			if err != nil {
 				return errors.Wrap(err, "error processing config")
-			}
-
-			if len(args) < 1 {
-				meshName, err = validateMesh(mctlCfg, "")
-			} else {
-				meshName, err = validateMesh(mctlCfg, args[0])
-			}
-			if err != nil {
-				return errors.Wrap(err, "error validating request")
 			}
 
 			if err = validateAdapter(mctlCfg, meshName); err != nil {
@@ -56,7 +50,7 @@ mesheryctl mesh remove [mesh adapter name]
 			s.Start()
 			_, err = sendOperationRequest(mctlCfg, strings.ToLower(meshName), true)
 			if err != nil {
-				return errors.Wrap(err, "error installing service mesh")
+				return errors.Wrap(err, "error removing service mesh")
 			}
 			s.Stop()
 

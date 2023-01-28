@@ -54,6 +54,11 @@ var (
 				//     args = Linkerd -> ["LINKERD"] -> "LINKERD"
 				//     args = nginx service mesh -> ["nginx", "service", "mesh"] -> "NGINX_SERVICE_MESH"
 				r, _ := regexp.Compile(`\W`)
+
+				// If the mesh name is single word and without any spaces eg: istio, linkerd
+				if len(args) == 1 {
+					meshName = strings.ToUpper(args[0])
+				}
 				meshName = r.ReplaceAllString(strings.ToUpper(strings.Join(args, "_")), "_")
 			}
 
@@ -222,43 +227,6 @@ func sendValidateRequest(mctlCfg *config.MesheryCtlConfig, query string, delete 
 	req, err := utils.NewRequest(method, path, payload)
 	if err != nil {
 		return "", ErrCreatingValidateRequest(err)
-	}
-	req.Header.Add("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8")
-
-	res, err := client.Do(req)
-	if err != nil {
-		return "", ErrCreatingDeployRequest(err)
-	}
-	defer res.Body.Close()
-
-	body, err := io.ReadAll(res.Body)
-	if err != nil {
-		return "", err
-	}
-	return string(body), nil
-}
-
-func sendDeployRequest(mctlCfg *config.MesheryCtlConfig, query string, delete bool) (string, error) {
-	path := mctlCfg.GetBaseMesheryURL() + "/api/system/adapter/operation"
-	method := "POST"
-
-	data := url.Values{}
-	data.Set("adapter", adapterURL)
-	data.Set("query", query)
-	data.Set("customBody", "")
-	data.Set("namespace", namespace)
-	if delete {
-		data.Set("deleteOp", "on")
-	} else {
-		data.Set("deleteOp", "")
-	}
-
-	payload := strings.NewReader(data.Encode())
-
-	client := &http.Client{}
-	req, err := utils.NewRequest(method, path, payload)
-	if err != nil {
-		return "", ErrCreatingDeployRequest(err)
 	}
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8")
 
