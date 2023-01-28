@@ -2,8 +2,6 @@ module github.com/layer5io/meshery
 
 go 1.19
 
-replace github.com/layer5io/meshkit => github.com/acald-creator/meshkit v0.0.0-20230126014945-283ae25926c0 // temporary until meshkit PR is merged
-
 replace (
 	github.com/googleapis/gnostic => github.com/googleapis/gnostic v0.5.5
 	helm.sh/helm/v3 => helm.sh/helm/v3 v3.8.2
