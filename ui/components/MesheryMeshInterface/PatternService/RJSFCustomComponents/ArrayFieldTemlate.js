@@ -12,6 +12,7 @@ import HelpOutlineIcon from "../../../../assets/icons/HelpOutlineIcon";
 import { isMultiSelect, getDefaultFormState } from "@rjsf/utils";
 import ErrorOutlineIcon from "../../../../assets/icons/ErrorOutlineIcon";
 import { ERROR_COLOR } from "../../../../constants/colors";
+import { iconMedium } from "../../../../css/icons.styles";
 function getTitleForItem(props) {
   const title = getTitle(props);
 
@@ -176,7 +177,7 @@ const DefaultNormalArrayFieldTemplate = (props) => {
               (props.uiSchema["ui:description"] || props.schema.description) &&
               <CustomTextTooltip backgroundColor="#3C494F" title={props.uiSchema["ui:description"] || props.schema.description}>
                 <IconButton  disableTouchRipple="true" disableRipple="true">
-                  <HelpOutlineIcon width="14px" height="14px" fill="black" style={{ marginLeft : '4px' }} />
+                  <HelpOutlineIcon width="14px" height="14px" fill="gray" style={{ marginLeft : '4px', ...iconMedium }} />
                 </IconButton>
               </CustomTextTooltip>
             }
@@ -193,7 +194,7 @@ const DefaultNormalArrayFieldTemplate = (props) => {
                     width="16px"
                     height="16px"
                     fill="#B32700"
-                    style={{ marginLeft : "4px", verticalAlign : "middle" }}
+                    style={{ marginLeft : "4px", verticalAlign : "middle", ...iconMedium }}
                   />
                 </IconButton>
               </CustomTextTooltip>
@@ -210,7 +211,7 @@ const DefaultNormalArrayFieldTemplate = (props) => {
                       onClick={props.onAddClick}
                       disabled={props.disabled || props.readonly}
                     >
-                      <AddIcon width="18px" height="18px" fill="gray" />
+                      <AddIcon style={iconMedium} fill="gray" />
                     </IconButton>
                   </Box>
                 </Grid>

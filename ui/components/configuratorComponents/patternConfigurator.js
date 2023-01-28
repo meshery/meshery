@@ -22,6 +22,7 @@ import NameToIcon from "./NameToIcon";
 import CustomBreadCrumb from "./CustomBreadCrumb";
 import { randomPatternNameGenerator as getRandomName } from "../../utils/utils"
 import _ from "lodash";
+import { iconMedium } from "../../css/icons.styles";
 
 const useStyles = makeStyles((theme) => ({
   backButton : {
@@ -491,7 +492,7 @@ function PatternConfiguratorComponent({ pattern, onSubmit, show : setSelectedPat
               color="primary"
               onClick={() => handleSubmitFinalPattern(yaml, "", getRandomName(), "upload")}
             >
-              <FileCopyIcon />
+              <FileCopyIcon style={iconMedium} />
             </IconButton>
           </Tooltip>
           <Tooltip title="Update Pattern">
@@ -500,7 +501,7 @@ function PatternConfiguratorComponent({ pattern, onSubmit, show : setSelectedPat
               color="primary"
               onClick={() => handleSubmitFinalPattern(yaml, pattern.id, pattern.name, "update")}
             >
-              <SaveIcon />
+              <SaveIcon style={iconMedium} />
             </IconButton>
           </Tooltip>
           <Tooltip title="Delete Pattern">
@@ -512,12 +513,12 @@ function PatternConfiguratorComponent({ pattern, onSubmit, show : setSelectedPat
                 deleteConfiguration()
               }}
             >
-              <DeleteIcon />
+              <DeleteIcon style={iconMedium}/>
             </IconButton>
           </Tooltip>
           <Tooltip title="Toggle View">
             <IconButton color="primary" onClick={toggleView}>
-              <ListAltIcon />
+              <ListAltIcon style={iconMedium} />
             </IconButton>
           </Tooltip>
         </Toolbar>
