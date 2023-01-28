@@ -17,6 +17,7 @@ import useStyles from "./Cards.styles";
 import YAMLDialog from "../YamlDialog";
 import PublicIcon from '@material-ui/icons/Public';
 import TooltipButton from '../../utils/TooltipButton'
+import { VISIBILITY } from "../../utils/Enum";
 
 const INITIAL_GRID_SIZE = { xl : 4, md : 6, xs : 12 };
 
@@ -148,7 +149,7 @@ function MesheryPatternCard({
                 <span className={classes.btnText}>Undeploy</span>
               </TooltipButton>
 
-              { visibility === "private" ?  <TooltipButton
+              { visibility === VISIBILITY.PRIVATE ?  <TooltipButton
                 title="Design"
                 variant="contained"
                 color="primary"
@@ -255,7 +256,7 @@ function MesheryPatternCard({
             </Grid>
 
             <Grid item xs={12}>
-              {visibility === "private" ?
+              {visibility === VISIBILITY.PRIVATE?
                 <div className={classes.updateDeleteButtons} >
 
                   {/* Save button */}

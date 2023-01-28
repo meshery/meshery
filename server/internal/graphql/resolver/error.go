@@ -31,6 +31,9 @@ const (
 	ErrK8sContextCode                       = "2245"
 	ErrClusterResourcesSubscriptionCode     = "2246"
 	ErrGettingClusterResourcesCode          = "2247"
+	ErrMeshModelSummarySubscriptionCode     = "2248"
+	ErrGettingMeshModelSummaryCode          = "2249"
+	ErrGettingRegistryManagerCode           = "2250"
 )
 
 var (
@@ -144,6 +147,38 @@ func ErrGettingClusterResources(err error) error {
 		[]string{"Unable to retrieve cluster resources"},
 		[]string{err.Error()},
 		[]string{"Table in the database might not exists"},
+		nil,
+	)
+}
+
+func ErrMeshModelSummarySubscription(err error) error {
+	return errors.New(
+		ErrMeshModelSummarySubscriptionCode,
+		errors.Alert,
+		[]string{"MeshModelSummary Subscription failed", err.Error()},
+		[]string{"GraphQL subscription for MeshModelSummary Subscription stopped"},
+		[]string{"Could be a network issue"},
+		[]string{"Confirm that Meshery Server is reachable from your browser."})
+}
+
+func ErrGettingMeshModelSummary(err error) error {
+	return errors.New(
+		ErrGettingMeshModelSummaryCode,
+		errors.Alert,
+		[]string{"Unable to retrieve MeshModel Summary"},
+		[]string{err.Error()},
+		[]string{"Table in the database might not exists"},
+		nil,
+	)
+}
+
+func ErrGettingRegistryManager(err error) error {
+	return errors.New(
+		ErrGettingRegistryManagerCode,
+		errors.Alert,
+		[]string{"Unable to retrieve Registry Manager"},
+		[]string{err.Error()},
+		[]string{"Registry Manager might not exists"},
 		nil,
 	)
 }
