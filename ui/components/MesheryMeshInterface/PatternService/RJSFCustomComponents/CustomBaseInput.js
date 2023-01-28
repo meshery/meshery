@@ -45,7 +45,7 @@ const BaseInput = (props) => {
 
                   }>
                   <IconButton component="span" size="small">
-                    <ErrorOutlineIcon width="14x" height="14px" fill="#B32700" style={{ verticalAlign : "middle", ...iconMedium }}/>
+                    <ErrorOutlineIcon width="14px" height="14px" fill="#B32700" style={{ verticalAlign : "middle", ...iconMedium }}/>
                   </IconButton>
                 </CustomTextTooltip>
               )}
