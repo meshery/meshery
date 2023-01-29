@@ -8,7 +8,6 @@ import (
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -31,7 +30,10 @@ var validateCmd = &cobra.Command{
 	Short: "Validate conformance to service mesh standards",
 	Example: `
 // Validate conformance to service mesh standards
-mesheryctl mesh validate --adapter [name of the adapter] --tokenPath [path to token for authentication] --spec [specification to be used for conformance test] --namespace [namespace to be used]
+mesheryctl mesh validate [mesh name] --adapter [name of the adapter] --tokenPath [path to token for authentication] --spec [specification to be used for conformance test] --namespace [namespace to be used]
+
+// Validate Istio to service mesh standards
+mesheryctl mesh validate istio --adapter meshery-istio --spec smi
 
 ! Refer below image link for usage
 * Usage of mesheryctl mesh validate
@@ -66,20 +68,19 @@ mesheryctl mesh validate --adapter [name of the adapter] --tokenPath [path to to
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if len(args) > 0 {
-			return errors.New(utils.MeshError(fmt.Sprintf("'%s' is an invalid argument for 'mesheryctl mesh validate'. Use 'mesheryctl mesh validate --help' to display usage guide.\n", args[0])))
-		}
-
 		log.Infof("Starting service mesh validation...")
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			log.Fatalln(err)
 		}
+		s := utils.CreateDefaultSpinner(fmt.Sprintf("Validating %s", meshName), fmt.Sprintf("\n%s validation successful", meshName))
+		s.Start()
 		_, err = sendValidateRequest(mctlCfg, meshName, false)
 		if err != nil {
 			log.Fatalln(err)
 		}
+		s.Stop()
 
 		if watch {
 			log.Infof("Verifying Operation")
@@ -94,9 +95,9 @@ mesheryctl mesh validate --adapter [name of the adapter] --tokenPath [path to to
 }
 
 func init() {
-	validateCmd.Flags().StringVarP(&spec, "spec", "s", "smi", "specification to be used for conformance test")
+	validateCmd.Flags().StringVarP(&spec, "spec", "s", "smi", "(Required) specification to be used for conformance test")
 	_ = validateCmd.MarkFlagRequired("spec")
-	validateCmd.Flags().StringVarP(&adapterURL, "adapter", "a", "meshery-osm", "Adapter to use for validation")
+	validateCmd.Flags().StringVarP(&adapterURL, "adapter", "a", "meshery-osm", "(Required) Adapter to use for validation")
 	_ = validateCmd.MarkFlagRequired("adapter")
 	validateCmd.Flags().StringVarP(&utils.TokenFlag, "token", "t", "", "Path to token for authenticating to Meshery API")
 	validateCmd.Flags().BoolVarP(&watch, "watch", "w", false, "Watch for events and verify operation (in beta testing)")
