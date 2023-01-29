@@ -29,6 +29,7 @@ import subscribeMeshModelSummary from "./graphql/subscriptions/MeshModelSummaryS
 import fetchMeshModelSummary from "./graphql/queries/MeshModelSummaryQuery";
 import { MuiThemeProvider, createTheme } from '@material-ui/core/styles';
 import MUIDataTable from "mui-datatables";
+import MesherySettingsEnvButtons from './MesherySettingsEnvButtons';
 
 
 const styles = (theme) => ({
@@ -74,7 +75,7 @@ const styles = (theme) => ({
     overflow : 'hidden',
   },
   topToolbar : {
-    margin : "2rem auto",
+    marginBottom : "2rem",
     display : "flex",
     justifyContent : "space-between",
     paddingLeft : "1rem",
@@ -586,6 +587,10 @@ class MesherySettings extends React.Component {
     }
     return (
       <div className={classes.wrapperClss}>
+        {tabVal ===0 && <div className={classes.topToolbar}>
+          <MesherySettingsEnvButtons/>
+        </div>
+        }
         <Paper square className={classes.wrapperClss}>
           <Tabs
             value={tabVal}
