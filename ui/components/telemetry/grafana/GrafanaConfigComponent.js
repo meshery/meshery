@@ -7,7 +7,7 @@ import {
 import ReactSelectWrapper from '../../ReactSelectWrapper'
 
 const grafanaStyles = (theme) => ({
-  wrapper : { padding : theme.spacing(5), },
+  wrapper : { padding : theme.spacing(5),backgroundColor : "white" },
   buttons : { display : 'flex',
     justifyContent : 'flex-end', },
   inputContainer : { marginTop : theme.spacing(2),

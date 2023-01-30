@@ -22,7 +22,7 @@ type Handler struct {
 	brokerConn         broker.Handler
 	K8sCompRegHelper   *models.ComponentsRegistrationHelper
 	MesheryCtrlsHelper *models.MesheryControllersHelper
-	EnforceProvider    string // When set, all endpoints consider tokens / identities / capabilities valid from the single, designated provider.
+	Provider           string // When set, all endpoints consider tokens / identities / capabilities valid from the single, designated provider.
 	dbHandler          *database.Handler
 	registryManager    *meshmodel.RegistryManager
 	EventsBuffer       *events.EventStreamer
@@ -39,7 +39,7 @@ func NewHandlerInstance(
 	dbHandler *database.Handler,
 	eb *events.EventStreamer,
 	regManager *meshmodel.RegistryManager,
-	enforcedProvider string,
+	provider string,
 ) models.HandlerInterface {
 	h := &Handler{
 		config:             handlerConfig,
@@ -51,7 +51,7 @@ func NewHandlerInstance(
 		dbHandler:          dbHandler,
 		EventsBuffer:       eb,
 		registryManager:    regManager,
-		EnforceProvider:    enforcedProvider,
+		Provider:           provider,
 	}
 
 	h.task = taskq.RegisterTask(&taskq.TaskOptions{

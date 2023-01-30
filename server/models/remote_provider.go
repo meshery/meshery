@@ -1384,7 +1384,7 @@ func (l *RemoteProvider) SaveMesheryPattern(tokenString string, pattern *Meshery
 }
 
 // GetMesheryPatterns gives the patterns stored with the provider
-func (l *RemoteProvider) GetMesheryPatterns(tokenString string, page, pageSize, search, order string) ([]byte, error) {
+func (l *RemoteProvider) GetMesheryPatterns(tokenString string, page, pageSize, search, order string, updatedAfter string) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistMesheryPatterns) {
 		logrus.Error("operation not available")
 		return []byte{}, fmt.Errorf("%s is not suppported by provider: %s", PersistMesheryPatterns, l.ProviderName)
@@ -1407,6 +1407,9 @@ func (l *RemoteProvider) GetMesheryPatterns(tokenString string, page, pageSize, 
 	}
 	if order != "" {
 		q.Set("order", order)
+	}
+	if updatedAfter != "" {
+		q.Set("updated_after", updatedAfter)
 	}
 	remoteProviderURL.RawQuery = q.Encode()
 	logrus.Debugf("constructed patterns url: %s", remoteProviderURL.String())
@@ -2279,7 +2282,7 @@ func (l *RemoteProvider) GetApplicationSourceContent(req *http.Request, applicat
 }
 
 // GetMesheryApplications gives the applications stored with the provider
-func (l *RemoteProvider) GetMesheryApplications(tokenString string, page, pageSize, search, order string) ([]byte, error) {
+func (l *RemoteProvider) GetMesheryApplications(tokenString string, page, pageSize, search, order string, updaterAfter string) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistMesheryApplications) {
 		logrus.Error("operation not available")
 		return []byte{}, ErrInvalidCapability("PersistMesheryApplications", l.ProviderName)
@@ -2302,6 +2305,9 @@ func (l *RemoteProvider) GetMesheryApplications(tokenString string, page, pageSi
 	}
 	if order != "" {
 		q.Set("order", order)
+	}
+	if updaterAfter != "" {
+		q.Set("updated_after", updaterAfter)
 	}
 	remoteProviderURL.RawQuery = q.Encode()
 	logrus.Debugf("constructed applications url: %s", remoteProviderURL.String())

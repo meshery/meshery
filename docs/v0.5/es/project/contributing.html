@@ -766,14 +766,14 @@ Después de ejecutar el servidor Meshery, deberás seleccionar tu <strong>Provee
 
 <p>Para instalar/actualizar las dependencias de UI:</p>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>make setup-ui-libs
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>make ui-setup
 </code></pre></div></div>
 
 <h4 id="construir-y-exportar-ui">Construir y exportar UI</h4>
 
 <p>Para construir y exportar el código de UI:</p>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>make build-ui
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>make ui-build
 </code></pre></div></div>
 
 <p>Ahora que el código de la interfaz de usuario está creado, la interfaz de usuario de Meshery estará disponible en<code class="language-plaintext highlighter-rouge"> http: // localhost: 9081</code>.
@@ -783,7 +783,7 @@ Cada vez que se realizan cambios en el código de la interfaz de usuario, el có
 
 <p>Si deseas trabajar en la UI, será una buena idea utilizar el servidor de desarrollo de UI incluido. Puedes ejecutar el servidor de desarrollo de UI ejecutando el siguiente comando:</p>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>make run-ui-dev
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>make ui
 </code></pre></div></div>
 
 <p>Asegúrete de tener el servidor Meshery configurado y en funcionamiento en el puerto predeterminado <code class="language-plaintext highlighter-rouge">http://localhost:9081</code> antes de proceder a acceder y trabajar en el servidor de UI en <code class="language-plaintext highlighter-rouge">http://localhost:3000</code>.

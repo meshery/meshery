@@ -758,10 +758,10 @@ You need to ask for the access to the above Figma File in <a href="http://slack.
 
 <h3 id="running-cypress-integration-tests">Running Cypress integration tests</h3>
 
-<p>To run cypress integration tests, a convenience make target called <code class="language-plaintext highlighter-rouge">run-ui-integration-tests</code> that installs dependencies in <code class="language-plaintext highlighter-rouge">/ui</code> and <code class="language-plaintext highlighter-rouge">/provider-ui</code> folders as prerequisite and invokes <code class="language-plaintext highlighter-rouge">ci-test-integration</code> npm script found in <a href="https://github.com/meshery/meshery/blob/master/ui/package.json">/ui/package.json</a></p>
+<p>To run cypress integration tests, a convenience make target called <code class="language-plaintext highlighter-rouge">ui-integration-tests</code> that installs dependencies in <code class="language-plaintext highlighter-rouge">/ui</code> and <code class="language-plaintext highlighter-rouge">/provider-ui</code> folders as prerequisite and invokes <code class="language-plaintext highlighter-rouge">ci-test-integration</code> npm script found in <a href="https://github.com/meshery/meshery/blob/master/ui/package.json">/ui/package.json</a></p>
 <pre class="codeblock-pre"><div class="codeblock">
    <code class="clipboardjs">
-     $ make run-ui-integration-tests
+     $ make ui-integration-tests
    </code></div></pre>
 <div class="alert alert-info" role="alert">
 <h4 class="alert-heading">Above command must be run from Meshery repository's root folder.</h4>

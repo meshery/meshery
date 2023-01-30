@@ -1,11 +1,11 @@
-import React from "react";
-import DashboardComponent from "../components/DashboardComponent";
 import { NoSsr } from "@material-ui/core";
-import { updatepagepath } from "../lib/store";
+import Head from 'next/head';
+import React from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from 'redux';
+import DashboardComponent from "../components/DashboardComponent";
 import { getPath } from "../lib/path";
-import Head from 'next/head';
+import { updatepagepath } from "../lib/store";
 
 class Index extends React.Component {
   componentDidMount () {

@@ -5,6 +5,7 @@ import (
 
 	"time"
 
+	"github.com/layer5io/meshery/server/models/meshmodel"
 	"github.com/layer5io/meshkit/utils/events"
 	"github.com/vmihailenco/taskq/v3"
 )
@@ -102,18 +103,19 @@ type HandlerInterface interface {
 	ComponentTypesHandler(rw http.ResponseWriter, r *http.Request)
 	ComponentsForTypeHandler(rw http.ResponseWriter, r *http.Request)
 	GetAllComponents(rw http.ResponseWriter, r *http.Request)
-	GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Request)
 	ComponentVersionsHandler(rw http.ResponseWriter, r *http.Request)
 	ComponentsByNameHandler(rw http.ResponseWriter, r *http.Request)
 	ValidationHandler(rw http.ResponseWriter, r *http.Request)
-	ComponentGenerationHandler(rw http.ResponseWriter, r *http.Request)
+	MeshModelGenerationHandler(rw http.ResponseWriter, r *http.Request)
+	GetMeshmodelModels(rw http.ResponseWriter, r *http.Request)
 	RegisterMeshmodelComponents(rw http.ResponseWriter, r *http.Request)
 
 	GetMeshmodelComponentsByName(rw http.ResponseWriter, r *http.Request)
-	GetMeshmodelComponentsByType(rw http.ResponseWriter, r *http.Request)
-	MeshmodelComponentsForTypeHandler(rw http.ResponseWriter, r *http.Request)
+	GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.Request)
+	GetMeshmodelEntititiesByModel(rw http.ResponseWriter, r *http.Request)
 
 	GetAllMeshmodelRelationships(rw http.ResponseWriter, r *http.Request)
+	GetMeshmodelRelationshipByName(rw http.ResponseWriter, r *http.Request)
 	RegisterMeshmodelRelationships(rw http.ResponseWriter, r *http.Request)
 
 	OAMComponentDetailsHandler(rw http.ResponseWriter, r *http.Request)
@@ -190,8 +192,10 @@ type HandlerConfig struct {
 	ConfigurationChannel *ConfigurationChannel
 
 	DashboardK8sResourcesChan *DashboardK8sResourcesChan
-	K8scontextChannel         *K8scontextChan
-	EventsBuffer              *events.EventStreamer
+	MeshModelSummaryChannel   *meshmodel.MeshModelSummaryChannel
+
+	K8scontextChannel *K8scontextChan
+	EventsBuffer      *events.EventStreamer
 }
 
 // SubmitMetricsConfig is used to store config used for submitting metrics
