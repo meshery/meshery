@@ -650,7 +650,7 @@ func GetSessionData(mctlCfg *config.MesheryCtlConfig) (*models.Preference, error
 	prefs := &models.Preference{}
 	err = utils.Unmarshal(string(body), prefs)
 	if err != nil {
-		return nil, errors.New("Failed to process JSON data. Did you sign in Meshery?")
+		return nil, errors.New("Failed to process JSON data. Please sign into Meshery")
 	}
 
 	return prefs, nil
