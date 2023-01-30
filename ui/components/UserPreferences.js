@@ -125,7 +125,7 @@ class UserPreference extends React.Component {
                 key="close"
                 aria-label="Close"
                 color="inherit"
-                onClick={() => self.props.closeSnackbar(key)}
+                onClick={() => this.props.closeSnackbar(key)}
               >
                 <CloseIcon style={iconMedium} />
               </IconButton>
