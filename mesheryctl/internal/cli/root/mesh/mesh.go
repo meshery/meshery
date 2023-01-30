@@ -71,7 +71,6 @@ var (
 
 			// ensure the mesh's adapter is available and update adapterURL if so
 			if err = validateAdapter(mctlCfg, meshName); err != nil {
-				// ErrValidatingAdapter
 				log.Fatalln(err)
 			}
 			return nil
@@ -150,43 +149,7 @@ func validateMesh(mctlCfg *config.MesheryCtlConfig, meshName string) (string, er
 	return meshNames[i], nil
 }
 
-func sendOperationRequest(mctlCfg *config.MesheryCtlConfig, query string, delete bool) (string, error) {
-	path := mctlCfg.GetBaseMesheryURL() + "/api/system/adapter/operation"
-	method := "POST"
-	data := url.Values{}
-	data.Set("adapter", adapterURL)
-	data.Set("query", query)
-	data.Set("customBody", "")
-	data.Set("namespace", namespace)
-	if delete {
-		data.Set("deleteOp", "on")
-	} else {
-		data.Set("deleteOp", "")
-	}
-
-	payload := strings.NewReader(data.Encode())
-
-	client := &http.Client{}
-	req, err := utils.NewRequest(method, path, payload)
-	if err != nil {
-		return "", ErrCreatingValidateRequest(err)
-	}
-	req.Header.Add("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8")
-
-	res, err := client.Do(req)
-	if err != nil {
-		return "", ErrCreatingDeployRequest(err)
-	}
-	defer res.Body.Close()
-
-	body, err := io.ReadAll(res.Body)
-	if err != nil {
-		return "", err
-	}
-	return string(body), nil
-}
-
-func sendValidateRequest(mctlCfg *config.MesheryCtlConfig, query string, delete bool) (string, error) {
+func sendOperationRequest(mctlCfg *config.MesheryCtlConfig, query string, delete bool, spec string) (string, error) {
 	path := mctlCfg.GetBaseMesheryURL() + "/api/system/adapter/operation"
 	method := "POST"
 	data := url.Values{}
@@ -201,6 +164,7 @@ func sendValidateRequest(mctlCfg *config.MesheryCtlConfig, query string, delete 
 	}
 
 	// Choose which specification to use for conformance test
+	// Used in validate command
 	switch spec {
 	case "smi":
 		{
@@ -214,6 +178,12 @@ func sendValidateRequest(mctlCfg *config.MesheryCtlConfig, query string, delete 
 				break
 			}
 			return "", errors.New("only Istio supports istio-vet operation")
+		}
+	case "null":
+		{
+			// If validate command isn't used
+			// This must be used only for deploy or remove operations
+			break
 		}
 	default:
 		{
@@ -285,6 +255,54 @@ func waitForDeployResponse(mctlCfg *config.MesheryCtlConfig, query string) (stri
 	case event := <-eventChan:
 		if event != "successful" {
 			return "", ErrFailedDeployingMesh
+		}
+	}
+
+	return "", nil
+}
+
+func waitForValidateResponse(mctlCfg *config.MesheryCtlConfig, query string) (string, error) {
+	path := mctlCfg.GetBaseMesheryURL() + "/api/events?client=cli_validate"
+	method := "GET"
+	client := &http.Client{}
+	req, err := utils.NewRequest(method, path, nil)
+	req.Header.Add("Accept", "text/event-stream")
+	if err != nil {
+		return "", ErrCreatingDeployResponseRequest(err)
+	}
+
+	res, err := client.Do(req)
+	if err != nil {
+		return "", ErrCreatingValidateRequest(err)
+	}
+
+	event, err := utils.ConvertRespToSSE(res)
+	if err != nil {
+		return "", ErrCreatingValidateResponseStream(err)
+	}
+
+	timer := time.NewTimer(time.Duration(1200) * time.Second)
+	eventChan := make(chan string)
+
+	//Run a goroutine to wait for the response
+	go func() {
+		for i := range event {
+			if strings.Contains(i.Data.Summary, query) {
+				eventChan <- "successful"
+				log.Infof("%s\n%s", i.Data.Summary, i.Data.Details)
+			} else if strings.Contains(i.Data.Details, "error") {
+				eventChan <- "error"
+				log.Infof("%s", i.Data.Summary)
+			}
+		}
+	}()
+
+	select {
+	case <-timer.C:
+		return "", ErrTimeoutWaitingForValidateResponse
+	case event := <-eventChan:
+		if event != "successful" {
+			return "", ErrSMIConformanceTestsFailed
 		}
 	}
 

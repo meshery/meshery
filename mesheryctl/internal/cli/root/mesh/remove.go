@@ -17,10 +17,10 @@ var (
 		Short: "remove a service mesh in the kubernetes cluster",
 		Long:  `remove service mesh in the connected kubernetes cluster`,
 		Example: `
-// Remove a service mesh
+// Remove a service mesh(linkerd)
 mesheryctl mesh remove linkerd
 
-// Remove a service mesh under a specific namespace
+// Remove a service mesh(linkerd) under a specific namespace(linkerd-ns)
 mesheryctl mesh remove linkerd --namespace linkerd-ns
 		`,
 		PreRunE: func(cmd *cobra.Command, args []string) error {
@@ -48,7 +48,7 @@ mesheryctl mesh remove linkerd --namespace linkerd-ns
 			}
 
 			s.Start()
-			_, err = sendOperationRequest(mctlCfg, strings.ToLower(meshName), true)
+			_, err = sendOperationRequest(mctlCfg, strings.ToLower(meshName), true, "null")
 			if err != nil {
 				return errors.Wrap(err, "error removing service mesh")
 			}

@@ -2,9 +2,7 @@ package mesh
 
 import (
 	"fmt"
-	"net/http"
 	"strings"
-	"time"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
@@ -76,7 +74,7 @@ mesheryctl mesh validate istio --adapter meshery-istio --spec smi
 		}
 		s := utils.CreateDefaultSpinner(fmt.Sprintf("Validating %s", meshName), fmt.Sprintf("\n%s validation successful", meshName))
 		s.Start()
-		_, err = sendValidateRequest(mctlCfg, meshName, false)
+		_, err = sendOperationRequest(mctlCfg, meshName, false, spec)
 		if err != nil {
 			log.Fatalln(err)
 		}
@@ -95,58 +93,10 @@ mesheryctl mesh validate istio --adapter meshery-istio --spec smi
 }
 
 func init() {
-	validateCmd.Flags().StringVarP(&spec, "spec", "s", "smi", "(Required) specification to be used for conformance test")
+	validateCmd.Flags().StringVarP(&spec, "spec", "s", "smi", "(Required) specification to be used for conformance test (smi/istio-vet)")
 	_ = validateCmd.MarkFlagRequired("spec")
 	validateCmd.Flags().StringVarP(&adapterURL, "adapter", "a", "meshery-osm", "(Required) Adapter to use for validation")
 	_ = validateCmd.MarkFlagRequired("adapter")
 	validateCmd.Flags().StringVarP(&utils.TokenFlag, "token", "t", "", "Path to token for authenticating to Meshery API")
 	validateCmd.Flags().BoolVarP(&watch, "watch", "w", false, "Watch for events and verify operation (in beta testing)")
-}
-
-func waitForValidateResponse(mctlCfg *config.MesheryCtlConfig, query string) (string, error) {
-	path := mctlCfg.GetBaseMesheryURL() + "/api/events?client=cli_validate"
-	method := "GET"
-	client := &http.Client{}
-	req, err := utils.NewRequest(method, path, nil)
-	req.Header.Add("Accept", "text/event-stream")
-	if err != nil {
-		return "", ErrCreatingDeployResponseRequest(err)
-	}
-
-	res, err := client.Do(req)
-	if err != nil {
-		return "", ErrCreatingValidateRequest(err)
-	}
-
-	event, err := utils.ConvertRespToSSE(res)
-	if err != nil {
-		return "", ErrCreatingValidateResponseStream(err)
-	}
-
-	timer := time.NewTimer(time.Duration(1200) * time.Second)
-	eventChan := make(chan string)
-
-	//Run a goroutine to wait for the response
-	go func() {
-		for i := range event {
-			if strings.Contains(i.Data.Summary, query) {
-				eventChan <- "successful"
-				log.Infof("%s\n%s", i.Data.Summary, i.Data.Details)
-			} else if strings.Contains(i.Data.Details, "error") {
-				eventChan <- "error"
-				log.Infof("%s", i.Data.Summary)
-			}
-		}
-	}()
-
-	select {
-	case <-timer.C:
-		return "", ErrTimeoutWaitingForValidateResponse
-	case event := <-eventChan:
-		if event != "successful" {
-			return "", ErrSMIConformanceTestsFailed
-		}
-	}
-
-	return "", nil
 }

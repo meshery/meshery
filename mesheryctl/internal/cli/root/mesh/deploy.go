@@ -2,13 +2,13 @@ package mesh
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"strings"
 )
 
 var (
@@ -58,7 +58,7 @@ mesheryctl mesh deploy linkerd --watch
 			}
 			s := utils.CreateDefaultSpinner(fmt.Sprintf("Deploying %s", meshName), fmt.Sprintf("\n%s service mesh deployed successfully", meshName))
 			s.Start()
-			_, err = sendOperationRequest(mctlCfg, strings.ToLower(meshName), false)
+			_, err = sendOperationRequest(mctlCfg, strings.ToLower(meshName), false, "null")
 			if err != nil {
 				log.Fatalln(err)
 			}
