@@ -47,28 +47,34 @@ const (
 	MeshsyncURL   = baseConfigURL + "samples/meshery_v1alpha1_meshsync.yaml"
 
 	// Documentation URLs
-	docsBaseURL      = "https://docs.meshery.io/"
-	rootUsageURL     = docsBaseURL + "reference/mesheryctl"
-	perfUsageURL     = docsBaseURL + "reference/mesheryctl/perf"
-	systemUsageURL   = docsBaseURL + "reference/mesheryctl/system"
-	systemStopURL    = docsBaseURL + "reference/mesheryctl/system/stop"
-	systemUpdateURL  = docsBaseURL + "reference/mesheryctl/system/update"
-	systemResetURL   = docsBaseURL + "reference/mesheryctl/system/reset"
-	systemStatusURL  = docsBaseURL + "reference/mesheryctl/system/status"
-	systemRestartURL = docsBaseURL + "reference/mesheryctl/system/restart"
-	meshUsageURL     = docsBaseURL + "reference/mesheryctl/mesh"
-	expUsageURL      = docsBaseURL + "reference/mesheryctl/exp"
-	filterUsageURL   = docsBaseURL + "reference/mesheryctl/exp/filter"
-	patternUsageURL  = docsBaseURL + "reference/mesheryctl/pattern"
-	appUsageURL      = docsBaseURL + "reference/mesheryctl/app"
-	contextDeleteURL = docsBaseURL + "reference/mesheryctl/system/context/delete"
-	contextViewURL   = docsBaseURL + "reference/mesheryctl/system/context/view"
-	contextCreateURL = docsBaseURL + "reference/mesheryctl/system/context/create"
-	contextUsageURL  = docsBaseURL + "reference/mesheryctl/system/context"
-	channelUsageURL  = docsBaseURL + "reference/mesheryctl/system/channel"
-	channelSetURL    = docsBaseURL + "reference/mesheryctl/system/channel/set"
-	channelSwitchURL = docsBaseURL + "reference/mesheryctl/system/channel/switch"
-	channelViewURL   = docsBaseURL + "reference/mesheryctl/system/channel/view"
+	docsBaseURL       = "https://docs.meshery.io/"
+	rootUsageURL      = docsBaseURL + "reference/mesheryctl"
+	perfUsageURL      = docsBaseURL + "reference/mesheryctl/perf"
+	systemUsageURL    = docsBaseURL + "reference/mesheryctl/system"
+	systemStopURL     = docsBaseURL + "reference/mesheryctl/system/stop"
+	systemUpdateURL   = docsBaseURL + "reference/mesheryctl/system/update"
+	systemResetURL    = docsBaseURL + "reference/mesheryctl/system/reset"
+	systemStatusURL   = docsBaseURL + "reference/mesheryctl/system/status"
+	systemRestartURL  = docsBaseURL + "reference/mesheryctl/system/restart"
+	meshUsageURL      = docsBaseURL + "reference/mesheryctl/mesh"
+	expUsageURL       = docsBaseURL + "reference/mesheryctl/exp"
+	filterUsageURL    = docsBaseURL + "reference/mesheryctl/exp/filter"
+	patternUsageURL   = docsBaseURL + "reference/mesheryctl/pattern"
+	appUsageURL       = docsBaseURL + "reference/mesheryctl/app"
+	contextDeleteURL  = docsBaseURL + "reference/mesheryctl/system/context/delete"
+	contextViewURL    = docsBaseURL + "reference/mesheryctl/system/context/view"
+	contextCreateURL  = docsBaseURL + "reference/mesheryctl/system/context/create"
+	contextUsageURL   = docsBaseURL + "reference/mesheryctl/system/context"
+	channelUsageURL   = docsBaseURL + "reference/mesheryctl/system/channel"
+	channelSetURL     = docsBaseURL + "reference/mesheryctl/system/channel/set"
+	channelSwitchURL  = docsBaseURL + "reference/mesheryctl/system/channel/switch"
+	channelViewURL    = docsBaseURL + "reference/mesheryctl/system/channel/view"
+	providerUsageURL  = docsBaseURL + "reference/mesheryctl/system/provider"
+	providerViewURL   = docsBaseURL + "reference/mesheryctl/system/provider/view"
+	providerListURL   = docsBaseURL + "reference/mesheryctl/system/provider/list"
+	providerSetURL    = docsBaseURL + "reference/mesheryctl/system/provider/set"
+	providerResetURL  = docsBaseURL + "reference/mesheryctl/system/provider/reset"
+	providerSwitchURL = docsBaseURL + "reference/mesheryctl/system/provider/switch"
 
 	// Meshery Server Location
 	EndpointProtocol = "http"
@@ -77,27 +83,33 @@ const (
 type cmdType string
 
 const (
-	cmdRoot          cmdType = "root"
-	cmdPerf          cmdType = "perf"
-	cmdMesh          cmdType = "mesh"
-	cmdSystem        cmdType = "system"
-	cmdSystemStop    cmdType = "system stop"
-	cmdSystemUpdate  cmdType = "system update"
-	cmdSystemReset   cmdType = "system reset"
-	cmdSystemStatus  cmdType = "system status"
-	cmdSystemRestart cmdType = "system restart"
-	cmdExp           cmdType = "exp"
-	cmdFilter        cmdType = "filter"
-	cmdPattern       cmdType = "pattern"
-	cmdApp           cmdType = "app"
-	cmdContext       cmdType = "context"
-	cmdContextDelete cmdType = "delete"
-	cmdContextCreate cmdType = "create"
-	cmdContextView   cmdType = "context view"
-	cmdChannel       cmdType = "channel"
-	cmdChannelSet    cmdType = "set"
-	cmdChannelSwitch cmdType = "switch"
-	cmdChannelView   cmdType = "channel view"
+	cmdRoot           cmdType = "root"
+	cmdPerf           cmdType = "perf"
+	cmdMesh           cmdType = "mesh"
+	cmdSystem         cmdType = "system"
+	cmdSystemStop     cmdType = "system stop"
+	cmdSystemUpdate   cmdType = "system update"
+	cmdSystemReset    cmdType = "system reset"
+	cmdSystemStatus   cmdType = "system status"
+	cmdSystemRestart  cmdType = "system restart"
+	cmdExp            cmdType = "exp"
+	cmdFilter         cmdType = "filter"
+	cmdPattern        cmdType = "pattern"
+	cmdApp            cmdType = "app"
+	cmdContext        cmdType = "context"
+	cmdContextDelete  cmdType = "delete"
+	cmdContextCreate  cmdType = "create"
+	cmdContextView    cmdType = "context view"
+	cmdChannel        cmdType = "channel"
+	cmdChannelSet     cmdType = "channel set"
+	cmdChannelSwitch  cmdType = "channel switch"
+	cmdChannelView    cmdType = "channel view"
+	cmdProvider       cmdType = "provider"
+	cmdProviderSet    cmdType = "provider set"
+	cmdProviderSwitch cmdType = "provider switch"
+	cmdProviderView   cmdType = "provider view"
+	cmdProviderList   cmdType = "provider list"
+	cmdProviderReset  cmdType = "provider reset"
 )
 
 const (
@@ -926,6 +938,13 @@ func SetOverrideValues(ctx *config.Context, mesheryImageVersion string) map[stri
 	// set the meshery image version
 	valueOverrides["image"] = map[string]interface{}{
 		"tag": ctx.GetChannel() + "-" + mesheryImageVersion,
+	}
+
+	// set the provider
+	if ctx.GetProvider() != "" {
+		valueOverrides["env"] = map[string]interface{}{
+			"PROVIDER": ctx.GetProvider(),
+		}
 	}
 
 	return valueOverrides

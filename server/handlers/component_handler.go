@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"github.com/gorilla/mux"
+	"github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshery/server/models/pattern/patterns/k8s"
 	"github.com/layer5io/meshkit/models/meshmodel"
@@ -177,13 +178,15 @@ func (h *Handler) GetMeshmodelComponentsByName(rw http.ResponseWriter, r *http.R
 	})
 	var comps []v1alpha1.ComponentDefinition
 	for _, r := range res {
-		m := make(map[string]interface{})
-		comp, _ := r.(v1alpha1.ComponentDefinition)
-		_ = json.Unmarshal([]byte(comp.Schema), &m)
-		m = k8s.Format.Prettify(m, false)
-		b, _ := json.Marshal(m)
-		comp.Schema = string(b)
-		comps = append(comps, comp)
+		comp, ok := r.(v1alpha1.ComponentDefinition)
+		if ok {
+			m := make(map[string]interface{})
+			_ = json.Unmarshal([]byte(comp.Schema), &m)
+			m = k8s.Format.Prettify(m, false)
+			b, _ := json.Marshal(m)
+			comp.Schema = string(b)
+			comps = append(comps, comp)
+		}
 	}
 	if err := enc.Encode(comps); err != nil {
 		h.log.Error(ErrWorkloadDefinition(err)) //TODO: Add appropriate meshkit error
@@ -237,13 +240,15 @@ func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.R
 	})
 	var comps []v1alpha1.ComponentDefinition
 	for _, r := range res {
-		m := make(map[string]interface{})
-		comp, _ := r.(v1alpha1.ComponentDefinition)
-		_ = json.Unmarshal([]byte(comp.Schema), &m)
-		m = k8s.Format.Prettify(m, false)
-		b, _ := json.Marshal(m)
-		comp.Schema = string(b)
-		comps = append(comps, comp)
+		comp, ok := r.(v1alpha1.ComponentDefinition)
+		if ok {
+			m := make(map[string]interface{})
+			_ = json.Unmarshal([]byte(comp.Schema), &m)
+			m = k8s.Format.Prettify(m, false)
+			b, _ := json.Marshal(m)
+			comp.Schema = string(b)
+			comps = append(comps, comp)
+		}
 	}
 	if err := enc.Encode(comps); err != nil {
 		h.log.Error(ErrWorkloadDefinition(err)) //TODO: Add appropriate meshkit error
@@ -269,20 +274,22 @@ func (h *Handler) RegisterMeshmodelComponents(rw http.ResponseWriter, r *http.Re
 		http.Error(rw, err.Error(), http.StatusBadRequest)
 		return
 	}
+	var c v1alpha1.ComponentDefinition
 	switch cc.EntityType {
 	case types.ComponentDefinition:
-		var c v1alpha1.ComponentDefinition
 		err = json.Unmarshal(cc.Entity, &c)
 		if err != nil {
 			http.Error(rw, err.Error(), http.StatusBadRequest)
 			return
 		}
+		utils.WriteSVGsOnFileSystem(&c)
 		err = h.registryManager.RegisterEntity(cc.Host, c)
 	}
 	if err != nil {
 		http.Error(rw, err.Error(), http.StatusBadRequest)
 		return
 	}
+	go h.config.MeshModelSummaryChannel.Publish()
 }
 
 // swagger:response ModelResponse
@@ -347,12 +354,14 @@ func (h *Handler) GetMeshmodelEntititiesByModel(rw http.ResponseWriter, r *http.
 		var comps []v1alpha1.ComponentDefinition
 		for _, r := range res {
 			m := make(map[string]interface{})
-			comp, _ := r.(v1alpha1.ComponentDefinition)
-			_ = json.Unmarshal([]byte(comp.Schema), &m)
-			m = k8s.Format.Prettify(m, false)
-			b, _ := json.Marshal(m)
-			comp.Schema = string(b)
-			comps = append(comps, comp)
+			comp, ok := r.(v1alpha1.ComponentDefinition)
+			if ok {
+				_ = json.Unmarshal([]byte(comp.Schema), &m)
+				m = k8s.Format.Prettify(m, false)
+				b, _ := json.Marshal(m)
+				comp.Schema = string(b)
+				comps = append(comps, comp)
+			}
 		}
 		res2 := h.registryManager.GetEntities(&v1alpha1.RelationshipFilter{
 			ModelName: mres.Name,
@@ -361,9 +370,10 @@ func (h *Handler) GetMeshmodelEntititiesByModel(rw http.ResponseWriter, r *http.
 		})
 		var relationships []v1alpha1.RelationshipDefinition
 		for _, r := range res2 {
-			rel, _ := r.(v1alpha1.RelationshipDefinition)
-
-			relationships = append(relationships, rel)
+			rel, ok := r.(v1alpha1.RelationshipDefinition)
+			if ok {
+				relationships = append(relationships, rel)
+			}
 		}
 		mres.Relationships = relationships
 		mres.Components = comps
