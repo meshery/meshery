@@ -12,7 +12,6 @@ class MesheryProgressBar extends Component {
       //     return true;
       // }
       return showProgress !== nextProps.showProgress;
-      // return false;
     }
 
     componentDidUpdate() {

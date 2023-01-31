@@ -20,6 +20,7 @@ import DoneIcon from "@material-ui/icons/Done";
 import Link from 'next/link';
 import Operator from "../assets/img/Operator";
 import { ACTIONS } from "../utils/Enum";
+import { iconMedium, iconSmall } from "../css/icons.styles";
 
 const styles = (theme) => ({
   dialogBox : {
@@ -94,16 +95,11 @@ const styles = (theme) => ({
     margin : theme.spacing(0.5),
     padding : theme.spacing(1),
     borderRadius : 5,
-    "&:disabled" : {
-      backgroundColor : "#FF3D3D",
-      color : "#fff"
-    },
     minWidth : 100,
   },
   actions : {
     display : 'flex',
-    justifyContent : 'space-evenly',
-    marginTop : theme.spacing(-3)
+    justifyContent : 'space-evenly'
   },
   all : {
     display : "table"
@@ -113,7 +109,10 @@ const styles = (theme) => ({
     flexWrap : "wrap"
   },
   tabs : {
-    marginLeft : 0
+    marginLeft : 0,
+    "& .MuiTab-root.Mui-selected" : {
+      backgroundColor : '#D9D9D9'
+    }
   },
   tabLabel : {
     tabLabel : {
@@ -189,8 +188,8 @@ function ConfirmationMsg(props) {
   const handleKubernetesClick = (ctxID) => {
     updateProgress({ showProgress : true })
     pingKubernetes(
-      successHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Kubernetes succesfully pinged", () => updateProgress({ showProgress : false })),
-      errorHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Kubernetes not pinged successfully", () => updateProgress({ showProgress : false })),
+      successHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Kubernetes pinged", () => updateProgress({ showProgress : false })),
+      errorHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Kubernetes not pinged", () => updateProgress({ showProgress : false })),
       ctxID
     )
   }
@@ -202,14 +201,14 @@ function ConfirmationMsg(props) {
           variant : "info", preventDuplicate : true,
           action : (key) => (
             <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-              <CloseIcon />
+              <CloseIcon style={iconMedium} />
             </IconButton>
           ),
           autoHideDuration : 3000,
         });
     }
 
-    if (tabVal === 0) {
+    if (tabVal === 2) {
       submit.deploy();
     } else if (tabVal === 1) {
       submit.unDeploy();
@@ -219,21 +218,22 @@ function ConfirmationMsg(props) {
 
   const searchContexts = (search) => {
     if (search === "") {
-      setK8sContexts(k8scontext);
+      setContexts(k8scontext);
+      return
     }
     let matchedCtx = [];
     k8scontext.forEach(ctx => {
-      if (ctx.name.startsWith(search)) {
+      if (ctx.name.includes(search)) {
         matchedCtx.push(ctx);
       }
     });
-    setK8sContexts(matchedCtx);
+    setContexts(matchedCtx);
   }
 
   const setContextViewer = (id) => {
     if (id === "all") {
-      if (selectedK8sContexts.includes("all")) {
-        updateProgress({ showProgress : true })
+      if (selectedK8sContexts?.includes("all")) {
+        // updateProgress({ showProgress : true })
         setK8sContexts({ selectedK8sContexts : [] })
       } else {
         setK8sContexts({ selectedK8sContexts : ["all"] });
@@ -241,7 +241,7 @@ function ConfirmationMsg(props) {
       return;
     }
 
-    if (selectedK8sContexts.includes(id)) {
+    if (selectedK8sContexts?.includes(id)) {
       const filteredContexts = selectedK8sContexts.filter(cid => cid !== id);
       setK8sContexts({ selectedK8sContexts : filteredContexts })
     } else if (selectedK8sContexts[0] === "all") {
@@ -270,27 +270,35 @@ function ConfirmationMsg(props) {
           </DialogTitle>
           {/* <Paper square className={classes.paperRoot}> */}
           <Tabs
-            value={tabVal}
-            onChange={handleTabValChange}
+            value={validationBody ? (tabVal) : (tabVal === 2 ? 1 : 0) }
             variant="fullWidth"
             indicatorColor="primary"
             textColor="primary"
             className={classes.tabs}
           >
-            <Tab
-              className={classes.tab}
-              label={<div style={{ display : "flex" }}> <DoneAllIcon style={{ margin : "2px" }} fontSize="small" /> <span className={classes.tabLabel}>Deploy</span> </div>}
-            />
-            <Tab
-              className={classes.tab}
-              label={<div style={{ display : "flex" }}> <div style={{ margin : "2px" }}> <UndeployIcon fill="rgba(0, 0, 0, 0.54)" width="20" height="20"/> </div> <span className={classes.tabLabel}>Undeploy</span> </div>}
-            />
             {!!validationBody &&
             <Tab
+              data-cy="validate-btn-modal"
               className={classes.tab}
-              label={<div style={{ display : "flex" }}> <DoneIcon style={{ margin : "2px" }}  fontSize="small"/><span className={classes.tabLabel}>Validate</span> </div>
+              onClick={(event) => handleTabValChange(event,0)}
+              label={<div style={{ display : "flex" }}
+              > <DoneIcon style={{ margin : "2px", ...iconSmall }}  fontSize="small"/><span className={classes.tabLabel}>Validate</span> </div>
               }
             />}
+            <Tab
+              data-cy="Undeploy-btn-modal"
+              className={classes.tab}
+              onClick={(event) => handleTabValChange(event,1)}
+              label={<div style={{ display : "flex" }}
+              > <div style={{ margin : "2px" }}> <UndeployIcon style={iconSmall} fill="rgba(0, 0, 0, 0.54)" width="20" height="20"/> </div> <span className={classes.tabLabel}>Undeploy</span> </div>}
+            />
+            <Tab
+              data-cy="deploy-btn-modal"
+              className={classes.tab}
+              onClick={(event) => handleTabValChange(event,2)}
+              label={<div style={{ display : "flex" }}
+              > <DoneAllIcon style={{ margin : "2px", ...iconSmall }} fontSize="small" /> <span className={classes.tabLabel}>Deploy</span> </div>}
+            />
           </Tabs>
 
           {(tabVal === ACTIONS.DEPLOY || tabVal === ACTIONS.UNDEPLOY) &&
@@ -309,7 +317,7 @@ function ConfirmationMsg(props) {
                           style={{ width : "100%", backgroundColor : "rgba(102, 102, 102, 0.12)", margin : "1px 1px 8px " }}
                           InputProps={{
                             endAdornment : (
-                              <Search />
+                              <Search style={iconMedium} />
                             )
                           }}
                         // margin="none"
@@ -336,7 +344,7 @@ function ConfirmationMsg(props) {
                                 <Tooltip title={`Server: ${ctx.server}`}>
                                   <div style={{ display : "flex", justifyContent : "flex-wrap", alignItems : "center" }}>
                                     <Checkbox
-                                      checked={selectedK8sContexts.includes(ctx.id) || (selectedK8sContexts.length > 0 && selectedK8sContexts[0] === "all")}
+                                      checked={selectedK8sContexts?.includes(ctx.id) || (selectedK8sContexts?.length > 0 && selectedK8sContexts[0] === "all")}
                                       onChange={() => setContextViewer(ctx.id)}
                                       color="primary"
                                     />

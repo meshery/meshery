@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import "./animatedFilter.css";
 
 function getClassName(className, isActive) {
   if (!isActive) {

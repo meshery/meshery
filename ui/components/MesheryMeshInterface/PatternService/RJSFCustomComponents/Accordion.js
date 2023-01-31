@@ -3,15 +3,15 @@ import { makeStyles } from "@material-ui/core/styles";
 import MuiAccordion from "@material-ui/core/Accordion";
 import MuiAccordionSummary from "@material-ui/core/AccordionSummary";
 import MuiAccordionDetails from "@material-ui/core/AccordionDetails";
-import DeleteIcon from "@material-ui/icons/Delete";
+import DeleteIcon from "../../../../assets/icons/DeleteIcon";
 import Typography from "@material-ui/core/Typography";
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+import ExpandMoreIcon from "../../../../assets/icons/ExpandMoreIcon"
 import { IconButton } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
   accordionRoot : {
     width : "100%",
-    marginBottom : "1rem"
+    marginBottom : "0rem"
   },
   heading : {
     fontSize : theme.typography.pxToRem(15),
@@ -20,9 +20,6 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function SimpleAccordion(props) {
-  const classes = useStyles();
-  const accordionDetailsRef = React.useRef(null);
-
   useEffect(() => {
     // for managing focus
     if (accordionDetailsRef.current) {
@@ -32,19 +29,23 @@ export default function SimpleAccordion(props) {
       });
     }
 
-  }, [accordionDetailsRef.current]);
+  }, []);
+  // React Hook useEffect has an unnecessary dependency: 'accordionDetailsRef.current'. Either exclude it or remove the dependency array. Mutable values like 'accordionDetailsRef.current' aren't valid dependencies because mutating them doesn't re-render the component.
+
+  const classes = useStyles();
+  const accordionDetailsRef = React.useRef(null);
 
   return (
     <div className={classes.accordionRoot}>
       <MuiAccordion defaultExpanded elevation={0}>
         <MuiAccordionSummary
-          expandIcon={<ExpandMoreIcon />}
+          expandIcon={<ExpandMoreIcon width="14px" height="14px" fill="gray"/>}
           aria-controls="panel1a-content"
           id="panel1a-header"
           style={{ backgroundColor : "F7F7F7" }}
         >
 
-          <Typography className={classes.heading}>{props.heading}</Typography>
+          <Typography className={classes.heading}>{props.heading?.charAt(0).toUpperCase() + props.heading?.slice(1)}{" "}</Typography>
 
           {props.childProps.hasRemove && (
 
@@ -56,7 +57,7 @@ export default function SimpleAccordion(props) {
                 props.childProps.index
               )}
             >
-              <DeleteIcon />
+              <DeleteIcon width="18px" height="18px" fill="gray"/>
             </IconButton>
           )}
         </MuiAccordionSummary>

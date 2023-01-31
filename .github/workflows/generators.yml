@@ -1,0 +1,37 @@
+name: Static Component Generation and Updation
+on: 
+  workflow_dispatch:
+  schedule:
+    - cron: "0 0 * * *"
+jobs:
+  run-script:
+    name: Run Script
+    if: github.repository == 'meshery/meshery'
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Check out code
+        uses: actions/checkout@master
+        with:
+          token: ${{ secrets.GH_ACCESS_TOKEN }}
+          fetch-depth: 1
+          
+      - name: Setup Go
+        uses: actions/setup-go@master
+        with:
+          go-version: "1.19"
+      - name: Setup Cache
+        uses: actions/cache@v3
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+      - run: |
+          GOPROXY=https://proxy.golang.org,direct GOSUMDB=off go run ./scripts/component_generation/main.go
+      - run: |
+          cd scripts/component_updation ;go build main.go
+          ./main https://docs.google.com/spreadsheets/d/e/2PACX-1vSgOXuiqbhUgtC9oNbJlz9PYpOEaFVoGNUFMIk4NZciFfQv1ewZg8ahdrWHKI79GkKK9TbmnZx8CqIe/pub\?gid\=0\&single\=true\&output\=csv
+      - name: Commit results
+        uses: EndBug/add-and-commit@v9
+        with: 
+          add: "*.yaml"

@@ -35,6 +35,24 @@ mesheryctl pattern delete [file | URL]
 			return errors.Wrap(err, "error processing config")
 		}
 
+		pattern := ""
+		isID := false
+		if len(args) > 0 {
+			pattern, isID, err = utils.Valid(args[0], "pattern")
+			if err != nil {
+				return err
+			}
+		}
+
+		// Delete the pattern using the id
+		if isID {
+			err := utils.DeleteConfiguration(pattern, "pattern")
+			if err != nil {
+				return errors.Wrap(err, utils.PatternError(fmt.Sprintf("failed to delete pattern %s", args[0])))
+			}
+			utils.Log.Info("Pattern ", args[0], " deleted successfully")
+			return nil
+		}
 		deployURL := mctlCfg.GetBaseMesheryURL() + "/api/pattern/deploy"
 		patternURL := mctlCfg.GetBaseMesheryURL() + "/api/pattern"
 
@@ -42,7 +60,7 @@ mesheryctl pattern delete [file | URL]
 		if !govalidator.IsURL(file) {
 			content, err := os.ReadFile(file)
 			if err != nil {
-				return errors.New(utils.PatternError(fmt.Sprintf("failed to read file %s", file)))
+				return errors.New(utils.PatternError(fmt.Sprintf("failed to read file %s. Ensure the filename or URL is valid", file)))
 			}
 
 			patternFile = string(content)
@@ -97,7 +115,7 @@ mesheryctl pattern delete [file | URL]
 
 			err = json.Unmarshal(body, &response)
 			if err != nil {
-				return errors.Wrap(err, "failed to unmarshal response body")
+				return errors.Wrap(err, "couldn't process JSON response from Meshery Server")
 			}
 
 			patternFile = response[0].PatternFile

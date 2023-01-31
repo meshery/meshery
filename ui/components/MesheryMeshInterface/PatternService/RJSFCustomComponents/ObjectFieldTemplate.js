@@ -1,24 +1,23 @@
 import React from 'react';
-
 import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/styles';
-
-import { utils } from '@rjsf/core';
-
-import AddButton from "@material-ui/icons/Add";
+import { canExpand } from '@rjsf/utils';
+import AddIcon from '../../../../assets/icons/AddIcon';
 import { Box, IconButton, Typography } from '@material-ui/core';
-import EnlargedTextTooltip from '../EnlargedTextTooltip';
-import HelpOutlineIcon from '../HelpOutlineIcon';
-import ArrowDown from '@material-ui/icons/KeyboardArrowDown';
-import ArrowUp from '@material-ui/icons/KeyboardArrowUp';
-
-const { canExpand } = utils;
+import { CustomTextTooltip } from '../CustomTextTooltip';
+import HelpOutlineIcon from '../../../../assets/icons/HelpOutlineIcon';
+import ExpandMoreIcon from '../../../../assets/icons/ExpandMoreIcon';
+import ExpandLessIcon from '../../../../assets/icons/ExpandLessIcon'
+import ErrorOutlineIcon from '../../../../assets/icons/ErrorOutlineIcon';
+import { ERROR_COLOR } from '../../../../constants/colors';
+import { iconMedium } from '../../../../css/icons.styles';
 
 const useStyles = makeStyles({
   objectFieldGrid : {
-    marginTop : 10,
     // paddingLeft: "0.6rem",
-    padding : "0.6rem",
+    padding : ".5rem",
+    // margin : ".5rem",
+    backgroundColor : "#f4f4f4",
     border : '1px solid rgba(0, 0, 0, .125)',
   },
 });
@@ -35,21 +34,22 @@ const ObjectFieldTemplate = ({
   schema,
   formData,
   onAddClick,
+  rawErrors
 }) => {
+  const additional = schema?.__additional_property; // check if the object is additional
   const classes = useStyles();
-  const [show, setShow] = React.useState(false);
-
+  // If the parent type is an `array`, then expand the current object.
+  const [show, setShow] = React.useState(schema?.p_type ? true : false);
+  properties.forEach((property, index) => {
+    if (schema.properties[property.name].type) {
+      properties[index].type = schema.properties[property.name].type;
+      properties[index].__additional_property =
+        schema.properties[property.name]?.__additional_property || false;
+    }
+  });
   const CustomTitleField = ({ title, id, description, properties }) => {
     return <Box mb={1} mt={1} id={id} >
-      <Grid container justify="space-between" alignItems="center">
-        <Grid item mb={1} mt={1}>
-          <Typography variant="body1" style={{ fontWeight : "bold", display : "inline" }}>{title.charAt(0).toUpperCase() + title.slice(1)}{" "}</Typography>
-          {description &&
-            <EnlargedTextTooltip title={description}>
-              <HelpOutlineIcon />
-            </EnlargedTextTooltip>}
-        </Grid>
-
+      <Grid container justify="flex-start" alignItems="center">
         {canExpand(schema, uiSchema, formData) ? (
           <Grid item={true} onClick={() => {
             if (!show) setShow(true);
@@ -59,7 +59,7 @@ const ObjectFieldTemplate = ({
               onClick={onAddClick(schema)}
               disabled={disabled || readonly}
             >
-              <AddButton />
+              <AddIcon width="18px" height="18px" fill="white" style={{ backgroundColor : "#647881", width : "1.25rem", height : "1.25rem", color : "#ffffff", borderRadius : ".2rem" }} />
             </IconButton>
           </Grid>
         ) : (
@@ -69,11 +69,32 @@ const ObjectFieldTemplate = ({
                 className="object-property-expand"
                 onClick={() => setShow(!show)}
               >
-                {show ? <ArrowUp /> : <ArrowDown />}
+                {show ? <ExpandLessIcon style={iconMedium} fill="gray" /> : <ExpandMoreIcon style={iconMedium} fill="gray"  />}
               </IconButton>
             </Grid>
           )
         )}
+
+        <Grid item mb={1} mt={1}>
+          <Typography variant="body1" style={{ fontWeight : "bold", display : "inline" }}>{title.charAt(0).toUpperCase() + title.slice(1)}{" "}
+          </Typography>
+          {description &&
+            <CustomTextTooltip backgroundColor="#3C494F" title={description}>
+              <IconButton disableTouchRipple="true" disableRipple="true" component="span" size="small">
+                <HelpOutlineIcon width="14px" height="14px" fill="gray" style={{ marginLeft : "4px", verticalAlign : "middle", ...iconMedium }}/>
+              </IconButton>
+            </CustomTextTooltip>}
+          {rawErrors?.length &&
+            <CustomTextTooltip backgroundColor={ERROR_COLOR} title={rawErrors?.map((error, index) => (
+              <div key={index}>{error}</div>
+            ))}>
+              <IconButton disableTouchRipple="true" disableRipple="true" component="span" size="small">
+                <ErrorOutlineIcon width="14px" height="14px" fill="red" style={{ marginLeft : "4px", verticalAlign : "middle", ...iconMedium }} />
+              </IconButton>
+            </CustomTextTooltip>}
+        </Grid>
+
+
       </Grid>
     </Box>
   };
@@ -86,7 +107,15 @@ const ObjectFieldTemplate = ({
         ) : (
           <Grid
             item={true}
-            xs={element.name === "name" || element.name === "namespace" ? 6 : 12}
+            sm={12}
+            lg={
+              element.type === "object" ||
+              element.type === "array" ||
+              element.__additional_property ||
+              additional
+                ? 12
+                : 6
+            }
             key={index}
           >
             {element.content}
@@ -102,12 +131,15 @@ const ObjectFieldTemplate = ({
     <>
       {fieldTitle ? (
         <>
-          <CustomTitleField
-            id={`${idSchema.$id}-title`}
-            title={fieldTitle}
-            description={description}
-            properties={properties}
-          />
+          {schema.p_type !== "array" ? (
+            <CustomTitleField
+              id={`${idSchema.$id}-title`}
+              title={additional ? "Value" : fieldTitle}
+              description={description}
+              properties={properties}
+            />
+          ) : null
+          }
           {Object.keys(properties).length > 0 && show && Properties}
         </>
       ) : Properties}

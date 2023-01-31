@@ -21,7 +21,7 @@ on:
 jobs:
   manual-test:
     name: Manual e2e Test
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     if: ${{ github.event_name == 'workflow_dispatch' }}
     strategy:
       fail-fast: false
@@ -44,10 +44,10 @@ jobs:
 
       - name: Get Date
         id: date
-        run: echo "::set-output name=date::$(date +'%Y-%m-%d-%H.%M.%S')"
+        run: echo "date=date +'%Y-%m-%d-%H.%M.%S'" >> $GITHUB_OUTPUT
 
       - name: Checkout Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@master
 
       - name: Run Performance Tests
         uses: layer5io/meshery-smp-action@master
@@ -75,7 +75,7 @@ jobs:
   
   scheduled-test:
     name: Scheduled e2e Test
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     if: ${{ github.event_name == 'schedule' }}
     strategy:
       fail-fast: false
@@ -98,10 +98,10 @@ jobs:
 
       - name: Get Date
         id: date
-        run: echo "::set-output name=date::$(date +'%Y-%m-%d-%H.%M.%S')"
+        run: echo "date=(date +'%Y-%m-%d-%H.%M.%S')" >> $GITHUB_OUTPUT
 
       - name: Checkout Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@master
 
       - name: Run Performance Tests
         uses: layer5io/meshery-smp-action@master

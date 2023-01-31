@@ -9,8 +9,6 @@ import Link from "next/link";
 import MenuList from '@material-ui/core/MenuList';
 import Grow from '@material-ui/core/Grow';
 import MenuItem from '@material-ui/core/MenuItem';
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import Popper from '@material-ui/core/Popper';
 import Paper from '@material-ui/core/Paper';
@@ -20,9 +18,20 @@ import { withRouter } from 'next/router';
 import dataFetch from '../lib/data-fetch';
 import { updateUser } from '../lib/store';
 import classNames from 'classnames';
+import { ListItem, List } from '@material-ui/core';
+import { withSnackbar } from "notistack";
+import CloseIcon from "@material-ui/icons/Close";
 
 
-const styles = () => ({ popover : { color : 'black', }, });
+const styles = () => ({
+  popover : { color : 'black', },
+  link : {
+    display : "inline-flex",
+    width : "100%",
+    height : "30px",
+    alignItems : "self-end"
+  },
+});
 
 function exportToJsonFile(jsonData, filename) {
   let dataStr = JSON.stringify(jsonData);
@@ -42,7 +51,8 @@ class User extends React.Component {
     user : null,
     open : false,
     account : ExtensionPointSchemaValidator("account")(),
-    providerType : ''
+    providerType : '',
+    capabilitiesLoaded : false
   }
 
   handleToggle = () => {
@@ -57,7 +67,21 @@ class User extends React.Component {
   }
 
   handleLogout = () => {
-    window.location = '/user/logout';
+    window.location = '/user/logout'
+  };
+
+  handleError = (error) => {
+    this.props.enqueueSnackbar(`Error performing logout: ${error}`, {
+      variant : "error",
+      action : function Action(key) {
+        return (
+          <IconButton key="close" aria-label="Close" color="inherit" onClick={() => this.prop.closeSnackbar(key)}>
+            <CloseIcon />
+          </IconButton>
+        );
+      },
+      autoHideDuration : 8000,
+    });
   };
 
   handlePreference = () => {
@@ -71,7 +95,6 @@ class User extends React.Component {
   };
 
   componentDidMount() {
-    // console.log("fetching user data");
     dataFetch('/api/user', {
       credentials : 'same-origin'
     }, (user) => {
@@ -80,21 +103,17 @@ class User extends React.Component {
     }, (error) => ({
       error,
     }));
+  }
 
-    dataFetch(
-      "/api/provider/capabilities", {
-        method : "GET",
-        credentials : "include", },
-      (result) => {
-        if (result) {
-          this.setState({
-            account : ExtensionPointSchemaValidator("account")(result?.extensions?.account),
-            providerType : result?.provider_type
-          })
-        }
-      },
-      err => console.error(err)
-    )
+  componentDidUpdate() {
+    const { capabilitiesRegistry } = this.props;
+    if (!this.state.capabilitiesLoaded && capabilitiesRegistry) {
+      this.setState({
+        capabilitiesLoaded : true, // to prevent re-compute
+        account : ExtensionPointSchemaValidator("account")(capabilitiesRegistry?.extensions?.account),
+        providerType : capabilitiesRegistry?.provider_type,
+      })
+    }
   }
 
   /**
@@ -139,15 +158,25 @@ class User extends React.Component {
         </ListItemText>
       </div>
     );
-
-    if (href) return <Link href={href}>{content}</Link>;
+    if (href) {
+      return (
+        <Link href={href}>
+          <span
+            className={classNames(classes.link)}
+            onClick={() => this.props.updateExtensionType(name)}
+          >
+            {content}
+          </span>
+        </Link>
+      )
+    }
 
     return content;
   }
 
   render() {
     const {
-      color, iconButtonClassName, avatarClassName, classes,
+      color, iconButtonClassName, avatarClassName, classes
     } = this.props;
     let avatar_url;
     if (this.state.user && this.state.user !== null) {
@@ -170,7 +199,7 @@ class User extends React.Component {
               aria-haspopup="true"
               onClick={this.handleToggle}
             >
-              <Avatar className={avatarClassName} src={avatar_url} />
+              <Avatar className={avatarClassName} src={avatar_url} imgProps={{ referrerPolicy : "no-referrer" }} />
             </IconButton>
           </div>
           <Popper open={open} anchorEl={this.anchorEl} transition  style={{ zIndex : 10000 }} placement="top-end">
@@ -211,8 +240,11 @@ class User extends React.Component {
 }
 
 const mapDispatchToProps = (dispatch) => ({ updateUser : bindActionCreators(updateUser, dispatch), });
+const mapStateToProps = state => ({
+  capabilitiesRegistry : state.get("capabilitiesRegistry")
+})
 
 export default withStyles(styles)(connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps,
-)(withRouter(User)));
+)(withSnackbar((withRouter(User)))));

@@ -1,0 +1,61 @@
+name: Meshery Integrations Updater
+on:
+  push:
+     branches:
+       - "master"
+     paths:
+       - ".github/workflows/integrations-updater.yml"
+  schedule:
+    - cron:  '0 0 * * *'  # Run the job every day at midnight
+  workflow_dispatch:
+
+# This workflow uses the service account: meshery-integrations-sheet@meshery-237716.iam.gserviceaccount.com
+# See these instructions for setup - https://theoephraim.github.io/node-google-spreadsheet/#/getting-started/authentication
+
+jobs:
+
+  integrations:
+    runs-on: ubuntu-22.04
+    # outputs:
+    #   output1: ${{ steps.step1.outputs.test }}
+    #   output2: ${{ steps.step2.outputs.test }}
+    steps:
+      - name: Checkout Meshery repo
+        uses: actions/checkout@master
+        with:
+          path: meshery
+      - name: Checkout Layer5.io repo
+        uses: actions/checkout@master
+        with:
+          repository: layer5io/layer5
+          token: ${{ secrets.GH_ACCESS_TOKEN }}
+          path: layer5
+      - name: Checkout Meshery.io repo
+        uses: actions/checkout@master
+        with:
+          repository: meshery/meshery.io
+          token: ${{ secrets.GH_ACCESS_TOKEN }}
+          path: meshery.io
+      - name: Run utility
+        run: cd meshery/scripts/component_updation; go build main.go; ./main "https://docs.google.com/spreadsheets/d/e/2PACX-1vSgOXuiqbhUgtC9oNbJlz9PYpOEaFVoGNUFMIk4NZciFfQv1ewZg8ahdrWHKI79GkKK9TbmnZx8CqIe/pub?gid=0&single=true&output=csv" --update-docs  layer5/src/collections/integrations  meshery.io/integrations --published-only
+      - name: Commit changes to Layer5.io repo
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_user_name: l5io
+          repository: ./layer5
+          commit_user_email: ci@layer5.io
+          commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
+          commit_options: "--signoff"
+          commit_message: "[Docs] Generated documentation for Integration"
+          branch: master
+      - name: Commit changes to Meshery.io repo
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_user_name: l5io
+          repository: ./meshery.io
+          commit_user_email: ci@layer5.io
+          commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
+          commit_options: "--signoff"
+          commit_message: "[Docs] Generated documentation for Integration"
+          branch: master
+

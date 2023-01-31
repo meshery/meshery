@@ -11,10 +11,7 @@ import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import NoSsr from "@material-ui/core/NoSsr";
 import RemoveIcon from "@material-ui/icons/Remove";
-import GitHubIcon from "@material-ui/icons/GitHub";
 import Zoom from '@material-ui/core/Zoom';
-import DescriptionOutlinedIcon from "@material-ui/icons/DescriptionOutlined";
-// import MailIcon from "@material-ui/icons/Mail";
 import Link from "next/link";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
@@ -27,25 +24,37 @@ import PerformanceIcon from '../public/static/img/drawer-icons/performance_svg';
 import ConformanceIcon from '../public/static/img/drawer-icons/conformance_svg';
 import ExtensionIcon from "../public/static/img/drawer-icons/extensions_svg";
 import LifecycleHover from '../public/static/img/drawer-icons/lifecycle_hover_svg';
-import ConfigurationHover from '../public/static/img/drawer-icons/configuration_hover_svg';
 import PerformanceHover from '../public/static/img/drawer-icons/performance_hover_svg';
+import ConfigurationHover from '../public/static/img/drawer-icons/configuration_hover_svg';
+import ConfigurationIcon from "../assets/icons/ConfigurationIcon";
+import DocumentIcon from "../assets/icons/DocumentIcon";
+import SlackIcon from "../assets/icons/SlackIcon";
+import GithubIcon from "../assets/icons/GithubIcon";
+import ChatIcon from "../assets/icons/ChatIcon";
 import ConformanceHover from '../public/static/img/drawer-icons/conformance_hover_svg';
 import SmiIcon from '../public/static/img/drawer-icons/servicemeshinterface-icon-white_svg';
-import DiscussIcon from '../public/static/img/drawer-icons/discuss_forum_svg.js';
 import OpenInNewIcon from "@material-ui/icons/OpenInNew";
 import {
   faAngleLeft, faCaretDown,
   faExternalLinkAlt,
   faDigitalTachograph
 } from "@fortawesome/free-solid-svg-icons";
-import { faSlack } from "@fortawesome/free-brands-svg-icons";
-import { updatepagetitle, updatebetabadge, toggleDrawer, setAdapter } from "../lib/store";
+import { updatepagetitle, updatebetabadge, toggleDrawer, setAdapter, updateCapabilities } from "../lib/store";
 import { ButtonGroup, IconButton, Tooltip } from "@material-ui/core";
 import ExtensionPointSchemaValidator from "../utils/ExtensionPointSchemaValidator";
 import dataFetch from "../lib/data-fetch";
 import { Collapse } from "@material-ui/core";
+import { cursorNotAllowed, disabledStyle, disabledStyleWithOutOpacity } from "../css/disableComponent.styles";
+import { CapabilitiesRegistry } from "../utils/disabledComponents";
+import { APPLICATION, APP_MESH, CILIUM_SM, CITRIX_SM, DESIGN, CONFIGURATION, CONFORMANCE, CONSUL, DASHBOARD, FILTER, ISTIO, KUMA, LIFECYCLE, LINKERD, NETWORK_SM, NGINX, OSM, PERFORMANCE, TRAEFIK_SM, PROFILES, SMI, TOGGLER } from "../constants/navigator"
 
 const styles = (theme) => ({
+  root : {
+    '& svg' : {
+      width : '1.21rem',
+      height : '1.21rem'
+    }
+  },
   categoryHeader : {
     paddingTop : 16,
     paddingBottom : 16,
@@ -75,10 +84,11 @@ const styles = (theme) => ({
     zIndex : 5
   },
   link : {
-    display : "inline-flex",
+    display : "flex",
+    alignItems : "center",
+    justifyContent : "center",
     width : "100%",
     height : "30px",
-    alignItems : "self-end"
   },
 
   itemActionable : { "&:hover" : { backgroundColor : "rgb(0, 187, 166, 0.5)", }, },
@@ -192,7 +202,8 @@ const styles = (theme) => ({
     position : "fixed",
     cursor : "pointer",
     backgroundColor : "#fff",
-
+    display : "flex",
+    justifyContent : "center",
     bottom : "12%",
     left : "257px",
     zIndex : "1400",
@@ -219,6 +230,8 @@ const styles = (theme) => ({
     width : "auto",
     transition : "left 225ms",
     transform : "rotate(180deg)",
+    display : "flex",
+    justifyContent : "center",
 
     "&:hover" : { opacity : 1 },
     "&:focus" : { opacity : 1 },
@@ -234,10 +247,9 @@ const styles = (theme) => ({
   },
   avatarGroup : { '& .MuiAvatarGroup-avatar' : { border : 'none', } },
   marginLeft : {
-    marginLeft : 8,
-    "& .MuiListItem-gutters" : {
-      paddingLeft : 8,
-      paddingRight : 8
+    padding : "5px",
+    "& > li" : {
+      padding : "0"
     }
   },
   rightMargin : { marginRight : 8 },
@@ -259,8 +271,11 @@ const styles = (theme) => ({
     },
   },
   extraPadding : {
-    paddingTop : 4,
-    paddingBottom : 4
+    // paddingTop : 4,
+    // paddingBottom : 4,
+    display : "flex",
+    alignItems : "center",
+    justifyContent : "center"
   },
   restrictPointer : { pointerEvents : 'none' },
   expandMoreIcon : {
@@ -283,197 +298,192 @@ const styles = (theme) => ({
     "&::-webkit-scrollbar" : {
       display : "none"
     }
-  }
+  },
+  disabled : disabledStyle,
+  disableLogo : disabledStyleWithOutOpacity,
+  cursorNotAllowed : cursorNotAllowed
 });
 
 const drawerIconsStyle = { height : "1.21rem", width : "1.21rem", fontSize : "1.45rem" };
 const externalLinkIconStyle = { width : "1.11rem", fontSize : "1.11rem" };
 
-const categories = [
+const getNavigatorComponents = (  /** @type {CapabilitiesRegistry} */  capabilityRegistryObj) => [
   {
-    id : "Dashboard",
+    id : DASHBOARD,
     icon : <DashboardIcon style={drawerIconsStyle} />,
+    hovericon : <DashboardIcon style={drawerIconsStyle} />,
     href : "/",
     title : "Dashboard",
-    show : true,
+    show : capabilityRegistryObj.isNavigatorComponentEnabled([DASHBOARD]),
     link : true,
+    submenu : false,
   },
   {
-    id : "Lifecycle",
+    id : LIFECYCLE,
     icon : <LifecycleIcon style={drawerIconsStyle} />,
     hovericon : <LifecycleHover style={drawerIconsStyle} />,
     href : "/management",
     title : "Lifecycle",
-    show : true,
+    show : capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE]),
     link : true,
+    submenu : true,
     children : [
       {
-        id : "App_Mesh",
+        id : APP_MESH,
         href : "/management/app-mesh",
         title : "AWS App Mesh",
         link : true,
-        show : true,
+        show : capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, APP_MESH]),
       },
       {
-        id : "Citrix_Service_Mesh",
+        id : CITRIX_SM,
         href : "/management/citrix",
         title : "Citrix Service Mesh",
         link : true,
-        show : true,
+        show : capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, CITRIX_SM]),
       },
       {
-        id : "Consul",
+        id : CONSUL,
         href : "/management/consul",
         title : "Consul",
         link : true,
-        show : true,
+        show : capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, CONSUL]),
       },
       {
-        id : "Cilium_Service_Mesh",
+        id : CILIUM_SM,
         href : "/management/cilium",
         title : "Cilium",
         link : true,
-        show : true,
+        show : capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, CILIUM_SM]),
       },
       {
-        id : "Istio",
+        id : ISTIO,
         href : "/management/istio",
         title : "Istio",
         link : true,
-        show : true,
+        show : capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, ISTIO]),
       },
       {
-        id : "Kuma",
+        id : KUMA,
         href : "/management/kuma",
         title : "Kuma",
         link : true,
-        show : true,
+        show : capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, KUMA]),
       },
       {
-        id : "Linkerd",
+        id : LINKERD,
         href : "/management/linkerd",
         title : "Linkerd",
         link : true,
-        show : true,
+        show : capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, LINKERD]),
       },
       {
-        id : "Network_Service_Mesh",
+        id : NETWORK_SM,
         href : "/management/nsm",
         title : "Network Service Mesh",
         link : true,
-        show : true,
+        show : capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, NETWORK_SM]),
       },
       {
-        id : "NGINX_Service_Mesh",
+        id : NGINX,
         // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
         href : "/management/nginx",
         title : "NGINX Service Mesh",
         link : true,
-        show : true,
+        show : capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, NGINX]),
       },
       {
-        id : "Octarine",
-        href : "/management/octarine",
-        title : "Octarine",
-        link : true,
-        show : true,
-      },
-      {
-        id : "Open_Service_Mesh",
+        id : OSM,
         href : "/management/osm",
         title : "Open Service Mesh",
         link : true,
-        show : true,
+        show : capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, OSM]),
       },
       {
-        id : "Traefik_Mesh",
+        id : TRAEFIK_SM,
         href : "/management/traefik-mesh",
         title : "Traefik Mesh",
         link : true,
-        show : true,
+        show : capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, TRAEFIK_SM]),
       },
     ],
   },
   {
-    id : "Configuration",
-    icon : <img src="/static/img/configuration_trans.svg" style={{ width : "1.21rem" }} />,
-    hovericon : <ConfigurationHover style={{ transform : "scale(1.3)", ...drawerIconsStyle }} />,
+    id : CONFIGURATION,
+    icon : <ConfigurationIcon {...drawerIconsStyle}/>,
+    hovericon : <ConfigurationHover style={drawerIconsStyle} />,
     href : "#",
     title : "Configuration",
-    show : true,
+    show : capabilityRegistryObj.isNavigatorComponentEnabled([CONFIGURATION]),
     link : true,
+    submenu : true,
     children : [
       {
-        id : "Applications",
+        id : APPLICATION,
         icon : <img src="/static/img/web-applications.svg" style={{ width : "1.21rem" }} />,
         href : "/configuration/applications",
         title : "Applications",
-        show : true,
+        show : capabilityRegistryObj.isNavigatorComponentEnabled([CONFIGURATION, APPLICATION]),
         link : true,
-        isBeta : true
+        isBeta : true,
       },
       {
-        id : "Filters",
+        id : FILTER,
         icon : <img src="/static/img/web-filters.svg" style={{ width : "1.21rem" }} />,
         href : "/configuration/filters",
         title : "Filters",
-        show : true,
+        show : capabilityRegistryObj.isNavigatorComponentEnabled([CONFIGURATION, FILTER]),
         link : true,
-        isBeta : true
+        isBeta : true,
       },
       {
-        id : "Designs",
+        id : DESIGN,
         icon : <img src="/static/img/pattern_trans.svg" style={{ width : "1.21rem" }} />,
         href : "/configuration/patterns",
         title : "Designs",
-        show : false,
+        show : capabilityRegistryObj.isNavigatorComponentEnabled([CONFIGURATION, DESIGN]),
         link : true,
-        isBeta : true
+        isBeta : true,
       },
     ],
   },
   {
-    id : "Performance",
+    id : PERFORMANCE,
     icon : <PerformanceIcon style={{ transform : "scale(1.3)", ...drawerIconsStyle }} />,
     hovericon : <PerformanceHover style={drawerIconsStyle} />,
     href : "/performance",
     title : "Performance",
-    show : true,
+    show : capabilityRegistryObj.isNavigatorComponentEnabled([PERFORMANCE]),
     link : true,
+    submenu : true,
     children : [
       {
-        id : "Profiles",
+        id : PROFILES,
         icon :
           <FontAwesomeIcon icon={faDigitalTachograph} style={{ fontSize : 24 }} />,
         href : "/performance/profiles",
         title : "Profiles",
-        show : true,
+        show : capabilityRegistryObj.isNavigatorComponentEnabled([PERFORMANCE, PROFILES]),
         link : true,
       },
     ],
   },
   {
-    id : "Settings",
-    href : "/settings",
-    title : "Settings",
-    show : false,
-    link : true,
-  }, // title is used for comparison in the Header.js file as well
-  {
-    id : "Conformance",
+    id : CONFORMANCE,
     icon : <ConformanceIcon style={drawerIconsStyle} />,
     hovericon : <ConformanceHover style={drawerIconsStyle} />,
     href : "/smi_results", //Temp
     title : "Conformance",
-    show : true,
+    show : capabilityRegistryObj.isNavigatorComponentEnabled([CONFORMANCE]),
     link : true,
+    submenu : true,
     children : [
       {
-        id : "Service Mesh Interface",
+        id : "serviceMeshInterface",
         icon : <SmiIcon style={drawerIconsStyle} />,
         href : "/smi_results",
         title : "Service Mesh Interface",
-        show : true,
+        show : capabilityRegistryObj.isNavigatorComponentEnabled([CONFORMANCE, SMI]),
         link : true,
       },
     ],
@@ -483,10 +493,11 @@ const categories = [
     icon : <ExtensionIcon style={drawerIconsStyle} />,
     hovericon : <ExtensionIcon style={drawerIconsStyle} />,
     title : "Extensions",
-    show : true,
+    show : capabilityRegistryObj.isNavigatorComponentEnabled(["Extensions"]),
     width : 12,
     link : true,
-    href : "/extensions"
+    href : "/extensions",
+    submenu : false,
   }
 ];
 
@@ -497,28 +508,28 @@ const externlinks = [
     id : "doc",
     href : "https://docs.meshery.io",
     title : "Documentation",
-    icon : <DescriptionOutlinedIcon style={drawerIconsStyle} />,
+    icon : <DocumentIcon style={drawerIconsStyle} />,
     external_icon : ExternalLinkIcon,
   },
   {
     id : "community",
     href : "https://slack.layer5.io",
     title : "Community",
-    icon : <FontAwesomeIcon style={{ marginBottom : 2, ...drawerIconsStyle }} icon={faSlack} transform="grow-1" />,
+    icon : <SlackIcon style={{ ...drawerIconsStyle,height : "1.5rem",width : "1.5rem",marginTop : "" }}/>,
     external_icon : ExternalLinkIcon,
   },
   {
     id : "forum",
     href : "https://discuss.layer5.io",
     title : "Discussion Forum",
-    icon : <DiscussIcon style={drawerIconsStyle} />,
+    icon : <ChatIcon style={drawerIconsStyle} />,
     external_icon : ExternalLinkIcon,
   },
   {
     id : "issues",
     href : "https://github.com/meshery/meshery/issues/new/choose",
     title : "Issues",
-    icon : <GitHubIcon style={drawerIconsStyle} />,
+    icon : <GithubIcon style={drawerIconsStyle} />,
     external_icon : ExternalLinkIcon,
   },
 ];
@@ -537,9 +548,10 @@ class Navigator extends React.Component {
       // passed into it
       navigator : ExtensionPointSchemaValidator("navigator")(),
       showHelperButton : false,
-      capabilities : [],
       openItems : [],
       hoveredId : null,
+      /** @type {CapabilitiesRegistry} */
+      capabilitiesRegistryObj : null,
       versionDetail : {
         build : "",
         latest : "",
@@ -547,10 +559,35 @@ class Navigator extends React.Component {
         commitsha : "",
         release_channel : "NA",
       },
+      navigatorComponents : []
     };
   }
 
+  componentId = "navigator";
+
   componentDidMount() {
+    dataFetch(
+      "/api/provider/capabilities",
+      {
+        method : "GET",
+        credentials : "include",
+      },
+      (result) => {
+        if (result) {
+          const capabilitiesRegistryObj = new CapabilitiesRegistry(result);
+          const navigatorComponents = getNavigatorComponents(capabilitiesRegistryObj);
+
+          this.setState({
+            navigator : ExtensionPointSchemaValidator("navigator")(result?.extensions?.navigator),
+            capabilitiesRegistryObj,
+            navigatorComponents
+          });
+          //global state
+          this.props.updateCapabilities({ capabilitiesRegistry : result })
+        }
+      },
+      (err) => console.error(err)
+    );
     dataFetch(
       "/api/system/version",
       {
@@ -568,22 +605,6 @@ class Navigator extends React.Component {
               outdated : false,
               commitsha : "Unknown",
             },
-          });
-        }
-      },
-      (err) => console.error(err)
-    );
-    dataFetch(
-      "/api/provider/capabilities",
-      {
-        method : "GET",
-        credentials : "include",
-      },
-      (result) => {
-        if (result) {
-          this.setState({
-            navigator : ExtensionPointSchemaValidator("navigator")(result?.extensions?.navigator),
-            capabilities : result?.capabilities || [],
           });
         }
       },
@@ -637,7 +658,7 @@ class Navigator extends React.Component {
   extensionPointContent(icon, href, name, drawerCollapsed) {
     const { classes } = this.props;
 
-    const content = (
+    let content = (
       <div className={classNames(classes.link)} data-cy={name}>
         <Tooltip
           title={name}
@@ -661,25 +682,29 @@ class Navigator extends React.Component {
     );
 
     if (href) {
-      return (
+      content =
         <Link href={href}>
-          {content}
+          <span
+            className={classNames(classes.link)}
+            onClick={() => this.props.updateExtensionType("navigator")}
+          >
+            {content}
+          </span>
         </Link>
-      )
     }
 
     return content;
   }
-
-  updateCategoriesMenus() {
+  updatenavigatorComponentsMenus() {
     const self = this;
-    categories.forEach((cat, ind) => {
-      if (cat.id === "Lifecycle") {
+    const { navigatorComponents } = this.state
+    navigatorComponents.forEach((cat, ind) => {
+      if (cat.id === LIFECYCLE) {
         cat.children.forEach((catc, ind1) => {
           const cr = self.fetchChildren(catc.id);
           const icon = self.pickIcon(catc.id);
-          categories[ind].children[ind1].icon = icon;
-          categories[ind].children[ind1].children = cr;
+          navigatorComponents[ind].children[ind1].icon = icon;
+          navigatorComponents[ind].children[ind1].children = cr;
         });
       }
 
@@ -687,7 +712,7 @@ class Navigator extends React.Component {
         let show = false;
         cat.children?.forEach((ch) => {
           if (ch.id === "Designs") {
-            const idx = self.state.capabilities.findIndex((cap) => cap.feature === "persist-meshery-patterns");
+            const idx = self.props.capabilitiesRegistry?.capabilities?.findIndex((cap) => cap.feature === "persist-meshery-patterns");
             if (idx != -1) {
               ch.show = true;
               show = true;
@@ -699,19 +724,19 @@ class Navigator extends React.Component {
       }
     });
   }
-
   updateAdaptersLink() {
-    categories.forEach((cat, ind) => {
-      if (cat.id === "Lifecycle") {
+    const { navigatorComponents } = this.state
+    navigatorComponents.forEach((cat, ind) => {
+      if (cat.id === LIFECYCLE) {
         cat.children.forEach((catc, ind1) => {
           if (
-            typeof categories[ind].children[ind1].children[0] !== "undefined" &&
-            typeof categories[ind].children[ind1].children[0].href !== "undefined"
+            typeof navigatorComponents[ind].children[ind1].children[0] !== "undefined" &&
+            typeof navigatorComponents[ind].children[ind1].children[0].href !== "undefined"
           ) {
             const val = true;
-            const newhref = `${categories[ind].children[ind1].children[0].href}`;
-            categories[ind].children[ind1].link = val;
-            categories[ind].children[ind1].href = newhref;
+            const newhref = `${navigatorComponents[ind].children[ind1].children[0].href}`;
+            navigatorComponents[ind].children[ind1].link = val;
+            navigatorComponents[ind].children[ind1].href = newhref;
           }
         });
       }
@@ -740,7 +765,7 @@ class Navigator extends React.Component {
       }
     };
 
-    categories.forEach(({ title, href, children, isBeta }) => {
+    state.navigatorComponents.forEach(({ title, href, children, isBeta }) => {
       fetchNestedPathAndTitle(path, title, href, children, isBeta);
     });
     st.path = path;
@@ -857,7 +882,7 @@ class Navigator extends React.Component {
     const { classes, isDrawerCollapsed } = this.props;
     const { path } = this.state;
 
-    if (idname != "Lifecycle" && children && children.length > 0) {
+    if (idname != LIFECYCLE && children && children.length > 0) {
       return (
         <List disablePadding>
           {children.map(({
@@ -890,18 +915,18 @@ class Navigator extends React.Component {
         </List>
       );
     }
-    if (idname == "Lifecycle") {
+    if (idname == LIFECYCLE) {
       if (children && children.length > 1) {
         return (
           <List disablePadding>
             {children.map(({
               id : idc, title : titlec, icon : iconc, href : hrefc, show : showc, link : linkc, children : childrenc
             }) => {
-              if (typeof showc !== "undefined" && !showc) {
-                return "";
-              }
+              // if (typeof showc !== "undefined" && !showc) {
+              //   return "";
+              // }
               return (
-                <React.Fragment key={idc}>
+                <div key={idc} className={!showc ? classes.cursorNotAllowed : null}>
                   <ListItem
                     data-cy={idc}
                     button
@@ -913,14 +938,15 @@ class Navigator extends React.Component {
                       classes.item,
                       classes.itemActionable,
                       path === hrefc && classes.itemActiveItem,
-                      isDrawerCollapsed && classes.noPadding
+                      isDrawerCollapsed && classes.noPadding,
+                      !showc && classes.disabled
                     )}
                     onClick={() => this.handleAdapterClick(idc, linkc)}
                   >
                     {this.linkContent(iconc, titlec, hrefc, linkc, isDrawerCollapsed)}
                   </ListItem>
                   {this.renderChildren(idname, childrenc, depth + 1)}
-                </React.Fragment>
+                </div>
               );
             })}
           </List>
@@ -1053,49 +1079,45 @@ class Navigator extends React.Component {
 
   render() {
     const { classes, isDrawerCollapsed, ...other } = this.props;
-    const { path, showHelperButton } = this.state;
-    this.updateCategoriesMenus();
-    let classname;
-    if (isDrawerCollapsed) {
-      classname = classes.collapseButtonWrapperRotated;
-    } else {
-      classname = classes.collapseButtonWrapper;
-    }
+    const { path, showHelperButton, navigatorComponents } = this.state;
+    this.updatenavigatorComponentsMenus();
 
     const Title = (
-      <ListItem
-        component="a"
-        onClick={this.handleTitleClick}
-        className={classNames(classes.firebase, classes.item, classes.itemCategory, classes.cursorPointer)}
-      >
-        <img
-          className={isDrawerCollapsed
-            ? classes.mainLogoCollapsed
-            : classes.mainLogo}
-          src="/static/img/meshery-logo.png"
+      <div style={ !this.state.capabilitiesRegistryObj?.isNavigatorComponentEnabled([DASHBOARD]) ? cursorNotAllowed : {}}>
+        <ListItem
+          component="a"
           onClick={this.handleTitleClick}
-        />
-        <img
-          className={isDrawerCollapsed
-            ? classes.mainLogoTextCollapsed
-            : classes.mainLogoText}
-          src="/static/img/meshery-logo-text.png"
-          onClick={this.handleTitleClick}
-        />
+          className={classNames(classes.firebase, classes.item, classes.itemCategory, classes.cursorPointer,!this.state.capabilitiesRegistryObj?.isNavigatorComponentEnabled([DASHBOARD]) && classes.disableLogo)}
+        >
+          <img
+            className={isDrawerCollapsed
+              ? classes.mainLogoCollapsed
+              : classes.mainLogo}
+            src="/static/img/meshery-logo.png"
+            onClick={this.handleTitleClick}
+          />
+          <img
+            className={isDrawerCollapsed
+              ? classes.mainLogoTextCollapsed
+              : classes.mainLogoText}
+            src="/static/img/meshery-logo-text.png"
+            onClick={this.handleTitleClick}
+          />
 
-        {/* <span className={isDrawerCollapsed ? classes.isHidden : classes.isDisplayed}>Meshery</span> */}
-      </ListItem>
+          {/* <span className={isDrawerCollapsed ? classes.isHidden : classes.isDisplayed}>Meshery</span> */}
+        </ListItem>
+      </div>
     )
     const Menu = (
       <List disablePadding className={classes.hideScrollbar}>
-        {categories.map(({
-          id : childId, title, icon, href, show, link, children, hovericon
+        {navigatorComponents.map(({
+          id : childId, title, icon, href, show, link, children, hovericon, submenu
         }) => {
-          if (typeof show !== "undefined" && !show) {
-            return "";
-          }
+          // if (typeof show !== "undefined" && !show) {
+          //   return "";
+          // }
           return (
-            <div key={childId}>
+            <div key={childId} style={!show ? cursorNotAllowed : {}} className={classes.root}>
               <ListItem
                 button={!!link}
                 dense
@@ -1105,11 +1127,12 @@ class Navigator extends React.Component {
                   link
                     ? classes.itemActionable
                     : '',
-                  path === href && classes.itemActiveItem
+                  path === href && classes.itemActiveItem,
+                  !show && classes.disabled
                 )}
                 onClick={() => this.toggleItemCollapse(childId)}
-                onMouseOver={() => children && isDrawerCollapsed ? this.setState({ hoveredId : childId }) : null}
-                onMouseLeave={() => !this.state.openItems.includes(childId) ? this.setState({ hoveredId : null }) : null}
+                onMouseOver={() => isDrawerCollapsed ? this.setState({ hoveredId : childId }) : null}
+                onMouseLeave={() =>  !submenu || !this.state.openItems.includes(childId) ? this.setState({ hoveredId : false }) : null}
               >
                 <Link href={link
                   ? href
@@ -1125,20 +1148,22 @@ class Navigator extends React.Component {
                       arrow
                     >
 
-                      {(isDrawerCollapsed && (this.state.hoveredId === childId || this.state.openItems.includes(childId))) ?
-                        <Tooltip
-                          title={title}
-                          placement="right"
-                          TransitionComponent={Zoom}
-                          arrow
-                        >
-                          <ListItemIcon
-                            onClick={() => this.toggleItemCollapse(childId)}
+                      {(isDrawerCollapsed && (this.state.hoveredId === childId || (this.state.openItems.includes(childId) && submenu))) ?
+                        <div>
+                          <Tooltip
+                            title={title}
+                            placement="right"
+                            TransitionComponent={Zoom}
+                            arrow
+                          >
+                            <ListItemIcon
+                              onClick={() => this.toggleItemCollapse(childId)}
 
-                            style={{ marginLeft : "20%", marginBottom : "0.4rem" }}>
-                            {hovericon}
-                          </ListItemIcon>
-                        </Tooltip>
+                              style={{ marginLeft : "20%", marginBottom : "0.4rem" }}>
+                              {hovericon}
+                            </ListItemIcon>
+                          </Tooltip>
+                        </div>
                         :
                         <ListItemIcon className={classes.listIcon}>
                           {icon}
@@ -1275,23 +1300,26 @@ class Navigator extends React.Component {
         }
       </ListItem>
     )
+
     const Chevron = (
-      <div className={classname} style={{ display : "flex", justifyContent : "center" }}
-        onClick={this.toggleMiniDrawer}
+      <div
+        className={classNames(isDrawerCollapsed ? classes.collapseButtonWrapperRotated : classes.collapseButtonWrapper)}
+        style={this.state?.capabilitiesRegistryObj?.isNavigatorComponentEnabled?.([TOGGLER]) ? {} : cursorNotAllowed}
       >
-        <FontAwesomeIcon
-          icon={faAngleLeft}
-          fixedWidth
-          size="1.5x"
-          style={{ margin : "0.5rem 0.2rem ", width : "0.8rem" }}
-          alt="Sidebar collapse toggle icon"
-        />
-
+        <div
+          style={this.state?.capabilitiesRegistryObj?.isNavigatorComponentEnabled?.([TOGGLER]) ? {} : disabledStyle}
+          onClick={this.toggleMiniDrawer}
+        >
+          <FontAwesomeIcon
+            icon={faAngleLeft}
+            fixedWidth
+            size="1.5x"
+            style={{ margin : "0.5rem 0.2rem ", width : "0.8rem" }}
+            alt="Sidebar collapse toggle icon"
+          />
+        </div>
       </div>
-
     )
-
-
 
     return (
       <NoSsr>
@@ -1331,17 +1359,16 @@ const mapDispatchToProps = (dispatch) => ({
   updatebetabadge : bindActionCreators(updatebetabadge, dispatch),
   toggleDrawer : bindActionCreators(toggleDrawer, dispatch),
   setAdapter : bindActionCreators(setAdapter, dispatch),
+  updateCapabilities : bindActionCreators(updateCapabilities, dispatch),
 });
 
 const mapStateToProps = (state) => {
   const meshAdapters = state.get("meshAdapters").toJS();
   const meshAdaptersts = state.get("meshAdaptersts");
   const path = state.get("page").get("path");
-  const isDrawerCollapsed = state.get("isDrawerCollapsed")
-  return { meshAdapters, meshAdaptersts, path, isDrawerCollapsed };
+  const isDrawerCollapsed = state.get("isDrawerCollapsed");
+  const capabilitiesRegistry = state.get("capabilitiesRegistry")
+  return { meshAdapters, meshAdaptersts, path, isDrawerCollapsed, capabilitiesRegistry };
 };
-
-
-
 
 export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(withRouter(Navigator)));

@@ -64,7 +64,7 @@ mesheryctl -v [or] --verbose
 		}
 
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
-			return errors.New(utils.RootError(fmt.Sprintf("'%s' is a invalid command. Use 'mesheryctl --help' to display usage guide.\n", args[0])))
+			return errors.New(utils.RootError(fmt.Sprintf("'%s' is an invalid command. Use 'mesheryctl --help' to display usage guide.\n", args[0])))
 		}
 
 		return nil

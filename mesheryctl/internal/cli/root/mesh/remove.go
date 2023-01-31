@@ -14,7 +14,6 @@ var (
 	removeCmd = &cobra.Command{
 		Use:   "remove",
 		Short: "remove a service mesh in the kubernetes cluster",
-		Args:  cobra.MinimumNArgs(0),
 		Long:  `remove service mesh in the connected kubernetes cluster`,
 		Example: `
 // Remove a service mesh
@@ -42,6 +41,11 @@ mesheryctl mesh remove [mesh adapter name]
 			return nil
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
+
+			if len(args) > 1 {
+				return errors.New(utils.MeshError("'mesheryctl mesh remove' should not have more than one argument, it can remove only one adapter at a time.\n"))
+			}
+
 			s := utils.CreateDefaultSpinner(fmt.Sprintf("Removing %s", meshName), fmt.Sprintf("\n%s service mesh removed successfully", meshName))
 			mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 			if err != nil {

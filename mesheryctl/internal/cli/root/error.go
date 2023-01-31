@@ -21,7 +21,7 @@ var (
 
 	ErrAddingContextToConfig = errors.New(ErrAddingContextToConfigCode, errors.Alert, []string{"Unable to add context to config"}, []string{"Unable to add context to config"}, []string{}, []string{})
 
-	ErrUnmarshallingConfigFile = errors.New(ErrUnmarshallingConfigFileCode, errors.Alert, []string{"Error unmarshalling config file"}, []string{"Error unmarshalling config file"}, []string{}, []string{})
+	ErrUnmarshallingConfigFile = errors.New(ErrUnmarshallingConfigFileCode, errors.Alert, []string{"Error processing json in config file"}, []string{"Error processing json in config file"}, []string{}, []string{})
 )
 
 func ErrProcessingConfig(err error) error {
@@ -37,9 +37,9 @@ func ErrGettingRequestContext(err error) error {
 }
 
 func ErrInvalidAPIResponse(err error) error {
-	return errors.New(ErrInvalidAPIResponseCode, errors.Fatal, []string{"Invalid API response"}, []string{"Invalid API response", err.Error()}, []string{}, []string{})
+	return errors.New(ErrInvalidAPIResponseCode, errors.Fatal, []string{"Invalid API response encountered"}, []string{"Invalid API response encountered", err.Error()}, []string{}, []string{})
 }
 
 func ErrUnmarshallingAPIData(err error) error {
-	return errors.New(ErrUnmarshallingAPIDataCode, errors.Fatal, []string{"Error unmarshalling API data"}, []string{"Error unmarshalling API data", err.Error()}, []string{}, []string{})
+	return errors.New(ErrUnmarshallingAPIDataCode, errors.Fatal, []string{"Error processing json API data"}, []string{"Error processing json API data", err.Error()}, []string{}, []string{})
 }

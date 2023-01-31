@@ -21,6 +21,8 @@ import CodeEditor from "./CodeEditor";
 import NameToIcon from "./NameToIcon";
 import CustomBreadCrumb from "./CustomBreadCrumb";
 import { randomPatternNameGenerator as getRandomName } from "../../utils/utils"
+import _ from "lodash";
+import { iconMedium } from "../../css/icons.styles";
 
 const useStyles = makeStyles((theme) => ({
   backButton : {
@@ -92,6 +94,21 @@ const useStyles = makeStyles((theme) => ({
     fontWeight : theme.typography.fontWeightRegular,
   },
 }));
+
+function removeRedundantFieldsFromSettings(settings) {
+  if (!settings || _.isEmpty(settings)) {
+    return {}
+  }
+
+  const newSettings = { ...settings };
+
+  delete newSettings.name;
+  delete newSettings.namespace;
+  delete newSettings.labels;
+  delete newSettings.annotations;
+
+  return newSettings;
+}
 
 function PatternConfiguratorComponent({ pattern, onSubmit, show : setSelectedPattern }) {
   const { workloadTraitSet, meshWorkloads } = useContext(SchemaContext);
@@ -235,12 +252,17 @@ function PatternConfiguratorComponent({ pattern, onSubmit, show : setSelectedPat
         return;
       }
     } else { // normal rjsf
+      const settings = reference.current?.getSettings();
+      const { name, namespace, labels, annotations } = settings;
       cfg = {
         [(Math.random() + 1).toString(36).substring(2)] : {
-          settings : reference.current?.getSettings(),
-          traits : reference.current?.getTraits(),
+          name,
+          namespace,
+          labels,
+          annotations,
           type : schemaSet?.oam_definition?.metadata?.name || "NA",
-          name : "<Name-Of-Component>",
+          settings : removeRedundantFieldsFromSettings(settings),
+          traits : reference.current?.getTraits(),
         }
       }
     }
@@ -277,6 +299,10 @@ function PatternConfiguratorComponent({ pattern, onSubmit, show : setSelectedPat
     const deployConfigYaml = jsYaml.dump(deployConfig);
     setYaml(deployConfigYaml);
   };
+
+  function deleteConfiguration() {
+    setSelectedPattern(resetSelectedPattern());
+  }
 
   function handleSubmitFinalPattern(yaml, id, name, action) {
     console.log("submitting a new pattern", yaml)
@@ -466,7 +492,7 @@ function PatternConfiguratorComponent({ pattern, onSubmit, show : setSelectedPat
               color="primary"
               onClick={() => handleSubmitFinalPattern(yaml, "", getRandomName(), "upload")}
             >
-              <FileCopyIcon />
+              <FileCopyIcon style={iconMedium} />
             </IconButton>
           </Tooltip>
           <Tooltip title="Update Pattern">
@@ -475,21 +501,24 @@ function PatternConfiguratorComponent({ pattern, onSubmit, show : setSelectedPat
               color="primary"
               onClick={() => handleSubmitFinalPattern(yaml, pattern.id, pattern.name, "update")}
             >
-              <SaveIcon />
+              <SaveIcon style={iconMedium} />
             </IconButton>
           </Tooltip>
           <Tooltip title="Delete Pattern">
             <IconButton
               aria-label="Delete"
               color="primary"
-              onClick={() => handleSubmitFinalPattern(yaml, pattern.id, pattern.name, "delete")}
+              // onClick={() => handleSubmitFinalPattern(yaml, pattern.id, pattern.name, "delete")}
+              onClick={() => {
+                deleteConfiguration()
+              }}
             >
-              <DeleteIcon />
+              <DeleteIcon style={iconMedium}/>
             </IconButton>
           </Tooltip>
           <Tooltip title="Toggle View">
             <IconButton color="primary" onClick={toggleView}>
-              <ListAltIcon />
+              <ListAltIcon style={iconMedium} />
             </IconButton>
           </Tooltip>
         </Toolbar>

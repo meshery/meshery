@@ -13,6 +13,7 @@ import CloseIcon from "@material-ui/icons/Close";
 import ReactSelectWrapper from "./ReactSelectWrapper";
 import { updateAdaptersInfo, updateProgress } from "../lib/store";
 import dataFetch from "../lib/data-fetch";
+import { iconMedium } from "../css/icons.styles";
 
 const styles = (theme) => ({
   wrapperClass : { padding : theme.spacing(5), },
@@ -37,6 +38,10 @@ const styles = (theme) => ({
   fileInputStyle : { opacity : "0.01", },
   icon : { width : theme.spacing(2.5), },
   istioIcon : { width : theme.spacing(1.5), },
+  chip : {
+    marginRight : theme.spacing(1),
+    marginBottom : theme.spacing(1),
+  }
 });
 
 class MeshAdapterConfigComponent extends React.Component {
@@ -136,13 +141,13 @@ class MeshAdapterConfigComponent extends React.Component {
         self.props.updateProgress({ showProgress : false });
         if (typeof result !== "undefined") {
           self.setState({ meshAdapters : result, meshLocationURL : "" });
-          self.props.enqueueSnackbar("Adapter was successfully configured!", {
+          self.props.enqueueSnackbar("Adapter was configured!", {
             variant : "success",
             "data-cy" : "adapterSuccessSnackbar",
             autoHideDuration : 2000,
             action : (key) => (
               <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
-                <CloseIcon />
+                <CloseIcon  style={iconMedium} />
               </IconButton>
             ),
           });
@@ -169,7 +174,7 @@ class MeshAdapterConfigComponent extends React.Component {
         this.props.updateProgress({ showProgress : false });
         if (typeof result !== "undefined") {
           this.setState({ meshAdapters : result });
-          this.props.enqueueSnackbar("Adapter was successfully removed!", { variant : "success",
+          this.props.enqueueSnackbar("Adapter was removed!", { variant : "success",
             autoHideDuration : 2000,
             action : (key) => (
               <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
@@ -194,7 +199,7 @@ class MeshAdapterConfigComponent extends React.Component {
       (result) => {
         this.props.updateProgress({ showProgress : false });
         if (typeof result !== "undefined") {
-          this.props.enqueueSnackbar("Adapter was successfully pinged!", { variant : "success",
+          this.props.enqueueSnackbar("Adapter was pinged!", { variant : "success",
             autoHideDuration : 2000,
             action : (key) => (
               <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
@@ -240,6 +245,8 @@ class MeshAdapterConfigComponent extends React.Component {
 
             return (
               <Chip
+                key={adapter.uniqueID}
+                className={classes.chip}
                 label={adapter.adapter_location}
                 onDelete={self.handleDelete(adapter.adapter_location)}
                 onClick={self.handleClick(adapter.adapter_location)}

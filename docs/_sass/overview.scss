@@ -30,8 +30,6 @@ h3[id]:before {
 h2[id]:before, h4[id]:before, h5[id]:before {
     display: block;
     content: " ";
-    margin-top: -4em;
-    height: 6rem;
     visibility: hidden;
 }
 div.wrapper {
@@ -53,25 +51,14 @@ div.overview:hover {
     color: #eee;
 }
 
-
-
-@media (max-width: 900px) {
-    div.wrapper {
-      display: block;
-    }
-    div.overview {
-      margin-left:20%;
-      margin-right:20%;
-      overflow-x:hidden;
-    }
-}
 @media (max-width: 62rem) {
     div.wrapper{
         display:block;
     }
     div.overview{
-        margin-left: 0px;
-        margin-right: 20%;
+        margin-left: auto;
+        margin-right: auto;
+        max-width: 80%;
         overflow-x: hidden ;                   
     }
 }

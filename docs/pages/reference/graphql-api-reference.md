@@ -134,6 +134,8 @@ Query available Namesapces in your cluster.
 
 ### `Query.getClusterResources`
 
+Query for getting cluster info.
+
 ###### **Returns** [`ClusterResources!`](#clusterresources).
 
 #### **Arguments**
@@ -180,6 +182,18 @@ Query for getting kubectl describe details with meshkit.
 | <a id="querygetkubectldescribekind"></a>`kind` | [`String!`](#string) |  |
 | <a id="querygetkubectldescribename"></a>`name` | [`String!`](#string) |  |
 | <a id="querygetkubectldescribenamespace"></a>`namespace` | [`String!`](#string) |  |
+
+### `Query.getMeshModelSummary`
+
+Query for meshmodel summary.
+
+###### **Returns** [`MeshModelSummary!`](#meshmodelsummary).
+
+#### **Arguments**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="querygetmeshmodelsummaryselector"></a>`selector` | [`MeshModelSummarySelector!`](#meshmodelsummaryselector) |  |
 
 ### `Query.getMeshsyncStatus`
 
@@ -420,6 +434,16 @@ Listen to changes in Broker (NATS) Connection.
 | ---- | ---- | ----------- |
 | <a id="subscriptionsubscribek8scontextselector"></a>`selector` | [`PageFilter!`](#pagefilter) |  |
 
+### `Subscription.subscribeMeshModelSummary`
+
+###### **Returns** [`MeshModelSummary!`](#meshmodelsummary).
+
+#### **Arguments**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="subscriptionsubscribemeshmodelsummaryselector"></a>`selector` | [`MeshModelSummarySelector!`](#meshmodelsummaryselector) |  |
+
 ### `Subscription.subscribeMeshSyncEvents`
 
 Listen to the events that MeshSync is sending through Meshery Broker.
@@ -526,7 +550,7 @@ Deatils about the Addon Component.
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| <a id="catalogfiltercatalog_data"></a>`catalog_data` | [`Map!`](#map) |  |
+| <a id="catalogfiltercatalog_data"></a>`catalog_data` | [`Map`](#map) |  |
 | <a id="catalogfiltercreated_at"></a>`created_at` | [`String`](#string) |  |
 | <a id="catalogfilterfilter_file"></a>`filter_file` | [`String!`](#string) |  |
 | <a id="catalogfilterid"></a>`id` | [`ID!`](#id) |  |
@@ -542,7 +566,7 @@ Deatils about the Addon Component.
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| <a id="catalogpatterncatalog_data"></a>`catalog_data` | [`Map!`](#map) |  |
+| <a id="catalogpatterncatalog_data"></a>`catalog_data` | [`Map`](#map) |  |
 | <a id="catalogpatterncreated_at"></a>`created_at` | [`String`](#string) |  |
 | <a id="catalogpatternid"></a>`id` | [`ID!`](#id) |  |
 | <a id="catalogpatternlocation"></a>`location` | [`Location!`](#location) |  |
@@ -693,6 +717,7 @@ Data Plane for a particular Mesh.
 | <a id="k8scontextcluster"></a>`cluster` | [`Map!`](#map) |  |
 | <a id="k8scontextcreated_at"></a>`created_at` | [`String!`](#string) |  |
 | <a id="k8scontextcreated_by"></a>`created_by` | [`ID!`](#id) |  |
+| <a id="k8scontextdeployment_type"></a>`deployment_type` | [`String!`](#string) |  |
 | <a id="k8scontextid"></a>`id` | [`String!`](#string) |  |
 | <a id="k8scontextkubernetes_server_id"></a>`kubernetes_server_id` | [`ID!`](#id) |  |
 | <a id="k8scontextmeshery_instance_id"></a>`meshery_instance_id` | [`ID!`](#id) |  |
@@ -729,6 +754,35 @@ Data Plane for a particular Mesh.
 | <a id="locationhost"></a>`host` | [`String`](#string) |  |
 | <a id="locationpath"></a>`path` | [`String`](#string) |  |
 | <a id="locationtype"></a>`type` | [`String`](#string) |  |
+
+### `MeshModelComponent`
+
+#### **Fields**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="meshmodelcomponentcount"></a>`count` | [`Int!`](#int) |  |
+| <a id="meshmodelcomponentname"></a>`name` | [`String!`](#string) |  |
+
+### `MeshModelRelationship`
+
+#### **Fields**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="meshmodelrelationshipcount"></a>`count` | [`Int!`](#int) |  |
+| <a id="meshmodelrelationshipname"></a>`name` | [`String!`](#string) |  |
+
+### `MeshModelSummary`
+
+Type MeshModelComponentsSummary define the summary of a Mesh Model.
+
+#### **Fields**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="meshmodelsummarycomponents"></a>`components` | [`[MeshModelComponent!]`](#meshmodelcomponent) |  |
+| <a id="meshmodelsummaryrelationships"></a>`relationships` | [`[MeshModelRelationship!]`](#meshmodelrelationship) |  |
 
 ### `MeshSyncEvent`
 
@@ -1053,6 +1107,14 @@ Input for changing Addon Status.
 | <a id="catalogselectororder"></a>`order` | [`String!`](#string) |  |
 | <a id="catalogselectorsearch"></a>`search` | [`String!`](#string) |  |
 
+### `MeshModelSummarySelector`
+
+#### **Arguments**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="meshmodelsummaryselectortype"></a>`type` | [`String!`](#string) |  |
+
 ### `PageFilter`
 
 #### **Arguments**
@@ -1065,6 +1127,7 @@ Input for changing Addon Status.
 | <a id="pagefilterpagesize"></a>`pageSize` | [`String!`](#string) |  |
 | <a id="pagefiltersearch"></a>`search` | [`String`](#string) |  |
 | <a id="pagefilterto"></a>`to` | [`String`](#string) |  |
+| <a id="pagefilterupdated_after"></a>`updated_after` | [`String`](#string) |  |
 
 ### `ReSyncActions`
 

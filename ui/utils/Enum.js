@@ -3,11 +3,23 @@ export const FILE_OPS = {
   URL_UPLOAD : "url_upload",
   UPDATE : "update",
   DELETE : "delete",
-  DOWNLOAD : "download"
+  DOWNLOAD : "download",
+  CLONE : "clone"
 }
 
 export const ACTIONS = {
-  DEPLOY : 0,
+  DEPLOY : 2,
   UNDEPLOY : 1,
-  VERIFY : 2,
+  VERIFY : 0,
+}
+
+export const DEPLOYMENT_TYPE = {
+  IN_CLUSTER : "in_cluster",
+  OUT_CLUSTER : "out_of_cluster"
+}
+
+export const VISIBILITY = {
+  PRIVATE : "private",
+  PUBLIC : "public",
+  PUBLISHED : "published"
 }

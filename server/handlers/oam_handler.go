@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 
@@ -17,6 +18,7 @@ import (
 	"github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshery/server/models/pattern/patterns"
 	"github.com/layer5io/meshery/server/models/pattern/stages"
+	"github.com/layer5io/meshkit/models/meshmodel"
 	"github.com/layer5io/meshkit/utils/events"
 	"github.com/sirupsen/logrus"
 )
@@ -92,6 +94,7 @@ func (h *Handler) PatternFileHandler(
 		isDel,
 		r.URL.Query().Get("verify") == "true",
 		false,
+		h.registryManager,
 		h.EventsBuffer,
 	)
 
@@ -137,12 +140,10 @@ func (h *Handler) PatternFileHandler(
 // 2. Getting list of workloads/traits/scopes
 func (h *Handler) OAMRegisterHandler(rw http.ResponseWriter, r *http.Request) {
 	typ := mux.Vars(r)["type"]
-
 	if !(typ == "workload" || typ == "trait" || typ == "scope") {
 		rw.WriteHeader(http.StatusNotFound)
 		return
 	}
-
 	method := r.Method
 	if method == "POST" {
 		if err := h.POSTOAMRegisterHandler(typ, r); err != nil {
@@ -151,9 +152,6 @@ func (h *Handler) OAMRegisterHandler(rw http.ResponseWriter, r *http.Request) {
 			_, _ = rw.Write([]byte(err.Error()))
 			return
 		}
-	}
-	if method == "GET" {
-		h.GETOAMRegisterHandler(typ, rw, r.URL.Query().Get("trim") == "true")
 	}
 }
 
@@ -301,7 +299,14 @@ func (h *Handler) POSTOAMRegisterHandler(typ string, r *http.Request) error {
 // 	200:
 
 // GETOAMRegisterHandler handles the get requests for the OAM objects
-func (h *Handler) GETOAMRegisterHandler(typ string, rw http.ResponseWriter, trim bool) {
+func (h *Handler) GETOAMRegisterHandler(rw http.ResponseWriter,
+	r *http.Request) {
+	typ := mux.Vars(r)["type"]
+	if !(typ == "workload" || typ == "trait" || typ == "scope") {
+		rw.WriteHeader(http.StatusNotFound)
+		return
+	}
+	trim := r.URL.Query().Get("trim") == "true"
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
 
@@ -377,6 +382,7 @@ func _processPattern(
 	isDelete bool,
 	verify bool,
 	skipPrintLogs bool,
+	registry *meshmodel.RegistryManager,
 	eb *events.EventStreamer,
 ) (string, error) {
 	// Get the token from the context
@@ -423,6 +429,7 @@ func _processPattern(
 			// kubeClient:    kubeClient,
 			opIsDelete: isDelete,
 			userID:     userID,
+			registry:   registry,
 			// kubeconfig:    kubecfg,
 			// kubecontext:   mk8scontext,
 			skipPrintLogs:   skipPrintLogs,
@@ -435,7 +442,7 @@ func _processPattern(
 		chain := stages.CreateChain()
 		chain.
 			Add(stages.Import(sip, sap)).
-			Add(stages.ServiceIdentifier(sip, sap)).
+			Add(stages.ServiceIdentifierAndMutator(sip, sap)).
 			Add(stages.Filler(skipPrintLogs)).
 			Add(stages.Validator(sip, sap))
 
@@ -561,15 +568,31 @@ type serviceActionProvider struct {
 	accumulatedMsgs []string
 	err             error
 	eventbuffer     *events.EventStreamer
+	registry        *meshmodel.RegistryManager
 }
 
+func (sap *serviceActionProvider) GetRegistry() *meshmodel.RegistryManager {
+	return sap.registry
+}
 func (sap *serviceActionProvider) Terminate(err error) {
 	if !sap.skipPrintLogs {
 		logrus.Error(err)
 	}
 	sap.err = err
 }
-
+func (sap *serviceActionProvider) Mutate(p *core.Pattern) {
+	//TODO: externalize these mutation rules with policies.
+	//1. Enforce the deployment of CRDs before other resources
+	for name, svc := range p.Services {
+		if svc.Type == "CustomResourceDefinition.K8s" {
+			for _, svc := range p.Services {
+				if svc.Type != "CustomResourceDefinition.K8s" {
+					svc.DependsOn = append(svc.DependsOn, name)
+				}
+			}
+		}
+	}
+}
 func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) (string, error) {
 	// Marshal the component
 	jsonComp, err := json.Marshal(ccp.Component)
@@ -583,15 +606,15 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) (string, 
 		return "", fmt.Errorf("failed to serialize the data: %s", err)
 	}
 
-	for adapter := range ccp.Hosts {
+	for host := range ccp.Hosts {
 		// Hack until adapters fix the concurrent client
 		// creation issue: https://github.com/layer5io/meshery-adapter-library/issues/32
 		time.Sleep(50 * time.Microsecond)
 
-		logrus.Debugf("Adapter to execute operations on: %s", adapter)
+		logrus.Debugf("Adapter to execute operations on: %s", host.Hostname)
 
 		// Local call
-		if strings.HasPrefix(adapter, string(noneLocal)) {
+		if host.Port == 0 {
 			resp, err := patterns.ProcessOAM(
 				sap.kubeconfigs,
 				[]string{string(jsonComp)},
@@ -602,11 +625,14 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) (string, 
 
 			return resp, err
 		}
-
+		addr := host.Hostname
+		if host.Port != 0 {
+			addr += ":" + strconv.Itoa(host.Port)
+		}
 		// Create mesh client
 		mClient, err := meshes.CreateClient(
 			context.TODO(),
-			adapter,
+			addr,
 		)
 		if err != nil {
 			return "", fmt.Errorf("error creating a mesh client: %v", err)
@@ -616,17 +642,17 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) (string, 
 		}()
 
 		// Execute operation on the adapter with raw data
-		if strings.HasPrefix(adapter, string(rawAdapter)) {
-			resp, err := mClient.MClient.ApplyOperation(context.TODO(), &meshes.ApplyRuleRequest{
-				Username:    sap.userID,
-				DeleteOp:    sap.opIsDelete,
-				OpName:      "custom",
-				Namespace:   "",
-				KubeConfigs: sap.kubeconfigs,
-			})
+		// if strings.HasPrefix(adapter, string(rawAdapter)) {
+		// 	resp, err := mClient.MClient.ApplyOperation(context.TODO(), &meshes.ApplyRuleRequest{
+		// 		Username:    sap.userID,
+		// 		DeleteOp:    sap.opIsDelete,
+		// 		OpName:      "custom",
+		// 		Namespace:   "",
+		// 		KubeConfigs: sap.kubeconfigs,
+		// 	})
 
-			return resp.String(), err
-		}
+		// 	return resp.String(), err
+		// }
 
 		// Else it is an OAM adapter call
 		resp, err := mClient.MClient.ProcessOAM(context.TODO(), &meshes.ProcessOAMRequest{

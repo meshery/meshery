@@ -48,7 +48,7 @@ mesheryctl pattern list
 
 		res, err := client.Do(req)
 		if err != nil {
-			return err
+			return errors.Errorf("Unable to reach Meshery server at %s. Verify your environment's readiness for a Meshery deployment by running `mesheryctl system check`. ", mctlCfg.GetBaseMesheryURL())
 		}
 		defer res.Body.Close()
 		body, err := io.ReadAll(res.Body)

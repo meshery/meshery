@@ -1,5 +1,5 @@
 import { createStore, applyMiddleware } from 'redux'
-import { composeWithDevTools } from 'redux-devtools-extension'
+import { composeWithDevTools } from '@redux-devtools/extension'
 import thunkMiddleware from 'redux-thunk'
 import { fromJS } from 'immutable'
 
@@ -56,10 +56,12 @@ const initialState = fromJS({
   selectedAdapter : '',
   events:[],
   catalogVisibility: true,
+  extensionType: '',
+  capabilitiesRegistry: null,
 
   // global gql-subscriptions
   operatorState: null,
-  meshSyncState: null
+  meshSyncState: null,
 });
 
 export const actionTypes = {
@@ -87,8 +89,10 @@ export const actionTypes = {
   UPDATE_EVENTS : 'UPDATE_EVENTS',
   SET_CATALOG_CONTENT : 'SET_CATALOG_CONTENT',
   SET_OPERATOR_SUBSCRIPTION: 'SET_OPERATOR_SUBSCRIPTION',
-  SET_MESHSYNC_SUBSCRIPTION: 'SET_MESHSYNC_SUBSCRIPTION'
+  SET_MESHSYNC_SUBSCRIPTION: 'SET_MESHSYNC_SUBSCRIPTION',
   // UPDATE_SMI_RESULT: 'UPDATE_SMI_RESULT',
+  UPDATE_EXTENSION_TYPE: 'UPDATE_EXTENSION_TYPE',
+  UPDATE_CAPABILITY_REGISTRY: 'UPDATE_CAPABILITY_REGISTRY' 
 };
 
 // REDUCERS
@@ -199,6 +203,12 @@ export const reducer = (state = initialState, action) => {
     case actionTypes.SET_MESHSYNC_SUBSCRIPTION: 
       return state.merge({meshSyncState: action.meshSyncState});
 
+    case actionTypes.UPDATE_EXTENSION_TYPE:
+        return state.merge({ extensionType: action.extensionType });
+
+    case actionTypes.UPDATE_CAPABILITY_REGISTRY: 
+      return state.merge({capabilitiesRegistry: action.capabilitiesRegistry})
+
     default:
       return state;
   }
@@ -298,6 +308,14 @@ export const setOperatorSubscription = ({operatorState}) => dispatch => {
 
 export const setMeshsyncSubscription = ({meshSyncState}) => dispatch => {
   return dispatch({type: actionTypes.SET_MESHSYNC_SUBSCRIPTION, meshSyncState})
+}
+
+export const updateExtensionType = ({ extensionType }) => dispatch => {
+  return dispatch({type: actionTypes.UPDATE_EXTENSION_TYPE, extensionType})
+}
+
+export const updateCapabilities = ({capabilitiesRegistry}) => dispatch => {
+  return dispatch({type: actionTypes.UPDATE_CAPABILITY_REGISTRY, capabilitiesRegistry})
 }
 
 // export const updateSMIResults = ({smi_result}) => dispatch => {

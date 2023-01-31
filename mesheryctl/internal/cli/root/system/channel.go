@@ -32,7 +32,7 @@ var err error
 
 var showForAllContext bool
 
-// PrintChannelAndVersionToStdout to return curren release channel details
+// PrintChannelAndVersionToStdout to return current release channel details
 func PrintChannelAndVersionToStdout(ctx config.Context, contextName string) string {
 	return fmt.Sprintf("Context: %v\nChannel: %v\nVersion: %v", contextName, ctx.Channel, ctx.Version)
 }
@@ -50,8 +50,10 @@ var viewCmd = &cobra.Command{
 // View current release channel
 mesheryctl system channel view
 	`,
-	Args: cobra.NoArgs,
 	RunE: func(cmd *cobra.Command, args []string) error {
+		if len(args) != 0 {
+			return errors.New(utils.SystemChannelSubError("this command takes no arguments.\n", "view"))
+		}
 		mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			log.Fatalln(err, "error processing config")
@@ -94,9 +96,11 @@ var setCmd = &cobra.Command{
 mesheryctl system channel set [stable|stable-version|edge|edge-version]
 	`,
 	Args: func(_ *cobra.Command, args []string) error {
-		const errMsg = `Usage: mesheryctl system channel set [stable|stable-version|edge|edge-version]`
+		const errMsg = `Please provide either 'stable' or 'edge' release channel. Usage: mesheryctl system channel set [stable|stable-version|edge|edge-version]`
 		if len(args) == 0 {
 			return fmt.Errorf("release channel not specified\n\n%v", errMsg)
+		} else if len(args) > 1 {
+			return fmt.Errorf("too many arguments.\n\n%v", errMsg)
 		}
 		return nil
 	},
@@ -171,9 +175,11 @@ var switchCmd = &cobra.Command{
 mesheryctl system channel switch [stable|stable-version|edge|edge-version]
 	`,
 	Args: func(_ *cobra.Command, args []string) error {
-		const errMsg = `Usage: mesheryctl system channel switch [stable|stable-version|edge|edge-version]`
+		const errMsg = `Please provide either 'stable' or 'edge' release channel. Usage: mesheryctl system channel switch [stable|stable-version|edge|edge-version]`
 		if len(args) == 0 {
 			return fmt.Errorf("release channel not specified\n\n%v", errMsg)
+		} else if len(args) > 1 {
+			return fmt.Errorf("too many arguments.\n\n%v", errMsg)
 		}
 		return nil
 	},
@@ -244,10 +250,11 @@ mesheryctl system channel view
 mesheryctl system channel switch [stable|stable-version|edge|edge-version]
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if len(args) != 0 {
-			if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
-				return errors.New(utils.SystemChannelSubError(fmt.Sprintf("'%s' is a invalid command. Use 'mesheryctl system channel --help' to display usage guide.\n", args[0]), "channel"))
-			}
+		if len(args) == 0 {
+			return errors.New(utils.SystemChannelSubError("please specify a flag or subcommand. Use 'mesheryctl system channel --help' to display user guide.\n", "channel"))
+		}
+		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
+			return errors.New(utils.SystemChannelSubError(fmt.Sprintf("'%s' is an invalid subcommand. Please provide required options from [set/switch/view]. Use 'mesheryctl system channel --help' to display usage guide.\n", args[0]), "channel"))
 		}
 		mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
 		if err != nil {

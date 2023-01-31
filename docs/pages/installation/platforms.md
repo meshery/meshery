@@ -15,27 +15,94 @@ Meshery deploys as a set of Docker containers, which can be deployed to either a
 
 ## Platform Compatibility Matrix
 
-{% include alert.html type="info" title="<a href='/project/compatibility-matrix'>Complete Compatibility Matrix and Testing Dashboard</a>" content="For a complete compatibility matrix and project test status dashboard, see Meshery <a href='/project/compatibility-matrix'>Compatibility Matrix</a>" %}
 
-Find installation instructions for the Supported Platforms in the compatibility table.
 
-| Platform                                                                                                                                                               |         Version         |
-| ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :---------------------: |
-| <img src="/assets/img/platforms/docker.svg" width="20" height="20" /> [Docker]({{ site.baseurl }}/installation/platforms/docker)                                       |                         |
-| &nbsp;&nbsp;&nbsp; <img src="/assets/img/platforms/docker.svg" width="20" height="20" /> [Docker Engine]({{ site.baseurl }}/installation/platforms/docker)             |     19.x and above      |
-| &nbsp;&nbsp;&nbsp;<img src="/assets/img/platforms/docker.svg" width="20" height="20" /> [Docker Desktop]({{ site.baseurl }}/installation/platforms/docker)             |     2.0.x and above     |
-| &nbsp;&nbsp;&nbsp;<img src="/assets/img/platforms/docker.svg" width="20" height="20" /> [Docker Extension]({{ site.baseurl }}/installation/platforms/docker-extension) |     2.0.x and above     |
-| <img src="/assets/img/platforms/kubernetes.svg" width="20" height="20" /> [Kubernetes]({{ site.baseurl }}/installation/platforms/kubernetes)                           |    1.12.x and above     |
-| &nbsp;&nbsp;&nbsp;<img src="/assets/img/platforms/aks.svg" width="20" height="20" /> [AKS]({{ site.baseurl }}/installation/platforms/aks)                              |                         |
-| &nbsp;&nbsp;&nbsp;<img src="/assets/img/platforms/eks.png" width="20" height="20" /> [EKS]({{ site.baseurl }}/installation/platforms/eks)                              |    1.12.x and above     |
-| &nbsp;&nbsp;&nbsp;<img src="/assets/img/platforms/gke.png" width="20" height="20" /> [GKE]({{ site.baseurl }}/installation/platforms/gke)                              |    1.14.x and above     |
-| &nbsp;&nbsp;&nbsp;<img src="/assets/img/platforms/helm.svg" width="20" height="20" /> [Helm]({{ site.baseurl }}/installation/platforms/kubernetes#using-helm)          |                         |
-| &nbsp;&nbsp;&nbsp;<img src="/assets/img/platforms/kind.png" width="20" height="20" /> [KinD]({{ site.baseurl }}/installation/platforms/kind)                           |         v0.7.0          |
-| &nbsp;&nbsp;&nbsp;<img src="/assets/img/platforms/kubesphere.png" width="20" height="20" /> [Kubesphere]({{ site.baseurl }}/installation/platforms/kubesphere)               |     v3.3     | 
-| &nbsp;&nbsp;&nbsp;<img src="/assets/img/platforms/minikube.png" width="20" height="20" /> [Minikube]({{ site.baseurl }}/installation/platforms/minikube)               |     1.2.x and above     |
-| &nbsp;&nbsp;&nbsp;<img src="/assets/img/platforms/openshift.svg" width="20" height="20" /> OpenShift                                                                   |       In Progress       |
-| <img src="/assets/img/platforms/apple.svg" width="20" height="20" vertical-align="middle" /> [Mac]({{ site.baseurl }}/installation#mac-or-linux)                       |                         |
-| &nbsp;&nbsp;&nbsp;<img src="/assets/img/platforms/homebrew.png" width="20" height="20" /> [Mac - Homebrew]({{ site.baseurl }}/installation#mac-or-linux)               | macOS 10.12 - 10.15, 11 |
-| &nbsp;&nbsp;&nbsp; [Scoop]({{ site.baseurl }}/installation/platforms/scoop)                                                                                            |                         |
-| &nbsp;&nbsp;&nbsp;<img src="/assets/img/platforms/wsl2.png" width="20" height="20" /> [Windows]({{ site.baseurl }}/installation/platforms/windows)                     |  Build 18917 and above  |
-| <img src="/assets/img/platforms/raspberry-pi.png" width="20" height="20" /> Raspberry Pi                                                                               |       In Progress       |
+<style>
+.nav-link.active{
+    border-bottom: #00B39F solid 5px!important;
+    border-top: none !important;
+     color:#00B39F!important
+
+}
+.nav-link:hover, .nav-link:focus{
+    color:#00B39F!important
+}
+.nav-link{
+    border: 0 !important;
+    color: black
+}
+</style>
+
+{% assign k8s_tests_group = site.compatibility | group_by: "k8s-version" %}
+
+<div>
+    <ul class="nav nav-tabs nav-fill mb-3" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <a class="nav-link active" id="kubernetes-tab" data-toggle="tab" href="#kubernetes" role="tab" aria-controls="kubernetes" aria-selected="true">Kubernetes</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" id="docker-tab" data-toggle="tab" href="#docker" role="tab" aria-controls="docker" aria-selected="false">Docker</a>
+        </li>
+         <!-- <li class="nav-item">
+          <a class="nav-link" id="mac-tab" data-toggle="tab" href="#mac" role="tab" aria-controls="mac" aria-selected="false">Mac</a>
+        </li>
+         <li class="nav-item">
+          <a class="nav-link" id="windows-tab" data-toggle="tab" href="#windows" role="tab" aria-controls="windows" aria-selected="false">Windows</a>
+        </li> -->
+      </ul>
+      <div class="tab-content" id="myTabContent">
+        <div class="tab-pane fade show active" id="kubernetes" role="tabpanel" aria-labelledby="kubernetes-tab">
+            {%include compatibilityMatrix.md k8s_tests_group=k8s_tests_group %}
+            <p style="font-size:20px; text-align:center;z-index:100;"><a href="{{ site.baseurl }}/installation/platforms/kubernetes">Install Instruction</a></p>
+            <div style="z-index:0">
+              {% include alert.html type="info" title="<span style='margin:0;'>Overview of the Integration Tests</span>" content="For a complete overview of the latest integration tests and their status please visit Meshery <a href='/project/compatibility-matrix#integration-tests'>Integration Tests</a>" %}
+            </div>
+        </div>
+        <div style="text-align:center" class="tab-pane fade" id="docker" role="tabpanel" aria-labelledby="docker-tab">
+        <h3 style="text-align:left;">The following minimum Docker build versions are required:</h3>
+        <table class="table table-striped table-bordered">
+            <tr style="text-align:center">
+              <th>Name</th>
+              <th>Version</th> 
+            </tr>
+            <tr>
+              <td><a href="{{site.baseurl}}/installation/platforms/docker">Docker Engine</a></td>
+              <td><b>19.x</b> and above</td>
+            </tr>
+            <tr>
+              <td><a href="{{site.baseurl}}/installation/platforms/docker-extension">Docker Desktop<br></a><span style="color:#999999; text-decororation:none;"><em>Used through <b>Docker Extension</b></em></span></td>
+              <td><b>2.0.x</b> and above </td>
+            </tr>
+          </table>
+        <br><a style="font-size:20px" href="{{ site.baseurl }}/installation/platforms/docker">Install Instruction</a></div>
+        <!-- <div style="background-color:#E6E6E6; text-align:center;font-size:30px;padding:210px; color:#999999;" class="tab-pane fade" id="mac" role="tabpanel" aria-labelledby="mac-tab">Compatibility matrix not yet available<br> <a style="font-size:20px" href="{{ site.baseurl }}/installation/">Install Instruction</a></div>
+        <div style="text-align:center;" class="tab-pane fade" id="windows" role="tabpanel" aria-labelledby="windows-tab">
+          <h3 style="text-align:left;">The following minimum Windows build versions are required:</h3>
+          <table class="table table-striped table-bordered">
+            <tr style="text-align:center">
+              <th>Name</th>
+              <th>Version</th> 
+            </tr>
+            <tr>
+              <td><a href="{{site.baseurl}}/installation/platforms/windows#wsl1">WSL1</a></td>
+              <td><b>x64</b> - Windows 7 </td>
+            </tr>
+            <tr>
+              <td><a href="{{site.baseurl}}/installation/platforms/windows#wsl1">WSL2</a></td>
+              <td><b>x64</b> - Version 1903, Build 18362; <b>ARM 64</b> - Version 2004, Build 19041</td>
+            </tr>
+            <tr>
+              <td><a href="https://docs.microsoft.com/en-us/windows/wsl/release-notes#build-18945">Custom Kernel</a></td>
+              <td>Build 18945</td>
+            </tr>
+            <tr>
+              <td><a href="https://docs.microsoft.com/en-us/windows/wsl/release-notes#build-19013">Kernel with K8s required modules</a></td>
+              <td>Build 19013</td>
+            </tr>
+          </table>
+        <br> <a style="font-size:20px" href="{{ site.baseurl }}/installation/platforms/windows">Install Instruction</a></div> -->
+      </div>
+  </div>
+
+  
+

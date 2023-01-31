@@ -82,6 +82,7 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, prefOb
 		return
 	}
 	h.config.K8scontextChannel.PublishContext()
+	go models.FlushMeshSyncData(req.Context(), mux.Vars(req)["id"], provider, h.EventsBuffer)
 }
 
 // func (h *Handler) GetCurrentContextHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {

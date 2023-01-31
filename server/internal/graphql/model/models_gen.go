@@ -155,6 +155,7 @@ type K8sContext struct {
 	CreatedBy          string                 `json:"created_by"`
 	MesheryInstanceID  string                 `json:"meshery_instance_id"`
 	KubernetesServerID string                 `json:"kubernetes_server_id"`
+	DeploymentType     string                 `json:"deployment_type"`
 	UpdatedAt          string                 `json:"updated_at"`
 	CreatedAt          string                 `json:"created_at"`
 }
@@ -174,6 +175,25 @@ type Location struct {
 	Host   *string `json:"host"`
 	Path   *string `json:"path"`
 	Type   *string `json:"type"`
+}
+
+type MeshModelComponent struct {
+	Name  string `json:"name"`
+	Count int    `json:"count"`
+}
+
+type MeshModelRelationship struct {
+	Name  string `json:"name"`
+	Count int    `json:"count"`
+}
+
+type MeshModelSummary struct {
+	Components    []*MeshModelComponent    `json:"components"`
+	Relationships []*MeshModelRelationship `json:"relationships"`
+}
+
+type MeshModelSummarySelector struct {
+	Type string `json:"type"`
 }
 
 type MeshSyncEvent struct {
@@ -253,12 +273,13 @@ type OperatorStatusPerK8sContext struct {
 }
 
 type PageFilter struct {
-	Page     string  `json:"page"`
-	PageSize string  `json:"pageSize"`
-	Order    *string `json:"order"`
-	Search   *string `json:"search"`
-	From     *string `json:"from"`
-	To       *string `json:"to"`
+	Page         string  `json:"page"`
+	PageSize     string  `json:"pageSize"`
+	Order        *string `json:"order"`
+	Search       *string `json:"search"`
+	From         *string `json:"from"`
+	To           *string `json:"to"`
+	UpdatedAfter *string `json:"updated_after"`
 }
 
 type PatternPageResult struct {

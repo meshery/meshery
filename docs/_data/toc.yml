@@ -11,12 +11,12 @@
       children:
         - title: Build & Release (CI)
           url: project/contributing/build-and-release
-        - title: Design and Code Conventions
-          url: project/contributing/contributing-guide
         - title: Meshery Adapters
           url: project/contributing/contributing-adapters
         - title: Meshery CLI
           url: project/contributing/contributing-cli
+        - title: "- CLI Design and Code Conventions"
+          url: project/contributing/contributing-cli-guide
         - title: Meshery Docs
           url: project/contributing/contributing-docs
         - title: Meshery Errors
@@ -81,8 +81,8 @@
   links:
     - title: App Mesh
       url: service-meshes/adapters/app-mesh
-    - title: Citrix Service Mesh
-      url: service-meshes/adapters/cpx
+    # - title: Citrix Service Mesh
+    #   url: service-meshes/adapters/cpx
     - title: Cilium Service Mesh
       url: service-meshes/adapters/cilium
     - title: Consul

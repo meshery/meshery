@@ -38,6 +38,12 @@ import { getK8sConfigIdsFromK8sConfig } from '../utils/multi-ctx';
 import './../public/static/style/index.css';
 import subscribeK8sContext from "../components/graphql/subscriptions/K8sContextSubscription";
 import { bindActionCreators } from 'redux';
+import "./styles/AnimatedFilter.css"
+import "./styles/AnimatedMeshery.css"
+import "./styles/AnimatedMeshPattern.css"
+import "./styles/AnimatedMeshSync.css"
+import PlaygroundMeshDeploy from './extension/AccessMesheryModal';
+import Router from "next/router";
 
 if (typeof window !== 'undefined') {
   require('codemirror/mode/yaml/yaml');
@@ -58,6 +64,11 @@ async function fetchContexts(number = 10, search = "") {
   return await promisifiedDataFetch(`/api/system/kubernetes/contexts?pageSize=${number}&search=${encodeURIComponent(search)}`)
 }
 
+const playgroundExtensionRoute = "/extension/meshmap";
+function isMesheryUiRestrictedAndThePageIsNotPlayground(capabilitiesRegistry) {
+  return !window.location.pathname.startsWith(playgroundExtensionRoute) && capabilitiesRegistry?.restrictedAccess?.isMesheryUiRestricted
+}
+
 class MesheryApp extends App {
   constructor() {
     super();
@@ -70,7 +81,8 @@ class MesheryApp extends App {
       activeK8sContexts : [],
       operatorSubscription : null,
       meshSyncSubscription : null,
-      disposeK8sContextSubscription : null
+      disposeK8sContextSubscription : null,
+      isOpen : false
     };
   }
 
@@ -84,9 +96,9 @@ class MesheryApp extends App {
         credentials : "include",
       },
       (result) => {
-        if (result) {
+        if (typeof result?.usersExtensionPreferences?.catalogContent !== 'undefined') {
           this.props.toggleCatalogContent({
-            catalogVisibility : result?.usersExtensionPreferences?.catalogContent || true
+            catalogVisibility : result?.usersExtensionPreferences?.catalogContent
           })
         }
       },
@@ -111,7 +123,13 @@ class MesheryApp extends App {
   }
 
   componentDidUpdate(prevProps) {
-    const { k8sConfig } = this.props;
+    const { k8sConfig, capabilitiesRegistry } = this.props;
+
+    // in case the meshery-ui is restricted, the user will be redirected to signup/extension page
+    if (isMesheryUiRestrictedAndThePageIsNotPlayground(capabilitiesRegistry)) {
+      Router.push(playgroundExtensionRoute);
+    }
+
     if (!_.isEqual(prevProps.k8sConfig, k8sConfig)) {
       const { operatorSubscription, meshSyncSubscription } = this.state;
       console.log("k8sconfig changed, re-initialising subscriptions");
@@ -146,10 +164,7 @@ class MesheryApp extends App {
   }
 
   handleL5CommunityClick = () => {
-    if (typeof window !== 'undefined') {
-      const w = window.open('https://layer5.io', '_blank');
-      w.focus();
-    }
+    this.setState(state => ({ isOpen : !state.isOpen }));
   };
 
   /**
@@ -204,6 +219,10 @@ class MesheryApp extends App {
         if (active) this.setState({ activeK8sContexts : [active?.id] })
       })
       .catch(err => console.error(err))
+  }
+
+  updateExtensionType = (type) => {
+    this.props.store.dispatch({ type : actionTypes.UPDATE_EXTENSION_TYPE, extensionType : type });
   }
 
   async loadConfigFromServer() {
@@ -299,12 +318,15 @@ class MesheryApp extends App {
                 onClose={this.handleDrawerToggle}
                 onCollapseDrawer={(open = null) => this.handleCollapseDrawer(open)}
                 isDrawerCollapsed={isDrawerCollapsed}
+                updateExtensionType={this.updateExtensionType}
               />
             </Hidden>
             <Hidden xsDown implementation="css">
               <Navigator
                 onCollapseDrawer={(open = null) => this.handleCollapseDrawer(open)}
-                isDrawerCollapsed={isDrawerCollapsed} />
+                isDrawerCollapsed={isDrawerCollapsed}
+                updateExtensionType={this.updateExtensionType}
+              />
             </Hidden>
           </nav>
           <div className={classes.appContent}>
@@ -335,6 +357,7 @@ class MesheryApp extends App {
                 activeContexts={this.state.activeK8sContexts}
                 setActiveContexts={this.setActiveContexts}
                 searchContexts={this.searchContexts}
+                updateExtensionType={this.updateExtensionType}
               />
               <main className={classes.mainContent}>
                 <MuiPickersUtilsProvider utils={MomentUtils}>
@@ -349,14 +372,18 @@ class MesheryApp extends App {
                 </MuiPickersUtilsProvider>
               </main>
             </SnackbarProvider>
-            <footer className={classes.footer}>
-              <Typography variant="body2" align="center" color="textSecondary" component="p">
+            <footer className={this.props.capabilitiesRegistry?.restrictedAccess?.isMesheryUiRestricted ? classes.playgroundFooter :classes.footer}>
+              <Typography variant="body2" align="center" color="textSecondary" component="p"
+                style={this.props.capabilitiesRegistry?.restrictedAccess?.isMesheryUiRestricted ? { color : "#000" }: {}}
+              >
                 <span onClick={this.handleL5CommunityClick} className={classes.footerText}>
-                  Built with <FavoriteIcon className={classes.footerIcon} /> by the Layer5 Community</span>
+                  {this.props.capabilitiesRegistry?.restrictedAccess?.isMesheryUiRestricted ? "ACCESS LIMITED IN MESHERY PLAYGROUND. DEPLOY MESHERY TO ACCESS ALL FEATURES.": ( <> Built with <FavoriteIcon className={classes.footerIcon} /> by the Layer5 Community</>) }
+                </span>
               </Typography>
             </footer>
           </div>
         </div>
+        <PlaygroundMeshDeploy closeForm={() => this.setState({ isOpen : false })} isOpen={this.state.isOpen} />
       </NoSsr>
     );
   }
@@ -368,7 +395,8 @@ const mapStateToProps = state => ({
   isDrawerCollapsed : state.get("isDrawerCollapsed"),
   k8sConfig : state.get("k8sConfig"),
   operatorSubscription : state.get("operatorSubscription"),
-  meshSyncSubscription : state.get("meshSyncSubscription")
+  meshSyncSubscription : state.get("meshSyncSubscription"),
+  capabilitiesRegistry : state.get("capabilitiesRegistry")
 })
 
 const mapDispatchToProps = dispatch => ({

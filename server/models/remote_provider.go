@@ -6,9 +6,9 @@ import (
 	"compress/gzip"
 	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"os"
@@ -92,7 +92,8 @@ func (l *RemoteProvider) loadCapabilities(token string) {
 
 	version := viper.GetString("BUILD")
 	os := viper.GetString("OS")
-	finalURL := fmt.Sprintf("%s/%s/capabilities?os=%s", l.RemoteProviderURL, version, os)
+	playground := viper.GetString("PLAYGROUND")
+	finalURL := fmt.Sprintf("%s/%s/capabilities?os=%s&playground=%s", l.RemoteProviderURL, version, os, playground)
 	finalURL = strings.TrimSuffix(finalURL, "\n")
 	remoteProviderURL, err := url.Parse(finalURL)
 	if err != nil {
@@ -280,7 +281,7 @@ func (l *RemoteProvider) fetchUserDetails(tokenString string) (*User, error) {
 
 	resp, err := l.DoRequest(req, tokenString)
 	if err != nil {
-		return nil, ErrFetch(err, "User Data", resp.StatusCode)
+		return nil, ErrFetch(err, "User Data", http.StatusUnauthorized)
 	}
 	defer func() {
 		_ = resp.Body.Close()
@@ -335,8 +336,25 @@ func (l *RemoteProvider) GetSession(req *http.Request) error {
 		logrus.Infof("session not found")
 		return err
 	}
+	jwtClaims, err := l.VerifyToken(ts)
+	if err != nil {
+		logrus.Error(err)
+		return err
+	}
+	if jwtClaims == nil {
+		logrus.Error("invalid JWT claim found")
+		return fmt.Errorf("invalid or nil JWT claim found")
+	}
+	// we verify the signature of the token and check if it has exp claim,
+	// if not present it's an infinite JWT, hence skip the introspect step
+	//
+	if (*jwtClaims)["exp"] != nil {
+		err = l.introspectToken(ts)
+		if err != nil {
+			return err
+		}
+	}
 
-	_, err = l.VerifyToken(ts)
 	if err != nil {
 		logrus.Infof("Token validation error : %v", err.Error())
 		newts, err := l.refreshToken(ts)
@@ -364,14 +382,77 @@ func (l *RemoteProvider) GetProviderToken(req *http.Request) (string, error) {
 // Logout - logout from provider backend
 //
 // It is assumed that every remote provider will support this feature
-func (l *RemoteProvider) Logout(w http.ResponseWriter, req *http.Request) {
-	ck, err := req.Cookie(tokenName)
-	if err == nil {
+func (l *RemoteProvider) Logout(w http.ResponseWriter, req *http.Request) error {
+	// construct remote provider logout url
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s", l.RemoteProviderURL, "/logout"))
+	logrus.Debugf("constructed url: %s", remoteProviderURL.String())
+
+	// make http.Request type variable with the constructed URL
+	cReq, _ := http.NewRequest(req.Method, remoteProviderURL.String(), req.Body)
+	tokenString, err := l.GetToken(req)
+	if err != nil {
+		logrus.Errorf("error performing logout: %v", err)
+		return err
+	}
+
+	// gets session cookie from the request headers
+	sessionCookie, err := req.Cookie("session_cookie")
+	if err != nil {
+		logrus.Errorf("error getting session cookie: %v", err)
+		return err
+	}
+
+	// adds session cookie to the new request headers
+	// necessary to run logout flow on the remote provider
+	cReq.AddCookie(&http.Cookie{
+		Name:  "session_cookie",
+		Value: sessionCookie.Value,
+	})
+
+	// adds return_to cookie to the new request headers
+	// necessary to inform remote provider to return back to Meshery UI
+	cReq.AddCookie(&http.Cookie{Name: "return_to", Value: "provider_ui"})
+
+	// make request to remote provider with contructed URL and updated headers (like session_cookie, return_to cookies)
+	resp, err := l.DoRequest(cReq, tokenString)
+	if err != nil {
+		logrus.Errorf("error performing logout: %v", err)
+		return err
+	}
+
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+	bd, err := io.ReadAll(resp.Body)
+	if err != nil {
+		logrus.Errorf("error performing logout: %v", err)
+		return err
+	}
+	logrus.Infof("response successfully retrieved from remote provider")
+	// if request succeeds then redirect to Provider UI
+	// And empties the token and session cookies
+	if resp.StatusCode == http.StatusFound || resp.StatusCode == http.StatusOK {
+		// gets the token from the request headers
+		ck, err := req.Cookie(tokenName)
+		if err == nil {
+			err = l.revokeToken(ck.Value)
+		}
+		if err != nil {
+			logrus.Errorf("error performing logout, token cannot be revoked: %v", err)
+			http.Redirect(w, req, "/user/login", http.StatusFound)
+			return nil
+		}
 		ck.MaxAge = -1
 		ck.Path = "/"
 		http.SetCookie(w, ck)
+		sessionCookie.MaxAge = -1
+		sessionCookie.Path = "/"
+		http.SetCookie(w, sessionCookie)
+		return nil
 	}
-	http.Redirect(w, req, "/provider", http.StatusFound)
+
+	logrus.Errorf("Error performing logout: %v", string(bd))
+	return errors.New(string(bd))
 }
 
 // HandleUnAuthenticated
@@ -468,7 +549,7 @@ func (l *RemoteProvider) GetK8sContexts(token, page, pageSize, search, order str
 	defer func() {
 		_ = resp.Body.Close()
 	}()
-	bdr, err := ioutil.ReadAll(resp.Body)
+	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
 		logrus.Errorf("unable to read response body: %v", err)
 		return nil, err
@@ -559,7 +640,7 @@ func (l *RemoteProvider) GetK8sContext(token, id string) (K8sContext, error) {
 		return kc, nil
 	}
 
-	bdr, err := ioutil.ReadAll(resp.Body)
+	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return K8sContext{}, ErrDataRead(err, "Kubernetes context")
 	}
@@ -596,7 +677,7 @@ func (l *RemoteProvider) GetK8sContext(token, id string) (K8sContext, error) {
 // 		return kc, nil
 // 	}
 
-// 	bdr, err := ioutil.ReadAll(resp.Body)
+// 	bdr, err := io.ReadAll(resp.Body)
 // 	if err != nil {
 // 		return K8sContext{}, ErrDataRead(err, "Kubernetes context")
 // 	}
@@ -632,7 +713,7 @@ func (l *RemoteProvider) GetK8sContext(token, id string) (K8sContext, error) {
 // 		return kc, nil
 // 	}
 
-// 	bdr, err := ioutil.ReadAll(resp.Body)
+// 	bdr, err := io.ReadAll(resp.Body)
 // 	if err != nil {
 // 		return K8sContext{}, ErrDataRead(err, "Kubernetes context")
 // 	}
@@ -843,7 +924,7 @@ func (l *RemoteProvider) FetchSmiResult(req *http.Request, page, pageSize, searc
 		_ = resp.Body.Close()
 	}()
 
-	bdr, err := ioutil.ReadAll(resp.Body)
+	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, ErrDataRead(err, "SMI Result")
 	}
@@ -1303,7 +1384,7 @@ func (l *RemoteProvider) SaveMesheryPattern(tokenString string, pattern *Meshery
 }
 
 // GetMesheryPatterns gives the patterns stored with the provider
-func (l *RemoteProvider) GetMesheryPatterns(tokenString string, page, pageSize, search, order string) ([]byte, error) {
+func (l *RemoteProvider) GetMesheryPatterns(tokenString string, page, pageSize, search, order string, updatedAfter string) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistMesheryPatterns) {
 		logrus.Error("operation not available")
 		return []byte{}, fmt.Errorf("%s is not suppported by provider: %s", PersistMesheryPatterns, l.ProviderName)
@@ -1326,6 +1407,9 @@ func (l *RemoteProvider) GetMesheryPatterns(tokenString string, page, pageSize, 
 	}
 	if order != "" {
 		q.Set("order", order)
+	}
+	if updatedAfter != "" {
+		q.Set("updated_after", updatedAfter)
 	}
 	remoteProviderURL.RawQuery = q.Encode()
 	logrus.Debugf("constructed patterns url: %s", remoteProviderURL.String())
@@ -1522,6 +1606,55 @@ func (l *RemoteProvider) CloneMesheryPattern(req *http.Request, patternID string
 	return nil, fmt.Errorf("error while cloning pattern - Status code: %d, Body: %s", resp.StatusCode, bdr)
 }
 
+// CloneMesheryPattern publishes a meshery pattern with the given id to catalog
+func (l *RemoteProvider) PublishCatalogPattern(req *http.Request, publishPatternRequest *MesheryCatalogPatternRequestBody) ([]byte, error) {
+	if !l.Capabilities.IsSupported(MesheryPatternsCatalog) {
+		logrus.Error("operation not available")
+		return nil, fmt.Errorf("%s is not suppported by provider: %s", MesheryPatternsCatalog, l.ProviderName)
+	}
+
+	ep, _ := l.Capabilities.GetEndpointForFeature(MesheryPatternsCatalog)
+
+	logrus.Infof("attempting to pubish pattern with id: %s", publishPatternRequest.ID)
+
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/publish", l.RemoteProviderURL, ep))
+	logrus.Debugf("constructed pattern url: %s", remoteProviderURL.String())
+
+	data, err := json.Marshal(publishPatternRequest)
+	if err != nil {
+		return nil, ErrMarshal(err, "pattern request to publish to catalog")
+	}
+	bf := bytes.NewBuffer(data)
+
+	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), bf)
+
+	tokenString, err := l.GetToken(req)
+	if err != nil {
+		logrus.Errorf("unable to publish pattern to catalog: %v", err)
+		return nil, err
+	}
+	resp, err := l.DoRequest(cReq, tokenString)
+	if err != nil {
+		logrus.Errorf("unable to publish pattern to catalog: %v", err)
+		return nil, err
+	}
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+	bdr, err := io.ReadAll(resp.Body)
+	if err != nil {
+		logrus.Errorf("unable to read response body: %v", err)
+		return nil, err
+	}
+
+	if resp.StatusCode == http.StatusOK {
+		logrus.Infof("pattern successfully published to catalog")
+		return bdr, nil
+	}
+	logrus.Errorf("error while publishing pattern file to catalog with id %s: %s", publishPatternRequest.ID, bdr)
+	return nil, fmt.Errorf("error while publishing pattern file to catalog - Status code: %d, Body: %s", resp.StatusCode, bdr)
+}
+
 // DeleteMesheryPatterns deletes meshery patterns with the given ids and names
 func (l *RemoteProvider) DeleteMesheryPatterns(req *http.Request, patterns MesheryPatternDeleteRequestBody) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistMesheryPatterns) {
@@ -1557,7 +1690,7 @@ func (l *RemoteProvider) DeleteMesheryPatterns(req *http.Request, patterns Meshe
 	defer func() {
 		_ = resp.Body.Close()
 	}()
-	bdr, err := ioutil.ReadAll(resp.Body)
+	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
 		logrus.Errorf("unable to read response body: %v", err)
 		return nil, err
@@ -1928,6 +2061,55 @@ func (l *RemoteProvider) CloneMesheryFilter(req *http.Request, filterID string) 
 	return nil, fmt.Errorf("error while cloning filter - Status code: %d, Body: %s", resp.StatusCode, bdr)
 }
 
+// CloneMesheryFilter publishes a meshery filter with the given id to catalog
+func (l *RemoteProvider) PublishCatalogFilter(req *http.Request, publishFilterRequest *MesheryCatalogFilterRequestBody) ([]byte, error) {
+	if !l.Capabilities.IsSupported(MesheryFiltersCatalog) {
+		logrus.Error("operation not available")
+		return nil, fmt.Errorf("%s is not suppported by provider: %s", MesheryFiltersCatalog, l.ProviderName)
+	}
+
+	ep, _ := l.Capabilities.GetEndpointForFeature(MesheryFiltersCatalog)
+
+	logrus.Infof("attempting to pubish filter with id: %s", publishFilterRequest.ID)
+
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/publish", l.RemoteProviderURL, ep))
+	logrus.Debugf("constructed filter url: %s", remoteProviderURL.String())
+
+	data, err := json.Marshal(publishFilterRequest)
+	if err != nil {
+		return nil, ErrMarshal(err, "filter request to publish to catalog")
+	}
+	bf := bytes.NewBuffer(data)
+
+	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), bf)
+
+	tokenString, err := l.GetToken(req)
+	if err != nil {
+		logrus.Errorf("unable to publish filter to catalog: %v", err)
+		return nil, err
+	}
+	resp, err := l.DoRequest(cReq, tokenString)
+	if err != nil {
+		logrus.Errorf("unable to publish filter to catalog: %v", err)
+		return nil, err
+	}
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+	bdr, err := io.ReadAll(resp.Body)
+	if err != nil {
+		logrus.Errorf("unable to read response body: %v", err)
+		return nil, err
+	}
+
+	if resp.StatusCode == http.StatusOK {
+		logrus.Infof("filter successfully published to catalog")
+		return bdr, nil
+	}
+	logrus.Errorf("error while publishing filter file to catalog with id %s: %s", publishFilterRequest.ID, bdr)
+	return nil, fmt.Errorf("error while publishing filter file to catalog - Status code: %d, Body: %s", resp.StatusCode, bdr)
+}
+
 func (l *RemoteProvider) RemoteFilterFile(req *http.Request, resourceURL, path string, save bool) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistMesheryFilters) {
 		logrus.Error("operation not available")
@@ -2100,7 +2282,7 @@ func (l *RemoteProvider) GetApplicationSourceContent(req *http.Request, applicat
 }
 
 // GetMesheryApplications gives the applications stored with the provider
-func (l *RemoteProvider) GetMesheryApplications(tokenString string, page, pageSize, search, order string) ([]byte, error) {
+func (l *RemoteProvider) GetMesheryApplications(tokenString string, page, pageSize, search, order string, updaterAfter string) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistMesheryApplications) {
 		logrus.Error("operation not available")
 		return []byte{}, ErrInvalidCapability("PersistMesheryApplications", l.ProviderName)
@@ -2123,6 +2305,9 @@ func (l *RemoteProvider) GetMesheryApplications(tokenString string, page, pageSi
 	}
 	if order != "" {
 		q.Set("order", order)
+	}
+	if updaterAfter != "" {
+		q.Set("updated_after", updaterAfter)
 	}
 	remoteProviderURL.RawQuery = q.Encode()
 	logrus.Debugf("constructed applications url: %s", remoteProviderURL.String())
@@ -2591,7 +2776,9 @@ func (l *RemoteProvider) RecordPreferences(req *http.Request, userID string, dat
 // TokenHandler - specific to remote auth
 func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, fromMiddleWare bool) {
 	tokenString := r.URL.Query().Get(tokenName)
-	logrus.Debugf("token : %v", tokenString)
+	// gets the session cookie from remote provider
+	sessionCookie := r.URL.Query().Get("session_cookie")
+
 	ck := &http.Cookie{
 		Name:     tokenName,
 		Value:    string(tokenString),
@@ -2599,17 +2786,32 @@ func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, fr
 		HttpOnly: true,
 	}
 	http.SetCookie(w, ck)
+	// sets the session cookie for Meshery Session
+	http.SetCookie(w, &http.Cookie{
+		Name:     "session_cookie",
+		Value:    sessionCookie,
+		Path:     "/",
+		HttpOnly: true,
+	})
 
 	// Get new capabilities
 	// Doing this here is important so that
 	l.loadCapabilities(tokenString)
 
-	// Download the package for the user
-	l.downloadProviderExtensionPackage()
+	// Download the package for the user only if they have extension capability
+	if len(l.GetProviderProperties().Extensions.Navigator) > 0 {
+		l.downloadProviderExtensionPackage()
+	}
 
 	// Proceed to redirect once the capabilities has loaded
 	// and the package has been downloaded
-	http.Redirect(w, r, "/", http.StatusFound)
+	redirectURL := "/"
+	isPlayGround, _ := strconv.ParseBool(viper.GetString("PLAYGROUND"))
+	if isPlayGround {
+		redirectURL = "/extension/meshmap"
+	}
+
+	http.Redirect(w, r, redirectURL, http.StatusFound)
 }
 
 // UpdateToken - in case the token was refreshed, this routine updates the response with the new token
@@ -2652,7 +2854,7 @@ func (l *RemoteProvider) ExtractToken(w http.ResponseWriter, r *http.Request) {
 		"meshery-provider": l.Name(),
 		tokenName:          tokenString,
 	}
-	logrus.Debugf("encoded response : %v", resp)
+	logrus.Debugf("token sent for meshery-provider %v", l.Name())
 	if err := json.NewEncoder(w).Encode(resp); err != nil {
 		err = ErrEncoding(err, "Auth Details")
 		logrus.Error(err)
@@ -2810,28 +3012,46 @@ func (l *RemoteProvider) SMPTestConfigDelete(req *http.Request, testUUID string)
 	return ErrDelete(fmt.Errorf("could not delete the test profile: %d", resp.StatusCode), "Perf Test Config :"+testUUID, resp.StatusCode)
 }
 
+// ExtensionProxy - proxy requests to the remote provider which are specific to user_account extension
 func (l *RemoteProvider) ExtensionProxy(req *http.Request) ([]byte, error) {
 	logrus.Infof("attempting to request remote provider")
+	// gets the requested path from user_account extension UI in Meshery UI
+	// splits the requested path into '/api/extensions' and '/<remote-provider-endpoint>'
 	p := req.URL.Path
 	split := strings.Split(p, "/api/extensions")
 	path := split[1]
+	// gets the available query parameters
 	q := req.URL.Query().Encode()
 	if len(q) > 0 {
+		// if available, then add it to <remote-provider-endpoint>
+		// eg: /<remote-provider-endpoint>?<query-parameters>
 		path = fmt.Sprintf("%s?%s", path, q)
 	}
+	// then attach the final path to the remote provider URL
 	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s", l.RemoteProviderURL, path))
 	logrus.Debugf("constructed url: %s", remoteProviderURL.String())
 
-	cReq, _ := http.NewRequest(req.Method, remoteProviderURL.String(), req.Body)
-	tokenString, err := l.GetToken(req)
-
+	// make http.Request type variable with the constructed URL
+	cReq, err := http.NewRequest(req.Method, remoteProviderURL.String(), req.Body)
 	if err != nil {
 		return nil, err
 	}
+
+	tokenString, err := l.GetToken(req)
+	if err != nil {
+		return nil, err
+	}
+
+	// update the request headers with the headers from the original request
+	// original headers includes cookies likes session_cookie necessary to run user management flows
+	cReq.Header = req.Header
+
+	// make request to remote provider with contructed URL and updated headers (like session cookie)
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
 		return nil, err
 	}
+
 	defer func() {
 		_ = resp.Body.Close()
 	}()
@@ -2896,7 +3116,7 @@ func TarXZF(srcURL, destination string) error {
 	}()
 
 	if resp.StatusCode != http.StatusOK {
-		return ErrFetch(err, "TarTZF file :"+srcURL, resp.StatusCode)
+		return ErrFetch(fmt.Errorf("failed GET request"), "TarTZF file :"+srcURL, resp.StatusCode)
 	}
 
 	return TarXZ(resp.Body, destination)

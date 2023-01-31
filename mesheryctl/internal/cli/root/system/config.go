@@ -61,29 +61,20 @@ func getContexts(configFile string) ([]string, error) {
 	}
 
 	log.Debugf("Get context API response: %s", string(body))
-	var results map[string]interface{}
+	var results []map[string]interface{}
 	err = json.Unmarshal(body, &results)
 	if err != nil {
 		return nil, err
 	}
 
-	if results == nil || results["contexts"] == nil {
+	if results == nil {
 		errstr := "Error unmarshalling the context info, check " + configFile + " file"
 		return nil, errors.New(errstr)
 	}
-	contexts, ok := results["contexts"].([]interface{})
-	if !ok {
-		errstr := "Unexpected response from server: contexts should be an array"
-		return nil, errors.New(errstr)
-	}
+
 	var contextNames []string
-	for _, ctx := range contexts {
-		contextstruct, ok := ctx.(map[string]interface{})
-		if !ok {
-			errstr := "Error unmarshalling the context info"
-			return nil, errors.New(errstr)
-		}
-		ctxname, ok := contextstruct["name"].(string)
+	for _, ctx := range results {
+		ctxname, ok := ctx["name"].(string)
 		if !ok {
 			errstr := "Invalid context name: context name should be a string"
 			return nil, errors.New(errstr)
@@ -355,7 +346,9 @@ Example: mesheryctl system config eks
 Description: Configure the Kubernetes cluster used by Meshery.`
 
 		if len(args) == 0 {
-			return fmt.Errorf("config name not provided\n\n%v", errMsg)
+			return fmt.Errorf("name of kubernetes cluster to configure Meshery not provided\n\n%v", errMsg)
+		} else if len(args) > 1 {
+			return fmt.Errorf("expected one argument received multiple arguments")
 		}
 		return nil
 	},

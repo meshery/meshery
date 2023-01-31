@@ -6,9 +6,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"path/filepath"
+
+	mcore "github.com/layer5io/meshery/server/models/meshmodel/core"
 
 	// for GKE kube API authentication
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
@@ -16,8 +17,10 @@ import (
 	"github.com/gofrs/uuid"
 
 	"github.com/layer5io/meshery/server/helpers"
+	mutil "github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/pattern/core"
+	"github.com/layer5io/meshkit/models/meshmodel"
 	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
 	"github.com/layer5io/meshkit/utils"
 	"github.com/pkg/errors"
@@ -79,7 +82,7 @@ func (h *Handler) addK8SConfig(user *models.User, prefObj *models.Preference, w 
 		_ = k8sfile.Close()
 	}()
 
-	k8sConfigBytes, err := ioutil.ReadAll(k8sfile)
+	k8sConfigBytes, err := io.ReadAll(k8sfile)
 	if err != nil {
 		logrus.Error(ErrReadConfig(err))
 		http.Error(w, ErrReadConfig(err).Error(), http.StatusBadRequest)
@@ -266,11 +269,16 @@ func (h *Handler) LoadContextsAndPersist(token string, prov models.Provider) ([]
 		ctxName := "in-cluster"
 
 		cc, err := models.NewK8sContextFromInClusterConfig(ctxName, mid)
-		if err != nil || cc == nil {
+		if err != nil {
 			logrus.Warn("failed to generate in cluster context: ", err)
 			return contexts, err
 		}
-
+		if cc == nil {
+			err := fmt.Errorf("nil context generated from in cluster config")
+			logrus.Warn(err)
+			return contexts, err
+		}
+		cc.DeploymentType = "in_cluster"
 		_, err = prov.SaveK8sContext(token, *cc)
 		if err != nil {
 			logrus.Warn("failed to save the context for incluster: ", err)
@@ -290,6 +298,7 @@ func (h *Handler) LoadContextsAndPersist(token string, prov models.Provider) ([]
 
 	// Persist the generated contexts
 	for _, ctx := range ctxs {
+		ctx.DeploymentType = "out_of_cluster"
 		_, err := prov.SaveK8sContext(token, ctx)
 		if err != nil {
 			logrus.Warn("failed to save the context: ", err)
@@ -301,7 +310,7 @@ func (h *Handler) LoadContextsAndPersist(token string, prov models.Provider) ([]
 	return contexts, nil
 }
 
-func RegisterK8sComponents(ctxt context.Context, config []byte, ctxID string) (err error) {
+func RegisterK8sComponents(ctxt context.Context, config []byte, ctxID string, reg *meshmodel.RegistryManager) (err error) {
 	man, err := core.GetK8Components(ctxt, config)
 	if err != nil {
 		return ErrCreatingKubernetesComponents(err, ctxID)
@@ -327,6 +336,8 @@ func RegisterK8sComponents(ctxt context.Context, config []byte, ctxID string) (e
 		if err != nil {
 			return ErrCreatingKubernetesComponents(err, ctxID)
 		}
+		// go writeDefK8sOnFileSystem(string(def), filepath.Join(rootpath, definition.Spec.Metadata["k8sKind"]+"_definitions.k8s.json"))
+		// go writeSchemaK8sFileSystem(ord.OAMRefSchema, filepath.Join(rootpath, definition.Spec.Metadata["k8sKind"]+"_schema.k8s.json"))
 		err = core.RegisterWorkload(content)
 		if err != nil {
 			return ErrCreatingKubernetesComponents(err, ctxID)
@@ -334,3 +345,51 @@ func RegisterK8sComponents(ctxt context.Context, config []byte, ctxID string) (e
 	}
 	return nil
 }
+
+func RegisterK8sMeshModelComponents(ctx context.Context, config []byte, ctxID string, reg *meshmodel.RegistryManager) (err error) {
+	man, err := mcore.GetK8sMeshModelComponents(ctx, config)
+	if err != nil {
+		return ErrCreatingKubernetesComponents(err, ctxID)
+	}
+	if man == nil {
+		return ErrCreatingKubernetesComponents(errors.New("generated components are nil"), ctxID)
+	}
+	for _, c := range man {
+		mutil.WriteSVGsOnFileSystem(&c)
+		err = reg.RegisterEntity(meshmodel.Host{
+			Hostname:  "kubernetes",
+			ContextID: ctxID,
+		}, c)
+	}
+	return
+}
+
+// func writeMeshModelComponentsOnFileSystem(c meshmodelv1alpha1.ComponentDefinition, dirpath string) {
+// 	fileName := c.Kind + ".json"
+// 	file, err := os.Create(filepath.Join(dirpath, fileName))
+// 	if err != nil {
+// 		fmt.Println("err: ", err.Error())
+// 	}
+// 	byt, err := json.Marshal(c)
+// 	if err != nil {
+// 		fmt.Println("err: ", err.Error())
+// 	}
+// 	_, err = file.Write(byt)
+// 	if err != nil {
+// 		fmt.Println("err: ", err.Error())
+// 	}
+// }
+
+// func writeDefK8sOnFileSystem(def string, path string) {
+// 	err := ioutil.WriteFile(path, []byte(def), 0777)
+// 	if err != nil {
+// 		fmt.Println("err def: ", err.Error())
+// 	}
+// }
+
+// func writeSchemaK8sFileSystem(schema string, path string) {
+// 	err := ioutil.WriteFile(path, []byte(schema), 0777)
+// 	if err != nil {
+// 		fmt.Println("err schema: ", err.Error())
+// 	}
+// }

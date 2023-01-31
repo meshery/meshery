@@ -33,6 +33,7 @@ import { trueRandom } from "../lib/trueRandom";
 import PublishIcon from "@material-ui/icons/Publish";
 import InfoIcon from '@material-ui/icons/Info';
 import ConfigurationSubscription from "./graphql/subscriptions/ConfigurationSubscription";
+import { iconMedium, iconSmall } from "../css/icons.styles";
 
 const styles = (theme) => ({
   grid : { padding : theme.spacing(2), },
@@ -126,10 +127,10 @@ function YAMLEditor({ application, onClose, onSubmit }) {
         <TooltipIcon
           title={fullScreen ? "Exit Fullscreen" : "Enter Fullscreen"}
           onClick={toggleFullScreen}>
-          {fullScreen ? <FullscreenExitIcon /> : <FullscreenIcon />}
+          {fullScreen ? <FullscreenExitIcon style={iconMedium}  /> : <FullscreenIcon style={iconMedium}  />}
         </TooltipIcon>
         <TooltipIcon title="Exit" onClick={onClose}>
-          <CloseIcon />
+          <CloseIcon style={iconMedium} />
         </TooltipIcon>
       </DialogTitle>
       <Divider variant="fullWidth" light />
@@ -158,7 +159,7 @@ function YAMLEditor({ application, onClose, onSubmit }) {
               data : yaml, id : application.id, name : application.name, type : FILE_OPS.UPDATE, source_type : application.type.String
             })}
           >
-            <SaveIcon />
+            <SaveIcon style={iconMedium}  />
           </IconButton>
         </Tooltip>
         <Tooltip title="Delete Application">
@@ -172,7 +173,7 @@ function YAMLEditor({ application, onClose, onSubmit }) {
               type : FILE_OPS.DELETE
             })}
           >
-            <DeleteIcon />
+            <DeleteIcon style={iconMedium} />
           </IconButton>
         </Tooltip>
       </DialogActions>
@@ -256,6 +257,7 @@ function MesheryApplications({
    * fetch applications when the page loads
    */
   useEffect(() => {
+    fetchApplications(page, pageSize, search, sortOrder)
   }, [page, pageSize, search, sortOrder]);
 
   /**
@@ -344,12 +346,12 @@ function MesheryApplications({
         body : application_file,
       }, () => {
         console.log("ApplicationFile Deploy API", `/api/application/deploy`);
-        enqueueSnackbar(`${name} successfully deployed!!` , {
+        enqueueSnackbar(`"${name}" application deployed` , {
           variant : "success",
           action : function Action(key) {
             return (
               <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-                <CloseIcon />
+                <CloseIcon style={iconMedium} />
               </IconButton>
             );
           },
@@ -371,12 +373,12 @@ function MesheryApplications({
         body : application_file,
       }, () => {
         console.log("ApplicationFile Undeploy API", `/api/pattern/deploy`);
-        enqueueSnackbar(`${name} successfully undeployed!!`, {
+        enqueueSnackbar(`"${name}" application undeployed`, {
           variant : "success",
           action : function Action(key) {
             return (
               <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-                <CloseIcon />
+                <CloseIcon style={iconMedium} />
               </IconButton>
             );
           },
@@ -458,7 +460,7 @@ function MesheryApplications({
       action : function Action(key) {
         return (
           <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-            <CloseIcon />
+            <CloseIcon style={iconMedium} />
           </IconButton>
         );
       },
@@ -472,26 +474,23 @@ function MesheryApplications({
     };
   }
 
-  function handleSubmit({ data, id, name, type, source_type }) {
+  async function handleSubmit({ data, id, name, type, source_type }) {
     updateProgress({ showProgress : true })
     if (type === FILE_OPS.DELETE) {
-      dataFetch(
-        `/api/application/${id}`,
-        {
-          credentials : "include",
-          method : "DELETE",
-        },
-        () => {
-          console.log("ApplicationFile API", `/api/application/${id}`);
-          updateProgress({ showProgress : false });
-          resetSelectedRowData()();
-        },
-        // handleError
-        handleError(ACTION_TYPES.DELETE_APPLICATIONS)
-      );
+      const response = await showModal(1);
+      if (response=="No"){
+        updateProgress({ showProgress : false })
+        return;
+      }
+      deleteApplication(id);
     }
 
     if (type === FILE_OPS.UPDATE) {
+      let response = await showUpdateModel("");
+      if (response=="No"){
+        updateProgress({ showProgress : false })
+        return;
+      }
       dataFetch(
         `/api/application/${source_type}`,
         {
@@ -502,6 +501,17 @@ function MesheryApplications({
         () => {
           console.log("ApplicationFile API", `/api/application/${source_type}`);
           updateProgress({ showProgress : false });
+          enqueueSnackbar(`"${name}" Application updated`, {
+            variant : "success",
+            action : function Action(key) {
+              return (
+                <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+                  <CloseIcon style={iconMedium} />
+                </IconButton>
+              );
+            },
+            autoHideDuration : 2000,
+          });
         },
         // handleError
         handleError(ACTION_TYPES.UPDATE_APPLICATIONS)
@@ -633,7 +643,7 @@ function MesheryApplications({
               <Tooltip title="Click source type to download Application">
                 <div style={{ display : "flex" }}>
                   <b>{column.label}</b>
-                  <InfoIcon color="primary" style={{ scale : "0.8" }}/>
+                  <InfoIcon color="primary" style={iconSmall}/>
                 </div>
               </Tooltip>
             </TableCell>
@@ -672,18 +682,18 @@ function MesheryApplications({
           const rowData = applications[tableMeta.rowIndex];
           return (
             <>
-              <IconButton
+              <TooltipIcon
                 title="Deploy"
                 onClick={() => handleModalOpen(rowData.application_file, rowData.name, true)}
               >
-                <DoneAllIcon data-cy="deploy-button" />
-              </IconButton>
-              <IconButton
+                <DoneAllIcon data-cy="deploy-button" style={iconMedium}  />
+              </TooltipIcon>
+              <TooltipIcon
                 title="Undeploy"
                 onClick={() => handleModalOpen(rowData.application_file, rowData.name, false)}
               >
                 <UndeployIcon fill="#8F1F00" data-cy="undeploy-button" />
-              </IconButton>
+              </TooltipIcon>
             </>
           );
         },
@@ -706,6 +716,14 @@ function MesheryApplications({
     return response;
   }
 
+  async function showUpdateModel(count){
+    let response = await modalRef.current.show({
+      title : `Update ${count ? count : ""} Application${count > 1 ? "s" : ''}?`,
+      subtitle : `Are you sure you want to update ${count > 1 ? "these" : 'this'} ${count ? count : ""} application${count > 1 ? "s" : ''}?`,
+      options : ["Yes","No"],
+    });
+    return response;
+  }
   async function deleteApplication(id) {
     dataFetch(
       `/api/application/${id}`,
@@ -722,7 +740,7 @@ function MesheryApplications({
           action : function Action(key) {
             return (
               <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-                <CloseIcon />
+                <CloseIcon style={iconMedium} />
               </IconButton>
             );
           },
@@ -840,7 +858,7 @@ function MesheryApplications({
                 onClick={handleUploadImport}
                 style={{ marginRight : "2rem" }}
               >
-                <PublishIcon className={classes.addIcon} />
+                <PublishIcon className={classes.addIcon} style={iconMedium}  />
               Import Application
               </Button>
             </div>

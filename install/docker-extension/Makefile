@@ -53,5 +53,11 @@ ui-build:
 
 ui:
 	cd ui/src; npm run start; cd ../..;
+# Make easier to debug the UI
+link:
+	docker extension dev ui-source meshery/docker-extension-meshery:${GIT_STRIPPED_VERSION} http://localhost:3000
+	docker extension dev debug meshery/docker-extension-meshery:${GIT_STRIPPED_VERSION}
+reset:
+	docker extension dev reset meshery/docker-extension-meshery:${GIT_STRIPPED_VERSION}
 
 .PHONY: prepare-buildx push-extension extension ui

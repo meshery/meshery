@@ -3,7 +3,6 @@
 
 import { promisifiedDataFetch } from "../../lib/data-fetch";
 import { trueRandom } from "../../lib/trueRandom";
-import { CustomFieldTemplate } from "./PatternService/RJSFCustomComponents/FieldTemplate";
 
 /**
  * @typedef {Object} OAMDefinition
@@ -163,6 +162,7 @@ export function recursiveCleanObject(obj) {
 
     if (Object.keys(obj[k]).length === 0) delete obj[k];
   }
+  return obj
 }
 
 /**
@@ -254,8 +254,6 @@ export function formatString(text) {
 function jsonSchemaBuilder(schema, obj) {
   if (!schema) return
 
-  const uiDesc = "ui:description"
-
   if (schema.type === 'object') {
     for (let key in schema.properties) {
       obj[key] = {};
@@ -277,25 +275,18 @@ function jsonSchemaBuilder(schema, obj) {
     return
   }
 
-  obj[uiDesc] = " ";
   if (obj["ui:widget"]) { // if widget is already assigned, don't go over
     return
   }
 
   if (schema.type === 'boolean') {
-    schema["default"] = false;
     obj["ui:widget"] = "checkbox";
   }
 
-  if (schema.type==='string'&&!schema?.enum) {
-    obj["ui:FieldTemplate"] = CustomFieldTemplate;
-  }
 
   if (schema.type === 'number' || schema.type === 'integer') {
     schema["maximum"] = 99999;
     schema["minimum"] = 0;
-    obj["ui:widget"] = "updown";
-    obj["ui:FieldTemplate"] = CustomFieldTemplate;
   }
 }
 
@@ -312,7 +303,7 @@ export function buildUiSchema(schema) {
   jsonSchemaBuilder(schema, uiSchemaObj);
 
   // 2. Set the ordering of the components
-  uiSchemaObj["ui:order"] = ["name", "namespace", "*"]
+  uiSchemaObj["ui:order"] = ["name", "namespace", "label", "annotation", "*"]
 
   //3. Return the final uiSchema Object
   return uiSchemaObj

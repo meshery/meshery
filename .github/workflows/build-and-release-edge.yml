@@ -13,10 +13,10 @@ jobs:
     if: github.repository == 'meshery/meshery' && github.event_name != 'pull_request' && success()
     env:
       RELEASE_CHANNEL: "edge"
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Check out code
-        uses: actions/checkout@v3
+        uses: actions/checkout@master
         with:
           fetch-depth: 1
       - name: Docker login
