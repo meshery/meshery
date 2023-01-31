@@ -2420,7 +2420,7 @@ func (l *RemoteProvider) ShareDesign(req *http.Request) (int, error) {
 	ep, _ := l.Capabilities.GetEndpointForFeature(ShareDesigns)
 	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s", l.RemoteProviderURL, ep))
 	bd, _ := io.ReadAll(req.Body)
-	defer func(){
+	defer func() {
 		_ = req.Body.Close()
 	}()
 	bf := bytes.NewBuffer(bd)
