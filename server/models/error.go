@@ -341,5 +341,5 @@ func ErrDownloadingSeededComponents(err error, content string) error {
 }
 
 func ErrShareDesign(err error) error {
-	return errors.New(ErrShareDesignCode, errors.Alert, []string{"cannot make design shareable"}, []string{err.Error()}, []string{"email id provided might not be valid", "insufficient permission"}, []string{"try sharing designs of which you are the owner", "Retry after sometime", "try using alternate email id"})
+	return errors.New(ErrShareDesignCode, errors.Alert, []string{"cannot make design public"}, []string{err.Error()}, []string{"email address provided might not be valid", "insufficient permission"}, []string{"Ensure that you are the owner of the design you are sharing", "Try again later", "Try using an alternate email address"})
 }

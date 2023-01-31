@@ -129,5 +129,5 @@ func (h *Handler) ShareDesignHandler(w http.ResponseWriter, r *http.Request, pre
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	fmt.Fprint(w, "Design shared successfully")
+	fmt.Fprint(w, "Design shared")
 }
