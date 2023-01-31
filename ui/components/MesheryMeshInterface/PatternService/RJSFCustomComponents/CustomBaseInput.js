@@ -4,7 +4,7 @@ import HelpOutlineIcon from "../../../../assets/icons/HelpOutlineIcon";
 import { CustomTextTooltip } from "../CustomTextTooltip";
 import ErrorOutlineIcon from "../../../../assets/icons/ErrorOutlineIcon";
 import { ERROR_COLOR } from "../../../../constants/colors";
-import { iconMedium } from "../../../../css/icons.styles";
+import { iconSmall } from "../../../../css/icons.styles";
 
 const BaseInput = (props) => {
   const additional = props.schema?.__additional_property; // check if the field is additional
@@ -45,14 +45,14 @@ const BaseInput = (props) => {
 
                   }>
                   <IconButton component="span" size="small">
-                    <ErrorOutlineIcon width="14px" height="14px" fill="#B32700" style={{ verticalAlign : "middle", ...iconMedium }}/>
+                    <ErrorOutlineIcon width="14px" height="14px" fill="#B32700" style={{ verticalAlign : "middle", ...iconSmall }}/>
                   </IconButton>
                 </CustomTextTooltip>
               )}
               {props.schema?.description && (
                 <CustomTextTooltip backgroundColor="#3C494F" flag={props?.formContext?.overrideFlag} title={props.schema?.description}>
                   <IconButton component="span" size="small">
-                    <HelpOutlineIcon width="14px" height="14px" fill="gray" style={{ verticalAlign : "middle", ...iconMedium }}/>
+                    <HelpOutlineIcon width="14px" height="14px" fill="gray" style={{ verticalAlign : "middle", ...iconSmall }}/>
                   </IconButton>
                 </CustomTextTooltip>
               )}

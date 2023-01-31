@@ -10,7 +10,7 @@ import ExpandMoreIcon from '../../../../assets/icons/ExpandMoreIcon';
 import ExpandLessIcon from '../../../../assets/icons/ExpandLessIcon'
 import ErrorOutlineIcon from '../../../../assets/icons/ErrorOutlineIcon';
 import { ERROR_COLOR } from '../../../../constants/colors';
-import { iconMedium } from '../../../../css/icons.styles';
+import { iconMedium, iconSmall } from '../../../../css/icons.styles';
 
 const useStyles = makeStyles({
   objectFieldGrid : {
@@ -81,7 +81,7 @@ const ObjectFieldTemplate = ({
           {description &&
             <CustomTextTooltip backgroundColor="#3C494F" title={description}>
               <IconButton disableTouchRipple="true" disableRipple="true" component="span" size="small">
-                <HelpOutlineIcon width="14px" height="14px" fill="gray" style={{ marginLeft : "4px", verticalAlign : "middle", ...iconMedium }}/>
+                <HelpOutlineIcon width="14px" height="14px" fill="gray" style={{ marginLeft : "4px", verticalAlign : "middle", ...iconSmall }}/>
               </IconButton>
             </CustomTextTooltip>}
           {rawErrors?.length &&
@@ -89,7 +89,7 @@ const ObjectFieldTemplate = ({
               <div key={index}>{error}</div>
             ))}>
               <IconButton disableTouchRipple="true" disableRipple="true" component="span" size="small">
-                <ErrorOutlineIcon width="14px" height="14px" fill="red" style={{ marginLeft : "4px", verticalAlign : "middle", ...iconMedium }} />
+                <ErrorOutlineIcon width="14px" height="14px" fill="red" style={{ marginLeft : "4px", verticalAlign : "middle", ...iconSmall }} />
               </IconButton>
             </CustomTextTooltip>}
         </Grid>
