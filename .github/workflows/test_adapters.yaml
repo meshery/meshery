@@ -107,6 +107,7 @@ jobs:
           yq e -i '.spec.template.spec.containers[0].image="test:test"' ./testimagedep.yaml
           yq e -i '.spec.template.spec.containers[0].imagePullPolicy="Never"' ./testimagedep.yaml
           cat testimagedep.yaml
+          kubectl create namespace meshery
           kubectl apply -f testimagedep.yaml --namespace=meshery
           kubectl apply -f ${{ inputs.service_url }} --namespace=meshery
 
