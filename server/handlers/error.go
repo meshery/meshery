@@ -463,11 +463,11 @@ func ErrRemoteApplication(err error) error {
 }
 
 func ErrClonePattern(err error) error {
-	return errors.New(ErrClonePatternCode, errors.Alert, []string{"Error failed to clone pattern"}, []string{err.Error()}, []string{"Failed to clone Pattern with the given ID"}, []string{"Check if the Pattern ID is correct and the pattern is public"})
+	return errors.New(ErrClonePatternCode, errors.Alert, []string{"Error failed to clone pattern"}, []string{err.Error()}, []string{"Failed to clone Pattern with the given ID"}, []string{"Check if the Pattern ID is correct and the pattern is published"})
 }
 
 func ErrCloneFilter(err error) error {
-	return errors.New(ErrCloneFilterCode, errors.Alert, []string{"Error failed to clone filter"}, []string{err.Error()}, []string{"Failed to clone Filter with the given ID"}, []string{"Check if the Filter ID is correct and the Filter is public"})
+	return errors.New(ErrCloneFilterCode, errors.Alert, []string{"Error failed to clone filter"}, []string{err.Error()}, []string{"Failed to clone Filter with the given ID"}, []string{"Check if the Filter ID is correct and the Filter is published"})
 }
 
 func ErrPublishCatalogPattern(err error) error {

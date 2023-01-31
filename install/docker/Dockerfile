@@ -13,9 +13,9 @@ FROM node:lts as ui
 ADD ui ui
 RUN cd ui; npm install --omit-dev; npm run build && npm run export; mv out /
 
-FROM node:16 as provider-ui
+FROM node:lts as provider-ui
 ADD provider-ui provider-ui
-RUN cd provider-ui; npm install --only=production; npm run build && npm run export; mv out /
+RUN cd provider-ui; npm install --omit=dev; npm run build && npm run export; mv out /
 
 FROM ubuntu as wrk2
 RUN apt-get -y update && apt-get -y install git && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/man/?? /usr/share/man/??_*

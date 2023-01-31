@@ -32,7 +32,7 @@ var err error
 
 var showForAllContext bool
 
-// PrintChannelAndVersionToStdout to return curren release channel details
+// PrintChannelAndVersionToStdout to return current release channel details
 func PrintChannelAndVersionToStdout(ctx config.Context, contextName string) string {
 	return fmt.Sprintf("Context: %v\nChannel: %v\nVersion: %v", contextName, ctx.Channel, ctx.Version)
 }

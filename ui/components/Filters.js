@@ -31,7 +31,7 @@ import PromptComponent from "./PromptComponent";
 import UploadImport from "./UploadImport";
 import FullscreenIcon from '@material-ui/icons/Fullscreen';
 import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
-import { FILE_OPS } from "../utils/Enum";
+import { FILE_OPS, VISIBILITY } from "../utils/Enum";
 import ViewSwitch from "./ViewSwitch";
 import CatalogFilter from "./CatalogFilter";
 import FiltersGrid from "./MesheryFilters/FiltersGrid";
@@ -456,10 +456,10 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
 
   const handleSetFilters = (filters) => {
     if (catalogVisibilityRef.current && catalogContentRef.current?.length > 0) {
-      setFilters([...catalogContentRef.current, ...filters.filter(content => content.visibility !== "public")])
+      setFilters([...catalogContentRef.current, ...filters.filter(content => content.visibility !== VISIBILITY.PUBLISHED)])
       return
     }
-    setFilters(filters.filter(content => content.visibility !== "public"))
+    setFilters(filters.filter(content => content.visibility !== VISIBILITY.PUBLISHED))
   }
 
   const initFiltersSubscription = (pageNo = page.toString(), pagesize = pageSize.toString(), searchText = search, order = sortOrder) => {
@@ -695,7 +695,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
           const visibility = filters[tableMeta.rowIndex].visibility
           return (
             <>
-              {visibility === "public" ? <IconButton onClick={(e) => {
+              {visibility === VISIBILITY.PUBLISHED ? <IconButton onClick={(e) => {
                 e.stopPropagation();
                 handleClone(rowData.id, rowData.name)
               }

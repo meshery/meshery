@@ -334,7 +334,7 @@ class MesheryNotification extends React.Component {
 
           <ClickAwayListener onClickAway={(e) => {
             if (e.target.className.baseVal !== "" && e.target.className.baseVal !== "MuiSvgIcon-root" &&
-              !e.target.className?.includes("MesheryNotification")) {
+              ((typeof e.target.className === "string")? !e.target.className?.includes("MesheryNotification"): null)) {
               this.handleClose();
             }
           }}>

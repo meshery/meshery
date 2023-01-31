@@ -10,7 +10,9 @@ import ExpandMoreIcon from '../../../../assets/icons/ExpandMoreIcon';
 import ExpandLessIcon from '../../../../assets/icons/ExpandLessIcon'
 import ErrorOutlineIcon from '../../../../assets/icons/ErrorOutlineIcon';
 import { ERROR_COLOR } from '../../../../constants/colors';
+import { iconMedium } from '../../../../css/icons.styles';
 const styles = (theme) => ({
+
 
 
   objectFieldGrid : {
@@ -80,7 +82,7 @@ const ObjectFieldTemplate = ({
                 className="object-property-expand"
                 onClick={() => setShow(!show)}
               >
-                {show ? <ExpandLessIcon width="18px" height="18px" fill="gray" /> : <ExpandMoreIcon width="18px" height="18px" fill="gray" />}
+                {show ? <ExpandLessIcon style={iconMedium} fill="gray" /> : <ExpandMoreIcon style={iconMedium} fill="gray"  />}
               </IconButton>
             </Grid>
           )
@@ -92,7 +94,7 @@ const ObjectFieldTemplate = ({
           {description &&
             <CustomTextTooltip backgroundColor="#3C494F" title={description}>
               <IconButton disableTouchRipple="true" disableRipple="true" component="span" size="small">
-                <HelpOutlineIcon width="14px" height="14px" fill={theme.palette.type === 'dark' ? "white" : "black"} style={{ marginLeft : "4px", verticalAlign : "middle" }} />
+                <HelpOutlineIcon width="14px" height="14px" fill={theme.palette.type === 'dark' ? "white" : "black"}  style={{ marginLeft : "4px", verticalAlign : "middle", ...iconMedium }}/>
               </IconButton>
             </CustomTextTooltip>}
           {rawErrors?.length &&
@@ -100,7 +102,7 @@ const ObjectFieldTemplate = ({
               <div key={index}>{error}</div>
             ))}>
               <IconButton disableTouchRipple="true" disableRipple="true" component="span" size="small">
-                <ErrorOutlineIcon width="14px" height="14px" fill="red" style={{ marginLeft : "4px", verticalAlign : "middle" }} />
+                <ErrorOutlineIcon width="14px" height="14px" fill="red" style={{ marginLeft : "4px", verticalAlign : "middle", ...iconMedium }} />
               </IconButton>
             </CustomTextTooltip>}
         </Grid>
