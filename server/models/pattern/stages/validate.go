@@ -12,7 +12,7 @@ import (
 	meshmodel "github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 )
 
-func Validator(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFunction {
+func Validator(prov ServiceInfoProvider, act ServiceActionProvider, skipValidation bool) ChainStageFunction {
 	s := selector.New(act.GetRegistry(), prov)
 
 	return func(data *Data, err error, next ChainStageNextFunction) {
@@ -34,6 +34,7 @@ func Validator(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFu
 			if k8s.Format {
 				svc.Settings = k8s.Format.DePrettify(svc.Settings, false)
 			}
+
 			//Validate workload definition
 			if !skipValidation {
 				if err := validateWorkload(svc.Settings, wc); err != nil {
