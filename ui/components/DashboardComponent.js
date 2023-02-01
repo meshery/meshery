@@ -16,7 +16,7 @@ import React from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import dataFetch from "../lib/data-fetch";
-import { updateGrafanaConfig, updateProgress, updatePrometheusConfig } from "../lib/store";
+import { updateGrafanaConfig, updateProgress, updatePrometheusConfig, updateTelemetryUrls } from "../lib/store";
 import { getK8sClusterIdsFromCtxId, getK8sClusterNamesFromCtxId } from "../utils/multi-ctx";
 import { versionMapper } from "../utils/nameMapper";
 import { submitGrafanaConfigure } from "./telemetry/grafana/GrafanaComponent";
@@ -26,11 +26,13 @@ import fetchDataPlanes from "./graphql/queries/DataPlanesQuery";
 import fetchClusterResources from "./graphql/queries/ClusterResourcesQuery";
 import subscribeClusterResources from "./graphql/subscriptions/ClusterResourcesSubscription";
 import fetchAvailableNamespaces from "./graphql/queries/NamespaceQuery";
+import fetchTelemetryCompsQuery from '../components/graphql/queries/TelemetryComponentsQuery';
 import { submitPrometheusConfigure } from "./telemetry/prometheus/PrometheusComponent";
 import MUIDataTable from "mui-datatables";
 import { MuiThemeProvider, createTheme } from '@material-ui/core/styles';
 import Popup from "./Popup";
 import { iconMedium } from "../css/icons.styles";
+import { extractURLFromScanData } from "./ConnectionWizard/helpers/metrics";
 
 const styles = (theme) => ({
   rootClass : { backgroundColor : "#eaeff1", },
@@ -137,6 +139,7 @@ class DashboardComponent extends React.Component {
       clusterResourcesSubscription : null,
       clusterResourcesQuery : null,
       namespaceQuery : null,
+      telemetryQuery : null
     };
   }
 
@@ -167,6 +170,9 @@ class DashboardComponent extends React.Component {
     }
     if (this.state.controlPlaneSubscription) {
       this.state.controlPlaneSubscription.unsubscribe()
+    }
+    if (this.state.telemetryQuery) {
+      this.state.telemetryQuery.unsubscribe();
     }
     this.disposeWorkloadWidgetSubscription();
   }
@@ -254,6 +260,29 @@ class DashboardComponent extends React.Component {
     }
   }
 
+  initTelemetryComponentQuery = () => {
+    const self = this;
+    const contextIDs = self.getK8sClusterIds();
+    const telemetryQuery = fetchTelemetryCompsQuery({
+      contexts : contextIDs
+    }).subscribe({
+      next : (components) => {
+        let prometheusURLs = [];
+        let grafanaURLs = [];
+        components.telemetryComps?.forEach((component) => {
+          const data = { spec : JSON.parse(component.spec), status : JSON.parse(component.status) };
+          if (component.name === "grafana") {
+            grafanaURLs = grafanaURLs.concat(extractURLFromScanData(data));
+          } else {
+            prometheusURLs = prometheusURLs.concat(extractURLFromScanData(data));
+          }
+        })
+
+        this.props.updateTelemetryUrls({ telemetryURLs : { "grafana" : grafanaURLs, "prometheus" : prometheusURLs } });
+      }
+    })
+    this.setState({ telemetryQuery });
+  }
   componentWillUnmount = () => {
     this._isMounted = false
     this.disposeSubscriptions()
@@ -271,7 +300,8 @@ class DashboardComponent extends React.Component {
       this.initMeshSyncControlPlaneSubscription();
       this.initDashboardClusterResourcesQuery();
       this.initDashboardClusterResourcesSubscription();
-      this.initNamespaceQuery()
+      this.initNamespaceQuery();
+      this.initTelemetryComponentQuery();
     }
   };
 
@@ -302,6 +332,7 @@ class DashboardComponent extends React.Component {
       this.initDashboardClusterResourcesQuery();
       this.initDashboardClusterResourcesSubscription();
       this.initNamespaceQuery();
+      this.initTelemetryComponentQuery();
     }
 
     if (prevState?.selectedNamespace !== this.state?.selectedNamespace) {
@@ -1404,6 +1435,7 @@ const mapDispatchToProps = (dispatch) => ({
   updateProgress : bindActionCreators(updateProgress, dispatch),
   updateGrafanaConfig : bindActionCreators(updateGrafanaConfig, dispatch),
   updatePrometheusConfig : bindActionCreators(updatePrometheusConfig, dispatch),
+  updateTelemetryUrls : bindActionCreators(updateTelemetryUrls, dispatch),
 });
 
 const mapStateToProps = (state) => {

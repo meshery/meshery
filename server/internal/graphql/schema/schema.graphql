@@ -480,6 +480,14 @@ input CatalogSelector {
   order: String!
 }
 
+# ================ TELEMETRY ==================== 
+
+
+type TelemetryComp {
+ name: String!
+ spec: String!
+ status: String!
+}
 # ============== RESYNC =============================
 
 # Type ReSyncActions define the actions involved during resync
@@ -604,6 +612,9 @@ type Query {
 
   # Query for meshmodel summary
   getMeshModelSummary(selector: MeshModelSummarySelector!): MeshModelSummary!
+
+  # Query for telemetry components
+  fetchTelemetryComponents(contexts: [String!]) : [TelemetryComp]!
 }
 
 
