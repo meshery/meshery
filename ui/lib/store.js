@@ -58,7 +58,10 @@ const initialState = fromJS({
   catalogVisibility: true,
   extensionType: '',
   capabilitiesRegistry: null,
-
+  telemetryURLs: {
+    grafana: [],
+    prometheus: []
+  },
   // global gql-subscriptions
   operatorState: null,
   meshSyncState: null,
@@ -92,7 +95,8 @@ export const actionTypes = {
   SET_MESHSYNC_SUBSCRIPTION: 'SET_MESHSYNC_SUBSCRIPTION',
   // UPDATE_SMI_RESULT: 'UPDATE_SMI_RESULT',
   UPDATE_EXTENSION_TYPE: 'UPDATE_EXTENSION_TYPE',
-  UPDATE_CAPABILITY_REGISTRY: 'UPDATE_CAPABILITY_REGISTRY' 
+  UPDATE_CAPABILITY_REGISTRY: 'UPDATE_CAPABILITY_REGISTRY',
+  UPDATE_TELEMETRY_URLS : 'UPDATE_TELEMETRY_URLS',
 };
 
 // REDUCERS
@@ -208,7 +212,9 @@ export const reducer = (state = initialState, action) => {
 
     case actionTypes.UPDATE_CAPABILITY_REGISTRY: 
       return state.merge({capabilitiesRegistry: action.capabilitiesRegistry})
-
+    
+    case actionTypes.UPDATE_TELEMETRY_URLS:
+      return state.updateIn(['telemetryURLs'], val => fromJS(action.telemetryURLs));
     default:
       return state;
   }
@@ -318,6 +324,9 @@ export const updateCapabilities = ({capabilitiesRegistry}) => dispatch => {
   return dispatch({type: actionTypes.UPDATE_CAPABILITY_REGISTRY, capabilitiesRegistry})
 }
 
+export const updateTelemetryUrls = ({ telemetryURLs }) => dispatch => {
+  return dispatch({type: actionTypes.UPDATE_TELEMETRY_URLS, telemetryURLs })
+}
 // export const updateSMIResults = ({smi_result}) => dispatch => {
 //   console.log("invoking the updateSMIResults action creator. . .",smi_result);
 //   return dispatch({ type: actionTypes.UPDATE_SMI_RESULT, smi_result });

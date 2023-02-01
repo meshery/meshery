@@ -38,14 +38,10 @@
 | ----------------- | --------------- | ----------- |
 | Adithya Krishna   | adithyaakrishna | Red Hat     |
 | Lee Calcote       | leecalcote      | Layer5      |
-| Aditya Chatterjee | warunicorn19    | Layer5      |
 
 
 ### Site Maintainers
 
 | Name                    | GitHub       | Affiliation |
 | ----------------------  | -----------  | ----------- |
-| Aditya Chatterjee       | warunicorn19 | Layer5      |
-| Debopriya Bhattacharjee | debo19       | Layer5      |
 | Nikhil Ladha.           | Nikhil-Ladha | Red Hat     |
-
