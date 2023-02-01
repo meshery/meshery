@@ -20,10 +20,8 @@ import GrafanaComponent from './telemetry/grafana/GrafanaComponent';
 import MeshAdapterConfigComponent from './MeshAdapterConfigComponent';
 import PrometheusComponent from './telemetry/prometheus/PrometheusComponent';
 // import MesherySettingsPerformanceComponent from "../components/MesherySettingsPerformanceComponent";
-import dataFetch from '../lib/data-fetch';
 import { updateProgress } from "../lib/store";
 import { withSnackbar } from "notistack";
-import { ctxUrl } from '../utils/multi-ctx';
 import PromptComponent from './PromptComponent';
 import resetDatabase from './graphql/queries/ResetDatabaseQuery';
 import { iconMedium } from '../css/icons.styles';
@@ -183,16 +181,26 @@ class MesherySettings extends React.Component {
   }
 
   static getDerivedStateFromProps(props, state) {
+    let st = {};
     if (JSON.stringify(props.k8sconfig) !== JSON.stringify(state.k8sconfig)
       || JSON.stringify(props.meshAdapters) !== JSON.stringify(state.meshAdapters)) {
-      return {
+      st = {
         k8sconfig : props.k8sconfig,
         meshAdapters : props.meshAdapters,
         grafana : props.grafana,
         prometheus : props.prometheus,
       };
     }
-    return null;
+    const compare = (arr1, arr2) => arr1.every((val, ind) => val === arr2[ind])
+
+    if (props.telemetryUrls.grafana.length !== state.scannedGrafana.length || !(compare(props.telemetryUrls.grafana, state.scannedGrafana))) {
+      st.scannedGrafana = props.telemetryUrls.grafana
+    }
+
+    if (props.telemetryUrls.prometheus.length !== state.scannedPrometheus.length || !(compare(props.telemetryUrls.prometheus, state.scannedPrometheus))) {
+      st.scannedPrometheus = props.telemetryUrls.prometheus
+    }
+    return st;
   }
 
   disposeMeshModelSummarySubscriptions = () => {
@@ -239,7 +247,6 @@ class MesherySettings extends React.Component {
   componentDidMount() {
     this._isMounted = true
 
-    this.fetchPromGrafanaScanData();
     this.disposeSubscriptions()
 
     if (this._isMounted) {
@@ -249,42 +256,11 @@ class MesherySettings extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (prevProps.selectedK8sContexts.length != this.props.selectedK8sContexts.length) {
-      this.fetchPromGrafanaScanData();
-    }
-
     if (prevState?.meshmodelSummarySelector !== this.state?.meshmodelSummarySelector) {
       this.disposeMeshModelSummarySubscriptions();
       this.initDashboardMeshModelSummaryQuery();
       this.initDashboardMeshModelSummarySubscription();
     }
-  }
-
-  fetchPromGrafanaScanData = () => {
-    const self = this;
-    self.props.updateProgress({ showProgress : true });
-    dataFetch(
-      ctxUrl('/api/system/meshsync/grafana', this.props.selectedK8sContexts),
-      {
-        method : "GET",
-        credentials : "include",
-      },
-      (result) => {
-        self.props.updateProgress({ showProgress : false });
-        if (!result) return;
-
-        if (Array.isArray(result.prometheus)) {
-          const urls = self.extractURLFromScanData(result.prometheus);
-          self.setState({ scannedPrometheus : urls });
-        }
-
-        if (Array.isArray(result.grafana)) {
-          const urls = self.extractURLFromScanData(result.grafana);
-          self.setState({ scannedGrafana : urls });
-        }
-      },
-      self.handleError("Unable to fetch Prometheus and Grafana details")
-    )
   }
 
   emptyStateMessageForMeshModelSummary = () => {
@@ -486,52 +462,6 @@ class MesherySettings extends React.Component {
         </>
       );
     };
-
-  /**
-   * extractURLFromScanData scans the ingress urls from the
-   * mesh scan data and returns an array of the response
-   * @param {object[]} scannedData
-   * @returns {string[]}
-   */
-  extractURLFromScanData = (scannedData) => {
-    const result = [];
-    scannedData.forEach(data => {
-      // Add loadbalancer based url
-      if (Array.isArray(data.status?.loadBalancer?.ingress)) {
-        data.status.loadBalancer.ingress.forEach(lbdata => {
-          let protocol = "http";
-
-          // Iterate over ports exposed by the service
-          if (Array.isArray(data.spec.ports)) {
-            data.spec.ports.forEach(({ port }) => {
-              if (port === 443) protocol = "https";
-
-              // From kubernetes v1.19 docs
-              // Hostname is set for load-balancer ingress points that are DNS based (typically AWS load-balancers)
-              // IP is set for load-balancer ingress points that are IP based (typically GCE or OpenStack load-balancers)
-              let address = lbdata.ip || lbdata.hostname;
-              if (address) result.push(`${protocol}://${address}:${port}`);
-            })
-          }
-        })
-      }
-
-      // Add clusterip based url
-      // As per kubernetes v1.19 api, "None", "" as well as a valid ip is a valid clusterIP
-      // Looking for valid ipv4 address
-      if (data.spec.clusterIP?.match(/^((25[0-5]|(2[0-4]|1[0-9]|[1-9]|)[0-9])(\.(?!$)|$)){4}$/g)?.[0]) {
-        let protocol = "http";
-        if (Array.isArray(data.spec.ports)) {
-          data.spec.ports.forEach(({ port }) => {
-            if (port === 443) protocol = "https";
-            result.push(`${protocol}://${data.spec.clusterIP}:${port}`);
-          })
-        }
-      }
-    })
-
-    return result
-  }
 
   handleError = (msg) => (error) => {
     this.props.updateProgress({ showProgress : false });
@@ -833,12 +763,14 @@ const mapStateToProps = (state) => {
   const grafana = state.get('grafana').toJS();
   const prometheus = state.get('prometheus').toJS();
   const selectedK8sContexts = state.get('selectedK8sContexts');
+  const telemetryUrls = state.get('telemetryURLs').toJS();
   return {
     k8sconfig,
     meshAdapters,
     grafana,
     prometheus,
     selectedK8sContexts,
+    telemetryUrls,
   };
 };
 

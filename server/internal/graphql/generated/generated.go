@@ -357,6 +357,7 @@ type ComplexityRoot struct {
 		FetchPatternCatalogContent func(childComplexity int, selector *model.CatalogSelector) int
 		FetchPatterns              func(childComplexity int, selector model.PageFilter) int
 		FetchResults               func(childComplexity int, selector model.PageFilter, profileID string) int
+		FetchTelemetryComponents   func(childComplexity int, contexts []string) int
 		GetAvailableAddons         func(childComplexity int, filter *model.ServiceMeshFilter) int
 		GetAvailableNamespaces     func(childComplexity int, k8sClusterIDs []string) int
 		GetClusterResources        func(childComplexity int, k8scontextIDs []string, namespace string) int
@@ -396,6 +397,12 @@ type ComplexityRoot struct {
 		SubscribePerfProfiles             func(childComplexity int, selector model.PageFilter) int
 		SubscribePerfResults              func(childComplexity int, selector model.PageFilter, profileID string) int
 	}
+
+	TelemetryComp struct {
+		Name   func(childComplexity int) int
+		Spec   func(childComplexity int) int
+		Status func(childComplexity int) int
+	}
 }
 
 type MutationResolver interface {
@@ -425,6 +432,7 @@ type QueryResolver interface {
 	FetchFilterCatalogContent(ctx context.Context, selector *model.CatalogSelector) ([]*model.CatalogFilter, error)
 	GetClusterResources(ctx context.Context, k8scontextIDs []string, namespace string) (*model.ClusterResources, error)
 	GetMeshModelSummary(ctx context.Context, selector model.MeshModelSummarySelector) (*model.MeshModelSummary, error)
+	FetchTelemetryComponents(ctx context.Context, contexts []string) ([]*model.TelemetryComp, error)
 }
 type SubscriptionResolver interface {
 	ListenToAddonState(ctx context.Context, filter *model.ServiceMeshFilter) (<-chan []*model.AddonList, error)
@@ -1849,6 +1857,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.FetchResults(childComplexity, args["selector"].(model.PageFilter), args["profileID"].(string)), true
 
+	case "Query.fetchTelemetryComponents":
+		if e.complexity.Query.FetchTelemetryComponents == nil {
+			break
+		}
+
+		args, err := ec.field_Query_fetchTelemetryComponents_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.FetchTelemetryComponents(childComplexity, args["contexts"].([]string)), true
+
 	case "Query.getAvailableAddons":
 		if e.complexity.Query.GetAvailableAddons == nil {
 			break
@@ -2217,6 +2237,27 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Subscription.SubscribePerfResults(childComplexity, args["selector"].(model.PageFilter), args["profileID"].(string)), true
+
+	case "TelemetryComp.name":
+		if e.complexity.TelemetryComp.Name == nil {
+			break
+		}
+
+		return e.complexity.TelemetryComp.Name(childComplexity), true
+
+	case "TelemetryComp.spec":
+		if e.complexity.TelemetryComp.Spec == nil {
+			break
+		}
+
+		return e.complexity.TelemetryComp.Spec(childComplexity), true
+
+	case "TelemetryComp.status":
+		if e.complexity.TelemetryComp.Status == nil {
+			break
+		}
+
+		return e.complexity.TelemetryComp.Status(childComplexity), true
 
 	}
 	return 0, false
@@ -2792,6 +2833,14 @@ input CatalogSelector {
   order: String!
 }
 
+# ================ TELEMETRY ==================== 
+
+
+type TelemetryComp {
+ name: String!
+ spec: String!
+ status: String!
+}
 # ============== RESYNC =============================
 
 # Type ReSyncActions define the actions involved during resync
@@ -2916,6 +2965,9 @@ type Query {
 
   # Query for meshmodel summary
   getMeshModelSummary(selector: MeshModelSummarySelector!): MeshModelSummary!
+
+  # Query for telemetry components
+  fetchTelemetryComponents(contexts: [String!]) : [TelemetryComp]!
 }
 
 
@@ -3150,6 +3202,21 @@ func (ec *executionContext) field_Query_fetchResults_args(ctx context.Context, r
 		}
 	}
 	args["profileID"] = arg1
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_fetchTelemetryComponents_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 []string
+	if tmp, ok := rawArgs["contexts"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("contexts"))
+		arg0, err = ec.unmarshalOString2ᚕstringᚄ(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["contexts"] = arg0
 	return args, nil
 }
 
@@ -13567,6 +13634,69 @@ func (ec *executionContext) fieldContext_Query_getMeshModelSummary(ctx context.C
 	return fc, nil
 }
 
+func (ec *executionContext) _Query_fetchTelemetryComponents(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_fetchTelemetryComponents(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().FetchTelemetryComponents(rctx, fc.Args["contexts"].([]string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.TelemetryComp)
+	fc.Result = res
+	return ec.marshalNTelemetryComp2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐTelemetryComp(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_fetchTelemetryComponents(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "name":
+				return ec.fieldContext_TelemetryComp_name(ctx, field)
+			case "spec":
+				return ec.fieldContext_TelemetryComp_spec(ctx, field)
+			case "status":
+				return ec.fieldContext_TelemetryComp_status(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type TelemetryComp", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_fetchTelemetryComponents_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Query___type(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Query___type(ctx, field)
 	if err != nil {
@@ -14819,6 +14949,138 @@ func (ec *executionContext) fieldContext_Subscription_subscribeMeshModelSummary(
 	if fc.Args, err = ec.field_Subscription_subscribeMeshModelSummary_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _TelemetryComp_name(ctx context.Context, field graphql.CollectedField, obj *model.TelemetryComp) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_TelemetryComp_name(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Name, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_TelemetryComp_name(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "TelemetryComp",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _TelemetryComp_spec(ctx context.Context, field graphql.CollectedField, obj *model.TelemetryComp) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_TelemetryComp_spec(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Spec, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_TelemetryComp_spec(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "TelemetryComp",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _TelemetryComp_status(ctx context.Context, field graphql.CollectedField, obj *model.TelemetryComp) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_TelemetryComp_status(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Status, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_TelemetryComp_status(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "TelemetryComp",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
 	}
 	return fc, nil
 }
@@ -19312,6 +19574,29 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			out.Concurrently(i, func() graphql.Marshaler {
 				return rrm(innerCtx)
 			})
+		case "fetchTelemetryComponents":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_fetchTelemetryComponents(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return rrm(innerCtx)
+			})
 		case "__type":
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
@@ -19414,6 +19699,48 @@ func (ec *executionContext) _Subscription(ctx context.Context, sel ast.Selection
 	default:
 		panic("unknown field " + strconv.Quote(fields[0].Name))
 	}
+}
+
+var telemetryCompImplementors = []string{"TelemetryComp"}
+
+func (ec *executionContext) _TelemetryComp(ctx context.Context, sel ast.SelectionSet, obj *model.TelemetryComp) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, telemetryCompImplementors)
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("TelemetryComp")
+		case "name":
+
+			out.Values[i] = ec._TelemetryComp_name(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "spec":
+
+			out.Values[i] = ec._TelemetryComp_spec(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "status":
+
+			out.Values[i] = ec._TelemetryComp_status(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
 }
 
 var __DirectiveImplementors = []string{"__Directive"}
@@ -20688,6 +21015,44 @@ func (ec *executionContext) marshalNString2string(ctx context.Context, sel ast.S
 	return res
 }
 
+func (ec *executionContext) marshalNTelemetryComp2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐTelemetryComp(ctx context.Context, sel ast.SelectionSet, v []*model.TelemetryComp) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOTelemetryComp2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐTelemetryComp(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	return ret
+}
+
 func (ec *executionContext) marshalN__Directive2githubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐDirective(ctx context.Context, sel ast.SelectionSet, v introspection.Directive) graphql.Marshaler {
 	return ec.___Directive(ctx, sel, &v)
 }
@@ -21703,6 +22068,13 @@ func (ec *executionContext) marshalOString2ᚖstring(ctx context.Context, sel as
 	}
 	res := graphql.MarshalString(*v)
 	return res
+}
+
+func (ec *executionContext) marshalOTelemetryComp2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐTelemetryComp(ctx context.Context, sel ast.SelectionSet, v *model.TelemetryComp) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._TelemetryComp(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalO__EnumValue2ᚕgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐEnumValueᚄ(ctx context.Context, sel ast.SelectionSet, v []introspection.EnumValue) graphql.Marshaler {

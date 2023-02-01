@@ -32,20 +32,23 @@ import getPageContext from '../components/PageContext';
 import { MESHSYNC_EVENT_SUBSCRIPTION, OPERATOR_EVENT_SUBSCRIPTION } from '../components/subscription/helpers';
 import { GQLSubscription } from '../components/subscription/subscriptionhandler';
 import dataFetch, { promisifiedDataFetch } from '../lib/data-fetch';
-import { actionTypes, makeStore, toggleCatalogContent } from '../lib/store';
-import theme from "../themes";
+import { actionTypes, makeStore, toggleCatalogContent,updateTelemetryUrls } from '../lib/store';
+import theme, { styles } from "../themes";
 import { getK8sConfigIdsFromK8sConfig } from '../utils/multi-ctx';
 import './../public/static/style/index.css';
 import subscribeK8sContext from "../components/graphql/subscriptions/K8sContextSubscription";
 import { bindActionCreators } from 'redux';
 import { darkTheme } from '../themes/app';
-import { styles } from '../themes';
 import "./styles/AnimatedFilter.css"
 import "./styles/AnimatedMeshery.css"
 import "./styles/AnimatedMeshPattern.css"
 import "./styles/AnimatedMeshSync.css"
 import PlaygroundMeshDeploy from './extension/AccessMesheryModal';
 import Router from "next/router";
+import subscribeMeshSyncEvents from '../components/graphql/subscriptions/MeshSyncEventsSubscription';
+import { isTelemetryComponent, TelemetryComps } from '../utils/nameMapper';
+import { extractURLFromScanData } from '../components/ConnectionWizard/helpers/metrics';
+import { updateURLs } from '../utils/utils';
 
 if (typeof window !== 'undefined') {
   require('codemirror/mode/yaml/yaml');
@@ -75,6 +78,7 @@ class MesheryApp extends App {
   constructor() {
     super();
     this.pageContext = getPageContext();
+    this.meshsyncEventsSubscriptionRef = React.createRef();
 
     this.state = {
       mobileOpen : false,
@@ -87,6 +91,43 @@ class MesheryApp extends App {
       theme : 'light',
       isOpen : false
     };
+  }
+
+  initMeshSyncEventsSubscription(contexts=[]) {
+    if (this.meshsyncEventsSubscriptionRef.current) {
+      this.meshsyncEventsSubscriptionRef.current.dispose();
+    }
+
+    const meshSyncEventsSubscription = subscribeMeshSyncEvents((result) => {
+      if (result.meshsyncevents.object.kind === "Service") {
+        const telemetryCompName = isTelemetryComponent(result.meshsyncevents.object?.metadata?.name);
+        let prometheusURLs = [];
+        let grafanaURLs = [];
+
+        const grafanaUrlsSet = new Set(this.props.telemetryURLs.grafana);
+        const promUrlsSet = new Set(this.props.telemetryURLs.prometheus);
+
+        const eventType = result.meshsyncevents.type;
+        const spec = result?.meshsyncevents?.object?.spec?.attribute;
+        const status = result?.meshsyncevents?.object?.status?.attribute;
+        const data = { spec : JSON.parse(spec), status : JSON.parse(status) };
+
+        if (telemetryCompName === TelemetryComps.GRAFANA) {
+          grafanaURLs = grafanaURLs.concat(extractURLFromScanData(data));
+          updateURLs(grafanaUrlsSet, grafanaURLs, eventType);
+        } else if (telemetryCompName === TelemetryComps.PROMETHEUS) {
+          prometheusURLs = new Set(prometheusURLs.concat(extractURLFromScanData(data)));
+          updateURLs(promUrlsSet, prometheusURLs, eventType);
+        }
+
+        this.props.updateTelemetryUrls({ telemetryURLs : { grafana : Array.from(grafanaUrlsSet), prometheus : Array.from(promUrlsSet) } })
+      }
+    },
+    {
+      contexts : contexts
+    });
+
+    this.meshsyncEventsSubscriptionRef.current = meshSyncEventsSubscription;
   }
 
   componentDidMount() {
@@ -107,7 +148,10 @@ class MesheryApp extends App {
       },
       err => console.error(err)
     )
-    const k8sContextSubscription = (page = "", search = "", pageSize = "10", order = "") => {
+
+    this.initMeshSyncEventsSubscription(this.state.activeK8sContexts);
+
+    const k8sContextSubscription = (page="", search="", pageSize="10", order="") => {
       return subscribeK8sContext((result) => {
         this.setState({ k8sContexts : result.k8sContext }, () => this.setActiveContexts("all"))
         this.props.store.dispatch({ type : actionTypes.UPDATE_CLUSTER_CONFIG, k8sConfig : result.k8sContext.contexts });
@@ -135,7 +179,7 @@ class MesheryApp extends App {
 
     if (!_.isEqual(prevProps.k8sConfig, k8sConfig)) {
       const { operatorSubscription, meshSyncSubscription } = this.state;
-      console.log("k8sconfig changed, re-initialising subscriptions");
+      console.log("k8sconfig changed, re-initialising subscriptions", k8sConfig, this.state.activeK8sContexts);
       const ids = getK8sConfigIdsFromK8sConfig(k8sConfig)
       if (operatorSubscription) {
         operatorSubscription.updateSubscription(ids);
@@ -144,6 +188,11 @@ class MesheryApp extends App {
       if (meshSyncSubscription) {
         meshSyncSubscription.updateSubscription(ids);
       }
+
+      if (this.meshsyncEventsSubscriptionRef.current) {
+        this.initMeshSyncEventsSubscription(ids);
+      }
+
     }
   }
 
@@ -408,11 +457,13 @@ const mapStateToProps = state => ({
   k8sConfig : state.get("k8sConfig"),
   operatorSubscription : state.get("operatorSubscription"),
   meshSyncSubscription : state.get("meshSyncSubscription"),
-  capabilitiesRegistry : state.get("capabilitiesRegistry")
+  capabilitiesRegistry : state.get("capabilitiesRegistry"),
+  telemetryURLs : state.get("telemetryURLs"),
 })
 
 const mapDispatchToProps = dispatch => ({
-  toggleCatalogContent : bindActionCreators(toggleCatalogContent, dispatch)
+  toggleCatalogContent : bindActionCreators(toggleCatalogContent, dispatch),
+  updateTelemetryUrls : bindActionCreators(updateTelemetryUrls, dispatch)
 })
 
 const MesheryWithRedux = withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(MesheryApp));

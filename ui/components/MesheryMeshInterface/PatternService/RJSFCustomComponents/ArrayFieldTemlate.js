@@ -11,6 +11,7 @@ import HelpOutlineIcon from "../../../../assets/icons/HelpOutlineIcon";
 import { isMultiSelect, getDefaultFormState } from "@rjsf/utils";
 import ErrorOutlineIcon from "../../../../assets/icons/ErrorOutlineIcon";
 import { ERROR_COLOR } from "../../../../constants/colors";
+import { iconMedium, iconSmall } from "../../../../css/icons.styles";
 const styles = (theme) => ({
   typography : {
     fontSize : "0.8rem",
@@ -21,7 +22,6 @@ const styles = (theme) => ({
     },
   }
 });
-
 function getTitleForItem(props) {
   const title = getTitle(props);
 
@@ -189,7 +189,7 @@ const DefaultNormalArrayFieldTemplate = (props) => {
               (props.uiSchema["ui:description"] || props.schema.description) &&
               <CustomTextTooltip backgroundColor="#3C494F" title={props.uiSchema["ui:description"] || props.schema.description}>
                 <IconButton  disableTouchRipple="true" disableRipple="true">
-                  <HelpOutlineIcon width="14px" height="14px"  fill={theme.palette.type === 'dark' ? "white" : "black"}  style={{ marginLeft : '4px' }} />
+                  <HelpOutlineIcon width="14px" height="14px"  fill={theme.palette.type === 'dark' ? "white" : "black"}  style={{ marginLeft : '4px', ...iconSmall }} />
                 </IconButton>
               </CustomTextTooltip>
             }
@@ -206,7 +206,7 @@ const DefaultNormalArrayFieldTemplate = (props) => {
                     width="16px"
                     height="16px"
                     fill={theme.palette.type === 'dark' ? "#F91313" : "#B32700"}
-                    style={{ marginLeft : "4px", verticalAlign : "middle" }}
+                    style={{ marginLeft : "4px", verticalAlign : "middle", ...iconSmall }}
                   />
                 </IconButton>
               </CustomTextTooltip>
