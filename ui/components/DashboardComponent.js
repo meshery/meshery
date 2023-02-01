@@ -5,7 +5,7 @@ import {
 // import {Table, TableBody, TableContainer, TableHead, TableRow,} from "@material-ui/core"
 import blue from "@material-ui/core/colors/blue";
 import Grid from "@material-ui/core/Grid";
-import { withStyles } from "@material-ui/core/styles";
+import { createTheme, withStyles, MuiThemeProvider } from "@material-ui/core/styles";
 import AddIcon from "@material-ui/icons/AddCircleOutline";
 import CloseIcon from "@material-ui/icons/Close";
 import SettingsIcon from "@material-ui/icons/Settings";
@@ -29,13 +29,15 @@ import fetchAvailableNamespaces from "./graphql/queries/NamespaceQuery";
 import fetchTelemetryCompsQuery from '../components/graphql/queries/TelemetryComponentsQuery';
 import { submitPrometheusConfigure } from "./telemetry/prometheus/PrometheusComponent";
 import MUIDataTable from "mui-datatables";
-import { MuiThemeProvider, createTheme } from '@material-ui/core/styles';
 import Popup from "./Popup";
 import { iconMedium } from "../css/icons.styles";
 import { extractURLFromScanData } from "./ConnectionWizard/helpers/metrics";
 
 const styles = (theme) => ({
-  rootClass : { backgroundColor : "#eaeff1", },
+  rootClass : { backgroundColor : theme.palette.secondary.elevatedComponents2, },
+  datatable : {
+    boxShadow : "none",
+  },
   chip : {
     marginRight : theme.spacing(1),
     marginBottom : theme.spacing(1),
@@ -85,7 +87,7 @@ const styles = (theme) => ({
     color : "#000",
   },
   dashboardSection : {
-    backgroundColor : "#fff",
+    backgroundColor : theme.palette.secondary.elevatedComponents,
     padding : theme.spacing(2),
     borderRadius : 4,
     height : "100%",
@@ -755,6 +757,22 @@ class DashboardComponent extends React.Component {
       },
     }
   })
+  getDarkMuiTheme = () => createTheme({
+    shadows : ["none"],
+    palette : {
+      type : "dark",
+    },
+    overrides : {
+      MuiPaper : { root : { backgroundColor : '#363636' } },
+      MuiFormLabel : {
+        root : {
+          "&$focused" : {
+            color : "#00B39F",
+          },
+        }
+      },
+    }
+  })
 
 
   /**
@@ -770,7 +788,7 @@ class DashboardComponent extends React.Component {
     let versionSort = "asc";
     let proxySort = "asc";
     let tempComp = [];
-
+    const { theme } = this.props;
     components
       .filter((comp) => comp.namespace === self.state.activeMeshScanNamespace[mesh.name])
       .map((component) => tempComp.push(component))
@@ -952,8 +970,10 @@ class DashboardComponent extends React.Component {
     if (Array.isArray(components) && components.length)
       return (
         <Paper elevation={1} style={{ padding : "2rem", marginTop : "1rem" }}>
-          <MuiThemeProvider theme={this.getMuiTheme()}>
+          <MuiThemeProvider theme={theme.palette.type == "dark" ? this.getDarkMuiTheme() : this.getMuiTheme()}>
+
             <MUIDataTable
+              className={this.props.classes.datatable}
               title={
                 <>
                   <div style={{ display : "flex", alignItems : "center", marginBottom : "1rem" }}>
@@ -966,7 +986,7 @@ class DashboardComponent extends React.Component {
               options={options}
               columns={columns}
             />
-          </MuiThemeProvider>
+          </MuiThemeProvider >
         </Paper>
       );
 
@@ -983,6 +1003,7 @@ class DashboardComponent extends React.Component {
     const self = this;
     let kindSort = "asc";
     let countSort = "asc";
+    const { theme } = this.props;
     const switchSortOrder = (type) => {
       if (type === "kindSort") {
         kindSort = (kindSort === "asc") ? "desc" : "asc";
@@ -1070,7 +1091,7 @@ class DashboardComponent extends React.Component {
     if (Array.isArray(resources) && resources.length)
       return (
         <Paper elevation={1} style={{ padding : "2rem" }}>
-          <MuiThemeProvider theme={this.getMuiTheme()}>
+          <MuiThemeProvider theme={theme.palette.type == "dark" ? this.getDarkMuiTheme() : this.getMuiTheme()}>
             <MUIDataTable
               title={
                 <>
@@ -1305,7 +1326,7 @@ class DashboardComponent extends React.Component {
       </Grid>
     );
 
-    const showServiceMesh = (
+    const showServiceMesh =(
       <>
         {self?.state?.meshScan && Object.keys(self?.state?.meshScan).length
           ? (
@@ -1334,7 +1355,7 @@ class DashboardComponent extends React.Component {
                 flexDirection : "column",
               }}
             >
-              <Typography style={{ fontSize : "1.5rem", marginBottom : "2rem" }} align="center" color="textSecondary">
+              <Typography style={{ fontSize : "1.5rem", marginBottom : "2rem" }} align="center" >
                 {this.emptyStateMessageForServiceMeshesInfo()}
               </Typography>
               <Button
@@ -1367,7 +1388,7 @@ class DashboardComponent extends React.Component {
                 flexDirection : "column",
               }}
             >
-              <Typography style={{ fontSize : "1.5rem", marginBottom : "2rem" }} align="center" color="textSecondary">
+              <Typography style={{ fontSize : "1.5rem", marginBottom : "2rem" }} align="center" >
                 {this.emptyStateMessageForClusterResources()}
               </Typography>
               <Button
@@ -1456,6 +1477,6 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default withStyles(styles)(
+export default withStyles(styles, { withTheme : true })(
   connect(mapStateToProps, mapDispatchToProps)(withRouter(withSnackbar(DashboardComponent)))
 );

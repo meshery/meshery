@@ -49,6 +49,7 @@ const styles = (theme) => ({
     width : theme.spacing(1.75),
     marginLeft : theme.spacing(0.5),
   },
+
   iconText : {
     display : 'inline',
     verticalAlign : 'middle',

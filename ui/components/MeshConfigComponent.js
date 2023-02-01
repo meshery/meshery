@@ -30,6 +30,7 @@ const styles = (theme) => ({
     },
   },
   icon : { width : theme.spacing(2.5), },
+  operatorIcon : {   width : theme.spacing(2.5), filter : theme.palette.secondary.brightness, },
   paper : { margin : theme.spacing(2), padding : theme.spacing(2), },
   heading : { textAlign : "center", },
   configBoxContainer : {
@@ -716,7 +717,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
                                   style={!operatorState ? { opacity : 0.5 }: {}}
                                   // onDelete={handleReconfigure}
                                   onClick={() => handleOperatorClick(rowMetaData.rowIndex)}
-                                  icon={<img src="/static/img/meshery-operator.svg" className={classes.icon} />}
+                                  icon={<img src="/static/img/meshery-operator.svg" className={classes.operatorIcon} />}
                                   variant="outlined"
                                   data-cy="chipOperator"
                                 />

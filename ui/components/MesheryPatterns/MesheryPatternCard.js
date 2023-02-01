@@ -17,6 +17,7 @@ import useStyles from "./Cards.styles";
 import YAMLDialog from "../YamlDialog";
 import PublicIcon from '@material-ui/icons/Public';
 import TooltipButton from '../../utils/TooltipButton'
+import CloneIcon from "../../public/static/img/CloneIcon";
 import { VISIBILITY } from "../../utils/Enum";
 
 const INITIAL_GRID_SIZE = { xl : 4, md : 6, xs : 12 };
@@ -169,8 +170,8 @@ function MesheryPatternCard({
                 }
                 className={classes.testsButton}
               >
-                <Avatar src="/static/img/clone-white.svg" className={classes.clonePatt} />
-                <span className={classes.btnText}> Clone </span>
+                <CloneIcon fill="#ffffff" className={classes.iconPatt} />
+                <span className={classes.cloneBtnText}> Clone </span>
               </TooltipButton>  }
 
             </div>
