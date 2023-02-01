@@ -104,7 +104,7 @@
     "react-select": "^5.7.0",
     "react-share": "^4.4.0",
     "react-slick": "^0.29.0",
-    "redux": "^4.2.0",
+    "redux": "^4.2.1",
     "redux-thunk": "^2.4.0",
     "relay-runtime": "^14.0.0",
     "set-value": "^4.0.1",
