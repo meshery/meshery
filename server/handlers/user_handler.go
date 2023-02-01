@@ -121,6 +121,15 @@ func (h *Handler) UserPrefsHandler(w http.ResponseWriter, req *http.Request, pre
 	}
 }
 
+// swagger:route POST /api/content/design/share ShareContent idPostShareContent
+// Handle POST request for Sharing content
+//
+// Used to share designs with others
+// responses:
+// 	200:
+//  403:
+//  500:
+
 func (h *Handler) ShareDesignHandler(w http.ResponseWriter, r *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	statusCode, err := provider.ShareDesign(r)
 	if err != nil {
