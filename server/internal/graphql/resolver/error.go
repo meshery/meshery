@@ -34,7 +34,7 @@ const (
 	ErrMeshModelSummarySubscriptionCode     = "2248"
 	ErrGettingMeshModelSummaryCode          = "2249"
 	ErrGettingRegistryManagerCode           = "2250"
-	ErrGettingTelemetryComponentsCode		= "2251"
+	ErrGettingTelemetryComponentsCode       = "2251"
 )
 
 var (
