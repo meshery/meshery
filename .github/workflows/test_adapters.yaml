@@ -54,7 +54,7 @@ jobs:
       fail-fast: false
       matrix:
         k8s_version: ['v1.23.13', 'v1.24.7', 'v1.25.3']
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     outputs:
       exitstatus: ${{ steps.runresources.outputs.exitstatus }}
     steps:

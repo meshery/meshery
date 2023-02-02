@@ -8,7 +8,8 @@ module.exports = {
   "extends" : [
     "eslint:recommended",
     "plugin:react/recommended",
-    "plugin:cypress/recommended"
+    "plugin:cypress/recommended",
+    "next/core-web-vitals"
   ],
   "globals" : {
     "Atomics" : "readonly",
@@ -25,6 +26,9 @@ module.exports = {
     "cypress"
   ],
   "rules" : {
+    "@next/next/no-img-element" : "off", // turn off next img/image warning
+    "react-hooks/rules-of-hooks" : "error", // turn off react hooks rules of hooks
+    "jsx-a11y/alt-text" : "off", // turn off image alt text warning
     "array-bracket-spacing" : ["error", "never"],
     "comma-style" : ["error"],
     "jsx-quotes" : ["error", "prefer-double"],

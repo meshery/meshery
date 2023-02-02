@@ -23,7 +23,7 @@ export const pingGrafanaWithNotification = (updateProgress, action, enqueueSnack
   const successCb = (result) => {
     updateProgress({ showProgress : false });
     if (typeof result !== "undefined") {
-      enqueueSnackbar("Grafana successfully pinged!", { variant : "success",
+      enqueueSnackbar("Grafana pinged!", { variant : "success",
         autoHideDuration : 2000,
         action });
     }
@@ -69,7 +69,7 @@ export const pingPrometheusWithNotification = (updateProgress, action, enqueueSn
   const successCb = (result) => {
     updateProgress({ showProgress : false });
     if (typeof result !== "undefined") {
-      enqueueSnackbar("Prometheus successfully pinged!", { variant : "success",
+      enqueueSnackbar("Prometheus pinged!", { variant : "success",
         autoHideDuration : 2000,
         action });
     }
@@ -130,42 +130,42 @@ export const fetchPromGrafanaScanData = (ctx) => {
    * @param {object[]} scannedData
    * @returns {string[]}
    */
-const extractURLFromScanData = (scannedData) => {
+export const extractURLFromScanData = (data) => {
   const result = [];
-  scannedData.forEach(data => {
-    // Add loadbalancer based url
-    if (Array.isArray(data.status?.loadBalancer?.ingress)) {
-      data.status.loadBalancer.ingress.forEach(lbdata => {
-        let protocol = "http";
-
-        // Iterate over ports exposed by the service
-        if (Array.isArray(data.spec.ports)) {
-          data.spec.ports.forEach(({ port }) => {
-            if (port === 443) protocol = "https";
-
-            // From kubernetes v1.19 docs
-            // Hostname is set for load-balancer ingress points that are DNS based (typically AWS load-balancers)
-            // IP is set for load-balancer ingress points that are IP based (typically GCE or OpenStack load-balancers)
-            let address = lbdata.ip || lbdata.hostname;
-            if (address) result.push(`${protocol}://${address}:${port}`);
-          })
-        }
-      })
-    }
-
-    // Add clusterip based url
-    // As per kubernetes v1.19 api, "None", "" as well as a valid ip is a valid clusterIP
-    // Looking for valid ipv4 address
-    if (data.spec.clusterIP?.match(/^((25[0-5]|(2[0-4]|1[0-9]|[1-9]|)[0-9])(\.(?!$)|$)){4}$/g)?.[0]) {
+  // scannedData.forEach(data => {
+  // Add loadbalancer based url
+  if (Array.isArray(data.status?.loadBalancer?.ingress)) {
+    data.status.loadBalancer.ingress.forEach(lbdata => {
       let protocol = "http";
+
+      // Iterate over ports exposed by the service
       if (Array.isArray(data.spec.ports)) {
         data.spec.ports.forEach(({ port }) => {
           if (port === 443) protocol = "https";
-          result.push(`${protocol}://${data.spec.clusterIP}:${port}`);
+
+          // From kubernetes v1.19 docs
+          // Hostname is set for load-balancer ingress points that are DNS based (typically AWS load-balancers)
+          // IP is set for load-balancer ingress points that are IP based (typically GCE or OpenStack load-balancers)
+          let address = lbdata.ip || lbdata.hostname;
+          if (address) result.push(`${protocol}://${address}:${port}`);
         })
       }
+    })
+  }
+
+  // Add clusterip based url
+  // As per kubernetes v1.19 api, "None", "" as well as a valid ip is a valid clusterIP
+  // Looking for valid ipv4 address
+  if (data.spec.clusterIP?.match(/^((25[0-5]|(2[0-4]|1[0-9]|[1-9]|)[0-9])(\.(?!$)|$)){4}$/g)?.[0]) {
+    let protocol = "http";
+    if (Array.isArray(data.spec.ports)) {
+      data.spec.ports.forEach(({ port }) => {
+        if (port === 443) protocol = "https";
+        result.push(`${protocol}://${data.spec.clusterIP}:${port}`);
+      })
     }
-  })
+  }
+  // })
 
   return result
 }
@@ -198,7 +198,7 @@ export const handleGrafanaConfigure = (grafanaURL, grafanaAPIKey, updateProgress
     (result) => {
       updateProgress({ showProgress : false });
       if (typeof result !== "undefined") {
-        enqueueSnackbar("Grafana was successfully configured!", { variant : "success",
+        enqueueSnackbar("Grafana was configured!", { variant : "success",
           autoHideDuration : 2000,
           action });
         updateGrafanaConfig({ grafana : { grafanaURL,
@@ -208,7 +208,7 @@ export const handleGrafanaConfigure = (grafanaURL, grafanaAPIKey, updateProgress
     (err) => {
       updateProgress({ showProgress : false });
       if (typeof result !== "undefined") {
-        enqueueSnackbar("Grafana was not successfully configured! :" + err, { variant : "error",
+        enqueueSnackbar("Grafana was not configured! :" + err, { variant : "error",
           autoHideDuration : 2000,
           action });
       }
@@ -242,7 +242,7 @@ export const handlePrometheusConfigure = (prometheusURL, updateProgress, enqueue
     (result) => {
       updateProgress({ showProgress : false });
       if (typeof result !== "undefined") {
-        enqueueSnackbar("Prometheus was successfully configured!", { variant : "success",
+        enqueueSnackbar("Prometheus was configured!", { variant : "success",
           autoHideDuration : 2000,
           action });
         updatePrometheusConfig({ prometheus : { prometheusURL,
@@ -252,7 +252,7 @@ export const handlePrometheusConfigure = (prometheusURL, updateProgress, enqueue
     (err) => {
       updateProgress({ showProgress : false });
       if (typeof result !== "undefined") {
-        enqueueSnackbar("Prometheus was not successfully configured! :" + err, { variant : "error",
+        enqueueSnackbar("Prometheus was not configured! :" + err, { variant : "error",
           autoHideDuration : 2000,
           action });
       }

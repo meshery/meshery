@@ -205,7 +205,7 @@ mesheryctl system dashboard --port-forward
 			log.Info("Opening Meshery (" + currCtx.GetEndpoint() + ") in browser.")
 			err = utils.NavigateToBrowser(currCtx.GetEndpoint())
 			if err != nil {
-				log.Warn("Failed to open Meshery in browser, please point your browser to " + currCtx.GetEndpoint() + " to access Meshery.")
+				log.Warn("Failed to open Meshery in your browser, please point your browser to " + currCtx.GetEndpoint() + " to access Meshery.")
 			}
 		} else {
 			log.Info("Meshery UI available at: ", currCtx.GetEndpoint())

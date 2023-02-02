@@ -1,0 +1,39 @@
+<style>
+  .posts {
+    list-style-image: url("/assets/img/meshery/meshery-logo-light.svg");
+  }
+  .post {
+    padding: 0.3rem 0.4rem;
+  }
+</style>
+
+<h3>Recent Discussions with "{{ include.tag }}" Tag</h3>
+<ul class="posts">
+  {% if include.tag == "mesheryctl" %}
+  <!-- -->
+  {% assign item = site.data.discuss.mesheryctl -%}
+  <!-- -->
+  {% else %}
+  <!-- -->
+  {% assign item = site.data.discuss.meshery -%}
+  <!-- -->
+  {% endif %}
+  <!-- -->
+  {% assign users = item.users %}
+  <!-- -->
+  {% assign topics = item.topic_list.topics %}
+  <!-- -->
+
+  {% for post in topics limit:10 %}
+  <!-- -->
+  <li class="post">
+    <span class="post-date"> {{ post.created_at | date: "%b %d" }} | </span>
+    <a href="https://discuss.layer5.io/t/{{ post.topics[0].slug }}/{{ post.id }}"> {{ post.title }}</a>
+    <span class="poost-author">
+      {%for user in users%} {% if(post.posters[0].user_id == user.id)%} {%assign author = user.name%} {%break%}
+      {%endif%} {%endfor%} by {{author}}
+    </span>
+  </li>
+  {% endfor %}
+</ul>
+

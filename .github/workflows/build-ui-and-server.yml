@@ -25,10 +25,10 @@ jobs:
   build-backend:
     name: Backend build
     if: github.repository == 'meshery/meshery'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Check out code
-        uses: actions/checkout@master
+        uses: actions/checkout@v3
         with:
           fetch-depth: 1
       - name: Setup Go
@@ -49,18 +49,18 @@ jobs:
         with:
           name: meshery
           path: ./main
-  build-ui:
+  ui-build:
     name: UI build
     if: github.repository == 'meshery/meshery'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Check out code
-        uses: actions/checkout@master
+        uses: actions/checkout@v3
         with:
           fetch-depth: 1
-      - uses: actions/setup-node@v3.0.0
+      - uses: actions/setup-node@v3
         with:
-          node-version: ${{ secrets.NODE_VERSION }}
+          node-version: 18
       - name: Cache node modules
         id: node-cache
         uses: actions/cache@v3
@@ -72,9 +72,11 @@ jobs:
             !~/cache/exclude
             **/node_modules
             /home/runner/.cache/Cypress
-          key: ${{ runner.os }}-node-${{ hashFiles('**/lockfiles') }}
+            ~/.npm
+            ${{ github.workspace }}/.next/cache
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
           restore-keys: |
-            ${{ runner.os }}-node-
+            ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
       - name: Install dependencies
         run: |
           cd ui
@@ -84,23 +86,23 @@ jobs:
           npm i
       - name: build meshery-ui
         run: |
-          make build-meshery-ui
+          make ui-meshery-build
       - name: build provider-ui
         run: |
-          make build-provider-ui
+          make ui-provider-build
   tests-ui:
-    needs: [build-ui]
+    needs: [ui-build]
     name: UI integration tests
     if: github.repository == 'meshery/meshery'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Check out code
-        uses: actions/checkout@master
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      - uses: actions/setup-node@v3.0.0
+      - uses: actions/setup-node@v3
         with:
-          node-version: ${{ secrets.NODE_VERSION }}
+          node-version: 18
       - name: Cache node modules
         id: node-cache
         uses: actions/cache@v3
@@ -111,7 +113,9 @@ jobs:
             !~/cache/exclude
             **/node_modules
             /home/runner/.cache
-          key: ${{ runner.os }}-node-${{ hashFiles('**/lockfiles') }}
+            ~/.npm
+            ${{ github.workspace }}/.next/cache
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
       - name: Run tests
         run: |
           cd ui
@@ -123,44 +127,59 @@ jobs:
           npm test
           cd ..
       - name: Upload coverage to Codecov (ui)
-        uses: codecov/codecov-action@v1
+        uses: codecov/codecov-action@v3
         with:
           files: ./provider-ui/coverage/coverage-summary.json
           directory: ./provider-ui/coverage/lcov-report
           flags: integrationtests
-          fail_ci_if_error: true
   tests-ui-e2e:
-    needs: [build-backend, build-ui]
+    needs: [build-backend, ui-build]
     name: UI end-to-end tests
     if: github.repository == 'meshery/meshery'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Check out code
-        uses: actions/checkout@master
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      - name: Check out meshery-consul code
-        uses: actions/checkout@master
-        with:
-          repository: layer5io/meshery-consul
-          path: ./meshery-consul
       - name: Check out meshery-istio code
-        uses: actions/checkout@master
+        uses: actions/checkout@v3
         with:
           repository: layer5io/meshery-istio
           path: ./meshery-istio
-      - name: Download artifacts
-        uses: actions/download-artifact@v3.0.0
+      - name: Check out meshery-consul code
+        uses: actions/checkout@v3
         with:
-          name: meshery
+          repository: layer5io/meshery-consul
+          path: ./meshery-consul
       - name: Setup go
         uses: actions/setup-go@master
         with:
           go-version: "1.19"
-      - name: Setup node
-        uses: actions/setup-node@v3.0.0
+      - name: Create k8s Kind Cluster
+        uses: helm/kind-action@v1.3.0
         with:
-          node-version: ${{ secrets.NODE_VERSION }}
+          cluster_name: "kind-cluster"
+      - name: Run meshery-istio
+        run: |
+          mkdir -p /home/runner/.meshery/bin
+          cd ./meshery-istio
+          go run main.go &
+          sleep 60
+      - name: Run meshery-consul
+        run: |
+          mkdir -p /home/runner/.meshery/bin
+          cd ./meshery-consul
+          go run main.go &
+          sleep 60
+      - name: Download artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: meshery
+      - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
       - name: Cache node modules
         id: node-cache
         uses: actions/cache@v3
@@ -172,20 +191,18 @@ jobs:
             !~/cache/exclude
             **/node_modules
             /home/runner/.cache/Cypress
-          key: ${{ runner.os }}-node-${{ hashFiles('**/lockfiles') }}
+            ~/.npm
+            ${{ github.workspace }}/.next/cache
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
           restore-keys: |
-            ${{ runner.os }}-node-
-      - name: Create k8s Kind Cluster
-        uses: helm/kind-action@v1.3.0
-        with:
-          cluster_name: "kind-cluster"
+            ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
       - name: Build Next App
         run: |
           cd ui
           node --version
           npm i
           cd ../
-          make build-meshery-ui
+          make ui-meshery-build
       # - name: Update /etc/hosts
       #   run: echo "127.0.0.1 mesherylocal.layer5.io" | sudo tee -a /etc/hosts
       - name: Run meshery-consul
@@ -209,31 +226,43 @@ jobs:
           chmod +x ./main
           ./main &
       - name: Cypress run
-        uses: cypress-io/github-action@v4
+        uses: cypress-io/github-action@v5
         with:
           working-directory: ui
           start: npm start
           wait-on: http://localhost:3000
-          spec: cypress/integration/e2e/**/*
+          spec: cypress/e2e/e2e/**/*
+          browser: chrome
           record: true
-          tag: node-${{ matrix.node }}
+          tag: node-18
         env:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload artifacts
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: cypress-ss
+          path: ./ui/cypress/screenshots
+      - name: Upload Videos
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: cypress-ss
+          path: ./ui/cypress/videos
       - name: Upload coverage to Codecov (ui)
-        uses: codecov/codecov-action@v1
+        uses: codecov/codecov-action@v3
         with:
           files: ./ui/coverage/coverage-summary.json
           directory: ./ui/coverage/lcov-report
           flags: e2etests
-          fail_ci_if_error: true
   docker-build-test:
     name: Docker build
     if: github.repository == 'meshery/meshery'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Check out code
-        uses: actions/checkout@master
+        uses: actions/checkout@v3
         with:
           fetch-depth: 1
       - name: Docker edge build & tag
@@ -261,9 +290,9 @@ jobs:
   swaggerci:
     if: github.repository == 'meshery/meshery'
     name: swagger-docs
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v3
       - name: Check if handlers were modified
         uses: dorny/paths-filter@v2
         id: changes
@@ -287,10 +316,10 @@ jobs:
   garphql_validate:
     name: Validate GraphQL schema
     if: github.repository == 'meshery/meshery'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Check out code
-        uses: actions/checkout@master
+        uses: actions/checkout@v3
         with:
           fetch-depth: 1
       - name: Check if schema was modified

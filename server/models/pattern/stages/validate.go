@@ -9,10 +9,11 @@ import (
 	"github.com/layer5io/meshery/server/models/pattern/jsonschema"
 	"github.com/layer5io/meshery/server/models/pattern/patterns/k8s"
 	"github.com/layer5io/meshery/server/models/pattern/resource/selector"
+	meshmodel "github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 )
 
 func Validator(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFunction {
-	s := selector.New(prov)
+	s := selector.New(act.GetRegistry(), prov)
 
 	return func(data *Data, err error, next ChainStageNextFunction) {
 		if err != nil {
@@ -20,32 +21,25 @@ func Validator(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFu
 			return
 		}
 
-		data.PatternSvcWorkloadCapabilities = map[string]core.WorkloadCapability{}
+		data.PatternSvcWorkloadCapabilities = map[string]meshmodel.ComponentDefinition{}
 		data.PatternSvcTraitCapabilities = map[string][]core.TraitCapability{}
 
 		for svcName, svc := range data.Pattern.Services {
-			wc, ok := s.Workload(svc.Type)
+			wc, ok := s.Workload(svc.Type, svc.Version, svc.Model)
 			if !ok {
 				act.Terminate(fmt.Errorf("invalid workload of type: %s", svc.Type))
 				return
 			}
 
-			var svcSettings map[string]interface{}
-			//deep copy settings for validation
-			if k8s.Format {
-				svcSettings = k8s.Format.Prettify(svc.Settings, true)
-			} else {
-				svcSettings = svc.Settings
-			}
-
-			//Validate workload definition
-			if err := validateWorkload(svcSettings, wc); err != nil {
-				act.Terminate(fmt.Errorf("invalid workload definition: %s", err))
-				return
-			}
 			if k8s.Format {
 				svc.Settings = k8s.Format.DePrettify(svc.Settings, false)
 			}
+			//Validate workload definition
+			if err := validateWorkload(svc.Settings, wc); err != nil {
+				act.Terminate(fmt.Errorf("invalid workload definition: %s", err))
+				return
+			}
+
 			// Store the workload capability in the metadata
 			data.PatternSvcWorkloadCapabilities[svcName] = wc
 
@@ -75,10 +69,10 @@ func Validator(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFu
 	}
 }
 
-func validateWorkload(comp map[string]interface{}, wc core.WorkloadCapability) error {
+func validateWorkload(comp map[string]interface{}, wc meshmodel.ComponentDefinition) error {
 	// Create schema validator from the schema
 	rs := jsonschema.GlobalJSONSchema()
-	if err := json.Unmarshal([]byte(wc.OAMRefSchema), rs); err != nil {
+	if err := json.Unmarshal([]byte(wc.Schema), rs); err != nil {
 		return fmt.Errorf("failed to create schema: %s", err)
 	}
 

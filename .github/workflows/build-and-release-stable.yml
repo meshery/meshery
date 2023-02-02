@@ -10,7 +10,7 @@ jobs:
     if: github.repository == 'meshery/meshery'
     env:
       RELEASE_CHANNEL: "stable"
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Check out code
         uses: actions/checkout@master
@@ -58,7 +58,7 @@ jobs:
         with:
           go-version: 1.19
       - name: goreleaser with tag
-        uses: goreleaser/goreleaser-action@master
+        uses: goreleaser/goreleaser-action@v4.1.0
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE_NOTES_PAT }}
           RELEASE_CHANNEL: "stable"
@@ -81,5 +81,10 @@ jobs:
     needs: build
     name: Deploy Meshery Playground
     uses: meshery/meshery/.github/workflows/deploy-meshery-playground.yml@master
+    secrets: inherit
+  email-meshery-release-notes-workflow:
+    needs: build
+    name: Email Meshery Release Notes
+    uses: layer5labs/meshery-extensions-packages/.github/workflows/notify-email.yml@master
     secrets: inherit
 

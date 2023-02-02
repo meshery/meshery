@@ -1,27 +1,24 @@
 import React from 'react';
 
 
-import { makeStyles } from '@material-ui/styles';
 import Typography from '@material-ui/core/Typography';
+import { withStyles } from '@material-ui/core';
 
-const useStyles = makeStyles({
+const styles = () => ({
   typography : {
     marginTop : "1rem",
+    fontSize : "0.8rem",
   },
 });
 
-const DescriptionField = ({ description }) => {
-  if (description) {
-    const classes = useStyles();
+const DescriptionField = ({ description, classes }) => {
 
-    return (
-      <Typography variant="caption" className={classes.typography}>
-        {description}
-      </Typography>
-    );
-  }
 
-  return null;
-};
+  return (
+    <Typography variant="caption" className={classes.typography}>
+      {description}
+    </Typography>
+  );
+}
 
-export default DescriptionField;
+export default withStyles(styles)(DescriptionField);

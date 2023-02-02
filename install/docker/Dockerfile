@@ -11,11 +11,11 @@ RUN go clean -modcache; cd server; cd cmd; GOPROXY=https://proxy.golang.org GOSU
 
 FROM node:lts as ui
 ADD ui ui
-RUN cd ui; npm install --only=production; npm run build && npm run export; mv out /
+RUN cd ui; npm install --omit-dev; npm run build && npm run export; mv out /
 
-FROM node:16 as provider-ui
+FROM node:lts as provider-ui
 ADD provider-ui provider-ui
-RUN cd provider-ui; npm install --only=production; npm run build && npm run export; mv out /
+RUN cd provider-ui; npm install --omit=dev; npm run build && npm run export; mv out /
 
 FROM ubuntu as wrk2
 RUN apt-get -y update && apt-get -y install git && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/man/?? /usr/share/man/??_*
@@ -69,7 +69,8 @@ RUN update-ca-certificates
 RUN apk upgrade --no-cache && \
     apk add --no-cache libstdc++
 COPY ./server/oam /app/server/oam
-COPY ./server/output /app/server/output
+COPY ./server/meshmodel/components /app/server/meshmodel/components
+COPY ./server/meshmodel/relationships /app/server/meshmodel/relationships
 COPY --from=meshery-server /meshery /app/server/cmd/
 COPY --from=meshery-server /etc/passwd /etc/passwd
 COPY --from=meshery-server /github.com/meshery/meshery/server/helpers/swagger.yaml /app/server/helpers/swagger.yaml

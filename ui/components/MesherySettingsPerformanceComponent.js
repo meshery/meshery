@@ -129,7 +129,7 @@ class MesherySettingsPerformanceComponent extends React.Component {
     }, (result) => {
       this.props.updateProgress({ showProgress: false });
       if (typeof result !== 'undefined') {
-        this.props.enqueueSnackbar('Preference was successfully updated!', {
+        this.props.enqueueSnackbar('Preference was updated!', {
           variant: 'success',
           autoHideDuration: 2000,
           action: (key) => (

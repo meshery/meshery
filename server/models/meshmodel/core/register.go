@@ -64,9 +64,12 @@ func RegisterMeshmodelComponentsForCRDS(reg meshmodel.RegistryManager, k8sYaml [
 				APIVersion: def.Spec.Metadata["k8sKind"],
 				Kind:       def.Spec.Metadata["k8sAPIVersion"],
 			},
-			Model: v1alpha1.Models{
-				Name:    "kubernetes",
-				Version: version,
+			Model: v1alpha1.Model{
+				Name:        "kubernetes",
+				Version:     version,
+				DisplayName: "Kubernetes",
+				Category:    "Orchestration & Management",
+				SubCategory: "Scheduling & Orchestration",
 			},
 		})
 	}
@@ -108,7 +111,9 @@ func GetK8sMeshModelComponents(ctx context.Context, kubeconfig []byte) ([]v1alph
 	}
 
 	var arrAPIResources []string
-	for res := range apiResources {
+	kindToNamespace := make(map[string]bool)
+	for res, api := range apiResources {
+		kindToNamespace[api.Kind] = api.Namespaced
 		arrAPIResources = append(arrAPIResources, res)
 	}
 	groups, err := getGroupsFromResource(cli) //change this
@@ -117,22 +122,27 @@ func GetK8sMeshModelComponents(ctx context.Context, kubeconfig []byte) ([]v1alph
 	}
 	manifest := string(content)
 	crds, metadata := getCRDsFromManifest(manifest, arrAPIResources)
-	components := make([]v1alpha1.ComponentDefinition, 1)
+	components := make([]v1alpha1.ComponentDefinition, 0)
 	for name, crd := range crds {
 		m := make(map[string]interface{})
 		m[customResourceKey] = customResources[metadata[name].K8sKind]
+		m[namespacedKey] = kindToNamespace[metadata[name].K8sKind]
+		apiVersion := string(groups[kind(metadata[name].K8sKind)])
 		c := v1alpha1.ComponentDefinition{
 			Format: v1alpha1.JSON,
 			Schema: crd,
 			TypeMeta: v1alpha1.TypeMeta{
 				Kind:       metadata[name].K8sKind,
-				APIVersion: string(groups[kind(metadata[name].K8sKind)]),
+				APIVersion: apiVersion,
 			},
 			Metadata:    m,
 			DisplayName: manifests.FormatToReadableString(metadata[name].K8sKind),
-			Model: v1alpha1.Models{
-				Version: k8version.String(),
-				Name:    "kubernetes",
+			Model: v1alpha1.Model{
+				Version:     k8version.String(),
+				Name:        "kubernetes",
+				DisplayName: "Kubernetes",
+				Category:    "Orchestration & Management",
+				SubCategory: "Scheduling & Orchestration",
 			},
 		}
 		components = append(components, c)
@@ -141,6 +151,7 @@ func GetK8sMeshModelComponents(ctx context.Context, kubeconfig []byte) ([]v1alph
 }
 
 const customResourceKey = "isCustomResource"
+const namespacedKey = "isNamespaced"
 
 func getResolvedManifest(manifest string) (string, error) {
 	cuectx := cuecontext.New()
@@ -148,13 +159,12 @@ func getResolvedManifest(manifest string) (string, error) {
 	parsedManifest := cuectx.BuildExpr(cueParsedManExpr)
 	definitions := parsedManifest.LookupPath(cue.ParsePath("definitions"))
 	if err != nil {
-		fmt.Printf("%v", err)
-		return "", nil
+		return "", err
 	}
 	resol := manifests.ResolveOpenApiRefs{}
 	resolved, err := resol.ResolveReferences([]byte(manifest), definitions)
 	if err != nil {
-		panic(err)
+		return "", err
 	}
 	manifest = string(resolved)
 	return manifest, nil
@@ -267,15 +277,30 @@ func getGroupsFromResource(cli *kubernetes.Client) (hgv map[kind]groupversion, e
 		if err != nil {
 			return nil, err
 		}
-		apiRes, err := cli.KubeClient.DiscoveryClient.ServerResourcesForGroupVersion(apig.PreferredVersion.GroupVersion)
+		for _, v := range apig.Versions {
+			apiRes, err := cli.KubeClient.DiscoveryClient.ServerResourcesForGroupVersion(v.GroupVersion)
+			if err != nil {
+				return nil, err
+			}
+			if err != nil {
+				return nil, err
+			}
+			for _, res := range apiRes.APIResources {
+				hgv[kind(res.Kind)] = groupversion(v.GroupVersion)
+				if hgv[kind(res.Kind)] == "" {
+					hgv[kind(res.Kind)] = groupversion(v.Version)
+				}
+			}
+		}
+		apiRes, err := cli.KubeClient.DiscoveryClient.ServerResourcesForGroupVersion("v1")
 		if err != nil {
 			return nil, err
 		}
-		if len(g.Versions) != 0 {
-			for _, res := range apiRes.APIResources {
-				hgv[kind(res.Kind)] = groupversion(g.Versions[0].GroupVersion)
-				break
-			}
+		if err != nil {
+			return nil, err
+		}
+		for _, res := range apiRes.APIResources {
+			hgv[kind(res.Kind)] = groupversion("v1")
 		}
 	}
 	return

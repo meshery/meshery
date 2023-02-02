@@ -150,7 +150,7 @@ Restart your WSL VM before moving forward.
 
 - Serve the code locally
   ```bash
-  $ make site
+  $ make docs
   ```
 - If that gives an error run:
 
@@ -191,14 +191,14 @@ source "https://rubygems.org"
 ruby '2.7.1' //to any version you have installed
 ```
 
-Automatically the `Gemfile.lock` will update once the `make site` is given (for Windows, run `bundle exec jekyll serve` if WSL2 isn't present)
+Automatically the `Gemfile.lock` will update once the `make docs` is given (for Windows, run `bundle exec jekyll serve` if WSL2 isn't present)
 
 **WARNING: If you have followed the third step then please don't commit the changes made on `Gemfile` and `Gemfile.lock` in your branch to preserve integrity, else the CI action will fail to generate the site preview during PR**.
 
 
 ### Make Necessary Changes
 - Make changes as required by the issue you are solving
-- Be sure check that your changes appear correctly locally by serving the site using `make site`
+- Be sure check that your changes appear correctly locally by serving the site using `make docs`
 
 #### Note
 - If the issue requires making new doc page that replaces the old page, please don't forget to add a redirect link on the old page. This redirect link field should have the link of the new page created.
@@ -271,7 +271,7 @@ The following is a concise summary of the steps to contribute to Meshery documen
    `vi <specific page>.md`
 5. Add redirect link on the old page (only when a new page is created that replaces the old page)
 5. Run site locally to preview changes.
-   `make site`
+   `make docs`
 6. Commit, [sign-off](#commit-signing), and push changes to your remote branch.
    `git push origin <my-changes>`
 7. Open a pull request (in your web browser) against the repo: https://github.com/layer5io/meshery.
