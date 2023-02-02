@@ -263,7 +263,7 @@ func (h *Handler) DeleteMesheryFilterHandler(
 // swagger:route POST /api/filter/clone/{id} FiltersAPI idCloneMesheryFilter
 // Handle Clone for a Meshery Filter
 //
-// Creates a local copy of a public filter with id: id
+// Creates a local copy of a published filter with id: id
 // responses:
 //
 //	200: noContentWrapper
@@ -293,12 +293,12 @@ func (h *Handler) CloneMesheryFilterHandler(
 // swagger:route POST /api/filter/catalog/publish FiltersAPI idPublishCatalogFilterHandler
 // Handle Publish for a Meshery Filter
 //
-// Publishes filter to Meshery Catalog by setting visibility to public and setting catalog data
+// Publishes filter to Meshery Catalog by setting visibility to published and setting catalog data
 // responses:
 //
 //	200: noContentWrapper
 //
-// PublishCatalogFilterHandler makes filter with given id public
+// PublishCatalogFilterHandler set visibility of filter with given id as published
 func (h *Handler) PublishCatalogFilterHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
@@ -383,7 +383,7 @@ func (h *Handler) formatFilterOutput(rw http.ResponseWriter, content []byte, for
 	for _, filter := range contentMesheryFilterSlice {
 		names = append(names, filter.Name)
 	}
-	res.Details = "filters successfully saved"
+	res.Details = "filters saved"
 	res.Summary = "following filters were saved: " + strings.Join(names, ",")
 	go h.EventsBuffer.Publish(res)
 }

@@ -17,7 +17,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/server/meshes"
 	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshery/server/models/pattern/core"
+	pCore "github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/layer5io/meshkit/utils/kubernetes/kompose"
 	"github.com/layer5io/meshkit/utils/walker"
@@ -31,6 +31,8 @@ type MesheryApplicationRequestBody struct {
 	Path            string                     `json:"path,omitempty"`
 	Save            bool                       `json:"save,omitempty"`
 	ApplicationData *models.MesheryApplication `json:"application_data,omitempty"`
+	CytoscapeJSON   string                     `json:"cytoscape_json,omitempty"`
+	Name            string                     `json:"name,omitempty"`
 }
 
 // swagger:route POST /api/application/deploy ApplicationsAPI idPostDeployApplicationFile
@@ -97,8 +99,8 @@ func (h *Handler) ApplicationFileRequestHandler(
 	}
 }
 
-// swagger:route PUT /api/application/{sourcetype} ApplicationsAPI idPutApplicationFileRequest
-// Handle PUT request for Application Files
+// swagger:route POST /api/application/{sourcetype} ApplicationsAPI idPutApplicationFileRequest
+// Handle POST request for Application Files
 //
 // Updates the design for the provided application
 // responses:
@@ -186,7 +188,7 @@ func (h *Handler) handleApplicationPOST(
 				}
 			}
 
-			pattern, err := core.NewPatternFileFromK8sManifest(k8sres, false)
+			pattern, err := pCore.NewPatternFileFromK8sManifest(k8sres, false)
 			if err != nil {
 				obj := "convert"
 				h.log.Error(ErrApplicationFailure(err, obj))
@@ -248,7 +250,7 @@ func (h *Handler) handleApplicationPOST(
 				return
 			}
 			result := string(resp)
-			pattern, err := core.NewPatternFileFromK8sManifest(result, false)
+			pattern, err := pCore.NewPatternFileFromK8sManifest(result, false)
 			if err != nil {
 				obj := "convert"
 				h.log.Error(ErrApplicationFailure(err, obj))
@@ -432,8 +434,79 @@ func (h *Handler) handleApplicationUpdate(rw http.ResponseWriter,
 		go h.EventsBuffer.Publish(&res)
 		return
 	}
-
 	format := r.URL.Query().Get("output")
+
+	if parsedBody.CytoscapeJSON != "" {
+		pf, err := pCore.NewPatternFileFromCytoscapeJSJSON(parsedBody.Name, []byte(parsedBody.CytoscapeJSON))
+		if err != nil {
+			rw.WriteHeader(http.StatusBadRequest)
+			fmt.Fprintf(rw, "%s", err)
+			addMeshkitErr(&res, ErrSavePattern(err))
+			go h.EventsBuffer.Publish(&res)
+			return
+		}
+
+		pfByt, err := pf.ToYAML()
+		if err != nil {
+			rw.WriteHeader(http.StatusInternalServerError)
+			fmt.Fprintf(rw, "%s", err)
+			addMeshkitErr(&res, ErrSavePattern(err))
+			go h.EventsBuffer.Publish(&res)
+			return
+		}
+
+		patternName, err := models.GetPatternName(string(pfByt))
+		if err != nil {
+			h.log.Error(ErrGetPattern(err))
+			http.Error(rw, ErrGetPattern(err).Error(), http.StatusBadRequest)
+			addMeshkitErr(&res, ErrGetPattern(err))
+			go h.EventsBuffer.Publish(&res)
+			return
+		}
+
+		mesheryApplication := &models.MesheryApplication{
+			Name:            patternName,
+			ApplicationFile: string(pfByt),
+			Location: map[string]interface{}{
+				"host": "",
+				"path": "",
+				"type": "local",
+			},
+			Type: sql.NullString{
+				String: sourcetype,
+				Valid:  true,
+			},
+		}
+		if parsedBody.ApplicationData != nil {
+			mesheryApplication.ID = parsedBody.ApplicationData.ID
+		}
+		if parsedBody.Save {
+			resp, err := provider.SaveMesheryApplication(token, mesheryApplication)
+			if err != nil {
+				h.log.Error(ErrSavePattern(err))
+				http.Error(rw, ErrSavePattern(err).Error(), http.StatusInternalServerError)
+				addMeshkitErr(&res, ErrSavePattern(err))
+				go h.EventsBuffer.Publish(&res)
+				return
+			}
+
+			go h.config.ConfigurationChannel.PublishApplications()
+			h.formatApplicationOutput(rw, resp, format, &res)
+			return
+		}
+
+		byt, err := json.Marshal([]models.MesheryApplication{*mesheryApplication})
+		if err != nil {
+			h.log.Error(ErrEncodePattern(err))
+			http.Error(rw, ErrEncodePattern(err).Error(), http.StatusInternalServerError)
+			addMeshkitErr(&res, ErrEncodePattern(err))
+			go h.EventsBuffer.Publish(&res)
+			return
+		}
+
+		h.formatApplicationOutput(rw, byt, format, &res)
+		return
+	}
 	mesheryApplication := parsedBody.ApplicationData
 	mesheryApplication.Type = sql.NullString{
 		String: sourcetype,
@@ -458,6 +531,11 @@ func (h *Handler) handleApplicationUpdate(rw http.ResponseWriter,
 // Handle GET request for Meshery Application with the given id
 //
 // Fetches the list of all applications saved by the current user
+// ?updated_after=<timestamp> timestamp should be of the format `YYYY-MM-DD HH:MM:SS`
+// ?order={field} orders on the passed field
+// ?search=<application name> A string matching is done on the specified application name
+// ?page={page-number} Default page number is 1
+// ?pagesize={pagesize} Default pagesize is 10
 // responses:
 //  200: mesheryApplicationResponseWrapper
 
@@ -472,7 +550,7 @@ func (h *Handler) GetMesheryApplicationsHandler(
 	q := r.URL.Query()
 	tokenString := r.Context().Value(models.TokenCtxKey).(string)
 
-	resp, err := provider.GetMesheryApplications(tokenString, q.Get("page"), q.Get("page_size"), q.Get("search"), q.Get("order"))
+	resp, err := provider.GetMesheryApplications(tokenString, q.Get("page"), q.Get("page_size"), q.Get("search"), q.Get("order"), q.Get("updated_after"))
 	if err != nil {
 		obj := "fetch"
 		h.log.Error(ErrApplicationFailure(err, obj))
@@ -566,7 +644,7 @@ func (h *Handler) GetMesheryApplicationTypesHandler(
 //
 // Get the application source-content
 // responses:
-//  200: applicationFileParamsWrapper
+//  200
 
 // GetMesheryApplicationHandler fetched the application with the given id
 func (h *Handler) GetMesheryApplicationSourceHandler(
@@ -629,9 +707,9 @@ func (h *Handler) formatApplicationOutput(rw http.ResponseWriter, content []byte
 	for _, app := range contentMesheryApplicationSlice {
 		names = append(names, app.Name)
 	}
-	res.Details = "applications successfully saved"
-	res.Summary = "following application were saved: " + strings.Join(names, ",")
-	go h.EventsBuffer.Publish(res)
+	res.Details = "\"" + strings.Join(names, ",") + "\" application saved"
+	res.Summary = "Changes to the \"" + strings.Join(names, ",") + "\" application have been saved."
+	// go h.EventsBuffer.Publish(res)
 }
 
 // Note: This function is guaranteed to return meshkit errors
@@ -662,7 +740,7 @@ func githubRepoApplicationScan(
 						return ErrRemoteApplication(err)
 					}
 				}
-				pattern, err := core.NewPatternFileFromK8sManifest(k8sres, false)
+				pattern, err := pCore.NewPatternFileFromK8sManifest(k8sres, false)
 				if err != nil {
 					return err //always a meshkit error
 				}
@@ -725,7 +803,7 @@ func genericHTTPApplicationFile(fileURL, sourceType string) ([]models.MesheryApp
 		}
 	}
 
-	pattern, err := core.NewPatternFileFromK8sManifest(k8sres, false)
+	pattern, err := pCore.NewPatternFileFromK8sManifest(k8sres, false)
 	if err != nil {
 		return nil, err //This error is already a meshkit error
 	}

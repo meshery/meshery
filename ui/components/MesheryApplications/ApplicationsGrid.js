@@ -3,7 +3,7 @@ import { Grid, Paper, Typography, Button } from "@material-ui/core";
 import { Pagination } from "@material-ui/lab";
 import React, { useState } from "react";
 import MesheryApplicationCard from "./ApplicationsCard";
-import ConfirmationMsg from "../ConfirmationModal";
+import ConfirmationModal from "../ConfirmationModal";
 import { getComponentsinFile } from "../../utils/utils";
 import PublishIcon from "@material-ui/icons/Publish";
 import useStyles from "../MesheryPatterns/Grid.styles";
@@ -62,7 +62,7 @@ function ApplicationsGridItem({ application,  handleDeploy, handleUnDeploy, hand
  * }} props props
  */
 
-function MesheryApplicationGrid({ applications=[],handleDeploy, handleUnDeploy, handleSubmit,urlUploadHandler,uploadHandler, setSelectedApplication, selectedApplication, pages = 1,setPage, selectedPage, UploadImport, handleAppDownload }) {
+function MesheryApplicationGrid({ applications=[],handleDeploy, handleUnDeploy, handleSubmit,urlUploadHandler,uploadHandler, setSelectedApplication, selectedApplication, pages = 1,setPage, selectedPage, UploadImport, fetch, handleAppDownload }) {
 
   const classes = useStyles()
 
@@ -158,7 +158,7 @@ function MesheryApplicationGrid({ applications=[],handleDeploy, handleUnDeploy, 
           </div>
         )
         : null}
-      <ConfirmationMsg
+      <ConfirmationModal
         open={modalOpen.open}
         handleClose={handleModalClose}
         submit={
@@ -167,9 +167,9 @@ function MesheryApplicationGrid({ applications=[],handleDeploy, handleUnDeploy, 
         isDelete={!modalOpen.deploy}
         title={ modalOpen.name }
         componentCount={ modalOpen.count }
-        tab={modalOpen.deploy ? 0 : 1}
+        tab={modalOpen.deploy ? 2 : 1}
       />
-      <UploadImport open={importModal.open} handleClose={handleUploadImportClose} isApplication = {true} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} configuration="Application"  />
+      <UploadImport open={importModal.open} handleClose={handleUploadImportClose} isApplication = {true} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} fetch={() => fetch()} configuration="Application"  />
     </div>
   );
 }

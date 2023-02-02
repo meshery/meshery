@@ -29,9 +29,10 @@ import MesheryMetrics from "./MesheryMetrics";
 import MesheryResultDialog from "./MesheryResultDialog";
 import ReactSelectWrapper from "./ReactSelectWrapper";
 import ConfirmationMsg from "./ConfirmationModal";
+import { iconMedium } from "../css/icons.styles";
 
 const styles = (theme) => ({
-  smWrapper : { backgroundColor : "#eaeff1", },
+  smWrapper : { backgroundColor : theme.palette.secondary.elevatedComponents2, },
   buttons : { width : "100%", },
   button : {
     marginTop : theme.spacing(3),
@@ -99,7 +100,7 @@ const styles = (theme) => ({
     backgroundColor : "#f7f7f7",
   },
   paneSection : {
-    backgroundColor : "#fff",
+    backgroundColor : theme.palette.secondary.elevatedComponents,
     padding : theme.spacing(3),
     borderRadius : 4,
   },
@@ -480,13 +481,13 @@ class MesheryAdapterPlayComponent extends React.Component {
             autoHideDuration : 2000,
             action : (key) => (
               <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
-                <CloseIcon />
+                <CloseIcon style={iconMedium} />
               </IconButton>
             ),
           });
         }
       },
-      self.handleError(cat, deleteOp)
+      self.handleError(cat, deleteOp, selectedOp)
     );
   };
 
@@ -501,12 +502,12 @@ class MesheryAdapterPlayComponent extends React.Component {
       (result) => {
         this.props.updateProgress({ showProgress : false });
         if (typeof result !== "undefined") {
-          this.props.enqueueSnackbar("Adapter successfully pinged!", {
+          this.props.enqueueSnackbar("Adapter pinged!", {
             variant : "success",
             autoHideDuration : 2000,
             action : (key) => (
               <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
-                <CloseIcon />
+                <CloseIcon style={iconMedium} />
               </IconButton>
             ),
           });
@@ -556,7 +557,7 @@ class MesheryAdapterPlayComponent extends React.Component {
     self.setState({ ["customDialogSMI"] : true });
   };
 
-  handleError = (cat, deleteOp) => {
+  handleError = (cat, deleteOp, selectedOp) => {
     const self = this;
     return (error) => {
       if (cat && deleteOp) {
@@ -569,12 +570,14 @@ class MesheryAdapterPlayComponent extends React.Component {
           : "customDialogAdd";
         self.setState({ menuState, [dlg] : false });
       }
+      self.setState(
+        { addonSwitchGroup : { ...self.addonSwitchGroup, [selectedOp] : deleteOp } })
       self.props.updateProgress({ showProgress : false });
       self.props.enqueueSnackbar(`Operation submission failed: ${error}`, {
         variant : "error",
         action : (key) => (
           <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
-            <CloseIcon />
+            <CloseIcon style={iconMedium} />
           </IconButton>
         ),
         autoHideDuration : 8000,
@@ -982,8 +985,8 @@ class MesheryAdapterPlayComponent extends React.Component {
         <DialogActions>
           <IconButton aria-label="Apply" color="primary" onClick={this.handleSubmit(cat, "custom", isDelete)}>
             {/* <FontAwesomeIcon icon={faArrowRight} transform="shrink-4" fixedWidth /> */}
-            {!isDelete && <PlayIcon />}
-            {isDelete && <DeleteIcon />}
+            {!isDelete && <PlayIcon  style={iconMedium}  />}
+            {isDelete && <DeleteIcon  style={iconMedium}  />}
           </IconButton>
         </DialogActions>
       </Dialog>
@@ -1063,8 +1066,8 @@ class MesheryAdapterPlayComponent extends React.Component {
             onClick={this.addDelHandleClick(cat, false)}
           >
             {cat !== 4
-              ? <AddIcon />
-              : <PlayIcon />}
+              ? <AddIcon style={iconMedium} />
+              : <PlayIcon style={iconMedium}  />}
           </IconButton>
           {cat !== 4 && this.generateMenu(cat, false, selectedAdapterOps)}
           {cat === 4 && this.generateYAMLEditor(cat, false)}
@@ -1076,7 +1079,7 @@ class MesheryAdapterPlayComponent extends React.Component {
                 className={classes.deleteRight}
                 onClick={this.addDelHandleClick(cat, true)}
               >
-                <DeleteIcon />
+                <DeleteIcon  style={iconMedium}  />
               </IconButton>
               {cat !== 4 && this.generateMenu(cat, true, selectedAdapterOps)}
               {cat === 4 && this.generateYAMLEditor(cat, true)}
@@ -1266,7 +1269,8 @@ class MesheryAdapterPlayComponent extends React.Component {
             open={this.state.modalOpen}
             handleClose={this.handleClose}
             submit={
-              { deploy : () => this.submitOp(this.state.category, this.state.selectedOp, false),
+              {
+                deploy : () => this.submitOp(this.state.category, this.state.selectedOp, false),
                 unDeploy : () => this.submitOp(this.state.category, this.state.selectedOp, true)
               }
             }

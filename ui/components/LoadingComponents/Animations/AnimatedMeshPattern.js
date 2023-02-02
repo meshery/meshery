@@ -1,5 +1,5 @@
+import { useTheme } from "@material-ui/core";
 import React, { useState, useEffect } from "react";
-import "./animatedMeshPattern.css";
 
 function getClassName(className, isActive) {
   if (!isActive) {
@@ -8,10 +8,12 @@ function getClassName(className, isActive) {
 
   return `${className} active`;
 }
-
+function getLogoTextColor(theme) {
+  return (theme.palette.type == 'light' ? "#3c494f" : "#FFF")
+}
 const AnimatedMeshPattern = (props) => {
   const [isActive, setIsActive] = useState(true);
-
+  const theme = useTheme();
   useEffect(() => {
     setTimeout(() => {
       setIsActive(false);
@@ -78,31 +80,31 @@ const AnimatedMeshPattern = (props) => {
         ></path>
         <polygon
           points="321.68 506.1 321.68 509.53 321.68 525.71 321.68 545.44 321.68 574.24 398.36 574.24 398.36 558.06 337.86 558.06 337.86 545.44 337.86 541.89 384.34 541.89 384.34 525.71 337.86 525.71 337.86 509.53 398.36 509.53 398.36 493.36 321.68 493.36 321.68 506.1"
-          fill="#3c494f"
+          fill={getLogoTextColor(theme)}
         ></polygon>
         <path
           d="M694,553.1a20.35,20.35,0,0,1-1.67,8.2,21,21,0,0,1-4.58,6.74,22.24,22.24,0,0,1-6.75,4.53,20.69,20.69,0,0,1-8.25,1.67h-75.7v-17h75.7a4,4,0,0,0,4.1-4.1v-6.58a4,4,0,0,0-4.1-4.09H618.29a20.3,20.3,0,0,1-8.19-1.67,21.5,21.5,0,0,1-11.38-11.38,20.38,20.38,0,0,1-1.67-8.2V514.6a20.73,20.73,0,0,1,1.67-8.25,21.81,21.81,0,0,1,4.58-6.74,21.5,21.5,0,0,1,6.8-4.58,20.13,20.13,0,0,1,8.19-1.67H694V510.5H618.29a4.06,4.06,0,0,0-4.1,4.1v6.58a4.06,4.06,0,0,0,4.1,4.1h54.46A20.69,20.69,0,0,1,681,527a21.71,21.71,0,0,1,11.33,11.32,20.73,20.73,0,0,1,1.67,8.25Z"
-          fill="#3c494f"
+          fill={getLogoTextColor(theme)}
         ></path>
         <path
           d="M419.75,508.78h41.49V525.6H427.82V541h7.66l29.34,33.21h20L455.45,541H466.9a12.56,12.56,0,0,0,12.56-12.56V505.92a12.56,12.56,0,0,0-12.56-12.56h-63v80.88h16.17Z"
-          fill="#3c494f"
+          fill={getLogoTextColor(theme)}
         ></path>
         <path
           d="M62,540.9H63.2a12.38,12.38,0,0,0,12.47-12.46V505.82A12.38,12.38,0,0,0,63.2,493.36H0v80.88H16.23l-.29-65.52H57.4v16.53H24.06V540.9"
-          fill="#3c494f"
+          fill={getLogoTextColor(theme)}
         ></path>
         <polygon
           points="106.96 493.36 74.6 574.24 93.06 574.24 115.05 517.62 130.73 558.06 105.24 558.06 99.2 574.24 155.51 574.24 123.14 493.36 106.96 493.36"
-          fill="#3c494f"
+          fill={getLogoTextColor(theme)}
         ></polygon>
-        <path d="M197.75,493.36h31.93V510.5H148.77V493.36h49" fill="#3c494f"></path>
-        <rect x="180.65" y="517.68" width="17.15" height="56.56" fill="#3c494f"></rect>
-        <path d="M284.2,493.36h31.93V510.5h-80.9V493.36h49" fill="#3c494f"></path>
-        <rect x="267.1" y="517.68" width="17.15" height="56.56" fill="#3c494f"></rect>
+        <path d="M197.75,493.36h31.93V510.5H148.77V493.36h49" fill={getLogoTextColor(theme)}></path>
+        <rect x="180.65" y="517.68" width="17.15" height="56.56" fill={getLogoTextColor(theme)}></rect>
+        <path d="M284.2,493.36h31.93V510.5h-80.9V493.36h49" fill={getLogoTextColor(theme)}></path>
+        <rect x="267.1" y="517.68" width="17.15" height="56.56" fill={getLogoTextColor(theme)}></rect>
         <path
           d="M591.5,574.24H574.35v-59a4.59,4.59,0,0,0-.38-1.84,4.86,4.86,0,0,0-1-1.5,4.77,4.77,0,0,0-1.51-1,4.58,4.58,0,0,0-1.83-.38H490.34V493.36h79.27a21.09,21.09,0,0,1,8.46,1.72,21.68,21.68,0,0,1,11.7,11.7,21.14,21.14,0,0,1,1.73,8.47Zm-75.76,0H498.59V519.49h17.15Z"
-          fill="#3c494f"
+          fill={getLogoTextColor(theme)}
         ></path>
       </svg>
     </div>

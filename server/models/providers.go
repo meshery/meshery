@@ -231,6 +231,8 @@ const (
 	CloneMesheryPatterns Feature = "clone-meshery-patterns" // /patterns/clone
 
 	CloneMesheryFilters Feature = "clone-meshery-filters" // /filters/clone
+
+	ShareDesigns Feature = "share-designs"
 )
 
 const (
@@ -257,6 +259,8 @@ const (
 
 	MesheryControllerHandlersKey ContextKey = "mesherycontrollerhandlerskey"
 	MeshSyncDataHandlersKey      ContextKey = "meshsyncdatahandlerskey"
+
+	RegistryManagerKey ContextKey = "registrymanagerkey"
 )
 
 // IsSupported returns true if the given feature is listed as one of
@@ -311,7 +315,7 @@ type Provider interface {
 	GetUserDetails(*http.Request) (*User, error)
 	GetProviderToken(req *http.Request) (string, error)
 	UpdateToken(http.ResponseWriter, *http.Request) string
-	Logout(http.ResponseWriter, *http.Request)
+	Logout(http.ResponseWriter, *http.Request) error
 	HandleUnAuthenticated(w http.ResponseWriter, req *http.Request)
 	FetchResults(tokenVal string, page, pageSize, search, order, profileID string) ([]byte, error)
 	FetchAllResults(tokenVal string, page, pageSize, search, order, from, to string) ([]byte, error)
@@ -344,7 +348,7 @@ type Provider interface {
 	GetKubeClient() *mesherykube.Client
 
 	SaveMesheryPattern(tokenString string, pattern *MesheryPattern) ([]byte, error)
-	GetMesheryPatterns(tokenString, page, pageSize, search, order string) ([]byte, error)
+	GetMesheryPatterns(tokenString, page, pageSize, search, order string, updatedAfter string) ([]byte, error)
 	GetCatalogMesheryPatterns(tokenString string, search, order string) ([]byte, error)
 	PublishCatalogPattern(req *http.Request, publishPatternRequest *MesheryCatalogPatternRequestBody) ([]byte, error)
 	DeleteMesheryPattern(req *http.Request, patternID string) ([]byte, error)
@@ -370,9 +374,10 @@ type Provider interface {
 	SaveMesheryApplication(tokenString string, application *MesheryApplication) ([]byte, error)
 	SaveApplicationSourceContent(token string, applicationID string, sourceContent []byte) error
 	GetApplicationSourceContent(req *http.Request, applicationID string) ([]byte, error)
-	GetMesheryApplications(tokenString, page, pageSize, search, order string) ([]byte, error)
+	GetMesheryApplications(tokenString, page, pageSize, search, order string, updatedAfter string) ([]byte, error)
 	DeleteMesheryApplication(req *http.Request, applicationID string) ([]byte, error)
 	GetMesheryApplication(req *http.Request, applicationID string) ([]byte, error)
+	ShareDesign(req *http.Request) (int, error)
 
 	SavePerformanceProfile(tokenString string, performanceProfile *PerformanceProfile) ([]byte, error)
 	GetPerformanceProfiles(tokenString string, page, pageSize, search, order string) ([]byte, error)

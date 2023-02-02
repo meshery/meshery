@@ -1,0 +1,1 @@
+{"kind":"KongPlugin","apiVersion":"v1","display-name":"Kong Plugin","format":"JSON","metadata":{"logo-URL":"","model":"kong","modelDisplayName":"Kong","primaryColor":"","secondaryColor":"","shape":"circle","svgColor":"","svgWhite":""},"model":{"name":"kong","version":"4.4.0","display-name":"Kong","category":"Cloud Native Network","sub-category":"API Gateway"},"schema":""}

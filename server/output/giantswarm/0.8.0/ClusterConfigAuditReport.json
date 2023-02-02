@@ -1,1 +1,0 @@
-{"kind":"ClusterConfigAuditReport","apiVersion":"v1alpha1","display-name":"Cluster Config Audit Report","format":"JSON","metadata":{},"model":{"name":"giantswarm","version":"0.8.0","display-name":"","category":"","sub-category":""},"schema":""}

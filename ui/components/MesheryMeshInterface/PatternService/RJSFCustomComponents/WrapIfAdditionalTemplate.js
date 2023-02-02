@@ -1,11 +1,14 @@
 import React from "react";
 import FormControl from "@material-ui/core/FormControl";
 import Grid from "@material-ui/core/Grid";
+import DeleteIcon from "@material-ui/icons/Delete";
 import InputLabel from "@material-ui/core/InputLabel";
 import Input from "@material-ui/core/Input";
 import {
   ADDITIONAL_PROPERTY_FLAG,
 } from "@rjsf/utils";
+import { IconButton } from "@material-ui/core";
+import { iconMedium } from "../../../../css/icons.styles";
 
 const WrapIfAdditionalTemplate = ({
   children,
@@ -18,19 +21,10 @@ const WrapIfAdditionalTemplate = ({
   readonly,
   required,
   schema,
-  uiSchema,
-  registry,
 }) => {
-  const { RemoveButton } = registry.templates.ButtonTemplates;
   const value=label.startsWith("newKey")?"":label; // removing the default value i.e newKey.
   const keyLabel = `Key`
   const additional = ADDITIONAL_PROPERTY_FLAG in schema;
-  const btnStyle= {
-    flex : 1,
-    paddingLeft : 6,
-    paddingRight : 6,
-    fontWeight : "bold",
-  };
 
   if (!additional) {
     return <div className={classNames}>{children}</div>;
@@ -61,7 +55,7 @@ const WrapIfAdditionalTemplate = ({
         </FormControl>
       </Grid>
       <Grid item style={{ alignSelf : 'flex-end' }}>
-        <span style={{ fontSize : "1.25rem", color : "#1E2117" }}>
+        <span style={{ fontSize : "1.25rem" }}>
           &nbsp;:&nbsp;
         </span>
       </Grid>
@@ -69,13 +63,13 @@ const WrapIfAdditionalTemplate = ({
         {children}
       </Grid>
       <Grid item={true}>
-        <RemoveButton
-          iconType="default"
-          style={btnStyle}
+        <IconButton
+          component="span"
           disabled={disabled || readonly}
           onClick={onDropPropertyClick(label)}
-          uiSchema={uiSchema}
-        />
+        >
+          <DeleteIcon style={iconMedium} />
+        </IconButton>
       </Grid>
     </Grid>
   );

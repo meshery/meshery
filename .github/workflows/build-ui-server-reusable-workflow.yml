@@ -1,16 +1,16 @@
 name: Re-usable Workflow - Build UI and Server
 on:
-  workflow_call: 
-    secrets: 
+  workflow_call:
+    secrets:
       NODE_VERSION:
         required: true
-      GO_VERSION: 
+      GO_VERSION:
         required: true
 
 jobs:
   build-backend:
     name: Backend build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Check out code
         uses: actions/checkout@master
@@ -35,9 +35,9 @@ jobs:
         with:
           name: meshery
           path: ./main
-  build-ui:
+  ui-build:
     name: UI build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Check out code
         uses: actions/checkout@master
@@ -46,7 +46,7 @@ jobs:
           fetch-depth: 1
       - uses: actions/setup-node@v3.0.0
         with:
-          node-version: ${{ secrets.NODE_VERSION }}
+          node-version: 18
       - name: Cache node modules
         id: node-cache
         uses: actions/cache@v3
@@ -70,10 +70,10 @@ jobs:
           npm i
       - name: build meshery-ui
         run: |
-          make build-meshery-ui
+          make ui-meshery-build
       - name: build provider-ui
         run: |
-          make build-provider-ui
+          make ui-provider-build
       - name: upload meshery-ui artifact
         uses: actions/upload-artifact@v3
         with:
@@ -81,6 +81,7 @@ jobs:
           path: ui/out/
       - name: upload Meshery-provider-ui artifacts
         uses: actions/upload-artifact@v3
-        with: 
+        with:
           name: meshery-provider-ui build
           path: provider-ui/out/
+

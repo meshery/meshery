@@ -1,1 +1,0 @@
-{"kind":"Policy","apiVersion":"v1alpha1","display-name":"Policy","format":"JSON","metadata":{},"model":{"name":"kubevela","version":"1.6.2","display-name":"","category":"","sub-category":""},"schema":""}

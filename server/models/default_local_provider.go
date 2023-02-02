@@ -142,8 +142,8 @@ func (l *DefaultLocalProvider) GetProviderToken(req *http.Request) (string, erro
 }
 
 // Logout - logout from provider backend
-func (l *DefaultLocalProvider) Logout(w http.ResponseWriter, req *http.Request) {
-	http.Redirect(w, req, "/user/login", http.StatusFound)
+func (l *DefaultLocalProvider) Logout(w http.ResponseWriter, req *http.Request) error {
+	return nil
 }
 
 // HandleUnAuthenticated - logout from provider backend
@@ -439,7 +439,7 @@ func (l *DefaultLocalProvider) ExtractToken(w http.ResponseWriter, r *http.Reque
 		"meshery-provider": l.Name(),
 		tokenName:          "",
 	}
-	logrus.Debugf("encoded response : %v", resp)
+	logrus.Debugf("token sent for meshery-provider %v", l.Name())
 	if err := json.NewEncoder(w).Encode(resp); err != nil {
 		logrus.Errorf("Unable to extract auth details: %v", err)
 		http.Error(w, "unable to extract auth details", http.StatusInternalServerError)
@@ -544,7 +544,7 @@ func (l *DefaultLocalProvider) SaveMesheryPattern(tokenString string, pattern *M
 }
 
 // GetMesheryPatterns gives the patterns stored with the provider
-func (l *DefaultLocalProvider) GetMesheryPatterns(tokenString, page, pageSize, search, order string) ([]byte, error) {
+func (l *DefaultLocalProvider) GetMesheryPatterns(tokenString, page, pageSize, search, order string, updatedAfter string) ([]byte, error) {
 	if page == "" {
 		page = "0"
 	}
@@ -561,8 +561,7 @@ func (l *DefaultLocalProvider) GetMesheryPatterns(tokenString, page, pageSize, s
 	if err != nil {
 		return nil, ErrPageSize(err)
 	}
-
-	return l.MesheryPatternPersister.GetMesheryPatterns(search, order, pg, pgs)
+	return l.MesheryPatternPersister.GetMesheryPatterns(search, order, pg, pgs, updatedAfter)
 }
 
 // GetCatalogMesheryPatterns gives the catalog patterns stored with the provider
@@ -779,7 +778,7 @@ func (l *DefaultLocalProvider) GetApplicationSourceContent(req *http.Request, ap
 }
 
 // GetMesheryApplications gives the applications stored with the provider
-func (l *DefaultLocalProvider) GetMesheryApplications(tokenString, page, pageSize, search, order string) ([]byte, error) {
+func (l *DefaultLocalProvider) GetMesheryApplications(tokenString, page, pageSize, search, order string, updatedAfter string) ([]byte, error) {
 	if page == "" {
 		page = "0"
 	}
@@ -797,7 +796,7 @@ func (l *DefaultLocalProvider) GetMesheryApplications(tokenString, page, pageSiz
 		return nil, ErrPageSize(err)
 	}
 
-	return l.MesheryApplicationPersister.GetMesheryApplications(search, order, pg, pgs)
+	return l.MesheryApplicationPersister.GetMesheryApplications(search, order, pg, pgs, updatedAfter)
 }
 
 // GetMesheryApplication gets application for the given applicationID
@@ -810,6 +809,10 @@ func (l *DefaultLocalProvider) GetMesheryApplication(req *http.Request, applicat
 func (l *DefaultLocalProvider) DeleteMesheryApplication(req *http.Request, applicationID string) ([]byte, error) {
 	id := uuid.FromStringOrNil(applicationID)
 	return l.MesheryApplicationPersister.DeleteMesheryApplication(id)
+}
+
+func (l *DefaultLocalProvider) ShareDesign(req *http.Request) (int, error) {
+	return http.StatusForbidden, ErrLocalProviderSupport
 }
 
 // SavePerformanceProfile saves given performance profile with the provider
@@ -975,7 +978,7 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 							Name:        name,
 							ID:          &id,
 							UserID:      &nilUserID,
-							Visibility:  "public",
+							Visibility:  Published,
 							Location: map[string]interface{}{
 								"host":   "",
 								"path":   "",
@@ -998,7 +1001,7 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 							Name:       name,
 							ID:         &id,
 							UserID:     &nilUserID,
-							Visibility: "public",
+							Visibility: Published,
 							Location: map[string]interface{}{
 								"host":   "",
 								"path":   "",

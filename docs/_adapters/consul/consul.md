@@ -6,13 +6,29 @@ mesh_name: Consul
 earliest_version: v1.8.4
 port: 10002/gRPC
 project_status: stable
-adapter_version: v0.5.2
 lab: consul-meshery-adapter
 github_link: https://github.com/meshery/meshery-consul
 image: /assets/img/service-meshes/consul.svg
 #redirect_from: service-meshes/adapters/consul
 permalink: service-meshes/adapters/consul
 ---
+
+{% assign sorted_tests_group = site.compatibility | group_by: "meshery-component" %}
+{% for group in sorted_tests_group %}
+      {% if group.name == "meshery-consul" %}
+        {% assign items = group.items | sort: "meshery-component-version" | reverse %}
+        {% for item in items %}
+          {% if item.meshery-component-version != "edge" %}
+            {% if item.overall-status == "passing" %}
+              {% assign adapter_version_dynamic = item.meshery-component-version %}
+              {% break %}
+            {% elsif item.overall-status == "failing" %}
+              {% continue %}
+            {% endif %}
+          {% endif %}
+        {% endfor %} 
+      {% endif %}
+{% endfor %}
 
 {% include adapter-status.html %}
 

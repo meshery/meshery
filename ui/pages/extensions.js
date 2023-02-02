@@ -23,7 +23,7 @@ const styles = (theme) => ({
     borderRadius : theme.spacing(1),
     transformStyle : "preserve-3d",
     boxShadow : "0 4px 8px 0 rgba(0,0,0,0.2)",
-    backgroundColor : "#fff",
+    backgroundColor : theme.palette.secondary.elevatedComponents,
     minHeight : "250px",
     position : "relative",
   },
@@ -46,11 +46,53 @@ const styles = (theme) => ({
   },
   link : {
     textDecoration : "none",
-    color : "#00b39F",
+    color : theme.palette.secondary.link2,
   },
+  switchBase : {
+    color : '#647881',
+    "&$checked" : { color : '#00b39f' },
+    "&$checked + $track" : { backgroundColor : 'rgba(0,179,159,0.5)' },
+  },
+  track : { backgroundColor : 'rgba(100,120,129,0.5)', },
+  checked : {},
 });
 
 const INITIAL_GRID_SIZE = { lg : 6, md : 12, xs : 12 };
+
+const MeshMapSignUpcard = ({ classes }) => {
+
+  const handleSignUp = (e) => {
+    window.open("https://layer5.io/meshmap", "_blank")
+    e.stopPropagation();
+  };
+
+  return (
+    <Grid item {...INITIAL_GRID_SIZE}>
+      <div className={classes.card}>
+        <Typography className={classes.frontContent} variant="h5" component="div">
+              MeshMap
+        </Typography>
+
+        <Typography className={classes.frontSideDescription} variant="body">
+          <img className={classes.img} src="/static/img/meshmap.svg" />
+              Collaboratively design and manage your Kubernetes clusters, service mesh deployments, and cloud native apps.
+              MeshMap is now in private beta. Sign-up today to for early access!
+        </Typography>
+        <div style={{ textAlign : "right" }}>
+          <Button
+            variant="contained"
+            color="primary"
+            className={classes.button}
+            onClick={(e) => handleSignUp(e)}>
+                Sign Up
+          </Button>
+        </div>
+      </div>
+    </Grid>
+  )
+}
+
+export const WrappedMeshMapSignupCard = withStyles(styles)(MeshMapSignUpcard);
 
 const Extensions = ({ classes, toggleCatalogContent,  enqueueSnackbar, closeSnackbar }) => {
   const [catalogContent, setCatalogContent] = useState(true);
@@ -110,11 +152,6 @@ const Extensions = ({ classes, toggleCatalogContent,  enqueueSnackbar, closeSnac
     )
   }
 
-  const handleSignUp = (e) => {
-    window.open("https://layer5.io/meshmap", "_blank")
-    e.stopPropagation();
-  };
-
 
   return (
     <React.Fragment>
@@ -122,30 +159,8 @@ const Extensions = ({ classes, toggleCatalogContent,  enqueueSnackbar, closeSnac
         <title>Extensions | Meshery</title>
       </Head>
       <Grid container spacing={1} >
+        <WrappedMeshMapSignupCard />
         <Grid item {...INITIAL_GRID_SIZE}>
-          <div className={classes.card}>
-            <Typography className={classes.frontContent} variant="h5" component="div">
-              {"MeshMap"}
-            </Typography>
-
-            <Typography className={classes.frontSideDescription} variant="body">
-              <img className={classes.img} src="/static/img/meshmap.svg" />
-              Collaboratively design and manage your Kubernetes clusters, service mesh deployments, and cloud native apps.
-              MeshMap is now in private beta. Sign-up today to for early access!
-            </Typography>
-            <div style={{ textAlign : "right" }}>
-              <Button
-                variant="contained"
-                color="primary"
-                className={classes.button}
-                onClick={(e) => handleSignUp(e)}>
-                Sign Up
-              </Button>
-            </div>
-          </div>
-        </Grid>
-        <Grid item {...INITIAL_GRID_SIZE}>
-
           <div className={classes.card} >
             <Typography className={classes.frontContent} variant="h5" component="div">
               {"Meshery Catalog"}
@@ -172,6 +187,9 @@ const Extensions = ({ classes, toggleCatalogContent,  enqueueSnackbar, closeSnac
                   onChange={handleToggle}
                   name="OperatorSwitch"
                   color="primary"
+                  classes={{ switchBase : classes.switchBase,
+                    track : classes.track,
+                    checked : classes.checked, }}
                 />
               </div>
             </Grid>
