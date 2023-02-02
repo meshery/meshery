@@ -193,7 +193,7 @@ type HandlerConfig struct {
 	ConfigurationChannel *ConfigurationChannel
 
 	DashboardK8sResourcesChan *DashboardK8sResourcesChan
-	MeshModelSummaryChannel   *meshmodel.MeshModelSummaryChannel
+	MeshModelSummaryChannel   *meshmodel.SummaryChannel
 
 	K8scontextChannel *K8scontextChan
 	EventsBuffer      *events.EventStreamer
