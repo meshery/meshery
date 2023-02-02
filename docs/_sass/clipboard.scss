@@ -11,7 +11,7 @@ pre.codeblock-pre {
   border-radius: 4px;
   width: 100%;
   box-shadow: var(--box-shadow-primary);
-  background-color: #212529;
+  background-color: var(--color-secondary-dark) !important;
   max-width: 700px;
   overflow: scroll;
 }
@@ -21,7 +21,7 @@ pre.codeblock-pre {
   display: inline-flex;
   overflow: auto;
   justify-content: left;
-  color: #ddd;
+  color: var(--color-primary-medium);
   margin: 0px;
   padding: 0px;
 }
@@ -34,6 +34,7 @@ pre.codeblock-pre {
   overflow-x: auto;
   padding: 0px;
   margin: 0px;
+  color: var(--color-primary-medium);
 }
 
 .btn-copy-wrap {

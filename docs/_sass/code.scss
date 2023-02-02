@@ -1,3 +1,8 @@
+code {
+  font-size: 87.5%;
+  color: #952a1e;
+  word-break: break-word;
+}
 .td-content {
   p code,
   li > code,
@@ -42,11 +47,11 @@
   word-break: normal;
   white-space: pre;
   border: 0;
+  width: 100%;
+  overflow: scroll;
+  color: var(--color-secondary-dark);
 }
-.td-content .highlight pre {
-  margin: 0;
-  padding: 0;
-}
+
 pre {
   display: block;
   color: var(--color-grey-medium);
@@ -54,5 +59,18 @@ pre {
 
 .highlight pre {
   border: none !important;
+}
+
+.td-content {
+  .highlight pre {
+    margin: 0;
+    padding: 0;
+  }
+  pre {
+    word-wrap: normal;
+    background-color: var(--color-primary-medium);
+    padding: 1rem;
+    overflow: scroll;
+  }
 }
 

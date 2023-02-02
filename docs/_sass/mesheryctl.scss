@@ -1,28 +1,34 @@
 /* COMMAND REFERENCE */
 table.mesherycomponents {
-    th {
-        background-color: $charcoal;
-        color:white;
-    }
-    td.childcomponent {
-        color:white;
-        background-color: $tealblue;
-    }
+  th {
+    background-color: $charcoal;
+    color: white;
+  }
+  td.childcomponent {
+    color: white;
+    background-color: $tealblue;
+  }
 }
 
 .cmd-caption {
-    margin-bottom: 2rem;
+  margin-bottom: 2rem;
 }
 
 /* INSTALLATION */
 div.prereqs {
-    background-color: $charcoal;;
+  background-color: $charcoal;
+  font-size: 1.5rem;
+  & > *,
+  & > * > * {
     color: #ddd;
-    margin: 20px;
-    padding: 15px;
-    border-radius: 0.3rem;
-
+    margin-top: 0;
+  }
+  color: #ddd;
+  margin: 20px;
+  padding: 15px;
+  border-radius: 0.3rem;
 }
 a.meshery-light {
-   color: $keppel;
+  color: $keppel;
 }
+
