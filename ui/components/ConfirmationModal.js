@@ -22,6 +22,8 @@ import Operator from "../assets/img/Operator";
 import { ACTIONS } from "../utils/Enum";
 import OperatorLight from "../assets/img/OperatorLight";
 import { iconMedium, iconSmall } from "../css/icons.styles";
+import { RoundedTriangleShape } from "./shapes/RoundedTriangle";
+import { notificationColors } from "../themes/app";
 
 const styles = (theme) => ({
   dialogBox : {
@@ -164,11 +166,21 @@ const styles = (theme) => ({
     color : "rgba(84, 87, 91, 1)",
     fontSize : "16px"
   },
+  triangleContainer : {
+    position : "relative"
+  },
+  triangleNumberSingleDigit : {
+    position : "absolute",
+    bottom : 12,
+    left : "37%",
+    color : "#fff",
+    fontSize : "0.8rem"
+  }
 })
 
 function ConfirmationMsg(props) {
   const { classes, open, handleClose, submit,
-    selectedK8sContexts, k8scontext, title, validationBody, setK8sContexts, enqueueSnackbar, closeSnackbar, componentCount, tab } = props
+    selectedK8sContexts, k8scontext, title, validationBody, setK8sContexts, enqueueSnackbar, closeSnackbar, componentCount, tab, errors } = props;
 
   const [tabVal, setTabVal] = useState(tab);
   const [disabled, setDisabled] = useState(true);
@@ -285,8 +297,18 @@ function ConfirmationMsg(props) {
               data-cy="validate-btn-modal"
               className={classes.tab}
               onClick={(event) => handleTabValChange(event,0)}
-              label={<div style={{ display : "flex" }}
-              > <DoneIcon style={{ margin : "2px", ...iconSmall }}  fontSize="small"/><span className={classes.tabLabel}>Validate</span> </div>
+              label={
+                <div style={{ display : "flex" }}
+                >
+                  <DoneIcon style={{ margin : "2px", ...iconSmall }}  fontSize="small"/><span className={classes.tabLabel}>Validate</span>
+                  {errors?.validationError > 0 && (
+                    <div className={classes.triangleContainer}>
+                      <RoundedTriangleShape color={notificationColors.warning}></RoundedTriangleShape>
+                      <div className={classes.triangleNumberSingleDigit} style={errors.validationError > 10 ? { left : "25%" }: {}}>
+                        {errors.validationError}
+                      </div>
+                    </div>)}
+                </div>
               }
             />}
             <Tab
