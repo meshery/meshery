@@ -31,7 +31,7 @@ import UndeployIcon from "../public/static/img/UndeployIcon";
 import DoneAllIcon from '@material-ui/icons/DoneAll';
 import DoneIcon from '@material-ui/icons/Done';
 import PublicIcon from '@material-ui/icons/Public';
-import ConfirmationMsg from "./ConfirmationModal";
+import ConfirmationModal from "./ConfirmationModal";
 import PublishIcon from "@material-ui/icons/Publish";
 import PromptComponent from "./PromptComponent";
 import ConfigurationSubscription from "./graphql/subscriptions/ConfigurationSubscription";
@@ -266,7 +266,10 @@ function MesheryPatterns({
     pattern_file : null,
     name : "",
     count : 0,
-    validationBody : null
+    validationBody : null,
+    errors : {
+      validationErrors : 0
+    }
   });
 
   const [importModal, setImportModal] = useState({
@@ -467,6 +470,7 @@ function MesheryPatterns({
   }
 
   const handleModalOpen = (e, pattern_file, name, errors, action) => {
+    console.log("errors...//./././././", errors)
     e.stopPropagation();
     const compCount = getComponentsinFile(pattern_file);
     const validationBody = (
@@ -482,7 +486,12 @@ function MesheryPatterns({
       pattern_file : pattern_file,
       name : name,
       count : compCount,
-      validationBody : validationBody
+      validationBody : validationBody,
+      errors : {
+        validationError : errors?.reduce((count, ele) => {
+          return ele.errors.length + count
+        }, 0)
+      }
     });
   }
 
@@ -1184,7 +1193,7 @@ function MesheryPatterns({
               patternErrors={patternErrors}
             />
         }
-        <ConfirmationMsg
+        <ConfirmationModal
           open={modalOpen.open}
           handleClose={handleModalClose}
           submit={
@@ -1194,6 +1203,7 @@ function MesheryPatterns({
           componentCount={modalOpen.count}
           tab={modalOpen.action}
           validationBody={modalOpen.validationBody}
+          errors={modalOpen.errors}
         />
         <PublishModal open={publishModal.open} handleClose={handlePublishModalClose} pattern={publishModal.pattern} aria-label="catalog publish" handlePublish={handlePublish} />
         <UploadImport open={importModal.open} handleClose={handleUploadImportClose} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} fetch={() => fetchPatterns(page, pageSize, search, sortOrder)} configuration="Design" />

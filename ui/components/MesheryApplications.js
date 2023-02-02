@@ -314,7 +314,6 @@ function MesheryApplications({
   }
 
   const handleModalOpen = (app_file, name, isDeploy) => {
-    // console.log("MMMM", disposeConfSubscription);
     setModalOpen({
       open : true,
       deploy : isDeploy,
