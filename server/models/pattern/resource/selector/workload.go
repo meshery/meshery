@@ -16,7 +16,7 @@ func (s *Selector) Workload(name string, version string, model string, apiVersio
 	if model == "" && name == "Application" { //If model is not passed, default to core
 		model = "core"
 	}
-	if apiVersion == "core.oam.dev/v1alpha1" { //For backwards compatibilty with older designs which were created using OAM
+	if apiVersion == "core.oam.dev/v1alpha1" { //For backwards compatibility with older designs which were created using OAM
 		apiVersion = ""
 	}
 	entities := s.registry.GetEntities(&v1alpha1.ComponentFilter{
