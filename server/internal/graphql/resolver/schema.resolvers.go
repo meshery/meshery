@@ -163,7 +163,16 @@ func (r *queryResolver) GetClusterResources(ctx context.Context, k8scontextIDs [
 	return r.getClusterResources(ctx, provider, k8scontextIDs, namespace)
 }
 
-// ListenToAddonState is the resolver for the listenToAddonState field.
+func (r *queryResolver) GetMeshModelSummary(ctx context.Context, selector model.MeshModelSummarySelector) (*model.MeshModelSummary, error) {
+	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	return r.getMeshModelSummary(ctx, provider, selector)
+}
+
+func (r *queryResolver) FetchTelemetryComponents(ctx context.Context, contexts []string) ([]*model.TelemetryComp, error) {
+	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	return r.getTelemetryComps(ctx, provider, contexts)
+}
+
 func (r *subscriptionResolver) ListenToAddonState(ctx context.Context, filter *model.ServiceMeshFilter) (<-chan []*model.AddonList, error) {
 	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
 	if filter != nil {
@@ -336,6 +345,11 @@ func (r *subscriptionResolver) SubscribeClusterResources(ctx context.Context, k8
 func (r *subscriptionResolver) SubscribeK8sContext(ctx context.Context, selector model.PageFilter) (<-chan *model.K8sContextsPage, error) {
 	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
 	return r.subscribeK8sContexts(ctx, provider, selector)
+}
+
+func (r *subscriptionResolver) SubscribeMeshModelSummary(ctx context.Context, selector model.MeshModelSummarySelector) (<-chan *model.MeshModelSummary, error) {
+	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	return r.subscribeMeshModelSummary(ctx, provider, selector)
 }
 
 // Mutation returns generated.MutationResolver implementation.

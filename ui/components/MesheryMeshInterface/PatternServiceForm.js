@@ -6,14 +6,7 @@ import PatternServiceFormCore from "./PatternServiceFormCore";
 import SettingsIcon from '@material-ui/icons/Settings';
 
 const useStyles = makeStyles(() => ({
-  appBar : {
-    // @ts-ignore
-    boxShadow : `0px 2px 4px -1px "#677E88"`,
-    // @ts-ignore
-    background : "#677E88",
-    position : "sticky",
-    zIndex : 'auto',
-  },
+
   tabPanel : {
     padding : "0px 2px"
   },
@@ -130,13 +123,19 @@ function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference
         // for rendering normal rjsf forms
         return (
           <div className={classes.formWrapper}>
-            <AppBar className={classes.appBar}>
+            <AppBar style={{
+
+              boxShadow : `0px 2px 4px -1px "#677E88"`,
+              background : "#677E88",
+              position : "sticky",
+              zIndex : 'auto',
+            }}>
               <Tabs className={classes.appTabs} value={tab} onChange={handleTabChange} TabIndicatorProps={{
                 style : {
                   display : "none",
                 },
               }} aria-label="Pattern Service" >
-                <Tab label={<div> <SettingsIcon className={classes.setIcon} />Settings</div>} {...a11yProps(0)} />
+                <Tab label={<div style={{ display : "flex" }}> <SettingsIcon className={classes.setIcon} />Settings</div>} {...a11yProps(0)} />
                 {
                   renderTraits()
                     ? <Tab label="Traits" {...a11yProps(1)} />

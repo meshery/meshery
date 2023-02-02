@@ -58,3 +58,19 @@ export function getMeshProperties(name) {
     default: return {}
   }
 }
+
+export const TelemetryComps = {
+  GRAFANA : "grafana",
+  PROMETHEUS : "prometheus",
+};
+
+// maps objects to telemetry comp if name is one of "TelemetryComps"
+export function isTelemetryComponent(name) {
+  const comps = Object.values(TelemetryComps);
+  for (const comp in comps) {
+    if (name?.toLowerCase().includes(comps[comp])) {
+      return comps[comp];
+    }
+  }
+  return "";
+}

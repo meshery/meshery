@@ -39,7 +39,6 @@ Meshery chart for deploying Meshery and Meshery's adapters.
 | env.ADAPTER_URLS | string | `"meshery-istio:10000 meshery-linkerd:10001 meshery-consul:10002 meshery-kuma:10007 meshery-osm:10009 meshery-nginx-sm:10010 meshery-nsm:10004 meshery-app-mesh:10005 meshery-traefik-mesh:10006 meshery-cilium:10012 meshery-perf:10013"` |  |
 | env.EVENT | string | `"mesheryLocal"` |  |
 | env.PROVIDER_BASE_URLS | string | `"https://meshery.layer5.io"` |  |
-| env.SAAS_BASE_URL | string | `"https://meshery.layer5.io"` |  |
 | fullnameOverride | string | `""` |  |
 | image.pullPolicy | string | `"Always"` |  |
 | image.repository | string | `"layer5/meshery"` |  |
