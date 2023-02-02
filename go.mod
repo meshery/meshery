@@ -21,7 +21,7 @@ replace (
 require (
 	cuelang.org/go v0.4.3
 	fortio.org/fortio v1.21.0
-	github.com/99designs/gqlgen v0.17.10
+	github.com/99designs/gqlgen v0.17.24
 	github.com/asaskevich/govalidator v0.0.0-20210307081110-f21760c49a8d
 	github.com/briandowns/spinner v1.20.0
 	github.com/docker/docker v20.10.23+incompatible
@@ -59,7 +59,7 @@ require (
 	github.com/spf13/cobra v1.6.1
 	github.com/spf13/pflag v1.0.5
 	github.com/spf13/viper v1.15.0
-	github.com/vektah/gqlparser/v2 v2.4.5
+	github.com/vektah/gqlparser/v2 v2.5.1
 	github.com/vmihailenco/taskq/v3 v3.2.9
 	golang.org/x/oauth2 v0.4.0
 	golang.org/x/text v0.6.0
