@@ -144,6 +144,11 @@ func (r *queryResolver) GetMeshModelSummary(ctx context.Context, selector model.
 	return r.getMeshModelSummary(ctx, provider, selector)
 }
 
+func (r *queryResolver) FetchTelemetryComponents(ctx context.Context, contexts []string) ([]*model.TelemetryComp, error) {
+	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	return r.getTelemetryComps(ctx, provider, contexts)
+}
+
 func (r *subscriptionResolver) ListenToAddonState(ctx context.Context, filter *model.ServiceMeshFilter) (<-chan []*model.AddonList, error) {
 	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
 	if filter != nil {

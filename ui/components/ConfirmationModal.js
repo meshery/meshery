@@ -1,6 +1,6 @@
 import {
   Button, Checkbox, Chip, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, Tab, Tabs, TextField,
-  Tooltip, Typography
+  Tooltip, Typography, useTheme
 } from "@material-ui/core";
 import CloseIcon from "@material-ui/icons/Close";
 import { withStyles } from "@material-ui/core/styles";
@@ -20,6 +20,7 @@ import DoneIcon from "@material-ui/icons/Done";
 import Link from 'next/link';
 import Operator from "../assets/img/Operator";
 import { ACTIONS } from "../utils/Enum";
+import OperatorLight from "../assets/img/OperatorLight";
 import { iconMedium, iconSmall } from "../css/icons.styles";
 
 const styles = (theme) => ({
@@ -39,15 +40,13 @@ const styles = (theme) => ({
     top: theme.spacing(0.5),
     [theme.breakpoints.down("md")]: { fontSize: "12px", },
   },
-
-  ctxChip: {
-    backgroundColor: "white",
-    cursor: "pointer",
-    marginRight: theme.spacing(1),
-    marginLeft: theme.spacing(1),
-    marginBottom: theme.spacing(1),
-    height: "100%",
-    padding: theme.spacing(0.5)
+  ctxChip : {
+    cursor : "pointer",
+    marginRight : theme.spacing(1),
+    marginLeft : theme.spacing(1),
+    marginBottom : theme.spacing(1),
+    height : "100%",
+    padding : theme.spacing(0.5)
   },
   ctxIcon: {
     display: 'inline',
@@ -91,15 +90,15 @@ const styles = (theme) => ({
     },
     minWidth: 100,
   },
-  disabledBtnDel: {
-    margin: theme.spacing(0.5),
-    padding: theme.spacing(1),
-    borderRadius: 5,
-    "&:disabled": {
-      backgroundColor: "#FF3D3D",
-      color: "#fff"
+  disabledBtnDel : {
+    margin : theme.spacing(0.5),
+    padding : theme.spacing(1),
+    borderRadius : 5,
+    "&:disabled" : {
+      backgroundColor : theme.palette.type=="dark"? "grey": "#FF3D3D",
+      color : "#fff"
     },
-    minWidth: 100,
+    minWidth : 100,
   },
   actions: {
     display: 'flex',
@@ -112,10 +111,10 @@ const styles = (theme) => ({
     display: "flex",
     flexWrap: "wrap"
   },
-  tabs: {
-    marginLeft: 0,
-    "& .MuiTab-root.Mui-selected": {
-      backgroundColor: '#D9D9D9'
+  tabs : {
+    marginLeft : 0,
+    "& .MuiTab-root.Mui-selected" : {
+      backgroundColor : theme.palette.secondary.modalTabs
     }
   },
   tabLabel: {
@@ -151,15 +150,14 @@ const styles = (theme) => ({
     display: "flex",
     justifyContent: "center"
   },
-  textContent: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    marginTop: "1rem",
-    backgroundColor: "rgb(234, 235, 236)",
-    padding: "10px",
-    borderRadius: "10px"
+  textContent : {
+    display : "flex",
+    flexDirection : "column",
+    alignItems : "center",
+    justifyContent : "center",
+    marginTop : "1rem",
+    padding : "10px",
+    borderRadius : "10px"
   },
   subText: {
     color: "rgba(84, 87, 91, 1)",
@@ -175,6 +173,7 @@ function ConfirmationMsg(props) {
   const [tabVal, setTabVal] = useState(tab);
   const [disabled, setDisabled] = useState(true);
   const [context, setContexts] = useState([]);
+  const theme = useTheme();
   let isDisabled = typeof selectedK8sContexts.length === "undefined" || selectedK8sContexts.length === 0
 
   useEffect(() => {
@@ -293,9 +292,9 @@ function ConfirmationMsg(props) {
             <Tab
               data-cy="Undeploy-btn-modal"
               className={classes.tab}
-              onClick={(event) => handleTabValChange(event, 1)}
-              label={<div style={{ display: "flex" }}
-              > <div style={{ margin: "2px" }}> <UndeployIcon style={iconSmall} fill="rgba(0, 0, 0, 0.54)" width="20" height="20" /> </div> <span className={classes.tabLabel}>Undeploy</span> </div>}
+              onClick={(event) => handleTabValChange(event,1)}
+              label={<div style={{ display : "flex" }}
+              > <div style={{ margin : "2px" }}> <UndeployIcon style={iconSmall} fill={theme.palette.secondary.icon} width="20" height="20"/> </div> <span className={classes.tabLabel}>Undeploy</span> </div>}
             />
             <Tab
               data-cy="deploy-btn-modal"
@@ -375,7 +374,7 @@ function ConfirmationMsg(props) {
                       </Typography>
                       :
                       <div className={classes.textContent}>
-                        <Operator />
+                        {theme.palette.type=="dark"? <OperatorLight /> : <Operator />}
                         <Typography variant="h5">No cluster connected yet</Typography>
 
                         <Link href="/settings">

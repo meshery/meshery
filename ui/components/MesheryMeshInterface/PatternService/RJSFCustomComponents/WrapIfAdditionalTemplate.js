@@ -55,7 +55,7 @@ const WrapIfAdditionalTemplate = ({
         </FormControl>
       </Grid>
       <Grid item style={{ alignSelf : 'flex-end' }}>
-        <span style={{ fontSize : "1.25rem", color : "#1E2117" }}>
+        <span style={{ fontSize : "1.25rem" }}>
           &nbsp;:&nbsp;
         </span>
       </Grid>

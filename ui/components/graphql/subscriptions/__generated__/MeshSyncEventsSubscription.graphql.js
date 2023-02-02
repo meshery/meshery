@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<78292ea9c6a13900233f03580ab3fcac>>
+ * @generated SignedSource<<b3011daaf25f93f6365380461e140963>>
  * @flow
  * @lightSyntaxTransform
  * @nogrep
@@ -15,7 +15,7 @@ export type MeshSyncEventsSubscription$variables = {|
   k8scontextIDs?: ?$ReadOnlyArray<string>,
 |};
 export type MeshSyncEventsSubscription$data = {|
-  +subscribeMeshSyncEvents: {|
+  +meshsyncevents: {|
     +type: string,
     +object: any,
     +contextId: string,
@@ -37,7 +37,7 @@ var v0 = [
 ],
 v1 = [
   {
-    "alias": null,
+    "alias": "meshsyncevents",
     "args": [
       {
         "kind": "Variable",
@@ -93,17 +93,17 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "519cd56d2c2174db537e8a5984e81714",
+    "cacheID": "c8d361708120a8bd2d53fa7d729389da",
     "id": null,
     "metadata": {},
     "name": "MeshSyncEventsSubscription",
     "operationKind": "subscription",
-    "text": "subscription MeshSyncEventsSubscription(\n  $k8scontextIDs: [String!]\n) {\n  subscribeMeshSyncEvents(k8scontextIDs: $k8scontextIDs) {\n    type\n    object\n    contextId\n  }\n}\n"
+    "text": "subscription MeshSyncEventsSubscription(\n  $k8scontextIDs: [String!]\n) {\n  meshsyncevents: subscribeMeshSyncEvents(k8scontextIDs: $k8scontextIDs) {\n    type\n    object\n    contextId\n  }\n}\n"
   }
 };
 })();
 
-(node/*: any*/).hash = "8c1304c7cd0a5eb6db288eb62104de62";
+(node/*: any*/).hash = "bb175879d0d8929cbeb1f5809b51413e";
 
 module.exports = ((node/*: any*/)/*: GraphQLSubscription<
   MeshSyncEventsSubscription$variables,

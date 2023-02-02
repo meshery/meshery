@@ -353,6 +353,12 @@ type ServiceMeshFilter struct {
 	K8sClusterIDs []string  `json:"k8sClusterIDs"`
 }
 
+type TelemetryComp struct {
+	Name   string `json:"name"`
+	Spec   string `json:"spec"`
+	Status string `json:"status"`
+}
+
 type MeshType string
 
 const (

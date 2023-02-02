@@ -211,3 +211,12 @@ func getRelativePathForAPI(path string) string {
 	ui := strings.TrimPrefix(UI, "../../")
 	return filepath.Join(ui, path)
 }
+
+func SliceContains(elements []string, name string) bool {
+	for _, ele := range elements {
+		if strings.Contains(strings.ToLower(name), ele) {
+			return true
+		}
+	}
+	return false
+}
