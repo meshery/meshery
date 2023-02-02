@@ -25,9 +25,9 @@ func Validator(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFu
 		data.PatternSvcTraitCapabilities = map[string][]core.TraitCapability{}
 
 		for svcName, svc := range data.Pattern.Services {
-			wc, ok := s.Workload(svc.Type, svc.Version, svc.Model)
-			if !ok {
-				act.Terminate(fmt.Errorf("invalid workload of type: %s", svc.Type))
+			wc, err := s.Workload(svc.Type, svc.Version, svc.Model, svc.APIVersion)
+			if err != nil {
+				act.Terminate(err)
 				return
 			}
 
