@@ -167,7 +167,8 @@ const styles = (theme) => ({
     fontSize : "16px"
   },
   triangleContainer : {
-    position : "relative"
+    position : "relative",
+    marginLeft : 2
   },
   triangleNumberSingleDigit : {
     position : "absolute",
