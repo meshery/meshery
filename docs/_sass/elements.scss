@@ -105,3 +105,11 @@ samp {
   font-family: SFMono-Regular, Menlo, Monaco, Consolas, liberation mono, courier new, monospace;
 }
 
+button {
+  background-color: var(--color-primary-dark);
+  color: var(--color-secondary-dark);
+  padding: 4px 8px;
+  border-radius: 5px;
+  border: 1px solid var(--color-secondary-light);
+}
+

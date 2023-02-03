@@ -41,6 +41,15 @@ ul,
 ol {
   list-style: none;
   text-decoration: none;
+  margin-bottom: 1.5rem;
+}
+
+button {
+  background-color: var(--color-primary-dark);
+  color: var(--color-secondary-dark);
+  padding: 2px 5px;
+  border-radius: 5px;
+  border: 1px solid var(--color-secondary-light);
 }
 
 .flex-container {
