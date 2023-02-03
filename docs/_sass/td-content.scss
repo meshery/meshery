@@ -25,7 +25,7 @@
 }
 
 [data-termynal] {
-  width: 750px;
+  width: 100% !important;
   max-width: 100%;
   background: linear-gradient(
     to right top,
@@ -44,10 +44,10 @@
   );
   // color: var(--color-text);
   box-shadow: var(--box-shadow-primary);
-  font-size: 18px;
+  font-size: 16px;
   font-family: "Fira Mono", Consolas, Menlo, Monaco, "Courier New", Courier, monospace;
-  border-radius: 4px;
-  padding: 45px 45px 35px;
+  border-radius: 0px;
+  padding: 40px 40px 30px;
   position: relative;
   overflow: hidden;
   overflow-x: scroll;

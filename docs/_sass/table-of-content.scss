@@ -25,6 +25,7 @@
   gap: 1.5rem;
   font-size: 1.4rem;
   overflow-y: auto;
+  overflow-wrap: break-word;
 
   @media (max-width: 75em) {
     flex: 0 0 23%;

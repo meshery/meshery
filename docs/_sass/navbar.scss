@@ -204,7 +204,7 @@ header {
       gap: 3rem;
       list-style: none;
       align-items: center;
-
+      margin-bottom: 0;
       @media (max-width: 1200px) {
         width: 100%;
         background: var(--background-grey);

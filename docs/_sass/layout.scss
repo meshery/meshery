@@ -44,14 +44,6 @@ ol {
   margin-bottom: 1.5rem;
 }
 
-button {
-  background-color: var(--color-primary-dark);
-  color: var(--color-secondary-dark);
-  padding: 2px 5px;
-  border-radius: 5px;
-  border: 1px solid var(--color-secondary-light);
-}
-
 .flex-container {
   display: flex;
 
@@ -68,6 +60,7 @@ button {
 .main-container {
   padding: 3.5rem min(4.5vh, 2.5vw);
   overflow: hidden;
+  width: 100%;
 
   @media (max-width: 75em) {
     flex: 0 0 75%;
@@ -92,5 +85,11 @@ button {
       }
     }
   }
+}
+
+#hiddendiv {
+  font-size: 1.4rem;
+  background-color: var(--color-primary-medium);
+  padding: 15px 10px;
 }
 

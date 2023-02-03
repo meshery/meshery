@@ -37,6 +37,18 @@
   }
 }
 
+.alert-dark {
+  border-style: solid;
+  border-color: var(--color-grey-dark);
+  border-width: 0 0 0 4px;
+  & .alert-heading > *,
+  & .alert-heading {
+    color: var(--color-secondary-medium);
+    margin: 0;
+    margin-bottom: 1rem;
+  }
+}
+
 .td-content .alert:not(:first-child) {
   margin-top: 3rem;
   margin-bottom: 3rem;
