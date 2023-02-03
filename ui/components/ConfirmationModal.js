@@ -42,7 +42,6 @@ const styles = (theme) => ({
     top : theme.spacing(0.5),
     [theme.breakpoints.down("md")] : { fontSize : "12px", },
   },
-
   ctxChip : {
     cursor : "pointer",
     marginRight : theme.spacing(1),
@@ -179,9 +178,10 @@ const styles = (theme) => ({
   }
 })
 
+
 function ConfirmationMsg(props) {
   const { classes, open, handleClose, submit,
-    selectedK8sContexts, k8scontext, title, validationBody, setK8sContexts, enqueueSnackbar, closeSnackbar, componentCount, tab, errors } = props;
+    selectedK8sContexts, k8scontext, title, validationBody, setK8sContexts, enqueueSnackbar, closeSnackbar, componentCount, tab, errors, dryRunComponent } = props
 
   const [tabVal, setTabVal] = useState(tab);
   const [disabled, setDisabled] = useState(true);
@@ -287,7 +287,7 @@ function ConfirmationMsg(props) {
           </DialogTitle>
           {/* <Paper square className={classes.paperRoot}> */}
           <Tabs
-            value={validationBody ? (tabVal) : (tabVal === 2 ? 1 : 0) }
+            value={validationBody ? (tabVal) : (tabVal === 2 ? 1 : 0)}
             variant="fullWidth"
             indicatorColor="primary"
             textColor="primary"
@@ -322,16 +322,20 @@ function ConfirmationMsg(props) {
             <Tab
               data-cy="deploy-btn-modal"
               className={classes.tab}
-              onClick={(event) => handleTabValChange(event,2)}
+              onClick={(event) => handleTabValChange(event, 2)}
               label={<div style={{ display : "flex" }}
               > <DoneAllIcon style={{ margin : "2px", ...iconSmall }} fontSize="small" /> <span className={classes.tabLabel}>Deploy</span> </div>}
             />
           </Tabs>
 
           {(tabVal === ACTIONS.DEPLOY || tabVal === ACTIONS.UNDEPLOY) &&
-              <DialogContent>
-                <DialogContentText id="alert-dialog-description" className={classes.subtitle}>
-                  <Typography variant="subtitle1" style={{ marginBottom : "0.8rem" }}> {componentCount !== undefined ? <> {componentCount} component{componentCount > 1 ? "s" : ""} </> : "" }</Typography>
+            <DialogContent>
+              <DialogContentText id="alert-dialog-description" className={classes.subtitle}>
+                <div style={{ height : "100%" }}>
+                  {dryRunComponent && dryRunComponent}
+                </div>
+                <div>
+                  <Typography variant="subtitle1" style={{ marginBottom : "0.8rem" }}> {componentCount !== undefined ? <> {componentCount} component{componentCount > 1 ? "s" : ""} </> : ""}</Typography>
                   {
                     k8scontext.length > 0 ?
                       <Typography variant="body1">
@@ -349,7 +353,7 @@ function ConfirmationMsg(props) {
                           }}
                         // margin="none"
                         />
-                        {context.length > 0?
+                        {context.length > 0 ?
                           <div className={classes.all}>
                             <Checkbox
                               checked={selectedK8sContexts?.includes("all")}
@@ -360,7 +364,7 @@ function ConfirmationMsg(props) {
                           </div>
                           :
                           <Typography variant="subtitle1">
-                          No Context found
+                            No Context found
                           </Typography>
                         }
 
@@ -404,20 +408,21 @@ function ConfirmationMsg(props) {
                             style={{ margin : "0.6rem 0.6rem", whiteSpace : "nowrap" }}
                           >
                             <AddIcon className={classes.AddIcon} />
-                          Connect Clusters
+                            Connect Clusters
                           </Button>
                         </Link>
                       </div>
                   }
-                </DialogContentText>
-              </DialogContent>
+                </div>
+              </DialogContentText>
+            </DialogContent>
           }
           {tabVal === ACTIONS.VERIFY &&// Validate
-              <DialogContent>
-                <DialogContentText>
-                  { validationBody }
-                </DialogContentText>
-              </DialogContent>
+            <DialogContent>
+              <DialogContentText>
+                {validationBody}
+              </DialogContentText>
+            </DialogContent>
           }
           {/* </Paper> */}
 
