@@ -19,8 +19,19 @@ table {
   padding: 1rem;
   vertical-align: top;
   border-top: 2px solid var(--color-primary-dark);
-  background-color: var(--color-primary-medium);
 }
+
+// .table th,
+// .td-box .row.section > table th,
+// .td-content > table th,
+// .table td,
+// .td-box .row.section > table td,
+// .td-content > table td {
+//   padding: 1rem;
+//   vertical-align: top;
+//   border-top: 2px solid var(--color-primary-dark);
+//   background-color: var(--color-primary-medium);
+// }
 
 .table thead th,
 .td-box .row.section > table thead th,

@@ -1,6 +1,6 @@
 <style>
   td:hover,tr:hover {
-      background-color: #ccfff9;
+      background-color: var(--color-primary-dark);
       cursor:pointer;
     }
     td.details {
@@ -87,20 +87,20 @@
             {% elsif single.overall-status == "failing" %}
               {% assign successfull_linkerd = 0 %}
             {% else %}
-              {% assign successfull_linkerd = 0.5%}  
+              {% assign successfull_linkerd = 0.5%}
             {% endif %}
           {% endfor %}
 
         {% elsif k8s_item.name == "meshery-istio" %}
           {% assign istio_size = k8s_item.size | times:1.0 | times:1.0 %}
           {% assign istio_items = k8s_item.items | sort: "meshery-component-version" | reverse %}
-          {% for single in istio_items limit: 1 %}    
+          {% for single in istio_items limit: 1 %}
              {% if single.overall-status == "passing" %}
               {% assign successfull_istio = 1 %}
             {% elsif single.overall-status == "failing" %}
               {% assign successfull_istio = 0 %}
             {% else %}
-              {% assign successfull_istio = 0.5%}  
+              {% assign successfull_istio = 0.5%}
             {% endif %}
           {% endfor %}
 
@@ -113,7 +113,7 @@
             {% elsif single.overall-status == "failing" %}
               {% assign successfull_kuma = 0 %}
             {% else %}
-              {% assign successfull_kuma = 0.5%}  
+              {% assign successfull_kuma = 0.5%}
             {% endif %}
           {% endfor %}
 
@@ -130,7 +130,7 @@
             {% elsif single.overall-status == "failing" %}
               {% assign successfull_osm = 0 %}
             {% else %}
-              {% assign successfull_osm = 0.5%} 
+              {% assign successfull_osm = 0.5%}
             {% endif %}
           {% endfor %}
 
@@ -143,7 +143,7 @@
             {% elsif single.overall-status == "failing" %}
               {% assign successfull_cilium = 0 %}
             {% else %}
-              {% assign successfull_cilium = 0.5%} 
+              {% assign successfull_cilium = 0.5%}
             {% endif %}
           {% endfor %}
 
@@ -156,7 +156,7 @@
             {% elsif single.overall-status == "failing" %}
               {% assign successfull_nginx_sm = 0 %}
             {% else %}
-              {% assign successfull_nginx_sm = 0.5%} 
+              {% assign successfull_nginx_sm = 0.5%}
             {% endif %}
           {% endfor %}
 
@@ -169,7 +169,7 @@
             {% elsif single.overall-status == "failing" %}
               {% assign successfull_consul = 0 %}
             {% else %}
-              {% assign successfull_consul = 0.5%} 
+              {% assign successfull_consul = 0.5%}
             {% endif %}
           {% endfor %}
 
@@ -182,7 +182,7 @@
             {% elsif single.overall-status == "failing" %}
               {% assign successfull_traefik_mesh = 0 %}
             {% else %}
-              {% assign successfull_traefik_mesh = 0.5%} 
+              {% assign successfull_traefik_mesh = 0.5%}
             {% endif %}
           {% endfor %}
         {% endif %}

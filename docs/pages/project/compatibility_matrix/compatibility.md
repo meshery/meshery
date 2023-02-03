@@ -319,9 +319,9 @@ As a key aspect of Meshery, its integrations with other systems are routinely te
         {% endif %}
       {% endfor %}
     {% endfor %}
+
   </tbody>
 </table>
-
 
 <script type="text/javascript" >
 
@@ -332,5 +332,4 @@ As a key aspect of Meshery, its integrations with other systems are routinely te
             });
     });
 </script>
-
 
