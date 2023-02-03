@@ -6,9 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
-	"os"
 	"path/filepath"
 
 	mutil "github.com/layer5io/meshery/server/helpers/utils"
@@ -29,8 +27,6 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
-
-const K8sModelMetadataPath = "../meshmodel/components/kubernetes/kubernetes_modellevel_metadata.json"
 
 // SaveK8sContextResponse - struct used as (json marshaled) response to requests for saving k8s contexts
 type SaveK8sContextResponse struct {
@@ -351,12 +347,6 @@ func RegisterK8sComponents(ctxt context.Context, config []byte, ctxID string, re
 }
 
 func RegisterK8sMeshModelComponents(ctx context.Context, config []byte, ctxID string, reg *meshmodel.RegistryManager) (err error) {
-	commonMetadata := make(map[string]interface{})
-	f, err := os.Open(K8sModelMetadataPath)
-	if err == nil {
-		b, _ := ioutil.ReadAll(f)
-		_ = json.Unmarshal(b, &commonMetadata)
-	}
 	man, err := mcore.GetK8sMeshModelComponents(ctx, config)
 	if err != nil {
 		return ErrCreatingKubernetesComponents(err, ctxID)
@@ -365,7 +355,6 @@ func RegisterK8sMeshModelComponents(ctx context.Context, config []byte, ctxID st
 		return ErrCreatingKubernetesComponents(errors.New("generated components are nil"), ctxID)
 	}
 	for _, c := range man {
-		c.Metadata = mergeMaps(c.Metadata, commonMetadata)
 		mutil.WriteSVGsOnFileSystem(&c)
 		err = reg.RegisterEntity(meshmodel.Host{
 			Hostname:  "kubernetes",
@@ -373,15 +362,6 @@ func RegisterK8sMeshModelComponents(ctx context.Context, config []byte, ctxID st
 		}, c)
 	}
 	return
-}
-func mergeMaps(maps ...map[string]interface{}) map[string]interface{} {
-	merged := make(map[string]interface{})
-	for _, m := range maps {
-		for key, value := range m {
-			merged[key] = value
-		}
-	}
-	return merged
 }
 
 // func writeMeshModelComponentsOnFileSystem(c meshmodelv1alpha1.ComponentDefinition, dirpath string) {
