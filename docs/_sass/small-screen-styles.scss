@@ -1,0 +1,21 @@
+@media (max-width: 1200px) {
+  p {
+    font-size: 1.8rem;
+  }
+  table {
+    font-size: 1.7rem !important;
+  }
+  .main-container #breadcrumbs {
+    font-size: 1.8rem;
+  }
+  .content-table-wrapper {
+    display: none;
+  }
+  pre {
+    font-size: 1.4rem;
+  }
+  ul,
+  ol {
+    font-size: 1.6rem;
+  }
+}
