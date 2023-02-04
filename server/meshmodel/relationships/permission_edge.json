@@ -7,7 +7,7 @@
   "model": {
     "name": "core"
   },
-  "subType": "Network",
+  "subType": "Permission",
   "selectors": {
     "deny": {
       "from": [

@@ -2,12 +2,12 @@
     "apiVersion": "core.meshery.io/v1alpha1",
     "kind": "Edge",
     "metadata": {
-      "description": "A relationship that represents a set of permissions"
+      "description": "A relationship that represents volume mounts between components"
     },
     "model": {
       "name": "core"
     },
-    "subType": "Network",
+    "subType": "Mount",
     "selectors": {
       "deny": {
         "from": [
