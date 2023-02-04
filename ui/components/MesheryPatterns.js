@@ -244,6 +244,8 @@ function MesheryPatterns({
   const [sortOrder] = useState("");
   const [count, setCount] = useState(0);
   const [pageSize, setPageSize] = useState(10);
+  const [currentPage, setCurrentPage] = useState(0);
+  // const [totalPage, setTotalPages] = useState(0);
   const modalRef = useRef();
   const [patterns, setPatterns] = useState([]);
   const [selectedRowData, setSelectedRowData] = useState(null);
@@ -430,6 +432,7 @@ function MesheryPatterns({
       disposeConfSubscriptionRef.current.dispose();
     }
     const configurationSubscription = ConfigurationSubscription((result) => {
+      console.log("result", result)
       setPage(result.configuration?.patterns?.page || 0);
       setPageSize(result.configuration?.patterns?.page_size || 0);
       setCount(result.configuration?.patterns?.total_count || 0);
@@ -666,6 +669,7 @@ function MesheryPatterns({
           setCount(result.total_count || 0);
           handleSetPatterns(result.patterns || [])
         }
+        console.log("PatternFile API result", result)
       },
       handleError(ACTION_TYPES.FETCH_PATTERNS)
     );
@@ -1014,11 +1018,16 @@ function MesheryPatterns({
     responsive : "scrollFullHeight",
     resizableColumns : true,
     serverSide : true,
-    count,
     rowsPerPage : pageSize,
     rowsPerPageOptions : [10, 20, 25],
+    onChangeRowsPerPage : (numberOfRows) => {
+      setPageSize(numberOfRows);
+      // setTotalPages(Math.ceil(patterns.length / numberOfRows));
+    },
+    onChangePage : (currentPageIndex) => setCurrentPage(currentPageIndex),
+    count : patterns.length,
+    page : currentPage,
     fixedHeader : true,
-    page,
     print : false,
     download : false,
     textLabels : {
@@ -1102,6 +1111,12 @@ function MesheryPatterns({
     return <LoadingScreen animatedIcon="AnimatedMeshPattern" message="Loading Designs..." />;
   }
 
+  // Getting the data from the API
+  console.log("patterns", patterns)
+
+  // Getting the size of the data send by the API
+  console.log("patterns.length", count)
+
   return (
     <>
       <NoSsr>
@@ -1161,7 +1176,7 @@ function MesheryPatterns({
           !selectedPattern.show && viewType === "table" &&
           <MUIDataTable
             title={<div className={classes.tableHeader}>Designs</div>}
-            data={patterns}
+            data={patterns.slice(currentPage * pageSize, (currentPage + 1) * pageSize)}
             columns={columns}
             // @ts-ignore
             options={options}
