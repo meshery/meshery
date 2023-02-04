@@ -27,7 +27,7 @@ make ui-build
 2. Build & run the server code by running
 
 ```sh
-make server // Or make run-fast
+make server
 ```
 
 Any time changes are made to the GO code, you will have to stop the server and run the above command again.

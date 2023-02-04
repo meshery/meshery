@@ -1384,7 +1384,7 @@ func (l *RemoteProvider) SaveMesheryPattern(tokenString string, pattern *Meshery
 }
 
 // GetMesheryPatterns gives the patterns stored with the provider
-func (l *RemoteProvider) GetMesheryPatterns(tokenString string, page, pageSize, search, order string) ([]byte, error) {
+func (l *RemoteProvider) GetMesheryPatterns(tokenString string, page, pageSize, search, order string, updatedAfter string) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistMesheryPatterns) {
 		logrus.Error("operation not available")
 		return []byte{}, fmt.Errorf("%s is not suppported by provider: %s", PersistMesheryPatterns, l.ProviderName)
@@ -1407,6 +1407,9 @@ func (l *RemoteProvider) GetMesheryPatterns(tokenString string, page, pageSize, 
 	}
 	if order != "" {
 		q.Set("order", order)
+	}
+	if updatedAfter != "" {
+		q.Set("updated_after", updatedAfter)
 	}
 	remoteProviderURL.RawQuery = q.Encode()
 	logrus.Debugf("constructed patterns url: %s", remoteProviderURL.String())
@@ -2279,7 +2282,7 @@ func (l *RemoteProvider) GetApplicationSourceContent(req *http.Request, applicat
 }
 
 // GetMesheryApplications gives the applications stored with the provider
-func (l *RemoteProvider) GetMesheryApplications(tokenString string, page, pageSize, search, order string) ([]byte, error) {
+func (l *RemoteProvider) GetMesheryApplications(tokenString string, page, pageSize, search, order string, updaterAfter string) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistMesheryApplications) {
 		logrus.Error("operation not available")
 		return []byte{}, ErrInvalidCapability("PersistMesheryApplications", l.ProviderName)
@@ -2302,6 +2305,9 @@ func (l *RemoteProvider) GetMesheryApplications(tokenString string, page, pageSi
 	}
 	if order != "" {
 		q.Set("order", order)
+	}
+	if updaterAfter != "" {
+		q.Set("updated_after", updaterAfter)
 	}
 	remoteProviderURL.RawQuery = q.Encode()
 	logrus.Debugf("constructed applications url: %s", remoteProviderURL.String())
@@ -2403,6 +2409,36 @@ func (l *RemoteProvider) DeleteMesheryApplication(req *http.Request, application
 		return bdr, nil
 	}
 	return nil, ErrDelete(fmt.Errorf("could not retrieve application from remote provider"), "Application :"+applicationID, resp.StatusCode)
+}
+
+func (l *RemoteProvider) ShareDesign(req *http.Request) (int, error) {
+	if !l.Capabilities.IsSupported(ShareDesigns) {
+		logrus.Error("operation not available")
+		return http.StatusForbidden, ErrInvalidCapability("ShareDesigns", l.ProviderName)
+	}
+
+	ep, _ := l.Capabilities.GetEndpointForFeature(ShareDesigns)
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s", l.RemoteProviderURL, ep))
+	bd, _ := io.ReadAll(req.Body)
+	defer func() {
+		_ = req.Body.Close()
+	}()
+	bf := bytes.NewBuffer(bd)
+	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), bf)
+	tokenString, err := l.GetToken(req)
+	if err != nil {
+		return http.StatusInternalServerError, err
+	}
+
+	resp, err := l.DoRequest(cReq, tokenString)
+	if err != nil {
+		return http.StatusInternalServerError, ErrShareDesign(err)
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		return resp.StatusCode, ErrShareDesign(fmt.Errorf("unable to share design"))
+	}
+	return resp.StatusCode, nil
 }
 
 // SavePerformanceProfile saves a performance profile into the remote provider

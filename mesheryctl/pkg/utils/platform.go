@@ -599,7 +599,7 @@ func GetRequiredPods(specifiedPods []string, availablePods []v1core.Pod) ([]stri
 		if index := StringContainedInSlice(sp, availablePodsName); index != -1 {
 			requiredPods = append(requiredPods, availablePodsName[index])
 		} else {
-			return nil, fmt.Errorf("invalid pod \"%s\" specified. Run mesheryctl `system status` to view the available pods", sp)
+			return nil, fmt.Errorf("pod \"%s\" specified, does not exist in the 'meshery' namespace. Please  Run `mesheryctl system status` to view the available pods", sp)
 		}
 	}
 	return requiredPods, nil

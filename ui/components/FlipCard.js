@@ -3,20 +3,22 @@ import React, { useState, useRef, useEffect } from "react";
 import { withStyles } from "@material-ui/core/styles";
 
 const styles = (theme) => ({
-  card : { height : '100%',
+  card : {
+    height : '100%',
     backgroundColor : "transparent",
-    perspective : theme.spacing(125), },
+    perspective : theme.spacing(125),
+  },
   innerCard : {
     padding : theme.spacing(2),
     borderRadius : theme.spacing(1),
     transformStyle : "preserve-3d",
     boxShadow : "0 4px 8px 0 rgba(0,0,0,0.2)",
-    backgroundColor : "#fff",
+    backgroundColor : theme.palette.secondary.elevatedComponents,
     cursor : "pointer",
   },
   content : { backfaceVisibility : "hidden", },
   frontContent : {},
-  backContent : { transform : "scale(-1, 1)", },
+  backContent : { transform : "scale(-1, 1)",maxWidth : "50vw" },
 });
 
 function GetChild(children, key) {
@@ -64,11 +66,13 @@ function FlipCard({
     >
       <div
         className={classes.innerCard}
-        style={{ transform : flipped
-          ? "scale(-1,1)"
-          : undefined,
-        transition : `transform ${duration}ms`,
-        transformOrigin : "50% 50% 10%" }}
+        style={{
+          transform : flipped
+            ? "scale(-1,1)"
+            : undefined,
+          transition : `transform ${duration}ms`,
+          transformOrigin : "50% 50% 10%"
+        }}
       >
         {!activeBack
           ? (

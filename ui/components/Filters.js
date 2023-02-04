@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
-import { withStyles, makeStyles, MuiThemeProvider } from "@material-ui/core/styles";
-import {  createTheme } from '@material-ui/core/styles';
+import { withStyles } from "@material-ui/core/styles";
+// import { createTheme } from '@material-ui/core/styles';
 import {
   NoSsr,
   TableCell,
@@ -31,7 +31,7 @@ import PromptComponent from "./PromptComponent";
 import UploadImport from "./UploadImport";
 import FullscreenIcon from '@material-ui/icons/Fullscreen';
 import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
-import { FILE_OPS } from "../utils/Enum";
+import { FILE_OPS, VISIBILITY } from "../utils/Enum";
 import ViewSwitch from "./ViewSwitch";
 import CatalogFilter from "./CatalogFilter";
 import FiltersGrid from "./MesheryFilters/FiltersGrid";
@@ -44,6 +44,7 @@ import PublishIcon from "@material-ui/icons/Publish";
 import ConfigurationSubscription from "./graphql/subscriptions/ConfigurationSubscription";
 import fetchCatalogFilter from "./graphql/queries/CatalogFilterQuery";
 import LoadingScreen from "./LoadingComponents/LoadingComponent";
+import { iconMedium } from "../css/icons.styles";
 
 const styles = (theme) => ({
   grid : {
@@ -69,12 +70,6 @@ const styles = (theme) => ({
     justifySelf : "flex-end",
     paddingLeft : "1rem"
   },
-  // text : {
-  //   padding : "5px"
-  // }
-});
-
-const useStyles = makeStyles(() => ({
   ymlDialogTitle : {
     display : "flex",
     alignItems : "center"
@@ -89,8 +84,10 @@ const useStyles = makeStyles(() => ({
       height : '100%',
     }
   },
-
-}))
+  // text : {
+  //   padding : "5px"
+  // }
+});
 
 function TooltipIcon({ children, onClick, title }) {
   return (
@@ -102,8 +99,7 @@ function TooltipIcon({ children, onClick, title }) {
   )
 }
 
-function YAMLEditor({ filter, onClose, onSubmit }) {
-  const classes = useStyles();
+function YAMLEditor({ filter, onClose, onSubmit, classes }) {
   const [yaml, setYaml] = useState("");
   const [fullScreen, setFullScreen] = useState(false);
 
@@ -120,10 +116,10 @@ function YAMLEditor({ filter, onClose, onSubmit }) {
         <TooltipIcon
           title={fullScreen ? "Exit Fullscreen" : "Enter Fullscreen"}
           onClick={toggleFullScreen}>
-          {fullScreen ? <FullscreenExitIcon /> : <FullscreenIcon />}
+          {fullScreen ? <FullscreenExitIcon  style={iconMedium} /> : <FullscreenIcon  style={iconMedium} />}
         </TooltipIcon>
         <TooltipIcon title="Exit" onClick={onClose}>
-          <CloseIcon />
+          <CloseIcon style={iconMedium} />
         </TooltipIcon>
       </DialogTitle>
       <Divider variant="fullWidth" light />
@@ -155,7 +151,7 @@ function YAMLEditor({ filter, onClose, onSubmit }) {
               type : FILE_OPS.DELETE
             })}
           >
-            <DeleteIcon />
+            <DeleteIcon  style={iconMedium} />
           </IconButton>
         </Tooltip>
       </DialogActions>
@@ -203,49 +199,6 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
   const catalogVisibilityRef = useRef();
   const disposeConfSubscriptionRef = useRef(null);
 
-  const getMuiTheme = () => createTheme({
-    overrides : {
-      MuiInput : {
-        underline : {
-          "&:hover:not(.Mui-disabled):before" : {
-            borderBottom : "2px solid #222"
-          },
-          "&:after" : {
-            borderBottom : "2px solid #222"
-          }
-        }
-      },
-      MUIDataTableSearch : {
-        searchIcon : {
-          color : "#607d8b" ,
-          marginTop : "7px",
-          marginRight : "8px",
-        },
-        clearIcon : {
-          "&:hover" : {
-            color : "#607d8b"
-          }
-        },
-      },
-      MUIDataTableSelectCell : {
-        checkboxRoot : {
-          '&$checked' : {
-            color : '#607d8b',
-          },
-        },
-      },
-      MUIDataTableToolbar : {
-        iconActive : {
-          color : "#222"
-        },
-        icon : {
-          "&:hover" : {
-            color : "#607d8b"
-          }
-        },
-      },
-    }
-  })
 
   const ACTION_TYPES = {
     FETCH_FILTERS : {
@@ -310,7 +263,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
                 color="inherit"
                 onClick={() => closeSnackbar(key)}
               >
-                <CloseIcon />
+                <CloseIcon style={iconMedium} />
               </IconButton>
             ),
           });
@@ -365,7 +318,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
       fetchCatalogFilters.unsubscribe();
       disposeConfSubscriptionRef.current.dispose();
     }
-  },[])
+  }, [])
 
   /**
    * fetchFilters constructs the queries based on the parameters given
@@ -414,7 +367,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
           action : function Action(key) {
             return (
               <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-                <CloseIcon />
+                <CloseIcon style={iconMedium} />
               </IconButton>
             );
           },
@@ -437,7 +390,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
           action : function Action(key) {
             return (
               <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-                <CloseIcon />
+                <CloseIcon style={iconMedium} />
               </IconButton>
             );
           },
@@ -462,7 +415,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
           action : function Action(key) {
             return (
               <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-                <CloseIcon />
+                <CloseIcon  style={iconMedium}/>
               </IconButton>
             );
           },
@@ -482,7 +435,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
       action : function Action(key) {
         return (
           <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-            <CloseIcon />
+            <CloseIcon  style={iconMedium}/>
           </IconButton>
         );
       },
@@ -503,13 +456,13 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
 
   const handleSetFilters = (filters) => {
     if (catalogVisibilityRef.current && catalogContentRef.current?.length > 0) {
-      setFilters([...catalogContentRef.current, ...filters.filter(content => content.visibility !== "public")])
+      setFilters([...catalogContentRef.current, ...filters.filter(content => content.visibility !== VISIBILITY.PUBLISHED)])
       return
     }
-    setFilters(filters.filter(content => content.visibility !== "public"))
+    setFilters(filters.filter(content => content.visibility !== VISIBILITY.PUBLISHED))
   }
 
-  const initFiltersSubscription = (pageNo=page.toString(), pagesize=pageSize.toString(), searchText=search, order=sortOrder) => {
+  const initFiltersSubscription = (pageNo = page.toString(), pagesize = pageSize.toString(), searchText = search, order = sortOrder) => {
     if (disposeConfSubscriptionRef.current) {
       disposeConfSubscriptionRef.current.dispose();
     }
@@ -579,7 +532,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
             action : function Action(key) {
               return (
                 <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-                  <CloseIcon />
+                  <CloseIcon  style={iconMedium}/>
                 </IconButton>
               );
             },
@@ -594,10 +547,10 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
 
     if (type === FILE_OPS.FILE_UPLOAD || type === FILE_OPS.URL_UPLOAD) {
       let body = { save : true }
-      if (type ===FILE_OPS.FILE_UPLOAD) {
+      if (type === FILE_OPS.FILE_UPLOAD) {
         body = JSON.stringify({ ...body, filter_data : { filter_file : data } })
       }
-      if (type ===  FILE_OPS.URL_UPLOAD) {
+      if (type === FILE_OPS.URL_UPLOAD) {
         body = JSON.stringify({ ...body, url : data })
       }
       dataFetch(
@@ -635,7 +588,8 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     handleSubmit({
       data : link,
       name : "meshery_" + Math.floor(trueRandom() * 100),
-      type : FILE_OPS.URL_UPLOAD });
+      type : FILE_OPS.URL_UPLOAD
+    });
   }
 
   const columns = [
@@ -741,7 +695,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
           const visibility = filters[tableMeta.rowIndex].visibility
           return (
             <>
-              {visibility === "public" ? <IconButton onClick={(e) => {
+              {visibility === VISIBILITY.PUBLISHED ? <IconButton onClick={(e) => {
                 e.stopPropagation();
                 handleClone(rowData.id, rowData.name)
               }
@@ -759,6 +713,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
                   <EditIcon
                     aria-label="config"
                     color="inherit"
+                    style={iconMedium}
                   />
                 </TooltipIcon> }
               <TooltipIcon
@@ -769,13 +724,14 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
                   aria-label="deploy"
                   color="inherit"
                   data-cy="deploy-button"
+                  style={iconMedium}
                 />
               </TooltipIcon>
               <TooltipIcon
                 title="Undeploy"
                 onClick={(e) => handleModalOpen(e, rowData.filter_file, rowData.name, false)}
               >
-                <UndeployIcon fill="#8F1F00" data-cy="undeploy-button" />
+                <UndeployIcon fill="#F91313" data-cy="undeploy-button" />
               </TooltipIcon>
             </>
           );
@@ -792,11 +748,12 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
 
   async function showmodal(count) {
     let response = await modalRef.current.show({
-      title : `Delete ${count ? count : ""} Filter${count > 1 ? "s" : '' }?`,
+      title : `Delete ${count ? count : ""} Filter${count > 1 ? "s" : ''}?`,
 
-      subtitle : `Are you sure you want to delete ${count > 1 ? "these" : 'this' } ${count ? count : ""} filter${count > 1 ? "s" : '' }?`,
+      subtitle : `Are you sure you want to delete ${count > 1 ? "these" : 'this'} ${count ? count : ""} filter${count > 1 ? "s" : ''}?`,
 
-      options : ["Yes", "No"], })
+      options : ["Yes", "No"],
+    })
     return response;
   }
 
@@ -816,7 +773,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
           action : function Action(key) {
             return (
               <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-                <CloseIcon />
+                <CloseIcon  style={iconMedium}/>
               </IconButton>
             );
           },
@@ -849,7 +806,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     },
 
     onRowsDelete : async function handleDelete(row) {
-      let response  = await showmodal(Object.keys(row.lookup).length)
+      let response = await showmodal(Object.keys(row.lookup).length)
       console.log(response)
       if (response === "Yes") {
         const fid = Object.keys(row.lookup).map((idx) => filters[idx]?.id);
@@ -918,10 +875,10 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
 
       <NoSsr>
         {selectedRowData && Object.keys(selectedRowData).length > 0 && (
-          <YAMLEditor filter={selectedRowData} onClose={resetSelectedRowData()} onSubmit={handleSubmit} />
+          <YAMLEditor filter={selectedRowData} onClose={resetSelectedRowData()} onSubmit={handleSubmit} classes={classes} />
         )}
         <div className={classes.topToolbar} >
-          {!selectedFilter.show && (filters.length>0 || viewType==="table") && <div className={classes.createButton}>
+          {!selectedFilter.show && (filters.length > 0 || viewType === "table") && <div className={classes.createButton}>
             <div>
               <Button
                 aria-label="Add Filter"
@@ -932,7 +889,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
                 onClick={handleUploadImport}
                 style={{ marginRight : "2rem" }}
               >
-                <PublishIcon className={classes.addIcon} data-cy="import-button"/>
+                <PublishIcon  style={iconMedium} className={classes.addIcon} data-cy="import-button"/>
               Import Filters
               </Button>
             </div>
@@ -942,22 +899,22 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
             <CatalogFilter catalogVisibility={catalogVisibility} handleCatalogVisibility={handleCatalogVisibility} />
           </div>
           {!selectedFilter.show &&
-          <div className={classes.viewSwitchButton}>
-            <ViewSwitch data-cy="table-view" view={viewType} changeView={setViewType} />
-          </div>
+            <div className={classes.viewSwitchButton}>
+              <ViewSwitch data-cy="table-view" view={viewType} changeView={setViewType} />
+            </div>
           }
         </div>
         {
-          !selectedFilter.show && viewType==="table" && <MuiThemeProvider theme={getMuiTheme() }>
-            <MUIDataTable
-              title={<div className={classes.tableHeader}>Filters</div>}
-              data={filters}
-              columns={columns}
-              // @ts-ignore
-              options={options}
-              className={classes.muiRow}
-            />
-          </MuiThemeProvider>
+          !selectedFilter.show && viewType === "table" &&
+          <MUIDataTable
+            title={<div className={classes.tableHeader}>Filters</div>}
+            data={filters}
+            columns={columns}
+            // @ts-ignore
+            options={options}
+            className={classes.muiRow}
+          />
+
         }
         {
           !selectedFilter.show && viewType==="grid" &&
@@ -983,7 +940,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
           open={modalOpen.open}
           handleClose={handleModalClose}
           submit={
-            { deploy : () => handleDeploy(modalOpen.filter_file, modalOpen.name),  unDeploy : () => handleUndeploy(modalOpen.filter_file, modalOpen.name) }
+            { deploy : () => handleDeploy(modalOpen.filter_file, modalOpen.name), unDeploy : () => handleUndeploy(modalOpen.filter_file, modalOpen.name) }
           }
           isDelete={!modalOpen.deploy}
           title={modalOpen.name}
@@ -997,12 +954,14 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
   );
 }
 
-const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(updateProgress, dispatch),
+const mapDispatchToProps = (dispatch) => ({
+  updateProgress : bindActionCreators(updateProgress, dispatch),
   toggleCatalogContent : bindActionCreators(toggleCatalogContent, dispatch)
 });
 
 const mapStateToProps = (state) => {
-  return { user : state.get("user")?.toObject(), selectedK8sContexts : state.get("selectedK8sContexts"),
+  return {
+    user : state.get("user")?.toObject(), selectedK8sContexts : state.get("selectedK8sContexts"),
     catalogVisibility : state.get("catalogVisibility")
   };
 };

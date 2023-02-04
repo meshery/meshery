@@ -732,12 +732,12 @@ After running Meshery server, you will need to select your <strong>Cloud Provide
 
 <h4 id="install-ui-dependencies">Install UI dependencies</h4>
 <p>To install/update the UI dependencies:</p>
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>make setup-ui-libs
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>make ui-setup
 </code></pre></div></div>
 
 <h4 id="build-and-export-ui">Build and export UI</h4>
 <p>To build and export the UI code:</p>
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>make build-ui
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>make ui-build
 </code></pre></div></div>
 
 <p>Now that the UI code is built, Meshery UI will be available at <code class="language-plaintext highlighter-rouge">http://localhost:9081</code>.
@@ -745,7 +745,7 @@ Any time changes are made to the UI code, the above code will have to run to reb
 
 <h4 id="ui-development-server">UI Development Server</h4>
 <p>If you want to work on the UI, it will be a good idea to use the included UI development server. You can run the UI development server by running the following command:</p>
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>make run-ui-dev
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>make ui
 </code></pre></div></div>
 
 <p>Make sure to have Meshery server configured, up and running on the default port <code class="language-plaintext highlighter-rouge">http://localhost:9081</code> before proceeding to access and work on the UI server at <code class="language-plaintext highlighter-rouge">http://localhost:3000</code>.

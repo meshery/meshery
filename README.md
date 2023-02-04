@@ -201,7 +201,7 @@ See the [getting started](https://meshery.io/#getting-started) section to quickl
 
 <p style="clear:both;">
 <h3>Cloud Native Lifecycle Management</h3>
-Meshery manages the provisioning, configuration and operation your Kubernetes clusters, workloads, and service meshes. While supporting hundreds of different type so cloud native infrastructure integrations, Meshery also offers a [catalog of curated design templates](https://meshery.io/catalog) filled with configuration best practices.
+Meshery manages the provisioning, configuration and operation of your Kubernetes clusters, workloads, and service meshes. While supporting hundreds of different types of cloud native infrastructure integrations, Meshery also offers a [catalog of curated design templates](https://meshery.io/catalog) filled with configuration best practices.
 
 Using a GitOps-centric approach, visually and collaboratively design and manage your infrastructure and microservices. Use Meshery to interoperate your various cloud native systems. With both REST and GraphQL APIs, integrating with Meshery as an extensible platform is facilitated through NATS, CloudEvents, gRPC, Service Mesh Interface (SMI), and Service Mesh Performance (SMP).
 
@@ -281,7 +281,7 @@ Learn more about <a href="https://docs.meshery.io/architecture">Meshery's archit
 ## Join the Meshery community!
 
 <a name="contributing"></a><a name="community"></a>
-Our projects are community-built and welcome collaboration. 👍 Be sure to see the <a href="https://docs.google.com/document/d/17OPtDE_rdnPQxmk2Kauhm3GwXF1R5dZ3Cj8qZLKdo5E/edit">Layer5 Community Welcome Guide</a> for a tour of resources available to you and see the <a href="https://layer5.io/community/handbook/repository-overview">Layer5 Repository Overview</a> for a cursory description of repository by technology and programming language. Jump into community <a href="http://slack.layer5.io">Slack</a> to engage!
+Our projects are community-built and welcome collaboration. 👍 Be sure to see the <a href="https://layer5.io/community/handbook/repository-overview">Layer5 Community Welcome Guide</a> for a tour of resources available to you and see the <a href="https://layer5.io/community/handbook/repository-overview">Layer5 Repository Overview</a> for a cursory description of repository by technology and programming language. Jump into community <a href="http://slack.layer5.io">Slack</a> to engage!
 
 <p style="clear:both;">
 <a href ="https://layer5.io/community"><img alt="MeshMates" src=".github/assets/images/readme/layer5-community-sign.png" style="margin-right:36px; margin-bottom:7px;" width="140px" align="left" /></a>
@@ -327,7 +327,7 @@ Find out more on the <a href="https://layer5.io/community#meshmate">Layer5 commu
 
 ## Contributing (please do!)
 
-We're a warm and welcoming community of open source contributors. Please join. All types of contributions are welcome. Be sure to read the <a href="https://docs.google.com/document/d/17OPtDE_rdnPQxmk2Kauhm3GwXF1R5dZ3Cj8qZLKdo5E/edit">Meshery Contributors Welcome Guide</a> for a tour of resources available to you and how to get started.
+We're a warm and welcoming community of open source contributors. Please join. All types of contributions are welcome. Be sure to read the <a href="https://layer5.io/community/handbook/repository-overview">Meshery Contributors Welcome Guide</a> for a tour of resources available to you and how to get started.
 
 See all [Contributor Guides](https://docs.meshery.io/project/contributing) in Meshery Docs.
 

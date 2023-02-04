@@ -5,14 +5,14 @@
   "main": "index.js",
   "scripts": {
     "dev": "node ui_dev_server.js",
-    "lint": "eslint --fix .",
-    "next": "next",
     "build": "next build",
-    "start": "NODE_ENV=production node ui_dev_server.js",
     "export": "next export",
+    "start": "NODE_ENV=production node server.js",
+    "lint": "next lint",
+    "lint:fix": "next lint --fix",
     "cy:run": "cypress run",
     "cy:open": "cypress open",
-    "test": "start-server-and-test dev http://localhost:3001 cy:run && eslint ."
+    "test": "start-server-and-test dev http://localhost:3001 cy:run && next lint"
   },
   "keywords": [],
   "author": "Layer5",
@@ -21,27 +21,28 @@
   "dependencies": {
     "@babel/eslint-parser": "^7.19.1",
     "@cypress/code-coverage": "^3.10.0",
+    "@emotion/cache": "^11.10.5",
     "@emotion/react": "^11.10.5",
-    "@material-ui/core": "^4.12.4",
-    "@material-ui/icons": "^4.11.3",
-    "babel-plugin-istanbul": "^6.0.0",
-    "glob-parent": ">=6.0.2",
-    "isomorphic-unfetch": "^3.1.0",
-    "jss": "latest",
-    "next": "12.3.1",
-    "prop-types": "latest",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
-    "styled-jsx": "^4.0.1"
+    "@emotion/server": "^11.10.0",
+    "@emotion/styled": "^11.10.5",
+    "@mui/icons-material": "^5.11.0",
+    "@mui/material": "^5.11.6",
+    "babel-plugin-istanbul": "^6.1.1",
+    "http-proxy": "^1.18.1",
+    "isomorphic-unfetch": "^4.0.2",
+    "next": "^13.1.5",
+    "prop-types": "^15.8.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "cypress": "^11.2.0",
-    "eslint": "^8.26.0",
-    "eslint-config-next": "^13.0.6",
+    "cypress": "^12.4.0",
+    "eslint": "^8.32.0",
+    "eslint-config-next": "^13.1.5",
     "eslint-plugin-cypress": "^2.12.1",
-    "eslint-plugin-react": "^7.31.11",
-    "http-proxy": "^1.18.1",
-    "nyc": "^15.1.0",
-    "start-server-and-test": "^1.15.2"
+    "start-server-and-test": "^1.15.3"
+  },
+  "engines": {
+    "node": "^16 || ^18"
   }
 }

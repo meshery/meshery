@@ -18,12 +18,11 @@ import GenericModal from "../GenericModal";
 import MesheryPerformanceComponent from "./index";
 import { Paper, Typography, Button } from "@material-ui/core";
 import fetchPerformanceProfiles from "../graphql/queries/PerformanceProfilesQuery";
-import { makeStyles } from "@material-ui/core/styles";
+import { withStyles } from "@material-ui/core/styles";
 import subscribePerformanceProfiles from "../graphql/subscriptions/PerformanceProfilesSubscription";
 
 const MESHERY_PERFORMANCE_URL = "/api/user/performance/profiles";
-
-const useStyles = makeStyles(() => ({
+const styles = () => ({
   topToolbar : {
     margin : "2rem auto",
     display : "flex",
@@ -64,7 +63,7 @@ const useStyles = makeStyles(() => ({
   addIcon : {
     paddingRight : "0.5"
   }
-}));
+});
 /**
  * Type Definition for View Type
  * @typedef {"grid" | "table"} TypeView
@@ -96,8 +95,7 @@ function ViewSwitch({ view, changeView }) {
 
 
 
-function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar }) {
-  const classes = useStyles();
+function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar, classes }) {
   const [viewType, setViewType] = useState(
     /**  @type {TypeView} */
     ("grid")
@@ -361,4 +359,4 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar }) 
 
 const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(updateProgress, dispatch), });
 
-export default connect(null, mapDispatchToProps)(withSnackbar(PerformanceProfile));
+export default withStyles(styles)(connect(null, mapDispatchToProps)(withSnackbar(PerformanceProfile)));

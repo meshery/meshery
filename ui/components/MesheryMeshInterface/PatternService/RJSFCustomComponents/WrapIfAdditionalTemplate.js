@@ -8,6 +8,7 @@ import {
   ADDITIONAL_PROPERTY_FLAG,
 } from "@rjsf/utils";
 import { IconButton } from "@material-ui/core";
+import { iconMedium } from "../../../../css/icons.styles";
 
 const WrapIfAdditionalTemplate = ({
   children,
@@ -54,7 +55,7 @@ const WrapIfAdditionalTemplate = ({
         </FormControl>
       </Grid>
       <Grid item style={{ alignSelf : 'flex-end' }}>
-        <span style={{ fontSize : "1.25rem", color : "#1E2117" }}>
+        <span style={{ fontSize : "1.25rem" }}>
           &nbsp;:&nbsp;
         </span>
       </Grid>
@@ -67,7 +68,7 @@ const WrapIfAdditionalTemplate = ({
           disabled={disabled || readonly}
           onClick={onDropPropertyClick(label)}
         >
-          <DeleteIcon/>
+          <DeleteIcon style={iconMedium} />
         </IconButton>
       </Grid>
     </Grid>

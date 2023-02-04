@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"path/filepath"
 
+	mutil "github.com/layer5io/meshery/server/helpers/utils"
 	mcore "github.com/layer5io/meshery/server/models/meshmodel/core"
 
 	// for GKE kube API authentication
@@ -354,7 +355,8 @@ func RegisterK8sMeshModelComponents(ctx context.Context, config []byte, ctxID st
 		return ErrCreatingKubernetesComponents(errors.New("generated components are nil"), ctxID)
 	}
 	for _, c := range man {
-		_ = reg.RegisterEntity(meshmodel.Host{
+		mutil.WriteSVGsOnFileSystem(&c)
+		err = reg.RegisterEntity(meshmodel.Host{
 			Hostname:  "kubernetes",
 			ContextID: ctxID,
 		}, c)

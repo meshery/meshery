@@ -21,27 +21,22 @@ func (s *Selector) Workload(name string, version string, model string) (v1alpha1
 		ModelName: model,
 		Version:   version,
 	})
+	found := false
 	if len(entities) != 0 {
 		for _, en := range entities {
 			if en != nil {
-				comp = en.(v1alpha1.ComponentDefinition)
+				var ok bool
+				comp, ok = en.(v1alpha1.ComponentDefinition)
+				if ok {
+					found = true
+					break
+				}
 			}
 		}
 	}
-	// data := store.GetAll(generateWorkloadKey(name))
-	// workloads := convertValueInterfaceSliceToWorkloadSlice(data)
-
-	// filteredWorkloads, typ := filterWorkloadByType(workloads)
-
-	// if typ == CoreResource {
-	// 	return s.selectCoreWorkload(filteredWorkloads)
-	// }
-
-	// if typ == K8sResource {
-	// 	return s.selectK8sWorkload(filteredWorkloads)
-	// }
-
-	// return s.selectMeshWorkload(filteredWorkloads)
+	if !found {
+		return comp, false
+	}
 	return comp, true
 }
 

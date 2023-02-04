@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http"
 
+	"github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/models"
 	meshkitmodels "github.com/layer5io/meshkit/models"
 	"github.com/layer5io/meshkit/models/meshmodel"
@@ -27,7 +28,7 @@ type componentGenerationResponseDataItem struct {
 	Errors     []string                       `json:"errors"`
 }
 
-// swagger:route POST /api/meshmodel/component/generate MeshmodelComponentGenerate idPostMeshModelComponentGenerate
+// swagger:route POST /api/meshmodel/generate MeshmodelComponentGenerate idPostMeshModelComponentGenerate
 // Handle POST request for component generation
 //
 // Generates Meshery Components for the given payload
@@ -37,7 +38,7 @@ type componentGenerationResponseDataItem struct {
 // request body should be json
 // request body should be of format - {data: [{name: string, register: boolean}]}
 // response format - {data: [{name: string, components: [component], errors: [string] }]}
-func (h *Handler) ComponentGenerationHandler(rw http.ResponseWriter, r *http.Request) {
+func (h *Handler) MeshModelGenerationHandler(rw http.ResponseWriter, r *http.Request) {
 	// Parse the request body
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
@@ -70,6 +71,7 @@ func (h *Handler) ComponentGenerationHandler(rw http.ResponseWriter, r *http.Req
 		if gpi.Register == true {
 			if len(comps) != 0 {
 				for _, comp := range comps {
+					utils.WriteSVGsOnFileSystem(&comp)
 					host := fmt.Sprintf("%s.artifacthub.meshery", gpi.Name)
 					err = h.registryManager.RegisterEntity(meshmodel.Host{
 						Hostname: host,
@@ -77,6 +79,7 @@ func (h *Handler) ComponentGenerationHandler(rw http.ResponseWriter, r *http.Req
 					if err != nil {
 						h.log.Error(ErrGenerateComponents(err))
 					}
+
 					h.log.Info(comp.DisplayName, " component for ", gpi.Name, " generated")
 				}
 			}

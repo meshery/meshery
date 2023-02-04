@@ -12,7 +12,7 @@ import (
 	meshmodel "github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 )
 
-func Validator(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFunction {
+func Validator(prov ServiceInfoProvider, act ServiceActionProvider, skipValidation bool) ChainStageFunction {
 	s := selector.New(act.GetRegistry(), prov)
 
 	return func(data *Data, err error, next ChainStageNextFunction) {
@@ -27,17 +27,20 @@ func Validator(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFu
 		for svcName, svc := range data.Pattern.Services {
 			wc, ok := s.Workload(svc.Type, svc.Version, svc.Model)
 			if !ok {
-				act.Terminate(fmt.Errorf("invalid workload of type: %s", svc.Type))
+				act.Terminate(fmt.Errorf("cannot recognize workload '%s' of type '%s' not found", svc.Name, svc.Type))
 				return
 			}
 
 			if k8s.Format {
 				svc.Settings = k8s.Format.DePrettify(svc.Settings, false)
 			}
+
 			//Validate workload definition
-			if err := validateWorkload(svc.Settings, wc); err != nil {
-				act.Terminate(fmt.Errorf("invalid workload definition: %s", err))
-				return
+			if !skipValidation {
+				if err := validateWorkload(svc.Settings, wc); err != nil {
+					act.Terminate(fmt.Errorf("invalid workload configuration for: %s", svc.Name))
+					return
+				}
 			}
 
 			// Store the workload capability in the metadata

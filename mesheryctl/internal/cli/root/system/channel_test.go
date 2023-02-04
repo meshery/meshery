@@ -105,20 +105,11 @@ func TestRunChannelWithNoCmdOrFlag(t *testing.T) {
 	SetupFunc(t)
 	SystemCmd.SetArgs([]string{"channel"})
 	err = SystemCmd.Execute()
-	if err != nil {
-		t.Error(err)
-	}
 
-	currCtx, err := mctlCfg.GetCurrentContext()
+	actualResponse := err.Error()
 
-	if err != nil {
-		t.Error(err)
-	}
-
-	actualResponse := b.String()
-	expectedResponse := ""
-	expectedResponse += PrintChannelAndVersionToStdout(*currCtx, "local") + "\n\n"
-	expectedResponse += channelCmd.UsageString()
+	expectedResponse := "please specify a flag or subcommand. Use 'mesheryctl system channel --help' to display user guide." + "\n\n"
+	expectedResponse += "See https://docs.meshery.io/reference/mesheryctl/system/channel for usage details\n"
 
 	if expectedResponse != actualResponse {
 		t.Errorf("expected response %v and actual response %v don't match", expectedResponse, actualResponse)
