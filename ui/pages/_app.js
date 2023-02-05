@@ -429,10 +429,7 @@ class MesheryApp extends App {
                   </MuiPickersUtilsProvider>
                 </main>
               </SnackbarProvider>
-              <footer className={this.props.capabilitiesRegistry?.restrictedAccess?.isMesheryUiRestricted ? classes.playgroundFooter : classes.footer} style={{
-
-                backgroundColor : this.state.theme === "dark" ? '#212121' : '#FFF',
-              }} >
+              <footer className={this.props.capabilitiesRegistry?.restrictedAccess?.isMesheryUiRestricted ? classes.playgroundFooter : classes.footer}>
                 <Typography variant="body2" align="center" color="textSecondary" component="p"
                   style={this.props.capabilitiesRegistry?.restrictedAccess?.isMesheryUiRestricted ? { color : "#000" } : {}}
                 >

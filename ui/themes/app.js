@@ -407,7 +407,7 @@ export const styles = (theme) => ({
     padding : '48px 36px 24px',
   },
   footer : {
-    backgroundColor : "#212121",
+    backgroundColor : darkTheme.palette.type == "dark" ? "#fff" : "#212121",
     padding : theme.spacing(2),
   },
   footerText : {
