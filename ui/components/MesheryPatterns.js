@@ -403,6 +403,7 @@ function MesheryPatterns({
     }).subscribe({
       next : (result) => {
         catalogContentRef.current = result?.catalogPatterns;
+        console.log("🚀 ~ file: MesheryPatterns.js:406 ~ useEffect ~ catalogContentRef", catalogContentRef.current)
         initPatternsSubscription();
       },
       error : (err) => console.log("There was an error fetching Catalog Pattern: ", err)
@@ -419,12 +420,24 @@ function MesheryPatterns({
     handleSetPatterns(patterns)
   }, [catalogVisibility])
 
-  const handleSetPatterns = (patterns) => {
+  // To change the patterns [] when the catalog Visibility changes
+  const handleSetPatterns = (/** @type {any[]} */ patterns) => {
+    // Getting 88 patterns because we are not getting the private patterns when the > is clicked
+    console.log("handle Set Pattenrs before, patterns[]", patterns)
+    console.log("🚀 ~ file: MesheryPatterns.js:428 ~ handleSetPatterns ~ catalogVisibilityRef", catalogVisibilityRef.current)
+    // If the catalog is visible, then add the private patterns to the patterns []
     if (catalogVisibilityRef.current && catalogContentRef.current?.length > 0) {
-      setPatterns([...catalogContentRef.current, ...patterns.filter(content => content.visibility !== VISIBILITY.PUBLISHED)])
+      setPatterns((previousState) => {
+        console.log("🚀 ~ file: MesheryPatterns.js:432 ~ setPatterns ~ previousState", previousState)
+        console.log("ON clicking > in the pagination, catalogContentRef.current", catalogContentRef.current)
+        console.log("ON clicking > in the pagination, patterns", patterns)
+        return ([...catalogContentRef.current, ...patterns.filter(content => content.visibility !== VISIBILITY.PUBLISHED)])
+      })
       return
+    } else if (!catalogVisibilityRef.current && catalogContentRef.current?.length > 0) {
+      setPatterns((previousState) => [...previousState.filter(content => content.visibility !== VISIBILITY.PUBLISHED)])
     }
-    setPatterns(patterns.filter(content => content.visibility !== VISIBILITY.PUBLISHED))
+    console.log("handle Set Pattenrs after, patterns[]", patterns)
   }
 
   const initPatternsSubscription = (pageNo = page.toString(), pagesize = pageSize.toString(), searchText = search, order = sortOrder) => {
@@ -432,11 +445,16 @@ function MesheryPatterns({
       disposeConfSubscriptionRef.current.dispose();
     }
     const configurationSubscription = ConfigurationSubscription((result) => {
-      console.log("result", result)
+      // Patterns [] is updated here when the next button is clicked
+      console.log("configuration Subscriptions Patterns before", result.configuration?.patterns?.patterns)
+      console.log("patterns", patterns)
+      console.log("configuration Subscriptions Result", result)
+      console.log("configuration Subscriptions Patterns", result.configuration?.patterns)
       setPage(result.configuration?.patterns?.page || 0);
       setPageSize(result.configuration?.patterns?.page_size || 0);
       setCount(result.configuration?.patterns?.total_count || 0);
-      handleSetPatterns(result.configuration?.patterns?.patterns ?? [] );
+      handleSetPatterns(!result.configuration?.patterns?.patterns.length ? patterns : result.configuration?.patterns?.patterns);
+      console.log("configuration Subscriptions Patterns after", result.configuration?.patterns?.patterns)
       stillLoading(false);
     },
     {
@@ -1007,6 +1025,15 @@ function MesheryPatterns({
     );
   }
 
+  const handleChangePage = (currentPageIndex) => {
+    console.log("Handle Set Patterns called")
+    handleSetPatterns(patterns)
+    console.log("current page index", currentPageIndex)
+    console.log("handleChangePage Called")
+
+    setCurrentPage(currentPageIndex)
+  }
+
   const options = {
     customToolbarSelect : (selectedRows, displayData, setSelectedRows) => (
       <CustomToolbarSelect selectedRows={selectedRows} displayData={displayData} setSelectedRows={setSelectedRows} patterns={patterns} deletePatterns={deletePatterns} showModal={showModal}/>
@@ -1024,7 +1051,7 @@ function MesheryPatterns({
       setPageSize(numberOfRows);
       // setTotalPages(Math.ceil(patterns.length / numberOfRows));
     },
-    onChangePage : (currentPageIndex) => setCurrentPage(currentPageIndex),
+    onChangePage : (currentPageIndex) => handleChangePage(currentPageIndex),
     count : patterns.length,
     page : currentPage,
     fixedHeader : true,
@@ -1115,7 +1142,10 @@ function MesheryPatterns({
   console.log("patterns", patterns)
 
   // Getting the size of the data send by the API
-  console.log("patterns.length", count)
+  console.log("patterns.length", patterns.length)
+
+  // Getting the count of the of the private visible patterns
+  console.log("count", count)
 
   return (
     <>
@@ -1174,6 +1204,7 @@ function MesheryPatterns({
         </div>
         {
           !selectedPattern.show && viewType === "table" &&
+          // @BUG = onClicking next page, the patterns [] is changed
           <MUIDataTable
             title={<div className={classes.tableHeader}>Designs</div>}
             data={patterns.slice(currentPage * pageSize, (currentPage + 1) * pageSize)}
