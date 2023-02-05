@@ -831,6 +831,7 @@ function MesheryPatterns({
         sort : true,
         searchable : true,
         customHeadRender : function CustomHead({ index, ...column }, sortColumn) {
+          console.log("columns Name", column)
           return (
             <TableCell key={index} onClick={() => sortColumn(index)}>
               <TableSortLabel active={column.sortDirection != null} direction={column.sortDirection || "asc"}>
@@ -898,7 +899,12 @@ function MesheryPatterns({
           );
         },
         customBodyRender : function CustomBody(_, tableMeta) {
-          const visibility = patterns[tableMeta.rowIndex].visibility
+          console.log("tableMeta", tableMeta)
+          const currentRowNumber = currentPage * pageSize + tableMeta.rowIndex
+          console.log("Current row number 0 index", currentRowNumber)
+          console.log("Current row number data", patterns[currentRowNumber])
+          const visibility = patterns[currentRowNumber].visibility
+
           return (
             <div style={{ cursor : "default" }}>
               <img className={classes.visibilityImg} src={`/static/img/${visibility}.svg`} />
@@ -921,8 +927,9 @@ function MesheryPatterns({
           );
         },
         customBodyRender : function CustomBody(_, tableMeta) {
-          const rowData = patterns[tableMeta.rowIndex];
-          const visibility = patterns[tableMeta.rowIndex].visibility
+          const currentRowNumber = currentPage * pageSize + tableMeta.rowIndex
+          const rowData = patterns[currentRowNumber];
+          const visibility = patterns[currentRowNumber].visibility
           return (
             <>
               { visibility === VISIBILITY.PUBLISHED ? <IconButton onClick={(e) => {
@@ -1141,6 +1148,12 @@ function MesheryPatterns({
   // Getting the data from the API
   console.log("patterns", patterns)
 
+  // Getting the private visible patterns
+  console.log("private patterns", patterns.filter(pattern => pattern.visibility === "private"))
+
+  // Getting the current patterns
+  console.log("current patterns", patterns.slice(currentPage * pageSize, (currentPage + 1) * pageSize)) // 0, 10
+
   // Getting the size of the data send by the API
   console.log("patterns.length", patterns.length)
 
@@ -1152,6 +1165,7 @@ function MesheryPatterns({
 
   // Getting the page size
   console.log("Page Size", pageSize)
+
 
   return (
     <>
