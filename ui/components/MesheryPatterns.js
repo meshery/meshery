@@ -434,9 +434,9 @@ function MesheryPatterns({
         return ([...catalogContentRef.current, ...patterns.filter(content => content.visibility !== VISIBILITY.PUBLISHED)])
       })
       return
-    } else if (!catalogVisibilityRef.current && catalogContentRef.current?.length > 0) {
-      setPatterns((previousState) => [...previousState.filter(content => content.visibility !== VISIBILITY.PUBLISHED)])
     }
+    setCurrentPage(0);
+    setPatterns([...patterns.filter(content => content.visibility !== VISIBILITY.PUBLISHED)])
     console.log("handle Set Pattenrs after, patterns[]", patterns)
   }
 
@@ -1145,7 +1145,13 @@ function MesheryPatterns({
   console.log("patterns.length", patterns.length)
 
   // Getting the count of the of the private visible patterns
-  console.log("count", count)
+  console.log("count of private patterns", count)
+
+  // Getting the current page
+  console.log("Current Page", currentPage)
+
+  // Getting the page size
+  console.log("Page Size", pageSize)
 
   return (
     <>
