@@ -403,7 +403,7 @@ function MesheryPatterns({
     }).subscribe({
       next : (result) => {
         catalogContentRef.current = result?.catalogPatterns;
-        console.log("🚀 ~ file: MesheryPatterns.js:406 ~ useEffect ~ catalogContentRef", catalogContentRef.current)
+        // console.log("🚀 ~ file: MesheryPatterns.js:406 ~ useEffect ~ catalogContentRef", catalogContentRef.current)
         initPatternsSubscription();
       },
       error : (err) => console.log("There was an error fetching Catalog Pattern: ", err)
@@ -423,21 +423,18 @@ function MesheryPatterns({
   // To change the patterns [] when the catalog Visibility changes
   const handleSetPatterns = (/** @type {any[]} */ patterns) => {
     // Getting 88 patterns because we are not getting the private patterns when the > is clicked
-    console.log("handle Set Pattenrs before, patterns[]", patterns)
-    console.log("🚀 ~ file: MesheryPatterns.js:428 ~ handleSetPatterns ~ catalogVisibilityRef", catalogVisibilityRef.current)
+    // console.log("handle Set Pattenrs before, patterns[]", patterns)
+    // console.log("🚀 ~ file: MesheryPatterns.js:428 ~ handleSetPatterns ~ catalogVisibilityRef", catalogVisibilityRef.current)
     // If the catalog is visible, then add the private patterns to the patterns []
     if (catalogVisibilityRef.current && catalogContentRef.current?.length > 0) {
-      setPatterns((previousState) => {
-        console.log("🚀 ~ file: MesheryPatterns.js:432 ~ setPatterns ~ previousState", previousState)
-        console.log("ON clicking > in the pagination, catalogContentRef.current", catalogContentRef.current)
-        console.log("ON clicking > in the pagination, patterns", patterns)
-        return ([...catalogContentRef.current, ...patterns.filter(content => content.visibility !== VISIBILITY.PUBLISHED)])
-      })
+      setPatterns(
+        ([...catalogContentRef.current, ...patterns.filter(content => content.visibility !== VISIBILITY.PUBLISHED)])
+      )
       return
     }
     setCurrentPage(0);
     setPatterns([...patterns.filter(content => content.visibility !== VISIBILITY.PUBLISHED)])
-    console.log("handle Set Pattenrs after, patterns[]", patterns)
+    // console.log("handle Set Pattenrs after, patterns[]", patterns)
   }
 
   const initPatternsSubscription = (pageNo = page.toString(), pagesize = pageSize.toString(), searchText = search, order = sortOrder) => {
@@ -446,15 +443,15 @@ function MesheryPatterns({
     }
     const configurationSubscription = ConfigurationSubscription((result) => {
       // Patterns [] is updated here when the next button is clicked
-      console.log("configuration Subscriptions Patterns before", result.configuration?.patterns?.patterns)
-      console.log("patterns", patterns)
-      console.log("configuration Subscriptions Result", result)
-      console.log("configuration Subscriptions Patterns", result.configuration?.patterns)
+      // console.log("configuration Subscriptions Patterns before", result.configuration?.patterns?.patterns)
+      // console.log("patterns", patterns)
+      // console.log("configuration Subscriptions Result", result)
+      // console.log("configuration Subscriptions Patterns", result.configuration?.patterns)
       setPage(result.configuration?.patterns?.page || 0);
       setPageSize(result.configuration?.patterns?.page_size || 0);
       setCount(result.configuration?.patterns?.total_count || 0);
       handleSetPatterns(!result.configuration?.patterns?.patterns.length ? patterns : result.configuration?.patterns?.patterns);
-      console.log("configuration Subscriptions Patterns after", result.configuration?.patterns?.patterns)
+      // console.log("configuration Subscriptions Patterns after", result.configuration?.patterns?.patterns)
       stillLoading(false);
     },
     {
@@ -831,7 +828,7 @@ function MesheryPatterns({
         sort : true,
         searchable : true,
         customHeadRender : function CustomHead({ index, ...column }, sortColumn) {
-          console.log("columns Name", column)
+          // console.log("columns Name", column)
           return (
             <TableCell key={index} onClick={() => sortColumn(index)}>
               <TableSortLabel active={column.sortDirection != null} direction={column.sortDirection || "asc"}>
@@ -899,10 +896,10 @@ function MesheryPatterns({
           );
         },
         customBodyRender : function CustomBody(_, tableMeta) {
-          console.log("tableMeta", tableMeta)
+          // console.log("tableMeta", tableMeta)
           const currentRowNumber = currentPage * pageSize + tableMeta.rowIndex
-          console.log("Current row number 0 index", currentRowNumber)
-          console.log("Current row number data", patterns[currentRowNumber])
+          // console.log("Current row number 0 index", currentRowNumber)
+          // console.log("Current row number data", patterns[currentRowNumber])
           const visibility = patterns[currentRowNumber].visibility
 
           return (
@@ -1033,10 +1030,10 @@ function MesheryPatterns({
   }
 
   const handleChangePage = (currentPageIndex) => {
-    console.log("Handle Set Patterns called")
+    // console.log("Handle Set Patterns called")
     handleSetPatterns(patterns)
-    console.log("current page index", currentPageIndex)
-    console.log("handleChangePage Called")
+    // console.log("current page index", currentPageIndex)
+    // console.log("handleChangePage Called")
 
     setCurrentPage(currentPageIndex)
   }
@@ -1146,25 +1143,25 @@ function MesheryPatterns({
   }
 
   // Getting the data from the API
-  console.log("patterns", patterns)
+  // console.log("patterns", patterns)
 
   // Getting the private visible patterns
-  console.log("private patterns", patterns.filter(pattern => pattern.visibility === "private"))
+  // console.log("private patterns", patterns.filter(pattern => pattern.visibility === "private"))
 
   // Getting the current patterns
-  console.log("current patterns", patterns.slice(currentPage * pageSize, (currentPage + 1) * pageSize)) // 0, 10
+  // console.log("current patterns", patterns.slice(currentPage * pageSize, (currentPage + 1) * pageSize)) // 0, 10
 
   // Getting the size of the data send by the API
-  console.log("patterns.length", patterns.length)
+  // console.log("patterns.length", patterns.length)
 
   // Getting the count of the of the private visible patterns
-  console.log("count of private patterns", count)
+  // console.log("count of private patterns", count)
 
   // Getting the current page
-  console.log("Current Page", currentPage)
+  // console.log("Current Page", currentPage)
 
   // Getting the page size
-  console.log("Page Size", pageSize)
+  // console.log("Page Size", pageSize)
 
 
   return (
