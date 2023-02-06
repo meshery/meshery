@@ -91,9 +91,9 @@ new Clipboard('.clipbtn');
 const toggleBtnSidebarNav=document.querySelector(".nav-toggle-btn--document");
 
 toggleBtnSidebarNav.addEventListener("click",()=>{
-    let sidebarNav=document.querySelector(".sidebar-container")
+    let sidebarNav=document.querySelector(".left-container")
     if(sidebarNav){
-        sidebarNav.classList.toggle("sidebar-container--active")
+        sidebarNav.classList.toggle("left-container--active")
     }
 })
 

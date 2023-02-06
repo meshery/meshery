@@ -1,51 +1,98 @@
-.sidebar-container {
-  padding: 1rem min(2vh, 2vw);
-  background: var(--background-grey);
-  overflow-y: scroll;
-  box-shadow: var(--box-shadow-primary);
+.left-container {
+  position: sticky;
   z-index: 9;
   height: calc(100vh - var(--navbar-height));
-  position: sticky;
+  transition: all 0.5s ease-in-out;
+  top: calc(var(--navbar-height));
+  & .sidebar-container-wrapper {
+    height: 100%;
+    padding: 0.5rem;
+    background: var(--background-grey);
+    box-shadow: var(--box-shadow-primary);
+  }
+  & .icon-container {
+    height: fit-content;
+    margin-top: 5px;
+    z-index: 9;
+    display: none;
+    @media (max-width: 75em) {
+      display: block;
+    }
+  }
+  @media (max-width: 75em) {
+    transform: translateX(calc(-100% + 3.2rem));
+    position: fixed;
+    display: flex;
+  }
+  &--active {
+    transform: translateX(0%);
+    & .nav-toggle-btn--document svg {
+      transform: rotate(180deg);
+    }
+  }
+}
+
+.nav-toggle-btn--document {
+  background-color: var(--color-grey-medium);
+  border-radius: 0 5px 5px 0;
+  // border-radius: 0;
+  // border: 1px solid var(--color-grey-medium);
+  border: none;
+  width: 3.2rem;
+  height: 3.4rem;
+  display: flex;
+  align-items: center;
+  padding: 5px;
+  cursor: pointer;
+}
+#document-nav-toggle-btn {
+  width: 1.8rem;
+  height: 1.8rem;
+  fill: var(--color-secondary-dark);
+}
+
+.sidebar-container {
+  padding: 1rem min(2vh, 2vw);
+  overflow-y: scroll;
+  height: calc(100vh - var(--navbar-height));
   transition: all 0.5s ease-in-out;
   font-size: 1.5rem;
   width: fit-content;
   max-width: 400px;
   min-width: 250px;
-  top: var(--navbar-height);
+  height: 100%;
+
   &::-webkit-scrollbar {
-    width: 10px;
+    width: 5px;
+    padding: 6px;
   }
 
   &::-webkit-scrollbar-track {
-    background-color: #f8f9fa;
-    width: 1.2rem;
-    // border-radius: 11px;
+    width: 0.5rem;
+    border-radius: 11px;
+    overflow: hidden;
+    padding: 6px;
   }
   &::-webkit-scrollbar-thumb {
     background: #868e96;
-    // background: #343a40;
-    // border-radius: 6px;
+    width: 0.2rem;
+    border-radius: 11px;
+    margin: 5px;
   }
 
   @media (max-width: 75em) {
-    position: fixed;
+    // position: fixed;
     top: var(--navbar-height);
     left: 0;
     width: max(30vh, 30vw);
     height: calc(100vh - var(--navbar-height));
     z-index: 9;
-    transform: translateX(-100%);
     transition: all 0.5s ease-in-out;
     padding: 1rem 2rem;
   }
 
   @media (max-width: 37.5em) {
     padding: 1rem 1.5rem;
-  }
-
-  &--active {
-    transform: translateX(0%);
-    box-shadow: var(--box-shadow-primary);
   }
 
   & .sidebar-menu {

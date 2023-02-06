@@ -4,7 +4,28 @@
   {% include head.html %} {% include header.html %}
   <body class="td-section">
     <div class="flex-container">
-      <div class="sidebar-container">{% include sidebar.html %}</div>
+      <div class="left-container">
+        <div class="sidebar-container-wrapper">
+          <div class="sidebar-container">{% include sidebar.html %}</div>
+        </div>
+
+        <div class="icon-container">
+          <button class="nav-toggle-btn nav-toggle-btn--document">
+            <svg
+              id="document-nav-toggle-btn"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 20 20"
+              height="inherit"
+              width=""
+              inherit
+            >
+              <path
+                d="M13.25 10 6.109 2.58a.697.697 0 0 1 0-.979.68.68 0 0 1 .969 0l7.83 7.908a.697.697 0 0 1 0 .979l-7.83 7.908a.68.68 0 0 1-.969 0 .697.697 0 0 1 0-.979L13.25 10z"
+              />
+            </svg>
+          </button>
+        </div>
+      </div>
       <main class="main-container" role="main">
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb spb-1">
