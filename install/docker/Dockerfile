@@ -11,7 +11,7 @@ RUN go clean -modcache; cd server; cd cmd; GOPROXY=https://proxy.golang.org GOSU
 
 FROM node:lts as ui
 ADD ui ui
-RUN cd ui; npm install --omit-dev; npm run build && npm run export; mv out /; cd .. ;mv public /
+RUN cd ui; npm install --omit-dev; npm run build && npm run export; mv out /; mv public /
 
 FROM node:lts as provider-ui
 ADD provider-ui provider-ui
