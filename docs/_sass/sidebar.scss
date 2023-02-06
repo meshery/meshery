@@ -12,7 +12,7 @@
   }
   & .icon-container {
     height: fit-content;
-    margin-top: 5px;
+    margin-top: 3rem;
     z-index: 9;
     display: none;
     @media (max-width: 75em) {
@@ -33,11 +33,11 @@
 }
 
 .nav-toggle-btn--document {
-  background-color: var(--color-grey-light);
+  background-color: var(--color-grey-medium);
   border-radius: 0 5px 5px 0;
   border: none;
   width: 4rem;
-  height: 4.6rem;
+  height: 6rem;
   display: flex;
   align-items: center;
   padding: 5px;
