@@ -452,7 +452,6 @@ func (h *Handler) PublishCatalogPatternHandler(
 		http.Error(rw, ErrRequestBody(err).Error(), http.StatusBadRequest)
 		return
 	}
-
 	resp, err := provider.PublishCatalogPattern(r, parsedBody)
 	if err != nil {
 		h.log.Error(ErrPublishCatalogPattern(err))
