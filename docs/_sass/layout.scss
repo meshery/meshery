@@ -93,3 +93,9 @@ ol {
   padding: 15px 10px;
 }
 
+@media (max-width: 1200px) {
+  .small-hide {
+    display: none;
+  }
+}
+
