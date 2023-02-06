@@ -9,25 +9,31 @@
   },
   "subType": "Network",
   "selectors": {
-    "from": [
-      {
-        "kind": "Service",
-        "model": "Kubernetes"
-      }
-    ],
-    "to": [
-      {
-        "kind": "Endpoints",
-        "model": "Kubernetes"
-      },
-      {
-        "kind": "Pod",
-        "model": "Kubernetes"
-      },
-      {
-        "kind": "Deployment",
-        "model": "Kubernetes"
-      }
-    ]
+    "allow": {
+      "from": [
+        {
+          "kind": "Service",
+          "model": "Kubernetes"
+        }
+      ],
+      "to": [
+        {
+          "kind": "Endpoints",
+          "model": "Kubernetes"
+        },
+        {
+          "kind": "Pod",
+          "model": "Kubernetes"
+        },
+        {
+          "kind": "Deployment",
+          "model": "Kubernetes"
+        }
+      ]
+    },
+    "deny": {
+      "from": [],
+      "deny": []
+    }
   }
 }

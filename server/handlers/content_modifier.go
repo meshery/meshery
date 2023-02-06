@@ -89,7 +89,7 @@ func (mc *ContentModifier) isPatternSupported(ctx context.Context, patternfile s
 		return err.Error(), false
 	}
 
-	msg, err = _processPattern(
+	resp, err := _processPattern(
 		ctx,
 		mc.provider,
 		patternFile,
@@ -97,11 +97,13 @@ func (mc *ContentModifier) isPatternSupported(ctx context.Context, patternfile s
 		mc.userID,
 		false,
 		true,
+		false,
 		true,
 		nil,
 		nil,
 		nil,
 	)
+	msg, ok = resp["messages"].(string)
 	if err != nil {
 		return err.Error(), false
 	}
