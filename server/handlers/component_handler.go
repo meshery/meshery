@@ -135,6 +135,7 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 // Example: /api/meshmodel/model/kubernetes/component/Namespace
 // Components can be further filtered through query parameter
 // ?version={version} If version is unspecified then all models are returned
+// ?apiVersion={apiVersion} If apiVersion is unspecified then all models are returned
 // ?order={field} orders on the passed field
 // ?sort={[asc/desc]} Default behavior is asc
 // ?search={[true/false]} If search is true then a greedy search is performed
@@ -167,14 +168,15 @@ func (h *Handler) GetMeshmodelComponentsByName(rw http.ResponseWriter, r *http.R
 	}
 	offset := (page - 1) * limit
 	res := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
-		Name:      name,
-		ModelName: typ,
-		Version:   v,
-		Greedy:    search,
-		Offset:    offset,
-		Limit:     limit,
-		OrderOn:   r.URL.Query().Get("order"),
-		Sort:      r.URL.Query().Get("sort"),
+		Name:       name,
+		ModelName:  typ,
+		APIVersion: r.URL.Query().Get("apiVersion"),
+		Version:    v,
+		Greedy:     search,
+		Offset:     offset,
+		Limit:      limit,
+		OrderOn:    r.URL.Query().Get("order"),
+		Sort:       r.URL.Query().Get("sort"),
 	})
 	var comps []v1alpha1.ComponentDefinition
 	for _, r := range res {
@@ -205,6 +207,7 @@ type typesResponseWithModelname struct {
 // Example: /api/meshmodel/model/kubernetes/component
 // Components can be further filtered through query parameter
 // ?version={version}
+// ?apiVersion={apiVersion} If apiVersion is unspecified then all models are returned
 // ?order={field} orders on the passed field
 // ?sort={[asc/desc]} Default behavior is asc
 // ?page={page-number} Default page number is 1
@@ -231,12 +234,13 @@ func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.R
 	}
 	offset := (page - 1) * limit
 	res := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
-		ModelName: typ,
-		Version:   v,
-		Limit:     limit,
-		Offset:    offset,
-		OrderOn:   r.URL.Query().Get("order"),
-		Sort:      r.URL.Query().Get("sort"),
+		ModelName:  typ,
+		Version:    v,
+		APIVersion: r.URL.Query().Get("apiVersion"),
+		Limit:      limit,
+		Offset:     offset,
+		OrderOn:    r.URL.Query().Get("order"),
+		Sort:       r.URL.Query().Get("sort"),
 	})
 	var comps []v1alpha1.ComponentDefinition
 	for _, r := range res {

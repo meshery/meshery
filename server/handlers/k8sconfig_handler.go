@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"path/filepath"
 
+	mutil "github.com/layer5io/meshery/server/helpers/utils"
 	mcore "github.com/layer5io/meshery/server/models/meshmodel/core"
 
 	// for GKE kube API authentication
@@ -17,7 +18,6 @@ import (
 	"github.com/gofrs/uuid"
 
 	"github.com/layer5io/meshery/server/helpers"
-	mutil "github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshkit/models/meshmodel"

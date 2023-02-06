@@ -1,36 +1,36 @@
 ---
 layout: default
-title: mesheryctl-system-status
-permalink: reference/mesheryctl/system/status
-redirect_from: reference/mesheryctl/system/status/
+title: mesheryctl-system-provider-view
+permalink: reference/mesheryctl/system/provider/view
+redirect_from: reference/mesheryctl/system/provider/view/
 type: reference
 display-title: "false"
 language: en
 command: system
-subcommand: status
+subcommand: provider
 ---
 
-# mesheryctl system status
+# mesheryctl system provider view
 
-Check Meshery status
+view provider
 
 ## Synopsis
 
-Check status of Meshery and Meshery components.
+View provider of context in focus
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl system status [flags]
+mesheryctl system provider view [flags]
 
 </div>
 </pre> 
 
 ## Examples
 
-Check status of Meshery, Meshery adapters, Meshery Operator and its controllers.
+View current provider
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl system status 
+mesheryctl system provider view
 
 </div>
 </pre> 
@@ -39,8 +39,8 @@ mesheryctl system status
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  -h, --help      help for status
-  -v, --verbose   (optional) Extra data in status table
+  -a, --all    Show provider for all contexts
+  -h, --help   help for view
 
 </div>
 </pre>
@@ -51,15 +51,11 @@ mesheryctl system status
 <div class='codeblock'>
       --config string    path to config file (default "/home/runner/.meshery/config.yaml")
   -c, --context string   (optional) temporarily change the current context.
+  -v, --verbose          verbose output
   -y, --yes              (optional) assume yes for user interactive prompts.
 
 </div>
 </pre>
-
-## Screenshots
-
-Usage of mesheryctl system status
-![status-usage](/assets/img/mesheryctl/status.png)
 
 ## See Also
 

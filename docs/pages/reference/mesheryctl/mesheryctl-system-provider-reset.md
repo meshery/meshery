@@ -1,36 +1,36 @@
 ---
 layout: default
-title: mesheryctl-system-status
-permalink: reference/mesheryctl/system/status
-redirect_from: reference/mesheryctl/system/status/
+title: mesheryctl-system-provider-reset
+permalink: reference/mesheryctl/system/provider/reset
+redirect_from: reference/mesheryctl/system/provider/reset/
 type: reference
 display-title: "false"
 language: en
 command: system
-subcommand: status
+subcommand: provider
 ---
 
-# mesheryctl system status
+# mesheryctl system provider reset
 
-Check Meshery status
+reset provider to default
 
 ## Synopsis
 
-Check status of Meshery and Meshery components.
+Reset provider of context in focus to default (No provider set)
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl system status [flags]
+mesheryctl system provider reset [flags]
 
 </div>
 </pre> 
 
 ## Examples
 
-Check status of Meshery, Meshery adapters, Meshery Operator and its controllers.
+Reset provider to default
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl system status 
+mesheryctl system provider reset
 
 </div>
 </pre> 
@@ -39,8 +39,7 @@ mesheryctl system status
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  -h, --help      help for status
-  -v, --verbose   (optional) Extra data in status table
+  -h, --help   help for reset
 
 </div>
 </pre>
@@ -51,15 +50,11 @@ mesheryctl system status
 <div class='codeblock'>
       --config string    path to config file (default "/home/runner/.meshery/config.yaml")
   -c, --context string   (optional) temporarily change the current context.
+  -v, --verbose          verbose output
   -y, --yes              (optional) assume yes for user interactive prompts.
 
 </div>
 </pre>
-
-## Screenshots
-
-Usage of mesheryctl system status
-![status-usage](/assets/img/mesheryctl/status.png)
 
 ## See Also
 

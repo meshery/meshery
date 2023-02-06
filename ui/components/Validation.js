@@ -46,10 +46,10 @@ const ValidationComponent = ({ errors, compCount, classes, handleClose }) => {
     setOpen(updatedState);
   };
 
-  let errorCount = errors ? errors.reduce((count, ele) => {
+  let errorCount = errors?.reduce((count, ele) => {
     return ele.errors.length + count
-  }, 0) : 0;
-  console.log("validation", errors);
+  }, 0) || 0;
+
   return (
     <List
       aria-labelledby="nested-list-subheader"
@@ -84,8 +84,8 @@ const ValidationComponent = ({ errors, compCount, classes, handleClose }) => {
             disablePadding
             className={classes.error}
             style={{
-              border : `2px solid ${errorCount > 0 ? "#ff6347" : "#3fc6b6"}`,
-              color : `${errorCount > 0 ? "#ff6347" : "#3fc6b6"}`
+              border : `2px solid ${errorCount > 0 ? "#F0A303" : "#3fc6b6"}`,
+              color : `${errorCount > 0 ? "#F0A303" : "#3fc6b6"}`
             }}
           >
             error{errorCount > 1 ? "s" : ""}: {errorCount}

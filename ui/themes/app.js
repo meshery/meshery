@@ -36,6 +36,7 @@ export var darkTheme = createTheme({
       lightText : 'rgba(255, 255, 255, 0.54)',
       icon : 'rgba(255, 255, 255, 0.54)',
       icon2 : '#FFF',
+      disabledIcon : 'rgba(255, 255, 255, 0.26)',
       chevron : 'rgb(255, 255, 255, 0.2)',
       link : 'rgba(255, 255, 255, 0.7)',
       link2 : "#05FFCD",
@@ -226,6 +227,7 @@ let theme = createTheme({
       lightText : 'rgba(0, 0, 0, 0.54)',
       icon : 'rgba(0, 0, 0, 0.54)',
       icon2 : '#000',
+      disabledIcon : 'rgba(0, 0, 0, 0.26)',
       chevron : '#FFF',
       link : '#000',
       link2 : "#00b39F",
@@ -364,6 +366,7 @@ export const notificationColors = {
   success : "#206D24",
   info : "#2196F3"
 };
+
 export const darkNotificationColors = {
   error : "#F91313",
   warning : "#F0D053",
@@ -404,7 +407,7 @@ export const styles = (theme) => ({
     padding : '48px 36px 24px',
   },
   footer : {
-    backgroundColor : "#212121",
+    backgroundColor : darkTheme.palette.type == "dark" ? "#fff" : "#212121",
     padding : theme.spacing(2),
   },
   footerText : {
