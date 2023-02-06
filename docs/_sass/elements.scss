@@ -1,0 +1,115 @@
+body {
+  line-height: 1.5;
+}
+a > * {
+  color: #00b39f;
+  text-decoration: none;
+  background-color: transparent;
+}
+
+img {
+  max-width: 100%;
+  vertical-align: middle;
+  border-style: none;
+}
+
+p {
+  font-size: 1.5rem;
+  margin: 0.6rem 0 1.6rem 0;
+
+  & > a {
+    color: var(--brand-color-secondary);
+  }
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 1.6rem 0 1rem;
+  font-weight: 500;
+}
+
+h1 {
+  font-size: 3.6rem;
+  font-weight: 700;
+}
+
+h2 {
+  font-size: 3.2rem;
+}
+
+h3 {
+  font-size: 2.6rem;
+}
+h4,
+.h4 {
+  font-size: 2.3rem;
+}
+h5,
+.h5 {
+  font-size: 2rem;
+}
+h6 {
+  font-size: 1.7rem;
+}
+
+hr {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  border: 0;
+  border-top: 1px solid var(--color-grey-light);
+}
+
+pre {
+  font-size: 1.2rem;
+}
+
+label {
+  font-size: 1.4rem;
+}
+
+// LIST (UL,OL) ////////////////////////////////////////////////////////////////////////////////////////////////////
+ul,
+ol {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 1.4rem;
+  padding-inline-start: 4rem;
+
+  @media (max-width: 37.5em) {
+    font-size: 1.8rem;
+  }
+
+  & li {
+    margin: 2px 0;
+  }
+}
+ul {
+  list-style: disc;
+}
+ol {
+  list-style-type: decimal;
+}
+
+.terminal {
+}
+
+pre,
+code,
+kbd,
+samp {
+  font-family: SFMono-Regular, Menlo, Monaco, Consolas, liberation mono, courier new, monospace;
+}
+
+button {
+  background-color: var(--color-primary-dark);
+  color: var(--color-secondary-dark);
+  padding: 4px 8px;
+  border-radius: 5px;
+  border: 1px solid var(--color-secondary-light);
+}
+
