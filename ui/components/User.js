@@ -60,10 +60,9 @@ function ThemeToggler({
   };
 
   return (
-    <>
-      Dark Mode <Checkbox color="success" checked={themeToggle} onChange={themeToggler} />
-
-    </>
+    <div onClick={themeToggler}>
+      Dark Mode <Checkbox color="success" checked={themeToggle} onChange={themeToggler}/>
+    </div>
   )
 }
 function exportToJsonFile(jsonData, filename) {
@@ -264,7 +263,7 @@ class User extends React.Component {
                       <MenuItem onClick={this.handleGetToken}>Get Token</MenuItem>
                       <MenuItem onClick={this.handlePreference}>Preferences</MenuItem>
                       <MenuItem onClick={this.handleLogout}>Logout</MenuItem>
-                      <MenuItem >  <ThemeToggler classes={classes} theme={theme} themeSetter={themeSetter} /></MenuItem>
+                      <MenuItem>  <ThemeToggler classes={classes} theme={theme} themeSetter={themeSetter} /></MenuItem>
                     </MenuList>
                   </ClickAwayListener>
                 </Paper>
