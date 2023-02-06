@@ -100,6 +100,7 @@ func (mc *ContentModifier) isPatternSupported(ctx context.Context, patternfile s
 		true,
 		nil,
 		nil,
+		nil,
 	)
 	if err != nil {
 		return err.Error(), false

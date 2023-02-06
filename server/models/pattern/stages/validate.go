@@ -30,7 +30,7 @@ func Validator(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFu
 				act.Terminate(err)
 				return
 			}
-
+			act.Log(fmt.Sprintf("%s version for %s: %s", svc.Model, svc.Name, wc.Model.Version)) //Eg: kubernetes version for Namespace: v1.25.0
 			if k8s.Format {
 				svc.Settings = k8s.Format.DePrettify(svc.Settings, false)
 			}

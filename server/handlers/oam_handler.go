@@ -18,6 +18,7 @@ import (
 	"github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshery/server/models/pattern/patterns"
 	"github.com/layer5io/meshery/server/models/pattern/stages"
+	"github.com/layer5io/meshkit/logger"
 	"github.com/layer5io/meshkit/models/meshmodel"
 	"github.com/layer5io/meshkit/utils/events"
 	"github.com/sirupsen/logrus"
@@ -96,6 +97,7 @@ func (h *Handler) PatternFileHandler(
 		false,
 		h.registryManager,
 		h.EventsBuffer,
+		h.log,
 	)
 
 	if err != nil {
@@ -384,6 +386,7 @@ func _processPattern(
 	skipPrintLogs bool,
 	registry *meshmodel.RegistryManager,
 	eb *events.EventStreamer,
+	l logger.Handler,
 ) (string, error) {
 	// Get the token from the context
 	token, ok := ctx.Value(models.TokenCtxKey).(string)
@@ -424,6 +427,7 @@ func _processPattern(
 		}
 		sap := &serviceActionProvider{
 			token:    token,
+			log:      l,
 			provider: provider,
 			prefObj:  prefObj,
 			// kubeClient:    kubeClient,
@@ -556,6 +560,7 @@ func (sip *serviceInfoProvider) IsDelete() bool {
 
 type serviceActionProvider struct {
 	token    string
+	log      logger.Handler
 	provider models.Provider
 	prefObj  *models.Preference
 	// kubeClient      *meshkube.Client
@@ -573,6 +578,12 @@ type serviceActionProvider struct {
 
 func (sap *serviceActionProvider) GetRegistry() *meshmodel.RegistryManager {
 	return sap.registry
+}
+
+func (sap *serviceActionProvider) Log(msg string) {
+	if sap.log != nil {
+		sap.log.Info(msg)
+	}
 }
 func (sap *serviceActionProvider) Terminate(err error) {
 	if !sap.skipPrintLogs {
