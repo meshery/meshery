@@ -82,7 +82,7 @@ header {
         filter: var(--image-color);
         transition: filter 0.3s;
         cursor: pointer;
-        @media (max-width: 1200px) {
+        @media (max-width: 600px) {
           width: 3.4rem;
           height: 3.4rem;
         }
@@ -113,6 +113,8 @@ header {
 
       @media (max-width: 1200px) {
         display: flex;
+      }
+      @media (max-width: 600px) {
         & #menu-nav-toggle-btn {
           width: 3.4rem;
           height: 3.4rem;
