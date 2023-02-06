@@ -58,16 +58,11 @@ ol {
 }
 
 .main-container {
-  padding: 3.5rem min(4.5vh, 2.5vw);
+  padding: 3.5rem 4.4rem;
   overflow: hidden;
   width: 100%;
 
-  @media (max-width: 75em) {
-    flex: 0 0 75%;
-    overflow-x: auto;
-  }
-
-  @media (max-width: 56.25em) {
+  @media (max-width: 1200px) {
     flex: 0 0 100%;
   }
 
@@ -77,6 +72,7 @@ ol {
 
   & #breadcrumbs {
     font-size: 1.4rem;
+    line-height: 3rem;
     & a {
       color: var(--color-grey-dark);
       transition: all 0.3s;

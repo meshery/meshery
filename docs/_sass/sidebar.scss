@@ -20,7 +20,7 @@
     }
   }
   @media (max-width: 75em) {
-    transform: translateX(calc(-100% + 3.2rem));
+    transform: translateX(calc(-100% + 4rem));
     position: fixed;
     display: flex;
   }
@@ -35,15 +35,14 @@
 .nav-toggle-btn--document {
   background-color: var(--color-grey-light);
   border-radius: 0 5px 5px 0;
-  // border-radius: 0;
-  // border: 1px solid var(--color-grey-medium);
   border: none;
-  width: 3.2rem;
-  height: 3.4rem;
+  width: 4rem;
+  height: 4.6rem;
   display: flex;
   align-items: center;
   padding: 5px;
   cursor: pointer;
+  justify-content: center;
 }
 #document-nav-toggle-btn {
   width: 1.8rem;
