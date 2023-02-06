@@ -76,7 +76,7 @@ header {
 
       & > img {
         padding: 0 !important;
-        margin-left: 3rem;
+        margin-left: 10%;
         width: 2.8rem;
         height: 2.8rem;
         filter: var(--image-color);
@@ -152,7 +152,7 @@ header {
       align-items: center;
 
       @media (max-width: 1200px) {
-        font-size: 2.5rem;
+        font-size: 2rem;
       }
 
       @media (max-width: 600px) {
@@ -160,7 +160,7 @@ header {
         flex-direction: column;
 
         & > span {
-          margin-left: 5rem;
+          margin-left: .5rem;
         }
       }
 
@@ -257,6 +257,7 @@ header {
         border-radius: 3px;
         background: var(--background-light);
         padding: 5px;
+        cursor: pointer;
         & > * {
           background: var(--color-primary-dark);
         }
