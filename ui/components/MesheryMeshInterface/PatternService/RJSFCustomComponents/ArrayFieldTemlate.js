@@ -58,7 +58,7 @@ const ArrayFieldTitle = ({ TitleField, idSchema, title, required, classes }) => 
     return null;
   }
 
-  return <Typography className={classes.typography} variant="body1" style={{ fontWeight : "bold", marginLeft : ".5rem", display : "inline" }}>{title.charAt(0).toUpperCase() + title.slice(1)}</Typography>;
+  return <Typography className={classes.typography} variant="body1" style={{ fontWeight : "bold", display : "inline" }}>{title.charAt(0).toUpperCase() + title.slice(1)}</Typography>;
 };
 
 const ArrayFieldDescription = ({ DescriptionField, idSchema, description }) => {
@@ -189,7 +189,7 @@ const DefaultNormalArrayFieldTemplate = (props) => {
               (props.uiSchema["ui:description"] || props.schema.description) &&
               <CustomTextTooltip backgroundColor="#3C494F" title={props.uiSchema["ui:description"] || props.schema.description}>
                 <IconButton  disableTouchRipple="true" disableRipple="true">
-                  <HelpOutlineIcon width="14px" height="14px"  fill={theme.palette.type === 'dark' ? "white" : "black"}  style={{ marginLeft : '4px', ...iconSmall }} />
+                  <HelpOutlineIcon width="14px" height="14px"  fill={theme.palette.type === 'dark' ? "white" : "gray"}  style={{ marginLeft : '4px', ...iconSmall }} />
                 </IconButton>
               </CustomTextTooltip>
             }
