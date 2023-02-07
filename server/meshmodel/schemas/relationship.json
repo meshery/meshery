@@ -12,21 +12,26 @@
   "type": "object",
   "properties": {
     "apiVersion": {
-      "type": "string"
+      "type": "string",
+      "description": "API Version of the Relationship."
     },
     "kind": {
-      "type": "string"
+      "type": "string",
+      "description": "Kind of the Relationship."
     },
     "metadata": {
       "type": "object",
+      "description": "Metadata contains additional information associated with the Relationship.",
       "properties": {
         "description": {
-          "type": "string"
+          "type": "string",
+          "description": "Description of the Relationship."
         }
       }
     },
     "model": {
-      "$ref": "https://schema.meshery.io/model.json"
+      "$ref": "https://schema.meshery.io/model.json",
+      "description": "Model of the Relationship."
     },
     "subType": {
       "type": "string",

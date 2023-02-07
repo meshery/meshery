@@ -12,34 +12,42 @@
   "type": "object",
   "properties": {
     "apiVersion": {
-      "type": "string"
+      "type": "string",
+      "description": "API Version of the component."
     },
     "kind": {
-      "type": "string"
+      "type": "string",
+      "description": "Kind of the component."
     },
     "metadata": {
       "type": "object",
+      "description": "Metadata contains additional information associated with the component.",
       "required": [
         "name",
         "version"
       ],
       "properties": {
         "description": {
-          "type": "string"
+          "type": "string",
+          "description": "Description of the component."
         },
         "name": {
-          "$ref": "https://schema.meshery.io/core.json#inputString"
+          "$ref": "https://schema.meshery.io/core.json#inputString",
+          "description": "Name of the component."
         },
         "version": {
-          "type": "string"
+          "type": "string",
+          "description": "Version of the component."
         }
       }
     },
     "model": {
-      "$ref": "https://schema.meshery.io/model.json#"
+      "$ref": "https://schema.meshery.io/model.json#",
+      "description": "Model of the component."
     },
     "displayName": {
-      "$ref": "https://schema.meshery.io/core.json#inputString"
+      "$ref": "https://schema.meshery.io/core.json#inputString",
+      "description": "Display name of the component."
     },
     "format": {
       "type": "string",
@@ -51,7 +59,8 @@
       "description": "Format specifies the format used in the `schema` field. JSON will be used as a default format."
     },
     "schema": {
-      "type": "string"
+      "type": "string",
+      "description": "JSON schema of the component."
     }
   }
 }
