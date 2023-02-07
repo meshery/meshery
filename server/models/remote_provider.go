@@ -250,7 +250,7 @@ func (l *RemoteProvider) executePrefSync(tokenString string, sess *Preference) {
 
 // InitiateLogin - initiates login flow and returns a true to indicate the handler to "return" or false to continue
 //
-// It is assumed that every remote provider will offer this feature
+// Every Remote Provider must offer this function
 func (l *RemoteProvider) InitiateLogin(w http.ResponseWriter, r *http.Request, _ bool) {
 	tu := viper.GetString("MESHERY_SERVER_CALLBACK_URL")
 	if tu == "" {

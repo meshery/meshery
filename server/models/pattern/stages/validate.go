@@ -25,12 +25,12 @@ func Validator(prov ServiceInfoProvider, act ServiceActionProvider, skipValidati
 		data.PatternSvcTraitCapabilities = map[string][]core.TraitCapability{}
 
 		for svcName, svc := range data.Pattern.Services {
-			wc, ok := s.Workload(svc.Type, svc.Version, svc.Model)
-			if !ok {
-				act.Terminate(fmt.Errorf("cannot recognize workload '%s' of type '%s' not found", svc.Name, svc.Type))
+			wc, err := s.Workload(svc.Type, svc.Version, svc.Model, svc.APIVersion)
+			if err != nil {
+				act.Terminate(err)
 				return
 			}
-
+			act.Log(fmt.Sprintf("%s version for %s: %s", svc.Model, svc.Name, wc.Model.Version)) //Eg: kubernetes version for Namespace: v1.25.0
 			if k8s.Format {
 				svc.Settings = k8s.Format.DePrettify(svc.Settings, false)
 			}

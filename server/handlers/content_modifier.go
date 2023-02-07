@@ -101,6 +101,7 @@ func (mc *ContentModifier) isPatternSupported(ctx context.Context, patternfile s
 		true,
 		nil,
 		nil,
+		nil,
 	)
 	msg, ok = resp["messages"].(string)
 	if err != nil {
