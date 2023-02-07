@@ -19,7 +19,7 @@
       "description": "The display name for the model."
     },
     "version": {
-      "type": "string",
+      "$ref": "https://schema.meshery.io/core.json#versionString",
       "description": "Version of the model."
     },
     "category": {

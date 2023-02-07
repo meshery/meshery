@@ -6,6 +6,10 @@
     "inputString": {
       "type": "string",
       "pattern": "^[a-zA-Z_][a-zA-Z0-9_]*$"
+    },
+    "versionString":{
+      "type": "string",
+      "pattern": "^\\d+(\\.\\d+){0,2}(-(alpha|beta))?$"
     }
   }
 }

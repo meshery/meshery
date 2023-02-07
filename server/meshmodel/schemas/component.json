@@ -36,7 +36,7 @@
           "description": "Name of the component."
         },
         "version": {
-          "type": "string",
+          "$ref": "https://schema.meshery.io/core.json#versionString",
           "description": "Version of the component."
         }
       }

@@ -55,7 +55,7 @@
                 "type": "string"
               },
               "version": {
-                "type": "string"
+                "$ref": "https://schema.meshery.io/core.json#versionString"
               }
             },
             "description": "Optional fields that are a part of the `from` selector. Absence of a field has an implied * meaning."
@@ -74,7 +74,7 @@
                 "type": "string"
               },
               "version": {
-                "type": "string"
+                "$ref": "https://schema.meshery.io/core.json#versionString"
               }
             },
             "description": "Optional fields that are a part of the `to` selector. Absence of a field has an implied * meaning."
