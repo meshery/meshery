@@ -108,6 +108,18 @@ Query for fetching all results for profile ID.
 | <a id="queryfetchresultsprofileid"></a>`profileID` | [`String!`](#string) |  |
 | <a id="queryfetchresultsselector"></a>`selector` | [`PageFilter!`](#pagefilter) |  |
 
+### `Query.fetchTelemetryComponents`
+
+Query for telemetry components.
+
+###### **Returns** [`[TelemetryComp]!`](#telemetrycomp).
+
+#### **Arguments**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="queryfetchtelemetrycomponentscontexts"></a>`contexts` | [`[String!]`](#string) |  |
+
 ### `Query.getAvailableAddons`
 
 Query details about Addons available (Eg. Prometheus and Grafana).
@@ -984,6 +996,16 @@ Status of Meshery Operator and its controllers.
 | ---- | ---- | ----------- |
 | <a id="resourcecount"></a>`count` | [`Int!`](#int) | Number of resouce. |
 | <a id="resourcekind"></a>`kind` | [`String!`](#string) | Name of resource. |
+
+### `TelemetryComp`
+
+#### **Fields**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="telemetrycompname"></a>`name` | [`String!`](#string) |  |
+| <a id="telemetrycompspec"></a>`spec` | [`String!`](#string) |  |
+| <a id="telemetrycompstatus"></a>`status` | [`String!`](#string) |  |
 
 ## Enumeration types
 

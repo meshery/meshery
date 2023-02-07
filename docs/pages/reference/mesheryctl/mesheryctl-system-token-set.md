@@ -38,7 +38,8 @@ mesheryctl system token set [token-name]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  -h, --help   help for set
+      --context string   Pass the context
+  -h, --help             help for set
 
 </div>
 </pre>
@@ -47,10 +48,9 @@ mesheryctl system token set [token-name]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string    path to config file (default "/home/runner/.meshery/config.yaml")
-  -c, --context string   (optional) temporarily change the current context.
-  -v, --verbose          verbose output
-  -y, --yes              (optional) assume yes for user interactive prompts.
+      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+  -v, --verbose         verbose output
+  -y, --yes             (optional) assume yes for user interactive prompts.
 
 </div>
 </pre>

@@ -15,9 +15,7 @@
 #-----------------------------------------------------------------------------
 # Global Variables
 #-----------------------------------------------------------------------------
-#GIT_VERSION	= $(shell git describe --tags `git rev-list --tags --max-count=1`)
 GIT_VERSION	= $(shell git describe --tags `git rev-list --tags --max-count=1`)
-git ls-remote --sort='v:refname' --tags https://github.com/meshery/meshery | tail -1 | cut -f2 | sed 's/refs\/tags\///g'
 GIT_COMMITSHA = $(shell git rev-list -1 HEAD)
 GIT_STRIPPED_VERSION=$(shell git describe --tags `git rev-list --tags --max-count=1` | cut -c 2-)
 REMOTE_PROVIDER="Meshery"

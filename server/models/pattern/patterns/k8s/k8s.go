@@ -1,12 +1,17 @@
 package k8s
 
 import (
+	"context"
+	"encoding/json"
 	"fmt"
+	"strings"
 
 	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
 	meshkube "github.com/layer5io/meshkit/utils/kubernetes"
 	man "github.com/layer5io/meshkit/utils/manifests"
 	"gopkg.in/yaml.v2"
+	v1 "k8s.io/client-go/applyconfigurations/meta/v1"
+	"k8s.io/client-go/rest"
 )
 
 // In case of any breaking change or bug caused by this, set this to false and the whitespace addition in schema generated/consumed would be removed(will go back to default behavior)
@@ -14,7 +19,6 @@ const Format prettifier = true
 
 func Deploy(kubeClient *meshkube.Client, oamComp v1alpha1.Component, oamConfig v1alpha1.Configuration, isDel bool) error {
 	resource := createK8sResourceStructure(oamComp)
-
 	manifest, err := yaml.Marshal(resource)
 	if err != nil {
 		return err
@@ -24,6 +28,46 @@ func Deploy(kubeClient *meshkube.Client, oamComp v1alpha1.Component, oamConfig v
 		Update:    true,
 		Delete:    isDel,
 	})
+}
+
+func DryRunHelper(client *meshkube.Client, comp v1alpha1.Component) (st *v1.StatusApplyConfiguration, err error) {
+	resource := createK8sResourceStructure(comp)
+	return dryRun(client.KubeClient.RESTClient(), resource, comp.Namespace)
+}
+
+// does dry-run on the kubernetes server for the given k8s resource and returns the Status object returned by the k8s server
+// TODO: add more tests for this function
+func dryRun(rClient rest.Interface, k8sResource map[string]interface{}, namespace string) (st *v1.StatusApplyConfiguration, err error) {
+	st = v1.Status()
+	if namespace == "" || k8sResource["kind"] == "" || k8sResource["apiVersion"] == "" {
+		err = fmt.Errorf("Invalid resource or namespace not provided")
+		return
+	}
+	aV := k8sResource["apiVersion"].(string)
+	// for non-core resources, the endpoint should use 'apis' instead of 'api'
+	apiString := "api"
+	if len(strings.Split(aV, "/")) > 1 {
+		apiString = apiString + "s"
+	}
+	path := fmt.Sprintf("/%s/%s/namespaces/%s/%s", apiString, aV, "default", kindToResource(k8sResource["kind"].(string)))
+	data, err := json.Marshal(k8sResource)
+	if err != nil {
+		return
+	}
+	req := rClient.Post().AbsPath(path).Body(data).SetHeader("Content-Type", "application/json").SetHeader("Accept", "application/json").Param("dryRun", "All").Param("fieldValidation", "Strict").Param("fieldManager", "meshery")
+	res := req.Do(context.Background())
+	// ignoring the error since this client-go treats failure of dryRun as an error
+	resp, _ := res.Raw()
+	e := json.Unmarshal(resp, &st)
+	if e != nil {
+		err = fmt.Errorf("Cannot serialize Status object from the server: %s", e.Error())
+		return
+	}
+	return
+}
+
+func kindToResource(kind string) string {
+	return strings.ToLower(kind) + "s"
 }
 
 func createK8sResourceStructure(comp v1alpha1.Component) map[string]interface{} {
