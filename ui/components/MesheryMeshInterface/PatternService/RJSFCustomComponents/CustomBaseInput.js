@@ -56,7 +56,7 @@ const BaseInput = (props) => {
               {props.schema?.description && (
                 <CustomTextTooltip backgroundColor="#3C494F" flag={props?.formContext?.overrideFlag} title={props.schema?.description}>
                   <IconButton component="span" size="small">
-                    <HelpOutlineIcon width="14px" height="14px"  fill={theme.palette.type === 'dark' ? "white" : "black"}  style={{ verticalAlign : "middle", ...iconSmall }}/>
+                    <HelpOutlineIcon width="14px" height="14px"  fill={theme.palette.type === 'dark' ? "white" : "gray"}  style={{ verticalAlign : "middle", ...iconSmall }}/>
                   </IconButton>
                 </CustomTextTooltip>
               )}
