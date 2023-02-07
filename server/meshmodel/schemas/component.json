@@ -28,7 +28,7 @@
           "type": "string"
         },
         "name": {
-          "type": "string"
+          "$ref": "https://schema.meshery.io/core.json#inputString"
         },
         "version": {
           "type": "string"

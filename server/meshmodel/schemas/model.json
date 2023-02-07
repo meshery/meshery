@@ -11,7 +11,7 @@
   ],
   "properties": {
     "name": {
-      "type": "string"
+      "$ref": "https://schema.meshery.io/core.json#inputString"
     },
     "displayName": {
       "$ref": "https://schema.meshery.io/core.json#inputString"
