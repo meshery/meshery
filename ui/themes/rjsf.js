@@ -182,7 +182,7 @@ export const rjsfTheme = createTheme({
       root : {
         marginLeft : "4px",
         "& > *:nth-child(1)" : {
-          // backgroundColor : "#ffffff",
+          backgroundColor : "#ffffff",
           width : "1rem",
           height : "1rem"
         },
