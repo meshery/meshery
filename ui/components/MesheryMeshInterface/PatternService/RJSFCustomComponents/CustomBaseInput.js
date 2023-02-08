@@ -26,7 +26,6 @@ const BaseInput = (props) => {
           focused={focused}
           type={props.options?.inputType}
           key={props.id}
-          style={{ width : "100%" }}
           value={additional && props?.value === "New Value" ? "" : props?.value} // remove the default value i.e. New Value for additionalFields
           id={props.id}
           margin="dense"
