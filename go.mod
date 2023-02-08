@@ -237,7 +237,7 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	gorm.io/driver/postgres v1.4.6 // indirect
 	gorm.io/driver/sqlite v1.4.4 // indirect
-	helm.sh/helm/v3 v3.11.0 // indirect
+	helm.sh/helm/v3 v3.11.1 // indirect
 	k8s.io/apiserver v0.26.0 // indirect
 	k8s.io/cli-runtime v0.26.0 // indirect
 	k8s.io/component-base v0.26.0 // indirect
