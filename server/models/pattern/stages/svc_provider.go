@@ -21,6 +21,7 @@ type ServiceInfoProvider interface {
 
 type ServiceActionProvider interface {
 	Terminate(error)
+	Log(msg string)
 	Provision(CompConfigPair) (string, error)
 	GetRegistry() *meshmodel.RegistryManager
 	Persist(string, core.Service, bool) error
