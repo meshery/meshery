@@ -4,6 +4,7 @@ import React, { useEffect } from "react";
 import { getMeshProperties } from "../../utils/nameMapper";
 import PatternServiceFormCore from "./PatternServiceFormCore";
 import SettingsIcon from '@material-ui/icons/Settings';
+import { iconSmall } from "../../css/icons.styles";
 
 const useStyles = makeStyles(() => ({
 
@@ -32,7 +33,7 @@ const useStyles = makeStyles(() => ({
 
 function RJSFButton({ handler, text, ...restParams }) {
   return (
-    <Button variant="contained" color="primary" style={{ margin : "0px 0.5rem 32px 0px" }} onClick={handler} {...restParams}>
+    <Button variant="contained" color="primary" style={{ margin : "0px 0.5rem 32px 0px",...iconSmall }} onClick={handler} {...restParams}>
       {text}
     </Button>
   );
@@ -135,7 +136,7 @@ function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference
                   display : "none",
                 },
               }} aria-label="Pattern Service" >
-                <Tab label={<div style={{ display : "flex" }}> <SettingsIcon className={classes.setIcon} />Settings</div>} {...a11yProps(0)} />
+                <Tab label={<div style={{ display : "flex" }}> <SettingsIcon  className={classes.setIcon} style={iconSmall} />Settings</div>} {...a11yProps(0)} />
                 {
                   renderTraits()
                     ? <Tab label="Traits" {...a11yProps(1)} />
