@@ -11,7 +11,7 @@ import {
 } from '@material-ui/core';
 import CloseIcon from "@material-ui/icons/Close";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowLeft, faCloud, faPoll, faDatabase } from '@fortawesome/free-solid-svg-icons';
+import { faArrowLeft, faCloud, faPoll, faDatabase, faFileInvoice } from '@fortawesome/free-solid-svg-icons';
 // import {faTachometerAlt} from '@fortawesome/free-solid-svg-icons';
 import { faMendeley } from '@fortawesome/free-brands-svg-icons';
 import Link from 'next/link';
@@ -646,7 +646,7 @@ class MesherySettings extends React.Component {
               <Tab
                 className={classes.tab}
                 icon={
-                  <FontAwesomeIcon icon={faDatabase}  style={iconMedium} />
+                  <FontAwesomeIcon icon={faFileInvoice}  style={iconMedium} />
                 }
                 label="MeshModel Summary"
                 tab="meshmodelSummary"
