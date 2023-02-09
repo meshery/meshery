@@ -317,6 +317,9 @@ func processCytoElementsWithPattern(eles []cytoscapejs.Element, pf *Pattern, cal
 		if err := json.Unmarshal(svcByt, &svc); err != nil {
 			return fmt.Errorf("failed to create service from the metadata in the scratch")
 		}
+		if svc.Name == "" {
+			return fmt.Errorf("cannot save service with empty name")
+		}
 		err = callback(svc, elem)
 		if err != nil {
 			return err
