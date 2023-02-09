@@ -39,7 +39,8 @@ mesheryctl app list
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  -h, --help   help for list
+  -h, --help      help for list
+  -v, --verbose   Display full length user and app file identifiers
 
 </div>
 </pre>
@@ -50,7 +51,6 @@ mesheryctl app list
 <div class='codeblock'>
       --config string   path to config file (default "/home/runner/.meshery/config.yaml")
   -t, --token string    Path to token file default from current context
-  -v, --verbose         verbose output
 
 </div>
 </pre>

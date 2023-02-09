@@ -82,4 +82,9 @@ jobs:
     name: Deploy Meshery Playground
     uses: meshery/meshery/.github/workflows/deploy-meshery-playground.yml@master
     secrets: inherit
+  email-meshery-release-notes-workflow:
+    needs: build
+    name: Email Meshery Release Notes
+    uses: layer5labs/meshery-extensions-packages/.github/workflows/notify-email.yml@master
+    secrets: inherit
 

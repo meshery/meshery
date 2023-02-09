@@ -1,6 +1,6 @@
 import { makeStyles } from "@material-ui/core";
 
-const useStyles= makeStyles((theme) => ({
+const useStyles = makeStyles((theme) => ({
   cardButtons : {
     display : "grid",
     gridTemplateColumns : "repeat(5,1fr)",
@@ -77,6 +77,12 @@ const useStyles= makeStyles((theme) => ({
     display : "flex",
     justifyContent : "center",
   },
+  cloneBtnText : {
+    [theme.breakpoints.between(960, 1370)] : { display : "none" },
+    display : "flex",
+    justifyContent : "center",
+    marginLeft : "3px",
+  },
   undeployButton : {
     backgroundColor : "#8F1F00",
     color : "#ffffff",
@@ -93,7 +99,8 @@ const useStyles= makeStyles((theme) => ({
     }
   },
   img : {
-    marginRight : "0.5rem"
+    marginRight : "0.5rem",
+    filter : theme.palette.secondary.img
   },
   noPaper : {
     padding : "0.5rem",

@@ -72,9 +72,9 @@ type HandlerInterface interface {
 	GrafanaPingHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	SaveSelectedGrafanaBoardsHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 
-	ScanPromGrafanaHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
-	ScanPrometheusHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
-	ScanGrafanaHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	// ScanPromGrafanaHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	// ScanPrometheusHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	// ScanGrafanaHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	PrometheusConfigHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	GrafanaBoardImportForPrometheusHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	PrometheusQueryHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
@@ -143,6 +143,7 @@ type HandlerInterface interface {
 	GetMesheryApplicationHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	GetMesheryApplicationSourceHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	DeleteMesheryApplicationHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
+	ShareDesignHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 
 	ExtensionsEndpointHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	LoadExtensionFromPackage(w http.ResponseWriter, req *http.Request, provider Provider) error
@@ -192,7 +193,7 @@ type HandlerConfig struct {
 	ConfigurationChannel *ConfigurationChannel
 
 	DashboardK8sResourcesChan *DashboardK8sResourcesChan
-	MeshModelSummaryChannel   *meshmodel.MeshModelSummaryChannel
+	MeshModelSummaryChannel   *meshmodel.SummaryChannel
 
 	K8scontextChannel *K8scontextChan
 	EventsBuffer      *events.EventStreamer

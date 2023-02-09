@@ -1,7 +1,7 @@
 import React from 'react';
 import Grid from '@material-ui/core/Grid';
-import { makeStyles } from '@material-ui/styles';
 import { canExpand } from '@rjsf/utils';
+import { CssBaseline,useTheme, withStyles } from '@material-ui/core';
 import AddIcon from '../../../../assets/icons/AddIcon';
 import { Box, IconButton, Typography } from '@material-ui/core';
 import { CustomTextTooltip } from '../CustomTextTooltip';
@@ -10,16 +10,24 @@ import ExpandMoreIcon from '../../../../assets/icons/ExpandMoreIcon';
 import ExpandLessIcon from '../../../../assets/icons/ExpandLessIcon'
 import ErrorOutlineIcon from '../../../../assets/icons/ErrorOutlineIcon';
 import { ERROR_COLOR } from '../../../../constants/colors';
-import { iconMedium } from '../../../../css/icons.styles';
+import { iconMedium, iconSmall } from '../../../../css/icons.styles';
 
-const useStyles = makeStyles({
+const styles = (theme) => ({
   objectFieldGrid : {
     // paddingLeft: "0.6rem",
     padding : ".5rem",
+    paddingTop : "0.7rem",
     // margin : ".5rem",
-    backgroundColor : "#f4f4f4",
-    border : '1px solid rgba(0, 0, 0, .125)',
+    backgroundColor : theme.palette.type === 'dark' ? "#303030" : "#f4f4f4",
+    border : `1px solid  ${theme.palette.type === 'dark' ? "rgba(255, 255, 255, .45)" : "rgba(0, 0, 0, .125)"}`,
+    width : "100%",
+    margin : "0px"
   },
+  typography : {
+    fontFamily : "inherit",
+    fontSize : 13,
+  },
+
 });
 
 const ObjectFieldTemplate = ({
@@ -34,10 +42,12 @@ const ObjectFieldTemplate = ({
   schema,
   formData,
   onAddClick,
+  classes,
   rawErrors
 }) => {
   const additional = schema?.__additional_property; // check if the object is additional
-  const classes = useStyles();
+  const theme = useTheme();
+
   // If the parent type is an `array`, then expand the current object.
   const [show, setShow] = React.useState(schema?.p_type ? true : false);
   properties.forEach((property, index) => {
@@ -49,6 +59,7 @@ const ObjectFieldTemplate = ({
   });
   const CustomTitleField = ({ title, id, description, properties }) => {
     return <Box mb={1} mt={1} id={id} >
+      <CssBaseline />
       <Grid container justify="flex-start" alignItems="center">
         {canExpand(schema, uiSchema, formData) ? (
           <Grid item={true} onClick={() => {
@@ -76,12 +87,12 @@ const ObjectFieldTemplate = ({
         )}
 
         <Grid item mb={1} mt={1}>
-          <Typography variant="body1" style={{ fontWeight : "bold", display : "inline" }}>{title.charAt(0).toUpperCase() + title.slice(1)}{" "}
+          <Typography variant="body1" className={classes.typography} style={{ fontWeight : "bold", display : "inline" }}>{title.charAt(0).toUpperCase() + title.slice(1)}{" "}
           </Typography>
           {description &&
             <CustomTextTooltip backgroundColor="#3C494F" title={description}>
               <IconButton disableTouchRipple="true" disableRipple="true" component="span" size="small">
-                <HelpOutlineIcon width="14px" height="14px" fill="gray" style={{ marginLeft : "4px", verticalAlign : "middle", ...iconMedium }}/>
+                <HelpOutlineIcon width="14px" height="14px"  fill={theme.palette.type === 'dark' ? "white" : "black"}   style={{ marginLeft : "4px", verticalAlign : "middle", ...iconSmall }}/>
               </IconButton>
             </CustomTextTooltip>}
           {rawErrors?.length &&
@@ -89,7 +100,7 @@ const ObjectFieldTemplate = ({
               <div key={index}>{error}</div>
             ))}>
               <IconButton disableTouchRipple="true" disableRipple="true" component="span" size="small">
-                <ErrorOutlineIcon width="14px" height="14px" fill="red" style={{ marginLeft : "4px", verticalAlign : "middle", ...iconMedium }} />
+                <ErrorOutlineIcon width="14px" height="14px" fill="red" style={{ marginLeft : "4px", verticalAlign : "middle", ...iconSmall }} />
               </IconButton>
             </CustomTextTooltip>}
         </Grid>
@@ -110,9 +121,9 @@ const ObjectFieldTemplate = ({
             sm={12}
             lg={
               element.type === "object" ||
-              element.type === "array" ||
-              element.__additional_property ||
-              additional
+                element.type === "array" ||
+                element.__additional_property ||
+                additional
                 ? 12
                 : 6
             }
@@ -123,7 +134,8 @@ const ObjectFieldTemplate = ({
         )
       );
     })}
-  </Grid>)
+  </Grid>
+  )
 
   const fieldTitle = uiSchema['ui:title'] || title;
 
@@ -147,4 +159,4 @@ const ObjectFieldTemplate = ({
   );
 };
 
-export default ObjectFieldTemplate;
+export default withStyles(styles)(ObjectFieldTemplate);

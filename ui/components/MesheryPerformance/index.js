@@ -527,7 +527,7 @@ class MesheryPerformanceComponent extends React.Component {
           });
         }
       },
-      () => {}
+      () => { }
     ); //error is already captured from the handler, also we have a redux-store for same & hence it's not needed here.
   };
 

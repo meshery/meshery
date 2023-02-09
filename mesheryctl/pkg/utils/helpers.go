@@ -75,6 +75,7 @@ const (
 	providerSetURL    = docsBaseURL + "reference/mesheryctl/system/provider/set"
 	providerResetURL  = docsBaseURL + "reference/mesheryctl/system/provider/reset"
 	providerSwitchURL = docsBaseURL + "reference/mesheryctl/system/provider/switch"
+	tokenUsageURL     = docsBaseURL + "reference/mesheryctl/system/token"
 
 	// Meshery Server Location
 	EndpointProtocol = "http"
@@ -110,6 +111,7 @@ const (
 	cmdProviderView   cmdType = "provider view"
 	cmdProviderList   cmdType = "provider list"
 	cmdProviderReset  cmdType = "provider reset"
+	cmdToken          cmdType = "token"
 )
 
 const (
@@ -646,10 +648,11 @@ func GetSessionData(mctlCfg *config.MesheryCtlConfig) (*models.Preference, error
 	if err != nil {
 		return nil, err
 	}
+
 	prefs := &models.Preference{}
 	err = utils.Unmarshal(string(body), prefs)
 	if err != nil {
-		return nil, err
+		return nil, errors.New("Failed to process JSON data. Please sign into Meshery")
 	}
 
 	return prefs, nil

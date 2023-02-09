@@ -27,10 +27,18 @@ mesheryctl mesh remove [flags]
 
 ## Examples
 
-Remove a service mesh
+Remove a service mesh(linkerd)
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl mesh remove [mesh adapter name]
+mesheryctl mesh remove linkerd
+
+</div>
+</pre> 
+
+Remove a service mesh(linkerd) under a specific namespace(linkerd-ns)
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl mesh remove linkerd --namespace linkerd-ns
 
 </div>
 </pre> 
@@ -46,10 +54,8 @@ mesheryctl mesh remove [mesh adapter name]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  -a, --adapter string     Adapter to use for installation (default "meshery-istio:10000")
   -h, --help               help for remove
-  -n, --namespace string   Kubernetes namespace to be used for deploying the validation tests and sample workload (default "default")
-  -t, --token string       Path to token for authenticating to Meshery API
+  -n, --namespace string   Kubernetes namespace where the mesh is deployed (default "default")
 
 </div>
 </pre>
@@ -59,6 +65,7 @@ mesheryctl mesh remove [mesh adapter name]
 <pre class='codeblock-pre'>
 <div class='codeblock'>
       --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+  -t, --token string    Path to token for authenticating to Meshery API
   -v, --verbose         verbose output
 
 </div>

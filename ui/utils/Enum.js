@@ -23,3 +23,9 @@ export const VISIBILITY = {
   PUBLIC : "public",
   PUBLISHED : "published"
 }
+
+export const EVENT_TYPES = {
+  ADDED : "ADDED",
+  DELETED : "DELETED",
+  MODIFIED : "MODIFIED",
+}
