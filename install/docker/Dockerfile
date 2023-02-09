@@ -11,7 +11,7 @@ RUN go clean -modcache; cd server; cd cmd; GOPROXY=https://proxy.golang.org GOSU
 
 FROM node:lts as ui
 ADD ui ui
-RUN cd ui; npm install --omit-dev; npm run build && npm run export; mv out /
+RUN cd ui; npm install --omit-dev; npm run build && npm run export; mv out /; mv public /
 
 FROM node:lts as provider-ui
 ADD provider-ui provider-ui
@@ -75,6 +75,7 @@ COPY --from=meshery-server /meshery /app/server/cmd/
 COPY --from=meshery-server /etc/passwd /etc/passwd
 COPY --from=meshery-server /github.com/meshery/meshery/server/helpers/swagger.yaml /app/server/helpers/swagger.yaml
 COPY --from=ui /out /app/ui/out
+COPY --from=ui /public /app/ui/public
 COPY --from=provider-ui /out /app/provider-ui/out
 COPY --from=wrk2 /wrk2 /app/server/cmd/wrk2
 COPY --from=wrk2 /wrk2/wrk /usr/local/bin
@@ -82,7 +83,7 @@ COPY --from=seed_content /seed_content /home/appuser/.meshery/seed_content
 COPY --from=layer5/getnighthawk:latest /usr/local/bin/nighthawk_service /app/server/cmd/
 COPY --from=layer5/getnighthawk:latest /usr/local/bin/nighthawk_output_transform /app/server/cmd/
 
-RUN mkdir -p /home/appuser/.meshery/config; chown -R appuser /home/appuser/
+RUN mkdir -p /home/appuser/.meshery/config; chown -R appuser /home/appuser/; chown -R appuser /app/ui/public
 USER appuser
 WORKDIR /app/server/cmd
 CMD ./meshery

@@ -26,7 +26,6 @@ const BaseInput = (props) => {
           focused={focused}
           type={props.options?.inputType}
           key={props.id}
-          style={{ width : "100%" }}
           value={additional && props?.value === "New Value" ? "" : props?.value} // remove the default value i.e. New Value for additionalFields
           id={props.id}
           margin="dense"
@@ -56,7 +55,7 @@ const BaseInput = (props) => {
               {props.schema?.description && (
                 <CustomTextTooltip backgroundColor="#3C494F" flag={props?.formContext?.overrideFlag} title={props.schema?.description}>
                   <IconButton component="span" size="small">
-                    <HelpOutlineIcon width="14px" height="14px"  fill={theme.palette.type === 'dark' ? "white" : "black"}  style={{ verticalAlign : "middle", ...iconSmall }}/>
+                    <HelpOutlineIcon width="14px" height="14px"  fill={theme.palette.type === 'dark' ? "white" : "gray"}  style={{ verticalAlign : "middle", ...iconSmall }}/>
                   </IconButton>
                 </CustomTextTooltip>
               )}

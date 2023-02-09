@@ -44,7 +44,7 @@ layout: null
     var Search = {
         init: function() {
             $(document).ready(function() {
-                $(document).on('keypress', '.td-search-input', function(e) {
+                $(document).on('keypress', '.sidebar__search-input', function(e) {
                     if (e.keyCode !== 13) {
                         return
                     }
@@ -88,3 +88,20 @@ getcodeelement.each(function(i) {
 });
 
 new Clipboard('.clipbtn');
+const toggleBtnSidebarNav=document.querySelector(".nav-toggle-btn--document");
+
+toggleBtnSidebarNav.addEventListener("click",()=>{
+    let sidebarNav=document.querySelector(".left-container")
+    if(sidebarNav){
+        sidebarNav.classList.toggle("left-container--active")
+    }
+})
+
+const toggleBtnMainNav=document.querySelector(".nav-toggle-btn--main");
+
+toggleBtnMainNav.addEventListener("click",()=>{
+    let sidebarNav=document.getElementById("main_navbar")
+    if(sidebarNav){
+        sidebarNav.classList.toggle("main-navbar--active")
+    }
+})

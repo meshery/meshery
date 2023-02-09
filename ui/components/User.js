@@ -60,10 +60,9 @@ function ThemeToggler({
   };
 
   return (
-    <>
-      Dark Mode <Checkbox color="success" checked={themeToggle} onChange={themeToggler} />
-
-    </>
+    <div onClick={themeToggler}>
+      Dark Mode <Checkbox color="success" checked={themeToggle} onChange={themeToggler}/>
+    </div>
   )
 }
 function exportToJsonFile(jsonData, filename) {
