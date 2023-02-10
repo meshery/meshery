@@ -383,7 +383,6 @@ func mergeMaps(mergeInto, toMerge map[string]interface{}) {
 	for k, v := range toMerge {
 		mergeInto[k] = v
 	}
-
 }
 
 // Caches k8sMeshModel metadatas in memory to use at the time of dynamic k8s component generation
