@@ -19,6 +19,10 @@ type DryRunFailureCause struct {
 	Field   string
 }
 
+var mesheryDefinedAPIVersions = map[string]bool{
+	"core.oam.dev/v1alpha1": true,
+}
+
 // There are two types of errors here:
 // 1. Error while performing the Dry Run (when the DryRun request could not be sent)
 // 2. Errors in Dry Run (when the Dry Run request was performed successfully but there are errors in the Object sent for DryRun)
@@ -33,7 +37,10 @@ func DryRun(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFunct
 			return
 		}
 		var comps []v1alpha1.Component
-		for name := range data.Pattern.Services {
+		for name, svc := range data.Pattern.Services {
+			if mesheryDefinedAPIVersions[svc.APIVersion] {
+				continue
+			}
 			comp, err := data.Pattern.GetApplicationComponent(name)
 			if err != nil {
 				continue
