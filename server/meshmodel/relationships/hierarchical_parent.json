@@ -14,12 +14,20 @@
         {
           "kind": "Namespace",
           "model": "Kubernetes"
-        }
+        },
+        {
+          "kind": "Node",
+          "model": "Kubernetes"
+        }      
       ],
       "to": [
         {
           "model": "Kubernetes"
-        }
+        },
+        {
+          "kind":"Application",
+          "model": "Core"
+        }       
       ]
     },
     "deny": {
