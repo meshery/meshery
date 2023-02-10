@@ -409,7 +409,6 @@ func init() {
 	if err != nil {
 		return
 	}
-	fmt.Println(m)
 	k8sMeshModelMetadata = m
 }
 
