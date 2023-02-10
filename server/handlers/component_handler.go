@@ -135,6 +135,7 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 // Example: /api/meshmodel/model/kubernetes/component/Namespace
 // Components can be further filtered through query parameter
 // ?version={version} If version is unspecified then all models are returned
+// ?apiVersion={apiVersion} If apiVersion is unspecified then all models are returned
 // ?order={field} orders on the passed field
 // ?sort={[asc/desc]} Default behavior is asc
 // ?search={[true/false]} If search is true then a greedy search is performed
@@ -167,24 +168,27 @@ func (h *Handler) GetMeshmodelComponentsByName(rw http.ResponseWriter, r *http.R
 	}
 	offset := (page - 1) * limit
 	res := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
-		Name:      name,
-		ModelName: typ,
-		Version:   v,
-		Greedy:    search,
-		Offset:    offset,
-		Limit:     limit,
-		OrderOn:   r.URL.Query().Get("order"),
-		Sort:      r.URL.Query().Get("sort"),
+		Name:       name,
+		ModelName:  typ,
+		APIVersion: r.URL.Query().Get("apiVersion"),
+		Version:    v,
+		Greedy:     search,
+		Offset:     offset,
+		Limit:      limit,
+		OrderOn:    r.URL.Query().Get("order"),
+		Sort:       r.URL.Query().Get("sort"),
 	})
 	var comps []v1alpha1.ComponentDefinition
 	for _, r := range res {
-		m := make(map[string]interface{})
-		comp, _ := r.(v1alpha1.ComponentDefinition)
-		_ = json.Unmarshal([]byte(comp.Schema), &m)
-		m = k8s.Format.Prettify(m, false)
-		b, _ := json.Marshal(m)
-		comp.Schema = string(b)
-		comps = append(comps, comp)
+		comp, ok := r.(v1alpha1.ComponentDefinition)
+		if ok {
+			m := make(map[string]interface{})
+			_ = json.Unmarshal([]byte(comp.Schema), &m)
+			m = k8s.Format.Prettify(m, false)
+			b, _ := json.Marshal(m)
+			comp.Schema = string(b)
+			comps = append(comps, comp)
+		}
 	}
 	if err := enc.Encode(comps); err != nil {
 		h.log.Error(ErrWorkloadDefinition(err)) //TODO: Add appropriate meshkit error
@@ -203,6 +207,7 @@ type typesResponseWithModelname struct {
 // Example: /api/meshmodel/model/kubernetes/component
 // Components can be further filtered through query parameter
 // ?version={version}
+// ?apiVersion={apiVersion} If apiVersion is unspecified then all models are returned
 // ?order={field} orders on the passed field
 // ?sort={[asc/desc]} Default behavior is asc
 // ?page={page-number} Default page number is 1
@@ -229,22 +234,25 @@ func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.R
 	}
 	offset := (page - 1) * limit
 	res := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
-		ModelName: typ,
-		Version:   v,
-		Limit:     limit,
-		Offset:    offset,
-		OrderOn:   r.URL.Query().Get("order"),
-		Sort:      r.URL.Query().Get("sort"),
+		ModelName:  typ,
+		Version:    v,
+		APIVersion: r.URL.Query().Get("apiVersion"),
+		Limit:      limit,
+		Offset:     offset,
+		OrderOn:    r.URL.Query().Get("order"),
+		Sort:       r.URL.Query().Get("sort"),
 	})
 	var comps []v1alpha1.ComponentDefinition
 	for _, r := range res {
-		m := make(map[string]interface{})
-		comp, _ := r.(v1alpha1.ComponentDefinition)
-		_ = json.Unmarshal([]byte(comp.Schema), &m)
-		m = k8s.Format.Prettify(m, false)
-		b, _ := json.Marshal(m)
-		comp.Schema = string(b)
-		comps = append(comps, comp)
+		comp, ok := r.(v1alpha1.ComponentDefinition)
+		if ok {
+			m := make(map[string]interface{})
+			_ = json.Unmarshal([]byte(comp.Schema), &m)
+			m = k8s.Format.Prettify(m, false)
+			b, _ := json.Marshal(m)
+			comp.Schema = string(b)
+			comps = append(comps, comp)
+		}
 	}
 	if err := enc.Encode(comps); err != nil {
 		h.log.Error(ErrWorkloadDefinition(err)) //TODO: Add appropriate meshkit error
@@ -285,6 +293,7 @@ func (h *Handler) RegisterMeshmodelComponents(rw http.ResponseWriter, r *http.Re
 		http.Error(rw, err.Error(), http.StatusBadRequest)
 		return
 	}
+	go h.config.MeshModelSummaryChannel.Publish()
 }
 
 // swagger:response ModelResponse
@@ -349,12 +358,14 @@ func (h *Handler) GetMeshmodelEntititiesByModel(rw http.ResponseWriter, r *http.
 		var comps []v1alpha1.ComponentDefinition
 		for _, r := range res {
 			m := make(map[string]interface{})
-			comp, _ := r.(v1alpha1.ComponentDefinition)
-			_ = json.Unmarshal([]byte(comp.Schema), &m)
-			m = k8s.Format.Prettify(m, false)
-			b, _ := json.Marshal(m)
-			comp.Schema = string(b)
-			comps = append(comps, comp)
+			comp, ok := r.(v1alpha1.ComponentDefinition)
+			if ok {
+				_ = json.Unmarshal([]byte(comp.Schema), &m)
+				m = k8s.Format.Prettify(m, false)
+				b, _ := json.Marshal(m)
+				comp.Schema = string(b)
+				comps = append(comps, comp)
+			}
 		}
 		res2 := h.registryManager.GetEntities(&v1alpha1.RelationshipFilter{
 			ModelName: mres.Name,
@@ -363,9 +374,10 @@ func (h *Handler) GetMeshmodelEntititiesByModel(rw http.ResponseWriter, r *http.
 		})
 		var relationships []v1alpha1.RelationshipDefinition
 		for _, r := range res2 {
-			rel, _ := r.(v1alpha1.RelationshipDefinition)
-
-			relationships = append(relationships, rel)
+			rel, ok := r.(v1alpha1.RelationshipDefinition)
+			if ok {
+				relationships = append(relationships, rel)
+			}
 		}
 		mres.Relationships = relationships
 		mres.Components = comps

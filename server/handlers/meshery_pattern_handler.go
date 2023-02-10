@@ -399,7 +399,7 @@ func (h *Handler) DeleteMesheryPatternHandler(
 // swagger:route POST /api/pattern/clone/{id} PatternsAPI idCloneMesheryPattern
 // Handle Clone for a Meshery Pattern
 //
-// Creates a local copy of a public pattern with id: id
+// Creates a local copy of a published pattern with id: id
 // responses:
 //
 //	200: noContentWrapper
@@ -429,12 +429,12 @@ func (h *Handler) CloneMesheryPatternHandler(
 // swagger:route POST /api/pattern/catalog/publish PatternsAPI idPublishCatalogPatternHandler
 // Handle Publish for a Meshery Pattern
 //
-// Publishes pattern to Meshery Catalog by setting visibility to public and setting catalog data
+// Publishes pattern to Meshery Catalog by setting visibility to published and setting catalog data
 // responses:
 //
 //	200: noContentWrapper
 //
-// PublishCatalogPatternHandler makes pattern with given id public
+// PublishCatalogPatternHandler sets visibility of pattern with given id as published
 func (h *Handler) PublishCatalogPatternHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
@@ -452,7 +452,6 @@ func (h *Handler) PublishCatalogPatternHandler(
 		http.Error(rw, ErrRequestBody(err).Error(), http.StatusBadRequest)
 		return
 	}
-
 	resp, err := provider.PublishCatalogPattern(r, parsedBody)
 	if err != nil {
 		h.log.Error(ErrPublishCatalogPattern(err))

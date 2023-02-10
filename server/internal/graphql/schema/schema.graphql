@@ -480,6 +480,14 @@ input CatalogSelector {
   order: String!
 }
 
+# ================ TELEMETRY ==================== 
+
+
+type TelemetryComp {
+ name: String!
+ spec: String!
+ status: String!
+}
 # ============== RESYNC =============================
 
 # Type ReSyncActions define the actions involved during resync
@@ -487,6 +495,28 @@ input ReSyncActions {
   clearDB: String!
   ReSync: String!
   hardReset: String!
+}
+
+# ============== MeshModel =============================
+
+input MeshModelSummarySelector {
+  type: String!
+}
+
+# Type MeshModelComponentsSummary define the summary of a Mesh Model
+type MeshModelSummary {
+  components: [MeshModelComponent!]
+  relationships: [MeshModelRelationship!]
+}
+
+type MeshModelComponent {
+  name: String!
+  count: Int!
+}
+
+type MeshModelRelationship {
+  name: String!
+  count: Int!
 }
 
 # ============== ROOT =================================
@@ -578,8 +608,13 @@ type Query {
   fetchFilterCatalogContent(selector: CatalogSelector): [CatalogFilter!]!
 
   # Query for getting cluster info
-
   getClusterResources(k8scontextIDs: [String!], namespace: String!): ClusterResources!
+
+  # Query for meshmodel summary
+  getMeshModelSummary(selector: MeshModelSummarySelector!): MeshModelSummary!
+
+  # Query for telemetry components
+  fetchTelemetryComponents(contexts: [String!]) : [TelemetryComp]!
 }
 
 
@@ -647,6 +682,8 @@ type Subscription {
   ): ClusterResources!
 
   subscribeK8sContext(selector: PageFilter!) : K8sContextsPage!
+
+  subscribeMeshModelSummary(selector: MeshModelSummarySelector!) : MeshModelSummary!
 
 }
 

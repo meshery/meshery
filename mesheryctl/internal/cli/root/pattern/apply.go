@@ -66,12 +66,12 @@ mesheryctl pattern apply [pattern-name]
 
 			req, err = utils.NewRequest("GET", patternURL+"?search="+patternName, nil)
 			if err != nil {
-				return err
+				return errors.Wrap(err, "could not create request ")
 			}
 
 			resp, err := client.Do(req)
 			if err != nil {
-				return err
+				return errors.Errorf("unable to reach Meshery Server at %s. Verify your environment's readiness for a Meshery deployment by running `mesheryctl system check`", mctlCfg.GetBaseMesheryURL())
 			}
 
 			var response *models.PatternsAPIResponse
@@ -104,7 +104,7 @@ mesheryctl pattern apply [pattern-name]
 			if validURL := govalidator.IsURL(file); !validURL {
 				content, err := os.ReadFile(file)
 				if err != nil {
-					return err
+					return errors.Errorf("file path %s is invalid. Enter a valid path ", file)
 				}
 				text := string(content)
 
@@ -122,12 +122,12 @@ mesheryctl pattern apply [pattern-name]
 					}
 					req, err = utils.NewRequest("POST", patternURL, bytes.NewBuffer(jsonValues))
 					if err != nil {
-						return err
+						return errors.Wrap(err, "could not create request ")
 					}
 
 					resp, err := client.Do(req)
 					if err != nil {
-						return err
+						return errors.Errorf("unable to reach Meshery server at %s. Verify your environment's readiness for a Meshery deployment by running `mesheryctl system check`", mctlCfg.GetBaseMesheryURL())
 					}
 					utils.Log.Debug("saved pattern file")
 					var response []*models.MesheryPattern
@@ -189,12 +189,12 @@ mesheryctl pattern apply [pattern-name]
 				}
 				req, err = utils.NewRequest("POST", patternURL, bytes.NewBuffer(jsonValues))
 				if err != nil {
-					return err
+					return errors.Wrap(err, "could not create request ")
 				}
 
 				resp, err := client.Do(req)
 				if err != nil {
-					return err
+					return errors.Errorf("unable to reach Meshery Server at %s. Verify your environment's readiness for a Meshery deployment by running `mesheryctl system check`", mctlCfg.GetBaseMesheryURL())
 				}
 				utils.Log.Debug("remote hosted pattern request success")
 				var response []*models.MesheryPattern
@@ -220,7 +220,7 @@ mesheryctl pattern apply [pattern-name]
 
 		req, err = utils.NewRequest("POST", deployURL, bytes.NewBuffer([]byte(patternFile)))
 		if err != nil {
-			return err
+			return errors.Wrap(err, "could not create request ")
 		}
 
 		pf, err := core.NewPatternFile([]byte(patternFile))
@@ -232,7 +232,7 @@ mesheryctl pattern apply [pattern-name]
 		s.Start()
 		res, err := client.Do(req)
 		if err != nil {
-			return err
+			return errors.Errorf("unable to reach Meshery Server at %s. Verify your environment's readiness for a Meshery deployment by running `mesheryctl system check`", mctlCfg.GetBaseMesheryURL())
 		}
 
 		defer res.Body.Close()

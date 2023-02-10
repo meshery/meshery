@@ -32,7 +32,7 @@ const styles = (theme) => ({
   sidelist : { width : 450, },
   notificationButton : { height : '100%', },
   notificationDrawer : {
-    backgroundColor : '#FFFFFF',
+    backgroundColor : theme.palette.secondary.sideBar,
     display : 'flex',
     flexDirection : 'column',
     justifyContent : 'space-between'
@@ -333,8 +333,10 @@ class MesheryNotification extends React.Component {
           </Tooltip>
 
           <ClickAwayListener onClickAway={(e) => {
-            let whiteListedIds = ["notification-button", "notification-icon", "error-icon", "bell-icon-path1", "bell-icon-path2", "notification-badge", "bell-icon-svg"]
-            whiteListedIds.includes(e.target?.id) ? null : this.handleClose();
+            if (e.target.className.baseVal !== "" && e.target.className.baseVal !== "MuiSvgIcon-root" &&
+              ((typeof e.target.className === "string")? !e.target.className?.includes("MesheryNotification"): null)) {
+              this.handleClose();
+            }
           }}>
             <Drawer
               anchor="right"

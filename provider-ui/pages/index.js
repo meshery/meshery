@@ -1,19 +1,8 @@
-import { NoSsr } from '@material-ui/core';
-import React from 'react';
-import ProviderComponent from '../components/ProviderComponent';
+import * as React from 'react'
+import ProviderComponent from '../components/Provider'
 
-class Index extends React.Component {
-  componentDidMount() {
-  }
-
-  render() {
-    return (
-      <NoSsr>
-        <ProviderComponent />
-      </NoSsr>
-    );
-  }
+export default function Index () {
+  return (
+    <ProviderComponent />
+  )
 }
-
-
-export default Index;

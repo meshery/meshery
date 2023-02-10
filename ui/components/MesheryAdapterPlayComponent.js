@@ -30,9 +30,10 @@ import MesheryResultDialog from "./MesheryResultDialog";
 import ReactSelectWrapper from "./ReactSelectWrapper";
 import ConfirmationMsg from "./ConfirmationModal";
 import { iconMedium } from "../css/icons.styles";
+import { ACTIONS } from "../utils/Enum";
 
 const styles = (theme) => ({
-  smWrapper : { backgroundColor : "#eaeff1", },
+  smWrapper : { backgroundColor : theme.palette.secondary.elevatedComponents2, },
   buttons : { width : "100%", },
   button : {
     marginTop : theme.spacing(3),
@@ -100,7 +101,7 @@ const styles = (theme) => ({
     backgroundColor : "#f7f7f7",
   },
   paneSection : {
-    backgroundColor : "#fff",
+    backgroundColor : theme.palette.secondary.elevatedComponents,
     padding : theme.spacing(3),
     borderRadius : 4,
   },
@@ -487,7 +488,7 @@ class MesheryAdapterPlayComponent extends React.Component {
           });
         }
       },
-      self.handleError(cat, deleteOp)
+      self.handleError(cat, deleteOp, selectedOp)
     );
   };
 
@@ -557,7 +558,7 @@ class MesheryAdapterPlayComponent extends React.Component {
     self.setState({ ["customDialogSMI"] : true });
   };
 
-  handleError = (cat, deleteOp) => {
+  handleError = (cat, deleteOp, selectedOp) => {
     const self = this;
     return (error) => {
       if (cat && deleteOp) {
@@ -570,6 +571,8 @@ class MesheryAdapterPlayComponent extends React.Component {
           : "customDialogAdd";
         self.setState({ menuState, [dlg] : false });
       }
+      self.setState(
+        { addonSwitchGroup : { ...self.addonSwitchGroup, [selectedOp] : deleteOp } })
       self.props.updateProgress({ showProgress : false });
       self.props.enqueueSnackbar(`Operation submission failed: ${error}`, {
         variant : "error",
@@ -1267,13 +1270,14 @@ class MesheryAdapterPlayComponent extends React.Component {
             open={this.state.modalOpen}
             handleClose={this.handleClose}
             submit={
-              { deploy : () => this.submitOp(this.state.category, this.state.selectedOp, false),
+              {
+                deploy : () => this.submitOp(this.state.category, this.state.selectedOp, false),
                 unDeploy : () => this.submitOp(this.state.category, this.state.selectedOp, true)
               }
             }
             isDelete={this.state.isDeleteOp}
             title={this.state.operationName}
-            tab={this.state.isDeleteOp ? 1 : 0}
+            tab={this.state.isDeleteOp ? ACTIONS.UNDEPLOY : ACTIONS.DEPLOY }
           />
         </React.Fragment>
       </NoSsr>

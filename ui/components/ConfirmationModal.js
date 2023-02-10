@@ -1,6 +1,6 @@
 import {
   Button, Checkbox, Chip, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, Tab, Tabs, TextField,
-  Tooltip, Typography
+  Tooltip, Typography, useTheme
 } from "@material-ui/core";
 import CloseIcon from "@material-ui/icons/Close";
 import { withStyles } from "@material-ui/core/styles";
@@ -20,7 +20,11 @@ import DoneIcon from "@material-ui/icons/Done";
 import Link from 'next/link';
 import Operator from "../assets/img/Operator";
 import { ACTIONS } from "../utils/Enum";
+import OperatorLight from "../assets/img/OperatorLight";
 import { iconMedium, iconSmall } from "../css/icons.styles";
+import { RoundedTriangleShape } from "./shapes/RoundedTriangle";
+import { notificationColors } from "../themes/app";
+import RedOctagonSvg from "./shapes/Octagon";
 
 const styles = (theme) => ({
   dialogBox : {
@@ -39,9 +43,7 @@ const styles = (theme) => ({
     top : theme.spacing(0.5),
     [theme.breakpoints.down("md")] : { fontSize : "12px", },
   },
-
   ctxChip : {
-    backgroundColor : "white",
     cursor : "pointer",
     marginRight : theme.spacing(1),
     marginLeft : theme.spacing(1),
@@ -96,7 +98,7 @@ const styles = (theme) => ({
     padding : theme.spacing(1),
     borderRadius : 5,
     "&:disabled" : {
-      backgroundColor : "#FF3D3D",
+      backgroundColor : theme.palette.type=="dark"? "grey": "#FF3D3D",
       color : "#fff"
     },
     minWidth : 100,
@@ -115,7 +117,7 @@ const styles = (theme) => ({
   tabs : {
     marginLeft : 0,
     "& .MuiTab-root.Mui-selected" : {
-      backgroundColor : '#D9D9D9'
+      backgroundColor : theme.palette.secondary.modalTabs
     }
   },
   tabLabel : {
@@ -157,7 +159,6 @@ const styles = (theme) => ({
     alignItems : "center",
     justifyContent : "center",
     marginTop : "1rem",
-    backgroundColor : "rgb(234, 235, 236)",
     padding : "10px",
     borderRadius : "10px"
   },
@@ -165,25 +166,53 @@ const styles = (theme) => ({
     color : "rgba(84, 87, 91, 1)",
     fontSize : "16px"
   },
+  triangleContainer : {
+    position : "relative",
+    marginLeft : 2
+  },
+  triangleNumberSingleDigit : {
+    position : "absolute",
+    bottom : 12,
+    left : "37%",
+    color : "#fff",
+    fontSize : "0.8rem"
+  },
+  octagonContainer : {
+    overflow : "hidden",
+    position : "relative",
+    display : "flex",
+    alignItems : "center",
+    justifyContent : "center",
+    height : 34,
+    marginLeft : 2
+  },
+  octagonText : {
+    position : "absolute",
+    bottom : 9.5 ,
+    color : "#fff",
+    fontSize : "0.8rem"
+  }
 })
+
 
 function ConfirmationMsg(props) {
   const { classes, open, handleClose, submit,
-    selectedK8sContexts, k8scontext, title, validationBody, setK8sContexts, enqueueSnackbar, closeSnackbar, componentCount, tab } = props
+    selectedK8sContexts, k8scontext, title, validationBody, setK8sContexts, enqueueSnackbar, closeSnackbar, componentCount, tab, errors, dryRunComponent } = props
 
   const [tabVal, setTabVal] = useState(tab);
   const [disabled, setDisabled] = useState(true);
-  const [context,setContexts]=useState([]);
+  const [context, setContexts] = useState([]);
+  const theme = useTheme();
   let isDisabled = typeof selectedK8sContexts.length === "undefined" || selectedK8sContexts.length === 0
 
   useEffect(() => {
     setTabVal(tab);
     setContexts(k8scontext);
-  },[open])
+  }, [open])
 
   useEffect(() => {
     setDisabled(isDisabled);
-  },[selectedK8sContexts]);
+  }, [selectedK8sContexts]);
 
   const handleTabValChange = (event, newVal) => {
     setTabVal(newVal);
@@ -274,7 +303,7 @@ function ConfirmationMsg(props) {
           </DialogTitle>
           {/* <Paper square className={classes.paperRoot}> */}
           <Tabs
-            value={validationBody ? (tabVal) : (tabVal === 2 ? 1 : 0) }
+            value={validationBody ? (tabVal) : (tabVal === 2 ? 1 : 0)}
             variant="fullWidth"
             indicatorColor="primary"
             textColor="primary"
@@ -285,8 +314,18 @@ function ConfirmationMsg(props) {
               data-cy="validate-btn-modal"
               className={classes.tab}
               onClick={(event) => handleTabValChange(event,0)}
-              label={<div style={{ display : "flex" }}
-              > <DoneIcon style={{ margin : "2px", ...iconSmall }}  fontSize="small"/><span className={classes.tabLabel}>Validate</span> </div>
+              label={
+                <div style={{ display : "flex" }}
+                >
+                  <DoneIcon style={{ margin : "2px", ...iconSmall }}  fontSize="small"/><span className={classes.tabLabel}>Validate</span>
+                  {errors?.validationError > 0 && (
+                    <div className={classes.triangleContainer}>
+                      <RoundedTriangleShape color={notificationColors.warning}></RoundedTriangleShape>
+                      <div className={classes.triangleNumberSingleDigit} style={errors.validationError > 10 ? { left : "25%" }: {}}>
+                        {errors.validationError}
+                      </div>
+                    </div>)}
+                </div>
               }
             />}
             <Tab
@@ -294,21 +333,34 @@ function ConfirmationMsg(props) {
               className={classes.tab}
               onClick={(event) => handleTabValChange(event,1)}
               label={<div style={{ display : "flex" }}
-              > <div style={{ margin : "2px" }}> <UndeployIcon style={iconSmall} fill="rgba(0, 0, 0, 0.54)" width="20" height="20"/> </div> <span className={classes.tabLabel}>Undeploy</span> </div>}
+              > <div style={{ margin : "2px" }}> <UndeployIcon style={iconSmall} fill={theme.palette.secondary.icon} width="20" height="20"/> </div> <span className={classes.tabLabel}>Undeploy</span> </div>}
             />
             <Tab
               data-cy="deploy-btn-modal"
               className={classes.tab}
-              onClick={(event) => handleTabValChange(event,2)}
-              label={<div style={{ display : "flex" }}
-              > <DoneAllIcon style={{ margin : "2px", ...iconSmall }} fontSize="small" /> <span className={classes.tabLabel}>Deploy</span> </div>}
+              onClick={(event) => handleTabValChange(event, 2)}
+              label={<div style={{ display : "flex" }}>
+                <DoneAllIcon style={{ margin : "2px", ...iconSmall }} fontSize="small" />
+                <span className={classes.tabLabel}>Deploy</span>
+                {errors?.deploymentError > 0 && (
+                  <div className={classes.octagonContainer}>
+                    <RedOctagonSvg fill={notificationColors.darkRed}></RedOctagonSvg>
+                    <div className={classes.octagonText}>
+                      {errors.deploymentError}
+                    </div>
+                  </div>)}
+              </div>}
             />
           </Tabs>
 
           {(tabVal === ACTIONS.DEPLOY || tabVal === ACTIONS.UNDEPLOY) &&
-              <DialogContent>
-                <DialogContentText id="alert-dialog-description" className={classes.subtitle}>
-                  <Typography variant="subtitle1" style={{ marginBottom : "0.8rem" }}> {componentCount !== undefined ? <> {componentCount} component{componentCount > 1 ? "s" : ""} </> : "" }</Typography>
+            <DialogContent>
+              <DialogContentText id="alert-dialog-description" className={classes.subtitle}>
+                <div style={{ height : "100%" }}>
+                  {dryRunComponent && dryRunComponent}
+                </div>
+                <div>
+                  <Typography variant="subtitle1" style={{ marginBottom : "0.8rem" }}> {componentCount !== undefined ? <> {componentCount} component{componentCount > 1 ? "s" : ""} </> : ""}</Typography>
                   {
                     k8scontext.length > 0 ?
                       <Typography variant="body1">
@@ -326,7 +378,7 @@ function ConfirmationMsg(props) {
                           }}
                         // margin="none"
                         />
-                        {context.length > 0?
+                        {context.length > 0 ?
                           <div className={classes.all}>
                             <Checkbox
                               checked={selectedK8sContexts?.includes("all")}
@@ -337,7 +389,7 @@ function ConfirmationMsg(props) {
                           </div>
                           :
                           <Typography variant="subtitle1">
-                          No Context found
+                            No Context found
                           </Typography>
                         }
 
@@ -370,7 +422,7 @@ function ConfirmationMsg(props) {
                       </Typography>
                       :
                       <div className={classes.textContent}>
-                        <Operator />
+                        {theme.palette.type=="dark"? <OperatorLight /> : <Operator />}
                         <Typography variant="h5">No cluster connected yet</Typography>
 
                         <Link href="/settings">
@@ -381,25 +433,26 @@ function ConfirmationMsg(props) {
                             style={{ margin : "0.6rem 0.6rem", whiteSpace : "nowrap" }}
                           >
                             <AddIcon className={classes.AddIcon} />
-                          Connect Clusters
+                            Connect Clusters
                           </Button>
                         </Link>
                       </div>
                   }
-                </DialogContentText>
-              </DialogContent>
+                </div>
+              </DialogContentText>
+            </DialogContent>
           }
           {tabVal === ACTIONS.VERIFY &&// Validate
-              <DialogContent>
-                <DialogContentText>
-                  { validationBody }
-                </DialogContentText>
-              </DialogContent>
+            <DialogContent>
+              <DialogContentText>
+                {validationBody}
+              </DialogContentText>
+            </DialogContent>
           }
           {/* </Paper> */}
 
           <DialogActions className={classes.actions}>
-            { (tabVal == ACTIONS.DEPLOY || tabVal === ACTIONS.UNDEPLOY) ?
+            {(tabVal == ACTIONS.DEPLOY || tabVal === ACTIONS.UNDEPLOY) ?
               <>
                 <Button onClick={handleClose}
                   type="submit"
@@ -408,7 +461,7 @@ function ConfirmationMsg(props) {
                   <Typography variant body2 > CANCEL </Typography>
                 </Button>
                 <Button disabled
-                  className={tabVal === ACTIONS.UNDEPLOY ? classes.disabledBtnDel : "" }
+                  className={tabVal === ACTIONS.UNDEPLOY ? classes.disabledBtnDel : ""}
                   type="submit"
                   variant="contained"
                   color="primary">

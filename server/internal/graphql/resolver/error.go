@@ -31,6 +31,10 @@ const (
 	ErrK8sContextCode                       = "2245"
 	ErrClusterResourcesSubscriptionCode     = "2246"
 	ErrGettingClusterResourcesCode          = "2247"
+	ErrMeshModelSummarySubscriptionCode     = "2248"
+	ErrGettingMeshModelSummaryCode          = "2249"
+	ErrGettingRegistryManagerCode           = "2250"
+	ErrGettingTelemetryComponentsCode       = "2251"
 )
 
 var (
@@ -148,6 +152,42 @@ func ErrGettingClusterResources(err error) error {
 	)
 }
 
+func ErrMeshModelSummarySubscription(err error) error {
+	return errors.New(
+		ErrMeshModelSummarySubscriptionCode,
+		errors.Alert,
+		[]string{"MeshModelSummary Subscription failed", err.Error()},
+		[]string{"GraphQL subscription for MeshModelSummary Subscription stopped"},
+		[]string{"Could be a network issue"},
+		[]string{"Confirm that Meshery Server is reachable from your browser."})
+}
+
+func ErrGettingMeshModelSummary(err error) error {
+	return errors.New(
+		ErrGettingMeshModelSummaryCode,
+		errors.Alert,
+		[]string{"Unable to retrieve MeshModel Summary"},
+		[]string{err.Error()},
+		[]string{"Table in the database might not exists"},
+		nil,
+	)
+}
+
+func ErrGettingRegistryManager(err error) error {
+	return errors.New(
+		ErrGettingRegistryManagerCode,
+		errors.Alert,
+		[]string{"Unable to retrieve Registry Manager"},
+		[]string{err.Error()},
+		[]string{"Registry Manager might not exists"},
+		nil,
+	)
+}
+
 func ErrK8sContextSubscription(err error) error {
 	return errors.New(ErrK8sContextCode, errors.Alert, []string{"Failed to get k8s context from remote provider", err.Error()}, []string{"There might be something wrong with the Meshery or Meshery Cloud"}, []string{"Could be a network issue"}, nil)
+}
+
+func ErrGettingTelemetryComponents(err error) error {
+	return errors.New(ErrGettingTelemetryComponentsCode, errors.Alert, []string{"unable to retrieve telemetry components"}, []string{err.Error()}, []string{"table in the database might be corrupted"}, []string{"try resetting database from settings"})
 }

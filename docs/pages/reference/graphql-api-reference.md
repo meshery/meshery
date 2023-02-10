@@ -108,6 +108,18 @@ Query for fetching all results for profile ID.
 | <a id="queryfetchresultsprofileid"></a>`profileID` | [`String!`](#string) |  |
 | <a id="queryfetchresultsselector"></a>`selector` | [`PageFilter!`](#pagefilter) |  |
 
+### `Query.fetchTelemetryComponents`
+
+Query for telemetry components.
+
+###### **Returns** [`[TelemetryComp]!`](#telemetrycomp).
+
+#### **Arguments**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="queryfetchtelemetrycomponentscontexts"></a>`contexts` | [`[String!]`](#string) |  |
+
 ### `Query.getAvailableAddons`
 
 Query details about Addons available (Eg. Prometheus and Grafana).
@@ -133,6 +145,8 @@ Query available Namesapces in your cluster.
 | <a id="querygetavailablenamespacesk8sclusterids"></a>`k8sClusterIDs` | [`[String!]`](#string) |  |
 
 ### `Query.getClusterResources`
+
+Query for getting cluster info.
 
 ###### **Returns** [`ClusterResources!`](#clusterresources).
 
@@ -180,6 +194,18 @@ Query for getting kubectl describe details with meshkit.
 | <a id="querygetkubectldescribekind"></a>`kind` | [`String!`](#string) |  |
 | <a id="querygetkubectldescribename"></a>`name` | [`String!`](#string) |  |
 | <a id="querygetkubectldescribenamespace"></a>`namespace` | [`String!`](#string) |  |
+
+### `Query.getMeshModelSummary`
+
+Query for meshmodel summary.
+
+###### **Returns** [`MeshModelSummary!`](#meshmodelsummary).
+
+#### **Arguments**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="querygetmeshmodelsummaryselector"></a>`selector` | [`MeshModelSummarySelector!`](#meshmodelsummaryselector) |  |
 
 ### `Query.getMeshsyncStatus`
 
@@ -419,6 +445,16 @@ Listen to changes in Broker (NATS) Connection.
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | <a id="subscriptionsubscribek8scontextselector"></a>`selector` | [`PageFilter!`](#pagefilter) |  |
+
+### `Subscription.subscribeMeshModelSummary`
+
+###### **Returns** [`MeshModelSummary!`](#meshmodelsummary).
+
+#### **Arguments**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="subscriptionsubscribemeshmodelsummaryselector"></a>`selector` | [`MeshModelSummarySelector!`](#meshmodelsummaryselector) |  |
 
 ### `Subscription.subscribeMeshSyncEvents`
 
@@ -731,6 +767,35 @@ Data Plane for a particular Mesh.
 | <a id="locationpath"></a>`path` | [`String`](#string) |  |
 | <a id="locationtype"></a>`type` | [`String`](#string) |  |
 
+### `MeshModelComponent`
+
+#### **Fields**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="meshmodelcomponentcount"></a>`count` | [`Int!`](#int) |  |
+| <a id="meshmodelcomponentname"></a>`name` | [`String!`](#string) |  |
+
+### `MeshModelRelationship`
+
+#### **Fields**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="meshmodelrelationshipcount"></a>`count` | [`Int!`](#int) |  |
+| <a id="meshmodelrelationshipname"></a>`name` | [`String!`](#string) |  |
+
+### `MeshModelSummary`
+
+Type MeshModelComponentsSummary define the summary of a Mesh Model.
+
+#### **Fields**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="meshmodelsummarycomponents"></a>`components` | [`[MeshModelComponent!]`](#meshmodelcomponent) |  |
+| <a id="meshmodelsummaryrelationships"></a>`relationships` | [`[MeshModelRelationship!]`](#meshmodelrelationship) |  |
+
 ### `MeshSyncEvent`
 
 #### **Fields**
@@ -932,6 +997,16 @@ Status of Meshery Operator and its controllers.
 | <a id="resourcecount"></a>`count` | [`Int!`](#int) | Number of resouce. |
 | <a id="resourcekind"></a>`kind` | [`String!`](#string) | Name of resource. |
 
+### `TelemetryComp`
+
+#### **Fields**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="telemetrycompname"></a>`name` | [`String!`](#string) |  |
+| <a id="telemetrycompspec"></a>`spec` | [`String!`](#string) |  |
+| <a id="telemetrycompstatus"></a>`status` | [`String!`](#string) |  |
+
 ## Enumeration types
 
 Also called _Enums_, enumeration types are a special kind of scalar that
@@ -1053,6 +1128,14 @@ Input for changing Addon Status.
 | ---- | ---- | ----------- |
 | <a id="catalogselectororder"></a>`order` | [`String!`](#string) |  |
 | <a id="catalogselectorsearch"></a>`search` | [`String!`](#string) |  |
+
+### `MeshModelSummarySelector`
+
+#### **Arguments**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="meshmodelsummaryselectortype"></a>`type` | [`String!`](#string) |  |
 
 ### `PageFilter`
 
