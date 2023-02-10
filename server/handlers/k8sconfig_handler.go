@@ -356,7 +356,7 @@ func RegisterK8sMeshModelComponents(ctx context.Context, config []byte, ctxID st
 		return ErrCreatingKubernetesComponents(errors.New("generated components are nil"), ctxID)
 	}
 	for _, c := range man {
-		writeK8sMetadataFromFilesystem(&c, reg)
+		writeK8sMetadata(&c, reg)
 		mutil.WriteSVGsOnFileSystem(&c)
 		err = reg.RegisterEntity(meshmodel.Host{
 			Hostname:  "kubernetes",
@@ -370,7 +370,7 @@ const k8sMeshModelPath = "../meshmodel/components/kubernetes/meshmodel_metadata.
 
 var k8sMeshModelMetadata = make(map[string]interface{})
 
-func writeK8sMetadataFromFilesystem(comp *meshmodelcore.ComponentDefinition, reg *meshmodel.RegistryManager) {
+func writeK8sMetadata(comp *meshmodelcore.ComponentDefinition, reg *meshmodel.RegistryManager) {
 	ent := reg.GetEntities(&meshmodelcore.ComponentFilter{
 		Name:       comp.Kind,
 		APIVersion: comp.APIVersion,
