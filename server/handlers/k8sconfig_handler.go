@@ -7,7 +7,9 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"os"
 	"path/filepath"
+	"strings"
 
 	mutil "github.com/layer5io/meshery/server/helpers/utils"
 	mcore "github.com/layer5io/meshery/server/models/meshmodel/core"
@@ -16,11 +18,11 @@ import (
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 
 	"github.com/gofrs/uuid"
-
 	"github.com/layer5io/meshery/server/helpers"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshkit/models/meshmodel"
+	meshmodelcore "github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
 	"github.com/layer5io/meshkit/utils"
 	"github.com/pkg/errors"
@@ -355,11 +357,99 @@ func RegisterK8sMeshModelComponents(ctx context.Context, config []byte, ctxID st
 		return ErrCreatingKubernetesComponents(errors.New("generated components are nil"), ctxID)
 	}
 	for _, c := range man {
+		writeK8sMetadataFromFilesystem(&c)
 		mutil.WriteSVGsOnFileSystem(&c)
 		err = reg.RegisterEntity(meshmodel.Host{
 			Hostname:  "kubernetes",
 			ContextID: ctxID,
 		}, c)
+	}
+	return
+}
+
+const k8sMeshModelPath = "../meshmodel/components/kubernetes"
+
+var k8sMeshModelMetadata = make(map[string]interface{})
+var k8sPerKindMeshmodelMetadata = make(map[string]map[string]interface{})
+
+func writeK8sMetadataFromFilesystem(comp *meshmodelcore.ComponentDefinition) {
+	if k8sPerKindMeshmodelMetadata[comp.Kind] != nil {
+		mergeMaps(comp.Metadata, k8sPerKindMeshmodelMetadata[comp.Kind])
+	} else {
+		mergeMaps(comp.Metadata, k8sMeshModelMetadata)
+	}
+}
+func mergeMaps(mergeInto, toMerge map[string]interface{}) {
+	for k, v := range toMerge {
+		mergeInto[k] = v
+	}
+
+}
+
+// Caches k8sMeshModel metadatas in memory to use at the time of dynamic k8s component generation
+func init() {
+	dir, err := os.Open(k8sMeshModelPath)
+	if err != nil {
+		return
+	}
+	defer dir.Close()
+
+	versionedDirs, err := dir.ReadDir(-1)
+	if err != nil {
+		return
+	}
+
+	for _, versionedDir := range versionedDirs {
+		if versionedDir.IsDir() {
+			d, err := os.Open(filepath.Join(k8sMeshModelPath, versionedDir.Name()))
+			if err != nil {
+				return
+			}
+			files, err := d.ReadDir(-1)
+			if err != nil {
+				return
+			}
+			for _, f := range files {
+				name := strings.TrimSuffix(f.Name(), ".json")
+				if k8sPerKindMeshmodelMetadata[name] == nil {
+					file, err := os.Open(filepath.Join(filepath.Join(k8sMeshModelPath, versionedDir.Name(), f.Name())))
+					if err != nil {
+						return
+					}
+					byt, err := io.ReadAll(file)
+					if err != nil {
+						return
+					}
+					m := make(map[string]interface{})
+					err = json.Unmarshal(byt, &m)
+					if err != nil {
+						return
+					}
+
+					m, ok := m["metadata"].(map[string]interface{})
+					if !ok {
+						return
+					}
+					k8sPerKindMeshmodelMetadata[name] = m
+				}
+			}
+		} else if k8sMeshModelMetadata == nil { //generic meshmodel_metadata.json
+			f, err := os.Open(filepath.Join(k8sMeshModelPath, versionedDir.Name()))
+			if err != nil {
+				return
+			}
+			byt, err := io.ReadAll(f)
+			if err != nil {
+				return
+			}
+			m := make(map[string]interface{})
+			err = json.Unmarshal(byt, &m)
+			if err != nil {
+				return
+			}
+			fmt.Println(m)
+			k8sMeshModelMetadata = m
+		}
 	}
 	return
 }
