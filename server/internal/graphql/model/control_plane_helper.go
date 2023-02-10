@@ -64,9 +64,11 @@ func GetControlPlaneState(ctx context.Context, selectors []MeshType, provider mo
 				if len(controlPlaneImageOrgs[MeshType(selector)]) != 0 && !haveCommonElements(controlPlaneImageOrgs[MeshType(selector)], imageOrgs) {
 					continue
 				}
-				if len(strings.Split(objspec.Containers[0].Image, ":")) > 0 {
+
+				if len(strings.Split(objspec.Containers[0].Image, ":")) > 1 {
 					version = strings.Split(objspec.Containers[0].Image, ":")[1]
 				}
+
 				members = append(members, &ControlPlaneMember{
 					Name:      obj.ObjectMeta.Name,
 					Component: strings.Split(obj.ObjectMeta.GenerateName, "-")[0],

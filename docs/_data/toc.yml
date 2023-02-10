@@ -83,8 +83,8 @@
   links:
     - title: App Mesh
       url: service-meshes/adapters/app-mesh
-    - title: Citrix Service Mesh
-      url: service-meshes/adapters/cpx
+    # - title: Citrix Service Mesh
+    #   url: service-meshes/adapters/cpx
     - title: Cilium Service Mesh
       url: service-meshes/adapters/cilium
     - title: Consul

@@ -65,8 +65,11 @@ func RegisterMeshmodelComponentsForCRDS(reg meshmodel.RegistryManager, k8sYaml [
 				Kind:       def.Spec.Metadata["k8sAPIVersion"],
 			},
 			Model: v1alpha1.Model{
-				Name:    "kubernetes",
-				Version: version,
+				Name:        "kubernetes",
+				Version:     version,
+				DisplayName: "Kubernetes",
+				Category:    "Orchestration & Management",
+				SubCategory: "Scheduling & Orchestration",
 			},
 		})
 	}
@@ -108,32 +111,34 @@ func GetK8sMeshModelComponents(ctx context.Context, kubeconfig []byte) ([]v1alph
 	}
 
 	var arrAPIResources []string
-	for res := range apiResources {
+	kindToNamespace := make(map[string]bool)
+	for res, api := range apiResources {
+		kindToNamespace[api.Kind] = api.Namespaced
 		arrAPIResources = append(arrAPIResources, res)
 	}
-	groups, err := getGroupsFromResource(cli) //change this
-	if err != nil {
-		return nil, err
-	}
 	manifest := string(content)
-	crds, metadata := getCRDsFromManifest(manifest, arrAPIResources)
-	components := make([]v1alpha1.ComponentDefinition, 1)
-	for name, crd := range crds {
+	crds := getCRDsFromManifest(manifest, arrAPIResources)
+	components := make([]v1alpha1.ComponentDefinition, 0)
+	for _, crd := range crds {
 		m := make(map[string]interface{})
-		m[customResourceKey] = customResources[metadata[name].K8sKind]
-		apiVersion := string(groups[kind(metadata[name].K8sKind)])
+		m[customResourceKey] = customResources[crd.kind]
+		m[namespacedKey] = kindToNamespace[crd.kind]
+		apiVersion := crd.apiVersion
 		c := v1alpha1.ComponentDefinition{
 			Format: v1alpha1.JSON,
-			Schema: crd,
+			Schema: crd.schema,
 			TypeMeta: v1alpha1.TypeMeta{
-				Kind:       metadata[name].K8sKind,
+				Kind:       crd.kind,
 				APIVersion: apiVersion,
 			},
 			Metadata:    m,
-			DisplayName: manifests.FormatToReadableString(metadata[name].K8sKind),
+			DisplayName: manifests.FormatToReadableString(crd.kind),
 			Model: v1alpha1.Model{
-				Version: k8version.String(),
-				Name:    "kubernetes",
+				Version:     k8version.String(),
+				Name:        "kubernetes",
+				DisplayName: "Kubernetes",
+				Category:    "Orchestration & Management",
+				SubCategory: "Scheduling & Orchestration",
 			},
 		}
 		components = append(components, c)
@@ -142,6 +147,7 @@ func GetK8sMeshModelComponents(ctx context.Context, kubeconfig []byte) ([]v1alph
 }
 
 const customResourceKey = "isCustomResource"
+const namespacedKey = "isNamespaced"
 
 func getResolvedManifest(manifest string) (string, error) {
 	cuectx := cuecontext.New()
@@ -159,22 +165,29 @@ func getResolvedManifest(manifest string) (string, error) {
 	manifest = string(resolved)
 	return manifest, nil
 }
-func getCRDsFromManifest(manifest string, arrAPIResources []string) (map[string]string, map[string]k8sMetadata) {
+
+type crdResponse struct {
+	name       string
+	kind       string
+	apiVersion string
+	schema     string
+}
+
+func getCRDsFromManifest(manifest string, arrAPIResources []string) []crdResponse {
 	var err error
+	res := make([]crdResponse, 0)
 	manifest, err = getResolvedManifest(manifest)
 	if err != nil {
 		fmt.Printf("%v", err)
-		return nil, nil
+		return nil
 	}
-	resourceToCRD := make(map[string]string)
-	resourceToMetadata := make(map[string]k8sMetadata, 0)
 	cuectx := cuecontext.New()
 	cueParsedManExpr, err := cueJson.Extract("", []byte(manifest))
 	parsedManifest := cuectx.BuildExpr(cueParsedManExpr)
 	definitions := parsedManifest.LookupPath(cue.ParsePath("definitions"))
 	if err != nil {
 		fmt.Printf("%v", err)
-		return nil, nil
+		return nil
 	}
 	for _, name := range arrAPIResources {
 		resource := strings.ToLower(name)
@@ -201,15 +214,23 @@ func getCRDsFromManifest(manifest string, arrAPIResources []string) (map[string]
 					fmt.Printf("%v", err)
 					continue
 				}
-				resourceToMetadata[resource] = k8sMetadata{
-					K8sKind: name,
+				versionCue := fieldVal.LookupPath(cue.ParsePath(`"x-kubernetes-group-version-kind"[0].version`))
+				groupCue := fieldVal.LookupPath(cue.ParsePath(`"x-kubernetes-group-version-kind"[0].group`))
+				apiVersion, _ := versionCue.String()
+				if g, _ := groupCue.String(); g != "" {
+					apiVersion = g + "/" + apiVersion
 				}
-				resourceToCRD[resource] = string(crd)
+				res = append(res, crdResponse{
+					name:       resource,
+					kind:       name,
+					schema:     string(crd),
+					apiVersion: apiVersion, //add apiVersion
+				})
 				// resourceToName[resource] = manifests.FormatToReadableString(name)
 			}
 		}
 	}
-	return resourceToCRD, resourceToMetadata
+	return res
 }
 
 type k8sMetadata struct {
@@ -244,8 +265,8 @@ type kind string
 type groupversion string
 
 // TODO: To be moved in meshkit
-func getGroupsFromResource(cli *kubernetes.Client) (hgv map[kind]groupversion, err error) {
-	hgv = make(map[kind]groupversion)
+func getGroupsFromResource(cli *kubernetes.Client) (hgv map[kind][]groupversion, err error) {
+	hgv = make(map[kind][]groupversion)
 	var gl v1.APIGroupList
 	gs, err := cli.KubeClient.RESTClient().Get().RequestURI("/apis").Do(context.Background()).Raw()
 	if err != nil {
@@ -276,9 +297,10 @@ func getGroupsFromResource(cli *kubernetes.Client) (hgv map[kind]groupversion, e
 				return nil, err
 			}
 			for _, res := range apiRes.APIResources {
-				hgv[kind(res.Kind)] = groupversion(v.GroupVersion)
-				if hgv[kind(res.Kind)] == "" {
-					hgv[kind(res.Kind)] = groupversion(v.Version)
+				if v.GroupVersion != "" {
+					hgv[kind(res.Kind)] = append(hgv[kind(res.Kind)], groupversion(v.GroupVersion))
+				} else {
+					hgv[kind(res.Kind)] = append(hgv[kind(res.Kind)], groupversion(v.Version))
 				}
 			}
 		}
@@ -290,7 +312,7 @@ func getGroupsFromResource(cli *kubernetes.Client) (hgv map[kind]groupversion, e
 			return nil, err
 		}
 		for _, res := range apiRes.APIResources {
-			hgv[kind(res.Kind)] = groupversion("v1")
+			hgv[kind(res.Kind)] = append(hgv[kind(res.Kind)], groupversion("v1"))
 		}
 	}
 	return

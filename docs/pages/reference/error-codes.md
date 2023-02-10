@@ -66,7 +66,10 @@ type: Reference
 
 ## Error Codes and Troubleshooting
 
-Meshery and it's components use a common framework (defined within MeshKit) to generate and document an error with a unique identifier - an error code. Each error code identifies the source component for the error and a standard set of information to describe the error and provide helpful details for troubleshooting the situation surrounding the specific error.
+Meshery and it's components use a common framework (defined within MeshKit) to generate and document an error with a unique error code identifier: the combination of Meshery component moniker and numberic code - `[component-moniker]-[numeric code]`. Each error code identifies the source component for the error and a standard set of information to describe the error and provide helpful details for troubleshooting the situation surrounding the specific error.
+
+{% include alert.html type="info" title="Error codes are combination of component moniker and numberic code" content="
+Note: The numeric portion of error codes are component-scoped. The numeric portion of error codes are allowed to overlap between Meshery components. The combination of the `[component-moniker]-[numeric code]` is what makes a given error code globally unique." %}
 
 ## Error Code Categories by Component
 

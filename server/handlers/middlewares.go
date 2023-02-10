@@ -42,13 +42,13 @@ func (h *Handler) ProviderMiddleware(next http.Handler) http.Handler {
 // AuthMiddleware is a middleware to validate if a user is authenticated
 func (h *Handler) AuthMiddleware(next http.Handler, auth models.AuthenticationMechanism) http.Handler {
 	fn := func(w http.ResponseWriter, req *http.Request) {
-		enforcedProvider := h.EnforceProvider
-		if auth == models.NoAuth && enforcedProvider != "" {
+		providerH := h.Provider
+		if auth == models.NoAuth && providerH != "" {
 			auth = models.ProviderAuth //If a provider is enforced then use provider authentication even in case of NoAuth
 		}
 		switch auth {
 		// case models.NoAuth:
-		// 	if enforcedProvider != "" {
+		// 	if providerH != "" {
 		// 		w.WriteHeader(http.StatusUnauthorized)
 		// 		return
 		// 	}
@@ -60,7 +60,7 @@ func (h *Handler) AuthMiddleware(next http.Handler, auth models.AuthenticationMe
 				http.Redirect(w, req, "/provider", http.StatusFound)
 				return
 			}
-			if enforcedProvider != "" && enforcedProvider != string(provider.GetProviderType()) {
+			if providerH != "" && providerH != provider.Name() {
 				w.WriteHeader(http.StatusUnauthorized)
 				return
 			}
@@ -147,6 +147,7 @@ func (h *Handler) KubernetesMiddleware(next func(http.ResponseWriter, *http.Requ
 
 		// register kubernetes components
 		h.K8sCompRegHelper.UpdateContexts(contexts).RegisterComponents(contexts, []models.K8sRegistrationFunction{RegisterK8sComponents, RegisterK8sMeshModelComponents}, h.EventsBuffer, h.registryManager)
+		go h.config.MeshModelSummaryChannel.Publish()
 
 		// Identify custom contexts, if provided
 		k8sContextIDs := req.URL.Query()["contexts"]
@@ -221,6 +222,7 @@ func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http
 		ctx := context.WithValue(req.Context(), models.TokenCtxKey, token)
 		ctx = context.WithValue(ctx, models.PerfObjCtxKey, prefObj)
 		ctx = context.WithValue(ctx, models.UserCtxKey, user)
+		ctx = context.WithValue(ctx, models.RegistryManagerKey, h.registryManager)
 
 		req1 := req.WithContext(ctx)
 		next(w, req1, prefObj, user, provider)

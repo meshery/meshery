@@ -1,14 +1,14 @@
-import { ClickAwayListener, makeStyles } from "@material-ui/core"
+import { ClickAwayListener, withStyles } from "@material-ui/core"
 import React, { useEffect, useState } from "react"
 
-const useStyles = makeStyles(() => ({
+const styles = (theme) => ({
   designWrapper : {
     width : "100%",
     color : "#fff",
     position : "fixed",
     top : 80,
     // left: 0,
-    backgroundColor : "#477E96",
+    backgroundColor : theme.palette.type == 'dark' ? "#222222" : "#477E96",
     zIndex : "1",
     marginLeft : "4px",
     padding : "4px 50px",
@@ -33,10 +33,9 @@ const useStyles = makeStyles(() => ({
       border : "none"
     }
   }
-}))
+});
 
-export default function CustomBreadCrumb({ title, onBack, titleChangeHandler }) {
-  const classes = useStyles()
+function CustomBreadCrumb({ title, onBack, titleChangeHandler, classes }) {
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState(title);
 
@@ -87,3 +86,4 @@ export default function CustomBreadCrumb({ title, onBack, titleChangeHandler }) 
     </div>
   )
 }
+export default withStyles(styles)(CustomBreadCrumb);

@@ -1,5 +1,5 @@
 import React from "react";
-import handleError from '../../ErrorHandling';
+import HandleError from '../../ErrorHandling';
 import { buildUiSchema } from "../helpers";
 import { getRefinedJsonSchema } from "./helper";
 // import MesheryArrayFieldTemplate from "./RJSFCustomComponents/ArrayFieldTemlate";
@@ -19,7 +19,7 @@ function RJSFWrapper(props) {
     //.. temporarily ignoring till handler is attached successfully
   } = props;
 
-  const errorHandler = handleError();
+  const errorHandler = HandleError();
 
   const [data, setData] = React.useState(prev => ({ ...formData, ...prev }));
   const [schema, setSchema] = React.useState({ rjsfSchema : {}, uiSchema : {} })
