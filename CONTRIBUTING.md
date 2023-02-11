@@ -110,7 +110,7 @@ Practices for Production Environments](https://peter.bourgon.org/go-in-productio
 Before you can access the Meshery UI, you need to install the UI dependencies,
 
 ```sh
-make ui-setup
+make ui-build
 ```
 
 and then build and export the UI
