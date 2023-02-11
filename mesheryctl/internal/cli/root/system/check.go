@@ -30,6 +30,8 @@ var (
 	preflight      bool
 	pre            bool
 	componentsFlag bool
+	adaptersFlag   bool
+	adapter        string
 	failure        int
 )
 
@@ -105,6 +107,11 @@ mesheryctl system check --preflight
 
 // Run checks on specific mesh adapter
 mesheryctl system check --adapter meshery-istio:10000
+or
+mesheryctl system check --adapter meshery-istio
+
+// Run checks for all the mesh adapters
+mesheryctl system check --adapters
 
 // Verify the health of Meshery Operator's deployment with MeshSync and Broker
 mesheryctl system check --operator
@@ -143,6 +150,10 @@ mesheryctl system check --report
 			return nil
 		} else if componentsFlag { // if --components has been passed we run checks related to components
 			return hc.runComponentsHealthChecks()
+		} else if adapter != "" {
+			return hc.runAdapterHealthChecks(adapter)
+		} else if adaptersFlag {
+			return hc.runAdapterHealthChecks("")
 		}
 
 		// if no flags passed we run complete system check
@@ -477,65 +488,47 @@ func (hc *HealthChecker) runComponentsHealthChecks() error {
 	if hc.Options.PrintLogs {
 		log.Info("\nMeshery Components \n--------------")
 	}
-	return hc.runAdapterHealthChecks()
+	return hc.runAdapterHealthChecks("")
+}
+
+// runOperatorHealthChecks executes health-checks for Operators
+func (hc *HealthChecker) runOperatorHealthChecks() error {
+	//TODO
+	return nil
 }
 
 // runAdapterHealthChecks executes health-checks for Adapters
-func (hc *HealthChecker) runAdapterHealthChecks() error {
+// If no adapter is specified all the adapters are checked
+func (hc *HealthChecker) runAdapterHealthChecks(adapter_name string) error {
 	url := hc.mctlCfg.GetBaseMesheryURL()
 	client := &http.Client{}
-
-	// Request to grab running adapters and ports
-	req, err := utils.NewRequest("GET", fmt.Sprintf("%s/api/system/adapters", url), nil)
-	if err != nil {
-		if hc.Options.PrintLogs {
-			log.Info("!! Authentication token not found. Please supply a valid user token. Login with `mesheryctl system login`")
-			// skip further as we failed to attach token
-			return nil
-		}
-		return errors.New("Authentication token not found. Please supply a valid user token. Login with `mesheryctl system login`")
-	}
-
 	var adapters []*models.Adapter
-	resp, err := client.Do(req)
-	// failed to grab response from the request
-	if err != nil || resp.StatusCode != 200 {
-		if hc.Options.PrintLogs {
-			log.Info("!! Failed to connect to Meshery Adapters")
-			// skip further as we failed to grab the response from server
-			return nil
-		}
-		return err
-	}
-
-	// needs multiple defer as Body.Close needs a valid response
-	defer resp.Body.Close()
-	data, err := io.ReadAll(resp.Body)
+	prefs, err := utils.GetSessionData(hc.mctlCfg)
 	if err != nil {
-		return errors.Errorf("\n  Invalid response: %v", err)
+		return fmt.Errorf("Authentication token not found. Please supply a valid user token. Login with `mesheryctl system login`")
 	}
-
-	err = json.Unmarshal(data, &adapters)
-	if err != nil {
-		return errors.Errorf("\n  Unable to unmarshal data: %v", err)
-	}
-
-	// check for each adapter
-	for _, adapter := range adapters {
-		skipAdapter := false
-
-		name := strings.Split(adapter.Location, ":")[0]
-		if adapter.Ops == nil {
-			if hc.Options.PrintLogs { // incase we're printing logs
-				log.Infof("!! %s adapter is not running", name)
+	for _, adapter := range prefs.MeshAdapters {
+		if adapter_name != "" {
+			name := strings.Split(adapter.Location, ":")[0]
+			if adapter_name == name || adapter_name == adapter.Location {
+				adapters = append(adapters, adapter)
+				break
 			}
-			continue
+
+		} else {
+			adapters = append(adapters, adapter)
 		}
-		req, err := utils.NewRequest("GET", fmt.Sprintf("%s/api/system/adapters?adapter=%s", url, adapter.Name), nil)
+	}
+	if len(adapters) == 0 {
+		return fmt.Errorf("Invalid adapter name provided")
+	}
+	for _, adapter := range adapters {
+		name := strings.Split(adapter.Location, ":")[0]
+		skipAdapter := false
+		req, err := utils.NewRequest("GET", fmt.Sprintf("%s/api/system/adapters?adapter=%s", url, name), nil)
 		if err != nil {
 			return err
 		}
-
 		resp, err := client.Do(req)
 		if err != nil {
 			if hc.Options.PrintLogs { // incase we're printing logs
@@ -546,8 +539,6 @@ func (hc *HealthChecker) runAdapterHealthChecks() error {
 			}
 			continue
 		}
-
-		// skip the adapter as we failed to receive response for adapter
 		if !skipAdapter {
 			// needs multiple defer as Body.Close needs a valid response
 			defer resp.Body.Close()
@@ -564,12 +555,6 @@ func (hc *HealthChecker) runAdapterHealthChecks() error {
 			}
 		}
 	}
-
-	return nil
-}
-
-func (hc *HealthChecker) runOperatorHealthChecks() error {
-	//TODO
 	return nil
 }
 
@@ -605,4 +590,6 @@ func init() {
 	checkCmd.Flags().BoolVarP(&preflight, "preflight", "", false, "Verify environment readiness to deploy Meshery")
 	checkCmd.Flags().BoolVarP(&pre, "pre", "", false, "Verify environment readiness to deploy Meshery")
 	checkCmd.Flags().BoolVarP(&componentsFlag, "components", "", false, "Check status of Meshery components")
+	checkCmd.Flags().BoolVarP(&adaptersFlag, "adapters", "", false, "Check status of meshery adapters")
+	checkCmd.Flags().StringVarP(&adapter, "adapter", "", "", "Check status of specified meshery adapter")
 }
