@@ -1,6 +1,5 @@
 /**
- * @generated SignedSource<<a71c67c0427ff681836b039233aa40d9>>
- * @flow
+ * @generated SignedSource<<25878a5479eea4a4697a737a7eb27f59>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,37 +8,7 @@
 
 'use strict';
 
-/*::
-import type { ConcreteRequest, GraphQLSubscription } from 'relay-runtime';
-export type Status = "ENABLED" | "CONNECTED" | "DISABLED" | "PROCESSING" | "UNKNOWN" | "%future added value";
-export type OperatorStatusSubscription$variables = {|
-  k8scontextIDs?: ?$ReadOnlyArray<string>,
-|};
-export type OperatorStatusSubscription$data = {|
-  +operator: ?{|
-    +contextID: string,
-    +operatorStatus: {|
-      +status: Status,
-      +version: string,
-      +controllers: $ReadOnlyArray<{|
-        +name: string,
-        +version: string,
-        +status: Status,
-      |}>,
-      +error: ?{|
-        +code: string,
-        +description: string,
-      |},
-    |},
-  |},
-|};
-export type OperatorStatusSubscription = {|
-  variables: OperatorStatusSubscription$variables,
-  response: OperatorStatusSubscription$data,
-|};
-*/
-
-var node/*: ConcreteRequest*/ = (function(){
+var node = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -173,9 +142,6 @@ return {
 };
 })();
 
-(node/*: any*/).hash = "5728620b5666bd13a414080f9d90778e";
+node.hash = "5728620b5666bd13a414080f9d90778e";
 
-module.exports = ((node/*: any*/)/*: GraphQLSubscription<
-  OperatorStatusSubscription$variables,
-  OperatorStatusSubscription$data,
->*/);
+module.exports = node;

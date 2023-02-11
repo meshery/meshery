@@ -1,6 +1,5 @@
 /**
- * @generated SignedSource<<d35797043a537ffb6e902f975fae8edd>>
- * @flow
+ * @generated SignedSource<<8dab43d3f31bac55596e7c1404cb167a>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,26 +8,7 @@
 
 'use strict';
 
-/*::
-import type { ConcreteRequest, Query } from 'relay-runtime';
-export type Status = "ENABLED" | "CONNECTED" | "DISABLED" | "PROCESSING" | "UNKNOWN" | "%future added value";
-export type MeshsyncStatusQuery$variables = {|
-  k8scontextID: string,
-|};
-export type MeshsyncStatusQuery$data = {|
-  +controller: {|
-    +name: string,
-    +version: string,
-    +status: Status,
-  |},
-|};
-export type MeshsyncStatusQuery = {|
-  variables: MeshsyncStatusQuery$variables,
-  response: MeshsyncStatusQuery$data,
-|};
-*/
-
-var node/*: ConcreteRequest*/ = (function(){
+var node = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -104,9 +84,6 @@ return {
 };
 })();
 
-(node/*: any*/).hash = "57b05e27fe69c3f807a81378bcbc5471";
+node.hash = "57b05e27fe69c3f807a81378bcbc5471";
 
-module.exports = ((node/*: any*/)/*: Query<
-  MeshsyncStatusQuery$variables,
-  MeshsyncStatusQuery$data,
->*/);
+module.exports = node;
