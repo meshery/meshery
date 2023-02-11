@@ -364,7 +364,8 @@ export const notificationColors = {
   error : "#F91313",
   warning : "#F0A303",
   success : "#206D24",
-  info : "#2196F3"
+  info : "#2196F3",
+  darkRed : "#B32700"
 };
 
 export const darkNotificationColors = {
