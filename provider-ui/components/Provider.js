@@ -72,7 +72,7 @@ export default function Provider() {
 
   useEffect(() => {
     loadProvidersFromServer()
-  })
+  }, [])
 
   function loadProvidersFromServer() {
     dataFetch(
@@ -125,7 +125,7 @@ export default function Provider() {
           placement="bottom"
           data-cy="providers-tooltip"
           sx={{
-            color : 'darkcyan',
+            color : '#00B39F',
             cursor : 'pointer',
             fontWeight : 700
           }}
