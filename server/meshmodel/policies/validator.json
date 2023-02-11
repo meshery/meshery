@@ -1,0 +1,27 @@
+{
+    "type":"Validation",
+    "subType":"rjsf",
+    "apiVersion":"core.meshery.io/v1alpha1",
+    "model":{
+        "name":"kubernetes"
+    },
+    "expression": {
+        "metadata":{
+            "description": "Custom validation rule for Kubernetes resources"
+        },
+        "properties":{
+            "name":{
+                "type": "string",
+                "format": "hostName"
+            },
+            "port":{
+                "type": "integer",
+                "minimum": 1035,
+                "maximum": 65535
+            }
+        },
+        "customFormats":{
+            "hostName": "^[a-z0-9]([-a-z0-9]{0,61}[a-z0-9])?$"
+        }
+    }
+}
