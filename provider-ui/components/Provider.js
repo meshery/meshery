@@ -72,7 +72,7 @@ export default function Provider() {
 
   useEffect(() => {
     loadProvidersFromServer()
-  })
+  }, [])
 
   function loadProvidersFromServer() {
     dataFetch(
