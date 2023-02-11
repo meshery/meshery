@@ -25,7 +25,9 @@ We will use Minikube in Codespaces to setup developer environment for Meshery.
 
 ## Steps
 
-After starting the Codespace on the Meshery repo, perform the following steps in the `workspaces` folder in order to run Meshery on Minikube using GitHub Codespaces:
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://github.com/codespaces/new?hide_repo_select=true&ref=master&repo=157554479&machine=premiumLinux&location=SouthEastAsia)
+
+After starting the Codespace on the Meshery repo(can be done by clicking on the Codespace badge above or by visiting the GitHub repo), perform the following steps in the `workspaces` folder in order to run Meshery on Minikube using GitHub Codespaces:
 
 ### 1. Start minikube
 
@@ -101,4 +103,4 @@ To establish connectivity between a particular Meshery Adapter and Kubernetes se
 Meshery should now be connected with your managed Kubernetes instance. Take a look at the [Meshery guides]({{ site.baseurl }}/guides) for advanced usage tips.
 
 <br />
-#### Note: Run Codespaces on locally installed VSCode IDE for a better experience.
+#### Note: Run Codespaces on locally installed [VSCode IDE](https://docs.github.com/en/codespaces/developing-in-codespaces/opening-an-existing-codespace) for a better experience.
