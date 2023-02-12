@@ -8,6 +8,7 @@ import (
 
 	"github.com/layer5io/meshery/server/models"
 	"github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 )
 
 const providerQParamName = "provider"
@@ -33,6 +34,11 @@ func (h *Handler) ProviderMiddleware(next http.Handler) http.Handler {
 			provider = h.config.Providers[providerName]
 		}
 		ctx := context.WithValue(req.Context(), models.ProviderCtxKey, provider) // nolint
+		tu := viper.GetString("MESHERY_SERVER_CALLBACK_URL")
+		if tu == "" {
+			tu = "http://" + req.Host + "/api/user/token" // Hard coding the path because this is what meshery expects
+		}
+		ctx = context.WithValue(ctx, models.MesheryServerURL, tu)
 		req1 := req.WithContext(ctx)
 		next.ServeHTTP(w, req1)
 	}
