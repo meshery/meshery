@@ -193,6 +193,21 @@ type K8sContextPersistResponse struct {
 	Inserted   bool       `json:"inserted,omitempty"`
 }
 
+type MesheryServerMetadata struct {
+	ServerID      *uuid.UUID `json:"server_id,omitempty"`
+	ServerVersion string `json:"server_version,omitempty"`
+	ServerBuildSHA string `json:"server_build_sha,omitempty"`
+	ServerLocation string `json:"server_location,omitempty"`
+}
+
+type Connection struct {
+	Kind string `json:"kind,omitempty"`
+	SubType string `json:"sub_type,omitempty"`
+	Type string `json:"type,omitempty"`
+	MetaData map[string]interface{} `json:"metadata,omitempty"`
+	CredentialSecret map[string]interface{} `json:"credential_secret,omitempty"`
+}
+
 // Feature is a type to store the features of the provider
 type Feature string
 
@@ -233,6 +248,8 @@ const (
 	CloneMesheryFilters Feature = "clone-meshery-filters" // /filters/clone
 
 	ShareDesigns Feature = "share-designs"
+
+	PersistConnection Feature = "persist-connection"
 )
 
 const (
@@ -261,6 +278,8 @@ const (
 	MeshSyncDataHandlersKey      ContextKey = "meshsyncdatahandlerskey"
 
 	RegistryManagerKey ContextKey = "registrymanagerkey"
+
+	MesheryServerURL ContextKey = "mesheryserverurl"
 )
 
 // IsSupported returns true if the given feature is listed as one of
