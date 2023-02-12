@@ -255,16 +255,9 @@ func (l *RemoteProvider) executePrefSync(tokenString string, sess *Preference) {
 //
 // Every Remote Provider must offer this function
 func (l *RemoteProvider) InitiateLogin(w http.ResponseWriter, r *http.Request, _ bool) {
-	// tu := viper.GetString("MESHERY_SERVER_CALLBACK_URL")
-	// if tu == "" {
-	// 	tu = "http://" + r.Host + "/api/user/token" // Hard coding the path because this is what meshery expects
-	// }
-	logrus.Debug("initiate login")
 	tu := r.Context().Value(MesheryServerURL).(string)
 
 	_, err := r.Cookie(tokenName)
-	// logrus.Debugf("url token: %v %v", token, err)
-	logrus.Debug("err: ", err)
 	if err != nil {
 		http.SetCookie(w, &http.Cookie{
 			Name:     l.RefCookieName,
@@ -273,21 +266,6 @@ func (l *RemoteProvider) InitiateLogin(w http.ResponseWriter, r *http.Request, _
 			Path:     "/",
 			HttpOnly: true,
 		})
-		sid, _ := viper.Get("INSTANCE_ID").(*uuid.UUID)
-
-		mesheryMetadata := &MesheryServerMetadata{
-			ServerID: sid,
-			ServerVersion: viper.GetString("BUILD"),
-			ServerBuildSHA: viper.GetString("COMMITSHA"),
-			ServerLocation: tu,
-		}
-
-		logrus.Debug("Meshery Server ID: ", mesheryMetadata.ServerID)
-		logrus.Debug("Meshery Server Version: ", mesheryMetadata.ServerVersion)
-		logrus.Debug("Meshery Server Build SHA: ", mesheryMetadata.ServerBuildSHA)
-		logrus.Debug("Meshery Server Location: ", mesheryMetadata.ServerLocation)
-
-		logrus.Debug("redirecting....")
 		http.Redirect(w, r, l.RemoteProviderURL+"?source="+base64.RawURLEncoding.EncodeToString([]byte(tu))+"&provider_version="+l.ProviderVersion, http.StatusFound)
 		return
 	}
