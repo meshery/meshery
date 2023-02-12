@@ -296,18 +296,18 @@ func main() {
 		go hc.MeshModelSummaryChannel.Publish()
 	}()
 
-	// go func(){
-	// 	staticPolicyPath, err := filepath.Abs("../meshmodel/policies")
-	// 	if err != nil {
-	// 		fmt.Println("Error registering policies: ", err.Error())
-	// 		return
-	// 	}
-	// 	err = handlers.RegisterStaticMeshmodelPolicies(*regManager, staticPolicyPath)
-	// 	if err != nil {
-	// 		fmt.Println("Error registering policies: ",err.Error())
-	// 	}
-	// 	go hc.MeshModelSummaryChannel.Publish()
-	// }()
+	go func(){
+		staticPolicyPath, err := filepath.Abs("../meshmodel/policies")
+		if err != nil {
+			fmt.Println("Error registering policies: ", err.Error())
+			return
+		}
+		err = handlers.RegisterStaticMeshmodelPolicy(*regManager, staticPolicyPath)
+		if err != nil {
+			fmt.Println("Error registering policies: ",err.Error())
+		}
+		go hc.MeshModelSummaryChannel.Publish()
+	}()
 
 	lProv.SeedContent(log)
 	provs[lProv.Name()] = lProv

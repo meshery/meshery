@@ -1,5 +1,5 @@
 {
-    "type":"Validation",
+    "kind":"Validation",
     "subType":"rjsf",
     "apiVersion":"core.meshery.io/v1alpha1",
     "model":{
