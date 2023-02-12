@@ -193,13 +193,6 @@ type K8sContextPersistResponse struct {
 	Inserted   bool       `json:"inserted,omitempty"`
 }
 
-type MesheryServerMetadata struct {
-	ServerID      *uuid.UUID `json:"server_id,omitempty"`
-	ServerVersion string `json:"server_version,omitempty"`
-	ServerBuildSHA string `json:"server_build_sha,omitempty"`
-	ServerLocation string `json:"server_location,omitempty"`
-}
-
 type Connection struct {
 	Kind string `json:"kind,omitempty"`
 	SubType string `json:"sub_type,omitempty"`
