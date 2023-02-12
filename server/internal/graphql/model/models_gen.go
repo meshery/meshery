@@ -33,6 +33,7 @@ type ApplicationResult struct {
 	Type            *NullString `json:"type"`
 	UserID          string      `json:"user_id"`
 	Location        *Location   `json:"location"`
+	Visibility      string      `json:"visibility"`
 	CreatedAt       *string     `json:"created_at"`
 	UpdatedAt       *string     `json:"updated_at"`
 }
