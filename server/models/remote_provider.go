@@ -248,17 +248,23 @@ func (l *RemoteProvider) executePrefSync(tokenString string, sess *Preference) {
 	}
 }
 
+
+
+
 // InitiateLogin - initiates login flow and returns a true to indicate the handler to "return" or false to continue
 //
 // Every Remote Provider must offer this function
 func (l *RemoteProvider) InitiateLogin(w http.ResponseWriter, r *http.Request, _ bool) {
-	tu := viper.GetString("MESHERY_SERVER_CALLBACK_URL")
-	if tu == "" {
-		tu = "http://" + r.Host + "/api/user/token" // Hard coding the path because this is what meshery expects
-	}
+	// tu := viper.GetString("MESHERY_SERVER_CALLBACK_URL")
+	// if tu == "" {
+	// 	tu = "http://" + r.Host + "/api/user/token" // Hard coding the path because this is what meshery expects
+	// }
+	logrus.Debug("initiate login")
+	tu := r.Context().Value(MesheryServerURL).(string)
 
 	_, err := r.Cookie(tokenName)
 	// logrus.Debugf("url token: %v %v", token, err)
+	logrus.Debug("err: ", err)
 	if err != nil {
 		http.SetCookie(w, &http.Cookie{
 			Name:     l.RefCookieName,
@@ -267,6 +273,21 @@ func (l *RemoteProvider) InitiateLogin(w http.ResponseWriter, r *http.Request, _
 			Path:     "/",
 			HttpOnly: true,
 		})
+		sid, _ := viper.Get("INSTANCE_ID").(*uuid.UUID)
+
+		mesheryMetadata := &MesheryServerMetadata{
+			ServerID: sid,
+			ServerVersion: viper.GetString("BUILD"),
+			ServerBuildSHA: viper.GetString("COMMITSHA"),
+			ServerLocation: tu,
+		}
+
+		logrus.Debug("Meshery Server ID: ", mesheryMetadata.ServerID)
+		logrus.Debug("Meshery Server Version: ", mesheryMetadata.ServerVersion)
+		logrus.Debug("Meshery Server Build SHA: ", mesheryMetadata.ServerBuildSHA)
+		logrus.Debug("Meshery Server Location: ", mesheryMetadata.ServerLocation)
+
+		logrus.Debug("redirecting....")
 		http.Redirect(w, r, l.RemoteProviderURL+"?source="+base64.RawURLEncoding.EncodeToString([]byte(tu))+"&provider_version="+l.ProviderVersion, http.StatusFound)
 		return
 	}
@@ -2841,6 +2862,36 @@ func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, fr
 		redirectURL = "/extension/meshmap"
 	}
 
+	go func(){
+		_metada := map[string]string{
+			"server_id": viper.GetString("INSTANCE_ID"),
+			"server_version": viper.GetString("BUILD"),
+			"server_build_sha": viper.GetString("COMMITSHA"),
+			"server_localtion": r.Context().Value(MesheryServerURL).(string),
+		}
+		metadata := make(map[string]interface{}, len(_metada))
+		for k, v := range _metada {
+			metadata[k] = v
+		}
+	
+		_cred := map[string]string{
+			"token": tokenString,
+		}
+		cred := make(map[string]interface{}, len(_cred))
+		for k, v := range _cred {
+			cred[k] = v
+		}
+	
+		conn := &Connection{
+			Kind: "meshery",
+			Type: "platform",
+			SubType: "management_plane",
+			MetaData: metadata,
+			CredentialSecret: cred,
+		}
+	
+		l.SaveConnection(r, conn, tokenString, true)	
+	}()
 	http.Redirect(w, r, redirectURL, http.StatusFound)
 }
 
@@ -3095,6 +3146,47 @@ func (l *RemoteProvider) ExtensionProxy(req *http.Request) ([]byte, error) {
 		return bdr, nil
 	}
 	return nil, ErrFetch(fmt.Errorf("failed to request to remote provider"), fmt.Sprint(bdr), resp.StatusCode)
+}
+
+func (l *RemoteProvider) SaveConnection(req *http.Request, conn *Connection, token string, skipTokenCheck bool) (error) {
+	if !l.Capabilities.IsSupported(PersistConnection) {
+		logrus.Error("operation not available")
+		return ErrInvalidCapability("PersistConnection", l.ProviderName)
+	}
+
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistConnection)
+	_conn, err := json.Marshal(conn)
+	if err != nil {
+		return err
+	}
+	bf := bytes.NewBuffer(_conn)
+
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
+	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), bf)
+	tokenString := token
+	if !skipTokenCheck {
+		tokenString, err = l.GetToken(req)
+		if err != nil {
+			logrus.Debug("error getting token: ", err)
+			return err
+		}
+	}
+	resp, err := l.DoRequest(cReq, tokenString)
+	if err != nil {
+		// return ErrSave(err, "Connection", resp.StatusCode)
+		logrus.Error(err)
+		return err
+	}
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+
+	if resp.StatusCode == http.StatusOK {
+		return nil
+	}
+
+	// return ErrSave(fmt.Errorf("could not save the connection: %d", resp.StatusCode), "Connection", resp.StatusCode)
+	return fmt.Errorf("could not save the connection: %d", resp.StatusCode)
 }
 
 // RecordMeshSyncData records the mesh sync data
