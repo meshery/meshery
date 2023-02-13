@@ -2848,14 +2848,9 @@ func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, fr
 		for k, v := range _metada {
 			metadata[k] = v
 		}
-
-		_cred := map[string]string{
-			"token": tokenString,
-		}
-		cred := make(map[string]interface{}, len(_cred))
-		for k, v := range _cred {
-			cred[k] = v
-		}
+		cred := make(map[string]interface{}, 0)
+		var temp *uuid.UUID
+		cred["token"] = temp
 
 		conn := &Connection{
 			Kind:             "meshery",
