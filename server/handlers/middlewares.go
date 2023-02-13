@@ -5,6 +5,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"net/url"
 
 	"github.com/layer5io/meshery/server/models"
 	"github.com/sirupsen/logrus"
@@ -34,11 +35,17 @@ func (h *Handler) ProviderMiddleware(next http.Handler) http.Handler {
 			provider = h.config.Providers[providerName]
 		}
 		ctx := context.WithValue(req.Context(), models.ProviderCtxKey, provider) // nolint
-		tu := viper.GetString("MESHERY_SERVER_CALLBACK_URL")
-		if tu == "" {
-			tu = "http://" + req.Host + "/api/user/token" // Hard coding the path because this is what meshery expects
+		callbackURL := viper.GetString("MESHERY_SERVER_CALLBACK_URL")
+		if callbackURL == "" {
+			callbackURL = "http://" + req.Host + "/api/user/token" // Hard coding the path because this is what meshery expects
 		}
-		ctx = context.WithValue(ctx, models.MesheryServerURL, tu)
+		ctx = context.WithValue(ctx, models.MesheryServerCallbackURL, callbackURL)
+		_url, err := url.Parse(callbackURL)
+		if err != nil {
+			logrus.Errorf("Error parsing callback url: %v", err)
+		} else {
+			ctx = context.WithValue(ctx, models.MesheryServerURL, fmt.Sprintf("%s://%s", _url.Scheme, _url.Host))
+		}
 		req1 := req.WithContext(ctx)
 		next.ServeHTTP(w, req1)
 	}

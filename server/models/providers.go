@@ -273,6 +273,7 @@ const (
 	RegistryManagerKey ContextKey = "registrymanagerkey"
 
 	MesheryServerURL ContextKey = "mesheryserverurl"
+	MesheryServerCallbackURL ContextKey = "mesheryservercallbackurl"
 )
 
 // IsSupported returns true if the given feature is listed as one of
