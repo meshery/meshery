@@ -74,6 +74,10 @@ function isMesheryUiRestrictedAndThePageIsNotPlayground(capabilitiesRegistry) {
   return !window.location.pathname.startsWith(playgroundExtensionRoute) && capabilitiesRegistry?.restrictedAccess?.isMesheryUiRestricted
 }
 
+export function isExtensionOpen() {
+  return window.location.pathname.startsWith(playgroundExtensionRoute);
+}
+
 class MesheryApp extends App {
   constructor() {
     super();
