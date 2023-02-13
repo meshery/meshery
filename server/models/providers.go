@@ -194,10 +194,10 @@ type K8sContextPersistResponse struct {
 }
 
 type Connection struct {
-	Kind string `json:"kind,omitempty"`
-	SubType string `json:"sub_type,omitempty"`
-	Type string `json:"type,omitempty"`
-	MetaData map[string]interface{} `json:"metadata,omitempty"`
+	Kind             string                 `json:"kind,omitempty"`
+	SubType          string                 `json:"sub_type,omitempty"`
+	Type             string                 `json:"type,omitempty"`
+	MetaData         map[string]interface{} `json:"metadata,omitempty"`
 	CredentialSecret map[string]interface{} `json:"credential_secret,omitempty"`
 }
 
@@ -272,7 +272,7 @@ const (
 
 	RegistryManagerKey ContextKey = "registrymanagerkey"
 
-	MesheryServerURL ContextKey = "mesheryserverurl"
+	MesheryServerURL         ContextKey = "mesheryserverurl"
 	MesheryServerCallbackURL ContextKey = "mesheryservercallbackurl"
 )
 

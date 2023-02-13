@@ -248,7 +248,6 @@ func (l *RemoteProvider) executePrefSync(tokenString string, sess *Preference) {
 	}
 }
 
-
 // InitiateLogin - initiates login flow and returns a true to indicate the handler to "return" or false to continue
 //
 // Every Remote Provider must offer this function
@@ -2838,18 +2837,18 @@ func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, fr
 		redirectURL = "/extension/meshmap"
 	}
 
-	go func(){
+	go func() {
 		_metada := map[string]string{
-			"server_id": viper.GetString("INSTANCE_ID"),
-			"server_version": viper.GetString("BUILD"),
+			"server_id":        viper.GetString("INSTANCE_ID"),
+			"server_version":   viper.GetString("BUILD"),
 			"server_build_sha": viper.GetString("COMMITSHA"),
-			"server_location": r.Context().Value(MesheryServerURL).(string),
+			"server_location":  r.Context().Value(MesheryServerURL).(string),
 		}
 		metadata := make(map[string]interface{}, len(_metada))
 		for k, v := range _metada {
 			metadata[k] = v
 		}
-	
+
 		_cred := map[string]string{
 			"token": tokenString,
 		}
@@ -2857,16 +2856,16 @@ func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, fr
 		for k, v := range _cred {
 			cred[k] = v
 		}
-	
+
 		conn := &Connection{
-			Kind: "meshery",
-			Type: "platform",
-			SubType: "management",
-			MetaData: metadata,
+			Kind:             "meshery",
+			Type:             "platform",
+			SubType:          "management",
+			MetaData:         metadata,
 			CredentialSecret: cred,
 		}
-	
-		l.SaveConnection(r, conn, tokenString, true)	
+
+		l.SaveConnection(r, conn, tokenString, true)
 	}()
 	http.Redirect(w, r, redirectURL, http.StatusFound)
 }
@@ -3124,7 +3123,7 @@ func (l *RemoteProvider) ExtensionProxy(req *http.Request) ([]byte, error) {
 	return nil, ErrFetch(fmt.Errorf("failed to request to remote provider"), fmt.Sprint(bdr), resp.StatusCode)
 }
 
-func (l *RemoteProvider) SaveConnection(req *http.Request, conn *Connection, token string, skipTokenCheck bool) (error) {
+func (l *RemoteProvider) SaveConnection(req *http.Request, conn *Connection, token string, skipTokenCheck bool) error {
 	if !l.Capabilities.IsSupported(PersistConnection) {
 		logrus.Error("operation not available")
 		return ErrInvalidCapability("PersistConnection", l.ProviderName)
