@@ -249,13 +249,11 @@ func (l *RemoteProvider) executePrefSync(tokenString string, sess *Preference) {
 }
 
 
-
-
 // InitiateLogin - initiates login flow and returns a true to indicate the handler to "return" or false to continue
 //
 // Every Remote Provider must offer this function
 func (l *RemoteProvider) InitiateLogin(w http.ResponseWriter, r *http.Request, _ bool) {
-	tu := r.Context().Value(MesheryServerURL).(string)
+	tu := r.Context().Value(MesheryServerCallbackURL).(string)
 
 	_, err := r.Cookie(tokenName)
 	if err != nil {
@@ -2845,7 +2843,7 @@ func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, fr
 			"server_id": viper.GetString("INSTANCE_ID"),
 			"server_version": viper.GetString("BUILD"),
 			"server_build_sha": viper.GetString("COMMITSHA"),
-			"server_localtion": r.Context().Value(MesheryServerURL).(string),
+			"server_location": r.Context().Value(MesheryServerURL).(string),
 		}
 		metadata := make(map[string]interface{}, len(_metada))
 		for k, v := range _metada {
@@ -2863,7 +2861,7 @@ func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, fr
 		conn := &Connection{
 			Kind: "meshery",
 			Type: "platform",
-			SubType: "management_plane",
+			SubType: "management",
 			MetaData: metadata,
 			CredentialSecret: cred,
 		}
