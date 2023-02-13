@@ -200,12 +200,13 @@ func (p *Pattern) ToYAML() ([]byte, error) {
 }
 
 // NewPatternFileFromCytoscapeJSJSON takes in CytoscapeJS JSON
-// and creates a PatternFile from it
+// and creates a PatternFile from it.
+// This function always returns meshkit error
 func NewPatternFileFromCytoscapeJSJSON(name string, byt []byte) (Pattern, error) {
 	// Unmarshal data into cytoscape struct
 	var cy cytoscapejs.GraphElem
 	if err := json.Unmarshal(byt, &cy); err != nil {
-		return Pattern{}, err
+		return Pattern{}, ErrPatternFromCytoscape(err)
 	}
 	if name == "" {
 		name = "MesheryGeneratedPattern"
@@ -225,7 +226,7 @@ func NewPatternFileFromCytoscapeJSJSON(name string, byt []byte) (Pattern, error)
 		return nil
 	})
 	if err != nil {
-		return pf, err
+		return pf, ErrPatternFromCytoscape(err)
 	}
 
 	//Populate the dependsOn field with appropriate unique service names
@@ -266,7 +267,7 @@ func NewPatternFileFromCytoscapeJSJSON(name string, byt []byte) (Pattern, error)
 			}
 		}
 	}
-	return pf, err
+	return pf, ErrPatternFromCytoscape(err)
 }
 
 func getRandomAlphabetsOfDigit(length int) (s string) {
