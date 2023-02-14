@@ -13,7 +13,7 @@ To authenticate with Meshery through `mesheryctl` you will use the command `mesh
 
 You can retrieve your authentication token from either of Meshery's two clients: the CLI or the UI.
 
-- Get your token through [Meshery UI](/concepts/architecture/ui), from the `Get Token` option.
+- Get your token through [Meshery UI](/extensibility/api#how-to-get-your-token), from the `Get Token` option.
 
   _Downloading the token_
 
