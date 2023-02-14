@@ -2864,7 +2864,6 @@ func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, fr
 		if err != nil {
 			logrus.Errorf("unable to save meshery connection: %v", err)
 		}
-
 	}()
 	http.Redirect(w, r, redirectURL, http.StatusFound)
 }
