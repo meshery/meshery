@@ -1565,7 +1565,7 @@ func (l *RemoteProvider) DeleteMesheryPattern(req *http.Request, patternID strin
 }
 
 // CloneMesheryPattern clones a meshery pattern with the given id
-func (l *RemoteProvider) CloneMesheryPattern(req *http.Request, patternID string) ([]byte, error) {
+func (l *RemoteProvider) CloneMesheryPattern(req *http.Request, patternID string, clonePatternRequest *MesheryClonePatternRequestBody) ([]byte, error) {
 	if !l.Capabilities.IsSupported(CloneMesheryPatterns) {
 		logrus.Error("operation not available")
 		return nil, fmt.Errorf("%s is not suppported by provider: %s", CloneMesheryPatterns, l.ProviderName)
@@ -1577,7 +1577,16 @@ func (l *RemoteProvider) CloneMesheryPattern(req *http.Request, patternID string
 
 	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s", l.RemoteProviderURL, ep, patternID))
 	logrus.Debugf("constructed pattern url: %s", remoteProviderURL.String())
-	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), nil)
+
+	data, err := json.Marshal(clonePatternRequest)
+	if err != nil {
+		logrus.Errorf("unable to marshal request: %v", err)
+		return nil, err
+	}
+
+	bf := bytes.NewBuffer(data)
+
+	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), bf)
 
 	tokenString, err := l.GetToken(req)
 	if err != nil {
@@ -2020,7 +2029,7 @@ func (l *RemoteProvider) DeleteMesheryFilter(req *http.Request, filterID string)
 }
 
 // CloneMesheryFilter clones a meshery filter with the given id
-func (l *RemoteProvider) CloneMesheryFilter(req *http.Request, filterID string) ([]byte, error) {
+func (l *RemoteProvider) CloneMesheryFilter(req *http.Request, filterID string, cloneFilterRequest *MesheryCloneFilterRequestBody) ([]byte, error) {
 	if !l.Capabilities.IsSupported(CloneMesheryFilters) {
 		logrus.Error("operation not available")
 		return nil, fmt.Errorf("%s is not suppported by provider: %s", CloneMesheryFilters, l.ProviderName)
@@ -2032,7 +2041,15 @@ func (l *RemoteProvider) CloneMesheryFilter(req *http.Request, filterID string) 
 
 	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s", l.RemoteProviderURL, ep, filterID))
 	logrus.Debugf("constructed filter url: %s", remoteProviderURL.String())
-	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), nil)
+	data, err := json.Marshal(cloneFilterRequest)
+	if err != nil {
+		logrus.Errorf("unable to marshal request: %v", err)
+		return nil, err
+	}
+
+	bf := bytes.NewBuffer(data)
+
+	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), bf)
 
 	tokenString, err := l.GetToken(req)
 	if err != nil {
