@@ -13,7 +13,7 @@ pre.codeblock-pre {
   box-shadow: var(--box-shadow-primary);
   background-color: var(--color-secondary-dark) !important;
   max-width: 700px;
-  overflow: scroll;
+  overflow: hidden;
 }
 
 .codeblock {
@@ -31,7 +31,7 @@ pre.codeblock-pre {
   align-self: flex-end;
   justify-content: left;
   width: 100%;
-  overflow-x: auto;
+  overflow-x: hidden;
   padding: 0px;
   margin: 0px;
   color: var(--color-primary-medium);
@@ -44,13 +44,13 @@ pre.codeblock-pre {
 }
 
 .clipbtn {
-  position: absolute;
-  top: -3.5rem;
+  // position: absolute;
+  // top: -3.5rem;
   right: 0;
   margin: 5px;
   border: 0px;
   background-color: transparent;
-  font-size: 2rem;
+  font-size: 1.5rem;
   & i::before {
     color: #f1f3f5 !important;
   }
