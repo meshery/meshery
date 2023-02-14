@@ -1202,9 +1202,6 @@ function MesheryPatterns({
               deploy : () => handleDeploy(modalOpen.pattern_file, modalOpen.name),  unDeploy : () => handleUnDeploy(modalOpen.pattern_file, modalOpen.name), verify : () => handleVerify(modalOpen.pattern_file, modalOpen.name)
             }
           }
-          verify={() => {
-            handleVerify(modalOpen.pattern_file, modalOpen.name)
-          }}
           title={modalOpen.name}
           componentCount={modalOpen.count}
           tab={modalOpen.action}
