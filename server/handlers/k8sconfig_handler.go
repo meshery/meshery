@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"os"
 	"path/filepath"
 
 	mutil "github.com/layer5io/meshery/server/helpers/utils"
@@ -16,11 +17,11 @@ import (
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 
 	"github.com/gofrs/uuid"
-
 	"github.com/layer5io/meshery/server/helpers"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshkit/models/meshmodel"
+	meshmodelcore "github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
 	"github.com/layer5io/meshkit/utils"
 	"github.com/pkg/errors"
@@ -355,6 +356,7 @@ func RegisterK8sMeshModelComponents(ctx context.Context, config []byte, ctxID st
 		return ErrCreatingKubernetesComponents(errors.New("generated components are nil"), ctxID)
 	}
 	for _, c := range man {
+		writeK8sMetadata(&c, reg)
 		mutil.WriteSVGsOnFileSystem(&c)
 		err = reg.RegisterEntity(meshmodel.Host{
 			Hostname:  "kubernetes",
@@ -362,6 +364,52 @@ func RegisterK8sMeshModelComponents(ctx context.Context, config []byte, ctxID st
 		}, c)
 	}
 	return
+}
+
+const k8sMeshModelPath = "../meshmodel/components/kubernetes/meshmodel_metadata.json"
+
+var k8sMeshModelMetadata = make(map[string]interface{})
+
+func writeK8sMetadata(comp *meshmodelcore.ComponentDefinition, reg *meshmodel.RegistryManager) {
+	ent := reg.GetEntities(&meshmodelcore.ComponentFilter{
+		Name:       comp.Kind,
+		APIVersion: comp.APIVersion,
+		ModelName:  comp.Model.Name,
+	})
+	//If component was not available in the registry, then use the generic model level metadata
+	if len(ent) == 0 {
+		mergeMaps(comp.Metadata, k8sMeshModelMetadata)
+	} else {
+		existingComp, ok := ent[0].(meshmodelcore.ComponentDefinition)
+		if !ok {
+			mergeMaps(comp.Metadata, k8sMeshModelMetadata)
+			return
+		}
+		mergeMaps(comp.Metadata, existingComp.Metadata)
+	}
+}
+func mergeMaps(mergeInto, toMerge map[string]interface{}) {
+	for k, v := range toMerge {
+		mergeInto[k] = v
+	}
+}
+
+// Caches k8sMeshModel metadatas in memory to use at the time of dynamic k8s component generation
+func init() {
+	f, err := os.Open(filepath.Join(k8sMeshModelPath))
+	if err != nil {
+		return
+	}
+	byt, err := io.ReadAll(f)
+	if err != nil {
+		return
+	}
+	m := make(map[string]interface{})
+	err = json.Unmarshal(byt, &m)
+	if err != nil {
+		return
+	}
+	k8sMeshModelMetadata = m
 }
 
 // func writeMeshModelComponentsOnFileSystem(c meshmodelv1alpha1.ComponentDefinition, dirpath string) {
