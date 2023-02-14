@@ -44,7 +44,7 @@ func (cg *ComponentsRegistrationHelper) UpdateContexts(ctxs []*K8sContext) *Comp
 	return cg
 }
 
-type K8sRegistrationFunction func(ctxt context.Context, config []byte, ctxID string, reg *meshmodel.RegistryManager) error
+type K8sRegistrationFunction func(ctxt context.Context, config []byte, ctxID string, reg *meshmodel.RegistryManager, es *events.EventStreamer, ctxName string) error
 
 // start registration of components for the contexts
 func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, regFunc []K8sRegistrationFunction, eb *events.EventStreamer, reg *meshmodel.RegistryManager) {
@@ -64,12 +64,13 @@ func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, r
 						Component:     "core",
 						ComponentName: "Kubernetes",
 						EventType:     meshes.EventType_INFO,
+						Details:       "Registration of " + ctxName + " components started for contextID: " + ctxID,
 						Summary:       "Registration of " + ctxName + " components started for contextID: " + ctxID,
 						OperationId:   id.String(),
 					}
 					eb.Publish(&req)
 					go func(ctx *K8sContext) {
-						// set the status to RegistrationComplete
+						// set the status to RegistrationCompletexs
 						defer func() {
 							cg.ctxRegStatusMap[ctxID] = RegistrationComplete
 
@@ -91,7 +92,7 @@ func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, r
 							return
 						}
 						for _, f := range regFunc {
-							err = f(context.Background(), cfg, ctxID, reg)
+							err = f(context.Background(), cfg, ctxID, reg, eb, ctxName)
 							if err != nil {
 								cg.log.Error(err)
 								return
