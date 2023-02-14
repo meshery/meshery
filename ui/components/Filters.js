@@ -241,6 +241,10 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     });
   }
 
+  useEffect(() => {
+    fetchFilters(page,pageSize,search,sortOrder)
+  }, [page, pageSize, search, sortOrder]);
+
   const handleCatalogPreference = (catalogPref) => {
     let body = Object.assign({}, extensionPreferences)
     body["catalogContent"] = catalogPref
@@ -946,7 +950,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
           isDelete={!modalOpen.deploy}
           title={modalOpen.name}
           componentCount={modalOpen.count}
-          tab={modalOpen.deploy ? 0 : 1}
+          tab={modalOpen.deploy ? 2 : 1}
         />
         <PromptComponent ref={modalRef} />
         <UploadImport open={importModal.open} handleClose={handleUploadImportClose} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} fetch={() => fetchFilters(page, pageSize, search, sortOrder) } configuration="Filter" />
