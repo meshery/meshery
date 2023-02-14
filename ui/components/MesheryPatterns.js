@@ -628,6 +628,7 @@ function MesheryPatterns({
       {
         credentials : "include",
         method : "POST",
+        body : JSON.stringify({ name : name + " (Copy)" }),
       },
       () => {
         updateProgress({ showProgress : false });

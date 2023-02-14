@@ -593,8 +593,8 @@ func (l *DefaultLocalProvider) DeleteMesheryPatterns(req *http.Request, patterns
 }
 
 // CloneMesheryPattern clones a meshery pattern with the given id
-func (l *DefaultLocalProvider) CloneMesheryPattern(req *http.Request, patternID string) ([]byte, error) {
-	return l.MesheryPatternPersister.CloneMesheryPattern(patternID)
+func (l *DefaultLocalProvider) CloneMesheryPattern(req *http.Request, patternID string, clonePatternRequest *MesheryClonePatternRequestBody) ([]byte, error) {
+	return l.MesheryPatternPersister.CloneMesheryPattern(patternID, clonePatternRequest)
 }
 
 // RemotePatternFile takes in the
@@ -706,8 +706,8 @@ func (l *DefaultLocalProvider) DeleteMesheryFilter(req *http.Request, filterID s
 }
 
 // CloneMesheryFilter clones a meshery filter with the given id
-func (l *DefaultLocalProvider) CloneMesheryFilter(req *http.Request, filterID string) ([]byte, error) {
-	return l.MesheryFilterPersister.CloneMesheryFilter(filterID)
+func (l *DefaultLocalProvider) CloneMesheryFilter(req *http.Request, filterID string, cloneFilterRequest *MesheryCloneFilterRequestBody) ([]byte, error) {
+	return l.MesheryFilterPersister.CloneMesheryFilter(filterID, cloneFilterRequest)
 }
 
 // RemoteFilterFile takes in the

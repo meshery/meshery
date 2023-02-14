@@ -254,20 +254,21 @@ func NewPatternFileFromCytoscapeJSJSON(name string, byt []byte) (Pattern, error)
 		pf.Services[svc.Name] = &svc
 		return nil
 	})
-	if err == nil {
-		//add depends-on field
-		for child, parents := range dependsOnMap {
-			childSvc := eleToSvc[child]
-			if childSvc != "" {
-				for _, parent := range parents {
-					if eleToSvc[parent] != "" {
-						pf.Services[childSvc].DependsOn = append(pf.Services[childSvc].DependsOn, eleToSvc[parent])
-					}
+	if err != nil {
+		return pf, ErrPatternFromCytoscape(err)
+	}
+	//add depends-on field
+	for child, parents := range dependsOnMap {
+		childSvc := eleToSvc[child]
+		if childSvc != "" {
+			for _, parent := range parents {
+				if eleToSvc[parent] != "" {
+					pf.Services[childSvc].DependsOn = append(pf.Services[childSvc].DependsOn, eleToSvc[parent])
 				}
 			}
 		}
 	}
-	return pf, ErrPatternFromCytoscape(err)
+	return pf, nil
 }
 
 func getRandomAlphabetsOfDigit(length int) (s string) {
