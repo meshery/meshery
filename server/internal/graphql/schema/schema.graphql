@@ -328,6 +328,7 @@ type ApplicationResult {
   type: NullString!
   user_id: String!
   location: Location!
+  visibility: String!
   created_at: String
   updated_at: String
 }
