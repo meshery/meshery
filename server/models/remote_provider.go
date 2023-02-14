@@ -3140,26 +3140,27 @@ func (l *RemoteProvider) SaveConnection(req *http.Request, conn *Connection, tok
 	if !skipTokenCheck {
 		tokenString, err = l.GetToken(req)
 		if err != nil {
-			logrus.Debug("error getting token: ", err)
+			logrus.Error("error getting token: ", err)
 			return err
 		}
 	}
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
-		// return ErrSave(err, "Connection", resp.StatusCode)
-		logrus.Error(err)
-		return err
+		return ErrFetch(err, "Save Connection", resp.StatusCode)
 	}
 	defer func() {
 		_ = resp.Body.Close()
 	}()
-
+	bdr, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return ErrDataRead(err, "Save Connection")
+	}
+	
 	if resp.StatusCode == http.StatusOK {
 		return nil
 	}
 
-	// return ErrSave(fmt.Errorf("could not save the connection: %d", resp.StatusCode), "Connection", resp.StatusCode)
-	return fmt.Errorf("could not save the connection: %d", resp.StatusCode)
+	return ErrFetch(fmt.Errorf("failed to save the connection"), fmt.Sprint(bdr), resp.StatusCode)
 }
 
 // RecordMeshSyncData records the mesh sync data
