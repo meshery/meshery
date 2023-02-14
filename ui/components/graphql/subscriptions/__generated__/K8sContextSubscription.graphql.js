@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<59972572c395e75dfd7a7e54195b431c>>
+ * @generated SignedSource<<e1f0c702f7ca2d1d6bda4c86148dd8fc>>
  * @flow
  * @lightSyntaxTransform
  * @nogrep
@@ -18,6 +18,7 @@ export type PageFilter = {|
   search?: ?string,
   from?: ?string,
   to?: ?string,
+  updated_after?: ?string,
 |};
 export type K8sContextSubscription$variables = {|
   selector: PageFilter,
