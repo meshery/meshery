@@ -35,8 +35,12 @@ func (h *Handler) ProviderMiddleware(next http.Handler) http.Handler {
 			provider = h.config.Providers[providerName]
 		}
 		ctx := context.WithValue(req.Context(), models.ProviderCtxKey, provider) // nolint
+		
+		// Incase Meshery is configured for deployments scenario: Istio, Azure Kubernetes Service etc
+		// then we can expect a MESHERY_SERVER_CALLBACK_URL in env var
 		callbackURL := viper.GetString("MESHERY_SERVER_CALLBACK_URL")
 		if callbackURL == "" {
+			// if MESHERY_SERVER_CALLBACK_URL is not set then we ca assume standard CALLBACK_URL
 			callbackURL = "http://" + req.Host + "/api/user/token" // Hard coding the path because this is what meshery expects
 		}
 		ctx = context.WithValue(ctx, models.MesheryServerCallbackURL, callbackURL)
