@@ -241,6 +241,10 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     });
   }
 
+  useEffect(() => {
+    fetchFilters(page,pageSize,search,sortOrder)
+  }, [page, pageSize, search, sortOrder]);
+
   const handleCatalogPreference = (catalogPref) => {
     let body = Object.assign({}, extensionPreferences)
     body["catalogContent"] = catalogPref
