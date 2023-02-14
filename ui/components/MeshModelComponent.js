@@ -14,9 +14,6 @@ const MeshModelComponent = ({ showMeshModelSummary,classes }) => {
   return (
     <div className={classes.wrapperClass}>
       <div className={classes.dashboardSection} data-test="workloads">
-        {/* <Typography variant="h6" gutterBottom className={classes.chartTitle}>
-                MeshModel
-            </Typography> */}
         {showMeshModelSummary()}
       </div>
     </div>
