@@ -64,25 +64,17 @@ func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, r
 						Component:     "core",
 						ComponentName: "Kubernetes",
 						EventType:     meshes.EventType_INFO,
+						Summary:       "Registration for kubernetes context " + ctxName + " started",
 						Details:       "Registration of " + ctxName + " components started for contextID: " + ctxID,
-						Summary:       "Registration of " + ctxName + " components started for contextID: " + ctxID,
 						OperationId:   id.String(),
 					}
 					eb.Publish(&req)
 					go func(ctx *K8sContext) {
-						// set the status to RegistrationCompletexs
+						// set the status to RegistrationComplete
 						defer func() {
 							cg.ctxRegStatusMap[ctxID] = RegistrationComplete
 
 							cg.log.Info(ctxName, " components for contextID:", ctxID, " registered")
-							req := meshes.EventsResponse{
-								Component:     "core",
-								ComponentName: "Kubernetes",
-								EventType:     meshes.EventType_INFO,
-								Summary:       ctxName + " components for contextID:" + ctxID + " registered",
-								OperationId:   id.String(),
-							}
-							eb.Publish(&req)
 						}()
 
 						// start registration
