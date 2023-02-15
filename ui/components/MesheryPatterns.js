@@ -330,7 +330,7 @@ function MesheryPatterns({
   // @ts-ignore
   useEffect(() => {
     document.body.style.overflowX = "hidden"
-
+    fetchPatterns(page,pageSize,search,sortOrder)
     return (() => document.body.style.overflowX = "auto")
   }, [page, pageSize, search, sortOrder]);
 
@@ -627,6 +627,7 @@ function MesheryPatterns({
       {
         credentials : "include",
         method : "POST",
+        body : JSON.stringify({ name : name + " (Copy)" }),
       },
       () => {
         updateProgress({ showProgress : false });

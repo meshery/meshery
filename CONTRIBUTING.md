@@ -82,7 +82,7 @@ Please contribute! Meshery documentation uses GitHub Pages to host the docs site
 1. Run site locally to preview changes.
    `make docs`
 
-- **Note:** _From the Makefile, this command is actually running `$ bundle exec jekyll serve --drafts --livereload --config _config_dev.yml`. If this command causes errors try running the server without Livereload with this command: `$ bundle exec jekyll serve --drafts --config _config_dev.yml`. Just keep in mind you will have to manually restart the server to reflect any changes made without Livereload. There are two Jekyll configuration, `jekyll serve` for developing locally and `jekyll build` when you need to generate the site artefacts for production._
+- **Note:** _From the Makefile, this command is actually running `$ bundle exec jekyll serve --drafts --livereload --config _config_dev.yml`. If this command causes errors try running the server without Livereload with this command: `$ bundle exec jekyll serve --drafts --config _config_dev.yml`. Just keep in mind you will have to manually restart the server to reflect any changes made without Livereload. There are two Jekyll configuration, `jekyll serve` for developing locally and `jekyll build` when you need to generate the site artifacts for production._
 
 1. Commit, [sign-off](#commit-signing), and push changes to your remote branch.
    `git push origin <my-changes>`
@@ -99,10 +99,10 @@ Practices for Production Environments](https://peter.bourgon.org/go-in-productio
 
 ### Prerequisites for building Meshery in your development environment:
 
-1. Go version 1.19.1 must installed if you want to build and/or make changes to the existing code. The binary `go1.19.1` should be available in your path. If you don't want to disturb your existing version of Go, then follow these [instructions](https://go.dev/doc/manage-install#:~:text=and%20run%20them.-,Installing%20multiple%20Go%20versions,-You%20can%20install) to keep multiple versions of Go in your system.
+1. Go version 1.19.1 must be installed if you want to build and/or make changes to the existing code. The binary `go1.19.1` should be available in your path. If you don't want to disturb your existing version of Go, then follow these [instructions](https://go.dev/doc/manage-install#:~:text=and%20run%20them.-,Installing%20multiple%20Go%20versions,-You%20can%20install) to keep multiple versions of Go in your system.
 1. `GOPATH` environment variable should be configured appropriately
 1. `npm` and `node` should be installed on your machine, preferably the latest versions.
-1. Fork this repository (`git clone https://github.com/meshery/meshery.git`), clone your forked version of Meshery to your local, preferably outside `GOPATH`.
+1. Fork this repository (`git clone https://github.com/meshery/meshery.git`), and clone your forked version of Meshery to your development environment, preferably outside `GOPATH`.
 1. `golangci-lint` should be installed if you want to test Go code, for MacOS and linux users.
 
 #### Build and Run Meshery Server
@@ -260,7 +260,7 @@ We are using ES-Lint to maintain code quality & consistency in our UI Code. To m
 
 ### Contributing
 
-Please refer the [Meshery Contributing Guidelines](https://docs.meshery.io/project/contributing/contributing-cli) for setting up your development environment and the [mesheryctl Command Reference and Tracker](https://docs.google.com/spreadsheets/d/1q63sIGAuCnIeDs8PeM-0BAkNj8BBgPUXhLbe1Y-318o/edit#gid=0) for current status of `mesheryctl`.
+Please refer to the [Meshery Contributing Guidelines](https://docs.meshery.io/project/contributing/contributing-cli) for setting up your development environment and the [mesheryctl Command Reference and Tracker](https://docs.google.com/spreadsheets/d/1q63sIGAuCnIeDs8PeM-0BAkNj8BBgPUXhLbe1Y-318o/edit#gid=0) for current status of `mesheryctl`.
 
 For a quick introduction to `mesheryctl`, checkout [Beginner's guide to contributing to Meshery and mesheryctl](https://youtu.be/hh_kFLZx3G4).
 
@@ -298,7 +298,7 @@ A central `struct` is maintained in the `mesheryctl/internal/cli/root/config/con
 
 For logs, `mesheryctl` uses [Logrus](https://github.com/sirupsen/logrus). Going through the docs and understanding the different [log-levels](https://github.com/sirupsen/logrus#level-logging) will help a lot.
 
-`mesheryctl` uses [golangci-lint](https://github.com/golangci/golangci-lint). Refer it for lint checks.
+`mesheryctl` uses [golangci-lint](https://github.com/golangci/golangci-lint). Refer to it for lint checks.
 
 All contributors are invited to review [pull requests](https://github.com/meshery/meshery/pulls) on `mesheryctl` as on other Layer5 projects.
 

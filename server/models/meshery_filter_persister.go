@@ -80,7 +80,7 @@ func (mfp *MesheryFilterPersister) GetMesheryCatalogFilters(search, order string
 }
 
 // CloneMesheryFilter clones meshery filter to private
-func (mfp *MesheryFilterPersister) CloneMesheryFilter(filterID string) ([]byte, error) {
+func (mfp *MesheryFilterPersister) CloneMesheryFilter(filterID string, cloneFilterRequest *MesheryCloneFilterRequestBody) ([]byte, error) {
 	var mesheryFilter MesheryFilter
 	filterUUID, _ := uuid.FromString(filterID)
 	err := mfp.DB.First(&mesheryFilter, filterUUID).Error
@@ -95,6 +95,7 @@ func (mfp *MesheryFilterPersister) CloneMesheryFilter(filterID string) ([]byte, 
 
 	mesheryFilter.Visibility = Private
 	mesheryFilter.ID = &id
+	mesheryFilter.Name = cloneFilterRequest.Name
 
 	return mfp.SaveMesheryFilter(&mesheryFilter)
 }
