@@ -403,4 +403,7 @@ type Provider interface {
 	DeleteSchedule(req *http.Request, scheduleID string) ([]byte, error)
 
 	ExtensionProxy(req *http.Request) ([]byte, error)
+
+	SaveConnection(req *http.Request, conn *Connection, token string, skipTokenCheck bool) error
+	DeleteMesheryConnection() error
 }

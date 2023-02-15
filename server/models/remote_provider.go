@@ -3180,6 +3180,33 @@ func (l *RemoteProvider) SaveConnection(req *http.Request, conn *Connection, tok
 	return ErrFetch(fmt.Errorf("failed to save the connection"), fmt.Sprint(bdr), resp.StatusCode)
 }
 
+func (l *RemoteProvider) DeleteMesheryConnection() error {
+	if !l.Capabilities.IsSupported(PersistConnection) {
+		logrus.Error("operation not available")
+		return ErrInvalidCapability("PersistConnection", l.ProviderName)
+	}
+
+	mesheryServerID := viper.GetString("INSTANCE_ID")
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistConnection)
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/meshery/%s/delete", l.RemoteProviderURL, ep, mesheryServerID))
+	cReq, _ := http.NewRequest(http.MethodDelete, remoteProviderURL.String(), nil)
+	cReq.Header.Set("X-API-Key", GlobalTokenForAnonymousResults)
+	c := &http.Client{}
+	resp, err := c.Do(cReq)
+	if err != nil {
+		return ErrDelete(err, "Meshery Connection", resp.StatusCode)
+	}
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+
+	if resp.StatusCode == http.StatusOK {
+		return nil
+	}
+
+	return ErrDelete(fmt.Errorf("could not delete meshery connection"), "Meshery Connection", resp.StatusCode)
+}
+
 // RecordMeshSyncData records the mesh sync data
 func (l *RemoteProvider) RecordMeshSyncData(obj model.Object) error {
 	result := l.GenericPersister.Create(&obj)
