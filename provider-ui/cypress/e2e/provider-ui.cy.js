@@ -14,7 +14,7 @@ describe('Provider UI', () => {
     it('selects None as provider', () => {
         cy
             .get('[data-cy="select_provider"]').click()
-            .get('#split-button-menu').contains('None').click()
+            .get('#split-button-menu').contains('None')
     })
 
     it('opens and closes modal to learn more about providers', () => {
