@@ -197,7 +197,7 @@ func ErrPraseUnverified(err error) error {
 }
 
 func ErrDataRead(err error, r string) error {
-	return errors.New(ErrDataReadCode, errors.Alert, []string{"Eeror occurred while reading from the Reader", r}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrDataReadCode, errors.Alert, []string{"Error occurred while reading from the Reader", r}, []string{err.Error()}, []string{}, []string{})
 }
 
 func ErrResultData() error {
