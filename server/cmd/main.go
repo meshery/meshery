@@ -360,6 +360,19 @@ func main() {
 	<-c
 	regManager.Cleanup()
 	log.Info("Doing seeded content cleanup...")
+
+	for _, p := range hc.Providers {
+		// skipping none provider for now
+		// so it doesn't throw error each server is stopped. Reason: support for none provider is not yet implemented
+		if p.Name() != "None" {
+			log.Info("De-registering Meshery server.")
+			err = p.DeleteMesheryConnection()
+			if err != nil {
+				log.Error(err)
+			}
+		}
+	}
+
 	err = lProv.Cleanup()
 	if err != nil {
 		log.Error(ErrCleaningUpLocalProvider(err))

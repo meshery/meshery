@@ -923,6 +923,14 @@ func (l *DefaultLocalProvider) ExtensionProxy(req *http.Request) ([]byte, error)
 	return []byte{}, ErrLocalProviderSupport
 }
 
+func (l *DefaultLocalProvider) SaveConnection(req *http.Request, conn *Connection, token string, skipTokenCheck bool) error {
+	return ErrLocalProviderSupport
+}
+
+func (l *DefaultLocalProvider) DeleteMesheryConnection() error {
+	return ErrLocalProviderSupport
+}
+
 // ReadMeshSyncData reads the mesh sync data
 func (l *DefaultLocalProvider) ReadMeshSyncData() ([]model.Object, error) {
 	objects := make([]model.Object, 0)
