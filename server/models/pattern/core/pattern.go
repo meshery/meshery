@@ -200,12 +200,13 @@ func (p *Pattern) ToYAML() ([]byte, error) {
 }
 
 // NewPatternFileFromCytoscapeJSJSON takes in CytoscapeJS JSON
-// and creates a PatternFile from it
+// and creates a PatternFile from it.
+// This function always returns meshkit error
 func NewPatternFileFromCytoscapeJSJSON(name string, byt []byte) (Pattern, error) {
 	// Unmarshal data into cytoscape struct
 	var cy cytoscapejs.GraphElem
 	if err := json.Unmarshal(byt, &cy); err != nil {
-		return Pattern{}, err
+		return Pattern{}, ErrPatternFromCytoscape(err)
 	}
 	if name == "" {
 		name = "MesheryGeneratedPattern"
@@ -225,7 +226,7 @@ func NewPatternFileFromCytoscapeJSJSON(name string, byt []byte) (Pattern, error)
 		return nil
 	})
 	if err != nil {
-		return pf, err
+		return pf, ErrPatternFromCytoscape(err)
 	}
 
 	//Populate the dependsOn field with appropriate unique service names
@@ -253,20 +254,21 @@ func NewPatternFileFromCytoscapeJSJSON(name string, byt []byte) (Pattern, error)
 		pf.Services[svc.Name] = &svc
 		return nil
 	})
-	if err == nil {
-		//add depends-on field
-		for child, parents := range dependsOnMap {
-			childSvc := eleToSvc[child]
-			if childSvc != "" {
-				for _, parent := range parents {
-					if eleToSvc[parent] != "" {
-						pf.Services[childSvc].DependsOn = append(pf.Services[childSvc].DependsOn, eleToSvc[parent])
-					}
+	if err != nil {
+		return pf, ErrPatternFromCytoscape(err)
+	}
+	//add depends-on field
+	for child, parents := range dependsOnMap {
+		childSvc := eleToSvc[child]
+		if childSvc != "" {
+			for _, parent := range parents {
+				if eleToSvc[parent] != "" {
+					pf.Services[childSvc].DependsOn = append(pf.Services[childSvc].DependsOn, eleToSvc[parent])
 				}
 			}
 		}
 	}
-	return pf, err
+	return pf, nil
 }
 
 func getRandomAlphabetsOfDigit(length int) (s string) {
@@ -316,6 +318,9 @@ func processCytoElementsWithPattern(eles []cytoscapejs.Element, pf *Pattern, cal
 
 		if err := json.Unmarshal(svcByt, &svc); err != nil {
 			return fmt.Errorf("failed to create service from the metadata in the scratch")
+		}
+		if svc.Name == "" {
+			return fmt.Errorf("cannot save service with empty name")
 		}
 		err = callback(svc, elem)
 		if err != nil {

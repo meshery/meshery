@@ -584,6 +584,7 @@ Deatils about the Addon Component.
 | <a id="applicationresulttype"></a>`type` | [`NullString!`](#nullstring) |  |
 | <a id="applicationresultupdated_at"></a>`updated_at` | [`String`](#string) |  |
 | <a id="applicationresultuser_id"></a>`user_id` | [`String!`](#string) |  |
+| <a id="applicationresultvisibility"></a>`visibility` | [`String!`](#string) |  |
 
 ### `CatalogFilter`
 
