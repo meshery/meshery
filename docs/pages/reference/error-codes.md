@@ -17,7 +17,6 @@ type: Reference
 }
 
 .tbl-head-row .error-name-code{
-  width:23rem;
   display:flex;
   justify-content:space-between;
   align-items:flex-end;
@@ -138,7 +137,7 @@ Note: The numeric portion of error codes are component-scoped. The numeric porti
   <table class="tbl">
   <thead>
     <tr class="tbl-head-row">
-      <th class="error-name-code"><span style="">Error Name</span> <span style="width:2.4rem;word-break:break-all;">Error Code</span></th>
+      <th class="error-name-code"><span>Error Name</span> <span>Error Code</span></th>
       <th style="width:15%">Severity</th>
       <th style="width:85%">Short Description</th>
     </tr>

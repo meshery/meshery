@@ -10,7 +10,9 @@ import (
 	"os"
 	"path/filepath"
 
+	guid "github.com/google/uuid"
 	mutil "github.com/layer5io/meshery/server/helpers/utils"
+	"github.com/layer5io/meshery/server/meshes"
 	mcore "github.com/layer5io/meshery/server/models/meshmodel/core"
 
 	// for GKE kube API authentication
@@ -24,6 +26,7 @@ import (
 	meshmodelcore "github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
 	"github.com/layer5io/meshkit/utils"
+	"github.com/layer5io/meshkit/utils/events"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
@@ -311,7 +314,7 @@ func (h *Handler) LoadContextsAndPersist(token string, prov models.Provider) ([]
 	return contexts, nil
 }
 
-func RegisterK8sComponents(ctxt context.Context, config []byte, ctxID string, reg *meshmodel.RegistryManager) (err error) {
+func RegisterK8sComponents(ctxt context.Context, config []byte, ctxID string, reg *meshmodel.RegistryManager, es *events.EventStreamer, ctxName string) (err error) {
 	man, err := core.GetK8Components(ctxt, config)
 	if err != nil {
 		return ErrCreatingKubernetesComponents(err, ctxID)
@@ -347,7 +350,7 @@ func RegisterK8sComponents(ctxt context.Context, config []byte, ctxID string, re
 	return nil
 }
 
-func RegisterK8sMeshModelComponents(ctx context.Context, config []byte, ctxID string, reg *meshmodel.RegistryManager) (err error) {
+func RegisterK8sMeshModelComponents(ctx context.Context, config []byte, ctxID string, reg *meshmodel.RegistryManager, es *events.EventStreamer, ctxName string) (err error) {
 	man, err := mcore.GetK8sMeshModelComponents(ctx, config)
 	if err != nil {
 		return ErrCreatingKubernetesComponents(err, ctxID)
@@ -355,6 +358,7 @@ func RegisterK8sMeshModelComponents(ctx context.Context, config []byte, ctxID st
 	if man == nil {
 		return ErrCreatingKubernetesComponents(errors.New("generated components are nil"), ctxID)
 	}
+	count := 0
 	for _, c := range man {
 		writeK8sMetadata(&c, reg)
 		mutil.WriteSVGsOnFileSystem(&c)
@@ -362,7 +366,16 @@ func RegisterK8sMeshModelComponents(ctx context.Context, config []byte, ctxID st
 			Hostname:  "kubernetes",
 			ContextID: ctxID,
 		}, c)
+		count++
 	}
+	es.Publish(&meshes.EventsResponse{
+		Component:     "core",
+		ComponentName: "kubernetes",
+		OperationId:   guid.NewString(),
+		EventType:     meshes.EventType_INFO,
+		Summary:       fmt.Sprintf("%d kubernetes components registered from %s", count, ctxName),
+		Details:       fmt.Sprintf("%d MeshModel components registered for Kubernetes context %s (%s)", count, ctxName, ctxID),
+	})
 	return
 }
 
