@@ -46,6 +46,7 @@ import GrafanaCustomCharts from "../telemetry/grafana/GrafanaCustomCharts";
 import { durationOptions } from "../../lib/prePopulatedOptions";
 import fetchControlPlanes from "../graphql/queries/ControlPlanesQuery";
 import { ctxUrl, getK8sClusterIdsFromCtxId } from "../../utils/multi-ctx";
+import { iconMedium } from "../../css/icons.styles";
 
 // =============================== HELPER FUNCTIONS ===========================
 
@@ -336,10 +337,11 @@ class MesheryPerformanceComponent extends React.Component {
                 <IconButton
                   key="close"
                   aria-label="Close"
+                  style={iconMedium}
                   color="inherit"
                   onClick={() => this.props.closeSnackbar(key)}
                 >
-                  <CloseIcon />
+                  <CloseIcon style={iconMedium}/>
                 </IconButton>
               ),
             });
@@ -353,8 +355,8 @@ class MesheryPerformanceComponent extends React.Component {
           variant : "error",
           autoHideDuration : 2000,
           action : (key) => (
-            <IconButton key="close" aria-label="Close" color="inherit" onClick={() => this.props.closeSnackbar(key)}>
-              <CloseIcon />
+            <IconButton style={iconMedium} key="close" aria-label="Close" color="inherit" onClick={() => this.props.closeSnackbar(key)}>
+              <CloseIcon style={iconMedium}/>
             </IconButton>
           ),
         });
@@ -459,8 +461,8 @@ class MesheryPerformanceComponent extends React.Component {
       variant : "info",
       autoHideDuration : 1000,
       action : (key) => (
-        <IconButton key="close" aria-label="Close" color="inherit" onClick={() => this.props.closeSnackbar(key)}>
-          <CloseIcon />
+        <IconButton style={iconMedium} key="close" aria-label="Close" color="inherit" onClick={() => this.props.closeSnackbar(key)}>
+          <CloseIcon style={iconMedium} />
         </IconButton>
       ),
     });
@@ -477,8 +479,8 @@ class MesheryPerformanceComponent extends React.Component {
             variant : "info",
             autoHideDuration : 1000,
             action : (key) => (
-              <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
-                <CloseIcon />
+              <IconButton style={iconMedium} key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
+                <CloseIcon style={iconMedium} />
               </IconButton>
             ),
           });
@@ -642,8 +644,8 @@ class MesheryPerformanceComponent extends React.Component {
       self.props.enqueueSnackbar(finalMsg, {
         variant : "error",
         action : (key) => (
-          <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
-            <CloseIcon />
+          <IconButton style={iconMedium} key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
+            <CloseIcon style={iconMedium} />
           </IconButton>
         ),
         autoHideDuration : 4000,
@@ -1019,12 +1021,13 @@ class MesheryPerformanceComponent extends React.Component {
                   Test Results
                   <IconButton
                     key="download"
+                    style={iconMedium}
                     aria-label="download"
                     color="inherit"
                     // onClick={() => self.props.closeSnackbar(key) }
                     href={`/api/perf/profile/result/${encodeURIComponent(result.meshery_id)}`}
                   >
-                    <GetAppIcon />
+                    <GetAppIcon style={iconMedium}/>
                   </IconButton>
                 </Typography>
                 <div className={classes.chartContent} style={chartStyle}>

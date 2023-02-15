@@ -18,6 +18,7 @@ import GenericModal from "../GenericModal";
 import MesheryPerformanceComponent from "./index";
 import fetchPerformanceProfiles from "../graphql/queries/PerformanceProfilesQuery";
 import fetchAllResults from "../graphql/queries/FetchAllResultsQuery";
+import { iconMedium } from "../../css/icons.styles";
 
 // const MESHERY_PERFORMANCE_URL = "/api/user/performance/profiles";
 // const MESHERY_PERFORMANCE_TEST_URL = "/api/user/performance/profiles/results";
@@ -145,8 +146,8 @@ function Dashboard({ updateProgress, enqueueSnackbar, closeSnackbar, grafana, ro
       enqueueSnackbar(`${msg}: ${error}`, { variant : "error",
         action : function Action(key) {
           return (
-            <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-              <CloseIcon />
+            <IconButton style={iconMedium} key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+              <CloseIcon style={iconMedium} />
             </IconButton>
           );
         },
@@ -166,7 +167,7 @@ function Dashboard({ updateProgress, enqueueSnackbar, closeSnackbar, grafana, ro
                     <Typography variant="h2" component="div" color="primary" style={{ marginRight : "0.75rem" }}>
                       {(tests.count).toLocaleString('en')}
                     </Typography>
-                    <Typography variant="body1" style={{ color : "rgba(0, 0, 0, 0.54)" }} component="div">
+                    <Typography  variant="body1" style={{ color : "rgba(0, 0, 0, 0.54)" }} component="div">
                       Results
                     </Typography>
                   </div>

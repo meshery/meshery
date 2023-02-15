@@ -15,6 +15,7 @@ import TableSortLabel from "@material-ui/core/TableSortLabel";
 import PerformanceResults from "./PerformanceResults";
 import EditIcon from '@material-ui/icons/Edit';
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
+import { iconMedium } from "../../css/icons.styles";
 
 const styles = (theme) => ({ grid : { padding : theme.spacing(2), },
   tableHeader : { fontWeight : "bolder",
@@ -202,6 +203,7 @@ function MesheryTestProfiles({
           return (
             <div>
               <IconButton
+                style={iconMedium}
                 onClick={(ev) => {
                   ev.stopPropagation();
                   setSelectedProfile(testProfiles[tableMeta.rowIndex]);
@@ -210,9 +212,10 @@ function MesheryTestProfiles({
                 // @ts-ignore
                 color="rgba(0, 0, 0, 0.54)"
               >
-                <EditIcon />
+                <EditIcon style={iconMedium} />
               </IconButton>
               <IconButton
+                style={iconMedium}
                 onClick={(ev) => {
                   ev.stopPropagation();
                   setSelectedProfile({ ...testProfiles[tableMeta.rowIndex], runTest : true });
@@ -221,7 +224,8 @@ function MesheryTestProfiles({
                 // @ts-ignore
                 color="rgba(0, 0, 0, 0.54)"
               >
-                <PlayArrowIcon />
+                <PlayArrowIcon
+                  style={iconMedium} />
               </IconButton>
             </div>
           );
