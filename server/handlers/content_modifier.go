@@ -103,10 +103,9 @@ func (mc *ContentModifier) isPatternSupported(ctx context.Context, patternfile s
 		nil,
 		nil,
 	)
-	msg, ok = resp["messages"].(string)
 	if err != nil {
 		return err.Error(), false
 	}
-
+	msg, _ = resp["messages"].(string)
 	return msg, true
 }

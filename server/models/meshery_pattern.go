@@ -33,6 +33,12 @@ type MesheryCatalogPatternRequestBody struct {
 	CatalogData sql.Map   `json:"catalog_data,omitempty"`
 }
 
+// MesheryCatalogPatternRequestBody refers to the type of request body
+// that CloneMesheryPatternHandler would receive
+type MesheryClonePatternRequestBody struct {
+	Name string `json:"name,omitempty"`
+}
+
 // GetPatternName takes in a stringified patternfile and extracts the name from it
 func GetPatternName(stringifiedFile string) (string, error) {
 	out := map[string]interface{}{}
