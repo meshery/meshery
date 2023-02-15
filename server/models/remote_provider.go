@@ -252,7 +252,7 @@ func (l *RemoteProvider) executePrefSync(tokenString string, sess *Preference) {
 //
 // Every Remote Provider must offer this function
 func (l *RemoteProvider) InitiateLogin(w http.ResponseWriter, r *http.Request, _ bool) {
-	callback_URL := r.Context().Value(MesheryServerCallbackURL).(string)
+	callbackURL := r.Context().Value(MesheryServerCallbackURL).(string)
 
 	_, err := r.Cookie(tokenName)
 	if err != nil {
@@ -263,7 +263,7 @@ func (l *RemoteProvider) InitiateLogin(w http.ResponseWriter, r *http.Request, _
 			Path:     "/",
 			HttpOnly: true,
 		})
-		http.Redirect(w, r, l.RemoteProviderURL+"?source="+base64.RawURLEncoding.EncodeToString([]byte(callback_URL))+"&provider_version="+l.ProviderVersion, http.StatusFound)
+		http.Redirect(w, r, l.RemoteProviderURL+"?source="+base64.RawURLEncoding.EncodeToString([]byte(callbackURL))+"&provider_version="+l.ProviderVersion, http.StatusFound)
 		return
 	}
 
@@ -2879,7 +2879,7 @@ func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, fr
 
 		err := l.SaveConnection(r, conn, tokenString, true)
 		if err != nil {
-			logrus.Errorf("unable to save meshery connection: %v", err)
+			logrus.Errorf("unable to save Meshery connection: %v", err)
 		}
 	}()
 	http.Redirect(w, r, redirectURL, http.StatusFound)
