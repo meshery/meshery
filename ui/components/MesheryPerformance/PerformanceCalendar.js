@@ -15,6 +15,8 @@ import MesheryChart from "../MesheryChart";
 import { Paper, withStyles } from "@material-ui/core";
 import { Typography } from "@material-ui/core";
 import fetchAllResults from '../graphql/queries/FetchAllResultsQuery'
+import { iconMedium } from "../../css/icons.styles";
+
 
 const localizer = momentLocalizer(moment);
 const styles = (theme) => ({
@@ -219,8 +221,8 @@ function PerformanceCalendar({
         variant : "error",
         action : function Action(key) {
           return (
-            <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-              <CloseIcon />
+            <IconButton style={iconMedium} key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+              <CloseIcon style={iconMedium}/>
             </IconButton>
           );
         },
@@ -250,7 +252,7 @@ function PerformanceCalendar({
         }}
       >
         <div>
-          <Typography variant="h6" gutterBottom align="center">Performance Graph</Typography>
+          <Typography variant="h6" gutterBottom align="center">Performance Graph Typography</Typography>
           <MesheryChart rawdata={[result && result.runner_results ? result : {}]} data={[result && result.runner_results
             ? result.runner_results
             : {}]} />

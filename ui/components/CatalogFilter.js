@@ -2,7 +2,8 @@ import VisibilityIcon from '@material-ui/icons/Visibility';
 import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
 import { Button } from "@material-ui/core";
 import PropTypes from "prop-types";
-import { iconMedium } from '../css/icons.styles';
+// import { iconMedium } from '../css/icons.styles';
+import iconMedium from '../'
 
 function CatalogFilter({ catalogVisibility, handleCatalogVisibility, hideCatalog }) {
   return (

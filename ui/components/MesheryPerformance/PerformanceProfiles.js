@@ -20,6 +20,7 @@ import { Paper, Typography, Button } from "@material-ui/core";
 import fetchPerformanceProfiles from "../graphql/queries/PerformanceProfilesQuery";
 import { withStyles } from "@material-ui/core/styles";
 import subscribePerformanceProfiles from "../graphql/subscriptions/PerformanceProfilesSubscription";
+import { iconMedium, iconXLarge } from "../../css/icons.styles";
 
 const MESHERY_PERFORMANCE_URL = "/api/user/performance/profiles";
 const styles = () => ({
@@ -83,11 +84,11 @@ function ViewSwitch({ view, changeView }) {
       onChange={(_, newView) => changeView(newView)}
       aria-label="Switch View"
     >
-      <ToggleButton value="grid">
-        <GridOnIcon />
+      <ToggleButton style={iconXLarge} value="grid">
+        <GridOnIcon style={iconMedium} />
       </ToggleButton>
-      <ToggleButton value="table">
-        <TableChartIcon />
+      <ToggleButton style={iconXLarge} value="table">
+        <TableChartIcon style={iconMedium}/>
       </ToggleButton>
     </ToggleButtonGroup>
   );
@@ -183,7 +184,7 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar, cl
   }
 
   async function showModal(count) {
-    let response = await modalRef.current.show({
+    let response = await modalRef.current?.show({
       title : `Delete ${count ? count : ""} Performance Profile${count > 1 ? "s" : ''}?`,
       subtitle : `Are you sure you want to delete ${count > 1 ? "these" : 'this'} ${count ? count : ""} performance profile${count > 1 ? "s" : ''}?`,
 
@@ -207,8 +208,8 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar, cl
           autoHideDuration : 2000,
           action : function Action(key) {
             return (
-              <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-                <CloseIcon />
+              <IconButton style={iconMedium} key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+                <CloseIcon style={iconMedium} />
               </IconButton>
             );
           },
@@ -217,7 +218,7 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar, cl
         fetchTestProfiles(page, pageSize, search, sortOrder);
       },
       handleError("Failed To Delete Profile")
-    );
+    )
   }
 
 
@@ -229,8 +230,8 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar, cl
         variant : "error",
         action : function Action(key) {
           return (
-            <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-              <CloseIcon />
+            <IconButton style={iconMedium} key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+              <CloseIcon style={iconMedium} />
             </IconButton>
           );
         },
@@ -253,7 +254,7 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar, cl
                 // @ts-ignore
                 onClick={() => setProfileForModal({})}
               >
-                <AddIcon className={classes.addIcon} />
+                <AddIcon style={iconMedium} className={classes.addIcon} />
                 Add Performance Profile
               </Button>
             </div>
