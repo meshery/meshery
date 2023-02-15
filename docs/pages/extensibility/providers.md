@@ -294,7 +294,9 @@ Meshery Server will proxy all requests to remote provider endpoints. Endpoints a
 ##### Meshery Server Registration
 
 Every Meshery server is capable of registering itself with the remote provider, considering that remote provider supports this feature as a capability.
-On successful authentication with the remote provider, Meshery server registers itself by sending following information to the remote provider through the `persist-connection` capability of remote provider.
+On successful authentication with the remote provider, Meshery server registers itself by sending a POST request to the remote provider through the `persist-connection` capability. The body of the request should include information so as to uniquely indentify Meshery server and its status.
+
+Example of the request body:
 
 ```json
   {
