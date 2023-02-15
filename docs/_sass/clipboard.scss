@@ -6,14 +6,15 @@ pre.codeblock-pre {
   align-content: left;
   flex-wrap: nowrap;
   flex-direction: row;
+  overflow: hidden !important;
   margin: 0;
-  padding: 10px;
+  padding: 0 !important;
+  font-size: 1.5rem;
   border-radius: 4px;
   width: 100%;
   box-shadow: var(--box-shadow-primary);
   background-color: var(--color-secondary-dark) !important;
   max-width: 700px;
-  overflow: hidden;
 }
 
 .codeblock {
@@ -44,8 +45,6 @@ pre.codeblock-pre {
 }
 
 .clipbtn {
-  // position: absolute;
-  // top: -3.5rem;
   right: 0;
   margin: 5px;
   border: 0px;
