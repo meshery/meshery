@@ -1,14 +1,26 @@
 {
     "Meshery": {
-        "ProviderType": "remote",
-        "DisplayName": "Meshery",
-        "Description": "Provider: Meshery (default)\n\t- persistent sessions \n\t- save environment setup \n\t- retrieve performance test results \n\t- free use",
-        "Capabilities": []
+        "provider_type": "remote",
+        "provider_name": "Meshery",
+        "provider_description": [
+            "Persistent sessions",
+            "Save environment configurations and user preferences",
+            "Store and retrieve patterns, filters, and application defintions",
+            "Retrieve performance and conformance test results",
+            "RBAC support",
+            "Free use"
+        ],
+        "provider_url": "https://meshery.layer5.io"
     },
     "None": {
-        "ProviderType": "local",
-        "DisplayName": "None",
-        "Description": "Provider: None\n\t- ephemeral sessions\n\t- environment setup not saved\n\t- no performance test result history\n\t- free use",
-        "Capabilities": []
+        "provider_type": "local",
+        "package_version": "v0.6.51",
+        "provider_name": "None",
+        "provider_description": [
+            "Ephemeral sessions",
+            "Environment setup not saved",
+            "No performance or conformance test result history",
+            "Free Use"
+        ]
     }
 }
