@@ -184,7 +184,7 @@ function Dashboard({ updateProgress, enqueueSnackbar, closeSnackbar, grafana, ro
                     <Typography className={classes.resultNum} variant="h2" component="div" color="primary" style={{ marginRight : "0.75rem" }}>
                       {(tests.count).toLocaleString('en')}
                     </Typography>
-                    <Typography variant="body1" className={classes.resultText} component="div">
+                    <Typography  variant="body1" style={{ color : "rgba(0, 0, 0, 0.54)" }} component="div">
                       Results
                     </Typography>
                   </div>

@@ -34,7 +34,7 @@ import {
   FacebookShareButton,
 
 } from "react-share"
-import { iconMedium } from "../../css/icons.styles";
+import { iconMedium, iconLarge } from "../../css/icons.styles";
 
 const COL_MAPPING = {
   QPS : 3,
@@ -275,7 +275,7 @@ function generateColumnsForDisplay(sortOrder, setSelectedProfileIdxForChart, set
                 aria-label="Share"
                 onClick={(e) => handleSocialExpandClick(e, tableMeta)}
               >
-                <ReplyIcon className={classes.share} />
+                <ReplyIcon style={iconLarge} className={classes.share}/>
               </IconButton>
               <Popper open={socialExpand[tableMeta.rowIndex]} anchorEl={anchorEl[tableMeta.rowIndex]} transition >
                 {({ TransitionProps }) => (
@@ -286,11 +286,11 @@ function generateColumnsForDisplay(sortOrder, setSelectedProfileIdxForChart, set
                           hashtags={["opensource"]}
                         >
                           {/* <img src={`/static/img/twitter.svg`} /> */}
-                          <TwitterIcon />
+                          <TwitterIcon  />
                         </TwitterShareButton>
                         <LinkedinShareButton  className={classes.socialIcon} url={"https://meshery.io"} summary={socialMessage}>
                           {/* <img src={`/static/img/linkedin.svg`} /> */}
-                          <LinkedinIcon />
+                          <LinkedinIcon  />
                         </LinkedinShareButton>
                         <FacebookShareButton  className={classes.socialIcon} url={"https://meshery.io"} quote={socialMessage}
                           hashtag={"#opensource"}
