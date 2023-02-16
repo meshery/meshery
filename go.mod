@@ -10,6 +10,7 @@ replace (
 	github.com/go-openapi/strfmt => github.com/go-openapi/strfmt v0.20.2
 	github.com/kubernetes/kompose => github.com/meshery/kompose v1.0.1 // do not upgrade until https://github.com/meshery/kompose/pull/3 has been merged
 	github.com/kudobuilder/kuttl => github.com/layer5io/kuttl v0.4.1-0.20200806180306-b7e46afd657f
+	github.com/layer5io/meshkit v0.6.25 => ../meshkit
 	gonum.org/v1/plot v0.9.0 => github.com/gonum/plot v0.9.0
 	vbom.ml/util => github.com/fvbommel/util v0.0.0-20180919145318-efcd4e0f9787
 )
@@ -237,7 +238,7 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	gorm.io/driver/postgres v1.4.6 // indirect
 	gorm.io/driver/sqlite v1.4.4 // indirect
-	helm.sh/helm/v3 v3.11.0 // indirect
+	helm.sh/helm/v3 v3.11.1 // indirect
 	k8s.io/apiserver v0.26.0 // indirect
 	k8s.io/cli-runtime v0.26.0 // indirect
 	k8s.io/component-base v0.26.0 // indirect
