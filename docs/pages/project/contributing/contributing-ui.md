@@ -95,17 +95,13 @@ The script supports other node versions as well, including node15 and node17, bu
 
 To install/update the UI dependencies:
 
-```
-make ui-setup
-```
+{% include code.html code="make ui-setup" %}
 
 ### Build and export UI
 
 To build and export the UI code:
 
-```
-make ui-build
-```
+{% include code.html code="make ui-build" %}
 
 Using this command, changes that you make are not rebuilt automatically. You will have to run this command again to rebuild the UI and see them.
 
@@ -113,17 +109,13 @@ Now that the UI code is built, Meshery UI will be available at `http://localhost
 
 To build and export the UI code _and_ build and run Meshery Server:
 
-```
-make ui-server
-```
+{% include code.html code="make ui-server" %}
 
 ## Run Meshery Server
 
 To start running Meshery Server locally:
 
-```
-$ make server
-```
+{% include code.html code="make server" %}
 Now, Meshery will run on the default port `http://localhost:9081`.
 
 
@@ -131,9 +123,7 @@ Now, Meshery will run on the default port `http://localhost:9081`.
 
 If you want to work on the UI, it will be a good idea to use the included UI development server. You can run the UI development server by running the following command:
 
-```
-make ui
-```
+{% include code.html code="make ui" %}
 
 Refer to [Contributing to Meshery Server](contributing-server), if needed.
 
@@ -144,10 +134,7 @@ Any UI changes made now will _automatically_ be rebuilt and served in your brows
 ### Running Cypress integration tests
 
 To run cypress integration tests, a convenience make target called `ui-integration-tests` that installs dependencies in `/ui` and `/provider-ui` folders as prerequisite and invokes `ci-test-integration` npm script found in [/ui/package.json](https://github.com/meshery/meshery/blob/master/ui/package.json)
-<pre class="codeblock-pre"><div class="codeblock">
-   <code class="clipboardjs">
-     $ make ui-integration-tests
-   </code></div></pre>
+{% include code.html code="make ui-integration-tests" %}
 {% include alert.html type="info" title="Above command must be run from Meshery repository's root folder." %}
 
 Refer to [Meshery Cypress Testing](contributing-cypress) for details of how to contribute and benefit from Meshery Cypress (integration & end-to-end) testing.
@@ -175,7 +162,7 @@ Images and icons used in Meshery UI need to be sourced from the [public director
 3. All SVGs should have `height` and `width` properties set to 20px x 20px by default. Ensure that height and width attributes are always set in original SVG.
 4. All SVGs should have `height` and `width` included as a style prop in their React component. 
 5. Always include this XML header in each SVG image:
-      ```
+      ```xml
       <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE svg>
       ```
 4. Svg can only fall under two categories, and this categories should be the name of folder \
@@ -193,8 +180,7 @@ Images and icons used in Meshery UI need to be sourced from the [public director
 5. Avoid any kind of duplicity in the versions of icons used.
 
 For accessing the svg file as data-url, the utf8 encoding should be used in place of base64.Use [encodeURIComponent](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURIComponent) on SVG data URIs. \
-  ```
-  let svg = 'data:image/svg+xml;utf8,' + encodeURIComponent(svgFile);
-  ```
+
+{% include code.html code="let svg = 'data:image/svg+xml;utf8,' + encodeURIComponent(svgFile);" %}
 
 {% include suggested-reading.html %}
