@@ -17,6 +17,7 @@ import {
 } from "./helpers";
 import { isEmptyObj } from "../../utils/utils";
 import { useSnackbar } from 'notistack';
+import { iconMedium } from "../../css/icons.styles";
 
 const useStyles = makeStyles((theme) => ({
   accordionRoot : {
@@ -110,7 +111,7 @@ export default function LazyPatternServiceForm(props) {
   return (
     <div className={classes.accordionRoot}>
       <Accordion elevation={0} expanded={expanded} onChange={() => expand(!expanded)}>
-        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+        <AccordionSummary expandIcon={<ExpandMoreIcon style={iconMedium} />}>
           <Typography className={classes.heading}>{getReadableItemName(props?.schemaSet?.workload)}</Typography>
         </AccordionSummary>
         <LazyAccordionDetails expanded={expanded}>

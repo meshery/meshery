@@ -156,40 +156,40 @@ darkTheme = {
       },
     },
     // Global scrollbar and body styles
-    MuiCssBaseline : {
-      "@global" : {
-        body : {
-          backgroundColor : "#303030",
-          scrollbarColor : "#6b6b6b #263238",
-          "&::-webkit-scrollbar, & *::-webkit-scrollbar" : {
-            backgroundColor : "#263238",
-            width : '0.7rem',
-          },
-          "&::-webkit-scrollbar-track, & *::-webkit-scrollbar-track" : {
-            backgroundColor : "#263238",
-            width : '0.7rem',
-          },
-          "&::-webkit-scrollbar-thumb, & *::-webkit-scrollbar-thumb" : {
-            borderRadius : 8,
-            backgroundColor : "#6b6b6b",
-            minHeight : 24,
-            border : "3px solid #263238",
-          },
-          "&::-webkit-scrollbar-thumb:focus, & *::-webkit-scrollbar-thumb:focus" : {
-            backgroundColor : "#959595",
-          },
-          "&::-webkit-scrollbar-thumb:active, & *::-webkit-scrollbar-thumb:active" : {
-            backgroundColor : "#959595",
-          },
-          "&::-webkit-scrollbar-thumb:hover, & *::-webkit-scrollbar-thumb:hover" : {
-            backgroundColor : "#959595",
-          },
-          "&::-webkit-scrollbar-corner, & *::-webkit-scrollbar-corner" : {
-            backgroundColor : "#263238",
-          },
-        },
-      },
-    },
+    // MuiCssBaseline : {
+    //   "@global" : {
+    //     body : {
+    //       backgroundColor : "#303030",
+    //       scrollbarColor : "#6b6b6b #263238",
+    //       "&::-webkit-scrollbar, & *::-webkit-scrollbar" : {
+    //         backgroundColor : "#263238",
+    //         width : '0.7rem',
+    //       },
+    //       "&::-webkit-scrollbar-track, & *::-webkit-scrollbar-track" : {
+    //         backgroundColor : "#263238",
+    //         width : '0.7rem',
+    //       },
+    //       "&::-webkit-scrollbar-thumb, & *::-webkit-scrollbar-thumb" : {
+    //         borderRadius : 8,
+    //         backgroundColor : "#6b6b6b",
+    //         minHeight : 24,
+    //         border : "3px solid #263238",
+    //       },
+    //       "&::-webkit-scrollbar-thumb:focus, & *::-webkit-scrollbar-thumb:focus" : {
+    //         backgroundColor : "#959595",
+    //       },
+    //       "&::-webkit-scrollbar-thumb:active, & *::-webkit-scrollbar-thumb:active" : {
+    //         backgroundColor : "#959595",
+    //       },
+    //       "&::-webkit-scrollbar-thumb:hover, & *::-webkit-scrollbar-thumb:hover" : {
+    //         backgroundColor : "#959595",
+    //       },
+    //       "&::-webkit-scrollbar-corner, & *::-webkit-scrollbar-corner" : {
+    //         backgroundColor : "#263238",
+    //       },
+    //     },
+    //   },
+    // },
   },
   props : { MuiTab : { disableRipple : true, }, },
   mixins : { ...darkTheme.mixins, },
@@ -324,34 +324,34 @@ theme = {
     },
 
     // Global scrollbar styles
-    MuiCssBaseline : {
-      "@global" : {
+    // MuiCssBaseline : {
+    //   "@global" : {
 
-        body : {
-          backgroundColor : "#eaeff1",
-          scrollbarColor : "#DDDDDD #FFF",
-          "&::-webkit-scrollbar, & *::-webkit-scrollbar" : {
-            backgroundColor : "#DDDDDD",
-            width : '0.7rem',
-          },
-          "&::-webkit-scrollbar-thumb, & *::-webkit-scrollbar-thumb" : {
-            borderRadius : 8,
-            backgroundColor : "#959595",
-            minHeight : 24,
-            border : "3px solid #DDDDDD",
-          },
-          "&::-webkit-scrollbar-thumb:focus, & *::-webkit-scrollbar-thumb:focus" : {
-            backgroundColor : "#959595",
-          },
-          "&::-webkit-scrollbar-thumb:active, & *::-webkit-scrollbar-thumb:active" : {
-            backgroundColor : "#959595",
-          },
-          "&::-webkit-scrollbar-thumb:hover, & *::-webkit-scrollbar-thumb:hover" : {
-            backgroundColor : "#959595",
-          },
-        },
-      },
-    },
+    //     body : {
+    //       backgroundColor : "#eaeff1",
+    //       scrollbarColor : "#DDDDDD #FFF",
+    //       "&::-webkit-scrollbar, & *::-webkit-scrollbar" : {
+    //         backgroundColor : "#DDDDDD",
+    //         width : '0.7rem',
+    //       },
+    //       "&::-webkit-scrollbar-thumb, & *::-webkit-scrollbar-thumb" : {
+    //         borderRadius : 8,
+    //         backgroundColor : "#959595",
+    //         minHeight : 24,
+    //         border : "3px solid #DDDDDD",
+    //       },
+    //       "&::-webkit-scrollbar-thumb:focus, & *::-webkit-scrollbar-thumb:focus" : {
+    //         backgroundColor : "#959595",
+    //       },
+    //       "&::-webkit-scrollbar-thumb:active, & *::-webkit-scrollbar-thumb:active" : {
+    //         backgroundColor : "#959595",
+    //       },
+    //       "&::-webkit-scrollbar-thumb:hover, & *::-webkit-scrollbar-thumb:hover" : {
+    //         backgroundColor : "#959595",
+    //       },
+    //     },
+    //   },
+    // },
   },
   props : { MuiTab : { disableRipple : true, }, },
   mixins : { ...theme.mixins, },
@@ -364,7 +364,8 @@ export const notificationColors = {
   error : "#F91313",
   warning : "#F0A303",
   success : "#206D24",
-  info : "#2196F3"
+  info : "#2196F3",
+  darkRed : "#B32700"
 };
 
 export const darkNotificationColors = {
@@ -407,7 +408,7 @@ export const styles = (theme) => ({
     padding : '48px 36px 24px',
   },
   footer : {
-    backgroundColor : "#212121",
+    backgroundColor : darkTheme.palette.type == "dark" ? "#fff" : "#212121",
     padding : theme.spacing(2),
   },
   footerText : {

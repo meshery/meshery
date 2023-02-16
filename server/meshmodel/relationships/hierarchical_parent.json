@@ -9,16 +9,30 @@
   },
   "subType": "Parent",
   "selectors": {
-    "from": [
-      {
-        "kind": "Namespace",
-        "model": "Kubernetes"
-      }
-    ],
-    "to": [
-      {
-        "model": "Kubernetes"
-      }
-    ]
+    "allow":{
+      "from": [
+        {
+          "kind": "Namespace",
+          "model": "Kubernetes"
+        },
+        {
+          "kind": "Node",
+          "model": "Kubernetes"
+        }      
+      ],
+      "to": [
+        {
+          "model": "Kubernetes"
+        },
+        {
+          "kind":"Application",
+          "model": "Core"
+        }       
+      ]
+    },
+    "deny": {
+      "from": [],
+      "to": []
+    }
   }
 }

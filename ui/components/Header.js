@@ -40,6 +40,7 @@ import { SETTINGS } from '../constants/navigator';
 import { cursorNotAllowed, disabledStyle } from '../css/disableComponent.styles';
 import PromptComponent from './PromptComponent';
 import { iconMedium } from '../css/icons.styles';
+import { isExtensionOpen } from '../pages/_app';
 
 const lightColor = 'rgba(255, 255, 255, 0.7)';
 const styles = (theme) => ({
@@ -221,17 +222,26 @@ async function loadActiveK8sContexts() {
     console.error("An error occurred while loading k8sconfig", e)
   }
 }
+
 function LoadTheme({
   themeSetter
 }) {
   const defaultTheme = "light";
+
   useLayoutEffect(() => {
+    // disable dark mode in extension
+    if (isExtensionOpen()) {
+      themeSetter(defaultTheme);
+      return;
+    }
+
     if (localStorage.getItem("Theme") === null) {
       themeSetter(defaultTheme);
     } else {
       themeSetter(localStorage.getItem("Theme"));
     }
   }, []);
+
   return (
     <>
     </>

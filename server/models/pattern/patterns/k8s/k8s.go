@@ -40,7 +40,7 @@ func DryRunHelper(client *meshkube.Client, comp v1alpha1.Component) (st *v1.Stat
 func dryRun(rClient rest.Interface, k8sResource map[string]interface{}, namespace string) (st *v1.StatusApplyConfiguration, err error) {
 	st = v1.Status()
 	if namespace == "" || k8sResource["kind"] == "" || k8sResource["apiVersion"] == "" {
-		err = fmt.Errorf("Invalid resource or namespace not provided")
+		err = fmt.Errorf("invalid resource or namespace not provided")
 		return
 	}
 	aV := k8sResource["apiVersion"].(string)
@@ -60,7 +60,7 @@ func dryRun(rClient rest.Interface, k8sResource map[string]interface{}, namespac
 	resp, _ := res.Raw()
 	e := json.Unmarshal(resp, &st)
 	if e != nil {
-		err = fmt.Errorf("Cannot serialize Status object from the server: %s", e.Error())
+		err = fmt.Errorf("cannot serialize Status object from the server: %s", e.Error())
 		return
 	}
 	return
