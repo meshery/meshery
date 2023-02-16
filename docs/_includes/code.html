@@ -1,5 +1,9 @@
-<pre class="codeblock-pre"><div class="codeblock">
-    <code class="clipboardjs">
-    $ {{include.code}}
-    </code>
-</div></pre>
+<!-- {% capture code %}{{include.code}}{% endcapture %}
+{% assign formatted_code = code | newline_to_br %} -->
+<pre class="codeblock-pre">
+<div class="codeblock">
+<code class="clipboardjs">
+{{ include.code }}
+</code>
+</div>
+</pre>

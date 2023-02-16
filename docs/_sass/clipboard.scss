@@ -8,8 +8,8 @@ pre.codeblock-pre {
   flex-direction: row;
   overflow: hidden !important;
   margin: 0;
-  padding: 0 !important;
-  font-size: 1.5rem;
+  padding: 0 0 2rem 2rem !important;
+  font-size: 1.75rem !important;
   border-radius: 4px;
   width: 100%;
   box-shadow: var(--box-shadow-primary);
@@ -28,11 +28,8 @@ pre.codeblock-pre {
 }
 
 .clipboardjs {
-  display: inline-flex;
-  align-self: flex-end;
-  justify-content: left;
   width: 100%;
-  overflow-x: hidden;
+  overflow-x: auto;
   padding: 0px;
   margin: 0px;
   color: var(--color-primary-medium);
