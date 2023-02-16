@@ -1,10 +1,72 @@
 [
-  "localhost:10004",
-  "localhost:10006",
-  "localhost:10008",
-  "localhost:10009",
-  "localhost:10000",
-  "localhost:10001",
-  "localhost:10002",
-  "localhost:10003"
+  {
+    "adapter_location": "localhost:10007",
+    "name": "",
+    "version": "",
+    "git_commit_sha": "",
+    "ops": null
+  },
+  {
+    "adapter_location": "localhost:10009",
+    "name": "",
+    "version": "",
+    "git_commit_sha": "",
+    "ops": null
+  },
+  {
+    "adapter_location": "localhost:10010",
+    "name": "",
+    "version": "",
+    "git_commit_sha": "",
+    "ops": null
+  },
+  {
+    "adapter_location": "localhost:10000",
+    "name": "",
+    "version": "",
+    "git_commit_sha": "",
+    "ops": null
+  },
+  {
+    "adapter_location": "localhost:10002",
+    "name": "",
+    "version": "",
+    "git_commit_sha": "",
+    "ops": null
+  },
+  {
+    "adapter_location": "localhost:10004",
+    "name": "",
+    "version": "",
+    "git_commit_sha": "",
+    "ops": null
+  },
+  {
+    "adapter_location": "localhost:10005",
+    "name": "",
+    "version": "",
+    "git_commit_sha": "",
+    "ops": null
+  },
+  {
+    "adapter_location": "localhost:10006",
+    "name": "",
+    "version": "",
+    "git_commit_sha": "",
+    "ops": null
+  },
+  {
+    "adapter_location": "localhost:10012",
+    "name": "",
+    "version": "",
+    "git_commit_sha": "",
+    "ops": null
+  },
+  {
+    "adapter_location": "localhost:10001",
+    "name": "",
+    "version": "",
+    "git_commit_sha": "",
+    "ops": null
+  }
 ]
