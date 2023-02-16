@@ -34,7 +34,7 @@ import {
   FacebookShareButton,
 
 } from "react-share"
-import { iconMedium, iconLarge } from "../../css/icons.styles";
+import { iconMedium } from "../../css/icons.styles";
 
 const COL_MAPPING = {
   QPS : 3,
