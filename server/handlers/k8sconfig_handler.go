@@ -373,8 +373,8 @@ func RegisterK8sMeshModelComponents(ctx context.Context, config []byte, ctxID st
 		ComponentName: "kubernetes",
 		OperationId:   guid.NewString(),
 		EventType:     meshes.EventType_INFO,
-		Summary:       fmt.Sprintf("%d kubernetes components registered from %s", count, ctxName),
-		Details:       fmt.Sprintf("%d MeshModel components registered for Kubernetes context %s (%s)", count, ctxName, ctxID),
+		Summary:       fmt.Sprintf("%d Kubernetes components registered from %s", count, ctxName),
+		Details:       fmt.Sprintf("%d MeshModel components registered for Kubernetes context \"%s\" (%s)", count, ctxName, ctxID),
 	})
 	return
 }

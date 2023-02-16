@@ -2,6 +2,7 @@ package models
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/meshes"
@@ -64,8 +65,8 @@ func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, r
 						Component:     "core",
 						ComponentName: "Kubernetes",
 						EventType:     meshes.EventType_INFO,
-						Summary:       "Registration for kubernetes context " + ctxName + " started",
-						Details:       "Registration of " + ctxName + " components started for contextID: " + ctxID,
+						Summary:       fmt.Sprintf("Registration for Kubernetes context \"%s\" started", ctxName),
+						Details:       fmt.Sprintf("Registration for Kubernetes context \"%s\" started with context ID %s", ctxName, ctxID),
 						OperationId:   id.String(),
 					}
 					eb.Publish(&req)

@@ -193,6 +193,14 @@ type K8sContextPersistResponse struct {
 	Inserted   bool       `json:"inserted,omitempty"`
 }
 
+type Connection struct {
+	Kind             string                 `json:"kind,omitempty"`
+	SubType          string                 `json:"sub_type,omitempty"`
+	Type             string                 `json:"type,omitempty"`
+	MetaData         map[string]interface{} `json:"metadata,omitempty"`
+	CredentialSecret map[string]interface{} `json:"credential_secret,omitempty"`
+}
+
 // Feature is a type to store the features of the provider
 type Feature string
 
@@ -233,6 +241,8 @@ const (
 	CloneMesheryFilters Feature = "clone-meshery-filters" // /filters/clone
 
 	ShareDesigns Feature = "share-designs"
+
+	PersistConnection Feature = "persist-connection"
 )
 
 const (
@@ -261,6 +271,9 @@ const (
 	MeshSyncDataHandlersKey      ContextKey = "meshsyncdatahandlerskey"
 
 	RegistryManagerKey ContextKey = "registrymanagerkey"
+
+	MesheryServerURL         ContextKey = "mesheryserverurl"
+	MesheryServerCallbackURL ContextKey = "mesheryservercallbackurl"
 )
 
 // IsSupported returns true if the given feature is listed as one of
@@ -390,4 +403,7 @@ type Provider interface {
 	DeleteSchedule(req *http.Request, scheduleID string) ([]byte, error)
 
 	ExtensionProxy(req *http.Request) ([]byte, error)
+
+	SaveConnection(req *http.Request, conn *Connection, token string, skipTokenCheck bool) error
+	DeleteMesheryConnection() error
 }
