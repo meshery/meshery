@@ -2,6 +2,7 @@ package models
 
 import (
 	"context"
+	"sync"
 
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/meshes"
@@ -77,10 +78,15 @@ func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, r
 			OperationId:   id.String(),
 		}
 		eb.Publish(&req)
+
+		var mu sync.Mutex // declare a mutex for synchronizing access to the map
+
 		go func(ctx *K8sContext) {
 			// set the status to RegistrationComplete
 			defer func() {
+				mu.Lock()
 				cg.ctxRegStatusMap[ctxID] = RegistrationComplete
+				mu.Unlock()
 
 				cg.log.Info(ctxName, " components for contextID:", ctxID, " registered")
 			}()
