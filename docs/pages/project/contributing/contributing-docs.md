@@ -32,96 +32,78 @@ Meshery documentation is made of these components:
 
 - Fire up your WSL VM and install the ruby version manager (RVM):
 
-```bash
-  sudo apt update
-  sudo apt install curl g++ gnupg gcc autoconf automake bison build-essential libc6-dev \
-    	libffi-dev libgdbm-dev libncurses5-dev libsqlite3-dev libtool \
-    	libyaml-dev make pkg-config sqlite3 zlib1g-dev libgmp-dev \
-    	libreadline-dev libssl-dev
-  sudo gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3
-  curl -sSL https://get.rvm.io | sudo bash -s stable
-  sudo usermod -a -G rvm `whoami`
-```
+{% capture code_content %}sudo apt update
+sudo apt install curl g++ gnupg gcc autoconf automake bison build-essential libc6-dev \
+ 	libffi-dev libgdbm-dev libncurses5-dev libsqlite3-dev libtool \
+ 	libyaml-dev make pkg-config sqlite3 zlib1g-dev libgmp-dev \
+ 	libreadline-dev libssl-dev
+sudo gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3
+curl -sSL https://get.rvm.io | sudo bash -s stable
+sudo usermod -a -G rvm `whoami`{% endcapture %}
+{% include code.html code=code_content %}
 
 If `gpg --keyserver` gives an error, you can use:
 
-```bash
-  sudo gpg --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3
-```
+{% include code.html code="sudo gpg --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3" %}
 
 or
 
-```bash
-  sudo gpg2 --keyserver hkp://pool.sks-keyservers.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB
-```
+{% include code.html code="sudo gpg2 --keyserver hkp://pool.sks-keyservers.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB" %}
 
 Restart your WSL VM before moving forward.
 
 - For installing Ruby, run:
-  ```bash
-    rvm install ruby
-    rvm --default use ruby 2.7.1
-    gem update
-    gem install jekyll bundler
-  ```
-
+{% capture code_content %}rvm install ruby
+rvm --default use ruby 2.7.1
+gem update
+gem install jekyll bundler{% endcapture %}
+{% include code.html code=code_content %}
 ### For Linux
 
 - Prerequisites
-  ```bash
-    sudo apt-get update
-    sudo apt-get install autoconf bison build-essential libssl-dev libyaml-dev libreadline6-dev zlib1g-dev libncurses5-dev libffi-dev libgdbm3 libgdbm-dev
-  ```
-
+{% capture code_content %}sudo apt-get update
+sudo apt-get install autoconf bison build-essential libssl-dev libyaml-dev libreadline6-dev zlib1g-dev libncurses5-dev libffi-dev libgdbm3 libgdbm-dev{% endcapture %}
+{% include code.html code=code_content %}
 #### Installing rbenv
 
 - Cloning the rbenv repository
-  ```bash
-    git clone https://github.com/rbenv/rbenv.git ~/.rbenv
-  ```
+{% capture code_content %}git clone https://github.com/rbenv/rbenv.git ~/.rbenv{% endcapture %}
+{% include code.html code=code_content %}
   <strong>Note:</strong> Change bashrc with your shell specific rc file, for eg: if you are using zsh then the filename is zshrc.
 - Setting the path
-  ```bash
-    echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.bashrc
-  ```
+{% capture code_content %}echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.bashrc{% endcapture %}
+{% include code.html code=code_content %}
 - rbenv init
-  ```bash
-    echo 'eval "$(rbenv init -)"' >> ~/.bashrc
-  ```
+{% capture code_content %}echo 'eval "$(rbenv init -)"' >> ~/.bashrc{% endcapture %}
+{% include code.html code=code_content %}
 - Reload your bashrc
-  ```bash
-    source ~/.bashrc
-  ```
+{% capture code_content %}source ~/.bashrc{% endcapture %}
+{% include code.html code=code_content %}
 - Check installation
-  ```bash
-    type rbenv
-  ```
+{% capture code_content %}type rbenv{% endcapture %}
+{% include code.html code=code_content %}
 
 #### Install Ruby
 
 - rbenv install version
 
-```bash
-  rbenv install 2.7.5
-```
+{% capture code_content %}rbenv install 2.7.5{% endcapture %}
+{% include code.html code=code_content %}
 
 - To list all the versions that can be installed
 
-```bash
-  rbenv install --list-all
-```
+{% capture code_content %}rbenv install --list-all{% endcapture %}
+{% include code.html code=code_content %}
 
 - Set which Ruby version you want to use
 
-```bash
-  rbenv global version
-```
+{% capture code_content %}rbenv global version{% endcapture %}
+{% include code.html code=code_content %}
 
 - Check Ruby installation
 
-```bash
-  ruby -v
-```
+{% capture code_content %}ruby -v{% endcapture %}
+{% include code.html code=code_content %}
 
 ### For MacOS
 
@@ -130,33 +112,26 @@ Restart your WSL VM before moving forward.
 ### Get the code
 
 - Fork and then clone the [Meshery repository](https://github.com/layer5io/meshery)
-  ```bash
-  $ git clone https://github.com/YOUR-USERNAME/meshery
-  ```
+{% capture code_content %}git clone https://github.com/YOUR-USERNAME/meshery{% endcapture %}
+{% include code.html code=code_content %}
 - Change to the docs directory
-  ```bash
-  $ cd docs
-  ```
+{% capture code_content %}cd docs{% endcapture %}
+{% include code.html code=code_content %}
 - Install any Ruby dependencies
-
-  ```bash
-  $ gem install bundler
-  $ bundle install
-  ```
+{% capture code_content %}gem install bundler
+bundle install{% endcapture %}
+{% include code.html code=code_content %}
 
   <strong>Note:</strong> If you are a Mac user you do not need to install the Ruby dependencies, after moving on to the docs directory, you can serve the site.
 
 ### Serve the site
 
 - Serve the code locally
-  ```bash
-  $ make docs
-  ```
+{% capture code_content %}make docs{% endcapture %}
+{% include code.html code=code_content %}
 - If that gives an error run:
-
-  ```bash
-  $ bundle exec jekyll serve --drafts --config _config_dev.yml
-  ```
+{% capture code_content %}bundle exec jekyll serve --drafts --config _config_dev.yml{% endcapture %}
+{% include code.html code=code_content %}
 
   _From the Makefile, this command is actually running `$ bundle exec jekyll serve --drafts --livereload --config _config_dev.yml`. If this command causes errors try running the server without Livereload with this command: `$ bundle exec jekyll serve --drafts --config _config_dev.yml`. Just keep in mind you will have to manually restart the server to reflect any changes made without Livereload. There are two Jekyll configuration, `jekyll serve` for developing locally and `jekyll build` when you need to generate the site artefacts for production._
 
@@ -164,9 +139,8 @@ Restart your WSL VM before moving forward.
 
 If you've Docker and `make` installed in your system, then you can serve the site locally
 
-```
-$ make docker
-```
+{% capture code_content %}make docker{% endcapture %}
+{% include code.html code=code_content %}
 
 This doesn't require the need for installing Jekyll and Ruby in your system
 
@@ -186,10 +160,9 @@ So, you need to follow either of the three steps to resolve this problem;
 - Alternatively, if you have Docker installed, then type `make docker-docs` to view the changes
 - If you're unable to install the required Ruby version, then manually configure the `Gemfile` as below (not recommended! Do only if above two steps fail):
 
-```
-source "https://rubygems.org"
-ruby '2.7.1' //to any version you have installed
-```
+{% capture code_content %}source "https://rubygems.org"
+ruby '2.7.1' //to any version you have installed{% endcapture %}
+{% include code.html code=code_content %}
 
 Automatically the `Gemfile.lock` will update once the `make docs` is given (for Windows, run `bundle exec jekyll serve` if WSL2 isn't present)
 
@@ -207,13 +180,11 @@ Automatically the `Gemfile.lock` will update once the `make docs` is given (for 
 ### Create a Pull Request
 
 - After making changes, don't forget to commit with the sign-off flag (-s)!
-  ```bash
-  $ git commit -s -m “my commit message w/signoff”
-  ```
+{% capture code_content %}git commit -s -m “my commit message w/signoff”{% endcapture %}
+{% include code.html code=code_content %}
 - Once all changes have been committed, push the changes.
-  ```bash
-  $ git push origin <branch-name>
-  ```
+{% capture code_content %}git push origin <branch-name>{% endcapture %}
+{% include code.html code=code_content %}
 - Then on Github, navigate to the [Meshery repository](https://github.com/layer5io/meshery) and create a pull request from your recently pushed changes!
 
 ---
@@ -236,22 +207,20 @@ Most popular clipboard plugins like Clipboard JS require the manual creation of 
 **<pre></pre>** _tags are optional unless the code snippet is in a paragraph format and also gives a terminal like effect to the code_
 
 **A full block:**
-
-````
-```code snippet```
-````
+{% capture code_content %}```code snippet```{% endcapture %}
+{% include code.html code=code_content %}
 
 Inline formatting:
 
-\`code snippet\`: `code snippet`
+{% capture code_content %}\`code snippet\`: `code snippet`{% endcapture %}
+{% include code.html code=code_content %}
 
 **Language specific:**
 
-````
-```(language name)
-  code snippet
-```
-````
+{% capture code_content %}```(language name)
+code snippet
+```{% endcapture %}
+{% include code.html code=code_content %}
 
 Whenever the code tags are detected, the clipboard javascript file is automatically loaded. Each code element is given a custom id and a clipboard-copy icon to copy the content.
 
@@ -305,11 +274,11 @@ The output of the code snippet would be:
 
 This executes the block of code only if the given condition is true. It is executed in the following manner:
 
-```
-    {{ "{% if product.title == 'Awesome Shoes' " }}%}
-    These shoes are awesome!
-    {{ "{% endif " }}%}
-```
+{% capture code_content %}{{ "{% if product.title == 'Awesome Shoes' " }}%}
+  These shoes are awesome!
+{{ "{% endif " }}%}
+{% endcapture %}
+{% include code.html code=code_content %}
 
 If the condition is true, the output would be:
 
@@ -321,11 +290,10 @@ If the condition is true, the output would be:
 
 The for statement executes a block of code repeatedly. It is wriiten in the following manner:
 
-```
-    {{ "{% for names in collection.names " }}%}
-    {{ "{{ name.title "}}}}
-    {{ "{% endfor " }}%}
-```
+{% capture code_content %}{{ "{% for names in collection.names " }}%}
+  {{ "{{ name.title "}}}}
+{{ "{% endfor " }}%}{% endcapture %}
+{% include code.html code=code_content %}
 
 The output produced by the above code snippet:
 
@@ -341,17 +309,15 @@ Comments allow to leave a block of code unattended, any statements between openi
 
 The above tag is used to insert a already rendered file within the current template. It is written in the following manner:
 
-```
-    {{ "{% include file.html " }}%}
-```
+{% capture code_content %}{{ "{% include file.html " }}%}{% endcapture %}
+{% include code.html code=code_content %}
 
 ### Assign
 
 The assign tag is used to create a new variable. It is written in the following manner:
 
-```
-    {{ "{% assign variable1 = true " }}%}
-```
+{% capture code_content %}{{ "{% assign variable1 = true " }}%}{% endcapture %}
+{% include code.html code=code_content %}
 
 {% include suggested-reading.html %}
 
