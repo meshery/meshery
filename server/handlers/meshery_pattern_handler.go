@@ -413,8 +413,14 @@ func (h *Handler) CloneMesheryPatternHandler(
 	provider models.Provider,
 ) {
 	patternID := mux.Vars(r)["id"]
+	var parsedBody *models.MesheryClonePatternRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil || patternID == "" {
+		h.log.Error(ErrRequestBody(err))
+		http.Error(rw, ErrRequestBody(err).Error(), http.StatusBadRequest)
+		return
+	}
 
-	resp, err := provider.CloneMesheryPattern(r, patternID)
+	resp, err := provider.CloneMesheryPattern(r, patternID, parsedBody)
 	if err != nil {
 		h.log.Error(ErrClonePattern(err))
 		http.Error(rw, ErrClonePattern(err).Error(), http.StatusInternalServerError)

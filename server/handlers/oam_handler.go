@@ -109,7 +109,7 @@ func (h *Handler) PatternFileHandler(
 		return
 	}
 	ec := json.NewEncoder(rw)
-	ec.Encode(response)
+	_ = ec.Encode(response)
 }
 
 // swagger:route GET /api/oam/{type} PatternsAPI idGetOAMRegister
@@ -475,7 +475,7 @@ func _processPattern(
 							sap.accumulatedMsgs = append(sap.accumulatedMsgs, msg)
 						}
 					}
-					if k == stages.DRY_RUN_RESPONSE_KEY {
+					if k == stages.DryRunResponseKey {
 						if v != nil {
 							resp["dryRunResponse"] = v
 						}

@@ -15,7 +15,7 @@
           url: project/contributing/contributing-adapters
         - title: Meshery CLI
           url: project/contributing/contributing-cli
-        - title: "- CLI Design and Code Conventions"
+        - title: " - Design Principles"
           url: project/contributing/contributing-cli-guide
         - title: Meshery Docs
           url: project/contributing/contributing-docs

@@ -67,6 +67,7 @@ type ComplexityRoot struct {
 		Type            func(childComplexity int) int
 		UpdatedAt       func(childComplexity int) int
 		UserID          func(childComplexity int) int
+		Visibility      func(childComplexity int) int
 	}
 
 	CatalogFilter struct {
@@ -563,6 +564,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ApplicationResult.UserID(childComplexity), true
+
+	case "ApplicationResult.visibility":
+		if e.complexity.ApplicationResult.Visibility == nil {
+			break
+		}
+
+		return e.complexity.ApplicationResult.Visibility(childComplexity), true
 
 	case "CatalogFilter.catalog_data":
 		if e.complexity.CatalogFilter.CatalogData == nil {
@@ -2681,6 +2689,7 @@ type ApplicationResult {
   type: NullString!
   user_id: String!
   location: Location!
+  visibility: String!
   created_at: String
   updated_at: String
 }
@@ -4087,6 +4096,8 @@ func (ec *executionContext) fieldContext_ApplicationPage_applications(ctx contex
 				return ec.fieldContext_ApplicationResult_user_id(ctx, field)
 			case "location":
 				return ec.fieldContext_ApplicationResult_location(ctx, field)
+			case "visibility":
+				return ec.fieldContext_ApplicationResult_visibility(ctx, field)
 			case "created_at":
 				return ec.fieldContext_ApplicationResult_created_at(ctx, field)
 			case "updated_at":
@@ -4373,6 +4384,50 @@ func (ec *executionContext) fieldContext_ApplicationResult_location(ctx context.
 				return ec.fieldContext_Location_type(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Location", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ApplicationResult_visibility(ctx context.Context, field graphql.CollectedField, obj *model.ApplicationResult) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ApplicationResult_visibility(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Visibility, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ApplicationResult_visibility(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ApplicationResult",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
 		},
 	}
 	return fc, nil
@@ -17260,6 +17315,13 @@ func (ec *executionContext) _ApplicationResult(ctx context.Context, sel ast.Sele
 		case "location":
 
 			out.Values[i] = ec._ApplicationResult_location(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "visibility":
+
+			out.Values[i] = ec._ApplicationResult_visibility(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				invalids++

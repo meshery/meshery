@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<69f5137ccf198a4abb7c74df505200c9>>
+ * @generated SignedSource<<f531c8df6455038685791f7ad08df727>>
  * @flow
  * @lightSyntaxTransform
  * @nogrep
@@ -18,6 +18,7 @@ export type PageFilter = {|
   search?: ?string,
   from?: ?string,
   to?: ?string,
+  updated_after?: ?string,
 |};
 export type FetchAllResultsQuery$variables = {|
   selector: PageFilter,
