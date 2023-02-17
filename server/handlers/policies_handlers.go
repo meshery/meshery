@@ -19,10 +19,21 @@ func (h *Handler) GetAllMeshmodelPolicy(rw http.ResponseWriter,r *http.Request) 
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
 	res := h.registryManager.GetEntities(&v1alpha1.PolicyFilter{})
-	err := enc.Encode(res)
-	if err != nil {
-		http.Error(rw, err.Error(), http.StatusInternalServerError)
-		return
+	unique := make(map[string]bool)
+	var pls []v1alpha1.PolicyDefinition
+	for _, p := range res {
+		pl, ok := p.(v1alpha1.PolicyDefinition)
+		if !ok {
+			continue
+		}
+		if _, ok := unique[pl.Model.Name]; !ok {
+			pls = append(pls, pl)
+			unique[pl.Model.Name] = true
+		}
+	}
+	if err := enc.Encode(pls); err != nil {
+		h.log.Error(ErrWorkloadDefinition(err)) //TODO: Add appropriate meshkit error
+		http.Error(rw, ErrWorkloadDefinition(err).Error(), http.StatusInternalServerError)
 	}
 }
 
