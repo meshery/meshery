@@ -2,6 +2,7 @@ package models
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/meshes"
@@ -44,7 +45,7 @@ func (cg *ComponentsRegistrationHelper) UpdateContexts(ctxs []*K8sContext) *Comp
 	return cg
 }
 
-type K8sRegistrationFunction func(ctxt context.Context, config []byte, ctxID string, reg *meshmodel.RegistryManager) error
+type K8sRegistrationFunction func(ctxt context.Context, config []byte, ctxID string, reg *meshmodel.RegistryManager, es *events.EventStreamer, ctxName string) error
 
 // start registration of components for the contexts
 func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, regFunc []K8sRegistrationFunction, eb *events.EventStreamer, reg *meshmodel.RegistryManager) {
@@ -64,7 +65,8 @@ func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, r
 						Component:     "core",
 						ComponentName: "Kubernetes",
 						EventType:     meshes.EventType_INFO,
-						Summary:       "Registration of " + ctxName + " components started for contextID: " + ctxID,
+						Summary:       fmt.Sprintf("Registration for Kubernetes context \"%s\" started", ctxName),
+						Details:       fmt.Sprintf("Registration for Kubernetes context \"%s\" started with context ID %s", ctxName, ctxID),
 						OperationId:   id.String(),
 					}
 					eb.Publish(&req)
@@ -74,14 +76,6 @@ func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, r
 							cg.ctxRegStatusMap[ctxID] = RegistrationComplete
 
 							cg.log.Info(ctxName, " components for contextID:", ctxID, " registered")
-							req := meshes.EventsResponse{
-								Component:     "core",
-								ComponentName: "Kubernetes",
-								EventType:     meshes.EventType_INFO,
-								Summary:       ctxName + " components for contextID:" + ctxID + " registered",
-								OperationId:   id.String(),
-							}
-							eb.Publish(&req)
 						}()
 
 						// start registration
@@ -91,7 +85,7 @@ func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, r
 							return
 						}
 						for _, f := range regFunc {
-							err = f(context.Background(), cfg, ctxID, reg)
+							err = f(context.Background(), cfg, ctxID, reg, eb, ctxName)
 							if err != nil {
 								cg.log.Error(err)
 								return

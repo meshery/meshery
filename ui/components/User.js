@@ -21,6 +21,7 @@ import classNames from 'classnames';
 import { ListItem, List, Checkbox } from '@material-ui/core';
 import { withSnackbar } from "notistack";
 import CloseIcon from "@material-ui/icons/Close";
+import { isExtensionOpen } from '../pages/_app';
 
 
 const styles = () => ({
@@ -31,19 +32,29 @@ const styles = () => ({
     alignItems : "self-end"
   },
 });
+
 function ThemeToggler({
-  theme, themeSetter
+  theme, themeSetter, enqueueSnackbar
 }) {
   const [themeToggle, setthemeToggle] = useState(false);
   const defaultTheme = "light";
   const handle = () => {
+    if (isExtensionOpen()) {
+      return;
+    }
+
     theme === "dark" ? setthemeToggle(true) : setthemeToggle(false);
-
     localStorage.setItem("Theme", theme);
-
   };
 
   useLayoutEffect(() => {
+    if (isExtensionOpen()) {
+      if (localStorage.getItem("Theme") && localStorage.getItem("Theme") !== defaultTheme) {
+        themeSetter(defaultTheme);
+      }
+      return;
+    }
+
     if (localStorage.getItem("Theme") === null) {
       themeSetter(defaultTheme);
     } else {
@@ -52,10 +63,13 @@ function ThemeToggler({
 
   }, []);
 
-  useLayoutEffect(() => {
-    handle();
-  }, [theme]);
+  useLayoutEffect(handle, [theme]);
+
   const themeToggler = () => {
+    if (isExtensionOpen()) {
+      enqueueSnackbar("Toggling between themes is not supported in MeshMap", { variant : "info", preventDuplicate : true })
+      return;
+    }
     theme === "light" ? themeSetter("dark") : themeSetter("light");
   };
 
@@ -65,6 +79,8 @@ function ThemeToggler({
     </div>
   )
 }
+
+
 function exportToJsonFile(jsonData, filename) {
   let dataStr = JSON.stringify(jsonData);
   let dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
@@ -263,7 +279,7 @@ class User extends React.Component {
                       <MenuItem onClick={this.handleGetToken}>Get Token</MenuItem>
                       <MenuItem onClick={this.handlePreference}>Preferences</MenuItem>
                       <MenuItem onClick={this.handleLogout}>Logout</MenuItem>
-                      <MenuItem >  <ThemeToggler classes={classes} theme={theme} themeSetter={themeSetter} /></MenuItem>
+                      <MenuItem >  <ThemeToggler classes={classes} theme={theme} themeSetter={themeSetter} enqueueSnackbar={this.props.enqueueSnackbar} /></MenuItem>
                     </MenuList>
                   </ClickAwayListener>
                 </Paper>
