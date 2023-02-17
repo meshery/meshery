@@ -628,11 +628,29 @@ func (sap *serviceActionProvider) DryRun(comps []v1alpha1.Component) (resp map[s
 			if err != nil {
 				return resp, err
 			}
+			if st == nil {
+				return resp, fmt.Errorf("failed to dry run")
+			}
 			dResp := stages.DryRunResponse{}
-			dResp.Status = *st.Status
+			if st.Status != nil {
+				dResp.Status = *st.Status
+			}
 			dResp.Causes = make([]stages.DryRunFailureCause, 0)
 			for _, c := range st.Details.Causes {
-				dResp.Causes = append(dResp.Causes, stages.DryRunFailureCause{Message: *c.Message, Field: *c.Field, Type: string(*c.Type)})
+				msg := ""
+				field := ""
+				typ := ""
+				if c.Message != nil {
+					msg = *c.Message
+				}
+				if c.Field != nil {
+					field = *c.Field
+				}
+				if c.Type != nil {
+					typ = string(*c.Type)
+				}
+				failureCase := stages.DryRunFailureCause{Message: msg, Field: field, Type: typ}
+				dResp.Causes = append(dResp.Causes, failureCase)
 			}
 			// a slice of DryRunResponse is used to concatenate the response for all the clusters
 			respSlice := make([]stages.DryRunResponse, 0)
