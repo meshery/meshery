@@ -161,10 +161,10 @@ Images and icons used in Meshery UI need to be sourced from the [public director
     1. Use an online, SVG optimizer, like https://www.svgviewer.dev, to compress the file(s) to smaller size.
 3. All SVGs should have `height` and `width` properties set to 20px x 20px by default. Ensure that height and width attributes are always set in original SVG.
 4. All SVGs should have `height` and `width` included as a style prop in their React component. 
-5. Always include this XML header in each SVG image:
-      ```xml
-      <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE svg>
-      ```
+5. Always include this XML header in each SVG image:  
+    <pre class="codeblock-pre"><div class="codeblock">
+    <div class="clipboardjs">&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;!DOCTYPE svg&gt;</div></div>
+    </pre>
 4. Svg can only fall under two categories, and this categories should be the name of folder \
     1. white: containing white or mono-colored version of that SVG
     2. color: containing colored version of that SVG.
