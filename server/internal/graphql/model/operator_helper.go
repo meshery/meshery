@@ -135,7 +135,7 @@ func GetMeshSyncInfo(mesheryclient operatorClient.Interface, mesheryKubeClient *
 		Version: meshsyncVersion,
 		Status:  Status(meshsyncStatus),
 	}
-	
+
 	return meshsyncControllerStatus, nil
 }
 
