@@ -900,7 +900,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
         if (res.controller.name === "MeshSync") {
           setMeshSyncStatusForGivenContext(ctxId, res.controller)
         }
-        
+
         if (res.controller.name === "MeshSync" && res.controller.status.includes("Connected")) {
           let publishEndpoint = res.controller.status.substring("Connected".length)
           enqueueSnackbar(`MeshSync was pinged. ${publishEndpoint != "" ? `Publishing to ${publishEndpoint}` : ""}`, {
