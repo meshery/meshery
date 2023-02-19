@@ -39,7 +39,7 @@ func DryRunHelper(client *meshkube.Client, comp v1alpha1.Component) (st *v1.Stat
 // TODO: add more tests for this function
 func dryRun(rClient rest.Interface, k8sResource map[string]interface{}, namespace string) (st *v1.StatusApplyConfiguration, err error) {
 	st = v1.Status()
-	if namespace == "" || k8sResource["kind"] == "" || k8sResource["apiVersion"] == "" {
+	if k8sResource["kind"] == "" || k8sResource["apiVersion"] == "" {
 		err = fmt.Errorf("invalid resource or namespace not provided")
 		return
 	}
@@ -49,7 +49,13 @@ func dryRun(rClient rest.Interface, k8sResource map[string]interface{}, namespac
 	if len(strings.Split(aV, "/")) > 1 {
 		apiString = apiString + "s"
 	}
-	path := fmt.Sprintf("/%s/%s/namespaces/%s/%s", apiString, aV, "default", kindToResource(k8sResource["kind"].(string)))
+	var path string
+	if namespace != "" {
+		path = fmt.Sprintf("/%s/%s/namespaces/%s/%s", apiString, aV, namespace, kindToResource(k8sResource["kind"].(string)))
+	} else {
+		path = fmt.Sprintf("/%s/%s/%s", apiString, aV, kindToResource(k8sResource["kind"].(string)))
+	}
+
 	data, err := json.Marshal(k8sResource)
 	if err != nil {
 		return
