@@ -9,7 +9,7 @@ language: en
 list: include
 ---
 
-Meshery offers Providers as a point of extensibility. With a built-in Local Provider (named "None"), Meshery Remote Providers are designed to be pluggable. Remote Providers offer points of extension to users / integrators to deliver enhanced functionality, using Meshery as a platform.
+Meshery offers Providers as a point of extensibility. With a built-in Local Provider (named "None"), Meshery Remote Providers are designed to be pluggable. Remote Providers offer points of extension to users / integrators to deliver enhanced functionality, using Meshery as a platform. A specific provider can be enforced in a Meshery instance by passing the name of the provider with the env variable PROVIDER.
 
 1. **Extensibility points offer clean separation of Meshery's core functionality versus plugin functionality.**
    - Meshmap is an example of a feature to be delivered via Remote Provider.
@@ -18,7 +18,7 @@ Meshery offers Providers as a point of extensibility. With a built-in Local Prov
 
 ### Design Principles: Meshery Remote Provider Framework
 
-Meshery's Remote Provider extensbility framework is designed to enable:
+Meshery's Remote Provider extensibility framework is designed to enable:
 
 1. **Pluggable UI Functionality:**
 
@@ -147,8 +147,8 @@ Meshery Server will proxy all requests to remote provider endpoints. Endpoints a
           "uri": "/meshmap",
           "external": false
         },
-        "component": "provider/navigator/meshmap/index.js",
-        "icon": "provider/navigator/img/meshmap-icon.svg",
+        "component": "/provider/navigator/meshmap/index.js",
+        "icon": "/provider/navigator/img/meshmap-icon.svg",
         "link:": true,
         "show": true,
         "children": [
@@ -158,32 +158,154 @@ Meshery Server will proxy all requests to remote provider endpoints. Endpoints a
               "uri": "/meshmap/mesh/all",
               "external": false
             },
-            "component": "navigator/meshmap/index.js",
-            "icon": "navigator/img/singlemesh-icon.svg",
+            "component": "/provider/navigator/meshmap/index.js",
+            "icon": "/provider/navigator/img/singlemesh-icon.svg",
             "link": false,
             "show": true
           }
         ]
       }
     ],
+    "account": [
+      {
+          "title": "Overview",
+          "on_click_callback": 1,
+          "href": {
+              "uri": "/account/overview",
+              "external": false
+          },
+          "component": "/provider/account/profile/overview.js",
+          "link": true,
+          "show": true,
+          "type": "full_page"
+      },
+      {
+          "title": "Profile",
+          "on_click_callback": 1,
+          "href": {
+              "uri": "/account/profile",
+              "external": false
+          },
+          "component": "/provider/account/profile/profile.js",
+          "link": true,
+          "show": true,
+          "type": "full_page"
+      },
+      {
+          "title": "API Tokens",
+          "on_click_callback": 1,
+          "href": {
+              "uri": "/account/tokens",
+              "external": false
+          },
+          "component": "/provider/account/profile/tokens.js",
+          "link": true,
+          "show": true,
+          "type": "full_page"
+      }
+    ],
     "user_prefs": [
       {
-        "component": "userprefs/meshmap-preferences.js"
+        "component": "/provider/userprefs/meshmap-preferences.js"
       }
     ]
   },
   "capabilities": [
-    { "feature": "sync-prefs", "endpoint": "/user/preferences" },
-    { "feature": "persist-results", "endpoint": "/results" },
-    { "feature": "persist-result", "endpoint": "/result" },
-    { "feature": "persist-smi-results", "endpoint": "/smi/results" },
-    { "feature": "persist-metrics", "endpoint": "/result/metrics" },
-    { "feature": "persist-smp-test-profile", "endpoint": "/user/test-config" }
+    {
+        "feature": "sync-prefs",
+        "endpoint": "/user/preferences"
+    },
+    {
+        "feature": "persist-results",
+        "endpoint": "/results"
+    },
+    {
+        "feature": "persist-result",
+        "endpoint": "/result"
+    },
+    {
+        "feature": "persist-smi-results",
+        "endpoint": "/smi/results"
+    },
+    {
+        "feature": "persist-smi-result",
+        "endpoint": "/smi/result"
+    },
+    {
+        "feature": "persist-metrics",
+        "endpoint": "/result/metrics"
+    },
+    {
+        "feature": "persist-smp-test-profile",
+        "endpoint": "/user/test-config"
+    },
+    {
+        "feature": "persist-performance-profiles",
+        "endpoint": "/user/performance/profiles"
+    },
+    {
+        "feature": "persist-schedules",
+        "endpoint": "/user/schedules"
+    },
+    {
+        "feature": "persist-meshery-patterns",
+        "endpoint": "/patterns"
+    },
+    {
+        "feature": "persist-meshery-filters",
+        "endpoint": "/filters"
+    },
+    {
+        "feature": "persist-meshery-applications",
+        "endpoint": "/applications"
+    },
+    {
+        "feature": "persist-meshery-pattern-resources",
+        "endpoint": "/patterns/resource"
+    },
+    {
+        "feature": "meshery-patterns-catalog",
+        "endpoint": "/patterns/catalog"
+    },
+    {
+        "feature": "meshery-filters-catalog",
+        "endpoint": "/filters/catalog"
+    },
+    {
+        "feature": "clone-meshery-patterns",
+        "endpoint": "/patterns/clone"
+    },
+    {
+        "feature": "clone-meshery-filters",
+        "endpoint": "/filters/clone"
+    },
+    {
+        "feature": "share-designs",
+        "endpoint": "/api/content/design/share"
+    },
+    {
+        "feature": "persist-connection",
+        "endpoint": "/api/connection"
+    }
   ]
 }
 ```
 
-Meshery enables you as a service mesh owner to customize your service mesh deployment.
+##### Meshery Server Registration
+
+Every Meshery server is capable of registering itself with the remote provider, considering that remote provider supports this feature as a capability.
+On successful authentication with the remote provider, Meshery server registers itself by sending a POST request to the remote provider through the `persist-connection` capability. The body of the request should include information so as to uniquely indentify Meshery server and its status.
+
+Example of the request body:
+
+```json
+  {
+    "server_id": "xxxx-xxxxx-xxxx-xxxx",
+    "server_version": "vx.x.x",
+    "server_build-sha": "xxxx-xxxxx",
+    "server_location": "<protocol>://<hostname>:<port>”
+  }
+```
 
 ## Configurable OAuth Callback URL
 

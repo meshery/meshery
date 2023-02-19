@@ -12,6 +12,23 @@ image: /assets/img/service-meshes/nsm.svg
 permalink: service-meshes/adapters/nsm
 ---
 
+{% assign sorted_tests_group = site.compatibility | group_by: "meshery-component" %}
+{% for group in sorted_tests_group %}
+{% if group.name == "meshery-nsm" %}
+{% assign items = group.items | sort: "meshery-component-version" | reverse %}
+{% for item in items %}
+{% if item.meshery-component-version != "edge" %}
+{% if item.overall-status == "passing" %}
+{% assign adapter_version_dynamic = item.meshery-component-version %}
+{% break %}
+{% elsif item.overall-status == "failing" %}
+{% continue %}
+{% endif %}
+{% endif %}
+{% endfor %}
+{% endif %}
+{% endfor %}
+
 {% include adapter-status.html %}
 
 {% include adapter-labs.html %}
@@ -25,13 +42,13 @@ The {{page.name}} can install **{{page.earliest_version}}** of {{page.mesh_name}
 ##### Choose the Meshery Adapter for {{ page.mesh_name }}
 
 <a href="{{ site.baseurl }}/assets/img/adapters/nsm/nsm-adapter.png">
-  <img style="width:500px;" src="{{ site.baseurl }}/assets/img/adapters/nsm/nsm-adapter.png" />
+  <img style="width:500px; background: white" src="{{ site.baseurl }}/assets/img/adapters/nsm/nsm-adapter.png" />
 </a>
 
 Click on (+) and choose the {{page.earliest_version}} of the {{page.mesh_name}} service mesh.
 
 <a href="{{ site.baseurl }}/assets/img/adapters/nsm/nsm-install.png">
-  <img style="width:500px;" src="{{ site.baseurl }}/assets/img/adapters/nsm/nsm-install.png" />
+  <img style="width:500px; background: white" src="{{ site.baseurl }}/assets/img/adapters/nsm/nsm-install.png" />
 </a>
 
 ## Sample Applications
@@ -56,7 +73,7 @@ Network Service Mesh allows flexibility in the choice of mechanisms used to prov
 The icmp responder example does this with kernel interfaces. The vpp-icmp-responder provides and consumes the same 'icmp-responder' Network Service, but has Client's and Endpoint's that use a [memif](https://www.youtube.com/watch?v=6aVr32WgY0Q) high speed memory interfaces to achieve performance unavailable via kernel interfaces.
 
 <a href="{{ site.baseurl }}/assets/img/adapters/nsm/vpp-icmp-responder-example.svg">
-  <img style="width:500px;" src="{{ site.baseurl }}/assets/img/adapters/nsm/vpp-icmp-responder-example.svg" />
+  <img style="width:500px; background: white" src="{{ site.baseurl }}/assets/img/adapters/nsm/vpp-icmp-responder-example.svg" />
 </a>
 
 Working process
@@ -71,7 +88,7 @@ This will install two Deployments:
 And cause each Client to get a vWire connecting it to one of the Endpoints. Network Service Mesh handles the Network Service Discovery and Routing, as well as the vWire 'Connection Handling' for setting all of this up.
 
 <a href="{{ site.baseurl }}/assets/img/adapters/nsm/vpp-icmp-responder-example-2.svg">
-  <img style="width:500px;" src="{{ site.baseurl }}/assets/img/adapters/nsm/vpp-icmp-responder-example-2.svg" />
+  <img style="width:500px; background: white" src="{{ site.baseurl }}/assets/img/adapters/nsm/vpp-icmp-responder-example-2.svg" />
 </a>
 
 In order to make this case more interesting, Endpoint1 and Endpoint2 are deployed on two separate Nodes using PodAntiAffinity, so that the Network Service Mesh has to demonstrate the ability to string vWires between Clients and Endpoints on the same Node and Clients and Endpoints on different Nodes.
@@ -99,7 +116,7 @@ To see the vpp-icmp-responder example in action, you can run:
 The simplest possible case for Network Service Mesh is to have is connecting a Client via a vWire to another Pod that is providing a Network Service. We call this case the ‘icmp-responder’ example, because it allows the client to ping the IP address of the Endpoint over the vWire.
 
 <a href="{{ site.baseurl }}/assets/img/adapters/nsm/vpp-icmp-responder-example.svg">
-  <img style="width:500px;" src="{{ site.baseurl }}/assets/img/adapters/nsm/vpp-icmp-responder-example.svg" />
+  <img style="width:500px; background: white" src="{{ site.baseurl }}/assets/img/adapters/nsm/vpp-icmp-responder-example.svg" />
 </a>
 
 Outcomes
@@ -115,7 +132,7 @@ And cause each Client to get a vWire connecting it to one of the Endpoints. Netw
 Network Service Discovery and Routing, as well as the vWire 'Connection Handling' for setting all of this up.
 
 <a href="{{ site.baseurl }}/assets/img/adapters/nsm/icmp-responder-example-2.svg">
-  <img style="width:500px;" src="{{ site.baseurl }}/assets/img/adapters/nsm/icmp-responder-example-2.svg" />
+  <img style="width:500px; background: white" src="{{ site.baseurl }}/assets/img/adapters/nsm/icmp-responder-example-2.svg" />
 </a>
 
 In order to make this case more interesting, Endpoint1 and Endpoint2 are deployed on two separate Nodes using
@@ -144,3 +161,4 @@ Verification
 
 - Examine [Meshery's architecture]({{ site.baseurl }}/architecture) and how adapters fit in as a component.
 - Learn more about [Meshery Adapters]({{ site.baseurl }}/architecture/adapters).
+

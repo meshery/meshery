@@ -5,7 +5,7 @@ permalink: installation/quick-start
 redirect_from: installation/quick-start/
 language: en
 ---
-<link href="/assets/css/terminal.css" rel="stylesheet">
+<!-- <link href="/assets/css/terminal.css" rel="stylesheet"> -->
 <a name="getting-started"></a>
 
 Getting Meshery up and running locally on a Docker-enabled system or in Kubernetes is easy. Meshery deploys as a set of Docker containers, which can be deployed to either a Docker host or Kubernetes cluster. See the complete list of its [supported platforms]({{ site.baseurl }}/installation/platforms).
@@ -66,10 +66,10 @@ Visit Meshery's web-based user interface `http://<hostname>:9081`. When Meshery 
 
 ## Select a Provider
 
-Select from the list of [Providers]({{site.baseurl}}/extensibility#providers) in order to login to Meshery. Authenticate with your chosen your Provider.
+Select from the list of [Providers]({{site.baseurl}}/extensibility#providers) in order to login to Meshery. Authenticate with your chosen Provider.
 
 <a href="/assets/img/meshery-server-page.png">
-  <img style="width:300px;" src="/assets/img/meshery-server-page.png" />
+  <img  style="width:min(100%,650px)" src="/assets/img/meshery-server-page.png" />
 </a>
 
 ## Configure Connection to Kubernetes
@@ -79,7 +79,7 @@ Meshery attempts to auto detect your kubeconfig if it is stored in the default p
 Visit <i class="fas fa-cog"></i> Settings:
 
   <a href="/assets/img/adapters/meshery-settings.png">
-  <img style="width:650px;" src="/assets/img/adapters/meshery-settings.png" />
+  <img style="width:min(100%,650px);" src="/assets/img/adapters/meshery-settings.png" />
   </a>
 
 If your config has not been auto-detected, you may manually locate and upload your **kube config** file and select the **context name** (docker-desktop, kind-clsuter, minikube etc.)
@@ -89,14 +89,14 @@ If your config has not been auto-detected, you may manually locate and upload yo
 Run connectivity tests and verify the health of your Meshery system. Verify Meshery's connection to Kubernetes by clicking on your configuration `context` name. You will be notified of your connection status. You can also verify a successful connection between Meshery and its adapters by clicking on any of the available [Adapter Ports]({{ site.baseurl }}/concepts/architecture#adapter-ports).
 
 <a href="/assets/img/adapters/meshery-ui.png">
-<img style="width:550px;height=auto;" src="/assets/img/adapters/meshery-ui.png" />
+<img style="width:min(100%,650px);height=auto;" src="/assets/img/adapters/meshery-ui.png" />
 </a>
 
 ## Operate service meshes and their workloads
 
 You may now proceed to install and work with any [service mesh]({{ site.baseurl }}/service-meshes) supported by Meshery.
 
-<video class="videoTest" width="700px" height="auto" autoplay muted loop>
+<video class="videoTest" style="width:min(100%,650px)" height="auto" autoplay muted loop>
   <source src="/assets/img/adapters/meshery-ui-setup.mp4" type="video/mp4">
  Your browser does not support the video tag
 </video>

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 
@@ -16,8 +17,13 @@ import (
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshery/server/models/pattern/patterns"
+	"github.com/layer5io/meshery/server/models/pattern/patterns/k8s"
 	"github.com/layer5io/meshery/server/models/pattern/stages"
+	"github.com/layer5io/meshkit/logger"
+	"github.com/layer5io/meshkit/models/meshmodel"
+	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
 	"github.com/layer5io/meshkit/utils/events"
+	meshkube "github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/sirupsen/logrus"
 )
 
@@ -83,7 +89,7 @@ func (h *Handler) PatternFileHandler(
 		return
 	}
 
-	msg, err := _processPattern(
+	response, err := _processPattern(
 		r.Context(),
 		provider,
 		patternFile,
@@ -91,17 +97,19 @@ func (h *Handler) PatternFileHandler(
 		user.UserID,
 		isDel,
 		r.URL.Query().Get("verify") == "true",
+		r.URL.Query().Get("dryRun") == "true",
 		false,
+		h.registryManager,
 		h.EventsBuffer,
+		h.log,
 	)
-
 	if err != nil {
 		h.log.Error(ErrCompConfigPairs(err))
 		http.Error(rw, ErrCompConfigPairs(err).Error(), http.StatusInternalServerError)
 		return
 	}
-
-	fmt.Fprintf(rw, "%s", msg)
+	ec := json.NewEncoder(rw)
+	_ = ec.Encode(response)
 }
 
 // swagger:route GET /api/oam/{type} PatternsAPI idGetOAMRegister
@@ -137,12 +145,10 @@ func (h *Handler) PatternFileHandler(
 // 2. Getting list of workloads/traits/scopes
 func (h *Handler) OAMRegisterHandler(rw http.ResponseWriter, r *http.Request) {
 	typ := mux.Vars(r)["type"]
-
 	if !(typ == "workload" || typ == "trait" || typ == "scope") {
 		rw.WriteHeader(http.StatusNotFound)
 		return
 	}
-
 	method := r.Method
 	if method == "POST" {
 		if err := h.POSTOAMRegisterHandler(typ, r); err != nil {
@@ -151,9 +157,6 @@ func (h *Handler) OAMRegisterHandler(rw http.ResponseWriter, r *http.Request) {
 			_, _ = rw.Write([]byte(err.Error()))
 			return
 		}
-	}
-	if method == "GET" {
-		h.GETOAMRegisterHandler(typ, rw, r.URL.Query().Get("trim") == "true")
 	}
 }
 
@@ -301,7 +304,14 @@ func (h *Handler) POSTOAMRegisterHandler(typ string, r *http.Request) error {
 // 	200:
 
 // GETOAMRegisterHandler handles the get requests for the OAM objects
-func (h *Handler) GETOAMRegisterHandler(typ string, rw http.ResponseWriter, trim bool) {
+func (h *Handler) GETOAMRegisterHandler(rw http.ResponseWriter,
+	r *http.Request) {
+	typ := mux.Vars(r)["type"]
+	if !(typ == "workload" || typ == "trait" || typ == "scope") {
+		rw.WriteHeader(http.StatusNotFound)
+		return
+	}
+	trim := r.URL.Query().Get("trim") == "true"
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
 
@@ -376,19 +386,23 @@ func _processPattern(
 	userID string,
 	isDelete bool,
 	verify bool,
+	dryRun bool,
 	skipPrintLogs bool,
+	registry *meshmodel.RegistryManager,
 	eb *events.EventStreamer,
-) (string, error) {
+	l logger.Handler,
+) (map[string]interface{}, error) {
+	resp := make(map[string]interface{})
+
 	// Get the token from the context
 	token, ok := ctx.Value(models.TokenCtxKey).(string)
 	if !ok {
-		return "", ErrRetrieveUserToken(fmt.Errorf("token not found in the context"))
+		return nil, ErrRetrieveUserToken(fmt.Errorf("token not found in the context"))
 	}
-
 	// // Get the kubehandler from the context
 	k8scontexts, ok := ctx.Value(models.KubeClustersKey).([]models.K8sContext)
 	if !ok || len(k8scontexts) == 0 {
-		return "", ErrInvalidKubeHandler(fmt.Errorf("failed to find k8s handler"), "_processPattern couldn't find a valid k8s handler")
+		return nil, ErrInvalidKubeHandler(fmt.Errorf("failed to find k8s handler"), "_processPattern couldn't find a valid k8s handler")
 	}
 
 	// // Get the kubernetes config from the context
@@ -406,11 +420,11 @@ func _processPattern(
 	for _, ctx := range k8scontexts {
 		cfg, err := ctx.GenerateKubeConfig()
 		if err != nil {
-			return "", ErrInvalidKubeConfig(fmt.Errorf("failed to find k8s config"), "_processPattern couldn't find a valid k8s config")
+			return nil, ErrInvalidKubeConfig(fmt.Errorf("failed to find k8s config"), "_processPattern couldn't find a valid k8s config")
 		}
 		configs = append(configs, string(cfg))
 	}
-	internal := func(mk8scontext []models.K8sContext) (string, error) {
+	internal := func(mk8scontext []models.K8sContext) (map[string]interface{}, error) {
 		sip := &serviceInfoProvider{
 			token:      token,
 			provider:   provider,
@@ -418,11 +432,13 @@ func _processPattern(
 		}
 		sap := &serviceActionProvider{
 			token:    token,
+			log:      l,
 			provider: provider,
 			prefObj:  prefObj,
 			// kubeClient:    kubeClient,
 			opIsDelete: isDelete,
 			userID:     userID,
+			registry:   registry,
 			// kubeconfig:    kubecfg,
 			// kubecontext:   mk8scontext,
 			skipPrintLogs:   skipPrintLogs,
@@ -431,20 +447,24 @@ func _processPattern(
 			err:             nil,
 			eventbuffer:     eb,
 		}
-
 		chain := stages.CreateChain()
 		chain.
 			Add(stages.Import(sip, sap)).
-			Add(stages.ServiceIdentifier(sip, sap)).
+			Add(stages.ServiceIdentifierAndMutator(sip, sap)).
 			Add(stages.Filler(skipPrintLogs)).
-			Add(stages.Validator(sip, sap))
-
-		if !verify {
+			// Calling this stage `The Validation stage` is a bit deceiving considering
+			// that the validation stage also formats the `data` (chain function parameter) that the
+			// subsequent stages depend on.
+			// We are skipping the `Validation` part in case of dryRun
+			Add(stages.Validator(sip, sap, dryRun))
+		if dryRun {
+			chain.Add(stages.DryRun(sip, sap))
+		}
+		if !verify && !dryRun {
 			chain.
 				Add(stages.Provision(sip, sap)).
 				Add(stages.Persist(sip, sap))
 		}
-
 		chain.
 			Add(func(data *stages.Data, err error, next stages.ChainStageNextFunction) {
 				data.Lock.Lock()
@@ -455,20 +475,23 @@ func _processPattern(
 							sap.accumulatedMsgs = append(sap.accumulatedMsgs, msg)
 						}
 					}
+					if k == stages.DryRunResponseKey {
+						if v != nil {
+							resp["dryRunResponse"] = v
+						}
+					}
 				}
 				data.Lock.Unlock()
-
 				sap.err = err
 			}).
 			Process(&stages.Data{
 				Pattern: &pattern,
 				Other:   map[string]interface{}{},
 			})
-
-		return mergeMsgs(sap.accumulatedMsgs), sap.err
+		resp["messages"] = mergeMsgs(sap.accumulatedMsgs)
+		return resp, sap.err
 	}
 	return internal(k8scontexts)
-
 	// customK8scontexts, ok := ctx.Value(models.KubeClustersKey).([]models.K8sContext)
 	// if ok && len(customK8scontexts) > 0 {
 	// 	var wg sync.WaitGroup
@@ -549,6 +572,7 @@ func (sip *serviceInfoProvider) IsDelete() bool {
 
 type serviceActionProvider struct {
 	token    string
+	log      logger.Handler
 	provider models.Provider
 	prefObj  *models.Preference
 	// kubeClient      *meshkube.Client
@@ -561,17 +585,89 @@ type serviceActionProvider struct {
 	accumulatedMsgs []string
 	err             error
 	eventbuffer     *events.EventStreamer
+	registry        *meshmodel.RegistryManager
 }
 
+func (sap *serviceActionProvider) GetRegistry() *meshmodel.RegistryManager {
+	return sap.registry
+}
+
+func (sap *serviceActionProvider) Log(msg string) {
+	if sap.log != nil {
+		sap.log.Info(msg)
+	}
+}
 func (sap *serviceActionProvider) Terminate(err error) {
 	if !sap.skipPrintLogs {
 		logrus.Error(err)
 	}
 	sap.err = err
 }
+func (sap *serviceActionProvider) Mutate(p *core.Pattern) {
+	//TODO: externalize these mutation rules with policies.
+	//1. Enforce the deployment of CRDs before other resources
+	for name, svc := range p.Services {
+		if svc.Type == "CustomResourceDefinition.K8s" {
+			for _, svc := range p.Services {
+				if svc.Type != "CustomResourceDefinition.K8s" {
+					svc.DependsOn = append(svc.DependsOn, name)
+				}
+			}
+		}
+	}
+}
 
-func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) (string, error) {
-	// Marshal the component
+func (sap *serviceActionProvider) DryRun(comps []v1alpha1.Component) (resp map[string][]stages.DryRunResponse, err error) {
+	for _, cmp := range comps {
+		for _, kc := range sap.kubeconfigs {
+			cl, err := meshkube.New([]byte(kc))
+			if err != nil {
+				return resp, err
+			}
+			st, err := k8s.DryRunHelper(cl, cmp)
+			if err != nil {
+				return resp, err
+			}
+			if st == nil {
+				return resp, fmt.Errorf("failed to dry run")
+			}
+			dResp := stages.DryRunResponse{}
+			if st.Status != nil {
+				dResp.Status = *st.Status
+			}
+			dResp.Causes = make([]stages.DryRunFailureCause, 0)
+			for _, c := range st.Details.Causes {
+				msg := ""
+				field := ""
+				typ := ""
+				if c.Message != nil {
+					msg = *c.Message
+				}
+				if c.Field != nil {
+					field = *c.Field
+				}
+				if c.Type != nil {
+					typ = string(*c.Type)
+				}
+				failureCase := stages.DryRunFailureCause{Message: msg, Field: field, Type: typ}
+				dResp.Causes = append(dResp.Causes, failureCase)
+			}
+			// a slice of DryRunResponse is used to concatenate the response for all the clusters
+			respSlice := make([]stages.DryRunResponse, 0)
+			if resp == nil {
+				resp = make(map[string][]stages.DryRunResponse)
+			}
+			if resp[cmp.Name] != nil {
+				respSlice = resp[cmp.Name]
+			}
+			respSlice = append(respSlice, dResp)
+			resp[cmp.Name] = respSlice
+		}
+	}
+	return
+}
+
+func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) (string, error) { // Marshal the component
 	jsonComp, err := json.Marshal(ccp.Component)
 	if err != nil {
 		return "", fmt.Errorf("failed to serialize the data: %s", err)
@@ -583,15 +679,15 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) (string, 
 		return "", fmt.Errorf("failed to serialize the data: %s", err)
 	}
 
-	for adapter := range ccp.Hosts {
+	for host := range ccp.Hosts {
 		// Hack until adapters fix the concurrent client
 		// creation issue: https://github.com/layer5io/meshery-adapter-library/issues/32
 		time.Sleep(50 * time.Microsecond)
 
-		logrus.Debugf("Adapter to execute operations on: %s", adapter)
+		logrus.Debugf("Adapter to execute operations on: %s", host.Hostname)
 
 		// Local call
-		if strings.HasPrefix(adapter, string(noneLocal)) {
+		if host.Port == 0 {
 			resp, err := patterns.ProcessOAM(
 				sap.kubeconfigs,
 				[]string{string(jsonComp)},
@@ -599,14 +695,16 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) (string, 
 				sap.opIsDelete,
 				sap.eventbuffer,
 			)
-
 			return resp, err
 		}
-
+		addr := host.Hostname
+		if host.Port != 0 {
+			addr += ":" + strconv.Itoa(host.Port)
+		}
 		// Create mesh client
 		mClient, err := meshes.CreateClient(
 			context.TODO(),
-			adapter,
+			addr,
 		)
 		if err != nil {
 			return "", fmt.Errorf("error creating a mesh client: %v", err)
@@ -616,17 +714,17 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) (string, 
 		}()
 
 		// Execute operation on the adapter with raw data
-		if strings.HasPrefix(adapter, string(rawAdapter)) {
-			resp, err := mClient.MClient.ApplyOperation(context.TODO(), &meshes.ApplyRuleRequest{
-				Username:    sap.userID,
-				DeleteOp:    sap.opIsDelete,
-				OpName:      "custom",
-				Namespace:   "",
-				KubeConfigs: sap.kubeconfigs,
-			})
+		// if strings.HasPrefix(adapter, string(rawAdapter)) {
+		// 	resp, err := mClient.MClient.ApplyOperation(context.TODO(), &meshes.ApplyRuleRequest{
+		// 		Username:    sap.userID,
+		// 		DeleteOp:    sap.opIsDelete,
+		// 		OpName:      "custom",
+		// 		Namespace:   "",
+		// 		KubeConfigs: sap.kubeconfigs,
+		// 	})
 
-			return resp.String(), err
-		}
+		// 	return resp.String(), err
+		// }
 
 		// Else it is an OAM adapter call
 		resp, err := mClient.MClient.ProcessOAM(context.TODO(), &meshes.ProcessOAMRequest{

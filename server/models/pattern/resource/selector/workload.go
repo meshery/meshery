@@ -1,25 +1,48 @@
 package selector
 
 import (
+	"fmt"
+	"strings"
+
 	"github.com/layer5io/meshery/server/internal/store"
 	"github.com/layer5io/meshery/server/models/pattern/core"
+	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 )
 
-func (s *Selector) Workload(name string) (core.WorkloadCapability, bool) {
-	data := store.GetAll(generateWorkloadKey(name))
-	workloads := convertValueInterfaceSliceToWorkloadSlice(data)
-
-	filteredWorkloads, typ := filterWorkloadByType(workloads)
-
-	if typ == CoreResource {
-		return s.selectCoreWorkload(filteredWorkloads)
+func (s *Selector) Workload(name string, version string, model string, apiVersion string) (v1alpha1.ComponentDefinition, error) {
+	var comp v1alpha1.ComponentDefinition
+	name = strings.Split(name, ".")[0]
+	fmt.Println(name, model, version)
+	if model == "" && name == "Application" { //If model is not passed, default to core
+		model = "core"
 	}
-
-	if typ == K8sResource {
-		return s.selectK8sWorkload(filteredWorkloads)
+	if apiVersion == "core.oam.dev/v1alpha1" { //For backwards compatibility with older designs which were created using OAM
+		apiVersion = ""
 	}
-
-	return s.selectMeshWorkload(filteredWorkloads)
+	entities := s.registry.GetEntities(&v1alpha1.ComponentFilter{
+		Name:       name,
+		ModelName:  model,
+		APIVersion: apiVersion,
+	})
+	found := false
+	if len(entities) != 0 {
+		for _, en := range entities {
+			if en != nil {
+				var ok bool
+				comp, ok = en.(v1alpha1.ComponentDefinition)
+				if ok {
+					found = true
+				}
+				if comp.Model.Version == version { //prefer to use the correct version, if available
+					break
+				}
+			}
+		}
+	}
+	if !found {
+		return comp, fmt.Errorf(fmt.Sprintf("could not find component with name: %s, model: %s, apiVersion: %s", name, model, apiVersion))
+	}
+	return comp, nil
 }
 
 // selectCoreWorkload selects a core workload - first workload from the list is selected

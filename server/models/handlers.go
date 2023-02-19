@@ -5,6 +5,7 @@ import (
 
 	"time"
 
+	"github.com/layer5io/meshery/server/models/meshmodel"
 	"github.com/layer5io/meshkit/utils/events"
 	"github.com/vmihailenco/taskq/v3"
 )
@@ -14,7 +15,13 @@ type HandlerInterface interface {
 	ServerVersionHandler(w http.ResponseWriter, r *http.Request)
 
 	ProviderMiddleware(http.Handler) http.Handler
-	AuthMiddleware(http.Handler) http.Handler
+
+	//Set the AuthenticationMechanism as NoAuth to skip provider authentication for certain endpoints. If the provider is enforced, then this flag will not be respected.
+	//Make sure all the endpoints are behind this middleware thereby protecting them. The reason for not just skipping this middleware is:
+	//1. So that we can enfore provider through this middleware whenever want for use cases where no unauthenticated endpoints should be there, at buildtime.
+	//2. For adapter and other components of Meshery, they register/use endpoints without any provider authentication. Although we can have a different type of authentication built for
+	//such external systems trying to communicate without provider authentication. So for different endpoints, different authentication mechanisms other than provider can be used.
+	AuthMiddleware(http.Handler, AuthenticationMechanism) http.Handler
 	KubernetesMiddleware(func(http.ResponseWriter, *http.Request, *Preference, *User, Provider)) func(http.ResponseWriter, *http.Request, *Preference, *User, Provider)
 	MesheryControllersMiddleware(func(http.ResponseWriter, *http.Request, *Preference, *User, Provider)) func(http.ResponseWriter, *http.Request, *Preference, *User, Provider)
 	SessionInjectorMiddleware(func(http.ResponseWriter, *http.Request, *Preference, *User, Provider)) http.Handler
@@ -65,9 +72,9 @@ type HandlerInterface interface {
 	GrafanaPingHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	SaveSelectedGrafanaBoardsHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 
-	ScanPromGrafanaHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
-	ScanPrometheusHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
-	ScanGrafanaHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	// ScanPromGrafanaHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	// ScanPrometheusHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	// ScanGrafanaHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	PrometheusConfigHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	GrafanaBoardImportForPrometheusHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	PrometheusQueryHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
@@ -91,15 +98,26 @@ type HandlerInterface interface {
 	SessionSyncHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 
 	PatternFileHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
+	GETOAMRegisterHandler(rw http.ResponseWriter, r *http.Request)
 	OAMRegisterHandler(rw http.ResponseWriter, r *http.Request)
 	ComponentTypesHandler(rw http.ResponseWriter, r *http.Request)
 	ComponentsForTypeHandler(rw http.ResponseWriter, r *http.Request)
 	GetAllComponents(rw http.ResponseWriter, r *http.Request)
-	GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Request)
 	ComponentVersionsHandler(rw http.ResponseWriter, r *http.Request)
 	ComponentsByNameHandler(rw http.ResponseWriter, r *http.Request)
 	ValidationHandler(rw http.ResponseWriter, r *http.Request)
-	ComponentGenerationHandler(rw http.ResponseWriter, r *http.Request)
+	MeshModelGenerationHandler(rw http.ResponseWriter, r *http.Request)
+	GetMeshmodelModels(rw http.ResponseWriter, r *http.Request)
+	RegisterMeshmodelComponents(rw http.ResponseWriter, r *http.Request)
+
+	GetMeshmodelComponentsByName(rw http.ResponseWriter, r *http.Request)
+	GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.Request)
+	GetMeshmodelEntititiesByModel(rw http.ResponseWriter, r *http.Request)
+
+	GetAllMeshmodelRelationships(rw http.ResponseWriter, r *http.Request)
+	GetMeshmodelRelationshipByName(rw http.ResponseWriter, r *http.Request)
+	RegisterMeshmodelRelationships(rw http.ResponseWriter, r *http.Request)
+
 	OAMComponentDetailsHandler(rw http.ResponseWriter, r *http.Request)
 	OAMComponentDetailByIDHandler(rw http.ResponseWriter, r *http.Request)
 	PatternFileRequestHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
@@ -107,12 +125,14 @@ type HandlerInterface interface {
 	CloneMesheryPatternHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	DeleteMultiMesheryPatternsHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	GetCatalogMesheryPatternsHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
+	PublishCatalogPatternHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	GetMesheryPatternHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 
 	FilterFileHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	GetMesheryFilterFileHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	FilterFileRequestHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	GetCatalogMesheryFiltersHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
+	PublishCatalogFilterHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	GetMesheryFilterHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	DeleteMesheryFilterHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	CloneMesheryFilterHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
@@ -123,6 +143,7 @@ type HandlerInterface interface {
 	GetMesheryApplicationHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	GetMesheryApplicationSourceHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	DeleteMesheryApplicationHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
+	ShareDesignHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 
 	ExtensionsEndpointHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	LoadExtensionFromPackage(w http.ResponseWriter, req *http.Request, provider Provider) error
@@ -134,8 +155,6 @@ type HandlerInterface interface {
 	DeleteScheduleHandler(w http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 
 	ExtensionsHandler(w http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
-
-	PatternCollabHandler(w http.ResponseWriter, r *http.Request)
 }
 
 // HandlerConfig holds all the config pieces needed by handler methods
@@ -160,7 +179,7 @@ type HandlerConfig struct {
 
 	// GraphQLHandler           http.Handler
 	// GraphQLPlaygroundHandler http.Handler
-
+	PlaygroundBuild        bool
 	Providers              map[string]Provider
 	ProviderCookieName     string
 	ProviderCookieDuration time.Duration
@@ -174,8 +193,10 @@ type HandlerConfig struct {
 	ConfigurationChannel *ConfigurationChannel
 
 	DashboardK8sResourcesChan *DashboardK8sResourcesChan
-	K8scontextChannel         *K8scontextChan
-	EventsBuffer              *events.EventStreamer
+	MeshModelSummaryChannel   *meshmodel.SummaryChannel
+
+	K8scontextChannel *K8scontextChan
+	EventsBuffer      *events.EventStreamer
 }
 
 // SubmitMetricsConfig is used to store config used for submitting metrics
@@ -186,3 +207,20 @@ type SubmitMetricsConfig struct {
 	TokenVal string
 	Provider Provider
 }
+
+type AuthenticationMechanism int
+
+func (a AuthenticationMechanism) String() string {
+	switch a {
+	case 0:
+		return "no_auth"
+	case 1:
+		return "provider_auth"
+	}
+	return ""
+}
+
+const (
+	NoAuth AuthenticationMechanism = iota
+	ProviderAuth
+)

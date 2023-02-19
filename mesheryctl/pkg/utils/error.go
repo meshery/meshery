@@ -31,6 +31,29 @@ func SystemError(msg string) string {
 	return formatError(msg, cmdSystem)
 }
 
+// SystemTokenError returns a formatted error message with a link to 'token' command usage page
+// in addition to the error message
+func SystemTokenError(msg string) string {
+	return formatError(msg, cmdToken)
+}
+
+func SystemLifeCycleError(msg string, cmd string) string {
+	switch cmd {
+	case "stop":
+		return formatError(msg, cmdSystemStop)
+	case "update":
+		return formatError(msg, cmdSystemUpdate)
+	case "reset":
+		return formatError(msg, cmdSystemReset)
+	case "status":
+		return formatError(msg, cmdSystemStatus)
+	case "restart":
+		return formatError(msg, cmdSystemRestart)
+	default:
+		return formatError(msg, cmdSystem)
+	}
+}
+
 // SystemContextSubError returns a formatted error message with a link to `context` command usage page
 // in addition to the error message
 func SystemContextSubError(msg string, cmd string) string {
@@ -46,7 +69,7 @@ func SystemContextSubError(msg string, cmd string) string {
 	}
 }
 
-// SystemChannelSubError returns a formatted error message with a link to `context` command usage page
+// SystemChannelSubError returns a formatted error message with a link to `channel` command usage page
 // in addition to the error message
 func SystemChannelSubError(msg string, cmd string) string {
 	switch cmd {
@@ -58,6 +81,25 @@ func SystemChannelSubError(msg string, cmd string) string {
 		return formatError(msg, cmdChannelSet)
 	default:
 		return formatError(msg, cmdChannel)
+	}
+}
+
+// SystemProviderSubError returns a formatted error message with a link to `provider` command usage page
+// in addition to the error message
+func SystemProviderSubError(msg string, cmd string) string {
+	switch cmd {
+	case "switch":
+		return formatError(msg, cmdProviderSwitch)
+	case "view":
+		return formatError(msg, cmdProviderView)
+	case "set":
+		return formatError(msg, cmdProviderSet)
+	case "list":
+		return formatError(msg, cmdProviderList)
+	case "reset":
+		return formatError(msg, cmdProviderReset)
+	default:
+		return formatError(msg, cmdProvider)
 	}
 }
 
@@ -97,6 +139,16 @@ func formatError(msg string, cmd cmdType) string {
 		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, meshUsageURL)
 	case cmdSystem:
 		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, systemUsageURL)
+	case cmdSystemStop:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, systemStopURL)
+	case cmdSystemUpdate:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, systemUpdateURL)
+	case cmdSystemReset:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, systemResetURL)
+	case cmdSystemStatus:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, systemStatusURL)
+	case cmdSystemRestart:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, systemRestartURL)
 	case cmdExp:
 		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, expUsageURL)
 	case cmdFilter:
@@ -121,6 +173,20 @@ func formatError(msg string, cmd cmdType) string {
 		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, channelSetURL)
 	case cmdChannel:
 		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, channelUsageURL)
+	case cmdProviderView:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, providerViewURL)
+	case cmdProviderList:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, providerListURL)
+	case cmdProviderSet:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, providerSetURL)
+	case cmdProviderSwitch:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, providerSwitchURL)
+	case cmdProviderReset:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, providerResetURL)
+	case cmdProvider:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, providerUsageURL)
+	case cmdToken:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, tokenUsageURL)
 	default:
 		return fmt.Sprintf("%s\n", msg)
 	}
@@ -128,7 +194,7 @@ func formatError(msg string, cmd cmdType) string {
 
 func ErrAttachAuthToken(err error) error {
 	return errors.New(ErrAttachAuthTokenCode, errors.Alert, []string{err.Error()},
-		[]string{"Authentication token not found. please supply a valid user token with the --token (or -t) flag. or login with `mesheryctl system login`"}, []string{}, []string{})
+		[]string{"Authentication token not found. Login with `mesheryctl system login` or supply a valid user token using the --token (or -t) flag."}, []string{}, []string{})
 }
 
 func ErrFailRequest(err error) error {

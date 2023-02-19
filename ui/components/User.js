@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useLayoutEffect, useState } from 'react';
 import IconButton from '@material-ui/core/IconButton';
 import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
 import Avatar from '@material-ui/core/Avatar';
@@ -9,8 +9,6 @@ import Link from "next/link";
 import MenuList from '@material-ui/core/MenuList';
 import Grow from '@material-ui/core/Grow';
 import MenuItem from '@material-ui/core/MenuItem';
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import Popper from '@material-ui/core/Popper';
 import Paper from '@material-ui/core/Paper';
@@ -20,13 +18,72 @@ import { withRouter } from 'next/router';
 import dataFetch from '../lib/data-fetch';
 import { updateUser } from '../lib/store';
 import classNames from 'classnames';
+import { ListItem, List, Checkbox } from '@material-ui/core';
+import { withSnackbar } from "notistack";
+import CloseIcon from "@material-ui/icons/Close";
+import { isExtensionOpen } from '../pages/_app';
 
 
-const styles = () => ({ popover : { color : 'black', }, });
+const styles = () => ({
+  link : {
+    display : "inline-flex",
+    width : "100%",
+    height : "30px",
+    alignItems : "self-end"
+  },
+});
+
+function ThemeToggler({
+  theme, themeSetter, enqueueSnackbar
+}) {
+  const [themeToggle, setthemeToggle] = useState(false);
+  const defaultTheme = "light";
+  const handle = () => {
+    if (isExtensionOpen()) {
+      return;
+    }
+
+    theme === "dark" ? setthemeToggle(true) : setthemeToggle(false);
+    localStorage.setItem("Theme", theme);
+  };
+
+  useLayoutEffect(() => {
+    if (isExtensionOpen()) {
+      if (localStorage.getItem("Theme") && localStorage.getItem("Theme") !== defaultTheme) {
+        themeSetter(defaultTheme);
+      }
+      return;
+    }
+
+    if (localStorage.getItem("Theme") === null) {
+      themeSetter(defaultTheme);
+    } else {
+      themeSetter(localStorage.getItem("Theme"));
+    }
+
+  }, []);
+
+  useLayoutEffect(handle, [theme]);
+
+  const themeToggler = () => {
+    if (isExtensionOpen()) {
+      enqueueSnackbar("Toggling between themes is not supported in MeshMap", { variant : "info", preventDuplicate : true })
+      return;
+    }
+    theme === "light" ? themeSetter("dark") : themeSetter("light");
+  };
+
+  return (
+    <div onClick={themeToggler}>
+      Dark Mode <Checkbox color="success" checked={themeToggle} onChange={themeToggler}/>
+    </div>
+  )
+}
+
 
 function exportToJsonFile(jsonData, filename) {
   let dataStr = JSON.stringify(jsonData);
-  let dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+  let dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
 
   let exportFileDefaultName = filename;
 
@@ -42,7 +99,8 @@ class User extends React.Component {
     user : null,
     open : false,
     account : ExtensionPointSchemaValidator("account")(),
-    providerType : ''
+    providerType : '',
+    capabilitiesLoaded : false
   }
 
   handleToggle = () => {
@@ -57,7 +115,21 @@ class User extends React.Component {
   }
 
   handleLogout = () => {
-    window.location = '/user/logout';
+    window.location = '/user/logout'
+  };
+
+  handleError = (error) => {
+    this.props.enqueueSnackbar(`Error performing logout: ${error}`, {
+      variant : "error",
+      action : function Action(key) {
+        return (
+          <IconButton key="close" aria-label="Close" color="inherit" onClick={() => this.prop.closeSnackbar(key)}>
+            <CloseIcon />
+          </IconButton>
+        );
+      },
+      autoHideDuration : 8000,
+    });
   };
 
   handlePreference = () => {
@@ -71,7 +143,6 @@ class User extends React.Component {
   };
 
   componentDidMount() {
-    // console.log("fetching user data");
     dataFetch('/api/user', {
       credentials : 'same-origin'
     }, (user) => {
@@ -80,21 +151,17 @@ class User extends React.Component {
     }, (error) => ({
       error,
     }));
+  }
 
-    dataFetch(
-      "/api/provider/capabilities", {
-        method : "GET",
-        credentials : "include", },
-      (result) => {
-        if (result) {
-          this.setState({
-            account : ExtensionPointSchemaValidator("account")(result?.extensions?.account),
-            providerType : result?.provider_type
-          })
-        }
-      },
-      err => console.error(err)
-    )
+  componentDidUpdate() {
+    const { capabilitiesRegistry } = this.props;
+    if (!this.state.capabilitiesLoaded && capabilitiesRegistry) {
+      this.setState({
+        capabilitiesLoaded : true, // to prevent re-compute
+        account : ExtensionPointSchemaValidator("account")(capabilitiesRegistry?.extensions?.account),
+        providerType : capabilitiesRegistry?.provider_type,
+      })
+    }
   }
 
   /**
@@ -139,15 +206,25 @@ class User extends React.Component {
         </ListItemText>
       </div>
     );
-
-    if (href) return <Link href={href}>{content}</Link>;
+    if (href) {
+      return (
+        <Link href={href}>
+          <span
+            className={classNames(classes.link)}
+            onClick={() => this.props.updateExtensionType(name)}
+          >
+            {content}
+          </span>
+        </Link>
+      )
+    }
 
     return content;
   }
 
   render() {
     const {
-      color, iconButtonClassName, avatarClassName, classes,
+      color, iconButtonClassName, avatarClassName, classes, theme, themeSetter,
     } = this.props;
     let avatar_url;
     if (this.state.user && this.state.user !== null) {
@@ -170,21 +247,25 @@ class User extends React.Component {
               aria-haspopup="true"
               onClick={this.handleToggle}
             >
-              <Avatar className={avatarClassName} src={avatar_url} />
+              <Avatar className={avatarClassName} src={avatar_url} imgProps={{ referrerPolicy : "no-referrer" }} />
             </IconButton>
           </div>
-          <Popper open={open} anchorEl={this.anchorEl} transition  style={{ zIndex : 10000 }} placement="top-end">
+          <Popper open={open} anchorEl={this.anchorEl} transition style={{ zIndex : 10000 }} placement="top-end">
             {({ TransitionProps, placement }) => (
               <Grow
                 {...TransitionProps}
                 id="menu-list-grow"
-                style={{ transformOrigin : placement === 'bottom'
-                  ? 'left top'
-                  : 'left bottom' }}
+                style={{
+                  transformOrigin : placement === 'bottom'
+                    ? 'left top'
+                    : 'left bottom'
+                }}
               >
                 <Paper className={classes.popover}>
                   <ClickAwayListener onClickAway={this.handleClose}>
+
                     <MenuList>
+
                       {
                         this.state.account && this.state.account.length ?
                           (
@@ -198,6 +279,7 @@ class User extends React.Component {
                       <MenuItem onClick={this.handleGetToken}>Get Token</MenuItem>
                       <MenuItem onClick={this.handlePreference}>Preferences</MenuItem>
                       <MenuItem onClick={this.handleLogout}>Logout</MenuItem>
+                      <MenuItem >  <ThemeToggler classes={classes} theme={theme} themeSetter={themeSetter} enqueueSnackbar={this.props.enqueueSnackbar} /></MenuItem>
                     </MenuList>
                   </ClickAwayListener>
                 </Paper>
@@ -211,8 +293,11 @@ class User extends React.Component {
 }
 
 const mapDispatchToProps = (dispatch) => ({ updateUser : bindActionCreators(updateUser, dispatch), });
+const mapStateToProps = state => ({
+  capabilitiesRegistry : state.get("capabilitiesRegistry")
+})
 
 export default withStyles(styles)(connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps,
-)(withRouter(User)));
+)(withSnackbar((withRouter(User)))));

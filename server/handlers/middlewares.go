@@ -5,9 +5,11 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"net/url"
 
 	"github.com/layer5io/meshery/server/models"
 	"github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 )
 
 const providerQParamName = "provider"
@@ -24,6 +26,7 @@ func (h *Handler) ProviderMiddleware(next http.Handler) http.Handler {
 			providerName = req.Header.Get(h.config.ProviderCookieName)
 			// allow provider to be set using query parameter
 			// this is OK since provider information is not sensitive
+
 			if providerName == "" {
 				providerName = req.URL.Query().Get(providerQParamName)
 			}
@@ -31,11 +34,22 @@ func (h *Handler) ProviderMiddleware(next http.Handler) http.Handler {
 		if providerName != "" {
 			provider = h.config.Providers[providerName]
 		}
-		if provider == nil {
-			http.Redirect(w, req, "/provider", http.StatusFound)
-			return
-		}
 		ctx := context.WithValue(req.Context(), models.ProviderCtxKey, provider) // nolint
+
+		// Incase Meshery is configured for deployments scenario: Istio, Azure Kubernetes Service etc
+		// then we can expect a MESHERY_SERVER_CALLBACK_URL in env var
+		callbackURL := viper.GetString("MESHERY_SERVER_CALLBACK_URL")
+		if callbackURL == "" {
+			// if MESHERY_SERVER_CALLBACK_URL is not set then we can assume standard CALLBACK_URL
+			callbackURL = "http://" + req.Host + "/api/user/token" // Hard coding the path because this is what meshery expects
+		}
+		ctx = context.WithValue(ctx, models.MesheryServerCallbackURL, callbackURL)
+		_url, err := url.Parse(callbackURL)
+		if err != nil {
+			logrus.Errorf("Error parsing callback url: %v", err)
+		} else {
+			ctx = context.WithValue(ctx, models.MesheryServerURL, fmt.Sprintf("%s://%s", _url.Scheme, _url.Host))
+		}
 		req1 := req.WithContext(ctx)
 		next.ServeHTTP(w, req1)
 	}
@@ -43,31 +57,47 @@ func (h *Handler) ProviderMiddleware(next http.Handler) http.Handler {
 }
 
 // AuthMiddleware is a middleware to validate if a user is authenticated
-func (h *Handler) AuthMiddleware(next http.Handler) http.Handler {
+func (h *Handler) AuthMiddleware(next http.Handler, auth models.AuthenticationMechanism) http.Handler {
 	fn := func(w http.ResponseWriter, req *http.Request) {
-		providerI := req.Context().Value(models.ProviderCtxKey)
-		// logrus.Debugf("models.ProviderCtxKey %s", models.ProviderCtxKey)
-		provider, ok := providerI.(models.Provider)
-		if !ok {
-			http.Redirect(w, req, "/provider", http.StatusFound)
-			return
+		providerH := h.Provider
+		if auth == models.NoAuth && providerH != "" {
+			auth = models.ProviderAuth //If a provider is enforced then use provider authentication even in case of NoAuth
 		}
-		// logrus.Debugf("provider %s", provider)
-		isValid := h.validateAuth(provider, req)
-		// logrus.Debugf("validate auth: %t", isValid)
-		if !isValid {
-			// if h.GetProviderType() == models.RemoteProviderType {
-			// 	http.Redirect(w, req, "/user/login", http.StatusFound)
-			// } else { // Local Provider
-			// 	h.LoginHandler(w, req)
-			// }
-			// return
-			if provider.GetProviderType() == models.RemoteProviderType {
-				provider.HandleUnAuthenticated(w, req)
+		switch auth {
+		// case models.NoAuth:
+		// 	if providerH != "" {
+		// 		w.WriteHeader(http.StatusUnauthorized)
+		// 		return
+		// 	}
+		case models.ProviderAuth:
+			providerI := req.Context().Value(models.ProviderCtxKey)
+			// logrus.Debugf("models.ProviderCtxKey %s", models.ProviderCtxKey)
+			provider, ok := providerI.(models.Provider)
+			if !ok {
+				http.Redirect(w, req, "/provider", http.StatusFound)
 				return
 			}
-			// Local Provider
-			h.LoginHandler(w, req, provider, true)
+			if providerH != "" && providerH != provider.Name() {
+				w.WriteHeader(http.StatusUnauthorized)
+				return
+			}
+			// logrus.Debugf("provider %s", provider)
+			isValid := h.validateAuth(provider, req)
+			// logrus.Debugf("validate auth: %t", isValid)
+			if !isValid {
+				// if h.GetProviderType() == models.RemoteProviderType {
+				// 	http.Redirect(w, req, "/user/login", http.StatusFound)
+				// } else { // Local Provider
+				// 	h.LoginHandler(w, req)
+				// }
+				// return
+				if provider.GetProviderType() == models.RemoteProviderType {
+					provider.HandleUnAuthenticated(w, req)
+					return
+				}
+				// Local Provider
+				h.LoginHandler(w, req, provider, true)
+			}
 		}
 		next.ServeHTTP(w, req)
 	}
@@ -133,7 +163,8 @@ func (h *Handler) KubernetesMiddleware(next func(http.ResponseWriter, *http.Requ
 		}
 
 		// register kubernetes components
-		h.K8sCompRegHelper.UpdateContexts(contexts).RegisterComponents(contexts, RegisterK8sComponents, h.EventsBuffer)
+		h.K8sCompRegHelper.UpdateContexts(contexts).RegisterComponents(contexts, []models.K8sRegistrationFunction{RegisterK8sComponents, RegisterK8sMeshModelComponents}, h.EventsBuffer, h.registryManager)
+		go h.config.MeshModelSummaryChannel.Publish()
 
 		// Identify custom contexts, if provided
 		k8sContextIDs := req.URL.Query()["contexts"]
@@ -187,7 +218,12 @@ func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http
 		// ensuring session is intact before running load test
 		err := provider.GetSession(req)
 		if err != nil {
-			provider.Logout(w, req)
+			err := provider.Logout(w, req)
+			if err != nil {
+				logrus.Errorf("Error performing logout: %v", err.Error())
+				provider.HandleUnAuthenticated(w, req)
+				return
+			}
 			logrus.Errorf("Error: unable to get session: %v", err)
 			http.Error(w, "unable to get session", http.StatusUnauthorized)
 			return
@@ -203,6 +239,7 @@ func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http
 		ctx := context.WithValue(req.Context(), models.TokenCtxKey, token)
 		ctx = context.WithValue(ctx, models.PerfObjCtxKey, prefObj)
 		ctx = context.WithValue(ctx, models.UserCtxKey, user)
+		ctx = context.WithValue(ctx, models.RegistryManagerKey, h.registryManager)
 
 		req1 := req.WithContext(ctx)
 		next(w, req1, prefObj, user, provider)

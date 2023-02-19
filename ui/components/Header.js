@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useLayoutEffect } from 'react';
 import PropTypes from 'prop-types';
 import AppBar from '@material-ui/core/AppBar';
 import Grid from '@material-ui/core/Grid';
@@ -17,8 +17,6 @@ import Chip from '@material-ui/core/Chip';
 import MesheryNotification from './MesheryNotification';
 import User from './User';
 import subscribeBrokerStatusEvents from "./graphql/subscriptions/BrokerStatusSubscription"
-import mesheryControllersStatusSubcription from "./graphql/subscriptions/MesheryControllersStatusSubscription"
-import meshSyncEventsSub from "./graphql/subscriptions/MeshSyncEventsSubscription"
 import Slide from '@material-ui/core/Slide';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import { Checkbox, Button } from '@material-ui/core';
@@ -30,12 +28,20 @@ import { Paper } from '@material-ui/core';
 import { useSnackbar } from "notistack";
 import { deleteKubernetesConfig, pingKubernetes } from './ConnectionWizard/helpers/kubernetesHelpers';
 import {
-  successHandlerGenerator, errorHandlerGenerator, closeButtonForSnackbarAction } from './ConnectionWizard/helpers/common';
-import { getFirstCtxIdFromSelectedCtxIds } from '../utils/multi-ctx';
+  successHandlerGenerator, errorHandlerGenerator, closeButtonForSnackbarAction
+} from './ConnectionWizard/helpers/common';
 import { promisifiedDataFetch } from '../lib/data-fetch';
 import { updateK8SConfig, updateProgress } from '../lib/store';
 import { bindActionCreators } from 'redux';
 import BadgeAvatars from './CustomAvatar';
+import { CapabilitiesRegistry as CapabilityRegistryClass } from '../utils/disabledComponents';
+import _ from 'lodash';
+import { SETTINGS } from '../constants/navigator';
+import { cursorNotAllowed, disabledStyle } from '../css/disableComponent.styles';
+import PromptComponent from './PromptComponent';
+import { iconMedium } from '../css/icons.styles';
+import { isExtensionOpen } from '../pages/_app';
+
 const lightColor = 'rgba(255, 255, 255, 0.7)';
 const styles = (theme) => ({
   secondaryBar : { zIndex : 0, },
@@ -43,8 +49,8 @@ const styles = (theme) => ({
   iconButtonAvatar : { padding : 4, },
   link : {
     textDecoration : 'none',
-    color : lightColor,
-    '&:hover' : { color : theme.palette.common.white, },
+    color : theme.palette.secondary.link
+
   },
   button : { borderColor : lightColor, },
   notifications : {
@@ -55,7 +61,8 @@ const styles = (theme) => ({
   userContainer : {
     paddingLeft : 1,
     display : 'flex',
-    backgroundColor : "#396679",
+
+
     alignItems : 'center'
   },
   userSpan : { marginLeft : theme.spacing(1), },
@@ -70,29 +77,30 @@ const styles = (theme) => ({
     [theme.breakpoints.up('sm')] : { fontSize : '1.65rem', },
   },
   appBarOnDrawerOpen : {
-    backgroundColor : "#396679",
+    backgroundColor : theme.palette.secondary.mainBackground,
     shadowColor : " #808080",
     zIndex : theme.zIndex.drawer + 1,
     [theme.breakpoints.between(635, 732)] : { padding : theme.spacing(0.75, 1.4), },
     [theme.breakpoints.between(600, 635)] : { padding : theme.spacing(0.4, 1.4), },
   },
   appBarOnDrawerClosed : {
-    backgroundColor : "#396679",
+    backgroundColor : theme.palette.secondary.mainBackground,
     zIndex : theme.zIndex.drawer + 1,
   },
   toolbarOnDrawerClosed : {
+
     minHeight : 59,
     padding : theme.spacing(2.4),
     paddingLeft : 34,
     paddingRight : 34,
-    backgroundColor : "#396679"
+    backgroundColor : theme.palette.secondary.mainBackground,
   },
   toolbarOnDrawerOpen : {
     minHeight : 58,
     padding : theme.spacing(2.4),
     paddingLeft : 34,
     paddingRight : 34,
-    backgroundColor : "#396679",
+    backgroundColor : theme.palette.secondary.mainBackground,
     [theme.breakpoints.between(620, 732)] : { minHeight : 68, paddingLeft : 20, paddingRight : 20 },
   },
   itemActiveItem : { color : "#00B39F" },
@@ -123,15 +131,18 @@ const styles = (theme) => ({
     height : 24
   },
   Chip : {
-    backgroundColor : "white",
-    flexGrow : 1,
+    width : '12.8rem',
+    textAlign : 'center',
     cursor : "pointer",
     "& .MuiChip-label" : {
       flexGrow : 1
-    }
+    },
+    overflow : "hidden",
+    whiteSpace : "nowrap",
+    textOverflow : "ellipsis"
   },
   cMenuContainer : {
-    backgroundColor : "revert",
+    backgroundColor : theme.palette.secondary.headerColor,
     marginTop : "-0.7rem",
     borderRadius : "3px",
     padding : "1rem",
@@ -158,8 +169,35 @@ const styles = (theme) => ({
   },
   searchIcon : {
     width : theme.spacing(3.5),
-  }
-});
+  },
+  darkThemeToggle : {
+
+    marginLeft : "1.5em",
+
+  },
+
+  toggle : {
+    appearance : "none",
+    outline : "none",
+    cursor : "pointer",
+    width : "1.5rem",
+    height : "1.5rem",
+    boxShadow : "inset calc(1.5rem * 0.33) calc(1.5rem * -0.25) 0",
+    borderRadius : "999px",
+    color : "#00B39F",
+    transition : "all 500ms",
+    zIndex : "1",
+    '&:checked' : {
+      width : "1.5rem",
+      height : "1.5rem",
+      borderRadius : "50%",
+      background : "orange",
+      boxShadow : "0 0 10px orange, 0 0 60px orange,0 0 200px yellow, inset 0 0 80px yellow",
+    }
+  },
+
+}
+);
 
 const CONTROLLERS = {
   BROKER : 0,
@@ -185,11 +223,37 @@ async function loadActiveK8sContexts() {
   }
 }
 
+function LoadTheme({
+  themeSetter
+}) {
+  const defaultTheme = "light";
+
+  useLayoutEffect(() => {
+    // disable dark mode in extension
+    if (isExtensionOpen()) {
+      themeSetter(defaultTheme);
+      return;
+    }
+
+    if (localStorage.getItem("Theme") === null) {
+      themeSetter(defaultTheme);
+    } else {
+      themeSetter(localStorage.getItem("Theme"));
+    }
+  }, []);
+
+  return (
+    <>
+    </>
+  )
+}
+
 function K8sContextMenu({
   classes = {},
   contexts = {},
   activeContexts = [],
   runningStatus,
+  show,
   updateK8SConfig,
   updateProgress,
 
@@ -198,16 +262,21 @@ function K8sContextMenu({
 }) {
   const [anchorEl, setAnchorEl] = React.useState(false);
   const [showFullContextMenu, setShowFullContextMenu] = React.useState(false);
-  const [transformProperty, setTransformProperty] = React.useState(100)
+  const [transformProperty, setTransformProperty] = React.useState(100);
+  const deleteCtxtRef = React.createRef();
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
   const styleSlider = {
-    backgroundColor : "#EEEEEE",
     position : "absolute",
     left : "-5rem",
     zIndex : "-1",
-    bottom : "-55%",
+    bottom : showFullContextMenu ? "-55%" : "-110%",
     transform : showFullContextMenu ? `translateY(${transformProperty}%)` : "translateY(0)"
+  }
+
+  const ctxStyle = {
+    ...disabledStyle,
+    marginRight : "0.5rem",
   }
 
   const getOperatorStatus = (contextId) => {
@@ -265,22 +334,28 @@ function K8sContextMenu({
     updateProgress({ showProgress : true })
 
     pingKubernetes(
-      successHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Kubernetes succesfully pinged", () => updateProgress({ showProgress : false })),
-      errorHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Kubernetes not pinged successfully", () => updateProgress({ showProgress : false })),
+      successHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Kubernetes pinged", () => updateProgress({ showProgress : false })),
+      errorHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Kubernetes not pinged", () => updateProgress({ showProgress : false })),
       id
     )
   }
 
-  const handleKubernetesDelete = (name, ctxId) => () => {
-    if (confirm(`Are you sure you want to delete "${name}" cluster from Meshery?`)) {
+  const handleKubernetesDelete = (name, ctxId) => async () => {
+    let responseOfDeleteK8sCtx = await deleteCtxtRef.current.show({
+      title : `Delete ${name} context ?`,
+      subtitle : `Are you sure you want to delete ${name} cluster from Meshery?`,
+      options : ["CONFIRM", "CANCEL"]
+    });
+    if (responseOfDeleteK8sCtx === "CONFIRM") {
       const successCallback = async () => {
         const updatedConfig = await loadActiveK8sContexts()
         if (Array.isArray(updatedConfig)) {
           updateK8SConfig({ k8sConfig : updatedConfig })
         }
       }
+
       deleteKubernetesConfig(
-        successHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Kubernetes config successfully removed", successCallback),
+        successHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Kubernetes config removed", successCallback),
         errorHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Not able to remove config"),
         ctxId
       )
@@ -296,37 +371,38 @@ function K8sContextMenu({
   useEffect(() => {
     setTransformProperty(prev => (prev + (contexts.total_count ? contexts.total_count * 3.125 : 0)))
   }, [])
-
   return (
     <>
-      <IconButton
-        aria-label="contexts"
-        className="k8s-icon-button"
-        onClick={(e) => {
-          e.preventDefault();
-          setShowFullContextMenu(prev => !prev);
-        }}
-        onMouseOver={(e) => {
-          e.preventDefault();
-          setAnchorEl(true);
-        }}
+      <div style={ show ? cursorNotAllowed : {}}>
+        <IconButton
+          aria-label="contexts"
+          className="k8s-icon-button"
+          onClick={(e) => {
+            e.preventDefault();
+            setShowFullContextMenu(prev => !prev);
+          }}
+          onMouseOver={(e) => {
+            e.preventDefault();
+            setAnchorEl(true);
+          }}
 
-        onMouseLeave={(e) => {
-          e.preventDefault();
-          setAnchorEl(false)
-        }}
+          onMouseLeave={(e) => {
+            e.preventDefault();
+            setAnchorEl(false)
+          }}
 
-        aria-owns={open
-          ? 'menu-list-grow'
-          : undefined}
-        aria-haspopup="true"
-        style={{ marginRight : "0.5rem" }}
-      >
-        <div className={classes.cbadgeContainer}>
-          <img className="k8s-image" src="/static/img/kubernetes.svg" width="24px" height="24px" style={{ zIndex : "2" }} />
-          <div className={classes.cbadge}>{contexts?.total_count || 0}</div>
-        </div>
-      </IconButton>
+          aria-owns={open
+            ? 'menu-list-grow'
+            : undefined}
+          aria-haspopup="true"
+          style={show? ctxStyle  : { marginRight : "0.5rem" }}
+        >
+          <div className={classes.cbadgeContainer}>
+            <img className="k8s-image" src="/static/img/kubernetes.svg" width="24px" height="24px" style={{ zIndex : "2" }} />
+            <div className={classes.cbadge}>{contexts?.total_count || 0}</div>
+          </div>
+        </IconButton>
+      </div>
 
       <Slide direction="down" style={styleSlider} timeout={400} in={open} mountOnEnter unmountOnExit>
         <div>
@@ -350,7 +426,7 @@ function K8sContextMenu({
                   InputProps={{
                     endAdornment :
                       (
-                        <Search className={classes.searchIcon} />
+                        <Search className={classes.searchIcon}  style={iconMedium} />
                       )
                   }}
                 />
@@ -376,7 +452,7 @@ function K8sContextMenu({
                         size="large"
                         style={{ margin : "0.5rem 0.5rem", whiteSpace : "nowrap" }}
                       >
-                        <AddIcon className={classes.AddIcon} />
+                        <AddIcon className={classes.AddIcon} style={iconMedium} />
                         Connect Clusters
                       </Button>
                     </Link>
@@ -394,7 +470,7 @@ function K8sContextMenu({
                     }
                   }
 
-                  return <div id={ctx.id} className={classes.chip}>
+                  return <div id={ctx.id} className={classes.chip} key={ctx.uniqueID}>
                     <Tooltip title={`Server: ${ctx.server},  Operator: ${getStatus(operStatus)}, MeshSync: ${getStatus(meshStatus)}, Broker: ${getStatus(brokerStatus)}`}>
                       <div style={{ display : "flex", justifyContent : "flex-start", alignItems : "center" }}>
                         <Checkbox
@@ -432,19 +508,23 @@ function K8sContextMenu({
           </ClickAwayListener>
         </div>
       </Slide>
+
+      <PromptComponent ref={deleteCtxtRef} />
     </>
   )
 }
 
 class Header extends React.Component {
+
   constructor(props) {
     super(props);
     this.state = {
       brokerStatusSubscription : null,
       brokerStatus : false,
+      /** @type {CapabilityRegistryClass} */
+      capabilityregistryObj : null
     }
   }
-
   componentDidMount() {
     this._isMounted = true;
     const brokerStatusSub = subscribeBrokerStatusEvents(data => {
@@ -452,22 +532,16 @@ class Header extends React.Component {
       this.setState({ brokerStatus : data?.subscribeBrokerConnection })
     });
     this.setState({ brokerStatusSubscription : brokerStatusSub })
-
-    mesheryControllersStatusSubcription(data => {
-      console.log({ status : data })
-      // this.setState({ brokerStatus: data?.subscribeBrokerConnection })
-    });
-
-    meshSyncEventsSub(data => {
-      console.log({ event : data })
-      // this.setState({ brokerStatus: data?.subscribeBrokerConnection })
-    });
   }
 
+  componentDidUpdate(prevProps) {
+    if (!_.isEqual(prevProps.capabilitiesRegistry, this.props.capabilitiesRegistry)) {
+      this.setState({ capabilityregistryObj : new CapabilityRegistryClass(this.props.capabilitiesRegistry) });
+    }
 
 
-  getSelectedContextId = () => {
-    return getFirstCtxIdFromSelectedCtxIds(["all"], this.props.k8sconfig)
+
+
   }
 
   componentWillUnmount = () => {
@@ -475,17 +549,19 @@ class Header extends React.Component {
   }
 
   render() {
-    const { classes, title, onDrawerToggle, onDrawerCollapse, isBeta } = this.props;
+    const { classes, title, onDrawerToggle, isBeta, theme, themeSetter, onDrawerCollapse } = this.props;
+
     return (
       <NoSsr>
         <React.Fragment>
+          <LoadTheme theme={theme} themeSetter={themeSetter} />
           <AppBar color="primary" position="sticky" elevation={2} className={onDrawerCollapse
             ? classes.appBarOnDrawerClosed
             : classes.appBarOnDrawerOpen}>
             <Toolbar className={onDrawerCollapse
               ? classes.toolbarOnDrawerClosed
               : classes.toolbarOnDrawerOpen}>
-              <Grid container alignItems="center" style={{ backgroundColor : "#396679" }}>
+              <Grid container alignItems="center" >
                 <Hidden smUp>
                   <Grid item>
                     <IconButton
@@ -494,7 +570,7 @@ class Header extends React.Component {
                       onClick={onDrawerToggle}
                       className={classes.menuButton}
                     >
-                      <MenuIcon className={classes.headerIcons} />
+                      <MenuIcon className={classes.headerIcons} style={iconMedium} />
                     </IconButton>
                   </Grid>
                 </Hidden>
@@ -508,6 +584,7 @@ class Header extends React.Component {
                     <K8sContextMenu
                       classes={classes}
                       contexts={this.props.contexts}
+                      show={!this.state.capabilityregistryObj?.isHeaderComponentEnabled([SETTINGS])}
                       activeContexts={this.props.activeContexts}
                       setActiveContexts={this.props.setActiveContexts}
                       searchContexts={this.props.searchContexts}
@@ -517,29 +594,33 @@ class Header extends React.Component {
                     />
                   </div>
 
-                  <div data-test="settings-button">
-                    <IconButton color="inherit">
+                  <div data-test="settings-button" style={!this.state.capabilityregistryObj?.isHeaderComponentEnabled([SETTINGS]) ? cursorNotAllowed : {}}>
+                    <IconButton style={!this.state.capabilityregistryObj?.isHeaderComponentEnabled([SETTINGS]) ? disabledStyle : {}} color="inherit">
                       <Link href="/settings">
                         <SettingsIcon className={classes.headerIcons + " " + (title === 'Settings'
                           ? classes.itemActiveItem
-                          : '')} />
+                          : '')} style={iconMedium} />
                       </Link>
                     </IconButton>
                   </div>
+
 
                   <div data-test="notification-button">
                     <MesheryNotification />
                   </div>
                   <span className={classes.userSpan}>
-                    <User color="inherit" iconButtonClassName={classes.iconButtonAvatar} avatarClassName={classes.avatar} />
+                    <User classes={classes} theme={theme} themeSetter={themeSetter} color="inherit" iconButtonClassName={classes.iconButtonAvatar} avatarClassName={classes.avatar} updateExtensionType={this.props.updateExtensionType} />
                   </span>
+                  {/* <div className="dark-theme-toggle">
+                      <input id="toggle" className="toggle" type="checkbox" onChange={themeToggler} checked={!themeToggle} />
+                    </div> */}
 
                 </Grid>
               </Grid>
             </Toolbar>
           </AppBar>
         </React.Fragment>
-      </NoSsr>
+      </NoSsr >
     );
   }
 }
@@ -556,7 +637,8 @@ const mapStateToProps = (state) => {
     selectedK8sContexts : state.get('selectedK8sContexts'),
     k8sconfig : state.get('k8sConfig'),
     operatorState : state.get('operatorState'),
-    meshSyncState : state.get('meshSyncState')
+    meshSyncState : state.get('meshSyncState'),
+    capabilitiesRegistry : state.get("capabilitiesRegistry")
   })
 };
 

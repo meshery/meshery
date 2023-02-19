@@ -1,4 +1,4 @@
-FROM golang:1.17 as meshery-server
+FROM golang:1.19 as meshery-server
 ARG TOKEN
 ARG GIT_VERSION
 ARG GIT_COMMITSHA
@@ -9,13 +9,13 @@ WORKDIR /github.com/meshery/meshery
 ADD . .
 RUN go clean -modcache; cd server; cd cmd; GOPROXY=https://proxy.golang.org GOSUMDB=off go build -ldflags="-w -s -X main.globalTokenForAnonymousResults=$TOKEN -X main.version=$GIT_VERSION -X main.commitsha=$GIT_COMMITSHA -X main.releasechannel=$RELEASE_CHANNEL" -tags draft -a -o /meshery .
 
-FROM node:lts-slim as ui
+FROM node:lts as ui
 ADD ui ui
-RUN cd ui; npm install --only=production; npm run build && npm run export; mv out /
+RUN cd ui; npm install --omit-dev; npm run build && npm run export; mv out /; mv public /
 
-FROM node:16 as provider-ui
+FROM node:lts as provider-ui
 ADD provider-ui provider-ui
-RUN cd provider-ui; npm install --only=production; npm run build && npm run export; mv out /
+RUN cd provider-ui; npm install --omit=dev; npm run build && npm run export; mv out /
 
 FROM ubuntu as wrk2
 RUN apt-get -y update && apt-get -y install git && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/man/?? /usr/share/man/??_*
@@ -69,10 +69,13 @@ RUN update-ca-certificates
 RUN apk upgrade --no-cache && \
     apk add --no-cache libstdc++
 COPY ./server/oam /app/server/oam
+COPY ./server/meshmodel/components /app/server/meshmodel/components
+COPY ./server/meshmodel/relationships /app/server/meshmodel/relationships
 COPY --from=meshery-server /meshery /app/server/cmd/
 COPY --from=meshery-server /etc/passwd /etc/passwd
 COPY --from=meshery-server /github.com/meshery/meshery/server/helpers/swagger.yaml /app/server/helpers/swagger.yaml
 COPY --from=ui /out /app/ui/out
+COPY --from=ui /public /app/ui/public
 COPY --from=provider-ui /out /app/provider-ui/out
 COPY --from=wrk2 /wrk2 /app/server/cmd/wrk2
 COPY --from=wrk2 /wrk2/wrk /usr/local/bin
@@ -80,7 +83,7 @@ COPY --from=seed_content /seed_content /home/appuser/.meshery/seed_content
 COPY --from=layer5/getnighthawk:latest /usr/local/bin/nighthawk_service /app/server/cmd/
 COPY --from=layer5/getnighthawk:latest /usr/local/bin/nighthawk_output_transform /app/server/cmd/
 
-RUN mkdir -p /home/appuser/.meshery/config; chown -R appuser /home/appuser/
+RUN mkdir -p /home/appuser/.meshery/config; chown -R appuser /home/appuser/; chown -R appuser /app/ui/public
 USER appuser
 WORKDIR /app/server/cmd
 CMD ./meshery

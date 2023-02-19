@@ -37,7 +37,7 @@ function FilterCardGridItem({ filter, handleDeploy, handleUndeploy, handleSubmit
   );
 }
 
-function FiltersGrid({ filters=[],handleDeploy, handleUndeploy, handleClone, handleSubmit,urlUploadHandler,uploadHandler, setSelectedFilter, selectedFilter, pages = 1,setPage, selectedPage, UploadImport }) {
+function FiltersGrid({ filters=[],handleDeploy, handleUndeploy, handleClone, handleSubmit,urlUploadHandler,uploadHandler, setSelectedFilter, selectedFilter, pages = 1,setPage, selectedPage, UploadImport, fetch }) {
 
   const classes = useStyles()
 
@@ -92,7 +92,7 @@ function FiltersGrid({ filters=[],handleDeploy, handleUndeploy, handleClone, han
           <FilterCardGridItem
             key={filter.id}
             filter={filter}
-            handleClone={() => handleClone(filter.id)}
+            handleClone={() => handleClone(filter.id, filter.name)}
             handleDeploy={() => handleModalOpen(filter, true)}
             handleUndeploy={() => handleModalOpen(filter, false)}
             handleSubmit={handleSubmit}
@@ -141,9 +141,9 @@ function FiltersGrid({ filters=[],handleDeploy, handleUndeploy, handleClone, han
         isDelete={!modalOpen.deploy}
         title={ modalOpen.name }
         componentCount = {modalOpen.count}
-        tab={modalOpen.deploy ? 0 : 1}
+        tab={modalOpen.deploy ? 2 : 1}
       />
-      <UploadImport open={importModal.open} handleClose={handleUploadImportClose} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} configuration="Filter"  />
+      <UploadImport open={importModal.open} handleClose={handleUploadImportClose} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} fetch={() => fetch()} configuration="Filter"  />
     </div>
   );
 }

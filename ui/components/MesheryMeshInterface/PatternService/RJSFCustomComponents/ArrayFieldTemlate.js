@@ -1,19 +1,27 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect } from "react";
-
-import { utils } from "@rjsf/core";
-
 import Box from "@material-ui/core/Box";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
-
-import { Button, IconButton, Typography } from "@material-ui/core";
+import { Button, IconButton, makeStyles, Typography, useTheme, withStyles } from "@material-ui/core";
 import AddIcon from "@material-ui/icons/Add";
 import SimpleAccordion from "./Accordion";
-import EnlargedTextTooltip from "../EnlargedTextTooltip";
-import HelpOutlineIcon from "../HelpOutlineIcon";
-const { isMultiSelect, getDefaultRegistry } = utils;
-
+import { CustomTextTooltip } from "../CustomTextTooltip";
+import HelpOutlineIcon from "../../../../assets/icons/HelpOutlineIcon";
+import { isMultiSelect, getDefaultFormState } from "@rjsf/utils";
+import ErrorOutlineIcon from "../../../../assets/icons/ErrorOutlineIcon";
+import { ERROR_COLOR } from "../../../../constants/colors";
+import { iconMedium, iconSmall } from "../../../../css/icons.styles";
+const styles = (theme) => ({
+  typography : {
+    fontSize : "0.8rem",
+  },
+  root : {
+    "& .MuiPaper-root" : {
+      backgroundColor : "#f4f4f4",
+    },
+  }
+});
 function getTitleForItem(props) {
   const title = getTitle(props);
 
@@ -36,8 +44,7 @@ function getTitle(props) {
 }
 
 const ArrayFieldTemplate = (props) => {
-  const { schema, registry = getDefaultRegistry() } = props;
-
+  const { schema, registry = getDefaultFormState(), classes } = props;
   // TODO: update types so we don't have to cast registry as any
   if (isMultiSelect(schema, registry.rootSchema)) {
     return <DefaultFixedArrayFieldTemplate {...props} />;
@@ -46,15 +53,12 @@ const ArrayFieldTemplate = (props) => {
   }
 };
 
-const ArrayFieldTitle = ({ TitleField, idSchema, title, required }) => {
+const ArrayFieldTitle = ({ TitleField, idSchema, title, required, classes }) => {
   if (!title) {
     return null;
   }
 
-  const id = `${idSchema.$id}__title`;
-  // return <h3>{title?.charAt(0)?.toUpperCase() + title?.slice(1)}</h3>;
-  return <Typography variant="body1" style={{ fontWeight : "bold", display : "inline" }}>{title.charAt(0).toUpperCase() + title.slice(1)}</Typography>;
-  // return <TitleField id={id} title={title} required={required} />;
+  return <Typography className={classes.typography} variant="body1" style={{ fontWeight : "bold", display : "inline" }}>{title.charAt(0).toUpperCase() + title.slice(1)}</Typography>;
 };
 
 const ArrayFieldDescription = ({ DescriptionField, idSchema, description }) => {
@@ -70,10 +74,9 @@ const ArrayFieldDescription = ({ DescriptionField, idSchema, description }) => {
 const DefaultArrayItem = (props) => {
   const btnStyle = {
     flex : 1,
-    paddingLeft : 6,
+    paddingLeft : 0,
     paddingRight : 6,
     fontWeight : "bold",
-    minWidth : 0
   };
 
   return (
@@ -121,14 +124,26 @@ const DefaultArrayItem = (props) => {
 };
 
 const DefaultFixedArrayFieldTemplate = (props) => {
+  const { classes } = props;
   return (
     <fieldset className={props.className}>
+      {props.canAdd && (
+        <Button
+          className="array-item-add"
+          onClick={props.onAddClick}
+          disabled={props.disabled || props.readonly}
+        >
+          Add
+        </Button>
+      )}
+
       <ArrayFieldTitle
         key={`array-field-title-${props.idSchema.$id}`}
         TitleField={props.TitleField}
         idSchema={props.idSchema}
         title={getTitle(props)}
         required={props.required}
+        classes={classes}
       />
 
       {(props.uiSchema["ui:description"] || props.schema.description) && (
@@ -149,22 +164,15 @@ const DefaultFixedArrayFieldTemplate = (props) => {
         })}
       </div>
 
-      {props.canAdd && (
-        <Button
-          className="array-item-add"
-          onClick={props.onAddClick}
-          disabled={props.disabled || props.readonly}
-        >
-          Add
-        </Button>
-      )}
+
     </fieldset>
   );
 };
 
 const DefaultNormalArrayFieldTemplate = (props) => {
+  const { classes,theme } = props;
   return (
-    <Paper elevation={0}>
+    <Paper className={classes.root} elevation={0}>
       <Box p={1}>
         <Grid item container alignItems="center" xs={12} justify="space-between" style={{ marginBottom : "0.3rem" }}>
           <Grid item xs={4}>
@@ -174,14 +182,35 @@ const DefaultNormalArrayFieldTemplate = (props) => {
               idSchema={props.idSchema}
               title={getTitle(props)}
               required={props.required}
+              classes={classes}
             />
 
             {
               (props.uiSchema["ui:description"] || props.schema.description) &&
-              <EnlargedTextTooltip title={props.uiSchema["ui:description"] || props.schema.description}>
-                <HelpOutlineIcon style={{ marginLeft : '4px' }} />
-              </EnlargedTextTooltip>
+              <CustomTextTooltip backgroundColor="#3C494F" title={props.uiSchema["ui:description"] || props.schema.description}>
+                <IconButton  disableTouchRipple="true" disableRipple="true">
+                  <HelpOutlineIcon width="14px" height="14px"  fill={theme.palette.type === 'dark' ? "white" : "gray"}  style={{ marginLeft : '4px', ...iconSmall }} />
+                </IconButton>
+              </CustomTextTooltip>
             }
+            {props.rawErrors?.length > 0 && (
+              <CustomTextTooltip
+                backgroundColor={ERROR_COLOR}
+                interactive={true}
+                title={props.rawErrors?.map((error, index) => (
+                  <div key={index}>{error}</div>
+                ))}
+              >
+                <IconButton component="span" size="small" disableTouchRipple="true" disableRipple="true">
+                  <ErrorOutlineIcon
+                    width="16px"
+                    height="16px"
+                    fill={theme.palette.type === 'dark' ? "#F91313" : "#B32700"}
+                    style={{ marginLeft : "4px", verticalAlign : "middle", ...iconSmall }}
+                  />
+                </IconButton>
+              </CustomTextTooltip>
+            )}
 
           </Grid>
           <Grid item xs={4}>
@@ -194,7 +223,7 @@ const DefaultNormalArrayFieldTemplate = (props) => {
                       onClick={props.onAddClick}
                       disabled={props.disabled || props.readonly}
                     >
-                      <AddIcon />
+                      <AddIcon width="18px" height="18px" fill="gray" />
                     </IconButton>
                   </Box>
                 </Grid>
@@ -226,4 +255,4 @@ const DefaultNormalArrayFieldTemplate = (props) => {
   );
 };
 
-export default ArrayFieldTemplate;
+export default withStyles(styles,{ withTheme : true })(ArrayFieldTemplate);

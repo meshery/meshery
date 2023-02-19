@@ -17,7 +17,6 @@ type: Reference
 }
 
 .tbl-head-row .error-name-code{
-  width:23rem;
   display:flex;
   justify-content:space-between;
   align-items:flex-end;
@@ -66,7 +65,10 @@ type: Reference
 
 ## Error Codes and Troubleshooting
 
-Meshery and it's components use a common framework (defined within MeshKit) to generate and document an error with a unique identifier - an error code. Each error code identifies the source component for the error and a standard set of information to describe the error and provide helpful details for troubleshooting the situation surrounding the specific error.
+Meshery and it's components use a common framework (defined within MeshKit) to generate and document an error with a unique error code identifier: the combination of Meshery component moniker and numberic code - `[component-moniker]-[numeric code]`. Each error code identifies the source component for the error and a standard set of information to describe the error and provide helpful details for troubleshooting the situation surrounding the specific error.
+
+{% include alert.html type="info" title="Error codes are combination of component moniker and numberic code" content="
+Note: The numeric portion of error codes are component-scoped. The numeric portion of error codes are allowed to overlap between Meshery components. The combination of the `[component-moniker]-[numeric code]` is what makes a given error code globally unique." %}
 
 ## Error Code Categories by Component
 
@@ -135,7 +137,7 @@ Meshery and it's components use a common framework (defined within MeshKit) to g
   <table class="tbl">
   <thead>
     <tr class="tbl-head-row">
-      <th class="error-name-code"><span style="">Error Name</span> <span style="width:2.4rem;word-break:break-all;">Error Code</span></th>
+      <th class="error-name-code"><span>Error Name</span> <span>Error Code</span></th>
       <th style="width:15%">Severity</th>
       <th style="width:85%">Short Description</th>
     </tr>

@@ -67,6 +67,7 @@ type ComplexityRoot struct {
 		Type            func(childComplexity int) int
 		UpdatedAt       func(childComplexity int) int
 		UserID          func(childComplexity int) int
+		Visibility      func(childComplexity int) int
 	}
 
 	CatalogFilter struct {
@@ -177,6 +178,7 @@ type ComplexityRoot struct {
 		Cluster            func(childComplexity int) int
 		CreatedAt          func(childComplexity int) int
 		CreatedBy          func(childComplexity int) int
+		DeploymentType     func(childComplexity int) int
 		ID                 func(childComplexity int) int
 		KubernetesServerID func(childComplexity int) int
 		MesheryInstanceID  func(childComplexity int) int
@@ -201,6 +203,21 @@ type ComplexityRoot struct {
 		Host   func(childComplexity int) int
 		Path   func(childComplexity int) int
 		Type   func(childComplexity int) int
+	}
+
+	MeshModelComponent struct {
+		Count func(childComplexity int) int
+		Name  func(childComplexity int) int
+	}
+
+	MeshModelRelationship struct {
+		Count func(childComplexity int) int
+		Name  func(childComplexity int) int
+	}
+
+	MeshModelSummary struct {
+		Components    func(childComplexity int) int
+		Relationships func(childComplexity int) int
 	}
 
 	MeshSyncEvent struct {
@@ -341,12 +358,14 @@ type ComplexityRoot struct {
 		FetchPatternCatalogContent func(childComplexity int, selector *model.CatalogSelector) int
 		FetchPatterns              func(childComplexity int, selector model.PageFilter) int
 		FetchResults               func(childComplexity int, selector model.PageFilter, profileID string) int
+		FetchTelemetryComponents   func(childComplexity int, contexts []string) int
 		GetAvailableAddons         func(childComplexity int, filter *model.ServiceMeshFilter) int
 		GetAvailableNamespaces     func(childComplexity int, k8sClusterIDs []string) int
 		GetClusterResources        func(childComplexity int, k8scontextIDs []string, namespace string) int
 		GetControlPlanes           func(childComplexity int, filter *model.ServiceMeshFilter) int
 		GetDataPlanes              func(childComplexity int, filter *model.ServiceMeshFilter) int
 		GetKubectlDescribe         func(childComplexity int, name string, kind string, namespace string) int
+		GetMeshModelSummary        func(childComplexity int, selector model.MeshModelSummarySelector) int
 		GetMeshsyncStatus          func(childComplexity int, k8scontextID string) int
 		GetNatsStatus              func(childComplexity int, k8scontextID string) int
 		GetOperatorStatus          func(childComplexity int, k8scontextID string) int
@@ -373,10 +392,17 @@ type ComplexityRoot struct {
 		SubscribeClusterResources         func(childComplexity int, k8scontextIDs []string, namespace string) int
 		SubscribeConfiguration            func(childComplexity int, applicationSelector model.PageFilter, patternSelector model.PageFilter, filterSelector model.PageFilter) int
 		SubscribeK8sContext               func(childComplexity int, selector model.PageFilter) int
+		SubscribeMeshModelSummary         func(childComplexity int, selector model.MeshModelSummarySelector) int
 		SubscribeMeshSyncEvents           func(childComplexity int, k8scontextIDs []string) int
 		SubscribeMesheryControllersStatus func(childComplexity int, k8scontextIDs []string) int
 		SubscribePerfProfiles             func(childComplexity int, selector model.PageFilter) int
 		SubscribePerfResults              func(childComplexity int, selector model.PageFilter, profileID string) int
+	}
+
+	TelemetryComp struct {
+		Name   func(childComplexity int) int
+		Spec   func(childComplexity int) int
+		Status func(childComplexity int) int
 	}
 }
 
@@ -406,6 +432,8 @@ type QueryResolver interface {
 	FetchPatternCatalogContent(ctx context.Context, selector *model.CatalogSelector) ([]*model.CatalogPattern, error)
 	FetchFilterCatalogContent(ctx context.Context, selector *model.CatalogSelector) ([]*model.CatalogFilter, error)
 	GetClusterResources(ctx context.Context, k8scontextIDs []string, namespace string) (*model.ClusterResources, error)
+	GetMeshModelSummary(ctx context.Context, selector model.MeshModelSummarySelector) (*model.MeshModelSummary, error)
+	FetchTelemetryComponents(ctx context.Context, contexts []string) ([]*model.TelemetryComp, error)
 }
 type SubscriptionResolver interface {
 	ListenToAddonState(ctx context.Context, filter *model.ServiceMeshFilter) (<-chan []*model.AddonList, error)
@@ -421,6 +449,7 @@ type SubscriptionResolver interface {
 	SubscribeConfiguration(ctx context.Context, applicationSelector model.PageFilter, patternSelector model.PageFilter, filterSelector model.PageFilter) (<-chan *model.ConfigurationPage, error)
 	SubscribeClusterResources(ctx context.Context, k8scontextIDs []string, namespace string) (<-chan *model.ClusterResources, error)
 	SubscribeK8sContext(ctx context.Context, selector model.PageFilter) (<-chan *model.K8sContextsPage, error)
+	SubscribeMeshModelSummary(ctx context.Context, selector model.MeshModelSummarySelector) (<-chan *model.MeshModelSummary, error)
 }
 
 type executableSchema struct {
@@ -535,6 +564,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ApplicationResult.UserID(childComplexity), true
+
+	case "ApplicationResult.visibility":
+		if e.complexity.ApplicationResult.Visibility == nil {
+			break
+		}
+
+		return e.complexity.ApplicationResult.Visibility(childComplexity), true
 
 	case "CatalogFilter.catalog_data":
 		if e.complexity.CatalogFilter.CatalogData == nil {
@@ -1012,6 +1048,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.K8sContext.CreatedBy(childComplexity), true
 
+	case "K8sContext.deployment_type":
+		if e.complexity.K8sContext.DeploymentType == nil {
+			break
+		}
+
+		return e.complexity.K8sContext.DeploymentType(childComplexity), true
+
 	case "K8sContext.id":
 		if e.complexity.K8sContext.ID == nil {
 			break
@@ -1116,6 +1159,48 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Location.Type(childComplexity), true
+
+	case "MeshModelComponent.count":
+		if e.complexity.MeshModelComponent.Count == nil {
+			break
+		}
+
+		return e.complexity.MeshModelComponent.Count(childComplexity), true
+
+	case "MeshModelComponent.name":
+		if e.complexity.MeshModelComponent.Name == nil {
+			break
+		}
+
+		return e.complexity.MeshModelComponent.Name(childComplexity), true
+
+	case "MeshModelRelationship.count":
+		if e.complexity.MeshModelRelationship.Count == nil {
+			break
+		}
+
+		return e.complexity.MeshModelRelationship.Count(childComplexity), true
+
+	case "MeshModelRelationship.name":
+		if e.complexity.MeshModelRelationship.Name == nil {
+			break
+		}
+
+		return e.complexity.MeshModelRelationship.Name(childComplexity), true
+
+	case "MeshModelSummary.components":
+		if e.complexity.MeshModelSummary.Components == nil {
+			break
+		}
+
+		return e.complexity.MeshModelSummary.Components(childComplexity), true
+
+	case "MeshModelSummary.relationships":
+		if e.complexity.MeshModelSummary.Relationships == nil {
+			break
+		}
+
+		return e.complexity.MeshModelSummary.Relationships(childComplexity), true
 
 	case "MeshSyncEvent.contextId":
 		if e.complexity.MeshSyncEvent.ContextID == nil {
@@ -1780,6 +1865,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.FetchResults(childComplexity, args["selector"].(model.PageFilter), args["profileID"].(string)), true
 
+	case "Query.fetchTelemetryComponents":
+		if e.complexity.Query.FetchTelemetryComponents == nil {
+			break
+		}
+
+		args, err := ec.field_Query_fetchTelemetryComponents_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.FetchTelemetryComponents(childComplexity, args["contexts"].([]string)), true
+
 	case "Query.getAvailableAddons":
 		if e.complexity.Query.GetAvailableAddons == nil {
 			break
@@ -1851,6 +1948,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.GetKubectlDescribe(childComplexity, args["name"].(string), args["kind"].(string), args["namespace"].(string)), true
+
+	case "Query.getMeshModelSummary":
+		if e.complexity.Query.GetMeshModelSummary == nil {
+			break
+		}
+
+		args, err := ec.field_Query_getMeshModelSummary_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetMeshModelSummary(childComplexity, args["selector"].(model.MeshModelSummarySelector)), true
 
 	case "Query.getMeshsyncStatus":
 		if e.complexity.Query.GetMeshsyncStatus == nil {
@@ -2077,6 +2186,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Subscription.SubscribeK8sContext(childComplexity, args["selector"].(model.PageFilter)), true
 
+	case "Subscription.subscribeMeshModelSummary":
+		if e.complexity.Subscription.SubscribeMeshModelSummary == nil {
+			break
+		}
+
+		args, err := ec.field_Subscription_subscribeMeshModelSummary_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Subscription.SubscribeMeshModelSummary(childComplexity, args["selector"].(model.MeshModelSummarySelector)), true
+
 	case "Subscription.subscribeMeshSyncEvents":
 		if e.complexity.Subscription.SubscribeMeshSyncEvents == nil {
 			break
@@ -2125,6 +2246,27 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Subscription.SubscribePerfResults(childComplexity, args["selector"].(model.PageFilter), args["profileID"].(string)), true
 
+	case "TelemetryComp.name":
+		if e.complexity.TelemetryComp.Name == nil {
+			break
+		}
+
+		return e.complexity.TelemetryComp.Name(childComplexity), true
+
+	case "TelemetryComp.spec":
+		if e.complexity.TelemetryComp.Spec == nil {
+			break
+		}
+
+		return e.complexity.TelemetryComp.Spec(childComplexity), true
+
+	case "TelemetryComp.status":
+		if e.complexity.TelemetryComp.Status == nil {
+			break
+		}
+
+		return e.complexity.TelemetryComp.Status(childComplexity), true
+
 	}
 	return 0, false
 }
@@ -2135,6 +2277,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	inputUnmarshalMap := graphql.BuildUnmarshalerMap(
 		ec.unmarshalInputAddonStatusInput,
 		ec.unmarshalInputCatalogSelector,
+		ec.unmarshalInputMeshModelSummarySelector,
 		ec.unmarshalInputOperatorStatusInput,
 		ec.unmarshalInputPageFilter,
 		ec.unmarshalInputReSyncActions,
@@ -2512,6 +2655,7 @@ type K8sContext {
   created_by: ID!,
   meshery_instance_id: ID!,
   kubernetes_server_id: ID!,
+  deployment_type: String!,
   updated_at: String!,
   created_at: String!
 }
@@ -2545,6 +2689,7 @@ type ApplicationResult {
   type: NullString!
   user_id: String!
   location: Location!
+  visibility: String!
   created_at: String
   updated_at: String
 }
@@ -2689,6 +2834,7 @@ input PageFilter {
   search: String
   from: String
   to: String
+  updated_after: String
 }
 
 input CatalogSelector {
@@ -2696,6 +2842,14 @@ input CatalogSelector {
   order: String!
 }
 
+# ================ TELEMETRY ==================== 
+
+
+type TelemetryComp {
+ name: String!
+ spec: String!
+ status: String!
+}
 # ============== RESYNC =============================
 
 # Type ReSyncActions define the actions involved during resync
@@ -2703,6 +2857,28 @@ input ReSyncActions {
   clearDB: String!
   ReSync: String!
   hardReset: String!
+}
+
+# ============== MeshModel =============================
+
+input MeshModelSummarySelector {
+  type: String!
+}
+
+# Type MeshModelComponentsSummary define the summary of a Mesh Model
+type MeshModelSummary {
+  components: [MeshModelComponent!]
+  relationships: [MeshModelRelationship!]
+}
+
+type MeshModelComponent {
+  name: String!
+  count: Int!
+}
+
+type MeshModelRelationship {
+  name: String!
+  count: Int!
 }
 
 # ============== ROOT =================================
@@ -2794,8 +2970,13 @@ type Query {
   fetchFilterCatalogContent(selector: CatalogSelector): [CatalogFilter!]!
 
   # Query for getting cluster info
-
   getClusterResources(k8scontextIDs: [String!], namespace: String!): ClusterResources!
+
+  # Query for meshmodel summary
+  getMeshModelSummary(selector: MeshModelSummarySelector!): MeshModelSummary!
+
+  # Query for telemetry components
+  fetchTelemetryComponents(contexts: [String!]) : [TelemetryComp]!
 }
 
 
@@ -2863,6 +3044,8 @@ type Subscription {
   ): ClusterResources!
 
   subscribeK8sContext(selector: PageFilter!) : K8sContextsPage!
+
+  subscribeMeshModelSummary(selector: MeshModelSummarySelector!) : MeshModelSummary!
 
 }
 
@@ -3031,6 +3214,21 @@ func (ec *executionContext) field_Query_fetchResults_args(ctx context.Context, r
 	return args, nil
 }
 
+func (ec *executionContext) field_Query_fetchTelemetryComponents_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 []string
+	if tmp, ok := rawArgs["contexts"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("contexts"))
+		arg0, err = ec.unmarshalOString2ᚕstringᚄ(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["contexts"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Query_getAvailableAddons_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -3145,6 +3343,21 @@ func (ec *executionContext) field_Query_getKubectlDescribe_args(ctx context.Cont
 		}
 	}
 	args["namespace"] = arg2
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_getMeshModelSummary_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.MeshModelSummarySelector
+	if tmp, ok := rawArgs["selector"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("selector"))
+		arg0, err = ec.unmarshalNMeshModelSummarySelector2githubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐMeshModelSummarySelector(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["selector"] = arg0
 	return args, nil
 }
 
@@ -3485,6 +3698,21 @@ func (ec *executionContext) field_Subscription_subscribeK8sContext_args(ctx cont
 	if tmp, ok := rawArgs["selector"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("selector"))
 		arg0, err = ec.unmarshalNPageFilter2githubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐPageFilter(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["selector"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Subscription_subscribeMeshModelSummary_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.MeshModelSummarySelector
+	if tmp, ok := rawArgs["selector"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("selector"))
+		arg0, err = ec.unmarshalNMeshModelSummarySelector2githubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐMeshModelSummarySelector(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -3868,6 +4096,8 @@ func (ec *executionContext) fieldContext_ApplicationPage_applications(ctx contex
 				return ec.fieldContext_ApplicationResult_user_id(ctx, field)
 			case "location":
 				return ec.fieldContext_ApplicationResult_location(ctx, field)
+			case "visibility":
+				return ec.fieldContext_ApplicationResult_visibility(ctx, field)
 			case "created_at":
 				return ec.fieldContext_ApplicationResult_created_at(ctx, field)
 			case "updated_at":
@@ -4154,6 +4384,50 @@ func (ec *executionContext) fieldContext_ApplicationResult_location(ctx context.
 				return ec.fieldContext_Location_type(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Location", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ApplicationResult_visibility(ctx context.Context, field graphql.CollectedField, obj *model.ApplicationResult) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ApplicationResult_visibility(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Visibility, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ApplicationResult_visibility(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ApplicationResult",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
 		},
 	}
 	return fc, nil
@@ -7538,6 +7812,50 @@ func (ec *executionContext) fieldContext_K8sContext_kubernetes_server_id(ctx con
 	return fc, nil
 }
 
+func (ec *executionContext) _K8sContext_deployment_type(ctx context.Context, field graphql.CollectedField, obj *model.K8sContext) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_K8sContext_deployment_type(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DeploymentType, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_K8sContext_deployment_type(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "K8sContext",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _K8sContext_updated_at(ctx context.Context, field graphql.CollectedField, obj *model.K8sContext) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_K8sContext_updated_at(ctx, field)
 	if err != nil {
@@ -7727,6 +8045,8 @@ func (ec *executionContext) fieldContext_K8sContextsPage_contexts(ctx context.Co
 				return ec.fieldContext_K8sContext_meshery_instance_id(ctx, field)
 			case "kubernetes_server_id":
 				return ec.fieldContext_K8sContext_kubernetes_server_id(ctx, field)
+			case "deployment_type":
+				return ec.fieldContext_K8sContext_deployment_type(ctx, field)
 			case "updated_at":
 				return ec.fieldContext_K8sContext_updated_at(ctx, field)
 			case "created_at":
@@ -7979,6 +8299,276 @@ func (ec *executionContext) fieldContext_Location_type(ctx context.Context, fiel
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _MeshModelComponent_name(ctx context.Context, field graphql.CollectedField, obj *model.MeshModelComponent) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_MeshModelComponent_name(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Name, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_MeshModelComponent_name(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "MeshModelComponent",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _MeshModelComponent_count(ctx context.Context, field graphql.CollectedField, obj *model.MeshModelComponent) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_MeshModelComponent_count(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Count, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_MeshModelComponent_count(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "MeshModelComponent",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _MeshModelRelationship_name(ctx context.Context, field graphql.CollectedField, obj *model.MeshModelRelationship) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_MeshModelRelationship_name(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Name, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_MeshModelRelationship_name(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "MeshModelRelationship",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _MeshModelRelationship_count(ctx context.Context, field graphql.CollectedField, obj *model.MeshModelRelationship) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_MeshModelRelationship_count(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Count, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_MeshModelRelationship_count(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "MeshModelRelationship",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _MeshModelSummary_components(ctx context.Context, field graphql.CollectedField, obj *model.MeshModelSummary) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_MeshModelSummary_components(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Components, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*model.MeshModelComponent)
+	fc.Result = res
+	return ec.marshalOMeshModelComponent2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐMeshModelComponentᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_MeshModelSummary_components(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "MeshModelSummary",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "name":
+				return ec.fieldContext_MeshModelComponent_name(ctx, field)
+			case "count":
+				return ec.fieldContext_MeshModelComponent_count(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type MeshModelComponent", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _MeshModelSummary_relationships(ctx context.Context, field graphql.CollectedField, obj *model.MeshModelSummary) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_MeshModelSummary_relationships(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Relationships, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*model.MeshModelRelationship)
+	fc.Result = res
+	return ec.marshalOMeshModelRelationship2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐMeshModelRelationshipᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_MeshModelSummary_relationships(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "MeshModelSummary",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "name":
+				return ec.fieldContext_MeshModelRelationship_name(ctx, field)
+			case "count":
+				return ec.fieldContext_MeshModelRelationship_count(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type MeshModelRelationship", field.Name)
 		},
 	}
 	return fc, nil
@@ -13038,6 +13628,130 @@ func (ec *executionContext) fieldContext_Query_getClusterResources(ctx context.C
 	return fc, nil
 }
 
+func (ec *executionContext) _Query_getMeshModelSummary(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_getMeshModelSummary(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GetMeshModelSummary(rctx, fc.Args["selector"].(model.MeshModelSummarySelector))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.MeshModelSummary)
+	fc.Result = res
+	return ec.marshalNMeshModelSummary2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐMeshModelSummary(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_getMeshModelSummary(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "components":
+				return ec.fieldContext_MeshModelSummary_components(ctx, field)
+			case "relationships":
+				return ec.fieldContext_MeshModelSummary_relationships(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type MeshModelSummary", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_getMeshModelSummary_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_fetchTelemetryComponents(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_fetchTelemetryComponents(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().FetchTelemetryComponents(rctx, fc.Args["contexts"].([]string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.TelemetryComp)
+	fc.Result = res
+	return ec.marshalNTelemetryComp2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐTelemetryComp(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_fetchTelemetryComponents(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "name":
+				return ec.fieldContext_TelemetryComp_name(ctx, field)
+			case "spec":
+				return ec.fieldContext_TelemetryComp_spec(ctx, field)
+			case "status":
+				return ec.fieldContext_TelemetryComp_status(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type TelemetryComp", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_fetchTelemetryComponents_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Query___type(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Query___type(ctx, field)
 	if err != nil {
@@ -14215,6 +14929,213 @@ func (ec *executionContext) fieldContext_Subscription_subscribeK8sContext(ctx co
 	if fc.Args, err = ec.field_Subscription_subscribeK8sContext_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Subscription_subscribeMeshModelSummary(ctx context.Context, field graphql.CollectedField) (ret func(ctx context.Context) graphql.Marshaler) {
+	fc, err := ec.fieldContext_Subscription_subscribeMeshModelSummary(ctx, field)
+	if err != nil {
+		return nil
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = nil
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Subscription().SubscribeMeshModelSummary(rctx, fc.Args["selector"].(model.MeshModelSummarySelector))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return nil
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return nil
+	}
+	return func(ctx context.Context) graphql.Marshaler {
+		select {
+		case res, ok := <-resTmp.(<-chan *model.MeshModelSummary):
+			if !ok {
+				return nil
+			}
+			return graphql.WriterFunc(func(w io.Writer) {
+				w.Write([]byte{'{'})
+				graphql.MarshalString(field.Alias).MarshalGQL(w)
+				w.Write([]byte{':'})
+				ec.marshalNMeshModelSummary2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐMeshModelSummary(ctx, field.Selections, res).MarshalGQL(w)
+				w.Write([]byte{'}'})
+			})
+		case <-ctx.Done():
+			return nil
+		}
+	}
+}
+
+func (ec *executionContext) fieldContext_Subscription_subscribeMeshModelSummary(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Subscription",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "components":
+				return ec.fieldContext_MeshModelSummary_components(ctx, field)
+			case "relationships":
+				return ec.fieldContext_MeshModelSummary_relationships(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type MeshModelSummary", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Subscription_subscribeMeshModelSummary_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _TelemetryComp_name(ctx context.Context, field graphql.CollectedField, obj *model.TelemetryComp) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_TelemetryComp_name(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Name, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_TelemetryComp_name(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "TelemetryComp",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _TelemetryComp_spec(ctx context.Context, field graphql.CollectedField, obj *model.TelemetryComp) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_TelemetryComp_spec(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Spec, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_TelemetryComp_spec(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "TelemetryComp",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _TelemetryComp_status(ctx context.Context, field graphql.CollectedField, obj *model.TelemetryComp) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_TelemetryComp_status(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Status, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_TelemetryComp_status(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "TelemetryComp",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
 	}
 	return fc, nil
 }
@@ -16062,6 +16983,29 @@ func (ec *executionContext) unmarshalInputCatalogSelector(ctx context.Context, o
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputMeshModelSummarySelector(ctx context.Context, obj interface{}) (model.MeshModelSummarySelector, error) {
+	var it model.MeshModelSummarySelector
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	for k, v := range asMap {
+		switch k {
+		case "type":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("type"))
+			it.Type, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputOperatorStatusInput(ctx context.Context, obj interface{}) (model.OperatorStatusInput, error) {
 	var it model.OperatorStatusInput
 	asMap := map[string]interface{}{}
@@ -16147,6 +17091,14 @@ func (ec *executionContext) unmarshalInputPageFilter(ctx context.Context, obj in
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("to"))
 			it.To, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "updated_after":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updated_after"))
+			it.UpdatedAfter, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -16363,6 +17315,13 @@ func (ec *executionContext) _ApplicationResult(ctx context.Context, sel ast.Sele
 		case "location":
 
 			out.Values[i] = ec._ApplicationResult_location(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "visibility":
+
+			out.Values[i] = ec._ApplicationResult_visibility(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				invalids++
@@ -17111,6 +18070,13 @@ func (ec *executionContext) _K8sContext(ctx context.Context, sel ast.SelectionSe
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "deployment_type":
+
+			out.Values[i] = ec._K8sContext_deployment_type(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "updated_at":
 
 			out.Values[i] = ec._K8sContext_updated_at(ctx, field, obj)
@@ -17225,6 +18191,105 @@ func (ec *executionContext) _Location(ctx context.Context, sel ast.SelectionSet,
 		case "type":
 
 			out.Values[i] = ec._Location_type(ctx, field, obj)
+
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var meshModelComponentImplementors = []string{"MeshModelComponent"}
+
+func (ec *executionContext) _MeshModelComponent(ctx context.Context, sel ast.SelectionSet, obj *model.MeshModelComponent) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, meshModelComponentImplementors)
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("MeshModelComponent")
+		case "name":
+
+			out.Values[i] = ec._MeshModelComponent_name(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "count":
+
+			out.Values[i] = ec._MeshModelComponent_count(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var meshModelRelationshipImplementors = []string{"MeshModelRelationship"}
+
+func (ec *executionContext) _MeshModelRelationship(ctx context.Context, sel ast.SelectionSet, obj *model.MeshModelRelationship) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, meshModelRelationshipImplementors)
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("MeshModelRelationship")
+		case "name":
+
+			out.Values[i] = ec._MeshModelRelationship_name(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "count":
+
+			out.Values[i] = ec._MeshModelRelationship_count(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var meshModelSummaryImplementors = []string{"MeshModelSummary"}
+
+func (ec *executionContext) _MeshModelSummary(ctx context.Context, sel ast.SelectionSet, obj *model.MeshModelSummary) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, meshModelSummaryImplementors)
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("MeshModelSummary")
+		case "components":
+
+			out.Values[i] = ec._MeshModelSummary_components(ctx, field, obj)
+
+		case "relationships":
+
+			out.Values[i] = ec._MeshModelSummary_relationships(ctx, field, obj)
 
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
@@ -18548,6 +19613,52 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			out.Concurrently(i, func() graphql.Marshaler {
 				return rrm(innerCtx)
 			})
+		case "getMeshModelSummary":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getMeshModelSummary(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return rrm(innerCtx)
+			})
+		case "fetchTelemetryComponents":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_fetchTelemetryComponents(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return rrm(innerCtx)
+			})
 		case "__type":
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
@@ -18645,9 +19756,53 @@ func (ec *executionContext) _Subscription(ctx context.Context, sel ast.Selection
 		return ec._Subscription_subscribeClusterResources(ctx, fields[0])
 	case "subscribeK8sContext":
 		return ec._Subscription_subscribeK8sContext(ctx, fields[0])
+	case "subscribeMeshModelSummary":
+		return ec._Subscription_subscribeMeshModelSummary(ctx, fields[0])
 	default:
 		panic("unknown field " + strconv.Quote(fields[0].Name))
 	}
+}
+
+var telemetryCompImplementors = []string{"TelemetryComp"}
+
+func (ec *executionContext) _TelemetryComp(ctx context.Context, sel ast.SelectionSet, obj *model.TelemetryComp) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, telemetryCompImplementors)
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("TelemetryComp")
+		case "name":
+
+			out.Values[i] = ec._TelemetryComp_name(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "spec":
+
+			out.Values[i] = ec._TelemetryComp_spec(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "status":
+
+			out.Values[i] = ec._TelemetryComp_status(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
 }
 
 var __DirectiveImplementors = []string{"__Directive"}
@@ -19537,6 +20692,45 @@ func (ec *executionContext) marshalNMap2map(ctx context.Context, sel ast.Selecti
 	return res
 }
 
+func (ec *executionContext) marshalNMeshModelComponent2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐMeshModelComponent(ctx context.Context, sel ast.SelectionSet, v *model.MeshModelComponent) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._MeshModelComponent(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNMeshModelRelationship2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐMeshModelRelationship(ctx context.Context, sel ast.SelectionSet, v *model.MeshModelRelationship) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._MeshModelRelationship(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNMeshModelSummary2githubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐMeshModelSummary(ctx context.Context, sel ast.SelectionSet, v model.MeshModelSummary) graphql.Marshaler {
+	return ec._MeshModelSummary(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNMeshModelSummary2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐMeshModelSummary(ctx context.Context, sel ast.SelectionSet, v *model.MeshModelSummary) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._MeshModelSummary(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNMeshModelSummarySelector2githubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐMeshModelSummarySelector(ctx context.Context, v interface{}) (model.MeshModelSummarySelector, error) {
+	res, err := ec.unmarshalInputMeshModelSummarySelector(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) marshalNMeshSyncEvent2githubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐMeshSyncEvent(ctx context.Context, sel ast.SelectionSet, v model.MeshSyncEvent) graphql.Marshaler {
 	return ec._MeshSyncEvent(ctx, sel, &v)
 }
@@ -19881,6 +21075,44 @@ func (ec *executionContext) marshalNString2string(ctx context.Context, sel ast.S
 		}
 	}
 	return res
+}
+
+func (ec *executionContext) marshalNTelemetryComp2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐTelemetryComp(ctx context.Context, sel ast.SelectionSet, v []*model.TelemetryComp) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOTelemetryComp2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐTelemetryComp(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	return ret
 }
 
 func (ec *executionContext) marshalN__Directive2githubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐDirective(ctx context.Context, sel ast.SelectionSet, v introspection.Directive) graphql.Marshaler {
@@ -20460,6 +21692,100 @@ func (ec *executionContext) marshalOMap2map(ctx context.Context, sel ast.Selecti
 	return res
 }
 
+func (ec *executionContext) marshalOMeshModelComponent2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐMeshModelComponentᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.MeshModelComponent) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNMeshModelComponent2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐMeshModelComponent(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalOMeshModelRelationship2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐMeshModelRelationshipᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.MeshModelRelationship) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNMeshModelRelationship2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐMeshModelRelationship(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
 func (ec *executionContext) unmarshalOMeshType2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐMeshType(ctx context.Context, v interface{}) (*model.MeshType, error) {
 	if v == nil {
 		return nil, nil
@@ -20804,6 +22130,13 @@ func (ec *executionContext) marshalOString2ᚖstring(ctx context.Context, sel as
 	}
 	res := graphql.MarshalString(*v)
 	return res
+}
+
+func (ec *executionContext) marshalOTelemetryComp2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐTelemetryComp(ctx context.Context, sel ast.SelectionSet, v *model.TelemetryComp) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._TelemetryComp(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalO__EnumValue2ᚕgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐEnumValueᚄ(ctx context.Context, sel ast.SelectionSet, v []introspection.EnumValue) graphql.Marshaler {

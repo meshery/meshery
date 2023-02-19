@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/gofrs/uuid"
+	"github.com/layer5io/meshery/server/models/pattern/patterns/k8s"
 	"github.com/layer5io/meshery/server/models/pattern/utils"
 	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
 	"github.com/sirupsen/logrus"
@@ -41,8 +42,10 @@ type Service struct {
 	// from the parent
 	Name        string            `yaml:"name,omitempty" json:"name,omitempty"`
 	Type        string            `yaml:"type,omitempty" json:"type,omitempty"`
+	APIVersion  string            `yaml:"apiVersion,omitempty" json:"apiVersion,omitempty"`
 	Namespace   string            `yaml:"namespace" json:"namespace"`
 	Version     string            `yaml:"version,omitempty" json:"version,omitempty"`
+	Model       string            `yaml:"model,omitempty" json:"model,omitempty"`
 	Labels      map[string]string `yaml:"labels,omitempty" json:"labels,omitempty"`
 	Annotations map[string]string `yaml:"annotations,omitempty" json:"annotations,omitempty"`
 	// DependsOn correlates one or more objects as a required dependency of this service
@@ -87,7 +90,6 @@ func (p *Pattern) GetApplicationComponent(name string) (v1alpha1.Component, erro
 	if !ok {
 		return v1alpha1.Component{}, fmt.Errorf("invalid service name")
 	}
-
 	comp := v1alpha1.Component{
 		TypeMeta: v1.TypeMeta{Kind: "Component", APIVersion: "core.oam.dev/v1alpha2"},
 		ObjectMeta: v1.ObjectMeta{
@@ -97,12 +99,17 @@ func (p *Pattern) GetApplicationComponent(name string) (v1alpha1.Component, erro
 			Annotations: svc.Annotations,
 		},
 		Spec: v1alpha1.ComponentSpec{
-			Type:     svc.Type,
-			Version:  svc.Version,
-			Settings: svc.Settings,
+			Type:       svc.Type,
+			Version:    svc.Version,
+			Model:      svc.Model,
+			APIVersion: svc.APIVersion,
+			Settings:   svc.Settings,
 		},
 	}
-
+	if comp.ObjectMeta.Labels == nil {
+		comp.ObjectMeta.Labels = make(map[string]string)
+	}
+	comp.ObjectMeta.Labels["resource.pattern.meshery.io/id"] = svc.ID.String() //set the patternID to track back the object
 	return comp, nil
 }
 
@@ -193,12 +200,13 @@ func (p *Pattern) ToYAML() ([]byte, error) {
 }
 
 // NewPatternFileFromCytoscapeJSJSON takes in CytoscapeJS JSON
-// and creates a PatternFile from it
+// and creates a PatternFile from it.
+// This function always returns meshkit error
 func NewPatternFileFromCytoscapeJSJSON(name string, byt []byte) (Pattern, error) {
 	// Unmarshal data into cytoscape struct
 	var cy cytoscapejs.GraphElem
 	if err := json.Unmarshal(byt, &cy); err != nil {
-		return Pattern{}, err
+		return Pattern{}, ErrPatternFromCytoscape(err)
 	}
 	if name == "" {
 		name = "MesheryGeneratedPattern"
@@ -213,15 +221,12 @@ func NewPatternFileFromCytoscapeJSJSON(name string, byt []byte) (Pattern, error)
 	countDuplicates := make(map[string]int)
 	//store the names of services and their count
 	err := processCytoElementsWithPattern(cy.Elements, &pf, func(svc Service, ele cytoscapejs.Element) error {
-		name, ok := svc.Settings["name"].(string)
-		if !ok {
-			return fmt.Errorf("missing name in service settings")
-		}
+		name := svc.Name
 		countDuplicates[name]++
 		return nil
 	})
 	if err != nil {
-		return pf, err
+		return pf, ErrPatternFromCytoscape(err)
 	}
 
 	//Populate the dependsOn field with appropriate unique service names
@@ -238,10 +243,7 @@ func NewPatternFileFromCytoscapeJSJSON(name string, byt []byte) (Pattern, error)
 				dependsOnMap[elementID] = append(dependsOnMap[elementID], parentID)
 			}
 		}
-		svc.Name, ok = svc.Settings["name"].(string)
-		if !ok {
-			return fmt.Errorf("required service setting: \"name\" missing")
-		}
+
 		//Only make the name unique when duplicates are encountered. This allows clients to preserve and propagate the unique name they want to give to their workload
 		if countDuplicates[svc.Name] > 1 {
 			//set appropriate unique service name
@@ -252,20 +254,21 @@ func NewPatternFileFromCytoscapeJSJSON(name string, byt []byte) (Pattern, error)
 		pf.Services[svc.Name] = &svc
 		return nil
 	})
-	if err == nil {
-		//add depends-on field
-		for child, parents := range dependsOnMap {
-			childSvc := eleToSvc[child]
-			if childSvc != "" {
-				for _, parent := range parents {
-					if eleToSvc[parent] != "" {
-						pf.Services[childSvc].DependsOn = append(pf.Services[childSvc].DependsOn, eleToSvc[parent])
-					}
+	if err != nil {
+		return pf, ErrPatternFromCytoscape(err)
+	}
+	//add depends-on field
+	for child, parents := range dependsOnMap {
+		childSvc := eleToSvc[child]
+		if childSvc != "" {
+			for _, parent := range parents {
+				if eleToSvc[parent] != "" {
+					pf.Services[childSvc].DependsOn = append(pf.Services[childSvc].DependsOn, eleToSvc[parent])
 				}
 			}
 		}
 	}
-	return pf, err
+	return pf, nil
 }
 
 func getRandomAlphabetsOfDigit(length int) (s string) {
@@ -316,6 +319,9 @@ func processCytoElementsWithPattern(eles []cytoscapejs.Element, pf *Pattern, cal
 		if err := json.Unmarshal(svcByt, &svc); err != nil {
 			return fmt.Errorf("failed to create service from the metadata in the scratch")
 		}
+		if svc.Name == "" {
+			return fmt.Errorf("cannot save service with empty name")
+		}
 		err = callback(svc, elem)
 		if err != nil {
 			return err
@@ -334,6 +340,7 @@ func manifestIsEmpty(manifests []string) bool {
 	return true
 }
 
+// Note: If modified, make sure this function always returns a meshkit error
 func NewPatternFileFromK8sManifest(data string, ignoreErrors bool) (Pattern, error) {
 	pattern := Pattern{
 		Name:     "Autogenerated",
@@ -344,7 +351,7 @@ func NewPatternFileFromK8sManifest(data string, ignoreErrors bool) (Pattern, err
 	//For `---` separated manifests, even if only one manifest is there followed/preceded by multiple `\n---\n`- the manifest be will be valid
 	//If there is no data present (except \n---\n) , then the yaml will be marked as empty and error will be thrown
 	if manifestIsEmpty(manifests) {
-		return pattern, ErrParseK8sManifest(fmt.Errorf("manifest is empty"))
+		return pattern, ErrParseK8sManifest(fmt.Errorf("kubernetes manifest is empty"))
 	}
 	for _, manifestYAML := range manifests {
 		manifest := map[string]interface{}{}
@@ -372,8 +379,7 @@ func NewPatternFileFromK8sManifest(data string, ignoreErrors bool) (Pattern, err
 			if ignoreErrors {
 				continue
 			}
-
-			return pattern, ErrCreatePatternService(fmt.Errorf("failed to create pattern service from extended kubernetes component: %s", err))
+			return pattern, ErrCreatePatternService(fmt.Errorf("failed to create pattern service from kubernetes component: %s", err))
 		}
 
 		pattern.Services[name] = &svc
@@ -436,11 +442,13 @@ func createPatternServiceFromK8s(manifest map[string]interface{}) (string, Servi
 			castedAnnotation[k] = cv
 		}
 	}
-
+	rest = k8s.Format.Prettify(rest, false)
 	svc := Service{
 		Name:        name,
 		Type:        w[0].OAMDefinition.Name,
+		APIVersion:  apiVersion,
 		Namespace:   namespace,
+		Model:       "kubernetes",
 		Labels:      castedLabel,
 		Annotations: castedAnnotation,
 		Settings:    rest,

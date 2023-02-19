@@ -5,7 +5,7 @@ import {
 // import {Table, TableBody, TableContainer, TableHead, TableRow,} from "@material-ui/core"
 import blue from "@material-ui/core/colors/blue";
 import Grid from "@material-ui/core/Grid";
-import { withStyles } from "@material-ui/core/styles";
+import { createTheme, withStyles, MuiThemeProvider } from "@material-ui/core/styles";
 import AddIcon from "@material-ui/icons/AddCircleOutline";
 import CloseIcon from "@material-ui/icons/Close";
 import SettingsIcon from "@material-ui/icons/Settings";
@@ -16,22 +16,28 @@ import React from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import dataFetch from "../lib/data-fetch";
-import { updateGrafanaConfig, updateProgress, updatePrometheusConfig } from "../lib/store";
+import { updateGrafanaConfig, updateProgress, updatePrometheusConfig, updateTelemetryUrls } from "../lib/store";
 import { getK8sClusterIdsFromCtxId, getK8sClusterNamesFromCtxId } from "../utils/multi-ctx";
 import { versionMapper } from "../utils/nameMapper";
-import { submitGrafanaConfigure } from "./GrafanaComponent";
+import { submitGrafanaConfigure } from "./telemetry/grafana/GrafanaComponent";
 import fetchAvailableAddons from "./graphql/queries/AddonsStatusQuery";
 import fetchControlPlanes from "./graphql/queries/ControlPlanesQuery";
 import fetchDataPlanes from "./graphql/queries/DataPlanesQuery";
 import fetchClusterResources from "./graphql/queries/ClusterResourcesQuery";
 import subscribeClusterResources from "./graphql/subscriptions/ClusterResourcesSubscription";
 import fetchAvailableNamespaces from "./graphql/queries/NamespaceQuery";
-import { submitPrometheusConfigure } from "./PrometheusComponent";
+import fetchTelemetryCompsQuery from '../components/graphql/queries/TelemetryComponentsQuery';
+import { submitPrometheusConfigure } from "./telemetry/prometheus/PrometheusComponent";
 import MUIDataTable from "mui-datatables";
-import { MuiThemeProvider, createTheme } from '@material-ui/core/styles';
+import Popup from "./Popup";
+import { iconMedium } from "../css/icons.styles";
+import { extractURLFromScanData } from "./ConnectionWizard/helpers/metrics";
 
 const styles = (theme) => ({
-  rootClass : { backgroundColor : "#eaeff1", },
+  rootClass : { backgroundColor : theme.palette.secondary.elevatedComponents2, },
+  datatable : {
+    boxShadow : "none",
+  },
   chip : {
     marginRight : theme.spacing(1),
     marginBottom : theme.spacing(1),
@@ -81,7 +87,7 @@ const styles = (theme) => ({
     color : "#000",
   },
   dashboardSection : {
-    backgroundColor : "#fff",
+    backgroundColor : theme.palette.secondary.elevatedComponents,
     padding : theme.spacing(2),
     borderRadius : 4,
     height : "100%",
@@ -135,6 +141,7 @@ class DashboardComponent extends React.Component {
       clusterResourcesSubscription : null,
       clusterResourcesQuery : null,
       namespaceQuery : null,
+      telemetryQuery : null
     };
   }
 
@@ -165,6 +172,9 @@ class DashboardComponent extends React.Component {
     }
     if (this.state.controlPlaneSubscription) {
       this.state.controlPlaneSubscription.unsubscribe()
+    }
+    if (this.state.telemetryQuery) {
+      this.state.telemetryQuery.unsubscribe();
     }
     this.disposeWorkloadWidgetSubscription();
   }
@@ -252,6 +262,29 @@ class DashboardComponent extends React.Component {
     }
   }
 
+  initTelemetryComponentQuery = () => {
+    const self = this;
+    const contextIDs = self.getK8sClusterIds();
+    const telemetryQuery = fetchTelemetryCompsQuery({
+      contexts : contextIDs
+    }).subscribe({
+      next : (components) => {
+        let prometheusURLs = [];
+        let grafanaURLs = [];
+        components.telemetryComps?.forEach((component) => {
+          const data = { spec : JSON.parse(component.spec), status : JSON.parse(component.status) };
+          if (component.name === "grafana") {
+            grafanaURLs = grafanaURLs.concat(extractURLFromScanData(data));
+          } else {
+            prometheusURLs = prometheusURLs.concat(extractURLFromScanData(data));
+          }
+        })
+
+        this.props.updateTelemetryUrls({ telemetryURLs : { "grafana" : grafanaURLs, "prometheus" : prometheusURLs } });
+      }
+    })
+    this.setState({ telemetryQuery });
+  }
   componentWillUnmount = () => {
     this._isMounted = false
     this.disposeSubscriptions()
@@ -269,7 +302,8 @@ class DashboardComponent extends React.Component {
       this.initMeshSyncControlPlaneSubscription();
       this.initDashboardClusterResourcesQuery();
       this.initDashboardClusterResourcesSubscription();
-      this.initNamespaceQuery()
+      this.initNamespaceQuery();
+      this.initTelemetryComponentQuery();
     }
   };
 
@@ -300,6 +334,7 @@ class DashboardComponent extends React.Component {
       this.initDashboardClusterResourcesQuery();
       this.initDashboardClusterResourcesSubscription();
       this.initNamespaceQuery();
+      this.initTelemetryComponentQuery();
     }
 
     if (prevState?.selectedNamespace !== this.state?.selectedNamespace) {
@@ -308,6 +343,7 @@ class DashboardComponent extends React.Component {
       this.initDashboardClusterResourcesQuery();
       this.initNamespaceQuery();
     }
+
   }
 
   getK8sClusterIds = () => {
@@ -506,7 +542,7 @@ class DashboardComponent extends React.Component {
       variant : "error", preventDuplicate : true,
       action : (key) => (
         <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
-          <CloseIcon />
+          <CloseIcon style={iconMedium} />
         </IconButton>
       ),
       autoHideDuration : 7000,
@@ -545,12 +581,12 @@ class DashboardComponent extends React.Component {
               self.props.closeSnackbar(key);
             }}
           >
-            <SettingsIcon className={classes.settingsIcon} />
+            <SettingsIcon className={classes.settingsIcon}  />
             Settings
           </Button>
 
           <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
-            <CloseIcon />
+            <CloseIcon  style={iconMedium} />
           </IconButton>
         </>
       ),
@@ -578,7 +614,7 @@ class DashboardComponent extends React.Component {
             autoHideDuration : 2000,
             action : (key) => (
               <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
-                <CloseIcon />
+                <CloseIcon  style={iconMedium} />
               </IconButton>
             ),
           });
@@ -638,7 +674,7 @@ class DashboardComponent extends React.Component {
             autoHideDuration : 2000,
             action : (key) => (
               <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
-                <CloseIcon />
+                <CloseIcon style={iconMedium} />
               </IconButton>
             ),
           });
@@ -665,7 +701,7 @@ class DashboardComponent extends React.Component {
             autoHideDuration : 2000,
             action : (key) => (
               <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
-                <CloseIcon />
+                <CloseIcon style={iconMedium} />
               </IconButton>
             ),
           });
@@ -692,7 +728,7 @@ class DashboardComponent extends React.Component {
       },
       MUIDataTableSearch : {
         searchIcon : {
-          color : "#607d8b" ,
+          color : "#607d8b",
           marginTop : "7px",
           marginRight : "8px",
         },
@@ -721,6 +757,22 @@ class DashboardComponent extends React.Component {
       },
     }
   })
+  getDarkMuiTheme = () => createTheme({
+    shadows : ["none"],
+    palette : {
+      type : "dark",
+    },
+    overrides : {
+      MuiPaper : { root : { backgroundColor : '#363636' } },
+      MuiFormLabel : {
+        root : {
+          "&$focused" : {
+            color : "#00B39F",
+          },
+        }
+      },
+    }
+  })
 
 
   /**
@@ -736,7 +788,7 @@ class DashboardComponent extends React.Component {
     let versionSort = "asc";
     let proxySort = "asc";
     let tempComp = [];
-
+    const { theme } = this.props;
     components
       .filter((comp) => comp.namespace === self.state.activeMeshScanNamespace[mesh.name])
       .map((component) => tempComp.push(component))
@@ -744,16 +796,16 @@ class DashboardComponent extends React.Component {
     components = tempComp;
 
     const switchSortOrder = (type) => {
-      if (type==="componentSort") {
-        componentSort = (componentSort==="asc")? "desc" : "asc";
+      if (type === "componentSort") {
+        componentSort = (componentSort === "asc") ? "desc" : "asc";
         versionSort = "asc";
         proxySort = "asc";
-      } else if (type==="versionSort") {
-        versionSort = (versionSort==="asc")? "desc" : "asc";
+      } else if (type === "versionSort") {
+        versionSort = (versionSort === "asc") ? "desc" : "asc";
         componentSort = "asc";
         proxySort = "asc";
-      } else if (type==="proxySort") {
-        proxySort = (proxySort==="asc")? "desc" : "asc";
+      } else if (type === "proxySort") {
+        proxySort = (proxySort === "asc") ? "desc" : "asc";
         componentSort = "asc";
         versionSort = "asc";
       }
@@ -780,7 +832,8 @@ class DashboardComponent extends React.Component {
 
             )
           }
-        }, },
+        },
+      },
       {
         name : "version",
         label : "Version",
@@ -804,7 +857,8 @@ class DashboardComponent extends React.Component {
           customBodyRender : (value) => {
             return (versionMapper(value))
           },
-        }, },
+        },
+      },
       {
         name : "data_planes",
         label : "Proxy",
@@ -853,19 +907,19 @@ class DashboardComponent extends React.Component {
                             <p>Ports: <br /> {cont?.ports && cont.ports.map(port => `[ ${port?.name ? port.name : 'Unknown'}, ${port?.containerPort ? port.containerPort : 'Unknown'}, ${port?.protocol ? port.protocol : 'Unknown'} ]`).join(', ')}</p>
                             {cont?.resources && (
                               <div>
-                                        Resources used: <br />
+                                Resources used: <br />
 
                                 <div style={{ paddingLeft : '2vh' }}>
                                   {cont?.resources?.limits && (
                                     <div>
                                       <p>Limits: <br />
-                                                CPU: {cont?.resources?.limits?.cpu} - Memory: {cont?.resources?.limits?.memory}</p>
+                                        CPU: {cont?.resources?.limits?.cpu} - Memory: {cont?.resources?.limits?.memory}</p>
                                     </div>
                                   )}
                                   {cont?.resources?.requests && (
                                     <div>
                                       <p>Requests: <br />
-                                                CPU: {cont?.resources?.requests?.cpu} - Memory: {cont?.resources?.requests?.memory}</p>
+                                        CPU: {cont?.resources?.requests?.cpu} - Memory: {cont?.resources?.requests?.memory}</p>
                                     </div>
                                   )}
                                 </div>
@@ -881,7 +935,8 @@ class DashboardComponent extends React.Component {
               </>
             );
           }
-        }, },
+        },
+      },
     ]
 
     const options = {
@@ -904,7 +959,7 @@ class DashboardComponent extends React.Component {
                 }
               >
                 {self.state.meshScanNamespaces[mesh.name] &&
-                    self.state.meshScanNamespaces[mesh.name].map((ns) => <MenuItem value={ns}>{ns}</MenuItem>)}
+                  self.state.meshScanNamespaces[mesh.name].map((ns) => <MenuItem key={ns.uniqueID} value={ns}>{ns}</MenuItem>)}
               </Select>
             )}
           </>
@@ -915,8 +970,10 @@ class DashboardComponent extends React.Component {
     if (Array.isArray(components) && components.length)
       return (
         <Paper elevation={1} style={{ padding : "2rem", marginTop : "1rem" }}>
-          <MuiThemeProvider theme={this.getMuiTheme()}>
+          <MuiThemeProvider theme={theme.palette.type == "dark" ? this.getDarkMuiTheme() : this.getMuiTheme()}>
+
             <MUIDataTable
+              className={this.props.classes.datatable}
               title={
                 <>
                   <div style={{ display : "flex", alignItems : "center", marginBottom : "1rem" }}>
@@ -929,7 +986,7 @@ class DashboardComponent extends React.Component {
               options={options}
               columns={columns}
             />
-          </MuiThemeProvider>
+          </MuiThemeProvider >
         </Paper>
       );
 
@@ -942,115 +999,118 @@ class DashboardComponent extends React.Component {
    * the selected cluster and namespace
    * @param {{kind, number}[]} resources
    */
-   ClusterResourcesCard = (resources = []) => {
-     const self = this;
-     let kindSort = "asc";
-     let countSort = "asc";
-     const switchSortOrder = (type) => {
-       if (type==="kindSort") {
-         kindSort = (kindSort==="asc")? "desc" : "asc";
-         countSort = "asc";
-       } else if (type==="countSort") {
-         countSort = (countSort==="asc")? "desc" : "asc";
-         kindSort = "asc";
-       }
-     }
+  ClusterResourcesCard = (resources = []) => {
+    const self = this;
+    let kindSort = "asc";
+    let countSort = "asc";
+    const { theme } = this.props;
+    const switchSortOrder = (type) => {
+      if (type === "kindSort") {
+        kindSort = (kindSort === "asc") ? "desc" : "asc";
+        countSort = "asc";
+      } else if (type === "countSort") {
+        countSort = (countSort === "asc") ? "desc" : "asc";
+        kindSort = "asc";
+      }
+    }
 
-     const columns = [
-       {
-         name : "kind",
-         label : "Resources",
-         options : {
-           filter : false,
-           sort : true,
-           searchable : true,
-           setCellProps : () => ({ style : { textAlign : "center" } }),
-           customHeadRender : ({ index, ...column }, sortColumn) => {
-             return (
-               <TableCell key={index} style={{ textAlign : "center" }} onClick={() => {
-                 sortColumn(index); switchSortOrder("kindSort");
-               }}>
-                 <TableSortLabel active={column.sortDirection != null} direction={kindSort} >
-                   <b>{column.label}</b>
-                 </TableSortLabel>
-               </TableCell>
+    const columns = [
+      {
+        name : "kind",
+        label : "Resources",
+        options : {
+          filter : false,
+          sort : true,
+          searchable : true,
+          setCellProps : () => ({ style : { textAlign : "center" } }),
+          customHeadRender : ({ index, ...column }, sortColumn) => {
+            return (
+              <TableCell key={index} style={{ textAlign : "center" }} onClick={() => {
+                sortColumn(index); switchSortOrder("kindSort");
+              }}>
+                <TableSortLabel active={column.sortDirection != null} direction={kindSort} >
+                  <b>{column.label}</b>
+                </TableSortLabel>
+              </TableCell>
 
-             )
-           }
-         }, },
-       {
-         name : "count",
-         label : "Count",
-         options : {
-           filter : false,
-           sort : true,
-           searchable : true,
-           setCellProps : () => ({ style : { textAlign : "center" } }),
-           customHeadRender : ({ index, ...column }, sortColumn) => {
-             return (
-               <TableCell key={index} style={{ textAlign : "center" }} onClick={() => {
-                 sortColumn(index); switchSortOrder("countSort");
-               }}>
-                 <TableSortLabel active={column.sortDirection != null} direction={countSort} >
-                   <b>{column.label}</b>
-                 </TableSortLabel>
-               </TableCell>
+            )
+          }
+        },
+      },
+      {
+        name : "count",
+        label : "Count",
+        options : {
+          filter : false,
+          sort : true,
+          searchable : true,
+          setCellProps : () => ({ style : { textAlign : "center" } }),
+          customHeadRender : ({ index, ...column }, sortColumn) => {
+            return (
+              <TableCell key={index} style={{ textAlign : "center" }} onClick={() => {
+                sortColumn(index); switchSortOrder("countSort");
+              }}>
+                <TableSortLabel active={column.sortDirection != null} direction={countSort} >
+                  <b>{column.label}</b>
+                </TableSortLabel>
+              </TableCell>
 
-             )
-           }
-         }, },
-     ]
+            )
+          }
+        },
+      },
+    ]
 
-     const options = {
-       filter : false,
-       selectableRows : "none",
-       responsive : "scrollMaxHeight",
-       print : false,
-       download : false,
-       viewColumns : false,
-       pagination : false,
-       fixedHeader : true,
-       customToolbar : () => {
-         return (
-           <>
-             {self.state.namespaceList && (
-               <Select
-                 value={self.state.selectedNamespace}
-                 onChange={(e) =>
-                   self.setState({ selectedNamespace : e.target.value })
-                 }
-               >
-                 {self.state.namespaceList && self.state.namespaceList.map((ns) => <MenuItem value={ns}>{ns}</MenuItem>)}
-               </Select>
-             )}
-           </>
-         )
-       }
-     }
+    const options = {
+      filter : false,
+      selectableRows : "none",
+      responsive : "scrollMaxHeight",
+      print : false,
+      download : false,
+      viewColumns : false,
+      pagination : false,
+      fixedHeader : true,
+      customToolbar : () => {
+        return (
+          <>
+            {self.state.namespaceList && (
+              <Select
+                value={self.state.selectedNamespace}
+                onChange={(e) =>
+                  self.setState({ selectedNamespace : e.target.value })
+                }
+              >
+                {self.state.namespaceList && self.state.namespaceList.map((ns) => <MenuItem key={ns.uniqueID} value={ns}>{ns}</MenuItem>)}
+              </Select>
+            )}
+          </>
+        )
+      }
+    }
 
-     if (Array.isArray(resources) && resources.length)
-       return (
-         <Paper elevation={1} style={{ padding : "2rem" }}>
-           <MuiThemeProvider theme={this.getMuiTheme()}>
-             <MUIDataTable
-               title={
-                 <>
-                   <div style={{ display : "flex", alignItems : "center", marginBottom : "1rem" }}>
-                     <img src={"/static/img/all_mesh.svg"} className={this.props.classes.icon} style={{ marginRight : "0.75rem" }} />
-                     <Typography variant="h6">All Workloads</Typography>
-                   </div>
-                 </>
-               }
-               data={resources}
-               options={options}
-               columns={columns}
-             />
-           </MuiThemeProvider>
-         </Paper>
-       );
+    if (Array.isArray(resources) && resources.length)
+      return (
+        <Paper elevation={1} style={{ padding : "2rem" }}>
+          <MuiThemeProvider theme={theme.palette.type == "dark" ? this.getDarkMuiTheme() : this.getMuiTheme()}>
+            <MUIDataTable
+              title={
+                <>
+                  <div style={{ display : "flex", alignItems : "center", marginBottom : "1rem" }}>
+                    <img src={"/static/img/all_mesh.svg"} className={this.props.classes.icon} style={{ marginRight : "0.75rem" }} />
+                    <Typography variant="h6">All Workloads</Typography>
+                  </div>
+                </>
+              }
+              data={resources}
+              options={options}
+              columns={columns}
+            />
+          </MuiThemeProvider>
+        </Paper>
+      );
 
-     return null;
-   };
+    return null;
+  };
 
   handlePrometheusClick = () => {
     this.props.updateProgress({ showProgress : true });
@@ -1069,7 +1129,7 @@ class DashboardComponent extends React.Component {
             autoHideDuration : 2000,
             action : (key) => (
               <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
-                <CloseIcon />
+                <CloseIcon  style={iconMedium} />
               </IconButton>
             ),
           });
@@ -1109,7 +1169,7 @@ class DashboardComponent extends React.Component {
     let chp = (
       <div>
         {k8sconfig?.map(ctx => (
-          <Tooltip title={`Server: ${ctx.server}`}>
+          <Tooltip key={ctx.uniqueID} title={`Server: ${ctx.server}`}>
             <Chip
               label={ctx?.name}
               className={classes.chip}
@@ -1200,7 +1260,7 @@ class DashboardComponent extends React.Component {
             className={classes.metricsButton}
             onClick={() => this.handleConfigure("grafana")}
           >
-            <SettingsIcon className={classes.settingsIcon} />
+            <SettingsIcon className={classes.settingsIcon} style={iconMedium} />
             Configure Grafana
           </Button>
         </div>
@@ -1230,7 +1290,7 @@ class DashboardComponent extends React.Component {
             className={classes.metricsButton}
             onClick={() => this.handleConfigure("prometheus")}
           >
-            <SettingsIcon className={classes.settingsIcon} />
+            <SettingsIcon className={classes.settingsIcon} style={iconMedium} />
             Configure Prometheus
           </Button>
         </div>
@@ -1266,7 +1326,7 @@ class DashboardComponent extends React.Component {
       </Grid>
     );
 
-    const showServiceMesh = (
+    const showServiceMesh =(
       <>
         {self?.state?.meshScan && Object.keys(self?.state?.meshScan).length
           ? (
@@ -1295,7 +1355,7 @@ class DashboardComponent extends React.Component {
                 flexDirection : "column",
               }}
             >
-              <Typography style={{ fontSize : "1.5rem", marginBottom : "2rem" }} align="center" color="textSecondary">
+              <Typography style={{ fontSize : "1.5rem", marginBottom : "2rem" }} align="center" >
                 {this.emptyStateMessageForServiceMeshesInfo()}
               </Typography>
               <Button
@@ -1305,7 +1365,7 @@ class DashboardComponent extends React.Component {
                 size="large"
                 onClick={() => self.props.router.push("/management")}
               >
-                <AddIcon className={classes.addIcon} />
+                <AddIcon style={iconMedium} className={classes.addIcon} />
                 Install Service Mesh
               </Button>
             </div>
@@ -1328,7 +1388,7 @@ class DashboardComponent extends React.Component {
                 flexDirection : "column",
               }}
             >
-              <Typography style={{ fontSize : "1.5rem", marginBottom : "2rem" }} align="center" color="textSecondary">
+              <Typography style={{ fontSize : "1.5rem", marginBottom : "2rem" }} align="center" >
                 {this.emptyStateMessageForClusterResources()}
               </Typography>
               <Button
@@ -1338,15 +1398,17 @@ class DashboardComponent extends React.Component {
                 size="large"
                 onClick={() => self.props.router.push("/settings")}
               >
-                <AddIcon className={classes.addIcon} />
+                <AddIcon style={iconMedium} className={classes.addIcon} />
                 Connect Cluster
               </Button>
             </div>
           )}
       </>
     );
+
     return (
       <NoSsr>
+        <Popup />
         <div className={classes.rootClass}>
           <Grid container spacing={2}>
             <Grid item xs={12} md={6}>
@@ -1394,6 +1456,7 @@ const mapDispatchToProps = (dispatch) => ({
   updateProgress : bindActionCreators(updateProgress, dispatch),
   updateGrafanaConfig : bindActionCreators(updateGrafanaConfig, dispatch),
   updatePrometheusConfig : bindActionCreators(updatePrometheusConfig, dispatch),
+  updateTelemetryUrls : bindActionCreators(updateTelemetryUrls, dispatch),
 });
 
 const mapStateToProps = (state) => {
@@ -1414,6 +1477,6 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default withStyles(styles)(
+export default withStyles(styles, { withTheme : true })(
   connect(mapStateToProps, mapDispatchToProps)(withRouter(withSnackbar(DashboardComponent)))
 );

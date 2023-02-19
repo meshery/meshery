@@ -39,14 +39,61 @@ type ProviderType string
 
 // ProviderProperties represents the structure of properties that a provider has
 type ProviderProperties struct {
-	ProviderType        ProviderType `json:"provider_type,omitempty"`
-	PackageVersion      string       `json:"package_version,omitempty"`
-	PackageURL          string       `json:"package_url,omitempty"`
-	ProviderName        string       `json:"provider_name,omitempty"`
-	ProviderDescription []string     `json:"provider_description,omitempty"`
-	ProviderURL         string       `json:"provider_url,omitempty"`
-	Extensions          Extensions   `json:"extensions,omitempty"`
-	Capabilities        Capabilities `json:"capabilities,omitempty"`
+	ProviderType        ProviderType     `json:"provider_type,omitempty"`
+	PackageVersion      string           `json:"package_version,omitempty"`
+	PackageURL          string           `json:"package_url,omitempty"`
+	ProviderName        string           `json:"provider_name,omitempty"`
+	ProviderDescription []string         `json:"provider_description,omitempty"`
+	ProviderURL         string           `json:"provider_url,omitempty"`
+	Extensions          Extensions       `json:"extensions,omitempty"`
+	Capabilities        Capabilities     `json:"capabilities,omitempty"`
+	RestrictedAccess    RestrictedAccess `json:"restrictedAccess,omitempty"`
+}
+
+type Adapters struct {
+	Istio   bool `json:"istio,omitempty"`
+	Citrix  bool `json:"citrix,omitempty"`
+	Consul  bool `json:"consul,omitempty"`
+	Cilium  bool `json:"cilium,omitempty"`
+	AppMesh bool `json:"appMesh,omitempty"`
+	Kuma    bool `json:"kuma,omitempty"`
+	Linkerd bool `json:"linkerd,omitempty"`
+	Nginx   bool `json:"nginx,omitempty"`
+	NSM     bool `json:"nsm,omitempty"`
+}
+
+type Configuration struct {
+	Designs      bool `json:"designs,omitempty"`
+	Applications bool `json:"applications,omitempty"`
+	Filters      bool `json:"filters,omitempty"`
+}
+
+type NavigatorComponents struct {
+	Dashboard     bool          `json:"dashboard,omitempty"`
+	Performance   bool          `json:"performance,omitempty"`
+	Conformance   bool          `json:"conformance,omitempty"`
+	Extensions    bool          `json:"extensions,omitempty"`
+	Toggler       bool          `json:"toggler,omitempty"`
+	Help          bool          `json:"help,omitempty"`
+	Lifecycle     Adapters      `json:"lifecycle,omitempty"`
+	Configuration Configuration `json:"configuration,omitempty"`
+}
+
+type HeaderComponents struct {
+	ContextSwitcher bool `json:"contextSwitcher,omitempty"`
+	Settings        bool `json:"settings,omitempty"`
+	Notifications   bool `json:"notifications,omitempty"`
+	Profile         bool `json:"profile,omitempty"` // todo: account can have other structs, if needed needs to expand
+}
+
+type MesheryUICapabilities struct {
+	Navigator NavigatorComponents `json:"navigator,omitempty"`
+	Header    HeaderComponents    `json:"header,omitempty"`
+}
+
+type RestrictedAccess struct {
+	IsMesheryUIRestricted bool                  `json:"isMesheryUiRestricted"`
+	AllowedComponents     MesheryUICapabilities `json:"allowedComponents,omitempty"`
 }
 
 // Extensions defines the UI extension points
@@ -76,6 +123,23 @@ type GraphQLExtension struct {
 	Type      string `json:"type,omitempty"`
 }
 
+type DesignerComponents struct {
+	Design      bool `json:"design,omitempty"`
+	Application bool `json:"application,omitempty"`
+	Filter      bool `json:"filter,omitempty"`
+	Save        bool `json:"save,omitempty"`
+	New         bool `json:"new,omitempty"`
+	SaveAs      bool `json:"saveAs,omitempty"`
+	Validate    bool `json:"validate,omitempty"`
+	Deploy      bool `json:"deploy,omitempty"`
+	Undeploy    bool `json:"unDeploy,omitempty"`
+}
+
+type MeshMapComponentSet struct {
+	Designer   DesignerComponents `json:"designer,omitempty"`
+	Visualizer bool               `json:"visualizer,omitempty"` // todo: create a component set for visualizer
+}
+
 // NavigatorExtension describes the Navigator extension point in the UI
 type NavigatorExtension struct {
 	Title           string              `json:"title,omitempty"`
@@ -87,6 +151,7 @@ type NavigatorExtension struct {
 	Show            *bool               `json:"show,omitempty"`
 	Children        NavigatorExtensions `json:"children,omitempty"`
 	Type            string              `json:"type,omitempty"`
+	AllowedTo       MeshMapComponentSet `json:"allowedTo,omitempty"`
 }
 
 // AccountExtension describes the Account extension point in the UI
@@ -128,6 +193,14 @@ type K8sContextPersistResponse struct {
 	Inserted   bool       `json:"inserted,omitempty"`
 }
 
+type Connection struct {
+	Kind             string                 `json:"kind,omitempty"`
+	SubType          string                 `json:"sub_type,omitempty"`
+	Type             string                 `json:"type,omitempty"`
+	MetaData         map[string]interface{} `json:"metadata,omitempty"`
+	CredentialSecret map[string]interface{} `json:"credential_secret,omitempty"`
+}
+
 // Feature is a type to store the features of the provider
 type Feature string
 
@@ -166,6 +239,10 @@ const (
 	CloneMesheryPatterns Feature = "clone-meshery-patterns" // /patterns/clone
 
 	CloneMesheryFilters Feature = "clone-meshery-filters" // /filters/clone
+
+	ShareDesigns Feature = "share-designs"
+
+	PersistConnection Feature = "persist-connection"
 )
 
 const (
@@ -192,6 +269,11 @@ const (
 
 	MesheryControllerHandlersKey ContextKey = "mesherycontrollerhandlerskey"
 	MeshSyncDataHandlersKey      ContextKey = "meshsyncdatahandlerskey"
+
+	RegistryManagerKey ContextKey = "registrymanagerkey"
+
+	MesheryServerURL         ContextKey = "mesheryserverurl"
+	MesheryServerCallbackURL ContextKey = "mesheryservercallbackurl"
 )
 
 // IsSupported returns true if the given feature is listed as one of
@@ -246,7 +328,7 @@ type Provider interface {
 	GetUserDetails(*http.Request) (*User, error)
 	GetProviderToken(req *http.Request) (string, error)
 	UpdateToken(http.ResponseWriter, *http.Request) string
-	Logout(http.ResponseWriter, *http.Request)
+	Logout(http.ResponseWriter, *http.Request) error
 	HandleUnAuthenticated(w http.ResponseWriter, req *http.Request)
 	FetchResults(tokenVal string, page, pageSize, search, order, profileID string) ([]byte, error)
 	FetchAllResults(tokenVal string, page, pageSize, search, order, from, to string) ([]byte, error)
@@ -279,11 +361,12 @@ type Provider interface {
 	GetKubeClient() *mesherykube.Client
 
 	SaveMesheryPattern(tokenString string, pattern *MesheryPattern) ([]byte, error)
-	GetMesheryPatterns(tokenString, page, pageSize, search, order string) ([]byte, error)
+	GetMesheryPatterns(tokenString, page, pageSize, search, order string, updatedAfter string) ([]byte, error)
 	GetCatalogMesheryPatterns(tokenString string, search, order string) ([]byte, error)
+	PublishCatalogPattern(req *http.Request, publishPatternRequest *MesheryCatalogPatternRequestBody) ([]byte, error)
 	DeleteMesheryPattern(req *http.Request, patternID string) ([]byte, error)
 	DeleteMesheryPatterns(req *http.Request, patterns MesheryPatternDeleteRequestBody) ([]byte, error)
-	CloneMesheryPattern(req *http.Request, patternID string) ([]byte, error)
+	CloneMesheryPattern(req *http.Request, patternID string, clonePatternRequest *MesheryClonePatternRequestBody) ([]byte, error)
 	GetMesheryPattern(req *http.Request, patternID string) ([]byte, error)
 	RemotePatternFile(req *http.Request, resourceURL, path string, save bool) ([]byte, error)
 	SaveMesheryPatternResource(token string, resource *PatternResource) (*PatternResource, error)
@@ -294,8 +377,9 @@ type Provider interface {
 	SaveMesheryFilter(tokenString string, filter *MesheryFilter) ([]byte, error)
 	GetMesheryFilters(tokenString, page, pageSize, search, order string) ([]byte, error)
 	GetCatalogMesheryFilters(tokenString string, search, order string) ([]byte, error)
+	PublishCatalogFilter(req *http.Request, publishFilterRequest *MesheryCatalogFilterRequestBody) ([]byte, error)
 	DeleteMesheryFilter(req *http.Request, filterID string) ([]byte, error)
-	CloneMesheryFilter(req *http.Request, filterID string) ([]byte, error)
+	CloneMesheryFilter(req *http.Request, filterID string, cloneFilterRequest *MesheryCloneFilterRequestBody) ([]byte, error)
 	GetMesheryFilter(req *http.Request, filterID string) ([]byte, error)
 	GetMesheryFilterFile(req *http.Request, filterID string) ([]byte, error)
 	RemoteFilterFile(req *http.Request, resourceURL, path string, save bool) ([]byte, error)
@@ -303,9 +387,10 @@ type Provider interface {
 	SaveMesheryApplication(tokenString string, application *MesheryApplication) ([]byte, error)
 	SaveApplicationSourceContent(token string, applicationID string, sourceContent []byte) error
 	GetApplicationSourceContent(req *http.Request, applicationID string) ([]byte, error)
-	GetMesheryApplications(tokenString, page, pageSize, search, order string) ([]byte, error)
+	GetMesheryApplications(tokenString, page, pageSize, search, order string, updatedAfter string) ([]byte, error)
 	DeleteMesheryApplication(req *http.Request, applicationID string) ([]byte, error)
 	GetMesheryApplication(req *http.Request, applicationID string) ([]byte, error)
+	ShareDesign(req *http.Request) (int, error)
 
 	SavePerformanceProfile(tokenString string, performanceProfile *PerformanceProfile) ([]byte, error)
 	GetPerformanceProfiles(tokenString string, page, pageSize, search, order string) ([]byte, error)
@@ -318,4 +403,7 @@ type Provider interface {
 	DeleteSchedule(req *http.Request, scheduleID string) ([]byte, error)
 
 	ExtensionProxy(req *http.Request) ([]byte, error)
+
+	SaveConnection(req *http.Request, conn *Connection, token string, skipTokenCheck bool) error
+	DeleteMesheryConnection() error
 }

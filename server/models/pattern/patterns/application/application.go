@@ -32,9 +32,7 @@ type PatternSetting struct {
 }
 
 type PatternSettingAdvanced struct {
-	CreateService *bool             `json:"create_service,omitempty"`
-	Labels        map[string]string `json:"labels,omitempty"`
-	Annotations   map[string]string `json:"annotations,omitempty"`
+	CreateService *bool `json:"create_service,omitempty"`
 }
 
 type PatternConfiguration struct {
@@ -96,8 +94,8 @@ func Deploy(
 				Replicas:    settings.Replicas,
 				Containers:  settings.Containers,
 				Metadata: RolloutEngineGenericOptionsMetadata{
-					Labels:      oamComp.Labels,
-					Annotations: oamComp.Annotations,
+					Labels:      oamComp.ObjectMeta.Labels,
+					Annotations: oamComp.ObjectMeta.Annotations,
 				},
 				Delete:   isDel,
 				Advanced: settings.Advanced,

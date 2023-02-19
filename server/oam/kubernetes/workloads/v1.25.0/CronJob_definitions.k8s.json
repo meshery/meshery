@@ -1,0 +1,1 @@
+{"kind":"WorkloadDefinition","apiVersion":"core.oam.dev/v1alpha1","metadata":{"name":"CronJob.K8s","creationTimestamp":null},"spec":{"definitionRef":{"name":"cronjob.k8s.meshery.layer5.io"},"metadata":{"@type":"pattern.meshery.io/k8s","isCustomResource":"false","k8sAPIVersion":"batch/v1","k8sKind":"CronJob","namespaced":"true","version":"v1.25.0"}}}

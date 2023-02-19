@@ -150,7 +150,7 @@ Reinicie su VM WSL antes de seguir adelante.
 
 - Sirve el código localmente
   ```bash
-  $ make site
+  $ make docs
   ```
 - Si eso da un error, ejecute:
 
@@ -191,7 +191,7 @@ source "https://rubygems.org"
 ruby '2.7.1' //to any version you have installed
 ```
 
-Automáticamente el `Gemfile.lock` se actualizará una vez que se proporcione el` make site` (para Windows, ejecute `bundle exec jekyll serve` si WSL2 no está presente)
+Automáticamente el `Gemfile.lock` se actualizará una vez que se proporcione el` make docs` (para Windows, ejecute `bundle exec jekyll serve` si WSL2 no está presente)
 
 ** ADVERTENCIA: Si ha seguido el tercer paso, no confirme los cambios realizados en `Gemfile` y` Gemfile.lock` en su rama para preservar la integridad; de lo contrario, la acción de CI no generará la vista previa del sitio durante las relaciones públicas. **.
 

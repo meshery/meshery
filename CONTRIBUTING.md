@@ -8,7 +8,7 @@ Please do! Thanks for your help in improving the project! :balloon:
 
 ---
 
-All contributors are welcome. Not sure where to start? Please see the [newcomers welcome guide](https://docs.google.com/document/d/17OPtDE_rdnPQxmk2Kauhm3GwXF1R5dZ3Cj8qZLKdo5E/edit) for how, where, and why to contribute. This project is community-built and welcomes collaboration. Contributors are expected to adhere to our [Code of Conduct](CODE_OF_CONDUCT.md).
+All contributors are welcome. Not sure where to start? Please see the [newcomers welcome guide](https://layer5.io/community/handbook/repository-overview) for how, where, and why to contribute. This project is community-built and welcomes collaboration. Contributors are expected to adhere to our [Code of Conduct](CODE_OF_CONDUCT.md).
 
 All set to contribute? Grab an open issue with the [help-wanted label](../../labels/help%20wanted) and jump in. Join our [Slack channel](http://slack.layer5.io) and engage in conversation. Create a [new issue](/../../issues/new/choose) if needed. All [pull requests](/../../pulls) should ideally reference an open [issue](/../../issues). Include keywords in your pull request descriptions, as well as commit messages, to [automatically close related issues in GitHub](https://help.github.com/en/github/managing-your-work-on-github/closing-issues-using-keywords).
 
@@ -78,10 +78,11 @@ Please contribute! Meshery documentation uses GitHub Pages to host the docs site
    `git checkout -b <my-changes>`
 1. Edit/add documentation.
    `vi <specific page>.md`
+1. Add redirect link on the old page (only when a new page is created that replaces the old page)
 1. Run site locally to preview changes.
    `make docs`
 
-- **Note:** _From the Makefile, this command is actually running `$ bundle exec jekyll serve --drafts --livereload --config _config_dev.yml`. If this command causes errors try running the server without Livereload with this command: `$ bundle exec jekyll serve --drafts --config _config_dev.yml`. Just keep in mind you will have to manually restart the server to reflect any changes made without Livereload. There are two Jekyll configuration, `jekyll serve` for developing locally and `jekyll build` when you need to generate the site artefacts for production._
+- **Note:** _From the Makefile, this command is actually running `$ bundle exec jekyll serve --drafts --livereload --config _config_dev.yml`. If this command causes errors try running the server without Livereload with this command: `$ bundle exec jekyll serve --drafts --config _config_dev.yml`. Just keep in mind you will have to manually restart the server to reflect any changes made without Livereload. There are two Jekyll configuration, `jekyll serve` for developing locally and `jekyll build` when you need to generate the site artifacts for production._
 
 1. Commit, [sign-off](#commit-signing), and push changes to your remote branch.
    `git push origin <my-changes>`
@@ -98,10 +99,10 @@ Practices for Production Environments](https://peter.bourgon.org/go-in-productio
 
 ### Prerequisites for building Meshery in your development environment:
 
-1. Go version 1.19.1 must installed if you want to build and/or make changes to the existing code. The binary `go1.19.1` should be available in your path. If you don't want to disturb your existing version of Go, then follow these [instructions](https://go.dev/doc/manage-install#:~:text=and%20run%20them.-,Installing%20multiple%20Go%20versions,-You%20can%20install) to keep multiple versions of Go in your system.
+1. Go version 1.19.1 must be installed if you want to build and/or make changes to the existing code. The binary `go1.19.1` should be available in your path. If you don't want to disturb your existing version of Go, then follow these [instructions](https://go.dev/doc/manage-install#:~:text=and%20run%20them.-,Installing%20multiple%20Go%20versions,-You%20can%20install) to keep multiple versions of Go in your system.
 1. `GOPATH` environment variable should be configured appropriately
 1. `npm` and `node` should be installed on your machine, preferably the latest versions.
-1. Fork this repository (`git clone https://github.com/meshery/meshery.git`), clone your forked version of Meshery to your local, preferably outside `GOPATH`.
+1. Fork this repository (`git clone https://github.com/meshery/meshery.git`), and clone your forked version of Meshery to your development environment, preferably outside `GOPATH`.
 1. `golangci-lint` should be installed if you want to test Go code, for MacOS and linux users.
 
 #### Build and Run Meshery Server
@@ -131,6 +132,12 @@ To access the [Meshery UI Development Server](#ui-development-server) on port `3
 
 **Please note**: When running `make server` on the macOS platform, some may face errors with the crypto module in Go. This is caused due to invalid C headers in Clang installed with XCode platform tools. Replacing Clang with gcc by adding `export CC=gcc` to .bashrc / .zshrc should fix the issue. More information on the issue can be found [here](https://github.com/golang/go/issues/30072)
 
+**Please Note** : Little minor things where you can face some issues in the windows platform -
+
+1. Meshery requires gcc at the `make server` step, **x64 windows** architecture can face issues while finding the best **GCC compiler**, You can install [tdm64-GCC](https://jmeubank.github.io/tdm-gcc/) which worked smoothly but many compilers other than that can cause issues, you also have to set an environment variable for this step.
+
+2. Installing `make` in windows requires you to install [choco](https://chocolatey.org/install) first, which makes it easier to install `make` then, It requires security access which can only be done in admin mode. 
+
 #### Tests
 
 Users can now test their code changes on their local machine against the CI checks implemented through golang-ci lint.
@@ -151,16 +158,21 @@ make docker
 
 #### <a name="adapter">Writing a Meshery Adapter</a>
 
-Meshery uses adapters to provision and interact with different service meshes. Follow these instructions to create a new adapter or modify and existing adapter.
+Meshery uses adapters to provision and interact with different service meshes. Follow these instructions to create a new adapter or modify an existing adapter.
 
 1. Get the proto buf spec file from Meshery repo:
    `wget https://raw.githubusercontent.com/meshery/meshery/master/server/meshes/meshops.proto`
 1. Generate code
    1. Using Go as an example, do the following:
-      - adding GOPATH to PATH: `export PATH=$PATH:$GOPATH/bin`
-      - install grpc: `go get -u google.golang.org/grpc`
-      - install protoc plugin for go: `go get -u github.com/golang/protobuf/protoc-gen-go`
-      - Generate Go code: `protoc -I meshes/ meshes/meshops.proto --go_out=plugins=grpc:./meshes/`
+      - install the protocol buffer compiler: https://grpc.io/docs/protoc-installation/
+      - add GOPATH to PATH: `export PATH=$PATH:$(go env GOPATH)/bin`
+      - install the protocol compiler plugins for go: 
+               `go install google.golang.org/protobuf/cmd/protoc-gen-go@latest`
+               `go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest`
+      - create a directory _meshes_
+      - Generate Go code: 
+         	`protoc --proto_path=. --go_out=meshes --go_opt=paths=source_relative --go-grpc_out=meshes --go-grpc_opt=paths=source_relative meshops.proto`
+
    1. For other languages, please refer to gRPC.io for language-specific guides.
 1. Implement the service methods and expose the gRPC server on a port of your choice (e.g. 10000).
 
@@ -189,7 +201,7 @@ Meshery is written in `Go` (Golang) and leverages Go Modules. UI is built on Rea
 To install/update the UI dependencies:
 
 ```
-make setup-ui-libs
+make ui-setup
 ```
 
 ### Build and export UI
@@ -197,7 +209,7 @@ make setup-ui-libs
 To build and export the UI code:
 
 ```
-make build-ui
+make ui-setup
 ```
 
 Now that the UI code is built, Meshery UI will be available at `http://localhost:9081`.
@@ -208,7 +220,7 @@ Any time changes are made to the UI code, the above code will have to run to reb
 If you want to work on the UI, it will be a good idea to use the included UI development server. You can run the UI development server by running the following command:
 
 ```
-make run-ui-dev
+make ui
 ```
 
 Once you have the server configured, and running successfully on the default port `http://localhost:9081`, you may proceed to access the Meshery UI at `http://localhost:3000`.
@@ -248,7 +260,7 @@ We are using ES-Lint to maintain code quality & consistency in our UI Code. To m
 
 ### Contributing
 
-Please refer the [Meshery Contributing Guidelines](https://docs.meshery.io/project/contributing/contributing-cli) for setting up your development environment and the [mesheryctl Command Reference and Tracker](https://docs.google.com/spreadsheets/d/1q63sIGAuCnIeDs8PeM-0BAkNj8BBgPUXhLbe1Y-318o/edit#gid=0) for current status of `mesheryctl`.
+Please refer to the [Meshery Contributing Guidelines](https://docs.meshery.io/project/contributing/contributing-cli) for setting up your development environment and the [mesheryctl Command Reference and Tracker](https://docs.google.com/spreadsheets/d/1q63sIGAuCnIeDs8PeM-0BAkNj8BBgPUXhLbe1Y-318o/edit#gid=0) for current status of `mesheryctl`.
 
 For a quick introduction to `mesheryctl`, checkout [Beginner's guide to contributing to Meshery and mesheryctl](https://youtu.be/hh_kFLZx3G4).
 
@@ -286,7 +298,7 @@ A central `struct` is maintained in the `mesheryctl/internal/cli/root/config/con
 
 For logs, `mesheryctl` uses [Logrus](https://github.com/sirupsen/logrus). Going through the docs and understanding the different [log-levels](https://github.com/sirupsen/logrus#level-logging) will help a lot.
 
-`mesheryctl` uses [golangci-lint](https://github.com/golangci/golangci-lint). Refer it for lint checks.
+`mesheryctl` uses [golangci-lint](https://github.com/golangci/golangci-lint). Refer to it for lint checks.
 
 All contributors are invited to review [pull requests](https://github.com/meshery/meshery/pulls) on `mesheryctl` as on other Layer5 projects.
 

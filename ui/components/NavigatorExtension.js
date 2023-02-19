@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { createUseRemoteComponent, getDependencies, createRequires } from "@paciolan/remote-component";
 import { bindActionCreators } from "redux";
 import { updateLoadTestData, setK8sContexts } from "../lib/store";
-import GrafanaCustomCharts from "./GrafanaCustomCharts";
+import GrafanaCustomCharts from "./telemetry/grafana/GrafanaCustomCharts";
 import MesheryPerformanceComponent from "./MesheryPerformance";
 import dataFetch from "../lib/data-fetch";
 import PatternServiceForm from "./MesheryMeshInterface/PatternServiceForm";
@@ -17,20 +17,42 @@ import ConfirmationModal from "./ConfirmationModal"
 import { getComponentsinFile, generateValidatePayload } from "../utils/utils";
 import UploadImport from "./UploadImport";
 import ConfigurationSubscription from "../components/graphql/subscriptions/ConfigurationSubscription";
+import PromptComponent from "./PromptComponent";
 import Validation from "./Validation";
+import { CapabilitiesRegistry } from "../utils/disabledComponents";
+import TroubleshootingComponent from "./TroubleshootingComponent";
 
 const requires = createRequires(getDependencies);
 const useRemoteComponent = createUseRemoteComponent({ requires });
 
-function Extension({ grafana, prometheus, updateLoadTestData, url, isDrawerCollapsed, selectedK8sContexts, k8sconfig }) {
+function NavigatorExtension({ grafana, prometheus, updateLoadTestData, url, isDrawerCollapsed, selectedK8sContexts, k8sconfig, capabilitiesRegistry }) {
   const [loading, err, RemoteComponent] = useRemoteComponent(url);
+  console.log(err);
 
   if (loading) {
     return <LoadingScreen animatedIcon="AnimatedMeshery" message="Loading Meshery Extension" />;
   }
 
   if (err != null) {
-    return <div>Unknown Error: {err.toString()}</div>;
+    return (
+      <div role="alert">
+        <h2>Uh-oh!😔 Please pardon our mesh.</h2>
+        <div
+          style={{
+            backgroundColor : "#1E2117",
+            color : "#FFFFFF",
+            padding : ".85rem",
+            borderRadius : ".2rem"
+          }}
+        >
+          <code>{err.toString()}</code>
+        </div>
+        <div style={{ marginTop : "1rem" }}>
+          <TroubleshootingComponent showDesignerButton={false} />
+        </div>
+      </div>
+    )
+    // <div>Unknown Error: {err.toString()}</div>;
   }
 
   const getSelectedK8sClusters = () => {
@@ -68,8 +90,11 @@ function Extension({ grafana, prometheus, updateLoadTestData, url, isDrawerColla
         ConfirmationModal,
         getComponentsinFile,
         UploadImport,
+        PromptComponent,
         generateValidatePayload,
-        Validation
+        Validation,
+        capabilitiesRegistry,
+        CapabilitiesRegistryClass : CapabilitiesRegistry
       }}
     />
   );
@@ -81,12 +106,13 @@ const mapStateToProps = (st) => {
   const isDrawerCollapsed = st.get("isDrawerCollapsed");
   const selectedK8sContexts = st.get('selectedK8sContexts');
   const k8sconfig = st.get("k8sConfig");
+  const capabilitiesRegistry = st.get("capabilitiesRegistry")
 
-  return { grafana, prometheus, isDrawerCollapsed, selectedK8sContexts, k8sconfig };
+  return { grafana, prometheus, isDrawerCollapsed, selectedK8sContexts, k8sconfig, capabilitiesRegistry };
 };
 
 const mapDispatchToProps = (dispatch) => ({ updateLoadTestData : bindActionCreators(updateLoadTestData, dispatch),
   setK8sContexts : bindActionCreators(setK8sContexts, dispatch) }
 );
 
-export default connect(mapStateToProps, mapDispatchToProps)(Extension);
+export default connect(mapStateToProps, mapDispatchToProps)(NavigatorExtension);

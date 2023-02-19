@@ -23,6 +23,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTachometerAlt } from '@fortawesome/free-solid-svg-icons';
 import MesherySettingsPerformanceComponent from './MesherySettingsPerformanceComponent';
 import { ctxUrl } from '../utils/multi-ctx';
+import { iconMedium } from '../css/icons.styles';
 
 
 const styles = (theme) => ({
@@ -97,7 +98,8 @@ class UserPreference extends React.Component {
       userPrefs : ExtensionPointSchemaValidator("user_prefs")(),
       providerType : '',
       catalogContent : true,
-      extensionPreferences : {}
+      extensionPreferences : {},
+      capabilitiesLoaded : false
     };
   }
 
@@ -123,9 +125,9 @@ class UserPreference extends React.Component {
                 key="close"
                 aria-label="Close"
                 color="inherit"
-                onClick={() => self.props.closeSnackbar(key)}
+                onClick={() => this.props.closeSnackbar(key)}
               >
-                <CloseIcon />
+                <CloseIcon style={iconMedium} />
               </IconButton>
             ),
           });
@@ -154,7 +156,7 @@ class UserPreference extends React.Component {
           color="inherit"
           onClick={() => self.props.closeSnackbar(key)}
         >
-          <CloseIcon />
+          <CloseIcon style={iconMedium} />
         </IconButton>
       ),
       autoHideDuration : 8000, });
@@ -181,7 +183,7 @@ class UserPreference extends React.Component {
       "anonymousPerfResults" : perfResultStats,
     });
 
-    console.log(requestBody,anonymousStats,perfResultStats);
+    // console.log(requestBody,anonymousStats,perfResultStats);
 
     this.props.updateProgress({ showProgress : true });
     dataFetch(
@@ -204,7 +206,7 @@ class UserPreference extends React.Component {
               color="inherit"
               onClick={() => self.props.closeSnackbar(key)}
             >
-              <CloseIcon />
+              <CloseIcon style={iconMedium} />
             </IconButton>
           ), });
         }
@@ -216,23 +218,6 @@ class UserPreference extends React.Component {
   }
 
   componentDidMount = () => {
-    dataFetch(
-      "/api/provider/capabilities",
-      {
-        method : "GET",
-        credentials : "include",
-      },
-      (result) => {
-        if (result) {
-          this.setState({
-            userPrefs : ExtensionPointSchemaValidator("user_prefs")(result?.extensions?.user_prefs),
-            providerType : result?.provider_type
-          })
-        }
-      },
-      err => console.error(err)
-    )
-
     dataFetch(
       "/api/user/prefs",
       {
@@ -252,13 +237,24 @@ class UserPreference extends React.Component {
 
   }
 
+  componentDidUpdate() {
+    const { capabilitiesRegistry } = this.props;
+    if (capabilitiesRegistry && !this.state.capabilitiesLoaded) {
+      this.setState({
+        capabilitiesLoaded : true, // to prevent re-compute
+        userPrefs : ExtensionPointSchemaValidator("user_prefs")(capabilitiesRegistry?.extensions?.user_prefs),
+        providerType : capabilitiesRegistry?.provider_type,
+      })
+    }
+  }
+
   render() {
     const {
       anonymousStats, perfResultStats, tabVal, userPrefs, providerType, catalogContent
     } = this.state;
     const { classes } = this.props;
 
-    const mainIconScale = 'grow-10';
+    // const mainIconScale = 'grow-10';
 
     return (
       <NoSsr>
@@ -275,7 +271,7 @@ class UserPreference extends React.Component {
               <Tab
                 className={classes.tab}
                 icon={
-                  <SettingsCellIcon />
+                  <SettingsCellIcon style={iconMedium} />
                 }
                 label={<span className={classes.tabLabel}>General</span>}
               />
@@ -284,7 +280,7 @@ class UserPreference extends React.Component {
               <Tab
                 className={classes.tab}
                 icon={
-                  <FontAwesomeIcon icon={faTachometerAlt} transform={mainIconScale} fixedWidth />
+                  <FontAwesomeIcon icon={faTachometerAlt} style={iconMedium}/>
                 }
                 label={<span className={classes.tabLabel}>Performance</span>}
               />
@@ -295,7 +291,7 @@ class UserPreference extends React.Component {
                 <Tab
                   className={classes.tab}
                   icon={
-                    <SettingsRemoteIcon />
+                    <SettingsRemoteIcon style={iconMedium} />
                   }
                   label={<span className={classes.tabLabel}>Remote Provider</span>}
                 />
@@ -387,10 +383,12 @@ const mapDispatchToProps = (dispatch) => ({ updateUser : bindActionCreators(upda
 
 const mapStateToProps = (state) => {
   const selectedK8sContexts = state.get('selectedK8sContexts');
-  const catalogVisibility = state.get('catalogVisibility')
+  const catalogVisibility = state.get('catalogVisibility');
+  const capabilitiesRegistry = state.get("capabilitiesRegistry")
   return {
     selectedK8sContexts,
-    catalogVisibility
+    catalogVisibility,
+    capabilitiesRegistry
   };
 };
 

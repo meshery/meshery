@@ -13,7 +13,7 @@ To authenticate with Meshery through `mesheryctl` you will use the command `mesh
 
 You can retrieve your authentication token from either of Meshery's two clients: the CLI or the UI.
 
-- Get your token through [Meshery UI](/concepts/architecture/ui), from the `Get Token` option.
+- Get your token through [Meshery UI](/extensibility/api#how-to-get-your-token), from the `Get Token` option.
 
   _Downloading the token_
 
@@ -33,7 +33,7 @@ You can retrieve your authentication token from either of Meshery's two clients:
   </pre>
   <br />
 
-**_The need for authentication to `Meshery` [provider](http://localhost:9081/provider) is to save your environment setup while also having persistent/steady sessions and to be able to retrieve performance test results._**
+**_The need for authentication to `Meshery` [provider](https://docs.meshery.io/extensibility/providers) is to save your environment setup while also having persistent/steady sessions and to be able to retrieve performance test results._**
 
 <br/>
 # Suggested Reading
@@ -51,3 +51,5 @@ Guides to using Meshery's various features and components.
 {% endcapture %}
 
 {% include suggested-reading.html diffName="true" isDiffTag="true" diffTag=tag %}
+{% include related-discussions.html tag="mesheryctl" %}
+

@@ -3,6 +3,7 @@ package utils
 import (
 	"bufio"
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"io"
 	"math/rand"
@@ -12,6 +13,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -45,23 +47,35 @@ const (
 	MeshsyncURL   = baseConfigURL + "samples/meshery_v1alpha1_meshsync.yaml"
 
 	// Documentation URLs
-	docsBaseURL      = "https://docs.meshery.io/"
-	rootUsageURL     = docsBaseURL + "reference/mesheryctl"
-	perfUsageURL     = docsBaseURL + "reference/mesheryctl/perf"
-	systemUsageURL   = docsBaseURL + "reference/mesheryctl/system"
-	meshUsageURL     = docsBaseURL + "reference/mesheryctl/mesh"
-	expUsageURL      = docsBaseURL + "reference/mesheryctl/exp"
-	filterUsageURL   = docsBaseURL + "reference/mesheryctl/exp/filter"
-	patternUsageURL  = docsBaseURL + "reference/mesheryctl/pattern"
-	appUsageURL      = docsBaseURL + "reference/mesheryctl/app"
-	contextDeleteURL = docsBaseURL + "reference/mesheryctl/system/context/delete"
-	contextViewURL   = docsBaseURL + "reference/mesheryctl/system/context/view"
-	contextCreateURL = docsBaseURL + "reference/mesheryctl/system/context/create"
-	contextUsageURL  = docsBaseURL + "reference/mesheryctl/system/context"
-	channelUsageURL  = docsBaseURL + "reference/mesheryctl/system/channel"
-	channelSetURL    = docsBaseURL + "reference/mesheryctl/system/channel/set"
-	channelSwitchURL = docsBaseURL + "reference/mesheryctl/system/channel/switch"
-	channelViewURL   = docsBaseURL + "reference/mesheryctl/system/channel/view"
+	docsBaseURL       = "https://docs.meshery.io/"
+	rootUsageURL      = docsBaseURL + "reference/mesheryctl"
+	perfUsageURL      = docsBaseURL + "reference/mesheryctl/perf"
+	systemUsageURL    = docsBaseURL + "reference/mesheryctl/system"
+	systemStopURL     = docsBaseURL + "reference/mesheryctl/system/stop"
+	systemUpdateURL   = docsBaseURL + "reference/mesheryctl/system/update"
+	systemResetURL    = docsBaseURL + "reference/mesheryctl/system/reset"
+	systemStatusURL   = docsBaseURL + "reference/mesheryctl/system/status"
+	systemRestartURL  = docsBaseURL + "reference/mesheryctl/system/restart"
+	meshUsageURL      = docsBaseURL + "reference/mesheryctl/mesh"
+	expUsageURL       = docsBaseURL + "reference/mesheryctl/exp"
+	filterUsageURL    = docsBaseURL + "reference/mesheryctl/exp/filter"
+	patternUsageURL   = docsBaseURL + "reference/mesheryctl/pattern"
+	appUsageURL       = docsBaseURL + "reference/mesheryctl/app"
+	contextDeleteURL  = docsBaseURL + "reference/mesheryctl/system/context/delete"
+	contextViewURL    = docsBaseURL + "reference/mesheryctl/system/context/view"
+	contextCreateURL  = docsBaseURL + "reference/mesheryctl/system/context/create"
+	contextUsageURL   = docsBaseURL + "reference/mesheryctl/system/context"
+	channelUsageURL   = docsBaseURL + "reference/mesheryctl/system/channel"
+	channelSetURL     = docsBaseURL + "reference/mesheryctl/system/channel/set"
+	channelSwitchURL  = docsBaseURL + "reference/mesheryctl/system/channel/switch"
+	channelViewURL    = docsBaseURL + "reference/mesheryctl/system/channel/view"
+	providerUsageURL  = docsBaseURL + "reference/mesheryctl/system/provider"
+	providerViewURL   = docsBaseURL + "reference/mesheryctl/system/provider/view"
+	providerListURL   = docsBaseURL + "reference/mesheryctl/system/provider/list"
+	providerSetURL    = docsBaseURL + "reference/mesheryctl/system/provider/set"
+	providerResetURL  = docsBaseURL + "reference/mesheryctl/system/provider/reset"
+	providerSwitchURL = docsBaseURL + "reference/mesheryctl/system/provider/switch"
+	tokenUsageURL     = docsBaseURL + "reference/mesheryctl/system/token"
 
 	// Meshery Server Location
 	EndpointProtocol = "http"
@@ -70,22 +84,34 @@ const (
 type cmdType string
 
 const (
-	cmdRoot          cmdType = "root"
-	cmdPerf          cmdType = "perf"
-	cmdMesh          cmdType = "mesh"
-	cmdSystem        cmdType = "system"
-	cmdExp           cmdType = "exp"
-	cmdFilter        cmdType = "filter"
-	cmdPattern       cmdType = "pattern"
-	cmdApp           cmdType = "app"
-	cmdContext       cmdType = "context"
-	cmdContextDelete cmdType = "delete"
-	cmdContextCreate cmdType = "create"
-	cmdContextView   cmdType = "context view"
-	cmdChannel       cmdType = "channel"
-	cmdChannelSet    cmdType = "set"
-	cmdChannelSwitch cmdType = "switch"
-	cmdChannelView   cmdType = "channel view"
+	cmdRoot           cmdType = "root"
+	cmdPerf           cmdType = "perf"
+	cmdMesh           cmdType = "mesh"
+	cmdSystem         cmdType = "system"
+	cmdSystemStop     cmdType = "system stop"
+	cmdSystemUpdate   cmdType = "system update"
+	cmdSystemReset    cmdType = "system reset"
+	cmdSystemStatus   cmdType = "system status"
+	cmdSystemRestart  cmdType = "system restart"
+	cmdExp            cmdType = "exp"
+	cmdFilter         cmdType = "filter"
+	cmdPattern        cmdType = "pattern"
+	cmdApp            cmdType = "app"
+	cmdContext        cmdType = "context"
+	cmdContextDelete  cmdType = "delete"
+	cmdContextCreate  cmdType = "create"
+	cmdContextView    cmdType = "context view"
+	cmdChannel        cmdType = "channel"
+	cmdChannelSet     cmdType = "channel set"
+	cmdChannelSwitch  cmdType = "channel switch"
+	cmdChannelView    cmdType = "channel view"
+	cmdProvider       cmdType = "provider"
+	cmdProviderSet    cmdType = "provider set"
+	cmdProviderSwitch cmdType = "provider switch"
+	cmdProviderView   cmdType = "provider view"
+	cmdProviderList   cmdType = "provider list"
+	cmdProviderReset  cmdType = "provider reset"
+	cmdToken          cmdType = "token"
 )
 
 const (
@@ -446,6 +472,83 @@ func StringInSlice(str string, slice []string) bool {
 	return false
 }
 
+// GetID returns a array of IDs from meshery server endpoint /api/{configurations}
+func GetID(configuration string) ([]string, error) {
+	url := MesheryEndpoint + "/api/" + configuration + "?page_size=10000"
+	configType := configuration + "s"
+	var idList []string
+	client := &http.Client{}
+	req, err := NewRequest("GET", url, nil)
+	if err != nil {
+		return idList, err
+	}
+
+	res, err := client.Do(req)
+	if err != nil {
+		return idList, err
+	}
+	if res.StatusCode != 200 {
+		return idList, errors.Errorf("Response Status Code %d, possible invalid ID", res.StatusCode)
+	}
+
+	defer res.Body.Close()
+	body, err := io.ReadAll(res.Body)
+	if err != nil {
+		return idList, err
+	}
+	var dat map[string]interface{}
+	if err = json.Unmarshal(body, &dat); err != nil {
+		return idList, errors.Wrap(err, "failed to unmarshal response body")
+	}
+	if dat == nil {
+		return idList, errors.New("no data found")
+	}
+	if dat[configType] == nil {
+		return idList, errors.New("no results found")
+	}
+	for _, config := range dat[configType].([]interface{}) {
+		idList = append(idList, config.(map[string]interface{})["id"].(string))
+	}
+	return idList, nil
+}
+
+// Delete configuration from meshery server endpoint /api/{configurations}/{id}
+func DeleteConfiguration(id string, configuration string) error {
+	url := MesheryEndpoint + "/api/" + configuration + "/" + id
+	client := &http.Client{}
+	req, err := NewRequest("DELETE", url, nil)
+	if err != nil {
+		return err
+	}
+
+	res, err := client.Do(req)
+	if err != nil {
+		return err
+	}
+	if res.StatusCode != 200 {
+		return errors.Errorf("Response Status Code %d, possible invalid ID", res.StatusCode)
+	}
+	return nil
+}
+
+// Valid - Check the args and configuration are valid.
+func Valid(args string, configuration string) (string, bool, error) {
+	isID := false
+	configID, err := GetID(configuration)
+	if err == nil {
+		for _, id := range configID {
+			if strings.HasPrefix(id, args) {
+				args = id
+			}
+		}
+	}
+	isID, err = regexp.MatchString("^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-4[a-fA-F0-9]{3}-[8|9|aA|bB][a-fA-F0-9]{3}-[a-fA-F0-9]{12}$", args)
+	if err != nil {
+		return "", false, err
+	}
+	return args, isID, nil
+}
+
 // AskForInput asks the user for an input and checks if it is in the available values
 func AskForInput(prompt string, allowed []string) string {
 	reader := bufio.NewReader(os.Stdin)
@@ -545,10 +648,11 @@ func GetSessionData(mctlCfg *config.MesheryCtlConfig) (*models.Preference, error
 	if err != nil {
 		return nil, err
 	}
+
 	prefs := &models.Preference{}
 	err = utils.Unmarshal(string(body), prefs)
 	if err != nil {
-		return nil, err
+		return nil, errors.New("Failed to process JSON data. Please sign into Meshery")
 	}
 
 	return prefs, nil
@@ -837,6 +941,13 @@ func SetOverrideValues(ctx *config.Context, mesheryImageVersion string) map[stri
 	// set the meshery image version
 	valueOverrides["image"] = map[string]interface{}{
 		"tag": ctx.GetChannel() + "-" + mesheryImageVersion,
+	}
+
+	// set the provider
+	if ctx.GetProvider() != "" {
+		valueOverrides["env"] = map[string]interface{}{
+			"PROVIDER": ctx.GetProvider(),
+		}
 	}
 
 	return valueOverrides

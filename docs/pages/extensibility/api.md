@@ -15,7 +15,7 @@ Each of Meshery's APIs are subject to the following authentication and authoriza
 
 Requests to any of the API endpoints must be authenticated and include a valid JWT access token in the HTTP headers. Type of authentication is determined by the selected [Provider](#providers). Use of the Local Provider, "None", puts Meshery into single-user mode and does not require authentication.
 
-{% include alert.html type="dark" title="What are authentication tokens?" content="Meshery authentication tokens allow users or systems to authenticate with Meshery Server via either its two clients, <a href='/reference/mesheryctl'>Meshery >CLI</a> and <a href='/concepts/architecture/ui'>UI</a>, or its two APIs: <a href='/reference/rest-apis'>REST</a> or <a href='/reference/graphql-apis'>GraphQL</a>. <p>Meshery's authentication token system provide secure access to Meshery's powerful management features.</p>" %}
+{% include alert.html type="dark" title="What are authentication tokens?" content="Meshery authentication tokens allow users or systems to authenticate with Meshery Server via either its two clients, <a href='/reference/mesheryctl'>Meshery >CLI</a> and <a href='/extensibility/api#how-to-get-your-token'>UI</a>, or its two APIs: <a href='/reference/rest-apis'>REST</a> or <a href='/reference/graphql-apis'>GraphQL</a>. <p>Meshery's authentication token system provide secure access to Meshery's powerful management features.</p>" %}
 
 #### What are authentication tokens?
 
@@ -46,7 +46,7 @@ Using Meshery CLI, you can get a copy of your authentication token by executing 
 
 <pre><code>mesheryctl system login</code></pre>
 
-In order to use this command, you must have a web broswer available on your system (this command cannot be executed on a headless system).  
+In order to use this command, you must have a web browser available on your system (this command cannot be executed on a headless system).  
 
 #### GraphQL
 
@@ -54,7 +54,7 @@ Meshery provides its GraphQl API at `hostname:9081/api/graphql/query`. A GraphQL
 
 Explore the Meshery GraphQL API using the `interactive Playground` provided with Meshery instance at `localhost:9081/api/system/graphql/playground`.
 
-Meshery GrahphQL API can be used to perform three operations:
+Meshery GraphQL API can be used to perform three operations:
 
 - Queries for data retrieval.
 - Mutations for creating, updating, and deleting data.

@@ -151,7 +151,6 @@ mesheryctl system logs meshery-istio
 				log.Error("No logs to show. Meshery is not running.")
 				return nil
 			}
-			log.Info("Starting Meshery logging...")
 
 			// create an kubernetes client
 			client, err := meshkitkube.New([]byte(""))
@@ -182,6 +181,7 @@ mesheryctl system logs meshery-istio
 				}
 			}
 
+			log.Info("Starting Meshery logging...")
 			// List all the pods similar to kubectl get pods -n MesheryNamespace
 			for _, pod := range podList.Items {
 

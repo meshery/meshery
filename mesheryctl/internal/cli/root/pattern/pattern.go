@@ -22,7 +22,7 @@ var PatternCmd = &cobra.Command{
 // Apply pattern file
 mesheryctl pattern apply --file [path to pattern file | URL of the file]
 
-// Deprovision pattern file
+// Delete pattern file
 mesheryctl pattern delete --file [path to pattern file]
 
 // View pattern file

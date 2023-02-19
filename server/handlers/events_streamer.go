@@ -103,8 +103,6 @@ STOP:
 
 			adaptersLen := len(meshAdapters)
 			if adaptersLen == 0 {
-				log.Debug("No valid mesh adapter(s) found.") // switching from Error to Debug to prevent it from filling up the logs
-
 				// Clear the adapter cache
 				localMeshAdapters = closeAdapterConnections(localMeshAdaptersLock, localMeshAdapters)
 			} else {
@@ -150,7 +148,7 @@ func listenForCoreEvents(ctx context.Context, eb *events.EventStreamer, resp cha
 			data, err := json.Marshal(event)
 			if err != nil {
 				log.Error(ErrMarshal(err, "event"))
-				return
+				continue
 			}
 			resp <- data
 

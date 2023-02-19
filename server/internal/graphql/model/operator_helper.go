@@ -135,7 +135,9 @@ func GetMeshSyncInfo(mesheryclient operatorClient.Interface, mesheryKubeClient *
 		Version: meshsyncVersion,
 		Status:  Status(meshsyncStatus),
 	}
-
+	if err != nil && kubeerror.IsNotFound(err) {
+		status = StatusDisabled.String()
+	}
 	return meshsyncControllerStatus, nil
 }
 

@@ -1,11 +1,13 @@
-import { Grid, Typography, Button, Switch } from "@material-ui/core";
+import { Grid, Typography, Button, Switch, IconButton } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import CloseIcon from "@material-ui/icons/Close";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { toggleCatalogContent } from "../lib/store";
 import Head from 'next/head';
-
+import { withSnackbar } from "notistack";
+import dataFetch from "../lib/data-fetch";
 
 const styles = (theme) => ({
   button : {
@@ -21,7 +23,7 @@ const styles = (theme) => ({
     borderRadius : theme.spacing(1),
     transformStyle : "preserve-3d",
     boxShadow : "0 4px 8px 0 rgba(0,0,0,0.2)",
-    backgroundColor : "#fff",
+    backgroundColor : theme.palette.secondary.elevatedComponents,
     minHeight : "250px",
     position : "relative",
   },
@@ -44,24 +46,111 @@ const styles = (theme) => ({
   },
   link : {
     textDecoration : "none",
-    color : "#00b39F",
+    color : theme.palette.secondary.link2,
   },
+  switchBase : {
+    color : '#647881',
+    "&$checked" : { color : '#00b39f' },
+    "&$checked + $track" : { backgroundColor : 'rgba(0,179,159,0.5)' },
+  },
+  track : { backgroundColor : 'rgba(100,120,129,0.5)', },
+  checked : {},
 });
 
 const INITIAL_GRID_SIZE = { lg : 6, md : 12, xs : 12 };
 
-const Extensions = ({ classes, catalogVisibility, toggleCatalogContent }) => {
-
-  const handleToggle = (e) => {
-    e.stopPropagation();
-    console.log(`Meshery Catalog: ${catalogVisibility ? "enabled" : "disabled"}`)
-    toggleCatalogContent({ catalogVisibility : !catalogVisibility });
-  }
+const MeshMapSignUpcard = ({ classes }) => {
 
   const handleSignUp = (e) => {
     window.open("https://layer5.io/meshmap", "_blank")
     e.stopPropagation();
   };
+
+  return (
+    <Grid item {...INITIAL_GRID_SIZE}>
+      <div className={classes.card}>
+        <Typography className={classes.frontContent} variant="h5" component="div">
+              MeshMap
+        </Typography>
+
+        <Typography className={classes.frontSideDescription} variant="body">
+          <img className={classes.img} src="/static/img/meshmap.svg" />
+              Collaboratively design and manage your Kubernetes clusters, service mesh deployments, and cloud native apps.
+              MeshMap is now in private beta. Sign-up today to for early access!
+        </Typography>
+        <div style={{ textAlign : "right" }}>
+          <Button
+            variant="contained"
+            color="primary"
+            className={classes.button}
+            onClick={(e) => handleSignUp(e)}>
+                Sign Up
+          </Button>
+        </div>
+      </div>
+    </Grid>
+  )
+}
+
+export const WrappedMeshMapSignupCard = withStyles(styles)(MeshMapSignUpcard);
+
+const Extensions = ({ classes, toggleCatalogContent,  enqueueSnackbar, closeSnackbar }) => {
+  const [catalogContent, setCatalogContent] = useState(true);
+  const [extensionPreferences, setExtensionPreferences] = useState({})
+
+  const handleToggle = () => {
+    toggleCatalogContent({ catalogVisibility : !catalogContent });
+    setCatalogContent(!catalogContent);
+    handleCatalogPreference(!catalogContent);
+  }
+
+  useEffect(() => {
+    dataFetch(
+      "/api/user/prefs",
+      {
+        method : "GET",
+        credentials : "include",
+      },
+      (result) => {
+        if (result) {
+          setExtensionPreferences(result?.usersExtensionPreferences)
+          setCatalogContent(result?.usersExtensionPreferences?.catalogContent)
+        }
+      },
+      err => console.error(err)
+    )
+  }, []);
+
+  const handleCatalogPreference = (catalogPref) => {
+    let body = Object.assign({}, extensionPreferences)
+    body["catalogContent"] = catalogPref
+
+    dataFetch(
+      "/api/user/prefs",
+      {
+        method : "POST",
+        credentials : "include",
+        body : JSON.stringify({ usersExtensionPreferences : body })
+      },
+      () => {
+        enqueueSnackbar(`Catalog Content was ${catalogPref ? "enab" : "disab"}led`,
+          { variant : 'success',
+            autoHideDuration : 4000,
+            action : (key) => (
+              <IconButton
+                key="close"
+                aria-label="Close"
+                color="inherit"
+                onClick={() => closeSnackbar(key)}
+              >
+                <CloseIcon />
+              </IconButton>
+            ),
+          });
+      },
+      err => console.error(err),
+    )
+  }
 
 
   return (
@@ -70,30 +159,8 @@ const Extensions = ({ classes, catalogVisibility, toggleCatalogContent }) => {
         <title>Extensions | Meshery</title>
       </Head>
       <Grid container spacing={1} >
+        <WrappedMeshMapSignupCard />
         <Grid item {...INITIAL_GRID_SIZE}>
-          <div className={classes.card}>
-            <Typography className={classes.frontContent} variant="h5" component="div">
-              {"MeshMap"}
-            </Typography>
-
-            <Typography className={classes.frontSideDescription} variant="body">
-              <img className={classes.img} src="/static/img/meshmap.svg" />
-              Collaboratively design and manage your Kubernetes clusters, service mesh deployments, and cloud native apps.
-              MeshMap is now in private beta. Sign-up today to for early access!
-            </Typography>
-            <div style={{ textAlign : "right" }}>
-              <Button
-                variant="contained"
-                color="primary"
-                className={classes.button}
-                onClick={(e) => handleSignUp(e)}>
-                Sign Up
-              </Button>
-            </div>
-          </div>
-        </Grid>
-        <Grid item {...INITIAL_GRID_SIZE}>
-
           <div className={classes.card} >
             <Typography className={classes.frontContent} variant="h5" component="div">
               {"Meshery Catalog"}
@@ -116,16 +183,19 @@ const Extensions = ({ classes, catalogVisibility, toggleCatalogContent }) => {
 
               <div style={{ textAlign : "right" }}>
                 <Switch
-                  checked={catalogVisibility}
-                  onClick={(e) => handleToggle(e)}
+                  checked={catalogContent}
+                  onChange={handleToggle}
                   name="OperatorSwitch"
                   color="primary"
+                  classes={{ switchBase : classes.switchBase,
+                    track : classes.track,
+                    checked : classes.checked, }}
                 />
               </div>
             </Grid>
           </div>
-        </Grid >
-      </Grid >
+        </Grid>
+      </Grid>
     </React.Fragment>
   )
 }
@@ -138,4 +208,4 @@ const mapDispatchToProps = dispatch => ({
   toggleCatalogContent : bindActionCreators(toggleCatalogContent, dispatch)
 })
 
-export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(Extensions));
+export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(withSnackbar(Extensions)));

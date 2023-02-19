@@ -62,7 +62,7 @@ var completionCmd = &cobra.Command{
 	Args: func(_ *cobra.Command, args []string) error {
 		const errMsg = `Usage: mesheryctl completion [bash|zsh|fish]`
 		if len(args) == 0 {
-			return fmt.Errorf("shell type not provided.\n\n%s", errMsg)
+			return fmt.Errorf("shell type not provided, please provide the required type from [bash|zsh|fish].\n\n%s", errMsg)
 		}
 		return nil
 	},
@@ -77,7 +77,7 @@ var completionCmd = &cobra.Command{
 		case "fish":
 			return cmd.Root().GenFishCompletion(os.Stdout, true)
 		default:
-			return errors.New("shell not supported")
+			return errors.New("shell not supported, requires one of the shells eg: [bash|zsh|fish]")
 		}
 	},
 }

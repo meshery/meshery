@@ -9,7 +9,7 @@ import (
 const UpdateSuffixKey = ".isUpdate"
 
 // ServiceIdentifier takes in a service identity provider and returns a ChainStageFunction
-func ServiceIdentifier(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFunction {
+func ServiceIdentifierAndMutator(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFunction {
 	return func(data *Data, err error, next ChainStageNextFunction) {
 		// Find the ID of the resources
 		for svcName, svc := range data.Pattern.Services {
@@ -38,7 +38,7 @@ func ServiceIdentifier(prov ServiceInfoProvider, act ServiceActionProvider) Chai
 			data.Other[fmt.Sprintf("%s%s", svcName, UpdateSuffixKey)] = true
 			data.Lock.Unlock()
 		}
-
+		act.Mutate(data.Pattern)
 		if next != nil {
 			next(data, nil)
 		}

@@ -87,6 +87,9 @@ const (
 	ErrBrokerSubscriptionCode             = "2238"
 	ErrContextAlreadyPersistedCode        = "2241"
 	ErrGetPackageCode                     = "2252"
+	ErrTokenRevokeCode                    = "2253"
+	ErrTokenIntrospectCode                = "2254"
+	ErrShareDesignCode                    = "2255"
 )
 
 var (
@@ -194,7 +197,7 @@ func ErrPraseUnverified(err error) error {
 }
 
 func ErrDataRead(err error, r string) error {
-	return errors.New(ErrDataReadCode, errors.Alert, []string{"Eeror occurred while reading from the Reader", r}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrDataReadCode, errors.Alert, []string{"Error occurred while reading from the Reader", r}, []string{err.Error()}, []string{}, []string{})
 }
 
 func ErrResultData() error {
@@ -285,6 +288,14 @@ func ErrTokenRefresh(err error) error {
 	return errors.New(ErrTokenRefreshCode, errors.Alert, []string{"Error occurred while Refresing the token"}, []string{err.Error()}, []string{}, []string{})
 }
 
+func ErrTokenRevoke(err error) error {
+	return errors.New(ErrTokenRevokeCode, errors.Alert, []string{"Error occurred while revoking the token"}, []string{err.Error()}, []string{"Unable to revoke token. Token appears to be a malformed base64 token."}, []string{"Try logging out (again) in order to fully close your session (and revoke the session token)."})
+}
+
+func ErrTokenIntrospect(err error) error {
+	return errors.New(ErrTokenIntrospectCode, errors.Alert, []string{"token introspection failed"}, []string{err.Error()}, []string{"Invalid session token. Token has revoked."}, []string{"Login again to establish a new session with valid token."})
+}
+
 func ErrGetToken(err error) error {
 	return errors.New(ErrGetTokenCode, errors.Alert, []string{"Error occurred while getting token from the Browser Cookie"}, []string{err.Error()}, []string{}, []string{})
 }
@@ -327,4 +338,8 @@ func ErrSavingSeededComponents(err error, content string) error {
 
 func ErrDownloadingSeededComponents(err error, content string) error {
 	return errors.New(ErrDownloadingSeededComponentsCode, errors.Alert, []string{"Could not download seed content for" + content}, []string{err.Error()}, []string{"The content is not present at the specified url endpoint", "HTTP requests failed"}, []string{"Make sure the content is available at the endpoints", "Make sure that Github is reachable and the http requests are not failing"})
+}
+
+func ErrShareDesign(err error) error {
+	return errors.New(ErrShareDesignCode, errors.Alert, []string{"cannot make design public"}, []string{err.Error()}, []string{"email address provided might not be valid", "insufficient permission"}, []string{"Ensure that you are the owner of the design you are sharing", "Try again later", "Try using an alternate email address"})
 }

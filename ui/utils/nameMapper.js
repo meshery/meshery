@@ -40,6 +40,7 @@ export const podNameMapper = (serviceMeshName, podName) => {
 export const versionMapper = (versionName) => (versionName.charAt(0) === "v" ? versionName : `v${versionName}`);
 
 
+
 export function getMeshProperties(name) {
   switch (name) {
     case "istio": return { name, img : "/static/img/istio.svg", color : "#466BB0" }
@@ -56,4 +57,20 @@ export function getMeshProperties(name) {
     case "kubernetes": return { name, img : "/static/img/kubernetes.svg", color : "#293CDA" }
     default: return {}
   }
+}
+
+export const TelemetryComps = {
+  GRAFANA : "grafana",
+  PROMETHEUS : "prometheus",
+};
+
+// maps objects to telemetry comp if name is one of "TelemetryComps"
+export function isTelemetryComponent(name) {
+  const comps = Object.values(TelemetryComps);
+  for (const comp in comps) {
+    if (name?.toLowerCase().includes(comps[comp])) {
+      return comps[comp];
+    }
+  }
+  return "";
 }
