@@ -22,7 +22,7 @@ Artifacts produced in the build processes are published and persisted in differe
 | ------------- | ------------- | ------------- |
 | Docker Hub    | Meshery       | [https://hub.docker.com/r/layer5/meshery](https://hub.docker.com/r/layer5/meshery) |
 | GitHub        | mesheryctl    | [https://github.com/layer5io/meshery/releases](https://github.com/layer5io/meshery/releases) |
-| Docker Hub    | Meshery Adapter for \<service-mesh\> | https://hub.docker.com/r/layer5/meshery-\<service-mesh\> |
+| Docker Hub    | Meshery Adapter for \<service-mesh\> | [https://hub.docker.com/r/layer5/meshery/service-mesh](https://hub.docker.com/r/layer5/meshery/service-mesh) |
 | Docs          | Meshery Documentation | [https://docs.meshery.io](https://docs.meshery.io) |
 | GitHub        | [Service Mesh Performance](https://smp-spec.io) | [https://github.com/layer5io/service-mesh-performance](https://github.com/layer5io/service-mesh-performance) |
 | Github        | Helm charts   | [https://github.com/meshery/meshery.io/tree/master/charts](https://github.com/meshery/meshery.io/tree/master/charts) |
