@@ -323,6 +323,14 @@ theme = {
       },
     },
 
+    // global style for body throughout meshery-ui
+    MuiCssBaseline : {
+      "@global" : {
+        body : {
+          backgroundColor : "#eaeff1",
+        },
+      },
+    },
     // Global scrollbar styles
     // MuiCssBaseline : {
     //   "@global" : {

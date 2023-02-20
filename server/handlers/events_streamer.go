@@ -103,8 +103,6 @@ STOP:
 
 			adaptersLen := len(meshAdapters)
 			if adaptersLen == 0 {
-				log.Debug("No valid mesh adapter(s) found.") // switching from Error to Debug to prevent it from filling up the logs
-
 				// Clear the adapter cache
 				localMeshAdapters = closeAdapterConnections(localMeshAdaptersLock, localMeshAdapters)
 			} else {
