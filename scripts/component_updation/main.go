@@ -33,6 +33,7 @@ import (
 
 	"github.com/layer5io/component_scraper/pkg"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
+	"github.com/layer5io/meshkit/utils/manifests"
 )
 
 var (
@@ -252,6 +253,7 @@ func main() {
 						if err != nil {
 							return err
 						}
+						component.DisplayName = manifests.FormatToReadableString(component.Kind)
 						fmt.Println("updating for ", changeFields["modelDisplayName"], "--", component.Kind)
 						if component.Metadata == nil {
 							component.Metadata = make(map[string]interface{})
@@ -275,6 +277,8 @@ func main() {
 							component.Model.DisplayName = changeFields[ColumnNamesToExtract[i]]
 						}
 						delete(component.Metadata, "Publish?")
+						modelDisplayName := component.Metadata["modelDisplayName"].(string)
+						component.Model.DisplayName = modelDisplayName
 						byt, err = json.Marshal(component)
 						if err != nil {
 							return err
