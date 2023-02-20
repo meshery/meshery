@@ -65,14 +65,16 @@ function RJSFForm(props) {
     // prop should be present in order for the cloned element to override this property
     transformErrors,
     override,
+    uiSchema={}
   } = props;
+
   const templates = {
     ArrayFieldTemplate,
     ObjectFieldTemplate,
     WrapIfAdditionalTemplate,
     FieldTemplate : CustomFieldTemplate, // applying field template universally to every field type.
   }
-  const globalTheme = useTheme()
+  const globalTheme = useTheme();
   useEffect(() => {
     const extensionTooltipPortal = document.getElementById("extension-tooltip-portal");
     if (extensionTooltipPortal) {
@@ -97,7 +99,7 @@ function RJSFForm(props) {
         validator={validator}
         templates={templates}
         formContext={{ overrideFlag : override, CustomTextTooltip : CustomTextTooltip }}
-        uiSchema={schema.uiSchema}
+        uiSchema={_.merge(schema.uiSchema, uiSchema)}
         fields={{ ObjectField : ObjectFieldWithErrors }}
         widgets={{
           TextWidget : CustomTextWidget,
