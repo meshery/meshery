@@ -24,7 +24,7 @@ Requests to any of the API endpoints must be authenticated and include a valid J
 
   _Downloading the token_
 
-  <a href="{{ site.baseurl }}/assets/img/token/token.png"><img alt="Meshery Dashboard" src="{{ site.baseurl }}/assets/img/token/token.png" width="680" height="400"/></a>
+  <a href="{{ site.baseurl }}/assets/img/token/MesheryTokenUI.png"><img alt="Meshery Dashboard" src="{{ site.baseurl }}/assets/img/token/MesheryTokenUI.png" width="680" height="400"/></a>
   <br/>
   <br/>
 
