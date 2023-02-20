@@ -197,20 +197,25 @@ Automatically the `Gemfile.lock` will update once the `make docs` is given (for 
 
 Most popular clipboard plugins like Clipboard JS require the manual creation of a new ID for each code snippet. A different approach is used here. For code snippets, we either use html tags or markdown in the following manner:
 
-```
-   <pre class="codeblock-pre"><div class="codeblock">
-   <code class="clipboardjs">
-     code snippet
-   </code></div></pre>
-```
+{% capture code_content %}<pre class="codeblock-pre"><div class="codeblock">
+<code class="clipboardjs">code_snippet_here</code>
+</div></pre>{% endcapture %}
+{% include code.html code=code_content %}
 
-**<pre></pre>** _tags are optional unless the code snippet is in a paragraph format and also gives a terminal like effect to the code_
+You can also use the `code` component created for this feature to make it easy to use. It can be used by including code.html and then passing the code snippet to it.
+
+If the code snippet does not cotain any special characters then, it can be used directly like,<br><br>
+`{% raw %}{% include code.html code="code_snippet_here" %}{% endraw %}`.
+
+If the code snippet has special characters then we need to capture it first in variable `code_content` like this,<br><br> `{% raw %}{% capture code_content%}code_snippet_here{% endcapture %}{% endraw %}`<br><br> and then pass it to the component like this,<br><br> `{% raw %}{% include code.html code=code_content %}{% endraw %}`.<br><br> That's it.
+
+**NOTE:** Don't use `code` component when the snippet is in between an ordered list, it breaks the order and next item in the list will have numbering from 1. So better use `<pre class="codeblock_pre">...</pre>` method above instead when the snippet is in between an ordered list.
 
 **A full block:**
 {% capture code_content %}```code snippet```{% endcapture %}
 {% include code.html code=code_content %}
 
-Inline formatting:
+**Inline formatting:**
 
 {% capture code_content %}\`code snippet\`: `code snippet`{% endcapture %}
 {% include code.html code=code_content %}
