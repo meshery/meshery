@@ -17,7 +17,7 @@ You can retrieve your authentication token from either of Meshery's two clients:
 
   _Downloading the token_
 
-  <a href="{{ site.baseurl }}/assets/img/token/token.png"><img alt="Meshery Dashboard" src="{{ site.baseurl }}/assets/img/token/token.png" /></a>
+  <a href="{{ site.baseurl }}/assets/img/token/MesheryTokenUI.png"><img alt="Meshery Dashboard" src="{{ site.baseurl }}/assets/img/token/MesheryTokenUI.png" /></a>
   <br/>
   <br/>
 
@@ -27,7 +27,7 @@ You can retrieve your authentication token from either of Meshery's two clients:
   <br/>
   <pre class="codeblock-pre">
   <div class="codeblock"><div class="clipboardjs">
-  mesheryctl system config [aks|eks|gke|minikube] --token [path-to-file]
+  mesheryctl system login
   
   </div></div>
   </pre>
