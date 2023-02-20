@@ -33,9 +33,7 @@ Requests to any of the API endpoints must be authenticated and include a valid J
   To get the token through `mesheryctl` you would have to use the following command. (default "auth.json").
   <br/>
   <pre class="codeblock-pre">
-  <div class="codeblock"><div class="clipboardjs">
-  mesheryctl system login
-  </div></div>
+  <div class="codeblock"><div class="clipboardjs">mesheryctl system login</div></div>
   </pre>
   <br />
   <br/>
