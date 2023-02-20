@@ -1,7 +1,7 @@
 {
 	"kind": "AnalysisRun",
 	"apiVersion": "argoproj.io/v1alpha1",
-	"display-name": "Analysis Run",
+	"displayName": "Analysis Run",
 	"format": "JSON",
 	"metadata": {
 		"Publish?": "false",
@@ -18,7 +18,7 @@
 	"model": {
 		"name": "kubernetes",
 		"version": "v1.25.2",
-		"display-name": "Kubernetes",
+		"displayName": "Kubernetes",
 		"category": "Orchestration \u0026 Management",
 		"sub-category": "Scheduling \u0026 Orchestration"
 	},

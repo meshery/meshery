@@ -1,7 +1,7 @@
 {
 	"kind": "Application",
 	"apiVersion": "core.oam.dev/v1alpha1",
-	"display-name": "Application",
+	"displayName": "Application",
 	"format": "JSON",
 	"metadata": {
 		"logo-URL": "",
@@ -16,7 +16,7 @@
 	"model": {
 		"name": "core",
 		"version": "v1.0.0",
-		"display-name": "Core",
+		"displayName": "Core",
 		"category": "Cloud Native Application",
 		"sub-category": "Not Found"
 	},
