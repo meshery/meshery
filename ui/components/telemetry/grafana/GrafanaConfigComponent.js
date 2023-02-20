@@ -18,63 +18,63 @@ const grafanaStyles = (theme) => ({
 });
 
 class GrafanaConfigComponent extends Component {
-    render = () => {
-      const {
-        classes, grafanaURL, grafanaAPIKey, urlError, handleChange, handleGrafanaConfigure, options, handleChangeApiKey
-      } = this.props;
-      return (
-        <NoSsr>
-          <React.Fragment>
-            <div className={classes.wrapper}>
-              <Grid container spacing={1}>
-                <Grid item xs={12} md={6}>
-                  <div className={classes.inputContainer}>
-                    <ReactSelectWrapper
-                      onChange={(select) => handleChange('grafanaURL')(select ? select.value : '')}
-                      options={options}
-                      value={grafanaURL}
-                      label="Grafana Base URL"
-                      error={urlError}
-                      placeholder="Address of Grafana Server"
-                      noOptionsMessage="No Grafana servers discovered"
-                    />
-                  </div>
-                </Grid>
-                <Grid item xs={12} md={6}>
-                  <TextField
-                    id="grafanaAPIKey"
-                    name="grafanaAPIKey"
-                    label="API Key"
-                    fullWidth
-                    value={grafanaAPIKey}
-                    margin="normal"
-                    variant="outlined"
-                    onKeyDown={(e) => {
-                      if (e.keyCode == 13) {
-                        handleGrafanaConfigure();
-                      }
-                    }}
-                    onChange={handleChangeApiKey}
+  render = () => {
+    const {
+      classes, grafanaURL, grafanaAPIKey, urlError, handleChange, handleGrafanaConfigure, options, handleChangeApiKey
+    } = this.props;
+    return (
+      <NoSsr>
+        <React.Fragment>
+          <div className={classes.wrapper}>
+            <Grid container spacing={1}>
+              <Grid item xs={12} md={6}>
+                <div className={classes.inputContainer}>
+                  <ReactSelectWrapper
+                    onChange={(select) => handleChange('grafanaURL')(select ? select.value : '')}
+                    options={options}
+                    value={grafanaURL}
+                    label="Grafana Base URL"
+                    error={urlError}
+                    placeholder="Address of Grafana Server"
+                    noOptionsMessage="No Grafana servers discovered"
                   />
-                </Grid>
+                </div>
               </Grid>
-              <div className={classes.buttons}>
-                <Button
-                  type="submit"
-                  variant="contained"
-                  color="primary"
-                  size="large"
-                  onClick={handleGrafanaConfigure}
-                  className={classes.button}
-                >
+              <Grid item xs={12} md={6}>
+                <TextField
+                  id="grafanaAPIKey"
+                  name="grafanaAPIKey"
+                  label="API Key"
+                  fullWidth
+                  value={grafanaAPIKey}
+                  margin="normal"
+                  variant="outlined"
+                  onKeyDown={(e) => {
+                    if (e.keyCode == 13) {
+                      handleGrafanaConfigure();
+                    }
+                  }}
+                  onChange={handleChangeApiKey}
+                />
+              </Grid>
+            </Grid>
+            <div className={classes.buttons}>
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                size="large"
+                onClick={handleGrafanaConfigure}
+                className={classes.button}
+              >
                   Submit
-                </Button>
-              </div>
+              </Button>
             </div>
-          </React.Fragment>
-        </NoSsr>
-      );
-    }
+          </div>
+        </React.Fragment>
+      </NoSsr>
+    );
+  }
 }
 
 GrafanaConfigComponent.propTypes = {
