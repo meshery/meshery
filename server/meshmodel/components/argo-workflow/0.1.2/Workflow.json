@@ -18,7 +18,7 @@
 		"version": "0.1.2",
 		"displayName": "Argo",
 		"category": "App Definition and Development",
-		"sub-category": "Continuous Integration \u0026 Delivery"
+		"subCategory": "Continuous Integration \u0026 Delivery"
 	},
 	"schema": "{\n \"title\": \"Workflow\",\n \"type\": \"object\",\n \"x-kubernetes-map-type\": \"atomic\",\n \"x-kubernetes-preserve-unknown-fields\": true\n}"
 }
