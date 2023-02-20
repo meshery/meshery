@@ -274,6 +274,7 @@ func main() {
 						if i := isInColumnNames("modelDisplayName", ColumnNamesToExtract); i != -1 {
 							component.Model.DisplayName = changeFields[ColumnNamesToExtract[i]]
 						}
+						delete(component.Metadata, "Publish?")
 						byt, err = json.Marshal(component)
 						if err != nil {
 							return err
