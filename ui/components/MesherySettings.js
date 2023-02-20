@@ -11,7 +11,7 @@ import {
 } from '@material-ui/core';
 import CloseIcon from "@material-ui/icons/Close";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowLeft, faCloud, faPoll, faDatabase } from '@fortawesome/free-solid-svg-icons';
+import { faArrowLeft, faCloud, faPoll, faDatabase, faFileInvoice } from '@fortawesome/free-solid-svg-icons';
 // import {faTachometerAlt} from '@fortawesome/free-solid-svg-icons';
 import { faMendeley } from '@fortawesome/free-brands-svg-icons';
 import Link from 'next/link';
@@ -28,8 +28,9 @@ import { iconMedium } from '../css/icons.styles';
 import subscribeMeshModelSummary from "./graphql/subscriptions/MeshModelSummarySubscription";
 import fetchMeshModelSummary from "./graphql/queries/MeshModelSummaryQuery";
 import { MuiThemeProvider, createTheme } from '@material-ui/core/styles';
-import MUIDataTable from "mui-datatables";
 import MesherySettingsEnvButtons from './MesherySettingsEnvButtons';
+import MeshModelComponent from './MeshModelComponent';
+import DataTable from "mui-datatables";
 
 
 const styles = (theme) => ({
@@ -69,6 +70,7 @@ const styles = (theme) => ({
     display : "flex",
     justifyContent : "center",
     margin : theme.spacing(2),
+    // backgroundColor : "#fff",
   },
   paper : {
     maxWidth : '90%',
@@ -416,7 +418,7 @@ class MesherySettings extends React.Component {
          return (
            <Paper elevation={1} style={{ padding : "2rem" }}>
              <MuiThemeProvider theme={this.getMuiTheme()}>
-               <MUIDataTable
+               <DataTable
                  title={
                    <>
                      <div style={{ display : "flex", alignItems : "center", marginBottom : "1rem" }}>
@@ -644,7 +646,7 @@ class MesherySettings extends React.Component {
               <Tab
                 className={classes.tab}
                 icon={
-                  <FontAwesomeIcon icon={faDatabase}  style={iconMedium} />
+                  <FontAwesomeIcon icon={faFileInvoice}  style={iconMedium} />
                 }
                 label="MeshModel Summary"
                 tab="meshmodelSummary"
@@ -733,14 +735,7 @@ class MesherySettings extends React.Component {
         )}
         {tabVal === 4 && (
           <TabContainer>
-            <div className={classes.container}>
-              <div className={classes.dashboardSection} data-test="workloads">
-                <Typography variant="h6" gutterBottom className={classes.chartTitle}>
-                    MeshModel
-                </Typography>
-                {this.showMeshModelSummary()}
-              </div>
-            </div>
+            <MeshModelComponent  showMeshModelSummary={this.showMeshModelSummary} />
           </TabContainer>
         )}
         {/* {tabVal === 3 && (
