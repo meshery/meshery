@@ -2344,11 +2344,11 @@ pre code {
 
 .form-control {
     display: block;
-    width: 100%;
-    height: -webkit-calc(2.25rem + 2px);
-    height: calc(2.25rem + 2px);
+    width: 50%;
+    height: -webkit-calc(2.25rem + 10px);
+    height: calc(2.25rem + 10px);
     padding: .375rem .75rem;
-    font-size: 1rem;
+    font-size: 1.2rem;
     line-height: 1.5;
     color: #495057;
     background-color: #fff;
@@ -2388,21 +2388,25 @@ pre code {
 
 .form-control::-webkit-input-placeholder {
     color: #888;
+    font-family: "Open Sans";
     opacity: 1
 }
 
 .form-control::-moz-placeholder {
     color: #888;
+    font-family: "Open Sans";
     opacity: 1
 }
 
 .form-control:-ms-input-placeholder {
     color: #888;
+    font-family: "Open Sans";
     opacity: 1
 }
 
 .form-control::placeholder {
     color: #888;
+    font-family: "Open Sans";
     opacity: 1
 }
 
