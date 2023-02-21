@@ -14,7 +14,7 @@ const proxy = httpProxy.createProxyServer({});
 
 proxy.on("error", function (err, req, res) {
   res.writeHead(500, { "Content-Type" : "text/plain" });
-  res.end('Proxy issue vi Meshery Provider-UI');
+  res.end('Proxy issue in Meshery Provider-UI');
 });
 
 app.prepare().then(() => {
