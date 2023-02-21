@@ -291,7 +291,7 @@
         else if(percentage < 0){
            percentContainer[i].innerHTML = `<div class = "tooltipss">
               <img src = "{{site.baseurl}}/assets/img/na-icon.svg" class = "yellowCheckbox" >
-              <span class = "tooltiptext">${percentage}%</span>
+              <span class = "tooltiptext">Not Applicable</span>
             </div>`
         }
         else{
