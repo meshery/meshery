@@ -276,9 +276,7 @@ table {
   //   background-color: #00b39f;
 }
 
-.table-dark.table-striped tbody tr:nth-of-type(even),
-.td-box .row.section > table.table-dark tbody tr:nth-of-type(even),
-.td-content > table td {
+.tbl-hidden-row {
   background-color: var(--color-primary-dark) !important;
 }
 
