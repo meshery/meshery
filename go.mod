@@ -94,7 +94,7 @@ require (
 	github.com/cncf/xds/go v0.0.0-20230105202645-06c439db220b // indirect
 	github.com/cockroachdb/apd/v2 v2.0.1 // indirect
 	github.com/containerd/cgroups v1.1.0 // indirect
-	github.com/containerd/containerd v1.6.15 // indirect
+	github.com/containerd/containerd v1.6.18 // indirect
 	github.com/cyphar/filepath-securejoin v0.2.3 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/deckarep/golang-set v1.8.0 // indirect
