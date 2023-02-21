@@ -276,6 +276,16 @@ table {
   //   background-color: #00b39f;
 }
 
+.table-dark.table-striped tbody tr:nth-of-type(even),
+.td-box .row.section > table.table-dark tbody tr:nth-of-type(even),
+.td-content > table td {
+  background-color: var(--color-primary-dark) !important;
+}
+
+.tbl > thead > tr {
+  background-color: var(--color-primary-dark) !important;
+}
+
 .table-dark.table-hover tbody tr:hover {
   background-color: rgba(255, 255, 255, 0.075);
   background-color: var(--color-primary-dark) !important;
