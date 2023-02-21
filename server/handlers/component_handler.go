@@ -196,12 +196,6 @@ func (h *Handler) GetMeshmodelComponentsByName(rw http.ResponseWriter, r *http.R
 	}
 }
 
-// swagger: response typesResponseWithModelname
-type typesResponseWithModelname struct {
-	DisplayName string   `json:"display-name"`
-	Versions    []string `json:"versions"`
-}
-
 // swagger:route GET /api/meshmodel/model/{model}/component MeshmodelGetByType idMeshmodelGetByType
 // Handle GET request for getting meshmodel components of a specific type. The component type/model name should be lowercase like "kubernetes", "istio"
 // Example: /api/meshmodel/model/kubernetes/component

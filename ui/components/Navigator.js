@@ -847,11 +847,6 @@ class Navigator extends React.Component {
     this.setState({ showHelperButton : !showHelperButton });
   }
 
-  toggleSpacing = () => {
-    const { showHelperButton } = this.state;
-    this.setState({ showHelperButton : !showHelperButton });
-  }
-
   /**
    * @param {number} id
    *
