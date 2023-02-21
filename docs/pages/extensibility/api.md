@@ -70,4 +70,4 @@ Meshery provides a REST API available through the default port of `9081/tcp`.
 
 ## See Also
 
-- [Extension Points]({{site.baseurl}}/extensibility}})
+- [Extension Points](/extensibility)
