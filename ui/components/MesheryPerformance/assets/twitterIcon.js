@@ -1,9 +1,10 @@
 import React from "react";
+import { iconLarge } from "../../../css/icons.styles";
 
 const TwitterIcon = ({ width = 40, height = 40 }) => (
 
 
-  <svg width={width} height={height} viewBox="0 0 29 29" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <svg width={width} height={height} viewBox="0 0 29 29" style={iconLarge} fill="none" xmlns="http://www.w3.org/2000/svg">
     <g filter="url(#filter0_d_6961_29753)">
       <rect x="4.62891" y="3" width="20.2472" height="20.2472" rx="4.82076" fill="#252E31"/>
     </g>
