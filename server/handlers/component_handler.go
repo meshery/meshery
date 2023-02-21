@@ -339,48 +339,52 @@ func (h *Handler) GetMeshmodelEntititiesByModel(rw http.ResponseWriter, r *http.
 		page = 1
 	}
 	offset := (page - 1) * limit
-	var mres ModelResponse
+	var mres []ModelResponse
 	mod := h.registryManager.GetModels(&v1alpha1.ModelFilter{
 		Name:    typ,
 		Version: v,
 		Greedy:  greedy,
 	})
 	if len(mod) != 0 {
-		mres.Model = mod[0]
-	}
-	if mres.Name != "" {
-		res := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
-			ModelName: mres.Name,
-			Version:   v,
-			Limit:     limit,
-			Offset:    offset,
-		})
-		var comps []v1alpha1.ComponentDefinition
-		for _, r := range res {
-			m := make(map[string]interface{})
-			comp, ok := r.(v1alpha1.ComponentDefinition)
-			if ok {
-				_ = json.Unmarshal([]byte(comp.Schema), &m)
-				m = k8s.Format.Prettify(m, false)
-				b, _ := json.Marshal(m)
-				comp.Schema = string(b)
-				comps = append(comps, comp)
+		for _, m := range mod {
+			if m.Name != "" {
+				res := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
+					ModelName: m.Name,
+					Version:   v,
+					Limit:     limit,
+					Offset:    offset,
+				})
+				var comps []v1alpha1.ComponentDefinition
+				for _, r := range res {
+					m := make(map[string]interface{})
+					comp, ok := r.(v1alpha1.ComponentDefinition)
+					if ok {
+						_ = json.Unmarshal([]byte(comp.Schema), &m)
+						m = k8s.Format.Prettify(m, false)
+						b, _ := json.Marshal(m)
+						comp.Schema = string(b)
+						comps = append(comps, comp)
+					}
+				}
+				res2 := h.registryManager.GetEntities(&v1alpha1.RelationshipFilter{
+					ModelName: m.Name,
+					Limit:     limit,
+					Offset:    offset,
+				})
+				var relationships []v1alpha1.RelationshipDefinition
+				for _, r := range res2 {
+					rel, ok := r.(v1alpha1.RelationshipDefinition)
+					if ok {
+						relationships = append(relationships, rel)
+					}
+				}
+				mres = append(mres, ModelResponse{
+					Model:         m,
+					Relationships: relationships,
+					Components:    comps,
+				})
 			}
 		}
-		res2 := h.registryManager.GetEntities(&v1alpha1.RelationshipFilter{
-			ModelName: mres.Name,
-			Limit:     limit,
-			Offset:    offset,
-		})
-		var relationships []v1alpha1.RelationshipDefinition
-		for _, r := range res2 {
-			rel, ok := r.(v1alpha1.RelationshipDefinition)
-			if ok {
-				relationships = append(relationships, rel)
-			}
-		}
-		mres.Relationships = relationships
-		mres.Components = comps
 	}
 	if err := enc.Encode(mres); err != nil {
 		h.log.Error(ErrWorkloadDefinition(err)) //TODO: Add appropriate meshkit error
