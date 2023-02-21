@@ -73,29 +73,29 @@ const TablePaginationActionsWrapper = withStyles(actionsStyles, { withTheme : tr
 const defaultFooterStyles = {};
 
 class CustomTableFooter extends Component {
-    customLabelDisplayedRows = () => `Page ${this.props.page + 1}`
+  customLabelDisplayedRows = () => `Page ${this.props.page + 1}`
 
-    render() {
-      return (
-        <TableFooter>
-          <TableRow>
-            <TablePagination
-              labelRowsPerPage=""
-              labelDisplayedRows={this.customLabelDisplayedRows}
-              rowsPerPageOptions={[10]}
-              colSpan={3}
-              count={this.props.count}
-              rowsPerPage={this.props.rowsPerPage}
-              page={this.props.page}
-              SelectProps={{ native : true, }}
-              onChangePage={this.props.changePage}
-              // onChangeRowsPerPage={this.handleChangeRowsPerPage}
-              ActionsComponent={TablePaginationActionsWrapper}
-            />
-          </TableRow>
-        </TableFooter>
-      );
-    }
+  render() {
+    return (
+      <TableFooter>
+        <TableRow>
+          <TablePagination
+            labelRowsPerPage=""
+            labelDisplayedRows={this.customLabelDisplayedRows}
+            rowsPerPageOptions={[10]}
+            colSpan={3}
+            count={this.props.count}
+            rowsPerPage={this.props.rowsPerPage}
+            page={this.props.page}
+            SelectProps={{ native : true, }}
+            onChangePage={this.props.changePage}
+            // onChangeRowsPerPage={this.handleChangeRowsPerPage}
+            ActionsComponent={TablePaginationActionsWrapper}
+          />
+        </TableRow>
+      </TableFooter>
+    );
+  }
 }
 
 CustomTableFooter.propTypes = { changePage : PropTypes.func.isRequired,
