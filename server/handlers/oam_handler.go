@@ -660,7 +660,7 @@ func (sap *serviceActionProvider) DryRun(comps []v1alpha1.Component) (resp map[s
 				resp[cmp.Name][ctxID] = dResp
 				lol, _ := json.MarshalIndent(resp, "", " ")
 				fmt.Println("will send to client", string(lol))
-				return resp, nil
+				continue
 			}
 			dResp.Error = &core.DryRunResponse{}
 			byt, err := json.Marshal(st)
@@ -676,7 +676,6 @@ func (sap *serviceActionProvider) DryRun(comps []v1alpha1.Component) (resp map[s
 				dResp.Error.Status = *a.Status
 			}
 			dResp.Error.Causes = make([]core.DryRunFailureCause, 0)
-			fmt.Println((*a.APIVersion), *a.Kind)
 			for _, c := range a.Details.Causes {
 				msg := ""
 				field := ""
@@ -702,7 +701,6 @@ func (sap *serviceActionProvider) DryRun(comps []v1alpha1.Component) (resp map[s
 			resp[cmp.Name][ctxID] = dResp
 			lol, _ := json.MarshalIndent(resp, "", " ")
 			fmt.Println("will send to client", string(lol))
-			return resp, nil
 		}
 	}
 	return
