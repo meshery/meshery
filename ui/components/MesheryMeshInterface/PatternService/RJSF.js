@@ -1,15 +1,13 @@
 import { MuiThemeProvider, useTheme } from '@material-ui/core/styles';
-import Form, { withTheme } from "@rjsf/core";
+import { withTheme } from "@rjsf/core";
 import { Theme as MaterialUITheme, } from "@rjsf/material-ui";
 import React, { useEffect } from "react";
 import JS4 from "../../../assets/jsonschema/schema-04.json";
 import { rjsfTheme } from "../../../themes";
-import { recursiveCleanObject } from "../helpers";
 import MesheryArrayFieldTemplate from "./RJSFCustomComponents/ArrayFieldTemlate";
 import MesheryCustomObjFieldTemplate from "./RJSFCustomComponents/ObjectFieldTemplate";
 import MesheryWrapIfAdditionalTemplate from './RJSFCustomComponents/WrapIfAdditionalTemplate';
 import { customizeValidator } from "@rjsf/validator-ajv6";
-import _ from "lodash"
 import CustomTextWidget from './RJSFCustomComponents/CustomTextWidget';
 import CustomDateTimeWidget from './RJSFCustomComponents/CustomDateTimeWidget';
 import darkRjsfTheme from '../../../themes/rjsf';
@@ -17,28 +15,7 @@ import ObjectFieldWithErrors from './RJSFCustomComponents/CustomObjectField';
 import { CustomTextTooltip } from './CustomTextTooltip';
 import { CustomFieldTemplate } from './RJSFCustomComponents/FieldTemplate';
 
-/*eslint-disable */
-class RJSFOverridenComponent extends Form {
-  constructor(props) {
-    try {
-      super(props)
-      let oldValidate = this.validate;
-      this.validate = (
-        formData,
-        schema,
-      ) => {
-        let fixedFormData = recursiveCleanObject(_.cloneDeep(formData));
-        return oldValidate.call(this, fixedFormData, schema);
-      }
-    } catch (e) {
-      console.error("An RJSF error occurred", e)
-    }
-  }
-}
-/*eslint-enable */
-
-// This is Patched change to include customised Forms
-const MuiRJSFForm = withTheme(MaterialUITheme, RJSFOverridenComponent);
+const MuiRJSFForm = withTheme(MaterialUITheme);
 const validator = customizeValidator({ additionalMetaSchemas : [JS4] });
 
 /**
