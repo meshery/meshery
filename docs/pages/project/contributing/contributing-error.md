@@ -42,15 +42,14 @@ Use the `errors.New()` function to create a new instance of the error object and
 
 ### Syntax
 
-     errors.New(ErrExampleCode, errors.Alert, []string{"<short-description>"}, []string{"<long-description>"}, []string{"<probable-cause>"}, []string{"<suggested remediation>"})
-
+{% capture code_content %}errors.New(ErrExampleCode, errors.Alert, []string{"<short-description>"}, []string{"<long-description>"}, []string{"<probable-cause>"}, []string{"<suggested remediation>"}){% endcapture %}
+{% include code.html code=code_content %}
 ## Example
 
 In this example we are creating an Error for being unable to marshal JSON
 
-```code
-var (
-    // Error code
+{% capture code_content %}var (
+	// Error code
     ErrMarshalCode= "replace_me"
 
     //Static errors (for example)
@@ -61,32 +60,29 @@ var (
 //Error Name
 func ErrMarshal(err error, obj string) error {
 	return errors.New(ErrMarshalCode, errors.Alert, []string{"Unable to marshal the : ", obj}, []string{err.Error()}, []string{}, []string{})
-}
-
-```
+}{% endcapture %}
+{% include code.html code=code_content %}
 
 ### Replacing old Error Codes
 
 Old
 
-```Code
-   bd, err := json.Marshal(providers)
+{% capture code_content %}bd, err := json.Marshal(providers)
 	if err != nil {
 		http.Error(w, "unable to marshal the providers", http.StatusInternalServerError)
 		return
-	}
-```
+	}{% endcapture %}
+{% include code.html code=code_content %}
 
 New
 
-```Code
-  bd, err := json.Marshal(providers)
+{% capture code_content %}bd, err := json.Marshal(providers)
   if err != nil {
           obj := "provider"
           http.Error(w, ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
           return
-      }
-```
+      }{% endcapture %}
+{% include code.html code=code_content %}
 
 ## Replacing logrus
 
@@ -96,36 +92,38 @@ There already exists an [interface for logger](https://github.com/layer5io/meshk
 
 #### Defining a Logger
 
-```Code
- type Logger struct {
-     log   logger.Handler
- }
-```
+{% capture code_content %}type Logger struct {
+	log   logger.Handler
+}{% endcapture %}
+{% include code.html code=code_content %}
 
 #### Debug
 
 ##### Old
 
-`logrus.Debugf("meshLocationURL: %s", meshLocationURL)`
+{% capture code_content %}logrus.Debugf("meshLocationURL: %s", meshLocationURL){% endcapture %}
+{% include code.html code=code_content %}
 
 ##### New
 
-`l.log.Debug("meshLocationURL: ", meshLocationURL)`
+{% capture code_content %}l.log.Debug("meshLocationURL: ", meshLocationURL){% endcapture %}
+{% include code.html code=code_content %}
 
 #### Error
 
 ##### Old
 
-`logrus.Errorf("error marshaling data: %v.", err)`
+{% capture code_content %}logrus.Errorf("error marshaling data: %v.", err){% endcapture %}
+{% include code.html code=code_content %}
 
 ##### New
 
-`l.log.Error(ErrMarshal(err, obj))`
+{% capture code_content %}l.log.Error(ErrMarshal(err, obj)){% endcapture %}
+{% include code.html code=code_content %}
 
 ## A small program using meshkit errors and logger
 
-```Code
-package main
+{% capture code_content %}package main
 
 import (
 	"fmt"
@@ -193,7 +191,7 @@ func ErrOpeningFile(err error) error {
 	[]string{err.Error()},
 	[]string{"empty string passed as argument ", "file with this name doesn't exist"},
 	[]string{"pass a non-empty string as filename ", "create file before opening it"})
-}
-```
+}{% endcapture %}
+{% include code.html code=code_content %}
 
 {% include suggested-reading.html %}
