@@ -35,18 +35,11 @@ function RJSFForm({
   ObjectFieldTemplate = MesheryCustomObjFieldTemplate,
   WrapIfAdditionalTemplate = MesheryWrapIfAdditionalTemplate,
   LoadingComponent,
-  ErrorList,
   // prop should be present in order for the cloned element to override this property
   transformErrors,
   override,
 }) {
-  const templates = {
-    ArrayFieldTemplate,
-    ObjectFieldTemplate,
-    WrapIfAdditionalTemplate,
-    FieldTemplate : CustomFieldTemplate, // applying field template universally to every field type.
-  }
-  const globalTheme = useTheme()
+  const globalTheme = useTheme();
   useEffect(() => {
     const extensionTooltipPortal = document.getElementById("extension-tooltip-portal");
     if (extensionTooltipPortal) {
@@ -68,7 +61,12 @@ function RJSFForm({
         onChange={onChange}
         formData={data}
         validator={ajv8validator}
-        templates={templates}
+        templates={{
+          ArrayFieldTemplate,
+          ObjectFieldTemplate,
+          WrapIfAdditionalTemplate,
+          FieldTemplate : CustomFieldTemplate, // applying field template universally to every field type.
+        }}
         formContext={{ overrideFlag : override, CustomTextTooltip : CustomTextTooltip }}
         uiSchema={schema.uiSchema}
         fields={{ ObjectField : ObjectFieldWithErrors }}
@@ -80,9 +78,8 @@ function RJSFForm({
           // CheckboxWidget: CustomBooleanWidget,
         }}
         liveValidate
-        showErrorList="top"
+        showErrorList={false}
         noHtml5Validate
-        ErrorList={ErrorList}
         transformErrors={transformErrors}
       />
     </MuiThemeProvider>

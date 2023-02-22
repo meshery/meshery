@@ -15,7 +15,6 @@ function RJSFWrapper(props) {
     onChange,
     hideTitle,
     RJSFWrapperComponent = React.Fragment,
-    RJSFFormChildComponent = React.Fragment, // eslint-disable-line no-unused-vars
     //.. temporarily ignoring till handler is attached successfully
   } = props;
 
