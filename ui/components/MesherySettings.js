@@ -608,8 +608,8 @@ class MesherySettings extends React.Component {
             className={classes.tabs}
             onChange={this.handleChange('tabVal')}
             variant="fullWidth"
-            indicatorColor='primary'
-            textColor='primary'
+            indicatorColor="primary"
+            textColor="primary"
           >
             <Tooltip title="Identify your cluster" placement="top">
               <Tab
