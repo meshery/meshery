@@ -290,15 +290,20 @@ function ExtensionSandbox({ type, Extension, isDrawerCollapsed, toggleDrawer, ca
   }, [type]);
 
   useEffect(() => {
+    console.log("capabilitiesRegistry(extensionSandbox.js): ", capabilitiesRegistry)
     if (capabilitiesRegistry) {
       const data = ExtensionPointSchemaValidator(type)(capabilitiesRegistry?.extensions[type]);
+      console.log("data: ", data)
       setExtension(data);
       setIsLoading(false);
     }
-  },[capabilitiesRegistry])
+  },[capabilitiesRegistry, type])
 
   return (
     <>
+      {console.log("type: ", type)}
+      {console.log("extension: ", extension)}
+      {console.log("path:", getPath())}
       {
         (type === "navigator" && extension?.length !== 0)?
           isLoading ?
