@@ -7,7 +7,6 @@ import (
 
 	"github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshery/server/models/pattern/jsonschema"
-	"github.com/layer5io/meshery/server/models/pattern/patterns/k8s"
 	"github.com/layer5io/meshery/server/models/pattern/resource/selector"
 	meshmodel "github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 )
@@ -31,8 +30,8 @@ func Validator(prov ServiceInfoProvider, act ServiceActionProvider, skipValidati
 				return
 			}
 			act.Log(fmt.Sprintf("%s version for %s: %s", svc.Model, svc.Name, wc.Model.Version)) //Eg: kubernetes version for Namespace: v1.25.0
-			if k8s.Format {
-				svc.Settings = k8s.Format.DePrettify(svc.Settings, false)
+			if core.Format {
+				svc.Settings = core.Format.DePrettify(svc.Settings, false)
 			}
 
 			//Validate workload definition
@@ -48,22 +47,23 @@ func Validator(prov ServiceInfoProvider, act ServiceActionProvider, skipValidati
 
 			data.PatternSvcTraitCapabilities[svcName] = []core.TraitCapability{}
 
+			//DEPRECATED: `traits` will be no-op for pattern engine
 			// Validate traits applied to this workload
-			for trName, tr := range svc.Traits {
-				tc, ok := s.Trait(trName)
-				if !ok {
-					act.Terminate(fmt.Errorf("invalid trait of type: %s", svc.Type))
-					return
-				}
+			// for trName, tr := range svc.Traits {
+			// 	tc, ok := s.Trait(trName)
+			// 	if !ok {
+			// 		act.Terminate(fmt.Errorf("invalid trait of type: %s", svc.Type))
+			// 		return
+			// 	}
 
-				if err := validateTrait(tr, tc, svc.Type); err != nil {
-					act.Terminate(err)
-					return
-				}
+			// 	if err := validateTrait(tr, tc, svc.Type); err != nil {
+			// 		act.Terminate(err)
+			// 		return
+			// 	}
 
-				// Store the trait capability in the metadata
-				data.PatternSvcTraitCapabilities[svcName] = append(data.PatternSvcTraitCapabilities[svcName], tc)
-			}
+			// 	// Store the trait capability in the metadata
+			// 	data.PatternSvcTraitCapabilities[svcName] = append(data.PatternSvcTraitCapabilities[svcName], tc)
+			// }
 		}
 
 		if next != nil {
