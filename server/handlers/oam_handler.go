@@ -741,7 +741,7 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) (string, 
 
 		// Local call
 		if host.Port == 0 {
-			//TODO: Accomodate internal calls to use context mapping with kubeconfig
+			//TODO: Accommodate internal calls to use context mapping with kubeconfig
 			var kconfigs []string
 			for _, v := range sap.ctxTokubeconfig {
 				kconfigs = append(kconfigs, v)
@@ -785,7 +785,7 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) (string, 
 		// }
 
 		// Else it is an OAM adapter call
-		//TODO: Accomodate gRPC calls to use context mapping with kubeconfig
+		//TODO: Accommodate gRPC calls to use context mapping with kubeconfig
 		var kconfigs []string
 		for _, v := range sap.ctxTokubeconfig {
 			kconfigs = append(kconfigs, v)
