@@ -43,7 +43,7 @@ type Service struct {
 	Name        string            `yaml:"name,omitempty" json:"name,omitempty"`
 	Type        string            `yaml:"type,omitempty" json:"type,omitempty"`
 	APIVersion  string            `yaml:"apiVersion,omitempty" json:"apiVersion,omitempty"`
-	Namespace   string            `yaml:"namespace" json:"namespace"`
+	Namespace   string            `yaml:"namespace,omitempty" json:"namespace,omitempty"`
 	Version     string            `yaml:"version,omitempty" json:"version,omitempty"`
 	Model       string            `yaml:"model,omitempty" json:"model,omitempty"`
 	Labels      map[string]string `yaml:"labels,omitempty" json:"labels,omitempty"`

@@ -13,6 +13,7 @@ import CustomTextWidget from './RJSFCustomComponents/CustomTextWidget';
 import { CustomFieldTemplate } from './RJSFCustomComponents/FieldTemplate';
 import MesheryCustomObjFieldTemplate from "./RJSFCustomComponents/ObjectFieldTemplate";
 import MesheryWrapIfAdditionalTemplate from './RJSFCustomComponents/WrapIfAdditionalTemplate';
+import _ from "lodash"
 
 const MuiRJSFForm = withTheme(MaterialUITheme);
 
@@ -38,6 +39,7 @@ function RJSFForm({
   // prop should be present in order for the cloned element to override this property
   transformErrors,
   override,
+  uiSchema={}
 }) {
   const globalTheme = useTheme();
   useEffect(() => {
@@ -68,7 +70,7 @@ function RJSFForm({
           FieldTemplate : CustomFieldTemplate, // applying field template universally to every field type.
         }}
         formContext={{ overrideFlag : override, CustomTextTooltip : CustomTextTooltip }}
-        uiSchema={schema.uiSchema}
+        uiSchema={_.merge(schema.uiSchema, uiSchema)}
         fields={{ ObjectField : ObjectFieldWithErrors }}
         widgets={{
           TextWidget : CustomTextWidget,
