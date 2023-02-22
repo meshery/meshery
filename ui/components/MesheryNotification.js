@@ -14,14 +14,12 @@ import {
   ClickAwayListener
 } from '@material-ui/core';
 import BellIcon from '@material-ui/icons/Notifications';
-import ClearIcon from '@material-ui/icons/Clear';
+import ClearIcon from "../assets/icons/ClearIcon";
 import ErrorIcon from '@material-ui/icons/Error';
 import { withStyles } from '@material-ui/core/styles';
 import amber from '@material-ui/core/colors/amber';
 import { eventTypes } from '../lib/event-types';
 import MesheryEventViewer from './MesheryEventViewer';
-// import { bindActionCreators } from 'redux';
-// import { updateSMIResults } from '../lib/store';
 import dataFetch from '../lib/data-fetch';
 import { withSnackbar } from 'notistack'
 import { bindActionCreators } from "redux";
@@ -136,7 +134,7 @@ function getNotificationCount(events) {
 function NotificationIcon({ type, className }) {
   if (type === "error") return <ErrorIcon id="error-icon" className={className} />
 
-  return <BellIcon className={className} />
+  return <BellIcon className={className} style={iconMedium} />
 }
 
 class MesheryNotification extends React.Component {
