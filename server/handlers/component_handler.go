@@ -8,7 +8,6 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/models/pattern/core"
-	"github.com/layer5io/meshery/server/models/pattern/patterns/k8s"
 	"github.com/layer5io/meshkit/models/meshmodel"
 	"github.com/layer5io/meshkit/models/meshmodel/core/types"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
@@ -184,7 +183,7 @@ func (h *Handler) GetMeshmodelComponentsByName(rw http.ResponseWriter, r *http.R
 		if ok {
 			m := make(map[string]interface{})
 			_ = json.Unmarshal([]byte(comp.Schema), &m)
-			m = k8s.Format.Prettify(m, false)
+			m = core.Format.Prettify(m, true)
 			b, _ := json.Marshal(m)
 			comp.Schema = string(b)
 			comps = append(comps, comp)
@@ -242,7 +241,7 @@ func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.R
 		if ok {
 			m := make(map[string]interface{})
 			_ = json.Unmarshal([]byte(comp.Schema), &m)
-			m = k8s.Format.Prettify(m, false)
+			m = core.Format.Prettify(m, true)
 			b, _ := json.Marshal(m)
 			comp.Schema = string(b)
 			comps = append(comps, comp)
@@ -355,7 +354,7 @@ func (h *Handler) GetMeshmodelEntititiesByModel(rw http.ResponseWriter, r *http.
 			comp, ok := r.(v1alpha1.ComponentDefinition)
 			if ok {
 				_ = json.Unmarshal([]byte(comp.Schema), &m)
-				m = k8s.Format.Prettify(m, false)
+				m = core.Format.Prettify(m, true)
 				b, _ := json.Marshal(m)
 				comp.Schema = string(b)
 				comps = append(comps, comp)

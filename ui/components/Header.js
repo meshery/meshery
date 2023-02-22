@@ -408,7 +408,7 @@ function K8sContextMenu({
         <div>
           <ClickAwayListener onClickAway={(e) => {
 
-            if (!e.target.className?.includes("cbadge") && e.target?.className != "k8s-image" && !e.target.className.includes("k8s-icon-button")) {
+            if (typeof e.target.className == "string" && !e.target.className?.includes("cbadge") && e.target?.className != "k8s-image" && !e.target.className.includes("k8s-icon-button")) {
               setAnchorEl(false)
               setShowFullContextMenu(false)
             }
@@ -527,11 +527,16 @@ class Header extends React.Component {
   }
   componentDidMount() {
     this._isMounted = true;
-    const brokerStatusSub = subscribeBrokerStatusEvents(data => {
-      console.log({ brokerData : data })
-      this.setState({ brokerStatus : data?.subscribeBrokerConnection })
-    });
-    this.setState({ brokerStatusSubscription : brokerStatusSub })
+    const checkServiceStatus = () => {
+      const brokerStatusSub = subscribeBrokerStatusEvents(data => {
+        console.log({ brokerData : data });
+        this.setState({ brokerStatus : data?.subscribeBrokerConnection });
+      });
+      this.setState({ brokerStatusSubscription : brokerStatusSub });
+    };
+    this.checkTimer = setInterval(() => {
+      checkServiceStatus();
+    }, 5000); // Check service status every 5 seconds
   }
 
   componentDidUpdate(prevProps) {
@@ -545,6 +550,7 @@ class Header extends React.Component {
   }
 
   componentWillUnmount = () => {
+    clearInterval(this.checkTimer);
     this._isMounted = false;
   }
 

@@ -3084,7 +3084,7 @@ func (l *RemoteProvider) SMPTestConfigDelete(req *http.Request, testUUID string)
 }
 
 // ExtensionProxy - proxy requests to the remote provider which are specific to user_account extension
-func (l *RemoteProvider) ExtensionProxy(req *http.Request) ([]byte, error) {
+func (l *RemoteProvider) ExtensionProxy(req *http.Request) (*ExtensionProxyResponse, error) {
 	logrus.Infof("attempting to request remote provider")
 	// gets the requested path from user_account extension UI in Meshery UI
 	// splits the requested path into '/api/extensions' and '/<remote-provider-endpoint>'
@@ -3131,9 +3131,16 @@ func (l *RemoteProvider) ExtensionProxy(req *http.Request) ([]byte, error) {
 		return nil, err
 	}
 
-	if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusCreated {
+	response := &ExtensionProxyResponse{
+		Body:       bdr,
+		StatusCode: resp.StatusCode,
+	}
+
+	// check for all success status codes
+	statusOK := response.StatusCode >= 200 && response.StatusCode < 300
+	if statusOK {
 		logrus.Infof("response successfully retrieved from remote provider")
-		return bdr, nil
+		return response, nil
 	}
 	return nil, ErrFetch(fmt.Errorf("failed to request to remote provider"), fmt.Sprint(bdr), resp.StatusCode)
 }

@@ -919,8 +919,8 @@ func (l *DefaultLocalProvider) RecordMeshSyncData(obj model.Object) error {
 	return nil
 }
 
-func (l *DefaultLocalProvider) ExtensionProxy(req *http.Request) ([]byte, error) {
-	return []byte{}, ErrLocalProviderSupport
+func (l *DefaultLocalProvider) ExtensionProxy(req *http.Request) (*ExtensionProxyResponse, error) {
+	return nil, ErrLocalProviderSupport
 }
 
 func (l *DefaultLocalProvider) SaveConnection(req *http.Request, conn *Connection, token string, skipTokenCheck bool) error {

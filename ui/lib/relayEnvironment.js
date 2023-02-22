@@ -1,6 +1,12 @@
-import { Environment, Network, Observable, RecordSource, Store } from "relay-runtime";
+import {
+  Environment,
+  Network,
+  Observable,
+  RecordSource,
+  Store
+} from 'relay-runtime';
+import { createClient } from "graphql-ws";
 import { promisifiedDataFetch } from "./data-fetch";
-import { SubscriptionClient } from "subscriptions-transport-ws";
 
 function fetchQuery(operation, variables) {
   return promisifiedDataFetch("/api/system/graphql/query", {
@@ -18,34 +24,36 @@ function fetchQuery(operation, variables) {
 
 export let subscriptionClient;
 
-if (typeof window !== "undefined"){
-  const isWss = window.location.protocol === "https:"; // https only accepts secure websockets
+if (typeof window !== 'undefined') {
+  const isWss = window.location.protocol === "https:";
   const wsProtocol = isWss ? "wss://" : "ws://"
-  subscriptionClient = new SubscriptionClient(wsProtocol + window.location.host + "/api/system/graphql/query", {
-    reconnect : true,
-    minTimeout: 4000
-  });
-
+  subscriptionClient = createClient({
+      url: wsProtocol + window.location.host + "/api/system/qraphql/query",
+  })
 }
 
-function setupSubscription(config, variables, cacheConfig, observer) {
-  const query = config.text;
-
-  const subscribeObservable = subscriptionClient.request({ query, variables }, (error, result) => {
-    if (error) {
-      console.error(error);
-      return
-    }
-
-    observer.onNext({ data : result });
+function setupSubscription(
+  operation,
+  variables,
+) {
+  return Observable.create((sink) => {
+      if (!operation.text) {
+          return sink.error(new Error('Operation text cannot be empty'));
+      }
+      return subscriptionClient.subscribe(
+          {
+              operationName: operation.name,
+              query: operation.text,
+              variables,
+          },
+          sink,
+      );
   });
-
-  return Observable.from(subscribeObservable);
 }
 
 const environment = new Environment({
-  network : Network.create(fetchQuery, setupSubscription),
-  store : new Store(new RecordSource()),
+  network: Network.create(fetchQuery, setupSubscription, setupSubscription),
+  store: new Store(new RecordSource()),
 });
 
 export default environment;
