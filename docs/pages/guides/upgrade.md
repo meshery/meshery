@@ -88,17 +88,13 @@ Sub-components deploy as a unit, however, they do not share the same version num
 In order to pull the latest images for Meshery Server, Adapters, and UI, execute the following command:
 
  <pre class="codeblock-pre"><div class="codeblock">
- <div class="clipboardjs">
- mesheryctl system update
- </div></div>
+ <div class="clipboardjs">mesheryctl system update</div></div>
  </pre>
 
 If you wish to update a running Meshery deployment with the images you just pulled, you'll also have to execute:
 
  <pre class="codeblock-pre"><div class="codeblock">
- <div class="clipboardjs">
- mesheryctl system restart
- </div></div>
+ <div class="clipboardjs">mesheryctl system restart</div></div>
  </pre>
 
 ### Meshery Kubernetes Deployments
@@ -114,9 +110,7 @@ The Meshery command line client, `mesheryctl`, is available in different package
 <p>To upgrade `mesheryctl`, execute the following command:</p>
 
  <pre class="codeblock-pre"><div class="codeblock">
- <div class="clipboardjs">
- brew upgrade mesheryctl
- </div></div>
+ <div class="clipboardjs">brew upgrade mesheryctl</div></div>
  </pre>
 
 ### Upgrading `mesheryctl` using Bash
@@ -124,9 +118,7 @@ The Meshery command line client, `mesheryctl`, is available in different package
 Upgrade `mesheryctl` and run Meshery on Mac or Linux with this script:
 
  <pre class="codeblock-pre">
- <div class="codeblock"><div class="clipboardjs">
- curl -L https://meshery.io/install | DEPLOY_MESHERY=false bash -
- </div></div>
+ <div class="codeblock"><div class="clipboardjs">curl -L https://meshery.io/install | DEPLOY_MESHERY=false bash -</div></div>
  </pre>
 
 ### Upgrading `mesheryctl` using Scoop
@@ -134,9 +126,7 @@ Upgrade `mesheryctl` and run Meshery on Mac or Linux with this script:
 To upgrade `mesheryctl`, execute the following command:
 
  <pre class="codeblock-pre">
- <div class="codeblock"><div class="clipboardjs">
- scoop update mesheryctl
- </div></div>
+ <div class="codeblock"><div class="clipboardjs">scoop update mesheryctl</div></div>
  </pre>
 
 {% include related-discussions.html tag="meshery" %}
