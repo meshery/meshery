@@ -18,6 +18,7 @@ const configurationSubscription = graphql`
             Valid
           }
           user_id
+          visibility
           created_at
           updated_at
         }

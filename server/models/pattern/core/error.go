@@ -8,6 +8,7 @@ const (
 	ErrGetK8sComponentsCode     = "2212"
 	ErrParseK8sManifestCode     = "2213"
 	ErrCreatePatternServiceCode = "2214"
+	ErrPatternFromCytoscapeCode = "2300"
 )
 
 func ErrGetK8sComponents(err error) error {
@@ -20,4 +21,8 @@ func ErrParseK8sManifest(err error) error {
 
 func ErrCreatePatternService(err error) error {
 	return errors.New(ErrParseK8sManifestCode, errors.Alert, []string{"Failed to create pattern service from Manifest"}, []string{err.Error()}, []string{"Invalid Manifest", "Meshery doesn't identifies the Resource mentioned in the Manifest"}, []string{"Check if all of the meshery adapters are running", "Check if Meshery has successfully identified and registered Kubernetes components"})
+}
+
+func ErrPatternFromCytoscape(err error) error {
+	return errors.New(ErrPatternFromCytoscapeCode, errors.Alert, []string{"Could not create pattern file from given cytoscape"}, []string{err.Error()}, []string{"Invalid cytoscape body", "Service name is empty for one or more services", "_data does not have correct data"}, []string{"Make sure cytoscape is valid", "Check if valid service name was passed in the request", "Make sure _data field has \"settings\" field"})
 }
