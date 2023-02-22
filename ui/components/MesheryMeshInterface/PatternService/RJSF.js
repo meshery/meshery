@@ -81,7 +81,9 @@ function RJSFForm({
         showErrorList={false}
         noHtml5Validate
         transformErrors={transformErrors}
-      />
+      >
+        <div></div>
+      </MuiRJSFForm>
     </MuiThemeProvider>
   )
 }
