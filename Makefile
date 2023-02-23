@@ -72,7 +72,7 @@ nighthawk-setup: dep-check
 run-local: server-local error
 ## Build and run Meshery Server on your local machine
 ## and point to (expect) a locally running Meshery Cloud or other Provider(s)
-## for user authentication (requires go${GOVERSION}).
+## for user authentication.
 server-local: dep-check
 	cd server; cd cmd; go clean; go mod tidy; \
 	BUILD="$(GIT_VERSION)" \
@@ -83,8 +83,7 @@ server-local: dep-check
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
 	go run main.go error.go
 
-## Build and run Meshery Server on your local machine (requires go${GOVERSION}).
-
+## Build and run Meshery Server on your local machine.
 server-without-k8s: dep-check
 	cd server; cd cmd; go mod tidy; \
 	BUILD="$(GIT_VERSION)" \
@@ -117,7 +116,6 @@ server-remote-provider: dep-check
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
 	go run main.go error.go;
 
-
 server-local-provider: dep-check
 	cd server; cd cmd; go mod tidy; \
 	BUILD="$(GIT_VERSION)" \
@@ -128,7 +126,8 @@ server-local-provider: dep-check
 	ADAPTER_URLS=$(ADAPTER_URLS) \
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
 	go run main.go error.go;
-## Build and run Meshery Server with no Kubernetes components on your local machine (requires go${GOVERSION}).
+
+## Build and run Meshery Server with no Kubernetes components on your local machine.
 server-skip-compgen:
 	cd server; cd cmd; go mod tidy; \
 	BUILD="$(GIT_VERSION)" \
@@ -140,7 +139,7 @@ server-skip-compgen:
  	SKIP_COMP_GEN=true \
 	go run main.go error.go;
 
-## Build and run Meshery Server with no seed content (requires go$(GOVERSION)).
+## Build and run Meshery Server with no seed content.
 server-no-content:
 	cd server; cd cmd; go mod tidy; \
 	BUILD="$(GIT_VERSION)" \
@@ -168,7 +167,7 @@ server-playground: dep-check
 golangci: error dep-check
 	golangci-lint run
 
-## Build Meshery's protobufs (requires go$(GOVERSION)).
+## Build Meshery's protobufs.
 proto-build:
 	# see https://developers.google.com/protocol-buffers/docs/reference/go-generated
 	# see https://grpc.io/docs/languages/go/quickstart/
@@ -181,8 +180,8 @@ proto-build:
 error: dep-check
 	go run github.com/layer5io/meshkit/cmd/errorutil -d . analyze -i ./server/helpers -o ./server/helpers --skip-dirs mesheryctl
 
-## Build Meshery UI; Build and run Meshery Server on your local machine (requires go${GOVERSION}).
-ui-server: ui-meshery-build server
+## Build Meshery UI; Build and run Meshery Server on your local machine.
+ui-server: ui-meshery-build ui-provider-build server
 
 #-----------------------------------------------------------------------------
 # Meshery UI Native Builds.
