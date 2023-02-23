@@ -3,7 +3,7 @@
 import NavigatorExtension from "../../components/NavigatorExtension";
 import ExtensionSandbox, { getCapabilities, getFullPageExtensions, getComponentTitleFromPath } from "../../components/ExtensionSandbox";
 import { Box, CircularProgress, NoSsr } from "@material-ui/core";
-import { updatepagepath, updatepagetitle, updateExtensionType } from "../../lib/store";
+import { updatepagepath, updatepagetitle, updateExtensionType, updateCapabilities } from "../../lib/store";
 import { connect } from "react-redux";
 import Head from "next/head";
 import { bindActionCreators } from "redux";
@@ -12,6 +12,9 @@ import RemoteComponent from "../../components/RemoteComponent";
 import { WrappedMeshMapSignupCard } from "../extensions";
 import _ from "lodash"
 import { MeshMapEarlyAccessCard } from "../../components/Popup";
+import { CapabilitiesRegistry } from "../../utils/disabledComponents";
+import dataFetch from "../../lib/data-fetch";
+import ExtensionPointSchemaValidator from "../../utils/ExtensionPointSchemaValidator";
 
 
 /**
@@ -65,16 +68,41 @@ class RemoteExtension extends React.Component {
     super(props);
     this.state = {
       componentTitle : '',
-      isLoading : true
+      isLoading : true,
+      capabilitiesRegistryObj : null,
+      path : ''
     }
   }
 
   componentDidMount() {
+    console.log("componentDidMount")
+    console.log("this.props.page:  ", this.props.page)
+    dataFetch(
+      "/api/provider/capabilities",
+      {
+        method : "GET",
+        credentials : "include",
+      },
+      (result) => {
+        console.log(result)
+        if (result) {
+          this.setState({
+            capabilitiesRegistryObj : result,
+          });
+          //global state
+          this.props.updateCapabilities({ capabilitiesRegistry : result })
+          this.renderExtension();
+        }
+      },
+      (err) => console.error(err)
+    );
     this.props.updatepagepath({ path : getPath() });
-    this.renderExtension();
   }
 
-  componentDidUpdate(prevProps) {
+  componentDidUpdate(prevProps, prevState) {
+    console.log("componentDidUpdate")
+    console.log("prevProps", prevProps)
+    console.log("this.props", this.props)
     // re-renders the extension if the extension type (redux store variable) changes
     if (this.props.extensionType !== prevProps.extensionType) {
       this.renderExtension();
@@ -82,17 +110,48 @@ class RemoteExtension extends React.Component {
   }
 
   renderExtension = () => {
-    getFullPageExtensions(extNames => {
-      extNames.forEach((ext) => {
-        if (matchComponentURI(ext?.uri, getPath())) {
-          this.props.updateExtensionType({ extensionType : ext.name })
-          getCapabilities(ext.name, extensions => {
-            this.setState({ componentTitle : getComponentTitleFromPath(extensions, getPath()), isLoading : false });
-            this.props.updatepagetitle({ title : getComponentTitleFromPath(extensions, getPath()) });
-          });
-        }
-      })
-    });
+    console.log("render Ext")
+    let result = this.state.capabilitiesRegistryObj;
+    let extNames = [];
+    for (var key of Object.keys(result?.extensions)) {
+      if (Array.isArray(result?.extensions[key])) {
+        result?.extensions[key].forEach((comp) => {
+          if (comp?.type === "full_page") {
+            let ext = {
+              name : key,
+              uri : comp?.href?.uri
+            }
+            extNames.push(ext)
+          }
+        })
+      }
+    }
+    console.log("extNames", extNames)
+    extNames.forEach((ext) => {
+      if (matchComponentURI(ext?.uri, getPath())) {
+        console.log("match found");
+        this.props.updateExtensionType({ extensionType : ext.name })
+        let type = ext.name;
+        let extensions = ExtensionPointSchemaValidator(type)(result?.extensions[type])
+        this.setState({ componentTitle : getComponentTitleFromPath(extensions, getPath()), isLoading : false });
+        this.props.updatepagetitle({ title : getComponentTitleFromPath(extensions, getPath()) });
+        // getCapabilities(ext.name, extensions => {
+        //   this.setState({ componentTitle : getComponentTitleFromPath(extensions, getPath()), isLoading : false });
+        //   this.props.updatepagetitle({ title : getComponentTitleFromPath(extensions, getPath()) });
+        // });
+      }
+    })
+    // getFullPageExtensions(extNames => {
+    //   extNames.forEach((ext) => {
+    //     if (matchComponentURI(ext?.uri, getPath())) {
+    //       this.props.updateExtensionType({ extensionType : ext.name })
+    //       getCapabilities(ext.name, extensions => {
+    //         this.setState({ componentTitle : getComponentTitleFromPath(extensions, getPath()), isLoading : false });
+    //         this.props.updatepagetitle({ title : getComponentTitleFromPath(extensions, getPath()) });
+    //       });
+    //     }
+    //   })
+    // });
 
     // loading state may set to false, either if the extension
     // is there or no extension after waiting for
@@ -105,6 +164,7 @@ class RemoteExtension extends React.Component {
     const { extensionType } = this.props;
     const { componentTitle, isLoading } = this.state;
     console.log("extensionType: ", extensionType)
+    console.log("isLoading: ", isLoading);
 
     return (
       <NoSsr>
@@ -143,7 +203,8 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
   updatepagepath : bindActionCreators(updatepagepath, dispatch),
   updatepagetitle : bindActionCreators(updatepagetitle, dispatch),
-  updateExtensionType : bindActionCreators(updateExtensionType, dispatch)
+  updateExtensionType : bindActionCreators(updateExtensionType, dispatch),
+  updateCapabilities : bindActionCreators(updateCapabilities, dispatch),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(RemoteExtension);
