@@ -54,5 +54,11 @@ pre.codeblock-pre {
 .clipbtn:hover {
   color: #fff;
   cursor: pointer;
+  transform: scale(1.25);
+}
+
+.clipbtn:active{
+  background-color: #495057;
+  transform: scale(1);
 }
 
