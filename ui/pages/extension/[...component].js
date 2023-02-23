@@ -96,14 +96,15 @@ class RemoteExtension extends React.Component {
 
     // loading state may set to false, either if the extension
     // is there or no extension after waiting for
-    setTimeout(() => {
-      this.setState({ isLoading : false })
-    }, 1500)
+    // setTimeout(() => {
+    //   this.setState({ isLoading : false })
+    // }, 1500)
   }
 
   render() {
     const { extensionType } = this.props;
     const { componentTitle, isLoading } = this.state;
+    console.log("extensionType: ", extensionType)
 
     return (
       <NoSsr>
@@ -119,14 +120,15 @@ class RemoteExtension extends React.Component {
                   :
                   <ExtensionSandbox type={extensionType} Extension={(url) => RemoteComponent({ url })} />
               }
-            </NoSsr>) : (!isLoading && (
-              <Box display="flex" justifyContent="center">
-                <MeshMapEarlyAccessCard rootStyle={{ position : "relative" }} />
-              </Box>)
+            </NoSsr>) : (
+              !isLoading? (
+                <Box display="flex" justifyContent="center">
+                  <MeshMapEarlyAccessCard rootStyle={{ position : "relative" }} />
+                </Box>
+              ): (
+                <CircularProgress />
+              )
             )
-        }
-        {
-          isLoading && <CircularProgress />
         }
       </NoSsr>
     )
