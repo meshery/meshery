@@ -50,6 +50,19 @@
   fill: var(--color-secondary-dark);
 }
 
+.td-content > .td-search-input {
+  border: none;
+  width: 200px;
+  border-radius: 22px;
+  background: var(--background-neumorphic);
+  padding: 8px 15px 8px 15px; 
+  margin-bottom: 5px
+}
+
+.td-content > .fa-search {
+  margin-right: -30px !important;
+}
+
 .sidebar-container {
   padding: 1rem min(2vh, 2vw);
   overflow-y: scroll;
