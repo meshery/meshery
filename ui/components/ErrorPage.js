@@ -6,13 +6,14 @@ import {
   Link
 } from "@material-ui/core";
 
-const styles = makeStyles(() => ({
+const styles = makeStyles((theme) => ({
   rootClass : {
-    backgroundColor : "#fff",
+    backgroundColor : theme.palette.type === 'dark' ? theme.palette.secondary.headerColor : '#fff',
     padding : "2rem",
     textAlign : "center",
     borderRadius : 4,
     height : "100%",
+
   },
   errorSection : {
   },
