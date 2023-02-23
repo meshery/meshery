@@ -111,7 +111,7 @@ sudo apt-get install autoconf bison build-essential libssl-dev libyaml-dev libre
 
 ### Get the code
 
-- Fork and then clone the [Meshery repository](https://github.com/layer5io/meshery)
+- Fork and then clone the [Meshery repository](https://github.com/meshery/meshery)
 {% capture code_content %}git clone https://github.com/YOUR-USERNAME/meshery{% endcapture %}
 {% include code.html code=code_content %}
 - Change to the docs directory
