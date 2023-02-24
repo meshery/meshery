@@ -92,7 +92,7 @@ sudo apt-get install autoconf bison build-essential libssl-dev libyaml-dev libre
 
 - To list all the versions that can be installed
 
-{% capture code_content %}rbenv install --list-all{% endcapture %}
+{% capture code_content %}rbenv install --list{% endcapture %}
 {% include code.html code=code_content %}
 
 - Set which Ruby version you want to use
