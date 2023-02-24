@@ -5,14 +5,15 @@
   "main": "index.js",
   "scripts": {
     "dev": "node ui_dev_server.js",
-    "build": "next build",
+    "build": "npm run clean && next build",
     "export": "next export",
     "start": "NODE_ENV=production node server.js",
     "lint": "next lint",
     "lint:fix": "next lint --fix",
     "cy:run": "cypress run",
     "cy:open": "cypress open",
-    "test": "start-server-and-test dev http://localhost:3001 cy:run && next lint"
+    "test": "start-server-and-test dev http://localhost:3001 cy:run && next lint",
+    "clean": "rm -rf .next,out"
   },
   "keywords": [],
   "author": "Layer5",

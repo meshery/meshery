@@ -7,7 +7,7 @@
     "dev": "next lint --fix && node ui_dev_server.js",
     "lint": "next lint",
     "lint:fix": "next lint --fix",
-    "build": "cross-env next build",
+    "build": "npm run clean && cross-env next build",
     "start": "NODE_ENV=production node ui_dev_server.js",
     "export": "next export",
     "export-playground": "PLAYGROUND=true next export -o playground",
@@ -20,7 +20,8 @@
     "relay": "relay-compiler --src ./components --schema ../server/internal/graphql/schema/schema.graphql",
     "prepare": "cd .. && husky install ui/.husky",
     "cy:dev:open": "start-server-and-test dev http://localhost:3000 cy:open",
-    "postinstall": "patch-package"
+    "postinstall": "patch-package",
+    "clean": "rm -rf .next,out"
   },
   "husky": {
     "hooks": {
