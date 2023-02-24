@@ -38,11 +38,11 @@ services:
     pull_policy: always
     ports:
       - "10005:10005"
-  meshery-traefik-mesh:
-    image: layer5/meshery-traefik-mesh:stable-latest
-    pull_policy: always
-    ports:
-      - "10006:10006"
+  # meshery-traefik-mesh:
+  #   image: layer5/meshery-traefik-mesh:stable-latest
+  #   pull_policy: always
+  #   ports:
+  #     - "10006:10006"
   meshery-kuma:
     image: layer5/meshery-kuma:stable-latest
     pull_policy: always
