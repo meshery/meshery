@@ -14,9 +14,11 @@ import (
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants"
+	c "github.com/layer5io/meshery/mesheryctl/pkg/constants"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/handlers"
 	"github.com/layer5io/meshery/server/models"
+	meshkitutils "github.com/layer5io/meshkit/utils"
 	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
 	log "github.com/sirupsen/logrus"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -446,7 +448,7 @@ func (hc *HealthChecker) runMesheryVersionHealthChecks() error {
 		}
 	}
 
-	latest, err := utils.GetLatestStableReleaseTag()
+	latestVersions, err := meshkitutils.GetLatestReleaseTagsSorted(c.GetMesheryGitHubOrg(), c.GetMesheryGitHubRepo())
 	if err != nil {
 		if hc.Options.PrintLogs { // log if we're supposed to
 			log.Info("!! failed to fetch latest release tag of mesheryctl")
@@ -455,7 +457,10 @@ func (hc *HealthChecker) runMesheryVersionHealthChecks() error {
 		}
 		return err
 	}
-
+	if len(latestVersions) == 0 {
+		return fmt.Errorf("no versions found")
+	}
+	latest := latestVersions[len(latestVersions)-1]
 	version := constants.GetMesheryctlVersion()
 	if hc.Options.PrintLogs { // log if we're supposed to
 		if latest == version {
