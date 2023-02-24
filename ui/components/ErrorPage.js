@@ -30,7 +30,7 @@ const styles = makeStyles((theme) => ({
     marginTop : "2.5rem",
   },
 
-  discussionformlink : {
+  discussionforumlink : {
     color : theme.palette.type === "dark" ? '#00B39F' : '#00B39F'
   },
 
@@ -83,7 +83,7 @@ function CustomErrorMessage(){
         </div>
         <img src="/static/img/service-mesh.svg" alt="service meshed" className={classes.mesh}/>
         <Typography variant="body1">
-          <p className={classes.helpMessage}>Start a conversation at Layer5 community <Link className={classes.discussionformlink} underline="none" href="https://discuss.layer5.io/c/meshery/5" target="_blank">discussion forum</Link>.</p>
+          <p className={classes.helpMessage}>Start a conversation at Layer5 community <Link className={classes.discussionforumlink} underline="none" href="https://discuss.layer5.io/c/meshery/5" target="_blank">discussion forum</Link>.</p>
         </Typography>
       </div>
     </NoSsr>
