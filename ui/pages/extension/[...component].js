@@ -76,7 +76,7 @@ class RemoteExtension extends React.Component {
 
   componentDidMount() {
     console.log("componentDidMount")
-    console.log("this.props.page:  ", this.props.page)
+    console.log("this.props.page:  ", this.props.path)
     dataFetch(
       "/api/provider/capabilities",
       {
@@ -84,7 +84,8 @@ class RemoteExtension extends React.Component {
         credentials : "include",
       },
       (result) => {
-        console.log(result)
+        this.props.updatepagepath({ path : getPath() });
+        console.log("result:  ", result)
         if (result) {
           this.setState({
             capabilitiesRegistryObj : result,
@@ -96,7 +97,6 @@ class RemoteExtension extends React.Component {
       },
       (err) => console.error(err)
     );
-    this.props.updatepagepath({ path : getPath() });
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -111,7 +111,8 @@ class RemoteExtension extends React.Component {
 
   renderExtension = () => {
     console.log("render Ext")
-    let result = this.state.capabilitiesRegistryObj;
+    let result = this.props.capabilitiesRegistry;
+    console.log("result", result)
     let extNames = [];
     for (var key of Object.keys(result?.extensions)) {
       if (Array.isArray(result?.extensions[key])) {
@@ -133,6 +134,8 @@ class RemoteExtension extends React.Component {
         this.props.updateExtensionType({ extensionType : ext.name })
         let type = ext.name;
         let extensions = ExtensionPointSchemaValidator(type)(result?.extensions[type])
+        console.log("extensions(outside)", extensions)
+        console.log("path(outside)", getPath())
         this.setState({ componentTitle : getComponentTitleFromPath(extensions, getPath()), isLoading : false });
         this.props.updatepagetitle({ title : getComponentTitleFromPath(extensions, getPath()) });
         // getCapabilities(ext.name, extensions => {
@@ -198,6 +201,8 @@ class RemoteExtension extends React.Component {
 
 const mapStateToProps = (state) => ({
   extensionType : state.get('extensionType'),
+  path : state.get('page').get('path'),
+  capabilitiesRegistry : state.get("capabilitiesRegistry")
 });
 
 const mapDispatchToProps = (dispatch) => ({

@@ -295,7 +295,7 @@ function ExtensionSandbox({ type, Extension, isDrawerCollapsed, toggleDrawer, ca
       setExtension([]);
       setIsLoading(true);
     }
-  }, [capabilitiesRegistry, type]);
+  }, [type]);
 
   // useEffect(() => {
 
@@ -306,6 +306,8 @@ function ExtensionSandbox({ type, Extension, isDrawerCollapsed, toggleDrawer, ca
       {console.log("type: ", type)}
       {/* {console.log("extension: ", extension)} */}
       {console.log("path:", getPath())}
+      {/* {console.log("createPathForRemoteComponent(getComponentURIFromPathForAccount(extension, getPath()))", createPathForRemoteComponent(getComponentURIFromPathForAccount(extension, getPath())))} */}
+
       {
         (
           isLoading ? (
@@ -341,6 +343,7 @@ const mapDispatchToProps = (dispatch) => ({
 const mapStateToProps = (state) => ({
   isDrawerCollapsed : state.get("isDrawerCollapsed"),
   capabilitiesRegistry : state.get("capabilitiesRegistry"),
+  path : state.get('page').get('path'),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ExtensionSandbox);
