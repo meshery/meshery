@@ -1,6 +1,6 @@
 import React from "react";
 import HandleError from '../../ErrorHandling';
-import { buildUiSchema } from "../helpers";
+import { buildUiSchema, recursiveCleanObject } from "../helpers";
 import { getRefinedJsonSchema } from "./helper";
 // import MesheryArrayFieldTemplate from "./RJSFCustomComponents/ArrayFieldTemlate";
 // import MesheryCustomObjFieldTemplate from "./RJSFCustomComponents/ObjectFieldTemplate";
@@ -15,7 +15,6 @@ function RJSFWrapper(props) {
     onChange,
     hideTitle,
     RJSFWrapperComponent = React.Fragment,
-    RJSFFormChildComponent = React.Fragment, // eslint-disable-line no-unused-vars
     //.. temporarily ignoring till handler is attached successfully
   } = props;
 
@@ -28,8 +27,15 @@ function RJSFWrapper(props) {
   React.useEffect(() => {
     // Apply debouncing mechanism for the state propagation
     const timer = setTimeout(() => {
+      // callback fired
       onChange?.(data);
-    }, 300);
+
+      // recursively clean data object as well to help in validation issues
+      // this facilitates the use of default validation engine, without any patch
+      const cleanedData = { ...data };
+      recursiveCleanObject(cleanedData);
+      setData(cleanedData);
+    }, 400);
 
     return () => clearTimeout(timer);
   }, [data]);
@@ -38,7 +44,7 @@ function RJSFWrapper(props) {
     const rjsfSchema = getRefinedJsonSchema(jsonSchema, hideTitle, errorHandler)
     // UI schema builds responsible for customizations in the RJSF fields shown to user
     const uiSchema = buildUiSchema(rjsfSchema)
-    setSchema({ rjsfSchema, uiSchema })
+    setSchema({ rjsfSchema, uiSchema });
   }, [jsonSchema]) // to reduce heavy lifting on every react render
 
   React.useEffect(() => {

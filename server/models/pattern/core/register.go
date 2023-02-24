@@ -151,7 +151,7 @@ func RegisterWorkload(data []byte) (err error) {
 	schema := map[string]interface{}{}
 	_ = json.Unmarshal([]byte(workload.OAMRefSchema), &schema)
 	if Format {
-		schema = Format.Prettify(schema, false)
+		schema = Format.Prettify(schema, true)
 	}
 	temp, _ := json.Marshal(schema)
 	workload.OAMRefSchema = string(temp)
@@ -400,7 +400,7 @@ func GetWorkloadByID(name, id string) *WorkloadCapability {
 		m := make(map[string]interface{})
 		_ = json.Unmarshal([]byte(f.OAMRefSchema), &m)
 		// prettify(m, false) False here means the disablement of prettification for terminal values in component schemas
-		m = Format.Prettify(m, false)
+		m = Format.Prettify(m, true)
 		b, _ := json.Marshal(m)
 		f.OAMRefSchema = string(b)
 		if f.GetID() == id {
