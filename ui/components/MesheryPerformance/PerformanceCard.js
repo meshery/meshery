@@ -9,6 +9,7 @@ import Moment from "react-moment";
 import PerformanceResults from "./PerformanceResults";
 import FlipCard from "../FlipCard";
 import { makeStyles } from "@material-ui/core/styles";
+import { iconMedium } from "../../css/icons.styles";
 
 const useStyles= makeStyles((theme) => ({
   cardButtons : {
@@ -178,10 +179,10 @@ function PerformanceCard({
           <Grid item xs={4}>
             <div className={classes.deleteEditButton} >
               <IconButton onClick={(ev) => genericClickHandler(ev, handleEdit)}>
-                <EditIcon />
+                <EditIcon style={iconMedium} />
               </IconButton>
               <IconButton onClick={(ev) => genericClickHandler(ev, handleDelete)}>
-                <DeleteIcon />
+                <DeleteIcon style={iconMedium} />
               </IconButton>
             </div>
           </Grid>

@@ -18,6 +18,7 @@ import GenericModal from "../GenericModal";
 import MesheryPerformanceComponent from "./index";
 import fetchPerformanceProfiles from "../graphql/queries/PerformanceProfilesQuery";
 import fetchAllResults from "../graphql/queries/FetchAllResultsQuery";
+import { iconMedium } from "../../css/icons.styles";
 
 // const MESHERY_PERFORMANCE_URL = "/api/user/performance/profiles";
 // const MESHERY_PERFORMANCE_TEST_URL = "/api/user/performance/profiles/results";
@@ -161,8 +162,8 @@ function Dashboard({ updateProgress, enqueueSnackbar, closeSnackbar, grafana, ro
         variant : "error",
         action : function Action(key) {
           return (
-            <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-              <CloseIcon />
+            <IconButton style={iconMedium} key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+              <CloseIcon style={iconMedium}/>
             </IconButton>
           );
         },

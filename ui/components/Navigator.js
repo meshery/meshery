@@ -47,6 +47,7 @@ import { Collapse } from "@material-ui/core";
 import { cursorNotAllowed, disabledStyle, disabledStyleWithOutOpacity } from "../css/disableComponent.styles";
 import { CapabilitiesRegistry } from "../utils/disabledComponents";
 import { APPLICATION, APP_MESH, CILIUM_SM, CITRIX_SM, DESIGN, CONFIGURATION, CONFORMANCE, CONSUL, DASHBOARD, FILTER, ISTIO, KUMA, LIFECYCLE, LINKERD, NETWORK_SM, NGINX, OSM, PERFORMANCE, TRAEFIK_SM, PROFILES, SMI, TOGGLER } from "../constants/navigator"
+import { iconSmall } from "../css/icons.styles";
 
 const styles = (theme) => ({
   root : {
@@ -303,7 +304,7 @@ const styles = (theme) => ({
   cursorNotAllowed : cursorNotAllowed
 });
 
-const drawerIconsStyle = { height : "1.21rem", width : "1.21rem", fontSize : "1.45rem" };
+const drawerIconsStyle = { height : "1.21rem", width : "1.21rem", fontSize : "1.45rem", ...iconSmall };
 const externalLinkIconStyle = { width : "1.11rem", fontSize : "1.11rem" };
 
 const getNavigatorComponents = (  /** @type {CapabilitiesRegistry} */  capabilityRegistryObj) => [
@@ -1262,7 +1263,7 @@ class Navigator extends React.Component {
               : classes.rightTranslate} onClick={this.toggleSpacing}>
               <HelpIcon
                 className={classes.helpIcon}
-                style={{ fontSize : '1.45rem', }}
+                style={{ fontSize : '1.45rem', ...iconSmall }}
               />
             </IconButton>
           </Tooltip>

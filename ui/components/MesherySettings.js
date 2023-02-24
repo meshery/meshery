@@ -43,6 +43,14 @@ const styles = (theme) => ({
     minWidth : 40,
     paddingLeft : 0,
     paddingRight : 0,
+    "&.Mui-selected" : {
+      color : theme.palette.type === 'dark' ? "#00B39F" : theme.palette.primary,
+    },
+  },
+  tabs : {
+    "& .MuiTabs-indicator" : {
+      backgroundColor : theme.palette.type === 'dark' ? "#00B39F" : theme.palette.primary,
+    },
   },
   icon : {
     display : 'inline',
@@ -597,6 +605,7 @@ class MesherySettings extends React.Component {
         <Paper square className={classes.wrapperClss}>
           <Tabs
             value={tabVal}
+            className={classes.tabs}
             onChange={this.handleChange('tabVal')}
             variant="fullWidth"
             indicatorColor="primary"
