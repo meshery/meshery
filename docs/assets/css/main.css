@@ -2342,6 +2342,10 @@ pre code {
     border: 0
 }
 
+.page-search-form{
+    margin-bottom: 20px;
+}
+
 .form-control {
     display: block;
     width: 50%;
