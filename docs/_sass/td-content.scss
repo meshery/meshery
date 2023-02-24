@@ -15,6 +15,18 @@
     margin: 3.2rem 0 1.6rem;
     font-weight: 400;
   }
+  & input {
+    border: none;
+    width: 40%;
+    font-family: "Open Sans";
+    border-radius: 21px;
+    background: var(--background-neumorphic);
+    padding: 8px 15px 8px 15px;
+    margin-bottom: 1.5rem;
+  }
+  & input::placeholder {
+    font-family: "font awesome 5 free", open sans, -apple-system, BlinkMacSystemFont, segoe ui, Roboto, helvetica neue, Arial, sans-serif, apple color emoji, segoe ui emoji, segoe ui symbol;
+  }
 }
 
 ///////////////// Code Terminal /////////////////////////////
