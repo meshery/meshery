@@ -499,28 +499,27 @@ func (hc *HealthChecker) runOperatorHealthChecks() error {
 
 // runAdapterHealthChecks executes health-checks for Adapters
 // If no adapter is specified all the adapters are checked
-func (hc *HealthChecker) runAdapterHealthChecks(adapter_name string) error {
+func (hc *HealthChecker) runAdapterHealthChecks(adapterName string) error {
 	url := hc.mctlCfg.GetBaseMesheryURL()
 	client := &http.Client{}
 	var adapters []*models.Adapter
 	prefs, err := utils.GetSessionData(hc.mctlCfg)
 	if err != nil {
-		return fmt.Errorf("Authentication token not found. Please supply a valid user token. Login with `mesheryctl system login`")
+		return fmt.Errorf("!! Authentication token not found. Please supply a valid user token. Login with `mesheryctl system login`")
 	}
 	for _, adapter := range prefs.MeshAdapters {
-		if adapter_name != "" {
+		if adapterName != "" {
 			name := strings.Split(adapter.Location, ":")[0]
-			if adapter_name == name || adapter_name == adapter.Location {
+			if adapterName == name || adapterName == adapter.Location {
 				adapters = append(adapters, adapter)
 				break
 			}
-
 		} else {
 			adapters = append(adapters, adapter)
 		}
 	}
 	if len(adapters) == 0 {
-		return fmt.Errorf("Invalid adapter name provided")
+		return fmt.Errorf("!! Invalid adapter name provided")
 	}
 	for _, adapter := range adapters {
 		name := strings.Split(adapter.Location, ":")[0]
