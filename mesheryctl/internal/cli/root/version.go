@@ -23,8 +23,10 @@ import (
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants"
+	c "github.com/layer5io/meshery/mesheryctl/pkg/constants"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/handlers"
+	meshkitutils "github.com/layer5io/meshkit/utils"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -163,13 +165,18 @@ func checkMesheryctlClientVersion(build string) {
 	utils.Log.Info("\nChecking for latest version of mesheryctl...")
 
 	// Inform user of the latest release version
-	res, err := utils.GetLatestStableReleaseTag()
+	res, err := meshkitutils.GetLatestReleaseTagsSorted(c.GetMesheryGitHubOrg(), c.GetMesheryGitHubRepo())
 	if err != nil {
 		utils.Log.Warn(fmt.Errorf("\n  Unable to check for latest version of mesheryctl. %s", err))
 		return
 	}
+	if len(res) == 0 {
+		utils.Log.Warn(fmt.Errorf("\n  Unable to check for latest version of mesheryctl. %s", fmt.Errorf("no version found")))
+		return
+	}
+	r := res[len(res)-1]
 	// If user is running an outdated release, let them know.
-	if res != build {
+	if r != build {
 		utils.Log.Info("\n  ", build, " is not the latest release. Update to ", res, ".")
 	} else { // If user is running the latest release, let them know.
 		utils.Log.Info("\n  ", res, " is the latest release.")
