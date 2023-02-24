@@ -202,8 +202,8 @@ type Connection struct {
 }
 
 type ExtensionProxyResponse struct {
-	Body []byte `json:"body,omitempty"`
-	StatusCode int `json:"status_code,omitempty"`
+	Body       []byte `json:"body,omitempty"`
+	StatusCode int    `json:"status_code,omitempty"`
 }
 
 // Feature is a type to store the features of the provider

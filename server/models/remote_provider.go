@@ -3132,7 +3132,7 @@ func (l *RemoteProvider) ExtensionProxy(req *http.Request) (*ExtensionProxyRespo
 	}
 
 	response := &ExtensionProxyResponse{
-		Body: bdr,
+		Body:       bdr,
 		StatusCode: resp.StatusCode,
 	}
 
