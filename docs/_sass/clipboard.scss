@@ -32,6 +32,24 @@ pre.codeblock-pre {
   padding: 1rem;
   margin: 0px;
   color: #f8f9fa;
+
+  &::-webkit-scrollbar {
+    width: 0.5rem !important;
+    padding: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    width: 0.5rem !important;
+    border-radius: 11px;
+    overflow: hidden;
+    padding: 6px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: #868e96;
+    width: 0.5rem !important;
+    border-radius: 11px;
+    margin: 5px;
+  }
 }
 
 .btn-copy-wrap {
