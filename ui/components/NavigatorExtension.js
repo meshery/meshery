@@ -28,8 +28,6 @@ const useRemoteComponent = createUseRemoteComponent({ requires });
 function NavigatorExtension({ grafana, prometheus, updateLoadTestData, url, isDrawerCollapsed, selectedK8sContexts, k8sconfig, capabilitiesRegistry }) {
   const [loading, err, RemoteComponent] = useRemoteComponent(url);
   console.log(err);
-  console.log("loading: ", loading)
-  console.log("url: ", url)
 
   if (loading) {
     return <LoadingScreen animatedIcon="AnimatedMeshery" message="Loading Meshery Extension" />;

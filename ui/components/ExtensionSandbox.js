@@ -333,7 +333,6 @@ const mapDispatchToProps = (dispatch) => ({
 const mapStateToProps = (state) => ({
   isDrawerCollapsed : state.get("isDrawerCollapsed"),
   capabilitiesRegistry : state.get("capabilitiesRegistry"),
-  path : state.get('page').get('path'),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ExtensionSandbox);

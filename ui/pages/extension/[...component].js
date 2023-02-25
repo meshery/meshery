@@ -110,9 +110,6 @@ class RemoteExtension extends React.Component {
 
   renderExtension = () => {
     let cap = this.props.capabilitiesRegistry;
-    console.log("cap", cap)
-    console.log("cap !== null", cap !== null)
-    console.log("!cap?.restrictedAccess?.isMesheryUiRestricted", !cap?.restrictedAccess?.isMesheryUiRestricted)
     // For no restricted, we will show extensions
     if (cap !== null && !cap?.restrictedAccess?.isMesheryUiRestricted) {
       console.log("inside if")
@@ -180,7 +177,6 @@ class RemoteExtension extends React.Component {
 
 const mapStateToProps = (state) => ({
   extensionType : state.get('extensionType'),
-  path : state.get('page').get('path'),
   capabilitiesRegistry : state.get("capabilitiesRegistry")
 });
 
