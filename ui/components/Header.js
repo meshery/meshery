@@ -408,7 +408,7 @@ function K8sContextMenu({
         <div>
           <ClickAwayListener onClickAway={(e) => {
 
-            if (!e.target.className?.includes("cbadge") && e.target?.className != "k8s-image" && !e.target.className.includes("k8s-icon-button")) {
+            if (typeof e.target.className == "string" && !e.target.className?.includes("cbadge") && e.target?.className != "k8s-image" && !e.target.className.includes("k8s-icon-button")) {
               setAnchorEl(false)
               setShowFullContextMenu(false)
             }

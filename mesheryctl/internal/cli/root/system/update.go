@@ -17,13 +17,13 @@ package system
 import (
 	"fmt"
 
-	"github.com/pkg/errors"
-
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants"
+	c "github.com/layer5io/meshery/mesheryctl/pkg/constants"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	meshkitutils "github.com/layer5io/meshkit/utils"
 	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
-
+	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -172,9 +172,14 @@ mesheryctl system update --skip-reset
 		return nil
 	},
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-		latest, err := utils.GetLatestStableReleaseTag()
+		latestVersions, err := meshkitutils.GetLatestReleaseTagsSorted(c.GetMesheryGitHubOrg(), c.GetMesheryGitHubRepo())
 		version := constants.GetMesheryctlVersion()
-		if err == nil && latest != version {
+		if err == nil {
+			if len(latestVersions) == 0 {
+				log.Warn("no versions found for Meshery")
+				return
+			}
+			latest := latestVersions[len(latestVersions)-1]
 			log.Printf("A new release of mesheryctl is available: %s → %s", version, latest)
 			log.Printf("https://github.com/layer5io/meshery/releases/tag/%s", latest)
 			log.Print("Check https://docs.meshery.io/guides/upgrade#upgrading-meshery-cli for instructions on how to update mesheryctl\n")

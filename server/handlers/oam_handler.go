@@ -658,8 +658,6 @@ func (sap *serviceActionProvider) DryRun(comps []v1alpha1.Component) (resp map[s
 					resp[cmp.Name] = make(map[string]core.DryRunResponse2)
 				}
 				resp[cmp.Name][ctxID] = dResp
-				lol, _ := json.MarshalIndent(resp, "", " ")
-				fmt.Println("will send to client", string(lol))
 				continue
 			}
 			dResp.Error = &core.DryRunResponse{}
@@ -676,21 +674,23 @@ func (sap *serviceActionProvider) DryRun(comps []v1alpha1.Component) (resp map[s
 				dResp.Error.Status = *a.Status
 			}
 			dResp.Error.Causes = make([]core.DryRunFailureCause, 0)
-			for _, c := range a.Details.Causes {
-				msg := ""
-				field := ""
-				typ := ""
-				if c.Message != nil {
-					msg = *c.Message
+			if a.Details != nil {
+				for _, c := range a.Details.Causes {
+					msg := ""
+					field := ""
+					typ := ""
+					if c.Message != nil {
+						msg = *c.Message
+					}
+					if c.Field != nil {
+						field = cmp.Name + "." + getComponentFieldPathFromK8sFieldPath(*c.Field)
+					}
+					if c.Type != nil {
+						typ = string(*c.Type)
+					}
+					failureCase := core.DryRunFailureCause{Message: msg, FieldPath: field, Type: typ}
+					dResp.Error.Causes = append(dResp.Error.Causes, failureCase)
 				}
-				if c.Field != nil {
-					field = cmp.Name + "." + getComponentFieldPathFromK8sFieldPath(*c.Field)
-				}
-				if c.Type != nil {
-					typ = string(*c.Type)
-				}
-				failureCase := core.DryRunFailureCause{Message: msg, FieldPath: field, Type: typ}
-				dResp.Error.Causes = append(dResp.Error.Causes, failureCase)
 			}
 			if resp == nil {
 				resp = make(map[string]map[string]core.DryRunResponse2)
@@ -699,8 +699,6 @@ func (sap *serviceActionProvider) DryRun(comps []v1alpha1.Component) (resp map[s
 				resp[cmp.Name] = make(map[string]core.DryRunResponse2)
 			}
 			resp[cmp.Name][ctxID] = dResp
-			lol, _ := json.MarshalIndent(resp, "", " ")
-			fmt.Println("will send to client", string(lol))
 		}
 	}
 	return
