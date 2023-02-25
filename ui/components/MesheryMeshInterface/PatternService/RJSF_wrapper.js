@@ -27,6 +27,7 @@ function RJSFWrapper(props) {
   React.useEffect(() => {
     // Apply debouncing mechanism for the state propagation
     const timer = setTimeout(() => {
+      // callback fired, that triggers save operations, and other related side-effects
       onChange?.(data);
     }, 400);
 
@@ -55,6 +56,8 @@ function RJSFWrapper(props) {
         schema={schema}
         data={data}
         onChange={(e) => {
+          // the object that has to cleaned before feeding into the RJSF form
+          // that helps us in coping overzealous validation issues
           const cleanedData = { ...e.formData };
           recursiveCleanObjectExceptEmptyArray(cleanedData);
           setData(cleanedData);
