@@ -109,5 +109,6 @@ func (h *Handler) ExtensionsHandler(w http.ResponseWriter, req *http.Request, pr
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	fmt.Fprint(w, string(resp))
+	w.WriteHeader(resp.StatusCode)
+	fmt.Fprint(w, string(resp.Body))
 }
