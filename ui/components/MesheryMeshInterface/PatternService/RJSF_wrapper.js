@@ -1,6 +1,6 @@
 import React from "react";
 import HandleError from '../../ErrorHandling';
-import { buildUiSchema, recursiveCleanObject } from "../helpers";
+import { buildUiSchema, recursiveCleanObjectExceptEmptyArray } from "../helpers";
 import { getRefinedJsonSchema } from "./helper";
 // import MesheryArrayFieldTemplate from "./RJSFCustomComponents/ArrayFieldTemlate";
 // import MesheryCustomObjFieldTemplate from "./RJSFCustomComponents/ObjectFieldTemplate";
@@ -22,19 +22,12 @@ function RJSFWrapper(props) {
 
   const [data, setData] = React.useState(prev => ({ ...formData, ...prev }));
   const [schema, setSchema] = React.useState({ rjsfSchema : {}, uiSchema : {} })
-  const [isLoading, setIsLoading] = React.useState(true)
+  const [isLoading, setIsLoading] = React.useState(true);
 
   React.useEffect(() => {
     // Apply debouncing mechanism for the state propagation
     const timer = setTimeout(() => {
-      // callback fired
       onChange?.(data);
-
-      // recursively clean data object as well to help in validation issues
-      // this facilitates the use of default validation engine, without any patch
-      const cleanedData = { ...data };
-      recursiveCleanObject(cleanedData);
-      setData(cleanedData);
     }, 400);
 
     return () => clearTimeout(timer);
@@ -62,7 +55,9 @@ function RJSFWrapper(props) {
         schema={schema}
         data={data}
         onChange={(e) => {
-          setData(e.formData)
+          const cleanedData = { ...e.formData };
+          recursiveCleanObjectExceptEmptyArray(cleanedData);
+          setData(cleanedData);
         }}
         jsonSchema={jsonSchema}
       />
