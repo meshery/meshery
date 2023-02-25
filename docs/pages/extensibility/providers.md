@@ -127,8 +127,7 @@ The Navigator extension point loads a set of menu items to be displayed in the m
 
 Meshery Server will proxy all requests to remote provider endpoints. Endpoints are dynamically determined and identified in the "capabilities" section of the `/capabilities` endpoint. Providers as an object have the following attributes (this must be returned as a response to `/capabilities` endpoint):
 
-```json
-{
+{% capture code_content %}{
   "provider_type": "remote",
   "package_version": "v0.1.0",
   "package_url": "https://layer5labs.github.io/meshery-extensions-packages/provider.tar.gz",
@@ -288,8 +287,8 @@ Meshery Server will proxy all requests to remote provider endpoints. Endpoints a
         "endpoint": "/api/connection"
     }
   ]
-}
-```
+}{% endcapture %}
+{% include code.html code=code_content %}
 
 ##### Meshery Server Registration
 
@@ -298,14 +297,15 @@ On successful authentication with the remote provider, Meshery server registers 
 
 Example of the request body:
 
-```json
+{% capture code_content %}
   {
     "server_id": "xxxx-xxxxx-xxxx-xxxx",
     "server_version": "vx.x.x",
     "server_build-sha": "xxxx-xxxxx",
     "server_location": "<protocol>://<hostname>:<port>”
   }
-```
+{% endcapture %}
+{% include code.html code=code_content %}
 
 ## Configurable OAuth Callback URL
 
@@ -326,9 +326,8 @@ If you are deploying Meshery using Helm, you can configure the MESHERY_SERVER_CA
 - **Custom URL:** `https://k8s-staging.test.io/`
 - **Auth Endpoint:** `api/user/token` (append at the end of your custom URL)
 
-```
-helm install meshery meshery/meshery --namespace meshery --set env.MESHERY_SERVER_CALLBACK_URL=https://k8s-staging.test.io/api/user/token
-```
+{% capture code_content %}helm install meshery meshery/meshery --namespace meshery --set env.MESHERY_SERVER_CALLBACK_URL=https://k8s-staging.test.io/api/user/token{% endcapture %}
+{% include code.html code=code_content %}
 
 ##### Note
 

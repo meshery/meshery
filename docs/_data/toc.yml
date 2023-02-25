@@ -44,6 +44,8 @@
           url: installation/platforms/docker-extension
         - title: EKS
           url: installation/platforms/eks
+        - title: GitHub Codespaces
+          url: installation/platforms/codespaces
         - title: GKE
           url: installation/platforms/gke
         - title: KinD
