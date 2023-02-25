@@ -35,9 +35,6 @@ The Docker Extension for Meshery extends Docker Desktop’s position as the clou
 
 Meshery runs as a set of containers inside your Docker Desktop virtual machine.
 
-<pre class="codeblock-pre">
- <div class="codeblock"><div class="clipboardjs">
- docker extension install meshery/docker-extension-meshery
- </div></div>
- </pre>
+{% capture code_content %}docker extension install meshery/docker-extension-meshery{% endcapture %}
+{% include code.html code=code_content %}
 

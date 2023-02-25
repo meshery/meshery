@@ -35,7 +35,7 @@ Using Meshery CLI, you can get a copy of your authentication token by executing 
 
   _Downloading the token_
 
-  <a href="{{ site.baseurl }}/assets/img/token/token.png"><img alt="Meshery Dashboard" src="{{ site.baseurl }}/assets/img/token/token.png" width="680" height="400"/></a>
+  <a href="{{ site.baseurl }}/assets/img/token/MesheryTokenUI.png"><img alt="Meshery Dashboard" src="{{ site.baseurl }}/assets/img/token/MesheryTokenUI.png" width="680" height="400"/></a>
   <br/>
   <br/>
 
@@ -44,9 +44,7 @@ Using Meshery CLI, you can get a copy of your authentication token by executing 
   To get the token through `mesheryctl` you would have to use the following command. (default "auth.json").
   <br/>
   <pre class="codeblock-pre">
-  <div class="codeblock"><div class="clipboardjs">
-  mesheryctl system login
-  </div></div>
+  <div class="codeblock"><div class="clipboardjs">mesheryctl system login</div></div>
   </pre>
   <br />
 

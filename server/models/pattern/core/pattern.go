@@ -10,14 +10,114 @@ import (
 	"time"
 
 	"github.com/gofrs/uuid"
-	"github.com/layer5io/meshery/server/models/pattern/patterns/k8s"
 	"github.com/layer5io/meshery/server/models/pattern/utils"
 	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
+	"github.com/layer5io/meshkit/utils/manifests"
 	"github.com/sirupsen/logrus"
 	cytoscapejs "gonum.org/v1/gonum/graph/formats/cytoscapejs"
 	"gopkg.in/yaml.v2"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
+
+type prettifier bool
+
+// prettifyEndString will be true in cases of schema prettification where we want to prettify everything and will be false in
+// cases of YAML inputs from users where we want the end input as it is before sending to external systems such as kubernetes.
+// NOTE: For clients which want a complete prettified version, prettifyEndString will be passed true.
+func (p prettifier) Prettify(m map[string]interface{}, prettifyEndString bool) map[string]interface{} {
+	res := ConvertMapInterfaceMapString(m, true, prettifyEndString)
+	out, ok := res.(map[string]interface{})
+	if !ok {
+		fmt.Println("failed to cast")
+	}
+	return out
+}
+func (p prettifier) DePrettify(m map[string]interface{}, deprettifyEndString bool) map[string]interface{} {
+	res := ConvertMapInterfaceMapString(m, false, deprettifyEndString)
+	out, ok := res.(map[string]interface{})
+	if !ok {
+		fmt.Println("failed to cast")
+	}
+
+	return out
+}
+
+// ConvertMapInterfaceMapString converts map[interface{}]interface{} => map[string]interface{}
+//
+// It will also convert []interface{} => []string
+func ConvertMapInterfaceMapString(v interface{}, prettify bool, endString bool) interface{} {
+	switch x := v.(type) {
+	case map[interface{}]interface{}:
+		m := map[string]interface{}{}
+		for k, v2 := range x {
+			switch k2 := k.(type) {
+			case string:
+				if prettify {
+					m[manifests.FormatToReadableString(k2)] = ConvertMapInterfaceMapString(v2, prettify, endString)
+				} else {
+					m[manifests.DeFormatReadableString(k2)] = ConvertMapInterfaceMapString(v2, prettify, endString)
+				}
+			default:
+				m[fmt.Sprint(k)] = ConvertMapInterfaceMapString(v2, prettify, endString)
+			}
+		}
+		return m
+
+	case []interface{}:
+		x2 := make([]interface{}, len(x))
+		for i, v2 := range x {
+			x2[i] = ConvertMapInterfaceMapString(v2, prettify, endString)
+		}
+		return x2
+	case map[string]interface{}:
+		m := map[string]interface{}{}
+		foundFormatIntOrString := false
+		for k, v2 := range x {
+			if prettify {
+				m[manifests.FormatToReadableString(k)] = ConvertMapInterfaceMapString(v2, prettify, endString)
+			} else {
+				m[manifests.DeFormatReadableString(k)] = ConvertMapInterfaceMapString(v2, prettify, endString)
+			}
+			//Apply this fix only when the format specifies string|int and type specifies string therefore when there is a contradiction
+			if k == "format" && v2 == "int-or-string" {
+				foundFormatIntOrString = true
+			}
+		}
+		if x["type"] == "string" && foundFormatIntOrString {
+			m["type"] = "integer"
+		}
+		return m
+	case string:
+		if endString {
+			if prettify {
+				return manifests.FormatToReadableString(x) //Whitespace formatting should be done at the time of prettification only
+			}
+			return manifests.DeFormatReadableString(x)
+		}
+	}
+	return v
+}
+
+// In case of any breaking change or bug caused by this, set this to false and the whitespace addition in schema generated/consumed would be removed(will go back to default behavior)
+const Format prettifier = true
+
+type DryRunResponse2 struct {
+	//When success is true, error will be nil and Component will contain the structure of the component as it will look after deployment
+	//When success is false, error will contain the errors. And Component will be set to Nil
+	Success   bool            `json:"success"`
+	Error     *DryRunResponse `json:"error"`
+	Component *Service        `json:"component"` //Service is synonymous with Component. Later Service is to be changed to "Component"
+}
+type DryRunResponse struct {
+	Status string
+	Causes []DryRunFailureCause
+}
+
+type DryRunFailureCause struct {
+	Type      string //Type of error
+	Message   string //Error message
+	FieldPath string //Dot separated field path inside service. (For eg: <name>.settings.spec.containers (for pod) or <name>.annotations ) where <name> is the name of service/component
+}
 
 // Pattern is the golang representation of the Pattern
 // config file model
@@ -442,7 +542,7 @@ func createPatternServiceFromK8s(manifest map[string]interface{}) (string, Servi
 			castedAnnotation[k] = cv
 		}
 	}
-	rest = k8s.Format.Prettify(rest, false)
+	rest = Format.Prettify(rest, false)
 	svc := Service{
 		Name:        name,
 		Type:        w[0].OAMDefinition.Name,
