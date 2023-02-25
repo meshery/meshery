@@ -1,6 +1,5 @@
 /**
- * @generated SignedSource<<8c887e54f08a367f2d406b7497dc3a3d>>
- * @flow
+ * @generated SignedSource<<393dc75182410b818fda16b7bb4f5a56>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,83 +8,7 @@
 
 'use strict';
 
-/*::
-import type { ConcreteRequest, GraphQLSubscription } from 'relay-runtime';
-export type PageFilter = {|
-  page: string,
-  pageSize: string,
-  order?: ?string,
-  search?: ?string,
-  from?: ?string,
-  to?: ?string,
-  updated_after?: ?string,
-|};
-export type ConfigurationSubscription$variables = {|
-  applicationSelector: PageFilter,
-  patternSelector: PageFilter,
-  filterSelector: PageFilter,
-|};
-export type ConfigurationSubscription$data = {|
-  +configuration: {|
-    +applications: ?{|
-      +page: number,
-      +page_size: number,
-      +total_count: number,
-      +applications: ?$ReadOnlyArray<?{|
-        +id: string,
-        +name: string,
-        +application_file: string,
-        +type: {|
-          +String: string,
-          +Valid: boolean,
-        |},
-        +user_id: string,
-        +visibility: string,
-        +created_at: ?string,
-        +updated_at: ?string,
-      |}>,
-    |},
-    +patterns: ?{|
-      +page: number,
-      +page_size: number,
-      +total_count: number,
-      +patterns: ?$ReadOnlyArray<?{|
-        +id: string,
-        +name: string,
-        +user_id: string,
-        +pattern_file: string,
-        +visibility: string,
-        +catalog_data: ?any,
-        +canSupport: boolean,
-        +errmsg: ?string,
-        +created_at: ?string,
-        +updated_at: ?string,
-      |}>,
-    |},
-    +filters: ?{|
-      +page: number,
-      +page_size: number,
-      +total_count: number,
-      +filters: ?$ReadOnlyArray<?{|
-        +id: string,
-        +name: string,
-        +filter_file: string,
-        +visibility: string,
-        +catalog_data: ?any,
-        +user_id: string,
-        +created_at: ?string,
-        +updated_at: ?string,
-      |}>,
-    |},
-  |},
-|};
-export type ConfigurationSubscription = {|
-  variables: ConfigurationSubscription$variables,
-  response: ConfigurationSubscription$data,
-|};
-*/
-
-var node/*: ConcreteRequest*/ = (function(){
+var node = (function(){
 var v0 = {
   "defaultValue": null,
   "kind": "LocalArgument",
@@ -391,9 +314,6 @@ return {
 };
 })();
 
-(node/*: any*/).hash = "e253f7fac4ca190bc348f864eec5525b";
+node.hash = "e253f7fac4ca190bc348f864eec5525b";
 
-module.exports = ((node/*: any*/)/*: GraphQLSubscription<
-  ConfigurationSubscription$variables,
-  ConfigurationSubscription$data,
->*/);
+module.exports = node;
