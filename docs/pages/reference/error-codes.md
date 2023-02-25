@@ -157,7 +157,7 @@ Note: The numeric portion of error codes are component-scoped. The numeric porti
           <td class="error-name-code">
             <span><a id="{{component[1].component_name}}-{{err_code[1]["name"]}}">
             {{ err_code[1]["name"] | xml_escape }}
-            </a></span> <span><code>{{ err_code[1]["code"] }}</code></span> 
+            </a></span> <span><code>({{ err_code[1]["code"] }})</code></span> 
           </td>
           <td style="{{severity}}">{{ err_code[1]["severity"]}}</td>
           <td>{{ err_code[1]["short_description"] | xml_escape}}</td>
