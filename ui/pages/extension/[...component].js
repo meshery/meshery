@@ -9,10 +9,8 @@ import Head from "next/head";
 import { bindActionCreators } from "redux";
 import React from "react";
 import RemoteComponent from "../../components/RemoteComponent";
-import { WrappedMeshMapSignupCard } from "../extensions";
 import _ from "lodash"
 import { MeshMapEarlyAccessCard } from "../../components/Popup";
-import { CapabilitiesRegistry } from "../../utils/disabledComponents";
 import dataFetch from "../../lib/data-fetch";
 import ExtensionPointSchemaValidator from "../../utils/ExtensionPointSchemaValidator";
 import { withRouter } from "next/router";
@@ -111,11 +109,11 @@ class RemoteExtension extends React.Component {
   }
 
   renderExtension = () => {
-    let result = this.props.capabilitiesRegistry;
+    let cap = this.props.capabilitiesRegistry;
     let extNames = [];
-    for (var key of Object.keys(result?.extensions)) {
-      if (Array.isArray(result?.extensions[key])) {
-        result?.extensions[key].forEach((comp) => {
+    for (var key of Object.keys(cap?.extensions)) {
+      if (Array.isArray(cap?.extensions[key])) {
+        cap?.extensions[key].forEach((comp) => {
           if (comp?.type === "full_page") {
             let ext = {
               name : key,
@@ -129,11 +127,8 @@ class RemoteExtension extends React.Component {
 
     extNames.forEach((ext) => {
       if (matchComponentURI(ext?.uri, getPath())) {
-
-        this.props.updateExtensionType({ extensionType : ext.name })
-        let type = ext.name;
-        let extensions = ExtensionPointSchemaValidator(type)(result?.extensions[type])
-
+        this.props.updateExtensionType({ extensionType : ext.name });
+        let extensions = ExtensionPointSchemaValidator(ext.name)(cap?.extensions[ext.name]);
         this.setState({ componentTitle : getComponentTitleFromPath(extensions, getPath()), isLoading : false });
         this.props.updatepagetitle({ title : getComponentTitleFromPath(extensions, getPath()) });
       }
