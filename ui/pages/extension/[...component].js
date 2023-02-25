@@ -110,7 +110,7 @@ class RemoteExtension extends React.Component {
 
   renderExtension = () => {
     let cap = this.props.capabilitiesRegistry;
-    // For no restricted, we will show extensions
+    // For unrestricted access, show extensions
     if (cap !== null && !cap?.restrictedAccess?.isMesheryUiRestricted) {
       console.log("inside if")
       let extNames = [];
