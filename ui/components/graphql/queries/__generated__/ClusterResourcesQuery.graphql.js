@@ -1,6 +1,5 @@
 /**
- * @generated SignedSource<<9b11273ffb94fd2c22708006de739a11>>
- * @flow
+ * @generated SignedSource<<e11c1691eba99b1c55d832d4aaf0c25c>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,27 +8,7 @@
 
 'use strict';
 
-/*::
-import type { ConcreteRequest, Query } from 'relay-runtime';
-export type ClusterResourcesQuery$variables = {|
-  k8scontextIDs?: ?$ReadOnlyArray<string>,
-  namespace: string,
-|};
-export type ClusterResourcesQuery$data = {|
-  +clusterResources: {|
-    +resources: $ReadOnlyArray<{|
-      +kind: string,
-      +count: number,
-    |}>,
-  |},
-|};
-export type ClusterResourcesQuery = {|
-  variables: ClusterResourcesQuery$variables,
-  response: ClusterResourcesQuery$data,
-|};
-*/
-
-var node/*: ConcreteRequest*/ = (function(){
+var node = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -119,9 +98,6 @@ return {
 };
 })();
 
-(node/*: any*/).hash = "df3b0056c596c2f025a87ac56962fc6e";
+node.hash = "df3b0056c596c2f025a87ac56962fc6e";
 
-module.exports = ((node/*: any*/)/*: Query<
-  ClusterResourcesQuery$variables,
-  ClusterResourcesQuery$data,
->*/);
+module.exports = node;
