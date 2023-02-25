@@ -16,7 +16,7 @@ import dataFetch from "../lib/data-fetch";
 import { iconMedium } from "../css/icons.styles";
 
 const styles = (theme) => ({
-  wrapperClass : { padding : theme.spacing(5), },
+  wrapperClass : { padding : theme.spacing(5),backgroundColor : "white",borderBottomLeftRadius : theme.spacing(1),borderBottomRightRadius : theme.spacing(1), },
   buttons : { display : "flex",
     justifyContent : "flex-end", },
   button : { marginTop : theme.spacing(3),

@@ -101,9 +101,9 @@ func ProcessOAM(kconfigs []string, oamComps []string, oamConfig string, isDel bo
 						errs = append(errs, err)
 						var summary string
 						if isDel {
-							summary = fmt.Sprintf("error deploying %s: %s", strings.TrimSuffix(comp.Spec.Type, ".K8s"), comp.Name)
-						} else {
 							summary = fmt.Sprintf("error undeploying %s: %s", strings.TrimSuffix(comp.Spec.Type, ".K8s"), comp.Name)
+						} else {
+							summary = fmt.Sprintf("error deploying %s: %s", strings.TrimSuffix(comp.Spec.Type, ".K8s"), comp.Name)
 						}
 						req = meshes.EventsResponse{
 							Component:     "core",

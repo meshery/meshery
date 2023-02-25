@@ -21,7 +21,7 @@ Please do! Thanks for your help! 🎈 Meshery is community-built and welcomes co
 
 Follow these steps and you'll be right at home.
 
-1. See the [_Community Welcome Guide_](https://docs.google.com/document/d/17OPtDE_rdnPQxmk2Kauhm3GwXF1R5dZ3Cj8qZLKdo5E/edit) for how, where, and why to contribute.
+1. See the [Newcomers Guide](https://layer5.io/community/newcomers) for how, where, and why to contribute.
 
 2. Sign up for a [_MeshMate_](https://layer5.io/community/meshmates) to find the perfect Mentor to help you explore the Layer5 projects and find your place in the community:
 

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<5a4a0e50be67f1046811ed99dba67ef1>>
+ * @generated SignedSource<<f1ae22888b1b78f405993f3085995237>>
  * @flow
  * @lightSyntaxTransform
  * @nogrep
@@ -18,6 +18,7 @@ export type PageFilter = {|
   search?: ?string,
   from?: ?string,
   to?: ?string,
+  updated_after?: ?string,
 |};
 export type PerformanceProfilesQuery$variables = {|
   selector: PageFilter,
