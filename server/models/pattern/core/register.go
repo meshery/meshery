@@ -13,7 +13,6 @@ import (
 	"cuelang.org/go/cue/cuecontext"
 	cueJson "cuelang.org/go/encoding/json"
 	"github.com/layer5io/meshery/server/internal/store"
-	"github.com/layer5io/meshery/server/models/pattern/patterns/k8s"
 	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
 	"github.com/layer5io/meshkit/utils"
 	"github.com/layer5io/meshkit/utils/kubernetes"
@@ -151,8 +150,8 @@ func RegisterWorkload(data []byte) (err error) {
 
 	schema := map[string]interface{}{}
 	_ = json.Unmarshal([]byte(workload.OAMRefSchema), &schema)
-	if k8s.Format {
-		schema = k8s.Format.Prettify(schema, false)
+	if Format {
+		schema = Format.Prettify(schema, true)
 	}
 	temp, _ := json.Marshal(schema)
 	workload.OAMRefSchema = string(temp)
@@ -401,7 +400,7 @@ func GetWorkloadByID(name, id string) *WorkloadCapability {
 		m := make(map[string]interface{})
 		_ = json.Unmarshal([]byte(f.OAMRefSchema), &m)
 		// prettify(m, false) False here means the disablement of prettification for terminal values in component schemas
-		m = k8s.Format.Prettify(m, false)
+		m = Format.Prettify(m, true)
 		b, _ := json.Marshal(m)
 		f.OAMRefSchema = string(b)
 		if f.GetID() == id {

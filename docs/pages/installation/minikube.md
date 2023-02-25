@@ -16,7 +16,7 @@ image: /assets/img/platforms/minikube.png
 - [Steps](#steps)
   - [1. Start minikube](#1-start-minikube)
   - [2. Install Meshery](#2-install-meshery)
-  - [2. Configure Meshery to use minikube](#2-configure-meshery-to-use-minikube)
+  - [3. Configure Meshery to use minikube](#3-configure-meshery-to-use-minikube)
   - [Manual Steps](#manual-steps)
 
 ##### Compatibility
@@ -154,3 +154,4 @@ _Note_: Make sure _current-context_ is set to _minikube_.
 
 <br />
 Meshery should now be connected with your managed Kubernetes instance. Take a look at the [Meshery guides]({{ site.baseurl }}/guides) for advanced usage tips.
+

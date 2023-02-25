@@ -1,7 +1,7 @@
 import React from 'react'
 import { Button, Grid, IconButton } from '@material-ui/core';
 // import { createTheme } from '@material-ui/core/styles';
-import validator from "@rjsf/validator-ajv6";
+import validator from "@rjsf/validator-ajv8";
 import {
   Dialog, DialogActions,
   DialogContent,

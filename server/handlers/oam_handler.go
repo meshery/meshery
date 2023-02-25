@@ -25,6 +25,7 @@ import (
 	"github.com/layer5io/meshkit/utils/events"
 	meshkube "github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/sirupsen/logrus"
+	v1 "k8s.io/client-go/applyconfigurations/meta/v1"
 )
 
 // patternCallType is custom type for pattern
@@ -416,13 +417,14 @@ func _processPattern(
 	// if !ok || mk8scontext == nil {
 	// 	return "", ErrInvalidKubeContext(fmt.Errorf("failed to find k8s context"), "_processPattern couldn't find a valid k8s context")
 	// }
-	var configs []string
+	var ctxToconfig = make(map[string]string)
 	for _, ctx := range k8scontexts {
 		cfg, err := ctx.GenerateKubeConfig()
 		if err != nil {
 			return nil, ErrInvalidKubeConfig(fmt.Errorf("failed to find k8s config"), "_processPattern couldn't find a valid k8s config")
 		}
-		configs = append(configs, string(cfg))
+		ctxToconfig[ctx.ID] = string(cfg)
+		// configs = append(configs, string(cfg))
 	}
 	internal := func(mk8scontext []models.K8sContext) (map[string]interface{}, error) {
 		sip := &serviceInfoProvider{
@@ -442,7 +444,7 @@ func _processPattern(
 			// kubeconfig:    kubecfg,
 			// kubecontext:   mk8scontext,
 			skipPrintLogs:   skipPrintLogs,
-			kubeconfigs:     configs,
+			ctxTokubeconfig: ctxToconfig,
 			accumulatedMsgs: []string{},
 			err:             nil,
 			eventbuffer:     eb,
@@ -576,9 +578,9 @@ type serviceActionProvider struct {
 	provider models.Provider
 	prefObj  *models.Preference
 	// kubeClient      *meshkube.Client
-	kubeconfigs []string
-	opIsDelete  bool
-	userID      string
+	ctxTokubeconfig map[string]string
+	opIsDelete      bool
+	userID          string
 	// kubeconfig  []byte
 	// kubecontext     *models.K8sContext
 	skipPrintLogs   bool
@@ -617,56 +619,103 @@ func (sap *serviceActionProvider) Mutate(p *core.Pattern) {
 	}
 }
 
-func (sap *serviceActionProvider) DryRun(comps []v1alpha1.Component) (resp map[string][]stages.DryRunResponse, err error) {
+// NOTE: Currently tied to kubernetes
+// Returns ComponentName->ContextID->Response
+func (sap *serviceActionProvider) DryRun(comps []v1alpha1.Component) (resp map[string]map[string]core.DryRunResponse2, err error) {
 	for _, cmp := range comps {
-		for _, kc := range sap.kubeconfigs {
+		for ctxID, kc := range sap.ctxTokubeconfig {
 			cl, err := meshkube.New([]byte(kc))
 			if err != nil {
 				return resp, err
 			}
-			st, err := k8s.DryRunHelper(cl, cmp)
+			st, ok, err := k8s.DryRunHelper(cl, cmp)
 			if err != nil {
 				return resp, err
 			}
-			if st == nil {
-				return resp, fmt.Errorf("failed to dry run")
-			}
-			dResp := stages.DryRunResponse{}
-			if st.Status != nil {
-				dResp.Status = *st.Status
-			}
-			dResp.Causes = make([]stages.DryRunFailureCause, 0)
-			for _, c := range st.Details.Causes {
-				msg := ""
-				field := ""
-				typ := ""
-				if c.Message != nil {
-					msg = *c.Message
+			dResp := core.DryRunResponse2{Success: ok}
+			if ok {
+				dResp.Component = &core.Service{
+					Name:        cmp.Name,
+					Type:        cmp.Spec.Type,
+					Namespace:   cmp.Namespace,
+					APIVersion:  cmp.Spec.APIVersion,
+					Version:     cmp.Spec.Version,
+					Model:       cmp.Spec.Model,
+					Labels:      cmp.Labels,
+					Annotations: cmp.Annotations,
 				}
-				if c.Field != nil {
-					field = *c.Field
+				dResp.Component.Settings = make(map[string]interface{})
+				for k, v := range st {
+					if k == "apiVersion" || k == "kind" || k == "metadata" {
+						continue
+					}
+					dResp.Component.Settings[k] = v
 				}
-				if c.Type != nil {
-					typ = string(*c.Type)
+				if resp == nil {
+					resp = make(map[string]map[string]core.DryRunResponse2)
 				}
-				failureCase := stages.DryRunFailureCause{Message: msg, Field: field, Type: typ}
-				dResp.Causes = append(dResp.Causes, failureCase)
+				if resp[cmp.Name] == nil {
+					resp[cmp.Name] = make(map[string]core.DryRunResponse2)
+				}
+				resp[cmp.Name][ctxID] = dResp
+				continue
 			}
-			// a slice of DryRunResponse is used to concatenate the response for all the clusters
-			respSlice := make([]stages.DryRunResponse, 0)
+			dResp.Error = &core.DryRunResponse{}
+			byt, err := json.Marshal(st)
+			if err != nil {
+				return nil, err
+			}
+			var a v1.StatusApplyConfiguration
+			err = json.Unmarshal(byt, &a)
+			if err != nil {
+				return nil, err
+			}
+			if a.Status != nil {
+				dResp.Error.Status = *a.Status
+			}
+			dResp.Error.Causes = make([]core.DryRunFailureCause, 0)
+			if a.Details != nil {
+				for _, c := range a.Details.Causes {
+					msg := ""
+					field := ""
+					typ := ""
+					if c.Message != nil {
+						msg = *c.Message
+					}
+					if c.Field != nil {
+						field = cmp.Name + "." + getComponentFieldPathFromK8sFieldPath(*c.Field)
+					}
+					if c.Type != nil {
+						typ = string(*c.Type)
+					}
+					failureCase := core.DryRunFailureCause{Message: msg, FieldPath: field, Type: typ}
+					dResp.Error.Causes = append(dResp.Error.Causes, failureCase)
+				}
+			}
 			if resp == nil {
-				resp = make(map[string][]stages.DryRunResponse)
+				resp = make(map[string]map[string]core.DryRunResponse2)
 			}
-			if resp[cmp.Name] != nil {
-				respSlice = resp[cmp.Name]
+			if resp[cmp.Name] == nil {
+				resp[cmp.Name] = make(map[string]core.DryRunResponse2)
 			}
-			respSlice = append(respSlice, dResp)
-			resp[cmp.Name] = respSlice
+			resp[cmp.Name][ctxID] = dResp
 		}
 	}
 	return
 }
-
+func getComponentFieldPathFromK8sFieldPath(path string) (newpath string) {
+	if strings.HasPrefix(path, "metadata.") {
+		path = strings.TrimPrefix(path, "metadata.")
+		paths := strings.Split(path, ".")
+		if len(paths) != 0 {
+			if paths[0] == "name" || paths[0] == "namespace" || paths[0] == "labels" || paths[0] == "annotations" {
+				return paths[0]
+			}
+		}
+		return
+	}
+	return fmt.Sprintf("%s.%s", "settings", path)
+}
 func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) (string, error) { // Marshal the component
 	jsonComp, err := json.Marshal(ccp.Component)
 	if err != nil {
@@ -688,8 +737,13 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) (string, 
 
 		// Local call
 		if host.Port == 0 {
+			//TODO: Accommodate internal calls to use context mapping with kubeconfig
+			var kconfigs []string
+			for _, v := range sap.ctxTokubeconfig {
+				kconfigs = append(kconfigs, v)
+			}
 			resp, err := patterns.ProcessOAM(
-				sap.kubeconfigs,
+				kconfigs,
 				[]string{string(jsonComp)},
 				string(jsonConfig),
 				sap.opIsDelete,
@@ -727,12 +781,17 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) (string, 
 		// }
 
 		// Else it is an OAM adapter call
+		//TODO: Accommodate gRPC calls to use context mapping with kubeconfig
+		var kconfigs []string
+		for _, v := range sap.ctxTokubeconfig {
+			kconfigs = append(kconfigs, v)
+		}
 		resp, err := mClient.MClient.ProcessOAM(context.TODO(), &meshes.ProcessOAMRequest{
 			Username:    sap.userID,
 			DeleteOp:    sap.opIsDelete,
 			OamComps:    []string{string(jsonComp)},
 			OamConfig:   string(jsonConfig),
-			KubeConfigs: sap.kubeconfigs,
+			KubeConfigs: kconfigs,
 		})
 
 		return resp.GetMessage(), err

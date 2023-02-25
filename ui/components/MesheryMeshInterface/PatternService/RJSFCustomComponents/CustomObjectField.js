@@ -68,7 +68,6 @@ class ObjectFieldWithErrors extends Component {
       const newFormData = { ...formData, [name] : value };
       onChange(
         newFormData,
-        errorSchema &&
         errorSchema && {
           ...errorSchema,
           [name] : newErrorSchema,
