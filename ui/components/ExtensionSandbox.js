@@ -304,8 +304,7 @@ function ExtensionSandbox({ type, Extension, isDrawerCollapsed, toggleDrawer, ca
   return (
     <>
       {console.log("type: ", type)}
-      {/* {console.log("extension: ", extension)} */}
-      {console.log("path:", getPath())}
+      {console.log("extension: ", extension)}
       {/* {console.log("createPathForRemoteComponent(getComponentURIFromPathForAccount(extension, getPath()))", createPathForRemoteComponent(getComponentURIFromPathForAccount(extension, getPath())))} */}
 
       {

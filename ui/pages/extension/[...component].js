@@ -15,6 +15,7 @@ import { MeshMapEarlyAccessCard } from "../../components/Popup";
 import { CapabilitiesRegistry } from "../../utils/disabledComponents";
 import dataFetch from "../../lib/data-fetch";
 import ExtensionPointSchemaValidator from "../../utils/ExtensionPointSchemaValidator";
+import { withRouter } from "next/router";
 
 
 /**
@@ -70,8 +71,16 @@ class RemoteExtension extends React.Component {
       componentTitle : '',
       isLoading : true,
       capabilitiesRegistryObj : null,
-      path : ''
     }
+  }
+
+  componentWillUnmount() {
+    console.log("componentWillUnmount")
+    this.setState({
+      componentTitle : '',
+      isLoading : true,
+      capabilitiesRegistryObj : null,
+    })
   }
 
   componentDidMount() {
@@ -103,8 +112,10 @@ class RemoteExtension extends React.Component {
     console.log("componentDidUpdate")
     console.log("prevProps", prevProps)
     console.log("this.props", this.props)
+    // console.log("------path: ", getPath())
+    // console.log("------window.location.path", window.location.pathname)
     // re-renders the extension if the extension type (redux store variable) changes
-    if (this.props.extensionType !== prevProps.extensionType) {
+    if (this.props.extensionType !== prevProps.extensionType || this.props.router.query.component != prevProps.router.query.component) {
       this.renderExtension();
     }
   }
@@ -112,7 +123,7 @@ class RemoteExtension extends React.Component {
   renderExtension = () => {
     console.log("render Ext")
     let result = this.props.capabilitiesRegistry;
-    console.log("result", result)
+    // console.log("result", result)
     let extNames = [];
     for (var key of Object.keys(result?.extensions)) {
       if (Array.isArray(result?.extensions[key])) {
@@ -165,9 +176,11 @@ class RemoteExtension extends React.Component {
 
   render() {
     const { extensionType } = this.props;
-    const { componentTitle, isLoading } = this.state;
+    const { componentTitle, isLoading, ext } = this.state;
     console.log("extensionType: ", extensionType)
-    console.log("isLoading: ", isLoading);
+    // console.log("isLoading: ", isLoading);
+    const slug = (this.props.router) || []
+    console.log("slug", slug)
 
     return (
       <NoSsr>
@@ -212,6 +225,6 @@ const mapDispatchToProps = (dispatch) => ({
   updateCapabilities : bindActionCreators(updateCapabilities, dispatch),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(RemoteExtension);
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter((RemoteExtension)));
 
 
