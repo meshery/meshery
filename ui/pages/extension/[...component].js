@@ -75,7 +75,6 @@ class RemoteExtension extends React.Component {
   }
 
   componentWillUnmount() {
-    console.log("componentWillUnmount")
     this.setState({
       componentTitle : '',
       isLoading : true,
@@ -84,8 +83,6 @@ class RemoteExtension extends React.Component {
   }
 
   componentDidMount() {
-    console.log("componentDidMount")
-    console.log("this.props.page:  ", this.props.path)
     dataFetch(
       "/api/provider/capabilities",
       {
@@ -94,7 +91,6 @@ class RemoteExtension extends React.Component {
       },
       (result) => {
         this.props.updatepagepath({ path : getPath() });
-        console.log("result:  ", result)
         if (result) {
           this.setState({
             capabilitiesRegistryObj : result,
@@ -109,21 +105,13 @@ class RemoteExtension extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    console.log("componentDidUpdate")
-    console.log("prevProps", prevProps)
-    console.log("this.props", this.props)
-    // console.log("------path: ", getPath())
-    // console.log("------window.location.path", window.location.pathname)
-    // re-renders the extension if the extension type (redux store variable) changes
     if (this.props.extensionType !== prevProps.extensionType || this.props.router.query.component != prevProps.router.query.component) {
       this.renderExtension();
     }
   }
 
   renderExtension = () => {
-    console.log("render Ext")
     let result = this.props.capabilitiesRegistry;
-    // console.log("result", result)
     let extNames = [];
     for (var key of Object.keys(result?.extensions)) {
       if (Array.isArray(result?.extensions[key])) {
@@ -138,49 +126,23 @@ class RemoteExtension extends React.Component {
         })
       }
     }
-    console.log("extNames", extNames)
+
     extNames.forEach((ext) => {
       if (matchComponentURI(ext?.uri, getPath())) {
-        console.log("match found");
+
         this.props.updateExtensionType({ extensionType : ext.name })
         let type = ext.name;
         let extensions = ExtensionPointSchemaValidator(type)(result?.extensions[type])
-        console.log("extensions(outside)", extensions)
-        console.log("path(outside)", getPath())
+
         this.setState({ componentTitle : getComponentTitleFromPath(extensions, getPath()), isLoading : false });
         this.props.updatepagetitle({ title : getComponentTitleFromPath(extensions, getPath()) });
-        // getCapabilities(ext.name, extensions => {
-        //   this.setState({ componentTitle : getComponentTitleFromPath(extensions, getPath()), isLoading : false });
-        //   this.props.updatepagetitle({ title : getComponentTitleFromPath(extensions, getPath()) });
-        // });
       }
     })
-    // getFullPageExtensions(extNames => {
-    //   extNames.forEach((ext) => {
-    //     if (matchComponentURI(ext?.uri, getPath())) {
-    //       this.props.updateExtensionType({ extensionType : ext.name })
-    //       getCapabilities(ext.name, extensions => {
-    //         this.setState({ componentTitle : getComponentTitleFromPath(extensions, getPath()), isLoading : false });
-    //         this.props.updatepagetitle({ title : getComponentTitleFromPath(extensions, getPath()) });
-    //       });
-    //     }
-    //   })
-    // });
-
-    // loading state may set to false, either if the extension
-    // is there or no extension after waiting for
-    // setTimeout(() => {
-    //   this.setState({ isLoading : false })
-    // }, 1500)
   }
 
   render() {
     const { extensionType } = this.props;
     const { componentTitle, isLoading, ext } = this.state;
-    console.log("extensionType: ", extensionType)
-    // console.log("isLoading: ", isLoading);
-    const slug = (this.props.router) || []
-    console.log("slug", slug)
 
     return (
       <NoSsr>

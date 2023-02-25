@@ -282,7 +282,6 @@ function ExtensionSandbox({ type, Extension, isDrawerCollapsed, toggleDrawer, ca
     if (type === "navigator" && !isDrawerCollapsed) {
       toggleDrawer({ isDrawerCollapsed : !isDrawerCollapsed });
     }
-    // console.log("capabilitiesRegistry(extensionSandbox.js): ", capabilitiesRegistry)
     if (capabilitiesRegistry) {
       const data = ExtensionPointSchemaValidator(type)(capabilitiesRegistry?.extensions[type]);
       if (data !== undefined) {
@@ -297,16 +296,8 @@ function ExtensionSandbox({ type, Extension, isDrawerCollapsed, toggleDrawer, ca
     }
   }, [type]);
 
-  // useEffect(() => {
-
-  // },[, type])
-
   return (
     <>
-      {console.log("type: ", type)}
-      {console.log("extension: ", extension)}
-      {/* {console.log("createPathForRemoteComponent(getComponentURIFromPathForAccount(extension, getPath()))", createPathForRemoteComponent(getComponentURIFromPathForAccount(extension, getPath())))} */}
-
       {
         (
           isLoading ? (
