@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 
 import NavigatorExtension from "../../components/NavigatorExtension";
-import ExtensionSandbox, { getCapabilities, getFullPageExtensions, getComponentTitleFromPath } from "../../components/ExtensionSandbox";
+import ExtensionSandbox, { getComponentTitleFromPath } from "../../components/ExtensionSandbox";
 import { Box, CircularProgress, NoSsr } from "@material-ui/core";
 import { updatepagepath, updatepagetitle, updateExtensionType, updateCapabilities } from "../../lib/store";
 import { connect } from "react-redux";
@@ -110,29 +110,38 @@ class RemoteExtension extends React.Component {
 
   renderExtension = () => {
     let cap = this.props.capabilitiesRegistry;
-    let extNames = [];
-    for (var key of Object.keys(cap?.extensions)) {
-      if (Array.isArray(cap?.extensions[key])) {
-        cap?.extensions[key].forEach((comp) => {
-          if (comp?.type === "full_page") {
-            let ext = {
-              name : key,
-              uri : comp?.href?.uri
+    console.log("cap", cap)
+    console.log("cap !== null", cap !== null)
+    console.log("!cap?.restrictedAccess?.isMesheryUiRestricted", !cap?.restrictedAccess?.isMesheryUiRestricted)
+    // For no restricted, we will show extensions
+    if (cap !== null && !cap?.restrictedAccess?.isMesheryUiRestricted) {
+      console.log("inside if")
+      let extNames = [];
+      for (var key of Object.keys(cap?.extensions)) {
+        if (Array.isArray(cap?.extensions[key])) {
+          cap?.extensions[key].forEach((comp) => {
+            if (comp?.type === "full_page") {
+              let ext = {
+                name : key,
+                uri : comp?.href?.uri
+              }
+              extNames.push(ext)
             }
-            extNames.push(ext)
-          }
-        })
+          })
+        }
       }
-    }
 
-    extNames.forEach((ext) => {
-      if (matchComponentURI(ext?.uri, getPath())) {
-        this.props.updateExtensionType({ extensionType : ext.name });
-        let extensions = ExtensionPointSchemaValidator(ext.name)(cap?.extensions[ext.name]);
-        this.setState({ componentTitle : getComponentTitleFromPath(extensions, getPath()), isLoading : false });
-        this.props.updatepagetitle({ title : getComponentTitleFromPath(extensions, getPath()) });
-      }
-    })
+      extNames.forEach((ext) => {
+        if (matchComponentURI(ext?.uri, getPath())) {
+          this.props.updateExtensionType({ extensionType : ext.name });
+          let extensions = ExtensionPointSchemaValidator(ext.name)(cap?.extensions[ext.name]);
+          this.setState({ componentTitle : getComponentTitleFromPath(extensions, getPath()), isLoading : false });
+          this.props.updatepagetitle({ title : getComponentTitleFromPath(extensions, getPath()) });
+        }
+      })
+    }
+    // else, show signup card
+    this.setState({ isLoading : false })
   }
 
   render() {
@@ -145,7 +154,7 @@ class RemoteExtension extends React.Component {
           <title>{`${componentTitle} | Meshery` || ""}</title>
         </Head>
         {
-          extensionType ?
+          ((this.props.capabilitiesRegistry !== null) && !this.props.capabilitiesRegistry?.restrictedAccess?.isMesheryUiRestricted && extensionType)?
             (<NoSsr>
               {
                 (extensionType === 'navigator') ?
