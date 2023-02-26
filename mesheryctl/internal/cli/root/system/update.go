@@ -1,4 +1,4 @@
-// Copyright 2020 Layer5, Inc.
+// Copyright 2023 Layer5, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -29,6 +29,11 @@ import (
 	"github.com/spf13/viper"
 )
 
+var linkDocUpdate = map[string]string{
+	"link":    "![update-usage](/assets/img/mesheryctl/update.png)",
+	"caption": "Usage of mesheryctl system update",
+}
+
 // updateCmd represents the update command
 var updateCmd = &cobra.Command{
 	Use:   "update",
@@ -40,11 +45,8 @@ mesheryctl system update
 
 // Pull the latest manifest files alone
 mesheryctl system update --skip-reset
-
-! Refer below image link for usage
-* Usage of mesheryctl system update
-# ![update-usage](/assets/img/mesheryctl/update.png)
 	`,
+	Annotations: linkDocUpdate,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
 		hcOptions := &HealthCheckOptions{
