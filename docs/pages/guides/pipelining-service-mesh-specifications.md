@@ -9,11 +9,11 @@ language: en
 
 With growing adoption of service meshes in cloud native environments, service mesh abstractions - service mesh-neutral specifications - have emerged. <a href="https://layer5.io/projects/service-mesh-performance">Service Mesh Performance</a>  and <a href="https://layer5.io/projects/service-mesh-interface-conformance">Service Mesh Interface</a> are two open specifications that address the need for universal interfaces for interacting with and managing any type of service mesh. Let’s examine what each specification provides.
 
-<img src="{{ site.baseurl }}/assets/img/smp-dark-text-side.svg" className="image-left-no-shadow" alt="service mesh performance logo" style="width: 50%; height: 50%;" />
+<img src="{{ site.baseurl }}/assets/img/smp-dark-text-side.svg" className="image-left-no-shadow" alt="service mesh performance logo" style="width: 60; max-width: 250px;" />
 
 <a href="https://smp-spec.io">Service Mesh Performance</a> standardizes service mesh value measurement, characterizing any deployment's performance by capturing the details of infrastructure capacity, service mesh configuration and workload metadata.
 
-<img src="{{ site.baseurl }}/assets/img/servicemeshinterface-horizontal-stackedtext-color.svg" className="image-right-no-shadow" alt="service mesh interface logo" style="width: 50%; height: 50%;" />
+<img src="{{ site.baseurl }}/assets/img/servicemeshinterface-horizontal-stackedtext-color.svg" className="image-right-no-shadow" alt="service mesh interface logo" style="width: 60%; max-width: 250px;" />
 
 <a href="https://smi-spec.io">Service Mesh Interface</a> provides a standard interface for service meshes on Kubernetes. These (currently) four specfications offer a common denominator set of interfaces to support most common service mesh use cases and the flexibility to evolve to support new service mesh capabilities over time.
 
