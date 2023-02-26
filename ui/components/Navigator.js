@@ -21,8 +21,11 @@ import HelpIcon from '@material-ui/icons/Help';
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import LifecycleIcon from '../public/static/img/drawer-icons/lifecycle_mgmt_svg';
 import PerformanceIcon from '../public/static/img/drawer-icons/performance_svg';
+import ApplicationIcon from '../public/static/img/drawer-icons/application_svg';
 import ConformanceIcon from '../public/static/img/drawer-icons/conformance_svg';
 import ExtensionIcon from "../public/static/img/drawer-icons/extensions_svg";
+import FilterIcon from '../public/static/img/drawer-icons/filter_svg';
+import PatternIcon from '../public/static/img/drawer-icons/pattern_svg';
 import LifecycleHover from '../public/static/img/drawer-icons/lifecycle_hover_svg';
 import PerformanceHover from '../public/static/img/drawer-icons/performance_hover_svg';
 import ConfigurationHover from '../public/static/img/drawer-icons/configuration_hover_svg';
@@ -420,7 +423,7 @@ const getNavigatorComponents = (  /** @type {CapabilitiesRegistry} */  capabilit
     children : [
       {
         id : APPLICATION,
-        icon : <img src="/static/img/web-applications.svg" style={{ width : "1.21rem" }} />,
+        icon : <ApplicationIcon style={{ ...drawerIconsStyle }}/>,
         href : "/configuration/applications",
         title : "Applications",
         show : capabilityRegistryObj.isNavigatorComponentEnabled([CONFIGURATION, APPLICATION]),
@@ -429,7 +432,7 @@ const getNavigatorComponents = (  /** @type {CapabilitiesRegistry} */  capabilit
       },
       {
         id : FILTER,
-        icon : <img src="/static/img/web-filters.svg" style={{ width : "1.21rem" }} />,
+        icon : <FilterIcon style={{ ...drawerIconsStyle }}/>,
         href : "/configuration/filters",
         title : "Filters",
         show : capabilityRegistryObj.isNavigatorComponentEnabled([CONFIGURATION, FILTER]),
@@ -438,7 +441,7 @@ const getNavigatorComponents = (  /** @type {CapabilitiesRegistry} */  capabilit
       },
       {
         id : DESIGN,
-        icon : <img src="/static/img/pattern_trans.svg" style={{ width : "1.21rem" }} />,
+        icon : <PatternIcon style={{ ...drawerIconsStyle }} />,
         href : "/configuration/patterns",
         title : "Designs",
         show : capabilityRegistryObj.isNavigatorComponentEnabled([CONFIGURATION, DESIGN]),
