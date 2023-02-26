@@ -1,6 +1,6 @@
 import React from "react";
 import { NoSsr, withStyles } from "@material-ui/core";
-import MesheryFilters from "../../components/Filters";
+import MesheryFilters from "../../components/MesheryFilters/MesheryFilters";
 import { updatepagepath } from "../../lib/store";
 import { connect } from "react-redux";
 import { bindActionCreators } from 'redux';
