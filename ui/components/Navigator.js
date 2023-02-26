@@ -702,7 +702,7 @@ class Navigator extends React.Component {
       if (cat.id === LIFECYCLE) {
         cat.children.forEach((catc, ind1) => {
           const cr = self.fetchChildren(catc.id);
-          const icon = self.pickIcon(catc.id);
+          const icon = self.pickIcon(catc.id,catc.href);
           navigatorComponents[ind].children[ind1].icon = icon;
           navigatorComponents[ind].children[ind1].children = cr;
         });
@@ -805,14 +805,15 @@ class Navigator extends React.Component {
    *
    * @returns {JSX.Element} image to display
    */
-  pickIcon(aName) {
+  pickIcon(aName,href) {
     aName = aName.toLowerCase();
     const { classes } = this.props;
     let image = "/static/img/meshery-logo.png";
+    let filter = window.location.pathname == href ? "invert(50%) sepia(78%) saturate(2392%) hue-rotate(160deg) brightness(93%) contrast(101%)" : "";
     let logoIcon = <img src={image} className={classes.icon} />;
     if (aName) {
       image = "/static/img/" + aName + "-light.svg";
-      logoIcon = <img src={image} className={classes.icon} />;
+      logoIcon = <img src={image} className={classes.icon} style={{ filter : filter }}/>;
     }
     return logoIcon;
   }
