@@ -910,7 +910,7 @@ function MesheryPatterns({
                 handleClone(rowData.id, rowData.name)
               }
               }>
-                <CloneIcon fill="#ffffff" className={classes.iconPatt} />
+                <CloneIcon fill="currentColor" className={classes.iconPatt} />
               </IconButton> :
 
                 <IconButton onClick={(e) => {
