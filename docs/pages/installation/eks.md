@@ -30,31 +30,23 @@ Once you fulfil the above two requirements, you should be able to install Mesher
 
 To set the context to Kubernetes
 
- <pre class="codeblock-pre"><div class="codeblock">
- <div class="clipboardjs">
- $ mesheryctl system context create [context-name] -p kubernetes -s
- </div></div>
- </pre>
+{% capture code_content %}$ mesheryctl system context create [context-name] -p kubernetes -s{% endcapture %}
+{% include code.html code=code_content %}
  <br>
 
 Execute the following to start Meshery
 
- <pre class="codeblock-pre"><div class="codeblock">
- <div class="clipboardjs">
- $ mesheryctl system start 
- </div></div>
- </pre>
+{% capture code_content %}$ mesheryctl system start{% endcapture %}
+{% include code.html code=code_content %}
  <br>
 
 <button class="toggle-button" onclick="HideToggleFunction()">Optional</button> Customize your Meshery Provider Callback URL
 
 <div id="hiddendiv">
 Meshery Server supports customizing authentication flow callback URL, which can be configured in the following way
- <pre class="codeblock-pre"><div class="codeblock">
- <div class="clipboardjs">
- $ MESHERY_SERVER_CALLBACK_URL=https://custom-host mesheryctl system start
- </div></div>
- </pre>
+<br>
+{% capture code_content %}$ MESHERY_SERVER_CALLBACK_URL=https://custom-host mesheryctl system start{% endcapture %}
+{% include code.html code=code_content %}
  <br>
 Meshery should now be running in your EKS cluster and Meshery UI should be accessible at the `EXTERNAL IP` of `meshery` service.
 <br/>
@@ -68,19 +60,13 @@ Also see: [Install Meshery into Kubernetes](https://docs.meshery.io/installation
 
 Install Meshery in Docker
 
- <pre class="codeblock-pre"><div class="codeblock">
- <div class="clipboardjs">
- $ mesheryctl system start -p docker 
- </div></div>
- </pre>
+{% capture code_content %}$ mesheryctl system start -p docker{% endcapture %}
+{% include code.html code=code_content %}
  <br>
 
 Configure Meshery to connect to your cluster by executing:
 
- <pre class="codeblock-pre"><div class="codeblock">
- <div class="clipboardjs">
- $ mesheryctl system config eks
- </div></div>
- </pre>
+{% capture code_content %}$ mesheryctl system config eks{% endcapture %}
+{% include code.html code=code_content %}
  <br>
 Once you have verified that all the services are up and running, Meshery UI will be accessible on your local machine on port 9081. Open your browser and access Meshery at [`http://localhost:9081`](http://localhost:9081).

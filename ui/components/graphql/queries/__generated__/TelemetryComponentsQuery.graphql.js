@@ -1,6 +1,5 @@
 /**
- * @generated SignedSource<<f9bd220ab7ad404ef38ba545b942811b>>
- * @flow
+ * @generated SignedSource<<359e3faf308f403ed9207a13856d700b>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,25 +8,7 @@
 
 'use strict';
 
-/*::
-import type { ConcreteRequest, Query } from 'relay-runtime';
-export type TelemetryComponentsQuery$variables = {|
-  contexts?: ?$ReadOnlyArray<string>,
-|};
-export type TelemetryComponentsQuery$data = {|
-  +telemetryComps: $ReadOnlyArray<?{|
-    +name: string,
-    +spec: string,
-    +status: string,
-  |}>,
-|};
-export type TelemetryComponentsQuery = {|
-  variables: TelemetryComponentsQuery$variables,
-  response: TelemetryComponentsQuery$data,
-|};
-*/
-
-var node/*: ConcreteRequest*/ = (function(){
+var node = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -103,9 +84,6 @@ return {
 };
 })();
 
-(node/*: any*/).hash = "ec7907a52eb8925b7e063038d08beb85";
+node.hash = "ec7907a52eb8925b7e063038d08beb85";
 
-module.exports = ((node/*: any*/)/*: Query<
-  TelemetryComponentsQuery$variables,
-  TelemetryComponentsQuery$data,
->*/);
+module.exports = node;

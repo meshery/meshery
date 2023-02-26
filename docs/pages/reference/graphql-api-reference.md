@@ -20,11 +20,11 @@ Currently, Meshery requires a valid token in order to allow clients to invoke it
 Requests to any of the API endpoints must be authenticated and include a valid JWT access token in the HTTP headers. Type of authentication is determined by the selected [Provider](#providers). Use of the Local Provider, "None", puts Meshery into single-user mode and does not require authentication.
 
 {% include alert.html type="dark" title="What are authentication tokens?" content="Meshery authentication tokens allow users or systems to authenticate with Meshery Server via either its two clients, <a href='/reference/mesheryctl'>Meshery >CLI</a> and <a href='/extensibility/api#how-to-get-your-token'>UI</a>, or its two APIs: <a href='/reference/rest-apis'>REST</a> or <a href='/reference/graphql-apis'>GraphQL</a>. <p>Meshery's authentication token system provide secure access to Meshery's powerful management features.</p>" %}
-- Get your token through [Meshery UI](/concepts/architecture/ui), from the `Get Token` option.
+- Get your token through [Meshery UI](/extensibility/api#how-to-get-your-token), from the `Get Token` option.
 
   _Downloading the token_
 
-  <a href="{{ site.baseurl }}/assets/img/token/token.png"><img alt="Meshery Dashboard" src="{{ site.baseurl }}/assets/img/token/token.png" width="680" height="400"/></a>
+  <a href="{{ site.baseurl }}/assets/img/token/MesheryTokenUI.png"><img alt="Meshery Dashboard" src="{{ site.baseurl }}/assets/img/token/MesheryTokenUI.png" width="680" height="400"/></a>
   <br/>
   <br/>
 
@@ -33,9 +33,7 @@ Requests to any of the API endpoints must be authenticated and include a valid J
   To get the token through `mesheryctl` you would have to use the following command. (default "auth.json").
   <br/>
   <pre class="codeblock-pre">
-  <div class="codeblock"><div class="clipboardjs">
-  mesheryctl system login
-  </div></div>
+  <div class="codeblock"><div class="clipboardjs">mesheryctl system login</div></div>
   </pre>
   <br />
   <br/>

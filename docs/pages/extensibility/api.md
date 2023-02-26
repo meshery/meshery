@@ -44,7 +44,7 @@ Using Meshery UI, you can get a copy of your authentication token by following t
 
 Using Meshery CLI, you can get a copy of your authentication token by executing this command:
 
-<pre><code>mesheryctl system login</code></pre>
+{% include code.html code="mesheryctl system login" %}
 
 In order to use this command, you must have a web browser available on your system (this command cannot be executed on a headless system).  
 
@@ -70,4 +70,4 @@ Meshery provides a REST API available through the default port of `9081/tcp`.
 
 ## See Also
 
-- [Extension Points]({{site.baseurl}}/extensibility}})
+- [Extension Points](/extensibility)
