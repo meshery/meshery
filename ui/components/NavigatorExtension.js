@@ -8,7 +8,7 @@ import MesheryPerformanceComponent from "./MesheryPerformance";
 import dataFetch from "../lib/data-fetch";
 import PatternServiceForm from "./MesheryMeshInterface/PatternServiceForm";
 import PatternServiceFormCore from "./MesheryMeshInterface/PatternServiceFormCore";
-import environment, { subscriptionClient } from "../lib/relayEnvironment";
+import { createRelayEnvironment, subscriptionClient } from "../lib/relayEnvironment";
 import subscribeMeshSyncStatusEvents from "../components/graphql/subscriptions/MeshSyncStatusSubscription"
 import LoadingScreen from "./LoadingComponents/LoadingComponent";
 import usePreventUserFromLeavingPage from "../utils/hooks/usePreventUserFromLeavingPage";
@@ -70,7 +70,7 @@ function NavigatorExtension({ grafana, prometheus, updateLoadTestData, url, isDr
         prometheus,
         MesheryPerformanceComponent,
         dataFetch,
-        environment,
+        createRelayEnvironment,
         subscriptionClient,
         isDrawerCollapsed,
         LoadingScreen,
