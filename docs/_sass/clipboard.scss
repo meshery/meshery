@@ -18,6 +18,7 @@ pre.codeblock-pre {
 
 .codeblock {
   width: 100%;
+  position: relative;;
   display: inline-flex;
   overflow: auto;
   justify-content: left;
@@ -72,11 +73,10 @@ pre.codeblock-pre {
 .clipbtn:hover {
   color: #fff;
   cursor: pointer;
-  transform: scale(1.25);
 }
 
 .clipbtn:active{
   background-color: #495057;
-  transform: scale(1);
+  transform: scale(0.75);
 }
 
