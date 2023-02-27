@@ -103,6 +103,7 @@ clipboard.on("success", (e)=>{
     var icon = e.trigger.childNodes[0];
     var text = document.createElement('span');
     text.textContent = "Copied!";
+    text.style.color = "white";
 
     e.trigger.replaceChild(text, icon);
 
