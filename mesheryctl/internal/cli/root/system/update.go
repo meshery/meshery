@@ -180,9 +180,11 @@ mesheryctl system update --skip-reset
 				return
 			}
 			latest := latestVersions[len(latestVersions)-1]
-			log.Printf("A new release of mesheryctl is available: %s → %s", version, latest)
-			log.Printf("https://github.com/layer5io/meshery/releases/tag/%s", latest)
-			log.Print("Check https://docs.meshery.io/guides/upgrade#upgrading-meshery-cli for instructions on how to update mesheryctl\n")
+			if latest != version {
+				log.Printf("A new release of mesheryctl is available: %s → %s", version, latest)
+				log.Printf("https://github.com/layer5io/meshery/releases/tag/%s", latest)
+				log.Print("Check https://docs.meshery.io/guides/upgrade#upgrading-meshery-cli for instructions on how to update mesheryctl\n")
+			}
 		}
 	},
 }
