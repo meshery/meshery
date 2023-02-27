@@ -45,6 +45,9 @@ Please research the internet to install these components. However, here are a fe
 - nodejs (for npm): [https://phoenixnap.com/kb/install-node-js-npm-on-windows](https://phoenixnap.com/kb/install-node-js-npm-on-windows)
 - go: [https://go.dev/doc/install](https://go.dev/doc/install)
 
+## Using Hyper-V to install a linux VM
+
+Here is a link to install linux VM using Hyper-V: [https://wiki.ubuntu.com/Hyper-V](https://wiki.ubuntu.com/Hyper-V)
 
 ### Git Bash  
 Git Bash is a terminal emulator which provides git command line experience. This will make working with git easier. You can download it from here: [https://git-scm.com/downloads](https://git-scm.com/downloads)
