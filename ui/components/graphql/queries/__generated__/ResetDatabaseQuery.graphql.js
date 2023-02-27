@@ -1,6 +1,5 @@
 /**
- * @generated SignedSource<<fb4f2e789f74ac2e7d93af7785c3e673>>
- * @flow
+ * @generated SignedSource<<a84076187375aaa2ced461e37f44710e>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,28 +8,7 @@
 
 'use strict';
 
-/*::
-import type { ConcreteRequest, Query } from 'relay-runtime';
-export type Status = "ENABLED" | "CONNECTED" | "DISABLED" | "PROCESSING" | "UNKNOWN" | "%future added value";
-export type ReSyncActions = {|
-  clearDB: string,
-  ReSync: string,
-  hardReset: string,
-|};
-export type ResetDatabaseQuery$variables = {|
-  selector: ReSyncActions,
-  k8scontextID: string,
-|};
-export type ResetDatabaseQuery$data = {|
-  +resetStatus: Status,
-|};
-export type ResetDatabaseQuery = {|
-  variables: ResetDatabaseQuery$variables,
-  response: ResetDatabaseQuery$data,
-|};
-*/
-
-var node/*: ConcreteRequest*/ = (function(){
+var node = (function(){
 var v0 = {
   "defaultValue": null,
   "kind": "LocalArgument",
@@ -95,9 +73,6 @@ return {
 };
 })();
 
-(node/*: any*/).hash = "54a9344cc4d95023f5082936dc95d05d";
+node.hash = "54a9344cc4d95023f5082936dc95d05d";
 
-module.exports = ((node/*: any*/)/*: Query<
-  ResetDatabaseQuery$variables,
-  ResetDatabaseQuery$data,
->*/);
+module.exports = node;

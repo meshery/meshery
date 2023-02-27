@@ -1,6 +1,5 @@
 /**
- * @generated SignedSource<<0d298ea50d3a9a725b1cd2e0d0ef5854>>
- * @flow
+ * @generated SignedSource<<16aa4fb154990d0451a4d469d4e27328>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,33 +8,7 @@
 
 'use strict';
 
-/*::
-import type { ConcreteRequest, GraphQLSubscription } from 'relay-runtime';
-export type Status = "ENABLED" | "CONNECTED" | "DISABLED" | "PROCESSING" | "UNKNOWN" | "%future added value";
-export type MeshSyncStatusSubscription$variables = {|
-  k8scontextIDs?: ?$ReadOnlyArray<string>,
-|};
-export type MeshSyncStatusSubscription$data = {|
-  +listenToMeshSyncEvents: ?{|
-    +contextID: string,
-    +OperatorControllerStatus: {|
-      +name: string,
-      +status: Status,
-      +version: string,
-      +error: ?{|
-        +code: string,
-        +description: string,
-      |},
-    |},
-  |},
-|};
-export type MeshSyncStatusSubscription = {|
-  variables: MeshSyncStatusSubscription$variables,
-  response: MeshSyncStatusSubscription$data,
-|};
-*/
-
-var node/*: ConcreteRequest*/ = (function(){
+var node = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -154,9 +127,6 @@ return {
 };
 })();
 
-(node/*: any*/).hash = "ad82236368e06dbae0e9f6008f6dc032";
+node.hash = "ad82236368e06dbae0e9f6008f6dc032";
 
-module.exports = ((node/*: any*/)/*: GraphQLSubscription<
-  MeshSyncStatusSubscription$variables,
-  MeshSyncStatusSubscription$data,
->*/);
+module.exports = node;

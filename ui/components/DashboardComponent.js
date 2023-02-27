@@ -5,7 +5,7 @@ import {
 // import {Table, TableBody, TableContainer, TableHead, TableRow,} from "@material-ui/core"
 import blue from "@material-ui/core/colors/blue";
 import Grid from "@material-ui/core/Grid";
-import { createTheme, withStyles, MuiThemeProvider } from "@material-ui/core/styles";
+import { withStyles, MuiThemeProvider } from "@material-ui/core/styles";
 import AddIcon from "@material-ui/icons/AddCircleOutline";
 import CloseIcon from "@material-ui/icons/Close";
 import SettingsIcon from "@material-ui/icons/Settings";
@@ -32,6 +32,8 @@ import MUIDataTable from "mui-datatables";
 import Popup from "./Popup";
 import { iconMedium } from "../css/icons.styles";
 import { extractURLFromScanData } from "./ConnectionWizard/helpers/metrics";
+import { configurationTableTheme, configurationTableThemeDark } from '../themes/configurationTableTheme';
+
 
 const styles = (theme) => ({
   rootClass : { backgroundColor : theme.palette.secondary.elevatedComponents2, },
@@ -711,70 +713,6 @@ class DashboardComponent extends React.Component {
     );
   };
 
-  getMuiTheme = () => createTheme({
-    shadows : ["none"],
-    overrides : {
-      MUIDataTable : {
-      },
-      MuiInput : {
-        underline : {
-          "&:hover:not(.Mui-disabled):before" : {
-            borderBottom : "2px solid #222"
-          },
-          "&:after" : {
-            borderBottom : "2px solid #222"
-          }
-        }
-      },
-      MUIDataTableSearch : {
-        searchIcon : {
-          color : "#607d8b",
-          marginTop : "7px",
-          marginRight : "8px",
-        },
-        clearIcon : {
-          "&:hover" : {
-            color : "#607d8b"
-          }
-        },
-      },
-      MUIDataTableSelectCell : {
-        checkboxRoot : {
-          '&$checked' : {
-            color : '#607d8b',
-          },
-        },
-      },
-      MUIDataTableToolbar : {
-        iconActive : {
-          color : "#222"
-        },
-        icon : {
-          "&:hover" : {
-            color : "#607d8b"
-          }
-        },
-      },
-    }
-  })
-  getDarkMuiTheme = () => createTheme({
-    shadows : ["none"],
-    palette : {
-      type : "dark",
-    },
-    overrides : {
-      MuiPaper : { root : { backgroundColor : '#363636' } },
-      MuiFormLabel : {
-        root : {
-          "&$focused" : {
-            color : "#00B39F",
-          },
-        }
-      },
-    }
-  })
-
-
   /**
    * Meshcard takes in the mesh related data
    * and renders a table along with other information of
@@ -970,7 +908,7 @@ class DashboardComponent extends React.Component {
     if (Array.isArray(components) && components.length)
       return (
         <Paper elevation={1} style={{ padding : "2rem", marginTop : "1rem" }}>
-          <MuiThemeProvider theme={theme.palette.type == "dark" ? this.getDarkMuiTheme() : this.getMuiTheme()}>
+          <MuiThemeProvider theme={theme.palette.type == "dark" ? configurationTableThemeDark() : configurationTableTheme() }>
 
             <MUIDataTable
               className={this.props.classes.datatable}
@@ -1091,7 +1029,7 @@ class DashboardComponent extends React.Component {
     if (Array.isArray(resources) && resources.length)
       return (
         <Paper elevation={1} style={{ padding : "2rem" }}>
-          <MuiThemeProvider theme={theme.palette.type == "dark" ? this.getDarkMuiTheme() : this.getMuiTheme()}>
+          <MuiThemeProvider theme={theme.palette.type == "dark" ? configurationTableThemeDark() : configurationTableTheme()}>
             <MUIDataTable
               title={
                 <>
