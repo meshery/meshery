@@ -60,7 +60,7 @@ Restart your WSL VM before moving forward.
 - For installing Ruby, run:
   ```bash
     rvm install ruby
-    rvm --default use ruby 2.7.1
+    rvm --default use ruby 2.7.5
     gem update
     gem install jekyll bundler
   ```
@@ -188,7 +188,7 @@ So, you need to follow either of the three steps to resolve this problem;
 
 ```
 source "https://rubygems.org"
-ruby '2.7.1' //to any version you have installed
+ruby '2.7.5' //to any version you have installed
 ```
 
 Automatically the `Gemfile.lock` will update once the `make docs` is given (for Windows, run `bundle exec jekyll serve` if WSL2 isn't present)
