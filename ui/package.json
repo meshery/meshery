@@ -17,7 +17,7 @@
     "test-integration": "cypress run --spec 'cypress/e2e/integration/**/*'",
     "test-e2e": "cypress run --spec 'cypress/e2e/e2e/**/*'",
     "ci-test-integration": "start-server-and-test dev http://localhost:3000 test-integration",
-    "relay": "relay-compiler --src ./components --schema ../server/internal/graphql/schema/schema.graphql",
+    "relay": "relay-compiler",
     "prepare": "cd .. && husky install ui/.husky",
     "cy:dev:open": "start-server-and-test dev http://localhost:3000 cy:open",
     "postinstall": "patch-package"
@@ -109,7 +109,6 @@
     "relay-runtime": "^14.0.0",
     "set-value": "^4.0.1",
     "styled-jsx": "^4.0.1",
-    "subscriptions-transport-ws": "^0.9.19",
     "tar": "^6.1.12",
     "universal-cookie": "^4.0.4",
     "uuid": "^8.3.2"
@@ -133,7 +132,7 @@
     "lint-staged": "^13.1.0",
     "nodemon": "^2.0.20",
     "nyc": "^15.1.0",
-    "relay-compiler": "^13.2.0",
+    "relay-compiler": "^14.1.0",
     "start-server-and-test": "^1.13.1",
     "webpack": "^5.75.0",
     "webpack-cli": "^4.9.2"
