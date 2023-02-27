@@ -1,6 +1,5 @@
 /**
- * @generated SignedSource<<3f8e706210e59168563a58ae4724c63c>>
- * @flow
+ * @generated SignedSource<<f97047255e02327cdd44fbcb3090b49c>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,26 +8,7 @@
 
 'use strict';
 
-/*::
-import type { ConcreteRequest, Mutation } from 'relay-runtime';
-export type Status = "ENABLED" | "CONNECTED" | "DISABLED" | "PROCESSING" | "UNKNOWN" | "%future added value";
-export type OperatorStatusInput = {|
-  targetStatus: Status,
-  contextID: string,
-|};
-export type OperatorStatusMutation$variables = {|
-  input?: ?OperatorStatusInput,
-|};
-export type OperatorStatusMutation$data = {|
-  +operatorStatus: Status,
-|};
-export type OperatorStatusMutation = {|
-  variables: OperatorStatusMutation$variables,
-  response: OperatorStatusMutation$data,
-|};
-*/
-
-var node/*: ConcreteRequest*/ = (function(){
+var node = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -79,9 +59,6 @@ return {
 };
 })();
 
-(node/*: any*/).hash = "fc306fe156aa1a0f9984281666bd7693";
+node.hash = "fc306fe156aa1a0f9984281666bd7693";
 
-module.exports = ((node/*: any*/)/*: Mutation<
-  OperatorStatusMutation$variables,
-  OperatorStatusMutation$data,
->*/);
+module.exports = node;

@@ -27,10 +27,11 @@ import resetDatabase from './graphql/queries/ResetDatabaseQuery';
 import { iconMedium } from '../css/icons.styles';
 import subscribeMeshModelSummary from "./graphql/subscriptions/MeshModelSummarySubscription";
 import fetchMeshModelSummary from "./graphql/queries/MeshModelSummaryQuery";
-import { MuiThemeProvider, createTheme } from '@material-ui/core/styles';
+import { MuiThemeProvider } from '@material-ui/core/styles';
 import MesherySettingsEnvButtons from './MesherySettingsEnvButtons';
 import MeshModelComponent from './MeshModelComponent';
 import DataTable from "mui-datatables";
+import { configurationTableTheme, configurationTableThemeDark } from '../themes/configurationTableTheme';
 
 
 const styles = (theme) => ({
@@ -93,7 +94,7 @@ const styles = (theme) => ({
     maxWidth : "90%"
   },
   dashboardSection : {
-    backgroundColor : "#fff",
+    backgroundColor : theme.palette.secondary.elevatedComponents,
     padding : theme.spacing(2),
     borderRadius : 4,
     height : "100%",
@@ -277,53 +278,6 @@ class MesherySettings extends React.Component {
     return "No MeshModel registered."
   }
 
-  getMuiTheme = () => createTheme({
-    shadows : ["none"],
-    overrides : {
-      MUIDataTable : {
-      },
-      MuiInput : {
-        underline : {
-          "&:hover:not(.Mui-disabled):before" : {
-            borderBottom : "2px solid #222"
-          },
-          "&:after" : {
-            borderBottom : "2px solid #222"
-          }
-        }
-      },
-      MUIDataTableSearch : {
-        searchIcon : {
-          color : "#607d8b",
-          marginTop : "7px",
-          marginRight : "8px",
-        },
-        clearIcon : {
-          "&:hover" : {
-            color : "#607d8b"
-          }
-        },
-      },
-      MUIDataTableSelectCell : {
-        checkboxRoot : {
-          '&$checked' : {
-            color : '#607d8b',
-          },
-        },
-      },
-      MUIDataTableToolbar : {
-        iconActive : {
-          color : "#222"
-        },
-        icon : {
-          "&:hover" : {
-            color : "#607d8b"
-          }
-        },
-      },
-    }
-  })
-
   /**
    * MeshModelSummaryCard takes in the meshmodel related data
    * and renders a table with registered meshmodel information of
@@ -338,6 +292,7 @@ class MesherySettings extends React.Component {
     const self = this;
     let kindSort = "asc";
     let countSort = "asc";
+    const { theme } = this.props;
     const switchSortOrder = (type) => {
       if (type === "kindSort") {
         kindSort = (kindSort === "asc") ? "desc" : "asc";
@@ -425,7 +380,7 @@ class MesherySettings extends React.Component {
     if (Array.isArray(meshmodelSummary) && meshmodelSummary?.length)
       return (
         <Paper elevation={1} style={{ padding : "2rem" }}>
-          <MuiThemeProvider theme={this.getMuiTheme()}>
+          <MuiThemeProvider theme={ theme.palette.type == "dark" ?  configurationTableThemeDark() : configurationTableTheme() }>
             <DataTable
               title={
                 <>
@@ -782,6 +737,6 @@ const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(
 
 MesherySettings.propTypes = { classes : PropTypes.object, };
 
-export default withStyles(styles)(
+export default withStyles(styles, { withTheme : true })(
   connect(mapStateToProps, mapDispatchToProps)(withRouter(withSnackbar(MesherySettings)))
 );

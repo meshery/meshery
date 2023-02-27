@@ -20,14 +20,12 @@ import (
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
-
 	"gopkg.in/yaml.v2"
-
-	v1core "k8s.io/api/core/v1"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	meshkitutils "github.com/layer5io/meshkit/utils"
 	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
+	v1core "k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 var (
@@ -138,21 +136,22 @@ func DownloadOperatorManifest() error {
 // returns the Channel and Version given a context
 func GetChannelAndVersion(currCtx *(config.Context)) (string, string, error) {
 	var version, channel string
-	var err error
-
 	version = currCtx.GetVersion()
 	channel = currCtx.GetChannel()
 	if version == "latest" {
 		if channel == "edge" {
 			version = "master"
 		} else {
-			version, err = GetLatestStableReleaseTag()
+			versions, err := meshkitutils.GetLatestReleaseTagsSorted(constants.GetMesheryGitHubOrg(), constants.GetMesheryGitHubRepo())
 			if err != nil {
 				return "", "", err
 			}
+			if len(versions) == 0 {
+				return "", "", fmt.Errorf("no versions found")
+			}
+			version = versions[len(versions)-1]
 		}
 	}
-
 	return channel, version, nil
 }
 
@@ -287,30 +286,6 @@ func FetchManifests(currCtx *(config.Context)) ([]Manifest, error) {
 	return manifests, nil
 }
 
-// GetLatestStableReleaseTag fetches and returns the latest release tag from GitHub
-func GetLatestStableReleaseTag() (string, error) {
-	url := "https://github.com/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/releases/latest"
-	resp, err := http.Get(url)
-	if err != nil {
-		return "", errors.Wrapf(err, "failed to make GET request to %s", url)
-	}
-	defer SafeClose(resp.Body)
-
-	if resp.StatusCode != http.StatusOK {
-		return "", errors.New("failed to get latest stable release tag")
-	}
-
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return "", errors.Wrap(err, "failed to read response body")
-	}
-	re := regexp.MustCompile("/releases/tag/(.*?)\"")
-	releases := re.FindAllString(string(body), -1)
-	latest := strings.ReplaceAll(releases[0], "/releases/tag/", "")
-	latest = strings.ReplaceAll(latest, "\"", "")
-	return latest, nil
-}
-
 // IsAdapterValid checks if the component mentioned by the user is a valid component
 func IsAdapterValid(manifestArr []Manifest, componentManifest string) bool {
 	for _, v := range manifestArr {
@@ -332,10 +307,14 @@ func DownloadDockerComposeFile(ctx *config.Context, force bool) error {
 			fileURL = "https://raw.githubusercontent.com/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/master/install/docker/docker-compose.yaml"
 		} else if ctx.Channel == "stable" {
 			if ctx.Version == "latest" {
-				ReleaseTag, err = GetLatestStableReleaseTag()
+				versions, err := meshkitutils.GetLatestReleaseTagsSorted(constants.GetMesheryGitHubOrg(), constants.GetMesheryGitHubRepo())
 				if err != nil {
 					return errors.Wrapf(err, "failed to fetch latest stable release tag")
 				}
+				if len(versions) == 0 {
+					return fmt.Errorf("no versions found")
+				}
+				ReleaseTag = versions[len(versions)-1]
 			} else { // else we get version tag from the config file
 				mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 				if err != nil {
