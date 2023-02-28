@@ -263,7 +263,10 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int, g http.
 			provider.ExtractToken(w, req)
 		}), models.ProviderAuth))).Methods("GET")
 
-	// TODO: have to change this too
+	// session injector middleWare in logs, is important to distinguish between the users and sessions and log files created for them
+	gMux.Handle("/api/experimental/logs", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.LogHandler), models.ProviderAuth))).Methods("GET", "POST")
+
+	// TODO: have to change this to	o
 	gMux.Handle("/favicon.ico", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Cache-Control", "public, max-age=3600") // 1 hr
 		http.ServeFile(w, r, "../ui/out/static/img/meshery-logo/meshery-logo.svg")
