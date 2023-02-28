@@ -151,8 +151,8 @@ func main() {
 			// 	fmt.Println(md)
 			// }
 			mesheryDocsJSON += jsonItem + ","
-
-			pathToIntegrationsLayer5, _ := filepath.Abs(filepath.Join("../../../", pathToIntegrationsLayer5, out["model"]))
+			modelName := strings.TrimSpace(out["model"])
+			pathToIntegrationsLayer5, _ := filepath.Abs(filepath.Join("../../../", pathToIntegrationsLayer5, modelName))
 			pathToIntegrationsMeshery, _ := filepath.Abs(filepath.Join("../../../", pathToIntegrationsMeshery))
 			err = os.MkdirAll(pathToIntegrationsLayer5, 0777)
 			if err != nil {
@@ -168,7 +168,7 @@ func main() {
 				panic(err)
 			}
 
-			err = pkg.WriteSVG(filepath.Join(pathToIntegrationsLayer5, "icon", "color", out["model"]+"-color.svg"), svgcolor) //CHANGE PATH
+			err = pkg.WriteSVG(filepath.Join(pathToIntegrationsLayer5, "icon", "color", modelName+"-color.svg"), svgcolor) //CHANGE PATH
 			if err != nil {
 				panic(err)
 			}
@@ -176,7 +176,7 @@ func main() {
 			if err != nil {
 				panic(err)
 			}
-			err = pkg.WriteSVG(filepath.Join(pathToIntegrationsLayer5, "icon", "white", out["model"]+"-white.svg"), svgwhite) //CHANGE PATH
+			err = pkg.WriteSVG(filepath.Join(pathToIntegrationsLayer5, "icon", "white", modelName+"-white.svg"), svgwhite) //CHANGE PATH
 			if err != nil {
 				panic(err)
 			}
@@ -187,12 +187,12 @@ func main() {
 				panic(err)
 			}
 
-			err = pkg.WriteSVG(filepath.Join(pathToIntegrationsMeshery, "../", "images", out["model"]+"-color.svg"), svgcolor) //CHANGE PATH
+			err = pkg.WriteSVG(filepath.Join(pathToIntegrationsMeshery, "../", "images", modelName+"-color.svg"), svgcolor) //CHANGE PATH
 			if err != nil {
 				panic(err)
 			}
 
-			err = pkg.WriteSVG(filepath.Join(pathToIntegrationsMeshery, "../", "images", out["model"]+"-white.svg"), svgwhite) //CHANGE PATH
+			err = pkg.WriteSVG(filepath.Join(pathToIntegrationsMeshery, "../", "images", modelName+"-white.svg"), svgwhite) //CHANGE PATH
 			if err != nil {
 				panic(err)
 			}
