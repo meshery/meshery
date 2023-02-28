@@ -154,13 +154,13 @@ func (mch *MesheryControllersHelper) UpdateCtxControllerHandlers(ctxs []K8sConte
 // update the status of MesheryOperator in all the contexts
 // for whom MesheryControllers are attached
 // should be called after UpdateCtxControllerHandlers
-func (mch *MesheryControllersHelper) UpdateOperatorsStatusMap(isUndeployed map[string]bool) *MesheryControllersHelper {
+func (mch *MesheryControllersHelper) UpdateOperatorsStatusMap(ot *OperatorTracker) *MesheryControllersHelper {
 	go func(mch *MesheryControllersHelper) {
 		mch.mu.Lock()
 		defer mch.mu.Unlock()
 		mch.ctxOperatorStatusMap = make(map[string]controllers.MesheryControllerStatus)
 		for ctxID, ctrlHandler := range mch.ctxControllerHandlersMap {
-			if isUndeployed[ctxID] {
+			if ot.IsUndeployed(ctxID) {
 				mch.ctxOperatorStatusMap[ctxID] = controllers.Undeployed
 			} else {
 				mch.ctxOperatorStatusMap[ctxID] = ctrlHandler[MesheryOperator].GetStatus()
@@ -171,12 +171,50 @@ func (mch *MesheryControllersHelper) UpdateOperatorsStatusMap(isUndeployed map[s
 	return mch
 }
 
-var OperatorIsUndeployed = make(map[string]bool)
-var Opmx sync.Mutex
+type OperatorTracker struct {
+	ctxIDtoDeploymentStatus map[string]bool
+	mx                      sync.Mutex
+	DisableOperator         bool
+}
+
+func NewOperatorTracker(disabled bool) *OperatorTracker {
+	return &OperatorTracker{
+		ctxIDtoDeploymentStatus: make(map[string]bool),
+		mx:                      sync.Mutex{},
+		DisableOperator:         disabled,
+	}
+}
+
+func (ot *OperatorTracker) Undeployed(ctxID string, undeployed bool) {
+	if ot.DisableOperator { //no-op when operator is disabled
+		return
+	}
+	ot.mx.Lock()
+	defer ot.mx.Unlock()
+	if ot.ctxIDtoDeploymentStatus == nil {
+		ot.ctxIDtoDeploymentStatus = make(map[string]bool)
+	}
+	ot.ctxIDtoDeploymentStatus[ctxID] = undeployed
+}
+func (ot *OperatorTracker) IsUndeployed(ctxID string) bool {
+	if ot.DisableOperator { //Return true everytime so that operators stay in undeployed state across all contexts
+		return true
+	}
+	ot.mx.Lock()
+	defer ot.mx.Unlock()
+	if ot.ctxIDtoDeploymentStatus == nil {
+		ot.ctxIDtoDeploymentStatus = make(map[string]bool)
+		return false
+	}
+	return ot.ctxIDtoDeploymentStatus[ctxID]
+}
 
 // looks at the status of Meshery Operator for each cluster and takes necessary action.
 // it will deploy the operator only when it is in NotDeployed state
-func (mch *MesheryControllersHelper) DeployUndeployedOperators(operatorState map[string]bool) *MesheryControllersHelper {
+func (mch *MesheryControllersHelper) DeployUndeployedOperators(ot *OperatorTracker) *MesheryControllersHelper {
+	if ot.DisableOperator { //Return true everytime so that operators stay in undeployed state across all contexts
+		return mch
+	}
 	go func(mch *MesheryControllersHelper) {
 		mch.mu.Lock()
 		defer mch.mu.Unlock()
