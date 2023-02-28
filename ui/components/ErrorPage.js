@@ -31,7 +31,7 @@ const styles = makeStyles((theme) => ({
   },
 
   discussionforumlink : {
-    color : theme.palette.type === "dark" ? '#00B39F' : '#00B39F'
+    color : theme.palette.type === "dark" ? '#00B39F': '#'
   },
 
   mesh : {
