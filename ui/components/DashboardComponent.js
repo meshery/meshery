@@ -93,6 +93,7 @@ const styles = (theme) => ({
     padding : theme.spacing(2),
     borderRadius : 4,
     height : "100%",
+    marginBottom : theme.spacing(2),
   },
 });
 class DashboardComponent extends React.Component {
