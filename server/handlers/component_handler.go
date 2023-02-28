@@ -308,7 +308,7 @@ type ModelResponse struct {
 // ?pagesize={pagesize} Default pagesize is 25. To return all results: pagesize=all
 // responses:
 //
-//	200: ModelResponse
+//	200: []ModelResponse
 func (h *Handler) GetMeshmodelEntititiesByModel(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
