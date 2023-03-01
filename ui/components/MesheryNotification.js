@@ -305,29 +305,31 @@ class MesheryNotification extends React.Component {
       <div>
         <NoSsr>
           <Tooltip title={toolTipMsg}>
-            <IconButton
-              id="notification-button"
-              className={classes.notificationButton}
-              buttonRef={(node) => {
-                this.anchorEl = node;
-              }}
-              color="inherit"
-              onClick={this.handleToggle}
+            <>
+              <IconButton
+                id="notification-button"
+                className={classes.notificationButton}
+                buttonRef={(node) => {
+                  this.anchorEl = node;
+                }}
+                color="inherit"
+                onClick={this.handleToggle}
 
-              onMouseOver={(e) => {
-                e.preventDefault();
-                this.setState({ anchorEl : true })
-              }}
+                onMouseOver={(e) => {
+                  e.preventDefault();
+                  this.setState({ anchorEl : true })
+                }}
 
-              onMouseLeave={(e) => {
-                e.preventDefault();
-                this.setState({ anchorEl : false })
-              }}
-            >
-              <Badge id="notification-badge" badgeContent={getNotificationCount(events)} color={badgeColorVariant}>
-                <NotificationIcon  style={iconMedium}  type={badgeColorVariant} />
-              </Badge>
-            </IconButton>
+                onMouseLeave={(e) => {
+                  e.preventDefault();
+                  this.setState({ anchorEl : false })
+                }}
+              >
+                <Badge id="notification-badge" badgeContent={getNotificationCount(events)} color={badgeColorVariant}>
+                  <NotificationIcon  style={iconMedium}  type={badgeColorVariant} />
+                </Badge>
+              </IconButton>
+            </>
           </Tooltip>
 
           <ClickAwayListener onClickAway={(e) => {
