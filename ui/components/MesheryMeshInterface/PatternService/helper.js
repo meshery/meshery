@@ -40,12 +40,10 @@ export function getRefinedJsonSchema(jsonSchema, hideTitle = true, handleError) 
 function handleExceptionalFields(schema) {
   const xKubernetesIntOrString = 'x-kubernetes-int-or-string';
   const xKubernetesPreserveUnknownFields = 'x-kubernetes-preserve-unknown-fields';
-  const additionalProperties = 'additionalProperties';
 
   const exceptionalFieldToTypeMap = {
     [xKubernetesIntOrString] : 'string', // string can hold integers too
     [xKubernetesPreserveUnknownFields] : schema?.type || 'object',
-    [additionalProperties] : 'string'
   }
 
   let returnedType;
@@ -70,6 +68,10 @@ function handleExceptionalFields(schema) {
 function recursivelyParseJsonAndCheckForNonRJSFCompliantFields(jsonSchema) {
   if (!jsonSchema || _.isEmpty(jsonSchema)) {
     return;
+  }
+
+  if (jsonSchema.type === "object" && jsonSchema.additionalProperties) {
+    recursivelyParseJsonAndCheckForNonRJSFCompliantFields(jsonSchema.additionalProperties);
   }
 
   if (jsonSchema.type === "object") {
