@@ -1,6 +1,5 @@
 /**
- * @generated SignedSource<<ac4995adbbbad880a997b8845afcb5f0>>
- * @flow
+ * @generated SignedSource<<7e25c5992afac17ee968aebd9882822f>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,27 +8,7 @@
 
 'use strict';
 
-/*::
-import type { ConcreteRequest, GraphQLSubscription } from 'relay-runtime';
-export type ClusterResourcesSubscription$variables = {|
-  k8scontextIDs?: ?$ReadOnlyArray<string>,
-  namespace: string,
-|};
-export type ClusterResourcesSubscription$data = {|
-  +clusterResources: {|
-    +resources: $ReadOnlyArray<{|
-      +kind: string,
-      +count: number,
-    |}>,
-  |},
-|};
-export type ClusterResourcesSubscription = {|
-  variables: ClusterResourcesSubscription$variables,
-  response: ClusterResourcesSubscription$data,
-|};
-*/
-
-var node/*: ConcreteRequest*/ = (function(){
+var node = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -119,9 +98,6 @@ return {
 };
 })();
 
-(node/*: any*/).hash = "2722cb19adcd7e786a91856efcff3e1c";
+node.hash = "2722cb19adcd7e786a91856efcff3e1c";
 
-module.exports = ((node/*: any*/)/*: GraphQLSubscription<
-  ClusterResourcesSubscription$variables,
-  ClusterResourcesSubscription$data,
->*/);
+module.exports = node;

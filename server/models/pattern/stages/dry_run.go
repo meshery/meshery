@@ -7,16 +7,10 @@ import (
 
 // import "github.com/layer5io/meshery/server/models/pattern/patterns"
 
-const DRY_RUN_RESPONSE_KEY = "dryRunResponse"
+const DryRunResponseKey = "dryRunResponse"
 
-type DryRunResponse struct {
-	Status string
-	Causes []DryRunFailureCause
-}
-type DryRunFailureCause struct {
-	Type    string
-	Message string
-	Field   string
+var mesheryDefinedAPIVersions = map[string]bool{
+	"core.oam.dev/v1alpha1": true,
 }
 
 // There are two types of errors here:
@@ -33,7 +27,10 @@ func DryRun(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFunct
 			return
 		}
 		var comps []v1alpha1.Component
-		for name := range data.Pattern.Services {
+		for name, svc := range data.Pattern.Services {
+			if mesheryDefinedAPIVersions[svc.APIVersion] {
+				continue
+			}
 			comp, err := data.Pattern.GetApplicationComponent(name)
 			if err != nil {
 				continue
@@ -53,7 +50,7 @@ func DryRun(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFunct
 		if data.Other == nil {
 			data.Other = make(map[string]interface{})
 		}
-		data.Other[DRY_RUN_RESPONSE_KEY] = resp
+		data.Other[DryRunResponseKey] = resp
 		data.Lock.Unlock()
 		if next != nil {
 			next(data, err)

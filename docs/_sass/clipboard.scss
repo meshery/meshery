@@ -1,56 +1,58 @@
 pre.codeblock-pre {
-    display: inline-flex;
-    justify-content: left;
-    text-align: left;
-    align-items: left;
-    align-content: left;
-    flex-wrap: nowrap;
-    flex-direction: row;
-    background-color: #111;
-    margin: 0;
-    padding: 10px;
-    border-radius: 0.3rem;
-    width: 100%;
+  display: inline-flex;
+  justify-content: left;
+  text-align: left;
+  align-items: left;
+  align-content: left;
+  flex-wrap: nowrap;
+  flex-direction: row;
+  overflow: hidden !important;
+  margin: 0;
+  font-size: 1.5rem;
+  border-radius: 4px;
+  width: 100%;
+  box-shadow: var(--box-shadow-primary);
+  background-color: var(--color-secondary-dark) !important;
+  max-width: 700px;
 }
 
 .codeblock {
-    width: 100%;
-    display: inline-flex;
-    overflow: auto;
-    justify-content: left;
-    color: #ddd;
-    margin: 0px;
-    padding: 0px;
+  width: 100%;
+  display: inline-flex;
+  overflow: auto;
+  justify-content: left;
+  color: var(--color-primary-medium);
+  margin: 0px;
+  padding: 0px;
 }
 
 .clipboardjs {
-    display: inline-flex;
-    align-self: flex-end;
-    justify-content: left;
-    width: 100%;
-    overflow-x: auto;
-    padding: 0px;
-    margin: 0px;
+  width: 100%;
+  overflow-x: auto;
+  padding: 1rem;
+  margin: 0px;
+  color: var(--color-primary-medium);
 }
 
 .btn-copy-wrap {
-    align-content: flex-end;
-    z-index: 9;
-    position:relative
+  align-content: flex-end;
+  z-index: 9;
+  position: relative;
 }
 
 .clipbtn {
-    position: absolute;
-    top: -35px;
-    right: 0;
-    margin: 5px;
-    border: 0px;
-    background-color: transparent;
-    color: #ccc;
-    font-size: 1.2rem;
+  right: 0;
+  margin: 5px;
+  border: 0px;
+  background-color: transparent;
+  font-size: 1.5rem;
+  & i::before {
+    color: #f1f3f5 !important;
+  }
 }
 
 .clipbtn:hover {
-    color: #fff;
-    cursor: pointer;
+  color: #fff;
+  cursor: pointer;
 }
+

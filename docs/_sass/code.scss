@@ -1,0 +1,77 @@
+code {
+  font-size: 87.5%;
+  color: #952a1e;
+  word-break: break-word;
+}
+.td-content {
+  p code,
+  li > code,
+  table code {
+    color: inherit;
+    padding: 0.2em 0.4em;
+    margin: 0;
+    font-size: 85%;
+    word-break: normal;
+    background-color: var(--color-primary-dark);
+    border-radius: 0.25rem;
+  }
+}
+.card,
+.td-content .highlight {
+  position: relative;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  min-width: 0;
+  word-wrap: break-word;
+  background-color: #fff;
+  background-clip: border-box;
+  border: 1px solid var(--color-grey-light);
+  border-radius: 0.25rem;
+}
+.td-content .highlight {
+  margin: 2rem 0;
+  padding: 1rem;
+  background-color: var(--color-primary-medium);
+  overflow: hidden;
+}
+.td-content pre > code {
+  padding: 10px 0;
+  margin: 0;
+  font-size: 100%;
+  word-break: normal;
+  white-space: pre;
+  border: 0;
+  width: 100%;
+  overflow: auto;
+  color: var(--color-secondary-dark);
+}
+
+pre {
+  display: block;
+  color: var(--color-grey-medium);
+}
+
+.highlight pre {
+  border: none !important;
+}
+
+.td-content {
+  .highlight pre {
+    margin: 0;
+    padding: 0;
+  }
+  pre {
+    word-wrap: normal;
+    background-color: var(--color-primary-medium);
+    padding: 1rem;
+    overflow: scroll;
+  }
+}
+

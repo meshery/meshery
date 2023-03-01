@@ -21,9 +21,10 @@ type ServiceInfoProvider interface {
 
 type ServiceActionProvider interface {
 	Terminate(error)
+	Log(msg string)
 	Provision(CompConfigPair) (string, error)
 	GetRegistry() *meshmodel.RegistryManager
 	Persist(string, core.Service, bool) error
-	DryRun([]v1alpha1.Component) (map[string][]DryRunResponse, error)
+	DryRun([]v1alpha1.Component) (map[string]map[string]core.DryRunResponse2, error)
 	Mutate(*core.Pattern) //Uses pre-defined policies/configuration to mutate the pattern
 }

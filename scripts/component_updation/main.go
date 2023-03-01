@@ -33,10 +33,11 @@ import (
 
 	"github.com/layer5io/component_scraper/pkg"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
+	"github.com/layer5io/meshkit/utils/manifests"
 )
 
 var (
-	ColumnNamesToExtract        = []string{"modelDisplayName", "model", "category", "subCategory", "shape", "primaryColor", "secondaryColor", "logo-URL", "svgColor", "svgWhite"}
+	ColumnNamesToExtract        = []string{"modelDisplayName", "model", "category", "subCategory", "shape", "primaryColor", "secondaryColor", "logo-URL", "svgColor", "svgWhite", "Publish?"}
 	ColumnNamesToExtractForDocs = []string{"modelDisplayName", "Page Subtitle", "Docs URL", "category", "subCategory", "Feature 1", "Feature 2", "Feature 3", "howItWorks", "howItWorksDetails", "Publish?", "About Project", "Standard Blurb", "svgColor", "svgWhite", "Full Page", "model"}
 	PrimaryColumnName           = "model"
 	OutputPath                  = "../../server/meshmodel/components"
@@ -150,8 +151,8 @@ func main() {
 			// 	fmt.Println(md)
 			// }
 			mesheryDocsJSON += jsonItem + ","
-
-			pathToIntegrationsLayer5, _ := filepath.Abs(filepath.Join("../../../", pathToIntegrationsLayer5, out["model"]))
+			modelName := strings.TrimSpace(out["model"])
+			pathToIntegrationsLayer5, _ := filepath.Abs(filepath.Join("../../../", pathToIntegrationsLayer5, modelName))
 			pathToIntegrationsMeshery, _ := filepath.Abs(filepath.Join("../../../", pathToIntegrationsMeshery))
 			err = os.MkdirAll(pathToIntegrationsLayer5, 0777)
 			if err != nil {
@@ -167,7 +168,7 @@ func main() {
 				panic(err)
 			}
 
-			err = pkg.WriteSVG(filepath.Join(pathToIntegrationsLayer5, "icon", "color", out["model"]+"-color.svg"), svgcolor) //CHANGE PATH
+			err = pkg.WriteSVG(filepath.Join(pathToIntegrationsLayer5, "icon", "color", modelName+"-color.svg"), svgcolor) //CHANGE PATH
 			if err != nil {
 				panic(err)
 			}
@@ -175,7 +176,7 @@ func main() {
 			if err != nil {
 				panic(err)
 			}
-			err = pkg.WriteSVG(filepath.Join(pathToIntegrationsLayer5, "icon", "white", out["model"]+"-white.svg"), svgwhite) //CHANGE PATH
+			err = pkg.WriteSVG(filepath.Join(pathToIntegrationsLayer5, "icon", "white", modelName+"-white.svg"), svgwhite) //CHANGE PATH
 			if err != nil {
 				panic(err)
 			}
@@ -186,12 +187,12 @@ func main() {
 				panic(err)
 			}
 
-			err = pkg.WriteSVG(filepath.Join(pathToIntegrationsMeshery, "../", "images", out["model"]+"-color.svg"), svgcolor) //CHANGE PATH
+			err = pkg.WriteSVG(filepath.Join(pathToIntegrationsMeshery, "../", "images", modelName+"-color.svg"), svgcolor) //CHANGE PATH
 			if err != nil {
 				panic(err)
 			}
 
-			err = pkg.WriteSVG(filepath.Join(pathToIntegrationsMeshery, "../", "images", out["model"]+"-white.svg"), svgwhite) //CHANGE PATH
+			err = pkg.WriteSVG(filepath.Join(pathToIntegrationsMeshery, "../", "images", modelName+"-white.svg"), svgwhite) //CHANGE PATH
 			if err != nil {
 				panic(err)
 			}
@@ -211,6 +212,13 @@ func main() {
 		}
 		file.Close()
 		os.Remove(file.Name())
+		publishedModels := make(map[string]bool)
+		_ = pkg.PopulateEntries(OutputPath, output, PrimaryColumnName, func(dirpath string, changeFields map[string]string) error {
+			if changeFields["Publish?"] == "TRUE" {
+				publishedModels[changeFields[PrimaryColumnName]] = true
+			}
+			return nil
+		})
 		err = pkg.PopulateEntries(OutputPath, output, PrimaryColumnName, func(dirpath string, changeFields map[string]string) error {
 			entries, err := os.ReadDir(dirpath)
 			if err != nil {
@@ -223,6 +231,10 @@ func main() {
 						return err
 					}
 					for _, entry := range entries {
+						if !publishedModels[changeFields[PrimaryColumnName]] {
+							fmt.Println("(Publish? is not set to TRUE) will not update", changeFields["modelDisplayName"])
+							continue
+						}
 						name := strings.TrimSuffix(strings.TrimSpace(entry.Name()), ".json")
 						if changeFields["Component"] != "" && changeFields["Component"] != name { //This is a component specific entry and only fill this when the filename matches component name
 							continue
@@ -241,7 +253,8 @@ func main() {
 						if err != nil {
 							return err
 						}
-						fmt.Println("updating for", component.Kind)
+						component.DisplayName = manifests.FormatToReadableString(component.Kind)
+						fmt.Println("updating for ", changeFields["modelDisplayName"], "--", component.Kind)
 						if component.Metadata == nil {
 							component.Metadata = make(map[string]interface{})
 						}
@@ -263,6 +276,9 @@ func main() {
 						if i := isInColumnNames("modelDisplayName", ColumnNamesToExtract); i != -1 {
 							component.Model.DisplayName = changeFields[ColumnNamesToExtract[i]]
 						}
+						delete(component.Metadata, "Publish?")
+						modelDisplayName := component.Metadata["modelDisplayName"].(string)
+						component.Model.DisplayName = modelDisplayName
 						byt, err = json.Marshal(component)
 						if err != nil {
 							return err

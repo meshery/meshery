@@ -1,6 +1,5 @@
 /**
- * @generated SignedSource<<b88894883739e2e5e0a25ebe270ad416>>
- * @flow
+ * @generated SignedSource<<a75b202ee81b8046d5b95519965ac914>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,26 +8,7 @@
 
 'use strict';
 
-/*::
-import type { ConcreteRequest, Query } from 'relay-runtime';
-export type Status = "ENABLED" | "CONNECTED" | "DISABLED" | "PROCESSING" | "UNKNOWN" | "%future added value";
-export type NatsStatusQuery$variables = {|
-  k8scontextID: string,
-|};
-export type NatsStatusQuery$data = {|
-  +controller: {|
-    +name: string,
-    +version: string,
-    +status: Status,
-  |},
-|};
-export type NatsStatusQuery = {|
-  variables: NatsStatusQuery$variables,
-  response: NatsStatusQuery$data,
-|};
-*/
-
-var node/*: ConcreteRequest*/ = (function(){
+var node = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -104,9 +84,6 @@ return {
 };
 })();
 
-(node/*: any*/).hash = "4dc5b2d81433e73a9eab8bd581d16b46";
+node.hash = "4dc5b2d81433e73a9eab8bd581d16b46";
 
-module.exports = ((node/*: any*/)/*: Query<
-  NatsStatusQuery$variables,
-  NatsStatusQuery$data,
->*/);
+module.exports = node;

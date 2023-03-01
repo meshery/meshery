@@ -388,10 +388,12 @@ func init() {
 func setToken() {
 	log.Debugf("Token path: %s", utils.TokenFlag)
 	contexts, err := getContexts(utils.ConfigPath)
-	if err != nil || contexts == nil || len(contexts) < 1 {
+	if err != nil {
 		log.Fatalf("Error getting context: %s", err.Error())
 	}
-
+	if contexts == nil || len(contexts) < 1 {
+		log.Fatalf("Error getting context: %s", fmt.Errorf("no contexts found"))
+	}
 	choosenCtx := contexts[0]
 	if len(contexts) > 1 {
 		fmt.Println("List of available contexts: ")

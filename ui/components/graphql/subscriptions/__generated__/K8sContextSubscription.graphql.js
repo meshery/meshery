@@ -1,6 +1,5 @@
 /**
- * @generated SignedSource<<59972572c395e75dfd7a7e54195b431c>>
- * @flow
+ * @generated SignedSource<<35ab61058ae1db0175c92c645e118d20>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,45 +8,7 @@
 
 'use strict';
 
-/*::
-import type { ConcreteRequest, GraphQLSubscription } from 'relay-runtime';
-export type PageFilter = {|
-  page: string,
-  pageSize: string,
-  order?: ?string,
-  search?: ?string,
-  from?: ?string,
-  to?: ?string,
-|};
-export type K8sContextSubscription$variables = {|
-  selector: PageFilter,
-|};
-export type K8sContextSubscription$data = {|
-  +k8sContext: {|
-    +total_count: number,
-    +contexts: $ReadOnlyArray<?{|
-      +id: string,
-      +name: string,
-      +auth: any,
-      +cluster: any,
-      +server: string,
-      +owner: string,
-      +created_by: string,
-      +meshery_instance_id: string,
-      +kubernetes_server_id: string,
-      +deployment_type: string,
-      +updated_at: string,
-      +created_at: string,
-    |}>,
-  |},
-|};
-export type K8sContextSubscription = {|
-  variables: K8sContextSubscription$variables,
-  response: K8sContextSubscription$data,
-|};
-*/
-
-var node/*: ConcreteRequest*/ = (function(){
+var node = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -204,9 +165,6 @@ return {
 };
 })();
 
-(node/*: any*/).hash = "844c4a5835b4f24315e540f72279fe7d";
+node.hash = "844c4a5835b4f24315e540f72279fe7d";
 
-module.exports = ((node/*: any*/)/*: GraphQLSubscription<
-  K8sContextSubscription$variables,
-  K8sContextSubscription$data,
->*/);
+module.exports = node;

@@ -1,6 +1,6 @@
 <style>
   td:hover,tr:hover {
-      background-color: #ccfff9;
+      background-color: var(--color-primary-dark);
       cursor:pointer;
     }
     td.details {
@@ -8,7 +8,7 @@
       cursor:text;
     }
     .yellowCheckbox{
-      width:1.5rem
+      width:2.5rem
     }
     .tooltipss{
       position:relative;
@@ -53,16 +53,17 @@
 <table class="table table-striped" >
   <th>Kubernetes Version</th>
 
-  <th><img style="height: 1rem; vertical-align: text-bottom;" src="{{site.baseurl}}/assets/img/service-meshes/istio.svg" /><a href="{{ site.repo }}-istio">meshery-istio</a></th>
-  <th><img style="height: 1rem; vertical-align: text-bottom;" src="{{site.baseurl}}/assets/img/service-meshes/linkerd.svg" /><a href="{{ site.repo }}-linkerd">meshery-linkerd</a></th>
-  <th><img style="height: 1rem; vertical-align: text-bottom;" src="{{site.baseurl}}/assets/img/service-meshes/kuma.svg" /><a href="{{ site.repo }}-kuma">meshery-kuma</a></th>
-  <th><img style="height: 1rem; vertical-align: text-bottom;" src="{{site.baseurl}}/assets/img/service-meshes/osm.svg" /><a href="{{ site.repo }}-osm">meshery-osm</a></th>
-  <th><img style="height: 1rem; vertical-align: text-bottom;" src="{{site.baseurl}}/assets/img/service-meshes/nginx-sm.svg" /><a href="{{ site.repo }}-nginx-sm">meshery-nginx-sm</a></th>
-  <th><img style="height: 1rem; vertical-align: text-bottom;" src="{{site.baseurl}}/assets/img/service-meshes/traefik-mesh.svg" /><a href="{{ site.repo }}-traefik-mesh">meshery-traefik-mesh</a></th>
-  <th><img style="height: 1rem; vertical-align: text-bottom;" src="{{site.baseurl}}/assets/img/service-meshes/cilium.svg" /><a href="{{ site.repo }}-cilium">meshery-cilium</a></th>
-  <th><img style="height: 1rem; vertical-align: text-bottom;" src="{{site.baseurl}}/assets/img/service-meshes/consul.svg" /><a href="{{ site.repo }}-consul">meshery-consul</a></th>
+  <th><img style="height: 1.5rem; vertical-align: text-bottom;" src="{{site.baseurl}}/assets/img/service-meshes/istio.svg" /><a href="{{ site.repo }}-istio">meshery-istio</a></th>
+  <th><img style="height: 1.5rem; vertical-align: text-bottom;" src="{{site.baseurl}}/assets/img/service-meshes/linkerd.svg" /><a href="{{ site.repo }}-linkerd">meshery-linkerd</a></th>
+  <th><img style="height: 1.5rem; vertical-align: text-bottom;" src="{{site.baseurl}}/assets/img/service-meshes/kuma.svg" /><a href="{{ site.repo }}-kuma">meshery-kuma</a></th>
+  <th><img style="height: 1.5rem; vertical-align: text-bottom;" src="{{site.baseurl}}/assets/img/service-meshes/osm.svg" /><a href="{{ site.repo }}-osm">meshery-osm</a></th>
+  <th><img style="height: 1.5rem; vertical-align: text-bottom;" src="{{site.baseurl}}/assets/img/service-meshes/nginx-sm.svg" /><a href="{{ site.repo }}-nginx-sm">meshery-nginx-sm</a></th>
+  <th><img style="height: 1.5rem; vertical-align: text-bottom;" src="{{site.baseurl}}/assets/img/service-meshes/traefik-mesh.svg" /><a href="{{ site.repo }}-traefik-mesh">meshery-traefik-mesh</a></th>
+  <th><img style="height: 1.5rem; vertical-align: text-bottom;" src="{{site.baseurl}}/assets/img/service-meshes/cilium.svg" /><a href="{{ site.repo }}-cilium">meshery-cilium</a></th>
+  <th><img style="height: 1.5rem; vertical-align: text-bottom;" src="{{site.baseurl}}/assets/img/service-meshes/consul.svg" /><a href="{{ site.repo }}-consul">meshery-consul</a></th>
 
 {% for k8s in {{include.k8s_tests_group}} %}
+
   <tr class = "first-row">
     {% assign successfull_istio = 0 %}
     {% assign successfull_linkerd = 0 %}
@@ -86,20 +87,20 @@
             {% elsif single.overall-status == "failing" %}
               {% assign successfull_linkerd = 0 %}
             {% else %}
-              {% assign successfull_linkerd = 0.5%}  
+              {% assign successfull_linkerd = 0.5%}
             {% endif %}
           {% endfor %}
 
         {% elsif k8s_item.name == "meshery-istio" %}
           {% assign istio_size = k8s_item.size | times:1.0 | times:1.0 %}
           {% assign istio_items = k8s_item.items | sort: "meshery-component-version" | reverse %}
-          {% for single in istio_items limit: 1 %}    
+          {% for single in istio_items limit: 1 %}
              {% if single.overall-status == "passing" %}
               {% assign successfull_istio = 1 %}
             {% elsif single.overall-status == "failing" %}
               {% assign successfull_istio = 0 %}
             {% else %}
-              {% assign successfull_istio = 0.5%}  
+              {% assign successfull_istio = 0.5%}
             {% endif %}
           {% endfor %}
 
@@ -112,7 +113,7 @@
             {% elsif single.overall-status == "failing" %}
               {% assign successfull_kuma = 0 %}
             {% else %}
-              {% assign successfull_kuma = 0.5%}  
+              {% assign successfull_kuma = 0.5%}
             {% endif %}
           {% endfor %}
 
@@ -129,7 +130,7 @@
             {% elsif single.overall-status == "failing" %}
               {% assign successfull_osm = 0 %}
             {% else %}
-              {% assign successfull_osm = 0.5%} 
+              {% assign successfull_osm = 0.5%}
             {% endif %}
           {% endfor %}
 
@@ -142,7 +143,7 @@
             {% elsif single.overall-status == "failing" %}
               {% assign successfull_cilium = 0 %}
             {% else %}
-              {% assign successfull_cilium = 0.5%} 
+              {% assign successfull_cilium = 0.5%}
             {% endif %}
           {% endfor %}
 
@@ -155,7 +156,7 @@
             {% elsif single.overall-status == "failing" %}
               {% assign successfull_nginx_sm = 0 %}
             {% else %}
-              {% assign successfull_nginx_sm = 0.5%} 
+              {% assign successfull_nginx_sm = 0.5%}
             {% endif %}
           {% endfor %}
 
@@ -168,7 +169,7 @@
             {% elsif single.overall-status == "failing" %}
               {% assign successfull_consul = 0 %}
             {% else %}
-              {% assign successfull_consul = 0.5%} 
+              {% assign successfull_consul = 0.5%}
             {% endif %}
           {% endfor %}
 
@@ -181,7 +182,7 @@
             {% elsif single.overall-status == "failing" %}
               {% assign successfull_traefik_mesh = 0 %}
             {% else %}
-              {% assign successfull_traefik_mesh = 0.5%} 
+              {% assign successfull_traefik_mesh = 0.5%}
             {% endif %}
           {% endfor %}
         {% endif %}
@@ -260,9 +261,9 @@
       {%assign kuma_size = 0 %}
       {%assign osm_size = 0 %}
     {%endif%}
+
   </tr>
 {% endfor %}
-
 
 </table>
 
@@ -290,7 +291,7 @@
         else if(percentage < 0){
            percentContainer[i].innerHTML = `<div class = "tooltipss">
               <img src = "{{site.baseurl}}/assets/img/na-icon.svg" class = "yellowCheckbox" >
-              <span class = "tooltiptext">${percentage}%</span>
+              <span class = "tooltiptext">Not Applicable</span>
             </div>`
         }
         else{
@@ -308,3 +309,4 @@
 
 showCompatability()
 </script>
+
