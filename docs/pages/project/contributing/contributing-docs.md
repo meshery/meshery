@@ -64,7 +64,24 @@ Restart your WSL VM before moving forward.
     gem update
     gem install jekyll bundler
   ```
-
+  
+- Update the Gemfile located in meshery/docs directory
+  ```
+    ruby '3.0.2'
+  ```
+  <strong>Note:</strong> In place of `3.0.2` add your installed version
+  
+- Also add this to the next line in the Gemfile
+  ```
+    gem 'wdm','>=0.1.0' if Gem.win_platform?
+  ```
+  <strong>Note:</strong> This is just a workaround for your local machine so do not commit or push the modified Gemfile or Gemfile.lock during Pull Requests
+  
+- Next, go to this folder on your device
+  ```C:\Ruby24-x64\lib\ruby\gems\2.4.0\gems\eventmachine-1.2.5-x64-mingw32\lib```
+  
+- Add ```require 'em/pure_ruby' ``` in the first line of the <strong>eventmachine.rb</strong> file
+  
 ### For Linux
 
 - Prerequisites
