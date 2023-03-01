@@ -296,7 +296,7 @@ func main() {
 		go hc.MeshModelSummaryChannel.Publish()
 	}()
 	// seed policys
-	go func(){
+	go func() {
 		staticPolicyPath, err := filepath.Abs("../meshmodel/policies")
 		if err != nil {
 			fmt.Println("Error registering policies: ", err.Error())
@@ -304,7 +304,7 @@ func main() {
 		}
 		err = handlers.RegisterStaticMeshmodelPolicy(*regManager, staticPolicyPath)
 		if err != nil {
-			fmt.Println("Error registering policies: ",err.Error())
+			fmt.Println("Error registering policies: ", err.Error())
 		}
 		go hc.MeshModelSummaryChannel.Publish()
 	}()

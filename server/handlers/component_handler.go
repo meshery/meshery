@@ -294,7 +294,7 @@ type ModelResponse struct {
 	v1alpha1.Model
 	Components    []v1alpha1.ComponentDefinition    `json:"components"`
 	Relationships []v1alpha1.RelationshipDefinition `json:"relationships"`
-	Policys []v1alpha1.PolicyDefinition `json:"policys"`
+	Policys       []v1alpha1.PolicyDefinition       `json:"policys"`
 }
 
 // swagger:route GET /api/meshmodel/model/{model} GetMeshmodelEntititiesByModel idGetMeshmodelEntititiesByModel

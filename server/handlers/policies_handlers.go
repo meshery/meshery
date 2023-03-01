@@ -15,15 +15,14 @@ import (
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 )
 
-
-func (h *Handler) GetAllMeshmodelPolicy(rw http.ResponseWriter,r *http.Request) {
+func (h *Handler) GetAllMeshmodelPolicy(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
 	typ := mux.Vars(r)["model"]
 	name := mux.Vars(r)["name"]
 
 	res := h.registryManager.GetEntities(&v1alpha1.PolicyFilter{
-		Kind: name,
+		Kind:      name,
 		ModelName: typ,
 	})
 	unique := make(map[string]bool)
@@ -44,7 +43,7 @@ func (h *Handler) GetAllMeshmodelPolicy(rw http.ResponseWriter,r *http.Request) 
 	}
 }
 
-func (h *Handler) RegisterMeshmodelPolicy(rw http.ResponseWriter,r *http.Request) {
+func (h *Handler) RegisterMeshmodelPolicy(rw http.ResponseWriter, r *http.Request) {
 	dec := json.NewDecoder(r.Body)
 	var cc meshmodel.MeshModelRegistrantData
 	err := dec.Decode(&cc)
@@ -69,7 +68,7 @@ func (h *Handler) RegisterMeshmodelPolicy(rw http.ResponseWriter,r *http.Request
 	go h.config.MeshModelSummaryChannel.Publish()
 }
 
-func parseStaticPolicy(sourceDirPath string)(rs []v1alpha1.PolicyDefinition, err error) {
+func parseStaticPolicy(sourceDirPath string) (rs []v1alpha1.PolicyDefinition, err error) {
 	err = filepath.Walk(sourceDirPath, func(path string, info fs.FileInfo, err error) error {
 		if info == nil {
 			return fmt.Errorf("invalid/nil fileinfo while walking %s", path)
@@ -85,7 +84,7 @@ func parseStaticPolicy(sourceDirPath string)(rs []v1alpha1.PolicyDefinition, err
 				return err
 			}
 			rs = append(rs, p)
-		}	
+		}
 		return nil
 	})
 	return

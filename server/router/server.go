@@ -159,8 +159,8 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int, g http.
 	gMux.Handle("/api/meshmodel/model/{model}/relationship", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.GetAllMeshmodelRelationships), models.NoAuth))).Methods("GET")
 	gMux.Handle("/api/meshmodel/model/{model}/relationship/{name}", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.GetMeshmodelRelationshipByName), models.NoAuth))).Methods("GET")
 	gMux.Handle("/api/meshmodel/relationships/register", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.RegisterMeshmodelRelationships), models.NoAuth))).Methods("POST") //This should also be left with NoAuth
-	gMux.Handle("/api/meshmodel/policy",h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.GetAllMeshmodelPolicy), models.NoAuth))).Methods("GET")
-	gMux.Handle("/api/meshmodel/policy/register", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.RegisterMeshmodelPolicy), models.NoAuth))).Methods("POST") 
+	gMux.Handle("/api/meshmodel/policy", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.GetAllMeshmodelPolicy), models.NoAuth))).Methods("GET")
+	gMux.Handle("/api/meshmodel/policy/register", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.RegisterMeshmodelPolicy), models.NoAuth))).Methods("POST")
 	gMux.Handle("/api/meshmodel/model/{model}/policy", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.GetAllMeshmodelPolicy), models.NoAuth))).Methods("GET")
 	// gMux.Handle("/api/meshmodel/model/{model}/policy/{name}", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.GetMeshmodelPolicyByName), models.NoAuth))).Methods("GET")
 
