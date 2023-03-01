@@ -53,17 +53,7 @@ RUN mkdir -p /seed_content/applications && cd /seed_content/applications \
     https://raw.githubusercontent.com/BuoyantIO/emojivoto/main/kustomize/deployment/web.yml) \
     && awk 'FNR==1 && NR>1 { printf("\n%s\n\n","---") } 1' /emojivoto/*.yml > /seed_content/applications/emojivoto.yml
 
-#FROM ubuntu as nighthawk
-#RUN apt-get -y update && apt-get -y install git && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/man/?? /usr/share/man/??_*
-#RUN apt-get -y update && apt-get -y  install build-essential libssl-dev git zlib1g-dev
-#RUN git config --global user.email "meshery@layer5.io"
-#RUN git config --global user.name "meshery"
-#RUN git clone https://github.com/layer5io/nighthawk-go
-#RUN cd nighthawk-go/apinighthawk/bin && chmod +x ./nighthawk_client
-
-
 FROM frolvlad/alpine-glibc:alpine-3.13_glibc-2.32
-#RUN apt-get update; apt-get install -y ca-certificates; update-ca-certificates && rm -rf /var/lib/apt/lists/*
 RUN apk update && apk add ca-certificates; update-ca-certificates && rm -rf /var/cache/apk/*
 RUN update-ca-certificates
 RUN apk upgrade --no-cache && \
