@@ -135,6 +135,6 @@
     "relay-compiler": "^14.1.0",
     "start-server-and-test": "^1.13.1",
     "webpack": "^5.75.0",
-    "webpack-cli": "^4.9.2"
+    "webpack-cli": "^5.0.1"
   }
 }
