@@ -1,3 +1,4 @@
+import _ from "lodash";
 
 
 function deleteTitleFromJSONSchema(jsonSchema) {
@@ -21,7 +22,7 @@ export function getRefinedJsonSchema(jsonSchema, hideTitle = true, handleError) 
   try {
     refinedSchema = hideTitle ? deleteTitleFromJSONSchema(jsonSchema) : jsonSchema
     refinedSchema = deleteDescriptionFromJSONSchema(refinedSchema)
-    refinedSchema = addTitleToPropertiesJSONSchema(refinedSchema)
+    recursivelyParseJsonAndCheckForNonRJSFCompliantFields(refinedSchema);
   } catch (e) {
     console.trace(e)
     handleError(e, "schema parsing problem")
@@ -42,44 +43,58 @@ function handleExceptionalFields(schema) {
   const additionalProperties = 'additionalProperties';
 
   const exceptionalFieldToTypeMap = {
-    [xKubernetesIntOrString] : ['string'], // string can hold integers too
-    [xKubernetesPreserveUnknownFields] : [schema?.type || 'object'],
-    [additionalProperties] : ['string']
+    [xKubernetesIntOrString] : 'string', // string can hold integers too
+    [xKubernetesPreserveUnknownFields] : schema?.type || 'object',
+    [additionalProperties] : 'string'
   }
 
   let returnedType;
 
   Object.keys(exceptionalFieldToTypeMap).some(field => {
-    if ( Object.prototype.hasOwnProperty.call(schema, field) && schema[field] === true) {
+    if ( Object.prototype.hasOwnProperty.call(schema, field)) {
       returnedType = exceptionalFieldToTypeMap[field];
-      return;
+      return true;
     }
   })
 
   return returnedType || false;
 }
 
-function addTitleToPropertiesJSONSchema(jsonSchema) {
-  const newProperties = jsonSchema?.properties
-
-
-  if (newProperties && typeof newProperties === 'object') {
-    Object.keys(newProperties).map(key => {
-      if (Object.prototype.hasOwnProperty.call(newProperties, key)) {
-        const eField = handleExceptionalFields(newProperties[key]); // false if it is not a exceptional field
-        if (eField) {
-          newProperties[key]['type'] = eField
-        }
-
-        newProperties[key] = {
-          ...newProperties[key],
-        }
-      }
-
-    })
-
-    return { ...jsonSchema, properties : newProperties };
-
+/**
+ * An inline object mutating function that could detect and handle the
+ * exceptional kubernetes field that are not valid RJSF constructs
+ *
+ * @param {Object} jsonSchema
+ * @returns
+ */
+function recursivelyParseJsonAndCheckForNonRJSFCompliantFields(jsonSchema) {
+  if (!jsonSchema || _.isEmpty(jsonSchema)) {
+    return;
   }
-  return undefined
+
+  if (jsonSchema.type === "object") {
+    const properties = jsonSchema.properties;
+
+    properties && Object.keys(properties).forEach(key => {
+      recursivelyParseJsonAndCheckForNonRJSFCompliantFields(properties[key]);
+    })
+  }
+
+  if (jsonSchema.type === "array") {
+    const items = jsonSchema.items;
+    items && recursivelyParseJsonAndCheckForNonRJSFCompliantFields(items)
+  }
+
+  // 1. Handling the special kubernetes types
+  const rjsfFieldType = handleExceptionalFields(jsonSchema);
+  if (rjsfFieldType) {
+    jsonSchema.type = rjsfFieldType; // Mutating original object by adding a valid type field
+  }
+
+  // 2. Handling missing type variable
+  if (!jsonSchema.type) {
+    jsonSchema.type = "string" // string as a default fallback
+  }
+
+  return jsonSchema;
 }

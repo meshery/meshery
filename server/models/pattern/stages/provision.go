@@ -69,6 +69,9 @@ func Provision(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFu
 				v1alpha1.GetAnnotationsForWorkload(data.PatternSvcWorkloadCapabilities[name]),
 				comp.ObjectMeta.Annotations,
 			)
+			if core.Format { //deprettify the component before deploying
+				comp.Spec.Settings = core.Format.DePrettify(comp.Spec.Settings, false)
+			}
 			ccp.Component = comp
 			// Add configuration only if traits are applied to the component
 			if len(svc.Traits) > 0 {

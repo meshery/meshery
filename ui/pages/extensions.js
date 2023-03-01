@@ -8,6 +8,7 @@ import { toggleCatalogContent } from "../lib/store";
 import Head from 'next/head';
 import { withSnackbar } from "notistack";
 import dataFetch from "../lib/data-fetch";
+import { EXTENSIONS } from "../utils/Enum";
 
 const styles = (theme) => ({
   button : {
@@ -59,7 +60,7 @@ const styles = (theme) => ({
 
 const INITIAL_GRID_SIZE = { lg : 6, md : 12, xs : 12 };
 
-const MeshMapSignUpcard = ({ classes }) => {
+const MeshMapSignUpcard = ({ classes, hasAccessToMeshMap=false }) => {
 
   const handleSignUp = (e) => {
     window.open("https://layer5.io/meshmap", "_blank")
@@ -76,17 +77,18 @@ const MeshMapSignUpcard = ({ classes }) => {
         <Typography className={classes.frontSideDescription} variant="body">
           <img className={classes.img} src="/static/img/meshmap.svg" />
               Collaboratively design and manage your Kubernetes clusters, service mesh deployments, and cloud native apps.
-              MeshMap is now in private beta. Sign-up today to for early access!
+              MeshMap is now in private beta. {!hasAccessToMeshMap && "Sign-up today to for early access!"}
         </Typography>
-        <div style={{ textAlign : "right" }}>
+        {<div style={{ textAlign : "right" }}>
           <Button
             variant="contained"
             color="primary"
+            disabled={hasAccessToMeshMap}
             className={classes.button}
             onClick={(e) => handleSignUp(e)}>
-                Sign Up
+            {hasAccessToMeshMap ? "Enabled" : "Sign Up"}
           </Button>
-        </div>
+        </div>}
       </div>
     </Grid>
   )
@@ -94,9 +96,10 @@ const MeshMapSignUpcard = ({ classes }) => {
 
 export const WrappedMeshMapSignupCard = withStyles(styles)(MeshMapSignUpcard);
 
-const Extensions = ({ classes, toggleCatalogContent,  enqueueSnackbar, closeSnackbar }) => {
+const Extensions = ({ classes, toggleCatalogContent,  enqueueSnackbar, closeSnackbar, capabilitiesRegistry }) => {
   const [catalogContent, setCatalogContent] = useState(true);
   const [extensionPreferences, setExtensionPreferences] = useState({})
+  const [hasAccessToMeshMap, setHasAccessToMeshMap] = useState(false)
 
   const handleToggle = () => {
     toggleCatalogContent({ catalogVisibility : !catalogContent });
@@ -152,6 +155,14 @@ const Extensions = ({ classes, toggleCatalogContent,  enqueueSnackbar, closeSnac
     )
   }
 
+  useEffect(() => {
+    const meshMapExtensionExists = capabilitiesRegistry?.extensions?.navigator?.filter(
+      (val) => val.title.toLowerCase() === EXTENSIONS.MESHMAP
+    );
+    if (typeof meshMapExtensionExists === "object" && meshMapExtensionExists.length)
+      setHasAccessToMeshMap(true);
+  }, [])
+
 
   return (
     <React.Fragment>
@@ -159,7 +170,7 @@ const Extensions = ({ classes, toggleCatalogContent,  enqueueSnackbar, closeSnac
         <title>Extensions | Meshery</title>
       </Head>
       <Grid container spacing={1} >
-        <WrappedMeshMapSignupCard />
+        <WrappedMeshMapSignupCard hasAccessToMeshMap={hasAccessToMeshMap} />
         <Grid item {...INITIAL_GRID_SIZE}>
           <div className={classes.card} >
             <Typography className={classes.frontContent} variant="h5" component="div">
@@ -201,7 +212,8 @@ const Extensions = ({ classes, toggleCatalogContent,  enqueueSnackbar, closeSnac
 }
 
 const mapStateToProps = state => ({
-  catalogVisibility : state.get('catalogVisibility')
+  catalogVisibility : state.get('catalogVisibility'),
+  capabilitiesRegistry : state.get('capabilitiesRegistry')
 })
 
 const mapDispatchToProps = dispatch => ({

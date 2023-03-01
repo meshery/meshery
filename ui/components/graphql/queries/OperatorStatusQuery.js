@@ -1,10 +1,11 @@
-import { graphql, fetchQuery } from "react-relay";
-import environment from "../../../lib/relayEnvironment";
+import { fetchQuery, graphql } from "react-relay";
+import { createRelayEnvironment } from "../../../lib/relayEnvironment";
 
 export default function fetchMesheryOperatorStatus(variables) {
+  const environment = createRelayEnvironment({});
   const vars = { k8scontextID : variables.k8scontextID };
 
-  const query = graphql`
+  const OperatorStatusQueryNode = graphql`
         query OperatorStatusQuery($k8scontextID: String!) {
           operator: getOperatorStatus(k8scontextID: $k8scontextID) {
             status
@@ -22,5 +23,5 @@ export default function fetchMesheryOperatorStatus(variables) {
         }
     `;
 
-  return fetchQuery(environment, query, vars)
+  return fetchQuery(environment, OperatorStatusQueryNode, vars)
 }

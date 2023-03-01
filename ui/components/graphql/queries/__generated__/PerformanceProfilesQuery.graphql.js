@@ -1,6 +1,5 @@
 /**
- * @generated SignedSource<<f1ae22888b1b78f405993f3085995237>>
- * @flow
+ * @generated SignedSource<<fafba0429f5040b577057f29fd4398b2>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,53 +8,7 @@
 
 'use strict';
 
-/*::
-import type { ConcreteRequest, Query } from 'relay-runtime';
-export type PageFilter = {|
-  page: string,
-  pageSize: string,
-  order?: ?string,
-  search?: ?string,
-  from?: ?string,
-  to?: ?string,
-  updated_after?: ?string,
-|};
-export type PerformanceProfilesQuery$variables = {|
-  selector: PageFilter,
-|};
-export type PerformanceProfilesQuery$data = {|
-  +getPerformanceProfiles: {|
-    +page: number,
-    +page_size: number,
-    +total_count: number,
-    +profiles: ?$ReadOnlyArray<?{|
-      +concurrent_request: number,
-      +created_at: ?string,
-      +duration: string,
-      +endpoints: ?$ReadOnlyArray<?string>,
-      +id: string,
-      +last_run: ?string,
-      +load_generators: ?$ReadOnlyArray<?string>,
-      +name: ?string,
-      +qps: ?number,
-      +total_results: ?number,
-      +updated_at: ?string,
-      +user_id: string,
-      +request_body: ?string,
-      +request_cookies: ?string,
-      +request_headers: ?string,
-      +content_type: ?string,
-      +service_mesh: ?string,
-    |}>,
-  |},
-|};
-export type PerformanceProfilesQuery = {|
-  variables: PerformanceProfilesQuery$variables,
-  response: PerformanceProfilesQuery$data,
-|};
-*/
-
-var node/*: ConcreteRequest*/ = (function(){
+var node = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -261,9 +214,6 @@ return {
 };
 })();
 
-(node/*: any*/).hash = "8c86c93431616aef124858b289e06a4f";
+node.hash = "8c86c93431616aef124858b289e06a4f";
 
-module.exports = ((node/*: any*/)/*: Query<
-  PerformanceProfilesQuery$variables,
-  PerformanceProfilesQuery$data,
->*/);
+module.exports = node;

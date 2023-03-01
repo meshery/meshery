@@ -2,9 +2,11 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/layer5io/meshery/mesheryctl/pkg/constants"
+	"github.com/layer5io/meshkit/utils"
 	"github.com/spf13/viper"
 )
 
@@ -61,11 +63,15 @@ func (h *Handler) ServerVersionHandler(w http.ResponseWriter, r *http.Request) {
 // and returns the (isOutdated, latestVersion, error)
 func CheckLatestVersion(serverVersion string) (*bool, string, error) {
 	// Inform user of the latest release version
-	latestVersion, err := utils.GetLatestStableReleaseTag()
+	latestVersions, err := utils.GetLatestReleaseTagsSorted(constants.GetMesheryGitHubOrg(), constants.GetMesheryGitHubRepo())
 	isOutdated := false
 	if err != nil {
 		return nil, "", ErrGetLatestVersion(err)
 	}
+	if len(latestVersions) == 0 {
+		return &isOutdated, "", fmt.Errorf("no versions found")
+	}
+	latestVersion := latestVersions[len(latestVersions)-1]
 	// Compare current running Meshery server version to the latest available Meshery release on GitHub.
 	if latestVersion != serverVersion {
 		isOutdated = true

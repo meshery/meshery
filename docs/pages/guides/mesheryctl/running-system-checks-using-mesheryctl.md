@@ -10,15 +10,11 @@ category: mesheryctl
 Meshery's CLI, `mesheryctl`, includes commands for verifying system readiness for a Meshery deployment and health checks to confirm the health of an existing Meshery deployment. Whether you have yet to deploy Meshery or have already deployed Meshery, `mesheryctl system check` is a useful utility to ensure that your Meshery deployments are healthy.
 
 <pre class="codeblock-pre">
-<div class="codeblock"><div class="clipboardjs">
-mesheryctl system check
-
-</div></div>
+<div class="codeblock"><div class="clipboardjs">mesheryctl system check</div></div>
 </pre>
 <br/>
 <pre class="codeblock-pre">
-<div class="codeblock"><div class="clipboardjs">
-Verify environment pre/post-deployment of Meshery.
+<div class="codeblock"><div class="clipboardjs">Verify environment pre/post-deployment of Meshery.
 
 Usage:
 mesheryctl system check [flags]
@@ -34,9 +30,7 @@ Global Flags:
 --config string path to config file (default "/Users/navendu/.meshery/config.yaml")
 -c, --context string (optional) temporarily change the current context.
 -v, --verbose verbose output
--y, --yes (optional) assume yes for user interactive prompts.
-
-</div></div>
+-y, --yes (optional) assume yes for user interactive prompts.</div></div>
 </pre>
 
 ## Deployment checks
@@ -56,10 +50,7 @@ The following checks are done here:
 Pre-deployment checks are run with the `--preflight` flag as shown below:
 
 <pre class="codeblock-pre">
-<div class="codeblock"><div class="clipboardjs">
-mesheryctl system check --preflight
-
-</div></div>
+<div class="codeblock"><div class="clipboardjs">mesheryctl system check --preflight</div></div>
 </pre>
 
 ### Post-deployment checks
@@ -74,10 +65,7 @@ In addition to the pre-flight checks, the following checks are also run in this 
 Post-deployment checks are run as shown below:
 
 <pre class="codeblock-pre">
-<div class="codeblock"><div class="clipboardjs">
-mesheryctl system check
-
-</div></div>
+<div class="codeblock"><div class="clipboardjs">mesheryctl system check</div></div>
 </pre>
 
 ## Additional checks
@@ -85,19 +73,13 @@ mesheryctl system check
 To check the status of the deployed adapters only, users can leverage the `--adapter` flag as shown below:
 
 <pre class="codeblock-pre">
-<div class="codeblock"><div class="clipboardjs">
-mesheryctl system check --adapter
-
-</div></div>
+<div class="codeblock"><div class="clipboardjs">mesheryctl system check --adapter</div></div>
 </pre>
 
 Users can also narrow down the tests to just check the status of the Meshery operator deployed on their Kubernetes cluster:
 
 <pre class="codeblock-pre">
-<div class="codeblock"><div class="clipboardjs">
-mesheryctl system check --operator
-
-</div></div>
+<div class="codeblock"><div class="clipboardjs">mesheryctl system check --operator</div></div>
 </pre>
 
 ## FAQ
