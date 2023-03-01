@@ -9,6 +9,7 @@ import (
 	"path"
 	"path/filepath"
 
+	"github.com/gorilla/mux"
 	"github.com/layer5io/meshkit/models/meshmodel"
 	"github.com/layer5io/meshkit/models/meshmodel/core/types"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
@@ -18,7 +19,13 @@ import (
 func (h *Handler) GetAllMeshmodelPolicy(rw http.ResponseWriter,r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
-	res := h.registryManager.GetEntities(&v1alpha1.PolicyFilter{})
+	typ := mux.Vars(r)["model"]
+	name := mux.Vars(r)["name"]
+
+	res := h.registryManager.GetEntities(&v1alpha1.PolicyFilter{
+		Kind: name,
+		ModelName: typ,
+	})
 	unique := make(map[string]bool)
 	var pls []v1alpha1.PolicyDefinition
 	for _, p := range res {

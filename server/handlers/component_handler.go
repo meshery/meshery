@@ -294,6 +294,7 @@ type ModelResponse struct {
 	v1alpha1.Model
 	Components    []v1alpha1.ComponentDefinition    `json:"components"`
 	Relationships []v1alpha1.RelationshipDefinition `json:"relationships"`
+	Policys []v1alpha1.PolicyDefinition `json:"policys"`
 }
 
 // swagger:route GET /api/meshmodel/model/{model} GetMeshmodelEntititiesByModel idGetMeshmodelEntititiesByModel
@@ -375,6 +376,18 @@ func (h *Handler) GetMeshmodelEntititiesByModel(rw http.ResponseWriter, r *http.
 					relationships = append(relationships, rel)
 				}
 			}
+			res3 := h.registryManager.GetEntities(&v1alpha1.PolicyFilter{
+				ModelName: mres.Name,
+			})
+
+			var policys []v1alpha1.PolicyDefinition
+			for _, r := range res3 {
+				pol, ok := r.(v1alpha1.PolicyDefinition)
+				if ok {
+					policys = append(policys, pol)
+				}
+			}
+			mres.Policys = policys
 			mres.Relationships = relationships
 			mres.Components = comps
 		}

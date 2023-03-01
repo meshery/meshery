@@ -295,7 +295,7 @@ func main() {
 		}
 		go hc.MeshModelSummaryChannel.Publish()
 	}()
-
+	// seed policys
 	go func(){
 		staticPolicyPath, err := filepath.Abs("../meshmodel/policies")
 		if err != nil {
