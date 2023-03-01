@@ -313,6 +313,7 @@ class MesheryNotification extends React.Component {
                   this.anchorEl = node;
                 }}
                 color="inherit"
+
                 onClick={this.handleToggle}
 
                 onMouseOver={(e) => {
