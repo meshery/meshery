@@ -16,10 +16,11 @@ type LogRequestBody struct {
 }
 
 type Log struct {
-	Timestamp       string `json:"timestamp,omitempty"`
-	Message         string `json:"message,omitempty"`
-	Severity        string `json:"severity,omitempty"`
-	CodeAttachments string `json:"codeAttachments,omitempty"`
+	Timestamp int64  `json:"timestamp,omitempty"` // Timestamp is the Javascript time format, that tells the number of milliseconds elapsed since midnight, January 1, 1970 Universal Coordinated Time (UTC)
+	Msg       string `json:"msg,omitempty"`
+	Severity  string `json:"severity,omitempty"`
+	CodeBlock string `json:"codeBlock,omitempty"`
+	Area      string `json:"area,omitempty"`
 }
 
 func (h *Handler) LogHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
@@ -29,7 +30,6 @@ func (h *Handler) LogHandler(w http.ResponseWriter, req *http.Request, prefObj *
 		return
 	}
 
-	logrus.Debugf("Inside Log handler %+v", parsedBody)
 	err := createLogFile(user, parsedBody.SessionId, parsedBody.Logs)
 	if err != nil {
 		w.Write([]byte(err.Error()))
