@@ -109,40 +109,21 @@ func ErrRestartMeshery(err error) error {
 }
 
 func ErrK8sConfig(err error) error {
-	return errors.New(ErrK8sConfigCode, errors.Alert, []string{"The Kubernetes cluster is not accessible."}, []string{err.Error(), "\nThe Kubernetes cluster is not accessible", " Please confirm that the cluster is running", " See https://docs.meshery.io/installation/quick-start for additional instructions."}, []string{"Kubernetes cluster isn't running or inaccessible"}, []string{"Verify kubernetes and Meshery connectivity or Verify kubeconfig certificates."})
+	return errors.New(ErrK8sConfigCode, errors.Alert, []string{"The Kubernetes cluster is not accessible."}, []string{err.Error()}, []string{"The Kubernetes cluster is not accessible"}, []string{" Please confirm that the cluster is running"}, []string{" See https://docs.meshery.io/installation/quick-start for additional instructions."}, []string{"Kubernetes cluster isn't running or inaccessible"}, []string{"Verify kubernetes and Meshery connectivity or Verify kubeconfig certificates."})
 }
 
 func ErrK8SQuery(err error) error {
-	return errors.New(ErrK8sQueryCode, errors.Alert, []string{"The Kubernetes cluster is not accessible."}, []string{err.Error(), "\nThe Kubernetes cluster is not accessible", " Please confirm that the token is valid", " See https://docs.meshery.io/installation/quick-start for additional instructions"}, []string{"Kubernetes cluster is unavailable and that the token is invalid"}, []string{"Please confirm that your cluster is available and that the token is valid. See https://docs.meshery.io/installation/quick-start for additional instructions"})
+	return errors.New(ErrK8sQueryCode, errors.Alert, []string{"The Kubernetes cluster is not accessible."}, []string{err.Error()}, []string{"The Kubernetes cluster is not accessible"}, []string{" Please confirm that the token is valid"}, []string{" See https://docs.meshery.io/installation/quick-start for additional instructions"}, []string{"Kubernetes cluster is unavailable and that the token is invalid"}, []string{"Please confirm that your cluster is available and that the token is valid. See https://docs.meshery.io/installation/quick-start for additional instructions"})
 }
 
 func ErrInitPortForward(err error) error {
-	return errors.New(
-		ErrInitPortForwardCode,
-		errors.Alert, []string{"Failed to initialize port-forward"},
-		[]string{err.Error(), "Failed to create new Port Forward instance"},
-		nil, nil,
-	)
+	return errors.New(ErrInitPortForwardCode, errors.Alert, []string{"Failed to initialize port-forward"}, []string{err.Error(), "Failed to create new Port Forward instance"}, nil, nil)
 }
 
 func ErrRunPortForward(err error) error {
-	return errors.New(
-		ErrRunPortForwardCode,
-		errors.Fatal,
-		[]string{"Failed to run port-forward"},
-		[]string{err.Error(), "Error running port-forward for Meshery"},
-		[]string{"Meshery pod is not in running phase", "mesheryctl can't connect to kubernetes with client-go"},
-		[]string{"Make sure Meshery pod exists and is in running state",
-			"Check if mesheryctl is connected to kubernetes with `mesheryctl system check`"},
-	)
+	return errors.New(ErrRunPortForwardCode, errors.Fatal, []string{"Failed to run port-forward"}, []string{err.Error(), "Error running port-forward for Meshery"}, []string{"Meshery pod is not in running phase", "mesheryctl can't connect to kubernetes with client-go"}, []string{"Make sure Meshery pod exists and is in running state", "Check if mesheryctl is connected to kubernetes with `mesheryctl system check`"})
 }
 
 func ErrFailedGetEphemeralPort(err error) error {
-	return errors.New(
-		ErrFailedGetEphemeralPortCode,
-		errors.Fatal,
-		[]string{"Failed to get a free port"},
-		[]string{err.Error(), "Failed to start port-forwarding"},
-		nil, nil,
-	)
+	return errors.New(ErrFailedGetEphemeralPortCode, errors.Fatal, []string{"Failed to get a free port"}, []string{err.Error(), "Failed to start port-forwarding"}, nil, nil)
 }
