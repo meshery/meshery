@@ -9,6 +9,7 @@ import (
 // var update = flag.Bool("update", false, "update golden files")
 
 var tests = []string{"ab2q3^$serhj", "klg434%$^", "m234@#$n", "op$#%G", "q$@#$r", "st4@#$23", "uv$@#$", "$@#TGGB#wx", "y@#$FG@$z", "1234"}
+var boolTests = []bool{true, false}
 
 func TestGetCommitSHA(t *testing.T) {
 	for _, test := range tests {
@@ -90,7 +91,7 @@ func TestGetChannel(t *testing.T) {
 
 func TestGetComponents(t *testing.T) {
 	dummy := []string{"abc", "def", "ghi", "jkl", "mno", "pqr"}
-	context := Context{"", "", "", dummy, "", "", ""}
+	context := Context{"", "", "", dummy, "", "", "", false}
 	got := context.GetComponents()
 	want := dummy
 	for i, j := range got {
@@ -230,7 +231,7 @@ func TestSetVersion(t *testing.T) {
 
 func TestSetComponents(t *testing.T) {
 	dummy := []string{"abc", "def", "ghi", "jkl", "mno", "pqr"}
-	context := Context{"", "", "", dummy, "", "", ""}
+	context := Context{"", "", "", dummy, "", "", "", false}
 	got := context.GetComponents()
 	want := dummy
 	for i, j := range got {
@@ -242,7 +243,7 @@ func TestSetComponents(t *testing.T) {
 
 func TestGetProvider(t *testing.T) {
 	for _, test := range tests {
-		context := Context{"", "", "", nil, "", "", test}
+		context := Context{"", "", "", nil, "", "", test, false}
 		got := context.GetProvider()
 		want := test
 
@@ -261,6 +262,31 @@ func TestSetProvider(t *testing.T) {
 
 		if got != want {
 			t.Errorf("got %q want %q", got, want)
+		}
+	}
+}
+
+func TestGetDisableOperator(t *testing.T) {
+	for _, test := range boolTests {
+		context := Context{"", "", "", nil, "", "", "", test}
+		got := context.GetDisableOperator()
+		want := test
+
+		if got != want {
+			t.Errorf("got %v want %v", got, want)
+		}
+	}
+}
+
+func TestSetDisableOperator(t *testing.T) {
+	context := Context{}
+	for _, test := range boolTests {
+		context.SetDisableOperator(test)
+		got := context.GetDisableOperator()
+		want := test
+
+		if got != want {
+			t.Errorf("got %v want %v", got, want)
 		}
 	}
 }

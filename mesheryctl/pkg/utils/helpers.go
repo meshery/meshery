@@ -950,6 +950,15 @@ func SetOverrideValues(ctx *config.Context, mesheryImageVersion string) map[stri
 		}
 	}
 
+	// disable the operator
+	if ctx.GetDisableOperator() {
+		if valueOverrides["env"] == nil {
+			valueOverrides["env"] = map[string]interface{}{}
+		}
+		envOverrides := valueOverrides["env"].(map[string]interface{})
+		envOverrides["DISABLE_OPERATOR"] = "'true'"
+	}
+
 	return valueOverrides
 }
 
