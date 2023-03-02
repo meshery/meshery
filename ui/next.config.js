@@ -1,4 +1,9 @@
-module.exports = {
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  reactStrictMode : false,
+  compiler : {
+    relay : require("./relay.config"),
+  },
   exportPathMap : function () {
     return {
       '/404' : { page : '/404' },
@@ -38,3 +43,5 @@ module.exports = {
     return config;
   }
 }
+
+module.exports = nextConfig

@@ -57,7 +57,7 @@ Click on (+) and choose the `{{page.earliest_version}}` of the {{page.mesh_name}
 
 Meshery allows you to analyze the compliance status and functional capabilities of your service mesh. This allows you to compare high-level functional differences between service meshes and verify whether your service mesh is conformant with the SMI specification.
 
-Learn more about the SMI specification and [Meshery's conformance test suite]({{ site.baseurl }}/functionality/service-mesh-interface).
+Learn more about the SMI specification and [Meshery's conformance test suite]({{ site.baseurl }}/tasks/service-mesh-interface).
 
 ### Managing Service Mesh Performance (SMP)
 

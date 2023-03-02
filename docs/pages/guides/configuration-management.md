@@ -11,7 +11,7 @@ Meshery now comes with built in support for service mesh patterns, WASM filters 
 
 ## Service Mesh Patterns
 
-Users can use Meshery UI or mesheryctl to manage [service mesh patterns](../functionality/patterns.md).
+Users can use Meshery UI or mesheryctl to manage [service mesh patterns](../tasks/patterns.md).
 
 ## Pattern Management Through Meshery UI
 

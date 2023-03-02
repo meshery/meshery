@@ -1,4 +1,4 @@
-// Copyright 2020 Layer5, Inc.
+// Copyright 2023 Layer5, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -36,6 +36,11 @@ var (
 	mctlCfg *config.MesheryCtlConfig
 )
 
+var linkDoc = map[string]string{
+	"link":    "![version-usage](/assets/img/mesheryctl/version.png)",
+	"caption": "Usage of mesheryctl version",
+}
+
 // versionCmd represents the version command
 var versionCmd = &cobra.Command{
 	Use:   "version",
@@ -44,11 +49,8 @@ var versionCmd = &cobra.Command{
 	Example: `
 // To view the current version and SHA of release binary of mesheryctl client 
 mesheryctl version
-
-! Refer below image link for usage
-* Usage of mesheryctl version
-# ![version-usage](/assets/img/mesheryctl/version.png)
 	`,
+	Annotations: linkDoc,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		var err error
 		mctlCfg, err = config.GetMesheryCtl(viper.GetViper())

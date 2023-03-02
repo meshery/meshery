@@ -19,11 +19,11 @@ With growing adoption of service meshes in cloud native environments, service me
 
 As a service mesh agnostic tool that provides lifecycle and performance management of a large number of (10+) service meshes, Kubernetes applications, service mesh patterns and WebAssembly filters, Meshery is the ideal tool for the job when it comes to implementing these specifications.
 
-Meshery also comes with two new GitHub Actions that do exactly this. The <a href="https://github.com/layer5io/meshery-smi-conformance-action">Meshery SMI Conformance Action</a> which <a href="https://meshery.io/blog/validating-smi-conformance-with-meshery">validates SMI conformance</a> in your pipeline and the <a href="https://github.com/layer5io/meshery-smp-action">Meshery SMP Action</a> which runs <a href="https://docs.meshery.io/functionality/performance-management">SMP compatible performance benchmarks</a>.
+Meshery also comes with two new GitHub Actions that do exactly this. The <a href="https://github.com/layer5io/meshery-smi-conformance-action">Meshery SMI Conformance Action</a> which <a href="https://meshery.io/blog/validating-smi-conformance-with-meshery">validates SMI conformance</a> in your pipeline and the <a href="https://github.com/layer5io/meshery-smp-action">Meshery SMP Action</a> which runs <a href="{{ site.baseurl }}/tasks/performance-management">SMP compatible performance benchmarks</a>.
 But how do we use these actions? What do they offer? Let’s find out!
 <h2>Service Mesh Interface Conformance GitHub Action</h2>
 
-Conformance of SMI specifications is defined as a series of test assertions. These test assertions are categorised by SMI specification (of which, there are currently four specifications) and comprise the complete suite of SMI conformance tests. Conformance requirements will change appropriately as each new version of the SMI spec is released. Refer to Meshery's documentation for details of how <a href="https://docs.meshery.io/functionality/service-mesh-interface">Meshery performs SMI conformance</a>.
+Conformance of SMI specifications is defined as a series of test assertions. These test assertions are categorised by SMI specification (of which, there are currently four specifications) and comprise the complete suite of SMI conformance tests. Conformance requirements will change appropriately as each new version of the SMI spec is released. Refer to Meshery's documentation for details of how <a href="{{ site.baseurl }}/tasks/service-mesh-interface">Meshery performs SMI conformance</a>.
 
 
 <h3>Using Meshery's SMI Conformance GitHub Action</h3>
@@ -96,7 +96,7 @@ You can download a token from Meshery and add it as a GitHub secret (in the exam
 <img src="{{ site.baseurl }}/assets/img/smi-conformance-result.png" className="image-center-shadow" style="width:70%" alt="smi conformance dashboard" /> <br />
 <i>Meshery's Service Mesh Interface Conformance Results</i>
 
-Participating service mesh projects can also <a href="https://docs.meshery.io/functionality/service-mesh-interface#reporting-conformance">automatically report their conformance test results</a> to the <a href="https://meshery.io/service-mesh-interface">SMI Conformance dashboard</a>
+Participating service mesh projects can also <a href="{{ site.baseurl }}/tasks/service-mesh-interface#reporting-conformance">automatically report their conformance test results</a> to the <a href="https://meshery.io/service-mesh-interface">SMI Conformance dashboard</a>
 
 <h2>Service Mesh Performance GitHub Action</h2>
 
