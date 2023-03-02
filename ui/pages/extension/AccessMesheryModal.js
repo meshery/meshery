@@ -68,7 +68,7 @@ export default function PlaygroundMeshDeploy(props) {
           <div className={classes.imgWrapper}>
             <img
               className={classes.insideImgWrapper}
-              width="20%" height="20%"
+              width="20%"  height="20%"
               src="/static/img/meshery-logo.png"
             />
             <img
