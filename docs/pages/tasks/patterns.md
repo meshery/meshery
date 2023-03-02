@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Service Mesh Pattern Management
+title: Cloud Native Pattern Management
 permalink: tasks/pattern-management
 redirect_from: tasks/pattern-management/
 type: tasks
@@ -10,14 +10,17 @@ list: include
 
 {% include alert.html 
     type="warning" 
-    title="What are Service Mesh Patterns?" 
+    title="What are Cloud Native Patterns?" 
     content='This feature area is under active development. Until additional documentation is published,see the <a href="https://docs.google.com/document/d/1B2N78EdRiZF-yVo1-HY3syppwBBDumgMuYg6seD-AJ4/edit#">Meshery and Service Mesh Patterns</a> design specification for further details.' %}
 
-## Use Meshery to Deploy a Service Mesh Pattern
+## Use Meshery to Deploy a Cloud Native Pattern
 
-You can use Meshery to deploy a service mesh pattern. Service mesh patterns are detailed as a YAML file. See the [Configuration Management]({{ site.baseurl }}/guides/configuration-management) guide.
+You can use Meshery to deploy a cloud native pattern. Cloud native patterns are detailed as a YAML file. See the [Configuration Management]({{ site.baseurl }}/guides/configuration-management) guide.
+
 
 ### Pattern Repository
+
+_See [Meshery Catalog](https://meshery.io/catalog)_.
 
 You may bring your own patterns or find them available through your chosen provider. Each service mesh pattern carries a unique identifier for reference. The patterns in this repository serve in an educational capacity, facilitating learning, and also serve in an operational capacity, facilitating implementation and validation of your service mesh deployment’s adherence to a pattern.
 
