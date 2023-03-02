@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -180,10 +181,12 @@ func (h *Handler) GetMeshmodelComponentsByName(rw http.ResponseWriter, r *http.R
 			OrderOn:    r.URL.Query().Get("order"),
 			Sort:       r.URL.Query().Get("sort"),
 		})
-		if err := enc.Encode(res); err != nil {
-			h.log.Error(ErrWorkloadDefinition(err))
-			http.Error(rw, ErrWorkloadDefinition(err).Error(), http.StatusInternalServerError)
-		}
+		rw.Header().Set("Content-Type", "text/html")
+		fmt.Fprintf(rw, res)
+		// if err := enc.Encode(res); err != nil {
+		// 	h.log.Error(ErrWorkloadDefinition(err))
+		// 	http.Error(rw, ErrWorkloadDefinition(err).Error(), http.StatusInternalServerError)
+		// }
 		return
 	}
 	res := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
