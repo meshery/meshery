@@ -140,8 +140,10 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 // ?search={[true/false]} If search is true then a greedy search is performed
 // ?page={page-number} Default page number is 1
 // ?pagesize={pagesize} Default pagesize is 25. To return all results: pagesize=all
+// ?docOnly=true when this is set to true then instead of the component definitions, a doc string is returned
 // responses:
 // 200: []ComponentDefinition
+// 200: string
 func (h *Handler) GetMeshmodelComponentsByName(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
@@ -166,6 +168,24 @@ func (h *Handler) GetMeshmodelComponentsByName(rw http.ResponseWriter, r *http.R
 		page = 1
 	}
 	offset := (page - 1) * limit
+	if r.URL.Query().Get("docOnly") == "true" {
+		res := h.registryManager.GetEntityDoc(&v1alpha1.ComponentFilter{
+			Name:       name,
+			ModelName:  typ,
+			APIVersion: r.URL.Query().Get("apiVersion"),
+			Version:    v,
+			Greedy:     search,
+			Offset:     offset,
+			Limit:      limit,
+			OrderOn:    r.URL.Query().Get("order"),
+			Sort:       r.URL.Query().Get("sort"),
+		})
+		if err := enc.Encode(res); err != nil {
+			h.log.Error(ErrWorkloadDefinition(err))
+			http.Error(rw, ErrWorkloadDefinition(err).Error(), http.StatusInternalServerError)
+		}
+		return
+	}
 	res := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
 		Name:       name,
 		ModelName:  typ,
