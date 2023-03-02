@@ -93,7 +93,7 @@ jobs:
 
 You can download a token from Meshery and add it as a GitHub secret (in the example above, the secret is <code>MESHERY_PROVIDER_TOKEN</code>). After the test is run, you can view the results from the Service Mesh Interface dashboard in Meshery UI.
 
-<img src="{{ site.baseurl }}/assets/img/smi-conformance-result.png" className="image-center-shadow" style="width:70%" alt="smi conformance dashboard" /> <br />
+<a href="{{ site.baseurl }}/assets/img/smi-conformance-result.png"><img src="{{ site.baseurl }}/assets/img/smi-conformance-result.png" className="image-center-shadow" style="width:70%" alt="smi conformance dashboard" /></a> <br />
 <i>Meshery's Service Mesh Interface Conformance Results</i>
 
 Participating service mesh projects can also <a href="https://docs.meshery.io/functionality/service-mesh-interface#reporting-conformance">automatically report their conformance test results</a> to the <a href="https://meshery.io/service-mesh-interface">SMI Conformance dashboard</a>
@@ -162,6 +162,6 @@ duration: "30m"
 
 See this sample GitHub workflow (<a href="https://github.com/layer5io/meshery-smp-action/blob/master/action.yml">action.yml</a>) for more configuration details.
 
-<img src="{{ site.baseurl }}/assets/img/service-mesh-performance-profile-test-results.png" className="image-center" alt="performance management dashboard" />
+<a href="{{ site.baseurl }}/assets/img/service-mesh-performance-profile-test-results.png"><img src="{{ site.baseurl }}/assets/img/service-mesh-performance-profile-test-results.png" className="image-center" alt="performance management dashboard" /></a>
 
 The results from the tests are updated on the Performance Management dashboard in Meshery. To learn more about interpreting the test results, check out <a href="https://docs.meshery.io/guides/interpreting-performance-test-results">this guide</a>. You can always checkout the <a href="https://docs.meshery.io/guides">Meshery User Guides</a> to dive deep into these features.
