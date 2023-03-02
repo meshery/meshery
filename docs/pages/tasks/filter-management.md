@@ -1,8 +1,8 @@
 ---
 layout: default
 title: Filter Management
-permalink: functionality/filter-management
-type: functionality
+permalink: tasks/filter-management
+type: tasks
 language: en
 list: include
 ---

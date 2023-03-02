@@ -1,8 +1,8 @@
 ---
 layout: default
 title: Performance Management
-permalink: functionality/performance-management
-type: functionality
+permalink: tasks/performance-management
+type: tasks
 language: en
 list: include
 ---
