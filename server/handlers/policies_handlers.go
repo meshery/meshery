@@ -15,14 +15,14 @@ import (
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 )
 
-func (h *Handler) GetMeshmodelPolicyByName(rw http.ResponseWriter, r *http.Request){
-	rw.Header().Add("Content-Type","application/json")
+func (h *Handler) GetMeshmodelPolicyByName(rw http.ResponseWriter, r *http.Request) {
+	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
 	typ := mux.Vars(r)["model"]
 	name := mux.Vars(r)["name"]
 
 	res := h.registryManager.GetEntities(&v1alpha1.PolicyFilter{
-		Kind: name,
+		Kind:      name,
 		ModelName: typ,
 	})
 
@@ -30,7 +30,7 @@ func (h *Handler) GetMeshmodelPolicyByName(rw http.ResponseWriter, r *http.Reque
 	for _, p := range res {
 		pl, ok := p.(v1alpha1.PolicyDefinition)
 		if ok {
-			pls = append(pls,pl)
+			pls = append(pls, pl)
 		}
 	}
 	if err := enc.Encode(pls); err != nil {
@@ -51,7 +51,7 @@ func (h *Handler) GetAllMeshmodelPolicy(rw http.ResponseWriter, r *http.Request)
 	for _, p := range res {
 		pl, ok := p.(v1alpha1.PolicyDefinition)
 		if ok {
-			pls = append(pls,pl)
+			pls = append(pls, pl)
 		}
 	}
 	if err := enc.Encode(pls); err != nil {
