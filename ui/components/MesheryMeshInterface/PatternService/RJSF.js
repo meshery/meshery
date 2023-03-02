@@ -1,7 +1,7 @@
 import { MuiThemeProvider, useTheme } from '@material-ui/core/styles';
 import { withTheme } from "@rjsf/core";
 import { Theme as MaterialUITheme } from "@rjsf/material-ui";
-import ajv8validator from "@rjsf/validator-ajv8";
+import { customizeValidator } from "@rjsf/validator-ajv8";
 import React, { useEffect } from "react";
 import { rjsfTheme } from "../../../themes";
 import darkRjsfTheme from '../../../themes/rjsf';
@@ -39,9 +39,13 @@ function RJSFForm({
   // prop should be present in order for the cloned element to override this property
   transformErrors,
   override,
-  uiSchema={}
+  uiSchema={},
+  // Custom Validation
+  customFormats={},
 }) {
   const globalTheme = useTheme();
+  const ajv8validator = customizeValidator({ customFormats })
+
   useEffect(() => {
     const extensionTooltipPortal = document.getElementById("extension-tooltip-portal");
     if (extensionTooltipPortal) {

@@ -284,7 +284,7 @@ function jsonSchemaBuilder(schema, obj) {
   }
 
 
-  if (schema.type === 'number' || schema.type === 'integer') {
+  if ((schema.type === 'number' || schema.type === 'integer' && (!schema.maximum || !schema.minimum))) {
     schema["maximum"] = 99999;
     schema["minimum"] = 0;
   }
