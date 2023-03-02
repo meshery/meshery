@@ -5,10 +5,6 @@
 const toggleBtn = document.getElementById("mode-toggle-btn");
 toggleBtn.addEventListener("click", setMode);
 
-if(localStorage.getItem("mode") == "light-mode")  {
-    document.body.classList.remove("dark-mode");
-    updateLogos();
-}
 
 function setMode() {
   document.body.classList.toggle("dark-mode");
