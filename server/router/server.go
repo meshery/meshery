@@ -162,7 +162,7 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int, g http.
 	gMux.Handle("/api/meshmodel/policy", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.GetAllMeshmodelPolicy), models.NoAuth))).Methods("GET")
 	gMux.Handle("/api/meshmodel/policy/register", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.RegisterMeshmodelPolicy), models.NoAuth))).Methods("POST")
 	gMux.Handle("/api/meshmodel/model/{model}/policy", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.GetAllMeshmodelPolicy), models.NoAuth))).Methods("GET")
-	// gMux.Handle("/api/meshmodel/model/{model}/policy/{name}", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.GetMeshmodelPolicyByName), models.NoAuth))).Methods("GET")
+	gMux.Handle("/api/meshmodel/model/{model}/policy/{name}", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.GetMeshmodelPolicyByName), models.NoAuth))).Methods("GET")
 
 	//TODO: Remove the 5 endpoints below made obsolete by Meshmodel components
 	gMux.Handle("/api/components", h.AuthMiddleware(http.HandlerFunc(h.GetAllComponents), models.NoAuth)).Methods("GET")

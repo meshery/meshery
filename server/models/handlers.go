@@ -119,7 +119,7 @@ type HandlerInterface interface {
 	RegisterMeshmodelRelationships(rw http.ResponseWriter, r *http.Request)
 
 	GetAllMeshmodelPolicy(rw http.ResponseWriter, r *http.Request)
-	// GetMeshmodelPolicyByName(rw http.ResponseWriter, r *http.Request)
+	GetMeshmodelPolicyByName(rw http.ResponseWriter, r *http.Request)
 	RegisterMeshmodelPolicy(rw http.ResponseWriter, r *http.Request)
 
 	OAMComponentDetailsHandler(rw http.ResponseWriter, r *http.Request)
