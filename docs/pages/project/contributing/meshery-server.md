@@ -23,6 +23,7 @@ To build and run Meshery server from source:
 make ui-build{% endcapture %}
 {% include code.html code=code_content %}
 
+
 2. Build & run the server code by running
 
 {% capture code_content %}make server{% endcapture %}
