@@ -15,6 +15,11 @@ import (
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 )
 
+// swagger:route GET /api/meshmodel/model/{model}/policy/{name} GetMeshmodelPolicyByName idGetMeshmodelPolicyByName
+// Handle GET request for getting meshmodel policies of a specific model by name.
+// Example: /api/meshmodel/model/kubernetes/policy/Validation
+// responses:
+// 200: []PolicyDefinition
 func (h *Handler) GetMeshmodelPolicyByName(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
@@ -38,6 +43,12 @@ func (h *Handler) GetMeshmodelPolicyByName(rw http.ResponseWriter, r *http.Reque
 		http.Error(rw, ErrWorkloadDefinition(err).Error(), http.StatusInternalServerError)
 	}
 }
+
+// swagger:route GET /api/meshmodel/model/{model}/policy GetAllMeshmodelPolicy idGetAllMeshmodelPolicy
+// Handle GET request for getting meshmodel policies of a specific model.
+// Example: /api/meshmodel/model/kubernetes/policy
+// responses:
+// 200: []PolicyDefinition
 
 func (h *Handler) GetAllMeshmodelPolicy(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
