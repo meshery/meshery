@@ -1,8 +1,8 @@
 ---
 layout: default
 title: Lifecycle Management
-permalink: functionality/lifecycle-management
-type: functionality
+permalink: tasks/lifecycle-management
+type: tasks
 language: en
 list: include
 ---

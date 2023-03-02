@@ -1,8 +1,8 @@
 ---
 layout: default
 title: Application Management
-permalink: functionality/application-management
-type: functionality
+permalink: tasks/application-management
+type: tasks
 language: en
 list: include
 ---

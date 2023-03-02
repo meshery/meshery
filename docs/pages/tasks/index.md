@@ -1,8 +1,8 @@
 ---
 layout: default
-title: Functionality
-permalink: functionality
-redirect_from: functionality/
+title: Tasks
+permalink: tasks
+redirect_from: tasks/
 ---
 
 These sections provide user guides to the functionality Meshery offers.
@@ -12,7 +12,7 @@ These sections provide user guides to the functionality Meshery offers.
 
 <ul>
     {% for item in sorted_functionality %}
-    {% if item.type=="functionality" and item.list!="exclude" and item.language !="es"  -%}
+    {% if item.type=="tasks" and item.list!="exclude" and item.language !="es"  -%}
       <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a></li>
       {% endif %}
     {% endfor %}

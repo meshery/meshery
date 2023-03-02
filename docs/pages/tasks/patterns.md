@@ -1,9 +1,9 @@
 ---
 layout: default
 title: Service Mesh Pattern Management
-permalink: functionality/pattern-management
-redirect_from: functionality/pattern-management/
-type: functionality
+permalink: tasks/pattern-management
+redirect_from: tasks/pattern-management/
+type: tasks
 language: en
 list: include
 ---

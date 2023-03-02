@@ -1,8 +1,8 @@
 ---
 layout: default
 title: Meshery and Service Mesh Interface (SMI)
-permalink: functionality/service-mesh-interface
-type: functionality
+permalink: tasks/service-mesh-interface
+type: tasks
 ---
 {% include alert.html type="info" title="Validating SMI Conformance with Meshery" content="<p>Meshery is SMI's 
 <a href='https://smi-spec.io/blog/validating-smi-conformance-with-meshery'>official tool for validating conformance</a>.</p> <p>The <a href='https://meshery.io/service-mesh-interface'>SMI Conformance dashboard</a> displays the current and historical test results of each of the service mesh projects.</p>" %}
