@@ -53,20 +53,37 @@ display-title: "false"
         {% endif %}
       {% endfor %}
     </ul>
-  </div>
 
+
+    <!-- REFERENCE -->
+  <div class="section">
+  <a href="{{ site.baseurl }}/installation/quick-start">
+        <div class="btn-primary">Reference</div>
+    </a>
+    <h6><a href="{{ site.baseurl }}/reference" class="text-black section-title">Reference</a></h6>
+    <ul>
+        {% for item in sorted_pages %}
+        {% if item.type=="Reference" and item.list!="exclude"  and item.language!="es"  -%}
+          <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
+          </li>
+          {% endif %}
+        {% endfor %}
+      </ul>
+    </div>
+    </div>
 </div>
+
 <div class="flex flex-col--2"  style="text-align: left; padding:1.6rem ;--col-gap:1rem">
 
-  <!-- FUNCTIONALITY -->
+  <!-- TASKS -->
   <div class="section">
-    <a href="{{ site.baseurl }}/functionality">
-        <div class="btn-primary">Functionality</div>
+    <a href="{{ site.baseurl }}/tasks">
+        <div class="btn-primary">Tasks</div>
     </a>
-    <h6><a href="{{ site.baseurl }}/functionality" class="text-black section-title">Cloud Native Management</a></h6>
+    <h6><a href="{{ site.baseurl }}/tasks" class="text-black section-title">Cloud Native Management</a></h6>
     <ul>
       {% for item in sorted_pages %}
-      {% if item.type=="functionality" and item.list!="exclude" and item.language !="es" -%}
+      {% if item.type=="tasks" and item.list!="exclude" and item.language !="es" -%}
         <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
         </li>
         {% endif %}
@@ -102,15 +119,6 @@ display-title: "false"
         {% endif %}
       {% endfor %}
     </ul>
-    <h6><a href="{{ site.baseurl }}/reference" class="text-black section-title">Reference</a></h6>
-    <ul>
-        {% for item in sorted_pages %}
-        {% if item.type=="Reference" and item.list!="exclude"  and item.language!="es"  -%}
-          <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
-          </li>
-          {% endif %}
-        {% endfor %}
-      </ul>
   </div>
 
 </div>
