@@ -66,6 +66,17 @@
               <li>
                 <ul id="TOC">
                   <!-- Links will be appended here-->
+                  <strong>{{ site.data.content.docs_list_title }}</strong>
+                    {% for item in site.data.content.docs %}
+                     <ul>
+                       <strong><a href="{{ item.url }}">{{ item.title }}</a></strong>
+                       <ul style="list-style-type:disc">
+                         {% for subItem in item.sublinks %}
+                           <li><a href="{{ subItem.url }}">{{ subItem.title }}</a></li>
+                         {% endfor %}
+                       </ul>
+                      </ul>
+                    {% endfor %}
                 </ul>
               </li>
             </ul>

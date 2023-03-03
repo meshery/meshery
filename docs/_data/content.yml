@@ -1,0 +1,30 @@
+docs_list_title: Quick Start Guide
+docs:
+
+- title: Install Meshery
+  url: /installation/quick-start#install-meshery
+  sublinks:
+  - title: Install on Kubernetes
+    url: /installation/quick-start#install-on-kubernetes
+  - title: Install on Docker
+    url: /installation/quick-start#install-on-docker
+  - title: Install using Docker extension for Meshery
+    url: /installation/quick-start#install-using-docker-extension-for-meshery
+
+- title: Access Meshery
+  url: /installation/quick-start#access-meshery
+
+- title: Select a Provider
+  url: /installation/quick-start#select-a-provider
+
+- title: Configure Connection to Kubernetes
+  url: /installation/quick-start#configure-connection-to-kubernetes
+
+- title: Verify Meshery’s Deployment
+  url: /installation/quick-start#verify-mesherys-deployment
+
+- title: Operate service meshes and their workloads
+  url: /installation/quick-start#operate-service-meshes-and-their-workloads
+
+- title: Additional Guides
+  url: /installation/quick-start#additional-guides
