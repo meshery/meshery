@@ -27,7 +27,6 @@ type: Reference
   background-color:#FFFFFF;
 }
 
-
 .tbl .tbl-body .tbl-body-row.hover-effect:hover{
   background-color:#ccfff9;
   cursor:pointer;
@@ -39,12 +38,11 @@ type: Reference
 }
 
 .tbl .tbl-body .tbl-hidden-row{
-  visibility:hidden; 
+  visibility:hidden;
   display:none;
   background-color:#FAFAFA;
   width:100%
 }
-
 
 </style>
 
@@ -56,7 +54,6 @@ type: Reference
           e.style.visibility = 'hidden';
       }
        else {
-         
           e.style.display = 'table-row';
           e.style.visibility = 'visible';
           }
@@ -155,9 +152,7 @@ Note: The numeric portion of error codes are component-scoped. The numeric porti
         {% endif %}   
         <tr class="tbl-body-row hover-effect" onclick="toggle_visibility('{{component[1].component_name}}-{{err_code[1]["name"]}}-more-info');">
           <td class="error-name-code">
-            <span><a id="{{component[1].component_name}}-{{err_code[1]["name"]}}">
-            {{ err_code[1]["name"] | xml_escape }}
-            </a></span><span>-<code>{{ err_code[1]["code"] }}</code></span> 
+            <code>{{ err_code[1]["name"] | xml_escape }}-{{ err_code[1]["code"] }}</code>
           </td>
           <td style="{{severity}}">{{ err_code[1]["severity"]}}</td>
           <td>{{ err_code[1]["short_description"] | xml_escape}}</td>
