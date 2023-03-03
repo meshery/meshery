@@ -13,7 +13,7 @@
 | Lee Calcote         | leecalcote             | Layer5      |
 | Nikhil Ladha        | Nikhil-Ladha           | Red Hat     |
 | Nithish Karthik     | sudo-NithishKarthik    | Layer5      |
-| Antonette Caldwell  | acald-creator          | Layer5      |
+| Antonette Caldwell  | acald-creator          | Acquia      |
 
 ### Adapter Maintainers
 
@@ -25,7 +25,7 @@
 | Hussaina Begum      | hexxdump      | VMware      |
 | Lee Calcote         | leecalcote    | Layer5      |
 | Michael Gfeller     | mgfeller      | Computas AS |
-| Antonette Caldwell  | acald-creator | Layer5      |
+| Antonette Caldwell  | acald-creator | Acquia      |
 
 ### CI / Build & Release Maintainers
 
