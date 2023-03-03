@@ -42,6 +42,7 @@ func (c *ConfigurationChannel) SubscribePatterns(ch chan struct{}) {
 }
 
 func (c *ConfigurationChannel) PublishPatterns() {
+
 	for _, ch := range c.PatternsChannel {
 		if !utils.IsClosed(ch) {
 			ch <- struct{}{}
