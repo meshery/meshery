@@ -286,17 +286,16 @@ func main() {
 		relChan := make(chan v1alpha1.RelationshipDefinition, 1)
 		done := make(chan bool)
 		go func(ch chan v1alpha1.RelationshipDefinition) {
-			for{
-				select{
+			for {
+				select {
 				case rel := <-relChan:
 					err = regManager.RegisterEntity(meshmodel.Host{
 						Hostname: "meshery",
-					}, rel)	
+					}, rel)
 				case <-done:
 					go hc.MeshModelSummaryChannel.Publish()
-					return 	
+					return
 				}
-
 			}
 		}(relChan)
 		staticRelationshipsPath, err := filepath.Abs("../meshmodel/relationships")
@@ -318,7 +317,7 @@ func main() {
 				if err != nil {
 					return nil
 				}
-				relChan <- rel				
+				relChan <- rel
 			}
 			return nil
 		})
@@ -329,8 +328,8 @@ func main() {
 		policyChan := make(chan v1alpha1.PolicyDefinition, 1)
 		done := make(chan bool)
 		go func(ch chan v1alpha1.PolicyDefinition) {
-			for{
-				select{
+			for {
+				select {
 				case p := <-policyChan:
 					err = regManager.RegisterEntity(meshmodel.Host{
 						Hostname: "meshery",
@@ -338,7 +337,7 @@ func main() {
 
 				case <-done:
 					go hc.MeshModelSummaryChannel.Publish()
-					return 	
+					return
 				}
 			}
 		}(policyChan)
@@ -347,7 +346,7 @@ func main() {
 			fmt.Println("Error registering policies: ", err.Error())
 			return
 		}
-		
+
 		_ = filepath.Walk(staticPolicyPath, func(path string, info fs.FileInfo, err error) error {
 			if info == nil {
 				return fmt.Errorf("invalid/nil fileinfo while walking %s", path)

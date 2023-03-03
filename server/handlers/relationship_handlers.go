@@ -142,4 +142,3 @@ func (h *Handler) RegisterMeshmodelRelationships(rw http.ResponseWriter, r *http
 	}
 	go h.config.MeshModelSummaryChannel.Publish()
 }
-
