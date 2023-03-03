@@ -1,5 +1,5 @@
 import { graphql, requestSubscription } from "react-relay";
-import environment from "../../../lib/relayEnvironment";
+import { createRelayEnvironment } from "../../../lib/relayEnvironment";
 
 const operatorStatusSubscription = graphql`
   subscription OperatorStatusSubscription($k8scontextIDs: [String!]) {
@@ -23,6 +23,7 @@ const operatorStatusSubscription = graphql`
 `;
 
 export default function subscribeOperatorStatusEvents(dataCB, contextIds) {
+  const environment = createRelayEnvironment({});
   return  requestSubscription(environment, {
     subscription : operatorStatusSubscription,
     variables : { k8scontextIDs : contextIds },

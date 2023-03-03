@@ -308,7 +308,7 @@ type ModelResponse struct {
 // ?pagesize={pagesize} Default pagesize is 25. To return all results: pagesize=all
 // responses:
 //
-//	200: ModelResponse
+//	200: []ModelResponse
 func (h *Handler) GetMeshmodelEntititiesByModel(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
@@ -332,50 +332,56 @@ func (h *Handler) GetMeshmodelEntititiesByModel(rw http.ResponseWriter, r *http.
 		page = 1
 	}
 	offset := (page - 1) * limit
-	var mres ModelResponse
+	var mress []ModelResponse
 	mod := h.registryManager.GetModels(&v1alpha1.ModelFilter{
 		Name:    typ,
 		Version: v,
 		Greedy:  greedy,
 	})
-	if len(mod) != 0 {
-		mres.Model = mod[0]
-	}
-	if mres.Name != "" {
-		res := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
-			ModelName: mres.Name,
-			Version:   v,
-			Limit:     limit,
-			Offset:    offset,
-		})
-		var comps []v1alpha1.ComponentDefinition
-		for _, r := range res {
-			m := make(map[string]interface{})
-			comp, ok := r.(v1alpha1.ComponentDefinition)
-			if ok {
-				_ = json.Unmarshal([]byte(comp.Schema), &m)
-				m = core.Format.Prettify(m, true)
-				b, _ := json.Marshal(m)
-				comp.Schema = string(b)
-				comps = append(comps, comp)
+	// if len(mod) != 0 {
+	// 	mres.Model = mod[0]
+	// }
+	for _, m := range mod {
+		var mres ModelResponse
+		mres.Model = m
+		if mres.Name != "" {
+			res := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
+				ModelName: mres.Name,
+				Version:   v,
+				Limit:     limit,
+				Offset:    offset,
+			})
+			var comps []v1alpha1.ComponentDefinition
+			for _, r := range res {
+				m := make(map[string]interface{})
+				comp, ok := r.(v1alpha1.ComponentDefinition)
+				if ok {
+					_ = json.Unmarshal([]byte(comp.Schema), &m)
+					m = core.Format.Prettify(m, true)
+					b, _ := json.Marshal(m)
+					comp.Schema = string(b)
+					comps = append(comps, comp)
+				}
 			}
-		}
-		res2 := h.registryManager.GetEntities(&v1alpha1.RelationshipFilter{
-			ModelName: mres.Name,
-			Limit:     limit,
-			Offset:    offset,
-		})
-		var relationships []v1alpha1.RelationshipDefinition
-		for _, r := range res2 {
-			rel, ok := r.(v1alpha1.RelationshipDefinition)
-			if ok {
-				relationships = append(relationships, rel)
+			res2 := h.registryManager.GetEntities(&v1alpha1.RelationshipFilter{
+				ModelName: mres.Name,
+				Limit:     limit,
+				Offset:    offset,
+			})
+			var relationships []v1alpha1.RelationshipDefinition
+			for _, r := range res2 {
+				rel, ok := r.(v1alpha1.RelationshipDefinition)
+				if ok {
+					relationships = append(relationships, rel)
+				}
 			}
+			mres.Relationships = relationships
+			mres.Components = comps
 		}
-		mres.Relationships = relationships
-		mres.Components = comps
+		mress = append(mress, mres)
 	}
-	if err := enc.Encode(mres); err != nil {
+
+	if err := enc.Encode(mress); err != nil {
 		h.log.Error(ErrWorkloadDefinition(err)) //TODO: Add appropriate meshkit error
 		http.Error(rw, ErrWorkloadDefinition(err).Error(), http.StatusInternalServerError)
 	}

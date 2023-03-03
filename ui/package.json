@@ -7,7 +7,7 @@
     "dev": "next lint --fix && node ui_dev_server.js",
     "lint": "next lint",
     "lint:fix": "next lint --fix",
-    "build": "cross-env next build",
+    "build": "npm run clean && cross-env next build",
     "start": "NODE_ENV=production node ui_dev_server.js",
     "export": "next export",
     "export-playground": "PLAYGROUND=true next export -o playground",
@@ -20,7 +20,8 @@
     "relay": "relay-compiler",
     "prepare": "cd .. && husky install ui/.husky",
     "cy:dev:open": "start-server-and-test dev http://localhost:3000 cy:open",
-    "postinstall": "patch-package"
+    "postinstall": "patch-package",
+    "clean": "rm -rf .next,out"
   },
   "husky": {
     "hooks": {
@@ -73,7 +74,7 @@
     "glob-parent": "^5.1.2",
     "graphql": "^16.5.0",
     "graphql-ws": "^5.11.2",
-    "immutable": "^4.1.0",
+    "immutable": "^4.2.4",
     "isomorphic-unfetch": "^4.0.2",
     "js-yaml": "^4.1.0",
     "jsonlint-mod": "^1.7.6",
@@ -109,7 +110,6 @@
     "relay-runtime": "^14.0.0",
     "set-value": "^4.0.1",
     "styled-jsx": "^4.0.1",
-    "subscriptions-transport-ws": "^0.9.19",
     "tar": "^6.1.12",
     "universal-cookie": "^4.0.4",
     "uuid": "^8.3.2"
@@ -124,7 +124,7 @@
     "babel-loader": "^9.1.2",
     "cypress": "^12.0.2",
     "cypress-file-upload": "^5.0.8",
-    "eslint": "^8.34.0",
+    "eslint": "^8.35.0",
     "eslint-config-next": "^13.1.2",
     "eslint-plugin-cypress": "^2.12.1",
     "eslint-plugin-react": "^7.31.8",
@@ -136,6 +136,6 @@
     "relay-compiler": "^14.1.0",
     "start-server-and-test": "^1.13.1",
     "webpack": "^5.75.0",
-    "webpack-cli": "^4.9.2"
+    "webpack-cli": "^5.0.1"
   }
 }

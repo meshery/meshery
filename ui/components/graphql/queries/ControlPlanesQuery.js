@@ -1,10 +1,11 @@
-import { graphql, fetchQuery } from "react-relay";
-import environment from "../../../lib/relayEnvironment";
+import { fetchQuery, graphql } from "react-relay";
+import { createRelayEnvironment } from "../../../lib/relayEnvironment";
 
 export default function fetchControlPlanes(variables) {
+  const environment = createRelayEnvironment({});
   const vars = { filter : variables };
 
-  const query = graphql`
+  const ControlPlanesQueryNode = graphql`
     query ControlPlanesQuery($filter: ServiceMeshFilter) {
       controlPlanesState: getControlPlanes(filter: $filter) {
         name
@@ -18,5 +19,5 @@ export default function fetchControlPlanes(variables) {
     }
   `;
 
-  return fetchQuery(environment, query, vars);
+  return fetchQuery(environment, ControlPlanesQueryNode, vars);
 }

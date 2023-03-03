@@ -93,6 +93,7 @@ const styles = (theme) => ({
     padding : theme.spacing(2),
     borderRadius : 4,
     height : "100%",
+    marginBottom : theme.spacing(2),
   },
 });
 class DashboardComponent extends React.Component {
@@ -1029,7 +1030,7 @@ class DashboardComponent extends React.Component {
     if (Array.isArray(resources) && resources.length)
       return (
         <Paper elevation={1} style={{ padding : "2rem" }}>
-          <MuiThemeProvider theme={theme.palette.type == "dark" ? this.getDarkMuiTheme() : this.getMuiTheme()}>
+          <MuiThemeProvider theme={theme.palette.type == "dark" ? configurationTableThemeDark() : configurationTableTheme()}>
             <MUIDataTable
               title={
                 <>

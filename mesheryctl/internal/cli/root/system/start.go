@@ -1,4 +1,4 @@
-// Copyright 2020 Layer5, Inc.
+// Copyright 2023 Layer5, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -115,9 +115,11 @@ mesheryctl system start --yes
 				return
 			}
 			latest := latestVersions[len(latestVersions)-1]
-			log.Printf("A new release of mesheryctl is available: %s → %s", version, latest)
-			log.Printf("https://github.com/layer5io/meshery/releases/tag/%s", latest)
-			log.Print("Check https://docs.meshery.io/guides/upgrade#upgrading-meshery-cli for instructions on how to update mesheryctl\n")
+			if latest != version {
+				log.Printf("A new release of mesheryctl is available: %s → %s", version, latest)
+				log.Printf("https://github.com/layer5io/meshery/releases/tag/%s", latest)
+				log.Print("Check https://docs.meshery.io/guides/upgrade#upgrading-meshery-cli for instructions on how to update mesheryctl\n")
+			}
 		}
 	},
 }

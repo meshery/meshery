@@ -1,6 +1,6 @@
 import React from "react";
 import HandleError from '../../ErrorHandling';
-import { buildUiSchema, recursiveCleanObjectExceptEmptyArray } from "../helpers";
+import { buildUiSchema } from "../helpers";
 import { getRefinedJsonSchema } from "./helper";
 // import MesheryArrayFieldTemplate from "./RJSFCustomComponents/ArrayFieldTemlate";
 // import MesheryCustomObjFieldTemplate from "./RJSFCustomComponents/ObjectFieldTemplate";
@@ -56,11 +56,7 @@ function RJSFWrapper(props) {
         schema={schema}
         data={data}
         onChange={(e) => {
-          // the object that has to cleaned before feeding into the RJSF form
-          // that helps us in coping overzealous validation issues
-          const cleanedData = { ...e.formData };
-          recursiveCleanObjectExceptEmptyArray(cleanedData);
-          setData(cleanedData);
+          setData(e.formData);
         }}
         jsonSchema={jsonSchema}
       />
