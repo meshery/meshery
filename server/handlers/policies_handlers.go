@@ -2,12 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
-	"io/fs"
 	"net/http"
-	"os"
-	"path"
-	"path/filepath"
 
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshkit/models/meshmodel"
@@ -94,41 +89,4 @@ func (h *Handler) RegisterMeshmodelPolicy(rw http.ResponseWriter, r *http.Reques
 		return
 	}
 	go h.config.MeshModelSummaryChannel.Publish()
-}
-
-func parseStaticPolicy(sourceDirPath string) (rs []v1alpha1.PolicyDefinition, err error) {
-	err = filepath.Walk(sourceDirPath, func(path string, info fs.FileInfo, err error) error {
-		if info == nil {
-			return fmt.Errorf("invalid/nil fileinfo while walking %s", path)
-		}
-		if !info.IsDir() {
-			var p v1alpha1.PolicyDefinition
-			byt, err := os.ReadFile(path)
-			if err != nil {
-				return err
-			}
-			err = json.Unmarshal(byt, &p)
-			if err != nil {
-				return err
-			}
-			rs = append(rs, p)
-		}
-		return nil
-	})
-	return
-}
-
-func RegisterStaticMeshmodelPolicy(rm meshmodel.RegistryManager, sourceDirPath string) (err error) {
-	host := meshmodel.Host{Hostname: "meshery"}
-	pl, err := parseStaticPolicy(path.Clean(sourceDirPath))
-	if err != nil && len(pl) == 0 {
-		return
-	}
-	for _, p := range pl {
-		err = rm.RegisterEntity(host, p)
-		if err != nil {
-			return
-		}
-	}
-	return
 }

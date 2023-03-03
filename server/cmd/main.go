@@ -283,30 +283,90 @@ func main() {
 	}()
 	// seed relationships
 	go func() {
+		relChan := make(chan v1alpha1.RelationshipDefinition, 1)
+		done := make(chan bool)
+		go func(ch chan v1alpha1.RelationshipDefinition) {
+			for{
+				select{
+				case rel := <-relChan:
+					err = regManager.RegisterEntity(meshmodel.Host{
+						Hostname: "meshery",
+					}, rel)	
+				case <-done:
+					go hc.MeshModelSummaryChannel.Publish()
+					return 	
+				}
+
+			}
+		}(relChan)
 		staticRelationshipsPath, err := filepath.Abs("../meshmodel/relationships")
 		if err != nil {
 			fmt.Println("Error registering relationships: ", err.Error())
 			return
 		}
-		err = handlers.RegisterStaticMeshmodelRelationships(*regManager, staticRelationshipsPath)
-		if err != nil {
-			fmt.Println("Error registering relationships: ", err.Error())
-			return
-		}
-		go hc.MeshModelSummaryChannel.Publish()
+		_ = filepath.Walk(staticRelationshipsPath, func(path string, info fs.FileInfo, err error) error {
+			if info == nil {
+				return fmt.Errorf("invalid/nil fileinfo while walking %s", path)
+			}
+			if !info.IsDir() {
+				var rel v1alpha1.RelationshipDefinition
+				byt, err := os.ReadFile(path)
+				if err != nil {
+					return nil
+				}
+				err = json.Unmarshal(byt, &rel)
+				if err != nil {
+					return nil
+				}
+				relChan <- rel				
+			}
+			return nil
+		})
+		done <- true
 	}()
 	// seed policys
 	go func() {
+		policyChan := make(chan v1alpha1.PolicyDefinition, 1)
+		done := make(chan bool)
+		go func(ch chan v1alpha1.PolicyDefinition) {
+			for{
+				select{
+				case p := <-policyChan:
+					err = regManager.RegisterEntity(meshmodel.Host{
+						Hostname: "meshery",
+					}, p)
+
+				case <-done:
+					go hc.MeshModelSummaryChannel.Publish()
+					return 	
+				}
+			}
+		}(policyChan)
 		staticPolicyPath, err := filepath.Abs("../meshmodel/policies")
 		if err != nil {
 			fmt.Println("Error registering policies: ", err.Error())
 			return
 		}
-		err = handlers.RegisterStaticMeshmodelPolicy(*regManager, staticPolicyPath)
-		if err != nil {
-			fmt.Println("Error registering policies: ", err.Error())
-		}
-		go hc.MeshModelSummaryChannel.Publish()
+		
+		_ = filepath.Walk(staticPolicyPath, func(path string, info fs.FileInfo, err error) error {
+			if info == nil {
+				return fmt.Errorf("invalid/nil fileinfo while walking %s", path)
+			}
+			if !info.IsDir() {
+				var p v1alpha1.PolicyDefinition
+				byt, err := os.ReadFile(path)
+				if err != nil {
+					return nil
+				}
+				err = json.Unmarshal(byt, &p)
+				if err != nil {
+					return nil
+				}
+				policyChan <- p
+			}
+			return nil
+		})
+		done <- true
 	}()
 
 	lProv.SeedContent(log)
