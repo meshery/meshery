@@ -17,7 +17,7 @@ Use the Meshery command line interface, [mesheryctl]({{ site.baseurl }}/guides/m
 ### Install on Kubernetes
 
  <pre class="codeblock-pre" style="padding: 0; font-size:0px;"><div class="codeblock" style="display: block;">
- <div class="clipboardjs">
+ <div class="clipboardjs" style="padding: 0">
     <span style="font-size:0;">curl -L https://meshery.io/install | PLATFORM=kubernetes bash -</span> 
  </div>
   <div id="termynal0" style="width:100%; height:200px; max-width:100%;" data-termynal="">
@@ -32,7 +32,7 @@ Use the Meshery command line interface, [mesheryctl]({{ site.baseurl }}/guides/m
 ### Install on Docker
 
 <pre class="codeblock-pre" style="padding: 0; font-size:0px;"><div class="codeblock" style="display: block;">
- <div class="clipboardjs">
+ <div class="clipboardjs" style="padding: 0">
  <span style="font-size:0;">curl -L https://meshery.io/install | PLATFORM=docker bash -</span>  
  </div>
  <div id="termynal1" style="width:100%; height:200px; max-width:100%;" data-termynal="">
@@ -47,7 +47,7 @@ Use the Meshery command line interface, [mesheryctl]({{ site.baseurl }}/guides/m
 ### Install using Docker extension for Meshery
 
 <pre class="codeblock-pre" style="padding: 0; font-size:0px;"><div class="codeblock" style="display: block;">
- <div class="clipboardjs">
+ <div class="clipboardjs" style="padding: 0">
  <span style="font-size:0;">docker extension install meshery/docker-extension-meshery</span> 
  </div>
  <div id="termynal2" style="width:100%; height:200px; max-width:100%;" data-termynal="">
