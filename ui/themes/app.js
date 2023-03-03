@@ -323,6 +323,14 @@ theme = {
       },
     },
 
+    // global style for body throughout meshery-ui
+    MuiCssBaseline : {
+      "@global" : {
+        body : {
+          backgroundColor : "#eaeff1",
+        },
+      },
+    },
     // Global scrollbar styles
     // MuiCssBaseline : {
     //   "@global" : {
@@ -364,7 +372,8 @@ export const notificationColors = {
   error : "#F91313",
   warning : "#F0A303",
   success : "#206D24",
-  info : "#2196F3"
+  info : "#2196F3",
+  darkRed : "#B32700"
 };
 
 export const darkNotificationColors = {
@@ -407,7 +416,11 @@ export const styles = (theme) => ({
     padding : '48px 36px 24px',
   },
   footer : {
-    backgroundColor : darkTheme.palette.type == "dark" ? "#fff" : "#212121",
+    backgroundColor : '#fff',
+    padding : theme.spacing(2),
+  },
+  footerDark : {
+    backgroundColor : '#202020',
     padding : theme.spacing(2),
   },
   footerText : {

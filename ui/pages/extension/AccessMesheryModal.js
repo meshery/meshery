@@ -28,7 +28,11 @@ const styles = makeStyles((theme) => ({
   imgWrapper : {
     display : "flex",
     justifyContent : "center",
-    padding : "1rem"
+    alignItems : "center",
+    padding : "2rem"
+  },
+  insideImgWrapper : {
+    padding : "0rem 0.5rem"
   },
   installButton : {
     marginBottom : "1rem",
@@ -62,7 +66,16 @@ export default function PlaygroundMeshDeploy(props) {
         </DialogTitle>
         <DialogContent>
           <div className={classes.imgWrapper}>
-            <img width="60%" height="60%" src="/static/img/meshery-logo-light-text-side.png" />
+            <img
+              className={classes.insideImgWrapper}
+              width="20%"  height="20%"
+              src="/static/img/meshery-logo.png"
+            />
+            <img
+              className={classes.insideImgWrapper}
+              width="50%" height="50%"
+              src="/static/img/meshery-logo-text.png"
+            />
           </div>
           <Typography gutterBottom>
             Meshery Playground gives you hands-on experience with designing cloud native systems - from your browser - using every CNCF project.

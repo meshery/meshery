@@ -1,8 +1,10 @@
-import { fetchQuery, graphql } from "relay-runtime";
-import environment from "../../../lib/relayEnvironment";
+import { fetchQuery, graphql } from "react-relay";
+import { createRelayEnvironment } from "../../../lib/relayEnvironment";
 
 export default function fetchTelemetryCompsQuery(variables) {
-  const query = graphql`
+  const environment = createRelayEnvironment({});
+
+  const TelemetryComponentsQueryNode = graphql`
     query TelemetryComponentsQuery($contexts: [String!]) {
       telemetryComps: fetchTelemetryComponents(contexts: $contexts) {
           name
@@ -10,5 +12,5 @@ export default function fetchTelemetryCompsQuery(variables) {
           status 
       }
     }`;
-  return fetchQuery(environment, query, variables);
+  return fetchQuery(environment, TelemetryComponentsQueryNode, variables);
 }

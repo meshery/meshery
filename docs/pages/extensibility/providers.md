@@ -127,8 +127,7 @@ The Navigator extension point loads a set of menu items to be displayed in the m
 
 Meshery Server will proxy all requests to remote provider endpoints. Endpoints are dynamically determined and identified in the "capabilities" section of the `/capabilities` endpoint. Providers as an object have the following attributes (this must be returned as a response to `/capabilities` endpoint):
 
-```json
-{
+{% capture code_content %}{
   "provider_type": "remote",
   "package_version": "v0.1.0",
   "package_url": "https://layer5labs.github.io/meshery-extensions-packages/provider.tar.gz",
@@ -147,8 +146,8 @@ Meshery Server will proxy all requests to remote provider endpoints. Endpoints a
           "uri": "/meshmap",
           "external": false
         },
-        "component": "provider/navigator/meshmap/index.js",
-        "icon": "provider/navigator/img/meshmap-icon.svg",
+        "component": "/provider/navigator/meshmap/index.js",
+        "icon": "/provider/navigator/img/meshmap-icon.svg",
         "link:": true,
         "show": true,
         "children": [
@@ -158,32 +157,155 @@ Meshery Server will proxy all requests to remote provider endpoints. Endpoints a
               "uri": "/meshmap/mesh/all",
               "external": false
             },
-            "component": "navigator/meshmap/index.js",
-            "icon": "navigator/img/singlemesh-icon.svg",
+            "component": "/provider/navigator/meshmap/index.js",
+            "icon": "/provider/navigator/img/singlemesh-icon.svg",
             "link": false,
             "show": true
           }
         ]
       }
     ],
+    "account": [
+      {
+          "title": "Overview",
+          "on_click_callback": 1,
+          "href": {
+              "uri": "/account/overview",
+              "external": false
+          },
+          "component": "/provider/account/profile/overview.js",
+          "link": true,
+          "show": true,
+          "type": "full_page"
+      },
+      {
+          "title": "Profile",
+          "on_click_callback": 1,
+          "href": {
+              "uri": "/account/profile",
+              "external": false
+          },
+          "component": "/provider/account/profile/profile.js",
+          "link": true,
+          "show": true,
+          "type": "full_page"
+      },
+      {
+          "title": "API Tokens",
+          "on_click_callback": 1,
+          "href": {
+              "uri": "/account/tokens",
+              "external": false
+          },
+          "component": "/provider/account/profile/tokens.js",
+          "link": true,
+          "show": true,
+          "type": "full_page"
+      }
+    ],
     "user_prefs": [
       {
-        "component": "userprefs/meshmap-preferences.js"
+        "component": "/provider/userprefs/meshmap-preferences.js"
       }
     ]
   },
   "capabilities": [
-    { "feature": "sync-prefs", "endpoint": "/user/preferences" },
-    { "feature": "persist-results", "endpoint": "/results" },
-    { "feature": "persist-result", "endpoint": "/result" },
-    { "feature": "persist-smi-results", "endpoint": "/smi/results" },
-    { "feature": "persist-metrics", "endpoint": "/result/metrics" },
-    { "feature": "persist-smp-test-profile", "endpoint": "/user/test-config" }
+    {
+        "feature": "sync-prefs",
+        "endpoint": "/user/preferences"
+    },
+    {
+        "feature": "persist-results",
+        "endpoint": "/results"
+    },
+    {
+        "feature": "persist-result",
+        "endpoint": "/result"
+    },
+    {
+        "feature": "persist-smi-results",
+        "endpoint": "/smi/results"
+    },
+    {
+        "feature": "persist-smi-result",
+        "endpoint": "/smi/result"
+    },
+    {
+        "feature": "persist-metrics",
+        "endpoint": "/result/metrics"
+    },
+    {
+        "feature": "persist-smp-test-profile",
+        "endpoint": "/user/test-config"
+    },
+    {
+        "feature": "persist-performance-profiles",
+        "endpoint": "/user/performance/profiles"
+    },
+    {
+        "feature": "persist-schedules",
+        "endpoint": "/user/schedules"
+    },
+    {
+        "feature": "persist-meshery-patterns",
+        "endpoint": "/patterns"
+    },
+    {
+        "feature": "persist-meshery-filters",
+        "endpoint": "/filters"
+    },
+    {
+        "feature": "persist-meshery-applications",
+        "endpoint": "/applications"
+    },
+    {
+        "feature": "persist-meshery-pattern-resources",
+        "endpoint": "/patterns/resource"
+    },
+    {
+        "feature": "meshery-patterns-catalog",
+        "endpoint": "/patterns/catalog"
+    },
+    {
+        "feature": "meshery-filters-catalog",
+        "endpoint": "/filters/catalog"
+    },
+    {
+        "feature": "clone-meshery-patterns",
+        "endpoint": "/patterns/clone"
+    },
+    {
+        "feature": "clone-meshery-filters",
+        "endpoint": "/filters/clone"
+    },
+    {
+        "feature": "share-designs",
+        "endpoint": "/api/content/design/share"
+    },
+    {
+        "feature": "persist-connection",
+        "endpoint": "/api/connection"
+    }
   ]
-}
-```
+}{% endcapture %}
+{% include code.html code=code_content %}
 
-Meshery enables you as a service mesh owner to customize your service mesh deployment.
+##### Meshery Server Registration
+
+Every Meshery server is capable of registering itself with the remote provider, considering that remote provider supports this feature as a capability.
+On successful authentication with the remote provider, Meshery server registers itself by sending a POST request to the remote provider through the `persist-connection` capability. The body of the request should include information so as to uniquely indentify Meshery server and its status.
+
+Example of the request body:
+
+{% capture code_content %}
+  {
+    "server_id": "xxxx-xxxxx-xxxx-xxxx",
+    "server_version": "vx.x.x",
+    "server_build-sha": "xxxx-xxxxx",
+    "server_location": "<protocol>://<hostname>:<port>”
+  }
+{% endcapture %}
+{% include code.html code=code_content %}
 
 ## Configurable OAuth Callback URL
 
@@ -204,9 +326,8 @@ If you are deploying Meshery using Helm, you can configure the MESHERY_SERVER_CA
 - **Custom URL:** `https://k8s-staging.test.io/`
 - **Auth Endpoint:** `api/user/token` (append at the end of your custom URL)
 
-```
-helm install meshery meshery/meshery --namespace meshery --set env.MESHERY_SERVER_CALLBACK_URL=https://k8s-staging.test.io/api/user/token
-```
+{% capture code_content %}helm install meshery meshery/meshery --namespace meshery --set env.MESHERY_SERVER_CALLBACK_URL=https://k8s-staging.test.io/api/user/token{% endcapture %}
+{% include code.html code=code_content %}
 
 ##### Note
 

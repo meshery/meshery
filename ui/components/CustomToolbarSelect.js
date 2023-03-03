@@ -33,18 +33,18 @@ class CustomToolbarSelect extends React.Component {
 
   //     this.props.setSelectedRows(nextSelectedRows);
   //   };
-    state = { dialogOpen : false,
-      data : [],
-      chartCompare : [], // will persist start, end times, chart config and metrics for each result to be compared
-    }
+  state = { dialogOpen : false,
+    data : [],
+    chartCompare : [], // will persist start, end times, chart config and metrics for each result to be compared
+  }
 
-    handleDialogClose = () => {
-      this.setState({ dialogOpen : false });
-    }
+  handleDialogClose = () => {
+    this.setState({ dialogOpen : false });
+  }
 
-    handleDialogOpen = () => {
-      this.setState({ dialogOpen : true });
-    }
+  handleDialogOpen = () => {
+    this.setState({ dialogOpen : true });
+  }
 
   handleClickDeselectAll = () => {
     this.props.setSelectedRows([]);

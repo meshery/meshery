@@ -39,6 +39,7 @@ code {
   margin: 2rem 0;
   padding: 1rem;
   background-color: var(--color-primary-medium);
+  overflow: hidden;
 }
 .td-content pre > code {
   padding: 10px 0;
@@ -48,7 +49,7 @@ code {
   white-space: pre;
   border: 0;
   width: 100%;
-  overflow: scroll;
+  overflow: auto;
   color: var(--color-secondary-dark);
 }
 

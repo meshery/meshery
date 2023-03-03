@@ -277,8 +277,14 @@ func (h *Handler) CloneMesheryFilterHandler(
 	provider models.Provider,
 ) {
 	filterID := mux.Vars(r)["id"]
+	var parsedBody *models.MesheryCloneFilterRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil || filterID == "" {
+		h.log.Error(ErrRequestBody(err))
+		http.Error(rw, ErrRequestBody(err).Error(), http.StatusBadRequest)
+		return
+	}
 
-	resp, err := provider.CloneMesheryFilter(r, filterID)
+	resp, err := provider.CloneMesheryFilter(r, filterID, parsedBody)
 	if err != nil {
 		h.log.Error(ErrCloneFilter(err))
 		http.Error(rw, ErrCloneFilter(err).Error(), http.StatusInternalServerError)

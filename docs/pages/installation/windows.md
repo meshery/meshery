@@ -47,9 +47,7 @@ The following minimum Windows build versions are required:
 Note
 <br />Run the following command on Powershell to check your Windows build and version:
  <pre class="codeblock-pre"><div class="codeblock">
- <div class="clipboardjs">
-[System.Environment]::OSVersion.Version
- </div></div>
+ <div class="clipboardjs">[System.Environment]::OSVersion.Version</div></div>
  </pre>
 ### Steps
 Perform the following steps in order:
@@ -59,10 +57,8 @@ Perform the following steps in order:
 Open Powershell in administrator mode and run:
 
  <pre class="codeblock-pre"><div class="codeblock">
- <div class="clipboardjs">
- dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
- Restart-Computer
- </div></div>
+ <div class="clipboardjs">dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
+Restart-Computer</div></div>
  </pre>
 
 ##### Choosing your WSL version:
@@ -74,17 +70,13 @@ Enable VM (Virtual Machine) feature:
 Open PowerShell in administrator mode and run:
 
  <pre class="codeblock-pre"><div class="codeblock">
- <div class="clipboardjs">
- dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart
- </div></div>
+ <div class="clipboardjs">dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart</div></div>
  </pre>
 
 Set WSL2 as the default version:
 
  <pre class="codeblock-pre"><div class="codeblock">
- <div class="clipboardjs">
- wsl --set-default-version 2
- </div></div>
+ <div class="clipboardjs">wsl --set-default-version 2</div></div>
  </pre>
 
 <h6><b><a href="https://docs.microsoft.com/en-us/windows/wsl/install-win10" name="wsl1"> WSL1 </a></b></h6>
@@ -143,37 +135,29 @@ Under "Settings" in the Docker Desktop application, enable *Kubernetes*.
 In this how-to, [K3d](https://github.com/rancher/k3d) will be used as it relies only on Docker.
 
   <pre class="codeblock-pre">
-  <div class="codeblock"><div class="clipboardjs">
-  curl -s https://raw.githubusercontent.com/rancher/k3d/main/install.sh | bash
-  k3d cluster create
-  export KUBECONFIG="$(k3d kubeconfig get 'k3s-default')"
-  </div></div>
+  <div class="codeblock"><div class="clipboardjs">curl -s https://raw.githubusercontent.com/rancher/k3d/main/install.sh | bash
+k3d cluster create
+export KUBECONFIG="$(k3d kubeconfig get 'k3s-default')"</div></div>
   </pre>
 
 If using Scoop, run the following in the PowerShell to install a Kubernetes cluster :
 
   <pre class="codeblock-pre">
-  <div class="codeblock"><div class="clipboardjs">
-  scoop install k3d
-  k3d cluster create
-  export KUBECONFIG="$(k3d kubeconfig get 'k3s-default')"
-  </div></div>
+  <div class="codeblock"><div class="clipboardjs">scoop install k3d
+k3d cluster create
+export KUBECONFIG="$(k3d kubeconfig get 'k3s-default')"</div></div>
   </pre>
 
 ### 5. <a name="step5"><b>Set up Meshery</b></a>
 
 Follow the [installation steps]({{ site.baseurl }}/installation#windows) to install the mesheryctl CLI. Then, execute:
   <pre class="codeblock-pre">
-  <div class="codeblock"><div class="clipboardjs">
-  ./mesheryctl system start
-  </div></div>
+  <div class="codeblock"><div class="clipboardjs">./mesheryctl system start</div></div>
   </pre>
 
   Meshery server supports customizing authentication flow callback URL, which can be configured in the following way
   <pre class="codeblock-pre">
-  <div class="codeblock"><div class="clipboardjs">
-  MESHERY_SERVER_CALLBACK_URL=https://custom-host ./mesheryctl system start
-  </div></div>
+  <div class="codeblock"><div class="clipboardjs">MESHERY_SERVER_CALLBACK_URL=https://custom-host ./mesheryctl system start</div></div>
   </pre>
 
 Type **yes** when prompted to choose to configure a file. To get started, choose Docker as your platform to deploy Meshery.
@@ -185,17 +169,14 @@ Meshery is unable to detect the Kubernetes connection running on your local syst
 1. To display a list of the contexts in Kubernetes, run:
 
   <pre class="codeblock-pre">
-  <div class="codeblock"><div class="clipboardjs">
-  kubectl config get-contexts
-  </div></div>
+  <div class="codeblock"><div class="clipboardjs">kubectl config get-contexts</div></div>
   </pre>
 
 2. Change your current context to docker-desktop:
 
   <pre class="codeblock-pre">
-  <div class="codeblock"><div class="clipboardjs">
-  kubectl config use-context docker-desktop
-  </div></div>
+  <div class="codeblock"><div class="clipboardjs">kubectl config use-context
+docker-desktop</div></div>
   </pre>
 
 3. Restart Meshery.

@@ -24,6 +24,7 @@ import OperatorLight from "../assets/img/OperatorLight";
 import { iconMedium, iconSmall } from "../css/icons.styles";
 import { RoundedTriangleShape } from "./shapes/RoundedTriangle";
 import { notificationColors } from "../themes/app";
+import RedOctagonSvg from "./shapes/Octagon";
 
 const styles = (theme) => ({
   dialogBox : {
@@ -175,6 +176,21 @@ const styles = (theme) => ({
     left : "37%",
     color : "#fff",
     fontSize : "0.8rem"
+  },
+  octagonContainer : {
+    overflow : "hidden",
+    position : "relative",
+    display : "flex",
+    alignItems : "center",
+    justifyContent : "center",
+    height : 34,
+    marginLeft : 2
+  },
+  octagonText : {
+    position : "absolute",
+    bottom : 9.5 ,
+    color : "#fff",
+    fontSize : "0.8rem"
   }
 })
 
@@ -323,8 +339,17 @@ function ConfirmationMsg(props) {
               data-cy="deploy-btn-modal"
               className={classes.tab}
               onClick={(event) => handleTabValChange(event, 2)}
-              label={<div style={{ display : "flex" }}
-              > <DoneAllIcon style={{ margin : "2px", ...iconSmall }} fontSize="small" /> <span className={classes.tabLabel}>Deploy</span> </div>}
+              label={<div style={{ display : "flex" }}>
+                <DoneAllIcon style={{ margin : "2px", ...iconSmall }} fontSize="small" />
+                <span className={classes.tabLabel}>Deploy</span>
+                {errors?.deploymentError > 0 && (
+                  <div className={classes.octagonContainer}>
+                    <RedOctagonSvg fill={notificationColors.darkRed}></RedOctagonSvg>
+                    <div className={classes.octagonText}>
+                      {errors.deploymentError}
+                    </div>
+                  </div>)}
+              </div>}
             />
           </Tabs>
 
