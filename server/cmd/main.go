@@ -236,6 +236,7 @@ func main() {
 		MeshModelSummaryChannel:   mesherymeshmodel.NewSummaryHelper(),
 
 		K8scontextChannel: models.NewContextHelper(),
+		OperatorTracker:   models.NewOperatorTracker(viper.GetBool("DISABLE_OPERATOR")),
 	}
 
 	//seed the local meshmodel components
