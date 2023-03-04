@@ -442,7 +442,7 @@ class MesheryApp extends App {
                     style={this.props.capabilitiesRegistry?.restrictedAccess?.isMesheryUiRestricted ? { color : "#000" } : {}}
                   >
                     <span onClick={this.handleL5CommunityClick} className={classes.footerText}>
-                      {this.props.capabilitiesRegistry?.restrictedAccess?.isMesheryUiRestricted ? "ACCESS LIMITED IN MESHERY PLAYGROUND. DEPLOY MESHERY TO ACCESS ALL FEATURES." : (<> Built with <FavoriteIcon className={classes.footerIcon} /> by the Layer5 Community</>)}
+                      {this.props.capabilitiesRegistry?.restrictedAccess?.isMesheryUiRestricted ? "ACCESS LIMITED IN MESHERY PLAYGROUND. DEPLOY MESHERY TO ACCESS ALL FEATURES." : (<> Built with test <FavoriteIcon className={classes.footerIcon} /> by the Layer5 Community</>)}
                     </span>
                   </Typography>
                 </footer>
