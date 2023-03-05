@@ -280,7 +280,7 @@ Learn more about <a href="https://docs.meshery.io/architecture">Meshery's archit
 
 ## Join the Meshery community!
 
-Our projects are community-built and welcome collaboration. 👍 Be sure to see the <a href="https://layer5.io/community/newcomers">Layer5 Community Welcome Guide</a> for a tour of resources available to you and see the <a href="https://layer5.io/community/handbook/repository-overview">Layer5 Repository Overview</a> for a cursory description of repository by technology and programming language. Jump into community <a href="http://slack.layer5.io">Slack</a> to engage!
+Our projects are community-built and welcome collaboration. 👍 Be sure to see the <a href="https://layer5.io/community/newcomers">Layer5 Newcomers' Guide</a> for a tour of resources available to you and see the <a href="https://layer5.io/community/handbook/repository-overview">Layer5 Repository Overview</a> for a cursory description of repository by technology and programming language. Jump into community <a href="http://slack.layer5.io">Slack</a> to engage!
 
 
 <p style="clear:both;">
