@@ -11,7 +11,11 @@ import { bindActionCreators } from "redux";
 import { setAdapter } from "../lib/store";
 
 const styles = (theme) => ({
-  icon : { fontSize : 20, },
+  icon : {
+    fontSize : 20,
+    width : theme.spacing(2.5),
+    marginRight : theme.spacing(0.5)
+  },
   playRoot : {
     padding : theme.spacing(0),
     marginBottom : theme.spacing(2),
