@@ -254,7 +254,6 @@ func main() {
 							return err
 						}
 						component.DisplayName = manifests.FormatToReadableString(component.Kind)
-						fmt.Println("updating for ", changeFields["modelDisplayName"], "--", component.Kind)
 						if component.Metadata == nil {
 							component.Metadata = make(map[string]interface{})
 						}
@@ -276,11 +275,13 @@ func main() {
 						if i := isInColumnNames("modelDisplayName", ColumnNamesToExtract); i != -1 {
 							component.Model.DisplayName = changeFields[ColumnNamesToExtract[i]]
 						}
-						if component.Metadata["Publish?"] == "TRUE" { //Publish? is an invalid field for putting inside kubernetes annotations
+						//Either component is set to published or the parent model is set to published
+						if component.Metadata["Publish?"] == "TRUE" || publishedModels[component.Model.Name] { //Publish? is an invalid field for putting inside kubernetes annotations
 							component.Metadata["published"] = true
 						} else {
 							component.Metadata["published"] = false
 						}
+						fmt.Println("updating for ", changeFields["modelDisplayName"], "--", component.Kind, "-- published=", component.Metadata["published"])
 						delete(component.Metadata, "Publish?")
 						modelDisplayName := component.Metadata["modelDisplayName"].(string)
 						component.Model.DisplayName = modelDisplayName
