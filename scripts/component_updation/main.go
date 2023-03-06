@@ -37,7 +37,7 @@ import (
 )
 
 var (
-	ColumnNamesToExtract        = []string{"modelDisplayName", "model", "category", "subCategory", "shape", "primaryColor", "secondaryColor", "logo-URL", "svgColor", "svgWhite", "Publish?"}
+	ColumnNamesToExtract        = []string{"modelDisplayName", "model", "category", "subCategory", "shape", "primaryColor", "secondaryColor", "logoURL", "svgColor", "svgWhite", "Publish?"}
 	ColumnNamesToExtractForDocs = []string{"modelDisplayName", "Page Subtitle", "Docs URL", "category", "subCategory", "Feature 1", "Feature 2", "Feature 3", "howItWorks", "howItWorksDetails", "Publish?", "About Project", "Standard Blurb", "svgColor", "svgWhite", "Full Page", "model"}
 	PrimaryColumnName           = "model"
 	OutputPath                  = "../../server/meshmodel/components"
@@ -254,7 +254,6 @@ func main() {
 							return err
 						}
 						component.DisplayName = manifests.FormatToReadableString(component.Kind)
-						fmt.Println("updating for ", changeFields["modelDisplayName"], "--", component.Kind)
 						if component.Metadata == nil {
 							component.Metadata = make(map[string]interface{})
 						}
@@ -276,6 +275,13 @@ func main() {
 						if i := isInColumnNames("modelDisplayName", ColumnNamesToExtract); i != -1 {
 							component.Model.DisplayName = changeFields[ColumnNamesToExtract[i]]
 						}
+						//Either component is set to published or the parent model is set to published
+						if component.Metadata["Publish?"] == "TRUE" || publishedModels[component.Model.Name] { //Publish? is an invalid field for putting inside kubernetes annotations
+							component.Metadata["published"] = true
+						} else {
+							component.Metadata["published"] = false
+						}
+						fmt.Println("updating for ", changeFields["modelDisplayName"], "--", component.Kind, "-- published=", component.Metadata["published"])
 						delete(component.Metadata, "Publish?")
 						modelDisplayName := component.Metadata["modelDisplayName"].(string)
 						component.Model.DisplayName = modelDisplayName

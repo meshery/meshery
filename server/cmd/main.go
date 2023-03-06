@@ -247,10 +247,12 @@ func main() {
 			for {
 				select {
 				case comp := <-compChan:
-					utils.WriteSVGsOnFileSystem(&comp)
-					err = regManager.RegisterEntity(meshmodel.Host{
-						Hostname: ArtifactHubComponentsHandler,
-					}, comp)
+					if comp.Metadata != nil && comp.Metadata["published"] == true {
+						utils.WriteSVGsOnFileSystem(&comp)
+						err = regManager.RegisterEntity(meshmodel.Host{
+							Hostname: ArtifactHubComponentsHandler,
+						}, comp)
+					}
 				case <-done:
 					go hc.MeshModelSummaryChannel.Publish()
 					return
