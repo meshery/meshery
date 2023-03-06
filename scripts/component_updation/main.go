@@ -37,7 +37,7 @@ import (
 )
 
 var (
-	ColumnNamesToExtract        = []string{"modelDisplayName", "model", "category", "subCategory", "shape", "primaryColor", "secondaryColor", "logo-URL", "svgColor", "svgWhite", "Publish?"}
+	ColumnNamesToExtract        = []string{"modelDisplayName", "model", "category", "subCategory", "shape", "primaryColor", "secondaryColor", "logoURL", "svgColor", "svgWhite", "Publish?"}
 	ColumnNamesToExtractForDocs = []string{"modelDisplayName", "Page Subtitle", "Docs URL", "category", "subCategory", "Feature 1", "Feature 2", "Feature 3", "howItWorks", "howItWorksDetails", "Publish?", "About Project", "Standard Blurb", "svgColor", "svgWhite", "Full Page", "model"}
 	PrimaryColumnName           = "model"
 	OutputPath                  = "../../server/meshmodel/components"
@@ -275,6 +275,11 @@ func main() {
 						}
 						if i := isInColumnNames("modelDisplayName", ColumnNamesToExtract); i != -1 {
 							component.Model.DisplayName = changeFields[ColumnNamesToExtract[i]]
+						}
+						if component.Metadata["Publish?"] == "TRUE" { //Publish? is an invalid field for putting inside kubernetes annotations
+							component.Metadata["published"] = true
+						} else {
+							component.Metadata["published"] = false
 						}
 						delete(component.Metadata, "Publish?")
 						modelDisplayName := component.Metadata["modelDisplayName"].(string)
