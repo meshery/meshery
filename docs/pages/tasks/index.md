@@ -3,6 +3,7 @@ layout: default
 title: Tasks
 permalink: tasks
 redirect_from: tasks/
+language: en
 ---
 
 These sections provide user guides to the functionality Meshery offers.

@@ -10,6 +10,7 @@ github_link: https://github.com/meshery/meshery-osm
 image: /assets/img/service-meshes/osm.svg
 permalink: service-meshes/adapters/osm
 earliest_version: v0.9.2
+language: en
 ---
 
 {% assign sorted_tests_group = site.compatibility | group_by: "meshery-component" %}

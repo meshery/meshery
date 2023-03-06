@@ -5,6 +5,7 @@ abstract: "Meshery Error Code Reference"
 permalink: reference/error-codes
 redirect_from: reference/error-codes/
 type: Reference
+language: en
 ---
 <style>
 
