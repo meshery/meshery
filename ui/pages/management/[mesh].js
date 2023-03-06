@@ -62,6 +62,7 @@ const useStyles = makeStyles((theme) => ({
   icon : {
     width : theme.spacing(2.5),
     marginRight : theme.spacing(0.5),
+    alignSelf : "flex-start"
   }
 }))
 

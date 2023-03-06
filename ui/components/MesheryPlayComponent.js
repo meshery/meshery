@@ -12,9 +12,10 @@ import { setAdapter } from "../lib/store";
 
 const styles = (theme) => ({
   icon : {
-    fontSize : 20,
+    fontSize : 23,
     width : theme.spacing(2.5),
-    marginRight : theme.spacing(0.5)
+    marginRight : theme.spacing(0.5),
+    alignSelf : "flex-start"
   },
   playRoot : {
     padding : theme.spacing(0),
