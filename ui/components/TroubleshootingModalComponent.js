@@ -43,7 +43,7 @@ const useStyles = makeStyles(theme => ({
     fontSize : "1rem"
   },
   infoIcon : {
-    color : theme.palette.type == 'dark' ? "#00B39F" : theme.palette.primary
+    color : theme.palette.type == 'dark' ? "#00B39F" : "#607d8b"
   },
   footerText : {
     color : "#EDEDED",
