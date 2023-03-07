@@ -17,15 +17,16 @@
   }
   & input {
     border: none;
-    width: 40%;
-    font-family: "Open Sans";
-    border-radius: 21px;
+    width: 100%;
+    max-width: 300px;
+    font-family: "Qanelas Soft, sans-serif";;
+    border-radius: 1.3125rem;
     background: var(--background-neumorphic);
-    padding: 8px 15px 8px 15px;
+    padding: 0.5rem 0.9375rem;
     margin-bottom: 1.5rem;
   }
   & input::placeholder {
-    font-family: "font awesome 5 free", open sans, -apple-system, BlinkMacSystemFont, segoe ui, Roboto, helvetica neue, Arial, sans-serif, apple color emoji, segoe ui emoji, segoe ui symbol;
+    font-family: "Qanelas Soft, sans-serif";
   }
 }
 
