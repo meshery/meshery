@@ -6,9 +6,10 @@
 	"metadata": {
 		"logo-URL": "",
 		"model": "core",
-		"modelDisplayName": "core",
+		"modelDisplayName": "Core",
 		"primaryColor": "",
 		"secondaryColor": "",
+		"published": true,
 		"shape": "circle",
 		"svgColor": "",
 		"svgWhite": ""
@@ -16,7 +17,7 @@
 	"model": {
 		"name": "core",
 		"version": "v1.0.0",
-		"displayName": "Core",
+		"modelDisplayName": "Core",
 		"category": "Cloud Native Application",
 		"subCategory": "Not Found"
 	},
