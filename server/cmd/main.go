@@ -250,9 +250,6 @@ func main() {
 				case comp := <-compChan:
 					if comp.Metadata != nil && comp.Metadata["published"] == true {
 						utils.WriteSVGsOnFileSystem(&comp)
-						if comp.Model.Name == "core" {
-							fmt.Println(comp)
-						}
 						err = regManager.RegisterEntity(meshmodel.Host{
 							Hostname: ArtifactHubComponentsHandler,
 						}, comp)
