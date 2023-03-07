@@ -347,7 +347,7 @@ func (h *Handler) GetMeshmodelEntititiesByModel(rw http.ResponseWriter, r *http.
 		if mres.Name != "" {
 			res := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
 				ModelName: mres.Name,
-				Version:   v,
+				Version:   mres.Version,
 				Limit:     limit,
 				Offset:    offset,
 			})
@@ -365,6 +365,7 @@ func (h *Handler) GetMeshmodelEntititiesByModel(rw http.ResponseWriter, r *http.
 			}
 			res2 := h.registryManager.GetEntities(&v1alpha1.RelationshipFilter{
 				ModelName: mres.Name,
+				Version:   mres.Version,
 				Limit:     limit,
 				Offset:    offset,
 			})
