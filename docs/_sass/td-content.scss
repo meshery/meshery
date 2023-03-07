@@ -15,6 +15,21 @@
     margin: 3.2rem 0 1.6rem;
     font-weight: 400;
   }
+
+  & input {
+    border: none;
+    width: 100%;
+    max-width: 20rem;
+    border-radius: 1.3125rem;
+    margin-bottom: 1.5rem;
+    background: var(--background-neumorphic);
+    padding: 0.6rem 1rem;
+  }
+
+  & input::placeholder {
+    font-family: "Qanelas Soft, sans-serif";
+  }
+
 }
 
 ///////////////// Code Terminal /////////////////////////////
