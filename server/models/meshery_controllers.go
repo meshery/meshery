@@ -155,18 +155,16 @@ func (mch *MesheryControllersHelper) UpdateCtxControllerHandlers(ctxs []K8sConte
 // for whom MesheryControllers are attached
 // should be called after UpdateCtxControllerHandlers
 func (mch *MesheryControllersHelper) UpdateOperatorsStatusMap(ot *OperatorTracker) *MesheryControllersHelper {
-	go func(mch *MesheryControllersHelper) {
-		mch.mu.Lock()
-		defer mch.mu.Unlock()
-		mch.ctxOperatorStatusMap = make(map[string]controllers.MesheryControllerStatus)
-		for ctxID, ctrlHandler := range mch.ctxControllerHandlersMap {
-			if ot.IsUndeployed(ctxID) {
-				mch.ctxOperatorStatusMap[ctxID] = controllers.Undeployed
-			} else {
-				mch.ctxOperatorStatusMap[ctxID] = ctrlHandler[MesheryOperator].GetStatus()
-			}
+	mch.mu.Lock()
+	defer mch.mu.Unlock()
+	mch.ctxOperatorStatusMap = make(map[string]controllers.MesheryControllerStatus)
+	for ctxID, ctrlHandler := range mch.ctxControllerHandlersMap {
+		if ot.IsUndeployed(ctxID) {
+			mch.ctxOperatorStatusMap[ctxID] = controllers.Undeployed
+		} else {
+			mch.ctxOperatorStatusMap[ctxID] = ctrlHandler[MesheryOperator].GetStatus()
 		}
-	}(mch)
+	}
 
 	return mch
 }
