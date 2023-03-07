@@ -48,6 +48,12 @@ const styles = (theme) => ({
       color : theme.palette.type === 'dark' ? "#00B39F" : theme.palette.primary,
     },
   },
+  subTab : {
+    color : theme.palette.primary,
+    "&.Mui-selected" : {
+      color : theme.palette.type === 'dark' ? "#00B39F" : theme.palette.primary,
+    },
+  },
   tabs : {
     "& .MuiTabs-indicator" : {
       backgroundColor : theme.palette.type === 'dark' ? "#00B39F" : theme.palette.primary,
@@ -645,20 +651,20 @@ class MesherySettings extends React.Component {
               <AppBar position="static" color="default">
                 <Tabs
                   value={subTabVal}
-                  className={classes.tab}
+                  className={classes.tabs}
                   onChange={this.handleChange('subTabVal')}
                   indicatorColor="primary"
                   textColor="primary"
                   variant="fullWidth"
                 >
-                  <Tab label={(
+                  <Tab className={classes.subTab} label={(
                     <div className={classes.iconText}>
                       Grafana
                       <img src="/static/img/grafana_icon.svg" className={classes.icon} />
                     </div>
                   )}
                   />
-                  <Tab label={(
+                  <Tab className={classes.subTab} label={(
                     <div className={classes.iconText}>
                       Prometheus
                       <img src="/static/img/prometheus_logo_orange_circle.svg" className={classes.icon} />
