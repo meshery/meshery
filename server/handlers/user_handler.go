@@ -7,6 +7,7 @@ import (
 
 	"encoding/json"
 
+	"github.com/gorilla/mux"
 	"github.com/pkg/errors"
 
 	"github.com/layer5io/meshery/server/models"
@@ -25,6 +26,26 @@ func (h *Handler) UserHandler(w http.ResponseWriter, req *http.Request, _ *model
 		http.Error(w, ErrEncoding(err, obj).Error(), http.StatusInternalServerError)
 		return
 	}
+}
+
+// swagger:route GET /api/user/profile/{id} UserAPI idGetUserByIdHandler
+// Handle GET for User info by ID
+//
+// Returns User info
+// responses:
+// 	200: userInfo
+
+func (h *Handler) GetUserByIdHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
+	userID := mux.Vars(r)["id"]
+	resp, err := provider.GetUserById(r, userID)
+	if err != nil {
+		h.log.Error(ErrGetResult(err))
+		http.Error(w, ErrGetResult(err).Error(), http.StatusNotFound)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	fmt.Fprint(w, string(resp))
 }
 
 // swagger:route GET /api/user/prefs UserAPI idGetUserTestPrefs

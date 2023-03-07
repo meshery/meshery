@@ -37,7 +37,7 @@ type HandlerInterface interface {
 	LoginHandler(w http.ResponseWriter, r *http.Request, provider Provider, fromMiddleWare bool)
 	LogoutHandler(w http.ResponseWriter, req *http.Request, provider Provider)
 	UserHandler(w http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
-
+	GetUserByIdHandler(w http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	K8SConfigHandler(w http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	GetContextsFromK8SConfig(w http.ResponseWriter, req *http.Request)
 	KubernetesPingHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)

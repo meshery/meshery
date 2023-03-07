@@ -308,6 +308,37 @@ func (l *RemoteProvider) fetchUserDetails(tokenString string) (*User, error) {
 	return &up.User, nil
 }
 
+func (l *RemoteProvider) GetUserById(req *http.Request, userId string) ([]byte, error) {
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s/api/user/profile/%s", l.RemoteProviderURL, userId))
+	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
+	token, err := l.GetToken(req)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := l.DoRequest(cReq, token)
+	if err != nil {
+		return nil, ErrFetch(err, "User Profile", resp.StatusCode)
+	}
+	
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+
+	bdr, err := io.ReadAll(resp.Body)
+	if err != nil {
+		logrus.Errorf("unable to read response body: %v", err)
+		return nil, err
+	}
+
+	if resp.StatusCode == http.StatusOK {
+		logrus.Infof("user profile successfully retrieved from remote provider")
+		return bdr, nil
+	}
+	logrus.Errorf("error while fetching user profile: %s", bdr)
+	return nil, fmt.Errorf("error while getting user profile - Status code: %d, Body: %s", resp.StatusCode, bdr)
+}
+
 // GetUserDetails - returns the user details
 //
 // It is assumed that every remote provider will support this feature
