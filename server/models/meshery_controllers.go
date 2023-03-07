@@ -125,28 +125,26 @@ func (mch *MesheryControllersHelper) UpdateMeshsynDataHandlers() *MesheryControl
 // 1. the config is valid
 // 2. if it is not already attached
 func (mch *MesheryControllersHelper) UpdateCtxControllerHandlers(ctxs []K8sContext) *MesheryControllersHelper {
-	go func(mch *MesheryControllersHelper) {
-		mch.mu.Lock()
-		defer mch.mu.Unlock()
-		// resetting this value as a specific controller handler instance does not have any significance opposed to
-		// a MeshsyncDataHandler instance where it signifies whether or not a listener is attached
-		mch.ctxControllerHandlersMap = make(map[string]map[MesheryController]controllers.IMesheryController)
-		for _, ctx := range ctxs {
-			ctxID := ctx.ID
-			cfg, _ := ctx.GenerateKubeConfig()
-			client, err := mesherykube.New(cfg)
-			// means that the config is invalid
-			if err != nil {
-				// invalid configs are not added to the map
-				continue
-			}
-			mch.ctxControllerHandlersMap[ctxID] = map[MesheryController]controllers.IMesheryController{
-				MesheryBroker:   controllers.NewMesheryBrokerHandler(client),
-				MesheryOperator: controllers.NewMesheryOperatorHandler(client, mch.oprDepConfig),
-				Meshsync:        controllers.NewMeshsyncHandler(client),
-			}
+	mch.mu.Lock()
+	defer mch.mu.Unlock()
+	// resetting this value as a specific controller handler instance does not have any significance opposed to
+	// a MeshsyncDataHandler instance where it signifies whether or not a listener is attached
+	mch.ctxControllerHandlersMap = make(map[string]map[MesheryController]controllers.IMesheryController)
+	for _, ctx := range ctxs {
+		ctxID := ctx.ID
+		cfg, _ := ctx.GenerateKubeConfig()
+		client, err := mesherykube.New(cfg)
+		// means that the config is invalid
+		if err != nil {
+			// invalid configs are not added to the map
+			continue
 		}
-	}(mch)
+		mch.ctxControllerHandlersMap[ctxID] = map[MesheryController]controllers.IMesheryController{
+			MesheryBroker:   controllers.NewMesheryBrokerHandler(client),
+			MesheryOperator: controllers.NewMesheryOperatorHandler(client, mch.oprDepConfig),
+			Meshsync:        controllers.NewMeshsyncHandler(client),
+		}
+	}
 
 	return mch
 }
