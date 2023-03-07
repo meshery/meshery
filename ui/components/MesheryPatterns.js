@@ -240,7 +240,7 @@ function MesheryPatterns({
   updateProgress, enqueueSnackbar, closeSnackbar, user, classes, selectedK8sContexts, catalogVisibility, toggleCatalogContent
 }) {
   const [page, setPage] = useState(0);
-  const [search] = useState("");
+  const [search,setSearch] = useState("");
   const [sortOrder] = useState("");
   const [count, setCount] = useState(0);
   const [pageSize, setPageSize] = useState(10);
@@ -333,6 +333,12 @@ function MesheryPatterns({
     fetchPatterns(page,pageSize,search,sortOrder)
     return (() => document.body.style.overflowX = "auto")
   }, [page, pageSize, search, sortOrder]);
+
+  useEffect(() => {
+    if (viewType==='grid'){
+      setSearch("")
+    }
+  },[viewType])
 
 
   const handleCatalogPreference = (catalogPref) => {
@@ -1071,6 +1077,7 @@ function MesheryPatterns({
               fetchPatterns(page, pageSize, tableState.searchText !== null
                 ? tableState.searchText
                 : "", sortOrder);
+              setSearch(tableState.searchText)
             }
           }, 500);
           break;
