@@ -9,7 +9,7 @@ $(document).ready(function() {
     var toc = $('#TOC');
 
     // Select each header
-    sections = $('h1.td-content');
+    sections = $('.td-content h1');
         $.each(sections, function(idx, v) {
             section = $(v);
             var div_id = $(section).attr('id');
