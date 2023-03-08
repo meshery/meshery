@@ -242,21 +242,37 @@ func main() {
 	//seed the local meshmodel components
 	go func() {
 		compChan := make(chan v1alpha1.ComponentDefinition, 1)
+		relationshipChan := make(chan v1alpha1.RelationshipDefinition, 1)
 		done := make(chan bool)
 		go func(ch chan v1alpha1.ComponentDefinition) {
 			for {
 				select {
 				case comp := <-compChan:
-					utils.WriteSVGsOnFileSystem(&comp)
-					err = regManager.RegisterEntity(meshmodel.Host{
-						Hostname: ArtifactHubComponentsHandler,
-					}, comp)
+					if comp.Metadata != nil && comp.Metadata["published"] == true {
+						utils.WriteSVGsOnFileSystem(&comp)
+						err = regManager.RegisterEntity(meshmodel.Host{
+							Hostname: ArtifactHubComponentsHandler,
+						}, comp)
+					}
 				case <-done:
 					go hc.MeshModelSummaryChannel.Publish()
 					return
 				}
 			}
 		}(compChan)
+		go func(ch chan v1alpha1.RelationshipDefinition) {
+			for {
+				select {
+				case rel := <-relationshipChan:
+					err = regManager.RegisterEntity(meshmodel.Host{
+						Hostname: ArtifactHubComponentsHandler,
+					}, rel)
+				case <-done:
+					go hc.MeshModelSummaryChannel.Publish()
+					return
+				}
+			}
+		}(relationshipChan)
 		path, err := filepath.Abs("../meshmodel/components")
 		if err != nil {
 			fmt.Println("err: ", err.Error())
@@ -301,7 +317,7 @@ func main() {
 		}(relChan)
 		staticRelationshipsPath, err := filepath.Abs("../meshmodel/relationships")
 		if err != nil {
-			fmt.Println("Error registering relationships: ", err.Error())
+			fmt.Println("err: ", err.Error())
 			return
 		}
 		_ = filepath.Walk(staticRelationshipsPath, func(path string, info fs.FileInfo, err error) error {
