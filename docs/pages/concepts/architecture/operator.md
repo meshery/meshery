@@ -10,7 +10,9 @@ display-title: "false"
 list: include
 ---
 
-# Meshery Operator <img src="{{ site.baseurl }}/assets/img/architecture/B203EFA85E89491B.png" width="30" height="35" style="display:inline"/>
+<link rel="stylesheet" type="text/css" href="{{ site.baseurl }}/_sass/operator.scss">
+
+# Meshery Operator <img src="{{ site.baseurl }}/assets/img/architecture/B203EFA85E89491B.png" class="img-responsive"/>
 
 Meshery Operator is the multi-service mesh operator (a Kubernetes custom controller) that manages MeshSync and it's messaging broker.
 
