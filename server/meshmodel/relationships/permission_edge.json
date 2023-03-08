@@ -5,7 +5,11 @@
     "description": "A relationship that represents a set of permissions"
   },
   "model": {
-    "name": "core"
+		"name": "core",
+		"version": "v1.0.0",
+		"modelDisplayName": "Core",
+		"category": "Cloud Native Application",
+		"subCategory": "Not Found"
   },
   "subType": "Permission",
   "selectors": {
