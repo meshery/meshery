@@ -3200,6 +3200,10 @@ func (l *RemoteProvider) DeleteMesheryConnection() error {
 	cReq.Header.Set("X-API-Key", GlobalTokenForAnonymousResults)
 	c := &http.Client{}
 	resp, err := c.Do(cReq)
+	if resp == nil {
+		return ErrUnreachableRemoteProvider(err)
+	}
+	
 	if err != nil {
 		return ErrDelete(err, "Meshery Connection", resp.StatusCode)
 	}
