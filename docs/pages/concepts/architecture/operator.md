@@ -10,7 +10,7 @@ display-title: "false"
 list: include
 ---
 
-<link rel="stylesheet" type="text/css" href="{{ site.baseurl }}/_sass/operator.scss">
+<link rel="stylesheet" type="text/css" href="{{ site.baseurl }}/_sass/operator.css">
 
 # Meshery Operator <img src="{{ site.baseurl }}/assets/img/architecture/B203EFA85E89491B.png" class="img-responsive"/>
 
