@@ -243,6 +243,7 @@ func main() {
 	go func() {
 		compChan := make(chan v1alpha1.ComponentDefinition, 1)
 		relationshipChan := make(chan v1alpha1.RelationshipDefinition, 1)
+		policyChan := make(chan v1alpha1.PolicyDefinition, 1)
 		done := make(chan bool)
 		go func(ch chan v1alpha1.ComponentDefinition) {
 			for {
@@ -273,6 +274,20 @@ func main() {
 				}
 			}
 		}(relationshipChan)
+		go func(ch chan v1alpha1.PolicyDefinition) {
+			for {
+				select {
+				case p := <-policyChan:
+					err = regManager.RegisterEntity(meshmodel.Host{
+						Hostname: "meshery",
+					}, p)
+
+				case <-done:
+					go hc.MeshModelSummaryChannel.Publish()
+					return
+				}
+			}
+		}(policyChan)
 		path, err := filepath.Abs("../meshmodel/components")
 		if err != nil {
 			fmt.Println("err: ", err.Error())
@@ -296,33 +311,14 @@ func main() {
 			}
 			return nil
 		})
-		done <- true
-	}()
-	// seed relationships
-	go func() {
-		relChan := make(chan v1alpha1.RelationshipDefinition, 1)
-		done := make(chan bool)
-		go func(ch chan v1alpha1.RelationshipDefinition) {
-			for {
-				select {
-				case rel := <-relChan:
-					err = regManager.RegisterEntity(meshmodel.Host{
-						Hostname: "meshery",
-					}, rel)
-				case <-done:
-					go hc.MeshModelSummaryChannel.Publish()
-					return
-				}
-			}
-		}(relChan)
-		staticRelationshipsPath, err := filepath.Abs("../meshmodel/relationships")
+		path, err = filepath.Abs("../meshmodel/relationships")
 		if err != nil {
 			fmt.Println("err: ", err.Error())
 			return
 		}
-		_ = filepath.Walk(staticRelationshipsPath, func(path string, info fs.FileInfo, err error) error {
+		_ = filepath.Walk(path, func(path string, info fs.FileInfo, err error) error {
 			if info == nil {
-				return fmt.Errorf("invalid/nil fileinfo while walking %s", path)
+				return nil
 			}
 			if !info.IsDir() {
 				var rel v1alpha1.RelationshipDefinition
@@ -334,39 +330,18 @@ func main() {
 				if err != nil {
 					return nil
 				}
-				relChan <- rel
+				relationshipChan <- rel
 			}
 			return nil
 		})
-		done <- true
-	}()
-	// seed policys
-	go func() {
-		policyChan := make(chan v1alpha1.PolicyDefinition, 1)
-		done := make(chan bool)
-		go func(ch chan v1alpha1.PolicyDefinition) {
-			for {
-				select {
-				case p := <-policyChan:
-					err = regManager.RegisterEntity(meshmodel.Host{
-						Hostname: "meshery",
-					}, p)
-
-				case <-done:
-					go hc.MeshModelSummaryChannel.Publish()
-					return
-				}
-			}
-		}(policyChan)
-		staticPolicyPath, err := filepath.Abs("../meshmodel/policies")
+		path, err = filepath.Abs("../meshmodel/policies")
 		if err != nil {
 			fmt.Println("Error registering policies: ", err.Error())
 			return
 		}
-
-		_ = filepath.Walk(staticPolicyPath, func(path string, info fs.FileInfo, err error) error {
+		_ = filepath.Walk(path, func(path string, info fs.FileInfo, err error) error {
 			if info == nil {
-				return fmt.Errorf("invalid/nil fileinfo while walking %s", path)
+				return nil
 			}
 			if !info.IsDir() {
 				var p v1alpha1.PolicyDefinition
