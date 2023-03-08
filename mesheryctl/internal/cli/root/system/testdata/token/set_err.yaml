@@ -1,7 +1,7 @@
 contexts:
   local:
     endpoint: http://localhost:9081
-    token: Default
+    token: default
     platform: docker
     components:
       - meshery-istio
