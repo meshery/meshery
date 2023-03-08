@@ -22,6 +22,7 @@ func (r *Resolver) subscribeConfiguration(ctx context.Context, provider models.P
 	chp <- struct{}{}
 	cha <- struct{}{}
 	chf <- struct{}{}
+	key := len(r.Config.ConfigurationChannel.ApplicationsChannel)
 	r.Config.ConfigurationChannel.SubscribePatterns(chp)
 	r.Config.ConfigurationChannel.SubscribeApplications(cha)
 	r.Config.ConfigurationChannel.SubscribeFilters(chf)
@@ -75,9 +76,9 @@ func (r *Resolver) subscribeConfiguration(ctx context.Context, provider models.P
 
 			case <-ctx.Done():
 				close(configuration)
-				close(chp)
-				close(cha)
-				close(chf)
+				r.Config.ConfigurationChannel.UnSubscribeApplications(key)
+				r.Config.ConfigurationChannel.UnSubscribeFilters(key)
+				r.Config.ConfigurationChannel.UnSubscribePatterns(key)
 				r.Log.Info("Configuration subscription stopped")
 				return
 			}
