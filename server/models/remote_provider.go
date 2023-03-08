@@ -3203,7 +3203,7 @@ func (l *RemoteProvider) DeleteMesheryConnection() error {
 	if resp == nil {
 		return ErrUnreachableRemoteProvider(err)
 	}
-	
+
 	if err != nil {
 		return ErrDelete(err, "Meshery Connection", resp.StatusCode)
 	}
