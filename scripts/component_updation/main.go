@@ -25,6 +25,7 @@ import (
 	"encoding/csv"
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
 	"os"
 	"path/filepath"
@@ -43,6 +44,9 @@ var (
 	OutputPath                  = "../../server/meshmodel/components"
 )
 
+const (
+	MESHMODEL_FILENAME = "meshmodel_metadata.json"
+)
 const (
 	SVG_WIDTH  = 20
 	SVG_HEIGHT = 20
@@ -220,6 +224,53 @@ func main() {
 			return nil
 		})
 		err = pkg.PopulateEntries(OutputPath, output, PrimaryColumnName, func(dirpath string, changeFields map[string]string) error {
+			//If it's a model level entry then populate meshmodel_metadata.json as well
+			if changeFields["Component"] == "" {
+				var f *os.File
+				var err error
+				created := false
+				if f, err = os.Open(filepath.Join(dirpath, MESHMODEL_FILENAME)); os.IsNotExist(err) {
+					created = true
+					f, err = os.Create(filepath.Join(dirpath, MESHMODEL_FILENAME))
+				}
+				// f, err = os.OpenFile(filepath.Join(dirpath, MESHMODEL_FILENAME), os.O_WRONLY|os.O_TRUNC, 0644)
+				// if err != nil {
+				// 	panic(err)
+				// }
+				byt, err := io.ReadAll(f)
+				if err == nil {
+					if err == nil {
+						m := make(map[string]interface{})
+						_ = json.Unmarshal(byt, &m)
+						m["primaryColor"] = changeFields["primaryColor"]
+						m["secondaryColor"] = changeFields["secondaryColor"]
+						m["svgColor"] = changeFields["svgColor"]
+						m["svgWhite"] = changeFields["svgWhite"]
+						m["logoURL"] = changeFields["logoURL"]
+						byt, err = json.Marshal(m)
+						if err != nil {
+							log.Fatal(err)
+						}
+						// f, err := os.OpenFile("filename.txt", os.O_WRONLY|os.O_TRUNC, 0644)
+						// if err != nil {
+						// 	panic(err)
+						// }
+						if !created {
+							err = os.Remove(filepath.Join(dirpath, MESHMODEL_FILENAME))
+							if err != nil {
+								log.Fatal(err)
+							}
+							f, err = os.Create(filepath.Join(dirpath, MESHMODEL_FILENAME))
+						}
+						_, err = f.Write(byt)
+						if err != nil {
+							log.Fatal(err)
+						}
+					}
+					f.Close()
+				}
+			}
+
 			entries, err := os.ReadDir(dirpath)
 			if err != nil {
 				return err
