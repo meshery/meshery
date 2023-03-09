@@ -3,7 +3,11 @@
     "subType":"rjsf",
     "apiVersion":"core.meshery.io/v1alpha1",
     "model":{
-        "name":"kubernetes"
+        "name":"kubernetes",
+        "version":"v1.25.2",
+        "modelDisplayName":"Kubernetes",
+        "category":"Orchestration Management",
+        "subCategory":"Scheduling Orchestration"
     },
     "expression": {
         "metadata":{
