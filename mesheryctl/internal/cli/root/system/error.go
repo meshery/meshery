@@ -45,81 +45,81 @@ const (
 )
 
 func ErrHealthCheckFailed(err error) error {
-	return errors.New(ErrHealthCheckFailedCode, errors.Alert, []string{"Health checks failed"}, []string{err.Error()}, []string{"Health checks execution failed"}, []string{"Health checks execution should passed to start Meshery server successfully"})
+	return errors.New(ErrHealthCheckFailedCode, errors.Severity, []string{"Health checks failed"}, []string{err.Error()}, []string{"Health checks execution failed"}, []string{"Health checks execution should passed to start Meshery server successfully"})
 }
 
 func ErrInvalidComponent(err error, obj string) error {
-	return errors.New(ErrInvalidComponentCode, errors.Alert, []string{"Invalid component ", obj, " specified"}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrInvalidComponentCode, errors.Severity, []string{"Invalid component ", obj, " specified"}, []string{err.Error()}, []string{}, []string{})
 }
 
 func ErrDownloadFile(err error, obj string) error {
-	return errors.New(ErrDownloadFileCode, errors.Alert, []string{"Error downloading file ", obj}, []string{err.Error()}, []string{"Failed to download docker-compose or manifest file due to system/config/network issues"}, []string{"Make sure docker-compose or manifest file is downloaded successfully"})
+	return errors.New(ErrDownloadFileCode, errors.Severity, []string{"Error downloading file ", obj}, []string{err.Error()}, []string{"Failed to download docker-compose or manifest file due to system/config/network issues"}, []string{"Make sure docker-compose or manifest file is downloaded successfully"})
 }
 
 func ErrStopMeshery(err error) error {
-	return errors.New(ErrStopMesheryCode, errors.Alert, []string{"Error stopping Meshery"}, []string{err.Error()}, []string{"Meshery server is not stopped, some of the docker containers are still running"}, []string{"Verify all docker containers of Meshery server are stopped"})
+	return errors.New(ErrStopMesheryCode, errors.Severity, []string{"Error stopping Meshery"}, []string{err.Error()}, []string{"Meshery server is not stopped, some of the docker containers are still running"}, []string{"Verify all docker containers of Meshery server are stopped"})
 }
 
 func ErrResetMeshconfig(err error) error {
-	return errors.New(ErrResetMeshconfigCode, errors.Alert, []string{"Error resetting meshconfig to default settings"}, []string{err.Error()}, []string{"Meshery server config file is not reset to default settings"}, []string{"Verify Meshery server config file is reset to default settings by executing `mesheryctl system context view`"})
+	return errors.New(ErrResetMeshconfigCode, errors.Severity, []string{"Error resetting meshconfig to default settings"}, []string{err.Error()}, []string{"Meshery server config file is not reset to default settings"}, []string{"Verify Meshery server config file is reset to default settings by executing `mesheryctl system context view`"})
 }
 
 func ErrApplyManifest(err error, deleteStatus, updateStatus bool) error {
-	return errors.New(ErrApplyManifestCode, errors.Alert, []string{"Error applying manifest with update: ", strconv.FormatBool(updateStatus), " and delete: ", strconv.FormatBool(deleteStatus)}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrApplyManifestCode, errors.Severity, []string{"Error applying manifest with update: ", strconv.FormatBool(updateStatus), " and delete: ", strconv.FormatBool(deleteStatus)}, []string{err.Error()}, []string{}, []string{})
 }
 
 func ErrApplyOperatorManifest(err error, deleteStatus, updateStatus bool) error {
-	return errors.New(ErrApplyOperatorManifestCode, errors.Alert, []string{"Error applying operator manifests with update: ", strconv.FormatBool(updateStatus), " and delete: ", strconv.FormatBool(deleteStatus)}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrApplyOperatorManifestCode, errors.Severity, []string{"Error applying operator manifests with update: ", strconv.FormatBool(updateStatus), " and delete: ", strconv.FormatBool(deleteStatus)}, []string{err.Error()}, []string{}, []string{})
 }
 
 func ErrCreateDir(err error, obj string) error {
-	return errors.New(ErrCreateDirCode, errors.Alert, []string{"Error creating directory ", obj}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrCreateDirCode, errors.Severity, []string{"Error creating directory ", obj}, []string{err.Error()}, []string{}, []string{})
 }
 
-func ErrUnmarshal(err error, obj string) error {
-	return errors.New(ErrUnmarshalCode, errors.Alert, []string{"Error processing JSON response from Meshery Server", obj}, []string{err.Error()}, []string{}, []string{"Either the JSON response or the Response is distorted"})
+func ErrUnmarshal(err error, obj string) error { 
+	return errors.New(ErrUnmarshalCode, errors.Severity, []string{"Error processing JSON response from Meshery Server", obj}, []string{err.Error()}, []string{}, []string{"Either the JSON response or the Response is distorted"})
 }
 
 func ErrUnsupportedPlatform(platform string, config string) error {
-	return errors.New(ErrUnsupportedPlatformCode, errors.Alert, []string{}, []string{"The platform ", platform, " is not supported for the deployment of Meshery. Supported platforms are:\n\n- docker\n- kubernetes\n\nVerify this setting in your meshconfig at ", config, " or verify by executing `mesheryctl system context view`"}, []string{}, []string{})
+	return errors.New(ErrUnsupportedPlatformCode, errors.Severity, []string{}, []string{"The platform ", platform, " is not supported for the deployment of Meshery. Supported platforms are:\n\n- docker\n- kubernetes\n\nVerify this setting in your meshconfig at ", config, " or verify by executing `mesheryctl system context view`"}, []string{}, []string{})
 }
 
 func ErrRetrievingCurrentContext(err error) error {
-	return errors.New(ErrRetrievingCurrentContextCode, errors.Alert, []string{"Error retrieving current context"}, []string{err.Error()}, []string{"current context is not retrieved successfully"}, []string{"Verify current context is retrieved successfully and valid"})
+	return errors.New(ErrRetrievingCurrentContextCode, errors.Severity, []string{"Error retrieving current context"}, []string{err.Error()}, []string{"current context is not retrieved successfully"}, []string{"Verify current context is retrieved successfully and valid"})
 }
 
 func ErrSettingDefaultContextToConfig(err error) error {
-	return errors.New(ErrRetrievingCurrentContextCode, errors.Alert, []string{"Error setting default context to config"}, []string{err.Error()}, []string{"Mesheryctl config file may not exist or is invalid"}, []string{"Make sure the Mesheryctl config file exists"})
+	return errors.New(ErrRetrievingCurrentContextCode, errors.Severity, []string{"Error setting default context to config"}, []string{err.Error()}, []string{"Mesheryctl config file may not exist or is invalid"}, []string{"Make sure the Mesheryctl config file exists"})
 }
 
 func ErrSettingTemporaryContext(err error) error {
-	return errors.New(ErrSettingTemporaryContextCode, errors.Alert, []string{"Error setting temporary context"}, []string{err.Error()}, []string{"temporary context is not set properly"}, []string{"Verify the temporary context is set properly using the -c flag provided"})
+	return errors.New(ErrSettingTemporaryContextCode, errors.Severity, []string{"Error setting temporary context"}, []string{err.Error()}, []string{"temporary context is not set properly"}, []string{"Verify the temporary context is set properly using the -c flag provided"})
 }
 
 func ErrCreateManifestsFolder(err error) error {
-	return errors.New(ErrCreateManifestsFolderCode, errors.Alert, []string{"Error creating manifest folder"}, []string{err.Error()}, []string{"system error in creating manifest folder"}, []string{"Make sure manifest folder (.meshery/manifests) is created properly"})
+	return errors.New(ErrCreateManifestsFolderCode, errors.Severity, []string{"Error creating manifest folder"}, []string{err.Error()}, []string{"system error in creating manifest folder"}, []string{"Make sure manifest folder (.meshery/manifests) is created properly"})
 }
 
 func ErrProcessingMctlConfig(err error) error {
-	return errors.New(ErrProcessingMctlConfigCode, errors.Alert, []string{"Error processing config"}, []string{err.Error()}, []string{"Error due to invalid format of Mesheryctl config"}, []string{"Make sure Mesheryctl config is in correct format and valid"})
+	return errors.New(ErrProcessingMctlConfigCode, errors.Severity, []string{"Error processing config"}, []string{err.Error()}, []string{"Error due to invalid format of Mesheryctl config"}, []string{"Make sure Mesheryctl config is in correct format and valid"})
 }
 
 func ErrRestartMeshery(err error) error {
-	return errors.New(ErrRestartMesheryCode, errors.Alert, []string{"Error restarting Meshery"}, []string{err.Error()}, []string{"Meshery is not running"}, []string{"Restart Meshery instance"})
+	return errors.New(ErrRestartMesheryCode, errors.Severity, []string{"Error restarting Meshery"}, []string{err.Error()}, []string{"Meshery is not running"}, []string{"Restart Meshery instance"})
 }
 
 func ErrK8sConfig(err error) error {
-	return errors.New(ErrK8sConfigCode, errors.Alert, []string{"The Kubernetes cluster is not accessible."}, []string{err.Error(), "\nThe Kubernetes cluster is not accessible", " Please confirm that the cluster is running", " See https://docs.meshery.io/installation/quick-start for additional instructions."}, []string{"Kubernetes cluster isn't running or inaccessible"}, []string{"Verify kubernetes and Meshery connectivity or Verify kubeconfig certificates."})
+	return errors.New(ErrK8sConfigCode, errors.Severity, []string{"The Kubernetes cluster is not accessible."}, []string{err.Error(), "\nThe Kubernetes cluster is not accessible", " Please confirm that the cluster is running", " See https://docs.meshery.io/installation/quick-start for additional instructions."}, []string{"Kubernetes cluster isn't running or inaccessible"}, []string{"Verify kubernetes and Meshery connectivity or Verify kubeconfig certificates."})
 }
 
 func ErrK8SQuery(err error) error {
-	return errors.New(ErrK8sQueryCode, errors.Alert, []string{"The Kubernetes cluster is not accessible."}, []string{err.Error(), "\nThe Kubernetes cluster is not accessible", " Please confirm that the token is valid", " See https://docs.meshery.io/installation/quick-start for additional instructions"}, []string{"Kubernetes cluster is unavailable and that the token is invalid"}, []string{"Please confirm that your cluster is available and that the token is valid. See https://docs.meshery.io/installation/quick-start for additional instructions"})
+	return errors.New(ErrK8sQueryCode, errors.Severity, []string{"The Kubernetes cluster is not accessible."}, []string{err.Error(), "\nThe Kubernetes cluster is not accessible", " Please confirm that the token is valid", " See https://docs.meshery.io/installation/quick-start for additional instructions"}, []string{"Kubernetes cluster is unavailable and that the token is invalid"}, []string{"Please confirm that your cluster is available and that the token is valid. See https://docs.meshery.io/installation/quick-start for additional instructions"})
 }
 
 func ErrInitPortForward(err error) error {
 	return errors.New(
 		ErrInitPortForwardCode,
-		errors.Alert, []string{"Failed to initialize port-forward"},
+		errors.Severity, []string{"Failed to initialize port-forward"},
 		[]string{err.Error(), "Failed to create new Port Forward instance"},
 		nil, nil,
 	)
