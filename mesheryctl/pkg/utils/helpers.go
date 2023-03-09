@@ -194,7 +194,7 @@ var ListOfComponents = []string{"meshery-app-mesh", "meshery-istio", "meshery-li
 // TemplateContext is the template context provided when creating a config file
 var TemplateContext = config.Context{
 	Endpoint:   EndpointProtocol + "://localhost:9081",
-	Token:      "Default",
+	Token:      "default",
 	Platform:   "kubernetes",
 	Components: ListOfComponents,
 	Channel:    "stable",
