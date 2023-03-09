@@ -654,7 +654,7 @@ class MesherySettings extends React.Component {
                   <Tab className={classes.tab}
                     label={(
                       <div className={classes.iconText}>
-                      Grafana
+                      Grafana test
                         <img src="/static/img/grafana_icon.svg" className={classes.icon} />
                       </div>
                     )}
