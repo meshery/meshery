@@ -23,7 +23,7 @@ Ensure that your `current-context` has `platform: kubernetes` configured in `~/.
 ```
 ➜  ~ mesheryctl system context view
 endpoint: http://localhost:9081
-token: Default
+token: default
 platform: kubernetes
 adapters:
 - meshery-istio
