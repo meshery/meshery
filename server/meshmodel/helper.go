@@ -25,6 +25,15 @@ type ComponentHelper struct {
 	errorChan        chan error
 }
 
+func (ch *ComponentHelper) Init(hc *models.HandlerConfig, rm *meshmodel.RegistryManager) {
+	ch.handlerConfig = hc
+	ch.regManager = rm
+	ch.componentChan = make(chan v1alpha1.ComponentDefinition, 1)
+	ch.relationshipChan = make(chan v1alpha1.RelationshipDefinition, 1)
+	ch.doneSignal = make(chan bool)
+	ch.errorChan = make(chan error)
+}
+
 // seed the local meshmodel components
 func (ch ComponentHelper) SeedComponents() {
 	// Read component and relationship definitions from files and send them to channels
