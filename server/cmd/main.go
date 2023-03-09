@@ -2,15 +2,11 @@ package main
 
 import (
 	"context"
-	"encoding/json"
-	"fmt"
-	"io/fs"
 	"net/http"
 	"net/url"
 	"os"
 	"os/signal"
 	"path"
-	"path/filepath"
 	"time"
 
 	"github.com/gofrs/uuid"
@@ -19,6 +15,7 @@ import (
 	"github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/internal/graphql"
 	"github.com/layer5io/meshery/server/internal/store"
+	meshmodelhelper "github.com/layer5io/meshery/server/meshmodel"
 	"github.com/layer5io/meshery/server/models"
 	mesherymeshmodel "github.com/layer5io/meshery/server/models/meshmodel"
 	"github.com/layer5io/meshery/server/models/pattern/core"
@@ -26,7 +23,6 @@ import (
 	"github.com/layer5io/meshkit/broker/nats"
 	"github.com/layer5io/meshkit/logger"
 	"github.com/layer5io/meshkit/models/meshmodel"
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 	"github.com/layer5io/meshkit/utils/broadcast"
 	"github.com/layer5io/meshkit/utils/events"
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
@@ -240,87 +236,9 @@ func main() {
 	}
 
 	//seed the local meshmodel components
-	go func() {
-		compChan := make(chan v1alpha1.ComponentDefinition, 1)
-		relationshipChan := make(chan v1alpha1.RelationshipDefinition, 1)
-		done := make(chan bool)
-		go func(ch chan v1alpha1.ComponentDefinition) {
-			for {
-				select {
-				case comp := <-compChan:
-					if comp.Metadata != nil && comp.Metadata["published"] == true {
-						utils.WriteSVGsOnFileSystem(&comp)
-						err = regManager.RegisterEntity(meshmodel.Host{
-							Hostname: ArtifactHubComponentsHandler,
-						}, comp)
-					}
-				case <-done:
-					go hc.MeshModelSummaryChannel.Publish()
-					return
-				}
-			}
-		}(compChan)
-		go func(ch chan v1alpha1.RelationshipDefinition) {
-			for {
-				select {
-				case rel := <-relationshipChan:
-					err = regManager.RegisterEntity(meshmodel.Host{
-						Hostname: ArtifactHubComponentsHandler,
-					}, rel)
-				case <-done:
-					go hc.MeshModelSummaryChannel.Publish()
-					return
-				}
-			}
-		}(relationshipChan)
-		path, err := filepath.Abs("../meshmodel/components")
-		if err != nil {
-			fmt.Println("err: ", err.Error())
-			return
-		}
-		_ = filepath.Walk(path, func(path string, info fs.FileInfo, err error) error {
-			if info == nil {
-				return nil
-			}
-			if !info.IsDir() {
-				var comp v1alpha1.ComponentDefinition
-				byt, err := os.ReadFile(path)
-				if err != nil {
-					return nil
-				}
-				err = json.Unmarshal(byt, &comp)
-				if err != nil {
-					return nil
-				}
-				compChan <- comp
-			}
-			return nil
-		})
-		path, err = filepath.Abs("../meshmodel/relationships")
-		if err != nil {
-			fmt.Println("err: ", err.Error())
-			return
-		}
-		_ = filepath.Walk(path, func(path string, info fs.FileInfo, err error) error {
-			if info == nil {
-				return nil
-			}
-			if !info.IsDir() {
-				var rel v1alpha1.RelationshipDefinition
-				byt, err := os.ReadFile(path)
-				if err != nil {
-					return nil
-				}
-				err = json.Unmarshal(byt, &rel)
-				if err != nil {
-					return nil
-				}
-				relationshipChan <- rel
-			}
-			return nil
-		})
-		done <- true
-	}()
+	ch := meshmodelhelper.ComponentHelper{}
+	ch.Init(hc, regManager)
+	go ch.SeedComponents()
 
 	lProv.SeedContent(log)
 	provs[lProv.Name()] = lProv
