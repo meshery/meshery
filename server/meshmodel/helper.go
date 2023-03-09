@@ -16,7 +16,7 @@ import (
 
 const ArtifactHubComponentsHandler = "kubernetes" //The components generated in output directory will be handled by kubernetes
 
-type meshmodelHelper struct {
+type ComponentHelper struct {
 	handlerConfig    *models.HandlerConfig
 	regManager       *meshmodel.RegistryManager
 	componentChan    chan v1alpha1.ComponentDefinition
@@ -26,21 +26,19 @@ type meshmodelHelper struct {
 }
 
 // seed the local meshmodel components
-func (mh meshmodelHelper) SeedComponents() {
+func (ch ComponentHelper) SeedComponents() {
 	// Read component and relationship definitions from files and send them to channels
-	go func() {
-		mh.generateComponents("/components")
-		mh.generateRelationships("/relationships")
-	}()
+	ch.generateComponents("/components")
+	ch.generateRelationships("/relationships")
 
 	// Register components and relationships with the registry manager
-	go mh.watchComponents()
+	go ch.watchComponents()
 }
 
-func (mh meshmodelHelper) generateComponents(pathToComponents string) {
+func (ch ComponentHelper) generateComponents(pathToComponents string) {
 	path, err := filepath.Abs(pathToComponents)
 	if err != nil {
-		mh.errorChan <- errors.Wrapf(err, "error while getting absolute path for generating components")
+		ch.errorChan <- errors.Wrapf(err, "error while getting absolute path for generating components")
 		return
 	}
 
@@ -61,19 +59,19 @@ func (mh meshmodelHelper) generateComponents(pathToComponents string) {
 			}
 			if comp.Metadata != nil && comp.Metadata["published"] == true {
 				utils.WriteSVGsOnFileSystem(&comp)
-				mh.componentChan <- comp
+				ch.componentChan <- comp
 			}
 		}
 		return nil
 	})
-	mh.errorChan <- errors.Wrapf(err, "error while generating components")
+	ch.errorChan <- errors.Wrapf(err, "error while generating components")
 	return
 }
 
-func (mh meshmodelHelper) generateRelationships(pathToComponents string) {
+func (ch ComponentHelper) generateRelationships(pathToComponents string) {
 	path, err := filepath.Abs(pathToComponents)
 	if err != nil {
-		mh.errorChan <- errors.Wrapf(err, "error while getting absolute path for generating relationships")
+		ch.errorChan <- errors.Wrapf(err, "error while getting absolute path for generating relationships")
 		return
 	}
 
@@ -91,38 +89,38 @@ func (mh meshmodelHelper) generateRelationships(pathToComponents string) {
 			if err != nil {
 				return nil
 			}
-			mh.relationshipChan <- rel
+			ch.relationshipChan <- rel
 		}
 		return nil
 	})
 
-	mh.errorChan <- errors.Wrapf(err, "error while generating relationships")
-	mh.doneSignal <- true
+	ch.errorChan <- errors.Wrapf(err, "error while generating relationships")
+	ch.doneSignal <- true
 	return
 }
 
-func (mh meshmodelHelper) watchComponents() {
+func (ch ComponentHelper) watchComponents() {
 	var err error
 	for {
 		select {
-		case comp := <-mh.componentChan:
-			err = mh.regManager.RegisterEntity(meshmodel.Host{
+		case comp := <-ch.componentChan:
+			err = ch.regManager.RegisterEntity(meshmodel.Host{
 				Hostname: ArtifactHubComponentsHandler,
 			}, comp)
-		case rel := <-mh.relationshipChan:
-			err = mh.regManager.RegisterEntity(meshmodel.Host{
+		case rel := <-ch.relationshipChan:
+			err = ch.regManager.RegisterEntity(meshmodel.Host{
 				Hostname: ArtifactHubComponentsHandler,
 			}, rel)
-		case mhErr := <-mh.errorChan:
+		case mhErr := <-ch.errorChan:
 			fmt.Println("err: ", mhErr.Error())
 
-		case <-mh.doneSignal:
-			go mh.handlerConfig.MeshModelSummaryChannel.Publish()
+		case <-ch.doneSignal:
+			go ch.handlerConfig.MeshModelSummaryChannel.Publish()
 			return
 		}
 
 		if err != nil {
-			mh.errorChan <- err
+			ch.errorChan <- err
 		}
 	}
 }
