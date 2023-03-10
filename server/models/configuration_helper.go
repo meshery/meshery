@@ -42,7 +42,7 @@ func (c *ConfigurationChannel) UnSubscribeApplications(key uuid.UUID) {
 
 func (c *ConfigurationChannel) PublishPatterns() {
 	for _, ch := range c.PatternsChannel {
-		ch <- struct{}{}		
+		ch <- struct{}{}
 	}
 }
 
@@ -77,4 +77,3 @@ func (c *ConfigurationChannel) UnSubscribeFilters(key uuid.UUID) {
 	close(c.FiltersChannel[key])
 	delete(c.FiltersChannel, key)
 }
-

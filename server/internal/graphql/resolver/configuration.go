@@ -28,7 +28,7 @@ func (r *Resolver) subscribeConfiguration(ctx context.Context, provider models.P
 		r.Log.Error(models.ErrGenerateUUID(err))
 		return nil, err
 	}
-	
+
 	r.Config.ConfigurationChannel.SubscribePatterns(chp, key)
 	r.Config.ConfigurationChannel.SubscribeApplications(cha, key)
 	r.Config.ConfigurationChannel.SubscribeFilters(chf, key)
