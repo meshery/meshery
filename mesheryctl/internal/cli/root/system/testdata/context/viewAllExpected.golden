@@ -1,6 +1,6 @@
 local:
   endpoint: http://localhost:9081
-  token: Default
+  token: default
   token-location: auth.json
   platform: kubernetes
   components:
@@ -9,7 +9,7 @@ local:
   version: latest
 local2:
   endpoint: http://localhost:32242
-  token: Default2
+  token: default2
   token-location: auth.json
   platform: docker
   components:
