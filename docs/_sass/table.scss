@@ -490,3 +490,6 @@ table.tablesorter th.headerSortUp {
   background-color: rgb(244, 244, 244) !important ;
 }
 
+td.details, .hidden-details > td {
+  background-color: var(--color-primary-dark) !important;
+}
