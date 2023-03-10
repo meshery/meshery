@@ -645,27 +645,25 @@ class MesherySettings extends React.Component {
               <AppBar position="static" color="default">
                 <Tabs
                   value={subTabVal}
-                  className={classes.tabs}
+                  className={classes.tab}
                   onChange={this.handleChange('subTabVal')}
                   indicatorColor="primary"
                   textColor="primary"
                   variant="fullWidth"
                 >
-                  <Tab className={classes.tab}
-                    label={(
-                      <div className={classes.iconText}>
+                  <Tab label={(
+                    <div className={classes.iconText}>
                       Grafana
-                        <img src="/static/img/grafana_icon.svg" className={classes.icon} />
-                      </div>
-                    )}
+                      <img src="/static/img/grafana_icon.svg" className={classes.icon} />
+                    </div>
+                  )}
                   />
-                  <Tab className={classes.tab}
-                    label={(
-                      <div className={classes.iconText}>
+                  <Tab label={(
+                    <div className={classes.iconText}>
                       Prometheus
-                        <img src="/static/img/prometheus_logo_orange_circle.svg" className={classes.icon} />
-                      </div>
-                    )}
+                      <img src="/static/img/prometheus_logo_orange_circle.svg" className={classes.icon} />
+                    </div>
+                  )}
                   />
                 </Tabs>
               </AppBar>
