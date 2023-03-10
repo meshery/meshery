@@ -306,6 +306,7 @@ type ModelResponse struct {
 // ?search={[true/false]} If search is true then a greedy search is performed on both model name and model display
 // ?page={page-number} Default page number is 1
 // ?pagesize={pagesize} Default pagesize is 25. To return all results: pagesize=all
+// ?trim={[true]} When trim is set to true, the underlying schemas are not returned for entities
 // responses:
 //
 //	200: []ModelResponse
@@ -317,6 +318,10 @@ func (h *Handler) GetMeshmodelEntititiesByModel(rw http.ResponseWriter, r *http.
 	var greedy bool
 	if r.URL.Query().Get("search") == "true" {
 		greedy = true
+	}
+	var trim bool
+	if r.URL.Query().Get("trim") == "true" {
+		trim = true
 	}
 	limitstr := r.URL.Query().Get("pagesize")
 	var limit int
@@ -357,6 +362,7 @@ func (h *Handler) GetMeshmodelEntititiesByModel(rw http.ResponseWriter, r *http.
 				Version:   mres.Version,
 				Limit:     limit,
 				Offset:    offset,
+				Trim:      trim,
 			})
 			var comps []v1alpha1.ComponentDefinition
 			for _, r := range res {
