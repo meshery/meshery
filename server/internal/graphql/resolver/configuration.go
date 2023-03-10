@@ -3,6 +3,7 @@ package resolver
 import (
 	"context"
 
+	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/internal/graphql/model"
 	"github.com/layer5io/meshery/server/models"
 )
@@ -22,10 +23,15 @@ func (r *Resolver) subscribeConfiguration(ctx context.Context, provider models.P
 	chp <- struct{}{}
 	cha <- struct{}{}
 	chf <- struct{}{}
-	key := len(r.Config.ConfigurationChannel.ApplicationsChannel)
-	r.Config.ConfigurationChannel.SubscribePatterns(chp)
-	r.Config.ConfigurationChannel.SubscribeApplications(cha)
-	r.Config.ConfigurationChannel.SubscribeFilters(chf)
+	key, err := uuid.NewV4()
+	if err != nil {
+		r.Log.Error(models.ErrGenerateUUID(err))
+		return nil, err
+	}
+	
+	r.Config.ConfigurationChannel.SubscribePatterns(chp, key)
+	r.Config.ConfigurationChannel.SubscribeApplications(cha, key)
+	r.Config.ConfigurationChannel.SubscribeFilters(chf, key)
 
 	configuration := make(chan *model.ConfigurationPage)
 	go func() {
