@@ -36,12 +36,13 @@ func (ch *ComponentHelper) Init(hc *models.HandlerConfig, rm *meshmodel.Registry
 
 // seed the local meshmodel components
 func (ch ComponentHelper) SeedComponents() {
-	// Read component and relationship definitions from files and send them to channels
+	// Watch channels and register components and relationships with the registry manager
+	go ch.watchComponents()
+
+	// Read component and relationship definitions from files and send them to respective channels
 	ch.generateComponents("/components")
 	ch.generateRelationships("/relationships")
-
-	// Register components and relationships with the registry manager
-	go ch.watchComponents()
+	ch.doneSignal <- true
 }
 
 func (ch ComponentHelper) generateComponents(pathToComponents string) {
@@ -104,7 +105,6 @@ func (ch ComponentHelper) generateRelationships(pathToComponents string) {
 	})
 
 	ch.errorChan <- errors.Wrapf(err, "error while generating relationships")
-	ch.doneSignal <- true
 	return
 }
 
