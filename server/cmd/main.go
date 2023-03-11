@@ -236,8 +236,7 @@ func main() {
 	}
 
 	//seed the local meshmodel components
-	ch := meshmodelhelper.ComponentHelper{}
-	ch.Init(hc, regManager)
+	ch := meshmodelhelper.NewComponentHelper(hc, regManager)
 	go ch.SeedComponents()
 
 	lProv.SeedContent(log)
