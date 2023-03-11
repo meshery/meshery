@@ -42,8 +42,8 @@ func (ch *ComponentHelper) SeedComponents() {
 	go ch.watchComponents()
 
 	// Read component and relationship definitions from files and send them to respective channels
-	ch.generateComponents("/components")
-	ch.generateRelationships("/relationships")
+	ch.generateComponents("../meshmodel/components")
+	ch.generateRelationships("../meshmodel/components")
 	ch.doneSignal <- true
 }
 
