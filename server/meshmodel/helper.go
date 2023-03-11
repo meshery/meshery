@@ -63,11 +63,13 @@ func (ch *ComponentHelper) generateComponents(pathToComponents string) {
 			var comp v1alpha1.ComponentDefinition
 			byt, err := os.ReadFile(path)
 			if err != nil {
-				return err
+				ch.errorChan <- errors.Wrapf(err, fmt.Sprintf("unable to read file at %s", path))
+				return nil
 			}
 			err = json.Unmarshal(byt, &comp)
 			if err != nil {
-				return err
+				ch.errorChan <- errors.Wrapf(err, fmt.Sprintf("unmarshal json failed for %s", path))
+				return nil
 			}
 			if comp.Metadata != nil && comp.Metadata["published"] == true {
 				utils.WriteSVGsOnFileSystem(&comp)
@@ -76,7 +78,9 @@ func (ch *ComponentHelper) generateComponents(pathToComponents string) {
 		}
 		return nil
 	})
-	ch.errorChan <- errors.Wrapf(err, "error while generating components")
+	if err != nil {
+		ch.errorChan <- errors.Wrapf(err, "error while generating components")
+	}
 	return
 }
 
@@ -95,18 +99,21 @@ func (ch *ComponentHelper) generateRelationships(pathToComponents string) {
 			var rel v1alpha1.RelationshipDefinition
 			byt, err := os.ReadFile(path)
 			if err != nil {
+				ch.errorChan <- errors.Wrapf(err, fmt.Sprintf("unable to read file at %s", path))
 				return nil
 			}
 			err = json.Unmarshal(byt, &rel)
 			if err != nil {
+				ch.errorChan <- errors.Wrapf(err, fmt.Sprintf("unmarshal json failed for %s", path))
 				return nil
 			}
 			ch.relationshipChan <- rel
 		}
 		return nil
 	})
-
-	ch.errorChan <- errors.Wrapf(err, "error while generating relationships")
+	if err != nil {
+		ch.errorChan <- errors.Wrapf(err, "error while generating relationships")
+	}
 	return
 }
 
