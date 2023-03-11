@@ -37,7 +37,7 @@ func NewComponentHelper(hc *models.HandlerConfig, rm *meshmodel.RegistryManager)
 }
 
 // seed the local meshmodel components
-func (ch ComponentHelper) SeedComponents() {
+func (ch *ComponentHelper) SeedComponents() {
 	// Watch channels and register components and relationships with the registry manager
 	go ch.watchComponents()
 
@@ -47,7 +47,7 @@ func (ch ComponentHelper) SeedComponents() {
 	ch.doneSignal <- true
 }
 
-func (ch ComponentHelper) generateComponents(pathToComponents string) {
+func (ch *ComponentHelper) generateComponents(pathToComponents string) {
 	path, err := filepath.Abs(pathToComponents)
 	if err != nil {
 		ch.errorChan <- errors.Wrapf(err, "error while getting absolute path for generating components")
@@ -80,7 +80,7 @@ func (ch ComponentHelper) generateComponents(pathToComponents string) {
 	return
 }
 
-func (ch ComponentHelper) generateRelationships(pathToComponents string) {
+func (ch *ComponentHelper) generateRelationships(pathToComponents string) {
 	path, err := filepath.Abs(pathToComponents)
 	if err != nil {
 		ch.errorChan <- errors.Wrapf(err, "error while getting absolute path for generating relationships")
@@ -110,7 +110,7 @@ func (ch ComponentHelper) generateRelationships(pathToComponents string) {
 	return
 }
 
-func (ch ComponentHelper) watchComponents() {
+func (ch *ComponentHelper) watchComponents() {
 	var err error
 	for {
 		select {
