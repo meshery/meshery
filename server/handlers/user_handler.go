@@ -28,16 +28,16 @@ func (h *Handler) UserHandler(w http.ResponseWriter, req *http.Request, _ *model
 	}
 }
 
-// swagger:route GET /api/user/profile/{id} UserAPI idGetUserByIdHandler
+// swagger:route GET /api/user/profile/{id} UserAPI idGetUserByIDHandler
 // Handle GET for User info by ID
 //
 // Returns User info
 // responses:
 // 	200: userInfo
 
-func (h *Handler) GetUserByIdHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
+func (h *Handler) GetUserByIDHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	userID := mux.Vars(r)["id"]
-	resp, err := provider.GetUserById(r, userID)
+	resp, err := provider.GetUserByID(r, userID)
 	if err != nil {
 		h.log.Error(ErrGetResult(err))
 		http.Error(w, ErrGetResult(err).Error(), http.StatusNotFound)

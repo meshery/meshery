@@ -308,8 +308,8 @@ func (l *RemoteProvider) fetchUserDetails(tokenString string) (*User, error) {
 	return &up.User, nil
 }
 
-func (l *RemoteProvider) GetUserById(req *http.Request, userId string) ([]byte, error) {
-	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s/api/user/profile/%s", l.RemoteProviderURL, userId))
+func (l *RemoteProvider) GetUserByID(req *http.Request, userID string) ([]byte, error) {
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s/api/user/profile/%s", l.RemoteProviderURL, userID))
 	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
 	token, err := l.GetToken(req)
 	if err != nil {
@@ -320,7 +320,7 @@ func (l *RemoteProvider) GetUserById(req *http.Request, userId string) ([]byte, 
 	if err != nil {
 		return nil, ErrFetch(err, "User Profile", resp.StatusCode)
 	}
-	
+
 	defer func() {
 		_ = resp.Body.Close()
 	}()
@@ -336,7 +336,7 @@ func (l *RemoteProvider) GetUserById(req *http.Request, userId string) ([]byte, 
 		return bdr, nil
 	}
 	logrus.Errorf("error while fetching user profile: %s", bdr)
-	return nil, fmt.Errorf("error while getting user profile - Status code: %d, Body: %s", resp.StatusCode, bdr)
+	return nil, ErrFetch(err, "User Profile", resp.StatusCode)
 }
 
 // GetUserDetails - returns the user details
