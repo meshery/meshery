@@ -131,6 +131,10 @@ func (l *DefaultLocalProvider) GetUserDetails(req *http.Request) (*User, error) 
 	return l.fetchUserDetails(), nil
 }
 
+func (l *DefaultLocalProvider) GetUserByID(req *http.Request, userID string) ([]byte, error) {
+	return nil, nil
+}
+
 // GetSession - returns the session
 func (l *DefaultLocalProvider) GetSession(req *http.Request) error {
 	return nil
