@@ -29,7 +29,7 @@ const styles = makeStyles((theme) => ({
     display : "flex",
     justifyContent : "center",
     alignItems : "center",
-    padding : "2rem",
+    padding : "2rem"
   },
   insideImgWrapper : {
     padding : "0rem 0.5rem",
