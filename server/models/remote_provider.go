@@ -335,8 +335,9 @@ func (l *RemoteProvider) GetUserByID(req *http.Request, userID string) ([]byte, 
 		logrus.Infof("user profile successfully retrieved from remote provider")
 		return bdr, nil
 	}
-	logrus.Errorf("error while fetching user profile: %s", bdr)
-	return nil, ErrFetch(err, "User Profile", resp.StatusCode)
+	err = ErrFetch(err, "User Profile", resp.StatusCode)
+	logrus.Errorf(err.Error())
+	return nil, err
 }
 
 // GetUserDetails - returns the user details
