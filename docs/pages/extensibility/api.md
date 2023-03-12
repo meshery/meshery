@@ -4,6 +4,7 @@ title: "Extensibility: APIs"
 permalink: extensibility/api
 type: Extensibility
 abstract: "Meshery architecture is extensible, offering an array of extension points and REST and GraphQL APIs."
+language: en
 #redirect_from: extensibility
 ---
 
