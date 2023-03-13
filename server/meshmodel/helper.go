@@ -17,7 +17,7 @@ import (
 
 const ArtifactHubComponentsHandler = "kubernetes" //The components generated in output directory will be handled by kubernetes
 
-type ComponentHelper struct {
+type EntityRegistrationHelper struct {
 	handlerConfig    *models.HandlerConfig
 	regManager       *meshmodel.RegistryManager
 	componentChan    chan v1alpha1.ComponentDefinition
@@ -27,8 +27,8 @@ type ComponentHelper struct {
 	log              logger.Handler
 }
 
-func NewComponentHelper(hc *models.HandlerConfig, rm *meshmodel.RegistryManager, log logger.Handler) *ComponentHelper {
-	return &ComponentHelper{
+func NewEntityRegistrationHelper(hc *models.HandlerConfig, rm *meshmodel.RegistryManager, log logger.Handler) *EntityRegistrationHelper {
+	return &EntityRegistrationHelper{
 		handlerConfig:    hc,
 		regManager:       rm,
 		componentChan:    make(chan v1alpha1.ComponentDefinition, 1),
@@ -40,7 +40,7 @@ func NewComponentHelper(hc *models.HandlerConfig, rm *meshmodel.RegistryManager,
 }
 
 // seed the local meshmodel components
-func (ch *ComponentHelper) SeedComponents() {
+func (ch *EntityRegistrationHelper) SeedComponents() {
 	// Watch channels and register components and relationships with the registry manager
 	go ch.watchComponents()
 
@@ -50,10 +50,10 @@ func (ch *ComponentHelper) SeedComponents() {
 	ch.doneSignal <- true
 }
 
-func (ch *ComponentHelper) generateComponents(pathToComponents string) {
+func (erh *EntityRegistrationHelper) generateComponents(pathToComponents string) {
 	path, err := filepath.Abs(pathToComponents)
 	if err != nil {
-		ch.errorChan <- errors.Wrapf(err, "error while getting absolute path for generating components")
+		erh.errorChan <- errors.Wrapf(err, "error while getting absolute path for generating components")
 		return
 	}
 
@@ -66,31 +66,31 @@ func (ch *ComponentHelper) generateComponents(pathToComponents string) {
 			var comp v1alpha1.ComponentDefinition
 			byt, err := os.ReadFile(path)
 			if err != nil {
-				ch.errorChan <- errors.Wrapf(err, fmt.Sprintf("unable to read file at %s", path))
+				erh.errorChan <- errors.Wrapf(err, fmt.Sprintf("unable to read file at %s", path))
 				return nil
 			}
 			err = json.Unmarshal(byt, &comp)
 			if err != nil {
-				ch.errorChan <- errors.Wrapf(err, fmt.Sprintf("unmarshal json failed for %s", path))
+				erh.errorChan <- errors.Wrapf(err, fmt.Sprintf("unmarshal json failed for %s", path))
 				return nil
 			}
 			if comp.Metadata != nil && comp.Metadata["published"] == true {
 				utils.WriteSVGsOnFileSystem(&comp)
-				ch.componentChan <- comp
+				erh.componentChan <- comp
 			}
 		}
 		return nil
 	})
 	if err != nil {
-		ch.errorChan <- errors.Wrapf(err, "error while generating components")
+		erh.errorChan <- errors.Wrapf(err, "error while generating components")
 	}
 	return
 }
 
-func (ch *ComponentHelper) generateRelationships(pathToComponents string) {
+func (erh *EntityRegistrationHelper) generateRelationships(pathToComponents string) {
 	path, err := filepath.Abs(pathToComponents)
 	if err != nil {
-		ch.errorChan <- errors.Wrapf(err, "error while getting absolute path for generating relationships")
+		erh.errorChan <- errors.Wrapf(err, "error while getting absolute path for generating relationships")
 		return
 	}
 
@@ -102,48 +102,48 @@ func (ch *ComponentHelper) generateRelationships(pathToComponents string) {
 			var rel v1alpha1.RelationshipDefinition
 			byt, err := os.ReadFile(path)
 			if err != nil {
-				ch.errorChan <- errors.Wrapf(err, fmt.Sprintf("unable to read file at %s", path))
+				erh.errorChan <- errors.Wrapf(err, fmt.Sprintf("unable to read file at %s", path))
 				return nil
 			}
 			err = json.Unmarshal(byt, &rel)
 			if err != nil {
-				ch.errorChan <- errors.Wrapf(err, fmt.Sprintf("unmarshal json failed for %s", path))
+				erh.errorChan <- errors.Wrapf(err, fmt.Sprintf("unmarshal json failed for %s", path))
 				return nil
 			}
-			ch.relationshipChan <- rel
+			erh.relationshipChan <- rel
 		}
 		return nil
 	})
 	if err != nil {
-		ch.errorChan <- errors.Wrapf(err, "error while generating relationships")
+		erh.errorChan <- errors.Wrapf(err, "error while generating relationships")
 	}
 	return
 }
 
-func (ch *ComponentHelper) watchComponents() {
+func (erh *EntityRegistrationHelper) watchComponents() {
 	var err error
 	for {
 		select {
-		case comp := <-ch.componentChan:
-			err = ch.regManager.RegisterEntity(meshmodel.Host{
+		case comp := <-erh.componentChan:
+			err = erh.regManager.RegisterEntity(meshmodel.Host{
 				Hostname: ArtifactHubComponentsHandler,
 			}, comp)
-		case rel := <-ch.relationshipChan:
-			err = ch.regManager.RegisterEntity(meshmodel.Host{
+		case rel := <-erh.relationshipChan:
+			err = erh.regManager.RegisterEntity(meshmodel.Host{
 				Hostname: ArtifactHubComponentsHandler,
 			}, rel)
 
 		//Watching and logging errors from error channel
-		case mhErr := <-ch.errorChan:
-			ch.log.Error(mhErr)
+		case mhErr := <-erh.errorChan:
+			erh.log.Error(mhErr)
 
-		case <-ch.doneSignal:
-			go ch.handlerConfig.MeshModelSummaryChannel.Publish()
+		case <-erh.doneSignal:
+			go erh.handlerConfig.MeshModelSummaryChannel.Publish()
 			return
 		}
 
 		if err != nil {
-			ch.errorChan <- err
+			erh.errorChan <- err
 		}
 	}
 }
