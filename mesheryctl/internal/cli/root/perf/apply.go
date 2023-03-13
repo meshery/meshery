@@ -159,6 +159,11 @@ mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --mesh i
 			return ErrNoProfileName()
 		}
 
+		// Invalid number of arguments
+		if len(args) > 1 {
+			return ErrorArgumentOverflow()
+		}
+
 		// handles spaces in args if quoted args passed
 		for i, arg := range args {
 			args[i] = strings.ReplaceAll(arg, " ", "%20")
