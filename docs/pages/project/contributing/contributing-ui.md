@@ -127,7 +127,7 @@ If you want to work on the UI, it will be a good idea to use the included UI dev
 
 Refer to [Contributing to Meshery Server](contributing-server), if needed.
 
-> Make sure to have Meshery Server configured, up and running on the default port `http://localhost:9081` before proceeding to access and work on the UI server at `http://localhost:3000`.
+> Make sure to have Meshery Server configured, up and running on the default port `http://localhost:9081` and login with meshery provider (go to the `http://localhost:9081` to login with meshery provider) before proceeding to access and work on the UI server at `http://localhost:3000`.
 
 Any UI changes made now will _automatically_ be rebuilt and served in your browser.
 
