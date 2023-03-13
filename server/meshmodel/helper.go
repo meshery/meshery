@@ -9,6 +9,7 @@ import (
 
 	"github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/models"
+	"github.com/layer5io/meshkit/logger"
 	"github.com/layer5io/meshkit/models/meshmodel"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 	"github.com/pkg/errors"
@@ -23,9 +24,10 @@ type ComponentHelper struct {
 	relationshipChan chan v1alpha1.RelationshipDefinition
 	doneSignal       chan bool
 	errorChan        chan error
+	log              logger.Handler
 }
 
-func NewComponentHelper(hc *models.HandlerConfig, rm *meshmodel.RegistryManager) *ComponentHelper {
+func NewComponentHelper(hc *models.HandlerConfig, rm *meshmodel.RegistryManager, log logger.Handler) *ComponentHelper {
 	return &ComponentHelper{
 		handlerConfig:    hc,
 		regManager:       rm,
@@ -33,6 +35,7 @@ func NewComponentHelper(hc *models.HandlerConfig, rm *meshmodel.RegistryManager)
 		relationshipChan: make(chan v1alpha1.RelationshipDefinition, 1),
 		doneSignal:       make(chan bool),
 		errorChan:        make(chan error),
+		log:              log,
 	}
 }
 
@@ -129,8 +132,10 @@ func (ch *ComponentHelper) watchComponents() {
 			err = ch.regManager.RegisterEntity(meshmodel.Host{
 				Hostname: ArtifactHubComponentsHandler,
 			}, rel)
+
+		//Watching and logging errors from error channel
 		case mhErr := <-ch.errorChan:
-			fmt.Println("err: ", mhErr.Error())
+			ch.log.Error(mhErr)
 
 		case <-ch.doneSignal:
 			go ch.handlerConfig.MeshModelSummaryChannel.Publish()
