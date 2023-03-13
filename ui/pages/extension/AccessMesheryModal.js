@@ -33,7 +33,7 @@ const styles = makeStyles((theme) => ({
   },
   insideImgWrapper : {
     padding : "0rem 0.5rem",
-    content : theme.palette.type === 'dark' ? "url('/static/img/meshery-logo-text.png')" : "url('/static/img/meshery-logo-light-text.png')"
+    content : theme.palette.type === 'dark' ? "url('/static/img/meshery-logo-text.svg')" : "url('/static/img/meshery-logo-light-text.svg')"
   },
   insideImgWrapperLogo : {
     padding : "0rem 0.5rem"
