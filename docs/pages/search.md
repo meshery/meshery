@@ -7,7 +7,7 @@ excluded_in_search: true
 display-title : "false"
 ---
 
-<p><span id="search-process">Loading</span> results <span id="search-query-container" style="display: none;">for "<strong id="search-query"></strong>"</span></p>
+<h3><span id="search-process">Loading</span> results <span id="search-query-container" style="display: none;">for "<strong id="search-query"></strong>"</span></h3>
 
 <ul id="search-results"></ul>
 
