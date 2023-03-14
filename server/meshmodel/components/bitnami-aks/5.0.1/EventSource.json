@@ -1,0 +1,1 @@
+{"kind":"EventSource","apiVersion":"v1alpha1","displayName":"Event Source","format":"JSON","metadata":{},"model":{"name":"bitnami-aks","version":"5.0.1","modelDisplayName":"bitnami-aks","category":"","subCategory":""},"schema":"{\n \"title\": \"Event Source\",\n \"type\": \"object\",\n \"x-kubernetes-preserve-unknown-fields\": true\n}"}
