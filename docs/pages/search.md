@@ -1,9 +1,10 @@
 ---
-title: 
+title: Search 
 sitemap: false
 permalink: /search/
 not_editable: true
 excluded_in_search: true
+display-title : "false"
 ---
 
 <input class="form-control td-search-input fa fa-search" type="search" name="q" id="search-input" placeholder="&#xf002 Search this site…"  style="margin-top:5px" autofocus>
