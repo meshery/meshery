@@ -140,7 +140,6 @@ func (erh *EntityRegistrationHelper) watchComponents() {
 			}
 
 		case <-erh.doneSignal:
-			go erh.handlerConfig.MeshModelSummaryChannel.Publish()
 			return
 		}
 

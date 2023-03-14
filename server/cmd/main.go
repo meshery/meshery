@@ -237,7 +237,10 @@ func main() {
 
 	//seed the local meshmodel components
 	ch := meshmodelhelper.NewEntityRegistrationHelper(hc, regManager, log)
-	go ch.SeedComponents()
+	go func() {
+		ch.SeedComponents()
+		go hc.MeshModelSummaryChannel.Publish()
+	}()
 
 	lProv.SeedContent(log)
 	provs[lProv.Name()] = lProv
