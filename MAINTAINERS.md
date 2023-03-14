@@ -3,16 +3,15 @@
 | Name              | GitHub            | Affiliation |
 | ----------------- | ----------------- | ----------- |
 | Hussaina Begum    | hexxdump          | VMware      |
-| Lee Calcote       | leecalcote        | Layer5      |
+| Aadhitya Amarendiran    | alphaX86    | Independent |
 
 ### UI Maintainers
 
 | Name                | GitHub                 | Affiliation |
 | ------------------- | ---------------------- | ----------- |
 | Abhishek Kumar      | Abhishek-kumar09       | Layer5      |
-| Lee Calcote         | leecalcote             | Layer5      |
+| Uzair Shaikh        | MUzairS15              | Layer5      |
 | Nikhil Ladha        | Nikhil-Ladha           | Red Hat     |
-| Nithish Karthik     | sudo-NithishKarthik    | Layer5      |
 | Antonette Caldwell  | acald-creator          | Acquia      |
 
 ### Adapter Maintainers
@@ -23,7 +22,7 @@
 | Dhiraj Gedam        | dheerajng     | Citrix      |
 | Haim Helman         | thehh1974     | VMware      |
 | Hussaina Begum      | hexxdump      | VMware      |
-| Lee Calcote         | leecalcote    | Layer5      |
+| Ashish Tiwari       | revolyssup    | Layer5      |
 | Michael Gfeller     | mgfeller      | Computas AS |
 | Antonette Caldwell  | acald-creator | Acquia      |
 
