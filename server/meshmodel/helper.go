@@ -1,6 +1,7 @@
 package meshmodel
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io/fs"
@@ -22,7 +23,6 @@ type EntityRegistrationHelper struct {
 	regManager       *meshmodel.RegistryManager
 	componentChan    chan v1alpha1.ComponentDefinition
 	relationshipChan chan v1alpha1.RelationshipDefinition
-	doneSignal       chan bool
 	errorChan        chan error
 	log              logger.Handler
 }
@@ -33,7 +33,6 @@ func NewEntityRegistrationHelper(hc *models.HandlerConfig, rm *meshmodel.Registr
 		regManager:       rm,
 		componentChan:    make(chan v1alpha1.ComponentDefinition, 1),
 		relationshipChan: make(chan v1alpha1.RelationshipDefinition, 1),
-		doneSignal:       make(chan bool),
 		errorChan:        make(chan error),
 		log:              log,
 	}
@@ -42,12 +41,13 @@ func NewEntityRegistrationHelper(hc *models.HandlerConfig, rm *meshmodel.Registr
 // seed the local meshmodel components
 func (erh *EntityRegistrationHelper) SeedComponents() {
 	// Watch channels and register components and relationships with the registry manager
-	go erh.watchComponents()
+	ctx, cancel := context.WithCancel(context.TODO())
+	go erh.watchComponents(ctx)
 
 	// Read component and relationship definitions from files and send them to respective channels
 	erh.generateComponents("../meshmodel/components")
 	erh.generateRelationships("../meshmodel/components")
-	erh.doneSignal <- true
+	cancel()
 }
 
 func (erh *EntityRegistrationHelper) generateComponents(pathToComponents string) {
@@ -120,7 +120,7 @@ func (erh *EntityRegistrationHelper) generateRelationships(pathToComponents stri
 	return
 }
 
-func (erh *EntityRegistrationHelper) watchComponents() {
+func (erh *EntityRegistrationHelper) watchComponents(ctx context.Context) {
 	var err error
 	for {
 		select {
@@ -139,7 +139,8 @@ func (erh *EntityRegistrationHelper) watchComponents() {
 				erh.log.Error(mhErr)
 			}
 
-		case <-erh.doneSignal:
+		case <-ctx.Done():
+			fmt.Println("DONE AOEFN")
 			return
 		}
 
