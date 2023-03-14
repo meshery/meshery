@@ -7,6 +7,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"strings"
 	"sync"
 
 	"time"
@@ -124,7 +125,7 @@ func main() {
 		fmt.Printf("Error creating file: %s\n", err)
 	}
 
-	f.Write([]byte("model,component_count\n"))
+	f.Write([]byte("model,component_count,components\n"))
 	go func() {
 		for entry := range csvChan {
 			f.Write([]byte(entry))
@@ -232,10 +233,16 @@ func StartPipeline(in chan []artifacthub.AhPackage, csv chan string, writer *Wri
 	go func() {
 		for comps := range compsCSV {
 			count := len(comps.comps)
+			names := "\""
+			for _, cmp := range comps.comps {
+				names += fmt.Sprintf("%s,", cmp.Kind)
+			}
+			names = strings.TrimSuffix(names, ",")
+			names += "\""
 			if count > 0 {
 				model := comps.model
 				fmt.Println(fmt.Sprintf("[DEBUG]Adding to CSV: %s", model))
-				csv <- fmt.Sprintf("%s,%d\n", model, count)
+				csv <- fmt.Sprintf("%s,%d,%s\n", model, count, names)
 			}
 		}
 	}()
