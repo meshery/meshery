@@ -255,8 +255,7 @@ mesheryctl system channel switch [stable|stable-version|edge|edge-version]
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
-// 			return errors.New(utils.SystemChannelSubError("please specify a flag or subcommand. Use 'mesheryctl system channel --help' to display user guide.\n", "channel"))
-			continue
+			return errors.New(utils.SystemChannelSubError("please specify a flag or subcommand. Use 'mesheryctl system channel --help' to display user guide.\n", "channel"))
 		}
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
 			return errors.New(utils.SystemChannelSubError(fmt.Sprintf("'%s' is an invalid subcommand. Please provide required options from [set/switch/view]. Use 'mesheryctl system channel --help' to display usage guide.\n", args[0]), "channel"))
