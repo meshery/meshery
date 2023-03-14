@@ -39,7 +39,7 @@ import fetchCatalogPattern from "./graphql/queries/CatalogPatternQuery";
 import LoadingScreen from "./LoadingComponents/LoadingComponent";
 import { SchemaContext } from "../utils/context/schemaSet";
 import Validation from "./Validation";
-import { ACTIONS, FILE_OPS, VISIBILITY } from "../utils/Enum";
+import { ACTIONS, FILE_OPS, MesheryPatternsCatalog, VISIBILITY } from "../utils/Enum";
 import PublishModal from "./PublishModal";
 import CloneIcon from "../public/static/img/CloneIcon";
 
@@ -237,7 +237,7 @@ function resetSelectedPattern() {
 }
 
 function MesheryPatterns({
-  updateProgress, enqueueSnackbar, closeSnackbar, user, classes, selectedK8sContexts, catalogVisibility, toggleCatalogContent
+  updateProgress, enqueueSnackbar, closeSnackbar, user, classes, selectedK8sContexts, catalogVisibility, toggleCatalogContent, capabilitiesRegistry
 }) {
   const [page, setPage] = useState(0);
   const [search,setSearch] = useState("");
@@ -251,6 +251,8 @@ function MesheryPatterns({
   const [extensionPreferences, setExtensionPreferences] = useState({});
 
   const [patternErrors, setPatternErrors] = useState(new Map());
+
+  const [canPublishPattern, setCanPublishPattern] = useState(false);
 
   const [viewType, setViewType] = useState(
     /**  @type {TypeView} */
@@ -322,6 +324,17 @@ function MesheryPatterns({
       error_msg : "Failed to publish catalog"
     }
   };
+
+  /**
+   * Checking whether users are signed in under a provider that doesn't have
+   * publish pattern capability and setting the canPublishPattern state accordingly
+   */
+  useEffect(() => {
+    const patternsCatalogueCapability = capabilitiesRegistry?.capabilities.filter(
+      (val) => val.feature === MesheryPatternsCatalog
+    );
+    if (patternsCatalogueCapability.length) setCanPublishPattern(true);
+  }, [])
 
   const searchTimeout = useRef(null);
   /**
@@ -514,11 +527,13 @@ function MesheryPatterns({
   }
 
   const handlePublishModal = (ev, pattern) => {
-    ev.stopPropagation();
-    setPublishModal({
-      open : true,
-      pattern : pattern
-    });
+    if (canPublishPattern) {
+      ev.stopPropagation();
+      setPublishModal({
+        open : true,
+        pattern : pattern
+      });
+    }
   };
   const handlePublishModalClose = () => {
     setPublishModal({
@@ -626,7 +641,6 @@ function MesheryPatterns({
       },
       handleError(ACTION_TYPES.PUBLISH_CATALOG),
     );
-
   }
   function handleClone(patternID, name) {
     updateProgress({ showProgress : true });
@@ -946,12 +960,13 @@ function MesheryPatterns({
               >
                 <DoneAllIcon data-cy="deploy-button" />
               </TooltipIcon>
-              <TooltipIcon
-                title="Publish"
-                onClick={(ev) => handlePublishModal(ev,rowData)}
-              >
-                <PublicIcon fill="#F91313" data-cy="publish-button" />
-              </TooltipIcon>
+              {canPublishPattern &&
+                (<TooltipIcon
+                  title="Publish"
+                  onClick={(ev) => handlePublishModal(ev,rowData)}
+                >
+                  <PublicIcon fill="#F91313" data-cy="publish-button" />
+                </TooltipIcon>)}
             </>
           );
         },
@@ -1182,6 +1197,7 @@ function MesheryPatterns({
           !selectedPattern.show && viewType==="grid" &&
             // grid vieww
             <MesheryPatternGrid
+              canPublishPattern={canPublishPattern}
               patterns={patterns}
               handleDeploy={handleDeploy}
               handleVerify={handleVerify}
@@ -1216,7 +1232,7 @@ function MesheryPatterns({
           validationBody={modalOpen.validationBody}
           errors={modalOpen.errors}
         />
-        <PublishModal open={publishModal.open} handleClose={handlePublishModalClose} pattern={publishModal.pattern} aria-label="catalog publish" handlePublish={handlePublish} />
+        {canPublishPattern && <PublishModal open={publishModal.open} handleClose={handlePublishModalClose} pattern={publishModal.pattern} aria-label="catalog publish" handlePublish={handlePublish} />}
         <UploadImport open={importModal.open} handleClose={handleUploadImportClose} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} fetch={() => fetchPatterns(page, pageSize, search, sortOrder)} configuration="Design" />
         <PromptComponent ref={modalRef} />
       </NoSsr>
@@ -1229,7 +1245,8 @@ const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(
 const mapStateToProps = (state) => {
   return {
     user : state.get("user")?.toObject(), selectedK8sContexts : state.get("selectedK8sContexts"),
-    catalogVisibility : state.get("catalogVisibility")
+    catalogVisibility : state.get("catalogVisibility"),
+    capabilitiesRegistry : state.get("capabilitiesRegistry")
   };
 };
 

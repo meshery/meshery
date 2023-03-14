@@ -576,7 +576,7 @@ func (l *DefaultLocalProvider) GetCatalogMesheryPatterns(tokenString string, sea
 // PublishCatalogPattern publishes pattern to catalog
 // Not supported by local provider
 func (l *DefaultLocalProvider) PublishCatalogPattern(req *http.Request, publishPatternRequest *MesheryCatalogPatternRequestBody) ([]byte, error) {
-	return []byte(""), nil
+	return []byte(""), ErrLocalProviderSupport
 }
 
 // GetMesheryPattern gets pattern for the given patternID

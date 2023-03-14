@@ -9,7 +9,7 @@ $(document).ready(function() {
     var toc = $('#TOC');
 
     // Select each header
-    sections = $('h1.td-content');
+    sections = $('.td-content h1');
         $.each(sections, function(idx, v) {
             section = $(v);
             var div_id = $(section).attr('id');
@@ -50,8 +50,18 @@ $(document).ready(function() {
           if($(window).scrollTop() + $(window).height() > $(document).height() - 10) {
             $('.selected').removeClass('selected');
               $(this).addClass('selected');
-   }
+          }
         });
       })
+      // Smooth scroll to target section when clicking on TOC link
+      $('a[href^="#"]').on('click', function(event) {
+        event.preventDefault();
+        var target = $(this.hash);
+        if (target.length) {
+          $('html, body').animate({
+          scrollTop: target.offset().top - 70
+          }, 1000);
+        }
+      });
     });
 </script>
