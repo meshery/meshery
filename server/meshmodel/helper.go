@@ -140,7 +140,6 @@ func (erh *EntityRegistrationHelper) watchComponents(ctx context.Context) {
 			}
 
 		case <-ctx.Done():
-			fmt.Println("DONE AOEFN")
 			return
 		}
 
