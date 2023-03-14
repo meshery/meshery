@@ -118,8 +118,20 @@ func main() {
 	}
 
 	inputChan := make(chan []artifacthub.AhPackage)
+	csvChan := make(chan string, 50)
+	f, err := os.Create(dumpFile)
+	if err != nil {
+		fmt.Printf("Error creating file: %s\n", err)
+	}
+
+	f.Write([]byte("model,component_count\n"))
+	go func() {
+		for entry := range csvChan {
+			f.Write([]byte(entry))
+		}
+	}()
 	for i := 0; i <= 10; i++ {
-		StartPipeline(inputChan, &compsWriter)
+		StartPipeline(inputChan, csvChan, &compsWriter)
 	}
 	inputChan <- pkgs[:10]
 	for len(pkgs) != 0 {
@@ -146,10 +158,16 @@ func main() {
 	}
 }
 
-func StartPipeline(in chan []artifacthub.AhPackage, writer *Writer) error {
+func StartPipeline(in chan []artifacthub.AhPackage, csv chan string, writer *Writer) error {
 	pkgsChan := make(chan []artifacthub.AhPackage)
-	compsChan := make(chan []v1alpha1.ComponentDefinition)
-	compsCSV := make(chan []v1alpha1.ComponentDefinition)
+	compsChan := make(chan struct {
+		comps []v1alpha1.ComponentDefinition
+		model string
+	})
+	compsCSV := make(chan struct {
+		comps []v1alpha1.ComponentDefinition
+		model string
+	})
 	// updating pacakge data
 	go func() {
 		for pkgs := range in {
@@ -176,19 +194,31 @@ func StartPipeline(in chan []artifacthub.AhPackage, writer *Writer) error {
 					fmt.Println(err)
 					continue
 				}
-				compsChan <- comps
+				compsCSV <- struct {
+					comps []v1alpha1.ComponentDefinition
+					model string
+				}{
+					comps: comps,
+					model: ap.Name,
+				}
 			}
 
 		}
 	}()
 	// writer
 	go func() {
-		for comps := range compsChan {
-			err := writeComponents(comps, writer)
+		for modelcomps := range compsChan {
+			err := writeComponents(modelcomps.comps, writer)
 			if err != nil {
 				fmt.Println(err)
 			}
-			compsCSV <- comps
+			compsCSV <- struct {
+				comps []v1alpha1.ComponentDefinition
+				model string
+			}{
+				comps: modelcomps.comps,
+				model: modelcomps.model,
+			}
 		}
 	}()
 	if _, err := os.Stat(dumpFile); os.IsExist(err) {
@@ -198,22 +228,18 @@ func StartPipeline(in chan []artifacthub.AhPackage, writer *Writer) error {
 			fmt.Printf("Error deleting file: %s\n", err)
 		}
 	}
-	f, err := os.Create(dumpFile)
-	if err != nil {
-		fmt.Printf("Error creating file: %s\n", err)
-	}
-	f.Write([]byte("model,component_count\n"))
+
 	go func() {
-		defer f.Close()
 		for comps := range compsCSV {
-			count := len(comps)
+			count := len(comps.comps)
 			if count > 0 {
-				model := comps[0].Model.Name
+				model := comps.model
 				fmt.Println(fmt.Sprintf("[DEBUG]Adding to CSV: %s", model))
-				f.Write([]byte(fmt.Sprintf("%s,%d\n", model, count)))
+				csv <- fmt.Sprintf("%s,%d\n", model, count)
 			}
 		}
 	}()
+
 	return nil
 }
 
