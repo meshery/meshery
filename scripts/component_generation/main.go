@@ -16,6 +16,8 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+const dumpFile = "./dump.csv"
+
 var (
 	AhSearchEndpoint = artifacthub.AhHelmExporterEndpoint
 
@@ -147,6 +149,7 @@ func main() {
 func StartPipeline(in chan []artifacthub.AhPackage, writer *Writer) error {
 	pkgsChan := make(chan []artifacthub.AhPackage)
 	compsChan := make(chan []v1alpha1.ComponentDefinition)
+	compsCSV := make(chan []v1alpha1.ComponentDefinition)
 	// updating pacakge data
 	go func() {
 		for pkgs := range in {
@@ -184,6 +187,30 @@ func StartPipeline(in chan []artifacthub.AhPackage, writer *Writer) error {
 			err := writeComponents(comps, writer)
 			if err != nil {
 				fmt.Println(err)
+			}
+			compsCSV <- comps
+		}
+	}()
+	if _, err := os.Stat(dumpFile); os.IsExist(err) {
+		// If file exists, delete it
+		err := os.Remove(dumpFile)
+		if err != nil {
+			fmt.Printf("Error deleting file: %s\n", err)
+		}
+	}
+	f, err := os.Create(dumpFile)
+	if err != nil {
+		fmt.Printf("Error creating file: %s\n", err)
+	}
+	f.Write([]byte("model,component_count\n"))
+	go func() {
+		defer f.Close()
+		for comps := range compsCSV {
+			count := len(comps)
+			if count > 0 {
+				model := comps[0].Model.Name
+				fmt.Println(fmt.Sprintf("[DEBUG]Adding to CSV: %s", model))
+				f.Write([]byte(fmt.Sprintf("%s,%d\n", model, count)))
 			}
 		}
 	}()

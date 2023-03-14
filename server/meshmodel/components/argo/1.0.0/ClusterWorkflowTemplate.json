@@ -1,0 +1,1 @@
+{"kind":"ClusterWorkflowTemplate","apiVersion":"v1alpha1","displayName":"Cluster Workflow Template","format":"JSON","metadata":{},"model":{"name":"argo","version":"1.0.0","modelDisplayName":"argo","category":"","subCategory":""}}

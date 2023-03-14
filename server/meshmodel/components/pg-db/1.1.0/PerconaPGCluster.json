@@ -1,0 +1,1 @@
+{"kind":"PerconaPGCluster","apiVersion":"v1","displayName":"Percona PG Cluster","format":"JSON","metadata":{},"model":{"name":"pg-db","version":"1.1.0","modelDisplayName":"pg-db","category":"","subCategory":""},"schema":"{\n \"title\": \"Percona PG Cluster\",\n \"type\": \"object\",\n \"x-kubernetes-preserve-unknown-fields\": true\n}"}
