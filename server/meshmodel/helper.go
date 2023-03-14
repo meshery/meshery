@@ -40,14 +40,14 @@ func NewEntityRegistrationHelper(hc *models.HandlerConfig, rm *meshmodel.Registr
 }
 
 // seed the local meshmodel components
-func (ch *EntityRegistrationHelper) SeedComponents() {
+func (erh *EntityRegistrationHelper) SeedComponents() {
 	// Watch channels and register components and relationships with the registry manager
-	go ch.watchComponents()
+	go erh.watchComponents()
 
 	// Read component and relationship definitions from files and send them to respective channels
-	ch.generateComponents("../meshmodel/components")
-	ch.generateRelationships("../meshmodel/components")
-	ch.doneSignal <- true
+	erh.generateComponents("../meshmodel/components")
+	erh.generateRelationships("../meshmodel/components")
+	erh.doneSignal <- true
 }
 
 func (erh *EntityRegistrationHelper) generateComponents(pathToComponents string) {
@@ -135,7 +135,9 @@ func (erh *EntityRegistrationHelper) watchComponents() {
 
 		//Watching and logging errors from error channel
 		case mhErr := <-erh.errorChan:
-			erh.log.Error(mhErr)
+			if err != nil {
+				erh.log.Error(mhErr)
+			}
 
 		case <-erh.doneSignal:
 			go erh.handlerConfig.MeshModelSummaryChannel.Publish()
