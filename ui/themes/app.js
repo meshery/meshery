@@ -416,7 +416,11 @@ export const styles = (theme) => ({
     padding : '48px 36px 24px',
   },
   footer : {
-    backgroundColor : darkTheme.palette.type == "dark" ? "#fff" : "#212121",
+    backgroundColor : '#fff',
+    padding : theme.spacing(2),
+  },
+  footerDark : {
+    backgroundColor : '#202020',
     padding : theme.spacing(2),
   },
   footerText : {
@@ -426,7 +430,7 @@ export const styles = (theme) => ({
   },
   footerIcon : {
     display : 'inline',
-    verticalAlign : 'top',
+    verticalAlign : 'middle',
   },
   icon : { fontSize : 20, },
   notifSuccess : {

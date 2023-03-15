@@ -33,10 +33,11 @@ import (
 
 	"github.com/layer5io/component_scraper/pkg"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
+	"github.com/layer5io/meshkit/utils/manifests"
 )
 
 var (
-	ColumnNamesToExtract        = []string{"modelDisplayName", "model", "category", "subCategory", "shape", "primaryColor", "secondaryColor", "logo-URL", "svgColor", "svgWhite", "Publish?"}
+	ColumnNamesToExtract        = []string{"modelDisplayName", "model", "category", "subCategory", "shape", "primaryColor", "secondaryColor", "logoURL", "svgColor", "svgWhite", "Publish?", "CRDs"}
 	ColumnNamesToExtractForDocs = []string{"modelDisplayName", "Page Subtitle", "Docs URL", "category", "subCategory", "Feature 1", "Feature 2", "Feature 3", "howItWorks", "howItWorksDetails", "Publish?", "About Project", "Standard Blurb", "svgColor", "svgWhite", "Full Page", "model"}
 	PrimaryColumnName           = "model"
 	OutputPath                  = "../../server/meshmodel/components"
@@ -97,7 +98,7 @@ func main() {
 		file.Close()
 		os.Remove(file.Name())
 		output = cleanupDuplicatesAndPreferEmptyComponentField(output, "model")
-		mesheryDocsJSON := "["
+		mesheryDocsJSON := "const data = ["
 		for _, out := range output {
 			var t pkg.TemplateAttributes
 			publishValue, err := strconv.ParseBool(out["Publish?"])
@@ -150,8 +151,8 @@ func main() {
 			// 	fmt.Println(md)
 			// }
 			mesheryDocsJSON += jsonItem + ","
-
-			pathToIntegrationsLayer5, _ := filepath.Abs(filepath.Join("../../../", pathToIntegrationsLayer5, out["model"]))
+			modelName := strings.TrimSpace(out["model"])
+			pathToIntegrationsLayer5, _ := filepath.Abs(filepath.Join("../../../", pathToIntegrationsLayer5, modelName))
 			pathToIntegrationsMeshery, _ := filepath.Abs(filepath.Join("../../../", pathToIntegrationsMeshery))
 			err = os.MkdirAll(pathToIntegrationsLayer5, 0777)
 			if err != nil {
@@ -167,7 +168,7 @@ func main() {
 				panic(err)
 			}
 
-			err = pkg.WriteSVG(filepath.Join(pathToIntegrationsLayer5, "icon", "color", out["model"]+"-color.svg"), svgcolor) //CHANGE PATH
+			err = pkg.WriteSVG(filepath.Join(pathToIntegrationsLayer5, "icon", "color", modelName+"-color.svg"), svgcolor) //CHANGE PATH
 			if err != nil {
 				panic(err)
 			}
@@ -175,7 +176,7 @@ func main() {
 			if err != nil {
 				panic(err)
 			}
-			err = pkg.WriteSVG(filepath.Join(pathToIntegrationsLayer5, "icon", "white", out["model"]+"-white.svg"), svgwhite) //CHANGE PATH
+			err = pkg.WriteSVG(filepath.Join(pathToIntegrationsLayer5, "icon", "white", modelName+"-white.svg"), svgwhite) //CHANGE PATH
 			if err != nil {
 				panic(err)
 			}
@@ -186,23 +187,22 @@ func main() {
 				panic(err)
 			}
 
-			err = pkg.WriteSVG(filepath.Join(pathToIntegrationsMeshery, "../", "images", out["model"]+"-color.svg"), svgcolor) //CHANGE PATH
+			err = pkg.WriteSVG(filepath.Join(pathToIntegrationsMeshery, "../", "images", modelName+"-color.svg"), svgcolor) //CHANGE PATH
 			if err != nil {
 				panic(err)
 			}
 
-			err = pkg.WriteSVG(filepath.Join(pathToIntegrationsMeshery, "../", "images", out["model"]+"-white.svg"), svgwhite) //CHANGE PATH
+			err = pkg.WriteSVG(filepath.Join(pathToIntegrationsMeshery, "../", "images", modelName+"-white.svg"), svgwhite) //CHANGE PATH
 			if err != nil {
 				panic(err)
 			}
 		}
 
 		mesheryDocsJSON = strings.TrimSuffix(mesheryDocsJSON, ",")
-		mesheryDocsJSON += "]"
-		if err := pkg.WriteToFile(filepath.Join("../../../", pathToIntegrationsMeshery, "data.json"), mesheryDocsJSON); err != nil {
+		mesheryDocsJSON += "]; export default data"
+		if err := pkg.WriteToFile(filepath.Join("../../../", pathToIntegrationsMeshery, "data.js"), mesheryDocsJSON); err != nil {
 			log.Fatal(err)
 		}
-
 	} else {
 		output, err := pkg.GetEntries(csvReader, ColumnNamesToExtract)
 		if err != nil {
@@ -212,7 +212,11 @@ func main() {
 		file.Close()
 		os.Remove(file.Name())
 		publishedModels := make(map[string]bool)
+		countWithoutCrds := 0
 		_ = pkg.PopulateEntries(OutputPath, output, PrimaryColumnName, func(dirpath string, changeFields map[string]string) error {
+			if changeFields["CRDs"] == "" {
+				countWithoutCrds++
+			}
 			if changeFields["Publish?"] == "TRUE" {
 				publishedModels[changeFields[PrimaryColumnName]] = true
 			}
@@ -252,7 +256,7 @@ func main() {
 						if err != nil {
 							return err
 						}
-						fmt.Println("updating for ", changeFields["modelDisplayName"], "--", component.Kind)
+						component.DisplayName = manifests.FormatToReadableString(component.Kind)
 						if component.Metadata == nil {
 							component.Metadata = make(map[string]interface{})
 						}
@@ -274,6 +278,16 @@ func main() {
 						if i := isInColumnNames("modelDisplayName", ColumnNamesToExtract); i != -1 {
 							component.Model.DisplayName = changeFields[ColumnNamesToExtract[i]]
 						}
+						//Either component is set to published or the parent model is set to published
+						if component.Metadata["Publish?"] == "TRUE" || publishedModels[component.Model.Name] { //Publish? is an invalid field for putting inside kubernetes annotations
+							component.Metadata["published"] = true
+						} else {
+							component.Metadata["published"] = false
+						}
+						fmt.Println("updating for ", changeFields["modelDisplayName"], "--", component.Kind, "-- published=", component.Metadata["published"])
+						delete(component.Metadata, "Publish?")
+						modelDisplayName := component.Metadata["modelDisplayName"].(string)
+						component.Model.DisplayName = modelDisplayName
 						byt, err = json.Marshal(component)
 						if err != nil {
 							return err
@@ -288,6 +302,7 @@ func main() {
 			}
 			return nil
 		})
+		fmt.Println("Total models without CRDs in spreadsheet are: ", countWithoutCrds)
 		if err != nil {
 			log.Fatal(err)
 		}

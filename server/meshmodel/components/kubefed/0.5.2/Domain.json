@@ -1,1 +1,1 @@
-{"kind":"Domain","apiVersion":"v1alpha1","display-name":"Domain","format":"JSON","metadata":{"logo-URL":"","model":"kubefed","modelDisplayName":"Kubefed","primaryColor":"","secondaryColor":"","shape":"circle","svgColor":"","svgWhite":""},"model":{"name":"kubefed","version":"0.5.2","display-name":"Kubefed","category":"Not Found","sub-category":"Not Found"},"schema":""}
+{"kind":"Domain","apiVersion":"v1alpha1","displayName":"Domain","format":"JSON","metadata":{},"model":{"name":"kubefed","version":"0.5.2","modelDisplayName":"kubefed","category":"","subCategory":""}}

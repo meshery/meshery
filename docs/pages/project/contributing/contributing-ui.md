@@ -78,7 +78,7 @@ The designs in this specification should result in enabling:
 ### Node Version Recommendations 
 We recommend to use LTS versions of node:
 
-- Node 16 LTS: https://nodejs.org/download/release/v16.19.0/ \
+- Node 16 LTS: https://nodejs.org/download/release/v16.19.0/
 - Node 18 LTS: https://nodejs.org/en/
 
 The script supports other node versions as well, including node15 and node17, but is recommended to use node versions above 15 and especially node LTS v18.
@@ -127,7 +127,7 @@ If you want to work on the UI, it will be a good idea to use the included UI dev
 
 Refer to [Contributing to Meshery Server](contributing-server), if needed.
 
-> Make sure to have Meshery Server configured, up and running on the default port `http://localhost:9081` before proceeding to access and work on the UI server at `http://localhost:3000`.
+> Make sure to have Meshery Server configured, up and running on the default port `http://localhost:9081` and choose a provider to login with (visit `http://localhost:9081`) before proceeding to access and work on the UI server at `http://localhost:3000`.
 
 Any UI changes made now will _automatically_ be rebuilt and served in your browser.
 

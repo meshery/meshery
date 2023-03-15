@@ -28,6 +28,7 @@ import ReplyIcon from '@material-ui/icons/Reply';
 import FacebookIcon from "./assets/facebookIcon";
 import LinkedinIcon from "./assets/linkedinIcon"
 import TwitterIcon from "./assets/twitterIcon";
+import { iconMedium, iconLarge } from "../../css/icons.styles";
 import {
   TwitterShareButton,
   LinkedinShareButton,
@@ -225,7 +226,7 @@ function generateColumnsForDisplay(sortOrder, setSelectedProfileIdxForChart, set
         customBodyRender : function CustomBody(value, tableMeta) {
           return (
             <IconButton aria-label="more" color="inherit" onClick={() => setSelectedProfileIdxForChart(tableMeta.rowIndex)}>
-              <BarChartIcon />
+              <BarChartIcon style={iconMedium} /> {/* can change it to large */}
             </IconButton>
           );
         },
@@ -247,7 +248,7 @@ function generateColumnsForDisplay(sortOrder, setSelectedProfileIdxForChart, set
         customBodyRender : function CustomBody(value, tableMeta) {
           return (
             <IconButton aria-label="more" color="inherit" onClick={() => setSelectedProfileIdxForNodeDetails(tableMeta.rowIndex)}>
-              <InfoIcon />
+              <InfoIcon style={iconMedium}/> {/* can change it to large */}
             </IconButton>
           );
         },
@@ -270,10 +271,11 @@ function generateColumnsForDisplay(sortOrder, setSelectedProfileIdxForChart, set
           return (
             <>
               <IconButton
+                style={iconMedium}
                 aria-label="Share"
                 onClick={(e) => handleSocialExpandClick(e, tableMeta)}
               >
-                <ReplyIcon className={classes.share} />
+                <ReplyIcon style={iconLarge} className={classes.share} />
               </IconButton>
               <Popper open={socialExpand[tableMeta.rowIndex]} anchorEl={anchorEl[tableMeta.rowIndex]} transition >
                 {({ TransitionProps }) => (
@@ -616,8 +618,8 @@ function MesheryResults({
       variant : "error",
       action : function Action(key) {
         return (
-          <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-            <CloseIcon />
+          <IconButton style={iconMedium} key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+            <CloseIcon style={iconMedium} />
           </IconButton>
         );
       },

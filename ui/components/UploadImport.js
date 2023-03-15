@@ -49,7 +49,7 @@ const getDarkMuiTheme = () => createTheme({
   }
 })
 
-const styles = () => ({
+const styles = (theme) => ({
   upload : {
     paddingLeft : "0.7rem",
     paddingTop : "8px"
@@ -59,15 +59,22 @@ const styles = () => ({
     minWidth : 500,
     padding : '15px',
     color : '#fff',
-    backgroundColor : '#396679'
+    backgroundColor : theme.palette.type === "dark" ? "#202020" : '#396679'
   },
   heading : {
-    color : "#607d8b"
+    color : theme.palette.type === "dark" ? "#fff" : "#607d8b"
   },
   selectType : {
-    color : "#607d8b",
+    color : theme.palette.type === "dark" ? "#fff" : "#607d8b",
     marginRight : "1.2rem"
-  }
+  },
+  button : {
+    backgroundColor : theme.palette.type === "dark" ? "#00B39F" : "#607d8b",
+    "&:hover" : {
+      backgroundColor : theme.palette.type === "dark" ? "#00B39F" : "#607d8b"
+    },
+    color : "#fff"
+  },
 });
 
 function UploadImport(props) {
@@ -163,7 +170,7 @@ function UploadImport(props) {
 
                       <label htmlFor="upload-button" className={classes.upload}>
 
-                        <Button disabled={sourceType === "Helm Chart"} variant="contained" color="primary" aria-label="Upload Button" onChange={sourceType === "Helm Chart" ? null : handleUploader} component="span" >
+                        <Button disabled={sourceType === "Helm Chart"} variant="contained" className={classes.button} aria-label="Upload Button" onChange={sourceType === "Helm Chart" ? null : handleUploader} component="span" >
                           <input id="upload-button" type="file" accept={fileType} disabled={sourceType === "Helm Chart"} hidden name="upload-button" data-cy="file-upload-button" />
                         Browse
                         </Button>
@@ -204,7 +211,7 @@ function UploadImport(props) {
               <label htmlFor="cancel" className={classes.cancel}>
                 <Button variant="outlined" color="secondary" onClick={handleClose}>Cancel</Button>
               </label>
-              <label htmlFor="URL">  <Button disabled={isError || !input} id="URL" variant="contained" color="primary" onClick={async(e) => {
+              <label htmlFor="URL">  <Button disabled={isError || !input} id="URL" variant="contained" className={classes.button} onClick={async(e) => {
                 await handleSubmit(e, handleUploader);fetch();
               }}>Import</Button> </label>
             </DialogActions>

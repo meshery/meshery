@@ -29,3 +29,9 @@ export const EVENT_TYPES = {
   DELETED : "DELETED",
   MODIFIED : "MODIFIED",
 }
+
+export const EXTENSIONS = {
+  MESHMAP : "meshmap"
+}
+
+export const MesheryPatternsCatalog = "meshery-patterns-catalog"

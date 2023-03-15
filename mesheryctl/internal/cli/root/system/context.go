@@ -1,4 +1,4 @@
-// Copyright 2020 Layer5, Inc.
+// Copyright 2023 Layer5, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -52,6 +52,11 @@ type contextWithLocation struct {
 	Version       string   `mapstructure:"version,omitempty"`
 }
 
+var linkDocContextCreate = map[string]string{
+	"link":    "![context-create-usage](/assets/img/mesheryctl/newcontext.png)",
+	"caption": "Usage of mesheryctl context create",
+}
+
 // createContextCmd represents the create command
 var createContextCmd = &cobra.Command{
 	Use:   "create context-name",
@@ -63,12 +68,8 @@ mesheryctl system context create [context-name]
 
 // Create new context and provide list of components, platform & URL
 mesheryctl system context create context-name --components meshery-osm --platform docker --url http://localhost:9081 --set --yes
-
-! Refer below image link for usage
-* Usage of mesheryctl context create
-# ![context-create-usage](../../../../docs/assets/img/mesheryctl/newcontext.png)
 	`,
-
+	Annotations: linkDocContextCreate,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
 			const errMsg = `Please provide a context name.
@@ -242,6 +243,11 @@ mesheryctl system context list
 	},
 }
 
+var linkDocContextView = map[string]string{
+	"link":    "![context-view-usage](/assets/img/mesheryctl/context-view.png)",
+	"caption": "Usage of mesheryctl context view",
+}
+
 // viewContextCmd represents the view command
 var viewContextCmd = &cobra.Command{
 	Use:   "view [context-name | --context context-name| --all] --flags",
@@ -259,12 +265,8 @@ mesheryctl system context view --context context-name
 
 // View config of all contexts
 mesheryctl system context view --all
-
-! Refer below image link for usage
-* Usage of mesheryctl context view
-# ![context-view-usage](/assets/img/mesheryctl/context-view.png)
 	`,
-
+	Annotations:  linkDocContextView,
 	SilenceUsage: true,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		err := viper.Unmarshal(&configuration)
@@ -333,6 +335,11 @@ mesheryctl system context view --all
 	},
 }
 
+var linkDocContextSwitch = map[string]string{
+	"link":    "![context-switch-usage](/assets/img/mesheryctl/contextswitch.png)",
+	"caption": "Usage of mesheryctl context switch",
+}
+
 // switchContextCmd represents the switch command
 var switchContextCmd = &cobra.Command{
 	Use:   "switch context-name",
@@ -341,11 +348,8 @@ var switchContextCmd = &cobra.Command{
 	Example: `
 // Switch to context named "sample"
 mesheryctl system context switch sample
-
-! Refer below image link for usage
-* Usage of mesheryctl context switch
-# ![context-switch-usage](../../../../docs/assets/img/mesheryctl/contextswitch.png)
 	`,
+	Annotations: linkDocContextSwitch,
 	Args: func(_ *cobra.Command, args []string) error {
 		const errMsg = `Usage: mesheryctl system context switch [context name]
 Example: mesheryctl system context switch k8s-sample

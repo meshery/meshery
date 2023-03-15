@@ -1,6 +1,5 @@
 /**
- * @generated SignedSource<<e6c8f534f70499df52c1519ce03be5cd>>
- * @flow
+ * @generated SignedSource<<4170a22251c03b88612e2881d58aea3c>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,34 +8,7 @@
 
 'use strict';
 
-/*::
-import type { ConcreteRequest, Query } from 'relay-runtime';
-export type CatalogSelector = {|
-  search: string,
-  order: string,
-|};
-export type CatalogFilterQuery$variables = {|
-  selector: CatalogSelector,
-|};
-export type CatalogFilterQuery$data = {|
-  +catalogFilters: $ReadOnlyArray<{|
-    +id: string,
-    +name: string,
-    +user_id: string,
-    +filter_file: string,
-    +visibility: string,
-    +catalog_data: ?any,
-    +created_at: ?string,
-    +updated_at: ?string,
-  |}>,
-|};
-export type CatalogFilterQuery = {|
-  variables: CatalogFilterQuery$variables,
-  response: CatalogFilterQuery$data,
-|};
-*/
-
-var node/*: ConcreteRequest*/ = (function(){
+var node = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -147,9 +119,6 @@ return {
 };
 })();
 
-(node/*: any*/).hash = "6a8f76476c5d44a58d465d9d7106e6b2";
+node.hash = "6a8f76476c5d44a58d465d9d7106e6b2";
 
-module.exports = ((node/*: any*/)/*: Query<
-  CatalogFilterQuery$variables,
-  CatalogFilterQuery$data,
->*/);
+module.exports = node;

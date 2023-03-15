@@ -18,8 +18,8 @@ See also Meshery's [Compatibility Matrix]({{site.baseurl}}/installation/platform
 {% for releases in sorted_release %}
     {% assign releasedate = releases.date | date: "%B %d, %Y" %}
     <tr>
-        <td> <a href="{{site.baseurl}}/{{page.permalink}}/{{ releases.tag }}">{{ releases.tag }}</a> </td>
-        <td> {{releasedate}} </td>
+        <td style="text-align:center"> <a href="{{site.baseurl}}/{{page.permalink}}/{{ releases.tag }}">{{ releases.tag }}</a> </td>
+        <td style="text-align:center"> {{releasedate}} </td>
     </tr>
 {% endfor %}
 

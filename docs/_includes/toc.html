@@ -50,8 +50,18 @@ $(document).ready(function() {
           if($(window).scrollTop() + $(window).height() > $(document).height() - 10) {
             $('.selected').removeClass('selected');
               $(this).addClass('selected');
-   }
+          }
         });
       })
+      // Smooth scroll to target section when clicking on TOC link
+      $('a[href^="#"]').on('click', function(event) {
+        event.preventDefault();
+        var target = $(this.hash);
+        if (target.length) {
+          $('html, body').animate({
+          scrollTop: target.offset().top - 70
+          }, 1000);
+        }
+      });
     });
 </script>
