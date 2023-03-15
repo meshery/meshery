@@ -333,7 +333,7 @@ function MesheryPatterns({
     const patternsCatalogueCapability = capabilitiesRegistry?.capabilities.filter(
       (val) => val.feature === MesheryPatternsCatalog
     );
-    if (patternsCatalogueCapability.length) setCanPublishPattern(true);
+    if (patternsCatalogueCapability?.length) setCanPublishPattern(true);
   }, [])
 
   const searchTimeout = useRef(null);
