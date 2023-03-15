@@ -195,6 +195,13 @@ func StartPipeline(in chan []artifacthub.AhPackage, csv chan string, writer *Wri
 					fmt.Println(err)
 					continue
 				}
+				compsChan <- struct {
+					comps []v1alpha1.ComponentDefinition
+					model string
+				}{
+					comps: comps,
+					model: ap.Name,
+				}
 				compsCSV <- struct {
 					comps []v1alpha1.ComponentDefinition
 					model string
