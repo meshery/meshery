@@ -37,7 +37,8 @@ function MesheryPatternCard({
   setSelectedPatterns,
   setYaml,
   description={},
-  visibility
+  visibility,
+  canPublishPattern = false
 }) {
 
   function genericClickHandler(ev, fn) {
@@ -104,15 +105,16 @@ function MesheryPatternCard({
           <div className={classes.bottomPart} >
 
             <div className={classes.cardButtons} >
-              <TooltipButton
-                variant="contained"
-                title="Publish"
-                className={classes.testsButton}
-                onClick={(ev) => genericClickHandler(ev, handlePublishModal)}
-              >
-                <PublicIcon className={classes.iconPatt} />
-                <span className={classes.btnText}> Publish </span>
-              </TooltipButton>
+              {canPublishPattern &&
+                <TooltipButton
+                  variant="contained"
+                  title="Publish"
+                  className={classes.testsButton}
+                  onClick={(ev) => genericClickHandler(ev, handlePublishModal)}
+                >
+                  <PublicIcon className={classes.iconPatt} />
+                  <span className={classes.btnText}> Publish </span>
+                </TooltipButton>}
 
               <TooltipButton
                 title="Valildate"
