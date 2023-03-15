@@ -98,7 +98,7 @@ func main() {
 		file.Close()
 		os.Remove(file.Name())
 		output = cleanupDuplicatesAndPreferEmptyComponentField(output, "model")
-		mesheryDocsJSON := "["
+		mesheryDocsJSON := "const data = ["
 		for _, out := range output {
 			var t pkg.TemplateAttributes
 			publishValue, err := strconv.ParseBool(out["Publish?"])
@@ -199,8 +199,8 @@ func main() {
 		}
 
 		mesheryDocsJSON = strings.TrimSuffix(mesheryDocsJSON, ",")
-		mesheryDocsJSON += "]"
-		if err := pkg.WriteToFile(filepath.Join("../../../", pathToIntegrationsMeshery, "data.json"), mesheryDocsJSON); err != nil {
+		mesheryDocsJSON += "]; export default data"
+		if err := pkg.WriteToFile(filepath.Join("../../../", pathToIntegrationsMeshery, "data.js"), mesheryDocsJSON); err != nil {
 			log.Fatal(err)
 		}
 	} else {
