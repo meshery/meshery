@@ -27,10 +27,11 @@ import resetDatabase from './graphql/queries/ResetDatabaseQuery';
 import { iconMedium } from '../css/icons.styles';
 import subscribeMeshModelSummary from "./graphql/subscriptions/MeshModelSummarySubscription";
 import fetchMeshModelSummary from "./graphql/queries/MeshModelSummaryQuery";
-import { MuiThemeProvider, createTheme } from '@material-ui/core/styles';
+import { MuiThemeProvider } from '@material-ui/core/styles';
 import MesherySettingsEnvButtons from './MesherySettingsEnvButtons';
 import MeshModelComponent from './MeshModelComponent';
 import DataTable from "mui-datatables";
+import { configurationTableTheme, configurationTableThemeDark } from '../themes/configurationTableTheme';
 
 
 const styles = (theme) => ({
@@ -43,6 +44,14 @@ const styles = (theme) => ({
     minWidth : 40,
     paddingLeft : 0,
     paddingRight : 0,
+    "&.Mui-selected" : {
+      color : theme.palette.type === 'dark' ? "#00B39F" : theme.palette.primary,
+    },
+  },
+  tabs : {
+    "& .MuiTabs-indicator" : {
+      backgroundColor : theme.palette.type === 'dark' ? "#00B39F" : theme.palette.primary,
+    },
   },
   icon : {
     display : 'inline',
@@ -85,7 +94,7 @@ const styles = (theme) => ({
     maxWidth : "90%"
   },
   dashboardSection : {
-    backgroundColor : "#fff",
+    backgroundColor : theme.palette.secondary.elevatedComponents,
     padding : theme.spacing(2),
     borderRadius : 4,
     height : "100%",
@@ -269,54 +278,7 @@ class MesherySettings extends React.Component {
     return "No MeshModel registered."
   }
 
-  getMuiTheme = () => createTheme({
-    shadows : ["none"],
-    overrides : {
-      MUIDataTable : {
-      },
-      MuiInput : {
-        underline : {
-          "&:hover:not(.Mui-disabled):before" : {
-            borderBottom : "2px solid #222"
-          },
-          "&:after" : {
-            borderBottom : "2px solid #222"
-          }
-        }
-      },
-      MUIDataTableSearch : {
-        searchIcon : {
-          color : "#607d8b",
-          marginTop : "7px",
-          marginRight : "8px",
-        },
-        clearIcon : {
-          "&:hover" : {
-            color : "#607d8b"
-          }
-        },
-      },
-      MUIDataTableSelectCell : {
-        checkboxRoot : {
-          '&$checked' : {
-            color : '#607d8b',
-          },
-        },
-      },
-      MUIDataTableToolbar : {
-        iconActive : {
-          color : "#222"
-        },
-        icon : {
-          "&:hover" : {
-            color : "#607d8b"
-          }
-        },
-      },
-    }
-  })
-
-     /**
+  /**
    * MeshModelSummaryCard takes in the meshmodel related data
    * and renders a table with registered meshmodel information of
    * the selected type of model (like relationships, components etc)
@@ -326,144 +288,145 @@ class MesherySettings extends React.Component {
    * }[]
    * } meshmodelSummary
    */
-     MeshModelSummaryCard = (meshmodelSummary = []) => {
-       const self = this;
-       let kindSort = "asc";
-       let countSort = "asc";
-       const switchSortOrder = (type) => {
-         if (type === "kindSort") {
-           kindSort = (kindSort === "asc") ? "desc" : "asc";
-           countSort = "asc";
-         } else if (type === "countSort") {
-           countSort = (countSort === "asc") ? "desc" : "asc";
-           kindSort = "asc";
-         }
-       }
+  MeshModelSummaryCard = (meshmodelSummary = []) => {
+    const self = this;
+    let kindSort = "asc";
+    let countSort = "asc";
+    const { theme } = this.props;
+    const switchSortOrder = (type) => {
+      if (type === "kindSort") {
+        kindSort = (kindSort === "asc") ? "desc" : "asc";
+        countSort = "asc";
+      } else if (type === "countSort") {
+        countSort = (countSort === "asc") ? "desc" : "asc";
+        kindSort = "asc";
+      }
+    }
 
-       const columns = [
-         {
-           name : "name",
-           label : "Name",
-           options : {
-             filter : false,
-             sort : true,
-             searchable : true,
-             setCellProps : () => ({ style : { textAlign : "center" } }),
-             customHeadRender : ({ index, ...column }, sortColumn) => {
-               return (
-                 <TableCell key={index} style={{ textAlign : "center" }} onClick={() => {
-                   sortColumn(index); switchSortOrder("kindSort");
-                 }}>
-                   <TableSortLabel active={column.sortDirection != null} direction={kindSort} >
-                     <b>{column.label}</b>
-                   </TableSortLabel>
-                 </TableCell>
+    const columns = [
+      {
+        name : "name",
+        label : "Name",
+        options : {
+          filter : false,
+          sort : true,
+          searchable : true,
+          setCellProps : () => ({ style : { textAlign : "center" } }),
+          customHeadRender : ({ index, ...column }, sortColumn) => {
+            return (
+              <TableCell key={index} style={{ textAlign : "center" }} onClick={() => {
+                sortColumn(index); switchSortOrder("kindSort");
+              }}>
+                <TableSortLabel active={column.sortDirection != null} direction={kindSort} >
+                  <b>{column.label}</b>
+                </TableSortLabel>
+              </TableCell>
 
-               )
-             }
-           },
-         },
-         {
-           name : "count",
-           label : "Count",
-           options : {
-             filter : false,
-             sort : true,
-             searchable : true,
-             setCellProps : () => ({ style : { textAlign : "center" } }),
-             customHeadRender : ({ index, ...column }, sortColumn) => {
-               return (
-                 <TableCell key={index} style={{ textAlign : "center" }} onClick={() => {
-                   sortColumn(index); switchSortOrder("countSort");
-                 }}>
-                   <TableSortLabel active={column.sortDirection != null} direction={countSort} >
-                     <b>{column.label}</b>
-                   </TableSortLabel>
-                 </TableCell>
-
-               )
-             }
-           },
-         },
-       ]
-
-       const options = {
-         filter : false,
-         selectableRows : "none",
-         responsive : "scrollMaxHeight",
-         print : false,
-         download : false,
-         viewColumns : false,
-         pagination : false,
-         fixedHeader : true,
-         customToolbar : () => {
-           return (
-             <>
-               {self.state.meshmodelSummarySelectorList && (
-                 <Select
-                   value={self.state.meshmodelSummarySelector.type}
-                   onChange={(e) =>
-                     self.setState({ meshmodelSummarySelector : { type : e.target.value } })
-                   }
-                 >
-                   {self.state.meshmodelSummarySelectorList && self.state.meshmodelSummarySelectorList.map((opts) => <MenuItem key={opts} value={opts}>{opts}</MenuItem>)}
-                 </Select>
-               )}
-             </>
-           )
-         }
-       }
-
-       if (Array.isArray(meshmodelSummary) && meshmodelSummary?.length)
-         return (
-           <Paper elevation={1} style={{ padding : "2rem" }}>
-             <MuiThemeProvider theme={this.getMuiTheme()}>
-               <DataTable
-                 title={
-                   <>
-                     <div style={{ display : "flex", alignItems : "center", marginBottom : "1rem" }}>
-                       <img src={"/static/img/all_mesh.svg"} className={this.props.classes.icon} style={{ marginRight : "0.75rem" }} />
-                       <Typography variant="h6">Registered MeshModel</Typography>
-                     </div>
-                   </>
-                 }
-                 data={meshmodelSummary}
-                 options={options}
-                 columns={columns}
-               />
-             </MuiThemeProvider>
-           </Paper>
-         );
-
-       return null;
-     };
-
-    showMeshModelSummary = () => {
-      const self = this;
-      return (
-        <>
-          {self?.state?.meshmodelSummary[self?.state?.meshmodelSummarySelector?.type] && self?.state?.meshmodelSummary[self?.state?.meshmodelSummarySelector?.type].length > 0
-            ? (
-              self.MeshModelSummaryCard(self?.state?.meshmodelSummary[self?.state?.meshmodelSummarySelector?.type])
             )
-            : (
-              <div
-                style={{
-                  padding : "2rem",
-                  display : "flex",
-                  justifyContent : "center",
-                  alignItems : "center",
-                  flexDirection : "column",
-                }}
+          }
+        },
+      },
+      {
+        name : "count",
+        label : "Count",
+        options : {
+          filter : false,
+          sort : true,
+          searchable : true,
+          setCellProps : () => ({ style : { textAlign : "center" } }),
+          customHeadRender : ({ index, ...column }, sortColumn) => {
+            return (
+              <TableCell key={index} style={{ textAlign : "center" }} onClick={() => {
+                sortColumn(index); switchSortOrder("countSort");
+              }}>
+                <TableSortLabel active={column.sortDirection != null} direction={countSort} >
+                  <b>{column.label}</b>
+                </TableSortLabel>
+              </TableCell>
+
+            )
+          }
+        },
+      },
+    ]
+
+    const options = {
+      filter : false,
+      selectableRows : "none",
+      responsive : "scrollMaxHeight",
+      print : false,
+      download : false,
+      viewColumns : false,
+      pagination : false,
+      fixedHeader : true,
+      customToolbar : () => {
+        return (
+          <>
+            {self.state.meshmodelSummarySelectorList && (
+              <Select
+                value={self.state.meshmodelSummarySelector.type}
+                onChange={(e) =>
+                  self.setState({ meshmodelSummarySelector : { type : e.target.value } })
+                }
               >
-                <Typography style={{ fontSize : "1.5rem", marginBottom : "2rem" }} align="center" color="textSecondary">
-                  {this.emptyStateMessageForMeshModelSummary()}
-                </Typography>
-              </div>
+                {self.state.meshmodelSummarySelectorList && self.state.meshmodelSummarySelectorList.map((opts) => <MenuItem key={opts} value={opts}>{opts}</MenuItem>)}
+              </Select>
             )}
-        </>
+          </>
+        )
+      }
+    }
+
+    if (Array.isArray(meshmodelSummary) && meshmodelSummary?.length)
+      return (
+        <Paper elevation={1} style={{ padding : "2rem" }}>
+          <MuiThemeProvider theme={ theme.palette.type == "dark" ?  configurationTableThemeDark() : configurationTableTheme() }>
+            <DataTable
+              title={
+                <>
+                  <div style={{ display : "flex", alignItems : "center", marginBottom : "1rem" }}>
+                    <img src={"/static/img/all_mesh.svg"} className={this.props.classes.icon} style={{ marginRight : "0.75rem" }} />
+                    <Typography variant="h6">Registered MeshModel</Typography>
+                  </div>
+                </>
+              }
+              data={meshmodelSummary}
+              options={options}
+              columns={columns}
+            />
+          </MuiThemeProvider>
+        </Paper>
       );
-    };
+
+    return null;
+  };
+
+  showMeshModelSummary = () => {
+    const self = this;
+    return (
+      <>
+        {self?.state?.meshmodelSummary[self?.state?.meshmodelSummarySelector?.type] && self?.state?.meshmodelSummary[self?.state?.meshmodelSummarySelector?.type].length > 0
+          ? (
+            self.MeshModelSummaryCard(self?.state?.meshmodelSummary[self?.state?.meshmodelSummarySelector?.type])
+          )
+          : (
+            <div
+              style={{
+                padding : "2rem",
+                display : "flex",
+                justifyContent : "center",
+                alignItems : "center",
+                flexDirection : "column",
+              }}
+            >
+              <Typography style={{ fontSize : "1.5rem", marginBottom : "2rem" }} align="center" color="textSecondary">
+                {this.emptyStateMessageForMeshModelSummary()}
+              </Typography>
+            </div>
+          )}
+      </>
+    );
+  };
 
   handleError = (msg) => (error) => {
     this.props.updateProgress({ showProgress : false });
@@ -597,6 +560,7 @@ class MesherySettings extends React.Component {
         <Paper square className={classes.wrapperClss}>
           <Tabs
             value={tabVal}
+            className={classes.tabs}
             onChange={this.handleChange('tabVal')}
             variant="fullWidth"
             indicatorColor="primary"
@@ -681,20 +645,20 @@ class MesherySettings extends React.Component {
               <AppBar position="static" color="default">
                 <Tabs
                   value={subTabVal}
-                  className={classes.tab}
+                  className={classes.tabs}
                   onChange={this.handleChange('subTabVal')}
                   indicatorColor="primary"
                   textColor="primary"
                   variant="fullWidth"
                 >
-                  <Tab label={(
+                  <Tab className={classes.tab} label={(
                     <div className={classes.iconText}>
                       Grafana
                       <img src="/static/img/grafana_icon.svg" className={classes.icon} />
                     </div>
                   )}
                   />
-                  <Tab label={(
+                  <Tab className={classes.tab} label={(
                     <div className={classes.iconText}>
                       Prometheus
                       <img src="/static/img/prometheus_logo_orange_circle.svg" className={classes.icon} />
@@ -773,6 +737,6 @@ const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(
 
 MesherySettings.propTypes = { classes : PropTypes.object, };
 
-export default withStyles(styles)(
+export default withStyles(styles, { withTheme : true })(
   connect(mapStateToProps, mapDispatchToProps)(withRouter(withSnackbar(MesherySettings)))
 );

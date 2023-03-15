@@ -1,8 +1,10 @@
 import { fetchQuery, graphql } from "relay-runtime";
-import environment from "../../../lib/relayEnvironment";
+import { createRelayEnvironment } from "../../../lib/relayEnvironment";
 
 export default function fetchCatalogPattern (variables) {
-  const query = graphql`
+  const environment = createRelayEnvironment({});
+
+  const CatalogPatternQueryNode = graphql`
       query CatalogPatternQuery($selector: CatalogSelector!) {
         catalogPatterns: fetchPatternCatalogContent(selector: $selector) { 
           id
@@ -17,5 +19,5 @@ export default function fetchCatalogPattern (variables) {
       }
     `;
 
-  return fetchQuery(environment, query, variables)
+  return fetchQuery(environment, CatalogPatternQueryNode, variables)
 }

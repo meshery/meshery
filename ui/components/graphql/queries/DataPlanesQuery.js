@@ -1,12 +1,13 @@
-import { graphql, fetchQuery } from "react-relay";
-import environment from "../../../lib/relayEnvironment";
+import { fetchQuery, graphql } from "react-relay";
+import { createRelayEnvironment } from "../../../lib/relayEnvironment";
 
 export default function fetchDataPlanes(variables) {
+  const environment = createRelayEnvironment({});
   const vars = {
     filter : variables,
   };
 
-  const query = graphql`
+  const DataPlanesQueryNode = graphql`
     query DataPlanesQuery($filter: ServiceMeshFilter) {
       dataPlanesState: getDataPlanes(filter: $filter) {
         name
@@ -36,5 +37,5 @@ export default function fetchDataPlanes(variables) {
     }
   `;
 
-  return fetchQuery(environment, query, vars);
+  return fetchQuery(environment, DataPlanesQueryNode, vars);
 }

@@ -8,7 +8,6 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/models/pattern/core"
-	"github.com/layer5io/meshery/server/models/pattern/patterns/k8s"
 	"github.com/layer5io/meshkit/models/meshmodel"
 	"github.com/layer5io/meshkit/models/meshmodel/core/types"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
@@ -90,7 +89,6 @@ const DefaultPageSizeForMeshModelComponents = 25
 // ?order={field} orders on the passed field
 // ?category={category of model} If category in unspecified then all models are returned
 // ?sort={[asc/desc]} Default behavior is asc
-// ?search={[true/false]} If search is true then a greedy search is performed
 // ?page={page-number} Default page number is 1
 // ?pagesize={pagesize} Default pagesize is 25. To return all results: pagesize=all
 // responses:
@@ -124,6 +122,7 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 		OrderOn:  r.URL.Query().Get("order"),
 		Sort:     r.URL.Query().Get("sort"),
 	})
+
 	if err := enc.Encode(res); err != nil {
 		h.log.Error(ErrWorkloadDefinition(err)) //TODO: Add appropriate meshkit error
 		http.Error(rw, ErrWorkloadDefinition(err).Error(), http.StatusInternalServerError)
@@ -184,7 +183,7 @@ func (h *Handler) GetMeshmodelComponentsByName(rw http.ResponseWriter, r *http.R
 		if ok {
 			m := make(map[string]interface{})
 			_ = json.Unmarshal([]byte(comp.Schema), &m)
-			m = k8s.Format.Prettify(m, false)
+			m = core.Format.Prettify(m, true)
 			b, _ := json.Marshal(m)
 			comp.Schema = string(b)
 			comps = append(comps, comp)
@@ -194,12 +193,6 @@ func (h *Handler) GetMeshmodelComponentsByName(rw http.ResponseWriter, r *http.R
 		h.log.Error(ErrWorkloadDefinition(err)) //TODO: Add appropriate meshkit error
 		http.Error(rw, ErrWorkloadDefinition(err).Error(), http.StatusInternalServerError)
 	}
-}
-
-// swagger: response typesResponseWithModelname
-type typesResponseWithModelname struct {
-	DisplayName string   `json:"display-name"`
-	Versions    []string `json:"versions"`
 }
 
 // swagger:route GET /api/meshmodel/model/{model}/component MeshmodelGetByType idMeshmodelGetByType
@@ -248,7 +241,7 @@ func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.R
 		if ok {
 			m := make(map[string]interface{})
 			_ = json.Unmarshal([]byte(comp.Schema), &m)
-			m = k8s.Format.Prettify(m, false)
+			m = core.Format.Prettify(m, true)
 			b, _ := json.Marshal(m)
 			comp.Schema = string(b)
 			comps = append(comps, comp)
@@ -310,12 +303,13 @@ type ModelResponse struct {
 // ?version={version}
 // ?order={field} orders on the passed field
 // ?sort={[asc/desc]} Default behavior is asc
-// ?search={[true/false]} If search is true then a greedy search is performed
+// ?search={[true/false]} If search is true then a greedy search is performed on both model name and model display
 // ?page={page-number} Default page number is 1
 // ?pagesize={pagesize} Default pagesize is 25. To return all results: pagesize=all
+// ?trim={[true]} When trim is set to true, the underlying schemas are not returned for entities
 // responses:
 //
-//	200: ModelResponse
+//	200: []ModelResponse
 func (h *Handler) GetMeshmodelEntititiesByModel(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
@@ -324,6 +318,10 @@ func (h *Handler) GetMeshmodelEntititiesByModel(rw http.ResponseWriter, r *http.
 	var greedy bool
 	if r.URL.Query().Get("search") == "true" {
 		greedy = true
+	}
+	var trim bool
+	if r.URL.Query().Get("trim") == "true" {
+		trim = true
 	}
 	limitstr := r.URL.Query().Get("pagesize")
 	var limit int
@@ -339,50 +337,65 @@ func (h *Handler) GetMeshmodelEntititiesByModel(rw http.ResponseWriter, r *http.
 		page = 1
 	}
 	offset := (page - 1) * limit
-	var mres ModelResponse
-	mod := h.registryManager.GetModels(&v1alpha1.ModelFilter{
-		Name:    typ,
-		Version: v,
-		Greedy:  greedy,
-	})
-	if len(mod) != 0 {
-		mres.Model = mod[0]
-	}
-	if mres.Name != "" {
-		res := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
-			ModelName: mres.Name,
-			Version:   v,
-			Limit:     limit,
-			Offset:    offset,
+	var mress []ModelResponse
+	var mod []v1alpha1.Model
+	if greedy { //If greedy search is performed then try to match display names as well
+		mod = h.registryManager.GetModels(&v1alpha1.ModelFilter{
+			Name:        typ,
+			DisplayName: typ,
+			Version:     v,
+			Greedy:      greedy,
 		})
-		var comps []v1alpha1.ComponentDefinition
-		for _, r := range res {
-			m := make(map[string]interface{})
-			comp, ok := r.(v1alpha1.ComponentDefinition)
-			if ok {
-				_ = json.Unmarshal([]byte(comp.Schema), &m)
-				m = k8s.Format.Prettify(m, false)
-				b, _ := json.Marshal(m)
-				comp.Schema = string(b)
-				comps = append(comps, comp)
-			}
-		}
-		res2 := h.registryManager.GetEntities(&v1alpha1.RelationshipFilter{
-			ModelName: mres.Name,
-			Limit:     limit,
-			Offset:    offset,
+	} else {
+		mod = h.registryManager.GetModels(&v1alpha1.ModelFilter{
+			Name:    typ,
+			Version: v,
+			Greedy:  greedy,
 		})
-		var relationships []v1alpha1.RelationshipDefinition
-		for _, r := range res2 {
-			rel, ok := r.(v1alpha1.RelationshipDefinition)
-			if ok {
-				relationships = append(relationships, rel)
-			}
-		}
-		mres.Relationships = relationships
-		mres.Components = comps
 	}
-	if err := enc.Encode(mres); err != nil {
+	for _, m := range mod {
+		var mres ModelResponse
+		mres.Model = m
+		if mres.Name != "" {
+			res := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
+				ModelName: mres.Name,
+				Version:   mres.Version,
+				Limit:     limit,
+				Offset:    offset,
+				Trim:      trim,
+			})
+			var comps []v1alpha1.ComponentDefinition
+			for _, r := range res {
+				m := make(map[string]interface{})
+				comp, ok := r.(v1alpha1.ComponentDefinition)
+				if ok {
+					_ = json.Unmarshal([]byte(comp.Schema), &m)
+					m = core.Format.Prettify(m, true)
+					b, _ := json.Marshal(m)
+					comp.Schema = string(b)
+					comps = append(comps, comp)
+				}
+			}
+			res2 := h.registryManager.GetEntities(&v1alpha1.RelationshipFilter{
+				ModelName: mres.Name,
+				Version:   mres.Version,
+				Limit:     limit,
+				Offset:    offset,
+			})
+			var relationships []v1alpha1.RelationshipDefinition
+			for _, r := range res2 {
+				rel, ok := r.(v1alpha1.RelationshipDefinition)
+				if ok {
+					relationships = append(relationships, rel)
+				}
+			}
+			mres.Relationships = relationships
+			mres.Components = comps
+		}
+		mress = append(mress, mres)
+	}
+
+	if err := enc.Encode(mress); err != nil {
 		h.log.Error(ErrWorkloadDefinition(err)) //TODO: Add appropriate meshkit error
 		http.Error(rw, ErrWorkloadDefinition(err).Error(), http.StatusInternalServerError)
 	}

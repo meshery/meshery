@@ -15,7 +15,6 @@ function RJSFWrapper(props) {
     onChange,
     hideTitle,
     RJSFWrapperComponent = React.Fragment,
-    RJSFFormChildComponent = React.Fragment, // eslint-disable-line no-unused-vars
     //.. temporarily ignoring till handler is attached successfully
   } = props;
 
@@ -23,13 +22,14 @@ function RJSFWrapper(props) {
 
   const [data, setData] = React.useState(prev => ({ ...formData, ...prev }));
   const [schema, setSchema] = React.useState({ rjsfSchema : {}, uiSchema : {} })
-  const [isLoading, setIsLoading] = React.useState(true)
+  const [isLoading, setIsLoading] = React.useState(true);
 
   React.useEffect(() => {
     // Apply debouncing mechanism for the state propagation
     const timer = setTimeout(() => {
+      // callback fired, that triggers save operations, and other related side-effects
       onChange?.(data);
-    }, 300);
+    }, 400);
 
     return () => clearTimeout(timer);
   }, [data]);
@@ -38,7 +38,7 @@ function RJSFWrapper(props) {
     const rjsfSchema = getRefinedJsonSchema(jsonSchema, hideTitle, errorHandler)
     // UI schema builds responsible for customizations in the RJSF fields shown to user
     const uiSchema = buildUiSchema(rjsfSchema)
-    setSchema({ rjsfSchema, uiSchema })
+    setSchema({ rjsfSchema, uiSchema });
   }, [jsonSchema]) // to reduce heavy lifting on every react render
 
   React.useEffect(() => {
@@ -56,7 +56,7 @@ function RJSFWrapper(props) {
         schema={schema}
         data={data}
         onChange={(e) => {
-          setData(e.formData)
+          setData(e.formData);
         }}
         jsonSchema={jsonSchema}
       />

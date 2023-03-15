@@ -1,6 +1,5 @@
 /**
- * @generated SignedSource<<0b783f6a1187a005d4dcb15ff5665130>>
- * @flow
+ * @generated SignedSource<<350308d6f756916bb1283003d2b046b5>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,48 +8,7 @@
 
 'use strict';
 
-/*::
-import type { ConcreteRequest, GraphQLSubscription } from 'relay-runtime';
-export type PageFilter = {|
-  page: string,
-  pageSize: string,
-  order?: ?string,
-  search?: ?string,
-  from?: ?string,
-  to?: ?string,
-  updated_after?: ?string,
-|};
-export type PerformanceResultSubscription$variables = {|
-  selector: PageFilter,
-  profileID: string,
-|};
-export type PerformanceResultSubscription$data = {|
-  +subscribePerfResults: {|
-    +page: number,
-    +page_size: number,
-    +total_count: number,
-    +results: ?$ReadOnlyArray<?{|
-      +meshery_id: ?string,
-      +name: ?string,
-      +mesh: ?string,
-      +performance_profile: ?string,
-      +test_id: ?string,
-      +server_metrics: ?string,
-      +test_start_time: ?string,
-      +created_at: ?string,
-      +user_id: ?string,
-      +updated_at: ?string,
-      +runner_results: ?any,
-    |}>,
-  |},
-|};
-export type PerformanceResultSubscription = {|
-  variables: PerformanceResultSubscription$variables,
-  response: PerformanceResultSubscription$data,
-|};
-*/
-
-var node/*: ConcreteRequest*/ = (function(){
+var node = (function(){
 var v0 = {
   "defaultValue": null,
   "kind": "LocalArgument",
@@ -228,9 +186,6 @@ return {
 };
 })();
 
-(node/*: any*/).hash = "4cd62dfb1b40f60dbc14b2ad7ffea32e";
+node.hash = "4cd62dfb1b40f60dbc14b2ad7ffea32e";
 
-module.exports = ((node/*: any*/)/*: GraphQLSubscription<
-  PerformanceResultSubscription$variables,
-  PerformanceResultSubscription$data,
->*/);
+module.exports = node;

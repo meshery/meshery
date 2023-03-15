@@ -236,26 +236,43 @@ func main() {
 		MeshModelSummaryChannel:   mesherymeshmodel.NewSummaryHelper(),
 
 		K8scontextChannel: models.NewContextHelper(),
+		OperatorTracker:   models.NewOperatorTracker(viper.GetBool("DISABLE_OPERATOR")),
 	}
 
 	//seed the local meshmodel components
 	go func() {
 		compChan := make(chan v1alpha1.ComponentDefinition, 1)
+		relationshipChan := make(chan v1alpha1.RelationshipDefinition, 1)
 		done := make(chan bool)
 		go func(ch chan v1alpha1.ComponentDefinition) {
 			for {
 				select {
 				case comp := <-compChan:
-					utils.WriteSVGsOnFileSystem(&comp)
-					err = regManager.RegisterEntity(meshmodel.Host{
-						Hostname: ArtifactHubComponentsHandler,
-					}, comp)
+					if comp.Metadata != nil && comp.Metadata["published"] == true {
+						utils.WriteSVGsOnFileSystem(&comp)
+						err = regManager.RegisterEntity(meshmodel.Host{
+							Hostname: ArtifactHubComponentsHandler,
+						}, comp)
+					}
 				case <-done:
 					go hc.MeshModelSummaryChannel.Publish()
 					return
 				}
 			}
 		}(compChan)
+		go func(ch chan v1alpha1.RelationshipDefinition) {
+			for {
+				select {
+				case rel := <-relationshipChan:
+					err = regManager.RegisterEntity(meshmodel.Host{
+						Hostname: ArtifactHubComponentsHandler,
+					}, rel)
+				case <-done:
+					go hc.MeshModelSummaryChannel.Publish()
+					return
+				}
+			}
+		}(relationshipChan)
 		path, err := filepath.Abs("../meshmodel/components")
 		if err != nil {
 			fmt.Println("err: ", err.Error())
@@ -279,21 +296,30 @@ func main() {
 			}
 			return nil
 		})
+		path, err = filepath.Abs("../meshmodel/relationships")
+		if err != nil {
+			fmt.Println("err: ", err.Error())
+			return
+		}
+		_ = filepath.Walk(path, func(path string, info fs.FileInfo, err error) error {
+			if info == nil {
+				return nil
+			}
+			if !info.IsDir() {
+				var rel v1alpha1.RelationshipDefinition
+				byt, err := os.ReadFile(path)
+				if err != nil {
+					return nil
+				}
+				err = json.Unmarshal(byt, &rel)
+				if err != nil {
+					return nil
+				}
+				relationshipChan <- rel
+			}
+			return nil
+		})
 		done <- true
-	}()
-	// seed relationships
-	go func() {
-		staticRelationshipsPath, err := filepath.Abs("../meshmodel/relationships")
-		if err != nil {
-			fmt.Println("Error registering relationships: ", err.Error())
-			return
-		}
-		err = handlers.RegisterStaticMeshmodelRelationships(*regManager, staticRelationshipsPath)
-		if err != nil {
-			fmt.Println("Error registering relationships: ", err.Error())
-			return
-		}
-		go hc.MeshModelSummaryChannel.Publish()
 	}()
 
 	lProv.SeedContent(log)

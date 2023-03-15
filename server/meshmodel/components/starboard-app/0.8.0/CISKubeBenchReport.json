@@ -1,1 +1,1 @@
-{"kind":"CISKubeBenchReport","apiVersion":"v1alpha1","display-name":"CIS Kube Bench Report","format":"JSON","metadata":{},"model":{"name":"starboard-app","version":"0.8.0","display-name":"starboard-app","category":"","subCategory":""},"schema":""}
+{"kind":"CISKubeBenchReport","apiVersion":"v1alpha1","displayName":"CIS Kube Bench Report","format":"JSON","metadata":{},"model":{"name":"starboard-app","version":"0.8.0","modelDisplayName":"starboard-app","category":"","subCategory":""}}

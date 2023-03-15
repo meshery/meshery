@@ -21,8 +21,11 @@ import HelpIcon from '@material-ui/icons/Help';
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import LifecycleIcon from '../public/static/img/drawer-icons/lifecycle_mgmt_svg';
 import PerformanceIcon from '../public/static/img/drawer-icons/performance_svg';
+import ApplicationIcon from '../public/static/img/drawer-icons/application_svg';
 import ConformanceIcon from '../public/static/img/drawer-icons/conformance_svg';
 import ExtensionIcon from "../public/static/img/drawer-icons/extensions_svg";
+import FilterIcon from '../public/static/img/drawer-icons/filter_svg';
+import PatternIcon from '../public/static/img/drawer-icons/pattern_svg';
 import LifecycleHover from '../public/static/img/drawer-icons/lifecycle_hover_svg';
 import PerformanceHover from '../public/static/img/drawer-icons/performance_hover_svg';
 import ConfigurationHover from '../public/static/img/drawer-icons/configuration_hover_svg';
@@ -47,6 +50,7 @@ import { Collapse } from "@material-ui/core";
 import { cursorNotAllowed, disabledStyle, disabledStyleWithOutOpacity } from "../css/disableComponent.styles";
 import { CapabilitiesRegistry } from "../utils/disabledComponents";
 import { APPLICATION, APP_MESH, CILIUM_SM, CITRIX_SM, DESIGN, CONFIGURATION, CONFORMANCE, CONSUL, DASHBOARD, FILTER, ISTIO, KUMA, LIFECYCLE, LINKERD, NETWORK_SM, NGINX, OSM, PERFORMANCE, TRAEFIK_SM, PROFILES, SMI, TOGGLER } from "../constants/navigator"
+import { iconSmall } from "../css/icons.styles";
 
 const styles = (theme) => ({
   root : {
@@ -303,7 +307,7 @@ const styles = (theme) => ({
   cursorNotAllowed : cursorNotAllowed
 });
 
-const drawerIconsStyle = { height : "1.21rem", width : "1.21rem", fontSize : "1.45rem" };
+const drawerIconsStyle = { height : "1.21rem", width : "1.21rem", fontSize : "1.45rem", ...iconSmall };
 const externalLinkIconStyle = { width : "1.11rem", fontSize : "1.11rem" };
 
 const getNavigatorComponents = (  /** @type {CapabilitiesRegistry} */  capabilityRegistryObj) => [
@@ -419,7 +423,7 @@ const getNavigatorComponents = (  /** @type {CapabilitiesRegistry} */  capabilit
     children : [
       {
         id : APPLICATION,
-        icon : <img src="/static/img/web-applications.svg" style={{ width : "1.21rem" }} />,
+        icon : <ApplicationIcon style={{ ...drawerIconsStyle }}/>,
         href : "/configuration/applications",
         title : "Applications",
         show : capabilityRegistryObj.isNavigatorComponentEnabled([CONFIGURATION, APPLICATION]),
@@ -428,7 +432,7 @@ const getNavigatorComponents = (  /** @type {CapabilitiesRegistry} */  capabilit
       },
       {
         id : FILTER,
-        icon : <img src="/static/img/web-filters.svg" style={{ width : "1.21rem" }} />,
+        icon : <FilterIcon style={{ ...drawerIconsStyle }}/>,
         href : "/configuration/filters",
         title : "Filters",
         show : capabilityRegistryObj.isNavigatorComponentEnabled([CONFIGURATION, FILTER]),
@@ -437,7 +441,7 @@ const getNavigatorComponents = (  /** @type {CapabilitiesRegistry} */  capabilit
       },
       {
         id : DESIGN,
-        icon : <img src="/static/img/pattern_trans.svg" style={{ width : "1.21rem" }} />,
+        icon : <PatternIcon style={{ ...drawerIconsStyle }} />,
         href : "/configuration/patterns",
         title : "Designs",
         show : capabilityRegistryObj.isNavigatorComponentEnabled([CONFIGURATION, DESIGN]),
@@ -701,7 +705,7 @@ class Navigator extends React.Component {
       if (cat.id === LIFECYCLE) {
         cat.children.forEach((catc, ind1) => {
           const cr = self.fetchChildren(catc.id);
-          const icon = self.pickIcon(catc.id);
+          const icon = self.pickIcon(catc.id,catc.href);
           navigatorComponents[ind].children[ind1].icon = icon;
           navigatorComponents[ind].children[ind1].children = cr;
         });
@@ -804,14 +808,15 @@ class Navigator extends React.Component {
    *
    * @returns {JSX.Element} image to display
    */
-  pickIcon(aName) {
+  pickIcon(aName,href) {
     aName = aName.toLowerCase();
     const { classes } = this.props;
     let image = "/static/img/meshery-logo.png";
+    let filter = window.location.pathname == href ? "invert(50%) sepia(78%) saturate(2392%) hue-rotate(160deg) brightness(93%) contrast(101%)" : "";
     let logoIcon = <img src={image} className={classes.icon} />;
     if (aName) {
       image = "/static/img/" + aName + "-light.svg";
-      logoIcon = <img src={image} className={classes.icon} />;
+      logoIcon = <img src={image} className={classes.icon} style={{ filter : filter }}/>;
     }
     return logoIcon;
   }
@@ -841,11 +846,6 @@ class Navigator extends React.Component {
     const { toggleDrawer, isDrawerCollapsed } = this.props;
     toggleDrawer({ isDrawerCollapsed : !isDrawerCollapsed });
   };
-
-  toggleSpacing = () => {
-    const { showHelperButton } = this.state;
-    this.setState({ showHelperButton : !showHelperButton });
-  }
 
   toggleSpacing = () => {
     const { showHelperButton } = this.state;
@@ -1267,7 +1267,7 @@ class Navigator extends React.Component {
               : classes.rightTranslate} onClick={this.toggleSpacing}>
               <HelpIcon
                 className={classes.helpIcon}
-                style={{ fontSize : '1.45rem', }}
+                style={{ fontSize : '1.45rem', ...iconSmall }}
               />
             </IconButton>
           </Tooltip>
@@ -1313,7 +1313,7 @@ class Navigator extends React.Component {
             icon={faAngleLeft}
             fixedWidth
             size="1.5x"
-            style={{ margin : "0.5rem 0.2rem ", width : "0.8rem" }}
+            style={{ margin : "0.75rem 0.2rem ", width : "0.8rem", verticalAlign : "middle" }}
             alt="Sidebar collapse toggle icon"
           />
         </div>

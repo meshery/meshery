@@ -82,6 +82,10 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Pro
 	}
 
 	go func(del bool, kubeclient *mesherykube.Client) {
+		if r.Config.OperatorTracker.DisableOperator { //Do not deploy operator is explicitly in disabled mode
+			r.Log.Info("skipping operator deployment (in disabled mode)")
+			return
+		}
 		op, _ := ctx.Value(models.MesheryControllerHandlersKey).(map[string]map[models.MesheryController]controllers.IMesheryController)
 		var err error
 		if del {
@@ -101,13 +105,13 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Pro
 			})
 			return
 		}
-		models.Opmx.Lock()
+
 		if del {
-			models.OperatorIsUndeployed[ctxID] = true
+			r.Config.OperatorTracker.Undeployed(ctxID, true)
 		} else {
-			models.OperatorIsUndeployed[ctxID] = false
+			r.Config.OperatorTracker.Undeployed(ctxID, false)
 		}
-		models.Opmx.Unlock()
+
 		r.Log.Info("Operator operation executed")
 
 		r.Broadcast.Submit(broadcast.BroadcastMessage{

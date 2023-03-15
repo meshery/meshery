@@ -44,6 +44,8 @@
           url: installation/platforms/docker-extension
         - title: EKS
           url: installation/platforms/eks
+        - title: GitHub Codespaces
+          url: installation/platforms/codespaces
         - title: GKE
           url: installation/platforms/gke
         - title: KinD
@@ -63,19 +65,19 @@
       url: concepts/architecture
     - title: Adapters
       url: concepts/architecture/adapters
-- title: ⚙️ Functionality
-  url: functionality
+- title: ⚙️ Tasks
+  url: tasks
   links:
     - title: Application Management
-      url: functionality/application-management
+      url: tasks/application-management
     - title: Lifecycle Management
-      url: functionality/lifecycle-management
+      url: tasks/lifecycle-management
     - title: Pattern Management
-      url: functionality/pattern-management
+      url: tasks/pattern-management
     - title: Performance Management
-      url: functionality/performance-management
+      url: tasks/performance-management
     - title: Service Mesh Interface (SMI) Conformance
-      url: functionality/service-mesh-interface
+      url: tasks/service-mesh-interface
 - title: 🦾 Service Meshes
   url: service-meshes
   links:
