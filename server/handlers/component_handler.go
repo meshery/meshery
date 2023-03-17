@@ -314,7 +314,7 @@ func (h *Handler) GetAllMeshmodelComponentsByName(rw http.ResponseWriter, r *htt
 	offset := (page - 1) * limit
 	res := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
 		Name:       name,
-		Trim:       r.URL.Query().Get("apiVersion") == "true",
+		Trim:       r.URL.Query().Get("trim") == "true",
 		APIVersion: r.URL.Query().Get("apiVersion"),
 		Version:    v,
 		Greedy:     search,
