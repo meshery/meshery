@@ -24,6 +24,7 @@ import (
 	"runtime"
 	"strings"
 
+	"github.com/manifoldco/promptui"
 	"github.com/pkg/errors"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
@@ -32,9 +33,11 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/handlers"
 	"github.com/layer5io/meshery/server/models"
+	"github.com/layer5io/meshkit/models/controllers"
 	meshkitutils "github.com/layer5io/meshkit/utils"
 	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
 	log "github.com/sirupsen/logrus"
+	kubeerror "k8s.io/apimachinery/pkg/api/errors"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	k8sVersion "k8s.io/apimachinery/pkg/version"
 
@@ -47,6 +50,7 @@ var (
 	pre            bool
 	componentsFlag bool
 	adaptersFlag   bool
+	operatorsFlag  bool
 	adapter        string
 	failure        int
 )
@@ -67,6 +71,8 @@ type HealthCheckOptions struct {
 	RunVersionChecks bool
 	// if RunComponentChecks is true we run component checks
 	RunComponentChecks bool
+	// if RunOperatorChecks is true we run operator checks
+	RunOperatorChecks bool
 }
 
 type HealthChecker struct {
@@ -172,6 +178,8 @@ mesheryctl system check --report
 			return hc.runAdapterHealthChecks(adapter)
 		} else if adaptersFlag {
 			return hc.runAdapterHealthChecks("")
+		} else if operatorsFlag {
+			return hc.runOperatorHealthChecks("")
 		}
 
 		// if no flags passed we run complete system check
@@ -179,6 +187,7 @@ mesheryctl system check --report
 		hc.Options.RunDockerChecks = true
 		hc.Options.RunKubernetesChecks = true
 		hc.Options.RunVersionChecks = true
+		hc.Options.RunOperatorChecks = true
 		return hc.Run()
 	},
 }
@@ -206,6 +215,12 @@ func (hc *HealthChecker) Run() error {
 	// Run meshery component health checks
 	if hc.Options.RunComponentChecks {
 		if err := hc.runComponentsHealthChecks(); err != nil {
+			return err
+		}
+	}
+
+	if hc.Options.RunOperatorChecks {
+		if err := hc.runOperatorHealthChecks(""); err != nil {
 			return err
 		}
 	}
@@ -513,8 +528,98 @@ func (hc *HealthChecker) runComponentsHealthChecks() error {
 }
 
 // runOperatorHealthChecks executes health-checks for Operators
-func (hc *HealthChecker) runOperatorHealthChecks() error {
+func (hc *HealthChecker) runOperatorHealthChecks(k8scontext string) error {
 	//TODO
+	url := hc.mctlCfg.GetBaseMesheryURL()
+	client := &http.Client{}
+
+	req, err := utils.NewRequest("GET", fmt.Sprintf("%s/api/system/kubernetes/contexts", url), nil)
+	if err != nil {
+		if hc.Options.PrintLogs {
+			log.Info("!! Authentication token not found. Please supply a valid user token. Login with `mesheryctl system login`")
+			// skip further as we failed to attach token
+			return nil
+		}
+		return errors.New("Authentication token not found. Please supply a valid user token. Login with `mesheryctl system login`")
+	}
+	var pages *models.MesheryK8sContextPage
+	var contexts []*models.K8sContext
+	resp, err := client.Do(req)
+	if err != nil || resp.StatusCode != 200 {
+		if hc.Options.PrintLogs {
+			log.Info("Failed to connect to Meshery server")
+		}
+	}
+	defer resp.Body.Close()
+	data, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return errors.Errorf("\n Invalid response: %v", err)
+	}
+
+	err = json.Unmarshal(data, &pages)
+	contexts = pages.Contexts
+	if err != nil {
+		return errors.Errorf("\n  Unable to unmarshal data: %v", err)
+	}
+
+	var contextNames []string
+	for _, ctx := range contexts {
+		contextNames = append(contextNames, ctx.Name)
+	}
+	contextNames = append(contextNames, "All")
+
+	var k8sContextIndex int = -1
+
+	if k8scontext == "" {
+		if len(contexts) == 0 {
+			return errors.Errorf("!! Meshery is not connected to any contexts ")
+		}
+
+		prompt := promptui.Select{
+			Label: "Select a context",
+			Items: contextNames,
+		}
+		_, k8scontext, err = prompt.Run()
+
+		if err != nil {
+			return err
+		}
+
+	} else {
+		found := false
+		for indx, ctx := range contextNames {
+			if ctx == k8scontext {
+				k8sContextIndex = indx
+				found = true
+				break
+			}
+		}
+		if !found {
+			return errors.Errorf("Specified context %s not found", k8scontext)
+		}
+	}
+	for indx, ctx := range contexts {
+		if k8sContextIndex != -1 {
+			if indx != k8sContextIndex {
+				continue
+			}
+		}
+		kubeclient, err := ctx.GenerateKubeHandler()
+		if err != nil {
+		}
+		_, err = kubeclient.KubeClient.AppsV1().Deployments("meshery").Get(context.TODO(), "meshery-operator", v1.GetOptions{})
+		if err != nil && !kubeerror.IsNotFound(err) {
+			log.Errorf("Operator not working %s", err)
+		}
+		broker := controllers.NewMesheryBrokerHandler(kubeclient)
+		brokerStatus := broker.GetStatus().String()
+
+		log.Info("MesheryBroker Status : ", brokerStatus)
+
+		meshsync := controllers.NewMeshsyncHandler(kubeclient)
+		meshsyncStatus := meshsync.GetStatus().String()
+		log.Infof("MesherySync Status : ", meshsyncStatus)
+	}
 	return nil
 }
 
@@ -612,4 +717,5 @@ func init() {
 	checkCmd.Flags().BoolVarP(&componentsFlag, "components", "", false, "Check status of Meshery components")
 	checkCmd.Flags().BoolVarP(&adaptersFlag, "adapters", "", false, "Check status of meshery adapters")
 	checkCmd.Flags().StringVarP(&adapter, "adapter", "", "", "Check status of specified meshery adapter")
+	checkCmd.Flags().BoolVarP(&operatorsFlag, "operator", "", false, "Verify the health of Meshery Operator's deployment with MeshSync and Broker")
 }
