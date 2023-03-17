@@ -1,1 +1,0 @@
-{"kind":"WorkflowTaskResult","apiVersion":"v1alpha1","displayName":"Workflow Task Result","format":"JSON","metadata":{},"model":{"name":"argo-workflows","version":"5.1.1","modelDisplayName":"argo-workflows","category":"","subCategory":""}}

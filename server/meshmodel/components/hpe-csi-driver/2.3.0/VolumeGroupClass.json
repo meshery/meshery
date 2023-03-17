@@ -1,0 +1,1 @@
+{"kind":"VolumeGroupClass","apiVersion":"v1","displayName":"Volume Group Class","format":"JSON","metadata":{},"model":{"name":"hpe-csi-driver","version":"2.3.0","displayName":"hpe-csi-driver","category":{"name":"","metadata":null},"metadata":null}}

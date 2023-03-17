@@ -1,0 +1,1 @@
+{"kind":"ServiceExport","apiVersion":"v1alpha1","displayName":"Service Export","format":"JSON","metadata":{},"model":{"name":"clusternet-agent","version":"0.11.0","displayName":"clusternet-agent","category":{"name":"","metadata":null},"metadata":null}}

@@ -1,1 +1,0 @@
-{"kind":"Logging","apiVersion":"v1alpha1","displayName":"Logging","format":"JSON","metadata":{},"model":{"name":"lagoon-charts","version":"0.74.1","modelDisplayName":"lagoon-charts","category":"","subCategory":""},"schema":"{\n \"title\": \"Logging\",\n \"type\": \"object\"\n}"}

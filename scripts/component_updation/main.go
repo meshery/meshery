@@ -262,15 +262,23 @@ func main() {
 						}
 						for key, value := range changeFields {
 							if key == "category" {
-								component.Model.Category = value
-							} else if key == "subCategory" {
-								component.Model.SubCategory = value
+								component.Model.Category = v1alpha1.Category{
+									Name: value,
+								}
 							} else if key == "svgColor" || key == "svgWhite" {
-								component.Metadata[key], err = pkg.UpdateSVGString(value, SVG_WIDTH, SVG_HEIGHT)
+								svg, err := pkg.UpdateSVGString(value, SVG_WIDTH, SVG_HEIGHT)
 								if err != nil {
 									fmt.Println("err for: ", component.Kind, err.Error())
 								}
-								// component.Metadata[key] = value
+								if changeFields["Component"] == "" { //If it is a model level entry then update model svgs
+									if component.Model.Metadata == nil {
+										component.Model.Metadata = make(map[string]interface{})
+									}
+									component.Model.Metadata[key] = svg
+								}
+								if changeFields["Component"] != "" || component.Metadata[key] == nil { // If it is a component level SVG or component already doesn't have an SVG. Use this svg at component level.
+									component.Metadata[key] = svg
+								}
 							} else if isInColumnNames(key, ColumnNamesToExtract) != -1 {
 								component.Metadata[key] = value
 							}
@@ -286,6 +294,7 @@ func main() {
 						}
 						fmt.Println("updating for ", changeFields["modelDisplayName"], "--", component.Kind, "-- published=", component.Metadata["published"])
 						delete(component.Metadata, "Publish?")
+						delete(component.Metadata, "CRDs")
 						modelDisplayName := component.Metadata["modelDisplayName"].(string)
 						component.Model.DisplayName = modelDisplayName
 						byt, err = json.Marshal(component)

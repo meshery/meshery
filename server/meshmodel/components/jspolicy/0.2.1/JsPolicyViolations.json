@@ -1,1 +1,0 @@
-{"kind":"JsPolicyViolations","apiVersion":"v1beta1","displayName":"Js Policy Violations","format":"JSON","metadata":{},"model":{"name":"jspolicy","version":"0.2.1","modelDisplayName":"jspolicy","category":"","subCategory":""},"schema":"{\n \"title\": \"Js Policy Violations\",\n \"type\": \"object\"\n}"}

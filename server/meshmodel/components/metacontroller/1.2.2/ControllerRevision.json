@@ -1,0 +1,1 @@
+{"kind":"ControllerRevision","apiVersion":"v1alpha1","displayName":"Controller Revision","format":"JSON","metadata":{},"model":{"name":"metacontroller","version":"1.2.2","displayName":"metacontroller","category":{"name":"","metadata":null},"metadata":null}}

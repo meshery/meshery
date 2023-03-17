@@ -8,7 +8,9 @@
 		"name": "core",
 		"version": "v1.0.0",
 		"modelDisplayName": "Core",
-		"category": "Cloud Native Application",
+		"category": {
+      "name":"Cloud Native Application"
+    },
 		"subCategory": "Not Found"
   },
   "subType": "Parent",

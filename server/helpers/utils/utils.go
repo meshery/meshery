@@ -126,16 +126,15 @@ func writeHashCheckSVG(key string, val string) {
 	hashCheckSVG[key] = val
 	mx.Unlock()
 }
-
-func WriteSVGsOnFileSystem(comp *v1alpha1.ComponentDefinition) {
+func writeSVGHelper(metadata map[string]interface{}, dirname, filename string) {
 	successCreatingDirectory := false
-	defer func(s bool) {
+	defer func() {
 		if successCreatingDirectory {
-			UISVGPaths = append(UISVGPaths, filepath.Join(UI, comp.Model.Name))
+			UISVGPaths = append(UISVGPaths, filepath.Join(UI, dirname))
 		}
-	}(successCreatingDirectory)
-	if comp.Metadata["svgColor"] != "" {
-		path := filepath.Join(UI, comp.Model.Name, "color")
+	}()
+	if metadata["svgColor"] != "" {
+		path := filepath.Join(UI, dirname, "color")
 		err := os.MkdirAll(path, 0777)
 		if err != nil {
 			fmt.Println(err)
@@ -143,16 +142,16 @@ func WriteSVGsOnFileSystem(comp *v1alpha1.ComponentDefinition) {
 		}
 		successCreatingDirectory = true
 
-		x, ok := comp.Metadata["svgColor"].(string)
+		x, ok := metadata["svgColor"].(string)
 		if ok {
 			hash := md5.Sum([]byte(x))
 			hashString := hex.EncodeToString(hash[:])
 			pathsvg := hashCheckSVG[hashString]
 			if pathsvg != "" { // the image has already been loaded, point the component to that path
-				comp.Metadata["svgColor"] = pathsvg
+				metadata["svgColor"] = pathsvg
 				goto White
 			} else {
-				f, err := os.Create(filepath.Join(path, comp.Kind+"-"+comp.Model.DisplayName+"-color.svg"))
+				f, err := os.Create(filepath.Join(path, filename+"-color.svg"))
 				if err != nil {
 					fmt.Println(err)
 					return
@@ -162,14 +161,14 @@ func WriteSVGsOnFileSystem(comp *v1alpha1.ComponentDefinition) {
 					fmt.Println(err)
 					return
 				}
-				comp.Metadata["svgColor"] = getRelativePathForAPI(filepath.Join(comp.Model.Name, "color", comp.Kind+"-"+comp.Model.DisplayName+"-color.svg")) //Replace the actual SVG with path to SVG
-				writeHashCheckSVG(hashString, comp.Metadata["svgColor"].(string))
+				metadata["svgColor"] = getRelativePathForAPI(filepath.Join(dirname, "color", filename+"-color.svg")) //Replace the actual SVG with path to SVG
+				writeHashCheckSVG(hashString, metadata["svgColor"].(string))
 			}
 		}
 	}
 White:
-	if comp.Metadata["svgWhite"] != "" {
-		path := filepath.Join(UI, comp.Model.Name, "white")
+	if metadata["svgWhite"] != "" {
+		path := filepath.Join(UI, dirname, "white")
 		err := os.MkdirAll(path, 0777)
 		if err != nil {
 			fmt.Println(err)
@@ -177,16 +176,16 @@ White:
 		}
 		successCreatingDirectory = true
 
-		x, ok := comp.Metadata["svgWhite"].(string)
+		x, ok := metadata["svgWhite"].(string)
 		if ok {
 			hash := md5.Sum([]byte(x))
 			hashString := hex.EncodeToString(hash[:])
 			pathsvg := hashCheckSVG[hashString]
 			if pathsvg != "" { // the image has already been loaded, point the component to that path
-				comp.Metadata["svgWhite"] = pathsvg
+				metadata["svgWhite"] = pathsvg
 				return
 			}
-			f, err := os.Create(filepath.Join(path, comp.Kind+"-"+comp.Model.DisplayName+"-white.svg"))
+			f, err := os.Create(filepath.Join(path, filename+"-white.svg"))
 			if err != nil {
 				fmt.Println(err)
 				return
@@ -196,10 +195,21 @@ White:
 				fmt.Println(err)
 				return
 			}
-			comp.Metadata["svgWhite"] = getRelativePathForAPI(filepath.Join(comp.Model.Name, "white", comp.Kind+"-"+comp.Model.DisplayName+"-white.svg")) //Replace the actual SVG with path to SVG
-			writeHashCheckSVG(hashString, comp.Metadata["svgWhite"].(string))
+			metadata["svgWhite"] = getRelativePathForAPI(filepath.Join(dirname, "white", filename+"-white.svg")) //Replace the actual SVG with path to SVG
+			writeHashCheckSVG(hashString, metadata["svgWhite"].(string))
 		}
 	}
+
+}
+func WriteSVGsOnFileSystem(comp *v1alpha1.ComponentDefinition) {
+	if comp.Metadata == nil {
+		comp.Metadata = make(map[string]interface{})
+	}
+	if comp.Model.Metadata == nil {
+		comp.Model.Metadata = make(map[string]interface{})
+	}
+	writeSVGHelper(comp.Metadata, comp.Model.Name, comp.Kind)             //Write SVG on components
+	writeSVGHelper(comp.Model.Metadata, comp.Model.Name, comp.Model.Name) //Write SVG on models
 }
 
 func DeleteSVGsFromFileSystem() {

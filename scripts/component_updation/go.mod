@@ -2,6 +2,8 @@ module github.com/layer5io/component_scraper
 
 go 1.19
 
+replace github.com/layer5io/meshkit v0.6.30 => ../../../meshkit
+
 require github.com/layer5io/meshkit v0.6.30
 
 require (
