@@ -37,7 +37,7 @@ import (
 )
 
 var (
-	ColumnNamesToExtract        = []string{"modelDisplayName", "model", "category", "subCategory", "shape", "primaryColor", "secondaryColor", "logoURL", "svgColor", "svgWhite", "Publish?"}
+	ColumnNamesToExtract        = []string{"modelDisplayName", "model", "category", "subCategory", "shape", "primaryColor", "secondaryColor", "logoURL", "svgColor", "svgWhite", "Publish?", "CRDs"}
 	ColumnNamesToExtractForDocs = []string{"modelDisplayName", "Page Subtitle", "Docs URL", "category", "subCategory", "Feature 1", "Feature 2", "Feature 3", "howItWorks", "howItWorksDetails", "Publish?", "About Project", "Standard Blurb", "svgColor", "svgWhite", "Full Page", "model"}
 	PrimaryColumnName           = "model"
 	OutputPath                  = "../../server/meshmodel/components"
@@ -98,7 +98,7 @@ func main() {
 		file.Close()
 		os.Remove(file.Name())
 		output = cleanupDuplicatesAndPreferEmptyComponentField(output, "model")
-		mesheryDocsJSON := "["
+		mesheryDocsJSON := "const data = ["
 		for _, out := range output {
 			var t pkg.TemplateAttributes
 			publishValue, err := strconv.ParseBool(out["Publish?"])
@@ -199,11 +199,10 @@ func main() {
 		}
 
 		mesheryDocsJSON = strings.TrimSuffix(mesheryDocsJSON, ",")
-		mesheryDocsJSON += "]"
-		if err := pkg.WriteToFile(filepath.Join("../../../", pathToIntegrationsMeshery, "data.json"), mesheryDocsJSON); err != nil {
+		mesheryDocsJSON += "]; export default data"
+		if err := pkg.WriteToFile(filepath.Join("../../../", pathToIntegrationsMeshery, "data.js"), mesheryDocsJSON); err != nil {
 			log.Fatal(err)
 		}
-
 	} else {
 		output, err := pkg.GetEntries(csvReader, ColumnNamesToExtract)
 		if err != nil {
@@ -213,7 +212,11 @@ func main() {
 		file.Close()
 		os.Remove(file.Name())
 		publishedModels := make(map[string]bool)
+		countWithoutCrds := 0
 		_ = pkg.PopulateEntries(OutputPath, output, PrimaryColumnName, func(dirpath string, changeFields map[string]string) error {
+			if changeFields["CRDs"] == "" {
+				countWithoutCrds++
+			}
 			if changeFields["Publish?"] == "TRUE" {
 				publishedModels[changeFields[PrimaryColumnName]] = true
 			}
@@ -299,6 +302,7 @@ func main() {
 			}
 			return nil
 		})
+		fmt.Println("Total models without CRDs in spreadsheet are: ", countWithoutCrds)
 		if err != nil {
 			log.Fatal(err)
 		}
