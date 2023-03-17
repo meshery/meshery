@@ -361,7 +361,7 @@ func RegisterK8sMeshModelComponents(ctx context.Context, config []byte, ctxID st
 	count := 0
 	for _, c := range man {
 		writeK8sMetadata(&c, reg)
-		mutil.WriteSVGsOnFileSystem(&c)
+
 		err = reg.RegisterEntity(meshmodel.Host{
 			Hostname:  "kubernetes",
 			ContextID: ctxID,
@@ -392,6 +392,7 @@ func writeK8sMetadata(comp *meshmodelcore.ComponentDefinition, reg *meshmodel.Re
 	//If component was not available in the registry, then use the generic model level metadata
 	if len(ent) == 0 {
 		mergeMaps(comp.Metadata, k8sMeshModelMetadata)
+		mutil.WriteSVGsOnFileSystem(comp)
 	} else {
 		existingComp, ok := ent[0].(meshmodelcore.ComponentDefinition)
 		if !ok {
