@@ -127,6 +127,7 @@ func writeHashCheckSVG(key string, val string) {
 	mx.Unlock()
 }
 func writeSVGHelper(metadata map[string]interface{}, dirname, filename string) {
+	filename = strings.ToLower(filename)
 	successCreatingDirectory := false
 	defer func() {
 		if successCreatingDirectory {
