@@ -21,17 +21,7 @@ $on-palm: 600px;
 $on-laptop: 800px;
 
 @mixin swagger-method($color) {
-  border: 1px solid $color;
-
   .swagger-method-title {
-    background: lighten($color, 30%);
-  }
-
-  .swagger-method-link {
-    color: darken($color, 20%);
-  }
-
-  .swagger-method-name {
     background: $color;
   }
 }
@@ -51,10 +41,13 @@ $on-laptop: 800px;
 }
 
 .swagger-method-title {
-  padding: 8px 5px 5px 5px;
+  padding: 0 5px;
   font-size: $base-font-size;
-  margin: 0;
+  margin: 16px 0 0 !important;
   cursor: pointer;
+  border-radius: 10px;
+  min-height: 45px;
+  display: flex;
 }
 
 .swagger-method-description {
@@ -64,27 +57,35 @@ $on-laptop: 800px;
 }
 
 .swagger-method-link {
+  display: flex;
+  align-items: center;
   &:hover {
+    color: white !important;
     text-decoration: none;
   }
 }
 
 .swagger-method-name {
-  font-weight: bolder;
-  padding: 6px 0;
-  display: inline-block;
-  width: 80px;
+  display: flex;
+  width: 100px;
   text-align: center;
   color: white;
-  margin-right: 10px;
+  justify-content: center;
+}
+
+.swagger-method-summary {
+  color: white;
+  border-left: 1px solid white;
+  height: 100%;
+  padding: 10px;
 }
 
 .swagger-method-get {
-  @include swagger-method(#4fc49d);
+  @include swagger-method(#3F9ABC);
 }
 
 .swagger-method-post {
-  @include swagger-method(#87adb6);
+  @include swagger-method(#3AAE97);
 }
 
 .swagger-method-put {
@@ -96,7 +97,7 @@ $on-laptop: 800px;
 }
 
 .swagger-method-delete {
-  @include swagger-method(#e27a7a);
+  @include swagger-method(#DD4A54);
 }
 
 .swagger-method-details {
