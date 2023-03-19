@@ -10,9 +10,7 @@ $text-color: #111;
 $background-color: #fdfdfd;
 $brand-color: #2a7ae2;
 
-$grey-color: #828282;
-$grey-color-light: lighten($grey-color, 40%);
-$grey-color-dark: darken($grey-color, 25%);
+$grey-color: #1D2C33;
 
 // Width of the content area
 $content-width: 800px;
@@ -22,6 +20,12 @@ $on-laptop: 800px;
 
 @mixin swagger-method($color) {
   .swagger-method-title {
+    background: $color;
+  }
+}
+
+@mixin swagger-response($color) {
+  .swagger-response-title {
     background: $color;
   }
 }
@@ -37,7 +41,6 @@ $on-laptop: 800px;
 .swagger-method {
   align-self: center;
   border-radius: 5px;
-  margin: 0 0 5px 0;
 }
 
 .swagger-method-title {
@@ -51,7 +54,7 @@ $on-laptop: 800px;
 }
 
 .swagger-method-description {
-  padding: 3px 5px 5px 5px;
+  padding-bottom: 10px;
   font-size: $base-font-size;
   margin: 0;
 }
@@ -100,49 +103,86 @@ $on-laptop: 800px;
   @include swagger-method(#DD4A54);
 }
 
+.swagger-response-200 {
+  @include swagger-response(#00E676);
+}
+
+.swagger-method-404 {
+  @include swagger-response(#DD4A54);
+}
+
 .swagger-method-details {
-  padding: 20px;
+  padding: 20px 0;
   display: none;
+  font-weight: 400;
   &.open {
     display: block;
   }
 }
 
 .swagger-response {
-  font-size: $base-font-size;
-  font-weight: bolder;
+  font-size: $small-font-size;
   h5 {
-    margin: 10px 0 10px 0;
+    margin: 10px 0;
   }
 }
 
+.swagger-response-title {
+  width: fit-content;
+  padding: 3px 20px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  margin-bottom: 0;
+}
+
 .swagger-response-code {
-  font-weight: bolder;
-  font-size: $base-font-size;
   margin: 2px 0 2px 0;
-  &:after {
-    content: " — ";
-  }
+}
+
+.swagger-response-description {
+  margin-left: 3px;
+}
+
+.swagger-parameters {
+  margin-bottom: 20px;
 }
 
 .swagger-parameters-table {
   border-spacing: 0px;
   border-collapse: collapse;
-  margin-bottom: $spacing-unit;
   width: 100%;
   display: table-header-group;
-  font-size: 0.9rem;
-
+  font-size: 1.2rem;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 15px;
+  
   th,
   td {
-    border: 1px solid darken($grey-color-light, 5%);
-    padding: 4px 10px;
+    padding: 8px 15px;
     text-align: center;
-    font-size: 0.9rem;
   }
 
   th {
-    background: lighten($grey-color-light, 6%);
+    background-color: $grey-color;
+    color: white;
+    font-weight: 700;
+  }
+  
+  thead tr {
+    :first-child {
+      border-radius: 15px 0 0;
+    }
+    :last-child {
+      border-radius: 0 15px 0 0;
+    }
+  }
+
+  td.line {
+    padding-top: 0;
+    hr {
+      margin: 0;
+    }
   }
 }
 

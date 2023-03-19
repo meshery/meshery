@@ -22,11 +22,11 @@ layout: default
             </a>
         </h3>
         <div class="swagger-method-details">
-            <h5><b>Description</b></h5>
+            <!-- Description -->
             <p class="swagger-method-description" >{{method[1].description}}</p>
             {% if method[1].parameters %}
             <div class="swagger-parameters">
-                <h5><b>Parameters</b></h5>
+                <!-- Parameters -->
                 <table class="swagger-parameters-table">
                     <thead>
                         <tr>
@@ -61,19 +61,22 @@ layout: default
                                 {% endif %}
                             </td>
                         </tr>
+                        <tr><td colspan="4" class="line"><hr/></td></tr>
                         {% endfor %}
                     </tbody>
                 </table>
-            </div><br>
+            </div>
             {% endif %}
             {% if method[1].responses %}
             <div class="swagger-response">
-                <h5><b>Responses</b></h5>
+                <!-- Responses -->
                 {% for response in method[1].responses %}
-                <h5>
-                    <span class="swagger-response-code">{{ response[0] }}</span>
-                    <span class="swagger-response">{{ response[1].description }}</span>
-                </h5>
+                <div class="swagger-response-{{ response[0] }}">
+                    <p class="swagger-response-title">
+                        <span class="swagger-response-code">{{ response[0] }} -</span>
+                        <span class="swagger-response-description">{{ response[1].description }}</span>
+                    </p>
+                </div>
                 {% if response[1].schema.properties %}
                  <table class="swagger-parameters-table">
                     <thead>
@@ -97,6 +100,7 @@ layout: default
                             </td>
                             <td>{{ parameter[1].type }}</td>
                         </tr>
+                        <tr><td colspan="4" class="line"><hr/></td></tr>
                         {% endfor %}
                     </tbody>
                 </table>
