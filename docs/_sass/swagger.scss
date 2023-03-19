@@ -107,7 +107,7 @@ $on-laptop: 800px;
   @include swagger-response(#00E676);
 }
 
-.swagger-method-404 {
+.swagger-response-403, .swagger-response-404, .swagger-response-500 {
   @include swagger-response(#DD4A54);
 }
 
@@ -122,6 +122,7 @@ $on-laptop: 800px;
 
 .swagger-response {
   font-size: $small-font-size;
+  display: flex;
   h5 {
     margin: 10px 0;
   }
@@ -140,8 +141,21 @@ $on-laptop: 800px;
   margin: 2px 0 2px 0;
 }
 
+.swagger-response-seperator {
+  margin: 0 5px;
+}
+
+.mdblock p {
+  margin: 0;
+}
+
 .swagger-response-description {
-  margin-left: 3px;
+  a {
+    color: #212529;
+    :hover {
+      text-decoration: underline;
+    }
+  }
 }
 
 .swagger-parameters {

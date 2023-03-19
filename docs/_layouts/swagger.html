@@ -23,7 +23,9 @@ layout: default
         </h3>
         <div class="swagger-method-details">
             <!-- Description -->
-            <p class="swagger-method-description" >{{method[1].description}}</p>
+            <md-block>
+              <span class="swagger-method-description" >{{method[1].description}}</span>
+            </md-block>
             {% if method[1].parameters %}
             <div class="swagger-parameters">
                 <!-- Parameters -->
@@ -73,8 +75,11 @@ layout: default
                 {% for response in method[1].responses %}
                 <div class="swagger-response-{{ response[0] }}">
                     <p class="swagger-response-title">
-                        <span class="swagger-response-code">{{ response[0] }} -</span>
-                        <span class="swagger-response-description">{{ response[1].description }}</span>
+                        <span class="swagger-response-code">{{ response[0] }}</span>
+                        {% if response[1].description != "" %}<span class="swagger-response-seperator">-</span>{% endif %}
+                        <md-block class="mdblock">
+                            <span class="swagger-response-description">{{ response[1].description }}</span>
+                        </md-block>
                     </p>
                 </div>
                 {% if response[1].schema.properties %}

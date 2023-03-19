@@ -51,7 +51,7 @@ paths:
             responses:
                 "200":
                     description: ""
-            description: handles the requests to serve react components from the provider package
+            description: Handles the requests to serve react components from the provider package
             tags:
                 - ProvidersAPI
             summary: Handle GET request for React Components
@@ -62,11 +62,16 @@ paths:
                     description: Fetches a single Meshery Application
             description: |-
                 Fetches the list of all applications saved by the current user
-                ?updated_after=<timestamp> timestamp should be of the format `YYYY-MM-DD HH:MM:SS`
-                ?order={field} orders on the passed field
-                ?search=<application name> A string matching is done on the specified application name
-                ?page={page-number} Default page number is 1
-                ?pagesize={pagesize} Default pagesize is 10
+
+                - ```?updated_after=<timestamp>``` timestamp should be of the format "YYYY-MM-DD HH:MM:SS"
+                
+                - ```?order={field}``` orders on the passed field
+                
+                - ```?search=<application name>``` A string matching is done on the specified application name
+                
+                - ```?page={page-number}``` Default page number is 1
+                
+                - ```?pagesize={pagesize}``` Default pagesize is 10
             tags:
                 - ApplicationsAPI
             summary: Handle GET request for Meshery Application with the given id
@@ -274,14 +279,21 @@ paths:
                             type: string
                     description: ""
             description: |-
-                Example: /api/meshmodel/model/kubernetes
+                **Example**: ```/api/meshmodel/model/kubernetes```
+
                 Models can be further filtered through query parameter
-                ?version={version}
-                ?order={field} orders on the passed field
-                ?sort={[asc/desc]} Default behavior is asc
-                ?search={[true/false]} If search is true then a greedy search is performed
-                ?page={page-number} Default page number is 1
-                ?pagesize={pagesize} Default pagesize is 25. To return all results: pagesize=all
+                
+                - ```?version={version}```
+                
+                - ```?order={field}``` orders on the passed field
+                
+                - ```?sort={[asc/desc]}``` Default behavior is asc
+                
+                - ```?search={[true/false]}``` If search is true then a greedy search is performed
+                
+                - ```?page={page-number}``` Default page number is 1
+                
+                - ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
             tags:
                 - GetMeshmodelEntititiesByModel
             summary: Handle GET request for getting all meshmodel entities of a specific model.
@@ -296,16 +308,18 @@ paths:
                 "200":
                     description: ""
             description: |-
-                Getting list of workloads/traits/scopes
+                Getting list of ```workloads/traits/scopes```
 
-                {type} being of either trait, scope, workload; registration of adapter capabilities.
-                Example: /api/oam/workload => Here {type} is "workload"
+                ```{type}``` being of either trait, scope, workload; registration of adapter capabilities.
+                
+                **Example**: ```/api/oam/workload =>``` Here ```{type}``` is "workload"
         post:
             description: |-
-                Adding a workload/trait/scope
+                Adding a ```workload/trait/scope```
 
-                {type} being of either trait, scope, workload; registration of adapter capabilities.
-                Example: /api/oam/trait => Here {type} is "trait"
+                ```{type}``` being of either trait, scope, workload; registration of adapter capabilities.
+                
+                **Example**: ```/api/oam/trait =>``` Here ```{type}``` is "trait"
             tags:
                 - PatternsAPI
             summary: Handles registering OMA objects
@@ -376,14 +390,21 @@ paths:
                         type: object
                         additionalProperties: false
             description: |-
-                Example: /api/meshmodel/model/kubernetes/component
+                **Example**: ```/api/meshmodel/model/kubernetes/component```
+                
                 Components can be further filtered through query parameter
-                ?version={version}
-                ?apiVersion={apiVersion} If apiVersion is unspecified then all models are returned
-                ?order={field} orders on the passed field
-                ?sort={[asc/desc]} Default behavior is asc
-                ?page={page-number} Default page number is 1
-                ?pagesize={pagesize} Default pagesize is 25. To return all results: pagesize=all
+                
+                - ```?version={version}```
+                
+                - ```?apiVersion={apiVersion}``` If apiVersion is unspecified then all models are returned
+                
+                - ```?order={field}``` orders on the passed field
+                
+                - ```?sort={[asc/desc]}``` Default behavior is asc
+                
+                - ```?page={page-number}``` Default page number is 1
+                
+                - ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
             tags:
                 - MeshmodelGetByType
     /api/pattern/clone/{id}:
@@ -627,15 +648,23 @@ paths:
                             type: string
                         metadata: {}
             description: |-
-                Example: /api/meshmodel/model/kubernetes/component/Namespace
+                **Example**: ```/api/meshmodel/model/kubernetes/component/Namespace```
+                
                 Components can be further filtered through query parameter
-                ?version={version} If version is unspecified then all models are returned
-                ?apiVersion={apiVersion} If apiVersion is unspecified then all models are returned
-                ?order={field} orders on the passed field
-                ?sort={[asc/desc]} Default behavior is asc
-                ?search={[true/false]} If search is true then a greedy search is performed
-                ?page={page-number} Default page number is 1
-                ?pagesize={pagesize} Default pagesize is 25. To return all results: pagesize=all
+                
+                - ```?version={version}``` If version is unspecified then all models are returned
+                
+                - ```?apiVersion={apiVersion}``` If apiVersion is unspecified then all models are returned
+                
+                - ```?order={field}``` orders on the passed field
+                
+                - ```?sort={[asc/desc]}``` Default behavior is asc
+                
+                - ```?search={[true/false]}``` If search is true then a greedy search is performed
+                
+                - ```?page={page-number}``` Default page number is 1
+                
+                - ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
             tags:
                 - MeshmodelGetByName
             summary: Handle GET request for getting meshmodel components of a specific type by name.
@@ -739,8 +768,7 @@ paths:
             responses:
                 "200":
                     description: |-
-                        https://docs.google.com/drawings/d/1_qzQ_YxvCWPYrOBcdqGMlMwfbsZx96SBuIkbn8TfKhU/edit?pli=1
-                        see RELATIONSHIPDEFINITIONS table in the diagram
+                        [see RELATIONSHIPDEFINITIONS table in the diagram](https://docs.google.com/drawings/d/1_qzQ_YxvCWPYrOBcdqGMlMwfbsZx96SBuIkbn8TfKhU/edit?pli=1)
                     schema:
                         type: object
                         additionalProperties: false
@@ -755,14 +783,21 @@ paths:
                         kind:
                             type: string
             description: |-
-                Example: /api/meshmodel/model/kubernetes/relationship/Edge
+                **Example**: ```/api/meshmodel/model/kubernetes/relationship/Edge```
+                
                 Relationships can be further filtered through query parameter
-                ?version={version}
-                ?order={field} orders on the passed field
-                ?sort={[asc/desc]} Default behavior is asc
-                ?search={[true/false]} If search is true then a greedy search is performed
-                ?page={page-number} Default page number is 1
-                ?pagesize={pagesize} Default pagesize is 25. To return all results: pagesize=all
+                
+                - ```?version={version}```
+                
+                - ```?order={field}``` orders on the passed field
+                
+                - ```?sort={[asc/desc]}``` Default behavior is asc
+                
+                - ```?search={[true/false]}``` If search is true then a greedy search is performed
+                
+                - ```?page={page-number}``` Default page number is 1
+                
+                - ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
             tags:
                 - GetMeshmodelRelationshipByName
             summary: Handle GET request for getting meshmodel relationships of a specific model by name.
@@ -892,14 +927,22 @@ paths:
                             type: string
                         model-display-name:
                             type: string
-            description: |-
-                ?version={version} If version is unspecified then all models are returned
-                ?order={field} orders on the passed field
-                ?category={category of model} If category in unspecified then all models are returned
-                ?sort={[asc/desc]} Default behavior is asc
-                ?search={[true/false]} If search is true then a greedy search is performed
-                ?page={page-number} Default page number is 1
-                ?pagesize={pagesize} Default pagesize is 25. To return all results: pagesize=all
+            description: |- 
+                Models can be further filtered through query parameter
+                         
+                - ```?version={version}``` If version is unspecified then all models are returned
+
+                - ```?order={field}``` orders on the passed field
+                
+                - ```?category={category of model}``` If category in unspecified then all models are returned
+                
+                - ```?sort={[asc/desc]}``` Default behavior is asc
+                
+                - ```?search={[true/false]}``` If search is true then a greedy search is performed
+                
+                - ```?page={page-number}``` Default page number is 1
+                
+                - ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
             tags:
                 - GetMeshmodelModels
             summary: Handle GET request for getting all meshmodel models. The component type/model name should be lowercase like "kubernetes", "istio"
@@ -913,12 +956,18 @@ paths:
                     description: Returns all meshery patterns
             description: |-
                 Returns the list of all the patterns saved by the current user
+                
                 This will return all the patterns with their details
-                ?updated_after=<timestamp> timestamp should be of the format `YYYY-MM-DD HH:MM:SS`
-                ?order={field} orders on the passed field
-                ?search=<design name> A string matching is done on the specified design name
-                ?page={page-number} Default page number is 1
-                ?pagesize={pagesize} Default pagesize is 10
+                
+                - ```?updated_after=<timestamp>``` timestamp should be of the format `YYYY-MM-DD HH:MM:SS`
+                
+                - ```?order={field}``` orders on the passed field
+                
+                - ```?search=<design name>``` A string matching is done on the specified design name
+                
+                - ```?page={page-number}``` Default page number is 1
+                
+                - ```?pagesize={pagesize}``` Default pagesize is 10
             tags:
                 - PatternsAPI
         post:
@@ -952,13 +1001,19 @@ paths:
     /api/meshmodel/model/{model}/relationship:
         get:
             description: |-
-                Example: /api/meshmodel/model/kubernetes/relationship
+                **Example**: ```/api/meshmodel/model/kubernetes/relationship```
+                
                 Relationships can be further filtered through query parameter
-                ?version={version}
-                ?order={field} orders on the passed field
-                ?sort={[asc/desc]} Default behavior is asc
-                ?page={page-number} Default page number is 1
-                ?pagesize={pagesize} Default pagesize is 25. To return all results: pagesize=all
+                
+                - ```?version={version}```
+                
+                - ```?order={field}``` orders on the passed field
+                
+                - ```?sort={[asc/desc]}``` Default behavior is asc
+                
+                - ```?page={page-number}``` Default page number is 1
+                
+                - ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
             tags:
                 - GetAllMeshmodelRelationships
             summary: Handle GET request for getting meshmodel relationships of a specific model.
@@ -976,8 +1031,7 @@ paths:
                             type: string
                         metadata: {}
                     description: |-
-                        https://docs.google.com/drawings/d/1_qzQ_YxvCWPYrOBcdqGMlMwfbsZx96SBuIkbn8TfKhU/edit?pli=1
-                        see RELATIONSHIPDEFINITIONS table in the diagram
+                        [see RELATIONSHIPDEFINITIONS table in the diagram](https://docs.google.com/drawings/d/1_qzQ_YxvCWPYrOBcdqGMlMwfbsZx96SBuIkbn8TfKhU/edit?pli=1)
                     schema:
                         type: object
                         additionalProperties: false
@@ -1033,11 +1087,12 @@ paths:
     /api/oam/{type}/{name}:
         get:
             description: |-
-                Returns component details of a workload/trait/scope by given name in the URL
+                Returns component details of a ```workload/trait/scope``` by given name in the URL
 
-                {type} being of either trait, scope, workload; registration of adapter capabilities.
-                Example: /api/oam/workload/Application => Here {type} is "workload" and {name} is "Application"
-                it should be noted that both {type} and {name} should be valid
+                ```{type}``` being of either trait, scope, workload; registration of adapter capabilities.
+                
+                **Example**: ```/api/oam/workload/Application =>``` Here ```{type}``` is "workload" and ```{name}``` is "Application"
+                it should be noted that both ```{type}``` and ```{name}``` should be valid
             tags:
                 - PatternsAPI
             summary: Handles GET requests for component details for OAM objects
@@ -1114,12 +1169,14 @@ paths:
                 "200":
                     description: ""
             description: |-
-                Returns details of a workload/trait/scope by given name and id in the URL
+                Returns details of a ```workload/trait/scope``` by given name and id in the URL
 
-                {type} being of either trait, scope, workload; registration of adapter capabilities.
-                Example: /api/oam/workload/Application/asdqe123sa275sasd => Here {type} is "workload"
-                {name} is "Application" and {id} is "asdqe123sa275sasd". It should be noted that all of three, i.e {type},
-                {name} and {id} must be valid
+                ```{type}``` being of either trait, scope, workload; registration of adapter capabilities.
+                
+                **Example**: ```/api/oam/workload/Application/asdqe123sa275sasd =>``` Here ```{type}``` is "workload"
+                
+                ```{name}``` is "Application" and ```{id}``` is "asdqe123sa275sasd". It should be noted that all of three, i.e ```{type}```,
+                ```{name}``` and ```{id}``` must be valid
     /api/providers:
         get:
             operationId: idGetProvidersList
@@ -1472,7 +1529,7 @@ definitions:
     VolumeUsageData:
         description: |-
             VolumeUsageData Usage details about the volume. This information is used by the
-            `GET /system/df` endpoint, and omitted in other endpoints.
+            ```GET /system/df``` endpoint, and omitted in other endpoints.
         x-go-package: github.com/docker/docker/api/types
 responses:
     mesheryApplicationsResponseWrapper:
@@ -1553,8 +1610,7 @@ responses:
             subType:
                 type: string
         description: |-
-            https://docs.google.com/drawings/d/1_qzQ_YxvCWPYrOBcdqGMlMwfbsZx96SBuIkbn8TfKhU/edit?pli=1
-            see RELATIONSHIPDEFINITIONS table in the diagram
+            [see RELATIONSHIPDEFINITIONS table in the diagram](https://docs.google.com/drawings/d/1_qzQ_YxvCWPYrOBcdqGMlMwfbsZx96SBuIkbn8TfKhU/edit?pli=1)
     noContentWrapper:
         description: ""
     perfSingleResultRespWrapper:
