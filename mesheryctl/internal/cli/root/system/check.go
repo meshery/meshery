@@ -532,6 +532,9 @@ func (hc *HealthChecker) runOperatorHealthChecks(k8scontext string) error {
 	//TODO
 	url := hc.mctlCfg.GetBaseMesheryURL()
 	client := &http.Client{}
+	if hc.Options.PrintLogs {
+		log.Info("\nMeshery Operators \n--------------")
+	}
 
 	req, err := utils.NewRequest("GET", fmt.Sprintf("%s/api/system/kubernetes/contexts", url), nil)
 	if err != nil {
@@ -568,7 +571,7 @@ func (hc *HealthChecker) runOperatorHealthChecks(k8scontext string) error {
 	}
 	contextNames = append(contextNames, "All")
 
-	var k8sContextIndex int = -1
+	var k8sContextIndex = -1
 
 	if k8scontext == "" {
 		if len(contexts) == 0 {
@@ -584,7 +587,6 @@ func (hc *HealthChecker) runOperatorHealthChecks(k8scontext string) error {
 		if err != nil {
 			return err
 		}
-
 	} else {
 		found := false
 		for indx, ctx := range contextNames {
@@ -606,6 +608,7 @@ func (hc *HealthChecker) runOperatorHealthChecks(k8scontext string) error {
 		}
 		kubeclient, err := ctx.GenerateKubeHandler()
 		if err != nil {
+			return errors.Errorf("Generating kubehandler caused error %v", err)
 		}
 		_, err = kubeclient.KubeClient.AppsV1().Deployments("meshery").Get(context.TODO(), "meshery-operator", v1.GetOptions{})
 		if err != nil && !kubeerror.IsNotFound(err) {
@@ -618,7 +621,7 @@ func (hc *HealthChecker) runOperatorHealthChecks(k8scontext string) error {
 
 		meshsync := controllers.NewMeshsyncHandler(kubeclient)
 		meshsyncStatus := meshsync.GetStatus().String()
-		log.Infof("MesherySync Status : ", meshsyncStatus)
+		log.Infof("MesherySync Status : %s", meshsyncStatus)
 	}
 	return nil
 }
