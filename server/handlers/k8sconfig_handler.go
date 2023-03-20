@@ -14,6 +14,7 @@ import (
 	mutil "github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/meshes"
 	mcore "github.com/layer5io/meshery/server/models/meshmodel/core"
+	meshmodelv1alpha1 "github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 
 	// for GKE kube API authentication
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
@@ -360,8 +361,10 @@ func RegisterK8sMeshModelComponents(ctx context.Context, config []byte, ctxID st
 	}
 	count := 0
 	for _, c := range man {
+		c.Model.Category = meshmodelcore.Category{
+			Name: "Orchestration & Management",
+		}
 		writeK8sMetadata(&c, reg)
-
 		err = reg.RegisterEntity(meshmodel.Host{
 			Hostname:  "kubernetes",
 			ContextID: ctxID,
@@ -379,7 +382,7 @@ func RegisterK8sMeshModelComponents(ctx context.Context, config []byte, ctxID st
 	return
 }
 
-const k8sMeshModelPath = "../meshmodel/components/kubernetes/meshmodel_metadata.json"
+const k8sMeshModelPath = "../meshmodel/components/kubernetes/model_template.json"
 
 var k8sMeshModelMetadata = make(map[string]interface{})
 
@@ -426,21 +429,22 @@ func init() {
 	k8sMeshModelMetadata = m
 }
 
-// func writeMeshModelComponentsOnFileSystem(c meshmodelv1alpha1.ComponentDefinition, dirpath string) {
-// 	fileName := c.Kind + ".json"
-// 	file, err := os.Create(filepath.Join(dirpath, fileName))
-// 	if err != nil {
-// 		fmt.Println("err: ", err.Error())
-// 	}
-// 	byt, err := json.Marshal(c)
-// 	if err != nil {
-// 		fmt.Println("err: ", err.Error())
-// 	}
-// 	_, err = file.Write(byt)
-// 	if err != nil {
-// 		fmt.Println("err: ", err.Error())
-// 	}
-// }
+// Utility to be used to write k8s components after generating them.
+func writeMeshModelComponentsOnFileSystem(c meshmodelv1alpha1.ComponentDefinition, dirpath string) {
+	fileName := c.Kind + ".json"
+	file, err := os.Create(filepath.Join(dirpath, fileName))
+	if err != nil {
+		fmt.Println("err: ", err.Error())
+	}
+	byt, err := json.Marshal(c)
+	if err != nil {
+		fmt.Println("err: ", err.Error())
+	}
+	_, err = file.Write(byt)
+	if err != nil {
+		fmt.Println("err: ", err.Error())
+	}
+}
 
 // func writeDefK8sOnFileSystem(def string, path string) {
 // 	err := ioutil.WriteFile(path, []byte(def), 0777)

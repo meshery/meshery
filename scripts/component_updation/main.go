@@ -245,16 +245,19 @@ func main() {
 
 						path, err := filepath.Abs(filepath.Join(dirpath, versionentry.Name(), entry.Name()))
 						if err != nil {
-							return err
+							fmt.Printf("[Error] for %s: %s\n", name, err.Error())
+							continue
 						}
 						byt, err := os.ReadFile(path)
 						if err != nil {
-							return err
+							fmt.Printf("[Error] for %s: %s\n", name, err.Error())
+							continue
 						}
 						var component v1alpha1.ComponentDefinition
 						err = json.Unmarshal(byt, &component)
 						if err != nil {
-							return err
+							fmt.Printf("[Error] for %s: %s\n", name, err.Error())
+							continue
 						}
 						component.DisplayName = manifests.FormatToReadableString(component.Kind)
 						if component.Metadata == nil {
@@ -299,11 +302,13 @@ func main() {
 						component.Model.DisplayName = modelDisplayName
 						byt, err = json.Marshal(component)
 						if err != nil {
-							return err
+							fmt.Printf("[Error] for %s: %s\n", name, err.Error())
+							continue
 						}
 						err = os.WriteFile(filepath.Join(dirpath, versionentry.Name(), entry.Name()), byt, 0777)
 						if err != nil {
-							return err
+							fmt.Printf("[Error] for %s: %s\n", name, err.Error())
+							continue
 						}
 					}
 				}
