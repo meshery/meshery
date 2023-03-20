@@ -6,6 +6,7 @@ redirect_from: reference/rest-apis/
 type: Reference
 abstract: 'Meshery REST API Documentation and Reference'
 data: swagger
+language: en
 ---
 
 ## Meshery's APIs

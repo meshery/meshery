@@ -9,6 +9,7 @@ project_status: beta
 github_link: https://github.com/meshery/meshery-app-mesh
 image: /assets/img/service-meshes/app-mesh.svg
 permalink: service-meshes/adapters/app-mesh
+language: en
 ---
 
 {% assign sorted_tests_group = site.compatibility | group_by: "meshery-component" %}

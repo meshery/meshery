@@ -89,7 +89,6 @@ const DefaultPageSizeForMeshModelComponents = 25
 // ?order={field} orders on the passed field
 // ?category={category of model} If category in unspecified then all models are returned
 // ?sort={[asc/desc]} Default behavior is asc
-// ?search={[true/false]} If search is true then a greedy search is performed
 // ?page={page-number} Default page number is 1
 // ?pagesize={pagesize} Default pagesize is 25. To return all results: pagesize=all
 // responses:
@@ -123,6 +122,7 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 		OrderOn:  r.URL.Query().Get("order"),
 		Sort:     r.URL.Query().Get("sort"),
 	})
+
 	if err := enc.Encode(res); err != nil {
 		h.log.Error(ErrWorkloadDefinition(err)) //TODO: Add appropriate meshkit error
 		http.Error(rw, ErrWorkloadDefinition(err).Error(), http.StatusInternalServerError)
@@ -303,9 +303,10 @@ type ModelResponse struct {
 // ?version={version}
 // ?order={field} orders on the passed field
 // ?sort={[asc/desc]} Default behavior is asc
-// ?search={[true/false]} If search is true then a greedy search is performed
+// ?search={[true/false]} If search is true then a greedy search is performed on both model name and model display
 // ?page={page-number} Default page number is 1
 // ?pagesize={pagesize} Default pagesize is 25. To return all results: pagesize=all
+// ?trim={[true]} When trim is set to true, the underlying schemas are not returned for entities
 // responses:
 //
 //	200: []ModelResponse
@@ -317,6 +318,10 @@ func (h *Handler) GetMeshmodelEntititiesByModel(rw http.ResponseWriter, r *http.
 	var greedy bool
 	if r.URL.Query().Get("search") == "true" {
 		greedy = true
+	}
+	var trim bool
+	if r.URL.Query().Get("trim") == "true" {
+		trim = true
 	}
 	limitstr := r.URL.Query().Get("pagesize")
 	var limit int
@@ -333,23 +338,31 @@ func (h *Handler) GetMeshmodelEntititiesByModel(rw http.ResponseWriter, r *http.
 	}
 	offset := (page - 1) * limit
 	var mress []ModelResponse
-	mod := h.registryManager.GetModels(&v1alpha1.ModelFilter{
-		Name:    typ,
-		Version: v,
-		Greedy:  greedy,
-	})
-	// if len(mod) != 0 {
-	// 	mres.Model = mod[0]
-	// }
+	var mod []v1alpha1.Model
+	if greedy { //If greedy search is performed then try to match display names as well
+		mod = h.registryManager.GetModels(&v1alpha1.ModelFilter{
+			Name:        typ,
+			DisplayName: typ,
+			Version:     v,
+			Greedy:      greedy,
+		})
+	} else {
+		mod = h.registryManager.GetModels(&v1alpha1.ModelFilter{
+			Name:    typ,
+			Version: v,
+			Greedy:  greedy,
+		})
+	}
 	for _, m := range mod {
 		var mres ModelResponse
 		mres.Model = m
 		if mres.Name != "" {
 			res := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
 				ModelName: mres.Name,
-				Version:   v,
+				Version:   mres.Version,
 				Limit:     limit,
 				Offset:    offset,
+				Trim:      trim,
 			})
 			var comps []v1alpha1.ComponentDefinition
 			for _, r := range res {
@@ -365,6 +378,7 @@ func (h *Handler) GetMeshmodelEntititiesByModel(rw http.ResponseWriter, r *http.
 			}
 			res2 := h.registryManager.GetEntities(&v1alpha1.RelationshipFilter{
 				ModelName: mres.Name,
+				Version:   mres.Version,
 				Limit:     limit,
 				Offset:    offset,
 			})

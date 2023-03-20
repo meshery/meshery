@@ -1,0 +1,1 @@
+{"kind":"Data","apiVersion":"v1alpha1","displayName":"Data","format":"JSON","metadata":{},"model":{"name":"newrelic-operator","version":"0.3.4+f2ca803","modelDisplayName":"newrelic-operator","category":"","subCategory":""},"schema":"{\n \"properties\": {\n  \"data\": {\n   \"type\": \"string\"\n  }\n },\n \"title\": \"Data\",\n \"type\": \"object\"\n}"}
