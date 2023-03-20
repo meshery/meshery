@@ -299,7 +299,7 @@ func (kc K8sContext) PingTest() error {
 		return err
 	}
 
-	res := h.KubeClient.DiscoveryClient.RESTClient().Get().RequestURI("/livez").Timeout(1 * time.Second).Do(context.TODO())
+	res := h.KubeClient.DiscoveryClient.RESTClient().Get().RequestURI("/livez").Timeout(15 * time.Second).Do(context.TODO())
 	if res.Error() != nil {
 		return res.Error()
 	}
