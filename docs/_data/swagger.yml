@@ -1399,7 +1399,7 @@ paths:
             responses:
                 "200":
                     description: Returns all performance results
-            description: Fetchs pages of results from Remote Provider for the given id
+            description: Fetches pages of results from Remote Provider for the given id
             tags:
                 - PerformanceAPI
             summary: Handle GET request for results of a profile
@@ -1416,7 +1416,7 @@ paths:
         get:
             description: |-
                 Returns token from the actual provider in a file
-                resposese:
+                response:
                 200:
             tags:
                 - UserAPI
@@ -1429,7 +1429,7 @@ paths:
             operationId: idPostTokenProvider
             description: |-
                 Receives token from the actual provider
-                resposese:
+                response:
                 200:
 definitions:
     PluginConfigRootfs:
