@@ -17,7 +17,7 @@
 	"model": {
 		"name": "core",
 		"version": "v1.0.0",
-		"modelDisplayName": "Core",
+		"displayName": "Core",
 		"category": {
 			"name":"Cloud Native Application",
 			"metadata": null
