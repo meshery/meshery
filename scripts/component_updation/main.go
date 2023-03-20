@@ -37,7 +37,7 @@ import (
 )
 
 var (
-	ColumnNamesToExtract        = []string{"modelDisplayName", "model", "category", "subCategory", "shape", "primaryColor", "secondaryColor", "logoURL", "svgColor", "svgWhite", "Publish?", "CRDs"}
+	ColumnNamesToExtract        = []string{"modelDisplayName", "model", "category", "subCategory", "shape", "primaryColor", "secondaryColor", "logoURL", "svgColor", "svgWhite", "Publish?", "CRDs", "component"}
 	ColumnNamesToExtractForDocs = []string{"modelDisplayName", "Page Subtitle", "Docs URL", "category", "subCategory", "Feature 1", "Feature 2", "Feature 3", "howItWorks", "howItWorksDetails", "Publish?", "About Project", "Standard Blurb", "svgColor", "svgWhite", "Full Page", "model"}
 	PrimaryColumnName           = "model"
 	OutputPath                  = "../../server/meshmodel/components"
@@ -217,7 +217,7 @@ func main() {
 			if changeFields["CRDs"] == "" {
 				countWithoutCrds++
 			}
-			if changeFields["Publish?"] == "TRUE" {
+			if changeFields["Publish?"] == "TRUE" { //For a component level field
 				publishedModels[changeFields[PrimaryColumnName]] = true
 			}
 			return nil
@@ -234,12 +234,12 @@ func main() {
 						return err
 					}
 					for _, entry := range entries {
-						if !publishedModels[changeFields[PrimaryColumnName]] {
+						if !publishedModels[changeFields[PrimaryColumnName]] && changeFields["component"] == "" { //Ignore Publish flag for component level rows
 							fmt.Println("(Publish? is not set to TRUE) will not update", changeFields["modelDisplayName"])
 							continue
 						}
 						name := strings.TrimSuffix(strings.TrimSpace(entry.Name()), ".json")
-						if changeFields["Component"] != "" && changeFields["Component"] != name { //This is a component specific entry and only fill this when the filename matches component name
+						if changeFields["component"] != "" && changeFields["component"] != name { //This is a component specific entry and only fill this when the filename matches component name
 							continue
 						}
 
@@ -273,13 +273,13 @@ func main() {
 								if err != nil {
 									fmt.Println("err for: ", component.Kind, err.Error())
 								}
-								if changeFields["Component"] == "" { //If it is a model level entry then update model svgs
+								if changeFields["component"] == "" { //If it is a model level entry then update model svgs
 									if component.Model.Metadata == nil {
 										component.Model.Metadata = make(map[string]interface{})
 									}
 									component.Model.Metadata[key] = svg
 								}
-								if changeFields["Component"] != "" || component.Metadata[key] == nil { // If it is a component level SVG or component already doesn't have an SVG. Use this svg at component level.
+								if changeFields["component"] != "" || component.Metadata[key] == nil { // If it is a component level SVG or component already doesn't have an SVG. Use this svg at component level.
 									component.Metadata[key] = svg
 								}
 							} else if isInColumnNames(key, ColumnNamesToExtract) != -1 {
@@ -298,6 +298,7 @@ func main() {
 						fmt.Println("updating for ", changeFields["modelDisplayName"], "--", component.Kind, "-- published=", component.Metadata["published"])
 						delete(component.Metadata, "Publish?")
 						delete(component.Metadata, "CRDs")
+						delete(component.Metadata, "component")
 						modelDisplayName := component.Metadata["modelDisplayName"].(string)
 						component.Model.DisplayName = modelDisplayName
 						byt, err = json.Marshal(component)
@@ -344,7 +345,7 @@ func cleanupDuplicatesAndPreferEmptyComponentField(out []map[string]string, grou
 		gkey := o[groupBykey]
 		//If the row with given gkey is encountered for the first time, or the given row already exists but with a non-empty component field then use the new entry.
 		//This logic will prioritize empty component fields to not be overriden
-		if keyToEntry[gkey] == nil || keyToEntry[gkey]["Component"] != "" {
+		if keyToEntry[gkey] == nil || keyToEntry[gkey]["component"] != "" {
 			keyToEntry[gkey] = o
 		}
 
