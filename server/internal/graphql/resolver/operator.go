@@ -86,7 +86,20 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Pro
 			r.Log.Info("skipping operator deployment (in disabled mode)")
 			return
 		}
-		op, _ := ctx.Value(models.MesheryControllerHandlersKey).(map[string]map[models.MesheryController]controllers.IMesheryController)
+		op, exists := ctx.Value(models.MesheryControllerHandlersKey).(map[string]map[models.MesheryController]controllers.IMesheryController)
+		if !exists {
+			r.Log.Error(err)
+			r.Broadcast.Submit(broadcast.BroadcastMessage{
+				Source: broadcast.OperatorSyncChannel,
+				Data: operatorStatusK8sContext{
+					processing: err,
+					ctxID:      ctxID,
+				},
+				Type: "error",
+			})
+			return
+		}
+
 		var err error
 		if del {
 			err = op[ctxID][models.MesheryOperator].Undeploy()
