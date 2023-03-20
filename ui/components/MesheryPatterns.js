@@ -333,7 +333,7 @@ function MesheryPatterns({
     const patternsCatalogueCapability = capabilitiesRegistry?.capabilities.filter(
       (val) => val.feature === MesheryPatternsCatalog
     );
-    if (patternsCatalogueCapability.length) setCanPublishPattern(true);
+    if (patternsCatalogueCapability?.length) setCanPublishPattern(true);
   }, [])
 
   const searchTimeout = useRef(null);
@@ -930,7 +930,7 @@ function MesheryPatterns({
                 handleClone(rowData.id, rowData.name)
               }
               }>
-                <CloneIcon fill="#ffffff" className={classes.iconPatt} />
+                <CloneIcon fill="currentColor" className={classes.iconPatt} />
               </IconButton> :
 
                 <IconButton onClick={(e) => {
