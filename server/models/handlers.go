@@ -101,8 +101,10 @@ type HandlerInterface interface {
 	GETOAMRegisterHandler(rw http.ResponseWriter, r *http.Request)
 	OAMRegisterHandler(rw http.ResponseWriter, r *http.Request)
 	GetMeshmodelCategories(rw http.ResponseWriter, r *http.Request)
+	GetMeshmodelCategoriesByName(rw http.ResponseWriter, r *http.Request)
+	GetMeshmodelModelsByName(rw http.ResponseWriter, r *http.Request)
 	GetMeshmodelModelsByCategories(rw http.ResponseWriter, r *http.Request)
-
+	GetMeshmodelModelsByCategoriesByModel(rw http.ResponseWriter, r *http.Request)
 	ValidationHandler(rw http.ResponseWriter, r *http.Request)
 	MeshModelGenerationHandler(rw http.ResponseWriter, r *http.Request)
 	GetMeshmodelModels(rw http.ResponseWriter, r *http.Request)
@@ -110,7 +112,9 @@ type HandlerInterface interface {
 
 	GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.Request)
 	GetMeshmodelComponentByModelByCategory(rw http.ResponseWriter, r *http.Request)
+	GetMeshmodelComponentByCategory(rw http.ResponseWriter, r *http.Request)
 	GetMeshmodelComponentsByNameByModelByCategory(rw http.ResponseWriter, r *http.Request)
+	GetMeshmodelComponentsByNameByCategory(rw http.ResponseWriter, r *http.Request)
 	GetMeshmodelComponentsByNameByModel(rw http.ResponseWriter, r *http.Request)
 	GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Request)
 	GetAllMeshmodelComponentsByName(rw http.ResponseWriter, r *http.Request)
