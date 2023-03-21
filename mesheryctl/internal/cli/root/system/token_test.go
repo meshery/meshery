@@ -114,7 +114,7 @@ func TestTokenCreateCmd(t *testing.T) {
 			if err := utils.Populate(path+"/fixtures/.meshery/config.yaml", filepath); err != nil {
 				t.Error(err, "Could not complete test. Unable to configure create test file")
 			}
-			BreakupFunc(t)
+			BreakupFunc()
 		})
 	}
 }
@@ -205,7 +205,7 @@ func TestTokenDeleteCmd(t *testing.T) {
 			if err := utils.Populate(path+"/fixtures/.meshery/config.yaml", filepath); err != nil {
 				t.Error(err, "Could not complete test. Unable to configure create test file")
 			}
-			BreakupFunc(t)
+			BreakupFunc()
 		})
 	}
 }
@@ -304,7 +304,7 @@ func TestTokenSetCmd(t *testing.T) {
 			if err := utils.Populate(path+"/testdata/token/set_reset.yaml", filepath); err != nil {
 				t.Error(err, "Could not complete test. Unable to configure create test file")
 			}
-			BreakupFunc(t)
+			BreakupFunc()
 		})
 	}
 }
@@ -366,7 +366,7 @@ func TestTokenViewCmd(t *testing.T) {
 			if expectedResponse != actualResponse {
 				t.Errorf("expected response [%v] and actual response [%v] don't match", expectedResponse, actualResponse)
 			}
-			BreakupFunc(t)
+			BreakupFunc()
 		})
 	}
 }
@@ -428,7 +428,7 @@ func TestTokenListCmd(t *testing.T) {
 			if expectedResponse != actualResponse {
 				t.Errorf("expected response [%v] and actual response [%v] don't match", expectedResponse, actualResponse)
 			}
-			BreakupFunc(t)
+			BreakupFunc()
 		})
 	}
 }
