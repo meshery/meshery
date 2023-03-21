@@ -24,7 +24,6 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/manifoldco/promptui"
 	"github.com/pkg/errors"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
@@ -179,7 +178,7 @@ mesheryctl system check --report
 		} else if adaptersFlag {
 			return hc.runAdapterHealthChecks("")
 		} else if operatorsFlag {
-			return hc.runOperatorHealthChecks("")
+			return hc.runOperatorHealthChecks()
 		}
 
 		// if no flags passed we run complete system check
@@ -220,7 +219,7 @@ func (hc *HealthChecker) Run() error {
 	}
 
 	if hc.Options.RunOperatorChecks {
-		if err := hc.runOperatorHealthChecks(""); err != nil {
+		if err := hc.runOperatorHealthChecks(); err != nil {
 			return err
 		}
 	}
@@ -528,8 +527,7 @@ func (hc *HealthChecker) runComponentsHealthChecks() error {
 }
 
 // runOperatorHealthChecks executes health-checks for Operators
-func (hc *HealthChecker) runOperatorHealthChecks(k8scontext string) error {
-	//TODO
+func (hc *HealthChecker) runOperatorHealthChecks() error {
 	url := hc.mctlCfg.GetBaseMesheryURL()
 	client := &http.Client{}
 	if hc.Options.PrintLogs {
@@ -538,20 +536,13 @@ func (hc *HealthChecker) runOperatorHealthChecks(k8scontext string) error {
 
 	req, err := utils.NewRequest("GET", fmt.Sprintf("%s/api/system/kubernetes/contexts", url), nil)
 	if err != nil {
-		if hc.Options.PrintLogs {
-			log.Info("!! Authentication token not found. Please supply a valid user token. Login with `mesheryctl system login`")
-			// skip further as we failed to attach token
-			return nil
-		}
 		return errors.New("Authentication token not found. Please supply a valid user token. Login with `mesheryctl system login`")
 	}
 	var pages *models.MesheryK8sContextPage
 	var contexts []*models.K8sContext
 	resp, err := client.Do(req)
 	if err != nil || resp.StatusCode != 200 {
-		if hc.Options.PrintLogs {
-			log.Info("Failed to connect to Meshery server")
-		}
+		return errors.Errorf("\nFailed to connect to Meshery server : %v", err)
 	}
 	defer resp.Body.Close()
 	data, err := io.ReadAll(resp.Body)
@@ -573,33 +564,10 @@ func (hc *HealthChecker) runOperatorHealthChecks(k8scontext string) error {
 
 	var k8sContextIndex = -1
 
-	if k8scontext == "" {
-		if len(contexts) == 0 {
-			return errors.Errorf("!! Meshery is not connected to any contexts ")
-		}
-
-		prompt := promptui.Select{
-			Label: "Select a context",
-			Items: contextNames,
-		}
-		_, k8scontext, err = prompt.Run()
-
-		if err != nil {
-			return err
-		}
-	} else {
-		found := false
-		for indx, ctx := range contextNames {
-			if ctx == k8scontext {
-				k8sContextIndex = indx
-				found = true
-				break
-			}
-		}
-		if !found {
-			return errors.Errorf("Specified context %s not found", k8scontext)
-		}
+	if len(contexts) == 0 {
+		return errors.Errorf("!! Meshery is not connected to any contexts ")
 	}
+
 	for indx, ctx := range contexts {
 		if k8sContextIndex != -1 {
 			if indx != k8sContextIndex {
