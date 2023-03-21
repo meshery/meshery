@@ -336,9 +336,9 @@ func start() error {
 				//check flag to check successful deployment
 				checkFlag = 0
 				break
-			} else {
-				checkFlag = 1
 			}
+
+			checkFlag = 1
 		}
 
 		//if meshery_meshery_1 failed to start showing logs
