@@ -76,7 +76,7 @@ func RegisterMeshmodelComponentsForCRDS(reg meshmodel.RegistryManager, k8sYaml [
 }
 
 // move to meshmodel
-func GetK8sMeshModelComponents(ctx context.Context, kubeconfig []byte) ([]v1alpha1.ComponentDefinition, error) {
+func GetK8sMeshModelComponents(kubeconfig []byte) ([]v1alpha1.ComponentDefinition, error) {
 	cli, err := kubernetes.New(kubeconfig)
 	if err != nil {
 		return nil, ErrGetK8sComponents(err)

@@ -351,7 +351,7 @@ func RegisterK8sComponents(ctxt context.Context, config []byte, ctxID string, re
 }
 
 func RegisterK8sMeshModelComponents(ctx context.Context, config []byte, ctxID string, reg *meshmodel.RegistryManager, es *events.EventStreamer, ctxName string) (err error) {
-	man, err := mcore.GetK8sMeshModelComponents(ctx, config)
+	man, err := mcore.GetK8sMeshModelComponents(config)
 	if err != nil {
 		return ErrCreatingKubernetesComponents(err, ctxID)
 	}
