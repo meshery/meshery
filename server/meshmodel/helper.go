@@ -42,12 +42,13 @@ func NewEntityRegistrationHelper(hc *models.HandlerConfig, rm *meshmodel.Registr
 func (erh *EntityRegistrationHelper) SeedComponents() {
 	// Watch channels and register components and relationships with the registry manager
 	ctx, cancel := context.WithCancel(context.TODO())
+	defer cancel()
+
 	go erh.watchComponents(ctx)
 
 	// Read component and relationship definitions from files and send them to respective channels
 	erh.generateComponents("../meshmodel/components")
 	erh.generateRelationships("../meshmodel/relationships")
-	cancel()
 }
 
 func (erh *EntityRegistrationHelper) generateComponents(pathToComponents string) {
