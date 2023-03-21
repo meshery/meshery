@@ -1031,7 +1031,7 @@ paths:
                             type: string
                         metadata: {}
                     description: |-
-                        [see RELATIONSHIPDEFINITIONS table in the diagram](https://docs.google.com/drawings/d/1_qzQ_YxvCWPYrOBcdqGMlMwfbsZx96SBuIkbn8TfKhU/edit?pli=1)
+`Relationships` define the genealogy between one or more `Components` interconnected `Components`. Just as in familial relationships, MeshModel `Relationships` are represented in a variety of forms very much resembling familiar ancestral lineage, including `hierarchical` relationships such as direct parent and child relationship as well as any number of layers of indirect grandparent and grandchild relationships. Peer relationships like that of `sibling`s take on different types such as `network` and `dependency`.  Each type of `Relationship` has `metadata`, `selectors` and some optional parameters. 
                     schema:
                         type: object
                         additionalProperties: false
@@ -1610,7 +1610,7 @@ responses:
             subType:
                 type: string
         description: |-
-            [see RELATIONSHIPDEFINITIONS table in the diagram](https://docs.google.com/drawings/d/1_qzQ_YxvCWPYrOBcdqGMlMwfbsZx96SBuIkbn8TfKhU/edit?pli=1)
+`Relationships` define the genealogy between one or more `Components` interconnected `Components`. Just as in familial relationships, MeshModel `Relationships` are represented in a variety of forms very much resembling familiar ancestral lineage, including `hierarchical` relationships such as direct parent and child relationship as well as any number of layers of indirect grandparent and grandchild relationships. Peer relationships like that of `sibling`s take on different types such as `network` and `dependency`.  Each type of `Relationship` has `metadata`, `selectors` and some optional parameters. 
     noContentWrapper:
         description: ""
     perfSingleResultRespWrapper:
