@@ -32,6 +32,10 @@ const styles = makeStyles((theme) => ({
     padding : "2rem"
   },
   insideImgWrapper : {
+    padding : "0rem 0.5rem",
+    content : theme.palette.type === 'dark' ? "url('/static/img/meshery-logo-text.svg')" : "url('/static/img/meshery-logo-light-text.svg')"
+  },
+  insideImgWrapperLogo : {
     padding : "0rem 0.5rem"
   },
   installButton : {
@@ -67,14 +71,13 @@ export default function PlaygroundMeshDeploy(props) {
         <DialogContent>
           <div className={classes.imgWrapper}>
             <img
-              className={classes.insideImgWrapper}
+              className={classes.insideImgWrapperLogo}
               width="20%"  height="20%"
               src="/static/img/meshery-logo.png"
             />
             <img
               className={classes.insideImgWrapper}
               width="50%" height="50%"
-              src="/static/img/meshery-logo-text.png"
             />
           </div>
           <Typography gutterBottom>
