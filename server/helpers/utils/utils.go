@@ -184,7 +184,7 @@ White:
 			pathsvg := hashCheckSVG[hashString]
 			if pathsvg != "" { // the image has already been loaded, point the component to that path
 				metadata["svgWhite"] = pathsvg
-				return
+				goto Complete
 			}
 			f, err := os.Create(filepath.Join(path, filename+"-white.svg"))
 			if err != nil {
@@ -200,7 +200,39 @@ White:
 			writeHashCheckSVG(hashString, metadata["svgWhite"].(string))
 		}
 	}
+Complete:
+	if metadata["svgComplete"] != "" {
+		path := filepath.Join(UI, dirname, "complete")
+		err := os.MkdirAll(path, 0777)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		successCreatingDirectory = true
 
+		x, ok := metadata["svgComplete"].(string)
+		if ok {
+			hash := md5.Sum([]byte(x))
+			hashString := hex.EncodeToString(hash[:])
+			pathsvg := hashCheckSVG[hashString]
+			if pathsvg != "" { // the image has already been loaded, point the component to that path
+				metadata["svgComplete"] = pathsvg
+				return
+			}
+			f, err := os.Create(filepath.Join(path, filename+"-complete.svg"))
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+			_, err = f.WriteString(x)
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+			metadata["svgComplete"] = getRelativePathForAPI(filepath.Join(dirname, "complete", filename+"-complete.svg")) //Replace the actual SVG with path to SVG
+			writeHashCheckSVG(hashString, metadata["svgComplete"].(string))
+		}
+	}
 }
 func WriteSVGsOnFileSystem(comp *v1alpha1.ComponentDefinition) {
 	if comp.Metadata == nil {
