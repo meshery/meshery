@@ -30,14 +30,14 @@ func NewAdaptersTracker(adapterURLs []string) *AdaptersTracker {
 }
 
 // AddAdapter is used to add new adapters to the collection
-func (a *AdaptersTracker) AddAdapter(ctx context.Context, adapter models.Adapter) {
+func (a *AdaptersTracker) AddAdapter(_ context.Context, adapter models.Adapter) {
 	a.adaptersLock.Lock()
 	defer a.adaptersLock.Unlock()
 	a.adapters[adapter.Location] = adapter
 }
 
 // RemoveAdapter is used to remove existing adapters from the collection
-func (a *AdaptersTracker) RemoveAdapter(ctx context.Context, adapter models.Adapter) {
+func (a *AdaptersTracker) RemoveAdapter(_ context.Context, adapter models.Adapter) {
 	a.adaptersLock.Lock()
 	defer a.adaptersLock.Unlock()
 	delete(a.adapters, adapter.Location)
