@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import Button from "@material-ui/core/Button";
 import { withStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
-import { NoSsr, Chip, IconButton } from "@material-ui/core";
+import { NoSsr, Chip, IconButton, Switch } from "@material-ui/core";
 import blue from "@material-ui/core/colors/blue";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
@@ -212,6 +212,11 @@ class MeshAdapterConfigComponent extends React.Component {
     );
   };
 
+  handleAdaptorSwitch = () => {
+    //TODO
+    return
+  };
+
   handleError = (msg) => (error) => {
     this.props.updateProgress({ showProgress : false });
     const self = this;
@@ -279,6 +284,13 @@ class MeshAdapterConfigComponent extends React.Component {
           </Grid>
           <React.Fragment>
             <div className={classes.buttons}>
+              <Switch
+                // checked={getOperatorStatus(contexts[tableMeta.rowIndex].id)?.operatorState}
+                onClick={() => this.handleAdaptorSwitch()}
+                name="AdaptorSwitch"
+                color="primary"
+                className={classes.OperatorSwitch}
+              />
               <Button
                 type="submit"
                 variant="contained"
@@ -288,7 +300,7 @@ class MeshAdapterConfigComponent extends React.Component {
                 className={classes.button}
                 data-cy="btnSubmitMeshAdapter"
               >
-                Connect
+                ConnectOO
               </Button>
             </div>
           </React.Fragment>
