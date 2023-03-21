@@ -4,14 +4,14 @@
   "metadata": {
     "description": "A relationship that represents a set of permissions"
   },
-  "model": {
+	"model":{
 		"name": "core",
 		"version": "v1.0.0",
-		"modelDisplayName": "Core",
+		"displayName": "Core",
 		"category": {
       "name":"Cloud Native Application"
     },
-		"subCategory": "Not Found"
+    "metadata":null
   },
   "subType": "Permission",
   "selectors": {
