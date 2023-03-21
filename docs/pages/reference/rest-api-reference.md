@@ -49,7 +49,7 @@ Using Meshery CLI, you can get a copy of your authentication token by executing 
   </pre>
   <br />
 
-### Self-generated documentation based on Meshery's Open API specification for it's REST API.  
+### Self-generated documentation based on Meshery's OpenAPI specification for it's REST API.  
 Meshery's REST API can be explored interactively using the Swagger UI Playground.
 
 ## Endpoints
