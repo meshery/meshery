@@ -46,7 +46,7 @@ func (erh *EntityRegistrationHelper) SeedComponents() {
 
 	// Read component and relationship definitions from files and send them to respective channels
 	erh.generateComponents("../meshmodel/components")
-	erh.generateRelationships("../meshmodel/components")
+	erh.generateRelationships("../meshmodel/relationships")
 	cancel()
 }
 
