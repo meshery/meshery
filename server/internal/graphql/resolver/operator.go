@@ -19,7 +19,7 @@ type operatorStatusK8sContext struct {
 }
 
 func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Provider, status model.Status, ctxID string) (model.Status, error) {
-	delete := true
+	deleteOperator := true
 
 	// Tell operator status subscription that operation is starting
 	r.Broadcast.Submit(broadcast.BroadcastMessage{
@@ -33,7 +33,7 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Pro
 
 	if status == model.StatusEnabled {
 		r.Log.Info("Installing Operator")
-		delete = false
+		deleteOperator = false
 	} else {
 		r.Log.Info("Uninstalling Operator in context ", ctxID)
 	}
@@ -147,7 +147,7 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Pro
 		// r.operatorChannel <- &model.OperatorStatus{
 		// 	Status: status,
 		// }
-	}(delete, kubeclient)
+	}(deleteOperator, kubeclient)
 
 	return model.StatusProcessing, nil
 }
