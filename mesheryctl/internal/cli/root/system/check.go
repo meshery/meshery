@@ -556,31 +556,18 @@ func (hc *HealthChecker) runOperatorHealthChecks() error {
 		return errors.Errorf("\n  Unable to unmarshal data: %v", err)
 	}
 
-	var contextNames []string
-	for _, ctx := range contexts {
-		contextNames = append(contextNames, ctx.Name)
-	}
-	contextNames = append(contextNames, "All")
-
-	var k8sContextIndex = -1
-
 	if len(contexts) == 0 {
 		return errors.Errorf("!! Meshery is not connected to any contexts ")
 	}
 
-	for indx, ctx := range contexts {
-		if k8sContextIndex != -1 {
-			if indx != k8sContextIndex {
-				continue
-			}
-		}
+	for _, ctx := range contexts {
 		kubeclient, err := ctx.GenerateKubeHandler()
 		if err != nil {
 			return errors.Errorf("Generating kubehandler caused error %v", err)
 		}
 		_, err = kubeclient.KubeClient.AppsV1().Deployments("meshery").Get(context.TODO(), "meshery-operator", v1.GetOptions{})
 		if err != nil && !kubeerror.IsNotFound(err) {
-			log.Errorf("Operator not working %s", err)
+			return errors.Errorf("Operator not working %s", err)
 		}
 		broker := controllers.NewMesheryBrokerHandler(kubeclient)
 		brokerStatus := broker.GetStatus().String()
