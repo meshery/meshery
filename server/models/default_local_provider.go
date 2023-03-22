@@ -155,7 +155,7 @@ func (l *DefaultLocalProvider) HandleUnAuthenticated(w http.ResponseWriter, req 
 	http.Redirect(w, req, "/user/login", http.StatusFound)
 }
 
-func (l *DefaultLocalProvider) SaveK8sContext(token string, k8sContext K8sContext) (K8sContext, error) {
+func (l *DefaultLocalProvider) SaveK8sContext(_ string, k8sContext K8sContext) (K8sContext, error) {
 	return l.MesheryK8sContextPersister.SaveMesheryK8sContext(k8sContext)
 }
 
@@ -230,7 +230,7 @@ func (l *DefaultLocalProvider) LoadAllK8sContext(token string) ([]*K8sContext, e
 // }
 
 // FetchResults - fetches results from provider backend
-func (l *DefaultLocalProvider) FetchResults(tokenVal, page, pageSize, search, order, profileID string) ([]byte, error) {
+func (l *DefaultLocalProvider) FetchResults(_, page, pageSize, search, order, profileID string) ([]byte, error) {
 	pg, err := strconv.ParseUint(page, 10, 32)
 	if err != nil {
 		return nil, ErrPageNumber(err)
@@ -243,7 +243,7 @@ func (l *DefaultLocalProvider) FetchResults(tokenVal, page, pageSize, search, or
 }
 
 // FetchResults - fetches results from provider backend
-func (l *DefaultLocalProvider) FetchAllResults(tokenString string, page, pageSize, search, order, from, to string) ([]byte, error) {
+func (l *DefaultLocalProvider) FetchAllResults(_, page, pageSize, search, order, from, to string) ([]byte, error) {
 	if page == "" {
 		page = "0"
 	}
@@ -263,7 +263,7 @@ func (l *DefaultLocalProvider) FetchAllResults(tokenString string, page, pageSiz
 }
 
 // GetResult - fetches result from provider backend for the given result id
-func (l *DefaultLocalProvider) GetResult(tokenVal string, resultID uuid.UUID) (*MesheryResult, error) {
+func (l *DefaultLocalProvider) GetResult(_ string, resultID uuid.UUID) (*MesheryResult, error) {
 	// key := uuid.FromStringOrNil(resultID)
 	if resultID == uuid.Nil {
 		return nil, ErrResultID
@@ -310,7 +310,7 @@ func (l *DefaultLocalProvider) PublishResults(req *http.Request, result *Meshery
 }
 
 // FetchSmiResults - fetches results from provider backend
-func (l *DefaultLocalProvider) FetchSmiResults(req *http.Request, page, pageSize, search, order string) ([]byte, error) {
+func (l *DefaultLocalProvider) FetchSmiResults(_ *http.Request, page, pageSize, search, order string) ([]byte, error) {
 	pg, err := strconv.ParseUint(page, 10, 32)
 	if err != nil {
 		return nil, ErrPageNumber(err)
@@ -323,7 +323,7 @@ func (l *DefaultLocalProvider) FetchSmiResults(req *http.Request, page, pageSize
 }
 
 // FetchSmiResults - fetches results from provider backend
-func (l *DefaultLocalProvider) FetchSmiResult(req *http.Request, _, _, _, _ string, resultID uuid.UUID) ([]byte, error) {
+func (l *DefaultLocalProvider) FetchSmiResult(_ *http.Request, _, _, _, _ string, resultID uuid.UUID) ([]byte, error) {
 	return l.SmiResultPersister.GetResult(resultID)
 }
 
@@ -343,7 +343,7 @@ func (l *DefaultLocalProvider) PublishSmiResults(result *SmiResult) (string, err
 	return key.String(), nil
 }
 
-func (l *DefaultLocalProvider) shipResults(req *http.Request, data []byte) (string, error) {
+func (l *DefaultLocalProvider) shipResults(_ *http.Request, data []byte) (string, error) {
 	bf := bytes.NewBuffer(data)
 	remoteProviderURL, _ := url.Parse(l.ProviderBaseURL + "/result")
 	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), bf)
@@ -426,11 +426,11 @@ func (l *DefaultLocalProvider) UpdateToken(http.ResponseWriter, *http.Request) s
 }
 
 // TokenHandler - specific to remote auth
-func (l *DefaultLocalProvider) TokenHandler(w http.ResponseWriter, r *http.Request, fromMiddleWare bool) {
+func (l *DefaultLocalProvider) TokenHandler(_ http.ResponseWriter, _ *http.Request, _ bool) {
 }
 
 // ExtractToken - Returns the auth token and the provider type
-func (l *DefaultLocalProvider) ExtractToken(w http.ResponseWriter, r *http.Request) {
+func (l *DefaultLocalProvider) ExtractToken(w http.ResponseWriter, _ *http.Request) {
 	resp := map[string]interface{}{
 		"meshery-provider": l.Name(),
 		tokenName:          "",
@@ -443,7 +443,7 @@ func (l *DefaultLocalProvider) ExtractToken(w http.ResponseWriter, r *http.Reque
 }
 
 // SMPTestConfigStore Stores the given PerformanceTestConfig into local datastore
-func (l *DefaultLocalProvider) SMPTestConfigStore(req *http.Request, perfConfig *SMP.PerformanceTestConfig) (string, error) {
+func (l *DefaultLocalProvider) SMPTestConfigStore(_ *http.Request, perfConfig *SMP.PerformanceTestConfig) (string, error) {
 	uid, err := uuid.NewV4()
 	if err != nil {
 		return "", ErrGenerateUUID(err)
@@ -457,7 +457,7 @@ func (l *DefaultLocalProvider) SMPTestConfigStore(req *http.Request, perfConfig 
 }
 
 // SMPTestConfigGet gets the given PerformanceTestConfig from the local datastore
-func (l *DefaultLocalProvider) SMPTestConfigGet(req *http.Request, testUUID string) (*SMP.PerformanceTestConfig, error) {
+func (l *DefaultLocalProvider) SMPTestConfigGet(_ *http.Request, testUUID string) (*SMP.PerformanceTestConfig, error) {
 	uid, err := uuid.FromString(testUUID)
 	if err != nil {
 		return nil, ErrGenerateUUID(err)
@@ -466,7 +466,7 @@ func (l *DefaultLocalProvider) SMPTestConfigGet(req *http.Request, testUUID stri
 }
 
 // SMPTestConfigFetch gets all the PerformanceTestConfigs from the local datastore
-func (l *DefaultLocalProvider) SMPTestConfigFetch(req *http.Request, page, pageSize, search, order string) ([]byte, error) {
+func (l *DefaultLocalProvider) SMPTestConfigFetch(_ *http.Request, page, pageSize, _, _ string) ([]byte, error) {
 	pg, err := strconv.ParseUint(page, 10, 32)
 	if err != nil {
 		return nil, ErrPageNumber(err)
@@ -479,7 +479,7 @@ func (l *DefaultLocalProvider) SMPTestConfigFetch(req *http.Request, page, pageS
 }
 
 // SMPTestConfigDelete deletes the given PerformanceTestConfig from the local datastore
-func (l *DefaultLocalProvider) SMPTestConfigDelete(req *http.Request, testUUID string) error {
+func (l *DefaultLocalProvider) SMPTestConfigDelete(_ *http.Request, testUUID string) error {
 	uid, err := uuid.FromString(testUUID)
 	if err != nil {
 		return ErrGenerateUUID(err)
@@ -487,11 +487,11 @@ func (l *DefaultLocalProvider) SMPTestConfigDelete(req *http.Request, testUUID s
 	return l.TestProfilesPersister.DeleteTestConfig(uid)
 }
 
-func (l *DefaultLocalProvider) SaveMesheryPatternResource(token string, resource *PatternResource) (*PatternResource, error) {
+func (l *DefaultLocalProvider) SaveMesheryPatternResource(_ string, resource *PatternResource) (*PatternResource, error) {
 	return l.MesheryPatternResourcePersister.SavePatternResource(resource)
 }
 
-func (l *DefaultLocalProvider) GetMesheryPatternResource(token, resourceID string) (*PatternResource, error) {
+func (l *DefaultLocalProvider) GetMesheryPatternResource(_, resourceID string) (*PatternResource, error) {
 	id := uuid.FromStringOrNil(resourceID)
 	return l.MesheryPatternResourcePersister.GetPatternResource(id)
 }
