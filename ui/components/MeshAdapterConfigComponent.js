@@ -18,8 +18,8 @@ import { iconMedium } from "../css/icons.styles";
 const styles = (theme) => ({
   wrapperClass : { padding : theme.spacing(5),backgroundColor : theme.palette.secondary.elevatedComponents,borderBottomLeftRadius : theme.spacing(1),borderBottomRightRadius : theme.spacing(1), },
   buttons : { display : "flex",
-    justifyContent : "flex-end", },
-  button : { marginTop : theme.spacing(3),
+    justifyContent : "flex-end", paddingTop : "2rem" },
+  button : {
     marginLeft : theme.spacing(1), },
   margin : { margin : theme.spacing(1), },
   alreadyConfigured : { textAlign : "center",
@@ -213,7 +213,7 @@ class MeshAdapterConfigComponent extends React.Component {
   };
 
   handleAdaptorSwitch = () => {
-    //TODO
+    this.props.updateProgress({ showProgress : true });
     return
   };
 
