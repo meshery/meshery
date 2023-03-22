@@ -176,7 +176,7 @@ func (h *Handler) GrafanaBoardsHandler(w http.ResponseWriter, req *http.Request,
 // 	200:
 
 // GrafanaQueryHandler is used for handling Grafana queries
-func (h *Handler) GrafanaQueryHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, p models.Provider) {
+func (h *Handler) GrafanaQueryHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, _ *models.User, _ models.Provider) {
 	// if req.Method != http.MethodGet {
 	// 	w.WriteHeader(http.StatusNotFound)
 	// 	return

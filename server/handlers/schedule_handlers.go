@@ -72,8 +72,8 @@ func (h *Handler) SaveScheduleHandler(
 func (h *Handler) GetSchedulesHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
-	prefObj *models.Preference,
-	user *models.User,
+	_ *models.Preference,
+	_ *models.User,
 	provider models.Provider,
 ) {
 	q := r.URL.Query()

@@ -135,7 +135,7 @@ STOP:
 	close(respChan)
 	defer log.Debug("events handler closed")
 }
-func listenForCoreEvents(ctx context.Context, eb *events.EventStreamer, resp chan []byte, log *logrus.Entry, p models.Provider) {
+func listenForCoreEvents(ctx context.Context, eb *events.EventStreamer, resp chan []byte, log *logrus.Entry, _ models.Provider) {
 	datach := make(chan interface{}, 10)
 	go eb.Subscribe(datach)
 	for {
