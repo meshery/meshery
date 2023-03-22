@@ -59,7 +59,7 @@ func (h *Handler) PatternFileRequestHandler(
 func (h *Handler) handlePatternPOST(
 	rw http.ResponseWriter,
 	r *http.Request,
-	prefObj *models.Preference,
+	_ *models.Preference,
 	user *models.User,
 	provider models.Provider,
 ) {
