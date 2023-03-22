@@ -1,1 +1,1 @@
-{"kind":"PropagatedVersion","apiVersion":"v1alpha1","displayName":"Propagated Version","format":"JSON","metadata":{},"model":{"name":"kubefed","version":"0.10.0","modelDisplayName":"kubefed","category":"","subCategory":""}}
+{"kind":"PropagatedVersion","apiVersion":"v1alpha1","displayName":"Propagated Version","format":"JSON","metadata":{},"model":{"name":"kubefed","version":"0.10.0","displayName":"kubefed","category":{"name":"","metadata":null},"metadata":null}}

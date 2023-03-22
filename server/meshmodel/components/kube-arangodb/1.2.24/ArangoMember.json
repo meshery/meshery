@@ -1,0 +1,1 @@
+{"kind":"ArangoMember","apiVersion":"v1","displayName":"Arango Member","format":"JSON","metadata":{},"model":{"name":"kube-arangodb","version":"1.2.24","displayName":"kube-arangodb","category":{"name":"","metadata":null},"metadata":null}}

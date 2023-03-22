@@ -1,1 +1,0 @@
-{"kind":"Timeout","apiVersion":"v1alpha1","displayName":"Timeout","format":"JSON","metadata":{},"model":{"name":"kong-mesh","version":"2.0.1","modelDisplayName":"kong-mesh","category":"","subCategory":""},"schema":"{\n \"description\": \"Spec is the specification of the Kuma Timeout resource.\",\n \"title\": \"Timeout\",\n \"x-kubernetes-preserve-unknown-fields\": true\n}"}

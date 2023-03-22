@@ -1,1 +1,1 @@
-{"kind":"TrafficSplit","apiVersion":"v1alpha2","displayName":"Traffic Split","format":"JSON","metadata":{},"model":{"name":"maesh","version":"2.1.2","modelDisplayName":"maesh","category":"","subCategory":""}}
+{"kind":"TrafficSplit","apiVersion":"v1alpha2","displayName":"Traffic Split","format":"JSON","metadata":{},"model":{"name":"maesh","version":"2.1.2","displayName":"maesh","category":{"name":"","metadata":null},"metadata":null}}

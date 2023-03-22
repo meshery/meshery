@@ -1,0 +1,1 @@
+{"kind":"VolumeSnapshotClass","apiVersion":"v1","displayName":"Volume Snapshot Class","format":"JSON","metadata":{},"model":{"name":"snapshot-validation-webhook","version":"1.7.1","displayName":"snapshot-validation-webhook","category":{"name":"","metadata":null},"metadata":null}}
