@@ -1,0 +1,1 @@
+{"kind":"Kiali","apiVersion":"v1alpha1","displayName":"Kiali","format":"JSON","metadata":{},"model":{"name":"kiali-operator","version":"1.65.0","displayName":"kiali-operator","category":{"name":"","metadata":null},"metadata":null}}

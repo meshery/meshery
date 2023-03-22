@@ -1,1 +1,0 @@
-{"kind":"CollectorSet","apiVersion":"v1alpha1","displayName":"Collector Set","format":"JSON","metadata":{},"model":{"name":"collectorset-controller","version":"4.0.1","modelDisplayName":"collectorset-controller","category":"","subCategory":""}}

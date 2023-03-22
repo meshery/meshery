@@ -1,1 +1,0 @@
-{"kind":"ClusterScanner","apiVersion":"v1","displayName":"Cluster Scanner","format":"JSON","metadata":{},"model":{"name":"devopstales","version":"2.5.0","modelDisplayName":"devopstales","category":"","subCategory":""},"schema":"{\n \"title\": \"Cluster Scanner\",\n \"type\": \"object\",\n \"x-kubernetes-preserve-unknown-fields\": true\n}"}
