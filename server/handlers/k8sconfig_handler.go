@@ -361,9 +361,6 @@ func RegisterK8sMeshModelComponents(ctx context.Context, config []byte, ctxID st
 	}
 	count := 0
 	for _, c := range man {
-		c.Model.Category = meshmodelcore.Category{
-			Name: "Orchestration & Management",
-		}
 		writeK8sMetadata(&c, reg)
 		err = reg.RegisterEntity(meshmodel.Host{
 			Hostname:  "kubernetes",
@@ -403,6 +400,11 @@ func writeK8sMetadata(comp *meshmodelcore.ComponentDefinition, reg *meshmodel.Re
 			return
 		}
 		mergeMaps(comp.Metadata, existingComp.Metadata)
+		if comp.Model.Metadata == nil {
+			comp.Model.Metadata = make(map[string]interface{})
+		}
+		mergeMaps(comp.Model.Metadata, existingComp.Model.Metadata)
+		comp.Model.Category = existingComp.Model.Category
 	}
 }
 func mergeMaps(mergeInto, toMerge map[string]interface{}) {
