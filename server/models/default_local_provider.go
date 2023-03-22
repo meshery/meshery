@@ -1075,10 +1075,7 @@ func (l *DefaultLocalProvider) Cleanup() error {
 	if err := l.MesheryK8sContextPersister.DB.Migrator().DropTable(&MesheryApplication{}); err != nil {
 		return err
 	}
-	if err := l.MesheryK8sContextPersister.DB.Migrator().DropTable(&MesheryFilter{}); err != nil {
-		return err
-	}
-	return nil
+	return l.MesheryK8sContextPersister.DB.Migrator().DropTable(&MesheryFilter{})
 }
 
 // githubRepoPatternScan & githubRepoFilterScan takes in github repo owner, repo name, path from where the file/files are needed
