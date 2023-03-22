@@ -41,7 +41,7 @@ func (h *Handler) UserTestPreferenceHandler(w http.ResponseWriter, req *http.Req
 // 	200:
 
 // UserTestPreferenceStore is used for persisting load test preferences
-func (h *Handler) UserTestPreferenceStore(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+func (h *Handler) UserTestPreferenceStore(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	body, err := io.ReadAll(req.Body)
 	if err != nil {
 		// logrus.Error(err)
