@@ -22,7 +22,7 @@ type ExtensionVersion struct {
 	Version string `json:"version,omitempty"`
 }
 
-func (h *Handler) ExtensionsEndpointHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+func (h *Handler) ExtensionsEndpointHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, _ models.Provider) {
 	mx.Lock()
 	val, ok := extendedEndpoints[req.URL.Path]
 	mx.Unlock()
