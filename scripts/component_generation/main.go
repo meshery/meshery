@@ -139,7 +139,6 @@ func main() {
 			f.Write([]byte(entry))
 		}
 	}()
-<<<<<<< HEAD
 	srv := NewSheetSRV()
 	// Convert sheet ID to sheet name.
 	response1, err := srv.Spreadsheets.Get(spreadsheetID).Fields("sheets(properties(sheetId,title))").Do()
@@ -200,10 +199,6 @@ func main() {
 
 	for i := 0; i <= 10; i++ {
 		StartPipeline(inputChan, csvChan, &compsWriter, spreadsheetChan)
-=======
-	for i := 0; i <= 10; i++ {
-		StartPipeline(inputChan, csvChan, &compsWriter)
->>>>>>> upstream/master
 	}
 	inputChan <- pkgs[:10]
 	for len(pkgs) != 0 {
@@ -232,14 +227,10 @@ func main() {
 	wg.Wait()
 }
 
-<<<<<<< HEAD
 func StartPipeline(in chan []artifacthub.AhPackage, csv chan string, writer *Writer, spreadsheet chan struct {
 	comps []v1alpha1.ComponentDefinition
 	model string
 }) error {
-=======
-func StartPipeline(in chan []artifacthub.AhPackage, csv chan string, writer *Writer) error {
->>>>>>> upstream/master
 	pkgsChan := make(chan []artifacthub.AhPackage)
 	compsChan := make(chan struct {
 		comps []v1alpha1.ComponentDefinition
@@ -275,22 +266,14 @@ func StartPipeline(in chan []artifacthub.AhPackage, csv chan string, writer *Wri
 					fmt.Println(err)
 					continue
 				}
-<<<<<<< HEAD
 				compsCSV <- struct {
-=======
-				compsChan <- struct {
->>>>>>> upstream/master
 					comps []v1alpha1.ComponentDefinition
 					model string
 				}{
 					comps: comps,
 					model: ap.Name,
 				}
-<<<<<<< HEAD
 				spreadsheet <- struct {
-=======
-				compsCSV <- struct {
->>>>>>> upstream/master
 					comps []v1alpha1.ComponentDefinition
 					model string
 				}{
@@ -503,57 +486,68 @@ func Spreadsheet(srv *sheets.Service, sheetName string, spreadsheet chan struct 
 	comps []v1alpha1.ComponentDefinition
 	model string
 }, am map[string]bool, acpm map[string]map[string]bool) {
+	fmt.Println("will not create models for: ", am)
 	start := time.Now()
 	rangeString := sheetName + "!A4:AB4"
+	// Get the value of the specified cell.
+	resp, err := srv.Spreadsheets.Values.Get(spreadsheetID, rangeString).Do()
+	if err != nil {
+		fmt.Println("Unable to retrieve data from sheet: ", err)
+		return
+	}
+	batchSize := 100
+	values := make([][]interface{}, 0)
 	for entry := range spreadsheet {
 		if len(entry.comps) == 0 {
 			continue
 		}
-		values := [][]interface{}{}
 		for _, comp := range entry.comps {
 			if acpm[entry.model][comp.Kind] {
 				fmt.Println("[Debug][Spreadsheet] Skipping spreadsheet updation for ", entry.model, comp.Kind)
 				continue
 			}
-			// Get the value of the specified cell.
-			resp, err := srv.Spreadsheets.Values.Get(spreadsheetID, rangeString).Do()
-			if err != nil {
-				fmt.Println("Unable to retrieve data from sheet: ", err)
-				return
-			}
-			newValues := resp.Values[0]
+			newValues := make([]interface{}, len(resp.Values[0]))
+			copy(newValues, resp.Values[0])
 			newValues[6] = comp.Kind
 			newValues[1] = entry.model
 			newValues[0] = entry.model
 			values = append(values, newValues)
-			time.Sleep(1 * time.Second) //To keep rps under 1rps
+			acpm[entry.model][comp.Kind] = true
+			batchSize--
 		}
 		if am[entry.model] {
 			fmt.Println("[Debug][Spreadsheet] Skipping spreadsheet updation for ", entry.model)
 			continue
 		}
-		// Get the value of the specified cell.
-		resp, err := srv.Spreadsheets.Values.Get(spreadsheetID, rangeString).Do()
-		if err != nil {
-			fmt.Println("Unable to retrieve data from sheet: ", err)
-			return
-		}
-		newValues := resp.Values[0]
+		newValues := make([]interface{}, len(resp.Values[0]))
+		copy(newValues, resp.Values[0])
 		newValues[1] = entry.model
 		newValues[0] = entry.model
 		newValues[4] = len(entry.comps)
 		values = append(values, newValues)
+		am[entry.model] = true
+		batchSize--
+		if batchSize <= 0 {
+			row := &sheets.ValueRange{
+				Values: values,
+			}
+			response2, err := srv.Spreadsheets.Values.Append(spreadsheetID, sheetName, row).ValueInputOption("USER_ENTERED").InsertDataOption("INSERT_ROWS").Context(context.Background()).Do()
+			values = make([][]interface{}, 0)
+			batchSize = 100
+			if err != nil || response2.HTTPStatusCode != 200 {
+				fmt.Println(err)
+				continue
+			}
+		}
+	}
+	if len(values) != 0 {
 		row := &sheets.ValueRange{
 			Values: values,
 		}
-		// // srv.Spreadsheets.Values.Get(spreadsheetID, sheetName)
-		// // srv.Spreadsheets.Values.Update()
 		response2, err := srv.Spreadsheets.Values.Append(spreadsheetID, sheetName, row).ValueInputOption("USER_ENTERED").InsertDataOption("INSERT_ROWS").Context(context.Background()).Do()
 		if err != nil || response2.HTTPStatusCode != 200 {
 			fmt.Println(err)
-			continue
 		}
-		time.Sleep(1 * time.Second) //To keep rps under 1rps
 	}
 	elapsed := time.Now().Sub(start)
 	fmt.Printf("Time taken by spreadsheet updater (including the time it required to generate components): %f", elapsed.Minutes())
