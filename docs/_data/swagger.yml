@@ -768,7 +768,7 @@ paths:
             responses:
                 "200":
                     description: |-
-Relationships define the genealogy between one or more Components interconnected Components. Just as in familial relationships, MeshModel Relationships are represented in a variety of forms very much resembling familiar ancestral lineage, including hierarchical relationships such as direct parent and child relationship as well as any number of layers of indirect grandparent and grandchild relationships. Peer relationships like that of siblings take on different types such as network and dependency.  Each type of Relationship has metadata, selectors and some optional parameters. 
+                        Relationships define the genealogy between one or more Components interconnected Components. Just as in familial relationships, MeshModel Relationships are represented in a variety of forms very much resembling familiar ancestral lineage, including hierarchical relationships such as direct parent and child relationship as well as any number of layers of indirect grandparent and grandchild relationships. Peer relationships like that of siblings take on different types such as network and dependency.  Each type of Relationship has metadata, selectors and some optional parameters. 
                     schema:
                         type: object
                         additionalProperties: false
@@ -862,7 +862,7 @@ Relationships define the genealogy between one or more Components interconnected
             description: Fetches and returns the schedule with the given id
             tags:
                 - SchedulesAPI
-            summary: Handle GET reqeuest for Schedules
+            summary: Handle GET request for Schedules
             operationId: idGetSingleSchedule
             parameters:
                 - x-go-name: ID
@@ -876,7 +876,7 @@ Relationships define the genealogy between one or more Components interconnected
                 "200":
                     description: Returns a single schedules
         delete:
-            summary: Handle DELETE reqeuest for Schedules
+            summary: Handle DELETE request for Schedules
             operationId: idDeleteSchedules
             parameters:
                 - required: true
@@ -1031,7 +1031,7 @@ Relationships define the genealogy between one or more Components interconnected
                             type: string
                         metadata: {}
                     description: |-
-Relationships define the genealogy between one or more Components interconnected Components. Just as in familial relationships, MeshModel Relationships are represented in a variety of forms very much resembling familiar ancestral lineage, including hierarchical relationships such as direct parent and child relationship as well as any number of layers of indirect grandparent and grandchild relationships. Peer relationships like that of siblings take on different types such as network and dependency.  Each type of Relationship has metadata, selectors and some optional parameters. 
+                        Relationships define the genealogy between one or more Components interconnected Components. Just as in familial relationships, MeshModel Relationships are represented in a variety of forms very much resembling familiar ancestral lineage, including hierarchical relationships such as direct parent and child relationship as well as any number of layers of indirect grandparent and grandchild relationships. Peer relationships like that of siblings take on different types such as network and dependency.  Each type of Relationship has metadata, selectors and some optional parameters. 
                     schema:
                         type: object
                         additionalProperties: false
@@ -1135,7 +1135,7 @@ Relationships define the genealogy between one or more Components interconnected
             description: Save schedule using the current provider's persistence mechanism
             tags:
                 - SchedulesAPI
-            summary: Handle POST reqeuest for Schedules
+            summary: Handle POST request for Schedules
             operationId: idPostSchedules
             responses:
                 "200":
@@ -1144,7 +1144,7 @@ Relationships define the genealogy between one or more Components interconnected
             description: Returns the list of all the schedules saved by the current user
             tags:
                 - SchedulesAPI
-            summary: Handle GET reqeuest for Schedules
+            summary: Handle GET request for Schedules
             operationId: idGetSchedules
             responses:
                 "200":
@@ -1227,21 +1227,21 @@ Relationships define the genealogy between one or more Components interconnected
         get:
             responses:
                 "200":
-                    description: Returns User Load Test Preferencee
+                    description: Returns User Load Test Preferences
             description: Returns User Load Test Preferences
             tags:
                 - UserAPI
-            summary: Handle GET for User Load Test Preferences
+            summary: Handle GET request for User Load Test Preferences
             operationId: idGetUserTestPrefs
         post:
             operationId: idPostUserTestPrefs
             responses:
                 "200":
-                    description: Returns User Load Test Preferencee
+                    description: Returns User Load Test Preferences
             description: Updates User Load Test Preferences
             tags:
                 - UserAPI
-            summary: Handle GET for User Load Test Preferences
+            summary: Handle GET request for User Load Test Preferences
     /api/user/prefs/perf:
         get:
             responses:
@@ -1301,7 +1301,7 @@ Relationships define the genealogy between one or more Components interconnected
             operationId: idSystemSync
             responses:
                 "200":
-                    description: Returns User Load Test Preferencee
+                    description: Returns User Load Test Preferences
             description: Used to send session data to the UI for initial sync
             tags:
                 - SystemAPI
@@ -1610,7 +1610,7 @@ responses:
             subType:
                 type: string
         description: |-
-Relationships define the genealogy between one or more Components interconnected Components. Just as in familial relationships, MeshModel Relationships are represented in a variety of forms very much resembling familiar ancestral lineage, including hierarchical relationships such as direct parent and child relationship as well as any number of layers of indirect grandparent and grandchild relationships. Peer relationships like that of siblings take on different types such as network and dependency.  Each type of Relationship has metadata, selectors and some optional parameters. 
+            Relationships define the genealogy between one or more Components interconnected Components. Just as in familial relationships, MeshModel Relationships are represented in a variety of forms very much resembling familiar ancestral lineage, including hierarchical relationships such as direct parent and child relationship as well as any number of layers of indirect grandparent and grandchild relationships. Peer relationships like that of siblings take on different types such as network and dependency.  Each type of Relationship has metadata, selectors and some optional parameters. 
     noContentWrapper:
         description: ""
     perfSingleResultRespWrapper:
@@ -1638,7 +1638,7 @@ Relationships define the genealogy between one or more Components interconnected
             type: object
             additionalProperties: false
     userLoadTestPrefsRespWrapper:
-        description: Returns User Load Test Preferencee
+        description: Returns User Load Test Preferences
     ComponentDefinition:
         schema:
             type: object
