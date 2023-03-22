@@ -58,6 +58,11 @@ const useStyles = makeStyles((theme) => ({
   },
   btn : {
     marginBottom : theme.spacing(2),
+  },
+  icon : {
+    width : theme.spacing(2.5),
+    marginRight : theme.spacing(0.5),
+    alignSelf : "flex-start"
   }
 }))
 

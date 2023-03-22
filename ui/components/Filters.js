@@ -165,7 +165,7 @@ function resetSelectedFilter() {
 
 function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, classes, selectedK8sContexts, catalogVisibility, toggleCatalogContent }) {
   const [page, setPage] = useState(0);
-  const [search] = useState("");
+  const [search,setSearch] = useState("");
   const [sortOrder] = useState("");
   const [count, setCount] = useState(0);
   const modalRef = useRef(null);
@@ -244,6 +244,10 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
   useEffect(() => {
     fetchFilters(page,pageSize,search,sortOrder)
   }, [page, pageSize, search, sortOrder]);
+
+  useEffect(() => {
+    if (viewType==='grid')setSearch("")
+  },[viewType])
 
   const handleCatalogPreference = (catalogPref) => {
     let body = Object.assign({}, extensionPreferences)
@@ -841,7 +845,10 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
           }
           searchTimeout.current = setTimeout(() => {
             if (search !== tableState.searchText) {
-              fetchFilters(page, pageSize, search, sortOrder);
+              fetchFilters(page, pageSize, tableState.searchText !== null
+                ? tableState.searchText
+                : "", sortOrder);
+              setSearch(tableState.searchText)
             }
           }, 500);
           break;

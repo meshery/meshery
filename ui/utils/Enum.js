@@ -33,3 +33,5 @@ export const EVENT_TYPES = {
 export const EXTENSIONS = {
   MESHMAP : "meshmap"
 }
+
+export const MesheryPatternsCatalog = "meshery-patterns-catalog"

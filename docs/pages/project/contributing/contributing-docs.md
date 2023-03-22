@@ -112,7 +112,7 @@ sudo apt-get install autoconf bison build-essential libssl-dev libyaml-dev libre
 
 - To list all the versions that can be installed
 
-{% capture code_content %}rbenv install --list-all{% endcapture %}
+{% capture code_content %}rbenv install --list{% endcapture %}
 {% include code.html code=code_content %}
 
 - Set which Ruby version you want to use
@@ -131,7 +131,7 @@ sudo apt-get install autoconf bison build-essential libssl-dev libyaml-dev libre
 
 ### Get the code
 
-- Fork and then clone the [Meshery repository](https://github.com/layer5io/meshery)
+- Fork and then clone the [Meshery repository](https://github.com/meshery/meshery)
 {% capture code_content %}git clone https://github.com/YOUR-USERNAME/meshery{% endcapture %}
 {% include code.html code=code_content %}
 - Change to the docs directory

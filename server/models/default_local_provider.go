@@ -131,6 +131,10 @@ func (l *DefaultLocalProvider) GetUserDetails(req *http.Request) (*User, error) 
 	return l.fetchUserDetails(), nil
 }
 
+func (l *DefaultLocalProvider) GetUserByID(req *http.Request, userID string) ([]byte, error) {
+	return nil, nil
+}
+
 // GetSession - returns the session
 func (l *DefaultLocalProvider) GetSession(req *http.Request) error {
 	return nil
@@ -572,7 +576,7 @@ func (l *DefaultLocalProvider) GetCatalogMesheryPatterns(tokenString string, sea
 // PublishCatalogPattern publishes pattern to catalog
 // Not supported by local provider
 func (l *DefaultLocalProvider) PublishCatalogPattern(req *http.Request, publishPatternRequest *MesheryCatalogPatternRequestBody) ([]byte, error) {
-	return []byte(""), nil
+	return []byte(""), ErrLocalProviderSupport
 }
 
 // GetMesheryPattern gets pattern for the given patternID
