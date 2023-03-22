@@ -296,7 +296,7 @@ func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request, prefO
 	opName := req.PostFormValue("query")
 	customBody := req.PostFormValue("customBody")
 	namespace := req.PostFormValue("namespace")
-	delete := req.PostFormValue("deleteOp")
+	deleteOp := req.PostFormValue("deleteOp")
 	if namespace == "" {
 		namespace = "default"
 	}
@@ -335,7 +335,7 @@ func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request, prefO
 		Username:    user.UserID,
 		Namespace:   namespace,
 		CustomBody:  customBody,
-		DeleteOp:    (delete != ""),
+		DeleteOp:    (deleteOp != ""),
 		KubeConfigs: configs,
 	})
 	if err != nil {
