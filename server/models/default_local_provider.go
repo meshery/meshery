@@ -529,7 +529,7 @@ func (l *DefaultLocalProvider) GetMesheryPatternResources(
 	)
 }
 
-func (l *DefaultLocalProvider) DeleteMesheryPatternResource(token, resourceID string) error {
+func (l *DefaultLocalProvider) DeleteMesheryPatternResource(_, resourceID string) error {
 	id := uuid.FromStringOrNil(resourceID)
 	return l.MesheryPatternResourcePersister.DeletePatternResource(id)
 }
@@ -1268,7 +1268,7 @@ func getSeededComponents(comp string, log logger.Handler) ([]string, []string, e
 		}
 	}
 	if !viper.GetBool("SKIP_DOWNLOAD_CONTENT") {
-		err = downloadContent(comp, wd, log)
+		err = downloadContent(comp, wd)
 		if err != nil {
 			log.Error(ErrDownloadingSeededComponents(err, comp))
 		}
@@ -1302,7 +1302,7 @@ func getSeededComponents(comp string, log logger.Handler) ([]string, []string, e
 }
 
 // Below helper functions are for downloading seed content and can be re used in future as the way of extracting them changes, like endpoint changes or so. That is why, they are encapsulated into general functions
-func downloadContent(comp string, downloadpath string, log logger.Handler) error {
+func downloadContent(comp string, downloadpath string) error {
 	switch comp {
 	case "Pattern":
 		walk := walker.NewGithub()
