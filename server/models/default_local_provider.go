@@ -696,7 +696,7 @@ func (l *DefaultLocalProvider) GetMesheryFilter(_ *http.Request, filterID string
 }
 
 // DeleteMesheryFilter deletes a meshery filter with the given id
-func (l *DefaultLocalProvider) DeleteMesheryFilter(req *http.Request, filterID string) ([]byte, error) {
+func (l *DefaultLocalProvider) DeleteMesheryFilter(_ *http.Request, filterID string) ([]byte, error) {
 	id := uuid.FromStringOrNil(filterID)
 	return l.MesheryFilterPersister.DeleteMesheryFilter(id)
 }
@@ -796,23 +796,23 @@ func (l *DefaultLocalProvider) GetMesheryApplications(_, page, pageSize, search,
 }
 
 // GetMesheryApplication gets application for the given applicationID
-func (l *DefaultLocalProvider) GetMesheryApplication(req *http.Request, applicationID string) ([]byte, error) {
+func (l *DefaultLocalProvider) GetMesheryApplication(_ *http.Request, applicationID string) ([]byte, error) {
 	id := uuid.FromStringOrNil(applicationID)
 	return l.MesheryApplicationPersister.GetMesheryApplication(id)
 }
 
 // DeleteMesheryApplication deletes a meshery application with the given id
-func (l *DefaultLocalProvider) DeleteMesheryApplication(req *http.Request, applicationID string) ([]byte, error) {
+func (l *DefaultLocalProvider) DeleteMesheryApplication(_ *http.Request, applicationID string) ([]byte, error) {
 	id := uuid.FromStringOrNil(applicationID)
 	return l.MesheryApplicationPersister.DeleteMesheryApplication(id)
 }
 
-func (l *DefaultLocalProvider) ShareDesign(req *http.Request) (int, error) {
+func (l *DefaultLocalProvider) ShareDesign(_ *http.Request) (int, error) {
 	return http.StatusForbidden, ErrLocalProviderSupport
 }
 
 // SavePerformanceProfile saves given performance profile with the provider
-func (l *DefaultLocalProvider) SavePerformanceProfile(tokenString string, performanceProfile *PerformanceProfile) ([]byte, error) {
+func (l *DefaultLocalProvider) SavePerformanceProfile(_ string, performanceProfile *PerformanceProfile) ([]byte, error) {
 	var uid uuid.UUID
 	if performanceProfile.ID != nil {
 		uid = *performanceProfile.ID
@@ -834,7 +834,7 @@ func (l *DefaultLocalProvider) SavePerformanceProfile(tokenString string, perfor
 }
 
 // GetPerformanceProfiles gives the performance profiles stored with the provider
-func (l *DefaultLocalProvider) GetPerformanceProfiles(tokenString string, page, pageSize, search, order string) ([]byte, error) {
+func (l *DefaultLocalProvider) GetPerformanceProfiles(_, page, pageSize, _, _ string) ([]byte, error) {
 	if page == "" {
 		page = "0"
 	}
@@ -856,7 +856,7 @@ func (l *DefaultLocalProvider) GetPerformanceProfiles(tokenString string, page, 
 }
 
 // GetPerformanceProfile gets performance profile for the given performance profileID
-func (l *DefaultLocalProvider) GetPerformanceProfile(req *http.Request, performanceProfileID string) ([]byte, error) {
+func (l *DefaultLocalProvider) GetPerformanceProfile(_ *http.Request, performanceProfileID string) ([]byte, error) {
 	uid, err := uuid.FromString(performanceProfileID)
 	if err != nil {
 		return nil, ErrPerfID(err)
@@ -876,7 +876,7 @@ func (l *DefaultLocalProvider) GetPerformanceProfile(req *http.Request, performa
 }
 
 // DeletePerformanceProfile deletes a meshery performance profile with the given id
-func (l *DefaultLocalProvider) DeletePerformanceProfile(req *http.Request, performanceProfileID string) ([]byte, error) {
+func (l *DefaultLocalProvider) DeletePerformanceProfile(_ *http.Request, performanceProfileID string) ([]byte, error) {
 	uid, err := uuid.FromString(performanceProfileID)
 	if err != nil {
 		return nil, ErrPerfID(err)
@@ -886,22 +886,22 @@ func (l *DefaultLocalProvider) DeletePerformanceProfile(req *http.Request, perfo
 }
 
 // SaveSchedule saves a schedule
-func (l *DefaultLocalProvider) SaveSchedule(tokenString string, schedule *Schedule) ([]byte, error) {
+func (l *DefaultLocalProvider) SaveSchedule(_ string, _ *Schedule) ([]byte, error) {
 	return []byte{}, ErrLocalProviderSupport
 }
 
 // GetSchedules gets the schedules stored by the current user
-func (l *DefaultLocalProvider) GetSchedules(req *http.Request, page, pageSize, order string) ([]byte, error) {
+func (l *DefaultLocalProvider) GetSchedules(_ *http.Request, _, _, _ string) ([]byte, error) {
 	return []byte{}, ErrLocalProviderSupport
 }
 
 // GetSchedule gets a schedule with the given id
-func (l *DefaultLocalProvider) GetSchedule(req *http.Request, scheduleID string) ([]byte, error) {
+func (l *DefaultLocalProvider) GetSchedule(_ *http.Request, _ string) ([]byte, error) {
 	return []byte{}, ErrLocalProviderSupport
 }
 
 // DeleteSchedule deletes a schedule with the given id
-func (l *DefaultLocalProvider) DeleteSchedule(req *http.Request, scheduleID string) ([]byte, error) {
+func (l *DefaultLocalProvider) DeleteSchedule(_ *http.Request, _ string) ([]byte, error) {
 	return []byte{}, ErrLocalProviderSupport
 }
 
@@ -915,11 +915,11 @@ func (l *DefaultLocalProvider) RecordMeshSyncData(obj model.Object) error {
 	return nil
 }
 
-func (l *DefaultLocalProvider) ExtensionProxy(req *http.Request) (*ExtensionProxyResponse, error) {
+func (l *DefaultLocalProvider) ExtensionProxy(_ *http.Request) (*ExtensionProxyResponse, error) {
 	return nil, ErrLocalProviderSupport
 }
 
-func (l *DefaultLocalProvider) SaveConnection(req *http.Request, conn *Connection, token string, skipTokenCheck bool) error {
+func (l *DefaultLocalProvider) SaveConnection(_ *http.Request, _ *Connection, _ string, _ bool) error {
 	return ErrLocalProviderSupport
 }
 
