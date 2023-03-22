@@ -20,8 +20,8 @@ import (
 func (h *Handler) SavePerformanceProfileHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
-	prefObj *models.Preference,
-	user *models.User,
+	_ *models.Preference,
+	_ *models.User,
 	provider models.Provider,
 ) {
 	defer func() {
@@ -76,8 +76,8 @@ func (h *Handler) SavePerformanceProfileHandler(
 func (h *Handler) GetPerformanceProfilesHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
-	prefObj *models.Preference,
-	user *models.User,
+	_ *models.Preference,
+	_ *models.User,
 	provider models.Provider,
 ) {
 	q := r.URL.Query()
