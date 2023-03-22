@@ -1,1 +1,0 @@
-{"kind":"RbacAssessmentReport","apiVersion":"v1alpha1","displayName":"Rbac Assessment Report","format":"JSON","metadata":{},"model":{"name":"trivy-operator","version":"0.3.2","modelDisplayName":"trivy-operator","category":"","subCategory":""}}

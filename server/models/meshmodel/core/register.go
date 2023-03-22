@@ -68,8 +68,9 @@ func RegisterMeshmodelComponentsForCRDS(reg meshmodel.RegistryManager, k8sYaml [
 				Name:        "kubernetes",
 				Version:     version,
 				DisplayName: "Kubernetes",
-				Category:    "Orchestration & Management",
-				SubCategory: "Scheduling & Orchestration",
+				Category: v1alpha1.Category{
+					Name: "Orchestration & Management",
+				},
 			},
 		})
 	}
@@ -137,8 +138,9 @@ func GetK8sMeshModelComponents(kubeconfig []byte) ([]v1alpha1.ComponentDefinitio
 				Version:     k8version.String(),
 				Name:        "kubernetes",
 				DisplayName: "Kubernetes",
-				Category:    "Orchestration & Management",
-				SubCategory: "Scheduling & Orchestration",
+				Category: v1alpha1.Category{
+					Name: "Orchestration & Management",
+				},
 			},
 		}
 		components = append(components, c)

@@ -1,0 +1,1 @@
+{"kind":"ClusterRbacAssessmentReport","apiVersion":"v1alpha1","displayName":"Cluster Rbac Assessment Report","format":"JSON","metadata":{},"model":{"name":"trivy-operator","version":"0.3.5","displayName":"trivy-operator","category":{"name":"","metadata":null},"metadata":null}}

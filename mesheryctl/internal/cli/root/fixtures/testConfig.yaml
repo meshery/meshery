@@ -35,5 +35,5 @@ contexts:
         version: latest
 current-context: local2
 tokens:
-    - name: Default
+    - name: default
       location: auth.json
