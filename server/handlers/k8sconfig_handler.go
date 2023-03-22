@@ -24,7 +24,6 @@ import (
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshkit/models/meshmodel"
-	meshmodelcore "github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
 	"github.com/layer5io/meshkit/utils"
 	"github.com/layer5io/meshkit/utils/events"
@@ -383,8 +382,8 @@ const k8sMeshModelPath = "../meshmodel/components/kubernetes/model_template.json
 
 var k8sMeshModelMetadata = make(map[string]interface{})
 
-func writeK8sMetadata(comp *meshmodelcore.ComponentDefinition, reg *meshmodel.RegistryManager) {
-	ent := reg.GetEntities(&meshmodelcore.ComponentFilter{
+func writeK8sMetadata(comp *meshmodelv1alpha1.ComponentDefinition, reg *meshmodel.RegistryManager) {
+	ent := reg.GetEntities(&meshmodelv1alpha1.ComponentFilter{
 		Name:       comp.Kind,
 		APIVersion: comp.APIVersion,
 		ModelName:  comp.Model.Name,
@@ -394,7 +393,7 @@ func writeK8sMetadata(comp *meshmodelcore.ComponentDefinition, reg *meshmodel.Re
 		mergeMaps(comp.Metadata, k8sMeshModelMetadata)
 		mutil.WriteSVGsOnFileSystem(comp)
 	} else {
-		existingComp, ok := ent[0].(meshmodelcore.ComponentDefinition)
+		existingComp, ok := ent[0].(meshmodelv1alpha1.ComponentDefinition)
 		if !ok {
 			mergeMaps(comp.Metadata, k8sMeshModelMetadata)
 			return
