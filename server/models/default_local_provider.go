@@ -230,7 +230,7 @@ func (l *DefaultLocalProvider) LoadAllK8sContext(token string) ([]*K8sContext, e
 // }
 
 // FetchResults - fetches results from provider backend
-func (l *DefaultLocalProvider) FetchResults(_, page, pageSize, search, order, profileID string) ([]byte, error) {
+func (l *DefaultLocalProvider) FetchResults(_, page, pageSize, _, _, profileID string) ([]byte, error) {
 	pg, err := strconv.ParseUint(page, 10, 32)
 	if err != nil {
 		return nil, ErrPageNumber(err)
@@ -243,7 +243,7 @@ func (l *DefaultLocalProvider) FetchResults(_, page, pageSize, search, order, pr
 }
 
 // FetchResults - fetches results from provider backend
-func (l *DefaultLocalProvider) FetchAllResults(_, page, pageSize, search, order, from, to string) ([]byte, error) {
+func (l *DefaultLocalProvider) FetchAllResults(_, page, pageSize, _, _, _, _ string) ([]byte, error) {
 	if page == "" {
 		page = "0"
 	}
@@ -310,7 +310,7 @@ func (l *DefaultLocalProvider) PublishResults(req *http.Request, result *Meshery
 }
 
 // FetchSmiResults - fetches results from provider backend
-func (l *DefaultLocalProvider) FetchSmiResults(_ *http.Request, page, pageSize, search, order string) ([]byte, error) {
+func (l *DefaultLocalProvider) FetchSmiResults(_ *http.Request, page, pageSize, _, _ string) ([]byte, error) {
 	pg, err := strconv.ParseUint(page, 10, 32)
 	if err != nil {
 		return nil, ErrPageNumber(err)
@@ -416,7 +416,7 @@ func (l *DefaultLocalProvider) PublishMetrics(_ string, result *MesheryResult) e
 }
 
 // RecordPreferences - records the user preference
-func (l *DefaultLocalProvider) RecordPreferences(req *http.Request, userID string, data *Preference) error {
+func (l *DefaultLocalProvider) RecordPreferences(_ *http.Request, userID string, data *Preference) error {
 	return l.MapPreferencePersister.WriteToPersister(userID, data)
 }
 
@@ -497,7 +497,7 @@ func (l *DefaultLocalProvider) GetMesheryPatternResource(_, resourceID string) (
 }
 
 func (l *DefaultLocalProvider) GetMesheryPatternResources(
-	token,
+	_,
 	page,
 	pageSize,
 	search,
@@ -535,12 +535,12 @@ func (l *DefaultLocalProvider) DeleteMesheryPatternResource(token, resourceID st
 }
 
 // SaveMesheryPattern saves given pattern with the provider
-func (l *DefaultLocalProvider) SaveMesheryPattern(tokenString string, pattern *MesheryPattern) ([]byte, error) {
+func (l *DefaultLocalProvider) SaveMesheryPattern(_ string, pattern *MesheryPattern) ([]byte, error) {
 	return l.MesheryPatternPersister.SaveMesheryPattern(pattern)
 }
 
 // GetMesheryPatterns gives the patterns stored with the provider
-func (l *DefaultLocalProvider) GetMesheryPatterns(tokenString, page, pageSize, search, order string, updatedAfter string) ([]byte, error) {
+func (l *DefaultLocalProvider) GetMesheryPatterns(_, page, pageSize, search, order string, updatedAfter string) ([]byte, error) {
 	if page == "" {
 		page = "0"
 	}
@@ -561,40 +561,40 @@ func (l *DefaultLocalProvider) GetMesheryPatterns(tokenString, page, pageSize, s
 }
 
 // GetCatalogMesheryPatterns gives the catalog patterns stored with the provider
-func (l *DefaultLocalProvider) GetCatalogMesheryPatterns(tokenString string, search, order string) ([]byte, error) {
+func (l *DefaultLocalProvider) GetCatalogMesheryPatterns(_, search, order string) ([]byte, error) {
 	return l.MesheryPatternPersister.GetMesheryCatalogPatterns(search, order)
 }
 
 // PublishCatalogPattern publishes pattern to catalog
 // Not supported by local provider
-func (l *DefaultLocalProvider) PublishCatalogPattern(req *http.Request, publishPatternRequest *MesheryCatalogPatternRequestBody) ([]byte, error) {
+func (l *DefaultLocalProvider) PublishCatalogPattern(_ *http.Request, _ *MesheryCatalogPatternRequestBody) ([]byte, error) {
 	return []byte(""), ErrLocalProviderSupport
 }
 
 // GetMesheryPattern gets pattern for the given patternID
-func (l *DefaultLocalProvider) GetMesheryPattern(req *http.Request, patternID string) ([]byte, error) {
+func (l *DefaultLocalProvider) GetMesheryPattern(_ *http.Request, patternID string) ([]byte, error) {
 	id := uuid.FromStringOrNil(patternID)
 	return l.MesheryPatternPersister.GetMesheryPattern(id)
 }
 
 // DeleteMesheryPattern deletes a meshery pattern with the given id
-func (l *DefaultLocalProvider) DeleteMesheryPattern(req *http.Request, patternID string) ([]byte, error) {
+func (l *DefaultLocalProvider) DeleteMesheryPattern(_ *http.Request, patternID string) ([]byte, error) {
 	id := uuid.FromStringOrNil(patternID)
 	return l.MesheryPatternPersister.DeleteMesheryPattern(id)
 }
 
 // DeleteMesheryPattern deletes a meshery pattern with the given id
-func (l *DefaultLocalProvider) DeleteMesheryPatterns(req *http.Request, patterns MesheryPatternDeleteRequestBody) ([]byte, error) {
+func (l *DefaultLocalProvider) DeleteMesheryPatterns(_ *http.Request, patterns MesheryPatternDeleteRequestBody) ([]byte, error) {
 	return l.MesheryPatternPersister.DeleteMesheryPatterns(patterns)
 }
 
 // CloneMesheryPattern clones a meshery pattern with the given id
-func (l *DefaultLocalProvider) CloneMesheryPattern(req *http.Request, patternID string, clonePatternRequest *MesheryClonePatternRequestBody) ([]byte, error) {
+func (l *DefaultLocalProvider) CloneMesheryPattern(_ *http.Request, patternID string, clonePatternRequest *MesheryClonePatternRequestBody) ([]byte, error) {
 	return l.MesheryPatternPersister.CloneMesheryPattern(patternID, clonePatternRequest)
 }
 
 // RemotePatternFile takes in the
-func (l *DefaultLocalProvider) RemotePatternFile(req *http.Request, resourceURL, path string, save bool) ([]byte, error) {
+func (l *DefaultLocalProvider) RemotePatternFile(_ *http.Request, resourceURL, path string, save bool) ([]byte, error) {
 	parsedURL, err := url.Parse(resourceURL)
 	if err != nil {
 		return nil, err
@@ -646,12 +646,12 @@ func (l *DefaultLocalProvider) RemotePatternFile(req *http.Request, resourceURL,
 }
 
 // SaveMesheryFilter saves given filter with the provider
-func (l *DefaultLocalProvider) SaveMesheryFilter(tokenString string, filter *MesheryFilter) ([]byte, error) {
+func (l *DefaultLocalProvider) SaveMesheryFilter(_ string, filter *MesheryFilter) ([]byte, error) {
 	return l.MesheryFilterPersister.SaveMesheryFilter(filter)
 }
 
 // GetMesheryFilters gives the filters stored with the provider
-func (l *DefaultLocalProvider) GetMesheryFilters(tokenString, page, pageSize, search, order string) ([]byte, error) {
+func (l *DefaultLocalProvider) GetMesheryFilters(_, page, pageSize, search, order string) ([]byte, error) {
 	if page == "" {
 		page = "0"
 	}
@@ -673,24 +673,24 @@ func (l *DefaultLocalProvider) GetMesheryFilters(tokenString, page, pageSize, se
 }
 
 // GetCatalogMesheryFilters gives the catalog filters stored with the provider
-func (l *DefaultLocalProvider) GetCatalogMesheryFilters(tokenString string, search, order string) ([]byte, error) {
+func (l *DefaultLocalProvider) GetCatalogMesheryFilters(_ string, search, order string) ([]byte, error) {
 	return l.MesheryFilterPersister.GetMesheryCatalogFilters(search, order)
 }
 
 // PublishCatalogFilter publishes filter to catalog
 // Not supported by local provider
-func (l *DefaultLocalProvider) PublishCatalogFilter(req *http.Request, publishFilterRequest *MesheryCatalogFilterRequestBody) ([]byte, error) {
+func (l *DefaultLocalProvider) PublishCatalogFilter(_ *http.Request, _ *MesheryCatalogFilterRequestBody) ([]byte, error) {
 	return []byte(""), nil
 }
 
 // GetMesheryFilterFile gets filter for the given filterID without the metadata
-func (l *DefaultLocalProvider) GetMesheryFilterFile(req *http.Request, filterID string) ([]byte, error) {
+func (l *DefaultLocalProvider) GetMesheryFilterFile(_ *http.Request, filterID string) ([]byte, error) {
 	id := uuid.FromStringOrNil(filterID)
 	return l.MesheryFilterPersister.GetMesheryFilterFile(id)
 }
 
 // GetMesheryFilter gets filter for the given filterID
-func (l *DefaultLocalProvider) GetMesheryFilter(req *http.Request, filterID string) ([]byte, error) {
+func (l *DefaultLocalProvider) GetMesheryFilter(_ *http.Request, filterID string) ([]byte, error) {
 	id := uuid.FromStringOrNil(filterID)
 	return l.MesheryFilterPersister.GetMesheryFilter(id)
 }
@@ -702,12 +702,12 @@ func (l *DefaultLocalProvider) DeleteMesheryFilter(req *http.Request, filterID s
 }
 
 // CloneMesheryFilter clones a meshery filter with the given id
-func (l *DefaultLocalProvider) CloneMesheryFilter(req *http.Request, filterID string, cloneFilterRequest *MesheryCloneFilterRequestBody) ([]byte, error) {
+func (l *DefaultLocalProvider) CloneMesheryFilter(_ *http.Request, filterID string, cloneFilterRequest *MesheryCloneFilterRequestBody) ([]byte, error) {
 	return l.MesheryFilterPersister.CloneMesheryFilter(filterID, cloneFilterRequest)
 }
 
 // RemoteFilterFile takes in the
-func (l *DefaultLocalProvider) RemoteFilterFile(req *http.Request, resourceURL, path string, save bool) ([]byte, error) {
+func (l *DefaultLocalProvider) RemoteFilterFile(_ *http.Request, resourceURL, path string, save bool) ([]byte, error) {
 	parsedURL, err := url.Parse(resourceURL)
 	if err != nil {
 		return nil, err
@@ -758,23 +758,23 @@ func (l *DefaultLocalProvider) RemoteFilterFile(req *http.Request, resourceURL, 
 }
 
 // SaveMesheryApplication saves given application with the provider
-func (l *DefaultLocalProvider) SaveMesheryApplication(tokenString string, application *MesheryApplication) ([]byte, error) {
+func (l *DefaultLocalProvider) SaveMesheryApplication(_ string, application *MesheryApplication) ([]byte, error) {
 	return l.MesheryApplicationPersister.SaveMesheryApplication(application)
 }
 
 // SaveApplicationSourceContent nothing needs to be done as application is saved with source content for local provider
-func (l *DefaultLocalProvider) SaveApplicationSourceContent(tokenString string, applicationID string, sourceContent []byte) error {
+func (l *DefaultLocalProvider) SaveApplicationSourceContent(_, _ string, _ []byte) error {
 	return nil
 }
 
 // GetApplicationSourceContent returns application source-content from provider
-func (l *DefaultLocalProvider) GetApplicationSourceContent(req *http.Request, applicationID string) ([]byte, error) {
+func (l *DefaultLocalProvider) GetApplicationSourceContent(_ *http.Request, applicationID string) ([]byte, error) {
 	id := uuid.FromStringOrNil(applicationID)
 	return l.MesheryApplicationPersister.GetMesheryApplicationSource(id)
 }
 
 // GetMesheryApplications gives the applications stored with the provider
-func (l *DefaultLocalProvider) GetMesheryApplications(tokenString, page, pageSize, search, order string, updatedAfter string) ([]byte, error) {
+func (l *DefaultLocalProvider) GetMesheryApplications(_, page, pageSize, search, order string, updatedAfter string) ([]byte, error) {
 	if page == "" {
 		page = "0"
 	}
