@@ -94,7 +94,7 @@ func (l *DefaultLocalProvider) PackageLocation() string {
 }
 
 // GetProviderCapabilities returns all of the provider properties
-func (l *DefaultLocalProvider) GetProviderCapabilities(w http.ResponseWriter, r *http.Request) {
+func (l *DefaultLocalProvider) GetProviderCapabilities(w http.ResponseWriter, _ *http.Request) {
 	encoder := json.NewEncoder(w)
 	if err := encoder.Encode(l.ProviderProperties); err != nil {
 		http.Error(w, "failed to encode provider capabilities", http.StatusInternalServerError)
@@ -102,7 +102,7 @@ func (l *DefaultLocalProvider) GetProviderCapabilities(w http.ResponseWriter, r 
 }
 
 // InitiateLogin - initiates login flow and returns a true to indicate the handler to "return" or false to continue
-func (l *DefaultLocalProvider) InitiateLogin(w http.ResponseWriter, r *http.Request, fromMiddleWare bool) {
+func (l *DefaultLocalProvider) InitiateLogin(_ http.ResponseWriter, _ *http.Request, _ bool) {
 	// l.issueSession(w, r, fromMiddleWare)
 }
 
@@ -127,26 +127,26 @@ func (l *DefaultLocalProvider) fetchUserDetails() *User {
 }
 
 // GetUserDetails - returns the user details
-func (l *DefaultLocalProvider) GetUserDetails(req *http.Request) (*User, error) {
+func (l *DefaultLocalProvider) GetUserDetails(_ *http.Request) (*User, error) {
 	return l.fetchUserDetails(), nil
 }
 
-func (l *DefaultLocalProvider) GetUserByID(req *http.Request, userID string) ([]byte, error) {
+func (l *DefaultLocalProvider) GetUserByID(_ *http.Request, _ string) ([]byte, error) {
 	return nil, nil
 }
 
 // GetSession - returns the session
-func (l *DefaultLocalProvider) GetSession(req *http.Request) error {
+func (l *DefaultLocalProvider) GetSession(_ *http.Request) error {
 	return nil
 }
 
 // GetProviderToken - returns provider token
-func (l *DefaultLocalProvider) GetProviderToken(req *http.Request) (string, error) {
+func (l *DefaultLocalProvider) GetProviderToken(_ *http.Request) (string, error) {
 	return "", nil
 }
 
 // Logout - logout from provider backend
-func (l *DefaultLocalProvider) Logout(w http.ResponseWriter, req *http.Request) error {
+func (l *DefaultLocalProvider) Logout(_ http.ResponseWriter, _ *http.Request) error {
 	return nil
 }
 
@@ -159,7 +159,7 @@ func (l *DefaultLocalProvider) SaveK8sContext(token string, k8sContext K8sContex
 	return l.MesheryK8sContextPersister.SaveMesheryK8sContext(k8sContext)
 }
 
-func (l *DefaultLocalProvider) GetK8sContexts(token, page, pageSize, search, order string) ([]byte, error) {
+func (l *DefaultLocalProvider) GetK8sContexts(_, page, pageSize, search, order string) ([]byte, error) {
 	if page == "" {
 		page = "0"
 	}
@@ -180,11 +180,11 @@ func (l *DefaultLocalProvider) GetK8sContexts(token, page, pageSize, search, ord
 	return l.MesheryK8sContextPersister.GetMesheryK8sContexts(search, order, pg, pgs)
 }
 
-func (l *DefaultLocalProvider) DeleteK8sContext(token, id string) (K8sContext, error) {
+func (l *DefaultLocalProvider) DeleteK8sContext(_, id string) (K8sContext, error) {
 	return l.MesheryK8sContextPersister.DeleteMesheryK8sContext(id)
 }
 
-func (l *DefaultLocalProvider) GetK8sContext(token, id string) (K8sContext, error) {
+func (l *DefaultLocalProvider) GetK8sContext(_, id string) (K8sContext, error) {
 	return l.MesheryK8sContextPersister.GetMesheryK8sContext(id)
 }
 
