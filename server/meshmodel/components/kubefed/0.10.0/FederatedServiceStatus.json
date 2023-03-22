@@ -1,1 +1,5 @@
+<<<<<<< HEAD
 {"kind":"FederatedServiceStatus","apiVersion":"v1alpha1","displayName":"Federated Service Status","format":"JSON","metadata":{},"model":{"name":"kubefed","version":"0.10.0","modelDisplayName":"kubefed","category":"","subCategory":""}}
+=======
+{"kind":"FederatedServiceStatus","apiVersion":"v1alpha1","displayName":"Federated Service Status","format":"JSON","metadata":{},"model":{"name":"kubefed","version":"0.10.0","displayName":"kubefed","category":{"name":"","metadata":null},"metadata":null}}
+>>>>>>> upstream/master

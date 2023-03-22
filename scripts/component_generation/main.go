@@ -139,6 +139,7 @@ func main() {
 			f.Write([]byte(entry))
 		}
 	}()
+<<<<<<< HEAD
 	srv := NewSheetSRV()
 	// Convert sheet ID to sheet name.
 	response1, err := srv.Spreadsheets.Get(spreadsheetID).Fields("sheets(properties(sheetId,title))").Do()
@@ -199,6 +200,10 @@ func main() {
 
 	for i := 0; i <= 10; i++ {
 		StartPipeline(inputChan, csvChan, &compsWriter, spreadsheetChan)
+=======
+	for i := 0; i <= 10; i++ {
+		StartPipeline(inputChan, csvChan, &compsWriter)
+>>>>>>> upstream/master
 	}
 	inputChan <- pkgs[:10]
 	for len(pkgs) != 0 {
@@ -227,10 +232,14 @@ func main() {
 	wg.Wait()
 }
 
+<<<<<<< HEAD
 func StartPipeline(in chan []artifacthub.AhPackage, csv chan string, writer *Writer, spreadsheet chan struct {
 	comps []v1alpha1.ComponentDefinition
 	model string
 }) error {
+=======
+func StartPipeline(in chan []artifacthub.AhPackage, csv chan string, writer *Writer) error {
+>>>>>>> upstream/master
 	pkgsChan := make(chan []artifacthub.AhPackage)
 	compsChan := make(chan struct {
 		comps []v1alpha1.ComponentDefinition
@@ -266,14 +275,22 @@ func StartPipeline(in chan []artifacthub.AhPackage, csv chan string, writer *Wri
 					fmt.Println(err)
 					continue
 				}
+<<<<<<< HEAD
 				compsCSV <- struct {
+=======
+				compsChan <- struct {
+>>>>>>> upstream/master
 					comps []v1alpha1.ComponentDefinition
 					model string
 				}{
 					comps: comps,
 					model: ap.Name,
 				}
+<<<<<<< HEAD
 				spreadsheet <- struct {
+=======
+				compsCSV <- struct {
+>>>>>>> upstream/master
 					comps []v1alpha1.ComponentDefinition
 					model string
 				}{

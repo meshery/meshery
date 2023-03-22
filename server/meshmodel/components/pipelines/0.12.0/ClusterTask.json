@@ -1,1 +1,9 @@
+<<<<<<< HEAD
 {"kind":"ClusterTask","apiVersion":"v1alpha1","displayName":"Cluster Task","format":"JSON","metadata":{},"model":{"name":"pipelines","version":"0.12.0","modelDisplayName":"pipelines","category":"","subCategory":""},"schema":""}
+=======
+<<<<<<< HEAD
+{"kind":"ClusterTask","apiVersion":"v1alpha1","displayName":"Cluster Task","format":"JSON","metadata":{},"model":{"name":"pipelines","version":"0.12.0","displayName":"pipelines","category":{"name":"","metadata":null},"metadata":null}}
+=======
+{"kind":"ClusterTask","apiVersion":"v1alpha1","displayName":"Cluster Task","format":"JSON","metadata":{},"model":{"name":"pipelines","version":"0.12.0","modelDisplayName":"pipelines","category":"","subCategory":""}}
+>>>>>>> upstream/master
+>>>>>>> upstream/master

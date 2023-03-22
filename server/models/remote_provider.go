@@ -1878,6 +1878,9 @@ func (l *RemoteProvider) GetMesheryFilters(tokenString string, page, pageSize, s
 
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
+		if resp == nil {
+			return nil, ErrFetchData(err)
+		}
 		return nil, ErrFetch(err, "Filter Page", resp.StatusCode)
 	}
 	defer func() {

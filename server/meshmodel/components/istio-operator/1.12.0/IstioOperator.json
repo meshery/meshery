@@ -1,1 +1,9 @@
+<<<<<<< HEAD
 {"kind":"IstioOperator","apiVersion":"v1alpha1","displayName":"Istio Operator","format":"JSON","metadata":{},"model":{"name":"istio-operator","version":"1.12.0","modelDisplayName":"istio-operator","category":"","subCategory":""},"schema":""}
+=======
+<<<<<<< HEAD
+{"kind":"IstioOperator","apiVersion":"v1alpha1","displayName":"Istio Operator","format":"JSON","metadata":{},"model":{"name":"istio-operator","version":"1.12.0","displayName":"istio-operator","category":{"name":"","metadata":null},"metadata":null}}
+=======
+{"kind":"IstioOperator","apiVersion":"v1alpha1","displayName":"Istio Operator","format":"JSON","metadata":{},"model":{"name":"istio-operator","version":"1.12.0","modelDisplayName":"istio-operator","category":"","subCategory":""}}
+>>>>>>> upstream/master
+>>>>>>> upstream/master

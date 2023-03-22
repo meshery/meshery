@@ -1,1 +1,5 @@
+<<<<<<< HEAD
 {"kind":"EventBus","apiVersion":"v1alpha1","displayName":"Event Bus","format":"JSON","metadata":{},"model":{"name":"argo-workflows","version":"5.0.1","modelDisplayName":"argo-workflows","category":"","subCategory":""},"schema":"{\n \"title\": \"Event Bus\",\n \"type\": \"object\",\n \"x-kubernetes-preserve-unknown-fields\": true\n}"}
+=======
+{"kind":"EventBus","apiVersion":"v1alpha1","displayName":"Event Bus","format":"JSON","metadata":{},"model":{"name":"argo-workflows","version":"5.0.1","displayName":"argo-workflows","category":{"name":"","metadata":null},"metadata":null},"schema":"{\n \"title\": \"Event Bus\",\n \"type\": \"object\",\n \"x-kubernetes-preserve-unknown-fields\": true\n}"}
+>>>>>>> upstream/master

@@ -1,1 +1,5 @@
+<<<<<<< HEAD
 {"kind":"Ingress","apiVersion":"v1alpha1","displayName":"Ingress","format":"JSON","metadata":{},"model":{"name":"knative-serving","version":"0.19.12","modelDisplayName":"knative-serving","category":"","subCategory":""}}
+=======
+{"kind":"Ingress","apiVersion":"v1alpha1","displayName":"Ingress","format":"JSON","metadata":{},"model":{"name":"knative-serving","version":"0.19.12","displayName":"knative-serving","category":{"name":"","metadata":null},"metadata":null}}
+>>>>>>> upstream/master

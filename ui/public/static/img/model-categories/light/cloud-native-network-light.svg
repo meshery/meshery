@@ -1,12 +1,12 @@
 <svg width="150" height="151" viewBox="0 0 150 151" fill="none" xmlns="http://www.w3.org/2000/svg">
-<rect y="0.853271" width="150" height="150" rx="75" fill="#3C494F"/>
-<path d="M93.5413 45.9876C91.8259 37.343 84.182 30.8533 74.9993 30.8533C67.7086 30.8533 61.3766 34.9626 58.2232 40.9762C50.6297 41.778 44.7266 48.1675 44.7266 55.9101C44.7266 64.2039 51.5127 70.9442 59.8629 70.9442H92.6584C99.6211 70.9442 105.272 65.3315 105.272 58.4158C105.272 51.8008 100.1 46.4386 93.5413 45.9876Z" fill="#FBFBFB"/>
-<path d="M75 70.9442V83.2169" stroke="#FBFBFB" stroke-width="4"/>
-<line x1="44.2715" y1="84.0866" x2="105.726" y2="84.0866" stroke="#FBFBFB" stroke-width="4" stroke-linecap="round"/>
-<path d="M43.9121 84.0351V111.853" stroke="#FBFBFB" stroke-width="4"/>
-<circle cx="43.9082" cy="111.853" r="7" fill="#FBFBFB" stroke="#FBFBFB" stroke-width="4"/>
-<path d="M75.002 84.0351V111.853" stroke="#FBFBFB" stroke-width="4"/>
-<circle cx="74.998" cy="111.853" r="7" fill="#FBFBFB" stroke="#FBFBFB" stroke-width="4"/>
-<path d="M106.094 84.0351V111.853" stroke="#FBFBFB" stroke-width="4"/>
-<circle cx="106.09" cy="111.853" r="7" fill="#FBFBFB" stroke="#FBFBFB" stroke-width="4"/>
+<rect y="0.835205" width="150" height="150" rx="75" fill="#3C494F"/>
+<path d="M93.5421 45.9695C91.8266 37.3249 84.1828 30.8352 75 30.8352C67.7093 30.8352 61.3773 34.9445 58.2239 40.9582C50.6305 41.76 44.7273 48.1495 44.7273 55.892C44.7273 64.1858 51.5134 70.9261 59.8637 70.9261H92.6591C99.6218 70.9261 105.273 65.3134 105.273 58.3977C105.273 51.7827 100.101 46.4205 93.5421 45.9695Z" fill="#FBFBFB"/>
+<path d="M75 70.9261V83.1988" stroke="#FBFBFB" stroke-width="4"/>
+<line x1="44.2727" y1="84.0685" x2="105.727" y2="84.0685" stroke="#FBFBFB" stroke-width="4" stroke-linecap="round"/>
+<path d="M43.9124 84.017V111.835" stroke="#FBFBFB" stroke-width="4"/>
+<circle cx="43.9092" cy="111.835" r="7" fill="#FBFBFB" stroke="#FBFBFB" stroke-width="4"/>
+<path d="M75.0024 84.017V111.835" stroke="#FBFBFB" stroke-width="4"/>
+<circle cx="74.9993" cy="111.835" r="7" fill="#FBFBFB" stroke="#FBFBFB" stroke-width="4"/>
+<path d="M106.094 84.017V111.835" stroke="#FBFBFB" stroke-width="4"/>
+<circle cx="106.091" cy="111.835" r="7" fill="#FBFBFB" stroke="#FBFBFB" stroke-width="4"/>
 </svg>
