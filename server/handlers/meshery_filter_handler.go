@@ -31,8 +31,8 @@ type MesheryFilterRequestBody struct {
 func (h *Handler) GetMesheryFilterFileHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
-	prefObj *models.Preference,
-	user *models.User,
+	_ *models.Preference,
+	_ *models.User,
 	provider models.Provider,
 ) {
 	filterID := mux.Vars(r)["id"]

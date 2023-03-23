@@ -35,7 +35,7 @@ func (h *Handler) UserHandler(w http.ResponseWriter, _ *http.Request, _ *models.
 // responses:
 // 	200: userInfo
 
-func (h *Handler) GetUserByIDHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
+func (h *Handler) GetUserByIDHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	userID := mux.Vars(r)["id"]
 	resp, err := provider.GetUserByID(r, userID)
 	if err != nil {

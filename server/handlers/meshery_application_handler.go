@@ -109,8 +109,8 @@ func (h *Handler) ApplicationFileRequestHandler(
 func (h *Handler) handleApplicationPOST(
 	rw http.ResponseWriter,
 	r *http.Request,
-	prefObj *models.Preference,
-	user *models.User,
+	_ *models.Preference,
+	_ *models.User,
 	provider models.Provider,
 ) {
 	defer func() {
