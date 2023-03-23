@@ -147,7 +147,7 @@ func (h *Handler) UserTestPreferenceGet(w http.ResponseWriter, req *http.Request
 // 	200:
 
 // UserTestPreferenceDelete deletes the PerformanceTestConfig object
-func (h *Handler) UserTestPreferenceDelete(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+func (h *Handler) UserTestPreferenceDelete(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	testUUID := req.URL.Query().Get("uuid")
 	if testUUID == "" {
 		obj := "field uuid"

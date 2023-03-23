@@ -622,10 +622,10 @@ func (h *Handler) GetMesheryApplicationHandler(
 // GetMesheryApplicationHandler fetched the application with the given id
 func (h *Handler) GetMesheryApplicationTypesHandler(
 	rw http.ResponseWriter,
-	r *http.Request,
-	prefObj *models.Preference,
-	user *models.User,
-	provider models.Provider,
+	_ *http.Request,
+	_ *models.Preference,
+	_ *models.User,
+	_ models.Provider,
 ) {
 	response := models.GetApplicationTypes()
 	b, err := json.Marshal(response)

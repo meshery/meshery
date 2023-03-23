@@ -72,7 +72,7 @@ func (h *Handler) LoadExtensionFromPackage(_ http.ResponseWriter, _ *http.Reques
 	return nil
 }
 
-func (h *Handler) ExtensionsVersionHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+func (h *Handler) ExtensionsVersionHandler(w http.ResponseWriter, _ *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	if provider.GetProviderType() == models.LocalProviderType {
 		err := json.NewEncoder(w).Encode("extension not available for current provider")
 		if err != nil {

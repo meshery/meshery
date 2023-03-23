@@ -139,8 +139,8 @@ func (h *Handler) DeletePerformanceProfileHandler(
 func (h *Handler) GetPerformanceProfileHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
-	prefObj *models.Preference,
-	user *models.User,
+	_ *models.Preference,
+	_ *models.User,
 	provider models.Provider,
 ) {
 	performanceProfileID := mux.Vars(r)["id"]

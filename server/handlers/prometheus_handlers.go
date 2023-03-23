@@ -259,7 +259,7 @@ func (h *Handler) PrometheusPingHandler(w http.ResponseWriter, req *http.Request
 // 	200: prometheusBoardImportRespWrapper
 
 // GrafanaBoardImportForPrometheusHandler accepts a Grafana board json, parses it and returns the list of panels
-func (h *Handler) GrafanaBoardImportForPrometheusHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+func (h *Handler) GrafanaBoardImportForPrometheusHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, _ *models.User, _ models.Provider) {
 	// if req.Method != http.MethodPost {
 	// 	w.WriteHeader(http.StatusNotFound)
 	// 	return
