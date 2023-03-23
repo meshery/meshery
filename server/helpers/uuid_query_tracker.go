@@ -39,7 +39,7 @@ func (a *UUIDQueryTracker) RemoveUUID(_ context.Context, uuid string) {
 }
 
 // GetQueriesForUUID retrieves queries for UUID
-func (a *UUIDQueryTracker) GetQueriesForUUID(ctx context.Context, uuid string) map[string]bool {
+func (a *UUIDQueryTracker) GetQueriesForUUID(_ context.Context, uuid string) map[string]bool {
 	a.qLock.Lock()
 	defer a.qLock.Unlock()
 	queries, ok := a.queries[uuid]

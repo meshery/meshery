@@ -44,7 +44,7 @@ func (a *AdaptersTracker) RemoveAdapter(_ context.Context, adapter models.Adapte
 }
 
 // GetAdapters returns the list of existing adapters
-func (a *AdaptersTracker) GetAdapters(ctx context.Context) []models.Adapter {
+func (a *AdaptersTracker) GetAdapters(_ context.Context) []models.Adapter {
 	a.adaptersLock.Lock()
 	defer a.adaptersLock.Unlock()
 
