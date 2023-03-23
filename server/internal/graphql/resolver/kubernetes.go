@@ -63,7 +63,7 @@ func (r *Resolver) getAvailableNamespaces(ctx context.Context, provider models.P
 }
 
 // getWorkloads return workloads
-func (r *Resolver) getWorkloads(ctx context.Context, name, id *string, trim *bool) (res []*model.OAMCapability, err error) {
+func (r *Resolver) getWorkloads(_ context.Context, name, id *string, trim *bool) (res []*model.OAMCapability, err error) {
 	if name != nil && *name != "" && id != nil && *id != "" {
 		workload := core.GetWorkloadByID(*name, *id)
 		// If trim is set to true then remove the schema from the response
