@@ -573,8 +573,8 @@ func (h *Handler) GetMesheryApplicationsHandler(
 func (h *Handler) DeleteMesheryApplicationHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
-	prefObj *models.Preference,
-	user *models.User,
+	_ *models.Preference,
+	_ *models.User,
 	provider models.Provider,
 ) {
 	applicationID := mux.Vars(r)["id"]
@@ -595,8 +595,8 @@ func (h *Handler) DeleteMesheryApplicationHandler(
 func (h *Handler) GetMesheryApplicationHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
-	prefObj *models.Preference,
-	user *models.User,
+	_ *models.Preference,
+	_ *models.User,
 	provider models.Provider,
 ) {
 	applicationID := mux.Vars(r)["id"]
@@ -650,8 +650,8 @@ func (h *Handler) GetMesheryApplicationTypesHandler(
 func (h *Handler) GetMesheryApplicationSourceHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
-	prefObj *models.Preference,
-	user *models.User,
+	_ *models.Preference,
+	_ *models.User,
 	provider models.Provider,
 ) {
 	applicationID := mux.Vars(r)["id"]
