@@ -34,7 +34,7 @@ func (h *Handler) ExtensionsEndpointHandler(w http.ResponseWriter, req *http.Req
 	http.Error(w, "Invalid endpoint", http.StatusInternalServerError)
 }
 
-func (h *Handler) LoadExtensionFromPackage(w http.ResponseWriter, req *http.Request, provider models.Provider) error {
+func (h *Handler) LoadExtensionFromPackage(_ http.ResponseWriter, _ *http.Request, provider models.Provider) error {
 	mx.Lock()
 	defer mx.Unlock()
 	packagePath := ""

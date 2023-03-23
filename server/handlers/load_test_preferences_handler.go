@@ -87,7 +87,7 @@ func (h *Handler) UserTestPreferenceStore(w http.ResponseWriter, req *http.Reque
 // 	200: loadTestPreferencesWrapper
 
 // UserTestPreferenceGet gets the PerformanceTestConfig object
-func (h *Handler) UserTestPreferenceGet(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+func (h *Handler) UserTestPreferenceGet(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	q := req.URL.Query()
 	testUUID := q.Get("uuid")
 	h.log.Debug(testUUID)

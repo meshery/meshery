@@ -20,7 +20,7 @@ import (
 // 	200:performanceResultsResponseWrapper
 
 // FetchResultsHandler fetchs pages of results from Remote Provider and presents it to the UI
-func (h *Handler) FetchResultsHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, p models.Provider) {
+func (h *Handler) FetchResultsHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, p models.Provider) {
 	profileID := mux.Vars(req)["id"]
 
 	err := req.ParseForm()
