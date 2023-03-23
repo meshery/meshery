@@ -366,22 +366,21 @@ func (r *Resolver) listenToOperatorsState(ctx context.Context, provider models.P
 						case operatorStatusK8sContext:
 							if processing.Data.(operatorStatusK8sContext).ctxID != k8scontext.ID {
 								continue
-							} else {
-								switch processing.Data.(operatorStatusK8sContext).processing.(type) {
-								case bool:
-									if processing.Data.(operatorStatusK8sContext).processing.(bool) {
-										status.Status = model.StatusProcessing
-									}
-								case *errors.Error:
-									status.Error = &model.Error{
-										Code:        "",
-										Description: processing.Data.(operatorStatusK8sContext).processing.(*errors.Error).Error(),
-									}
-								case error:
-									status.Error = &model.Error{
-										Code:        "",
-										Description: processing.Data.(operatorStatusK8sContext).processing.(error).Error(),
-									}
+							}
+							switch processing.Data.(operatorStatusK8sContext).processing.(type) {
+							case bool:
+								if processing.Data.(operatorStatusK8sContext).processing.(bool) {
+									status.Status = model.StatusProcessing
+								}
+							case *errors.Error:
+								status.Error = &model.Error{
+									Code:        "",
+									Description: processing.Data.(operatorStatusK8sContext).processing.(*errors.Error).Error(),
+								}
+							case error:
+								status.Error = &model.Error{
+									Code:        "",
+									Description: processing.Data.(operatorStatusK8sContext).processing.(error).Error(),
 								}
 							}
 						}
