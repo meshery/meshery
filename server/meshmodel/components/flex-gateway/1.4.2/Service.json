@@ -1,0 +1,1 @@
+{"kind":"Service","apiVersion":"v1alpha1","displayName":"Service","format":"JSON","metadata":{},"model":{"name":"flex-gateway","version":"1.4.2","displayName":"flex-gateway","category":{"name":"","metadata":null},"metadata":null},"schema":"{\n \"title\": \"Service\",\n \"x-kubernetes-preserve-unknown-fields\": true\n}"}

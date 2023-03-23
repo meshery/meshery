@@ -1,1 +1,0 @@
-{"kind":"KubeHunterReport","apiVersion":"v1alpha1","displayName":"Kube Hunter Report","format":"JSON","metadata":{},"model":{"name":"trivy-operator","version":"0.10.10","modelDisplayName":"trivy-operator","category":"","subCategory":""},"schema":""}

@@ -1,1 +1,1 @@
-{"kind":"SubnamespaceAnchor","apiVersion":"v1alpha2","displayName":"Subnamespace Anchor","format":"JSON","metadata":{},"model":{"name":"cloudbees-previews","version":"1.1.0","modelDisplayName":"cloudbees-previews","category":"","subCategory":""}}
+{"kind":"SubnamespaceAnchor","apiVersion":"v1alpha2","displayName":"Subnamespace Anchor","format":"JSON","metadata":{},"model":{"name":"cloudbees-previews","version":"1.1.0","displayName":"cloudbees-previews","category":{"name":"","metadata":null},"metadata":null}}

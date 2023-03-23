@@ -1,1 +1,1 @@
-{"kind":"ConstraintTemplatePodStatus","apiVersion":"v1beta1","displayName":"Constraint Template Pod Status","format":"JSON","metadata":{},"model":{"name":"lagoon-gatekeeper","version":"0.4.0","modelDisplayName":"lagoon-gatekeeper","category":"","subCategory":""}}
+{"kind":"ConstraintTemplatePodStatus","apiVersion":"v1beta1","displayName":"Constraint Template Pod Status","format":"JSON","metadata":{},"model":{"name":"lagoon-gatekeeper","version":"0.4.0","displayName":"lagoon-gatekeeper","category":{"name":"","metadata":null},"metadata":null}}

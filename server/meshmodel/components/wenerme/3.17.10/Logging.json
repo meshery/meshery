@@ -1,1 +1,0 @@
-{"kind":"Logging","apiVersion":"v1alpha1","displayName":"Logging","format":"JSON","metadata":{},"model":{"name":"wenerme","version":"3.17.10","modelDisplayName":"wenerme","category":"","subCategory":""},"schema":"{\n \"title\": \"Logging\",\n \"type\": \"object\"\n}"}

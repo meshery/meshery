@@ -1,1 +1,0 @@
-{"kind":"OperatorConfiguration","apiVersion":"v1","displayName":"Operator Configuration","format":"JSON","metadata":{},"model":{"name":"cloudve","version":"5.3.2","modelDisplayName":"cloudve","category":"","subCategory":""},"schema":""}

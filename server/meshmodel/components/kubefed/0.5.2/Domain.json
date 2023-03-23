@@ -1,1 +1,1 @@
-{"kind":"Domain","apiVersion":"v1alpha1","displayName":"Domain","format":"JSON","metadata":{},"model":{"name":"kubefed","version":"0.5.2","modelDisplayName":"kubefed","category":"","subCategory":""}}
+{"kind":"Domain","apiVersion":"v1alpha1","displayName":"Domain","format":"JSON","metadata":{},"model":{"name":"kubefed","version":"0.5.2","displayName":"kubefed","category":{"name":"","metadata":null},"metadata":null}}

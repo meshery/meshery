@@ -1,1 +1,1 @@
-{"kind":"TriggerBinding","apiVersion":"v1alpha1","displayName":"Trigger Binding","format":"JSON","metadata":{},"model":{"name":"triggers","version":"0.4.0","modelDisplayName":"triggers","category":"","subCategory":""}}
+{"kind":"TriggerBinding","apiVersion":"v1alpha1","displayName":"Trigger Binding","format":"JSON","metadata":{},"model":{"name":"triggers","version":"0.4.0","displayName":"triggers","category":{"name":"","metadata":null},"metadata":null}}
