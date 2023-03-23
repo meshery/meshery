@@ -263,7 +263,7 @@ func (r *Resolver) getMeshsyncStatus(ctx context.Context, _ models.Provider, k8s
 	return &status, nil
 }
 
-func (r *Resolver) getNatsStatus(ctx context.Context, provider models.Provider, k8scontextID string) (*model.OperatorControllerStatus, error) {
+func (r *Resolver) getNatsStatus(ctx context.Context, _ models.Provider, k8scontextID string) (*model.OperatorControllerStatus, error) {
 	var kubeclient *mesherykube.Client
 	var err error
 	if k8scontextID != "" {
