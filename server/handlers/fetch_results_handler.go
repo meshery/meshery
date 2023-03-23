@@ -88,7 +88,7 @@ func (h *Handler) FetchAllResultsHandler(w http.ResponseWriter, req *http.Reques
 // 	200: perfSingleResultRespWrapper
 
 // GetResultHandler gets an individual result from provider
-func (h *Handler) GetResultHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, p models.Provider) {
+func (h *Handler) GetResultHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, p models.Provider) {
 	// if req.Method != http.MethodGet {
 	// 	w.WriteHeader(http.StatusNotFound)
 	// 	return
