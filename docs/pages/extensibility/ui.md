@@ -17,8 +17,7 @@ Meshery can provide the extension point in various ways by providing the feature
 ### Extensibility: RJSF Custom Component
 RJSFWrapperComponent are the customizations done on RJSF forms overriding the default behaviour of meshery-ui rjsf forms.
 The [Rjsf forms are wrapped](https://github.com/meshery/meshery/blob/0bc68d1cd0ba80a565afa68bce80899c22db9a2e/ui/components/MesheryMeshInterface/PatternService/RJSF.js#L66) under these component to receive the custom-props from Meshery-extension.
-```jsx
-<RJSFWrapperComponent {...props}>
+{% capture code_content %} <RJSFWrapperComponent {...props}>
       <RJSFForm
         isLoading={isLoading}
         schema={schema}
@@ -28,16 +27,15 @@ The [Rjsf forms are wrapped](https://github.com/meshery/meshery/blob/0bc68d1cd0b
         }}
         jsonSchema={jsonSchema}
       />
- </RJSFWrapperComponent> 
-```
+ </RJSFWrapperComponent>{% endcapture %}
+{% include code.html code=code_content %}
 These props are received in the RJSF forms like this: [RJSF Component](https://github.com/meshery/meshery/blob/0bc68d1cd0ba80a565afa68bce80899c22db9a2e/ui/components/MesheryMeshInterface/PatternService/RJSF.js#L91) 
 
 #### Passing new custom prop to forms:
 
  1. Pass the new prop from the Meshery Extension in the RJSF Wrapper component used like this:
 
- ```js
-function RJSFWrapperComponent(props) {
+{% capture code_content %} function RJSFWrapperComponent(props) {
   // Clone the child to pass in additional props
   const children = React.cloneElement(props.children, {
     ...(props.children?.props || {}),
@@ -45,8 +43,8 @@ function RJSFWrapperComponent(props) {
   });
 
   return children
-} 
- ```
+}{% endcapture %}
+{% include code.html code=code_content %}
 Extract the props in the [RJSFForm Component](https://github.com/meshery/meshery/blob/0bc68d1cd0ba80a565afa68bce80899c22db9a2e/ui/components/MesheryMeshInterface/PatternService/RJSF.js#L91)
 
 _Extensibility documentation missing?_
@@ -62,8 +60,7 @@ Submit an issue to request more documentation.
 ### Using React JSON Schema Form
  Meshery exposes a custom RJSF Form component which is capable of generating "Pattern" YAMLs without being extremely opinionated about the UI. This custom component is available at `ui/components/MesheryMeshInterface/PatternServiceFormCore.js`. An example usage of the component which will render the logically coupled `SettingsForm` and `TraitsForm` in a Material UI `TabPanel`:
 
- ```js
-  <PatternServiceFormCore
+{% capture code_content %} <PatternServiceFormCore
     formData={formData}
     schemaSet={schemaSet}
     onSubmit={onSubmit}
@@ -83,8 +80,8 @@ Submit an issue to request more documentation.
 			</div>
 		);
 	}}
-  </PatternServiceFormCore>
- ```
+  </PatternServiceFormCore>{% endcapture %}
+{% include code.html code=code_content %}
 
  Meshery UI's RJSF form accepts two props:
 
@@ -94,6 +91,4 @@ Submit an issue to request more documentation.
 With both of these props, Remote Providers can customize the wrapper and can also customize the body of the form. This allows full customization of the form.
 
 from _ui/components/MesheryMeshInterface/PatternService/index.js_
-```
-function PatternService({ formData, jsonSchema, onChange, type, onSubmit, onDelete, RJSFWrapperComponent, RJSFFormChildComponent }) 
-```
+{% include code.html code="function PatternService({ formData, jsonSchema, onChange, type, onSubmit, onDelete, RJSFWrapperComponent, RJSFFormChildComponent })" %}

@@ -201,6 +201,11 @@ type Connection struct {
 	CredentialSecret map[string]interface{} `json:"credential_secret,omitempty"`
 }
 
+type ExtensionProxyResponse struct {
+	Body       []byte `json:"body,omitempty"`
+	StatusCode int    `json:"status_code,omitempty"`
+}
+
 // Feature is a type to store the features of the provider
 type Feature string
 
@@ -326,6 +331,7 @@ type Provider interface {
 	ExtractToken(http.ResponseWriter, *http.Request)
 	GetSession(req *http.Request) error
 	GetUserDetails(*http.Request) (*User, error)
+	GetUserByID(req *http.Request, userID string) ([]byte, error)
 	GetProviderToken(req *http.Request) (string, error)
 	UpdateToken(http.ResponseWriter, *http.Request) string
 	Logout(http.ResponseWriter, *http.Request) error
@@ -402,7 +408,7 @@ type Provider interface {
 	GetSchedule(req *http.Request, scheduleID string) ([]byte, error)
 	DeleteSchedule(req *http.Request, scheduleID string) ([]byte, error)
 
-	ExtensionProxy(req *http.Request) ([]byte, error)
+	ExtensionProxy(req *http.Request) (*ExtensionProxyResponse, error)
 
 	SaveConnection(req *http.Request, conn *Connection, token string, skipTokenCheck bool) error
 	DeleteMesheryConnection() error

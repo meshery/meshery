@@ -14,7 +14,7 @@ import PublishModal from "../PublishModal";
 
 const INITIAL_GRID_SIZE = { xl : 4, md : 6, xs : 12 };
 
-function PatternCardGridItem({ pattern, handleDeploy, handleVerify, handlePublishModal, handleUnDeploy, handleClone, handleSubmit, setSelectedPatterns }) {
+function PatternCardGridItem({ pattern, handleDeploy, handleVerify, handlePublishModal, handleUnDeploy, handleClone, handleSubmit, setSelectedPatterns, canPublishPattern = false }) {
   const [gridProps, setGridProps] = useState(INITIAL_GRID_SIZE);
   const [yaml, setYaml] = useState(pattern.pattern_file);
 
@@ -22,6 +22,7 @@ function PatternCardGridItem({ pattern, handleDeploy, handleVerify, handlePublis
     <Grid item {...gridProps}>
       <MesheryPatternCard
         // id={pattern.id}
+        canPublishPattern={canPublishPattern}
         name={pattern.name}
         updated_at={pattern.updated_at}
         created_at={pattern.created_at}
@@ -64,10 +65,11 @@ function PatternCardGridItem({ pattern, handleDeploy, handleVerify, handlePublis
  *  selectedPage?: number,
  *  setPage: (page: number) => void
  *  patternErrors: Map
+ *  canPublishPattern: boolean
  * }} props props
  */
 
-function MesheryPatternGrid({ patterns=[], handleVerify, handlePublish,handleDeploy, handleUnDeploy, urlUploadHandler, handleClone, uploadHandler, handleSubmit, setSelectedPattern, selectedPattern, pages = 1,setPage, selectedPage, UploadImport, fetch, patternErrors  }) {
+function MesheryPatternGrid({ patterns=[], handleVerify, handlePublish,handleDeploy, handleUnDeploy, urlUploadHandler, handleClone, uploadHandler, handleSubmit, setSelectedPattern, selectedPattern, pages = 1,setPage, selectedPage, UploadImport, fetch, patternErrors, canPublishPattern = false }) {
 
   const classes = useStyles()
 
@@ -79,10 +81,12 @@ function MesheryPatternGrid({ patterns=[], handleVerify, handlePublish,handleDep
     pattern : {}
   });
   const handlePublishModal = (pattern) => {
-    setPublishModal({
-      open : true,
-      pattern : pattern
-    });
+    if (canPublishPattern) {
+      setPublishModal({
+        open : true,
+        pattern : pattern
+      });
+    }
   };
   const handlePublishModalClose = () => {
     setPublishModal({
@@ -150,6 +154,7 @@ function MesheryPatternGrid({ patterns=[], handleVerify, handlePublish,handleDep
           <PatternCardGridItem
             key={pattern.id}
             pattern={pattern}
+            canPublishPattern={canPublishPattern}
             handleClone={() => handleClone(pattern.id, pattern.name)}
             handleDeploy={() => handleModalOpen(pattern, ACTIONS.DEPLOY)}
             handleUnDeploy={() => handleModalOpen(pattern, ACTIONS.UNDEPLOY)}
@@ -203,7 +208,7 @@ function MesheryPatternGrid({ patterns=[], handleVerify, handlePublish,handleDep
         tab={modalOpen.action}
         validationBody={modalOpen.validationBody}
       />
-      <PublishModal open={publishModal.open} handleClose={handlePublishModalClose} pattern={publishModal.pattern} aria-label="catalog publish" handlePublish={handlePublish} />
+      {canPublishPattern && <PublishModal open={publishModal.open} handleClose={handlePublishModalClose} pattern={publishModal.pattern} aria-label="catalog publish" handlePublish={handlePublish} />}
       <UploadImport open={importModal.open} handleClose={handleUploadImportClose} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} fetch={async() => await fetch()} configuration="Designs"  />
     </div>
   );

@@ -20,21 +20,21 @@ func TestTokenCreateCmd(t *testing.T) {
 	tests := []utils.CmdTestInput{
 		{
 			Name:                 "create the passed token with default location",
-			Args:                 []string{"token", "create", "Default2"},
+			Args:                 []string{"token", "create", "default2"},
 			ExpectedResponse:     "create_default.golden",
 			ExpectedResponseYaml: "create_default.yaml",
 			ExpectError:          false,
 		},
 		{
 			Name:                 "create the passed token with passed location",
-			Args:                 []string{"token", "create", "Default2", "-f", "~/.meshery/auth.json"},
+			Args:                 []string{"token", "create", "default2", "-f", "~/.meshery/auth.json"},
 			ExpectedResponse:     "create.golden",
 			ExpectedResponseYaml: "create.yaml",
 			ExpectError:          false,
 		},
 		{
 			Name:                 "creating a token which already exists",
-			Args:                 []string{"token", "create", "Default"},
+			Args:                 []string{"token", "create", "default"},
 			ExpectedResponse:     "create_err.golden",
 			ExpectedResponseYaml: "create_err.yaml",
 			ExpectError:          true,
@@ -128,14 +128,14 @@ func TestTokenDeleteCmd(t *testing.T) {
 	tests := []utils.CmdTestInput{
 		{
 			Name:                 "delete the passed token",
-			Args:                 []string{"token", "delete", "Default"},
+			Args:                 []string{"token", "delete", "default"},
 			ExpectedResponse:     "delete_default.golden",
 			ExpectedResponseYaml: "delete_default.yaml",
 			ExpectError:          false,
 		},
 		{
 			Name:                 "delete the passed token(with a token name that doesn't exist)",
-			Args:                 []string{"token", "create", "Default2"},
+			Args:                 []string{"token", "create", "default2"},
 			ExpectedResponse:     "delete.golden",
 			ExpectedResponseYaml: "delete_err.yaml",
 			ExpectError:          true,
@@ -319,7 +319,7 @@ func TestTokenViewCmd(t *testing.T) {
 	tests := []utils.CmdTestInput{
 		{
 			Name:             "view the default2 token",
-			Args:             []string{"token", "view", "Default2"},
+			Args:             []string{"token", "view", "default2"},
 			ExpectedResponse: "view.golden",
 		},
 		{

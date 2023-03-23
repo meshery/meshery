@@ -9,16 +9,6 @@ import (
 
 const DryRunResponseKey = "dryRunResponse"
 
-type DryRunResponse struct {
-	Status string
-	Causes []DryRunFailureCause
-}
-type DryRunFailureCause struct {
-	Type    string
-	Message string
-	Field   string
-}
-
 var mesheryDefinedAPIVersions = map[string]bool{
 	"core.oam.dev/v1alpha1": true,
 }

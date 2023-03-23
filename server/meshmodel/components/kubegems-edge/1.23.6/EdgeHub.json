@@ -1,0 +1,1 @@
+{"kind":"EdgeHub","apiVersion":"v1beta1","displayName":"Edge Hub","format":"JSON","metadata":{},"model":{"name":"kubegems-edge","version":"1.23.6","displayName":"kubegems-edge","category":{"name":"","metadata":null},"metadata":null},"schema":"{\n \"title\": \"Edge Hub\",\n \"type\": \"object\"\n}"}

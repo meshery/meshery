@@ -1,6 +1,5 @@
 /**
- * @generated SignedSource<<81a68e742a5d0e408ab7c56bbbdbf849>>
- * @flow
+ * @generated SignedSource<<1282ae0224439164af34f0d4fba4a71a>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,29 +8,7 @@
 
 'use strict';
 
-/*::
-import type { ConcreteRequest, Query } from 'relay-runtime';
-export type MeshType = "ALL_MESH" | "INVALID_MESH" | "APP_MESH" | "CITRIX_SERVICE_MESH" | "CONSUL" | "ISTIO" | "KUMA" | "LINKERD" | "TRAEFIK_MESH" | "OCTARINE" | "NETWORK_SERVICE_MESH" | "TANZU" | "OPEN_SERVICE_MESH" | "NGINX_SERVICE_MESH" | "CILIUM_SERVICE_MESH" | "%future added value";
-export type ServiceMeshFilter = {|
-  type?: ?MeshType,
-  k8sClusterIDs?: ?$ReadOnlyArray<string>,
-|};
-export type AddonsStatusQuery$variables = {|
-  filter?: ?ServiceMeshFilter,
-|};
-export type AddonsStatusQuery$data = {|
-  +addonsState: $ReadOnlyArray<{|
-    +name: string,
-    +owner: string,
-  |}>,
-|};
-export type AddonsStatusQuery = {|
-  variables: AddonsStatusQuery$variables,
-  response: AddonsStatusQuery$data,
-|};
-*/
-
-var node/*: ConcreteRequest*/ = (function(){
+var node = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -100,9 +77,6 @@ return {
 };
 })();
 
-(node/*: any*/).hash = "9cbf0a827a321dead7e3e6d0c2e9cbe7";
+node.hash = "9cbf0a827a321dead7e3e6d0c2e9cbe7";
 
-module.exports = ((node/*: any*/)/*: Query<
-  AddonsStatusQuery$variables,
-  AddonsStatusQuery$data,
->*/);
+module.exports = node;

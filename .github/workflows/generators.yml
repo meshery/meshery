@@ -27,11 +27,16 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-go-
       - run: |
-          GOPROXY=https://proxy.golang.org,direct GOSUMDB=off go run ./scripts/component_generation/main.go
+          cd scripts/component_generation; GOPROXY=https://proxy.golang.org,direct GOSUMDB=off go run main.go
       - run: |
           cd scripts/component_updation ;go build main.go
           ./main https://docs.google.com/spreadsheets/d/e/2PACX-1vSgOXuiqbhUgtC9oNbJlz9PYpOEaFVoGNUFMIk4NZciFfQv1ewZg8ahdrWHKI79GkKK9TbmnZx8CqIe/pub\?gid\=0\&single\=true\&output\=csv
-      - name: Commit results
-        uses: EndBug/add-and-commit@v9
-        with: 
-          add: "*.yaml"
+      - name: Commit changes 
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_user_name: l5io
+          commit_user_email: ci@layer5.io
+          commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
+          commit_options: "--signoff"
+          commit_message: "New Meshmodel components generated"
+          branch: master

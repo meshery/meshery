@@ -1,1 +1,0 @@
-{"kind":"KongIngress","apiVersion":"v1","display-name":"Kong Ingress","format":"JSON","metadata":{"logo-URL":"","model":"kong-app","modelDisplayName":"Kong App","primaryColor":"","secondaryColor":"","shape":"circle","svgColor":"","svgWhite":""},"model":{"name":"kong-app","version":"2.13.0","display-name":"Kong App","category":"Not Found","sub-category":"Not Found"},"schema":""}

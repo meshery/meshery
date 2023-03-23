@@ -1,0 +1,1 @@
+{"kind":"OPAPolicy","apiVersion":"v1alpha1","displayName":"OPA Policy","format":"JSON","metadata":{},"model":{"name":"kong-mesh","version":"2.1.1","displayName":"kong-mesh","category":{"name":"","metadata":null},"metadata":null},"schema":"{\n \"title\": \"OPA Policy\",\n \"type\": \"object\",\n \"x-kubernetes-preserve-unknown-fields\": true\n}"}

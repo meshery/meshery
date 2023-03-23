@@ -19,16 +19,15 @@ To build and run Meshery server from source:
 
 1. Build the static assets for the UI by running
 
-```sh
-make ui-setup
-make ui-build
-```
+{% capture code_content %}make ui-setup
+make ui-build{% endcapture %}
+{% include code.html code=code_content %}
+
 
 2. Build & run the server code by running
 
-```sh
-make server
-```
+{% capture code_content %}make server{% endcapture %}
+{% include code.html code=code_content %}
 
 Any time changes are made to the GO code, you will have to stop the server and run the above command again.
 Once the Meshery server is up and running, you should be able to access Meshery on your `localhost` on port `9081` at `http://localhost:9081`. One thing to note, you might NOT see the [Meshery UI](#contributing-ui) until the UI code is built as well.
@@ -38,17 +37,15 @@ After running Meshery server, you will need to select your **Cloud Provider** by
 
 To build a Docker image of Meshery, please ensure you have `Docker` installed to be able to build the image. Now, run the following command to build the Docker image:
 
-```sh
-make docker
-```
+{% capture code_content %}make docker{% endcapture %}
+{% include code.html code=code_content %}
 
 #### Define and validate errors
 
 Every Golang-based project that belongs to Layer5 incorporates a utility to define and manage error messages for every error instance. This is internally done with several make commands, but one can explicitely validate with the help of the following make command. This checks and validates the errors that are present in the particular project.
 
-```sh
-make error
-```
+{% capture code_content %}make error{% endcapture %}
+{% include code.html code=code_content %}
 
 For more details, <a href="{{ site.baseurl }}/project/contributing/contributing-error">Error Utility</a>
 

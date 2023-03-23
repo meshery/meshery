@@ -17,7 +17,7 @@ You can retrieve your authentication token from either of Meshery's two clients:
 
   _Downloading the token_
 
-  <a href="{{ site.baseurl }}/assets/img/token/token.png"><img alt="Meshery Dashboard" src="{{ site.baseurl }}/assets/img/token/token.png" /></a>
+  <a href="{{ site.baseurl }}/assets/img/token/MesheryTokenUI.png"><img alt="Meshery Dashboard" src="{{ site.baseurl }}/assets/img/token/MesheryTokenUI.png" /></a>
   <br/>
   <br/>
 
@@ -26,10 +26,7 @@ You can retrieve your authentication token from either of Meshery's two clients:
   To get the token through `mesheryctl` you would have to use the following command and the path to token for authenticating to Meshery API (default "auth.json").
   <br/>
   <pre class="codeblock-pre">
-  <div class="codeblock"><div class="clipboardjs">
-  mesheryctl system config [aks|eks|gke|minikube] --token [path-to-file]
-  
-  </div></div>
+  <div class="codeblock"><div class="clipboardjs"> mesheryctl system login</div></div>
   </pre>
   <br />
 

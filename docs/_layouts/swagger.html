@@ -9,8 +9,9 @@ layout: default
 {% else %}
 {% assign swagger = page %}
 {% endif %}
+{% assign sorted_paths = swagger.paths | sort %}
 
-{% for route in swagger.paths %}
+{% for route in sorted_paths %}
 <div class="swagger-path">
     <h2 class="swagger-path">{{ route[0] }}</h>
     {% for method in route[1] %}

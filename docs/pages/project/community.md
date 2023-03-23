@@ -23,8 +23,8 @@ The Meshery project is community-built and welcomes collaboration!
 
 ## Getting involved in the Community
 
-Want to get involved with project, read through the [Newcomers Guide](https://layer5.io/community/newcomers), which provides details on how to engage. Seek out other community members, who will make sure you are not left out. We always have a role for everyone whether to be a code-writer, a community manager, user, advocate, or just to listen in. Layer5 community is always open and warmly welcomes you. Check out our [community welcome guide](https://docs.google.com/document/d/17OPtDE_rdnPQxmk2Kauhm3GwXF1R5dZ3Cj8qZLKdo5E/edit) for more details.
-If this is your first time making open source contribution, you are in the right place! Check out our [first timers' welcome guide](https://docs.google.com/document/d/1tpg2sLxirozNt3Ofr3GdM002f9rExp74EqrsGZBU710/edit).
+Want to get involved with project, read through the [Newcomers Guide](https://layer5.io/community/newcomers), which provides details on how to engage. Seek out other community members, who will make sure you are not left out. We always have a role for everyone whether to be a code-writer, a community manager, user, advocate, or just to listen in. Layer5 community is always open and warmly welcomes you. 
+If this is your first time making open source contribution, you are in the right place! Check out our [first timers' welcome guide](https://layer5.io/community/newcomers).
 
 Please see our [contributing guide]({{ site.baseurl }}/project/contributing) for more details.
 
