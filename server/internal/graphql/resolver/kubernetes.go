@@ -223,7 +223,7 @@ func (r *Resolver) getScopes(_ context.Context, name, id *string, trim *bool) (r
 	return
 }
 
-func (r *Resolver) getKubectlDescribe(ctx context.Context, name string, kind string, namespace string) (*model.KctlDescribeDetails, error) {
+func (r *Resolver) getKubectlDescribe(_ context.Context, name, kind, namespace string) (*model.KctlDescribeDetails, error) {
 	var ResourceMap = map[string]describe.DescribeType{
 		"pod":                       describe.Pod,
 		"deployment":                describe.Deployment,

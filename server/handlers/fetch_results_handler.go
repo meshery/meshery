@@ -151,7 +151,7 @@ func (h *Handler) FetchSmiResultsHandler(w http.ResponseWriter, req *http.Reques
 }
 
 // FetchSingleSmiResultHandler gets the result of single smi conformance test
-func (h *Handler) FetchSingleSmiResultHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, p models.Provider) {
+func (h *Handler) FetchSingleSmiResultHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, p models.Provider) {
 	w.Header().Set("content-type", "application/json")
 	err := req.ParseForm()
 	if err != nil {

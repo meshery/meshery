@@ -152,7 +152,7 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Pro
 	return model.StatusProcessing, nil
 }
 
-func (r *Resolver) getOperatorStatus(ctx context.Context, provider models.Provider, ctxID string) (*model.OperatorStatus, error) {
+func (r *Resolver) getOperatorStatus(ctx context.Context, _ models.Provider, ctxID string) (*model.OperatorStatus, error) {
 	status := model.StatusUnknown
 	version := string(model.StatusUnknown)
 
@@ -221,7 +221,7 @@ func (r *Resolver) getOperatorStatus(ctx context.Context, provider models.Provid
 	}, nil
 }
 
-func (r *Resolver) getMeshsyncStatus(ctx context.Context, provider models.Provider, k8scontextID string) (*model.OperatorControllerStatus, error) {
+func (r *Resolver) getMeshsyncStatus(ctx context.Context, _ models.Provider, k8scontextID string) (*model.OperatorControllerStatus, error) {
 	var kubeclient *mesherykube.Client
 	var err error
 	if k8scontextID != "" {

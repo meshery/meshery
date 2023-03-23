@@ -101,7 +101,7 @@ func (h *Handler) ExtensionsVersionHandler(w http.ResponseWriter, _ *http.Reques
 * ExtensionsHandler is a handler function which works as a proxy to resolve the
 * request of any extension point to its remote provider
  */
-func (h *Handler) ExtensionsHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+func (h *Handler) ExtensionsHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	resp, err := provider.ExtensionProxy(req)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Error: %v", err.Error()), http.StatusInternalServerError)

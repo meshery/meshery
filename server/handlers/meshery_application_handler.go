@@ -399,8 +399,8 @@ func (h *Handler) handleApplicationPOST(
 
 func (h *Handler) handleApplicationUpdate(rw http.ResponseWriter,
 	r *http.Request,
-	prefObj *models.Preference,
-	user *models.User,
+	_ *models.Preference,
+	_ *models.User,
 	provider models.Provider) {
 	defer func() {
 		_ = r.Body.Close()
@@ -543,8 +543,8 @@ func (h *Handler) handleApplicationUpdate(rw http.ResponseWriter,
 func (h *Handler) GetMesheryApplicationsHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
-	prefObj *models.Preference,
-	user *models.User,
+	_ *models.Preference,
+	_ *models.User,
 	provider models.Provider,
 ) {
 	q := r.URL.Query()
