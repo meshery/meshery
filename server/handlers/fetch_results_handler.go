@@ -59,7 +59,7 @@ func (h *Handler) FetchResultsHandler(w http.ResponseWriter, req *http.Request, 
 // 	200: performanceResultsResponseWrapper
 
 // FetchAllResultsHandler fetchs pages of results from Remote Provider and presents it to the UI
-func (h *Handler) FetchAllResultsHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, p models.Provider) {
+func (h *Handler) FetchAllResultsHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, p models.Provider) {
 	err := req.ParseForm()
 	if err != nil {
 		logrus.Error(ErrParseForm(err))

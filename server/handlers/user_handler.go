@@ -151,7 +151,7 @@ func (h *Handler) UserPrefsHandler(w http.ResponseWriter, req *http.Request, pre
 //  403:
 //  500:
 
-func (h *Handler) ShareDesignHandler(w http.ResponseWriter, r *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+func (h *Handler) ShareDesignHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	statusCode, err := provider.ShareDesign(r)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Error: %v", err.Error()), statusCode)

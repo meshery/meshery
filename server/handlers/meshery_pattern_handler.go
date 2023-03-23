@@ -60,7 +60,7 @@ func (h *Handler) handlePatternPOST(
 	rw http.ResponseWriter,
 	r *http.Request,
 	_ *models.Preference,
-	user *models.User,
+	_ *models.User,
 	provider models.Provider,
 ) {
 	defer func() {
