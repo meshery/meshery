@@ -69,7 +69,7 @@ func (h *Handler) GetContext(w http.ResponseWriter, req *http.Request, _ *models
 	}
 }
 
-func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	token, ok := req.Context().Value(models.TokenCtxKey).(string)
 	if !ok {
 		http.Error(w, "failed to get token", http.StatusInternalServerError)

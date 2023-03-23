@@ -116,7 +116,7 @@ func (r *Resolver) getWorkloads(_ context.Context, name, id *string, trim *bool)
 }
 
 // getTraits return traits
-func (r *Resolver) getTraits(ctx context.Context, name, id *string, trim *bool) (res []*model.OAMCapability, err error) {
+func (r *Resolver) getTraits(_ context.Context, name, id *string, trim *bool) (res []*model.OAMCapability, err error) {
 	if name != nil && *name != "" && id != nil && *id != "" {
 		trait := core.GetTraitByID(*name, *id)
 		// If trim is set to true then remove the schema from the response
@@ -170,7 +170,7 @@ func (r *Resolver) getTraits(ctx context.Context, name, id *string, trim *bool) 
 }
 
 // getScopes return scopes
-func (r *Resolver) getScopes(ctx context.Context, name, id *string, trim *bool) (res []*model.OAMCapability, err error) {
+func (r *Resolver) getScopes(_ context.Context, name, id *string, trim *bool) (res []*model.OAMCapability, err error) {
 	if name != nil && *name != "" && id != nil && *id != "" {
 		scope := core.GetScopeByID(*name, *id)
 		// If trim is set to true then remove the schema from the response
