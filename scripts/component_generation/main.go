@@ -37,6 +37,9 @@ type ComponentModel struct {
 	AhRepo     string `yaml:"ahRepo"`
 	Version    string `yaml:"version"`
 	RepoUrl    string `yaml:"repoUrl"`
+	Verified   bool   `yaml:"verified"`
+	Official   bool   `yaml:"official"`
+	CNCF       bool   `yaml:"cncf"`
 }
 
 func convertPackagesToCompModels(pkgs []artifacthub.AhPackage) []ComponentModel {
@@ -47,6 +50,7 @@ func convertPackagesToCompModels(pkgs []artifacthub.AhPackage) []ComponentModel 
 			Version:    ap.Version,
 			AhRepo:     ap.Repository,
 			RepoUrl:    ap.RepoUrl,
+			Verified:   ap.VerifiedPublisher,
 		})
 	}
 	return models
@@ -56,15 +60,60 @@ func convertCompModelsToPackages(models []ComponentModel) []artifacthub.AhPackag
 	pkgs := make([]artifacthub.AhPackage, 0)
 	for _, cm := range models {
 		pkgs = append(pkgs, artifacthub.AhPackage{
-			Name:       cm.SystemName,
-			Version:    cm.Version,
-			Repository: cm.AhRepo,
-			RepoUrl:    cm.RepoUrl,
+			Name:              cm.SystemName,
+			Version:           cm.Version,
+			Repository:        cm.AhRepo,
+			RepoUrl:           cm.RepoUrl,
+			VerifiedPublisher: cm.Verified,
+			Official:          cm.Official,
+			CNCF:              cm.CNCF,
 		})
 	}
 	return pkgs
 }
 
+var priorityRepos = map[string]bool{"prometheus-community": true, "grafana": true} //Append ahrepos here whose components should be respected and should be used when encountered duplicates
+
+// returns pkgs with sorted pkgs at the front
+func sortOnVerified(pkgs []artifacthub.AhPackage) []artifacthub.AhPackage {
+	sorted := make([]artifacthub.AhPackage, 0)
+	verified := make([]artifacthub.AhPackage, 0)
+	official := make([]artifacthub.AhPackage, 0)
+	cncf := make([]artifacthub.AhPackage, 0)
+	unverified := make([]artifacthub.AhPackage, 0)
+	priority := make([]artifacthub.AhPackage, 0)
+	for _, pkg := range pkgs {
+		if priorityRepos[pkg.Repository] {
+			priority = append(priority, pkg)
+			continue
+		}
+		if pkg.CNCF {
+			cncf = append(cncf, pkg)
+		} else if pkg.Official {
+			official = append(official, pkg)
+		} else if pkg.VerifiedPublisher {
+			verified = append(verified, pkg)
+		} else {
+			unverified = append(unverified, pkg)
+		}
+	}
+	for _, v := range priority {
+		sorted = append(sorted, v)
+	}
+	for _, v := range cncf {
+		sorted = append(sorted, v)
+	}
+	for _, v := range official {
+		sorted = append(sorted, v)
+	}
+	for _, v := range verified {
+		sorted = append(sorted, v)
+	}
+	for _, v := range unverified {
+		sorted = append(sorted, v)
+	}
+	return sorted
+}
 func main() {
 	if len(os.Args) > 1 {
 		spreadsheetID = os.Args[1]
@@ -125,7 +174,10 @@ func main() {
 			return
 		}
 	}
-
+	pkgs = sortOnVerified(pkgs)
+	for _, pkg := range pkgs {
+		fmt.Println(pkg.Name, pkg.VerifiedPublisher)
+	}
 	inputChan := make(chan []artifacthub.AhPackage)
 	csvChan := make(chan string, 50)
 	f, err := os.Create(dumpFile)
@@ -196,10 +248,8 @@ func main() {
 		defer wg.Done()
 		Spreadsheet(srv, sheetName, spreadsheetChan, availableModels, availableComponentsPerModel)
 	}()
-
-	for i := 0; i <= 10; i++ {
-		StartPipeline(inputChan, csvChan, &compsWriter, spreadsheetChan)
-	}
+	dp := newdedup()
+	StartPipeline(inputChan, csvChan, &compsWriter, spreadsheetChan, dp)
 	inputChan <- pkgs[:10]
 	for len(pkgs) != 0 {
 		if len(pkgs) < 50 {
@@ -227,10 +277,28 @@ func main() {
 	wg.Wait()
 }
 
+type dedup struct {
+	m  map[string]bool
+	mx sync.Mutex
+}
+
+func newdedup() *dedup {
+	return &dedup{
+		m: make(map[string]bool),
+	}
+}
+func (d *dedup) set(key string) {
+	d.mx.Lock()
+	defer d.mx.Unlock()
+	d.m[key] = true
+}
+func (d *dedup) check(key string) bool {
+	return d.m[key]
+}
 func StartPipeline(in chan []artifacthub.AhPackage, csv chan string, writer *Writer, spreadsheet chan struct {
 	comps []v1alpha1.ComponentDefinition
 	model string
-}) error {
+}, dp *dedup) error {
 	pkgsChan := make(chan []artifacthub.AhPackage)
 	compsChan := make(chan struct {
 		comps []v1alpha1.ComponentDefinition
@@ -260,24 +328,33 @@ func StartPipeline(in chan []artifacthub.AhPackage, csv chan string, writer *Wri
 	go func() {
 		for pkgs := range pkgsChan {
 			for _, ap := range pkgs {
-				fmt.Println("[DEBUG] Generating components for: ", ap.Name)
+				fmt.Printf("[DEBUG] Generating components for: %s with verified status %v\n", ap.Name, ap.VerifiedPublisher)
 				comps, err := ap.GenerateComponents()
 				if err != nil {
 					fmt.Println(err)
 					continue
 				}
+				var newcomps []v1alpha1.ComponentDefinition
+				for _, comp := range comps {
+					key := fmt.Sprintf("%sMESHERY%s", comp.Kind, comp.APIVersion)
+					if !dp.check(key) {
+						fmt.Println("SETTING FOR: ", key)
+						newcomps = append(newcomps, comp)
+						dp.set(key)
+					}
+				}
 				compsCSV <- struct {
 					comps []v1alpha1.ComponentDefinition
 					model string
 				}{
-					comps: comps,
+					comps: newcomps,
 					model: ap.Name,
 				}
 				spreadsheet <- struct {
 					comps []v1alpha1.ComponentDefinition
 					model string
 				}{
-					comps: comps,
+					comps: newcomps,
 					model: ap.Name,
 				}
 			}
@@ -512,6 +589,9 @@ func Spreadsheet(srv *sheets.Service, sheetName string, spreadsheet chan struct 
 			newValues[1] = entry.model
 			newValues[0] = entry.model
 			values = append(values, newValues)
+			if acpm[entry.model] == nil {
+				acpm[entry.model] = make(map[string]bool)
+			}
 			acpm[entry.model][comp.Kind] = true
 			batchSize--
 		}
