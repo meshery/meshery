@@ -1,0 +1,1 @@
+{"kind":"DataplaneInsight","apiVersion":"v1alpha1","displayName":"Dataplane Insight","format":"JSON","metadata":{},"model":{"name":"kong-mesh","version":"2.1.1","displayName":"kong-mesh","category":{"name":"","metadata":null},"metadata":null}}

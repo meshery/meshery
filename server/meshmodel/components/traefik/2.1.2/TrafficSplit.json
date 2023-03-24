@@ -1,1 +1,0 @@
-{"kind":"TrafficSplit","apiVersion":"v1alpha2","displayName":"Traffic Split","format":"JSON","metadata":{},"model":{"name":"traefik","version":"2.1.2","modelDisplayName":"traefik","category":"","subCategory":""},"schema":""}

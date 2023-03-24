@@ -1,1 +1,0 @@
-{"kind":"EventBus","apiVersion":"v1alpha1","displayName":"Event Bus","format":"JSON","metadata":{},"model":{"name":"argo-workflows","version":"5.1.1","modelDisplayName":"argo-workflows","category":"","subCategory":""},"schema":"{\n \"title\": \"Event Bus\",\n \"type\": \"object\",\n \"x-kubernetes-preserve-unknown-fields\": true\n}"}

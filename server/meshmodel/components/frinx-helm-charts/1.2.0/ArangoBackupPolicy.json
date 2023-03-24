@@ -1,1 +1,0 @@
-{"kind":"ArangoBackupPolicy","apiVersion":"v1","displayName":"Arango Backup Policy","format":"JSON","metadata":{},"model":{"name":"frinx-helm-charts","version":"1.2.0","modelDisplayName":"frinx-helm-charts","category":"","subCategory":""},"schema":""}

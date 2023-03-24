@@ -1,1 +1,0 @@
-{"kind":"KubeHunterReport","apiVersion":"v1alpha1","displayName":"Kube Hunter Report","format":"JSON","metadata":{},"model":{"name":"giantswarm","version":"0.8.0","modelDisplayName":"giantswarm","category":"","subCategory":""},"schema":""}

@@ -309,10 +309,12 @@ func main() {
 				var rel v1alpha1.RelationshipDefinition
 				byt, err := os.ReadFile(path)
 				if err != nil {
+					fmt.Println(err)
 					return nil
 				}
 				err = json.Unmarshal(byt, &rel)
 				if err != nil {
+					fmt.Println(err)
 					return nil
 				}
 				relationshipChan <- rel
