@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 {"kind":"TaskRun","apiVersion":"v1alpha1","displayName":"Task Run","format":"JSON","metadata":{},"model":{"name":"umbrella","version":"0.0.1","modelDisplayName":"umbrella","category":"","subCategory":""},"schema":""}
 =======
 <<<<<<< HEAD
@@ -6,4 +7,7 @@
 =======
 {"kind":"TaskRun","apiVersion":"v1alpha1","displayName":"Task Run","format":"JSON","metadata":{},"model":{"name":"umbrella","version":"0.0.1","modelDisplayName":"umbrella","category":"","subCategory":""}}
 >>>>>>> upstream/master
+>>>>>>> upstream/master
+=======
+{"kind":"TaskRun","apiVersion":"v1alpha1","displayName":"Task Run","format":"JSON","metadata":{},"model":{"name":"umbrella","version":"0.0.1","displayName":"umbrella","category":{"name":"","metadata":null},"metadata":null}}
 >>>>>>> upstream/master
