@@ -22,6 +22,11 @@ func (r *mutationResolver) ChangeOperatorStatus(ctx context.Context, input *mode
 	return r.changeOperatorStatus(ctx, provider, input.TargetStatus, input.ContextID)
 }
 
+// ChangeAdaptorStatus is the resolver for the changeAdaptorStatus field.
+func (r *mutationResolver) ChangeAdaptorStatus(ctx context.Context, input *model.AdaptorStatusInput) (model.Status, error) {
+	panic(fmt.Errorf("not implemented: ChangeAdaptorStatus - changeAdaptorStatus"))
+}
+
 // GetAvailableAddons is the resolver for the getAvailableAddons field.
 func (r *queryResolver) GetAvailableAddons(ctx context.Context, filter *model.ServiceMeshFilter) ([]*model.AddonList, error) {
 	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)

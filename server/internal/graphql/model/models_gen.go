@@ -8,6 +8,11 @@ import (
 	"strconv"
 )
 
+type AdaptorStatusInput struct {
+	TargetStatus Status `json:"targetStatus"`
+	AdapterPort  string `json:"adapterPort"`
+}
+
 type AddonList struct {
 	Name  string `json:"name"`
 	Owner string `json:"owner"`

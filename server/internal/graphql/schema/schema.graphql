@@ -621,9 +621,20 @@ type Query {
 
 #
 
+# Input for status change of Meshery Operator
+input AdaptorStatusInput {
+  # Desired status for Meshery Operator
+  targetStatus: Status!
+  
+  adapterPort: String!
+}
+
 type Mutation {
   # Change the Operator Status
   changeOperatorStatus(input: OperatorStatusInput): Status!
+
+  # Change the Adaptor Status
+  changeAdaptorStatus(input: AdaptorStatusInput): Status!
 }
 
 type Subscription {
