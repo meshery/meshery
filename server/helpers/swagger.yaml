@@ -146,11 +146,16 @@ paths:
         get:
             description: |-
                 Fetches the list of all applications saved by the current user
-                ?updated_after=<timestamp> timestamp should be of the format `YYYY-MM-DD HH:MM:SS`
-                ?order={field} orders on the passed field
-                ?search=<application name> A string matching is done on the specified application name
-                ?page={page-number} Default page number is 1
-                ?pagesize={pagesize} Default pagesize is 10
+
+                ```?updated_after=<timestamp>``` timestamp should be of the format `YYYY-MM-DD HH:MM:SS`
+
+                ```?order={field}``` orders on the passed field
+
+                ```?search=<application name>``` A string matching is done on the specified application name
+
+                ```?page={page-number}``` Default page number is 1
+
+                ```?pagesize={pagesize}``` Default pagesize is 10
             operationId: idGetMesheryApplication
             parameters:
                 - description: id for a specific
@@ -377,7 +382,6 @@ paths:
                 ?order={field} orders on the passed field
                 ?category={category of model} If category in unspecified then all models are returned
                 ?sort={[asc/desc]} Default behavior is asc
-                ?search={[true/false]} If search is true then a greedy search is performed
                 ?page={page-number} Default page number is 1
                 ?pagesize={pagesize} Default pagesize is 25. To return all results: pagesize=all
             operationId: idGetMeshmodelModels
@@ -395,9 +399,10 @@ paths:
                 ?version={version}
                 ?order={field} orders on the passed field
                 ?sort={[asc/desc]} Default behavior is asc
-                ?search={[true/false]} If search is true then a greedy search is performed
+                ?search={[true/false]} If search is true then a greedy search is performed on both model name and model display
                 ?page={page-number} Default page number is 1
                 ?pagesize={pagesize} Default pagesize is 25. To return all results: pagesize=all
+                ?trim={[true]} When trim is set to true, the underlying schemas are not returned for entities
             operationId: idGetMeshmodelEntititiesByModel
             responses:
                 "200":
@@ -411,6 +416,7 @@ paths:
                 Example: /api/meshmodel/model/kubernetes/component
                 Components can be further filtered through query parameter
                 ?version={version}
+                ?apiVersion={apiVersion} If apiVersion is unspecified then all models are returned
                 ?order={field} orders on the passed field
                 ?sort={[asc/desc]} Default behavior is asc
                 ?page={page-number} Default page number is 1
@@ -428,6 +434,7 @@ paths:
                 Example: /api/meshmodel/model/kubernetes/component/Namespace
                 Components can be further filtered through query parameter
                 ?version={version} If version is unspecified then all models are returned
+                ?apiVersion={apiVersion} If apiVersion is unspecified then all models are returned
                 ?order={field} orders on the passed field
                 ?sort={[asc/desc]} Default behavior is asc
                 ?search={[true/false]} If search is true then a greedy search is performed
@@ -1272,6 +1279,16 @@ paths:
             summary: Handle POST request for load test preferences
             tags:
                 - UserAPI
+    /api/user/profile/{id}:
+        get:
+            description: Returns User info
+            operationId: idGetUserByIDHandler
+            responses:
+                "200":
+                    $ref: '#/responses/userInfo'
+            summary: Handle GET for User info by ID
+            tags:
+                - UserAPI
     /api/user/schedules:
         get:
             description: Returns the list of all the schedules saved by the current user
@@ -1363,7 +1380,7 @@ responses:
         headers:
             apiVersion:
                 type: string
-            display-name:
+            displayName:
                 type: string
             format: {}
             kind:
@@ -1382,11 +1399,11 @@ responses:
         headers:
             category:
                 type: string
-            model-display-name:
+            modelDisplayName:
                 type: string
             name:
                 type: string
-            sub-category:
+            subCategory:
                 type: string
             version:
                 type: string
@@ -1398,14 +1415,14 @@ responses:
             components:
                 items: {}
                 type: array
-            model-display-name:
+            modelDisplayName:
                 type: string
             name:
                 type: string
             relationships:
                 items: {}
                 type: array
-            sub-category:
+            subCategory:
                 type: string
             version:
                 type: string
@@ -1495,6 +1512,8 @@ responses:
         schema:
             items: {}
             type: array
+    userInfo:
+        description: Returns user info
     userLoadTestPrefsRespWrapper:
         description: Returns User Load Test Preferencee
     v1ServicesMapResponseWrapper:
