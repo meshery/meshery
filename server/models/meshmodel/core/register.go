@@ -211,7 +211,7 @@ func getCRDsFromManifest(manifest string, arrAPIResources []string) []crdRespons
 				continue
 			}
 			if kind == resource {
-				crd, err := fieldVal.MarshalJSON()
+				crd, err := fieldVal.LookupPath(cue.ParsePath("properties.spec")).MarshalJSON()
 				if err != nil {
 					fmt.Printf("%v", err)
 					continue
