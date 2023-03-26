@@ -8,7 +8,7 @@ language: en
 type: project
 ---
 
-See also Meshery's [Compatibility Matrix]({{site.baseurl}}/installation/platforms) and [Build and Release](/project/build-and-release) process.
+See also Meshery's [Compatibility Matrix]({{site.baseurl}}/installation/platforms) and [Build and Release](/project/contributing/build-and-release) process.
 
 {% assign sorted_release = site.releases | sort: 'date' | reverse %}
 
