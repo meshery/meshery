@@ -82,15 +82,22 @@ func (h *Handler) GetAllComponents(rw http.ResponseWriter, r *http.Request) {
 
 /**Meshmodel endpoints **/
 const DefaultPageSizeForMeshModelComponents = 25
-
 // swagger:route GET /api/meshmodel/model GetMeshmodelModels idGetMeshmodelModels
 // Handle GET request for getting all meshmodel models. The component type/model name should be lowercase like "kubernetes", "istio"
-// ?version={version} If version is unspecified then all models are returned
-// ?order={field} orders on the passed field
-// ?category={category of model} If category in unspecified then all models are returned
-// ?sort={[asc/desc]} Default behavior is asc
-// ?page={page-number} Default page number is 1
-// ?pagesize={pagesize} Default pagesize is 25. To return all results: pagesize=all
+// 
+// Models can be further filtered through query parameter
+// 
+// ```?version={version}``` If version is unspecified then all models are returned
+// 
+// ```?order={field}``` orders on the passed field
+// 
+// ```?category={category of model}``` If category in unspecified then all models are returned
+// 
+// ```?sort={[asc/desc]}``` Default behavior is asc
+// 
+// ```?page={page-number}``` Default page number is 1
+// 
+// ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
 // responses:
 // 200: []Model
 func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
@@ -131,15 +138,25 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 
 // swagger:route GET /api/meshmodel/model/{model}/component/{name} MeshmodelGetByName idMeshmodelGetByName
 // Handle GET request for getting meshmodel components of a specific type by name.
-// Example: /api/meshmodel/model/kubernetes/component/Namespace
+// 
+// Example: ```/api/meshmodel/model/kubernetes/component/Namespace```
+// 
 // Components can be further filtered through query parameter
-// ?version={version} If version is unspecified then all models are returned
-// ?apiVersion={apiVersion} If apiVersion is unspecified then all models are returned
-// ?order={field} orders on the passed field
-// ?sort={[asc/desc]} Default behavior is asc
-// ?search={[true/false]} If search is true then a greedy search is performed
-// ?page={page-number} Default page number is 1
-// ?pagesize={pagesize} Default pagesize is 25. To return all results: pagesize=all
+// 
+// ```?version={version}``` If version is unspecified then all models are returned
+// 
+// ```?apiVersion={apiVersion}``` If apiVersion is unspecified then all models are returned
+// 
+// ```?order={field}``` orders on the passed field
+// 
+// ```?sort={[asc/desc]}``` Default behavior is asc
+// 
+// ```?search={[true/false]}``` If search is true then a greedy search is performed
+// 
+// ```?page={page-number}``` Default page number is 1
+// 
+// ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
+// 
 // responses:
 // 200: []ComponentDefinition
 func (h *Handler) GetMeshmodelComponentsByName(rw http.ResponseWriter, r *http.Request) {
@@ -197,14 +214,22 @@ func (h *Handler) GetMeshmodelComponentsByName(rw http.ResponseWriter, r *http.R
 
 // swagger:route GET /api/meshmodel/model/{model}/component MeshmodelGetByType idMeshmodelGetByType
 // Handle GET request for getting meshmodel components of a specific type. The component type/model name should be lowercase like "kubernetes", "istio"
-// Example: /api/meshmodel/model/kubernetes/component
+// 
+// Example: ```/api/meshmodel/model/kubernetes/component```
+// 
 // Components can be further filtered through query parameter
-// ?version={version}
-// ?apiVersion={apiVersion} If apiVersion is unspecified then all models are returned
-// ?order={field} orders on the passed field
-// ?sort={[asc/desc]} Default behavior is asc
-// ?page={page-number} Default page number is 1
-// ?pagesize={pagesize} Default pagesize is 25. To return all results: pagesize=all
+// 
+// ```?version={version}```
+// 
+// ```?apiVersion={apiVersion}``` If apiVersion is unspecified then all models are returned
+// 
+// ```?order={field}``` orders on the passed field
+// 
+// ```?sort={[asc/desc]}``` Default behavior is asc
+// 
+// ```?page={page-number}``` Default page number is 1
+// 
+// ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
 // responses:
 // 200: []ComponentDefinition
 func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.Request) {
@@ -298,15 +323,23 @@ type ModelResponse struct {
 
 // swagger:route GET /api/meshmodel/model/{model} GetMeshmodelEntititiesByModel idGetMeshmodelEntititiesByModel
 // Handle GET request for getting all meshmodel entities of a specific model.
-// Example: /api/meshmodel/model/kubernetes
+// 
+// Example: ```/api/meshmodel/model/kubernetes```
 // Models can be further filtered through query parameter
-// ?version={version}
-// ?order={field} orders on the passed field
-// ?sort={[asc/desc]} Default behavior is asc
-// ?search={[true/false]} If search is true then a greedy search is performed on both model name and model display
-// ?page={page-number} Default page number is 1
-// ?pagesize={pagesize} Default pagesize is 25. To return all results: pagesize=all
-// ?trim={[true]} When trim is set to true, the underlying schemas are not returned for entities
+// 
+// ```?version={version}```
+// 
+// ```?order={field}``` orders on the passed field
+// 
+// ```?sort={[asc/desc]}``` Default behavior is asc
+// 
+// ```?search={[true/false]}``` If search is true then a greedy search is performed on both model name and model display
+// 
+// ```?page={page-number}``` Default page number is 1
+// 
+// ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
+// 
+// ```?trim={[true]}``` When trim is set to true, the underlying schemas are not returned for entities
 // responses:
 //
 //	200: []ModelResponse

@@ -147,7 +147,7 @@ paths:
             description: |-
                 Fetches the list of all applications saved by the current user
 
-                ```?updated_after=<timestamp>``` timestamp should be of the format `YYYY-MM-DD HH:MM:SS`
+                ```?updated_after=<timestamp>``` timestamp should be of the format "YYYY-MM-DD HH:MM:SS"
 
                 ```?order={field}``` orders on the passed field
 
@@ -378,12 +378,19 @@ paths:
     /api/meshmodel/model:
         get:
             description: |-
-                ?version={version} If version is unspecified then all models are returned
-                ?order={field} orders on the passed field
-                ?category={category of model} If category in unspecified then all models are returned
-                ?sort={[asc/desc]} Default behavior is asc
-                ?page={page-number} Default page number is 1
-                ?pagesize={pagesize} Default pagesize is 25. To return all results: pagesize=all
+                Models can be further filtered through query parameter
+
+                ```?version={version}``` If version is unspecified then all models are returned
+
+                ```?order={field}``` orders on the passed field
+
+                ```?category={category of model}``` If category in unspecified then all models are returned
+
+                ```?sort={[asc/desc]}``` Default behavior is asc
+
+                ```?page={page-number}``` Default page number is 1
+
+                ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
             operationId: idGetMeshmodelModels
             responses:
                 "200":
@@ -394,15 +401,22 @@ paths:
     /api/meshmodel/model/{model}:
         get:
             description: |-
-                Example: /api/meshmodel/model/kubernetes
+                Example: ```/api/meshmodel/model/kubernetes```
                 Models can be further filtered through query parameter
-                ?version={version}
-                ?order={field} orders on the passed field
-                ?sort={[asc/desc]} Default behavior is asc
-                ?search={[true/false]} If search is true then a greedy search is performed on both model name and model display
-                ?page={page-number} Default page number is 1
-                ?pagesize={pagesize} Default pagesize is 25. To return all results: pagesize=all
-                ?trim={[true]} When trim is set to true, the underlying schemas are not returned for entities
+
+                ```?version={version}```
+
+                ```?order={field}``` orders on the passed field
+
+                ```?sort={[asc/desc]}``` Default behavior is asc
+
+                ```?search={[true/false]}``` If search is true then a greedy search is performed on both model name and model display
+
+                ```?page={page-number}``` Default page number is 1
+
+                ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
+
+                ```?trim={[true]}``` When trim is set to true, the underlying schemas are not returned for entities
             operationId: idGetMeshmodelEntititiesByModel
             responses:
                 "200":
@@ -413,14 +427,21 @@ paths:
     /api/meshmodel/model/{model}/component:
         get:
             description: |-
-                Example: /api/meshmodel/model/kubernetes/component
+                Example: ```/api/meshmodel/model/kubernetes/component```
+
                 Components can be further filtered through query parameter
-                ?version={version}
-                ?apiVersion={apiVersion} If apiVersion is unspecified then all models are returned
-                ?order={field} orders on the passed field
-                ?sort={[asc/desc]} Default behavior is asc
-                ?page={page-number} Default page number is 1
-                ?pagesize={pagesize} Default pagesize is 25. To return all results: pagesize=all
+
+                ```?version={version}```
+
+                ```?apiVersion={apiVersion}``` If apiVersion is unspecified then all models are returned
+
+                ```?order={field}``` orders on the passed field
+
+                ```?sort={[asc/desc]}``` Default behavior is asc
+
+                ```?page={page-number}``` Default page number is 1
+
+                ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
             operationId: idMeshmodelGetByType
             responses:
                 "200":
@@ -431,15 +452,23 @@ paths:
     /api/meshmodel/model/{model}/component/{name}:
         get:
             description: |-
-                Example: /api/meshmodel/model/kubernetes/component/Namespace
+                Example: ```/api/meshmodel/model/kubernetes/component/Namespace```
+
                 Components can be further filtered through query parameter
-                ?version={version} If version is unspecified then all models are returned
-                ?apiVersion={apiVersion} If apiVersion is unspecified then all models are returned
-                ?order={field} orders on the passed field
-                ?sort={[asc/desc]} Default behavior is asc
-                ?search={[true/false]} If search is true then a greedy search is performed
-                ?page={page-number} Default page number is 1
-                ?pagesize={pagesize} Default pagesize is 25. To return all results: pagesize=all
+
+                ```?version={version}``` If version is unspecified then all models are returned
+
+                ```?apiVersion={apiVersion}``` If apiVersion is unspecified then all models are returned
+
+                ```?order={field}``` orders on the passed field
+
+                ```?sort={[asc/desc]}``` Default behavior is asc
+
+                ```?search={[true/false]}``` If search is true then a greedy search is performed
+
+                ```?page={page-number}``` Default page number is 1
+
+                ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
             operationId: idMeshmodelGetByName
             responses:
                 "200":
@@ -450,13 +479,19 @@ paths:
     /api/meshmodel/model/{model}/relationship:
         get:
             description: |-
-                Example: /api/meshmodel/model/kubernetes/relationship
+                Example: ```/api/meshmodel/model/kubernetes/relationship```
+
                 Relationships can be further filtered through query parameter
-                ?version={version}
-                ?order={field} orders on the passed field
-                ?sort={[asc/desc]} Default behavior is asc
-                ?page={page-number} Default page number is 1
-                ?pagesize={pagesize} Default pagesize is 25. To return all results: pagesize=all
+
+                ```?version={version}```
+
+                ```?order={field}``` orders on the passed field
+
+                ```?sort={[asc/desc]}``` Default behavior is asc
+
+                ```?page={page-number}``` Default page number is 1
+
+                ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
             operationId: idGetAllMeshmodelRelationships
             responses:
                 "200":
@@ -467,14 +502,21 @@ paths:
     /api/meshmodel/model/{model}/relationship/{name}:
         get:
             description: |-
-                Example: /api/meshmodel/model/kubernetes/relationship/Edge
+                Example: ```/api/meshmodel/model/kubernetes/relationship/Edge```
+
                 Relationships can be further filtered through query parameter
-                ?version={version}
-                ?order={field} orders on the passed field
-                ?sort={[asc/desc]} Default behavior is asc
-                ?search={[true/false]} If search is true then a greedy search is performed
-                ?page={page-number} Default page number is 1
-                ?pagesize={pagesize} Default pagesize is 25. To return all results: pagesize=all
+
+                ```?version={version}```
+
+                ```?order={field}``` orders on the passed field
+
+                ```?sort={[asc/desc]}``` Default behavior is asc
+
+                ```?search={[true/false]}``` If search is true then a greedy search is performed
+
+                ```?page={page-number}``` Default page number is 1
+
+                ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
             operationId: idGetMeshmodelRelationshipByName
             responses:
                 "200":
@@ -494,11 +536,7 @@ paths:
                 - MeshmodelValidate
     /api/oam/{type}:
         get:
-            description: |-
-                Getting list of workloads/traits/scopes
-
-                {type} being of either trait, scope, workload; registration of adapter capabilities.
-                Example: /api/oam/workload => Here {type} is "workload"
+            description: "Getting list of ```workloads/traits/scopes```\n\n```{type}``` being of either trait, scope, workload; registration of adapter capabilities. \n\nExample: ```/api/oam/workload``` => Here ```{type}``` is \"workload\""
             operationId: idGETOAMMesheryPattern
             responses:
                 "200":
@@ -508,10 +546,11 @@ paths:
                 - PatternsAPI
         post:
             description: |-
-                Adding a workload/trait/scope
+                Adding a ```workload/trait/scope```
 
                 {type} being of either trait, scope, workload; registration of adapter capabilities.
-                Example: /api/oam/trait => Here {type} is "trait"
+
+                Example: ```/api/oam/trait``` => Here ```{type}``` is "trait"
             operationId: idPOSTOAMRegister
             responses:
                 "200":
@@ -522,11 +561,12 @@ paths:
     /api/oam/{type}/{name}:
         get:
             description: |-
-                Returns component details of a workload/trait/scope by given name in the URL
+                Returns component details of a ```workload/trait/scope``` by given name in the URL
 
-                {type} being of either trait, scope, workload; registration of adapter capabilities.
-                Example: /api/oam/workload/Application => Here {type} is "workload" and {name} is "Application"
-                it should be noted that both {type} and {name} should be valid
+                ```{type}``` being of either trait, scope, workload; registration of adapter capabilities.
+
+                Example: ```/api/oam/workload/Application``` => Here ```{type}``` is "workload" and ```{name}``` is "Application"
+                it should be noted that both ```{type}``` and ```{name}``` should be valid
             operationId: idOAMComponentDetails
             responses:
                 "200":
@@ -537,12 +577,13 @@ paths:
     /api/oam/{type}/{name}/{id}:
         get:
             description: |-
-                Returns details of a workload/trait/scope by given name and id in the URL
+                Returns details of a ```workload/trait/scope``` by given name and id in the URL
 
-                {type} being of either trait, scope, workload; registration of adapter capabilities.
-                Example: /api/oam/workload/Application/asdqe123sa275sasd => Here {type} is "workload"
-                {name} is "Application" and {id} is "asdqe123sa275sasd". It should be noted that all of three, i.e {type},
-                {name} and {id} must be valid
+                ```{type}``` being of either trait, scope, workload; registration of adapter capabilities.
+
+                Example: ```/api/oam/workload/Application/asdqe123sa275sasd``` => Here ```{type}``` is "workload"
+                ```{name}``` is "Application" and ```{id}``` is "asdqe123sa275sasd". It should be noted that all of three, i.e {type},
+                ```{name}``` and ```{id}``` must be valid
             operationId: idOAMComponentDetailByID
             responses:
                 "200":
@@ -554,12 +595,18 @@ paths:
         get:
             description: |-
                 Returns the list of all the patterns saved by the current user
+
                 This will return all the patterns with their details
-                ?updated_after=<timestamp> timestamp should be of the format `YYYY-MM-DD HH:MM:SS`
-                ?order={field} orders on the passed field
-                ?search=<design name> A string matching is done on the specified design name
-                ?page={page-number} Default page number is 1
-                ?pagesize={pagesize} Default pagesize is 10
+
+                ```?updated_after=<timestamp>``` timestamp should be of the format "YYYY-MM-DD HH:MM:SS"
+
+                ```?order={field}``` orders on the passed field
+
+                ```?search=<design name>``` A string matching is done on the specified design name
+
+                ```?page={page-number}``` Default page number is 1
+
+                ```?pagesize={pagesize}``` Default pagesize is 10
             operationId: idGetPatternFiles
             responses:
                 "200":
@@ -1223,7 +1270,7 @@ paths:
             responses:
                 "200":
                     $ref: '#/responses/userLoadTestPrefsRespWrapper'
-            summary: Handle GET for User Load Test Preferences
+            summary: Handle GET Requests for User Load Test Preferences
             tags:
                 - UserAPI
         post:
@@ -1232,7 +1279,7 @@ paths:
             responses:
                 "200":
                     $ref: '#/responses/userLoadTestPrefsRespWrapper'
-            summary: Handle GET for User Load Test Preferences
+            summary: Handle GET Requests for User Load Test Preferences
             tags:
                 - UserAPI
     /api/user/prefs/perf:
@@ -1296,7 +1343,7 @@ paths:
             responses:
                 "200":
                     $ref: '#/responses/schedulesResponseWrapper'
-            summary: Handle GET reqeuest for Schedules
+            summary: Handle GET request for Schedules
             tags:
                 - SchedulesAPI
         post:
@@ -1305,7 +1352,7 @@ paths:
             responses:
                 "200":
                     $ref: '#/responses/singleScheduleResponseWrapper'
-            summary: Handle POST reqeuest for Schedules
+            summary: Handle POST request for Schedules
             tags:
                 - SchedulesAPI
     /api/user/schedules/{id}:
@@ -1323,7 +1370,7 @@ paths:
             responses:
                 "200":
                     $ref: '#/responses/schedulesResponseWrapper'
-            summary: Handle DELETE reqeuest for Schedules
+            summary: Handle DELETE request for Schedules
             tags:
                 - SchedulesAPI
         get:
@@ -1340,14 +1387,14 @@ paths:
             responses:
                 "200":
                     $ref: '#/responses/singleScheduleResponseWrapper'
-            summary: Handle GET reqeuest for Schedules
+            summary: Handle GET request for Schedules
             tags:
                 - SchedulesAPI
     /api/user/token:
         get:
             description: |-
                 Returns token from the actual provider in a file
-                resposese:
+                response:
                 200:
             operationId: idGetTokenProvider
             summary: Handle GET request for tokens
@@ -1356,7 +1403,7 @@ paths:
         post:
             description: |-
                 Receives token from the actual provider
-                resposese:
+                response:
                 200:
             operationId: idPostTokenProvider
             summary: Handle POST request for tokens

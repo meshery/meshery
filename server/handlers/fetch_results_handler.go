@@ -19,7 +19,7 @@ import (
 // responses:
 // 	200:performanceResultsResponseWrapper
 
-// FetchResultsHandler fetchs pages of results from Remote Provider and presents it to the UI
+// FetchResultsHandler fetches pages of results from Remote Provider and presents it to the UI
 func (h *Handler) FetchResultsHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, p models.Provider) {
 	profileID := mux.Vars(req)["id"]
 
@@ -58,7 +58,7 @@ func (h *Handler) FetchResultsHandler(w http.ResponseWriter, req *http.Request, 
 // responses:
 // 	200: performanceResultsResponseWrapper
 
-// FetchAllResultsHandler fetchs pages of results from Remote Provider and presents it to the UI
+// FetchAllResultsHandler fetches pages of results from Remote Provider and presents it to the UI
 func (h *Handler) FetchAllResultsHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, p models.Provider) {
 	err := req.ParseForm()
 	if err != nil {
