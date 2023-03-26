@@ -1,9 +1,9 @@
 /* eslint-disable no-unused-vars */
-import React, { useEffect } from "react";
+import React from "react";
 import Box from "@material-ui/core/Box";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
-import { Button, IconButton, makeStyles, Typography, useTheme, withStyles } from "@material-ui/core";
+import { Button, IconButton,Typography, withStyles } from "@material-ui/core";
 import AddIcon from "@material-ui/icons/Add";
 import SimpleAccordion from "./Accordion";
 import { CustomTextTooltip } from "../CustomTextTooltip";
@@ -11,7 +11,7 @@ import HelpOutlineIcon from "../../../../assets/icons/HelpOutlineIcon";
 import { isMultiSelect, getDefaultFormState } from "@rjsf/utils";
 import ErrorOutlineIcon from "../../../../assets/icons/ErrorOutlineIcon";
 import { ERROR_COLOR } from "../../../../constants/colors";
-import { iconMedium, iconSmall } from "../../../../css/icons.styles";
+import { iconSmall } from "../../../../css/icons.styles";
 const styles = (theme) => ({
   typography : {
     fontSize : "0.8rem",
@@ -231,17 +231,6 @@ const DefaultNormalArrayFieldTemplate = (props) => {
             )}
           </Grid>
         </Grid>
-
-        {/* {(props.uiSchema["ui:description"] || props.schema.description) && (
-          <ArrayFieldDescription
-            key={`array-field-description-${props.idSchema.$id}`}
-            DescriptionField={CustomDescriptionField}
-            idSchema={props.idSchema}
-            description={
-              props.uiSchema["ui:description"] || props.schema.description
-            }
-          />
-        )} */}
 
         <Grid container={true} key={`array-item-list-${props.idSchema.$id}`}>
           {props.items && props.items.map((item, idx) => {
