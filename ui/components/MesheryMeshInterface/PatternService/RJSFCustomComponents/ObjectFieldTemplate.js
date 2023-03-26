@@ -49,7 +49,7 @@ const ObjectFieldTemplate = ({
   const theme = useTheme();
 
   // If the parent type is an `array`, then expand the current object.
-  const [show, setShow] = React.useState(schema?.p_type ? true : false);
+  const [show, setShow] = React.useState(false);
   properties.forEach((property, index) => {
     if (schema.properties[property.name].type) {
       properties[index].type = schema.properties[property.name].type;
@@ -143,15 +143,12 @@ const ObjectFieldTemplate = ({
     <>
       {fieldTitle ? (
         <>
-          {schema.p_type !== "array" ? (
-            <CustomTitleField
-              id={`${idSchema.$id}-title`}
-              title={additional ? "Value" : fieldTitle}
-              description={description}
-              properties={properties}
-            />
-          ) : null
-          }
+          <CustomTitleField
+            id={`${idSchema.$id}-title`}
+            title={additional ? "Value" : fieldTitle}
+            description={description}
+            properties={properties}
+          />
           {Object.keys(properties).length > 0 && show && Properties}
         </>
       ) : Properties}
