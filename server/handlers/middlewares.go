@@ -230,7 +230,7 @@ func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http
 		}
 
 		user, err := provider.GetUserDetails(req)
-		// if user details are not available, 
+		// if user details are not available,
 		// then logout current user session and redirect to login page
 		if err != nil {
 			err1 := provider.Logout(w, req)
