@@ -432,6 +432,8 @@ class MesheryApp extends App {
                         activeContexts={this.state.activeK8sContexts}
                         setActiveContexts={this.setActiveContexts}
                         searchContexts={this.searchContexts}
+                        theme={this.state.theme}
+                        themeSetter={this.themeSetter}
                         {...pageProps}
                       />
                     </MuiPickersUtilsProvider>
