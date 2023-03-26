@@ -110,6 +110,7 @@ const (
 	ErrGenerateComponentsCode           = "2254"
 	ErrPublishCatalogPatternCode        = "2255"
 	ErrPublishCatalogFilterCode         = "2256"
+	ErrGetMeshModelsCode                = "2257"
 )
 
 var (
@@ -476,4 +477,8 @@ func ErrPublishCatalogPattern(err error) error {
 
 func ErrPublishCatalogFilter(err error) error {
 	return errors.New(ErrPublishCatalogFilterCode, errors.Alert, []string{"Error failed to publish catalog filter"}, []string{err.Error()}, []string{"Failed to publish catalog filter"}, []string{"Check if the filter ID is correct and you are admin"})
+}
+
+func ErrGetMeshModels(err error) error {
+	return errors.New(ErrGetMeshModelsCode, errors.Alert, []string{"could not get meshmodel entitities"}, []string{err.Error()}, []string{"Meshmodel entity could not be converted into valid json", "data in the registry was inconsistent"}, []string{"make sure correct and consistent data is present inside the registry", "drop the Meshmodel tables and restart Meshery server"})
 }

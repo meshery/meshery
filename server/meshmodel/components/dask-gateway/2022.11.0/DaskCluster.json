@@ -1,1 +1,0 @@
-{"kind":"DaskCluster","apiVersion":"v1alpha1","displayName":"Dask Cluster","format":"JSON","metadata":{},"model":{"name":"dask-gateway","version":"2022.11.0","modelDisplayName":"dask-gateway","category":"","subCategory":""}}

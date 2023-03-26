@@ -1,1 +1,1 @@
-{"kind":"Image","apiVersion":"v1alpha1","displayName":"Image","format":"JSON","metadata":{},"model":{"name":"knative","version":"0.4.5","modelDisplayName":"knative","category":"","subCategory":""}}
+{"kind":"Image","apiVersion":"v1alpha1","displayName":"Image","format":"JSON","metadata":{},"model":{"name":"knative","version":"0.4.5","displayName":"knative","category":{"name":"","metadata":null},"metadata":null}}
