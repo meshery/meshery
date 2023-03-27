@@ -128,6 +128,17 @@ make server
 Any time changes are made to the Go code, you will have to stop the server and run the above command again.
 Once the Meshery server is up and running, you should be able to access Meshery on your `localhost` on port `9081` at `http://localhost:9081`.
 
+### UI Development Server
+
+If you want to work on the UI, it will be a good idea to use the included UI development server. You can run the UI development server by running the following command:
+
+```
+make ui
+```
+
+Once you have the server configured, and running successfully on the default port `http://localhost:9081`, you may proceed to access the Meshery UI at `http://localhost:3000`.
+Any UI changes made now will automatically be recompiled and served in the browser.
+
 To access the [Meshery UI Development Server](#ui-development-server) on port `3000`, you will need to select your **Cloud Provider** by navigating to `localhost:9081` after running the Meshery server.
 
 **Please note**: When running `make server` on the macOS platform, some may face errors with the crypto module in Go. This is caused due to invalid C headers in Clang installed with XCode platform tools. Replacing Clang with gcc by adding `export CC=gcc` to .bashrc / .zshrc should fix the issue. More information on the issue can be found [here](https://github.com/golang/go/issues/30072)
@@ -209,7 +220,15 @@ make ui-setup
 To build and export the UI code:
 
 ```
-make ui-setup
+make ui-build
+```
+
+### Build and run Meshery Server
+
+To build & run Meshery Server:
+
+```
+make server
 ```
 
 Now that the UI code is built, Meshery UI will be available at `http://localhost:9081`.
