@@ -209,7 +209,15 @@ make ui-setup
 To build and export the UI code:
 
 ```
-make ui-setup
+make ui-build
+```
+
+### Build and run Meshery Server
+
+To build & run Meshery Server:
+
+```
+make server
 ```
 
 Now that the UI code is built, Meshery UI will be available at `http://localhost:9081`.
