@@ -68,8 +68,9 @@ func RegisterMeshmodelComponentsForCRDS(reg meshmodel.RegistryManager, k8sYaml [
 				Name:        "kubernetes",
 				Version:     version,
 				DisplayName: "Kubernetes",
-				Category:    "Orchestration & Management",
-				SubCategory: "Scheduling & Orchestration",
+				Category: v1alpha1.Category{
+					Name: "Orchestration & Management",
+				},
 			},
 		})
 	}
@@ -137,8 +138,9 @@ func GetK8sMeshModelComponents(ctx context.Context, kubeconfig []byte) ([]v1alph
 				Version:     k8version.String(),
 				Name:        "kubernetes",
 				DisplayName: "Kubernetes",
-				Category:    "Orchestration & Management",
-				SubCategory: "Scheduling & Orchestration",
+				Category: v1alpha1.Category{
+					Name: "Orchestration & Management",
+				},
 			},
 		}
 		components = append(components, c)
@@ -209,7 +211,7 @@ func getCRDsFromManifest(manifest string, arrAPIResources []string) []crdRespons
 				continue
 			}
 			if kind == resource {
-				crd, err := fieldVal.MarshalJSON()
+				crd, err := fieldVal.LookupPath(cue.ParsePath("properties.spec")).MarshalJSON()
 				if err != nil {
 					fmt.Printf("%v", err)
 					continue

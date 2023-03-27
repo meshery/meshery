@@ -1,1 +1,1 @@
-{"kind":"VolumeSnapshotClass","apiVersion":"v1","displayName":"Volume Snapshot Class","format":"JSON","metadata":{},"model":{"name":"snapshot-controller","version":"0.2.2","modelDisplayName":"snapshot-controller","category":"","subCategory":""}}
+{"kind":"VolumeSnapshotClass","apiVersion":"v1","displayName":"Volume Snapshot Class","format":"JSON","metadata":{},"model":{"name":"snapshot-controller","version":"0.2.2","displayName":"snapshot-controller","category":{"name":"","metadata":null},"metadata":null}}

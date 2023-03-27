@@ -203,7 +203,7 @@ var TemplateContext = config.Context{
 
 // TemplateToken is the template token provided when creating a config file
 var TemplateToken = config.Token{
-	Name:     "Default",
+	Name:     "default",
 	Location: AuthConfigFile,
 }
 

@@ -1,1 +1,0 @@
-{"kind":"ClusterPolicyReport","apiVersion":"v1alpha2","displayName":"Cluster Policy Report","format":"JSON","metadata":{},"model":{"name":"kube-bench-adapter","version":"1.1.6","modelDisplayName":"kube-bench-adapter","category":"","subCategory":""}}
