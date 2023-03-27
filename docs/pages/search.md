@@ -1,15 +1,13 @@
 ---
-title: 
+title: Search 
 sitemap: false
 permalink: /search/
 not_editable: true
 excluded_in_search: true
+display-title : "false"
 ---
 
-<input class="form-control td-search-input fa fa-search" type="search" name="q" id="search-input" placeholder="&#xf002 Search this site…"  style="margin-top:5px" autofocus>
-<i style="color:white; margin-right:8px; margin-left:5px" class="fa fa-search"></i>
-
-<p><span id="search-process">Loading</span> results <span id="search-query-container" style="display: none;">for "<strong id="search-query"></strong>"</span></p>
+<h3><span id="search-process">Loading</span> results <span id="search-query-container" style="display: none;">for "<strong id="search-query"></strong>"</span></h3>
 
 <ul id="search-results"></ul>
 
