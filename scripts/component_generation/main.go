@@ -75,13 +75,7 @@ func convertCompModelsToPackages(models []ComponentModel) []artifacthub.AhPackag
 var priorityRepos = map[string]bool{"prometheus-community": true, "grafana": true} //Append ahrepos here whose components should be respected and should be used when encountered duplicates
 
 // returns pkgs with sorted pkgs at the front
-func sortOnVerified(pkgs []artifacthub.AhPackage) []artifacthub.AhPackage {
-	sorted := make([]artifacthub.AhPackage, 0)
-	verified := make([]artifacthub.AhPackage, 0)
-	official := make([]artifacthub.AhPackage, 0)
-	cncf := make([]artifacthub.AhPackage, 0)
-	unverified := make([]artifacthub.AhPackage, 0)
-	priority := make([]artifacthub.AhPackage, 0)
+func sortOnVerified(pkgs []artifacthub.AhPackage) (verified []artifacthub.AhPackage, official []artifacthub.AhPackage, cncf []artifacthub.AhPackage, priority []artifacthub.AhPackage, unverified []artifacthub.AhPackage) {
 	for _, pkg := range pkgs {
 		if priorityRepos[pkg.Repository] {
 			priority = append(priority, pkg)
@@ -97,22 +91,7 @@ func sortOnVerified(pkgs []artifacthub.AhPackage) []artifacthub.AhPackage {
 			unverified = append(unverified, pkg)
 		}
 	}
-	for _, v := range priority {
-		sorted = append(sorted, v)
-	}
-	for _, v := range cncf {
-		sorted = append(sorted, v)
-	}
-	for _, v := range official {
-		sorted = append(sorted, v)
-	}
-	for _, v := range verified {
-		sorted = append(sorted, v)
-	}
-	for _, v := range unverified {
-		sorted = append(sorted, v)
-	}
-	return sorted
+	return
 }
 func main() {
 	if len(os.Args) > 1 {
@@ -174,11 +153,7 @@ func main() {
 			return
 		}
 	}
-	pkgs = sortOnVerified(pkgs)
-	for _, pkg := range pkgs {
-		fmt.Println(pkg.Name, pkg.VerifiedPublisher)
-	}
-	inputChan := make(chan []artifacthub.AhPackage)
+	verified, official, cncf, priority, unverified := sortOnVerified(pkgs)
 	csvChan := make(chan string, 50)
 	f, err := os.Create(dumpFile)
 	if err != nil {
@@ -211,7 +186,7 @@ func main() {
 		model string
 	}, 100)
 	// Set the range of cells to retrieve.
-	rangeString := sheetName + "!B:G" //modelname column
+	rangeString := sheetName + "!A:P" //modelname column
 
 	// Get the value of the specified cell.
 	resp, err := srv.Spreadsheets.Values.Get(spreadsheetID, rangeString).Do()
@@ -219,20 +194,21 @@ func main() {
 		fmt.Println("Unable to retrieve data from sheet: ", err)
 		return
 	}
-	availableModels := make(map[string]bool)
+	availableModels := make(map[string][]interface{})
 	availableComponentsPerModel := make(map[string]map[string]bool)
 	for _, val := range resp.Values {
 		if len(val) > 1 {
-			key := val[0].(string)
+			key := val[1].(string)
 			if key == "" {
 				continue
 			}
 			var compkey string
-			if len(val) > 5 {
-				compkey = val[5].(string)
+			if len(val) > 6 {
+				compkey = val[6].(string)
 			}
 			if compkey == "" {
-				availableModels[key] = true
+				availableModels[key] = make([]interface{}, len(val))
+				copy(availableModels[key], val)
 				continue
 			}
 			if availableComponentsPerModel[key] == nil {
@@ -249,17 +225,8 @@ func main() {
 		Spreadsheet(srv, sheetName, spreadsheetChan, availableModels, availableComponentsPerModel)
 	}()
 	dp := newdedup()
-	StartPipeline(inputChan, csvChan, &compsWriter, spreadsheetChan, dp)
-	inputChan <- pkgs[:10]
-	for len(pkgs) != 0 {
-		if len(pkgs) < 50 {
-			inputChan <- pkgs
-			time.Sleep(10 * time.Second)
-			return
-		}
-		inputChan <- pkgs[:50]
-		pkgs = pkgs[50:]
-	}
+
+	executeInStages(StartPipeline, csvChan, &compsWriter, spreadsheetChan, dp, priority, cncf, official, verified, unverified)
 	time.Sleep(20 * time.Second)
 
 	// split files
@@ -275,6 +242,45 @@ func main() {
 	}
 	close(spreadsheetChan)
 	wg.Wait()
+}
+
+// Stages have to run sequentially. The steps within each stage can be concurrent.
+// pipeline function should return only after completion
+func executeInStages(pipeline func(in chan []artifacthub.AhPackage, csv chan string, writer *Writer, spreadsheet chan struct {
+	comps []v1alpha1.ComponentDefinition
+	model string
+}, dp *dedup) error,
+	csv chan string,
+	writer *Writer,
+	spreadsheetChan chan struct {
+		comps []v1alpha1.ComponentDefinition
+		model string
+	}, dp *dedup, pkg ...[]artifacthub.AhPackage) {
+	for stageno, p := range pkg {
+		input := make(chan []artifacthub.AhPackage)
+		go func() {
+			for len(p) != 0 {
+				x := 50
+				if len(p) < x {
+					x = len(p)
+				}
+				input <- p[:x]
+				p = p[x:]
+			}
+			close(input)
+		}()
+		var wg sync.WaitGroup
+		for i := 1; i < 10; i++ {
+			wg.Add(1)
+			go func() {
+				defer wg.Done()
+				pipeline(input, csv, writer, spreadsheetChan, dp) //synchronous
+				fmt.Println("Pipeline exited for a go routine")
+			}()
+		}
+		wg.Wait()
+		fmt.Println("[DEBUG] Completed stage", stageno)
+	}
 }
 
 type dedup struct {
@@ -323,43 +329,7 @@ func StartPipeline(in chan []artifacthub.AhPackage, csv chan string, writer *Wri
 			}
 			pkgsChan <- ahPkgs
 		}
-	}()
-	// generation of components
-	go func() {
-		for pkgs := range pkgsChan {
-			for _, ap := range pkgs {
-				fmt.Printf("[DEBUG] Generating components for: %s with verified status %v\n", ap.Name, ap.VerifiedPublisher)
-				comps, err := ap.GenerateComponents()
-				if err != nil {
-					fmt.Println(err)
-					continue
-				}
-				var newcomps []v1alpha1.ComponentDefinition
-				for _, comp := range comps {
-					key := fmt.Sprintf("%sMESHERY%s", comp.Kind, comp.APIVersion)
-					if !dp.check(key) {
-						fmt.Println("SETTING FOR: ", key)
-						newcomps = append(newcomps, comp)
-						dp.set(key)
-					}
-				}
-				compsCSV <- struct {
-					comps []v1alpha1.ComponentDefinition
-					model string
-				}{
-					comps: newcomps,
-					model: ap.Name,
-				}
-				spreadsheet <- struct {
-					comps []v1alpha1.ComponentDefinition
-					model string
-				}{
-					comps: newcomps,
-					model: ap.Name,
-				}
-			}
-
-		}
+		close(pkgsChan)
 	}()
 	// writer
 	go func() {
@@ -401,7 +371,40 @@ func StartPipeline(in chan []artifacthub.AhPackage, csv chan string, writer *Wri
 			}
 		}
 	}()
+	for pkgs := range pkgsChan {
+		for _, ap := range pkgs {
+			fmt.Printf("[DEBUG] Generating components for: %s with verified status %v\n", ap.Name, ap.VerifiedPublisher)
+			comps, err := ap.GenerateComponents()
+			if err != nil {
+				fmt.Println(err)
+				continue
+			}
+			var newcomps []v1alpha1.ComponentDefinition
+			for _, comp := range comps {
+				key := fmt.Sprintf("%sMESHERY%s", comp.Kind, comp.APIVersion)
+				if !dp.check(key) {
+					fmt.Println("SETTING FOR: ", key)
+					newcomps = append(newcomps, comp)
+					dp.set(key)
+				}
+			}
+			compsCSV <- struct {
+				comps []v1alpha1.ComponentDefinition
+				model string
+			}{
+				comps: newcomps,
+				model: ap.Name,
+			}
+			spreadsheet <- struct {
+				comps []v1alpha1.ComponentDefinition
+				model string
+			}{
+				comps: newcomps,
+				model: ap.Name,
+			}
+		}
 
+	}
 	return nil
 }
 
@@ -562,8 +565,7 @@ const sheetID = 0
 func Spreadsheet(srv *sheets.Service, sheetName string, spreadsheet chan struct {
 	comps []v1alpha1.ComponentDefinition
 	model string
-}, am map[string]bool, acpm map[string]map[string]bool) {
-	fmt.Println("will not create models for: ", am)
+}, am map[string][]interface{}, acpm map[string]map[string]bool) {
 	start := time.Now()
 	rangeString := sheetName + "!A4:AB4"
 	// Get the value of the specified cell.
@@ -583,8 +585,18 @@ func Spreadsheet(srv *sheets.Service, sheetName string, spreadsheet chan struct 
 				fmt.Println("[Debug][Spreadsheet] Skipping spreadsheet updation for ", entry.model, comp.Kind)
 				continue
 			}
-			newValues := make([]interface{}, len(resp.Values[0]))
-			copy(newValues, resp.Values[0])
+			fmt.Println("HERE")
+			var newValues []interface{}
+			if am[entry.model] != nil {
+				fmt.Println("HERE 1")
+				newValues = make([]interface{}, len(am[entry.model]))
+				copy(newValues, am[entry.model])
+			} else {
+				fmt.Println("HERE 0")
+				newValues = make([]interface{}, len(resp.Values[0]))
+				copy(newValues, resp.Values[0])
+			}
+			fmt.Println("HERE 2 ")
 			newValues[6] = comp.Kind
 			newValues[1] = entry.model
 			newValues[0] = entry.model
@@ -592,10 +604,12 @@ func Spreadsheet(srv *sheets.Service, sheetName string, spreadsheet chan struct 
 			if acpm[entry.model] == nil {
 				acpm[entry.model] = make(map[string]bool)
 			}
+			fmt.Println("HERE 6")
 			acpm[entry.model][comp.Kind] = true
 			batchSize--
+			fmt.Println("Batch size: ", batchSize)
 		}
-		if am[entry.model] {
+		if am[entry.model] != nil {
 			fmt.Println("[Debug][Spreadsheet] Skipping spreadsheet updation for ", entry.model)
 			continue
 		}
@@ -605,8 +619,9 @@ func Spreadsheet(srv *sheets.Service, sheetName string, spreadsheet chan struct 
 		newValues[0] = entry.model
 		newValues[4] = len(entry.comps)
 		values = append(values, newValues)
-		am[entry.model] = true
+		copy(am[entry.model], newValues)
 		batchSize--
+		fmt.Println("Batch size: ", batchSize)
 		if batchSize <= 0 {
 			row := &sheets.ValueRange{
 				Values: values,
