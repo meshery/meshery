@@ -32,7 +32,7 @@ There are two ways to get your authentication token:
 
 Using Meshery UI, you can get a copy of your authentication token by following these steps:
 
-1. Log into Meshery by selecting your identity provider of choice (typically found at <pre style="background-color:#343a40;">http:\\{meshery-server}:9081/provider</pre>)
+1. Log into Meshery by selecting your identity provider of choice (typically found at <pre>http:\\{meshery-server}:9081/provider</pre>)
 2. Navigate to your user's avatar in the upper lefthand corner and select "Get Token" from the dropdown of profile section.
 
 </details>
