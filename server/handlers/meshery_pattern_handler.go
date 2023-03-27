@@ -297,7 +297,6 @@ func (h *Handler) handlePatternPOST(
 // Handle GET request for patterns
 //
 // Returns the list of all the patterns saved by the current user
-// 
 // This will return all the patterns with their details
 // 
 // ```?updated_after=<timestamp>``` timestamp should be of the format "YYYY-MM-DD HH:MM:SS"

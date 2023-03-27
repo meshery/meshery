@@ -15,7 +15,7 @@ import (
 // swagger:route GET /api/user/performance/profiles/{id}/results PerformanceAPI idGETProfileResults
 // Handle GET request for results of a profile
 //
-// Fetchs pages of results from Remote Provider for the given id
+// Fetches pages of results from Remote Provider for the given id
 // responses:
 // 	200:performanceResultsResponseWrapper
 

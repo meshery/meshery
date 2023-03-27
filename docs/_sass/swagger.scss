@@ -1,6 +1,6 @@
 // Our variables
 $base-font-family: Helvetica, Arial, sans-serif;
-$base-font-size: 1.125rem;
+$base-font-size: 1.5rem;
 $small-font-size: $base-font-size * 0.875;
 $base-line-height: 1.5;
 
@@ -32,8 +32,8 @@ $on-laptop: 800px;
 
 .swagger-path {
   font-weight: normal;
-  font-size: $base-font-size * 1.2;
-  margin: 0 0 30px 0;
+  font-size: $base-font-size * 1.125;
+  margin: 0 0 20px 0;
   font-family: open sans, -apple-system, BlinkMacSystemFont, segoe ui, Roboto, helvetica neue, Arial, sans-serif,
     apple color emoji, segoe ui emoji, segoe ui symbol;
 }
@@ -81,6 +81,8 @@ $on-laptop: 800px;
   border-left: 1px solid white;
   height: 100%;
   padding: 10px;
+  display: flex;
+  align-items: center;
 }
 
 .swagger-method-get {
@@ -112,17 +114,20 @@ $on-laptop: 800px;
 }
 
 .swagger-method-details {
-  padding: 20px 0;
+  padding: 10px 0 20px 0;
   display: none;
   font-weight: 400;
   &.open {
     display: block;
   }
+  p {
+    font-size: 1.25rem;
+  }
 }
 
 .swagger-response {
   font-size: $small-font-size;
-  display: flex;
+  display: block;
   h5 {
     margin: 10px 0;
   }
@@ -134,7 +139,7 @@ $on-laptop: 800px;
   border-radius: 10px;
   display: flex;
   align-items: center;
-  margin-bottom: 0;
+  margin-bottom: 20px;
 }
 
 .swagger-response-code {

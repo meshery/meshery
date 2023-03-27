@@ -270,7 +270,7 @@ func (h *Handler) OAMComponentDetailByIDHandler(rw http.ResponseWriter, r *http.
 //
 // Adding a ```workload/trait/scope```
 //
-// {type} being of either trait, scope, workload; registration of adapter capabilities.
+// ```{type}``` being of either trait, scope, workload; registration of adapter capabilities.
 // 
 // Example: ```/api/oam/trait``` => Here ```{type}``` is "trait"
 //
