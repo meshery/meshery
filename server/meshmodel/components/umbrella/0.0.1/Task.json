@@ -1,1 +1,13 @@
+<<<<<<< HEAD
+<<<<<<< HEAD
+{"kind":"Task","apiVersion":"v1alpha1","displayName":"Task","format":"JSON","metadata":{},"model":{"name":"umbrella","version":"0.0.1","modelDisplayName":"umbrella","category":"","subCategory":""},"schema":""}
+=======
+<<<<<<< HEAD
 {"kind":"Task","apiVersion":"v1alpha1","displayName":"Task","format":"JSON","metadata":{},"model":{"name":"umbrella","version":"0.0.1","displayName":"umbrella","category":{"name":"","metadata":null},"metadata":null}}
+=======
+{"kind":"Task","apiVersion":"v1alpha1","displayName":"Task","format":"JSON","metadata":{},"model":{"name":"umbrella","version":"0.0.1","modelDisplayName":"umbrella","category":"","subCategory":""}}
+>>>>>>> upstream/master
+>>>>>>> upstream/master
+=======
+{"kind":"Task","apiVersion":"v1alpha1","displayName":"Task","format":"JSON","metadata":{},"model":{"name":"umbrella","version":"0.0.1","displayName":"umbrella","category":{"name":"","metadata":null},"metadata":null}}
+>>>>>>> upstream/master

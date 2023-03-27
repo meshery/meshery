@@ -1,1 +1,13 @@
+<<<<<<< HEAD
+<<<<<<< HEAD
+{"kind":"PipelineRun","apiVersion":"v1alpha1","displayName":"Pipeline Run","format":"JSON","metadata":{},"model":{"name":"pipelines","version":"0.12.0","modelDisplayName":"pipelines","category":"","subCategory":""},"schema":""}
+=======
+<<<<<<< HEAD
 {"kind":"PipelineRun","apiVersion":"v1alpha1","displayName":"Pipeline Run","format":"JSON","metadata":{},"model":{"name":"pipelines","version":"0.12.0","displayName":"pipelines","category":{"name":"","metadata":null},"metadata":null}}
+=======
+{"kind":"PipelineRun","apiVersion":"v1alpha1","displayName":"Pipeline Run","format":"JSON","metadata":{},"model":{"name":"pipelines","version":"0.12.0","modelDisplayName":"pipelines","category":"","subCategory":""}}
+>>>>>>> upstream/master
+>>>>>>> upstream/master
+=======
+{"kind":"PipelineRun","apiVersion":"v1alpha1","displayName":"Pipeline Run","format":"JSON","metadata":{},"model":{"name":"pipelines","version":"0.12.0","displayName":"pipelines","category":{"name":"","metadata":null},"metadata":null}}
+>>>>>>> upstream/master
