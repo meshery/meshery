@@ -94,7 +94,7 @@ func (l *DefaultLocalProvider) PackageLocation() string {
 }
 
 // GetProviderCapabilities returns all of the provider properties
-func (l *DefaultLocalProvider) GetProviderCapabilities(w http.ResponseWriter, r *http.Request) {
+func (l *DefaultLocalProvider) GetProviderCapabilities(w http.ResponseWriter) {
 	encoder := json.NewEncoder(w)
 	if err := encoder.Encode(l.ProviderProperties); err != nil {
 		http.Error(w, "failed to encode provider capabilities", http.StatusInternalServerError)
@@ -102,7 +102,7 @@ func (l *DefaultLocalProvider) GetProviderCapabilities(w http.ResponseWriter, r 
 }
 
 // InitiateLogin - initiates login flow and returns a true to indicate the handler to "return" or false to continue
-func (l *DefaultLocalProvider) InitiateLogin(w http.ResponseWriter, r *http.Request, fromMiddleWare bool) {
+func (l *DefaultLocalProvider) InitiateLogin(r *http.Request, fromMiddleWare bool) {
 	// l.issueSession(w, r, fromMiddleWare)
 }
 
@@ -324,7 +324,7 @@ func (l *DefaultLocalProvider) FetchSmiResults(req *http.Request, page, pageSize
 
 // FetchSmiResults - fetches results from provider backend
 func (l *DefaultLocalProvider) FetchSmiResult(req *http.Request, page, pageSize, search, order string, resultID uuid.UUID) ([]byte, error) {
-	pg, err := strconv.ParseUint(page, 10, 32)
+	_, err := strconv.ParseUint(page, 10, 32)
 	if err != nil {
 		return nil, ErrPageNumber(err)
 	}
@@ -332,7 +332,7 @@ func (l *DefaultLocalProvider) FetchSmiResult(req *http.Request, page, pageSize,
 	if err != nil {
 		return nil, ErrPageSize(err)
 	}
-	return l.SmiResultPersister.GetResult(pg, pgs, resultID)
+	return l.SmiResultPersister.GetResult(pgs, resultID)
 }
 
 // PublishSmiResults - publishes results to the provider backend synchronously
@@ -838,7 +838,7 @@ func (l *DefaultLocalProvider) SavePerformanceProfile(tokenString string, perfor
 		return nil, ErrMarshal(err, "Perf Profile for persisting")
 	}
 
-	return data, l.PerformanceProfilesPersister.SavePerformanceProfile(uid, performanceProfile)
+	return data, l.PerformanceProfilesPersister.SavePerformanceProfile(performanceProfile)
 }
 
 // GetPerformanceProfiles gives the performance profiles stored with the provider
@@ -860,7 +860,7 @@ func (l *DefaultLocalProvider) GetPerformanceProfiles(tokenString string, page, 
 		return nil, ErrPageSize(err)
 	}
 
-	return l.PerformanceProfilesPersister.GetPerformanceProfiles("", "", "", pg, pgs)
+	return l.PerformanceProfilesPersister.GetPerformanceProfiles("", "", pg, pgs)
 }
 
 // GetPerformanceProfile gets performance profile for the given performance profileID
