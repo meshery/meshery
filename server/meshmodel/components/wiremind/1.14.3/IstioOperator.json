@@ -1,1 +1,0 @@
-{"kind":"IstioOperator","apiVersion":"v1alpha1","displayName":"Istio Operator","format":"JSON","metadata":{},"model":{"name":"wiremind","version":"1.14.3","modelDisplayName":"wiremind","category":"","subCategory":""},"schema":""}

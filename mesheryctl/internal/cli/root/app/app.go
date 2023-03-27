@@ -48,7 +48,13 @@ mesheryctl app [subcommand]
 			return cmd.Help()
 		}
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
-			return errors.New(utils.AppError(fmt.Sprintf("'%s' is a invalid command. Use 'mesheryctl app --help' to display usage guide.\n", args[0])))
+			availableSubCmds := []string{"onboard", "offboard", "list", "import", "view"}
+
+			suggestedCmd := utils.FindClosestArg(args[0], availableSubCmds)
+			if suggestedCmd != "" && suggestedCmd[0] == args[0][0] {
+				return errors.New(utils.AppError(fmt.Sprintf("'%s' is a invalid command for '%s'. Did you mean this?\n\t%s\n", args[0], cmd.CalledAs(), suggestedCmd)))
+			}
+			return errors.New(utils.AppError(fmt.Sprintf("'%s' is a invalid command for '%s'. Use 'mesheryctl perf --help' to display usage guide.\n", args[0], cmd.CalledAs())))
 		}
 		return nil
 	},

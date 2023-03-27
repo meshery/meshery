@@ -1,1 +1,0 @@
-{"kind":"Workflow","apiVersion":"v1alpha1","displayName":"Workflow","format":"JSON","metadata":{},"model":{"name":"argo-workflow","version":"0.1.2","modelDisplayName":"argo-workflow","category":"","subCategory":""},"schema":"{\n \"title\": \"Workflow\",\n \"type\": \"object\",\n \"x-kubernetes-map-type\": \"atomic\",\n \"x-kubernetes-preserve-unknown-fields\": true\n}"}

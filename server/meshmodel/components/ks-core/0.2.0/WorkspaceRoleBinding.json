@@ -1,1 +1,0 @@
-{"kind":"WorkspaceRoleBinding","apiVersion":"v1alpha2","displayName":"Workspace Role Binding","format":"JSON","metadata":{},"model":{"name":"ks-core","version":"0.2.0","modelDisplayName":"ks-core","category":"","subCategory":""}}

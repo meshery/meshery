@@ -1,0 +1,1 @@
+{"kind":"NodeResourceTopology","apiVersion":"v1alpha1","displayName":"Node Resource Topology","format":"JSON","metadata":{},"model":{"name":"scheduler-plugins","version":"1.0.0","displayName":"scheduler-plugins","category":{"name":"","metadata":null},"metadata":null}}

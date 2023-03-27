@@ -270,7 +270,9 @@ function jsonSchemaBuilder(schema, obj) {
   }
 
   if (schema.type === 'array') {
-    obj["items"] = {}
+    obj["items"] = {
+      "ui:label" : false
+    }
     jsonSchemaBuilder(schema.items, obj["items"]);
     return
   }
@@ -281,6 +283,7 @@ function jsonSchemaBuilder(schema, obj) {
 
   if (schema.type === 'boolean') {
     obj["ui:widget"] = "checkbox";
+    obj["ui:description"] = "";
   }
 
 

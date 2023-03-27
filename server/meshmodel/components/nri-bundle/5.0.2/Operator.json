@@ -1,1 +1,0 @@
-{"kind":"Operator","apiVersion":"v1","displayName":"Operator","format":"JSON","metadata":{},"model":{"name":"nri-bundle","version":"5.0.2","modelDisplayName":"nri-bundle","category":"","subCategory":""},"schema":"{\n \"description\": \"OperatorSpec defines the desired state of Operator\",\n \"title\": \"Operator\",\n \"type\": \"object\"\n}"}
