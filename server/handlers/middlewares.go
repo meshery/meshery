@@ -215,12 +215,12 @@ func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http
 			http.Redirect(w, req, "/provider", http.StatusFound)
 			return
 		}
-		// ensuring session is intact before running load test
+		// ensuring session is intact
 		err := provider.GetSession(req)
 		if err != nil {
-			err := provider.Logout(w, req)
-			if err != nil {
-				logrus.Errorf("Error performing logout: %v", err.Error())
+			err1 := provider.Logout(w, req)
+			if err1 != nil {
+				logrus.Errorf("Error performing logout: %v", err1.Error())
 				provider.HandleUnAuthenticated(w, req)
 				return
 			}
@@ -229,7 +229,20 @@ func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http
 			return
 		}
 
-		user, _ := provider.GetUserDetails(req)
+		user, err := provider.GetUserDetails(req)
+		// if user details are not available,
+		// then logout current user session and redirect to login page
+		if err != nil {
+			err1 := provider.Logout(w, req)
+			if err1 != nil {
+				logrus.Errorf("Error performing logout: %v", err1.Error())
+				provider.HandleUnAuthenticated(w, req)
+				return
+			}
+			h.log.Error(ErrGetUserDetails(err))
+			http.Error(w, "unable to get user details", http.StatusUnauthorized)
+			return
+		}
 		prefObj, err := provider.ReadFromPersister(user.UserID)
 		if err != nil {
 			logrus.Warn("unable to read session from the session persister, starting with a new one")
