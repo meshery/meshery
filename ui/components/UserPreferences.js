@@ -275,7 +275,7 @@ class UserPreference extends React.Component {
           });
         }
       },
-      self.handleError("There was an error sending your preference")
+      self.handleError("There was an error updating your preference")
     );
   };
 
