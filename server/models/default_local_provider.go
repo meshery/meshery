@@ -102,7 +102,7 @@ func (l *DefaultLocalProvider) GetProviderCapabilities(w http.ResponseWriter) {
 }
 
 // InitiateLogin - initiates login flow and returns a true to indicate the handler to "return" or false to continue
-func (l *DefaultLocalProvider) InitiateLogin(r *http.Request, fromMiddleWare bool) {
+func (l *DefaultLocalProvider) InitiateLogin(_ *http.Request, fromMiddleWare bool) {
 	// l.issueSession(w, r, fromMiddleWare)
 }
 
@@ -127,16 +127,16 @@ func (l *DefaultLocalProvider) fetchUserDetails() *User {
 }
 
 // GetUserDetails - returns the user details
-func (l *DefaultLocalProvider) GetUserDetails(req *http.Request) (*User, error) {
+func (l *DefaultLocalProvider) GetUserDetails(_ *http.Request) (*User, error) {
 	return l.fetchUserDetails(), nil
 }
 
-func (l *DefaultLocalProvider) GetUserByID(req *http.Request, userID string) ([]byte, error) {
+func (l *DefaultLocalProvider) GetUserByID(_ *http.Request, userID string) ([]byte, error) {
 	return nil, nil
 }
 
 // GetSession - returns the session
-func (l *DefaultLocalProvider) GetSession(req *http.Request) error {
+func (l *DefaultLocalProvider) GetSession(_ *http.Request) error {
 	return nil
 }
 
@@ -146,7 +146,7 @@ func (l *DefaultLocalProvider) GetProviderToken(req *http.Request) (string, erro
 }
 
 // Logout - logout from provider backend
-func (l *DefaultLocalProvider) Logout(w http.ResponseWriter, req *http.Request) error {
+func (l *DefaultLocalProvider) Logout(_ http.ResponseWriter, req *http.Request) error {
 	return nil
 }
 

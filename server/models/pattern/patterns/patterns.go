@@ -97,7 +97,7 @@ func ProcessOAM(kconfigs []string, oamComps []string, oamConfig string, isDel bo
 				} else {
 					//All other components will be handled directly by Kubernetes
 					//TODO: Add a Mapper utility function which carries the logic for X hosts can handle Y components under Z circumstances.
-					if err := k8s.Deploy(kcli, comp, config, isDel); err != nil {
+					if err := k8s.Deploy(kcli, comp, isDel); err != nil {
 						errs = append(errs, err)
 						var summary string
 						if isDel {
