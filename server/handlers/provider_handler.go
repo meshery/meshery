@@ -46,7 +46,7 @@ func (h *Handler) ProviderHandler(w http.ResponseWriter, r *http.Request) {
 // 	200: listProvidersRespWrapper
 
 // ProvidersHandler returns a list of providers
-func (h *Handler) ProvidersHandler(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) ProvidersHandler(w http.ResponseWriter, _ *http.Request) {
 	// if r.Method != http.MethodGet {
 	// 	http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
 	// 	return
@@ -100,8 +100,8 @@ func (h *Handler) ProviderUIHandler(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) ProviderCapabilityHandler(
 	w http.ResponseWriter,
 	r *http.Request,
-	prefObj *models.Preference,
-	user *models.User,
+	_ *models.Preference,
+	_ *models.User,
 	provider models.Provider,
 ) {
 	provider.GetProviderCapabilities(w)

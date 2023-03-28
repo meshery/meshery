@@ -23,7 +23,39 @@ import (
 )
 
 const dumpFile = "./dump.csv"
+const COLUMNRANGE = "!A:AF3" //Update this on addition of new columns
 
+var NameToIndex = map[string]int{ //Update this on addition of new columns
+	"modelDisplayName":  0,
+	"model":             1,
+	"category":          2,
+	"subCategory":       3,
+	"CRDs":              4,
+	"link":              5,
+	"hasSchema?":        6,
+	"component":         7,
+	"shape":             8,
+	"primaryColor":      9,
+	"secondaryColor":    10,
+	"styleOverrides":    11,
+	"logoURL":           12,
+	"svgColor":          13,
+	"svgWhite":          14,
+	"svgComplete":       15,
+	"genealogy":         16,
+	"About Project":     17,
+	"Page Subtitle":     18,
+	"Docs URL":          19,
+	"Standard Blurb":    20,
+	"Feature 1":         21,
+	"Feature 2":         22,
+	"Feature 3":         23,
+	"howItWorks":        24,
+	"howItWorksDetails": 25,
+	"Screenshots":       26,
+	"Full Page":         27,
+	"Publish?":          28,
+}
 var (
 	AhSearchEndpoint = artifacthub.AhHelmExporterEndpoint
 
@@ -186,7 +218,7 @@ func main() {
 		model string
 	}, 100)
 	// Set the range of cells to retrieve.
-	rangeString := sheetName + "!A:P" //modelname column
+	rangeString := sheetName + COLUMNRANGE
 
 	// Get the value of the specified cell.
 	resp, err := srv.Spreadsheets.Values.Get(spreadsheetID, rangeString).Do()
@@ -197,14 +229,14 @@ func main() {
 	availableModels := make(map[string][]interface{})
 	availableComponentsPerModel := make(map[string]map[string]bool)
 	for _, val := range resp.Values {
-		if len(val) > 1 {
-			key := val[1].(string)
+		if len(val) > NameToIndex["model"]+1 {
+			key := val[NameToIndex["model"]].(string)
 			if key == "" {
 				continue
 			}
 			var compkey string
-			if len(val) > 6 {
-				compkey = val[6].(string)
+			if len(val) > NameToIndex["component"]+1 {
+				compkey = val[NameToIndex["component"]].(string)
 			}
 			if compkey == "" {
 				availableModels[key] = make([]interface{}, len(val))
@@ -474,45 +506,6 @@ func writeComponents(cmps []v1alpha1.ComponentDefinition, writer *Writer) error 
 		}
 	}
 	return nil
-	// compsToWrite := make([]ComponentStruct, 0)
-	// content, err := io.ReadAll(writer.file)
-	// if err != nil {
-	// 	return err
-	// }
-	// // 1. the file is empty
-	// if string(content) == "" {
-	// 	for _, cs := range cmps {
-	// 		if len(cs.Components) != 0 {
-	// 			compsToWrite = append(compsToWrite, cs)
-	// 		}
-	// 	}
-	// }
-	// // 2. the file already has some components in it
-	// if string(content) != "" {
-	// 	err = yaml.Unmarshal(content, &compsToWrite)
-	// 	if err != nil {
-	// 		return err
-	// 	}
-	// 	for _, cs := range cmps {
-	// 		if len(cs.Components) != 0 {
-	// 			fmt.Println("[DEBUG] Writing components for package: ", cs.PackageName)
-	// 			compsToWrite = append(compsToWrite, cs)
-	// 		}
-	// 	}
-	// }
-	// if len(compsToWrite) == 0 {
-	// 	return nil
-	// }
-	// // write components
-	// val, err := yaml.Marshal(compsToWrite)
-	// if err != nil {
-	// 	return err
-	// }
-	// _, err = writer.file.Write(val)
-	// if err != nil {
-	// 	return err
-	// }
-	// return nil
 }
 
 // this function should take in the file descriptor for a yaml
@@ -585,29 +578,42 @@ func Spreadsheet(srv *sheets.Service, sheetName string, spreadsheet chan struct 
 				fmt.Println("[Debug][Spreadsheet] Skipping spreadsheet updation for ", entry.model, comp.Kind)
 				continue
 			}
-			fmt.Println("HERE")
 			var newValues []interface{}
 			if am[entry.model] != nil {
-				fmt.Println("HERE 1")
 				newValues = make([]interface{}, len(am[entry.model]))
 				copy(newValues, am[entry.model])
 			} else {
-				fmt.Println("HERE 0")
 				newValues = make([]interface{}, len(resp.Values[0]))
 				copy(newValues, resp.Values[0])
 			}
-			fmt.Println("HERE 2 ")
-			newValues[6] = comp.Kind
-			newValues[1] = entry.model
-			newValues[0] = entry.model
+			newValues[NameToIndex["component"]] = comp.Kind
+			newValues[NameToIndex["modelDisplayName"]] = entry.model
+			newValues[NameToIndex["model"]] = entry.model
+
+			if comp.Schema != "" {
+				newValues[NameToIndex["hasSchema?"]] = true
+			} else {
+				newValues[NameToIndex["hasSchema?"]] = false
+			}
 			values = append(values, newValues)
 			if acpm[entry.model] == nil {
 				acpm[entry.model] = make(map[string]bool)
 			}
-			fmt.Println("HERE 6")
 			acpm[entry.model][comp.Kind] = true
 			batchSize--
 			fmt.Println("Batch size: ", batchSize)
+			if batchSize <= 0 {
+				row := &sheets.ValueRange{
+					Values: values,
+				}
+				response2, err := srv.Spreadsheets.Values.Append(spreadsheetID, sheetName, row).ValueInputOption("USER_ENTERED").InsertDataOption("INSERT_ROWS").Context(context.Background()).Do()
+				values = make([][]interface{}, 0)
+				batchSize = 100
+				if err != nil || response2.HTTPStatusCode != 200 {
+					fmt.Println(err)
+					continue
+				}
+			}
 		}
 		if am[entry.model] != nil {
 			fmt.Println("[Debug][Spreadsheet] Skipping spreadsheet updation for ", entry.model)
@@ -615,9 +621,9 @@ func Spreadsheet(srv *sheets.Service, sheetName string, spreadsheet chan struct 
 		}
 		newValues := make([]interface{}, len(resp.Values[0]))
 		copy(newValues, resp.Values[0])
-		newValues[1] = entry.model
-		newValues[0] = entry.model
-		newValues[4] = len(entry.comps)
+		newValues[NameToIndex["modelDisplayName"]] = entry.model
+		newValues[NameToIndex["model"]] = entry.model
+		newValues[NameToIndex["CRDs"]] = len(entry.comps)
 		values = append(values, newValues)
 		copy(am[entry.model], newValues)
 		batchSize--
@@ -645,7 +651,7 @@ func Spreadsheet(srv *sheets.Service, sheetName string, spreadsheet chan struct 
 		}
 	}
 	elapsed := time.Now().Sub(start)
-	fmt.Printf("Time taken by spreadsheet updater (including the time it required to generate components): %f", elapsed.Minutes())
+	fmt.Printf("Time taken by spreadsheet updater in minutes (including the time it required to generate components): %f", elapsed.Minutes())
 }
 
 func NewSheetSRV() *sheets.Service {

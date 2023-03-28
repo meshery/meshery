@@ -20,7 +20,7 @@ var mesheryDefinedAPIVersions = map[string]bool{
 // DryRun stage does not terminate the whole chain when an error of type #2 is encountered, it rather
 // stores that information in the `Other` placeholder for future use.
 // This is in contrast with the Validation stage where the Validation errors terminate the chain.
-func DryRun(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFunction {
+func DryRun(_ ServiceInfoProvider, act ServiceActionProvider) ChainStageFunction {
 	return func(data *Data, err error, next ChainStageNextFunction) {
 		if err != nil {
 			act.Terminate(err)

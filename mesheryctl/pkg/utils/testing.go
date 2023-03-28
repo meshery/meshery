@@ -157,7 +157,7 @@ func SetupContextEnv(t *testing.T) {
 }
 
 // setup logrus formatter and return the buffer in which commands output is to be set.
-func SetupLogrusGrabTesting(_ *testing.T, verbose bool) *bytes.Buffer {
+func SetupLogrusGrabTesting(_ *testing.T, _ bool) *bytes.Buffer {
 	b := bytes.NewBufferString("")
 	logrus.SetOutput(b)
 	SetupLogrusFormatter()
@@ -213,7 +213,7 @@ func StartMockery(t *testing.T) {
 }
 
 // stop HTTP mock client
-func StopMockery(t *testing.T) {
+func StopMockery(_ *testing.T) {
 	httpmock.DeactivateAndReset()
 }
 
