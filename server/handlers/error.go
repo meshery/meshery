@@ -111,6 +111,7 @@ const (
 	ErrPublishCatalogPatternCode        = "2255"
 	ErrPublishCatalogFilterCode         = "2256"
 	ErrGetMeshModelsCode                = "2257"
+	ErrGetUserDetailsCode               = "2258"
 )
 
 var (
@@ -481,4 +482,8 @@ func ErrPublishCatalogFilter(err error) error {
 
 func ErrGetMeshModels(err error) error {
 	return errors.New(ErrGetMeshModelsCode, errors.Alert, []string{"could not get meshmodel entitities"}, []string{err.Error()}, []string{"Meshmodel entity could not be converted into valid json", "data in the registry was inconsistent"}, []string{"make sure correct and consistent data is present inside the registry", "drop the Meshmodel tables and restart Meshery server"})
+}
+
+func ErrGetUserDetails(err error) error {
+	return errors.New(ErrGetUserDetailsCode, errors.Alert, []string{"could not get user details"}, []string{err.Error()}, []string{"User details could not be fetched from provider", "Your provider may not be reachable", "No user exists for the provided token"}, []string{"Make sure provider is reachable", "Make sure you are logged in", "Make sure you are using a valid token"})
 }

@@ -14,6 +14,9 @@ layout: default
 {% for route in sorted_paths %}
 <div class="swagger-path">
     <h2 class="swagger-path">{{ route[0] }}</h>
+{% if route[0] contains '/api/oam' %}
+    <span class="deprecated-label">Deprecated</span>
+{% endif %}
     {% for method in route[1] %}
     <div class="swagger-method swagger-method-{{ method[0] }}">
         <h3 class="swagger-method-title">

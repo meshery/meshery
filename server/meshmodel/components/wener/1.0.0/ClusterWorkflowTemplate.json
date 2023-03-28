@@ -1,0 +1,1 @@
+{"kind":"ClusterWorkflowTemplate","apiVersion":"v1alpha1","displayName":"Cluster Workflow Template","format":"JSON","metadata":{},"model":{"name":"wener","version":"1.0.0","modelDisplayName":"wener","category":"","subCategory":""},"schema":""}

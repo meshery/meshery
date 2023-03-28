@@ -557,7 +557,7 @@ func (hc *HealthChecker) runOperatorHealthChecks() error {
 	}
 
 	if len(contexts) == 0 {
-		return errors.Errorf("!! Meshery is not connected to any contexts ")
+		return errors.New("!! Meshery is not connected to any contexts ")
 	}
 
 	for _, ctx := range contexts {
@@ -572,7 +572,7 @@ func (hc *HealthChecker) runOperatorHealthChecks() error {
 		broker := controllers.NewMesheryBrokerHandler(kubeclient)
 		brokerStatus := broker.GetStatus().String()
 
-		log.Info("MesheryBroker Status : ", brokerStatus)
+		log.Infof("MesheryBroker Status : %s", brokerStatus)
 
 		meshsync := controllers.NewMeshsyncHandler(kubeclient)
 		meshsyncStatus := meshsync.GetStatus().String()
