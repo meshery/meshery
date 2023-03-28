@@ -54,7 +54,7 @@ func (ss *servicestack) runOnStack(fn func(svc *core.Service)) {
 		fn(s.svc)
 	}
 }
-func Import(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFunction {
+func Import(_ ServiceInfoProvider, act ServiceActionProvider) ChainStageFunction {
 	return func(data *Data, err error, next ChainStageNextFunction) {
 		if err != nil {
 			act.Terminate(err)

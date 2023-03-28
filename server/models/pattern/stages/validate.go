@@ -68,7 +68,7 @@ func Validator(prov ServiceInfoProvider, act ServiceActionProvider, skipValidati
 	}
 }
 
-func validateWorkload(comp map[string]interface{}, wc meshmodel.ComponentDefinition, format bool) error {
+func validateWorkload(comp map[string]interface{}, wc meshmodel.ComponentDefinition, _ bool) error {
 	schemaByt := []byte(wc.Schema)
 	if core.Format { //Prettified schema will be validated against the prettified component
 		comp = core.Format.Prettify(comp, false) //partially prettify the component

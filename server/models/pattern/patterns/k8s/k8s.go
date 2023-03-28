@@ -12,7 +12,7 @@ import (
 	"k8s.io/client-go/rest"
 )
 
-func Deploy(kubeClient *meshkube.Client, oamComp v1alpha1.Component, oamConfig v1alpha1.Configuration, isDel bool) error {
+func Deploy(kubeClient *meshkube.Client, oamComp v1alpha1.Component, _ v1alpha1.Configuration, isDel bool) error {
 	resource := createK8sResourceStructure(oamComp)
 	manifest, err := yaml.Marshal(resource)
 	if err != nil {
