@@ -24,8 +24,8 @@ Currently, Meshery requires a valid token in order to allow clients to invoke it
 
 There are two ways to get your authentication token:
 
-1. Meshery UI
-2. Meshery CLI
+
+
 
 <details>
   <summary>Meshery UI</summary>
