@@ -97,10 +97,10 @@ func resetMesheryConfig() error {
 		return ErrSettingDefaultContextToConfig(err)
 	}
 
-	if err = fetchManifests(mctlCfg); err != nil {
+	err = fetchManifests(mctlCfg)
+	if err != nil {
 		return err
 	}
-
 	return nil
 }
 

@@ -102,7 +102,7 @@ func (l *DefaultLocalProvider) GetProviderCapabilities(w http.ResponseWriter) {
 }
 
 // InitiateLogin - initiates login flow and returns a true to indicate the handler to "return" or false to continue
-func (l *DefaultLocalProvider) InitiateLogin(_ *http.Request, fromMiddleWare bool) {
+func (l *DefaultLocalProvider) InitiateLogin(_ http.ResponseWriter, _ *http.Request, _ bool) {
 	// l.issueSession(w, r, fromMiddleWare)
 }
 
@@ -131,7 +131,7 @@ func (l *DefaultLocalProvider) GetUserDetails(_ *http.Request) (*User, error) {
 	return l.fetchUserDetails(), nil
 }
 
-func (l *DefaultLocalProvider) GetUserByID(_ *http.Request, userID string) ([]byte, error) {
+func (l *DefaultLocalProvider) GetUserByID(_ *http.Request, _ string) ([]byte, error) {
 	return nil, nil
 }
 
@@ -141,12 +141,12 @@ func (l *DefaultLocalProvider) GetSession(_ *http.Request) error {
 }
 
 // GetProviderToken - returns provider token
-func (l *DefaultLocalProvider) GetProviderToken(req *http.Request) (string, error) {
+func (l *DefaultLocalProvider) GetProviderToken(_ *http.Request) (string, error) {
 	return "", nil
 }
 
 // Logout - logout from provider backend
-func (l *DefaultLocalProvider) Logout(_ http.ResponseWriter, req *http.Request) error {
+func (l *DefaultLocalProvider) Logout(_ http.ResponseWriter, _ *http.Request) error {
 	return nil
 }
 
@@ -155,11 +155,11 @@ func (l *DefaultLocalProvider) HandleUnAuthenticated(w http.ResponseWriter, req 
 	http.Redirect(w, req, "/user/login", http.StatusFound)
 }
 
-func (l *DefaultLocalProvider) SaveK8sContext(token string, k8sContext K8sContext) (K8sContext, error) {
+func (l *DefaultLocalProvider) SaveK8sContext(_ string, k8sContext K8sContext) (K8sContext, error) {
 	return l.MesheryK8sContextPersister.SaveMesheryK8sContext(k8sContext)
 }
 
-func (l *DefaultLocalProvider) GetK8sContexts(token, page, pageSize, search, order string) ([]byte, error) {
+func (l *DefaultLocalProvider) GetK8sContexts(_, page, pageSize, search, order string) ([]byte, error) {
 	if page == "" {
 		page = "0"
 	}
@@ -180,7 +180,7 @@ func (l *DefaultLocalProvider) GetK8sContexts(token, page, pageSize, search, ord
 	return l.MesheryK8sContextPersister.GetMesheryK8sContexts(search, order, pg, pgs)
 }
 
-func (l *DefaultLocalProvider) DeleteK8sContext(token, id string) (K8sContext, error) {
+func (l *DefaultLocalProvider) DeleteK8sContext(_, id string) (K8sContext, error) {
 	return l.MesheryK8sContextPersister.DeleteMesheryK8sContext(id)
 }
 
@@ -230,7 +230,7 @@ func (l *DefaultLocalProvider) LoadAllK8sContext(token string) ([]*K8sContext, e
 // }
 
 // FetchResults - fetches results from provider backend
-func (l *DefaultLocalProvider) FetchResults(tokenVal, page, pageSize, search, order, profileID string) ([]byte, error) {
+func (l *DefaultLocalProvider) FetchResults(_, page, pageSize, search, order, profileID string) ([]byte, error) {
 	pg, err := strconv.ParseUint(page, 10, 32)
 	if err != nil {
 		return nil, ErrPageNumber(err)
@@ -243,7 +243,7 @@ func (l *DefaultLocalProvider) FetchResults(tokenVal, page, pageSize, search, or
 }
 
 // FetchResults - fetches results from provider backend
-func (l *DefaultLocalProvider) FetchAllResults(tokenString string, page, pageSize, search, order, from, to string) ([]byte, error) {
+func (l *DefaultLocalProvider) FetchAllResults(_ string, page, pageSize, search, order, from, to string) ([]byte, error) {
 	if page == "" {
 		page = "0"
 	}
@@ -263,7 +263,7 @@ func (l *DefaultLocalProvider) FetchAllResults(tokenString string, page, pageSiz
 }
 
 // GetResult - fetches result from provider backend for the given result id
-func (l *DefaultLocalProvider) GetResult(tokenVal string, resultID uuid.UUID) (*MesheryResult, error) {
+func (l *DefaultLocalProvider) GetResult(_ string, resultID uuid.UUID) (*MesheryResult, error) {
 	// key := uuid.FromStringOrNil(resultID)
 	if resultID == uuid.Nil {
 		return nil, ErrResultID

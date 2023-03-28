@@ -33,7 +33,7 @@ type MockURL struct {
 	ResponseCode int
 }
 
-func NewTestHelper(t *testing.T) *TestHelper {
+func NewTestHelper(_ *testing.T) *TestHelper {
 	return &TestHelper{
 		Version: "v0.5.10",
 		BaseURL: MesheryEndpoint,
@@ -157,7 +157,7 @@ func SetupContextEnv(t *testing.T) {
 }
 
 // setup logrus formatter and return the buffer in which commands output is to be set.
-func SetupLogrusGrabTesting(t *testing.T, verbose bool) *bytes.Buffer {
+func SetupLogrusGrabTesting(_ *testing.T, verbose bool) *bytes.Buffer {
 	b := bytes.NewBufferString("")
 	logrus.SetOutput(b)
 	SetupLogrusFormatter()
@@ -165,7 +165,7 @@ func SetupLogrusGrabTesting(t *testing.T, verbose bool) *bytes.Buffer {
 }
 
 // setup meshkit logger for testing and return the buffer in which commands output is to be set.
-func SetupMeshkitLoggerTesting(t *testing.T, verbose bool) *bytes.Buffer {
+func SetupMeshkitLoggerTesting(_ *testing.T, verbose bool) *bytes.Buffer {
 	b := bytes.NewBufferString("")
 	SetupMeshkitLogger(verbose, b)
 	return b

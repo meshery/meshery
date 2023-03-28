@@ -197,7 +197,7 @@ func ErrAttachAuthToken(err error) error {
 		[]string{"Authentication token not found. Login with `mesheryctl system login` or supply a valid user token using the --token (or -t) flag."}, []string{}, []string{})
 }
 
-func ErrFailRequest(err error) error {
+func ErrFailRequest(_ error) error {
 	return errors.New(ErrFailRequestCode, errors.Alert, []string{},
 		[]string{"Failed to make a request"}, []string{}, []string{})
 }

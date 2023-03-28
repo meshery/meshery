@@ -104,7 +104,7 @@ func (h *Handler) ProviderCapabilityHandler(
 	user *models.User,
 	provider models.Provider,
 ) {
-	provider.GetProviderCapabilities(w, r)
+	provider.GetProviderCapabilities(w)
 }
 
 // swagger:route GET /api/provider/extension ProvidersAPI idReactComponents

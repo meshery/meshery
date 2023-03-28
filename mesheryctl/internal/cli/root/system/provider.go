@@ -196,29 +196,29 @@ mesheryctl system provider set [provider]
 
 			if err != nil {
 				log.Fatalln("unable to verify provider\nStart Meshery or see https://docs.meshery.io/extensibility/providers#types-of-providers\n\nRun `mesheryctl system provider set [provider] --force` to force set the provider")
-			} else {
-				keys := make([]string, 0, len(availableProviders))
-				isValidProvider := false
-
-				for k := range availableProviders {
-					if provider == k {
-						isValidProvider = true
-					}
-					keys = append(keys, k)
-				}
-
-				if !isValidProvider {
-					log.Error("invalid provider\nPlease specify a valid provider\n")
-
-					log.Print("Available providers:\n")
-					//sorting the contexts to get a consistent order on each subsequent run
-					sort.Strings(keys)
-					for _, k := range keys {
-						log.Printf("- %s", k)
-					}
-					os.Exit(1)
-				}
 			}
+			keys := make([]string, 0, len(availableProviders))
+			isValidProvider := false
+
+			for k := range availableProviders {
+				if provider == k {
+					isValidProvider = true
+				}
+				keys = append(keys, k)
+			}
+
+			if !isValidProvider {
+				log.Error("invalid provider\nPlease specify a valid provider\n")
+
+				log.Print("Available providers:\n")
+				//sorting the contexts to get a consistent order on each subsequent run
+				sort.Strings(keys)
+				for _, k := range keys {
+					log.Printf("- %s", k)
+				}
+				os.Exit(1)
+			}
+
 		}
 
 		currCtx.Provider = provider
