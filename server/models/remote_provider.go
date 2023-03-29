@@ -244,7 +244,7 @@ func (l *RemoteProvider) executePrefSync(tokenString string, sess *Preference) {
 	resp, err := l.DoRequest(req, tokenString)
 	if err != nil {
 		if resp == nil {
-			logrus.Errorf("Could not reach remote provider: %s", err)
+			logrus.Errorf(ErrUnreachableRemoteProvider(err))
 			return
 		}
 		logrus.Errorf("unable to upload user preference data: %v", err)
