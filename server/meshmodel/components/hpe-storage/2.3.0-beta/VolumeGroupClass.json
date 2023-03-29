@@ -1,0 +1,1 @@
+{"kind":"VolumeGroupClass","apiVersion":"v1","displayName":"Volume Group Class","format":"JSON","metadata":{},"model":{"name":"hpe-storage","version":"2.3.0-beta","modelDisplayName":"hpe-storage","category":"","subCategory":""},"schema":""}

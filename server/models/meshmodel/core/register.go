@@ -77,7 +77,7 @@ func RegisterMeshmodelComponentsForCRDS(reg meshmodel.RegistryManager, k8sYaml [
 }
 
 // move to meshmodel
-func GetK8sMeshModelComponents(ctx context.Context, kubeconfig []byte) ([]v1alpha1.ComponentDefinition, error) {
+func GetK8sMeshModelComponents(kubeconfig []byte) ([]v1alpha1.ComponentDefinition, error) {
 	cli, err := kubernetes.New(kubeconfig)
 	if err != nil {
 		return nil, ErrGetK8sComponents(err)
@@ -211,7 +211,7 @@ func getCRDsFromManifest(manifest string, arrAPIResources []string) []crdRespons
 				continue
 			}
 			if kind == resource {
-				crd, err := fieldVal.MarshalJSON()
+				crd, err := fieldVal.LookupPath(cue.ParsePath("properties.spec")).MarshalJSON()
 				if err != nil {
 					fmt.Printf("%v", err)
 					continue

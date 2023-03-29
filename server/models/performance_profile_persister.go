@@ -23,7 +23,7 @@ type PerformanceProfilePage struct {
 }
 
 // GetPerformanceProfiles returns all of the performance profiles
-func (ppp *PerformanceProfilePersister) GetPerformanceProfiles(userID, search, order string, page, pageSize uint64) ([]byte, error) {
+func (ppp *PerformanceProfilePersister) GetPerformanceProfiles(_, search, order string, page, pageSize uint64) ([]byte, error) {
 	order = sanitizeOrderInput(order, []string{"updated_at", "created_at", "name", "last_run"})
 	if order == "" {
 		order = "updated_at desc"
@@ -71,7 +71,7 @@ func (ppp *PerformanceProfilePersister) DeletePerformanceProfile(id uuid.UUID) (
 	return marshalPerformanceProfile(&profile), nil
 }
 
-func (ppp *PerformanceProfilePersister) SavePerformanceProfile(id uuid.UUID, profile *PerformanceProfile) error {
+func (ppp *PerformanceProfilePersister) SavePerformanceProfile(_ uuid.UUID, profile *PerformanceProfile) error {
 	return ppp.DB.Save(profile).Error
 }
 
