@@ -34,7 +34,7 @@ func SetupContextEnv(t *testing.T) {
 	}
 }
 
-func SetupFunc(t *testing.T) {
+func SetupFunc() {
 	//fmt.Println(viper.AllKeys())
 	b = bytes.NewBufferString("")
 	logrus.SetOutput(b)
@@ -42,7 +42,7 @@ func SetupFunc(t *testing.T) {
 	SystemCmd.SetOut(b)
 }
 
-func BreakupFunc(t *testing.T) {
+func BreakupFunc() {
 	viewCmd.Flags().VisitAll(setFlagValueAsUndefined)
 }
 
@@ -84,7 +84,7 @@ func TestViewCmd(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
-			SetupFunc(t)
+			SetupFunc()
 			SystemCmd.SetArgs(tt.Args)
 			err = SystemCmd.Execute()
 			if err != nil {
@@ -97,12 +97,12 @@ func TestViewCmd(t *testing.T) {
 			if expectedResponse != actualResponse {
 				t.Errorf("expected response %v and actual response %v don't match", expectedResponse, actualResponse)
 			}
-			BreakupFunc(t)
+			BreakupFunc()
 		})
 	}
 }
 func TestRunChannelWithNoCmdOrFlag(t *testing.T) {
-	SetupFunc(t)
+	SetupFunc()
 	SystemCmd.SetArgs([]string{"channel"})
 	err = SystemCmd.Execute()
 
@@ -114,5 +114,5 @@ func TestRunChannelWithNoCmdOrFlag(t *testing.T) {
 	if expectedResponse != actualResponse {
 		t.Errorf("expected response %v and actual response %v don't match", expectedResponse, actualResponse)
 	}
-	BreakupFunc(t)
+	BreakupFunc()
 }

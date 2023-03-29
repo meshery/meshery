@@ -201,7 +201,7 @@ func (l *RemoteProvider) SyncPreferences() {
 }
 
 // GetProviderCapabilities returns all of the provider properties
-func (l *RemoteProvider) GetProviderCapabilities(w http.ResponseWriter, r *http.Request) {
+func (l *RemoteProvider) GetProviderCapabilities(w http.ResponseWriter, _ *http.Request) {
 	encoder := json.NewEncoder(w)
 	if err := encoder.Encode(l.ProviderProperties); err != nil {
 		http.Error(w, ErrEncoding(err, "Provider Capablity").Error(), http.StatusInternalServerError)
@@ -2853,7 +2853,7 @@ func (l *RemoteProvider) RecordPreferences(req *http.Request, userID string, dat
 }
 
 // TokenHandler - specific to remote auth
-func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, fromMiddleWare bool) {
+func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, _ bool) {
 	tokenString := r.URL.Query().Get(tokenName)
 	// gets the session cookie from remote provider
 	sessionCookie := r.URL.Query().Get("session_cookie")
@@ -3063,6 +3063,9 @@ func (l *RemoteProvider) SMPTestConfigFetch(req *http.Request, page, pageSize, s
 	q := remoteProviderURL.Query()
 	q.Add("page", page)
 	q.Add("pageSize", pageSize)
+	q.Add("search", search)
+	q.Add("order", order)
+
 	remoteProviderURL.RawQuery = q.Encode()
 	logrus.Debugf("Making request to : %s", remoteProviderURL.String())
 	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
