@@ -263,3 +263,14 @@ func SliceContains(elements []string, name string) bool {
 	}
 	return false
 }
+
+func GetPlatform() (platform string) {
+	platform = "Unsupported Platform"
+	_, err := os.Stat("/var/run/docker.sock")
+	if err == nil {
+		platform = "docker"
+	} else if os.Getenv("KUBERNETES_SERVICE_HOST") != "" && os.Getenv("KUBERNETES_SERVICE_PORT") != "" {
+		platform = "kubernetes"
+	}
+	return
+}
