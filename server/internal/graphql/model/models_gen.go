@@ -19,7 +19,7 @@ type AddonList struct {
 }
 
 type AddonStatusInput struct {
-	Selector     *MeshType `json:"selector"`
+	Selector     *MeshType `json:"selector,omitempty"`
 	K8scontextID string    `json:"k8scontextID"`
 	TargetStatus Status    `json:"targetStatus"`
 }
@@ -28,7 +28,7 @@ type ApplicationPage struct {
 	Page         int                  `json:"page"`
 	PageSize     int                  `json:"page_size"`
 	TotalCount   int                  `json:"total_count"`
-	Applications []*ApplicationResult `json:"applications"`
+	Applications []*ApplicationResult `json:"applications,omitempty"`
 }
 
 type ApplicationResult struct {
@@ -39,8 +39,8 @@ type ApplicationResult struct {
 	UserID          string      `json:"user_id"`
 	Location        *Location   `json:"location"`
 	Visibility      string      `json:"visibility"`
-	CreatedAt       *string     `json:"created_at"`
-	UpdatedAt       *string     `json:"updated_at"`
+	CreatedAt       *string     `json:"created_at,omitempty"`
+	UpdatedAt       *string     `json:"updated_at,omitempty"`
 }
 
 type CatalogFilter struct {
@@ -50,9 +50,9 @@ type CatalogFilter struct {
 	UserID      string                 `json:"user_id"`
 	Location    *Location              `json:"location"`
 	Visibility  string                 `json:"visibility"`
-	CatalogData map[string]interface{} `json:"catalog_data"`
-	CreatedAt   *string                `json:"created_at"`
-	UpdatedAt   *string                `json:"updated_at"`
+	CatalogData map[string]interface{} `json:"catalog_data,omitempty"`
+	CreatedAt   *string                `json:"created_at,omitempty"`
+	UpdatedAt   *string                `json:"updated_at,omitempty"`
 }
 
 type CatalogPattern struct {
@@ -62,9 +62,9 @@ type CatalogPattern struct {
 	PatternFile string                 `json:"pattern_file"`
 	Location    *Location              `json:"location"`
 	Visibility  string                 `json:"visibility"`
-	CatalogData map[string]interface{} `json:"catalog_data"`
-	CreatedAt   *string                `json:"created_at"`
-	UpdatedAt   *string                `json:"updated_at"`
+	CatalogData map[string]interface{} `json:"catalog_data,omitempty"`
+	CreatedAt   *string                `json:"created_at,omitempty"`
+	UpdatedAt   *string                `json:"updated_at,omitempty"`
 }
 
 type CatalogSelector struct {
@@ -77,22 +77,22 @@ type ClusterResources struct {
 }
 
 type ConfigurationPage struct {
-	Applications *ApplicationPage   `json:"applications"`
-	Patterns     *PatternPageResult `json:"patterns"`
-	Filters      *FilterPage        `json:"filters"`
+	Applications *ApplicationPage   `json:"applications,omitempty"`
+	Patterns     *PatternPageResult `json:"patterns,omitempty"`
+	Filters      *FilterPage        `json:"filters,omitempty"`
 }
 
 type Container struct {
 	ControlPlaneMemberName string           `json:"controlPlaneMemberName"`
 	ContainerName          string           `json:"containerName"`
 	Image                  string           `json:"image"`
-	Status                 *ContainerStatus `json:"status"`
-	Ports                  []*ContainerPort `json:"ports"`
-	Resources              interface{}      `json:"resources"`
+	Status                 *ContainerStatus `json:"status,omitempty"`
+	Ports                  []*ContainerPort `json:"ports,omitempty"`
+	Resources              interface{}      `json:"resources,omitempty"`
 }
 
 type ContainerPort struct {
-	Name          *string `json:"name"`
+	Name          *string `json:"name,omitempty"`
 	ContainerPort int     `json:"containerPort"`
 	Protocol      string  `json:"protocol"`
 }
@@ -100,13 +100,13 @@ type ContainerPort struct {
 type ContainerStatus struct {
 	ContainerStatusName string      `json:"containerStatusName"`
 	Image               string      `json:"image"`
-	State               interface{} `json:"state"`
-	LastState           interface{} `json:"lastState"`
+	State               interface{} `json:"state,omitempty"`
+	LastState           interface{} `json:"lastState,omitempty"`
 	Ready               bool        `json:"ready"`
-	RestartCount        interface{} `json:"restartCount"`
+	RestartCount        interface{} `json:"restartCount,omitempty"`
 	Started             bool        `json:"started"`
-	ImageID             interface{} `json:"imageID"`
-	ContainerID         interface{} `json:"containerID"`
+	ImageID             interface{} `json:"imageID,omitempty"`
+	ContainerID         interface{} `json:"containerID,omitempty"`
 }
 
 type ControlPlane struct {
@@ -119,7 +119,7 @@ type ControlPlaneMember struct {
 	Component  string       `json:"component"`
 	Version    string       `json:"version"`
 	Namespace  string       `json:"namespace"`
-	DataPlanes []*Container `json:"data_planes"`
+	DataPlanes []*Container `json:"data_planes,omitempty"`
 }
 
 type DataPlane struct {
@@ -136,7 +136,7 @@ type FilterPage struct {
 	Page       int             `json:"page"`
 	PageSize   int             `json:"page_size"`
 	TotalCount int             `json:"total_count"`
-	Filters    []*FilterResult `json:"filters"`
+	Filters    []*FilterResult `json:"filters,omitempty"`
 }
 
 type FilterResult struct {
@@ -146,9 +146,9 @@ type FilterResult struct {
 	UserID      string                 `json:"user_id"`
 	Location    *Location              `json:"location"`
 	Visibility  string                 `json:"visibility"`
-	CatalogData map[string]interface{} `json:"catalog_data"`
-	CreatedAt   *string                `json:"created_at"`
-	UpdatedAt   *string                `json:"updated_at"`
+	CatalogData map[string]interface{} `json:"catalog_data,omitempty"`
+	CreatedAt   *string                `json:"created_at,omitempty"`
+	UpdatedAt   *string                `json:"updated_at,omitempty"`
 }
 
 type K8sContext struct {
@@ -172,15 +172,15 @@ type K8sContextsPage struct {
 }
 
 type KctlDescribeDetails struct {
-	Describe *string `json:"describe"`
-	Ctxid    *string `json:"ctxid"`
+	Describe *string `json:"describe,omitempty"`
+	Ctxid    *string `json:"ctxid,omitempty"`
 }
 
 type Location struct {
-	Branch *string `json:"branch"`
-	Host   *string `json:"host"`
-	Path   *string `json:"path"`
-	Type   *string `json:"type"`
+	Branch *string `json:"branch,omitempty"`
+	Host   *string `json:"host,omitempty"`
+	Path   *string `json:"path,omitempty"`
+	Type   *string `json:"type,omitempty"`
 }
 
 type MeshModelComponent struct {
@@ -194,8 +194,8 @@ type MeshModelRelationship struct {
 }
 
 type MeshModelSummary struct {
-	Components    []*MeshModelComponent    `json:"components"`
-	Relationships []*MeshModelRelationship `json:"relationships"`
+	Components    []*MeshModelComponent    `json:"components,omitempty"`
+	Relationships []*MeshModelRelationship `json:"relationships,omitempty"`
 }
 
 type MeshModelSummarySelector struct {
@@ -215,18 +215,18 @@ type MesheryControllersStatusListItem struct {
 }
 
 type MesheryResult struct {
-	MesheryID          *string                `json:"meshery_id"`
-	Name               *string                `json:"name"`
-	Mesh               *string                `json:"mesh"`
-	PerformanceProfile *string                `json:"performance_profile"`
-	TestID             *string                `json:"test_id"`
-	RunnerResults      map[string]interface{} `json:"runner_results"`
-	ServerMetrics      *string                `json:"server_metrics"`
-	ServerBoardConfig  *string                `json:"server_board_config"`
-	TestStartTime      *string                `json:"test_start_time"`
-	UserID             *string                `json:"user_id"`
-	UpdatedAt          *string                `json:"updated_at"`
-	CreatedAt          *string                `json:"created_at"`
+	MesheryID          *string                `json:"meshery_id,omitempty"`
+	Name               *string                `json:"name,omitempty"`
+	Mesh               *string                `json:"mesh,omitempty"`
+	PerformanceProfile *string                `json:"performance_profile,omitempty"`
+	TestID             *string                `json:"test_id,omitempty"`
+	RunnerResults      map[string]interface{} `json:"runner_results,omitempty"`
+	ServerMetrics      *string                `json:"server_metrics,omitempty"`
+	ServerBoardConfig  *string                `json:"server_board_config,omitempty"`
+	TestStartTime      *string                `json:"test_start_time,omitempty"`
+	UserID             *string                `json:"user_id,omitempty"`
+	UpdatedAt          *string                `json:"updated_at,omitempty"`
+	CreatedAt          *string                `json:"created_at,omitempty"`
 }
 
 type NameSpace struct {
@@ -239,19 +239,19 @@ type NullString struct {
 }
 
 type OAMCapability struct {
-	OamDefinition interface{} `json:"oam_definition"`
-	ID            *string     `json:"id"`
-	OamRefSchema  *string     `json:"oam_ref_schema"`
-	Host          *string     `json:"host"`
-	Restricted    *bool       `json:"restricted"`
-	Metadata      interface{} `json:"metadata"`
+	OamDefinition interface{} `json:"oam_definition,omitempty"`
+	ID            *string     `json:"id,omitempty"`
+	OamRefSchema  *string     `json:"oam_ref_schema,omitempty"`
+	Host          *string     `json:"host,omitempty"`
+	Restricted    *bool       `json:"restricted,omitempty"`
+	Metadata      interface{} `json:"metadata,omitempty"`
 }
 
 type OperatorControllerStatus struct {
 	Name      string `json:"name"`
 	Version   string `json:"version"`
 	Status    Status `json:"status"`
-	Error     *Error `json:"error"`
+	Error     *Error `json:"error,omitempty"`
 	ContextID string `json:"contextID"`
 }
 
@@ -264,7 +264,7 @@ type OperatorStatus struct {
 	Status      Status                      `json:"status"`
 	Version     string                      `json:"version"`
 	Controllers []*OperatorControllerStatus `json:"controllers"`
-	Error       *Error                      `json:"error"`
+	Error       *Error                      `json:"error,omitempty"`
 	ContextID   string                      `json:"contextID"`
 }
 
@@ -281,18 +281,18 @@ type OperatorStatusPerK8sContext struct {
 type PageFilter struct {
 	Page         string  `json:"page"`
 	PageSize     string  `json:"pageSize"`
-	Order        *string `json:"order"`
-	Search       *string `json:"search"`
-	From         *string `json:"from"`
-	To           *string `json:"to"`
-	UpdatedAfter *string `json:"updated_after"`
+	Order        *string `json:"order,omitempty"`
+	Search       *string `json:"search,omitempty"`
+	From         *string `json:"from,omitempty"`
+	To           *string `json:"to,omitempty"`
+	UpdatedAfter *string `json:"updated_after,omitempty"`
 }
 
 type PatternPageResult struct {
 	Page       int              `json:"page"`
 	PageSize   int              `json:"page_size"`
 	TotalCount int              `json:"total_count"`
-	Patterns   []*PatternResult `json:"patterns"`
+	Patterns   []*PatternResult `json:"patterns,omitempty"`
 }
 
 type PatternResult struct {
@@ -302,45 +302,45 @@ type PatternResult struct {
 	Location    *Location              `json:"location"`
 	PatternFile string                 `json:"pattern_file"`
 	Visibility  string                 `json:"visibility"`
-	CatalogData map[string]interface{} `json:"catalog_data"`
+	CatalogData map[string]interface{} `json:"catalog_data,omitempty"`
 	CanSupport  bool                   `json:"canSupport"`
-	Errmsg      *string                `json:"errmsg"`
-	CreatedAt   *string                `json:"created_at"`
-	UpdatedAt   *string                `json:"updated_at"`
+	Errmsg      *string                `json:"errmsg,omitempty"`
+	CreatedAt   *string                `json:"created_at,omitempty"`
+	UpdatedAt   *string                `json:"updated_at,omitempty"`
 }
 
 type PerfPageProfiles struct {
 	Page       int            `json:"page"`
 	PageSize   int            `json:"page_size"`
 	TotalCount int            `json:"total_count"`
-	Profiles   []*PerfProfile `json:"profiles"`
+	Profiles   []*PerfProfile `json:"profiles,omitempty"`
 }
 
 type PerfPageResult struct {
 	Page       int              `json:"page"`
 	PageSize   int              `json:"page_size"`
 	TotalCount int              `json:"total_count"`
-	Results    []*MesheryResult `json:"results"`
+	Results    []*MesheryResult `json:"results,omitempty"`
 }
 
 type PerfProfile struct {
 	ConcurrentRequest int       `json:"concurrent_request"`
-	CreatedAt         *string   `json:"created_at"`
+	CreatedAt         *string   `json:"created_at,omitempty"`
 	Duration          string    `json:"duration"`
-	Endpoints         []*string `json:"endpoints"`
+	Endpoints         []*string `json:"endpoints,omitempty"`
 	ID                string    `json:"id"`
-	LastRun           *string   `json:"last_run"`
-	LoadGenerators    []*string `json:"load_generators"`
-	Name              *string   `json:"name"`
-	QPS               *int      `json:"qps"`
-	TotalResults      *int      `json:"total_results"`
-	UpdatedAt         *string   `json:"updated_at"`
+	LastRun           *string   `json:"last_run,omitempty"`
+	LoadGenerators    []*string `json:"load_generators,omitempty"`
+	Name              *string   `json:"name,omitempty"`
+	QPS               *int      `json:"qps,omitempty"`
+	TotalResults      *int      `json:"total_results,omitempty"`
+	UpdatedAt         *string   `json:"updated_at,omitempty"`
 	UserID            string    `json:"user_id"`
-	RequestHeaders    *string   `json:"request_headers"`
-	RequestCookies    *string   `json:"request_cookies"`
-	RequestBody       *string   `json:"request_body"`
-	ContentType       *string   `json:"content_type"`
-	ServiceMesh       *string   `json:"service_mesh"`
+	RequestHeaders    *string   `json:"request_headers,omitempty"`
+	RequestCookies    *string   `json:"request_cookies,omitempty"`
+	RequestBody       *string   `json:"request_body,omitempty"`
+	ContentType       *string   `json:"content_type,omitempty"`
+	ServiceMesh       *string   `json:"service_mesh,omitempty"`
 }
 
 type ReSyncActions struct {
@@ -355,8 +355,8 @@ type Resource struct {
 }
 
 type ServiceMeshFilter struct {
-	Type          *MeshType `json:"type"`
-	K8sClusterIDs []string  `json:"k8sClusterIDs"`
+	Type          *MeshType `json:"type,omitempty"`
+	K8sClusterIDs []string  `json:"k8sClusterIDs,omitempty"`
 }
 
 type TelemetryComp struct {
