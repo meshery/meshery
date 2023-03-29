@@ -601,6 +601,7 @@ func Spreadsheet(srv *sheets.Service, sheetName string, spreadsheet chan struct 
 			} else {
 				newValues[NameToIndex["hasSchema?"]] = false
 			}
+			newValues[NameToIndex["link"]] = entry.helmURL
 			values = append(values, newValues)
 			if acpm[entry.model] == nil {
 				acpm[entry.model] = make(map[string]bool)
@@ -630,6 +631,7 @@ func Spreadsheet(srv *sheets.Service, sheetName string, spreadsheet chan struct 
 		newValues[NameToIndex["modelDisplayName"]] = entry.model
 		newValues[NameToIndex["model"]] = entry.model
 		newValues[NameToIndex["CRDs"]] = len(entry.comps)
+		newValues[NameToIndex["link"]] = entry.helmURL
 		values = append(values, newValues)
 		copy(am[entry.model], newValues)
 		batchSize--
