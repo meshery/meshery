@@ -5,6 +5,7 @@ import { getMeshProperties } from "../../utils/nameMapper";
 import PatternServiceFormCore from "./PatternServiceFormCore";
 import SettingsIcon from '@material-ui/icons/Settings';
 import { iconSmall } from "../../css/icons.styles";
+import { useTheme } from "@material-ui/core/styles";
 
 const useStyles = makeStyles(() => ({
 
@@ -51,6 +52,7 @@ const useStyles = makeStyles(() => ({
 function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference, namespace, onSettingsChange, onTraitsChange, scroll = false }) {
   const [tab, setTab] = React.useState(0);
   const classes = useStyles({ color : getMeshProperties(getMeshName(schemaSet))?.color });
+  const theme = useTheme();
 
   useEffect(() => {
     schemaSet.workload.properties.name = {
@@ -110,7 +112,7 @@ function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference
             <AppBar style={{
 
               boxShadow : `0px 2px 4px -1px "#677E88"`,
-              background : "#677E88",
+              background : `${theme.palette.type === "dark" ? "#00B39F" : "#647881"}`,
               position : "sticky",
               zIndex : 'auto',
             }}>
