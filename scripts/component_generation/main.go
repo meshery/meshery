@@ -214,8 +214,9 @@ func main() {
 		}
 	}
 	spreadsheetChan := make(chan struct {
-		comps []v1alpha1.ComponentDefinition
-		model string
+		comps   []v1alpha1.ComponentDefinition
+		model   string
+		helmURL string
 	}, 100)
 	// Set the range of cells to retrieve.
 	rangeString := sheetName + COLUMNRANGE
@@ -279,14 +280,16 @@ func main() {
 // Stages have to run sequentially. The steps within each stage can be concurrent.
 // pipeline function should return only after completion
 func executeInStages(pipeline func(in chan []artifacthub.AhPackage, csv chan string, writer *Writer, spreadsheet chan struct {
-	comps []v1alpha1.ComponentDefinition
-	model string
+	comps   []v1alpha1.ComponentDefinition
+	model   string
+	helmURL string
 }, dp *dedup) error,
 	csv chan string,
 	writer *Writer,
 	spreadsheetChan chan struct {
-		comps []v1alpha1.ComponentDefinition
-		model string
+		comps   []v1alpha1.ComponentDefinition
+		model   string
+		helmURL string
 	}, dp *dedup, pkg ...[]artifacthub.AhPackage) {
 	for stageno, p := range pkg {
 		input := make(chan []artifacthub.AhPackage)
@@ -334,8 +337,9 @@ func (d *dedup) check(key string) bool {
 	return d.m[key]
 }
 func StartPipeline(in chan []artifacthub.AhPackage, csv chan string, writer *Writer, spreadsheet chan struct {
-	comps []v1alpha1.ComponentDefinition
-	model string
+	comps   []v1alpha1.ComponentDefinition
+	model   string
+	helmURL string
 }, dp *dedup) error {
 	pkgsChan := make(chan []artifacthub.AhPackage)
 	compsChan := make(chan struct {
@@ -428,11 +432,13 @@ func StartPipeline(in chan []artifacthub.AhPackage, csv chan string, writer *Wri
 				model: ap.Name,
 			}
 			spreadsheet <- struct {
-				comps []v1alpha1.ComponentDefinition
-				model string
+				comps   []v1alpha1.ComponentDefinition
+				model   string
+				helmURL string
 			}{
-				comps: newcomps,
-				model: ap.Name,
+				comps:   newcomps,
+				model:   ap.Name,
+				helmURL: ap.ChartUrl,
 			}
 		}
 
@@ -556,8 +562,9 @@ var spreadsheetID = "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw"
 const sheetID = 0
 
 func Spreadsheet(srv *sheets.Service, sheetName string, spreadsheet chan struct {
-	comps []v1alpha1.ComponentDefinition
-	model string
+	comps   []v1alpha1.ComponentDefinition
+	model   string
+	helmURL string
 }, am map[string][]interface{}, acpm map[string]map[string]bool) {
 	start := time.Now()
 	rangeString := sheetName + "!A4:AB4"
