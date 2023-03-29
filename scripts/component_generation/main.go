@@ -585,11 +585,10 @@ func Spreadsheet(srv *sheets.Service, sheetName string, spreadsheet chan struct 
 			} else {
 				newValues = make([]interface{}, len(resp.Values[0]))
 				copy(newValues, resp.Values[0])
+				newValues[NameToIndex["modelDisplayName"]] = entry.model
+				newValues[NameToIndex["model"]] = entry.model
 			}
 			newValues[NameToIndex["component"]] = comp.Kind
-			newValues[NameToIndex["modelDisplayName"]] = entry.model
-			newValues[NameToIndex["model"]] = entry.model
-
 			if comp.Schema != "" {
 				newValues[NameToIndex["hasSchema?"]] = true
 			} else {
