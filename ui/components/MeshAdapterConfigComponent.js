@@ -14,6 +14,7 @@ import ReactSelectWrapper from "./ReactSelectWrapper";
 import { updateAdaptersInfo, updateProgress } from "../lib/store";
 import dataFetch from "../lib/data-fetch";
 import { iconMedium } from "../css/icons.styles";
+import changeAdaptorState from './graphql/mutations/AdaptorStatusMutation';
 
 const styles = (theme) => ({
   wrapperClass : { padding : theme.spacing(5),backgroundColor : theme.palette.secondary.elevatedComponents,borderBottomLeftRadius : theme.spacing(1),borderBottomRightRadius : theme.spacing(1), },
@@ -43,6 +44,9 @@ const styles = (theme) => ({
     marginBottom : theme.spacing(1),
   }
 });
+
+const ENABLED = "ENABLED"
+const DISABLED = "DISABLED"
 
 class MeshAdapterConfigComponent extends React.Component {
   constructor(props) {
@@ -212,9 +216,50 @@ class MeshAdapterConfigComponent extends React.Component {
     );
   };
 
-  handleAdaptorSwitch = () => {
+  // getAdaptorStatus = (adapterLoc) => {
+
+  // }
+
+  handleAdaptorSwitch = (checked) => {
+    const { meshLocationURL } = this.state;
+
+    if (!meshLocationURL || !meshLocationURL.value || meshLocationURL.value === "") {
+      this.setState({ meshLocationURLError : true });
+      return;
+    }
+
     this.props.updateProgress({ showProgress : true });
-    return
+
+    const variables = {
+      status : `${checked ? ENABLED : DISABLED}`,
+      adapterPort : meshLocationURL.value
+    };
+
+    changeAdaptorState((response, errors) => {
+      this.props.updateProgress({ showProgress : false });
+
+      if (errors !== undefined) {
+        this.handleError(`Unable to ${!checked ? "Und" : "D"}eploy adaptor`);
+      }
+      this.props.enqueueSnackbar("Adaptor " + response.adaptorStatus.toLowerCase(), {
+        variant : "success",
+        autoHideDuration : 2000,
+        action : (key) => (
+          <IconButton key="close" aria-label="Close" color="inherit" onClick={() => this.closeSnackbar(key)}>
+            <CloseIcon style={iconMedium} />
+          </IconButton>
+        ),
+      });
+
+      // const tempSubscription = fetchMesheryOperatorStatus({ k8scontextID : contextId }).subscribe({
+      //   next : (res) => {
+      //     _setOperatorState(updateCtxInfo(contextId, res))
+      //     tempSubscription.unsubscribe();
+      //   },
+      //   error : (err) => console.log("error at operator scan: " + err),
+      // })
+
+    }, variables);
   };
 
   handleError = (msg) => (error) => {
@@ -285,8 +330,9 @@ class MeshAdapterConfigComponent extends React.Component {
           <React.Fragment>
             <div className={classes.buttons}>
               <Switch
-                // checked={getOperatorStatus(contexts[tableMeta.rowIndex].id)?.operatorState}
-                onClick={() => this.handleAdaptorSwitch()}
+                // checked={this.getAdaptorStatus(this.state.meshLocationURL)}
+                checked={false}
+                onClick={(e) => this.handleAdaptorSwitch(e.target.checked)}
                 name="AdaptorSwitch"
                 color="primary"
                 className={classes.OperatorSwitch}
@@ -300,7 +346,7 @@ class MeshAdapterConfigComponent extends React.Component {
                 className={classes.button}
                 data-cy="btnSubmitMeshAdapter"
               >
-                ConnectOO
+                Connect
               </Button>
             </div>
           </React.Fragment>
@@ -318,9 +364,11 @@ MeshAdapterConfigComponent.propTypes = { classes : PropTypes.object.isRequired, 
 
 const mapDispatchToProps = (dispatch) => ({ updateAdaptersInfo : bindActionCreators(updateAdaptersInfo, dispatch),
   updateProgress : bindActionCreators(updateProgress, dispatch), });
+
 const mapStateToProps = (state) => {
   const meshAdapters = state.get("meshAdapters").toJS();
   const meshAdaptersts = state.get("meshAdaptersts");
+
   return { meshAdapters, meshAdaptersts };
 };
 
