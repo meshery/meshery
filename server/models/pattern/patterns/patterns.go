@@ -51,7 +51,7 @@ func ProcessOAM(kconfigs []string, oamComps []string, oamConfig string, isDel bo
 			id, _ := uuid.NewV4()
 			for _, comp := range comps {
 				var req meshes.EventsResponse
-				if comp.Spec.Model == "core" || comp.Spec.Type == "Application" { //TODO: Remove second condition once "core" is added to MeshModels
+				if comp.Spec.Model == "core" {
 					if err := application.Deploy(kcli, comp, config, isDel); err != nil {
 						var summary string
 						if isDel {
