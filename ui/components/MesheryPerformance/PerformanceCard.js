@@ -99,7 +99,7 @@ function PerformanceCard({
           </Typography>
           <div className={classes.noOfResultsContainer} >
             <div >
-              <Typography variant="h2" component="div" style={{ marginRight : "0.75rem", color: `${theme.palette.type === "dark" ? "#fff" : "#647881"}` }}>
+              <Typography variant="h2" component="div" style={{ marginRight : "0.75rem", color : `${theme.palette.type === "dark" ? "#fff" : "#647881"}` }}>
                 {(results).toLocaleString('en')}
               </Typography>
               <Typography variant="body1" className={classes.resultText} component="div">
@@ -113,7 +113,7 @@ function PerformanceCard({
             <div>
               {lastRun
                 ? (
-                  <Typography variant="caption" style={{ fontStyle : "italic", color: `${theme.palette.type === "dark" ? "rgba(255, 255, 255, 0.7)" : "#647881"}` }}>
+                  <Typography variant="caption" style={{ fontStyle : "italic", color : `${theme.palette.type === "dark" ? "rgba(255, 255, 255, 0.7)" : "#647881"}` }}>
                   Last Run: <Moment format="LLL">{lastRun}</Moment>
                   </Typography>
                 )

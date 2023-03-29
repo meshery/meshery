@@ -96,7 +96,7 @@ function MesheryPatternCard({
               <div>
                 {updated_at
                   ? (
-                    <Typography variant="caption" style={{ fontStyle : "italic", color: `${theme.palette.type === "dark" ? "rgba(255, 255, 255, 0.7)" : "#647881"}` }}>
+                    <Typography variant="caption" style={{ fontStyle : "italic", color : `${theme.palette.type === "dark" ? "rgba(255, 255, 255, 0.7)" : "#647881"}` }}>
                       Modified On: <Moment format="LLL">{updated_at}</Moment>
                     </Typography>
                   )
@@ -251,7 +251,7 @@ function MesheryPatternCard({
                 <div>
                   {created_at
                     ? (
-                      <Typography variant="caption" style={{ fontStyle : "italic", color: `${theme.palette.type === "dark" ? "rgba(255, 255, 255, 0.7)" : "#647881"}` }}>
+                      <Typography variant="caption" style={{ fontStyle : "italic", color : `${theme.palette.type === "dark" ? "rgba(255, 255, 255, 0.7)" : "#647881"}` }}>
                         Created at: <Moment format="LLL">{created_at}</Moment>
                       </Typography>
                     )
