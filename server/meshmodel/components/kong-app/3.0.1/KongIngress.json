@@ -1,1 +1,0 @@
-{"kind":"KongIngress","apiVersion":"v1","displayName":"Kong Ingress","format":"JSON","metadata":{},"model":{"name":"kong-app","version":"3.0.1","displayName":"kong-app","category":{"name":"","metadata":null},"metadata":null}}

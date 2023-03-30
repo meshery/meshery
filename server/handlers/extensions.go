@@ -22,7 +22,7 @@ type ExtensionVersion struct {
 	Version string `json:"version,omitempty"`
 }
 
-func (h *Handler) ExtensionsEndpointHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+func (h *Handler) ExtensionsEndpointHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, _ models.Provider) {
 	mx.Lock()
 	val, ok := extendedEndpoints[req.URL.Path]
 	mx.Unlock()
@@ -34,7 +34,7 @@ func (h *Handler) ExtensionsEndpointHandler(w http.ResponseWriter, req *http.Req
 	http.Error(w, "Invalid endpoint", http.StatusInternalServerError)
 }
 
-func (h *Handler) LoadExtensionFromPackage(w http.ResponseWriter, req *http.Request, provider models.Provider) error {
+func (h *Handler) LoadExtensionFromPackage(_ http.ResponseWriter, _ *http.Request, provider models.Provider) error {
 	mx.Lock()
 	defer mx.Unlock()
 	packagePath := ""
@@ -72,7 +72,7 @@ func (h *Handler) LoadExtensionFromPackage(w http.ResponseWriter, req *http.Requ
 	return nil
 }
 
-func (h *Handler) ExtensionsVersionHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+func (h *Handler) ExtensionsVersionHandler(w http.ResponseWriter, _ *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	if provider.GetProviderType() == models.LocalProviderType {
 		err := json.NewEncoder(w).Encode("extension not available for current provider")
 		if err != nil {
@@ -101,7 +101,7 @@ func (h *Handler) ExtensionsVersionHandler(w http.ResponseWriter, req *http.Requ
 * ExtensionsHandler is a handler function which works as a proxy to resolve the
 * request of any extension point to its remote provider
  */
-func (h *Handler) ExtensionsHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+func (h *Handler) ExtensionsHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	resp, err := provider.ExtensionProxy(req)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Error: %v", err.Error()), http.StatusInternalServerError)

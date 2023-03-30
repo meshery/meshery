@@ -1,1 +1,0 @@
-{"kind":"IstioOperator","apiVersion":"v1alpha1","displayName":"Istio Operator","format":"JSON","metadata":{},"model":{"name":"istio-operator","version":"1.7.0","displayName":"istio-operator","category":{"name":"","metadata":null},"metadata":null}}

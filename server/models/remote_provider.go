@@ -201,7 +201,7 @@ func (l *RemoteProvider) SyncPreferences() {
 }
 
 // GetProviderCapabilities returns all of the provider properties
-func (l *RemoteProvider) GetProviderCapabilities(w http.ResponseWriter, r *http.Request) {
+func (l *RemoteProvider) GetProviderCapabilities(w http.ResponseWriter, _ *http.Request) {
 	encoder := json.NewEncoder(w)
 	if err := encoder.Encode(l.ProviderProperties); err != nil {
 		http.Error(w, ErrEncoding(err, "Provider Capablity").Error(), http.StatusInternalServerError)
@@ -253,6 +253,7 @@ func (l *RemoteProvider) executePrefSync(tokenString string, sess *Preference) {
 // Every Remote Provider must offer this function
 func (l *RemoteProvider) InitiateLogin(w http.ResponseWriter, r *http.Request, _ bool) {
 	callbackURL := r.Context().Value(MesheryServerCallbackURL).(string)
+	mesheryVersion := viper.GetString("BUILD")
 
 	_, err := r.Cookie(tokenName)
 	if err != nil {
@@ -263,7 +264,7 @@ func (l *RemoteProvider) InitiateLogin(w http.ResponseWriter, r *http.Request, _
 			Path:     "/",
 			HttpOnly: true,
 		})
-		http.Redirect(w, r, l.RemoteProviderURL+"?source="+base64.RawURLEncoding.EncodeToString([]byte(callbackURL))+"&provider_version="+l.ProviderVersion, http.StatusFound)
+		http.Redirect(w, r, l.RemoteProviderURL+"?source="+base64.RawURLEncoding.EncodeToString([]byte(callbackURL))+"&provider_version="+l.ProviderVersion+"&meshery_version="+mesheryVersion, http.StatusFound)
 		return
 	}
 
@@ -914,12 +915,12 @@ func (l *RemoteProvider) FetchSmiResults(req *http.Request, page, pageSize, sear
 
 // FetchSmiResult - fetches single result from provider backend with given id
 func (l *RemoteProvider) FetchSmiResult(req *http.Request, page, pageSize, search, order string, resultID uuid.UUID) ([]byte, error) {
-	if !l.Capabilities.IsSupported(PersistSMIResult) {
+	if !l.Capabilities.IsSupported(PersistSMIResults) {
 		logrus.Error("operation not available")
-		return []byte{}, ErrInvalidCapability("PersistSMIResult", l.ProviderName)
+		return []byte{}, ErrInvalidCapability("PersistSMIResults", l.ProviderName)
 	}
 
-	ep, _ := l.Capabilities.GetEndpointForFeature(PersistSMIResult)
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistSMIResults)
 
 	logrus.Infof("attempting to fetch smi result from cloud for id: %s", resultID)
 
@@ -1068,12 +1069,12 @@ func (l *RemoteProvider) PublishResults(req *http.Request, result *MesheryResult
 
 // PublishSmiResults - publishes results to the provider backend synchronously
 func (l *RemoteProvider) PublishSmiResults(result *SmiResult) (string, error) {
-	if !l.Capabilities.IsSupported(PersistSMIResult) {
+	if !l.Capabilities.IsSupported(PersistSMIResults) {
 		logrus.Error("operation not available")
-		return "", ErrInvalidCapability("PersistSMIResult", l.ProviderName)
+		return "", ErrInvalidCapability("PersistSMIResults", l.ProviderName)
 	}
 
-	ep, _ := l.Capabilities.GetEndpointForFeature(PersistSMIResult)
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistSMIResults)
 
 	data, err := json.Marshal(result)
 	if err != nil {
@@ -2852,7 +2853,7 @@ func (l *RemoteProvider) RecordPreferences(req *http.Request, userID string, dat
 }
 
 // TokenHandler - specific to remote auth
-func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, fromMiddleWare bool) {
+func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, _ bool) {
 	tokenString := r.URL.Query().Get(tokenName)
 	// gets the session cookie from remote provider
 	sessionCookie := r.URL.Query().Get("session_cookie")
@@ -3062,6 +3063,9 @@ func (l *RemoteProvider) SMPTestConfigFetch(req *http.Request, page, pageSize, s
 	q := remoteProviderURL.Query()
 	q.Add("page", page)
 	q.Add("pageSize", pageSize)
+	q.Add("search", search)
+	q.Add("order", order)
+
 	remoteProviderURL.RawQuery = q.Encode()
 	logrus.Debugf("Making request to : %s", remoteProviderURL.String())
 	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)

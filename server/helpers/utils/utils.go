@@ -151,20 +151,19 @@ func writeSVGHelper(metadata map[string]interface{}, dirname, filename string) {
 			if pathsvg != "" { // the image has already been loaded, point the component to that path
 				metadata["svgColor"] = pathsvg
 				goto White
-			} else {
-				f, err := os.Create(filepath.Join(path, filename+"-color.svg"))
-				if err != nil {
-					fmt.Println(err)
-					return
-				}
-				_, err = f.WriteString(x)
-				if err != nil {
-					fmt.Println(err)
-					return
-				}
-				metadata["svgColor"] = getRelativePathForAPI(filepath.Join(dirname, "color", filename+"-color.svg")) //Replace the actual SVG with path to SVG
-				writeHashCheckSVG(hashString, metadata["svgColor"].(string))
 			}
+			f, err := os.Create(filepath.Join(path, filename+"-color.svg"))
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+			_, err = f.WriteString(x)
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+			metadata["svgColor"] = getRelativePathForAPI(filepath.Join(dirname, "color", filename+"-color.svg")) //Replace the actual SVG with path to SVG
+			writeHashCheckSVG(hashString, metadata["svgColor"].(string))
 		}
 	}
 White:

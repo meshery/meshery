@@ -109,8 +109,8 @@ func (h *Handler) ApplicationFileRequestHandler(
 func (h *Handler) handleApplicationPOST(
 	rw http.ResponseWriter,
 	r *http.Request,
-	prefObj *models.Preference,
-	user *models.User,
+	_ *models.Preference,
+	_ *models.User,
 	provider models.Provider,
 ) {
 	defer func() {
@@ -399,8 +399,8 @@ func (h *Handler) handleApplicationPOST(
 
 func (h *Handler) handleApplicationUpdate(rw http.ResponseWriter,
 	r *http.Request,
-	prefObj *models.Preference,
-	user *models.User,
+	_ *models.Preference,
+	_ *models.User,
 	provider models.Provider) {
 	defer func() {
 		_ = r.Body.Close()
@@ -550,8 +550,8 @@ func (h *Handler) handleApplicationUpdate(rw http.ResponseWriter,
 func (h *Handler) GetMesheryApplicationsHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
-	prefObj *models.Preference,
-	user *models.User,
+	_ *models.Preference,
+	_ *models.User,
 	provider models.Provider,
 ) {
 	q := r.URL.Query()
@@ -580,8 +580,8 @@ func (h *Handler) GetMesheryApplicationsHandler(
 func (h *Handler) DeleteMesheryApplicationHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
-	prefObj *models.Preference,
-	user *models.User,
+	_ *models.Preference,
+	_ *models.User,
 	provider models.Provider,
 ) {
 	applicationID := mux.Vars(r)["id"]
@@ -602,8 +602,8 @@ func (h *Handler) DeleteMesheryApplicationHandler(
 func (h *Handler) GetMesheryApplicationHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
-	prefObj *models.Preference,
-	user *models.User,
+	_ *models.Preference,
+	_ *models.User,
 	provider models.Provider,
 ) {
 	applicationID := mux.Vars(r)["id"]
@@ -629,10 +629,10 @@ func (h *Handler) GetMesheryApplicationHandler(
 // GetMesheryApplicationHandler fetched the application with the given id
 func (h *Handler) GetMesheryApplicationTypesHandler(
 	rw http.ResponseWriter,
-	r *http.Request,
-	prefObj *models.Preference,
-	user *models.User,
-	provider models.Provider,
+	_ *http.Request,
+	_ *models.Preference,
+	_ *models.User,
+	_ models.Provider,
 ) {
 	response := models.GetApplicationTypes()
 	b, err := json.Marshal(response)
@@ -657,8 +657,8 @@ func (h *Handler) GetMesheryApplicationTypesHandler(
 func (h *Handler) GetMesheryApplicationSourceHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
-	prefObj *models.Preference,
-	user *models.User,
+	_ *models.Preference,
+	_ *models.User,
 	provider models.Provider,
 ) {
 	applicationID := mux.Vars(r)["id"]
@@ -687,7 +687,7 @@ func (h *Handler) GetMesheryApplicationSourceHandler(
 	}
 }
 
-func (h *Handler) formatApplicationOutput(rw http.ResponseWriter, content []byte, format string, res *meshes.EventsResponse) {
+func (h *Handler) formatApplicationOutput(rw http.ResponseWriter, content []byte, _ string, res *meshes.EventsResponse) {
 	contentMesheryApplicationSlice := make([]models.MesheryApplication, 0)
 	names := []string{}
 

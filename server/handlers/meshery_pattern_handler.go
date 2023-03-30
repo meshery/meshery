@@ -59,8 +59,8 @@ func (h *Handler) PatternFileRequestHandler(
 func (h *Handler) handlePatternPOST(
 	rw http.ResponseWriter,
 	r *http.Request,
-	prefObj *models.Preference,
-	user *models.User,
+	_ *models.Preference,
+	_ *models.User,
 	provider models.Provider,
 ) {
 	defer func() {
@@ -315,8 +315,8 @@ func (h *Handler) handlePatternPOST(
 func (h *Handler) GetMesheryPatternsHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
-	prefObj *models.Preference,
-	user *models.User,
+	_ *models.Preference,
+	_ *models.User,
 	provider models.Provider,
 ) {
 	q := r.URL.Query()
@@ -354,8 +354,8 @@ func (h *Handler) GetMesheryPatternsHandler(
 func (h *Handler) GetCatalogMesheryPatternsHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
-	prefObj *models.Preference,
-	user *models.User,
+	_ *models.Preference,
+	_ *models.User,
 	provider models.Provider,
 ) {
 	q := r.URL.Query()
@@ -384,8 +384,8 @@ func (h *Handler) GetCatalogMesheryPatternsHandler(
 func (h *Handler) DeleteMesheryPatternHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
-	prefObj *models.Preference,
-	user *models.User,
+	_ *models.Preference,
+	_ *models.User,
 	provider models.Provider,
 ) {
 	patternID := mux.Vars(r)["id"]
@@ -413,8 +413,8 @@ func (h *Handler) DeleteMesheryPatternHandler(
 func (h *Handler) CloneMesheryPatternHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
-	prefObj *models.Preference,
-	user *models.User,
+	_ *models.Preference,
+	_ *models.User,
 	provider models.Provider,
 ) {
 	patternID := mux.Vars(r)["id"]
@@ -449,8 +449,8 @@ func (h *Handler) CloneMesheryPatternHandler(
 func (h *Handler) PublishCatalogPatternHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
-	prefObj *models.Preference,
-	user *models.User,
+	_ *models.Preference,
+	_ *models.User,
 	provider models.Provider,
 ) {
 	defer func() {
@@ -482,8 +482,8 @@ func (h *Handler) PublishCatalogPatternHandler(
 func (h *Handler) DeleteMultiMesheryPatternsHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
-	prefObj *models.Preference,
-	user *models.User,
+	_ *models.Preference,
+	_ *models.User,
 	provider models.Provider,
 ) {
 	body, err := io.ReadAll(r.Body)
@@ -522,8 +522,8 @@ func (h *Handler) DeleteMultiMesheryPatternsHandler(
 func (h *Handler) GetMesheryPatternHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
-	prefObj *models.Preference,
-	user *models.User,
+	_ *models.Preference,
+	_ *models.User,
 	provider models.Provider,
 ) {
 	patternID := mux.Vars(r)["id"]
