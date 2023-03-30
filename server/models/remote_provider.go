@@ -915,12 +915,12 @@ func (l *RemoteProvider) FetchSmiResults(req *http.Request, page, pageSize, sear
 
 // FetchSmiResult - fetches single result from provider backend with given id
 func (l *RemoteProvider) FetchSmiResult(req *http.Request, page, pageSize, search, order string, resultID uuid.UUID) ([]byte, error) {
-	if !l.Capabilities.IsSupported(PersistSMIResult) {
+	if !l.Capabilities.IsSupported(PersistSMIResults) {
 		logrus.Error("operation not available")
-		return []byte{}, ErrInvalidCapability("PersistSMIResult", l.ProviderName)
+		return []byte{}, ErrInvalidCapability("PersistSMIResults", l.ProviderName)
 	}
 
-	ep, _ := l.Capabilities.GetEndpointForFeature(PersistSMIResult)
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistSMIResults)
 
 	logrus.Infof("attempting to fetch smi result from cloud for id: %s", resultID)
 
@@ -1069,12 +1069,12 @@ func (l *RemoteProvider) PublishResults(req *http.Request, result *MesheryResult
 
 // PublishSmiResults - publishes results to the provider backend synchronously
 func (l *RemoteProvider) PublishSmiResults(result *SmiResult) (string, error) {
-	if !l.Capabilities.IsSupported(PersistSMIResult) {
+	if !l.Capabilities.IsSupported(PersistSMIResults) {
 		logrus.Error("operation not available")
-		return "", ErrInvalidCapability("PersistSMIResult", l.ProviderName)
+		return "", ErrInvalidCapability("PersistSMIResults", l.ProviderName)
 	}
 
-	ep, _ := l.Capabilities.GetEndpointForFeature(PersistSMIResult)
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistSMIResults)
 
 	data, err := json.Marshal(result)
 	if err != nil {
@@ -1655,7 +1655,7 @@ func (l *RemoteProvider) PublishCatalogPattern(req *http.Request, publishPattern
 
 	logrus.Infof("attempting to pubish pattern with id: %s", publishPatternRequest.ID)
 
-	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/publish", l.RemoteProviderURL, ep))
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s", l.RemoteProviderURL, ep))
 	logrus.Debugf("constructed pattern url: %s", remoteProviderURL.String())
 
 	data, err := json.Marshal(publishPatternRequest)
@@ -2121,7 +2121,7 @@ func (l *RemoteProvider) PublishCatalogFilter(req *http.Request, publishFilterRe
 
 	logrus.Infof("attempting to pubish filter with id: %s", publishFilterRequest.ID)
 
-	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/publish", l.RemoteProviderURL, ep))
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s", l.RemoteProviderURL, ep))
 	logrus.Debugf("constructed filter url: %s", remoteProviderURL.String())
 
 	data, err := json.Marshal(publishFilterRequest)
