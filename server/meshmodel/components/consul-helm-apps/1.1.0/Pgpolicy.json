@@ -1,1 +1,0 @@
-{"kind":"Pgpolicy","apiVersion":"v1","displayName":"Pgpolicy","format":"JSON","metadata":{},"model":{"name":"consul-helm-apps","version":"1.1.0","modelDisplayName":"consul-helm-apps","category":"","subCategory":""},"schema":"{\n \"title\": \"Pgpolicy\",\n \"type\": \"object\",\n \"x-kubernetes-preserve-unknown-fields\": true\n}"}

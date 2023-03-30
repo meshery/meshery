@@ -1,1 +1,0 @@
-{"kind":"BindableKinds","apiVersion":"v1alpha1","displayName":"Bindable Kinds","format":"JSON","metadata":{},"model":{"name":"service-binding-operator-helm-chart","version":"1.3.2","modelDisplayName":"service-binding-operator-helm-chart","category":"","subCategory":""},"schema":""}
