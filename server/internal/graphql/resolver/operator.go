@@ -88,7 +88,7 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Pro
 		}
 		op, exists := ctx.Value(models.MesheryControllerHandlersKey).(map[string]map[models.MesheryController]controllers.IMesheryController)
 		if !exists {
-			r.Log.Error(err)
+			r.Log.Error(ErrGettingController(err))
 			r.Broadcast.Submit(broadcast.BroadcastMessage{
 				Source: broadcast.OperatorSyncChannel,
 				Data: operatorStatusK8sContext{
