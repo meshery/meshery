@@ -1,24 +1,28 @@
 {
 	"kind": "Application",
 	"apiVersion": "core.oam.dev/v1alpha1",
-	"display-name": "Application",
+	"displayName": "Application",
 	"format": "JSON",
 	"metadata": {
 		"logo-URL": "",
 		"model": "core",
-		"model-display-name": "core",
-		"primary-color": "",
-		"secondary-color": "",
+		"modelDisplayName": "Core",
+		"primaryColor": "",
+		"published": true,
+		"secondaryColor": "",
 		"shape": "circle",
-		"svg_color": "",
-		"svg_white": ""
+		"svgColor": "",
+		"svgWhite": ""
 	},
 	"model": {
 		"name": "core",
 		"version": "v1.0.0",
-		"display-name": "Core",
-		"category": "Cloud Native Application",
-		"sub-category": "Not Found"
+		"displayName": "Core",
+		"category": {
+			"name": "Cloud Native Application",
+			"metadata": null
+		},
+		"metadata": {}
 	},
-	"schema":"{\n  \"$id\": \"http://meshery.layer5.io/definition/Workload/Application\",\n  \"$schema\": \"http://json-schema.org/draft-07/schema\",\n  \"title\": \"Application\",\n  \"type\": \"object\",\n  \"properties\": {\n    \"replicas\": {\n      \"type\": \"integer\"\n    },\n    \"advanced\": {\n      \"type\": \"object\",\n      \"properties\": {\n        \"create_service\": {\n          \"type\": \"boolean\",\n          \"title\": \"Expose as a Service\",\n          \"default\": true\n        }\n      }\n    },\n    \"containers\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"name\": {\n            \"type\": \"string\"\n          },\n          \"image\": {\n            \"type\": \"string\"\n          },\n          \"commands\": {\n            \"type\": \"array\",\n            \"items\": {\n              \"type\": \"string\"\n            }\n          },\n          \"ports\": {\n            \"type\": \"array\",\n            \"items\": {\n              \"type\": \"object\",\n              \"properties\": {\n                \"name\": {\n                  \"type\": \"string\",\n                  \"default\": \"http\"\n                },\n                \"containerPort\": {\n                  \"type\": \"integer\"\n                }\n              },\n              \"minItems\": 1,\n              \"required\": [\"containerPort\"]\n            }\n          },\n          \"envs\": {\n            \"type\": \"array\",\n            \"items\": {\n              \"type\": \"object\",\n              \"properties\": {\n                \"name\": {\n                  \"type\": \"string\"\n                },\n                \"value\": {\n                  \"type\": \"string\"\n                }\n              }\n            }\n          }\n        },\n        \"required\": [\"name\", \"image\", \"ports\"],\n        \"minItems\": 1\n      }\n    }\n  },\n  \"required\": [\"replicas\", \"containers\"]\n}\n"
+	"schema": "{\"$id\":\"http://meshery.layer5.io/definition/Workload/Application\",\"$schema\":\"http://json-schema.org/draft-07/schema\",\"properties\":{\"advanced\":{\"properties\":{\"create_service\":{\"default\":true,\"title\":\"Expose as a Service\",\"type\":\"boolean\"}},\"type\":\"object\"},\"containers\":{\"items\":{\"min Items\":1,\"properties\":{\"commands\":{\"items\":{\"type\":\"string\"},\"type\":\"array\"},\"envs\":{\"items\":{\"properties\":{\"name\":{\"type\":\"string\"},\"value\":{\"type\":\"string\"}},\"type\":\"object\"},\"type\":\"array\"},\"image\":{\"type\":\"string\"},\"name\":{\"type\":\"string\"},\"ports\":{\"items\":{\"min Items\":1,\"properties\":{\"container Port\":{\"type\":\"integer\"},\"name\":{\"default\":\"http\",\"type\":\"string\"}},\"required\":[\"container Port\"],\"type\":\"object\"},\"type\":\"array\"}},\"required\":[\"name\",\"image\",\"ports\"],\"type\":\"object\"},\"type\":\"array\"},\"replicas\":{\"type\":\"integer\"}},\"required\":[\"replicas\",\"containers\"],\"title\":\"Application\",\"type\":\"object\"}"
 }
