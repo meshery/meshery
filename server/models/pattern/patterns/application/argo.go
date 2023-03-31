@@ -110,7 +110,7 @@ func (ar *ArgoRollout) Canary(opt RolloutEngineCanaryOptions) error {
 	return nil
 }
 
-func (ar *ArgoRollout) istioCanary(opt RolloutEngineCanaryOptions) error {
+func (ar *ArgoRollout) istioCanary(_ RolloutEngineCanaryOptions) error {
 	// Performing canary requires 4 steps:
 	// 1. Create a rollout
 	// ar.createOrUpdateRollout(opt)

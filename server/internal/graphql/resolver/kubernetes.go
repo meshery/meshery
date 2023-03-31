@@ -63,7 +63,7 @@ func (r *Resolver) getAvailableNamespaces(ctx context.Context, provider models.P
 }
 
 // getWorkloads return workloads
-func (r *Resolver) getWorkloads(ctx context.Context, name, id *string, trim *bool) (res []*model.OAMCapability, err error) {
+func (r *Resolver) getWorkloads(_ context.Context, name, id *string, trim *bool) (res []*model.OAMCapability, err error) {
 	if name != nil && *name != "" && id != nil && *id != "" {
 		workload := core.GetWorkloadByID(*name, *id)
 		// If trim is set to true then remove the schema from the response
@@ -116,7 +116,7 @@ func (r *Resolver) getWorkloads(ctx context.Context, name, id *string, trim *boo
 }
 
 // getTraits return traits
-func (r *Resolver) getTraits(ctx context.Context, name, id *string, trim *bool) (res []*model.OAMCapability, err error) {
+func (r *Resolver) getTraits(_ context.Context, name, id *string, trim *bool) (res []*model.OAMCapability, err error) {
 	if name != nil && *name != "" && id != nil && *id != "" {
 		trait := core.GetTraitByID(*name, *id)
 		// If trim is set to true then remove the schema from the response
@@ -170,7 +170,7 @@ func (r *Resolver) getTraits(ctx context.Context, name, id *string, trim *bool) 
 }
 
 // getScopes return scopes
-func (r *Resolver) getScopes(ctx context.Context, name, id *string, trim *bool) (res []*model.OAMCapability, err error) {
+func (r *Resolver) getScopes(_ context.Context, name, id *string, trim *bool) (res []*model.OAMCapability, err error) {
 	if name != nil && *name != "" && id != nil && *id != "" {
 		scope := core.GetScopeByID(*name, *id)
 		// If trim is set to true then remove the schema from the response
@@ -223,7 +223,7 @@ func (r *Resolver) getScopes(ctx context.Context, name, id *string, trim *bool) 
 	return
 }
 
-func (r *Resolver) getKubectlDescribe(ctx context.Context, name string, kind string, namespace string) (*model.KctlDescribeDetails, error) {
+func (r *Resolver) getKubectlDescribe(_ context.Context, name, kind, namespace string) (*model.KctlDescribeDetails, error) {
 	var ResourceMap = map[string]describe.DescribeType{
 		"pod":                       describe.Pod,
 		"deployment":                describe.Deployment,

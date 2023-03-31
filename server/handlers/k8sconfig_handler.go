@@ -62,7 +62,7 @@ func (h *Handler) K8SConfigHandler(w http.ResponseWriter, req *http.Request, pre
 // responses:
 // 	200: k8sConfigRespWrapper
 
-func (h *Handler) addK8SConfig(user *models.User, prefObj *models.Preference, w http.ResponseWriter, req *http.Request, provider models.Provider) {
+func (h *Handler) addK8SConfig(_ *models.User, _ *models.Preference, w http.ResponseWriter, req *http.Request, provider models.Provider) {
 	token, ok := req.Context().Value(models.TokenCtxKey).(string)
 	if !ok {
 		err := ErrRetrieveUserToken(fmt.Errorf("failed to retrieve user token"))
@@ -144,7 +144,7 @@ func (h *Handler) addK8SConfig(user *models.User, prefObj *models.Preference, w 
 // responses:
 // 	200:
 
-func (h *Handler) deleteK8SConfig(user *models.User, prefObj *models.Preference, w http.ResponseWriter, req *http.Request, provider models.Provider) {
+func (h *Handler) deleteK8SConfig(_ *models.User, _ *models.Preference, w http.ResponseWriter, _ *http.Request, _ models.Provider) {
 	// prefObj.K8SConfig = nil
 	// err := provider.RecordPreferences(req, user.UserID, prefObj)
 	// if err != nil {
@@ -212,7 +212,7 @@ func (h *Handler) GetContextsFromK8SConfig(w http.ResponseWriter, req *http.Requ
 // 	200:
 
 // KubernetesPingHandler - fetches server version to simulate ping
-func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	token, ok := req.Context().Value(models.TokenCtxKey).(string)
 	if !ok {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -314,7 +314,7 @@ func (h *Handler) LoadContextsAndPersist(token string, prov models.Provider) ([]
 	return contexts, nil
 }
 
-func RegisterK8sComponents(ctxt context.Context, config []byte, ctxID string, reg *meshmodel.RegistryManager, es *events.EventStreamer, ctxName string) (err error) {
+func RegisterK8sComponents(ctxt context.Context, config []byte, ctxID string, _ *meshmodel.RegistryManager, _ *events.EventStreamer, _ string) (err error) {
 	man, err := core.GetK8Components(ctxt, config)
 	if err != nil {
 		return ErrCreatingKubernetesComponents(err, ctxID)
@@ -350,8 +350,8 @@ func RegisterK8sComponents(ctxt context.Context, config []byte, ctxID string, re
 	return nil
 }
 
-func RegisterK8sMeshModelComponents(ctx context.Context, config []byte, ctxID string, reg *meshmodel.RegistryManager, es *events.EventStreamer, ctxName string) (err error) {
-	man, err := mcore.GetK8sMeshModelComponents(ctx, config)
+func RegisterK8sMeshModelComponents(_ context.Context, config []byte, ctxID string, reg *meshmodel.RegistryManager, es *events.EventStreamer, ctxName string) (err error) {
+	man, err := mcore.GetK8sMeshModelComponents(config)
 	if err != nil {
 		return ErrCreatingKubernetesComponents(err, ctxID)
 	}

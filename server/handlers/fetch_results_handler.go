@@ -20,7 +20,7 @@ import (
 // 	200:performanceResultsResponseWrapper
 
 // FetchResultsHandler fetchs pages of results from Remote Provider and presents it to the UI
-func (h *Handler) FetchResultsHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, p models.Provider) {
+func (h *Handler) FetchResultsHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, p models.Provider) {
 	profileID := mux.Vars(req)["id"]
 
 	err := req.ParseForm()
@@ -59,7 +59,7 @@ func (h *Handler) FetchResultsHandler(w http.ResponseWriter, req *http.Request, 
 // 	200: performanceResultsResponseWrapper
 
 // FetchAllResultsHandler fetchs pages of results from Remote Provider and presents it to the UI
-func (h *Handler) FetchAllResultsHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, p models.Provider) {
+func (h *Handler) FetchAllResultsHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, p models.Provider) {
 	err := req.ParseForm()
 	if err != nil {
 		logrus.Error(ErrParseForm(err))
@@ -88,7 +88,7 @@ func (h *Handler) FetchAllResultsHandler(w http.ResponseWriter, req *http.Reques
 // 	200: perfSingleResultRespWrapper
 
 // GetResultHandler gets an individual result from provider
-func (h *Handler) GetResultHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, p models.Provider) {
+func (h *Handler) GetResultHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, p models.Provider) {
 	// if req.Method != http.MethodGet {
 	// 	w.WriteHeader(http.StatusNotFound)
 	// 	return
@@ -133,7 +133,7 @@ func (h *Handler) GetResultHandler(w http.ResponseWriter, req *http.Request, _ *
 }
 
 // GetSmiResultsHandler gets the results of all the smi conformance tests
-func (h *Handler) FetchSmiResultsHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, p models.Provider) {
+func (h *Handler) FetchSmiResultsHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, p models.Provider) {
 	w.Header().Set("content-type", "application/json")
 	err := req.ParseForm()
 	if err != nil {
@@ -151,7 +151,7 @@ func (h *Handler) FetchSmiResultsHandler(w http.ResponseWriter, req *http.Reques
 }
 
 // FetchSingleSmiResultHandler gets the result of single smi conformance test
-func (h *Handler) FetchSingleSmiResultHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, p models.Provider) {
+func (h *Handler) FetchSingleSmiResultHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, p models.Provider) {
 	w.Header().Set("content-type", "application/json")
 	err := req.ParseForm()
 	if err != nil {
