@@ -40,7 +40,7 @@
   "repository": "https://github.com/meshery/meshery",
   "license": "Apache-2.0",
   "dependencies": {
-    "@cypress/code-coverage": "^3.10.0",
+    "@cypress/code-coverage": "^3.10.1",
     "@date-io/moment": "^2.11.0",
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
