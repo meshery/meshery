@@ -1,1 +1,0 @@
-{"kind":"ClusterPolicyReport","apiVersion":"v1alpha2","displayName":"Cluster Policy Report","format":"JSON","metadata":{},"model":{"name":"trivy-operator","version":"2.5.0","modelDisplayName":"trivy-operator","category":"","subCategory":""}}

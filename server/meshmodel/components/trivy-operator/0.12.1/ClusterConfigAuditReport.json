@@ -1,1 +1,0 @@
-{"kind":"ClusterConfigAuditReport","apiVersion":"v1alpha1","displayName":"Cluster Config Audit Report","format":"JSON","metadata":{},"model":{"name":"trivy-operator","version":"0.12.1","displayName":"trivy-operator","category":{"name":"","metadata":null},"metadata":null}}

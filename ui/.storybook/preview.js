@@ -1,6 +1,7 @@
 import React, { useMemo } from "react";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { lightTheme, darkTheme } from "../stories/themes/app";
+import { withThemeFromJSXProvider } from "@storybook/addon-styling";
 
 export const parameters = {
   actions: { argTypesRegex: "^on[A-Z].*" },
@@ -12,26 +13,17 @@ export const parameters = {
   },
 }
 
-const THEMES = {
-  light: lightTheme,
-  dark: darkTheme,
-};
-
-
-export const withMuiTheme = (Story, context) => {
-  const { theme: themeKey } = context.globals;
-
-  const theme = useMemo(() => THEMES[themeKey] || THEMES["light"], [themeKey]);
-
-  return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <Story />
-    </ThemeProvider>
-  );
-};
-
-export const decorators = [withMuiTheme];
+export const decorators = [
+  withThemeFromJSXProvider({
+    themes: {
+      light: lightTheme,
+      dark: darkTheme
+    },
+    defaultTheme: "light",
+    Provider: ThemeProvider,
+    GlobalStyles: CssBaseline
+  }),
+];
 
 export const globalTypes = {
   theme: {

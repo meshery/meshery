@@ -1,1 +1,0 @@
-{"kind":"ChaosResult","apiVersion":"v1alpha1","displayName":"Chaos Result","format":"JSON","metadata":{},"model":{"name":"litmuschaos","version":"2.14.0","modelDisplayName":"litmuschaos","category":"","subCategory":""},"schema":"{\n \"title\": \"Chaos Result\",\n \"type\": \"object\",\n \"x-kubernetes-preserve-unknown-fields\": true\n}"}
