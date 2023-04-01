@@ -320,7 +320,7 @@ func NewPatternFileFromCytoscapeJSJSON(name string, byt []byte) (Pattern, error)
 	eleToSvc := make(map[string]string)          //used to map cyto element ID uniquely to the name of the service created.
 	countDuplicates := make(map[string]int)
 	//store the names of services and their count
-	err := processCytoElementsWithPattern(cy.Elements, &pf, func(svc Service, ele cytoscapejs.Element) error {
+	err := processCytoElementsWithPattern(cy.Elements, func(svc Service, ele cytoscapejs.Element) error {
 		name := svc.Name
 		countDuplicates[name]++
 		return nil
@@ -330,7 +330,7 @@ func NewPatternFileFromCytoscapeJSJSON(name string, byt []byte) (Pattern, error)
 	}
 
 	//Populate the dependsOn field with appropriate unique service names
-	err = processCytoElementsWithPattern(cy.Elements, &pf, func(svc Service, ele cytoscapejs.Element) error {
+	err = processCytoElementsWithPattern(cy.Elements, func(svc Service, ele cytoscapejs.Element) error {
 		//Extract parents, if present
 		m, ok := svc.Traits["meshmap"].(map[string]interface{})
 		if ok {
@@ -382,7 +382,7 @@ func getRandomAlphabetsOfDigit(length int) (s string) {
 }
 
 // processCytoElementsWithPattern iterates over all the cyto elements, convert each into a patternfile service and exposes a callback to handle that service
-func processCytoElementsWithPattern(eles []cytoscapejs.Element, pf *Pattern, callback func(svc Service, ele cytoscapejs.Element) error) error {
+func processCytoElementsWithPattern(eles []cytoscapejs.Element, callback func(svc Service, ele cytoscapejs.Element) error) error {
 	for _, elem := range eles {
 		// Try to create Service object from the elem.scratch's _data field
 		// if this fails then immediately fail the process and return an error

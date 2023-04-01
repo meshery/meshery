@@ -1,1 +1,0 @@
-{"kind":"VolumeSnapshotClass","apiVersion":"v1","displayName":"Volume Snapshot Class","format":"JSON","metadata":{},"model":{"name":"vsphere-csi","version":"2.5.0","modelDisplayName":"vsphere-csi","category":"","subCategory":""}}

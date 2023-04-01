@@ -116,7 +116,7 @@ func doc() {
 	fmt.Println("Documentation generated at " + markDownPath)
 }
 
-func printOptions(buf *bytes.Buffer, cmd *cobra.Command, name string) error {
+func printOptions(buf *bytes.Buffer, cmd *cobra.Command) error {
 	flags := cmd.NonInheritedFlags()
 	flags.SetOutput(buf)
 	if flags.HasAvailableFlags() {
@@ -136,7 +136,7 @@ func printOptions(buf *bytes.Buffer, cmd *cobra.Command, name string) error {
 }
 
 // GenMarkdownCustom creates custom markdown output.
-func GenMarkdownCustom(cmd *cobra.Command, w io.Writer, linkHandler func(string) string) error {
+func GenMarkdownCustom(cmd *cobra.Command, w io.Writer) error {
 	cmd.InitDefaultHelpCmd()
 	cmd.InitDefaultHelpFlag()
 
@@ -180,7 +180,7 @@ func GenMarkdownCustom(cmd *cobra.Command, w io.Writer, linkHandler func(string)
 		}
 	}
 
-	if err := printOptions(buf, cmd, name); err != nil {
+	if err := printOptions(buf, cmd); err != nil {
 		return err
 	}
 
@@ -251,7 +251,7 @@ func GenMarkdownTreeCustom(cmd *cobra.Command, dir string, filePrepender, linkHa
 		return err
 	}
 
-	err = GenMarkdownCustom(cmd, f, linkHandler)
+	err = GenMarkdownCustom(cmd, f)
 	if err != nil {
 		return err
 	}
@@ -281,14 +281,14 @@ func GenYamlTreeCustom(cmd *cobra.Command, dir string, filePrepender, linkHandle
 		return err
 	}
 
-	err = GenYamlCustom(cmd, f, linkHandler)
+	err = GenYamlCustom(cmd, f)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func GenYamlCustom(cmd *cobra.Command, w io.Writer, linkHandler func(string) string) error {
+func GenYamlCustom(cmd *cobra.Command, w io.Writer) error {
 	cmd.InitDefaultHelpCmd()
 	cmd.InitDefaultHelpFlag()
 
