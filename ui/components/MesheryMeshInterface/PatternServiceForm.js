@@ -112,7 +112,7 @@ function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference
             <AppBar style={{
 
               boxShadow : `0px 2px 4px -1px "#677E88"`,
-              background : `${theme.palette.type === "dark" ? "#00B39F" : "#647881"}`,
+              background : `${theme.palette.type === "dark" ? "#202020" : "#647881"}`,
               position : "sticky",
               zIndex : 'auto',
             }}>
