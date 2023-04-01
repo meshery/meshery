@@ -431,6 +431,13 @@ func StartPipeline(in chan []artifacthub.AhPackage, csv chan string, writer *Wri
 				comps: newcomps,
 				model: ap.Name,
 			}
+			compsChan <- struct {
+				comps []v1alpha1.ComponentDefinition
+				model string
+			}{
+				comps: newcomps,
+				model: ap.Name,
+			}
 			spreadsheet <- struct {
 				comps   []v1alpha1.ComponentDefinition
 				model   string
