@@ -14,6 +14,7 @@ import (
 	"runtime"
 	"strings"
 
+	"github.com/docker/docker/client"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/constants"
 
@@ -613,6 +614,12 @@ func Startdockerdaemon(subcommand string) error {
 	}
 
 	log.Info("Attempting to start Docker...")
+	// create docker client using ENV variables
+	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
+	if err != nil {
+		return err
+	}
+
 	// once user gaves permission, start docker daemon on linux/macOS
 	if runtime.GOOS == "linux" {
 		if err := exec.Command("sudo", "service", "docker", "start").Run(); err != nil {
@@ -631,7 +638,7 @@ func Startdockerdaemon(subcommand string) error {
 			return errors.Wrapf(err, "please start Docker then run the command `mesheryctl system %s`", subcommand)
 		}
 		// check whether docker started successfully or not, throw an error message otherwise
-		if err := exec.Command("docker", "ps").Run(); err != nil {
+		if _, err = cli.Ping(context.Background()); err != nil {
 			return errors.Wrapf(err, "please start Docker then run the command `mesheryctl system %s`", subcommand)
 		}
 	}

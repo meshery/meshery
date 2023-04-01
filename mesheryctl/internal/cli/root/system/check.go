@@ -24,6 +24,8 @@ import (
 	"runtime"
 	"strings"
 
+	"github.com/docker/docker/client"
+
 	"github.com/pkg/errors"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
@@ -240,8 +242,15 @@ func (hc *HealthChecker) runDockerHealthChecks() error {
 	if hc.Options.PrintLogs {
 		log.Info("\nDocker \n--------------")
 	}
+	// Create docker client using ENV variables
+
+	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
+	if err != nil {
+		return err
+	}
+
 	//Check whether docker daemon is running or not
-	err := exec.Command("docker", "ps").Run()
+	_, err = cli.Ping(context.Background())
 	if err != nil {
 		if hc.Options.IsPreRunE { // if this is PreRunExec we trigger self installation
 			log.Warn("!! Docker is not running")
