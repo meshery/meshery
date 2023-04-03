@@ -20,7 +20,7 @@ func NewUUIDQueryTracker() *UUIDQueryTracker {
 }
 
 // AddOrFlagQuery either adds a new query or flags an existing one
-func (a *UUIDQueryTracker) AddOrFlagQuery(ctx context.Context, uuid, query string, flag bool) {
+func (a *UUIDQueryTracker) AddOrFlagQuery(_ context.Context, uuid, query string, flag bool) {
 	a.qLock.Lock()
 	defer a.qLock.Unlock()
 	queries, ok := a.queries[uuid]
@@ -32,14 +32,14 @@ func (a *UUIDQueryTracker) AddOrFlagQuery(ctx context.Context, uuid, query strin
 }
 
 // RemoveUUID removes an existing UUID from the collection
-func (a *UUIDQueryTracker) RemoveUUID(ctx context.Context, uuid string) {
+func (a *UUIDQueryTracker) RemoveUUID(_ context.Context, uuid string) {
 	a.qLock.Lock()
 	defer a.qLock.Unlock()
 	delete(a.queries, uuid)
 }
 
 // GetQueriesForUUID retrieves queries for UUID
-func (a *UUIDQueryTracker) GetQueriesForUUID(ctx context.Context, uuid string) map[string]bool {
+func (a *UUIDQueryTracker) GetQueriesForUUID(_ context.Context, uuid string) map[string]bool {
 	a.qLock.Lock()
 	defer a.qLock.Unlock()
 	queries, ok := a.queries[uuid]

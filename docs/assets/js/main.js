@@ -44,7 +44,7 @@ layout: null
     var Search = {
         init: function() {
             $(document).ready(function() {
-                $(document).on('keypress', '.td-search-input', function(e) {
+                $(document).on('keypress', '.sidebar__search-input', function(e) {
                     if (e.keyCode !== 13) {
                         return
                     }
@@ -82,9 +82,50 @@ getcodeelement.each(function(i) {
 
     /*trigger*/
     var text = $(this).text();
-    text = text.replace(/\$ /gi, '');
+    text = text.replace(/\$ /gi, '')
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/'/g, "&#39;")
+    .replace(/"/g, "&quot;");
     var clipButton = '<div class="btn-copy-wrap"><button class="clipbtn" data-clipboard-text="' + text + '" data-clipboard-target="#' + currentId + '"><i class="far fa-copy"></i></button></div>';
        $(this).after(clipButton);
 });
 
-new Clipboard('.clipbtn');
+var clipboard = new Clipboard('.clipbtn');
+
+/* Change copy icon to text when successfully copied*/
+clipboard.on("success", (e)=>{
+    console.info(e.trigger);
+    console.info(e.trigger.childNodes[0]);
+    let originalIcon = e.trigger.childNodes[0];
+
+    var icon = e.trigger.childNodes[0];
+    var text = document.createElement('span');
+    text.textContent = "Copied!";
+    text.style.color = "white";
+
+    e.trigger.replaceChild(text, icon);
+
+    setTimeout(()=>{
+        e.trigger.replaceChild(originalIcon, text);
+    },2000)
+})
+
+const toggleBtnSidebarNav=document.querySelector(".nav-toggle-btn--document");
+
+toggleBtnSidebarNav.addEventListener("click",()=>{
+    let sidebarNav=document.querySelector(".left-container")
+    if(sidebarNav){
+        sidebarNav.classList.toggle("left-container--active")
+    }
+})
+
+const toggleBtnMainNav=document.querySelector(".nav-toggle-btn--main");
+
+toggleBtnMainNav.addEventListener("click",()=>{
+    let sidebarNav=document.getElementById("main_navbar")
+    if(sidebarNav){
+        sidebarNav.classList.toggle("main-navbar--active")
+    }
+})

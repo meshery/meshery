@@ -5,6 +5,7 @@ abstract: "Meshery Error Code Reference"
 permalink: reference/error-codes
 redirect_from: reference/error-codes/
 type: Reference
+language: en
 ---
 <style>
 
@@ -17,7 +18,6 @@ type: Reference
 }
 
 .tbl-head-row .error-name-code{
-  width:23rem;
   display:flex;
   justify-content:space-between;
   align-items:flex-end;
@@ -28,7 +28,6 @@ type: Reference
   background-color:#FFFFFF;
 }
 
-
 .tbl .tbl-body .tbl-body-row.hover-effect:hover{
   background-color:#ccfff9;
   cursor:pointer;
@@ -36,16 +35,15 @@ type: Reference
 
 .tbl-body-row .error-name-code{
   display:flex;
-  justify-content:space-between;
+  justify-content:flex-start;
 }
 
 .tbl .tbl-body .tbl-hidden-row{
-  visibility:hidden; 
+  visibility:hidden;
   display:none;
   background-color:#FAFAFA;
   width:100%
 }
-
 
 </style>
 
@@ -57,7 +55,6 @@ type: Reference
           e.style.visibility = 'hidden';
       }
        else {
-         
           e.style.display = 'table-row';
           e.style.visibility = 'visible';
           }
@@ -66,15 +63,18 @@ type: Reference
 
 ## Error Codes and Troubleshooting
 
-Meshery and it's components use a common framework (defined within MeshKit) to generate and document an error with a unique identifier - an error code. Each error code identifies the source component for the error and a standard set of information to describe the error and provide helpful details for troubleshooting the situation surrounding the specific error.
+Meshery and its components use a common framework (defined within MeshKit) to generate and document an error with a unique error code identifier: the combination of Meshery component moniker and numberic code - `[component-moniker]-[numeric code]`. Each error code identifies the source component for the error and a standard set of information to describe the error and provide helpful details for troubleshooting the situation surrounding the specific error.
+
+{% include alert.html type="info" title="Error codes are combination of component moniker and numberic code" content="
+Note: The numeric portion of error codes are component-scoped. The numeric portion of error codes are allowed to overlap between Meshery components. The combination of the `[component-moniker]-[numeric code]` is what makes a given error code globally unique." %}
 
 ## Error Code Categories by Component
 
 <table style="margin:auto;padding-right:25%; padding-left:20%;">
 <thead>
   <tr>
-    <th align="right">Component Type</th>
-    <th>Component Name</th>
+    <th style="text-align:left">Component Type</th>
+    <th style="text-align:left">Component Name</th>
   </tr>
 </thead>
 <tbody>
@@ -92,7 +92,7 @@ Meshery and it's components use a common framework (defined within MeshKit) to g
               {% capture link %}{{ component[1].component_name  | camelcase }}-{{ component[1].component_type }}{% endcapture %}      
             {% endif %}
             <tr>
-              <td align="right">{{ component[1].component_type }}</td>
+              <td style="text-align:left">{{ component[1].component_type }}</td>
               <td class="title"><a href="#{{ link}}">{{ component[1].component_name }}</a></td>
             </tr>
         {% endif %}
@@ -101,8 +101,9 @@ Meshery and it's components use a common framework (defined within MeshKit) to g
   {% endfor %}
 </tbody>
 </table>
-
-<hr />
+ <a href="#error-code-reference">Top</a>
+  <hr>
+  <br>
 
   {% for files in site.data.errorref %}    
     {% for eachFile in files %}
@@ -114,6 +115,7 @@ Meshery and it's components use a common framework (defined within MeshKit) to g
               {% capture heading %}
                Meshery Adapter for {{ component[1].component_name }}
               {% endcapture %}
+              
             {% endif %}
             {% if component[1].component_type == 'client' %}
               {% capture heading %}
@@ -135,7 +137,7 @@ Meshery and it's components use a common framework (defined within MeshKit) to g
   <table class="tbl">
   <thead>
     <tr class="tbl-head-row">
-      <th class="error-name-code"><span style="">Error Name</span> <span style="width:2.4rem;word-break:break-all;">Error Code</span></th>
+      <th class="error-name-code"><span>Error Name - Code</span></th>
       <th style="width:15%">Severity</th>
       <th style="width:85%">Short Description</th>
     </tr>
@@ -151,9 +153,7 @@ Meshery and it's components use a common framework (defined within MeshKit) to g
         {% endif %}   
         <tr class="tbl-body-row hover-effect" onclick="toggle_visibility('{{component[1].component_name}}-{{err_code[1]["name"]}}-more-info');">
           <td class="error-name-code">
-            <span><a id="{{component[1].component_name}}-{{err_code[1]["name"]}}">
-            {{ err_code[1]["name"] | xml_escape }}
-            </a></span> <span>{{ err_code[1]["code"] }}</span> 
+            <code>{{ err_code[1]["name"] | xml_escape }}-{{ err_code[1]["code"] }}</code>
           </td>
           <td style="{{severity}}">{{ err_code[1]["severity"]}}</td>
           <td>{{ err_code[1]["short_description"] | xml_escape}}</td>

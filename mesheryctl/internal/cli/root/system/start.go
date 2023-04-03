@@ -1,4 +1,4 @@
-// Copyright 2020 Layer5, Inc.
+// Copyright 2023 Layer5, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import (
 	"strings"
 	"time"
 
+	c "github.com/layer5io/meshery/mesheryctl/pkg/constants"
 	"github.com/pkg/errors"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
@@ -106,12 +107,19 @@ mesheryctl system start --yes
 		return nil
 	},
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-		latest, err := utils.GetLatestStableReleaseTag()
+		latestVersions, err := meshkitutils.GetLatestReleaseTagsSorted(c.GetMesheryGitHubOrg(), c.GetMesheryGitHubRepo())
 		version := constants.GetMesheryctlVersion()
-		if err == nil && latest != version {
-			log.Printf("A new release of mesheryctl is available: %s → %s", version, latest)
-			log.Printf("https://github.com/layer5io/meshery/releases/tag/%s", latest)
-			log.Print("Check https://docs.meshery.io/guides/upgrade#upgrading-meshery-cli for instructions on how to update mesheryctl\n")
+		if err == nil {
+			if len(latestVersions) == 0 {
+				log.Warn("no versions found for Meshery")
+				return
+			}
+			latest := latestVersions[len(latestVersions)-1]
+			if latest != version {
+				log.Printf("A new release of mesheryctl is available: %s → %s", version, latest)
+				log.Printf("https://github.com/layer5io/meshery/releases/tag/%s", latest)
+				log.Print("Check https://docs.meshery.io/guides/upgrade#upgrading-meshery-cli for instructions on how to update mesheryctl\n")
+			}
 		}
 	},
 }
@@ -151,7 +159,7 @@ func start() error {
 			currCtx.SetPlatform(utils.PlatformFlag)
 
 			// update the context to config
-			err = config.UpdateContextInConfig(viper.GetViper(), currCtx, mctlCfg.GetCurrentContextName())
+			err = config.UpdateContextInConfig(currCtx, mctlCfg.GetCurrentContextName())
 			if err != nil {
 				return err
 			}
@@ -278,7 +286,7 @@ func start() error {
 			endpoint.Address = utils.EndpointProtocol + "://localhost"
 			currCtx.SetEndpoint(endpoint.Address + ":" + userPort[len(userPort)-1])
 
-			err = config.UpdateContextInConfig(viper.GetViper(), currCtx, mctlCfg.GetCurrentContextName())
+			err = config.UpdateContextInConfig(currCtx, mctlCfg.GetCurrentContextName())
 			if err != nil {
 				return err
 			}
@@ -328,9 +336,9 @@ func start() error {
 				//check flag to check successful deployment
 				checkFlag = 0
 				break
-			} else {
-				checkFlag = 1
 			}
+
+			checkFlag = 1
 		}
 
 		//if meshery_meshery_1 failed to start showing logs

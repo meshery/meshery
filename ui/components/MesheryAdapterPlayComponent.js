@@ -30,9 +30,10 @@ import MesheryResultDialog from "./MesheryResultDialog";
 import ReactSelectWrapper from "./ReactSelectWrapper";
 import ConfirmationMsg from "./ConfirmationModal";
 import { iconMedium } from "../css/icons.styles";
+import { ACTIONS } from "../utils/Enum";
 
 const styles = (theme) => ({
-  smWrapper : { backgroundColor : "#eaeff1", },
+  smWrapper : { backgroundColor : theme.palette.secondary.elevatedComponents2, },
   buttons : { width : "100%", },
   button : {
     marginTop : theme.spacing(3),
@@ -100,7 +101,7 @@ const styles = (theme) => ({
     backgroundColor : "#f7f7f7",
   },
   paneSection : {
-    backgroundColor : "#fff",
+    backgroundColor : theme.palette.secondary.elevatedComponents,
     padding : theme.spacing(3),
     borderRadius : 4,
   },
@@ -1269,13 +1270,14 @@ class MesheryAdapterPlayComponent extends React.Component {
             open={this.state.modalOpen}
             handleClose={this.handleClose}
             submit={
-              { deploy : () => this.submitOp(this.state.category, this.state.selectedOp, false),
+              {
+                deploy : () => this.submitOp(this.state.category, this.state.selectedOp, false),
                 unDeploy : () => this.submitOp(this.state.category, this.state.selectedOp, true)
               }
             }
             isDelete={this.state.isDeleteOp}
             title={this.state.operationName}
-            tab={this.state.isDeleteOp ? 1 : 0}
+            tab={this.state.isDeleteOp ? ACTIONS.UNDEPLOY : ACTIONS.DEPLOY }
           />
         </React.Fragment>
       </NoSsr>

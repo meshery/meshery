@@ -1,3 +1,17 @@
+// Copyright 2023 Layer5, Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package pattern
 
 import (
@@ -27,6 +41,11 @@ var (
 	patternFile string
 )
 
+var linkDocPatternApply = map[string]string{
+	"link":    "![pattern-apply-usage](/assets/img/mesheryctl/patternApply.png)",
+	"caption": "Usage of mesheryctl pattern apply",
+}
+
 var applyCmd = &cobra.Command{
 	Use:   "apply",
 	Short: "Apply pattern file",
@@ -37,12 +56,9 @@ mesheryctl pattern apply -f [file | URL]
 
 // deploy a saved pattern
 mesheryctl pattern apply [pattern-name]
-
-! Refer below image link for usage
-* Usage of mesheryctl pattern apply
-# ![pattern-apply-usage](/assets/img/mesheryctl/patternApply.png)
 	`,
-	Args: cobra.MinimumNArgs(0),
+	Annotations: linkDocPatternApply,
+	Args:        cobra.MinimumNArgs(0),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var req *http.Request
 		var err error
@@ -66,12 +82,12 @@ mesheryctl pattern apply [pattern-name]
 
 			req, err = utils.NewRequest("GET", patternURL+"?search="+patternName, nil)
 			if err != nil {
-				return err
+				return errors.Wrap(err, "could not create request ")
 			}
 
 			resp, err := client.Do(req)
 			if err != nil {
-				return err
+				return errors.Errorf("unable to reach Meshery Server at %s. Verify your environment's readiness for a Meshery deployment by running `mesheryctl system check`", mctlCfg.GetBaseMesheryURL())
 			}
 
 			var response *models.PatternsAPIResponse
@@ -104,7 +120,7 @@ mesheryctl pattern apply [pattern-name]
 			if validURL := govalidator.IsURL(file); !validURL {
 				content, err := os.ReadFile(file)
 				if err != nil {
-					return err
+					return errors.Errorf("file path %s is invalid. Enter a valid path ", file)
 				}
 				text := string(content)
 
@@ -122,12 +138,12 @@ mesheryctl pattern apply [pattern-name]
 					}
 					req, err = utils.NewRequest("POST", patternURL, bytes.NewBuffer(jsonValues))
 					if err != nil {
-						return err
+						return errors.Wrap(err, "could not create request ")
 					}
 
 					resp, err := client.Do(req)
 					if err != nil {
-						return err
+						return errors.Errorf("unable to reach Meshery server at %s. Verify your environment's readiness for a Meshery deployment by running `mesheryctl system check`", mctlCfg.GetBaseMesheryURL())
 					}
 					utils.Log.Debug("saved pattern file")
 					var response []*models.MesheryPattern
@@ -189,12 +205,12 @@ mesheryctl pattern apply [pattern-name]
 				}
 				req, err = utils.NewRequest("POST", patternURL, bytes.NewBuffer(jsonValues))
 				if err != nil {
-					return err
+					return errors.Wrap(err, "could not create request ")
 				}
 
 				resp, err := client.Do(req)
 				if err != nil {
-					return err
+					return errors.Errorf("unable to reach Meshery Server at %s. Verify your environment's readiness for a Meshery deployment by running `mesheryctl system check`", mctlCfg.GetBaseMesheryURL())
 				}
 				utils.Log.Debug("remote hosted pattern request success")
 				var response []*models.MesheryPattern
@@ -220,7 +236,7 @@ mesheryctl pattern apply [pattern-name]
 
 		req, err = utils.NewRequest("POST", deployURL, bytes.NewBuffer([]byte(patternFile)))
 		if err != nil {
-			return err
+			return errors.Wrap(err, "could not create request ")
 		}
 
 		pf, err := core.NewPatternFile([]byte(patternFile))
@@ -232,7 +248,7 @@ mesheryctl pattern apply [pattern-name]
 		s.Start()
 		res, err := client.Do(req)
 		if err != nil {
-			return err
+			return errors.Errorf("unable to reach Meshery Server at %s. Verify your environment's readiness for a Meshery deployment by running `mesheryctl system check`", mctlCfg.GetBaseMesheryURL())
 		}
 
 		defer res.Body.Close()

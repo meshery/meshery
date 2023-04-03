@@ -5,9 +5,11 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"net/url"
 
 	"github.com/layer5io/meshery/server/models"
 	"github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 )
 
 const providerQParamName = "provider"
@@ -33,6 +35,21 @@ func (h *Handler) ProviderMiddleware(next http.Handler) http.Handler {
 			provider = h.config.Providers[providerName]
 		}
 		ctx := context.WithValue(req.Context(), models.ProviderCtxKey, provider) // nolint
+
+		// Incase Meshery is configured for deployments scenario: Istio, Azure Kubernetes Service etc
+		// then we can expect a MESHERY_SERVER_CALLBACK_URL in env var
+		callbackURL := viper.GetString("MESHERY_SERVER_CALLBACK_URL")
+		if callbackURL == "" {
+			// if MESHERY_SERVER_CALLBACK_URL is not set then we can assume standard CALLBACK_URL
+			callbackURL = "http://" + req.Host + "/api/user/token" // Hard coding the path because this is what meshery expects
+		}
+		ctx = context.WithValue(ctx, models.MesheryServerCallbackURL, callbackURL)
+		_url, err := url.Parse(callbackURL)
+		if err != nil {
+			logrus.Errorf("Error parsing callback url: %v", err)
+		} else {
+			ctx = context.WithValue(ctx, models.MesheryServerURL, fmt.Sprintf("%s://%s", _url.Scheme, _url.Host))
+		}
 		req1 := req.WithContext(ctx)
 		next.ServeHTTP(w, req1)
 	}
@@ -110,7 +127,7 @@ func (h *Handler) MesheryControllersMiddleware(next func(http.ResponseWriter, *h
 		}
 
 		// 1. get the status of controller deployments for each cluster and make sure that all the contexts have meshery controllers deployed
-		ctrlHlpr := h.MesheryCtrlsHelper.UpdateCtxControllerHandlers(mk8sContexts).UpdateOperatorsStatusMap(models.OperatorIsUndeployed).DeployUndeployedOperators(models.OperatorIsUndeployed)
+		ctrlHlpr := h.MesheryCtrlsHelper.UpdateCtxControllerHandlers(mk8sContexts).UpdateOperatorsStatusMap(h.config.OperatorTracker).DeployUndeployedOperators(h.config.OperatorTracker)
 		ctx = context.WithValue(ctx, models.MesheryControllerHandlersKey, h.MesheryCtrlsHelper.GetControllerHandlersForEachContext())
 
 		// 2. make sure that the data from meshsync for all the clusters are persisted properly
@@ -198,12 +215,12 @@ func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http
 			http.Redirect(w, req, "/provider", http.StatusFound)
 			return
 		}
-		// ensuring session is intact before running load test
+		// ensuring session is intact
 		err := provider.GetSession(req)
 		if err != nil {
-			err := provider.Logout(w, req)
-			if err != nil {
-				logrus.Errorf("Error performing logout: %v", err.Error())
+			err1 := provider.Logout(w, req)
+			if err1 != nil {
+				logrus.Errorf("Error performing logout: %v", err1.Error())
 				provider.HandleUnAuthenticated(w, req)
 				return
 			}
@@ -212,7 +229,20 @@ func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http
 			return
 		}
 
-		user, _ := provider.GetUserDetails(req)
+		user, err := provider.GetUserDetails(req)
+		// if user details are not available,
+		// then logout current user session and redirect to login page
+		if err != nil {
+			err1 := provider.Logout(w, req)
+			if err1 != nil {
+				logrus.Errorf("Error performing logout: %v", err1.Error())
+				provider.HandleUnAuthenticated(w, req)
+				return
+			}
+			h.log.Error(ErrGetUserDetails(err))
+			http.Error(w, "unable to get user details", http.StatusUnauthorized)
+			return
+		}
 		prefObj, err := provider.ReadFromPersister(user.UserID)
 		if err != nil {
 			logrus.Warn("unable to read session from the session persister, starting with a new one")

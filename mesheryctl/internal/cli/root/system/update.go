@@ -1,4 +1,4 @@
-// Copyright 2020 Layer5, Inc.
+// Copyright 2023 Layer5, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,17 +17,22 @@ package system
 import (
 	"fmt"
 
-	"github.com/pkg/errors"
-
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants"
+	c "github.com/layer5io/meshery/mesheryctl/pkg/constants"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	meshkitutils "github.com/layer5io/meshkit/utils"
 	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
-
+	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
+
+var linkDocUpdate = map[string]string{
+	"link":    "![update-usage](/assets/img/mesheryctl/update.png)",
+	"caption": "Usage of mesheryctl system update",
+}
 
 // updateCmd represents the update command
 var updateCmd = &cobra.Command{
@@ -40,11 +45,8 @@ mesheryctl system update
 
 // Pull the latest manifest files alone
 mesheryctl system update --skip-reset
-
-! Refer below image link for usage
-* Usage of mesheryctl system update
-# ![update-usage](/assets/img/mesheryctl/update.png)
 	`,
+	Annotations: linkDocUpdate,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
 		hcOptions := &HealthCheckOptions{
@@ -110,7 +112,7 @@ mesheryctl system update --skip-reset
 				return errors.Wrap(err, utils.SystemError("failed to update Meshery containers"))
 			}
 
-			err = config.UpdateContextInConfig(viper.GetViper(), currCtx, mctlCfg.GetCurrentContextName())
+			err = config.UpdateContextInConfig(currCtx, mctlCfg.GetCurrentContextName())
 
 			if err != nil {
 				return err
@@ -160,7 +162,7 @@ mesheryctl system update --skip-reset
 			}
 
 			currCtx.SetVersion("latest")
-			err = config.UpdateContextInConfig(viper.GetViper(), currCtx, mctlCfg.GetCurrentContextName())
+			err = config.UpdateContextInConfig(currCtx, mctlCfg.GetCurrentContextName())
 			if err != nil {
 				return err
 			}
@@ -172,12 +174,19 @@ mesheryctl system update --skip-reset
 		return nil
 	},
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-		latest, err := utils.GetLatestStableReleaseTag()
+		latestVersions, err := meshkitutils.GetLatestReleaseTagsSorted(c.GetMesheryGitHubOrg(), c.GetMesheryGitHubRepo())
 		version := constants.GetMesheryctlVersion()
-		if err == nil && latest != version {
-			log.Printf("A new release of mesheryctl is available: %s → %s", version, latest)
-			log.Printf("https://github.com/layer5io/meshery/releases/tag/%s", latest)
-			log.Print("Check https://docs.meshery.io/guides/upgrade#upgrading-meshery-cli for instructions on how to update mesheryctl\n")
+		if err == nil {
+			if len(latestVersions) == 0 {
+				log.Warn("no versions found for Meshery")
+				return
+			}
+			latest := latestVersions[len(latestVersions)-1]
+			if latest != version {
+				log.Printf("A new release of mesheryctl is available: %s → %s", version, latest)
+				log.Printf("https://github.com/layer5io/meshery/releases/tag/%s", latest)
+				log.Print("Check https://docs.meshery.io/guides/upgrade#upgrading-meshery-cli for instructions on how to update mesheryctl\n")
+			}
 		}
 	},
 }

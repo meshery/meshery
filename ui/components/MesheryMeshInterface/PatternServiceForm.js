@@ -1,19 +1,13 @@
 // @ts-check
-import { AppBar, Button, makeStyles, Tab, Tabs, Typography } from "@material-ui/core";
+import { AppBar, makeStyles, Tab, Tabs, Typography } from "@material-ui/core";
 import React, { useEffect } from "react";
 import { getMeshProperties } from "../../utils/nameMapper";
 import PatternServiceFormCore from "./PatternServiceFormCore";
 import SettingsIcon from '@material-ui/icons/Settings';
+import { iconSmall } from "../../css/icons.styles";
 
 const useStyles = makeStyles(() => ({
-  appBar : {
-    // @ts-ignore
-    boxShadow : `0px 2px 4px -1px "#677E88"`,
-    // @ts-ignore
-    background : "#677E88",
-    position : "sticky",
-    zIndex : 'auto',
-  },
+
   tabPanel : {
     padding : "0px 2px"
   },
@@ -36,23 +30,6 @@ const useStyles = makeStyles(() => ({
     transform : "scale(0.8)"
   }
 }));
-
-function RJSFButton({ handler, text, ...restParams }) {
-  return (
-    <Button variant="contained" color="primary" style={{ margin : "0px 0.5rem 32px 0px" }} onClick={handler} {...restParams}>
-      {text}
-    </Button>
-  );
-}
-
-function RJSFFormChildComponent({ onSubmit, onDelete }) {
-  return (
-    <>
-      <RJSFButton handler={onSubmit} text="Submit" />
-      <RJSFButton handler={onDelete} text="Delete" />
-    </>
-  )
-}
 
 /**
  * PatternServiceForm renders a form from the workloads schema and
@@ -130,13 +107,19 @@ function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference
         // for rendering normal rjsf forms
         return (
           <div className={classes.formWrapper}>
-            <AppBar className={classes.appBar}>
+            <AppBar style={{
+
+              boxShadow : `0px 2px 4px -1px "#677E88"`,
+              background : "#677E88",
+              position : "sticky",
+              zIndex : 'auto',
+            }}>
               <Tabs className={classes.appTabs} value={tab} onChange={handleTabChange} TabIndicatorProps={{
                 style : {
                   display : "none",
                 },
               }} aria-label="Pattern Service" >
-                <Tab label={<div> <SettingsIcon className={classes.setIcon} />Settings</div>} {...a11yProps(0)} />
+                <Tab label={<div style={{ display : "flex" }}> <SettingsIcon  className={classes.setIcon} style={iconSmall} />Settings</div>} {...a11yProps(0)} />
                 {
                   renderTraits()
                     ? <Tab label="Traits" {...a11yProps(1)} />
@@ -145,7 +128,7 @@ function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference
               </Tabs>
             </AppBar>
             <TabPanel value={tab} index={0} className={classes.tabPanel}>
-              <SettingsForm RJSFFormChildComponent={RJSFFormChildComponent} />
+              <SettingsForm />
             </TabPanel>
             <TabPanel value={tab} index={1} className={classes.tabPanel}>
               <TraitsForm />

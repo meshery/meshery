@@ -23,3 +23,15 @@ export const VISIBILITY = {
   PUBLIC : "public",
   PUBLISHED : "published"
 }
+
+export const EVENT_TYPES = {
+  ADDED : "ADDED",
+  DELETED : "DELETED",
+  MODIFIED : "MODIFIED",
+}
+
+export const EXTENSIONS = {
+  MESHMAP : "meshmap"
+}
+
+export const MesheryPatternsCatalog = "meshery-patterns-catalog"

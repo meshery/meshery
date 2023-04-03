@@ -224,7 +224,7 @@ function MesheryApplications({
   updateProgress, enqueueSnackbar, closeSnackbar, user, classes, selectedK8sContexts
 }) {
   const [page, setPage] = useState(0);
-  const [search] = useState("");
+  const [search,setSearch] = useState("");
   const [sortOrder] = useState("");
   const [count, setCount] = useState(0);
   const modalRef = useRef(null);
@@ -259,6 +259,10 @@ function MesheryApplications({
   useEffect(() => {
     fetchApplications(page, pageSize, search, sortOrder)
   }, [page, pageSize, search, sortOrder]);
+
+  useEffect(() => {
+    if (viewType==='grid')setSearch("")
+  },[viewType])
 
   /**
    * fetch applications when the application downloads
@@ -314,7 +318,6 @@ function MesheryApplications({
   }
 
   const handleModalOpen = (app_file, name, isDeploy) => {
-    // console.log("MMMM", disposeConfSubscription);
     setModalOpen({
       open : true,
       deploy : isDeploy,
@@ -692,7 +695,7 @@ function MesheryApplications({
                 title="Undeploy"
                 onClick={() => handleModalOpen(rowData.application_file, rowData.name, false)}
               >
-                <UndeployIcon fill="#8F1F00" data-cy="undeploy-button" />
+                <UndeployIcon fill="#F91313" data-cy="undeploy-button" />
               </TooltipIcon>
             </>
           );
@@ -810,6 +813,7 @@ function MesheryApplications({
               fetchApplications(page, pageSize, tableState.searchText !== null
                 ? tableState.searchText
                 : "", sortOrder);
+              setSearch(tableState.searchText)
             }
           }, 500);
           break;
@@ -911,7 +915,7 @@ function MesheryApplications({
           isDelete={!modalOpen.deploy}
           title={ modalOpen.name }
           componentCount={modalOpen.count}
-          tab={modalOpen.deploy ? 0 : 1}
+          tab={modalOpen.deploy ? 2 : 1}
         />
         <PromptComponent ref={modalRef} />
         <UploadImport open={importModal.open} handleClose={handleUploadImportClose} isApplication = {true} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler}

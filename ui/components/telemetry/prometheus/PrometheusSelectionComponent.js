@@ -14,7 +14,7 @@ import CodeIcon from '@material-ui/icons/Code';
 import Alert from '@material-ui/lab/Alert';
 
 const promStyles = (theme) => ({
-  prometheusWrapper : { padding : theme.spacing(5), },
+  prometheusWrapper : { padding : theme.spacing(5) },
   buttons : { display : 'flex',
     justifyContent : 'flex-end', },
   button : { marginTop : theme.spacing(3), },
@@ -79,249 +79,249 @@ class PrometheusSelectionComponent extends Component {
     };
   }
 
-      handleChange = (name) => (event) => {
-        if (name === 'grafanaBoard') {
-          // if (this.cmEditor.state.lint.marked.length > 0) {
-          //   this.setState({grafanaBoardError: true});
-          //   return
-          // }
-          // if(this.boardTimeout) {
-          //   clearnTimeout(this.boardTimeout);
-          // }
-          // const self = this;
-          // this.boardTimeout = setTimeout(function(){
-          //   self.boardChange(event.target.value);
-          // }, 500);
-        } else if (name.startsWith('template_var_')) {
-          this.setSelectedTemplateVar(parseInt(name.replace('template_var_', '')), event.target.value);
-        } else {
-          this.setState({ [name] : event.target.value });
+  handleChange = (name) => (event) => {
+    if (name === 'grafanaBoard') {
+      // if (this.cmEditor.state.lint.marked.length > 0) {
+      //   this.setState({grafanaBoardError: true});
+      //   return
+      // }
+      // if(this.boardTimeout) {
+      //   clearnTimeout(this.boardTimeout);
+      // }
+      // const self = this;
+      // this.boardTimeout = setTimeout(function(){
+      //   self.boardChange(event.target.value);
+      // }, 500);
+    } else if (name.startsWith('template_var_')) {
+      this.setSelectedTemplateVar(parseInt(name.replace('template_var_', '')), event.target.value);
+    } else {
+      this.setState({ [name] : event.target.value });
+    }
+  };
+
+  getSelectedTemplateVar = (ind) => {
+    const { selectedTemplateVars } = this.state;
+    const retVal = typeof selectedTemplateVars[ind] !== 'undefined'
+      ? selectedTemplateVars[ind]
+      : undefined;
+    return retVal;
+  }
+
+  setSelectedTemplateVar = (ind, val) => {
+    const { templateVars, templateVarOptions, selectedTemplateVars } = this.state;
+    selectedTemplateVars[ind] = val;
+    for (let i = ind + 1; i < selectedTemplateVars.length; i++) {
+      selectedTemplateVars[i] = '';
+    }
+    this.setState({ selectedTemplateVars });
+    if (templateVars.length > ind + 1) {
+      this.queryTemplateVars(ind + 1, templateVars, templateVarOptions, selectedTemplateVars);
+    }
+  }
+
+
+  boardChange = (newVal) => {
+    this.props.updateProgress({ showProgress : true });
+    const self = this;
+    dataFetch('/api/telemetry/metrics/board_import', {
+      method : 'POST',
+      credentials : 'include',
+      headers : { 'Content-Type' : 'application/json', },
+      body : newVal,
+    },
+    (result) => {
+      this.props.updateProgress({ showProgress : false });
+      var panels = result.panels.filter((panel) => panel.targets !== undefined && panel.datasource.type.toLowerCase() === 'prometheus');
+      if (typeof result !== 'undefined') {
+        this.setState({
+          grafanaBoardObject : result,
+          panels : panels,
+          selectedPanels : panels.map((panel) => panel.id), // selecting all panels by default
+          templateVars : result.template_vars && result.template_vars.length > 0 ? result.template_vars : [],
+          templateVarOptions : [],
+          selectedTemplateVars : [],
+        });
+        if (result.template_vars && result.template_vars.length > 0) {
+          this.queryTemplateVars(0, result.template_vars, [], []);
         }
-      };
-
-      getSelectedTemplateVar = (ind) => {
-        const { selectedTemplateVars } = this.state;
-        const retVal = typeof selectedTemplateVars[ind] !== 'undefined'
-          ? selectedTemplateVars[ind]
-          : undefined;
-        return retVal;
       }
+    }, self.props.handleError);
 
-      setSelectedTemplateVar = (ind, val) => {
-        const { templateVars, templateVarOptions, selectedTemplateVars } = this.state;
-        selectedTemplateVars[ind] = val;
-        for (let i = ind + 1; i < selectedTemplateVars.length; i++) {
-          selectedTemplateVars[i] = '';
-        }
-        this.setState({ selectedTemplateVars });
-        if (templateVars.length > ind + 1) {
-          this.queryTemplateVars(ind + 1, templateVars, templateVarOptions, selectedTemplateVars);
-        }
+    // this.props.grafanaBoards.forEach((board) => {
+    //   if (board.uri === newVal) {
+    //       this.setState({
+    //         grafanaBoard: newVal,
+    //         panels: board.panels,
+    //         selectedPanels: board.panels.map(panel=>panel.id), // selecting all panels by default
+    //         templateVars: board.template_vars && board.template_vars.length > 0?board.template_vars:[],
+    //         templateVarOptions: [],
+    //         selectedTemplateVars: [],
+    //       });
+    //       if(board.template_vars && board.template_vars.length > 0){
+    //         this.queryTemplateVars(0, board.template_vars, [], []);
+    //       }
+    //   }
+    // });
+  }
+
+
+  queryTemplateVars = (ind, templateVars, templateVarOptions, selectedTemplateVars) => {
+    if (templateVars.length > 0) {
+      let queryURL = `/api/telemetry/metrics/query?query=${encodeURIComponent(templateVars[ind].query)}`;
+      for (let i = ind; i > 0; i--) {
+        queryURL += `&${templateVars[i - 1].name}=${selectedTemplateVars[i - 1]}`;
       }
-
-
-      boardChange = (newVal) => {
-        this.props.updateProgress({ showProgress : true });
-        const self = this;
-        dataFetch('/api/telemetry/metrics/board_import', {
-          method : 'POST',
-          credentials : 'include',
-          headers : { 'Content-Type' : 'application/json', },
-          body : newVal,
-        },
-        (result) => {
-          this.props.updateProgress({ showProgress : false });
-          var panels = result.panels.filter((panel) => panel.targets !== undefined && panel.datasource.type.toLowerCase() === 'prometheus');
-          if (typeof result !== 'undefined') {
-            this.setState({
-              grafanaBoardObject : result,
-              panels : panels,
-              selectedPanels : panels.map((panel) => panel.id), // selecting all panels by default
-              templateVars : result.template_vars && result.template_vars.length > 0 ? result.template_vars : [],
-              templateVarOptions : [],
-              selectedTemplateVars : [],
-            });
-            if (result.template_vars && result.template_vars.length > 0) {
-              this.queryTemplateVars(0, result.template_vars, [], []);
-            }
-          }
-        }, self.props.handleError);
-
-        // this.props.grafanaBoards.forEach((board) => {
-        //   if (board.uri === newVal) {
-        //       this.setState({
-        //         grafanaBoard: newVal,
-        //         panels: board.panels,
-        //         selectedPanels: board.panels.map(panel=>panel.id), // selecting all panels by default
-        //         templateVars: board.template_vars && board.template_vars.length > 0?board.template_vars:[],
-        //         templateVarOptions: [],
-        //         selectedTemplateVars: [],
-        //       });
-        //       if(board.template_vars && board.template_vars.length > 0){
-        //         this.queryTemplateVars(0, board.template_vars, [], []);
-        //       }
-        //   }
-        // });
+      if (templateVars[ind].query.startsWith('label_values') && templateVars[ind].query.indexOf(',') > -1) {
+        // series query needs a start and end time or else it will take way longer to return. . .
+        // but at this point this component does not have the time range selection bcoz the time range selection comes after this component makes its selections
+        // hence for now just limiting the time period to the last 24hrs
+        const ed = new Date();
+        const sd = new Date();
+        sd.setDate(sd.getDate() - 1);
+        queryURL += `&start=${Math.floor(sd.getTime() / 1000)}&end=${Math.floor(ed.getTime() / 1000)}`; // accounts for the last 24hrs
       }
-
-
-      queryTemplateVars = (ind, templateVars, templateVarOptions, selectedTemplateVars) => {
-        if (templateVars.length > 0) {
-          let queryURL = `/api/telemetry/metrics/query?query=${encodeURIComponent(templateVars[ind].query)}`;
-          for (let i = ind; i > 0; i--) {
-            queryURL += `&${templateVars[i - 1].name}=${selectedTemplateVars[i - 1]}`;
-          }
-          if (templateVars[ind].query.startsWith('label_values') && templateVars[ind].query.indexOf(',') > -1) {
-            // series query needs a start and end time or else it will take way longer to return. . .
-            // but at this point this component does not have the time range selection bcoz the time range selection comes after this component makes its selections
-            // hence for now just limiting the time period to the last 24hrs
-            const ed = new Date();
-            const sd = new Date();
-            sd.setDate(sd.getDate() - 1);
-            queryURL += `&start=${Math.floor(sd.getTime() / 1000)}&end=${Math.floor(ed.getTime() / 1000)}`; // accounts for the last 24hrs
-          }
-          this.props.updateProgress({ showProgress : true });
-          const self = this;
-          dataFetch(queryURL, { credentials : 'include', }, (result) => {
-            this.props.updateProgress({ showProgress : false });
-            if (typeof result !== 'undefined') {
-              let tmpVarOpts = [];
-              // result.data check if it is an array or object
-              if (Array.isArray(result.data)) {
-                if (result.data.length > 0) {
-                  if (templateVars[ind].query.startsWith('label_values') && templateVars[ind].query.indexOf(',') > -1
+      this.props.updateProgress({ showProgress : true });
+      const self = this;
+      dataFetch(queryURL, { credentials : 'include', }, (result) => {
+        this.props.updateProgress({ showProgress : false });
+        if (typeof result !== 'undefined') {
+          let tmpVarOpts = [];
+          // result.data check if it is an array or object
+          if (Array.isArray(result.data)) {
+            if (result.data.length > 0) {
+              if (templateVars[ind].query.startsWith('label_values') && templateVars[ind].query.indexOf(',') > -1
                     && typeof result.data[0] === 'object') {
-                    let q = templateVars[ind].query.replace('label_values(', '');
-                    q = q.substr(0, q.length - 1); // to remove ')'
-                    const qInd = q.substr(q.lastIndexOf(',')).replace(',', '').trim();
-                    result.data.forEach((d) => {
-                      const v = d[qInd];
-                      if (typeof v !== 'undefined' && v !== null && tmpVarOpts.indexOf(v) === -1) {
-                        tmpVarOpts.push(v);
-                      }
-                    });
-                  } else {
-                    tmpVarOpts = result.data;
-                  }
-                }
-              } else {
-                tmpVarOpts = result.data.result.map(({ metric }) => {
-                  const tmpArr = Object.keys(metric);
-                  if (tmpArr.length > 0) {
-                    return metric[tmpArr[0]];
+                let q = templateVars[ind].query.replace('label_values(', '');
+                q = q.substr(0, q.length - 1); // to remove ')'
+                const qInd = q.substr(q.lastIndexOf(',')).replace(',', '').trim();
+                result.data.forEach((d) => {
+                  const v = d[qInd];
+                  if (typeof v !== 'undefined' && v !== null && tmpVarOpts.indexOf(v) === -1) {
+                    tmpVarOpts.push(v);
                   }
                 });
+              } else {
+                tmpVarOpts = result.data;
               }
-              templateVarOptions[ind] = tmpVarOpts;
-              this.setState({ templateVarOptions });
             }
-          }, (error) => {
-            templateVarOptions[ind] = [templateVars[ind].Value];
-            this.setState({ templateVarOptions });
-            self.props.handleError(error);
-          });
+          } else {
+            tmpVarOpts = result.data.result.map(({ metric }) => {
+              const tmpArr = Object.keys(metric);
+              if (tmpArr.length > 0) {
+                return metric[tmpArr[0]];
+              }
+            });
+          }
+          templateVarOptions[ind] = tmpVarOpts;
+          this.setState({ templateVarOptions });
         }
-      }
-
-      // static getDerivedStateFromProps(props, state){
-      //   if (JSON.stringify(state.grafanaBoards.sort()) !== JSON.stringify(props.grafanaBoards.sort())) {
-      //     return {
-      //       grafanaBoards: props.grafanaBoards,
-      //       grafanaBoard: '',
-      //       selectedPanels: [],
-      //     };
-      //   }
-      //   return null;
-      // }
-
-    addSelectedBoardPanelConfig = () => {
-      const {
-        grafanaBoardObject, templateVars, selectedTemplateVars, selectedPanels, panels,
-      } = this.state;
-      const boardConfig = {};
-      boardConfig.board = grafanaBoardObject;
-      boardConfig.panels = panels.filter(({ id }) => selectedPanels.indexOf(id) > -1);
-      boardConfig.templateVars = templateVars.map(({ name }, index) => (typeof selectedTemplateVars[index] !== 'undefined'
-        ? `${name}=${selectedTemplateVars[index]}`
-        : ''));
-      this.props.addSelectedBoardPanelConfig(boardConfig);
+      }, (error) => {
+        templateVarOptions[ind] = [templateVars[ind].Value];
+        this.setState({ templateVarOptions });
+        self.props.handleError(error);
+      });
     }
+  }
 
-    genRandomNumberForKey = () => Math.floor((trueRandom() * 1000) + 1)
+  // static getDerivedStateFromProps(props, state){
+  //   if (JSON.stringify(state.grafanaBoards.sort()) !== JSON.stringify(props.grafanaBoards.sort())) {
+  //     return {
+  //       grafanaBoards: props.grafanaBoards,
+  //       grafanaBoard: '',
+  //       selectedPanels: [],
+  //     };
+  //   }
+  //   return null;
+  // }
 
-    render = () => {
-      const self = this;
-      const {
-        classes, prometheusURL,
-        handlePrometheusChipDelete, handlePrometheusClick,
-      } = this.props;
-      const {
-        panels, selectedPanels,
-        grafanaBoard, templateVars, templateVarOptions,
-      } = this.state;
-      return (
-        <NoSsr>
-          <React.Fragment>
-            <div className={classes.prometheusWrapper}>
-              <div className={classes.alignRight}>
-                <Chip
-                  label={prometheusURL}
-                  onDelete={handlePrometheusChipDelete}
-                  onClick={handlePrometheusClick}
-                  key="prometh-key"
-                  icon={<img src="/static/img/prometheus_logo_orange_circle.svg" className={classes.icon} />}
-                  variant="outlined"
-                />
-              </div>
-              <Grid container spacing={1}>
-                <Grid item xs={12}>
-                  <div style={{ padding : '20px', display : 'flex' }}>
-                    <CodeIcon style={{ marginRight : '6px' }} />
+  addSelectedBoardPanelConfig = () => {
+    const {
+      grafanaBoardObject, templateVars, selectedTemplateVars, selectedPanels, panels,
+    } = this.state;
+    const boardConfig = {};
+    boardConfig.board = grafanaBoardObject;
+    boardConfig.panels = panels.filter(({ id }) => selectedPanels.indexOf(id) > -1);
+    boardConfig.templateVars = templateVars.map(({ name }, index) => (typeof selectedTemplateVars[index] !== 'undefined'
+      ? `${name}=${selectedTemplateVars[index]}`
+      : ''));
+    this.props.addSelectedBoardPanelConfig(boardConfig);
+  }
+
+  genRandomNumberForKey = () => Math.floor((trueRandom() * 1000) + 1)
+
+  render = () => {
+    const self = this;
+    const {
+      classes, prometheusURL,
+      handlePrometheusChipDelete, handlePrometheusClick,
+    } = this.props;
+    const {
+      panels, selectedPanels,
+      grafanaBoard, templateVars, templateVarOptions,
+    } = this.state;
+    return (
+      <NoSsr>
+        <React.Fragment>
+          <div className={classes.prometheusWrapper}>
+            <div className={classes.alignRight}>
+              <Chip
+                label={prometheusURL}
+                onDelete={handlePrometheusChipDelete}
+                onClick={handlePrometheusClick}
+                key="prometh-key"
+                icon={<img src="/static/img/prometheus_logo_orange_circle.svg" className={classes.icon} />}
+                variant="outlined"
+              />
+            </div>
+            <Grid container spacing={1}>
+              <Grid item xs={12}>
+                <div style={{ padding : '20px', display : 'flex' }}>
+                  <CodeIcon style={{ marginRight : '6px' }} />
                   Paste your custom board JSON below.
-                  </div>
+                </div>
 
-                  <CodeMirror
-                    editorDidMount={(editor) => {
-                      this.cmEditor = editor;
-                    }}
-                    value={grafanaBoard}
-                    options={{
-                      theme : 'material',
-                      lineNumbers : true,
-                      lineWrapping : true,
-                      gutters : ['CodeMirror-lint-markers'],
-                      lint : true,
-                      mode : 'application/json',
-                    }}
-                    onBeforeChange={(editor, data, value) => {
-                      self.setState({
-                        grafanaBoard : value,
-                        grafanaBoardObject : {},
-                        panels : [],
-                        selectedPanels : [],
-                        templateVars : [],
-                        templateVarOptions : [],
-                        selectedTemplateVars : [],
-                      });
-                      if (typeof self.boardTimeout !== 'undefined') {
-                        clearTimeout(self.boardTimeout);
+                <CodeMirror
+                  editorDidMount={(editor) => {
+                    this.cmEditor = editor;
+                  }}
+                  value={grafanaBoard}
+                  options={{
+                    theme : 'material',
+                    lineNumbers : true,
+                    lineWrapping : true,
+                    gutters : ['CodeMirror-lint-markers'],
+                    lint : true,
+                    mode : 'application/json',
+                  }}
+                  onBeforeChange={(editor, data, value) => {
+                    self.setState({
+                      grafanaBoard : value,
+                      grafanaBoardObject : {},
+                      panels : [],
+                      selectedPanels : [],
+                      templateVars : [],
+                      templateVarOptions : [],
+                      selectedTemplateVars : [],
+                    });
+                    if (typeof self.boardTimeout !== 'undefined') {
+                      clearTimeout(self.boardTimeout);
+                    }
+                    self.boardTimeout = setTimeout(() => {
+                      console.log(`lint error count: ${self.cmEditor.state.lint.marked.length}`);
+                      if (value !== '' && self.cmEditor.state.lint.marked.length === 0) {
+                        self.setState({ grafanaBoardError : false });
+                      } else {
+                        self.setState({ grafanaBoardError : true });
+                        return;
                       }
-                      self.boardTimeout = setTimeout(() => {
-                        console.log(`lint error count: ${self.cmEditor.state.lint.marked.length}`);
-                        if (value !== '' && self.cmEditor.state.lint.marked.length === 0) {
-                          self.setState({ grafanaBoardError : false });
-                        } else {
-                          self.setState({ grafanaBoardError : true });
-                          return;
-                        }
-                        self.boardChange(value);
-                      }, 1000);
-                    }}
-                    onChange={() => {
-                    }}
-                  />
-                </Grid>
-                {templateVars.length > 0
+                      self.boardChange(value);
+                    }, 1000);
+                  }}
+                  onChange={() => {
+                  }}
+                />
+              </Grid>
+              {templateVars.length > 0
                   && templateVars.map(({ name }, ind) => {
                     // if (ind === 0 || this.getSelectedTemplateVar(ind-1) !== ''){
                     if (ind === 0 || typeof this.getSelectedTemplateVar(ind - 1) !== 'undefined') {
@@ -351,69 +351,69 @@ class PrometheusSelectionComponent extends Component {
                     return null;
                   })}
 
-                {panels.length === 0 && (
-                  <Grid item xs={12} style={{ marginTop : '10px' }}>
-                    <Alert severity="error">Please load a valid Board JSON to be able to view the panels</Alert>
-                  </Grid>
-                )}
-
-                {panels.length > 0 && (
-                  <Grid item xs={12}>
-                    <TextField
-                      select
-                      id="panels"
-                      name="panels"
-                      label="Panels"
-                      fullWidth
-                      value={selectedPanels}
-                      margin="normal"
-                      variant="outlined"
-                      onChange={this.handleChange('selectedPanels')}
-                      SelectProps={{ multiple : true,
-                        renderValue : (selected) => (
-                          <div className={classes.panelChips}>
-                            {selected.map((value) => {
-                              let selVal = '';
-                              let panelId = '';
-                              panels.forEach((panel) => {
-                                if (panel.id === value) {
-                                  selVal = panel.title;
-                                  panelId = panel.id;
-                                }
-                              });
-                              return (
-                                <Chip key={`pl_--_${panelId}`} label={selVal} className={classes.panelChip} />
-                              );
-                            })}
-                          </div>
-                        ), }}
-                    >
-                      {panels.map((panel) => (
-                        <MenuItem key={`panel_-__-${panel.id}`} value={panel.id}>{panel.title}</MenuItem>
-                      ))}
-                    </TextField>
-                  </Grid>
-                )}
-              </Grid>
-              {selectedPanels.length > 0 && (
-                <div className={classes.buttons}>
-                  <Button
-                    type="submit"
-                    variant="contained"
-                    color="primary"
-                    size="large"
-                    onClick={this.addSelectedBoardPanelConfig}
-                    className={classes.button}
-                  >
-                  Add
-                  </Button>
-                </div>
+              {panels.length === 0 && (
+                <Grid item xs={12} style={{ marginTop : '10px' }}>
+                  <Alert severity="error">Please load a valid Board JSON to be able to view the panels</Alert>
+                </Grid>
               )}
-            </div>
-          </React.Fragment>
-        </NoSsr>
-      );
-    }
+
+              {panels.length > 0 && (
+                <Grid item xs={12}>
+                  <TextField
+                    select
+                    id="panels"
+                    name="panels"
+                    label="Panels"
+                    fullWidth
+                    value={selectedPanels}
+                    margin="normal"
+                    variant="outlined"
+                    onChange={this.handleChange('selectedPanels')}
+                    SelectProps={{ multiple : true,
+                      renderValue : (selected) => (
+                        <div className={classes.panelChips}>
+                          {selected.map((value) => {
+                            let selVal = '';
+                            let panelId = '';
+                            panels.forEach((panel) => {
+                              if (panel.id === value) {
+                                selVal = panel.title;
+                                panelId = panel.id;
+                              }
+                            });
+                            return (
+                              <Chip key={`pl_--_${panelId}`} label={selVal} className={classes.panelChip} />
+                            );
+                          })}
+                        </div>
+                      ), }}
+                  >
+                    {panels.map((panel) => (
+                      <MenuItem key={`panel_-__-${panel.id}`} value={panel.id}>{panel.title}</MenuItem>
+                    ))}
+                  </TextField>
+                </Grid>
+              )}
+            </Grid>
+            {selectedPanels.length > 0 && (
+              <div className={classes.buttons}>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  size="large"
+                  onClick={this.addSelectedBoardPanelConfig}
+                  className={classes.button}
+                >
+                  Add
+                </Button>
+              </div>
+            )}
+          </div>
+        </React.Fragment>
+      </NoSsr>
+    );
+  }
 }
 
 PrometheusSelectionComponent.propTypes = {

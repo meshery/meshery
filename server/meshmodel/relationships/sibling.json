@@ -1,0 +1,39 @@
+{
+    "apiVersion": "core.meshery.io/v1alpha1",
+    "kind": "Sibling",
+    "metadata": {
+      "description": "A relationship between two objects that are siblings."
+    },
+    "model":{
+      "name": "core",
+      "version": "v1.0.0",
+      "displayName": "Core",
+      "category": {
+        "name":"Cloud Native Application",
+        "metadata": null
+      },
+      "metadata": {}
+    },
+    "subType": "MatchLabels",
+    "selectors": {
+      "allow":{
+        "from": [
+          {
+            "kind": "Service",
+            "model": "Kubernetes"
+          }      
+        ],
+        "to": [
+          {
+            "kind": "Pod",
+            "model": "Kubernetes"
+          }     
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
+    }
+  }
+  

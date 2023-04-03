@@ -1,0 +1,75 @@
+{
+  "apiVersion": "core.meshery.io/v1alpha1",
+  "kind": "Edge",
+  "metadata": {
+    "description": "A relationship that represents a set of permissions"
+  },
+	"model":{
+		"name": "core",
+		"version": "v1.0.0",
+		"displayName": "Core",
+		"category": {
+      "name":"Cloud Native Application",
+      "metadata": null
+    },
+    "metadata": {}
+  },
+  "subType": "Permission",
+  "selectors": {
+    "deny": {
+      "from": [
+        {
+          "kind": "ClusterRole",
+          "model": "Kubernetes"
+        },
+        {
+          "kind": "Role",
+          "model": "Kubernetes"
+        },
+        { 
+          "kind": "ClusterRoleBinding",
+          "model": "Kubernetes"
+        },
+        {
+          "kind": "RoleBinding",
+          "model": "Kubernetes"
+        }
+      ],
+      "to": [
+        {
+          "kind": "ClusterRole",
+          "model": "Kubernetes"
+        },
+        {
+          "kind": "Role",
+          "model": "Kubernetes"
+        },
+        {
+          "kind": "ClusterRoleBinding",
+          "model": "Kubernetes"
+        },
+        {
+          "kind": "RoleBinding",
+          "model": "Kubernetes"
+        }
+      ]
+    },
+    "allow":{
+      "from": [
+        {
+          "kind": "ClusterRole",
+          "model": "Kubernetes"
+        },
+        {
+          "kind": "Role",
+          "model": "Kubernetes"
+        }
+      ],
+      "to": [
+        {
+          "model": "Kubernetes"
+        }
+      ]
+    }
+  }
+}

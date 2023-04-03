@@ -42,11 +42,18 @@ const styles = (theme) => ({
     borderTopLeftRadius : 3,
     borderTopRightRadius : 3,
   },
-  tabs : { marginLeft : 0 },
+  tabs : { marginLeft : 0,
+    "& .MuiTabs-indicator" : {
+      backgroundColor : theme.palette.type === 'dark' ? "#00B39F" : theme.palette.primary,
+    },
+  },
   tab : {
     maxWidth : 'min(33%, 200px)',
     minWidth : '50px',
-    margin : 0
+    margin : 0,
+    "&.Mui-selected" : {
+      color : theme.palette.type === 'dark' ? "#00B39F" : theme.palette.primary,
+    }
   },
   icon : {
     display : 'inline',
@@ -125,7 +132,7 @@ class UserPreference extends React.Component {
                 key="close"
                 aria-label="Close"
                 color="inherit"
-                onClick={() => self.props.closeSnackbar(key)}
+                onClick={() => this.props.closeSnackbar(key)}
               >
                 <CloseIcon style={iconMedium} />
               </IconButton>

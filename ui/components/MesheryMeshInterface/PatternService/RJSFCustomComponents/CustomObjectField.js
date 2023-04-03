@@ -68,7 +68,6 @@ class ObjectFieldWithErrors extends Component {
       const newFormData = { ...formData, [name] : value };
       onChange(
         newFormData,
-        errorSchema &&
         errorSchema && {
           ...errorSchema,
           [name] : newErrorSchema,
@@ -229,13 +228,13 @@ class ObjectFieldWithErrors extends Component {
       registry,
     } = this.props;
 
-    const { fields, formContext, schemaUtils } = registry;
+    const { fields, formContext, schemaUtils, globalUiOptions } = registry;
     const { SchemaField } = fields;
     const schema = schemaUtils.retrieveSchema(rawSchema, formData);
-    const uiOptions = getUiOptions(uiSchema);
+    const uiOptions = getUiOptions(uiSchema, globalUiOptions);
     const { properties : schemaProperties = {} } = schema;
 
-    const title = schema.title === undefined ? name : schema.title;
+    const title = uiOptions.title ? schema.title : name ;
     const description = uiOptions.description || schema.description;
     let orderedProperties;
     try {
@@ -260,7 +259,7 @@ class ObjectFieldWithErrors extends Component {
     );
 
     const templateProps = {
-      title : uiOptions.title || title,
+      title : uiOptions.label === false ? '' : title,
       description,
       rawErrors : this.props.rawErrors,
       properties : orderedProperties.map((name) => {

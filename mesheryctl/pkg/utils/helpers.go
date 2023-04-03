@@ -75,6 +75,7 @@ const (
 	providerSetURL    = docsBaseURL + "reference/mesheryctl/system/provider/set"
 	providerResetURL  = docsBaseURL + "reference/mesheryctl/system/provider/reset"
 	providerSwitchURL = docsBaseURL + "reference/mesheryctl/system/provider/switch"
+	tokenUsageURL     = docsBaseURL + "reference/mesheryctl/system/token"
 
 	// Meshery Server Location
 	EndpointProtocol = "http"
@@ -110,6 +111,7 @@ const (
 	cmdProviderView   cmdType = "provider view"
 	cmdProviderList   cmdType = "provider list"
 	cmdProviderReset  cmdType = "provider reset"
+	cmdToken          cmdType = "token"
 )
 
 const (
@@ -192,7 +194,7 @@ var ListOfComponents = []string{"meshery-app-mesh", "meshery-istio", "meshery-li
 // TemplateContext is the template context provided when creating a config file
 var TemplateContext = config.Context{
 	Endpoint:   EndpointProtocol + "://localhost:9081",
-	Token:      "Default",
+	Token:      "default",
 	Platform:   "kubernetes",
 	Components: ListOfComponents,
 	Channel:    "stable",
@@ -201,7 +203,7 @@ var TemplateContext = config.Context{
 
 // TemplateToken is the template token provided when creating a config file
 var TemplateToken = config.Token{
-	Name:     "Default",
+	Name:     "default",
 	Location: AuthConfigFile,
 }
 
@@ -646,10 +648,11 @@ func GetSessionData(mctlCfg *config.MesheryCtlConfig) (*models.Preference, error
 	if err != nil {
 		return nil, err
 	}
+
 	prefs := &models.Preference{}
 	err = utils.Unmarshal(string(body), prefs)
 	if err != nil {
-		return nil, err
+		return nil, errors.New("Failed to process JSON data. Please sign into Meshery")
 	}
 
 	return prefs, nil

@@ -1,6 +1,6 @@
 // Our variables
 $base-font-family: Helvetica, Arial, sans-serif;
-$base-font-size: 16px;
+$base-font-size: 1.125rem;
 $small-font-size: $base-font-size * 0.875;
 $base-line-height: 1.5;
 
@@ -37,7 +37,7 @@ $on-laptop: 800px;
 }
 
 .swagger-path {
-  font-weight: bolder;
+  font-weight: normal;
   font-size: $base-font-size * 1.2;
   margin: 0 0 30px 0;
   font-family: open sans, -apple-system, BlinkMacSystemFont, segoe ui, Roboto, helvetica neue, Arial, sans-serif,
@@ -150,4 +150,13 @@ $on-laptop: 800px;
     content: " *";
     color: red;
   }
+}
+
+.deprecated-label {
+  background-color: #f44336;
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+  padding: 2px 6px;
+  border-radius: 4px;
 }

@@ -20,8 +20,8 @@ import (
 func (h *Handler) SaveScheduleHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
-	prefObj *models.Preference,
-	user *models.User,
+	_ *models.Preference,
+	_ *models.User,
 	provider models.Provider,
 ) {
 	defer func() {
@@ -72,8 +72,8 @@ func (h *Handler) SaveScheduleHandler(
 func (h *Handler) GetSchedulesHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
-	prefObj *models.Preference,
-	user *models.User,
+	_ *models.Preference,
+	_ *models.User,
 	provider models.Provider,
 ) {
 	q := r.URL.Query()
@@ -102,8 +102,8 @@ func (h *Handler) GetSchedulesHandler(
 func (h *Handler) DeleteScheduleHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
-	prefObj *models.Preference,
-	user *models.User,
+	_ *models.Preference,
+	_ *models.User,
 	provider models.Provider,
 ) {
 	ScheduleID := mux.Vars(r)["id"]
@@ -132,8 +132,8 @@ func (h *Handler) DeleteScheduleHandler(
 func (h *Handler) GetScheduleHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
-	prefObj *models.Preference,
-	user *models.User,
+	_ *models.Preference,
+	_ *models.User,
 	provider models.Provider,
 ) {
 	ScheduleID := mux.Vars(r)["id"]

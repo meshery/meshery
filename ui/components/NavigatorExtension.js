@@ -8,7 +8,7 @@ import MesheryPerformanceComponent from "./MesheryPerformance";
 import dataFetch from "../lib/data-fetch";
 import PatternServiceForm from "./MesheryMeshInterface/PatternServiceForm";
 import PatternServiceFormCore from "./MesheryMeshInterface/PatternServiceFormCore";
-import environment, { subscriptionClient } from "../lib/relayEnvironment";
+import { createRelayEnvironment, subscriptionClient } from "../lib/relayEnvironment";
 import subscribeMeshSyncStatusEvents from "../components/graphql/subscriptions/MeshSyncStatusSubscription"
 import LoadingScreen from "./LoadingComponents/LoadingComponent";
 import usePreventUserFromLeavingPage from "../utils/hooks/usePreventUserFromLeavingPage";
@@ -20,19 +20,39 @@ import ConfigurationSubscription from "../components/graphql/subscriptions/Confi
 import PromptComponent from "./PromptComponent";
 import Validation from "./Validation";
 import { CapabilitiesRegistry } from "../utils/disabledComponents";
+import TroubleshootingComponent from "./TroubleshootingComponent";
 
 const requires = createRequires(getDependencies);
 const useRemoteComponent = createUseRemoteComponent({ requires });
 
 function NavigatorExtension({ grafana, prometheus, updateLoadTestData, url, isDrawerCollapsed, selectedK8sContexts, k8sconfig, capabilitiesRegistry }) {
   const [loading, err, RemoteComponent] = useRemoteComponent(url);
+  console.log(err);
 
   if (loading) {
     return <LoadingScreen animatedIcon="AnimatedMeshery" message="Loading Meshery Extension" />;
   }
 
   if (err != null) {
-    return <div>Unknown Error: {err.toString()}</div>;
+    return (
+      <div role="alert">
+        <h2>Uh-oh!😔 Please pardon our mesh.</h2>
+        <div
+          style={{
+            backgroundColor : "#1E2117",
+            color : "#FFFFFF",
+            padding : ".85rem",
+            borderRadius : ".2rem"
+          }}
+        >
+          <code>{err.toString()}</code>
+        </div>
+        <div style={{ marginTop : "1rem" }}>
+          <TroubleshootingComponent showDesignerButton={false} />
+        </div>
+      </div>
+    )
+    // <div>Unknown Error: {err.toString()}</div>;
   }
 
   const getSelectedK8sClusters = () => {
@@ -50,7 +70,7 @@ function NavigatorExtension({ grafana, prometheus, updateLoadTestData, url, isDr
         prometheus,
         MesheryPerformanceComponent,
         dataFetch,
-        environment,
+        createRelayEnvironment,
         subscriptionClient,
         isDrawerCollapsed,
         LoadingScreen,

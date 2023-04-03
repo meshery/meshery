@@ -9,8 +9,9 @@ import Moment from "react-moment";
 import PerformanceResults from "./PerformanceResults";
 import FlipCard from "../FlipCard";
 import { makeStyles } from "@material-ui/core/styles";
+import { iconMedium } from "../../css/icons.styles";
 
-const useStyles= makeStyles(() => ({
+const useStyles= makeStyles((theme) => ({
   cardButtons : {
     display : "flex",
     justifyContent : "flex-end",
@@ -44,7 +45,10 @@ const useStyles= makeStyles(() => ({
   },
   lastRunText : {
     marginRight : "0.5rem"
-  }
+  },
+  resultText : {
+    color : theme.palette.secondary.lightText,
+  },
 }))
 
 function PerformanceCard({
@@ -96,7 +100,7 @@ function PerformanceCard({
               <Typography variant="h2" component="div" color="primary" style={{ marginRight : "0.75rem" }}>
                 {(results).toLocaleString('en')}
               </Typography>
-              <Typography variant="body1" style={{ color : "rgba(0, 0, 0, 0.54)" }} component="div">
+              <Typography variant="body1" className={classes.resultText} component="div">
                 Results
               </Typography>
             </div>
@@ -175,10 +179,10 @@ function PerformanceCard({
           <Grid item xs={4}>
             <div className={classes.deleteEditButton} >
               <IconButton onClick={(ev) => genericClickHandler(ev, handleEdit)}>
-                <EditIcon color="primary" />
+                <EditIcon style={iconMedium} />
               </IconButton>
               <IconButton onClick={(ev) => genericClickHandler(ev, handleDelete)}>
-                <DeleteIcon color="primary" />
+                <DeleteIcon style={iconMedium} />
               </IconButton>
             </div>
           </Grid>

@@ -7,13 +7,14 @@ import (
 
 	"encoding/json"
 
+	"github.com/gorilla/mux"
 	"github.com/pkg/errors"
 
 	"github.com/layer5io/meshery/server/models"
 )
 
 // UserHandler returns info about the logged in user
-func (h *Handler) UserHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
+func (h *Handler) UserHandler(w http.ResponseWriter, _ *http.Request, _ *models.Preference, user *models.User, _ models.Provider) {
 	// if req.Method != http.MethodGet {
 	// 	w.WriteHeader(http.StatusNotFound)
 	// 	return
@@ -25,6 +26,26 @@ func (h *Handler) UserHandler(w http.ResponseWriter, req *http.Request, _ *model
 		http.Error(w, ErrEncoding(err, obj).Error(), http.StatusInternalServerError)
 		return
 	}
+}
+
+// swagger:route GET /api/user/profile/{id} UserAPI idGetUserByIDHandler
+// Handle GET for User info by ID
+//
+// Returns User info
+// responses:
+// 	200: userInfo
+
+func (h *Handler) GetUserByIDHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
+	userID := mux.Vars(r)["id"]
+	resp, err := provider.GetUserByID(r, userID)
+	if err != nil {
+		h.log.Error(ErrGetResult(err))
+		http.Error(w, ErrGetResult(err).Error(), http.StatusNotFound)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	fmt.Fprint(w, string(resp))
 }
 
 // swagger:route GET /api/user/prefs UserAPI idGetUserTestPrefs
@@ -119,4 +140,24 @@ func (h *Handler) UserPrefsHandler(w http.ResponseWriter, req *http.Request, pre
 		http.Error(w, ErrEncoding(err, obj).Error(), http.StatusInternalServerError)
 		return
 	}
+}
+
+// swagger:route POST /api/content/design/share ShareContent idPostShareContent
+// Handle POST request for Sharing content
+//
+// Used to share designs with others
+// responses:
+// 	200:
+//  403:
+//  500:
+
+func (h *Handler) ShareDesignHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
+	statusCode, err := provider.ShareDesign(r)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Error: %v", err.Error()), statusCode)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	fmt.Fprint(w, "Design shared")
 }

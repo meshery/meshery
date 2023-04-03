@@ -5,7 +5,7 @@ import {
 // import {Table, TableBody, TableContainer, TableHead, TableRow,} from "@material-ui/core"
 import blue from "@material-ui/core/colors/blue";
 import Grid from "@material-ui/core/Grid";
-import { withStyles } from "@material-ui/core/styles";
+import { withStyles, MuiThemeProvider } from "@material-ui/core/styles";
 import AddIcon from "@material-ui/icons/AddCircleOutline";
 import CloseIcon from "@material-ui/icons/Close";
 import SettingsIcon from "@material-ui/icons/Settings";
@@ -16,7 +16,7 @@ import React from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import dataFetch from "../lib/data-fetch";
-import { updateGrafanaConfig, updateProgress, updatePrometheusConfig } from "../lib/store";
+import { updateGrafanaConfig, updateProgress, updatePrometheusConfig, updateTelemetryUrls } from "../lib/store";
 import { getK8sClusterIdsFromCtxId, getK8sClusterNamesFromCtxId } from "../utils/multi-ctx";
 import { versionMapper } from "../utils/nameMapper";
 import { submitGrafanaConfigure } from "./telemetry/grafana/GrafanaComponent";
@@ -26,14 +26,20 @@ import fetchDataPlanes from "./graphql/queries/DataPlanesQuery";
 import fetchClusterResources from "./graphql/queries/ClusterResourcesQuery";
 import subscribeClusterResources from "./graphql/subscriptions/ClusterResourcesSubscription";
 import fetchAvailableNamespaces from "./graphql/queries/NamespaceQuery";
+import fetchTelemetryCompsQuery from '../components/graphql/queries/TelemetryComponentsQuery';
 import { submitPrometheusConfigure } from "./telemetry/prometheus/PrometheusComponent";
 import MUIDataTable from "mui-datatables";
-import { MuiThemeProvider, createTheme } from '@material-ui/core/styles';
 import Popup from "./Popup";
 import { iconMedium } from "../css/icons.styles";
+import { extractURLFromScanData } from "./ConnectionWizard/helpers/metrics";
+import { configurationTableTheme, configurationTableThemeDark } from '../themes/configurationTableTheme';
+
 
 const styles = (theme) => ({
-  rootClass : { backgroundColor : "#eaeff1", },
+  rootClass : { backgroundColor : theme.palette.secondary.elevatedComponents2, },
+  datatable : {
+    boxShadow : "none",
+  },
   chip : {
     marginRight : theme.spacing(1),
     marginBottom : theme.spacing(1),
@@ -83,10 +89,11 @@ const styles = (theme) => ({
     color : "#000",
   },
   dashboardSection : {
-    backgroundColor : "#fff",
+    backgroundColor : theme.palette.secondary.elevatedComponents,
     padding : theme.spacing(2),
     borderRadius : 4,
     height : "100%",
+    marginBottom : theme.spacing(2),
   },
 });
 class DashboardComponent extends React.Component {
@@ -137,6 +144,7 @@ class DashboardComponent extends React.Component {
       clusterResourcesSubscription : null,
       clusterResourcesQuery : null,
       namespaceQuery : null,
+      telemetryQuery : null
     };
   }
 
@@ -167,6 +175,9 @@ class DashboardComponent extends React.Component {
     }
     if (this.state.controlPlaneSubscription) {
       this.state.controlPlaneSubscription.unsubscribe()
+    }
+    if (this.state.telemetryQuery) {
+      this.state.telemetryQuery.unsubscribe();
     }
     this.disposeWorkloadWidgetSubscription();
   }
@@ -254,6 +265,29 @@ class DashboardComponent extends React.Component {
     }
   }
 
+  initTelemetryComponentQuery = () => {
+    const self = this;
+    const contextIDs = self.getK8sClusterIds();
+    const telemetryQuery = fetchTelemetryCompsQuery({
+      contexts : contextIDs
+    }).subscribe({
+      next : (components) => {
+        let prometheusURLs = [];
+        let grafanaURLs = [];
+        components.telemetryComps?.forEach((component) => {
+          const data = { spec : JSON.parse(component.spec), status : JSON.parse(component.status) };
+          if (component.name === "grafana") {
+            grafanaURLs = grafanaURLs.concat(extractURLFromScanData(data));
+          } else {
+            prometheusURLs = prometheusURLs.concat(extractURLFromScanData(data));
+          }
+        })
+
+        this.props.updateTelemetryUrls({ telemetryURLs : { "grafana" : grafanaURLs, "prometheus" : prometheusURLs } });
+      }
+    })
+    this.setState({ telemetryQuery });
+  }
   componentWillUnmount = () => {
     this._isMounted = false
     this.disposeSubscriptions()
@@ -271,7 +305,8 @@ class DashboardComponent extends React.Component {
       this.initMeshSyncControlPlaneSubscription();
       this.initDashboardClusterResourcesQuery();
       this.initDashboardClusterResourcesSubscription();
-      this.initNamespaceQuery()
+      this.initNamespaceQuery();
+      this.initTelemetryComponentQuery();
     }
   };
 
@@ -302,6 +337,7 @@ class DashboardComponent extends React.Component {
       this.initDashboardClusterResourcesQuery();
       this.initDashboardClusterResourcesSubscription();
       this.initNamespaceQuery();
+      this.initTelemetryComponentQuery();
     }
 
     if (prevState?.selectedNamespace !== this.state?.selectedNamespace) {
@@ -678,54 +714,6 @@ class DashboardComponent extends React.Component {
     );
   };
 
-  getMuiTheme = () => createTheme({
-    shadows : ["none"],
-    overrides : {
-      MUIDataTable : {
-      },
-      MuiInput : {
-        underline : {
-          "&:hover:not(.Mui-disabled):before" : {
-            borderBottom : "2px solid #222"
-          },
-          "&:after" : {
-            borderBottom : "2px solid #222"
-          }
-        }
-      },
-      MUIDataTableSearch : {
-        searchIcon : {
-          color : "#607d8b",
-          marginTop : "7px",
-          marginRight : "8px",
-        },
-        clearIcon : {
-          "&:hover" : {
-            color : "#607d8b"
-          }
-        },
-      },
-      MUIDataTableSelectCell : {
-        checkboxRoot : {
-          '&$checked' : {
-            color : '#607d8b',
-          },
-        },
-      },
-      MUIDataTableToolbar : {
-        iconActive : {
-          color : "#222"
-        },
-        icon : {
-          "&:hover" : {
-            color : "#607d8b"
-          }
-        },
-      },
-    }
-  })
-
-
   /**
    * Meshcard takes in the mesh related data
    * and renders a table along with other information of
@@ -739,7 +727,7 @@ class DashboardComponent extends React.Component {
     let versionSort = "asc";
     let proxySort = "asc";
     let tempComp = [];
-
+    const { theme } = this.props;
     components
       .filter((comp) => comp.namespace === self.state.activeMeshScanNamespace[mesh.name])
       .map((component) => tempComp.push(component))
@@ -921,8 +909,10 @@ class DashboardComponent extends React.Component {
     if (Array.isArray(components) && components.length)
       return (
         <Paper elevation={1} style={{ padding : "2rem", marginTop : "1rem" }}>
-          <MuiThemeProvider theme={this.getMuiTheme()}>
+          <MuiThemeProvider theme={theme.palette.type == "dark" ? configurationTableThemeDark() : configurationTableTheme() }>
+
             <MUIDataTable
+              className={this.props.classes.datatable}
               title={
                 <>
                   <div style={{ display : "flex", alignItems : "center", marginBottom : "1rem" }}>
@@ -935,7 +925,7 @@ class DashboardComponent extends React.Component {
               options={options}
               columns={columns}
             />
-          </MuiThemeProvider>
+          </MuiThemeProvider >
         </Paper>
       );
 
@@ -952,6 +942,7 @@ class DashboardComponent extends React.Component {
     const self = this;
     let kindSort = "asc";
     let countSort = "asc";
+    const { theme } = this.props;
     const switchSortOrder = (type) => {
       if (type === "kindSort") {
         kindSort = (kindSort === "asc") ? "desc" : "asc";
@@ -1039,7 +1030,7 @@ class DashboardComponent extends React.Component {
     if (Array.isArray(resources) && resources.length)
       return (
         <Paper elevation={1} style={{ padding : "2rem" }}>
-          <MuiThemeProvider theme={this.getMuiTheme()}>
+          <MuiThemeProvider theme={theme.palette.type == "dark" ? configurationTableThemeDark() : configurationTableTheme()}>
             <MUIDataTable
               title={
                 <>
@@ -1274,7 +1265,7 @@ class DashboardComponent extends React.Component {
       </Grid>
     );
 
-    const showServiceMesh = (
+    const showServiceMesh =(
       <>
         {self?.state?.meshScan && Object.keys(self?.state?.meshScan).length
           ? (
@@ -1303,7 +1294,7 @@ class DashboardComponent extends React.Component {
                 flexDirection : "column",
               }}
             >
-              <Typography style={{ fontSize : "1.5rem", marginBottom : "2rem" }} align="center" color="textSecondary">
+              <Typography style={{ fontSize : "1.5rem", marginBottom : "2rem" }} align="center" >
                 {this.emptyStateMessageForServiceMeshesInfo()}
               </Typography>
               <Button
@@ -1336,7 +1327,7 @@ class DashboardComponent extends React.Component {
                 flexDirection : "column",
               }}
             >
-              <Typography style={{ fontSize : "1.5rem", marginBottom : "2rem" }} align="center" color="textSecondary">
+              <Typography style={{ fontSize : "1.5rem", marginBottom : "2rem" }} align="center" >
                 {this.emptyStateMessageForClusterResources()}
               </Typography>
               <Button
@@ -1404,6 +1395,7 @@ const mapDispatchToProps = (dispatch) => ({
   updateProgress : bindActionCreators(updateProgress, dispatch),
   updateGrafanaConfig : bindActionCreators(updateGrafanaConfig, dispatch),
   updatePrometheusConfig : bindActionCreators(updatePrometheusConfig, dispatch),
+  updateTelemetryUrls : bindActionCreators(updateTelemetryUrls, dispatch),
 });
 
 const mapStateToProps = (state) => {
@@ -1424,6 +1416,6 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default withStyles(styles)(
+export default withStyles(styles, { withTheme : true })(
   connect(mapStateToProps, mapDispatchToProps)(withRouter(withSnackbar(DashboardComponent)))
 );

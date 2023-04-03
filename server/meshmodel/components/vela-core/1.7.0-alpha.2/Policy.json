@@ -1,1 +1,0 @@
-{"kind":"Policy","apiVersion":"v1alpha1","display-name":"Policy","format":"JSON","metadata":{"logo-URL":"","model":"vela-core","modelDisplayName":"Vela Core","primaryColor":"","secondaryColor":"","shape":"","svgColor":"","svgWhite":""},"model":{"name":"vela-core","version":"1.7.0-alpha.2","display-name":"Vela Core","category":"Not Found","sub-category":"Not Found"},"schema":""}

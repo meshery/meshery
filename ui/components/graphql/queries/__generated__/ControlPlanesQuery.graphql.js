@@ -1,6 +1,5 @@
 /**
- * @generated SignedSource<<1b9a3ed5711eaa6029c44d22c1caef33>>
- * @flow
+ * @generated SignedSource<<c7d21a27e2d8edf0e2cc11470bd35a50>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,34 +8,7 @@
 
 'use strict';
 
-/*::
-import type { ConcreteRequest, Query } from 'relay-runtime';
-export type MeshType = "ALL_MESH" | "INVALID_MESH" | "APP_MESH" | "CITRIX_SERVICE_MESH" | "CONSUL" | "ISTIO" | "KUMA" | "LINKERD" | "TRAEFIK_MESH" | "OCTARINE" | "NETWORK_SERVICE_MESH" | "TANZU" | "OPEN_SERVICE_MESH" | "NGINX_SERVICE_MESH" | "CILIUM_SERVICE_MESH" | "%future added value";
-export type ServiceMeshFilter = {|
-  type?: ?MeshType,
-  k8sClusterIDs?: ?$ReadOnlyArray<string>,
-|};
-export type ControlPlanesQuery$variables = {|
-  filter?: ?ServiceMeshFilter,
-|};
-export type ControlPlanesQuery$data = {|
-  +controlPlanesState: $ReadOnlyArray<{|
-    +name: string,
-    +members: $ReadOnlyArray<{|
-      +name: string,
-      +version: string,
-      +component: string,
-      +namespace: string,
-    |}>,
-  |}>,
-|};
-export type ControlPlanesQuery = {|
-  variables: ControlPlanesQuery$variables,
-  response: ControlPlanesQuery$data,
-|};
-*/
-
-var node/*: ConcreteRequest*/ = (function(){
+var node = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -132,9 +104,6 @@ return {
 };
 })();
 
-(node/*: any*/).hash = "82f1d5dbf1eec9d253f34bc6b6a7e6f4";
+node.hash = "82f1d5dbf1eec9d253f34bc6b6a7e6f4";
 
-module.exports = ((node/*: any*/)/*: Query<
-  ControlPlanesQuery$variables,
-  ControlPlanesQuery$data,
->*/);
+module.exports = node;

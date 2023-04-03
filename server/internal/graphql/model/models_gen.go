@@ -33,6 +33,7 @@ type ApplicationResult struct {
 	Type            *NullString `json:"type"`
 	UserID          string      `json:"user_id"`
 	Location        *Location   `json:"location"`
+	Visibility      string      `json:"visibility"`
 	CreatedAt       *string     `json:"created_at"`
 	UpdatedAt       *string     `json:"updated_at"`
 }
@@ -351,6 +352,12 @@ type Resource struct {
 type ServiceMeshFilter struct {
 	Type          *MeshType `json:"type"`
 	K8sClusterIDs []string  `json:"k8sClusterIDs"`
+}
+
+type TelemetryComp struct {
+	Name   string `json:"name"`
+	Spec   string `json:"spec"`
+	Status string `json:"status"`
 }
 
 type MeshType string

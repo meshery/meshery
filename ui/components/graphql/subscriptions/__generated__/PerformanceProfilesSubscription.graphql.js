@@ -1,6 +1,5 @@
 /**
- * @generated SignedSource<<1f75887f31fc42bd7e0be7b0b02eb63f>>
- * @flow
+ * @generated SignedSource<<4a889c17abcbfd1e4f4799ea21fc0d0e>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,52 +8,7 @@
 
 'use strict';
 
-/*::
-import type { ConcreteRequest, GraphQLSubscription } from 'relay-runtime';
-export type PageFilter = {|
-  page: string,
-  pageSize: string,
-  order?: ?string,
-  search?: ?string,
-  from?: ?string,
-  to?: ?string,
-|};
-export type PerformanceProfilesSubscription$variables = {|
-  selector: PageFilter,
-|};
-export type PerformanceProfilesSubscription$data = {|
-  +subscribePerfProfiles: {|
-    +page: number,
-    +page_size: number,
-    +total_count: number,
-    +profiles: ?$ReadOnlyArray<?{|
-      +concurrent_request: number,
-      +created_at: ?string,
-      +duration: string,
-      +endpoints: ?$ReadOnlyArray<?string>,
-      +id: string,
-      +last_run: ?string,
-      +load_generators: ?$ReadOnlyArray<?string>,
-      +name: ?string,
-      +qps: ?number,
-      +total_results: ?number,
-      +updated_at: ?string,
-      +user_id: string,
-      +request_body: ?string,
-      +request_cookies: ?string,
-      +request_headers: ?string,
-      +content_type: ?string,
-      +service_mesh: ?string,
-    |}>,
-  |},
-|};
-export type PerformanceProfilesSubscription = {|
-  variables: PerformanceProfilesSubscription$variables,
-  response: PerformanceProfilesSubscription$data,
-|};
-*/
-
-var node/*: ConcreteRequest*/ = (function(){
+var node = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -260,9 +214,6 @@ return {
 };
 })();
 
-(node/*: any*/).hash = "2efb94fd4676d37f9cc54c1c45a8bcdb";
+node.hash = "2efb94fd4676d37f9cc54c1c45a8bcdb";
 
-module.exports = ((node/*: any*/)/*: GraphQLSubscription<
-  PerformanceProfilesSubscription$variables,
-  PerformanceProfilesSubscription$data,
->*/);
+module.exports = node;

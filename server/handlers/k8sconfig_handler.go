@@ -7,22 +7,26 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"os"
 	"path/filepath"
 
+	guid "github.com/google/uuid"
+	mutil "github.com/layer5io/meshery/server/helpers/utils"
+	"github.com/layer5io/meshery/server/meshes"
 	mcore "github.com/layer5io/meshery/server/models/meshmodel/core"
+	meshmodelv1alpha1 "github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 
 	// for GKE kube API authentication
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 
 	"github.com/gofrs/uuid"
-
 	"github.com/layer5io/meshery/server/helpers"
-	mutil "github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshkit/models/meshmodel"
 	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
 	"github.com/layer5io/meshkit/utils"
+	"github.com/layer5io/meshkit/utils/events"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
@@ -58,7 +62,7 @@ func (h *Handler) K8SConfigHandler(w http.ResponseWriter, req *http.Request, pre
 // responses:
 // 	200: k8sConfigRespWrapper
 
-func (h *Handler) addK8SConfig(user *models.User, prefObj *models.Preference, w http.ResponseWriter, req *http.Request, provider models.Provider) {
+func (h *Handler) addK8SConfig(_ *models.User, _ *models.Preference, w http.ResponseWriter, req *http.Request, provider models.Provider) {
 	token, ok := req.Context().Value(models.TokenCtxKey).(string)
 	if !ok {
 		err := ErrRetrieveUserToken(fmt.Errorf("failed to retrieve user token"))
@@ -140,7 +144,7 @@ func (h *Handler) addK8SConfig(user *models.User, prefObj *models.Preference, w 
 // responses:
 // 	200:
 
-func (h *Handler) deleteK8SConfig(user *models.User, prefObj *models.Preference, w http.ResponseWriter, req *http.Request, provider models.Provider) {
+func (h *Handler) deleteK8SConfig(_ *models.User, _ *models.Preference, w http.ResponseWriter, _ *http.Request, _ models.Provider) {
 	// prefObj.K8SConfig = nil
 	// err := provider.RecordPreferences(req, user.UserID, prefObj)
 	// if err != nil {
@@ -208,7 +212,7 @@ func (h *Handler) GetContextsFromK8SConfig(w http.ResponseWriter, req *http.Requ
 // 	200:
 
 // KubernetesPingHandler - fetches server version to simulate ping
-func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	token, ok := req.Context().Value(models.TokenCtxKey).(string)
 	if !ok {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -310,7 +314,7 @@ func (h *Handler) LoadContextsAndPersist(token string, prov models.Provider) ([]
 	return contexts, nil
 }
 
-func RegisterK8sComponents(ctxt context.Context, config []byte, ctxID string, reg *meshmodel.RegistryManager) (err error) {
+func RegisterK8sComponents(ctxt context.Context, config []byte, ctxID string, _ *meshmodel.RegistryManager, _ *events.EventStreamer, _ string) (err error) {
 	man, err := core.GetK8Components(ctxt, config)
 	if err != nil {
 		return ErrCreatingKubernetesComponents(err, ctxID)
@@ -346,39 +350,102 @@ func RegisterK8sComponents(ctxt context.Context, config []byte, ctxID string, re
 	return nil
 }
 
-func RegisterK8sMeshModelComponents(ctx context.Context, config []byte, ctxID string, reg *meshmodel.RegistryManager) (err error) {
-	man, err := mcore.GetK8sMeshModelComponents(ctx, config)
+func RegisterK8sMeshModelComponents(_ context.Context, config []byte, ctxID string, reg *meshmodel.RegistryManager, es *events.EventStreamer, ctxName string) (err error) {
+	man, err := mcore.GetK8sMeshModelComponents(config)
 	if err != nil {
 		return ErrCreatingKubernetesComponents(err, ctxID)
 	}
 	if man == nil {
 		return ErrCreatingKubernetesComponents(errors.New("generated components are nil"), ctxID)
 	}
+	count := 0
 	for _, c := range man {
-		mutil.WriteSVGsOnFileSystem(&c)
+		writeK8sMetadata(&c, reg)
 		err = reg.RegisterEntity(meshmodel.Host{
 			Hostname:  "kubernetes",
 			ContextID: ctxID,
 		}, c)
+		count++
 	}
+	es.Publish(&meshes.EventsResponse{
+		Component:     "core",
+		ComponentName: "kubernetes",
+		OperationId:   guid.NewString(),
+		EventType:     meshes.EventType_INFO,
+		Summary:       fmt.Sprintf("%d Kubernetes components registered from %s", count, ctxName),
+		Details:       fmt.Sprintf("%d MeshModel components registered for Kubernetes context \"%s\" (%s)", count, ctxName, ctxID),
+	})
 	return
 }
 
-// func writeMeshModelComponentsOnFileSystem(c meshmodelv1alpha1.ComponentDefinition, dirpath string) {
-// 	fileName := c.Kind + ".json"
-// 	file, err := os.Create(filepath.Join(dirpath, fileName))
-// 	if err != nil {
-// 		fmt.Println("err: ", err.Error())
-// 	}
-// 	byt, err := json.Marshal(c)
-// 	if err != nil {
-// 		fmt.Println("err: ", err.Error())
-// 	}
-// 	_, err = file.Write(byt)
-// 	if err != nil {
-// 		fmt.Println("err: ", err.Error())
-// 	}
-// }
+const k8sMeshModelPath = "../meshmodel/components/kubernetes/model_template.json"
+
+var k8sMeshModelMetadata = make(map[string]interface{})
+
+func writeK8sMetadata(comp *meshmodelv1alpha1.ComponentDefinition, reg *meshmodel.RegistryManager) {
+	ent := reg.GetEntities(&meshmodelv1alpha1.ComponentFilter{
+		Name:       comp.Kind,
+		APIVersion: comp.APIVersion,
+		ModelName:  comp.Model.Name,
+	})
+	//If component was not available in the registry, then use the generic model level metadata
+	if len(ent) == 0 {
+		mergeMaps(comp.Metadata, k8sMeshModelMetadata)
+		mutil.WriteSVGsOnFileSystem(comp)
+	} else {
+		existingComp, ok := ent[0].(meshmodelv1alpha1.ComponentDefinition)
+		if !ok {
+			mergeMaps(comp.Metadata, k8sMeshModelMetadata)
+			return
+		}
+		mergeMaps(comp.Metadata, existingComp.Metadata)
+		if comp.Model.Metadata == nil {
+			comp.Model.Metadata = make(map[string]interface{})
+		}
+		mergeMaps(comp.Model.Metadata, existingComp.Model.Metadata)
+		comp.Model.Category = existingComp.Model.Category
+	}
+}
+func mergeMaps(mergeInto, toMerge map[string]interface{}) {
+	for k, v := range toMerge {
+		mergeInto[k] = v
+	}
+}
+
+// Caches k8sMeshModel metadatas in memory to use at the time of dynamic k8s component generation
+func init() {
+	f, err := os.Open(filepath.Join(k8sMeshModelPath))
+	if err != nil {
+		return
+	}
+	byt, err := io.ReadAll(f)
+	if err != nil {
+		return
+	}
+	m := make(map[string]interface{})
+	err = json.Unmarshal(byt, &m)
+	if err != nil {
+		return
+	}
+	k8sMeshModelMetadata = m
+}
+
+// Utility to be used to write k8s components after generating them.
+func writeMeshModelComponentsOnFileSystem(c meshmodelv1alpha1.ComponentDefinition, dirpath string) {
+	fileName := c.Kind + ".json"
+	file, err := os.Create(filepath.Join(dirpath, fileName))
+	if err != nil {
+		fmt.Println("err: ", err.Error())
+	}
+	byt, err := json.Marshal(c)
+	if err != nil {
+		fmt.Println("err: ", err.Error())
+	}
+	_, err = file.Write(byt)
+	if err != nil {
+		fmt.Println("err: ", err.Error())
+	}
+}
 
 // func writeDefK8sOnFileSystem(def string, path string) {
 // 	err := ioutil.WriteFile(path, []byte(def), 0777)

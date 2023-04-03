@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react'
 import { TextField, Button, Grid, NativeSelect } from '@material-ui/core';
-import { makeStyles, MuiThemeProvider } from '@material-ui/core/styles';
-import { createTheme } from '@material-ui/core/styles';
+import { createTheme, MuiThemeProvider, useTheme, withStyles } from '@material-ui/core/styles';
 import { URLValidator } from '../utils/URLValidator';
 import {
   Dialog, DialogActions,
@@ -27,9 +26,30 @@ const getMuiTheme = () => createTheme({
     },
   }
 })
+const getDarkMuiTheme = () => createTheme({
+  palette : {
+    type : "dark",
+    primary : {
+      main : "#607d8b"
+    },
+  },
+  overrides : {
+    MuiGrid : {
+      input : {
+        color : '#607d8b'
+      }
+    },
+    MuiFormLabel : {
+      root : {
+        "&$focused" : {
+          color : "#00B39F",
+        },
+      }
+    },
+  }
+})
 
-
-const styles = makeStyles(() => ({
+const styles = (theme) => ({
   upload : {
     paddingLeft : "0.7rem",
     paddingTop : "8px"
@@ -39,26 +59,32 @@ const styles = makeStyles(() => ({
     minWidth : 500,
     padding : '15px',
     color : '#fff',
-    backgroundColor : '#396679'
+    backgroundColor : theme.palette.type === "dark" ? "#202020" : '#396679'
   },
   heading : {
-    color : "#607d8b"
+    color : theme.palette.type === "dark" ? "#fff" : "#607d8b"
   },
   selectType : {
-    color : "#607d8b",
+    color : theme.palette.type === "dark" ? "#fff" : "#607d8b",
     marginRight : "1.2rem"
-  }
-}));
+  },
+  button : {
+    backgroundColor : theme.palette.type === "dark" ? "#00B39F" : "#607d8b",
+    "&:hover" : {
+      backgroundColor : theme.palette.type === "dark" ? "#00B39F" : "#607d8b"
+    },
+    color : "#fff"
+  },
+});
 
 function UploadImport(props) {
-  const { handleUpload, handleUrlUpload, configuration, isApplication, open, handleClose, fetch } = props;
-  const classes = styles();
+  const { handleUpload, handleUrlUpload, configuration, isApplication, open, handleClose, classes, fetch } = props;
   const [input, setInput] = React.useState();
   const [isError, setIsError] = React.useState(false);
   const [fileType, setFileType] = React.useState();
   const [sourceType, setSourceType] = React.useState();
   const [supportedTypes, setSupportedTypes] = React.useState();
-
+  const theme=useTheme()
   useEffect(() => {
     if (isApplication) {
       (async () => {
@@ -105,7 +131,7 @@ function UploadImport(props) {
           open={open}
           onClose={handleClose}>
 
-          <MuiThemeProvider theme={getMuiTheme()}>
+          <MuiThemeProvider theme={theme.palette.type == "dark" ? getDarkMuiTheme() : getMuiTheme()}>
             <DialogTitle className={classes.title}>
               <b id="simple-modal-title" style={{ textAlign : "center" }} >Import {configuration}</b>
             </DialogTitle>
@@ -144,9 +170,9 @@ function UploadImport(props) {
 
                       <label htmlFor="upload-button" className={classes.upload}>
 
-                        <Button disabled={sourceType === "Helm Chart"} variant="contained" color="primary" aria-label="Upload Button" onChange={sourceType === "Helm Chart" ? null : handleUploader} component="span" >
+                        <Button disabled={sourceType === "Helm Chart"} variant="contained" className={classes.button} aria-label="Upload Button" onChange={sourceType === "Helm Chart" ? null : handleUploader} component="span" >
                           <input id="upload-button" type="file" accept={fileType} disabled={sourceType === "Helm Chart"} hidden name="upload-button" data-cy="file-upload-button" />
-                          Browse
+                        Browse
                         </Button>
                       </label>
                     </Grid>
@@ -157,27 +183,27 @@ function UploadImport(props) {
               <Grid container spacing={24} alignItems="center">
                 {
                   isApplication &&
-                  <h4 className={classes.selectType}>SELECT TYPE </h4>
+                <h4 className={classes.selectType}>SELECT TYPE </h4>
                 }
                 {isApplication &&
-                  <>
-                    <NativeSelect
-                      defaultValue={0}
-                      onChange={(e) => handleFileType(e.target.value)}
-                      inputProps={{
-                        name : 'name',
-                        id : 'uncontrolled-native',
-                      }}
-                    >
-                      {
-                        supportedTypes?.map((type, index) => (
-                          <option key={index} value={index}>
-                            {type.application_type}
-                          </option>
-                        ))
-                      }
-                    </NativeSelect>
-                  </>
+                <>
+                  <NativeSelect
+                    defaultValue={0}
+                    onChange={(e) => handleFileType(e.target.value)}
+                    inputProps={{
+                      name : 'name',
+                      id : 'uncontrolled-native',
+                    }}
+                  >
+                    {
+                      supportedTypes?.map((type, index) => (
+                        <option key={index} value={index}>
+                          {type.application_type}
+                        </option>
+                      ))
+                    }
+                  </NativeSelect>
+                </>
                 }
               </Grid>
             </DialogContent>
@@ -185,7 +211,7 @@ function UploadImport(props) {
               <label htmlFor="cancel" className={classes.cancel}>
                 <Button variant="outlined" color="secondary" onClick={handleClose}>Cancel</Button>
               </label>
-              <label htmlFor="URL">  <Button disabled={isError || !input} id="URL" variant="contained" color="primary" onClick={async(e) => {
+              <label htmlFor="URL">  <Button disabled={isError || !input} id="URL" variant="contained" className={classes.button} onClick={async(e) => {
                 await handleSubmit(e, handleUploader);fetch();
               }}>Import</Button> </label>
             </DialogActions>
@@ -197,4 +223,4 @@ function UploadImport(props) {
   )
 }
 
-export default UploadImport
+export default withStyles(styles)(UploadImport);

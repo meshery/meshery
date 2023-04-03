@@ -1,0 +1,151 @@
+:root {
+  --navbar-height: 6.5rem;
+
+  // Colors that will not change in the dark mode.
+  --brand-color-primary: #00d3a9;
+  --brand-color-secondary: #00b39f;
+  --color-white: #fff;
+  // ////////////////////////////////////////////
+  --color-primary-light: #fff;
+  --color-primary-medium: #f8f9fa;
+  --color-primary-dark: #f1f3f5;
+  --color-secondary-light: #495057;
+  --color-secondary-medium: #343a40;
+  --color-secondary-dark: #212529;
+  --color-grey-light: #ced4da;
+  --color-grey-medium: #adb5bd;
+  --color-grey-dark: #868e96;
+  --color-summary-background:#bac1c8;
+  --color-details-background:#d3d8dd;
+
+  --box-shadow-primary: 3px 3px 10px rgba(0, 0, 0, 0.4);
+  --box-shadow-primary-light: 2px 2px 8px rgb(0 0 0 / 15%);
+  --box-shadow-primary-left: -3px 6px 10px rgb(0 0 0 / 40%);
+  --box-shadow-navbar: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+  --box-shadow-neumorphic: inset 3px 3px 7px #cbced1, inset -3px -3px 2px #fff;
+  --integrations-box-shadow: 4px 4px 14px #cbced1, -12px -12px 20px #fff;
+  --integrations-bg: #ecf0f3;
+
+  --image-color: brightness(15%);
+  --image-filter-light: invert(27%) sepia(34%) saturate(217%) hue-rotate(154deg) brightness(92%) contrast(95%);
+  --image-filter-dark: brightness(40) invert(1);
+  --meshery-logo-text-fill: #3c494f;
+
+  --logo-filter: brightness(100%) invert(0);
+
+  --background-primary: linear-gradient(250deg, #477e96 0%, #00b39f 35%, rgb(60, 73, 79) 100%);
+  --background-primary-2: linear-gradient(100deg, #477e96 0%, #00b39f 35%, #5a6f79 100%);
+  --background-light: linear-gradient(to right top, #fff, #fff);
+  --background-light-cards: linear-gradient(
+    to left bottom,
+    #f1f3f5,
+    #f4f5f7,
+    #f7f7f9,
+    #ffffff,
+    #ffffff,
+    #ffffff,
+    #ffffff,
+    #ffffff,
+    #ffffff,
+    #f7f7f9,
+    #f4f5f7,
+    #f1f3f5
+  );
+  --background-grey: linear-gradient(to right top, #dee2e6, #d2d7dc, #c5cbd1, #b9c0c7, #adb5bd);
+  --background-grey-secondary: linear-gradient(to right top, #868e96, #767e86, #676e76, #585f66, #495057);
+  --background-neumorphic: #ecf0f3;
+
+  // Gradients
+  --section-button: linear-gradient(315deg, #008979 0%, rgba(0, 179, 159, 0.8617822129) 87%);
+  --section-button-hover: linear-gradient(135deg, #008979 0%, rgba(0, 179, 159, 0.8617822129) 87%);
+
+  // --section-button: linear-gradient(to right top, #00b39f, #00b09d, #00ae9b, #00ab99, #00a997, #00ac98, #00ae99, #00b19a, #00b99e, #00c2a2, #00caa6, #00d3a9);;
+  // --section-button-hover:linear-gradient(to left bottom, #007a6c, #00b09d, #00ae9b, #00ab99, #00a997, #00ac98, #00ae99, #00b19a, #00b99e, #00c2a2, #00caa6, #00d3a9);
+  --sidenav-hover: #009c89;
+}
+
+.dark-mode {
+  --color-primary-light: #212529;
+  --color-primary-medium: #343a40;
+  --color-primary-dark: #495057;
+  --color-secondary-light: #f1f3f5;
+  --color-secondary-medium: #dadddf;
+  --color-secondary-dark: #fff;
+  --color-grey-light: #495057;
+  --color-grey-medium: #868e96;
+  --color-grey-dark: #adb5bd;
+  --color-summary-background:#333;
+  --color-details-background:#282828;
+
+  --box-shadow-primary: 4px 4px 8px rgba(0, 0, 0, 1);
+  --box-shadow-primary-light: 2px 2px 8px rgb(0 0 0 / 70%);
+  --box-shadow-primary-left: -4px 8px 8px rgb(0 0 0 / 10%);
+  --box-shadow-neumorphic: inset 3px 3px 7px #040404, inset -3px -3px 2px #171a1d;
+
+  // --box-shadow-primary:4px 4px 8px rgba(255, 255, 255, 0.4);
+
+  --background-light: linear-gradient(
+    to right top,
+    #3d3d3d,
+    #343434,
+    #2b2b2b,
+    #222222,
+    #1a1a1a,
+    #181818,
+    #161616,
+    #141414,
+    #181818,
+    #1c1c1c,
+    #212121,
+    #252525
+  );
+  --background-grey: linear-gradient(
+    to right top,
+    #495057,
+    #495057,
+    #495057,
+    #495057,
+    #495057,
+    #474e55,
+    #464c53,
+    #444a51,
+    #40464d,
+    #3c4248,
+    #383e44,
+    #343a40
+  );
+  --background-grey-secondary: linear-gradient(to right bottom, #dee2e6, #d2d7dc, #c5cbd1, #b9c0c7, #adb5bd);
+  --background-light-cards: linear-gradient(
+    to right top,
+    #3d3d3d,
+    #343434,
+    #2b2b2b,
+    #222222,
+    #1a1a1a,
+    #181818,
+    #161616,
+    #141414,
+    #181818,
+    #1c1c1c,
+    #212121,
+    #252525
+  );
+  --background-neumorphic: #212529;
+
+  --image-color: brightness(0) invert(1);
+  --image-filter-light: brightness(40) invert(1);
+  --image-filter-dark: invert(27%) sepia(34%) saturate(217%) hue-rotate(154deg) brightness(92%) contrast(95%);
+  --logo-filter: invert(0.9) grayscale(1.6) brightness(1.5);
+  --meshery-logo-text-fill: #ffffff;
+
+  --integrations-bg: #676e76;
+  --integrations-box-shadow: 4px 4px 14px #41454a, -4px -4px 10px #78808a;
+  --sidenav-hover: #00d3a9;
+}
+
+@media (max-width: 600px) {
+  :root {
+    --navbar-height: 9.5rem;
+  }
+}
+

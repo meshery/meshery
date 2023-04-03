@@ -8,7 +8,7 @@ import {
   Button, Grid, Paper, Typography
 } from "@material-ui/core";
 import IconButton from "@material-ui/core/IconButton";
-import { makeStyles, useTheme } from "@material-ui/core/styles";
+import { useTheme, withStyles } from "@material-ui/core/styles";
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import CloseIcon from "@material-ui/icons/Close";
 import { withRouter } from "next/router";
@@ -18,12 +18,14 @@ import GenericModal from "../GenericModal";
 import MesheryPerformanceComponent from "./index";
 import fetchPerformanceProfiles from "../graphql/queries/PerformanceProfilesQuery";
 import fetchAllResults from "../graphql/queries/FetchAllResultsQuery";
+import { iconMedium } from "../../css/icons.styles";
 
 // const MESHERY_PERFORMANCE_URL = "/api/user/performance/profiles";
 // const MESHERY_PERFORMANCE_TEST_URL = "/api/user/performance/profiles/results";
 
-const useStyles = makeStyles(() => ({
-  paper : { padding : "1rem", },
+const styles = (theme) => ({
+  paper : { padding : "1rem",
+    backgroundColor : theme.palette.secondary.elevatedComponents, },
   resultContainer : {
     display : "flex",
     flexDirection : "row",
@@ -37,7 +39,7 @@ const useStyles = makeStyles(() => ({
     width : "1px",
     background : "black",
     marginTop : "1.1rem",
-    bottom : "0" ,
+    bottom : "0",
     left : "36%",
     backgroundColor : "#36454f",
     opacity : "0.7",
@@ -53,23 +55,33 @@ const useStyles = makeStyles(() => ({
       height : "1px",
       background : "black",
       marginTop : "1.1rem",
-      bottom : "0" ,
+      bottom : "0",
       left : "36%",
       backgroundColor : "#36454f",
       opacity : "0.7",
     }
-  }
-}));
+  },
+  resultText : {
+    color : theme.palette.secondary.lightText,
+  },
+  profileText : {
+    color : theme.palette.secondary.lightText,
+  },
+  resultNum : {
+    color : theme.palette.secondary.number,
+  },
+  profileNum : {
+    color : theme.palette.secondary.number,
+  },
+});
 
-function Dashboard({ updateProgress, enqueueSnackbar, closeSnackbar, grafana, router }) {
+function Dashboard({ updateProgress, enqueueSnackbar, closeSnackbar, grafana, router, classes }) {
   const [profiles, setProfiles] = useState({ count : 0, profiles : [] });
   const [tests, setTests] = useState({ count : 0, tests : [] });
   const [runTest, setRunTest] = useState(false);
-  const classes = useStyles();
 
   const theme = useTheme();
   const matches = useMediaQuery(theme.breakpoints.up("xs"))
-
   if (matches) {
     console.log("HIT")
   }
@@ -100,8 +112,10 @@ function Dashboard({ updateProgress, enqueueSnackbar, closeSnackbar, grafana, ro
         updateProgress({ showProgress : false });
         if (typeof result !== "undefined") {
           if (result) {
-            setProfiles({ count : result.total_count || 0,
-              profiles : result.profiles || [], });
+            setProfiles({
+              count : result.total_count || 0,
+              profiles : result.profiles || [],
+            });
           }
         }
       },
@@ -129,8 +143,10 @@ function Dashboard({ updateProgress, enqueueSnackbar, closeSnackbar, grafana, ro
         updateProgress({ showProgress : false });
         if (typeof result !== "undefined") {
           if (result) {
-            setTests({ count : result.total_count || 0,
-              tests : result.results || [], });
+            setTests({
+              count : result.total_count || 0,
+              tests : result.results || [],
+            });
           }
         }
       },
@@ -142,15 +158,17 @@ function Dashboard({ updateProgress, enqueueSnackbar, closeSnackbar, grafana, ro
     return function (error) {
       updateProgress({ showProgress : false });
 
-      enqueueSnackbar(`${msg}: ${error}`, { variant : "error",
+      enqueueSnackbar(`${msg}: ${error}`, {
+        variant : "error",
         action : function Action(key) {
           return (
-            <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-              <CloseIcon />
+            <IconButton style={iconMedium} key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+              <CloseIcon style={iconMedium}/>
             </IconButton>
           );
         },
-        autoHideDuration : 8000, });
+        autoHideDuration : 8000,
+      });
     };
   }
 
@@ -162,11 +180,11 @@ function Dashboard({ updateProgress, enqueueSnackbar, closeSnackbar, grafana, ro
             <Paper className={classes.paper}>
               <div className={classes.resultContainer}>
                 <div className={classes.paper}>
-                  <div style={{ display : "flex", alignItems : "center" , height : "6.8rem" }}>
-                    <Typography variant="h2" component="div" color="primary" style={{ marginRight : "0.75rem" }}>
+                  <div style={{ display : "flex", alignItems : "center", height : "6.8rem" }}>
+                    <Typography className={classes.resultNum} variant="h2" component="div" color="primary" style={{ marginRight : "0.75rem" }}>
                       {(tests.count).toLocaleString('en')}
                     </Typography>
-                    <Typography variant="body1" style={{ color : "rgba(0, 0, 0, 0.54)" }} component="div">
+                    <Typography variant="body1" className={classes.resultText} component="div">
                       Results
                     </Typography>
                   </div>
@@ -180,10 +198,10 @@ function Dashboard({ updateProgress, enqueueSnackbar, closeSnackbar, grafana, ro
                 <div className={classes.hSep} />
                 <div className={classes.paper}>
                   <div style={{ display : "flex", alignItems : "center", height : "6.8rem" }}>
-                    <Typography variant="h2" component="div" color="primary" style={{ marginRight : "0.75rem" }}>
+                    <Typography className={classes.profileNum} variant="h2" component="div" color="primary" style={{ marginRight : "0.75rem" }}>
                       {profiles.count}
                     </Typography>
-                    <Typography variant="body1" style={{ color : "rgba(0, 0, 0, 0.54)" }} component="div">
+                    <Typography variant="body1" className={classes.profileText} component="div">
                       Profiles
                     </Typography>
                   </div>
@@ -234,4 +252,4 @@ const mapStateToProps = (st) => {
 
 const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(updateProgress, dispatch), });
 
-export default connect(mapStateToProps, mapDispatchToProps)(withRouter(withSnackbar(Dashboard)));
+export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(withRouter(withSnackbar(Dashboard))));

@@ -39,6 +39,13 @@ import (
 	v1 "k8s.io/api/core/v1"
 )
 
+// Returns user info
+// swagger:response userInfo
+type userInfo struct {
+	// in: body
+	Body models.User
+}
+
 // Returns all meshery patterns
 // swagger:response mesheryPatternsResponseWrapper
 type mesheryPatternsResponseWrapper struct {

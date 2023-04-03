@@ -31,6 +31,12 @@ func SystemError(msg string) string {
 	return formatError(msg, cmdSystem)
 }
 
+// SystemTokenError returns a formatted error message with a link to 'token' command usage page
+// in addition to the error message
+func SystemTokenError(msg string) string {
+	return formatError(msg, cmdToken)
+}
+
 func SystemLifeCycleError(msg string, cmd string) string {
 	switch cmd {
 	case "stop":
@@ -179,6 +185,8 @@ func formatError(msg string, cmd cmdType) string {
 		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, providerResetURL)
 	case cmdProvider:
 		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, providerUsageURL)
+	case cmdToken:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, tokenUsageURL)
 	default:
 		return fmt.Sprintf("%s\n", msg)
 	}
@@ -190,8 +198,8 @@ func ErrAttachAuthToken(err error) error {
 }
 
 func ErrFailRequest(err error) error {
-	return errors.New(ErrFailRequestCode, errors.Alert, []string{},
-		[]string{"Failed to make a request"}, []string{}, []string{})
+	return errors.New(ErrFailRequestCode, errors.Alert, []string{"Failed to make a request"},
+		[]string{err.Error()}, []string{}, []string{})
 }
 
 func ErrUnauthenticated() error {

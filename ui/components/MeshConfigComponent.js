@@ -30,6 +30,7 @@ const styles = (theme) => ({
     },
   },
   icon : { width : theme.spacing(2.5), },
+  operatorIcon : {   width : theme.spacing(2.5), filter : theme.palette.secondary.brightness, },
   paper : { margin : theme.spacing(2), padding : theme.spacing(2), },
   heading : { textAlign : "center", },
   configBoxContainer : {
@@ -84,13 +85,6 @@ const styles = (theme) => ({
   },
   uploadCluster : {
     overflow : "hidden"
-  },
-  MenuItem : {
-    backgroundColor : theme.palette.common.white,
-    "&:hover" : {
-      backgroundColor : theme.palette.common.white
-    },
-    pointerEvents : "none"
   },
   OperatorSwitch : {
     pointerEvents : "auto"
@@ -716,7 +710,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
                                   style={!operatorState ? { opacity : 0.5 }: {}}
                                   // onDelete={handleReconfigure}
                                   onClick={() => handleOperatorClick(rowMetaData.rowIndex)}
-                                  icon={<img src="/static/img/meshery-operator.svg" className={classes.icon} />}
+                                  icon={<img src="/static/img/meshery-operator.svg" className={classes.operatorIcon} />}
                                   variant="outlined"
                                   data-cy="chipOperator"
                                 />
@@ -773,7 +767,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
                         <Grid item xs={12} md={5}>
                           <List>
                             <ListItem>
-                              <ListItemText primary="Operator State" secondary={operatorState ? "Active" : "Disabled"} />
+                              <ListItemText primary="Operator State" secondary={operatorState ? "Active" : "Undeployed"} />
                             </ListItem>
                             <ListItem>
                               <ListItemText primary="Operator Version" secondary={operatorVersion} />
@@ -783,7 +777,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
                         <Grid item xs={12} md={5}>
                           <List>
                             <ListItem>
-                              <ListItemText primary="MeshSync State" secondary={meshSyncState || "Disabled"} />
+                              <ListItemText primary="MeshSync State" secondary={meshSyncState || "Undeployed"} />
                             </ListItem>
                             <ListItem>
                               <ListItemText primary="MeshSync Version" secondary={meshSyncVersion} />
@@ -847,8 +841,8 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
     NatsStatusQuery({ k8scontextID : contexts[index].id }).subscribe({
       next : (res) => {
         updateProgress({ showProgress : false });
-        if (res.controller.name === "broker" && res.controller.status.includes("CONNECTED")) {
-          let runningEndpoint = res.controller.status.substring("CONNECTED".length).trim();
+        if (res.controller.name === "MesheryBroker" && res.controller.status.includes("Connected")) {
+          let runningEndpoint = res.controller.status.substring("Connected".length)
           enqueueSnackbar(`Broker was pinged. ${runningEndpoint != "" ? `Running at ${runningEndpoint}` : ""}`, {
             variant : "success",
             action : (key) => (
@@ -862,7 +856,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
           handleError("Meshery Broker could not be reached")("Meshery Server is not connected to Meshery Broker");
         }
 
-        stateUpdater(NATSState, setNATSState, res.controller.status.length !== 0 ? res.controller.status : "UNKNOWN", index)
+        stateUpdater(NATSState, setNATSState, res.controller.status.length !== 0 ? res.controller.status : "Unknown", index)
         stateUpdater(NATSVersion, setNATSVersion, res.controller.version, index);
       },
       error : handleError("NATS status could not be retrieved"),
@@ -896,13 +890,12 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
     MeshsyncStatusQuery(({ k8scontextID : ctxId })).subscribe({
       next : (res) => {
         updateProgress({ showProgress : false });
-        if (res.controller.name === "meshsync") {
+        if (res.controller.name === "MeshSync") {
           setMeshSyncStatusForGivenContext(ctxId, res.controller)
         }
-        if (res.controller.status === DISABLED) {
-          handleError("MeshSync could not be reached")("MeshSync is unavailable");
-        } else {
-          let publishEndpoint = res.controller.status.substring("ENABLED".length).trim()
+
+        if (res.controller.name === "MeshSync" && res.controller.status.includes("Connected")) {
+          let publishEndpoint = res.controller.status.substring("Connected".length)
           enqueueSnackbar(`MeshSync was pinged. ${publishEndpoint != "" ? `Publishing to ${publishEndpoint}` : ""}`, {
             variant : "success",
             action : (key) => (
@@ -912,6 +905,18 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
             ),
             autohideduration : 2000,
           })
+        }  else if (res.controller.name === "MeshSync" && !res.controller.status.includes("Unknown")) {
+          enqueueSnackbar(`MeshSync is not publishing to Meshery Broker`, {
+            variant : "warning",
+            action : (key) => (
+              <IconButton key="close" aria-label="close" color="inherit" onClick={() => closeSnackbar(key)}>
+                <CloseIcon />
+              </IconButton>
+            ),
+            autohideduration : 2000,
+          })
+        } else {
+          handleError("MeshSync could not be reached")("MeshSync is unavailable");
         }
       },
       error : handleError("MeshSync status could not be retrieved"),
