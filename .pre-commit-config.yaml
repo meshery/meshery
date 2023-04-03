@@ -2,6 +2,7 @@ repos:
   -   repo: https://github.com/tekwizely/pre-commit-golang
       rev: master
       hooks:
+
        -   id: go-build-mod
        -   id: go-fmt
        -   id: go-lint
