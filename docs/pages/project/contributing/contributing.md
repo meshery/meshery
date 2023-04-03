@@ -86,8 +86,7 @@ Practices for Production Environments](https://peter.bourgon.org/go-in-productio
 
 #### Prerequisites for building Meshery in your development environment:
 
-1. `Go` version 1.11+ installed if you want to build and/or make changes to the existing code.
+1. `Go` version 1.19 must be installed if you want to build and/or make changes to the existing code.
 1. `GOPATH` environment variable should be configured appropriately
-1. `npm` and `node` should be installed on your machine, preferably the latest versions.
-1. Fork this repository (`git clone https://github.com/layer5io/meshery.git`), clone your forked version of Meshery to your local, preferably outside `GOPATH`. If you happen to checkout Meshery inside your `GOPATH` and you have a version of `Go` prior to version 1.13, please set an environment variable `GO111MODULE=on` to enable GO Modules.
-
+1. `npm` and `node` should be installed on your machine, `node` version 19 or higher are not supported right now.
+1. Fork this repository (`git clone https://github.com/meshery/meshery`), clone your forked version of Meshery to your local, preferably outside `GOPATH`. If you happen to checkout Meshery inside your `GOPATH` and you have a version of `Go` prior to version 1.13, please set an environment variable `GO111MODULE=on` to enable GO Modules.
