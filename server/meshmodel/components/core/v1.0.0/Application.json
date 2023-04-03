@@ -1,6 +1,6 @@
 {
 	"kind": "Application",
-	"apiVersion": "core.oam.dev/v1alpha1",
+	"apiVersion": "core.meshmodel.dev/v1alpha1",
 	"displayName": "Application",
 	"format": "JSON",
 	"metadata": {
