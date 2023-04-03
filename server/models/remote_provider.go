@@ -1655,7 +1655,7 @@ func (l *RemoteProvider) PublishCatalogPattern(req *http.Request, publishPattern
 
 	logrus.Infof("attempting to pubish pattern with id: %s", publishPatternRequest.ID)
 
-	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/publish", l.RemoteProviderURL, ep))
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s", l.RemoteProviderURL, ep))
 	logrus.Debugf("constructed pattern url: %s", remoteProviderURL.String())
 
 	data, err := json.Marshal(publishPatternRequest)
@@ -2121,7 +2121,7 @@ func (l *RemoteProvider) PublishCatalogFilter(req *http.Request, publishFilterRe
 
 	logrus.Infof("attempting to pubish filter with id: %s", publishFilterRequest.ID)
 
-	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/publish", l.RemoteProviderURL, ep))
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s", l.RemoteProviderURL, ep))
 	logrus.Debugf("constructed filter url: %s", remoteProviderURL.String())
 
 	data, err := json.Marshal(publishFilterRequest)
