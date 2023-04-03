@@ -56,6 +56,21 @@
               },
               "version": {
                 "$ref": "https://schema.meshery.io/core.json#versionString"
+              },
+              "intermidiate": {
+                "type": "object",
+                "description": "The field that is required to establish connection between two nodes via third node",
+                "properties": {
+                  "kind": {
+                    "type": "string"
+                  },
+                  "model": {
+                    "type": "string"
+                  },
+                  "version": {
+                    "$ref": "https://schema.meshery.io/core.json#versionString"
+                  }
+                }
               }
             },
             "description": "Optional fields that are a part of the `from` selector. Absence of a field has an implied * meaning."
@@ -79,6 +94,11 @@
             },
             "description": "Optional fields that are a part of the `to` selector. Absence of a field has an implied * meaning."
           }
+        },
+        "allowMultiple": {
+          "type": "boolean",
+          "default": true,
+          "description": "Whether to allow multiple connections of same type between the same two components"
         }
       }
     }
