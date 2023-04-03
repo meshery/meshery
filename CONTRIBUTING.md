@@ -158,6 +158,15 @@ To test code changes on your local machine, run the following command:
 ```
 make golangci-run
 ```
+#### Golang Pre-commit
+In order to ensure consistency, `pre-commit` library is used to make sure code is linted and formatted properly before being published for code review.
+Please follow these [download instructions](https://pre-commit.com/#installation).
+
+Once installed, please run the following command to set up the configured git hook scripts. 
+
+```
+pre-commit install
+```
 
 #### Building Docker image
 
