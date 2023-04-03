@@ -201,7 +201,9 @@ See the [getting started](https://meshery.io/#getting-started) section to quickl
 
 <p style="clear:both;">
 <h3>Cloud Native Lifecycle Management</h3>
-Meshery manages the provisioning, configuration and operation of your Kubernetes clusters, workloads, and service meshes. While supporting hundreds of different types of cloud native infrastructure integrations, Meshery also offers a [catalog of curated design templates](https://meshery.io/catalog) filled with configuration best practices.
+Meshery manages the provisioning, configuration and operation of your Kubernetes clusters, workloads, and service meshes. While supporting hundreds of different types of cloud native infrastructure integrations.
+
+Meshery also offers a [catalog of curated design templates](https://meshery.io/catalog) filled with configuration best practices.
 
 Using a GitOps-centric approach, visually and collaboratively design and manage your infrastructure and microservices. Use Meshery to interoperate your various cloud native systems. With both REST and GraphQL APIs, integrating with Meshery as an extensible platform is facilitated through NATS, CloudEvents, gRPC, Service Mesh Interface (SMI), and Service Mesh Performance (SMP).
 
@@ -227,7 +229,9 @@ Assess your cloud native infrastructure configuration against deployment and ope
   <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/layer5io/layer5/master/src/assets/images/service-mesh-performance/stacked/smp-dark-text.svg" width="18%" align="left" style="margin-left:10px;">
   <img alt="Shows an illustrated light mode meshery logo in light color mode and a dark mode meshery logo dark color mode." src="https://raw.githubusercontent.com/layer5io/layer5/master/src/assets/images/service-mesh-performance/stacked/smp-light-text.svg" width="18%" align="left" style="margin-left:10px;">
 </picture>
-In an effort to produce service mesh agnostic tooling, Meshery uses the [service mesh performance](https://smp-spec.io) as a common format to capture and measure your mesh's performance against a universal service mesh performance index. As a partner of VMware's Multi-Vendor Service Mesh Interoperation (Hamlet) and Service Mesh Interface (SMI), Meshery participates in advancing service mesh adoption through the standardization of APIs.
+In an effort to produce service mesh agnostic tooling, Meshery uses the 
+
+[service mesh performance](https://smp-spec.io) as a common format to capture and measure your mesh's performance against a universal service mesh performance index. As a partner of VMware's Multi-Vendor Service Mesh Interoperation (Hamlet) and Service Mesh Interface (SMI), Meshery participates in advancing service mesh adoption through the standardization of APIs.
 <br /><br />
 
 <p style="clear:both;">
