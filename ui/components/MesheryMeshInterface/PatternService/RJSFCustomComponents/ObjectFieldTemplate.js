@@ -36,6 +36,7 @@ const styles = (theme) => ({
 */
 
 const getRawErrors = (errorSchema) => {
+  if(!errorSchema) return []; 
   const errors = [];
   Object.keys(errorSchema).forEach((key) => {
     if (errorSchema[key].__errors) {
