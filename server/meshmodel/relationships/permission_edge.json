@@ -62,7 +62,8 @@
           "intermidiate": {
             "kind": "ClusterRoleBinding",
             "model": "Kubernetes"
-          }
+          },
+          "allowMultiple": false
         },
         {
           "kind": "Role",
@@ -70,7 +71,8 @@
           "intermidiate": {
             "kind": "ClusterRoleBinding",
             "model": "Kubernetes"
-          }
+          },
+          "allowMultiple": false
         }
       ],
       "to": [

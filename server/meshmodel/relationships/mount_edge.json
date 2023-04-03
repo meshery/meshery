@@ -38,7 +38,8 @@
             "intermidiate": {
               "kind": "PersistentVolumeClaim",
               "model": "Kubernetes"
-            }
+            },
+            "allowMultiple": false
           }
         ],
         "to": [
