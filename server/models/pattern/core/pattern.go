@@ -21,19 +21,22 @@ import (
 
 type prettifier bool
 
-// prettifyEndString will be true in cases of schema prettification where we want to prettify everything and will be false in
-// cases of YAML inputs from users where we want the end input as it is before sending to external systems such as kubernetes.
-// NOTE: For clients which want a complete prettified version, prettifyEndString will be passed true.
-func (p prettifier) Prettify(m map[string]interface{}, prettifyEndString bool) map[string]interface{} {
-	res := ConvertMapInterfaceMapString(m, true, prettifyEndString)
+/*
+The logic and principle for prettification/deprettification.
+1. Specific considerations are made when schema is passed to be prettified like handling kubernetes specific fields.
+2. A general rule of thumb is to never prettify or deprettify the end-user fields, the ones which are entered by USER.
+For non schema files, it would be all end string fields (user input) and for schema files it would be ENUMS as they are the only system defined fields that are used at end user input.
+*/
+func (p prettifier) Prettify(m map[string]interface{}, isSchema bool) map[string]interface{} {
+	res := ConvertMapInterfaceMapString(m, true, isSchema)
 	out, ok := res.(map[string]interface{})
 	if !ok {
 		fmt.Println("failed to cast")
 	}
 	return out
 }
-func (p prettifier) DePrettify(m map[string]interface{}, deprettifyEndString bool) map[string]interface{} {
-	res := ConvertMapInterfaceMapString(m, false, deprettifyEndString)
+func (p prettifier) DePrettify(m map[string]interface{}, isSchema bool) map[string]interface{} {
+	res := ConvertMapInterfaceMapString(m, false, isSchema)
 	out, ok := res.(map[string]interface{})
 	if !ok {
 		fmt.Println("failed to cast")
@@ -45,20 +48,24 @@ func (p prettifier) DePrettify(m map[string]interface{}, deprettifyEndString boo
 // ConvertMapInterfaceMapString converts map[interface{}]interface{} => map[string]interface{}
 //
 // It will also convert []interface{} => []string
-func ConvertMapInterfaceMapString(v interface{}, prettify bool, endString bool) interface{} {
+func ConvertMapInterfaceMapString(v interface{}, prettify bool, isSchema bool) interface{} {
 	switch x := v.(type) {
 	case map[interface{}]interface{}:
 		m := map[string]interface{}{}
 		for k, v2 := range x {
 			switch k2 := k.(type) {
 			case string:
+				if isSchema && k2 == "enum" { //While schema prettification, ENUMS are end system defined end user input and therefore should not be prettified/deprettified
+					m[k2] = v2
+					continue
+				}
 				if prettify {
-					m[manifests.FormatToReadableString(k2)] = ConvertMapInterfaceMapString(v2, prettify, endString)
+					m[manifests.FormatToReadableString(k2)] = ConvertMapInterfaceMapString(v2, prettify, isSchema)
 				} else {
-					m[manifests.DeFormatReadableString(k2)] = ConvertMapInterfaceMapString(v2, prettify, endString)
+					m[manifests.DeFormatReadableString(k2)] = ConvertMapInterfaceMapString(v2, prettify, isSchema)
 				}
 			default:
-				m[fmt.Sprint(k)] = ConvertMapInterfaceMapString(v2, prettify, endString)
+				m[fmt.Sprint(k)] = ConvertMapInterfaceMapString(v2, prettify, isSchema)
 			}
 		}
 		return m
@@ -66,29 +73,35 @@ func ConvertMapInterfaceMapString(v interface{}, prettify bool, endString bool) 
 	case []interface{}:
 		x2 := make([]interface{}, len(x))
 		for i, v2 := range x {
-			x2[i] = ConvertMapInterfaceMapString(v2, prettify, endString)
+			x2[i] = ConvertMapInterfaceMapString(v2, prettify, isSchema)
 		}
 		return x2
 	case map[string]interface{}:
 		m := map[string]interface{}{}
 		foundFormatIntOrString := false
 		for k, v2 := range x {
-			if prettify {
-				m[manifests.FormatToReadableString(k)] = ConvertMapInterfaceMapString(v2, prettify, endString)
+			if isSchema && k == "enum" { //While schema prettification, ENUMS are end system defined end user input and therefore should not be prettified/deprettified
+				m[k] = v2
+			} else if prettify {
+				m[manifests.FormatToReadableString(k)] = ConvertMapInterfaceMapString(v2, prettify, isSchema)
 			} else {
-				m[manifests.DeFormatReadableString(k)] = ConvertMapInterfaceMapString(v2, prettify, endString)
+				m[manifests.DeFormatReadableString(k)] = ConvertMapInterfaceMapString(v2, prettify, isSchema)
 			}
-			//Apply this fix only when the format specifies string|int and type specifies string therefore when there is a contradiction
-			if k == "format" && v2 == "int-or-string" {
-				foundFormatIntOrString = true
+			if isSchema {
+				//Apply this fix only when the format specifies string|int and type specifies string therefore when there is a contradiction
+				if k == "format" && v2 == "int-or-string" {
+					foundFormatIntOrString = true
+				}
 			}
 		}
-		if x["type"] == "string" && foundFormatIntOrString {
-			m["type"] = "integer"
+		if isSchema {
+			if x["type"] == "string" && foundFormatIntOrString {
+				m["type"] = "integer"
+			}
 		}
 		return m
 	case string:
-		if endString {
+		if isSchema {
 			if prettify {
 				return manifests.FormatToReadableString(x) //Whitespace formatting should be done at the time of prettification only
 			}
