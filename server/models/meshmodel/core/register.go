@@ -211,7 +211,7 @@ func getCRDsFromManifest(manifest string, arrAPIResources []string) []crdRespons
 				continue
 			}
 			if kind == resource {
-				crd, err := fieldVal.LookupPath(cue.ParsePath("properties.spec")).MarshalJSON()
+				crd, err := fieldVal.MarshalJSON()
 				if err != nil {
 					fmt.Printf("%v", err)
 					continue
@@ -221,6 +221,18 @@ func getCRDsFromManifest(manifest string, arrAPIResources []string) []crdRespons
 				apiVersion, _ := versionCue.String()
 				if g, _ := groupCue.String(); g != "" {
 					apiVersion = g + "/" + apiVersion
+				}
+				modified := make(map[string]interface{}) //Remove the given fields which is either not required by End user (like status) or is prefilled by system (like apiVersion, kind and metadata)
+				err = json.Unmarshal(crd, &modified)
+				if err != nil {
+					fmt.Printf("%v", err)
+					continue
+				}
+				deleteProperties(modified)
+				crd, err = json.Marshal(modified)
+				if err != nil {
+					fmt.Printf("%v", err)
+					continue
 				}
 				res = append(res, crdResponse{
 					name:       resource,
@@ -233,6 +245,21 @@ func getCRDsFromManifest(manifest string, arrAPIResources []string) []crdRespons
 		}
 	}
 	return res
+}
+
+var fieldsToDelete = [4]string{"apiVersion", "kind", "status", "metadata"}
+
+func deleteProperties(m map[string]interface{}) {
+	key := "properties"
+	if m[key] == nil {
+		return
+	}
+	if prop, ok := m[key].(map[string]interface{}); ok && prop != nil {
+		for _, f := range fieldsToDelete {
+			delete(prop, f)
+		}
+		m[key] = prop
+	}
 }
 
 type k8sMetadata struct {
