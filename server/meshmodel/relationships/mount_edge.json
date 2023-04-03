@@ -34,7 +34,11 @@
         "from": [
           {
             "kind": "Pod",
-            "model": "Kubernetes"
+            "model": "Kubernetes",
+            "intermidiate": {
+              "kind": "PersistentVolumeClaim",
+              "model": "Kubernetes"
+            }
           }
         ],
         "to": [

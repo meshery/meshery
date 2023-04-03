@@ -4,12 +4,12 @@
   "metadata": {
     "description": "A relationship that represents a set of permissions"
   },
-	"model":{
-		"name": "core",
-		"version": "v1.0.0",
-		"displayName": "Core",
-		"category": {
-      "name":"Cloud Native Application",
+  "model": {
+    "name": "core",
+    "version": "v1.0.0",
+    "displayName": "Core",
+    "category": {
+      "name": "Cloud Native Application",
       "metadata": null
     },
     "metadata": {}
@@ -26,7 +26,7 @@
           "kind": "Role",
           "model": "Kubernetes"
         },
-        { 
+        {
           "kind": "ClusterRoleBinding",
           "model": "Kubernetes"
         },
@@ -54,15 +54,23 @@
         }
       ]
     },
-    "allow":{
+    "allow": {
       "from": [
         {
           "kind": "ClusterRole",
-          "model": "Kubernetes"
+          "model": "Kubernetes",
+          "intermidiate": {
+            "kind": "ClusterRoleBinding",
+            "model": "Kubernetes"
+          }
         },
         {
           "kind": "Role",
-          "model": "Kubernetes"
+          "model": "Kubernetes",
+          "intermidiate": {
+            "kind": "ClusterRoleBinding",
+            "model": "Kubernetes"
+          }
         }
       ],
       "to": [
