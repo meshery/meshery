@@ -29,6 +29,22 @@ const styles = (theme) => ({
   },
 
 });
+/**
+ * Get the raw errors from the error schema.
+ * @param {Object} errorSchema error schema.
+ * @returns {Array} raw errors.
+*/
+
+const getRawErrors = (errorSchema) => {
+  if (!errorSchema) return [];
+  const errors = [];
+  Object.keys(errorSchema).forEach((key) => {
+    if (errorSchema[key].__errors) {
+      errors.push(...errorSchema[key].__errors);
+    }
+  });
+  return errors;
+};
 
 const ObjectFieldTemplate = ({
   description,
@@ -43,10 +59,11 @@ const ObjectFieldTemplate = ({
   formData,
   onAddClick,
   classes,
-  rawErrors
+  errorSchema
 }) => {
   const additional = schema?.__additional_property; // check if the object is additional
   const theme = useTheme();
+  const rawErrors = getRawErrors(errorSchema)
 
   // If the parent type is an `array`, then expand the current object.
   const [show, setShow] = React.useState(false);
@@ -95,7 +112,7 @@ const ObjectFieldTemplate = ({
                 <HelpOutlineIcon width="14px" height="14px"  fill={theme.palette.type === 'dark' ? "white" : "black"}   style={{ marginLeft : "4px", verticalAlign : "middle", ...iconSmall }}/>
               </IconButton>
             </CustomTextTooltip>}
-          {rawErrors?.length &&
+          {rawErrors.length !==0 &&
             <CustomTextTooltip backgroundColor={ERROR_COLOR} title={rawErrors?.map((error, index) => (
               <div key={index}>{error}</div>
             ))}>

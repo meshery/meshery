@@ -309,7 +309,7 @@ This executes the block of code only if the given condition is true. It is execu
 If the condition is true, the output would be:
 
 ```
-    How are you?
+    These shoes are awesome!
 ```
 
 ### `for` loop
