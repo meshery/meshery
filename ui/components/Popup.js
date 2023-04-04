@@ -101,9 +101,11 @@ function MeshMapEarlyAccessCardPopup({ capabilitiesRegistry }) {
 }
 
 export function MeshMapEarlyAccessCard({ rootStyle = {}, closeForm = () => { }, capabilitiesRegistry }) {
-  const classes = styles();
   const signUpText = "Sign up";
+  const signupHeader = "Get early access to MeshMap!";
+  const classes = styles();
   const [buttonText, setButtonText] = useState(signUpText);
+  const [title, setTitle] = useState(signupHeader)
   const { push } = useRouter()
 
   const handleButtonClick = (e) => {
@@ -118,8 +120,10 @@ export function MeshMapEarlyAccessCard({ rootStyle = {}, closeForm = () => { }, 
   useState(() => {
     const isMeshMapUser = isMeshMapRegisteredUser(capabilitiesRegistry);
     if (isMeshMapUser) {
-      setButtonText("Explore")
+      setTitle("Try out MeshMap Now!")
+      setButtonText("Explore!")
     } else {
+      setTitle(signupHeader);
       setButtonText(signUpText)
     }
   }, [capabilitiesRegistry])
@@ -130,7 +134,7 @@ export function MeshMapEarlyAccessCard({ rootStyle = {}, closeForm = () => { }, 
       style={rootStyle}
     >
       <div className={classes.headerWrapper}>
-        <Typography className={classes.header} variant="h6">Get early access to MeshMap!
+        <Typography className={classes.header} variant="h6">{title}
         </Typography>
 
         <div style={{ display : "flex", justifyContent : "flex-end", whiteSpace : "nowrap", position : "relative" }}>
