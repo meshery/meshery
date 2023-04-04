@@ -11,12 +11,18 @@ $background-color: #fdfdfd;
 $brand-color: #2a7ae2;
 
 $grey-color: #1D2C33;
-
+$grey-color-light: lighten($grey-color, 40%);
+$grey-color-dark: darken($grey-color, 25%);
 // Width of the content area
 $content-width: 800px;
 
 $on-palm: 600px;
 $on-laptop: 800px;
+
+h5 {
+  text-transform: uppercase;
+  font-weight: bold;
+}
 
 @mixin swagger-method($color) {
   .swagger-method-title {
@@ -32,8 +38,8 @@ $on-laptop: 800px;
 
 .swagger-path {
   font-weight: normal;
-  font-size: $base-font-size * 1.125;
-  margin: 0 0 20px 0;
+  font-size: $base-font-size * 1.2;
+  margin: 5.5rem 0 1rem 0;
   font-family: open sans, -apple-system, BlinkMacSystemFont, segoe ui, Roboto, helvetica neue, Arial, sans-serif,
     apple color emoji, segoe ui emoji, segoe ui symbol;
 }
@@ -55,8 +61,8 @@ $on-laptop: 800px;
 
 .swagger-method-description {
   padding-bottom: 10px;
-  font-size: $base-font-size;
-  margin: 0;
+  font-size: $base-font-size * 1.2;
+  margin-left: 2rem;
 }
 
 .swagger-method-link {
@@ -114,14 +120,15 @@ $on-laptop: 800px;
 }
 
 .swagger-method-details {
-  padding: 10px 0 20px 0;
+  padding: .5rem .5rem .5rem 2rem;
   display: none;
+  font-size: $base-font-size * 1.1;
   font-weight: 400;
   &.open {
     display: block;
   }
   p {
-    font-size: 1.25rem;
+    font-size: $base-font-size * 1.1;
   }
 }
 
@@ -170,11 +177,10 @@ $on-laptop: 800px;
 .swagger-parameters-table {
   border-spacing: 0px;
   border-collapse: collapse;
+  padding-left: 4rem;
   width: 100%;
   display: table-header-group;
-  font-size: 1.2rem;
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-  border-radius: 15px;
+  font-size: 1.35rem;
   
   th,
   td {
@@ -184,16 +190,16 @@ $on-laptop: 800px;
 
   th {
     background-color: $grey-color;
-    color: white;
-    font-weight: 700;
+    color: #eee;
+    font-weight: 500;
   }
   
   thead tr {
     :first-child {
-      border-radius: 15px 0 0;
+      // border-radius: 15px 0 0;
     }
     :last-child {
-      border-radius: 0 15px 0 0;
+      // border-radius: 0 15px 0 0;
     }
   }
 
@@ -202,6 +208,9 @@ $on-laptop: 800px;
     hr {
       margin: 0;
     }
+  }
+  tr:nth-child(odd) {
+    background: lighten($grey-color-light, 6%);
   }
 }
 

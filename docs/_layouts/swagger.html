@@ -13,7 +13,7 @@ layout: default
 
 {% for route in sorted_paths %}
 <div class="swagger-path">
-    <h2 class="swagger-path">{{ route[0] }}</h>
+    <h2 class="swagger-path">{{ route[0] }}</h2>
 {% if route[0] contains '/api/oam' %}
     <span class="deprecated-label">Deprecated</span>
 {% endif %}
@@ -26,13 +26,13 @@ layout: default
             </a>
         </h3>
         <div class="swagger-method-details">
-            <!-- Description -->
+            <h5>Description</h5>
             <md-block>
               <span class="swagger-method-description" >{{method[1].description}}</span>
             </md-block>
             {% if method[1].parameters %}
             <div class="swagger-parameters">
-                <!-- Parameters -->
+                <h5>Parameters</h5>
                 <table class="swagger-parameters-table">
                     <thead>
                         <tr>
@@ -67,7 +67,6 @@ layout: default
                                 {% endif %}
                             </td>
                         </tr>
-                        <tr><td colspan="4" class="line"><hr/></td></tr>
                         {% endfor %}
                     </tbody>
                 </table>
@@ -75,7 +74,7 @@ layout: default
             {% endif %}
             {% if method[1].responses %}
             <div class="swagger-response">
-                <!-- Responses -->
+                <h5>Responses</h5>
                 {% for response in method[1].responses %}
                 <div class="swagger-response-{{ response[0] }}">
                     <p class="swagger-response-title">
@@ -109,7 +108,6 @@ layout: default
                             </td>
                             <td>{{ parameter[1].type }}</td>
                         </tr>
-                        <tr><td colspan="4" class="line"><hr/></td></tr>
                         {% endfor %}
                     </tbody>
                 </table>
