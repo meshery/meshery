@@ -120,8 +120,8 @@ export function MeshMapEarlyAccessCard({ rootStyle = {}, closeForm = () => { }, 
   useState(() => {
     const isMeshMapUser = isMeshMapRegisteredUser(capabilitiesRegistry);
     if (isMeshMapUser) {
-      setTitle("Try out MeshMap Now!")
-      setButtonText("Explore!")
+      setTitle("Your access to collaborative cloud native management is enabled!")
+      setButtonText("Open MeshMap")
     } else {
       setTitle(signupHeader);
       setButtonText(signUpText)
