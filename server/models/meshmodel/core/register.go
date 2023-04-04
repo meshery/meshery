@@ -124,7 +124,6 @@ func GetK8sMeshModelComponents(kubeconfig []byte) ([]v1alpha1.ComponentDefinitio
 		m := make(map[string]interface{})
 		m[customResourceKey] = customResources[crd.kind]
 		m[namespacedKey] = kindToNamespace[crd.kind]
-		m["hasSpec"] = crd.hasSpec
 		apiVersion := crd.apiVersion
 		c := v1alpha1.ComponentDefinition{
 			Format: v1alpha1.JSON,
@@ -173,7 +172,6 @@ type crdResponse struct {
 	name       string
 	kind       string
 	apiVersion string
-	hasSpec    bool
 	schema     string
 }
 
@@ -218,38 +216,28 @@ func getCRDsFromManifest(manifest string, arrAPIResources []string) []crdRespons
 					fmt.Printf("%v", err)
 					continue
 				}
-				m := make(map[string]interface{})
+				modified := make(map[string]interface{}) //Remove the given fields which is either not required by End user (like status) or is prefilled by system (like apiVersion, kind and metadata)
 				versionCue := fieldVal.LookupPath(cue.ParsePath(`"x-kubernetes-group-version-kind"[0].version`))
 				groupCue := fieldVal.LookupPath(cue.ParsePath(`"x-kubernetes-group-version-kind"[0].group`))
 				apiVersion, _ := versionCue.String()
 				if g, _ := groupCue.String(); g != "" {
 					apiVersion = g + "/" + apiVersion
 				}
-				err = json.Unmarshal(crd, &m)
+				err = json.Unmarshal(crd, &modified)
 				if err != nil {
-					panic(err)
+					fmt.Printf("%v", err)
+					continue
 				}
-				prop := make(map[string]interface{})
-				prop, _ = m["properties"].(map[string]interface{})
-				delete(prop, "apiVersion")
-				delete(prop, "kind")
-				delete(prop, "status")
-				delete(prop, "metadata")
-				hasSpec := false
-				if prop["spec"] != nil {
-					hasSpec = true
-					m["properties"] = prop["spec"].(map[string]interface{})["properties"].(map[string]interface{})
-					m["type"] = "object"
-				}
-				crdm, err := json.Marshal(m)
+				deleteProperties(modified)
+				crd, err = json.Marshal(modified)
 				if err != nil {
-					panic(err)
+					fmt.Printf("%v", err)
+					continue
 				}
 				res = append(res, crdResponse{
 					name:       resource,
 					kind:       name,
-					schema:     string(crdm),
-					hasSpec:    hasSpec,
+					schema:     string(crd),
 					apiVersion: apiVersion, //add apiVersion
 				})
 			}

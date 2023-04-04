@@ -91,12 +91,11 @@ func createK8sResourceStructure(comp v1alpha1.Component) map[string]interface{} 
 			"labels":      comp.ObjectMeta.Labels,
 		},
 	}
-	if comp.ObjectMeta.Annotations["design.meshmodel.io.hasSpec"] == "true" {
-		component["spec"] = comp.Spec.Settings
-	} else {
-		for k, v := range comp.Spec.Settings {
-			component[k] = v
+	for k, v := range comp.Spec.Settings {
+		if k == "apiVersion" || k == "kind" || k == "metadata" {
+			continue
 		}
+		component[k] = v
 	}
 	return component
 }
