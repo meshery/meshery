@@ -273,7 +273,7 @@ func (l *RemoteProvider) InitiateLogin(w http.ResponseWriter, r *http.Request, _
 }
 
 func (l *RemoteProvider) fetchUserDetails(tokenString string) (*User, error) {
-	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + "/user")
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + "/api/identity/users/profile")
 	req, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
 
 	resp, err := l.DoRequest(req, tokenString)
