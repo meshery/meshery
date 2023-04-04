@@ -1075,76 +1075,63 @@ meshery-custom-end -->
   <li><strong>Fill-in</strong> a <a href="https://layer5.io/newcomers">community member form</a> community member form to gain access to community resources.</li>
 </ul>
 
-<details>
-    <summary><h2 id="general-contribution-flow"><a name="contributing">General Contribution Flow</a></h2></summary>
-    <p>
+<h2 id="general-contribution-flow"><a name="contributing">General Contribution Flow</a></h2>
 
-        
-        <!-- <h2 id="general-contribution-flow"><a name="contributing">General Contribution Flow</a></h2> -->
-        
-        <p>To contribute to Meshery, please follow the fork-and-pull request workflow described <a href="/v0.5/v0.5/project/contributing/CONTRIBUTING-gitflow.md">here</a>.</p>
-        
-        <h3 id="signing-off-on-commits-developer-certificate-of-origin"><a name="commit-signing">Signing-off on Commits (Developer Certificate of Origin)</a></h3>
-        
-        <p>To contribute to this project, you must agree to the Developer Certificate of
-            Origin (DCO) for each commit you make. The DCO is a simple statement that you,
-        as a contributor, have the legal right to make the contribution.</p>
-        
-        <p>See the <a href="https://developercertificate.org">DCO</a> file for the full text of what you must agree to
-            and how it works <a href="https://github.com/probot/dco#how-it-works">here</a>.
-            To signify that you agree to the DCO for contributions, you simply add a line to each of your
-            git commit messages:</p>
-            
-            <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Signed-off-by: Jane Smith &lt;jane.smith@example.com&gt;
-            </code></pre></div></div>
-            
-            <p>In most cases, you can add this signoff to your commit automatically with the
-                <code class="language-plaintext highlighter-rouge">-s</code> or <code class="language-plaintext highlighter-rouge">--signoff</code> flag to <code class="language-plaintext highlighter-rouge">git commit</code>. You must use your real name and a reachable email
-                address (sorry, no pseudonyms or anonymous contributions). An example of signing off on a commit:</p>
-                
-                <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ git commit -s -m “my commit message w/signoff”
-                </code></pre></div></div>
-                
-                <p>To ensure all your commits are signed, you may choose to add this alias to your global <code class="language-plaintext highlighter-rouge">.gitconfig</code>:</p>
-                
-                <p><em>~/.gitconfig</em></p>
-                
-                <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[alias]
-                    amend = commit -s --amend
-                    cm = commit -s -m
-                    commit = commit -s
-                </code></pre></div></div>
-                
-                <p>Or you may configure your IDE, for example, Visual Studio Code to automatically sign-off commits for you:</p>
-                
-                <p><a href="https://user-images.githubusercontent.com/7570704/64490167-98906400-d25a-11e9-8b8a-5f465b854d49.png"><img src="https://user-images.githubusercontent.com/7570704/64490167-98906400-d25a-11e9-8b8a-5f465b854d49.png" width="50%" /><a></a></a></p>
-    </p>
-</details>
+<p>To contribute to Meshery, please follow the fork-and-pull request workflow described <a href="/v0.5/v0.5/project/contributing/CONTRIBUTING-gitflow.md">here</a>.</p>
 
-<details>
-    <summary><h3 id="meshery-contribution-flow"><a name="contributing-meshery">Meshery Contribution Flow</a></h3></summary>
-    <p>
+<h3 id="signing-off-on-commits-developer-certificate-of-origin"><a name="commit-signing">Signing-off on Commits (Developer Certificate of Origin)</a></h3>
 
-        
-        <!-- <h3 id="meshery-contribution-flow"><a name="contributing-meshery">Meshery Contribution Flow</a></h3> -->
-    
-        <p>Meshery is written in <code class="language-plaintext highlighter-rouge">Go</code> (Golang) and leverages Go Modules. UI is built on React and Next.js. To make building and packaging easier a <code class="language-plaintext highlighter-rouge">Makefile</code> is included in the main repository folder.</p>
-        
-        <p>Relevant coding style guidelines are the <a href="https://code.google.com/p/go-wiki/wiki/CodeReviewComments">Go Code Review Comments</a> and the <em>Formatting and style</em> section of Peter Bourgon’s <a href="https://peter.bourgon.org/go-in-production/#formatting-and-style">Go: Best
-            Practices for Production Environments</a>.</p>
-            
-            <p><strong>Please note</strong>: All <code class="language-plaintext highlighter-rouge">make</code> commands should be run in a terminal from within the Meshery’s main folder.</p>
-            
-    <h4 id="prerequisites-for-building-meshery-in-your-development-environment">Prerequisites for building Meshery in your development environment:</h4>
-    
-    <ol>
-        <li><code class="language-plaintext highlighter-rouge">Go</code> version 1.11+ installed if you want to build and/or make changes to the existing code.</li>
-        <li><code class="language-plaintext highlighter-rouge">GOPATH</code> environment variable should be configured appropriately</li>
-        <li><code class="language-plaintext highlighter-rouge">npm</code> and <code class="language-plaintext highlighter-rouge">node</code> should be installed on your machine, preferably the latest versions.</li>
-        <li>Fork this repository (<code class="language-plaintext highlighter-rouge">git clone https://github.com/layer5io/meshery.git</code>), clone your forked version of Meshery to your local, preferably outside <code class="language-plaintext highlighter-rouge">GOPATH</code>. If you happen to checkout Meshery inside your <code class="language-plaintext highlighter-rouge">GOPATH</code> and you have a version of <code class="language-plaintext highlighter-rouge">Go</code> prior to version 1.13, please set an environment variable <code class="language-plaintext highlighter-rouge">GO111MODULE=on</code> to enable GO Modules.</li>
-    </ol>
-    </p>
-</details>
+<p>To contribute to this project, you must agree to the Developer Certificate of
+Origin (DCO) for each commit you make. The DCO is a simple statement that you,
+as a contributor, have the legal right to make the contribution.</p>
+
+<p>See the <a href="https://developercertificate.org">DCO</a> file for the full text of what you must agree to
+and how it works <a href="https://github.com/probot/dco#how-it-works">here</a>.
+To signify that you agree to the DCO for contributions, you simply add a line to each of your
+git commit messages:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Signed-off-by: Jane Smith &lt;jane.smith@example.com&gt;
+</code></pre></div></div>
+
+<p>In most cases, you can add this signoff to your commit automatically with the
+<code class="language-plaintext highlighter-rouge">-s</code> or <code class="language-plaintext highlighter-rouge">--signoff</code> flag to <code class="language-plaintext highlighter-rouge">git commit</code>. You must use your real name and a reachable email
+address (sorry, no pseudonyms or anonymous contributions). An example of signing off on a commit:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ git commit -s -m “my commit message w/signoff”
+</code></pre></div></div>
+
+<p>To ensure all your commits are signed, you may choose to add this alias to your global <code class="language-plaintext highlighter-rouge">.gitconfig</code>:</p>
+
+<p><em>~/.gitconfig</em></p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[alias]
+  amend = commit -s --amend
+  cm = commit -s -m
+  commit = commit -s
+</code></pre></div></div>
+
+<p>Or you may configure your IDE, for example, Visual Studio Code to automatically sign-off commits for you:</p>
+
+<p><a href="https://user-images.githubusercontent.com/7570704/64490167-98906400-d25a-11e9-8b8a-5f465b854d49.png"><img src="https://user-images.githubusercontent.com/7570704/64490167-98906400-d25a-11e9-8b8a-5f465b854d49.png" width="50%" /><a></a></a></p>
+
+
+<h3 id="meshery-contribution-flow"><a name="contributing-meshery">Meshery Contribution Flow</a></h3>
+
+<p>Meshery is written in <code class="language-plaintext highlighter-rouge">Go</code> (Golang) and leverages Go Modules. UI is built on React and Next.js. To make building and packaging easier a <code class="language-plaintext highlighter-rouge">Makefile</code> is included in the main repository folder.</p>
+
+<p>Relevant coding style guidelines are the <a href="https://code.google.com/p/go-wiki/wiki/CodeReviewComments">Go Code Review Comments</a> and the <em>Formatting and style</em> section of Peter Bourgon’s <a href="https://peter.bourgon.org/go-in-production/#formatting-and-style">Go: Best
+Practices for Production Environments</a>.</p>
+
+<p><strong>Please note</strong>: All <code class="language-plaintext highlighter-rouge">make</code> commands should be run in a terminal from within the Meshery’s main folder.</p>
+
+<h4 id="prerequisites-for-building-meshery-in-your-development-environment">Prerequisites for building Meshery in your development environment:</h4>
+
+<ol>
+  <li><code class="language-plaintext highlighter-rouge">Go</code> version 1.11+ installed if you want to build and/or make changes to the existing code.</li>
+  <li><code class="language-plaintext highlighter-rouge">GOPATH</code> environment variable should be configured appropriately</li>
+  <li><code class="language-plaintext highlighter-rouge">npm</code> and <code class="language-plaintext highlighter-rouge">node</code> should be installed on your machine, preferably the latest versions.</li>
+  <li>Fork this repository (<code class="language-plaintext highlighter-rouge">git clone https://github.com/layer5io/meshery.git</code>), clone your forked version of Meshery to your local, preferably outside <code class="language-plaintext highlighter-rouge">GOPATH</code>. If you happen to checkout Meshery inside your <code class="language-plaintext highlighter-rouge">GOPATH</code> and you have a version of <code class="language-plaintext highlighter-rouge">Go</code> prior to version 1.13, please set an environment variable <code class="language-plaintext highlighter-rouge">GO111MODULE=on</code> to enable GO Modules.</li>
+</ol>
 
 
 <script>

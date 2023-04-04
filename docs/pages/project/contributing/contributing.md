@@ -33,61 +33,67 @@ Follow these steps and you'll be right at home.
 - **Contribute** by grabbing any open issue with the [help-wanted label](https://github.com/meshery/meshery/issues/) and jump in. If needed, create a [new issue](https://github.com/meshery/meshery/issues/new/choose). All [pull requests](https://github.com/meshery/meshery/pulls) should reference an open issue. Include keywords in your pull request descriptions, as well as commit messages, to [automatically close issues in GitHub](https://help.github.com/en/github/managing-your-work-on-github/closing-issues-using-keywords).
 - **Fill-in** a [community member form](https://layer5.io/newcomers) community member form to gain access to community resources.
 
-## General Contribution Flow
+<details>
+  <summary><h2>General Contribution Flow</h2></summary>
 
-To contribute to Meshery, from creating a fork to creating pull request, please follow the basic fork-and-pull request workflow described [here]({{site.baseurl}}/project/contributing/contributing-gitflow).
+  To contribute to Meshery, from creating a fork to creating pull request, please follow the basic fork-and-pull request workflow described [here]({{site.baseurl}}/project/contributing/contributing-gitflow).
 
-### Signing-off on Commits (Developer Certificate of Origin)
+  ### Signing-off on Commits (Developer Certificate of Origin)
 
-To contribute to this project, you must agree to the Developer Certificate of
-Origin (DCO) for each commit you make. The DCO is a simple statement that you,
-as a contributor, have the legal right to make the contribution.
+  To contribute to this project, you must agree to the Developer Certificate of
+  Origin (DCO) for each commit you make. The DCO is a simple statement that you,
+  as a contributor, have the legal right to make the contribution.
 
-See the [DCO](https://developercertificate.org) file for the full text of what you must agree to
-and how it works [here](https://github.com/probot/dco#how-it-works).
-To signify that you agree to the DCO for contributions, you simply add a line to each of your
-git commit messages:
+  See the [DCO](https://developercertificate.org) file for the full text of what you must agree to
+  and how it works [here](https://github.com/probot/dco#how-it-works).
+  To signify that you agree to the DCO for contributions, you simply add a line to each of your
+  git commit messages:
 
-```
-Signed-off-by: Jane Smith <jane.smith@example.com>
-```
+  ```
+  Signed-off-by: Jane Smith <jane.smith@example.com>
+  ```
+  
+  In most cases, you can add this signoff to your commit automatically with the
+  `-s` or `--signoff` flag to `git commit`. You must use your real name and a reachable email
+  address (sorry, no pseudonyms or anonymous contributions). An example of signing off on a commit:
 
-In most cases, you can add this signoff to your commit automatically with the
-`-s` or `--signoff` flag to `git commit`. You must use your real name and a reachable email
-address (sorry, no pseudonyms or anonymous contributions). An example of signing off on a commit:
+  ```
+  $ git commit -s -m “my commit message w/signoff”
+  ```
 
-```
-$ git commit -s -m “my commit message w/signoff”
-```
+  
+  To ensure all your commits are signed, you may choose to add this alias to your global `.gitconfig`:
 
-To ensure all your commits are signed, you may choose to add this alias to your global `.gitconfig`:
+  _~/.gitconfig_
 
-_~/.gitconfig_
+  ```
+  [alias]
+    amend = commit -s --amend
+    cm = commit -s -m
+    commit = commit -s
+  ```
 
-```
-[alias]
-  amend = commit -s --amend
-  cm = commit -s -m
-  commit = commit -s
-```
+  
+  Or you may configure your IDE, for example, Visual Studio Code to automatically sign-off commits for you:
 
-Or you may configure your IDE, for example, Visual Studio Code to automatically sign-off commits for you:
+  <a href="https://user-images.githubusercontent.com/7570704/64490167-98906400-d25a-11e9-8b8a-5f465b854d49.png" ><img   src="https://user-images.githubusercontent.com/7570704/64490167-98906400-d25a-11e9-8b8a-5f465b854d49.png" width="50%"><a>
+</details>
 
-<a href="https://user-images.githubusercontent.com/7570704/64490167-98906400-d25a-11e9-8b8a-5f465b854d49.png" ><img src="https://user-images.githubusercontent.com/7570704/64490167-98906400-d25a-11e9-8b8a-5f465b854d49.png" width="50%"><a>
 
-### Meshery Contribution Flow
+<details>
+  <summary><h3>Meshery Contribution Flow</h3></summary>
 
-Meshery is written in `Go` (Golang) and leverages Go Modules. UI is built on React and Next.js. To make building and packaging easier a `Makefile` is included in the main repository folder.
-
-Relevant coding style guidelines are the [Go Code Review Comments](https://code.google.com/p/go-wiki/wiki/CodeReviewComments) and the _Formatting and style_ section of Peter Bourgon's [Go: Best
-Practices for Production Environments](https://peter.bourgon.org/go-in-production/#formatting-and-style).
-
-**Please note**: All `make` commands should be run in a terminal from within the Meshery's main folder.
-
-#### Prerequisites for building Meshery in your development environment:
-
-1. `Go` version 1.11+ installed if you want to build and/or make changes to the existing code.
-1. `GOPATH` environment variable should be configured appropriately
-1. `npm` and `node` should be installed on your machine, preferably the latest versions.
-1. Fork this repository (`git clone https://github.com/layer5io/meshery.git`), clone your forked version of Meshery to your local, preferably outside `GOPATH`. If you happen to checkout Meshery inside your `GOPATH` and you have a version of `Go` prior to version 1.13, please set an environment variable `GO111MODULE=on` to enable GO Modules.
-
+  Meshery is written in `Go` (Golang) and leverages Go Modules. UI is built on React and Next.js. To make building and   packaging easier a `Makefile` is included in the main repository folder.
+  
+  Relevant coding style guidelines are the [Go Code Review Comments](https://code.google.com/p/go-wiki/wiki/  CodeReviewComments) and the _Formatting and style_ section of Peter Bourgon's [Go: Best
+  Practices for Production Environments](https://peter.bourgon.org/go-in-production/#formatting-and-style).
+  
+  **Please note**: All `make` commands should be run in a terminal from within the Meshery's main folder.
+  
+  #### Prerequisites for building Meshery in your development environment:
+  
+  1. `Go` version 1.11+ installed if you want to build and/or make changes to the existing code.
+  1. `GOPATH` environment variable should be configured appropriately
+  1. `npm` and `node` should be installed on your machine, preferably the latest versions.
+  1. Fork this repository (`git clone https://github.com/layer5io/meshery.git`), clone your forked version of Meshery to your   local, preferably outside `GOPATH`. If you happen to checkout Meshery inside your `GOPATH` and you have a version of `Go`   prior to version 1.13, please set an environment variable `GO111MODULE=on` to enable GO Modules.
+</details>
