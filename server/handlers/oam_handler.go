@@ -722,6 +722,8 @@ func getComponentFieldPathFromK8sFieldPath(path string) (newpath string) {
 	}
 	return fmt.Sprintf("%s.%s", "settings", path)
 }
+
+const ArtifactHubComponentsHandler = "kubernetes-artifacthub" //The components generated in output directory will be handled by kubernetes
 func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) (string, error) { // Marshal the component
 	jsonComp, err := json.Marshal(ccp.Component)
 	if err != nil {
@@ -754,6 +756,7 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) (string, 
 				string(jsonConfig),
 				sap.opIsDelete,
 				sap.eventbuffer,
+				host.Hostname,
 			)
 			return resp, err
 		}

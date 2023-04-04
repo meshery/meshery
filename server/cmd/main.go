@@ -43,7 +43,7 @@ var (
 const (
 	// DefaultProviderURL is the provider url for the "none" provider
 	DefaultProviderURL           = "https://meshery.layer5.io"
-	ArtifactHubComponentsHandler = "kubernetes" //The components generated in output directory will be handled by kubernetes
+	ArtifactHubComponentsHandler = "kubernetes-artifacthub" //The components generated in output directory will be handled by kubernetes
 )
 
 func main() {

@@ -15,7 +15,8 @@ import (
 	"github.com/layer5io/meshkit/utils/kubernetes"
 )
 
-func ProcessOAM(kconfigs []string, oamComps []string, oamConfig string, isDel bool, eb *events.EventStreamer) (string, error) {
+const ArtifactHubComponentsHandler = "kubernetes-artifacthub" //The components generated in output directory will be handled by kubernetes
+func ProcessOAM(kconfigs []string, oamComps []string, oamConfig string, isDel bool, eb *events.EventStreamer, hostname string) (string, error) {
 	var comps []v1alpha1.Component
 	var config v1alpha1.Configuration
 
@@ -49,6 +50,7 @@ func ProcessOAM(kconfigs []string, oamComps []string, oamConfig string, isDel bo
 		go func(kcli *kubernetes.Client) {
 			defer wg.Done()
 			id, _ := uuid.NewV4()
+			deployedCharts := make(map[string]bool)
 			for _, comp := range comps {
 				var req meshes.EventsResponse
 				if comp.Spec.Model == "core" {
@@ -91,9 +93,77 @@ func ProcessOAM(kconfigs []string, oamComps []string, oamConfig string, isDel bo
 
 						msgs = append(msgs, "Deleted application: "+comp.Name)
 					}
-
 					eb.Publish(&req)
 					continue
+				}
+				if hostname == ArtifactHubComponentsHandler {
+					comp.ObjectMeta.Annotations["design.meshmodel.io.hasSpec"] = "true"
+					if comp.Annotations["helmURL"] != "" {
+						var act kubernetes.HelmChartAction
+						if !isDel {
+							act = kubernetes.INSTALL
+							req = meshes.EventsResponse{
+								Component:     "core",
+								ComponentName: "Kubernetes",
+								EventType:     meshes.EventType_INFO,
+								Summary:       fmt.Sprintf("Detected helm chart for model (deploying helm chart)%s: %s", strings.TrimSuffix(comp.Spec.Type, ".K8s"), comp.Name),
+								OperationId:   id.String(),
+							}
+							msgs = append(msgs, fmt.Sprintf("Deployed %s: %s", strings.TrimSuffix(comp.Spec.Type, ".K8s"), comp.Name))
+						} else {
+							act = kubernetes.UNINSTALL
+							req = meshes.EventsResponse{
+								Component:     "core",
+								ComponentName: "Kubernetes",
+								EventType:     meshes.EventType_INFO,
+								Summary:       fmt.Sprintf("Detected helm chart for model (undeploying helm chart)%s: %s", strings.TrimSuffix(comp.Spec.Type, ".K8s"), comp.Name),
+								OperationId:   id.String(),
+							}
+							msgs = append(msgs, fmt.Sprintf("Deleted %s: %s", strings.TrimSuffix(comp.Spec.Type, ".K8s"), comp.Name))
+						}
+						eb.Publish(&req)
+						deployedCharts[comp.Annotations["helmURL"]] = true
+						err := kcli.ApplyHelmChart(kubernetes.ApplyHelmChartConfig{
+							URL:             comp.Annotations["helmURL"],
+							Namespace:       comp.Namespace,
+							CreateNamespace: true,
+							Action:          act,
+						})
+						if err != nil {
+							errs = append(errs, err)
+							var summary string
+							if isDel {
+								summary = fmt.Sprintf("error undeploying helm chart%s: %s", strings.TrimSuffix(comp.Spec.Type, ".K8s"), comp.Name)
+							} else {
+								summary = fmt.Sprintf("error deploying helm chart%s: %s", strings.TrimSuffix(comp.Spec.Type, ".K8s"), comp.Name)
+							}
+							req = meshes.EventsResponse{
+								Component:     "core",
+								ComponentName: "Kubernetes",
+								EventType:     meshes.EventType_ERROR,
+								Summary:       summary,
+								Details:       err.Error(),
+								OperationId:   id.String(),
+							}
+							eb.Publish(&req)
+							continue
+						}
+						var summary string
+						if isDel {
+							summary = fmt.Sprintf("Undeployed helm chart%s: %s", strings.TrimSuffix(comp.Spec.Type, ".K8s"), comp.Name)
+						} else {
+							summary = fmt.Sprintf("Deployed helm chart%s: %s", strings.TrimSuffix(comp.Spec.Type, ".K8s"), comp.Name)
+						}
+						req = meshes.EventsResponse{
+							Component:     "core",
+							ComponentName: "Kubernetes",
+							EventType:     meshes.EventType_INFO,
+							Summary:       summary,
+							Details:       "successfully deployed helm chart",
+							OperationId:   id.String(),
+						}
+						eb.Publish(&req)
+					}
 				}
 				//All other components will be handled directly by Kubernetes
 				//TODO: Add a Mapper utility function which carries the logic for X hosts can handle Y components under Z circumstances.

@@ -361,6 +361,9 @@ func RegisterK8sMeshModelComponents(_ context.Context, config []byte, ctxID stri
 	count := 0
 	for _, c := range man {
 		writeK8sMetadata(&c, reg)
+		// if c.Model.Version == "v1.25.2" {
+		// 	writeMeshModelComponentsOnFileSystem(c, "/Users/ashishtiwari/dev/meshery/server/meshmodel/components/kubernetes/v1.25.2")
+		// }
 		err = reg.RegisterEntity(meshmodel.Host{
 			Hostname:  "kubernetes",
 			ContextID: ctxID,
