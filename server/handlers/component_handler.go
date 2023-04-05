@@ -76,6 +76,8 @@ func (h *Handler) GetMeshmodelModelsByCategories(rw http.ResponseWriter, r *http
 //
 // ```?order={field}``` orders on the passed field
 //
+// ```?search={[true/false]}``` If search is true then a greedy search is performed
+//
 // ```?sort={[asc/desc]}``` Default behavior is asc
 //
 // ```?page={page-number}``` Default page number is 1
@@ -181,6 +183,8 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 //
 // ```?order={field}``` orders on the passed field
 //
+// ```?search={[true/false]}``` If search is true then a greedy search is performed
+//
 // ```?sort={[asc/desc]}``` Default behavior is asc
 //
 // ```?page={page-number}``` Default page number is 1
@@ -281,6 +285,8 @@ func (h *Handler) GetMeshmodelCategories(rw http.ResponseWriter, r *http.Request
 // ```?page={page-number}``` Default page number is 1
 //
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
+//
+// ```?search={[true/false]}``` If search is true then a greedy search is performed
 // responses:
 // 200: []Category
 func (h *Handler) GetMeshmodelCategoriesByName(rw http.ResponseWriter, r *http.Request) {
@@ -328,6 +334,8 @@ func (h *Handler) GetMeshmodelCategoriesByName(rw http.ResponseWriter, r *http.R
 // ```?order={field}``` orders on the passed field
 //
 // ```?sort={[asc/desc]}``` Default behavior is asc
+//
+// ```?search={[true/false]}``` If search is true then a greedy search is performed
 //
 // ```?page={page-number}``` Default page number is 1
 //
@@ -398,6 +406,8 @@ func (h *Handler) GetMeshmodelComponentsByNameByModelByCategory(rw http.Response
 //
 // ```?sort={[asc/desc]}``` Default behavior is asc
 //
+// ```?search={[true/false]}``` If search is true then a greedy search is performed
+//
 // ```?page={page-number}``` Default page number is 1
 //
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
@@ -464,6 +474,8 @@ func (h *Handler) GetMeshmodelComponentsByNameByCategory(rw http.ResponseWriter,
 // ```?order={field}``` orders on the passed field
 //
 // ```?sort={[asc/desc]}``` Default behavior is asc
+//
+// ```?search={[true/false]}``` If search is true then a greedy search is performed
 //
 // ```?page={page-number}``` Default page number is 1
 //
@@ -534,6 +546,8 @@ func (h *Handler) GetMeshmodelComponentsByNameByModel(rw http.ResponseWriter, r 
 // ```?sort={[asc/desc]}``` Default behavior is asc
 //
 // ```?trim={[true]}``` When trim is set to true, the underlying schemas are not returned for entities
+//
+// ```?search={[true/false]}``` If search is true then a greedy search is performed
 //
 // ```?page={page-number}``` Default page number is 1
 //
@@ -677,6 +691,7 @@ func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.R
 // ```?order={field}``` orders on the passed field
 //
 // ```?search={componentname}``` If search is non empty then a greedy search is performed
+// ```?sort={[asc/desc]}``` Default behavior is asc
 //
 // ```?page={page-number}``` Default page number is 1
 //
@@ -752,6 +767,7 @@ func (h *Handler) GetMeshmodelComponentByModelByCategory(rw http.ResponseWriter,
 // ```?order={field}``` orders on the passed field
 //
 // ```?search={componentname}``` If search is non empty then a greedy search is performed
+// ```?sort={[asc/desc]}``` Default behavior is asc
 //
 // ```?page={page-number}``` Default page number is 1
 //
