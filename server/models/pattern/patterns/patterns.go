@@ -96,7 +96,12 @@ func ProcessOAM(kconfigs []string, oamComps []string, oamConfig string, isDel bo
 					eb.Publish(&req)
 					continue
 				}
+				fmt.Println("host: ", hostname)
 				if hostname == ArtifactHubComponentsHandler {
+					settings := comp.Spec.Settings
+					comp.Spec.Settings = make(map[string]interface{})
+					comp.Spec.Settings["spec"] = settings
+					fmt.Println("setting is", comp.Spec.Settings)
 					comp.ObjectMeta.Annotations["design.meshmodel.io.hasSpec"] = "true"
 					if comp.Annotations["helmURL"] != "" {
 						var act kubernetes.HelmChartAction

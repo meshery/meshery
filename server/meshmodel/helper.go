@@ -10,6 +10,7 @@ import (
 
 	"github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/models"
+	"github.com/layer5io/meshery/server/models/pattern/patterns"
 	"github.com/layer5io/meshkit/logger"
 	"github.com/layer5io/meshkit/models/meshmodel"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
@@ -134,11 +135,11 @@ func (erh *EntityRegistrationHelper) watchComponents(ctx context.Context) {
 		select {
 		case comp := <-erh.componentChan:
 			err = erh.regManager.RegisterEntity(meshmodel.Host{
-				Hostname: ArtifactHubComponentsHandler,
+				Hostname: patterns.ArtifactHubComponentsHandler,
 			}, comp)
 		case rel := <-erh.relationshipChan:
 			err = erh.regManager.RegisterEntity(meshmodel.Host{
-				Hostname: ArtifactHubComponentsHandler,
+				Hostname: patterns.ArtifactHubComponentsHandler,
 			}, rel)
 
 		//Watching and logging errors from error channel
