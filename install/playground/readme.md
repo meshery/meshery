@@ -1,6 +1,9 @@
 
 # Meshery Playground Bare Metal Configuration 
 
+### DNS
+playground.meshery.io - 147.28.141.9
+
 ### Host: meshery02
 
 #### Static IP address configuration
