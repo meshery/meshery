@@ -29,12 +29,8 @@
       ],
       "to": [
         {
-          "model": "Kubernetes"
-        },
-        {
-          "kind":"Application",
-          "model": "Core"
-        }       
+          "model": "*"
+        }    
       ]
     },
     "deny": {
