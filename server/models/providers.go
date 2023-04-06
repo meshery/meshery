@@ -193,6 +193,19 @@ type K8sContextPersistResponse struct {
 	Inserted   bool       `json:"inserted,omitempty"`
 }
 
+type Connection struct {
+	Kind             string                 `json:"kind,omitempty"`
+	SubType          string                 `json:"sub_type,omitempty"`
+	Type             string                 `json:"type,omitempty"`
+	MetaData         map[string]interface{} `json:"metadata,omitempty"`
+	CredentialSecret map[string]interface{} `json:"credential_secret,omitempty"`
+}
+
+type ExtensionProxyResponse struct {
+	Body       []byte `json:"body,omitempty"`
+	StatusCode int    `json:"status_code,omitempty"`
+}
+
 // Feature is a type to store the features of the provider
 type Feature string
 
@@ -204,9 +217,9 @@ const (
 
 	PersistResult Feature = "persist-result" // /result
 
-	PersistSMIResults Feature = "persist-smi-results" // /smi/results
+	// PersistSMIResults Feature = "persist-smi-results" // /smi/results
 
-	PersistSMIResult Feature = "persist-smi-result" // /smi/result
+	PersistSMIResults Feature = "persist-smi-results" // /smi/results
 
 	PersistMetrics Feature = "persist-metrics" // /result/metrics
 
@@ -231,6 +244,10 @@ const (
 	CloneMesheryPatterns Feature = "clone-meshery-patterns" // /patterns/clone
 
 	CloneMesheryFilters Feature = "clone-meshery-filters" // /filters/clone
+
+	ShareDesigns Feature = "share-designs"
+
+	PersistConnection Feature = "persist-connection"
 )
 
 const (
@@ -257,6 +274,11 @@ const (
 
 	MesheryControllerHandlersKey ContextKey = "mesherycontrollerhandlerskey"
 	MeshSyncDataHandlersKey      ContextKey = "meshsyncdatahandlerskey"
+
+	RegistryManagerKey ContextKey = "registrymanagerkey"
+
+	MesheryServerURL         ContextKey = "mesheryserverurl"
+	MesheryServerCallbackURL ContextKey = "mesheryservercallbackurl"
 )
 
 // IsSupported returns true if the given feature is listed as one of
@@ -309,6 +331,7 @@ type Provider interface {
 	ExtractToken(http.ResponseWriter, *http.Request)
 	GetSession(req *http.Request) error
 	GetUserDetails(*http.Request) (*User, error)
+	GetUserByID(req *http.Request, userID string) ([]byte, error)
 	GetProviderToken(req *http.Request) (string, error)
 	UpdateToken(http.ResponseWriter, *http.Request) string
 	Logout(http.ResponseWriter, *http.Request) error
@@ -344,12 +367,12 @@ type Provider interface {
 	GetKubeClient() *mesherykube.Client
 
 	SaveMesheryPattern(tokenString string, pattern *MesheryPattern) ([]byte, error)
-	GetMesheryPatterns(tokenString, page, pageSize, search, order string) ([]byte, error)
+	GetMesheryPatterns(tokenString, page, pageSize, search, order string, updatedAfter string) ([]byte, error)
 	GetCatalogMesheryPatterns(tokenString string, search, order string) ([]byte, error)
 	PublishCatalogPattern(req *http.Request, publishPatternRequest *MesheryCatalogPatternRequestBody) ([]byte, error)
 	DeleteMesheryPattern(req *http.Request, patternID string) ([]byte, error)
 	DeleteMesheryPatterns(req *http.Request, patterns MesheryPatternDeleteRequestBody) ([]byte, error)
-	CloneMesheryPattern(req *http.Request, patternID string) ([]byte, error)
+	CloneMesheryPattern(req *http.Request, patternID string, clonePatternRequest *MesheryClonePatternRequestBody) ([]byte, error)
 	GetMesheryPattern(req *http.Request, patternID string) ([]byte, error)
 	RemotePatternFile(req *http.Request, resourceURL, path string, save bool) ([]byte, error)
 	SaveMesheryPatternResource(token string, resource *PatternResource) (*PatternResource, error)
@@ -362,7 +385,7 @@ type Provider interface {
 	GetCatalogMesheryFilters(tokenString string, search, order string) ([]byte, error)
 	PublishCatalogFilter(req *http.Request, publishFilterRequest *MesheryCatalogFilterRequestBody) ([]byte, error)
 	DeleteMesheryFilter(req *http.Request, filterID string) ([]byte, error)
-	CloneMesheryFilter(req *http.Request, filterID string) ([]byte, error)
+	CloneMesheryFilter(req *http.Request, filterID string, cloneFilterRequest *MesheryCloneFilterRequestBody) ([]byte, error)
 	GetMesheryFilter(req *http.Request, filterID string) ([]byte, error)
 	GetMesheryFilterFile(req *http.Request, filterID string) ([]byte, error)
 	RemoteFilterFile(req *http.Request, resourceURL, path string, save bool) ([]byte, error)
@@ -370,9 +393,10 @@ type Provider interface {
 	SaveMesheryApplication(tokenString string, application *MesheryApplication) ([]byte, error)
 	SaveApplicationSourceContent(token string, applicationID string, sourceContent []byte) error
 	GetApplicationSourceContent(req *http.Request, applicationID string) ([]byte, error)
-	GetMesheryApplications(tokenString, page, pageSize, search, order string) ([]byte, error)
+	GetMesheryApplications(tokenString, page, pageSize, search, order string, updatedAfter string) ([]byte, error)
 	DeleteMesheryApplication(req *http.Request, applicationID string) ([]byte, error)
 	GetMesheryApplication(req *http.Request, applicationID string) ([]byte, error)
+	ShareDesign(req *http.Request) (int, error)
 
 	SavePerformanceProfile(tokenString string, performanceProfile *PerformanceProfile) ([]byte, error)
 	GetPerformanceProfiles(tokenString string, page, pageSize, search, order string) ([]byte, error)
@@ -384,5 +408,8 @@ type Provider interface {
 	GetSchedule(req *http.Request, scheduleID string) ([]byte, error)
 	DeleteSchedule(req *http.Request, scheduleID string) ([]byte, error)
 
-	ExtensionProxy(req *http.Request) ([]byte, error)
+	ExtensionProxy(req *http.Request) (*ExtensionProxyResponse, error)
+
+	SaveConnection(req *http.Request, conn *Connection, token string, skipTokenCheck bool) error
+	DeleteMesheryConnection() error
 }

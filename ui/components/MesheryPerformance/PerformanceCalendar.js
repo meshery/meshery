@@ -12,12 +12,94 @@ import "react-big-calendar/lib/css/react-big-calendar.css";
 import GenericModal from "../GenericModal";
 import GrafanaCustomCharts from "../telemetry/grafana/GrafanaCustomCharts";
 import MesheryChart from "../MesheryChart";
-import { Paper } from "@material-ui/core";
+import { Paper, withStyles } from "@material-ui/core";
 import { Typography } from "@material-ui/core";
 import fetchAllResults from '../graphql/queries/FetchAllResultsQuery'
+import { iconMedium } from "../../css/icons.styles";
 
 const localizer = momentLocalizer(moment);
+const styles = (theme) => ({
+  paper : { padding : "3rem" },
+  resultContainer : {
+    display : "flex",
+    flexDirection : "row",
+    justifyContent : "space-between",
+    ["@media (max-width: 830px)"] : {
+      flexDirection : "column"
+    },
+  },
+  vSep : {
+    height : "10.4rem",
+    width : "1px",
+    background : "black",
+    marginTop : "1.1rem",
+    bottom : "0",
+    left : "36%",
+    backgroundColor : "#36454f",
+    opacity : "0.7",
+    ["@media (max-width: 830px)"] : {
+      display : "none",
+    }
+  },
+  hSep : {
+    display : "none",
+    ["@media (max-width: 830px)"] : {
+      display : "block",
+      width : "100%",
+      height : "1px",
+      background : "black",
+      marginTop : "1.1rem",
+      bottom : "0",
+      left : "36%",
+      backgroundColor : "#36454f",
+      opacity : "0.7",
+    }
+  },
+  calender : {
+    "& .rbc-off-range-bg" : {
+      backgroundColor : theme.palette.type === 'dark' ? "#a9a9a9" : "#e6e6e6",
+      color : theme.palette.type === 'dark' ? "white" : "black",
+    },
+    "& .rbc-off-range " : {
+      color : theme.palette.secondary.lightText,
+    },
+    "& .rbc-btn-group" : {
+      color : theme.palette.secondary.lightText,
+    },
+    "& .rbc-toolbar button" : {
 
+      color : theme.palette.secondary.lightText,
+
+
+    },
+    "& .rbc-today" : {
+      backgroundColor : theme.palette.type === 'dark' ? "#505050" : "#eaf6ff",
+    },
+    "& .rbc-day-slot .rbc-time-slot" : {
+      borderTop : `1px solid ${theme.palette.type === 'dark' ? "#555555" : "#eaf6ff"}`,
+    },
+    "& .rbc-toolbar button.rbc-active" : {
+      backgroundColor : theme.palette.type === 'dark' ? "#505050" : "#eaf6ff",
+      color : theme.palette.type === 'dark' ? "white" : "black",
+    },
+    "& .rbc-toolbar button:hover" : {
+      backgroundColor : theme.palette.type === 'dark' ? "rgba(0, 0, 0, 0.54)" : "rgba(255, 255, 255, 0.54)"
+    },
+    "& .rbc-toolbar button.rbc-active:hover" : {
+      backgroundColor : theme.palette.type === 'dark' ? "#909090" : "#eaf6ff",
+    },
+    "& .rbc-toolbar button:focus " : {
+      backgroundColor : theme.palette.type === 'dark' ? "#505050" : "#eaf6ff",
+      color : theme.palette.type === 'dark' ? "white" : "black",
+    },
+  },
+  resultText : {
+    color : theme.palette.secondary.lightText,
+  },
+  profileText : {
+    color : theme.palette.secondary.lightText,
+  },
+});
 // const PERFORMANCE_PROFILE_RESULTS_URL = "/api/user/performance/profiles/results";
 
 /**
@@ -68,12 +150,16 @@ function generateCalendarEventsFromResults(results) {
  */
 function generateDateRange(from, to) {
   if (from && to) {
-    return { start : moment(from).format("YYYY-MM-DD"),
-      end : moment(to).format("YYYY-MM-DD"), };
+    return {
+      start : moment(from).format("YYYY-MM-DD"),
+      end : moment(to).format("YYYY-MM-DD"),
+    };
   }
 
-  return { start : moment().startOf("M").format("YYYY-MM-DD"),
-    end : moment().add(1, "M").startOf("M").format("YYYY-MM-DD"), };
+  return {
+    start : moment().startOf("M").format("YYYY-MM-DD"),
+    end : moment().add(1, "M").startOf("M").format("YYYY-MM-DD"),
+  };
 }
 
 /**
@@ -87,7 +173,7 @@ function generateDateRange(from, to) {
  * @returns
  */
 function PerformanceCalendar({
-  style, updateProgress, enqueueSnackbar, closeSnackbar
+  style, updateProgress, enqueueSnackbar, closeSnackbar, classes
 }) {
   const [time, setTime] = useState(generateDateRange());
   const [results, setResults] = useState([]);
@@ -130,15 +216,17 @@ function PerformanceCalendar({
     return function (error) {
       updateProgress({ showProgress : false });
 
-      enqueueSnackbar(`${msg}: ${error}`, { variant : "error",
+      enqueueSnackbar(`${msg}: ${error}`, {
+        variant : "error",
         action : function Action(key) {
           return (
-            <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-              <CloseIcon />
+            <IconButton style={iconMedium} key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+              <CloseIcon style={iconMedium}/>
             </IconButton>
           );
         },
-        autoHideDuration : 8000, });
+        autoHideDuration : 8000,
+      });
     };
   }
 
@@ -156,9 +244,11 @@ function PerformanceCalendar({
     const endTime = new Date(startTime.getTime() + row.ActualDuration / 1000000);
     return (
       <Paper
-        style={{ width : "100%",
+        style={{
+          width : "100%",
           maxWidth : "90vw",
-          padding : "0.5rem" }}
+          padding : "0.5rem"
+        }}
       >
         <div>
           <Typography variant="h6" gutterBottom align="center">Performance Graph</Typography>
@@ -183,7 +273,6 @@ function PerformanceCalendar({
       </Paper>
     );
   }
-
   return (
     <div style={style}>
       <Calendar
@@ -194,6 +283,7 @@ function PerformanceCalendar({
         showMultiDayTimes
         defaultDate={new Date()}
         localizer={localizer}
+        className={classes.calender}
         style={{ height : "100%", }}
         // @ts-ignore
         onRangeChange={(range) => setTime(generateDateRange(range.start, range.end))}
@@ -212,4 +302,4 @@ function PerformanceCalendar({
 
 const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(updateProgress, dispatch), });
 
-export default connect(null, mapDispatchToProps)(withSnackbar(PerformanceCalendar));
+export default withStyles(styles)(connect(null, mapDispatchToProps)(withSnackbar(PerformanceCalendar)));

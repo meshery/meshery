@@ -28,9 +28,7 @@ Meshery will use this *ServiceAccount* to interact with your managed Kubernetes 
 1. Use this authentication token to execute the following command:
     
  <pre class="codeblock-pre"><div class="codeblock">
- <div class="clipboardjs">
- $ mesheryctl system config gke --token *PATH_TO_TOKEN*
- </div></div>
+ <div class="clipboardjs">$ mesheryctl system config gke --token *PATH_TO_TOKEN*</div></div>
  </pre>
 
 This command updates your kubeconfig to provide Meshery with access to your managed Kubernetes instance.
@@ -48,23 +46,17 @@ If the [Automatic Configuration](#automatic-configuration-recommended) procedure
 1. Execute this shell script identifying ServiceAccount name and Namespace arguments, like so:
     
     <pre class="codeblock-pre"><div class="codeblock">
-    <div class="clipboardjs">
-    ./generate_kubeconfig_gke.sh cluster-admin-sa-gke default
-    </div></div>
+    <div class="clipboardjs">./generate_kubeconfig_gke.sh cluster-admin-sa-gke default</div></div>
     </pre>
     
 1. Once the script is complete, you may proceed to start Meshery with the GKE-compatible configuration by executing:
     
     <pre class="codeblock-pre"><div class="codeblock">
-    <div class="clipboardjs">
-    $ mesheryctl system start
-    </div></div>
+    <div class="clipboardjs">$ mesheryctl system start</div></div>
     </pre>
     - Meshery server supports customizing authentication flow callback URL, which can be configured in the following way
     <pre class="codeblock-pre"><div class="codeblock">
-    <div class="clipboardjs">
-    $ MESHERY_SERVER_CALLBACK_URL=https://custom-host mesheryctl system start
-    </div></div>
+    <div class="clipboardjs">$ MESHERY_SERVER_CALLBACK_URL=https://custom-host mesheryctl system start</div></div>
     </pre>
 1. In your browser, navigate to Meshery (e.g., `http://localhost:9081`) and login.
 1. Under Settings --> Environment, provide the generated file (config-cluster-admin-sa-gke-default.yaml) as the kubeconfig file.

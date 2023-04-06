@@ -31,6 +31,12 @@ func SystemError(msg string) string {
 	return formatError(msg, cmdSystem)
 }
 
+// SystemTokenError returns a formatted error message with a link to 'token' command usage page
+// in addition to the error message
+func SystemTokenError(msg string) string {
+	return formatError(msg, cmdToken)
+}
+
 func SystemLifeCycleError(msg string, cmd string) string {
 	switch cmd {
 	case "stop":
@@ -63,7 +69,7 @@ func SystemContextSubError(msg string, cmd string) string {
 	}
 }
 
-// SystemChannelSubError returns a formatted error message with a link to `context` command usage page
+// SystemChannelSubError returns a formatted error message with a link to `channel` command usage page
 // in addition to the error message
 func SystemChannelSubError(msg string, cmd string) string {
 	switch cmd {
@@ -75,6 +81,25 @@ func SystemChannelSubError(msg string, cmd string) string {
 		return formatError(msg, cmdChannelSet)
 	default:
 		return formatError(msg, cmdChannel)
+	}
+}
+
+// SystemProviderSubError returns a formatted error message with a link to `provider` command usage page
+// in addition to the error message
+func SystemProviderSubError(msg string, cmd string) string {
+	switch cmd {
+	case "switch":
+		return formatError(msg, cmdProviderSwitch)
+	case "view":
+		return formatError(msg, cmdProviderView)
+	case "set":
+		return formatError(msg, cmdProviderSet)
+	case "list":
+		return formatError(msg, cmdProviderList)
+	case "reset":
+		return formatError(msg, cmdProviderReset)
+	default:
+		return formatError(msg, cmdProvider)
 	}
 }
 
@@ -148,6 +173,20 @@ func formatError(msg string, cmd cmdType) string {
 		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, channelSetURL)
 	case cmdChannel:
 		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, channelUsageURL)
+	case cmdProviderView:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, providerViewURL)
+	case cmdProviderList:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, providerListURL)
+	case cmdProviderSet:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, providerSetURL)
+	case cmdProviderSwitch:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, providerSwitchURL)
+	case cmdProviderReset:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, providerResetURL)
+	case cmdProvider:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, providerUsageURL)
+	case cmdToken:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, tokenUsageURL)
 	default:
 		return fmt.Sprintf("%s\n", msg)
 	}
@@ -159,8 +198,8 @@ func ErrAttachAuthToken(err error) error {
 }
 
 func ErrFailRequest(err error) error {
-	return errors.New(ErrFailRequestCode, errors.Alert, []string{},
-		[]string{"Failed to make a request"}, []string{}, []string{})
+	return errors.New(ErrFailRequestCode, errors.Alert, []string{"Failed to make a request"},
+		[]string{err.Error()}, []string{}, []string{})
 }
 
 func ErrUnauthenticated() error {

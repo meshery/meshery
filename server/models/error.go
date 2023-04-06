@@ -89,6 +89,8 @@ const (
 	ErrGetPackageCode                     = "2252"
 	ErrTokenRevokeCode                    = "2253"
 	ErrTokenIntrospectCode                = "2254"
+	ErrShareDesignCode                    = "2255"
+	ErrUnreachableRemoteProviderCode      = "2256"
 )
 
 var (
@@ -196,7 +198,7 @@ func ErrPraseUnverified(err error) error {
 }
 
 func ErrDataRead(err error, r string) error {
-	return errors.New(ErrDataReadCode, errors.Alert, []string{"Eeror occurred while reading from the Reader", r}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrDataReadCode, errors.Alert, []string{"Error occurred while reading from the Reader", r}, []string{err.Error()}, []string{}, []string{})
 }
 
 func ErrResultData() error {
@@ -337,4 +339,12 @@ func ErrSavingSeededComponents(err error, content string) error {
 
 func ErrDownloadingSeededComponents(err error, content string) error {
 	return errors.New(ErrDownloadingSeededComponentsCode, errors.Alert, []string{"Could not download seed content for" + content}, []string{err.Error()}, []string{"The content is not present at the specified url endpoint", "HTTP requests failed"}, []string{"Make sure the content is available at the endpoints", "Make sure that Github is reachable and the http requests are not failing"})
+}
+
+func ErrShareDesign(err error) error {
+	return errors.New(ErrShareDesignCode, errors.Alert, []string{"cannot make design public"}, []string{err.Error()}, []string{"email address provided might not be valid", "insufficient permission"}, []string{"Ensure that you are the owner of the design you are sharing", "Try again later", "Try using an alternate email address"})
+}
+
+func ErrUnreachableRemoteProvider(err error) error {
+	return errors.New(ErrUnreachableRemoteProviderCode, errors.Alert, []string{"Could not reach remote provider"}, []string{"", err.Error()}, []string{"Remote provider server may be down or not accepting requests"}, []string{"Make sure remote provider server is healthy and accepting requests"})
 }

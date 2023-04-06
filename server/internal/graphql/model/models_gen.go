@@ -33,6 +33,7 @@ type ApplicationResult struct {
 	Type            *NullString `json:"type"`
 	UserID          string      `json:"user_id"`
 	Location        *Location   `json:"location"`
+	Visibility      string      `json:"visibility"`
 	CreatedAt       *string     `json:"created_at"`
 	UpdatedAt       *string     `json:"updated_at"`
 }
@@ -177,6 +178,25 @@ type Location struct {
 	Type   *string `json:"type"`
 }
 
+type MeshModelComponent struct {
+	Name  string `json:"name"`
+	Count int    `json:"count"`
+}
+
+type MeshModelRelationship struct {
+	Name  string `json:"name"`
+	Count int    `json:"count"`
+}
+
+type MeshModelSummary struct {
+	Components    []*MeshModelComponent    `json:"components"`
+	Relationships []*MeshModelRelationship `json:"relationships"`
+}
+
+type MeshModelSummarySelector struct {
+	Type string `json:"type"`
+}
+
 type MeshSyncEvent struct {
 	Type      string      `json:"type"`
 	Object    interface{} `json:"object"`
@@ -254,12 +274,13 @@ type OperatorStatusPerK8sContext struct {
 }
 
 type PageFilter struct {
-	Page     string  `json:"page"`
-	PageSize string  `json:"pageSize"`
-	Order    *string `json:"order"`
-	Search   *string `json:"search"`
-	From     *string `json:"from"`
-	To       *string `json:"to"`
+	Page         string  `json:"page"`
+	PageSize     string  `json:"pageSize"`
+	Order        *string `json:"order"`
+	Search       *string `json:"search"`
+	From         *string `json:"from"`
+	To           *string `json:"to"`
+	UpdatedAfter *string `json:"updated_after"`
 }
 
 type PatternPageResult struct {
@@ -331,6 +352,12 @@ type Resource struct {
 type ServiceMeshFilter struct {
 	Type          *MeshType `json:"type"`
 	K8sClusterIDs []string  `json:"k8sClusterIDs"`
+}
+
+type TelemetryComp struct {
+	Name   string `json:"name"`
+	Spec   string `json:"spec"`
+	Status string `json:"status"`
 }
 
 type MeshType string

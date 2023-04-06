@@ -13,9 +13,10 @@ import CloseIcon from "@material-ui/icons/Close";
 import ReactSelectWrapper from "./ReactSelectWrapper";
 import { updateAdaptersInfo, updateProgress } from "../lib/store";
 import dataFetch from "../lib/data-fetch";
+import { iconMedium } from "../css/icons.styles";
 
 const styles = (theme) => ({
-  wrapperClass : { padding : theme.spacing(5), },
+  wrapperClass : { padding : theme.spacing(5),backgroundColor : theme.palette.secondary.elevatedComponents,borderBottomLeftRadius : theme.spacing(1),borderBottomRightRadius : theme.spacing(1), },
   buttons : { display : "flex",
     justifyContent : "flex-end", },
   button : { marginTop : theme.spacing(3),
@@ -37,6 +38,10 @@ const styles = (theme) => ({
   fileInputStyle : { opacity : "0.01", },
   icon : { width : theme.spacing(2.5), },
   istioIcon : { width : theme.spacing(1.5), },
+  chip : {
+    marginRight : theme.spacing(1),
+    marginBottom : theme.spacing(1),
+  }
 });
 
 class MeshAdapterConfigComponent extends React.Component {
@@ -142,7 +147,7 @@ class MeshAdapterConfigComponent extends React.Component {
             autoHideDuration : 2000,
             action : (key) => (
               <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
-                <CloseIcon />
+                <CloseIcon  style={iconMedium} />
               </IconButton>
             ),
           });
@@ -241,6 +246,7 @@ class MeshAdapterConfigComponent extends React.Component {
             return (
               <Chip
                 key={adapter.uniqueID}
+                className={classes.chip}
                 label={adapter.adapter_location}
                 onDelete={self.handleDelete(adapter.adapter_location)}
                 onClick={self.handleClick(adapter.adapter_location)}

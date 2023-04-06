@@ -1,3 +1,17 @@
+// Copyright 2023 Layer5, Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package main
 
 import (
@@ -102,7 +116,7 @@ func doc() {
 	fmt.Println("Documentation generated at " + markDownPath)
 }
 
-func printOptions(buf *bytes.Buffer, cmd *cobra.Command, name string) error {
+func printOptions(buf *bytes.Buffer, cmd *cobra.Command) error {
 	flags := cmd.NonInheritedFlags()
 	flags.SetOutput(buf)
 	if flags.HasAvailableFlags() {
@@ -122,7 +136,7 @@ func printOptions(buf *bytes.Buffer, cmd *cobra.Command, name string) error {
 }
 
 // GenMarkdownCustom creates custom markdown output.
-func GenMarkdownCustom(cmd *cobra.Command, w io.Writer, linkHandler func(string) string) error {
+func GenMarkdownCustom(cmd *cobra.Command, w io.Writer) error {
 	cmd.InitDefaultHelpCmd()
 	cmd.InitDefaultHelpFlag()
 
@@ -140,8 +154,15 @@ func GenMarkdownCustom(cmd *cobra.Command, w io.Writer, linkHandler func(string)
 		buf.WriteString(fmt.Sprintf("<pre class='codeblock-pre'>\n<div class='codeblock'>\n%s\n\n</div>\n</pre> \n\n", cmd.UseLine()))
 	}
 
-	var picLine = ""
-	var picComment = ""
+	picLine, ok := cmd.Annotations["link"]
+	if !ok {
+		picLine = ""
+	}
+
+	picComment, ok := cmd.Annotations["caption"]
+	if !ok {
+		picComment = ""
+	}
 
 	if len(cmd.Example) > 0 {
 		buf.WriteString("## Examples\n\n")
@@ -151,15 +172,6 @@ func GenMarkdownCustom(cmd *cobra.Command, w io.Writer, linkHandler func(string)
 				if strings.HasPrefix(examples[i], "//") {
 					// Description Line
 					buf.WriteString(strings.Replace(examples[i], "// ", "", -1) + "\n")
-				} else if strings.HasPrefix(examples[i], "#") {
-					// If command has screenshot present
-					picLine += strings.Replace(examples[i], "# ", "", -1)
-				} else if strings.HasPrefix(examples[i], "*") {
-					// Caption for screenshot, if any
-					picComment += strings.Replace(examples[i], "* ", "", -1)
-				} else if strings.HasPrefix(examples[i], "! ") {
-					// For skipping comments present in codeblock
-					continue
 				} else {
 					// Code Block Line
 					buf.WriteString(fmt.Sprintf("<pre class='codeblock-pre'>\n<div class='codeblock'>\n%s\n\n</div>\n</pre> \n\n", examples[i]))
@@ -168,7 +180,7 @@ func GenMarkdownCustom(cmd *cobra.Command, w io.Writer, linkHandler func(string)
 		}
 	}
 
-	if err := printOptions(buf, cmd, name); err != nil {
+	if err := printOptions(buf, cmd); err != nil {
 		return err
 	}
 
@@ -239,7 +251,7 @@ func GenMarkdownTreeCustom(cmd *cobra.Command, dir string, filePrepender, linkHa
 		return err
 	}
 
-	err = GenMarkdownCustom(cmd, f, linkHandler)
+	err = GenMarkdownCustom(cmd, f)
 	if err != nil {
 		return err
 	}
@@ -269,14 +281,14 @@ func GenYamlTreeCustom(cmd *cobra.Command, dir string, filePrepender, linkHandle
 		return err
 	}
 
-	err = GenYamlCustom(cmd, f, linkHandler)
+	err = GenYamlCustom(cmd, f)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func GenYamlCustom(cmd *cobra.Command, w io.Writer, linkHandler func(string) string) error {
+func GenYamlCustom(cmd *cobra.Command, w io.Writer) error {
 	cmd.InitDefaultHelpCmd()
 	cmd.InitDefaultHelpFlag()
 

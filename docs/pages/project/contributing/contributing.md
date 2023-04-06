@@ -5,9 +5,9 @@ permalink: project/contributing
 description: How to contribute to the Meshery project.
 language: en
 type: project
-redirect_from: 
- - contributing
- - project/contributing/
+redirect_from:
+  - contributing
+  - project/contributing/
 category: contributing
 ---
 
@@ -21,7 +21,7 @@ Please do! Thanks for your help! 🎈 Meshery is community-built and welcomes co
 
 Follow these steps and you'll be right at home.
 
-1. See the [_Community Welcome Guide_](https://docs.google.com/document/d/17OPtDE_rdnPQxmk2Kauhm3GwXF1R5dZ3Cj8qZLKdo5E/edit) for how, where, and why to contribute.
+1. See the [Newcomers Guide](https://layer5.io/community/newcomers) for how, where, and why to contribute.
 
 2. Sign up for a [_MeshMate_](https://layer5.io/community/meshmates) to find the perfect Mentor to help you explore the Layer5 projects and find your place in the community:
 
@@ -33,11 +33,11 @@ Follow these steps and you'll be right at home.
 - **Contribute** by grabbing any open issue with the [help-wanted label](https://github.com/meshery/meshery/issues/) and jump in. If needed, create a [new issue](https://github.com/meshery/meshery/issues/new/choose). All [pull requests](https://github.com/meshery/meshery/pulls) should reference an open issue. Include keywords in your pull request descriptions, as well as commit messages, to [automatically close issues in GitHub](https://help.github.com/en/github/managing-your-work-on-github/closing-issues-using-keywords).
 - **Fill-in** a [community member form](https://layer5.io/newcomers) community member form to gain access to community resources.
 
-## <a name="contributing">General Contribution Flow</a>
+## General Contribution Flow
 
 To contribute to Meshery, from creating a fork to creating pull request, please follow the basic fork-and-pull request workflow described [here]({{site.baseurl}}/project/contributing/contributing-gitflow).
 
-### <a name="commit-signing">Signing-off on Commits (Developer Certificate of Origin)</a>
+### Signing-off on Commits (Developer Certificate of Origin)
 
 To contribute to this project, you must agree to the Developer Certificate of
 Origin (DCO) for each commit you make. The DCO is a simple statement that you,
@@ -75,7 +75,7 @@ Or you may configure your IDE, for example, Visual Studio Code to automatically 
 
 <a href="https://user-images.githubusercontent.com/7570704/64490167-98906400-d25a-11e9-8b8a-5f465b854d49.png" ><img src="https://user-images.githubusercontent.com/7570704/64490167-98906400-d25a-11e9-8b8a-5f465b854d49.png" width="50%"><a>
 
-### <a name="contributing-meshery">Meshery Contribution Flow</a>
+### Meshery Contribution Flow
 
 Meshery is written in `Go` (Golang) and leverages Go Modules. UI is built on React and Next.js. To make building and packaging easier a `Makefile` is included in the main repository folder.
 
@@ -86,7 +86,8 @@ Practices for Production Environments](https://peter.bourgon.org/go-in-productio
 
 #### Prerequisites for building Meshery in your development environment:
 
-1. `Go` version 1.11+ installed if you want to build and/or make changes to the existing code.
+1. `Go` version 1.19 must be installed if you want to build and/or make changes to the existing code. The binary `go1.19` should be available in your path. If you don't want to disturb your existing version of Go, then follow these [instructions](https://go.dev/doc/manage-install#:~:text=and%20run%20them.-,Installing%20multiple%20Go%20versions,-You%20can%20install) to keep multiple versions of Go in your system.
 1. `GOPATH` environment variable should be configured appropriately
-1. `npm` and `node` should be installed on your machine, preferably the latest versions.
-1. Fork this repository (`git clone https://github.com/layer5io/meshery.git`), clone your forked version of Meshery to your local, preferably outside `GOPATH`. If you happen to checkout Meshery inside your `GOPATH` and you have a version of `Go` prior to version 1.13, please set an environment variable `GO111MODULE=on` to enable GO Modules.
+1. `npm` and `node` should be installed on your machine, `node` version 19 or higher is not supported right now.
+1. Fork this repository (`git clone https://github.com/meshery/meshery.git`), and clone your forked version of Meshery to your development environment, preferably outside `GOPATH`.
+1. `golangci-lint` should be installed if you want to test Go code, for MacOS and linux users.

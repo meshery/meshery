@@ -13,24 +13,33 @@ import (
 	"github.com/layer5io/meshery/server/models"
 	brokerpkg "github.com/layer5io/meshkit/broker"
 	"github.com/layer5io/meshkit/broker/nats"
+	"github.com/layer5io/meshkit/models/controllers"
 	"github.com/layer5io/meshkit/utils"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/sirupsen/logrus"
-	v1 "k8s.io/api/core/v1"
 	kubeerror "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 const (
-	Namespace       = "meshery"
-	RequestSubject  = "meshery.meshsync.request"
-	MeshsyncSubject = "meshery.meshsync.core"
-	BrokerQueue     = "meshery"
+	Namespace                = "meshery"
+	RequestSubject           = "meshery.meshsync.request"
+	MeshsyncSubject          = "meshery.meshsync.core"
+	BrokerQueue              = "meshery"
+	MeshSyncBrokerConnection = "meshsync"
 )
 
 var (
 	meshsyncVersion string
 )
+
+type Connections struct {
+	Connections []connection `json:"connections"`
+}
+
+type connection struct {
+	Name string `json:"name"`
+}
 
 func Initialize(client *mesherykube.Client, delete bool, adapterTracker models.AdaptersTrackerInterface) error {
 	// installOperator
@@ -92,55 +101,45 @@ func GetControllersInfo(mesheryKubeClient *mesherykube.Client, brokerConn broker
 	return controllers, nil
 }
 
-func GetBrokerInfo(mesheryclient operatorClient.Interface, mesheryKubeClient *mesherykube.Client, brokerConn brokerpkg.Handler) (OperatorControllerStatus, error) {
-	var brokerStatus OperatorControllerStatus
+func GetBrokerInfo(_ operatorClient.Interface, mesheryKubeClient *mesherykube.Client, _ brokerpkg.Handler) (OperatorControllerStatus, error) {
+	broker := controllers.NewMesheryBrokerHandler(mesheryKubeClient)
+	brokerStatus := broker.GetStatus().String()
 
-	broker, err := mesheryclient.CoreV1Alpha1().Brokers(Namespace).Get(context.TODO(), "meshery-broker", metav1.GetOptions{})
-	if err != nil && !kubeerror.IsNotFound(err) {
-		return brokerStatus, ErrMesheryClient(err)
+	if brokerStatus == controllers.Connected.String() {
+		brokerEndpoint, _ := broker.GetPublicEndpoint()
+		brokerStatus = fmt.Sprintf("%s %s", brokerStatus, brokerEndpoint)
 	}
-	statefulSet, err := mesheryKubeClient.KubeClient.AppsV1().StatefulSets("meshery").Get(context.TODO(), "meshery-broker", metav1.GetOptions{})
-	brokerVersion := ""
-	if err == nil {
-		brokerVersion = imageVersionExtractUtil(statefulSet.Spec.Template, "nats")
-	}
-	if err == nil {
-		status := fmt.Sprintf("%s %s", StatusConnected, broker.Status.Endpoint.External)
-		if brokerConn.Info() != brokerpkg.NotConnected {
-			brokerStatus.Status = Status(status)
-		}
-		brokerStatus.Name = "broker"
-		brokerStatus.Version = brokerVersion
+	brokerControllerStatus := OperatorControllerStatus{
+		Name:   broker.GetName(),
+		Status: Status(brokerStatus),
 	}
 
-	return brokerStatus, nil
+	brokerControllerStatus.Version, _ = broker.GetVersion()
+
+	return brokerControllerStatus, nil
 }
 
-func GetMeshSyncInfo(mesheryclient operatorClient.Interface, mesheryKubeClient *mesherykube.Client) (OperatorControllerStatus, error) {
-	var meshsyncStatus OperatorControllerStatus
-	meshsync, err := mesheryclient.CoreV1Alpha1().MeshSyncs(Namespace).Get(context.TODO(), "meshery-meshsync", metav1.GetOptions{})
-	if err != nil && !kubeerror.IsNotFound(err) {
-		return meshsyncStatus, ErrMesheryClient(err)
+func GetMeshSyncInfo(_ operatorClient.Interface, mesheryKubeClient *mesherykube.Client) (OperatorControllerStatus, error) {
+	meshsync := controllers.NewMeshsyncHandler(mesheryKubeClient)
+	meshsyncStatus := meshsync.GetStatus().String()
+
+	broker := controllers.NewMesheryBrokerHandler(mesheryKubeClient)
+
+	if meshsyncStatus == controllers.Connected.String() {
+		brokerEndpoint, _ := broker.GetPublicEndpoint()
+		meshsyncStatus = fmt.Sprintf("%s %s", meshsyncStatus, brokerEndpoint)
 	}
 
-	meshsyncDeployment, err := mesheryKubeClient.KubeClient.AppsV1().Deployments("meshery").Get(context.TODO(), "meshery-meshsync", metav1.GetOptions{})
-	meshsyncVersion := ""
-	var status string
-	if err == nil {
-		status = fmt.Sprintf("%s %s", StatusEnabled, meshsync.Status.PublishingTo)
-		meshsyncVersion = imageVersionExtractUtil(meshsyncDeployment.Spec.Template, "meshsync")
-	}
-	if err != nil && kubeerror.IsNotFound(err) {
-		status = StatusDisabled.String()
+	meshsyncControllerStatus := OperatorControllerStatus{
+		Name:    meshsync.GetName(),
+		Version: meshsyncVersion,
+		Status:  Status(meshsyncStatus),
 	}
 
-	meshsyncStatus.Status = Status(status)
-	meshsyncStatus.Name = "meshsync"
-	meshsyncStatus.Version = meshsyncVersion
-	return meshsyncStatus, nil
+	return meshsyncControllerStatus, nil
 }
 
-func SubscribeToBroker(provider models.Provider, mesheryKubeClient *mesherykube.Client, datach chan *brokerpkg.Message, brokerConn brokerpkg.Handler, ct *K8sConnectionTracker) (string, error) {
+func SubscribeToBroker(_ models.Provider, mesheryKubeClient *mesherykube.Client, datach chan *brokerpkg.Message, brokerConn brokerpkg.Handler, ct *K8sConnectionTracker) (string, error) {
 	var broker *operatorv1alpha1.Broker
 	var endpoints []string
 	if ct != nil {
@@ -240,16 +239,6 @@ func SubscribeToBroker(provider models.Provider, mesheryKubeClient *mesherykube.
 	return endpoint, nil
 }
 
-func imageVersionExtractUtil(container v1.PodTemplateSpec, containerName string) string {
-	version := ""
-	for _, container := range container.Spec.Containers {
-		if strings.Compare(container.Name, containerName) == 0 {
-			version = strings.Split(container.Image, ":")[1]
-		}
-	}
-	return version
-}
-
 func getVersion(brokerConn brokerpkg.Handler) {
 	versionch := make(chan *brokerpkg.Message)
 
@@ -270,6 +259,5 @@ func getVersion(brokerConn brokerpkg.Handler) {
 	}
 
 	ch := <-versionch
-	meshsyncVersion = "stable-" + ch.Object.(string)
-	fmt.Println("VERSION", meshsyncVersion)
+	meshsyncVersion = ch.Object.(string)
 }

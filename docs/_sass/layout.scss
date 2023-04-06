@@ -1,0 +1,97 @@
+@import "https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,700,700i";
+html {
+  font-size: 62.5%;
+  box-sizing: border-box;
+
+  @media (max-width: 75em) {
+    font-size: 56.25%;
+  }
+
+  @media (max-width: 56.25em) {
+    font-size: 50%;
+  }
+
+  @media (max-width: 37.5em) {
+    font-size: 43.75%;
+  }
+}
+
+*,
+*::after,
+*::before {
+  margin: 0;
+  padding: 0;
+  box-sizing: inherit;
+  color: var(--color-secondary-dark);
+  text-decoration: none;
+}
+
+body {
+  font-weight: 400;
+  position: relative;
+  line-height: 1.3;
+  background-repeat: no-repeat;
+  color: var(--color-secondary-dark);
+  background: var(--background-light);
+  font-family: "Open Sans", -apple-system, BlinkMacSystemFont, segoe ui, Roboto, helvetica neue, Arial, sans-serif,
+    apple color emoji, segoe ui emoji, segoe ui symbol;
+}
+
+ul,
+ol {
+  list-style: none;
+  text-decoration: none;
+  margin-bottom: 1.5rem;
+}
+
+.flex-container {
+  display: flex;
+
+  @media (max-width: 81.25em) {
+    // grid-template-columns: 2.2fr 5.8fr 2fr;
+  }
+  @media (max-width: 75em) {
+    display: flex;
+    // flex-direction: column;
+    flex-wrap: wrap;
+  }
+}
+
+.main-container {
+  padding: 3.5rem 4.4rem;
+  overflow: hidden;
+  width: 100%;
+
+  @media (max-width: 1200px) {
+    flex: 0 0 100%;
+  }
+
+  & .breadcrumb {
+    list-style: none;
+  }
+
+  & #breadcrumbs {
+    font-size: 1.4rem;
+    line-height: 3rem;
+    & a {
+      color: var(--color-grey-dark);
+      transition: all 0.3s;
+      &:hover {
+        color: var(--color-secondary-dark);
+      }
+    }
+  }
+}
+
+#hiddendiv {
+  font-size: 1.4rem;
+  background-color: var(--color-primary-medium);
+  padding: 15px 10px;
+}
+
+@media (max-width: 600px) {
+  .small-hide {
+    display: none;
+  }
+}
+

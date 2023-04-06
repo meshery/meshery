@@ -1,0 +1,136 @@
+// FLEX /////////////////////////////////////////////////////////////////////////////////////////////////////
+
+.flex {
+  display: flex;
+  justify-content: space-evenly;
+  gap: var(--col-gap);
+  flex-wrap: wrap;
+
+  &.flex-col--2 {
+    & > * {
+      flex: 0 0 calc(50% - calc(var(--col-gap) / 2));
+    }
+  }
+
+  &.flex-col--3 {
+    & > * {
+      flex: 0 0 calc(33.33% - calc(var(--col-gap) / 3));
+    }
+  }
+}
+
+// BUTTONS /////////////////////////////////////////////////////////////////////////////////////////////////////
+
+.btn-primary {
+  padding: 1rem 2rem;
+  // background: var(--section-button);
+  position: relative;
+  border-radius: 11px;
+  color: white;
+  text-align: center;
+  font-size: 2rem;
+  -webkit-transition: background-color 0.9s ease-out;
+  -moz-transition: background-color 0.9s ease-out;
+  -o-transition: background-color 2.9s ease-out;
+  transition: background-color 0.9s ease-out;
+  overflow: hidden;
+
+  &::after,
+  &::before {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    z-index: -1;
+    transition: all 0.3s;
+  }
+  &::after {
+    left: 0;
+    background: var(--section-button);
+  }
+  &::before {
+    left: 100%;
+    background: var(--section-button-hover);
+  }
+
+  &:hover {
+    &::after {
+      left: -100%;
+      background: var(--section-button);
+    }
+    &::before {
+      left: 0%;
+      background: var(--section-button-hover);
+    }
+  }
+}
+
+// SVG's ///////////////////////////////////////////////////////////////////////////////////////////
+.svg-lg {
+  & svg {
+    width: calc(100% / 2.5);
+  }
+}
+
+// Embeds
+
+iframe.container {
+  width: 100%;
+  padding-right: 15px;
+  padding-left: 15px;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+// SUMMARY AND DETAILS //////////////////////////////////////////
+details {
+  width: 95%;
+  margin: 0 auto ;
+  background-color: var( --color-details-background);
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 .1rem 1rem -.5rem rgba(0,0,0,.4);
+  border-radius: 5px;
+  overflow: hidden;
+  font-size: 1.35rem;
+  padding: 1.5rem;
+}
+
+summary {
+  padding: 1rem;
+  display: block;
+  background-color: var(--color-summary-background);
+  padding-left: 2.2rem;
+  position: relative;
+  cursor: pointer;
+  font-size: 1.5rem;
+}
+
+summary:before {
+  content: '';
+  border-width: .4rem;
+  border-style: solid;
+  border-color: transparent transparent transparent var( --color-secondary-dark);
+  position: absolute;
+  top: 1.3rem;
+  left: 1rem;
+  transform: rotate(0);
+  transform-origin: .2rem 50%;
+  transition: .25s transform ease;
+}
+
+/* THE MAGIC 🧙‍♀️ */
+details[open] > summary:before {
+  transform: rotate(90deg);
+}
+
+
+details summary::-webkit-details-marker {
+  display:none;
+}
+
+details > ul {
+  padding-bottom: 1rem;
+  margin-bottom: 0;
+}

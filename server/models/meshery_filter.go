@@ -26,11 +26,16 @@ type MesheryFilter struct {
 	CreatedAt *time.Time `json:"created_at,omitempty"`
 }
 
-// MesheryCatalogFilterRequestBody refers to the type of request body
-// that PublishCatalogFilter would receive
+// MesheryCatalogFilterRequestBody refers to the type of request body that PublishCatalogFilter would receive
 type MesheryCatalogFilterRequestBody struct {
 	ID          uuid.UUID `json:"id,omitempty"`
 	CatalogData sql.Map   `json:"catalog_data,omitempty"`
+}
+
+// MesheryCatalogFilterRequestBody refers to the type of request body
+// that CloneMesheryFilterHandler would receive
+type MesheryCloneFilterRequestBody struct {
+	Name string `json:"name,omitempty"`
 }
 
 // GetFilterName takes in a stringified filterfile and extracts the name from it

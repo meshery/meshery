@@ -110,6 +110,8 @@ const (
 	ErrGenerateComponentsCode           = "2254"
 	ErrPublishCatalogPatternCode        = "2255"
 	ErrPublishCatalogFilterCode         = "2256"
+	ErrGetMeshModelsCode                = "2257"
+	ErrGetUserDetailsCode               = "2258"
 )
 
 var (
@@ -463,11 +465,11 @@ func ErrRemoteApplication(err error) error {
 }
 
 func ErrClonePattern(err error) error {
-	return errors.New(ErrClonePatternCode, errors.Alert, []string{"Error failed to clone pattern"}, []string{err.Error()}, []string{"Failed to clone Pattern with the given ID"}, []string{"Check if the Pattern ID is correct and the pattern is public"})
+	return errors.New(ErrClonePatternCode, errors.Alert, []string{"Error failed to clone pattern"}, []string{err.Error()}, []string{"Failed to clone Pattern with the given ID"}, []string{"Check if the Pattern ID is correct and the pattern is published"})
 }
 
 func ErrCloneFilter(err error) error {
-	return errors.New(ErrCloneFilterCode, errors.Alert, []string{"Error failed to clone filter"}, []string{err.Error()}, []string{"Failed to clone Filter with the given ID"}, []string{"Check if the Filter ID is correct and the Filter is public"})
+	return errors.New(ErrCloneFilterCode, errors.Alert, []string{"Error failed to clone filter"}, []string{err.Error()}, []string{"Failed to clone Filter with the given ID"}, []string{"Check if the Filter ID is correct and the Filter is published"})
 }
 
 func ErrPublishCatalogPattern(err error) error {
@@ -476,4 +478,12 @@ func ErrPublishCatalogPattern(err error) error {
 
 func ErrPublishCatalogFilter(err error) error {
 	return errors.New(ErrPublishCatalogFilterCode, errors.Alert, []string{"Error failed to publish catalog filter"}, []string{err.Error()}, []string{"Failed to publish catalog filter"}, []string{"Check if the filter ID is correct and you are admin"})
+}
+
+func ErrGetMeshModels(err error) error {
+	return errors.New(ErrGetMeshModelsCode, errors.Alert, []string{"could not get meshmodel entitities"}, []string{err.Error()}, []string{"Meshmodel entity could not be converted into valid json", "data in the registry was inconsistent"}, []string{"make sure correct and consistent data is present inside the registry", "drop the Meshmodel tables and restart Meshery server"})
+}
+
+func ErrGetUserDetails(err error) error {
+	return errors.New(ErrGetUserDetailsCode, errors.Alert, []string{"could not get user details"}, []string{err.Error()}, []string{"User details could not be fetched from provider", "Your provider may not be reachable", "No user exists for the provided token"}, []string{"Make sure provider is reachable", "Make sure you are logged in", "Make sure you are using a valid token"})
 }

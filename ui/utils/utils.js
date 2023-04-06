@@ -1,6 +1,7 @@
 import { trueRandom } from "../lib/trueRandom";
 import jsYaml from "js-yaml";
 import { findWorkloadByName } from "./workloadFilter";
+import { EVENT_TYPES } from "./Enum";
 
 /**
  * Check if an object is empty
@@ -128,4 +129,20 @@ export function generateValidatePayload(pattern_file, workloadTraitSet) {
   }
 
   return validationPayloads;
+}
+
+export function updateURLs(urlsSet, newUrls, eventType) {
+  switch (eventType) {
+    case EVENT_TYPES.DELETED:
+      newUrls.forEach(url => {
+        urlsSet.delete(url);
+      })
+      break;
+    case EVENT_TYPES.ADDED:
+    case EVENT_TYPES.MODIFIED:
+      newUrls.forEach(url => {
+        urlsSet.add(url);
+      })
+
+  }
 }

@@ -1,6 +1,6 @@
 
 import {
-  Accordion, AccordionDetails, AccordionSummary, AppBar, ButtonGroup, CircularProgress, Divider, FormControl, Grid, IconButton, makeStyles, MenuItem, Paper, TextField, Toolbar, Tooltip, Typography,
+  Accordion, AccordionDetails, AccordionSummary, AppBar, ButtonGroup, CircularProgress, Divider, FormControl, Grid, IconButton, MenuItem, Paper, TextField, Toolbar, Tooltip, Typography, withStyles,
 } from "@material-ui/core";
 import DeleteIcon from "@material-ui/icons/Delete";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
@@ -22,14 +22,15 @@ import NameToIcon from "./NameToIcon";
 import CustomBreadCrumb from "./CustomBreadCrumb";
 import { randomPatternNameGenerator as getRandomName } from "../../utils/utils"
 import _ from "lodash";
+import { iconMedium } from "../../css/icons.styles";
 
-const useStyles = makeStyles((theme) => ({
+const styles = (theme) => ({
   backButton : {
     marginRight : theme.spacing(2),
   },
   appBar : {
     marginBottom : "16px",
-    backgroundColor : "#fff",
+    backgroundColor : theme.palette.secondary.appBar,
     borderRadius : "8px"
   },
   yamlDialogTitle : {
@@ -48,7 +49,7 @@ const useStyles = makeStyles((theme) => ({
   },
   patternType : {
     padding : '0px',
-    paddingBottom : '5px' ,
+    paddingBottom : '5px',
     paddingTop : '5px',
     justifyContent : 'center'
   },
@@ -92,7 +93,7 @@ const useStyles = makeStyles((theme) => ({
     fontSize : theme.typography.pxToRem(15),
     fontWeight : theme.typography.fontWeightRegular,
   },
-}));
+});
 
 function removeRedundantFieldsFromSettings(settings) {
   if (!settings || _.isEmpty(settings)) {
@@ -109,7 +110,7 @@ function removeRedundantFieldsFromSettings(settings) {
   return newSettings;
 }
 
-function PatternConfiguratorComponent({ pattern, onSubmit, show : setSelectedPattern }) {
+function PatternConfiguratorComponent({ pattern, onSubmit, show : setSelectedPattern, classes }) {
   const { workloadTraitSet, meshWorkloads } = useContext(SchemaContext);
   const [workloadTraitsSet, setWorkloadTraitsSet] = useState(workloadTraitSet);
   const [deployServiceConfig, setDeployServiceConfig] = useState(getPatternJson());
@@ -122,7 +123,6 @@ function PatternConfiguratorComponent({ pattern, onSubmit, show : setSelectedPat
   const [viewType, setViewType] = useState("list");
   const [activeCR, setActiveCR] = useState({});
   const [patternName, setPatternName] = useState(pattern.name)
-  const classes = useStyles();
   const reference = useRef({});
 
   useEffect(() => {
@@ -491,7 +491,7 @@ function PatternConfiguratorComponent({ pattern, onSubmit, show : setSelectedPat
               color="primary"
               onClick={() => handleSubmitFinalPattern(yaml, "", getRandomName(), "upload")}
             >
-              <FileCopyIcon />
+              <FileCopyIcon style={iconMedium} />
             </IconButton>
           </Tooltip>
           <Tooltip title="Update Pattern">
@@ -500,7 +500,7 @@ function PatternConfiguratorComponent({ pattern, onSubmit, show : setSelectedPat
               color="primary"
               onClick={() => handleSubmitFinalPattern(yaml, pattern.id, pattern.name, "update")}
             >
-              <SaveIcon />
+              <SaveIcon style={iconMedium} />
             </IconButton>
           </Tooltip>
           <Tooltip title="Delete Pattern">
@@ -512,12 +512,12 @@ function PatternConfiguratorComponent({ pattern, onSubmit, show : setSelectedPat
                 deleteConfiguration()
               }}
             >
-              <DeleteIcon />
+              <DeleteIcon style={iconMedium}/>
             </IconButton>
           </Tooltip>
           <Tooltip title="Toggle View">
             <IconButton color="primary" onClick={toggleView}>
-              <ListAltIcon />
+              <ListAltIcon style={iconMedium} />
             </IconButton>
           </Tooltip>
         </Toolbar>
@@ -626,4 +626,4 @@ function PatternConfiguratorComponent({ pattern, onSubmit, show : setSelectedPat
 }
 
 
-export default PatternConfiguratorComponent;
+export default withStyles(styles)(PatternConfiguratorComponent);

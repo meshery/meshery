@@ -63,8 +63,9 @@ mesheryctl system context view --all
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --all    Show configs for all of the context
-  -h, --help   help for view
+      --all              Show configs for all of the context
+  -c, --context string   Show config for the context
+  -h, --help             help for view
 
 </div>
 </pre>
@@ -73,10 +74,9 @@ mesheryctl system context view --all
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string    path to config file (default "/home/runner/.meshery/config.yaml")
-  -c, --context string   (optional) temporarily change the current context.
-  -v, --verbose          verbose output
-  -y, --yes              (optional) assume yes for user interactive prompts.
+      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+  -v, --verbose         verbose output
+  -y, --yes             (optional) assume yes for user interactive prompts.
 
 </div>
 </pre>

@@ -1,4 +1,4 @@
-// Copyright 2020 Layer5, Inc.
+// Copyright 2023 Layer5, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ var err error
 
 var showForAllContext bool
 
-// PrintChannelAndVersionToStdout to return curren release channel details
+// PrintChannelAndVersionToStdout to return current release channel details
 func PrintChannelAndVersionToStdout(ctx config.Context, contextName string) string {
 	return fmt.Sprintf("Context: %v\nChannel: %v\nVersion: %v", contextName, ctx.Channel, ctx.Version)
 }
@@ -240,12 +240,16 @@ var channelCmd = &cobra.Command{
 	Example: `
 // Subscribe to release channel or version
 mesheryctl system channel
+
 // To set the channel
 mesheryctl system channel set [stable|stable-version|edge|edge-version]
+
 // To pin/set the channel to a specific version
 mesheryctl system channel set stable-v0.6.0
+
 // To view release channel and version
 mesheryctl system channel view
+
 // To switch release channel and version
 mesheryctl system channel switch [stable|stable-version|edge|edge-version]
 	`,

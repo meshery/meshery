@@ -1,7 +1,6 @@
 // @ts-check
 import React, { useState, useRef, useEffect } from "react";
-import { withStyles, MuiThemeProvider } from "@material-ui/core/styles";
-import {  createTheme } from '@material-ui/core/styles';
+import { withStyles } from "@material-ui/core/styles";
 import {
   NoSsr, TableCell, IconButton, TableRow, Typography
 } from "@material-ui/core";
@@ -15,13 +14,21 @@ import TableSortLabel from "@material-ui/core/TableSortLabel";
 import PerformanceResults from "./PerformanceResults";
 import EditIcon from '@material-ui/icons/Edit';
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
+import { iconMedium } from "../../css/icons.styles";
 
-const styles = (theme) => ({ grid : { padding : theme.spacing(2), },
-  tableHeader : { fontWeight : "bolder",
-    fontSize : 18, },
-  paper : { maxWidth : "90%",
+
+const styles = (theme) => ({
+  grid : { padding : theme.spacing(2), },
+  tableHeader : {
+    fontWeight : "bolder",
+    fontSize : 18,
+  },
+  paper : {
+    maxWidth : "90%",
     margin : "auto",
-    overflow : "hidden", }, });
+    overflow : "hidden",
+  },
+});
 
 /**
  *
@@ -53,52 +60,11 @@ function MesheryTestProfiles({
 
   const searchTimeout = useRef(null);
 
-  const getMuiTheme = () => createTheme({
-    overrides : {
-      MuiInput : {
-        underline : {
-          "&:hover:not(.Mui-disabled):before" : {
-            borderBottom : "2px solid #222"
-          },
-          "&:after" : {
-            borderBottom : "2px solid #222"
-          }
-        }
-      },
-      MUIDataTableSearch : {
-        searchIcon : {
-          color : "#607d8b" ,
-          marginTop : "7px",
-          marginRight : "8px",
-        },
-        clearIcon : {
-          "&:hover" : {
-            color : "#607d8b"
-          }
-        },
-      },
-      MUIDataTableSelectCell : {
-        checkboxRoot : {
-          '&$checked' : {
-            color : '#607d8b',
-          },
-        },
-      },
-      MUIDataTableToolbar : {
-        iconActive : {
-          color : "#222"
-        },
-        icon : {
-          "&:hover" : {
-            color : "#607d8b"
-          }
-        },
-      }
-    }
-  })
+
 
   const columns = [
-    { name : "name",
+    {
+      name : "name",
       label : "Profile",
       options : {
         filter : false,
@@ -113,10 +79,13 @@ function MesheryTestProfiles({
             </TableCell>
           );
         },
-      }, },
-    { name : "endpoints",
+      },
+    },
+    {
+      name : "endpoints",
       label : "Endpoints",
-      options : { filter : false,
+      options : {
+        filter : false,
         sort : true,
         customHeadRender : function CustomHead({ index, ...column }, sortColumn) {
           return (
@@ -126,8 +95,11 @@ function MesheryTestProfiles({
               </TableSortLabel>
             </TableCell>
           );
-        }, }, },
-    { name : "last_run",
+        },
+      },
+    },
+    {
+      name : "last_run",
       label : "Last Run",
       options : {
         filter : false,
@@ -145,7 +117,8 @@ function MesheryTestProfiles({
         customBodyRender : function CustomBody(value) {
           return <Moment format="LLLL">{value}</Moment>;
         },
-      }, },
+      },
+    },
     // {
     //   name: "next_run",
     //   label: "Next Run",
@@ -167,7 +140,8 @@ function MesheryTestProfiles({
     //     },
     //   },
     // },
-    { name : "updated_on",
+    {
+      name : "updated_on",
       label : "Updated On",
       options : {
         filter : false,
@@ -185,8 +159,10 @@ function MesheryTestProfiles({
         customBodyRender : function CustomBody(value) {
           return <Moment format="LLLL">{value}</Moment>;
         },
-      }, },
-    { name : "Actions",
+      },
+    },
+    {
+      name : "Actions",
       options : {
         filter : false,
         sort : false,
@@ -202,6 +178,7 @@ function MesheryTestProfiles({
           return (
             <div>
               <IconButton
+                style={iconMedium}
                 onClick={(ev) => {
                   ev.stopPropagation();
                   setSelectedProfile(testProfiles[tableMeta.rowIndex]);
@@ -210,9 +187,10 @@ function MesheryTestProfiles({
                 // @ts-ignore
                 color="rgba(0, 0, 0, 0.54)"
               >
-                <EditIcon />
+                <EditIcon style={iconMedium}/>
               </IconButton>
               <IconButton
+                style={iconMedium}
                 onClick={(ev) => {
                   ev.stopPropagation();
                   setSelectedProfile({ ...testProfiles[tableMeta.rowIndex], runTest : true });
@@ -221,12 +199,13 @@ function MesheryTestProfiles({
                 // @ts-ignore
                 color="rgba(0, 0, 0, 0.54)"
               >
-                <PlayArrowIcon />
+                <PlayArrowIcon style={iconMedium} />
               </IconButton>
             </div>
           );
         },
-      }, },
+      },
+    },
   ];
 
   columns.forEach((column, idx) => {
@@ -326,15 +305,14 @@ function MesheryTestProfiles({
 
   return (
     <NoSsr>
-      <MuiThemeProvider theme={getMuiTheme()}>
-        <MUIDataTable
-          title={<div className={classes.tableHeader}>Profiles</div>}
-          data={testProfiles}
-          columns={columns}
-          // @ts-ignore
-          options={options}
-        />
-      </MuiThemeProvider>
+
+      <MUIDataTable
+        title={<div className={classes.tableHeader}>Profiles</div>}
+        data={testProfiles}
+        columns={columns}
+        // @ts-ignore
+        options={options}
+      />=
     </NoSsr>
   );
 }

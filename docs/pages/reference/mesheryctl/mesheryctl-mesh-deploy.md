@@ -35,10 +35,18 @@ mesheryctl mesh deploy
 </div>
 </pre> 
 
+Deploy a service mesh
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl mesh deploy linkerd
+
+</div>
+</pre> 
+
 Deploy Linkerd mesh on a specific namespace
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl mesh deploy --adapter meshery-linkerd --namespace linkerd-ns
+mesheryctl mesh deploy linkerd --namespace linkerd-ns
 
 </div>
 </pre> 
@@ -46,7 +54,7 @@ mesheryctl mesh deploy --adapter meshery-linkerd --namespace linkerd-ns
 Deploy Linkerd mesh and wait for it to be deployed
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl mesh deploy --adapter meshery-linkerd --watch
+mesheryctl mesh deploy linkerd --watch
 
 </div>
 </pre> 
@@ -62,7 +70,6 @@ mesheryctl mesh deploy --adapter meshery-linkerd --watch
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  -a, --adapter string     Adapter to use for installation (default "meshery-istio:10000")
   -h, --help               help for deploy
   -n, --namespace string   Kubernetes namespace to be used for deploying the validation tests and sample workload (default "default")
   -t, --token string       Path to token for authenticating to Meshery API

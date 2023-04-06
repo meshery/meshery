@@ -1,15 +1,19 @@
 name: Discussion data files update
 
 on:
+  workflow_dispatch:
   schedule:
-    - cron: '0 0 * * *'
+    - cron: '0 0 * * *' #runs every day at midnight
 
 jobs:
   update:
     runs-on: ubuntu-latest
+    if: github.repository == 'meshery/meshery'
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GH_ACCESS_TOKEN }}
       - name: Fetch data for mesheryctl tag
         run: curl https://discuss.layer5.io/tag/mesheryctl.json -o docs/_data/discuss/mesheryctl.json
       - name: Fetch data for meshery tag
@@ -23,3 +27,4 @@ jobs:
           commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
           commit_options: "--signoff"
           commit_message: "latest discussion data files added"
+          branch: master

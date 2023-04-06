@@ -90,7 +90,7 @@ func TestGetChannel(t *testing.T) {
 
 func TestGetComponents(t *testing.T) {
 	dummy := []string{"abc", "def", "ghi", "jkl", "mno", "pqr"}
-	context := Context{"", "", "", dummy, "", ""}
+	context := Context{"", "", "", dummy, "", "", ""}
 	got := context.GetComponents()
 	want := dummy
 	for i, j := range got {
@@ -152,7 +152,7 @@ func TestGetCurrentContextName(t *testing.T) {
 func TestSetContext(t *testing.T) {
 	for _, test := range tests {
 		mesherycltconfig := MesheryCtlConfig{nil, test, nil}
-		err := UpdateContextInConfig(nil, nil, test)
+		err := UpdateContextInConfig(nil, test)
 		if err != nil {
 			fmt.Print("Fail") //Internal:need to be fixed
 		}
@@ -230,11 +230,36 @@ func TestSetVersion(t *testing.T) {
 
 func TestSetComponents(t *testing.T) {
 	dummy := []string{"abc", "def", "ghi", "jkl", "mno", "pqr"}
-	context := Context{"", "", "", dummy, "", ""}
+	context := Context{"", "", "", dummy, "", "", ""}
 	got := context.GetComponents()
 	want := dummy
 	for i, j := range got {
 		if j != want[i] {
+			t.Errorf("got %q want %q", got, want)
+		}
+	}
+}
+
+func TestGetProvider(t *testing.T) {
+	for _, test := range tests {
+		context := Context{"", "", "", nil, "", "", test}
+		got := context.GetProvider()
+		want := test
+
+		if got != want {
+			t.Errorf("got %q want %q", got, want)
+		}
+	}
+}
+
+func TestSetProvider(t *testing.T) {
+	context := Context{}
+	for _, test := range tests {
+		context.SetProvider(test)
+		got := context.GetProvider()
+		want := test
+
+		if got != want {
 			t.Errorf("got %q want %q", got, want)
 		}
 	}

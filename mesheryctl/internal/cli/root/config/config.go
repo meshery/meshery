@@ -1,3 +1,17 @@
+// Copyright 2023 Layer5, Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package config
 
 import (
@@ -24,25 +38,26 @@ type Version struct {
 
 // MesheryCtlConfig is configuration structure of mesheryctl with contexts
 type MesheryCtlConfig struct {
-	Contexts       map[string]Context `mapstructure:"contexts"`
-	CurrentContext string             `mapstructure:"current-context"`
-	Tokens         []Token            `mapstructure:"tokens"`
+	Contexts       map[string]Context `yaml:"contexts" mapstructure:"contexts"`
+	CurrentContext string             `yaml:"current-context" mapstructure:"current-context"`
+	Tokens         []Token            `yaml:"tokens" mapstructure:"tokens"`
 }
 
 // Token defines the structure of Token stored in mesheryctl
 type Token struct {
-	Name     string `mapstructure:"name"`
-	Location string `mapstructure:"location"`
+	Name     string `yaml:"name" mapstructure:"name"`
+	Location string `yaml:"location" mapstructure:"location"`
 }
 
 // Context defines a meshery environment
 type Context struct {
-	Endpoint   string   `mapstructure:"endpoint,omitempty"`
-	Token      string   `mapstructure:"token,omitempty"`
-	Platform   string   `mapstructure:"platform"`
-	Components []string `mapstructure:"components,omitempty"`
-	Channel    string   `mapstructure:"channel,omitempty"`
-	Version    string   `mapstructure:"version,omitempty"`
+	Endpoint   string   `yaml:"endpoint,omitempty" mapstructure:"endpoint,omitempty"`
+	Token      string   `yaml:"token,omitempty" mapstructure:"token,omitempty"`
+	Platform   string   `yaml:"platform" mapstructure:"platform"`
+	Components []string `yaml:"components,omitempty" mapstructure:"components,omitempty"`
+	Channel    string   `yaml:"channel,omitempty" mapstructure:"channel,omitempty"`
+	Version    string   `yaml:"version,omitempty" mapstructure:"version,omitempty"`
+	Provider   string   `yaml:"provider,omitempty" mapstructure:"provider,omitempty"`
 }
 
 // GetMesheryCtl returns a reference to the mesheryctl configuration object
@@ -57,7 +72,7 @@ func GetMesheryCtl(v *viper.Viper) (*MesheryCtlConfig, error) {
 }
 
 // UpdateContextInConfig write the given context in meshconfig
-func UpdateContextInConfig(v *viper.Viper, context *Context, name string) error {
+func UpdateContextInConfig(context *Context, name string) error {
 	viper.Set("contexts."+name, context)
 	err := viper.WriteConfig()
 	if err != nil {
@@ -256,6 +271,16 @@ func (ctx *Context) ValidateVersion() error {
 	return nil
 }
 
+// GetProvider returns the provider of the current context
+func (ctx *Context) GetProvider() string {
+	return ctx.Provider
+}
+
+// SetProvider sets the provider of the current context
+func (ctx *Context) SetProvider(provider string) {
+	ctx.Provider = provider
+}
+
 // GetName returns the token name
 func (t *Token) GetName() string {
 	return t.Name
@@ -405,7 +430,7 @@ func SetTokenToConfig(tokenName string, configPath string, ctxName string) error
 		return err
 	}
 	context.Token = tokenName
-	err = UpdateContextInConfig(viper.GetViper(), context, ctxName)
+	err = UpdateContextInConfig(context, ctxName)
 	if err != nil {
 		return err
 	}

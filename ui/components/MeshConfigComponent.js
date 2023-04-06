@@ -21,6 +21,7 @@ import { updateProgress } from "../lib/store";
 import fetchMesheryOperatorStatus from "./graphql/queries/OperatorStatusQuery";
 import _ from "lodash";
 import { DEPLOYMENT_TYPE } from '../utils/Enum';
+import { iconMedium } from '../css/icons.styles';
 
 const styles = (theme) => ({
   operationButton : {
@@ -29,6 +30,7 @@ const styles = (theme) => ({
     },
   },
   icon : { width : theme.spacing(2.5), },
+  operatorIcon : {   width : theme.spacing(2.5), filter : theme.palette.secondary.brightness, },
   paper : { margin : theme.spacing(2), padding : theme.spacing(2), },
   heading : { textAlign : "center", },
   configBoxContainer : {
@@ -83,13 +85,6 @@ const styles = (theme) => ({
   },
   uploadCluster : {
     overflow : "hidden"
-  },
-  MenuItem : {
-    backgroundColor : theme.palette.common.white,
-    "&:hover" : {
-      backgroundColor : theme.palette.common.white
-    },
-    pointerEvents : "none"
   },
   OperatorSwitch : {
     pointerEvents : "auto"
@@ -164,7 +159,6 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
     if (operatorState) {
       _setOperatorState(operatorState);
     }
-
   }, [operatorState])
 
   const handleFlushMeshSync = (index) => {
@@ -192,7 +186,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
                 variant : "success",
                 action : (key) => (
                   <IconButton key="close" aria-label="close" color="inherit" onClick={() => closeSnackbar(key)}>
-                    <CloseIcon />
+                    <CloseIcon style={iconMedium} />
                   </IconButton>
                 ),
                 autohideduration : 2000,
@@ -233,7 +227,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
       variant : "error", preventDuplicate : true,
       action : (key) => (
         <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-          <CloseIcon />
+          <CloseIcon style={iconMedium} />
         </IconButton>
       ),
       autoHideDuration : 7000,
@@ -285,7 +279,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
             autoHideDuration : 2000,
             action : (key) => (
               <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-                <CloseIcon />
+                <CloseIcon style={iconMedium} />
               </IconButton>
             ),
           });
@@ -333,7 +327,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
         autoHideDuration : 2000,
         action : (key) => (
           <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-            <CloseIcon />
+            <CloseIcon style={iconMedium} />
           </IconButton>
         ),
       });
@@ -560,7 +554,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
                 aria-haspopup="true"
                 onClick={(e) => handleMenuOpen(e, tableMeta.rowIndex)}
               >
-                <MoreVertIcon />
+                <MoreVertIcon style={iconMedium} />
               </IconButton>
               <Menu
                 className={classes.menu}
@@ -716,7 +710,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
                                   style={!operatorState ? { opacity : 0.5 }: {}}
                                   // onDelete={handleReconfigure}
                                   onClick={() => handleOperatorClick(rowMetaData.rowIndex)}
-                                  icon={<img src="/static/img/meshery-operator.svg" className={classes.icon} />}
+                                  icon={<img src="/static/img/meshery-operator.svg" className={classes.operatorIcon} />}
                                   variant="outlined"
                                   data-cy="chipOperator"
                                 />
@@ -773,7 +767,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
                         <Grid item xs={12} md={5}>
                           <List>
                             <ListItem>
-                              <ListItemText primary="Operator State" secondary={operatorState ? "Active" : "Disabled"} />
+                              <ListItemText primary="Operator State" secondary={operatorState ? "Active" : "Undeployed"} />
                             </ListItem>
                             <ListItem>
                               <ListItemText primary="Operator Version" secondary={operatorVersion} />
@@ -783,7 +777,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
                         <Grid item xs={12} md={5}>
                           <List>
                             <ListItem>
-                              <ListItemText primary="MeshSync State" secondary={meshSyncState || "Disabled"} />
+                              <ListItemText primary="MeshSync State" secondary={meshSyncState || "Undeployed"} />
                             </ListItem>
                             <ListItem>
                               <ListItemText primary="MeshSync Version" secondary={meshSyncVersion} />
@@ -829,7 +823,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
               autoHideDuration : 2000,
               action : (key) => (
                 <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-                  <CloseIcon />
+                  <CloseIcon style={iconMedium} />
                 </IconButton>
               ),
             });
@@ -847,13 +841,13 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
     NatsStatusQuery({ k8scontextID : contexts[index].id }).subscribe({
       next : (res) => {
         updateProgress({ showProgress : false });
-        if (res.controller.name === "broker" && res.controller.status.includes("CONNECTED")) {
-          let runningEndpoint = res.controller.status.substring("CONNECTED".length).trim();
+        if (res.controller.name === "MesheryBroker" && res.controller.status.includes("Connected")) {
+          let runningEndpoint = res.controller.status.substring("Connected".length)
           enqueueSnackbar(`Broker was pinged. ${runningEndpoint != "" ? `Running at ${runningEndpoint}` : ""}`, {
             variant : "success",
             action : (key) => (
               <IconButton key="close" aria-label="close" color="inherit" onClick={() => closeSnackbar(key)}>
-                <CloseIcon />
+                <CloseIcon style={iconMedium} />
               </IconButton>
             ),
             autohideduration : 2000,
@@ -862,7 +856,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
           handleError("Meshery Broker could not be reached")("Meshery Server is not connected to Meshery Broker");
         }
 
-        stateUpdater(NATSState, setNATSState, res.controller.status.length !== 0 ? res.controller.status : "UNKNOWN", index)
+        stateUpdater(NATSState, setNATSState, res.controller.status.length !== 0 ? res.controller.status : "Unknown", index)
         stateUpdater(NATSVersion, setNATSVersion, res.controller.version, index);
       },
       error : handleError("NATS status could not be retrieved"),
@@ -896,15 +890,24 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
     MeshsyncStatusQuery(({ k8scontextID : ctxId })).subscribe({
       next : (res) => {
         updateProgress({ showProgress : false });
-        if (res.controller.name === "meshsync") {
+        if (res.controller.name === "MeshSync") {
           setMeshSyncStatusForGivenContext(ctxId, res.controller)
         }
-        if (res.controller.status === DISABLED) {
-          handleError("MeshSync could not be reached")("MeshSync is unavailable");
-        } else {
-          let publishEndpoint = res.controller.status.substring("ENABLED".length).trim()
+
+        if (res.controller.name === "MeshSync" && res.controller.status.includes("Connected")) {
+          let publishEndpoint = res.controller.status.substring("Connected".length)
           enqueueSnackbar(`MeshSync was pinged. ${publishEndpoint != "" ? `Publishing to ${publishEndpoint}` : ""}`, {
             variant : "success",
+            action : (key) => (
+              <IconButton key="close" aria-label="close" color="inherit" onClick={() => closeSnackbar(key)}>
+                <CloseIcon style={iconMedium} />
+              </IconButton>
+            ),
+            autohideduration : 2000,
+          })
+        }  else if (res.controller.name === "MeshSync" && !res.controller.status.includes("Unknown")) {
+          enqueueSnackbar(`MeshSync is not publishing to Meshery Broker`, {
+            variant : "warning",
             action : (key) => (
               <IconButton key="close" aria-label="close" color="inherit" onClick={() => closeSnackbar(key)}>
                 <CloseIcon />
@@ -912,6 +915,8 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
             ),
             autohideduration : 2000,
           })
+        } else {
+          handleError("MeshSync could not be reached")("MeshSync is unavailable");
         }
       },
       error : handleError("MeshSync status could not be retrieved"),
@@ -925,7 +930,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
     //         variant : "info",
     //         action : (key) => (
     //           <IconButton key="close" aria-label="close" color="inherit" onClick={() => closesnackbar(key)}>
-    //             <CloseIcon />
+    //             <CloseIcon style={iconMedium} />
     //           </IconButton>
     //         ),
     //         autohideduration : 7000,
@@ -937,7 +942,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
     //         variant : "success",
     //         action : (key) => (
     //           <IconButton key="close" aria-label="close" color="inherit" onClick={() => self.props.closesnackbar(key)}>
-    //             <CloseIcon />
+    //             <CloseIcon style={iconMedium} />
     //           </IconButton>
     //         ),
     //         autohideduration : 7000,

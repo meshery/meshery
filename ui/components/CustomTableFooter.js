@@ -7,6 +7,7 @@ import TableRow from '@material-ui/core/TableRow';
 import IconButton from '@material-ui/core/IconButton';
 import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
 import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
+import { iconSmall } from '../css/icons.styles';
 
 const actionsStyles = (theme) => ({ wrapper : { flexShrink : 0,
   color : theme.palette.text.secondary,
@@ -44,8 +45,8 @@ class TablePaginationActions extends React.Component {
           aria-label="Previous Page"
         >
           {theme.direction === 'rtl'
-            ? <KeyboardArrowRight />
-            : <KeyboardArrowLeft />}
+            ? <KeyboardArrowRight style={iconSmall} />
+            : <KeyboardArrowLeft style={iconSmall} />}
         </IconButton>
         <IconButton
           onClick={this.handleNextButtonClick}
@@ -53,8 +54,8 @@ class TablePaginationActions extends React.Component {
           aria-label="Next Page"
         >
           {theme.direction === 'rtl'
-            ? <KeyboardArrowLeft />
-            : <KeyboardArrowRight />}
+            ? <KeyboardArrowLeft style={iconSmall} />
+            : <KeyboardArrowRight style={iconSmall} />}
         </IconButton>
       </div>
     );
@@ -72,29 +73,29 @@ const TablePaginationActionsWrapper = withStyles(actionsStyles, { withTheme : tr
 const defaultFooterStyles = {};
 
 class CustomTableFooter extends Component {
-    customLabelDisplayedRows = () => `Page ${this.props.page + 1}`
+  customLabelDisplayedRows = () => `Page ${this.props.page + 1}`
 
-    render() {
-      return (
-        <TableFooter>
-          <TableRow>
-            <TablePagination
-              labelRowsPerPage=""
-              labelDisplayedRows={this.customLabelDisplayedRows}
-              rowsPerPageOptions={[10]}
-              colSpan={3}
-              count={this.props.count}
-              rowsPerPage={this.props.rowsPerPage}
-              page={this.props.page}
-              SelectProps={{ native : true, }}
-              onChangePage={this.props.changePage}
-              // onChangeRowsPerPage={this.handleChangeRowsPerPage}
-              ActionsComponent={TablePaginationActionsWrapper}
-            />
-          </TableRow>
-        </TableFooter>
-      );
-    }
+  render() {
+    return (
+      <TableFooter>
+        <TableRow>
+          <TablePagination
+            labelRowsPerPage=""
+            labelDisplayedRows={this.customLabelDisplayedRows}
+            rowsPerPageOptions={[10]}
+            colSpan={3}
+            count={this.props.count}
+            rowsPerPage={this.props.rowsPerPage}
+            page={this.props.page}
+            SelectProps={{ native : true, }}
+            onChangePage={this.props.changePage}
+            // onChangeRowsPerPage={this.handleChangeRowsPerPage}
+            ActionsComponent={TablePaginationActionsWrapper}
+          />
+        </TableRow>
+      </TableFooter>
+    );
+  }
 }
 
 CustomTableFooter.propTypes = { changePage : PropTypes.func.isRequired,

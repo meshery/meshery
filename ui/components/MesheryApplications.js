@@ -33,6 +33,7 @@ import { trueRandom } from "../lib/trueRandom";
 import PublishIcon from "@material-ui/icons/Publish";
 import InfoIcon from '@material-ui/icons/Info';
 import ConfigurationSubscription from "./graphql/subscriptions/ConfigurationSubscription";
+import { iconMedium, iconSmall } from "../css/icons.styles";
 
 const styles = (theme) => ({
   grid : { padding : theme.spacing(2), },
@@ -126,10 +127,10 @@ function YAMLEditor({ application, onClose, onSubmit }) {
         <TooltipIcon
           title={fullScreen ? "Exit Fullscreen" : "Enter Fullscreen"}
           onClick={toggleFullScreen}>
-          {fullScreen ? <FullscreenExitIcon /> : <FullscreenIcon />}
+          {fullScreen ? <FullscreenExitIcon style={iconMedium}  /> : <FullscreenIcon style={iconMedium}  />}
         </TooltipIcon>
         <TooltipIcon title="Exit" onClick={onClose}>
-          <CloseIcon />
+          <CloseIcon style={iconMedium} />
         </TooltipIcon>
       </DialogTitle>
       <Divider variant="fullWidth" light />
@@ -158,7 +159,7 @@ function YAMLEditor({ application, onClose, onSubmit }) {
               data : yaml, id : application.id, name : application.name, type : FILE_OPS.UPDATE, source_type : application.type.String
             })}
           >
-            <SaveIcon />
+            <SaveIcon style={iconMedium}  />
           </IconButton>
         </Tooltip>
         <Tooltip title="Delete Application">
@@ -172,7 +173,7 @@ function YAMLEditor({ application, onClose, onSubmit }) {
               type : FILE_OPS.DELETE
             })}
           >
-            <DeleteIcon />
+            <DeleteIcon style={iconMedium} />
           </IconButton>
         </Tooltip>
       </DialogActions>
@@ -223,7 +224,7 @@ function MesheryApplications({
   updateProgress, enqueueSnackbar, closeSnackbar, user, classes, selectedK8sContexts
 }) {
   const [page, setPage] = useState(0);
-  const [search] = useState("");
+  const [search,setSearch] = useState("");
   const [sortOrder] = useState("");
   const [count, setCount] = useState(0);
   const modalRef = useRef(null);
@@ -258,6 +259,10 @@ function MesheryApplications({
   useEffect(() => {
     fetchApplications(page, pageSize, search, sortOrder)
   }, [page, pageSize, search, sortOrder]);
+
+  useEffect(() => {
+    if (viewType==='grid')setSearch("")
+  },[viewType])
 
   /**
    * fetch applications when the application downloads
@@ -313,7 +318,6 @@ function MesheryApplications({
   }
 
   const handleModalOpen = (app_file, name, isDeploy) => {
-    // console.log("MMMM", disposeConfSubscription);
     setModalOpen({
       open : true,
       deploy : isDeploy,
@@ -350,7 +354,7 @@ function MesheryApplications({
           action : function Action(key) {
             return (
               <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-                <CloseIcon />
+                <CloseIcon style={iconMedium} />
               </IconButton>
             );
           },
@@ -377,7 +381,7 @@ function MesheryApplications({
           action : function Action(key) {
             return (
               <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-                <CloseIcon />
+                <CloseIcon style={iconMedium} />
               </IconButton>
             );
           },
@@ -459,7 +463,7 @@ function MesheryApplications({
       action : function Action(key) {
         return (
           <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-            <CloseIcon />
+            <CloseIcon style={iconMedium} />
           </IconButton>
         );
       },
@@ -505,7 +509,7 @@ function MesheryApplications({
             action : function Action(key) {
               return (
                 <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-                  <CloseIcon />
+                  <CloseIcon style={iconMedium} />
                 </IconButton>
               );
             },
@@ -642,7 +646,7 @@ function MesheryApplications({
               <Tooltip title="Click source type to download Application">
                 <div style={{ display : "flex" }}>
                   <b>{column.label}</b>
-                  <InfoIcon color="primary" style={{ scale : "0.8" }}/>
+                  <InfoIcon color="primary" style={iconSmall}/>
                 </div>
               </Tooltip>
             </TableCell>
@@ -685,13 +689,13 @@ function MesheryApplications({
                 title="Deploy"
                 onClick={() => handleModalOpen(rowData.application_file, rowData.name, true)}
               >
-                <DoneAllIcon data-cy="deploy-button" />
+                <DoneAllIcon data-cy="deploy-button" style={iconMedium}  />
               </TooltipIcon>
               <TooltipIcon
                 title="Undeploy"
                 onClick={() => handleModalOpen(rowData.application_file, rowData.name, false)}
               >
-                <UndeployIcon fill="#8F1F00" data-cy="undeploy-button" />
+                <UndeployIcon fill="#F91313" data-cy="undeploy-button" />
               </TooltipIcon>
             </>
           );
@@ -739,7 +743,7 @@ function MesheryApplications({
           action : function Action(key) {
             return (
               <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-                <CloseIcon />
+                <CloseIcon style={iconMedium} />
               </IconButton>
             );
           },
@@ -809,6 +813,7 @@ function MesheryApplications({
               fetchApplications(page, pageSize, tableState.searchText !== null
                 ? tableState.searchText
                 : "", sortOrder);
+              setSearch(tableState.searchText)
             }
           }, 500);
           break;
@@ -857,7 +862,7 @@ function MesheryApplications({
                 onClick={handleUploadImport}
                 style={{ marginRight : "2rem" }}
               >
-                <PublishIcon className={classes.addIcon} />
+                <PublishIcon className={classes.addIcon} style={iconMedium}  />
               Import Application
               </Button>
             </div>
@@ -910,7 +915,7 @@ function MesheryApplications({
           isDelete={!modalOpen.deploy}
           title={ modalOpen.name }
           componentCount={modalOpen.count}
-          tab={modalOpen.deploy ? 0 : 1}
+          tab={modalOpen.deploy ? 2 : 1}
         />
         <PromptComponent ref={modalRef} />
         <UploadImport open={importModal.open} handleClose={handleUploadImportClose} isApplication = {true} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler}

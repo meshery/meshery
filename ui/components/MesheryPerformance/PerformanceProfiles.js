@@ -18,12 +18,12 @@ import GenericModal from "../GenericModal";
 import MesheryPerformanceComponent from "./index";
 import { Paper, Typography, Button } from "@material-ui/core";
 import fetchPerformanceProfiles from "../graphql/queries/PerformanceProfilesQuery";
-import { makeStyles } from "@material-ui/core/styles";
+import { withStyles } from "@material-ui/core/styles";
 import subscribePerformanceProfiles from "../graphql/subscriptions/PerformanceProfilesSubscription";
+import { iconMedium, iconXLarge } from "../../css/icons.styles";
 
 const MESHERY_PERFORMANCE_URL = "/api/user/performance/profiles";
-
-const useStyles = makeStyles(() => ({
+const styles = () => ({
   topToolbar : {
     margin : "2rem auto",
     display : "flex",
@@ -64,7 +64,7 @@ const useStyles = makeStyles(() => ({
   addIcon : {
     paddingRight : "0.5"
   }
-}));
+});
 /**
  * Type Definition for View Type
  * @typedef {"grid" | "table"} TypeView
@@ -84,11 +84,11 @@ function ViewSwitch({ view, changeView }) {
       onChange={(_, newView) => changeView(newView)}
       aria-label="Switch View"
     >
-      <ToggleButton value="grid">
-        <GridOnIcon />
+      <ToggleButton style={iconXLarge} value="grid">
+        <GridOnIcon style={iconMedium}/>
       </ToggleButton>
-      <ToggleButton value="table">
-        <TableChartIcon />
+      <ToggleButton style={iconXLarge} value="table">
+        <TableChartIcon style={iconMedium}/>
       </ToggleButton>
     </ToggleButtonGroup>
   );
@@ -96,8 +96,7 @@ function ViewSwitch({ view, changeView }) {
 
 
 
-function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar }) {
-  const classes = useStyles();
+function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar, classes }) {
   const [viewType, setViewType] = useState(
     /**  @type {TypeView} */
     ("grid")
@@ -209,8 +208,8 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar }) 
           autoHideDuration : 2000,
           action : function Action(key) {
             return (
-              <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-                <CloseIcon />
+              <IconButton style={iconMedium} key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+                <CloseIcon style={iconMedium}/>
               </IconButton>
             );
           },
@@ -231,8 +230,8 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar }) 
         variant : "error",
         action : function Action(key) {
           return (
-            <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-              <CloseIcon />
+            <IconButton style={iconMedium} key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+              <CloseIcon style={iconMedium} />
             </IconButton>
           );
         },
@@ -255,7 +254,7 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar }) 
                 // @ts-ignore
                 onClick={() => setProfileForModal({})}
               >
-                <AddIcon className={classes.addIcon} />
+                <AddIcon style={iconMedium} className={classes.addIcon} />
                 Add Performance Profile
               </Button>
             </div>
@@ -361,4 +360,4 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar }) 
 
 const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(updateProgress, dispatch), });
 
-export default connect(null, mapDispatchToProps)(withSnackbar(PerformanceProfile));
+export default withStyles(styles)(connect(null, mapDispatchToProps)(withSnackbar(PerformanceProfile)));

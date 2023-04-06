@@ -18,28 +18,12 @@ Service Mesh Lifecycle Management
 
 Provisioning, configuration, and on-going operational management of service meshes
 
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-mesheryctl mesh [flags]
-
-</div>
-</pre> 
-
-## Examples
-
-Lifecycle management of service meshes
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-mesheryctl mesh
-
-</div>
-</pre> 
-
 ## Options
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  -h, --help   help for mesh
+  -h, --help           help for mesh
+  -t, --token string   Path to token for authenticating to Meshery API
 
 </div>
 </pre>

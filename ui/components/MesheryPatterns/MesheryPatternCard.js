@@ -17,6 +17,8 @@ import useStyles from "./Cards.styles";
 import YAMLDialog from "../YamlDialog";
 import PublicIcon from '@material-ui/icons/Public';
 import TooltipButton from '../../utils/TooltipButton'
+import CloneIcon from "../../public/static/img/CloneIcon";
+import { VISIBILITY } from "../../utils/Enum";
 
 const INITIAL_GRID_SIZE = { xl : 4, md : 6, xs : 12 };
 
@@ -35,7 +37,8 @@ function MesheryPatternCard({
   setSelectedPatterns,
   setYaml,
   description={},
-  visibility
+  visibility,
+  canPublishPattern = false
 }) {
 
   function genericClickHandler(ev, fn) {
@@ -102,15 +105,16 @@ function MesheryPatternCard({
           <div className={classes.bottomPart} >
 
             <div className={classes.cardButtons} >
-              <TooltipButton
-                variant="contained"
-                title="Publish"
-                className={classes.testsButton}
-                onClick={(ev) => genericClickHandler(ev, handlePublishModal)}
-              >
-                <PublicIcon className={classes.iconPatt} />
-                <span className={classes.btnText}> Publish </span>
-              </TooltipButton>
+              {canPublishPattern &&
+                <TooltipButton
+                  variant="contained"
+                  title="Publish"
+                  className={classes.testsButton}
+                  onClick={(ev) => genericClickHandler(ev, handlePublishModal)}
+                >
+                  <PublicIcon className={classes.iconPatt} />
+                  <span className={classes.btnText}> Publish </span>
+                </TooltipButton>}
 
               <TooltipButton
                 title="Valildate"
@@ -148,7 +152,7 @@ function MesheryPatternCard({
                 <span className={classes.btnText}>Undeploy</span>
               </TooltipButton>
 
-              { visibility === "private" ?  <TooltipButton
+              { visibility === VISIBILITY.PRIVATE ?  <TooltipButton
                 title="Design"
                 variant="contained"
                 color="primary"
@@ -168,8 +172,8 @@ function MesheryPatternCard({
                 }
                 className={classes.testsButton}
               >
-                <Avatar src="/static/img/clone-white.svg" className={classes.clonePatt} />
-                <span className={classes.btnText}> Clone </span>
+                <CloneIcon fill="#ffffff" className={classes.iconPatt} />
+                <span className={classes.cloneBtnText}> Clone </span>
               </TooltipButton>  }
 
             </div>
@@ -255,7 +259,7 @@ function MesheryPatternCard({
             </Grid>
 
             <Grid item xs={12}>
-              {visibility === "private" ?
+              {visibility === VISIBILITY.PRIVATE?
                 <div className={classes.updateDeleteButtons} >
 
                   {/* Save button */}

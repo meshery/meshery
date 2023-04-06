@@ -10,7 +10,9 @@ display-title: "false"
 list: include
 ---
 
-# Meshery Operator <img style="width:1em; inline; margin-bottom:10px;" src="{{ site.baseurl }}/assets/img/architecture/B203EFA85E89491B.png"/>
+<link rel="stylesheet" type="text/css" href="{{ site.baseurl }}/_sass/operator.css">
+
+# Meshery Operator <img src="{{ site.baseurl }}/assets/img/architecture/B203EFA85E89491B.png" width="30" height="35" style="display:inline"/>
 
 Meshery Operator is the multi-service mesh operator (a Kubernetes custom controller) that manages MeshSync and it's messaging broker.
 
@@ -34,13 +36,13 @@ It is recommended to deploy one Meshery Operator per cluster.
 
 Meshery broker is one of the core components of the meshery architecture. This controller manages the lifecycle of broker that meshery uses for data streaming across the cluster and the outside world.
 
-See [Meshery Broker]({{site.baseurl}}/architecture/broker) for more information.
+See [Meshery Broker]({{site.baseurl}}/concepts/architecture/broker) for more information.
 
 ### MeshSync Controller
 
 MeshSync Controller manages the lifecycle of MeshSync that is deployed for resource synchronization for the cluster.
 
-See [MeshSync]({{site.baseurl}}/architecture/meshsync) for more information.
+See [MeshSync]({{site.baseurl}}/concepts/architecture/meshsync) for more information.
 
 ## Operator FAQs
 

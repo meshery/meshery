@@ -23,6 +23,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTachometerAlt } from '@fortawesome/free-solid-svg-icons';
 import MesherySettingsPerformanceComponent from './MesherySettingsPerformanceComponent';
 import { ctxUrl } from '../utils/multi-ctx';
+import { iconMedium } from '../css/icons.styles';
 
 
 const styles = (theme) => ({
@@ -41,11 +42,18 @@ const styles = (theme) => ({
     borderTopLeftRadius : 3,
     borderTopRightRadius : 3,
   },
-  tabs : { marginLeft : 0 },
+  tabs : { marginLeft : 0,
+    "& .MuiTabs-indicator" : {
+      backgroundColor : theme.palette.type === 'dark' ? "#00B39F" : theme.palette.primary,
+    },
+  },
   tab : {
     maxWidth : 'min(33%, 200px)',
     minWidth : '50px',
-    margin : 0
+    margin : 0,
+    "&.Mui-selected" : {
+      color : theme.palette.type === 'dark' ? "#00B39F" : theme.palette.primary,
+    }
   },
   icon : {
     display : 'inline',
@@ -124,9 +132,9 @@ class UserPreference extends React.Component {
                 key="close"
                 aria-label="Close"
                 color="inherit"
-                onClick={() => self.props.closeSnackbar(key)}
+                onClick={() => this.props.closeSnackbar(key)}
               >
-                <CloseIcon />
+                <CloseIcon style={iconMedium} />
               </IconButton>
             ),
           });
@@ -155,7 +163,7 @@ class UserPreference extends React.Component {
           color="inherit"
           onClick={() => self.props.closeSnackbar(key)}
         >
-          <CloseIcon />
+          <CloseIcon style={iconMedium} />
         </IconButton>
       ),
       autoHideDuration : 8000, });
@@ -205,7 +213,7 @@ class UserPreference extends React.Component {
               color="inherit"
               onClick={() => self.props.closeSnackbar(key)}
             >
-              <CloseIcon />
+              <CloseIcon style={iconMedium} />
             </IconButton>
           ), });
         }
@@ -253,7 +261,7 @@ class UserPreference extends React.Component {
     } = this.state;
     const { classes } = this.props;
 
-    const mainIconScale = 'grow-10';
+    // const mainIconScale = 'grow-10';
 
     return (
       <NoSsr>
@@ -270,7 +278,7 @@ class UserPreference extends React.Component {
               <Tab
                 className={classes.tab}
                 icon={
-                  <SettingsCellIcon />
+                  <SettingsCellIcon style={iconMedium} />
                 }
                 label={<span className={classes.tabLabel}>General</span>}
               />
@@ -279,7 +287,7 @@ class UserPreference extends React.Component {
               <Tab
                 className={classes.tab}
                 icon={
-                  <FontAwesomeIcon icon={faTachometerAlt} transform={mainIconScale} fixedWidth />
+                  <FontAwesomeIcon icon={faTachometerAlt} style={iconMedium}/>
                 }
                 label={<span className={classes.tabLabel}>Performance</span>}
               />
@@ -290,7 +298,7 @@ class UserPreference extends React.Component {
                 <Tab
                   className={classes.tab}
                   icon={
-                    <SettingsRemoteIcon />
+                    <SettingsRemoteIcon style={iconMedium} />
                   }
                   label={<span className={classes.tabLabel}>Remote Provider</span>}
                 />

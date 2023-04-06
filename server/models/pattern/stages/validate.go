@@ -7,12 +7,11 @@ import (
 
 	"github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshery/server/models/pattern/jsonschema"
-	"github.com/layer5io/meshery/server/models/pattern/patterns/k8s"
 	"github.com/layer5io/meshery/server/models/pattern/resource/selector"
 	meshmodel "github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 )
 
-func Validator(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFunction {
+func Validator(prov ServiceInfoProvider, act ServiceActionProvider, skipValidation bool) ChainStageFunction {
 	s := selector.New(act.GetRegistry(), prov)
 
 	return func(data *Data, err error, next ChainStageNextFunction) {
@@ -25,19 +24,21 @@ func Validator(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFu
 		data.PatternSvcTraitCapabilities = map[string][]core.TraitCapability{}
 
 		for svcName, svc := range data.Pattern.Services {
-			wc, ok := s.Workload(svc.Type, svc.Version, svc.Model)
-			if !ok {
-				act.Terminate(fmt.Errorf("invalid workload of type: %s", svc.Type))
+			wc, err := s.Workload(svc.Type, svc.Version, svc.Model, svc.APIVersion)
+			if err != nil {
+				act.Terminate(err)
 				return
 			}
-
-			if k8s.Format {
-				svc.Settings = k8s.Format.DePrettify(svc.Settings, false)
+			act.Log(fmt.Sprintf("%s version for %s: %s", svc.Model, svc.Name, wc.Model.Version)) //Eg: kubernetes version for Namespace: v1.25.0
+			if core.Format {
+				svc.Settings = core.Format.DePrettify(svc.Settings, false)
 			}
-			//Validate workload definition
-			if err := validateWorkload(svc.Settings, wc); err != nil {
-				act.Terminate(fmt.Errorf("invalid workload definition: %s", err))
-				return
+			//Validate component definition
+			if !skipValidation {
+				if err := validateWorkload(svc.Settings, wc); err != nil {
+					act.Terminate(fmt.Errorf("invalid component configuration for %s: %s", svc.Name, err.Error()))
+					return
+				}
 			}
 
 			// Store the workload capability in the metadata
@@ -45,22 +46,23 @@ func Validator(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFu
 
 			data.PatternSvcTraitCapabilities[svcName] = []core.TraitCapability{}
 
+			//DEPRECATED: `traits` will be no-op for pattern engine
 			// Validate traits applied to this workload
-			for trName, tr := range svc.Traits {
-				tc, ok := s.Trait(trName)
-				if !ok {
-					act.Terminate(fmt.Errorf("invalid trait of type: %s", svc.Type))
-					return
-				}
+			// for trName, tr := range svc.Traits {
+			// 	tc, ok := s.Trait(trName)
+			// 	if !ok {
+			// 		act.Terminate(fmt.Errorf("invalid trait of type: %s", svc.Type))
+			// 		return
+			// 	}
 
-				if err := validateTrait(tr, tc, svc.Type); err != nil {
-					act.Terminate(err)
-					return
-				}
+			// 	if err := validateTrait(tr, tc, svc.Type); err != nil {
+			// 		act.Terminate(err)
+			// 		return
+			// 	}
 
-				// Store the trait capability in the metadata
-				data.PatternSvcTraitCapabilities[svcName] = append(data.PatternSvcTraitCapabilities[svcName], tc)
-			}
+			// 	// Store the trait capability in the metadata
+			// 	data.PatternSvcTraitCapabilities[svcName] = append(data.PatternSvcTraitCapabilities[svcName], tc)
+			// }
 		}
 
 		if next != nil {
@@ -70,9 +72,10 @@ func Validator(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFu
 }
 
 func validateWorkload(comp map[string]interface{}, wc meshmodel.ComponentDefinition) error {
+	schemaByt := []byte(wc.Schema)
 	// Create schema validator from the schema
 	rs := jsonschema.GlobalJSONSchema()
-	if err := json.Unmarshal([]byte(wc.Schema), rs); err != nil {
+	if err := json.Unmarshal(schemaByt, rs); err != nil {
 		return fmt.Errorf("failed to create schema: %s", err)
 	}
 

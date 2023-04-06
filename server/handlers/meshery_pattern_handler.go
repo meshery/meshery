@@ -59,8 +59,8 @@ func (h *Handler) PatternFileRequestHandler(
 func (h *Handler) handlePatternPOST(
 	rw http.ResponseWriter,
 	r *http.Request,
-	prefObj *models.Preference,
-	user *models.User,
+	_ *models.Preference,
+	_ *models.User,
 	provider models.Provider,
 ) {
 	defer func() {
@@ -298,6 +298,16 @@ func (h *Handler) handlePatternPOST(
 //
 // Returns the list of all the patterns saved by the current user
 // This will return all the patterns with their details
+//
+// ```?updated_after=<timestamp>``` timestamp should be of the format "YYYY-MM-DD HH:MM:SS"
+//
+// ```?order={field}``` orders on the passed field
+//
+// ```?search=<design name>``` A string matching is done on the specified design name
+//
+// ```?page={page-number}``` Default page number is 1
+//
+// ```?pagesize={pagesize}``` Default pagesize is 10
 // responses:
 // 	200: mesheryPatternsResponseWrapper
 
@@ -305,14 +315,14 @@ func (h *Handler) handlePatternPOST(
 func (h *Handler) GetMesheryPatternsHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
-	prefObj *models.Preference,
-	user *models.User,
+	_ *models.Preference,
+	_ *models.User,
 	provider models.Provider,
 ) {
 	q := r.URL.Query()
 	tokenString := r.Context().Value(models.TokenCtxKey).(string)
-
-	resp, err := provider.GetMesheryPatterns(tokenString, q.Get("page"), q.Get("page_size"), q.Get("search"), q.Get("order"))
+	updateAfter := q.Get("updated_after")
+	resp, err := provider.GetMesheryPatterns(tokenString, q.Get("page"), q.Get("page_size"), q.Get("search"), q.Get("order"), updateAfter)
 	if err != nil {
 		h.log.Error(ErrFetchPattern(err))
 		http.Error(rw, ErrFetchPattern(err).Error(), http.StatusInternalServerError)
@@ -344,8 +354,8 @@ func (h *Handler) GetMesheryPatternsHandler(
 func (h *Handler) GetCatalogMesheryPatternsHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
-	prefObj *models.Preference,
-	user *models.User,
+	_ *models.Preference,
+	_ *models.User,
 	provider models.Provider,
 ) {
 	q := r.URL.Query()
@@ -374,8 +384,8 @@ func (h *Handler) GetCatalogMesheryPatternsHandler(
 func (h *Handler) DeleteMesheryPatternHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
-	prefObj *models.Preference,
-	user *models.User,
+	_ *models.Preference,
+	_ *models.User,
 	provider models.Provider,
 ) {
 	patternID := mux.Vars(r)["id"]
@@ -394,7 +404,7 @@ func (h *Handler) DeleteMesheryPatternHandler(
 // swagger:route POST /api/pattern/clone/{id} PatternsAPI idCloneMesheryPattern
 // Handle Clone for a Meshery Pattern
 //
-// Creates a local copy of a public pattern with id: id
+// Creates a local copy of a published pattern with id: id
 // responses:
 //
 //	200: noContentWrapper
@@ -403,13 +413,19 @@ func (h *Handler) DeleteMesheryPatternHandler(
 func (h *Handler) CloneMesheryPatternHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
-	prefObj *models.Preference,
-	user *models.User,
+	_ *models.Preference,
+	_ *models.User,
 	provider models.Provider,
 ) {
 	patternID := mux.Vars(r)["id"]
+	var parsedBody *models.MesheryClonePatternRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil || patternID == "" {
+		h.log.Error(ErrRequestBody(err))
+		http.Error(rw, ErrRequestBody(err).Error(), http.StatusBadRequest)
+		return
+	}
 
-	resp, err := provider.CloneMesheryPattern(r, patternID)
+	resp, err := provider.CloneMesheryPattern(r, patternID, parsedBody)
 	if err != nil {
 		h.log.Error(ErrClonePattern(err))
 		http.Error(rw, ErrClonePattern(err).Error(), http.StatusInternalServerError)
@@ -424,17 +440,17 @@ func (h *Handler) CloneMesheryPatternHandler(
 // swagger:route POST /api/pattern/catalog/publish PatternsAPI idPublishCatalogPatternHandler
 // Handle Publish for a Meshery Pattern
 //
-// Publishes pattern to Meshery Catalog by setting visibility to public and setting catalog data
+// Publishes pattern to Meshery Catalog by setting visibility to published and setting catalog data
 // responses:
 //
 //	200: noContentWrapper
 //
-// PublishCatalogPatternHandler makes pattern with given id public
+// PublishCatalogPatternHandler sets visibility of pattern with given id as published
 func (h *Handler) PublishCatalogPatternHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
-	prefObj *models.Preference,
-	user *models.User,
+	_ *models.Preference,
+	_ *models.User,
 	provider models.Provider,
 ) {
 	defer func() {
@@ -447,7 +463,6 @@ func (h *Handler) PublishCatalogPatternHandler(
 		http.Error(rw, ErrRequestBody(err).Error(), http.StatusBadRequest)
 		return
 	}
-
 	resp, err := provider.PublishCatalogPattern(r, parsedBody)
 	if err != nil {
 		h.log.Error(ErrPublishCatalogPattern(err))
@@ -467,8 +482,8 @@ func (h *Handler) PublishCatalogPatternHandler(
 func (h *Handler) DeleteMultiMesheryPatternsHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
-	prefObj *models.Preference,
-	user *models.User,
+	_ *models.Preference,
+	_ *models.User,
 	provider models.Provider,
 ) {
 	body, err := io.ReadAll(r.Body)
@@ -507,8 +522,8 @@ func (h *Handler) DeleteMultiMesheryPatternsHandler(
 func (h *Handler) GetMesheryPatternHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
-	prefObj *models.Preference,
-	user *models.User,
+	_ *models.Preference,
+	_ *models.User,
 	provider models.Provider,
 ) {
 	patternID := mux.Vars(r)["id"]

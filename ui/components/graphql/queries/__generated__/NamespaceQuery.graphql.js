@@ -1,6 +1,5 @@
 /**
- * @generated SignedSource<<3125aec988744bf8c77d206d23103f0d>>
- * @flow
+ * @generated SignedSource<<690faf7517990831cec356b0bf8f28bd>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,23 +8,7 @@
 
 'use strict';
 
-/*::
-import type { ConcreteRequest, Query } from 'relay-runtime';
-export type NamespaceQuery$variables = {|
-  k8sClusterIDs?: ?$ReadOnlyArray<string>,
-|};
-export type NamespaceQuery$data = {|
-  +namespaces: $ReadOnlyArray<{|
-    +namespace: string,
-  |}>,
-|};
-export type NamespaceQuery = {|
-  variables: NamespaceQuery$variables,
-  response: NamespaceQuery$data,
-|};
-*/
-
-var node/*: ConcreteRequest*/ = (function(){
+var node = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -87,9 +70,6 @@ return {
 };
 })();
 
-(node/*: any*/).hash = "04f74232907aa0ba765bd0f8db6c427c";
+node.hash = "04f74232907aa0ba765bd0f8db6c427c";
 
-module.exports = ((node/*: any*/)/*: Query<
-  NamespaceQuery$variables,
-  NamespaceQuery$data,
->*/);
+module.exports = node;

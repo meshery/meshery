@@ -1,7 +1,7 @@
 //@ts-check
 import React, { useEffect, useState, useRef } from "react";
 import {
-  NoSsr, TableCell, IconButton, Paper, createTheme, Popper, ClickAwayListener, Fade
+  NoSsr, TableCell, IconButton, Paper, Popper, ClickAwayListener, Fade
 } from "@material-ui/core";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
@@ -10,7 +10,7 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Moment from "react-moment";
 import { withSnackbar } from "notistack";
-import { MuiThemeProvider, withStyles } from '@material-ui/core/styles';
+import { withStyles } from '@material-ui/core/styles';
 import CloseIcon from "@material-ui/icons/Close";
 import { updateResultsSelection, clearResultsSelection, updateProgress } from "../../lib/store";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
@@ -28,6 +28,7 @@ import ReplyIcon from '@material-ui/icons/Reply';
 import FacebookIcon from "./assets/facebookIcon";
 import LinkedinIcon from "./assets/linkedinIcon"
 import TwitterIcon from "./assets/twitterIcon";
+import { iconMedium, iconLarge } from "../../css/icons.styles";
 import {
   TwitterShareButton,
   LinkedinShareButton,
@@ -46,7 +47,7 @@ const styles = (theme) => ({
   },
   share : {
     transform : "scaleX(-1)",
-    color : "#000"
+    color : theme.palette.secondary.icon2,
   },
   paper : {
     padding : theme.spacing(1)
@@ -86,7 +87,8 @@ function generateResultsForDisplay(results) {
 
 function generateColumnsForDisplay(sortOrder, setSelectedProfileIdxForChart, setSelectedProfileIdxForNodeDetails, classes, handleSocialExpandClick, handleClickAway, socialExpand, anchorEl, socialMessage) {
   const columns = [
-    { name : "name",
+    {
+      name : "name",
       label : "Name",
       options : {
         filter : false,
@@ -101,8 +103,10 @@ function generateColumnsForDisplay(sortOrder, setSelectedProfileIdxForChart, set
             </TableCell>
           );
         },
-      }, },
-    { name : "mesh",
+      },
+    },
+    {
+      name : "mesh",
       label : "Mesh",
       options : {
         filter : false,
@@ -117,8 +121,10 @@ function generateColumnsForDisplay(sortOrder, setSelectedProfileIdxForChart, set
             </TableCell>
           );
         },
-      }, },
-    { name : "test_start_time",
+      },
+    },
+    {
+      name : "test_start_time",
       label : "Start Time",
       options : {
         filter : false,
@@ -136,8 +142,10 @@ function generateColumnsForDisplay(sortOrder, setSelectedProfileIdxForChart, set
         customBodyRender : function CustomBody(value) {
           return <Moment format="LLLL">{value}</Moment>;
         },
-      }, },
-    { name : "qps",
+      },
+    },
+    {
+      name : "qps",
       label : "QPS",
       options : {
         filter : false,
@@ -150,8 +158,10 @@ function generateColumnsForDisplay(sortOrder, setSelectedProfileIdxForChart, set
             </TableCell>
           );
         },
-      }, },
-    { name : "duration",
+      },
+    },
+    {
+      name : "duration",
       label : "Duration",
       options : {
         filter : false,
@@ -164,9 +174,11 @@ function generateColumnsForDisplay(sortOrder, setSelectedProfileIdxForChart, set
             </TableCell>
           );
         },
-      }, },
+      },
+    },
 
-    { name : "p50",
+    {
+      name : "p50",
       label : "P50",
       options : {
         filter : false,
@@ -179,9 +191,11 @@ function generateColumnsForDisplay(sortOrder, setSelectedProfileIdxForChart, set
             </TableCell>
           );
         },
-      }, },
+      },
+    },
 
-    { name : "p99_9",
+    {
+      name : "p99_9",
       label : "P99.9",
       options : {
         filter : false,
@@ -194,8 +208,10 @@ function generateColumnsForDisplay(sortOrder, setSelectedProfileIdxForChart, set
             </TableCell>
           );
         },
-      }, },
-    { name : "Chart",
+      },
+    },
+    {
+      name : "Chart",
       options : {
         filter : false,
         sort : false,
@@ -210,12 +226,14 @@ function generateColumnsForDisplay(sortOrder, setSelectedProfileIdxForChart, set
         customBodyRender : function CustomBody(value, tableMeta) {
           return (
             <IconButton aria-label="more" color="inherit" onClick={() => setSelectedProfileIdxForChart(tableMeta.rowIndex)}>
-              <BarChartIcon />
+              <BarChartIcon style={iconMedium} /> {/* can change it to large */}
             </IconButton>
           );
         },
-      }, },
-    { name : "Node Details",
+      },
+    },
+    {
+      name : "Node Details",
       options : {
         filter : false,
         sort : false,
@@ -230,7 +248,7 @@ function generateColumnsForDisplay(sortOrder, setSelectedProfileIdxForChart, set
         customBodyRender : function CustomBody(value, tableMeta) {
           return (
             <IconButton aria-label="more" color="inherit" onClick={() => setSelectedProfileIdxForNodeDetails(tableMeta.rowIndex)}>
-              <InfoIcon />
+              <InfoIcon style={iconMedium}/> {/* can change it to large */}
             </IconButton>
           );
         },
@@ -253,10 +271,11 @@ function generateColumnsForDisplay(sortOrder, setSelectedProfileIdxForChart, set
           return (
             <>
               <IconButton
+                style={iconMedium}
                 aria-label="Share"
                 onClick={(e) => handleSocialExpandClick(e, tableMeta)}
               >
-                <ReplyIcon className={classes.share}/>
+                <ReplyIcon style={iconLarge} className={classes.share} />
               </IconButton>
               <Popper open={socialExpand[tableMeta.rowIndex]} anchorEl={anchorEl[tableMeta.rowIndex]} transition >
                 {({ TransitionProps }) => (
@@ -267,17 +286,17 @@ function generateColumnsForDisplay(sortOrder, setSelectedProfileIdxForChart, set
                           hashtags={["opensource"]}
                         >
                           {/* <img src={`/static/img/twitter.svg`} /> */}
-                          <TwitterIcon   />
+                          <TwitterIcon />
                         </TwitterShareButton>
                         <LinkedinShareButton className={classes.socialIcon} url={"https://meshery.io"} summary={socialMessage}>
                           {/* <img src={`/static/img/linkedin.svg`} /> */}
-                          <LinkedinIcon    />
+                          <LinkedinIcon />
                         </LinkedinShareButton>
                         <FacebookShareButton className={classes.socialIcon} url={"https://meshery.io"} quote={socialMessage}
                           hashtag={"#opensource"}
                         >
                           {/* <img src={`/static/img/facebook.svg`} /> */}
-                          <FacebookIcon  />
+                          <FacebookIcon />
                         </FacebookShareButton>
                       </Paper>
                     </Fade>
@@ -326,16 +345,16 @@ function generateSelectedRows(results_selection, page, pageSize) {
 function ResultChart({ result, handleTabChange, tabValue }) {
   if (!result) return <div />;
 
-  const getMuiTheme = () => createTheme({
-    overrides : {
-      MuiTab : {
-        textColorInherit : {
-          textTransform : "none",
-          backgroundColor : "#eaeff1"
-        }
-      }
-    }
-  })
+  // const getMuiTheme = () => createTheme({
+  //   overrides : {
+  //     MuiTab : {
+  //       textColorInherit : {
+  //         textTransform : "none",
+  //         backgroundColor : "#eaeff1"
+  //       }
+  //     }
+  //   }
+  // })
   const row = result.runner_results;
   const boardConfig = result.server_board_config;
   const serverMetrics = result.server_metrics;
@@ -343,61 +362,63 @@ function ResultChart({ result, handleTabChange, tabValue }) {
   const endTime = new Date(startTime.getTime() + row.ActualDuration / 1000000);
 
   return (
-    <MuiThemeProvider theme={getMuiTheme()}>
-      <Paper
-        style={{ width : "100%",
-          maxWidth : "90vw",
-          padding : "0.5rem" }}
-      >
-        <Tabs
-          value={tabValue}
-          onChange={handleTabChange}
-          TabIndicatorProps={{
-            style : {
-              backgroundColor : "#00B39F"
-            }
-          }}
-        >
-          <Tab label="Performance Chart" />
-          <Tab label="Node Details" />
-        </Tabs>
 
-        {
-          (tabValue == 0) ?
+    <Paper
+      style={{
+        width : "100%",
+        maxWidth : "90vw",
+        padding : "0.5rem"
+      }}
+    >
+      <Tabs
+        value={tabValue}
+        onChange={handleTabChange}
+        TabIndicatorProps={{
+          style : {
+            backgroundColor : "#00B39F"
+          }
+        }}
+      >
+        <Tab label="Performance Chart" />
+        <Tab label="Node Details" />
+      </Tabs>
+
+      {
+        (tabValue == 0) ?
+          <div>
             <div>
+              <MesheryChart
+                rawdata={[result && result.runner_results ? result : {}]}
+                data={[result && result.runner_results ? result.runner_results : {}]}
+              />
+            </div>
+            {boardConfig && boardConfig !== null && Object.keys(boardConfig).length > 0 && (
               <div>
-                <MesheryChart
-                  rawdata={[result && result.runner_results ? result : {}]}
-                  data={[result && result.runner_results ? result.runner_results : {}]}
+                <GrafanaCustomCharts
+                  boardPanelConfigs={[boardConfig]}
+                  // @ts-ignore
+                  boardPanelData={[serverMetrics]}
+                  startDate={startTime}
+                  from={startTime.getTime().toString()}
+                  endDate={endTime}
+                  to={endTime.getTime().toString()}
+                  liveTail={false}
                 />
               </div>
-              {boardConfig && boardConfig !== null && Object.keys(boardConfig).length > 0 && (
-                <div>
-                  <GrafanaCustomCharts
-                    boardPanelConfigs={[boardConfig]}
-                    // @ts-ignore
-                    boardPanelData={[serverMetrics]}
-                    startDate={startTime}
-                    from={startTime.getTime().toString()}
-                    endDate={endTime}
-                    to={endTime.getTime().toString()}
-                    liveTail={false}
-                  />
-                </div>
-              )}
+            )}
+          </div>
+          : (tabValue == 1) ?
+            <div>
+              <NodeDetails result={row} />
             </div>
-            : (tabValue == 1) ?
-              <div>
-                <NodeDetails result={row}/>
-              </div>
-              : <div />
-        }
-      </Paper>
-    </MuiThemeProvider>
+            : <div />
+      }
+    </Paper>
+
   );
 }
 
-function ResultNodeDetails({ result, handleTabChange, tabValue }){
+function ResultNodeDetails({ result, handleTabChange, tabValue }) {
   console.log("results: ", result)
   if (!result) return <div />
   const chartData = result.runner_results;
@@ -409,9 +430,11 @@ function ResultNodeDetails({ result, handleTabChange, tabValue }){
   const endTime = new Date(startTime.getTime() + row.ActualDuration / 1000000);
   return (
     <Paper
-      style={{ width : "100%",
+      style={{
+        width : "100%",
         maxWidth : "90vw",
-        padding : "0.5rem" }}
+        padding : "0.5rem"
+      }}
     >
       <Tabs
         value={tabValue}
@@ -428,7 +451,7 @@ function ResultNodeDetails({ result, handleTabChange, tabValue }){
       {
         (tabValue == 1) ?
           <div>
-            <NodeDetails result={chartData}/>
+            <NodeDetails result={chartData} />
           </div>
           :
           (tabValue == 0) ?
@@ -454,7 +477,7 @@ function ResultNodeDetails({ result, handleTabChange, tabValue }){
                 </div>
               )}
             </div>
-            : <div/>
+            : <div />
       }
     </Paper>
   )
@@ -521,13 +544,15 @@ function MesheryResults({
           setPageSize(result.page_size);
         }
       }
-    },{ selector : {
-      pageSize : `${pageSize}`,
-      page : `${page}`,
-      search : `${encodeURIComponent(search)}`,
-      order : `${encodeURIComponent(sortOrder)}`
-    },
-    profileID : endpoint.split("/")[endpoint.split("/").length - 2] })
+    }, {
+      selector : {
+        pageSize : `${pageSize}`,
+        page : `${page}`,
+        search : `${encodeURIComponent(search)}`,
+        order : `${encodeURIComponent(sortOrder)}`
+      },
+      profileID : endpoint.split("/")[endpoint.split("/").length - 2]
+    })
     return () => {
       subscription.dispose();
     };
@@ -557,43 +582,49 @@ function MesheryResults({
 
     updateProgress({ showProgress : true });
 
-    fetchPerformanceResults({ selector : {
-      pageSize : `${pageSize}`,
-      page : `${page}`,
-      search : `${encodeURIComponent(search)}`,
-      order : `${encodeURIComponent(sortOrder)}`
-    },
-    profileID : endpoint.split("/")[endpoint.split("/").length - 2] }).subscribe({ next : (res) => {
-      // @ts-ignore
-      let result = res?.fetchResults
-      if (typeof result !== "undefined") {
-        updateProgress({ showProgress : false })
+    fetchPerformanceResults({
+      selector : {
+        pageSize : `${pageSize}`,
+        page : `${page}`,
+        search : `${encodeURIComponent(search)}`,
+        order : `${encodeURIComponent(sortOrder)}`
+      },
+      profileID : endpoint.split("/")[endpoint.split("/").length - 2]
+    }).subscribe({
+      next : (res) => {
+        // @ts-ignore
+        let result = res?.fetchResults
+        if (typeof result !== "undefined") {
+          updateProgress({ showProgress : false })
 
-        if (result) {
-          setCount(result.total_count);
-          setPageSize(result.page_size);
-          setSortOrder(sortOrder);
-          setSearch(search);
-          setResults(result.results);
-          setPageSize(result.page_size);
+          if (result) {
+            setCount(result.total_count);
+            setPageSize(result.page_size);
+            setSortOrder(sortOrder);
+            setSearch(search);
+            setResults(result.results);
+            setPageSize(result.page_size);
+          }
         }
-      }
-    },
-    error : handleError, });
+      },
+      error : handleError,
+    });
   }
 
   function handleError(error) {
     updateProgress({ showProgress : false });
 
-    enqueueSnackbar(`There was an error fetching results: ${error}`, { variant : "error",
+    enqueueSnackbar(`There was an error fetching results: ${error}`, {
+      variant : "error",
       action : function Action(key) {
         return (
-          <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-            <CloseIcon />
+          <IconButton style={iconMedium} key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+            <CloseIcon style={iconMedium} />
           </IconButton>
         );
       },
-      autoHideDuration : 8000, });
+      autoHideDuration : 8000,
+    });
   }
 
   const columns = generateColumnsForDisplay(sortOrder, (idx) => {
@@ -726,9 +757,11 @@ function MesheryResults({
   );
 }
 
-const mapDispatchToProps = (dispatch) => ({ updateResultsSelection : bindActionCreators(updateResultsSelection, dispatch),
+const mapDispatchToProps = (dispatch) => ({
+  updateResultsSelection : bindActionCreators(updateResultsSelection, dispatch),
   clearResultsSelection : bindActionCreators(clearResultsSelection, dispatch),
-  updateProgress : bindActionCreators(updateProgress, dispatch), });
+  updateProgress : bindActionCreators(updateProgress, dispatch),
+});
 
 const mapStateToProps = (state) => {
   const startKey = state.get("results").get("startKey");

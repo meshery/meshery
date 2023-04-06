@@ -7,7 +7,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func Persist(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFunction {
+func Persist(_ ServiceInfoProvider, act ServiceActionProvider) ChainStageFunction {
 	return func(data *Data, err error, next ChainStageNextFunction) {
 		if err != nil {
 			act.Terminate(err)

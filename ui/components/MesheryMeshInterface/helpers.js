@@ -3,7 +3,6 @@
 
 import { promisifiedDataFetch } from "../../lib/data-fetch";
 import { trueRandom } from "../../lib/trueRandom";
-import { CustomFieldTemplate } from "./PatternService/RJSFCustomComponents/FieldTemplate";
 
 /**
  * @typedef {Object} OAMDefinition
@@ -255,9 +254,6 @@ export function formatString(text) {
 function jsonSchemaBuilder(schema, obj) {
   if (!schema) return
 
-  const uiDesc = "ui:description"
-  // applying field template universally to every field type.
-  obj["ui:FieldTemplate"] = CustomFieldTemplate;
   if (schema.type === 'object') {
     for (let key in schema.properties) {
       obj[key] = {};
@@ -274,15 +270,11 @@ function jsonSchemaBuilder(schema, obj) {
   }
 
   if (schema.type === 'array') {
-    obj["items"] = {}
+    obj["items"] = {
+      "ui:label" : false
+    }
     jsonSchemaBuilder(schema.items, obj["items"]);
     return
-  }
-
-
-  // Don't remove the description from additonal Fields Title
-  if (!schema?.additionalProperties) {
-    obj[uiDesc] = " ";
   }
 
   if (obj["ui:widget"]) { // if widget is already assigned, don't go over
@@ -291,6 +283,7 @@ function jsonSchemaBuilder(schema, obj) {
 
   if (schema.type === 'boolean') {
     obj["ui:widget"] = "checkbox";
+    obj["ui:description"] = "";
   }
 
 

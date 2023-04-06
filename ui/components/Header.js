@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useLayoutEffect } from 'react';
 import PropTypes from 'prop-types';
 import AppBar from '@material-ui/core/AppBar';
 import Grid from '@material-ui/core/Grid';
@@ -12,7 +12,7 @@ import { withStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
 import NoSsr from '@material-ui/core/NoSsr';
 import Link from 'next/link';
-import SettingsIcon from '../assets/icons/SettingsIcon';
+import SettingsIcon from '@material-ui/icons/Settings';
 import Chip from '@material-ui/core/Chip';
 import MesheryNotification from './MesheryNotification';
 import User from './User';
@@ -20,7 +20,7 @@ import subscribeBrokerStatusEvents from "./graphql/subscriptions/BrokerStatusSub
 import Slide from '@material-ui/core/Slide';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import { Checkbox, Button } from '@material-ui/core';
-import AddIconCircleBorder from '../assets/icons/AddIconCircleBorder';
+import AddIcon from '@material-ui/icons/Add';
 import { Search } from '@material-ui/icons';
 import { TextField } from '@material-ui/core';
 import Avatar from '@material-ui/core/Avatar';
@@ -28,7 +28,8 @@ import { Paper } from '@material-ui/core';
 import { useSnackbar } from "notistack";
 import { deleteKubernetesConfig, pingKubernetes } from './ConnectionWizard/helpers/kubernetesHelpers';
 import {
-  successHandlerGenerator, errorHandlerGenerator, closeButtonForSnackbarAction } from './ConnectionWizard/helpers/common';
+  successHandlerGenerator, errorHandlerGenerator, closeButtonForSnackbarAction
+} from './ConnectionWizard/helpers/common';
 import { promisifiedDataFetch } from '../lib/data-fetch';
 import { updateK8SConfig, updateProgress } from '../lib/store';
 import { bindActionCreators } from 'redux';
@@ -38,6 +39,8 @@ import _ from 'lodash';
 import { SETTINGS } from '../constants/navigator';
 import { cursorNotAllowed, disabledStyle } from '../css/disableComponent.styles';
 import PromptComponent from './PromptComponent';
+import { iconMedium } from '../css/icons.styles';
+import { isExtensionOpen } from '../pages/_app';
 
 const lightColor = 'rgba(255, 255, 255, 0.7)';
 const styles = (theme) => ({
@@ -46,8 +49,8 @@ const styles = (theme) => ({
   iconButtonAvatar : { padding : 4, },
   link : {
     textDecoration : 'none',
-    color : lightColor,
-    '&:hover' : { color : theme.palette.common.white, },
+    color : theme.palette.secondary.link
+
   },
   button : { borderColor : lightColor, },
   notifications : {
@@ -58,7 +61,8 @@ const styles = (theme) => ({
   userContainer : {
     paddingLeft : 1,
     display : 'flex',
-    backgroundColor : "#396679",
+
+
     alignItems : 'center'
   },
   userSpan : { marginLeft : theme.spacing(1), },
@@ -73,29 +77,30 @@ const styles = (theme) => ({
     [theme.breakpoints.up('sm')] : { fontSize : '1.65rem', },
   },
   appBarOnDrawerOpen : {
-    backgroundColor : "#396679",
+    backgroundColor : theme.palette.secondary.mainBackground,
     shadowColor : " #808080",
     zIndex : theme.zIndex.drawer + 1,
     [theme.breakpoints.between(635, 732)] : { padding : theme.spacing(0.75, 1.4), },
     [theme.breakpoints.between(600, 635)] : { padding : theme.spacing(0.4, 1.4), },
   },
   appBarOnDrawerClosed : {
-    backgroundColor : "#396679",
+    backgroundColor : theme.palette.secondary.mainBackground,
     zIndex : theme.zIndex.drawer + 1,
   },
   toolbarOnDrawerClosed : {
+
     minHeight : 59,
     padding : theme.spacing(2.4),
     paddingLeft : 34,
     paddingRight : 34,
-    backgroundColor : "#396679"
+    backgroundColor : theme.palette.secondary.mainBackground,
   },
   toolbarOnDrawerOpen : {
     minHeight : 58,
     padding : theme.spacing(2.4),
     paddingLeft : 34,
     paddingRight : 34,
-    backgroundColor : "#396679",
+    backgroundColor : theme.palette.secondary.mainBackground,
     [theme.breakpoints.between(620, 732)] : { minHeight : 68, paddingLeft : 20, paddingRight : 20 },
   },
   itemActiveItem : { color : "#00B39F" },
@@ -126,7 +131,6 @@ const styles = (theme) => ({
     height : 24
   },
   Chip : {
-    backgroundColor : "white",
     width : '12.8rem',
     textAlign : 'center',
     cursor : "pointer",
@@ -138,7 +142,7 @@ const styles = (theme) => ({
     textOverflow : "ellipsis"
   },
   cMenuContainer : {
-    backgroundColor : "revert",
+    backgroundColor : theme.palette.secondary.headerColor,
     marginTop : "-0.7rem",
     borderRadius : "3px",
     padding : "1rem",
@@ -165,8 +169,35 @@ const styles = (theme) => ({
   },
   searchIcon : {
     width : theme.spacing(3.5),
-  }
-});
+  },
+  darkThemeToggle : {
+
+    marginLeft : "1.5em",
+
+  },
+
+  toggle : {
+    appearance : "none",
+    outline : "none",
+    cursor : "pointer",
+    width : "1.5rem",
+    height : "1.5rem",
+    boxShadow : "inset calc(1.5rem * 0.33) calc(1.5rem * -0.25) 0",
+    borderRadius : "999px",
+    color : "#00B39F",
+    transition : "all 500ms",
+    zIndex : "1",
+    '&:checked' : {
+      width : "1.5rem",
+      height : "1.5rem",
+      borderRadius : "50%",
+      background : "orange",
+      boxShadow : "0 0 10px orange, 0 0 60px orange,0 0 200px yellow, inset 0 0 80px yellow",
+    }
+  },
+
+}
+);
 
 const CONTROLLERS = {
   BROKER : 0,
@@ -192,6 +223,31 @@ async function loadActiveK8sContexts() {
   }
 }
 
+function LoadTheme({
+  themeSetter
+}) {
+  const defaultTheme = "light";
+
+  useLayoutEffect(() => {
+    // disable dark mode in extension
+    if (isExtensionOpen()) {
+      themeSetter(defaultTheme);
+      return;
+    }
+
+    if (localStorage.getItem("Theme") === null) {
+      themeSetter(defaultTheme);
+    } else {
+      themeSetter(localStorage.getItem("Theme"));
+    }
+  }, []);
+
+  return (
+    <>
+    </>
+  )
+}
+
 function K8sContextMenu({
   classes = {},
   contexts = {},
@@ -211,7 +267,6 @@ function K8sContextMenu({
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
   const styleSlider = {
-    backgroundColor : "#EEEEEE",
     position : "absolute",
     left : "-5rem",
     zIndex : "-1",
@@ -285,7 +340,7 @@ function K8sContextMenu({
     )
   }
 
-  const handleKubernetesDelete = (name, ctxId) => async() => {
+  const handleKubernetesDelete = (name, ctxId) => async () => {
     let responseOfDeleteK8sCtx = await deleteCtxtRef.current.show({
       title : `Delete ${name} context ?`,
       subtitle : `Are you sure you want to delete ${name} cluster from Meshery?`,
@@ -353,7 +408,7 @@ function K8sContextMenu({
         <div>
           <ClickAwayListener onClickAway={(e) => {
 
-            if (!e.target.className?.includes("cbadge") && e.target?.className != "k8s-image" && !e.target.className.includes("k8s-icon-button")) {
+            if (typeof e.target.className == "string" && !e.target.className?.includes("cbadge") && e.target?.className != "k8s-image" && !e.target.className.includes("k8s-icon-button")) {
               setAnchorEl(false)
               setShowFullContextMenu(false)
             }
@@ -371,7 +426,7 @@ function K8sContextMenu({
                   InputProps={{
                     endAdornment :
                       (
-                        <Search className={classes.searchIcon} />
+                        <Search className={classes.searchIcon}  style={iconMedium} />
                       )
                   }}
                 />
@@ -397,7 +452,7 @@ function K8sContextMenu({
                         size="large"
                         style={{ margin : "0.5rem 0.5rem", whiteSpace : "nowrap" }}
                       >
-                        <AddIconCircleBorder className={classes.AddIcon} />
+                        <AddIcon className={classes.AddIcon} style={iconMedium} />
                         Connect Clusters
                       </Button>
                     </Link>
@@ -460,6 +515,7 @@ function K8sContextMenu({
 }
 
 class Header extends React.Component {
+
   constructor(props) {
     super(props);
     this.state = {
@@ -469,7 +525,6 @@ class Header extends React.Component {
       capabilityregistryObj : null
     }
   }
-
   componentDidMount() {
     this._isMounted = true;
     const brokerStatusSub = subscribeBrokerStatusEvents(data => {
@@ -483,6 +538,10 @@ class Header extends React.Component {
     if (!_.isEqual(prevProps.capabilitiesRegistry, this.props.capabilitiesRegistry)) {
       this.setState({ capabilityregistryObj : new CapabilityRegistryClass(this.props.capabilitiesRegistry) });
     }
+
+
+
+
   }
 
   componentWillUnmount = () => {
@@ -490,18 +549,19 @@ class Header extends React.Component {
   }
 
   render() {
-    const { classes, title, onDrawerToggle, onDrawerCollapse, isBeta } = this.props;
+    const { classes, title, onDrawerToggle, isBeta, theme, themeSetter, onDrawerCollapse } = this.props;
 
     return (
       <NoSsr>
         <React.Fragment>
+          <LoadTheme theme={theme} themeSetter={themeSetter} />
           <AppBar color="primary" position="sticky" elevation={2} className={onDrawerCollapse
             ? classes.appBarOnDrawerClosed
             : classes.appBarOnDrawerOpen}>
             <Toolbar className={onDrawerCollapse
               ? classes.toolbarOnDrawerClosed
               : classes.toolbarOnDrawerOpen}>
-              <Grid container alignItems="center" style={{ backgroundColor : "#396679" }}>
+              <Grid container alignItems="center" >
                 <Hidden smUp>
                   <Grid item>
                     <IconButton
@@ -510,7 +570,7 @@ class Header extends React.Component {
                       onClick={onDrawerToggle}
                       className={classes.menuButton}
                     >
-                      <MenuIcon className={classes.headerIcons} />
+                      <MenuIcon className={classes.headerIcons} style={iconMedium} />
                     </IconButton>
                   </Grid>
                 </Hidden>
@@ -535,28 +595,32 @@ class Header extends React.Component {
                   </div>
 
                   <div data-test="settings-button" style={!this.state.capabilityregistryObj?.isHeaderComponentEnabled([SETTINGS]) ? cursorNotAllowed : {}}>
-                    <IconButton style={!this.state.capabilityregistryObj?.isHeaderComponentEnabled([SETTINGS]) ? disabledStyle : {}} color="inherit">
-                      <Link href="/settings">
-                        <SettingsIcon style={{ width : "1.2rem",height : "1.2rem" }} className={classes.headerIcons + " " + (title === 'Settings'
+                    <Link href="/settings">
+                      <IconButton style={!this.state.capabilityregistryObj?.isHeaderComponentEnabled([SETTINGS]) ? disabledStyle : {}} color="inherit">
+                        <SettingsIcon className={classes.headerIcons + " " + (title === 'Settings'
                           ? classes.itemActiveItem
-                          : '')} />
-                      </Link>
-                    </IconButton>
+                          : '')} style={iconMedium} />
+                      </IconButton>
+                    </Link>
                   </div>
+
 
                   <div data-test="notification-button">
                     <MesheryNotification />
                   </div>
                   <span className={classes.userSpan}>
-                    <User color="inherit" iconButtonClassName={classes.iconButtonAvatar} avatarClassName={classes.avatar} updateExtensionType={this.props.updateExtensionType}/>
+                    <User classes={classes} theme={theme} themeSetter={themeSetter} color="inherit" iconButtonClassName={classes.iconButtonAvatar} avatarClassName={classes.avatar} updateExtensionType={this.props.updateExtensionType} />
                   </span>
+                  {/* <div className="dark-theme-toggle">
+                      <input id="toggle" className="toggle" type="checkbox" onChange={themeToggler} checked={!themeToggle} />
+                    </div> */}
 
                 </Grid>
               </Grid>
             </Toolbar>
           </AppBar>
         </React.Fragment>
-      </NoSsr>
+      </NoSsr >
     );
   }
 }

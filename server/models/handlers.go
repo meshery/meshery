@@ -5,6 +5,7 @@ import (
 
 	"time"
 
+	"github.com/layer5io/meshery/server/models/meshmodel"
 	"github.com/layer5io/meshkit/utils/events"
 	"github.com/vmihailenco/taskq/v3"
 )
@@ -36,7 +37,7 @@ type HandlerInterface interface {
 	LoginHandler(w http.ResponseWriter, r *http.Request, provider Provider, fromMiddleWare bool)
 	LogoutHandler(w http.ResponseWriter, req *http.Request, provider Provider)
 	UserHandler(w http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
-
+	GetUserByIDHandler(w http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	K8SConfigHandler(w http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	GetContextsFromK8SConfig(w http.ResponseWriter, req *http.Request)
 	KubernetesPingHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
@@ -71,9 +72,9 @@ type HandlerInterface interface {
 	GrafanaPingHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	SaveSelectedGrafanaBoardsHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 
-	ScanPromGrafanaHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
-	ScanPrometheusHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
-	ScanGrafanaHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	// ScanPromGrafanaHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	// ScanPrometheusHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	// ScanGrafanaHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	PrometheusConfigHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	GrafanaBoardImportForPrometheusHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	PrometheusQueryHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
@@ -99,20 +100,24 @@ type HandlerInterface interface {
 	PatternFileHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	GETOAMRegisterHandler(rw http.ResponseWriter, r *http.Request)
 	OAMRegisterHandler(rw http.ResponseWriter, r *http.Request)
-	ComponentTypesHandler(rw http.ResponseWriter, r *http.Request)
-	ComponentsForTypeHandler(rw http.ResponseWriter, r *http.Request)
-	GetAllComponents(rw http.ResponseWriter, r *http.Request)
-	ComponentVersionsHandler(rw http.ResponseWriter, r *http.Request)
-	ComponentsByNameHandler(rw http.ResponseWriter, r *http.Request)
+	GetMeshmodelCategories(rw http.ResponseWriter, r *http.Request)
+	GetMeshmodelCategoriesByName(rw http.ResponseWriter, r *http.Request)
+	GetMeshmodelModelsByName(rw http.ResponseWriter, r *http.Request)
+	GetMeshmodelModelsByCategories(rw http.ResponseWriter, r *http.Request)
+	GetMeshmodelModelsByCategoriesByModel(rw http.ResponseWriter, r *http.Request)
 	ValidationHandler(rw http.ResponseWriter, r *http.Request)
 	MeshModelGenerationHandler(rw http.ResponseWriter, r *http.Request)
 	GetMeshmodelModels(rw http.ResponseWriter, r *http.Request)
 	RegisterMeshmodelComponents(rw http.ResponseWriter, r *http.Request)
 
-	GetMeshmodelComponentsByName(rw http.ResponseWriter, r *http.Request)
 	GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.Request)
-	GetMeshmodelEntititiesByModel(rw http.ResponseWriter, r *http.Request)
-
+	GetMeshmodelComponentByModelByCategory(rw http.ResponseWriter, r *http.Request)
+	GetMeshmodelComponentByCategory(rw http.ResponseWriter, r *http.Request)
+	GetMeshmodelComponentsByNameByModelByCategory(rw http.ResponseWriter, r *http.Request)
+	GetMeshmodelComponentsByNameByCategory(rw http.ResponseWriter, r *http.Request)
+	GetMeshmodelComponentsByNameByModel(rw http.ResponseWriter, r *http.Request)
+	GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Request)
+	GetAllMeshmodelComponentsByName(rw http.ResponseWriter, r *http.Request)
 	GetAllMeshmodelRelationships(rw http.ResponseWriter, r *http.Request)
 	GetMeshmodelRelationshipByName(rw http.ResponseWriter, r *http.Request)
 	RegisterMeshmodelRelationships(rw http.ResponseWriter, r *http.Request)
@@ -142,6 +147,7 @@ type HandlerInterface interface {
 	GetMesheryApplicationHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	GetMesheryApplicationSourceHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	DeleteMesheryApplicationHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
+	ShareDesignHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 
 	ExtensionsEndpointHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	LoadExtensionFromPackage(w http.ResponseWriter, req *http.Request, provider Provider) error
@@ -191,8 +197,11 @@ type HandlerConfig struct {
 	ConfigurationChannel *ConfigurationChannel
 
 	DashboardK8sResourcesChan *DashboardK8sResourcesChan
-	K8scontextChannel         *K8scontextChan
-	EventsBuffer              *events.EventStreamer
+	MeshModelSummaryChannel   *meshmodel.SummaryChannel
+
+	K8scontextChannel *K8scontextChan
+	EventsBuffer      *events.EventStreamer
+	OperatorTracker   *OperatorTracker
 }
 
 // SubmitMetricsConfig is used to store config used for submitting metrics

@@ -1,4 +1,4 @@
-// Copyright 2020 Layer5, Inc.
+// Copyright 2023 Layer5, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,8 +23,10 @@ import (
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants"
+	c "github.com/layer5io/meshery/mesheryctl/pkg/constants"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/handlers"
+	meshkitutils "github.com/layer5io/meshkit/utils"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -34,6 +36,11 @@ var (
 	mctlCfg *config.MesheryCtlConfig
 )
 
+var linkDoc = map[string]string{
+	"link":    "![version-usage](/assets/img/mesheryctl/version.png)",
+	"caption": "Usage of mesheryctl version",
+}
+
 // versionCmd represents the version command
 var versionCmd = &cobra.Command{
 	Use:   "version",
@@ -42,11 +49,8 @@ var versionCmd = &cobra.Command{
 	Example: `
 // To view the current version and SHA of release binary of mesheryctl client 
 mesheryctl version
-
-! Refer below image link for usage
-* Usage of mesheryctl version
-# ![version-usage](/assets/img/mesheryctl/version.png)
 	`,
+	Annotations: linkDoc,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		var err error
 		mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
@@ -153,6 +157,7 @@ mesheryctl version
 			utils.Log.Error(ErrUnmarshallingAPIData(err))
 			return
 		}
+
 		rows[1][1] = version.GetBuild()
 		rows[1][2] = version.GetCommitSHA()
 		utils.PrintToTable(header, rows)
@@ -163,15 +168,20 @@ func checkMesheryctlClientVersion(build string) {
 	utils.Log.Info("\nChecking for latest version of mesheryctl...")
 
 	// Inform user of the latest release version
-	res, err := utils.GetLatestStableReleaseTag()
+	res, err := meshkitutils.GetLatestReleaseTagsSorted(c.GetMesheryGitHubOrg(), c.GetMesheryGitHubRepo())
 	if err != nil {
 		utils.Log.Warn(fmt.Errorf("\n  Unable to check for latest version of mesheryctl. %s", err))
 		return
 	}
+	if len(res) == 0 {
+		utils.Log.Warn(fmt.Errorf("\n  Unable to check for latest version of mesheryctl. %s", fmt.Errorf("no version found")))
+		return
+	}
+	r := res[len(res)-1]
 	// If user is running an outdated release, let them know.
-	if res != build {
-		utils.Log.Info("\n  ", build, " is not the latest release. Update to ", res, ".")
+	if r != build {
+		utils.Log.Info("\n  ", build, " is not the latest release. Update to ", r, ".")
 	} else { // If user is running the latest release, let them know.
-		utils.Log.Info("\n  ", res, " is the latest release.")
+		utils.Log.Info("\n  ", r, " is the latest release.")
 	}
 }

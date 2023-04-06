@@ -30,7 +30,15 @@ mesheryctl mesh validate [flags]
 Validate conformance to service mesh standards
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl mesh validate --adapter [name of the adapter] --tokenPath [path to token for authentication] --spec [specification to be used for conformance test] --namespace [namespace to be used]
+mesheryctl mesh validate [mesh name] --adapter [name of the adapter] --tokenPath [path to token for authentication] --spec [specification to be used for conformance test] --namespace [namespace to be used]
+
+</div>
+</pre> 
+
+Validate Istio to service mesh standards
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl mesh validate istio --adapter meshery-istio --spec smi
 
 </div>
 </pre> 
@@ -39,9 +47,9 @@ mesheryctl mesh validate --adapter [name of the adapter] --tokenPath [path to to
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  -a, --adapter string   Adapter to use for validation (default "meshery-osm")
+  -a, --adapter string   (Required) Adapter to use for validation (default "meshery-osm")
   -h, --help             help for validate
-  -s, --spec string      specification to be used for conformance test (default "smi")
+  -s, --spec string      (Required) specification to be used for conformance test (smi/istio-vet) (default "smi")
   -t, --token string     Path to token for authenticating to Meshery API
   -w, --watch            Watch for events and verify operation (in beta testing)
 

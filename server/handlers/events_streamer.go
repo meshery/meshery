@@ -23,7 +23,7 @@ var (
 )
 
 // EventStreamHandler endpoint is used for streaming events to the frontend
-func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, p models.Provider) {
+func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, _ *models.User, p models.Provider) {
 	// if req.Method != http.MethodGet {
 	// 	w.WriteHeader(http.StatusNotFound)
 	// 	return
@@ -103,8 +103,6 @@ STOP:
 
 			adaptersLen := len(meshAdapters)
 			if adaptersLen == 0 {
-				log.Debug("No valid mesh adapter(s) found.") // switching from Error to Debug to prevent it from filling up the logs
-
 				// Clear the adapter cache
 				localMeshAdapters = closeAdapterConnections(localMeshAdaptersLock, localMeshAdapters)
 			} else {
@@ -137,7 +135,7 @@ STOP:
 	close(respChan)
 	defer log.Debug("events handler closed")
 }
-func listenForCoreEvents(ctx context.Context, eb *events.EventStreamer, resp chan []byte, log *logrus.Entry, p models.Provider) {
+func listenForCoreEvents(ctx context.Context, eb *events.EventStreamer, resp chan []byte, log *logrus.Entry, _ models.Provider) {
 	datach := make(chan interface{}, 10)
 	go eb.Subscribe(datach)
 	for {

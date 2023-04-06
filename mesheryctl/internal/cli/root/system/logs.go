@@ -1,4 +1,4 @@
-// Copyright 2020 Layer5, Inc.
+// Copyright 2023 Layer5, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -151,7 +151,6 @@ mesheryctl system logs meshery-istio
 				log.Error("No logs to show. Meshery is not running.")
 				return nil
 			}
-			log.Info("Starting Meshery logging...")
 
 			// create an kubernetes client
 			client, err := meshkitkube.New([]byte(""))
@@ -182,6 +181,7 @@ mesheryctl system logs meshery-istio
 				}
 			}
 
+			log.Info("Starting Meshery logging...")
 			// List all the pods similar to kubectl get pods -n MesheryNamespace
 			for _, pod := range podList.Items {
 

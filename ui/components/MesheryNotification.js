@@ -13,25 +13,24 @@ import {
   Tab,
   ClickAwayListener
 } from '@material-ui/core';
-import BellIcon from "../assets/icons/BellIcon";
+import BellIcon from '@material-ui/icons/Notifications';
 import ClearIcon from "../assets/icons/ClearIcon";
 import ErrorIcon from '@material-ui/icons/Error';
 import { withStyles } from '@material-ui/core/styles';
 import amber from '@material-ui/core/colors/amber';
 import { eventTypes } from '../lib/event-types';
 import MesheryEventViewer from './MesheryEventViewer';
-// import { bindActionCreators } from 'redux';
-// import { updateSMIResults } from '../lib/store';
 import dataFetch from '../lib/data-fetch';
 import { withSnackbar } from 'notistack'
 import { bindActionCreators } from "redux";
 import { updateEvents } from "../lib/store";
+import { iconMedium } from "../css/icons.styles";
 
 const styles = (theme) => ({
   sidelist : { width : 450, },
   notificationButton : { height : '100%', },
   notificationDrawer : {
-    backgroundColor : '#FFFFFF',
+    backgroundColor : theme.palette.secondary.sideBar,
     display : 'flex',
     flexDirection : 'column',
     justifyContent : 'space-between'
@@ -63,11 +62,6 @@ const styles = (theme) => ({
   clearAllButton : {
     display : 'flex',
     justifyContent : 'flex-end'
-  },
-  HeaderItem : {
-    fontSize : '1.6rem',
-    height : '1.6rem',
-    width : '1.6rem',
   },
   drawerButton : {
     padding : '0.45rem',
@@ -140,7 +134,7 @@ function getNotificationCount(events) {
 function NotificationIcon({ type, className }) {
   if (type === "error") return <ErrorIcon id="error-icon" className={className} />
 
-  return <BellIcon className={className} />
+  return <BellIcon className={className} style={iconMedium} />
 }
 
 class MesheryNotification extends React.Component {
@@ -179,7 +173,7 @@ class MesheryNotification extends React.Component {
           color="inherit"
           onClick={() => self.props.closeSnackbar(key)}
         >
-          <CloseIcon />
+          <CloseIcon style={iconMedium} />
         </IconButton>
       ),
     });
@@ -311,34 +305,39 @@ class MesheryNotification extends React.Component {
       <div>
         <NoSsr>
           <Tooltip title={toolTipMsg}>
-            <IconButton
-              id="notification-button"
-              className={classes.notificationButton}
-              buttonRef={(node) => {
-                this.anchorEl = node;
-              }}
-              color="inherit"
-              onClick={this.handleToggle}
+            <>
+              <IconButton
+                id="notification-button"
+                className={classes.notificationButton}
+                buttonRef={(node) => {
+                  this.anchorEl = node;
+                }}
+                color="inherit"
 
-              onMouseOver={(e) => {
-                e.preventDefault();
-                this.setState({ anchorEl : true })
-              }}
+                onClick={this.handleToggle}
 
-              onMouseLeave={(e) => {
-                e.preventDefault();
-                this.setState({ anchorEl : false })
-              }}
-            >
-              <Badge id="notification-badge" badgeContent={getNotificationCount(events)} color={badgeColorVariant}>
-                <NotificationIcon className={classes.HeaderItem} type={badgeColorVariant} />
-              </Badge>
-            </IconButton>
+                onMouseOver={(e) => {
+                  e.preventDefault();
+                  this.setState({ anchorEl : true })
+                }}
+
+                onMouseLeave={(e) => {
+                  e.preventDefault();
+                  this.setState({ anchorEl : false })
+                }}
+              >
+                <Badge id="notification-badge" badgeContent={getNotificationCount(events)} color={badgeColorVariant}>
+                  <NotificationIcon  style={iconMedium}  type={badgeColorVariant} />
+                </Badge>
+              </IconButton>
+            </>
           </Tooltip>
 
           <ClickAwayListener onClickAway={(e) => {
-            let whiteListedIds = ["notification-button", "notification-icon", "error-icon", "bell-icon-path1", "bell-icon-path2", "notification-badge", "bell-icon-svg"]
-            whiteListedIds.includes(e.target?.id) ? null : this.handleClose();
+            if (e.target.className.baseVal !== "" && e.target.className.baseVal !== "MuiSvgIcon-root" &&
+              ((typeof e.target.className === "string")? !e.target.className?.includes("MesheryNotification"): null)) {
+              this.handleClose();
+            }
           }}>
             <Drawer
               anchor="right"
@@ -360,7 +359,7 @@ class MesheryNotification extends React.Component {
                             className={classes.drawerButton}
                             onClick={this.handleBellButtonClick}
                           >
-                            <BellIcon className={classes.HeaderItem} />
+                            <BellIcon  style={iconMedium}  />
                           </IconButton>
                         </Tooltip>
                       </div>

@@ -1,4 +1,4 @@
-// Copyright 2020 Layer5, Inc.
+// Copyright 2023 Layer5, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -346,7 +346,9 @@ Example: mesheryctl system config eks
 Description: Configure the Kubernetes cluster used by Meshery.`
 
 		if len(args) == 0 {
-			return fmt.Errorf("config name not provided\n\n%v", errMsg)
+			return fmt.Errorf("name of kubernetes cluster to configure Meshery not provided\n\n%v", errMsg)
+		} else if len(args) > 1 {
+			return fmt.Errorf("expected one argument received multiple arguments")
 		}
 		return nil
 	},
@@ -386,10 +388,12 @@ func init() {
 func setToken() {
 	log.Debugf("Token path: %s", utils.TokenFlag)
 	contexts, err := getContexts(utils.ConfigPath)
-	if err != nil || contexts == nil || len(contexts) < 1 {
+	if err != nil {
 		log.Fatalf("Error getting context: %s", err.Error())
 	}
-
+	if contexts == nil || len(contexts) < 1 {
+		log.Fatalf("Error getting context: %s", fmt.Errorf("no contexts found"))
+	}
 	choosenCtx := contexts[0]
 	if len(contexts) > 1 {
 		fmt.Println("List of available contexts: ")

@@ -1,4 +1,4 @@
-// Copyright 2020 Layer5, Inc.
+// Copyright 2023 Layer5, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -39,7 +39,7 @@ var SystemCmd = &cobra.Command{
 	Long:  `Manage the state and configuration of Meshery server, components, and client.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
-			return errors.New(utils.SystemError("please specify a flag or subcommand. Use 'mesheryctl system --help' to display user guide.\n"))
+			return cmd.Help()
 		}
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
 			return errors.New(utils.SystemError(fmt.Sprintf("'%s' is a invalid command.  Use 'mesheryctl system --help' to display usage guide.\n", args[0])))
@@ -65,6 +65,7 @@ func init() {
 		configCmd,
 		ContextCmd,
 		channelCmd,
+		providerCmd,
 		checkCmd,
 		loginCmd,
 		logoutCmd,
