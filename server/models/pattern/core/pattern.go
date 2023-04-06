@@ -536,28 +536,18 @@ func createPatternServiceFromK8s(regManager *meshmodel.RegistryManager, manifest
 	}
 
 	// Get MeshModel entity with the selectors
-	res := regManager.GetEntities(&meshmodelv1alpha1.ComponentFilter{
+	componentList := regManager.GetEntities(&meshmodelv1alpha1.ComponentFilter{
 		Name:       kind,
-		ModelName:  "kubernetes", // currently hardcoded for kubernetes manifest conversion
 		APIVersion: apiVersion,
-		Greedy:     false,
 	})
-	if len(res) == 0 {
+	if componentList == nil || len(componentList) == 0 {
 		return "", Service{}, ErrCreatePatternService(fmt.Errorf("no resources found for APIVersion: %s Kind: %s", apiVersion, kind))
 	}
 
 	// just needs the first entry to grab meshmodel-metadata and other model requirements
-	comp, ok := res[0].(meshmodelv1alpha1.ComponentDefinition)
-	var traits map[string]interface{}
+	comp, ok := componentList[0].(meshmodelv1alpha1.ComponentDefinition)
 	if !ok {
-		logrus.Error("Failed to typecast to componentDefinition")
-		traits = map[string]interface{}{}
-	} else {
-		traits = map[string]interface{}{
-			"meshmap": map[string]interface{}{
-				"meshmodel-metadata": comp.Metadata,
-			},
-		}
+		return "", Service{}, ErrCreatePatternService(fmt.Errorf("cannot cast to the component-definition for APIVersion: %s Kind: %s", apiVersion, kind))
 	}
 
 	// Setup labels
@@ -580,14 +570,18 @@ func createPatternServiceFromK8s(regManager *meshmodel.RegistryManager, manifest
 	rest = Format.Prettify(rest, false)
 	svc := Service{
 		Name:        name,
-		Type:        kind,
-		APIVersion:  apiVersion,
+		Type:        comp.Kind,
+		APIVersion:  comp.APIVersion,
 		Namespace:   namespace,
-		Model:       "kubernetes",
+		Model:       comp.Model.Name,
 		Labels:      castedLabel,
 		Annotations: castedAnnotation,
 		Settings:    rest,
-		Traits:      traits,
+		Traits: map[string]interface{}{
+			"meshmap": map[string]interface{}{
+				"meshmodel-metadata": comp.Metadata,
+			},
+		},
 	}
 
 	return id, svc, nil
