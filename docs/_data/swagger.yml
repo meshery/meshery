@@ -3055,6 +3055,103 @@ paths:
             responses:
                 "200":
                     description: ""
+    /api/system/kubernetes/contexts:
+        post:
+            description: Returns the context list for a given k8s config
+            tags:
+                - SystemAPI
+            summary: Handle POST requests for Kubernetes Context list
+            operationId: idPostK8SContexts
+            responses:
+                "200":
+                    description: Returns kubernetes context list
+    /api/user/schedules/{id}:
+        get:
+            operationId: idGetSingleSchedule
+            parameters:
+                - format: uuid
+                  x-go-name: ID
+                  description: id for a specific
+                  name: id
+                  in: path
+                  required: true
+                  type: string
+            responses:
+                "200":
+                    description: Returns a single meshery filter
+                    schema:
+                        description: MesheryFilter represents the filters that needs to be saved
+                        type: object
+                        properties:
+                            user_id:
+                                description: |-
+                                    Meshery doesn't have the user id fields
+                                    but the remote provider is allowed to provide one
+                                type: string
+                                x-go-name: UserID
+                            visibility:
+                                type: string
+                                x-go-name: Visibility
+                            created_at:
+                                type: string
+                                format: date-time
+                                x-go-name: CreatedAt
+                            filter_file:
+                                type: string
+                                x-go-name: FilterFile
+                            location:
+                                description: |-
+                                    It implements native SQL driver interfaces and hence can
+                                    be used for SQL json or jsonb types as a drop in replacement
+                                    of golang native maps
+                                type: object
+                                title: Map type is an alias for map[string]interface{}
+                                additionalProperties: false
+                                x-go-package: github.com/layer5io/meshery/server/internal/sql
+                            name:
+                                type: string
+                                x-go-name: Name
+                            updated_at:
+                                type: string
+                                format: date-time
+                                x-go-name: UpdatedAt
+                            catalogData:
+                                description: |-
+                                    It implements native SQL driver interfaces and hence can
+                                    be used for SQL json or jsonb types as a drop in replacement
+                                    of golang native maps
+                                type: object
+                                title: Map type is an alias for map[string]interface{}
+                                additionalProperties: false
+                                x-go-package: github.com/layer5io/meshery/server/internal/sql
+                            id:
+                                x-go-name: ID
+                                type: string
+                                format: uuid
+                        x-go-package: github.com/layer5io/meshery/server/models
+            description: Fetches the Meshery Filter with the given id
+        delete:
+            description: 'Deletes a meshery filter with ID: id'
+            tags:
+                - SchedulesAPI
+            summary: Handle GET request for Schedules
+        delete:
+            description: Deletes a schedule with the given id
+            tags:
+                - SchedulesAPI
+            summary: Handle DELETE request for Schedules
+            operationId: idDeleteSchedules
+            parameters:
+                - in: path
+                  required: true
+                  type: string
+                  format: uuid
+                  x-go-name: ID
+                  description: id for a specific
+                  name: id
+            responses:
+                "200":
+                    description: ""
     /api/telemetry/metrics/grafana/boards:
         get:
             summary: Handle GET request for Grafana boards
@@ -6445,7 +6542,7 @@ paths:
                                 type: boolean
                                 x-go-name: AnonymousPerfResults
                         x-go-package: github.com/layer5io/meshery/server/models
-                    description: Returns User Load Test Preferencee
+                    description: Returns User Load Test Preferences
     /api/filter/catalog:
         post:
             description: Used to get catalog filters
@@ -6509,15 +6606,22 @@ paths:
     /api/meshmodels/categories/{category}/models/{model}/components/{name}:
         get:
             description: |-
-                Example: /api/meshmodels/categories/Orchestration and Management/models/kubernetes/components/Namespace
+                Example: ```/api/meshmodels/categories/Orchestration``` and Management/models/kubernetes/components/Namespace
                 Components can be further filtered through query parameter
-                ?version={version} If version is unspecified then all models are returned
-                ?apiVersion={apiVersion} If apiVersion is unspecified then all models are returned
-                ?order={field} orders on the passed field
-                ?sort={[asc/desc]} Default behavior is asc
-                ?search={[true/false]} If search is true then a greedy search is performed
-                ?page={page-number} Default page number is 1
-                ?pagesize={pagesize} Default pagesize is 25. To return all results: pagesize=all
+                
+                ```?version={version}``` If version is unspecified then all models are returned
+                
+                ```?apiVersion={apiVersion}``` If apiVersion is unspecified then all models are returned
+                
+                ```?order={field}``` orders on the passed field
+                
+                ```?sort={[asc/desc]}``` Default behavior is asc
+                
+                ```?search={[true/false]}``` If search is true then a greedy search is performed
+                
+                ```?page={page-number}``` Default page number is 1
+                
+                ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
             tags:
                 - GetMeshmodelComponentsByNameByModelByCategory
             summary: Handle GET request for getting meshmodel components of a specific type by model and category.
@@ -8243,7 +8347,7 @@ paths:
         get:
             tags:
                 - SchedulesAPI
-            summary: Handle GET reqeuest for Schedules
+            summary: Handle GET request for Schedules
             operationId: idGetSchedules
             responses:
                 "200":
@@ -8286,7 +8390,7 @@ paths:
             description: Save schedule using the current provider's persistence mechanism
             tags:
                 - SchedulesAPI
-            summary: Handle POST reqeuest for Schedules
+            summary: Handle POST request for Schedules
             operationId: idPostSchedules
             responses:
                 "200":
@@ -8311,6 +8415,89 @@ paths:
                 - ApplicationsAPI
             summary: Handle POST request for Application Files
             operationId: idPutApplicationFileRequest
+            responses:
+                "200":
+                    description: Fetches a single Meshery Application
+                    schema:
+                        description: MesheryApplication represents the applications that needs to be saved
+                        type: object
+                        properties:
+                            id:
+                                x-go-name: ID
+                                type: string
+                                format: uuid
+                            location:
+                                title: Map type is an alias for map[string]interface{}
+                                additionalProperties: false
+                                x-go-package: github.com/layer5io/meshery/server/internal/sql
+                                description: |-
+                                    It implements native SQL driver interfaces and hence can
+                                    be used for SQL json or jsonb types as a drop in replacement
+                                    of golang native maps
+                                type: object
+                            name:
+                                type: string
+                                x-go-name: Name
+                            type:
+                                description: |-
+                                    var s NullString
+                                    err := db.QueryRow("SELECT name FROM foo WHERE id=?", id).Scan(&s)
+                                    ...
+                                    if s.Valid {
+                                    use s.String
+                                    } else {
+                                    NULL value
+                                    }
+                                type: object
+                                title: |-
+                                    NullString represents a string that may be null.
+                                    NullString implements the Scanner interface so
+                                    it can be used as a scan destination:
+                                properties:
+                                    String:
+                                        type: string
+                                    Valid:
+                                        type: boolean
+                                x-go-package: database/sql
+                            updated_at:
+                                x-go-name: UpdatedAt
+                                type: string
+                                format: date-time
+                            application_file:
+                                type: string
+                                x-go-name: ApplicationFile
+                            created_at:
+                                x-go-name: CreatedAt
+                                type: string
+                                format: date-time
+                            source_content:
+                                type: array
+                                items:
+                                    type: integer
+                                    format: uint8
+                                x-go-name: SourceContent
+                            user_id:
+                                description: |-
+                                    Meshery doesn't have the user id fields
+                                    but the remote provider is allowed to provide one
+                                type: string
+                                x-go-name: UserID
+                        x-go-package: github.com/layer5io/meshery/server/models
+    /api/pattern/{id}:
+        delete:
+            description: DeleteMultiMesheryPatternsHandler deletes patterns with the given ids
+            tags:
+                - PatternsAPI
+            summary: Handle Delete for multiple Meshery Patterns
+            operationId: idDeleteMesheryPattern
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  type: string
+                  format: uuid
+                  x-go-name: ID
+                  description: id for a specific
             responses:
                 "200":
                     description: Fetches a single Meshery Application
@@ -8438,12 +8625,18 @@ paths:
                             type: string
             description: |-
                 Example: /api/meshmodel/model/kubernetes/relationship
+                
                 Relationships can be further filtered through query parameter
-                ?version={version}
-                ?order={field} orders on the passed field
-                ?sort={[asc/desc]} Default behavior is asc
-                ?page={page-number} Default page number is 1
-                ?pagesize={pagesize} Default pagesize is 25. To return all results: pagesize=all
+                
+                ```?version={version}```
+                
+                ```?order={field}``` orders on the passed field
+                
+                ```?sort={[asc/desc]}``` Default behavior is asc
+                
+                ```?page={page-number}``` Default page number is 1
+                
+                ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
             tags:
                 - GetAllMeshmodelRelationships
     /api/patterns:
@@ -9354,12 +9547,13 @@ paths:
     /api/oam/{type}/{name}/{id}:
         get:
             description: |-
-                Returns details of a workload/trait/scope by given name and id in the URL
+                Returns details of a ```workload/trait/scope``` by given name and id in the URL
 
-                {type} being of either trait, scope, workload; registration of adapter capabilities.
-                Example: /api/oam/workload/Application/asdqe123sa275sasd => Here {type} is "workload"
-                {name} is "Application" and {id} is "asdqe123sa275sasd". It should be noted that all of three, i.e {type},
-                {name} and {id} must be valid
+                ```{type}``` being of either trait, scope, workload; registration of adapter capabilities.
+                
+                Example: ```/api/oam/workload/Application/asdqe123sa275sasd``` => Here ```{type}``` is "workload"
+                ```{name}``` is "Application" and {id} is "asdqe123sa275sasd". It should be noted that all of three, i.e ```{type}```,
+                ```{name}``` and ```{id}``` must be valid
             tags:
                 - PatternsAPI
             summary: Handles GET requests for component details for OAM objects
@@ -9456,11 +9650,10 @@ paths:
             operationId: idGetGrafanaQuery
     /api/telemetry/metrics/static-board:
         get:
-            description: Used to fetch the static board
             tags:
-                - PrometheusAPI
-            summary: Handle GET request for Prometheus static board
-            operationId: idGetPrometheusStaticBoard
+                - ApplicationsAPI
+            summary: Handle GET request for Meshery Application with the provided type
+            operationId: typeGetMesheryApplication
             responses:
                 "200":
                     description: Returns Prometheus static board
@@ -9548,7 +9741,9 @@ paths:
         get:
             responses:
                 "200":
-                    description: ""
+                    description: |-
+                        https://docs.google.com/drawings/d/1_qzQ_YxvCWPYrOBcdqGMlMwfbsZx96SBuIkbn8TfKhU/edit?pli=1
+                        see RELATIONSHIPDEFINITIONS table in the diagram
                     schema:
                         type: object
                         properties:
@@ -9590,15 +9785,22 @@ paths:
                         apiVersion:
                             type: string
             description: |-
-                Example: /api/meshmodels/models/kubernetes/components/Namespace
+                Example: ```/api/meshmodels/models/kubernetes/components/Namespace```
                 Components can be further filtered through query parameter
-                ?version={version} If version is unspecified then all models are returned
-                ?apiVersion={apiVersion} If apiVersion is unspecified then all models are returned
-                ?order={field} orders on the passed field
-                ?sort={[asc/desc]} Default behavior is asc
-                ?search={[true/false]} If search is true then a greedy search is performed
-                ?page={page-number} Default page number is 1
-                ?pagesize={pagesize} Default pagesize is 25. To return all results: pagesize=all
+                
+                ```?version={version}``` If version is unspecified then all models are returned
+                
+                ```?apiVersion={apiVersion}``` If apiVersion is unspecified then all models are returned
+                
+                ```?order={field}``` orders on the passed field
+                
+                ```?sort={[asc/desc]}``` Default behavior is asc
+                
+                ```?search={[true/false]}``` If search is true then a greedy search is performed
+                
+                ```?page={page-number}``` Default page number is 1
+                
+                ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
             tags:
                 - GetMeshmodelComponentsByNameByModel
             summary: Handle GET request for getting meshmodel components of a specific  model.
@@ -9751,11 +9953,15 @@ paths:
     /api/meshmodels/categories/{category}/models:
         get:
             description: |-
-                ?version={version} If version is unspecified then all models are returned
-                ?order={field} orders on the passed field
-                ?sort={[asc/desc]} Default behavior is asc
-                ?page={page-number} Default page number is 1
-                ?pagesize={pagesize} Default pagesize is 25. To return all results: pagesize=all
+                ```?version={version}``` If version is unspecified then all models are returned
+                
+                ```?order={field}``` orders on the passed field
+                
+                ```?sort={[asc/desc]}``` Default behavior is asc
+                
+                ```?page={page-number}``` Default page number is 1
+                
+                ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
             tags:
                 - GetMeshmodelModelsByCategories
             summary: Handle GET request for getting all meshmodel models for a given category. The component type/model name should be lowercase like "kubernetes", "istio"
@@ -10320,9 +10526,17 @@ paths:
             summary: Handle POST requests for saving performance profile
     /api/user/prefs:
         get:
+            summary: Handle GET request to run a test
+            operationId: idRunPerfTest
+            parameters:
+                - name: Query
+                  in: query
+                - schema: {}
+                  name: Body
+                  in: body
             responses:
                 "200":
-                    description: Returns User Load Test Preferencee
+                    description: Returns User Load Test Preferences
                     schema:
                         properties:
                             loadTestPrefs:
@@ -13633,7 +13847,7 @@ paths:
             operationId: idPostUserTestPrefs
             responses:
                 "200":
-                    description: Returns User Load Test Preferencee
+                    description: Returns User Load Test Preferences
                     schema:
                         description: Preference represents the data stored in session / local DB
                         type: object
@@ -16952,11 +17166,16 @@ paths:
         get:
             description: |-
                 Fetches the list of all applications saved by the current user
-                ?updated_after=<timestamp> timestamp should be of the format `YYYY-MM-DD HH:MM:SS`
-                ?order={field} orders on the passed field
-                ?search=<application name> A string matching is done on the specified application name
-                ?page={page-number} Default page number is 1
-                ?pagesize={pagesize} Default pagesize is 10
+                
+                ```?updated_after=<timestamp>``` timestamp should be of the format "YYYY-MM-DD HH:MM:SS"
+                
+                ```?order={field}``` orders on the passed field
+                
+                ```?search=<application name>``` A string matching is done on the specified application name
+                
+                ```?page={page-number}``` Default page number is 1
+                
+                ```?pagesize={pagesize}``` Default pagesize is 10
             tags:
                 - ApplicationsAPI
             summary: Handle GET request for Meshery Application with the given id
@@ -17115,7 +17334,7 @@ paths:
             description: Used to persist adapter config
     /api/user/performance/profiles/{id}/results:
         get:
-            description: Fetchs pages of results from Remote Provider for the given id
+            description: Fetches pages of results from Remote Provider for the given id
             tags:
                 - PerformanceAPI
             summary: Handle GET request for results of a profile
@@ -17232,7 +17451,7 @@ paths:
             description: Fetches and returns the schedule with the given id
             tags:
                 - SchedulesAPI
-            summary: Handle GET reqeuest for Schedules
+            summary: Handle GET request for Schedules
             operationId: idGetSingleSchedule
             parameters:
                 - required: true
@@ -17298,7 +17517,7 @@ paths:
             description: Deletes a schedule with the given id
             tags:
                 - SchedulesAPI
-            summary: Handle DELETE reqeuest for Schedules
+            summary: Handle DELETE request for Schedules
             operationId: idDeleteSchedules
             parameters:
                 - format: uuid
@@ -17418,25 +17637,37 @@ paths:
                                 x-go-name: Metadata
                                 type: object
             description: |-
-                Example: /api/meshmodels/models/kubernetes/components
+                Example: ```/api/meshmodels/models/kubernetes/components```
                 Components can be further filtered through query parameter
-                ?version={version}
-                ?apiVersion={apiVersion} If apiVersion is unspecified then all models are returned
-                ?order={field} orders on the passed field
-                ?sort={[asc/desc]} Default behavior is asc
-                ?page={page-number} Default page number is 1
-                ?pagesize={pagesize} Default pagesize is 25. To return all results: pagesize=all
+                
+                ```?version={version}```
+                
+                ```?apiVersion={apiVersion}``` If apiVersion is unspecified then all models are returned
+                
+                ```?order={field}``` orders on the passed field
+                
+                ```?sort={[asc/desc]}``` Default behavior is asc
+                
+                ```?page={page-number}``` Default page number is 1
+                
+                ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
     /api/meshmodels/categories/{category}/models/{model}/components:
         get:
             description: |-
-                Example: /api/meshmodels/categories/Orchestration and Management/models/kubernetes/components
+                Example: ```/api/meshmodels/categories/Orchestration``` and Management/models/kubernetes/components
                 Components can be further filtered through query parameter
-                ?version={version}
-                ?apiVersion={apiVersion} If apiVersion is unspecified then all models are returned
-                ?order={field} orders on the passed field
-                ?sort={[asc/desc]} Default behavior is asc
-                ?page={page-number} Default page number is 1
-                ?pagesize={pagesize} Default pagesize is 25. To return all results: pagesize=all
+                
+                ```?version={version}```
+                
+                ```?apiVersion={apiVersion}``` If apiVersion is unspecified then all models are returned
+                
+                ```?order={field}``` orders on the passed field
+                
+                ```?sort={[asc/desc]}``` Default behavior is asc
+                
+                ```?page={page-number}``` Default page number is 1
+                
+                ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
             tags:
                 - GetMeshmodelComponentByModelByCategory
             summary: Handle GET request for getting meshmodel components of a specific model and category. The component type/model name should be lowercase like "kubernetes", "istio"
@@ -17488,13 +17719,20 @@ paths:
         get:
             description: |-
                 Components can be further filtered through query parameter
-                ?version={version}
-                ?apiVersion={apiVersion} If apiVersion is unspecified then all models are returned
-                ?order={field} orders on the passed field
-                ?trim={[true]} When trim is set to true, the underlying schemas are not returned for entities
-                ?sort={[asc/desc]} Default behavior is asc
-                ?page={page-number} Default page number is 1
-                ?pagesize={pagesize} Default pagesize is 25. To return all results: pagesize=all
+                
+                ```?version={version}```
+                
+                ```?apiVersion={apiVersion}``` If apiVersion is unspecified then all models are returned
+                
+                ```?order={field}``` orders on the passed field
+                
+                ```?trim={[true]}``` When trim is set to true, the underlying schemas are not returned for entities
+                
+                ```?sort={[asc/desc]}``` Default behavior is asc
+                
+                ```?page={page-number}``` Default page number is 1
+                
+                ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
             tags:
                 - GetAllMeshmodelComponents
             summary: Handle GET request for getting meshmodel components across all models and categories.
@@ -17544,11 +17782,10 @@ paths:
                         metadata: {}
     /api/system/meshsync/prometheus:
         get:
-            description: Fetches Prometheus
             tags:
-                - SystemAPI
-            summary: Handle GET request for fetching prometheus
-            operationId: idMeshSyncPrometheus
+                - ProvidersAPI
+            summary: Handle GET requests for Provider
+            operationId: idGetProviderCapabilities
             responses:
                 "200":
                     description: Returns a map for v1 services
@@ -18483,7 +18720,7 @@ paths:
             summary: Handle Clone for a Meshery Pattern
             operationId: idCloneMesheryPattern
             responses:
-                "200":
+                "403":
                     description: ""
     /api/telemetry/metrics/board_import:
         post:
@@ -18759,11 +18996,16 @@ paths:
             description: |-
                 Returns the list of all the patterns saved by the current user
                 This will return all the patterns with their details
-                ?updated_after=<timestamp> timestamp should be of the format `YYYY-MM-DD HH:MM:SS`
-                ?order={field} orders on the passed field
-                ?search=<design name> A string matching is done on the specified design name
-                ?page={page-number} Default page number is 1
-                ?pagesize={pagesize} Default pagesize is 10
+                
+                ```?updated_after=<timestamp>``` timestamp should be of the format "YYYY-MM-DD HH:MM:SS"
+                
+                ```?order={field}``` orders on the passed field
+                
+                ```?search=<design name>``` A string matching is done on the specified design name
+                
+                ```?page={page-number}``` Default page number is 1
+                
+                ```?pagesize={pagesize}``` Default pagesize is 10
             tags:
                 - PatternsAPI
             summary: Handle GET request for patterns
@@ -19006,11 +19248,12 @@ paths:
     /api/oam/{type}/{name}:
         get:
             description: |-
-                Returns component details of a workload/trait/scope by given name in the URL
+                Returns component details of a ```workload/trait/scope``` by given name in the URL
 
-                {type} being of either trait, scope, workload; registration of adapter capabilities.
-                Example: /api/oam/workload/Application => Here {type} is "workload" and {name} is "Application"
-                it should be noted that both {type} and {name} should be valid
+                ```{type}``` being of either trait, scope, workload; registration of adapter capabilities.
+                
+                Example: ```/api/oam/workload/Application``` => Here ```{type}``` is "workload" and ```{name}``` is "Application"
+                it should be noted that both {```type}``` and ```{name}``` should be valid
             tags:
                 - PatternsAPI
             summary: Handles GET requests for component details for OAM objects
@@ -19053,7 +19296,7 @@ paths:
         get:
             description: |-
                 Returns token from the actual provider in a file
-                resposese:
+                response:
                 200:
             tags:
                 - UserAPI
@@ -19064,7 +19307,7 @@ paths:
             operationId: idPostTokenProvider
             description: |-
                 Receives token from the actual provider
-                resposese:
+                response:
                 200:
             tags:
                 - UserAPI
@@ -19211,13 +19454,20 @@ paths:
                         metadata: {}
             description: |-
                 Example: /api/meshmodel/model/kubernetes/relationship/Edge
+                
                 Relationships can be further filtered through query parameter
-                ?version={version}
-                ?order={field} orders on the passed field
-                ?sort={[asc/desc]} Default behavior is asc
-                ?search={[true/false]} If search is true then a greedy search is performed
-                ?page={page-number} Default page number is 1
-                ?pagesize={pagesize} Default pagesize is 25. To return all results: pagesize=all
+                
+                ```?version={version}```
+                
+                ```?order={field}``` orders on the passed field
+                
+                ```?sort={[asc/desc]}``` Default behavior is asc
+                
+                ```?search={[true/false]}``` If search is true then a greedy search is performed
+                
+                ```?page={page-number}``` Default page number is 1
+                
+                ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
             tags:
                 - GetMeshmodelRelationshipByName
             summary: Handle GET request for getting meshmodel relationships of a specific model by name.
@@ -19229,18 +19479,19 @@ paths:
                 "200":
                     description: ""
             description: |-
-                Getting list of workloads/traits/scopes
+                Getting list of ```workloads/traits/scopes```
 
-                {type} being of either trait, scope, workload; registration of adapter capabilities.
-                Example: /api/oam/workload => Here {type} is "workload"
+                ```{type}``` being of either trait, scope, workload; registration of adapter capabilities.
+                
+                Example: ```/api/oam/workload``` => Here ```{type}``` is "workload"
             tags:
                 - PatternsAPI
         post:
             description: |-
                 Adding a workload/trait/scope
 
-                {type} being of either trait, scope, workload; registration of adapter capabilities.
-                Example: /api/oam/trait => Here {type} is "trait"
+                ```{type}``` being of either trait, scope, workload; registration of adapter capabilities.
+                Example: ```/api/oam/trait``` => Here ```{type}``` is "trait"
             tags:
                 - PatternsAPI
             summary: Handles registering OMA objects
@@ -21250,13 +21501,16 @@ paths:
                         name:
                             type: string
             description: |-
-                Handle GET request for getting all meshmodel categories
-                ?order={field} orders on the passed field
-                ?sort={[asc/desc]} Default behavior is asc
-                ?page={page-number} Default page number is 1
-                ?pagesize={pagesize} Default pagesize is 25. To return all results: pagesize=all
+                ```?order={field}``` orders on the passed field
+                
+                ```?sort={[asc/desc]}``` Default behavior is asc
+                
+                ```?page={page-number}``` Default page number is 1
+                
+                ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
             tags:
                 - GetMeshmodelCategories
+            summary: Handle GET request for getting all meshmodel categories
             operationId: idGetMeshmodelCategories
     /api/meshmodels/components/{name}:
         get:
@@ -21305,28 +21559,42 @@ paths:
                                 x-go-name: Version
                         x-go-package: github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1
             description: |-
-                Handle GET request for getting meshmodel components of a specific type by name across all models and categories
-                Example: /api/meshmodels/components/Namespace
+                Example: ```/api/meshmodels/components/Namespace```
+                
                 Components can be further filtered through query parameter
-                ?version={version} If version is unspecified then all models are returned
-                ?apiVersion={apiVersion} If apiVersion is unspecified then all models are returned
-                ?order={field} orders on the passed field
-                ?sort={[asc/desc]} Default behavior is asc
-                ?trim={[true]} When trim is set to true, the underlying schemas are not returned for entities
-                ?search={[true/false]} If search is true then a greedy search is performed
-                ?page={page-number} Default page number is 1
-                ?pagesize={pagesize} Default pagesize is 25. To return all results: pagesize=all
+                
+                ```?version={version}``` If version is unspecified then all models are returned
+                
+                ```?apiVersion={apiVersion}``` If apiVersion is unspecified then all models are returned
+                
+                ```?order={field}``` orders on the passed field
+                
+                ```?sort={[asc/desc]}``` Default behavior is asc
+                
+                ```?trim={[true]}``` When trim is set to true, the underlying schemas are not returned for entities
+                
+                ```?search={[true/false]}``` If search is true then a greedy search is performed
+                
+                ```?page={page-number}``` Default page number is 1
+                
+                ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
             tags:
                 - GetAllMeshmodelComponentsByName
+            summary: Handle GET request for getting meshmodel components of a specific type by name across all models and categories
     /api/meshmodels/models:
         get:
             description: |-
                 Returns a list of registered models across all categories
-                ?version={version} If version is unspecified then all models are returned
-                ?order={field} orders on the passed field
-                ?sort={[asc/desc]} Default behavior is asc
-                ?page={page-number} Default page number is 1
-                ?pagesize={pagesize} Default pagesize is 25. To return all results: pagesize=all
+                
+                ```?version={version}``` If version is unspecified then all models are returned
+                
+                ```?order={field}``` orders on the passed field
+                
+                ```?sort={[asc/desc]}``` Default behavior is asc
+                
+                ```?page={page-number}``` Default page number is 1
+                
+                ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
             tags:
                 - GetMeshmodelModels
             summary: Handle GET request for getting all meshmodel models. The component type/model name should be lowercase like "kubernetes", "istio"
@@ -38861,7 +39129,7 @@ responses:
             description: API response model for SchedulesAPI
             type: object
     userLoadTestPrefsRespWrapper:
-        description: Returns User Load Test Preferencee
+        description: Returns User Load Test Preferences
         schema:
             x-go-package: github.com/layer5io/meshery/server/models
             description: Preference represents the data stored in session / local DB

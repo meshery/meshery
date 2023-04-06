@@ -273,7 +273,7 @@ func (l *RemoteProvider) InitiateLogin(w http.ResponseWriter, r *http.Request, _
 }
 
 func (l *RemoteProvider) fetchUserDetails(tokenString string) (*User, error) {
-	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + "/user")
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + "/api/identity/users/profile")
 	req, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
 
 	resp, err := l.DoRequest(req, tokenString)
@@ -310,7 +310,7 @@ func (l *RemoteProvider) fetchUserDetails(tokenString string) (*User, error) {
 }
 
 func (l *RemoteProvider) GetUserByID(req *http.Request, userID string) ([]byte, error) {
-	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s/api/user/profile/%s", l.RemoteProviderURL, userID))
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s/api/identity/users/profile/%s", l.RemoteProviderURL, userID))
 	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
 	token, err := l.GetToken(req)
 	if err != nil {

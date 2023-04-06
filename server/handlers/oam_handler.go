@@ -116,10 +116,11 @@ func (h *Handler) PatternFileHandler(
 // swagger:route GET /api/oam/{type} PatternsAPI idGetOAMRegister
 // Handles GET requests for list of OAM objects
 //
-// Returns a list of workloads/traits/scopes by given type in the URL
+// Returns a list of ```workloads/traits/scopes``` by given type in the URL
 //
-// {type} being of either trait, scope, workload; registration of adapter capabilities.
-// Example: /api/oam/workload => Here {type} is "workload"
+// ```{type}``` being of either trait, scope, workload; registration of adapter capabilities.
+//
+// Example: ```/api/oam/workload``` => Here ```{type}``` is "workload"
 //
 // deprecated: true
 //
@@ -129,10 +130,11 @@ func (h *Handler) PatternFileHandler(
 // swagger:route POST /api/oam/{type} PatternsAPI idPostOAMRegister
 // Handles POST requests for adding OAM objects
 //
-// Adding a workloads/traits/scopes by given type in the URL
+// Adding a ```workloads/traits/scopes``` by given type in the URL
 //
-// {type} being of either trait, scope, workload; registration of adapter capabilities.
-// Example: /api/oam/workload => Here {type} is "workload"
+//```{type}``` being of either trait, scope, workload; registration of adapter capabilities.
+//
+// Example: ```/api/oam/workload``` => Here ```{type}``` is "workload"
 //
 // deprecated: true
 //
@@ -164,11 +166,12 @@ func (h *Handler) OAMRegisterHandler(rw http.ResponseWriter, r *http.Request) {
 // swagger:route GET /api/oam/{type}/{name} PatternsAPI idOAMComponentDetails
 // Handles GET requests for component details for OAM objects
 //
-// Returns component details of a workload/trait/scope by given name in the URL
+// Returns component details of a ```workload/trait/scope``` by given name in the URL
 //
-// {type} being of either trait, scope, workload; registration of adapter capabilities.
-// Example: /api/oam/workload/Application => Here {type} is "workload" and {name} is "Application"
-// it should be noted that both {type} and {name} should be valid
+// ```{type}``` being of either trait, scope, workload; registration of adapter capabilities.
+//
+// Example: ```/api/oam/workload/Application``` => Here ```{type}``` is "workload" and ```{name}``` is "Application"
+// it should be noted that both ```{type}``` and ```{name}``` should be valid
 //
 // responses:
 // 	200:
@@ -215,12 +218,13 @@ func (h *Handler) OAMComponentDetailsHandler(rw http.ResponseWriter, r *http.Req
 // swagger:route GET /api/oam/{type}/{name}/{id} PatternsAPI idOAMComponentDetailByID
 // Handles GET requests for component details for OAM objects
 //
-// Returns details of a workload/trait/scope by given name and id in the URL
+// Returns details of a ```workload/trait/scope``` by given name and id in the URL
 //
-// {type} being of either trait, scope, workload; registration of adapter capabilities.
-// Example: /api/oam/workload/Application/asdqe123sa275sasd => Here {type} is "workload"
-// {name} is "Application" and {id} is "asdqe123sa275sasd". It should be noted that all of three, i.e {type},
-// {name} and {id} must be valid
+// ```{type}``` being of either trait, scope, workload; registration of adapter capabilities.
+//
+// Example: ```/api/oam/workload/Application/asdqe123sa275sasd``` => Here ```{type}``` is "workload"
+// ```{name}``` is "Application" and ```{id}``` is "asdqe123sa275sasd". It should be noted that all of three, i.e {type},
+// ```{name}``` and ```{id}``` must be valid
 //
 // responses:
 // 	200:
@@ -264,10 +268,11 @@ func (h *Handler) OAMComponentDetailByIDHandler(rw http.ResponseWriter, r *http.
 // swagger:route POST /api/oam/{type} PatternsAPI idPOSTOAMRegister
 // Handles registering OMA objects
 //
-// Adding a workload/trait/scope
+// Adding a ```workload/trait/scope```
 //
-// {type} being of either trait, scope, workload; registration of adapter capabilities.
-// Example: /api/oam/trait => Here {type} is "trait"
+// ```{type}``` being of either trait, scope, workload; registration of adapter capabilities.
+//
+// Example: ```/api/oam/trait``` => Here ```{type}``` is "trait"
 //
 // responses:
 // 	200:
@@ -296,10 +301,11 @@ func (h *Handler) POSTOAMRegisterHandler(typ string, r *http.Request) error {
 // swagger:route GET /api/oam/{type} PatternsAPI idGETOAMMesheryPattern
 // Handles the get requests for the OAM objects
 //
-// Getting list of workloads/traits/scopes
+// Getting list of ```workloads/traits/scopes```
 //
-// {type} being of either trait, scope, workload; registration of adapter capabilities.
-// Example: /api/oam/workload => Here {type} is "workload"
+// ```{type}``` being of either trait, scope, workload; registration of adapter capabilities.
+//
+//  Example: ```/api/oam/workload``` => Here ```{type}``` is "workload"
 //
 // responses:
 // 	200:
