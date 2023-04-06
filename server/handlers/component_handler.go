@@ -23,6 +23,8 @@ const DefaultPageSizeForMeshModelComponents = 25
 //
 // ```?order={field}``` orders on the passed field
 //
+// ```?search={modelname}``` If search is non empty then a greedy search is performed
+//
 // ```?sort={[asc/desc]}``` Default behavior is asc
 //
 // ```?page={page-number}``` Default page number is 1
@@ -48,13 +50,18 @@ func (h *Handler) GetMeshmodelModelsByCategories(rw http.ResponseWriter, r *http
 		page = 1
 	}
 	offset := (page - 1) * limit
-	res := h.registryManager.GetModels(h.dbHandler, &v1alpha1.ModelFilter{
+	filter := &v1alpha1.ModelFilter{
 		Category: cat,
 		Limit:    limit,
 		Offset:   offset,
 		OrderOn:  r.URL.Query().Get("order"),
 		Sort:     r.URL.Query().Get("sort"),
-	})
+	}
+	if r.URL.Query().Get("search") != "" {
+		filter.Greedy = true
+		filter.Name = r.URL.Query().Get("search")
+	}
+	res := h.registryManager.GetModels(h.dbHandler, filter)
 
 	if err := enc.Encode(res); err != nil {
 		h.log.Error(ErrGetMeshModels(err)) //TODO: Add appropriate meshkit error
@@ -99,7 +106,6 @@ func (h *Handler) GetMeshmodelModelsByCategoriesByModel(rw http.ResponseWriter, 
 	offset := (page - 1) * limit
 	res := h.registryManager.GetModels(h.dbHandler, &v1alpha1.ModelFilter{
 		Category: cat,
-		Greedy:   r.URL.Query().Get("search") == "true",
 		Name:     model,
 		Version:  r.URL.Query().Get("version"),
 		Limit:    limit,
@@ -122,6 +128,8 @@ func (h *Handler) GetMeshmodelModelsByCategoriesByModel(rw http.ResponseWriter, 
 // ```?version={version}``` If version is unspecified then all models are returned
 //
 // ```?order={field}``` orders on the passed field
+//
+// ```?search={modelname}``` If search is non empty then a greedy search is performed
 //
 // ```?sort={[asc/desc]}``` Default behavior is asc
 //
@@ -148,13 +156,18 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 		page = 1
 	}
 	offset := (page - 1) * limit
-	res := h.registryManager.GetModels(h.dbHandler, &v1alpha1.ModelFilter{
+	filter := &v1alpha1.ModelFilter{
 		Version: v,
 		Limit:   limit,
 		Offset:  offset,
 		OrderOn: r.URL.Query().Get("order"),
 		Sort:    r.URL.Query().Get("sort"),
-	})
+	}
+	if r.URL.Query().Get("search") != "" {
+		filter.Name = r.URL.Query().Get("search")
+		filter.Greedy = true
+	}
+	res := h.registryManager.GetModels(h.dbHandler, filter)
 
 	if err := enc.Encode(res); err != nil {
 		h.log.Error(ErrGetMeshModels(err)) //TODO: Add appropriate meshkit error
@@ -201,7 +214,6 @@ func (h *Handler) GetMeshmodelModelsByName(rw http.ResponseWriter, r *http.Reque
 	res := h.registryManager.GetModels(h.dbHandler, &v1alpha1.ModelFilter{
 		Name:    name,
 		Version: v,
-		Greedy:  r.URL.Query().Get("search") == "true",
 		Limit:   limit,
 		Offset:  offset,
 		OrderOn: r.URL.Query().Get("order"),
@@ -220,6 +232,8 @@ func (h *Handler) GetMeshmodelModelsByName(rw http.ResponseWriter, r *http.Reque
 // ```?order={field}``` orders on the passed field
 //
 // ```?sort={[asc/desc]}``` Default behavior is asc
+//
+// ```?search={categoryName}``` If search is non empty then a greedy search is performed
 //
 // ```?page={page-number}``` Default page number is 1
 //
@@ -243,12 +257,17 @@ func (h *Handler) GetMeshmodelCategories(rw http.ResponseWriter, r *http.Request
 		page = 1
 	}
 	offset := (page - 1) * limit
-	res := h.registryManager.GetCategories(h.dbHandler, &v1alpha1.CategoryFilter{
+	filter := &v1alpha1.CategoryFilter{
 		Limit:   limit,
 		Offset:  offset,
 		OrderOn: r.URL.Query().Get("order"),
 		Sort:    r.URL.Query().Get("sort"),
-	})
+	}
+	if r.URL.Query().Get("search") != "" {
+		filter.Greedy = true
+		filter.Name = r.URL.Query().Get("search")
+	}
+	res := h.registryManager.GetCategories(h.dbHandler, filter)
 
 	if err := enc.Encode(res); err != nil {
 		h.log.Error(ErrGetMeshModels(err)) //TODO: Add appropriate meshkit error
@@ -291,7 +310,6 @@ func (h *Handler) GetMeshmodelCategoriesByName(rw http.ResponseWriter, r *http.R
 	res := h.registryManager.GetCategories(h.dbHandler, &v1alpha1.CategoryFilter{
 		Name:    name,
 		Limit:   limit,
-		Greedy:  r.URL.Query().Get("search") == "true",
 		Offset:  offset,
 		OrderOn: r.URL.Query().Get("order"),
 		Sort:    r.URL.Query().Get("sort"),
@@ -331,10 +349,6 @@ func (h *Handler) GetMeshmodelComponentsByNameByModelByCategory(rw http.Response
 	typ := mux.Vars(r)["model"]
 	cat := mux.Vars(r)["category"]
 	v := r.URL.Query().Get("version")
-	var search bool
-	if r.URL.Query().Get("search") == "true" {
-		search = true
-	}
 	limitstr := r.URL.Query().Get("pagesize")
 	var limit int
 	if limitstr != "all" {
@@ -355,7 +369,6 @@ func (h *Handler) GetMeshmodelComponentsByNameByModelByCategory(rw http.Response
 		ModelName:    typ,
 		APIVersion:   r.URL.Query().Get("apiVersion"),
 		Version:      v,
-		Greedy:       search,
 		Offset:       offset,
 		Limit:        limit,
 		OrderOn:      r.URL.Query().Get("order"),
@@ -406,10 +419,6 @@ func (h *Handler) GetMeshmodelComponentsByNameByCategory(rw http.ResponseWriter,
 	name := mux.Vars(r)["name"]
 	cat := mux.Vars(r)["category"]
 	v := r.URL.Query().Get("version")
-	var search bool
-	if r.URL.Query().Get("search") == "true" {
-		search = true
-	}
 	limitstr := r.URL.Query().Get("pagesize")
 	var limit int
 	if limitstr != "all" {
@@ -429,7 +438,6 @@ func (h *Handler) GetMeshmodelComponentsByNameByCategory(rw http.ResponseWriter,
 		CategoryName: cat,
 		APIVersion:   r.URL.Query().Get("apiVersion"),
 		Version:      v,
-		Greedy:       search,
 		Offset:       offset,
 		Limit:        limit,
 		OrderOn:      r.URL.Query().Get("order"),
@@ -481,10 +489,6 @@ func (h *Handler) GetMeshmodelComponentsByNameByModel(rw http.ResponseWriter, r 
 	name := mux.Vars(r)["name"]
 	typ := mux.Vars(r)["model"]
 	v := r.URL.Query().Get("version")
-	var search bool
-	if r.URL.Query().Get("search") == "true" {
-		search = true
-	}
 	limitstr := r.URL.Query().Get("pagesize")
 	var limit int
 	if limitstr != "all" {
@@ -504,7 +508,6 @@ func (h *Handler) GetMeshmodelComponentsByNameByModel(rw http.ResponseWriter, r 
 		ModelName:  typ,
 		APIVersion: r.URL.Query().Get("apiVersion"),
 		Version:    v,
-		Greedy:     search,
 		Offset:     offset,
 		Limit:      limit,
 		OrderOn:    r.URL.Query().Get("order"),
@@ -556,10 +559,6 @@ func (h *Handler) GetAllMeshmodelComponentsByName(rw http.ResponseWriter, r *htt
 	enc := json.NewEncoder(rw)
 	name := mux.Vars(r)["name"]
 	v := r.URL.Query().Get("version")
-	var search bool
-	if r.URL.Query().Get("search") == "true" {
-		search = true
-	}
 	limitstr := r.URL.Query().Get("pagesize")
 	var limit int
 	if limitstr != "all" {
@@ -579,7 +578,6 @@ func (h *Handler) GetAllMeshmodelComponentsByName(rw http.ResponseWriter, r *htt
 		Trim:       r.URL.Query().Get("trim") == "true",
 		APIVersion: r.URL.Query().Get("apiVersion"),
 		Version:    v,
-		Greedy:     search,
 		Offset:     offset,
 		Limit:      limit,
 		OrderOn:    r.URL.Query().Get("order"),
@@ -615,6 +613,8 @@ func (h *Handler) GetAllMeshmodelComponentsByName(rw http.ResponseWriter, r *htt
 //
 // ```?apiVersion={apiVersion}``` If apiVersion is unspecified then all models are returned
 //
+// ```?search={componentname}``` If search is non empty then a greedy search is performed
+//
 // ```?order={field}``` orders on the passed field
 //
 // ```?sort={[asc/desc]}``` Default behavior is asc
@@ -643,7 +643,7 @@ func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.R
 		page = 1
 	}
 	offset := (page - 1) * limit
-	res := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
+	filter := &v1alpha1.ComponentFilter{
 		ModelName:  typ,
 		Version:    v,
 		Trim:       r.URL.Query().Get("trim") == "true",
@@ -652,7 +652,12 @@ func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.R
 		Offset:     offset,
 		OrderOn:    r.URL.Query().Get("order"),
 		Sort:       r.URL.Query().Get("sort"),
-	})
+	}
+	if r.URL.Query().Get("search") != "" {
+		filter.Greedy = true
+		filter.Name = r.URL.Query().Get("search")
+	}
+	res := h.registryManager.GetEntities(filter)
 	var comps []v1alpha1.ComponentDefinition
 	for _, r := range res {
 		comp, ok := r.(v1alpha1.ComponentDefinition)
@@ -685,6 +690,7 @@ func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.R
 //
 // ```?order={field}``` orders on the passed field
 //
+// ```?search={componentname}``` If search is non empty then a greedy search is performed
 // ```?sort={[asc/desc]}``` Default behavior is asc
 //
 // ```?page={page-number}``` Default page number is 1
@@ -712,7 +718,7 @@ func (h *Handler) GetMeshmodelComponentByModelByCategory(rw http.ResponseWriter,
 		page = 1
 	}
 	offset := (page - 1) * limit
-	res := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
+	filter := &v1alpha1.ComponentFilter{
 		CategoryName: cat,
 		ModelName:    typ,
 		Version:      v,
@@ -722,7 +728,12 @@ func (h *Handler) GetMeshmodelComponentByModelByCategory(rw http.ResponseWriter,
 		Offset:       offset,
 		OrderOn:      r.URL.Query().Get("order"),
 		Sort:         r.URL.Query().Get("sort"),
-	})
+	}
+	if r.URL.Query().Get("search") != "" {
+		filter.Greedy = true
+		filter.Name = r.URL.Query().Get("search")
+	}
+	res := h.registryManager.GetEntities(filter)
 	var comps []v1alpha1.ComponentDefinition
 	for _, r := range res {
 		comp, ok := r.(v1alpha1.ComponentDefinition)
@@ -755,6 +766,7 @@ func (h *Handler) GetMeshmodelComponentByModelByCategory(rw http.ResponseWriter,
 //
 // ```?order={field}``` orders on the passed field
 //
+// ```?search={componentname}``` If search is non empty then a greedy search is performed
 // ```?sort={[asc/desc]}``` Default behavior is asc
 //
 // ```?page={page-number}``` Default page number is 1
@@ -781,7 +793,7 @@ func (h *Handler) GetMeshmodelComponentByCategory(rw http.ResponseWriter, r *htt
 		page = 1
 	}
 	offset := (page - 1) * limit
-	res := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
+	filter := &v1alpha1.ComponentFilter{
 		CategoryName: cat,
 		Version:      v,
 		Trim:         r.URL.Query().Get("trim") == "true",
@@ -790,7 +802,12 @@ func (h *Handler) GetMeshmodelComponentByCategory(rw http.ResponseWriter, r *htt
 		Offset:       offset,
 		OrderOn:      r.URL.Query().Get("order"),
 		Sort:         r.URL.Query().Get("sort"),
-	})
+	}
+	if r.URL.Query().Get("search") != "" {
+		filter.Greedy = true
+		filter.Name = r.URL.Query().Get("search")
+	}
+	res := h.registryManager.GetEntities(filter)
 	var comps []v1alpha1.ComponentDefinition
 	for _, r := range res {
 		comp, ok := r.(v1alpha1.ComponentDefinition)
@@ -820,6 +837,8 @@ func (h *Handler) GetMeshmodelComponentByCategory(rw http.ResponseWriter, r *htt
 //
 // ```?order={field}``` orders on the passed field
 //
+// ```?search={componentname}``` If search is non empty then a greedy search is performed
+//
 // ```?trim={[true]}``` When trim is set to true, the underlying schemas are not returned for entities
 //
 // ```?sort={[asc/desc]}``` Default behavior is asc
@@ -848,7 +867,7 @@ func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Requ
 		page = 1
 	}
 	offset := (page - 1) * limit
-	res := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
+	filter := &v1alpha1.ComponentFilter{
 		Version:    v,
 		Trim:       r.URL.Query().Get("trim") == "true",
 		APIVersion: r.URL.Query().Get("apiVersion"),
@@ -856,7 +875,12 @@ func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Requ
 		Offset:     offset,
 		OrderOn:    r.URL.Query().Get("order"),
 		Sort:       r.URL.Query().Get("sort"),
-	})
+	}
+	if r.URL.Query().Get("search") != "" {
+		filter.Greedy = true
+		filter.Name = r.URL.Query().Get("search")
+	}
+	res := h.registryManager.GetEntities(filter)
 	var comps []v1alpha1.ComponentDefinition
 	for _, r := range res {
 		comp, ok := r.(v1alpha1.ComponentDefinition)
