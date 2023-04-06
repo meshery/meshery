@@ -27,6 +27,7 @@ Needed?
 
 
 ### Nginx Configuration for websocket (until annotations issue is solved)
+## When to do this: Whenever Ingress is reset directly or indirectly(via scaling deployments).
 Nginx ingress controller by default (sometimes) doesn't pick up the custom configuration passed to it via annotations so after the nginx pod starts below steps are required to make sure that websocket requests go through.
 
 - exec into the nginx pod and go to /etc/nginx/conf.d.
