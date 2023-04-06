@@ -18,6 +18,7 @@ import (
 	"github.com/layer5io/meshery/server/meshes"
 	"github.com/layer5io/meshery/server/models"
 	pCore "github.com/layer5io/meshery/server/models/pattern/core"
+	"github.com/layer5io/meshkit/models/meshmodel"
 	"github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/layer5io/meshkit/utils/kubernetes/kompose"
 	"github.com/layer5io/meshkit/utils/walker"
@@ -188,7 +189,7 @@ func (h *Handler) handleApplicationPOST(
 				}
 			}
 
-			pattern, err := pCore.NewPatternFileFromK8sManifest(k8sres, false)
+			pattern, err := pCore.NewPatternFileFromK8sManifest(h.registryManager, k8sres, false)
 			if err != nil {
 				obj := "convert"
 				h.log.Error(ErrApplicationFailure(err, obj))
@@ -250,7 +251,7 @@ func (h *Handler) handleApplicationPOST(
 				return
 			}
 			result := string(resp)
-			pattern, err := pCore.NewPatternFileFromK8sManifest(result, false)
+			pattern, err := pCore.NewPatternFileFromK8sManifest(h.registryManager, result, false)
 			if err != nil {
 				obj := "convert"
 				h.log.Error(ErrApplicationFailure(err, obj))
@@ -314,7 +315,7 @@ func (h *Handler) handleApplicationPOST(
 					path = strings.Join(parsedPath[4:], "/")
 				}
 
-				pfs, err := githubRepoApplicationScan(owner, repo, path, branch, sourcetype)
+				pfs, err := githubRepoApplicationScan(owner, repo, path, branch, sourcetype, h.registryManager)
 				if err != nil {
 					http.Error(rw, ErrRemoteApplication(err).Error(), http.StatusInternalServerError)
 					addMeshkitErr(&res, err) //error guaranteed to be meshkit error
@@ -325,7 +326,7 @@ func (h *Handler) handleApplicationPOST(
 				mesheryApplication = &pfs[0]
 			} else {
 				// Fallback to generic HTTP import
-				pfs, err := genericHTTPApplicationFile(parsedBody.URL, sourcetype)
+				pfs, err := genericHTTPApplicationFile(parsedBody.URL, sourcetype, h.registryManager)
 				if err != nil {
 					http.Error(rw, ErrRemoteApplication(err).Error(), http.StatusInternalServerError)
 					addMeshkitErr(&res, err) //error guaranteed to be meshkit error
@@ -726,6 +727,7 @@ func githubRepoApplicationScan(
 	path,
 	branch,
 	sourceType string,
+	registryManager *meshmodel.RegistryManager,
 ) ([]models.MesheryApplication, error) {
 	var mu sync.Mutex
 	ghWalker := walker.NewGit()
@@ -747,7 +749,7 @@ func githubRepoApplicationScan(
 						return ErrRemoteApplication(err)
 					}
 				}
-				pattern, err := pCore.NewPatternFileFromK8sManifest(k8sres, false)
+				pattern, err := pCore.NewPatternFileFromK8sManifest(registryManager, k8sres, false)
 				if err != nil {
 					return err //always a meshkit error
 				}
@@ -785,7 +787,7 @@ func githubRepoApplicationScan(
 }
 
 // Note: Always return meshkit error from this function
-func genericHTTPApplicationFile(fileURL, sourceType string) ([]models.MesheryApplication, error) {
+func genericHTTPApplicationFile(fileURL, sourceType string, registryManager *meshmodel.RegistryManager) ([]models.MesheryApplication, error) {
 	resp, err := http.Get(fileURL)
 	if err != nil {
 		return nil, ErrRemoteApplication(err)
@@ -810,7 +812,7 @@ func genericHTTPApplicationFile(fileURL, sourceType string) ([]models.MesheryApp
 		}
 	}
 
-	pattern, err := pCore.NewPatternFileFromK8sManifest(k8sres, false)
+	pattern, err := pCore.NewPatternFileFromK8sManifest(registryManager, k8sres, false)
 	if err != nil {
 		return nil, err //This error is already a meshkit error
 	}
