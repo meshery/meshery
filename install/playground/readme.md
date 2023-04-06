@@ -67,3 +67,14 @@ Nginx ingress controller by default (sometimes) doesn't pick up the custom confi
 - Perform an nginx reload with `nginx -s reload`
 
 - Confirm that the websocket requests are passing through.
+
+
+
+### Renewing SSL certificate for playground. (When cert manager is not used and certificates are generated manually)
+NOTE: Make sure to renew certificates before they expire
+
+- Run sudo certbot certonly --manual --preferred-challenges http -d playground.meshery.io and press 2 to renew the certificates. 
+- New certs will be stored at /etc/letsencrypt/live/playground.meshery.io/fullchain.pem and /etc/letsencrypt/live/playground.meshery.io/privkey.pem
+- Delete the previous secrets named tls-secret or tls-meshery-secret(check the name in the Ingress resource) and delete the the secret with `nginx-ingress-default-server-tls` in the name in meshery namespace
+- Run `kubectl create secret tls tls-secret --cert=/etc/letsencrypt/live/playground.meshery.io/fullchain.pem --key=/etc/letsencrypt/live/playground.meshery.io/privkey.pem`  and `kubectl create secret tls nginx-ingress-default-server-tls --cert=/etc/letsencrypt/live/playground.meshery.io/fullchain.pem --key=/etc/letsencrypt/live/playground.meshery.io/privkey.pem`
+- Delete the ingress pod so that it can restart and use the newly configured secrets.
