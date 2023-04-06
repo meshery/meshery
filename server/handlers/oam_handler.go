@@ -634,22 +634,20 @@ func (sap *serviceActionProvider) DryRun(comps []v1alpha1.Component) (resp map[s
 			if err != nil {
 				return resp, err
 			}
+
 			st, ok, err := k8s.DryRunHelper(cl, cmp)
-			if err != nil {
-				return resp, err
-			}
-			dResp := core.DryRunResponse2{Success: ok}
+			dResp := core.DryRunResponse2{Success: ok, Component: &core.Service{
+				Name:        cmp.Name,
+				Type:        cmp.Spec.Type,
+				Namespace:   cmp.Namespace,
+				APIVersion:  cmp.Spec.APIVersion,
+				Version:     cmp.Spec.Version,
+				Model:       cmp.Spec.Model,
+				Labels:      cmp.Labels,
+				Annotations: cmp.Annotations,
+			}}
+			// Dry run was success
 			if ok {
-				dResp.Component = &core.Service{
-					Name:        cmp.Name,
-					Type:        cmp.Spec.Type,
-					Namespace:   cmp.Namespace,
-					APIVersion:  cmp.Spec.APIVersion,
-					Version:     cmp.Spec.Version,
-					Model:       cmp.Spec.Model,
-					Labels:      cmp.Labels,
-					Annotations: cmp.Annotations,
-				}
 				dResp.Component.Settings = make(map[string]interface{})
 				for k, v := range st {
 					if k == "apiVersion" || k == "kind" || k == "metadata" {
@@ -657,45 +655,42 @@ func (sap *serviceActionProvider) DryRun(comps []v1alpha1.Component) (resp map[s
 					}
 					dResp.Component.Settings[k] = v
 				}
-				if resp == nil {
-					resp = make(map[string]map[string]core.DryRunResponse2)
+			} else if err != nil { //Dry run failed due to some error eg: K8s server could not identify the resource
+				dResp.Error = &core.DryRunResponse{
+					Status: err.Error(),
 				}
-				if resp[cmp.Name] == nil {
-					resp[cmp.Name] = make(map[string]core.DryRunResponse2)
+			} else { //Dry run failure returned with an error wrapped in kubernetes custom error
+				dResp.Error = &core.DryRunResponse{}
+				byt, err := json.Marshal(st)
+				if err != nil {
+					return nil, err
 				}
-				resp[cmp.Name][ctxID] = dResp
-				continue
-			}
-			dResp.Error = &core.DryRunResponse{}
-			byt, err := json.Marshal(st)
-			if err != nil {
-				return nil, err
-			}
-			var a v1.StatusApplyConfiguration
-			err = json.Unmarshal(byt, &a)
-			if err != nil {
-				return nil, err
-			}
-			if a.Status != nil {
-				dResp.Error.Status = *a.Status
-			}
-			dResp.Error.Causes = make([]core.DryRunFailureCause, 0)
-			if a.Details != nil {
-				for _, c := range a.Details.Causes {
-					msg := ""
-					field := ""
-					typ := ""
-					if c.Message != nil {
-						msg = *c.Message
+				var a v1.StatusApplyConfiguration
+				err = json.Unmarshal(byt, &a)
+				if err != nil {
+					return nil, err
+				}
+				if a.Status != nil {
+					dResp.Error.Status = *a.Status
+				}
+				dResp.Error.Causes = make([]core.DryRunFailureCause, 0)
+				if a.Details != nil {
+					for _, c := range a.Details.Causes {
+						msg := ""
+						field := ""
+						typ := ""
+						if c.Message != nil {
+							msg = *c.Message
+						}
+						if c.Field != nil {
+							field = cmp.Name + "." + getComponentFieldPathFromK8sFieldPath(*c.Field)
+						}
+						if c.Type != nil {
+							typ = string(*c.Type)
+						}
+						failureCase := core.DryRunFailureCause{Message: msg, FieldPath: field, Type: typ}
+						dResp.Error.Causes = append(dResp.Error.Causes, failureCase)
 					}
-					if c.Field != nil {
-						field = cmp.Name + "." + getComponentFieldPathFromK8sFieldPath(*c.Field)
-					}
-					if c.Type != nil {
-						typ = string(*c.Type)
-					}
-					failureCase := core.DryRunFailureCause{Message: msg, FieldPath: field, Type: typ}
-					dResp.Error.Causes = append(dResp.Error.Causes, failureCase)
 				}
 			}
 			if resp == nil {
