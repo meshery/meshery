@@ -11,3 +11,4 @@ data:
       protocol: layer2
       addresses:
       - 147.28.141.9/32 
+      autoAssign: false
