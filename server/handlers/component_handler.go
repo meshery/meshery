@@ -59,7 +59,7 @@ func (h *Handler) GetMeshmodelModelsByCategories(rw http.ResponseWriter, r *http
 	}
 	if r.URL.Query().Get("search") != "" {
 		filter.Greedy = true
-		filter.Name = r.URL.Query().Get("search")
+		filter.DisplayName = r.URL.Query().Get("search")
 	}
 	res := h.registryManager.GetModels(h.dbHandler, filter)
 
@@ -164,7 +164,7 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 		Sort:    r.URL.Query().Get("sort"),
 	}
 	if r.URL.Query().Get("search") != "" {
-		filter.Name = r.URL.Query().Get("search")
+		filter.DisplayName = r.URL.Query().Get("search")
 		filter.Greedy = true
 	}
 	res := h.registryManager.GetModels(h.dbHandler, filter)
@@ -655,7 +655,7 @@ func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.R
 	}
 	if r.URL.Query().Get("search") != "" {
 		filter.Greedy = true
-		filter.Name = r.URL.Query().Get("search")
+		filter.DisplayName = r.URL.Query().Get("search")
 	}
 	res := h.registryManager.GetEntities(filter)
 	var comps []v1alpha1.ComponentDefinition
@@ -731,7 +731,7 @@ func (h *Handler) GetMeshmodelComponentByModelByCategory(rw http.ResponseWriter,
 	}
 	if r.URL.Query().Get("search") != "" {
 		filter.Greedy = true
-		filter.Name = r.URL.Query().Get("search")
+		filter.DisplayName = r.URL.Query().Get("search")
 	}
 	res := h.registryManager.GetEntities(filter)
 	var comps []v1alpha1.ComponentDefinition
@@ -805,7 +805,7 @@ func (h *Handler) GetMeshmodelComponentByCategory(rw http.ResponseWriter, r *htt
 	}
 	if r.URL.Query().Get("search") != "" {
 		filter.Greedy = true
-		filter.Name = r.URL.Query().Get("search")
+		filter.DisplayName = r.URL.Query().Get("search")
 	}
 	res := h.registryManager.GetEntities(filter)
 	var comps []v1alpha1.ComponentDefinition
@@ -878,7 +878,7 @@ func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Requ
 	}
 	if r.URL.Query().Get("search") != "" {
 		filter.Greedy = true
-		filter.Name = r.URL.Query().Get("search")
+		filter.DisplayName = r.URL.Query().Get("search")
 	}
 	res := h.registryManager.GetEntities(filter)
 	var comps []v1alpha1.ComponentDefinition
