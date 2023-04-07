@@ -503,7 +503,7 @@ func NewPatternFileFromK8sManifest(data string, ignoreErrors bool, reg *meshmode
 	return pattern, nil
 }
 
-func createPatternServiceFromK8s(manifest map[string]interface{}, reg *meshmodel.RegistryManager) (string, Service, error) {
+func createPatternServiceFromK8s(manifest map[string]interface{}, regManager *meshmodel.RegistryManager) (string, Service, error) {
 	apiVersion, _ := manifest["apiVersion"].(string)
 	kind, _ := manifest["kind"].(string)
 	metadata, _ := manifest["metadata"].(map[string]interface{})
@@ -534,10 +534,6 @@ func createPatternServiceFromK8s(manifest map[string]interface{}, reg *meshmodel
 	if apiVersion == "" || kind == "" {
 		return "", Service{}, ErrCreatePatternService(fmt.Errorf("empty apiVersion or kind in manifest"))
 	}
-	w := reg.GetEntities(&meshmodelv1alpha1.ComponentFilter{
-		APIVersion: apiVersion,
-		Name:       kind,
-	})
 
 	// Get MeshModel entity with the selectors
 	componentList := regManager.GetEntities(&meshmodelv1alpha1.ComponentFilter{
@@ -547,7 +543,11 @@ func createPatternServiceFromK8s(manifest map[string]interface{}, reg *meshmodel
 	if componentList == nil || len(componentList) == 0 {
 		return "", Service{}, ErrCreatePatternService(fmt.Errorf("no resources found for APIVersion: %s Kind: %s", apiVersion, kind))
 	}
-	comp := w[0].(meshmodelv1alpha1.ComponentDefinition)
+	// just needs the first entry to grab meshmodel-metadata and other model requirements
+	comp, ok := componentList[0].(meshmodelv1alpha1.ComponentDefinition)
+	if !ok {
+		return "", Service{}, ErrCreatePatternService(fmt.Errorf("cannot cast to the component-definition for APIVersion: %s Kind: %s", apiVersion, kind))
+	}
 	// Setup labels
 	castedLabel := map[string]string{}
 	for k, v := range labels {
