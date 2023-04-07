@@ -539,7 +539,12 @@ func createPatternServiceFromK8s(manifest map[string]interface{}, reg *meshmodel
 		Name:       kind,
 	})
 
-	if len(w) == 0 {
+	// Get MeshModel entity with the selectors
+	componentList := regManager.GetEntities(&meshmodelv1alpha1.ComponentFilter{
+		Name:       kind,
+		APIVersion: apiVersion,
+	})
+	if componentList == nil || len(componentList) == 0 {
 		return "", Service{}, ErrCreatePatternService(fmt.Errorf("no resources found for APIVersion: %s Kind: %s", apiVersion, kind))
 	}
 	comp := w[0].(meshmodelv1alpha1.ComponentDefinition)
@@ -570,6 +575,11 @@ func createPatternServiceFromK8s(manifest map[string]interface{}, reg *meshmodel
 		Labels:      castedLabel,
 		Annotations: castedAnnotation,
 		Settings:    rest,
+		Traits: map[string]interface{}{
+			"meshmap": map[string]interface{}{
+				"meshmodel-metadata": comp.Metadata,
+			},
+		},
 	}
 
 	return id, svc, nil
