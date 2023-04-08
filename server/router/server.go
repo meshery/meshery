@@ -143,11 +143,6 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 	gMux.Handle("/api/patterns/delete", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.DeleteMultiMesheryPatternsHandler), models.ProviderAuth))).
 		Methods("POST")
 
-	gMux.Handle("/api/oam/{type}", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.GETOAMRegisterHandler), models.NoAuth))).Methods("GET")
-	//TODO: Put all the meshmodel endpoints under ProviderAuth(except for register)
-	gMux.Handle("/api/oam/{type}", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.OAMRegisterHandler), models.NoAuth))).Methods("POST")
-	gMux.Handle("/api/oam/{type}/{name}", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.OAMComponentDetailsHandler), models.NoAuth))).Methods("GET")
-	gMux.Handle("/api/oam/{type}/{name}/{id}", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.OAMComponentDetailByIDHandler), models.NoAuth))).Methods("GET")
 	gMux.Handle("/api/meshmodels/validate", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.ValidationHandler), models.NoAuth))).Methods("POST")
 	gMux.Handle("/api/meshmodels/components", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.RegisterMeshmodelComponents), models.NoAuth))).Methods("POST")         //This should also be left with NoAuth
 	gMux.Handle("/api/meshmodel/components/register", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.RegisterMeshmodelComponents), models.NoAuth))).Methods("POST") //For backwards compatibility with previous registrants
