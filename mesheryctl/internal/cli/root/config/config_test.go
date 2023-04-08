@@ -51,10 +51,10 @@ func TestGetLocation(t *testing.T) {
 }
 
 func TestGetVersion(t *testing.T) {
-	context := Context{}
+	meshConfigCtx := Context{}
 	for _, test := range tests {
-		context.SetVersion(test)
-		got := context.GetVersion()
+		meshConfigCtx.SetVersion(test)
+		got := meshConfigCtx.GetVersion()
 		want := test
 
 		if got != want {
@@ -77,10 +77,10 @@ func TestGetName(t *testing.T) {
 }
 
 func TestGetChannel(t *testing.T) {
-	context := Context{}
+	meshConfigCtx := Context{}
 	for _, test := range tests {
-		context.SetChannel(test)
-		got := context.GetChannel()
+		meshConfigCtx.SetChannel(test)
+		got := meshConfigCtx.GetChannel()
 		want := test
 
 		if got != want {
@@ -91,8 +91,8 @@ func TestGetChannel(t *testing.T) {
 
 func TestGetComponents(t *testing.T) {
 	dummy := []string{"abc", "def", "ghi", "jkl", "mno", "pqr"}
-	context := Context{"", "", "", dummy, "", "", "", false}
-	got := context.GetComponents()
+	meshConfigCtx := Context{"", "", "", dummy, "", "", "", false}
+	got := meshConfigCtx.GetComponents()
 	want := dummy
 	for i, j := range got {
 		if j != want[i] {
@@ -102,10 +102,10 @@ func TestGetComponents(t *testing.T) {
 }
 
 func TestGetPlatform(t *testing.T) {
-	context := Context{}
+	meshConfigCtx := Context{}
 	for _, test := range tests {
-		context.SetPlatform(test)
-		got := context.GetPlatform()
+		meshConfigCtx.SetPlatform(test)
+		got := meshConfigCtx.GetPlatform()
 		want := test
 
 		if got != want {
@@ -115,10 +115,10 @@ func TestGetPlatform(t *testing.T) {
 }
 
 func TestGetToken(t *testing.T) {
-	context := Context{}
+	meshConfigCtx := Context{}
 	for _, test := range tests {
-		context.SetToken(test)
-		got := context.GetToken()
+		meshConfigCtx.SetToken(test)
+		got := meshConfigCtx.GetToken()
 		want := test
 
 		if got != want {
@@ -128,10 +128,10 @@ func TestGetToken(t *testing.T) {
 }
 
 func TestGetEndpoint(t *testing.T) {
-	context := Context{}
+	meshConfigCtx := Context{}
 	for _, test := range tests {
-		context.SetEndpoint(test)
-		got := context.GetEndpoint()
+		meshConfigCtx.SetEndpoint(test)
+		got := meshConfigCtx.GetEndpoint()
 		want := test
 
 		if got != want {
@@ -141,8 +141,8 @@ func TestGetEndpoint(t *testing.T) {
 }
 func TestGetCurrentContextName(t *testing.T) {
 	for _, test := range tests {
-		mesherycltconfig := MesheryCtlConfig{nil, test, nil}
-		got := mesherycltconfig.GetCurrentContextName()
+		mesheryctlconfig := MesheryCtlConfig{nil, test, nil}
+		got := mesheryctlconfig.GetCurrentContextName()
 		want := test
 
 		if got != want {
@@ -152,12 +152,12 @@ func TestGetCurrentContextName(t *testing.T) {
 }
 func TestSetContext(t *testing.T) {
 	for _, test := range tests {
-		mesherycltconfig := MesheryCtlConfig{nil, test, nil}
+		mesheryctlconfig := MesheryCtlConfig{nil, test, nil}
 		err := UpdateContextInConfig(nil, nil, test)
 		if err != nil {
 			fmt.Print("Fail") //Internal:need to be fixed
 		}
-		got := mesherycltconfig.GetCurrentContextName()
+		got := mesheryctlconfig.GetCurrentContextName()
 		want := test
 
 		if got != want {
@@ -166,10 +166,10 @@ func TestSetContext(t *testing.T) {
 	}
 }
 func TestSetEndpoint(t *testing.T) {
-	context := Context{}
+	meshConfigCtx := Context{}
 	for _, test := range tests {
-		context.SetEndpoint(test)
-		got := context.GetEndpoint()
+		meshConfigCtx.SetEndpoint(test)
+		got := meshConfigCtx.GetEndpoint()
 		want := test
 
 		if got != want {
@@ -179,10 +179,10 @@ func TestSetEndpoint(t *testing.T) {
 }
 
 func TestSetToken(t *testing.T) {
-	context := Context{}
+	meshConfigCtx := Context{}
 	for _, test := range tests {
-		context.SetToken(test)
-		got := context.GetToken()
+		meshConfigCtx.SetToken(test)
+		got := meshConfigCtx.GetToken()
 		want := test
 
 		if got != want {
@@ -192,10 +192,10 @@ func TestSetToken(t *testing.T) {
 }
 
 func TestSetPlatform(t *testing.T) {
-	context := Context{}
+	meshConfigCtx := Context{}
 	for _, test := range tests {
-		context.SetPlatform(test)
-		got := context.GetPlatform()
+		meshConfigCtx.SetPlatform(test)
+		got := meshConfigCtx.GetPlatform()
 		want := test
 
 		if got != want {
@@ -205,10 +205,10 @@ func TestSetPlatform(t *testing.T) {
 }
 
 func TestSetChannel(t *testing.T) {
-	context := Context{}
+	meshConfigCtx := Context{}
 	for _, test := range tests {
-		context.SetChannel(test)
-		got := context.GetChannel()
+		meshConfigCtx.SetChannel(test)
+		got := meshConfigCtx.GetChannel()
 		want := test
 
 		if got != want {
@@ -217,10 +217,10 @@ func TestSetChannel(t *testing.T) {
 	}
 }
 func TestSetVersion(t *testing.T) {
-	context := Context{}
+	meshConfigCtx := Context{}
 	for _, test := range tests {
-		context.SetVersion(test)
-		got := context.GetVersion()
+		meshConfigCtx.SetVersion(test)
+		got := meshConfigCtx.GetVersion()
 		want := test
 
 		if got != want {
@@ -231,8 +231,8 @@ func TestSetVersion(t *testing.T) {
 
 func TestSetComponents(t *testing.T) {
 	dummy := []string{"abc", "def", "ghi", "jkl", "mno", "pqr"}
-	context := Context{"", "", "", dummy, "", "", "", false}
-	got := context.GetComponents()
+	meshConfigCtx := Context{"", "", "", dummy, "", "", "", false}
+	got := meshConfigCtx.GetComponents()
 	want := dummy
 	for i, j := range got {
 		if j != want[i] {
@@ -243,8 +243,8 @@ func TestSetComponents(t *testing.T) {
 
 func TestGetProvider(t *testing.T) {
 	for _, test := range tests {
-		context := Context{"", "", "", nil, "", "", test, false}
-		got := context.GetProvider()
+		meshConfigCtx := Context{"", "", "", nil, "", "", test, false}
+		got := meshConfigCtx.GetProvider()
 		want := test
 
 		if got != want {
@@ -254,10 +254,10 @@ func TestGetProvider(t *testing.T) {
 }
 
 func TestSetProvider(t *testing.T) {
-	context := Context{}
+	meshConfigCtx := Context{}
 	for _, test := range tests {
-		context.SetProvider(test)
-		got := context.GetProvider()
+		meshConfigCtx.SetProvider(test)
+		got := meshConfigCtx.GetProvider()
 		want := test
 
 		if got != want {
@@ -268,8 +268,8 @@ func TestSetProvider(t *testing.T) {
 
 func TestGetDisableOperator(t *testing.T) {
 	for _, test := range boolTests {
-		context := Context{"", "", "", nil, "", "", "", test}
-		got := context.GetDisableOperator()
+		meshConfigCtx := Context{"", "", "", nil, "", "", "", test}
+		got := meshConfigCtx.GetDisableOperator()
 		want := test
 
 		if got != want {
@@ -279,10 +279,10 @@ func TestGetDisableOperator(t *testing.T) {
 }
 
 func TestSetDisableOperator(t *testing.T) {
-	context := Context{}
+	meshConfigCtx := Context{}
 	for _, test := range boolTests {
-		context.SetDisableOperator(test)
-		got := context.GetDisableOperator()
+		meshConfigCtx.SetDisableOperator(test)
+		got := meshConfigCtx.GetDisableOperator()
 		want := test
 
 		if got != want {
