@@ -422,7 +422,7 @@ function ConfirmationMsg(props) {
                       </Typography>
                       :
                       <div className={classes.textContent}>
-                        {theme.palette.type=="dark"? <OperatorLight /> : <Operator />}
+                        {theme.palette.type==="dark"? <OperatorLight /> : <Operator />}
                         <Typography variant="h5">No cluster connected yet</Typography>
 
                         <Link href="/settings">
@@ -452,7 +452,7 @@ function ConfirmationMsg(props) {
           {/* </Paper> */}
 
           <DialogActions className={classes.actions}>
-            {(tabVal == ACTIONS.DEPLOY || tabVal === ACTIONS.UNDEPLOY) ?
+            {(tabVal === ACTIONS.DEPLOY || tabVal === ACTIONS.UNDEPLOY) ?
               <>
                 <Button onClick={handleClose}
                   type="submit"

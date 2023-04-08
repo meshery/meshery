@@ -90,7 +90,7 @@ export default function CodeEditor({ yaml, saveCodeEditorChanges, cleanHandler }
  * @returns dynamically calcultaed height in vh
  */
 function getDynamicVh(scrollPos) {
-  if (window.scrollY == 0) {
+  if (window.scrollY === 0) {
     return '67vh'
   }
   const per = getScrollPercentage()

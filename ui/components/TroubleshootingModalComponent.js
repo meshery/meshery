@@ -43,7 +43,7 @@ const useStyles = makeStyles(theme => ({
     fontSize : "1rem"
   },
   infoIcon : {
-    color : theme.palette.type == 'dark' ? "#00B39F" : "#607d8b"
+    color : theme.palette.type === 'dark' ? "#00B39F" : "#607d8b"
   },
   footerText : {
     color : "#EDEDED",
@@ -95,11 +95,11 @@ const useStyles = makeStyles(theme => ({
   },
   accordionSummary : {
     "&.Mui-expanded" : {
-      backgroundColor : theme.palette.type == 'dark' ? "#303030" : "#f1f1f1"
+      backgroundColor : theme.palette.type === 'dark' ? "#303030" : "#f1f1f1"
     }
   },
   accDetailHead : {
-    color : theme.palette.type=='dark' ? "f1f1f1" : "#444",
+    color : theme.palette.type==='dark' ? "f1f1f1" : "#444",
     fontFamily : "Qanelas Soft, sans-serif"
   },
   troubleshootListitem : {
@@ -120,7 +120,7 @@ const useStyles = makeStyles(theme => ({
     flexDirection : "column"
   },
   troubleshootHelpLink : {
-    color : theme.palette.type=='dark' ? "#00B39F" : "rgb(57, 102, 121)",
+    color : theme.palette.type==='dark' ? "#00B39F" : "rgb(57, 102, 121)",
     fontWeight : "bold",
     textDecoration : "none"
   },
