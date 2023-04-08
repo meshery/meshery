@@ -112,7 +112,7 @@ const ExtensionsComponent = () => {
   const [emptystate,isEmptystate]=useState(true)
   const [meshAdapters, setMeshAdapters] = useState(null);
   useEffect(() => {
-    if (meshAdapters && meshAdapters.length != 0) {
+    if (meshAdapters && meshAdapters.length !== 0) {
       setSwitchesState(
         meshAdapters.map((adapter) => ({
           [adapter.name]: false,
@@ -132,8 +132,8 @@ const ExtensionsComponent = () => {
   useEffect(() => {
     let ws = new WebSocket("ws://127.0.0.1:7877/ws");
     ws.onmessage = (msg) => {
-      if (msg.data == AuthenticatedMsg) setIsLoggedIn(true);
-      if (msg.data == UnauthenticatedMsg) {
+      if (msg.data === AuthenticatedMsg) setIsLoggedIn(true);
+      if (msg.data === UnauthenticatedMsg) {
         setIsLoggedIn(false);
       }
     };

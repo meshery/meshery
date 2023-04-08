@@ -291,7 +291,7 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar, cl
               fetchTestProfiles={fetchTestProfiles}
             />
           )}
-        {testProfiles.length == 0 && viewType == "grid" && (
+        {testProfiles.length === 0 && viewType === "grid" && (
           <Paper className={classes.noProfilePaper} >
             <div className={classes.noProfileContainer}>
               <Typography className={classes.noProfileText} align="center" color="textSecondary">
