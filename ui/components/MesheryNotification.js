@@ -14,6 +14,7 @@ import {
   ClickAwayListener
 } from '@material-ui/core';
 import BellIcon from '@material-ui/icons/Notifications';
+import VisibilityIcon from '@material-ui/icons/Visibility';
 import ClearIcon from "../assets/icons/ClearIcon";
 import ErrorIcon from '@material-ui/icons/Error';
 import { withStyles } from '@material-ui/core/styles';
@@ -167,14 +168,24 @@ class MesheryNotification extends React.Component {
       variant : eventTypes[type]?.type,
       autoHideDuration : 5000,
       action : (key) => (
-        <IconButton
-          key="close"
-          aria-label="Close"
-          color="inherit"
-          onClick={() => self.props.closeSnackbar(key)}
-        >
-          <CloseIcon style={iconMedium} />
-        </IconButton>
+        <>
+          <IconButton
+            key="eye"
+            aria-label="eye"
+            color="inherit"
+            onClick={() => self.props.closeSnackbar(key)}
+          >
+            <VisibilityIcon style={iconMedium} />
+          </IconButton>
+          <IconButton
+            key="close"
+            aria-label="Close"
+            color="inherit"
+            onClick={() => self.props.closeSnackbar(key)}
+          >
+            <CloseIcon style={iconMedium} />
+          </IconButton>
+        </>
       ),
     });
   }
