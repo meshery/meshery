@@ -119,6 +119,37 @@ func (h *Handler) ReadUserCredentials(w http.ResponseWriter, req *http.Request, 
 }
 
 func (h *Handler) UpdateUserCredential(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+	bd, err := io.ReadAll(req.Body)
+	if err != nil {
+		h.log.Error(fmt.Errorf("error reading request body: %v", err))
+		http.Error(w, "unable to read credential data", http.StatusInternalServerError)
+		return
+	}
+
+	credential := &models.Credential{}
+	err = json.Unmarshal(bd, credential)
+	if err != nil {
+		h.log.Error(fmt.Errorf("error unmarshal request body: %v", err))
+		http.Error(w, "unable to parse credential data", http.StatusInternalServerError)
+		return
+	}
+
+	result := provider.GetGenericPersister().Where("user_id = ? AND id = ? AND deleted_at is NULL", user.UserID, credential.ID).First(&models.Credential{})
+	if result.Error != nil {
+		h.log.Error(fmt.Errorf("error getting user credential: %v", result.Error))
+		http.Error(w, "unable to get user credential", http.StatusInternalServerError)
+		return
+	}
+
+	result = provider.GetGenericPersister().Save(credential)
+	if result.Error != nil {
+		h.log.Error(fmt.Errorf("error updating user credential: %v", result.Error))
+		http.Error(w, "unable to update user credential", http.StatusInternalServerError)
+		return
+	}
+
+	h.log.Info("credential updated successfully")
+	w.WriteHeader(http.StatusOK)
 }
 
 func (h *Handler) DeleteUserCredential(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
