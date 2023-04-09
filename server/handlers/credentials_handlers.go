@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"database/sql"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -11,7 +10,7 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/models"
-	"github.com/sirupsen/logrus"
+	"gorm.io/gorm"
 )
 
 func (h *Handler) CreateUserCredential(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
@@ -78,39 +77,41 @@ func (h *Handler) ReadUserCredentials(w http.ResponseWriter, req *http.Request, 
 
 	result = result.Order(order)
 
-	count, err := qc.Count(&models.Credential{})
-	if err != nil {
-		logrus.Errorf("error retrieving count of credentials for user id: %s - %v", userID, err)
-		return nil, err
+	var count int64
+	if err := result.Count(&count).Error; err != nil {
+		h.log.Error(fmt.Errorf("error retrieving count of credentials for user id: %s - %v", user.UserID, err))
+		http.Error(w, "unable to get user credentials count", http.StatusInternalServerError)
+		return
 	}
-	logrus.Debugf("retrieved total count: %d", count)
+	h.log.Debug("retrieved total count: ", count)
 
-	credentialsList := []*models.Credential{}
+	var credentialsList []*models.Credential
 	if count > 0 {
-		if err := qc.Paginate(page+1, pageSize).All(&credentialsList); err != nil {
-			if err.Error() != sql.ErrNoRows.Error() {
-				logrus.Errorf("error retrieving credentials for user id: %s - %v", userID, err)
-				return nil, err
+		if err := result.Offset(page * pageSize).Limit(pageSize).Find(&credentialsList).Error; err != nil {
+			if err != gorm.ErrRecordNotFound {
+				h.log.Error(fmt.Errorf("error retrieving credentials for user id: %s - %v", user.UserID, err))
+				http.Error(w, "unable to get user credentials", http.StatusInternalServerError)
+				return
 			}
 		}
 	}
-	logrus.Debugf("retrieved credentials: %+v", credentials)
+	h.log.Debug("retrieved credentials: ", credentialsList)
 
-	credentials := models.CredentialsPage{
+	credentialsPage := &models.CredentialsPage{
 		Credentials: credentialsList,
 		Page:        page,
 		PageSize:    pageSize,
-		TotalCount:  count,
+		TotalCount:  int(count),
 	}
 
-	h.log.Debug("credentials: ", credentials)
+	h.log.Debug("credentials: ", credentialsPage)
 	if result.Error != nil {
 		h.log.Error(fmt.Errorf("error getting user credentials: %v", result.Error))
 		http.Error(w, "unable to get user credentials", http.StatusInternalServerError)
 		return
 	}
 
-	if err := json.NewEncoder(w).Encode(credentials); err != nil {
+	if err := json.NewEncoder(w).Encode(credentialsPage); err != nil {
 		h.log.Error(fmt.Errorf("error encoding user credentials: %v", err))
 		http.Error(w, "unable to encode user credentials", http.StatusInternalServerError)
 		return
