@@ -46,7 +46,7 @@ func (h *Handler) CreateUserCredential(w http.ResponseWriter, req *http.Request,
 	w.WriteHeader(http.StatusCreated)
 }
 
-func (h *Handler) ReadUserCredentials(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+func (h *Handler) ReadUserCredentials(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	q := req.URL.Query()
 
 	page, _ := strconv.Atoi(q.Get("page"))
@@ -119,7 +119,7 @@ func (h *Handler) ReadUserCredentials(w http.ResponseWriter, req *http.Request, 
 	}
 }
 
-func (h *Handler) UpdateUserCredential(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+func (h *Handler) UpdateUserCredential(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	bd, err := io.ReadAll(req.Body)
 	if err != nil {
 		h.log.Error(fmt.Errorf("error reading request body: %v", err))
@@ -153,7 +153,7 @@ func (h *Handler) UpdateUserCredential(w http.ResponseWriter, req *http.Request,
 	w.WriteHeader(http.StatusOK)
 }
 
-func (h *Handler) DeleteUserCredential(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+func (h *Handler) DeleteUserCredential(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	q := req.URL.Query()
 
 	credentialID := q.Get("credential_id")
