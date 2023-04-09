@@ -153,7 +153,7 @@ func TestGetCurrentContextName(t *testing.T) {
 func TestSetContext(t *testing.T) {
 	for _, test := range tests {
 		mesheryctlconfig := MesheryCtlConfig{nil, test, nil}
-		err := UpdateContextInConfig(nil, nil, test)
+		err := UpdateContextInConfig(nil, test)
 		if err != nil {
 			fmt.Print("Fail") //Internal:need to be fixed
 		}
