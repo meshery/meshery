@@ -98,8 +98,6 @@ type HandlerInterface interface {
 	SessionSyncHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 
 	PatternFileHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
-	GETOAMRegisterHandler(rw http.ResponseWriter, r *http.Request)
-	OAMRegisterHandler(rw http.ResponseWriter, r *http.Request)
 	GetMeshmodelCategories(rw http.ResponseWriter, r *http.Request)
 	GetMeshmodelCategoriesByName(rw http.ResponseWriter, r *http.Request)
 	GetMeshmodelModelsByName(rw http.ResponseWriter, r *http.Request)
@@ -122,8 +120,6 @@ type HandlerInterface interface {
 	GetMeshmodelRelationshipByName(rw http.ResponseWriter, r *http.Request)
 	RegisterMeshmodelRelationships(rw http.ResponseWriter, r *http.Request)
 
-	OAMComponentDetailsHandler(rw http.ResponseWriter, r *http.Request)
-	OAMComponentDetailByIDHandler(rw http.ResponseWriter, r *http.Request)
 	PatternFileRequestHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	DeleteMesheryPatternHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	CloneMesheryPatternHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)

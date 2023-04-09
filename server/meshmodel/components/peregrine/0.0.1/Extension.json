@@ -1,1 +1,0 @@
-{"kind":"Extension","apiVersion":"v1alpha1","displayName":"Extension","format":"JSON","metadata":{},"model":{"name":"peregrine","version":"0.0.1","displayName":"peregrine","category":{"name":"","metadata":null},"metadata":null},"schema":"{\n \"title\": \"Extension\",\n \"x-kubernetes-preserve-unknown-fields\": true\n}"}

@@ -51,6 +51,7 @@ func (erh *EntityRegistrationHelper) SeedComponents() {
 	erh.generateRelationships("../meshmodel/relationships")
 }
 
+// reads component definitions from files and sends them to the component channel
 func (erh *EntityRegistrationHelper) generateComponents(pathToComponents string) {
 	path, err := filepath.Abs(pathToComponents)
 	if err != nil {
@@ -64,6 +65,7 @@ func (erh *EntityRegistrationHelper) generateComponents(pathToComponents string)
 		}
 
 		if !info.IsDir() {
+			// Read the component definition from file
 			var comp v1alpha1.ComponentDefinition
 			byt, err := os.ReadFile(path)
 			if err != nil {
@@ -75,7 +77,9 @@ func (erh *EntityRegistrationHelper) generateComponents(pathToComponents string)
 				erh.errorChan <- errors.Wrapf(err, fmt.Sprintf("unmarshal json failed for %s", path))
 				return nil
 			}
+			// Only register components that have been marked as published
 			if comp.Metadata != nil && comp.Metadata["published"] == true {
+				// Generate SVGs for the component and save them on the file system
 				utils.WriteSVGsOnFileSystem(&comp)
 				erh.componentChan <- comp
 			}
@@ -88,6 +92,7 @@ func (erh *EntityRegistrationHelper) generateComponents(pathToComponents string)
 	return
 }
 
+// reads relationship definitions from files and sends them to the relationship channel
 func (erh *EntityRegistrationHelper) generateRelationships(pathToComponents string) {
 	path, err := filepath.Abs(pathToComponents)
 	if err != nil {
@@ -121,6 +126,8 @@ func (erh *EntityRegistrationHelper) generateRelationships(pathToComponents stri
 	return
 }
 
+// watches the component and relationship channels for incoming definitions and registers them with the registry manager
+// If an error occurs, it logs the error
 func (erh *EntityRegistrationHelper) watchComponents(ctx context.Context) {
 	var err error
 	for {

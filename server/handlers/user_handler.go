@@ -14,7 +14,7 @@ import (
 )
 
 // UserHandler returns info about the logged in user
-func (h *Handler) UserHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
+func (h *Handler) UserHandler(w http.ResponseWriter, _ *http.Request, _ *models.Preference, user *models.User, _ models.Provider) {
 	// if req.Method != http.MethodGet {
 	// 	w.WriteHeader(http.StatusNotFound)
 	// 	return
@@ -35,7 +35,7 @@ func (h *Handler) UserHandler(w http.ResponseWriter, req *http.Request, _ *model
 // responses:
 // 	200: userInfo
 
-func (h *Handler) GetUserByIDHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
+func (h *Handler) GetUserByIDHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	userID := mux.Vars(r)["id"]
 	resp, err := provider.GetUserByID(r, userID)
 	if err != nil {
@@ -49,14 +49,14 @@ func (h *Handler) GetUserByIDHandler(w http.ResponseWriter, r *http.Request, _ *
 }
 
 // swagger:route GET /api/user/prefs UserAPI idGetUserTestPrefs
-// Handle GET for User Load Test Preferences
+// Handle GET Requests for User Load Test Preferences
 //
 // Returns User Load Test Preferences
 // responses:
 // 	200: userLoadTestPrefsRespWrapper
 
 // swagger:route POST /api/user/prefs UserAPI idPostUserTestPrefs
-// Handle GET for User Load Test Preferences
+// Handle GET Requests for User Load Test Preferences
 //
 // Updates User Load Test Preferences
 // responses:
@@ -151,7 +151,7 @@ func (h *Handler) UserPrefsHandler(w http.ResponseWriter, req *http.Request, pre
 //  403:
 //  500:
 
-func (h *Handler) ShareDesignHandler(w http.ResponseWriter, r *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+func (h *Handler) ShareDesignHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	statusCode, err := provider.ShareDesign(r)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Error: %v", err.Error()), statusCode)

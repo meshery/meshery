@@ -54,6 +54,18 @@ const createCustomTheme = (paletteType) => {
         xl : 1920,
       },
     },
+    components : {
+      MuiAppBar : {
+        styleOverrides : {
+          colorPrimary : {
+            backgroundColor : blueGrey[500],
+          },
+          colorSecondary : {
+            backgroundColor : blueGrey[600],
+          }
+        }
+      }
+    }
   })
 
   const overrides = {
