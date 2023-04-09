@@ -73,7 +73,7 @@ func GetMesheryCtl(v *viper.Viper) (*MesheryCtlConfig, error) {
 }
 
 // UpdateContextInConfig write the given context in meshconfig
-func UpdateContextInConfig(v *viper.Viper, context *Context, name string) error {
+func UpdateContextInConfig(context *Context, name string) error {
 	viper.Set("contexts."+name, context)
 	err := viper.WriteConfig()
 	if err != nil {
@@ -441,7 +441,7 @@ func SetTokenToConfig(tokenName string, configPath string, ctxName string) error
 		return err
 	}
 	context.Token = tokenName
-	err = UpdateContextInConfig(viper.GetViper(), context, ctxName)
+	err = UpdateContextInConfig(context, ctxName)
 	if err != nil {
 		return err
 	}

@@ -1,1 +1,0 @@
-{"kind":"KongConsumer","apiVersion":"v1","displayName":"Kong Consumer","format":"JSON","metadata":{"logo-URL":"","model":"kong","modelDisplayName":"Kong","primaryColor":"","secondaryColor":"","shape":"circle","svgColor":"","svgWhite":""},"model":{"name":"kong","version":"4.4.0","displayName":"Kong","category":"Cloud Native Network","subCategory":"API Gateway"},"schema":""}

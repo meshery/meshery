@@ -1313,7 +1313,7 @@ class Navigator extends React.Component {
             icon={faAngleLeft}
             fixedWidth
             size="1.5x"
-            style={{ margin : "0.5rem 0.2rem ", width : "0.8rem" }}
+            style={{ margin : "0.75rem 0.2rem ", width : "0.8rem", verticalAlign : "middle" }}
             alt="Sidebar collapse toggle icon"
           />
         </div>

@@ -16,10 +16,10 @@ Before contributing, please review the [Documentation Contribution Flow](https:/
 
 Meshery documentation is made of these components:
 
-- Framework - Jekyll
-- Theme - https://github.com/vsoch/docsy-jekyll
-- Repo - https://github.com/layer5io/meshery/tree/master/docs
-- DNS - https://meshery.layer5.io/docs
+- Framework - [Jekyll](https://jekyllrb.com)
+- Theme - [https://github.com/vsoch/docsy-jekyll](https://github.com/vsoch/docsy-jekyll)
+- Repo - [https://github.com/layer5io/meshery/tree/master/docs](https://github.com/layer5io/meshery/tree/master/docs)
+- Site - [https://docs.meshery.io](https://docs.meshery.io)
 - AWS API GW - an instance is configured to redirect from docs.meshery.io to meshery.layer5.io, because of the repo location of where the docs currently reside.
 
 ## Set up your development environment
@@ -112,7 +112,7 @@ sudo apt-get install autoconf bison build-essential libssl-dev libyaml-dev libre
 
 - To list all the versions that can be installed
 
-{% capture code_content %}rbenv install --list-all{% endcapture %}
+{% capture code_content %}rbenv install --list{% endcapture %}
 {% include code.html code=code_content %}
 
 - Set which Ruby version you want to use
@@ -131,7 +131,7 @@ sudo apt-get install autoconf bison build-essential libssl-dev libyaml-dev libre
 
 ### Get the code
 
-- Fork and then clone the [Meshery repository](https://github.com/layer5io/meshery)
+- Fork and then clone the [Meshery repository](https://github.com/meshery/meshery)
 {% capture code_content %}git clone https://github.com/YOUR-USERNAME/meshery{% endcapture %}
 {% include code.html code=code_content %}
 - Change to the docs directory
@@ -309,7 +309,7 @@ This executes the block of code only if the given condition is true. It is execu
 If the condition is true, the output would be:
 
 ```
-    How are you?
+    These shoes are awesome!
 ```
 
 ### `for` loop

@@ -33,7 +33,7 @@ Meshery deploys as a set of Docker containers, which can be deployed to either a
 }
 </style>
 
-{% assign k8s_tests_group = site.compatibility | group_by: "k8s-version" %}
+{% assign k8s_tests_group = site.compatibility | group_by: "k8s-version" | sort: "name" | reverse %}
 
 <div>
     <ul class="nav nav-tabs nav-fill mb-3" id="myTab" role="tablist">

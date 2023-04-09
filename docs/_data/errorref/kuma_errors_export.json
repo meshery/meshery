@@ -25,7 +25,7 @@
         "name": "ErrOpInvalidCode",
         "code": "1002",
         "severity": "Alert",
-        "long_description": "Kuma adapter recived an invalid operation from the meshey server",
+        "long_description": "Kuma adapter received an invalid operation from the meshey server",
         "short_description": "Invalid operation",
         "probable_cause": "The operation is not supported by the adapter\nInvalid operation name",
         "suggested_remediation": "Check if the operation name is valid and supported by the adapter"
@@ -34,7 +34,7 @@
         "name": "ErrInstallKumaCode",
         "code": "1003",
         "severity": "Alert",
-        "long_description": "Error occured while installing kuma mesh through kumactl",
+        "long_description": "Error occurred while installing kuma mesh through kumactl",
         "short_description": "Error with kuma operation",
         "probable_cause": "",
         "suggested_remediation": ""
@@ -53,7 +53,7 @@
         "code": "1005",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "Error occured while fetching the mainfest",
+        "short_description": "Error occurred while fetching the manifest",
         "probable_cause": "",
         "suggested_remediation": ""
       },
@@ -62,7 +62,7 @@
         "code": "1006",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "Error occured while setting client config",
+        "short_description": "Error occurred while setting client config",
         "probable_cause": "",
         "suggested_remediation": ""
       },
@@ -71,7 +71,7 @@
         "code": "1007",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "Error occured while setting clientset",
+        "short_description": "Error occurred while setting clientset",
         "probable_cause": "",
         "suggested_remediation": ""
       },
@@ -80,7 +80,7 @@
         "code": "1008",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "Error occured while streaming events",
+        "short_description": "Error occurred while streaming events",
         "probable_cause": "",
         "suggested_remediation": ""
       },
@@ -88,7 +88,7 @@
         "name": "ErrSampleAppCode",
         "code": "1009",
         "severity": "Alert",
-        "long_description": "Error occured while trying to install a sample application using manifests",
+        "long_description": "Error occurred while trying to install a sample application using manifests",
         "short_description": "Error with sample app operation",
         "probable_cause": "Invalid kubeclient config\nInvalid manifest",
         "suggested_remediation": "Reconnect your adapter to Meshery Server to refresh the kubeclient"
@@ -97,7 +97,7 @@
         "name": "ErrGetKumactlCode",
         "code": "1010",
         "severity": "Alert",
-        "long_description": "Error occured while downloading`kumactl` and moving it to .meshery/bin]",
+        "long_description": "Error occurred while downloading`kumactl` and moving it to .meshery/bin]",
         "short_description": "Error getting kumactl comamndline",
         "probable_cause": "https://download.konghq.com/mesh-alpine/kuma-<release>-<platform>-<arch>.tar.gz might be deprecated",
         "suggested_remediation": ""
@@ -106,7 +106,7 @@
         "name": "ErrDownloadBinaryCode",
         "code": "1011",
         "severity": "Alert",
-        "long_description": "Error occured while download kuma binary from its release url",
+        "long_description": "Error occurred while download kuma binary from its release url",
         "short_description": "Error downloading kuma binary",
         "probable_cause": "Checkout https://download.konghq.com/mesh-alpine/kuma-<release>-<platform>-<arch>.tar.gz for more details",
         "suggested_remediation": ""
@@ -115,7 +115,7 @@
         "name": "ErrInstallBinaryCode",
         "code": "1012",
         "severity": "Alert",
-        "long_description": "Error occured while installing kuma mesh through kumactl",
+        "long_description": "Error occurred while installing kuma mesh through kumactl",
         "short_description": "Error installing kumactl",
         "probable_cause": "",
         "suggested_remediation": ""
@@ -133,7 +133,7 @@
         "name": "ErrUntarDefaultCode",
         "code": "1014",
         "severity": "Alert",
-        "long_description": "Error occured in the process of untaring a compressed file",
+        "long_description": "Error occurred in the process of untaring a compressed file",
         "short_description": "Error untaring opeartion default",
         "probable_cause": "The compressed file might be corrupted",
         "suggested_remediation": "Clear the cache and retry the operation"
@@ -143,7 +143,7 @@
         "code": "1015",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "Error occured while moving the kumactl binary",
+        "short_description": "Error occurred while moving the kumactl binary",
         "probable_cause": "Meshery adapter might not have write access",
         "suggested_remediation": ""
       },
@@ -151,7 +151,7 @@
         "name": "ErrCustomOperationCode",
         "code": "1016",
         "severity": "Alert",
-        "long_description": "Error occured while applying custom manifest to the cluster",
+        "long_description": "Error occurred while applying custom manifest to the cluster",
         "short_description": "Error with custom operation",
         "probable_cause": "Invalid kubeclient config\nInvalid manifest",
         "suggested_remediation": "Reupload the kubconfig in the Meshery Server and reconnect the adapter"
@@ -169,7 +169,7 @@
         "name": "ErrApplyHelmChartCode",
         "code": "1018",
         "severity": "Alert",
-        "long_description": "Error occured while applying Helm Chart",
+        "long_description": "Error occurred while applying Helm Chart",
         "short_description": "Error with helm chart operation",
         "probable_cause": "",
         "suggested_remediation": "Invalid helm chart configuration"
@@ -232,9 +232,9 @@
         "name": "ErrParseOAMConfigCode",
         "code": "1026",
         "severity": "Alert",
-        "long_description": "Error occured while parsing configuration in the request made by Meshery Server",
+        "long_description": "Error occurred while parsing configuration in the request made by Meshery Server",
         "short_description": "error parsing the configuration",
-        "probable_cause": "Could not unmarshall OAM config recieved via ProcessOAM gRPC call into a valid Config struct",
+        "probable_cause": "Could not unmarshall OAM config received via ProcessOAM gRPC call into a valid Config struct",
         "suggested_remediation": "Check if Meshery Server is creating valid config for ProcessOAM gRPC call. This error should never happen and can be reported as a bug in Meshery Server. Also, confirm that Meshery Server and Adapters are referring to same config struct provided in MeshKit"
       },
       "1027": {
@@ -251,7 +251,7 @@
         "code": "1028",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "Error occured while applying namespace ",
+        "short_description": "Error occurred while applying namespace ",
         "probable_cause": "Trying to access a namespace which is not available",
         "suggested_remediation": "Verify presence of namespace. Confirm Meshery ServiceAccount permissions"
       }

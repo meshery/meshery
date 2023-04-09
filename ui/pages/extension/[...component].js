@@ -89,6 +89,7 @@ class RemoteExtension extends React.Component {
       },
       (result) => {
         this.props.updatepagepath({ path : getPath() });
+        console.log("result:", result)
         if (result) {
           this.setState({
             capabilitiesRegistryObj : result,
@@ -110,8 +111,8 @@ class RemoteExtension extends React.Component {
 
   renderExtension = () => {
     let cap = this.props.capabilitiesRegistry;
-    // For unrestricted access, show extensions
-    if (cap !== null && !cap?.restrictedAccess?.isMesheryUiRestricted) {
+    // load extension if capabilities are available
+    if (cap !== null) {
       let extNames = [];
       for (var key of Object.keys(cap?.extensions)) {
         if (Array.isArray(cap?.extensions[key])) {
@@ -141,8 +142,8 @@ class RemoteExtension extends React.Component {
   }
 
   render() {
-    const { extensionType } = this.props;
-    const { componentTitle, isLoading, ext } = this.state;
+    const { extensionType, capabilitiesRegistry } = this.props;
+    const { componentTitle, isLoading } = this.state;
 
     return (
       <NoSsr>
@@ -150,7 +151,7 @@ class RemoteExtension extends React.Component {
           <title>{`${componentTitle} | Meshery` || ""}</title>
         </Head>
         {
-          ((this.props.capabilitiesRegistry !== null) && !this.props.capabilitiesRegistry?.restrictedAccess?.isMesheryUiRestricted && extensionType)?
+          ((this.props.capabilitiesRegistry !== null) && extensionType)?
             (<NoSsr>
               {
                 (extensionType === 'navigator') ?
@@ -161,7 +162,7 @@ class RemoteExtension extends React.Component {
             </NoSsr>) : (
               !isLoading? (
                 <Box display="flex" justifyContent="center">
-                  <MeshMapEarlyAccessCard rootStyle={{ position : "relative" }} />
+                  <MeshMapEarlyAccessCard rootStyle={{ position : "relative" }} capabilitiesRegistry={capabilitiesRegistry} />
                 </Box>
               ): (
                 <CircularProgress />

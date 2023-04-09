@@ -1,1 +1,0 @@
-{"kind":"Nginx","apiVersion":"v1alpha1","displayName":"Nginx","format":"JSON","metadata":{},"model":{"name":"ks-core","version":"0.2.0","displayName":"ks-core","category":"","subCategory":""},"schema":"{\n \"description\": \"Spec defines the desired state of Nginx\",\n \"title\": \"Nginx\",\n \"type\": \"object\",\n \"x-kubernetes-preserve-unknown-fields\": true\n}"}
