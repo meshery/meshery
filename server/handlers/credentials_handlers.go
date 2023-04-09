@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/models"
@@ -153,4 +154,17 @@ func (h *Handler) UpdateUserCredential(w http.ResponseWriter, req *http.Request,
 }
 
 func (h *Handler) DeleteUserCredential(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+	q := req.URL.Query()
+
+	credentialID := q.Get("credential_id")
+
+	result := provider.GetGenericPersister().Model(&models.Credential{}).Where("user_id = ? AND id = ? AND deleted_at is NULL", user.UserID, credentialID).Update("deleted_at", time.Now())
+	if result.Error != nil {
+		h.log.Error(fmt.Errorf("error deleting user credential: %v", result.Error))
+		http.Error(w, "unable to delete user credential", http.StatusInternalServerError)
+		return
+	}
+
+	h.log.Info("credential deleted successfully")
+	w.WriteHeader(http.StatusOK)
 }
