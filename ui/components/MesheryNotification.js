@@ -162,7 +162,7 @@ class MesheryNotification extends React.Component {
    * @param {number} type type of the event
    * @param {string} message message to be displayed
    */
-  notificationDispatcher(type, message) {
+  notificationDispatcher(type, message, operation_id) {
     const self = this;
     self.props.enqueueSnackbar(message, {
       variant : eventTypes[type]?.type,
@@ -173,7 +173,7 @@ class MesheryNotification extends React.Component {
             key="eye"
             aria-label="eye"
             color="inherit"
-            onClick={() => self.props.closeSnackbar(key)}
+            onClick={() => self.openEventInNotification(operation_id)}
           >
             <VisibilityIcon style={iconMedium} />
           </IconButton>
@@ -209,9 +209,8 @@ class MesheryNotification extends React.Component {
       // set null event field as success
       data.event_type = data.event_type || 0
 
-
       // Dispatch the notification
-      self.notificationDispatcher(data.event_type, data.summary)
+      self.notificationDispatcher(data.event_type, data.summary, data.operation_id)
       //Temperory Hack
       // if(data.summary==="Smi conformance test completed successfully"){
       //   self.props.updateSMIResults({smi_result: data,});
@@ -280,6 +279,11 @@ class MesheryNotification extends React.Component {
       tabValue : 0,
       displayEventType : '*'
     })
+  }
+
+  openEventInNotification = (operation_id) => {
+    // TODO: first open notification bar open the particular event.
+    console.log("First open notification", operation_id)
   }
 
   render() {
