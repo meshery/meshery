@@ -3420,7 +3420,7 @@ func (l *RemoteProvider) UpdateUserCredential(_ *Credential) (*Credential, error
 }
 
 // DeleteUserCredential - to delete a saved credential
-func (l *RemoteProvider) DeleteUserCredential(credentialID uuid.UUID) (*Credential, error) {
+func (l *RemoteProvider) DeleteUserCredential(_ uuid.UUID) (*Credential, error) {
 	// TODO
 	return nil, nil
 }
