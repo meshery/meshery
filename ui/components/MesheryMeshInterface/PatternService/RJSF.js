@@ -55,7 +55,7 @@ function RJSFForm({
 
   return (
     <MuiThemeProvider
-      theme={globalTheme.palette.type == "dark" ? darkRjsfTheme : rjsfTheme}>
+      theme={globalTheme.palette.type === "dark" ? darkRjsfTheme : rjsfTheme}>
       <MuiRJSFForm
         schema={schema.rjsfSchema}
         idPrefix={jsonSchema?.title}
