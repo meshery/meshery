@@ -146,6 +146,7 @@ class MesheryNotification extends React.Component {
     tabValue : 0,
     anchorEl : false,
     showFullNotificationCenter : false,
+    eventIdToOpenInNotification : undefined,
   }
 
   handleToggle = () => {
@@ -173,7 +174,7 @@ class MesheryNotification extends React.Component {
             key="eye"
             aria-label="eye"
             color="inherit"
-            onClick={() => self.openEventInNotification(operation_id)}
+            onClick={() => self.openEventInNotificationCenter(operation_id)}
           >
             <VisibilityIcon style={iconMedium} />
           </IconButton>
@@ -281,9 +282,11 @@ class MesheryNotification extends React.Component {
     })
   }
 
-  openEventInNotification = (operation_id) => {
-    // TODO: first open notification bar open the particular event.
-    console.log("First open notification", operation_id)
+  openEventInNotificationCenter = (operation_id) => {
+    this.setState({
+      showFullNotificationCenter : true,
+      eventIdToOpenInNotification : operation_id,
+    })
   }
 
   render() {
@@ -421,6 +424,7 @@ class MesheryNotification extends React.Component {
                         eventErrorCode={event.error_code}
                         componentType={event.component}
                         componentName={event.component_name}
+                        expand={(this.state.eventIdToOpenInNotification && this.state.eventIdToOpenInNotification === event.operation_id) ? true : false}
                       />
                     ))}
                   </div>

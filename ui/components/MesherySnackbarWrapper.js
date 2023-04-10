@@ -119,7 +119,7 @@ const getDefaultMessage = (message) => {
 
 function MesherySnackbarWrapper(props) {
   const {
-    classes, className, message, onClose, variant, details, cause, remedy, errorCode, componentType, componentName
+    classes, className, message, onClose, variant, details, cause, remedy, errorCode, componentType, componentName, expand
   } = props;
   const Icon = variantIcon[variant];
   const ERROR_DOC_LINK = "https://docs.meshery.io/reference/error-codes"
@@ -131,6 +131,7 @@ function MesherySnackbarWrapper(props) {
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
+    // expand && (expand = false);
   };
 
   const handleSocialExpandClick = (e) => {
@@ -138,8 +139,10 @@ function MesherySnackbarWrapper(props) {
     e.stopPropagation();
     setSocialExpand(socialExpand => !socialExpand);
   }
-
   useEffect(() => {
+    if (expand && !expanded) {
+      handleExpandClick();
+    }
     if (componentType === "adapter") {
       if (message.includes("mesh installed")) {
         setSocialMessage(generateMsgForMesh(componentName[0].toUpperCase() + componentName.substring(1).toLowerCase()))
@@ -158,7 +161,7 @@ function MesherySnackbarWrapper(props) {
       setSocialMessage(generateMsgForAppsPatt(designName))
     }
 
-  },[])
+  },[expand])
 
   return (
     <SnackbarContent className={classes.snackbarContent}>
@@ -264,7 +267,8 @@ MesherySnackbarWrapper.propTypes = {
   message : PropTypes.node,
   onClose : PropTypes.func,
   variant : PropTypes.oneOf(["success", "warning", "error", "info"]).isRequired,
-  details : PropTypes.string
+  details : PropTypes.string,
+  expand : PropTypes.string.isRequired
 };
 
 export default withStyles(styles)(MesherySnackbarWrapper);
