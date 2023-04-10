@@ -20,6 +20,7 @@ import ExtensionPointSchemaValidator from "../utils/ExtensionPointSchemaValidato
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTachometerAlt } from "@fortawesome/free-solid-svg-icons";
 import MesherySettingsPerformanceComponent from "./MesherySettingsPerformanceComponent";
+import { getTheme,setTheme } from "../constants/theme";
 import { ctxUrl } from "../utils/multi-ctx";
 import { iconMedium } from "../css/icons.styles";
 
@@ -109,22 +110,19 @@ function ThemeToggler({ theme, themeSetter, enqueueSnackbar, classes }) {
     }
 
     theme === "dark" ? setthemeToggle(true)  : setthemeToggle(false);
-    localStorage.setItem("Theme", theme);
+    setTheme(theme)
   };
 
   useLayoutEffect(() => {
     if (isExtensionOpen()) {
-      if (localStorage.getItem("Theme") && localStorage.getItem("Theme") !== defaultTheme) {
+      if (getTheme() && getTheme() !== defaultTheme) {
         themeSetter(defaultTheme);
       }
       return;
     }
 
-    if (localStorage.getItem("Theme") === null) {
-      themeSetter(defaultTheme);
-    } else {
-      themeSetter(localStorage.getItem("Theme"));
-    }
+    themeSetter(getTheme() || defaultTheme);
+
   }, []);
 
   useLayoutEffect(handle, [theme]);
