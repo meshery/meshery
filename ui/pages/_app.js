@@ -257,7 +257,7 @@ class MesheryApp extends App {
         let ids = [...(state.activeK8sContexts || [])];
         //pop event
         if (ids.includes(id)) {
-          ids = ids.filter(id => id != "all")
+          ids = ids.filter(id => id !== "all")
           return { activeK8sContexts : ids.filter(cid => cid !== id) }
         }
 
