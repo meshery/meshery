@@ -6,12 +6,10 @@ import (
 	"io"
 	"net/http"
 	"strconv"
-	"strings"
 	"time"
 
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/models"
-	"gorm.io/gorm"
 )
 
 func (h *Handler) SaveUserCredential(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
@@ -46,7 +44,7 @@ func (h *Handler) SaveUserCredential(w http.ResponseWriter, req *http.Request, _
 	w.WriteHeader(http.StatusCreated)
 }
 
-func (h *Handler) ReadUserCredentials(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
+func (h *Handler) GetUserCredentials(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	q := req.URL.Query()
 
 	page, _ := strconv.Atoi(q.Get("page"))
@@ -69,45 +67,9 @@ func (h *Handler) ReadUserCredentials(w http.ResponseWriter, req *http.Request, 
 
 	h.log.Debug(fmt.Sprintf("page: %d, page size: %d, search: %s, order: %s", page+1, pageSize, search, order))
 
-	result := provider.GetGenericPersister().Select("*").Where("user_id=? and deleted_at is NULL", user.UserID) // CredentialsDAO.GetUserCredentials(user.ID, page, pageSize, order, search)
-
-	if search != "" {
-		like := "%" + strings.ToLower(search) + "%"
-		result = result.Where("(lower(name) like ?)", like)
-	}
-
-	result = result.Order(order)
-
-	var count int64
-	if err := result.Count(&count).Error; err != nil {
-		h.log.Error(fmt.Errorf("error retrieving count of credentials for user id: %s - %v", user.UserID, err))
-		http.Error(w, "unable to get user credentials count", http.StatusInternalServerError)
-		return
-	}
-	h.log.Debug("retrieved total count: ", count)
-
-	var credentialsList []*models.Credential
-	if count > 0 {
-		if err := result.Offset(page * pageSize).Limit(pageSize).Find(&credentialsList).Error; err != nil {
-			if err != gorm.ErrRecordNotFound {
-				h.log.Error(fmt.Errorf("error retrieving credentials for user id: %s - %v", user.UserID, err))
-				http.Error(w, "unable to get user credentials", http.StatusInternalServerError)
-				return
-			}
-		}
-	}
-	h.log.Debug("retrieved credentials: ", credentialsList)
-
-	credentialsPage := &models.CredentialsPage{
-		Credentials: credentialsList,
-		Page:        page,
-		PageSize:    pageSize,
-		TotalCount:  int(count),
-	}
-
-	h.log.Debug("credentials: ", credentialsPage)
-	if result.Error != nil {
-		h.log.Error(fmt.Errorf("error getting user credentials: %v", result.Error))
+	credentialsPage, err := provider.GetCredentials(user.ID, page, pageSize, order, search)
+	if err != nil {
+		h.log.Error(fmt.Errorf("error getting user credentials: %v", err))
 		http.Error(w, "unable to get user credentials", http.StatusInternalServerError)
 		return
 	}

@@ -157,7 +157,7 @@ type HandlerInterface interface {
 	ExtensionsHandler(w http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 
 	SaveUserCredential(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
-	ReadUserCredentials(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	GetUserCredentials(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	UpdateUserCredential(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	DeleteUserCredential(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 }

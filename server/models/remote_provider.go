@@ -3406,3 +3406,9 @@ func SaveCredential(_ *Credential) error {
 	// TODO
 	return nil
 }
+
+// GetCredential - to get saved credentials
+func GetCredentials(_ string, _, _ int, _, _ string) (*CredentialsPage, error) {
+	// TODO
+	return nil, nil
+}

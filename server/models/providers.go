@@ -414,4 +414,5 @@ type Provider interface {
 	DeleteMesheryConnection() error
 
 	SaveCredential(credential *Credential) error
+	GetCredentials(userID string, page, pageSize int, search, order string) (*CredentialsPage, error)
 }

@@ -27,6 +27,7 @@ import (
 	SMP "github.com/layer5io/service-mesh-performance/spec"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
+	"gorm.io/gorm"
 )
 
 // DefaultLocalProvider - represents a local provider
@@ -1084,6 +1085,45 @@ func (l *DefaultLocalProvider) SaveCredential(credential *Credential) error {
 		return fmt.Errorf("error saving user credentials: %v", result.Error)
 	}
 	return nil
+}
+
+func (l *DefaultLocalProvider) GetCredentials(userID string, page, pageSize int, search, order string) (*CredentialsPage, error) {
+	result := l.GetGenericPersister().Select("*").Where("user_id=? and deleted_at is NULL", userID)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	if search != "" {
+		like := "%" + strings.ToLower(search) + "%"
+		result = result.Where("(lower(name) like ?)", like)
+	}
+
+	result = result.Order(order)
+
+	var count int64
+	if err := result.Count(&count).Error; err != nil {
+		return nil, fmt.Errorf("error retrieving count of credentials for user id: %s - %v", userID, err)
+	}
+
+	var credentialsList []*Credential
+	if count > 0 {
+		if err := result.Offset(page * pageSize).Limit(pageSize).Find(&credentialsList).Error; err != nil {
+			if err != gorm.ErrRecordNotFound {
+				return nil, fmt.Errorf("error retrieving credentials for user id: %s - %v", userID, err)
+			}
+		}
+	}
+
+	credentialsPage := &CredentialsPage{
+		Credentials: credentialsList,
+		Page:        page,
+		PageSize:    pageSize,
+		TotalCount:  int(count),
+	}
+
+	if result.Error != nil {
+		return nil, fmt.Errorf("error getting user credentials: %v", result.Error)
+	}
+	return credentialsPage, nil
 }
 
 // githubRepoPatternScan & githubRepoFilterScan takes in github repo owner, repo name, path from where the file/files are needed
