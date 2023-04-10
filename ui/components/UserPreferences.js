@@ -20,7 +20,7 @@ import ExtensionPointSchemaValidator from "../utils/ExtensionPointSchemaValidato
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTachometerAlt } from "@fortawesome/free-solid-svg-icons";
 import MesherySettingsPerformanceComponent from "./MesherySettingsPerformanceComponent";
-import { getTheme,setTheme } from "../constants/theme";
+import { getTheme,setTheme } from "../utils/theme";
 import { ctxUrl } from "../utils/multi-ctx";
 import { iconMedium } from "../css/icons.styles";
 
