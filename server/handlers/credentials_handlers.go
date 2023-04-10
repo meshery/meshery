@@ -33,7 +33,7 @@ func (h *Handler) SaveUserCredential(w http.ResponseWriter, req *http.Request, _
 		return
 	}
 
-	err = provider.SaveCredential(&credential)
+	err = provider.SaveUserCredential(&credential)
 	if err != nil {
 		h.log.Error(fmt.Errorf("error saving user credentials: %v", err))
 		http.Error(w, "unable to save user credentials", http.StatusInternalServerError)
@@ -67,7 +67,7 @@ func (h *Handler) GetUserCredentials(w http.ResponseWriter, req *http.Request, _
 
 	h.log.Debug(fmt.Sprintf("page: %d, page size: %d, search: %s, order: %s", page+1, pageSize, search, order))
 
-	credentialsPage, err := provider.GetCredentials(user.ID, page, pageSize, order, search)
+	credentialsPage, err := provider.GetUserCredentials(user.ID, page, pageSize, order, search)
 	if err != nil {
 		h.log.Error(fmt.Errorf("error getting user credentials: %v", err))
 		http.Error(w, "unable to get user credentials", http.StatusInternalServerError)
@@ -89,7 +89,11 @@ func (h *Handler) UpdateUserCredential(w http.ResponseWriter, req *http.Request,
 		return
 	}
 
-	credential := &models.Credential{}
+	userUUID := uuid.FromStringOrNil(user.ID)
+	credential := &models.Credential{
+		UserID: &userUUID,
+		Secret: map[string]interface{}{},
+	}
 	err = json.Unmarshal(bd, credential)
 	if err != nil {
 		h.log.Error(fmt.Errorf("error unmarshal request body: %v", err))
@@ -97,17 +101,10 @@ func (h *Handler) UpdateUserCredential(w http.ResponseWriter, req *http.Request,
 		return
 	}
 
-	result := provider.GetGenericPersister().Where("user_id = ? AND id = ? AND deleted_at is NULL", user.UserID, credential.ID).First(&models.Credential{})
-	if result.Error != nil {
-		h.log.Error(fmt.Errorf("error getting user credential: %v", result.Error))
+	_, err = provider.UpdateUserCredential(credential)
+	if err != nil {
+		h.log.Error(fmt.Errorf("error getting user credential: %v", err))
 		http.Error(w, "unable to get user credential", http.StatusInternalServerError)
-		return
-	}
-
-	result = provider.GetGenericPersister().Save(credential)
-	if result.Error != nil {
-		h.log.Error(fmt.Errorf("error updating user credential: %v", result.Error))
-		http.Error(w, "unable to update user credential", http.StatusInternalServerError)
 		return
 	}
 

@@ -3401,14 +3401,20 @@ func (l *RemoteProvider) GetKubeClient() *mesherykube.Client {
 	return l.KubeClient
 }
 
-// SaveCredential - to save creadential for an integration
-func SaveCredential(_ *Credential) error {
+// SaveCredential - to save a creadential for an integration
+func (l *RemoteProvider) SaveUserCredential(_ *Credential) error {
 	// TODO
 	return nil
 }
 
-// GetCredential - to get saved credentials
-func GetCredentials(_ string, _, _ int, _, _ string) (*CredentialsPage, error) {
+// GetCredentials - to get saved credentials
+func (l *RemoteProvider) GetUserCredentials(_ string, _, _ int, _, _ string) (*CredentialsPage, error) {
+	// TODO
+	return nil, nil
+}
+
+// UpdateUserCredential - to update existing credential
+func (l *RemoteProvider) UpdateUserCredential(_ *Credential) (*Credential, error) {
 	// TODO
 	return nil, nil
 }

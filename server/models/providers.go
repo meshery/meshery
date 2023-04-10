@@ -413,6 +413,7 @@ type Provider interface {
 	SaveConnection(req *http.Request, conn *Connection, token string, skipTokenCheck bool) error
 	DeleteMesheryConnection() error
 
-	SaveCredential(credential *Credential) error
-	GetCredentials(userID string, page, pageSize int, search, order string) (*CredentialsPage, error)
+	SaveUserCredential(credential *Credential) error
+	GetUserCredentials(userID string, page, pageSize int, search, order string) (*CredentialsPage, error)
+	UpdateUserCredential(credential *Credential) (*Credential, error)
 }
