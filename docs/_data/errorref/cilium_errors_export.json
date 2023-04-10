@@ -1,6 +1,6 @@
 {
   "errors_export": {
-    "component_name": "cilium",
+    "component_name": "CILIUM",
     "component_type": "adapter",
     "errors": {
       "1000": {

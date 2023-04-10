@@ -49,14 +49,14 @@ func (h *Handler) GetUserByIDHandler(w http.ResponseWriter, r *http.Request, _ *
 }
 
 // swagger:route GET /api/user/prefs UserAPI idGetUserTestPrefs
-// Handle GET for User Load Test Preferences
+// Handle GET Requests for User Load Test Preferences
 //
 // Returns User Load Test Preferences
 // responses:
 // 	200: userLoadTestPrefsRespWrapper
 
 // swagger:route POST /api/user/prefs UserAPI idPostUserTestPrefs
-// Handle GET for User Load Test Preferences
+// Handle GET Requests for User Load Test Preferences
 //
 // Updates User Load Test Preferences
 // responses:
