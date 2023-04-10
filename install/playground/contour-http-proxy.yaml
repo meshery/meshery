@@ -12,24 +12,18 @@ spec:
   - services:
     - name: meshery
       port: 9081
-    loadBalancerPolicy:
-      strategy: Cookie
   - conditions:
     - prefix: /api/provider/extension/server/graphql/query
     enableWebsockets: true # Setting this to true enables websocket for Meshery's extensions
     services:
     - name: meshery
       port: 9081
-    loadBalancerPolicy:
-      strategy: Cookie
   - conditions:
     - prefix: /api/system/graphql/query
     enableWebsockets: true # Setting this to true enables websocket for Meshery
     services:
     - name: meshery
       port: 9081
-    loadBalancerPolicy:
-      strategy: Cookie
     timeoutPolicy:
       response: 100m
       idle: 100m
