@@ -361,7 +361,6 @@ func writeK8sMetadata(comp *meshmodelv1alpha1.ComponentDefinition, reg *meshmode
 			return
 		}
 		mergeMaps(comp.Metadata, existingComp.Metadata)
-		fmt.Println("setting model ", existingComp.Model.Name, " for component ", comp.Kind)
 		comp.Model = existingComp.Model
 	}
 }
