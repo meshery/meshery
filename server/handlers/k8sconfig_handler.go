@@ -349,7 +349,6 @@ func writeK8sMetadata(comp *meshmodelv1alpha1.ComponentDefinition, reg *meshmode
 	ent := reg.GetEntities(&meshmodelv1alpha1.ComponentFilter{
 		Name:       comp.Kind,
 		APIVersion: comp.APIVersion,
-		ModelName:  comp.Model.Name,
 	})
 	//If component was not available in the registry, then use the generic model level metadata
 	if len(ent) == 0 {
@@ -362,11 +361,8 @@ func writeK8sMetadata(comp *meshmodelv1alpha1.ComponentDefinition, reg *meshmode
 			return
 		}
 		mergeMaps(comp.Metadata, existingComp.Metadata)
-		if comp.Model.Metadata == nil {
-			comp.Model.Metadata = make(map[string]interface{})
-		}
-		mergeMaps(comp.Model.Metadata, existingComp.Model.Metadata)
-		comp.Model.Category = existingComp.Model.Category
+		fmt.Println("setting model ", existingComp.Model.Name, " for component ", comp.Kind)
+		comp.Model = existingComp.Model
 	}
 }
 func mergeMaps(mergeInto, toMerge map[string]interface{}) {
