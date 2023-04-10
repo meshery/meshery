@@ -16,6 +16,7 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshkit/database"
@@ -1136,6 +1137,17 @@ func (l *DefaultLocalProvider) UpdateUserCredential(credential *Credential) (*Cr
 		return nil, fmt.Errorf("error getting updated user credential: %v", err)
 	}
 	return updatedCredential, nil
+}
+
+func (l *DefaultLocalProvider) DeleteUserCredential(credentialID uuid.UUID) (*Credential, error) {
+	delCredential := &Credential{}
+	if err := l.GetGenericPersister().Model(&Credential{}).Where("id = ?", credentialID).Update("deleted_at", time.Now()).Error; err != nil {
+		return nil, err
+	}
+	if err := l.GetGenericPersister().Where("id = ?", credentialID).First(delCredential).Error; err != nil {
+		return nil, err
+	}
+	return delCredential, nil
 }
 
 // githubRepoPatternScan & githubRepoFilterScan takes in github repo owner, repo name, path from where the file/files are needed

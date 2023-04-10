@@ -416,4 +416,5 @@ type Provider interface {
 	SaveUserCredential(credential *Credential) error
 	GetUserCredentials(userID string, page, pageSize int, search, order string) (*CredentialsPage, error)
 	UpdateUserCredential(credential *Credential) (*Credential, error)
+	DeleteUserCredential(credentialID uuid.UUID) (*Credential, error)
 }

@@ -3413,8 +3413,14 @@ func (l *RemoteProvider) GetUserCredentials(_ string, _, _ int, _, _ string) (*C
 	return nil, nil
 }
 
-// UpdateUserCredential - to update existing credential
+// UpdateUserCredential - to update an existing credential
 func (l *RemoteProvider) UpdateUserCredential(_ *Credential) (*Credential, error) {
+	// TODO
+	return nil, nil
+}
+
+// DeleteUserCredential - to delete a saved credential
+func (l *RemoteProvider) DeleteUserCredential(credentialID uuid.UUID) (*Credential, error) {
 	// TODO
 	return nil, nil
 }
