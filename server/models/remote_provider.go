@@ -410,7 +410,7 @@ func (l *RemoteProvider) GetProviderToken(req *http.Request) (string, error) {
 // Logout - logout from provider backend
 //
 // It is assumed that every remote provider will support this feature
-func (l *RemoteProvider) Logout(w http.ResponseWriter, req *http.Request) error {	
+func (l *RemoteProvider) Logout(w http.ResponseWriter, req *http.Request) error {
 	ck, err := req.Cookie(tokenName)
 	if err == nil {
 		err = l.revokeToken(ck.Value)
@@ -2807,7 +2807,7 @@ func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, _ 
 		Name:     tokenName,
 		Value:    string(tokenString),
 		Path:     "/",
-		Expires: time.Now().Add(24 * time.Hour),
+		Expires:  time.Now().Add(24 * time.Hour),
 		HttpOnly: true,
 	}
 	http.SetCookie(w, ck)
