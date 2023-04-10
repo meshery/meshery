@@ -3,11 +3,17 @@ package resolver
 import (
 	"context"
 
+	"github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/internal/graphql/model"
 	"github.com/layer5io/meshery/server/models"
 )
 
-func (r *Resolver) changeAdaptorStatus(ctx context.Context, provider models.Provider, targetStatus model.Status, adaptorPort string) (model.Status, error) {
+func (r *Resolver) changeAdaptorStatus(_ context.Context, _ models.Provider, targetStatus model.Status, adapterName, targetPort string) (model.Status, error) {
+	if utils.GetPlatform() == "kubernetes" {
+		r.Log.Info("Feature for kuberenetes disabled")
+		return model.StatusDisabled, nil
+	}
+
 	deleteAdaptor := true
 
 	if targetStatus == model.StatusEnabled {
@@ -17,7 +23,8 @@ func (r *Resolver) changeAdaptorStatus(ctx context.Context, provider models.Prov
 		r.Log.Info("Undeploying Adapter")
 	}
 
-	adapter := models.Adapter{Name: string(models.Istio), Location: adaptorPort}
+	r.Log.Debug(adapterName, targetPort)
+	adapter := models.Adapter{Name: adapterName, Location: targetPort}
 	go func(routineCtx context.Context, del bool) {
 		var operation string
 		if del {
@@ -29,7 +36,8 @@ func (r *Resolver) changeAdaptorStatus(ctx context.Context, provider models.Prov
 		}
 		if err != nil {
 			// r.Log.Error(errors.Errorf("Failed to "+operation+" adapter: %w", err))
-			r.Log.Info(err.Error())
+			r.Log.Info("Failed to " + operation + " adapter")
+			r.Log.Error(err)
 		} else {
 			r.Log.Info("Successfully " + operation + "ed adapter")
 		}

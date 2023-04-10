@@ -626,7 +626,11 @@ input AdaptorStatusInput {
   # Desired status for Meshery Operator
   targetStatus: Status!
   
-  adapterPort: String!
+  # The port on which adapter will be deployed
+  targetPort: String!
+
+  # Name of the adapter to be deployed
+  adapter: String!
 }
 
 type Mutation {

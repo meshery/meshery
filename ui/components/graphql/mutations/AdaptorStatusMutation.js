@@ -3,7 +3,7 @@ import { createRelayEnvironment } from "../../../lib/relayEnvironment";
 
 export default function changeAdaptorState(onComplete, variables) {
   const environment = createRelayEnvironment({});
-  const vars = { input : { targetStatus : variables.status, adapterPort : variables.adapterPort } };
+  const vars = { input : { targetStatus : variables.status, targetPort : variables.targetPort, adapter : variables.adapter } };
 
   const adaptorStatusMutation = graphql`
   mutation AdaptorStatusMutation($input: AdaptorStatusInput) {

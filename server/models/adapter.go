@@ -7,22 +7,23 @@ import (
 )
 
 // Available Meshery adapters
-type MesheryAdapterName string
-
-const (
-	Istio    MesheryAdapterName = "meshery-istio"
-	Linkerd  MesheryAdapterName = "meshery-linkerd"
-	Consul   MesheryAdapterName = "meshery-consul"
-	Kuma     MesheryAdapterName = "meshery-kuma"
-	NSM      MesheryAdapterName = "meshery-nsm"
-	Citrix   MesheryAdapterName = "meshery-cpx"
-	Nginx    MesheryAdapterName = "meshery-nginx-sm"
-	Octarine MesheryAdapterName = "meshery-octarine"
-	AWS      MesheryAdapterName = "meshery-app-mesh"
-	OSM      MesheryAdapterName = "meshery-osm"
-	Cilium   MesheryAdapterName = "meshery-cilium"
-	Traefik  MesheryAdapterName = "meshery-traefik-mesh"
+var (
+	Istio    = Adapter{Name: "meshery-istio", Location: "10000"}
+	Linkerd  = Adapter{Name: "meshery-linkerd", Location: "10001"}
+	Consul   = Adapter{Name: "meshery-consul", Location: "10002"}
+	Octarine = Adapter{Name: "meshery-octarine", Location: "10003"}
+	NSM      = Adapter{Name: "meshery-nsm", Location: "10004"}
+	AWS      = Adapter{Name: "meshery-app-mesh", Location: "10005"}
+	Traefik  = Adapter{Name: "meshery-traefik-mesh", Location: "10006"}
+	Kuma     = Adapter{Name: "meshery-kuma", Location: "10007"}
+	Citrix   = Adapter{Name: "meshery-cpx", Location: "10008"}
+	OSM      = Adapter{Name: "meshery-osm", Location: "10009"}
+	Nginx    = Adapter{Name: "meshery-nginx-sm", Location: "10010"}
+	// Tanzu    = Adapter{Name: "meshery-tanzu-sm", Location: "10011"}
+	Cilium = Adapter{Name: "meshery-cilium", Location: "10012"}
 )
+
+var ListAvailableAdapters = []Adapter{Istio, Linkerd, Consul, Kuma, NSM, Citrix, Nginx, Octarine, AWS, OSM, Cilium, Traefik}
 
 // Adapter represents an adapter in Meshery
 type Adapter struct {
