@@ -43,7 +43,7 @@ const useStyles = makeStyles(theme => ({
     fontSize : "1rem"
   },
   infoIcon : {
-    color : theme.palette.type == 'dark' ? "#00B39F" : "#607d8b"
+    color : theme.palette.type === 'dark' ? "#00B39F" : "#607d8b"
   },
   footerText : {
     color : "#EDEDED",
@@ -95,7 +95,7 @@ const useStyles = makeStyles(theme => ({
   },
   accordionSummary : {
     "&.Mui-expanded" : {
-      backgroundColor : theme.palette.type == 'dark' ? "#303030" : "#f1f1f1"
+      backgroundColor : theme.palette.type === 'dark' ? "#303030" : "#f1f1f1"
     }
   },
   accDetailHead : {

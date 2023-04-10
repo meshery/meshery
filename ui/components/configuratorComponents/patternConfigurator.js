@@ -133,7 +133,7 @@ function PatternConfiguratorComponent({ pattern, onSubmit, show : setSelectedPat
 
   useEffect(() => {
     // core is not versioned
-    if (selectedMeshType == "core") {
+    if (selectedMeshType === "core") {
       setSelectedVersionMesh(null);
     } else {
       const meshVersionsWithDetails = groupWlByVersion();
@@ -361,7 +361,7 @@ function PatternConfiguratorComponent({ pattern, onSubmit, show : setSelectedPat
   }
 
   function toggleView() {
-    if (viewType == "list") {
+    if (viewType === "list") {
       if (isEmptyObj(activeForm)) {
         // core resources are handled sepaeratrly since they are not versioned
         setBriefCrsInformations(getFormBriefInformationKeys());

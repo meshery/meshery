@@ -48,7 +48,7 @@ class UserPref extends React.Component {
   render () {
     const { anonymousStats, perfResultStats }=this.state;
     console.log(this.state)
-    if (anonymousStats==undefined){
+    if (anonymousStats===undefined){
       // Skip rendering till data is not loaded
       return <div></div>
     }
