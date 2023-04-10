@@ -27,6 +27,8 @@
           url: project/contributing/contributing-ui
         - title: End-to-End Testing
           url: project/contributing/contributing-cypress
+        - title: Meshery Docker Extension
+          url: project/contributing/contributing-docker-extension
     - title: Releases
       url: project/releases
     - title: Vulnerabilities
