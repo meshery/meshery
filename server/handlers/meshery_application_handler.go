@@ -188,8 +188,7 @@ func (h *Handler) handleApplicationPOST(
 					Valid:  true,
 				}
 			}
-
-			pattern, err := pCore.NewPatternFileFromK8sManifest(h.registryManager, k8sres, false)
+			pattern, err := pCore.NewPatternFileFromK8sManifest(k8sres, false, h.registryManager)
 			if err != nil {
 				obj := "convert"
 				h.log.Error(ErrApplicationFailure(err, obj))
@@ -251,7 +250,7 @@ func (h *Handler) handleApplicationPOST(
 				return
 			}
 			result := string(resp)
-			pattern, err := pCore.NewPatternFileFromK8sManifest(h.registryManager, result, false)
+			pattern, err := pCore.NewPatternFileFromK8sManifest(result, false, h.registryManager)
 			if err != nil {
 				obj := "convert"
 				h.log.Error(ErrApplicationFailure(err, obj))
@@ -727,7 +726,7 @@ func githubRepoApplicationScan(
 	path,
 	branch,
 	sourceType string,
-	registryManager *meshmodel.RegistryManager,
+	reg *meshmodel.RegistryManager,
 ) ([]models.MesheryApplication, error) {
 	var mu sync.Mutex
 	ghWalker := walker.NewGit()
@@ -749,7 +748,7 @@ func githubRepoApplicationScan(
 						return ErrRemoteApplication(err)
 					}
 				}
-				pattern, err := pCore.NewPatternFileFromK8sManifest(registryManager, k8sres, false)
+				pattern, err := pCore.NewPatternFileFromK8sManifest(k8sres, false, reg)
 				if err != nil {
 					return err //always a meshkit error
 				}
@@ -787,7 +786,7 @@ func githubRepoApplicationScan(
 }
 
 // Note: Always return meshkit error from this function
-func genericHTTPApplicationFile(fileURL, sourceType string, registryManager *meshmodel.RegistryManager) ([]models.MesheryApplication, error) {
+func genericHTTPApplicationFile(fileURL, sourceType string, reg *meshmodel.RegistryManager) ([]models.MesheryApplication, error) {
 	resp, err := http.Get(fileURL)
 	if err != nil {
 		return nil, ErrRemoteApplication(err)
@@ -812,7 +811,7 @@ func genericHTTPApplicationFile(fileURL, sourceType string, registryManager *mes
 		}
 	}
 
-	pattern, err := pCore.NewPatternFileFromK8sManifest(registryManager, k8sres, false)
+	pattern, err := pCore.NewPatternFileFromK8sManifest(k8sres, false, reg)
 	if err != nil {
 		return nil, err //This error is already a meshkit error
 	}
