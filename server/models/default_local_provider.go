@@ -1078,6 +1078,14 @@ func (l *DefaultLocalProvider) Cleanup() error {
 	return l.MesheryK8sContextPersister.DB.Migrator().DropTable(&MesheryFilter{})
 }
 
+func (l *DefaultLocalProvider) SaveCredential(credential *Credential) error {
+	result := l.GetGenericPersister().Table("credentials").Create(&credential)
+	if result.Error != nil {
+		return fmt.Errorf("error saving user credentials: %v", result.Error)
+	}
+	return nil
+}
+
 // githubRepoPatternScan & githubRepoFilterScan takes in github repo owner, repo name, path from where the file/files are needed
 // to be imported
 //

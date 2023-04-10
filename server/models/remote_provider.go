@@ -3400,3 +3400,9 @@ func (l *RemoteProvider) SetKubeClient(client *mesherykube.Client) {
 func (l *RemoteProvider) GetKubeClient() *mesherykube.Client {
 	return l.KubeClient
 }
+
+// SaveCredential - to save creadential for an integration
+func SaveCredential(_ *Credential) error {
+	// TODO
+	return nil
+}

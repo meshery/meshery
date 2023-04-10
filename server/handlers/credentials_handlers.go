@@ -14,7 +14,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func (h *Handler) CreateUserCredential(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
+func (h *Handler) SaveUserCredential(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	bd, err := io.ReadAll(req.Body)
 	if err != nil {
 		h.log.Error(fmt.Errorf("error reading request body: %v", err))
@@ -35,9 +35,9 @@ func (h *Handler) CreateUserCredential(w http.ResponseWriter, req *http.Request,
 		return
 	}
 
-	result := provider.GetGenericPersister().Table("credentials").Create(&credential) // CredentialsDAO.SaveUserCredentials(&credential)
-	if result.Error != nil {
-		h.log.Error(fmt.Errorf("error saving user credentials: %v", result.Error))
+	err = provider.SaveCredential(&credential)
+	if err != nil {
+		h.log.Error(fmt.Errorf("error saving user credentials: %v", err))
 		http.Error(w, "unable to save user credentials", http.StatusInternalServerError)
 		return
 	}
