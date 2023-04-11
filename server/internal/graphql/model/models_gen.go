@@ -10,7 +10,8 @@ import (
 
 type AdaptorStatusInput struct {
 	TargetStatus Status `json:"targetStatus"`
-	AdapterPort  string `json:"adapterPort"`
+	TargetPort   string `json:"targetPort"`
+	Adapter      string `json:"adapter"`
 }
 
 type AddonList struct {

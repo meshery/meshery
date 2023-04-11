@@ -19,15 +19,15 @@ func init() {
 	gob.Register([]*models.Adapter{})
 }
 
- // swagger:route GET /api/system/adapters/available SystemAPI idGetAvailableAdapters
- // Handle GET request for available adapters
- //
- // Fetches and returns all the adapters available for deployment
- // Responses:
- //  200: systemAdaptersRespWrapper
+// swagger:route GET /api/system/adapters/available SystemAPI idGetAvailableAdapters
+// Handle GET request for available adapters
+//
+// Fetches and returns all the adapters available for deployment
+// Responses:
+//  200: systemAdaptersRespWrapper
 
- // AdaptersHandler is used to fetch all the adapters
- func (h *Handler) AvailableAdaptersHandler(w http.ResponseWriter, _ *http.Request) {
+// AdaptersHandler is used to fetch all the adapters
+func (h *Handler) AvailableAdaptersHandler(w http.ResponseWriter, _ *http.Request) {
 	err := json.NewEncoder(w).Encode(models.ListAvailableAdapters)
 	if err != nil {
 		obj := "data"
