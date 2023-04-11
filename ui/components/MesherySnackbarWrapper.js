@@ -62,6 +62,9 @@ const styles = (theme) => ({
     alignItems : "center",
   },
   snackbarContent : { [theme.breakpoints.up("sm")] : { minWidth : "344px !important", }, },
+  snackbarContentBorder : {
+    border : "1px solid rgba(102, 102, 102, 1)"
+  },
   card : {
     backgroundColor : "rgba(50, 50, 50)",
     width : "100%",
@@ -128,6 +131,7 @@ function MesherySnackbarWrapper(props) {
   const [socialExpand, setSocialExpand] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const [socialMessage, setSocialMessage] = useState("");
+  const [highlight, setHighlight] = useState(false)
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
@@ -142,6 +146,10 @@ function MesherySnackbarWrapper(props) {
   useEffect(() => {
     if (expand && !expanded) {
       handleExpandClick();
+      setHighlight(true)
+      setTimeout(() => {
+        setHighlight(false)
+      }, 3000)
     }
     if (componentType === "adapter") {
       if (message.includes("mesh installed")) {
@@ -165,7 +173,7 @@ function MesherySnackbarWrapper(props) {
 
   return (
     <SnackbarContent className={classes.snackbarContent}>
-      <Card className={classNames(classes.card, classes[variant], className)}
+      <Card className={highlight ? classNames(classes.card, classes[variant], className, classes.snackbarContentBorder) : classNames(classes.card, classes[variant], className)}
         aria-label="Show more"
       >
         <CardActions classes={{ root : classes.actionRoot }} onClick={handleExpandClick}>
