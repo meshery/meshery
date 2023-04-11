@@ -66,6 +66,7 @@ func (l *DefaultLocalProvider) Initialize() {
 		{Feature: PersistMesheryPatterns},
 		{Feature: PersistMesheryApplications},
 		{Feature: PersistMesheryFilters},
+		{Feature: PersistCredentials},
 	}
 }
 

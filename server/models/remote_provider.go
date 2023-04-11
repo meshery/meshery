@@ -3402,25 +3402,41 @@ func (l *RemoteProvider) GetKubeClient() *mesherykube.Client {
 }
 
 // SaveCredential - to save a creadential for an integration
+// TODO
 func (l *RemoteProvider) SaveUserCredential(_ *Credential) error {
-	// TODO
+	if !l.Capabilities.IsSupported(PersistCredentials) {
+		logrus.Error("operation not available")
+		return ErrInvalidCapability("PersistCredentials", l.ProviderName)
+	}
 	return nil
 }
 
 // GetCredentials - to get saved credentials
+// TODO
 func (l *RemoteProvider) GetUserCredentials(_ string, _, _ int, _, _ string) (*CredentialsPage, error) {
-	// TODO
+	if !l.Capabilities.IsSupported(PersistCredentials) {
+		logrus.Error("operation not available")
+		return nil, ErrInvalidCapability("PersistCredentials", l.ProviderName)
+	}
 	return nil, nil
 }
 
 // UpdateUserCredential - to update an existing credential
+// TODO
 func (l *RemoteProvider) UpdateUserCredential(_ *Credential) (*Credential, error) {
-	// TODO
+	if !l.Capabilities.IsSupported(PersistCredentials) {
+		logrus.Error("operation not available")
+		return nil, ErrInvalidCapability("PersistCredentials", l.ProviderName)
+	}
 	return nil, nil
 }
 
 // DeleteUserCredential - to delete a saved credential
+// TODO
 func (l *RemoteProvider) DeleteUserCredential(_ uuid.UUID) (*Credential, error) {
-	// TODO
+	if !l.Capabilities.IsSupported(PersistCredentials) {
+		logrus.Error("operation not available")
+		return nil, ErrInvalidCapability("PersistCredentials", l.ProviderName)
+	}
 	return nil, nil
 }

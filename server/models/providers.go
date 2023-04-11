@@ -248,6 +248,8 @@ const (
 	ShareDesigns Feature = "share-designs"
 
 	PersistConnection Feature = "persist-connection"
+
+	PersistCredentials Feature = "persist-credentials"
 )
 
 const (
