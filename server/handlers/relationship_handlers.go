@@ -13,14 +13,22 @@ import (
 
 // swagger:route GET /api/meshmodel/model/{model}/relationship/{name} GetMeshmodelRelationshipByName idGetMeshmodelRelationshipByName
 // Handle GET request for getting meshmodel relationships of a specific model by name.
-// Example: /api/meshmodel/model/kubernetes/relationship/Edge
-// Relationships can be further filtered through query parameter
-// ?version={version}
-// ?order={field} orders on the passed field
-// ?sort={[asc/desc]} Default behavior is asc
-// ?search={[true/false]} If search is true then a greedy search is performed
-// ?page={page-number} Default page number is 1
-// ?pagesize={pagesize} Default pagesize is 25. To return all results: pagesize=all
+//
+// Example: ```/api/meshmodel/model/kubernetes/relationship/Edge```
+//
+// # Relationships can be further filtered through query parameter
+//
+// ```?version={version}```
+//
+// ```?order={field}``` orders on the passed field
+//
+// ```?sort={[asc/desc]}``` Default behavior is asc
+//
+// ```?search={[true/false]}``` If search is true then a greedy search is performed
+//
+// ```?page={page-number}``` Default page number is 1
+//
+// ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
 // responses:
 // 200: []RelationshipDefinition
 func (h *Handler) GetMeshmodelRelationshipByName(rw http.ResponseWriter, r *http.Request) {
@@ -70,13 +78,20 @@ func (h *Handler) GetMeshmodelRelationshipByName(rw http.ResponseWriter, r *http
 
 // swagger:route GET /api/meshmodel/model/{model}/relationship GetAllMeshmodelRelationships idGetAllMeshmodelRelationships
 // Handle GET request for getting meshmodel relationships of a specific model.
-// Example: /api/meshmodel/model/kubernetes/relationship
-// Relationships can be further filtered through query parameter
-// ?version={version}
-// ?order={field} orders on the passed field
-// ?sort={[asc/desc]} Default behavior is asc
-// ?page={page-number} Default page number is 1
-// ?pagesize={pagesize} Default pagesize is 25. To return all results: pagesize=all
+//
+// Example: ```/api/meshmodel/model/kubernetes/relationship```
+//
+// # Relationships can be further filtered through query parameter
+//
+// ```?version={version}```
+//
+// ```?order={field}``` orders on the passed field
+//
+// ```?sort={[asc/desc]}``` Default behavior is asc
+//
+// ```?page={page-number}``` Default page number is 1
+//
+// ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
 // responses:
 // 200: []RelationshipDefinition
 func (h *Handler) GetAllMeshmodelRelationships(rw http.ResponseWriter, r *http.Request) {

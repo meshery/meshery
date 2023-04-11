@@ -131,21 +131,6 @@ func (r *queryResolver) FetchPatterns(ctx context.Context, selector model.PageFi
 	return r.fetchPatterns(ctx, provider, selector)
 }
 
-// GetWorkloads is the resolver for the getWorkloads field.
-func (r *queryResolver) GetWorkloads(ctx context.Context, name *string, id *string, trim *bool) ([]*model.OAMCapability, error) {
-	return r.getWorkloads(ctx, name, id, trim)
-}
-
-// GetTraits is the resolver for the getTraits field.
-func (r *queryResolver) GetTraits(ctx context.Context, name *string, id *string, trim *bool) ([]*model.OAMCapability, error) {
-	return r.getTraits(ctx, name, id, trim)
-}
-
-// GetScopes is the resolver for the getScopes field.
-func (r *queryResolver) GetScopes(ctx context.Context, name *string, id *string, trim *bool) ([]*model.OAMCapability, error) {
-	return r.getScopes(ctx, name, id, trim)
-}
-
 // GetKubectlDescribe is the resolver for the getKubectlDescribe field.
 func (r *queryResolver) GetKubectlDescribe(ctx context.Context, name string, kind string, namespace string) (*model.KctlDescribeDetails, error) {
 	return r.getKubectlDescribe(ctx, name, kind, namespace)

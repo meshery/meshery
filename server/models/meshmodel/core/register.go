@@ -77,7 +77,7 @@ func RegisterMeshmodelComponentsForCRDS(reg meshmodel.RegistryManager, k8sYaml [
 }
 
 // move to meshmodel
-func GetK8sMeshModelComponents(ctx context.Context, kubeconfig []byte) ([]v1alpha1.ComponentDefinition, error) {
+func GetK8sMeshModelComponents(kubeconfig []byte) ([]v1alpha1.ComponentDefinition, error) {
 	cli, err := kubernetes.New(kubeconfig)
 	if err != nil {
 		return nil, ErrGetK8sComponents(err)
@@ -222,6 +222,18 @@ func getCRDsFromManifest(manifest string, arrAPIResources []string) []crdRespons
 				if g, _ := groupCue.String(); g != "" {
 					apiVersion = g + "/" + apiVersion
 				}
+				modified := make(map[string]interface{}) //Remove the given fields which is either not required by End user (like status) or is prefilled by system (like apiVersion, kind and metadata)
+				err = json.Unmarshal(crd, &modified)
+				if err != nil {
+					fmt.Printf("%v", err)
+					continue
+				}
+				deleteProperties(modified)
+				crd, err = json.Marshal(modified)
+				if err != nil {
+					fmt.Printf("%v", err)
+					continue
+				}
 				res = append(res, crdResponse{
 					name:       resource,
 					kind:       name,
@@ -233,6 +245,21 @@ func getCRDsFromManifest(manifest string, arrAPIResources []string) []crdRespons
 		}
 	}
 	return res
+}
+
+var fieldsToDelete = [4]string{"apiVersion", "kind", "status", "metadata"}
+
+func deleteProperties(m map[string]interface{}) {
+	key := "properties"
+	if m[key] == nil {
+		return
+	}
+	if prop, ok := m[key].(map[string]interface{}); ok && prop != nil {
+		for _, f := range fieldsToDelete {
+			delete(prop, f)
+		}
+		m[key] = prop
+	}
 }
 
 type k8sMetadata struct {

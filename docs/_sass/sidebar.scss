@@ -100,16 +100,6 @@
         width: 100%;
         margin: 2rem 0 2rem;
         position: relative;
-
-        & > svg {
-          position: absolute;
-          top: 50%;
-          right: 5%;
-          width: 2rem;
-          height: 2rem;
-          transform: translateY(-50%);
-          fill: var(--color-grey-medium);
-        }
       }
 
       &-input {

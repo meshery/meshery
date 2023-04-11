@@ -325,7 +325,7 @@ class MesheryChart extends React.Component {
 
     if (typeof this.props.data !== 'undefined') {
       const results = this.props.data;
-      if (results.length == 2) {
+      if (results.length === 2) {
         chartData = makeOverlayChart(fortioResultToJsChartData(this.props.rawdata,results[0]), fortioResultToJsChartData(this.props.rawdata,results[1]));
       } else if (results.length > 2) {
         chartData = makeMultiChart(this.props.rawdata,results);
@@ -334,7 +334,7 @@ class MesheryChart extends React.Component {
     const self = this;
     if (typeof chartData === 'undefined') {
       const tmpData = (typeof this.props.data !== 'undefined')
-        ? (this.props.data.length == 1
+        ? (this.props.data.length === 1
           ? this.props.data[0]
           : {})
         : {};
@@ -400,7 +400,7 @@ class MesheryChart extends React.Component {
               }
             }}>
               {
-                this.props.data.length == 1
+                this.props.data.length === 1
                   ?
                   <div style={{ margin : "1rem" }}>
                     <Typography style={{ whiteSpace : "nowrap" }} gutterBottom>Percentile Summary</Typography>
