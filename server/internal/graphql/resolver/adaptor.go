@@ -8,17 +8,17 @@ import (
 	"github.com/layer5io/meshery/server/models"
 )
 
-func (r *Resolver) changeAdaptorStatus(_ context.Context, _ models.Provider, targetStatus model.Status, adapterName, targetPort string) (model.Status, error) {
+func (r *Resolver) changeAdapterStatus(_ context.Context, _ models.Provider, targetStatus model.Status, adapterName, targetPort string) (model.Status, error) {
 	if utils.GetPlatform() == "kubernetes" {
 		r.Log.Info("Feature for kuberenetes disabled")
 		return model.StatusDisabled, nil
 	}
 
-	deleteAdaptor := true
+	deleteAdapter := true
 
 	if targetStatus == model.StatusEnabled {
 		r.Log.Info("Deploying Adapter")
-		deleteAdaptor = false
+		deleteAdapter = false
 	} else {
 		r.Log.Info("Undeploying Adapter")
 	}
@@ -41,7 +41,7 @@ func (r *Resolver) changeAdaptorStatus(_ context.Context, _ models.Provider, tar
 		} else {
 			r.Log.Info("Successfully " + operation + "ed adapter")
 		}
-	}(context.Background(), deleteAdaptor)
+	}(context.Background(), deleteAdapter)
 
 	return model.StatusProcessing, nil
 }

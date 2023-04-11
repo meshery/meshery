@@ -13,7 +13,7 @@ import ReactSelectWrapper from "./ReactSelectWrapper";
 import { updateAdaptersInfo, updateProgress } from "../lib/store";
 import dataFetch from "../lib/data-fetch";
 import { iconMedium } from "../css/icons.styles";
-import changeAdaptorState from './graphql/mutations/AdaptorStatusMutation';
+import changeAdapterState from './graphql/mutations/AdapterStatusMutation';
 
 const styles = (theme) => ({
   wrapperClass : { padding : theme.spacing(5),backgroundColor : theme.palette.secondary.elevatedComponents,borderBottomLeftRadius : theme.spacing(1),borderBottomRightRadius : theme.spacing(1), },
@@ -250,7 +250,7 @@ class MeshAdapterConfigComponent extends React.Component {
     );
   };
 
-  handleAdaptorDeploy = () => {
+  handleAdapterDeploy = () => {
     const { selectedAvailableAdapter, meshDeployURL } = this.state;
 
     if (!selectedAvailableAdapter || !selectedAvailableAdapter.value || selectedAvailableAdapter.value === "") {
@@ -272,13 +272,13 @@ class MeshAdapterConfigComponent extends React.Component {
       targetPort : meshDeployURL
     };
 
-    changeAdaptorState((response, errors) => {
+    changeAdapterState((response, errors) => {
       this.props.updateProgress({ showProgress : false });
 
       if (errors !== undefined) {
-        this.handleError("Unable to Deploy adaptor");
+        this.handleError("Unable to Deploy adapter");
       }
-      this.props.enqueueSnackbar("Adaptor " + response.adaptorStatus.toLowerCase(), {
+      this.props.enqueueSnackbar("Adapter " + response.adapterStatus.toLowerCase(), {
         variant : "success",
         autoHideDuration : 2000,
         action : (key) => (
@@ -290,7 +290,7 @@ class MeshAdapterConfigComponent extends React.Component {
     }, variables);
   };
 
-  handleAdaptorUndeploy = () => {
+  handleAdapterUndeploy = () => {
     const { meshLocationURL } = this.state;
 
     if (!meshLocationURL || !meshLocationURL.value || meshLocationURL.value === "") {
@@ -306,13 +306,13 @@ class MeshAdapterConfigComponent extends React.Component {
       targetPort : meshLocationURL.value
     };
 
-    changeAdaptorState((response, errors) => {
+    changeAdapterState((response, errors) => {
       this.props.updateProgress({ showProgress : false });
 
       if (errors !== undefined) {
-        this.handleError("Unable to Deploy adaptor");
+        this.handleError("Unable to Deploy adapter");
       }
-      this.props.enqueueSnackbar("Adaptor " + response.adaptorStatus.toLowerCase(), {
+      this.props.enqueueSnackbar("Adapter " + response.adapterStatus.toLowerCase(), {
         variant : "success",
         autoHideDuration : 2000,
         action : (key) => (
@@ -396,7 +396,7 @@ class MeshAdapterConfigComponent extends React.Component {
                 variant="contained"
                 color="primary"
                 size="large"
-                onClick={this.handleAdaptorUndeploy}
+                onClick={this.handleAdapterUndeploy}
                 className={classes.button}
                 data-cy="btnSubmitMeshAdapter"
               >
@@ -442,7 +442,7 @@ class MeshAdapterConfigComponent extends React.Component {
                 variant="contained"
                 color="primary"
                 size="large"
-                onClick={this.handleAdaptorDeploy}
+                onClick={this.handleAdapterDeploy}
                 className={classes.button}
                 data-cy="btnSubmitMeshAdapter"
               >

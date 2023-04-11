@@ -248,7 +248,7 @@ type ComplexityRoot struct {
 	}
 
 	Mutation struct {
-		ChangeAdaptorStatus  func(childComplexity int, input *model.AdaptorStatusInput) int
+		ChangeAdapterStatus  func(childComplexity int, input *model.AdapterStatusInput) int
 		ChangeOperatorStatus func(childComplexity int, input *model.OperatorStatusInput) int
 	}
 
@@ -406,7 +406,7 @@ type ComplexityRoot struct {
 
 type MutationResolver interface {
 	ChangeOperatorStatus(ctx context.Context, input *model.OperatorStatusInput) (model.Status, error)
-	ChangeAdaptorStatus(ctx context.Context, input *model.AdaptorStatusInput) (model.Status, error)
+	ChangeAdapterStatus(ctx context.Context, input *model.AdapterStatusInput) (model.Status, error)
 }
 type QueryResolver interface {
 	GetAvailableAddons(ctx context.Context, filter *model.ServiceMeshFilter) ([]*model.AddonList, error)
@@ -1324,17 +1324,17 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.MesheryResult.UserID(childComplexity), true
 
-	case "Mutation.changeAdaptorStatus":
-		if e.complexity.Mutation.ChangeAdaptorStatus == nil {
+	case "Mutation.changeAdapterStatus":
+		if e.complexity.Mutation.ChangeAdapterStatus == nil {
 			break
 		}
 
-		args, err := ec.field_Mutation_changeAdaptorStatus_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_changeAdapterStatus_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Mutation.ChangeAdaptorStatus(childComplexity, args["input"].(*model.AdaptorStatusInput)), true
+		return e.complexity.Mutation.ChangeAdapterStatus(childComplexity, args["input"].(*model.AdapterStatusInput)), true
 
 	case "Mutation.changeOperatorStatus":
 		if e.complexity.Mutation.ChangeOperatorStatus == nil {
@@ -2247,7 +2247,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	rc := graphql.GetOperationContext(ctx)
 	ec := executionContext{rc, e}
 	inputUnmarshalMap := graphql.BuildUnmarshalerMap(
-		ec.unmarshalInputAdaptorStatusInput,
+		ec.unmarshalInputAdapterStatusInput,
 		ec.unmarshalInputAddonStatusInput,
 		ec.unmarshalInputCatalogSelector,
 		ec.unmarshalInputMeshModelSummarySelector,
@@ -2949,7 +2949,7 @@ type Query {
 #
 
 # Input for status change of Meshery Operator
-input AdaptorStatusInput {
+input AdapterStatusInput {
   # Desired status for Meshery Operator
   targetStatus: Status!
   
@@ -2964,8 +2964,8 @@ type Mutation {
   # Change the Operator Status
   changeOperatorStatus(input: OperatorStatusInput): Status!
 
-  # Change the Adaptor Status
-  changeAdaptorStatus(input: AdaptorStatusInput): Status!
+  # Change the Adapter Status
+  changeAdapterStatus(input: AdapterStatusInput): Status!
 }
 
 type Subscription {
@@ -3050,13 +3050,13 @@ var parsedSchema = gqlparser.MustLoadSchema(sources...)
 
 // region    ***************************** args.gotpl *****************************
 
-func (ec *executionContext) field_Mutation_changeAdaptorStatus_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Mutation_changeAdapterStatus_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 *model.AdaptorStatusInput
+	var arg0 *model.AdapterStatusInput
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalOAdaptorStatusInput2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐAdaptorStatusInput(ctx, tmp)
+		arg0, err = ec.unmarshalOAdapterStatusInput2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐAdapterStatusInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -9281,8 +9281,8 @@ func (ec *executionContext) fieldContext_Mutation_changeOperatorStatus(ctx conte
 	return fc, nil
 }
 
-func (ec *executionContext) _Mutation_changeAdaptorStatus(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_changeAdaptorStatus(ctx, field)
+func (ec *executionContext) _Mutation_changeAdapterStatus(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_changeAdapterStatus(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -9295,7 +9295,7 @@ func (ec *executionContext) _Mutation_changeAdaptorStatus(ctx context.Context, f
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().ChangeAdaptorStatus(rctx, fc.Args["input"].(*model.AdaptorStatusInput))
+		return ec.resolvers.Mutation().ChangeAdapterStatus(rctx, fc.Args["input"].(*model.AdapterStatusInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -9312,7 +9312,7 @@ func (ec *executionContext) _Mutation_changeAdaptorStatus(ctx context.Context, f
 	return ec.marshalNStatus2githubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐStatus(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Mutation_changeAdaptorStatus(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Mutation_changeAdapterStatus(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Mutation",
 		Field:      field,
@@ -9329,7 +9329,7 @@ func (ec *executionContext) fieldContext_Mutation_changeAdaptorStatus(ctx contex
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_changeAdaptorStatus_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Mutation_changeAdapterStatus_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return
 	}
@@ -16666,8 +16666,8 @@ func (ec *executionContext) fieldContext___Type_specifiedByURL(ctx context.Conte
 
 // region    **************************** input.gotpl *****************************
 
-func (ec *executionContext) unmarshalInputAdaptorStatusInput(ctx context.Context, obj interface{}) (model.AdaptorStatusInput, error) {
-	var it model.AdaptorStatusInput
+func (ec *executionContext) unmarshalInputAdapterStatusInput(ctx context.Context, obj interface{}) (model.AdapterStatusInput, error) {
+	var it model.AdapterStatusInput
 	asMap := map[string]interface{}{}
 	for k, v := range obj.(map[string]interface{}) {
 		asMap[k] = v
@@ -18315,10 +18315,10 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "changeAdaptorStatus":
+		case "changeAdapterStatus":
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_changeAdaptorStatus(ctx, field)
+				return ec._Mutation_changeAdapterStatus(ctx, field)
 			})
 
 			if out.Values[i] == graphql.Null {
@@ -21149,11 +21149,11 @@ func (ec *executionContext) marshalN__TypeKind2string(ctx context.Context, sel a
 	return res
 }
 
-func (ec *executionContext) unmarshalOAdaptorStatusInput2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐAdaptorStatusInput(ctx context.Context, v interface{}) (*model.AdaptorStatusInput, error) {
+func (ec *executionContext) unmarshalOAdapterStatusInput2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐAdapterStatusInput(ctx context.Context, v interface{}) (*model.AdapterStatusInput, error) {
 	if v == nil {
 		return nil, nil
 	}
-	res, err := ec.unmarshalInputAdaptorStatusInput(ctx, v)
+	res, err := ec.unmarshalInputAdapterStatusInput(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 

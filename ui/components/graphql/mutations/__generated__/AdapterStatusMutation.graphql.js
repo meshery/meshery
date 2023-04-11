@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<bf8a810fe00984ff88e24dc09b2d6e9b>>
+ * @generated SignedSource<<aff6f55dc556ea8dcf170a9dd4d5853b>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -18,7 +18,7 @@ var v0 = [
 ],
 v1 = [
   {
-    "alias": "adaptorStatus",
+    "alias": "adapterStatus",
     "args": [
       {
         "kind": "Variable",
@@ -27,7 +27,7 @@ v1 = [
       }
     ],
     "kind": "ScalarField",
-    "name": "changeAdaptorStatus",
+    "name": "changeAdapterStatus",
     "storageKey": null
   }
 ];
@@ -36,7 +36,7 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "AdaptorStatusMutation",
+    "name": "AdapterStatusMutation",
     "selections": (v1/*: any*/),
     "type": "Mutation",
     "abstractKey": null
@@ -45,20 +45,20 @@ return {
   "operation": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "AdaptorStatusMutation",
+    "name": "AdapterStatusMutation",
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "7120ac79bbdc5508fcdabea89a855ba5",
+    "cacheID": "910bac5b935be9f44edf2e0b45186c89",
     "id": null,
     "metadata": {},
-    "name": "AdaptorStatusMutation",
+    "name": "AdapterStatusMutation",
     "operationKind": "mutation",
-    "text": "mutation AdaptorStatusMutation(\n  $input: AdaptorStatusInput\n) {\n  adaptorStatus: changeAdaptorStatus(input: $input)\n}\n"
+    "text": "mutation AdapterStatusMutation(\n  $input: AdapterStatusInput\n) {\n  adapterStatus: changeAdapterStatus(input: $input)\n}\n"
   }
 };
 })();
 
-node.hash = "794bade1e18539e87d0b561d2484bb6b";
+node.hash = "3d97311fb835925f575991945093af8e";
 
 module.exports = node;

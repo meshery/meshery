@@ -8,7 +8,7 @@ import (
 	"strconv"
 )
 
-type AdaptorStatusInput struct {
+type AdapterStatusInput struct {
 	TargetStatus Status `json:"targetStatus"`
 	TargetPort   string `json:"targetPort"`
 	Adapter      string `json:"adapter"`

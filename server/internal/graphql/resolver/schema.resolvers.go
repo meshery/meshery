@@ -22,10 +22,10 @@ func (r *mutationResolver) ChangeOperatorStatus(ctx context.Context, input *mode
 	return r.changeOperatorStatus(ctx, provider, input.TargetStatus, input.ContextID)
 }
 
-// ChangeAdaptorStatus is the resolver for the changeAdaptorStatus field.
-func (r *mutationResolver) ChangeAdaptorStatus(ctx context.Context, input *model.AdaptorStatusInput) (model.Status, error) {
+// ChangeAdapterStatus is the resolver for the changeAdapterStatus field.
+func (r *mutationResolver) ChangeAdapterStatus(ctx context.Context, input *model.AdapterStatusInput) (model.Status, error) {
 	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
-	return r.changeAdaptorStatus(ctx, provider, input.TargetStatus, input.Adapter, input.TargetPort)
+	return r.changeAdapterStatus(ctx, provider, input.TargetStatus, input.Adapter, input.TargetPort)
 }
 
 // GetAvailableAddons is the resolver for the getAvailableAddons field.
