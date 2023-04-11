@@ -212,7 +212,8 @@ function UploadImport(props) {
                 <Button variant="outlined" color="secondary" onClick={handleClose}>Cancel</Button>
               </label>
               <label htmlFor="URL">  <Button disabled={isError || !input} id="URL" variant="contained" className={classes.button} onClick={async(e) => {
-                await handleSubmit(e, handleUploader);fetch();
+                await handleSubmit(e, handleUploader);
+                fetch?.();
               }}>Import</Button> </label>
             </DialogActions>
           </MuiThemeProvider>
