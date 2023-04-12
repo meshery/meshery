@@ -14,7 +14,7 @@ import {
   ClickAwayListener
 } from '@material-ui/core';
 import BellIcon from '@material-ui/icons/Notifications';
-import VisibilityIcon from '@material-ui/icons/Visibility';
+import InfoIcon from '@mui/icons-material/Info';
 import ClearIcon from "../assets/icons/ClearIcon";
 import ErrorIcon from '@material-ui/icons/Error';
 import { withStyles } from '@material-ui/core/styles';
@@ -176,7 +176,7 @@ class MesheryNotification extends React.Component {
             color="inherit"
             onClick={() => self.openEventInNotificationCenter(operation_id)}
           >
-            <VisibilityIcon style={iconMedium} />
+            <InfoIcon style={iconMedium} />
           </IconButton>
           <IconButton
             key="close"
