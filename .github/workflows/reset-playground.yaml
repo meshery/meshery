@@ -1,4 +1,4 @@
-name: Reset running Meshery playground
+name: Meshery Playground: Reset
 on:
    workflow_dispatch:
    schedule:
@@ -6,6 +6,8 @@ on:
 
 jobs:
    reset:
+     name: Cluster Reset
+     if: github.repository == 'meshery/meshery'
      runs-on: ubuntu-latest 
      steps:
       - name: Install kubectl
