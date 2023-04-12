@@ -10,6 +10,8 @@ import (
 	"os"
 	"path/filepath"
 
+	mutil "github.com/layer5io/meshery/server/helpers/utils"
+
 	guid "github.com/google/uuid"
 	"github.com/layer5io/meshery/server/meshes"
 	mcore "github.com/layer5io/meshery/server/models/meshmodel/core"
@@ -324,9 +326,6 @@ func RegisterK8sMeshModelComponents(_ context.Context, config []byte, ctxID stri
 	count := 0
 	for _, c := range man {
 		writeK8sMetadata(&c, reg)
-		if c.Model.Version == "v1.25.2" {
-			writeMeshModelComponentsOnFileSystem(c, "/Users/ashishtiwari/dev/meshery/server/meshmodel/components/kubernetes/v1.25.2")
-		}
 		err = reg.RegisterEntity(meshmodel.Host{
 			Hostname:  "kubernetes",
 			ContextID: ctxID,
@@ -357,7 +356,7 @@ func writeK8sMetadata(comp *meshmodelv1alpha1.ComponentDefinition, reg *meshmode
 	//If component was not available in the registry, then use the generic model level metadata
 	if len(ent) == 0 {
 		putils.MergeMaps(comp.Metadata, k8sMeshModelMetadata)
-		// mutil.WriteSVGsOnFileSystem(comp)
+		mutil.WriteSVGsOnFileSystem(comp)
 	} else {
 		existingComp, ok := ent[0].(meshmodelv1alpha1.ComponentDefinition)
 		if !ok {
