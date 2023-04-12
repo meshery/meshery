@@ -24,6 +24,11 @@ spec:
     services:
     - name: meshery
       port: 9081
+  - conditions:
+    - prefix: /api/events
+    services:
+     - name: meshery
+       port: 9081
     timeoutPolicy:
-      response: 100m
-      idle: 100m
+        idle: infinity
+        response: infinity
