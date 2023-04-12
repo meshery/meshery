@@ -9,21 +9,21 @@ language: en
 
 With growing adoption of service meshes in cloud native environments, service mesh abstractions - service mesh-neutral specifications - have emerged. <a href="https://layer5.io/projects/service-mesh-performance">Service Mesh Performance</a>  and <a href="https://layer5.io/projects/service-mesh-interface-conformance">Service Mesh Interface</a> are two open specifications that address the need for universal interfaces for interacting with and managing any type of service mesh. Let’s examine what each specification provides.
 
-<img src="{{ site.baseurl }}/assets/img/smp-dark-text-side.svg" className="image-left-no-shadow" alt="service mesh performance logo" style="width: 50%; height: 50%;" />
+<img src="{{ site.baseurl }}/assets/img/smp-dark-text-side.svg" className="image-left-no-shadow" alt="service mesh performance logo" style="width: 60%; max-width: 250px;" />
 
 <a href="https://smp-spec.io">Service Mesh Performance</a> standardizes service mesh value measurement, characterizing any deployment's performance by capturing the details of infrastructure capacity, service mesh configuration and workload metadata.
 
-<img src="{{ site.baseurl }}/assets/img/servicemeshinterface-horizontal-stackedtext-color.svg" className="image-right-no-shadow" alt="service mesh interface logo" style="width: 50%; height: 50%;" />
+<img src="{{ site.baseurl }}/assets/img/servicemeshinterface-horizontal-stackedtext-color.svg" className="image-right-no-shadow" alt="service mesh interface logo" style="width: 60%; max-width: 250px;" />
 
 <a href="https://smi-spec.io">Service Mesh Interface</a> provides a standard interface for service meshes on Kubernetes. These (currently) four specfications offer a common denominator set of interfaces to support most common service mesh use cases and the flexibility to evolve to support new service mesh capabilities over time.
 
 As a service mesh agnostic tool that provides lifecycle and performance management of a large number of (10+) service meshes, Kubernetes applications, service mesh patterns and WebAssembly filters, Meshery is the ideal tool for the job when it comes to implementing these specifications.
 
-Meshery also comes with two new GitHub Actions that do exactly this. The <a href="https://github.com/layer5io/meshery-smi-conformance-action">Meshery SMI Conformance Action</a> which <a href="https://meshery.io/blog/validating-smi-conformance-with-meshery">validates SMI conformance</a> in your pipeline and the <a href="https://github.com/layer5io/meshery-smp-action">Meshery SMP Action</a> which runs <a href="https://docs.meshery.io/functionality/performance-management">SMP compatible performance benchmarks</a>.
+Meshery also comes with two new GitHub Actions that do exactly this. The <a href="https://github.com/layer5io/meshery-smi-conformance-action">Meshery SMI Conformance Action</a> which <a href="https://meshery.io/blog/validating-smi-conformance-with-meshery">validates SMI conformance</a> in your pipeline and the <a href="https://github.com/layer5io/meshery-smp-action">Meshery SMP Action</a> which runs <a href="{{ site.baseurl }}/tasks/performance-management">SMP compatible performance benchmarks</a>.
 But how do we use these actions? What do they offer? Let’s find out!
 <h2>Service Mesh Interface Conformance GitHub Action</h2>
 
-Conformance of SMI specifications is defined as a series of test assertions. These test assertions are categorised by SMI specification (of which, there are currently four specifications) and comprise the complete suite of SMI conformance tests. Conformance requirements will change appropriately as each new version of the SMI spec is released. Refer to Meshery's documentation for details of how <a href="https://docs.meshery.io/functionality/service-mesh-interface">Meshery performs SMI conformance</a>.
+Conformance of SMI specifications is defined as a series of test assertions. These test assertions are categorised by SMI specification (of which, there are currently four specifications) and comprise the complete suite of SMI conformance tests. Conformance requirements will change appropriately as each new version of the SMI spec is released. Refer to Meshery's documentation for details of how <a href="{{ site.baseurl }}/tasks/service-mesh-interface">Meshery performs SMI conformance</a>.
 
 
 <h3>Using Meshery's SMI Conformance GitHub Action</h3>
@@ -93,10 +93,10 @@ jobs:
 
 You can download a token from Meshery and add it as a GitHub secret (in the example above, the secret is <code>MESHERY_PROVIDER_TOKEN</code>). After the test is run, you can view the results from the Service Mesh Interface dashboard in Meshery UI.
 
-<img src="{{ site.baseurl }}/assets/img/smi-conformance-result.png" className="image-center-shadow" style="width:70%" alt="smi conformance dashboard" /> <br />
+<a href="{{ site.baseurl }}/assets/img/smi-conformance-result.png"><img src="{{ site.baseurl }}/assets/img/smi-conformance-result.png" className="image-center-shadow" style="width:70%" alt="smi conformance dashboard" /></a> <br />
 <i>Meshery's Service Mesh Interface Conformance Results</i>
 
-Participating service mesh projects can also <a href="https://docs.meshery.io/functionality/service-mesh-interface#reporting-conformance">automatically report their conformance test results</a> to the <a href="https://meshery.io/service-mesh-interface">SMI Conformance dashboard</a>
+Participating service mesh projects can also <a href="{{ site.baseurl }}/tasks/service-mesh-interface#reporting-conformance">automatically report their conformance test results</a> to the <a href="https://meshery.io/service-mesh-interface">SMI Conformance dashboard</a>
 
 <h2>Service Mesh Performance GitHub Action</h2>
 
@@ -162,6 +162,6 @@ duration: "30m"
 
 See this sample GitHub workflow (<a href="https://github.com/layer5io/meshery-smp-action/blob/master/action.yml">action.yml</a>) for more configuration details.
 
-<img src="{{ site.baseurl }}/assets/img/service-mesh-performance-profile-test-results.png" className="image-center" alt="performance management dashboard" />
+<a href="{{ site.baseurl }}/assets/img/service-mesh-performance-profile-test-results.png"><img src="{{ site.baseurl }}/assets/img/service-mesh-performance-profile-test-results.png" className="image-center" alt="performance management dashboard" /></a>
 
 The results from the tests are updated on the Performance Management dashboard in Meshery. To learn more about interpreting the test results, check out <a href="https://docs.meshery.io/guides/interpreting-performance-test-results">this guide</a>. You can always checkout the <a href="https://docs.meshery.io/guides">Meshery User Guides</a> to dive deep into these features.

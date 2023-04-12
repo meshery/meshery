@@ -1,0 +1,1 @@
+{"kind":"Workflow","apiVersion":"core.oam.dev/v1alpha1","displayName":"Workflow","format":"JSON","metadata":{},"model":{"name":"vela-workflow","version":"0.4.3","displayName":"vela-workflow","category":{"name":"","metadata":null},"metadata":null}}

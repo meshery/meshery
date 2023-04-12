@@ -5,7 +5,14 @@
       "description": "A relationship between two objects that are siblings."
     },
     "model":{
-      "name":"core"
+      "name": "core",
+      "version": "v1.0.0",
+      "displayName": "Core",
+      "category": {
+        "name":"Cloud Native Application",
+        "metadata": null
+      },
+      "metadata": {}
     },
     "subType": "MatchLabels",
     "selectors": {

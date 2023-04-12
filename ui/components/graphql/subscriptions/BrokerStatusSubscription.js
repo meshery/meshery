@@ -1,5 +1,5 @@
 import { graphql, requestSubscription } from "react-relay";
-import environment from "../../../lib/relayEnvironment";
+import { createRelayEnvironment } from "../../../lib/relayEnvironment";
 
 const brokerStatusSubscription = graphql`
 subscription BrokerStatusSubscription {
@@ -8,6 +8,7 @@ subscription BrokerStatusSubscription {
 `;
 
 export default function subscribeBrokerStatusEvents(dataCB) {
+  const environment = createRelayEnvironment({});
   return requestSubscription(environment, {
     subscription : brokerStatusSubscription,
     variables : {},

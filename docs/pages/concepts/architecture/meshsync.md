@@ -9,8 +9,8 @@ language: en
 list: include
 ---
 
-<p >
-<img src="{{site.baseurl}}/assets/img/meshsync/meshsync.svg" align="left"/>
+<p>
+<img src="{{site.baseurl}}/assets/img/meshsync/meshsync.svg" align="left" style="margin-right:1rem;margin-bottom:.5rem;" width="20%" />
 
 MeshSync is a custom Kubernetes controller that provides tiered discovery and continual synchronization with Meshery Server as to the state of the Kubernetes cluster, service meshes, and their workloads.
 

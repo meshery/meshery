@@ -217,9 +217,9 @@ const (
 
 	PersistResult Feature = "persist-result" // /result
 
-	PersistSMIResults Feature = "persist-smi-results" // /smi/results
+	// PersistSMIResults Feature = "persist-smi-results" // /smi/results
 
-	PersistSMIResult Feature = "persist-smi-result" // /smi/result
+	PersistSMIResults Feature = "persist-smi-results" // /smi/results
 
 	PersistMetrics Feature = "persist-metrics" // /result/metrics
 
@@ -331,6 +331,7 @@ type Provider interface {
 	ExtractToken(http.ResponseWriter, *http.Request)
 	GetSession(req *http.Request) error
 	GetUserDetails(*http.Request) (*User, error)
+	GetUserByID(req *http.Request, userID string) ([]byte, error)
 	GetProviderToken(req *http.Request) (string, error)
 	UpdateToken(http.ResponseWriter, *http.Request) string
 	Logout(http.ResponseWriter, *http.Request) error

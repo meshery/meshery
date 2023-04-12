@@ -224,7 +224,7 @@ function MesheryApplications({
   updateProgress, enqueueSnackbar, closeSnackbar, user, classes, selectedK8sContexts
 }) {
   const [page, setPage] = useState(0);
-  const [search] = useState("");
+  const [search,setSearch] = useState("");
   const [sortOrder] = useState("");
   const [count, setCount] = useState(0);
   const modalRef = useRef(null);
@@ -259,6 +259,10 @@ function MesheryApplications({
   useEffect(() => {
     fetchApplications(page, pageSize, search, sortOrder)
   }, [page, pageSize, search, sortOrder]);
+
+  useEffect(() => {
+    if (viewType==='grid')setSearch("")
+  },[viewType])
 
   /**
    * fetch applications when the application downloads
@@ -809,11 +813,12 @@ function MesheryApplications({
               fetchApplications(page, pageSize, tableState.searchText !== null
                 ? tableState.searchText
                 : "", sortOrder);
+              setSearch(tableState.searchText)
             }
           }, 500);
           break;
         case "sort":
-          if (sortInfo.length == 2) {
+          if (sortInfo.length === 2) {
             if (sortInfo[1] === "ascending") {
               order = `${columns[tableState.activeColumn].name} asc`;
             } else {

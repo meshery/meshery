@@ -1,7 +1,7 @@
 contexts:
     local:
         endpoint: http://localhost:9081
-        token: Default
+        token: default
         platform: kubernetes
         components:
             - meshery-app-mesh
@@ -18,7 +18,7 @@ contexts:
         version: latest
     local2:
         endpoint: http://localhost:9081
-        token: Default
+        token: default
         platform: kubernetes
         components:
             - meshery-app-mesh
@@ -35,5 +35,5 @@ contexts:
         version: latest
 current-context: local2
 tokens:
-    - name: Default
+    - name: default
       location: auth.json

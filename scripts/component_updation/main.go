@@ -37,7 +37,7 @@ import (
 )
 
 var (
-	ColumnNamesToExtract        = []string{"modelDisplayName", "model", "category", "subCategory", "shape", "primaryColor", "secondaryColor", "logo-URL", "svgColor", "svgWhite", "Publish?"}
+	ColumnNamesToExtract        = []string{"modelDisplayName", "model", "category", "subCategory", "shape", "primaryColor", "secondaryColor", "logoURL", "svgColor", "svgWhite", "Publish?", "CRDs", "component", "svgComplete", "genealogy", "styleOverrides"}
 	ColumnNamesToExtractForDocs = []string{"modelDisplayName", "Page Subtitle", "Docs URL", "category", "subCategory", "Feature 1", "Feature 2", "Feature 3", "howItWorks", "howItWorksDetails", "Publish?", "About Project", "Standard Blurb", "svgColor", "svgWhite", "Full Page", "model"}
 	PrimaryColumnName           = "model"
 	OutputPath                  = "../../server/meshmodel/components"
@@ -98,7 +98,7 @@ func main() {
 		file.Close()
 		os.Remove(file.Name())
 		output = cleanupDuplicatesAndPreferEmptyComponentField(output, "model")
-		mesheryDocsJSON := "["
+		mesheryDocsJSON := "const data = ["
 		for _, out := range output {
 			var t pkg.TemplateAttributes
 			publishValue, err := strconv.ParseBool(out["Publish?"])
@@ -151,8 +151,8 @@ func main() {
 			// 	fmt.Println(md)
 			// }
 			mesheryDocsJSON += jsonItem + ","
-
-			pathToIntegrationsLayer5, _ := filepath.Abs(filepath.Join("../../../", pathToIntegrationsLayer5, out["model"]))
+			modelName := strings.TrimSpace(out["model"])
+			pathToIntegrationsLayer5, _ := filepath.Abs(filepath.Join("../../../", pathToIntegrationsLayer5, modelName))
 			pathToIntegrationsMeshery, _ := filepath.Abs(filepath.Join("../../../", pathToIntegrationsMeshery))
 			err = os.MkdirAll(pathToIntegrationsLayer5, 0777)
 			if err != nil {
@@ -168,7 +168,7 @@ func main() {
 				panic(err)
 			}
 
-			err = pkg.WriteSVG(filepath.Join(pathToIntegrationsLayer5, "icon", "color", out["model"]+"-color.svg"), svgcolor) //CHANGE PATH
+			err = pkg.WriteSVG(filepath.Join(pathToIntegrationsLayer5, "icon", "color", modelName+"-color.svg"), svgcolor) //CHANGE PATH
 			if err != nil {
 				panic(err)
 			}
@@ -176,7 +176,7 @@ func main() {
 			if err != nil {
 				panic(err)
 			}
-			err = pkg.WriteSVG(filepath.Join(pathToIntegrationsLayer5, "icon", "white", out["model"]+"-white.svg"), svgwhite) //CHANGE PATH
+			err = pkg.WriteSVG(filepath.Join(pathToIntegrationsLayer5, "icon", "white", modelName+"-white.svg"), svgwhite) //CHANGE PATH
 			if err != nil {
 				panic(err)
 			}
@@ -187,23 +187,22 @@ func main() {
 				panic(err)
 			}
 
-			err = pkg.WriteSVG(filepath.Join(pathToIntegrationsMeshery, "../", "images", out["model"]+"-color.svg"), svgcolor) //CHANGE PATH
+			err = pkg.WriteSVG(filepath.Join(pathToIntegrationsMeshery, "../", "images", modelName+"-color.svg"), svgcolor) //CHANGE PATH
 			if err != nil {
 				panic(err)
 			}
 
-			err = pkg.WriteSVG(filepath.Join(pathToIntegrationsMeshery, "../", "images", out["model"]+"-white.svg"), svgwhite) //CHANGE PATH
+			err = pkg.WriteSVG(filepath.Join(pathToIntegrationsMeshery, "../", "images", modelName+"-white.svg"), svgwhite) //CHANGE PATH
 			if err != nil {
 				panic(err)
 			}
 		}
 
 		mesheryDocsJSON = strings.TrimSuffix(mesheryDocsJSON, ",")
-		mesheryDocsJSON += "]"
-		if err := pkg.WriteToFile(filepath.Join("../../../", pathToIntegrationsMeshery, "data.json"), mesheryDocsJSON); err != nil {
+		mesheryDocsJSON += "]; export default data"
+		if err := pkg.WriteToFile(filepath.Join("../../../", pathToIntegrationsMeshery, "data.js"), mesheryDocsJSON); err != nil {
 			log.Fatal(err)
 		}
-
 	} else {
 		output, err := pkg.GetEntries(csvReader, ColumnNamesToExtract)
 		if err != nil {
@@ -213,8 +212,12 @@ func main() {
 		file.Close()
 		os.Remove(file.Name())
 		publishedModels := make(map[string]bool)
+		countWithoutCrds := 0
 		_ = pkg.PopulateEntries(OutputPath, output, PrimaryColumnName, func(dirpath string, changeFields map[string]string) error {
-			if changeFields["Publish?"] == "TRUE" {
+			if changeFields["CRDs"] == "" {
+				countWithoutCrds++
+			}
+			if changeFields["Publish?"] == "TRUE" { //For a component level field
 				publishedModels[changeFields[PrimaryColumnName]] = true
 			}
 			return nil
@@ -231,44 +234,54 @@ func main() {
 						return err
 					}
 					for _, entry := range entries {
-						if !publishedModels[changeFields[PrimaryColumnName]] {
+						if !publishedModels[changeFields[PrimaryColumnName]] && changeFields["component"] == "" { //Ignore Publish flag for component level rows
 							fmt.Println("(Publish? is not set to TRUE) will not update", changeFields["modelDisplayName"])
 							continue
 						}
 						name := strings.TrimSuffix(strings.TrimSpace(entry.Name()), ".json")
-						if changeFields["Component"] != "" && changeFields["Component"] != name { //This is a component specific entry and only fill this when the filename matches component name
+						if changeFields["component"] != "" && changeFields["component"] != name { //This is a component specific entry and only fill this when the filename matches component name
 							continue
 						}
 
 						path, err := filepath.Abs(filepath.Join(dirpath, versionentry.Name(), entry.Name()))
 						if err != nil {
-							return err
+							fmt.Printf("[Error] for %s: %s\n", name, err.Error())
+							continue
 						}
 						byt, err := os.ReadFile(path)
 						if err != nil {
-							return err
+							fmt.Printf("[Error] for %s: %s\n", name, err.Error())
+							continue
 						}
 						var component v1alpha1.ComponentDefinition
 						err = json.Unmarshal(byt, &component)
 						if err != nil {
-							return err
+							fmt.Printf("[Error] for %s: %s\n", name, err.Error())
+							continue
 						}
 						component.DisplayName = manifests.FormatToReadableString(component.Kind)
-						fmt.Println("updating for ", changeFields["modelDisplayName"], "--", component.Kind)
 						if component.Metadata == nil {
 							component.Metadata = make(map[string]interface{})
 						}
 						for key, value := range changeFields {
 							if key == "category" {
-								component.Model.Category = value
-							} else if key == "subCategory" {
-								component.Model.SubCategory = value
+								component.Model.Category = v1alpha1.Category{
+									Name: value,
+								}
 							} else if key == "svgColor" || key == "svgWhite" {
-								component.Metadata[key], err = pkg.UpdateSVGString(value, SVG_WIDTH, SVG_HEIGHT)
+								svg, err := pkg.UpdateSVGString(value, SVG_WIDTH, SVG_HEIGHT)
 								if err != nil {
 									fmt.Println("err for: ", component.Kind, err.Error())
 								}
-								// component.Metadata[key] = value
+								if changeFields["component"] == "" { //If it is a model level entry then update model svgs
+									if component.Model.Metadata == nil {
+										component.Model.Metadata = make(map[string]interface{})
+									}
+									component.Model.Metadata[key] = svg
+								}
+								if changeFields["component"] != "" || component.Metadata[key] == nil { // If it is a component level SVG or component already doesn't have an SVG. Use this svg at component level.
+									component.Metadata[key] = svg
+								}
 							} else if isInColumnNames(key, ColumnNamesToExtract) != -1 {
 								component.Metadata[key] = value
 							}
@@ -276,16 +289,27 @@ func main() {
 						if i := isInColumnNames("modelDisplayName", ColumnNamesToExtract); i != -1 {
 							component.Model.DisplayName = changeFields[ColumnNamesToExtract[i]]
 						}
+						//Either component is set to published or the parent model is set to published
+						if component.Metadata["Publish?"] == "TRUE" || publishedModels[component.Model.Name] { //Publish? is an invalid field for putting inside kubernetes annotations
+							component.Metadata["published"] = true
+						} else {
+							component.Metadata["published"] = false
+						}
+						fmt.Println("updating for ", changeFields["modelDisplayName"], "--", component.Kind, "-- published=", component.Metadata["published"])
 						delete(component.Metadata, "Publish?")
+						delete(component.Metadata, "CRDs")
+						delete(component.Metadata, "component")
 						modelDisplayName := component.Metadata["modelDisplayName"].(string)
 						component.Model.DisplayName = modelDisplayName
 						byt, err = json.Marshal(component)
 						if err != nil {
-							return err
+							fmt.Printf("[Error] for %s: %s\n", name, err.Error())
+							continue
 						}
 						err = os.WriteFile(filepath.Join(dirpath, versionentry.Name(), entry.Name()), byt, 0777)
 						if err != nil {
-							return err
+							fmt.Printf("[Error] for %s: %s\n", name, err.Error())
+							continue
 						}
 					}
 				}
@@ -293,6 +317,7 @@ func main() {
 			}
 			return nil
 		})
+		fmt.Println("Total models without CRDs in spreadsheet are: ", countWithoutCrds)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -320,7 +345,7 @@ func cleanupDuplicatesAndPreferEmptyComponentField(out []map[string]string, grou
 		gkey := o[groupBykey]
 		//If the row with given gkey is encountered for the first time, or the given row already exists but with a non-empty component field then use the new entry.
 		//This logic will prioritize empty component fields to not be overriden
-		if keyToEntry[gkey] == nil || keyToEntry[gkey]["Component"] != "" {
+		if keyToEntry[gkey] == nil || keyToEntry[gkey]["component"] != "" {
 			keyToEntry[gkey] = o
 		}
 

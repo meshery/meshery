@@ -1,10 +1,5 @@
 ---
----
-
 <script>
     {% assign newestVer = site.data.versions | first %}
-    //console.log('ver:{{newestVer.url}}');
-   // alert('{{newestVer.url}}');
     window.location = "/{{newestVer.url}}";
-    //window.location = "/v0.5"
 </script>

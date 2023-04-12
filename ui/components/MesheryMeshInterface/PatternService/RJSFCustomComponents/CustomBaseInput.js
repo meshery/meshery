@@ -46,14 +46,15 @@ const BaseInput = (props) => {
                       ))}
                     </div>
 
-                  }>
+                  }
+                  interactive={true}>
                   <IconButton component="span" size="small">
                     <ErrorOutlineIcon width="14px" height="14px" fill="#B32700" style={{ verticalAlign : "middle", ...iconSmall }}/>
                   </IconButton>
                 </CustomTextTooltip>
               )}
               {props.schema?.description && (
-                <CustomTextTooltip backgroundColor="#3C494F" flag={props?.formContext?.overrideFlag} title={props.schema?.description}>
+                <CustomTextTooltip backgroundColor="#3C494F" flag={props?.formContext?.overrideFlag} title={props.schema?.description} interactive={true}>
                   <IconButton component="span" size="small">
                     <HelpOutlineIcon width="14px" height="14px"  fill={theme.palette.type === 'dark' ? "white" : "gray"}  style={{ verticalAlign : "middle", ...iconSmall }}/>
                   </IconButton>

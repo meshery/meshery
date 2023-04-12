@@ -5,14 +5,15 @@
   "main": "index.js",
   "scripts": {
     "dev": "node ui_dev_server.js",
-    "build": "next build",
+    "build": "npm run clean && next build",
     "export": "next export",
     "start": "NODE_ENV=production node server.js",
     "lint": "next lint",
     "lint:fix": "next lint --fix",
     "cy:run": "cypress run",
     "cy:open": "cypress open",
-    "test": "start-server-and-test dev http://localhost:3001 cy:run && next lint"
+    "test": "start-server-and-test dev http://localhost:3001 cy:run && next lint",
+    "clean": "rm -rf .next,out"
   },
   "keywords": [],
   "author": "Layer5",
@@ -22,11 +23,11 @@
     "@babel/eslint-parser": "^7.19.1",
     "@cypress/code-coverage": "^3.10.0",
     "@emotion/cache": "^11.10.5",
-    "@emotion/react": "^11.10.5",
+    "@emotion/react": "^11.10.6",
     "@emotion/server": "^11.10.0",
-    "@emotion/styled": "^11.10.5",
-    "@mui/icons-material": "^5.11.0",
-    "@mui/material": "^5.11.6",
+    "@emotion/styled": "^11.10.6",
+    "@mui/icons-material": "^5.11.11",
+    "@mui/material": "^5.11.15",
     "babel-plugin-istanbul": "^6.1.1",
     "http-proxy": "^1.18.1",
     "isomorphic-unfetch": "^4.0.2",
@@ -36,10 +37,10 @@
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "cypress": "^12.4.0",
+    "cypress": "^12.9.0",
     "eslint": "^8.32.0",
-    "eslint-config-next": "^13.1.5",
-    "eslint-plugin-cypress": "^2.12.1",
+    "eslint-config-next": "^13.2.4",
+    "eslint-plugin-cypress": "^2.13.2",
     "start-server-and-test": "^1.15.3"
   },
   "engines": {

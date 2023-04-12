@@ -33,7 +33,7 @@ Meshery deploys as a set of Docker containers, which can be deployed to either a
 }
 </style>
 
-{% assign k8s_tests_group = site.compatibility | group_by: "k8s-version" %}
+{% assign k8s_tests_group = site.compatibility | group_by: "k8s-version" | sort: "name" | reverse %}
 
 <div>
     <ul class="nav nav-tabs nav-fill mb-3" id="myTab" role="tablist">
@@ -53,7 +53,6 @@ Meshery deploys as a set of Docker containers, which can be deployed to either a
       <div class="tab-content" id="myTabContent">
         <div class="tab-pane fade show active" id="kubernetes" role="tabpanel" aria-labelledby="kubernetes-tab">
             {%include compatibilityMatrix.md k8s_tests_group=k8s_tests_group %}
-            <p style="font-size:20px; text-align:center;z-index:100;"><a href="{{ site.baseurl }}/installation/platforms/kubernetes">Install Instruction</a></p>
             <div style="z-index:0">
               {% include alert.html type="info" title="<span style='margin:0;'>Overview of the Integration Tests</span>" content="For a complete overview of the latest integration tests and their status please visit Meshery <a href='/project/compatibility-matrix#integration-tests'>Integration Tests</a>" %}
             </div>
@@ -74,7 +73,6 @@ Meshery deploys as a set of Docker containers, which can be deployed to either a
               <td><b>2.0.x</b> and above </td>
             </tr>
           </table>
-        <br><a style="font-size:20px" href="{{ site.baseurl }}/installation/platforms/docker">Install Instruction</a></div>
         <!-- <div style="background-color:#E6E6E6; text-align:center;font-size:30px;padding:210px; color:#999999;" class="tab-pane fade" id="mac" role="tabpanel" aria-labelledby="mac-tab">Compatibility matrix not yet available<br> <a style="font-size:20px" href="{{ site.baseurl }}/installation/">Install Instruction</a></div>
         <div style="text-align:center;" class="tab-pane fade" id="windows" role="tabpanel" aria-labelledby="windows-tab">
           <h3 style="text-align:left;">The following minimum Windows build versions are required:</h3>

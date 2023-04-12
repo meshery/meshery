@@ -1,4 +1,4 @@
-// Copyright 2020 Layer5, Inc.
+// Copyright 2023 Layer5, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -27,6 +27,11 @@ import (
 	"github.com/spf13/viper"
 )
 
+var linkDocReset = map[string]string{
+	"link":    "![reset-usage](/assets/img/mesheryctl/reset.png)",
+	"caption": "Usage of mesheryctl system reset",
+}
+
 // resetCmd represents the reset command
 var resetCmd = &cobra.Command{
 	Use:   "reset",
@@ -35,11 +40,8 @@ var resetCmd = &cobra.Command{
 	Example: `
 // Resets meshery.yaml file with a copy from Meshery repo
 mesheryctl system reset
-
-! Refer below image link for usage
-* Usage of mesheryctl system reset
-# ![reset-usage](/assets/img/mesheryctl/reset.png)
 	`,
+	Annotations: linkDocReset,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) != 0 {
 			return errors.New(utils.SystemLifeCycleError(fmt.Sprintf("this command takes no arguments. See '%s --help' for more information.\n", cmd.CommandPath()), "reset"))
@@ -95,11 +97,7 @@ func resetMesheryConfig() error {
 		return ErrSettingDefaultContextToConfig(err)
 	}
 
-	if err = fetchManifests(mctlCfg); err != nil {
-		return err
-	}
-
-	return nil
+	return fetchManifests(mctlCfg)
 }
 
 // Fetches manifests for meshery components based on the current context

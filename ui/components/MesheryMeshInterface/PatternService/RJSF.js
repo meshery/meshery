@@ -8,7 +8,6 @@ import darkRjsfTheme from '../../../themes/rjsf';
 import { CustomTextTooltip } from './CustomTextTooltip';
 import MesheryArrayFieldTemplate from "./RJSFCustomComponents/ArrayFieldTemlate";
 import CustomDateTimeWidget from './RJSFCustomComponents/CustomDateTimeWidget';
-import ObjectFieldWithErrors from './RJSFCustomComponents/CustomObjectField';
 import CustomTextWidget from './RJSFCustomComponents/CustomTextWidget';
 import { CustomFieldTemplate } from './RJSFCustomComponents/FieldTemplate';
 import MesheryCustomObjFieldTemplate from "./RJSFCustomComponents/ObjectFieldTemplate";
@@ -56,7 +55,7 @@ function RJSFForm({
 
   return (
     <MuiThemeProvider
-      theme={globalTheme.palette.type == "dark" ? darkRjsfTheme : rjsfTheme}>
+      theme={globalTheme.palette.type === "dark" ? darkRjsfTheme : rjsfTheme}>
       <MuiRJSFForm
         schema={schema.rjsfSchema}
         idPrefix={jsonSchema?.title}
@@ -71,7 +70,6 @@ function RJSFForm({
         }}
         formContext={{ overrideFlag : override, CustomTextTooltip : CustomTextTooltip }}
         uiSchema={_.merge(schema.uiSchema, uiSchema)}
-        fields={{ ObjectField : ObjectFieldWithErrors }}
         widgets={{
           TextWidget : CustomTextWidget,
           // Custom components to be added here

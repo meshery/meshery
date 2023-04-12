@@ -42,11 +42,18 @@ const styles = (theme) => ({
     borderTopLeftRadius : 3,
     borderTopRightRadius : 3,
   },
-  tabs : { marginLeft : 0 },
+  tabs : { marginLeft : 0,
+    "& .MuiTabs-indicator" : {
+      backgroundColor : theme.palette.type === 'dark' ? "#00B39F" : theme.palette.primary,
+    },
+  },
   tab : {
     maxWidth : 'min(33%, 200px)',
     minWidth : '50px',
-    margin : 0
+    margin : 0,
+    "&.Mui-selected" : {
+      color : theme.palette.type === 'dark' ? "#00B39F" : theme.palette.primary,
+    }
   },
   icon : {
     display : 'inline',
@@ -138,7 +145,7 @@ class UserPreference extends React.Component {
 
   handleToggle = (name) => () => {
     const self = this;
-    if (name == 'anonymousUsageStats') {
+    if (name === 'anonymousUsageStats') {
       self.setState((state) => ({ anonymousStats : !state.anonymousStats }), () => this.handleChange(name));
     } else {
       self.setState((state) => ({ perfResultStats : !state.perfResultStats }), () => this.handleChange(name));
@@ -166,7 +173,7 @@ class UserPreference extends React.Component {
     const self = this;
     const { anonymousStats, perfResultStats } = this.state;
     let val, msg;
-    if (name == 'anonymousUsageStats') {
+    if (name === 'anonymousUsageStats') {
       val = anonymousStats;
       msg = val
         ? "Sending anonymous usage statistics was enabled"
@@ -300,7 +307,7 @@ class UserPreference extends React.Component {
           </Tabs>
         </Paper>
         <Paper className={classes.statsWrapper}>
-          {tabVal == 0 &&
+          {tabVal === 0 &&
           <>
             <div className={classes.formContainer}>
               <FormControl component="fieldset" className={classes.formGrp}>
@@ -369,7 +376,7 @@ class UserPreference extends React.Component {
           {tabVal === 1 &&
             <MesherySettingsPerformanceComponent />
           }
-          {tabVal == 2 && userPrefs && providerType != 'local' &&
+          {tabVal === 2 && userPrefs && providerType !== 'local' &&
             <ExtensionSandbox type="user_prefs" Extension={(url) => RemoteComponent({ url })} />
           }
         </Paper>

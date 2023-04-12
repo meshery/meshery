@@ -430,7 +430,7 @@ export const styles = (theme) => ({
   },
   footerIcon : {
     display : 'inline',
-    verticalAlign : 'top',
+    verticalAlign : 'bottom'
   },
   icon : { fontSize : 20, },
   notifSuccess : {
