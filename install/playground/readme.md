@@ -25,6 +25,18 @@ Affect changes:
 Needed?
 `systemctl restart networking`
 
+### Firewalling
+
+cd /etc/network/interface/if-up.d/
+cat 
+```
+#!/bin/sh
+
+iptables -I INPUT -s 192.210.143.199 -j DROP
+```
+> protect-kubelet
+chmod +x protect-kubelet
+
 
 ### Nginx Configuration for websocket (until annotations issue is solved)
 ## When to do this: Whenever Ingress is reset directly or indirectly(via scaling deployments).
