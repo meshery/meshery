@@ -196,7 +196,7 @@ var TemplateContext = config.Context{
 	Endpoint:   EndpointProtocol + "://localhost:9081",
 	Token:      "default",
 	Platform:   "kubernetes",
-	Components: ListOfComponents,
+	Components: []string{},
 	Channel:    "stable",
 	Version:    "latest",
 }
