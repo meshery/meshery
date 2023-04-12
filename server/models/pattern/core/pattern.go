@@ -95,18 +95,7 @@ func ConvertMapInterfaceMapString(v interface{}, prettify bool, isSchema bool) i
 			} else {
 				m[manifests.FormatToReadableString(k)] = newmap
 			}
-			// if isSchema {
-			// 	//Apply this fix only when the format specifies string|int and type specifies string therefore when there is a contradiction
-			// 	if k == "format" && v2 == "int-or-string" {
-			// 		foundFormatIntOrString = true
-			// 	}
-			// }
 		}
-		// if isSchema {
-		// 	if x["type"] == "string" && foundFormatIntOrString {
-		// 		m["type"] = "integer"
-		// 	}
-		// }
 		return m
 	case string:
 		if isSchema {

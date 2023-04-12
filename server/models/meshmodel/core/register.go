@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"strings"
-	"time"
 
 	"cuelang.org/go/cue"
 	"cuelang.org/go/cue/cuecontext"
@@ -85,7 +84,7 @@ type Entry struct {
 	URL string `json:"serverRelativeURL"`
 }
 
-func mergeAllAPIs(content []byte, cli *kubernetes.Client) [][]byte {
+func mergeAllAPIResults(content []byte, cli *kubernetes.Client) [][]byte {
 	var res OpenAPIV3Response
 	json.Unmarshal(content, &res)
 	m := make([][]byte, 0)
@@ -93,7 +92,6 @@ func mergeAllAPIs(content []byte, cli *kubernetes.Client) [][]byte {
 		if !strings.HasPrefix(k, "api") {
 			continue
 		}
-		fmt.Println("bruh ", k, " ->", path.URL)
 		req := cli.KubeClient.RESTClient().Get().RequestURI(path.URL)
 		res := req.Do(context.Background())
 		content, err := res.Raw()
@@ -101,12 +99,6 @@ func mergeAllAPIs(content []byte, cli *kubernetes.Client) [][]byte {
 			return nil
 		}
 		m = append(m, content)
-		// m := make(map[string]interface{})
-		// _ = json.Unmarshal(content, &m)
-		// utils.MergeMaps(newSchema["paths"], m["paths"].(map[string]interface{}))
-		// utils.MergeMaps(newSchema["components"], m["components"].(map[string]interface{}))
-		// schemas := m["components"].(map[string]interface{})["schemas"].(map[string]interface{})
-		// utils.MergeMaps(newSchema, schemas)
 	}
 	return m
 }
@@ -141,7 +133,7 @@ func GetK8sMeshModelComponents(kubeconfig []byte) ([]v1alpha1.ComponentDefinitio
 	if err != nil {
 		return nil, ErrGetK8sComponents(err)
 	}
-	contents := mergeAllAPIs(content, cli)
+	contents := mergeAllAPIResults(content, cli)
 	apiResources, err := getAPIRes(cli)
 	if err != nil {
 		return nil, ErrGetK8sComponents(err)
@@ -154,17 +146,9 @@ func GetK8sMeshModelComponents(kubeconfig []byte) ([]v1alpha1.ComponentDefinitio
 		arrAPIResources = append(arrAPIResources, res)
 	}
 	var crds []crdResponse
-	t := time.Now()
 	for _, content := range contents {
-		manifest := string(content)
-		crd := getCRDsFromManifest(manifest, arrAPIResources)
-		for _, c := range crd {
-			fmt.Println(c.kind)
-		}
-		crds = append(crds, crd...)
+		crds = append(crds, getCRDsFromManifest(string(content), arrAPIResources)...)
 	}
-	d := time.Since(t)
-	fmt.Println("GENERATION TOOK: ", d.Minutes())
 	components := make([]v1alpha1.ComponentDefinition, 0)
 	for _, crd := range crds {
 		m := make(map[string]interface{})
@@ -206,7 +190,8 @@ func getResolvedManifest(manifest string) (string, error) {
 		return "", err
 	}
 	resol := manifests.ResolveOpenApiRefs{}
-	resolved, err := resol.ResolveReferences([]byte(manifest), definitions)
+	cache := make(map[string][]byte)
+	resolved, err := resol.ResolveReferences([]byte(manifest), definitions, cache)
 	if err != nil {
 		return "", err
 	}
