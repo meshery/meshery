@@ -135,7 +135,6 @@ function MesherySnackbarWrapper(props) {
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
-    // expand && (expand = false);
   };
 
   const handleSocialExpandClick = (e) => {
