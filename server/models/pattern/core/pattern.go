@@ -61,10 +61,12 @@ func ConvertMapInterfaceMapString(v interface{}, prettify bool, isSchema bool) i
 					m[k2] = v2
 					continue
 				}
-				if prettify {
-					m[manifests.FormatToReadableString(k2)] = ConvertMapInterfaceMapString(v2, prettify, isSchema)
+				var newmap interface{}
+				newmap = ConvertMapInterfaceMapString(v2, prettify, isSchema)
+				if isSchema && (k2 == "anyOf" || k2 == "allOf" || k2 == "oneOf") {
+					m[k2] = newmap
 				} else {
-					m[manifests.DeFormatReadableString(k2)] = ConvertMapInterfaceMapString(v2, prettify, isSchema)
+					m[manifests.FormatToReadableString(k2)] = newmap
 				}
 			default:
 				m[fmt.Sprint(k)] = ConvertMapInterfaceMapString(v2, prettify, isSchema)
@@ -80,27 +82,31 @@ func ConvertMapInterfaceMapString(v interface{}, prettify bool, isSchema bool) i
 		return x2
 	case map[string]interface{}:
 		m := map[string]interface{}{}
-		foundFormatIntOrString := false
+		// foundFormatIntOrString := false
 		for k, v2 := range x {
 			if isSchema && k == "enum" { //While schema prettification, ENUMS are end system defined end user input and therefore should not be prettified/deprettified
 				m[k] = v2
-			} else if prettify {
-				m[manifests.FormatToReadableString(k)] = ConvertMapInterfaceMapString(v2, prettify, isSchema)
+				continue
+			}
+			var newmap interface{}
+			newmap = ConvertMapInterfaceMapString(v2, prettify, isSchema)
+			if isSchema && (k == "anyOf" || k == "allOf" || k == "oneOf") {
+				m[k] = newmap
 			} else {
-				m[manifests.DeFormatReadableString(k)] = ConvertMapInterfaceMapString(v2, prettify, isSchema)
+				m[manifests.FormatToReadableString(k)] = newmap
 			}
-			if isSchema {
-				//Apply this fix only when the format specifies string|int and type specifies string therefore when there is a contradiction
-				if k == "format" && v2 == "int-or-string" {
-					foundFormatIntOrString = true
-				}
-			}
+			// if isSchema {
+			// 	//Apply this fix only when the format specifies string|int and type specifies string therefore when there is a contradiction
+			// 	if k == "format" && v2 == "int-or-string" {
+			// 		foundFormatIntOrString = true
+			// 	}
+			// }
 		}
-		if isSchema {
-			if x["type"] == "string" && foundFormatIntOrString {
-				m["type"] = "integer"
-			}
-		}
+		// if isSchema {
+		// 	if x["type"] == "string" && foundFormatIntOrString {
+		// 		m["type"] = "integer"
+		// 	}
+		// }
 		return m
 	case string:
 		if isSchema {

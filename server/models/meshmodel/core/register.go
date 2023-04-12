@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"strings"
+	"time"
 
 	"cuelang.org/go/cue"
 	"cuelang.org/go/cue/cuecontext"
@@ -76,13 +77,47 @@ func RegisterMeshmodelComponentsForCRDS(reg meshmodel.RegistryManager, k8sYaml [
 	}
 }
 
+type OpenAPIV3Response struct {
+	Paths map[string]Entry `json:"paths"`
+}
+
+type Entry struct {
+	URL string `json:"serverRelativeURL"`
+}
+
+func mergeAllAPIs(content []byte, cli *kubernetes.Client) [][]byte {
+	var res OpenAPIV3Response
+	json.Unmarshal(content, &res)
+	m := make([][]byte, 0)
+	for k, path := range res.Paths {
+		if !strings.HasPrefix(k, "api") {
+			continue
+		}
+		fmt.Println("bruh ", k, " ->", path.URL)
+		req := cli.KubeClient.RESTClient().Get().RequestURI(path.URL)
+		res := req.Do(context.Background())
+		content, err := res.Raw()
+		if err != nil {
+			return nil
+		}
+		m = append(m, content)
+		// m := make(map[string]interface{})
+		// _ = json.Unmarshal(content, &m)
+		// utils.MergeMaps(newSchema["paths"], m["paths"].(map[string]interface{}))
+		// utils.MergeMaps(newSchema["components"], m["components"].(map[string]interface{}))
+		// schemas := m["components"].(map[string]interface{})["schemas"].(map[string]interface{})
+		// utils.MergeMaps(newSchema, schemas)
+	}
+	return m
+}
+
 // move to meshmodel
 func GetK8sMeshModelComponents(kubeconfig []byte) ([]v1alpha1.ComponentDefinition, error) {
 	cli, err := kubernetes.New(kubeconfig)
 	if err != nil {
 		return nil, ErrGetK8sComponents(err)
 	}
-	req := cli.KubeClient.RESTClient().Get().RequestURI("/openapi/v2")
+	req := cli.KubeClient.RESTClient().Get().RequestURI("/openapi/v3")
 	k8version, err := cli.KubeClient.ServerVersion()
 	if err != nil {
 		return nil, ErrGetK8sComponents(err)
@@ -106,6 +141,7 @@ func GetK8sMeshModelComponents(kubeconfig []byte) ([]v1alpha1.ComponentDefinitio
 	if err != nil {
 		return nil, ErrGetK8sComponents(err)
 	}
+	contents := mergeAllAPIs(content, cli)
 	apiResources, err := getAPIRes(cli)
 	if err != nil {
 		return nil, ErrGetK8sComponents(err)
@@ -117,8 +153,18 @@ func GetK8sMeshModelComponents(kubeconfig []byte) ([]v1alpha1.ComponentDefinitio
 		kindToNamespace[api.Kind] = api.Namespaced
 		arrAPIResources = append(arrAPIResources, res)
 	}
-	manifest := string(content)
-	crds := getCRDsFromManifest(manifest, arrAPIResources)
+	var crds []crdResponse
+	t := time.Now()
+	for _, content := range contents {
+		manifest := string(content)
+		crd := getCRDsFromManifest(manifest, arrAPIResources)
+		for _, c := range crd {
+			fmt.Println(c.kind)
+		}
+		crds = append(crds, crd...)
+	}
+	d := time.Since(t)
+	fmt.Println("GENERATION TOOK: ", d.Minutes())
 	components := make([]v1alpha1.ComponentDefinition, 0)
 	for _, crd := range crds {
 		m := make(map[string]interface{})
@@ -155,7 +201,7 @@ func getResolvedManifest(manifest string) (string, error) {
 	cuectx := cuecontext.New()
 	cueParsedManExpr, err := cueJson.Extract("", []byte(manifest))
 	parsedManifest := cuectx.BuildExpr(cueParsedManExpr)
-	definitions := parsedManifest.LookupPath(cue.ParsePath("definitions"))
+	definitions := parsedManifest.LookupPath(cue.ParsePath("components.schemas"))
 	if err != nil {
 		return "", err
 	}
@@ -186,9 +232,8 @@ func getCRDsFromManifest(manifest string, arrAPIResources []string) []crdRespons
 	cuectx := cuecontext.New()
 	cueParsedManExpr, err := cueJson.Extract("", []byte(manifest))
 	parsedManifest := cuectx.BuildExpr(cueParsedManExpr)
-	definitions := parsedManifest.LookupPath(cue.ParsePath("definitions"))
+	definitions := parsedManifest.LookupPath(cue.ParsePath("components.schemas"))
 	if err != nil {
-		fmt.Printf("%v", err)
 		return nil
 	}
 	for _, name := range arrAPIResources {
@@ -240,7 +285,6 @@ func getCRDsFromManifest(manifest string, arrAPIResources []string) []crdRespons
 					schema:     string(crd),
 					apiVersion: apiVersion, //add apiVersion
 				})
-				// resourceToName[resource] = manifests.FormatToReadableString(name)
 			}
 		}
 	}
