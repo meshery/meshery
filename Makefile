@@ -314,9 +314,8 @@ swagger: swagger-build
 	swagger serve ./server/helpers/swagger.yaml
 
 ## Build Meshery REST API documentation
-swagger-docs-build:
-	swagger generate spec -o ./docs/_data/swagger.yml --scan-models; \
-	swagger flatten ./docs/_data/swagger.yml -o ./docs/_data/swagger.yml --with-expand --format=yaml
+redocly-docs-build:
+	npx @redocly/cli build-docs ./docs/_data/swagger.yml
 
 ## Build Meshery GraphQL API documentation
 graphql-docs:
