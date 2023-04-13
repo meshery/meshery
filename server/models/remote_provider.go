@@ -3442,13 +3442,45 @@ func (l *RemoteProvider) SaveUserCredential(req *http.Request, credential *Crede
 }
 
 // GetCredentials - to get saved credentials
-// TODO
-func (l *RemoteProvider) GetUserCredentials(_ *http.Request, _ string, _, _ int, _, _ string) (*CredentialsPage, error) {
+func (l *RemoteProvider) GetUserCredentials(req *http.Request, _, page, pageSize, search, order string) (*CredentialsPage, error) {
 	if !l.Capabilities.IsSupported(PersistCredentials) {
 		logrus.Error("operation not available")
 		return nil, ErrInvalidCapability("PersistCredentials", l.ProviderName)
 	}
-	return nil, nil
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistSMPTestProfile)
+
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
+	q := remoteProviderURL.Query()
+	q.Add("page", page)
+	q.Add("pageSize", pageSize)
+	q.Add("search", search)
+	q.Add("order", order)
+
+	remoteProviderURL.RawQuery = q.Encode()
+	logrus.Debugf("Making request to : %s", remoteProviderURL.String())
+	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
+	tokenString, err := l.GetToken(req)
+	if err != nil {
+		return nil, err
+	}
+	resp, err := l.DoRequest(cReq, tokenString)
+	if err != nil {
+		return nil, ErrFetch(err, "Perf Test Config Page", resp.StatusCode)
+	}
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+
+	bdr, _ := io.ReadAll(resp.Body)
+	if resp.StatusCode != http.StatusOK {
+		return nil, ErrFetch(fmt.Errorf("could not retrieve list of test profiles: %d", resp.StatusCode), fmt.Sprint(bdr), resp.StatusCode)
+	}
+
+	var cp CredentialsPage
+	if err = json.Unmarshal(bdr, &cp); err != nil {
+		return nil, err
+	}
+	return &cp, nil
 }
 
 // UpdateUserCredential - to update an existing credential
