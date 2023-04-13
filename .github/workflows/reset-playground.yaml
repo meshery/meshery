@@ -1,4 +1,4 @@
-name: Meshery Playground: Reset
+name: Meshery Playground - Reset
 on:
    workflow_dispatch:
    schedule:
