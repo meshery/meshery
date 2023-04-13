@@ -3346,3 +3346,167 @@ func (l *RemoteProvider) SetKubeClient(client *mesherykube.Client) {
 func (l *RemoteProvider) GetKubeClient() *mesherykube.Client {
 	return l.KubeClient
 }
+
+// SaveCredential - to save a creadential for an integration
+func (l *RemoteProvider) SaveUserCredential(req *http.Request, credential *Credential) error {
+	if !l.Capabilities.IsSupported(PersistCredentials) {
+		logrus.Error("operation not available")
+		return ErrInvalidCapability("PersistCredentials", l.ProviderName)
+	}
+
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistCredentials)
+	_creds, err := json.Marshal(credential)
+	if err != nil {
+		return err
+	}
+	bf := bytes.NewBuffer(_creds)
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
+	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), bf)
+	tokenString, _ := l.GetToken(req)
+	if err != nil {
+		logrus.Error("error getting token: ", err)
+		return err
+	}
+
+	resp, err := l.DoRequest(cReq, tokenString)
+	if err != nil {
+		return ErrFetch(err, "Save Credential", resp.StatusCode)
+	}
+	defer resp.Body.Close()
+
+	bdr, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return ErrDataRead(err, "Save Credential")
+	}
+
+	if resp.StatusCode == http.StatusOK {
+		return nil
+	}
+
+	return ErrFetch(fmt.Errorf("failed to save the credential"), fmt.Sprint(bdr), resp.StatusCode)
+}
+
+// GetCredentials - to get saved credentials
+func (l *RemoteProvider) GetUserCredentials(req *http.Request, _ string, page, pageSize int, search, order string) (*CredentialsPage, error) {
+	if !l.Capabilities.IsSupported(PersistCredentials) {
+		logrus.Error("operation not available")
+		return nil, ErrInvalidCapability("PersistCredentials", l.ProviderName)
+	}
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistSMPTestProfile)
+
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
+	q := remoteProviderURL.Query()
+	q.Add("page", strconv.Itoa(page))
+	q.Add("pageSize", strconv.Itoa(pageSize))
+	q.Add("search", search)
+	q.Add("order", order)
+
+	remoteProviderURL.RawQuery = q.Encode()
+	logrus.Debugf("Making request to : %s", remoteProviderURL.String())
+	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
+	tokenString, err := l.GetToken(req)
+	if err != nil {
+		return nil, err
+	}
+	resp, err := l.DoRequest(cReq, tokenString)
+	if err != nil {
+		return nil, ErrFetch(err, "Perf Test Config Page", resp.StatusCode)
+	}
+	defer resp.Body.Close()
+
+	bdr, _ := io.ReadAll(resp.Body)
+	if resp.StatusCode != http.StatusOK {
+		return nil, ErrFetch(fmt.Errorf("could not retrieve list of test profiles: %d", resp.StatusCode), fmt.Sprint(bdr), resp.StatusCode)
+	}
+
+	var cp CredentialsPage
+	if err = json.Unmarshal(bdr, &cp); err != nil {
+		return nil, err
+	}
+	return &cp, nil
+}
+
+// UpdateUserCredential - to update an existing credential
+func (l *RemoteProvider) UpdateUserCredential(req *http.Request, credential *Credential) (*Credential, error) {
+	if !l.Capabilities.IsSupported(PersistCredentials) {
+		logrus.Error("operation not available")
+		return nil, ErrInvalidCapability("PersistCredentials", l.ProviderName)
+	}
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistCredentials)
+	_creds, err := json.Marshal(credential)
+	if err != nil {
+		return nil, err
+	}
+	bf := bytes.NewBuffer(_creds)
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
+	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), bf)
+	tokenString, _ := l.GetToken(req)
+	if err != nil {
+		logrus.Error("error getting token: ", err)
+		return nil, err
+	}
+
+	resp, err := l.DoRequest(cReq, tokenString)
+	if err != nil {
+		return nil, ErrFetch(err, "Update Credential", resp.StatusCode)
+	}
+	defer resp.Body.Close()
+
+	bdr, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, ErrDataRead(err, "Update Credential")
+	}
+
+	if resp.StatusCode == http.StatusOK {
+		var cred Credential
+		if err = json.Unmarshal(bdr, &cred); err != nil {
+			return nil, err
+		}
+		return &cred, nil
+	}
+
+	return nil, ErrFetch(fmt.Errorf("failed to update the credential"), fmt.Sprint(bdr), resp.StatusCode)
+}
+
+// DeleteUserCredential - to delete a saved credential
+func (l *RemoteProvider) DeleteUserCredential(req *http.Request, credentialID uuid.UUID) (*Credential, error) {
+	if !l.Capabilities.IsSupported(PersistCredentials) {
+		logrus.Error("operation not available")
+		return nil, ErrInvalidCapability("PersistCredentials", l.ProviderName)
+	}
+
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistMesheryFilters)
+
+	logrus.Infof("attempting to delete credential from cloud for id: %s", credentialID)
+
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s", l.RemoteProviderURL, ep, credentialID))
+	logrus.Debugf("constructed credential url: %s", remoteProviderURL.String())
+	cReq, _ := http.NewRequest(http.MethodDelete, remoteProviderURL.String(), nil)
+
+	tokenString, err := l.GetToken(req)
+	if err != nil {
+		return nil, err
+	}
+	resp, err := l.DoRequest(cReq, tokenString)
+	if err != nil {
+		logrus.Errorf("unable to delete credential: %v", err)
+		return nil, ErrDelete(err, "Credential: "+credentialID.String(), resp.StatusCode)
+	}
+	defer resp.Body.Close()
+
+	bdr, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, ErrDataRead(err, "Credential: "+credentialID.String())
+	}
+
+	if resp.StatusCode == http.StatusOK {
+		logrus.Infof("credential successfully deleted from remote provider")
+		var cred Credential
+		if err = json.Unmarshal(bdr, &cred); err != nil {
+			return nil, err
+		}
+		return &cred, nil
+	}
+	logrus.Errorf("error while deleting credential: %s", bdr)
+	return nil, ErrDelete(fmt.Errorf("error while deleting credential: %s", bdr), fmt.Sprint(bdr), resp.StatusCode)
+}
