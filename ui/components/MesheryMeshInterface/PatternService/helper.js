@@ -11,8 +11,7 @@ function deleteDescriptionFromJSONSchema(jsonSchema) {
 
 /**
  * remove top-level title, top-level description and
- * replace internal description with "help" key for
- * tooltip description
+ * handle non-RJSF compliant fields
  *
  * @param {Object.<String, Object>} jsonSchema
  * @returns
