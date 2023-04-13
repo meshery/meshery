@@ -1081,7 +1081,7 @@ func (l *DefaultLocalProvider) Cleanup() error {
 	return l.MesheryK8sContextPersister.DB.Migrator().DropTable(&MesheryFilter{})
 }
 
-func (l *DefaultLocalProvider) SaveUserCredential(credential *Credential) error {
+func (l *DefaultLocalProvider) SaveUserCredential(_ *http.Request, credential *Credential) error {
 	result := l.GetGenericPersister().Table("credentials").Create(&credential)
 	if result.Error != nil {
 		return fmt.Errorf("error saving user credentials: %v", result.Error)
@@ -1089,7 +1089,7 @@ func (l *DefaultLocalProvider) SaveUserCredential(credential *Credential) error 
 	return nil
 }
 
-func (l *DefaultLocalProvider) GetUserCredentials(userID string, page, pageSize int, search, order string) (*CredentialsPage, error) {
+func (l *DefaultLocalProvider) GetUserCredentials(_ *http.Request, userID string, page, pageSize int, search, order string) (*CredentialsPage, error) {
 	result := l.GetGenericPersister().Select("*").Where("user_id=? and deleted_at is NULL", userID)
 	if result.Error != nil {
 		return nil, result.Error
@@ -1128,7 +1128,7 @@ func (l *DefaultLocalProvider) GetUserCredentials(userID string, page, pageSize 
 	return credentialsPage, nil
 }
 
-func (l *DefaultLocalProvider) UpdateUserCredential(credential *Credential) (*Credential, error) {
+func (l *DefaultLocalProvider) UpdateUserCredential(_ *http.Request, credential *Credential) (*Credential, error) {
 	updatedCredential := &Credential{}
 	if err := l.GetGenericPersister().Model(*updatedCredential).Where("user_id = ? AND id = ? AND deleted_at is NULL", credential.UserID, credential.ID).Updates(credential); err != nil {
 		return nil, fmt.Errorf("error updating user credential: %v", err)
@@ -1140,7 +1140,7 @@ func (l *DefaultLocalProvider) UpdateUserCredential(credential *Credential) (*Cr
 	return updatedCredential, nil
 }
 
-func (l *DefaultLocalProvider) DeleteUserCredential(credentialID uuid.UUID) (*Credential, error) {
+func (l *DefaultLocalProvider) DeleteUserCredential(_ *http.Request, credentialID uuid.UUID) (*Credential, error) {
 	delCredential := &Credential{}
 	if err := l.GetGenericPersister().Model(&Credential{}).Where("id = ?", credentialID).Update("deleted_at", time.Now()).Error; err != nil {
 		return nil, err

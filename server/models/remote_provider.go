@@ -3403,7 +3403,7 @@ func (l *RemoteProvider) GetKubeClient() *mesherykube.Client {
 
 // SaveCredential - to save a creadential for an integration
 // TODO
-func (l *RemoteProvider) SaveUserCredential(_ *Credential) error {
+func (l *RemoteProvider) SaveUserCredential(_ *http.Request, _ *Credential) error {
 	if !l.Capabilities.IsSupported(PersistCredentials) {
 		logrus.Error("operation not available")
 		return ErrInvalidCapability("PersistCredentials", l.ProviderName)
@@ -3413,7 +3413,7 @@ func (l *RemoteProvider) SaveUserCredential(_ *Credential) error {
 
 // GetCredentials - to get saved credentials
 // TODO
-func (l *RemoteProvider) GetUserCredentials(_ string, _, _ int, _, _ string) (*CredentialsPage, error) {
+func (l *RemoteProvider) GetUserCredentials(_ *http.Request, _ string, _, _ int, _, _ string) (*CredentialsPage, error) {
 	if !l.Capabilities.IsSupported(PersistCredentials) {
 		logrus.Error("operation not available")
 		return nil, ErrInvalidCapability("PersistCredentials", l.ProviderName)
@@ -3423,7 +3423,7 @@ func (l *RemoteProvider) GetUserCredentials(_ string, _, _ int, _, _ string) (*C
 
 // UpdateUserCredential - to update an existing credential
 // TODO
-func (l *RemoteProvider) UpdateUserCredential(_ *Credential) (*Credential, error) {
+func (l *RemoteProvider) UpdateUserCredential(_ *http.Request, _ *Credential) (*Credential, error) {
 	if !l.Capabilities.IsSupported(PersistCredentials) {
 		logrus.Error("operation not available")
 		return nil, ErrInvalidCapability("PersistCredentials", l.ProviderName)
@@ -3433,7 +3433,7 @@ func (l *RemoteProvider) UpdateUserCredential(_ *Credential) (*Credential, error
 
 // DeleteUserCredential - to delete a saved credential
 // TODO
-func (l *RemoteProvider) DeleteUserCredential(_ uuid.UUID) (*Credential, error) {
+func (l *RemoteProvider) DeleteUserCredential(_ *http.Request, _ uuid.UUID) (*Credential, error) {
 	if !l.Capabilities.IsSupported(PersistCredentials) {
 		logrus.Error("operation not available")
 		return nil, ErrInvalidCapability("PersistCredentials", l.ProviderName)
