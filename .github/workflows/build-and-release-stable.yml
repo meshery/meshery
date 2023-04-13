@@ -77,7 +77,7 @@ jobs:
     name: Build and Release Docker Extension
     uses: meshery/meshery/.github/workflows/build-and-release-dde.yml@master
     secrets: inherit
-  call-playground-deploy-workflow:
+  call-aks-playground-deploy-workflow:
     needs: build
     name: Deploy Meshery Playground
     uses: meshery/meshery/.github/workflows/deploy-meshery-playground.yml@master
@@ -88,3 +88,15 @@ jobs:
     uses: layer5labs/meshery-extensions-packages/.github/workflows/notify-email.yml@master
     secrets: inherit
 
+  cncf-playground-rollout:
+      name: Rollout Meshery on CNCF playground
+      needs: build
+      if: github.repository == 'meshery/meshery'
+      runs-on: ubuntu-latest 
+      steps:
+       - uses: azure/setup-kubectl@v3
+       - name: Extract kubeconfig
+         run: mkdir ~/.kube; touch ~/.kube/config ;echo "${{ secrets.PLAYGROUND_CONFIG }}" | base64 --decode > ~/.kube/config
+       - name: Rollout Meshery so that pods can restart with latest Meshery image
+         run: |
+          kubectl -n meshery rollout restart deployment meshery
