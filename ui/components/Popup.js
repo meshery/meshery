@@ -36,11 +36,16 @@ const styles = makeStyles((theme) => ({
   header : {
     paddingBottom : "0.5rem",
     paddingTop : "0.6rem",
-    position : "absolute",
     fontWeight : "bold",
     ["@media (max-width: 455px)"] : {
       fontSize : "1rem"
     },
+  },
+  closeButtonContainer : {
+    display : "flex",
+    justifyContent : "flex-end",
+    whiteSpace : "nowrap",
+    alignItems : "center"
   },
   caption : {
     lineHeight : "1.2",
@@ -53,7 +58,8 @@ const styles = makeStyles((theme) => ({
     display : "flex"
   },
   headerWrapper : {
-    marginBottom : 12
+    marginBottom : 12,
+    display : "flex"
   }
 }));
 
@@ -137,8 +143,8 @@ export function MeshMapEarlyAccessCard({ rootStyle = {}, closeForm = () => { }, 
         <Typography className={classes.header} variant="h6">{title}
         </Typography>
 
-        <div style={{ display : "flex", justifyContent : "flex-end", whiteSpace : "nowrap", position : "relative" }}>
-          <IconButton key="close" aria-label="Close" color="inherit" onClick={closeForm}>
+        <div className={classes.closeButtonContainer}>
+          <IconButton key="close" aria-label="Close" color="inherit" onClick={closeForm} style={{ height : "2.5rem" }}>
             <CloseIcon />
           </IconButton>
         </div>
@@ -150,7 +156,7 @@ export function MeshMapEarlyAccessCard({ rootStyle = {}, closeForm = () => { }, 
       <Typography className={classes.caption} variant="subtitle1"><i>Friends dont let friends GitOps alone.
         Visually design and collaborate in real-time with other MeshMap users.</i></Typography>
       <div style={{ display : "flex", justifyContent : "flex-end" }}>
-        <Grid item xs={3}>
+        <Grid>
           <Button fullWidth variant="contained" color="primary" onClick={(e) => handleButtonClick(e)}>{buttonText}</Button>
         </Grid>
       </div>
