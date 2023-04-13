@@ -11,7 +11,7 @@ jobs:
      runs-on: ubuntu-latest 
      steps:
       - name: Install kubectl
-        run: apt-get update;apt-get install -y kubectl
+        run: sudo apt-get update;sudo apt-get install -y kubectl
       - name: Extract kubeconfig
         run: echo "${{ secrets.PLAYGROUND_CONFIG }}" | base64 --decode > ~/.kube/config
       - name: Delete namespaces except the ones which are whitelisted in the if statement
