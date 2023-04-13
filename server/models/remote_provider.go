@@ -3402,13 +3402,43 @@ func (l *RemoteProvider) GetKubeClient() *mesherykube.Client {
 }
 
 // SaveCredential - to save a creadential for an integration
-// TODO
-func (l *RemoteProvider) SaveUserCredential(_ *http.Request, _ *Credential) error {
+func (l *RemoteProvider) SaveUserCredential(req *http.Request, credential *Credential) error {
 	if !l.Capabilities.IsSupported(PersistCredentials) {
 		logrus.Error("operation not available")
 		return ErrInvalidCapability("PersistCredentials", l.ProviderName)
 	}
-	return nil
+
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistCredentials)
+	_creds, err := json.Marshal(credential)
+	if err != nil {
+		return err
+	}
+	bf := bytes.NewBuffer(_creds)
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
+	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), bf)
+	tokenString, _ := l.GetToken(req)
+	if err != nil {
+		logrus.Error("error getting token: ", err)
+		return err
+	}
+
+	resp, err := l.DoRequest(cReq, tokenString)
+	if err != nil {
+		return ErrFetch(err, "Save Credential", resp.StatusCode)
+	}
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+	bdr, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return ErrDataRead(err, "Save Credential")
+	}
+
+	if resp.StatusCode == http.StatusOK {
+		return nil
+	}
+
+	return ErrFetch(fmt.Errorf("failed to save the credential"), fmt.Sprint(bdr), resp.StatusCode)
 }
 
 // GetCredentials - to get saved credentials
