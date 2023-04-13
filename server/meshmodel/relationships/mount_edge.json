@@ -9,9 +9,10 @@
       "version": "v1.0.0",
       "displayName": "Core",
       "category": {
-        "name":"Cloud Native Application"
+        "name":"Cloud Native Application",
+        "metadata": null
       },
-      "metadata":null
+      "metadata": {}
     },
     "subType": "Mount",
     "selectors": {

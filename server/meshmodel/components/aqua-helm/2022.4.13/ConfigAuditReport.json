@@ -1,1 +1,0 @@
-{"kind":"ConfigAuditReport","apiVersion":"v1alpha1","displayName":"Config Audit Report","format":"JSON","metadata":{},"model":{"name":"aqua-helm","version":"2022.4.13","modelDisplayName":"aqua-helm","category":"","subCategory":""},"schema":""}

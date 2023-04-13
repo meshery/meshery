@@ -1,1 +1,0 @@
-{"kind":"WorkflowEventBinding","apiVersion":"v1alpha1","displayName":"Workflow Event Binding","format":"JSON","metadata":{},"model":{"name":"argo-ci","version":"1.0.0","displayName":"argo-ci","category":{"name":"","metadata":null},"metadata":null}}

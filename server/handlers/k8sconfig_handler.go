@@ -24,7 +24,6 @@ import (
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshkit/models/meshmodel"
-	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
 	"github.com/layer5io/meshkit/utils"
 	"github.com/layer5io/meshkit/utils/events"
 	"github.com/pkg/errors"
@@ -62,7 +61,7 @@ func (h *Handler) K8SConfigHandler(w http.ResponseWriter, req *http.Request, pre
 // responses:
 // 	200: k8sConfigRespWrapper
 
-func (h *Handler) addK8SConfig(user *models.User, prefObj *models.Preference, w http.ResponseWriter, req *http.Request, provider models.Provider) {
+func (h *Handler) addK8SConfig(_ *models.User, _ *models.Preference, w http.ResponseWriter, req *http.Request, provider models.Provider) {
 	token, ok := req.Context().Value(models.TokenCtxKey).(string)
 	if !ok {
 		err := ErrRetrieveUserToken(fmt.Errorf("failed to retrieve user token"))
@@ -144,7 +143,7 @@ func (h *Handler) addK8SConfig(user *models.User, prefObj *models.Preference, w 
 // responses:
 // 	200:
 
-func (h *Handler) deleteK8SConfig(user *models.User, prefObj *models.Preference, w http.ResponseWriter, req *http.Request, provider models.Provider) {
+func (h *Handler) deleteK8SConfig(_ *models.User, _ *models.Preference, w http.ResponseWriter, _ *http.Request, _ models.Provider) {
 	// prefObj.K8SConfig = nil
 	// err := provider.RecordPreferences(req, user.UserID, prefObj)
 	// if err != nil {
@@ -212,7 +211,7 @@ func (h *Handler) GetContextsFromK8SConfig(w http.ResponseWriter, req *http.Requ
 // 	200:
 
 // KubernetesPingHandler - fetches server version to simulate ping
-func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	token, ok := req.Context().Value(models.TokenCtxKey).(string)
 	if !ok {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -314,44 +313,8 @@ func (h *Handler) LoadContextsAndPersist(token string, prov models.Provider) ([]
 	return contexts, nil
 }
 
-func RegisterK8sComponents(ctxt context.Context, config []byte, ctxID string, reg *meshmodel.RegistryManager, es *events.EventStreamer, ctxName string) (err error) {
-	man, err := core.GetK8Components(ctxt, config)
-	if err != nil {
-		return ErrCreatingKubernetesComponents(err, ctxID)
-	}
-	if man == nil {
-		return ErrCreatingKubernetesComponents(errors.New("generated components are nil"), ctxID)
-	}
-	for i, def := range man.Definitions {
-		var ord core.WorkloadCapability
-		ord.Metadata = make(map[string]string)
-		ord.Metadata["io.meshery.ctxid"] = ctxID
-		ord.Metadata["adapter.meshery.io/name"] = "kubernetes"
-		ord.Host = "<none-local>"
-		ord.OAMRefSchema = man.Schemas[i]
-
-		var definition v1alpha1.WorkloadDefinition
-		err := json.Unmarshal([]byte(def), &definition)
-		if err != nil {
-			return ErrCreatingKubernetesComponents(err, ctxID)
-		}
-		ord.OAMDefinition = definition
-		content, err := json.Marshal(ord)
-		if err != nil {
-			return ErrCreatingKubernetesComponents(err, ctxID)
-		}
-		// go writeDefK8sOnFileSystem(string(def), filepath.Join(rootpath, definition.Spec.Metadata["k8sKind"]+"_definitions.k8s.json"))
-		// go writeSchemaK8sFileSystem(ord.OAMRefSchema, filepath.Join(rootpath, definition.Spec.Metadata["k8sKind"]+"_schema.k8s.json"))
-		err = core.RegisterWorkload(content)
-		if err != nil {
-			return ErrCreatingKubernetesComponents(err, ctxID)
-		}
-	}
-	return nil
-}
-
-func RegisterK8sMeshModelComponents(ctx context.Context, config []byte, ctxID string, reg *meshmodel.RegistryManager, es *events.EventStreamer, ctxName string) (err error) {
-	man, err := mcore.GetK8sMeshModelComponents(ctx, config)
+func RegisterK8sMeshModelComponents(_ context.Context, config []byte, ctxID string, reg *meshmodel.RegistryManager, es *events.EventStreamer, ctxName string) (err error) {
+	man, err := mcore.GetK8sMeshModelComponents(config)
 	if err != nil {
 		return ErrCreatingKubernetesComponents(err, ctxID)
 	}
@@ -386,7 +349,6 @@ func writeK8sMetadata(comp *meshmodelv1alpha1.ComponentDefinition, reg *meshmode
 	ent := reg.GetEntities(&meshmodelv1alpha1.ComponentFilter{
 		Name:       comp.Kind,
 		APIVersion: comp.APIVersion,
-		ModelName:  comp.Model.Name,
 	})
 	//If component was not available in the registry, then use the generic model level metadata
 	if len(ent) == 0 {
@@ -399,11 +361,7 @@ func writeK8sMetadata(comp *meshmodelv1alpha1.ComponentDefinition, reg *meshmode
 			return
 		}
 		mergeMaps(comp.Metadata, existingComp.Metadata)
-		if comp.Model.Metadata == nil {
-			comp.Model.Metadata = make(map[string]interface{})
-		}
-		mergeMaps(comp.Model.Metadata, existingComp.Model.Metadata)
-		comp.Model.Category = existingComp.Model.Category
+		comp.Model = existingComp.Model
 	}
 }
 func mergeMaps(mergeInto, toMerge map[string]interface{}) {

@@ -139,11 +139,6 @@ meshery-traefik-mesh:
   fullnameOverride: meshery-traefik-mesh
   serviceAccountNameOverride: meshery-server
 
-meshery-cpx:
-  enabled: false
-  fullnameOverride: meshery-cpx
-  serviceAccountNameOverride: meshery-server
-
 # The operator has its own cluster role
 meshery-operator:
   enabled: true

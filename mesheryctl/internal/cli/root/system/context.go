@@ -50,6 +50,7 @@ type contextWithLocation struct {
 	Components    []string `mapstructure:"components,omitempty"`
 	Channel       string   `mapstructure:"channel,omitempty"`
 	Version       string   `mapstructure:"version,omitempty"`
+	Provider      string   `mapstructure:"provider,omitempty"`
 }
 
 var linkDocContextCreate = map[string]string{
@@ -461,6 +462,7 @@ func getContextWithTokenLocation(c *config.Context) (*contextWithLocation, bool)
 		Components:    c.Components,
 		Channel:       c.Channel,
 		Version:       c.Version,
+		Provider:      c.Provider,
 	}
 	if temp.Tokenlocation == "" {
 		return &temp, false

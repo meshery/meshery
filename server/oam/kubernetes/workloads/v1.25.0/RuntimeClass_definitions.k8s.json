@@ -1,1 +1,0 @@
-{"kind":"WorkloadDefinition","apiVersion":"core.oam.dev/v1alpha1","metadata":{"name":"RuntimeClass.K8s","creationTimestamp":null},"spec":{"definitionRef":{"name":"runtimeclass.k8s.meshery.layer5.io"},"metadata":{"@type":"pattern.meshery.io/k8s","isCustomResource":"false","k8sAPIVersion":"node.k8s.io/v1","k8sKind":"RuntimeClass","namespaced":"false","version":"v1.25.0"}}}
