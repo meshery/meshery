@@ -18,9 +18,9 @@ import (
 	"sync"
 	"time"
 
+	"errors"
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshkit/database"
-	"errors"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/layer5io/meshsync/pkg/model"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
