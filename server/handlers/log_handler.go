@@ -15,7 +15,7 @@ import (
 
 type LogRequestBody struct {
 	Logs      []Log  `json:"logs,omitempty"`
-	SessionId string `json:"sessionId,omitempty"`
+	SessionID string `json:"sessionId,omitempty"`
 }
 
 type Log struct {
@@ -26,21 +26,21 @@ type Log struct {
 	Area      string `json:"area,omitempty"`
 }
 
-func (h *Handler) LogHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+func (h *Handler) LogHandler(w http.ResponseWriter, req *http.Request, _prefObj *models.Preference, user *models.User, provider models.Provider) {
 	parsedBody := LogRequestBody{}
 	if err := json.NewDecoder(req.Body).Decode(&parsedBody); err != nil {
 		http.Error(w, ErrRetrieveData(err).Error(), http.StatusBadRequest)
 		return
 	}
 
-	err := writeLogToFile(user, parsedBody.SessionId, parsedBody.Logs)
+	err := writeLogToFile(user, parsedBody.SessionID, parsedBody.Logs)
 	if err != nil {
-		w.Write([]byte(err.Error()))
+		_, _ = w.Write([]byte(err.Error()))
 		w.WriteHeader(500)
 		return
 	}
 
-	w.Write([]byte("Logs written on filesystem"))
+	_, _ = w.Write([]byte("Logs written on filesystem"))
 	w.WriteHeader(200)
 }
 
@@ -78,7 +78,7 @@ func writeLogToFile(user *models.User, sessionId string, logs []Log) error {
 }
 
 // createLogFile returns reference to the opened file as a result of request to create or append
-func createLogFile(sessionId string) (*os.File, error) {
+func createLogFile(sessionID string) (*os.File, error) {
 	filePath, err := getLogFilePath()
 	// create set of folders if doesn't exist
 	errMkdir := os.MkdirAll(filePath, os.ModePerm)
@@ -87,9 +87,9 @@ func createLogFile(sessionId string) (*os.File, error) {
 		return nil, err
 	}
 
-	f, err := os.OpenFile(filepath.Join(filePath, sessionId), os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
+	f, err := os.OpenFile(filepath.Join(filePath, sessionID), os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
 	if err != nil {
-		logrus.Errorf("Failed to open/create/append to logFile with session Id %s [%s]", sessionId, err.Error())
+		logrus.Errorf("Failed to open/create/append to logFile with session Id %s [%s]", sessionID, err.Error())
 		return nil, err
 	}
 
@@ -107,12 +107,19 @@ func getLogFilePath() (string, error) {
 }
 
 func getLogFileHeaders(user *models.User) []byte {
-	return []byte(fmt.Sprintf(`// Meshery Log File, please share this file to raise issues or problems you report in Meshery
-// System Information: 
-// Operating System: %s
-// CPUs: %d
-// Os Architecture: %s
-// 
-// Time Created: %s
-`, runtime.GOOS, runtime.NumCPU(), runtime.GOARCH, time.Now().String()))
+	return []byte(fmt.Sprintf(`/*
+	Meshery Log File, please share this file to raise issues or problems you report in Meshery
+	System Information: 
+	Operating System: %s
+	CPUs: %d
+	Os Architecture: %s
+
+	Time Created: %s
+
+	user Details:
+	Email: %s
+	Provider: %s
+	Name: %s
+*/
+`, runtime.GOOS, runtime.NumCPU(), runtime.GOARCH, time.Now().String(), user.Email, user.Provider, fmt.Sprintf("%s %s", user.FirstName, user.LastName)))
 }
