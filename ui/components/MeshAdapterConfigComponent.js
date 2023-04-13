@@ -48,6 +48,7 @@ class MeshAdapterConfigComponent extends React.Component {
   constructor(props) {
     super(props);
     const { meshAdapters } = props;
+    this.labelRef = React.createRef();
     this.state = {
       meshAdapters,
       setAdapterURLs : [],
@@ -138,9 +139,12 @@ class MeshAdapterConfigComponent extends React.Component {
 
   handleAvailableAdapterChange = (newValue) => {
     if (typeof newValue !== "undefined") {
-      console.log(newValue)
+      // Trigger label animation manually
+      this.labelRef.current.querySelector('label').classList.add('MuiInputLabel-shrink');
       this.setState({ selectedAvailableAdapter : newValue, selectedAvailableAdapterError : false });
-      this.setState({ meshDeployURL : newValue.value, meshDeployURLError : false });
+      if (newValue !== null) {
+        this.setState({ meshDeployURL : newValue.value, meshDeployURLError : false });
+      }
     }
   };
 
@@ -415,7 +419,7 @@ class MeshAdapterConfigComponent extends React.Component {
               </Button>
             </div>
           </React.Fragment>
-          <Grid container spacing={1} alignItems="flex-end">
+          <Grid container spacing={1} alignItems="flex-end" style={{ marginTop : '50px' }}>
             <Grid item xs={12}>
               <ReactSelectWrapper
                 onChange={this.handleAvailableAdapterChange}
@@ -426,30 +430,34 @@ class MeshAdapterConfigComponent extends React.Component {
                 error={selectedAvailableAdapterError}
               />
             </Grid>
-            <TextField
-              id="deployPort"
-              type="text"
-              label="Enter Port"
-              onChange={(e) => this.handleDeployPortChange(e.target)}
-              value={meshDeployURL}
-              error={meshDeployURLError}
-            />
           </Grid>
-          <React.Fragment>
-            <div className={classes.buttons}>
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                size="large"
-                onClick={this.handleAdapterDeploy}
-                className={classes.button}
-                data-cy="btnSubmitMeshAdapter"
-              >
-                Deploy
-              </Button>
+          <Grid container spacing={1} alignItems="flex-end" justifyContent="flex-end">
+            <div ref={this.labelRef}>
+              <TextField
+                id="deployPort"
+                type="text"
+                label="Enter Port"
+                onChange={(e) => this.handleDeployPortChange(e.target)}
+                value={meshDeployURL}
+                error={meshDeployURLError}
+              />
             </div>
-          </React.Fragment>
+            <React.Fragment>
+              <div className={classes.buttons}>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  size="large"
+                  onClick={this.handleAdapterDeploy}
+                  className={classes.button}
+                  data-cy="btnSubmitMeshAdapter"
+                >
+                Deploy
+                </Button>
+              </div>
+            </React.Fragment>
+          </Grid>
         </div>
       </NoSsr>
     );
