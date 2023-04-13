@@ -3387,7 +3387,7 @@ func (l *RemoteProvider) SaveUserCredential(req *http.Request, credential *Crede
 }
 
 // GetCredentials - to get saved credentials
-func (l *RemoteProvider) GetUserCredentials(req *http.Request, _, page, pageSize, search, order string) (*CredentialsPage, error) {
+func (l *RemoteProvider) GetUserCredentials(req *http.Request, _ string, page, pageSize int, search, order string) (*CredentialsPage, error) {
 	if !l.Capabilities.IsSupported(PersistCredentials) {
 		logrus.Error("operation not available")
 		return nil, ErrInvalidCapability("PersistCredentials", l.ProviderName)
@@ -3396,8 +3396,8 @@ func (l *RemoteProvider) GetUserCredentials(req *http.Request, _, page, pageSize
 
 	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
 	q := remoteProviderURL.Query()
-	q.Add("page", page)
-	q.Add("pageSize", pageSize)
+	q.Add("page", strconv.Itoa(page))
+	q.Add("pageSize", strconv.Itoa(pageSize))
 	q.Add("search", search)
 	q.Add("order", order)
 
