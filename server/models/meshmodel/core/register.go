@@ -86,7 +86,7 @@ type Entry struct {
 
 func mergeAllAPIResults(content []byte, cli *kubernetes.Client) [][]byte {
 	var res OpenAPIV3Response
-	json.Unmarshal(content, &res)
+	_ = json.Unmarshal(content, &res)
 	m := make([][]byte, 0)
 	for k, path := range res.Paths {
 		if !strings.HasPrefix(k, "api") {
