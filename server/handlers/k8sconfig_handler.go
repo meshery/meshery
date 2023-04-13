@@ -10,8 +10,9 @@ import (
 	"os"
 	"path/filepath"
 
-	guid "github.com/google/uuid"
 	mutil "github.com/layer5io/meshery/server/helpers/utils"
+
+	guid "github.com/google/uuid"
 	"github.com/layer5io/meshery/server/meshes"
 	mcore "github.com/layer5io/meshery/server/models/meshmodel/core"
 	meshmodelv1alpha1 "github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
@@ -23,6 +24,7 @@ import (
 	"github.com/layer5io/meshery/server/helpers"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/pattern/core"
+	putils "github.com/layer5io/meshery/server/models/pattern/utils"
 	"github.com/layer5io/meshkit/models/meshmodel"
 	"github.com/layer5io/meshkit/utils"
 	"github.com/layer5io/meshkit/utils/events"
@@ -352,21 +354,16 @@ func writeK8sMetadata(comp *meshmodelv1alpha1.ComponentDefinition, reg *meshmode
 	})
 	//If component was not available in the registry, then use the generic model level metadata
 	if len(ent) == 0 {
-		mergeMaps(comp.Metadata, k8sMeshModelMetadata)
+		putils.MergeMaps(comp.Metadata, k8sMeshModelMetadata)
 		mutil.WriteSVGsOnFileSystem(comp)
 	} else {
 		existingComp, ok := ent[0].(meshmodelv1alpha1.ComponentDefinition)
 		if !ok {
-			mergeMaps(comp.Metadata, k8sMeshModelMetadata)
+			putils.MergeMaps(comp.Metadata, k8sMeshModelMetadata)
 			return
 		}
-		mergeMaps(comp.Metadata, existingComp.Metadata)
+		putils.MergeMaps(comp.Metadata, existingComp.Metadata)
 		comp.Model = existingComp.Model
-	}
-}
-func mergeMaps(mergeInto, toMerge map[string]interface{}) {
-	for k, v := range toMerge {
-		mergeInto[k] = v
 	}
 }
 

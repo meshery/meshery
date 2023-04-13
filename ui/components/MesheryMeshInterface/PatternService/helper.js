@@ -11,8 +11,7 @@ function deleteDescriptionFromJSONSchema(jsonSchema) {
 
 /**
  * remove top-level title, top-level description and
- * replace internal description with "help" key for
- * tooltip description
+ * handle non-RJSF compliant fields
  *
  * @param {Object.<String, Object>} jsonSchema
  * @returns
@@ -37,7 +36,8 @@ export function getRefinedJsonSchema(jsonSchema, hideTitle = true, handleError) 
  *
  * @see https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/#specifying-a-structural-schema
  */
-function handleExceptionalFields(schema) {
+function getXKubenetesToRJSFCompatibleFieldType(schema) {
+  // todo: add more
   const xKubernetesIntOrString = 'x-kubernetes-int-or-string';
   const xKubernetesPreserveUnknownFields = 'x-kubernetes-preserve-unknown-fields';
 
@@ -49,8 +49,12 @@ function handleExceptionalFields(schema) {
   let returnedType;
 
   Object.keys(exceptionalFieldToTypeMap).some(field => {
-    if ( Object.prototype.hasOwnProperty.call(schema, field)) {
+    if (Object.prototype.hasOwnProperty.call(schema, field)) {
       returnedType = exceptionalFieldToTypeMap[field];
+      if (field.startsWith("x-kubernetes") && !returnedType) {
+        // case where the above map is not enough to detect the correct alternate type, fallback to "object" in that case
+        returnedType = "object"
+      }
       return true;
     }
   })
@@ -88,14 +92,9 @@ function recursivelyParseJsonAndCheckForNonRJSFCompliantFields(jsonSchema) {
   }
 
   // 1. Handling the special kubernetes types
-  const rjsfFieldType = handleExceptionalFields(jsonSchema);
+  const rjsfFieldType = getXKubenetesToRJSFCompatibleFieldType(jsonSchema);
   if (rjsfFieldType) {
     jsonSchema.type = rjsfFieldType; // Mutating original object by adding a valid type field
-  }
-
-  // 2. Handling missing type variable
-  if (!jsonSchema.type) {
-    jsonSchema.type = "string" // string as a default fallback
   }
 
   return jsonSchema;
