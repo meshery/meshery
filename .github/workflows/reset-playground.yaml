@@ -10,8 +10,7 @@ jobs:
      if: github.repository == 'meshery/meshery'
      runs-on: ubuntu-latest 
      steps:
-      - name: Install kubectl
-        run: sudo apt-get update;sudo apt-get install -y kubectl
+      - uses: azure/setup-kubectl@v3
       - name: Extract kubeconfig
         run: echo "${{ secrets.PLAYGROUND_CONFIG }}" | base64 --decode > ~/.kube/config
       - name: Delete namespaces except the ones which are whitelisted in the if statement
