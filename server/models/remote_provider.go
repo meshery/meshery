@@ -3494,11 +3494,44 @@ func (l *RemoteProvider) UpdateUserCredential(_ *http.Request, _ *Credential) (*
 }
 
 // DeleteUserCredential - to delete a saved credential
-// TODO
-func (l *RemoteProvider) DeleteUserCredential(_ *http.Request, _ uuid.UUID) (*Credential, error) {
+func (l *RemoteProvider) DeleteUserCredential(req *http.Request, credentialID uuid.UUID) (*Credential, error) {
 	if !l.Capabilities.IsSupported(PersistCredentials) {
 		logrus.Error("operation not available")
 		return nil, ErrInvalidCapability("PersistCredentials", l.ProviderName)
 	}
-	return nil, nil
+
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistMesheryFilters)
+
+	logrus.Infof("attempting to delete credential from cloud for id: %s", credentialID)
+
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s", l.RemoteProviderURL, ep, credentialID))
+	logrus.Debugf("constructed credential url: %s", remoteProviderURL.String())
+	cReq, _ := http.NewRequest(http.MethodDelete, remoteProviderURL.String(), nil)
+
+	tokenString, err := l.GetToken(req)
+	if err != nil {
+		return nil, err
+	}
+	resp, err := l.DoRequest(cReq, tokenString)
+	if err != nil {
+		logrus.Errorf("unable to delete credential: %v", err)
+		return nil, ErrDelete(err, "Credential: "+credentialID.String(), resp.StatusCode)
+	}
+	defer resp.Body.Close()
+
+	bdr, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, ErrDataRead(err, "Credential: "+credentialID.String())
+	}
+
+	if resp.StatusCode == http.StatusOK {
+		logrus.Infof("credential successfully deleted from remote provider")
+		var cred Credential
+		if err = json.Unmarshal(bdr, &cred); err != nil {
+			return nil, err
+		}
+		return &cred, nil
+	}
+	logrus.Errorf("error while deleting credential: %s", bdr)
+	return nil, ErrDelete(fmt.Errorf("error while deleting credential: %s", bdr), fmt.Sprint(bdr), resp.StatusCode)
 }
