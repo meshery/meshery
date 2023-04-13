@@ -12,7 +12,7 @@ jobs:
      steps:
       - uses: azure/setup-kubectl@v3
       - name: Extract kubeconfig
-        run: echo "${{ secrets.PLAYGROUND_CONFIG }}" | base64 --decode > ~/.kube/config
+        run: mkdir ~/.kube; touch config ;echo "${{ secrets.PLAYGROUND_CONFIG }}" | base64 --decode > ~/.kube/config
       - name: Delete namespaces except the ones which are whitelisted in the if statement
         run: |
          for ns in $(kubectl get ns -o jsonpath="{.items[*].metadata.name}");
