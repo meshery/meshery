@@ -3426,9 +3426,8 @@ func (l *RemoteProvider) SaveUserCredential(req *http.Request, credential *Crede
 	if err != nil {
 		return ErrFetch(err, "Save Credential", resp.StatusCode)
 	}
-	defer func() {
-		_ = resp.Body.Close()
-	}()
+	defer resp.Body.Close()
+
 	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return ErrDataRead(err, "Save Credential")
@@ -3467,9 +3466,7 @@ func (l *RemoteProvider) GetUserCredentials(req *http.Request, _, page, pageSize
 	if err != nil {
 		return nil, ErrFetch(err, "Perf Test Config Page", resp.StatusCode)
 	}
-	defer func() {
-		_ = resp.Body.Close()
-	}()
+	defer resp.Body.Close()
 
 	bdr, _ := io.ReadAll(resp.Body)
 	if resp.StatusCode != http.StatusOK {
@@ -3484,13 +3481,45 @@ func (l *RemoteProvider) GetUserCredentials(req *http.Request, _, page, pageSize
 }
 
 // UpdateUserCredential - to update an existing credential
-// TODO
-func (l *RemoteProvider) UpdateUserCredential(_ *http.Request, _ *Credential) (*Credential, error) {
+func (l *RemoteProvider) UpdateUserCredential(req *http.Request, credential *Credential) (*Credential, error) {
 	if !l.Capabilities.IsSupported(PersistCredentials) {
 		logrus.Error("operation not available")
 		return nil, ErrInvalidCapability("PersistCredentials", l.ProviderName)
 	}
-	return nil, nil
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistCredentials)
+	_creds, err := json.Marshal(credential)
+	if err != nil {
+		return nil, err
+	}
+	bf := bytes.NewBuffer(_creds)
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
+	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), bf)
+	tokenString, _ := l.GetToken(req)
+	if err != nil {
+		logrus.Error("error getting token: ", err)
+		return nil, err
+	}
+
+	resp, err := l.DoRequest(cReq, tokenString)
+	if err != nil {
+		return nil, ErrFetch(err, "Update Credential", resp.StatusCode)
+	}
+	defer resp.Body.Close()
+
+	bdr, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, ErrDataRead(err, "Update Credential")
+	}
+
+	if resp.StatusCode == http.StatusOK {
+		var cred Credential
+		if err = json.Unmarshal(bdr, &cred); err != nil {
+			return nil, err
+		}
+		return &cred, nil
+	}
+
+	return nil, ErrFetch(fmt.Errorf("failed to update the credential"), fmt.Sprint(bdr), resp.StatusCode)
 }
 
 // DeleteUserCredential - to delete a saved credential
