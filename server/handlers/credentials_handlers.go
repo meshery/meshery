@@ -32,7 +32,7 @@ func (h *Handler) SaveUserCredential(w http.ResponseWriter, req *http.Request, _
 		return
 	}
 
-	err = provider.SaveUserCredential(&credential)
+	err = provider.SaveUserCredential(req, &credential)
 	if err != nil {
 		h.log.Error(fmt.Errorf("error saving user credentials: %v", err))
 		http.Error(w, "unable to save user credentials", http.StatusInternalServerError)
@@ -66,7 +66,7 @@ func (h *Handler) GetUserCredentials(w http.ResponseWriter, req *http.Request, _
 
 	h.log.Debug(fmt.Sprintf("page: %d, page size: %d, search: %s, order: %s", page+1, pageSize, search, order))
 
-	credentialsPage, err := provider.GetUserCredentials(user.ID, page, pageSize, order, search)
+	credentialsPage, err := provider.GetUserCredentials(req, user.ID, page, pageSize, order, search)
 	if err != nil {
 		h.log.Error(fmt.Errorf("error getting user credentials: %v", err))
 		http.Error(w, "unable to get user credentials", http.StatusInternalServerError)
@@ -100,7 +100,7 @@ func (h *Handler) UpdateUserCredential(w http.ResponseWriter, req *http.Request,
 		return
 	}
 
-	_, err = provider.UpdateUserCredential(credential)
+	_, err = provider.UpdateUserCredential(req, credential)
 	if err != nil {
 		h.log.Error(fmt.Errorf("error getting user credential: %v", err))
 		http.Error(w, "unable to get user credential", http.StatusInternalServerError)
@@ -115,7 +115,7 @@ func (h *Handler) DeleteUserCredential(w http.ResponseWriter, req *http.Request,
 	q := req.URL.Query()
 
 	credentialID := uuid.FromStringOrNil(q.Get("credential_id"))
-	_, err := provider.DeleteUserCredential(credentialID)
+	_, err := provider.DeleteUserCredential(req, credentialID)
 	if err != nil {
 		h.log.Error(fmt.Errorf("error deleting user credential: %v", err))
 		http.Error(w, "unable to delete user credential", http.StatusInternalServerError)
