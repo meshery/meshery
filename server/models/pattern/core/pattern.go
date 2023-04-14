@@ -110,6 +110,7 @@ func ConvertMapInterfaceMapString(v interface{}, prettify bool, isSchema bool) i
 	return v
 }
 
+// These keys should not be prettified to "any Of", "all Of" and "one Of"
 var keysToNotPrettifyOnSchema = []string{"anyOf", "allOf", "oneOf"}
 
 func isSpecialKey(k string) bool {
