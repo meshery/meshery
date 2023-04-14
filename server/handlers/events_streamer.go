@@ -22,6 +22,13 @@ var (
 	flusherMap map[string]http.Flusher
 )
 
+// swagger:route GET /api/events/events-streamer EventsAPI idGetEventStreamer
+// Handle GET request for events streamer
+//
+// Fetches events from Remote Provider and streams it to the UI
+// responses:
+// 	200:
+
 // EventStreamHandler endpoint is used for streaming events to the frontend
 func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, _ *models.User, p models.Provider) {
 	// if req.Method != http.MethodGet {
