@@ -49,15 +49,29 @@ function getXKubenetesToRJSFCompatibleFieldType(schema) {
   let returnedType;
 
   Object.keys(exceptionalFieldToTypeMap).some(field => {
-    if (Object.prototype.hasOwnProperty.call(schema, field)) {
+    if (Object.prototype.hasOwnProperty.call(schema, field)
+      && !Object.prototype.hasOwnProperty.call(schema, "type")
+    ) {
       returnedType = exceptionalFieldToTypeMap[field];
-      if (field.startsWith("x-kubernetes") && !returnedType) {
-        // case where the above map is not enough to detect the correct alternate type, fallback to "object" in that case
-        returnedType = "object"
-      }
+      delete schema[field];
       return true;
     }
   })
+
+  // handle other x-kubernetes
+  if (!returnedType) {
+    const keys = Object.keys(schema)
+    const isXKubernetesFieldPresent = keys.find(key => {
+      if (key.startsWith("x-kubernetes")) {
+        return true
+      }
+      return false;
+    })
+
+    if (isXKubernetesFieldPresent) {
+      delete schema[isXKubernetesFieldPresent]
+    }
+  }
 
   return returnedType || false;
 }
@@ -72,6 +86,33 @@ function getXKubenetesToRJSFCompatibleFieldType(schema) {
 function recursivelyParseJsonAndCheckForNonRJSFCompliantFields(jsonSchema) {
   if (!jsonSchema || _.isEmpty(jsonSchema)) {
     return;
+  }
+
+  // 1. Handling the special kubernetes types
+  const rjsfFieldType = getXKubenetesToRJSFCompatibleFieldType(jsonSchema);
+  if (rjsfFieldType) {
+    jsonSchema.type = rjsfFieldType; // Mutating original object by adding a valid type field
+  }
+
+  // handle allOf
+  if (Object.prototype.hasOwnProperty.call(jsonSchema, "allOf")) {
+    jsonSchema.allOf.forEach((item) => {
+      recursivelyParseJsonAndCheckForNonRJSFCompliantFields(item)
+    })
+  }
+
+  // handle oneOf
+  if (Object.prototype.hasOwnProperty.call(jsonSchema, "oneOf")) {
+    jsonSchema.oneOf.forEach((item) => {
+      recursivelyParseJsonAndCheckForNonRJSFCompliantFields(item)
+    })
+  }
+
+  // handle anyof
+  if (Object.prototype.hasOwnProperty.call(jsonSchema, "anyOf")) {
+    jsonSchema.anyOf.forEach(item => {
+      recursivelyParseJsonAndCheckForNonRJSFCompliantFields(item)
+    })
   }
 
   if (jsonSchema.type === "object" && jsonSchema.additionalProperties) {
@@ -89,12 +130,6 @@ function recursivelyParseJsonAndCheckForNonRJSFCompliantFields(jsonSchema) {
   if (jsonSchema.type === "array") {
     const items = jsonSchema.items;
     items && recursivelyParseJsonAndCheckForNonRJSFCompliantFields(items)
-  }
-
-  // 1. Handling the special kubernetes types
-  const rjsfFieldType = getXKubenetesToRJSFCompatibleFieldType(jsonSchema);
-  if (rjsfFieldType) {
-    jsonSchema.type = rjsfFieldType; // Mutating original object by adding a valid type field
   }
 
   return jsonSchema;
