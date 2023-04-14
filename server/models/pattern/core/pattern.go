@@ -116,10 +116,10 @@ var keysToNotPrettifyOnSchema = []string{"anyOf", "allOf", "oneOf"}
 func isSpecialKey(k string) bool {
 	for _, k0 := range keysToNotPrettifyOnSchema {
 		if k0 == k {
-			return false
+			return true
 		}
 	}
-	return true
+	return false
 }
 
 // In case of any breaking change or bug caused by this, set this to false and the whitespace addition in schema generated/consumed would be removed(will go back to default behavior)
