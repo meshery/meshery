@@ -91,7 +91,7 @@ function NavigatorExtension({ grafana, prometheus, updateLoadTestData, url, isDr
         ConfirmationModal,
         getComponentsinFile,
         UploadImport,
-        PublishModal, 
+        PublishModal,
         PromptComponent,
         generateValidatePayload,
         Validation,
