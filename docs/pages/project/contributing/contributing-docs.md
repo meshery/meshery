@@ -16,10 +16,10 @@ Before contributing, please review the [Documentation Contribution Flow](https:/
 
 Meshery documentation is made of these components:
 
-- Framework - Jekyll
-- Theme - https://github.com/vsoch/docsy-jekyll
-- Repo - https://github.com/layer5io/meshery/tree/master/docs
-- DNS - https://meshery.layer5.io/docs
+- Framework - [Jekyll](https://jekyllrb.com)
+- Theme - [https://github.com/vsoch/docsy-jekyll](https://github.com/vsoch/docsy-jekyll)
+- Repo - [https://github.com/layer5io/meshery/tree/master/docs](https://github.com/layer5io/meshery/tree/master/docs)
+- Site - [https://docs.meshery.io](https://docs.meshery.io)
 - AWS API GW - an instance is configured to redirect from docs.meshery.io to meshery.layer5.io, because of the repo location of where the docs currently reside.
 
 ## Set up your development environment
@@ -309,7 +309,7 @@ This executes the block of code only if the given condition is true. It is execu
 If the condition is true, the output would be:
 
 ```
-    How are you?
+    These shoes are awesome!
 ```
 
 ### `for` loop

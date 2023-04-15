@@ -97,7 +97,7 @@ func Provision(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFu
 	}
 }
 
-func generateHosts(wc meshmodelv1alpha1.ComponentDefinition, tcs []core.TraitCapability, reg *meshmodel.RegistryManager) map[meshmodel.Host]bool {
+func generateHosts(wc meshmodelv1alpha1.ComponentDefinition, _ []core.TraitCapability, reg *meshmodel.RegistryManager) map[meshmodel.Host]bool {
 	res := map[meshmodel.Host]bool{}
 	host := reg.GetRegistrant(wc)
 	res[host] = true

@@ -29,6 +29,22 @@ const styles = (theme) => ({
   },
 
 });
+/**
+ * Get the raw errors from the error schema.
+ * @param {Object} errorSchema error schema.
+ * @returns {Array} raw errors.
+*/
+
+const getRawErrors = (errorSchema) => {
+  if (!errorSchema) return [];
+  const errors = [];
+  Object.keys(errorSchema).forEach((key) => {
+    if (errorSchema[key].__errors) {
+      errors.push(...errorSchema[key].__errors);
+    }
+  });
+  return errors;
+};
 
 const ObjectFieldTemplate = ({
   description,
@@ -43,13 +59,14 @@ const ObjectFieldTemplate = ({
   formData,
   onAddClick,
   classes,
-  rawErrors
+  errorSchema
 }) => {
   const additional = schema?.__additional_property; // check if the object is additional
   const theme = useTheme();
+  const rawErrors = getRawErrors(errorSchema)
 
   // If the parent type is an `array`, then expand the current object.
-  const [show, setShow] = React.useState(schema?.p_type ? true : false);
+  const [show, setShow] = React.useState(false);
   properties.forEach((property, index) => {
     if (schema.properties[property.name].type) {
       properties[index].type = schema.properties[property.name].type;
@@ -95,7 +112,7 @@ const ObjectFieldTemplate = ({
                 <HelpOutlineIcon width="14px" height="14px"  fill={theme.palette.type === 'dark' ? "white" : "black"}   style={{ marginLeft : "4px", verticalAlign : "middle", ...iconSmall }}/>
               </IconButton>
             </CustomTextTooltip>}
-          {rawErrors?.length &&
+          {rawErrors.length !==0 &&
             <CustomTextTooltip backgroundColor={ERROR_COLOR} title={rawErrors?.map((error, index) => (
               <div key={index}>{error}</div>
             ))}>
@@ -119,14 +136,7 @@ const ObjectFieldTemplate = ({
           <Grid
             item={true}
             sm={12}
-            lg={
-              element.type === "object" ||
-                element.type === "array" ||
-                element.__additional_property ||
-                additional
-                ? 12
-                : 6
-            }
+            lg={12} //@harkiratsm, please recheck the logic once again. I'm deleting it now to fix problems with the RJSF
             key={index}
           >
             {element.content}
@@ -143,15 +153,12 @@ const ObjectFieldTemplate = ({
     <>
       {fieldTitle ? (
         <>
-          {schema.p_type !== "array" ? (
-            <CustomTitleField
-              id={`${idSchema.$id}-title`}
-              title={additional ? "Value" : fieldTitle}
-              description={description}
-              properties={properties}
-            />
-          ) : null
-          }
+          <CustomTitleField
+            id={`${idSchema.$id}-title`}
+            title={additional ? "Value" : fieldTitle}
+            description={description}
+            properties={properties}
+          />
           {Object.keys(properties).length > 0 && show && Properties}
         </>
       ) : Properties}

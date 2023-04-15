@@ -1,1 +1,0 @@
-{"kind":"Logging","apiVersion":"v1alpha1","displayName":"Logging","format":"JSON","metadata":{},"model":{"name":"logging-operator","version":"4.0.0","displayName":"logging-operator","category":{"name":"","metadata":null},"metadata":null},"schema":"{\n \"title\": \"Logging\",\n \"type\": \"object\"\n}"}

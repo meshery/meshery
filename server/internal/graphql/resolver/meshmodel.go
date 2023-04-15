@@ -40,7 +40,7 @@ func (r *Resolver) subscribeMeshModelSummary(ctx context.Context, provider model
 	return respChan, nil
 }
 
-func (r *Resolver) getMeshModelSummary(ctx context.Context, provider models.Provider, selector model.MeshModelSummarySelector) (*model.MeshModelSummary, error) {
+func (r *Resolver) getMeshModelSummary(ctx context.Context, _ models.Provider, selector model.MeshModelSummarySelector) (*model.MeshModelSummary, error) {
 	regManager, ok := ctx.Value(models.RegistryManagerKey).(*meshmodel.RegistryManager)
 	summary := &model.MeshModelSummary{}
 	if !ok {

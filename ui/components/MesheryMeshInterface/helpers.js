@@ -248,39 +248,63 @@ export function formatString(text) {
  * to the schema provided
  *
  * @param {Record<string, any>} schema The RJSF schema
- * @param {*} obj
+ * @param {*} uiSchema uiSchema
  * @returns
  */
-function jsonSchemaBuilder(schema, obj) {
+function jsonSchemaBuilder(schema, uiSchema) {
   if (!schema) return
 
-  if (schema.type === 'object') {
+  if (schema.type === 'object' || Object.prototype.hasOwnProperty.call(schema, "properties")) { // to handle objects as well as oneof, anyof and allof fields
     for (let key in schema.properties) {
-      obj[key] = {};
+      uiSchema[key] = {};
 
       // handle percentage for range widget
       if ((schema.properties?.[key]["type"] === 'number' || schema.properties?.[key].type === 'integer')
         && key.toLowerCase().includes("percent")) {
-        obj[key]["ui:widget"] = "range"
+        uiSchema[key]["ui:widget"] = "range"
       }
 
-      jsonSchemaBuilder(schema.properties?.[key], obj[key]);
+      jsonSchemaBuilder(schema.properties?.[key], uiSchema[key]);
     }
     return
   }
 
   if (schema.type === 'array') {
-    obj["items"] = {}
-    jsonSchemaBuilder(schema.items, obj["items"]);
+    uiSchema["items"] = {
+      "ui:label" : false
+    }
+    jsonSchemaBuilder(schema.items, uiSchema["items"]);
     return
   }
 
-  if (obj["ui:widget"]) { // if widget is already assigned, don't go over
+  // handle allOf
+  if (Object.prototype.hasOwnProperty.call(schema, "allOf")) {
+    schema.allOf.forEach((item) => {
+      jsonSchemaBuilder(item, uiSchema)
+    })
+  }
+
+  // handle oneOf
+  if (Object.prototype.hasOwnProperty.call(schema, "oneOf")) {
+    schema.oneOf.forEach((item) => {
+      jsonSchemaBuilder(item, uiSchema)
+    })
+  }
+
+  // handle anyof
+  if (Object.prototype.hasOwnProperty.call(schema, "anyOf")) {
+    schema.anyOf.forEach(item => {
+      jsonSchemaBuilder(item, uiSchema)
+    })
+  }
+
+  if (uiSchema["ui:widget"]) { // if widget is already assigned, don't go over
     return
   }
 
   if (schema.type === 'boolean') {
-    obj["ui:widget"] = "checkbox";
+    uiSchema["ui:widget"] = "checkbox";
+    uiSchema["ui:description"] = "";
   }
 
 

@@ -86,13 +86,6 @@ const styles = (theme) => ({
   uploadCluster : {
     overflow : "hidden"
   },
-  MenuItem : {
-    backgroundColor : theme.palette.common.white,
-    "&:hover" : {
-      backgroundColor : theme.palette.common.white
-    },
-    pointerEvents : "none"
-  },
   OperatorSwitch : {
     pointerEvents : "auto"
   }

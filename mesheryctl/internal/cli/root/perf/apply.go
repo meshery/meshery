@@ -84,7 +84,6 @@ mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --mesh i
 	`,
 	Annotations: linkDocPerfApply,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		client := &http.Client{}
 		userResponse := false
 
 		// setting up for error formatting
@@ -191,7 +190,7 @@ mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --mesh i
 			}
 
 			if userResponse {
-				profileID, profileName, err = createPerformanceProfile(client, mctlCfg)
+				profileID, profileName, err = createPerformanceProfile(mctlCfg)
 				if err != nil {
 					return err
 				}
@@ -293,7 +292,7 @@ func init() {
 	applyCmd.Flags().StringVarP(&filePath, "file", "f", "", "(optional) file containing SMP-compatible test configuration. For more, see https://github.com/layer5io/service-mesh-performance-specification")
 }
 
-func createPerformanceProfile(client *http.Client, mctlCfg *config.MesheryCtlConfig) (string, string, error) {
+func createPerformanceProfile(mctlCfg *config.MesheryCtlConfig) (string, string, error) {
 	utils.Log.Debug("Creating new performance profile inside function")
 
 	if profileName == "" {
