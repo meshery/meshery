@@ -112,8 +112,8 @@ func (l *RemoteProvider) loadCapabilities(token string) {
 		// Proceed to make a request with the token
 		resp, err = l.DoRequest(req, token)
 	}
-	if resp == nil {
-		logrus.Errorf(ErrUnreachableRemoteProvider(err))
+	if err != nil && resp == nil {
+		logrus.Errorf(ErrUnreachableRemoteProvider(err).Error())
 		return
 	}
 	if err != nil || resp.StatusCode != http.StatusOK {
@@ -245,7 +245,7 @@ func (l *RemoteProvider) executePrefSync(tokenString string, sess *Preference) {
 	resp, err := l.DoRequest(req, tokenString)
 	if err != nil {
 		if resp == nil {
-			logrus.Errorf(ErrUnreachableRemoteProvider(err))
+			logrus.Errorf(ErrUnreachableRemoteProvider(err).Error())
 			return
 		}
 		logrus.Errorf("unable to upload user preference data: %v", err)
