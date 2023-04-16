@@ -2,9 +2,9 @@ name: OpenAPI Specification and Documentation
 on:
   push:
     branches:
-      - 'master'
+      - "master"
     paths:
-      - 'handlers/**'
+      - "handlers/**"
 jobs:
   redocly:
     if: github.repository == 'meshery/meshery'
@@ -15,12 +15,12 @@ jobs:
         uses: actions/checkout@v3
       - name: Install Node.js
         uses: actions/setup-node@v3
-        with: 
+        with:
           node-version: 16
       - name: Install dependencies
         run: npm install -g @redocly/openapi-cli
       - name: Generate documentation
-        run: npx @redocly/cli build-docs ./docs/_data/swagger.yml
+        run: npx @redocly/cli build-docs ./docs/_data/swagger.yml --config='redocly.yaml'
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
