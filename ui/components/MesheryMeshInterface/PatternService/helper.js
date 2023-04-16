@@ -76,6 +76,70 @@ function getXKubenetesToRJSFCompatibleFieldType(schema) {
   return returnedType || false;
 }
 
+// Order of properties in the form
+const sortOrder = [
+  "string",
+  "integer",
+  "number",
+  "boolean",
+  "array",
+  "object"
+];
+
+/**
+ * Sorts the properties of the jsonSchema in the order of the sortOrder.
+ * @param {*} properties
+ * @param {*} sortOrder
+ * @returns
+ */
+export const sortProperties = (properties) => {
+  const sortedProperties = {};
+  Object.keys(properties)
+    .sort((a, b) => {
+      return (
+        sortOrder.indexOf(properties[a]?.type) - sortOrder.indexOf(properties[b]?.type)
+      );
+    })
+    .forEach(key => {
+      sortedProperties[key] = properties[key];
+      if (properties[key]?.properties) {
+        sortedProperties[key].properties = sortProperties(
+          properties[key].properties,
+          sortOrder
+        );
+      }
+
+      if (properties[key]?.oneOf || properties[key]?.anyOf || properties[key]?.allOf) {
+        const handleReserve = properties[key].oneOf || properties[key].anyOf || properties[key].allOf;
+        handleReserve.forEach((item, index) => {
+          properties[key].type=item.type; // Adding type as schema lacks type for oneOf, anyOf, allOf
+          if (item.properties) {
+            handleReserve[index].properties = sortProperties(
+              item.properties,
+              sortOrder
+            );
+          }
+          if (item.items?.properties) {
+            handleReserve[index].items.properties = sortProperties(
+              item.items.properties,
+              sortOrder
+            );
+          }
+        })
+      }
+
+      if (properties[key].items?.properties) {
+        sortedProperties[key].items.properties = sortProperties(
+          properties[key].items.properties,
+          sortOrder
+        );
+      }
+    });
+  return sortedProperties;
+};
+
+
+
 /**
  * An inline object mutating function that could detect and handle the
  * exceptional kubernetes field that are not valid RJSF constructs
