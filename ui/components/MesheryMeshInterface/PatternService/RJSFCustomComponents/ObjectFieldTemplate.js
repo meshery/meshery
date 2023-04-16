@@ -136,7 +136,14 @@ const ObjectFieldTemplate = ({
           <Grid
             item={true}
             sm={12}
-            lg={12} //@harkiratsm, please recheck the logic once again. I'm deleting it now to fix problems with the RJSF
+            lg={
+              element.type === "object" ||
+              element.type === "array" ||
+              element.__additional_property ||
+              additional
+                ? 12
+                : 6
+            }
             key={index}
           >
             {element.content}
