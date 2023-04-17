@@ -270,8 +270,8 @@ func SliceContains(elements []string, name string) bool {
 	return false
 }
 
-func GetPlatform() (platform string) {
-	platform = "Unknown Platform"
+func GetPlatform() (string, error) {
+	platform := "Unknown Platform"
 
 	if _, err := os.Stat("/var/run/secrets/kubernetes.io/serviceaccount"); err == nil &&
 		os.Getenv("KUBERNETES_SERVICE_HOST") != "" &&
@@ -289,7 +289,9 @@ func GetPlatform() (platform string) {
 			default:
 				platform = "Unknown Platform"
 			}
+		} else {
+			return "", err
 		}
 	}
-	return platform
+	return platform, nil
 }
