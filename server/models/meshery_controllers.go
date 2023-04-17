@@ -17,7 +17,7 @@ import (
 )
 
 const (
-	chartRepo                     = "https://meshery.github.io/meshery.io/charts"
+	ChartRepo                     = "https://meshery.github.io/meshery.io/charts"
 	MesheryServerBrokerConnection = "meshery-server"
 )
 
@@ -247,7 +247,7 @@ func NewOperatorDeploymentConfig(adapterTracker AdaptersTrackerInterface) contro
 		GetHelmOverrides: func(delete bool) map[string]interface{} {
 			return setOverrideValues(delete, adapterTracker)
 		},
-		HelmChartRepo: chartRepo,
+		HelmChartRepo: ChartRepo,
 	}
 }
 
