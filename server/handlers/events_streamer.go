@@ -24,7 +24,7 @@ var (
 
 // swagger:route GET /api/events EventsAPI idGetEventStreamer
 // Handle GET request for events.
-// Listens for events across all of Meshery's components like adapters and server, streaming it to the UI
+// Listens for events across all of Meshery's components like adapters and server, streaming them to the UI via Server Side Events
 // This API call never terminates and establishes a persistent keep-alive connection over which EventsResponse is sent back.
 // responses:
 // 	200: EventsResponse
