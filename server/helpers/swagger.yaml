@@ -242,16 +242,6 @@ paths:
             summary: Handle POST request for Sharing content
             tags:
                 - ShareContent
-    /api/events/events-streamer:
-        get:
-            description: Fetches events from Remote Provider and streams it to the UI
-            operationId: idGetEventStreamer
-            responses:
-                "200":
-                    description: ""
-            summary: Handle GET request for events streamer
-            tags:
-                - EventsAPI
     /api/filter:
         get:
             description: Returns all the Meshery Filters saved by the current user
