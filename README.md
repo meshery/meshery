@@ -1,8 +1,6 @@
-<p style="text-align:center;" align="center"><a href="https://layer5.io/meshery"><picture align="center">
-  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/meshery/meshery/master/.github/assets/images/meshery/meshery-logo-dark-text-side.svg"  width="70%" align="center" style="margin-bottom:20px;">
-  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/meshery/meshery/master/.github/assets/images/meshery/meshery-logo-light-text-side.svg" width="70%" align="center" style="margin-bottom:20px;">
-  <img alt="Shows an illustrated light mode meshery logo in light color mode and a dark mode meshery logo dark color mode." src="https://raw.githubusercontent.com/meshery/meshery/master/.github/assets/images/meshery/meshery-logo-tag-light-text-side.png" width="70%" align="center" style="margin-bottom:20px;">
-</picture></a><br /><br /></p>
+<p style="text-align:center;" align="center"><a href="https://layer5.io/meshery"><picture><img src="./.github/assets/images/readme/meshery-logo-light-text-side.svg#gh-dark-mode-only" width="70%"/>
+<img src="./.github/assets/images/readme/meshery-logo-dark-text-side.svg#gh-light-mode-only"
+width="70%" /></picture></a><br /><br /></p>
 <p align="center">
 <a href="https://hub.docker.com/r/layer5/meshery" alt="Docker pulls">
   <img src="https://img.shields.io/docker/pulls/layer5/meshery.svg" /></a>
