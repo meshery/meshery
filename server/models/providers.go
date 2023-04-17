@@ -248,6 +248,8 @@ const (
 	ShareDesigns Feature = "share-designs"
 
 	PersistConnection Feature = "persist-connection"
+
+	PersistCredentials Feature = "persist-credentials"
 )
 
 const (
@@ -412,4 +414,9 @@ type Provider interface {
 
 	SaveConnection(req *http.Request, conn *Connection, token string, skipTokenCheck bool) error
 	DeleteMesheryConnection() error
+
+	SaveUserCredential(req *http.Request, credential *Credential) error
+	GetUserCredentials(req *http.Request, userID string, page, pageSize int, search, order string) (*CredentialsPage, error)
+	UpdateUserCredential(req *http.Request, credential *Credential) (*Credential, error)
+	DeleteUserCredential(req *http.Request, credentialID uuid.UUID) (*Credential, error)
 }

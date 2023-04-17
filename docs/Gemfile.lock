@@ -64,7 +64,7 @@ GEM
       execjs
     coffee-script-source (1.11.1)
     colorator (1.1.0)
-    commonmarker (0.23.7)
+    commonmarker (0.23.9)
     concurrent-ruby (1.1.10)
     crass (1.0.6)
     date (3.3.3)
@@ -305,10 +305,10 @@ GEM
     net-smtp (0.3.3)
       net-protocol
     nio4r (2.5.8)
-    nokogiri (1.14.0)
+    nokogiri (1.14.3)
       mini_portile2 (~> 2.8.0)
       racc (~> 1.4)
-    nokogiri (1.14.0-x64-mingw32)
+    nokogiri (1.14.3-x64-mingw32)
       racc (~> 1.4)
     octokit (4.25.0)
       faraday (>= 1, < 3)

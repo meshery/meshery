@@ -314,7 +314,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
       {% endfor %}
       {% assign subcommand4 = command4.subcommands.switch %}
         <tr>
-          <td rowspan=4><a href="{{ site.baseurl }}/reference/mesheryctl/system/context/switch">{{ subcommand4.name }}</a></td>
+          <td><a href="{{ site.baseurl }}/reference/mesheryctl/system/context/switch">{{ subcommand4.name }}</a></td>
           <td></td>
           <td>{{ subcommand4.description }}</td>
         </tr>
@@ -324,6 +324,57 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
           <td>{{ flag.description }}</td>
         </tr>
       {% endfor %}
+      </tr>
+    {% assign command5 = site.data.mesheryctlcommands.cmds.system-provider %}
+      <tr>
+        <td rowspan=8><a href="{{ site.baseurl }}/reference/mesheryctl/system/provider">{{ command5.name }}</a></td>
+      <td></td>
+      <td></td>
+      <td>{{ command5.description }}</td>
+    </tr>
+      {% assign subcommand2 = command5.subcommands.list %}
+        <tr>
+          <td><a href="{{ site.baseurl }}/reference/mesheryctl/system/provider/list">{{ subcommand2.name }}</a></td>
+          <td></td>
+          <td>{{ subcommand2.description }}</td>
+        </tr>
+      {% assign subcommand3 = command5.subcommands.reset %}
+        <tr>
+          <td><a href="{{ site.baseurl }}/reference/mesheryctl/system/provider/reset">{{ subcommand3.name }}</a></td>
+          <td></td>
+          <td>{{ subcommand3.description }}</td>
+        </tr>
+      {% assign subcommand4 = command5.subcommands.switch %}
+        <tr>
+          <td><a href="{{ site.baseurl }}/reference/mesheryctl/system/provider/switch">{{ subcommand4.name }}</a></td>
+          <td></td>
+          <td>{{ subcommand4.description }}</td>
+        </tr>
+      {% assign subcommand5 = command5.subcommands.view %}
+        <tr>
+          <td rowspan=2><a href="{{ site.baseurl }}/reference/mesheryctl/system/provider/view">{{ subcommand5.name }}</a></td>
+          <td></td>
+          <td>{{ subcommand5.description }}</td>
+        </tr>
+      {% for flag_hash in subcommand5.flags %}{% assign flag = flag_hash[1] %}
+        <tr>
+          <td>{{ flag.name }}</td>
+          <td>{{ flag.description }}</td>
+        </tr>
+      {% endfor %}
+      {% assign subcommand1 = command5.subcommands.set %}
+        <tr>
+          <td rowspan=2><a href="{{ site.baseurl }}/reference/mesheryctl/system/provider/set">{{ subcommand1.name }}</a></td>
+          <td></td>
+          <td>{{ subcommand1.description }}</td>
+        </tr>
+      {% for flag_hash in subcommand1.flags %}{% assign flag = flag_hash[1] %}
+        <tr>
+          <td>{{ flag.name }}</td>
+          <td>{{ flag.description }}</td>
+        </tr>
+      {% endfor %}
+      
 </thead>
 </table>
 
