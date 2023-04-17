@@ -18,6 +18,21 @@ data:
       - job_name: 'prometheus'
         static_configs:
         - targets: ['147.75.47.9:9100','147.28.149.165:9100']
+      - job_name: 'k8services'
+        kubernetes_sd_configs:
+            - role: endpoints
+        relabel_configs:
+            - source_labels:
+                - __meta_kubernetes_namespace
+                - __meta_kubernetes_service_name
+              action: drop
+              regex: default;kubernetes
+            - source_labels:
+                - __meta_kubernetes_namespace
+              regex: default
+              action: keep
+            - source_labels: [__meta_kubernetes_service_name]
+              target_label: job
 
 ---
 apiVersion: rbac.authorization.k8s.io/v1
