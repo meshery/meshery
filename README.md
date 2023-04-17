@@ -185,7 +185,14 @@ See the [getting started](https://meshery.io/#getting-started) section to quickl
 <hr />
 <p style="clear:both;">&nbsp;</p>
 
-<a href="https://docs.google.com/presentation/d/14kxjwYSJ_FyE3K_6CDEd6oq2kqwn0OSE8RDJ4H-KlKU/edit?usp=sharing"><img alt="Meshery Logo" src=".github/assets/images/meshery/meshery-logo-dark-text-side.png"  style="margin-left:10px; margin-bottom:10px;" width="45%" align="left"/></a>
+<a href="https://meshery.io">
+<picture><img src="./.github/assets/images/readme/meshery-logo-light-text-side.svg#gh-dark-mode-only"
+style="margin:10px;" width="45%" 
+alt="Meshery - the Cloud Native Manager" align="left" />
+<img src="./.github/assets/images/readme/meshery-logo-dark-text-side.svg#gh-light-mode-only"
+style="margin:10px;" width="%" 
+alt="Meshery - the Cloud Native Manager" align="left" /></picture></a>
+<a href="https://meshery.io">
 
 <!-- <h3 style="margin:auto;"><br /><br />
   <a href="https://docs.google.com/presentation/d/14kxjwYSJ_FyE3K_6CDEd6oq2kqwn0OSE8RDJ4H-KlKU/edit?usp=sharing"><center><i>Project Overview Presentation</i></center></a>
