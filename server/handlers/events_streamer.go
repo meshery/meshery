@@ -22,12 +22,12 @@ var (
 	flusherMap map[string]http.Flusher
 )
 
-// swagger:route GET /api/events/events-streamer EventsAPI idGetEventStreamer
-// Handle GET request for events streamer
-//
-// Fetches events from Remote Provider and streams it to the UI
+// swagger:route GET /api/events EventsAPI idGetEventStreamer
+// Handle GET request for events.
+// Listens for events across all of Meshery's components like adapters and server, streaming it to the UI
+// This API call never terminates and establishes a persistent keep-alive connection over which EventsResponse is sent back.
 // responses:
-// 	200:
+// 	200: EventsResponse
 
 // EventStreamHandler endpoint is used for streaming events to the frontend
 func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, _ *models.User, p models.Provider) {
