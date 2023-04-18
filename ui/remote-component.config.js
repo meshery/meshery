@@ -148,7 +148,6 @@ module.exports = {
     "@material-ui/icons/GetApp" : require("@material-ui/icons/GetApp"),
     "@material-ui/core/Avatar" : require("@material-ui/core/Avatar"),
     "@material-ui/lab/AvatarGroup" : require("@material-ui/lab/AvatarGroup"),
-    "@material-ui/icons/Person" : require("@material-ui/icons/Person"),
-    "@material-ui/icons/Public" : require("@material-ui/icons/Public")
+    "@material-ui/icons/Person" : require("@material-ui/icons/Person")
   },
 };
