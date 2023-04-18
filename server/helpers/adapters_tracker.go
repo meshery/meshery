@@ -2,7 +2,6 @@ package helpers
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -70,14 +69,17 @@ func (a *AdaptersTracker) GetAdapters(_ context.Context) []models.Adapter {
 
 // AddAdapter is used to add new adapters to the collection
 func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adapter) error {
-	platform := utils.GetPlatform()
+	platform, err := utils.GetPlatform()
+	if err != nil {
+		return ErrDockerHost(err)
+	}
 
 	// Deploy to current platform
 	switch platform {
 	case "docker":
 		cli, err := client.NewClientWithOpts(client.FromEnv)
 		if err != nil {
-			return err
+			return ErrAdapterAdministration(err)
 		}
 
 		adapterImage := "layer5/" + adapter.Name + ":stable-latest"
@@ -85,7 +87,7 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 		// Pull the latest image
 		reader, err := cli.ImagePull(ctx, adapterImage, types.ImagePullOptions{})
 		if err != nil {
-			return err
+			return ErrAdapterAdministration(err)
 		}
 		defer reader.Close()
 		_, _ = io.Copy(os.Stdout, reader)
@@ -110,16 +112,16 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 			},
 		}, &network.NetworkingConfig{}, nil, adapter.Name+"-"+fmt.Sprint(time.Now().Unix()))
 		if err != nil {
-			return err
+			return ErrAdapterAdministration(err)
 		}
 
 		if err := cli.ContainerStart(ctx, resp.ID, types.ContainerStartOptions{}); err != nil {
-			return err
+			return ErrAdapterAdministration(err)
 		}
 
 	// switch to default case if the platform specified is not supported
 	default:
-		return fmt.Errorf("the platform %s is not supported currently. The supported platforms are:\ndocker\nkubernetes", platform)
+		return ErrAdapterAdministration(fmt.Errorf("the platform %s is not supported currently. The supported platforms are:\ndocker\nkubernetes", platform))
 	}
 
 	a.AddAdapter(ctx, adapter)
@@ -128,21 +130,24 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 
 // RemoveAdapter is used to remove existing adapters from the collection
 func (a *AdaptersTracker) UndeployAdapter(ctx context.Context, adapter models.Adapter) error {
-	platform := utils.GetPlatform()
+	platform, err := utils.GetPlatform()
+	if err != nil {
+		return ErrDockerHost(err)
+	}
 
 	// Undeploy from current platform
-	switch utils.GetPlatform() {
+	switch platform {
 	case "docker":
 		cli, err := client.NewClientWithOpts(client.FromEnv)
 		if err != nil {
-			return err
+			return ErrAdapterAdministration(err)
 		}
 
 		// Find the container ID by given exposed port
 		port := strings.Split(adapter.Location, ":")[1]
 		containers, err := cli.ContainerList(ctx, types.ContainerListOptions{})
 		if err != nil {
-			return err
+			return ErrAdapterAdministration(err)
 		}
 		var containerID string
 		for _, container := range containers {
@@ -154,7 +159,7 @@ func (a *AdaptersTracker) UndeployAdapter(ctx context.Context, adapter models.Ad
 			}
 		}
 		if containerID == "" {
-			return errors.New("No container found for port " + port)
+			return ErrAdapterAdministration(fmt.Errorf("no container found for port %s", port))
 		}
 
 		// Stop and remove the container
@@ -163,12 +168,12 @@ func (a *AdaptersTracker) UndeployAdapter(ctx context.Context, adapter models.Ad
 			RemoveVolumes: true,
 		})
 		if err != nil {
-			return err
+			return ErrAdapterAdministration(err)
 		}
 
 	// switch to default case if the platform specified is not supported
 	default:
-		return fmt.Errorf("the platform %s is not supported currently. The supported platforms are:\ndocker\nkubernetes", platform)
+		return ErrAdapterAdministration(fmt.Errorf("the platform %s is not supported currently. The supported platforms are:\ndocker\nkubernetes", platform))
 	}
 
 	a.RemoveAdapter(ctx, adapter)
