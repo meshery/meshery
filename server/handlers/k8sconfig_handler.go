@@ -41,19 +41,19 @@ type SaveK8sContextResponse struct {
 }
 
 // K8SConfigHandler is used for persisting kubernetes config and context info
-func (h *Handler) K8SConfigHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+func (h *Handler) K8SConfigHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) []string {
+	var uiMessages []string
 	// if req.Method != http.MethodPost && req.Method != http.MethodDelete {
 	// 	w.WriteHeader(http.StatusNotFound)
 	// 	return
 	// }
 	if req.Method == http.MethodPost {
-		h.addK8SConfig(user, prefObj, w, req, provider)
-		return
+		uiMessages = h.addK8SConfig(user, prefObj, w, req, provider)
 	}
 	if req.Method == http.MethodDelete {
 		h.deleteK8SConfig(user, prefObj, w, req, provider)
-		return
 	}
+	return uiMessages
 }
 
 // swagger:route POST /api/system/kubernetes SystemAPI idPostK8SConfig
@@ -63,13 +63,14 @@ func (h *Handler) K8SConfigHandler(w http.ResponseWriter, req *http.Request, pre
 // responses:
 // 	200: k8sConfigRespWrapper
 
-func (h *Handler) addK8SConfig(_ *models.User, _ *models.Preference, w http.ResponseWriter, req *http.Request, provider models.Provider) {
+func (h *Handler) addK8SConfig(_ *models.User, _ *models.Preference, w http.ResponseWriter, req *http.Request, provider models.Provider) []string {
+	var uiMessages []string
 	token, ok := req.Context().Value(models.TokenCtxKey).(string)
 	if !ok {
 		err := ErrRetrieveUserToken(fmt.Errorf("failed to retrieve user token"))
 		logrus.Error(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+		return uiMessages
 	}
 
 	_ = req.ParseMultipartForm(1 << 20)
@@ -81,7 +82,7 @@ func (h *Handler) addK8SConfig(_ *models.User, _ *models.Preference, w http.Resp
 	if err != nil {
 		logrus.Error(ErrFormFile(err))
 		http.Error(w, ErrFormFile(err).Error(), http.StatusBadRequest)
-		return
+		return uiMessages
 	}
 	defer func() {
 		_ = k8sfile.Close()
@@ -91,7 +92,7 @@ func (h *Handler) addK8SConfig(_ *models.User, _ *models.Preference, w http.Resp
 	if err != nil {
 		logrus.Error(ErrReadConfig(err))
 		http.Error(w, ErrReadConfig(err).Error(), http.StatusBadRequest)
-		return
+		return uiMessages
 	}
 
 	// Flatten kubeconfig. If that fails, go ahead with non-flattened config file
@@ -105,7 +106,7 @@ func (h *Handler) addK8SConfig(_ *models.User, _ *models.Preference, w http.Resp
 	if !ok {
 		logrus.Error(ErrMesheryInstanceID)
 		http.Error(w, ErrMesheryInstanceID.Error(), http.StatusInternalServerError)
-		return
+		return uiMessages
 	}
 
 	saveK8sContextResponse := SaveK8sContextResponse{
@@ -114,7 +115,7 @@ func (h *Handler) addK8SConfig(_ *models.User, _ *models.Preference, w http.Resp
 		ErroredContexts:  make([]models.K8sContext, 0),
 	}
 
-	contexts := models.K8sContextsFromKubeconfig(k8sConfigBytes, mid)
+	contexts, uiMessages := models.K8sContextsFromKubeconfig(k8sConfigBytes, mid)
 	for _, ctx := range contexts {
 		_, err := provider.SaveK8sContext(token, ctx) // Ignore errors
 		if err != nil {
@@ -134,8 +135,8 @@ func (h *Handler) addK8SConfig(_ *models.User, _ *models.Preference, w http.Resp
 	if err := json.NewEncoder(w).Encode(saveK8sContextResponse); err != nil {
 		logrus.Error(ErrMarshal(err, "kubeconfig"))
 		http.Error(w, ErrMarshal(err, "kubeconfig").Error(), http.StatusInternalServerError)
-		return
 	}
+	return uiMessages
 }
 
 // swagger:route DELETE /api/system/kubernetes SystemAPI idDeleteK8SConfig
@@ -195,7 +196,7 @@ func (h *Handler) GetContextsFromK8SConfig(w http.ResponseWriter, req *http.Requ
 		return
 	}
 
-	contexts := models.K8sContextsFromKubeconfig(k8sConfigBytes, mid)
+	contexts, _ := models.K8sContextsFromKubeconfig(k8sConfigBytes, mid)
 
 	err = json.NewEncoder(w).Encode(contexts)
 	if err != nil {
@@ -299,7 +300,7 @@ func (h *Handler) LoadContextsAndPersist(token string, prov models.Provider) ([]
 		return contexts, err
 	}
 
-	ctxs := models.K8sContextsFromKubeconfig(cfg, mid)
+	ctxs, _ := models.K8sContextsFromKubeconfig(cfg, mid)
 
 	// Persist the generated contexts
 	for _, ctx := range ctxs {
