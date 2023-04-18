@@ -271,6 +271,12 @@ func (a *AdaptersTracker) UndeployAdapter(ctx context.Context, adapter models.Ad
 			return ErrAdapterAdministration(err)
 		}
 
+		// Delete the associated Service objects
+		err = kubeClient.KubeClient.CoreV1().Services(core.MesheryNamespace).Delete(context.Background(), adapter.Name, metav1.DeleteOptions{})
+		if err != nil {
+			return ErrAdapterAdministration(err)
+		}
+
 	// switch to default case if the platform specified is not supported
 	default:
 		return ErrAdapterAdministration(fmt.Errorf("the platform %s is not supported currently. The supported platforms are:\ndocker\nkubernetes", platform))
