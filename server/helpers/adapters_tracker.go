@@ -22,6 +22,7 @@ import (
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/util/intstr"
 )
 
 // AdaptersTracker is used to hold the list of known adapters
@@ -168,6 +169,35 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 		}
 
 		_, err = kubeClient.KubeClient.AppsV1().Deployments(core.MesheryNamespace).Create(context.Background(), deployment, metav1.CreateOptions{})
+		if err != nil {
+			return ErrAdapterAdministration(err)
+		}
+
+		service := &corev1.Service{
+			ObjectMeta: metav1.ObjectMeta{
+				Name:      adapter.Name,
+				Namespace: core.MesheryNamespace,
+			},
+			Spec: corev1.ServiceSpec{
+				Selector: map[string]string{
+					"app": adapter.Name,
+				},
+				Ports: []corev1.ServicePort{
+					{
+						Name:     "http",
+						Protocol: corev1.ProtocolTCP,
+						Port:     int32(port),
+						TargetPort: intstr.IntOrString{
+							Type:   intstr.Int,
+							IntVal: int32(port),
+						},
+					},
+				},
+				Type: corev1.ServiceTypeClusterIP, // or use appropriate service type
+			},
+		}
+
+		_, err = kubeClient.KubeClient.CoreV1().Services(core.MesheryNamespace).Create(context.Background(), service, metav1.CreateOptions{})
 		if err != nil {
 			return ErrAdapterAdministration(err)
 		}
