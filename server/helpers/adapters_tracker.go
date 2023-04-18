@@ -15,8 +15,13 @@ import (
 	"github.com/docker/docker/api/types/network"
 	"github.com/docker/docker/client"
 	"github.com/docker/go-connections/nat"
+	"github.com/layer5io/meshery/server/core"
 	"github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/models"
+	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
+	appsv1 "k8s.io/api/apps/v1"
+	corev1 "k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 // AdaptersTracker is used to hold the list of known adapters
@@ -94,7 +99,6 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 
 		// Create and start the container
 		portNum := adapter.Location
-		adapter.Location = "localhost:" + adapter.Location
 		port := nat.Port(portNum + "/tcp")
 		resp, err := cli.ContainerCreate(ctx, &container.Config{
 			Image: adapterImage,
@@ -119,11 +123,61 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 			return ErrAdapterAdministration(err)
 		}
 
+	case "kubernetes":
+		kubeClient, err := meshkitkube.New([]byte(""))
+		if err != nil {
+			return ErrAdapterAdministration(err)
+		}
+
+		port, _ := strconv.Atoi(adapter.Location)
+
+		// Create a deployment
+		deployment := &appsv1.Deployment{
+			ObjectMeta: metav1.ObjectMeta{
+				Name:      adapter.Name,
+				Namespace: core.MesheryNamespace,
+			},
+			Spec: appsv1.DeploymentSpec{
+				Selector: &metav1.LabelSelector{
+					MatchLabels: map[string]string{
+						"app": adapter.Name,
+					},
+				},
+				Replicas: int32Ptr(1),
+				Template: corev1.PodTemplateSpec{
+					ObjectMeta: metav1.ObjectMeta{
+						Labels: map[string]string{
+							"app": adapter.Name,
+						},
+					},
+					Spec: corev1.PodSpec{
+						Containers: []corev1.Container{
+							{
+								Name:  adapter.Name,
+								Image: "layer5/" + adapter.Name + ":stable-latest",
+								Ports: []corev1.ContainerPort{
+									{
+										ContainerPort: int32(port),
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		}
+
+		_, err = kubeClient.KubeClient.AppsV1().Deployments(core.MesheryNamespace).Create(context.Background(), deployment, metav1.CreateOptions{})
+		if err != nil {
+			return ErrAdapterAdministration(err)
+		}
+
 	// switch to default case if the platform specified is not supported
 	default:
 		return ErrAdapterAdministration(fmt.Errorf("the platform %s is not supported currently. The supported platforms are:\ndocker\nkubernetes", platform))
 	}
 
+	adapter.Location = "localhost:" + adapter.Location
 	a.AddAdapter(ctx, adapter)
 	return nil
 }
@@ -171,6 +225,22 @@ func (a *AdaptersTracker) UndeployAdapter(ctx context.Context, adapter models.Ad
 			return ErrAdapterAdministration(err)
 		}
 
+	case "kubernetes":
+		kubeClient, err := meshkitkube.New([]byte(""))
+		if err != nil {
+			return ErrAdapterAdministration(err)
+		}
+
+		if adapter.Name == "" {
+			adapter = a.adapters[adapter.Location]
+		}
+
+		// Delete the Deployment
+		err = kubeClient.KubeClient.AppsV1().Deployments(core.MesheryNamespace).Delete(context.Background(), adapter.Name, metav1.DeleteOptions{})
+		if err != nil {
+			return ErrAdapterAdministration(err)
+		}
+
 	// switch to default case if the platform specified is not supported
 	default:
 		return ErrAdapterAdministration(fmt.Errorf("the platform %s is not supported currently. The supported platforms are:\ndocker\nkubernetes", platform))
@@ -178,4 +248,8 @@ func (a *AdaptersTracker) UndeployAdapter(ctx context.Context, adapter models.Ad
 
 	a.RemoveAdapter(ctx, adapter)
 	return nil
+}
+
+func int32Ptr(n int32) *int32 {
+	return &n
 }

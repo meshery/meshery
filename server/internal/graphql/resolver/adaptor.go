@@ -3,18 +3,11 @@ package resolver
 import (
 	"context"
 
-	"github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/internal/graphql/model"
 	"github.com/layer5io/meshery/server/models"
 )
 
 func (r *Resolver) changeAdapterStatus(_ context.Context, _ models.Provider, targetStatus model.Status, adapterName, targetPort string) (model.Status, error) {
-	platform, _ := utils.GetPlatform()
-	if platform == "kubernetes" {
-		r.Log.Info("Feature for kuberenetes disabled")
-		return model.StatusDisabled, nil
-	}
-
 	deleteAdapter := true
 
 	if targetStatus == model.StatusEnabled {

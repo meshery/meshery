@@ -16,6 +16,12 @@ import (
 )
 
 const (
+	// MesheryNamespace is the namespace to which Meshery is deployed in the Kubernetes cluster
+	MesheryNamespace = "meshery"
+	// MesheryFolder is the default relative location of the meshery config
+	// related configuration files.
+	MesheryFolder = ".meshery"
+
 	HelmChartURL          = "https://meshery.io/charts/"
 	HelmChartName         = "meshery"
 	HelmChartOperatorName = "meshery-operator"

@@ -12,6 +12,8 @@ import (
 )
 
 var (
+	// MesheryNamespace is the namespace to which Meshery is deployed in the Kubernetes cluster
+	MesheryNamespace = "meshery"
 	// ManifestsFolder is where the Kubernetes manifests are stored
 	ManifestsFolder = "manifests"
 	// MesheryFolder is the default relative location of the meshery config
