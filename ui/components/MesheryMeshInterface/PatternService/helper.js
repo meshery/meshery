@@ -122,8 +122,22 @@ export const sortProperties = (properties) => {
         );
       }
 
-      if (properties[key]?.oneOf || properties[key]?.anyOf || properties[key]?.allOf) {
-        const handleReserve = properties[key].oneOf || properties[key].anyOf || properties[key].allOf;
+      if (properties[key].items?.properties) { // Handles Arrays in the schema
+        sortedProperties[key].items.properties = sortProperties(
+          properties[key].items.properties,
+          sortOrder
+        );
+      }
+
+
+      if (properties[key] || properties[key].items) { // Handles oneOf, anyOf, allOf
+        const handleReserve = properties[key]?.oneOf ||
+                              properties[key]?.anyOf ||
+                              properties[key]?.allOf ||
+                              properties[key]?.items?.oneOf ||
+                              properties[key]?.items?.anyOf ||
+                              properties[key]?.items?.allOf;
+        if (!handleReserve) return;
         handleReserve.forEach((item, index) => {
           if (item.properties) { // Handles the Objects in the schema
             handleReserve[index].properties = sortProperties(
@@ -140,12 +154,6 @@ export const sortProperties = (properties) => {
         })
       }
 
-      if (properties[key].items?.properties) { // Handles Arrays in the schema
-        sortedProperties[key].items.properties = sortProperties(
-          properties[key].items.properties,
-          sortOrder
-        );
-      }
     });
   return sortedProperties;
 };
