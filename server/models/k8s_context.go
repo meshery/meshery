@@ -133,35 +133,34 @@ func NewK8sContextWithServerID(
 
 // K8sContextsFromKubeconfig takes in a kubeconfig and meshery instance ID and generates
 // kubernetes contexts from it
-func K8sContextsFromKubeconfig(kubeconfig []byte, instanceID *uuid.UUID) ([]K8sContext, []string) {
+func K8sContextsFromKubeconfig(kubeconfig []byte, instanceID *uuid.UUID) ([]K8sContext, string) {
+	respMessage := ""
 	kcs := []K8sContext{}
-	uiMessages := []string{}
 
 	parsed, err := clientcmd.Load(kubeconfig)
 	if err != nil {
-		return kcs, uiMessages
+		return kcs, respMessage
 	}
 
 	kcfg := InternalKubeConfig{}
 	if err := yaml.Unmarshal(kubeconfig, &kcfg); err != nil {
-		return kcs, uiMessages
+		return kcs, respMessage
 	}
 
 	for name := range parsed.Contexts {
 		kc, msg := kcfg.K8sContext(name, instanceID)
-		uiMessages = append(uiMessages, msg)
+		respMessage += msg
 		if err := kc.AssignServerID(); err != nil {
 			msg = fmt.Sprintf("Skipping context: Reason => %s\n", err)
 			logrus.Warn(msg)
-
-			uiMessages = append(uiMessages, msg)
+			respMessage += msg
 			continue
 		}
 
 		kcs = append(kcs, kc)
 	}
 
-	return kcs, uiMessages
+	return kcs, respMessage
 }
 
 func NewK8sContextFromInClusterConfig(contextName string, instanceID *uuid.UUID) (*K8sContext, error) {

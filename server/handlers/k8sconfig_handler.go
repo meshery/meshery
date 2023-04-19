@@ -40,10 +40,6 @@ type SaveK8sContextResponse struct {
 	ErroredContexts  []models.K8sContext `json:"errored_contexts"`
 }
 
-type K8sConfigResonseOutput struct {
-	K8sConfigOutputs []string `json:"k8sConfigOutputs"`
-}
-
 // K8SConfigHandler is used for persisting kubernetes config and context info
 func (h *Handler) K8SConfigHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	// if req.Method != http.MethodPost && req.Method != http.MethodDelete {
@@ -118,7 +114,7 @@ func (h *Handler) addK8SConfig(_ *models.User, _ *models.Preference, w http.Resp
 		ErroredContexts:  make([]models.K8sContext, 0),
 	}
 
-	contexts, uiMessages := models.K8sContextsFromKubeconfig(k8sConfigBytes, mid)
+	contexts, respMessage := models.K8sContextsFromKubeconfig(k8sConfigBytes, mid)
 	for _, ctx := range contexts {
 		_, err := provider.SaveK8sContext(token, ctx) // Ignore errors
 		if err != nil {
@@ -139,11 +135,15 @@ func (h *Handler) addK8SConfig(_ *models.User, _ *models.Preference, w http.Resp
 		logrus.Error(ErrMarshal(err, "kubeconfig"))
 		http.Error(w, ErrMarshal(err, "kubeconfig").Error(), http.StatusInternalServerError)
 	}
-	w.Header().Set("Content-Type", "application/json")
-	resp := K8sConfigResonseOutput{
-		K8sConfigOutputs: uiMessages,
-	}
-	json.NewEncoder(w).Encode(resp)
+
+	h.EventsBuffer.Publish(&meshes.EventsResponse{
+		Component:     "core",
+		ComponentName: "kubernetes",
+		OperationId:   guid.NewString(),
+		EventType:     meshes.EventType_INFO,
+		Summary:       fmt.Sprintf("Kubernetes configuration output"),
+		Details:       fmt.Sprintf("%s", respMessage),
+	})
 }
 
 // swagger:route DELETE /api/system/kubernetes SystemAPI idDeleteK8SConfig
