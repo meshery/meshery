@@ -3,7 +3,7 @@
 
 import { promisifiedDataFetch } from "../../lib/data-fetch";
 import { trueRandom } from "../../lib/trueRandom";
-import { reversedKeys } from "./PatternService/helper";
+import { userPromptKeys } from "./PatternService/helper";
 
 /**
  * @typedef {Object} OAMDefinition
@@ -255,7 +255,7 @@ export function formatString(text) {
 function jsonSchemaBuilder(schema, uiSchema) {
   if (!schema) return
 
-  reversedKeys.forEach((key) => {
+  userPromptKeys.forEach((key) => {
     if (Object.prototype.hasOwnProperty.call(schema, key)) {
       schema[key]?.forEach((item) => {
         jsonSchemaBuilder(item, uiSchema);

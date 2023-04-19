@@ -86,7 +86,7 @@ const sortOrder = [
   "object"
 ];
 // Reversed keys to handle oneof, anyof and allof fields
-export const reversedKeys = ["allOf", "anyOf", "oneOf"];
+export const userPromptKeys = ["allOf", "anyOf", "oneOf"];
 
 /**
  * Sorts the properties of the jsonSchema in the order of the sortOrder.
@@ -101,7 +101,7 @@ export const sortProperties = (properties) => {
       let a_type = properties[a]?.type;
       let b_type = properties[b]?.type;
       // if we have oneOf, anyOf, allOf, we need to handle them
-      reversedKeys.forEach(key => {
+      userPromptKeys.forEach(key => {
         if (properties[a]?.[key]) {
           a_type = properties[a]?.[key][0]?.type;
         }
@@ -179,7 +179,7 @@ export const calculateGrid = element => {
   if (!type) {
     // handle anyOf, oneOf, allOf
     const schema = element?.content?.props?.schema;
-    reversedKeys.forEach(key => {
+    userPromptKeys.forEach(key => {
       if (schema[key]) {
         type = schema[key][0].type;
       }
