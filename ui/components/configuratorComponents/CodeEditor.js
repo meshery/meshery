@@ -1,5 +1,4 @@
-import { Card, makeStyles, CardContent,  IconButton } from "@material-ui/core";
-import {  Eco } from "@material-ui/icons";
+import { Card, CardContent, makeStyles } from "@material-ui/core";
 import { useEffect, useState } from "react";
 import { UnControlled as CodeMirror } from "react-codemirror2";
 
@@ -31,7 +30,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export default function CodeEditor({ yaml, saveCodeEditorChanges, cleanHandler }) {
+export default function CodeEditor({ yaml, saveCodeEditorChanges }) {
   const [style, setStyle] = useState(67)
   const classes = useStyles({ scrollPos : style });
 
@@ -73,9 +72,6 @@ export default function CodeEditor({ yaml, saveCodeEditorChanges, cleanHandler }
               }
             }}
           />
-          <IconButton className={classes.icon} onClick={cleanHandler}>
-            <Eco />
-          </IconButton>
         </CardContent>
       </Card>
     </div>

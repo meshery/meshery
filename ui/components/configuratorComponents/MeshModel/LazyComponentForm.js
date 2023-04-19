@@ -7,6 +7,8 @@ import { getMeshModelComponent } from "../../../api/meshmodel";
 import { iconMedium } from "../../../css/icons.styles";
 import { useSnackbar } from "notistack";
 import PatternServiceForm from "../../MesheryMeshInterface/PatternServiceForm";
+// eslint-disable-next-line no-unused-vars
+import * as Types from "../MeshModel/hooks/types";
 // import { isEmptyObj } from "../../utils/utils";
 // import PatternServiceForm from "./PatternServiceForm";
 
@@ -20,6 +22,13 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+/**
+ *
+ * @param {{
+ * component: Types.ComponentDefinition
+ * }} param0
+ * @returns
+ */
 export default function LazyComponentForm({ component, ...otherprops }) {
   const classes = useStyles();
   const [expanded, setExpanded] = React.useState(false);
@@ -60,7 +69,7 @@ export default function LazyComponentForm({ component, ...otherprops }) {
           </Typography>
         </AccordionSummary>
         <LazyAccordionDetails expanded={expanded}>
-          {isEmpty(schemaSet) ? <CircularProgress /> : <PatternServiceForm formData={{}} {...otherprops}
+          {isEmpty(schemaSet) ? <CircularProgress /> : <PatternServiceForm formData={{}} color={component?.metadata?.primaryColor} {...otherprops}
             // @ts-ignore
             schemaSet={schemaSet} />}
         </LazyAccordionDetails>
