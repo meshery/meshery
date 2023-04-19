@@ -40,20 +40,24 @@ type SaveK8sContextResponse struct {
 	ErroredContexts  []models.K8sContext `json:"errored_contexts"`
 }
 
+type K8sConfigResonseOutput struct {
+	K8sConfigOutputs []string `json:"k8sConfigOutputs"`
+}
+
 // K8SConfigHandler is used for persisting kubernetes config and context info
-func (h *Handler) K8SConfigHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) []string {
-	var uiMessages []string
+func (h *Handler) K8SConfigHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	// if req.Method != http.MethodPost && req.Method != http.MethodDelete {
 	// 	w.WriteHeader(http.StatusNotFound)
 	// 	return
 	// }
 	if req.Method == http.MethodPost {
-		uiMessages = h.addK8SConfig(user, prefObj, w, req, provider)
+		h.addK8SConfig(user, prefObj, w, req, provider)
+		return
 	}
 	if req.Method == http.MethodDelete {
 		h.deleteK8SConfig(user, prefObj, w, req, provider)
+		return
 	}
-	return uiMessages
 }
 
 // swagger:route POST /api/system/kubernetes SystemAPI idPostK8SConfig
@@ -63,14 +67,13 @@ func (h *Handler) K8SConfigHandler(w http.ResponseWriter, req *http.Request, pre
 // responses:
 // 	200: k8sConfigRespWrapper
 
-func (h *Handler) addK8SConfig(_ *models.User, _ *models.Preference, w http.ResponseWriter, req *http.Request, provider models.Provider) []string {
-	var uiMessages []string
+func (h *Handler) addK8SConfig(_ *models.User, _ *models.Preference, w http.ResponseWriter, req *http.Request, provider models.Provider) {
 	token, ok := req.Context().Value(models.TokenCtxKey).(string)
 	if !ok {
 		err := ErrRetrieveUserToken(fmt.Errorf("failed to retrieve user token"))
 		logrus.Error(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return uiMessages
+		return
 	}
 
 	_ = req.ParseMultipartForm(1 << 20)
@@ -82,7 +85,7 @@ func (h *Handler) addK8SConfig(_ *models.User, _ *models.Preference, w http.Resp
 	if err != nil {
 		logrus.Error(ErrFormFile(err))
 		http.Error(w, ErrFormFile(err).Error(), http.StatusBadRequest)
-		return uiMessages
+		return
 	}
 	defer func() {
 		_ = k8sfile.Close()
@@ -92,7 +95,7 @@ func (h *Handler) addK8SConfig(_ *models.User, _ *models.Preference, w http.Resp
 	if err != nil {
 		logrus.Error(ErrReadConfig(err))
 		http.Error(w, ErrReadConfig(err).Error(), http.StatusBadRequest)
-		return uiMessages
+		return
 	}
 
 	// Flatten kubeconfig. If that fails, go ahead with non-flattened config file
@@ -106,7 +109,7 @@ func (h *Handler) addK8SConfig(_ *models.User, _ *models.Preference, w http.Resp
 	if !ok {
 		logrus.Error(ErrMesheryInstanceID)
 		http.Error(w, ErrMesheryInstanceID.Error(), http.StatusInternalServerError)
-		return uiMessages
+		return
 	}
 
 	saveK8sContextResponse := SaveK8sContextResponse{
@@ -136,7 +139,11 @@ func (h *Handler) addK8SConfig(_ *models.User, _ *models.Preference, w http.Resp
 		logrus.Error(ErrMarshal(err, "kubeconfig"))
 		http.Error(w, ErrMarshal(err, "kubeconfig").Error(), http.StatusInternalServerError)
 	}
-	return uiMessages
+	w.Header().Set("Content-Type", "application/json")
+	resp := K8sConfigResonseOutput{
+		K8sConfigOutputs: uiMessages,
+	}
+	json.NewEncoder(w).Encode(resp)
 }
 
 // swagger:route DELETE /api/system/kubernetes SystemAPI idDeleteK8SConfig
