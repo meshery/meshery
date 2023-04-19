@@ -3,6 +3,7 @@
 
 import { promisifiedDataFetch } from "../../lib/data-fetch";
 import { trueRandom } from "../../lib/trueRandom";
+import { reversedKeys } from "./PatternService/helper";
 
 /**
  * @typedef {Object} OAMDefinition
@@ -253,7 +254,6 @@ export function formatString(text) {
  */
 function jsonSchemaBuilder(schema, uiSchema) {
   if (!schema) return
-  const reversedKeys = ["allOf", "anyOf", "oneOf"]; // to handle oneof, anyof and allof fields
 
   reversedKeys.forEach((key) => {
     if (Object.prototype.hasOwnProperty.call(schema, key)) {
