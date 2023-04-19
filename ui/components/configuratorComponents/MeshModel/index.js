@@ -1,5 +1,5 @@
 import { CircularProgress, FormControl, Grid, IconButton, MenuItem, NoSsr, TextField, Toolbar, Tooltip } from "@material-ui/core";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import AppBarComponent from "./styledComponents/AppBar";
 
 import DeleteIcon from "@material-ui/icons/Delete";
@@ -9,13 +9,16 @@ import { iconMedium } from "../../../css/icons.styles";
 import { useMeshModelComponents } from "../../../utils/hooks/useMeshModelComponents";
 import { randomPatternNameGenerator as getRandomName } from "../../../utils/utils";
 import LazyComponentForm from "./LazyComponentForm";
+import useDesignLifecycle from "./hooks/useDesignLifecycle";
+import CodeEditor from "../CodeEditor";
 
 
 export default function DesignConfigurator() {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedModel, setSelectedModel] = useState(null);
   const { models, meshmodelComponents, getModelFromCategory, getComponentsFromModel, categories } = useMeshModelComponents();
-  console.log(meshmodelComponents);
+  const { onSettingsChange, onDelete, onSubmit, designYaml } = useDesignLifecycle();
+  const formReference = useRef();
 
   function handleCategoryChange(event) {
     setSelectedCategory(event.target.value);
@@ -125,13 +128,13 @@ export default function DesignConfigurator() {
           {
             meshmodelComponents[selectedModel]?.[0]?.components?.map(function ShowRjsfComponentsLazily(trimmedComponent, idx) {
               return (
-                <LazyComponentForm key={`${trimmedComponent.kind}-${idx}`} component={trimmedComponent} />
+                <LazyComponentForm key={`${trimmedComponent.kind}-${idx}`} component={trimmedComponent} onSettingsChange={onSettingsChange(trimmedComponent, formReference)} reference={formReference} />
               )
             })
           }
         </Grid>}
         <Grid item xs={12} md={selectedCategory && selectedModel ? 6 : 12}>
-          Chalo bhai
+          <CodeEditor yaml={designYaml} saveCodeEditorChanges={() => { }} />
         </Grid>
       </Grid>
     </NoSsr>
