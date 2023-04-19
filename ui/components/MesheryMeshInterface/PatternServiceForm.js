@@ -49,6 +49,7 @@ const useStyles = makeStyles(() => ({
  * @returns
  */
 function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference, namespace, onSettingsChange, onTraitsChange, scroll = false }) {
+  console.log({ schemaSet })
   const [tab, setTab] = React.useState(0);
   const classes = useStyles({ color : getMeshProperties(getMeshName(schemaSet))?.color });
 

@@ -1,0 +1,158 @@
+[
+  {
+    "name": "admin-console-operator",
+    "version": "2.14.0-SNAPSHOT.4",
+    "displayName": "Epam Delivery Platform (EDP) Admin Console",
+    "category": {
+      "name": "Provisioning",
+      "metadata": null
+    },
+    "metadata": {
+      "svgColor": "ui/public/static/img/meshmodels/admin-console-operator/color/adminconsole-color.svg",
+      "svgWhite": "ui/public/static/img/meshmodels/admin-console-operator/white/adminconsole-white.svg"
+    }
+  },
+  {
+    "name": "aws-node-termination-handler-2",
+    "version": "0.2.0",
+    "displayName": "AWS Node Termination Handler 2",
+    "category": {
+      "name": "Provisioning",
+      "metadata": null
+    },
+    "metadata": {
+      "svgColor": "ui/public/static/img/meshmodels/aws-node-termination-handler-2/color/terminator-color.svg",
+      "svgWhite": "ui/public/static/img/meshmodels/aws-node-termination-handler-2/white/terminator-white.svg"
+    }
+  },
+  {
+    "name": "capsule-proxy",
+    "version": "0.4.3",
+    "displayName": "Capsule Proxy",
+    "category": {
+      "name": "Provisioning",
+      "metadata": null
+    },
+    "metadata": {
+      "svgColor": "ui/public/static/img/meshmodels/capsule-proxy/color/proxysetting-color.svg",
+      "svgWhite": "ui/public/static/img/meshmodels/capsule-proxy/white/proxysetting-white.svg"
+    }
+  },
+  {
+    "name": "external-secrets-operator",
+    "version": "0.0.15",
+    "displayName": "External Secrets Operator",
+    "category": {
+      "name": "Provisioning",
+      "metadata": null
+    },
+    "metadata": {
+      "svgColor": "ui/public/static/img/meshmodels/external-secrets-operator/color/externalbackend-color.svg",
+      "svgWhite": "ui/public/static/img/meshmodels/external-secrets-operator/white/externalbackend-white.svg"
+    }
+  },
+  {
+    "name": "gatekeeper",
+    "version": "0.6.10",
+    "displayName": "OPA Gatekeeper",
+    "category": {
+      "name": "Provisioning",
+      "metadata": null
+    },
+    "metadata": {
+      "svgColor": "ui/public/static/img/meshmodels/gatekeeper/color/assign-color.svg",
+      "svgWhite": "ui/public/static/img/meshmodels/gatekeeper/white/assign-white.svg"
+    }
+  },
+  {
+    "name": "gatekeeper",
+    "version": "3.12.0-beta.0",
+    "displayName": "OPA Gatekeeper",
+    "category": {
+      "name": "Provisioning",
+      "metadata": null
+    },
+    "metadata": {
+      "svgColor": "ui/public/static/img/meshmodels/gatekeeper/color/assign-color.svg",
+      "svgWhite": "ui/public/static/img/meshmodels/gatekeeper/white/assign-white.svg"
+    }
+  },
+  {
+    "name": "harbor-operator",
+    "version": "1.5.4",
+    "displayName": "Harbor Operator",
+    "category": {
+      "name": "Provisioning",
+      "metadata": null
+    },
+    "metadata": {
+      "svgColor": "ui/public/static/img/meshmodels/harbor-operator/color/instance-color.svg",
+      "svgWhite": "ui/public/static/img/meshmodels/harbor-operator/white/instance-white.svg"
+    }
+  },
+  {
+    "name": "identity-manager",
+    "version": "1.0.0",
+    "displayName": "Identity Manager",
+    "category": {
+      "name": "Provisioning",
+      "metadata": null
+    },
+    "metadata": {
+      "svgColor": "ui/public/static/img/meshmodels/identity-manager/color/workloadidentity-color.svg",
+      "svgWhite": "ui/public/static/img/meshmodels/identity-manager/white/workloadidentity-white.svg"
+    }
+  },
+  {
+    "name": "karpenter",
+    "version": "0.16.3",
+    "displayName": "Karpenter",
+    "category": {
+      "name": "Provisioning",
+      "metadata": null
+    },
+    "metadata": {
+      "svgColor": "ui/public/static/img/meshmodels/karpenter/color/awsnodetemplate-color.svg",
+      "svgWhite": "ui/public/static/img/meshmodels/karpenter/white/awsnodetemplate-white.svg"
+    }
+  },
+  {
+    "name": "kube-ui-server",
+    "version": "2022.6.14",
+    "displayName": "Kubernetes UI Server",
+    "category": {
+      "name": "Provisioning",
+      "metadata": null
+    },
+    "metadata": {
+      "svgColor": "ui/public/static/img/meshmodels/kube-ui-server/color/appbinding-color.svg",
+      "svgWhite": "ui/public/static/img/meshmodels/kube-ui-server/white/appbinding-white.svg"
+    }
+  },
+  {
+    "name": "kyverno-monitor",
+    "version": "0.1.2",
+    "displayName": "Kyverno Monitor",
+    "category": {
+      "name": "Provisioning",
+      "metadata": null
+    },
+    "metadata": {
+      "svgColor": "ui/public/static/img/meshmodels/kyverno-monitor/color/kyvernomonitor-color.svg",
+      "svgWhite": "ui/public/static/img/meshmodels/kyverno-monitor/white/kyvernomonitor-white.svg"
+    }
+  },
+  {
+    "name": "terraform",
+    "version": "1.1.2",
+    "displayName": "Terraform",
+    "category": {
+      "name": "Provisioning",
+      "metadata": null
+    },
+    "metadata": {
+      "svgColor": "ui/public/static/img/meshmodels/terraform/color/workspace-color.svg",
+      "svgWhite": "ui/public/static/img/meshmodels/terraform/white/workspace-white.svg"
+    }
+  }
+]
