@@ -3,6 +3,7 @@
 
 import { promisifiedDataFetch } from "../../lib/data-fetch";
 import { trueRandom } from "../../lib/trueRandom";
+import { userPromptKeys } from "./PatternService/helper";
 
 /**
  * @typedef {Object} OAMDefinition
@@ -254,6 +255,14 @@ export function formatString(text) {
 function jsonSchemaBuilder(schema, uiSchema) {
   if (!schema) return
 
+  userPromptKeys.forEach((key) => {
+    if (Object.prototype.hasOwnProperty.call(schema, key)) {
+      schema[key]?.forEach((item) => {
+        jsonSchemaBuilder(item, uiSchema);
+      })
+    }
+  })
+
   if (schema.type === 'object' || Object.prototype.hasOwnProperty.call(schema, "properties")) { // to handle objects as well as oneof, anyof and allof fields
     for (let key in schema.properties) {
       uiSchema[key] = {};
@@ -275,27 +284,6 @@ function jsonSchemaBuilder(schema, uiSchema) {
     }
     jsonSchemaBuilder(schema.items, uiSchema["items"]);
     return
-  }
-
-  // handle allOf
-  if (Object.prototype.hasOwnProperty.call(schema, "allOf")) {
-    schema.allOf.forEach((item) => {
-      jsonSchemaBuilder(item, uiSchema)
-    })
-  }
-
-  // handle oneOf
-  if (Object.prototype.hasOwnProperty.call(schema, "oneOf")) {
-    schema.oneOf.forEach((item) => {
-      jsonSchemaBuilder(item, uiSchema)
-    })
-  }
-
-  // handle anyof
-  if (Object.prototype.hasOwnProperty.call(schema, "anyOf")) {
-    schema.anyOf.forEach(item => {
-      jsonSchemaBuilder(item, uiSchema)
-    })
   }
 
   if (uiSchema["ui:widget"]) { // if widget is already assigned, don't go over
