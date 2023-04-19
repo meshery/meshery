@@ -1,10 +1,12 @@
 // @ts-check
-import { AppBar, makeStyles, Tab, Tabs, Typography } from "@material-ui/core";
+import { AppBar, IconButton, makeStyles, Toolbar, Tooltip, Typography } from "@material-ui/core";
+import { Delete, HelpOutline } from "@material-ui/icons";
+import SettingsIcon from '@material-ui/icons/Settings';
 import React, { useEffect } from "react";
+import { iconSmall } from "../../css/icons.styles";
+import { pSBCr } from "../../utils/lightenOrDarkenColor";
 import { getMeshProperties } from "../../utils/nameMapper";
 import PatternServiceFormCore from "./PatternServiceFormCore";
-import SettingsIcon from '@material-ui/icons/Settings';
-import { iconSmall } from "../../css/icons.styles";
 
 const useStyles = makeStyles(() => ({
 
@@ -45,11 +47,13 @@ const useStyles = makeStyles(() => ({
  *  formData?: Record<String, unknown>
  *  reference?: Record<any, any>;
  *  scroll?: Boolean; // If the window should be scrolled to zero after re-rendering
+ *  color ?: string;
  * }} props
  * @returns
  */
-function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference, namespace, onSettingsChange, onTraitsChange, scroll = false }) {
+function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference, namespace, onSettingsChange, onTraitsChange, scroll = false, color }) {
   console.log({ schemaSet })
+  // eslint-disable-next-line no-unused-vars
   const [tab, setTab] = React.useState(0);
   const classes = useStyles({ color : getMeshProperties(getMeshName(schemaSet))?.color });
 
@@ -79,11 +83,6 @@ function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference
       "type" : "object"
     };
   }, [])
-
-  const handleTabChange = (_, newValue) => {
-    setTab(newValue);
-  };
-  const renderTraits = () => !!schemaSet.traits?.length;
 
   return (
     <PatternServiceFormCore
@@ -115,18 +114,50 @@ function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference
               position : "sticky",
               zIndex : 'auto',
             }}>
-              <Tabs className={classes.appTabs} value={tab} onChange={handleTabChange} TabIndicatorProps={{
-                style : {
-                  display : "none",
-                },
-              }} aria-label="Pattern Service" >
-                <Tab label={<div style={{ display : "flex" }}> <SettingsIcon  className={classes.setIcon} style={iconSmall} />Settings</div>} {...a11yProps(0)} />
-                {
-                  renderTraits()
-                    ? <Tab label="Traits" {...a11yProps(1)} />
-                    : null
-                }
-              </Tabs>
+              <Toolbar
+                variant="dense"
+                style={{
+                  padding : "0 5px",
+                  paddingLeft : 16,
+                  background : `linear-gradient(115deg, ${pSBCr(
+                    color,
+                    -20
+                  )} 0%, ${color} 100%)`,
+                  height : "0.7rem !important",
+                }}
+              >
+                <SettingsIcon style={iconSmall} />
+                <p
+                  style={{
+                    margin : "auto auto auto 10px",
+                    fontSize : "16px",
+                    display : "flex",
+                    alignItems : "center"
+                  }}
+                >
+                  Settings
+                </p>
+                {schemaSet?.workload?.description && (
+                  <label htmlFor="help-button">
+                    <Tooltip title={schemaSet?.workload?.description} interactive>
+                      <IconButton component="span">
+                        <HelpOutline width="22px" style={{ color : "#fff" }} height="22px" />
+                      </IconButton>
+                    </Tooltip>
+                  </label>
+                )}
+                <IconButton
+                  component="span"
+                  onClick={() =>
+                    // @ts-ignore
+                    reference.current.delete(settings => ({
+                      settings
+                    }))
+                  }
+                >
+                  <Delete width="22px" height="22px" style={{ color : "#FFF" }} />
+                </IconButton>
+              </Toolbar>
             </AppBar>
             <TabPanel value={tab} index={0} className={classes.tabPanel}>
               <SettingsForm />
@@ -159,13 +190,6 @@ function TabPanel(props) {
       )}
     </div>
   );
-}
-
-function a11yProps(index) {
-  return {
-    id : `simple-tab-${index}`,
-    "aria-controls" : `simple-tabpanel-${index}`,
-  };
 }
 
 /**
