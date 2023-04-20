@@ -926,6 +926,18 @@ func (l *DefaultLocalProvider) SaveConnection(_ *http.Request, _ *Connection, _ 
 	return ErrLocalProviderSupport
 }
 
+func GetConnections(_ *http.Request, _ string, _, _ int, _, _ string) (*ConnectionsPage, error) {
+	return nil, ErrLocalProviderSupport
+}
+
+func UpdateConnection(_ *http.Request, _ *Connection) (*Connection, error) {
+	return nil, ErrLocalProviderSupport
+}
+
+func DeleteConnection(_ *http.Request, _ uuid.UUID) (*Connection, error) {
+	return nil, ErrLocalProviderSupport
+}
+
 func (l *DefaultLocalProvider) DeleteMesheryConnection() error {
 	return ErrLocalProviderSupport
 }
