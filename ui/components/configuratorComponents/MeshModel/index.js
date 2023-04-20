@@ -13,7 +13,6 @@ import CodeEditor from "../CodeEditor";
 import LazyComponentForm from "./LazyComponentForm";
 import useDesignLifecycle from "./hooks/useDesignLifecycle";
 
-
 export default function DesignConfigurator() {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedModel, setSelectedModel] = useState(null);
@@ -153,8 +152,9 @@ export default function DesignConfigurator() {
         {meshmodelComponents?.[selectedModel] && <Grid item xs={12} md={6} >
           {
             meshmodelComponents[selectedModel]?.[0]?.components?.map(function ShowRjsfComponentsLazily(trimmedComponent, idx) {
+              const hasInvalidSchema = !!trimmedComponent.metadata?.hasInvalidSchema
               return (
-                <LazyComponentForm key={`${trimmedComponent.kind}-${idx}`} component={trimmedComponent} onSettingsChange={onSettingsChange(trimmedComponent, formReference)} reference={formReference} />
+                <LazyComponentForm key={`${trimmedComponent.kind}-${idx}`} component={trimmedComponent} onSettingsChange={onSettingsChange(trimmedComponent, formReference)} reference={formReference} disabled={hasInvalidSchema} />
               )
             })
           }

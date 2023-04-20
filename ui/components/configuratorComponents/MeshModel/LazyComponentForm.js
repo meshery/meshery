@@ -30,7 +30,7 @@ const useStyles = makeStyles((theme) => ({
  * }} param0
  * @returns
  */
-export default function LazyComponentForm({ component, ...otherprops }) {
+export default function LazyComponentForm({ component, disabled, ...otherprops }) {
   const classes = useStyles();
   const [expanded, setExpanded] = React.useState(false);
   const [schemaSet, setSchemaSet] = React.useState({});
@@ -63,10 +63,10 @@ export default function LazyComponentForm({ component, ...otherprops }) {
 
   return (
     <div className={classes.accordionRoot}>
-      <Accordion elevation={0} expanded={expanded} onChange={() => expand(!expanded)}>
+      <Accordion elevation={0} expanded={expanded} onChange={() => !disabled && expand(!expanded)}>
         <AccordionSummary expandIcon={<ExpandMoreIcon style={iconMedium} />}>
           <Typography className={classes.heading}>
-            {component.displayName}
+            {component.displayName} {disabled && (<em style={{ opacity : 0.5 }}>(contains invalid schema)</em>)}
           </Typography>
         </AccordionSummary>
         <LazyAccordionDetails expanded={expanded}>
