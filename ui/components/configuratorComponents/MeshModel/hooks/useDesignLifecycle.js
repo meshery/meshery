@@ -75,7 +75,8 @@ export default function useDesignLifecycle() {
       }),
       method : "POST"
     }).then(data => {
-      setDesignId(data[0].id)
+      setDesignId(data[0].id);
+      enqueueSnackbar(`"${designName}" saved successfully`, { variant : "success" })
     }).catch(() => {
       enqueueSnackbar("failed to save design file", { variant : "error" })
     })
@@ -91,6 +92,10 @@ export default function useDesignLifecycle() {
         }
       }),
       method : "POST"
+    }).then(() => {
+      enqueueSnackbar(`"${designName}" updated successfully`, { variant : "success" })
+    }).catch(() => {
+      enqueueSnackbar(`couldn't update "${designName}"`, { variant : "error" })
     })
   }
 
