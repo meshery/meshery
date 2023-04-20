@@ -201,6 +201,13 @@ type Connection struct {
 	CredentialSecret map[string]interface{} `json:"credential_secret,omitempty"`
 }
 
+type ConnectionsPage struct {
+	Page        int           `json:"page"`
+	PageSize    int           `json:"page_size"`
+	TotalCount  int           `json:"total_count"`
+	Connections []*Connection `json:"connections"`
+}
+
 type ExtensionProxyResponse struct {
 	Body       []byte `json:"body,omitempty"`
 	StatusCode int    `json:"status_code,omitempty"`
@@ -413,6 +420,9 @@ type Provider interface {
 	ExtensionProxy(req *http.Request) (*ExtensionProxyResponse, error)
 
 	SaveConnection(req *http.Request, conn *Connection, token string, skipTokenCheck bool) error
+	GetConnections(req *http.Request, userID string, page, pageSize int, search, order string) (*CredentialsPage, error)
+	UpdateConnection(req *http.Request, credential *Credential) (*Credential, error)
+	DeleteConnection(req *http.Request, credentialID uuid.UUID) (*Credential, error)
 	DeleteMesheryConnection() error
 
 	SaveUserCredential(req *http.Request, credential *Credential) error
