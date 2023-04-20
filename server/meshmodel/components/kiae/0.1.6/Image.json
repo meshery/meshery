@@ -1,1 +1,1 @@
-{"kind":"Image","apiVersion":"kpack.io/v1alpha1","displayName":"Image","format":"JSON","metadata":{},"model":{"name":"kiae","version":"0.1.6","displayName":"kiae","category":{"name":"","metadata":null},"metadata":null}}
+{"kind":"Image","apiVersion":"kpack.io/v1alpha1","displayName":"Image","format":"JSON","metadata":{"isNamespaced":true},"model":{"name":"kiae","version":"0.1.6","displayName":"kiae","category":{"name":"","metadata":null},"metadata":null}}
