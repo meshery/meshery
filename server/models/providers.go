@@ -420,9 +420,9 @@ type Provider interface {
 	ExtensionProxy(req *http.Request) (*ExtensionProxyResponse, error)
 
 	SaveConnection(req *http.Request, conn *Connection, token string, skipTokenCheck bool) error
-	GetConnections(req *http.Request, userID string, page, pageSize int, search, order string) (*CredentialsPage, error)
-	UpdateConnection(req *http.Request, credential *Credential) (*Credential, error)
-	DeleteConnection(req *http.Request, credentialID uuid.UUID) (*Credential, error)
+	GetConnections(req *http.Request, userID string, page, pageSize int, search, order string) (*ConnectionsPage, error)
+	UpdateConnection(req *http.Request, conn *Connection) (*Connection, error)
+	DeleteConnection(req *http.Request, connID uuid.UUID) (*Connection, error)
 	DeleteMesheryConnection() error
 
 	SaveUserCredential(req *http.Request, credential *Credential) error
