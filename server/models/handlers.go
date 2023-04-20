@@ -161,6 +161,8 @@ type HandlerInterface interface {
 	GetUserCredentials(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	UpdateUserCredential(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	DeleteUserCredential(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+
+	SaveConnection(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 }
 
 // HandlerConfig holds all the config pieces needed by handler methods
