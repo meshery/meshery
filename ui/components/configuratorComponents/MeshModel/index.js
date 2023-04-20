@@ -1,23 +1,25 @@
-import { CircularProgress, FormControl, Grid, IconButton, MenuItem, NoSsr, TextField, Toolbar, Tooltip } from "@material-ui/core";
+import { Avatar, CircularProgress, FormControl, Grid, IconButton, MenuItem, NoSsr, TextField, Toolbar, Tooltip } from "@material-ui/core";
 import React, { useRef, useState } from "react";
 import AppBarComponent from "./styledComponents/AppBar";
 
 import DeleteIcon from "@material-ui/icons/Delete";
 import FileCopyIcon from '@material-ui/icons/FileCopy';
 import SaveIcon from '@material-ui/icons/Save';
+import { AvatarGroup } from "@mui/material";
 import { iconMedium } from "../../../css/icons.styles";
 import { useMeshModelComponents } from "../../../utils/hooks/useMeshModelComponents";
 import { randomPatternNameGenerator as getRandomName } from "../../../utils/utils";
+import { getWebAdress } from "../../../utils/webApis";
+import CodeEditor from "../CodeEditor";
 import LazyComponentForm from "./LazyComponentForm";
 import useDesignLifecycle from "./hooks/useDesignLifecycle";
-import CodeEditor from "../CodeEditor";
 
 
 export default function DesignConfigurator() {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedModel, setSelectedModel] = useState(null);
   const { models, meshmodelComponents, getModelFromCategory, getComponentsFromModel, categories } = useMeshModelComponents();
-  const { onSettingsChange, onDelete, onSubmit, designYaml } = useDesignLifecycle();
+  const { onSettingsChange, onDelete, onSubmit, designYaml, designJson } = useDesignLifecycle();
   const formReference = useRef();
 
   function handleCategoryChange(event) {
@@ -36,61 +38,83 @@ export default function DesignConfigurator() {
     <NoSsr>
       <AppBarComponent position="static" elevation={0}>
         <Toolbar>
-          {/* Category Selector */}
-          <FormControl>
-            <TextField
-              select={true}
-              SelectProps={{
-                MenuProps: {
-                  anchorOrigin: {
-                    vertical: "bottom",
-                    horizontal: "left"
+          <div style={{ flexGrow: 1 }}>
+            {/* Category Selector */}
+            <FormControl>
+              <TextField
+                select={true}
+                SelectProps={{
+                  MenuProps: {
+                    anchorOrigin: {
+                      vertical: "bottom",
+                      horizontal: "left"
+                    },
+                    getContentAnchorEl: null
                   },
-                  getContentAnchorEl: null
-                }
-              }}
-              InputProps={{ disableUnderline: true }}
-              labelId="category-selector"
-              id="category-selector"
-              value={selectedCategory}
-              onChange={handleCategoryChange}
-              fullWidth
-            >
-              {categories.map(cat => (<MenuItem key={cat.name} value={cat.name}>
-                {cat.name}
-              </MenuItem>))}
-            </TextField>
-          </FormControl>
+                  renderValue: (selected) => {
+                    console.log("selected", selected)
+                    if (!selected || selected.length === 0) {
+                      return <em>Select Category</em>;
+                    }
 
-          {/* Model Selector */}
-          <FormControl>
-            <TextField
-              select={true}
-              SelectProps={{
-                MenuProps: {
-                  anchorOrigin: {
-                    vertical: "bottom",
-                    horizontal: "left"
+                    return selected
                   },
-                  getContentAnchorEl: null
-                }
-              }}
-              InputProps={{ disableUnderline: true }}
-              labelId="model-selector"
-              id="model-selector"
-              value={selectedModel}
-              onChange={handleModelChange}
-              fullWidth
-            >
-              {models?.[selectedCategory]
-                ? models[selectedCategory].map(function renderModels(model, idx) {
-                  return (<MenuItem key={`${model.name}-${idx}`} value={model.name} >{model.displayName}</MenuItem>)
-                })
-                : <RenderModelNull selectedCategory={selectedCategory} models={models} />
-              }
-            </TextField>
-          </FormControl>
+                  displayEmpty: true
+                }}
+                InputProps={{ disableUnderline: true }}
+                labelId="category-selector"
+                id="category-selector"
+                value={selectedCategory}
+                onChange={handleCategoryChange}
+                fullWidth
+              >
+                {categories.map(cat => (<MenuItem key={cat.name} value={cat.name}>
+                  {cat.name}
+                </MenuItem>))}
+              </TextField>
+            </FormControl>
 
+            {/* Model Selector */}
+            <FormControl>
+              <TextField
+                placeholder="select Model"
+                select={true}
+                SelectProps={{
+                  MenuProps: {
+                    anchorOrigin: {
+                      vertical: "bottom",
+                      horizontal: "left"
+                    },
+                    getContentAnchorEl: null
+                  },
+                  renderValue: (selected) => {
+                    console.log("selected", selected)
+                    if (!selected || selected.length === 0) {
+                      return <em>Select Model</em>;
+                    }
+
+                    return removeHyphenAndCapitalise(selected)
+                  },
+                  displayEmpty: true
+                }}
+                InputProps={{ disableUnderline: true }}
+                labelId="model-selector"
+                id="model-selector"
+                value={selectedModel}
+                onChange={handleModelChange}
+                fullWidth
+              >
+                {models?.[selectedCategory]
+                  ? models[selectedCategory].map(function renderModels(model, idx) {
+                    return (<MenuItem key={`${model.name}-${idx}`} value={model.name} >{model.displayName}</MenuItem>)
+                  })
+                  : <RenderModelNull selectedCategory={selectedCategory} models={models} />
+                }
+              </TextField>
+            </FormControl>
+          </div>
+
+          {/* Action Toolbar */}
           <Tooltip title="Save Pattern as New File">
             <IconButton
               aria-label="Save"
@@ -135,9 +159,28 @@ export default function DesignConfigurator() {
         </Grid>}
         <Grid item xs={12} md={selectedCategory && selectedModel ? 6 : 12}>
           <CodeEditor yaml={designYaml} saveCodeEditorChanges={() => { }} />
+          {
+            designJson?.services && Object.keys(designJson.services).length > 0 && (
+              <AvatarGroup max={10} style={{
+                position: "fixed",
+                bottom: 60,
+                right: 40,
+              }}>
+                {
+                  Object.values(designJson.services).map(function renderAvatarFromServices(service) {
+                    const metadata = service.traits?.["meshmodel-metadata"];
+                    if (metadata) {
+                      const { primaryColor, svgWhite } = metadata;
+                      return <Avatar src={`${getWebAdress()}/${svgWhite}`} style={{ background: primaryColor }} onClick={() => { console.log("TODO: write function to highlight things on editor") }} />
+                    }
+                  })
+                }
+              </AvatarGroup>
+            )
+          }
         </Grid>
       </Grid>
-    </NoSsr>
+    </NoSsr >
   )
 }
 
@@ -150,4 +193,12 @@ function RenderModelNull({ selectedCategory, models }) {
   if (!models?.[selectedCategory]) {
     return <CircularProgress />
   }
+}
+
+function removeHyphenAndCapitalise(str) {
+  if(!str) {
+    return ""
+  }
+
+  return str.split("-").filter(word => word).map(word => word[0].toUpperCase() + word.substring(1)).join(" ")
 }
