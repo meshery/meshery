@@ -6,7 +6,6 @@ import { connect } from "react-redux";
 import { bindActionCreators } from 'redux';
 import Head from 'next/head';
 import { getPath } from "../../../lib/path";
-import Wrapper from "../../../components/ConfiguratorWrapper"
 
 const styles = {
   paper : {
@@ -28,9 +27,7 @@ class Patterns extends React.Component {
         <Head>
           <title>Designs | Meshery</title>
         </Head>
-        <Wrapper>
-          <MesheryPatterns />
-        </Wrapper>
+        <MesheryPatterns />
       </NoSsr>
     );
   }
