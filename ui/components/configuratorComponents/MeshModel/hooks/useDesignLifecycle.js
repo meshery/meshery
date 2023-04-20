@@ -2,17 +2,21 @@ import { useEffect, useState } from "react";
 import jsYaml from "js-yaml";
 // eslint-disable-next-line no-unused-vars
 import * as Types from "./types";
+import { promisifiedDataFetch } from "../../../../lib/data-fetch";
+import { useSnackbar } from "notistack";
 
 export default function useDesignLifecycle() {
+  const [designName, setDesignName] = useState("Unitled Design")
+  const [designId, setDesignId] = useState();
   const [designJson, setDesignJson] = useState({
-    name : "Unitled Design",
+    name : designName,
     services : {}
   })
   const [designYaml, setDesignyaml] = useState("");
+  const { enqueueSnackbar } = useSnackbar();
 
 
   useEffect(function updateDesignYamlFromJson() {
-    console.log("....des", designJson)
     setDesignyaml(jsYaml.dump(designJson))
   }, [designJson])
 
@@ -53,13 +57,54 @@ export default function useDesignLifecycle() {
     }
   }
 
-  function onSubmit(e, v, f) {
-    console.log({ e, v, f })
+  function onSubmit() {
+  }
+
+  function onDelete() {
 
   }
 
-  function onDelete(formData) {
-    console.log(formData)
+  function designSave() {
+    promisifiedDataFetch("/api/pattern", {
+      body : JSON.stringify({
+        pattern_data : {
+          name : designName,
+          pattern_file : designYaml
+        },
+        save : true
+      }),
+      method : "POST"
+    }).then(data => {
+      setDesignId(data[0].id)
+    }).catch(() => {
+      enqueueSnackbar("failed to save design file", { variant : "error" })
+    })
+  }
+
+  function designUpdate() {
+    return promisifiedDataFetch("/api/pattern", {
+      body : JSON.stringify({
+        pattern_data : {
+          name : designName,
+          pattern_file : designYaml,
+          id : designId
+        }
+      }),
+      method : "POST"
+    })
+  }
+
+  function designDelete() {
+    return promisifiedDataFetch("/api/pattern/" + designId, { method : "DELETE" }).then(() => {
+      enqueueSnackbar(`Design "${designName}" Deleted`, { variant : "success" })
+      setDesignJson({
+        name : "Unitled Design",
+        services : {}
+      })
+      setDesignId(undefined)
+      setDesignName("Unitled Design")
+    }).catch(() => enqueueSnackbar("error deleting design", { variant : "error" })
+    )
   }
 
   return {
@@ -67,6 +112,10 @@ export default function useDesignLifecycle() {
     onSettingsChange,
     onSubmit,
     onDelete,
-    designYaml
+    designYaml,
+    designSave,
+    designUpdate,
+    designId,
+    designDelete
   }
 }
