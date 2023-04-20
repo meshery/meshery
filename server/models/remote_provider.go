@@ -3310,6 +3310,49 @@ func (l *RemoteProvider) UpdateConnection(req *http.Request, connection *Connect
 	return nil, ErrFetch(fmt.Errorf("failed to update the connection"), fmt.Sprint(bdr), resp.StatusCode)
 }
 
+// DeleteConnection - to delete a saved connection
+func (l *RemoteProvider) DeleteConnection(req *http.Request, connectionID uuid.UUID) (*Connection, error) {
+	if !l.Capabilities.IsSupported(PersistConnection) {
+		logrus.Error("operation not available")
+		return nil, ErrInvalidCapability("PersistConnection", l.ProviderName)
+	}
+
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistConnection)
+
+	logrus.Infof("attempting to delete connection from cloud for id: %s", connectionID)
+
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s", l.RemoteProviderURL, ep, connectionID))
+	logrus.Debugf("constructed connection url: %s", remoteProviderURL.String())
+	cReq, _ := http.NewRequest(http.MethodDelete, remoteProviderURL.String(), nil)
+
+	tokenString, err := l.GetToken(req)
+	if err != nil {
+		return nil, err
+	}
+	resp, err := l.DoRequest(cReq, tokenString)
+	if err != nil {
+		logrus.Errorf("unable to delete connection: %v", err)
+		return nil, ErrDelete(err, "Connection: "+connectionID.String(), resp.StatusCode)
+	}
+	defer resp.Body.Close()
+
+	bdr, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, ErrDataRead(err, "Connection: "+connectionID.String())
+	}
+
+	if resp.StatusCode == http.StatusOK {
+		logrus.Infof("connection successfully deleted from remote provider")
+		var conn Connection
+		if err = json.Unmarshal(bdr, &conn); err != nil {
+			return nil, err
+		}
+		return &conn, nil
+	}
+	logrus.Errorf("error while deleting connection: %s", bdr)
+	return nil, ErrDelete(fmt.Errorf("error while deleting connection: %s", bdr), fmt.Sprint(bdr), resp.StatusCode)
+}
+
 func (l *RemoteProvider) DeleteMesheryConnection() error {
 	if !l.Capabilities.IsSupported(PersistConnection) {
 		logrus.Error("operation not available")

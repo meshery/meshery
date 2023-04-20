@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/models"
 )
 
@@ -98,5 +99,20 @@ func (h *Handler) UpdateConnection(w http.ResponseWriter, req *http.Request, _ *
 	}
 
 	h.log.Info("connection updated successfully")
+	w.WriteHeader(http.StatusOK)
+}
+
+func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
+	q := req.URL.Query()
+
+	connectionID := uuid.FromStringOrNil(q.Get("connection_id"))
+	_, err := provider.DeleteConnection(req, connectionID)
+	if err != nil {
+		h.log.Error(fmt.Errorf("error deleting user connection: %v", err))
+		http.Error(w, "unable to delete user connection", http.StatusInternalServerError)
+		return
+	}
+
+	h.log.Info("connection deleted successfully")
 	w.WriteHeader(http.StatusOK)
 }
