@@ -62,37 +62,6 @@ export async function getTraitDefinitionsForAdapter(adapter) {
 }
 
 /**
- * createWorkloadTraitSets returns an array of workloads and traits object
- * which are interrelated
- * @param {string} adapter
- * @returns {Promise<Array<{
- *  workload: OAMGenericResponse;
- *  traits: Array<OAMGenericResponse>;
- *  type?: string;
- * }>>}
- */
-export async function createWorkloadTraitSets(adapter) {
-  const workloads = await getWorkloadDefinitionsForAdapter(adapter);
-  const traits = await getTraitDefinitionsForAdapter(adapter);
-
-  const sets = [];
-  workloads?.forEach((w) => {
-    const item = { workload : w, traits : [], type : getPatternServiceType(w) };
-
-    item.traits = traits?.filter((t) => {
-      if (Array.isArray(t?.oam_definition?.spec?.appliesToWorkloads))
-        return t?.oam_definition?.spec?.appliesToWorkloads?.includes(w?.oam_definition?.metadata?.name);
-
-      return false;
-    });
-
-    sets.push(item);
-  });
-
-  return sets;
-}
-
-/**
  * getPatternServiceName takes in the pattern service metadata and returns
  * the name of the service
  *

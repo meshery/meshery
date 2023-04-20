@@ -5,7 +5,6 @@ import { connect } from "react-redux";
 import { bindActionCreators } from 'redux';
 import Head from 'next/head';
 import { getPath } from "../../../lib/path";
-import Wrapper from "../../../components/ConfiguratorWrapper"
 import DesignConfigurator from "../../../components/configuratorComponents/MeshModel";
 
 const styles = {
@@ -28,9 +27,7 @@ class Patterns extends React.Component {
         <Head>
           <title>Designs Configurator</title>
         </Head>
-        <Wrapper>
-          <DesignConfigurator />
-        </Wrapper>
+        <DesignConfigurator />
       </NoSsr>
     );
   }
