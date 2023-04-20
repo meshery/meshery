@@ -8,7 +8,6 @@ export default function useDesignLifecycle() {
     name : "Unitled Design",
     services : {}
   })
-
   const [designYaml, setDesignyaml] = useState("");
 
 

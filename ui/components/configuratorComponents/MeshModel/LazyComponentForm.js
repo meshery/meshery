@@ -15,6 +15,7 @@ import * as Types from "../MeshModel/hooks/types";
 const useStyles = makeStyles((theme) => ({
   accordionRoot : {
     width : "100%",
+    marginBottom : 8
   },
   heading : {
     fontSize : theme.typography.pxToRem(15),
