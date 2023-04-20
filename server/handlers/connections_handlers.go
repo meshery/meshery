@@ -73,3 +73,30 @@ func (h *Handler) GetConnections(w http.ResponseWriter, req *http.Request, _ *mo
 		return
 	}
 }
+
+func (h *Handler) UpdateConnection(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
+	bd, err := io.ReadAll(req.Body)
+	if err != nil {
+		h.log.Error(fmt.Errorf("error reading request body: %v", err))
+		http.Error(w, "unable to read connection data", http.StatusInternalServerError)
+		return
+	}
+
+	connection := &models.Connection{}
+	err = json.Unmarshal(bd, connection)
+	if err != nil {
+		h.log.Error(fmt.Errorf("error unmarshal request body: %v", err))
+		http.Error(w, "unable to parse connection data", http.StatusInternalServerError)
+		return
+	}
+
+	_, err = provider.UpdateConnection(req, connection)
+	if err != nil {
+		h.log.Error(fmt.Errorf("error getting user connection: %v", err))
+		http.Error(w, "unable to get user connection", http.StatusInternalServerError)
+		return
+	}
+
+	h.log.Info("connection updated successfully")
+	w.WriteHeader(http.StatusOK)
+}

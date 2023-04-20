@@ -3268,6 +3268,48 @@ func (l *RemoteProvider) GetConnections(req *http.Request, _ string, page, pageS
 	return &cp, nil
 }
 
+// UpdateConnection - to update an existing connection
+func (l *RemoteProvider) UpdateConnection(req *http.Request, connection *Connection) (*Connection, error) {
+	if !l.Capabilities.IsSupported(PersistConnection) {
+		logrus.Error("operation not available")
+		return nil, ErrInvalidCapability("PersistConnection", l.ProviderName)
+	}
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistConnection)
+	_creds, err := json.Marshal(connection)
+	if err != nil {
+		return nil, err
+	}
+	bf := bytes.NewBuffer(_creds)
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
+	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), bf)
+	tokenString, _ := l.GetToken(req)
+	if err != nil {
+		logrus.Error("error getting token: ", err)
+		return nil, err
+	}
+
+	resp, err := l.DoRequest(cReq, tokenString)
+	if err != nil {
+		return nil, ErrFetch(err, "Update Connection", resp.StatusCode)
+	}
+	defer resp.Body.Close()
+
+	bdr, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, ErrDataRead(err, "Update Connection")
+	}
+
+	if resp.StatusCode == http.StatusOK {
+		var conn Connection
+		if err = json.Unmarshal(bdr, &conn); err != nil {
+			return nil, err
+		}
+		return &conn, nil
+	}
+
+	return nil, ErrFetch(fmt.Errorf("failed to update the connection"), fmt.Sprint(bdr), resp.StatusCode)
+}
+
 func (l *RemoteProvider) DeleteMesheryConnection() error {
 	if !l.Capabilities.IsSupported(PersistConnection) {
 		logrus.Error("operation not available")
