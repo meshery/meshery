@@ -134,6 +134,7 @@ func (h *Handler) addK8SConfig(_ *models.User, _ *models.Preference, w http.Resp
 	if err := json.NewEncoder(w).Encode(saveK8sContextResponse); err != nil {
 		logrus.Error(ErrMarshal(err, "kubeconfig"))
 		http.Error(w, ErrMarshal(err, "kubeconfig").Error(), http.StatusInternalServerError)
+		return
 	}
 
 	h.EventsBuffer.Publish(&meshes.EventsResponse{
