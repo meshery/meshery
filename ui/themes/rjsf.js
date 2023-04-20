@@ -61,6 +61,11 @@ export const rjsfTheme = createTheme({
         marginTop : "0.3rem"
       }
     },
+    MuiFormControlLabel : {
+      root : {
+        textTransform : 'capitalize',
+      }
+    },
     MuiBox : {
       root : {
         marginTop : 0
