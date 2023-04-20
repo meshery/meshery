@@ -117,7 +117,7 @@ export default function DesignConfigurator() {
               color="primary"
               onClick={designSave}
             >
-              <FileCopyIcon style={iconMedium} />
+              <SaveIcon style={iconMedium} />
             </IconButton>
           </Tooltip>
           {
@@ -129,7 +129,7 @@ export default function DesignConfigurator() {
                     color="primary"
                     onClick={designUpdate}
                   >
-                    <SaveIcon style={iconMedium} />
+                    <FileCopyIcon style={iconMedium} />
                   </IconButton>
                 </Tooltip>
                 <Tooltip title="Delete Design">
@@ -160,7 +160,7 @@ export default function DesignConfigurator() {
           }
         </Grid>}
         <Grid item xs={12} md={selectedCategory && selectedModel ? 6 : 12}>
-          <CodeEditor yaml={designYaml} saveCodeEditorChanges={() => { }} />
+          <CodeEditor yaml={designYaml} saveCodeEditorChanges={() => { }} fullWidth={!(selectedCategory && selectedModel)} />
           {
             designJson?.services && Object.keys(designJson.services).length > 0 && (
               <AvatarGroup max={10} style={{
@@ -173,7 +173,7 @@ export default function DesignConfigurator() {
                     const metadata = service.traits?.["meshmodel-metadata"];
                     if (metadata) {
                       const { primaryColor, svgWhite } = metadata;
-                      return <Avatar key={idx} src={`${getWebAdress()}/${svgWhite}`} style={{ background : primaryColor }} onClick={() => {
+                      return <Avatar key={idx} src={`${getWebAdress()}/${svgWhite}`} style={{ background : primaryColor, padding : 6, height : 20, width : 20 }} onClick={() => {
                         console.log("TODO: write function to highlight things on editor")
                       }} />
                     }
