@@ -81,6 +81,7 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 	}
 
 	// Deploy to current platform
+	targetIP := "127.0.0.1"
 	switch platform {
 	case "docker":
 		cli, err := client.NewClientWithOpts(client.FromEnv)
@@ -110,7 +111,7 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 			PortBindings: nat.PortMap{
 				port: []nat.PortBinding{
 					{
-						HostIP:   "127.0.0.1",
+						HostIP:   targetIP,
 						HostPort: portNum,
 					},
 				},
@@ -184,7 +185,7 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 				},
 				Ports: []corev1.ServicePort{
 					{
-						Name:     "http",
+						Name:     "gRPC",
 						Protocol: corev1.ProtocolTCP,
 						Port:     int32(port),
 						TargetPort: intstr.IntOrString{
@@ -197,17 +198,19 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 			},
 		}
 
-		_, err = kubeClient.KubeClient.CoreV1().Services(core.MesheryNamespace).Create(context.Background(), service, metav1.CreateOptions{})
+		svc, err := kubeClient.KubeClient.CoreV1().Services(core.MesheryNamespace).Create(context.Background(), service, metav1.CreateOptions{})
 		if err != nil {
 			return ErrAdapterAdministration(err)
 		}
+
+		targetIP = svc.Spec.ClusterIP
 
 	// switch to default case if the platform specified is not supported
 	default:
 		return ErrAdapterAdministration(fmt.Errorf("the platform %s is not supported currently. The supported platforms are:\ndocker\nkubernetes", platform))
 	}
 
-	adapter.Location = "localhost:" + adapter.Location
+	adapter.Location = targetIP + ":" + adapter.Location
 	a.AddAdapter(ctx, adapter)
 	return nil
 }
