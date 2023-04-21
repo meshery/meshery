@@ -19,10 +19,7 @@ import (
 	"github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/models"
 	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
-	appsv1 "k8s.io/api/apps/v1"
-	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/util/intstr"
 )
 
 // AdaptersTracker is used to hold the list of known adapters
@@ -132,80 +129,12 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 		}
 
 		exposedPort, _ := strconv.Atoi(adapter.Location)
-		adapterPort := 0
-		for _, availableAdapter := range models.ListAvailableAdapters {
-			if availableAdapter.Name == adapter.Name {
-				adapterPort, _ = strconv.Atoi(availableAdapter.Location)
-				break
-			}
-		}
-
-		// Create a deployment
-		deployment := &appsv1.Deployment{
-			ObjectMeta: metav1.ObjectMeta{
-				Name:      adapter.Name,
-				Namespace: core.MesheryNamespace,
-			},
-			Spec: appsv1.DeploymentSpec{
-				Selector: &metav1.LabelSelector{
-					MatchLabels: map[string]string{
-						"app": adapter.Name,
-					},
-				},
-				Replicas: int32Ptr(1),
-				Template: corev1.PodTemplateSpec{
-					ObjectMeta: metav1.ObjectMeta{
-						Labels: map[string]string{
-							"app": adapter.Name,
-						},
-					},
-					Spec: corev1.PodSpec{
-						Containers: []corev1.Container{
-							{
-								Name:  adapter.Name,
-								Image: "layer5/" + adapter.Name + ":stable-latest",
-								Ports: []corev1.ContainerPort{
-									{
-										ContainerPort: int32(adapterPort),
-									},
-								},
-							},
-						},
-					},
-				},
-			},
-		}
-
-		_, err = kubeClient.KubeClient.AppsV1().Deployments(core.MesheryNamespace).Create(context.Background(), deployment, metav1.CreateOptions{})
+		err = a.applyHelmCharts(kubeClient, adapter.Name, int32(exposedPort), true)
 		if err != nil {
 			return ErrAdapterAdministration(err)
 		}
 
-		service := &corev1.Service{
-			ObjectMeta: metav1.ObjectMeta{
-				Name:      adapter.Name,
-				Namespace: core.MesheryNamespace,
-			},
-			Spec: corev1.ServiceSpec{
-				Selector: map[string]string{
-					"app": adapter.Name,
-				},
-				Ports: []corev1.ServicePort{
-					{
-						Name:     "gRPC",
-						Protocol: corev1.ProtocolTCP,
-						Port:     int32(exposedPort),
-						TargetPort: intstr.IntOrString{
-							Type:   intstr.Int,
-							IntVal: int32(adapterPort),
-						},
-					},
-				},
-				Type: corev1.ServiceTypeClusterIP, // or use appropriate service type
-			},
-		}
-
-		svc, err := kubeClient.KubeClient.CoreV1().Services(core.MesheryNamespace).Create(context.Background(), service, metav1.CreateOptions{})
+		svc, err := kubeClient.KubeClient.CoreV1().Services(core.MesheryNamespace).Get(context.Background(), adapter.Name, metav1.GetOptions{})
 		if err != nil {
 			return ErrAdapterAdministration(err)
 		}
@@ -271,18 +200,7 @@ func (a *AdaptersTracker) UndeployAdapter(ctx context.Context, adapter models.Ad
 			return ErrAdapterAdministration(err)
 		}
 
-		if adapter.Name == "" {
-			adapter = a.adapters[adapter.Location]
-		}
-
-		// Delete the Deployment
-		err = kubeClient.KubeClient.AppsV1().Deployments(core.MesheryNamespace).Delete(context.Background(), adapter.Name, metav1.DeleteOptions{})
-		if err != nil {
-			return ErrAdapterAdministration(err)
-		}
-
-		// Delete the associated Service objects
-		err = kubeClient.KubeClient.CoreV1().Services(core.MesheryNamespace).Delete(context.Background(), adapter.Name, metav1.DeleteOptions{})
+		err = a.applyHelmCharts(kubeClient, adapter.Name, 0, false)
 		if err != nil {
 			return ErrAdapterAdministration(err)
 		}
@@ -298,4 +216,88 @@ func (a *AdaptersTracker) UndeployAdapter(ctx context.Context, adapter models.Ad
 
 func int32Ptr(n int32) *int32 {
 	return &n
+}
+
+// SetOverrideValues returns the value overrides to install/upgrade helm chart
+func (a *AdaptersTracker) setOverrideValues(adapterName string, exposedPort int32, enable bool) map[string]interface{} {
+	// Initialize the valueOverrides with default values and set config for selected adapter
+	valueOverrides := map[string]interface{}{}
+	for _, availableAdapter := range models.ListAvailableAdapters {
+		valueOverrides[availableAdapter.Name] = map[string]interface{}{
+			"enabled": false,
+		}
+		if enable && availableAdapter.Name == adapterName {
+			valueOverrides[availableAdapter.Name] = map[string]interface{}{
+				"enabled": true,
+				"service": map[string]interface{}{
+					"name":      adapterName,
+					"namespace": core.MesheryNamespace,
+					"spec": map[string]interface{}{
+						"selector": map[string]string{
+							"app": adapterName,
+						},
+						"ports": []map[string]interface{}{
+							{
+								"name":     "gRPC",
+								"protocol": "TCP",
+								"port":     exposedPort,
+							},
+						},
+						"type": "ClusterIP",
+					},
+				},
+			}
+		}
+	}
+
+	// Enable all already existing adapters
+	for _, setAdapter := range a.adapters {
+		setAdapterPort, _ := strconv.Atoi(strings.Split(setAdapter.Location, ":")[1])
+		valueOverrides[setAdapter.Name] = map[string]interface{}{
+			"enabled": true,
+			"service": setService(setAdapter.Name, setAdapterPort),
+		}
+	}
+
+	return valueOverrides
+}
+
+// Apply Helm charts for adapter deployment and service
+func (a *AdaptersTracker) applyHelmCharts(kubeClient *meshkitkube.Client, adapterName string, exposedPort int32, enable bool) error {
+	// get value overrides to install the helm chart
+	overrideValues := a.setOverrideValues(adapterName, exposedPort, enable)
+
+	// install the helm charts with specified override values
+	return kubeClient.ApplyHelmChart(meshkitkube.ApplyHelmChartConfig{
+		Namespace:       core.MesheryNamespace,
+		ReleaseName:     "meshery",
+		CreateNamespace: true,
+		ChartLocation: meshkitkube.HelmChartLocation{
+			Repository: utils.HelmChartURL,
+			Chart:      utils.HelmChartName,
+		},
+		Action:         meshkitkube.INSTALL,
+		DryRun:         false,
+		OverrideValues: overrideValues,
+	})
+}
+
+func setService(name string, port int) map[string]interface{} {
+	return map[string]interface{}{
+		"name":      name,
+		"namespace": core.MesheryNamespace,
+		"spec": map[string]interface{}{
+			"selector": map[string]string{
+				"app": name,
+			},
+			"ports": []map[string]interface{}{
+				{
+					"name":     "gRPC",
+					"protocol": "TCP",
+					"port":     port,
+				},
+			},
+			"type": "ClusterIP",
+		},
+	}
 }
