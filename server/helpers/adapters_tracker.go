@@ -131,7 +131,14 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 			return ErrAdapterAdministration(err)
 		}
 
-		port, _ := strconv.Atoi(adapter.Location)
+		exposedPort, _ := strconv.Atoi(adapter.Location)
+		adapterPort := 0
+		for _, availableAdapter := range models.ListAvailableAdapters {
+			if availableAdapter.Name == adapter.Name {
+				adapterPort, _ = strconv.Atoi(availableAdapter.Location)
+				break
+			}
+		}
 
 		// Create a deployment
 		deployment := &appsv1.Deployment{
@@ -159,7 +166,7 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 								Image: "layer5/" + adapter.Name + ":stable-latest",
 								Ports: []corev1.ContainerPort{
 									{
-										ContainerPort: int32(port),
+										ContainerPort: int32(adapterPort),
 									},
 								},
 							},
@@ -187,10 +194,10 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 					{
 						Name:     "gRPC",
 						Protocol: corev1.ProtocolTCP,
-						Port:     int32(port),
+						Port:     int32(exposedPort),
 						TargetPort: intstr.IntOrString{
 							Type:   intstr.Int,
-							IntVal: int32(port),
+							IntVal: int32(adapterPort),
 						},
 					},
 				},
