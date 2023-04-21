@@ -14,6 +14,8 @@ import (
 var (
 	// MesheryNamespace is the namespace to which Meshery is deployed in the Kubernetes cluster
 	MesheryNamespace = "meshery"
+	// MesheryReleaseName is the release name under which Meshery is deployed by Helm
+	MesheryReleaseName = "meshery"
 	// ManifestsFolder is where the Kubernetes manifests are stored
 	ManifestsFolder = "manifests"
 	// MesheryFolder is the default relative location of the meshery config

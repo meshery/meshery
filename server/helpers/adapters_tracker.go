@@ -254,7 +254,7 @@ func (a *AdaptersTracker) applyHelmCharts(kubeClient *meshkitkube.Client, adapte
 	// install the helm charts with specified override values
 	return kubeClient.ApplyHelmChart(meshkitkube.ApplyHelmChartConfig{
 		Namespace:       core.MesheryNamespace,
-		ReleaseName:     "meshery",
+		ReleaseName:     core.MesheryReleaseName,
 		CreateNamespace: true,
 		ChartLocation: meshkitkube.HelmChartLocation{
 			Repository: utils.HelmChartURL,
