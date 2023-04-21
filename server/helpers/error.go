@@ -139,7 +139,7 @@ func ErrNewKubeClient(err error) error {
 }
 
 func ErrAdapterAdministration(err error) error {
-	return errors.New(ErrAdapterAdministrationCode, errors.Critical, []string{"Unable to create new kube client"}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrAdapterAdministrationCode, errors.Critical, []string{"Unable to create administer adaptor"}, []string{err.Error()}, []string{}, []string{})
 }
 
 func ErrDockerHost(err error) error {
