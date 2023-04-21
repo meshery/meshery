@@ -1,4 +1,4 @@
-name: Reboot equinix metal servers running playground
+name: Meshery Playground - Reboot Equinix metal servers
 on:
     workflow_dispatch:
     schedule:
