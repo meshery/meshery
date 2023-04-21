@@ -2,6 +2,7 @@ package helpers
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 	"os"
@@ -250,6 +251,11 @@ func (a *AdaptersTracker) setOverrideValues(adapterName string, exposedPort int,
 func (a *AdaptersTracker) applyHelmCharts(kubeClient *meshkitkube.Client, adapterName string, exposedPort int, enable bool) error {
 	// get value overrides to install the helm chart
 	overrideValues := a.setOverrideValues(adapterName, exposedPort, enable)
+	b, err := json.MarshalIndent(overrideValues, "", "  ")
+	if err != nil {
+		fmt.Println("error:", err)
+	}
+	fmt.Print(string(b))
 
 	// install the helm charts with specified override values
 	return kubeClient.ApplyHelmChart(meshkitkube.ApplyHelmChartConfig{
@@ -266,13 +272,11 @@ func (a *AdaptersTracker) applyHelmCharts(kubeClient *meshkitkube.Client, adapte
 	})
 }
 
-func setService(name string, port int) *corev1.Service {
-	return &corev1.Service{
-		ObjectMeta: metav1.ObjectMeta{
-			Name:      name,
-			Namespace: core.MesheryNamespace,
-		},
-		Spec: corev1.ServiceSpec{
+func setService(name string, port int) map[string]interface{} {
+	return map[string]interface{}{
+		"name":      name,
+		"namespace": core.MesheryNamespace,
+		"spec": corev1.ServiceSpec{
 			Selector: map[string]string{
 				"app": name,
 			},
