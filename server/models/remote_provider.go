@@ -310,6 +310,36 @@ func (l *RemoteProvider) fetchUserDetails(tokenString string) (*User, error) {
 	return &up.User, nil
 }
 
+func (l *RemoteProvider) GetUserRole(req *http.Request) ([]byte, error) {
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s/api/identity/roles", l.RemoteProviderURL))
+	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
+	token, err := l.GetToken(req)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := l.DoRequest(cReq, token)
+	if err != nil {
+		return nil, ErrFetch(err, "User Role", resp.StatusCode)
+	}
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+
+	bdr, err := io.ReadAll(resp.Body)
+	if err != nil {
+		logrus.Errorf("unable to read response body: %v", err)
+		return nil, err
+	}
+
+	if resp.StatusCode == http.StatusOK {
+		return bdr, nil
+	}
+	err = ErrFetch(err, "User Role", resp.StatusCode)
+	logrus.Errorf(err.Error())
+	return nil, err
+}
+
 func (l *RemoteProvider) GetUserByID(req *http.Request, userID string) ([]byte, error) {
 	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s/api/identity/users/profile/%s", l.RemoteProviderURL, userID))
 	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)

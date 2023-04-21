@@ -50,6 +50,9 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 	gMux.Handle("/api/system/sync", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.KubernetesMiddleware(h.MesheryControllersMiddleware(h.SessionSyncHandler))), models.ProviderAuth))).
 		Methods("GET")
 
+	gMux.Handle("/api/roles", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetUserRoleHandler), models.ProviderAuth))).
+		Methods("GET")
+
 	gMux.Handle("/api/user", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.UserHandler), models.ProviderAuth))).
 		Methods("GET")
 	gMux.Handle("/api/user/profile/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetUserByIDHandler), models.ProviderAuth))).

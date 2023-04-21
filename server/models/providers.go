@@ -333,6 +333,7 @@ type Provider interface {
 	ExtractToken(http.ResponseWriter, *http.Request)
 	GetSession(req *http.Request) error
 	GetUserDetails(*http.Request) (*User, error)
+	GetUserRole(req *http.Request) ([]byte, error)
 	GetUserByID(req *http.Request, userID string) ([]byte, error)
 	GetProviderToken(req *http.Request) (string, error)
 	UpdateToken(http.ResponseWriter, *http.Request) string

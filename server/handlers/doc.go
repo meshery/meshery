@@ -46,6 +46,13 @@ type userInfo struct {
 	Body models.User
 }
 
+// Returns user role
+// swagger:response userRole
+type userRole struct {
+	// in: body
+	Body models.Role
+}
+
 // Returns all meshery patterns
 // swagger:response mesheryPatternsResponseWrapper
 type mesheryPatternsResponseWrapper struct {

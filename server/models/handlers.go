@@ -91,6 +91,8 @@ type HandlerInterface interface {
 	UserTestPreferenceGet(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	UserTestPreferenceDelete(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 
+	GetUserRoleHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+
 	SavePerformanceProfileHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	GetPerformanceProfilesHandler(w http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	GetPerformanceProfileHandler(w http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)

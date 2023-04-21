@@ -142,6 +142,23 @@ func (h *Handler) UserPrefsHandler(w http.ResponseWriter, req *http.Request, pre
 	}
 }
 
+// swagger:route GET /api/roles UserAPI idGetUserRole
+// Handle GET Requests for User Role
+//
+// Returns User Role
+// responses:
+// 	200: userRole
+func (h *Handler) GetUserRoleHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
+	resp, err := provider.GetUserRole(r)
+	if err != nil {
+		h.log.Error(ErrGetResult(err))
+		http.Error(w, ErrGetResult(err).Error(), http.StatusNotFound)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	fmt.Fprint(w, string(resp))
+}
+
 // swagger:route POST /api/content/design/share ShareContent idPostShareContent
 // Handle POST request for Sharing content
 //

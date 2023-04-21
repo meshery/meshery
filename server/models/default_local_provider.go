@@ -138,6 +138,10 @@ func (l *DefaultLocalProvider) GetUserByID(_ *http.Request, _ string) ([]byte, e
 	return nil, nil
 }
 
+func (l *DefaultLocalProvider) GetUserRole(_ *http.Request) ([]byte, error) {
+	return nil, nil
+}
+
 // GetSession - returns the session
 func (l *DefaultLocalProvider) GetSession(_ *http.Request) error {
 	return nil
