@@ -19,6 +19,7 @@ import (
 	"github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/models"
 	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
+	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -128,8 +129,11 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 			return ErrAdapterAdministration(err)
 		}
 
-		exposedPort, _ := strconv.Atoi(adapter.Location)
-		err = a.applyHelmCharts(kubeClient, adapter.Name, int32(exposedPort), true)
+		exposedPort, err := strconv.Atoi(adapter.Location)
+		if err != nil {
+			return ErrAdapterAdministration(err)
+		}
+		err = a.applyHelmCharts(kubeClient, adapter.Name, exposedPort, true)
 		if err != nil {
 			return ErrAdapterAdministration(err)
 		}
@@ -214,12 +218,8 @@ func (a *AdaptersTracker) UndeployAdapter(ctx context.Context, adapter models.Ad
 	return nil
 }
 
-func int32Ptr(n int32) *int32 {
-	return &n
-}
-
 // SetOverrideValues returns the value overrides to install/upgrade helm chart
-func (a *AdaptersTracker) setOverrideValues(adapterName string, exposedPort int32, enable bool) map[string]interface{} {
+func (a *AdaptersTracker) setOverrideValues(adapterName string, exposedPort int, enable bool) map[string]interface{} {
 	// Initialize the valueOverrides with default values and set config for selected adapter
 	valueOverrides := map[string]interface{}{}
 	for _, availableAdapter := range models.ListAvailableAdapters {
@@ -229,23 +229,7 @@ func (a *AdaptersTracker) setOverrideValues(adapterName string, exposedPort int3
 		if enable && availableAdapter.Name == adapterName {
 			valueOverrides[availableAdapter.Name] = map[string]interface{}{
 				"enabled": true,
-				"service": map[string]interface{}{
-					"name":      adapterName,
-					"namespace": core.MesheryNamespace,
-					"spec": map[string]interface{}{
-						"selector": map[string]string{
-							"app": adapterName,
-						},
-						"ports": []map[string]interface{}{
-							{
-								"name":     "gRPC",
-								"protocol": "TCP",
-								"port":     exposedPort,
-							},
-						},
-						"type": "ClusterIP",
-					},
-				},
+				"service": setService(adapterName, exposedPort),
 			}
 		}
 	}
@@ -263,7 +247,7 @@ func (a *AdaptersTracker) setOverrideValues(adapterName string, exposedPort int3
 }
 
 // Apply Helm charts for adapter deployment and service
-func (a *AdaptersTracker) applyHelmCharts(kubeClient *meshkitkube.Client, adapterName string, exposedPort int32, enable bool) error {
+func (a *AdaptersTracker) applyHelmCharts(kubeClient *meshkitkube.Client, adapterName string, exposedPort int, enable bool) error {
 	// get value overrides to install the helm chart
 	overrideValues := a.setOverrideValues(adapterName, exposedPort, enable)
 
@@ -282,22 +266,24 @@ func (a *AdaptersTracker) applyHelmCharts(kubeClient *meshkitkube.Client, adapte
 	})
 }
 
-func setService(name string, port int) map[string]interface{} {
-	return map[string]interface{}{
-		"name":      name,
-		"namespace": core.MesheryNamespace,
-		"spec": map[string]interface{}{
-			"selector": map[string]string{
+func setService(name string, port int) *corev1.Service {
+	return &corev1.Service{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      name,
+			Namespace: core.MesheryNamespace,
+		},
+		Spec: corev1.ServiceSpec{
+			Selector: map[string]string{
 				"app": name,
 			},
-			"ports": []map[string]interface{}{
+			Ports: []corev1.ServicePort{
 				{
-					"name":     "gRPC",
-					"protocol": "TCP",
-					"port":     port,
+					Name:     "gRPC",
+					Protocol: corev1.ProtocolTCP,
+					Port:     int32(port),
 				},
 			},
-			"type": "ClusterIP",
+			Type: corev1.ServiceTypeClusterIP,
 		},
 	}
 }
