@@ -24,3 +24,11 @@ type User struct {
 	Email     string `json:"email,omitempty" db:"email"`
 	Bio       string `json:"bio,omitempty" db:"bio"`
 }
+
+// Role - represents the roles of a user
+type Role struct {
+	ID        uuid.UUID `json:"id,omitempty" db:"id"`
+	RoleName  string    `json:"role_name,omitempty" db:"role_name"`
+	CreatedAt string    `json:"created_at,omitempty" db:"created_at"`
+	UpdatedAt string    `json:"updated_at,omitempty" db:"updated_at"`
+}
