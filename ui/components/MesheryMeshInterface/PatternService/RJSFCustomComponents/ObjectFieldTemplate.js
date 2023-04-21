@@ -11,6 +11,7 @@ import ExpandLessIcon from '../../../../assets/icons/ExpandLessIcon'
 import ErrorOutlineIcon from '../../../../assets/icons/ErrorOutlineIcon';
 import { ERROR_COLOR } from '../../../../constants/colors';
 import { iconMedium, iconSmall } from '../../../../css/icons.styles';
+import { calculateGrid, getHyperLinkDiv } from '../helper';
 
 const styles = (theme) => ({
   objectFieldGrid : {
@@ -107,7 +108,7 @@ const ObjectFieldTemplate = ({
           <Typography variant="body1" className={classes.typography} style={{ fontWeight : "bold", display : "inline" }}>{title.charAt(0).toUpperCase() + title.slice(1)}{" "}
           </Typography>
           {description &&
-            <CustomTextTooltip backgroundColor="#3C494F" title={description}>
+            <CustomTextTooltip backgroundColor="#3C494F" title={getHyperLinkDiv(description)}>
               <IconButton disableTouchRipple="true" disableRipple="true" component="span" size="small">
                 <HelpOutlineIcon width="14px" height="14px"  fill={theme.palette.type === 'dark' ? "white" : "black"}   style={{ marginLeft : "4px", verticalAlign : "middle", ...iconSmall }}/>
               </IconButton>
@@ -135,15 +136,7 @@ const ObjectFieldTemplate = ({
         ) : (
           <Grid
             item={true}
-            sm={12}
-            lg={
-              element.type === "object" ||
-                element.type === "array" ||
-                element.__additional_property ||
-                additional
-                ? 12
-                : 6
-            }
+            {...calculateGrid(element)}
             key={index}
           >
             {element.content}

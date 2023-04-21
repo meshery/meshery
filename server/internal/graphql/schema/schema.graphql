@@ -614,9 +614,24 @@ type Query {
 
 #
 
+# Input for status change of Meshery Operator
+input AdapterStatusInput {
+  # Desired status for Meshery Operator
+  targetStatus: Status!
+  
+  # The port on which adapter will be deployed
+  targetPort: String!
+
+  # Name of the adapter to be deployed
+  adapter: String!
+}
+
 type Mutation {
   # Change the Operator Status
   changeOperatorStatus(input: OperatorStatusInput): Status!
+
+  # Change the Adapter Status
+  changeAdapterStatus(input: AdapterStatusInput): Status!
 }
 
 type Subscription {

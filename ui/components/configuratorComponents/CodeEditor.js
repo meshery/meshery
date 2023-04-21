@@ -1,5 +1,4 @@
-import { Card, makeStyles, CardContent,  IconButton } from "@material-ui/core";
-import {  Eco } from "@material-ui/icons";
+import { Card, CardContent, makeStyles } from "@material-ui/core";
 import { useEffect, useState } from "react";
 import { UnControlled as CodeMirror } from "react-codemirror2";
 
@@ -16,9 +15,9 @@ const useStyles = makeStyles(theme => ({
   wrapper : {
     [theme.breakpoints.up('md')] : {
       top : ({ scrollPos }) => scrollPos >= 106 ? 106 : window.scrollY > 0 ? 208 - scrollPos: "auto",
-      position : "fixed",
-      minWidth : "calc(50% - 175px)",
-      maxWidth : "calc(50% - 175px)",
+      position : ({ fullWidth }) => fullWidth ? "inherit": "fixed",
+      minWidth : ({ fullWidth }) => fullWidth ? undefined: "calc(50% - 175px)",
+      maxWidth : ({ fullWidth }) => fullWidth ? undefined: "calc(50% - 175px)",
     },
   },
   icon : {
@@ -31,9 +30,9 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export default function CodeEditor({ yaml, saveCodeEditorChanges, cleanHandler }) {
+export default function CodeEditor({ yaml, saveCodeEditorChanges, fullWidth }) {
   const [style, setStyle] = useState(67)
-  const classes = useStyles({ scrollPos : style });
+  const classes = useStyles({ scrollPos : style, fullWidth });
 
   useEffect(() => {
     window.addEventListener('scroll', handleScroll);
@@ -48,7 +47,7 @@ export default function CodeEditor({ yaml, saveCodeEditorChanges, cleanHandler }
   }
 
   return (
-    <div className={classes.wrapper} >
+    <div className={classes.wrapper} style={{}} >
       <Card
         elevation={0}
         // @ts-ignore
@@ -73,9 +72,6 @@ export default function CodeEditor({ yaml, saveCodeEditorChanges, cleanHandler }
               }
             }}
           />
-          <IconButton className={classes.icon} onClick={cleanHandler}>
-            <Eco />
-          </IconButton>
         </CardContent>
       </Card>
     </div>

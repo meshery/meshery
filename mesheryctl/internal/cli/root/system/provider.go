@@ -121,7 +121,7 @@ mesheryctl system provider list
 
 		providers, err := utils.GetProviderInfo(mctlCfg)
 		if err != nil {
-			log.Fatalln("unable to fetch providers\nStart Meshery or see https://docs.meshery.io/extensibility/providers#types-of-providers")
+			log.Fatalln("could not fetch providers as Meshery server was unreachable\nStart Meshery to list available providers")
 		}
 
 		log.Print("Available providers:\n")
@@ -158,7 +158,7 @@ var setProviderCmd = &cobra.Command{
 mesheryctl system provider set [provider]
 	`,
 	Args: func(_ *cobra.Command, args []string) error {
-		const errMsg = "Usage: mesheryctl system provider set [provider]\nRun 'mesheryctl system provider list' to see the available providers\n"
+		const errMsg = "Usage: mesheryctl system provider set [provider]\nRun 'mesheryctl system provider list' to see the available providers"
 		if len(args) == 0 {
 			return fmt.Errorf("provider not specified\n\n%v", errMsg)
 		} else if len(args) > 1 {
@@ -194,7 +194,7 @@ mesheryctl system provider set [provider]
 			// Verify provider
 			availableProviders, err := utils.GetProviderInfo(mctlCfg)
 			if err != nil {
-				log.Fatalln("unable to verify provider\nStart Meshery or see https://docs.meshery.io/extensibility/providers#types-of-providers\n\nRun `mesheryctl system provider set [provider] --force` to force set the provider")
+				log.Fatalln("could not verify provider as Meshery server was unreachable\nStart Meshery to verify provider\n\nRun `mesheryctl system provider set [provider] --force` to force set the provider")
 			}
 
 			keys := make([]string, 0, len(availableProviders))
@@ -305,7 +305,7 @@ mesheryctl system provider switch [provider]
 var resetProviderCmd = &cobra.Command{
 	Use:   "reset",
 	Short: "reset provider to default",
-	Long:  "Reset provider of context in focus to default (No provider set)",
+	Long:  "Reset provider for current context to default (Meshery)",
 	Example: `
 // Reset provider to default
 mesheryctl system provider reset
@@ -336,7 +336,7 @@ mesheryctl system provider reset
 			return err
 		}
 
-		currCtx.Provider = ""
+		currCtx.Provider = "Meshery"
 
 		mctlCfg.Contexts[focusedContext] = *currCtx
 		viper.Set("contexts", mctlCfg.Contexts)
@@ -345,7 +345,7 @@ mesheryctl system provider reset
 			return err
 		}
 
-		log.Infof("Provider reset to default (No provider set)")
+		log.Infof("Provider reset to Meshery")
 		return nil
 	},
 }
