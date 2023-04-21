@@ -148,6 +148,7 @@ func (h *Handler) UserPrefsHandler(w http.ResponseWriter, req *http.Request, pre
 // Returns User Role
 // responses:
 // 	200: userRole
+
 func (h *Handler) GetUserRoleHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	resp, err := provider.GetUserRole(r)
 	if err != nil {

@@ -2,6 +2,8 @@ package models
 
 import (
 	"encoding/gob"
+
+	"github.com/gofrs/uuid"
 )
 
 func init() {
