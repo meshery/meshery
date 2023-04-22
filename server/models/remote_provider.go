@@ -3280,7 +3280,7 @@ func (l *RemoteProvider) UpdateConnection(req *http.Request, connection *Connect
 		return nil, err
 	}
 	bf := bytes.NewBuffer(_creds)
-	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s/edit", l.RemoteProviderURL, ep, connection.Kind))
 	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), bf)
 	tokenString, _ := l.GetToken(req)
 	if err != nil {
