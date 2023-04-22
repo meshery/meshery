@@ -20,7 +20,7 @@ func (h *Handler) SaveConnection(w http.ResponseWriter, req *http.Request, _ *mo
 		return
 	}
 
-	connection := models.Connection{}
+	connection := models.ConnectionPayload{}
 	err = json.Unmarshal(bd, &connection)
 	if err != nil {
 		h.log.Error(fmt.Errorf("error unmarshal request body: %v", err))

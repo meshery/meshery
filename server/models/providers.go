@@ -193,19 +193,12 @@ type K8sContextPersistResponse struct {
 	Inserted   bool       `json:"inserted,omitempty"`
 }
 
-type Connection struct {
+type ConnectionPayload struct {
 	Kind             string                 `json:"kind,omitempty"`
 	SubType          string                 `json:"sub_type,omitempty"`
 	Type             string                 `json:"type,omitempty"`
 	MetaData         map[string]interface{} `json:"metadata,omitempty"`
 	CredentialSecret map[string]interface{} `json:"credential_secret,omitempty"`
-}
-
-type ConnectionsPage struct {
-	Page        int           `json:"page"`
-	PageSize    int           `json:"page_size"`
-	TotalCount  int           `json:"total_count"`
-	Connections []*Connection `json:"connections"`
 }
 
 type ExtensionProxyResponse struct {
@@ -419,8 +412,8 @@ type Provider interface {
 
 	ExtensionProxy(req *http.Request) (*ExtensionProxyResponse, error)
 
-	SaveConnection(req *http.Request, conn *Connection, token string, skipTokenCheck bool) error
-	GetConnections(req *http.Request, userID string, page, pageSize int, search, order, connectionKind string) (*ConnectionsPage, error)
+	SaveConnection(req *http.Request, conn *ConnectionPayload, token string, skipTokenCheck bool) error
+	GetConnections(req *http.Request, userID string, page, pageSize int, search, order, connectionKind string) (*ConnectionPage, error)
 	UpdateConnection(req *http.Request, conn *Connection) (*Connection, error)
 	DeleteConnection(req *http.Request, connID uuid.UUID) (*Connection, error)
 	DeleteMesheryConnection() error

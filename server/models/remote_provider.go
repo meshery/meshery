@@ -2907,7 +2907,7 @@ func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, _ 
 		var temp *uuid.UUID
 		cred["token"] = temp
 
-		conn := &Connection{
+		conn := &ConnectionPayload{
 			Kind:             "meshery",
 			Type:             "platform",
 			SubType:          "management",
@@ -3186,7 +3186,7 @@ func (l *RemoteProvider) ExtensionProxy(req *http.Request) (*ExtensionProxyRespo
 	return nil, ErrFetch(fmt.Errorf("failed to request to remote provider"), fmt.Sprint(bdr), resp.StatusCode)
 }
 
-func (l *RemoteProvider) SaveConnection(req *http.Request, conn *Connection, token string, skipTokenCheck bool) error {
+func (l *RemoteProvider) SaveConnection(req *http.Request, conn *ConnectionPayload, token string, skipTokenCheck bool) error {
 	if !l.Capabilities.IsSupported(PersistConnection) {
 		logrus.Error("operation not available")
 		return ErrInvalidCapability("PersistConnection", l.ProviderName)
@@ -3229,7 +3229,7 @@ func (l *RemoteProvider) SaveConnection(req *http.Request, conn *Connection, tok
 }
 
 // GetConnections - to get saved credentials
-func (l *RemoteProvider) GetConnections(req *http.Request, _ string, page, pageSize int, search, order, connectionKind string) (*ConnectionsPage, error) {
+func (l *RemoteProvider) GetConnections(req *http.Request, _ string, page, pageSize int, search, order, connectionKind string) (*ConnectionPage, error) {
 	if !l.Capabilities.IsSupported(PersistConnection) {
 		logrus.Error("operation not available")
 		return nil, ErrInvalidCapability("PersistConnection", l.ProviderName)
@@ -3261,7 +3261,7 @@ func (l *RemoteProvider) GetConnections(req *http.Request, _ string, page, pageS
 		return nil, ErrFetch(fmt.Errorf("could not retrieve list of connections: %d", resp.StatusCode), fmt.Sprint(bdr), resp.StatusCode)
 	}
 
-	var cp ConnectionsPage
+	var cp ConnectionPage
 	if err = json.Unmarshal(bdr, &cp); err != nil {
 		return nil, err
 	}
