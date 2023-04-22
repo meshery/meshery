@@ -552,6 +552,7 @@ func (x *EventsRequest) ProtoReflect() protoreflect.Message {
 func (*EventsRequest) Descriptor() ([]byte, []int) {
 	return file_meshops_proto_rawDescGZIP(), []int{7}
 }
+
 //swagger:response EventsResponse
 type EventsResponse struct {
 	state         protoimpl.MessageState

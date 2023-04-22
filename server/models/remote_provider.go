@@ -61,12 +61,6 @@ type userSession struct {
 	session *Preference
 }
 
-// UserPref - is just use to separate out the user info from preference
-type UserPref struct {
-	User
-	Preferences *Preference `json:"preferences,omitempty"`
-}
-
 const (
 	remoteUploadURL   = "/upload"
 	remoteDownloadURL = "/download"
@@ -273,14 +267,20 @@ func (l *RemoteProvider) InitiateLogin(w http.ResponseWriter, r *http.Request, _
 	http.Redirect(w, r, "/", http.StatusFound)
 }
 
-func (l *RemoteProvider) fetchUserDetails(tokenString string) (*User, error) {
+// GetUserDetails - returns the user details
+func (l *RemoteProvider) GetUserDetails(req *http.Request) (*User, error) {
 	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + "/api/identity/users/profile")
-	req, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
+	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
+	token, err := l.GetToken(req)
+	if err != nil {
+		return nil, err
+	}
 
-	resp, err := l.DoRequest(req, tokenString)
+	resp, err := l.DoRequest(cReq, token)
 	if err != nil {
 		return nil, ErrFetch(err, "User Data", http.StatusUnauthorized)
 	}
+
 	defer func() {
 		_ = resp.Body.Close()
 	}()
@@ -289,25 +289,13 @@ func (l *RemoteProvider) fetchUserDetails(tokenString string) (*User, error) {
 		return nil, ErrDataRead(err, "User Data")
 	}
 
-	up := &UserPref{
-		Preferences: &Preference{
-			AnonymousUsageStats:  true,
-			AnonymousPerfResults: true,
-		},
-	}
-	err = json.Unmarshal(bd, up)
+	user := &User{}
+	err = json.Unmarshal(bd, user)
 	if err != nil {
-		return nil, ErrUnmarshal(err, "User Pref")
+		return nil, ErrUnmarshal(err, "User")
 	}
 
-	prefLocal, _ := l.ReadFromPersister(up.UserID)
-	if prefLocal == nil || up.Preferences.UpdatedAt.After(prefLocal.UpdatedAt) {
-		_ = l.WriteToPersister(up.UserID, up.Preferences)
-	}
-
-	// Uncomment when Debug verbosity is figured out project wide. | @leecalcote
-	// logrus.Debugf("retrieved user: %v", up.User)
-	return &up.User, nil
+	return user, nil
 }
 
 func (l *RemoteProvider) GetUserByID(req *http.Request, userID string) ([]byte, error) {
@@ -340,21 +328,6 @@ func (l *RemoteProvider) GetUserByID(req *http.Request, userID string) ([]byte, 
 	err = ErrFetch(err, "User Profile", resp.StatusCode)
 	logrus.Errorf(err.Error())
 	return nil, err
-}
-
-// GetUserDetails - returns the user details
-//
-// It is assumed that every remote provider will support this feature
-func (l *RemoteProvider) GetUserDetails(req *http.Request) (*User, error) {
-	token, err := l.GetToken(req)
-	if err != nil {
-		return nil, err
-	}
-	user, err := l.fetchUserDetails(token)
-	if err != nil {
-		return nil, err
-	}
-	return user, nil
 }
 
 // GetSession - validates the current request, attempts for a refresh of token, and then return its validity
