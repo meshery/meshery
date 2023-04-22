@@ -5,6 +5,7 @@ import { CustomTextTooltip } from "../CustomTextTooltip";
 import ErrorOutlineIcon from "../../../../assets/icons/ErrorOutlineIcon";
 import { ERROR_COLOR } from "../../../../constants/colors";
 import { iconSmall } from "../../../../css/icons.styles";
+import { getHyperLinkDiv } from "../helper";
 
 const BaseInput = (props) => {
   const additional = props.schema?.__additional_property; // check if the field is additional
@@ -54,7 +55,7 @@ const BaseInput = (props) => {
                 </CustomTextTooltip>
               )}
               {props.schema?.description && (
-                <CustomTextTooltip backgroundColor="#3C494F" flag={props?.formContext?.overrideFlag} title={props.schema?.description} interactive={true}>
+                <CustomTextTooltip backgroundColor="#3C494F" flag={props?.formContext?.overrideFlag} title={getHyperLinkDiv(props.schema?.description)} interactive={true}>
                   <IconButton component="span" size="small">
                     <HelpOutlineIcon width="14px" height="14px"  fill={theme.palette.type === 'dark' ? "white" : "gray"}  style={{ verticalAlign : "middle", ...iconSmall }}/>
                   </IconButton>
