@@ -137,14 +137,16 @@ func (h *Handler) addK8SConfig(_ *models.User, _ *models.Preference, w http.Resp
 		return
 	}
 
-	h.EventsBuffer.Publish(&meshes.EventsResponse{
-		Component:     "core",
-		ComponentName: "kubernetes",
-		OperationId:   guid.NewString(),
-		EventType:     meshes.EventType_INFO,
-		Summary:       fmt.Sprintf("Kubernetes configuration output"),
-		Details:       fmt.Sprintf("%s", respMessage),
-	})
+	if respMessage != "" {
+		h.EventsBuffer.Publish(&meshes.EventsResponse{
+			Component:     "core",
+			ComponentName: "kubernetes",
+			OperationId:   guid.NewString(),
+			EventType:     meshes.EventType_INFO,
+			Summary:       fmt.Sprintf("Kubernetes configuration Info"),
+			Details:       fmt.Sprintf("%s", respMessage),
+		})
+	}
 }
 
 // swagger:route DELETE /api/system/kubernetes SystemAPI idDeleteK8SConfig
