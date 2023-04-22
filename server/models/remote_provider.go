@@ -3229,14 +3229,13 @@ func (l *RemoteProvider) SaveConnection(req *http.Request, conn *Connection, tok
 }
 
 // GetConnections - to get saved credentials
-func (l *RemoteProvider) GetConnections(req *http.Request, _ string, page, pageSize int, search, order string) (*ConnectionsPage, error) {
+func (l *RemoteProvider) GetConnections(req *http.Request, _ string, page, pageSize int, search, order, connectionKind string) (*ConnectionsPage, error) {
 	if !l.Capabilities.IsSupported(PersistConnection) {
 		logrus.Error("operation not available")
 		return nil, ErrInvalidCapability("PersistConnection", l.ProviderName)
 	}
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistConnection)
-	pathSegments := strings.Split(req.URL.Path, "/")
-	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep + pathSegments[len(pathSegments)-1])
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep + connectionKind)
 
 	q := remoteProviderURL.Query()
 	q.Add("page", strconv.Itoa(page))

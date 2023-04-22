@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/models"
@@ -40,7 +41,8 @@ func (h *Handler) SaveConnection(w http.ResponseWriter, req *http.Request, _ *mo
 
 func (h *Handler) GetConnections(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	q := req.URL.Query()
-
+	pathSegments := strings.Split(req.URL.Path, "/")
+	connectionKind := pathSegments[len(pathSegments)-1]
 	page, _ := strconv.Atoi(q.Get("page"))
 	order := q.Get("order")
 	search := q.Get("search")
@@ -61,7 +63,7 @@ func (h *Handler) GetConnections(w http.ResponseWriter, req *http.Request, _ *mo
 
 	h.log.Debug(fmt.Sprintf("page: %d, page size: %d, search: %s, order: %s", page+1, pageSize, search, order))
 
-	connectionsPage, err := provider.GetConnections(req, user.ID, page, pageSize, order, search)
+	connectionsPage, err := provider.GetConnections(req, user.ID, page, pageSize, order, search, connectionKind)
 	if err != nil {
 		h.log.Error(fmt.Errorf("error getting user connections: %v", err))
 		http.Error(w, "unable to get user connections", http.StatusInternalServerError)

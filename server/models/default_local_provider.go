@@ -926,7 +926,7 @@ func (l *DefaultLocalProvider) SaveConnection(_ *http.Request, _ *Connection, _ 
 	return ErrLocalProviderSupport
 }
 
-func (l *DefaultLocalProvider) GetConnections(_ *http.Request, _ string, _, _ int, _, _ string) (*ConnectionsPage, error) {
+func (l *DefaultLocalProvider) GetConnections(_ *http.Request, _ string, _, _ int, _, _, _ string) (*ConnectionsPage, error) {
 	return nil, ErrLocalProviderSupport
 }
 
