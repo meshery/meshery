@@ -15,14 +15,13 @@ import (
 )
 
 // UserHandler returns info about the logged in user
-func (h *Handler) UserHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
+func (h *Handler) UserHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	resp, err := provider.GetUserDetails(r)
 	if err != nil {
 		h.log.Error(ErrGetResult(err))
 		http.Error(w, ErrGetResult(err).Error(), http.StatusNotFound)
 		return
 	}
-	fmt.Println(resp)
 	w.Header().Set("Content-Type", "application/json")
 	enc := json.NewEncoder(w)
 	if err := enc.Encode(resp); err != nil {
