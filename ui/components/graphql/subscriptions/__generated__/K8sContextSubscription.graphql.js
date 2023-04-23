@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<35ab61058ae1db0175c92c645e118d20>>
+ * @generated SignedSource<<e5329bb8772403c10972129fbe02be88>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -129,6 +129,13 @@ v1 = [
             "kind": "ScalarField",
             "name": "created_at",
             "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "version",
+            "storageKey": null
           }
         ],
         "storageKey": null
@@ -155,16 +162,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "277230e3e71a8325a1a2e075db2f7847",
+    "cacheID": "7e7d2789e340a7c3fd56badc433c0ffc",
     "id": null,
     "metadata": {},
     "name": "K8sContextSubscription",
     "operationKind": "subscription",
-    "text": "subscription K8sContextSubscription(\n  $selector: PageFilter!\n) {\n  k8sContext: subscribeK8sContext(selector: $selector) {\n    total_count\n    contexts {\n      id\n      name\n      auth\n      cluster\n      server\n      owner\n      created_by\n      meshery_instance_id\n      kubernetes_server_id\n      deployment_type\n      updated_at\n      created_at\n    }\n  }\n}\n"
+    "text": "subscription K8sContextSubscription(\n  $selector: PageFilter!\n) {\n  k8sContext: subscribeK8sContext(selector: $selector) {\n    total_count\n    contexts {\n      id\n      name\n      auth\n      cluster\n      server\n      owner\n      created_by\n      meshery_instance_id\n      kubernetes_server_id\n      deployment_type\n      updated_at\n      created_at\n      version\n    }\n  }\n}\n"
   }
 };
 })();
 
-node.hash = "844c4a5835b4f24315e540f72279fe7d";
+node.hash = "c905518498312d5141459c30dd8d0e41";
 
 module.exports = node;
