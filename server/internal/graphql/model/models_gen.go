@@ -163,6 +163,7 @@ type K8sContext struct {
 	MesheryInstanceID  string                 `json:"meshery_instance_id"`
 	KubernetesServerID string                 `json:"kubernetes_server_id"`
 	DeploymentType     string                 `json:"deployment_type"`
+	Version            string                 `json:"version"`
 	UpdatedAt          string                 `json:"updated_at"`
 	CreatedAt          string                 `json:"created_at"`
 }
