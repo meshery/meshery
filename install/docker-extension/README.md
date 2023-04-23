@@ -9,7 +9,7 @@
   <img src="https://img.shields.io/docker/pulls/layer5/meshery.svg" /></a>
 <a href="https://github.com/issues?utf8=✓&q=is%3Aopen+is%3Aissue+archived%3Afalse+org%3Alayer5io+label%3A%22help+wanted%22+" alt="GitHub issues by-label">
   <img src="https://img.shields.io/github/issues/layer5io/meshery/help%20wanted.svg?color=informational" /></a>
-<a href="https://github.com/meshery/meshery" alt="LICENSE">
+<a href="https://github.com/meshery/meshery/blob/master/LICENSE" alt="LICENSE">
   <img src="https://img.shields.io/github/license/meshery/meshery?color=brightgreen" /></a>
 <a href="https://goreportcard.com/report/github.com/meshery/meshery" alt="Go Report Card">
   <img src="https://goreportcard.com/badge/github.com/meshery/meshery" /></a>
@@ -65,3 +65,4 @@ Learn more about <a href="https://docs.meshery.io/architecture">Meshery's archit
 </p>
 <p style="text-align:center; width:100%;" align="center">
 <h3 style="text-align:center;" align="center"><em>Have questions? Need help?</em> <strong>Ask in the <a href="https://discuss.layer5.io">Community Forum</a></strong>.</h3></p>
+

@@ -26,7 +26,9 @@ import { scrollToTop } from "../../utils/utils";
 function PatternServiceFormCore({ formData, schemaSet, onSubmit, onDelete, reference, namespace, onSettingsChange, onTraitsChange, children, scroll = false, tab }) {
   const [settings, setSettings, getSettingsRefValue] = useStateCB(formData && !!formData.settings ? formData.settings : {}, onSettingsChange);
   const [traits, setTraits, getTraitsRefValue] = useStateCB(formData && !!formData.traits ? formData.traits : {}, onTraitsChange);
-  const [update, forceUpdate] = useState(0)
+  const [update, forceUpdate] = useState(0);
+  // eslint-disable-next-line no-unused-vars
+  const [rjsfReferenceKey, _] = useState((Math.random() + 1).toString(32).substring(2))
 
   useEffect(() => {
     if (schemaSet.type !== "addon") {
@@ -90,6 +92,7 @@ function PatternServiceFormCore({ formData, schemaSet, onSubmit, onDelete, refer
     reference.current.delete = (cb) => deleteHandler(cb?.(getSettingsRefValue(), getTraitsRefValue()))
     reference.current.getSettings = () => getSettingsRefValue()
     reference.current.getTraits = () => getTraitsRefValue()
+    reference.current.referKey = rjsfReferenceKey;
   }
 
   // Return cached child -- Prevents rerenders

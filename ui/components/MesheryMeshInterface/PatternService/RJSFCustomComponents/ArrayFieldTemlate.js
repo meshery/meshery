@@ -12,6 +12,7 @@ import { isMultiSelect, getDefaultFormState } from "@rjsf/utils";
 import ErrorOutlineIcon from "../../../../assets/icons/ErrorOutlineIcon";
 import { ERROR_COLOR } from "../../../../constants/colors";
 import { iconSmall } from "../../../../css/icons.styles";
+import { getHyperLinkDiv } from "../helper";
 const styles = (theme) => ({
   typography : {
     fontSize : "0.8rem",
@@ -187,7 +188,7 @@ const DefaultNormalArrayFieldTemplate = (props) => {
 
             {
               (props.uiSchema["ui:description"] || props.schema.description) &&
-              <CustomTextTooltip backgroundColor="#3C494F" title={props.uiSchema["ui:description"] || props.schema.description}>
+              <CustomTextTooltip backgroundColor="#3C494F" title={getHyperLinkDiv(props.schema.description)}>
                 <IconButton  disableTouchRipple="true" disableRipple="true">
                   <HelpOutlineIcon width="14px" height="14px"  fill={theme.palette.type === 'dark' ? "white" : "gray"}  style={{ marginLeft : '4px', ...iconSmall }} />
                 </IconButton>

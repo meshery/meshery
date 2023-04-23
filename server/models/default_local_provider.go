@@ -16,6 +16,7 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshkit/database"
@@ -27,6 +28,7 @@ import (
 	SMP "github.com/layer5io/service-mesh-performance/spec"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
+	"gorm.io/gorm"
 )
 
 // DefaultLocalProvider - represents a local provider
@@ -64,6 +66,7 @@ func (l *DefaultLocalProvider) Initialize() {
 		{Feature: PersistMesheryPatterns},
 		{Feature: PersistMesheryApplications},
 		{Feature: PersistMesheryFilters},
+		{Feature: PersistCredentials},
 	}
 }
 
@@ -1076,6 +1079,76 @@ func (l *DefaultLocalProvider) Cleanup() error {
 		return err
 	}
 	return l.MesheryK8sContextPersister.DB.Migrator().DropTable(&MesheryFilter{})
+}
+
+func (l *DefaultLocalProvider) SaveUserCredential(_ *http.Request, credential *Credential) error {
+	result := l.GetGenericPersister().Table("credentials").Create(&credential)
+	if result.Error != nil {
+		return fmt.Errorf("error saving user credentials: %v", result.Error)
+	}
+	return nil
+}
+
+func (l *DefaultLocalProvider) GetUserCredentials(_ *http.Request, userID string, page, pageSize int, search, order string) (*CredentialsPage, error) {
+	result := l.GetGenericPersister().Select("*").Where("user_id=? and deleted_at is NULL", userID)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	if search != "" {
+		like := "%" + strings.ToLower(search) + "%"
+		result = result.Where("(lower(name) like ?)", like)
+	}
+
+	result = result.Order(order)
+
+	var count int64
+	if err := result.Count(&count).Error; err != nil {
+		return nil, fmt.Errorf("error retrieving count of credentials for user id: %s - %v", userID, err)
+	}
+
+	var credentialsList []*Credential
+	if count > 0 {
+		if err := result.Offset(page * pageSize).Limit(pageSize).Find(&credentialsList).Error; err != nil {
+			if err != gorm.ErrRecordNotFound {
+				return nil, fmt.Errorf("error retrieving credentials for user id: %s - %v", userID, err)
+			}
+		}
+	}
+
+	credentialsPage := &CredentialsPage{
+		Credentials: credentialsList,
+		Page:        page,
+		PageSize:    pageSize,
+		TotalCount:  int(count),
+	}
+
+	if result.Error != nil {
+		return nil, fmt.Errorf("error getting user credentials: %v", result.Error)
+	}
+	return credentialsPage, nil
+}
+
+func (l *DefaultLocalProvider) UpdateUserCredential(_ *http.Request, credential *Credential) (*Credential, error) {
+	updatedCredential := &Credential{}
+	if err := l.GetGenericPersister().Model(*updatedCredential).Where("user_id = ? AND id = ? AND deleted_at is NULL", credential.UserID, credential.ID).Updates(credential); err != nil {
+		return nil, fmt.Errorf("error updating user credential: %v", err)
+	}
+
+	if err := l.GetGenericPersister().Where("user_id = ? AND id = ?", credential.UserID, credential.ID).First(updatedCredential).Error; err != nil {
+		return nil, fmt.Errorf("error getting updated user credential: %v", err)
+	}
+	return updatedCredential, nil
+}
+
+func (l *DefaultLocalProvider) DeleteUserCredential(_ *http.Request, credentialID uuid.UUID) (*Credential, error) {
+	delCredential := &Credential{}
+	if err := l.GetGenericPersister().Model(&Credential{}).Where("id = ?", credentialID).Update("deleted_at", time.Now()).Error; err != nil {
+		return nil, err
+	}
+	if err := l.GetGenericPersister().Where("id = ?", credentialID).First(delCredential).Error; err != nil {
+		return nil, err
+	}
+	return delCredential, nil
 }
 
 // githubRepoPatternScan & githubRepoFilterScan takes in github repo owner, repo name, path from where the file/files are needed

@@ -97,9 +97,9 @@ const styles = (theme) => ({
     margin : theme.spacing(0.5),
     padding : theme.spacing(1),
     borderRadius : 5,
-    "&:disabled" : {
-      backgroundColor : theme.palette.type==="dark"? "grey": "#FF3D3D",
-      color : "#fff"
+    '&:disabled' : {
+      cursor : 'not-allowed',
+      pointerEvents : 'all !important'
     },
     minWidth : 100,
   },
