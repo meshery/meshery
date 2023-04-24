@@ -61,10 +61,13 @@ func ConvertMapInterfaceMapString(v interface{}, prettify bool, isSchema bool) i
 					m[k2] = v2
 					continue
 				}
-				if prettify {
-					m[manifests.FormatToReadableString(k2)] = ConvertMapInterfaceMapString(v2, prettify, isSchema)
+				newmap := ConvertMapInterfaceMapString(v2, prettify, isSchema)
+				if isSchema && isSpecialKey(k2) { //Few special keys in schema should not be prettified
+					m[k2] = newmap
+				} else if prettify {
+					m[manifests.FormatToReadableString(k2)] = newmap
 				} else {
-					m[manifests.DeFormatReadableString(k2)] = ConvertMapInterfaceMapString(v2, prettify, isSchema)
+					m[manifests.DeFormatReadableString(k2)] = newmap
 				}
 			default:
 				m[fmt.Sprint(k)] = ConvertMapInterfaceMapString(v2, prettify, isSchema)
@@ -80,25 +83,19 @@ func ConvertMapInterfaceMapString(v interface{}, prettify bool, isSchema bool) i
 		return x2
 	case map[string]interface{}:
 		m := map[string]interface{}{}
-		foundFormatIntOrString := false
+		// foundFormatIntOrString := false
 		for k, v2 := range x {
 			if isSchema && k == "enum" { //While schema prettification, ENUMS are end system defined end user input and therefore should not be prettified/deprettified
 				m[k] = v2
+				continue
+			}
+			newmap := ConvertMapInterfaceMapString(v2, prettify, isSchema)
+			if isSchema && isSpecialKey(k) {
+				m[k] = newmap
 			} else if prettify {
-				m[manifests.FormatToReadableString(k)] = ConvertMapInterfaceMapString(v2, prettify, isSchema)
+				m[manifests.FormatToReadableString(k)] = newmap
 			} else {
-				m[manifests.DeFormatReadableString(k)] = ConvertMapInterfaceMapString(v2, prettify, isSchema)
-			}
-			if isSchema {
-				//Apply this fix only when the format specifies string|int and type specifies string therefore when there is a contradiction
-				if k == "format" && v2 == "int-or-string" {
-					foundFormatIntOrString = true
-				}
-			}
-		}
-		if isSchema {
-			if x["type"] == "string" && foundFormatIntOrString {
-				m["type"] = "integer"
+				m[manifests.DeFormatReadableString(k)] = newmap
 			}
 		}
 		return m
@@ -111,6 +108,18 @@ func ConvertMapInterfaceMapString(v interface{}, prettify bool, isSchema bool) i
 		}
 	}
 	return v
+}
+
+// These keys should not be prettified to "any Of", "all Of" and "one Of"
+var keysToNotPrettifyOnSchema = []string{"anyOf", "allOf", "oneOf"}
+
+func isSpecialKey(k string) bool {
+	for _, k0 := range keysToNotPrettifyOnSchema {
+		if k0 == k {
+			return true
+		}
+	}
+	return false
 }
 
 // In case of any breaking change or bug caused by this, set this to false and the whitespace addition in schema generated/consumed would be removed(will go back to default behavior)

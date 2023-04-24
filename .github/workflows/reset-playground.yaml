@@ -1,4 +1,4 @@
-name: Meshery Playground: Reset
+name: Meshery Playground - Reset
 on:
    workflow_dispatch:
    schedule:
@@ -10,15 +10,14 @@ jobs:
      if: github.repository == 'meshery/meshery'
      runs-on: ubuntu-latest 
      steps:
-      - name: Install kubectl
-        run: apt-get update;apt-get install -y kubectl
+      - uses: azure/setup-kubectl@v3
       - name: Extract kubeconfig
-        run: echo "${{ secrets.PLAYGROUND_CONFIG }}" | base64 --decode > ~/.kube/config
+        run: mkdir ~/.kube; touch ~/.kube/config ;echo "${{ secrets.PLAYGROUND_CONFIG }}" | base64 --decode > ~/.kube/config
       - name: Delete namespaces except the ones which are whitelisted in the if statement
         run: |
          for ns in $(kubectl get ns -o jsonpath="{.items[*].metadata.name}");
          do
-         if [[ "$ns" != "kube-system" && "$ns" != "default" && "$ns" != "kube-flannel" && "$ns" != "kube-node-lease" && "$ns" != "kube-public" && "$ns" != "meshery" && "$ns" != "metallb-system" && "$ns" != "projectcontour" ]];then
+         if [[ "$ns" != "kube-system" && "$ns" != "default" && "$ns" != "monitoring" && "$ns" != "kube-flannel" && "$ns" != "kube-node-lease" && "$ns" != "kube-public" && "$ns" != "meshery" && "$ns" != "metallb-system" && "$ns" != "projectcontour" ]];then
            echo "Deleting namespace $ns"
            kubectl delete ns "$ns"
           fi
