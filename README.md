@@ -1,5 +1,7 @@
-<p style="text-align:center;" align="center"><a href="https://layer5.io/meshery"><picture><img src="./.github/assets/images/readme/meshery-logo-light-text-side.svg#gh-dark-mode-only" width="70%"/>
-<img src="./.github/assets/images/readme/meshery-logo-dark-text-side.svg#gh-light-mode-only"
+<p style="text-align:center;" align="center"><a href="https://layer5.io/meshery"><picture>
+ <source media="(prefers-color-scheme: dark)" srcset="./.github/assets/images/readme/meshery-logo-light-text-side.svg">
+ <source media="(prefers-color-scheme: light)" srcset="./.github/assets/images/readme/meshery-logo-dark-text-side.svg">
+<img src="./.github/assets/images/readme/meshery-logo-dark-text-side.svg"
 width="70%" /></picture></a><br /><br /></p>
 <p align="center">
 <a href="https://hub.docker.com/r/layer5/meshery" alt="Docker pulls">
