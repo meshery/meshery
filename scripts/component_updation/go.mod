@@ -2,7 +2,7 @@ module github.com/layer5io/component_scraper
 
 go 1.19
 
-require github.com/layer5io/meshkit v0.6.33
+require github.com/layer5io/meshkit v0.6.38
 
 require (
 	cuelang.org/go v0.4.3 // indirect
