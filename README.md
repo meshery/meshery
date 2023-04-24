@@ -184,16 +184,12 @@ See the [getting started](https://meshery.io/#getting-started) section to quickl
 <p style="clear:both;">&nbsp;</p>
 <hr />
 <p style="clear:both;">&nbsp;</p>
-
+<a href="https://meshery.io"><picture>
+  <source media="(prefers-color-scheme: dark)" srcset="./.github/assets/images/readme/meshery-logo-light-text-side.svg">
+  <source media="(prefers-color-scheme: light)" srcset="./.github/assets/images/readme/meshery-logo-dark-text-side.svg">
+  <img alt="Meshery - the Cloud Native Manager" src="./.github/assets/images/readme/meshery-logo-dark-text-side.svg" align="left" width="45%">
+  </picture></a>
 <a href="https://meshery.io">
-<picture><img src="./.github/assets/images/readme/meshery-logo-light-text-side.svg#gh-dark-mode-only"
-style="margin:10px;" width="45%" 
-alt="Meshery - the Cloud Native Manager" align="left" />
-<img src="./.github/assets/images/readme/meshery-logo-dark-text-side.svg#gh-light-mode-only"
-style="margin:10px;" width="%" 
-alt="Meshery - the Cloud Native Manager" align="left" /></picture></a>
-<a href="https://meshery.io">
-
 <!-- <h3 style="margin:auto;"><br /><br />
   <a href="https://docs.google.com/presentation/d/14kxjwYSJ_FyE3K_6CDEd6oq2kqwn0OSE8RDJ4H-KlKU/edit?usp=sharing"><center><i>Project Overview Presentation</i></center></a>
   <br /><br /><br />
