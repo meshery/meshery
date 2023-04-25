@@ -42,57 +42,14 @@
 <p align="center">
 MESHERY IS A CLOUD NATIVE COMPUTING FOUNDATION PROJECT
 </p>
-<p align="center">
+
+<div align="center" width="100%">
 <img src=".github/assets/images/readme/cncf-white.svg#gh-dark-mode-only" width="30%" align="center" />
 <img src=".github/assets/images/readme/cncf-black.svg#gh-light-mode-only" width="30%" align="center" />
-</p>
-
-<h2><a name="running"></a>Get Started with Meshery</h2>
-<p style="clear:both;"></p>
-<img alt="Control Kubernetes and your workloads with mesheryctl" src=".github/assets/images/readme/mesheryctl.png"  style="margin-left:10px; margin-bottom:10px;" width="50%" align="right" />
-<h3>Using `mesheryctl`</h3>
-<p>Meshery runs as a set of containers inside or outside of your Kubernetes clusters.</p>
-<pre>curl -L https://meshery.io/install | bash -</pre>
-<p>See the <a href="https://docs.meshery.io/installation/quick-start">quick start</a> guide.</p>
-<p style="clear:both;">&nbsp;</p>
-
-<h3>Supported Platforms</h3>
-<p>Meshery supports 10+ platforms.</p>
-<details>
-  <summary><strong>See all supported platforms</strong></summary>
-
-See the [getting started](https://meshery.io/#getting-started) section to quickly deploy Meshery on any of these supported platforms:
-
-| Platform                                                                                                                                                                                                                             | Supported?  |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | :---------: |
-| <img src="https://docs.meshery.io/assets/img/platforms/docker.svg" width="20" height="20" vertical-align="middle" /> [Docker](https://docs.meshery.io/installation/platforms/docker)                                                 |     ✔️      |
-| &nbsp;&nbsp;&nbsp; <img src="https://docs.meshery.io/assets/img/platforms/docker.svg" width="20" height="20" vertical-align="middle" /> [Docker - Docker App](https://docs.meshery.io/installation/platforms/docker)                 |     ✔️      |
-| &nbsp;&nbsp;&nbsp; <img src="https://docs.meshery.io/assets/img/platforms/docker.svg" width="20" height="20" vertical-align="middle" /> [Docker - Docker Extension](https://docs.meshery.io/installation/platforms/docker-extension) |     ✔️      |
-| <img src="https://docs.meshery.io/assets/img/platforms/kubernetes.svg" width="20" height="20" vertical-align="middle" /> [Kubernetes](https://docs.meshery.io/installation/platforms/kubernetes)                                     |     ✔️      |
-| &nbsp;&nbsp;&nbsp; <img src="https://docs.meshery.io/assets/img/platforms/aks.svg" width="20" height="20" vertical-align="middle" /> [Kubernetes - AKS](https://docs.meshery.io/installation/platforms/aks)                          |     ✔️      |
-| &nbsp;&nbsp;&nbsp; <img src="https://docs.meshery.io/assets/img/platforms/docker.svg" width="20" height="20" vertical-align="middle" /> [Kubernetes - Docker Desktop](https://docs.meshery.io/installation#mac-or-linux)             |     ✔️      |
-| &nbsp;&nbsp;&nbsp; <img src="https://docs.meshery.io/assets/img/platforms/eks.png" width="20" height="20" vertical-align="middle" /> [Kubernetes - EKS](https://docs.meshery.io/installation/platforms/eks)                          |     ✔️      |
-| &nbsp;&nbsp;&nbsp; <img src="https://docs.meshery.io/assets/img/platforms/gke.png" width="20" height="20" vertical-align="middle" /> [Kubernetes - GKE](https://docs.meshery.io/installation/platforms/gke)                          |     ✔️      |
-| &nbsp;&nbsp;&nbsp; <img src="https://docs.meshery.io/assets/img/platforms/helm.svg" width="20" height="20" vertical-align="middle" /> [Kubernetes - Helm](https://docs.meshery.io/installation/platforms/kubernetes#using-helm)      |     ✔️      |
-| &nbsp;&nbsp;&nbsp; <img src="https://docs.meshery.io/assets/img/platforms/kind.png" width="20" height="20" vertical-align="middle" /> [Kubernetes - kind](https://docs.meshery.io/installation/platforms/kind)                       |     ✔️      |
-| &nbsp;&nbsp;&nbsp; <img src="https://docs.meshery.io/assets/img/platforms/minikube.png" width="20" height="20" vertical-align="middle" /> [Kubernetes - Minikube](https://docs.meshery.io/installation/platforms/minikube)           |     ✔️      |
-| &nbsp;&nbsp;&nbsp; <img src="https://docs.meshery.io/assets/img/platforms/openshift.svg" width="20" height="20" vertical-align="middle" /> Kubernetes - OpenShift                                                                    | In Progress |
-| <img src="https://docs.meshery.io/assets/img/platforms/linux.svg" width="20" height="20" vertical-align="middle" /> [Linux](https://docs.meshery.io/installation#mac-or-linux)                                                       |     ✔️      |
-| <img src="https://docs.meshery.io/assets/img/platforms/apple.svg" width="20" height="20" vertical-align="middle" /> [Mac](https://docs.meshery.io/installation#mac-or-linux)                                                         |     ✔️      |
-| &nbsp;&nbsp;&nbsp; <img src="https://docs.meshery.io/assets/img/platforms/homebrew.png" width="20" height="20" vertical-align="middle" /> [Mac - Homebrew](https://docs.meshery.io/installation#mac-or-linux)                        |     ✔️      |
-| <img src="https://docs.meshery.io/assets/img/platforms/wsl2.png" width="20" height="20" vertical-align="middle" /> [Windows](https://docs.meshery.io/installation#windows)                                                           |     ✔️      |
-| &nbsp;&nbsp;&nbsp; [Scoop](https://docs.meshery.io/installation#windows)                                                                                                                                                             |     ✔️      |
-| &nbsp;&nbsp;&nbsp; <img src="https://docs.meshery.io/assets/img/platforms/wsl2.png" width="20" height="20" vertical-align="middle" /> [WSL2](https://docs.meshery.io/installation/platforms/windows#wsl2)                            |     ✔️      |
-| <img src="https://docs.meshery.io/assets/img/platforms/raspberry-pi.png" width="20" height="20" vertical-align="middle" /> Raspberry Pi                                                                                              | In Progress |
-
-[Meshery documentation](https://docs.meshery.io/installation) offers thorough installation guides for your platform of choice.
-
- </details>
-
-<p style="clear:both;">&nbsp;</p>
- 
+</div
+>
 <h3><a name="service-meshes"></a>Supported Cloud Native Infrastructure and Applications</h3>
-<p>Meshery supports <a href="https://meshery.io/integrations">100+ cloud native integrations</a>.</p>
+<p>Meshery supports <a href="https://meshery.io/integrations">200+ cloud native integrations</a>.</p>
 
 <details>
   <summary><strong>See all of Meshery's pluggable adapters</strong></summary>
@@ -189,19 +146,157 @@ See the [getting started](https://meshery.io/#getting-started) section to quickl
  </div>
 </div>
  </details>
+
+<h2><a name="running"></a>Get Started with Meshery</h2>
+<p style="clear:both;"></p>
+<img alt="Control Kubernetes and your workloads with mesheryctl" src=".github/assets/images/readme/mesheryctl.png"  style="margin-left:10px; margin-bottom:10px;" width="50%" align="right" />
+<h3>Using `mesheryctl`</h3>
+<p>Meshery runs as a set of containers inside or outside of your Kubernetes clusters.</p>
+<pre>curl -L https://meshery.io/install | bash -</pre>
+<p>See the <a href="https://docs.meshery.io/installation/quick-start">quick start</a> guide.</p>
 <p style="clear:both;">&nbsp;</p>
+
+<h3><a name="service-meshes"></a>Supported Cloud Native Infrastructure and Applications</h3>
+<p>Meshery supports <a href="https://meshery.io/integrations">200+ cloud native integrations</a>.</p>
+
+<details>
+  <summary><strong>See all of Meshery's pluggable adapters</strong></summary>
+<div class="container flex">
+  <div class="text editable">
+    <p>Meshery adapters provision, configure, and manage their respective cloud native infrastructure.
+      <table class="adapters">
+        <thead style="display:none;">
+          <th>Status</th>
+          <th>Adapter</th>
+        </thead>
+        <tbody>
+        <tr>
+          <td style="width:30%" rowspan="11" class="stable-adapters">stable</td>
+        </tr>
+        <tr>
+          <td><a href="https://github.com/layer5io/meshery-istio">
+            <img src='https://docs.meshery.io/assets/img/service-meshes/istio.svg' alt='Meshery Adapter for Istio Service Mesh' align="middle" hspace="10px" vspace="5px" height="30px" /> Meshery adapter for Istio</a>
+          </td>
+        </tr>
+        <tr>
+          <td><a href="https://github.com/layer5io/meshery-linkerd">
+            <img src='https://docs.meshery.io/assets/img/service-meshes/linkerd.svg' alt='Linkerd' align="middle" hspace="5px" vspace="5px" height="30px" width="30px" /> Meshery adapter for Linkerd</a>
+          </td>
+        </tr>
+        <tr>
+          <td><a href="https://github.com/meshery/meshery-cilium">
+            <img src='https://docs.meshery.io/assets/img/service-meshes/cilium.svg' alt='Cilium Service mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px" />Meshery Adapter for Cilium Service Mesh</a>
+          </td>
+        </tr>
+        <tr>
+          <td><a href="https://github.com/layer5io/meshery-consul">
+            <img src='https://docs.meshery.io/assets/img/service-meshes/consul.svg' alt='Consul Connect' align="middle" hspace="5px" vspace="5px" height="30px" width="30px" /> Meshery adapter for Consul</a>
+          </td>
+        </tr>
+        <tr>
+          <td><a href="https://github.com/layer5io/meshery-octarine">
+            <img src='https://docs.meshery.io/assets/img/service-meshes/octarine.svg' alt='Octarine Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px" />Meshery adapter for Octarine**</a>
+          </td>
+        </tr>
+        <tr>
+          <td><a href="https://github.com/layer5io/meshery-nsm">
+            <img src='https://docs.meshery.io/assets/img/service-meshes/nsm.svg' alt='Network Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px" />Meshery adapter for Network Service Mesh</a>
+          </td>
+        </tr>
+         <tr>
+           <td><a href="https://github.com/layer5io/meshery-kuma">
+             <img src='https://docs.meshery.io/assets/img/service-meshes/kuma.svg' alt='Kuma Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px" />Meshery adapter for Kuma</a>
+           </td>
+        </tr>
+          <tr>
+          <td><a href="https://github.com/layer5io/meshery-osm">
+            <img src='https://docs.meshery.io/assets/img/service-meshes/osm.svg' alt='Open Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px" />Meshery adapter for Open Service Mesh</a>
+          </td>
+        </tr>
+        <tr>
+          <td><a href="https://github.com/layer5io/meshery-traefik-mesh">
+            <img src='https://docs.meshery.io/assets/img/service-meshes/traefik-mesh.svg' alt='Traefik Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px" />Meshery adapter for Traefik Mesh</a>
+          </td>
+        </tr>
+        <tr>
+          <td><a href="https://github.com/meshery/meshery-nginx-sm">
+            <img src='https://docs.meshery.io/assets/img/service-meshes/nginx-sm.svg' alt='NGINX Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px" />Meshery adapter for NGINX Service Mesh</a>
+          </td>
+        </tr>          
+        <tr><td colspan="2" class="stable-adapters"></td></tr>
+        <tr>
+          <td rowspan="3" class="beta-adapters">beta</td>
+        </tr>
+         <tr>
+          <td><a href="https://github.com/layer5io/meshery-cpx">
+            <img src='https://docs.meshery.io/assets/img/service-meshes/citrix.svg' alt='Citrix CPX Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px" />Meshery adapter for Citrix CPX**</a>
+          </td>
+        </tr>
+        <tr>
+          <td><a href="https://github.com/meshery/meshery-app-mesh">
+            <img src='https://docs.meshery.io/assets/img/service-meshes/app-mesh.svg' alt='AWS App Mesh Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px" />Meshery adapter for App Mesh</a>
+          </td>
+        </tr>
+        <tr><td colspan="2" class="beta-adapters"></td></tr>
+        <tr>
+          <td rowspan="3" class="alpha-adapters">alpha</td>
+        </tr>
+        <tr>
+          <td><a href="https://github.com/meshery/meshery-tanzu-sm">
+            <img src='https://docs.meshery.io/assets/img/service-meshes/tanzu.svg' alt='Tanzu Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px" />Meshery adapter for Tanzu SM</a>
+          </td>
+        </tr>
+        <tr><td colspan="2" class="alpha-adapters"></td></tr>
+        </tbody>
+    </table>
+   ** Deprecated
+  </p>
+ </div>
+</div>
+ </details>
+
+
+<h3>Supported Platforms</h3>
+<p>Meshery supports 10+ platforms.</p>
+<details>
+  <summary><strong>See all supported platforms</strong></summary>
+
+See the [getting started](https://meshery.io/#getting-started) section to quickly deploy Meshery on any of these supported platforms:
+
+| Platform                                                                                                                                                                                                                             | Supported?  |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | :---------: |
+| <img src="https://docs.meshery.io/assets/img/platforms/docker.svg" width="20" height="20" vertical-align="middle" /> [Docker](https://docs.meshery.io/installation/platforms/docker)                                                 |     ✔️      |
+| &nbsp;&nbsp;&nbsp; <img src="https://docs.meshery.io/assets/img/platforms/docker.svg" width="20" height="20" vertical-align="middle" /> [Docker - Docker App](https://docs.meshery.io/installation/platforms/docker)                 |     ✔️      |
+| &nbsp;&nbsp;&nbsp; <img src="https://docs.meshery.io/assets/img/platforms/docker.svg" width="20" height="20" vertical-align="middle" /> [Docker - Docker Extension](https://docs.meshery.io/installation/platforms/docker-extension) |     ✔️      |
+| <img src="https://docs.meshery.io/assets/img/platforms/kubernetes.svg" width="20" height="20" vertical-align="middle" /> [Kubernetes](https://docs.meshery.io/installation/platforms/kubernetes)                                     |     ✔️      |
+| &nbsp;&nbsp;&nbsp; <img src="https://docs.meshery.io/assets/img/platforms/aks.svg" width="20" height="20" vertical-align="middle" /> [Kubernetes - AKS](https://docs.meshery.io/installation/platforms/aks)                          |     ✔️      |
+| &nbsp;&nbsp;&nbsp; <img src="https://docs.meshery.io/assets/img/platforms/docker.svg" width="20" height="20" vertical-align="middle" /> [Kubernetes - Docker Desktop](https://docs.meshery.io/installation#mac-or-linux)             |     ✔️      |
+| &nbsp;&nbsp;&nbsp; <img src="https://docs.meshery.io/assets/img/platforms/eks.png" width="20" height="20" vertical-align="middle" /> [Kubernetes - EKS](https://docs.meshery.io/installation/platforms/eks)                          |     ✔️      |
+| &nbsp;&nbsp;&nbsp; <img src="https://docs.meshery.io/assets/img/platforms/gke.png" width="20" height="20" vertical-align="middle" /> [Kubernetes - GKE](https://docs.meshery.io/installation/platforms/gke)                          |     ✔️      |
+| &nbsp;&nbsp;&nbsp; <img src="https://docs.meshery.io/assets/img/platforms/helm.svg" width="20" height="20" vertical-align="middle" /> [Kubernetes - Helm](https://docs.meshery.io/installation/platforms/kubernetes#using-helm)      |     ✔️      |
+| &nbsp;&nbsp;&nbsp; <img src="https://docs.meshery.io/assets/img/platforms/kind.png" width="20" height="20" vertical-align="middle" /> [Kubernetes - kind](https://docs.meshery.io/installation/platforms/kind)                       |     ✔️      |
+| &nbsp;&nbsp;&nbsp; <img src="https://docs.meshery.io/assets/img/platforms/minikube.png" width="20" height="20" vertical-align="middle" /> [Kubernetes - Minikube](https://docs.meshery.io/installation/platforms/minikube)           |     ✔️      |
+| &nbsp;&nbsp;&nbsp; <img src="https://docs.meshery.io/assets/img/platforms/openshift.svg" width="20" height="20" vertical-align="middle" /> Kubernetes - OpenShift                                                                    | In Progress |
+| <img src="https://docs.meshery.io/assets/img/platforms/linux.svg" width="20" height="20" vertical-align="middle" /> [Linux](https://docs.meshery.io/installation#mac-or-linux)                                                       |     ✔️      |
+| <img src="https://docs.meshery.io/assets/img/platforms/apple.svg" width="20" height="20" vertical-align="middle" /> [Mac](https://docs.meshery.io/installation#mac-or-linux)                                                         |     ✔️      |
+| &nbsp;&nbsp;&nbsp; <img src="https://docs.meshery.io/assets/img/platforms/homebrew.png" width="20" height="20" vertical-align="middle" /> [Mac - Homebrew](https://docs.meshery.io/installation#mac-or-linux)                        |     ✔️      |
+| <img src="https://docs.meshery.io/assets/img/platforms/wsl2.png" width="20" height="20" vertical-align="middle" /> [Windows](https://docs.meshery.io/installation#windows)                                                           |     ✔️      |
+| &nbsp;&nbsp;&nbsp; [Scoop](https://docs.meshery.io/installation#windows)                                                                                                                                                             |     ✔️      |
+| &nbsp;&nbsp;&nbsp; <img src="https://docs.meshery.io/assets/img/platforms/wsl2.png" width="20" height="20" vertical-align="middle" /> [WSL2](https://docs.meshery.io/installation/platforms/windows#wsl2)                            |     ✔️      |
+| <img src="https://docs.meshery.io/assets/img/platforms/raspberry-pi.png" width="20" height="20" vertical-align="middle" /> Raspberry Pi                                                                                              | In Progress |
+
+[Meshery documentation](https://docs.meshery.io/installation) offers thorough installation guides for your platform of choice.
+ </details>
+ 
+<!--<p style="clear:both;">&nbsp;</p>
 <hr />
 <p style="clear:both;">&nbsp;</p>
-
 <img alt="Meshery Logo" src=".github/assets/images/meshery/meshery-logo-dark-text-side.png"  style="margin-left:10px; margin-bottom:10px;" width="45%" align="left" />
-
-<!-- <h3 style="margin:auto;"><br /><br />
+  <h3 style="margin:auto;"><br /><br />
   <a href="https://docs.google.com/presentation/d/14kxjwYSJ_FyE3K_6CDEd6oq2kqwn0OSE8RDJ4H-KlKU/edit?usp=sharing"><center><i>Project Overview Presentation</i></center></a>
   <br /><br /><br />
 </h3> -->
 <p style="clear:both;">&nbsp;</p>
-
-<br /><br />
 
 ## <a name="functionality">Functionality</a>
 
@@ -297,7 +392,7 @@ Our projects are community-built and welcome collaboration. 👍 Be sure to see 
 <a href ="https://layer5.io/community"><img alt="MeshMates" src=".github/assets/images/readme/layer5-community-sign.png" style="margin-right:36px; margin-bottom:7px;" width="140px" align="left" /></a>
 <h3>Find your MeshMate</h3>
 
-<p>MeshMates are experienced Layer5 community members, who will help you learn your way around, discover live projects, and expand your community network. Become a <b>Meshtee</b> today!</p>
+<p>MeshMates are experienced Layer5 community members, who will help you learn your way around, discover live projects, and expand your community network. Conneect with a Meshmate today!</p>
 
 Find out more on the <a href="https://layer5.io/community#meshmate">Layer5 community</a>. <br />
 
@@ -342,6 +437,22 @@ We're a warm and welcoming community of open source contributors. Please join. A
 
 <div>&nbsp;</div>
 
+### Stargazers
+
+<p align="center">
+  <i>If you’re using Meshery or if you like the project, please <a href="../../stargazers">★</a> star this repository to show your support! 🤩</i>
+<a href="../../stargazers"><img align="right" src="https://starchart.cc/meshery/meshery.svg" /></a></p>
+
+### License
+
+This repository and site are available as open-source under the terms of the [Apache 2.0 License](https://opensource.org/licenses/Apache-2.0).
+
+### Community
+
+See an <a href="https://layer5.io/community/handbook/repository-overview">overview of repositories</a> and projects by tech stack in the <a href="https://layer5.io/community/handbook/">Community Handbook</a>.
+
+
+<!--
 ## See Meshery in Action
 
 - [DockerCon 2020](https://docker.events.cube365.net/docker/dockercon/content/Videos/63TCCNpzDC7Xxnm8b) | ([video](https://www.youtube.com/watch?v=5BrbbKZOctw&list=PL3A-A6hPO2IN_HSU0pSfijBboiHggs5mC&index=4&t=0s), [deck](https://calcotestudios.com/talks/decks/slides-dockercon-2020-service-meshing-with-docker-desktop-and-webassembly.html))
@@ -354,19 +465,4 @@ We're a warm and welcoming community of open source contributors. Please join. A
 - [Service Mesh Day](https://servicemeshday.com/schedule.html) | [deck](https://docs.google.com/presentation/d/1HwG03okX3DHgGKbma4PL-MO7Xr9zDrjQgd05PRi9i8E/edit?usp=sharing), [video](https://youtu.be/CFj1O_uyhhs)
 - [Innotech San Antonio](https://innotechsanantonio2019.sched.com/event/Lmlb/the-enterprise-path-to-service-mesh-architectures?iframe=no&w=100%&sidebar=yes&bg=no) | [deck](https://calcotestudios.com/talks/decks/slides-innotech-san-antonio-2019-the-enterprise-path-to-service-mesh.html)
 - [CNCF Networking WG](https://github.com/cncf/wg-networking) | [deck](https://www.slideshare.net/leecalcote/benchmarking-service-meshes-cncf-networking-wg-141938576), [video](https://www.youtube.com/watch?v=2_JwCc-kLMA&list=PLYjO73_1efChX9NuRaU7WocTbgrfvCoPE)
-
-### Stargazers
-
-<p align="center">
-  <i>If you’re using Meshery or if you like the project, please <a href="../../stargazers">★</a> star this repository to show your support! 🤩</i>
-<a href="../../stargazers"><img align="right" src="https://starchart.cc/meshery/meshery.svg" /></a></p>
-
-### License
-
-<p>
-This repository and site are available as open-source under the terms of the [Apache 2.0 License](https://opensource.org/licenses/Apache-2.0).</p>
-
-### Community
-
-<p>
-See an <a href="https://layer5.io/community/handbook/repository-overview">overview of repositories</a> and projects by tech stack in the <a href="https://layer5.io/community/handbook/">Community Handbook</a>.</p>
+-->
