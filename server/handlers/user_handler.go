@@ -14,11 +14,12 @@ import (
 )
 
 // UserHandler returns info about the logged in user
-func (h *Handler) UserHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
+func (h *Handler) UserHandler(w http.ResponseWriter, _ *http.Request, _ *models.Preference, user *models.User, _ models.Provider) {
 	if err := json.NewEncoder(w).Encode(user); err != nil {
 		obj := "user data"
 		h.log.Error(ErrEncoding(err, obj))
 		http.Error(w, ErrEncoding(err, obj).Error(), http.StatusInternalServerError)
+		return
 	}
 }
 
