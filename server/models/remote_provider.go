@@ -61,6 +61,12 @@ type userSession struct {
 	session *Preference
 }
 
+// UserPref - is just use to separate out the user info from preference
+type UserPref struct {
+	User
+	Preferences *Preference `json:"preferences,omitempty"`
+}
+
 const (
 	remoteUploadURL   = "/upload"
 	remoteDownloadURL = "/download"
@@ -280,7 +286,6 @@ func (l *RemoteProvider) GetUserDetails(req *http.Request) (*User, error) {
 	if err != nil {
 		return nil, ErrFetch(err, "User Data", http.StatusUnauthorized)
 	}
-
 	defer func() {
 		_ = resp.Body.Close()
 	}()
@@ -289,13 +294,25 @@ func (l *RemoteProvider) GetUserDetails(req *http.Request) (*User, error) {
 		return nil, ErrDataRead(err, "User Data")
 	}
 
-	user := &User{}
-	err = json.Unmarshal(bd, user)
+	up := &UserPref{
+		Preferences: &Preference{
+			AnonymousUsageStats:  true,
+			AnonymousPerfResults: true,
+		},
+	}
+	err = json.Unmarshal(bd, up)
 	if err != nil {
-		return nil, ErrUnmarshal(err, "User")
+		return nil, ErrUnmarshal(err, "User Pref")
 	}
 
-	return user, nil
+	prefLocal, _ := l.ReadFromPersister(up.UserID)
+	if prefLocal == nil || up.Preferences.UpdatedAt.After(prefLocal.UpdatedAt) {
+		_ = l.WriteToPersister(up.UserID, up.Preferences)
+	}
+
+	// Uncomment when Debug verbosity is figured out project wide. | @leecalcote
+	// logrus.Debugf("retrieved user: %v", up.User)
+	return &up.User, nil
 }
 
 func (l *RemoteProvider) GetUserByID(req *http.Request, userID string) ([]byte, error) {

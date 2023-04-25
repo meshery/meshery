@@ -25,7 +25,5 @@ type User struct {
 	Status    string `json:"string,omitempty"`
 	Bio       string `json:"bio,omitempty" db:"bio"`
 
-	Preferences map[string]interface{} `json:"preferences,omitempty" db:"preferences"`
-
 	RoleNames []string `json:"role_names,omitempty" db:"-"`
 }
