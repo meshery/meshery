@@ -46,7 +46,7 @@ var (
 	watch      bool
 	MeshCmd    = &cobra.Command{
 		Use:   "mesh",
-		Short: "Service Mesh Lifecycle Management",
+		Short: "Cloud Native Lifecycle Management",
 		Long:  "Provisioning, configuration, and on-going operational management of service meshes",
 		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
 
@@ -66,7 +66,7 @@ var (
 				// all args are joined, converted to upper case, and non-word characters replaced with "_"
 				// examples:
 				//     args = Linkerd -> ["LINKERD"] -> "LINKERD"
-				//     args = nginx service mesh -> ["nginx", "service", "mesh"] -> "NGINX_SERVICE_MESH"
+				//     args = nginx Cloud Native -> ["nginx", "service", "mesh"] -> "NGINX_SERVICE_MESH"
 				r, _ := regexp.Compile(`\W`)
 
 				// If the mesh name is single word and without any spaces eg: istio, linkerd
