@@ -317,13 +317,13 @@ func start() error {
 		// Get the Docker configuration
 		dockerCfg, err := cliconfig.Load(dockerconfig.Dir())
 		if err != nil {
-			return errors.Wrap(err, utils.SystemError("failed to load config file"))
+			return ErrCreatingDockerClient(err)
 		}
 
 		//connection to docker-client
 		cli, err := dockerCmd.NewAPIClientFromFlags(cliflags.NewCommonOptions(), dockerCfg)
 		if err != nil {
-			return errors.Wrap(err, utils.SystemError("failed to create new env client"))
+			return ErrCreatingDockerClient(err)
 		}
 
 		containers, err := cli.ContainerList(context.Background(), types.ContainerListOptions{})
