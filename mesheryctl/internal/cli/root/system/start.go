@@ -21,6 +21,7 @@ import (
 	"os"
 	"os/exec"
 	"path"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
@@ -32,8 +33,11 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 
+	dockerCmd "github.com/docker/cli/cli/command"
+	cliconfig "github.com/docker/cli/cli/config"
+	cliflags "github.com/docker/cli/cli/flags"
 	"github.com/docker/docker/api/types"
-	"github.com/docker/docker/client"
+	dockerconfig "github.com/docker/docker/cli/config"
 
 	meshkitutils "github.com/layer5io/meshkit/utils"
 	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
@@ -311,8 +315,14 @@ func start() error {
 
 		checkFlag := 0 //flag to check
 
+		// Get the Docker configuration
+		dockerCfg, err := cliconfig.Load(filepath.Join(dockerconfig.Dir(), "config.json"))
+		if err != nil {
+			return errors.Wrap(err, utils.SystemError("failed to load config file"))
+		}
+
 		//connection to docker-client
-		cli, err := client.NewClientWithOpts(client.FromEnv)
+		cli, err := dockerCmd.NewAPIClientFromFlags(cliflags.NewCommonOptions(), dockerCfg)
 		if err != nil {
 			return errors.Wrap(err, utils.SystemError("failed to create new env client"))
 		}
