@@ -78,10 +78,12 @@ jobs:
       # Build the image by setting appropriate environmental variables in order to access the image from minikube
       - name: Build the tagged Docker image
         run: |
-          # if  [[ "${{ steps.name.outputs.adapter_name}}" != "meshery" ]];then
           if [ "${{ inputs.adapter_name }}" != "meshery" ];then
-            eval $(minikube -p minikube docker-env) 
-            docker build -f install/docker/Dockerfile -t test:test .
+             eval $(minikube -p minikube docker-env) 
+             docker build -t test:test .
+          else 
+             eval $(minikube -p minikube docker-env) 
+             docker build -f install/docker/Dockerfile -t test:test .           
           fi
       - name: Retrieve kubeconfig
         run: cat ~/.kube/config
