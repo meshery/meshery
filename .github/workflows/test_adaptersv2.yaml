@@ -86,7 +86,13 @@ jobs:
              docker build -f install/docker/Dockerfile -t test:test .           
           fi
       - name: Retrieve kubeconfig
-        run: cat ~/.kube/config
+        run: |
+          echo "Before flattening"
+          cat ~/.kube/config
+          kubectl config view --minify --flatten > ~/.kube/configtemp
+          mv ~/.kube/configtemp ~/.kube/config
+          echo "After flattening"
+          cat ~/.kube/config
       # Setup meshery config.yaml and auth.json
       - name: Setup meshery config and infinite token for use
         env:
