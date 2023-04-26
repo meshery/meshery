@@ -21,7 +21,6 @@ import (
 	"os"
 	"os/exec"
 	"path"
-	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
@@ -316,7 +315,7 @@ func start() error {
 		checkFlag := 0 //flag to check
 
 		// Get the Docker configuration
-		dockerCfg, err := cliconfig.Load(filepath.Join(dockerconfig.Dir(), "config.json"))
+		dockerCfg, err := cliconfig.Load(dockerconfig.Dir())
 		if err != nil {
 			return errors.Wrap(err, utils.SystemError("failed to load config file"))
 		}
