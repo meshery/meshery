@@ -145,7 +145,7 @@ If using Scoop, run the following in the PowerShell to install a Kubernetes clus
   <pre class="codeblock-pre">
   <div class="codeblock"><div class="clipboardjs">scoop install k3d
 k3d cluster create
-export KUBECONFIG="$(k3d kubeconfig get 'k3s-default')"</div></div>
+set KUBECONFIG="$(k3d kubeconfig get 'k3s-default')"</div></div>
   </pre>
 
 ### 5. <a name="step5"><b>Set up Meshery</b></a>
