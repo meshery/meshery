@@ -17,9 +17,9 @@ Meshery features can be categorized by:
 1. Cloud Native Configuration Management
    - Configuration best practices
 1. Cloud Native Lifecycle Management
-   - Service mesh provisioning and workload onboarding
+   - Cloud native provisioning and workload onboarding
    - Meshery Operator and MeshSync
-   - Service mesh patterns and Open Application Model integration
+   - Cloud native patterns and Open Application Model integration
 1. Data Plane Intelligence
    - Registry and configuration of WebAssembly filters for Envoy
 1. Cloud Native Interoperability and Federation
