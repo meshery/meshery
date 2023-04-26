@@ -15,6 +15,7 @@ import PerformanceResults from "./PerformanceResults";
 import EditIcon from '@material-ui/icons/Edit';
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 import { iconMedium } from "../../css/icons.styles";
+import Tooltip from '@mui/material/Tooltip';
 
 
 const styles = (theme) => ({
@@ -177,30 +178,35 @@ function MesheryTestProfiles({
         customBodyRender : function CustomBody(_, tableMeta) {
           return (
             <div>
-              <IconButton
-                style={iconMedium}
-                onClick={(ev) => {
-                  ev.stopPropagation();
-                  setSelectedProfile(testProfiles[tableMeta.rowIndex]);
-                }}
-                aria-label="edit"
-                // @ts-ignore
-                color="rgba(0, 0, 0, 0.54)"
-              >
-                <EditIcon style={iconMedium}/>
-              </IconButton>
-              <IconButton
-                style={iconMedium}
-                onClick={(ev) => {
-                  ev.stopPropagation();
-                  setSelectedProfile({ ...testProfiles[tableMeta.rowIndex], runTest : true });
-                }}
-                aria-label="run"
-                // @ts-ignore
-                color="rgba(0, 0, 0, 0.54)"
-              >
-                <PlayArrowIcon style={iconMedium} />
-              </IconButton>
+              <Tooltip title="Edit">
+                <IconButton
+                  style={iconMedium}
+                  onClick={(ev) => {
+                    ev.stopPropagation();
+                    setSelectedProfile(testProfiles[tableMeta.rowIndex]);
+                  }}
+                  aria-label="edit"
+                  // @ts-ignore
+                  color="rgba(0, 0, 0, 0.54)"
+                >
+                  <EditIcon style={iconMedium}/>
+                </IconButton>
+              </Tooltip>
+
+              <Tooltip title="Run test">
+                <IconButton
+                  style={iconMedium}
+                  onClick={(ev) => {
+                    ev.stopPropagation();
+                    setSelectedProfile({ ...testProfiles[tableMeta.rowIndex], runTest : true });
+                  }}
+                  aria-label="run"
+                  // @ts-ignore
+                  color="rgba(0, 0, 0, 0.54)"
+                >
+                  <PlayArrowIcon style={iconMedium} />
+                </IconButton>
+              </Tooltip>
             </div>
           );
         },

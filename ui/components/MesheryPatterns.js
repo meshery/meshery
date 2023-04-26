@@ -149,9 +149,9 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-function TooltipIcon({ children, onClick, title }) {
+function TooltipIcon({ children, onClick, title,placement }) {
   return (
-    <Tooltip title={title} placement="top" arrow interactive >
+    <Tooltip title={title} placement={placement} arrow interactive >
       <IconButton onClick={onClick}>
         {children}
       </IconButton>
@@ -175,11 +175,13 @@ function YAMLEditor({ pattern, onClose, onSubmit }) {
           {pattern.name}
         </Typography>
         <TooltipIcon
+          placement ="top"
           title={fullScreen ? "Exit Fullscreen" : "Enter Fullscreen"}
           onClick={toggleFullScreen}>
           {fullScreen ? <FullscreenExitIcon /> : <FullscreenIcon />}
         </TooltipIcon>
-        <TooltipIcon title="Exit" onClick={onClose}>
+        <TooltipIcon
+          placement ="top" title="Exit" onClick={onClose}>
           <CloseIcon />
         </TooltipIcon>
       </DialogTitle>
@@ -925,23 +927,30 @@ function MesheryPatterns({
           const visibility = patterns[tableMeta.rowIndex].visibility
           return (
             <>
-              { visibility === VISIBILITY.PUBLISHED ? <IconButton onClick={(e) => {
-                e.stopPropagation();
-                handleClone(rowData.id, rowData.name)
-              }
-              }>
-                <CloneIcon fill="currentColor" className={classes.iconPatt} />
-              </IconButton> :
-
-                <IconButton onClick={(e) => {
+              { visibility === VISIBILITY.PUBLISHED ? <TooltipIcon
+                placement ="top"
+                title={"Clone"}
+                onClick={(e) => {
                   e.stopPropagation();
-                  setSelectedPattern({ pattern : patterns[tableMeta.rowIndex], show : true })
+                  handleClone(rowData.id, rowData.name)
                 }
-                }
+                }>
+                <CloneIcon fill="currentColor" className={classes.iconPatt} />
+              </TooltipIcon> :
+
+                <TooltipIcon
+                  title={"Design"}
+                  placement={"top"}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSelectedPattern({ pattern : patterns[tableMeta.rowIndex], show : true })
+                  }
+                  }
                 >
                   <Avatar src="/static/img/pattwhite.svg" className={classes.iconPatt} imgProps={{ height : "16px", width : "16px" }} />
-                </IconButton> }
+                </TooltipIcon> }
               <TooltipIcon
+                placement ="top"
                 title="Validate"
                 onClick={(e) => handleVerify(e, rowData.pattern_file, rowData.id)}
               >
@@ -949,12 +958,14 @@ function MesheryPatterns({
               </TooltipIcon>
 
               <TooltipIcon
+                placement ="top"
                 title="Undeploy"
                 onClick={(e) => handleModalOpen(e, rowData.pattern_file, rowData.name, patternErrors.get(rowData.id), ACTIONS.UNDEPLOY)}
               >
                 <UndeployIcon fill="#F91313" data-cy="undeploy-button" />
               </TooltipIcon>
               <TooltipIcon
+                placement ="bottom"
                 title="Deploy"
                 onClick={(e) => handleModalOpen(e, rowData.pattern_file, rowData.name, patternErrors.get(rowData.id), ACTIONS.DEPLOY)}
               >
@@ -962,6 +973,7 @@ function MesheryPatterns({
               </TooltipIcon>
               {canPublishPattern &&
                 (<TooltipIcon
+                  placement ="bottom"
                   title="Publish"
                   onClick={(ev) => handlePublishModal(ev,rowData)}
                 >
