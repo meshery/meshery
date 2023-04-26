@@ -66,9 +66,9 @@ jobs:
           run: echo "value=${USER_INPUT:-"meshery"}" >> $GITHUB_OUTPUT
       - name: Setting up minikube
         id: setk8s
-        uses: manusa/actions-setup-minikube@v2.7.1
+        uses: manusa/actions-setup-minikube@v2.7.2
         with:
-          minikube version: "v1.27.1"
+          minikube version: "v1.28.0"
           kubernetes version: "${{ matrix.k8s_version }}"
           driver: docker
           start args: --cni "${{ inputs.k8s_cni }}"
@@ -92,7 +92,7 @@ jobs:
         run: |
           echo $provider_token 
           mkdir ~/.meshery
-          config='{"contexts":{"local":{"endpoint":"http://localhost:9081","token":"default","platform":"kubernetes","adapters":[],"channel":"stable","version":"latest"}},"current-context":"local","tokens":[{"location":"auth.json","name":"default"}]}'
+          config='{"contexts":{"local":{"endpoint":"http://localhost:9081","token":"default","platform":"kubernetes","components":[],"channel":"stable","version":"latest"}},"current-context":"local","tokens":[{"location":"auth.json","name":"default"}]}'
           echo $config > ~/.meshery/config.yaml 
           cat ~/.meshery/config.yaml
           echo "Using provider: ${{ inputs.provider }}"
@@ -103,6 +103,8 @@ jobs:
           fi
           cat ~/.meshery/auth.json
 
+      - name: Cluster info for debugging before starting Meshery
+        run: kubectl get all -A
       # Start Meshery Server (Assuming that this step will create the meshery namespace)
       - name: Start Meshery Server using mesheryctl
         run: |
