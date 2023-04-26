@@ -1,4 +1,4 @@
-name: Meshery Playground - Reboot Equinix metal servers
+name: CNCF Playground - Reboot Equinix metal servers
 on:
     workflow_dispatch:
     schedule:

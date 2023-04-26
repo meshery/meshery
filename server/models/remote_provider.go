@@ -273,11 +273,16 @@ func (l *RemoteProvider) InitiateLogin(w http.ResponseWriter, r *http.Request, _
 	http.Redirect(w, r, "/", http.StatusFound)
 }
 
-func (l *RemoteProvider) fetchUserDetails(tokenString string) (*User, error) {
+// GetUserDetails - returns the user details
+func (l *RemoteProvider) GetUserDetails(req *http.Request) (*User, error) {
 	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + "/api/identity/users/profile")
-	req, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
+	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
+	token, err := l.GetToken(req)
+	if err != nil {
+		return nil, err
+	}
 
-	resp, err := l.DoRequest(req, tokenString)
+	resp, err := l.DoRequest(cReq, token)
 	if err != nil {
 		return nil, ErrFetch(err, "User Data", http.StatusUnauthorized)
 	}
@@ -340,21 +345,6 @@ func (l *RemoteProvider) GetUserByID(req *http.Request, userID string) ([]byte, 
 	err = ErrFetch(err, "User Profile", resp.StatusCode)
 	logrus.Errorf(err.Error())
 	return nil, err
-}
-
-// GetUserDetails - returns the user details
-//
-// It is assumed that every remote provider will support this feature
-func (l *RemoteProvider) GetUserDetails(req *http.Request) (*User, error) {
-	token, err := l.GetToken(req)
-	if err != nil {
-		return nil, err
-	}
-	user, err := l.fetchUserDetails(token)
-	if err != nil {
-		return nil, err
-	}
-	return user, nil
 }
 
 // GetSession - validates the current request, attempts for a refresh of token, and then return its validity
