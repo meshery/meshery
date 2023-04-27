@@ -22,7 +22,7 @@ To customize which Meshery Adapters are used in which deployments, customize you
 Configure your meshconfig, using `mesheryctl system context` to customize which Meshery Adapters are used in which deployments.
 
 *Alternative:*
-Alternatively, directly modify youn the `~/.meshery/meshery.yaml` configuration file, remove the entry(ies) of the adapter(s) you are removing from your deployment.
+Alternatively, directly modify the `~/.meshery/meshery.yaml` configuration file, remove the entry(ies) of the adapter(s) you are removing from your deployment.
 
 #### Configuration: Running more than one instance of the same Meshery adapter
 
