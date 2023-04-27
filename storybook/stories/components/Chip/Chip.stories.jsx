@@ -7,6 +7,7 @@ import { Chip } from "./Chip";
 export default {
   title : "Components/Chip",
   component : Chip,
+  tags: ['autodocs'],
 };
 
 const CustomChip = styled(Chip)(({ theme }) => ({

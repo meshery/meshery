@@ -7,6 +7,11 @@ import Link from "next/link";
 export default {
   title : "Components/AppBar",
   component : AppBar,
+  tags: ['autodocs'],
+    parameters: {
+    // More on how to position stories at: https://storybook.js.org/docs/react/configure/story-layout
+    layout: 'fullscreen',
+  },
 };
 
 export function Primary() {
