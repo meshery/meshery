@@ -553,6 +553,7 @@ func (*EventsRequest) Descriptor() ([]byte, []int) {
 	return file_meshops_proto_rawDescGZIP(), []int{7}
 }
 
+//swagger:response EventsResponse
 type EventsResponse struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache

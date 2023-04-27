@@ -37,6 +37,20 @@ iptables -I INPUT -s 192.210.143.199 -j DROP
 > protect-kubelet
 chmod +x protect-kubelet
 
+## Prometheus deployment
+For monitoring the playground deployment we have a node exporter running on both the nodes.
+Node exporter can be installed by following the below commands after doing an SSH on the node.
+```
+wget https://github.com/prometheus/node_exporter/releases/download/v1.5.0/node_exporter-1.5.0.linux-amd64.tar.gz
+tar xvfz  node_exporter-1.5.0.linux-amd64.tar.gz
+cd node_exporter-1.5.0.linux-amd64/
+./node_exporter &
+```
+Make sure to add nodeexporter.service inside /etc/systemd/system so that node exporter automatically starts when server boots up.
+
+After this create the namespace `monitoring` and apply `prometheus.yaml`.
+Notice the job_name: `prometheus` configured with two targets. It is the address of node exporter running on each node.
+
 
 ### Nginx Configuration for websocket (until annotations issue is solved)
 ## When to do this: Whenever Ingress is reset directly or indirectly(via scaling deployments).

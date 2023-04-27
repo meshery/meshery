@@ -77,7 +77,7 @@ jobs:
     name: Build and Release Docker Extension
     uses: meshery/meshery/.github/workflows/build-and-release-dde.yml@master
     secrets: inherit
-  call-playground-deploy-workflow:
+  call-aks-playground-deploy-workflow:
     needs: build
     name: Deploy Meshery Playground
     uses: meshery/meshery/.github/workflows/deploy-meshery-playground.yml@master
@@ -87,4 +87,8 @@ jobs:
     name: Email Meshery Release Notes
     uses: layer5labs/meshery-extensions-packages/.github/workflows/notify-email.yml@master
     secrets: inherit
-
+  call-cncf-playground-rollout:
+    needs: build
+    name: Deploy CNCF Playground
+    uses: meshery/meshery/.github/workflows/cncf-playground-deploy-meshery.yaml@master
+    secrets: inherit

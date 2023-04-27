@@ -14,6 +14,7 @@ import {
   ClickAwayListener
 } from '@material-ui/core';
 import BellIcon from '@material-ui/icons/Notifications';
+import InfoIcon from '@mui/icons-material/Info';
 import ClearIcon from "../assets/icons/ClearIcon";
 import ErrorIcon from '@material-ui/icons/Error';
 import { withStyles } from '@material-ui/core/styles';
@@ -155,6 +156,7 @@ class MesheryNotification extends React.Component {
     tabValue : 0,
     anchorEl : false,
     showFullNotificationCenter : false,
+    eventIdToOpenInNotification : undefined,
   }
 
   handleToggle = () => {
@@ -171,20 +173,30 @@ class MesheryNotification extends React.Component {
    * @param {number} type type of the event
    * @param {string} message message to be displayed
    */
-  notificationDispatcher(type, message) {
+  notificationDispatcher(type, message, operation_id) {
     const self = this;
     self.props.enqueueSnackbar(message, {
       variant : eventTypes[type]?.type,
       autoHideDuration : 5000,
       action : (key) => (
-        <IconButton
-          key="close"
-          aria-label="Close"
-          color="inherit"
-          onClick={() => self.props.closeSnackbar(key)}
-        >
-          <CloseIcon style={iconMedium} />
-        </IconButton>
+        <>
+          <IconButton
+            key="eye"
+            aria-label="eye"
+            color="inherit"
+            onClick={() => self.openEventInNotificationCenter(operation_id)}
+          >
+            <InfoIcon style={iconMedium} />
+          </IconButton>
+          <IconButton
+            key="close"
+            aria-label="Close"
+            color="inherit"
+            onClick={() => self.props.closeSnackbar(key)}
+          >
+            <CloseIcon style={iconMedium} />
+          </IconButton>
+        </>
       ),
     });
   }
@@ -208,9 +220,8 @@ class MesheryNotification extends React.Component {
       // set null event field as success
       data.event_type = data.event_type || 0
 
-
       // Dispatch the notification
-      self.notificationDispatcher(data.event_type, data.summary)
+      self.notificationDispatcher(data.event_type, data.summary, data.operation_id)
       //Temperory Hack
       // if(data.summary==="Smi conformance test completed successfully"){
       //   self.props.updateSMIResults({smi_result: data,});
@@ -278,6 +289,13 @@ class MesheryNotification extends React.Component {
     this.setState({
       tabValue : 0,
       displayEventType : '*'
+    })
+  }
+
+  openEventInNotificationCenter = (operation_id) => {
+    this.setState({
+      showFullNotificationCenter : true,
+      eventIdToOpenInNotification : operation_id,
     })
   }
 
@@ -417,6 +435,7 @@ class MesheryNotification extends React.Component {
                         eventErrorCode={event.error_code}
                         componentType={event.component}
                         componentName={event.component_name}
+                        expand={(this.state.eventIdToOpenInNotification && this.state.eventIdToOpenInNotification === event.operation_id) ? true : false}
                       />
                     ))}
                   </div>
