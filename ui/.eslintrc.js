@@ -13,7 +13,8 @@ module.exports = {
   "extends" : ["eslint:recommended", "plugin:react/recommended", "plugin:cypress/recommended", "next", "plugin:storybook/recommended"],
   "globals" : {
     "Atomics" : "readonly",
-    "SharedArrayBuffer" : "readonly"
+    "SharedArrayBuffer" : "readonly",
+    "globalThis" : "readonly"
   },
   "parser" : "@babel/eslint-parser",
   "parserOptions" : {

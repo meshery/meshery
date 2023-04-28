@@ -37,10 +37,12 @@ const nextConfig = {
   //    }
   //  },
   webpack : (config) => {
+    config.output.webassemblyModuleFilename = 'static/[modulehash].wasm'
     config.resolve.alias = {
       ...config.resolve.alias,
-      "remote-component.config.js" : __dirname + "/remote-component.config.js"
+      "remote-component.config.js" : __dirname + "/remote-component.config.js",
     };
+    config.experiments = { asyncWebAssembly : true }
     return config;
   }
 }

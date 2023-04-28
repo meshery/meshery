@@ -1,3 +1,5 @@
+import "../wasm/wasm_exec"; // import Go Wasm runtime
+
 import MomentUtils from '@date-io/moment';
 import { NoSsr, Typography } from '@material-ui/core';
 import CssBaseline from '@material-ui/core/CssBaseline';
