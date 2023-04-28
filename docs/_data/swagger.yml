@@ -224,7 +224,7 @@ paths:
                 ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
             tags:
                 - GetMeshmodelComponentByModel
-            summary: Handle GET request for getting meshmodel components of a specific specific. The component type/model name should be lowercase like "kubernetes", "istio"
+            summary: Handle GET request for getting meshmodel components of a specific model. The component type/model name should be lowercase like "kubernetes", "istio"
     /api/user/performance/profiles/{id}:
         get:
             description: Returns single performance profile with the given id
