@@ -39,7 +39,7 @@ func (h *Handler) GetMesheryFilterFileHandler(
 
 	resp, err := provider.GetMesheryFilterFile(r, filterID)
 	if err != nil {
-		h.log.Error(ErrGetFilter(err))
+		//h.log.Error(ErrGetFilter(err))
 		http.Error(rw, ErrGetFilter(err).Error(), http.StatusNotFound)
 		return
 	}
@@ -101,7 +101,7 @@ func (h *Handler) handleFilterPOST(
 	}
 	var parsedBody *MesheryFilterRequestBody
 	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil {
-		h.log.Error(ErrRequestBody(err))
+		//h.log.Error(ErrRequestBody(err))
 		http.Error(rw, ErrGetFilter(err).Error(), http.StatusBadRequest)
 		addMeshkitErr(&res, ErrGetFilter(err))
 		go h.EventsBuffer.Publish(&res)
@@ -110,7 +110,7 @@ func (h *Handler) handleFilterPOST(
 
 	token, err := provider.GetProviderToken(r)
 	if err != nil {
-		h.log.Error(ErrRetrieveUserToken(err))
+		//h.log.Error(ErrRetrieveUserToken(err))
 		http.Error(rw, ErrRetrieveUserToken(err).Error(), http.StatusInternalServerError)
 		addMeshkitErr(&res, ErrRetrieveUserToken(err))
 		go h.EventsBuffer.Publish(&res)
@@ -141,7 +141,7 @@ func (h *Handler) handleFilterPOST(
 		if parsedBody.Save {
 			resp, err := provider.SaveMesheryFilter(token, mesheryFilter)
 			if err != nil {
-				h.log.Error(ErrSaveFilter(err))
+				//h.log.Error(ErrSaveFilter(err))
 				http.Error(rw, ErrSaveFilter(err).Error(), http.StatusInternalServerError)
 				addMeshkitErr(&res, ErrSaveFilter(err))
 				go h.EventsBuffer.Publish(&res)
@@ -155,7 +155,7 @@ func (h *Handler) handleFilterPOST(
 
 		byt, err := json.Marshal([]models.MesheryFilter{*mesheryFilter})
 		if err != nil {
-			h.log.Error(ErrEncodeFilter(err))
+			//h.log.Error(ErrEncodeFilter(err))
 			http.Error(rw, ErrEncodeFilter(err).Error(), http.StatusInternalServerError)
 			addMeshkitErr(&res, ErrEncodeFilter(err))
 			go h.EventsBuffer.Publish(&res)
@@ -170,7 +170,7 @@ func (h *Handler) handleFilterPOST(
 		resp, err := provider.RemoteFilterFile(r, parsedBody.URL, parsedBody.Path, parsedBody.Save)
 
 		if err != nil {
-			h.log.Error(ErrImportFilter(err))
+			//h.log.Error(ErrImportFilter(err))
 			http.Error(rw, ErrImportFilter(err).Error(), http.StatusInternalServerError)
 			return
 		}
@@ -193,7 +193,7 @@ func (h *Handler) GetMesheryFiltersHandler(
 
 	resp, err := provider.GetMesheryFilters(tokenString, q.Get("page"), q.Get("page_size"), q.Get("search"), q.Get("order"))
 	if err != nil {
-		h.log.Error(ErrFetchFilter(err))
+		//h.log.Error(ErrFetchFilter(err))
 		http.Error(rw, ErrFetchFilter(err).Error(), http.StatusInternalServerError)
 		return
 	}
@@ -221,7 +221,7 @@ func (h *Handler) GetCatalogMesheryFiltersHandler(
 
 	resp, err := provider.GetCatalogMesheryFilters(tokenString, q.Get("search"), q.Get("order"))
 	if err != nil {
-		h.log.Error(ErrFetchFilter(err))
+		//h.log.Error(ErrFetchFilter(err))
 		http.Error(rw, ErrFetchFilter(err).Error(), http.StatusInternalServerError)
 		return
 	}
@@ -250,7 +250,7 @@ func (h *Handler) DeleteMesheryFilterHandler(
 
 	resp, err := provider.DeleteMesheryFilter(r, filterID)
 	if err != nil {
-		h.log.Error(ErrDeleteFilter(err))
+		//h.log.Error(ErrDeleteFilter(err))
 		http.Error(rw, ErrDeleteFilter(err).Error(), http.StatusInternalServerError)
 		return
 	}
@@ -279,14 +279,14 @@ func (h *Handler) CloneMesheryFilterHandler(
 	filterID := mux.Vars(r)["id"]
 	var parsedBody *models.MesheryCloneFilterRequestBody
 	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil || filterID == "" {
-		h.log.Error(ErrRequestBody(err))
+		//h.log.Error(ErrRequestBody(err))
 		http.Error(rw, ErrRequestBody(err).Error(), http.StatusBadRequest)
 		return
 	}
 
 	resp, err := provider.CloneMesheryFilter(r, filterID, parsedBody)
 	if err != nil {
-		h.log.Error(ErrCloneFilter(err))
+		//h.log.Error(ErrCloneFilter(err))
 		http.Error(rw, ErrCloneFilter(err).Error(), http.StatusInternalServerError)
 		return
 	}
@@ -318,14 +318,14 @@ func (h *Handler) PublishCatalogFilterHandler(
 
 	var parsedBody *models.MesheryCatalogFilterRequestBody
 	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil {
-		h.log.Error(ErrRequestBody(err))
+		//h.log.Error(ErrRequestBody(err))
 		http.Error(rw, ErrRequestBody(err).Error(), http.StatusBadRequest)
 		return
 	}
 
 	resp, err := provider.PublishCatalogFilter(r, parsedBody)
 	if err != nil {
-		h.log.Error(ErrPublishCatalogFilter(err))
+		//h.log.Error(ErrPublishCatalogFilter(err))
 		http.Error(rw, ErrPublishCatalogFilter(err).Error(), http.StatusInternalServerError)
 		return
 	}
@@ -354,7 +354,7 @@ func (h *Handler) GetMesheryFilterHandler(
 
 	resp, err := provider.GetMesheryFilter(r, filterID)
 	if err != nil {
-		h.log.Error(ErrGetFilter(err))
+		//h.log.Error(ErrGetFilter(err))
 		http.Error(rw, ErrGetFilter(err).Error(), http.StatusNotFound)
 		return
 	}

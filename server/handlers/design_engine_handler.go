@@ -24,7 +24,7 @@ import (
 	"github.com/layer5io/meshkit/utils/events"
 	meshkube "github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/sirupsen/logrus"
-	v1 "k8s.io/client-go/applyconfigurations/meta/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 // patternCallType is custom type for pattern
@@ -59,33 +59,28 @@ func (h *Handler) PatternFileHandler(
 	user *models.User,
 	provider models.Provider,
 ) {
-	// Read the PatternFile
-	body, err := io.ReadAll(r.Body)
+	body, err := readRequestBody(r)
 	if err != nil {
-		h.log.Error(ErrRequestBody(err))
-		http.Error(rw, ErrRequestBody(err).Error(), http.StatusInternalServerError)
-
-		rw.WriteHeader(http.StatusBadRequest)
-		fmt.Fprintf(rw, "failed to read request body: %s", err)
+		// h.log.Error(ErrRequestBody(err))
+		// http.Error(rw, ErrRequestBody(err).Error(), http.StatusBadRequest)
 		return
 	}
 
 	if r.Header.Get("Content-Type") == "application/json" {
 		body, err = yaml.JSONToYAML(body)
 		if err != nil {
-			h.log.Error(ErrPatternFile(err))
-			http.Error(rw, ErrPatternFile(err).Error(), http.StatusInternalServerError)
+			// h.log.Error(ErrPatternFile(err))
+			// http.Error(rw, ErrPatternFile(err).Error(), http.StatusInternalServerError)
 			return
 		}
 	}
 
 	isDel := r.Method == http.MethodDelete
 
-	// Generate the pattern file object
 	patternFile, err := core.NewPatternFile(body)
 	if err != nil {
-		h.log.Error(ErrPatternFile(err))
-		http.Error(rw, ErrPatternFile(err).Error(), http.StatusInternalServerError)
+		h.log.Error("error generating pattern file: %v", err)
+		// You can choose to send an error response to the client if needed
 		return
 	}
 
@@ -104,13 +99,27 @@ func (h *Handler) PatternFileHandler(
 		h.log,
 	)
 	if err != nil {
-		h.log.Error(ErrCompConfigPairs(err))
-		http.Error(rw, ErrCompConfigPairs(err).Error(), http.StatusInternalServerError)
+		h.log.Error("error: %s", err)
+		http.Error(rw, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
+
 	ec := json.NewEncoder(rw)
-	_ = ec.Encode(response)
+	if err = ec.Encode(response); err != nil {
+		h.log.Error("error encoding response:", err)
+		http.Error(rw, "failed to encode response", http.StatusInternalServerError)
+		return
+	}
 }
+
+func readRequestBody(r *http.Request) ([]byte, error) {
+	body, err := io.ReadAll(r.Body)
+	if err != nil {
+		return nil, err
+	}
+	return body, nil
+}
+
 func mergeMsgs(msgs []string) string {
 	var finalMsgs []string
 
@@ -320,6 +329,8 @@ func (sap *serviceActionProvider) Mutate(p *core.Pattern) {
 	}
 }
 
+// @TODO update this section
+// v1.StatusApplyConfiguration has deprecated, needed to find a different option to do this
 // NOTE: Currently tied to kubernetes
 // Returns ComponentName->ContextID->Response
 func (sap *serviceActionProvider) DryRun(comps []v1alpha1.Component) (resp map[string]map[string]core.DryRunResponse2, err error) {
@@ -329,64 +340,9 @@ func (sap *serviceActionProvider) DryRun(comps []v1alpha1.Component) (resp map[s
 			if err != nil {
 				return resp, err
 			}
-
-			st, ok, err := k8s.DryRunHelper(cl, cmp)
-			dResp := core.DryRunResponse2{Success: ok, Component: &core.Service{
-				Name:        cmp.Name,
-				Type:        cmp.Spec.Type,
-				Namespace:   cmp.Namespace,
-				APIVersion:  cmp.Spec.APIVersion,
-				Version:     cmp.Spec.Version,
-				Model:       cmp.Spec.Model,
-				Labels:      cmp.Labels,
-				Annotations: cmp.Annotations,
-			}}
-			// Dry run was success
-			if ok {
-				dResp.Component.Settings = make(map[string]interface{})
-				for k, v := range st {
-					if k == "apiVersion" || k == "kind" || k == "metadata" {
-						continue
-					}
-					dResp.Component.Settings[k] = v
-				}
-			} else if err != nil { //Dry run failed due to some error eg: K8s server could not identify the resource
-				dResp.Error = &core.DryRunResponse{
-					Status: err.Error(),
-				}
-			} else { //Dry run failure returned with an error wrapped in kubernetes custom error
-				dResp.Error = &core.DryRunResponse{}
-				byt, err := json.Marshal(st)
-				if err != nil {
-					return nil, err
-				}
-				var a v1.StatusApplyConfiguration
-				err = json.Unmarshal(byt, &a)
-				if err != nil {
-					return nil, err
-				}
-				if a.Status != nil {
-					dResp.Error.Status = *a.Status
-				}
-				dResp.Error.Causes = make([]core.DryRunFailureCause, 0)
-				if a.Details != nil {
-					for _, c := range a.Details.Causes {
-						msg := ""
-						field := ""
-						typ := ""
-						if c.Message != nil {
-							msg = *c.Message
-						}
-						if c.Field != nil {
-							field = cmp.Name + "." + getComponentFieldPathFromK8sFieldPath(*c.Field)
-						}
-						if c.Type != nil {
-							typ = string(*c.Type)
-						}
-						failureCase := core.DryRunFailureCause{Message: msg, FieldPath: field, Type: typ}
-						dResp.Error.Causes = append(dResp.Error.Causes, failureCase)
-					}
-				}
+			dResp, err := dryRunComponent(cl, cmp)
+			if err != nil {
+				return resp, err
 			}
 			if resp == nil {
 				resp = make(map[string]map[string]core.DryRunResponse2)
@@ -399,6 +355,75 @@ func (sap *serviceActionProvider) DryRun(comps []v1alpha1.Component) (resp map[s
 	}
 	return
 }
+
+func dryRunComponent(cl *meshkube.Client, cmp v1alpha1.Component) (core.DryRunResponse2, error) {
+	st, ok, err := k8s.DryRunHelper(cl, cmp)
+	dResp := core.DryRunResponse2{Success: ok, Component: &core.Service{
+		Name:        cmp.Name,
+		Type:        cmp.Spec.Type,
+		Namespace:   cmp.Namespace,
+		APIVersion:  cmp.Spec.APIVersion,
+		Version:     cmp.Spec.Version,
+		Model:       cmp.Spec.Model,
+		Labels:      cmp.Labels,
+		Annotations: cmp.Annotations,
+	}}
+	if ok {
+		dResp.Component.Settings = filterSettings(st)
+	} else if err != nil {
+		dResp.Error = &core.DryRunResponse{Status: err.Error()}
+	} else {
+		dResp.Error = parseDryRunFailure(st, cmp.Name)
+	}
+	return dResp, nil
+}
+
+func filterSettings(settings map[string]interface{}) map[string]interface{} {
+	filteredSettings := make(map[string]interface{})
+	for k, v := range settings {
+		if k != "apiVersion" && k != "kind" && k != "metadata" {
+			filteredSettings[k] = v
+		}
+	}
+	return filteredSettings
+}
+
+func parseDryRunFailure(settings map[string]interface{}, name string) *core.DryRunResponse {
+	byt, err := json.Marshal(settings)
+	if err != nil {
+		return nil
+	}
+	var a metav1.Status
+	err = json.Unmarshal(byt, &a)
+	if err != nil {
+		return nil
+	}
+	dResp := core.DryRunResponse{}
+	if a.Status != "" {
+		dResp.Status = a.Status
+	}
+	if a.Details != nil {
+		dResp.Causes = make([]core.DryRunFailureCause, 0)
+		for _, c := range a.Details.Causes {
+			msg := ""
+			field := ""
+			typ := ""
+			if c.Message != "" {
+				msg = c.Message
+			}
+			if c.Field != "" {
+				field = name + "." + getComponentFieldPathFromK8sFieldPath(c.Field)
+			}
+			if c.Type != "" {
+				typ = string(c.Type)
+			}
+			failureCase := core.DryRunFailureCause{Message: msg, FieldPath: field, Type: typ}
+			dResp.Causes = append(dResp.Causes, failureCase)
+		}
+	}
+	return &dResp
+}
+
 func getComponentFieldPathFromK8sFieldPath(path string) (newpath string) {
 	if strings.HasPrefix(path, "metadata.") {
 		path = strings.TrimPrefix(path, "metadata.")
@@ -409,9 +434,14 @@ func getComponentFieldPathFromK8sFieldPath(path string) (newpath string) {
 			}
 		}
 		return
+	} else if strings.HasPrefix(path, "status.") {
+		path = strings.TrimPrefix(path, "status.")
+		return fmt.Sprintf("%s.%s", "status", path)
 	}
-	return fmt.Sprintf("%s.%s", "settings", path)
+	return fmt.Sprintf("%s.%s", "spec", path)
 }
+
+// ------------------------------------------------------------------------------------
 func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) (string, error) { // Marshal the component
 	jsonComp, err := json.Marshal(ccp.Component)
 	if err != nil {

@@ -71,7 +71,7 @@ func (h *Handler) GetMeshmodelRelationshipByName(rw http.ResponseWriter, r *http
 		}
 	}
 	if err := enc.Encode(rels); err != nil {
-		h.log.Error(ErrWorkloadDefinition(err)) //TODO: Add appropriate meshkit error
+		// h.log.Error(ErrWorkloadDefinition(err)) //TODO: Add appropriate meshkit error
 		http.Error(rw, ErrWorkloadDefinition(err).Error(), http.StatusInternalServerError)
 	}
 }
@@ -128,7 +128,7 @@ func (h *Handler) GetAllMeshmodelRelationships(rw http.ResponseWriter, r *http.R
 		}
 	}
 	if err := enc.Encode(rels); err != nil {
-		h.log.Error(ErrWorkloadDefinition(err)) //TODO: Add appropriate meshkit error
+		// h.log.Error(ErrWorkloadDefinition(err)) //TODO: Add appropriate meshkit error
 		http.Error(rw, ErrWorkloadDefinition(err).Error(), http.StatusInternalServerError)
 	}
 }

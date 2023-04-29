@@ -17,7 +17,7 @@ import (
 func (h *Handler) UserHandler(w http.ResponseWriter, _ *http.Request, _ *models.Preference, user *models.User, _ models.Provider) {
 	if err := json.NewEncoder(w).Encode(user); err != nil {
 		obj := "user data"
-		h.log.Error(ErrEncoding(err, obj))
+		//h.log.Error(ErrEncoding(err, obj))
 		http.Error(w, ErrEncoding(err, obj).Error(), http.StatusInternalServerError)
 		return
 	}
@@ -34,7 +34,7 @@ func (h *Handler) GetUserByIDHandler(w http.ResponseWriter, r *http.Request, _ *
 	userID := mux.Vars(r)["id"]
 	resp, err := provider.GetUserByID(r, userID)
 	if err != nil {
-		h.log.Error(ErrGetResult(err))
+		//h.log.Error(ErrGetResult(err))
 		http.Error(w, ErrGetResult(err).Error(), http.StatusNotFound)
 		return
 	}
@@ -62,7 +62,7 @@ func (h *Handler) UserPrefsHandler(w http.ResponseWriter, req *http.Request, pre
 	if req.Method == http.MethodGet {
 		if err := json.NewEncoder(w).Encode(prefObj); err != nil {
 			obj := "user preference object"
-			h.log.Error(ErrEncoding(err, obj))
+			//h.log.Error(ErrEncoding(err, obj))
 			http.Error(w, ErrEncoding(err, obj).Error(), http.StatusInternalServerError)
 		}
 		return
@@ -74,7 +74,7 @@ func (h *Handler) UserPrefsHandler(w http.ResponseWriter, req *http.Request, pre
 
 	// read user preferences from JSON request body
 	if err := json.NewDecoder(req.Body).Decode(&prefObj); err != nil {
-		h.log.Error(ErrDecoding(err, "user preferences"))
+		//h.log.Error(ErrDecoding(err, "user preferences"))
 		http.Error(w, ErrDecoding(err, "user preferences").Error(), http.StatusInternalServerError)
 		return
 	}
@@ -86,7 +86,7 @@ func (h *Handler) UserPrefsHandler(w http.ResponseWriter, req *http.Request, pre
 		if qps < 0 {
 			w.WriteHeader(http.StatusBadRequest)
 			err := fmt.Errorf("QPS value less than 0")
-			h.log.Error(ErrSavingUserPreference(err))
+			//h.log.Error(ErrSavingUserPreference(err))
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -94,7 +94,7 @@ func (h *Handler) UserPrefsHandler(w http.ResponseWriter, req *http.Request, pre
 		dur := prefObj.LoadTestPreferences.Duration
 		if _, err := time.ParseDuration(dur); err != nil {
 			err = errors.Wrap(err, "unable to parse test duration")
-			h.log.Error(ErrSavingUserPreference(err))
+			//h.log.Error(ErrSavingUserPreference(err))
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -102,7 +102,7 @@ func (h *Handler) UserPrefsHandler(w http.ResponseWriter, req *http.Request, pre
 		c := prefObj.LoadTestPreferences.ConcurrentRequests
 		if c < 0 {
 			err := fmt.Errorf("number of concurrent requests less than 0")
-			h.log.Error(ErrSavingUserPreference(err))
+			//h.log.Error(ErrSavingUserPreference(err))
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -116,7 +116,7 @@ func (h *Handler) UserPrefsHandler(w http.ResponseWriter, req *http.Request, pre
 		}
 		if !loadGenSupported {
 			err := fmt.Errorf("invalid load generator: %s", loadGen)
-			h.log.Error(ErrSavingUserPreference(err))
+			//h.log.Error(ErrSavingUserPreference(err))
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -124,14 +124,14 @@ func (h *Handler) UserPrefsHandler(w http.ResponseWriter, req *http.Request, pre
 
 	if err := provider.RecordPreferences(req, user.UserID, prefObj); err != nil {
 		err := fmt.Errorf("unable to save user preferences: %v", err)
-		h.log.Error(ErrSavingUserPreference(err))
+		//h.log.Error(ErrSavingUserPreference(err))
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	if err := json.NewEncoder(w).Encode(prefObj); err != nil {
 		obj := "user preferences"
-		h.log.Error(ErrEncoding(err, obj))
+		//h.log.Error(ErrEncoding(err, obj))
 		http.Error(w, ErrEncoding(err, obj).Error(), http.StatusInternalServerError)
 		return
 	}

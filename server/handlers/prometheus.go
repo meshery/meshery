@@ -17,152 +17,6 @@ func init() {
 	gob.Register(&models.PrometheusClient{})
 }
 
-// swagger:route GET /api/system/meshsync/grafana SystemAPI idMeshSyncGrafana
-// Handle GET request for mesh-sync grafana
-//
-// Fetches Prometheus and Grafana
-// responses:
-// 	200: v1ServicesMapResponseWrapper
-
-// ScanPromGrafanaHandler - fetches  Prometheus and Grafana
-// func (h *Handler) ScanPromGrafanaHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
-// 	errs := []string{}
-// 	var wg sync.WaitGroup
-// 	customK8scontexts, ok := req.Context().Value(models.KubeClustersKey).([]models.K8sContext)
-// 	if ok && len(customK8scontexts) > 0 {
-// 		for _, mk8scontext := range customK8scontexts {
-// 			wg.Add(1)
-// 			go func(mk8scontext models.K8sContext) {
-// 				defer wg.Done()
-// 				k8sconfig, err := mk8scontext.GenerateKubeConfig()
-// 				if err != nil {
-// 					errs = append(errs, err.Error())
-// 					h.log.Error(err)
-// 					return
-// 				}
-// 				availablePromGrafana, err := helpers.ScanPromGrafana(k8sconfig, mk8scontext.Name)
-// 				if err != nil {
-// 					errs = append(errs, err.Error())
-// 					h.log.Error(err)
-// 					return
-// 				}
-// 				if err = json.NewEncoder(w).Encode(availablePromGrafana); err != nil {
-// 					obj := "payloads"
-// 					h.log.Error(ErrMarshal(err, obj))
-// 					errs = append(errs, ErrMarshal(err, obj).Error())
-// 					return
-// 				}
-// 			}(mk8scontext)
-// 		}
-// 	}
-// 	if len(errs) != 0 {
-// 		http.Error(w, mergeMsgs(errs), http.StatusInternalServerError)
-// 	}
-// 	wg.Wait()
-// }
-
-// swagger:route GET /api/system/meshsync/prometheus SystemAPI idMeshSyncPrometheus
-// Handle GET request for fetching prometheus
-//
-// Fetches Prometheus
-// responses:
-// 	200: v1ServicesMapResponseWrapper
-
-// ScanPrometheusHandler - fetches  Prometheus
-// func (h *Handler) ScanPrometheusHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
-// 	errs := []string{}
-// 	var wg sync.WaitGroup
-// 	customK8scontexts, ok := req.Context().Value(models.KubeClustersKey).([]models.K8sContext)
-// 	if ok && len(customK8scontexts) > 0 {
-// 		for _, mk8scontext := range customK8scontexts {
-// 			wg.Add(1)
-// 			go func(mk8scontext models.K8sContext) {
-// 				defer wg.Done()
-// 				k8sconfig, err := mk8scontext.GenerateKubeConfig()
-// 				if err != nil {
-// 					errs = append(errs, err.Error())
-// 					h.log.Error(err)
-// 					return
-// 				}
-// 				availablePromGrafana, err := helpers.ScanPrometheus(k8sconfig, mk8scontext.Name)
-// 				if err != nil {
-// 					errs = append(errs, err.Error())
-// 					h.log.Error(err)
-// 					return
-// 				}
-// 				if err = json.NewEncoder(w).Encode(availablePromGrafana); err != nil {
-// 					obj := "payloads"
-// 					h.log.Error(ErrMarshal(err, obj))
-// 					errs = append(errs, ErrMarshal(err, obj).Error())
-// 					return
-// 				}
-// 			}(mk8scontext)
-// 		}
-// 	}
-// 	if len(errs) != 0 {
-// 		http.Error(w, mergeMsgs(errs), http.StatusInternalServerError)
-// 	}
-// 	wg.Wait()
-// }
-
-// swagger:route GET /api/telemetry/metrics/grafana/scan GrafanaAPI idGetGrafana
-// Handle GET request for Grafana
-//
-// Fetches and returns Grafana
-// responses:
-// 	200: v1ServicesMapResponseWrapper
-
-// ScanGrafanaHandler - fetches  Grafana
-// func (h *Handler) ScanGrafanaHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
-// 	errs := []string{}
-// 	var wg sync.WaitGroup
-// 	customK8scontexts, ok := req.Context().Value(models.KubeClustersKey).([]models.K8sContext)
-// 	if ok && len(customK8scontexts) > 0 {
-// 		for _, mk8scontext := range customK8scontexts {
-// 			wg.Add(1)
-// 			go func(mk8scontext models.K8sContext) {
-// 				defer wg.Done()
-// 				k8sconfig, err := mk8scontext.GenerateKubeConfig()
-// 				if err != nil {
-// 					errs = append(errs, err.Error())
-// 					h.log.Error(err)
-// 					return
-// 				}
-// 				availablePromGrafana, err := helpers.ScanGrafana(k8sconfig, mk8scontext.Name)
-// 				if err != nil {
-// 					errs = append(errs, err.Error())
-// 					h.log.Error(err)
-// 					return
-// 				}
-// 				if err = json.NewEncoder(w).Encode(availablePromGrafana); err != nil {
-// 					obj := "payloads"
-// 					h.log.Error(ErrMarshal(err, obj))
-// 					errs = append(errs, ErrMarshal(err, obj).Error())
-// 					return
-// 				}
-// 			}(mk8scontext)
-// 		}
-// 	}
-// 	if len(errs) != 0 {
-// 		http.Error(w, mergeMsgs(errs), http.StatusInternalServerError)
-// 	}
-// 	wg.Wait()
-// }
-
-// swagger:route GET /api/telemetry/metrics/config PrometheusAPI idGetPrometheusConfig
-// Handle GET for Prometheus configuration
-//
-// Used for fetching Prometheus configuration
-// responses:
-//  200: prometheusConfigResponseWrapper
-
-// swagger:route POST /api/telemetry/metrics/config PrometheusAPI idPostPrometheusConfig
-// Handle POST for Prometheus configuration
-//
-// Used for persisting Prometheus configuration
-// responses:
-//  200:
-
 // swagger:route DELETE /api/telemetry/metrics/config PrometheusAPI idDeletePrometheusConfig
 // Handle DELETE for Prometheus configuration
 //
@@ -181,7 +35,7 @@ func (h *Handler) PrometheusConfigHandler(w http.ResponseWriter, req *http.Reque
 		err := json.NewEncoder(w).Encode(prefObj.Prometheus)
 		if err != nil {
 			obj := "Prometheus config"
-			h.log.Error(ErrMarshal(err, obj))
+			// h.log.Error(ErrMarshal(err, obj))
 			http.Error(w, ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
 			return
 		}
@@ -191,7 +45,7 @@ func (h *Handler) PrometheusConfigHandler(w http.ResponseWriter, req *http.Reque
 	if req.Method == http.MethodPost {
 		promURL := req.FormValue("prometheusURL")
 		if err := h.config.PrometheusClient.Validate(req.Context(), promURL); err != nil {
-			h.log.Error(ErrPrometheusScan(err))
+			// h.log.Error(ErrPrometheusScan(err))
 			http.Error(w, ErrPrometheusScan(err).Error(), http.StatusInternalServerError)
 			return
 		}
@@ -207,14 +61,14 @@ func (h *Handler) PrometheusConfigHandler(w http.ResponseWriter, req *http.Reque
 		prefObj.Prometheus = &models.Prometheus{
 			PrometheusURL: promURL,
 		}
-		h.log.Debug("Prometheus URL %s successfully saved", promURL)
+		h.log.Debugf("Prometheus URL %s successfully saved", promURL)
 	} else if req.Method == http.MethodDelete {
 		prefObj.Prometheus = nil
 	}
 
 	err := provider.RecordPreferences(req, user.UserID, prefObj)
 	if err != nil {
-		h.log.Error(ErrRecordPreferences(err))
+		// h.log.Error(ErrRecordPreferences(err))
 		http.Error(w, ErrRecordPreferences(err).Error(), http.StatusInternalServerError)
 		return
 	}
@@ -237,13 +91,13 @@ func (h *Handler) PrometheusPingHandler(w http.ResponseWriter, req *http.Request
 	// }
 
 	if prefObj.Prometheus == nil || prefObj.Prometheus.PrometheusURL == "" {
-		h.log.Error(ErrPrometheusConfig)
+		// h.log.Error(ErrPrometheusConfig)
 		http.Error(w, ErrPrometheusConfig.Error(), http.StatusBadRequest)
 		return
 	}
 
 	if err := h.config.PrometheusClient.Validate(req.Context(), prefObj.Prometheus.PrometheusURL); err != nil {
-		h.log.Error(ErrPrometheusScan(err))
+		// h.log.Error(ErrPrometheusScan(err))
 		http.Error(w, ErrPrometheusScan(err).Error(), http.StatusInternalServerError)
 		return
 	}
@@ -266,7 +120,7 @@ func (h *Handler) GrafanaBoardImportForPrometheusHandler(w http.ResponseWriter, 
 	// }
 
 	if prefObj.Prometheus == nil || prefObj.Prometheus.PrometheusURL == "" {
-		h.log.Error(ErrPrometheusConfig)
+		// h.log.Error(ErrPrometheusConfig)
 		http.Error(w, ErrPrometheusConfig.Error(), http.StatusBadRequest)
 		return
 	}
@@ -277,20 +131,20 @@ func (h *Handler) GrafanaBoardImportForPrometheusHandler(w http.ResponseWriter, 
 
 	boardData, err := io.ReadAll(req.Body)
 	if err != nil {
-		h.log.Error(ErrRequestBody(err))
+		// h.log.Error(ErrRequestBody(err))
 		http.Error(w, ErrRequestBody(err).Error(), http.StatusInternalServerError)
 		return
 	}
 	board, err := h.config.PrometheusClient.ImportGrafanaBoard(req.Context(), boardData)
 	if err != nil {
-		h.log.Error(ErrPrometheusBoards(err))
+		//h.log.Error(ErrPrometheusBoards(err))
 		http.Error(w, ErrPrometheusBoards(err).Error(), http.StatusInternalServerError)
 		return
 	}
 	err = json.NewEncoder(w).Encode(board)
 	if err != nil {
 		obj := "board instance"
-		h.log.Error(ErrMarshal(err, obj))
+		// h.log.Error(ErrMarshal(err, obj))
 		http.Error(w, ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
 		return
 	}
@@ -311,7 +165,7 @@ func (h *Handler) PrometheusQueryHandler(w http.ResponseWriter, req *http.Reques
 	// }
 
 	if prefObj.Prometheus == nil || prefObj.Prometheus.PrometheusURL == "" {
-		h.log.Error(ErrPrometheusConfig)
+		// h.log.Error(ErrPrometheusConfig)
 		http.Error(w, ErrPrometheusConfig.Error(), http.StatusBadRequest)
 		return
 	}
@@ -320,7 +174,7 @@ func (h *Handler) PrometheusQueryHandler(w http.ResponseWriter, req *http.Reques
 
 	data, err := h.config.PrometheusClientForQuery.Query(req.Context(), prefObj.Prometheus.PrometheusURL, &reqQuery)
 	if err != nil {
-		h.log.Error(ErrPrometheusQuery(err))
+		// h.log.Error(ErrPrometheusQuery(err))
 		http.Error(w, ErrPrometheusQuery(err).Error(), http.StatusInternalServerError)
 		return
 	}
@@ -344,7 +198,7 @@ func (h *Handler) PrometheusQueryRangeHandler(w http.ResponseWriter, req *http.R
 
 	data, err := h.config.PrometheusClientForQuery.QueryRange(req.Context(), reqQuery.Get("url"), &reqQuery)
 	if err != nil {
-		h.log.Error(ErrPrometheusQuery(err))
+		// h.log.Error(ErrPrometheusQuery(err))
 		http.Error(w, ErrPrometheusQuery(err).Error(), http.StatusInternalServerError)
 		return
 	}
@@ -397,7 +251,7 @@ func (h *Handler) PrometheusStaticBoardHandler(w http.ResponseWriter, req *http.
 	resultWG.Wait()
 
 	if len(result) != len(boardFunc) {
-		h.log.Error(ErrStaticBoards)
+		// h.log.Error(ErrStaticBoards)
 		http.Error(w, ErrStaticBoards.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -405,7 +259,7 @@ func (h *Handler) PrometheusStaticBoardHandler(w http.ResponseWriter, req *http.
 	err := json.NewEncoder(w).Encode(result)
 	if err != nil {
 		obj := "board instance"
-		h.log.Error(ErrMarshal(err, obj))
+		// h.log.Error(ErrMarshal(err, obj))
 		http.Error(w, ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
 		return
 	}
@@ -426,7 +280,7 @@ func (h *Handler) SaveSelectedPrometheusBoardsHandler(w http.ResponseWriter, req
 	// }
 
 	if prefObj.Prometheus == nil || prefObj.Prometheus.PrometheusURL == "" {
-		h.log.Error(ErrPrometheusConfig)
+		// h.log.Error(ErrPrometheusConfig)
 		http.Error(w, ErrPrometheusConfig.Error(), http.StatusBadRequest)
 		return
 	}
@@ -441,7 +295,7 @@ func (h *Handler) SaveSelectedPrometheusBoardsHandler(w http.ResponseWriter, req
 
 	body, err := io.ReadAll(req.Body)
 	if err != nil {
-		h.log.Error(ErrRequestBody(err))
+		// h.log.Error(ErrRequestBody(err))
 		http.Error(w, ErrRequestBody(err).Error(), http.StatusInternalServerError)
 		return
 	}
@@ -449,7 +303,7 @@ func (h *Handler) SaveSelectedPrometheusBoardsHandler(w http.ResponseWriter, req
 	err = json.Unmarshal(body, &boards)
 	if err != nil {
 		obj := "request body"
-		h.log.Error(ErrUnmarshal(err, obj))
+		// h.log.Error(ErrUnmarshal(err, obj))
 		http.Error(w, ErrUnmarshal(err, obj).Error(), http.StatusBadRequest)
 		return
 	}
@@ -460,7 +314,7 @@ func (h *Handler) SaveSelectedPrometheusBoardsHandler(w http.ResponseWriter, req
 	}
 	err = provider.RecordPreferences(req, user.UserID, prefObj)
 	if err != nil {
-		h.log.Error(ErrRecordPreferences(err))
+		// h.log.Error(ErrRecordPreferences(err))
 		http.Error(w, ErrRecordPreferences(err).Error(), http.StatusInternalServerError)
 		return
 	}

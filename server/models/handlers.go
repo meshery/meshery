@@ -29,7 +29,7 @@ type HandlerInterface interface {
 
 	ProviderHandler(w http.ResponseWriter, r *http.Request)
 	ProvidersHandler(w http.ResponseWriter, r *http.Request)
-	ProviderUIHandler(w http.ResponseWriter, r *http.Request)
+	ProviderStaticHandler(w http.ResponseWriter, r *http.Request)
 	ProviderCapabilityHandler(w http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	ProviderComponentsHandler(w http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 

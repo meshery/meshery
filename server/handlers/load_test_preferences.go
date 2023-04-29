@@ -46,7 +46,7 @@ func (h *Handler) UserTestPreferenceStore(w http.ResponseWriter, req *http.Reque
 	if err != nil {
 		// logrus.Error(err)
 		// http.Error(w, msg, http.StatusInternalServerError)
-		h.log.Error(ErrRequestBody(err))
+		//h.log.Error(ErrRequestBody(err))
 		http.Error(w, ErrRequestBody(err).Error(), http.StatusInternalServerError)
 		return
 	}
@@ -56,14 +56,14 @@ func (h *Handler) UserTestPreferenceStore(w http.ResponseWriter, req *http.Reque
 		// err = errors.Wrapf(err, msg)
 		// logrus.Error(err)
 		// http.Error(w, msg, http.StatusBadRequest)
-		h.log.Error(ErrUnmarshal(err, obj))
+		//h.log.Error(ErrUnmarshal(err, obj))
 		http.Error(w, ErrUnmarshal(err, obj).Error(), http.StatusBadRequest)
 		return
 	}
 	if err = models.SMPPerformanceTestConfigValidator(perfTest); err != nil {
 		// logrus.Error(err)
 		// http.Error(w, err.Error(), http.StatusBadRequest)
-		h.log.Error(ErrRecordPreferences(err))
+		//h.log.Error(ErrRecordPreferences(err))
 		http.Error(w, ErrRecordPreferences(err).Error(), http.StatusBadRequest)
 		return
 	}
@@ -72,7 +72,7 @@ func (h *Handler) UserTestPreferenceStore(w http.ResponseWriter, req *http.Reque
 		obj := "user preference"
 		// logrus.Errorf("unable to save user preferences: %v", err)
 		// http.Error(w, "unable to save user preferences", http.StatusInternalServerError)
-		h.log.Error(ErrFailToSave(err, obj))
+		//h.log.Error(ErrFailToSave(err, obj))
 		http.Error(w, ErrFailToSave(err, obj).Error(), http.StatusBadRequest)
 		return
 	}
@@ -101,7 +101,7 @@ func (h *Handler) UserTestPreferenceGet(w http.ResponseWriter, req *http.Request
 		if err != nil {
 			// logrus.Error("error fetching test configs")
 			// http.Error(w, "error fetching test configs", http.StatusInternalServerError)
-			h.log.Error(ErrTestConfigs)
+			//h.log.Error(ErrTestConfigs)
 			http.Error(w, ErrTestConfigs.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -111,7 +111,7 @@ func (h *Handler) UserTestPreferenceGet(w http.ResponseWriter, req *http.Request
 		if err != nil {
 			// logrus.Error("error fetching test configs")
 			// http.Error(w, "error fetching test configs", http.StatusInternalServerError)
-			h.log.Error(ErrTestConfigs)
+			//h.log.Error(ErrTestConfigs)
 			http.Error(w, ErrTestConfigs.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -124,7 +124,7 @@ func (h *Handler) UserTestPreferenceGet(w http.ResponseWriter, req *http.Request
 		if err != nil {
 			// logrus.Errorf("error reading database: %v", err)
 			// http.Error(w, "error reading database", http.StatusInternalServerError)
-			h.log.Error(ErrReadConfig(err))
+			//h.log.Error(ErrReadConfig(err))
 			http.Error(w, ErrReadConfig(err).Error(), http.StatusInternalServerError)
 			return
 		}
@@ -132,7 +132,7 @@ func (h *Handler) UserTestPreferenceGet(w http.ResponseWriter, req *http.Request
 		if err != nil {
 			// logrus.Errorf("error writing response: %v", err)
 			// http.Error(w, "error writing response", http.StatusInternalServerError)
-			h.log.Error(ErrWriteResponse)
+			//h.log.Error(ErrWriteResponse)
 			http.Error(w, ErrWriteResponse.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -153,7 +153,7 @@ func (h *Handler) UserTestPreferenceDelete(w http.ResponseWriter, req *http.Requ
 		obj := "field uuid"
 		// logrus.Error("field uuid not found")
 		// http.Error(w, "field uuid not found", http.StatusBadRequest)
-		h.log.Error(ErrQueryGet(obj))
+		//h.log.Error(ErrQueryGet(obj))
 		http.Error(w, ErrQueryGet(obj).Error(), http.StatusBadRequest)
 		return
 	}
@@ -161,7 +161,7 @@ func (h *Handler) UserTestPreferenceDelete(w http.ResponseWriter, req *http.Requ
 		obj := "testConfig"
 		// logrus.Errorf("error deleting testConfig: %v", err)
 		// http.Error(w, "error deleting testConfig", http.StatusBadRequest)
-		h.log.Error(ErrFailToDelete(err, obj))
+		//h.log.Error(ErrFailToDelete(err, obj))
 		http.Error(w, ErrFailToDelete(err, obj).Error(), http.StatusBadRequest)
 		return
 	}

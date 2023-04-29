@@ -67,7 +67,7 @@ func (h *Handler) addK8SConfig(_ *models.User, _ *models.Preference, w http.Resp
 	token, ok := req.Context().Value(models.TokenCtxKey).(string)
 	if !ok {
 		err := ErrRetrieveUserToken(fmt.Errorf("failed to retrieve user token"))
-		logrus.Error(err)
+		//logrus.Error(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -75,7 +75,7 @@ func (h *Handler) addK8SConfig(_ *models.User, _ *models.Preference, w http.Resp
 	_ = req.ParseMultipartForm(1 << 20)
 
 	inClusterConfig := req.FormValue("inClusterConfig")
-	logrus.Debugf("inClusterConfig: %s", inClusterConfig)
+	h.log.Debugf("inClusterConfig: %s", inClusterConfig)
 
 	k8sfile, _, err := req.FormFile("k8sfile")
 	if err != nil {
@@ -89,7 +89,7 @@ func (h *Handler) addK8SConfig(_ *models.User, _ *models.Preference, w http.Resp
 
 	k8sConfigBytes, err := io.ReadAll(k8sfile)
 	if err != nil {
-		logrus.Error(ErrReadConfig(err))
+		//logrus.Error(ErrReadConfig(err))
 		http.Error(w, ErrReadConfig(err).Error(), http.StatusBadRequest)
 		return
 	}
@@ -103,7 +103,7 @@ func (h *Handler) addK8SConfig(_ *models.User, _ *models.Preference, w http.Resp
 	// Get meshery instance ID
 	mid, ok := viper.Get("INSTANCE_ID").(*uuid.UUID)
 	if !ok {
-		logrus.Error(ErrMesheryInstanceID)
+		//logrus.Error(ErrMesheryInstanceID)
 		http.Error(w, ErrMesheryInstanceID.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -132,7 +132,7 @@ func (h *Handler) addK8SConfig(_ *models.User, _ *models.Preference, w http.Resp
 		h.config.K8scontextChannel.PublishContext()
 	}
 	if err := json.NewEncoder(w).Encode(saveK8sContextResponse); err != nil {
-		logrus.Error(ErrMarshal(err, "kubeconfig"))
+		//logrus.Error(ErrMarshal(err, "kubeconfig"))
 		http.Error(w, ErrMarshal(err, "kubeconfig").Error(), http.StatusInternalServerError)
 		return
 	}
@@ -173,7 +173,7 @@ func (h *Handler) GetContextsFromK8SConfig(w http.ResponseWriter, req *http.Requ
 
 	k8sfile, _, err := req.FormFile("k8sfile")
 	if err != nil {
-		logrus.Error(ErrFormFile(err))
+		//logrus.Error(ErrFormFile(err))
 		http.Error(w, ErrFormFile(err).Error(), http.StatusBadRequest)
 		return
 	}
@@ -182,7 +182,7 @@ func (h *Handler) GetContextsFromK8SConfig(w http.ResponseWriter, req *http.Requ
 	}()
 	k8sConfigBytes, err = io.ReadAll(k8sfile)
 	if err != nil {
-		logrus.Error(ErrReadConfig(err))
+		//logrus.Error(ErrReadConfig(err))
 		http.Error(w, ErrReadConfig(err).Error(), http.StatusBadRequest)
 		return
 	}
@@ -190,7 +190,7 @@ func (h *Handler) GetContextsFromK8SConfig(w http.ResponseWriter, req *http.Requ
 	// Get meshery instance ID
 	mid, ok := viper.Get("INSTANCE_ID").(*uuid.UUID)
 	if !ok {
-		logrus.Error(ErrMesheryInstanceID)
+		//logrus.Error(ErrMesheryInstanceID)
 		http.Error(w, ErrMesheryInstanceID.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -199,7 +199,7 @@ func (h *Handler) GetContextsFromK8SConfig(w http.ResponseWriter, req *http.Requ
 
 	err = json.NewEncoder(w).Encode(contexts)
 	if err != nil {
-		logrus.Error(ErrMarshal(err, "kube-context"))
+		//logrus.Error(ErrMarshal(err, "kube-context"))
 		http.Error(w, ErrMarshal(err, "kube-context").Error(), http.StatusInternalServerError)
 		return
 	}
@@ -240,7 +240,7 @@ func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request
 		}
 		version, err := kubeclient.KubeClient.ServerVersion()
 		if err != nil {
-			logrus.Error(ErrKubeVersion(err))
+			//logrus.Error(ErrKubeVersion(err))
 			http.Error(w, ErrKubeVersion(err).Error(), http.StatusInternalServerError)
 			return
 		}
@@ -248,7 +248,7 @@ func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request
 			"server_version": version.String(),
 		}); err != nil {
 			err = errors.Wrap(err, "unable to marshal the payload")
-			logrus.Error(ErrMarshal(err, "kube-server-version"))
+			//logrus.Error(ErrMarshal(err, "kube-server-version"))
 			http.Error(w, ErrMarshal(err, "kube-server-version").Error(), http.StatusInternalServerError)
 		}
 		return
@@ -275,18 +275,18 @@ func (h *Handler) LoadContextsAndPersist(token string, prov models.Provider) ([]
 
 		cc, err := models.NewK8sContextFromInClusterConfig(ctxName, mid)
 		if err != nil {
-			logrus.Warn("failed to generate in cluster context: ", err)
+			h.log.Warn("failed to generate in cluster context: ", err)
 			return contexts, err
 		}
 		if cc == nil {
 			err := fmt.Errorf("nil context generated from in cluster config")
-			logrus.Warn(err)
+			// logrus.Warn(err)
 			return contexts, err
 		}
 		cc.DeploymentType = "in_cluster"
 		_, err = prov.SaveK8sContext(token, *cc)
 		if err != nil {
-			logrus.Warn("failed to save the context for incluster: ", err)
+			h.log.Warn("failed to save the context for incluster: ", err)
 			return contexts, err
 		}
 		h.config.K8scontextChannel.PublishContext()
@@ -401,17 +401,3 @@ func writeMeshModelComponentsOnFileSystem(c meshmodelv1alpha1.ComponentDefinitio
 		fmt.Println("err: ", err.Error())
 	}
 }
-
-// func writeDefK8sOnFileSystem(def string, path string) {
-// 	err := ioutil.WriteFile(path, []byte(def), 0777)
-// 	if err != nil {
-// 		fmt.Println("err def: ", err.Error())
-// 	}
-// }
-
-// func writeSchemaK8sFileSystem(schema string, path string) {
-// 	err := ioutil.WriteFile(path, []byte(schema), 0777)
-// 	if err != nil {
-// 		fmt.Println("err schema: ", err.Error())
-// 	}
-// }

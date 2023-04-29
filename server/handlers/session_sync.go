@@ -52,7 +52,7 @@ func (h *Handler) SessionSyncHandler(w http.ResponseWriter, req *http.Request, p
 	prefObj.MeshAdapters = meshAdapters
 	err := provider.RecordPreferences(req, user.UserID, prefObj)
 	if err != nil { // ignoring errors in this context
-		h.log.Error(ErrSaveSession(err))
+		//h.log.Error(ErrSaveSession(err))
 	}
 	s := []SessionSyncDataK8sConfig{}
 	k8scontexts, ok := req.Context().Value(models.AllKubeClusterKey).([]models.K8sContext)
@@ -81,7 +81,7 @@ func (h *Handler) SessionSyncHandler(w http.ResponseWriter, req *http.Request, p
 	err = json.NewEncoder(w).Encode(data)
 	if err != nil {
 		obj := "user config data"
-		h.log.Error(ErrMarshal(err, obj))
+		//h.log.Error(ErrMarshal(err, obj))
 		http.Error(w, ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
 		return
 	}

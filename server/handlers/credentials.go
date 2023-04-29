@@ -14,7 +14,7 @@ import (
 func (h *Handler) SaveUserCredential(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	bd, err := io.ReadAll(req.Body)
 	if err != nil {
-		h.log.Error(fmt.Errorf("error reading request body: %v", err))
+		//h.log.Error(fmt.Errorf("error reading request body: %v", err))
 		http.Error(w, "unable to read result data", http.StatusInternalServerError)
 		return
 	}
@@ -27,14 +27,14 @@ func (h *Handler) SaveUserCredential(w http.ResponseWriter, req *http.Request, _
 
 	err = json.Unmarshal(bd, &credential)
 	if err != nil {
-		h.log.Error(fmt.Errorf("error unmarshal request body: %v", err))
+		//h.log.Error(fmt.Errorf("error unmarshal request body: %v", err))
 		http.Error(w, "unable to parse credential data", http.StatusInternalServerError)
 		return
 	}
 
 	err = provider.SaveUserCredential(req, &credential)
 	if err != nil {
-		h.log.Error(fmt.Errorf("error saving user credentials: %v", err))
+		//h.log.Error(fmt.Errorf("error saving user credentials: %v", err))
 		http.Error(w, "unable to save user credentials", http.StatusInternalServerError)
 		return
 	}
@@ -68,13 +68,13 @@ func (h *Handler) GetUserCredentials(w http.ResponseWriter, req *http.Request, _
 
 	credentialsPage, err := provider.GetUserCredentials(req, user.ID, page, pageSize, order, search)
 	if err != nil {
-		h.log.Error(fmt.Errorf("error getting user credentials: %v", err))
+		h.log.Errorf("error getting user credentials: %v", err)
 		http.Error(w, "unable to get user credentials", http.StatusInternalServerError)
 		return
 	}
 
 	if err := json.NewEncoder(w).Encode(credentialsPage); err != nil {
-		h.log.Error(fmt.Errorf("error encoding user credentials: %v", err))
+		h.log.Errorf("error encoding user credentials: %v", err)
 		http.Error(w, "unable to encode user credentials", http.StatusInternalServerError)
 		return
 	}
@@ -83,7 +83,7 @@ func (h *Handler) GetUserCredentials(w http.ResponseWriter, req *http.Request, _
 func (h *Handler) UpdateUserCredential(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	bd, err := io.ReadAll(req.Body)
 	if err != nil {
-		h.log.Error(fmt.Errorf("error reading request body: %v", err))
+		//h.log.Error(fmt.Errorf("error reading request body: %v", err))
 		http.Error(w, "unable to read credential data", http.StatusInternalServerError)
 		return
 	}
@@ -95,14 +95,14 @@ func (h *Handler) UpdateUserCredential(w http.ResponseWriter, req *http.Request,
 	}
 	err = json.Unmarshal(bd, credential)
 	if err != nil {
-		h.log.Error(fmt.Errorf("error unmarshal request body: %v", err))
+		//h.log.Error(fmt.Errorf("error unmarshal request body: %v", err))
 		http.Error(w, "unable to parse credential data", http.StatusInternalServerError)
 		return
 	}
 
 	_, err = provider.UpdateUserCredential(req, credential)
 	if err != nil {
-		h.log.Error(fmt.Errorf("error getting user credential: %v", err))
+		//h.log.Error(fmt.Errorf("error getting user credential: %v", err))
 		http.Error(w, "unable to get user credential", http.StatusInternalServerError)
 		return
 	}
@@ -117,7 +117,7 @@ func (h *Handler) DeleteUserCredential(w http.ResponseWriter, req *http.Request,
 	credentialID := uuid.FromStringOrNil(q.Get("credential_id"))
 	_, err := provider.DeleteUserCredential(req, credentialID)
 	if err != nil {
-		h.log.Error(fmt.Errorf("error deleting user credential: %v", err))
+		//h.log.Error(fmt.Errorf("error deleting user credential: %v", err))
 		http.Error(w, "unable to delete user credential", http.StatusInternalServerError)
 		return
 	}

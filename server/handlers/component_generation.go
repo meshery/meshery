@@ -42,7 +42,7 @@ func (h *Handler) MeshModelGenerationHandler(rw http.ResponseWriter, r *http.Req
 	// Parse the request body
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
-		h.log.Error(ErrRequestBody(err))
+		//h.log.Error(ErrRequestBody(err))
 		http.Error(rw, ErrRequestBody(err).Error(), http.StatusInternalServerError)
 		return
 	}
@@ -50,7 +50,7 @@ func (h *Handler) MeshModelGenerationHandler(rw http.ResponseWriter, r *http.Req
 	pld := componentGenerationPayload{}
 	err = json.Unmarshal(body, &pld)
 	if err != nil {
-		h.log.Error(ErrRequestBody(err))
+		//h.log.Error(ErrRequestBody(err))
 		http.Error(rw, ErrRequestBody(err).Error(), http.StatusBadRequest)
 		return
 	}
@@ -63,7 +63,7 @@ func (h *Handler) MeshModelGenerationHandler(rw http.ResponseWriter, r *http.Req
 		}
 		comps, err := generateComponents(ahpm)
 		if err != nil {
-			h.log.Error(ErrGenerateComponents(err))
+			//h.log.Error(ErrGenerateComponents(err))
 			responseItem.Errors = append(responseItem.Errors, err.Error())
 			response = append(response, responseItem)
 			continue
@@ -77,7 +77,7 @@ func (h *Handler) MeshModelGenerationHandler(rw http.ResponseWriter, r *http.Req
 						Hostname: host,
 					}, comp)
 					if err != nil {
-						h.log.Error(ErrGenerateComponents(err))
+						//h.log.Error(ErrGenerateComponents(err))
 					}
 
 					h.log.Info(comp.DisplayName, " component for ", gpi.Name, " generated")
@@ -91,7 +91,7 @@ func (h *Handler) MeshModelGenerationHandler(rw http.ResponseWriter, r *http.Req
 	rw.Header().Set("Content-Type", "application/json")
 	err = json.NewEncoder(rw).Encode(response)
 	if err != nil {
-		h.log.Error(ErrGenerateComponents(err))
+		//h.log.Error(ErrGenerateComponents(err))
 		http.Error(rw, ErrGenerateComponents(err).Error(), http.StatusInternalServerError)
 		return
 	}

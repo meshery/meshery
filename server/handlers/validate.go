@@ -54,7 +54,7 @@ func (h *Handler) ValidationHandler(rw http.ResponseWriter, r *http.Request) {
 	// Parse the request body
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
-		h.log.Error(ErrRequestBody(err))
+		//h.log.Error(ErrRequestBody(err))
 		http.Error(rw, ErrRequestBody(err).Error(), http.StatusInternalServerError)
 		return
 	}
@@ -62,7 +62,7 @@ func (h *Handler) ValidationHandler(rw http.ResponseWriter, r *http.Request) {
 	pld := payload{}
 	err = json.Unmarshal(body, &pld)
 	if err != nil {
-		h.log.Error(ErrRequestBody(err))
+		//h.log.Error(ErrRequestBody(err))
 		http.Error(rw, ErrRequestBody(err).Error(), http.StatusBadRequest)
 		return
 	}
@@ -76,7 +76,7 @@ func (h *Handler) ValidationHandler(rw http.ResponseWriter, r *http.Request) {
 		Result: validationResults,
 	})
 	if err != nil {
-		h.log.Error(ErrValidate(err))
+		//h.log.Error(ErrValidate(err))
 		http.Error(rw, ErrValidate(err).Error(), http.StatusInternalServerError)
 		return
 	}

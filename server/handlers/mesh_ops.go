@@ -11,7 +11,6 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/meshes"
 	"github.com/layer5io/meshery/server/models"
-	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
 
@@ -31,7 +30,7 @@ func (h *Handler) AvailableAdaptersHandler(w http.ResponseWriter, _ *http.Reques
 	err := json.NewEncoder(w).Encode(models.ListAvailableAdapters)
 	if err != nil {
 		obj := "data"
-		h.log.Error(ErrMarshal(err, obj))
+		//h.log.Error(ErrMarshal(err, obj))
 		http.Error(w, ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
 		return
 	}
@@ -54,7 +53,7 @@ func (h *Handler) AdaptersHandler(w http.ResponseWriter, req *http.Request, pref
 	// if adapter found in query user is trying to ping an adapter
 	adapterLoc := req.URL.Query().Get("adapter")
 	if adapterLoc != "" {
-		logrus.Debug("adapter pinging")
+		h.log.Debug("adapter pinging")
 		h.AdapterPingHandler(w, req, prefObj, user, provider)
 		return
 	}
@@ -62,7 +61,7 @@ func (h *Handler) AdaptersHandler(w http.ResponseWriter, req *http.Request, pref
 	err := json.NewEncoder(w).Encode(h.config.AdapterTracker.GetAdapters(req.Context()))
 	if err != nil {
 		obj := "data"
-		h.log.Error(ErrMarshal(err, obj))
+		//h.log.Error(ErrMarshal(err, obj))
 		http.Error(w, ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
 		return
 	}
@@ -83,7 +82,7 @@ func (h *Handler) AdapterPingHandler(w http.ResponseWriter, req *http.Request, p
 	// adapterLoc := req.PostFormValue("adapter")
 	adapterLoc := req.URL.Query().Get("adapter")
 	h.log.Debug("Adapter url to ping: ", adapterLoc)
-	logrus.Debug("Adapter url to ping: ", adapterLoc)
+	//logrus.Debug("Adapter url to ping: ", adapterLoc)
 
 	aID := -1
 	for i, ad := range meshAdapters {
@@ -92,7 +91,7 @@ func (h *Handler) AdapterPingHandler(w http.ResponseWriter, req *http.Request, p
 		}
 	}
 	if aID < 0 {
-		h.log.Error(ErrValidAdapter)
+		//h.log.Error(ErrValidAdapter)
 		http.Error(w, ErrValidAdapter.Error(), http.StatusBadRequest)
 		return
 	}
@@ -107,7 +106,7 @@ func (h *Handler) AdapterPingHandler(w http.ResponseWriter, req *http.Request, p
 	}()
 	_, err = mClient.MClient.MeshName(req.Context(), &meshes.MeshNameRequest{})
 	if err != nil {
-		h.log.Error(ErrMeshClient)
+		//h.log.Error(ErrMeshClient)
 		http.Error(w, ErrMeshClient.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -143,7 +142,7 @@ func (h *Handler) MeshAdapterConfigHandler(w http.ResponseWriter, req *http.Requ
 
 		h.log.Debug("meshLocationURL: ", meshLocationURL)
 		if strings.TrimSpace(meshLocationURL) == "" {
-			h.log.Error(ErrAddAdapter)
+			//h.log.Error(ErrAddAdapter)
 			http.Error(w, ErrAddAdapter.Error(), http.StatusBadRequest)
 			return
 		}
@@ -166,7 +165,7 @@ func (h *Handler) MeshAdapterConfigHandler(w http.ResponseWriter, req *http.Requ
 	prefObj.MeshAdapters = meshAdapters
 	err = provider.RecordPreferences(req, user.UserID, prefObj)
 	if err != nil {
-		h.log.Error(ErrRecordPreferences(err))
+		//h.log.Error(ErrRecordPreferences(err))
 		http.Error(w, ErrRecordPreferences(err).Error(), http.StatusInternalServerError)
 		return
 	}
@@ -174,7 +173,7 @@ func (h *Handler) MeshAdapterConfigHandler(w http.ResponseWriter, req *http.Requ
 	err = json.NewEncoder(w).Encode(meshAdapters)
 	if err != nil {
 		obj := "data"
-		h.log.Error(ErrMarshal(err, obj))
+		//h.log.Error(ErrMarshal(err, obj))
 		http.Error(w, ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
 		return
 	}
@@ -200,7 +199,7 @@ func (h *Handler) addAdapter(ctx context.Context, meshAdapters []*models.Adapter
 
 	mClient, err := meshes.CreateClient(ctx, meshLocationURL)
 	if err != nil {
-		h.log.Error(ErrMeshClient)
+		//h.log.Error(ErrMeshClient)
 		// http.Error(w, ErrMeshClient.Error(), http.StatusInternalServerError)
 		return meshAdapters, ErrMeshClient
 	}
@@ -210,14 +209,14 @@ func (h *Handler) addAdapter(ctx context.Context, meshAdapters []*models.Adapter
 	}()
 	respOps, err := mClient.MClient.SupportedOperations(ctx, &meshes.SupportedOperationsRequest{})
 	if err != nil {
-		h.log.Error(ErrRetrieveMeshData(err))
+		//h.log.Error(ErrRetrieveMeshData(err))
 		// http.Error(w, ErrRetrieveMeshData(err).Error(), http.StatusInternalServerError)
 		return meshAdapters, err
 	}
 	h.log.Debug("retrieved supported ops for adapter: ", meshLocationURL)
 	meshInfo, err := mClient.MClient.ComponentInfo(ctx, &meshes.ComponentInfoRequest{})
 	if err != nil {
-		h.log.Error(ErrRetrieveMeshData(err))
+		//h.log.Error(ErrRetrieveMeshData(err))
 		// http.Error(w, ErrRetrieveMeshData(err).Error(), http.StatusInternalServerError)
 		return meshAdapters, err
 	}
@@ -248,7 +247,7 @@ func (h *Handler) deleteAdapter(meshAdapters []*models.Adapter, w http.ResponseW
 		}
 	}
 	if aID < 0 {
-		h.log.Error(ErrValidAdapter)
+		//h.log.Error(ErrValidAdapter)
 		http.Error(w, ErrValidAdapter.Error(), http.StatusBadRequest)
 		return meshAdapters, ErrValidAdapter
 	}
@@ -306,7 +305,7 @@ func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request, prefO
 		}
 	}
 	if aID < 0 {
-		h.log.Error(ErrValidAdapter)
+		//h.log.Error(ErrValidAdapter)
 		http.Error(w, ErrValidAdapter.Error(), http.StatusBadRequest)
 		return
 	}
@@ -320,7 +319,7 @@ func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request, prefO
 	}
 	mk8sContexts, ok := req.Context().Value(models.KubeClustersKey).([]models.K8sContext)
 	if !ok || len(mk8sContexts) == 0 {
-		h.log.Error(ErrInvalidK8SConfig)
+		//h.log.Error(ErrInvalidK8SConfig)
 		http.Error(w, ErrInvalidK8SConfig.Error(), http.StatusBadRequest)
 		return
 	}

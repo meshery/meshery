@@ -64,7 +64,7 @@ func (h *Handler) GetMeshmodelModelsByCategories(rw http.ResponseWriter, r *http
 	res := h.registryManager.GetModels(h.dbHandler, filter)
 
 	if err := enc.Encode(res); err != nil {
-		h.log.Error(ErrGetMeshModels(err)) //TODO: Add appropriate meshkit error
+		//h.log.Error(ErrGetMeshModels(err)) //TODO: Add appropriate meshkit error
 		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
 	}
 }
@@ -115,7 +115,7 @@ func (h *Handler) GetMeshmodelModelsByCategoriesByModel(rw http.ResponseWriter, 
 	})
 
 	if err := enc.Encode(res); err != nil {
-		h.log.Error(ErrGetMeshModels(err)) //TODO: Add appropriate meshkit error
+		//h.log.Error(ErrGetMeshModels(err)) //TODO: Add appropriate meshkit error
 		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
 	}
 }
@@ -170,7 +170,7 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 	res := h.registryManager.GetModels(h.dbHandler, filter)
 
 	if err := enc.Encode(res); err != nil {
-		h.log.Error(ErrGetMeshModels(err)) //TODO: Add appropriate meshkit error
+		//h.log.Error(ErrGetMeshModels(err)) //TODO: Add appropriate meshkit error
 		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
 	}
 }
@@ -221,7 +221,7 @@ func (h *Handler) GetMeshmodelModelsByName(rw http.ResponseWriter, r *http.Reque
 	})
 
 	if err := enc.Encode(res); err != nil {
-		h.log.Error(ErrGetMeshModels(err)) //TODO: Add appropriate meshkit error
+		//h.log.Error(ErrGetMeshModels(err)) //TODO: Add appropriate meshkit error
 		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
 	}
 }
@@ -270,7 +270,7 @@ func (h *Handler) GetMeshmodelCategories(rw http.ResponseWriter, r *http.Request
 	res := h.registryManager.GetCategories(h.dbHandler, filter)
 
 	if err := enc.Encode(res); err != nil {
-		h.log.Error(ErrGetMeshModels(err)) //TODO: Add appropriate meshkit error
+		//h.log.Error(ErrGetMeshModels(err)) //TODO: Add appropriate meshkit error
 		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
 	}
 }
@@ -316,7 +316,7 @@ func (h *Handler) GetMeshmodelCategoriesByName(rw http.ResponseWriter, r *http.R
 	})
 
 	if err := enc.Encode(res); err != nil {
-		h.log.Error(ErrGetMeshModels(err)) //TODO: Add appropriate meshkit error
+		//h.log.Error(ErrGetMeshModels(err)) //TODO: Add appropriate meshkit error
 		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
 	}
 }
@@ -387,7 +387,7 @@ func (h *Handler) GetMeshmodelComponentsByNameByModelByCategory(rw http.Response
 		}
 	}
 	if err := enc.Encode(comps); err != nil {
-		h.log.Error(ErrGetMeshModels(err)) //TODO: Add appropriate meshkit error
+		//h.log.Error(ErrGetMeshModels(err)) //TODO: Add appropriate meshkit error
 		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
 	}
 }
@@ -456,7 +456,7 @@ func (h *Handler) GetMeshmodelComponentsByNameByCategory(rw http.ResponseWriter,
 		}
 	}
 	if err := enc.Encode(comps); err != nil {
-		h.log.Error(ErrGetMeshModels(err)) //TODO: Add appropriate meshkit error
+		//h.log.Error(ErrGetMeshModels(err)) //TODO: Add appropriate meshkit error
 		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
 	}
 }
@@ -526,7 +526,7 @@ func (h *Handler) GetMeshmodelComponentsByNameByModel(rw http.ResponseWriter, r 
 		}
 	}
 	if err := enc.Encode(comps); err != nil {
-		h.log.Error(ErrGetMeshModels(err)) //TODO: Add appropriate meshkit error
+		//h.log.Error(ErrGetMeshModels(err)) //TODO: Add appropriate meshkit error
 		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
 	}
 }
@@ -596,7 +596,7 @@ func (h *Handler) GetAllMeshmodelComponentsByName(rw http.ResponseWriter, r *htt
 		}
 	}
 	if err := enc.Encode(comps); err != nil {
-		h.log.Error(ErrGetMeshModels(err)) //TODO: Add appropriate meshkit error
+		//h.log.Error(ErrGetMeshModels(err)) //TODO: Add appropriate meshkit error
 		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
 	}
 }
@@ -671,7 +671,7 @@ func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.R
 		}
 	}
 	if err := enc.Encode(comps); err != nil {
-		h.log.Error(ErrGetMeshModels(err)) //TODO: Add appropriate meshkit error
+		//h.log.Error(ErrGetMeshModels(err)) //TODO: Add appropriate meshkit error
 		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
 	}
 }
@@ -747,7 +747,7 @@ func (h *Handler) GetMeshmodelComponentByModelByCategory(rw http.ResponseWriter,
 		}
 	}
 	if err := enc.Encode(comps); err != nil {
-		h.log.Error(ErrGetMeshModels(err)) //TODO: Add appropriate meshkit error
+		//h.log.Error(ErrGetMeshModels(err)) //TODO: Add appropriate meshkit error
 		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
 	}
 }
@@ -821,7 +821,7 @@ func (h *Handler) GetMeshmodelComponentByCategory(rw http.ResponseWriter, r *htt
 		}
 	}
 	if err := enc.Encode(comps); err != nil {
-		h.log.Error(ErrGetMeshModels(err)) //TODO: Add appropriate meshkit error
+		//h.log.Error(ErrGetMeshModels(err)) //TODO: Add appropriate meshkit error
 		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
 	}
 }
@@ -894,7 +894,7 @@ func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Requ
 		}
 	}
 	if err := enc.Encode(comps); err != nil {
-		h.log.Error(ErrGetMeshModels(err)) //TODO: Add appropriate meshkit error
+		//h.log.Error(ErrGetMeshModels(err)) //TODO: Add appropriate meshkit error
 		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
 	}
 }

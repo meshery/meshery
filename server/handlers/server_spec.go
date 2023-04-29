@@ -28,22 +28,17 @@ type Version struct {
 
 // ServerVersionHandler handles the version api request for the server
 func (h *Handler) ServerVersionHandler(w http.ResponseWriter, _ *http.Request) {
-	// Default values incase any errors
 	version := &Version{
 		Build:          viper.GetString("BUILD"),
 		CommitSHA:      viper.GetString("COMMITSHA"),
 		ReleaseChannel: viper.GetString("RELEASE_CHANNEL"),
 	}
 
-	// if r.Method != http.MethodGet {
-	//      w.WriteHeader(http.StatusNotFound)
-	//      return
-	// }
-
-	// compare the server build with the target build
 	isOutdated, latestVersion, err := CheckLatestVersion(version.Build)
 	if err != nil {
-		h.log.Error(err)
+		// h.log.Errorf("error checking latest version: %v", err)
+		http.Error(w, "internal server error", http.StatusInternalServerError)
+		return
 	} else {
 		// Add "Latest" and "Outdated" fields to the response
 		version.Latest = latestVersion
@@ -51,11 +46,20 @@ func (h *Handler) ServerVersionHandler(w http.ResponseWriter, _ *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-
-	err = json.NewEncoder(w).Encode(version)
+	// Use json.MarshalIndent() function to format the response
+	prettyJSON, err := json.MarshalIndent(version, "", "  ")
 	if err != nil {
-		h.log.Error(ErrEncoding(err, "server-version"))
-		http.Error(w, ErrEncoding(err, "server-version").Error(), http.StatusNotFound)
+		// h.logger.Errorf("error encoding response: %v", err)
+		http.Error(w, "internal server error", http.StatusInternalServerError)
+		return
+	}
+
+	// Write the formatted response to the response writer
+	_, err = w.Write(prettyJSON)
+	if err != nil {
+		// h.logger.Errorf("error writing response: %v", err)
+		http.Error(w, "internal server error", http.StatusInternalServerError)
+		return
 	}
 }
 
@@ -66,15 +70,17 @@ func CheckLatestVersion(serverVersion string) (*bool, string, error) {
 	latestVersions, err := utils.GetLatestReleaseTagsSorted(constants.GetMesheryGitHubOrg(), constants.GetMesheryGitHubRepo())
 	isOutdated := false
 	if err != nil {
-		return nil, "", ErrGetLatestVersion(err)
+		return nil, "", fmt.Errorf("error getting latest release tags: %w", err)
 	}
+
 	if len(latestVersions) == 0 {
-		return &isOutdated, "", fmt.Errorf("no versions found")
+		return nil, "", fmt.Errorf("no versions found")
 	}
+
 	latestVersion := latestVersions[len(latestVersions)-1]
+
 	// Compare current running Meshery server version to the latest available Meshery release on GitHub.
 	if latestVersion != serverVersion {
-		isOutdated = true
 		return &isOutdated, latestVersion, nil
 	}
 

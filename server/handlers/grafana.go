@@ -50,7 +50,7 @@ func (h *Handler) GrafanaConfigHandler(w http.ResponseWriter, req *http.Request,
 		err := json.NewEncoder(w).Encode(prefObj.Grafana)
 		if err != nil {
 			obj := "Grafana config"
-			h.log.Error(ErrMarshal(err, obj))
+			//h.log.Error(ErrMarshal(err, obj))
 			http.Error(w, ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
 			return
 		}
@@ -76,7 +76,7 @@ func (h *Handler) GrafanaConfigHandler(w http.ResponseWriter, req *http.Request,
 		}
 
 		if err := h.config.GrafanaClient.Validate(req.Context(), grafanaURL, grafanaAPIKey); err != nil {
-			h.log.Error(ErrGrafanaScan(err))
+			//h.log.Error(ErrGrafanaScan(err))
 			http.Error(w, ErrGrafanaScan(err).Error(), http.StatusInternalServerError)
 			return
 		}
@@ -86,7 +86,7 @@ func (h *Handler) GrafanaConfigHandler(w http.ResponseWriter, req *http.Request,
 	}
 	err := p.RecordPreferences(req, user.UserID, prefObj)
 	if err != nil {
-		h.log.Error(ErrRecordPreferences(err))
+		//h.log.Error(ErrRecordPreferences(err))
 		http.Error(w, ErrRecordPreferences(err).Error(), http.StatusInternalServerError)
 		return
 	}
@@ -108,13 +108,13 @@ func (h *Handler) GrafanaPingHandler(w http.ResponseWriter, req *http.Request, p
 	// }
 
 	if prefObj.Grafana == nil || prefObj.Grafana.GrafanaURL == "" {
-		h.log.Error(ErrGrafanaConfig)
+		//h.log.Error(ErrGrafanaConfig)
 		http.Error(w, ErrGrafanaConfig.Error(), http.StatusBadRequest)
 		return
 	}
 
 	if err := h.config.GrafanaClient.Validate(req.Context(), prefObj.Grafana.GrafanaURL, prefObj.Grafana.GrafanaAPIKey); err != nil {
-		h.log.Error(ErrGrafanaScan(err))
+		//h.log.Error(ErrGrafanaScan(err))
 		http.Error(w, ErrGrafanaScan(err).Error(), http.StatusInternalServerError)
 		return
 	}
@@ -141,13 +141,13 @@ func (h *Handler) GrafanaBoardsHandler(w http.ResponseWriter, req *http.Request,
 	}
 
 	if prefObj.Grafana == nil || prefObj.Grafana.GrafanaURL == "" {
-		h.log.Error(ErrGrafanaConfig)
+		//h.log.Error(ErrGrafanaConfig)
 		http.Error(w, ErrGrafanaConfig.Error(), http.StatusBadRequest)
 		return
 	}
 
 	if err := h.config.GrafanaClient.Validate(req.Context(), prefObj.Grafana.GrafanaURL, prefObj.Grafana.GrafanaAPIKey); err != nil {
-		h.log.Error(ErrGrafanaScan(err))
+		//h.log.Error(ErrGrafanaScan(err))
 		http.Error(w, ErrGrafanaScan(err).Error(), http.StatusInternalServerError)
 		return
 	}
@@ -155,14 +155,14 @@ func (h *Handler) GrafanaBoardsHandler(w http.ResponseWriter, req *http.Request,
 	dashboardSearch := req.URL.Query().Get("dashboardSearch")
 	boards, err := h.config.GrafanaClient.GetGrafanaBoards(req.Context(), prefObj.Grafana.GrafanaURL, prefObj.Grafana.GrafanaAPIKey, dashboardSearch)
 	if err != nil {
-		h.log.Error(ErrGrafanaBoards(err))
+		//h.log.Error(ErrGrafanaBoards(err))
 		http.Error(w, ErrGrafanaBoards(err).Error(), http.StatusInternalServerError)
 		return
 	}
 	err = json.NewEncoder(w).Encode(boards)
 	if err != nil {
 		obj := "boards payload"
-		h.log.Error(ErrMarshal(err, obj))
+		//h.log.Error(ErrMarshal(err, obj))
 		http.Error(w, ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
 		return
 	}
@@ -186,14 +186,14 @@ func (h *Handler) GrafanaQueryHandler(w http.ResponseWriter, req *http.Request, 
 
 	if prefObj.Grafana == nil || prefObj.Grafana.GrafanaURL == "" {
 		err := ErrGrafanaConfig
-		h.log.Error(err)
+		//h.log.Error(err)
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	data, err := h.config.GrafanaClientForQuery.GrafanaQuery(req.Context(), prefObj.Grafana.GrafanaURL, prefObj.Grafana.GrafanaAPIKey, &reqQuery)
 	if err != nil {
-		h.log.Error(ErrGrafanaQuery(err))
+		//h.log.Error(ErrGrafanaQuery(err))
 		http.Error(w, ErrGrafanaQuery(err).Error(), http.StatusInternalServerError)
 		return
 	}
@@ -211,7 +211,7 @@ func (h *Handler) GrafanaQueryRangeHandler(w http.ResponseWriter, req *http.Requ
 
 	data, err := h.config.GrafanaClientForQuery.GrafanaQueryRange(req.Context(), reqQuery.Get("url"), reqQuery.Get("api-key"), &reqQuery)
 	if err != nil {
-		h.log.Error(ErrGrafanaQuery(err))
+		//h.log.Error(ErrGrafanaQuery(err))
 		http.Error(w, ErrGrafanaQuery(err).Error(), http.StatusInternalServerError)
 		return
 	}
@@ -233,7 +233,7 @@ func (h *Handler) SaveSelectedGrafanaBoardsHandler(w http.ResponseWriter, req *h
 	}
 
 	if prefObj.Grafana == nil || prefObj.Grafana.GrafanaURL == "" {
-		h.log.Error(ErrGrafanaConfig)
+		//h.log.Error(ErrGrafanaConfig)
 		http.Error(w, ErrGrafanaConfig.Error(), http.StatusBadRequest)
 		return
 	}
@@ -247,7 +247,7 @@ func (h *Handler) SaveSelectedGrafanaBoardsHandler(w http.ResponseWriter, req *h
 	}()
 	body, err := io.ReadAll(req.Body)
 	if err != nil {
-		h.log.Error(ErrRequestBody(err))
+		//h.log.Error(ErrRequestBody(err))
 		http.Error(w, ErrRequestBody(err).Error(), http.StatusInternalServerError)
 		return
 	}
@@ -255,7 +255,7 @@ func (h *Handler) SaveSelectedGrafanaBoardsHandler(w http.ResponseWriter, req *h
 	err = json.Unmarshal(body, &boards)
 	if err != nil {
 		obj := "request body"
-		h.log.Error(ErrUnmarshal(err, obj))
+		//h.log.Error(ErrUnmarshal(err, obj))
 		http.Error(w, ErrUnmarshal(err, obj).Error(), http.StatusBadRequest)
 		return
 	}
@@ -266,7 +266,7 @@ func (h *Handler) SaveSelectedGrafanaBoardsHandler(w http.ResponseWriter, req *h
 	}
 	err = p.RecordPreferences(req, user.UserID, prefObj)
 	if err != nil {
-		h.log.Error(ErrRecordPreferences(err))
+		//h.log.Error(ErrRecordPreferences(err))
 		http.Error(w, ErrRecordPreferences(err).Error(), http.StatusInternalServerError)
 		return
 	}

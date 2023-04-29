@@ -76,7 +76,7 @@ func (h *Handler) ExtensionsVersionHandler(w http.ResponseWriter, _ *http.Reques
 	if provider.GetProviderType() == models.LocalProviderType {
 		err := json.NewEncoder(w).Encode("extension not available for current provider")
 		if err != nil {
-			h.log.Error(ErrEncoding(err, "extension version"))
+			//h.log.Error(ErrEncoding(err, "extension version"))
 			http.Error(w, ErrEncoding(err, "extension version").Error(), http.StatusNotFound)
 		}
 		return
@@ -92,7 +92,7 @@ func (h *Handler) ExtensionsVersionHandler(w http.ResponseWriter, _ *http.Reques
 	w.Header().Set("Content-Type", "application/json")
 	err := json.NewEncoder(w).Encode(extensionVersion)
 	if err != nil {
-		h.log.Error(ErrEncoding(err, "extension version"))
+		//h.log.Error(ErrEncoding(err, "extension version"))
 		http.Error(w, ErrEncoding(err, "extension version").Error(), http.StatusNotFound)
 	}
 }

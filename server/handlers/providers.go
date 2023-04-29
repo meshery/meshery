@@ -3,6 +3,8 @@ package handlers
 import (
 	"encoding/json"
 	"net/http"
+	"net/http/httputil"
+	"net/url"
 	"strings"
 
 	models "github.com/layer5io/meshery/server/models"
@@ -20,12 +22,13 @@ func (h *Handler) ProviderHandler(w http.ResponseWriter, r *http.Request) {
 	provider := r.URL.Query().Get("provider")
 	for _, p := range h.config.Providers {
 		if provider == p.Name() {
-			http.SetCookie(w, &http.Cookie{
+			cookie := &http.Cookie{
 				Name:     h.config.ProviderCookieName,
 				Value:    p.Name(),
 				Path:     "/",
 				HttpOnly: true,
-			})
+			}
+			http.SetCookie(w, cookie)
 
 			redirectURL := "/user/login"
 			if provider == "None" {
@@ -36,6 +39,9 @@ func (h *Handler) ProviderHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
+
+	// If the provider was not found, return a 404 error.
+	http.NotFound(w, r)
 }
 
 // swagger:route GET /api/providers ProvidersAPI idGetProvidersList
@@ -46,24 +52,34 @@ func (h *Handler) ProviderHandler(w http.ResponseWriter, r *http.Request) {
 // 	200: listProvidersRespWrapper
 
 // ProvidersHandler returns a list of providers
-func (h *Handler) ProvidersHandler(w http.ResponseWriter, _ *http.Request) {
-	// if r.Method != http.MethodGet {
-	// 	http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
-	// 	return
-	// }
-
-	providers := map[string]models.ProviderProperties{}
-	for _, p := range h.config.Providers {
-		providers[p.Name()] = (p.GetProviderProperties())
-	}
-	bd, err := json.Marshal(providers)
-	if err != nil {
-		obj := "provider"
-		h.log.Error(ErrMarshal(err, obj))
-		http.Error(w, ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
+func (h *Handler) ProvidersHandler(w http.ResponseWriter, r *http.Request) {
+	// Only allow GET requests.
+	if r.Method != http.MethodGet {
+		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
 		return
 	}
-	_, _ = w.Write(bd)
+
+	// Get a map of providers and their properties.
+	providers := make(map[string]models.ProviderProperties)
+	for _, p := range h.config.Providers {
+		providers[p.Name()] = p.GetProviderProperties()
+	}
+
+	// Marshal the providers map to JSON.
+	b, err := json.Marshal(providers)
+	if err != nil {
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		h.log.Errorf("failed to marshal JSON: %v", err)
+		return
+	}
+
+	// Write the JSON response.
+	w.Header().Set("Content-Type", "application/json")
+	if _, err := w.Write(b); err != nil {
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		h.log.Errorf("failed to write response: %v", err)
+		return
+	}
 }
 
 // swagger:route GET /provider ProvidersAPI idProvider
@@ -73,8 +89,8 @@ func (h *Handler) ProvidersHandler(w http.ResponseWriter, _ *http.Request) {
 // responses:
 // 	200:
 
-// ProviderUIHandler - serves providers UI
-func (h *Handler) ProviderUIHandler(w http.ResponseWriter, r *http.Request) {
+// ProviderStaticHandler - servers Next.js UI
+func (h *Handler) ProviderStaticHandler(w http.ResponseWriter, r *http.Request) {
 	if h.config.PlaygroundBuild || h.Provider == "Meshery" { //Always use Remote provider for Playground build or when Provider is enforced
 		http.SetCookie(w, &http.Cookie{
 			Name:     h.config.ProviderCookieName,
@@ -86,7 +102,11 @@ func (h *Handler) ProviderUIHandler(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, redirectURL, http.StatusFound)
 		return
 	}
-	ServeUI(w, r, "/provider", "../../provider-ui/out/")
+
+	// Serve the application using the Next.js development server in live hot reload mode
+	proxyURL, _ := url.Parse("http://localhost:3000")
+	proxy := httputil.NewSingleHostReverseProxy(proxyURL)
+	proxy.ServeHTTP(w, r)
 }
 
 // swagger:route GET /api/provider/capabilities ProvidersAPI idGetProviderCapabilities
@@ -107,6 +127,12 @@ func (h *Handler) ProviderCapabilityHandler(
 	provider.GetProviderCapabilities(w, r)
 }
 
+const (
+	uiReqBasePath     = "/api/provider/extension"
+	serverReqBasePath = "/api/provider/extension/server/"
+	loadReqBasePath   = "/api/provider/extension/"
+)
+
 // swagger:route GET /api/provider/extension ProvidersAPI idReactComponents
 // Handle GET request for React Components
 //
@@ -123,23 +149,20 @@ func (h *Handler) ProviderComponentsHandler(
 	user *models.User,
 	provider models.Provider,
 ) {
-	uiReqBasePath := "/api/provider/extension"
-	serverReqBasePath := "/api/provider/extension/server/"
-	loadReqBasePath := "/api/provider/extension/"
-
-	if strings.HasPrefix(r.URL.Path, serverReqBasePath) {
+	switch {
+	case strings.HasPrefix(r.URL.Path, serverReqBasePath):
 		h.ExtensionsEndpointHandler(w, r, prefObj, user, provider)
-	} else if r.URL.Path == loadReqBasePath {
+	case r.URL.Path == loadReqBasePath:
 		err := h.LoadExtensionFromPackage(w, r, provider)
 		if err != nil {
 			// failed to load extensions from package
-			h.log.Error(ErrFailToLoadExtensions(err))
+			//h.log.Error(ErrFailToLoadExtensions(err))
 			http.Error(w, ErrFailToLoadExtensions(err).Error(), http.StatusInternalServerError)
 			return
 		}
 		w.Header().Set("content-type", "application/json")
 		_, _ = w.Write([]byte("{}"))
-	} else {
+	default:
 		ServeReactComponentFromPackage(w, r, uiReqBasePath, provider)
 	}
 }

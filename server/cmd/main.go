@@ -2,11 +2,16 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"net/url"
 	"os"
 	"os/signal"
 	"path"
+	"path/filepath"
+	"runtime"
+	"runtime/debug"
+	"sync"
 	"time"
 
 	"github.com/gofrs/uuid"
@@ -14,7 +19,6 @@ import (
 	"github.com/layer5io/meshery/server/helpers"
 	"github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/internal/graphql"
-	"github.com/layer5io/meshery/server/internal/store"
 	meshmodelhelper "github.com/layer5io/meshery/server/meshmodel"
 	"github.com/layer5io/meshery/server/models"
 	mesherymeshmodel "github.com/layer5io/meshery/server/models/meshmodel"
@@ -27,9 +31,9 @@ import (
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
 	"github.com/spf13/viper"
 
-	"github.com/sirupsen/logrus"
 	"github.com/vmihailenco/taskq/v3"
 	"github.com/vmihailenco/taskq/v3/memqueue"
+	"golang.org/x/exp/slog"
 )
 
 var (
@@ -37,6 +41,7 @@ var (
 	version                        = "Not Set"
 	commitsha                      = "Not Set"
 	releasechannel                 = "Not Set"
+	serviceName                    = "meshery"
 )
 
 const (
@@ -50,82 +55,113 @@ func main() {
 		models.GlobalTokenForAnonymousResults = globalTokenForAnonymousResults
 	}
 
-	// Initialize Logger instance
-	log, err := logger.New("meshery", logger.Options{
-		Format: logger.SyslogLogFormat,
+	ctx := context.Background()
+
+	log, err := logger.New(serviceName, logger.Options{
+		Format:     logger.JSONLogFormat,
+		DebugLevel: true,
+		Output:     os.Stderr,
 	})
 	if err != nil {
-		logrus.Error(err)
-		os.Exit(1)
+		log.Error("Failed to create logger", err)
 	}
+
+	// print stack gracefully
+	defer func() {
+		if r := recover(); r != nil {
+			log.Errorf("A panic occurred:", "error", fmt.Sprintf("%v", r))
+			debug.PrintStack()
+			os.Exit(1)
+		}
+	}()
 
 	instanceID, err := uuid.NewV4()
 	if err != nil {
-		log.Error(ErrCreatingUUIDInstance(err))
+		// log.Error(ErrCreatingUUIDInstance(err))
 		os.Exit(1)
 	}
-
-	// operatingSystem, err := exec.Command("uname", "-s").Output()
-	// if err != nil {
-	// 	logrus.Error(err)
-	// }
-
-	ctx := context.Background()
 
 	viper.AutomaticEnv()
-
-	viper.SetDefault("PORT", 8080)
-	viper.SetDefault("ADAPTER_URLS", "")
-	viper.SetDefault("BUILD", version)
-	viper.SetDefault("OS", "meshery")
-	viper.SetDefault("COMMITSHA", commitsha)
-	viper.SetDefault("RELEASE_CHANNEL", releasechannel)
-	viper.SetDefault("INSTANCE_ID", &instanceID)
-	viper.SetDefault("PROVIDER", "")
-	viper.SetDefault("REGISTER_STATIC_K8S", true)
-	viper.SetDefault("SKIP_DOWNLOAD_CONTENT", false)
-	viper.SetDefault("SKIP_COMP_GEN", false)
-	viper.SetDefault("PLAYGROUND", false)
-	store.Initialize()
-
-	log.Info("Local Provider capabilities are: ", version)
-
-	// Get the channel
-	log.Info("Meshery Server release channel is: ", releasechannel)
-
-	home, err := os.UserHomeDir()
-	if viper.GetString("USER_DATA_FOLDER") == "" {
-		if err != nil {
-			log.Error(ErrRetrievingUserHomeDirectory(err))
-			os.Exit(1)
-		}
-		viper.SetDefault("USER_DATA_FOLDER", path.Join(home, ".meshery", "config"))
+	defaults := map[string]interface{}{
+		"PORT":                  8080,
+		"ADAPTER_URLS":          "",
+		"BUILD":                 version,
+		"OS":                    "meshery",
+		"COMMITSHA":             commitsha,
+		"RELEASE_CHANNEL":       releasechannel,
+		"ISNTANCE_ID":           &instanceID,
+		"PROVIDER":              "",
+		"REGISTER_STATIC_K8S":   true,
+		"SKIP_DOWNLOAD_CONTENT": false,
+		"SKIP_COMP_GEN":         false,
+		"PLAYGROUND":            false,
 	}
 
-	errDir := os.MkdirAll(viper.GetString("USER_DATA_FOLDER"), 0755)
-	if errDir != nil {
-		log.Error(ErrCreatingUserDataDirectory(viper.GetString("USER_DATA_FOLDER")))
+	for key, value := range defaults {
+		viper.SetDefault(key, value)
+	}
+
+	// Provide version
+	log.Info("Local Provider capabilities", slog.String("version", version))
+
+	// Get current channel - beta or stable
+	log.Info("Meshery Server release channel is", slog.String("releaseChannel", releasechannel))
+
+	// create user data directory
+	userDataFolder := viper.GetString("USER_DATA_FOLDER")
+	if _, err := os.Stat(userDataFolder); os.IsNotExist(err) {
+		home, err := os.UserHomeDir()
+		if err != nil {
+			log.Errorf("Failed to get user home directory", "error", err.Error())
+			os.Exit(1)
+		}
+
+		userDataFolder := viper.GetString("USER_DATA_FOLDER")
+		if userDataFolder == "" {
+			userDataFolder = filepath.Join(home, ".meshery", "config")
+			viper.SetDefault("USER_DATA_FOLDER", userDataFolder)
+		}
+
+		log.Debug("User data directory created", slog.String("path", userDataFolder))
+
+		errDir := os.MkdirAll(userDataFolder, os.ModePerm)
+		if errDir != nil {
+			log.Errorf("Failed to create user data directory", "error", errDir.Error())
+			os.Exit(1)
+		}
+	} else if err != nil {
+		log.Errorf("Failed to create user data directory", "error", err.Error())
+		os.Exit(1)
+	}
+	log.Debugf("Meshery Database is at", "path", viper.GetString("USER_DATA_FOLDER"))
+
+	// create kubeconfig data directory
+	if _, err := os.Stat(viper.GetString("KUBECONFIG_FOLDER")); os.IsNotExist(err) {
+		kubeDataFolder := viper.GetString("KUBECONFIG_FOLDER")
+		if kubeDataFolder == "" {
+			home, err := os.UserHomeDir()
+			if err != nil {
+				log.Errorf("Failed to get user home directory", "error", err.Error())
+				os.Exit(1)
+			}
+			kubeDataFolder = path.Join(home, ".kube")
+			viper.SetDefault("KUBECONFIG_FOLDER", kubeDataFolder)
+		}
+
+		errDir := os.MkdirAll(kubeDataFolder, 0755)
+		if errDir != nil {
+			log.Errorf("Failed to create kubeconfig data directory", "error", errDir.Error())
+			os.Exit(1)
+		}
+		// logger.Debug("Kubeconfig data directory created", slog.String("path", kubeDataFolder))
+	} else if err != nil {
+		log.Errorf("Failed to create kubeconfig data directory", "error", err.Error())
 		os.Exit(1)
 	}
 
-	log.Info("Meshery Database is at: ", viper.GetString("USER_DATA_FOLDER"))
-	if viper.GetString("KUBECONFIG_FOLDER") == "" {
-		if err != nil {
-			log.Error(ErrRetrievingUserHomeDirectory(err))
-			os.Exit(1)
-		}
-		viper.SetDefault("KUBECONFIG_FOLDER", path.Join(home, ".kube"))
-	}
-	log.Info("Using kubeconfig at: ", viper.GetString("KUBECONFIG_FOLDER"))
-
-	if viper.GetBool("DEBUG") {
-		logrus.SetLevel(logrus.DebugLevel)
-	}
-	log.Info("Log level: ", logrus.GetLevel())
-
-	adapterURLs := viper.GetStringSlice("ADAPTER_URLS")
-
-	adapterTracker := helpers.NewAdaptersTracker(adapterURLs)
+	// Adapters Configuration
+	adapterURLS := viper.GetStringSlice("ADAPTER_URLS")
+	adapterTracker := helpers.NewAdaptersTracker(adapterURLS)
 	queryTracker := helpers.NewUUIDQueryTracker()
 
 	// Uncomment line below to generate a new UUID and force the user to login every time Meshery is started.
@@ -137,20 +173,25 @@ func main() {
 	mainQueue := QueueFactory.RegisterQueue(&taskq.QueueOptions{
 		Name: "loadTestReporterQueue",
 	})
-
 	provs := map[string]models.Provider{}
 
-	preferencePersister, err := models.NewMapPreferencePersister()
+	// Persist data from preferences
+	preferencePersister, err := models.NewMapPreferencePersister(log)
 	if err != nil {
-		log.Error(ErrCreatingMapPreferencePersisterInstance(err))
+		//log.Error(ErrCreatingMapPreferencePersisterInstance(err))
+		log.Errorf("Failed to create preference persister", "error", err.Error())
 		os.Exit(1)
 	}
 	defer preferencePersister.ClosePersister()
 
+	// Database Configuration
 	dbHandler := models.GetNewDBInstance()
+
+	// Registry Manager configuration
 	regManager, err := meshmodel.NewRegistryManager(dbHandler)
 	if err != nil {
-		log.Error(ErrInitializingRegistryManager(err))
+		log.Errorf("Failed to create registry manager", "error", err.Error())
+		// log.Error(ErrInitializingRegistryManager(err))
 		os.Exit(1)
 	}
 	meshsyncCh := make(chan struct{}, 10)
@@ -174,7 +215,8 @@ func main() {
 		models.K8sContext{},
 	)
 	if err != nil {
-		log.Error(ErrDatabaseAutoMigration(err))
+		log.Errorf("Failed to auto migrate database", "error", err.Error())
+		// log.Error(ErrDatabaseAutoMigration(err))
 		os.Exit(1)
 	}
 
@@ -194,50 +236,95 @@ func main() {
 	}
 	lProv.Initialize()
 
+	//--- Handler Configuration
 	hc := &models.HandlerConfig{
-		Providers:              provs,
-		ProviderCookieName:     "meshery-provider",
-		ProviderCookieDuration: 30 * 24 * time.Hour,
-		PlaygroundBuild:        viper.GetBool("PLAYGROUND"),
-		AdapterTracker:         adapterTracker,
-		QueryTracker:           queryTracker,
-
-		Queue: mainQueue,
-
-		KubeConfigFolder: viper.GetString("KUBECONFIG_FOLDER"),
-
-		GrafanaClient:         models.NewGrafanaClient(),
-		GrafanaClientForQuery: models.NewGrafanaClientWithHTTPClient(&http.Client{Timeout: time.Second}),
-
-		PrometheusClient:         models.NewPrometheusClient(),
-		PrometheusClientForQuery: models.NewPrometheusClientWithHTTPClient(&http.Client{Timeout: time.Second}),
-
-		ConfigurationChannel: models.NewConfigurationHelper(),
-
+		Providers:                 provs,
+		ProviderCookieName:        "meshery-provider",
+		ProviderCookieDuration:    30 * 24 * time.Hour,
+		PlaygroundBuild:           viper.GetBool("PLAYGROUND"),
+		AdapterTracker:            adapterTracker,
+		QueryTracker:              queryTracker,
+		Queue:                     mainQueue,
+		KubeConfigFolder:          viper.GetString("KUBECONFIG_FOLDER"),
+		GrafanaClient:             models.NewGrafanaClient(),
+		GrafanaClientForQuery:     models.NewGrafanaClientWithHTTPClient(&http.Client{Timeout: time.Second}),
+		PrometheusClient:          models.NewPrometheusClient(),
+		PrometheusClientForQuery:  models.NewPrometheusClientWithHTTPClient(&http.Client{Timeout: time.Second}),
+		ConfigurationChannel:      models.NewConfigurationHelper(),
 		DashboardK8sResourcesChan: models.NewDashboardK8sResourcesHelper(),
 		MeshModelSummaryChannel:   mesherymeshmodel.NewSummaryHelper(),
-
-		K8scontextChannel: models.NewContextHelper(),
-		OperatorTracker:   models.NewOperatorTracker(viper.GetBool("DISABLE_OPERATOR")),
+		K8scontextChannel:         models.NewContextHelper(),
+		OperatorTracker:           models.NewOperatorTracker(viper.GetBool("DISABLE_OPERATOR")),
 	}
 
 	//seed the local meshmodel components
 	ch := meshmodelhelper.NewEntityRegistrationHelper(hc, regManager, log)
+
+	// @TODO add these to two different goroutine to avoid race conditions
+	var wg sync.WaitGroup
+	wg.Add(2)
+
 	go func() {
-		ch.SeedComponents()
-		go hc.MeshModelSummaryChannel.Publish()
+		defer wg.Done()
+		defer func() {
+			if r := recover(); r != nil {
+				log.Errorf("Error occurred while publishing meshmodel summary: %v", r)
+			}
+		}()
+		log.Debug("Publishing meshmodel summary...")
+		hc.MeshModelSummaryChannel.Publish()
+		log.Debug("Done publishing meshmodel summary")
 	}()
+
+	go func() {
+		defer wg.Done()
+		defer func() {
+			if r := recover(); r != nil {
+				log.Errorf("Error occurred while seeding components: %v", r)
+			}
+		}()
+		log.Debug("Seeding components now...")
+		ch.SeedComponents()
+		log.Debug("Done seeding components")
+	}()
+
+	log.Debug("Waiting for goroutines to finish...")
+	wg.Wait()
+
+	log.Debug("All goroutines have finished")
+
+	buf := make([]byte, 1<<20)
+	runtime.Stack(buf, true)
+	log.Debugf("Running goroutines:\n%s", buf)
+
+	select {
+	case <-time.After(10 * time.Second):
+		log.Error("Timeout waiting for goroutines to finish", err)
+		buf := make([]byte, 1<<20)
+		runtime.Stack(buf, true)
+		log.Debugf("Running goroutines:\n%s", buf)
+	case <-ctx.Done():
+		if ctx.Err() == context.DeadlineExceeded {
+			log.Debug("Context deadline exceeded")
+			return
+		}
+	}
+
+	// logger.Debug("Server has finished")
 
 	lProv.SeedContent(log)
 	provs[lProv.Name()] = lProv
 
-	RemoteProviderURLs := viper.GetStringSlice("PROVIDER_BASE_URLS")
+	//--- Remote Provider
+	RemoteProviderURLs := viper.GetStringSlice("REMOTE_PROVIDER_URLS")
 	for _, providerurl := range RemoteProviderURLs {
 		parsedURL, err := url.Parse(providerurl)
 		if err != nil {
-			log.Error(ErrInvalidURLSkippingProvider(providerurl))
-			continue
+			//log.Error(ErrInvalidURLSkippingProvider(providerurl))
+			log.Errorf("Failed to parse provider url", "error", err.Error())
+			os.Exit(1)
 		}
+		log.Debugf("Initializing remote provider with URL: %s", parsedURL.String())
 		cp := &models.RemoteProvider{
 			RemoteProviderURL:          parsedURL.String(),
 			RefCookieName:              parsedURL.Host + "_ref",
@@ -252,8 +339,13 @@ func main() {
 
 		cp.Initialize()
 
+		log.Debugf("Syncing preferences for remote provider: %s", cp.Name())
 		cp.SyncPreferences()
-		defer cp.StopSyncPreferences()
+		defer func(providerName string) {
+			log.Debugf("Stopping preference sync for remote provider: %s", providerName)
+			cp.StopSyncPreferences()
+		}(cp.Name())
+
 		provs[cp.Name()] = cp
 	}
 
@@ -261,7 +353,18 @@ func main() {
 	mctrlHelper := models.NewMesheryControllersHelper(log, operatorDeploymentConfig, dbHandler)
 	k8sComponentsRegistrationHelper := models.NewComponentsRegistrationHelper(log)
 
-	h := handlers.NewHandlerInstance(hc, meshsyncCh, log, brokerConn, k8sComponentsRegistrationHelper, mctrlHelper, dbHandler, events.NewEventStreamer(), regManager, viper.GetString("PROVIDER"))
+	h := handlers.NewHandlerInstance(
+		hc,
+		meshsyncCh,
+		log,
+		brokerConn,
+		k8sComponentsRegistrationHelper,
+		mctrlHelper,
+		dbHandler,
+		events.NewEventStreamer(),
+		regManager,
+		viper.GetString("PROVIDER"),
+	)
 
 	b := broadcast.NewBroadcaster(100)
 	defer b.Close()
@@ -283,38 +386,43 @@ func main() {
 	signal.Notify(c, os.Interrupt)
 
 	go func() {
-		log.Info("Meshery Server listening on: ", port)
+		log.Info("Meshery server listening on", slog.Int("port", port))
 		if err := r.Run(); err != nil {
-			log.Error(ErrListenAndServe(err))
+			// log.Error(ErrListenAndServe(err))
+			log.Error("error with starting the server", err)
 			os.Exit(1)
 		}
 	}()
 	<-c
+
+	// Clean-up registry manager
 	regManager.Cleanup()
-	log.Info("Doing seeded content cleanup...")
+	log.Infof("Doing seeded content cleanup...")
 
 	for _, p := range hc.Providers {
 		// skipping none provider for now
 		// so it doesn't throw error each server is stopped. Reason: support for none provider is not yet implemented
 		if p.Name() != "None" {
-			log.Info("De-registering Meshery server.")
+			log.Infof("De-registering Meshery server.")
 			err = p.DeleteMesheryConnection()
 			if err != nil {
-				log.Error(err)
+				log.Errorf("error cleaning", err)
 			}
 		}
 	}
-
 	err = lProv.Cleanup()
 	if err != nil {
-		log.Error(ErrCleaningUpLocalProvider(err))
+		// log.Error(ErrCleaningUpLocalProvider(err))
+		log.Errorf("error with cleaning", ErrCleaningUpLocalProvider(err))
 	}
 	utils.DeleteSVGsFromFileSystem()
-	log.Info("Closing database instance...")
+	log.Infof("Closing database instance...")
 	err = dbHandler.DBClose()
 	if err != nil {
-		log.Error(ErrClosingDatabaseInstance(err))
+		// log.Error(ErrClosingDatabaseInstance(err))
+		log.Error("error closing database", ErrClosingDatabaseInstance(err))
 	}
 
-	log.Info("Shutting down Meshery Server...")
+	log.Infof("Shutting down Meshery Server...")
+
 }

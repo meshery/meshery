@@ -16,44 +16,53 @@ const providerQParamName = "provider"
 
 // ProviderMiddleware is a middleware to validate if a provider is set
 func (h *Handler) ProviderMiddleware(next http.Handler) http.Handler {
-	fn := func(w http.ResponseWriter, req *http.Request) {
+	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		var providerName string
-		var provider models.Provider
-		ck, err := req.Cookie(h.config.ProviderCookieName)
-		if err == nil {
+
+		if ck, err := req.Cookie(h.config.ProviderCookieName); err == nil {
 			providerName = ck.Value
-		} else {
-			providerName = req.Header.Get(h.config.ProviderCookieName)
-			// allow provider to be set using query parameter
-			// this is OK since provider information is not sensitive
-
-			if providerName == "" {
-				providerName = req.URL.Query().Get(providerQParamName)
-			}
+		} else if hn := req.Header.Get(h.config.ProviderCookieName); hn != "" {
+			providerName = hn
+		} else if pn := req.URL.Query().Get(providerQParamName); pn != "" {
+			providerName = pn
 		}
-		if providerName != "" {
-			provider = h.config.Providers[providerName]
-		}
-		ctx := context.WithValue(req.Context(), models.ProviderCtxKey, provider) // nolint
 
-		// Incase Meshery is configured for deployments scenario: Istio, Azure Kubernetes Service etc
+		// allow provider to be set using query parameter
+		// this is OK since provider information is not sensitive
+		if providerName == "" {
+			http.Error(w, "Provider name not found", http.StatusBadRequest)
+			return
+		}
+
+		provider, ok := h.config.Providers[providerName]
+		if !ok {
+			http.Error(w, "Provider configuration not found", http.StatusBadRequest)
+			return
+		}
+
+		// In case Meshery is configured for deployments scenario: Istio, Azure Kubernetes Service etc
 		// then we can expect a MESHERY_SERVER_CALLBACK_URL in env var
 		callbackURL := viper.GetString("MESHERY_SERVER_CALLBACK_URL")
 		if callbackURL == "" {
 			// if MESHERY_SERVER_CALLBACK_URL is not set then we can assume standard CALLBACK_URL
-			callbackURL = "http://" + req.Host + "/api/user/token" // Hard coding the path because this is what meshery expects
+			// Hard coding the path because this is what meshery expects
+			callbackURL = "http://" + req.Host + "/api/user/token"
 		}
-		ctx = context.WithValue(ctx, models.MesheryServerCallbackURL, callbackURL)
-		_url, err := url.Parse(callbackURL)
+
+		url, err := url.Parse(callbackURL)
 		if err != nil {
-			logrus.Errorf("Error parsing callback url: %v", err)
-		} else {
-			ctx = context.WithValue(ctx, models.MesheryServerURL, fmt.Sprintf("%s://%s", _url.Scheme, _url.Host))
+			http.Error(w, "Invalid callback URL", http.StatusInternalServerError)
+			return
 		}
+
+		ctx := req.Context()
+		ctx = context.WithValue(ctx, models.ProviderCtxKey, provider)
+		ctx = context.WithValue(ctx, models.MesheryServerCallbackURL, callbackURL)
+		ctx = context.WithValue(ctx, models.MesheryServerURL, fmt.Sprintf("%s://%s", url.Scheme, url.Host))
+
 		req1 := req.WithContext(ctx)
 		next.ServeHTTP(w, req1)
-	}
-	return http.HandlerFunc(fn)
+	})
 }
 
 // AuthMiddleware is a middleware to validate if a user is authenticated
@@ -120,7 +129,7 @@ func (h *Handler) MesheryControllersMiddleware(next func(http.ResponseWriter, *h
 		ctx := req.Context()
 		mk8sContexts, ok := ctx.Value(models.AllKubeClusterKey).([]models.K8sContext)
 		if !ok || len(mk8sContexts) == 0 {
-			h.log.Error(ErrInvalidK8SConfig)
+			//h.log.Error(ErrInvalidK8SConfig)
 			// this should not block the request
 			next(w, req, prefObj, user, provider)
 			return
@@ -239,7 +248,7 @@ func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http
 				provider.HandleUnAuthenticated(w, req)
 				return
 			}
-			h.log.Error(ErrGetUserDetails(err))
+			//h.log.Error(ErrGetUserDetails(err))
 			http.Error(w, "unable to get user details", http.StatusUnauthorized)
 			return
 		}

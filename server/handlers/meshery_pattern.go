@@ -15,7 +15,6 @@ import (
 
 	pCore "github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshery/server/models/pattern/stages"
-	"github.com/sirupsen/logrus"
 )
 
 // MesheryPatternRequestBody refers to the type of request body that
@@ -76,7 +75,7 @@ func (h *Handler) handlePatternPOST(
 	}
 	var parsedBody *MesheryPatternRequestBody
 	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil {
-		h.log.Error(ErrRequestBody(err))
+		//h.log.Error(ErrRequestBody(err))
 		http.Error(rw, ErrRequestBody(err).Error(), http.StatusBadRequest)
 		addMeshkitErr(&res, ErrRequestBody(err))
 		go h.EventsBuffer.Publish(&res)
@@ -85,7 +84,7 @@ func (h *Handler) handlePatternPOST(
 
 	token, err := provider.GetProviderToken(r)
 	if err != nil {
-		h.log.Error(ErrRetrieveUserToken(err))
+		//h.log.Error(ErrRetrieveUserToken(err))
 		http.Error(rw, ErrRetrieveUserToken(err).Error(), http.StatusInternalServerError)
 		addMeshkitErr(&res, ErrRequestBody(err))
 		go h.EventsBuffer.Publish(&res)
@@ -115,7 +114,7 @@ func (h *Handler) handlePatternPOST(
 
 		patternName, err := models.GetPatternName(string(pfByt))
 		if err != nil {
-			h.log.Error(ErrGetPattern(err))
+			//h.log.Error(ErrGetPattern(err))
 			http.Error(rw, ErrGetPattern(err).Error(), http.StatusBadRequest)
 			addMeshkitErr(&res, ErrGetPattern(err))
 			go h.EventsBuffer.Publish(&res)
@@ -137,7 +136,7 @@ func (h *Handler) handlePatternPOST(
 		if parsedBody.Save {
 			resp, err := provider.SaveMesheryPattern(token, mesheryPattern)
 			if err != nil {
-				h.log.Error(ErrSavePattern(err))
+				//h.log.Error(ErrSavePattern(err))
 				http.Error(rw, ErrSavePattern(err).Error(), http.StatusInternalServerError)
 				addMeshkitErr(&res, ErrSavePattern(err))
 				go h.EventsBuffer.Publish(&res)
@@ -151,7 +150,7 @@ func (h *Handler) handlePatternPOST(
 
 		byt, err := json.Marshal([]models.MesheryPattern{*mesheryPattern})
 		if err != nil {
-			h.log.Error(ErrEncodePattern(err))
+			//h.log.Error(ErrEncodePattern(err))
 			http.Error(rw, ErrEncodePattern(err).Error(), http.StatusInternalServerError)
 			addMeshkitErr(&res, ErrEncodePattern(err))
 			go h.EventsBuffer.Publish(&res)
@@ -167,7 +166,7 @@ func (h *Handler) handlePatternPOST(
 		if parsedBody.PatternData.Name == "" {
 			patternName, err := models.GetPatternName(parsedBody.PatternData.PatternFile)
 			if err != nil {
-				h.log.Error(ErrSavePattern(err))
+				//h.log.Error(ErrSavePattern(err))
 				http.Error(rw, ErrSavePattern(err).Error(), http.StatusBadRequest)
 				addMeshkitErr(&res, ErrSavePattern(err))
 				go h.EventsBuffer.Publish(&res)
@@ -191,7 +190,7 @@ func (h *Handler) handlePatternPOST(
 		if parsedBody.Save {
 			resp, err := provider.SaveMesheryPattern(token, mesheryPattern)
 			if err != nil {
-				h.log.Error(ErrSavePattern(err))
+				//h.log.Error(ErrSavePattern(err))
 				http.Error(rw, ErrSavePattern(err).Error(), http.StatusInternalServerError)
 				addMeshkitErr(&res, ErrSavePattern(err))
 				go h.EventsBuffer.Publish(&res)
@@ -204,7 +203,7 @@ func (h *Handler) handlePatternPOST(
 
 		byt, err := json.Marshal([]models.MesheryPattern{*mesheryPattern})
 		if err != nil {
-			h.log.Error(ErrEncodePattern(err))
+			//h.log.Error(ErrEncodePattern(err))
 			http.Error(rw, ErrEncodePattern(err).Error(), http.StatusInternalServerError)
 			addMeshkitErr(&res, ErrSavePattern(err))
 			go h.EventsBuffer.Publish(&res)
@@ -219,7 +218,7 @@ func (h *Handler) handlePatternPOST(
 		resp, err := provider.RemotePatternFile(r, parsedBody.URL, parsedBody.Path, parsedBody.Save)
 
 		if err != nil {
-			h.log.Error(ErrImportPattern(err))
+			//h.log.Error(ErrImportPattern(err))
 			http.Error(rw, ErrImportPattern(err).Error(), http.StatusInternalServerError)
 			addMeshkitErr(&res, ErrImportPattern(err))
 			go h.EventsBuffer.Publish(&res)
@@ -324,7 +323,7 @@ func (h *Handler) GetMesheryPatternsHandler(
 	updateAfter := q.Get("updated_after")
 	resp, err := provider.GetMesheryPatterns(tokenString, q.Get("page"), q.Get("page_size"), q.Get("search"), q.Get("order"), updateAfter)
 	if err != nil {
-		h.log.Error(ErrFetchPattern(err))
+		//h.log.Error(ErrFetchPattern(err))
 		http.Error(rw, ErrFetchPattern(err).Error(), http.StatusInternalServerError)
 		return
 	}
@@ -363,7 +362,7 @@ func (h *Handler) GetCatalogMesheryPatternsHandler(
 
 	resp, err := provider.GetCatalogMesheryPatterns(tokenString, q.Get("search"), q.Get("order"))
 	if err != nil {
-		h.log.Error(ErrFetchPattern(err))
+		//h.log.Error(ErrFetchPattern(err))
 		http.Error(rw, ErrFetchPattern(err).Error(), http.StatusInternalServerError)
 		return
 	}
@@ -391,7 +390,7 @@ func (h *Handler) DeleteMesheryPatternHandler(
 	patternID := mux.Vars(r)["id"]
 	resp, err := provider.DeleteMesheryPattern(r, patternID)
 	if err != nil {
-		h.log.Error(ErrDeletePattern(err))
+		//h.log.Error(ErrDeletePattern(err))
 		http.Error(rw, ErrDeletePattern(err).Error(), http.StatusInternalServerError)
 		return
 	}
@@ -420,14 +419,14 @@ func (h *Handler) CloneMesheryPatternHandler(
 	patternID := mux.Vars(r)["id"]
 	var parsedBody *models.MesheryClonePatternRequestBody
 	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil || patternID == "" {
-		h.log.Error(ErrRequestBody(err))
+		//h.log.Error(ErrRequestBody(err))
 		http.Error(rw, ErrRequestBody(err).Error(), http.StatusBadRequest)
 		return
 	}
 
 	resp, err := provider.CloneMesheryPattern(r, patternID, parsedBody)
 	if err != nil {
-		h.log.Error(ErrClonePattern(err))
+		//h.log.Error(ErrClonePattern(err))
 		http.Error(rw, ErrClonePattern(err).Error(), http.StatusInternalServerError)
 		return
 	}
@@ -459,13 +458,13 @@ func (h *Handler) PublishCatalogPatternHandler(
 
 	var parsedBody *models.MesheryCatalogPatternRequestBody
 	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil {
-		h.log.Error(ErrRequestBody(err))
+		//h.log.Error(ErrRequestBody(err))
 		http.Error(rw, ErrRequestBody(err).Error(), http.StatusBadRequest)
 		return
 	}
 	resp, err := provider.PublishCatalogPattern(r, parsedBody)
 	if err != nil {
-		h.log.Error(ErrPublishCatalogPattern(err))
+		//h.log.Error(ErrPublishCatalogPattern(err))
 		http.Error(rw, ErrPublishCatalogPattern(err).Error(), http.StatusInternalServerError)
 		return
 	}
@@ -488,16 +487,16 @@ func (h *Handler) DeleteMultiMesheryPatternsHandler(
 ) {
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
-		logrus.Error(rw, "err deleting pattern, converting bytes: ", err)
+		h.log.Errorf("err deleting pattern, converting bytes: ", err, rw)
 	}
 
 	var patterns models.MesheryPatternDeleteRequestBody
 	err = json.Unmarshal([]byte(body), &patterns)
 	if err != nil {
-		logrus.Error("error marshaling patterns json: ", err)
+		h.log.Error("error marshaling patterns json: ", err)
 	}
 
-	logrus.Debugf("patterns to be deleted: %+v", patterns)
+	h.log.Debugf("patterns to be deleted: %+v", patterns)
 
 	resp, err := provider.DeleteMesheryPatterns(r, patterns)
 
@@ -530,7 +529,7 @@ func (h *Handler) GetMesheryPatternHandler(
 
 	resp, err := provider.GetMesheryPattern(r, patternID)
 	if err != nil {
-		h.log.Error(ErrGetPattern(err))
+		//h.log.Error(ErrGetPattern(err))
 		http.Error(rw, ErrGetPattern(err).Error(), http.StatusNotFound)
 		return
 	}

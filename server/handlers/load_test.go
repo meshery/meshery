@@ -35,18 +35,18 @@ func (h *Handler) LoadTestUsingSMPHandler(w http.ResponseWriter, req *http.Reque
 	// Read the SMP File
 	body, err := io.ReadAll(req.Body)
 	if err != nil {
-		h.log.Error(ErrRequestBody(err))
+		//h.log.Error(ErrRequestBody(err))
 		http.Error(w, ErrRequestBody(err).Error(), http.StatusInternalServerError)
 
 		w.WriteHeader(http.StatusBadRequest)
-		fmt.Fprintf(w, "failed to read request body: %s", err)
+		h.log.Infof("failed to read request body: %s", w, err)
 		return
 	}
 
 	if req.Header.Get("Content-Type") == "application/json" {
 		body, err = yaml.JSONToYAML(body)
 		if err != nil {
-			h.log.Error(ErrPatternFile(err))
+			//h.log.Error(ErrPatternFile(err))
 			http.Error(w, ErrPatternFile(err).Error(), http.StatusInternalServerError)
 			return
 		}
@@ -56,7 +56,7 @@ func (h *Handler) LoadTestUsingSMPHandler(w http.ResponseWriter, req *http.Reque
 
 	perfTest := &models.PerformanceTestConfigFile{}
 	if err := json.Unmarshal(jsonBytes, perfTest); err != nil {
-		h.log.Error(ErrParseBool(err, "provided input"))
+		//h.log.Error(ErrParseBool(err, "provided input"))
 		http.Error(w, ErrParseBool(err, "provided input").Error(), http.StatusBadRequest)
 		return
 	}
@@ -64,7 +64,7 @@ func (h *Handler) LoadTestUsingSMPHandler(w http.ResponseWriter, req *http.Reque
 	// testName - should be loaded from the file and updated with a random string appended to the end of the name
 	testName := perfTest.Config.Name
 	if testName == "" {
-		h.log.Error(ErrBlankName(err))
+		//h.log.Error(ErrBlankName(err))
 		http.Error(w, ErrBlankName(err).Error(), http.StatusForbidden)
 		return
 	}
@@ -78,7 +78,7 @@ func (h *Handler) LoadTestUsingSMPHandler(w http.ResponseWriter, req *http.Reque
 
 	testDuration, err := time.ParseDuration(perfTest.Config.Duration)
 	if err != nil {
-		h.log.Error(ErrParseDuration)
+		//h.log.Error(ErrParseDuration)
 		http.Error(w, ErrParseDuration.Error(), http.StatusBadRequest)
 		return
 	}
@@ -102,12 +102,12 @@ func (h *Handler) LoadTestUsingSMPHandler(w http.ResponseWriter, req *http.Reque
 	ltURL, err := url.Parse(loadTestOptions.URL)
 	if err != nil {
 		obj := "the provided load test"
-		h.log.Error(ErrParseBool(err, obj))
+		//h.log.Error(ErrParseBool(err, obj))
 		http.Error(w, ErrParseBool(err, obj).Error(), http.StatusBadRequest)
 		return
 	}
 	if !ltURL.IsAbs() {
-		h.log.Error(ErrInvalidLTURL(ltURL.String()))
+		//h.log.Error(ErrInvalidLTURL(ltURL.String()))
 		http.Error(w, ErrInvalidLTURL(ltURL.String()).Error(), http.StatusBadRequest)
 		return
 	}
@@ -168,7 +168,7 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 
 	// if values have been passed as body we run test using SMP Handler
 	if string(body) != "" {
-		logrus.Info("Running test with SMP config")
+		h.log.Info("Running test with SMP config")
 		req.Body = io.NopCloser(strings.NewReader(string(body)))
 		h.LoadTestUsingSMPHandler(w, req, prefObj, user, provider)
 		return
@@ -177,7 +177,7 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 	err = req.ParseForm()
 	if err != nil {
 		obj := "form"
-		h.log.Error(ErrParseBool(err, obj))
+		//h.log.Error(ErrParseBool(err, obj))
 		http.Error(w, ErrParseBool(err, obj).Error(), http.StatusForbidden)
 		return
 	}
@@ -185,7 +185,7 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 
 	testName := q.Get("name")
 	if testName == "" {
-		h.log.Error(ErrBlankName(err))
+		//h.log.Error(ErrBlankName(err))
 		http.Error(w, ErrBlankName(err).Error(), http.StatusForbidden)
 		return
 	}
@@ -227,7 +227,7 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 	loadTestOptions.Duration, err = time.ParseDuration(fmt.Sprintf("%d%s", tt, dur))
 	if err != nil {
 		obj := "load test duration"
-		h.log.Error(ErrParseBool(err, obj))
+		//h.log.Error(ErrParseBool(err, obj))
 		http.Error(w, ErrParseBool(err, obj).Error(), http.StatusForbidden)
 		return
 	}
@@ -242,7 +242,7 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 	ltURL, err := url.Parse(loadTestURL)
 	if err != nil || !ltURL.IsAbs() {
 		obj := "the provided load test url"
-		h.log.Error(ErrParseBool(err, obj))
+		//h.log.Error(ErrParseBool(err, obj))
 		http.Error(w, ErrParseBool(err, obj).Error(), http.StatusBadRequest)
 		return
 	}
@@ -294,13 +294,13 @@ func (h *Handler) loadTestHelperHandler(w http.ResponseWriter, req *http.Request
 	go func() {
 		defer func() {
 			if r := recover(); r != nil {
-				h.log.Error(ErrPanicRecovery(r))
+				//h.log.Error(ErrPanicRecovery(r))
 			}
 		}()
 		for data := range respChan {
 			bd, err := json.Marshal(data)
 			if err != nil {
-				h.log.Error(ErrMarshal(err, "meshery result for shipping"))
+				//h.log.Error(ErrMarshal(err, "meshery result for shipping"))
 				http.Error(w, ErrMarshal(err, "meshery result for shipping").Error(), http.StatusInternalServerError)
 				return
 			}
@@ -348,7 +348,7 @@ func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, profil
 		resultsMap, resultInst, err = helpers.FortioLoadTest(loadTestOptions)
 	}
 	if err != nil {
-		h.log.Error(ErrLoadTest(err, "unable to perform"))
+		//h.log.Error(ErrLoadTest(err, "unable to perform"))
 		respChan <- &models.LoadTestResponse{
 			Status:  models.LoadTestError,
 			Message: "unable to perform",
@@ -365,7 +365,7 @@ func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, profil
 
 	mk8sContexts, ok := req.Context().Value(models.KubeClustersKey).([]models.K8sContext)
 	if !ok {
-		h.log.Warn(ErrInvalidK8SConfig)
+		//h.log.Warn(ErrInvalidK8SConfig)
 	}
 	var wg sync.WaitGroup
 
@@ -403,7 +403,7 @@ func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, profil
 					nodes, err = helpers.FetchKubernetesNodes(k8sconfig, mk8scontext.Name)
 					if err != nil {
 						err = errors.Wrap(err, "unable to ping kubernetes for context: "+mk8scontext.ID)
-						h.log.Warn(ErrFetchKubernetes(err))
+						//h.log.Warn(ErrFetchKubernetes(err))
 					}
 
 					nodesChan <- nodes
@@ -413,7 +413,7 @@ func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, profil
 					var err error
 					serverVersion, err = helpers.FetchKubernetesVersion(k8sconfig, mk8scontext.Name)
 					if err != nil {
-						h.log.Error(ErrFetchKubernetes(err))
+						//h.log.Error(ErrFetchKubernetes(err))
 					}
 
 					versionChan <- serverVersion
@@ -421,7 +421,7 @@ func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, profil
 				go func() {
 					installedMeshes, err := helpers.ScanKubernetes(k8sconfig, mk8scontext.Name)
 					if err != nil {
-						h.log.Warn(ErrFetchKubernetes(err))
+						//h.log.Warn(ErrFetchKubernetes(err))
 					}
 
 					installedMeshesChan <- installedMeshes
@@ -471,7 +471,7 @@ func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, profil
 func (h *Handler) persistPerformanceTestResult(ctx context.Context, req *http.Request, result *models.MesheryResult, testUUID, profileID string, resultInst *periodic.RunnerResults, prefObj *models.Preference, provider models.Provider, respChan chan *models.LoadTestResponse) {
 	resultID, err := provider.PublishResults(req, result, profileID)
 	if err != nil {
-		h.log.Error(ErrLoadTest(err, "unable to persist in cluster"))
+		//h.log.Error(ErrLoadTest(err, "unable to persist in cluster"))
 		respChan <- &models.LoadTestResponse{
 			Status:  models.LoadTestError,
 			Message: "unable to persist",
@@ -556,7 +556,7 @@ func (h *Handler) CollectStaticMetrics(config *models.SubmitMetricsConfig) error
 
 	resultUUID, err := uuid.FromString(config.ResultID)
 	if err != nil {
-		h.log.Error(ErrParseBool(err, "result uuid"))
+		//h.log.Error(ErrParseBool(err, "result uuid"))
 		return err
 	}
 	result := &models.MesheryResult{

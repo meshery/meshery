@@ -171,7 +171,7 @@ func (h *Handler) handleApplicationPOST(
 				k8sres, err = kompose.Convert(bytApplication) // convert the docker compose file into kubernetes manifest
 				if err != nil {
 					obj := "convert"
-					h.log.Error(ErrApplicationFailure(err, obj))
+					//h.log.Error(ErrApplicationFailure(err, obj))
 					http.Error(rw, ErrApplicationFailure(err, obj).Error(), http.StatusInternalServerError) // sending a 500 when we cannot convert the file into kuberentes manifest
 					addMeshkitErr(&res, ErrApplicationFailure(err, obj))
 					go h.EventsBuffer.Publish(&res)
@@ -191,7 +191,7 @@ func (h *Handler) handleApplicationPOST(
 			pattern, err := pCore.NewPatternFileFromK8sManifest(k8sres, false, h.registryManager)
 			if err != nil {
 				obj := "convert"
-				h.log.Error(ErrApplicationFailure(err, obj))
+				//h.log.Error(ErrApplicationFailure(err, obj))
 				http.Error(rw, ErrApplicationFailure(err, obj).Error(), http.StatusInternalServerError) // sending a 500 when we cannot convert the file into kuberentes manifest
 				addMeshkitErr(&res, err)                                                                //this error is already a meshkit error so no further wrapping required
 				go h.EventsBuffer.Publish(&res)
@@ -200,7 +200,7 @@ func (h *Handler) handleApplicationPOST(
 			response, err := yaml.Marshal(pattern)
 			if err != nil {
 				obj := "convert"
-				h.log.Error(ErrApplicationFailure(err, obj))
+				//h.log.Error(ErrApplicationFailure(err, obj))
 				http.Error(rw, ErrApplicationFailure(err, obj).Error(), http.StatusInternalServerError) // sending a 500 when we cannot convert the file into kuberentes manifest
 				addMeshkitErr(&res, ErrApplicationFailure(err, obj))
 				go h.EventsBuffer.Publish(&res)
@@ -209,7 +209,7 @@ func (h *Handler) handleApplicationPOST(
 			mesheryApplication.ApplicationFile = string(response)
 		} else {
 			obj := "convert"
-			h.log.Error(ErrApplicationFailure(fmt.Errorf("invalid source type"), obj))
+			//h.log.Error(ErrApplicationFailure(fmt.Errorf("invalid source type"), obj))
 			http.Error(rw, ErrApplicationFailure(fmt.Errorf("invalid source type"), obj).Error(), http.StatusInternalServerError) // sending a 500 when we cannot convert the file into kuberentes manifest
 			addMeshkitErr(&res, ErrApplicationFailure(err, obj))
 			go h.EventsBuffer.Publish(&res)
@@ -232,7 +232,7 @@ func (h *Handler) handleApplicationPOST(
 			}
 			sourceContent, err := io.ReadAll(helmSourceResp.Body)
 			if err != nil {
-				http.Error(rw, "error read body", http.StatusInternalServerError)
+				//http.Error(rw, "error read body", http.StatusInternalServerError)
 				addMeshkitErr(&res, ErrSaveApplication(fmt.Errorf("error reading body")))
 				go h.EventsBuffer.Publish(&res)
 				return
@@ -243,7 +243,7 @@ func (h *Handler) handleApplicationPOST(
 			})
 			if err != nil {
 				obj := "import"
-				h.log.Error(ErrApplicationFailure(err, obj))
+				//h.log.Error(ErrApplicationFailure(err, obj))
 				http.Error(rw, ErrApplicationFailure(err, obj).Error(), http.StatusInternalServerError)
 				addMeshkitErr(&res, ErrApplicationFailure(err, obj))
 				go h.EventsBuffer.Publish(&res)
@@ -253,7 +253,7 @@ func (h *Handler) handleApplicationPOST(
 			pattern, err := pCore.NewPatternFileFromK8sManifest(result, false, h.registryManager)
 			if err != nil {
 				obj := "convert"
-				h.log.Error(ErrApplicationFailure(err, obj))
+				//h.log.Error(ErrApplicationFailure(err, obj))
 				http.Error(rw, ErrApplicationFailure(err, obj).Error(), http.StatusInternalServerError) // sending a 500 when we cannot convert the file into kuberentes manifest
 				addMeshkitErr(&res, err)
 				go h.EventsBuffer.Publish(&res)
@@ -262,7 +262,7 @@ func (h *Handler) handleApplicationPOST(
 			response, err := yaml.Marshal(pattern)
 			if err != nil {
 				obj := "convert"
-				h.log.Error(ErrApplicationFailure(err, obj))
+				//h.log.Error(ErrApplicationFailure(err, obj))
 				http.Error(rw, ErrApplicationFailure(err, obj).Error(), http.StatusInternalServerError) // sending a 500 when we cannot convert the file into kuberentes manifest
 				addMeshkitErr(&res, ErrApplicationFailure(err, obj))
 				go h.EventsBuffer.Publish(&res)
@@ -336,7 +336,7 @@ func (h *Handler) handleApplicationPOST(
 			}
 		} else {
 			obj := "convert"
-			h.log.Error(ErrApplicationFailure(fmt.Errorf("invalid source type"), obj))
+			//h.log.Error(ErrApplicationFailure(fmt.Errorf("invalid source type"), obj))
 			http.Error(rw, ErrApplicationFailure(fmt.Errorf("invalid source type"), obj).Error(), http.StatusInternalServerError) // sending a 500 when we cannot convert the file into kuberentes manifest
 			addMeshkitErr(&res, ErrApplicationFailure(fmt.Errorf("error parsing URL"), obj))
 			go h.EventsBuffer.Publish(&res)
@@ -350,7 +350,7 @@ func (h *Handler) handleApplicationPOST(
 		resp, err := provider.SaveMesheryApplication(token, mesheryApplication)
 		if err != nil {
 			obj := "save"
-			h.log.Error(ErrApplicationFailure(err, obj))
+			//h.log.Error(ErrApplicationFailure(err, obj))
 			http.Error(rw, ErrApplicationFailure(err, obj).Error(), http.StatusInternalServerError)
 			addMeshkitErr(&res, ErrApplicationFailure(err, obj))
 			go h.EventsBuffer.Publish(&res)
@@ -361,7 +361,7 @@ func (h *Handler) handleApplicationPOST(
 		err = json.Unmarshal(resp, &mesheryApplicationContent)
 		if err != nil {
 			obj := "application"
-			h.log.Error(ErrEncoding(err, obj))
+			//h.log.Error(ErrEncoding(err, obj))
 			http.Error(rw, ErrEncoding(err, obj).Error(), http.StatusInternalServerError)
 			addMeshkitErr(&res, ErrEncoding(err, obj))
 			go h.EventsBuffer.Publish(&res)
@@ -372,7 +372,7 @@ func (h *Handler) handleApplicationPOST(
 
 		if err != nil {
 			obj := "upload"
-			h.log.Error(ErrApplicationSourceContent(err, obj))
+			//h.log.Error(ErrApplicationSourceContent(err, obj))
 			http.Error(rw, ErrApplicationSourceContent(err, obj).Error(), http.StatusInternalServerError)
 			addMeshkitErr(&res, ErrApplicationSourceContent(err, obj))
 			go h.EventsBuffer.Publish(&res)
@@ -386,7 +386,7 @@ func (h *Handler) handleApplicationPOST(
 	byt, err := json.Marshal([]models.MesheryApplication{*mesheryApplication})
 	if err != nil {
 		obj := "application"
-		h.log.Error(ErrEncoding(err, obj))
+		//h.log.Error(ErrEncoding(err, obj))
 		http.Error(rw, ErrEncoding(err, obj).Error(), http.StatusInternalServerError)
 		addMeshkitErr(&res, ErrEncoding(err, obj))
 		go h.EventsBuffer.Publish(&res)
@@ -457,7 +457,7 @@ func (h *Handler) handleApplicationUpdate(rw http.ResponseWriter,
 
 		patternName, err := models.GetPatternName(string(pfByt))
 		if err != nil {
-			h.log.Error(ErrGetPattern(err))
+			//h.log.Error(ErrGetPattern(err))
 			http.Error(rw, ErrGetPattern(err).Error(), http.StatusBadRequest)
 			addMeshkitErr(&res, ErrGetPattern(err))
 			go h.EventsBuffer.Publish(&res)
@@ -483,7 +483,7 @@ func (h *Handler) handleApplicationUpdate(rw http.ResponseWriter,
 		if parsedBody.Save {
 			resp, err := provider.SaveMesheryApplication(token, mesheryApplication)
 			if err != nil {
-				h.log.Error(ErrSavePattern(err))
+				//h.log.Error(ErrSavePattern(err))
 				http.Error(rw, ErrSavePattern(err).Error(), http.StatusInternalServerError)
 				addMeshkitErr(&res, ErrSavePattern(err))
 				go h.EventsBuffer.Publish(&res)
@@ -497,7 +497,7 @@ func (h *Handler) handleApplicationUpdate(rw http.ResponseWriter,
 
 		byt, err := json.Marshal([]models.MesheryApplication{*mesheryApplication})
 		if err != nil {
-			h.log.Error(ErrEncodePattern(err))
+			//h.log.Error(ErrEncodePattern(err))
 			http.Error(rw, ErrEncodePattern(err).Error(), http.StatusInternalServerError)
 			addMeshkitErr(&res, ErrEncodePattern(err))
 			go h.EventsBuffer.Publish(&res)
@@ -515,7 +515,7 @@ func (h *Handler) handleApplicationUpdate(rw http.ResponseWriter,
 	resp, err := provider.SaveMesheryApplication(token, mesheryApplication)
 	if err != nil {
 		obj := "save"
-		h.log.Error(ErrApplicationFailure(err, obj))
+		//h.log.Error(ErrApplicationFailure(err, obj))
 		http.Error(rw, ErrApplicationFailure(err, obj).Error(), http.StatusInternalServerError)
 		addMeshkitErr(&res, ErrApplicationFailure(err, obj))
 		go h.EventsBuffer.Publish(&res)
@@ -560,7 +560,7 @@ func (h *Handler) GetMesheryApplicationsHandler(
 	resp, err := provider.GetMesheryApplications(tokenString, q.Get("page"), q.Get("page_size"), q.Get("search"), q.Get("order"), q.Get("updated_after"))
 	if err != nil {
 		obj := "fetch"
-		h.log.Error(ErrApplicationFailure(err, obj))
+		//h.log.Error(ErrApplicationFailure(err, obj))
 		http.Error(rw, ErrApplicationFailure(err, obj).Error(), http.StatusInternalServerError)
 		return
 	}
@@ -588,7 +588,7 @@ func (h *Handler) DeleteMesheryApplicationHandler(
 	resp, err := provider.DeleteMesheryApplication(r, applicationID)
 	if err != nil {
 		obj := "delete"
-		h.log.Error(ErrApplicationFailure(err, obj))
+		//h.log.Error(ErrApplicationFailure(err, obj))
 		http.Error(rw, ErrApplicationFailure(err, obj).Error(), http.StatusInternalServerError)
 		return
 	}
@@ -610,7 +610,7 @@ func (h *Handler) GetMesheryApplicationHandler(
 	resp, err := provider.GetMesheryApplication(r, applicationID)
 	if err != nil {
 		obj := "get"
-		h.log.Error(ErrApplicationFailure(err, obj))
+		//h.log.Error(ErrApplicationFailure(err, obj))
 		http.Error(rw, ErrApplicationFailure(err, obj).Error(), http.StatusNotFound)
 		return
 	}
@@ -638,7 +638,7 @@ func (h *Handler) GetMesheryApplicationTypesHandler(
 	b, err := json.Marshal(response)
 	if err != nil {
 		obj := "available types"
-		h.log.Error(ErrMarshal(err, obj))
+		//h.log.Error(ErrMarshal(err, obj))
 		http.Error(rw, ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
 		return
 	}
@@ -665,7 +665,7 @@ func (h *Handler) GetMesheryApplicationSourceHandler(
 	resp, err := provider.GetApplicationSourceContent(r, applicationID)
 	if err != nil {
 		obj := "download"
-		h.log.Error(ErrApplicationFailure(err, obj))
+		//h.log.Error(ErrApplicationFailure(err, obj))
 		http.Error(rw, ErrApplicationFailure(err, obj).Error(), http.StatusNotFound)
 		return
 	}
@@ -682,7 +682,7 @@ func (h *Handler) GetMesheryApplicationSourceHandler(
 	rw.Header().Set("Content-Type", mimeType)
 	_, err = io.Copy(rw, reader)
 	if err != nil {
-		h.log.Error(ErrApplicationSourceContent(err, "download"))
+		//h.log.Error(ErrApplicationSourceContent(err, "download"))
 		http.Error(rw, ErrApplicationSourceContent(err, "download").Error(), http.StatusInternalServerError)
 	}
 }
@@ -693,7 +693,7 @@ func (h *Handler) formatApplicationOutput(rw http.ResponseWriter, content []byte
 
 	if err := json.Unmarshal(content, &contentMesheryApplicationSlice); err != nil {
 		obj := "application data into go slice"
-		h.log.Error(ErrDecoding(err, obj))
+		//h.log.Error(ErrDecoding(err, obj))
 		http.Error(rw, ErrDecoding(err, obj).Error(), http.StatusInternalServerError)
 		addMeshkitErr(res, ErrDecoding(err, obj))
 		go h.EventsBuffer.Publish(res)
@@ -703,7 +703,7 @@ func (h *Handler) formatApplicationOutput(rw http.ResponseWriter, content []byte
 	data, err := json.Marshal(&contentMesheryApplicationSlice)
 	if err != nil {
 		obj := "application file"
-		h.log.Error(ErrMarshal(err, obj))
+		//h.log.Error(ErrMarshal(err, obj))
 		http.Error(rw, ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
 		addMeshkitErr(res, ErrMarshal(err, obj))
 		go h.EventsBuffer.Publish(res)

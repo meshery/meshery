@@ -1,25 +1,29 @@
 package models
 
 import (
+	"fmt"
 	"sync"
 	"time"
 
 	"github.com/jinzhu/copier"
-	"github.com/sirupsen/logrus"
+	"github.com/layer5io/meshkit/logger"
 )
 
 // MapPreferencePersister assists with persisting session in a badger store
 type MapPreferencePersister struct {
-	db *sync.Map
+	db     *sync.Map
+	logger logger.Handler
 }
 
 // NewMapPreferencePersister creates a new MapPreferencePersister instance
-func NewMapPreferencePersister() (*MapPreferencePersister, error) {
+func NewMapPreferencePersister(log logger.Handler) (*MapPreferencePersister, error) {
 	return &MapPreferencePersister{
-		db: &sync.Map{},
+		db:     &sync.Map{},
+		logger: log,
 	}, nil
 }
 
+// @TODO revise to use logging
 // ReadFromPersister reads the session data for the given userID
 func (s *MapPreferencePersister) ReadFromPersister(userID string) (*Preference, error) {
 	data := &Preference{
@@ -28,29 +32,31 @@ func (s *MapPreferencePersister) ReadFromPersister(userID string) (*Preference, 
 	}
 
 	if s.db == nil {
-		return nil, ErrDBConnection
+		return data, nil
 	}
 
 	if userID == "" {
-		return nil, ErrUserID
+		return nil, fmt.Errorf("user ID is empty")
 	}
 
 	dataCopyB, ok := s.db.Load(userID)
-	if ok {
-		logrus.Debugf("retrieved session for user with id: %s", userID)
-		newData, ok1 := dataCopyB.(*Preference)
-		if ok1 {
-			logrus.Debugf("session for user with id: %s was read in tact.", userID)
-			data = newData
-		} else {
-			logrus.Warnf("session for user with id: %s was NOT read in tact.", userID)
-		}
-	} else {
-		logrus.Warnf("unable to find session for user with id: %s.", userID)
+	if !ok {
+		return nil, fmt.Errorf("unable to find session for user with id: %s", userID)
 	}
-	return data, nil
+
+	s.logger.Debugf("retrieved session for user with id: %s", userID)
+
+	newData, ok1 := dataCopyB.(*Preference)
+	if !ok1 {
+		s.logger.Warnf("session for user with id: %s was NOT intact", userID)
+		return data, fmt.Errorf("unable to cast session for user with id: %s", userID)
+	}
+
+	s.logger.Debugf("session for user with id: %s was read intact", userID)
+	return newData, nil
 }
 
+// @TODO revise to add more error handling
 // WriteToPersister persists session for the user
 func (s *MapPreferencePersister) WriteToPersister(userID string, data *Preference) error {
 	if s.db == nil {
@@ -64,16 +70,18 @@ func (s *MapPreferencePersister) WriteToPersister(userID string, data *Preferenc
 	if data == nil {
 		return ErrNilConfigData
 	}
-	data.UpdatedAt = time.Now()
-	newSess := &Preference{
-		AnonymousUsageStats:  true,
-		AnonymousPerfResults: true,
-	}
-	if err := copier.Copy(newSess, data); err != nil {
+
+	dataCopy := &Preference{}
+	if err := copier.Copy(dataCopy, data); err != nil {
 		return ErrSessionCopy(err)
 	}
+	dataCopy.UpdatedAt = time.Now()
 
-	s.db.Store(userID, newSess)
+	if _, ok := s.db.LoadOrStore(userID, dataCopy); ok {
+		s.logger.Debugf("session for user with id: %s was updated", userID)
+	} else {
+		s.logger.Debugf("session for user with id: %s was created", userID)
+	}
 
 	return nil
 }
