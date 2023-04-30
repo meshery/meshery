@@ -7,7 +7,7 @@ import { bindActionCreators } from "redux";
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import {
-  AppBar, Paper, Tooltip, Button, IconButton, MenuItem, Select, TableCell, TableSortLabel, Typography
+  AppBar, Paper, Tooltip, Button, IconButton, MenuItem, Select, TableRow, TableCell, TableSortLabel, Typography
 } from '@material-ui/core';
 import CloseIcon from "@material-ui/icons/Close";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -32,6 +32,7 @@ import MesherySettingsEnvButtons from './MesherySettingsEnvButtons';
 import MeshModelComponent from './MeshModelComponent';
 import DataTable from "mui-datatables";
 import { configurationTableTheme, configurationTableThemeDark } from '../themes/configurationTableTheme';
+import { getComponentDetails } from "../api/meshmodel";
 
 
 const styles = (theme) => ({
@@ -123,6 +124,7 @@ TabContainer.propTypes = { children : PropTypes.node.isRequired, };
 class MesherySettings extends React.Component {
   constructor(props) {
     super(props);
+
     const {
       k8sconfig, meshAdapters, grafana, prometheus, router : { asPath }
     } = props;
@@ -186,6 +188,7 @@ class MesherySettings extends React.Component {
       meshmodelSummary : [],
       meshmodelSummarySubscription : null,
       meshmodelSummaryQuery : null,
+      componentDetails : [],
     };
 
     this.systemResetRef = React.createRef();
@@ -274,6 +277,25 @@ class MesherySettings extends React.Component {
     }
   }
 
+
+  getComponentsFromModel = (modelName, version)  => {
+    if (!version) {
+      if (!this.state.componentDetails[modelName]) {
+        getComponentDetails(modelName).then((modelData) => {
+          this.setState({ componentDetails : (
+            Object.assign(
+              { ...this.state.componentDetails },
+              {
+                [modelName] : (modelData)
+              }
+            )
+          ) });
+        })
+      }
+      return;
+    }
+  }
+
   emptyStateMessageForMeshModelSummary = () => {
     return "No MeshModel registered."
   }
@@ -306,7 +328,7 @@ class MesherySettings extends React.Component {
     const columns = [
       {
         name : "name",
-        label : "Name",
+        label : "Model Name",
         options : {
           filter : false,
           sort : true,
@@ -328,7 +350,7 @@ class MesherySettings extends React.Component {
       },
       {
         name : "count",
-        label : "Count",
+        label : "Component Count",
         options : {
           filter : false,
           sort : true,
@@ -351,9 +373,13 @@ class MesherySettings extends React.Component {
     ]
 
     const options = {
-      filter : false,
+      filter : true,
+      filterType : 'dropdown',
+      expandableRows : true,
+      expandableRowsOnClick : true,
+      expandableRowsHeader : false,
       selectableRows : "none",
-      responsive : "scrollMaxHeight",
+      responsive : "standard",
       print : false,
       download : false,
       viewColumns : false,
@@ -374,8 +400,36 @@ class MesherySettings extends React.Component {
             )}
           </>
         )
+      },
+      isRowExpandable : (dataIndex, expandedRows) => {
+        return expandedRows.data.length === 0 || expandedRows.data[0].dataIndex === dataIndex;
+      },
+      renderExpandableRow : (rowData) => {
+        const colSpan = rowData.length - 1;
+        this.getComponentsFromModel(rowData[0]);
+        const componentDetails = this.state.componentDetails[rowData[0]];
+
+        return (
+          <>
+            <TableRow>
+              <TableCell colSpan={colSpan} style={{ textAlign : "center" }} ><b> Component Name </b></TableCell>
+              <TableCell colSpan={colSpan} style={{ textAlign : "center" }} ><b> API Version </b></TableCell>
+              <TableCell colSpan={colSpan} style={{ textAlign : "center" }} ><b> Category Name </b></TableCell>
+            </TableRow>
+
+            {componentDetails && componentDetails.map((component) => (
+              <TableRow>
+                <TableCell colSpan={colSpan} style={{ textAlign : "center" }} >{component.name}</TableCell>
+                <TableCell colSpan={colSpan} style={{ textAlign : "center" }} >{component.version}</TableCell>
+                <TableCell colSpan={colSpan} style={{ textAlign : "center" }} >{component.category.name}</TableCell>
+              </TableRow>
+            ))}
+          </>
+        )
       }
-    }
+    };
+
+
 
     if (Array.isArray(meshmodelSummary) && meshmodelSummary?.length)
       return (
