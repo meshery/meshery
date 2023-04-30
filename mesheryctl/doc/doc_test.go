@@ -15,6 +15,7 @@
 package main
 
 import (
+	"bytes"
 	"testing"
 
 	. "github.com/onsi/ginkgo/v2"
@@ -31,6 +32,14 @@ func TestDoc(t *testing.T) {
 
 var _ = Describe("Tests for Doc", func() {
 
+	// Create a new cobra command before each test
+	var cmd *cobra.Command
+	BeforeEach(func() {
+		cmd = &cobra.Command{
+			Use: "test",
+		}
+	})
+
 	// TestLinkHandler is the link handler for the markdown file
 	const TestLinkHandler = "/main"
 	Context("Test linkHandler function", func() {
@@ -45,16 +54,10 @@ var _ = Describe("Tests for Doc", func() {
 	// TestGenMarkdownTreeCustom is the test for GenMarkdownTreeCustom function
 	Context("Test GenMarkdownTreeCustom function", func() {
 		It("should return nil", func() {
-			// create a new cobra command
-			cmd := &cobra.Command{
-				Use: "test",
-			}
-
 			// add a subcommand
 			cmd.AddCommand(&cobra.Command{
 				Use: "sub",
 			})
-
 			// path for docs
 			markDownPath := "../../docs/pages/reference/mesheryctl/"
 
@@ -65,4 +68,74 @@ var _ = Describe("Tests for Doc", func() {
 		})
 	})
 
+	// TestGenMarkdownCustom is the test for GenMarkdownCustom function
+	Context("Test GenMarkdownCustom function", func() {
+		It("should contain specific sub-strings", func() {
+			// add annotations "link" and "caption" to the command
+			cmd.Annotations = map[string]string{
+				"link":    "test_link",
+				"caption": "test_caption",
+			}
+
+			// add Example for cmd for test
+			cmd.Example = "test_example"
+
+			// io.Writer
+			buf := &bytes.Buffer{}
+			// call GenMarkdownCustom
+			err := GenMarkdownCustom(cmd, buf)
+			// check if err is nil
+			Expect(err).To(BeNil())
+			// check if buf is not empty
+			Expect(buf.String()).NotTo(BeEmpty())
+			// check if buf contains the correct string
+			Expect(buf.String()).To(ContainSubstring("test_link"))
+			Expect(buf.String()).To(ContainSubstring("test_caption"))
+			Expect(buf.String()).To(ContainSubstring("test_example"))
+		})
+	})
+
+	// TestHasSeeAlso is the test for HasSeeAlso function
+	Context("Test HasSeeAlso function", func() {
+		It("should return false", func() {
+			// call HasSeeAlso
+			hasSeeAlso := hasSeeAlso(cmd)
+			// check if hasSeeAlso is false
+			Expect(hasSeeAlso).To(BeFalse())
+		})
+	})
+
+	// TestGenYamlTreeCustom is the test for GenYamlTreeCustom function
+	Context("Test GenYamlTreeCustom function", func() {
+		It("should return nil", func() {
+			// add a subcommand
+			cmd.AddCommand(&cobra.Command{
+				Use: "sub",
+			})
+			// path for docs
+			yamlPath := "../../docs/pages/reference/mesheryctl/"
+			// call GenYamlTreeCustom
+			err := GenYamlTreeCustom(cmd, yamlPath, prepender, linkHandler)
+			// check if err is nil
+			Expect(err).To(BeNil())
+		})
+	})
+
+	//TestGenYamlCustom is the test for GenYamlCustom function
+	Context("Test GenYamlCustom function", func() {
+		It("should return specific sub-strings", func() {
+			// add Example for cmd for test
+			cmd.Example = "test_example"
+			// io.Writer
+			buf := &bytes.Buffer{}
+			// call GenYamlCustom
+			err := GenYamlCustom(cmd, buf)
+			// check if err is nil
+			Expect(err).To(BeNil())
+			// check if buf is not empty
+			Expect(buf.String()).NotTo(BeEmpty())
+			// check if buf contains the correct string
+			Expect(buf.String()).To(ContainSubstring("test_example"))
+		})
+	})
 })
