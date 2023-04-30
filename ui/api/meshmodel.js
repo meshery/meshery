@@ -44,6 +44,12 @@ export async function getComponentFromModelApi(model, pageSize = "all", trim = t
   );
 }
 
+export async function getComponentDetails(model) {
+  return await promisifiedDataFetch(
+    `${MESHMODEL_ENDPOINT}/${model}`
+  );
+}
+
 export async function getVersionedComponentFromModel(
   model,
   version,
