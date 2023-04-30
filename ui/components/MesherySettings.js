@@ -408,7 +408,7 @@ class MesherySettings extends React.Component {
         const colSpan = rowData.length - 1;
         this.getComponentsFromModel(rowData[0]);
         const componentDetails = this.state.componentDetails[rowData[0]];
-
+        console.log(componentDetails)
         return (
           <>
             <TableRow>
@@ -419,7 +419,7 @@ class MesherySettings extends React.Component {
 
             {componentDetails && componentDetails.map((component) => (
               <TableRow>
-                <TableCell colSpan={colSpan} style={{ textAlign : "center" }} >{component.name}</TableCell>
+                <TableCell colSpan={colSpan} style={{ textAlign : "center" }} >{component.displayName}</TableCell>
                 <TableCell colSpan={colSpan} style={{ textAlign : "center" }} >{component.version}</TableCell>
                 <TableCell colSpan={colSpan} style={{ textAlign : "center" }} >{component.category.name}</TableCell>
               </TableRow>
