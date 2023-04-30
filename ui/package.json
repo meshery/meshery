@@ -90,6 +90,7 @@
     "notistack": "^1.0.10",
     "patch-package": "^6.4.7",
     "path-parse": "^1.0.7",
+    "pluralize": "^8.0.0",
     "postcss": "^8.4.21",
     "prop-types": "latest",
     "react": "^17.0.2",
