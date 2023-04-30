@@ -40,9 +40,10 @@ import LoadingScreen from "./LoadingComponents/LoadingComponent";
 import { SchemaContext } from "../utils/context/schemaSet";
 import Validation from "./Validation";
 import { ACTIONS, FILE_OPS, MesheryPatternsCatalog, VISIBILITY } from "../utils/Enum";
-import PublishModal from "./PublishModal";
 import CloneIcon from "../public/static/img/CloneIcon";
 import { useRouter } from "next/router";
+import { publish_schema } from "./schemas/publish_schema";
+import Modal from "./Modal";
 
 const styles = (theme) => ({
   grid : {
@@ -336,7 +337,7 @@ function MesheryPatterns({
       (val) => val.feature === MesheryPatternsCatalog
     );
     if (patternsCatalogueCapability?.length) setCanPublishPattern(true);
-  }, [])
+  }, [capabilitiesRegistry])
 
   const searchTimeout = useRef(null);
   /**
@@ -1231,7 +1232,7 @@ function MesheryPatterns({
           validationBody={modalOpen.validationBody}
           errors={modalOpen.errors}
         />
-        {canPublishPattern && <PublishModal open={publishModal.open} handleClose={handlePublishModalClose} pattern={publishModal.pattern} aria-label="catalog publish" handlePublish={handlePublish} />}
+        {canPublishPattern && <Modal open={publishModal.open} schema={publish_schema} handleClose={handlePublishModalClose} pattern={publishModal.pattern} aria-label="catalog publish" handlePublish={handlePublish} />}
         <UploadImport open={importModal.open} handleClose={handleUploadImportClose} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} fetch={() => fetchPatterns(page, pageSize, search, sortOrder)} configuration="Design" />
         <PromptComponent ref={modalRef} />
       </NoSsr>

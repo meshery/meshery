@@ -10,7 +10,8 @@ import { getComponentsinFile } from "../../utils/utils";
 import PublishIcon from "@material-ui/icons/Publish";
 import useStyles from "./Grid.styles";
 import Validation from "../Validation";
-import PublishModal from "../PublishModal";
+import { publish_schema } from "../schemas/publish_schema";
+import Modal from "../Modal";
 
 const INITIAL_GRID_SIZE = { xl : 4, md : 6, xs : 12 };
 
@@ -208,7 +209,7 @@ function MesheryPatternGrid({ patterns=[], handleVerify, handlePublish,handleDep
         tab={modalOpen.action}
         validationBody={modalOpen.validationBody}
       />
-      {canPublishPattern && <PublishModal open={publishModal.open} handleClose={handlePublishModalClose} pattern={publishModal.pattern} aria-label="catalog publish" handlePublish={handlePublish} />}
+      {canPublishPattern && <Modal open={publishModal.open} schema={publish_schema} handleClose={handlePublishModalClose} pattern={publishModal.pattern} aria-label="catalog publish" handlePublish={handlePublish} />}
       <UploadImport open={importModal.open} handleClose={handleUploadImportClose} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} fetch={async() => await fetch()} configuration="Designs"  />
     </div>
   );

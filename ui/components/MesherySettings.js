@@ -32,6 +32,8 @@ import MesherySettingsEnvButtons from './MesherySettingsEnvButtons';
 import MeshModelComponent from './MeshModelComponent';
 import DataTable from "mui-datatables";
 import { configurationTableTheme, configurationTableThemeDark } from '../themes/configurationTableTheme';
+import CredentialIcon from '../assets/icons/CredentialIcon';
+import MesheryCredentialComponent from './MesheryCredentialComponent';
 
 
 const styles = (theme) => ({
@@ -557,6 +559,11 @@ class MesherySettings extends React.Component {
           <MesherySettingsEnvButtons/>
         </div>
         }
+        {
+          tabVal === 5 && <div className={classes.topToolbar}>
+            <MesherySettingsEnvButtons/>
+          </div>
+        }
         <Paper square className={classes.wrapperClss}>
           <Tabs
             value={tabVal}
@@ -614,6 +621,16 @@ class MesherySettings extends React.Component {
                 }
                 label="MeshModel Summary"
                 tab="meshmodelSummary"
+              />
+            </Tooltip>
+            <Tooltip title="Credential" placement="top">
+              <Tab
+                className={classes.tab}
+                icon={
+                  <CredentialIcon width="1.5rem" />
+                }
+                label="Credentials"
+                tab="credential"
               />
             </Tooltip>
 
@@ -708,6 +725,11 @@ class MesherySettings extends React.Component {
 
           </TabContainer>
         )} */}
+        {tabVal === 5 && (
+          <TabContainer>
+            <MesheryCredentialComponent />
+          </TabContainer>
+        )}
 
         {backToPlay}
         <PromptComponent ref={this.systemResetRef} />
