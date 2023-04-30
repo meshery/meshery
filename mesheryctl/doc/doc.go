@@ -134,10 +134,13 @@ func printOptions(buf *bytes.Buffer, cmd *cobra.Command) error {
 
 // GenMarkdownCustom creates custom markdown output.
 func GenMarkdownCustom(cmd *cobra.Command, w io.Writer) error {
+	// InitDefaultHelpCmd add the help command to the command tree.
 	cmd.InitDefaultHelpCmd()
+	// InitDefaultHelpFlag add the help flag to the command tree.
 	cmd.InitDefaultHelpFlag()
 
 	buf := new(bytes.Buffer)
+	// CommandPath returns the full path to this command.
 	name := cmd.CommandPath()
 
 	buf.WriteString("# " + name + "\n\n")
@@ -147,20 +150,22 @@ func GenMarkdownCustom(cmd *cobra.Command, w io.Writer) error {
 		buf.WriteString(cmd.Long + "\n\n")
 	}
 
+	// check if the command is runnable
 	if cmd.Runnable() {
 		buf.WriteString(fmt.Sprintf("<pre class='codeblock-pre'>\n<div class='codeblock'>\n%s\n\n</div>\n</pre> \n\n", cmd.UseLine()))
 	}
 
+	// check cmd has annotations link and caption
 	picLine, ok := cmd.Annotations["link"]
 	if !ok {
 		picLine = ""
 	}
-
 	picComment, ok := cmd.Annotations["caption"]
 	if !ok {
 		picComment = ""
 	}
 
+	// check if cmd has example
 	if len(cmd.Example) > 0 {
 		buf.WriteString("## Examples\n\n")
 		var examples = strings.Split(cmd.Example, "\n")
@@ -273,7 +278,6 @@ func GenYamlTreeCustom(cmd *cobra.Command, dir string, filePrepender, linkHandle
 	if err != nil {
 		return err
 	}
-	defer f.Close()
 
 	_, err = io.WriteString(f, filePrepender(filename))
 	if err != nil {
@@ -284,17 +288,25 @@ func GenYamlTreeCustom(cmd *cobra.Command, dir string, filePrepender, linkHandle
 	if err != nil {
 		return err
 	}
+
+	// check error before defer
+	if err = f.Close(); err != nil {
+		return err
+	}
+	defer f.Close()
+
 	return nil
 }
 
 // GenYamlCustom generates yaml docs for the command
 func GenYamlCustom(cmd *cobra.Command, w io.Writer) error {
+	// init default help command and flag
 	cmd.InitDefaultHelpCmd()
 	cmd.InitDefaultHelpFlag()
-
 	yamlDoc := cmdDoc{}
 
 	yamlDoc.Name = cmd.CommandPath()
+	// cmd.Short is the short description of the command
 	yamlDoc.Description = cmd.Short
 	yamlDoc.Usage = cmd.UseLine()
 	if len(cmd.Example) > 0 {
