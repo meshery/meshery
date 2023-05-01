@@ -1,11 +1,10 @@
 // @ts-check
-import { AppBar, IconButton, makeStyles, Toolbar, Tooltip, Typography } from "@material-ui/core";
+import { AppBar, IconButton, makeStyles, Toolbar, Tooltip } from "@material-ui/core";
 import { Delete, HelpOutline } from "@material-ui/icons";
 import SettingsIcon from '@material-ui/icons/Settings';
 import React, { useEffect } from "react";
 import { iconSmall } from "../../css/icons.styles";
 import { pSBCr } from "../../utils/lightenOrDarkenColor";
-import { getMeshProperties } from "../../utils/nameMapper";
 import PatternServiceFormCore from "./PatternServiceFormCore";
 
 const useStyles = makeStyles(() => ({
@@ -34,16 +33,14 @@ const useStyles = makeStyles(() => ({
 }));
 
 /**
- * PatternServiceForm renders a form from the workloads schema and
- * traits schema
+ * PatternServiceForm renders a form from the workloads schema
  * @param {{
- *  schemaSet: { workload: any, traits: any[], type: string };
+ *  schemaSet: { workload: any, type: string };
  *  onSubmit: Function;
  *  onDelete: Function;
  *  namespace: string;
  *  onChange?: Function
  *  onSettingsChange?: Function;
- *  onTraitsChange?: Function;
  *  formData?: Record<String, unknown>
  *  reference?: Record<any, any>;
  *  scroll?: Boolean; // If the window should be scrolled to zero after re-rendering
@@ -51,11 +48,9 @@ const useStyles = makeStyles(() => ({
  * }} props
  * @returns
  */
-function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference, namespace, onSettingsChange, onTraitsChange, scroll = false, color }) {
+function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference, namespace, onSettingsChange, scroll = false, color }) {
   console.log({ schemaSet })
-  // eslint-disable-next-line no-unused-vars
-  const [tab, setTab] = React.useState(0);
-  const classes = useStyles({ color : getMeshProperties(getMeshName(schemaSet))?.color });
+  const classes = useStyles();
 
   useEffect(() => {
     schemaSet.workload.properties.name = {
@@ -93,22 +88,12 @@ function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference
       reference={reference}
       namespace={namespace}
       onSettingsChange={onSettingsChange}
-      onTraitsChange={onTraitsChange}
       scroll={scroll}
-      tab={tab}
     >
-      {(SettingsForm, TraitsForm) => {
-
-        // For rendering addons without tabs
-        if (schemaSet?.type === "addon") {
-          return <SettingsForm />
-        }
-
-        // for rendering normal rjsf forms
+      {(SettingsForm) => {
         return (
           <div className={classes.formWrapper}>
             <AppBar style={{
-
               boxShadow : `0px 2px 4px -1px "#677E88"`,
               background : "#677E88",
               position : "sticky",
@@ -159,45 +144,12 @@ function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference
                 </IconButton>
               </Toolbar>
             </AppBar>
-            <TabPanel value={tab} index={0} className={classes.tabPanel}>
-              <SettingsForm />
-            </TabPanel>
-            <TabPanel value={tab} index={1} className={classes.tabPanel}>
-              <TraitsForm />
-            </TabPanel>
+            <SettingsForm />
           </div>
         )
       }}
     </PatternServiceFormCore>
   )
-}
-
-function TabPanel(props) {
-  const {
-    children, value, index, ...other
-  } = props;
-
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
-      {value === index && (
-        <Typography>{children}</Typography>
-      )}
-    </div>
-  );
-}
-
-/**
- * @param {{ workload: { [x: string]: string; }; }} schema
- * @returns {String} name
- */
-function getMeshName(schema) {
-  return schema?.workload?.["service-mesh"]?.toLowerCase() || "core";
 }
 
 export default PatternServiceForm;
