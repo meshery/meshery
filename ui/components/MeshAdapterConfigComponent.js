@@ -359,7 +359,7 @@ class MeshAdapterConfigComponent extends React.Component {
               image = "/static/img/" + adapter.name.toLowerCase() + ".svg";
               logoIcon = <img src={image} className={classes.icon} />;
             }
-            console.log(adapter)
+
             return (
               <Tooltip
                 key={adapter.uniqueID}
