@@ -67,7 +67,7 @@
       url: concepts/architecture
     - title: Adapters
       url: concepts/architecture/adapters
-- title: ⚙️ Tasks
+- title: ⚙️ Tasks (all)
   url: tasks
   links:
     - title: Application Management
@@ -107,7 +107,7 @@
 #       url: service-meshes/adapters/tanzu-sm
 #     - title: Traefik Mesh
 #       url: service-meshes/adapters/traefik-mesh
-- title: 📚 Guides
+- title: 📚 Guides (all)
   url: guides
   links:
     - title: Deploying Sample Applications
