@@ -402,9 +402,7 @@ class MesherySettings extends React.Component {
           </>
         )
       },
-      isRowExpandable : (dataIndex, expandedRows) => {
-        return expandedRows.data.length === 0 || expandedRows.data[0].dataIndex === dataIndex;
-      },
+
       renderExpandableRow : (rowData) => {
         const colSpan = rowData.length - 1;
         this.getComponentsFromModel(rowData[0]);
