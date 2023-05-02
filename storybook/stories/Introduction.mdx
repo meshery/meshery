@@ -1,4 +1,6 @@
-import { Meta } from '@storybook/addon-docs';
+import { Meta } from '@storybook/blocks';
+import Image from 'next/image';
+
 import Code from './assets/code-brackets.svg';
 import Colors from './assets/colors.svg';
 import Comments from './assets/comments.svg';
@@ -14,7 +16,7 @@ import StackAlt from './assets/stackalt.svg';
   {`
     .subheading {
       --mediumdark: '#999999';
-      font-weight: 900;
+      font-weight: 700;
       font-size: 13px;
       color: #999;
       letter-spacing: 6px;
@@ -49,7 +51,7 @@ import StackAlt from './assets/stackalt.svg';
 
     .link-item {
       display: block;
-      padding: 20px 30px 20px 15px;
+      padding: 20px;
       border: 1px solid #00000010;
       border-radius: 5px;
       transition: background 150ms ease-out, border 150ms ease-out, transform 150ms ease-out;
@@ -75,14 +77,16 @@ import StackAlt from './assets/stackalt.svg';
       margin-bottom: 2px;
     }
 
-    .link-item img {
+    .link-item-img-wrapper {
       height: 40px;
       width: 40px;
       margin-right: 15px;
       flex: none;
     }
 
-    .link-item span {
+    .link-item span,
+    .link-item p {
+      margin: 0;
       font-size: 14px;
       line-height: 20px;
     }
@@ -131,7 +135,9 @@ We recommend building UIs with a [**component-driven**](https://componentdriven.
     href="https://storybook.js.org/docs/react/addons/addon-types"
     target="_blank"
   >
-    <img src={Plugin} alt="plugin" />
+    <div className="link-item-img-wrapper">
+      <Image src={Plugin} alt="plugin" />
+    </div>
     <span>
       <strong>Presets for popular tools</strong>
       Easy setup for TypeScript, SCSS and more.
@@ -142,7 +148,9 @@ We recommend building UIs with a [**component-driven**](https://componentdriven.
     href="https://storybook.js.org/docs/react/configure/webpack"
     target="_blank"
   >
-    <img src={StackAlt} alt="Build" />
+    <div className="link-item-img-wrapper">
+      <Image src={StackAlt} alt="Build" />
+    </div>
     <span>
       <strong>Build configuration</strong>
       How to customize webpack and Babel
@@ -153,7 +161,9 @@ We recommend building UIs with a [**component-driven**](https://componentdriven.
     href="https://storybook.js.org/docs/react/configure/styling-and-css"
     target="_blank"
   >
-    <img src={Colors} alt="colors" />
+    <div className="link-item-img-wrapper">
+      <Image src={Colors} alt="colors" />
+    </div>
     <span>
       <strong>Styling</strong>
       How to load and configure CSS libraries
@@ -164,7 +174,9 @@ We recommend building UIs with a [**component-driven**](https://componentdriven.
     href="https://storybook.js.org/docs/react/get-started/setup#configure-storybook-for-your-stack"
     target="_blank"
   >
-    <img src={Flow} alt="flow" />
+    <div className="link-item-img-wrapper">
+      <Image src={Flow} alt="flow" />
+    </div>
     <span>
       <strong>Data</strong>
       Providers and mocking for data libraries
@@ -176,28 +188,36 @@ We recommend building UIs with a [**component-driven**](https://componentdriven.
 
 <div className="link-list">
   <a className="link-item" href="https://storybook.js.org/docs" target="_blank">
-    <img src={Repo} alt="repo" />
+    <div className="link-item-img-wrapper">
+      <Image src={Repo} alt="repo" />
+    </div>
     <span>
       <strong>Storybook documentation</strong>
       Configure, customize, and extend
     </span>
   </a>
   <a className="link-item" href="https://storybook.js.org/tutorials/" target="_blank">
-    <img src={Direction} alt="direction" />
+    <div className="link-item-img-wrapper">
+      <Image src={Direction} alt="direction" />
+    </div>
     <span>
       <strong>In-depth guides</strong>
       Best practices from leading teams
     </span>
   </a>
   <a className="link-item" href="https://github.com/storybookjs/storybook" target="_blank">
-    <img src={Code} alt="code" />
+    <div className="link-item-img-wrapper">
+      <Image src={Code} alt="code" />
+    </div>
     <span>
       <strong>GitHub project</strong>
       View the source and add issues
     </span>
   </a>
   <a className="link-item" href="https://discord.gg/storybook" target="_blank">
-    <img src={Comments} alt="comments" />
+    <div className="link-item-img-wrapper">
+      <Image src={Comments} alt="comments" />
+    </div>
     <span>
       <strong>Discord chat</strong>
       Chat with maintainers and the community
@@ -206,6 +226,5 @@ We recommend building UIs with a [**component-driven**](https://componentdriven.
 </div>
 
 <div className="tip-wrapper">
-  <span className="tip">Tip</span>Edit the Markdown in{' '}
-  <code>stories/Introduction.stories.mdx</code>
+  <span className="tip">Tip</span>Edit the Markdown in <code>stories/Introduction.mdx</code>
 </div>
