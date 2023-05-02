@@ -209,7 +209,7 @@ function MesheryPatternGrid({ patterns=[], handleVerify, handlePublish,handleDep
         tab={modalOpen.action}
         validationBody={modalOpen.validationBody}
       />
-      {canPublishPattern && <Modal open={publishModal.open} schema={publish_schema} handleClose={handlePublishModalClose} pattern={publishModal.pattern} aria-label="catalog publish" handlePublish={handlePublish} />}
+      {canPublishPattern && <Modal open={publishModal.open} schema={publish_schema} handleClose={handlePublishModalClose} pattern={publishModal.pattern} aria-label="catalog publish" handleSubmit={handlePublish} />}
       <UploadImport open={importModal.open} handleClose={handleUploadImportClose} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} fetch={async() => await fetch()} configuration="Designs"  />
     </div>
   );

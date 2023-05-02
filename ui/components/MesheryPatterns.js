@@ -1232,7 +1232,7 @@ function MesheryPatterns({
           validationBody={modalOpen.validationBody}
           errors={modalOpen.errors}
         />
-        {canPublishPattern && <Modal open={publishModal.open} schema={publish_schema} handleClose={handlePublishModalClose} pattern={publishModal.pattern} aria-label="catalog publish" handlePublish={handlePublish} />}
+        {canPublishPattern && <Modal open={publishModal.open} schema={publish_schema} handleClose={handlePublishModalClose} pattern={publishModal.pattern} aria-label="catalog publish" handleSubmit={handlePublish} />}
         <UploadImport open={importModal.open} handleClose={handleUploadImportClose} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} fetch={() => fetchPatterns(page, pageSize, search, sortOrder)} configuration="Design" />
         <PromptComponent ref={modalRef} />
       </NoSsr>

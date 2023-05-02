@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Button, Grid, IconButton } from '@material-ui/core';
 import {
   Dialog, DialogActions,
@@ -11,7 +11,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import RJSFWrapper from './MesheryMeshInterface/PatternService/RJSF_wrapper';
 
 function Modal(props) {
-  const { open, handleClose, pattern, handlePublish, schema } = props;
+  const { open, handleClose, pattern, handleSubmit, schema } = props;
   const classes = useStyles();
 
   const [data, setData] = React.useState(null)
@@ -19,10 +19,10 @@ function Modal(props) {
     "id" : pattern?.id,
     "catalog_data" : pattern?.catalog_data
   })
-  React.useEffect(() => {
-    setData(pattern.catalog_data)
-  }, [pattern])
-  React.useEffect(() => {
+  // useEffect(() => {
+  //   setData(pattern.catalog_data)
+  // }, [pattern])
+  useEffect(() => {
     setPayload({
       "id" : pattern?.id,
       "catalog_data" : data
@@ -65,7 +65,7 @@ function Modal(props) {
             className={classes.testsButton}
             onClick={() => {
               handleClose();
-              handlePublish(payload)
+              handleSubmit(payload)
             }}
           >
             <PublicIcon className={classes.iconPatt} />
