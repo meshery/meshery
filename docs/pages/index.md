@@ -25,7 +25,7 @@ language: en
     </a>
     <h6>Getting Started</h6>
     <ul>
-        <li><a href="{{ site.baseurl }}/getting-started/overview">Meshery Overview</a></li>
+        <li><a href="{{ site.baseurl }}/project">Meshery Overview</a></li>
         <li><a href="{{ site.baseurl }}/project/community">Community</a></li>
         <li><a href="{{ site.baseurl }}/project/contributing">Contributing</a></li> 
     </ul>
