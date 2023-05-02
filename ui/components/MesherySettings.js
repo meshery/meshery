@@ -15,22 +15,23 @@ import { faArrowLeft, faCloud, faPoll, faDatabase, faFileInvoice } from '@fortaw
 // import {faTachometerAlt} from '@fortawesome/free-solid-svg-icons';
 import { faMendeley } from '@fortawesome/free-brands-svg-icons';
 import Link from 'next/link';
+import { withSnackbar } from "notistack";
+import { MuiThemeProvider } from '@material-ui/core/styles';
+import DataTable from "mui-datatables";
+
 import MeshConfigComponent from './MeshConfigComponent';
 import GrafanaComponent from './telemetry/grafana/GrafanaComponent';
 import MeshAdapterConfigComponent from './MeshAdapterConfigComponent';
 import PrometheusComponent from './telemetry/prometheus/PrometheusComponent';
 // import MesherySettingsPerformanceComponent from "../components/MesherySettingsPerformanceComponent";
 import { updateProgress } from "../lib/store";
-import { withSnackbar } from "notistack";
 import PromptComponent from './PromptComponent';
 import resetDatabase from './graphql/queries/ResetDatabaseQuery';
 import { iconMedium } from '../css/icons.styles';
 import subscribeMeshModelSummary from "./graphql/subscriptions/MeshModelSummarySubscription";
 import fetchMeshModelSummary from "./graphql/queries/MeshModelSummaryQuery";
-import { MuiThemeProvider } from '@material-ui/core/styles';
 import MesherySettingsEnvButtons from './MesherySettingsEnvButtons';
 import MeshModelComponent from './MeshModelComponent';
-import DataTable from "mui-datatables";
 import { configurationTableTheme, configurationTableThemeDark } from '../themes/configurationTableTheme';
 import { getComponentDetails } from "../api/meshmodel";
 
@@ -386,7 +387,6 @@ class MesherySettings extends React.Component {
       pagination : false,
       fixedHeader : true,
       customToolbar : () => {
-
         return (
           <>
             {self.state.meshmodelSummarySelectorList && (
@@ -432,14 +432,14 @@ class MesherySettings extends React.Component {
 
     if (Array.isArray(meshmodelSummary) && meshmodelSummary?.length)
       return (
-        <Paper elevation={1} style={{ padding : "2rem" }}>
+        <Paper elevation={1}  >
           <MuiThemeProvider theme={ theme.palette.type == "dark" ?  configurationTableThemeDark() : configurationTableTheme() }>
             <DataTable
               title={
                 <>
-                  <div style={{ display : "flex", alignItems : "center", marginBottom : "1rem" }}>
+                  <div style={{ display : "flex", alignItems : "center", marginBottom : "2rem", marginTop : "2rem" }}>
                     <img src={"/static/img/all_mesh.svg"} className={this.props.classes.icon} style={{ marginRight : "0.75rem" }} />
-                    <Typography variant="h6">Registered MeshModel</Typography>
+                    <Typography variant="h7" style={{ fontWeight : 'bold' }}>Registered MeshModel</Typography>
                   </div>
                 </>
               }
