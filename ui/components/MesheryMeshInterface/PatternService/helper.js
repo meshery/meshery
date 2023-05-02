@@ -21,6 +21,7 @@ export function getRefinedJsonSchema(jsonSchema, hideTitle = true, handleError) 
   try {
     refinedSchema = hideTitle ? deleteTitleFromJSONSchema(jsonSchema) : jsonSchema
     refinedSchema = deleteDescriptionFromJSONSchema(refinedSchema)
+    refinedSchema.properties = sortProperties(refinedSchema.properties)
     recursivelyParseJsonAndCheckForNonRJSFCompliantFields(refinedSchema);
   } catch (e) {
     console.trace(e)
@@ -93,7 +94,7 @@ export const userPromptKeys = ["allOf", "anyOf", "oneOf"];
  * @param {*} properties
  * @returns
  */
-export const sortProperties = (properties) => {
+const sortProperties = (properties) => {
   const sortedProperties = {};
   Object.keys(properties)
     .sort((a, b) => {

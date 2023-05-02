@@ -23,7 +23,7 @@
     "@babel/eslint-parser": "^7.19.1",
     "@cypress/code-coverage": "^3.10.0",
     "@emotion/cache": "^11.10.5",
-    "@emotion/react": "^11.10.6",
+    "@emotion/react": "^11.10.8",
     "@emotion/server": "^11.10.0",
     "@emotion/styled": "^11.10.6",
     "@mui/icons-material": "^5.11.11",
@@ -38,7 +38,7 @@
   },
   "devDependencies": {
     "cypress": "^12.9.0",
-    "eslint": "^8.32.0",
+    "eslint": "^8.39.0",
     "eslint-config-next": "^13.2.4",
     "eslint-plugin-cypress": "^2.13.2",
     "start-server-and-test": "^1.15.3"
