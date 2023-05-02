@@ -699,7 +699,7 @@ paths:
             responses:
                 "200":
                     $ref: '#/responses/ComponentDefinition'
-            summary: Handle GET request for getting meshmodel components of a specific specific. The component type/model name should be lowercase like "kubernetes", "istio"
+            summary: Handle GET request for getting meshmodel components of a specific model. The component type/model name should be lowercase like "kubernetes", "istio"
             tags:
                 - GetMeshmodelComponentByModel
     /api/meshmodels/models/{model}/components/{name}:
