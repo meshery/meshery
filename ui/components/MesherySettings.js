@@ -373,7 +373,7 @@ class MesherySettings extends React.Component {
     ]
 
     const options = {
-      filter : true,
+      filter : false,
       filterType : 'dropdown',
       expandableRows : true,
       expandableRowsOnClick : true,
@@ -386,6 +386,7 @@ class MesherySettings extends React.Component {
       pagination : false,
       fixedHeader : true,
       customToolbar : () => {
+        console.log('selector', this.state.meshModelSummarySelector)
         return (
           <>
             {self.state.meshmodelSummarySelectorList && (
