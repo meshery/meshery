@@ -11,6 +11,7 @@ import ExpandLessIcon from '../../../../assets/icons/ExpandLessIcon'
 import ErrorOutlineIcon from '../../../../assets/icons/ErrorOutlineIcon';
 import { ERROR_COLOR } from '../../../../constants/colors';
 import { iconMedium, iconSmall } from '../../../../css/icons.styles';
+import { calculateGrid, getHyperLinkDiv } from '../helper';
 
 const styles = (theme) => ({
   objectFieldGrid : {
@@ -29,6 +30,22 @@ const styles = (theme) => ({
   },
 
 });
+/**
+ * Get the raw errors from the error schema.
+ * @param {Object} errorSchema error schema.
+ * @returns {Array} raw errors.
+*/
+
+const getRawErrors = (errorSchema) => {
+  if (!errorSchema) return [];
+  const errors = [];
+  Object.keys(errorSchema).forEach((key) => {
+    if (errorSchema[key].__errors) {
+      errors.push(...errorSchema[key].__errors);
+    }
+  });
+  return errors;
+};
 
 const ObjectFieldTemplate = ({
   description,
@@ -43,10 +60,11 @@ const ObjectFieldTemplate = ({
   formData,
   onAddClick,
   classes,
-  rawErrors
+  errorSchema
 }) => {
   const additional = schema?.__additional_property; // check if the object is additional
   const theme = useTheme();
+  const rawErrors = getRawErrors(errorSchema)
 
   // If the parent type is an `array`, then expand the current object.
   const [show, setShow] = React.useState(false);
@@ -90,12 +108,12 @@ const ObjectFieldTemplate = ({
           <Typography variant="body1" className={classes.typography} style={{ fontWeight : "bold", display : "inline" }}>{title.charAt(0).toUpperCase() + title.slice(1)}{" "}
           </Typography>
           {description &&
-            <CustomTextTooltip backgroundColor="#3C494F" title={description}>
+            <CustomTextTooltip backgroundColor="#3C494F" title={getHyperLinkDiv(description)}>
               <IconButton disableTouchRipple="true" disableRipple="true" component="span" size="small">
                 <HelpOutlineIcon width="14px" height="14px"  fill={theme.palette.type === 'dark' ? "white" : "black"}   style={{ marginLeft : "4px", verticalAlign : "middle", ...iconSmall }}/>
               </IconButton>
             </CustomTextTooltip>}
-          {rawErrors?.length &&
+          {rawErrors.length !==0 &&
             <CustomTextTooltip backgroundColor={ERROR_COLOR} title={rawErrors?.map((error, index) => (
               <div key={index}>{error}</div>
             ))}>
@@ -118,15 +136,7 @@ const ObjectFieldTemplate = ({
         ) : (
           <Grid
             item={true}
-            sm={12}
-            lg={
-              element.type === "object" ||
-                element.type === "array" ||
-                element.__additional_property ||
-                additional
-                ? 12
-                : 6
-            }
+            {...calculateGrid(element)}
             key={index}
           >
             {element.content}

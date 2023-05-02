@@ -142,7 +142,7 @@ class RemoteExtension extends React.Component {
   }
 
   render() {
-    const { extensionType } = this.props;
+    const { extensionType, capabilitiesRegistry } = this.props;
     const { componentTitle, isLoading } = this.state;
 
     return (
@@ -162,7 +162,7 @@ class RemoteExtension extends React.Component {
             </NoSsr>) : (
               !isLoading? (
                 <Box display="flex" justifyContent="center">
-                  <MeshMapEarlyAccessCard rootStyle={{ position : "relative" }} />
+                  <MeshMapEarlyAccessCard rootStyle={{ position : "relative" }} capabilitiesRegistry={capabilitiesRegistry} />
                 </Box>
               ): (
                 <CircularProgress />

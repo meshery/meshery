@@ -10,8 +10,9 @@ import (
 	"os"
 	"path/filepath"
 
-	guid "github.com/google/uuid"
 	mutil "github.com/layer5io/meshery/server/helpers/utils"
+
+	guid "github.com/google/uuid"
 	"github.com/layer5io/meshery/server/meshes"
 	mcore "github.com/layer5io/meshery/server/models/meshmodel/core"
 	meshmodelv1alpha1 "github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
@@ -23,8 +24,8 @@ import (
 	"github.com/layer5io/meshery/server/helpers"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/pattern/core"
+	putils "github.com/layer5io/meshery/server/models/pattern/utils"
 	"github.com/layer5io/meshkit/models/meshmodel"
-	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
 	"github.com/layer5io/meshkit/utils"
 	"github.com/layer5io/meshkit/utils/events"
 	"github.com/pkg/errors"
@@ -314,42 +315,6 @@ func (h *Handler) LoadContextsAndPersist(token string, prov models.Provider) ([]
 	return contexts, nil
 }
 
-func RegisterK8sComponents(ctxt context.Context, config []byte, ctxID string, _ *meshmodel.RegistryManager, _ *events.EventStreamer, _ string) (err error) {
-	man, err := core.GetK8Components(ctxt, config)
-	if err != nil {
-		return ErrCreatingKubernetesComponents(err, ctxID)
-	}
-	if man == nil {
-		return ErrCreatingKubernetesComponents(errors.New("generated components are nil"), ctxID)
-	}
-	for i, def := range man.Definitions {
-		var ord core.WorkloadCapability
-		ord.Metadata = make(map[string]string)
-		ord.Metadata["io.meshery.ctxid"] = ctxID
-		ord.Metadata["adapter.meshery.io/name"] = "kubernetes"
-		ord.Host = "<none-local>"
-		ord.OAMRefSchema = man.Schemas[i]
-
-		var definition v1alpha1.WorkloadDefinition
-		err := json.Unmarshal([]byte(def), &definition)
-		if err != nil {
-			return ErrCreatingKubernetesComponents(err, ctxID)
-		}
-		ord.OAMDefinition = definition
-		content, err := json.Marshal(ord)
-		if err != nil {
-			return ErrCreatingKubernetesComponents(err, ctxID)
-		}
-		// go writeDefK8sOnFileSystem(string(def), filepath.Join(rootpath, definition.Spec.Metadata["k8sKind"]+"_definitions.k8s.json"))
-		// go writeSchemaK8sFileSystem(ord.OAMRefSchema, filepath.Join(rootpath, definition.Spec.Metadata["k8sKind"]+"_schema.k8s.json"))
-		err = core.RegisterWorkload(content)
-		if err != nil {
-			return ErrCreatingKubernetesComponents(err, ctxID)
-		}
-	}
-	return nil
-}
-
 func RegisterK8sMeshModelComponents(_ context.Context, config []byte, ctxID string, reg *meshmodel.RegistryManager, es *events.EventStreamer, ctxName string) (err error) {
 	man, err := mcore.GetK8sMeshModelComponents(config)
 	if err != nil {
@@ -386,29 +351,19 @@ func writeK8sMetadata(comp *meshmodelv1alpha1.ComponentDefinition, reg *meshmode
 	ent := reg.GetEntities(&meshmodelv1alpha1.ComponentFilter{
 		Name:       comp.Kind,
 		APIVersion: comp.APIVersion,
-		ModelName:  comp.Model.Name,
 	})
 	//If component was not available in the registry, then use the generic model level metadata
 	if len(ent) == 0 {
-		mergeMaps(comp.Metadata, k8sMeshModelMetadata)
+		putils.MergeMaps(comp.Metadata, k8sMeshModelMetadata)
 		mutil.WriteSVGsOnFileSystem(comp)
 	} else {
 		existingComp, ok := ent[0].(meshmodelv1alpha1.ComponentDefinition)
 		if !ok {
-			mergeMaps(comp.Metadata, k8sMeshModelMetadata)
+			putils.MergeMaps(comp.Metadata, k8sMeshModelMetadata)
 			return
 		}
-		mergeMaps(comp.Metadata, existingComp.Metadata)
-		if comp.Model.Metadata == nil {
-			comp.Model.Metadata = make(map[string]interface{})
-		}
-		mergeMaps(comp.Model.Metadata, existingComp.Model.Metadata)
-		comp.Model.Category = existingComp.Model.Category
-	}
-}
-func mergeMaps(mergeInto, toMerge map[string]interface{}) {
-	for k, v := range toMerge {
-		mergeInto[k] = v
+		putils.MergeMaps(comp.Metadata, existingComp.Metadata)
+		comp.Model = existingComp.Model
 	}
 }
 

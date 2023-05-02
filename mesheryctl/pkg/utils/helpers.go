@@ -199,6 +199,7 @@ var TemplateContext = config.Context{
 	Components: ListOfComponents,
 	Channel:    "stable",
 	Version:    "latest",
+	Provider:   "Meshery",
 }
 
 // TemplateToken is the template token provided when creating a config file

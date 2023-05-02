@@ -62,6 +62,7 @@ type HandlerInterface interface {
 	MeshAdapterConfigHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	MeshOpsHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	AdaptersHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	AvailableAdaptersHandler(w http.ResponseWriter, req *http.Request)
 	EventStreamHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	AdapterPingHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 
@@ -98,8 +99,6 @@ type HandlerInterface interface {
 	SessionSyncHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 
 	PatternFileHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
-	GETOAMRegisterHandler(rw http.ResponseWriter, r *http.Request)
-	OAMRegisterHandler(rw http.ResponseWriter, r *http.Request)
 	GetMeshmodelCategories(rw http.ResponseWriter, r *http.Request)
 	GetMeshmodelCategoriesByName(rw http.ResponseWriter, r *http.Request)
 	GetMeshmodelModelsByName(rw http.ResponseWriter, r *http.Request)
@@ -122,8 +121,6 @@ type HandlerInterface interface {
 	GetMeshmodelRelationshipByName(rw http.ResponseWriter, r *http.Request)
 	RegisterMeshmodelRelationships(rw http.ResponseWriter, r *http.Request)
 
-	OAMComponentDetailsHandler(rw http.ResponseWriter, r *http.Request)
-	OAMComponentDetailByIDHandler(rw http.ResponseWriter, r *http.Request)
 	PatternFileRequestHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	DeleteMesheryPatternHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	CloneMesheryPatternHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
@@ -159,6 +156,11 @@ type HandlerInterface interface {
 	DeleteScheduleHandler(w http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 
 	ExtensionsHandler(w http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
+
+	SaveUserCredential(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	GetUserCredentials(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	UpdateUserCredential(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	DeleteUserCredential(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 }
 
 // HandlerConfig holds all the config pieces needed by handler methods

@@ -17,10 +17,12 @@ replace (
 require (
 	cuelang.org/go v0.4.3
 	fortio.org/fortio v1.21.0
-	github.com/99designs/gqlgen v0.17.24
+	github.com/99designs/gqlgen v0.17.28
 	github.com/asaskevich/govalidator v0.0.0-20200907205600-7a23bdc65eef
 	github.com/briandowns/spinner v1.19.0
+	github.com/docker/cli v20.10.21+incompatible
 	github.com/docker/docker v20.10.23+incompatible
+	github.com/docker/go-connections v0.4.0
 	github.com/envoyproxy/go-control-plane v0.11.0
 	github.com/ghodss/yaml v1.0.0
 	github.com/go-errors/errors v1.4.2
@@ -37,8 +39,8 @@ require (
 	github.com/jarcoal/httpmock v1.2.0
 	github.com/jinzhu/copier v0.0.0-20190924061706-b57f9002281a
 	github.com/layer5io/gowrk2 v0.0.0-20191111234958-a4c9071c0f87
-	github.com/layer5io/meshery-operator v0.6.6
-	github.com/layer5io/meshkit v0.6.33
+	github.com/layer5io/meshery-operator v0.6.8
+	github.com/layer5io/meshkit v0.6.40
 	github.com/layer5io/meshsync v0.6.9
 	github.com/layer5io/nighthawk-go v1.0.3
 	github.com/layer5io/service-mesh-performance v0.3.4
@@ -46,6 +48,8 @@ require (
 	github.com/manifoldco/promptui v0.9.0
 	github.com/nsf/termbox-go v1.1.1
 	github.com/olekukonko/tablewriter v0.0.5
+	github.com/onsi/ginkgo/v2 v2.4.0
+	github.com/onsi/gomega v1.23.0
 	github.com/pkg/browser v0.0.0-20210706143420-7d21f8c997e2
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.14.0
@@ -57,8 +61,8 @@ require (
 	github.com/spf13/viper v1.15.0
 	github.com/vektah/gqlparser/v2 v2.5.1
 	github.com/vmihailenco/taskq/v3 v3.2.9
-	golang.org/x/oauth2 v0.5.0
-	golang.org/x/text v0.7.0
+	golang.org/x/oauth2 v0.6.0
+	golang.org/x/text v0.8.0
 	gonum.org/v1/gonum v0.12.0
 	google.golang.org/grpc v1.53.0
 	google.golang.org/protobuf v1.28.1
@@ -100,10 +104,9 @@ require (
 	github.com/deckarep/golang-set v1.8.0 // indirect
 	github.com/dgryski/go-farm v0.0.0-20200201041132-a6ae2369ad13 // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
-	github.com/docker/cli v20.10.21+incompatible // indirect
 	github.com/docker/distribution v2.8.1+incompatible // indirect
 	github.com/docker/docker-credential-helpers v0.7.0 // indirect
-	github.com/docker/go-connections v0.4.0 // indirect
+	github.com/docker/go v1.5.1-1.0.20160303222718-d30aec9fd63c // indirect
 	github.com/docker/go-metrics v0.0.1 // indirect
 	github.com/docker/go-units v0.5.0 // indirect
 	github.com/docker/libcompose v0.4.0 // indirect
@@ -118,11 +121,12 @@ require (
 	github.com/flynn/go-shlex v0.0.0-20150515145356-3f9db97f8568 // indirect
 	github.com/fsnotify/fsnotify v1.6.0 // indirect
 	github.com/fsouza/go-dockerclient v1.9.3 // indirect
+	github.com/fvbommel/sortorder v1.0.1 // indirect
 	github.com/go-git/gcfg v1.5.0 // indirect
 	github.com/go-git/go-billy/v5 v5.4.0 // indirect
 	github.com/go-git/go-git/v5 v5.4.2 // indirect
 	github.com/go-gorp/gorp/v3 v3.0.2 // indirect
-	github.com/go-logr/logr v1.2.3 // indirect
+	github.com/go-logr/logr v1.2.4 // indirect
 	github.com/go-openapi/analysis v0.19.10 // indirect
 	github.com/go-openapi/errors v0.19.8 // indirect
 	github.com/go-openapi/jsonpointer v0.19.6 // indirect
@@ -146,6 +150,7 @@ require (
 	github.com/gosuri/uitable v0.0.4 // indirect
 	github.com/gregjones/httpcache v0.0.0-20190611155906-901d90724c79 // indirect
 	github.com/hashicorp/golang-lru v0.5.4 // indirect
+	github.com/hashicorp/golang-lru/v2 v2.0.1 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/huandu/xstrings v1.3.3 // indirect
 	github.com/imdario/mergo v0.3.13 // indirect
@@ -169,10 +174,11 @@ require (
 	github.com/magiconair/properties v1.8.7 // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
-	github.com/mattn/go-isatty v0.0.16 // indirect
+	github.com/mattn/go-isatty v0.0.17 // indirect
 	github.com/mattn/go-runewidth v0.0.9 // indirect
 	github.com/mattn/go-sqlite3 v1.14.15 // indirect
 	github.com/matttproud/golang_protobuf_extensions v1.0.4 // indirect
+	github.com/miekg/pkcs11 v1.1.1 // indirect
 	github.com/mitchellh/copystructure v1.2.0 // indirect
 	github.com/mitchellh/go-homedir v1.1.0 // indirect
 	github.com/mitchellh/go-wordwrap v1.0.0 // indirect
@@ -196,7 +202,7 @@ require (
 	github.com/oklog/ulid v1.3.1 // indirect
 	github.com/opencontainers/go-digest v1.0.0 // indirect
 	github.com/opencontainers/image-spec v1.1.0-rc2 // indirect
-	github.com/opencontainers/runc v1.1.4 // indirect
+	github.com/opencontainers/runc v1.1.5 // indirect
 	github.com/openshift/api v3.9.0+incompatible // indirect
 	github.com/pelletier/go-toml/v2 v2.0.6 // indirect
 	github.com/peterbourgon/diskv v2.0.1+incompatible // indirect
@@ -211,6 +217,7 @@ require (
 	github.com/spf13/cast v1.5.0 // indirect
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect
 	github.com/subosito/gotenv v1.4.2 // indirect
+	github.com/theupdateframework/notary v0.7.0 // indirect
 	github.com/vmihailenco/msgpack/v5 v5.3.5 // indirect
 	github.com/vmihailenco/tagparser/v2 v2.0.0 // indirect
 	github.com/xanzy/ssh-agent v0.3.3 // indirect
@@ -223,10 +230,10 @@ require (
 	go.starlark.net v0.0.0-20200306205701-8dd3e2ee1dd5 // indirect
 	golang.org/x/crypto v0.5.0 // indirect
 	golang.org/x/mod v0.8.0 // indirect
-	golang.org/x/net v0.7.0 // indirect
+	golang.org/x/net v0.8.0 // indirect
 	golang.org/x/sync v0.1.0 // indirect
-	golang.org/x/sys v0.5.0 // indirect
-	golang.org/x/term v0.5.0 // indirect
+	golang.org/x/sys v0.6.0 // indirect
+	golang.org/x/term v0.6.0 // indirect
 	golang.org/x/time v0.1.0 // indirect
 	golang.org/x/tools v0.6.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect

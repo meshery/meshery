@@ -798,7 +798,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     sort : !(user && user.user_id === "meshery"),
     search : !(user && user.user_id === "meshery"),
     filterType : "textField",
-    responsive : "scrollFullHeight",
+    responsive : "standard",
     resizableColumns : true,
     serverSide : true,
     count,
@@ -853,7 +853,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
           }, 500);
           break;
         case "sort":
-          if (sortInfo.length == 2) {
+          if (sortInfo.length === 2) {
             if (sortInfo[1] === "ascending") {
               order = `${columns[tableState.activeColumn].name} asc`;
             } else {
@@ -884,7 +884,6 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
 
   return (
     <>
-
       <NoSsr>
         {selectedRowData && Object.keys(selectedRowData).length > 0 && (
           <YAMLEditor filter={selectedRowData} onClose={resetSelectedRowData()} onSubmit={handleSubmit} classes={classes} />

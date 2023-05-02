@@ -15,11 +15,6 @@ import (
 
 // UserHandler returns info about the logged in user
 func (h *Handler) UserHandler(w http.ResponseWriter, _ *http.Request, _ *models.Preference, user *models.User, _ models.Provider) {
-	// if req.Method != http.MethodGet {
-	// 	w.WriteHeader(http.StatusNotFound)
-	// 	return
-	// }
-
 	if err := json.NewEncoder(w).Encode(user); err != nil {
 		obj := "user data"
 		h.log.Error(ErrEncoding(err, obj))
@@ -49,14 +44,14 @@ func (h *Handler) GetUserByIDHandler(w http.ResponseWriter, r *http.Request, _ *
 }
 
 // swagger:route GET /api/user/prefs UserAPI idGetUserTestPrefs
-// Handle GET for User Load Test Preferences
+// Handle GET Requests for User Load Test Preferences
 //
 // Returns User Load Test Preferences
 // responses:
 // 	200: userLoadTestPrefsRespWrapper
 
 // swagger:route POST /api/user/prefs UserAPI idPostUserTestPrefs
-// Handle GET for User Load Test Preferences
+// Handle GET Requests for User Load Test Preferences
 //
 // Updates User Load Test Preferences
 // responses:
