@@ -42,7 +42,7 @@
   "dependencies": {
     "@cypress/code-coverage": "^3.10.1",
     "@date-io/moment": "^2.11.0",
-    "@emotion/react": "^11.10.5",
+    "@emotion/react": "^11.10.8",
     "@emotion/styled": "^11.10.5",
     "@fortawesome/fontawesome-svg-core": "^6.2.0",
     "@fortawesome/free-brands-svg-icons": "^6.4.0",
