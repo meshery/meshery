@@ -375,7 +375,7 @@ class MesherySettings extends React.Component {
     const options = {
       filter : false,
       filterType : 'dropdown',
-      expandableRows : true,
+      expandableRows : self.state.meshmodelSummarySelector.type === 'components',
       expandableRowsOnClick : true,
       expandableRowsHeader : false,
       selectableRows : "none",
@@ -386,7 +386,7 @@ class MesherySettings extends React.Component {
       pagination : false,
       fixedHeader : true,
       customToolbar : () => {
-        console.log('selector', this.state.meshModelSummarySelector)
+
         return (
           <>
             {self.state.meshmodelSummarySelectorList && (
@@ -418,8 +418,8 @@ class MesherySettings extends React.Component {
               <TableCell colSpan={colSpan} style={{ textAlign : "center" }} ><b> Category Name </b></TableCell>
             </TableRow>
 
-            {componentDetails && componentDetails.map((component) => (
-              <TableRow>
+            {componentDetails && componentDetails.map((component, index) => (
+              <TableRow key={index}>
                 <TableCell colSpan={colSpan} style={{ textAlign : "center" }} >{component.displayName}</TableCell>
                 <TableCell colSpan={colSpan} style={{ textAlign : "center" }} >{component.version}</TableCell>
                 <TableCell colSpan={colSpan} style={{ textAlign : "center" }} >{component.category.name}</TableCell>
