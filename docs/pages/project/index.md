@@ -33,18 +33,18 @@ As the cloud native management plane, Meshery enables the operation and manageme
 
 Meshery features can be categorized by:
 
-1. Service Mesh Performance Management
+1. Cloud Native Performance Management
    - Workload and service mesh performance characterization
    - Prometheus and Grafana integration
-1. Service Mesh Configuration Management
+1. Cloud Native Configuration Management
    - Configuration best practices
-1. Service Mesh Lifecycle Management
-   - Service mesh provisioning and workload onboarding
+1. Cloud Native Lifecycle Management
+   - Cloud native provisioning and workload onboarding
    - Meshery Operator and MeshSync
-   - Service mesh patterns and Open Application Model integration
+   - Cloud native patterns and Open Application Model integration
 1. Data Plane Intelligence
    - Registry and configuration of WebAssembly filters for Envoy
-1. Service Mesh Interoperability and Federation
+1. Cloud Native Interoperability and Federation
    - Manage multiple service meshes concurrently
    - Connect to multiple clusters independently
 
@@ -88,7 +88,6 @@ Infrastructure diversity is a reality for any enterprise. Whether you're running
 
 | Service Mesh | Status |
 | :----------- | -----: |
-
 {% for adapter in site.adapters -%}
 {% if adapter.project_status == "stable" -%}
 | <img src="{{ adapter.image }}" style="width:20px" /> [{{ adapter.name }}]({{ site.baseurl }}{{ adapter.url }}) | {{ adapter.project_status }} |
@@ -99,7 +98,6 @@ Infrastructure diversity is a reality for any enterprise. Whether you're running
 
 | Service Mesh | Status |
 | :----------- | -----: |
-
 {% for adapter in site.adapters -%}
 {% if adapter.project_status == "beta" -%}
 | <img src="{{ adapter.image }}" style="width:20px" /> [{{ adapter.name }}]({{ site.baseurl }}{{ adapter.url }}) | {{ adapter.project_status }} |
@@ -110,7 +108,6 @@ Infrastructure diversity is a reality for any enterprise. Whether you're running
 
 | Service Mesh | Status |
 | :----------- | -----: |
-
 {% for adapter in site.adapters -%}
 {% if adapter.project_status == "alpha" -%}
 | <img src="{{ adapter.image }}" style="width:20px" /> [{{ adapter.name }}]({{ site.baseurl }}{{ adapter.url }}) | {{ adapter.project_status }} |

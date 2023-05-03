@@ -35,9 +35,9 @@ type K8sContext struct {
 	MesheryInstanceID  *uuid.UUID `json:"meshery_instance_id,omitempty" yaml:"meshery_instance_id,omitempty"`
 	KubernetesServerID *uuid.UUID `json:"kubernetes_server_id,omitempty" yaml:"kubernetes_server_id,omitempty"`
 	DeploymentType     string     `json:"deployment_type,omitempty" yaml:"deployment_type,omitempty" default:"out_cluster"`
-
-	UpdatedAt *time.Time `json:"updated_at,omitempty" yaml:"updated_at,omitempty"`
-	CreatedAt *time.Time `json:"created_at,omitempty" yaml:"created_at,omitempty"`
+	Version            string     `json:"version,omitempty" yaml:"version,omitempty"`
+	UpdatedAt          *time.Time `json:"updated_at,omitempty" yaml:"updated_at,omitempty"`
+	CreatedAt          *time.Time `json:"created_at,omitempty" yaml:"created_at,omitempty"`
 }
 
 type InternalKubeConfig struct {
@@ -118,6 +118,11 @@ func NewK8sContextWithServerID(
 		return nil, err
 	}
 
+	err = ctx.AssignVersion(handler)
+	if err != nil {
+		return nil, err
+	}
+
 	// Get Kubernetes API server ID by querying the "kube-system" namespace uuid
 	ksns, err := handler.KubeClient.CoreV1().Namespaces().Get(context.TODO(), "kube-system", v1.GetOptions{})
 	if err != nil {
@@ -150,7 +155,21 @@ func K8sContextsFromKubeconfig(kubeconfig []byte, instanceID *uuid.UUID) ([]K8sC
 	for name := range parsed.Contexts {
 		kc, msg := kcfg.K8sContext(name, instanceID)
 		respMessage += msg
-		if err := kc.AssignServerID(); err != nil {
+		handler, err := kc.GenerateKubeHandler()
+		if err != nil {
+			msg = fmt.Sprintf("error generating kubernetes handler: %v\n Skipping context", err)
+			logrus.Warnf(msg)
+			respMessage += msg
+			continue
+		}
+		err = kc.AssignVersion(handler)
+		if err != nil {
+			msg = fmt.Sprintf("error getting kubernetes version: %v\n Skipping context", err)
+			logrus.Warnf(msg)
+			respMessage += msg
+			continue
+		}
+		if err := kc.AssignServerID(handler); err != nil {
 			msg = fmt.Sprintf("Skipping context: Reason => %s\n", err)
 			logrus.Warn(msg)
 			respMessage += msg
@@ -296,6 +315,16 @@ func (kc K8sContext) GenerateKubeHandler() (*kubernetes.Client, error) {
 	return kubernetes.New(cfg)
 }
 
+func (kc *K8sContext) AssignVersion(handler *kubernetes.Client) error {
+	res, err := handler.KubeClient.DiscoveryClient.ServerVersion()
+	if err != nil {
+		return err
+	}
+
+	kc.Version = res.GitVersion
+	return nil
+}
+
 // PingTest uses the k8scontext to to "ping" the kubernetes cluster
 // if the return value is nil then the succeeds or else it has failed
 func (kc K8sContext) PingTest() error {
@@ -314,15 +343,9 @@ func (kc K8sContext) PingTest() error {
 
 // AssignServerID will attempt to assign kubernetes
 // server ID to the kubernetes context
-func (kc *K8sContext) AssignServerID() error {
+func (kc *K8sContext) AssignServerID(handler *kubernetes.Client) error {
 	// Perform Ping test on the cluster
 	if err := kc.PingTest(); err != nil {
-		return err
-	}
-
-	// Get a kubernetes handler
-	handler, err := kc.GenerateKubeHandler()
-	if err != nil {
 		return err
 	}
 

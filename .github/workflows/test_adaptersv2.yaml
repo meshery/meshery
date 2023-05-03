@@ -63,12 +63,12 @@ jobs:
         id: adapter_name
         run: |
           USER_INPUT=${{ github.event.inputs.adapter_name }}
-          run: echo "value=${USER_INPUT:-"meshery"}" >> $GITHUB_OUTPUT
+          echo "value=${USER_INPUT:-"meshery"}" >> $GITHUB_OUTPUT
       - name: Setting up minikube
         id: setk8s
-        uses: manusa/actions-setup-minikube@v2.7.1
+        uses: manusa/actions-setup-minikube@v2.7.2
         with:
-          minikube version: "v1.27.1"
+          minikube version: "v1.28.0"
           kubernetes version: "${{ matrix.k8s_version }}"
           driver: docker
           start args: --cni "${{ inputs.k8s_cni }}"
@@ -78,13 +78,21 @@ jobs:
       # Build the image by setting appropriate environmental variables in order to access the image from minikube
       - name: Build the tagged Docker image
         run: |
-          # if  [[ "${{ steps.name.outputs.adapter_name}}" != "meshery" ]];then
           if [ "${{ inputs.adapter_name }}" != "meshery" ];then
-            eval $(minikube -p minikube docker-env) 
-            docker build -f install/docker/Dockerfile -t test:test .
+             eval $(minikube -p minikube docker-env) 
+             docker build -t test:test .
+          else 
+             eval $(minikube -p minikube docker-env) 
+             docker build -f install/docker/Dockerfile -t test:test .           
           fi
       - name: Retrieve kubeconfig
-        run: cat ~/.kube/config
+        run: |
+          echo "Before flattening"
+          cat ~/.kube/config
+          kubectl config view --minify --flatten > ~/.kube/configtemp
+          mv ~/.kube/configtemp ~/.kube/config
+          echo "After flattening"
+          cat ~/.kube/config
       # Setup meshery config.yaml and auth.json
       - name: Setup meshery config and infinite token for use
         env:
@@ -92,7 +100,7 @@ jobs:
         run: |
           echo $provider_token 
           mkdir ~/.meshery
-          config='{"contexts":{"local":{"endpoint":"http://localhost:9081","token":"default","platform":"kubernetes","adapters":[],"channel":"stable","version":"latest"}},"current-context":"local","tokens":[{"location":"auth.json","name":"default"}]}'
+          config='{"contexts":{"local":{"endpoint":"http://localhost:9081","token":"default","platform":"kubernetes","components":[],"channel":"stable","version":"latest"}},"current-context":"local","tokens":[{"location":"auth.json","name":"default"}]}'
           echo $config > ~/.meshery/config.yaml 
           cat ~/.meshery/config.yaml
           echo "Using provider: ${{ inputs.provider }}"
@@ -103,6 +111,8 @@ jobs:
           fi
           cat ~/.meshery/auth.json
 
+      - name: Cluster info for debugging before starting Meshery
+        run: kubectl get all -A
       # Start Meshery Server (Assuming that this step will create the meshery namespace)
       - name: Start Meshery Server using mesheryctl
         run: |

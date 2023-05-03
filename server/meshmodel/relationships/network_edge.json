@@ -21,6 +21,10 @@
         {
           "kind": "Service",
           "model": "Kubernetes"
+        },
+        {
+          "kind": "Ingress",
+          "model": "Kubernetes"
         }
       ],
       "to": [
@@ -35,12 +39,34 @@
         {
           "kind": "Deployment",
           "model": "Kubernetes"
+        },
+        {
+          "kind": "Service",
+          "model": "Kubernetes"
         }
       ]
     },
     "deny": {
-      "from": [],
-      "deny": []
+      "from": [
+        {
+          "kind": "Ingress",
+          "model": "Kubernetes"
+        }
+      ],
+      "deny": [
+        {
+          "kind": "Endpoints",
+          "model": "Kubernetes"
+        },
+        {
+          "kind": "Pod",
+          "model": "Kubernetes"
+        },
+        {
+          "kind": "Deployment",
+          "model": "Kubernetes"
+        }
+      ]
     }
   }
 }

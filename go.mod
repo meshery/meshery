@@ -20,6 +20,7 @@ require (
 	github.com/99designs/gqlgen v0.17.28
 	github.com/asaskevich/govalidator v0.0.0-20200907205600-7a23bdc65eef
 	github.com/briandowns/spinner v1.19.0
+	github.com/docker/cli v20.10.21+incompatible
 	github.com/docker/docker v20.10.23+incompatible
 	github.com/docker/go-connections v0.4.0
 	github.com/envoyproxy/go-control-plane v0.11.0
@@ -38,7 +39,7 @@ require (
 	github.com/jarcoal/httpmock v1.2.0
 	github.com/jinzhu/copier v0.0.0-20190924061706-b57f9002281a
 	github.com/layer5io/gowrk2 v0.0.0-20191111234958-a4c9071c0f87
-	github.com/layer5io/meshery-operator v0.6.6
+	github.com/layer5io/meshery-operator v0.6.8
 	github.com/layer5io/meshkit v0.6.40
 	github.com/layer5io/meshsync v0.6.9
 	github.com/layer5io/nighthawk-go v1.0.3
@@ -47,6 +48,8 @@ require (
 	github.com/manifoldco/promptui v0.9.0
 	github.com/nsf/termbox-go v1.1.1
 	github.com/olekukonko/tablewriter v0.0.5
+	github.com/onsi/ginkgo/v2 v2.4.0
+	github.com/onsi/gomega v1.23.0
 	github.com/pkg/browser v0.0.0-20210706143420-7d21f8c997e2
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.14.0
@@ -101,9 +104,9 @@ require (
 	github.com/deckarep/golang-set v1.8.0 // indirect
 	github.com/dgryski/go-farm v0.0.0-20200201041132-a6ae2369ad13 // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
-	github.com/docker/cli v20.10.21+incompatible // indirect
 	github.com/docker/distribution v2.8.1+incompatible // indirect
 	github.com/docker/docker-credential-helpers v0.7.0 // indirect
+	github.com/docker/go v1.5.1-1.0.20160303222718-d30aec9fd63c // indirect
 	github.com/docker/go-metrics v0.0.1 // indirect
 	github.com/docker/go-units v0.5.0 // indirect
 	github.com/docker/libcompose v0.4.0 // indirect
@@ -118,11 +121,12 @@ require (
 	github.com/flynn/go-shlex v0.0.0-20150515145356-3f9db97f8568 // indirect
 	github.com/fsnotify/fsnotify v1.6.0 // indirect
 	github.com/fsouza/go-dockerclient v1.9.3 // indirect
+	github.com/fvbommel/sortorder v1.0.1 // indirect
 	github.com/go-git/gcfg v1.5.0 // indirect
 	github.com/go-git/go-billy/v5 v5.4.0 // indirect
 	github.com/go-git/go-git/v5 v5.4.2 // indirect
 	github.com/go-gorp/gorp/v3 v3.0.2 // indirect
-	github.com/go-logr/logr v1.2.3 // indirect
+	github.com/go-logr/logr v1.2.4 // indirect
 	github.com/go-openapi/analysis v0.19.10 // indirect
 	github.com/go-openapi/errors v0.19.8 // indirect
 	github.com/go-openapi/jsonpointer v0.19.6 // indirect
@@ -174,6 +178,7 @@ require (
 	github.com/mattn/go-runewidth v0.0.9 // indirect
 	github.com/mattn/go-sqlite3 v1.14.15 // indirect
 	github.com/matttproud/golang_protobuf_extensions v1.0.4 // indirect
+	github.com/miekg/pkcs11 v1.1.1 // indirect
 	github.com/mitchellh/copystructure v1.2.0 // indirect
 	github.com/mitchellh/go-homedir v1.1.0 // indirect
 	github.com/mitchellh/go-wordwrap v1.0.0 // indirect
@@ -212,6 +217,7 @@ require (
 	github.com/spf13/cast v1.5.0 // indirect
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect
 	github.com/subosito/gotenv v1.4.2 // indirect
+	github.com/theupdateframework/notary v0.7.0 // indirect
 	github.com/vmihailenco/msgpack/v5 v5.3.5 // indirect
 	github.com/vmihailenco/tagparser/v2 v2.0.0 // indirect
 	github.com/xanzy/ssh-agent v0.3.3 // indirect
