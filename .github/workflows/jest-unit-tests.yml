@@ -1,0 +1,21 @@
+name: frontendTestingWithJest
+run-name: ${{ github.actor }} is testing their frontend with Jest
+on:   
+  push:
+    branches:
+      - master
+  pull_request:
+
+jobs:
+  run-jest-frontend-tests:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./ui
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      - run: npm ci
+      - run: npm run test
