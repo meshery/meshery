@@ -1,6 +1,6 @@
 
-include ../Makefile.core.mk
-include ../Makefile.show-help.mk
+# include ../Makefile.core.mk
+# include ../Makefile.show-help.mk
 
 IMAGE?=meshery/docker-extension-meshery:edge-latest
 
