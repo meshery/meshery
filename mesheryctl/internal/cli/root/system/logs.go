@@ -15,13 +15,11 @@
 package system
 
 import (
-	"bufio"
 	"bytes"
 	"context"
 	"fmt"
 	"io"
 	"os"
-	"os/exec"
 	"strings"
 
 	"github.com/pkg/errors"
@@ -29,6 +27,7 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 
+	format "github.com/docker/compose/v2/cmd/formatter"
 	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
 	log "github.com/sirupsen/logrus"
 	apiCorev1 "k8s.io/api/core/v1"
@@ -121,23 +120,15 @@ mesheryctl system logs meshery-istio
 				return nil
 			}
 
-			cmdlog := exec.Command("docker-compose", "-f", utils.DockerComposeFile, "logs", "-f")
-
-			cmdReader, err := cmdlog.StdoutPipe()
+			cli, err := meshkithelp.NewDockerAPIClientFromConfig("")
 			if err != nil {
-				return errors.Wrap(err, utils.SystemError("failed to create stdout pipe"))
+				return err
 			}
-			scanner := bufio.NewScanner(cmdReader)
-			go func() {
-				for scanner.Scan() {
-					fmt.Println(scanner.Text())
-				}
-			}()
-			if err := cmdlog.Start(); err != nil {
-				return errors.Wrap(err, utils.SystemError("failed start logger"))
-			}
-			if err := cmdlog.Wait(); err != nil {
-				return errors.Wrap(err, utils.SystemError("failed to wait for exec process"))
+
+			composeCli := meshkithelp.NewComposeClientFromDocker(cli)
+			logConsumer := format.NewLogConsumer(ctx, os.Stdout, true, false)
+			if err = meshkithelp.GetLogs(ctx, composeCli, utils.DockerComposeFile, "10", true, logConsumer); err != nil {
+				return errors.Wrap(err, utils.SystemError("failed to start logging"))
 			}
 		case "kubernetes":
 			// if the platform is kubernetes, use kubernetes go-client to

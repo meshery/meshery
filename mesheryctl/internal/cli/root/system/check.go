@@ -20,11 +20,8 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"os/exec"
 	"runtime"
 	"strings"
-
-	"github.com/docker/docker/client"
 
 	"github.com/pkg/errors"
 
@@ -256,9 +253,9 @@ func (hc *HealthChecker) runDockerHealthChecks() error {
 	if hc.Options.PrintLogs {
 		log.Info("\nDocker \n--------------")
 	}
-	// Create docker client using ENV variables
 
-	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
+	// Create docker client using existing config
+	cli, err := meshkithelp.NewDockerAPIClientFromConfig("")
 	if err != nil {
 		return err
 	}
@@ -293,8 +290,9 @@ func (hc *HealthChecker) runDockerHealthChecks() error {
 		}
 	}
 
-	//Check for installed docker-compose on client system
-	err = exec.Command("docker-compose", "-v").Run()
+	//Check if docker-compose is available on client system
+	composeCli := meshkithelp.NewComposeClientFromDocker(cli)
+	err = meshkithelp.Ps(ctx, composeCli, false, false, "")
 	if err != nil {
 		if hc.Options.IsPreRunE { // if PreRunExec we trigger self installation
 			log.Warn("!! docker-compose is not available")

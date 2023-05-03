@@ -15,11 +15,9 @@
 package system
 
 import (
-	"bufio"
 	"context"
 	"fmt"
 	"os"
-	"os/exec"
 	"path"
 	"strconv"
 	"strings"
@@ -32,11 +30,8 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 
-	dockerCmd "github.com/docker/cli/cli/command"
-	cliconfig "github.com/docker/cli/cli/config"
-	cliflags "github.com/docker/cli/cli/flags"
+	format "github.com/docker/compose/v2/cmd/formatter"
 	"github.com/docker/docker/api/types"
-	dockerconfig "github.com/docker/docker/cli/config"
 
 	meshkitutils "github.com/layer5io/meshkit/utils"
 	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
@@ -303,28 +298,20 @@ func start() error {
 		}
 		endpoint.Port = int32(tempPort)
 
-		log.Info("Starting Meshery...")
-		start := exec.Command("docker-compose", "-f", utils.DockerComposeFile, "up", "-d")
-		start.Stdout = os.Stdout
-		start.Stderr = os.Stderr
+		//connection to docker-client
+		cli, err := meshkithelp.NewDockerAPIClientFromConfig("")
+		if err != nil {
+			return err
+		}
 
-		if err := start.Run(); err != nil {
+		composeCli := meshkithelp.NewComposeClientFromDocker(cli)
+
+		log.Info("Starting Meshery...")
+		if err = meshkithelp.Up(ctx, composeCli, utils.DockerComposeFile, true); err != nil {
 			return errors.Wrap(err, utils.SystemError("failed to run meshery server"))
 		}
 
 		checkFlag := 0 //flag to check
-
-		// Get the Docker configuration
-		dockerCfg, err := cliconfig.Load(dockerconfig.Dir())
-		if err != nil {
-			return ErrCreatingDockerClient(err)
-		}
-
-		//connection to docker-client
-		cli, err := dockerCmd.NewAPIClientFromFlags(cliflags.NewCommonOptions(), dockerCfg)
-		if err != nil {
-			return ErrCreatingDockerClient(err)
-		}
 
 		containers, err := cli.ContainerList(context.Background(), types.ContainerListOptions{})
 		if err != nil {
@@ -354,22 +341,9 @@ func start() error {
 		//code for logs
 		if checkFlag == 1 {
 			log.Info("Starting Meshery logging . . .")
-			cmdlog := exec.Command("docker-compose", "-f", utils.DockerComposeFile, "logs", "-f")
-			cmdReader, err := cmdlog.StdoutPipe()
-			if err != nil {
-				return errors.Wrap(err, utils.SystemError("failed to create stdout pipe"))
-			}
-			scanner := bufio.NewScanner(cmdReader)
-			go func() {
-				for scanner.Scan() {
-					log.Println(scanner.Text())
-				}
-			}()
-			if err := cmdlog.Start(); err != nil {
+			logConsumer := format.NewLogConsumer(ctx, os.Stdout, true, false)
+			if err = meshkithelp.GetLogs(ctx, composeCli, utils.DockerComposeFile, "10", true, logConsumer); err != nil {
 				return errors.Wrap(err, utils.SystemError("failed to start logging"))
-			}
-			if err := cmdlog.Wait(); err != nil {
-				return errors.Wrap(err, utils.SystemError("failed to wait for command to execute"))
 			}
 		}
 
