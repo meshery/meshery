@@ -10,7 +10,7 @@ module.exports = {
       'version' : require('./package.json').dependencies.react
     }
   },
-  "extends" : ["eslint:recommended", "plugin:react/recommended", "plugin:cypress/recommended", "next", "plugin:storybook/recommended"],
+  "extends" : ["eslint:recommended", "plugin:react/recommended", "plugin:cypress/recommended", "next"],
   "globals" : {
     "Atomics" : "readonly",
     "SharedArrayBuffer" : "readonly"
