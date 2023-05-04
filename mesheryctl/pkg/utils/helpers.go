@@ -3,6 +3,7 @@ package utils
 import (
 	"bufio"
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -352,11 +353,12 @@ func ContentTypeIsHTML(resp *http.Response) bool {
 // UpdateMesheryContainers runs the update command for meshery client
 func UpdateMesheryContainers() error {
 	log.Info("Updating Meshery now...")
-
-	start := exec.Command("docker-compose", "-f", DockerComposeFile, "pull")
-	start.Stdout = os.Stdout
-	start.Stderr = os.Stderr
-	if err := start.Run(); err != nil {
+	cli, err := meshkithelp.NewDockerAPIClientFromConfig("")
+	if err != nil {
+		return errors.Wrap(err, SystemError("failed to create Docker client"))
+	}
+	composeCli := meshkithelp.NewComposeClientFromDocker(cli)
+	if err = meshkithelp.Pull(context.TODO(), composeCli, DockerComposeFile); err != nil {
 		return errors.Wrap(err, SystemError("failed to start meshery"))
 	}
 	return nil
