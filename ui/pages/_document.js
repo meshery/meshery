@@ -9,6 +9,9 @@ class MesheryDocument extends Document {
       <Html lang="en" dir="ltr">
         <Head>
           <meta charSet="utf-8" />
+          {/**
+           * content="no-referrer" included to avoid 403 errors on Google avatars
+          */}
           <meta name="referrer" content="no-referrer" />
           <link rel="icon" href="/static/favicon.png" />
 
@@ -18,6 +21,11 @@ class MesheryDocument extends Document {
           }} />
           {/* End Google Tag Manager */}
 
+          {/**
+          * For hiding the scrollbar without losing the scroll functionality
+          * add the class "hide-scrollbar" to hide scrollbar for that element
+          * Only applicable for Chrome, safari and newest version of Opera
+          */}
           <style type="text/css">{"\
             .hide-scrollbar::-webkit-scrollbar {\
               width: 0 !important;\
