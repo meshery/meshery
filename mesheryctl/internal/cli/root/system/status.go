@@ -16,8 +16,6 @@ package system
 
 import (
 	"fmt"
-	"os/exec"
-	"strings"
 	"time"
 
 	"github.com/pkg/errors"
@@ -104,17 +102,13 @@ mesheryctl system status
 		switch currPlatform {
 		case "docker":
 			// List the running Meshery containers
-			start := exec.Command("docker-compose", "-f", utils.DockerComposeFile, "ps")
-
-			outputStd, err := start.Output()
+			cli, err := meshkithelp.NewDockerAPIClientFromConfig("")
 			if err != nil {
-				return errors.Wrap(err, utils.SystemError("failed to get Meshery status"))
+				return errors.Wrap(err, utils.SystemError("failed to create Docker client"))
 			}
-
-			outputString := string(outputStd)
-
-			if strings.Contains(outputString, "meshery") {
-				log.Info(outputString)
+			composeCli := meshkithelp.NewComposeClientFromDocker(cli)
+			if err = meshkithelp.Ps(ctx, composeCli, false, false, "", utils.DockerComposeFile); err != nil {
+				return errors.Wrap(err, utils.SystemError("failed to get Meshery status"))
 			}
 
 			hcOptions := &HealthCheckOptions{

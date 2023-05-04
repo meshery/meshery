@@ -18,7 +18,6 @@ import (
 	"context"
 	"fmt"
 	"os"
-	"os/exec"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
@@ -120,20 +119,19 @@ func stop() error {
 
 		log.Info("Stopping Meshery resources...")
 
-		// Stop all Docker containers
-		stop := exec.Command("docker-compose", "-f", utils.DockerComposeFile, "stop")
-		stop.Stdout = os.Stdout
-		stop.Stderr = os.Stderr
+		cli, err := meshkithelp.NewDockerAPIClientFromConfig("")
+		if err != nil {
+			return errors.Wrap(err, utils.SystemError("failed to create Docker client"))
+		}
+		composeCli := meshkithelp.NewComposeClientFromDocker(cli)
 
-		if err := stop.Run(); err != nil {
+		// Stop all Docker containers
+		if err = meshkithelp.Stop(ctx, composeCli, utils.DockerComposeFile, false); err != nil {
 			return errors.Wrap(err, utils.SystemError("failed to stop meshery - could not stop some containers."))
 		}
 
 		// Remove all Docker containers
-		stop = exec.Command("docker-compose", "-f", utils.DockerComposeFile, "rm", "-f")
-		stop.Stderr = os.Stderr
-
-		if err := stop.Run(); err != nil {
+		if err = meshkithelp.Rm(ctx, composeCli, utils.DockerComposeFile, false); err != nil {
 			return ErrStopMeshery(err)
 		}
 		log.Info("Meshery resources is stopped.")
