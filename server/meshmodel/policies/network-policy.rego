@@ -1,8 +1,10 @@
 package service_pod_port_matching
 
+# playground with this policy: https://play.openpolicyagent.org/p/ttJQwNEGQ8
+
 # gets the container pod protocol, default is "TCP"
 get_port_protocol(container_ports) = pod_protocol {
-	not container_ports.protocol
+	not has_key(container_ports, "protocol")
 	pod_protocol := "TCP"
 }
 
