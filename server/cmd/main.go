@@ -257,6 +257,9 @@ func main() {
 		provs[cp.Name()] = cp
 	}
 
+	// this line is just for debugging, would be deleted
+	handlers.PolicyRelationshipRegoHandler()
+
 	operatorDeploymentConfig := models.NewOperatorDeploymentConfig(adapterTracker)
 	mctrlHelper := models.NewMesheryControllersHelper(log, operatorDeploymentConfig, dbHandler)
 	k8sComponentsRegistrationHelper := models.NewComponentsRegistrationHelper(log)
