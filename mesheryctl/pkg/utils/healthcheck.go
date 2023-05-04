@@ -119,6 +119,25 @@ func parseKubectlShortVersion(version string) ([3]int, error) {
 	return getK8sVersion(versionString)
 }
 
+func IsMesheryRunningInDocker() (bool, error) {
+	cli, err := meshkithelp.NewDockerAPIClientFromConfig("")
+	if err != nil {
+		return false, errors.Wrap(err, SystemError("failed to create Docker client"))
+	}
+	composeCli := meshkithelp.NewComposeClientFromDocker(cli)
+	runningContainers, err := meshkithelp.ListContainers(context.Background(), composeCli, false, false, "", DockerComposeFile)
+	if err != nil {
+		return false, errors.Wrap(err, " required dependency, docker-compose, is not present or docker is not available. Please run `mesheryctl system check --preflight` to verify system readiness")
+	}
+
+	for rc := range runningContainers {
+		if strings.Contains(rc.Image, "meshery") {
+			return true, nil
+		}
+	}
+	return false, nil
+}
+
 // IsMesheryRunning checks if the meshery server containers are up and running
 func IsMesheryRunning(currPlatform string) (bool, error) {
 	// Get viper instance used for context to extract the endpoint from config file
@@ -140,13 +159,7 @@ func IsMesheryRunning(currPlatform string) (bool, error) {
 	//If not, use the platforms to check if Meshery is running or not
 	switch currPlatform {
 	case "docker":
-		{
-			op, err := exec.Command("docker-compose", "-f", DockerComposeFile, "ps").Output()
-			if err != nil {
-				return false, errors.Wrap(err, " required dependency, docker-compose, is not present or docker is not available. Please run `mesheryctl system check --preflight` to verify system readiness")
-			}
-			return strings.Contains(string(op), "meshery"), nil
-		}
+		return IsMesheryRunningInDocker()
 	case "kubernetes":
 		{
 			client, err := meshkitkube.New([]byte(""))
@@ -182,11 +195,7 @@ func AreMesheryComponentsRunning(currPlatform string) (bool, error) {
 	switch currPlatform {
 	case "docker":
 		{
-			op, err := exec.Command("docker-compose", "-f", DockerComposeFile, "ps").Output()
-			if err != nil {
-				return false, errors.Wrap(err, " required dependency, docker-compose, is not present or docker is not available. Please run `mesheryctl system check --preflight` to verify system readiness")
-			}
-			return strings.Contains(string(op), "meshery"), nil
+			return IsMesheryRunningInDocker()
 		}
 	case "kubernetes":
 		{
