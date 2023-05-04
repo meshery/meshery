@@ -8,7 +8,7 @@ describe("Settings", () => {
     });
 
     it("select, submit, and confirm", () => {
-      cy.get(".MuiInputBase-input").type("localhost:10000{enter}");
+      cy.get("[data-cy='mesh-adapter-url']").type("localhost:10000{enter}");
       cy.get("[data-cy=btnSubmitMeshAdapter]").click();
       cy.wait("@postMeshManage");
       cy.wait("@getMeshAdapters");
