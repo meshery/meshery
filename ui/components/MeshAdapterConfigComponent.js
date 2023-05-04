@@ -412,7 +412,6 @@ class MeshAdapterConfigComponent extends React.Component {
                 size="large"
                 onClick={this.handleAdapterUndeploy}
                 className={classes.button}
-                data-cy="btnSubmitMeshAdapter"
               >
                 Undeploy
               </Button>
@@ -461,7 +460,6 @@ class MeshAdapterConfigComponent extends React.Component {
                   size="large"
                   onClick={this.handleAdapterDeploy}
                   className={classes.button}
-                  data-cy="btnSubmitMeshAdapter"
                 >
                 Deploy
                 </Button>
