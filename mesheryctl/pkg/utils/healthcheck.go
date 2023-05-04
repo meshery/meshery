@@ -161,29 +161,27 @@ func IsMesheryRunning(currPlatform string) (bool, error) {
 	case "docker":
 		return IsMesheryRunningInDocker()
 	case "kubernetes":
-		{
-			client, err := meshkitkube.New([]byte(""))
+		client, err := meshkitkube.New([]byte(""))
 
-			if err != nil {
-				return false, errors.Wrap(err, "failed to create new client")
-			}
+		if err != nil {
+			return false, errors.Wrap(err, "failed to create new client")
+		}
 
-			//podInterface := client.KubeClient.CoreV1().Pods(MesheryNamespace)
-			deploymentInterface := client.KubeClient.AppsV1().Deployments(MesheryNamespace)
-			//podList, err := podInterface.List(context.TODO(), v1.ListOptions{})
-			deploymentList, err := deploymentInterface.List(context.TODO(), metav1.ListOptions{})
+		//podInterface := client.KubeClient.CoreV1().Pods(MesheryNamespace)
+		deploymentInterface := client.KubeClient.AppsV1().Deployments(MesheryNamespace)
+		//podList, err := podInterface.List(context.TODO(), v1.ListOptions{})
+		deploymentList, err := deploymentInterface.List(context.TODO(), metav1.ListOptions{})
 
-			if err != nil {
-				return false, err
-			}
-			for _, deployment := range deploymentList.Items {
-				if deployment.GetName() == "meshery" {
-					return true, nil
-				}
-			}
-
+		if err != nil {
 			return false, err
 		}
+		for _, deployment := range deploymentList.Items {
+			if deployment.GetName() == "meshery" {
+				return true, nil
+			}
+		}
+
+		return false, err
 	}
 
 	return false, nil
@@ -194,31 +192,29 @@ func AreMesheryComponentsRunning(currPlatform string) (bool, error) {
 	//If not, use the platforms to check if Meshery is running or not
 	switch currPlatform {
 	case "docker":
-		{
-			return IsMesheryRunningInDocker()
-		}
+		return IsMesheryRunningInDocker()
+
 	case "kubernetes":
-		{
-			client, err := meshkitkube.New([]byte(""))
 
-			if err != nil {
-				return false, errors.Wrap(err, "failed to create new client")
-			}
+		client, err := meshkitkube.New([]byte(""))
 
-			deploymentInterface := client.KubeClient.AppsV1().Deployments(MesheryNamespace)
-			deploymentList, err := deploymentInterface.List(context.TODO(), metav1.ListOptions{})
+		if err != nil {
+			return false, errors.Wrap(err, "failed to create new client")
+		}
 
-			if err != nil {
-				return false, err
-			}
-			for _, deployment := range deploymentList.Items {
-				if strings.Contains(string(deployment.GetName()), "meshery") {
-					return true, nil
-				}
-			}
+		deploymentInterface := client.KubeClient.AppsV1().Deployments(MesheryNamespace)
+		deploymentList, err := deploymentInterface.List(context.TODO(), metav1.ListOptions{})
 
+		if err != nil {
 			return false, err
 		}
+		for _, deployment := range deploymentList.Items {
+			if strings.Contains(string(deployment.GetName()), "meshery") {
+				return true, nil
+			}
+		}
+
+		return false, err
 	}
 
 	return false, nil
