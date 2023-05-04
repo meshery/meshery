@@ -37,7 +37,7 @@ var (
 // AppCmd represents the root command for app commands
 var AppCmd = &cobra.Command{
 	Use:   "app",
-	Short: "Service Mesh Apps Management",
+	Short: "Cloud Native Apps Management",
 	Long:  `Manage all apps operations; import, list, view, onboard and offboard`,
 	Example: `
 // Base command

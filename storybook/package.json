@@ -11,10 +11,12 @@
     "build-storybook": "storybook build"
   },
   "dependencies": {
+    "@codemirror/view": "^6.11.0",
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
     "@mui/icons-material": "^5.11.16",
     "@mui/material": "^5.12.2",
+    "codemirror": "^6.0.1",
     "eslint": "8.39.0",
     "eslint-config-next": "13.3.1",
     "next": "13.3.1",
