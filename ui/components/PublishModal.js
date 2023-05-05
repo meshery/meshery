@@ -30,8 +30,7 @@ import CloseIcon from '@material-ui/icons/Close';
 //   }
 // })
 
-
-function PublishModal(props) {
+export default function PublishModal(props) {
   const { open, handleClose, pattern, handlePublish } = props;
   const classes = useStyles();
   const schema = {
@@ -133,5 +132,3 @@ function PublishModal(props) {
     </>
   )
 }
-
-export default PublishModal;
