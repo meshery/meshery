@@ -1,12 +1,16 @@
 package handlers
 
 import (
-	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
+	"net/http"
 
+	"github.com/layer5io/meshery/server/models"
+
+	"github.com/ghodss/yaml"
 	"github.com/open-policy-agent/opa/rego"
 	"github.com/sirupsen/logrus"
 )
@@ -16,383 +20,105 @@ type Policy struct {
 	Rules string `json:"rules"`
 }
 
-func PolicyRelationshipRegoHandler() {
+// TODO remove it
+// func TestIt() {
+// 	yamlData := "name: nginx-service.yml\nservices:\n  nginx:\n    name: nginx\n    type: Pod\n    apiVersion: v1\n    namespace: default\n    model: kubernetes\n    settings:\n      spec:\n        containers:\n        - image: nginx:stable\n          name: nginx\n          ports:\n          - container Port: 80\n            name: http-web-svc\n    traits:\n      meshmap:\n        edges: []\n        id: 19d2a03e-141d-41a9-bf7f-9ca12cf3b9be\n        label: nginx\n        meshmodel-metadata:\n          genealogy: \"\"\n          isCustomResource: false\n          isNamespaced: true\n          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg\n          model: kubernetes\n          modelDisplayName: Kubernetes\n          primaryColor: '#326CE5'\n          published: true\n          secondaryColor: '#7aa1f0'\n          shape: round-rectangle\n          styleOverrides: \"\"\n          subCategory: Scheduling & Orchestration\n          svgColor: ui/public/static/img/meshmodels/kubernetes/color/apiservice-color.svg\n          svgComplete: \"\"\n          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/apiservice-white.svg\n        position:\n          posX: 113.0763599675155\n          posY: -26.13721055079196\n  nginx-service:\n    name: nginx-service\n    type: Service\n    apiVersion: v1\n    namespace: default\n    model: kubernetes\n    settings:\n      spec:\n        ports:\n        - name: name-of-service-port\n          port: 80\n          protocol: TCP\n          target Port: http-web-svc\n        selector:\n          app.kubernetes.io/name: proxy\n    traits:\n      meshmap:\n        edges: []\n        id: 5b140a92-0f93-4500-b64a-ce703b49f166\n        label: nginx-service\n        meshmodel-metadata:\n          genealogy: \"\"\n          isCustomResource: false\n          isNamespaced: true\n          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg\n          model: kubernetes\n          modelDisplayName: Kubernetes\n          primaryColor: '#326CE5'\n          published: true\n          secondaryColor: '#7aa1f0'\n          shape: round-triangle\n          styleOverrides: '{\"height\":16,\"width\":17,\"padding\":12,\"background-fit\":\"none\",\"background-position-y\":4.5}'\n          subCategory: Scheduling & Orchestration\n          svgColor: ui/public/static/img/meshmodels/kubernetes/color/apiservice-color.svg\n          svgComplete: \"\"\n          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/apiservice-white.svg\n        position:\n          posX: -32.24910429536563\n          posY: 10.040920246138025\n"
+// 	res := PolicyRelationshipRegoHandler([]byte(yamlData))
+// 	fmt.Println("*******", *res)
+// }
+
+type RelationObject struct {
+	DestinationId   string `json:"destination_id,omitempty"`
+	DestinationName string `json:"destination_name,omitempty"`
+	SourceId        string `json:"source_id,omitempty"`
+	SourceName      string `json:"source_name,omitempty"`
+}
+
+type NetworkPolicyRegoResponse struct {
+	ServicePodRelationships        []RelationObject `json:"service_pod_relationships,omitempty"`
+	ServiceDeploymentRelationships []RelationObject `json:"service_deployment_relationships,omitempty"`
+}
+
+func PolicyRelationshipRegoHandler(ctx context.Context, designFile []byte) *NetworkPolicyRegoResponse {
 	// Load the policy
-	policyFile, err := ioutil.ReadFile("../meshmodel/policies/network-policy.rego")
+	policyFile, err := ioutil.ReadFile("../meshmodel/policies/network-policy.rego") // absolute path, needs to be changed
 	if err != nil {
-		panic(err)
+		logrus.Fatal("error reading rego file", err.Error())
 	}
 
 	// Initialize the policy
 	policy := Policy{string(policyFile)}
+	fmt.Println("policy relationship1")
 
 	// Initialize the rego engine with the policy
 	engine, err := rego.New(
-		rego.Query("result = data"),
+		rego.Query("data.network_policy"),
 		rego.Module("policy", policy.Rules),
-	).PrepareForEval(context.Background())
+	).PrepareForEval(ctx)
 
 	if err != nil {
 		panic(err)
 	}
 
-	var input interface{}
-	err = json.NewDecoder(bytes.NewBufferString(`{
-		"name": "service-nginx-deployment",
-		"services": {
-				"nginx-1-pod": {
-						"apiVersion": "v1",
-						"model": "kubernetes",
-						"name": "nginx-1",
-						"namespace": "default",
-						"settings": {
-								"spec": {
-										"containers": [
-												{
-														"image": "nginx:stable",
-														"name": "nginx",
-														"ports": [
-																{
-																		"container Port": 80,
-																		"name": "http-web-svc"
-																}
-														]
-												}
-										]
-								}
-						},
-						"traits": {
-								"meshmap": {
-										"edges": [],
-										"id": "19d2a03e-141d-41a9-bf7f-9ca12cf3b9be",
-										"label": "nginx",
-										"meshmodel-metadata": {
-												"genealogy": "",
-												"isCustomResource": false,
-												"isNamespaced": true,
-												"logoURL": "https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg",
-												"model": "kubernetes",
-												"modelDisplayName": "Kubernetes",
-												"primaryColor": "#326CE5",
-												"published": true,
-												"secondaryColor": "#7aa1f0",
-												"shape": "round-rectangle",
-												"styleOverrides": "",
-												"subCategory": "Scheduling & Orchestration",
-												"svgColor": "ui/public/static/img/meshmodels/kubernetes/color/apiservice-color.svg",
-												"svgComplete": "",
-												"svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/apiservice-white.svg"
-										},
-										"position": {
-												"posX": 113.0763599675155,
-												"posY": -26.13721055079196
-										}
-								}
-						},
-						"type": "Pod"
-				},
-				"nginx-2-pod": {
-						"apiVersion": "v1",
-						"model": "kubernetes",
-						"name": "nginx-2",
-						"namespace": "default",
-						"settings": {
-								"spec": {
-										"containers": [
-												{
-														"image": "nginx:stable",
-														"name": "nginx",
-														"ports": [
-																{
-																		"container Port": 80,
-																		"name": "http-web-svc"
-																}
-														]
-												}
-										]
-								}
-						},
-						"traits": {
-								"meshmap": {
-										"edges": [],
-										"id": "19d2a03e-141d-41a9-bf7f-9ca12cf3b9be",
-										"label": "nginx",
-										"meshmodel-metadata": {
-												"genealogy": "",
-												"isCustomResource": false,
-												"isNamespaced": true,
-												"logoURL": "https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg",
-												"model": "kubernetes",
-												"modelDisplayName": "Kubernetes",
-												"primaryColor": "#326CE5",
-												"published": true,
-												"secondaryColor": "#7aa1f0",
-												"shape": "round-rectangle",
-												"styleOverrides": "",
-												"subCategory": "Scheduling & Orchestration",
-												"svgColor": "ui/public/static/img/meshmodels/kubernetes/color/apiservice-color.svg",
-												"svgComplete": "",
-												"svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/apiservice-white.svg"
-										},
-										"position": {
-												"posX": 113.0763599675155,
-												"posY": -26.13721055079196
-										}
-								}
-						},
-						"type": "Pod"
-				},
-				"nginx-deployment": {
-						"apiVersion": "apps/v1",
-						"model": "kubernetes",
-						"name": "nginx-deployment",
-						"namespace": "default",
-						"settings": {
-								"spec": {
-										"replicas": 1,
-										"selector": {
-												"match Labels": {
-														"app": "nginx-deployment"
-												}
-										},
-										"template": {
-												"metadata": {
-														"labels": {
-																"app": "nginx-deployment"
-														}
-												},
-												"spec": {
-														"containers": [
-																{
-																		"image": "nginx:latest",
-																		"image Pull Policy": "IfNotPresent",
-																		"name": "nginx",
-																		"ports": [
-																				{
-																						"container Port": 80,
-																						"name": "nginx-port",
-																						"protocol": "TCP"
-																				}
-																		]
-																}
-														]
-												}
-										}
-								}
-						},
-						"traits": {
-								"meshmap": {
-										"edges": [],
-										"id": "87f36c76-cf0c-463e-950a-0a61948aaa41",
-										"label": "nginx-deployment",
-										"meshmodel-data": {
-												"category": {
-														"metadata": null,
-														"name": "Orchestration & Management"
-												},
-												"displayName": "Kubernetes",
-												"metadata": {
-														"svgColor": "ui/public/static/img/meshmodels/kubernetes/color/apiservice-color.svg",
-														"svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/apiservice-white.svg"
-												},
-												"name": "kubernetes",
-												"version": "v1.25.2"
-										},
-										"meshmodel-metadata": {
-												"genealogy": "parent",
-												"isCustomResource": false,
-												"isNamespaced": true,
-												"logoURL": "Created by Lee",
-												"model": "kubernetes",
-												"modelDisplayName": "Kubernetes",
-												"primaryColor": "#326CE5",
-												"published": true,
-												"secondaryColor": "#7aa1f0",
-												"shape": "round-pentagon",
-												"styleOverrides": "{\"background-image\":\"none\",\"border-width\":2,\"background-opacity\":0.5}",
-												"subCategory": "Scheduling & Orchestration",
-												"svgColor": "ui/public/static/img/meshmodels/kubernetes/color/deployment-color.svg",
-												"svgComplete": "ui/public/static/img/meshmodels/kubernetes/complete/deployment-complete.svg",
-												"svgWhite": "ui/public/static/img/meshmodels/kubernetes/color/deployment-color.svg"
-										},
-										"position": {
-												"posX": 264.94755032496664,
-												"posY": 148.80052387476576
-										}
-								}
-						},
-						"type": "Deployment",
-						"version": "v1.25.2"
-				},
-				"nginx-service-1-deployment": {
-						"apiVersion": "v1",
-						"model": "kubernetes",
-						"name": "nginx-service",
-						"namespace": "default",
-						"settings": {
-								"spec": {
-										"ports": [
-												{
-														"port": 8080,
-														"protocol": "TCP",
-														"target Port": 80
-												}
-										]
-								}
-						},
-						"traits": {
-								"meshmap": {
-										"edges": [],
-										"id": "f69fad7e-6027-4265-8e1d-6fa5b0eee710",
-										"label": "nginx-service",
-										"meshmodel-data": {
-												"category": {
-														"metadata": null,
-														"name": "Orchestration & Management"
-												},
-												"displayName": "Kubernetes",
-												"metadata": {
-														"svgColor": "ui/public/static/img/meshmodels/kubernetes/color/apiservice-color.svg",
-														"svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/apiservice-white.svg"
-												},
-												"name": "kubernetes",
-												"version": "v1.25.2"
-										},
-										"meshmodel-metadata": {
-												"genealogy": "",
-												"isCustomResource": false,
-												"isNamespaced": true,
-												"logoURL": "https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg",
-												"model": "kubernetes",
-												"modelDisplayName": "Kubernetes",
-												"primaryColor": "#326CE5",
-												"published": true,
-												"secondaryColor": "#7aa1f0",
-												"shape": "round-triangle",
-												"styleOverrides": "{\"height\":16,\"width\":17,\"padding\":12,\"background-fit\":\"none\",\"background-position-y\":4.5}",
-												"subCategory": "Scheduling & Orchestration",
-												"svgColor": "ui/public/static/img/meshmodels/kubernetes/color/apiservice-color.svg",
-												"svgComplete": "",
-												"svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/apiservice-white.svg"
-										},
-										"position": {
-												"posX": 14.952012136066841,
-												"posY": 133.77595704299856
-										}
-								}
-						},
-						"type": "Service",
-						"version": "v1.25.2"
-				},
-				"nginx-service-2": {
-						"apiVersion": "v1",
-						"model": "kubernetes",
-						"name": "nginx-service",
-						"namespace": "default",
-						"settings": {
-								"spec": {
-										"ports": [
-												{
-														"name": "name-of-service-port",
-														"port": 80,
-														"protocol": "TCP",
-														"target Port": "http-web-svc"
-												}
-										],
-										"selector": {
-												"app.kubernetes.io/name": "proxy"
-										}
-								}
-						},
-						"traits": {
-								"meshmap": {
-										"edges": [],
-										"id": "5b140a92-0f93-4500-b64a-ce703b49f166",
-										"label": "nginx-service",
-										"meshmodel-metadata": {
-												"genealogy": "",
-												"isCustomResource": false,
-												"isNamespaced": true,
-												"logoURL": "https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg",
-												"model": "kubernetes",
-												"modelDisplayName": "Kubernetes",
-												"primaryColor": "#326CE5",
-												"published": true,
-												"secondaryColor": "#7aa1f0",
-												"shape": "round-triangle",
-												"styleOverrides": "{\"height\":16,\"width\":17,\"padding\":12,\"background-fit\":\"none\",\"background-position-y\":4.5}",
-												"subCategory": "Scheduling & Orchestration",
-												"svgColor": "ui/public/static/img/meshmodels/kubernetes/color/apiservice-color.svg",
-												"svgComplete": "",
-												"svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/apiservice-white.svg"
-										},
-										"position": {
-												"posX": -32.24910429536563,
-												"posY": 10.040920246138025
-										}
-								}
-						},
-						"type": "Service"
-				}
-		}
-}`)).Decode(&input)
-
+	var input map[string]interface{}
+	err = yaml.Unmarshal(designFile, &input)
 	if err != nil {
-		logrus.Error("an error occured decoding input data", err.Error())
+		logrus.Error("error unmarshalling design file format", err.Error())
 	}
-	rs, err := engine.Eval(context.Background(), rego.EvalInput( // SAMPLE DATA, HAS TO BE REMOVED
-		input,
-	))
 
+	eval_reponse, err := engine.Eval(ctx, rego.EvalInput(input))
 	if err != nil {
 		fmt.Println("an error occured evaluating rego policy", err.Error())
 	}
 
 	// Check the result of the policy
-	if len(rs) == 1 {
-		fmt.Printf("rego engine response: %+v", rs)
+	if len(eval_reponse) > 0 && len(eval_reponse[0].Expressions) > 0 {
+		if eval_resp, ok := (eval_reponse[0].Expressions[0].Value).(map[string]interface{}); ok {
+			return NewRelationPolicy(eval_resp)
+		}
 	} else {
 		logrus.Error("Failed to evaluate policy")
+	}
+	return nil
+}
+
+func (h *Handler) HandleNetworkRelationship(
+	rw http.ResponseWriter,
+	r *http.Request,
+	_ *models.Preference,
+	_ *models.User,
+	provider models.Provider,
+) {
+	defer func() {
+		_ = r.Body.Close()
+	}()
+
+	body, err := io.ReadAll(r.Body)
+	if err != nil {
+		logrus.Error(ErrRequestBody(err))
+		http.Error(rw, ErrRequestBody(err).Error(), http.StatusBadRequest)
+
+		rw.WriteHeader((http.StatusBadRequest))
 		return
 	}
+
+	networkPolicy := PolicyRelationshipRegoHandler(context.Background(), body)
+	ec := json.NewEncoder(rw)
+	_ = ec.Encode(networkPolicy)
 }
 
-type ServiceStruct struct {
-	Name       string                 `yaml:"name,omitempty" json:"name,omitempty"`
-	Type       string                 `yaml:"type,omitempty" json:"type,omitempty"`
-	APIVersion string                 `yaml:"apiVersion,omitempty" json:"apiVersion,omitempty"`
-	Version    string                 `yaml:"version,omitempty" json:"version,omitempty"`
-	Model      string                 `yaml:"model,omitempty" json:"model,omitempty"`
-	Settings   map[string]interface{} `yaml:"settings,omitempty" json:"settings,omitempty"`
-	Traits     struct {
-		Meshmap struct {
-			Edges             []interface{}          `yaml:"edges,omitempty" json:"edges,omitempty"`
-			ID                string                 `yaml:"id,omitempty" json:"id,omitempty"`
-			Label             string                 `yaml:"label,omitempty" json:"label,omitempty"`
-			MeshmodelData     map[string]interface{} `yaml:"meshmodel-data,omitempty" json:"meshmodel-data,omitempty"`
-			MeshmodelMetadata map[string]interface{} `yaml:"meshmap,omitempty" json:"meshmap,omitempty"`
-		} `yaml:"traits,omitempty" json:"traits,omitempty"`
+func NewRelationPolicy(networkResponse map[string]interface{}) *NetworkPolicyRegoResponse {
+	var result NetworkPolicyRegoResponse
+
+	b, err := json.Marshal(networkResponse)
+	if err != nil {
+		logrus.Error("Error marhsalling json", err.Error())
 	}
-}
 
-type MeshheryDesignFileFormat struct {
-	Name    string          `yaml:"name"`
-	Service []ServiceStruct `yaml:service`
-}
+	err = json.Unmarshal(b, &result)
+	if err != nil {
+		logrus.Error("Error unmarshalling json into network response", err.Error())
+	}
 
-// handlerelationship takes the design-file and resolves all the relationships supported by us and returns the updated design file with the updated relationships
-func handleRelationship(designFile []byte) {
-
-}
-
-func handleHierarchyRelationship(designFile []byte) {
-
-}
-
-func handleNetworkRelationship(designFile []byte) {
-
-}
-
-func handleMountRelationship(designFile []byte) {
-
+	return &result
 }
