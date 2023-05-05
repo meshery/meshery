@@ -32,6 +32,7 @@ describe('User Preferences', () => {
   
         cy.get('[data-cy="UsageStatsPreference"]').click();
         cy.wait('@postUserStats');
+        cy.wait(2000)
         cy.get('[data-cy="UsageStatsPreference"]').should('not.have.class', 'Mui-checked');
       });
   
@@ -40,6 +41,7 @@ describe('User Preferences', () => {
   
         cy.get('[data-cy="UsageStatsPreference"]').click();
         cy.wait('@postUserStats');
+        cy.wait(2000)
         cy.get('[data-cy="UsageStatsPreference"]').should('have.class', 'Mui-checked');
       });
   
@@ -48,14 +50,16 @@ describe('User Preferences', () => {
   
         cy.get('[data-cy="PerfResultPreference"]').click();
         cy.wait('@postUserStats');
+        cy.wait(2000)
         cy.get('[data-cy="PerfResultPreference"]').should('not.have.class', 'Mui-checked');
       });
   
       it('activates "Send Anonymous Performance Results"', () => {
         cy.intercept('POST', '/api/user/prefs?contexts=all').as('postUserStats');
-  
+
         cy.get('[data-cy="PerfResultPreference"]').click();
         cy.wait('@postUserStats');
+        cy.wait(2000)
         cy.get('[data-cy="PerfResultPreference"]').should('have.class', 'Mui-checked');
       });
     })
