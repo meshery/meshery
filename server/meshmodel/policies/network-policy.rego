@@ -1,4 +1,4 @@
-package service_pod_port_matching
+package network_policy
 
 # playground with this policy: https://play.openpolicyagent.org/p/ttJQwNEGQ8
 
@@ -70,10 +70,10 @@ service_pod_relationships[service_name] {
 
 	source_id := service.traits.meshmap.id
 	destination_id := pod.traits.meshmap.id
-	service_name = {"destination_name": pod.name, "source_id": source_id, "destination_id": destination_id, "source_name": service.name}
+	service_name = {"destination_name": pod.name, "source_id": source_id, "destination_id": destination_id, "source_name": service.name, "port": service_port}
 }
 
-service_deployment_relationship[service_name] {
+service_deployment_relationships[service_name] {
     # Select a service resource
     service := input.services[_]
     
@@ -113,5 +113,5 @@ service_deployment_relationship[service_name] {
     source_id := service.traits.meshmap.id
     destination_id := deployment.traits.meshmap.id
     
-    service_name = {"destination_name": deployment.name, "source_id": source_id, "destination_id": destination_id, "source_name": service.name}
+    service_name = {"destination_name": deployment.name, "source_id": source_id, "destination_id": destination_id, "source_name": service.name, "port": service_port}
 }
