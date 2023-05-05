@@ -258,7 +258,7 @@ func main() {
 	}
 
 	// this line is just for debugging, would be deleted
-	handlers.PolicyRelationshipRegoHandler()
+	// handlers.TestIt()
 
 	operatorDeploymentConfig := models.NewOperatorDeploymentConfig(adapterTracker)
 	mctrlHelper := models.NewMesheryControllersHelper(log, operatorDeploymentConfig, dbHandler)

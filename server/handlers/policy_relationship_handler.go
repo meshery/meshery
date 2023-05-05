@@ -28,10 +28,11 @@ type Policy struct {
 // }
 
 type RelationObject struct {
-	DestinationId   string `json:"destination_id,omitempty"`
-	DestinationName string `json:"destination_name,omitempty"`
-	SourceId        string `json:"source_id,omitempty"`
-	SourceName      string `json:"source_name,omitempty"`
+	DestinationId   string                 `json:"destination_id,omitempty"`
+	DestinationName string                 `json:"destination_name,omitempty"`
+	SourceId        string                 `json:"source_id,omitempty"`
+	SourceName      string                 `json:"source_name,omitempty"`
+	Port            map[string]interface{} `json:"port,omitempty"`
 }
 
 type NetworkPolicyRegoResponse struct {
