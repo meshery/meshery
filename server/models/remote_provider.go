@@ -112,7 +112,10 @@ func (l *RemoteProvider) loadCapabilities(token string) {
 		// Proceed to make a request with the token
 		resp, err = l.DoRequest(req, token)
 	}
-
+	if err != nil && resp == nil {
+		logrus.Errorf(ErrUnreachableRemoteProvider(err).Error())
+		return
+	}
 	if err != nil || resp.StatusCode != http.StatusOK {
 		logrus.Errorf("[Initialize Provider]: Failed to get capabilities %s", err)
 		return
@@ -241,6 +244,10 @@ func (l *RemoteProvider) executePrefSync(tokenString string, sess *Preference) {
 	// }
 	resp, err := l.DoRequest(req, tokenString)
 	if err != nil {
+		if resp == nil {
+			logrus.Errorf(ErrUnreachableRemoteProvider(err).Error())
+			return
+		}
 		logrus.Errorf("unable to upload user preference data: %v", err)
 		return
 	}
@@ -284,6 +291,9 @@ func (l *RemoteProvider) GetUserDetails(req *http.Request) (*User, error) {
 
 	resp, err := l.DoRequest(cReq, token)
 	if err != nil {
+		if resp == nil {
+			return nil, ErrUnreachableRemoteProvider(err)
+		}
 		return nil, ErrFetch(err, "User Data", http.StatusUnauthorized)
 	}
 	defer func() {
@@ -325,6 +335,9 @@ func (l *RemoteProvider) GetUserByID(req *http.Request, userID string) ([]byte, 
 
 	resp, err := l.DoRequest(cReq, token)
 	if err != nil {
+		if resp == nil {
+			return nil, ErrUnreachableRemoteProvider(err)
+		}
 		return nil, ErrFetch(err, "User Profile", resp.StatusCode)
 	}
 
@@ -436,6 +449,9 @@ func (l *RemoteProvider) Logout(w http.ResponseWriter, req *http.Request) error 
 	// make request to remote provider with contructed URL and updated headers (like session_cookie, return_to cookies)
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
+		if resp == nil {
+			return ErrUnreachableRemoteProvider(err)
+		}
 		logrus.Errorf("error performing logout: %v", err)
 		return err
 	}
@@ -511,6 +527,9 @@ func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext) (K8
 
 	resp, err := l.DoRequest(cReq, token)
 	if err != nil {
+		if resp == nil {
+			return k8sContext, ErrUnreachableRemoteProvider(err)
+		}
 		logrus.Errorf("unable to send kubernetes context: %v", err)
 		return k8sContext, ErrPost(err, "kubernetes context", cReq.Response.StatusCode)
 	}
@@ -563,6 +582,9 @@ func (l *RemoteProvider) GetK8sContexts(token, page, pageSize, search, order str
 
 	resp, err := l.DoRequest(cReq, token)
 	if err != nil {
+		if resp == nil {
+			return nil, ErrUnreachableRemoteProvider(err)
+		}
 		logrus.Errorf("unable to get kubernetes contexts: %v", err)
 		return nil, err
 	}
@@ -621,6 +643,9 @@ func (l *RemoteProvider) DeleteK8sContext(token, id string) (K8sContext, error) 
 
 	resp, err := l.DoRequest(cReq, token)
 	if err != nil {
+		if resp == nil {
+			return K8sContext{}, ErrUnreachableRemoteProvider(err)
+		}
 		logrus.Errorf("unable to delete kubernetes contexts: %v", err)
 		return K8sContext{}, err
 	}
@@ -644,6 +669,9 @@ func (l *RemoteProvider) GetK8sContext(token, id string) (K8sContext, error) {
 
 	resp, err := l.DoRequest(cReq, token)
 	if err != nil {
+		if resp == nil {
+			return K8sContext{}, ErrUnreachableRemoteProvider(err)
+		}
 		return K8sContext{}, ErrFetch(err, "Kubernetes Context", resp.StatusCode)
 	}
 	defer func() {
@@ -778,6 +806,9 @@ func (l *RemoteProvider) FetchResults(tokenVal string, page, pageSize, search, o
 	// }
 	resp, err := l.DoRequest(cReq, tokenVal)
 	if err != nil {
+		if resp == nil {
+			return nil, ErrUnreachableRemoteProvider(err)
+		}
 		return nil, ErrFetch(err, "Perf Results", resp.StatusCode)
 	}
 	defer func() {
@@ -834,6 +865,9 @@ func (l *RemoteProvider) FetchAllResults(tokenString string, page, pageSize, sea
 
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
+		if resp == nil {
+			return nil, ErrUnreachableRemoteProvider(err)
+		}
 		return nil, ErrFetch(err, "All Perf results", resp.StatusCode)
 	}
 	defer func() {
@@ -886,6 +920,9 @@ func (l *RemoteProvider) FetchSmiResults(req *http.Request, page, pageSize, sear
 	}
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
+		if resp == nil {
+			return nil, ErrUnreachableRemoteProvider(err)
+		}
 		return nil, ErrFetch(err, "SMI Result", resp.StatusCode)
 	}
 	defer func() {
@@ -938,6 +975,9 @@ func (l *RemoteProvider) FetchSmiResult(req *http.Request, page, pageSize, searc
 	}
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
+		if resp == nil {
+			return nil, ErrUnreachableRemoteProvider(err)
+		}
 		return nil, ErrFetch(err, "SMI Result", resp.StatusCode)
 	}
 	defer func() {
@@ -977,6 +1017,9 @@ func (l *RemoteProvider) GetResult(tokenVal string, resultID uuid.UUID) (*Mesher
 	// }
 	resp, err := l.DoRequest(cReq, tokenVal)
 	if err != nil {
+		if resp == nil {
+			return nil, ErrUnreachableRemoteProvider(err)
+		}
 		logrus.Errorf("unable to get results: %v", err)
 		return nil, ErrFetch(err, "Perf Result "+resultID.String(), resp.StatusCode)
 	}
@@ -1030,6 +1073,9 @@ func (l *RemoteProvider) PublishResults(req *http.Request, result *MesheryResult
 	logrus.Info("request: ", cReq)
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
+		if resp == nil {
+			return "", ErrUnreachableRemoteProvider(err)
+		}
 		logrus.Errorf("unable to send results: %v", err)
 		return "", ErrPost(err, "Perf Results", resp.StatusCode)
 	}
@@ -1081,6 +1127,9 @@ func (l *RemoteProvider) PublishSmiResults(result *SmiResult) (string, error) {
 	tokenString := viper.GetString("opt-token")
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
+		if resp == nil {
+			return "", ErrUnreachableRemoteProvider(err)
+		}
 		return "", ErrPost(err, "SMI Result", resp.StatusCode)
 	}
 	defer func() {
@@ -1134,6 +1183,9 @@ func (l *RemoteProvider) PublishMetrics(tokenString string, result *MesheryResul
 	// }
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
+		if resp == nil {
+			return ErrUnreachableRemoteProvider(err)
+		}
 		logrus.Errorf("unable to send metrics: %v", err)
 		return ErrPost(err, "metrics", resp.StatusCode)
 	}
@@ -1178,6 +1230,9 @@ func (l *RemoteProvider) SaveMesheryPatternResource(token string, resource *Patt
 
 	resp, err := l.DoRequest(cReq, token)
 	if err != nil {
+		if resp == nil {
+			return nil, ErrUnreachableRemoteProvider(err)
+		}
 		logrus.Errorf("unable to send pattern resource: %v", err)
 		return nil, ErrPost(err, "pattern", cReq.Response.StatusCode)
 	}
@@ -1215,6 +1270,9 @@ func (l *RemoteProvider) GetMesheryPatternResource(token, resourceID string) (*P
 
 	resp, err := l.DoRequest(cReq, token)
 	if err != nil {
+		if resp == nil {
+			return nil, ErrUnreachableRemoteProvider(err)
+		}
 		return nil, ErrFetch(err, "Pattern Resource", resp.StatusCode)
 	}
 	defer func() {
@@ -1292,6 +1350,9 @@ func (l *RemoteProvider) GetMesheryPatternResources(
 
 	resp, err := l.DoRequest(cReq, token)
 	if err != nil {
+		if resp == nil {
+			return nil, ErrUnreachableRemoteProvider(err)
+		}
 		logrus.Errorf("unable to get pattern resource: %v", err)
 		return nil, ErrFetch(err, "Patterns Page Resource", resp.StatusCode)
 	}
@@ -1335,6 +1396,9 @@ func (l *RemoteProvider) DeleteMesheryPatternResource(token, resourceID string) 
 
 	resp, err := l.DoRequest(cReq, token)
 	if err != nil {
+		if resp == nil {
+			return ErrUnreachableRemoteProvider(err)
+		}
 		return ErrDelete(err, "pattern: "+resourceID, resp.StatusCode)
 	}
 	defer func() {
@@ -1381,6 +1445,9 @@ func (l *RemoteProvider) SaveMesheryPattern(tokenString string, pattern *Meshery
 	}
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
+		if resp == nil {
+			return nil, ErrUnreachableRemoteProvider(err)
+		}
 		logrus.Errorf("unable to send pattern: %v", err)
 		return nil, err
 	}
@@ -1437,6 +1504,9 @@ func (l *RemoteProvider) GetMesheryPatterns(tokenString string, page, pageSize, 
 
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
+		if resp == nil {
+			return nil, ErrUnreachableRemoteProvider(err)
+		}
 		logrus.Errorf("unable to get patterns: %v", err)
 		return nil, err
 	}
@@ -1482,6 +1552,9 @@ func (l *RemoteProvider) GetCatalogMesheryPatterns(tokenString string, search, o
 
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
+		if resp == nil {
+			return nil, ErrUnreachableRemoteProvider(err)
+		}
 		return nil, ErrFetch(err, "Pattern Page - Catalog", resp.StatusCode)
 	}
 	defer func() {
@@ -1522,6 +1595,9 @@ func (l *RemoteProvider) GetMesheryPattern(req *http.Request, patternID string) 
 	}
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
+		if resp == nil {
+			return nil, ErrUnreachableRemoteProvider(err)
+		}
 		logrus.Errorf("unable to get patterns: %v", err)
 		return nil, err
 	}
@@ -1564,6 +1640,9 @@ func (l *RemoteProvider) DeleteMesheryPattern(req *http.Request, patternID strin
 	}
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
+		if resp == nil {
+			return nil, ErrUnreachableRemoteProvider(err)
+		}
 		logrus.Errorf("unable to get patterns: %v", err)
 		return nil, err
 	}
@@ -1615,6 +1694,9 @@ func (l *RemoteProvider) CloneMesheryPattern(req *http.Request, patternID string
 	}
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
+		if resp == nil {
+			return nil, ErrUnreachableRemoteProvider(err)
+		}
 		logrus.Errorf("unable to clone patterns: %v", err)
 		return nil, err
 	}
@@ -1664,6 +1746,9 @@ func (l *RemoteProvider) PublishCatalogPattern(req *http.Request, publishPattern
 	}
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
+		if resp == nil {
+			return nil, ErrUnreachableRemoteProvider(err)
+		}
 		logrus.Errorf("unable to publish pattern to catalog: %v", err)
 		return nil, err
 	}
@@ -1713,6 +1798,9 @@ func (l *RemoteProvider) DeleteMesheryPatterns(req *http.Request, patterns Meshe
 	// make request
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
+		if resp == nil {
+			return nil, ErrUnreachableRemoteProvider(err)
+		}
 		logrus.Errorf("unable to get patterns: %v", err)
 		return nil, err
 	}
@@ -1769,6 +1857,9 @@ func (l *RemoteProvider) RemotePatternFile(req *http.Request, resourceURL, path 
 	}
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
+		if resp == nil {
+			return nil, ErrUnreachableRemoteProvider(err)
+		}
 		logrus.Errorf("unable to send pattern: %v", err)
 		return nil, ErrPost(err, "Pattern File", resp.StatusCode)
 	}
@@ -1819,6 +1910,9 @@ func (l *RemoteProvider) SaveMesheryFilter(tokenString string, filter *MesheryFi
 	}
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
+		if resp == nil {
+			return nil, ErrUnreachableRemoteProvider(err)
+		}
 		logrus.Errorf("unable to send filter: %v", err)
 		return nil, ErrPost(err, "Filters", resp.StatusCode)
 	}
@@ -1871,7 +1965,7 @@ func (l *RemoteProvider) GetMesheryFilters(tokenString string, page, pageSize, s
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
 		if resp == nil {
-			return nil, ErrFetchData(err)
+			return nil, ErrUnreachableRemoteProvider(err)
 		}
 		return nil, ErrFetch(err, "Filter Page", resp.StatusCode)
 	}
@@ -1916,6 +2010,9 @@ func (l *RemoteProvider) GetCatalogMesheryFilters(tokenString string, search, or
 
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
+		if resp == nil {
+			return nil, ErrUnreachableRemoteProvider(err)
+		}
 		return nil, ErrFetch(err, "Filter Page - Catalog", resp.StatusCode)
 	}
 	defer func() {
@@ -1955,6 +2052,9 @@ func (l *RemoteProvider) GetMesheryFilterFile(req *http.Request, filterID string
 	}
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
+		if resp == nil {
+			return nil, ErrUnreachableRemoteProvider(err)
+		}
 		logrus.Errorf("unable to get filters: %v", err)
 		return nil, ErrFetch(err, "Filter File: "+filterID, resp.StatusCode)
 	}
@@ -1994,6 +2094,9 @@ func (l *RemoteProvider) GetMesheryFilter(req *http.Request, filterID string) ([
 	}
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
+		if resp == nil {
+			return nil, ErrUnreachableRemoteProvider(err)
+		}
 		return nil, ErrFetch(err, "Filter:"+filterID, resp.StatusCode)
 	}
 	defer func() {
@@ -2032,6 +2135,9 @@ func (l *RemoteProvider) DeleteMesheryFilter(req *http.Request, filterID string)
 	}
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
+		if resp == nil {
+			return nil, ErrUnreachableRemoteProvider(err)
+		}
 		logrus.Errorf("unable to get filters: %v", err)
 		return nil, ErrDelete(err, "Filter: "+filterID, resp.StatusCode)
 	}
@@ -2081,6 +2187,9 @@ func (l *RemoteProvider) CloneMesheryFilter(req *http.Request, filterID string, 
 	}
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
+		if resp == nil {
+			return nil, ErrUnreachableRemoteProvider(err)
+		}
 		logrus.Errorf("unable to clone filters: %v", err)
 		return nil, err
 	}
@@ -2130,6 +2239,9 @@ func (l *RemoteProvider) PublishCatalogFilter(req *http.Request, publishFilterRe
 	}
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
+		if resp == nil {
+			return nil, ErrUnreachableRemoteProvider(err)
+		}
 		logrus.Errorf("unable to publish filter to catalog: %v", err)
 		return nil, err
 	}
@@ -2186,6 +2298,9 @@ func (l *RemoteProvider) RemoteFilterFile(req *http.Request, resourceURL, path s
 	}
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
+		if resp == nil {
+			return nil, ErrUnreachableRemoteProvider(err)
+		}
 		return nil, ErrPost(err, "Filter File", resp.StatusCode)
 	}
 
@@ -2236,6 +2351,9 @@ func (l *RemoteProvider) SaveMesheryApplication(tokenString string, application 
 	}
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
+		if resp == nil {
+			return nil, ErrUnreachableRemoteProvider(err)
+		}
 		return nil, ErrPost(err, "Application", resp.StatusCode)
 	}
 
@@ -2269,6 +2387,9 @@ func (l *RemoteProvider) SaveApplicationSourceContent(tokenString string, applic
 
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
+		if resp == nil {
+			return ErrUnreachableRemoteProvider(err)
+		}
 		return ErrPost(err, "Application Source Content", resp.StatusCode)
 	}
 
@@ -2300,6 +2421,9 @@ func (l *RemoteProvider) GetApplicationSourceContent(req *http.Request, applicat
 
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
+		if resp == nil {
+			return nil, ErrUnreachableRemoteProvider(err)
+		}
 		logrus.Errorf("unable to get application source content: %v", err)
 		return nil, ErrFetch(err, "Application source content", resp.StatusCode)
 	}
@@ -2355,6 +2479,9 @@ func (l *RemoteProvider) GetMesheryApplications(tokenString string, page, pageSi
 
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
+		if resp == nil {
+			return nil, ErrUnreachableRemoteProvider(err)
+		}
 		logrus.Errorf("unable to get applications: %v", err)
 		return nil, ErrFetch(err, "Application", resp.StatusCode)
 	}
@@ -2396,6 +2523,9 @@ func (l *RemoteProvider) GetMesheryApplication(req *http.Request, applicationID 
 	}
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
+		if resp == nil {
+			return nil, ErrUnreachableRemoteProvider(err)
+		}
 		return nil, ErrFetch(err, "Application: "+applicationID, resp.StatusCode)
 	}
 	defer func() {
@@ -2434,6 +2564,9 @@ func (l *RemoteProvider) DeleteMesheryApplication(req *http.Request, application
 	}
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
+		if resp == nil {
+			return nil, ErrUnreachableRemoteProvider(err)
+		}
 		return nil, ErrDelete(err, "Application :"+applicationID, resp.StatusCode)
 	}
 	defer func() {
@@ -2472,6 +2605,9 @@ func (l *RemoteProvider) ShareDesign(req *http.Request) (int, error) {
 
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
+		if resp == nil {
+			return http.StatusInternalServerError, ErrUnreachableRemoteProvider(err)
+		}
 		return http.StatusInternalServerError, ErrShareDesign(err)
 	}
 
@@ -2508,6 +2644,9 @@ func (l *RemoteProvider) SavePerformanceProfile(tokenString string, pp *Performa
 	}
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
+		if resp == nil {
+			return nil, ErrUnreachableRemoteProvider(err)
+		}
 		return nil, ErrPost(err, "Perf Profile", resp.StatusCode)
 	}
 
@@ -2558,6 +2697,9 @@ func (l *RemoteProvider) GetPerformanceProfiles(tokenString string, page, pageSi
 
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
+		if resp == nil {
+			return nil, ErrUnreachableRemoteProvider(err)
+		}
 		return nil, ErrFetch(err, "Perf Profile Page", resp.StatusCode)
 	}
 	defer func() {
@@ -2596,6 +2738,9 @@ func (l *RemoteProvider) GetPerformanceProfile(req *http.Request, performancePro
 	}
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
+		if resp == nil {
+			return nil, ErrUnreachableRemoteProvider(err)
+		}
 		logrus.Errorf("unable to get performance profiles: %v", err)
 		return nil, ErrFetch(err, "Perf Profile :"+performanceProfileID, resp.StatusCode)
 	}
@@ -2635,6 +2780,9 @@ func (l *RemoteProvider) DeletePerformanceProfile(req *http.Request, performance
 	}
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
+		if resp == nil {
+			return nil, ErrUnreachableRemoteProvider(err)
+		}
 		return nil, ErrDelete(err, "Perf Profile :"+performanceProfileID, resp.StatusCode)
 	}
 	defer func() {
@@ -2678,6 +2826,9 @@ func (l *RemoteProvider) SaveSchedule(tokenString string, s *Schedule) ([]byte, 
 	}
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
+		if resp == nil {
+			return nil, ErrUnreachableRemoteProvider(err)
+		}
 		logrus.Errorf("unable to send schedule: %v", err)
 		return nil, ErrPost(err, "Perf Schedule", resp.StatusCode)
 	}
@@ -2731,6 +2882,9 @@ func (l *RemoteProvider) GetSchedules(req *http.Request, page, pageSize, order s
 
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
+		if resp == nil {
+			return nil, ErrUnreachableRemoteProvider(err)
+		}
 		return nil, ErrFetch(err, "Perf Schedule Page", resp.StatusCode)
 	}
 	defer func() {
@@ -2770,6 +2924,9 @@ func (l *RemoteProvider) GetSchedule(req *http.Request, scheduleID string) ([]by
 	}
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
+		if resp == nil {
+			return nil, ErrUnreachableRemoteProvider(err)
+		}
 		return nil, ErrFetch(err, "Perf Schedule :"+scheduleID, resp.StatusCode)
 	}
 	defer func() {
@@ -2808,6 +2965,9 @@ func (l *RemoteProvider) DeleteSchedule(req *http.Request, scheduleID string) ([
 	}
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
+		if resp == nil {
+			return nil, ErrUnreachableRemoteProvider(err)
+		}
 		logrus.Errorf("unable to delete schedules: %v", err)
 		return nil, ErrDelete(err, "Perf Schedule :"+scheduleID, resp.StatusCode)
 	}
@@ -2985,6 +3145,9 @@ func (l *RemoteProvider) SMPTestConfigStore(req *http.Request, perfConfig *SMP.P
 	}
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
+		if resp == nil {
+			return "", ErrUnreachableRemoteProvider(err)
+		}
 		logrus.Errorf("unable to send testConfig: %v", err)
 		return "", ErrPost(err, "Perf Test Config", resp.StatusCode)
 	}
@@ -3020,6 +3183,9 @@ func (l *RemoteProvider) SMPTestConfigGet(req *http.Request, testUUID string) (*
 	}
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
+		if resp == nil {
+			return nil, ErrUnreachableRemoteProvider(err)
+		}
 		return nil, ErrFetch(err, "Perf Test Config: "+testUUID, resp.StatusCode)
 	}
 	defer func() {
@@ -3067,6 +3233,9 @@ func (l *RemoteProvider) SMPTestConfigFetch(req *http.Request, page, pageSize, s
 	}
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
+		if resp == nil {
+			return nil, ErrUnreachableRemoteProvider(err)
+		}
 		return nil, ErrFetch(err, "Perf Test Config Page", resp.StatusCode)
 	}
 	defer func() {
@@ -3101,6 +3270,9 @@ func (l *RemoteProvider) SMPTestConfigDelete(req *http.Request, testUUID string)
 	}
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
+		if resp == nil {
+			return ErrUnreachableRemoteProvider(err)
+		}
 		return ErrDelete(err, "Perf Test Config :"+testUUID, resp.StatusCode)
 	}
 	defer func() {
@@ -3151,6 +3323,9 @@ func (l *RemoteProvider) ExtensionProxy(req *http.Request) (*ExtensionProxyRespo
 	// make request to remote provider with contructed URL and updated headers (like session cookie)
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
+		if resp == nil {
+			return nil, ErrUnreachableRemoteProvider(err)
+		}
 		return nil, err
 	}
 
@@ -3201,6 +3376,9 @@ func (l *RemoteProvider) SaveConnection(req *http.Request, conn *Connection, tok
 	}
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
+		if resp == nil {
+			return ErrUnreachableRemoteProvider(err)
+		}
 		return ErrFetch(err, "Save Connection", resp.StatusCode)
 	}
 	defer func() {
@@ -3231,11 +3409,10 @@ func (l *RemoteProvider) DeleteMesheryConnection() error {
 	cReq.Header.Set("X-API-Key", GlobalTokenForAnonymousResults)
 	c := &http.Client{}
 	resp, err := c.Do(cReq)
-	if resp == nil {
-		return ErrUnreachableRemoteProvider(err)
-	}
-
 	if err != nil {
+		if resp == nil {
+			return ErrUnreachableRemoteProvider(err)
+		}
 		return ErrDelete(err, "Meshery Connection", resp.StatusCode)
 	}
 	defer func() {
@@ -3288,6 +3465,9 @@ func TarXZF(srcURL, destination string) error {
 
 	resp, err := http.Get(srcURL)
 	if err != nil {
+		if resp == nil {
+			return fmt.Errorf("could not reach %v: %w", srcURL, err)
+		}
 		return err
 	}
 	defer func() {
