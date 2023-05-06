@@ -30,7 +30,7 @@ var (
 // FilterCmd represents the root command for filter commands
 var FilterCmd = &cobra.Command{
 	Use:   "filter",
-	Short: "Service Mesh Filter Management",
+	Short: "Cloud Native Filter Management",
 	Long:  ``,
 	Example: `
 // Base command for WASM filters (experimental feature)

@@ -9,24 +9,23 @@ import { scrollToTop } from "../../utils/utils";
 /**
  * usePatternServiceForm seperates the form logic from its UI representation
  * @param {{
- *  schemaSet: { workload: any, traits: any[], type: string };
+ *  schemaSet: { workload: any, type: string };
  *  onSubmit: Function;
  *  onDelete: Function;
  *  namespace: string;
  *  onChange?: Function
  *  onSettingsChange?: Function;
- *  onTraitsChange?: Function;
  *  formData?: Record<String, unknown>
  *  reference?: Record<any, any>;
  * 	children?: Function;
  *  scroll?: Boolean; // If the window should be scrolled to zero after re-rendering
- *  tab?:Number
  * }} param0 props for the component
  */
-function PatternServiceFormCore({ formData, schemaSet, onSubmit, onDelete, reference, namespace, onSettingsChange, onTraitsChange, children, scroll = false, tab }) {
+function PatternServiceFormCore({ formData, schemaSet, onSubmit, onDelete, reference, namespace, onSettingsChange, children, scroll = false }) {
   const [settings, setSettings, getSettingsRefValue] = useStateCB(formData && !!formData.settings ? formData.settings : {}, onSettingsChange);
-  const [traits, setTraits, getTraitsRefValue] = useStateCB(formData && !!formData.traits ? formData.traits : {}, onTraitsChange);
-  const [update, forceUpdate] = useState(0)
+  const [update, forceUpdate] = useState(0);
+  // eslint-disable-next-line no-unused-vars
+  const [rjsfReferenceKey, _] = useState((Math.random() + 1).toString(32).substring(2))
 
   useEffect(() => {
     if (schemaSet.type !== "addon") {
@@ -36,7 +35,7 @@ function PatternServiceFormCore({ formData, schemaSet, onSubmit, onDelete, refer
       forceUpdate(update + 1) // updating the state for simulating re-rendering of changed children
       scroll && scrollToTop()
     }
-  }, [schemaSet, tab])
+  }, [schemaSet])
 
   const child = React.useRef(null);
 
@@ -60,36 +59,20 @@ function PatternServiceFormCore({ formData, schemaSet, onSubmit, onDelete, refer
           formData={settings}
           jsonSchema={schemaSet.workload}
           onChange={setSettings}
-          onSubmit={() => submitHandler({ settings : getSettingsRefValue(), traits })}
-          onDelete={() => deleteHandler({ settings : getSettingsRefValue(), traits })}
+          onSubmit={() => submitHandler({ settings : getSettingsRefValue() })}
+          onDelete={() => deleteHandler({ settings : getSettingsRefValue() })}
           {...props}
         />
-      )
-    },
-    function (props = {}) {
-      return (
-        <>
-          {schemaSet.traits?.map((trait, idx) => (
-            <PatternService
-              key={`pattern-trait-${idx}`}
-              formData={traits[getPatternAttributeName(trait)]}
-              type="trait"
-              jsonSchema={trait}
-              onChange={(val) => setTraits({ ...traits, [getPatternAttributeName(trait)] : val })}
-              {...props}
-            />
-          ))}
-        </>
       )
     }]
 
   if (reference) {
     if (!reference.current) reference.current = {}
 
-    reference.current.submit = (cb) => submitHandler(cb?.(getSettingsRefValue(), getTraitsRefValue()))
-    reference.current.delete = (cb) => deleteHandler(cb?.(getSettingsRefValue(), getTraitsRefValue()))
+    reference.current.submit = (cb) => submitHandler(cb?.(getSettingsRefValue()))
+    reference.current.delete = (cb) => deleteHandler(cb?.(getSettingsRefValue()))
     reference.current.getSettings = () => getSettingsRefValue()
-    reference.current.getTraits = () => getTraitsRefValue()
+    reference.current.referKey = rjsfReferenceKey;
   }
 
   // Return cached child -- Prevents rerenders

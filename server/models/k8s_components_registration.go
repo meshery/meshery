@@ -26,12 +26,14 @@ type ComponentsRegistrationHelper struct {
 	// it should be private
 	ctxRegStatusMap map[string]RegistrationStatus
 	log             logger.Handler
+	mx              sync.RWMutex
 }
 
 func NewComponentsRegistrationHelper(logger logger.Handler) *ComponentsRegistrationHelper {
 	return &ComponentsRegistrationHelper{
 		ctxRegStatusMap: make(map[string]RegistrationStatus),
 		log:             logger,
+		mx:              sync.RWMutex{},
 	}
 }
 
@@ -40,7 +42,9 @@ func (cg *ComponentsRegistrationHelper) UpdateContexts(ctxs []*K8sContext) *Comp
 	for _, ctx := range ctxs {
 		ctxID := ctx.ID
 		if _, ok := cg.ctxRegStatusMap[ctxID]; !ok {
+			cg.mx.Lock()
 			cg.ctxRegStatusMap[ctxID] = NotRegistered
+			cg.mx.Unlock()
 		}
 	}
 	return cg
@@ -68,7 +72,9 @@ func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, r
 		id, _ := uuid.NewV4()
 
 		// update the status
+		cg.mx.Lock()
 		cg.ctxRegStatusMap[ctxID] = Registering
+		cg.mx.Unlock()
 		cg.log.Info("Registration of ", ctxName, " components started for contextID: ", ctxID)
 		req := meshes.EventsResponse{
 			Component:     "core",
@@ -79,15 +85,12 @@ func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, r
 			OperationId:   id.String(),
 		}
 		eb.Publish(&req)
-
-		var mu sync.Mutex // declare a mutex for synchronizing access to the map
-
 		go func(ctx *K8sContext) {
 			// set the status to RegistrationComplete
 			defer func() {
-				mu.Lock()
+				cg.mx.Lock()
 				cg.ctxRegStatusMap[ctxID] = RegistrationComplete
-				mu.Unlock()
+				cg.mx.Unlock()
 
 				cg.log.Info(ctxName, " components for contextID:", ctxID, " registered")
 			}()
