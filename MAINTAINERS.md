@@ -22,7 +22,7 @@
 | Dhiraj Gedam        | dheerajng     | Citrix      |
 | Haim Helman         | thehh1974     | VMware      |
 | Hussaina Begum      | hexxdump      | VMware      |
-| Ashish Tiwari       | revolyssup    | Layer5      |
+| Ashish Tiwari       | revolyssup    | API7        |
 | Michael Gfeller     | mgfeller      | Computas AS |
 | Antonette Caldwell  | acald-creator | Acquia      |
 
@@ -30,7 +30,7 @@
 
 | Name                  | GitHub             | Affiliation |
 | --------------------- | ------------------ | ----------- |
-| Ashish Tiwari         | revolyssup         | Layer5      |
+| Ashish Tiwari         | revolyssup         | API7        |
 | Mario Arriaga         | MarioArriaga92     | F5          |
 
 ### Docs Maintainers

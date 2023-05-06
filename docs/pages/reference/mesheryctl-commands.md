@@ -17,10 +17,10 @@ Meshery CLI commands are categorized by function, which are:
 
 - `mesheryctl` - Global flags and CLI configuration
 - `mesheryctl system` - Meshery Lifecycle and Troubleshooting
-- `mesheryctl mesh` - Service Mesh Lifecycle & Configuration Management: provisioning and configuration best practices
-- `mesheryctl perf` - Service Mesh Performance Management: Workload and service mesh performance characterization
-- `mesheryctl pattern` - Service Mesh Pattern Configuration & Management: Service mesh patterns and Open Application Model integration
-- `mesheryctl app` - Service Mesh Application Management
+- `mesheryctl mesh` - Cloud Native Lifecycle & Configuration Management: provisioning and configuration best practices
+- `mesheryctl perf` - Cloud Native Performance Management: Workload and service mesh performance characterization
+- `mesheryctl pattern` - Cloud Native Pattern Configuration & Management: Service mesh patterns and Open Application Model integration
+- `mesheryctl app` - Cloud Native Application Management
 - `mesheryctl filter` - Data Plane Intelligence: Registry and configuration of WebAssembly filters for Envoy (experimental feature)
 
 ## Global Commands and Flags
@@ -378,7 +378,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
 </thead>
 </table>
 
-## Service Mesh Performance Management
+## Cloud Native Performance Management
 
 <table>
 <thead>
@@ -441,7 +441,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
 </thead>
 </table>
 
-## Service Mesh Lifecycle and Configuration Management
+## Cloud Native Lifecycle and Configuration Management
 
 <table>
 <thead>
@@ -485,7 +485,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
 </thead>
 </table>
 
-## Service Mesh Pattern Configuration and Management
+## Cloud Native Pattern Configuration and Management
 
 <table>
 <thead>
@@ -564,7 +564,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
 </thead>
 </table>
 
-## Service Mesh Application Management
+## Cloud Native Application Management
 
 <table>
 <thead>
