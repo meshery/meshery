@@ -9,7 +9,6 @@ import (
 // var update = flag.Bool("update", false, "update golden files")
 
 var tests = []string{"ab2q3^$serhj", "klg434%$^", "m234@#$n", "op$#%G", "q$@#$r", "st4@#$23", "uv$@#$", "$@#TGGB#wx", "y@#$FG@$z", "1234"}
-var boolTests = []bool{true, false}
 
 func TestGetCommitSHA(t *testing.T) {
 	for _, test := range tests {
@@ -91,7 +90,7 @@ func TestGetChannel(t *testing.T) {
 
 func TestGetComponents(t *testing.T) {
 	dummy := []string{"abc", "def", "ghi", "jkl", "mno", "pqr"}
-	meshConfigCtx := Context{"", "", "", dummy, "", "", "", false}
+	meshConfigCtx := Context{"", "", "", dummy, "", "", "", ""}
 	got := meshConfigCtx.GetComponents()
 	want := dummy
 	for i, j := range got {
@@ -231,7 +230,7 @@ func TestSetVersion(t *testing.T) {
 
 func TestSetComponents(t *testing.T) {
 	dummy := []string{"abc", "def", "ghi", "jkl", "mno", "pqr"}
-	meshConfigCtx := Context{"", "", "", dummy, "", "", "", false}
+	meshConfigCtx := Context{"", "", "", dummy, "", "", "", ""}
 	got := meshConfigCtx.GetComponents()
 	want := dummy
 	for i, j := range got {
@@ -243,7 +242,7 @@ func TestSetComponents(t *testing.T) {
 
 func TestGetProvider(t *testing.T) {
 	for _, test := range tests {
-		meshConfigCtx := Context{"", "", "", nil, "", "", test, false}
+		meshConfigCtx := Context{"", "", "", nil, "", "", test, ""}
 		got := meshConfigCtx.GetProvider()
 		want := test
 
@@ -266,10 +265,10 @@ func TestSetProvider(t *testing.T) {
 	}
 }
 
-func TestGetDisableOperator(t *testing.T) {
-	for _, test := range boolTests {
+func TestGetOperatorStatus(t *testing.T) {
+	for _, test := range tests {
 		meshConfigCtx := Context{"", "", "", nil, "", "", "", test}
-		got := meshConfigCtx.GetDisableOperator()
+		got := meshConfigCtx.GetOperatorStatus()
 		want := test
 
 		if got != want {
@@ -278,11 +277,11 @@ func TestGetDisableOperator(t *testing.T) {
 	}
 }
 
-func TestSetDisableOperator(t *testing.T) {
+func TestSetOperatorStatus(t *testing.T) {
 	meshConfigCtx := Context{}
-	for _, test := range boolTests {
-		meshConfigCtx.SetDisableOperator(test)
-		got := meshConfigCtx.GetDisableOperator()
+	for _, test := range tests {
+		meshConfigCtx.SetOperatorStatus(test)
+		got := meshConfigCtx.GetOperatorStatus()
 		want := test
 
 		if got != want {

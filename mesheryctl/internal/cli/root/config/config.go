@@ -51,14 +51,14 @@ type Token struct {
 
 // Context defines a meshery environment
 type Context struct {
-	Endpoint        string   `yaml:"endpoint,omitempty" mapstructure:"endpoint,omitempty"`
-	Token           string   `yaml:"token,omitempty" mapstructure:"token,omitempty"`
-	Platform        string   `yaml:"platform" mapstructure:"platform"`
-	Components      []string `yaml:"components,omitempty" mapstructure:"components,omitempty"`
-	Channel         string   `yaml:"channel,omitempty" mapstructure:"channel,omitempty"`
-	Version         string   `yaml:"version,omitempty" mapstructure:"version,omitempty"`
-	Provider        string   `yaml:"provider,omitempty" mapstructure:"provider,omitempty"`
-	DisableOperator bool     `yaml:"disable-operator,omitempty" mapstructure:"disable-operator,omitempty"`
+	Endpoint   string   `yaml:"endpoint,omitempty" mapstructure:"endpoint,omitempty"`
+	Token      string   `yaml:"token,omitempty" mapstructure:"token,omitempty"`
+	Platform   string   `yaml:"platform" mapstructure:"platform"`
+	Components []string `yaml:"components,omitempty" mapstructure:"components,omitempty"`
+	Channel    string   `yaml:"channel,omitempty" mapstructure:"channel,omitempty"`
+	Version    string   `yaml:"version,omitempty" mapstructure:"version,omitempty"`
+	Provider   string   `yaml:"provider,omitempty" mapstructure:"provider,omitempty"`
+	Operator   string   `yaml:"operator,omitempty" mapstructure:"operator,omitempty"`
 }
 
 // GetMesheryCtl returns a reference to the mesheryctl configuration object
@@ -282,14 +282,14 @@ func (ctx *Context) SetProvider(provider string) {
 	ctx.Provider = provider
 }
 
-// GetDisableOperator returns a boolean that denotes if the operator is disabled
-func (ctx *Context) GetDisableOperator() bool {
-	return ctx.DisableOperator
+// GetOperatorStatus returns a string that denotes the operator status
+func (ctx *Context) GetOperatorStatus() string {
+	return ctx.Operator
 }
 
-// SetDisableOperator sets DisableOperator to true or false
-func (ctx *Context) SetDisableOperator(flag bool) {
-	ctx.DisableOperator = flag
+// SetOperatorStatus can be used to set operator status
+func (ctx *Context) SetOperatorStatus(status string) {
+	ctx.Operator = status
 }
 
 // GetName returns the token name
