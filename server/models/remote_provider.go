@@ -3425,7 +3425,7 @@ func (l *RemoteProvider) SaveUserCredential(req *http.Request, credential *Crede
 		return ErrDataRead(err, "Save Credential")
 	}
 
-	if resp.StatusCode == http.StatusOK {
+	if resp.StatusCode == http.StatusCreated {
 		return nil
 	}
 
@@ -3438,7 +3438,7 @@ func (l *RemoteProvider) GetUserCredentials(req *http.Request, _ string, page, p
 		logrus.Error("operation not available")
 		return nil, ErrInvalidCapability("PersistCredentials", l.ProviderName)
 	}
-	ep, _ := l.Capabilities.GetEndpointForFeature(PersistSMPTestProfile)
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistCredentials)
 
 	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
 	q := remoteProviderURL.Query()
@@ -3456,7 +3456,7 @@ func (l *RemoteProvider) GetUserCredentials(req *http.Request, _ string, page, p
 	}
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
-		return nil, ErrFetch(err, "Perf Test Config Page", resp.StatusCode)
+		return nil, ErrFetch(err, "Credentials Page", resp.StatusCode)
 	}
 	defer resp.Body.Close()
 
@@ -3467,7 +3467,8 @@ func (l *RemoteProvider) GetUserCredentials(req *http.Request, _ string, page, p
 
 	var cp CredentialsPage
 	if err = json.Unmarshal(bdr, &cp); err != nil {
-		return nil, err
+		fmt.Println("bawi is here", &cp)
+		return nil, ErrFetch(err, "Unmarshal Credentials Page", resp.StatusCode)
 	}
 	return &cp, nil
 }
@@ -3521,7 +3522,7 @@ func (l *RemoteProvider) DeleteUserCredential(req *http.Request, credentialID uu
 		return nil, ErrInvalidCapability("PersistCredentials", l.ProviderName)
 	}
 
-	ep, _ := l.Capabilities.GetEndpointForFeature(PersistMesheryFilters)
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistCredentials)
 
 	logrus.Infof("attempting to delete credential from cloud for id: %s", credentialID)
 

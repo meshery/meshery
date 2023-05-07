@@ -176,6 +176,35 @@ const getHyperLinkWithDescription = description => {
 export const getHyperLinkDiv = text => (
   <div dangerouslySetInnerHTML={{ __html : getHyperLinkWithDescription(text) }} />
 );
+/**
+ * Returns the schema for the credentials.
+ * @param {String} type
+ * @returns
+ */
+export const getSchema = (type) => {
+  switch (type) {
+    case "grafana":
+      return require("../../schemas/credentials/grafana").grafanaSchema;
+    case "prometheus":
+      return require("../../schemas/credentials/prometheus").prometheusSchema;
+    case "kubernetes":
+      return require("../../schemas/credentials/kubernetes").kubernetesSchema;
+    default:
+      return
+  }
+}
+
+/**
+ * Extracts the credential name from the formData
+ * @param {Record<string, any>} formData RJSF form data
+ * @returns {string} credentialName
+ */
+export function extractCredentialName(formData) {
+  if (formData[formData?.key + "CredentialName"]) {
+    return formData[formData?.key + "CredentialName"];
+  }
+}
+
 
 /**
  * Calculates the grid for the object field template.

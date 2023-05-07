@@ -34,8 +34,6 @@ import DataTable from "mui-datatables";
 import { configurationTableTheme, configurationTableThemeDark } from '../themes/configurationTableTheme';
 import CredentialIcon from '../assets/icons/CredentialIcon';
 import MesheryCredentialComponent from './MesheryCredentialComponent';
-import { MesherySettingBtn } from './MesherySettingBtn';
-import { publish_schema } from './schemas/publish_schema';
 
 
 const styles = (theme) => ({
@@ -560,11 +558,6 @@ class MesherySettings extends React.Component {
         {tabVal ===0 && <div className={classes.topToolbar}>
           <MesherySettingsEnvButtons/>
         </div>
-        }
-        {
-          tabVal === 5 && <div className={classes.topToolbar}>
-           <MesherySettingBtn type="Credentials" />
-          </div>
         }
         <Paper square className={classes.wrapperClss}>
           <Tabs

@@ -1,34 +1,50 @@
-import React, { useEffect } from 'react'
-import { Button, Grid, IconButton } from '@material-ui/core';
+import React from 'react'
+import { Grid, IconButton, Menu, MenuItem, Tooltip } from '@material-ui/core';
 import {
   Dialog, DialogActions,
   DialogContent,
   DialogTitle
 } from '@material-ui/core';
 import useStyles from "./MesheryPatterns/Cards.styles";
-import PublicIcon from '@material-ui/icons/Public';
 import CloseIcon from '@material-ui/icons/Close';
 import RJSFWrapper from './MesheryMeshInterface/PatternService/RJSF_wrapper';
+import { ArrowDropDown } from '@material-ui/icons';
+import { getSchema } from './MesheryMeshInterface/PatternService/helper';
 
+const SchemaVersion = ({ schema_array, type, schemaChangeHandler }) => {
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const open = Boolean(anchorEl);
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+  return (
+    <div>
+      <Tooltip title="Schema_Changer">
+        <IconButton component="span" onClick={e => setAnchorEl(e.currentTarget)}>
+          <ArrowDropDown style={{ color : "#000" }} />
+        </IconButton>
+      </Tooltip>
+      <Menu id="schema-menu" anchorEl={anchorEl} open={open} handleClose={handleClose}>
+        {schema_array.map((version, index) => (
+          <MenuItem
+            id="schema-menu-item"
+            key={index}
+            selected={version === type}
+            onClick={() => {
+              schemaChangeHandler(version)
+              handleClose();
+            }}
+          >
+            {version}
+          </MenuItem>
+        ))}
+      </Menu>
+    </div>
+  )
+}
 function Modal(props) {
-  const { open, handleClose, pattern, handleSubmit, schema } = props;
+  const { open, title, handleClose, onChange, schema, formData, children, schema_array, type, schemaChangeHandler } = props;
   const classes = useStyles();
-
-  const [data, setData] = React.useState(null)
-  const [payload, setPayload] = React.useState({
-    "id" : pattern?.id,
-    "catalog_data" : pattern?.catalog_data
-  })
-  // useEffect(() => {
-  //   setData(pattern.catalog_data)
-  // }, [pattern])
-  useEffect(() => {
-    setPayload({
-      "id" : pattern?.id,
-      "catalog_data" : data
-    })
-    console.log(payload)
-  }, [data])
 
   return (
     <>
@@ -37,8 +53,15 @@ function Modal(props) {
         onClose={handleClose}>
         <DialogTitle>
           <div className={classes.publishTitle}>
-
-            <b id="simple-modal-title" style={{ textAlign : "center" }} > {pattern?.name}</b>
+            <p style={{
+              display : "flex",
+              alignItems : "center",
+            }}>
+              <b id="simple-modal-title" style={{ textAlign : "center" }} > {title}</b>
+              {schema_array?.length > 1 && (
+                <SchemaVersion schema_array={schema_array} type={type} schemaChangeHandler={schemaChangeHandler}/>
+              )}
+            </p>
             <IconButton aria-label="close" className={classes.closeButton} onClick={handleClose}>
               <CloseIcon />
             </IconButton>
@@ -47,32 +70,18 @@ function Modal(props) {
         <DialogContent>
           <Grid container spacing={24} alignItems="center">
             <RJSFWrapper
-              formData={data}
-              jsonSchema={schema}
-              onChange={(e) => {
-                console.log(e);
-              }}
+              key={type}
+              formData={formData}
+              jsonSchema={schema || getSchema(type)}
+              onChange={onChange}
               hideTitle={true}
             />
           </Grid>
 
         </DialogContent>
         <DialogActions>
-          <Button
-            title="Publish"
-            variant="contained"
-            color="primary"
-            className={classes.testsButton}
-            onClick={() => {
-              handleClose();
-              handleSubmit(payload)
-            }}
-          >
-            <PublicIcon className={classes.iconPatt} />
-            <span className={classes.btnText}> Publish </span>
-          </Button>
+          {children}
         </DialogActions>
-
       </Dialog>
     </>
   )
