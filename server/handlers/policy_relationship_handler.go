@@ -68,7 +68,7 @@ func PolicyRelationshipRegoHandler(ctx context.Context, designFile []byte) (*Net
 	// Check the result of the policy
 	if len(eval_reponse) > 0 && len(eval_reponse[0].Expressions) > 0 {
 		if eval_resp, ok := (eval_reponse[0].Expressions[0].Value).(map[string]interface{}); ok {
-			return NewRelationPolicy(eval_resp), nil
+			return NewRelationPolicy(eval_resp)
 		}
 	}
 
@@ -100,24 +100,25 @@ func (h *Handler) HandleNetworkRelationship(
 		logrus.Error(err)
 		rw.WriteHeader(http.StatusInternalServerError)
 		rw.Write([]byte(fmt.Sprintf("failed to evaluate policy, err: %s", err)))
+		return
 	}
 
 	ec := json.NewEncoder(rw)
 	_ = ec.Encode(networkPolicy)
 }
 
-func NewRelationPolicy(networkResponse map[string]interface{}) *NetworkPolicyRegoResponse {
+func NewRelationPolicy(networkResponse map[string]interface{}) (*NetworkPolicyRegoResponse, error) {
 	var result NetworkPolicyRegoResponse
 
 	b, err := json.Marshal(networkResponse)
 	if err != nil {
-		logrus.Error("error marhsalling json", err.Error())
+		return nil, fmt.Errorf("error marhsalling json %s", err.Error())
 	}
 
 	err = json.Unmarshal(b, &result)
 	if err != nil {
-		logrus.Error("error unmarshalling json into network response", err.Error())
+		return nil, fmt.Errorf("error unmarshalling json into network response struct %s", err.Error())
 	}
 
-	return &result
+	return &result, nil
 }
