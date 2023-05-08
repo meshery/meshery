@@ -69,7 +69,7 @@ func (h *Handler) AdaptersHandler(w http.ResponseWriter, req *http.Request, pref
 }
 
 // AdapterPingHandler is used to ping a given adapter
-func (h *Handler) AdapterPingHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, _ *models.User, _ models.Provider) {
+func (h *Handler) AdapterPingHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	// if req.Method != http.MethodGet {
 	// 	w.WriteHeader(http.StatusNotFound)
 	// 	return
@@ -180,7 +180,7 @@ func (h *Handler) MeshAdapterConfigHandler(w http.ResponseWriter, req *http.Requ
 	}
 }
 
-func (h *Handler) addAdapter(ctx context.Context, meshAdapters []*models.Adapter, _ *models.Preference, meshLocationURL string, _ models.Provider) ([]*models.Adapter, error) {
+func (h *Handler) addAdapter(ctx context.Context, meshAdapters []*models.Adapter, prefObj *models.Preference, meshLocationURL string, provider models.Provider) ([]*models.Adapter, error) {
 	alreadyConfigured := false
 	for _, adapter := range meshAdapters {
 		if adapter.Location == meshLocationURL {

@@ -14,6 +14,7 @@ describe('Settings', () => {
       cy.intercept('GET', '/api/system/adapters*').as('getAdapterPing');
       cy.intercept('POST', '/api/system/adapter/manage').as('postMeshManage');
       cy.intercept('GET', '/api/system/adapters').as('getMeshAdapters');
+      cy.wait('@getMeshAdapters');
 
       cy.get('[data-cy=chipAdapterLocation]')
         .contains('.MuiChip-label', 'localhost:10002')
