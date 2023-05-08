@@ -20,15 +20,8 @@ type Policy struct {
 	Rules string `json:"rules"`
 }
 
-// TODO remove it
-// func TestIt() {
-// 	yamlData := "name: nginx-service.yml\nservices:\n  nginx:\n    name: nginx\n    type: Pod\n    apiVersion: v1\n    namespace: default\n    model: kubernetes\n    settings:\n      spec:\n        containers:\n        - image: nginx:stable\n          name: nginx\n          ports:\n          - container Port: 80\n            name: http-web-svc\n    traits:\n      meshmap:\n        edges: []\n        id: 19d2a03e-141d-41a9-bf7f-9ca12cf3b9be\n        label: nginx\n        meshmodel-metadata:\n          genealogy: \"\"\n          isCustomResource: false\n          isNamespaced: true\n          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg\n          model: kubernetes\n          modelDisplayName: Kubernetes\n          primaryColor: '#326CE5'\n          published: true\n          secondaryColor: '#7aa1f0'\n          shape: round-rectangle\n          styleOverrides: \"\"\n          subCategory: Scheduling & Orchestration\n          svgColor: ui/public/static/img/meshmodels/kubernetes/color/apiservice-color.svg\n          svgComplete: \"\"\n          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/apiservice-white.svg\n        position:\n          posX: 113.0763599675155\n          posY: -26.13721055079196\n  nginx-service:\n    name: nginx-service\n    type: Service\n    apiVersion: v1\n    namespace: default\n    model: kubernetes\n    settings:\n      spec:\n        ports:\n        - name: name-of-service-port\n          port: 80\n          protocol: TCP\n          target Port: http-web-svc\n        selector:\n          app.kubernetes.io/name: proxy\n    traits:\n      meshmap:\n        edges: []\n        id: 5b140a92-0f93-4500-b64a-ce703b49f166\n        label: nginx-service\n        meshmodel-metadata:\n          genealogy: \"\"\n          isCustomResource: false\n          isNamespaced: true\n          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg\n          model: kubernetes\n          modelDisplayName: Kubernetes\n          primaryColor: '#326CE5'\n          published: true\n          secondaryColor: '#7aa1f0'\n          shape: round-triangle\n          styleOverrides: '{\"height\":16,\"width\":17,\"padding\":12,\"background-fit\":\"none\",\"background-position-y\":4.5}'\n          subCategory: Scheduling & Orchestration\n          svgColor: ui/public/static/img/meshmodels/kubernetes/color/apiservice-color.svg\n          svgComplete: \"\"\n          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/apiservice-white.svg\n        position:\n          posX: -32.24910429536563\n          posY: 10.040920246138025\n"
-// 	res := PolicyRelationshipRegoHandler([]byte(yamlData))
-// 	fmt.Println("*******", *res)
-// }
-
 type RelationObject struct {
-	DestinationId   string                 `json:"destination_id,omitempty"`
+	DestinationID   string                 `json:"destination_id,omitempty"`
 	DestinationName string                 `json:"destination_name,omitempty"`
 	SourceId        string                 `json:"source_id,omitempty"`
 	SourceName      string                 `json:"source_name,omitempty"`
@@ -40,16 +33,16 @@ type NetworkPolicyRegoResponse struct {
 	ServiceDeploymentRelationships []RelationObject `json:"service_deployment_relationships,omitempty"`
 }
 
-func PolicyRelationshipRegoHandler(ctx context.Context, designFile []byte) *NetworkPolicyRegoResponse {
+func PolicyRelationshipRegoHandler(ctx context.Context, designFile []byte) (*NetworkPolicyRegoResponse, error) {
 	// Load the policy
 	policyFile, err := ioutil.ReadFile("../meshmodel/policies/network-policy.rego") // absolute path, needs to be changed
 	if err != nil {
 		logrus.Fatal("error reading rego file", err.Error())
+		return nil, err
 	}
 
 	// Initialize the policy
 	policy := Policy{string(policyFile)}
-	fmt.Println("policy relationship1")
 
 	// Initialize the rego engine with the policy
 	engine, err := rego.New(
@@ -58,29 +51,28 @@ func PolicyRelationshipRegoHandler(ctx context.Context, designFile []byte) *Netw
 	).PrepareForEval(ctx)
 
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	var input map[string]interface{}
 	err = yaml.Unmarshal(designFile, &input)
 	if err != nil {
-		logrus.Error("error unmarshalling design file format", err.Error())
+		return nil, err
 	}
 
 	eval_reponse, err := engine.Eval(ctx, rego.EvalInput(input))
 	if err != nil {
-		fmt.Println("an error occured evaluating rego policy", err.Error())
+		return nil, err
 	}
 
 	// Check the result of the policy
 	if len(eval_reponse) > 0 && len(eval_reponse[0].Expressions) > 0 {
 		if eval_resp, ok := (eval_reponse[0].Expressions[0].Value).(map[string]interface{}); ok {
-			return NewRelationPolicy(eval_resp)
+			return NewRelationPolicy(eval_resp), nil
 		}
-	} else {
-		logrus.Error("Failed to evaluate policy")
 	}
-	return nil
+
+	return nil, fmt.Errorf("failed to evaluate rego policy %s", eval_reponse)
 }
 
 func (h *Handler) HandleNetworkRelationship(
@@ -103,7 +95,13 @@ func (h *Handler) HandleNetworkRelationship(
 		return
 	}
 
-	networkPolicy := PolicyRelationshipRegoHandler(context.Background(), body)
+	networkPolicy, err := PolicyRelationshipRegoHandler(context.Background(), body)
+	if err != nil {
+		logrus.Error(err)
+		rw.WriteHeader(http.StatusInternalServerError)
+		rw.Write([]byte(fmt.Sprintf("failed to evaluate policy, err: %s", err)))
+	}
+
 	ec := json.NewEncoder(rw)
 	_ = ec.Encode(networkPolicy)
 }
@@ -113,12 +111,12 @@ func NewRelationPolicy(networkResponse map[string]interface{}) *NetworkPolicyReg
 
 	b, err := json.Marshal(networkResponse)
 	if err != nil {
-		logrus.Error("Error marhsalling json", err.Error())
+		logrus.Error("error marhsalling json", err.Error())
 	}
 
 	err = json.Unmarshal(b, &result)
 	if err != nil {
-		logrus.Error("Error unmarshalling json into network response", err.Error())
+		logrus.Error("error unmarshalling json into network response", err.Error())
 	}
 
 	return &result
