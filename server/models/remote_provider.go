@@ -3467,7 +3467,6 @@ func (l *RemoteProvider) GetUserCredentials(req *http.Request, _ string, page, p
 
 	var cp CredentialsPage
 	if err = json.Unmarshal(bdr, &cp); err != nil {
-		fmt.Println("bawi is here", &cp)
 		return nil, ErrFetch(err, "Unmarshal Credentials Page", resp.StatusCode)
 	}
 	return &cp, nil
@@ -3486,7 +3485,7 @@ func (l *RemoteProvider) UpdateUserCredential(req *http.Request, credential *Cre
 	}
 	bf := bytes.NewBuffer(_creds)
 	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
-	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), bf)
+	cReq, _ := http.NewRequest(http.MethodPut, remoteProviderURL.String(), bf)
 	tokenString, _ := l.GetToken(req)
 	if err != nil {
 		logrus.Error("error getting token: ", err)
@@ -3526,7 +3525,10 @@ func (l *RemoteProvider) DeleteUserCredential(req *http.Request, credentialID uu
 
 	logrus.Infof("attempting to delete credential from cloud for id: %s", credentialID)
 
-	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s", l.RemoteProviderURL, ep, credentialID))
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s", l.RemoteProviderURL, ep))
+	q := remoteProviderURL.Query()
+	q.Add("credential_id", credentialID.String())
+	remoteProviderURL.RawQuery = q.Encode()
 	logrus.Debugf("constructed credential url: %s", remoteProviderURL.String())
 	cReq, _ := http.NewRequest(http.MethodDelete, remoteProviderURL.String(), nil)
 
@@ -3548,11 +3550,7 @@ func (l *RemoteProvider) DeleteUserCredential(req *http.Request, credentialID uu
 
 	if resp.StatusCode == http.StatusOK {
 		logrus.Infof("credential successfully deleted from remote provider")
-		var cred Credential
-		if err = json.Unmarshal(bdr, &cred); err != nil {
-			return nil, err
-		}
-		return &cred, nil
+		return nil, nil
 	}
 	logrus.Errorf("error while deleting credential: %s", bdr)
 	return nil, ErrDelete(fmt.Errorf("error while deleting credential: %s", bdr), fmt.Sprint(bdr), resp.StatusCode)

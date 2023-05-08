@@ -235,7 +235,7 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 		Methods("POST")
 
 	// Handlers for User Credentials
-	
+
 	gMux.Handle("/api/integrations/credentials", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetUserCredentials), models.ProviderAuth))).
 		Methods("GET")
 	gMux.Handle("/api/integrations/credentials", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.UpdateUserCredential), models.ProviderAuth))).
@@ -301,7 +301,6 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 			handlers.ServeUI(w, r, "", "../../ui/out/")
 		}), models.ProviderAuth))).
 		Methods("GET")
-
 
 	return &Router{
 		S:    gMux,

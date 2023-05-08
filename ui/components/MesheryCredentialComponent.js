@@ -40,7 +40,9 @@ const MesheryCredentialComponent = ({
   const [loading, setLoading] = useState(true);
   const [credModal, setCredModal] = useState({
     open : false,
-    data : null
+    data : null,
+    actionType : null,
+    id : null
   });
   const [credentialType, setCredentialType] = useState(schema_array[0]);
   const [credentialName, setCredentialName] = useState(null);
@@ -49,21 +51,24 @@ const MesheryCredentialComponent = ({
     fetchCredential();
   }, []);
 
-  const handleOpen = (ev) => (data) => {
+  const handleOpen = (ev) => (data, type, id) => {
     ev.stopPropagation();
     (data && setCredentialType(data?.type))
     setCredModal({
       open : true,
-      data : data?.secret || null
+      data : data?.secret || null,
+      actionType : type,
+      id : id
     })
   }
 
   const schemaChangeHandler = (type) => {
     setCredentialType(type);
-    setCredModal({
+    setCredModal((prev) => ({
+      ...prev,
       open : true,
       data : null
-    })
+    }))
   }
 
   const _onChange=(formData) => {
@@ -76,7 +81,9 @@ const MesheryCredentialComponent = ({
     ev.stopPropagation();
     setCredModal({
       open : false,
-      data : null
+      data : null,
+      actionType : null,
+      id : null
     })
 
   }
@@ -243,23 +250,26 @@ const MesheryCredentialComponent = ({
                 key={`edit_credential-${tableMeta.rowIndex}`}
                 title="Edit Credential"
               >
-                <EditIcon
-                  onClick={(ev) => {
-                    handleOpen(ev)(rowData)
-                  }}
-                />
+                <IconButton
+                  aria-label="edit"
+                  onClick={(ev) => handleOpen(ev)(rowData,"update",rowData["id"])}
+                >
+                  <EditIcon/>
+                </IconButton>
               </Tooltip>
               <Tooltip
                 key={`delete_credential-${tableMeta.rowIndex}`}
                 title="Delete Credential"
               >
-                <DeleteIcon
-                  width="1.25rem"
-                  // onClick={deleteCredentialHandler(
-                  //   tableMeta.rowData[0],
-                  //   tableMeta.rowData[1]
-                  // )}
-                />
+                <IconButton
+                  aria-label="delete"
+                  onClick={() => handleSubmit({ type : "delete", id : rowData["id"] })}
+                >
+
+                  <DeleteIcon
+                    width="1.25rem"
+                  />
+                </IconButton>
               </Tooltip>
             </div>
           );
@@ -287,7 +297,7 @@ const MesheryCredentialComponent = ({
           variant="contained"
           color="primary"
           size="large"
-          onClick={(ev) => handleOpen(ev)(null)}
+          onClick={(ev) => handleOpen(ev)(null,"create", null)}
           style={{
             "padding" : "0.5rem",
             "borderRadius" : 5,
@@ -310,7 +320,7 @@ const MesheryCredentialComponent = ({
   };
 
   // control the entire submit
-  const handleSubmit= ({ id,name , type }) => {
+  const handleSubmit= ({ id, type }) => {
     updateProgress({ showProgress : true });
 
     if (type === CON_OPS.DELETE){
@@ -321,9 +331,9 @@ const MesheryCredentialComponent = ({
           method : "DELETE"
         },
         () => {
-          console.log("Credentials Deleted")
+          fetchCredential();
           updateProgress({ showProgress : false })
-          enqueueSnackbar(`"${name}" deleted.`, {
+          enqueueSnackbar(`"${type}" deleted.`, {
             variant : "success",
             action : function Action(key) {
               return (
@@ -375,16 +385,33 @@ const MesheryCredentialComponent = ({
     }
 
     if (type === CON_OPS.UPDATE){
+      const data = {
+        id : id,
+        name : credentialName,
+        type : credentialType,
+        secret : formData
+      }
       dataFetch(
         `/api/integrations/credentials`,
         {
           credentials : "include",
           method : "PUT",
-          // body: JSON.stringify(data)
+          body : JSON.stringify(data)
         },
         () => {
-          console.log("credentials updated")
+          fetchCredential();
           updateProgress({ showProgress : false })
+          enqueueSnackbar(`"${credentialType}" updated.`, {
+            variant : "success",
+            action : function Action(key) {
+              return (
+                <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+                  <CloseIcon />
+                </IconButton>
+              );
+            },
+            autoHideDuration : 2000,
+          });
 
         },
         () => {
@@ -412,7 +439,7 @@ const MesheryCredentialComponent = ({
           variant="contained"
           color="primary"
           onClick={(ev) => {
-            handleSubmit({ type : "create" })
+            handleSubmit({ type : credModal.actionType, id : credModal.id })
             handleClose(ev)
           }}
         >
