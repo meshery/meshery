@@ -7,7 +7,9 @@ describe('Settings', () => {
       cy.visit('/settings');
 
       cy.get('[data-cy="tabServiceMeshes"]').click();
-      cy.wait('@getMeshAdapters').debug();
+      cy.wait('@getMeshAdapters').debug({"log": true}).then((response) => {
+        cy.log(response.body);
+      });
     })
 
     it('ping and submit Consul', () => {
@@ -15,7 +17,7 @@ describe('Settings', () => {
       cy.intercept('POST', '/api/system/adapter/manage').as('postMeshManage');
       cy.intercept('GET', '/api/system/adapters').as('getMeshAdapters');
 
-      cy.get('[data-cy=chipAdapterLocation]').debug()
+      cy.get('[data-cy=chipAdapterLocation]').debug({"log": true})
         .contains('.MuiChip-label', 'localhost:10002')
         .click();
 
