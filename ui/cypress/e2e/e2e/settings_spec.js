@@ -7,16 +7,15 @@ describe('Settings', () => {
       cy.visit('/settings');
 
       cy.get('[data-cy="tabServiceMeshes"]').click();
-      cy.wait('@getMeshAdapters');
+      cy.wait('@getMeshAdapters').debug();
     })
 
     it('ping and submit Consul', () => {
       cy.intercept('GET', '/api/system/adapters*').as('getAdapterPing');
       cy.intercept('POST', '/api/system/adapter/manage').as('postMeshManage');
       cy.intercept('GET', '/api/system/adapters').as('getMeshAdapters');
-      cy.wait('@getMeshAdapters');
 
-      cy.get('[data-cy=chipAdapterLocation]')
+      cy.get('[data-cy=chipAdapterLocation]').debug()
         .contains('.MuiChip-label', 'localhost:10002')
         .click();
 
