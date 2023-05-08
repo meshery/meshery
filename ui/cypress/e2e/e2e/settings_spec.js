@@ -7,7 +7,8 @@ describe('Settings', () => {
       cy.visit('/settings');
 
       cy.get('[data-cy="tabServiceMeshes"]').click();
-      cy.wait('@getMeshAdapters').debug({"log": true}).then((response) => {
+      cy.wait('@getMeshAdapters')
+      cy.request('GET', '/api/system/adapters').then((response) => {
         cy.log(response.body);
       });
     })
