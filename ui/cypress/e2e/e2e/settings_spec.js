@@ -1,12 +1,12 @@
 describe('Settings', () => {
   describe('Service Meshes', () => {
     beforeEach(() => {
-      cy.intercept('GET', '/api/system/adapters').as('getMeshAdapters');
-
       cy.selectProviderNone();
       cy.visit('/settings');
 
       cy.get('[data-cy="tabServiceMeshes"]').click();
+
+      cy.intercept('GET', '/api/system/adapters').as('getMeshAdapters');
       cy.wait('@getMeshAdapters')
       cy.request('GET', '/api/system/adapters').then((response) => {
         cy.log(response.body);
@@ -18,7 +18,7 @@ describe('Settings', () => {
       cy.intercept('POST', '/api/system/adapter/manage').as('postMeshManage');
       cy.intercept('GET', '/api/system/adapters').as('getMeshAdapters');
 
-      cy.get('[data-cy=chipAdapterLocation]').debug({"log": true})
+      cy.get('[data-cy=chipAdapterLocation]')
         .contains('.MuiChip-label', 'localhost:10002')
         .click();
 
