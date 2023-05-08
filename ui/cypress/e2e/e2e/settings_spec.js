@@ -3,10 +3,9 @@ describe('Settings', () => {
     beforeEach(() => {
       cy.selectProviderNone();
       cy.visit('/settings');
+      cy.intercept('GET', '/api/system/adapters').as('getMeshAdapters');
 
       cy.get('[data-cy="tabServiceMeshes"]').click();
-
-      cy.intercept('GET', '/api/system/adapters').as('getMeshAdapters');
       cy.wait('@getMeshAdapters')
       cy.request('GET', '/api/system/adapters').then((response) => {
         cy.log(response.body);
