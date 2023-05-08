@@ -33,6 +33,7 @@ type NetworkPolicyRegoResponse struct {
 	ServiceDeploymentRelationships []RelationObject `json:"service_deployment_relationships,omitempty"`
 }
 
+// PolicyRelationshipRegoHandler gets the designFile in the bytes of Yaml and resolves the network relationship as of now.
 func PolicyRelationshipRegoHandler(ctx context.Context, designFile []byte) (*NetworkPolicyRegoResponse, error) {
 	// Load the policy
 	policyFile, err := ioutil.ReadFile("../meshmodel/policies/network-policy.rego") // absolute path, needs to be changed
@@ -95,6 +96,7 @@ func (h *Handler) HandleNetworkRelationship(
 		return
 	}
 
+	// evaluate the rego policy
 	networkPolicy, err := PolicyRelationshipRegoHandler(context.Background(), body)
 	if err != nil {
 		logrus.Error(err)
@@ -103,10 +105,12 @@ func (h *Handler) HandleNetworkRelationship(
 		return
 	}
 
+	// write the response
 	ec := json.NewEncoder(rw)
 	_ = ec.Encode(networkPolicy)
 }
 
+// NewRelationPolicy unmarhals the json response to the struct defined as NetworkPolicyRegoResponse or throws error in failiure, enforces type struct obey
 func NewRelationPolicy(networkResponse map[string]interface{}) (*NetworkPolicyRegoResponse, error) {
 	var result NetworkPolicyRegoResponse
 
