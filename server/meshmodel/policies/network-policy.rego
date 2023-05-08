@@ -16,10 +16,10 @@ get_port_protocol(container_ports) = pod_protocol {
 # checks for key in object
 has_key(x, k) { _ = x[k] }
 
-checkServiceToContainerPortMap(service_port, container_port) {
-	# the service target-port should be equal to the container port name
-	service_port["target Port"] == container_port.name
-}
+# checkServiceToContainerPortMap(service_port, container_port) {
+# 	# the service target-port should be equal to the container port name
+# 	service_port["target Port"] == container_port.name
+# }
 
 checkServiceToContainerPortMap(service_port, container_port) {
 	# the service target-port can be number as well and should be equal to container port in that case

@@ -234,7 +234,7 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 	gMux.Handle("/api/user/schedules", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.SaveScheduleHandler), models.ProviderAuth))).
 		Methods("POST")
 	gMux.Handle("/api/policies/run_policy", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.HandleNetworkRelationship), models.ProviderAuth))).
-		Methods("GET", "POST")
+		Methods("POST")
 
 	gMux.PathPrefix("/api/extensions").
 		Handler(h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.ExtensionsHandler), models.ProviderAuth))).
