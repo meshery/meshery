@@ -12,7 +12,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func (h *Handler) HandleNetworkRelationship(
+func (h *Handler) GetRegoPolicyForDesignFile(
 	rw http.ResponseWriter,
 	r *http.Request,
 	_ *models.Preference,
