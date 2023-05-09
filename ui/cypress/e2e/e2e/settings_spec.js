@@ -6,10 +6,10 @@ describe('Settings', () => {
       cy.intercept('GET', '/api/system/adapters').as('getMeshAdapters');
 
       cy.get('[data-cy="tabServiceMeshes"]').click();
-      cy.wait('@getMeshAdapters')
       cy.request('GET', '/api/system/adapters').then((response) => {
         cy.log(response.body);
       });
+      cy.wait('@getMeshAdapters')
     })
 
     it('ping and submit Consul', () => {
