@@ -18,4 +18,4 @@ jobs:
         with:
           node-version: '18'
       - run: npm ci
-      - run: npm run test
+      - run: npm run test-jest
