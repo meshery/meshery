@@ -133,7 +133,7 @@ function YAMLEditor({ filter, onClose, onSubmit, classes }) {
             lineWrapping : true,
             gutters : ["CodeMirror-lint-markers"],
             lint : true,
-            mode : "text/x-yaml",
+            mode : "text/plain",
           }}
           onChange={(val) => setYaml(val)}
         />
