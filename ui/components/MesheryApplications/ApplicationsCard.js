@@ -59,6 +59,7 @@ function MesheryApplicationCard({
           setYaml={setYaml}
           updateHandler={updateHandler}
           deleteHandler={deleteHandler}
+          type={"application"}
         />
       }
       <FlipCard
