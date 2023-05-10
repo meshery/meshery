@@ -2,11 +2,7 @@ export const prometheusSchema = {
   type : "object",
   title : "Prometheus",
   properties : {
-    key : {
-      type : "string",
-      default : "prometheus"
-    },
-    prometheusCredentialName : {
+    credentialName : {
       title : "Credential Name",
       type : "string",
       description : "Name of your credential"
@@ -25,5 +21,5 @@ export const prometheusSchema = {
       required : ["prometheusURL"]
     }
   },
-  required : ["prometheusCredentialName"]
+  required : ["credentialName"]
 };

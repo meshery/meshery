@@ -195,18 +195,6 @@ export const getSchema = (type) => {
 }
 
 /**
- * Extracts the credential name from the formData
- * @param {Record<string, any>} formData RJSF form data
- * @returns {string} credentialName
- */
-export function extractCredentialName(formData) {
-  if (formData[formData?.key + "CredentialName"]) {
-    return formData[formData?.key + "CredentialName"];
-  }
-}
-
-
-/**
  * Calculates the grid for the object field template.
  * @param {*} element
  * @returns

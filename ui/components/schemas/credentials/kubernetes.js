@@ -2,11 +2,7 @@ export const kubernetesSchema = {
   type : "object",
   title : "Kubernetes",
   properties : {
-    key : {
-      type : "string",
-      default : "kubernetes"
-    },
-    kubernetesCredentialName : {
+    credentialName : {
       title : "Credential Name",
       type : "string",
       description : "Name of your credential"
@@ -69,5 +65,5 @@ export const kubernetesSchema = {
       required : ["clusterName", "clusterServerURL"]
     }
   },
-  required : ["kubernetesCredentialName"]
+  required : ["credentialName"]
 };

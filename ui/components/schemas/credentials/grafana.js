@@ -2,11 +2,7 @@ export const grafanaSchema = {
   type : "object",
   title : "Grafana",
   properties : {
-    key : {
-      type : "string",
-      default : "grafana"
-    },
-    grafanaCredentialName : {
+    credentialName : {
       title : "Credential Name",
       type : "string",
       description : "Name of your credential"
@@ -30,5 +26,5 @@ export const grafanaSchema = {
       required : ["grafanaURL", "grafanaAPIKey"]
     }
   },
-  required : ["grafanaCredentialName"]
+  required : ["credentialName"]
 };

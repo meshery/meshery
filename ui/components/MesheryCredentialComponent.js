@@ -10,7 +10,6 @@ import EditIcon from '@material-ui/icons/Edit';
 import CloseIcon from "@material-ui/icons/Close";
 import DeleteIcon from "../assets/icons/DeleteIcon";
 import Moment from "react-moment";
-import { extractCredentialName } from "./MesheryMeshInterface/PatternService/helper";
 import LoadingScreen from "./LoadingComponents/LoadingComponent";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
@@ -72,8 +71,7 @@ const MesheryCredentialComponent = ({
   }
 
   const _onChange=(formData) => {
-    let name=extractCredentialName(formData);
-    setCredentialName(name);
+    setCredentialName(formData?.credentialName);
     setFormData(formData)
   }
 
