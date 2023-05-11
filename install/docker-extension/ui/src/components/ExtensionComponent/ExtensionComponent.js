@@ -31,6 +31,8 @@ import {
   SectionWrapper,
   VersionText,
   LogoutButton,
+  MeshModels,
+  ModelCategory,
 } from './styledComponents'
 import { MesheryAnimation } from '../MesheryAnimation/MesheryAnimation'
 import { trueRandom, randomApplicationNameGenerator } from '../../utils'
@@ -125,6 +127,8 @@ const ExtensionsComponent = () => {
     }
   }, [meshAdapters])
   const [mesheryVersion, setMesheryVersion] = useState(null)
+  const [emptyMeshmodelCategories, isEmptyMeshmodelCategories] = useState(true)
+  const [meshmodelsCategories, setMeshmodelsCategories] = useState(null)
 
   const logout = () => {
     fetch(proxyUrl + '/token', { method: httpDelete })
@@ -156,7 +160,6 @@ const ExtensionsComponent = () => {
             .then((res) => {
               setUserName(JSON.parse(res)?.user_id)
               setAvatar(JSON.parse(res)?.avatar_url)
-              console.log(res)
             })
             .catch(console.error)
           fetch(proxyUrl + '/api/system/sync')
@@ -169,6 +172,13 @@ const ExtensionsComponent = () => {
           fetch(proxyUrl + '/api/system/version')
             .then((result) => result.text())
             .then((result) => setMesheryVersion(JSON.parse(result)?.build))
+            .catch(console.error)
+          fetch(proxyUrl + '/api/meshmodels/categories')
+            .then((result) => result.text())
+            .then((result) => {
+              setMeshmodelsCategories(JSON.parse(result))
+              isEmptyMeshmodelCategories(false)
+            })
             .catch(console.error)
         }
       })
@@ -221,15 +231,13 @@ const ExtensionsComponent = () => {
     })
       .then(() => {
         window.ddClient.desktopUI.toast.success(
-          `Request received. ${
-            deprovision ? 'Deprovisioning' : 'Provisioning'
+          `Request received. ${deprovision ? 'Deprovisioning' : 'Provisioning'
           } Service Mesh...`,
         )
       })
       .catch(() => {
         window.ddClient.desktopUI.toast.error(
-          `Could not ${
-            deprovision ? 'Deprovision' : 'Provision'
+          `Could not ${deprovision ? 'Deprovision' : 'Provision'
           } the Service Mesh due to some error.`,
         )
       })
@@ -375,8 +383,8 @@ const ExtensionsComponent = () => {
                   href={
                     token &&
                     'http://localhost:9081/api/user/token?token=' +
-                      token +
-                      '&provider=Meshery'
+                    token +
+                    '&provider=Meshery'
                   }
                 >
                   {isLoggedIn ? (
@@ -413,7 +421,7 @@ const ExtensionsComponent = () => {
                   Login
                 </Button>
               ) : (
-                <div sx={{display: 'none'}}></div>
+                <div sx={{ display: 'none' }}></div>
               )}
             </AccountDiv>
           </ExtensionWrapper>
@@ -452,6 +460,41 @@ const ExtensionsComponent = () => {
                 </div>
               </AccountDiv>
             </ExtensionWrapper>
+          )}
+          {!!isLoggedIn && (
+            <div style={{ paddingTop: isLoggedIn ? '1.2rem' : null }}>
+              <ExtensionWrapper
+                className="first-step"
+                sx={{
+                  height: ['22rem', '17rem', '14rem'],
+                  backgroundColor: isDarkTheme ? '#393F49' : '#D7DADE',
+                }}
+              >
+                {!emptyMeshmodelCategories ? (
+                  <div>
+                    <Typography sx={{ marginBottom: '1rem' }}>
+                      Meshery Catalogs
+                    </Typography>
+                    <MeshModels>
+                      {meshmodelsCategories &&
+                        meshmodelsCategories.map((adapter) => (
+                          <ModelCategory>
+                            <Typography style={{ marginBottom: '10px' }}>
+                              {adapter.name}
+                            </Typography>
+                          </ModelCategory>
+                        ))}
+                    </MeshModels>
+                  </div>
+                ) : (
+                  <div>
+                    <Typography sx={{ marginBottom: '1rem' }} variant="h4">
+                      No Mesh Models Category
+                    </Typography>
+                  </div>
+                )}
+              </ExtensionWrapper>
+            </div>
           )}
           {!!isLoggedIn && (
             <div style={{ paddingTop: isLoggedIn ? '1.2rem' : null }}>

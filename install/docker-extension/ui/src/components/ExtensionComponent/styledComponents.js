@@ -76,3 +76,18 @@ export const LogoutButton = styled('div')(({ theme }) => ({
   transform:" translateX(39%)",
   width: "fit-content",
 }));
+
+export const MeshModels = styled('div')(({ theme }) => ({
+  display: "flex",
+  alignItems: 'center',
+  flexWrap: "wrap",
+  [theme.breakpoints.down("md")]: {
+    display: "flex",
+  },
+}));
+
+export const ModelCategory = styled(StyledDiv)(() => ({
+  display: 'flex',
+  width: '25%',
+  justifyContent: 'center',
+}));
