@@ -321,7 +321,7 @@ swagger-docs-build:
 
 ## Building Meshery docs with redocly
 redocly-docs-build:
-	npx @redocly/cli build-docs ./docs/_data/swagger.yml --config='redocly.yaml'
+	npx @redocly/cli build-docs ./docs/_data/swagger.yml --config='redocly.yaml' -t custom.hbs
 
 ## Build Meshery GraphQL API documentation
 graphql-docs:
