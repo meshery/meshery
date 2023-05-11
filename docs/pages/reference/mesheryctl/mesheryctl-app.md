@@ -12,7 +12,7 @@ subcommand: nil
 
 # mesheryctl app
 
-Service Mesh Apps Management
+Cloud Native Apps Management
 
 ## Synopsis
 

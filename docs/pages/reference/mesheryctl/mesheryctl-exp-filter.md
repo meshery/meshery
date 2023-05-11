@@ -12,7 +12,7 @@ subcommand: filter
 
 # mesheryctl exp filter
 
-Service Mesh Filter Management
+Cloud Native Filter Management
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>

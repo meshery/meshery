@@ -12,7 +12,7 @@ subcommand: nil
 
 # mesheryctl pattern
 
-Service Mesh Patterns Management
+Cloud Native Patterns Management
 
 ## Synopsis
 

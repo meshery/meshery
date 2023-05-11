@@ -1,113 +1,8 @@
 // @ts-check
 // ********************************** TYPE DEFINTIONS **********************************
 
-import { promisifiedDataFetch } from "../../lib/data-fetch";
 import { trueRandom } from "../../lib/trueRandom";
 import { userPromptKeys } from "./PatternService/helper";
-
-/**
- * @typedef {Object} OAMDefinition
- * @property {string} kind
- * @property {string} apiVersion
- * @property {Record<string, any>} metadata
- * @property {Record<string, any>} spec
- */
-
-/**
- * @typedef {string} OAMRefSchema
- */
-
-/**
- * @typedef {Object} OAMGenericResponse
- * @property {OAMDefinition} oam_definition
- * @property {OAMRefSchema} oam_ref_schema
- * @property {string} host
- * @property {Record<string, any>} metadata
- */
-
-// ******************************************************************************************
-
-/**
- * getWorkloadDefinitionsForAdapter will fetch workloads for the given
- * adapter from meshery server
- * @param {string} adapter
- * @returns {Promise<Array<OAMGenericResponse>>}
- */
-export async function getWorkloadDefinitionsForAdapter(adapter) {
-  try {
-    const res = await promisifiedDataFetch("/api/oam/workload");
-    if (adapter) return res?.filter((el) => el?.metadata?.["adapter.meshery.io/name"] === adapter);
-    return res;
-  } catch (error) {
-    console.error(error);
-    return [];
-  }
-}
-
-/**
- * getTraitDefinitionsForAdapter will fetch tratis for the given
- * adapter from meshery server
- * @param {string} adapter
- * @returns {Promise<Array<OAMGenericResponse>>}
- */
-export async function getTraitDefinitionsForAdapter(adapter) {
-  try {
-    const res = await promisifiedDataFetch("/api/oam/trait?trim=true");
-
-    if (adapter) return res?.filter((el) => el?.metadata?.["adapter.meshery.io/name"] === adapter);
-    return res;
-  } catch (error) {
-    console.error(error);
-    return [];
-  }
-}
-
-/**
- * getPatternServiceName takes in the pattern service metadata and returns
- * the name of the service
- *
- * @param {*} item pattern service component
- * @param {boolean} includeDisplayName if set to true, display name is checked first
- * @returns {string} service name
- */
-export function getPatternServiceName(item, includeDisplayName = true) {
-  if (includeDisplayName) return item?.metadata?.["display.ui.meshery.io/name"] || item?.oam_definition?.metadata?.name || getPatternAttributeName(item) || "NA";
-
-  return item?.oam_definition?.metadata?.name || "NA";
-}
-
-/**
- * getHumanReadablePatternServiceName takes in the pattern service metadata and returns
- * the readable name of the service
- *
- * @param {*} item pattern service component
- * @returns {string} service name
- */
-export function getHumanReadablePatternServiceName(item) {
-  return (
-    item?.metadata?.["display.ui.meshery.io/name"]
-  )
-}
-
-/**
- * getPatternServiceID takes in the pattern service metadata and returns
- * the ID of the service
- * @param {*} item pattern service component
- * @returns {string | undefined}
- */
-export function getPatternServiceID(item) {
-  return item?.id;
-}
-
-/**
- * getPatternServiceType takes in the pattern service metadata and returns
- * the category of the service
- * @param {*} item pattern service coponent
- * @returns {string | undefined} service name
- */
-export function getPatternServiceType(item) {
-  return item?.metadata?.["ui.meshery.io/category"];
-}
 
 /**
  * getPatternAttributeName will take a json schema and will return a pattern
@@ -183,34 +78,6 @@ export function createPatternFromConfig(config, namespace, partialClean = false)
   return pattern;
 }
 
-/**
- * Capitalises camelcase-string
- *
- * @param {String} text
- * @returns
- */
-export function camelCaseToCapitalize(text) {
-  if (!text) return null
-
-  return text?.replaceAll(/([A-Z])/g, " $1")?.trim();
-}
-
-/**
- * Formats text for prettified view
- *
- * @param {String} text
- * @returns
- */
-export function formatString(text) {
-  if (!text) return null
-
-  // format string for prettified camelCase
-  // @ts-ignore
-  let formattedText = text.replaceAll("IP", "Ip");
-  formattedText = camelCaseToCapitalize(formattedText),
-  formattedText = formattedText.replaceAll("Ip", "IP")
-  return formattedText
-}
 
 /**
  * The rjsf json schema builder for the ui

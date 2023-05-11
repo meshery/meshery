@@ -69,6 +69,7 @@ function MesheryPatternCard({
           setYaml={setYaml}
           updateHandler={updateHandler}
           deleteHandler={deleteHandler}
+          type={"pattern"}
         />
       }
       <FlipCard
