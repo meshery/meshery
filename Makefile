@@ -318,6 +318,11 @@ swagger-docs-build:
 	swagger generate spec -o ./docs/_data/swagger.yml --scan-models; \
 	swagger flatten ./docs/_data/swagger.yml -o ./docs/_data/swagger.yml --with-expand --format=yaml
 
+
+## Building Meshery docs with redocly
+redocly-docs-build:
+	npx @redocly/cli build-docs ./docs/_data/swagger.yml --config='redocly.yaml' -t custom.hbs
+
 ## Build Meshery GraphQL API documentation
 graphql-docs:
 	cd docs; build-docs; bundle exec rake graphql:compile_docs
