@@ -77,12 +77,13 @@ const MeshModelComponent = ({ type, classes }) => {
 
 
 
-  const smi_columns = [
+  const meshmodel_columns = [
     {
       name : type === 'components' ? 'kind' : 'displayName',
       label : `Name`,
       options : {
         sort : true,
+        search : true,
         sortDescFirst : true,
         sortThirdClickReset : true,
         customHeadRender : function CustomHead({ index, ...column }, sortColumn) {
@@ -106,6 +107,7 @@ const MeshModelComponent = ({ type, classes }) => {
       label : type === 'components' ? 'Api Version' : 'Version',
       options : {
         sort : true,
+        search : true,
         sortDescFirst : true,
         sortThirdClickReset : true,
         customHeadRender : function CustomHead({ index, ...column }, sortColumn) {
@@ -129,6 +131,7 @@ const MeshModelComponent = ({ type, classes }) => {
       label : type === 'components' ? 'Model' : 'Category Name',
       options : {
         sort : false,
+        search : true,
         customHeadRender : function CustomHead({ index, ...column }) {
           return (
             <TableCell align={"start"} key={index}>
@@ -154,6 +157,7 @@ const MeshModelComponent = ({ type, classes }) => {
       label : 'Sub Category',
       options : {
         sort : false,
+        search : true,
         display : type === 'components' ? 'true' : 'false',
         customHeadRender : function CustomHead({ index, ...column }) {
           return (
@@ -178,7 +182,7 @@ const MeshModelComponent = ({ type, classes }) => {
 
   ]
 
-  const smi_options = {
+  const meshmodel_options = {
     rowsPerPage : 25,
     count : 500,
     sort : true,
@@ -186,6 +190,7 @@ const MeshModelComponent = ({ type, classes }) => {
     print : false,
     filter : false,
     selectableRows : false,
+    search : true,
     serverSide : true,
     onChangePage : (p) =>  setPage(p+1),
   }
@@ -194,12 +199,11 @@ const MeshModelComponent = ({ type, classes }) => {
     <div >
       <div data-test="workloads">
         {resourcesDetail && (
-          console.log('inside retuirn' ,resourcesDetail),
           <MUIDataTable
             title={<div className={classes.tableHeader}></div>}
             data={resourcesDetail}
-            columns={smi_columns}
-            options={smi_options}
+            columns={meshmodel_columns}
+            options={meshmodel_options}
           />
         )}
       </div>
