@@ -11,6 +11,7 @@ describe('Settings', () => {
         cy.log(response.body);
       });
       cy.wait('@getMeshAdapters')
+      cy.reload()
     })
 
     it('ping and submit Consul', () => {
