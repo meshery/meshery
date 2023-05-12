@@ -1,27 +1,26 @@
-import React, { useLayoutEffect, useState } from 'react';
-import IconButton from '@material-ui/core/IconButton';
-import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
+import { Checkbox, List, ListItem } from '@material-ui/core';
 import Avatar from '@material-ui/core/Avatar';
+import ClickAwayListener from '@material-ui/core/ClickAwayListener';
+import Grow from '@material-ui/core/Grow';
+import IconButton from '@material-ui/core/IconButton';
+import ListItemText from "@material-ui/core/ListItemText";
+import MenuItem from '@material-ui/core/MenuItem';
+import MenuList from '@material-ui/core/MenuList';
+import NoSsr from '@material-ui/core/NoSsr';
+import Paper from '@material-ui/core/Paper';
+import Popper from '@material-ui/core/Popper';
+import { withStyles } from '@material-ui/core/styles';
+import CloseIcon from "@material-ui/icons/Close";
+import classNames from 'classnames';
+import Link from "next/link";
+import { withRouter } from 'next/router';
+import { withSnackbar } from "notistack";
+import React, { useLayoutEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { withStyles } from '@material-ui/core/styles';
-import Link from "next/link";
-import MenuList from '@material-ui/core/MenuList';
-import Grow from '@material-ui/core/Grow';
-import MenuItem from '@material-ui/core/MenuItem';
-import ListItemText from "@material-ui/core/ListItemText";
-import Popper from '@material-ui/core/Popper';
-import Paper from '@material-ui/core/Paper';
-import ClickAwayListener from '@material-ui/core/ClickAwayListener';
-import NoSsr from '@material-ui/core/NoSsr';
-import { withRouter } from 'next/router';
 import dataFetch from '../lib/data-fetch';
 import { updateUser } from '../lib/store';
-import classNames from 'classnames';
-import { ListItem, List, Checkbox } from '@material-ui/core';
-import { withSnackbar } from "notistack";
-import CloseIcon from "@material-ui/icons/Close";
-import { isExtensionOpen } from '../pages/_app';
+import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
 
 
 const styles = () => ({
@@ -34,27 +33,16 @@ const styles = () => ({
 });
 
 function ThemeToggler({
-  theme, themeSetter, enqueueSnackbar
+  theme, themeSetter
 }) {
   const [themeToggle, setthemeToggle] = useState(false);
   const defaultTheme = "light";
   const handle = () => {
-    if (isExtensionOpen()) {
-      return;
-    }
-
     theme === "dark" ? setthemeToggle(true) : setthemeToggle(false);
     localStorage.setItem("Theme", theme);
   };
 
   useLayoutEffect(() => {
-    if (isExtensionOpen()) {
-      if (localStorage.getItem("Theme") && localStorage.getItem("Theme") !== defaultTheme) {
-        themeSetter(defaultTheme);
-      }
-      return;
-    }
-
     if (localStorage.getItem("Theme") === null) {
       themeSetter(defaultTheme);
     } else {
@@ -66,10 +54,6 @@ function ThemeToggler({
   useLayoutEffect(handle, [theme]);
 
   const themeToggler = () => {
-    if (isExtensionOpen()) {
-      enqueueSnackbar("Toggling between themes is not supported in MeshMap", { variant : "info", preventDuplicate : true })
-      return;
-    }
     theme === "light" ? themeSetter("dark") : themeSetter("light");
   };
 
@@ -279,7 +263,7 @@ class User extends React.Component {
                       <MenuItem onClick={this.handleGetToken}>Get Token</MenuItem>
                       <MenuItem onClick={this.handlePreference}>Preferences</MenuItem>
                       <MenuItem onClick={this.handleLogout}>Logout</MenuItem>
-                      <MenuItem >  <ThemeToggler classes={classes} theme={theme} themeSetter={themeSetter} enqueueSnackbar={this.props.enqueueSnackbar} /></MenuItem>
+                      <MenuItem >  <ThemeToggler classes={classes} theme={theme} themeSetter={themeSetter} /></MenuItem>
                     </MenuList>
                   </ClickAwayListener>
                 </Paper>

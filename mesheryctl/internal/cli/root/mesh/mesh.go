@@ -46,7 +46,7 @@ var (
 	watch      bool
 	MeshCmd    = &cobra.Command{
 		Use:   "mesh",
-		Short: "Service Mesh Lifecycle Management",
+		Short: "Cloud Native Lifecycle Management",
 		Long:  "Provisioning, configuration, and on-going operational management of service meshes",
 		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
 

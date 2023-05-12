@@ -102,7 +102,6 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
   const [NATSState, setNATSState] = useState(["UNKNOWN"]);
   const [NATSVersion, setNATSVersion] = useState(["N/A"]);
   const [contexts, setContexts] = useState([]);
-  const [k8sVersion, setK8sVersion] = useState(["N/A"]);
   const [discover, setLastDiscover] = useState(['']);
   const [_operatorState, _setOperatorState] = useState(operatorState || []);
   const deleteCtxtRef = useRef(null);
@@ -152,7 +151,6 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
           error : (err) => console.log("error at operator scan: " + err),
         })
     })
-    getKubernetesVersion(); // change to per context and also ping return server version. no need to check workload
   }, [])
 
   useEffect(() => {
@@ -248,20 +246,6 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
     let newData = [...discover];
     newData[index] = newDate;
     setLastDiscover(newData);
-  }
-
-  const getKubernetesVersion = () => {
-    dataFetch(
-      "/api/oam/workload/APIService.K8s",
-      { credentials : "same-origin" },
-      (result) => {
-        if (result) {
-          let version = result[0]?.oam_definition?.spec?.metadata?.version;
-          setK8sVersion(version);
-        }
-      },
-      handleError("Failed to get Kubernetes version")
-    )
   }
 
   const handleKubernetesClick = (context, index) => {
@@ -658,7 +642,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
                               <ListItemText primary="Name" secondary={contexts[rowMetaData.rowIndex].name} />
                             </ListItem>
                             <ListItem>
-                              <ListItemText primary="K8s Version" secondary={k8sVersion} />
+                              <ListItemText primary="K8s Version" secondary={contexts[rowMetaData.rowIndex].version} />
                             </ListItem>
                           </List>
                         </Grid>

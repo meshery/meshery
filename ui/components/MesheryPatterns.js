@@ -20,7 +20,7 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import dataFetch from "../lib/data-fetch";
 import { toggleCatalogContent, updateProgress } from "../lib/store";
-import DesignConfigurator from "../components/configuratorComponents/patternConfigurator";
+import DesignConfigurator from "../components/configuratorComponents/MeshModel";
 import UploadImport from "./UploadImport";
 import { ctxUrl } from "../utils/multi-ctx";
 import { generateValidatePayload, getComponentsinFile, randomPatternNameGenerator as getRandomName } from "../utils/utils";
@@ -42,6 +42,7 @@ import Validation from "./Validation";
 import { ACTIONS, FILE_OPS, MesheryPatternsCatalog, VISIBILITY } from "../utils/Enum";
 import PublishModal from "./PublishModal";
 import CloneIcon from "../public/static/img/CloneIcon";
+import { useRouter } from "next/router";
 
 const styles = (theme) => ({
   grid : {
@@ -249,6 +250,7 @@ function MesheryPatterns({
   const [selectedRowData, setSelectedRowData] = useState(null);
   const [selectedPattern, setSelectedPattern] = useState(resetSelectedPattern());
   const [extensionPreferences, setExtensionPreferences] = useState({});
+  const router = useRouter()
 
   const [patternErrors, setPatternErrors] = useState(new Map());
 
@@ -1144,10 +1146,7 @@ function MesheryPatterns({
                 color="primary"
                 size="large"
                 // @ts-ignore
-                onClick={() => setSelectedPattern({
-                  pattern : { id : null, name : "New Pattern", pattern_file : "name: New Pattern\nservices:" },
-                  show : true,
-                })}
+                onClick={() => router.push("designs/configurator")}
                 style={{ marginRight : "2rem" }}
               >
                 <AddIcon className={classes.addIcon} />

@@ -295,6 +295,7 @@ type K8sContext {
   meshery_instance_id: ID!,
   kubernetes_server_id: ID!,
   deployment_type: String!,
+  version: String!,
   updated_at: String!,
   created_at: String!
 }

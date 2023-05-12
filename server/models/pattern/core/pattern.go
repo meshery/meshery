@@ -575,6 +575,7 @@ func createPatternServiceFromK8s(manifest map[string]interface{}, regManager *me
 		}
 	}
 	rest = Format.Prettify(rest, false)
+	uuidV4, _ := uuid.NewV4()
 	svc := Service{
 		Name:        name,
 		Type:        comp.Kind,
@@ -586,6 +587,7 @@ func createPatternServiceFromK8s(manifest map[string]interface{}, regManager *me
 		Settings:    rest,
 		Traits: map[string]interface{}{
 			"meshmap": map[string]interface{}{
+				"id":                 uuidV4,
 				"meshmodel-metadata": comp.Metadata,
 			},
 		},

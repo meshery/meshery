@@ -442,7 +442,7 @@ const getNavigatorComponents = (  /** @type {CapabilitiesRegistry} */  capabilit
       {
         id : DESIGN,
         icon : <PatternIcon style={{ ...drawerIconsStyle }} />,
-        href : "/configuration/patterns",
+        href : "/configuration/designs",
         title : "Designs",
         show : capabilityRegistryObj.isNavigatorComponentEnabled([CONFIGURATION, DESIGN]),
         link : true,
