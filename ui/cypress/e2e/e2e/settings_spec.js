@@ -2,7 +2,6 @@ describe('Settings', () => {
   describe('Service Meshes', () => {
     beforeEach(() => {
       cy.selectProviderNone();
-      cy.visit('/');
       cy.visit('/settings');
       cy.intercept('GET', '/api/system/adapters').as('getMeshAdapters');
 
