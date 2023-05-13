@@ -579,7 +579,7 @@ class Header extends React.Component {
                     {title}{isBeta ? <sup className={classes.betaBadge}>BETA</sup> : ""}
                   </Typography>
                 </Grid>
-                <Grid item className={classes.userContainer}>
+                <Grid item className={classes.userContainer} style={{ position : "relative", right : "-27px" }}>
                   <div className={classes.userSpan} style={{ position : "relative" }}>
                     <K8sContextMenu
                       classes={classes}
