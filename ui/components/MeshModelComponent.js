@@ -16,12 +16,12 @@ const meshmodelStyles = (theme) => ({
     paddingLeft : 0,
     paddingRight : 0,
     "&.Mui-selected" : {
-      color : theme.palette.type === 'dark' ? "#00B39F" : theme.palette.primary,
+      color : theme.palette.view === 'dark' ? "#00B39F" : theme.palette.primary,
     },
   },
   tabs : {
     "& .MuiTabs-indicator" : {
-      backgroundColor : theme.palette.type === 'dark' ? "#00B39F" : theme.palette.primary,
+      backgroundColor : theme.palette.view === 'dark' ? "#00B39F" : theme.palette.primary,
     },
   },
   dashboardSection : {
@@ -31,7 +31,7 @@ const meshmodelStyles = (theme) => ({
 
 })
 
-const MeshModelComponent = ({ type, classes }) => {
+const MeshModelComponent = ({ view, classes }) => {
   const [resourcesDetail, setResourcesDetail] = useState();
   const [isRequestCancelled, setRequestCancelled] = useState(false);
   const [page, setPage] = useState(1);
@@ -63,23 +63,23 @@ const MeshModelComponent = ({ type, classes }) => {
     setRequestCancelled(false);
 
 
-    if (type === 'models') {
+    if (view === 'models') {
       getModels(page);
-    } else if (type === 'components') {
+    } else if (view === 'components') {
       getComponents(page);
     }
 
     return () => {
       setRequestCancelled(true);
     };
-  }, [type, page]);
+  }, [view, page]);
 
 
 
 
   const meshmodel_columns = [
     {
-      name : type === 'components' ? 'kind' : 'displayName',
+      name : view === 'components' ? 'kind' : 'displayName',
       label : `Name`,
       options : {
         sort : true,
@@ -103,8 +103,8 @@ const MeshModelComponent = ({ type, classes }) => {
       },
     },
     {
-      name : type === 'components' ? 'apiVersion' : 'version',
-      label : type === 'components' ? 'Api Version' : 'Version',
+      name : view === 'components' ? 'apiVersion' : 'version',
+      label : view === 'components' ? 'Api Version' : 'Version',
       options : {
         sort : true,
         search : true,
@@ -127,8 +127,8 @@ const MeshModelComponent = ({ type, classes }) => {
       },
     },
     {
-      name : type === 'components' ? 'metadata' : 'category',
-      label : type === 'components' ? 'Model' : 'Category Name',
+      name : view === 'components' ? 'metadata' : 'category',
+      label : view === 'components' ? 'Model' : 'Category Name',
       options : {
         sort : false,
         search : true,
@@ -144,8 +144,8 @@ const MeshModelComponent = ({ type, classes }) => {
         customBodyRender : (value) => {
           const { modelDisplayName, name } = value;
           return (
-            <Tooltip title={type === 'models' ? name : modelDisplayName} placement="top">
-              <div>{type === 'models' ? name : modelDisplayName}</div>
+            <Tooltip title={view === 'models' ? name : modelDisplayName} placement="top">
+              <div>{view === 'models' ? name : modelDisplayName}</div>
             </Tooltip>
           )
 
@@ -158,7 +158,7 @@ const MeshModelComponent = ({ type, classes }) => {
       options : {
         sort : false,
         search : true,
-        display : type === 'components' ? 'true' : 'false',
+        display : view === 'components' ? 'true' : 'false',
         customHeadRender : function CustomHead({ index, ...column }) {
           return (
             <TableCell align={"start"} key={index}>

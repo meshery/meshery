@@ -12,27 +12,19 @@ import {
 import CloseIcon from "@material-ui/icons/Close";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faCloud, faPoll, faDatabase, faFileInvoice } from '@fortawesome/free-solid-svg-icons';
-// import {faTachometerAlt} from '@fortawesome/free-solid-svg-icons';
 import { faMendeley } from '@fortawesome/free-brands-svg-icons';
 import Link from 'next/link';
 import MeshConfigComponent from './MeshConfigComponent';
 import GrafanaComponent from './telemetry/grafana/GrafanaComponent';
 import MeshAdapterConfigComponent from './MeshAdapterConfigComponent';
 import PrometheusComponent from './telemetry/prometheus/PrometheusComponent';
-// import MesherySettingsPerformanceComponent from "../components/MesherySettingsPerformanceComponent";
 import { updateProgress } from "../lib/store";
 import { withSnackbar } from "notistack";
 import PromptComponent from './PromptComponent';
 import resetDatabase from './graphql/queries/ResetDatabaseQuery';
 import { iconMedium } from '../css/icons.styles';
-// import subscribeMeshModelSummary from "./graphql/subscriptions/MeshModelSummarySubscription";
-// import fetchMeshModelSummary from "./graphql/queries/MeshModelSummaryQuery";
-// import { MuiThemeProvider } from '@material-ui/core/styles';
 import MesherySettingsEnvButtons from './MesherySettingsEnvButtons';
 import MeshModelComponent from './MeshModelComponent';
-// import { getComponentsDetail, getModelsDetail } from '../api/meshmodel'
-// import DataTable from "mui-datatables";
-// import { configurationTableTheme, configurationTableThemeDark } from '../themes/configurationTableTheme';
 
 
 const styles = (theme) => ({
@@ -80,7 +72,6 @@ const styles = (theme) => ({
     display : "flex",
     justifyContent : "center",
     margin : theme.spacing(2),
-    // backgroundColor : "#fff",
   },
   paper : {
     maxWidth : '90%',
@@ -211,12 +202,6 @@ class MesherySettings extends React.Component {
       scannedPrometheus : [],
       // Array of scanned grafan urls
       scannedGrafana : [],
-
-      // meshmodelSummarySelector : { type : "components" },
-      // meshmodelSummarySelectorList : ["components", "relationships"],
-      // meshmodelSummary : [],
-      // meshmodelSummarySubscription : null,
-      // meshmodelSummaryQuery : null,
     };
 
     this.systemResetRef = React.createRef();
@@ -244,220 +229,6 @@ class MesherySettings extends React.Component {
     }
     return st;
   }
-
-  // disposeMeshModelSummarySubscriptions = () => {
-  //   this.state.meshmodelSummarySubscription && this.state.meshmodelSummarySubscription.dispose();
-  //   this.state.meshmodelSummaryQuery && this.state.meshmodelSummaryQuery.unsubscribe();
-  // }
-
-  // initDashboardMeshModelSummaryQuery = () => {
-  //   const self = this;
-  //   let selector = self.state.meshmodelSummarySelector;
-
-  //   if (self._isMounted) {
-  //     // @ts-ignore
-  //     const meshmodelSummaryQuery = fetchMeshModelSummary(selector).subscribe({
-  //       next : (res) => {
-  //         this.setState({ meshmodelSummary : res?.meshmodelSummary })
-  //       },
-  //       error : (err) => console.log(err),
-  //     })
-
-  //     this.setState({ meshmodelSummaryQuery });
-  //   }
-  // }
-
-  // initDashboardMeshModelSummarySubscription = () => {
-  //   const self = this;
-  //   let selector = self.state.meshmodelSummarySelector;
-
-  //   if (self._isMounted) {
-  //     // @ts-ignore
-  //     const meshmodelSummarySubscription = subscribeMeshModelSummary((res) => {
-  //       this.setState({ meshmodelSummary : res?.meshmodelSummary })
-  //     }, {
-  //       selector : selector
-  //     });
-  //     this.setState({ meshmodelSummarySubscription });
-  //   }
-  // }
-
-  // disposeSubscriptions = () => {
-  //   this.disposeMeshModelSummarySubscriptions()
-  // }
-
-  // componentDidMount() {
-  //   this._isMounted = true
-
-  //   this.disposeSubscriptions()
-
-  //   if (this._isMounted) {
-  //     this.initDashboardMeshModelSummaryQuery();
-  //     this.initDashboardMeshModelSummarySubscription();
-  //   }
-  // }
-
-  // componentDidUpdate(prevProps, prevState) {
-  //   if (prevState?.meshmodelSummarySelector !== this.state?.meshmodelSummarySelector) {
-  //     this.disposeMeshModelSummarySubscriptions();
-  //     this.initDashboardMeshModelSummaryQuery();
-  //     this.initDashboardMeshModelSummarySubscription();
-  //   }
-  // }
-
-  // emptyStateMessageForMeshModelSummary = () => {
-  //   return "No MeshModel registered."
-  // }
-
-  /**
-   * MeshModelSummaryCard takes in the meshmodel related data
-   * and renders a table with registered meshmodel information of
-   * the selected type of model (like relationships, components etc)
-   * @param {
-   * {
-   *   kind, count
-   * }[]
-   * } meshmodelSummary
-   */
-  // MeshModelSummaryCard = (meshmodelSummary = []) => {
-  //   const self = this;
-  //   let kindSort = "asc";
-  //   let countSort = "asc";
-  //   const { theme } = this.props;
-  //   const switchSortOrder = (type) => {
-  //     if (type === "kindSort") {
-  //       kindSort = (kindSort === "asc") ? "desc" : "asc";
-  //       countSort = "asc";
-  //     } else if (type === "countSort") {
-  //       countSort = (countSort === "asc") ? "desc" : "asc";
-  //       kindSort = "asc";
-  //     }
-  //   }
-
-  //   const columns = [
-  //     {
-  //       name : "name",
-  //       label : "Name",
-  //       options : {
-  //         filter : false,
-  //         sort : true,
-  //         searchable : true,
-  //         setCellProps : () => ({ style : { textAlign : "center" } }),
-  //         customHeadRender : ({ index, ...column }, sortColumn) => {
-  //           return (
-  //             <TableCell key={index} style={{ textAlign : "center" }} onClick={() => {
-  //               sortColumn(index); switchSortOrder("kindSort");
-  //             }}>
-  //               <TableSortLabel active={column.sortDirection != null} direction={kindSort} >
-  //                 <b>{column.label}</b>
-  //               </TableSortLabel>
-  //             </TableCell>
-
-  //           )
-  //         }
-  //       },
-  //     },
-  //     {
-  //       name : "count",
-  //       label : "Count",
-  //       options : {
-  //         filter : false,
-  //         sort : true,
-  //         searchable : true,
-  //         setCellProps : () => ({ style : { textAlign : "center" } }),
-  //         customHeadRender : ({ index, ...column }, sortColumn) => {
-  //           return (
-  //             <TableCell key={index} style={{ textAlign : "center" }} onClick={() => {
-  //               sortColumn(index); switchSortOrder("countSort");
-  //             }}>
-  //               <TableSortLabel active={column.sortDirection != null} direction={countSort} >
-  //                 <b>{column.label}</b>
-  //               </TableSortLabel>
-  //             </TableCell>
-
-  //           )
-  //         }
-  //       },
-  //     },
-  //   ]
-
-  //   const options = {
-  //     filter : false,
-  //     selectableRows : "none",
-  //     responsive : "scrollMaxHeight",
-  //     print : false,
-  //     download : false,
-  //     viewColumns : false,
-  //     pagination : false,
-  //     fixedHeader : true,
-  //     customToolbar : () => {
-  //       return (
-  //         <>
-  //           {self.state.meshmodelSummarySelectorList && (
-  //             <Select
-  //               value={self.state.meshmodelSummarySelector.type}
-  //               onChange={(e) =>
-  //                 self.setState({ meshmodelSummarySelector : { type : e.target.value } })
-  //               }
-  //             >
-  //               {self.state.meshmodelSummarySelectorList && self.state.meshmodelSummarySelectorList.map((opts) => <MenuItem key={opts} value={opts}>{opts}</MenuItem>)}
-  //             </Select>
-  //           )}
-  //         </>
-  //       )
-  //     }
-  //   }
-
-  //   if (Array.isArray(meshmodelSummary) && meshmodelSummary?.length)
-  //     return (
-  //       <Paper elevation={1} style={{ padding : "2rem" }}>
-  //         <MuiThemeProvider theme={ theme.palette.type == "dark" ?  configurationTableThemeDark() : configurationTableTheme() }>
-  //           <DataTable
-  //             title={
-  //               <>
-  //                 <div style={{ display : "flex", alignItems : "center", marginBottom : "1rem" }}>
-  //                   <img src={"/static/img/all_mesh.svg"} className={this.props.classes.icon} style={{ marginRight : "0.75rem" }} />
-  //                   <Typography variant="h6">Registered MeshModel</Typography>
-  //                 </div>
-  //               </>
-  //             }
-  //             data={meshmodelSummary}
-  //             options={options}
-  //             columns={columns}
-  //           />
-  //         </MuiThemeProvider>
-  //       </Paper>
-  //     );
-
-  //   return null;
-  // };
-
-  // showMeshModelSummary = () => {
-  //   const self = this;
-  //   return (
-  //     <>
-  //       {self?.state?.meshmodelSummary[self?.state?.meshmodelSummarySelector?.type] && self?.state?.meshmodelSummary[self?.state?.meshmodelSummarySelector?.type].length > 0
-  //         ? (
-  //           self.MeshModelSummaryCard(self?.state?.meshmodelSummary[self?.state?.meshmodelSummarySelector?.type])
-  //         )
-  //         : (
-  //           <div
-  //             style={{
-  //               padding : "2rem",
-  //               display : "flex",
-  //               justifyContent : "center",
-  //               alignItems : "center",
-  //               flexDirection : "column",
-  //             }}
-  //           >
-  //             <Typography style={{ fontSize : "1.5rem", marginBottom : "2rem" }} align="center" color="textSecondary">
-  //               {this.emptyStateMessageForMeshModelSummary()}
-  //             </Typography>
-  //           </div>
-  //         )}
-  //     </>
-  //   );
-  // };
 
   handleError = (msg) => (error) => {
     this.props.updateProgress({ showProgress : false });
@@ -770,12 +541,12 @@ class MesherySettings extends React.Component {
               </AppBar>
               {subTabVal === 0 && (
                 <TabContainer>
-                  <MeshModelComponent type="models"  />
+                  <MeshModelComponent view="models"  />
                 </TabContainer>
               )}
               {subTabVal === 1 && (
                 <TabContainer>
-                  <MeshModelComponent type="components" />
+                  <MeshModelComponent view="components" />
                 </TabContainer>
               )}
               {subTabVal === 2 && (
