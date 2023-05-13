@@ -46,6 +46,10 @@ const (
 )
 
 func main() {
+	pingKubernetesCluster()
+	if ctx.Err()==context.DeadlineExceeded{
+		log.Warn("Kubernetes cluster responded late")
+	}
 	if globalTokenForAnonymousResults != "" {
 		models.GlobalTokenForAnonymousResults = globalTokenForAnonymousResults
 	}
