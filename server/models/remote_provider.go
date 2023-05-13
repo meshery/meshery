@@ -360,6 +360,46 @@ func (l *RemoteProvider) GetUserByID(req *http.Request, userID string) ([]byte, 
 	return nil, err
 }
 
+func (l *RemoteProvider) GetUsers(req *http.Request) ([]byte, error) {
+	if !l.Capabilities.IsSupported(UsersIdentity) {
+		logrus.Warn("operation not available")
+		return []byte{}, ErrInvalidCapability("UsersIdentity", l.ProviderName)
+	}
+
+	ep, _ := l.Capabilities.GetEndpointForFeature(UsersIdentity)
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
+	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
+	token, err := l.GetToken(req)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := l.DoRequest(cReq, token)
+	if err != nil {
+		if resp == nil {
+			return nil, ErrUnreachableRemoteProvider(err)
+		}
+		return nil, ErrFetch(err, "Users Data", http.StatusUnauthorized)
+	}
+
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+
+	bd, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, ErrDataRead(err, "Users Data")
+	}
+
+	if resp.StatusCode == http.StatusOK {
+		logrus.Infof("user data successfully retrieved from remote provider")
+		return bd, nil
+	}
+	err = ErrFetch(err, "Users Data", resp.StatusCode)
+	logrus.Errorf(err.Error())
+	return nil, err
+}
+
 // GetSession - validates the current request, attempts for a refresh of token, and then return its validity
 //
 // It is assumed that each remote provider will support this feature
