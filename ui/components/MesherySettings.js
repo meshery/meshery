@@ -251,7 +251,7 @@ class MesherySettings extends React.Component {
       
       if (val === 'tabVal') {
         let newRoute = this.props.router.route;
-        console.log('newRoute', newRoute);
+        
         switch (newVal) {
           case 0:
             newRoute += '#environment'
