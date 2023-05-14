@@ -54,7 +54,7 @@ func (h *Handler) GetMeshmodelRelationshipByName(rw http.ResponseWriter, r *http
 		page = 1
 	}
 	offset := (page - 1) * limit
-	res := h.registryManager.GetEntities(&v1alpha1.RelationshipFilter{
+	res, _ := h.registryManager.GetEntities(&v1alpha1.RelationshipFilter{
 		Kind:      name,
 		ModelName: typ,
 		Greedy:    greedy,
@@ -112,7 +112,7 @@ func (h *Handler) GetAllMeshmodelRelationships(rw http.ResponseWriter, r *http.R
 		page = 1
 	}
 	offset := (page - 1) * limit
-	res := h.registryManager.GetEntities(&v1alpha1.RelationshipFilter{
+	entities, count := h.registryManager.GetEntities(&v1alpha1.RelationshipFilter{
 		Version:   r.URL.Query().Get("version"),
 		ModelName: typ,
 		Limit:     limit,
@@ -121,13 +121,22 @@ func (h *Handler) GetAllMeshmodelRelationships(rw http.ResponseWriter, r *http.R
 		Sort:      r.URL.Query().Get("sort"),
 	})
 	var rels []v1alpha1.RelationshipDefinition
-	for _, r := range res {
+	for _, r := range entities {
 		rel, ok := r.(v1alpha1.RelationshipDefinition)
 		if ok {
 			rels = append(rels, rel)
 		}
 	}
-	if err := enc.Encode(rels); err != nil {
+
+	res := struct {
+		Count int64 `json:"total_count"`
+		Relationships []v1alpha1.RelationshipDefinition `json:"relationships"`
+	} {
+		Count: *count,
+		Relationships: rels,
+	}
+
+	if err := enc.Encode(res); err != nil {
 		h.log.Error(ErrWorkloadDefinition(err)) //TODO: Add appropriate meshkit error
 		http.Error(rw, ErrWorkloadDefinition(err).Error(), http.StatusInternalServerError)
 	}
