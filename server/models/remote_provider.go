@@ -282,7 +282,13 @@ func (l *RemoteProvider) InitiateLogin(w http.ResponseWriter, r *http.Request, _
 
 // GetUserDetails - returns the user details
 func (l *RemoteProvider) GetUserDetails(req *http.Request) (*User, error) {
-	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + "/api/identity/users/profile")
+	if !l.Capabilities.IsSupported(UsersProfile) {
+		logrus.Warn("operation not available")
+		return &User{}, ErrInvalidCapability("UserProfile", l.ProviderName)
+	}
+
+	ep, _ := l.Capabilities.GetEndpointForFeature(UsersProfile)
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
 	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
 	token, err := l.GetToken(req)
 	if err != nil {
@@ -326,7 +332,14 @@ func (l *RemoteProvider) GetUserDetails(req *http.Request) (*User, error) {
 }
 
 func (l *RemoteProvider) GetUserByID(req *http.Request, userID string) ([]byte, error) {
-	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s/api/identity/users/profile/%s", l.RemoteProviderURL, userID))
+	if !l.Capabilities.IsSupported(UsersProfile) {
+		logrus.Warn("operation not available")
+		return []byte{}, ErrInvalidCapability("UsersProfile", l.ProviderName)
+	}
+
+	ep, _ := l.Capabilities.GetEndpointForFeature(UsersProfile)
+
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s", l.RemoteProviderURL, ep, userID))
 	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
 	token, err := l.GetToken(req)
 	if err != nil {
