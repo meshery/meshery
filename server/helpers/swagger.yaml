@@ -242,6 +242,18 @@ paths:
             summary: Handle POST request for Sharing content
             tags:
                 - ShareContent
+    /api/events:
+        get:
+            description: |-
+                Listens for events across all of Meshery's components like adapters and server, streaming them to the UI via Server Side Events
+                This API call never terminates and establishes a persistent keep-alive connection over which `EventsResponse`s are pushed.
+            operationId: idGetEventStreamer
+            responses:
+                "200":
+                    $ref: '#/responses/EventsResponse'
+            summary: Handle GET request for events.
+            tags:
+                - EventsAPI
     /api/filter:
         get:
             description: Returns all the Meshery Filters saved by the current user
@@ -355,6 +367,16 @@ paths:
             summary: Handle GET request for filter file with given id
             tags:
                 - FiltersAPI
+    /api/identity/users:
+        get:
+            description: Returns all users info
+            operationId: idGetUsersHandler
+            responses:
+                "200":
+                    $ref: '#/responses/users'
+            summary: Handles GET for all Users
+            tags:
+                - UserAPI
     /api/meshmodel/components/register:
         post:
             description: Validate the given value with the given schema
@@ -1023,6 +1045,16 @@ paths:
             summary: Handle GET request for adapters
             tags:
                 - SystemAPI
+    /api/system/adapters/available:
+        get:
+            description: Fetches and returns all the adapters available for deployment
+            operationId: idGetAvailableAdapters
+            responses:
+                "200":
+                    $ref: '#/responses/systemAdaptersRespWrapper'
+            summary: Handle GET request for available adapters
+            tags:
+                - SystemAPI
     /api/system/kubernetes:
         delete:
             description: Used to delete kubernetes config to System
@@ -1584,6 +1616,35 @@ responses:
         schema:
             additionalProperties: {}
             type: object
+    EventsResponse:
+        description: ""
+        headers:
+            component:
+                type: string
+            component_name:
+                type: string
+            details:
+                type: string
+            error_code:
+                type: string
+            event_type: {}
+            operation_id:
+                type: string
+            probable_cause:
+                type: string
+            sizeCache:
+                format: int32
+                type: integer
+            state: {}
+            suggested_remediation:
+                type: string
+            summary:
+                type: string
+            unknownFields:
+                items:
+                    format: uint8
+                    type: integer
+                type: array
     FilterFilesResponseWrapper:
         description: Returns the response of the Filter files
     Model:
@@ -1690,6 +1751,8 @@ responses:
         description: Returns user info
     userLoadTestPrefsRespWrapper:
         description: Returns User Load Test Preferencee
+    users:
+        description: Returns all users info
     v1ServicesMapResponseWrapper:
         description: Returns a map for v1 services
         schema:
