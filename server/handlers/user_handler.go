@@ -45,7 +45,7 @@ func (h *Handler) GetUserByIDHandler(w http.ResponseWriter, r *http.Request, _ *
 
 // swagger:route GET /api/identity/users UserAPI idGetAllUsersHandler
 // Handles GET for all Users
-// 
+//
 // Returns all Users
 // responses:
 // 	200: users
