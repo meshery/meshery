@@ -254,7 +254,6 @@ const (
 	UsersProfile Feature = "users-profile"
 
 	UsersIdentity Feature = "users-identity"
-
 )
 
 const (

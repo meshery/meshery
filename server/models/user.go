@@ -29,10 +29,8 @@ type User struct {
 }
 
 type AllUsers struct {
-	Page int `json:"page"`
-	PageSize int `json:"page_size"`
-	Data []*User `json:"users"`
-	RecordsTotal int `json:"records_total"`
+	Page         int     `json:"page"`
+	PageSize     int     `json:"page_size"`
+	Data         []*User `json:"users"`
+	RecordsTotal int     `json:"records_total"`
 }
-
-
