@@ -369,12 +369,36 @@ paths:
                 - FiltersAPI
     /api/identity/users:
         get:
-            description: Returns all users info
-            operationId: idGetUsersHandler
+            description: Handles GET for all Users
+            operationId: idGetAllUsersHandler
+            parameters:
+                - format: int64
+                  in: query
+                  name: page
+                  type: integer
+                  x-go-name: Page
+                - format: int64
+                  in: query
+                  name: pageSize
+                  type: integer
+                  x-go-name: PageSize
+                - in: query
+                  name: search
+                  type: string
+                  x-go-name: Search
+                - description: 'in: order'
+                  in: query
+                  name: order
+                  type: string
+                  x-go-name: Order
+                - description: 'in: filter'
+                  in: query
+                  name: filter
+                  type: string
+                  x-go-name: Filter
             responses:
                 "200":
                     $ref: '#/responses/users'
-            summary: Handles GET for all Users
             tags:
                 - UserAPI
     /api/meshmodel/components/register:

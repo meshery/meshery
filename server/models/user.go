@@ -34,3 +34,5 @@ type AllUsers struct {
 	Data []*User `json:"users"`
 	RecordsTotal int `json:"records_total"`
 }
+
+

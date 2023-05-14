@@ -53,6 +53,20 @@ type users struct {
 	Body models.AllUsers
 }
 
+// swagger:parameters idGetAllUsersHandler
+type usersParameterWrapper struct {
+	// in: query
+	Page int64 `json:"page"`
+	// in: query
+	PageSize int64 `json:"pageSize"`
+	// in: query
+	Search string `json:"search"`
+	// in: order
+	Order string `json:"order"`
+	// in: filter
+	Filter string `json:"filter"`
+}
+
 // Returns all meshery patterns
 // swagger:response mesheryPatternsResponseWrapper
 type mesheryPatternsResponseWrapper struct {
