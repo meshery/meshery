@@ -129,10 +129,10 @@ func (h *Handler) GetAllMeshmodelRelationships(rw http.ResponseWriter, r *http.R
 	}
 
 	res := struct {
-		Count int64 `json:"total_count"`
+		Count         int64                             `json:"total_count"`
 		Relationships []v1alpha1.RelationshipDefinition `json:"relationships"`
-	} {
-		Count: *count,
+	}{
+		Count:         *count,
 		Relationships: rels,
 	}
 

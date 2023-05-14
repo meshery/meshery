@@ -170,10 +170,10 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 	models, count := h.registryManager.GetModels(h.dbHandler, filter)
 
 	res := struct {
-		Count int64 `json:"total_count"`
+		Count  int64            `json:"total_count"`
 		Models []v1alpha1.Model `json:"models"`
-	} {
-		Count: count,
+	}{
+		Count:  count,
 		Models: models,
 	}
 
@@ -903,10 +903,10 @@ func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Requ
 	}
 
 	res := struct {
-		Count int64 `json:"total_count"`
+		Count      int64                          `json:"total_count"`
 		Components []v1alpha1.ComponentDefinition `json:"components"`
-	} {
-		Count: *count,
+	}{
+		Count:      *count,
 		Components: comps,
 	}
 
