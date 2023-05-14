@@ -152,7 +152,7 @@ class MesherySettings extends React.Component {
 
     if (splittedPath.length >= 2 && splittedPath[1]) {
       const subTabPath = splittedPath[1].split('/');
-      console.log('subTabPath', subTabPath[0])
+      
       switch (subTabPath[0]) {
 
         case 'environment':
