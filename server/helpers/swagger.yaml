@@ -369,7 +369,7 @@ paths:
                 - FiltersAPI
     /api/identity/users:
         get:
-            description: Handles GET for all Users
+            description: Returns all Users
             operationId: idGetAllUsersHandler
             parameters:
                 - format: int64
@@ -399,6 +399,7 @@ paths:
             responses:
                 "200":
                     $ref: '#/responses/users'
+            summary: Handles GET for all Users
             tags:
                 - UserAPI
     /api/meshmodel/components/register:
