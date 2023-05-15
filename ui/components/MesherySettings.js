@@ -32,6 +32,7 @@ import MesherySettingsEnvButtons from './MesherySettingsEnvButtons';
 import MeshModelComponent from './MeshModelComponent';
 import DataTable from "mui-datatables";
 import { configurationTableTheme, configurationTableThemeDark } from '../themes/configurationTableTheme';
+import dataFetch from '../lib/data-fetch';
 
 
 const styles = (theme) => ({
@@ -181,6 +182,8 @@ class MesherySettings extends React.Component {
       // Array of scanned grafan urls
       scannedGrafana : [],
 
+      databaseSummary : { tables : [], totalRecords : 0, totalSize : 0, totalTables : 0 },
+
       meshmodelSummarySelector : { type : "components" },
       meshmodelSummarySelectorList : ["components", "relationships"],
       meshmodelSummary : [],
@@ -251,6 +254,22 @@ class MesherySettings extends React.Component {
     }
   }
 
+  initDatabaseSummary = () => {
+    dataFetch(
+      "/api/system/database",
+      {
+        method : "GET",
+        credentials : "include",
+      },
+      (result) => {
+        if (typeof result !== "undefined") {
+          this.setState({ databaseSummary : result })
+        }
+      },
+      this.handleError("Unable to fetch database summary.")
+    );
+  }
+
   disposeSubscriptions = () => {
     this.disposeMeshModelSummarySubscriptions()
   }
@@ -263,6 +282,7 @@ class MesherySettings extends React.Component {
     if (this._isMounted) {
       this.initDashboardMeshModelSummaryQuery();
       this.initDashboardMeshModelSummarySubscription();
+      this.initDatabaseSummary();
     }
   }
 
@@ -426,6 +446,43 @@ class MesherySettings extends React.Component {
           )}
       </>
     );
+  };
+
+  showDatabaseSummary = () => {
+    return (<>
+      <Paper elevation={1} style={{ padding : "2rem" }}>
+        <Typography variant="h6" style={{ textAlign : "center" }}>Database Overview</Typography>
+        <Typography style={{ textAlign : "end" }}>Total Records : {this.state.databaseSummary?.totalRecords}</Typography>
+        <Typography style={{ textAlign : "end", paddingBottom : "0.5rem" }}>Total Size : {this.state.databaseSummary?.totalSize}</Typography>
+        <DataTable
+          title={<>
+            <Typography>Tables</Typography>
+          </>
+          }
+          data={this.state.databaseSummary?.tables}
+          options={{
+            filter : false,
+            selectableRows : "none",
+            responsive : "scrollMaxHeight",
+            print : false,
+            download : false,
+            viewColumns : false,
+            pagination : false,
+            fixedHeader : true,
+          }}
+          columns={[
+            {
+              name : "name",
+              label : "Name"
+            },
+            {
+              name : "count",
+              label : "Count"
+            }
+          ]}
+        />
+      </Paper>
+    </>)
   };
 
   handleError = (msg) => (error) => {
@@ -681,6 +738,7 @@ class MesherySettings extends React.Component {
           )}
         {tabVal === 3 && (
           <TabContainer>
+            {this.showDatabaseSummary()}
             <div className={classes.container}>
               <Button
                 type="submit"
@@ -692,7 +750,7 @@ class MesherySettings extends React.Component {
                 data-cy="btnResetDatabase"
 
               >
-                <Typography> System Reset </Typography>
+                <Typography> RESET DATABASE </Typography>
               </Button>
             </div>
           </TabContainer>
