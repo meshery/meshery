@@ -13,7 +13,7 @@ language: en
         {% include svg/meshery-logo.html %}
     </a>
 </div>
-<p style="margin:auto;padding:1.6rem">Meshery is the open source, cloud native management plane that enables the adoption, operation, and management of Kubernetes, any service mesh, and their workloads.</p>
+<p style="margin:auto;padding:1.6rem">As a self-service engineering platform, Meshery enables collaborative design and operation of cloud native infrastructure.</p>
 
 <p style="padding:1.6rem;">Follow on <a href="https://twitter.com/mesheryio">Twitter</a> or subscribe to our <a href="https://meshery.io/subscribe">newsletter</a> for the latest updates. Get support on our <a href="https://discuss.layer5.io">forum</a>. Join our <a href="https://slack.layer5.io">Slack</a> to interact directly with other users and contributors.</p>
 
@@ -25,7 +25,7 @@ language: en
     </a>
     <h6>Getting Started</h6>
     <ul>
-        <li><a href="{{ site.baseurl }}/getting-started/overview">Meshery Overview</a></li>
+        <li><a href="{{ site.baseurl }}/project">Meshery Overview</a></li>
         <li><a href="{{ site.baseurl }}/project/community">Community</a></li>
         <li><a href="{{ site.baseurl }}/project/contributing">Contributing</a></li> 
     </ul>

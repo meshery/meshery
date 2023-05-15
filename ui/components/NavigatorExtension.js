@@ -16,6 +16,7 @@ import { getK8sClusterIdsFromCtxId } from "../utils/multi-ctx";
 import ConfirmationModal from "./ConfirmationModal"
 import { getComponentsinFile, generateValidatePayload } from "../utils/utils";
 import UploadImport from "./UploadImport";
+import PublishModal from "./PublishModal";
 import ConfigurationSubscription from "../components/graphql/subscriptions/ConfigurationSubscription";
 import PromptComponent from "./PromptComponent";
 import Validation from "./Validation";
@@ -90,6 +91,7 @@ function NavigatorExtension({ grafana, prometheus, updateLoadTestData, url, isDr
         ConfirmationModal,
         getComponentsinFile,
         UploadImport,
+        PublishModal,
         PromptComponent,
         generateValidatePayload,
         Validation,
