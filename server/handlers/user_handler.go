@@ -43,6 +43,25 @@ func (h *Handler) GetUserByIDHandler(w http.ResponseWriter, r *http.Request, _ *
 	fmt.Fprint(w, string(resp))
 }
 
+// swagger:route GET /api/identity/users UserAPI idGetAllUsersHandler
+// Handles GET for all Users
+//
+// Returns all Users
+// responses:
+// 	200: users
+
+func (h *Handler) GetUsers(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
+	resp, err := provider.GetUsers(r)
+	if err != nil {
+		h.log.Error(ErrGetResult(err))
+		http.Error(w, ErrGetResult(err).Error(), http.StatusNotFound)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	fmt.Fprint(w, string(resp))
+}
+
 // swagger:route GET /api/user/prefs UserAPI idGetUserTestPrefs
 // Handle GET Requests for User Load Test Preferences
 //
