@@ -439,7 +439,7 @@ class GrafanaCustomChart extends Component {
           const newData = [];
 
           // if (typeof cd.labels[datasetInd] === 'undefined' || typeof cd.datasets[datasetInd] === 'undefined'){
-          let legend = typeof target.legendFormat !== undefined ? target.legendFormat
+          let legend = typeof target.legendFormat !== "undefined" ? target.legendFormat
             : '';
           if (legend === '') {
             legend = Object.keys(metric).length > 0 ? JSON.stringify(metric)

@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import {
   Divider, Grid, IconButton, Typography, Tooltip
 } from "@material-ui/core";
-import { useTheme} from '@material-ui/core';
+import { useTheme } from '@material-ui/core';
 
 import DeleteIcon from "@material-ui/icons/Delete";
 import Save from "@material-ui/icons/Save";
