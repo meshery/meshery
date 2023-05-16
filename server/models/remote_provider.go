@@ -282,7 +282,13 @@ func (l *RemoteProvider) InitiateLogin(w http.ResponseWriter, r *http.Request, _
 
 // GetUserDetails - returns the user details
 func (l *RemoteProvider) GetUserDetails(req *http.Request) (*User, error) {
-	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + "/api/identity/users/profile")
+	if !l.Capabilities.IsSupported(UsersProfile) {
+		logrus.Warn("operation not available")
+		return &User{}, ErrInvalidCapability("UserProfile", l.ProviderName)
+	}
+
+	ep, _ := l.Capabilities.GetEndpointForFeature(UsersProfile)
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
 	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
 	token, err := l.GetToken(req)
 	if err != nil {
@@ -326,7 +332,14 @@ func (l *RemoteProvider) GetUserDetails(req *http.Request) (*User, error) {
 }
 
 func (l *RemoteProvider) GetUserByID(req *http.Request, userID string) ([]byte, error) {
-	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s/api/identity/users/profile/%s", l.RemoteProviderURL, userID))
+	if !l.Capabilities.IsSupported(UsersProfile) {
+		logrus.Warn("operation not available")
+		return []byte{}, ErrInvalidCapability("UsersProfile", l.ProviderName)
+	}
+
+	ep, _ := l.Capabilities.GetEndpointForFeature(UsersProfile)
+
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s", l.RemoteProviderURL, ep, userID))
 	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
 	token, err := l.GetToken(req)
 	if err != nil {
@@ -356,6 +369,46 @@ func (l *RemoteProvider) GetUserByID(req *http.Request, userID string) ([]byte, 
 		return bdr, nil
 	}
 	err = ErrFetch(err, "User Profile", resp.StatusCode)
+	logrus.Errorf(err.Error())
+	return nil, err
+}
+
+func (l *RemoteProvider) GetUsers(req *http.Request) ([]byte, error) {
+	if !l.Capabilities.IsSupported(UsersIdentity) {
+		logrus.Warn("operation not available")
+		return []byte{}, ErrInvalidCapability("UsersIdentity", l.ProviderName)
+	}
+
+	ep, _ := l.Capabilities.GetEndpointForFeature(UsersIdentity)
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
+	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
+	token, err := l.GetToken(req)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := l.DoRequest(cReq, token)
+	if err != nil {
+		if resp == nil {
+			return nil, ErrUnreachableRemoteProvider(err)
+		}
+		return nil, ErrFetch(err, "Users Data", http.StatusUnauthorized)
+	}
+
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+
+	bd, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, ErrDataRead(err, "Users Data")
+	}
+
+	if resp.StatusCode == http.StatusOK {
+		logrus.Infof("user data successfully retrieved from remote provider")
+		return bd, nil
+	}
+	err = ErrFetch(err, "Users Data", resp.StatusCode)
 	logrus.Errorf(err.Error())
 	return nil, err
 }
