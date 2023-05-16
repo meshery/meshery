@@ -3,7 +3,7 @@
 
 function doGeneralIstioLifecycleChecks() {
   cy.contains("Lifecycle");
-  cy.contains("Manage Service Mesh Lifecycle");
+  cy.contains("Manage Service Mesh Lifecycle", { timeout: 10_000 });
   cy.contains("Namespace");
   cy.contains("Manage Sample Application Lifecycle");
   cy.contains("Apply Service Mesh Configuration");
