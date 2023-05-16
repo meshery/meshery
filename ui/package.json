@@ -55,6 +55,7 @@
     "@mui/lab": "^5.0.0-alpha.115",
     "@mui/material": "^5.11.4",
     "@mui/styles": "^5.11.2",
+    "@open-policy-agent/opa-wasm": "^1.8.0",
     "@paciolan/remote-component": "^2.11.0",
     "@redux-devtools/extension": "^3.2.3",
     "@rjsf/core": "^5.5.0",
