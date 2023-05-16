@@ -18,21 +18,19 @@ import RJSFWrapper from "./RJSF_wrapper";
  * @returns
  */
 function PatternService({ formData, jsonSchema, onChange, type, onSubmit, onDelete, RJSFWrapperComponent, RJSFFormChildComponent }) {
-  if (Object.keys(jsonSchema?.properties).length > 0 )
-    return (
-      <RJSFWrapper
-        formData={formData}
-        hideSubmit={type === "trait"}
-        hideTitle={type === "workload"}
-        jsonSchema={jsonSchema}
-        onChange={onChange}
-        onSubmit={onSubmit}
-        onDelete={onDelete}
-        RJSFWrapperComponent={RJSFWrapperComponent}
-        RJSFFormChildComponent={RJSFFormChildComponent}
-      />
-    );
-  return null;
+  return (
+    <RJSFWrapper
+      formData={formData}
+      hideSubmit={type === "trait"}
+      hideTitle={type === "workload"}
+      jsonSchema={jsonSchema}
+      onChange={onChange}
+      onSubmit={onSubmit}
+      onDelete={onDelete}
+      RJSFWrapperComponent={RJSFWrapperComponent}
+      RJSFFormChildComponent={RJSFFormChildComponent}
+    />
+  );
 }
 
 export default PatternService;
