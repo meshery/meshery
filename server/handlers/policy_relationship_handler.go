@@ -22,7 +22,7 @@ func (h *Handler) GetRegoPolicyForDesignFile(
 	r *http.Request,
 	_ *models.Preference,
 	_ *models.User,
-	provider models.Provider,
+	_ models.Provider,
 ) {
 	defer func() {
 		_ = r.Body.Close()
