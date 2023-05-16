@@ -121,7 +121,7 @@ func (h *Handler) GetMeshmodelModelsByCategoriesByModel(rw http.ResponseWriter, 
 }
 
 // swagger:route GET ```/api/meshmodels/models``` GetMeshmodelModels idGetMeshmodelModels
-// Handle GET request for getting all meshmodel models.
+// Handle GET request for getting all meshmodel models and their total count.
 //
 // # Returns a list of registered models across all categories
 //
@@ -137,7 +137,7 @@ func (h *Handler) GetMeshmodelModelsByCategoriesByModel(rw http.ResponseWriter, 
 //
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
 // responses:
-// 200: []Model
+// 200: total_count, []Model
 func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
@@ -835,7 +835,7 @@ func (h *Handler) GetMeshmodelComponentByCategory(rw http.ResponseWriter, r *htt
 }
 
 // swagger:route GET /api/meshmodels/components GetAllMeshmodelComponents idGetAllMeshmodelComponents
-// Handle GET request for getting meshmodel components across all models and categories.
+// Handle GET request for getting meshmodel components across all models and categories and their total count.
 //
 // # Components can be further filtered through query parameter
 //
@@ -855,7 +855,7 @@ func (h *Handler) GetMeshmodelComponentByCategory(rw http.ResponseWriter, r *htt
 //
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
 // responses:
-// 200: []ComponentDefinition
+// 200: total_count, []ComponentDefinition
 func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
