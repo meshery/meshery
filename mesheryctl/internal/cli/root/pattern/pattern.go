@@ -30,7 +30,7 @@ var (
 // PatternCmd represents the root command for pattern commands
 var PatternCmd = &cobra.Command{
 	Use:   "pattern",
-	Short: "Service Mesh Patterns Management",
+	Short: "Cloud Native Patterns Management",
 	Long:  `Manage service meshes using predefined patterns`,
 	Example: `
 // Apply pattern file

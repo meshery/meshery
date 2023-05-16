@@ -16,7 +16,7 @@ import (
 // Handle POST request for running the set of policies on the design file, the policies are picked from the policies directory and query is sent to find all the relationships around the services in the given design file
 //
 // responses:
-// 200: policies.NetworkPolicyRegoResponse
+// 200
 func (h *Handler) GetRegoPolicyForDesignFile(
 	rw http.ResponseWriter,
 	r *http.Request,
