@@ -8,6 +8,7 @@ import MesheryPerformanceComponent from "./MesheryPerformance";
 import dataFetch from "../lib/data-fetch";
 import PatternServiceForm from "./MesheryMeshInterface/PatternServiceForm";
 import PatternServiceFormCore from "./MesheryMeshInterface/PatternServiceFormCore";
+import PatternService from "./MesheryMeshInterface/PatternService"
 import { createRelayEnvironment, subscriptionClient } from "../lib/relayEnvironment";
 import subscribeMeshSyncStatusEvents from "../components/graphql/subscriptions/MeshSyncStatusSubscription"
 import LoadingScreen from "./LoadingComponents/LoadingComponent";
@@ -65,6 +66,7 @@ function NavigatorExtension({ grafana, prometheus, updateLoadTestData, url, isDr
       injectProps={{
         GrafanaCustomCharts,
         updateLoadTestData,
+        PatternService,
         PatternServiceForm,
         PatternServiceFormCore,
         grafana,
