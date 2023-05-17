@@ -3,6 +3,8 @@ import React, { useState } from "react";
 import {
   Divider, Grid, IconButton, Typography, Tooltip
 } from "@material-ui/core";
+import { useTheme } from '@material-ui/core';
+
 import DeleteIcon from "@material-ui/icons/Delete";
 import Save from "@material-ui/icons/Save";
 import Fullscreen from "@material-ui/icons/Fullscreen";
@@ -46,7 +48,7 @@ function MesheryApplicationCard({
   const toggleFullScreen = () => {
     setFullScreen(!fullScreen);
   };
-
+  const theme = useTheme();
   const classes = useStyles()
   const theme = useTheme()
 
@@ -75,7 +77,7 @@ function MesheryApplicationCard({
         {/* FRONT PART */}
         <>
           <div>
-            <div style={{ display : "flex", justifyContent : "space-between" }}>
+            <div className="helm" style={{ display : "flex", justifyContent : "space-between" }}>
               <Typography variant="h6" component="div">
                 {name}
               </Typography>
@@ -85,7 +87,7 @@ function MesheryApplicationCard({
                   e.stopPropagation(); handleAppDownload(id ,source_type, name)
                 }}
               >
-                <img src={`/static/img/${(source_type).replaceAll(" ", "_").toLowerCase()}.svg`} width="45px" height="45px" />
+                <img src={`/static/img/${(source_type).replaceAll(" ", "_").toLowerCase()}${(theme.palette.type)==='dark'?"-light":''}.svg`} width="45px" height="45px" />
               </IconButton>
             </div>
             <div className={classes.lastRunText} >

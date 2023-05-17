@@ -6,6 +6,7 @@ import (
 	"encoding/base64"
 	"encoding/hex"
 	"encoding/json"
+	"fmt"
 	"net"
 	"os"
 	"time"
@@ -49,7 +50,7 @@ type InternalKubeConfig struct {
 	Users          []map[string]interface{} `json:"users,omitempty" yaml:"users,omitempty"`
 }
 
-func (kcfg InternalKubeConfig) K8sContext(name string, instanceID *uuid.UUID) K8sContext {
+func (kcfg InternalKubeConfig) K8sContext(name string, instanceID *uuid.UUID) (K8sContext, string) {
 	cluster := map[string]interface{}{}
 	user := map[string]interface{}{}
 	context := map[string]interface{}{}
@@ -104,7 +105,7 @@ func NewK8sContextWithServerID(
 	server string,
 	instanceID *uuid.UUID,
 ) (*K8sContext, error) {
-	ctx := NewK8sContext(contextName, clusters, users, server, instanceID)
+	ctx, _ := NewK8sContext(contextName, clusters, users, server, instanceID)
 
 	// Perform Ping test on the cluster
 	if err := ctx.PingTest(); err != nil {
@@ -137,41 +138,48 @@ func NewK8sContextWithServerID(
 
 // K8sContextsFromKubeconfig takes in a kubeconfig and meshery instance ID and generates
 // kubernetes contexts from it
-func K8sContextsFromKubeconfig(kubeconfig []byte, instanceID *uuid.UUID) []K8sContext {
+func K8sContextsFromKubeconfig(kubeconfig []byte, instanceID *uuid.UUID) ([]K8sContext, string) {
+	respMessage := ""
 	kcs := []K8sContext{}
 
 	parsed, err := clientcmd.Load(kubeconfig)
 	if err != nil {
-		return kcs
+		return kcs, respMessage
 	}
 
 	kcfg := InternalKubeConfig{}
 	if err := yaml.Unmarshal(kubeconfig, &kcfg); err != nil {
-		return kcs
+		return kcs, respMessage
 	}
 
 	for name := range parsed.Contexts {
-		kc := kcfg.K8sContext(name, instanceID)
+		kc, msg := kcfg.K8sContext(name, instanceID)
+		respMessage += msg
 		handler, err := kc.GenerateKubeHandler()
 		if err != nil {
-			logrus.Warnf("error generating kubernetes handler: %v\n Skipping context", err)
+			msg = fmt.Sprintf("error generating kubernetes handler: %v\n Skipping context", err)
+			logrus.Warnf(msg)
+			respMessage += msg
 			continue
 		}
 		err = kc.AssignVersion(handler)
 		if err != nil {
-			logrus.Warnf("error getting kubernetes version: %v\n Skipping context", err)
+			msg = fmt.Sprintf("error getting kubernetes version: %v\n Skipping context", err)
+			logrus.Warnf(msg)
+			respMessage += msg
 			continue
 		}
 		if err := kc.AssignServerID(handler); err != nil {
-			logrus.Warn("Skipping context: Reason => ", err)
-
+			msg = fmt.Sprintf("Skipping context: Reason => %s\n", err)
+			logrus.Warn(msg)
+			respMessage += msg
 			continue
 		}
 
 		kcs = append(kcs, kc)
 	}
 
-	return kcs
+	return kcs, respMessage
 }
 
 func NewK8sContextFromInClusterConfig(contextName string, instanceID *uuid.UUID) (*K8sContext, error) {
@@ -228,7 +236,7 @@ func NewK8sContext(
 	user map[string]interface{},
 	server string,
 	instanceID *uuid.UUID,
-) K8sContext {
+) (K8sContext, string) {
 	ctx := K8sContext{
 		Name:              contextName,
 		Cluster:           cluster,
@@ -239,14 +247,15 @@ func NewK8sContext(
 
 	ID, err := K8sContextGenerateID(ctx)
 	if err != nil {
-		return ctx
+		return ctx, ""
 	}
 
 	ctx.ID = ID
+	msg := fmt.Sprintf("Generated context: %s\n", ctx.Name)
 
-	logrus.Infof("Generated context: %s\n", ctx.Name)
+	logrus.Infof(msg)
 
-	return ctx
+	return ctx, msg
 }
 
 // K8sContextGenerateID takes in a kubernetes context and generates an ID for it

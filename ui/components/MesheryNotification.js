@@ -76,9 +76,11 @@ const styles = (theme) => ({
   },
   fullView : {
     right : 0,
+    transition : '0.3s ease-in-out !important'
   },
   peekView : {
-    right : "-26.1rem"
+    right : "-26.1rem",
+    transition : '0.3s ease-in-out !important'
   },
   tabs : {
     "& .MuiTabs-indicator" : {

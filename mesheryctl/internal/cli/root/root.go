@@ -46,7 +46,7 @@ var (
 var RootCmd = &cobra.Command{
 	Use:   "mesheryctl",
 	Short: "Meshery Command Line tool",
-	Long:  `Meshery is the service mesh management plane, providing lifecycle, performance, and configuration management of service meshes and their workloads.`,
+	Long:  `As a self-service engineering platform, Meshery enables collaborative design and operation of cloud native infrastructure.`,
 	Example: `
 // Base command
 mesheryctl

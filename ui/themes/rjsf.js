@@ -401,7 +401,7 @@ const darkRjsfTheme = createTheme({
       root : {
         marginLeft : "4px",
         "& > *:nth-child(1)" : {
-          backgroundColor : "#ffffff",
+          backgroundColor : "#303030",
           width : "1rem",
           height : "1rem"
         },

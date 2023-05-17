@@ -4,7 +4,6 @@ import jsYaml from "js-yaml";
 import * as Types from "./types";
 import { promisifiedDataFetch } from "../../../../lib/data-fetch";
 import { useSnackbar } from "notistack";
-import { v4 as uuidV4 } from "uuid";
 
 export default function useDesignLifecycle() {
   const [designName, setDesignName] = useState("Unitled Design")
@@ -26,7 +25,7 @@ export default function useDesignLifecycle() {
    * @param {Types.ComponentDefinition} componentDefinition
    */
   function onSettingsChange(componentDefinition, formReference) {
-    const { kind, apiVersion, model, metadata } = componentDefinition;
+    const { kind, apiVersion, model } = componentDefinition;
     const modelVersion = model.version;
     const modelName = model.name;
 
@@ -48,14 +47,7 @@ export default function useDesignLifecycle() {
         apiVersion,
         model : modelName,
         version : modelVersion,
-        settings,
-        traits : {
-          meshmap : {
-            "meshmodel-metadata" : { ...metadata },
-            id : uuidV4(),
-            ...formReference.current.getTraits()
-          },
-        }
+        settings
       }
       setDesignJson(currentJson);
     }
