@@ -242,6 +242,18 @@ paths:
             summary: Handle POST request for Sharing content
             tags:
                 - ShareContent
+    /api/events:
+        get:
+            description: |-
+                Listens for events across all of Meshery's components like adapters and server, streaming them to the UI via Server Side Events
+                This API call never terminates and establishes a persistent keep-alive connection over which `EventsResponse`s are pushed.
+            operationId: idGetEventStreamer
+            responses:
+                "200":
+                    $ref: '#/responses/EventsResponse'
+            summary: Handle GET request for events.
+            tags:
+                - EventsAPI
     /api/filter:
         get:
             description: Returns all the Meshery Filters saved by the current user
@@ -394,8 +406,8 @@ paths:
             operationId: idGetAllMeshmodelRelationships
             responses:
                 "200":
-                    $ref: '#/responses/RelationshipDefinition'
-            summary: Handle GET request for getting meshmodel relationships of a specific model.
+                    $ref: '#/responses/allMeshmodelRelationshipsResponseWrapper'
+            summary: Handle GET request for getting meshmodel relationships of a specific model and their total count.
             tags:
                 - GetAllMeshmodelRelationships
     /api/meshmodel/model/{model}/relationship/{name}:
@@ -642,8 +654,8 @@ paths:
             operationId: idGetAllMeshmodelComponents
             responses:
                 "200":
-                    $ref: '#/responses/ComponentDefinition'
-            summary: Handle GET request for getting meshmodel components across all models and categories.
+                    $ref: '#/responses/allMeshmodelComponentsResponseWrapper'
+            summary: Handle GET request for getting meshmodel components across all models and categories and their total count.
             tags:
                 - GetAllMeshmodelComponents
     /api/meshmodels/components/{name}:
@@ -1021,6 +1033,16 @@ paths:
                 "200":
                     $ref: '#/responses/systemAdaptersRespWrapper'
             summary: Handle GET request for adapters
+            tags:
+                - SystemAPI
+    /api/system/adapters/available:
+        get:
+            description: Fetches and returns all the adapters available for deployment
+            operationId: idGetAvailableAdapters
+            responses:
+                "200":
+                    $ref: '#/responses/systemAdaptersRespWrapper'
+            summary: Handle GET request for available adapters
             tags:
                 - SystemAPI
     /api/system/kubernetes:
@@ -1584,6 +1606,35 @@ responses:
         schema:
             additionalProperties: {}
             type: object
+    EventsResponse:
+        description: ""
+        headers:
+            component:
+                type: string
+            component_name:
+                type: string
+            details:
+                type: string
+            error_code:
+                type: string
+            event_type: {}
+            operation_id:
+                type: string
+            probable_cause:
+                type: string
+            sizeCache:
+                format: int32
+                type: integer
+            state: {}
+            suggested_remediation:
+                type: string
+            summary:
+                type: string
+            unknownFields:
+                items:
+                    format: uint8
+                    type: integer
+                type: array
     FilterFilesResponseWrapper:
         description: Returns the response of the Filter files
     Model:
@@ -1617,6 +1668,14 @@ responses:
         schema:
             additionalProperties: {}
             type: object
+    allMeshmodelComponentsResponseWrapper:
+        description: Returns all meshmodel components across all models and categories
+        headers:
+            Body: {}
+    allMeshmodelRelationshipsResponseWrapper:
+        description: Returns all meshmodel relationships of a specific model
+        headers:
+            Body: {}
     applicationFilesResponseWrapper:
         description: Returns the response of the application files
     grafanaBoardsResponseWrapper:
@@ -1656,6 +1715,10 @@ responses:
         description: Returns all meshery patterns
     mesheryVersionRespWrapper:
         description: Returns Meshery version
+    meshmodelModelsResponseWrapper:
+        description: Returns all meshmodel models
+        headers:
+            Body: {}
     noContentWrapper:
         description: ""
     perfSingleResultRespWrapper:
