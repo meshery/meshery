@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"os"
 	"testing"
+
+	"github.com/spf13/viper"
 )
 
 // var update = flag.Bool("update", false, "update golden files")
@@ -289,6 +291,79 @@ func TestSetOperatorStatus(t *testing.T) {
 		}
 	}
 }
+
+func TestGetMesheryCtl(t *testing.T) {
+	v := viper.New()
+	for _, test := range tests {
+		validConfig := MesheryCtlConfig{nil, test, nil}
+		err := v.Unmarshal(validConfig)
+		if err != nil {
+			t.Errorf("Failed to set configuration data: %v", err)
+		}
+		
+		config, err := GetMesheryCtl(v)
+		if err != nil {
+			t.Errorf("Expected no error, got: %v", err)
+		}
+		if config == nil {
+			t.Errorf("Expected a non-nil configuration object")
+		}
+	}
+}
+
+func TestCheckIfCurrentContextIsValid(t *testing.T) {
+	for _, test := range tests {
+		validConfig := MesheryCtlConfig{nil, test, nil}
+		ctx, err := validConfig.CheckIfCurrentContextIsValid()
+		if err != nil {
+			t.Errorf("Expected no error, got: %v", err)
+		}
+		expectedCtx := validConfig.Contexts[validConfig.CurrentContext]
+		if ctx != &expectedCtx {
+			t.Errorf("Expected context %q, got %q", expectedCtx, ctx)
+		}
+	}
+}
+
+func TestCheckIfGivenContextIsValid(t *testing.T) {
+	for _, test := range tests {
+		mesheryctlconfig := MesheryCtlConfig{nil, test, nil}
+		_, err := mesheryctlconfig.CheckIfGivenContextIsValid(test)
+		if err != nil {
+			fmt.Print("Fail")
+		}
+
+	}
+}
+
+func TestGetCurrentContext(t *testing.T) {
+	for _, test := range tests {
+		mesheryctlconfig := MesheryCtlConfig{nil, test, nil}
+		got, err := mesheryctlconfig.GetCurrentContext()
+		if err != nil {
+			fmt.Print("Fail")
+		}
+		want := mesheryctlconfig.Contexts[mesheryctlconfig.CurrentContext]
+		if got != &want {
+			t.Errorf("Expected context %v, got %v", want, got)
+		}
+	}
+}
+
+func TestGetContext(t *testing.T) {
+	for _, test := range tests {
+		mesheryctlconfig := MesheryCtlConfig{nil, test, nil}
+		got, err := mesheryctlconfig.GetContext(test)
+		if err != nil {
+			fmt.Print("Fail")
+		}
+		want := mesheryctlconfig.Contexts[test]
+		if got != &want {
+			t.Errorf("Expected context %v, got %v", want, got)
+		}
+	}
+}
+
 
 // TODO: Shift Testing utility functions to meshkit so import cycle problems can be eliminated in future
 
