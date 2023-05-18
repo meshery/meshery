@@ -116,6 +116,8 @@
       url: guides/smi-conformance
     - title: Integrating Prometheus and Grafana
       url: guides/meshery-metrics
+    - title: Importing Applications
+      url: guides/importing-apps
     - title: Troubleshooting Guide
       url: guides/troubleshooting
     - title: Upgrading Meshery
