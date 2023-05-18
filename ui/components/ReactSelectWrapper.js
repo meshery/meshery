@@ -11,16 +11,26 @@ import Chip from '@material-ui/core/Chip';
 import MenuItem from '@material-ui/core/MenuItem';
 import CancelIcon from '@material-ui/icons/Cancel';
 
-const styles = () => ({ input : { display : 'flex', },
+const styles = () => ({
+  input : { display : 'flex' },
   valueContainer : {
     display : 'flex',
     flex : 1,
     alignItems : 'center',
     overflow : 'hidden',
   },
-  placeholder : { position : 'absolute',
+  placeholder : {
+    position : 'absolute',
     left : 16,
-    fontSize : 16, }, });
+    fontSize : 16,
+  },
+  paper : {
+    zIndex : 9999,
+    width : '100%',
+    position : 'absolute',
+  },
+
+});
 
 function NoOptionsMessage(props) {
   return (
@@ -63,7 +73,7 @@ function Option(props) {
       component="div"
       style={{ fontWeight : props.isSelected
         ? 500
-        : 400, }}
+        : 400 }}
       {...props.innerProps}
     >
       {props.children}
@@ -132,9 +142,13 @@ class ReactSelectWrapper extends React.Component {
       classes, theme, label, placeholder, onChange, onInputChange, value, options, error, noOptionsMessage = "No Options"
     } = this.props;
 
-    const selectStyles = { input : (base) => ({ ...base,
-      color : theme.palette.text.primary,
-      '& input' : { font : 'inherit', }, }), };
+    const selectStyles = {
+      input : (base) => ({
+        ...base,
+        color : theme.palette.text.primary,
+        '& input' : { font : 'inherit', },
+      })
+    };
 
     return (
       <div className={classes.root}>
