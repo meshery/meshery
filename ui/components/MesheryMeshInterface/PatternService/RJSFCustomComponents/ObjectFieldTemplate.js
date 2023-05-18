@@ -15,10 +15,8 @@ import { calculateGrid, getHyperLinkDiv } from '../helper';
 
 const styles = (theme) => ({
   objectFieldGrid : {
-    // paddingLeft: "0.6rem",
     padding : ".5rem",
     paddingTop : "0.7rem",
-    // margin : ".5rem",
     backgroundColor : theme.palette.type === 'dark' ? "#303030" : "#f4f4f4",
     border : `1px solid  ${theme.palette.type === 'dark' ? "rgba(255, 255, 255, .45)" : "rgba(0, 0, 0, .125)"}`,
     width : "100%",
@@ -51,7 +49,6 @@ const ObjectFieldTemplate = ({
   description,
   title,
   properties,
-  // required,
   disabled,
   readonly,
   uiSchema,
@@ -88,7 +85,7 @@ const ObjectFieldTemplate = ({
               onClick={onAddClick(schema)}
               disabled={disabled || readonly}
             >
-              <AddIcon width="18px" height="18px" fill="white" style={{ backgroundColor : "#647881", width : "1.25rem", height : "1.25rem", color : "#ffffff", borderRadius : ".2rem" }} />
+              <AddIcon style={{ backgroundColor : "#647881", width : "1rem", height : "1rem", color : "#ffffff", borderRadius : ".2rem" }} />
             </IconButton>
           </Grid>
         ) : (
@@ -110,7 +107,7 @@ const ObjectFieldTemplate = ({
           {description &&
             <CustomTextTooltip backgroundColor="#3C494F" title={getHyperLinkDiv(description)}>
               <IconButton disableTouchRipple="true" disableRipple="true" component="span" size="small">
-                <HelpOutlineIcon width="14px" height="14px"  fill={theme.palette.type === 'dark' ? "white" : "black"}   style={{ marginLeft : "4px", verticalAlign : "middle", ...iconSmall }}/>
+                <HelpOutlineIcon width="1rem" height="1rem"  fill={theme.palette.type === 'dark' ? "white" : "black"}   style={{ marginLeft : "4px", verticalAlign : "middle", ...iconSmall }}/>
               </IconButton>
             </CustomTextTooltip>}
           {rawErrors.length !==0 &&
@@ -118,7 +115,7 @@ const ObjectFieldTemplate = ({
               <div key={index}>{error}</div>
             ))}>
               <IconButton disableTouchRipple="true" disableRipple="true" component="span" size="small">
-                <ErrorOutlineIcon width="14px" height="14px" fill="red" style={{ marginLeft : "4px", verticalAlign : "middle", ...iconSmall }} />
+                <ErrorOutlineIcon width="1rem" height="1rem" fill="#B32700" style={{ marginLeft : "4px", verticalAlign : "middle", ...iconSmall }} />
               </IconButton>
             </CustomTextTooltip>}
         </Grid>
