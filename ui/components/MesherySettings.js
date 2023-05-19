@@ -353,7 +353,7 @@ class MesherySettings extends React.Component {
     const options = {
       filter : false,
       selectableRows : "none",
-      responsive : "scrollMaxHeight",
+      responsive : "standard",
       print : false,
       download : false,
       viewColumns : false,
