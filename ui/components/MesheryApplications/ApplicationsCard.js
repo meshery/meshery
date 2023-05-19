@@ -50,7 +50,6 @@ function MesheryApplicationCard({
   };
   const theme = useTheme();
   const classes = useStyles()
-  const theme = useTheme()
 
   return (
     <>
