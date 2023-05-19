@@ -4,7 +4,15 @@
 ### DNS
 playground.meshery.io - 147.28.141.9
 
-### Host: meshery02
+### Hosts
+- c3-medium-x86-01-meshery
+- c3-medium-x86-02-meshery - Has K8s control plane
+
+#### Access
+```
+ssh -i ~/.ssh/equinix-metal root@c3-medium-x86-01-meshery
+ssh -i ~/.ssh/equinix-metal root@c3-medium-x86-02-meshery
+```
 
 #### Static IP address configuration
 File: `/etc/netplan/00-elastic.yaml`
