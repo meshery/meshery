@@ -16,7 +16,13 @@ import { iconMedium } from "../css/icons.styles";
 import changeAdapterState from './graphql/mutations/AdapterStatusMutation';
 
 const styles = (theme) => ({
-  wrapperClass : { padding : theme.spacing(5),backgroundColor : theme.palette.secondary.elevatedComponents,borderBottomLeftRadius : theme.spacing(1),borderBottomRightRadius : theme.spacing(1), },
+  wrapperClass : {
+    padding : theme.spacing(5),
+    backgroundColor : theme.palette.secondary.elevatedComponents,
+    borderBottomLeftRadius : theme.spacing(1),
+    borderBottomRightRadius : theme.spacing(1),
+    marginTop : theme.spacing(2),
+  },
   buttons : { display : "flex",
     justifyContent : "flex-end", paddingTop : "2rem" },
   button : {
@@ -364,7 +370,7 @@ class MeshAdapterConfigComponent extends React.Component {
               <Tooltip
                 key={adapter.uniqueID}
                 title={
-                        `Meshery Adapter for 
+                        `Meshery Adapter for
                         ${adapter.name
                           .toLowerCase()
                           .split(" ")
