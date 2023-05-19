@@ -29,6 +29,10 @@ const styles = () => ({
     width : '100%',
     position : 'absolute',
   },
+  noOptionsMessage : {
+    padding : '0.2rem',
+    marginLeft : '0.8rem',
+  }
 
 });
 
@@ -71,9 +75,7 @@ function Option(props) {
       buttonRef={props.innerRef}
       selected={props.isFocused}
       component="div"
-      style={{ fontWeight : props.isSelected
-        ? 500
-        : 400 }}
+      style={{ fontWeight : props.isSelected ? 500 : 400, padding : '0.4rem 1rem' }}
       {...props.innerProps}
     >
       {props.children}
