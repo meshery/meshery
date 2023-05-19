@@ -457,7 +457,7 @@ function K8sContextMenu({
                       </Button>
                     </Link>
                 }
-                {contexts?.contexts?.map(ctx => {
+                {contexts?.contexts?.map((ctx,idx) => {
                   const meshStatus = getMeshSyncStatus(ctx.id);
                   const brokerStatus = getBrokerStatus(ctx.id);
                   const operStatus = getOperatorStatus(ctx.id);
@@ -470,7 +470,7 @@ function K8sContextMenu({
                     }
                   }
 
-                  return <div id={ctx.id} className={classes.chip} key={ctx.uniqueID}>
+                  return <div key={`${ctx.uniqueID}-${idx}`} id={ctx.id} className={classes.chip} >
                     <Tooltip title={`Server: ${ctx.server},  Operator: ${getStatus(operStatus)}, MeshSync: ${getStatus(meshStatus)}, Broker: ${getStatus(brokerStatus)}`}>
                       <div style={{ display : "flex", justifyContent : "flex-start", alignItems : "center" }}>
                         <Checkbox
@@ -579,7 +579,7 @@ class Header extends React.Component {
                     {title}{isBeta ? <sup className={classes.betaBadge}>BETA</sup> : ""}
                   </Typography>
                 </Grid>
-                <Grid item className={classes.userContainer}>
+                <Grid item className={classes.userContainer} style={{ position : "relative", right : "-27px" }}>
                   <div className={classes.userSpan} style={{ position : "relative" }}>
                     <K8sContextMenu
                       classes={classes}

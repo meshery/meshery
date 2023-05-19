@@ -1,0 +1,1 @@
+{"kind":"ClusterPropagatedVersion","apiVersion":"core.kubefed.io/v1alpha1","displayName":"Cluster Propagated Version","format":"JSON","metadata":{},"model":{"name":"kommander","version":"0.39.2","displayName":"kommander","category":{"name":"","metadata":null},"metadata":null}}

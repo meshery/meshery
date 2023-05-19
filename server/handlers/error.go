@@ -112,6 +112,7 @@ const (
 	ErrPublishCatalogFilterCode         = "2256"
 	ErrGetMeshModelsCode                = "2257"
 	ErrGetUserDetailsCode               = "2258"
+	ErrResolvingRelationship            = "2259"
 )
 
 var (
@@ -486,4 +487,8 @@ func ErrGetMeshModels(err error) error {
 
 func ErrGetUserDetails(err error) error {
 	return errors.New(ErrGetUserDetailsCode, errors.Alert, []string{"could not get user details"}, []string{err.Error()}, []string{"User details could not be fetched from provider", "Your provider may not be reachable", "No user exists for the provided token"}, []string{"Make sure provider is reachable", "Make sure you are logged in", "Make sure you are using a valid token"})
+}
+
+func ErrResolvingRegoRelationship(err error) error {
+	return errors.New(ErrResolvingRelationship, errors.Alert, []string{"could not resolve rego relationship"}, []string{err.Error()}, []string{"The rego evaluation engine failed to resolve policies", "Design-File/Application-File is in incorrect format", "The policy query is invalid", "The evaluation engine response is unexpected for the code written"}, []string{"Make sure the design-file/application-file is a valid yaml", "Make sure you're proving correct rego query", "Make sure the server is evaluating the query correctly, add some logs"})
 }
