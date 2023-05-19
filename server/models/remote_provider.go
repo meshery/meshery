@@ -373,7 +373,7 @@ func (l *RemoteProvider) GetUserByID(req *http.Request, userID string) ([]byte, 
 	return nil, err
 }
 
-func (l *RemoteProvider) GetUsers(req *http.Request) ([]byte, error) {
+func (l *RemoteProvider) GetUsers(token, page, pageSize, search, order, filter string) ([]byte, error) {
 	if !l.Capabilities.IsSupported(UsersIdentity) {
 		logrus.Warn("operation not available")
 		return []byte{}, ErrInvalidCapability("UsersIdentity", l.ProviderName)
@@ -381,12 +381,26 @@ func (l *RemoteProvider) GetUsers(req *http.Request) ([]byte, error) {
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(UsersIdentity)
 	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
-	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
-	token, err := l.GetToken(req)
-	if err != nil {
-		return nil, err
+	q := remoteProviderURL.Query()
+	if page != "" {
+		q.Set("page", page)
 	}
+	if pageSize != "" {
+		q.Set("pageSize", pageSize)
+	}
+	if search != "" {
+		q.Set("search", search)
+	}
+	if order != "" {
+		q.Set("order", order)
+	}
+	if filter != "" {
+		q.Set("filter", filter)
+	}
+	remoteProviderURL.RawQuery = q.Encode()
 
+	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
+	
 	resp, err := l.DoRequest(cReq, token)
 	if err != nil {
 		if resp == nil {
