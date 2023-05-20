@@ -7,6 +7,7 @@ package resolver
 import (
 	"context"
 	"fmt"
+	"sync"
 	"time"
 
 	"github.com/layer5io/meshery/server/internal/graphql/generated"
@@ -348,7 +349,14 @@ func (r *subscriptionResolver) SubscribeMeshSyncEvents(ctx context.Context, k8sc
 
 func processAndRateLimitTheResponseOnGqlChannel(publishChannel chan *model.MeshSyncEvent, d time.Duration) func(meshsyncEvent *model.MeshSyncEvent) {
 	shouldWait := false
-	processMap := make(map[string]*model.MeshSyncEvent)
+	type syncedProcessMap struct {
+		mu         sync.Mutex
+		processMap map[string]*model.MeshSyncEvent
+	}
+
+	processMap := syncedProcessMap{processMap: make(map[string]*model.MeshSyncEvent)}
+
+	// processMap := make(map[string]*model.MeshSyncEvent)
 	isLast := false
 
 	return func(meshsyncEvent *model.MeshSyncEvent) {
@@ -364,8 +372,10 @@ func processAndRateLimitTheResponseOnGqlChannel(publishChannel chan *model.MeshS
 			key += metadata.(map[string]interface{})["uid"].(string)
 		}
 
+		processMap.mu.Lock()
 		// Deduplicates the same event by storing it as a map rather
-		processMap[key] = meshsyncEvent
+		processMap.processMap[key] = meshsyncEvent
+		processMap.mu.Unlock()
 
 		if !shouldWait {
 			// fmt.Println("starting to publish......")
@@ -377,12 +387,14 @@ func processAndRateLimitTheResponseOnGqlChannel(publishChannel chan *model.MeshS
 				<-time.After(d)
 				shouldWait = false
 
-				for k, v := range processMap {
+				processMap.mu.Lock()
+				for k, v := range processMap.processMap {
 					publishChannel <- v
 
 					// delete the key once processed to collect new entries
-					delete(processMap, k)
+					delete(processMap.processMap, k)
 				}
+				processMap.mu.Unlock()
 			}()
 		} else {
 			// don't let the last items stay in the queue until next event, but execute once the timer ends
@@ -390,12 +402,15 @@ func processAndRateLimitTheResponseOnGqlChannel(publishChannel chan *model.MeshS
 			go func() {
 				<-time.After(d)
 				if isLast {
-					for k, v := range processMap {
+					processMap.mu.Lock()
+					for k, v := range processMap.processMap {
+						fmt.Println("print last", k)
 						publishChannel <- v
 
 						// delete the key once processed to collect new entries
-						delete(processMap, k)
+						delete(processMap.processMap, k)
 					}
+					processMap.mu.Unlock()
 				}
 			}()
 		}
