@@ -49,4 +49,4 @@ Every Golang-based project that belongs to Layer5 incorporates a utility to defi
 
 For more details, <a href="{{ site.baseurl }}/project/contributing/contributing-error">Error Utility</a>
 
-{% include suggested-reading.html %}
+<!-- {% include suggested-reading.html %} -->

@@ -244,5 +244,5 @@ To grab console logs - `fmt.Println()` (check [mesheryctl/internal/cli/root/perf
 
 To grab Logrus logs - `logrus.Info()` (check [mesheryctl/internal/cli/root/perf/apply_test.go](https://github.com/meshery/meshery/blob/master/mesheryctl/internal/cli/root/perf/apply_test.go) )
 
-{% include suggested-reading.html %}
+<!-- {% include suggested-reading.html %} -->
 
