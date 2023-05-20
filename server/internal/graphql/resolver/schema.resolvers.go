@@ -285,10 +285,16 @@ func (r *subscriptionResolver) SubscribeMesheryControllersStatus(ctx context.Con
 	return resChan, nil
 }
 
+var count int16
+
 // SubscribeMeshSyncEvents is the resolver for the subscribeMeshSyncEvents field.
 func (r *subscriptionResolver) SubscribeMeshSyncEvents(ctx context.Context, k8scontextIDs []string) (<-chan *model.MeshSyncEvent, error) {
+	count++
+	internalCount := count
+	fmt.Println("SubscribeMeshSyncEvents called", count)
 	resChan := make(chan *model.MeshSyncEvent)
-	// get handlers
+	isSubscriptionFlushed := false
+
 	meshSyncDataHandlers, ok := ctx.Value(models.MeshSyncDataHandlersKey).(map[string]models.MeshsyncDataHandler)
 	if !ok || len(meshSyncDataHandlers) == 0 || meshSyncDataHandlers == nil {
 		er := model.ErrMeshSyncEventsSubscription(fmt.Errorf("meshsync data handlers are not configured for any of the contexts"))
@@ -304,23 +310,96 @@ func (r *subscriptionResolver) SubscribeMeshSyncEvents(ctx context.Context, k8sc
 			continue
 		}
 		go func(ctxID string, brokerEventsChan chan *broker.Message) {
+			publishHandlerWithProcessing := processAndRateLimitTheResponseOnGqlChannel(resChan, 5*time.Second)
 			for event := range brokerEventsChan {
-				if event.EventType == broker.ErrorEvent {
+				if event.EventType == broker.ErrorEvent || isSubscriptionFlushed { // better close the parent channel, but it is throwing panic
 					// TODO: Handle errors accordingly
 					continue
 				}
+
 				// handle the events
 				res := &model.MeshSyncEvent{
 					ContextID: ctxID,
 					Type:      string(event.EventType),
 					Object:    event.Object,
 				}
-				resChan <- res
-				go r.Config.DashboardK8sResourcesChan.PublishDashboardK8sResources()
+				fmt.Println("sent something from instance number", internalCount)
+				publishHandlerWithProcessing(res)
+				// go r.Config.DashboardK8sResourcesChan.PublishDashboardK8sResources()
 			}
 		}(ctxID, brokerEventsChan)
 	}
+
+	// handle subscription dispose
+	go func() {
+	loop:
+		for {
+			select {
+			case <-ctx.Done(): // executes when the subscription is dumped
+				isSubscriptionFlushed = true
+				break loop
+			default:
+			}
+		}
+	}()
+
 	return resChan, nil
+}
+
+func processAndRateLimitTheResponseOnGqlChannel(publishChannel chan *model.MeshSyncEvent, d time.Duration) func(meshsyncEvent *model.MeshSyncEvent) {
+	shouldWait := false
+	processMap := make(map[string]*model.MeshSyncEvent)
+	isLast := false
+
+	return func(meshsyncEvent *model.MeshSyncEvent) {
+		// create a key to uniquely identify meshsync objects with its type, purpose, ctx and resource uniqueId
+		var key string
+		key += meshsyncEvent.Type
+		key = (meshsyncEvent.Object).(map[string]interface{})["kind"].(string)
+		key += meshsyncEvent.ContextID
+		metadata := (meshsyncEvent.Object).(map[string]interface{})["metadata"]
+		// the metadata.uid could alone be used as key, but has a danger that it may not be avaiable
+		// this uid is coming from the ObjectMeta of the resource, but it is possible that modified and Add or Delete may come under one key, which isn't desired
+		if metadata != nil && metadata != "" && metadata.(map[string]interface{})["uid"] != nil {
+			key += metadata.(map[string]interface{})["uid"].(string)
+		}
+
+		// Deduplicates the same event by storing it as a map rather
+		processMap[key] = meshsyncEvent
+
+		if !shouldWait {
+			// fmt.Println("starting to publish......")
+			shouldWait = true
+			isLast = false
+			// push the entry
+
+			go func() {
+				<-time.After(d)
+				shouldWait = false
+
+				for k, v := range processMap {
+					publishChannel <- v
+
+					// delete the key once processed to collect new entries
+					delete(processMap, k)
+				}
+			}()
+		} else {
+			// don't let the last items stay in the queue until next event, but execute once the timer ends
+			isLast = true
+			go func() {
+				<-time.After(d)
+				if isLast {
+					for k, v := range processMap {
+						publishChannel <- v
+
+						// delete the key once processed to collect new entries
+						delete(processMap, k)
+					}
+				}
+			}()
+		}
+	}
 }
 
 // SubscribeConfiguration is the resolver for the subscribeConfiguration field.
