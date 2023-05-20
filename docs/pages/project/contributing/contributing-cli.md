@@ -156,38 +156,40 @@ Use:   "start",
 Short: "Start Meshery",
 Long:  'Start Meshery and each of its service mesh components.',
 Args:  cobra.NoArgs,
-Example:
+Example:```
 // Start meshery
 mesheryctl system start
 
 // To create a new context for in-cluster Kubernetes deployments and set the new context as your current-context
 mesheryctl system context create k8s -p kubernetes -s
+```,
+Annotations: linkScreenshot,
 ...{% endcapture %}
 
 {% include code.html code=code_content %}
 
   The variables present in above sample will be used in creating the doc pages for the specific command
 
-Also, if the screenshot is present in the command, the respective field has to be added at the bottom of the `Examples` field in the command file. The image file has to be included in the `docs/assets` folder in **PNG** format. The screenshot field is given for reference below
+Also, if the screenshot is present in the command, an `Annotation` macro variable (of `map[string]string` type) containing the `link` and the `caption` has to be added at the bottom of the `Examples` field in the command file. The image file has to be included in the `docs/assets` folder in **PNG** format. The screenshot field is given for reference below
 
-{% capture code_content %}Example:
+{% capture code_content %}var linkDocPatternApply = map[string]string{
+	"link":    "![pattern-apply-usage](/assets/img/mesheryctl/patternApply.png)",
+	"caption": "Usage of mesheryctl pattern apply",
+}
+...
+Example:```
 // apply a pattern file
 mesheryctl pattern apply -f [file | URL]
 
 // deploy a saved pattern
 mesheryctl pattern apply [pattern-name]
-
-! Refer below image link for usage
-* Usage of mesheryctl pattern apply
-# ![pattern-apply-usage](/assets/img/mesheryctl/patternApply.png){% endcapture %}
+```,
+Annotations: linkDocPatternApply,
+...
+{% endcapture %}
 {% include code.html code=code_content %}
-Certain symbols are used in the screenshot section, each having it's own function
 
-- `!` - Used to denote as comment and the line will be ignored by the script
-- `*` - Caption for the screenshot
-- `#` - Markdown code for adding the screenshot in the doc page
-
-**NOTE: It is advised not to modify the changes in `docs` folder, rather should be done in `mesheryctl` folder as the changes will get overwritten by the script.**
+**NOTE: It is advised not to modify the changes in `docs` folder, rather should be done in `mesheryctl` folder as the changes will get overwritten by the script. Also, the `index` page has to be manually updated by editing the `docs/_data/mesheryctlcommands/cmds.yml` file to appear the generated file in the command reference index table.**
 
 ### References
 
