@@ -400,7 +400,7 @@ func (l *RemoteProvider) GetUsers(token, page, pageSize, search, order, filter s
 	remoteProviderURL.RawQuery = q.Encode()
 
 	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
-	
+
 	resp, err := l.DoRequest(cReq, token)
 	if err != nil {
 		if resp == nil {

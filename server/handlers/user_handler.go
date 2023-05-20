@@ -58,7 +58,7 @@ func (h *Handler) GetUsers(w http.ResponseWriter, req *http.Request, _ *models.P
 	}
 
 	q := req.URL.Query()
-	
+
 	resp, err := provider.GetUsers(token, q.Get("page"), q.Get("pageSize"), q.Get("search"), q.Get("order"), q.Get("filter"))
 	if err != nil {
 		h.log.Error(ErrGetResult(err))
