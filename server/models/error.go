@@ -91,6 +91,7 @@ const (
 	ErrTokenIntrospectCode                = "2254"
 	ErrShareDesignCode                    = "2255"
 	ErrUnreachableRemoteProviderCode      = "2256"
+	ErrLateClusterResponseCode            = "2261"
 )
 
 var (
@@ -347,4 +348,8 @@ func ErrShareDesign(err error) error {
 
 func ErrUnreachableRemoteProvider(err error) error {
 	return errors.New(ErrUnreachableRemoteProviderCode, errors.Alert, []string{"Could not reach remote provider"}, []string{"", err.Error()}, []string{"Remote provider server may be down or not accepting requests"}, []string{"Make sure remote provider server is healthy and accepting requests"})
+}
+
+func ErrLateClusterResponse(err error) error {
+	return errors.New(ErrLateClusterResponseCode, errors.Alert, []string{"Cluster ping test timed out before response"}, []string{err.Error()}, []string{}, []string{})
 }

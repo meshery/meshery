@@ -339,7 +339,7 @@ func (kc K8sContext) PingTest() error {
 	res := h.KubeClient.DiscoveryClient.RESTClient().Get().RequestURI("/livez").Do(ctx)
 	if res.Error() != nil {
 		if res.Error() == context.DeadlineExceeded {
-			fmt.Println("Timeout Exceeded. Cluster Responded late.")
+			return ErrLateClusterResponse(err)
 		}
 		return res.Error()
 	}
