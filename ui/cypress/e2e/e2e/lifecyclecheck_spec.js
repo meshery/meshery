@@ -1,5 +1,5 @@
 /// <reference types="cypress" />
-// ***********************************************************
+import { aliasQuery } from "../../actionHelpers/graphql-test-utils";
 
 function doGeneralIstioLifecycleChecks() {
   cy.contains("Lifecycle");
@@ -49,9 +49,14 @@ describe("Test Lifecycle Paths With None Provider", () => {
     verifyAllIstioAddons(cy);
   })
 
-  it("Visit Istio by button Click", () => {
+  it.only("Visit Istio by button Click", () => {
+    cy.intercept('POST', '/api/system/graphql/query', (req) => {
+      // Queries
+      aliasQuery(req, "AddonsStatus")
+    })
     cy.visit("/")
     cy.get('[data-cy="lifecycle"]').click();
+    cy.wait('@gqlAddonsStatusQuery', { timeout: 30_000 })
     cy.get('[data-cy="istio"]').click();
     doGeneralIstioLifecycleChecks(cy);
     verifyAllIstioAddons(cy);
@@ -62,9 +67,14 @@ describe("Test Lifecycle Paths With None Provider", () => {
     doGeneralConsulLifecycleChecks(cy);
   })
 
-  it("Visit Consul by button Click", () => {
+  it.only("Visit Consul by button Click", () => {
+    cy.intercept('POST', '/api/system/graphql/query', (req) => {
+      // Queries
+      aliasQuery(req, "AddonsStatus")
+    })
     cy.visit("/")
     cy.get('[data-cy="lifecycle"]').click();
+    cy.wait('@gqlAddonsStatusQuery', { timeout: 30_000 })
     cy.get('[data-cy="consul"]').click();
     doGeneralConsulLifecycleChecks(cy);
   })
