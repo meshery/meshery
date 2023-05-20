@@ -286,13 +286,8 @@ func (r *subscriptionResolver) SubscribeMesheryControllersStatus(ctx context.Con
 	return resChan, nil
 }
 
-var count int16
-
 // SubscribeMeshSyncEvents is the resolver for the subscribeMeshSyncEvents field.
 func (r *subscriptionResolver) SubscribeMeshSyncEvents(ctx context.Context, k8scontextIDs []string) (<-chan *model.MeshSyncEvent, error) {
-	count++
-	internalCount := count
-	fmt.Println("SubscribeMeshSyncEvents called", count)
 	resChan := make(chan *model.MeshSyncEvent)
 	isSubscriptionFlushed := false
 
@@ -324,7 +319,6 @@ func (r *subscriptionResolver) SubscribeMeshSyncEvents(ctx context.Context, k8sc
 					Type:      string(event.EventType),
 					Object:    event.Object,
 				}
-				fmt.Println("sent something from instance number", internalCount)
 				publishHandlerWithProcessing(res)
 				// go r.Config.DashboardK8sResourcesChan.PublishDashboardK8sResources()
 			}
@@ -404,7 +398,6 @@ func processAndRateLimitTheResponseOnGqlChannel(publishChannel chan *model.MeshS
 				if isLast {
 					processMap.mu.Lock()
 					for k, v := range processMap.processMap {
-						fmt.Println("print last", k)
 						publishChannel <- v
 
 						// delete the key once processed to collect new entries
