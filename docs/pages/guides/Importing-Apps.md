@@ -18,7 +18,7 @@ You can import apps into Meshery using either the Meshery CLI or the Meshery UI.
 
 **Step 1: Install Meshery CLI**
 
-Before you can use the Meshery CLI to import a Docker Compose app, you must first install it. You can install Meshery CLI by following the instructions on the Meshery documentation site.
+Before you can use the Meshery CLI to import a Docker Compose app, you must first install it. You can install Meshery CLI by following the instructions on the [Meshery documentation site](../installation/mesheryctl.md).
 
 
 **Step 2: Import the App Manifest**
@@ -36,7 +36,11 @@ This command enable users to import their existing applications from
 - k8s manifests
 - Docker Compose
 
+Example : 
 
+<pre class="codeblock-pre">
+<div class="codeblock"><div class="clipboardjs">mesheryctl app import -f ./SampleApplication.yml -s "Kubernetes Manifest"</div></div>
+</pre>
 
 
 ## Using Meshery UI:
@@ -45,7 +49,7 @@ This command enable users to import their existing applications from
 **Step 1: Access the Meshery UI**
 
 
-To import a Docker Compose app into Meshery using the Meshery UI, you must first access the Meshery UI. 
+To import a Docker Compose app into Meshery using the Meshery UI, you must first Install the Meshery. You can install Meshery by following the instructions on the [Meshery documentation site](../installation/quick-start.md) 
 
 
 
@@ -55,6 +59,7 @@ To import a Docker Compose app into Meshery using the Meshery UI, you must first
 Once you have accessed the Meshery UI, navigate to the App Import page. This page can be accessed by clicking on the "Applications" menu item and then selecting "Import Application".
 
 
+<a href="{{ site.baseurl }}/assets/img/applications/Menu.png"><img alt="Application-Navigation" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/applications/Menu.png" /></a>
 
 
 **Step 3: Upload the Application**
