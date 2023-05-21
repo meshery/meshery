@@ -31,12 +31,12 @@ Once you have created your App Definition file, you can use the Meshery CLI to i
 <div class="codeblock"><div class="clipboardjs">mesheryctl app import -f [file/url] -s [source-type]</div></div>
 </pre>
 
-This command enable users to import their existing applications from 
+This command enable users to import their existing applications from sources as
 - Helm Charts
-- k8s manifests
+- Kubernetes Manifests
 - Docker Compose
 
-Example : 
+**Example :**  
 
 <pre class="codeblock-pre">
 <div class="codeblock"><div class="clipboardjs">mesheryctl app import -f ./SampleApplication.yml -s "Kubernetes Manifest"</div></div>
