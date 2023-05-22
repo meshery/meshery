@@ -50,8 +50,16 @@ func (h *Handler) GetUserByIDHandler(w http.ResponseWriter, r *http.Request, _ *
 // responses:
 // 	200: users
 
-func (h *Handler) GetUsers(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
-	resp, err := provider.GetUsers(r)
+func (h *Handler) GetUsers(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
+	token, ok := req.Context().Value(models.TokenCtxKey).(string)
+	if !ok {
+		http.Error(w, "failed to get token", http.StatusInternalServerError)
+		return
+	}
+
+	q := req.URL.Query()
+
+	resp, err := provider.GetUsers(token, q.Get("page"), q.Get("pageSize"), q.Get("search"), q.Get("order"), q.Get("filter"))
 	if err != nil {
 		h.log.Error(ErrGetResult(err))
 		http.Error(w, ErrGetResult(err).Error(), http.StatusNotFound)
