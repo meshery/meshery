@@ -194,4 +194,4 @@ func ErrOpeningFile(err error) error {
 }{% endcapture %}
 {% include code.html code=code_content %}
 
-{% include suggested-reading.html %}
+<!-- {% include suggested-reading.html %} -->

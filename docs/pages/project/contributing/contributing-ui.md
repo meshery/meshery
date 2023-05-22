@@ -183,4 +183,4 @@ For accessing the svg file as data-url, the utf8 encoding should be used in plac
 
 {% include code.html code="let svg = 'data:image/svg+xml;utf8,' + encodeURIComponent(svgFile);" %}
 
-{% include suggested-reading.html %}
+<!-- {% include suggested-reading.html %} -->

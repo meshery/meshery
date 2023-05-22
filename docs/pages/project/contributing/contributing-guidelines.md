@@ -100,5 +100,5 @@ Broader features should have a design specification created in the form of a Goo
 
 For small changes, communicating over the [issue tracker](https://github.com/layer5io/meshery/issues) or the [discussions](https://github.com/layer5io/meshery/discussions) will be helpful.
 
-{% include suggested-reading.html %}
+<!-- {% include suggested-reading.html %} -->
 
