@@ -85,9 +85,3 @@ export const MeshModels = styled('div')(({ theme }) => ({
     display: "flex",
   },
 }));
-
-export const ModelCategory = styled(StyledDiv)(() => ({
-  display: 'flex',
-  width: '25%',
-  justifyContent: 'center',
-}));
