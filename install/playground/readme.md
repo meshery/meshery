@@ -5,8 +5,8 @@
 playground.meshery.io - 147.28.141.9
 
 ### Hosts
-- c3-medium-x86-01-meshery
-- c3-medium-x86-02-meshery - Has K8s control plane
+- c3-medium-x86-01-meshery - docker host with Meshery Server
+- c3-medium-x86-02-meshery - single node k8s cluster
 
 #### Access
 ```
