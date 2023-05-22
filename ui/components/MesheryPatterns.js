@@ -27,7 +27,7 @@ import { generateValidatePayload, getComponentsinFile, randomPatternNameGenerato
 import ViewSwitch from "./ViewSwitch";
 import CatalogFilter from "./CatalogFilter";
 import MesheryPatternGrid from "./MesheryPatterns/MesheryPatternGridView";
-import UndeployIcon from "../public/static/img/UndeployIcon";
+import RemoveDoneIcon from '@mui/icons-material/RemoveDone';
 import DoneAllIcon from '@material-ui/icons/DoneAll';
 import DoneIcon from '@material-ui/icons/Done';
 import PublicIcon from '@material-ui/icons/Public';
@@ -901,7 +901,7 @@ function MesheryPatterns({
                 title="Undeploy"
                 onClick={(e) => handleModalOpen(e, rowData.pattern_file, rowData.name, patternErrors.get(rowData.id), ACTIONS.UNDEPLOY)}
               >
-                <UndeployIcon fill="#F91313" data-cy="undeploy-button" />
+                <RemoveDoneIcon data-cy="undeploy-button" />
               </TooltipIcon>
               <TooltipIcon
                 title="Deploy"

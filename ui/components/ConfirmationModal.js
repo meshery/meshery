@@ -62,7 +62,7 @@ const styles = (theme) => ({
     // minWidth : 300,
     padding : theme.spacing(1),
     color : '#fff',
-    backgroundColor : theme.palette.type == "light"? 'rgb(57, 102, 121)': 'none',
+    backgroundColor : theme.palette.type == "light"? theme.palette.secondary.mainBackground: theme.palette.secondary.confirmationModal,
     fontSize : "1rem",
 
   },
