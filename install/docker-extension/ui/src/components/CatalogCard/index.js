@@ -33,7 +33,7 @@ function CatalogCard({ pattern, patternType, catalog }) {
   };
 
   return pattern?.visibility == "published" ? (
-    <a href={`https://meshery.layer5.io/catalog/${pattern.id}`} target="_blank" rel="noreferrer">
+    <a href={`http://localhost:9081/configuration/designs`} target="_blank" rel="noreferrer">
       <DesignCard>
         <DesignInnerCard>
           <CardFront>
