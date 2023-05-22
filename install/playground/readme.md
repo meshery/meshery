@@ -1,6 +1,9 @@
 
 # Meshery Playground Bare Metal Configuration 
 
+![Deployment Topology](../docker/meshery-playground-deployment.png)
+
+
 ### DNS
 playground.meshery.io - 147.28.141.9
 
