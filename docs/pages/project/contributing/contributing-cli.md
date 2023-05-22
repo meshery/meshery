@@ -48,6 +48,7 @@ For logs, `mesheryctl` uses [Logrus](https://github.com/sirupsen/logrus). Going 
 Unit test code coverage reports can be found in the [CodeCov logs](https://app.codecov.io/gh/meshery/meshery/). _Note: GitHub login may be required for access._
 
 **Documentation**
+
 The documentation pages for `mesheryctl` reference are made with the help of the Cobra Golang framework and use of GitHub Actions. Refer to [Contributing to mesheryctl documentation](#contributing-to-mesheryctl-documentation) for details.
 
 # Meshery CLI Style Guide
@@ -119,18 +120,18 @@ When designing for the command line interface, ask and consider the following qu
 - What is the default behavior? What flags might you need to change that behavior?
 - What might people try and fail to do and how can you anticipate that?
 
-###### What the command is called
+##### What the command is called
 
 - What should be the command language? (`mesheryctl <command> <subcommand> [args] [flags] [value]`)
 - What should be a command vs a flag?
 - How can you align the language of the new command with the existing commands?
 
-##### What the command outputs
+##### What are the command outputs
 
 - How can you make the GUI and the CLI outputs similar?
 - What should be outputted normally and what falls into debug logs?
 
-##### How you explain your command
+##### How you would explain your command
 
 You will need to provide a short and long description of the command for the help pages and also for the Meshery Documentation.
 
@@ -189,7 +190,14 @@ Annotations: linkDocPatternApply,
 {% endcapture %}
 {% include code.html code=code_content %}
 
-**NOTE: It is advised not to modify the changes in `docs` folder, rather should be done in `mesheryctl` folder as the changes will get overwritten by the script. Also, the `index` page has to be manually updated by editing the `docs/_data/mesheryctlcommands/cmds.yml` file to appear the generated file in the command reference index table.**
+**NOTE: It is advised not to modify the changes in `docs` folder, rather should be done in `mesheryctl` folder as the changes will get overwritten by the script.**
+
+## Adding New/Removing Existing commands in the reference index
+
+Though the command page is generated automatically by the Cobra CLI library, there are chances where the command does not appear in the [reference index page](https://docs.meshery.io/reference/mesheryctl). In such cases, the command details must be manually added to the reference index YAML file. This is generally done by editing the below two files:
+
+- [cmds.yml](https://github.com/meshery/meshery/blob/master/docs/_data/mesheryctlcommands/cmds.yml) - The YAML file containing the data about the commands
+- [mesheryctl-commands.md](https://github.com/meshery/meshery/blob/master/docs/pages/reference/mesheryctl-commands.md) - The markdown page of the command reference documentation
 
 ### References
 
