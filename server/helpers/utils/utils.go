@@ -5,7 +5,6 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
-	"net/url"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -271,27 +270,12 @@ func SliceContains(elements []string, name string) bool {
 }
 
 func GetPlatform() (string, error) {
-	platform := "Unknown Platform"
+	platform := "docker"
 
 	if _, err := os.Stat("/var/run/secrets/kubernetes.io/serviceaccount"); err == nil &&
 		os.Getenv("KUBERNETES_SERVICE_HOST") != "" &&
 		os.Getenv("KUBERNETES_SERVICE_PORT") != "" {
 		platform = "kubernetes"
-	} else if dockerHost := os.Getenv("DOCKER_HOST"); dockerHost != "" {
-		if u, err := url.Parse(dockerHost); err == nil {
-			switch u.Scheme {
-			case "unix":
-				if info, err := os.Stat(u.Path); err == nil && info.Mode()&os.ModeSocket != 0 {
-					platform = "docker"
-				}
-			case "tcp", "http", "https":
-				platform = "docker"
-			default:
-				platform = "Unknown Platform"
-			}
-		} else {
-			return "", err
-		}
 	}
 	return platform, nil
 }
