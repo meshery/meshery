@@ -1,4 +1,5 @@
-import React from 'react';
+//import useState from 'react';
+import React, { useState, useLayoutEffect } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'next/router';
@@ -24,10 +25,13 @@ import { faTachometerAlt } from '@fortawesome/free-solid-svg-icons';
 import MesherySettingsPerformanceComponent from './MesherySettingsPerformanceComponent';
 import { ctxUrl } from '../utils/multi-ctx';
 import { iconMedium } from '../css/icons.styles';
+import { getTheme,setTheme } from "../utils/theme";
+import { isExtensionOpen } from "../pages/_app";
 
 
 const styles = (theme) => ({
   statsWrapper : {
+    padding : theme.spacing(2),
     maxWidth : "100%",
     height : 'auto',
     borderTopLeftRadius : 0,
@@ -76,8 +80,13 @@ const styles = (theme) => ({
   formGrp : {
     padding : 20,
     border : '1.5px solid #969696',
+    // margin : 20,
+    display : 'flex',
+    'flex-direction' : 'column',
+    width : "90%",
   },
   formLegend : { fontSize : 20, },
+  formLegendSmall : { fontSize : 16 },
   switchBase : {
     color : '#647881',
     "&$checked" : { color : '#00b39f' },
@@ -94,6 +103,62 @@ const styles = (theme) => ({
     }
   }
 });
+
+function ThemeToggler({ theme, themeSetter, enqueueSnackbar, classes }) {
+  const [themeToggle, setthemeToggle] = useState(false);
+  const defaultTheme = "light";
+  const handle = () => {
+    if (isExtensionOpen()) {
+      return;
+    }
+
+    theme === "dark" ? setthemeToggle(true)  : setthemeToggle(false);
+    setTheme(theme)
+  };
+
+  useLayoutEffect(() => {
+    if (isExtensionOpen()) {
+      if (getTheme() && getTheme() !== defaultTheme) {
+        themeSetter(defaultTheme);
+      }
+      return;
+    }
+
+    themeSetter(getTheme() || defaultTheme);
+
+  }, []);
+
+  useLayoutEffect(handle, [theme]);
+
+  const themeToggler = () => {
+    if (isExtensionOpen()) {
+      enqueueSnackbar("Toggling between themes is not supported in MeshMap", {
+        variant : "info",
+        preventDuplicate : true,
+      });
+      return;
+    }
+    theme === "light" ? themeSetter("dark")  : themeSetter("light");
+  };
+
+  return (
+    <div onClick={themeToggler}>
+      <Switch
+        color="primary"
+        classes={{
+          switchBase : classes.switchBase,
+          track : classes.track,
+          checked : classes.checked,
+          font : classes.checked,
+        }}
+        checked={themeToggle}
+        onChange={themeToggler}
+      />{" "}
+      {themeToggle ? "Light Mode" : "Dark Mode"}
+    </div>
+  );
+}
+
 
 class UserPreference extends React.Component {
   constructor(props) {
@@ -371,6 +436,22 @@ class UserPreference extends React.Component {
                 </FormGroup>
               </FormControl>
             </div>
+
+            <div className={classes.formGrp} style={{ marginLeft : '20px' }}>
+              <FormLabel component="span" className={classes.formLegendSmall}>
+                    Theme
+              </FormLabel>
+              <FormControl component="fieldset">
+                <FormGroup>
+                  <ThemeToggler
+                    classes={classes}
+                    theme={this.props.theme}
+                    themeSetter={this.props.themeSetter}
+                    enqueueSnackbar={this.props.enqueueSnackbar}
+                  />
+                </FormGroup>
+              </FormControl>
+            </div>
           </>
           }
           {tabVal === 1 &&
@@ -379,6 +460,7 @@ class UserPreference extends React.Component {
           {tabVal === 2 && userPrefs && providerType !== 'local' &&
             <ExtensionSandbox type="user_prefs" Extension={(url) => RemoteComponent({ url })} />
           }
+
         </Paper>
       </NoSsr>
     );
