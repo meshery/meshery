@@ -138,7 +138,7 @@ func (l *DefaultLocalProvider) GetUserByID(_ *http.Request, _ string) ([]byte, e
 	return nil, nil
 }
 
-func (l *DefaultLocalProvider) GetUsers(_ *http.Request) ([]byte, error) {
+func (l *DefaultLocalProvider) GetUsers(_, _, _, _, _, _ string) ([]byte, error) {
 	return []byte(""), ErrLocalProviderSupport
 }
 
