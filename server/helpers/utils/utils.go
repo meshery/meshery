@@ -269,7 +269,7 @@ func SliceContains(elements []string, name string) bool {
 	return false
 }
 
-func GetPlatform() (string, error) {
+func GetPlatform() string {
 	platform := "docker"
 
 	if _, err := os.Stat("/var/run/secrets/kubernetes.io/serviceaccount"); err == nil &&
@@ -277,5 +277,5 @@ func GetPlatform() (string, error) {
 		os.Getenv("KUBERNETES_SERVICE_PORT") != "" {
 		platform = "kubernetes"
 	}
-	return platform, nil
+	return platform
 }
