@@ -357,7 +357,7 @@ func processAndRateLimitTheResponseOnGqlChannel(publishChannel chan *model.MeshS
 		// create a key to uniquely identify meshsync objects with its type, purpose, ctx and resource uniqueId
 		var key string
 		key += meshsyncEvent.Type
-		key = (meshsyncEvent.Object).(map[string]interface{})["kind"].(string)
+		key += (meshsyncEvent.Object).(map[string]interface{})["kind"].(string)
 		key += meshsyncEvent.ContextID
 		metadata := (meshsyncEvent.Object).(map[string]interface{})["metadata"]
 		// the metadata.uid could alone be used as key, but has a danger that it may not be avaiable
