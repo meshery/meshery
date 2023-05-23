@@ -34,7 +34,7 @@ configuration in the CRD.
 ## MeshSync FAQs
 
 ### How to reconfigure Meshsync informer?  
-Meshsync is managed by [Operator]({{site.baseurl}}/concepts/architecture/operator) which watches for changes on Meshsync CRD for 
+MeshSync is managed by [Meshery Operator]({{site.baseurl}}/concepts/architecture/operator), which watches for changes on MeshSync CRD for 
 changes and updates the deployed resource accordingly. You can update the CRD using kubectl through the following steps
 - Download the CRD with `kubectl get crd meshsyncs.meshery.layer5.io -o yaml > meshsync.yaml`
 - Open the downloaded file and edit the field `informer_config` to blacklist all the types of resources that you don't want updates from.
